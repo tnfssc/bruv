@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 export function allowedAnswer(input: unknown, question: { id: string; status: string } | undefined, alreadySent: boolean): boolean {
   if (!input || typeof input !== "object" || Array.isArray(input)) return false;
   const value = input as Record<string, unknown>;
@@ -11,6 +12,6 @@ export function allowedScopedAnswer(input: unknown, question: {id:string;status:
  if (!input || typeof input !== 'object' || Array.isArray(input)) return false;
  const value=input as Record<string,unknown>;
  if (Object.keys(value).sort().join(',') !== 'choice,epoch,id,identity,owner,version' || value.identity!==identity || value.epoch!==epoch || !question ||
-     JSON.stringify(value.owner)!==JSON.stringify(question.owner) || value.version!==question.version) return false;
+     !isDeepStrictEqual(value.owner, question.owner) || value.version!==question.version) return false;
  return allowedAnswer({id:value.id,choice:value.choice},question,alreadySent);
 }

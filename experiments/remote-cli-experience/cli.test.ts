@@ -37,3 +37,9 @@ test('first launch lost reply stays unknown, retries only same pinned owner and 
  const srv=Bun.serve({port:0,async fetch(req){if(new URL(req.url).pathname.endsWith('hello'))return Response.json({identity:'same',epoch:3});const body=await req.json() as any;posts.push(body);expect(JSON.parse(readFileSync(f,'utf8')).identity).toBe('same');return first?(first=false,new Response('reply lost',{status:500})):Response.json({id:body.id,duplicate:true})}});
  try{expect((await run(f,'launch',srv.port)).code).toBe(1);const before=JSON.parse(readFileSync(f,'utf8'));expect(before.intent.stage).toContain('unknown');expect((await run(f,'launch',srv.port)).code).toBe(0);expect(posts).toHaveLength(2);expect(posts[0]).toEqual(posts[1]);expect(posts[0].epoch).toBe(3)}finally{srv.stop(true);rmSync(dir,{recursive:true,force:true})}
 });
+
+test('lost first launch reply cannot replay on a restarted owner',async()=>{
+ const dir=mkdtempSync(join(tmpdir(),'remote-cli-')),f=join(dir,'state');let epoch=1,posts=0;
+ const srv=Bun.serve({port:0,fetch(req){if(new URL(req.url).pathname.endsWith('hello'))return Response.json({identity:'owner',epoch});posts++;return new Response('lost',{status:500})}});
+ try{expect((await run(f,'launch',srv.port)).code).toBe(1);expect(JSON.parse(readFileSync(f,'utf8')).epoch).toBe(1);epoch=2;expect((await run(f,'launch',srv.port)).code).toBe(1);expect(posts).toBe(1);const saved=JSON.parse(readFileSync(f,'utf8'));expect(saved.epoch).toBe(1);expect(saved.refusal).toContain('owner changed')}finally{srv.stop(true);rmSync(dir,{recursive:true,force:true})}
+});

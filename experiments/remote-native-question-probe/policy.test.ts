@@ -15,6 +15,7 @@ test('integrated answer requires exact observed native owner and version, includ
  const q={id:'q',status:'pending',owner:{sessionId:'s',branchId:'b'},version:2};
  const input={id:'q',choice:'A',identity:'owner',epoch:1,owner:q.owner,version:2};
  expect(allowedScopedAnswer(input,q,false,'owner',1)).toBe(true);
+ expect(allowedScopedAnswer({...input,owner:{branchId:'b',sessionId:'s'}},q,false,'owner',1)).toBe(true);
  for(const bad of [{...input,identity:'restart'},{...input,epoch:2},{...input,version:1},{...input,owner:{sessionId:'s',branchId:'other'}},{...input,extra:true}])expect(allowedScopedAnswer(bad,q,false,'owner',1)).toBe(false);
  expect(allowedScopedAnswer(input,{...q,version:3},false,'owner',1)).toBe(false);
  expect(allowedScopedAnswer(input,q,true,'owner',1)).toBe(false);
