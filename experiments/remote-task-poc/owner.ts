@@ -31,11 +31,7 @@ const identity = old.find((x) => x.k === "identity")?.id ?? randomUUID(),
   epoch = (old.filter((x) => x.k === "epoch").at(-1)?.n ?? 0) + 1;
 let events: any[] = old.filter((x) => x.k === "event"),
   accepted: any = old.find((x) => x.k === "accept");
-let phase = accepted
-    ? events.some((x) => x.type === "outcome" && x.data.state === "done")
-      ? "done"
-      : "unknown"
-    : "ready",
+let phase = accepted ? (events.filter((x) => x.type === "outcome").at(-1)?.data.state ?? "unknown") : "ready",
   rpc: ReturnType<typeof Bun.spawn> | undefined,
   turns = 0,
   stderr = "",
@@ -53,13 +49,28 @@ const sendPrompt = (message: string) => {
   input.stdin.write(JSON.stringify({ id: "prompt", type: "prompt", message }) + "\n");
 };
 function resumeIfReady() {
-  if (!waiting || resumed || !dependency.reply || !dependency.result || !rpc) return;
-  if (dependency.result.status === "denied") { terminal("denied", "local fixture permission denied"); return; }
+  if (
+    phase !== "waiting" ||
+    !waiting ||
+    resumed ||
+    !dependency.result ||
+    !rpc ||
+    events.some((x) => x.type === "outcome")
+  )
+    return;
+  if (dependency.result.status === "denied") {
+    terminal("denied", "local fixture permission denied");
+    return;
+  }
+  if (!dependency.reply) return;
   resumed = true;
   waiting = false;
   phase = "running";
   emit("dependency_resumed", { questionId: "q1", capabilityId: "c1" });
-  sendPrompt("The explicit fixture reply and capability result are available. Fetch both via the lab dependency result tool and finish.");
+  if (phase !== "running" || events.some((x) => x.type === "outcome")) return;
+  sendPrompt(
+    "The explicit fixture reply and capability result are available. Fetch both via the lab dependency result tool and finish.",
+  );
 }
 const fd = openSync(file, "a"),
   t0 = Date.now();
@@ -72,6 +83,7 @@ save({ k: "epoch", n: epoch });
 function terminal(state: "done" | "unknown" | "capped" | "denied", reason?: string) {
   if (events.some((x) => x.type === "outcome")) return;
   phase = state;
+  waiting = false;
   const x = { k: "event", seq: events.length + 1, ms: Date.now() - t0, type: "outcome", data: { state, reason } };
   if (Buffer.byteLength(JSON.stringify(x)) > 20000) throw Error("terminal event too large");
   save(x);
@@ -148,14 +160,32 @@ const server = Bun.serve({
         );
       if (fixtureMode()) {
         const serialized = JSON.stringify(body);
-        if (turns === 1) return call("independent", 'console.log("INDEPENDENT_DONE:"+(await Bun.file("marker.txt").text()).trim())');
+        if (turns === 1)
+          return call("independent", 'console.log("INDEPENDENT_DONE:"+(await Bun.file("marker.txt").text()).trim())');
         if (turns === 2 && serialized.includes("INDEPENDENT_DONE:LINUX-CONTAINER-MARKER"))
-          return call("request-dependencies", 'const base="http://127.0.0.1:8080"; const headers={authorization:"Bearer "+process.env.LAB_TOKEN,"content-type":"application/json"}; for(const path of ["question","capability"]){const r=await fetch(base+"/lab/"+path,{method:"POST",headers,body:"{}"}); console.log(path+":"+JSON.stringify(await r.json()))}');
-        if (turns === 3 && serialized.includes("question:") && serialized.includes("capability:") && serialized.includes("q1") && serialized.includes("c1"))
+          return call(
+            "request-dependencies",
+            'const base="http://127.0.0.1:8080"; const headers={authorization:"Bearer "+process.env.LAB_TOKEN,"content-type":"application/json"}; for(const path of ["question","capability"]){const r=await fetch(base+"/lab/"+path,{method:"POST",headers,body:"{}"}); console.log(path+":"+JSON.stringify(await r.json()))}',
+          );
+        if (
+          turns === 3 &&
+          serialized.includes("question:") &&
+          serialized.includes("capability:") &&
+          serialized.includes("q1") &&
+          serialized.includes("c1")
+        )
           return sse({ role: "assistant", content: "WAITING_FOR_EXPLICIT_RESPONSES" }, "stop");
         if (turns === 4 && dependency.reply && dependency.result)
-          return call("consume-responses", 'const r=await fetch("http://127.0.0.1:8080/lab/results",{headers:{authorization:"Bearer "+process.env.LAB_TOKEN}});console.log("ACTUAL_DEPENDENCIES:"+JSON.stringify(await r.json()))');
-        if (turns === 5 && serialized.includes("ACTUAL_DEPENDENCIES:") && serialized.includes(dependency.reply.answer) && serialized.includes(dependency.result.content))
+          return call(
+            "consume-responses",
+            'const r=await fetch("http://127.0.0.1:8080/lab/results",{headers:{authorization:"Bearer "+process.env.LAB_TOKEN}});console.log("ACTUAL_DEPENDENCIES:"+JSON.stringify(await r.json()))',
+          );
+        if (
+          turns === 5 &&
+          serialized.includes("ACTUAL_DEPENDENCIES:") &&
+          serialized.includes(dependency.reply.answer) &&
+          serialized.includes(dependency.result.content)
+        )
           return sse({ role: "assistant", content: "FINISHED_WITH_EXPLICIT_DEPENDENCIES" }, "stop");
         emit("fixture_error", { turn: turns });
         return respond({ error: "unexpected dependency turn" }, 500);
@@ -190,28 +220,61 @@ const server = Bun.serve({
       const raw = await req.text();
       if (raw.length > 1024) return respond({ error: "request too large" }, 413);
       let data: any;
-      try { data = JSON.parse(raw); } catch { return respond({ error: "invalid JSON" }, 400); }
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        return respond({ error: "invalid JSON" }, 400);
+      }
+      if (!data || typeof data !== "object" || Array.isArray(data)) return respond({ error: "object required" }, 400);
       if (op === "question" || op === "capability") {
         if (phase !== "running" || !rpc || Object.keys(data).length) return respond({ error: "invalid request" }, 409);
         if (op === "question") {
-          if (!dependency.question) { dependency.question = { k: "question", id: "q1", text: "Choose a fixture label for this task" }; save(dependency.question); emit("question_pending", dependency.question); }
+          if (!dependency.question) {
+            dependency.question = { k: "question", id: "q1", text: "Choose a fixture label for this task" };
+            save(dependency.question);
+            emit("question_pending", dependency.question);
+          }
           return respond("q1");
         }
-        if (!dependency.capability) { dependency.capability = { k: "capability", id: "c1", kind: "read-local-fixture", permission: "pending" }; save(dependency.capability); emit("capability_pending", dependency.capability); }
+        if (!dependency.capability) {
+          dependency.capability = { k: "capability", id: "c1", kind: "read-local-fixture", permission: "pending" };
+          save(dependency.capability);
+          emit("capability_pending", dependency.capability);
+        }
         return respond("c1");
       }
       if (op === "reply" && dependency.question) {
         const decision = checkReply(data, dependency.reply);
         if (decision === "invalid") return respond({ error: "invalid reply" }, 400);
-        if (decision !== "new") return decision === "duplicate" ? respond({ accepted: true, duplicate: true }) : respond({ error: "conflicting reply" }, 409);
-        dependency.reply = { k: "reply", questionId: "q1", replyId: data.replyId, answer: data.answer }; save(dependency.reply); emit("question_answered", dependency.reply); resumeIfReady();
+        if (decision !== "new")
+          return decision === "duplicate"
+            ? respond({ accepted: true, duplicate: true })
+            : respond({ error: "conflicting reply" }, 409);
+        if (events.some((x) => x.type === "outcome")) return respond({ error: "task already terminal" }, 409);
+        dependency.reply = { k: "reply", questionId: "q1", replyId: data.replyId, answer: data.answer };
+        save(dependency.reply);
+        emit("question_answered", dependency.reply);
+        resumeIfReady();
         return respond({ accepted: true, duplicate: false });
       }
       if (op === "capability-result" && dependency.capability) {
         const decision = checkCapability(data, dependency.result);
         if (decision === "invalid") return respond({ error: "invalid capability response" }, 400);
-        if (decision !== "new") return decision === "duplicate" ? respond({ accepted: true, duplicate: true }) : respond({ error: "conflicting capability response" }, 409);
-        dependency.result = { k: "capability_result", ...data }; save(dependency.result); emit("capability_resolved", dependency.result); resumeIfReady();
+        if (decision !== "new")
+          return decision === "duplicate"
+            ? respond({ accepted: true, duplicate: true })
+            : respond({ error: "conflicting capability response" }, 409);
+        if (events.some((x) => x.type === "outcome")) return respond({ error: "task already terminal" }, 409);
+        dependency.result = {
+          k: "capability_result",
+          capabilityId: "c1",
+          responseId: data.responseId,
+          status: data.status,
+          ...(data.status === "granted" ? { content: data.content } : {}),
+        };
+        save(dependency.result);
+        emit("capability_resolved", dependency.result);
+        resumeIfReady();
         return respond({ accepted: true, duplicate: false });
       }
       return respond({ error: "not found or dependency absent" }, 404);
@@ -302,10 +365,16 @@ const server = Bun.serve({
               ["tool_execution_start", "tool_execution_end", "message_end", "agent_end", "agent_start"].includes(e.type)
             )
               emit(e.type, e);
-            if (e.type === "agent_end") {
+            if (e.type === "agent_end" && !events.some((x) => x.type === "outcome")) {
               if (fixtureMode() && !resumed) {
-                if (!dependency.question || !dependency.capability) terminal("unknown", "fixture did not request dependencies");
-                else { waiting = true; phase = "waiting"; emit("waiting", { questionId: "q1", capabilityId: "c1" }); resumeIfReady(); }
+                if (!dependency.question || !dependency.capability)
+                  terminal("unknown", "fixture did not request dependencies");
+                else {
+                  waiting = true;
+                  phase = "waiting";
+                  emit("waiting", { questionId: "q1", capabilityId: "c1" });
+                  resumeIfReady();
+                }
               } else terminal("done");
             }
           }

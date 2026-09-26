@@ -8,7 +8,7 @@ TMP="$(mktemp -d)"
 GATE_PID=''
 cleanup(){ if [[ -n "$GATE_PID" ]]; then kill "$GATE_PID" 2>/dev/null || true; wait "$GATE_PID" 2>/dev/null || true; fi; docker rm -f "$ID" >/dev/null 2>&1 || true; docker image rm "$ID" >/dev/null 2>&1 || true; docker volume rm "$ID-data" >/dev/null 2>&1 || true; if [[ "${LAB_KEEP:-0}" != 1 ]]; then rm -rf "$TMP"; else echo "Diagnostics (contains synthetic token): $TMP"; fi; }
 trap cleanup EXIT
-cp experiments/remote-task-poc/{Dockerfile,owner.ts,bounded-log.ts} "$TMP/"
+cp experiments/remote-task-poc/{Dockerfile,owner.ts,bounded-log.ts,dependency.ts} "$TMP/"
 cp "$BUN_BIN" "$TMP/bun"
 cp "$DIE_BIN" "$TMP/die"
 "$TMP/die" --version

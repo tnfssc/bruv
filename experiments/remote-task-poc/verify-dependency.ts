@@ -2,8 +2,13 @@ import { readFileSync } from "node:fs";
 import { strict as assert } from "node:assert";
 const dir = process.argv[2];
 const read = (p: string) => readFileSync(dir + "/" + p, "utf8");
-const events = (p: string) => read(p).trim().split("\n").map((s) => JSON.parse(s));
-const pending = events("dependency-pending.jsonl"), final = events("replica.jsonl");
+const events = (p: string) =>
+  read(p)
+    .trim()
+    .split("\n")
+    .map((s) => JSON.parse(s));
+const pending = events("dependency-pending.jsonl"),
+  final = events("replica.jsonl");
 assert(pending.some((e) => e.type === "question_pending" && e.data.text === "Choose a fixture label for this task"));
 assert(pending.some((e) => e.type === "capability_pending" && e.data.kind === "read-local-fixture"));
 assert(pending.some((e) => e.type === "waiting"));
@@ -15,7 +20,17 @@ assert(JSON.parse(read("reply-retry")).duplicate);
 assert(!events("replica.jsonl").some((e) => e.type === "fixture_error"));
 assert(JSON.parse(read("dependency-question-only")).phase === "waiting");
 assert(JSON.parse(read("capability-retry")).duplicate);
-assert(final.some((e) => e.type === "tool_execution_end" && JSON.stringify(e).includes("ACTUAL_DEPENDENCIES:") && JSON.stringify(e).includes("Approved Label") && JSON.stringify(e).includes("LOCAL-FIXTURE-CONTENT")));
-assert(final.some((e) => e.type === "message_end" && JSON.stringify(e).includes("FINISHED_WITH_EXPLICIT_DEPENDENCIES")));
+assert(
+  final.some(
+    (e) =>
+      e.type === "tool_execution_end" &&
+      JSON.stringify(e).includes("ACTUAL_DEPENDENCIES:") &&
+      JSON.stringify(e).includes("Approved Label") &&
+      JSON.stringify(e).includes("LOCAL-FIXTURE-CONTENT"),
+  ),
+);
+assert(
+  final.some((e) => e.type === "message_end" && JSON.stringify(e).includes("FINISHED_WITH_EXPLICIT_DEPENDENCIES")),
+);
 assert(final.at(-1).type === "outcome" && final.at(-1).data.state === "done");
 console.log("dependency fixture PASS", { pending: pending.length, final: final.length });

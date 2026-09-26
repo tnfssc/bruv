@@ -110,6 +110,8 @@ for i in {1..100}; do if client hello >/dev/null 2>&1; then break; fi; sleep .1;
 client launch task-denied 'DEPENDENCY: permission denial fixture' >/dev/null
 for i in {1..140}; do client sync >/dev/null; if grep -q '"type":"waiting"' "$TMP/replica.jsonl"; then break; fi; sleep .1; done
 client capability denied c-nope > "$TMP/denial"
-client reply r-denied 'Approved Label' >/dev/null
+if client reply r-denied 'Approved Label' >/dev/null 2>&1; then echo "new reply accepted after terminal denial" >&2; exit 1; fi
+# Exact denial retry is a receipt, not a new action.
+client capability denied c-nope > "$TMP/denial-retry"
 client sync >/dev/null
 "$BUN_BIN" experiments/remote-task-poc/verify-denial.ts "$TMP/replica.jsonl"

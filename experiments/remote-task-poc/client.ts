@@ -14,14 +14,18 @@ const replica = () =>
 const saved = replica();
 if (op === "offline") {
   console.log(
-    JSON.stringify({
-      offline: true,
-      connection: "not checked; cached transcript only",
-      events: saved.length,
-      latest: saved.at(-1),
-      transcript: saved,
-      fullToolResults: saved.filter((x) => x.type === "tool_execution_end").length,
-    }, null, 2),
+    JSON.stringify(
+      {
+        offline: true,
+        connection: "not checked; cached transcript only",
+        events: saved.length,
+        latest: saved.at(-1),
+        transcript: saved,
+        fullToolResults: saved.filter((x) => x.type === "tool_execution_end").length,
+      },
+      null,
+      2,
+    ),
   );
   process.exit(0);
 }
@@ -43,15 +47,29 @@ else if (op === "launch")
       }),
     ),
   );
-else if (op === "reply") console.log(JSON.stringify(await request("/lab/reply", { method: "POST", body: JSON.stringify({ questionId: "q1", replyId: params[0], answer: params[1] }) })));
+else if (op === "reply")
+  console.log(
+    JSON.stringify(
+      await request("/lab/reply", {
+        method: "POST",
+        body: JSON.stringify({ questionId: "q1", replyId: params[0], answer: params[1] }),
+      }),
+    ),
+  );
 else if (op === "capability") {
   const status = params[0];
   if (status === "granted" && (!process.env.LAB_FIXTURE_FILE || params[2] !== process.env.LAB_FIXTURE_FILE))
     throw Error("only the explicitly configured local fixture file may be read");
   const content = status === "granted" ? (await Bun.file(process.env.LAB_FIXTURE_FILE!).text()).trim() : undefined;
-  console.log(JSON.stringify(await request("/lab/capability-result", { method: "POST", body: JSON.stringify({ capabilityId: "c1", responseId: params[1], status, content }) })));
-}
-else if (op === "sync") {
+  console.log(
+    JSON.stringify(
+      await request("/lab/capability-result", {
+        method: "POST",
+        body: JSON.stringify({ capabilityId: "c1", responseId: params[1], status, content }),
+      }),
+    ),
+  );
+} else if (op === "sync") {
   const hello = await request("/hello");
   let cursor = saved.length,
     pages = 0,
