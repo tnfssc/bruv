@@ -1,36 +1,44 @@
-# Remote network lab (experimental, simulated)
+# Remote task network lab
 
-Docker Bun remote task owner + Toxiproxy + host Bun client (Linux standing in for Mac). No LLM, SSH, macOS, provider, authentication, real capabilities or production code. No home or Docker socket mounted. Owner state lives in its own Docker volume; transcript on host disk. Ports loopback-only: 18783 owner, 18784 impaired client, 18785 proxy admin. No credentials.
+A deterministic task owner runs in Docker. A Linux host client stands in for the Mac. Toxiproxy sits between them. This is not an LLM, SSH transport, Mac app, or production remote mode.
 
-## Reproduce
+## Run
 
-Requires Docker Compose and Bun 1.2.23. Images pinned by digest. If Bun unavailable on host, extract binary from same pinned image:
+From the repo root, with Docker Compose, curl and Bun (parent tested 1.4.2):
 
-    n=$(docker create oven/bun:1.2.23); docker cp "$n":/usr/local/bin/bun /tmp/die-network-lab-bun; docker rm "$n"
-    BUN=/tmp/die-network-lab-bun
-    D='docker compose -f experiments/remote-network-lab/compose.yaml -p die-network-lab-86a7ae68'
-    $D up -d
-    $BUN experiments/remote-network-lab/setup.ts
-    $BUN test experiments/remote-network-lab/client.test.ts
-    $BUN experiments/remote-network-lab/demo.ts > /tmp/network-lab-results.json
-    LAB_REPLICA=/tmp/network-lab-transcript.json $BUN experiments/remote-network-lab/client.ts launch my-task needs-mac
-    sleep 1
-    LAB_REPLICA=/tmp/network-lab-transcript.json $BUN experiments/remote-network-lab/client.ts sync
-    LAB_REPLICA=/tmp/network-lab-transcript.json $BUN experiments/remote-network-lab/client.ts reply my-task fixture
-    sleep 1
-    LAB_REPLICA=/tmp/network-lab-transcript.json $BUN experiments/remote-network-lab/client.ts sync
-    $D stop owner
-    LAB_REPLICA=/tmp/network-lab-transcript.json $BUN experiments/remote-network-lab/client.ts offline
-    $D down -v # removes this project's containers, network and owner volume
+```sh
+bash experiments/remote-network-lab/run.sh
+# Optional output location:
+LAB_RESULTS=/tmp/network-results.json bash experiments/remote-network-lab/run.sh
+```
 
-Shell snippets use POSIX shell; set BUN and D appropriately in fish. Port collision? Change compose published ports and client/admin URLs together. Demo requires owner up; it removes temporary replicas and resets toxics but retains owner history. Setup is idempotent. Do not down -v if retaining outcomes. Do not expose unauthenticated endpoints beyond loopback.
+The runner starts a unique Compose project, waits for readiness, runs tests and the demo, reads the saved transcript with the owner stopped, and removes its containers/network/volume on exit. It uses fixed loopback ports 18783 (owner), 18784 (impaired link), 18785 (proxy admin). Do not run two copies at once. Images are pinned by digest. Containers have CPU, memory and PID limits. No home, credentials or Docker socket mounted. No paid calls. The owner volume is disposable; cleanup deletes its outcomes.
 
-## Protocol and assertions
+For manual exploration, use the commands in run.sh but keep the Compose project up. Host CLI:
 
-JSON v1: POST /launch {v,id,spec}, spec plain or needs-mac; POST /reply {v,id,text}; GET /events?cursor=N&limit=1..20 returns {v,events,next,more}. Each event has v, monotonic seq, id, kind, text, at. /head yields latest cursor for benchmarking without old history; normal new replicas start at 0. Caller-stable ID retries with same spec return replayed:true; changed spec conflicts. Acceptance is persisted before HTTP reply; reply is deduplicated. Owner persists tasks and append-only events by atomic rename. Host validates contiguous sequence then atomically replaces replica cursor+events. Lost acceptance response is retried, not relaunched. Offline status derives running/waiting/unknown/done from disk. Plain tasks continue after client disappearance. Needs-mac waits for a response: stand-in for on-demand file/skill/capability/CLI request, not actual transfer. Restart marks in-flight tasks unknown, never fabricated complete. No automatic restart/resume or transactional exactly-once guarantee.
+```sh
+LAB_REPLICA=/tmp/transcript.json bun experiments/remote-network-lab/client.ts launch my-task needs-mac
+LAB_REPLICA=/tmp/transcript.json bun experiments/remote-network-lab/client.ts sync
+LAB_REPLICA=/tmp/transcript.json bun experiments/remote-network-lab/client.ts offline
+LAB_REPLICA=/tmp/transcript.json bun experiments/remote-network-lab/client.ts reply my-task fixture
+```
 
-Demo asserts detachment, discarded acceptance response, dedup/conflict, durable question/reply, outage/catchup and page limit 1. Unit test checks offline disk read with unreachable fetch and rejects noncontiguous event pages. Page size max 20; append-only history and replica storage not bounded. Primitive polling is not an agent scheduling design.
+Sync again after the reply. Offline/status never fetches the owner. A Mac capability is ONLY a saved question/reply here, not actual Mac file/CLI access.
 
-## Measurement
+## Protocol and proof
 
-See results.json and ../../wisdom/remote-workspaces/network-lab.md. Three sequential plain tasks/condition. Each reports host-observed time from launch start to acceptance, first visible progress and completion visibility in milliseconds. Serialized application payload bytes: UTF-8 JSON request body + URL path and JSON response body; counts through completion. HTTP headers, framing, retransmissions, TCP bytes NOT counted. /head setup and proxy admin excluded. GET page 10; poll every ~25ms. Injected 100 or 300ms latency EACH direction means request RTT minimum ~200 or 600ms plus processing. Bandwidth 1024 bytes/s each direction toxic barely affected small messages (buffer/burst). Outage disables proxy while owner stays up. Samples depend on scheduling/timer cadence, not p95. Mac+one server only; thousands of agents, auth, transport security, storage scaling, real Mac offline behavior, real file transfer and provider agents untested.
+JSON v1: POST /launch {v,id,spec}, POST /reply {v,id,text}, GET /events?cursor=N&limit=1..20. Each event has a monotonic seq, task id, kind, text and time. Repeated launch ID/spec or reply text returns the saved status. Conflicting launch spec/reply rejects. Acceptance is written before HTTP reply. Owner and client use atomic file replacement, not a transactional crash-safe database or power-loss guarantee.
+
+Demo covers discarded acceptance response plus stable-ID retry, detached continuation to a question, saved question/reply, proxy outage during independent work, and incremental catchup with pages of one event. It discards a received acceptance response; it does NOT yet cut TCP after server acceptance but before delivery. The runner also stops the server and asserts completed transcript can still be read from the host disk.
+
+On restart, owner marks in-flight work unknown rather than claiming recovery. Cursor ahead of owner is rejected. No runtime epoch/reset reconciliation implemented. History is unbounded on disk and rewritten in full; event pages are count-bounded, not proof of bounded total storage or a slow-client socket queue. The wire bench separately models byte/time batch limits.
+
+## Measurements
+
+See results.json and [findings](../../wisdom/remote-workspaces/network-lab.md). Three sequential tasks per condition; report medians, not tail-latency claims. Time is host-observed from launch to acceptance, first progress and visible done. The scripted task takes about 460ms unimpeded.
+
+Injected latency is applied EACH direction: 100ms means about 200ms minimum request RTT; 300ms means about 600ms. Toxiproxy bandwidth rate is KiB/s, not B/s. The current tiny-message case uses rate=1. A separate 16KiB transfer at rate=8 verifies throttling is taking effect. Earlier rate=1024 results were mislabeled as 1024 B/s and are superseded.
+
+Application byte counts include UTF-8 JSON bodies and request URL paths only. They omit HTTP headers, TCP framing/retransmission, proxy admin and /head benchmark setup. With tiny requests, omitted HTTP overhead can matter a lot. Baseline polls every ~25ms; request count is a warning against using this polling scheme in production. No compression is enabled in the transfer probe.
+
+Limits: unauthenticated loopback HTTP, whole-file storage, fixed ports, no real task queue/LLM, no Mac/SSH/auth/capability transfer or fleet-scale proof. Future work should test event-driven subscriptions, actual network-loss retry, large transcript catchup and real Mac tools before making product promises.

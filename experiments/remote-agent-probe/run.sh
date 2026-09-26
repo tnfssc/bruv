@@ -24,7 +24,9 @@ for i in {1..100}; do
   sleep .05
 done
 client detach > "$TMP/detach.json"
-# Viewer process is gone; server owns the process and all subsequent model turns.
+# No host requests during this window; server owns all subsequent model turns.
+sleep 4
+# A new viewer now reconnects.
 for i in {1..400}; do
   client status > "$TMP/reconnect.json"
   if grep -q '"phase":"done"' "$TMP/reconnect.json"; then break; fi

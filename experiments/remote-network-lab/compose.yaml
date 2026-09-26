@@ -9,12 +9,18 @@ services:
       - owner-data:/data
     ports:
       - "127.0.0.1:18783:8080"
+    mem_limit: 256m
+    cpus: 1
+    pids_limit: 64
     restart: "no"
   proxy:
     image: ghcr.io/shopify/toxiproxy:2.9.0@sha256:b44c283298cea49e2defaba1b3028783798346f2a926684e3a345fd8441af3b8
     ports:
       - "127.0.0.1:18784:8666"
       - "127.0.0.1:18785:8474"
+    mem_limit: 256m
+    cpus: 1
+    pids_limit: 64
     restart: "no"
 volumes:
   owner-data:

@@ -1,11 +1,40 @@
-const [a,b]=await Promise.all(process.argv.slice(2).map(async p=>JSON.parse(await Bun.file(p).text())));
-const tools=b.events.filter((e:any)=>e.type==='tool_execution_end'&&e.toolName==='execute');
-const assert=(ok:boolean,msg:string)=>{if(!ok)throw Error(msg+' '+JSON.stringify({a,b}).slice(0,6000))};
-assert(a.phase==='running'&&a.detachedAt>=0&&a.modelTurns===1&&a.events.every((e:any)=>e.type!=='tool_execution_end'),'detached before first result');
-assert(b.phase==='done'&&b.modelTurns===3&&b.modelTimes[1]>a.elapsedMs&&b.detachedAt===a.detachedAt,'second turn after detach');
-assert(tools.length===2&&tools.every((e:any)=>!e.isError),'two successful execute calls');
-assert(JSON.stringify(tools[0].result).includes('LINUX-CONTAINER-MARKER')&&JSON.stringify(tools[0].result).includes('/work'),'Linux workspace placement');
-assert(JSON.stringify(tools[1].result).includes('SECOND_DONE:LINUX-CONTAINER-MARKER'),'second result');
-assert(b.events.filter((e:any)=>e.type==='agent_end').length===1,'one agent end');
-assert(JSON.stringify(b.events).includes('FINISHED'),'final assistant response in transcript');
-console.log(JSON.stringify({result:'PASS',syntheticModel:true,host:'Docker Linux, not Mac or SSH',detachedMs:a.elapsedMs,secondTurnMs:b.modelTimes[1],completedMs:b.elapsedMs,modelTurns:b.modelTurns,executeCalls:tools.length}));
+export {};
+const [a, b] = await Promise.all(process.argv.slice(2).map(async (p) => JSON.parse(await Bun.file(p).text())));
+const tools = b.events.filter((e: any) => e.type === "tool_execution_end" && e.toolName === "execute");
+const assert = (ok: boolean, msg: string) => {
+  if (!ok) throw Error(msg + " " + JSON.stringify({ a, b }).slice(0, 6000));
+};
+assert(
+  a.phase === "running" &&
+    a.detachedAt >= 0 &&
+    a.modelTurns === 1 &&
+    a.events.every((e: any) => e.type !== "tool_execution_end"),
+  "detached before first result",
+);
+assert(
+  b.phase === "done" && b.modelTurns === 3 && b.modelTimes[1] > a.elapsedMs && b.detachedAt === a.detachedAt,
+  "second turn after detach",
+);
+assert(b.modelTimes[2] <= a.elapsedMs + 4000, "final model turn inside no-client-request window");
+assert(tools.length === 2 && tools.every((e: any) => !e.isError), "two successful execute calls");
+assert(
+  JSON.stringify(tools[0].result).includes("LINUX-CONTAINER-MARKER") &&
+    JSON.stringify(tools[0].result).includes("/work"),
+  "Linux workspace placement",
+);
+assert(JSON.stringify(tools[1].result).includes("SECOND_DONE:LINUX-CONTAINER-MARKER"), "second result");
+assert(b.events.filter((e: any) => e.type === "agent_end").length === 1, "one agent end");
+assert(JSON.stringify(b.events).includes("FINISHED"), "final assistant response in transcript");
+console.log(
+  JSON.stringify({
+    result: "PASS",
+    syntheticModel: true,
+    host: "Docker Linux, not Mac or SSH",
+    detachedMs: a.elapsedMs,
+    secondTurnMs: b.modelTimes[1],
+    completionObservedMs: b.elapsedMs,
+    noClientRequestsMs: 4000,
+    modelTurns: b.modelTurns,
+    executeCalls: tools.length,
+  }),
+);

@@ -6,33 +6,33 @@
     {
       "label": "baseline",
       "injectedOneWayMs": 0,
-      "bandwidthBytesPerSecond": 0,
+      "bandwidthKiBPerSecond": 0,
       "samples": [
         {
           "acceptanceMs": 1,
+          "progressMs": 156,
+          "completionMs": 465,
+          "requests": 21,
+          "requestBytes": 556,
+          "responseBytes": 1326,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 0,
+          "progressMs": 156,
+          "completionMs": 465,
+          "requests": 21,
+          "requestBytes": 556,
+          "responseBytes": 1326,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 0,
           "progressMs": 157,
-          "completionMs": 478,
+          "completionMs": 465,
           "requests": 21,
-          "requestBytes": 596,
-          "responseBytes": 1374,
-          "events": 4
-        },
-        {
-          "acceptanceMs": 1,
-          "progressMs": 158,
-          "completionMs": 472,
-          "requests": 21,
-          "requestBytes": 596,
-          "responseBytes": 1374,
-          "events": 4
-        },
-        {
-          "acceptanceMs": 1,
-          "progressMs": 158,
-          "completionMs": 472,
-          "requests": 21,
-          "requestBytes": 596,
-          "responseBytes": 1374,
+          "requestBytes": 569,
+          "responseBytes": 1343,
           "events": 4
         }
       ]
@@ -40,33 +40,33 @@
     {
       "label": "latency100",
       "injectedOneWayMs": 100,
-      "bandwidthBytesPerSecond": 0,
+      "bandwidthKiBPerSecond": 0,
       "samples": [
         {
-          "acceptanceMs": 203,
-          "progressMs": 405,
-          "completionMs": 834,
+          "acceptanceMs": 202,
+          "progressMs": 404,
+          "completionMs": 831,
           "requests": 4,
-          "requestBytes": 139,
-          "responseBytes": 654,
+          "requestBytes": 136,
+          "responseBytes": 647,
           "events": 4
         },
         {
-          "acceptanceMs": 203,
-          "progressMs": 404,
-          "completionMs": 835,
+          "acceptanceMs": 201,
+          "progressMs": 403,
+          "completionMs": 831,
           "requests": 4,
-          "requestBytes": 139,
-          "responseBytes": 654,
+          "requestBytes": 136,
+          "responseBytes": 647,
           "events": 4
         },
         {
           "acceptanceMs": 202,
           "progressMs": 404,
-          "completionMs": 833,
+          "completionMs": 831,
           "requests": 4,
-          "requestBytes": 139,
-          "responseBytes": 654,
+          "requestBytes": 136,
+          "responseBytes": 647,
           "events": 4
         }
       ]
@@ -74,74 +74,86 @@
     {
       "label": "latency300",
       "injectedOneWayMs": 300,
-      "bandwidthBytesPerSecond": 0,
+      "bandwidthKiBPerSecond": 0,
       "samples": [
         {
-          "acceptanceMs": 603,
-          "progressMs": 1206,
-          "completionMs": 1808,
+          "acceptanceMs": 602,
+          "progressMs": 1204,
+          "completionMs": 1806,
           "requests": 3,
-          "requestBytes": 112,
-          "responseBytes": 613,
+          "requestBytes": 110,
+          "responseBytes": 607,
           "events": 4
         },
         {
-          "acceptanceMs": 603,
-          "progressMs": 1205,
-          "completionMs": 1807,
+          "acceptanceMs": 602,
+          "progressMs": 1204,
+          "completionMs": 1805,
           "requests": 3,
-          "requestBytes": 112,
-          "responseBytes": 613,
+          "requestBytes": 110,
+          "responseBytes": 607,
           "events": 4
         },
         {
-          "acceptanceMs": 603,
-          "progressMs": 1205,
-          "completionMs": 1807,
+          "acceptanceMs": 602,
+          "progressMs": 1204,
+          "completionMs": 1806,
           "requests": 3,
-          "requestBytes": 112,
-          "responseBytes": 613,
+          "requestBytes": 110,
+          "responseBytes": 607,
           "events": 4
         }
       ]
     },
     {
-      "label": "bandwidth1024",
+      "label": "bandwidth1KiB",
       "injectedOneWayMs": 0,
-      "bandwidthBytesPerSecond": 1024,
+      "bandwidthKiBPerSecond": 1,
       "samples": [
         {
-          "acceptanceMs": 1,
-          "progressMs": 161,
-          "completionMs": 478,
-          "requests": 21,
-          "requestBytes": 601,
-          "responseBytes": 1399,
+          "acceptanceMs": 466,
+          "progressMs": 1168,
+          "completionMs": 1620,
+          "requests": 3,
+          "requestBytes": 113,
+          "responseBytes": 621,
           "events": 4
         },
         {
-          "acceptanceMs": 1,
-          "progressMs": 160,
-          "completionMs": 479,
-          "requests": 21,
-          "requestBytes": 601,
-          "responseBytes": 1399,
+          "acceptanceMs": 464,
+          "progressMs": 1166,
+          "completionMs": 1618,
+          "requests": 3,
+          "requestBytes": 113,
+          "responseBytes": 621,
           "events": 4
         },
         {
-          "acceptanceMs": 3,
-          "progressMs": 162,
-          "completionMs": 480,
-          "requests": 21,
-          "requestBytes": 601,
-          "responseBytes": 1399,
+          "acceptanceMs": 466,
+          "progressMs": 1168,
+          "completionMs": 1620,
+          "requests": 3,
+          "requestBytes": 113,
+          "responseBytes": 621,
           "events": 4
         }
       ]
     }
   ],
+  "bandwidthTransfer": [
+    {
+      "rateKiBPerSecond": 0,
+      "bodyBytes": 16384,
+      "elapsedMs": 1
+    },
+    {
+      "rateKiBPerSecond": 8,
+      "bodyBytes": 16384,
+      "elapsedMs": 2072
+    }
+  ],
   "checks": {
-    "lostResponseRetry": true,
+    "discardedResponseRetry": true,
     "questionOfflineStatus": "waiting",
     "questionEvents": [
       "accepted",
@@ -154,23 +166,23 @@
     ],
     "outageFailed": true,
     "offlineDuringOutage": {
-      "cursor": 166,
+      "cursor": 56,
       "tasks": {
-        "muioouq7-outage": {
+        "muip4fuv-outage": {
           "status": "running",
           "text": "simulated plain accepted"
         }
       },
       "transcript": [
-        "#166 muioouq7-outage accepted: simulated plain accepted"
+        "#56 muip4fuv-outage accepted: simulated plain accepted"
       ]
     },
-    "cursor": 169,
-    "reconnectCatchupMs": 1,
+    "cursor": 59,
+    "reconnectCatchupMs": 2,
     "slowPageMetrics": {
       "requests": 7,
-      "requestBytes": 188,
-      "responseBytes": 684,
+      "requestBytes": 183,
+      "responseBytes": 675,
       "events": 4
     }
   }

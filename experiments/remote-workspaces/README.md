@@ -119,3 +119,12 @@ not implemented. Existing production notification ACK ownership is not reproduce
 this adapter. Maximum 32 executes per runtime, 10-second execute/job deadlines.
 
 See [wisdom](../../wisdom/remote-workspaces/ssh-prototype.md) for findings and next steps.
+
+## Follow-up network and wire experiments
+
+The newer bounded probes live separately:
+
+- [Docker/Toxiproxy UX lab](../remote-network-lab/README.md): cached transcript, questions, disconnect and measured latency.
+- [Actual-agent Docker probe](../remote-agent-probe/README.md): real die RPC loop with fake provider and no host requests during work.
+- [Wire benchmark](../remote-wire-bench/README.md): equal-content deltas, lazy output, batching and synthetic 1000-task traffic.
+- [Joined findings](../../wisdom/remote-workspaces/experiment-findings.md): measurements, corrections and what remains unproven.
