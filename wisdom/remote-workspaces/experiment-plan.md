@@ -85,3 +85,13 @@ Stream commits integrated as a0a8293 and ac76cd6. Actual-task commits integrated
 Thirteen unit tests pass (nine Bun, four Node), strict TS checks for all five experiments pass, shell syntax/diff checks pass. No production code changed or full production suite run. Docker lab resources cleaned up; no round-two jobs left running. Normal full build remains blocked on missing pnpm, but current CLI 0.15.3 was built with supported --reuse-web earlier; web not validated. See task-poc.md for artifact hash and exact measurements.
 
 Next highest-value work: durable questions/replies and one explicitly allowed Mac fixture-read capability in the actual-agent path. Warm stream delivery versus cold handshake, real mid-flight reply loss and interrupted-running-owner behavior remain unproven. Do not claim thousands real agents or TCP backpressure from synthetic loopback tests. Values checked again and unchanged; current proof/ownership/bounds rules already cover lessons.
+
+## User authorized ongoing discovery and develop pushes
+
+On 2026-09-26 user asked to do all needed investigation/experiments and keep pushing develop. Parent fetched origin, merged two newer release commits (80872d7, fb4d6fd) without conflicts, reran relevant release and experiment tests (15 Bun + 4 Node), and pushed develop successfully at 6984422. SSH printed an id_rsa libcrypto warning but fetch and push both succeeded; do not report it as an auth blocker. No force push. Package is now0.15.4 from upstream release metadata; the proven staged CLI remains0.15.3 with recorded hash. Do not overwrite artifact while workers stage it.
+
+Round three active from 6984422dfae3bf789a52a3763988dc6c309c67e8:
+- task_66633bbf: questions and explicitly allowed Mac fixture-read capability in actual task POC. Owns experiments/remote-task-poc and task-poc.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_66633bbf, branch die/durable-questions-and-on-demand-mac-fixt-66633bbf.
+- task_792d547d: true reply-loss gate and active-owner kill/restart, independent experiments/remote-failure-probe and failure-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_792d547d, branch die/ambiguous-delivery-and-running-owner-fai-792d547d. Reuses prior actual-task owner read-only; integration must check it still fits questions worker changes.
+
+Parent owns review/integration/push only after checks. Workers must commit, not push. Keep work bounded to experiments; user did not ask to publish releases, transfer real secrets or contact an unprovided remote machine. Runtime/model setup discovery is in remote-profile-discovery.md. Native questions versus lab-only dependency transport must be labeled accurately; no silent approval bypass.
