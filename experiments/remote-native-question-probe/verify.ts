@@ -76,9 +76,10 @@ if (outcome.questions[0].status === "pending") {
       error: outcome.error,
     }),
   );
+  if (process.env.REQUIRE_NATIVE_ANSWER === "1") throw Error("native question answer remains blocked");
   process.exit(0);
 }
-const done = outcome;
+const done = await until((s) => s.questions?.[0]?.delivery === "delivered" && s.turns === 4 && s.events.filter((e: any) => e.type === "agent_end").length === 2);
 const saved = done.questions[0];
 assert.equal(saved.status, "answered");
 assert.equal(saved.answer, "A");

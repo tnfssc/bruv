@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-BUN_BIN="${BUN_BIN:-/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun}"
-DIE_BIN="${DIE_BIN:-/home/tnfssc/Code/die/dist/die}"
+BUN_BIN="${BUN_BIN:-$(command -v bun)}"
+DIE_BIN="${DIE_BIN:-dist/die}"
 NAME="die-native-question-$RANDOM-$$"
 IMAGE="die-native-question:$RANDOM-$$"
 TMP="$(mktemp -d)"

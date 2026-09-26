@@ -1,7 +1,7 @@
 Port 2222
 ListenAddress 0.0.0.0
-HostKey /keys/hostkey
-AuthorizedKeysFile /keys/client.pub
+HostKey /run/sshd/hostkey
+AuthorizedKeysFile /run/sshd/client.pub
 PermitRootLogin prohibit-password
 PasswordAuthentication no
 KbdInteractiveAuthentication no
@@ -11,5 +11,5 @@ AllowTcpForwarding local
 PermitTTY no
 X11Forwarding no
 GatewayPorts no
-StrictModes no
+StrictModes yes
 LogLevel ERROR
