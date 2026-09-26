@@ -8,9 +8,11 @@ for b in "$BUN_BIN" "$DIE_BIN"; do test -x "$b" || { echo "missing executable: $
 id="die-ssh-native-question-$$-$RANDOM"; tmp="$(mktemp -d)"; ssh_pid=''
 cleanup(){
  [[ -z "$ssh_pid" ]] || { kill "$ssh_pid" 2>/dev/null || true; wait "$ssh_pid" 2>/dev/null || true; }
- docker rm -f "$id-sshd" "$id-owner" >/dev/null 2>&1 || true
+ docker rm -f "$id-sshd" >/dev/null 2>&1 || true
+ docker rm -f "$id-owner" >/dev/null 2>&1 || true
  docker network rm "$id-net" >/dev/null 2>&1 || true
- docker image rm "$id-owner" "$id-sshd" >/dev/null 2>&1 || true
+ docker image rm "$id-owner" >/dev/null 2>&1 || true
+ docker image rm "$id-sshd" >/dev/null 2>&1 || true
  rm -rf "$tmp"
 }
 trap cleanup EXIT
@@ -31,10 +33,13 @@ timeout 150 docker build -q -t "$id-owner" "$tmp/owner-context" >/dev/null
 timeout 150 docker build -q -t "$id-sshd" -f experiments/remote-ssh-probe/sshd.Dockerfile experiments/remote-ssh-probe >/dev/null
 docker network create "$id-net" >/dev/null
 token="$(head -c 24 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+printf %s "$token" > "$tmp/token"
+printf "PROBE_TOKEN=%s\n" "$token" > "$tmp/owner.env"
+unset token
 # SSH shares the owner's network namespace; forward destination is 127.0.0.1:8080.
 # Only the SSH port is published, on host loopback.
 for n in {1..8}; do
- if docker run -d --name "$id-owner" --network "$id-net" --memory 768m --cpus 2 --pids-limit 128 --read-only --tmpfs /work:rw,size=64m,uid=65534,gid=65534 -e "PROBE_TOKEN=$token" -p 127.0.0.1::2222 "$id-owner" >/dev/null; then break; fi
+ if docker run -d --name "$id-owner" --network "$id-net" --memory 768m --cpus 2 --pids-limit 128 --read-only --tmpfs /work:rw,size=64m,uid=65534,gid=65534 --env-file "$tmp/owner.env" -p 127.0.0.1::2222 "$id-owner" >/dev/null; then break; fi
  docker rm -f "$id-owner" >/dev/null 2>&1 || true
  if (( n == 8 )); then echo 'SSH port allocation failed' >&2; exit 1; fi
 done
@@ -67,7 +72,7 @@ start_ssh(){
  done
  cat "$tmp/ssh.out" >&2; echo 'SSH bind failed after retries' >&2; exit 1
 }
-client(){ "$BUN_BIN" experiments/remote-ssh-native-question/client.ts "$1" "$local_port" "$token" "$tmp" "${@:2}"; }
+client(){ "$BUN_BIN" experiments/remote-ssh-native-question/client.ts "$1" "$local_port" "$tmp" "${@:2}"; }
 # All owner API traffic is through the pinned SSH local forward. No owner HTTP port is published.
 "$BUN_BIN" test experiments/remote-native-question-probe/policy.test.ts
 start_ssh
@@ -81,8 +86,8 @@ client reconnect
 client answer
 client done
 client duplicate
-# Store the final transcript on the client, then destroy both servers.
+# Store the final readable snapshot on the client, then destroy both servers.
 docker rm -f "$id-sshd" "$id-owner" >/dev/null
 kill "$ssh_pid" 2>/dev/null || true; wait "$ssh_pid" 2>/dev/null || true; ssh_pid=''
 client offline
-printf 'SSH native question PASS: pinned host key, disconnect, reconnect, exact reply, follow-up, duplicate and offline transcript; die %s\n' "$(sha256sum "$DIE_BIN" | cut -d' ' -f1)"
+printf 'SSH native question PASS: pinned host key, disconnect, reconnect, exact reply, follow-up, duplicate and offline readable snapshot; die %s\n' "$(sha256sum "$DIE_BIN" | cut -d' ' -f1)"

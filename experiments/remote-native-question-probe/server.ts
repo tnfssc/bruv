@@ -20,7 +20,8 @@ const events: any[] = [],
   requests: string[] = [];
 let error = "",
   started = false,
-  answerSent = false;
+  answerSent = false,
+  duplicateSent = false;
 const rpc = Bun.spawn(
   [
     "/opt/die",
@@ -161,9 +162,11 @@ const server = Bun.serve({
       const q = (await ledger()).find((x) => x.id === input?.id);
       if (!allowedAnswer(input, q, answerSent))
         return new Response("invalid or already answered", { status: 409 });
+      const duplicate = answerSent;
       answerSent = true;
+      if (duplicate) duplicateSent = true;
       rpc.stdin.write(
-        JSON.stringify({ id: "answer", type: "prompt", message: "/questions answer " + q.id + " A" }) + "\n",
+        JSON.stringify({ id: duplicate ? "duplicate" : "answer", type: "prompt", message: "/questions answer " + q.id + " A" }) + "\n",
       );
     } else if (path !== "/status") return new Response("not found", { status: 404 });
     return Response.json({
@@ -206,6 +209,7 @@ const server = Bun.serve({
       })),
       error,
       answerSent,
+      duplicateSent,
     });
   },
 });

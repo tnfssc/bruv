@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { readFile, writeFile } from "node:fs/promises";
-const [command, port, token, dir] = Bun.argv.slice(2);
+const [command, port, dir] = Bun.argv.slice(2);
+const token = (await readFile(dir + "/token", "utf8")).trim();
 const url = "http://127.0.0.1:" + port;
-const file = dir + "/transcript.json";
+const file = dir + "/snapshot.json";
 async function request(path: string, method = "GET", body?: object, key = token) {
   const response = await fetch(url + path, { method, headers: { authorization: "Bearer " + key, "content-type": "application/json" }, body: body && JSON.stringify(body), signal: AbortSignal.timeout(1500) });
   return { status: response.status, data: response.ok ? await response.json() : await response.text() };
@@ -46,15 +47,20 @@ else if (command === "pending") {
   const old = await saved();
   // Controller permits exact idempotent repeats; the native RPC must not start a second turn.
   assert.equal((await request("/answer", "POST", { id: old.pending.id, choice: "A" })).status, 200);
-  await Bun.sleep(250);
-  const s = await status();
+  // A successful native RPC response proves the duplicate command reached preflight;
+  // the answered ledger and unchanged completed turn prove its idempotent disposition.
+  const s = await until((x) => x.events.some((e: any) => e.type === "response" && e.id === "duplicate" && e.success === true));
+  assert.equal(s.duplicateSent, true);
+  assert.equal(s.events.filter((e: any) => e.type === "response" && e.id === "duplicate").length, 1);
   assert.equal(s.turns, 4); assert.equal(ends(s), 2); assert.equal(s.questions[0].replyId, old.latest.questions[0].replyId);
+  assert.equal(s.questions[0].status, "answered"); assert.equal(s.error, "");
   await persist(s, old.pending);
 } else if (command === "offline") {
   // No fetch: read ONLY the client's cached copy after both server containers stop.
   const { pending, latest: s } = await saved();
   assert.equal(pending.status, "pending"); assert.equal(s.questions[0].status, "answered");
   assert.equal(s.turns, 4); assert.equal(ends(s), 2);
+  assert.ok(s.events.some((e: any) => e.type === "response" && e.id === "duplicate" && e.success === true));
   assert.ok(s.events.some((e: any) => e.type === "message_end"));
   assert.ok(s.events.some((e: any) => e.type === "tool_execution_end" && !e.isError));
   assert.ok(JSON.stringify(s.events).includes("SAVED ANSWER OBSERVED"), "offline final assistant text missing");
