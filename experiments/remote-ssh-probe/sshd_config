@@ -1,0 +1,15 @@
+Port 2222
+ListenAddress 0.0.0.0
+HostKey /keys/hostkey
+AuthorizedKeysFile /keys/client.pub
+PermitRootLogin prohibit-password
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+AllowAgentForwarding no
+AllowTcpForwarding local
+PermitTTY no
+X11Forwarding no
+GatewayPorts no
+StrictModes no
+LogLevel ERROR
