@@ -125,3 +125,7 @@ Round four review: SSH worker9512bed integrated as9fab260, parent tightened key 
 Question ownership fixes and retained transcript probe are integrated through 906a412. Parent reran 31 question tests, required-success packaged native-question Docker proof, and the transcript runner (four tests). Transcript sanitized fixture is 18,894 raw bytes / 6,923 batched gzip bytes; this is payload only, not wire traffic. No new value: ownership and honest proof already cover this round.
 
 Next worker task_e64f49ce combines native questions with interrupted SSH in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e64f49ce, branch die/native-questions-over-interrupted-ssh-e64f49ce. Base 906a412. It must prove targeted answer and duplicate handling after tunnel reconnect, plus offline history. Fake provider only. Parent must review, rerun and integrate before pushing.
+
+## On-demand repo follow-up
+
+SSH/native-question hardening passed both parent runners and is pushed through d6e8649. Next: task_271b5bde probes exact code identity, explicitly selected dirty changes, isolated task checkout and safe result return in disposable Git repositories. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_271b5bde; branch die/on-demand-repository-identity-and-result-271b5bde; base d6e8649. No bulk environment sync or production API. Parent must review refusal paths, rerun, integrate and push. Values unchanged.
