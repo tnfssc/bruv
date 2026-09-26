@@ -189,6 +189,10 @@ test("execute diagnostic sibling does not steal question ownership from toolResu
     f.move("tool-result", "assistant-tool-call", "message");
     f.move("assistant-waiting", "tool-result", "message");
     expect(service.get(f.ctx, q.id).readOnly).toBe(false);
+    f.navigate("diagnostic");
+    expect(service.get(f.ctx, q.id).readOnly).toBe(true);
+    f.navigate("assistant-waiting");
+    expect(service.get(f.ctx, q.id).readOnly).toBe(false);
     const answer = await service.answer(f.ctx, {
       id: q.id,
       owner: q.owner,
@@ -234,6 +238,66 @@ test("diagnostic-only child does not fork an owner at the root or tool anchor", 
     f.move("custom-fork", "anchor", "custom", "other-bookkeeping");
     f.navigate("anchor");
     expect(service.get(f.ctx, anchored.id).readOnly).toBe(true);
+  } finally {
+    f.cleanup();
+  }
+});
+
+test("a real continuation through an inline diagnostic keeps ownership against a later sibling fork", async () => {
+  const f = fixture();
+  try {
+    const service = new QuestionService();
+    f.move("anchor-inline", "root", "message");
+    const q = await service.ask(f.ctx, { text: "Choose" });
+    f.move("inline-diagnostic", "anchor-inline", "custom", "die-diagnostic");
+    f.move("original-after-diagnostic", "inline-diagnostic", "message");
+    expect(service.get(f.ctx, q.id).readOnly).toBe(false);
+    f.move("later-fork", "anchor-inline", "message");
+    expect(service.get(f.ctx, q.id).readOnly).toBe(true);
+    await expect(
+      service.answer(f.ctx, { id: q.id, owner: q.owner, version: q.version, text: "wrong fork" }),
+    ).rejects.toThrow("owner branch");
+    f.navigate("original-after-diagnostic");
+    expect(service.get(f.ctx, q.id).readOnly).toBe(false);
+    await service.answer(f.ctx, { id: q.id, owner: q.owner, version: q.version, text: "original" });
+  } finally {
+    f.cleanup();
+  }
+});
+
+test("diagnostic chains preserve ancestor and sibling ownership", async () => {
+  const f = fixture();
+  try {
+    const s = new QuestionService();
+    f.move("anchor-chain", "root", "message");
+    const q = await s.ask(f.ctx, { text: "Choose" });
+    f.move("d1", "anchor-chain", "custom", "die-diagnostic");
+    f.move("d2", "d1", "custom", "die-diagnostic");
+    f.move("original-chain", "d2", "message");
+    f.navigate("anchor-chain");
+    expect(s.get(f.ctx, q.id).readOnly).toBe(true);
+    f.navigate("d1");
+    expect(s.get(f.ctx, q.id).readOnly).toBe(true);
+    f.move("fork-under-diagnostic", "d1", "message");
+    expect(s.get(f.ctx, q.id).readOnly).toBe(true);
+    f.navigate("original-chain");
+    expect(s.get(f.ctx, q.id).readOnly).toBe(false);
+  } finally {
+    f.cleanup();
+  }
+});
+test("a question anchored on a diagnostic still has a distinct owner", async () => {
+  const f = fixture();
+  try {
+    const s = new QuestionService();
+    f.move("diagnostic-owner", "root", "custom", "die-diagnostic");
+    const q = await s.ask(f.ctx, { text: "Diagnostic leaf" });
+    f.move("owned-child", "diagnostic-owner", "message");
+    expect(s.get(f.ctx, q.id).readOnly).toBe(false);
+    f.move("other-child", "diagnostic-owner", "message");
+    expect(s.get(f.ctx, q.id).readOnly).toBe(true);
+    f.navigate("owned-child");
+    await s.answer(f.ctx, { id: q.id, owner: q.owner, version: q.version, text: "yes" });
   } finally {
     f.cleanup();
   }

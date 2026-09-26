@@ -9,3 +9,9 @@ Proof: regression first failed after a diagnostic sibling; after change 27 focus
 The first probe success attempt exposed a fixture timing assumption (delivery marked before fourth model request); the second exposed a fixture assumption that a custom message's customType and answer text appear verbatim in provider context. The probe now waits for a complete second turn, checks durable journal custom_message and provider reply ID, and uses the reply marker to trigger its third request. No production code changed to accommodate those fixture assumptions. Parent owns probe review.
 
 This is loopback Docker fake-provider evidence, not external provider, authentication, sandbox or remote Mac validation. The copied web assets are from another build; question path uses the newly compiled CLI. No real credentials used.
+
+## Parent final check
+
+The first fix also needed to handle real continuations below inline diagnostics. The parent now flattens diagnostic-only chains while keeping the first meaningful child in journal order. Ordinary custom entries and real sibling forks still constrain ownership. An independent review found no ownership takeover in these cases. Malformed parent cycles fail closed.
+
+All 31 question tests passed. A rebuilt CLI passed the Docker native-answer probe with REQUIRE_NATIVE_ANSWER=1: four model turns, two agent ends, a saved reply ID and delivered state. The verifier uses its already settled outcome rather than waiting twice. This is still a fake-provider Linux fixture, not a Mac or live-provider proof. Values stay unchanged: existing ownership and truthful-evidence rules cover the finding.
