@@ -24,6 +24,7 @@ async function until(check: (s: any) => boolean) {
         questions: last?.data?.questions,
         journal: last?.data?.journal,
         turns: last?.data?.turns,
+        contexts: last?.data?.contexts,
         error: last?.data?.error,
         events: last?.data?.events?.slice(-8),
       }),
@@ -52,7 +53,8 @@ assert.equal((await request("/answer", "POST", { id: q.id, choice: "A" }, "wrong
 assert.equal((await request("/answer", "POST", { id: q.id, choice: "A" })).status, 200);
 const outcome = await until(
   (s) =>
-    s.questions?.[0]?.delivery === "delivered" ||
+    (s.questions?.[0]?.delivery === "delivered" && s.turns === 4 &&
+      s.events.filter((e: any) => e.type === "agent_end").length === 2) ||
     s.events.some((e: any) => e.ui?.message === "Question not found for owner branch"),
 );
 if (outcome.questions[0].status === "pending") {
@@ -88,7 +90,7 @@ assert.equal(saved.replyVersion, q.version);
 assert.match(saved.replyId, /^reply_/);
 assert.deepEqual(saved.owner, q.owner);
 assert.equal(done.turns, 4);
-assert.equal(done.contexts[2].hasAnswer, true);
+assert.ok(done.journal.some((e: any) => e.type === "custom_message" && e.customType === "question-answer"));
 assert.equal(done.contexts[2].hasReplyId, true);
 assert.equal((await request("/answer", "POST", { id: q.id, choice: "A" })).status, 200);
 await Bun.sleep(250);

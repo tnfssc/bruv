@@ -7,7 +7,9 @@ import { QuestionService } from "../src/questions/service";
 function fixture() {
   const dir = mkdtempSync(join(tmpdir(), "die-questions-"));
   let leaf = "root";
-  let entries: Array<{ id: string; parentId: string | null }> = [{ id: "root", parentId: null }];
+  let entries: Array<{ id: string; parentId: string | null; type?: string; customType?: string }> = [
+    { id: "root", parentId: null },
+  ];
   const file = join(dir, "s.jsonl");
   const ctx = {
     sessionManager: {
@@ -31,8 +33,8 @@ function fixture() {
   return {
     ctx,
     file,
-    move(id: string, parent: string) {
-      entries.push({ id, parentId: parent });
+    move(id: string, parent: string, type?: string, customType?: string) {
+      entries.push({ id, parentId: parent, type, customType });
       leaf = id;
     },
     navigate(id: string) {
@@ -164,6 +166,74 @@ test("navigation to an ancestor is history only; deeper sibling forks cannot ans
     f.navigate("original-tip");
     expect(s.get(f.ctx, q.id).readOnly).toBe(false);
     await s.answer(f.ctx, { id: q.id, owner: q.owner, version: 1, text: "original" });
+  } finally {
+    f.cleanup();
+  }
+});
+
+// Execute journals append a diagnostic as an off-branch sibling before the toolResult.
+test("execute diagnostic sibling does not steal question ownership from toolResult", async () => {
+  const f = fixture();
+  try {
+    const service = new QuestionService();
+    f.move("assistant-tool-call", "root");
+    const q = await service.ask(f.ctx, { text: "Choose", choices: ["A"], allowFreeText: false });
+    const blocked = await service.block(f.ctx, {
+      id: q.id,
+      owner: q.owner,
+      version: q.version,
+      checkpoint: "Wait",
+      foreground: true,
+    });
+    f.move("diagnostic", "assistant-tool-call", "custom", "die-diagnostic");
+    f.move("tool-result", "assistant-tool-call", "message");
+    f.move("assistant-waiting", "tool-result", "message");
+    expect(service.get(f.ctx, q.id).readOnly).toBe(false);
+    const answer = await service.answer(f.ctx, {
+      id: q.id,
+      owner: q.owner,
+      version: blocked.version,
+      text: "A",
+      replyId: "reply-1",
+    });
+    expect(answer.replyId).toBe("reply-1");
+    expect(
+      await service.answer(f.ctx, {
+        id: q.id,
+        owner: q.owner,
+        version: blocked.version,
+        text: "A",
+        replyId: "reply-1",
+      }),
+    ).toEqual(answer);
+    f.move("real-fork", "assistant-tool-call", "message");
+    expect(service.get(f.ctx, q.id).readOnly).toBe(true);
+    await expect(
+      service.answer(f.ctx, { id: q.id, owner: q.owner, version: answer.version, text: "A" }),
+    ).rejects.toThrow("owner branch");
+    f.navigate("root");
+    expect(() => service.get(f.ctx, q.id)).toThrow("not found");
+  } finally {
+    f.cleanup();
+  }
+});
+
+test("diagnostic-only child does not fork an owner at the root or tool anchor", async () => {
+  const f = fixture();
+  try {
+    const service = new QuestionService();
+    const root = await service.ask(f.ctx, { text: "Root" });
+    f.move("root-diagnostic", "root", "custom", "die-diagnostic");
+    f.navigate("root");
+    expect(service.get(f.ctx, root.id).readOnly).toBe(false);
+    f.move("anchor", "root");
+    const anchored = await service.ask(f.ctx, { text: "Anchor" });
+    f.move("anchor-diagnostic", "anchor", "custom", "die-diagnostic");
+    f.navigate("anchor");
+    expect(service.get(f.ctx, anchored.id).readOnly).toBe(false);
+    f.move("custom-fork", "anchor", "custom", "other-bookkeeping");
+    f.navigate("anchor");
+    expect(service.get(f.ctx, anchored.id).readOnly).toBe(true);
   } finally {
     f.cleanup();
   }

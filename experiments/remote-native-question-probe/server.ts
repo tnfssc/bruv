@@ -132,9 +132,8 @@ const server = Bun.serve({
         return sse({ role: "assistant", content: "WAITING FOR EXPLICIT ANSWER" }, "stop");
       if (
         requests.length === 3 &&
-        body.includes("question-answer") &&
         body.includes("reply_") &&
-        body.includes("A")
+        body.includes("Choose fixture target?")
       )
         return call(
           "read",

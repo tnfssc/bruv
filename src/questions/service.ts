@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync, renameSync, openSync, closeSync, unlinkSync } from "node:fs";
 import { dirname } from "node:path";
 import { randomUUID } from "node:crypto";
+import { DIAGNOSTIC_ENTRY_TYPE } from "../diagnostics";
 
 export type QuestionOwner = { sessionId: string; branchId: string };
 export type Question = {
@@ -32,7 +33,7 @@ export type QuestionContext = {
     getSessionFile(): string | undefined;
     getLeafId(): string | null;
     getBranch(): Array<{ id: string }>;
-    getEntries?(): Array<{ id: string; parentId?: string | null }>;
+    getEntries?(): Array<{ id: string; parentId?: string | null; type?: string; customType?: string }>;
   };
 };
 export type QuestionMutation = { id: string; owner: QuestionOwner; version: number };
@@ -128,11 +129,15 @@ export class QuestionService {
     const at = branch.indexOf(q.owner.branchId);
     if (at < 0) return false;
     const entries = m.getEntries?.();
+    // Diagnostics are journal observations, not conversation continuations. Other custom
+    // entries remain real children so a fork cannot take over the owner branch.
+    const continues = (e: { type?: string; customType?: string }) =>
+      !(e.type === "custom" && e.customType === DIAGNOSTIC_ENTRY_TYPE);
     // An ancestor position with existing descendants is not an active branch tip.
     // Answering there would fork the old owner rather than continue it.
-    if (entries?.some((e) => e.parentId === m.getLeafId())) return false;
+    if (entries?.some((e) => e.parentId === m.getLeafId() && continues(e))) return false;
     for (let i = at; i < branch.length - 1; i++) {
-      const children = entries?.filter((e) => e.parentId === branch[i]);
+      const children = entries?.filter((e) => e.parentId === branch[i] && continues(e));
       if (children?.length && children[0]?.id !== branch[i + 1]) return false;
     }
     return true;
