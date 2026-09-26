@@ -95,3 +95,9 @@ Round three active from 6984422dfae3bf789a52a3763988dc6c309c67e8:
 - task_792d547d: true reply-loss gate and active-owner kill/restart, independent experiments/remote-failure-probe and failure-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_792d547d, branch die/ambiguous-delivery-and-running-owner-fai-792d547d. Reuses prior actual-task owner read-only; integration must check it still fits questions worker changes.
 
 Parent owns review/integration/push only after checks. Workers must commit, not push. Keep work bounded to experiments; user did not ask to publish releases, transfer real secrets or contact an unprovided remote machine. Runtime/model setup discovery is in remote-profile-discovery.md. Native questions versus lab-only dependency transport must be labeled accurately; no silent approval bypass.
+
+## Round three failure review in parent
+
+Failure worker returned 750ec0f, integrated as f525944. Parent removed machine-specific default binary paths, formatted source, counted actual downstream socket bytes instead of a constant, added gate socket deadlines and bounded page loop validation. First parent run reached replica check and failed: independent owner read observed tool-start after the earlier client sync, so cached replica legitimately lagged that read. Added explicit catchup before kill for this assertion; rerun in flight (task_8e9b646f, log /tmp/die-parent-failure-final.log). Do not call that first run a pass or the stale cache corrupt. Questions worker task_66633bbf is still active. Changes not pushed until the parent proof passes.
+
+Parent failure rerun task_8e9b646f passed. See failure-probe.md for exact counts and fixed stale-cache assertion. Questions worker returned 9cc8f43; parent review identified terminal reply/resume guards and denial-before-question-answer behavior to tighten before integration/push.

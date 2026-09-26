@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-BUN_BIN="${BUN_BIN:-/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun}"
-DIE_BIN="${DIE_BIN:-/home/tnfssc/Code/die/dist/die}"
+BUN_BIN="${BUN_BIN:-$(command -v bun)}"
+DIE_BIN="${DIE_BIN:-dist/die}"
 ID="die-failure-$RANDOM-$$"
 TMP="$(mktemp -d)"
 GATE_PID=''
@@ -34,6 +34,9 @@ for i in {1..100}; do
  sleep .05
 done
 "$BUN_BIN" experiments/remote-failure-probe/check-before.ts "$TMP"
+# The independent owner read can observe tool-start after the prior client sync.
+# Catch that event up before checking the offline replica after the kill.
+client sync > "$TMP/progress-before-kill.json"
 docker kill --signal=KILL "$ID" >/dev/null
 docker start "$ID" >/dev/null
 PORT="$(docker port "$ID" 8080/tcp | sed 's/.*://')"
