@@ -11,3 +11,7 @@ UX decisions still open:
 - Are local history, submodules, LFS and repository trust acceptable to transfer on demand? Which files/paths and hooks are authorized? How are bytes/storage and sensitivity presented before launch?
 
 This is local recipe evidence, not a new project value. Existing [values](../values.md) on safety, truth and simplest workable approach plus [experience contract](task-experience-contract.md) cover the general lessons. No values.md change.
+
+## Parent review in progress
+
+Parent reran initial probe successfully; integrated locally as 2593299, not yet pushed. Review calls for staged-only selected/unselected cases and byte/index preservation on refusal. Exact-state wording must distinguish combined tracked diff from index staging layout and atomic capture. Follow-up task_7c0a5dee in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c0a5dee, branch die/test-staged-state-and-repo-refusal-bound-7c0a5dee. Parent must review, rerun and push after fixes.
