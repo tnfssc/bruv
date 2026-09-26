@@ -15,3 +15,7 @@ This is local recipe evidence, not a new project value. Existing [values](../val
 ## Parent review in progress
 
 Parent reran initial probe successfully; integrated locally as 2593299, not yet pushed. Review calls for staged-only selected/unselected cases and byte/index preservation on refusal. Exact-state wording must distinguish combined tracked diff from index staging layout and atomic capture. Follow-up task_7c0a5dee in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c0a5dee, branch die/test-staged-state-and-repo-refusal-bound-7c0a5dee. Parent must review, rerun and push after fixes.
+
+## Reviewed staged-state check
+
+Integrated follow-up as 9e7aa16. Parent reran Python probe and diff check successfully. Return gate now includes an index-entry fingerprint as well as HEAD and tracked diff; index-only staging changes refuse. Selected staged-only/mixed transfer, unselected staged refusal, ignored/untracked omission and invalid-patch refusal have checks. Each refusal compares HEAD, index entries and fixture worktree bytes before/after. This is still sequential disposable Git evidence, not atomic capture/apply or an arbitrary repo safety guarantee. Reachable history in a bundle is not secret-filtered. Review checkpoint above is closed. No values change: existing safety and truthful-state rules apply.
