@@ -54,3 +54,34 @@ Newest user proposal: require die preinstalled/authenticated remotely; choose re
 ## Round complete
 
 Full build hit missing pnpm. Existing --reuse-web build path rebuilt current CLI successfully (0.15.3); web archive reused, not validated. Current-source actual-agent probe passed: detach 315ms, second model turn 3486ms, completion observed 4323ms during/rejoining a four-second no-client-request window. See agent notes for artifact hash. Network runner and wire benchmark reran; eight unit tests, strict standalone TS, shell syntax and diff checks passed. No production code edited, no full production suite run. Read experiment-findings.md for synthesis and next thin vertical slice. Experiment resources cleaned up; durable worktrees kept for handoff. Values unchanged for reasons in findings.
+
+## Round two started after user said continue
+
+Base bb3e12ba695de5d789f3e18b091cb3d24d875472. Production still untouched. Two independent worktrees:
+
+- task_86d6e797: actual-die durable task vertical proof, remote version/profile handshake, persisted cursor + local transcript, detached progress and explicit lifecycle gaps. Owns experiments/remote-task-poc and task-poc.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_86d6e797; branch die/remote-task-vertical-proof-86d6e797.
+- task_e7122cd8: polling versus long-poll/stream, byte-capped consumer buffers and gap handling, synthetic 1/100/1000 task network measurements. Owns experiments/remote-stream-probe and stream-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e7122cd8; branch die/stream-and-slow-client-network-probe-e7122cd8.
+
+Workers have full current wisdom and may reuse the parent freshly built die 0.15.3 binary with recorded hash. Loopback-only Docker, no real credentials or paid models. Parent will review integration, rerun results and keep claims narrow. First priority is connected actual-agent + durable offline transcript experience, not thousands-machine deployment.
+
+## Round two stream review
+
+Stream worker returned c63d2f5. Parent has not integrated it yet. It used application-delay HTTP loopback (not Docker/Toxiproxy), and carefully disclaimed socket-memory bounds. Review found Log.add advanced cursor before oversize rejection, and client read server log.cursor directly for catchup. Notification also carried full events that client discarded before fetching them again. Negative extra-RTT observation is useful, but needs fairer candidate.
+Follow-up task started from c63d2f5 to remove shared-memory oracle, add direct data-bearing long-poll alongside polling and compact hints, test byte-capped pages, fix oversize cursor and format code. Worktree/job identity is recorded below once launch returns.
+
+Stream follow-up task_a4f7eaf8: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_a4f7eaf8, branch die/review-direct-event-delivery-experiment-a4f7eaf8. Base c63d2f5. Actual-die vertical worker task_86d6e797 remains in flight.
+
+## Round two actual-task review
+
+Task worker returned 2370cea (not integrated yet). Actual RPC + append-log + local replica run passed and completed-owner restart changes epoch. Questions and local capability not implemented; this is an explicit gap, not a failed claim.
+Parent review found hardcoded runtime version, offline CLI showing only summary rather than transcript, nonpersisted cap reason, envelope excluded from record-size check, and last-sync bytes labeled as total. Follow-up requested fixes and tests, including bounded requests and metadata reconciliation. Do not interpret pending review as ready production code.
+
+Actual-task follow-up task_39581494: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_39581494, branch die/review-durable-task-proof-39581494, base 2370cea. Parent must integrate original plus follow-up after checking tests and limits.
+
+## Round two complete
+
+Stream commits integrated as a0a8293 and ac76cd6. Actual-task commits integrated as 2f73ce7 and 49de980. Parent fixed the stream final-page boolean size boundary, reran 19 scenarios on Node 24.21.0, and reran actual die Docker path twice. Offline reader now accepts offline FILE, prints cached transcript and can retain it with LAB_TRANSCRIPT. Final proof preserved /tmp/die-poc-offline-transcript.jsonl plus meta; reading after container removal showed both real tool results and final assistant text (fake provider). Results in each experiment directory; source worktrees remain for history.
+
+Thirteen unit tests pass (nine Bun, four Node), strict TS checks for all five experiments pass, shell syntax/diff checks pass. No production code changed or full production suite run. Docker lab resources cleaned up; no round-two jobs left running. Normal full build remains blocked on missing pnpm, but current CLI 0.15.3 was built with supported --reuse-web earlier; web not validated. See task-poc.md for artifact hash and exact measurements.
+
+Next highest-value work: durable questions/replies and one explicitly allowed Mac fixture-read capability in the actual-agent path. Warm stream delivery versus cold handshake, real mid-flight reply loss and interrupted-running-owner behavior remain unproven. Do not claim thousands real agents or TCP backpressure from synthetic loopback tests. Values checked again and unchanged; current proof/ownership/bounds rules already cover lessons.

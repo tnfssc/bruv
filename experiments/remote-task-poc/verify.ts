@@ -39,9 +39,12 @@ assert(
 );
 const offline = JSON.parse(await read("offline"));
 assert(offline.fullToolResults === 2 && offline.transcript.length === es.length, "offline disk replica unreadable");
-assert(JSON.stringify(offline.transcript).includes("FINISHED") &&
-  JSON.stringify(offline.transcript).includes("FIRST_DONE") &&
-  JSON.stringify(offline.transcript).includes("SECOND_DONE:LINUX-CONTAINER-MARKER"), "offline CLI missing transcript");
+assert(
+  JSON.stringify(offline.transcript).includes("FINISHED") &&
+    JSON.stringify(offline.transcript).includes("FIRST_DONE") &&
+    JSON.stringify(offline.transcript).includes("SECOND_DONE:LINUX-CONTAINER-MARKER"),
+  "offline CLI missing transcript",
+);
 console.log(
   JSON.stringify({
     result: "PASS",

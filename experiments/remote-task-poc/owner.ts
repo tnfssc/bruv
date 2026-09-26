@@ -8,7 +8,8 @@ if (!token) throw Error("LAB_TOKEN must be nonempty");
 let versionProbe: ReturnType<typeof Bun.spawnSync>;
 try {
   versionProbe = Bun.spawnSync(["/opt/die", "--version"], {
-    stdout: "pipe", stderr: "pipe",
+    stdout: "pipe",
+    stderr: "pipe",
     env: { ...process.env, HOME: dir, PI_CODING_AGENT_DIR: dir + "/agent", DIE_CODING_AGENT_DIR: dir + "/agent" },
   });
 } catch (error) {
@@ -58,12 +59,14 @@ function emit(type: string, data: any) {
   if (phase === "capped" || events.some((x) => x.type === "outcome")) return;
   const x = { k: "event", seq: events.length + 1, ms: Date.now() - t0, type, data };
   const reason = eventDecision(events.length, Buffer.byteLength(JSON.stringify(x)));
-  if (reason) { terminal("capped", reason); return; }
+  if (reason) {
+    terminal("capped", reason);
+    return;
+  }
   save(x);
   events.push(x);
 }
-if (accepted && !events.some((x) => x.type === "outcome"))
-  terminal("unknown", "owner restart; no replay");
+if (accepted && !events.some((x) => x.type === "outcome")) terminal("unknown", "owner restart; no replay");
 const args = [
   "/opt/die",
   "--mode",
@@ -100,8 +103,7 @@ const server = Bun.serve({
     const url = new URL(req.url),
       path = url.pathname;
     if (path === "/v1/chat/completions") {
-      if (req.headers.get("authorization") !== "Bearer " + token)
-        return respond({ error: "unauthorized" }, 401);
+      if (req.headers.get("authorization") !== "Bearer " + token) return respond({ error: "unauthorized" }, 401);
       if (!rpc || phase !== "running") return respond({ error: "not running" }, 409);
       const body = await req.json();
       turns++;
@@ -137,8 +139,7 @@ const server = Bun.serve({
       emit("fixture_error", { turn: turns });
       return respond({ error: "unexpected turn" }, 500);
     }
-    if (req.headers.get("authorization") !== "Bearer " + token)
-      return respond({ error: "unauthorized" }, 401);
+    if (req.headers.get("authorization") !== "Bearer " + token) return respond({ error: "unauthorized" }, 401);
     if (path === "/hello")
       return respond({
         protocol: 1,
@@ -222,13 +223,7 @@ const server = Bun.serve({
             if (!line) continue;
             const e = JSON.parse(line);
             if (
-              [
-                "tool_execution_start",
-                "tool_execution_end",
-                "message_end",
-                "agent_end",
-                "agent_start",
-              ].includes(e.type)
+              ["tool_execution_start", "tool_execution_end", "message_end", "agent_end", "agent_start"].includes(e.type)
             )
               emit(e.type, e);
             if (e.type === "agent_end") {

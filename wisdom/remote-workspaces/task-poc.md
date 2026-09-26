@@ -9,3 +9,11 @@ Critical boundaries: fsynced append log and client replica make accepted records
 Final Docker-volume/restart run: detached at 320ms, finished at 3662ms; 18 events / 21858 JSON bytes; restart retained identity/completed outcome, advanced epoch, and stale client rejected cross-epoch sync. Docker picked a new random host port on restart; the runner rediscovers it. These are observed lab timings, not benchmarks.
 
 Correction: offline CLI prints the full saved bounded event transcript, including assistant/tool output; verifier checks CLI output. Owner probes staged /opt/die version and validates token. Event caps reserve a persisted capped outcome and bound the JSON envelope and RPC line buffer. Reported bytes distinguish full event JSON, replica file, and post-detach catchup. HTTP requests time out; stale replicas without meta require explicit reconciliation. Question/reply, Mac capability, and interruption of a running task across restart remain untested/unimplemented.
+
+## Parent integration and final run
+
+Integrated 2370cea -> 2f73ce7 and fixes 4ec45f0 -> 49de980. Parent reran Docker on Linux with Bun 1.4.2 and die 0.15.3 artifact hash above. Final run PASS: detach boundary event at 420ms, outcome at 3807ms; 18 events, 34,224 total event JSON UTF-8 bytes, 34,242 replica file bytes including newlines, 21,858 post-detach catchup event bytes. The original 21,858-byte headline was catchup only, not the full transcript. Results are recorded in experiments/remote-task-poc/results.json. HTTP/TCP overhead excluded.
+
+Parent added LAB_TRANSCRIPT retention and a simpler offline FILE command. The retained /tmp/die-poc-offline-transcript.jsonl and .meta can be inspected here until removed. Ran offline command after container cleanup; parsed output contained FINISHED and the second tool marker, two tool results and all 18 events, labeled cached/not connected. This is actual offline-readable content, not just a count or pointer. Snapshot is fake-provider test data.
+
+Question/reply, Mac-only capabilities and interruption during running work remain the next gaps. Server restart check covers completed outcome and rejects cross-epoch merge; no recovery protocol claimed. Production untouched. Values unchanged; existing truthful state and recovery principles cover corrections.

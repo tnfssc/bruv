@@ -24,31 +24,31 @@
       "events": 4,
       "requests": 18,
       "requestBytes": 975,
-      "responseBytes": 1956,
+      "responseBytes": 1958,
       "frames": 18,
       "latencyMs": {
         "acceptance": {
-          "min": 3.5,
-          "median": 3.5,
-          "max": 3.5,
+          "min": 10.7,
+          "median": 10.7,
+          "max": 10.7,
           "n": 1
         },
         "progress": {
-          "min": 7.4,
-          "median": 7.4,
-          "max": 7.4,
+          "min": 8,
+          "median": 8,
+          "max": 8,
           "n": 1
         },
         "question": {
-          "min": 2.1,
-          "median": 2.1,
-          "max": 2.1,
+          "min": 3.7,
+          "median": 3.7,
+          "max": 3.7,
           "n": 1
         },
         "result": {
-          "min": 17.5,
-          "median": 17.5,
-          "max": 17.5,
+          "min": 24.5,
+          "median": 24.5,
+          "max": 24.5,
           "n": 1
         }
       },
@@ -58,7 +58,7 @@
       "catchupPages": 0,
       "maxPageBytes": 203,
       "maxPageEvents": 1,
-      "elapsedMs": 478
+      "elapsedMs": 485
     },
     {
       "variant": "normal",
@@ -73,27 +73,27 @@
       "frames": 10,
       "latencyMs": {
         "acceptance": {
-          "min": 4.3,
-          "median": 4.3,
-          "max": 4.3,
+          "min": 3.2,
+          "median": 3.2,
+          "max": 3.2,
           "n": 1
         },
         "progress": {
-          "min": 4.9,
-          "median": 4.9,
-          "max": 4.9,
-          "n": 1
-        },
-        "question": {
           "min": 5.1,
           "median": 5.1,
           "max": 5.1,
           "n": 1
         },
+        "question": {
+          "min": 4.9,
+          "median": 4.9,
+          "max": 4.9,
+          "n": 1
+        },
         "result": {
-          "min": 4.7,
-          "median": 4.7,
-          "max": 4.7,
+          "min": 4.6,
+          "median": 4.6,
+          "max": 4.6,
           "n": 1
         }
       },
@@ -101,7 +101,7 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 4,
-      "maxPageBytes": 203,
+      "maxPageBytes": 204,
       "maxPageEvents": 1,
       "elapsedMs": 466
     },
@@ -118,27 +118,27 @@
       "frames": 6,
       "latencyMs": {
         "acceptance": {
-          "min": 1.5,
-          "median": 1.5,
-          "max": 1.5,
+          "min": 1.4,
+          "median": 1.4,
+          "max": 1.4,
           "n": 1
         },
         "progress": {
+          "min": 1.7,
+          "median": 1.7,
+          "max": 1.7,
+          "n": 1
+        },
+        "question": {
           "min": 1.8,
           "median": 1.8,
           "max": 1.8,
           "n": 1
         },
-        "question": {
-          "min": 2,
-          "median": 2,
-          "max": 2,
-          "n": 1
-        },
         "result": {
-          "min": 1.7,
-          "median": 1.7,
-          "max": 1.7,
+          "min": 1.9,
+          "median": 1.9,
+          "max": 1.9,
           "n": 1
         }
       },
@@ -163,27 +163,27 @@
       "frames": 3,
       "latencyMs": {
         "acceptance": {
-          "min": 395.9,
-          "median": 395.9,
-          "max": 395.9,
+          "min": 395.8,
+          "median": 395.8,
+          "max": 395.8,
           "n": 1
         },
         "progress": {
-          "min": 305.4,
-          "median": 305.4,
-          "max": 305.4,
+          "min": 305.3,
+          "median": 305.3,
+          "max": 305.3,
           "n": 1
         },
         "question": {
-          "min": 185.7,
-          "median": 185.7,
-          "max": 185.7,
+          "min": 186,
+          "median": 186,
+          "max": 186,
           "n": 1
         },
         "result": {
-          "min": 173.7,
-          "median": 173.7,
-          "max": 173.7,
+          "min": 171.9,
+          "median": 171.9,
+          "max": 171.9,
           "n": 1
         }
       },
@@ -204,31 +204,31 @@
       "events": 4,
       "requests": 3,
       "requestBytes": 70,
-      "responseBytes": 649,
+      "responseBytes": 648,
       "frames": 3,
       "latencyMs": {
         "acceptance": {
-          "min": 595.5,
-          "median": 595.5,
-          "max": 595.5,
+          "min": 596.6,
+          "median": 596.6,
+          "max": 596.6,
           "n": 1
         },
         "progress": {
-          "min": 505,
-          "median": 505,
-          "max": 505,
+          "min": 506.4,
+          "median": 506.4,
+          "max": 506.4,
           "n": 1
         },
         "question": {
-          "min": 385.6,
-          "median": 385.6,
-          "max": 385.6,
+          "min": 386.7,
+          "median": 386.7,
+          "max": 386.7,
           "n": 1
         },
         "result": {
-          "min": 144.8,
-          "median": 144.8,
-          "max": 144.8,
+          "min": 146.9,
+          "median": 146.9,
+          "max": 146.9,
           "n": 1
         }
       },
@@ -236,9 +236,9 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 1,
-      "maxPageBytes": 563,
+      "maxPageBytes": 562,
       "maxPageEvents": 4,
-      "elapsedMs": 606
+      "elapsedMs": 607
     },
     {
       "variant": "normal",
@@ -249,31 +249,31 @@
       "events": 4,
       "requests": 3,
       "requestBytes": 124,
-      "responseBytes": 705,
+      "responseBytes": 704,
       "frames": 3,
       "latencyMs": {
         "acceptance": {
-          "min": 394.2,
-          "median": 394.2,
-          "max": 394.2,
+          "min": 392.8,
+          "median": 392.8,
+          "max": 392.8,
           "n": 1
         },
         "progress": {
-          "min": 303.6,
-          "median": 303.6,
-          "max": 303.6,
+          "min": 303.3,
+          "median": 303.3,
+          "max": 303.3,
           "n": 1
         },
         "question": {
-          "min": 183.6,
-          "median": 183.6,
-          "max": 183.6,
+          "min": 183.1,
+          "median": 183.1,
+          "max": 183.1,
           "n": 1
         },
         "result": {
-          "min": 144.6,
-          "median": 144.6,
-          "max": 144.6,
+          "min": 145.7,
+          "median": 145.7,
+          "max": 145.7,
           "n": 1
         }
       },
@@ -281,7 +281,7 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 0,
-      "maxPageBytes": 445,
+      "maxPageBytes": 444,
       "maxPageEvents": 3,
       "elapsedMs": 606
     },
@@ -294,31 +294,31 @@
       "events": 4,
       "requests": 2,
       "requestBytes": 63,
-      "responseBytes": 621,
+      "responseBytes": 622,
       "frames": 2,
       "latencyMs": {
         "acceptance": {
-          "min": 1195.7,
-          "median": 1195.7,
-          "max": 1195.7,
+          "min": 1194.6,
+          "median": 1194.6,
+          "max": 1194.6,
           "n": 1
         },
         "progress": {
-          "min": 1105.2,
-          "median": 1105.2,
-          "max": 1105.2,
+          "min": 1104.1,
+          "median": 1104.1,
+          "max": 1104.1,
           "n": 1
         },
         "question": {
-          "min": 985.6,
-          "median": 985.6,
-          "max": 985.6,
+          "min": 984.4,
+          "median": 984.4,
+          "max": 984.4,
           "n": 1
         },
         "result": {
-          "min": 744.8,
-          "median": 744.8,
-          "max": 744.8,
+          "min": 745,
+          "median": 745,
+          "max": 745,
           "n": 1
         }
       },
@@ -326,7 +326,7 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 0,
-      "maxPageBytes": 562,
+      "maxPageBytes": 563,
       "maxPageEvents": 4,
       "elapsedMs": 1205
     },
@@ -343,27 +343,27 @@
       "frames": 3,
       "latencyMs": {
         "acceptance": {
-          "min": 1799.8,
-          "median": 1799.8,
-          "max": 1799.8,
+          "min": 1797.9,
+          "median": 1797.9,
+          "max": 1797.9,
           "n": 1
         },
         "progress": {
-          "min": 1709.3,
-          "median": 1709.3,
-          "max": 1709.3,
+          "min": 1707.5,
+          "median": 1707.5,
+          "max": 1707.5,
           "n": 1
         },
         "question": {
-          "min": 1589.5,
-          "median": 1589.5,
-          "max": 1589.5,
+          "min": 1587.8,
+          "median": 1587.8,
+          "max": 1587.8,
           "n": 1
         },
         "result": {
-          "min": 1349,
-          "median": 1349,
-          "max": 1349,
+          "min": 1347.6,
+          "median": 1347.6,
+          "max": 1347.6,
           "n": 1
         }
       },
@@ -373,7 +373,7 @@
       "catchupPages": 1,
       "maxPageBytes": 563,
       "maxPageEvents": 4,
-      "elapsedMs": 1810
+      "elapsedMs": 1808
     },
     {
       "variant": "normal",
@@ -388,27 +388,27 @@
       "frames": 2,
       "latencyMs": {
         "acceptance": {
-          "min": 1196,
-          "median": 1196,
-          "max": 1196,
+          "min": 1193.5,
+          "median": 1193.5,
+          "max": 1193.5,
           "n": 1
         },
         "progress": {
-          "min": 1106,
-          "median": 1106,
-          "max": 1106,
+          "min": 1103.5,
+          "median": 1103.5,
+          "max": 1103.5,
           "n": 1
         },
         "question": {
-          "min": 985.5,
-          "median": 985.5,
-          "max": 985.5,
+          "min": 982.9,
+          "median": 982.9,
+          "max": 982.9,
           "n": 1
         },
         "result": {
-          "min": 745.9,
-          "median": 745.9,
-          "max": 745.9,
+          "min": 743.4,
+          "median": 743.4,
+          "max": 743.4,
           "n": 1
         }
       },
@@ -418,7 +418,7 @@
       "catchupPages": 0,
       "maxPageBytes": 563,
       "maxPageEvents": 4,
-      "elapsedMs": 1206
+      "elapsedMs": 1204
     },
     {
       "variant": "normal",
@@ -429,31 +429,31 @@
       "events": 400,
       "requests": 22,
       "requestBytes": 1240,
-      "responseBytes": 50860,
+      "responseBytes": 50853,
       "frames": 22,
       "latencyMs": {
         "acceptance": {
-          "min": 26.1,
-          "median": 26.1,
-          "max": 28.9,
+          "min": 25.1,
+          "median": 25.5,
+          "max": 27.8,
           "n": 100
         },
         "progress": {
-          "min": 21.8,
-          "median": 22,
-          "max": 25.2,
+          "min": 27.1,
+          "median": 27.3,
+          "max": 29.4,
           "n": 100
         },
         "question": {
-          "min": 18.9,
-          "median": 19,
-          "max": 22.3,
+          "min": 21.7,
+          "median": 21.7,
+          "max": 24.9,
           "n": 100
         },
         "result": {
-          "min": 7.9,
-          "median": 8.1,
-          "max": 9.8,
+          "min": 13.3,
+          "median": 13.5,
+          "max": 16.5,
           "n": 100
         }
       },
@@ -461,9 +461,9 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 4,
-      "maxPageBytes": 7993,
+      "maxPageBytes": 7994,
       "maxPageEvents": 64,
-      "elapsedMs": 472
+      "elapsedMs": 477
     },
     {
       "variant": "normal",
@@ -474,31 +474,31 @@
       "events": 400,
       "requests": 14,
       "requestBytes": 510,
-      "responseBytes": 49814,
+      "responseBytes": 49805,
       "frames": 14,
       "latencyMs": {
         "acceptance": {
-          "min": 5.3,
-          "median": 5.5,
-          "max": 8.2,
+          "min": 5.2,
+          "median": 5.3,
+          "max": 8.1,
           "n": 100
         },
         "progress": {
-          "min": 5.1,
-          "median": 5.3,
-          "max": 7.9,
+          "min": 5.2,
+          "median": 5.4,
+          "max": 8,
           "n": 100
         },
         "question": {
-          "min": 5.8,
-          "median": 6,
-          "max": 8.8,
+          "min": 6.1,
+          "median": 6.2,
+          "max": 9.3,
           "n": 100
         },
         "result": {
-          "min": 4.8,
-          "median": 4.8,
-          "max": 7.6,
+          "min": 5.4,
+          "median": 5.5,
+          "max": 8.5,
           "n": 100
         }
       },
@@ -506,9 +506,9 @@
       "gap": true,
       "unavailable": false,
       "catchupPages": 8,
-      "maxPageBytes": 7997,
+      "maxPageBytes": 8000,
       "maxPageEvents": 64,
-      "elapsedMs": 469
+      "elapsedMs": 470
     },
     {
       "variant": "normal",
@@ -519,31 +519,31 @@
       "events": 400,
       "requests": 10,
       "requestBytes": 544,
-      "responseBytes": 49827,
+      "responseBytes": 49829,
       "frames": 10,
       "latencyMs": {
         "acceptance": {
-          "min": 2.4,
-          "median": 2.5,
-          "max": 5.2,
+          "min": 2.7,
+          "median": 2.8,
+          "max": 5.9,
           "n": 100
         },
         "progress": {
-          "min": 2.3,
-          "median": 2.4,
-          "max": 5.2,
-          "n": 100
-        },
-        "question": {
-          "min": 3.1,
-          "median": 3.2,
+          "min": 3.2,
+          "median": 3.3,
           "max": 6.1,
           "n": 100
         },
+        "question": {
+          "min": 2.7,
+          "median": 2.8,
+          "max": 5.9,
+          "n": 100
+        },
         "result": {
-          "min": 2.1,
-          "median": 2.1,
-          "max": 4.9,
+          "min": 2.4,
+          "median": 2.5,
+          "max": 5.6,
           "n": 100
         }
       },
@@ -551,7 +551,7 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 4,
-      "maxPageBytes": 7993,
+      "maxPageBytes": 7996,
       "maxPageEvents": 64,
       "elapsedMs": 465
     },
@@ -564,31 +564,31 @@
       "events": 4000,
       "requests": 73,
       "requestBytes": 4304,
-      "responseBytes": 504191,
+      "responseBytes": 504190,
       "frames": 73,
       "latencyMs": {
         "acceptance": {
-          "min": 24.7,
-          "median": 48,
-          "max": 71.2,
+          "min": 23.4,
+          "median": 47.5,
+          "max": 73.5,
           "n": 1000
         },
         "progress": {
-          "min": 11.2,
-          "median": 34,
-          "max": 60.9,
+          "min": 12.9,
+          "median": 39.8,
+          "max": 68.1,
           "n": 1000
         },
         "question": {
-          "min": 27.7,
-          "median": 52,
-          "max": 78.6,
+          "min": 5.8,
+          "median": 29.8,
+          "max": 57.6,
           "n": 1000
         },
         "result": {
-          "min": 8.3,
-          "median": 31.1,
-          "max": 56.8,
+          "min": 17.8,
+          "median": 39.6,
+          "max": 66,
           "n": 1000
         }
       },
@@ -596,9 +596,9 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 60,
-      "maxPageBytes": 8146,
+      "maxPageBytes": 8143,
       "maxPageEvents": 64,
-      "elapsedMs": 518
+      "elapsedMs": 528
     },
     {
       "variant": "normal",
@@ -609,31 +609,31 @@
       "events": 4000,
       "requests": 70,
       "requestBytes": 3862,
-      "responseBytes": 503598,
+      "responseBytes": 503551,
       "frames": 70,
       "latencyMs": {
         "acceptance": {
-          "min": 5.8,
-          "median": 28.7,
-          "max": 54.2,
+          "min": 6.3,
+          "median": 28,
+          "max": 53.5,
           "n": 1000
         },
         "progress": {
-          "min": 7.8,
-          "median": 30.1,
-          "max": 55.3,
+          "min": 5.7,
+          "median": 29.4,
+          "max": 54.9,
           "n": 1000
         },
         "question": {
-          "min": 6.4,
-          "median": 28.7,
-          "max": 54.1,
+          "min": 6.3,
+          "median": 28.8,
+          "max": 54.6,
           "n": 1000
         },
         "result": {
-          "min": 6,
-          "median": 30.6,
-          "max": 54.7,
+          "min": 5.8,
+          "median": 27.6,
+          "max": 51.7,
           "n": 1000
         }
       },
@@ -641,9 +641,9 @@
       "gap": true,
       "unavailable": false,
       "catchupPages": 64,
-      "maxPageBytes": 8144,
+      "maxPageBytes": 8145,
       "maxPageEvents": 64,
-      "elapsedMs": 516
+      "elapsedMs": 513
     },
     {
       "variant": "normal",
@@ -654,31 +654,31 @@
       "events": 4000,
       "requests": 66,
       "requestBytes": 3897,
-      "responseBytes": 506553,
+      "responseBytes": 507584,
       "frames": 66,
       "latencyMs": {
         "acceptance": {
-          "min": 3.5,
-          "median": 25.8,
-          "max": 54.4,
+          "min": 3.3,
+          "median": 25.6,
+          "max": 51.1,
           "n": 1000
         },
         "progress": {
-          "min": 4.3,
-          "median": 26.8,
-          "max": 52.5,
+          "min": 3,
+          "median": 27.4,
+          "max": 52.3,
           "n": 1000
         },
         "question": {
-          "min": 3.4,
-          "median": 26.2,
-          "max": 52.4,
+          "min": 3.5,
+          "median": 26.8,
+          "max": 52.8,
           "n": 1000
         },
         "result": {
-          "min": 4.1,
-          "median": 28,
-          "max": 53,
+          "min": 3.9,
+          "median": 25.7,
+          "max": 52.7,
           "n": 1000
         }
       },
@@ -686,9 +686,9 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 60,
-      "maxPageBytes": 8146,
+      "maxPageBytes": 8207,
       "maxPageEvents": 64,
-      "elapsedMs": 516
+      "elapsedMs": 515
     },
     {
       "variant": "burst",
@@ -698,71 +698,26 @@
       "batchMs": 0,
       "events": 16,
       "requests": 23,
-      "requestBytes": 664,
-      "responseBytes": 3137,
+      "requestBytes": 614,
+      "responseBytes": 3080,
       "frames": 23,
       "latencyMs": {
         "acceptance": {
-          "min": 4.1,
-          "median": 4.1,
-          "max": 4.1,
+          "min": 4.4,
+          "median": 4.4,
+          "max": 4.4,
           "n": 1
         },
         "progress": {
-          "min": 1.4,
-          "median": 4,
-          "max": 6.3,
+          "min": 1.2,
+          "median": 3.9,
+          "max": 6.7,
           "n": 13
         },
         "question": {
-          "min": 5.4,
-          "median": 5.4,
-          "max": 5.4,
-          "n": 1
-        },
-        "result": {
-          "min": 4.2,
-          "median": 4.2,
-          "max": 4.2,
-          "n": 1
-        }
-      },
-      "peakQueueBytes": 178,
-      "gap": false,
-      "unavailable": false,
-      "catchupPages": 10,
-      "maxPageBytes": 448,
-      "maxPageEvents": 3,
-      "elapsedMs": 464
-    },
-    {
-      "variant": "burst",
-      "mode": "notify",
-      "tasks": 1,
-      "eachWayMs": 0,
-      "batchMs": 10,
-      "events": 16,
-      "requests": 20,
-      "requestBytes": 492,
-      "responseBytes": 2875,
-      "frames": 20,
-      "latencyMs": {
-        "acceptance": {
-          "min": 4,
-          "median": 4,
-          "max": 4,
-          "n": 1
-        },
-        "progress": {
-          "min": 1.4,
-          "median": 5.2,
-          "max": 15.2,
-          "n": 13
-        },
-        "question": {
-          "min": 1.4,
-          "median": 1.4,
-          "max": 1.4,
+          "min": 3.7,
+          "median": 3.7,
+          "max": 3.7,
           "n": 1
         },
         "result": {
@@ -772,25 +727,25 @@
           "n": 1
         }
       },
-      "peakQueueBytes": 236,
+      "peakQueueBytes": 120,
       "gap": false,
       "unavailable": false,
-      "catchupPages": 7,
-      "maxPageBytes": 688,
-      "maxPageEvents": 5,
-      "elapsedMs": 464
+      "catchupPages": 9,
+      "maxPageBytes": 448,
+      "maxPageEvents": 3,
+      "elapsedMs": 465
     },
     {
       "variant": "burst",
       "mode": "notify",
       "tasks": 1,
       "eachWayMs": 0,
-      "batchMs": 40,
+      "batchMs": 10,
       "events": 16,
-      "requests": 17,
-      "requestBytes": 422,
-      "responseBytes": 2737,
-      "frames": 17,
+      "requests": 19,
+      "requestBytes": 485,
+      "responseBytes": 2846,
+      "frames": 19,
       "latencyMs": {
         "acceptance": {
           "min": 3.9,
@@ -799,15 +754,60 @@
           "n": 1
         },
         "progress": {
-          "min": 1.3,
-          "median": 6.2,
-          "max": 24.7,
+          "min": 1.4,
+          "median": 4.5,
+          "max": 14.8,
           "n": 13
         },
         "question": {
-          "min": 4.2,
-          "median": 4.2,
-          "max": 4.2,
+          "min": 5.8,
+          "median": 5.8,
+          "max": 5.8,
+          "n": 1
+        },
+        "result": {
+          "min": 5.1,
+          "median": 5.1,
+          "max": 5.1,
+          "n": 1
+        }
+      },
+      "peakQueueBytes": 236,
+      "gap": false,
+      "unavailable": false,
+      "catchupPages": 7,
+      "maxPageBytes": 687,
+      "maxPageEvents": 5,
+      "elapsedMs": 466
+    },
+    {
+      "variant": "burst",
+      "mode": "notify",
+      "tasks": 1,
+      "eachWayMs": 0,
+      "batchMs": 40,
+      "events": 16,
+      "requests": 16,
+      "requestBytes": 415,
+      "responseBytes": 2709,
+      "frames": 16,
+      "latencyMs": {
+        "acceptance": {
+          "min": 4.3,
+          "median": 4.3,
+          "max": 4.3,
+          "n": 1
+        },
+        "progress": {
+          "min": 2.7,
+          "median": 6.3,
+          "max": 23.8,
+          "n": 13
+        },
+        "question": {
+          "min": 4.3,
+          "median": 4.3,
+          "max": 4.3,
           "n": 1
         },
         "result": {
@@ -821,7 +821,7 @@
       "gap": false,
       "unavailable": false,
       "catchupPages": 6,
-      "maxPageBytes": 1173,
+      "maxPageBytes": 1174,
       "maxPageEvents": 9,
       "elapsedMs": 464
     },
@@ -834,37 +834,37 @@
       "events": 132,
       "requests": 23,
       "requestBytes": 1182,
-      "responseBytes": 542294,
+      "responseBytes": 542296,
       "frames": 23,
       "latencyMs": {
         "acceptance": {
-          "min": 4,
-          "median": 4,
-          "max": 4,
+          "min": 4.2,
+          "median": 4.2,
+          "max": 4.2,
           "n": 1
         },
         "progress": {
-          "min": 470,
-          "median": 470,
-          "max": 470,
+          "min": 471.6,
+          "median": 471.6,
+          "max": 471.6,
           "n": 1
         },
         "question": {
-          "min": 390.8,
-          "median": 390.8,
-          "max": 390.8,
+          "min": 394.3,
+          "median": 394.3,
+          "max": 394.3,
           "n": 1
         },
         "result": {
-          "min": 160.7,
-          "median": 160.7,
-          "max": 160.7,
+          "min": 165.7,
+          "median": 165.7,
+          "max": 165.7,
           "n": 1
         },
         "transcript": {
-          "min": 374.3,
-          "median": 412.4,
-          "max": 449.8,
+          "min": 378.5,
+          "median": 414.1,
+          "max": 451.3,
           "n": 128
         }
       },
@@ -872,9 +872,9 @@
       "gap": true,
       "unavailable": false,
       "catchupPages": 20,
-      "maxPageBytes": 29746,
+      "maxPageBytes": 29744,
       "maxPageEvents": 8,
-      "elapsedMs": 622
+      "elapsedMs": 626
     }
   ]
 }

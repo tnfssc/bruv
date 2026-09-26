@@ -128,3 +128,8 @@ The newer bounded probes live separately:
 - [Actual-agent Docker probe](../remote-agent-probe/README.md): real die RPC loop with fake provider and no host requests during work.
 - [Wire benchmark](../remote-wire-bench/README.md): equal-content deltas, lazy output, batching and synthetic 1000-task traffic.
 - [Joined findings](../../wisdom/remote-workspaces/experiment-findings.md): measurements, corrections and what remains unproven.
+
+Second-round pieces:
+
+- [Durable actual-task POC](../remote-task-poc/README.md): explicit remote profile, actual die RPC, bounded persisted events and offline-readable local transcript.
+- [Direct event delivery comparison](../remote-stream-probe/README.md): shared polling, compact hints and direct long-poll under application-level latency, with explicit queue gaps and byte-bounded pages.

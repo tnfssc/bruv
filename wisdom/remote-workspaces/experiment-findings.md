@@ -33,3 +33,11 @@ Build one thin vertical slice, not a mesh scheduler: remote version/profile hand
 Test real mid-flight acceptance/reply loss, larger transcript catchup, server epoch reset, cancellation during disconnect, and slow-consumer byte bounds. Use a real Mac/Linux SSH pair before claiming that UX. LLM auth refresh and task profiles need their own checks. Thousands of live agent processes/hosts, secure bootstrap, production retention, audio forwarding and cross-server reachability remain unproven.
 
 Values reviewed across all three probes. No new value added. Existing values already require whole-experience proof, truthful evidence, one owner, bounded use and recoverable IDs. These measured tradeoffs and local fixes belong here, not as new broad rules.
+
+## Second round
+
+The actual agent is now joined to persisted events and a local offline transcript in [task POC](../../experiments/remote-task-poc/README.md). Fake provider, real die tools, explicit remote profile, per-run bearer, launch dedup, fsynced bounded event log and completed-owner restart epoch check. Still no question/reply or on-demand Mac capability in this actual-agent path. It runs on Linux containers, not a real Mac/server SSH pair.
+
+[Stream probe](../../experiments/remote-stream-probe/README.md) compares polling, compact hints plus fetch, and direct data-bearing long-poll. Parent reran 19 cases. One-task baseline needed 18, 10 and 6 GETs respectively. Hints can add an entire RTT before events are visible. Direct delivery is the simpler candidate to explore. Timings include cold handshake; warm delivery remains to measure separately. Four unit tests prove cursor, retention and full-page byte boundaries at this layer, not socket/RSS bounds. Application queue has explicit gap and separately bounded in-memory history.
+
+Next: persist real task questions and replies, then one allowlisted Mac fixture-read capability. Also test a genuinely interrupted running task and mid-flight transport loss. Those matter more than adding more simulated machines now. Keep runtime preinstalled/authenticated for this phase; no credential migration needed.

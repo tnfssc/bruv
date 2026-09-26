@@ -1,6 +1,8 @@
 import { openSync, writeSync, fsyncSync, closeSync, readFileSync, existsSync } from "node:fs";
-const [op, port, token, file, ...params] = process.argv.slice(2);
-if (!op || !file) throw Error("usage client.ts hello|launch|sync|offline PORT TOKEN REPLICA [id prompt]");
+const argv = process.argv.slice(2);
+const [op, port, token, fileArg, ...params] = argv;
+const file = op === "offline" && argv.length === 2 ? argv[1] : fileArg;
+if (!op || !file) throw Error("usage client.ts offline REPLICA | hello|launch|sync PORT TOKEN REPLICA [id prompt]");
 const replica = () =>
   existsSync(file)
     ? readFileSync(file, "utf8")
@@ -14,11 +16,12 @@ if (op === "offline") {
   console.log(
     JSON.stringify({
       offline: true,
+      connection: "not checked; cached transcript only",
       events: saved.length,
       latest: saved.at(-1),
       transcript: saved,
       fullToolResults: saved.filter((x) => x.type === "tool_execution_end").length,
-    }),
+    }, null, 2),
   );
   process.exit(0);
 }
@@ -51,25 +54,30 @@ else if (op === "sync") {
     throw Error("invalid hello identity/epoch");
   if (meta && (meta.identity !== hello.identity || meta.epoch !== hello.epoch))
     throw Error("owner identity/epoch changed: explicit reconciliation required");
-  if (!meta)
-    await Bun.write(file + ".meta", JSON.stringify({ identity: hello.identity, epoch: hello.epoch }));
+  if (!meta) await Bun.write(file + ".meta", JSON.stringify({ identity: hello.identity, epoch: hello.epoch }));
   const fd = openSync(file, "a");
   try {
     for (let i = 0; i < 20; i++) {
       const x = await request(
-        "/events?identity=" +
-          encodeURIComponent(hello.identity) +
-          "&epoch=" +
-          hello.epoch +
-          "&cursor=" +
-          cursor,
+        "/events?identity=" + encodeURIComponent(hello.identity) + "&epoch=" + hello.epoch + "&cursor=" + cursor,
       );
-      if (x.identity !== hello.identity || x.epoch !== hello.epoch || !Array.isArray(x.events) ||
-          x.events.length > 10 || !Number.isSafeInteger(x.next) || x.next !== cursor + x.events.length ||
-          typeof x.hasMore !== "boolean" || !Number.isSafeInteger(x.bytes) || x.bytes < 0 || x.bytes > 30000 ||
-          x.bytes !== x.events.reduce((n: number, e: unknown) => n + Buffer.byteLength(JSON.stringify(e)), 0) ||
-          x.events.some((e: any, i: number) => !e || e.k !== "event" || e.seq !== cursor + i + 1 ||
-            Buffer.byteLength(JSON.stringify(e)) > 20000))
+      if (
+        x.identity !== hello.identity ||
+        x.epoch !== hello.epoch ||
+        !Array.isArray(x.events) ||
+        x.events.length > 10 ||
+        !Number.isSafeInteger(x.next) ||
+        x.next !== cursor + x.events.length ||
+        typeof x.hasMore !== "boolean" ||
+        !Number.isSafeInteger(x.bytes) ||
+        x.bytes < 0 ||
+        x.bytes > 30000 ||
+        x.bytes !== x.events.reduce((n: number, e: unknown) => n + Buffer.byteLength(JSON.stringify(e)), 0) ||
+        x.events.some(
+          (e: any, i: number) =>
+            !e || e.k !== "event" || e.seq !== cursor + i + 1 || Buffer.byteLength(JSON.stringify(e)) > 20000,
+        )
+      )
         throw Error("invalid event page identity/epoch/next/caps");
       if (x.events.length === 0 && x.hasMore) throw Error("stalled page");
       for (const e of x.events) {

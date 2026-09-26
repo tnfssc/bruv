@@ -47,3 +47,10 @@ if client sync >/dev/null 2>&1; then echo "cross-epoch merge accepted" >&2; exit
 docker rm -f "$ID" >/dev/null
 client offline > "$TMP/offline"
 "$BUN_BIN" experiments/remote-task-poc/verify.ts "$TMP"
+
+if [[ -n "${LAB_TRANSCRIPT:-}" ]]; then
+ mkdir -p "$(dirname "$LAB_TRANSCRIPT")"
+ cp "$TMP/replica.jsonl" "$LAB_TRANSCRIPT"
+ cp "$TMP/replica.jsonl.meta" "$LAB_TRANSCRIPT.meta"
+ printf "Offline transcript: %s\n" "$LAB_TRANSCRIPT"
+fi
