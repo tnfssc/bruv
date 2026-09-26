@@ -107,3 +107,13 @@ Parent failure rerun task_8e9b646f passed. See failure-probe.md for exact counts
 Question/capability commit9cc8f43 integrated as a874ca3; parent tightened terminal-state guards, denial-before-answer, typed payloads and record construction. Failure runner stages dependency.ts too; combined runner passed against the revised owner. Four task-PoC unit tests plus strict TS passed. Parent actual local SDK /questions command test also passed. Read-only scout task_f2bd8594 corrected the overly broad “RPC cannot answer” claim: command handler supports parent depth0 non-T3-native context, and SDK prompt routes commands. No authenticated remote native-question proof yet.
 
 Next bounded discovery: actual RPC-native /questions answer through an authenticated test controller, plus real SSH tunnel/disconnect in Docker rather than HTTP-only transport. Local fixture-only dependency transport stays explicitly modeled. Do not confuse these decisions with real user approval, actual Mac access or paid-provider credentials.
+
+## Round three pushed; round four active
+
+Parent pushed validated failure checkpoint4440556, then dependency/terminal fixes e0526ab to origin/develop. No force push. Native local SDK command test passed. Final combined failure runner passed with revised dependency owner; its child task runner covers independent work, modeled question/local fixture grant and denial. User-facing /lab question remains modeled; real question service is next.
+
+Round four base e0526ab4c6ffef5511be79c6d7ced06d7c114b1e:
+- task_e5a84fc3: actual persisted harness questions through packaged RPC plus authenticated narrow controller. Owns experiments/remote-native-question-probe and native-question-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e5a84fc3, branch die/native-persisted-question-over-remote-rp-e5a84fc3.
+- task_6ca79168: real SSH tunnel and disconnect against disposable Docker sshd+existing task owner. Generated fixture client/host keys and private known_hosts only, strict checking, no user SSH keys/config modifications. Owns experiments/remote-ssh-probe and ssh-transport-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_6ca79168, branch die/real-ssh-disconnect-transport-probe-6ca79168.
+
+Parent must review, rerun and push finished pieces. Workers do not push. Both use staged CLI0.15.3 hash already recorded; repo0.15.4 metadata is distinct. No real remote host was supplied, so only disposable local Docker SSH authorized. No real provider credentials or paid requests. Loopback bearer does not isolate same-user agent code from controller secrets; security boundary not claimed.
