@@ -1,3 +1,4 @@
+import { checkReply, checkCapability } from "./dependency";
 import { eventDecision } from "./bounded-log";
 import { mkdirSync, readFileSync, openSync, writeSync, fsyncSync, existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
@@ -37,7 +38,29 @@ let phase = accepted
     : "ready",
   rpc: ReturnType<typeof Bun.spawn> | undefined,
   turns = 0,
-  stderr = "";
+  stderr = "",
+  waiting = false,
+  resumed = false;
+const dependency = {
+  question: old.find((x) => x.k === "question"),
+  reply: old.find((x) => x.k === "reply"),
+  capability: old.find((x) => x.k === "capability"),
+  result: old.find((x) => x.k === "capability_result"),
+};
+const fixtureMode = () => accepted?.prompt.startsWith("DEPENDENCY:");
+const sendPrompt = (message: string) => {
+  const input = rpc as unknown as { stdin: { write(s: string): void } };
+  input.stdin.write(JSON.stringify({ id: "prompt", type: "prompt", message }) + "\n");
+};
+function resumeIfReady() {
+  if (!waiting || resumed || !dependency.reply || !dependency.result || !rpc) return;
+  if (dependency.result.status === "denied") { terminal("denied", "local fixture permission denied"); return; }
+  resumed = true;
+  waiting = false;
+  phase = "running";
+  emit("dependency_resumed", { questionId: "q1", capabilityId: "c1" });
+  sendPrompt("The explicit fixture reply and capability result are available. Fetch both via the lab dependency result tool and finish.");
+}
 const fd = openSync(file, "a"),
   t0 = Date.now();
 function save(x: object) {
@@ -46,14 +69,14 @@ function save(x: object) {
 }
 if (!old.length) save({ k: "identity", id: identity });
 save({ k: "epoch", n: epoch });
-function terminal(state: "done" | "unknown" | "capped", reason?: string) {
+function terminal(state: "done" | "unknown" | "capped" | "denied", reason?: string) {
   if (events.some((x) => x.type === "outcome")) return;
   phase = state;
   const x = { k: "event", seq: events.length + 1, ms: Date.now() - t0, type: "outcome", data: { state, reason } };
   if (Buffer.byteLength(JSON.stringify(x)) > 20000) throw Error("terminal event too large");
   save(x);
   events.push(x);
-  if (state === "capped") rpc?.kill();
+  if (state === "capped" || state === "denied") rpc?.kill();
 }
 function emit(type: string, data: any) {
   if (phase === "capped" || events.some((x) => x.type === "outcome")) return;
@@ -80,7 +103,7 @@ const args = [
   "--thinking",
   "off",
 ];
-const respond = (x: object, status = 200) => Response.json(x, { status });
+const respond = (x: unknown, status = 200) => Response.json(x, { status });
 function sse(delta: object, finish: string) {
   const chunk = (d: object, f: string | null) =>
     "data: " +
@@ -123,6 +146,20 @@ const server = Bun.serve({
           },
           "tool_calls",
         );
+      if (fixtureMode()) {
+        const serialized = JSON.stringify(body);
+        if (turns === 1) return call("independent", 'console.log("INDEPENDENT_DONE:"+(await Bun.file("marker.txt").text()).trim())');
+        if (turns === 2 && serialized.includes("INDEPENDENT_DONE:LINUX-CONTAINER-MARKER"))
+          return call("request-dependencies", 'const base="http://127.0.0.1:8080"; const headers={authorization:"Bearer "+process.env.LAB_TOKEN,"content-type":"application/json"}; for(const path of ["question","capability"]){const r=await fetch(base+"/lab/"+path,{method:"POST",headers,body:"{}"}); console.log(path+":"+JSON.stringify(await r.json()))}');
+        if (turns === 3 && serialized.includes("question:") && serialized.includes("capability:") && serialized.includes("q1") && serialized.includes("c1"))
+          return sse({ role: "assistant", content: "WAITING_FOR_EXPLICIT_RESPONSES" }, "stop");
+        if (turns === 4 && dependency.reply && dependency.result)
+          return call("consume-responses", 'const r=await fetch("http://127.0.0.1:8080/lab/results",{headers:{authorization:"Bearer "+process.env.LAB_TOKEN}});console.log("ACTUAL_DEPENDENCIES:"+JSON.stringify(await r.json()))');
+        if (turns === 5 && serialized.includes("ACTUAL_DEPENDENCIES:") && serialized.includes(dependency.reply.answer) && serialized.includes(dependency.result.content))
+          return sse({ role: "assistant", content: "FINISHED_WITH_EXPLICIT_DEPENDENCIES" }, "stop");
+        emit("fixture_error", { turn: turns });
+        return respond({ error: "unexpected dependency turn" }, 500);
+      }
       if (turns === 1)
         return call(
           "first",
@@ -140,6 +177,45 @@ const server = Bun.serve({
       return respond({ error: "unexpected turn" }, 500);
     }
     if (req.headers.get("authorization") !== "Bearer " + token) return respond({ error: "unauthorized" }, 401);
+    // Lab-only explicit dependency transport. Not harness questions: RPC does not expose
+    // an externally answerable /questions operation. No tool execution waits in place.
+    if (path.startsWith("/lab/")) {
+      if (!fixtureMode()) return respond({ error: "not a dependency fixture" }, 409);
+      const op = path.slice(5);
+      if (op === "results" && req.method === "GET")
+        return dependency.reply && dependency.result
+          ? respond({ answer: dependency.reply.answer, content: dependency.result.content })
+          : respond({ error: "dependencies pending" }, 409);
+      if (req.method !== "POST") return respond({ error: "POST required" }, 405);
+      const raw = await req.text();
+      if (raw.length > 1024) return respond({ error: "request too large" }, 413);
+      let data: any;
+      try { data = JSON.parse(raw); } catch { return respond({ error: "invalid JSON" }, 400); }
+      if (op === "question" || op === "capability") {
+        if (phase !== "running" || !rpc || Object.keys(data).length) return respond({ error: "invalid request" }, 409);
+        if (op === "question") {
+          if (!dependency.question) { dependency.question = { k: "question", id: "q1", text: "Choose a fixture label for this task" }; save(dependency.question); emit("question_pending", dependency.question); }
+          return respond("q1");
+        }
+        if (!dependency.capability) { dependency.capability = { k: "capability", id: "c1", kind: "read-local-fixture", permission: "pending" }; save(dependency.capability); emit("capability_pending", dependency.capability); }
+        return respond("c1");
+      }
+      if (op === "reply" && dependency.question) {
+        const decision = checkReply(data, dependency.reply);
+        if (decision === "invalid") return respond({ error: "invalid reply" }, 400);
+        if (decision !== "new") return decision === "duplicate" ? respond({ accepted: true, duplicate: true }) : respond({ error: "conflicting reply" }, 409);
+        dependency.reply = { k: "reply", questionId: "q1", replyId: data.replyId, answer: data.answer }; save(dependency.reply); emit("question_answered", dependency.reply); resumeIfReady();
+        return respond({ accepted: true, duplicate: false });
+      }
+      if (op === "capability-result" && dependency.capability) {
+        const decision = checkCapability(data, dependency.result);
+        if (decision === "invalid") return respond({ error: "invalid capability response" }, 400);
+        if (decision !== "new") return decision === "duplicate" ? respond({ accepted: true, duplicate: true }) : respond({ error: "conflicting capability response" }, 409);
+        dependency.result = { k: "capability_result", ...data }; save(dependency.result); emit("capability_resolved", dependency.result); resumeIfReady();
+        return respond({ accepted: true, duplicate: false });
+      }
+      return respond({ error: "not found or dependency absent" }, 404);
+    }
     if (path === "/hello")
       return respond({
         protocol: 1,
@@ -227,7 +303,10 @@ const server = Bun.serve({
             )
               emit(e.type, e);
             if (e.type === "agent_end") {
-              terminal("done");
+              if (fixtureMode() && !resumed) {
+                if (!dependency.question || !dependency.capability) terminal("unknown", "fixture did not request dependencies");
+                else { waiting = true; phase = "waiting"; emit("waiting", { questionId: "q1", capabilityId: "c1" }); resumeIfReady(); }
+              } else terminal("done");
             }
           }
         }
@@ -235,11 +314,11 @@ const server = Bun.serve({
         terminal("unknown", String(e).slice(0, 1000));
       });
       void rpc.exited.then((code) => {
-        if (phase === "running") {
+        if (phase === "running" || phase === "waiting") {
           terminal("unknown", JSON.stringify({ code, stderr }));
         }
       });
-      child.stdin.write(JSON.stringify({ id: "prompt", type: "prompt", message: x.prompt }) + "\n");
+      sendPrompt(x.prompt);
       return respond({ id: x.id, config, phase, duplicate: false });
     }
     if (path === "/events") {
