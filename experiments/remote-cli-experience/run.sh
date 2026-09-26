@@ -106,10 +106,10 @@ grep -q "exact choice A only" "$tmp/rejected.out"
 client answer "$q_id" A | tee "$tmp/answer.out"
 for i in {1..100}; do
  client sync > "$tmp/final.out"
- if grep -q ' done' "$tmp/final.out"; then break; fi
+ if grep -q ' fixture complete' "$tmp/final.out"; then break; fi
  sleep .1
 done
-grep -q ' done' "$tmp/final.out"
+grep -q ' fixture complete' "$tmp/final.out" || { cat "$tmp/final.out" >&2; exit 1; }
 client transcript > "$tmp/transcript.out"
 grep -q 'SAVED ANSWER OBSERVED' "$tmp/transcript.out"
 grep -q 'tool_execution_end' "$tmp/transcript.out"
@@ -119,4 +119,4 @@ client offline > "$tmp/final-offline.out"
 grep -q 'SAVED ANSWER OBSERVED' "$tmp/final-offline.out"
 grep -q 'tool_execution_end' "$tmp/final-offline.out"
 if [[ -n "${LAB_EXPERIENCE_STATE:-}" ]]; then cp "$tmp/state.json" "$LAB_EXPERIENCE_STATE"; fi
-printf 'PASS pinned SSH, offline cached full RPC events, exact native question, follow-up; %s events\n' "$(python3 -c 'import json,sys;print(len(json.load(open(sys.argv[1]))["events"]))' "$tmp/state.json")"
+printf 'PASS pinned SSH, offline cached bounded RPC event prefix, exact native question, follow-up; %s events\n' "$(python3 -c 'import json,sys;print(len(json.load(open(sys.argv[1]))["events"]))' "$tmp/state.json")"

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { allowedAnswer } from "./policy";
+import { allowedAnswer, allowedScopedAnswer } from "./policy";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 const root = "/work",
   token = process.env.PROBE_TOKEN!;
@@ -157,10 +157,11 @@ const server = Bun.serve({
     if (req.headers.get("authorization") !== "Bearer " + token)
       return new Response("unauthorized", { status: 401 });
     if (path === "/experience/hello") return Response.json({protocol:1, identity:ownerIdentity, epoch:1, provider:"loopback", model:"loopback-model", reasoning:"off", auth:"FAKE provider; no credentials verified", phase: started ? "accepted" : "idle"});
-    if (path === "/experience/events") return Response.json({identity:ownerIdentity, epoch:1, events, cap:180, error, questions: await ledger(), started, launchId, answerSent});
+    if (path === "/experience/events") return Response.json({identity:ownerIdentity, epoch:1, events, cap:180, error, questions: await ledger(), started, launchId, answerSent, fixtureComplete: events.some(e => e.type === "message_end" && e.message?.role === "assistant" && JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
     if (path === "/experience/launch" && req.method === "POST") {
       const input = await req.json().catch(() => null);
       if (!input || input.v !== 1 || input.profile !== "fixture" || typeof input.id !== "string" || !/^[a-zA-Z0-9_-]{1,64}$/.test(input.id)) return new Response("invalid launch", {status:400});
+      if (input.identity !== ownerIdentity || input.epoch !== 1) return new Response("owner changed", {status:409});
       if (started) return launchId === input.id ? Response.json({id:launchId, duplicate:true, phase:"accepted"}) : new Response("owner busy", {status:409});
       launchId = input.id;
       started = true;
@@ -181,7 +182,7 @@ const server = Bun.serve({
     } else if (path === "/answer" && req.method === "POST") {
       const input = await req.json().catch(() => null);
       const q = (await ledger()).find((x) => x.id === input?.id);
-      if (!allowedAnswer(input, q, answerSent))
+      if (!(process.env.EXPERIENCE_MODE === "1" ? allowedScopedAnswer(input, q, answerSent, ownerIdentity, 1) : allowedAnswer(input, q, answerSent)))
         return new Response("invalid or already answered", { status: 409 });
       const duplicate = answerSent;
       answerSent = true;
