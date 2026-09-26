@@ -1,0 +1,16 @@
+import {test,expect} from 'bun:test';
+import {mkdtempSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+const cli=join(import.meta.dir,'cli.ts');
+async function run(file:string,cmd:string,port=0,...args:string[]){const p=Bun.spawn([process.execPath,cli,cmd,...args],{env:{...process.env,REMOTE_CLI_STATE:file,REMOTE_CLI_PORT:String(port),REMOTE_CLI_TOKEN:'test'},stdout:'pipe',stderr:'pipe'});const out=await new Response(p.stdout).text(),err=await new Response(p.stderr).text();return {out,err,code:await p.exited}}
+test('render full cached RPC values, not just a status summary; offline never connects',async()=>{const dir=mkdtempSync(join(tmpdir(),'remote-cli-'));try{const f=join(dir,'state');writeFileSync(f,JSON.stringify({events:[{type:'tool_execution_end',result:'FULL TOOL OUTPUT'},{type:'message_end',message:{content:'FINAL TEXT'}}],synced:'yesterday',intent:{id:'i',stage:'waiting for answer'}}));const r=await run(f,'transcript');expect(r.code).toBe(0);expect(r.out).toContain('FULL TOOL OUTPUT');expect(r.out).toContain('FINAL TEXT');expect(r.out).toContain('cached yesterday');}finally{rmSync(dir,{recursive:true,force:true})}});
+test('durable pending intent before failed send; retry same ID; changed owner refuses merge',async()=>{const dir=mkdtempSync(join(tmpdir(),'remote-cli-'));try{const f=join(dir,'state');const first=await run(f,'launch',1);expect(first.code).toBe(1);const id=JSON.parse(readFileSync(f,'utf8')).intent.id;expect(JSON.parse(readFileSync(f,'utf8')).intent.stage).toContain('unknown');const second=await run(f,'launch',1);expect(second.code).toBe(1);expect(JSON.parse(readFileSync(f,'utf8')).intent.id).toBe(id);
+ const srv=Bun.serve({port:0,fetch(req){const u=new URL(req.url);return Response.json(u.pathname.endsWith('hello')?{identity:'different',epoch:1}:{identity:'different',epoch:1,events:[],questions:[]})}});try{writeFileSync(f,JSON.stringify({identity:'old',epoch:1,events:[{type:'message_end'}],intent:{id,stage:'accepted'}}));const r=await run(f,'sync',srv.port);expect(r.code).toBe(1);expect(r.err).toContain('unknown; do not replay');expect(JSON.parse(readFileSync(f,'utf8')).events).toHaveLength(1)}finally{srv.stop(true)}}finally{rmSync(dir,{recursive:true,force:true})}});
+
+test('changed transcript prefix and explicit cap refuse fresh state', async () => {
+ let overflow=false;
+ const dir=mkdtempSync(join(tmpdir(),'remote-cli-'));const f=join(dir,'state');
+ const srv=Bun.serve({port:0,fetch(req){const u=new URL(req.url);return Response.json(u.pathname.endsWith('hello')?{identity:'same',epoch:1}:{identity:'same',epoch:1,events:[{type:'message_end',message:'changed'}],error:overflow?'event cap':''})}});
+ try {writeFileSync(f,JSON.stringify({identity:'same',epoch:1,events:[{type:'message_end',message:'original'}],synced:'old'}));const r=await run(f,'sync',srv.port);expect(r.code).toBe(1);expect(r.err).toContain('transcript gap or changed prefix');expect(JSON.parse(readFileSync(f,'utf8')).synced).toBe('old');overflow=true;const cap=await run(f,'sync',srv.port);expect(cap.code).toBe(1);expect(cap.err).toContain('event cap');expect(JSON.parse(readFileSync(f,'utf8')).synced).toBe('old');}finally{srv.stop(true);rmSync(dir,{recursive:true,force:true})}
+});

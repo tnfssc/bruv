@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { allowedAnswer } from "./policy";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 const root = "/work",
@@ -16,12 +17,14 @@ await writeFile(
     },
   }),
 );
+const ownerIdentity = randomUUID();
 const events: any[] = [],
   requests: string[] = [];
 let error = "",
   started = false,
   answerSent = false,
-  duplicateSent = false;
+  duplicateSent = false,
+  launchId = "";
 const rpc = Bun.spawn(
   [
     "/opt/die",
@@ -56,12 +59,15 @@ void (async () => {
   for await (const data of rpc.stderr) error += new TextDecoder().decode(data).slice(-1000);
 })().catch((e) => (error += String(e)));
 void (async () => {
-  let pending = "";
+  let pending = Buffer.alloc(0);
   for await (const data of rpc.stdout) {
-    pending += new TextDecoder().decode(data);
-    const lines = pending.split("\n");
-    pending = lines.pop()!;
-    for (const line of lines)
+    pending = Buffer.concat([pending, Buffer.from(data)]);
+    let end: number;
+    while ((end = pending.indexOf(10)) !== -1) {
+      const lineBytes = pending.subarray(0, end);
+      pending = pending.subarray(end + 1);
+      if (process.env.EXPERIENCE_MODE === "1" && lineBytes.length > 65536) { error = "RPC event exceeds 65536 bytes; transcript incomplete"; rpc.kill(); return; }
+      const line = new TextDecoder("utf-8", {fatal:true}).decode(lineBytes);
       if (line) {
         events.push(JSON.parse(line));
         if (events.length > 180) {
@@ -70,7 +76,10 @@ void (async () => {
           return;
         }
       }
+    }
+    if (process.env.EXPERIENCE_MODE === "1" && pending.length > 65536) { error = "RPC line exceeds 65536 bytes; transcript incomplete"; rpc.kill(); return; }
   }
+  if (pending.length) error = "incomplete RPC line at EOF; transcript incomplete";
 })().catch((e) => (error += String(e)));
 const ledger = async (): Promise<any[]> => {
   try {
@@ -147,6 +156,18 @@ const server = Bun.serve({
     }
     if (req.headers.get("authorization") !== "Bearer " + token)
       return new Response("unauthorized", { status: 401 });
+    if (path === "/experience/hello") return Response.json({protocol:1, identity:ownerIdentity, epoch:1, provider:"loopback", model:"loopback-model", reasoning:"off", auth:"FAKE provider; no credentials verified", phase: started ? "accepted" : "idle"});
+    if (path === "/experience/events") return Response.json({identity:ownerIdentity, epoch:1, events, cap:180, error, questions: await ledger(), started, launchId, answerSent});
+    if (path === "/experience/launch" && req.method === "POST") {
+      const input = await req.json().catch(() => null);
+      if (!input || input.v !== 1 || input.profile !== "fixture" || typeof input.id !== "string" || !/^[a-zA-Z0-9_-]{1,64}$/.test(input.id)) return new Response("invalid launch", {status:400});
+      if (started) return launchId === input.id ? Response.json({id:launchId, duplicate:true, phase:"accepted"}) : new Response("owner busy", {status:409});
+      launchId = input.id;
+      started = true;
+      await writeFile(root + "/launch.json", JSON.stringify({id:launchId}));
+      rpc.stdin.write(JSON.stringify({id:"start", type:"prompt", message:"Ask fixture question with actual questions helpers and yield."}) + "\n");
+      return Response.json({id:launchId, duplicate:false, phase:"accepted"});
+    }
     if (path === "/start" && req.method === "POST") {
       if (started) return new Response("already started", { status: 409 });
       started = true;
@@ -216,4 +237,4 @@ const server = Bun.serve({
 setTimeout(() => {
   rpc.kill();
   server.stop(true);
-}, 55000);
+}, process.env.EXPERIENCE_MODE === "1" ? 900000 : 55000);
