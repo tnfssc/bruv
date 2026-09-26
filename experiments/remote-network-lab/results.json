@@ -1,0 +1,177 @@
+{
+  "v": 1,
+  "simulated": true,
+  "host": "Linux Mac stand-in",
+  "results": [
+    {
+      "label": "baseline",
+      "injectedOneWayMs": 0,
+      "bandwidthBytesPerSecond": 0,
+      "samples": [
+        {
+          "acceptanceMs": 1,
+          "progressMs": 157,
+          "completionMs": 478,
+          "requests": 21,
+          "requestBytes": 596,
+          "responseBytes": 1374,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 1,
+          "progressMs": 158,
+          "completionMs": 472,
+          "requests": 21,
+          "requestBytes": 596,
+          "responseBytes": 1374,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 1,
+          "progressMs": 158,
+          "completionMs": 472,
+          "requests": 21,
+          "requestBytes": 596,
+          "responseBytes": 1374,
+          "events": 4
+        }
+      ]
+    },
+    {
+      "label": "latency100",
+      "injectedOneWayMs": 100,
+      "bandwidthBytesPerSecond": 0,
+      "samples": [
+        {
+          "acceptanceMs": 203,
+          "progressMs": 405,
+          "completionMs": 834,
+          "requests": 4,
+          "requestBytes": 139,
+          "responseBytes": 654,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 203,
+          "progressMs": 404,
+          "completionMs": 835,
+          "requests": 4,
+          "requestBytes": 139,
+          "responseBytes": 654,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 202,
+          "progressMs": 404,
+          "completionMs": 833,
+          "requests": 4,
+          "requestBytes": 139,
+          "responseBytes": 654,
+          "events": 4
+        }
+      ]
+    },
+    {
+      "label": "latency300",
+      "injectedOneWayMs": 300,
+      "bandwidthBytesPerSecond": 0,
+      "samples": [
+        {
+          "acceptanceMs": 603,
+          "progressMs": 1206,
+          "completionMs": 1808,
+          "requests": 3,
+          "requestBytes": 112,
+          "responseBytes": 613,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 603,
+          "progressMs": 1205,
+          "completionMs": 1807,
+          "requests": 3,
+          "requestBytes": 112,
+          "responseBytes": 613,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 603,
+          "progressMs": 1205,
+          "completionMs": 1807,
+          "requests": 3,
+          "requestBytes": 112,
+          "responseBytes": 613,
+          "events": 4
+        }
+      ]
+    },
+    {
+      "label": "bandwidth1024",
+      "injectedOneWayMs": 0,
+      "bandwidthBytesPerSecond": 1024,
+      "samples": [
+        {
+          "acceptanceMs": 1,
+          "progressMs": 161,
+          "completionMs": 478,
+          "requests": 21,
+          "requestBytes": 601,
+          "responseBytes": 1399,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 1,
+          "progressMs": 160,
+          "completionMs": 479,
+          "requests": 21,
+          "requestBytes": 601,
+          "responseBytes": 1399,
+          "events": 4
+        },
+        {
+          "acceptanceMs": 3,
+          "progressMs": 162,
+          "completionMs": 480,
+          "requests": 21,
+          "requestBytes": 601,
+          "responseBytes": 1399,
+          "events": 4
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "lostResponseRetry": true,
+    "questionOfflineStatus": "waiting",
+    "questionEvents": [
+      "accepted",
+      "progress",
+      "question",
+      "answered",
+      "progress",
+      "progress",
+      "done"
+    ],
+    "outageFailed": true,
+    "offlineDuringOutage": {
+      "cursor": 166,
+      "tasks": {
+        "muioouq7-outage": {
+          "status": "running",
+          "text": "simulated plain accepted"
+        }
+      },
+      "transcript": [
+        "#166 muioouq7-outage accepted: simulated plain accepted"
+      ]
+    },
+    "cursor": 169,
+    "reconnectCatchupMs": 1,
+    "slowPageMetrics": {
+      "requests": 7,
+      "requestBytes": 188,
+      "responseBytes": 684,
+      "events": 4
+    }
+  }
+}
