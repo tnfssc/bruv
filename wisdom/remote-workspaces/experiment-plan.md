@@ -129,3 +129,7 @@ Next worker task_e64f49ce combines native questions with interrupted SSH in /hom
 ## On-demand repo follow-up
 
 SSH/native-question hardening passed both parent runners and is pushed through d6e8649. Next: task_271b5bde probes exact code identity, explicitly selected dirty changes, isolated task checkout and safe result return in disposable Git repositories. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_271b5bde; branch die/on-demand-repository-identity-and-result-271b5bde; base d6e8649. No bulk environment sync or production API. Parent must review refusal paths, rerun, integrate and push. Values unchanged.
+
+## Integrated CLI first slice
+
+Discovery synthesis committed at 3218622. Worker task_2711fe5c builds a single experimental CLI flow (connect, launch, status, sync, offline transcript, native answer), reusing fixture pieces where possible. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_2711fe5c; branch die/integrated-remote-cli-experience-first-s-2711fe5c; base 3218622. Require human-readable commands, honest stale/unknown states, full retained events or explicit gaps, and fake-provider Docker proof. Capability and repo return are later slices in this same experience. Parent reviews/reruns before integration and push. No production remote support or actual Mac proof implied.
