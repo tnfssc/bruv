@@ -37,15 +37,22 @@ assert(
   es.some((x) => x.type === "outcome" && x.data.state === "done"),
   "outcome missing",
 );
-assert(JSON.parse(await read("offline")).fullToolResults === 2, "offline disk replica unreadable");
+const offline = JSON.parse(await read("offline"));
+assert(offline.fullToolResults === 2 && offline.transcript.length === es.length, "offline disk replica unreadable");
+assert(JSON.stringify(offline.transcript).includes("FINISHED") &&
+  JSON.stringify(offline.transcript).includes("FIRST_DONE") &&
+  JSON.stringify(offline.transcript).includes("SECOND_DONE:LINUX-CONTAINER-MARKER"), "offline CLI missing transcript");
 console.log(
   JSON.stringify({
     result: "PASS",
     fakeProvider: true,
+    stagedDie: JSON.parse(await read("provenance")),
     detachedAtMs: es.find((x) => x.seq === before.cursor)?.ms,
     finishMs: es.at(-1).ms,
     events: es.length,
-    bytes: after.bytes,
+    totalEventUtf8Bytes: es.reduce((n, e) => n + Buffer.byteLength(JSON.stringify(e)), 0),
+    replicaFileBytes: Buffer.byteLength(await read("replica.jsonl")),
+    catchupEventBytes: after.bytes,
     offline: true,
   }),
 );

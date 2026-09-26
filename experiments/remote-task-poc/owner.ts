@@ -1,8 +1,22 @@
+import { eventDecision } from "./bounded-log";
 import { mkdirSync, readFileSync, openSync, writeSync, fsyncSync, existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 const dir = "/work",
   file = dir + "/events.jsonl",
   token = process.env.LAB_TOKEN!;
+if (!token) throw Error("LAB_TOKEN must be nonempty");
+let versionProbe: ReturnType<typeof Bun.spawnSync>;
+try {
+  versionProbe = Bun.spawnSync(["/opt/die", "--version"], {
+    stdout: "pipe", stderr: "pipe",
+    env: { ...process.env, HOME: dir, PI_CODING_AGENT_DIR: dir + "/agent", DIE_CODING_AGENT_DIR: dir + "/agent" },
+  });
+} catch (error) {
+  throw Error("/opt/die --version unavailable: " + String(error));
+}
+const dieVersion = new TextDecoder().decode(versionProbe.stdout).trim();
+if (versionProbe.exitCode !== 0 || !dieVersion)
+  throw Error("/opt/die --version unavailable: " + new TextDecoder().decode(versionProbe.stderr));
 mkdirSync(dir + "/agent", { recursive: true });
 const old: any[] = existsSync(file)
   ? readFileSync(file, "utf8")
@@ -31,18 +45,25 @@ function save(x: object) {
 }
 if (!old.length) save({ k: "identity", id: identity });
 save({ k: "epoch", n: epoch });
+function terminal(state: "done" | "unknown" | "capped", reason?: string) {
+  if (events.some((x) => x.type === "outcome")) return;
+  phase = state;
+  const x = { k: "event", seq: events.length + 1, ms: Date.now() - t0, type: "outcome", data: { state, reason } };
+  if (Buffer.byteLength(JSON.stringify(x)) > 20000) throw Error("terminal event too large");
+  save(x);
+  events.push(x);
+  if (state === "capped") rpc?.kill();
+}
 function emit(type: string, data: any) {
-  if (events.length >= 160 || Buffer.byteLength(JSON.stringify(data)) > 20000) {
-    phase = "capped";
-    rpc?.kill();
-    return;
-  }
+  if (phase === "capped" || events.some((x) => x.type === "outcome")) return;
   const x = { k: "event", seq: events.length + 1, ms: Date.now() - t0, type, data };
+  const reason = eventDecision(events.length, Buffer.byteLength(JSON.stringify(x)));
+  if (reason) { terminal("capped", reason); return; }
   save(x);
   events.push(x);
 }
 if (accepted && !events.some((x) => x.type === "outcome"))
-  emit("outcome", { state: "unknown", reason: "owner restart; no replay" });
+  terminal("unknown", "owner restart; no replay");
 const args = [
   "/opt/die",
   "--mode",
@@ -123,7 +144,7 @@ const server = Bun.serve({
         protocol: 1,
         identity,
         epoch,
-        dieVersion: "0.15.3",
+        dieVersion,
         defaultProfile: "fixture",
         profiles: {
           fixture: {
@@ -191,6 +212,10 @@ const server = Bun.serve({
         let p = "";
         for await (const b of child.stdout) {
           p += new TextDecoder().decode(b);
+          if (Buffer.byteLength(p) > 262144) {
+            terminal("capped", "RPC stdout line exceeds 262144 bytes");
+            break;
+          }
           const lines = p.split("\n");
           p = lines.pop()!;
           for (const line of lines) {
@@ -207,19 +232,16 @@ const server = Bun.serve({
             )
               emit(e.type, e);
             if (e.type === "agent_end") {
-              phase = "done";
-              emit("outcome", { state: "done" });
+              terminal("done");
             }
           }
         }
       })().catch((e) => {
-        phase = "unknown";
-        emit("outcome", { state: "unknown", error: String(e) });
+        terminal("unknown", String(e).slice(0, 1000));
       });
       void rpc.exited.then((code) => {
         if (phase === "running") {
-          phase = "unknown";
-          emit("outcome", { state: "unknown", code, stderr });
+          terminal("unknown", JSON.stringify({ code, stderr }));
         }
       });
       child.stdin.write(JSON.stringify({ id: "prompt", type: "prompt", message: x.prompt }) + "\n");

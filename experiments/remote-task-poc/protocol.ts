@@ -3,6 +3,7 @@ const url = "http://127.0.0.1:" + port;
 async function req(path: string, body?: object, auth = token) {
   const r = await fetch(url + path, {
     method: body ? "POST" : "GET",
+    signal: AbortSignal.timeout(2500),
     headers: { authorization: "Bearer " + auth, "content-type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
   });

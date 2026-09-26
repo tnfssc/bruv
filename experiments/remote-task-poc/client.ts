@@ -16,6 +16,7 @@ if (op === "offline") {
       offline: true,
       events: saved.length,
       latest: saved.at(-1),
+      transcript: saved,
       fullToolResults: saved.filter((x) => x.type === "tool_execution_end").length,
     }),
   );
@@ -24,7 +25,7 @@ if (op === "offline") {
 const base = "http://127.0.0.1:" + port,
   headers = { authorization: "Bearer " + token, "content-type": "application/json" };
 async function request(path: string, init?: RequestInit) {
-  const r = await fetch(base + path, { ...init, headers });
+  const r = await fetch(base + path, { ...init, headers, signal: AbortSignal.timeout(2500) });
   const x = await r.json();
   if (!r.ok) throw Error(r.status + " " + JSON.stringify(x));
   return x;
@@ -45,6 +46,9 @@ else if (op === "sync") {
     pages = 0,
     bytes = 0;
   const meta = existsSync(file + ".meta") ? JSON.parse(readFileSync(file + ".meta", "utf8")) : null;
+  if (saved.length && !meta) throw Error("replica without meta: explicit reconciliation required");
+  if (!Number.isSafeInteger(hello.epoch) || hello.epoch < 1 || typeof hello.identity !== "string" || !hello.identity)
+    throw Error("invalid hello identity/epoch");
   if (meta && (meta.identity !== hello.identity || meta.epoch !== hello.epoch))
     throw Error("owner identity/epoch changed: explicit reconciliation required");
   if (!meta)
@@ -60,6 +64,13 @@ else if (op === "sync") {
           "&cursor=" +
           cursor,
       );
+      if (x.identity !== hello.identity || x.epoch !== hello.epoch || !Array.isArray(x.events) ||
+          x.events.length > 10 || !Number.isSafeInteger(x.next) || x.next !== cursor + x.events.length ||
+          typeof x.hasMore !== "boolean" || !Number.isSafeInteger(x.bytes) || x.bytes < 0 || x.bytes > 30000 ||
+          x.bytes !== x.events.reduce((n: number, e: unknown) => n + Buffer.byteLength(JSON.stringify(e)), 0) ||
+          x.events.some((e: any, i: number) => !e || e.k !== "event" || e.seq !== cursor + i + 1 ||
+            Buffer.byteLength(JSON.stringify(e)) > 20000))
+        throw Error("invalid event page identity/epoch/next/caps");
       if (x.events.length === 0 && x.hasMore) throw Error("stalled page");
       for (const e of x.events) {
         if (e.seq !== cursor + 1) throw Error("noncontiguous event");
