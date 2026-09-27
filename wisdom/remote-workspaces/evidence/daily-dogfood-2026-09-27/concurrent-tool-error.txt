@@ -1,0 +1,39 @@
+Execution failed with exit code 1.
+
+stdout:
+{
+  id: "task_cff2ce23",
+  kind: "command",
+  command: "sleep 12; echo DAILY_LOCAL_FINISHED",
+  cwd: "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/repo",
+  pid: 3039766,
+  status: "running",
+  startedAt: "2026-09-27T20:09:44.442Z",
+  baseOffset: 0,
+  outputEnd: 0,
+  timedOut: false,
+  lastActivityAt: "2026-09-27T20:09:44.442Z",
+  stdinOpen: false,
+  output: "",
+  requestedOffset: 0,
+  nextOffset: 0,
+  outputLost: false,
+  hasMore: false,
+  background: true,
+  elapsedMs: 2,
+}
+
+
+stderr:
+Error: disk I/O error
+    at gh (/$bunfs/root/die:2131:7503)
+    at <anonymous> (/$bunfs/root/die:2132:790)
+    at nIt (/$bunfs/root/die:2131:8140)
+    at <anonymous> (/$bunfs/root/die:2132:255)
+    at emit (node:events:100:22)
+    at addChunk (internal:streams/readable:267:47)
+    at readableAddChunkPushByteMode (internal:streams/readable:245:18)
+    at t (/$bunfs/root/die:2133:2147)
+
+
+Background jobs: task_cff2ce23. Results come later.
