@@ -99,3 +99,64 @@ test("three-source pagination crosses native to SSH without skipping or repeatin
     expect(ids).toEqual(["native0", "native1", "native2", sshJobId("ssh0"), sshJobId("ssh1"), sshJobId("ssh2")]);
   } finally { await manager.shutdown(); }
 });
+
+
+test("mixed pages pin totals across a local-only first page, bound cursors and discriminate raw SSH IDs", async () => {
+  const { client, adapter } = await fixture();
+  await client.launch("/repo", "prompt", "same", undefined, "session-A");
+  const manager = new TaskManager(() => {});
+  const factory = () => ({ list: async ({ cursor, count }: { cursor: string; count: number }) => {
+    const native = [{ taskId: "native0", status: "running" }, { taskId: "native1", status: "running" }];
+    const start = Number(cursor); const tasks = native.slice(start, start + count);
+    return { tasks, total: 2, nextCursor: start + tasks.length < 2 ? String(start + tasks.length) : undefined };
+  }, observe: async () => { throw Error("unexpected native observe"); }, cancel: async () => { throw Error("unexpected native cancel"); }, close: async () => {} });
+  const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined,
+    { T3_MCP_URL: "http://localhost:8080", T3_MCP_BEARER_TOKEN: "test" }, factory as any, undefined, adapter);
+  const ctx = { cwd: process.cwd(), sessionManager: { getSessionFile: () => "session-A" } } as any;
+  const signal = new AbortController().signal;
+  try {
+    const locals: string[] = [];
+    for (let i = 0; i < 3; i++) locals.push((await service.handle("shell", { command: "printf local", waitSeconds: 1 }, ctx, signal) as { id: string }).id);
+    let cursor: string | undefined; const ids: string[] = [];
+    do {
+      const page = await service.handle("jobs.list", { count: 2, ...(cursor ? { cursor } : {}) }, ctx, signal) as { jobs: Array<{ id: string }>; nextCursor?: string; total: number };
+      expect(page.total).toBe(6);
+      ids.push(...page.jobs.map((job) => job.id)); cursor = page.nextCursor;
+    } while (cursor);
+    expect(ids).toEqual([...locals, "native0", "native1", sshJobId("same")]);
+    for (const method of ["jobs.inspect", "jobs.stop"])
+      await expect(service.handle(method, { id: "same" }, ctx, signal)).rejects.toThrow("ssh: namespace");
+    await expect(service.handle("jobs.inspect", { id: "missing" }, ctx, signal)).rejects.toThrow("Unknown job");
+    await expect(service.handle("jobs.list", { cursor: "jobs-v2." + "x".repeat(2100) }, ctx, signal)).rejects.toThrow();
+  } finally { await manager.shutdown(); }
+});
+
+test("confirmed cancelled work is terminal, and cached transcript gaps are surfaced", async () => {
+  const { client, adapter } = await fixture();
+  await client.launch("/repo", "prompt", "cancelled", undefined, "session-A");
+  const state = await client.read();
+  state.tasks.cancelled!.task = { taskId: "cancelled", state: "cancelled" };
+  state.tasks.cancelled!.cancelDelivery = { status: "confirmed" };
+  state.tasks.cancelled!.events = [{ seq: 2, event: "later" }, { seq: 4, event: "gap" }];
+  await import("node:fs/promises").then(({ writeFile }) => writeFile(client.path, JSON.stringify(state)));
+  expect((await adapter.stopWork("session-A")).jobs).toEqual([]);
+  const page = await adapter.inspect("session-A", sshJobId("cancelled"));
+  expect(page.status).toBe("cancelled");
+  expect(page.outputLost).toBe(true);
+  expect(page.transcriptGap).toBe(true);
+  expect(page.cancelDelivery).toBe("confirmed");
+});
+
+
+test("confirmed cancellation without a terminal observation remains pending offline", async () => {
+  const { client, adapter, setOffline } = await fixture();
+  await client.launch("/repo", "prompt", "confirm", undefined, "session-A");
+  const state = await client.read();
+  state.tasks.confirm!.cancelDelivery = { status: "confirmed" };
+  state.tasks.confirm!.task = { taskId: "confirm", state: "running" };
+  await import("node:fs/promises").then(({ writeFile }) => writeFile(client.path, JSON.stringify(state)));
+  setOffline(true);
+  const report = await adapter.stopWork("session-A");
+  expect(report.outcome).toBe("pending");
+  expect(report.jobs).toMatchObject([{ id: sshJobId("confirm"), outcome: "pending", status: "running" }]);
+});
