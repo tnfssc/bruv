@@ -1,5 +1,7 @@
 # Pinned T3 web chunk split (2026-09-27)
 
+> Integrated into `integrations/t3/upstream/die.patch`. Incremental patch names below are historical review artifacts, not current build inputs. See [final installer handoff](install-local-warning-fixes-2026-09-27.md) for current evidence.
+
 Branch: `die/fix-web-chunk-warnings-65d7ccf5`. Persistent source checkout:
 `/home/tnfssc/.die/worktrees/die-a86675007a5e-task_a478759f-a86675007a5e-task_65d7ccf5/.cache/t3-web-chunks`, at upstream revision `b488c57f3f9f1688e31c53daee99e29dd1d0baa2` with `integrations/t3/upstream/die.patch` applied. The separately generated incremental patch is `integrations/t3/upstream/chunks.patch`; apply it **after** die.patch. Neither upstream package.json nor lockfile was changed. No dependency changes required for this slice.
 

@@ -11,17 +11,22 @@ test("web source verification requires the exact canonical patch without changin
   try {
     git("init", "--quiet");
     await writeFile(join(root, "source.ts"), "export const value = 1;\n");
+    await writeFile(join(root, "obsolete.ts"), "removed by the canonical patch\n");
     await writeFile(join(root, ".gitignore"), "ignored-build/\ncanonical.patch\n");
     git("add", ".");
     git("-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "--quiet", "-m", "fixture");
     await writeFile(join(root, "source.ts"), "export const value = 2;\n");
     await writeFile(join(root, "added.ts"), "export const added = true;\n");
+    await rm(join(root, "obsolete.ts"));
     git("add", "-N", "added.ts");
     const patch = join(root, "canonical.patch");
     await writeFile(patch, git("diff", "--binary"));
     const before = await readFile(join(root, ".git/index"));
     await verifyWebSource(root, patch);
     expect(await readFile(join(root, ".git/index"))).toEqual(before);
+    await writeFile(join(root, "obsolete.ts"), "unreviewed resurrection\n");
+    await expect(verifyWebSource(root, patch)).rejects.toThrow("untracked");
+    await rm(join(root, "obsolete.ts"));
     await writeFile(join(root, "source.ts"), "unreviewed mutation\n");
     await expect(verifyWebSource(root, patch)).rejects.toThrow("differs");
     await writeFile(join(root, "source.ts"), "export const value = 2;\n");

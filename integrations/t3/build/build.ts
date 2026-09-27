@@ -40,7 +40,7 @@ const root = resolve(import.meta.dir, "../../..");
 export async function buildWeb(): Promise<void> {
   const source = resolve(process.env.DIE_T3_SOURCE ?? root + "/.cache/die-t3code-" + sourcePin.revision);
   const output = resolve(root, "dist/die-web");
-  const patches = ["die.patch", "dependencies.patch"].map((name) => resolve(root, "integrations/t3/upstream", name));
+  const patch = resolve(root, "integrations/t3/upstream/die.patch");
   async function run(args: string[], cwd = source): Promise<void> {
     const child = Bun.spawn(args, { cwd, stdin: "inherit", stdout: "inherit", stderr: "inherit" });
     const code = await child.exited;
@@ -60,18 +60,17 @@ export async function buildWeb(): Promise<void> {
   if (git(["rev-parse", "HEAD"]) !== sourcePin.revision) {
     throw new Error("T3 checkout does not match integrations/t3/upstream/source.json; use a fresh checkout.");
   }
-  for (const patch of patches) {
-    try {
-      git(["apply", "--reverse", "--check", patch]);
-    } catch {
-      git(["apply", "--check", patch]);
-      await run(["git", "apply", patch]);
-    }
+  try {
+    git(["apply", "--reverse", "--check", patch]);
+  } catch {
+    git(["apply", "--check", patch]);
+    await run(["git", "apply", patch]);
   }
-  await verifyWebSource(source, patches);
+  await verifyWebSource(source, patch);
   await run(["pnpm", "install", "--frozen-lockfile"]);
-  // Bundlers erase types; validate the final patched backend before packaging it.
+  // Bundlers erase types; validate both patched application graphs before packaging.
   await run([source + "/node_modules/.bin/tsc", "--noEmit"], source + "/apps/server");
+  await run([source + "/node_modules/.bin/tsc", "--noEmit"], source + "/apps/web");
   await run(["pnpm", "--filter", "@t3tools/web", "build"]);
   await run(["pnpm", "--filter", "t3", "build:bundle"]);
   await cp(source + "/apps/web/dist", source + "/apps/server/dist/client", { recursive: true });
@@ -84,18 +83,14 @@ export async function buildWeb(): Promise<void> {
   await verifyPortableOptionalDependencies(output);
   await cp(source + "/LICENSE", output + "/LICENSE-T3CODE");
   await cp(root + "/integrations/t3/upstream/bootstrap.mjs", output + "/bootstrap.mjs");
-  const patchHashes = await Promise.all(
-    patches.map(async (patch) => new Bun.CryptoHasher("sha256").update(await Bun.file(patch).bytes()).digest("hex")),
-  );
+  const patchHash = new Bun.CryptoHasher("sha256").update(await Bun.file(patch).bytes()).digest("hex");
   await Bun.write(
     output + "/SOURCE.txt",
     [
       "T3 source: " + sourcePin.repository,
       "Revision: " + sourcePin.revision,
       "Die patch: integrations/t3/upstream/die.patch",
-      "Patch-SHA256: " + patchHashes[0],
-      "Dependencies patch: integrations/t3/upstream/dependencies.patch",
-      "Dependencies-Patch-SHA256: " + patchHashes[1],
+      "Patch-SHA256: " + patchHash,
       "Bun runtime: " + Bun.version,
       "Native assets: " + process.platform + "-" + process.arch,
       "",

@@ -1,9 +1,10 @@
 // Run after the pinned upstream web production build:
 // T3_WEB_DIST=<upstream>/apps/web/dist node --test integrations/t3/upstream/chunks.test.mjs
+
+import assert from "node:assert/strict";
 import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
-import assert from "node:assert/strict";
 
 const dist = process.env.T3_WEB_DIST;
 if (!dist) {
@@ -23,7 +24,7 @@ test("alternate sidebar stays outside the startup graph", () => {
     assert.notEqual(main.file, manifest[id].file);
   }
   // Regression bound against the measured pinned baseline (801,444 bytes).
-  assert.ok(bytes(main) < 801444, "main: " + bytes(main) + " bytes");
+  assert.ok(bytes(main) < 801444, `main: ${bytes(main)} bytes`);
 });
 
 test("composer and timeline retain separate lazy chat boundaries", () => {
@@ -35,5 +36,5 @@ test("composer and timeline retain separate lazy chat boundaries", () => {
     assert.notEqual(chat.file, manifest[id].file);
   }
   // Regression bound against the measured pinned baseline (888,994 bytes).
-  assert.ok(bytes(chat) < 888994, "chat: " + bytes(chat) + " bytes");
+  assert.ok(bytes(chat) < 888994, `chat: ${bytes(chat)} bytes`);
 });

@@ -1,5 +1,7 @@
 # Pinned T3 native deploy dependency patch (2026-09-27)
 
+> Integrated into `integrations/t3/upstream/die.patch`. Incremental patch names below are historical review artifacts, not current build inputs. See [final installer handoff](install-local-warning-fixes-2026-09-27.md) for current evidence.
+
 The pinned revision is `b488c57f3f9f1688e31c53daee99e29dd1d0baa2`. Lasting checkout: `.cache/die-t3code-b488c57f3f9f1688e31c53daee99e29dd1d0baa2` on branch `die/native-deploy-dependencies` within worktree `/home/tnfssc/.die/worktrees/die-a86675007a5e-task_a478759f-a86675007a5e-task_8c344dd9`. HEAD remains pinned. Working tree is die.patch then dependencies.patch. The incremental patch was generated against a locally committed baseline of die.patch; canonical die.patch was never modified. Build verifies both patches in a disposable index.
 
 The incremental patch enables pnpm 11 `injectWorkspacePackages: true` and regenerates the lockfile with injected workspace directory snapshots. `pnpm install --frozen-lockfile` and `pnpm --filter t3 deploy --prod` succeeded; modern deploy installed 158 production packages and a 319 MB standalone trial directory at `/tmp/die-modern-deploy-test`. Full `bun integrations/t3/build/build.ts` produced `dist/die-web.archive.gz` with SHA256 `48305d713b766d6e0ffebb5067859ffc076dedc56f3b030dd8288b867d228786`. The build checks cross-platform ffi-rs assets and fixes the local package self-reference.
