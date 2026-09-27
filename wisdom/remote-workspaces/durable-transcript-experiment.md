@@ -10,3 +10,5 @@ Evidence (Bun 1.4.2; staged real die 0.15.4 sha256 6a4b0a5775dc244320f1580dc5bc8
 - bash experiments/remote-native-question-probe/run.sh with same binaries: PASS actual native question, reply delivery, four model turns, 79 RPC events.
 
 Not verified: Mac, real provider, large file transfer, disk-persistent server restart, automatic repository return. No user pending questions modified. The original bounded-prefix state cannot be silently upgraded; start with a new local state path.
+
+Parent integrated as 8f5a6c3. Read-only review task_7dfc2007 and parent Docker/native reruns task_fc8629c6 pending. Logs /tmp/die-durable-cli-parent.log and /tmp/die-durable-native-parent.log. Do not push until reviewed. Repo helper integrated separately, still needs same-path wiring.

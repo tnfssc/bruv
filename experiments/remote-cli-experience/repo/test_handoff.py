@@ -32,6 +32,18 @@ class HandoffTests(unittest.TestCase):
         self.assertEqual((self.remote / 'code.txt').read_text(), 'base\nstaged\nunstaged\n')
         self.assertFalse((self.remote / 'secret.env').exists())
 
+    def test_assume_unchanged_refuses_capture_and_return(self):
+        patch = self.make_result()
+        git(self.local, 'update-index', '--assume-unchanged', 'other.txt')
+        put(self.local, 'other.txt', 'hidden tracked edit\n')
+        before = git(self.local, 'ls-files', '--stage', '-z')
+        with self.assertRaisesRegex(ValueError, 'assume-unchanged'):
+            capture(self.local, self.root / 'hidden-snapshot')
+        with self.assertRaisesRegex(ValueError, 'assume-unchanged'):
+            self.integrate(patch)
+        self.assertEqual((self.local / 'other.txt').read_text(), 'hidden tracked edit\n')
+        self.assertEqual(before, git(self.local, 'ls-files', '--stage', '-z'))
+
     def make_result(self, path='code.txt', content='base\nstaged\nunstaged\nremote\n'):
         put(self.remote, path, content)
         git(self.remote, 'add', '--', path)

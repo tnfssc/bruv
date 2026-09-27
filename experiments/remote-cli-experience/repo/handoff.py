@@ -35,6 +35,8 @@ def guard(repo):
     sparse = subprocess.run(['git', '-C', str(repo), 'config', '--bool', '--get', 'core.sparseCheckout'], capture_output=True)
     if sparse.stdout.strip() == b'true' or any(x.startswith(b'S ') for x in git(repo, 'ls-files', '-v', '-z').split(b'\0') if x):
         raise ValueError('sparse checkout / skip-worktree requires review')
+    if any(x[:1].islower() for x in git(repo, 'ls-files', '-v', '-z').split(b'\0') if x):
+        raise ValueError('assume-unchanged entries require review')
     entries = git(repo, 'ls-files', '--stage', '-z').split(b'\0')[:-1]
     if git(repo, 'ls-files', '-u', '-z') or any(not x.startswith((b'100644 ', b'100755 ')) for x in entries):
         raise ValueError('unmerged entries, symlinks or gitlinks require review')
