@@ -1,0 +1,14 @@
+bun test v1.4.2 (744846f84)
+
+tests/goals-sdk.test.ts:
+(pass) real offline assembly changes only messages across goal set, update, and clear [503.20ms]
+(pass) real SDK reconciles helper waiting through task-complete and completes [371.92ms]
+(pass) real SDK print completion cycles pause within bounded agent runs [653.43ms]
+(pass) real SDK print completion cycles accept distinct explicit milestones [1241.42ms]
+(pass) real SDK reports auth preparation failure before provider dispatch [2.40ms]
+(pass) live goal fixture reaches an intercepted real-runtime provider offline [13.45ms]
+
+ 6 pass
+ 0 fail
+ 54 expect() calls
+Ran 6 tests across 1 file. [3.03s]

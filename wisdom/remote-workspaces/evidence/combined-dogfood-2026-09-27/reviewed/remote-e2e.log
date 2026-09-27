@@ -1,0 +1,2 @@
+normal CLI die 0.15.9 sha256 9feeacbd34912953ddd08a4e1f6cf85904628c329d072f256bcb523c1c471dec
+PASS normal CLI RPC agent remote execute helper, human connect, pinned SSH, independent owner, automatic reconnect sync, native question answer/continuation, server-offline paged human transcript, dirty repo safe/index-preserving return and conflict review, explicit offline-waiting file/tool/skill grants, native cancellation, cached text artifacts; events=64

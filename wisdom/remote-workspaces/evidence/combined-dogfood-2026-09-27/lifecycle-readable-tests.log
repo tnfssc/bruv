@@ -1,0 +1,21 @@
+bun test v1.4.2 (744846f84)
+
+tests/remote-human-rendering.test.ts:
+(pass) preparation-only status preserves both recovery states, without pretending no work exists [0.54ms]
+(pass) mixed status includes task and orphan preparation [0.23ms]
+(pass) uncertain answer identifies question and saved reply in task and status [0.16ms]
+(pass) cancel delivery requested (requested locally) vs not terminal [0.16ms]
+(pass) cancel delivery uncertain (delivery uncertain) vs not terminal [0.13ms]
+(pass) cancel delivery confirmed (request acknowledged) vs not terminal [0.03ms]
+(pass) cancel delivery confirmed (request acknowledged) vs terminal [0.09ms]
+(pass) cached transcript reads as conversation and tools, not machine JSON [0.47ms]
+(pass) unknown and lifecycle events, paging, transcript gaps and explicit raw remain visible [0.14ms]
+(pass) conflict details identify the retained artifact without implying automatic application [0.08ms]
+(pass) saved task details describe capability waits without granting access [0.08ms]
+(pass) human capability outcomes are readable scoped receipts, not protocol JSON [0.05ms]
+(pass) known lifecycle message envelopes remain readable without losing new event fields [0.11ms]
+
+ 13 pass
+ 0 fail
+ 90 expect() calls
+Ran 13 tests across 1 file. [12.00ms]

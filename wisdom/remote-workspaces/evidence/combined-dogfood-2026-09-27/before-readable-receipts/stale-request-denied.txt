@@ -1,0 +1,35 @@
+ [die-remote]
+
+ Remote 1ef636a0-c5d2-4e47-ae26-7c7a3ce32610 · capability request: shell.execute · rm -rf / · /remote to review
+
+
+ [die-remote]
+
+ Remote error: Error: Invalid capability kind; no grant sent
+ No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.
+
+
+ [die-remote]
+
+ Remote 1ef636a0-c5d2-4e47-ae26-7c7a3ce32610 · capability request: tool:git-diff · tracked.txt · /remote to review
+
+
+ [die-remote]
+
+ Remote error: Error: Remote request changed; no grant sent
+ No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.
+
+
+
+capability-test-repo:master · mode: orchestrator · $0.000 · ctx 0.5% · cache est ?                         fixture-model
+
+
+
+
+
+
+
+
+
+
+

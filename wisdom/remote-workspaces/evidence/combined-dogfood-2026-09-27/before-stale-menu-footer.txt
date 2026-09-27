@@ -1,0 +1,35 @@
+ [die-remote]
+
+ Remote 739f3533-cfd6-4226-b86f-26ee0fdd69ec · capability request: repo.read · on-demand.txt · /remote to review
+
+
+ [die-remote]
+
+ Remote 739f3533-cfd6-4226-b86f-26ee0fdd69ec · capability request: shell.execute · rm -rf / · /remote to review
+
+
+ [die-remote]
+
+ Remote error: Error: Invalid capability kind; no grant sent
+ No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.
+
+
+ [die-remote]
+
+ Remote error: Error: Remote request changed; no grant sent
+ No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.
+
+
+
+remote: menu snapshot · Refresh from remote to reload $0.000 C0.4% cache est ? capability-test-repo        fixture-model
+
+
+
+
+
+
+
+
+
+
+

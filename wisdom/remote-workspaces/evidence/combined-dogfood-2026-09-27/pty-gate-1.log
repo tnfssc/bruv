@@ -1,0 +1,37 @@
+normal CLI die 0.15.9 sha256 b56f42c174f7e288dea2ac007333c543643d3bc38fbffc45d77a0fba0c96f547
+327 |   const staleQ = state().tasks[staleId]!.task!.questions![0]!;
+328 |   const stablePickerFrame = pane();
+329 |   rpc.send("/remote answer " + staleId + " " + staleQ.id + " REMOTE_FIXTURE_MENU_CONTINUED external answer");
+330 |   await rpc.wait(() => ownerQuestion(staleId).status !== "pending", "external answer creates stale picker", 20000);
+331 |   await Bun.sleep(5500); // Cross the production refresh timer while the other client changes this question.
+332 |   assert.equal(pane(), stablePickerFrame, "background refresh disturbed the open picker");
+               ^
+AssertionError: background refresh disturbed the open picker
++ actual - expected
+... Skipped lines
+
+  ' REMOTE_FIXTURE_MENU_QUESTION · /remote to answer\n' +
+    '\n' +
+    '\n' +
+    '──────────────────────────────────────────────────\n' +
+    'REMOTE_FIXTURE_MENU_QUESTION\n' +
+...
+    '──────────────────────────────────────────────────\n' +
++   'remote: menu snapshot updated · Ref… fixture-model\n' +
+-   'remote: menu snapshot · Refresh fro… fixture-model\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+
+ generatedMessage: false,
+     actual: " REMOTE_FIXTURE_MENU_QUESTION · /remote to answer\n\n\n──────────────────────────────────────────────────\nREMOTE_FIXTURE_MENU_QUESTION\n\nREMOTE_FIXTURE_MENU_FIRST\n> Filter…\n→ REMOTE_FIXTURE_MENU_FIRST\n  REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TA\n  Write an answer…\n↑↓ · PgUp/PgDn details · type · Enter · Esc\n──────────────────────────────────────────────────\nremote: menu snapshot updated · Ref… fixture-model\n\n\n\n\n\n\n",
+   expected: " REMOTE_FIXTURE_MENU_QUESTION · /remote to answer\n\n\n──────────────────────────────────────────────────\nREMOTE_FIXTURE_MENU_QUESTION\n\nREMOTE_FIXTURE_MENU_FIRST\n> Filter…\n→ REMOTE_FIXTURE_MENU_FIRST\n  REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TA\n  Write an answer…\n↑↓ · PgUp/PgDn details · type · Enter · Esc\n──────────────────────────────────────────────────\nremote: menu snapshot · Refresh fro… fixture-model\n\n\n\n\n\n\n",
+   operator: "strictEqual",
+       diff: "simple",
+       code: "ERR_ASSERTION"
+
+      at /home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/scripts/remote-pty-e2e.ts:332:10
+
+Bun v1.4.2 (Linux x64)
