@@ -6,6 +6,7 @@ import { launchRepository, retryRepository, repositoryPreparations } from "./rep
 import { grantCapabilities, revokeCapability } from "./services";
 import type { CapabilityKind } from "./capabilities";
 import { QuestionPicker } from "../questions/picker";
+import { renderHuman, RemoteAttention, assistantText, remoteStatus } from "./human-rendering";
 import {
   inboxItems,
   questionOptions,
@@ -16,12 +17,8 @@ import {
   taskOwned,
 } from "./menu";
 
-/** Keep untrusted remote text printable even for terminals accepting C1/bidi controls. */
-export const renderRemote = (value: unknown) =>
-  (JSON.stringify(value, null, 2) ?? "null").replace(
-    /[-‪-‮⁦-⁩]/g,
-    (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"),
-  );
+/** Safe human-facing renderer. */
+export const renderRemote = renderHuman;
 
 export function parseRemoteLaunch(input: string): { repoPath: string; prompt: string } {
   const start = /^\s*launch\s+/.exec(input);
@@ -52,55 +49,53 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   registerRemoteRuntime(pi);
   if (process.env.DIE_REMOTE_RUNTIME_STATE) return;
   const operations = createRemoteOperations(client),
-    summary = summarizeRemoteTask;
-  const publish = (result: unknown) =>
-    pi.sendMessage({ customType: "die-remote", content: renderRemote(result), display: true });
+    summary = (task: import("./client").RemoteTask) => ({
+      ...summarizeRemoteTask(task),
+      finalAssistantText: assistantText(task.events),
+    });
+  const publish = (result: unknown, kind?: string) =>
+    pi.sendMessage({ customType: "die-remote", content: renderHuman(result, kind), display: true });
   let inFlight = false,
     closed = false,
-    picking = false;
-  const seen = new Map<string, string>();
+    picking = false,
+    ui: { setStatus?: (key: string, value: string | undefined) => void } | undefined;
+  const attention = new RemoteAttention();
+  let lastStatus: string | undefined;
   const refresh = async () => {
     if (inFlight || closed || picking) return;
     inFlight = true;
+    let syncError: unknown;
     try {
-      await client.syncActive();
-      const tasks = Object.values((await client.status()).tasks).slice(-20);
-      if (picking) return;
-      for (const task of tasks) {
-        const notice = {
-          taskId: task.taskId,
-          state: task.task?.state,
-          outcome: task.outcome,
-          eventCount: task.cursor,
-          questions: task.task?.questions,
-          replyDelivery: task.replyDelivery,
-          capabilityNeeds: task.task?.capabilityNeeds,
-          capabilities: task.task?.capabilities,
-          repository: task.repository,
-          artifacts: task.localArtifacts,
-          transcriptComplete: task.transcriptComplete,
-          artifactsComplete: task.artifactsComplete,
-          transcriptWarning: task.task?.textOutputGap,
-          error: task.lastError ?? task.integrationError ?? task.task?.error,
-          cancelRequested: task.cancelRequested,
-          cached: true,
-        };
-        const fingerprint = JSON.stringify(notice);
-        if (seen.get(task.taskId) === fingerprint) continue;
-        seen.set(task.taskId, fingerprint);
-        if (task.task?.state === "done") {
-          const final = task.events
-            .slice()
-            .reverse()
-            .find((row) => {
-              const e = row.event as { type?: string; message?: { role?: string } };
-              return e?.type === "message_end" && e.message?.role === "assistant";
-            });
-          publish({ ...notice, lastAssistant: final?.event });
-        } else publish(notice);
+      try {
+        await client.syncActive();
+      } catch (error) {
+        syncError = error;
       }
+      const state = await client.status();
+      if (picking || closed) return;
+      const status = remoteStatus(state, !!syncError);
+      if (lastStatus !== status) {
+        ui?.setStatus?.("die-remote", status);
+        lastStatus = status;
+      }
+      for (const notice of attention.connection("owner", !!syncError, syncError, (key) =>
+        pi.appendEntry?.("die-remote-attention", { key }),
+      ))
+        publish(notice);
+      for (const notice of attention.update(state, (key) => pi.appendEntry?.("die-remote-attention", { key })))
+        publish(notice);
     } catch (error) {
-      /* Cached transcript is still usable. Task-specific network failures persist on each task. */
+      // A global cache/status failure must not masquerade as a healthy connection.
+      const status = "remote: offline (cached state unavailable)";
+      if (!picking && !closed && lastStatus !== status) {
+        ui?.setStatus?.("die-remote", status);
+        lastStatus = status;
+      }
+      if (!picking && !closed)
+        for (const notice of attention.connection("owner", true, error, (key) =>
+          pi.appendEntry?.("die-remote-attention", { key }),
+        ))
+          publish(notice);
     } finally {
       inFlight = false;
     }
@@ -109,12 +104,22 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     void refresh();
   }, 5000);
   timer.unref();
-  pi.on("session_start", async () => {
+  pi.on("session_start", async (_event, ctx) => {
+    ui = ctx.hasUI ? ctx.ui : undefined;
+    lastStatus = undefined;
+    attention.reset();
+    attention.restore(
+      (ctx.sessionManager?.getBranch?.() ?? [])
+        .filter((entry: any) => entry.type === "custom" && entry.customType === "die-remote-attention")
+        .map((entry: any) => entry.data?.key)
+        .filter((key: unknown): key is string => typeof key === "string"),
+    );
     void refresh();
   });
   pi.on("session_shutdown", async () => {
     closed = true;
     clearInterval(timer);
+    ui?.setStatus?.("die-remote", undefined);
   });
   const choose = async (id?: string) => {
     if (id) return id;
@@ -141,7 +146,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     ) as Promise<string | undefined>;
   const inbox = async (ctx: any) => {
     if (!ctx.hasUI) {
-      publish(await operations({ op: "status" }));
+      publish(await operations({ op: "status" }), "status");
       return;
     }
     picking = true;
@@ -157,11 +162,11 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           continue;
         }
         if (choice === "connect") {
-          const host = (await ctx.ui.editor("SSH host (configured name)"))?.trim();
+          const host = (await ctx.ui.editor("SSH user@host or configured alias"))?.trim();
           if (!host) continue;
           const path = await ctx.ui.editor("Remote die path (blank for default)");
           if (path === undefined) continue;
-          publish(await client.connect(host, path.trim() || undefined));
+          publish({ host, ...(await client.connect(host, path.trim() || undefined)) }, "connect");
           continue;
         }
         if (choice === "launch") {
@@ -217,7 +222,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             );
             if (!action) break;
             if (action === "transcript") {
-              publish(await operations({ op: "transcript", taskId: id, offset: 0 }));
+              publish(await operations({ op: "transcript", taskId: id, offset: 0 }), "transcript");
               return; // Let the human read the conversation instead of covering it with another picker.
             }
             if (action === "sync") publish(summary(await client.sync(id)));
@@ -258,10 +263,13 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         }
       }
     } catch (error) {
-      publish({
-        error: String(error),
-        hint: "No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.",
-      });
+      publish(
+        {
+          error: String(error),
+          hint: "No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.",
+        },
+        "error",
+      );
     } finally {
       picking = false;
     }
@@ -273,12 +281,13 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     handler: async (input, ctx) => {
       if (!input.trim()) return inbox(ctx);
       try {
+        if (ctx.hasUI) ui = ctx.ui;
         const [op, ...rest] = input.trim().split(/\s+/);
         let result: unknown;
         switch (op) {
           case "connect":
             if (!rest[0] || rest.length > 2)
-              throw Error("Usage: /remote connect <configured-ssh-host> [absolute-remote-die-path]");
+              throw Error("Usage: /remote connect <user@host-or-configured-alias> [absolute-remote-die-path]");
             result = {
               host: rest[0],
               ...(await client.connect(rest[0], rest[1])),
@@ -421,13 +430,16 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               "Usage: /remote connect|status|launch|launch-repo|launch-repo-json|answer|grant|revoke|cancel|retry|sync|transcript",
             );
         }
-        publish(result);
+        publish(result, op === "status" || op === "transcript" || op === "connect" ? op : undefined);
         void refresh();
       } catch (error) {
-        publish({
-          error: String(error),
-          hint: "/remote status shows saved task/question IDs. Offline transcript remains available; uncertain operations must reconcile the same ID.",
-        });
+        publish(
+          {
+            error: String(error),
+            hint: "/remote status shows saved task/question IDs. Offline transcript remains available; uncertain operations must reconcile the same ID.",
+          },
+          "error",
+        );
       }
     },
   });

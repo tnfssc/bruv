@@ -72,7 +72,7 @@ export function inboxItems(state: RemoteState): Item[] {
           (task.lastError ? " · " + task.lastError : ""),
       ),
     })),
-    { value: "connect", label: "Connect…", description: "Configured SSH host" },
+    { value: "connect", label: "Connect…", description: "user@host or configured SSH alias" },
     ...(online
       ? [
           {
@@ -157,7 +157,11 @@ const verbs = [
 ];
 export function remoteCompletions(prefix: string, state: RemoteState): Item[] | null {
   const match = /^(\S+)\s+(.*)$/s.exec(prefix);
-  if (!match) return verbs.filter((v) => v.startsWith(prefix)).map((v) => ({ value: v, label: v }));
+  // An exact command must submit on Enter, not re-select the identical completion.
+  if (!match)
+    return verbs.includes(prefix)
+      ? null
+      : verbs.filter((v) => v.startsWith(prefix)).map((v) => ({ value: v, label: v }));
   const [, verb, typed] = match;
   if (verb === "answer") {
     const scoped = /^(\S+)\s+(\S*)$/.exec(typed);
@@ -193,6 +197,7 @@ export function remoteCompletions(prefix: string, state: RemoteState): Item[] | 
     return ["repo.read", "tool:git-status", "tool:git-diff"]
       .filter((v) => v.startsWith(typed))
       .map((v) => ({ value: "grant " + v, label: v }));
+  if (["sync", "cancel", "retry", "transcript", "grant", "revoke"].includes(verb!) && state.tasks[typed]) return null;
   if (["sync", "cancel", "retry", "transcript", "grant", "revoke"].includes(verb!))
     return Object.values(state.tasks)
       .filter((task) => task.taskId.startsWith(typed) || task.prompt.toLowerCase().includes(typed.toLowerCase()))

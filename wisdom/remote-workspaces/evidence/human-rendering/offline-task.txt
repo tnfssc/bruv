@@ -1,0 +1,35 @@
+ /remote status shows saved task/question IDs. Offline transcript remains available; uncertain operations must
+ reconcile the same ID.
+
+
+ [die-remote]
+
+ Remote f09205ce-33e3-4b7e-b511-f94a4f1eed82 · offline; cached state only: Error: SSH remote control failed: ssh:
+ connect to host 127.0.0.1 port 32996: Connection refused
+
+
+ [die-remote]
+
+ Remote f09205ce-33e3-4b7e-b511-f94a4f1eed82 · question q_5d419c15-76c9-4b82-aced-497d57e63ca9:
+ REMOTE_FIXTURE_MENU_QUESTION · /remote to answer
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Task · REMOTE_FIXTURE_MENU_CHOICE
+
+View cached transcript
+
+Available offline
+> Filter…
+→ View cached transcript                                                          Available offline
+  Sync task                                                                       Fetch owner updates
+↑↓ · PgUp/PgDn details · type · Enter · Esc
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+remote: 1 active · 1 question(s) · offline (cached) $0.000 C6.9% cache est ?                               fixture-model
+
+
+
+
+
+
+

@@ -311,10 +311,12 @@ export function renderCompactFooter(
           ? "fast?"
           : "";
   const live = singleLine(statuses.get("die-live") ?? "");
+  const remote = singleLine(statuses.get("die-remote") ?? "");
   const otherCount = [...statuses.keys()].filter(
     (key) =>
       key !== "die-tasks" &&
       key !== "die-questions" &&
+      key !== "die-remote" &&
       key !== "die-mode" &&
       key !== "die-native-fast" &&
       key !== "die-live" &&
@@ -345,6 +347,7 @@ export function renderCompactFooter(
     [
       [
         accent(live),
+        accent(remote),
         branch ? `${project}:${singleLine(branch)}` : project,
         accent(task),
         questions,
@@ -361,6 +364,7 @@ export function renderCompactFooter(
     [
       [
         accent(live),
+        accent(remote),
         project,
         accent(task),
         questions,
@@ -377,6 +381,7 @@ export function renderCompactFooter(
     [
       [
         accent(live),
+        accent(remote),
         accent(shortTask),
         shortQuestions,
         accent(shortNativeFast),
@@ -390,7 +395,17 @@ export function renderCompactFooter(
       " ",
     ],
     [
-      [shortQuestions, accent(live), accent(shortTask), accent(shortNativeFast), cost, context("C"), cacheText, extra],
+      [
+        shortQuestions,
+        accent(live),
+        accent(remote),
+        accent(shortTask),
+        accent(shortNativeFast),
+        cost,
+        context("C"),
+        cacheText,
+        extra,
+      ],
       model,
       " ",
     ],

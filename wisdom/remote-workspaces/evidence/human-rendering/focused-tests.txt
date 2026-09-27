@@ -1,0 +1,128 @@
+bun test v1.4.2 (744846f84)
+
+tests/footer.test.ts:
+(pass) compact extension footer > Live reactive line stays in existing compact status row [2.18ms]
+(pass) compact extension footer > pending questions remain in ordinary-color compact footer through progress updates [0.52ms]
+(pass) compact extension footer > braille animation stays one row and within narrow terminal widths [3.34ms]
+(pass) compact extension footer > /status toggles details without replacing the editor or changing the draft [1.13ms]
+(pass) compact extension footer > default is one row including tasks, cost, context, model and thinking [2.14ms]
+(pass) compact extension footer > keeps historical fast-session dollar cost unavailable after explicit off [0.42ms]
+(pass) compact extension footer > persisted voice increments survive resume and incomplete billing is explicit [0.35ms]
+(pass) compact extension footer > caches reduced history until session position changes [0.54ms]
+(pass) compact extension footer > puts task count beside the directory without losing usage or model information [0.08ms]
+(pass) compact extension footer > clears completed counts and preserves other extensions' statuses [0.12ms]
+(pass) compact extension footer > respects narrow widths, Unicode paths, ANSI styles, and live counts [0.67ms]
+(pass) compact extension footer > includes tool/summary usage and unknown post-compaction context [0.27ms]
+(pass) compact extension footer > does not abbreviate directories outside the home or leak path newlines [0.06ms]
+(pass) compact extension footer > uses setFooter only in TUI mode and disposes its reactive subscription [0.26ms]
+(pass) both footer modes combine costs without adding child tokens or context [0.16ms]
+(pass) disposing the footer suppresses an in-flight cost refresh redraw [0.32ms]
+(pass) footer includes failed compaction attempt costs without changing context usage [0.22ms]
+(pass) cache estimate keeps footer usage layout and uses a bounded disposable minute timer [0.66ms]
+(pass) compact UI owns initial footer disposal across switches and shutdown [0.27ms]
+(pass) footer cache notices an append followed by branching back between renders [0.15ms]
+(pass) remote work and attention remain named in compact footer, not a hidden extra-status count [0.31ms]
+
+tests/remote-artifacts.test.ts:
+(pass) catalog includes entire journal and execute spill, not tool preview; returns exact offline bytes [7.31ms]
+(pass) mid-download change leaves incomplete manifest and retry refetches [2.06ms]
+(pass) rejects escapes, symlinks, oversized files, bad offsets and altered chunks [5.07ms]
+(pass) refuses symlinked execute directory and noncontiguous page [0.68ms]
+
+tests/remote-capabilities.test.ts:
+(pass) explicit repo grant, bounded read and no other task/kind [1.99ms]
+(pass) traversal, symlink, oversized, binary and nonregular denied [0.88ms]
+(pass) offline waiting, reply identity, duplicate, revoke, cancellation and retry [1.08ms]
+(pass) named tool/skill handlers only; output and request limits [0.51ms]
+(pass) revocation during slow handler suppresses late result [0.34ms]
+
+tests/remote-capability-runtime.test.ts:
+(pass) offline request survives reload, explicitly granted read and idempotent fenced reply [6.03ms]
+(pass) offline execute remains pending; abort, deadline, revoke and terminal fence [106.54ms]
+(pass) sensitive paths denied, explicit skills and read-only git tools [20.57ms]
+(pass) concurrent capability requests across mailbox instances obey the pending bound [107.11ms]
+(pass) an explicit regrant after revocation gets a new durable authority without reviving the old one [9.54ms]
+
+tests/remote-client.test.ts:
+(pass) pins intent before first network POST; uncertain retry uses identical ID only [5.30ms]
+(pass) changed owner prevents retry and sync; cache remains available offline [4.32ms]
+(pass) paginated sync persists contiguous pages and does not clobber accepted task after offline [4.21ms]
+(pass) rejects gaps without persisting bad transcript and never accepts hostile host [2.50ms]
+(pass) lost launch reply blocks automatic fresh-ID repeat of the same intent [2.01ms]
+(pass) missing remote model fails explicitly without copying a local default [0.58ms]
+(pass) independent client instances serialize local state writes [33.57ms]
+(pass) killed client releases state lock and reopens the same durable ambiguous ID [24.33ms]
+(pass) unknown task snapshot carries its error and native questions rather than losing status [2.39ms]
+(pass) targeted answer pins reply ID before transport, rejects changed intent, bounded reconnect sync [7.28ms]
+(pass) restart automatically finishes a partially cached terminal transcript [3.56ms]
+(pass) existing task catch-up is independent of a subsequently removed default profile [2.51ms]
+(pass) cancel retains local intent and pinned retry after changed-connection [6.18ms]
+(pass) cancel retains local intent and pinned retry after offline-hello [3.75ms]
+(pass) cancel retains local intent and pinned retry after lost-cancel [4.14ms]
+(pass) uncertain cancel stays uncertain across changed owner and only terminal sync proves cancellation [7.35ms]
+
+tests/remote-e2e.test.ts:
+(skip) normal CLI Docker/SSH fake-provider owner continues, answers native question, and reconnects
+(skip) compiled CLI /remote native question PTY
+
+tests/remote-job-artifacts.test.ts:
+(pass) native job text is paged into task-owned offline artifacts before buffers disappear [0.82ms]
+
+tests/remote-menu.test.ts:
+(pass) remote inbox has searchable actionable labels and relevant completion IDs [0.73ms]
+(pass) uncertain replies are never offered as new questions; offline actions are visibly unavailable [0.14ms]
+(pass) untrusted remote labels are printable [0.04ms]
+(pass) cached offline and foreign-owner questions are visible but not answer actions [0.11ms]
+(pass) uncertain reply remains actionable without offering a replacement answer [0.13ms]
+(pass) cancel delivery status is shown apart from terminal observation [0.07ms]
+(pass) SSH connection discovery explains usernames and aliases [0.02ms]
+(pass) fully typed remote commands submit instead of reselecting identical autocomplete [0.04ms]
+
+tests/remote-owner.test.ts:
+(pass) remote handshake, pinned launch, immutable intent and unknown recovery [711.13ms]
+
+tests/remote-repository-wire.test.ts:
+(pass) orphan snapshot omits history; chunk replay is idempotent and result is terminal fenced [160.99ms]
+
+tests/remote-repository.test.ts:
+(pass) capture current tracked state and safe return without touching staged index [120.72ms]
+(pass) local drift, remote creations and remote untracked bytes are review only [119.27ms]
+(pass) explicit untracked transfer and hidden tracked edits [74.33ms]
+
+tests/remote-runtime.test.ts:
+(pass) owner completion checkpoint reads actual paged jobs and pending-message state [0.93ms]
+
+tests/remote-ssh.test.ts:
+(pass) SSH oversized peer is bounded and force-stopped even when it ignores TERM [1113.99ms]
+
+tests/remote-extension.test.ts:
+(pass) remote uses execute bridge while human output persists in conversation [2.17ms]
+(pass) remote launch preserves raw prompt and quoted repository paths [0.11ms]
+(pass) accepted retry syncs; uncertain retry retains same launch ID [0.40ms]
+(pass) execute remote methods use configured client, never accept a host [0.29ms]
+(pass) remote presentation escapes terminal and bidi control text [0.05ms]
+(pass) stale targeted or missing-text remote answers never fall through to a different question [0.65ms]
+(pass) no-args inbox binds selected choice to freshly synced owner/version, Escape never submits [1.20ms]
+(pass) connect editor Escape never connects, even after entering a host [0.15ms]
+(pass) cancel confirmation open then offline refuses dispatch [0.44ms]
+(pass) cancel confirmation open then changed-owner refuses dispatch [0.04ms]
+(pass) many polls do not append routine progress; transitions and reconnect are semantic [0.44ms]
+(pass) human transcript preserves every event and offset while task summary extracts final assistant [0.08ms]
+(pass) poll UI is compact, cleanup clears status, and open picker receives no chat interruption [4.55ms]
+(pass) capability, delivery uncertainty, blocked, failure and integration review get single notices [0.26ms]
+(pass) sync command renders final assistant text from full client task, not stripped RPC summary [0.21ms]
+(pass) attention deduplicates hundreds of polls, reconnects and volatile diagnostics while reporting new identities [1.71ms]
+(pass) compact status retains unresolved attention after active tasks end and clears resolved questions [0.11ms]
+(pass) session branch attention rehydrates on reload without poll spam [30.82ms]
+(pass) each genuine outage and recovery is noticed once, including recovery after session reload [0.29ms]
+(pass) failure is one useful notice and explicit delivery responses distinguish request from outcome [0.16ms]
+
+2 tests skipped:
+(skip) normal CLI Docker/SSH fake-provider owner continues, answers native question, and reconnects
+(skip) compiled CLI /remote native question PTY
+
+ 87 pass
+ 2 skip
+ 0 fail
+ 1539 expect() calls
+Ran 89 tests across 14 files. [3.05s]

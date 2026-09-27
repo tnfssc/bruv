@@ -186,6 +186,29 @@ const evidence = (name: string) => {
   }
 };
 const key = (...keys: string[]) => tmux("send-keys", "-t", "remote", ...keys);
+// Capture only terminal text; the owner/RPC JSON remains available separately for machine assertions.
+const historyPane = () => tmux("capture-pane", "-p", "-S", "-", "-t", "remote");
+const noChatJson = (frame: string) =>
+  assert(
+    !/"(?:taskId|eventCount|lastAssistant|transcriptComplete|replyDelivery)"\s*:/.test(frame),
+    "structured remote poll leaked into human chat\n" + frame,
+  );
+const command = async (text: string, expected: string) => {
+  const before = historyPane().split("[die-remote]").length;
+  key("C-u");
+  type(text);
+  // Let the real editor consume the pasted command before dispatching Enter.
+  await until(text);
+  await Bun.sleep(150);
+  key("Enter");
+  const deadline = Date.now() + 20000;
+  while (Date.now() < deadline) {
+    const messages = historyPane().split("[die-remote]");
+    if (messages.length > before && messages.at(-1)!.replace(/\s+/g, "").includes(expected.replace(/\s+/g, ""))) return;
+    await Bun.sleep(100);
+  }
+  throw new Error("No rendered command result: " + text + "\n" + pane());
+};
 const type = (text: string) => tmux("send-keys", "-t", "remote", "-l", text);
 const until = async (needle: string, timeout = 12000) => {
   const start = Date.now();
@@ -311,6 +334,14 @@ try {
   await until("Question changed");
   evidence("stale-rejected");
   assert.equal(ownerQuestion(staleId).answer, "REMOTE_FIXTURE_MENU_CONTINUED external answer");
+  await rpc.wait(() => state().tasks[answeredId]?.task?.state === "done", "native answer completion", 20000);
+  await rpc.wait(
+    () => historyPane().includes("REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED"),
+    "readable final assistant text",
+    20000,
+  );
+  noChatJson(historyPane());
+  evidence("final-assistant");
   tmux("resize-window", "-t", "remote", "-x", "120", "-y", "35");
   type("/remote an");
   await until("→ answer");
@@ -324,7 +355,18 @@ try {
   key("Tab");
   await until("/remote sync " + first);
   key("C-u");
+  // This native owner job remains active for 120s. Observe multiple real 5s refreshes in
+  // the compiled CLI, not just a renderer unit test or a synthetic publish call.
   const cancelled = await launch("CANCEL", false);
+  await Bun.sleep(6000);
+  const pollFrame = pane();
+  const pollHistory = historyPane();
+  assert(pollFrame.includes("remote: 1 active"), "named compact active remote status not visible\n" + pollFrame);
+  noChatJson(pollHistory);
+  await Bun.sleep(11000); // At least two more production timer ticks with no owner transition.
+  assert.equal(pane(), pollFrame, "unchanged active polls churned the human terminal");
+  assert.equal(historyPane(), pollHistory, "unchanged active polls appended chat messages");
+  evidence("stable-active-polls");
   type("/remote");
   key("Enter");
   await until("Remote · inbox");
@@ -350,11 +392,57 @@ try {
   key("Escape");
   await until("Remote · inbox");
   key("Escape");
+  // A real cancellation changes state once; the next two polls must not repeat it.
+  await Bun.sleep(6000);
+  const cancelledFrame = historyPane();
+  noChatJson(cancelledFrame);
+  await Bun.sleep(11000);
+  assert.equal(historyPane(), cancelledFrame, "cancelled state was announced repeatedly");
+  evidence("cancelled-once");
+  // Explicit human commands are distinct from structured execute/RPC operations.
+  await command("/remote status", "cached observations");
+  await until(cancelled);
+  noChatJson(historyPane());
+  evidence("human-status");
+  await command("/remote sync " + first, "Last synchronized state");
+  await until(first);
+  noChatJson(historyPane());
+  evidence("human-sync");
+  // Use a tall actual terminal to inspect full transcript events rather than
+  // incorrectly treating the bottom viewport as the entire transcript.
+  tmux("resize-window", "-t", "remote", "-x", "120", "-y", "160");
+  await Bun.sleep(150);
+  const finalOffset = state().tasks[unansweredId]!.events.reduce((found, row, index) => {
+    const event = row.event as any;
+    return event?.type === "message_end" &&
+      event.message?.role === "assistant" &&
+      JSON.stringify(event.message).includes("REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED")
+      ? index
+      : found;
+  }, -1);
+  assert(finalOffset >= 0, "fixture final assistant absent from source transcript");
+  await command("/remote transcript " + unansweredId + " " + finalOffset, "REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED");
+  const answerOffset = state().tasks[unansweredId]!.events.reduce(
+    (found, row, index) => (JSON.stringify(row.event).includes("REMOTE_FIXTURE_MENU_CONTINUED") ? index : found),
+    -1,
+  );
+  assert(answerOffset >= 0, "fixture answer absent from source transcript");
+  await command("/remote transcript " + unansweredId + " " + answerOffset, "REMOTE_FIXTURE_MENU_CONTINUED");
+  // Explicit transcript content can itself contain structured tool/event text. The
+  // no-envelope assertions above apply to routine notices and status/sync, not to
+  // arbitrary content the human explicitly requested in the transcript.
+  evidence("human-transcript");
+  tmux("resize-window", "-t", "remote", "-x", "120", "-y", "35");
+  await Bun.sleep(150);
   const offline = await launch("OFFLINE");
   const stopped = spawnSync("docker", ["stop", "-t", "1", container], { encoding: "utf8", timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
+  await command("/remote sync " + offline, "cached");
   rpc.send("/remote sync " + offline);
   await rpc.wait(() => !!state().tasks[offline]?.lastError, "offline state", 20000);
+  await rpc.wait(() => /offline|unreachable|unavailable/i.test(pane()), "offline human notice", 20000);
+  assert(/offline|unreachable|unavailable/i.test(historyPane()), "offline command implied fresh owner state");
+  noChatJson(historyPane().split("[die-remote]").at(-1)!);
   type("/remote");
   key("Enter");
   await until("Remote · inbox");
@@ -375,7 +463,7 @@ try {
   assert.equal(localLedgers.status, 0, localLedgers.stderr);
   assert.equal(localLedgers.stdout.trim(), "", "remote UI wrote local user questions");
   console.log(
-    "PASS compiled CLI PTY remote menu navigation, choice, free text, narrow choice, subcommand/task/question autocomplete, Escape, task cancellation, stale rejection, quiet picker, offline read; native Docker SSH owner questions",
+    "PASS compiled CLI PTY remote menu, stable active polls, readable transitions/final/status/sync/transcript, offline honesty; native Docker SSH owner questions",
   );
 } finally {
   try {
