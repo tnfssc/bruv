@@ -17,6 +17,8 @@ export type RemoteEvent = { seq: number; event: unknown };
 export type Task = { taskId: string; state: string; [key: string]: unknown };
 export type RemoteTask = {
   taskId: string;
+  /** Immutable parent session attribution, committed with launch intent before SSH. */
+  jobSessionFile?: string;
   host: string;
   ownerId: string;
   epoch: string;
@@ -193,11 +195,13 @@ export class RemoteClient {
     prompt: string,
     taskId?: string,
     overrides?: { model?: string; thinking?: string },
+    sessionFile?: string,
   ): Promise<RemoteTask> {
     return this.exclusive(async () => {
       if (
         !repoPath.startsWith("/") ||
         !prompt.trim() ||
+        (sessionFile !== undefined && !sessionFile) ||
         (taskId !== undefined && !/^[a-zA-Z0-9_-]{1,128}$/.test(taskId))
       )
         throw new Error("Expected absolute remote repoPath, prompt and safe taskId");
@@ -226,6 +230,8 @@ export class RemoteClient {
       }
       let task = state.tasks[taskId];
       if (task) {
+        if (sessionFile !== undefined && task.jobSessionFile !== sessionFile)
+          throw new Error("Task ID already belongs to a different session (or has no session owner); refusal to steal");
         if (
           task.host !== c.host ||
           task.ownerId !== c.hello.ownerId ||
@@ -240,6 +246,7 @@ export class RemoteClient {
         if (Object.keys(state.tasks).length >= 100) throw new Error("Remote cache task limit (100) reached");
         task = {
           taskId,
+          ...(sessionFile ? { jobSessionFile: sessionFile } : {}),
           host: c.host,
           ownerId: c.hello.ownerId,
           epoch: c.hello.epoch,
