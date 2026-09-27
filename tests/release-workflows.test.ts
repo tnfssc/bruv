@@ -95,13 +95,17 @@ describe("release automation", () => {
         >;
       };
       const job = workflow.jobs[path === "ci" ? "test" : "release"]!;
-      expect(job.env?.BUN_INSTALL_CACHE_DIR).toBe("${{ runner.temp }}/die-bun-cache");
-      expect(job.env?.PNPM_CONFIG_STORE_DIR).toBe("${{ runner.temp }}/die-pnpm-store");
+      expect(await read(`.github/workflows/${path}.yml`)).toContain(
+        'echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/die-bun-cache"',
+      );
+      expect(await read(`.github/workflows/${path}.yml`)).toContain(
+        'echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/die-pnpm-store"',
+      );
       const caches = job.steps.filter((step) => step.uses?.startsWith("actions/cache@"));
       expect(caches).toHaveLength(2);
-      expect(caches[0]?.with?.path).toBe(job.env?.BUN_INSTALL_CACHE_DIR);
+      expect(caches[0]?.with?.path).toBe("${{ runner.temp }}/die-bun-cache");
       expect(caches[0]?.with?.key).toContain("hashFiles('bun.lock', 'package.json')");
-      expect(caches[1]?.with?.path).toBe(job.env?.PNPM_CONFIG_STORE_DIR);
+      expect(caches[1]?.with?.path).toBe("${{ runner.temp }}/die-pnpm-store");
       expect(caches[1]?.with?.key).toContain("pnpm-11.10.0-");
       expect(caches[1]?.with?.key).toContain(
         "hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch')",
@@ -372,6 +376,10 @@ test("release cache environment retains source identity variables", async () => 
   const job = Object.values(workflow.jobs).find((job) => job.name === "Linux, macOS, and Android release")!;
   expect(job.env?.RELEASE_SHA).toContain("needs.prepare-manual.outputs.sha");
   expect(job.env?.RELEASE_TAG).toContain("needs.prepare-manual.outputs.tag");
-  expect(job.env?.BUN_INSTALL_CACHE_DIR).toContain("runner.temp");
-  expect(job.env?.PNPM_CONFIG_STORE_DIR).toContain("runner.temp");
+  const source = await read(".github/workflows/release.yml");
+  expect(source).toContain('echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/die-bun-cache"');
+  expect(source).toContain('echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/die-pnpm-store"');
+  for (const job of Object.values(workflow.jobs)) {
+    expect(JSON.stringify(job.env ?? {})).not.toContain("runner.temp");
+  }
 });
