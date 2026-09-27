@@ -1,3 +1,4 @@
+import type { RemoteOperation } from "../remote/operations";
 import { enableJobResponseAcknowledgement, JOB_RESPONSE_ACK_EVENT, withJobRequestIdentity } from "../job-delivery";
 import type { ChildProcess } from "node:child_process";
 import { Duplex } from "node:stream";
@@ -97,7 +98,7 @@ export interface ExecuteJobGlobals {
   live: { stop(): Promise<unknown> };
   remote: {
     status(): Promise<unknown>;
-    launch(input: { repoPath: string; prompt: string; taskId?: string }): Promise<unknown>;
+    launch(input: Omit<Extract<RemoteOperation, { op: "launch" }>, "op">): Promise<unknown>;
     sync(taskId: string): Promise<unknown>;
     transcript(taskId: string, offset?: number): Promise<unknown>;
   };
@@ -343,7 +344,7 @@ export function installJobGlobals(socket?: Duplex): { finish(): Promise<void> } 
     remote: {
       status: async () => request("remote", { op: "status" }),
       launch: async (input) =>
-        request("remote", { op: "launch", repoPath: input.repoPath, prompt: input.prompt, taskId: input.taskId }),
+        request("remote", { ...input, op: "launch" }),
       sync: async (taskId) => request("remote", { op: "sync", taskId }),
       transcript: async (taskId, offset) => request("remote", { op: "transcript", taskId, offset }),
     },

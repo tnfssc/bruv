@@ -1,5 +1,4 @@
 import { Database } from "bun:sqlite";
-import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, chmod, open, stat } from "node:fs/promises";
 import { homedir } from "node:os";
@@ -34,70 +33,8 @@ export type RemoteState = {
   tasks: Record<string, RemoteTask>;
 };
 export type Transport = (host: string, diePath: string, request: Record<string, unknown>) => Promise<unknown>;
-const validHost = (host: string) => /^[a-zA-Z0-9_][a-zA-Z0-9_.@-]*$/.test(host) && !host.startsWith("-");
-const validPath = (path: string) => path === "die" || (path.startsWith("/") && !/[\r\n\0]/.test(path));
-const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
-
-/** One SSH stdio invocation per operation. SSH's remote command is a shell string: quote only the executable. */
-export const sshTransport: Transport = async (host, diePath, request) => {
-  if (!validHost(host) || !validPath(diePath)) throw new Error("Invalid SSH alias or remote die path");
-  return await new Promise((resolve, reject) => {
-    const child = spawn(
-      "ssh",
-      [
-        "-T",
-        "-o",
-        "BatchMode=yes",
-        "-o",
-        "StrictHostKeyChecking=yes",
-        "-o",
-        "UpdateHostKeys=no",
-        "-o",
-        "ClearAllForwardings=yes",
-        "-o",
-        "ForwardAgent=no",
-        "-o",
-        "ForwardX11=no",
-        "-o",
-        "GSSAPIDelegateCredentials=no",
-        "-o",
-        "PermitLocalCommand=no",
-        "--",
-        host,
-        quote(diePath) + " --remote-control",
-      ],
-      { stdio: ["pipe", "pipe", "pipe"] },
-    );
-    let out = "",
-      err = "";
-    const timer = setTimeout(() => child.kill(), 30_000);
-    child.stdout.setEncoding("utf8");
-    child.stderr.setEncoding("utf8");
-    child.stdout.on("data", (s: string) => {
-      out += s;
-      if (out.length > 4_000_000) child.kill();
-    });
-    child.stderr.on("data", (s: string) => {
-      err += s;
-      if (err.length > 4000) err = err.slice(-4000);
-    });
-    child.on("error", (error) => {
-      clearTimeout(timer);
-      reject(error);
-    });
-    child.on("close", (code) => {
-      clearTimeout(timer);
-      if (code !== 0) return reject(new Error("SSH remote control failed: " + (err.trim() || "exit " + code)));
-      try {
-        resolve(JSON.parse(out));
-      } catch {
-        reject(new Error("Remote die returned no protocol JSON; use a compatible remote-enabled Linux build"));
-      }
-    });
-    child.stdin.on("error", () => {});
-    child.stdin.end(JSON.stringify(request) + "\n");
-  });
-};
+export { sshTransport } from "./ssh";
+import { sshTransport, validHost, validPath } from "./ssh";
 function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid remote response");
   const result = value as Record<string, unknown>;
