@@ -342,7 +342,8 @@ export function installJobGlobals(socket?: Duplex): { finish(): Promise<void> } 
     },
     remote: {
       status: async () => request("remote", { op: "status" }),
-      launch: async (input) => request("remote", { op: "launch", repoPath: input.repoPath, prompt: input.prompt, taskId: input.taskId }),
+      launch: async (input) =>
+        request("remote", { op: "launch", repoPath: input.repoPath, prompt: input.prompt, taskId: input.taskId }),
       sync: async (taskId) => request("remote", { op: "sync", taskId }),
       transcript: async (taskId, offset) => request("remote", { op: "transcript", taskId, offset }),
     },
