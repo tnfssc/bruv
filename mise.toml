@@ -1,2 +1,6 @@
+# Keep these aligned with the CI and release bootstrap tools.
 [tools]
 bun = "1.4.2"
+node = "24.21.0"
+# T3 selects pnpm 11.10.0 through its own packageManager field.
+pnpm = "11.27.1"
