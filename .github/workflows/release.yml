@@ -120,6 +120,9 @@ jobs:
       RELEASE_SHA: ${{ needs.prepare-manual.outputs.sha || github.sha }}
       RELEASE_TAG: ${{ needs.prepare-manual.outputs.tag || github.ref_name }}
     timeout-minutes: 40
+    env:
+      BUN_INSTALL_CACHE_DIR: ${{ runner.temp }}/die-bun-cache
+      PNPM_CONFIG_STORE_DIR: ${{ runner.temp }}/die-pnpm-store
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -134,6 +137,18 @@ jobs:
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.2
+      # Only download stores: never restore node_modules, patched source, dist, or credentials.
+      - name: Cache Bun package downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ runner.temp }}/die-bun-cache
+          key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
+      - name: Cache pinned T3 pnpm package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ runner.temp }}/die-pnpm-store
+          # The source pin includes its upstream lockfile; the patch can change its dependencies.
+          key: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch') }}
       - name: Resolve pinned T3 source checkout
         shell: bash
         run: echo "DIE_T3_SOURCE=$GITHUB_WORKSPACE/.cache/die-t3code-$(bun -e 'console.log(require("./integrations/t3/upstream/source.json").revision)')" >> "$GITHUB_ENV"

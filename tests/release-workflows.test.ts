@@ -47,6 +47,7 @@ describe("release automation", () => {
   });
   test("all workflow actions use audited immutable commits and tool versions stay aligned", async () => {
     const pins = new Map([
+      ["actions/cache", "0057852bfaa89a56745cba8c7296529d2fc39830"],
       ["actions/checkout", "3d3c42e5aac5ba805825da76410c181273ba90b1"],
       ["actions/setup-node", "820762786026740c76f36085b0efc47a31fe5020"],
       ["actions/upload-artifact", "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"],
@@ -83,6 +84,29 @@ describe("release automation", () => {
     const notices = await read("scripts/generate-third-party-notices.ts");
     expect(notices).toContain("Bun 1.4.2 runtime");
     expect(notices).toContain("oven-sh/bun/tree/bun-v1.4.2");
+  });
+
+  test("CI and release cache downloads only with pinned dependency and source inputs", async () => {
+    for (const path of ["ci", "release"]) {
+      const workflow = Bun.YAML.parse(await read(`.github/workflows/${path}.yml`)) as {
+        jobs: Record<string, { env?: Record<string, string>; steps: { uses?: string; with?: Record<string, string> }[] }>;
+      };
+      const job = workflow.jobs[path === "ci" ? "test" : "release"]!;
+      expect(job.env?.BUN_INSTALL_CACHE_DIR).toBe("${{ runner.temp }}/die-bun-cache");
+      expect(job.env?.PNPM_CONFIG_STORE_DIR).toBe("${{ runner.temp }}/die-pnpm-store");
+      const caches = job.steps.filter((step) => step.uses?.startsWith("actions/cache@"));
+      expect(caches).toHaveLength(2);
+      expect(caches[0]?.with?.path).toBe(job.env?.BUN_INSTALL_CACHE_DIR);
+      expect(caches[0]?.with?.key).toContain("hashFiles('bun.lock', 'package.json')");
+      expect(caches[1]?.with?.path).toBe(job.env?.PNPM_CONFIG_STORE_DIR);
+      expect(caches[1]?.with?.key).toContain("pnpm-11.10.0-");
+      expect(caches[1]?.with?.key).toContain("hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch')");
+      for (const cache of caches) {
+        expect(cache.with?.key).toContain("${{ runner.os }}-${{ runner.arch }}");
+        expect(cache.with?.["restore-keys"]).toBeUndefined();
+        expect(cache.with?.path).not.toMatch(/node_modules|dist|HOME/);
+      }
+    }
   });
 
   test("CI is deterministic, locked, credential-free, and retains failure logs", async () => {
