@@ -20,11 +20,11 @@ chmod 644 "$tmp/build"/*; chmod 755 "$tmp/build/bun" "$tmp/build/die" "$tmp/buil
 printf 'normal CLI die %s sha256 %s\n' "$(HOME="$tmp/home" "$DIE_BIN" --version)" "$(sha256sum "$DIE_BIN" | cut -d ' ' -f 1)"
 timeout 180 docker build -q -t "$name" "$tmp/build" >/dev/null
 for attempt in {1..8}; do
- if docker run -d --name "$name" --memory 1g --cpus 2 --pids-limit 192 -p 127.0.0.1::2222 -p 127.0.0.1:18765:18765 --mount "type=bind,src=$tmp/keys,dst=/keys,readonly" "$name" >"$tmp/container-id"; then break; fi
+ if docker run -d --name "$name" --memory 1g --cpus 2 --pids-limit 192 -p 127.0.0.1::2222 -p 127.0.0.1::18765 --mount "type=bind,src=$tmp/keys,dst=/keys,readonly" "$name" >"$tmp/container-id"; then break; fi
  docker rm -f "$name" >/dev/null 2>&1 || true
  if (( attempt == 8 )); then echo 'could not bind loopback SSH port' >&2; exit 1; fi
 done
-provider_port="$(docker port "$name" 18765/tcp)"; test "$provider_port" = '127.0.0.1:18765' || { echo 'provider not published exclusively on loopback' >&2; exit 1; }
+provider_port="$(docker port "$name" 18765/tcp)"; [[ "$provider_port" =~ ^127\.0\.0\.1:[0-9]+$ ]] || { echo 'provider not published exclusively on loopback' >&2; exit 1; }
 port="$(docker port "$name" 2222/tcp | sed -nE 's/^127\.0\.0\.1:([0-9]+)$/\1/p')"; test -n "$port" || { echo 'SSH not published only on loopback' >&2; exit 1; }
 printf '[127.0.0.1]:%s %s\n' "$port" "$(cat "$tmp/hostkey.pub")" > "$tmp/home/.ssh/known_hosts"
 cat > "$tmp/home/.ssh/config" <<EOF
@@ -51,7 +51,7 @@ for attempt in {1..50}; do
  sleep .1
 done
 for attempt in {1..50}; do
- if [[ "$(curl --silent --max-time 1 -o /dev/null -w '%{http_code}' http://127.0.0.1:18765/v1/models)" == 404 ]]; then break; fi
+ if [[ "$(curl --silent --max-time 1 -o /dev/null -w '%{http_code}' http://$provider_port/v1/models)" == 404 ]]; then break; fi
  if (( attempt == 50 )); then docker logs "$name" >&2; echo 'provider readiness timeout' >&2; exit 1; fi
  sleep .1
 done
