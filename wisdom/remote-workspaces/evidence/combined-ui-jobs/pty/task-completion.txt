@@ -1,0 +1,35 @@
+ q_2f513f9b-9b1e-41ff-b81f-a81bce1d9c3e
+ Answer q_2f513f9b-9b1e-41ff-b81f-a81bce1d9c3e (reply bc768e1f-e7b5-4dc1-8efd-ddd78076dbf4): delivery uncertain;
+ reconcile saved reply with /remote sync 6d04d8c7-c19d-4877-adc4-1f2087a04dd6 before retrying
+ Last synchronized state, not live status. /remote transcript 6d04d8c7-c19d-4877-adc4-1f2087a04dd6 for full events.
+
+
+ [die-remote]
+
+ Remote 612ec5fa-9b45-465c-ba8a-54a6c1c002ec · done
+ Waiting for the real native question answer
+
+
+ [die-remote]
+
+ Remote 6d04d8c7-c19d-4877-adc4-1f2087a04dd6 · done
+ REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED
+
+
+ [die-remote]
+
+ Remote 1c7cbc6b-f77b-4001-86a7-31966acc94c2 · question q_0bd99e13-d0f8-45bb-a447-c3aa7d30d8a5:
+ REMOTE_FIXTURE_MENU_QUESTION · /remote to answer
+
+
+ [die-remote]
+
+ Remote error: Error: Question changed or has a saved reply; no new answer sent
+ No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.
+
+
+ /remote sync
+  → Task: REMOTE_FIXTURE_MENU_CHOI  done
+    Task: REMOTE_FIXTURE_MENU_FREE  done
+    Task: REMOTE_FIXTURE_MENU_STAL  done
+remote: 1 active · 1 question(s) $0.000 C1.4% cache est ?                                                  fixture-model

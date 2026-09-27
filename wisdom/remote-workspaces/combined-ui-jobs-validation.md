@@ -32,6 +32,8 @@ Docker CLI/PTY fixture worker: /home/tnfssc/.die/worktrees/die-a86675007a5e-task
 
 Text logs: [combined evidence](evidence/combined-ui-jobs/). Docker opt-ins are independently run by the fixture worker rather than misrepresented as covered by the default-suite skips.
 
-Docker/PTY final evidence will be linked here after integration.
+All three Docker compiled gates passed unchanged: owner-continuation/native questions/repository return, PTY menus/quiet progress/human rendering, and print/JSON + two-parent jobs followup/isolation. See [compiled Docker report](combined-compiled-docker-2026-09-27.md) and [17 retained PTY frames](evidence/combined-ui-jobs/pty/). Integration owner also inspected stable-active-polls, narrow-choice, and human-status frames. The Docker binary tested merge 04e6b45; subsequent production-source change is formatting only (git diff 04e6b45 HEAD -- src). No raw JSON fixture rewrite or interaction assertion weakening was needed.
+
+Review/release remains parent-owned. Existing jobs dispatch acceptance/crash-uncertainty limits in jobs-integration.md remain unchanged; no exactly-once claim or real-provider/Live-audio proof is inferred.
 
  Values unchanged: existing actual-human-flow, single-owner, honest-uncertainty and isolated-evidence values already govern this merge.
