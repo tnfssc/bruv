@@ -1,0 +1,160 @@
+
+ [die-remote]
+
+ Remote 76abff84-423c-490e-addf-734ad9878bba · question q_bd95d7c3-f412-4c64-94cf-fdcdb6f7cf6f:
+ REMOTE_FIXTURE_MENU_QUESTION · /remote to answer
+
+
+ [die-remote]
+
+ Remote fdb1a58d-bd41-4c9e-9c56-7fea483d196a · running · 1 question(s) pending
+ Answer q_6fdad03f-95b8-48d5-aca8-0d45c525d952: delivery uncertain; saved reply retained for reconciliation
+ Last synchronized state, not live status. /remote transcript fdb1a58d-bd41-4c9e-9c56-7fea483d196a for full events.
+
+
+ [die-remote]
+
+ Remote 76abff84-423c-490e-addf-734ad9878bba · running · 1 question(s) pending
+ Answer q_bd95d7c3-f412-4c64-94cf-fdcdb6f7cf6f: delivery uncertain; saved reply retained for reconciliation
+ Last synchronized state, not live status. /remote transcript 76abff84-423c-490e-addf-734ad9878bba for full events.
+
+
+ [die-remote]
+
+ Remote error: Error: Question changed or has a saved reply; no new answer sent
+ No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.
+
+
+ [die-remote]
+
+ Remote fdb1a58d-bd41-4c9e-9c56-7fea483d196a · done
+ Waiting for the real native question answer
+
+
+ [die-remote]
+
+ Remote 76abff84-423c-490e-addf-734ad9878bba · done
+ REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED
+
+
+ [die-remote]
+
+ Remote 24ae7611-4561-4393-9309-87922e704af5 · done
+ REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED
+
+
+ [die-remote]
+
+ Remote b59a7aed-fbe3-48a2-8bb3-8ef7ef38f8c3 · cancelled
+ Cancellation: request acknowledged; observed task state: cancelled.
+ Last synchronized state, not live status. /remote transcript b59a7aed-fbe3-48a2-8bb3-8ef7ef38f8c3 for full events.
+
+
+ [die-remote]
+
+ Remote b59a7aed-fbe3-48a2-8bb3-8ef7ef38f8c3 · cancelled
+
+
+ [die-remote]
+
+ Remote · SSH target fixture-owner (cached observations)
+ fdb1a58d-bd41-4c9e-9c56-7fea483d196a · done
+ 76abff84-423c-490e-addf-734ad9878bba · done
+ 24ae7611-4561-4393-9309-87922e704af5 · done
+ b59a7aed-fbe3-48a2-8bb3-8ef7ef38f8c3 · cancelled
+ Use /remote to act; /remote transcript <taskId> for all events.
+
+
+ [die-remote]
+
+ Remote fdb1a58d-bd41-4c9e-9c56-7fea483d196a · done
+ Answer q_6fdad03f-95b8-48d5-aca8-0d45c525d952: delivered to owner (not proof it was used)
+ Waiting for the real native question answer
+ Last synchronized state, not live status. /remote transcript fdb1a58d-bd41-4c9e-9c56-7fea483d196a for full events.
+
+
+ [die-remote]
+
+ Remote transcript · 76abff84-423c-490e-addf-734ad9878bba · offset 51
+ #52 message_end ·
+ {"type":"message_end","message":{"role":"assistant","content":[{"type":"text","text":"REMOTE_FIXTURE_NATIVE_ANSWER_CON
+ TINUED"}],"api":"openai-completions","provider":"fixture","model":"fixture-model","usage":{"input":0,"output":0,"cache
+ Read":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReas
+ on":"stop","timestamp":1790535026125,"responseId":"remote-fixture","rawStopReason":"stop"}}
+ #53 turn_end ·
+ {"type":"turn_end","message":{"role":"assistant","content":[{"type":"text","text":"REMOTE_FIXTURE_NATIVE_ANSWER_CONTIN
+ UED"}],"api":"openai-completions","provider":"fixture","model":"fixture-model","usage":{"input":0,"output":0,"cacheRea
+ d":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason"
+ :"stop","timestamp":1790535026125,"responseId":"remote-fixture","rawStopReason":"stop"},"toolResults":[]}
+ #54 extension_ui_request ·
+ {"type":"extension_ui_request","id":"e8c52400-0d8f-4b85-af3e-da7c0d0dfac5","method":"setStatus","statusKey":"die-quest
+ ions","statusText":"1 question · 1 saved"}
+ #55 agent_end · {"type":"agent_end","messages":[{"role":"custom","customType":"question-answer","content":"Saved
+ answer for
+ q_bd95d7c3-f412-4c64-94cf-fdcdb6f7cf6f:\n{"id":"q_bd95d7c3-f412-4c64-94cf-fdcdb6f7cf6f","owner":{"sessionId":"01a0e434
+ -16f3-7522-9404-0f4d646a2992","branchId":"746ad1f2"},"text":"REMOTE_FIXTURE_MENU_QUESTION","status":"answered","versio
+ n":5,"createdAt":"2026-09-27T18:50:14.402Z","updatedAt":"2026-09-27T18:50:26.121Z","dedupKey":"remote-menu-question","
+ choices":["REMOTE_FIXTURE_MENU_FIRST","REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TAIL_VISIBLE_ON_NARROW_TERMINAL"],"
+ allowFreeText":true,"requester":"Parent","blocked":{"checkpoint":"Need menu
+ answer","foreground":true},"answeredFrom":"cli","answer":"REMOTE_FIXTURE_MENU_CONTINUED free
+ text","replyId":"99e8e64c-d042-4cf5-b074-5eb6e09e5f3c","replyVersion":2,"delivery":"dispatching"}\nUse this saved
+ reply in a new parent turn. Do not replay prior tool calls or resume a native child in
+ place.","display":false,"details":{"questionId":"q_bd95d7c3-f412-4c64-94cf-fdcdb6f7cf6f","replyKey":"99e8e64c-d042-4cf
+ 5-b074-5eb6e09e5f3c","owner":{"sessionId":"01a0e434-16f3-7522-9404-0f4d646a2992","branchId":"746ad1f2"}},"timestamp":1
+ 790535026121},{"role":"assistant","content":[{"type":"text","text":"REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED"}],"api":"o
+ penai-completions","provider":"fixture","model":"fixture-model","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrit
+ e":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timest
+ amp":1790535026125,"responseId":"remote-fixture","rawStopReason":"stop"}],"willRetry":false}
+ #56 agent_settled · {"type":"agent_settled"}
+ #57 extension_ui_request ·
+ {"type":"extension_ui_request","id":"8a5f30b9-4951-47c0-9394-62717d6356de","method":"setStatus","statusKey":"die-nativ
+ e-fast"}
+ #58 extension_ui_request ·
+ {"type":"extension_ui_request","id":"f5d9c6a4-4a0e-46fe-a9f0-c6d299383b1b","method":"setStatus","statusKey":"die-quest
+ ions"}
+ #59 extension_ui_request ·
+ {"type":"extension_ui_request","id":"ec4cde99-ca64-49ba-aced-1c2260d61340","method":"setStatus","statusKey":"die-tasks
+ "}
+ #60 extension_ui_request ·
+ {"type":"extension_ui_request","id":"c35057e7-3673-40ac-923d-6a8bd85c3698","method":"setStatus","statusKey":"die-mode"
+ }
+ End of cached transcript.
+
+
+ [die-remote]
+
+ Remote transcript · 76abff84-423c-490e-addf-734ad9878bba · offset 54
+ #55 agent_end · {"type":"agent_end","messages":[{"role":"custom","customType":"question-answer","content":"Saved
+ answer for
+ q_bd95d7c3-f412-4c64-94cf-fdcdb6f7cf6f:\n{"id":"q_bd95d7c3-f412-4c64-94cf-fdcdb6f7cf6f","owner":{"sessionId":"01a0e434
+ -16f3-7522-9404-0f4d646a2992","branchId":"746ad1f2"},"text":"REMOTE_FIXTURE_MENU_QUESTION","status":"answered","versio
+ n":5,"createdAt":"2026-09-27T18:50:14.402Z","updatedAt":"2026-09-27T18:50:26.121Z","dedupKey":"remote-menu-question","
+ choices":["REMOTE_FIXTURE_MENU_FIRST","REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TAIL_VISIBLE_ON_NARROW_TERMINAL"],"
+ allowFreeText":true,"requester":"Parent","blocked":{"checkpoint":"Need menu
+ answer","foreground":true},"answeredFrom":"cli","answer":"REMOTE_FIXTURE_MENU_CONTINUED free
+ text","replyId":"99e8e64c-d042-4cf5-b074-5eb6e09e5f3c","replyVersion":2,"delivery":"dispatching"}\nUse this saved
+ reply in a new parent turn. Do not replay prior tool calls or resume a native child in
+ place.","display":false,"details":{"questionId":"q_bd95d7c3-f412-4c64-94cf-fdcdb6f7cf6f","replyKey":"99e8e64c-d042-4cf
+ 5-b074-5eb6e09e5f3c","owner":{"sessionId":"01a0e434-16f3-7522-9404-0f4d646a2992","branchId":"746ad1f2"}},"timestamp":1
+ 790535026121},{"role":"assistant","content":[{"type":"text","text":"REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED"}],"api":"o
+ penai-completions","provider":"fixture","model":"fixture-model","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrit
+ e":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timest
+ amp":1790535026125,"responseId":"remote-fixture","rawStopReason":"stop"}],"willRetry":false}
+ #56 agent_settled · {"type":"agent_settled"}
+ #57 extension_ui_request ·
+ {"type":"extension_ui_request","id":"8a5f30b9-4951-47c0-9394-62717d6356de","method":"setStatus","statusKey":"die-nativ
+ e-fast"}
+ #58 extension_ui_request ·
+ {"type":"extension_ui_request","id":"f5d9c6a4-4a0e-46fe-a9f0-c6d299383b1b","method":"setStatus","statusKey":"die-quest
+ ions"}
+ #59 extension_ui_request ·
+ {"type":"extension_ui_request","id":"ec4cde99-ca64-49ba-aced-1c2260d61340","method":"setStatus","statusKey":"die-tasks
+ "}
+ #60 extension_ui_request ·
+ {"type":"extension_ui_request","id":"c35057e7-3673-40ac-923d-6a8bd85c3698","method":"setStatus","statusKey":"die-mode"
+ }
+ End of cached transcript.
+
+
+
+die-a86675007a5e-task_dca0ef2b · mode: orchestrator · $0.000 · ctx 6.5% · cache est ?                      fixture-model

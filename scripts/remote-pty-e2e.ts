@@ -408,12 +408,23 @@ try {
   await until(first);
   noChatJson(historyPane());
   evidence("human-sync");
-  await command(
-    "/remote transcript " + answeredId + " " + Math.max(0, state().tasks[answeredId]!.cursor - 30),
-    "REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED",
-  );
-  const answerOffset = state().tasks[unansweredId]!.events.findIndex((row) =>
-    JSON.stringify(row.event).includes("REMOTE_FIXTURE_MENU_CONTINUED"),
+  // Use a tall actual terminal to inspect full transcript events rather than
+  // incorrectly treating the bottom viewport as the entire transcript.
+  tmux("resize-window", "-t", "remote", "-x", "120", "-y", "160");
+  await Bun.sleep(150);
+  const finalOffset = state().tasks[unansweredId]!.events.reduce((found, row, index) => {
+    const event = row.event as any;
+    return event?.type === "message_end" &&
+      event.message?.role === "assistant" &&
+      JSON.stringify(event.message).includes("REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED")
+      ? index
+      : found;
+  }, -1);
+  assert(finalOffset >= 0, "fixture final assistant absent from source transcript");
+  await command("/remote transcript " + unansweredId + " " + finalOffset, "REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED");
+  const answerOffset = state().tasks[unansweredId]!.events.reduce(
+    (found, row, index) => (JSON.stringify(row.event).includes("REMOTE_FIXTURE_MENU_CONTINUED") ? index : found),
+    -1,
   );
   assert(answerOffset >= 0, "fixture answer absent from source transcript");
   await command("/remote transcript " + unansweredId + " " + answerOffset, "REMOTE_FIXTURE_MENU_CONTINUED");
@@ -421,6 +432,8 @@ try {
   // no-envelope assertions above apply to routine notices and status/sync, not to
   // arbitrary content the human explicitly requested in the transcript.
   evidence("human-transcript");
+  tmux("resize-window", "-t", "remote", "-x", "120", "-y", "35");
+  await Bun.sleep(150);
   const offline = await launch("OFFLINE");
   const stopped = spawnSync("docker", ["stop", "-t", "1", container], { encoding: "utf8", timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
