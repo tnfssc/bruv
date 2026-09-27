@@ -44,6 +44,8 @@ import { createTaskLifecycleRecorder } from "../tasks/task-lifecycle";
 import { type TaskInspection, TaskManager } from "../tasks/task-manager";
 import { registerTaskMonitor } from "../tasks/task-monitor";
 import { createWebTaskEventEmitter } from "../t3/tasks/events";
+import { clearRemoteJobEvents, remoteJobEvents, type RemoteJobObservation } from "../remote/job-events";
+import { RemoteJobDeliveryOutbox } from "../remote/job-delivery";
 
 export function completionDiagnosticDetails(tasks: TaskInspection[], notices: AttentionNotice[]) {
   const taskStatusCounts = {
@@ -239,8 +241,36 @@ export default function asynchronousTasksExtension(
   };
 
   let t3NativeSession = false;
+  let remoteOutbox: RemoteJobDeliveryOutbox | undefined;
+  let remoteSessionFile: string | undefined;
+  let unsubscribeRemote: (() => void) | undefined;
+  let remoteRetry: ReturnType<typeof setTimeout> | undefined;
+  const remoteActionable = new Set<string>();
+  const scheduleRemoteRetry = () => {
+    if (remoteRetry || !remoteOutbox?.hasPending()) return;
+    remoteRetry = setTimeout(() => {
+      remoteRetry = undefined;
+      if (remoteOutbox?.pending().length) notificationBatch.add({ kind: "remote" });
+      scheduleRemoteRetry();
+    }, 1_000);
+    remoteRetry.unref?.();
+  };
+  const disposeRemote = () => {
+    unsubscribeRemote?.();
+    unsubscribeRemote = undefined;
+    if (remoteRetry) clearTimeout(remoteRetry);
+    remoteRetry = undefined;
+    remoteOutbox?.close();
+    remoteOutbox = undefined;
+    remoteActionable.clear();
+    if (remoteSessionFile) clearRemoteJobEvents(remoteSessionFile);
+    remoteSessionFile = undefined;
+  };
   let t3LocalDelivery: T3LocalNotificationDelivery | undefined;
-  type Notification = { kind: "completion"; task: TaskInspection } | { kind: "attention"; notice: AttentionNotice };
+  type Notification =
+    | { kind: "completion"; task: TaskInspection }
+    | { kind: "attention"; notice: AttentionNotice }
+    | { kind: "remote" };
   const notificationBatch = new CompletionBatcher<Notification>(
     (items) => {
       updateTaskStatus();
@@ -256,7 +286,9 @@ export default function asynchronousTasksExtension(
       );
       const tasks = [...completionMap.values()],
         notices = [...attentionMap.values()];
-      if (!tasks.length && !notices.length) return;
+      const remoteRows = remoteOutbox?.pending() ?? [];
+      const actionable = [...remoteActionable];
+      if (!tasks.length && !notices.length && !remoteRows.length && !actionable.length) return;
       const mixed = tasks.length > 0 && notices.length > 0;
       const separator = mixed ? 2 : 0;
       const completionBudget = mixed ? 2_499 : 5_000;
@@ -264,26 +296,52 @@ export default function asynchronousTasksExtension(
       const content = [
         tasks.length ? formatCompletionNotification(tasks, completionBudget) : "",
         notices.length ? formatAttentionNotification(notices, attentionBudget) : "",
+        remoteRows.length
+          ? "SSH jobs completed:\n" +
+            remoteRows
+              .map(
+                ({ id, observation }) =>
+                  `${observation.taskId} ${observation.state} (delivery ${id})${observation.preview ? ` — ${observation.preview.slice(0, 500)}` : ""}`,
+              )
+              .join("\n")
+          : "",
+        actionable.length ? actionable.join("\n") : "",
       ]
         .filter(Boolean)
         .join("\n\n");
       const owner = owningContext?.sessionManager && currentMainOwner(owningContext.sessionManager);
-      if (owner) {
-        owner.sendContext(content, {
-          customType: tasks.length ? "task-complete" : "task-attention",
-          details: completionDiagnosticDetails(tasks, notices),
-        });
-        return;
+      try {
+        if (owner) {
+          owner.sendContext(content, {
+            customType: tasks.length || remoteRows.length ? "task-complete" : "task-attention",
+            details: {
+              ...completionDiagnosticDetails(tasks, notices),
+              remote: remoteRows.map(({ id, observation }) => ({ id, ...observation })),
+            },
+          });
+        } else {
+          if (t3NativeSession) return; // Never fall back to an unowned Pi turn.
+          pi.sendMessage(
+            {
+              customType: tasks.length || remoteRows.length ? "task-complete" : "task-attention",
+              content,
+              display: true,
+              details: {
+                ...completionDiagnosticDetails(tasks, notices),
+                remote: remoteRows.map(({ id, observation }) => ({ id, ...observation })),
+              },
+            },
+            { deliverAs: "steer", triggerTurn: true },
+          );
+        }
+        remoteOutbox?.delivered(remoteRows);
+        for (const item of actionable) remoteActionable.delete(item);
+      } catch (error) {
+        remoteOutbox?.failed(remoteRows);
+        console.error("Job completion dispatch failed:", error);
+      } finally {
+        scheduleRemoteRetry();
       }
-      pi.sendMessage(
-        {
-          customType: tasks.length ? "task-complete" : "task-attention",
-          content,
-          display: true,
-          details: completionDiagnosticDetails(tasks, notices),
-        },
-        { deliverAs: "steer", triggerTurn: true },
-      );
     },
     250,
     500,
@@ -611,8 +669,11 @@ export default function asynchronousTasksExtension(
     if (ctx.signal?.aborted || lastAssistant?.stopReason === "aborted" || lastAssistant?.stopReason === "error") return;
     const tasks = manager;
     const running = tasks?.list().filter((task) => task.status === "running") ?? [];
+    const remoteSource = remoteSessionFile ? remoteJobEvents(remoteSessionFile) : undefined;
+    const remoteRunning =
+      remoteSource?.snapshot().filter((job) => job.state === "running" || job.state === "unknown") ?? [];
     let boundary: "completion" | "attention" | "abort" = "abort";
-    if (tasks && running.length > 0) {
+    if ((tasks && running.length > 0) || remoteRunning.length > 0) {
       let onAbort: (() => void) | undefined;
       let resolveCompletion!: () => void;
       const completion = new Promise<void>((resolve) => {
@@ -620,15 +681,37 @@ export default function asynchronousTasksExtension(
       });
       // One manager listener covers every running job and, unlike Promise.then,
       // can be detached when attention or cancellation wins this boundary.
-      const unsubscribe = tasks.subscribe((event) => {
+      const unsubscribe = tasks?.subscribe((event) => {
         if (event.type === "completed") resolveCompletion();
+      });
+      const remoteKeys = new Set(remoteRunning.map((job) => JSON.stringify([job.ownerId, job.epoch, job.taskId])));
+      const unsubscribeRemoteWait = remoteSource?.subscribe((event) => {
+        if (
+          remoteKeys.has(JSON.stringify([event.ownerId, event.epoch, event.taskId])) &&
+          (event.state === "done" || event.state === "cancelled" || !!event.actionable)
+        )
+          resolveCompletion();
       });
       const attentionWait = new AbortController();
       try {
         // A child can exit after the running snapshot but before subscription.
         // Rechecking after subscribing closes that gap without per-job waits.
-        const current = new Map(tasks.list().map((task) => [task.id, task.status]));
+        const current = new Map(tasks?.list().map((task) => [task.id, task.status]) ?? []);
         if (running.some((task) => current.get(task.id) !== "running")) resolveCompletion();
+        const remoteCurrent = new Map(
+          remoteSource?.snapshot().map((job) => [JSON.stringify([job.ownerId, job.epoch, job.taskId]), job]) ?? [],
+        );
+        if (
+          remoteRunning.some((job) => {
+            const latest = remoteCurrent.get(JSON.stringify([job.ownerId, job.epoch, job.taskId]));
+            return (
+              latest?.state === "done" ||
+              latest?.state === "cancelled" ||
+              (!!latest?.actionable && remoteActionable.has(latest.actionable))
+            );
+          })
+        )
+          resolveCompletion();
         boundary = await Promise.race([
           completion.then(() => "completion" as const),
           ...(attention
@@ -647,7 +730,8 @@ export default function asynchronousTasksExtension(
           }),
         ]);
       } finally {
-        unsubscribe();
+        unsubscribe?.();
+        unsubscribeRemoteWait?.();
         attentionWait.abort();
         if (onAbort) ctx.signal?.removeEventListener("abort", onAbort);
       }
@@ -727,6 +811,7 @@ export default function asynchronousTasksExtension(
 
   pi.on("session_start", async (_event, ctx) => {
     notificationBatch.reset();
+    disposeRemote();
     await t3LocalDelivery?.stop();
     t3LocalDelivery = undefined;
     t3NativeSession = process.env[T3_MCP_URL_ENV] !== undefined || process.env[T3_MCP_BEARER_ENV] !== undefined;
@@ -742,6 +827,27 @@ export default function asynchronousTasksExtension(
       } catch {
         // A configured T3 session fails closed if its durable mailbox cannot be
         // opened. It must never fall back to an unowned Pi-triggered turn.
+      }
+    }
+    if (sessionFile) {
+      remoteSessionFile = sessionFile;
+      try {
+        remoteOutbox = new RemoteJobDeliveryOutbox(sessionFile);
+        remoteOutbox.replay();
+        const source = remoteJobEvents(sessionFile);
+        const observe = (event: RemoteJobObservation) => {
+          if (event.state === "done" || event.state === "cancelled") remoteOutbox?.enqueue(event);
+          if (event.actionable) remoteActionable.add(event.actionable);
+          if (remoteOutbox?.pending().length || event.actionable) notificationBatch.add({ kind: "remote" });
+          scheduleRemoteRetry();
+        };
+        unsubscribeRemote = source.subscribe(observe);
+        for (const event of source.snapshot()) observe(event);
+        if (remoteOutbox.pending().length) notificationBatch.add({ kind: "remote" });
+        scheduleRemoteRetry();
+      } catch (error) {
+        console.error("Remote job outbox unavailable:", error);
+        disposeRemote();
       }
     }
     owningContext = ctx;
@@ -767,6 +873,7 @@ export default function asynchronousTasksExtension(
     t3LocalDelivery = undefined;
     t3NativeSession = false;
     completions.dispose();
+    disposeRemote();
     attentions.dispose();
     attention?.dispose();
     await manager?.shutdown();
