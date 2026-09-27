@@ -1,0 +1,21 @@
+# Android CLI/web review before release (2026-09-27)
+
+Read [values](../values.md) and the [integrated installer handoff](install-local-warning-fixes-2026-09-27.md). This is source/platform review, **not** a device validation or release approval. No parent installer output or global installation was modified.
+
+## Baseline versus regression
+
+At pre-warning-cleanup commit `8ccc646` (replace control markers with backticks), the pinned T3 upstream `b488c57f3f9f1688e31c53daee99e29dd1d0baa2` already had a top-level `requireForFff("@ff-labs/fff-node")` in `apps/server/src/workspace/WorkspaceSearchIndex.ts`. Its native packages list Darwin/Linux/Windows, **no Android**. Thus the unsupported search native binary and eager module load predate warning cleanup, despite the existing `die-android-arm64` release artifact. The new regression was broadening `pnpm-workspace.yaml#supportedArchitectures` to three desktop OSes while omitting Android, plus omitting Android from `verifyPortableOptionalDependencies`. Baseline had `os: [current, linux]`, so installs on Linux were not guaranteed to contain Android either. The reviewer is right about the packaging gap; not all of the native limitation is new.
+
+## Resolution and actual call paths
+
+Canonical patch now includes Android in pnpm OS targets; web deploy verifier requires the declared Android ffi-rs optional package. The desktop Windows foreground code (`apps/desktop/src/electron/WindowsForeground.ts`) also imports `ffi-rs` lazily; server `fff-node` depends on ffi-rs but is now only loaded for requested workspace indexes. Browser UI does not import ffi-rs directly. The web archive still carries it as a portable optional native dependency. No claim that it makes fff-node Android-compatible.
+
+Server `WorkspaceSearchIndex.ts` used to load fff-node during module evaluation, even for CLI/web startup. Now it loads only inside `createFinder`'s `Effect.try`, after an explicit Android guard. This makes a requested native workspace index fail with `WorkspaceSearchIndexCreateFailed` (not a process-crashing uncaught require); path/content search and root-index listing remain unavailable on Android. `WorkspaceEntries.browse` and explicit-directory listing use Node filesystem calls, not this native index. Workspace search `WorkspaceEntries.search/searchContents/list` requests a lazy index; refresh skips keys that have not been instantiated and logs/invalidate on creation failure. UI treatment of that returned error on a real Android device remains unverified. The server's other native dependencies or actual CLI/web startup on Android are likewise **not** proven by this source-level guard.
+
+## Evidence and limits
+
+- Portable tests: `bun test tests/t3-android-packaging.test.ts` (2 passed), asserting canonical source patch and verifier coverage. `git apply --reverse --check` on locally cloned pinned upstream with the canonical patch passes. This is a local, isolated `.cache/android-review-source` checkout, not the parent source/artifacts.
+- `adb devices` returned an empty device list. No Android hardware or booted emulator, and no Android execution, installer, browser, CLI/web startup, native availability, or end-to-end feature proof. Full rebuild intentionally deferred because parent has fresh installer running and these checks only establish source/packaging invariants.
+- Safe release note pending device/emulator validation: “Android workspace indexed search/content search and root-index listing are unavailable because the pinned fff-node has no Android binary; normal CLI/web startup is **not yet certified** on Android. Browser image compression uses JavaScript/WASM and is unrelated to this native search limitation.” Release gate: stage Android artifact with the new web archive; on Android run CLI help/start, local web startup/login/connection, filesystem browse, search-unavailable response, and smoke basic chat; confirm no other eager native loads. If startup fails, hold Android artifact or fix before release. Do not silently drop artifact or advertise working startup based on Linux-only tests.
+
+Values unchanged: honest platform evidence and complete-path validation already apply; this is a local packaging recipe, not a new global principle.

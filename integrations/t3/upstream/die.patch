@@ -15574,10 +15574,18 @@ index 6668cc6a..ae9abdd0 100644
            )).some(Boolean);
          if (!shouldRun) {
 diff --git a/apps/server/src/workspace/WorkspaceSearchIndex.ts b/apps/server/src/workspace/WorkspaceSearchIndex.ts
-index a387dd18..049714ba 100644
+index a387dd18..0546bd7a 100644
 --- a/apps/server/src/workspace/WorkspaceSearchIndex.ts
 +++ b/apps/server/src/workspace/WorkspaceSearchIndex.ts
-@@ -71,8 +71,8 @@ export class WorkspaceSearchIndexSearchFailed extends Schema.TaggedError<Workspa
+@@ -32,7 +32,6 @@ import { isWorkspaceImagePreviewPath } from "@t3tools/shared/filePreview";
+ // Node single-executable (only built-ins resolve there), so load it through
+ // `require`, which reads from the real filesystem in every runtime.
+ const requireForFff = NodeModule.createRequire(import.meta.url);
+-const { FileFinder } = requireForFff("@ff-labs/fff-node") as typeof import("@ff-labs/fff-node");
+ 
+ const WORKSPACE_INDEX_MAX_ENTRIES = 25_000;
+ const WORKSPACE_INDEX_PAGE_SIZE = WORKSPACE_INDEX_MAX_ENTRIES + 2;
+@@ -71,8 +70,8 @@ export class WorkspaceSearchIndexSearchFailed extends Schema.TaggedError<Workspa
    "WorkspaceSearchIndexSearchFailed",
    {
      cwd: Schema.String,
@@ -15588,6 +15596,33 @@ index a387dd18..049714ba 100644
      reason: Schema.String,
      cause: Schema.optional(Schema.Defect()),
    },
+@@ -305,8 +304,14 @@ const createFinder = Effect.fn("WorkspaceSearchIndex.createFinder")(function* (
+   variant: WorkspaceSearchIndexVariant,
+ ) {
+   const result = yield* Effect.try({
+-    try: () =>
+-      FileFinder.create({
++    try: () => {
++      // fff-node has no Android binary. Do not load it until a search index is
++      // requested: CLI and web startup must not depend on this optional feature.
++      if (process.platform === "android") {
++        throw new Error("Workspace search is unavailable on Android (fff-node has no Android binary).");
++      }
++      const { FileFinder } = requireForFff("@ff-labs/fff-node") as typeof import("@ff-labs/fff-node");
++      return FileFinder.create({
+         basePath: cwd,
+         disableMmapCache: true,
+         // Content indexing costs scan CPU and memory, so only the on-demand
+@@ -316,7 +321,8 @@ const createFinder = Effect.fn("WorkspaceSearchIndex.createFinder")(function* (
+         aiMode: false,
+         enableFsRootScanning: true,
+         enableHomeDirScanning: true,
+-      }),
++      });
++    },
+     catch: (cause) =>
+       new WorkspaceSearchIndexCreateFailed({
+         cwd,
 diff --git a/apps/server/src/ws.ts b/apps/server/src/ws.ts
 index 176ef3bd..51a5c9d9 100644
 --- a/apps/server/src/ws.ts
@@ -44814,7 +44849,7 @@ index 0b13fbe2..8fdf70fd 100644
 -      '@types/emscripten': 1.41.5
 -      type-fest: 5.7.0
 diff --git a/pnpm-workspace.yaml b/pnpm-workspace.yaml
-index 2a6429b8..a2186be8 100644
+index 2a6429b8..9d6a04a1 100644
 --- a/pnpm-workspace.yaml
 +++ b/pnpm-workspace.yaml
 @@ -1,7 +1,8 @@
@@ -44868,7 +44903,7 @@ index 2a6429b8..a2186be8 100644
 -  os: [current, linux]
 +  cpu: [current, x64, arm64, ia32]
 +  libc: [current, glibc, musl]
-+  os: [current, darwin, linux, win32]
++  os: [current, android, darwin, linux, win32]
 diff --git a/scripts/lib/dev-share.ts b/scripts/lib/dev-share.ts
 index 94a1c462..98e050e2 100644
 --- a/scripts/lib/dev-share.ts

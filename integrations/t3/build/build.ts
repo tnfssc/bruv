@@ -14,6 +14,7 @@ async function verifyPortableOptionalDependencies(output: string): Promise<void>
     optionalDependencies?: Record<string, string>;
   };
   const required = [
+    "@yuuang/ffi-rs-android-arm64",
     "@yuuang/ffi-rs-darwin-arm64",
     "@yuuang/ffi-rs-darwin-x64",
     "@yuuang/ffi-rs-linux-arm64-gnu",
