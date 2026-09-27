@@ -79,14 +79,14 @@ export async function grantCapabilities(
   };
 }
 /** Local authority inventory; never inferred from a remote request. */
-export function localCapabilityGrants(client: RemoteClient, taskId: string) {
+export function localCapabilityGrants(client: RemoteClient, taskId: string, includeRevoked = false) {
   const dir = local(client).dir;
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
     .filter((name) => /^grant_[a-zA-Z0-9_-]+\.json$/.test(name))
     .flatMap((name) => {
       const record = JSON.parse(readFileSync(join(dir, name), "utf8"));
-      if (record.taskId !== taskId || record.id !== name.slice(0, -5) || existsSync(join(dir, record.id + ".revoked")))
+      if (record.taskId !== taskId || record.id !== name.slice(0, -5) || (!includeRevoked && existsSync(join(dir, record.id + ".revoked"))))
         return [];
       return [
         {
@@ -99,8 +99,9 @@ export function localCapabilityGrants(client: RemoteClient, taskId: string) {
     });
 }
 export async function revokeCapability(client: RemoteClient, taskId: string, grantId: string) {
-  if (!localCapabilityGrants(client, taskId).some((grant) => grant.id === grantId))
-    throw Error("No active local grant for this task; no revoke sent");
+  // A lost owner reply must remain retryable after the durable local revocation.
+  if (!localCapabilityGrants(client, taskId, true).some((grant) => grant.id === grantId))
+    throw Error("No local grant for this task; no revoke sent");
   await local(client).store.revoke(grantId);
   await client.control({ op: "capability-revoke", taskId, grantId });
   return { revoked: true, grantId };

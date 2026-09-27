@@ -1125,8 +1125,14 @@ test("local capability revocation is pinned to its task and never sends another 
     const grant = await store.grant("first", dir, ["repo.read"], "grant_test1");
     expect(localCapabilityGrants(client, "first").map((g) => g.id)).toEqual([grant.id]);
     expect(localCapabilityGrants(client, "second")).toEqual([]);
-    expect(revokeCapability(client, "second", grant.id)).rejects.toThrow("No active local grant");
+    expect(revokeCapability(client, "second", grant.id)).rejects.toThrow("No local grant");
     expect(localCapabilityGrants(client, "first")).toHaveLength(1);
+    let attempts = 0;
+    client.control = async () => { if (++attempts === 1) throw Error("owner reply lost"); };
+    await expect(revokeCapability(client, "first", grant.id)).rejects.toThrow("owner reply lost");
+    expect(localCapabilityGrants(client, "first")).toEqual([]);
+    expect(await revokeCapability(client, "first", grant.id)).toMatchObject({ revoked: true });
+    expect(attempts).toBe(2);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
