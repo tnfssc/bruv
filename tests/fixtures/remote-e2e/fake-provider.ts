@@ -1,14 +1,28 @@
 /** Deterministic OpenAI-compatible stream; no real credentials or outbound requests. */
 import { appendFileSync, writeFileSync, existsSync } from "node:fs";
 const server = Bun.serve({
-  hostname: "127.0.0.1",
+  hostname: "0.0.0.0",
   port: 18765,
   async fetch(request) {
     if (request.method !== "POST" || !new URL(request.url).pathname.endsWith("/chat/completions"))
       return new Response("not found", { status: 404 });
     const body = (await request.json()) as {
+      model?: string;
       messages?: Array<{ role: string; tool_call_id?: string; content?: unknown }>;
     };
+    if (body.model === "fixture-parent") {
+      const messages = JSON.stringify(body.messages ?? []);
+      const side = messages.includes("REMOTE_JOBS_PROOF_A") ? "A" : messages.includes("REMOTE_JOBS_PROOF_B") ? "B" : "?";
+      const done = (body.messages ?? []).some(m => m.role === "tool" && m.tool_call_id === "launch-" + side);
+      const completion = messages.includes("SSH jobs completed:");
+      const delta = messages.includes("REMOTE_JOBS_PRINT_BOUNDARY") ? {role:"assistant",content:"REMOTE_JOBS_PRINT_JSON_OK"} : completion ? {role:"assistant",content:"REMOTE_JOBS_PARENT_ACK_" + side} : done
+        ? {role:"assistant",content:"REMOTE_JOBS_PARENT_YIELDED_" + side}
+        : {role:"assistant",tool_calls:[{index:0,id:"launch-" + side,type:"function",function:{name:"execute",arguments:JSON.stringify({code:
+            'console.log(await remote.launch({repoPath:"/fixture/repo",prompt:"REMOTE_JOBS_PROOF_' + side + '"}))'
+          })}}]};
+      const emit = (delta: object, finish_reason: string | null) => ({id:"parent-proof",object:"chat.completion.chunk",created:1,model:"fixture-parent",choices:[{index:0,delta,finish_reason}]});
+      return new Response([emit(delta,null),emit({},"tool_calls" in delta ? "tool_calls":"stop")].map(e=>"data: " + JSON.stringify(e) + "\n\n").join("") + "data: [DONE]\n\n",{headers:{"content-type":"text/event-stream"}});
+    }
     const userText = (body.messages ?? [])
       .filter((m) => m.role === "user")
       .map((m) => JSON.stringify(m.content))
