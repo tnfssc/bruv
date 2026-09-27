@@ -27,6 +27,36 @@ export function assistantText(events: Array<{ event: unknown }> = []): string | 
     if (text) return safe(text);
   }
 }
+const terminal = (t: RemoteTask) => ["done", "cancelled", "failed"].includes(t.task?.state ?? "");
+const replyLines = (t: RemoteTask) =>
+  Object.entries(t.replyDelivery ?? {}).map(
+    ([id, reply]) =>
+      "Answer " +
+      safe(id) +
+      " (reply " +
+      safe(reply.replyId) +
+      "): " +
+      (reply.status === "delivered"
+        ? "delivered to owner (not proof it was used)"
+        : "delivery uncertain; reconcile saved reply with /remote sync " + safe(t.taskId) + " before retrying"),
+  );
+const cancellationLine = (t: RemoteTask) =>
+  t.cancelDelivery &&
+  "Cancellation: " +
+    (t.cancelDelivery.status === "confirmed"
+      ? "request acknowledged"
+      : t.cancelDelivery.status === "uncertain"
+        ? "delivery uncertain"
+        : "requested locally (not yet confirmed)") +
+    "; observed task state: " +
+    safe(t.task?.state ?? "unknown") +
+    (terminal(t)
+      ? " (terminal)."
+      : "; /remote sync " +
+        safe(t.taskId) +
+        " for terminal truth" +
+        (t.cancelDelivery.status === "uncertain" ? "; reconcile before retrying" : "") +
+        ".");
 export function taskLine(t: RemoteTask): string {
   const problems = [
     t.lastError && "offline (cached)",
@@ -40,8 +70,12 @@ export function taskLine(t: RemoteTask): string {
   const questions = (t.task?.questions as any[] | undefined)?.filter((q) => q.status === "pending") ?? [];
   if (questions.length) problems.push(questions.length + " question(s) pending");
   if ((t.task?.capabilityNeeds as any[] | undefined)?.length) problems.push("capability request pending");
-  if (t.cancelRequested && !["done", "cancelled", "failed"].includes(t.task?.state ?? ""))
-    problems.push("cancel requested (not terminal)");
+  const uncertainReplies = Object.entries(t.replyDelivery ?? {}).filter(([, reply]) => reply.status === "uncertain");
+  if (uncertainReplies.length)
+    problems.push("answer delivery uncertain: " + uncertainReplies.map(([id]) => safe(id)).join(", "));
+  if (t.cancelDelivery)
+    problems.push("cancel " + safe(t.cancelDelivery.status) + (terminal(t) ? " (terminal)" : " (not terminal)"));
+  else if (t.cancelRequested && !terminal(t)) problems.push("cancel requested (not terminal)");
   return (
     safe(t.taskId) +
     " \u00B7 " +
@@ -69,6 +103,7 @@ export function renderHuman(value: unknown, kind = "result"): string {
   if (kind === "error" && v.error) return "Remote error: " + detail(v.error) + (v.hint ? "\n" + detail(v.hint) : "");
   if (kind === "status") {
     const tasks = Array.isArray(v.tasks) ? (v.tasks as RemoteTask[]) : [];
+    const preparations = Array.isArray(v.repositoryPreparations) ? v.repositoryPreparations : [];
     return [
       "Remote \u00B7 " +
         (v.connection ? "SSH target " + safe(v.connection.host) : "not connected") +
@@ -80,9 +115,27 @@ export function renderHuman(value: unknown, kind = "result"): string {
           ((t.task?.questions as any[] | undefined) ?? [])
             .filter((q) => q.status === "pending")
             .map((q) => "\n  Question " + safe(q.id) + ": " + safe(q.text ?? q.question))
-            .join(""),
+            .join("") +
+          replyLines(t)
+            .map((line) => "\n  " + line)
+            .join("") +
+          (cancellationLine(t) ? "\n  " + cancellationLine(t) : ""),
       ),
-      tasks.length ? "Use /remote to act; /remote transcript <taskId> for all events." : "No saved tasks.",
+      ...preparations.map(
+        (p: any) =>
+          "Repository preparation " +
+          safe(p.taskId) +
+          " · " +
+          (p.state === "snapshot_incomplete"
+            ? "snapshot incomplete; inspect local preparation before starting a new launch"
+            : p.state === "prepared_not_confirmed_launched"
+              ? "prepared, launch not confirmed; reconcile with owner before retrying same task ID"
+              : "state unknown; inspect local preparation") +
+          (p.artifact ? " · local artifact: " + safe(p.artifact) : ""),
+      ),
+      tasks.length || preparations.length
+        ? "Use /remote to act; /remote transcript <taskId> for saved task events."
+        : "No saved tasks or repository preparations.",
     ].join("\n");
   }
   if (v.taskId) {
@@ -94,25 +147,8 @@ export function renderHuman(value: unknown, kind = "result"): string {
       obj(t.repository).status === "review" &&
         "Repository result review: " + detail(obj(t.repository).reason ?? "returned changes require review"),
       t.task?.error && "Task error: " + detail(t.task.error),
-      ...Object.entries(t.replyDelivery ?? {}).map(
-        ([id, reply]) =>
-          "Answer " +
-          safe(id) +
-          ": " +
-          (reply.status === "delivered"
-            ? "delivered to owner (not proof it was used)"
-            : "delivery uncertain; saved reply retained for reconciliation"),
-      ),
-      t.cancelDelivery &&
-        "Cancellation: " +
-          (t.cancelDelivery.status === "confirmed"
-            ? "request acknowledged"
-            : t.cancelDelivery.status === "uncertain"
-              ? "delivery uncertain"
-              : "requested locally") +
-          "; observed task state: " +
-          safe(t.task?.state ?? "unknown") +
-          ".",
+      ...replyLines(t),
+      cancellationLine(t),
       t.transcriptComplete === false && "Warning: transcript incomplete.",
       t.task?.state === "done" && (v.finalAssistantText || assistantText(t.events)),
       "Last synchronized state, not live status. /remote transcript " + safe(t.taskId) + " for full events.",
