@@ -197,6 +197,9 @@ const command = async (text: string, expected: string) => {
   const before = historyPane().split("[die-remote]").length;
   key("C-u");
   type(text);
+  // Let the real editor consume the pasted command before dispatching Enter.
+  await until(text);
+  await Bun.sleep(150);
   key("Enter");
   const deadline = Date.now() + 20000;
   while (Date.now() < deadline) {
@@ -358,10 +361,7 @@ try {
   await Bun.sleep(6000);
   const pollFrame = pane();
   const pollHistory = historyPane();
-  assert(
-    pollFrame.includes("Remote") || pollFrame.includes(cancelled),
-    "active remote status not visible\n" + pollFrame,
-  );
+  assert(pollFrame.includes("remote: 1 active"), "named compact active remote status not visible\n" + pollFrame);
   noChatJson(pollHistory);
   await Bun.sleep(11000); // At least two more production timer ticks with no owner transition.
   assert.equal(pane(), pollFrame, "unchanged active polls churned the human terminal");

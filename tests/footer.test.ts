@@ -522,3 +522,19 @@ test("footer cache notices an append followed by branching back between renders"
   renderSingleRowFooter(ctx, data, theme, 150);
   expect(calls).toBe(2);
 });
+
+test("remote work and attention remain named in compact footer, not a hidden extra-status count", () => {
+  const { ctx, data, statuses } = fixture();
+  statuses.set("die-remote", "remote: 1 active");
+  for (const width of [50, 90, 120]) {
+    const rows = plain(renderSingleRowFooter(ctx, data, theme, width));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toContain("remote: 1 active");
+    expect(rows[0]).not.toContain("+1 status");
+    expect(visibleWidth(rows[0]!)).toBeLessThanOrEqual(width);
+  }
+  statuses.set("die-remote", "remote: 1 question(s) · offline (cached)");
+  expect(plain(renderSingleRowFooter(ctx, data, theme, 90))[0]).toContain("offline (cached)");
+  statuses.delete("die-remote");
+  expect(plain(renderSingleRowFooter(ctx, data, theme, 90))[0]).not.toContain("remote:");
+});
