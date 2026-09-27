@@ -67,6 +67,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   const publish = (result: unknown, kind?: string) =>
     pi.sendMessage({ customType: "die-remote", content: renderHuman(result, kind), display: true });
   let sessionFile: string | undefined;
+  let sessionGeneration = 0;
   let inFlight = false,
     closed = false,
     picking = false,
@@ -86,24 +87,30 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   const refresh = async () => {
     if (inFlight || closed || picking) return;
     inFlight = true;
+    const generation = sessionGeneration;
+    const current = () => !closed && generation === sessionGeneration;
     let syncError: unknown;
     try {
       // Observe the cache before sync: a completion produced by this sync is new,
       // while a terminal result already on disk is not a fresh-session notice.
       if (initialSnapshot) {
         try {
-          rememberActive(await client.status());
+          const baseline = await client.status();
+          if (!current()) return;
+          rememberActive(baseline);
         } catch {
           /* Retry baseline on next refresh. */
         }
       }
+      if (!current()) return;
       try {
         await client.syncActive();
       } catch (error) {
         syncError = error;
       }
+      if (!current()) return;
       const state = await client.status();
-      if (closed) return;
+      if (!current()) return;
       const baseline = initialSnapshot;
       initialSnapshot = false;
       publishRemoteJobObservations(state, sessionFile);
@@ -125,6 +132,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         publish(notice);
       rememberActive(state);
     } catch (error) {
+      if (!current()) return;
       // A global cache/status failure must not masquerade as a healthy connection.
       const status = "remote: offline (cached state unavailable)";
       if (!picking && !closed && lastStatus !== status) {
@@ -138,6 +146,8 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           publish(notice);
     } finally {
       inFlight = false;
+      // A new session may have requested refresh while this old one was awaiting I/O.
+      if (!closed && generation !== sessionGeneration) void refresh();
     }
   };
   let timer: ReturnType<typeof setInterval> | undefined;
@@ -150,6 +160,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   };
   startRefresh();
   pi.on("session_start", async (_event, ctx) => {
+    sessionGeneration++;
     sessionFile = ctx?.sessionManager?.getSessionFile?.();
     closed = false;
     startRefresh();
@@ -170,6 +181,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     void refresh();
   });
   pi.on("session_shutdown", async () => {
+    sessionGeneration++;
     closed = true;
     sessionFile = undefined;
     if (timer) clearInterval(timer);
