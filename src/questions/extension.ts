@@ -162,7 +162,12 @@ export function registerQuestions(
         if (selected === undefined) break; // Escape from choices returns to the inbox.
         const answer = selected === "write" ? await ctx.ui.editor(text) : q.choices?.[Number(selected)];
         if (!answer?.trim()) continue; // Empty/cancelled editor returns to this question's choices.
-        await service.handle("questions.answer", { id: q.id, answer: answer.trim(), owner: q.owner, version: q.version });
+        await service.handle("questions.answer", {
+          id: q.id,
+          answer: answer.trim(),
+          owner: q.owner,
+          version: q.version,
+        });
         await refresh();
         break;
       }

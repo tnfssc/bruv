@@ -38,7 +38,10 @@ export class QuestionPicker implements Component, Focusable {
     });
   }
   handleInput(data: string): void {
-    if (this.keys.matches(data, "tui.select.cancel")) return this.done();
+    if (this.keys.matches(data, "tui.select.cancel")) {
+      this.done();
+      return;
+    }
     if (this.keys.matches(data, "tui.select.confirm")) {
       const item = this.list.getSelectedItem();
       if (item) this.done(item.value);

@@ -30,8 +30,7 @@ test.skipIf(!hasTmux)(
       expect((await tmux("send-keys", "-t", name, "Enter")).code).toBe(0);
       if (text.startsWith("/questions ")) {
         await Bun.sleep(80);
-        if ((await frame()).includes(" " + text))
-          expect((await tmux("send-keys", "-t", name, "Enter")).code).toBe(0);
+        if ((await frame()).includes(" " + text)) expect((await tmux("send-keys", "-t", name, "Enter")).code).toBe(0);
       }
     };
     const until = async (text: string) => {

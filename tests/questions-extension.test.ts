@@ -325,25 +325,52 @@ test("interactive inbox answers only selected choice, advances, and escape leave
 
 test("cancelled or empty free text retries choices; Escape from choices returns to inbox without mutation", async () => {
   let command: any;
-  const question = { id: "q_one", text: "Why?", status: "pending", version: 1, owner: { sessionId: "s", branchId: "b" } };
+  const question = {
+    id: "q_one",
+    text: "Why?",
+    status: "pending",
+    version: 1,
+    owner: { sessionId: "s", branchId: "b" },
+  };
   const answers: any[] = [];
   const picks = ["q_one", "write", "write", "write", undefined];
   const editorReplies = [undefined, "   ", "valid answer"];
   const titles: string[] = [];
-  const ctx: any = { mode: "tui", ui: {
-    custom: async (factory: any) => {
-      const picker = factory({ terminal: { rows: 24 }, requestRender() {} },
-        { fg: (_: string, s: string) => s }, { matches: () => false }, () => {});
-      titles.push(picker.render(80).join("\n"));
-      return picks.shift();
+  const ctx: any = {
+    mode: "tui",
+    ui: {
+      custom: async (factory: any) => {
+        const picker = factory(
+          { terminal: { rows: 24 }, requestRender() {} },
+          { fg: (_: string, s: string) => s },
+          { matches: () => false },
+          () => {},
+        );
+        titles.push(picker.render(80).join("\n"));
+        return picks.shift();
+      },
+      editor: async () => editorReplies.shift(),
+      notify() {},
+      setStatus() {},
     },
-    editor: async () => editorReplies.shift(), notify() {}, setStatus() {},
-  } };
-  registerQuestions({ on() {}, registerCommand(_: string, value: any) { command = value; } } as any,
-    () => ({ handle(method: string, params: any) {
-      if (method === "questions.list") return [question];
-      if (method === "questions.answer") { answers.push(params); question.status = "answered"; }
-    } }));
+  };
+  registerQuestions(
+    {
+      on() {},
+      registerCommand(_: string, value: any) {
+        command = value;
+      },
+    } as any,
+    () => ({
+      handle(method: string, params: any) {
+        if (method === "questions.list") return [question];
+        if (method === "questions.answer") {
+          answers.push(params);
+          question.status = "answered";
+        }
+      },
+    }),
+  );
   await command.handler("", ctx);
   expect(titles.slice(1, 4).every((title) => title.includes("Why?"))).toBe(true);
   expect(answers).toEqual([{ id: "q_one", answer: "valid answer", owner: question.owner, version: 1 }]);
