@@ -57,12 +57,20 @@ export async function grantCapabilities(
   const check = Bun.spawnSync(["git", "-C", root, "rev-parse", "--show-toplevel"], { stdout: "pipe", stderr: "pipe" });
   if (check.exitCode) throw Error("Capabilities require the current Git repository");
   root = check.stdout.toString().trim();
-  const id =
+  const scopeId =
     "grant_" +
     createHash("sha256")
       .update(JSON.stringify([taskId, root, selected]))
       .digest("hex");
-  const metadata = await local(client).store.grant(taskId, root, selected, id);
+  const capabilityStore = local(client);
+  const binding = join(capabilityStore.dir, scopeId + ".current");
+  let id = existsSync(binding) ? JSON.parse(readFileSync(binding, "utf8")).id : scopeId;
+  if (typeof id !== "string" || !safeId(id)) throw Error("Invalid saved capability grant identity");
+  if (existsSync(join(capabilityStore.dir, id + ".revoked"))) {
+    id = "grant_" + randomUUID();
+    atomic(binding, { id });
+  }
+  const metadata = await capabilityStore.store.grant(taskId, root, selected, id);
   await client.control({ op: "capability-grant", taskId, grant: metadata });
   return {
     grant: metadata,

@@ -1,3 +1,4 @@
+import { grantCapabilities, revokeCapability } from "../src/remote/services";
 import { test, expect } from "bun:test";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -120,6 +121,32 @@ test("concurrent capability requests across mailbox instances obey the pending b
     expect(requests.filter((r) => r.status === "fulfilled")).toHaveLength(32);
     expect(requests.filter((r) => r.status === "rejected")).toHaveLength(8);
     expect(await f.owner.pending()).toHaveLength(32);
+  } finally {
+    await f.clean();
+  }
+});
+
+test("an explicit regrant after revocation gets a new durable authority without reviving the old one", async () => {
+  const f = await fixture();
+  try {
+    execFileSync("git", ["-C", f.repo, "init", "-q"]);
+    const client = {
+      path: join(f.root, "remote", "state.json"),
+      transcript: async () => ({ task: { state: "running" } }),
+      control: async (req: any) => {
+        if (req.op === "capability-grant") await f.owner.acceptGrant(req.grant);
+        else if (req.op === "capability-revoke") await f.owner.revoke(req.grantId);
+        return { accepted: true };
+      },
+    };
+    const first = await grantCapabilities(client as any, "task1", f.repo, ["repo.read"]);
+    await revokeCapability(client as any, "task1", first.grant.id);
+    const second = await grantCapabilities(client as any, "task1", f.repo, ["repo.read"]);
+    expect(second.grant.id).not.toBe(first.grant.id);
+    expect(await f.owner.grant(first.grant.id)).toBeUndefined();
+    expect(await f.owner.grant(second.grant.id)).toMatchObject({ kinds: ["repo.read"] });
+    const retry = await grantCapabilities(client as any, "task1", f.repo, ["repo.read"]);
+    expect(retry.grant.id).toBe(second.grant.id);
   } finally {
     await f.clean();
   }

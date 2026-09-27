@@ -1,6 +1,6 @@
 # Integrated normal-session remote follow-up (2026-09-27)
 
-Work in progress, not a completion or release claim. Parent worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_90d61a8a, base 5c760e05dbd063c124577e108c66248825fd53f7. User says finish the whole normal-session path, Docker only; no external host, publishing, installation or push. Saved answers in user-decisions.md remain binding. Main Live stays execute-only.
+Production integration completed and committed; release remains parent-owned. Parent worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_90d61a8a, base 5c760e05dbd063c124577e108c66248825fd53f7. User says finish the whole normal-session path, Docker only; no external host, publishing, installation or push. Saved answers in user-decisions.md remain binding. Main Live stays execute-only.
 
 ## Ownership / resume
 
@@ -18,7 +18,7 @@ Baseline rebuilt normal CLI Linux Docker/SSH fake-provider lifecycle passed (/tm
 
 ## Assembly and recovery fixes
 
-The parent assembled production paths in 914da9b and subsequent reviewed work (pending final commit). Native module 62c8e87, repo 22ec87e, explicit capability 3093c61/50b58b3 and artifact ea2f898 are integrated, not left as detached experiments. Current user-facing behavior and limits are in src/remote/README.md.
+The parent assembled production paths in 914da9b and completed recovery/offline integration in 26aa4c5. Native module 62c8e87, repo 22ec87e, explicit capability 3093c61/50b58b3 and artifact ea2f898 are integrated, not left as detached experiments. Current user-facing behavior and limits are in src/remote/README.md.
 
 - Snapshot transfer now sends an orphan commit, not local history; a cloned-bundle regression checks the old secret blob is absent. Local shared Git objects avoid copying history during preparation. Known credential/config paths and configured clean/smudge filters are rejected. Regular remote untracked result bytes are retained in a review patch.
 - Parent integration fixed prepared task-directory adoption (upload creates the directory before launch), preserves result receipts across concurrent sessions, and decouples safe code return from offline artifact failures.
@@ -42,3 +42,17 @@ Final typecheck/format/lint pass (existing lint warnings remain). New final full
 Final boundary review task_c6ead351 reads current parent files; worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_90d61a8a-a86675007a5e-task_c6ead351, branch die/final-integrated-remote-boundary-review-c6ead351.
 
 Release wisdom was read. No package version bump, install, push, publish or release dispatch performed. Reused unchanged embedded web assets for CLI iteration; parent still owns exact-SHA web/platform/updater/release gates. No Mac or real-provider proof. Values unchanged: integration, durability, scope and honest partial-state findings apply existing values, not a new broad principle.
+
+## Final handoff (26aa4c5 source)
+
+Final rebuilt root suite **including** opt-in actual Docker/SSH acceptance passed: **1260 pass, 17 skip, 0 fail; 29139 assertions; 183 files; 196.71 s**. Command used installed Bun/Node, TMPDIR=/home/tnfssc/die-test-tmp-90d61a8a and DIE_REMOTE_E2E=1. Task task_f90ca122 completed successfully; raw log /tmp/remote-integrated-final-all.log. The Docker test passed in 66.09 s, now also asserting complete 9000-character execute stdout spill and full scoped native job text are cached, not merely their previews. Built CLI SHA256: **eab27a4c0177549ed3e90acd92e60c1445e227202ed76132ecd6f7b4a5d4e05c**.
+
+Focused remote suite: **39 pass, 1 opt-in skip, 0 fail**, 242 assertions (/tmp/remote-integrated-final-unit.log). Final check/format/lint passed; lint retains existing warnings and infos, not suppressed. Full suite includes real tmux Pi/Live presentation tests; active loadout remains execute-only. These are Linux/fake-provider proofs, not Mac/audio hardware or paid-provider proofs.
+
+Read-only final boundary review task_c6ead351 reported no confirmed blocking defect in artifacts, native job text pagination, cursors, reply identity/status and owner/epoch checks. It did not finish owner/cancellation/human-question review, so do not represent that as a full independent sign-off. Those paths are covered by parent source review, targeted tests and actual Docker/native lifecycle acceptance. Earlier independent terminal-pagination finding is fixed with a regression.
+
+No remaining blocker to parent review/integration was observed. Deliberate supported-scope limits are documented in src/remote/README.md: conservative regular-file return, explicit credential/config-path denial, bounded text/requests, honest gap/unknown states, trusted repo/SSH user assumptions and no fleet/host deployment proof. The parent should review all commits from 5c760e0 through 26aa4c5 plus this wisdom update, integrate, run exact-SHA release/web/platform gates, and only then push/release. Nothing was installed, pushed or published by this work. Values stayed unchanged because all fixes reinforced existing whole-path, durable ownership, bounded-use and honest-state principles.
+
+### Last recovery hardening after the 26aa4c5 gate
+
+Parent review found two narrowly defined recovery holes and added regressions: a control-process crash after durable answer receipt but before command-slot publication could leave a safely retryable reply stranded; recovery now republishes only that exact never-dispatched slot, never an existing possibly-dispatched same-ID command. Also, explicitly granting the same capability after revocation used the revoked ID; an explicit regrant now rotates to a persisted new identity, while retries reuse that new identity and the old grant remains revoked. Targeted tests passed (13 owner/client tests, then 6 mailbox/owner tests). Exact final rebuilt gates are being repeated before handoff; the 1260-pass result above remains evidence for 26aa4c5, not a claim that these last changes skipped testing.

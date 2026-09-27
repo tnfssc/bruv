@@ -377,6 +377,20 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         const prior = read<{ request: typeof req; status: "delivered" | "uncertain" }>(receipt);
         if (JSON.stringify(prior.request) !== JSON.stringify(req))
           return error("answer_conflict", "Reply ID reused with different intent");
+        if (prior.status === "uncertain") {
+          // Receipt is committed before the command slot. Recover that exact pre-dispatch
+          // crash window, but never rewrite an existing (possibly dispatched) same-ID slot.
+          const slotPath = join(location(req.taskId), "answer.json");
+          const slot = existsSync(slotPath) ? read<{ replyId: string }>(slotPath) : undefined;
+          const oldReceipt = slot ? join(location(req.taskId), "answers", slot.replyId + ".json") : undefined;
+          const oldDelivered =
+            oldReceipt && existsSync(oldReceipt) && read<{ status: string }>(oldReceipt).status === "delivered";
+          if (!slot || (slot.replyId !== req.replyId && oldDelivered)) {
+            atomic(slotPath, req);
+            value.task.reply = { replyId: req.replyId, status: "uncertain" };
+            persist(req.taskId, value);
+          }
+        }
         return {
           task: { ...value.task, reply: { replyId: req.replyId, status: prior.status } },
           ...events(req.taskId),

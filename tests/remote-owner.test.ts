@@ -180,6 +180,13 @@ test.skipIf(process.platform !== "linux")(
       expect(await handleRemoteRequest(answer)).toMatchObject({ task: { state: "running" } });
       expect(await handleRemoteRequest({ ...answer, text: "no" })).toMatchObject({ code: "answer_conflict" });
       expect(JSON.parse(readFileSync(join(replyDir, "answer.json"), "utf8"))).toMatchObject(answer);
+      // Simulate control-process death after its durable receipt but before command publication.
+      rmSync(join(replyDir, "answer.json"));
+      expect(await handleRemoteRequest(answer)).toMatchObject({
+        task: { reply: { replyId: answer.replyId, status: "uncertain" } },
+      });
+      expect(JSON.parse(readFileSync(join(replyDir, "answer.json"), "utf8"))).toMatchObject(answer);
+
       // A delivered first answer must not permanently occupy the task's reply slot.
       let nextState = JSON.parse(readFileSync(join(replyDir, "state.json"), "utf8"));
       nextState.task.questions = [{ ...question, id: "q2" }];
