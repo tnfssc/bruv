@@ -13,3 +13,5 @@ First hosted runs 36309583195/36309583805 rejected workflow before jobs: runner 
 Fixed workflow pushed 02327ad. actionlint passed; 16 tests pass. Valid hosted cold runs CI 36309732905 and Release dry-run 36309732944 queued. Watch logs /tmp/die-cache-cold-{ci,release}.log. After success inspect cache-save logs and rerun same CI SHA once to prove warm restores; do not dispatch new release for cache validation.
 
 User requested accurate mise.toml. Parent added Node 24.21.0 and pnpm bootstrap 11.27.1 alongside Bun 1.4.2, matching CI/release/live workflows. T3 packageManager selects pnpm 11.10.0 inside its checkout; comment records distinction. No global tool installation or trust change implied. Values unchanged.
+
+Cold CI 36309732905 cancelled by newer mise push, not test failure; macOS succeeded and saved cache. Hosted annotation showed cache v4 Node20 deprecated. Parent verified latest actions/cache v6.1.0 immutable SHA 55cc8345863c7cc4c66a329aec7e433d2d1c52a9 and action.yml using node24 via GitHub API; updated pins, actionlint + 16 tests pass. New push will supersede CI again; wait final stable run before warm rerun.
