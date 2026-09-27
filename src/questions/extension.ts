@@ -1,3 +1,4 @@
+import { QuestionPicker } from "./picker";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 /** The service owns persistence, scope and authorization; UI only presents a view. */
@@ -122,7 +123,81 @@ export function registerQuestions(
     return matches[0]?.id ?? id;
   };
 
+  const inbox = async (ctx: ExtensionContext, service: QuestionCommands) => {
+    while (true) {
+      const all = records(await service.handle("questions.list", {}));
+      const pending = all.filter((q) => q.status === "pending" && !q.readOnly);
+      if (!pending.length) {
+        ctx.ui.notify("No unanswered questions", "info");
+        return;
+      }
+      const pick = async (title: string, items: { value: string; label: string; description?: string }[]) =>
+        ctx.ui.custom<string | undefined>(
+          (tui, theme, keys, done) =>
+            new QuestionPicker(
+              title,
+              items,
+              theme,
+              keys,
+              done,
+              () => tui.requestRender(),
+              () => tui.terminal.rows,
+            ),
+        );
+      const id = await pick(
+        "Questions · " + pending.length + " unanswered",
+        pending.map((q) => ({
+          value: q.id,
+          label: q.text ?? q.question ?? "Untitled question",
+          description: q.reason,
+        })),
+      );
+      if (!id) return;
+      const q = pending.find((item) => item.id === id)!;
+      const text = q.text ?? q.question ?? "Untitled question";
+      const options = (q.choices ?? []).map((choice, index) => ({ value: String(index), label: choice }));
+      if (q.allowFreeText !== false) options.push({ value: "write", label: "Write an answer…" });
+      const selected = options.length ? await pick(text, options) : undefined;
+      if (selected === undefined) continue;
+      const answer = selected === "write" ? await ctx.ui.editor(text) : q.choices?.[Number(selected)];
+      if (!answer?.trim()) continue;
+      await service.handle("questions.answer", { id: q.id, answer: answer.trim(), owner: q.owner, version: q.version });
+      await refresh();
+    }
+  };
+
   pi.registerCommand("questions", {
+    getArgumentCompletions: async (prefix) => {
+      const verbs = ["list", "detail", "answer", "cancel", "resume"];
+      const parts = prefix.match(/^(\S+)\s+(.*)$/s);
+      if (!parts) return verbs.filter((v) => v.startsWith(prefix)).map((v) => ({ value: v, label: v }));
+      const [, verb, typed] = parts;
+      if (!verbs.includes(verb) || /\s/.test(typed)) return null;
+      try {
+        if (!context) return null;
+        const all = records(await getService(context).handle("questions.list", {}));
+        return all
+          .filter((q) =>
+            verb === "resume"
+              ? q.status === "answered"
+              : verb === "answer" || verb === "cancel"
+                ? q.status === "pending"
+                : true,
+          )
+          .filter(
+            (q) =>
+              !q.readOnly &&
+              (q.id.startsWith(typed) || (q.text ?? q.question ?? "").toLowerCase().includes(typed.toLowerCase())),
+          )
+          .map((q) => ({
+            value: verb + " " + q.id,
+            label: (q.text ?? q.question ?? q.id).replace(/\s+/g, " "),
+            description: q.status,
+          }));
+      } catch {
+        return null;
+      }
+    },
     description: "List, inspect, answer, cancel or resume questions",
     async handler(args, ctx) {
       context = ctx;
@@ -130,7 +205,9 @@ export function registerQuestions(
       const [verb = "list", id, ...rest] = parts;
       try {
         const service = getService(ctx);
-        if (verb === "list") {
+        if (!args.trim() && ctx.mode === "tui") {
+          await inbox(ctx, service);
+        } else if (verb === "list") {
           if (id) throw new Error("Usage: /questions [list|detail <id>|answer <id> <text>|cancel <id>|resume <id>]");
           const questions = records(await service.handle("questions.list", {}));
           ctx.ui.notify(

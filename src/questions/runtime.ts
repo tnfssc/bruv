@@ -226,6 +226,13 @@ export function registerQuestionRuntime(
           if (!options.supported()) throw new Error("Questions are supported in the parent CLI session only.");
           if (method === "questions.answer" || method === "questions.cancel" || method === "questions.resume") {
             const q = service.get(ctx, String(params.id));
+            if (
+              params.version !== undefined &&
+              (q.version !== params.version ||
+                JSON.stringify(q.owner) !== JSON.stringify(params.owner) ||
+                q.status !== "pending")
+            )
+              throw new Error("Question changed while open; reopen /questions to answer the current question.");
             if (method === "questions.resume") {
               if (q.readOnly) throw new Error("Question belongs to the original branch; this is history only.");
               if (q.status !== "answered") throw new Error("Only a saved answer can be resumed.");

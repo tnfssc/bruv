@@ -258,3 +258,97 @@ test("detail uses the same unambiguous short ID as list, including saved-answer 
   expect(notices.at(-1)).toContain("/questions resume q_12345678");
   expect(notices.at(-1)).not.toContain(id);
 });
+
+test("interactive inbox answers only selected choice, advances, and escape leaves data untouched", async () => {
+  let command: any;
+  const questions = [
+    {
+      id: "q_first",
+      text: "Which deployment target?",
+      choices: ["staging", "production"],
+      allowFreeText: false,
+      status: "pending",
+      version: 2,
+      owner: { sessionId: "s", branchId: "b" },
+    },
+    { id: "q_second", text: "Why?", status: "pending", version: 1, owner: { sessionId: "s", branchId: "b" } },
+  ];
+  const replies: any[] = [];
+  const picks = ["q_first", "1", "q_second", "write", undefined];
+  const titles: string[] = [];
+  const ctx: any = {
+    mode: "tui",
+    ui: {
+      custom: async (factory: any) => {
+        const index = titles.length;
+        factory(
+          { terminal: { rows: 24 }, requestRender() {} },
+          { fg: (_: string, s: string) => s },
+          {
+            matches() {
+              return false;
+            },
+          },
+          () => {},
+        );
+        titles.push(index === 0 ? "inbox" : "choice");
+        return picks.shift();
+      },
+      editor: async () => undefined,
+      notify() {},
+      setStatus() {},
+    },
+  };
+  registerQuestions(
+    {
+      on() {},
+      registerCommand(_: string, value: any) {
+        command = value;
+      },
+    } as any,
+    () => ({
+      handle(method: string, params: any) {
+        if (method === "questions.list") return questions;
+        if (method === "questions.answer") {
+          replies.push(params);
+          questions.find((q) => q.id === params.id)!.status = "answered";
+        }
+      },
+    }),
+  );
+  await command.handler("", ctx);
+  expect(replies).toEqual([{ id: "q_first", answer: "production", owner: questions[0].owner, version: 2 }]);
+  expect(questions[1].status).toBe("pending");
+  expect(titles).toHaveLength(5);
+  expect((await command.getArgumentCompletions("ans"))[0].label).toBe("answer");
+});
+
+test("picker wraps full long labels at narrow width and filters without answering on escape", async () => {
+  const { QuestionPicker } = await import("../src/questions/picker");
+  const done: Array<string | undefined> = [];
+  const picker = new QuestionPicker(
+    "Question\nsecond line",
+    [
+      { value: "a", label: "A very long first choice that must wrap cleanly across narrow terminals" },
+      { value: "b", label: "Other choice" },
+    ],
+    { fg: (_: string, text: string) => text } as any,
+    {
+      matches: (data: string, action: string) =>
+        (action === "tui.select.cancel" && data === "\x1b") ||
+        (action === "tui.select.confirm" && data === "\r") ||
+        (action === "tui.select.down" && data === "\x1b[B"),
+    } as any,
+    (value) => done.push(value),
+    () => {},
+    () => 20,
+  );
+  let frame = picker.render(24);
+  expect(frame.join("\n")).toContain("must wrap cleanly");
+  const { visibleWidth } = await import("@earendil-works/pi-tui");
+  expect(frame.every((line) => visibleWidth(line) <= 24)).toBe(true);
+  picker.handleInput("\x1b[B");
+  expect(picker.render(24).join("\n")).toContain("Other choice");
+  picker.handleInput("\x1b");
+  expect(done).toEqual([undefined]);
+});
