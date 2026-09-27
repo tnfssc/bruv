@@ -187,6 +187,8 @@ const evidence = (name: string) => {
 };
 const key = (...keys: string[]) => tmux("send-keys", "-t", "remote", ...keys);
 // Capture only terminal text; the owner/RPC JSON remains available separately for machine assertions.
+// Only the declared freshness footer may change under a modal; every picker/search/selection row stays exact.
+const withoutFreshness = (frame: string) => frame.replace(/^remote: menu snapshot.*$/gm, "[freshness footer]");
 const historyPane = () => tmux("capture-pane", "-p", "-S", "-", "-t", "remote");
 const noChatJson = (frame: string) =>
   assert(
@@ -329,7 +331,12 @@ try {
   rpc.send("/remote answer " + staleId + " " + staleQ.id + " REMOTE_FIXTURE_MENU_CONTINUED external answer");
   await rpc.wait(() => ownerQuestion(staleId).status !== "pending", "external answer creates stale picker", 20000);
   await Bun.sleep(5500); // Cross the production refresh timer while the other client changes this question.
-  assert.equal(pane(), stablePickerFrame, "background refresh disturbed the open picker");
+  assert(pane().includes("menu snapshot updated"), "open stale picker lacks freshness indication");
+  assert.equal(
+    withoutFreshness(pane()),
+    withoutFreshness(stablePickerFrame),
+    "background refresh disturbed the open picker",
+  );
   key("Enter");
   await until("Question changed");
   evidence("stale-rejected");
@@ -470,7 +477,8 @@ try {
   const openFrame = pane();
   await rpc.wait(() => state().tasks[finishing]?.task?.state === "done", "owner completion under menu", 25000);
   await Bun.sleep(6000);
-  assert.equal(pane(), openFrame, "owner completion displaced open picker");
+  assert(pane().includes("menu snapshot updated"), "completion under picker lacks freshness indication");
+  assert.equal(withoutFreshness(pane()), withoutFreshness(openFrame), "owner completion displaced open picker");
   evidence("completion-menu-open");
   key("Escape");
   await until("REMOTE_FIXTURE", 15000);

@@ -3,7 +3,9 @@ import remoteExtension from "../src/remote/extension";
 
 const deferred = <T>() => {
   let resolve!: (value: T) => void;
-  const promise = new Promise<T>((done) => { resolve = done; });
+  const promise = new Promise<T>((done) => {
+    resolve = done;
+  });
   return { promise, resolve };
 };
 
@@ -30,12 +32,18 @@ test("a refresh awaiting its baseline cannot adopt an unowned task into the next
         }
         return { tasks: { [task.taskId]: task } };
       },
-      syncActive: async () => { task.task.state = "done"; },
+      syncActive: async () => {
+        task.task.state = "done";
+      },
     } as any,
   );
-  const start = (file: string) => handlers.get("session_start")!({}, {
-    sessionManager: { getSessionFile: () => file, getBranch: () => [] },
-  });
+  const start = (file: string) =>
+    handlers.get("session_start")!(
+      {},
+      {
+        sessionManager: { getSessionFile: () => file, getBranch: () => [] },
+      },
+    );
   try {
     await start("/sessions/A.jsonl");
     await baselineEntered.promise;
@@ -55,36 +63,54 @@ test("a refresh awaiting its baseline cannot adopt an unowned task into the next
   }
 });
 
-for (const failure of [false, true]) test("a switched-away refresh cannot publish late sync " + (failure ? "errors" : "results"), async () => {
-  const handlers = new Map<string, Function>();
-  const entered = deferred<void>();
-  const release = deferred<void>();
-  const messages: string[] = [];
-  const statuses: string[] = [];
-  let syncs = 0;
-  const task = { taskId: "from-A", events: [], task: { state: "running" } };
-  remoteExtension({
-    on: (name: string, handler: Function) => handlers.set(name, handler), registerCommand() {},
-    sendMessage: (message: any) => messages.push(message.content),
-  } as any, {
-    status: async () => ({ tasks: { [task.taskId]: task } }),
-    syncActive: async () => {
-      if (++syncs === 1) { entered.resolve(); await release.promise; if (failure) throw Error("A-only offline error"); }
-    },
-  } as any);
-  const start = (file: string) => handlers.get("session_start")!({}, {
-    hasUI: true, ui: { setStatus: (_key: string, value: string) => statuses.push(value) },
-    sessionManager: { getSessionFile: () => file, getBranch: () => [] },
+for (const failure of [false, true])
+  test("a switched-away refresh cannot publish late sync " + (failure ? "errors" : "results"), async () => {
+    const handlers = new Map<string, Function>();
+    const entered = deferred<void>();
+    const release = deferred<void>();
+    const messages: string[] = [];
+    const statuses: string[] = [];
+    let syncs = 0;
+    const task = { taskId: "from-A", events: [], task: { state: "running" } };
+    remoteExtension(
+      {
+        on: (name: string, handler: Function) => handlers.set(name, handler),
+        registerCommand() {},
+        sendMessage: (message: any) => messages.push(message.content),
+      } as any,
+      {
+        status: async () => ({ tasks: { [task.taskId]: task } }),
+        syncActive: async () => {
+          if (++syncs === 1) {
+            entered.resolve();
+            await release.promise;
+            if (failure) throw Error("A-only offline error");
+          }
+        },
+      } as any,
+    );
+    const start = (file: string) =>
+      handlers.get("session_start")!(
+        {},
+        {
+          hasUI: true,
+          ui: { setStatus: (_key: string, value: string) => statuses.push(value) },
+          sessionManager: { getSessionFile: () => file, getBranch: () => [] },
+        },
+      );
+    try {
+      await start("A");
+      await entered.promise;
+      await handlers.get("session_shutdown")!();
+      task.task.state = "done";
+      await start("B");
+      release.resolve();
+      for (let i = 0; i < 20 && syncs < 2; i++) await Bun.sleep(0);
+      await Bun.sleep(0);
+      expect(syncs).toBe(2);
+      expect(messages).toEqual([]);
+      expect(statuses.filter(Boolean).some((status) => status.includes("offline"))).toBe(false);
+    } finally {
+      await handlers.get("session_shutdown")!();
+    }
   });
-  try {
-    await start("A"); await entered.promise;
-    await handlers.get("session_shutdown")!();
-    task.task.state = "done";
-    await start("B"); release.resolve();
-    for (let i = 0; i < 20 && syncs < 2; i++) await Bun.sleep(0);
-    await Bun.sleep(0);
-    expect(syncs).toBe(2);
-    expect(messages).toEqual([]);
-    expect(statuses.filter(Boolean).some((status) => status.includes("offline"))).toBe(false);
-  } finally { await handlers.get("session_shutdown")!(); }
-});

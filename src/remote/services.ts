@@ -86,7 +86,11 @@ export function localCapabilityGrants(client: RemoteClient, taskId: string, incl
     .filter((name) => /^grant_[a-zA-Z0-9_-]+\.json$/.test(name))
     .flatMap((name) => {
       const record = JSON.parse(readFileSync(join(dir, name), "utf8"));
-      if (record.taskId !== taskId || record.id !== name.slice(0, -5) || (!includeRevoked && existsSync(join(dir, record.id + ".revoked"))))
+      if (
+        record.taskId !== taskId ||
+        record.id !== name.slice(0, -5) ||
+        (!includeRevoked && existsSync(join(dir, record.id + ".revoked")))
+      )
         return [];
       return [
         {
