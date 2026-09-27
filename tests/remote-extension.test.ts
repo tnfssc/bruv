@@ -1140,3 +1140,72 @@ test("local capability revocation is pinned to its task and never sends another 
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test("oversized untracked menu inventory permits tracked-only without bulk approval", async () => {
+  const { mkdtemp, writeFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const dir = await mkdtemp(join(tmpdir(), "remote-menu-overflow-"));
+  try {
+    Bun.spawnSync(["git", "init", dir]);
+    for (let i = 0; i < 5000; i++) await writeFile(join(dir, String(i).padStart(5, "0") + "x".repeat(215)), "");
+    let command: any;
+    const notices: string[] = [];
+    let confirmations = 0;
+    let reachedLaunch = false;
+    remoteExtension(
+      {
+        on() {},
+        registerCommand(_n: string, c: any) {
+          command = c;
+        },
+        sendMessage() {},
+      } as any,
+      {
+        path: join(dir, "cache/state.json"),
+        status: async () => {
+          reachedLaunch = true;
+          return { tasks: {} };
+        },
+      } as any,
+    );
+    await command.handler("", {
+      cwd: dir,
+      hasUI: true,
+      ui: {
+        custom: async () => "launch",
+        editor: async () => "Tracked only",
+        confirm: async () => {
+          confirmations++;
+          return true;
+        },
+        notify: (text: string) => notices.push(text),
+      },
+    });
+    expect(confirmations).toBe(0);
+    expect(notices.some((n) => /at least [0-9]+/.test(n) && n.includes("tracked files only"))).toBe(true);
+    // Reached launchRepository (no connection), rather than failing at git inventory.
+    expect(reachedLaunch).toBe(true);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("bounded untracked preview distinguishes exact from incomplete path counts", async () => {
+  const { repositoryUntracked } = await import("../src/remote/untracked-preview");
+  const { mkdtemp, writeFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const dir = await mkdtemp(join(tmpdir(), "remote-preview-"));
+  try {
+    Bun.spawnSync(["git", "init", dir]);
+    await writeFile(join(dir, "first"), "");
+    await writeFile(join(dir, "second"), "");
+    const exact = await repositoryUntracked(dir, 100);
+    expect(exact).toMatchObject({ paths: ["first", "second"], count: 2, incomplete: false });
+    const limited = await repositoryUntracked(dir, 8);
+    expect(limited).toMatchObject({ paths: [], preview: ["first"], count: 2, incomplete: true });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

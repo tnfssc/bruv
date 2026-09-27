@@ -387,3 +387,15 @@ test("uncertain cancel stays uncertain across changed owner and only terminal sy
   await c.cancel("id");
   expect(posts).toBe(2); // Confirmed request is not resent; terminal observation is retained.
 });
+
+test("new lock database is private before transport runs and stays private on reuse", async () => {
+  let calls = 0;
+  const c = await fixture(async () => {
+    calls++;
+    expect((await stat(c.path + ".lock.sqlite")).mode & 0o777).toBe(0o600);
+    return h();
+  });
+  await c.connect("box");
+  await c.connect("box");
+  expect(calls).toBe(2);
+});

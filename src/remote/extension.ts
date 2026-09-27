@@ -1,6 +1,7 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerRemoteRuntime } from "./runtime";
 import { RemoteClient } from "./client";
+import { repositoryUntracked } from "./untracked-preview";
 import { publishRemoteJobObservations } from "./job-observations";
 import { createRemoteOperations, summarizeRemoteTask } from "./operations";
 import { launchRepository, retryRepository, repositoryPreparations } from "./repository-wire";
@@ -44,16 +45,6 @@ export function parseRemoteLaunch(input: string): { repoPath: string; prompt: st
   if (!repoPath || !prompt.trim()) throw new Error("Usage: /remote launch <absolute-remote-repo-path> <prompt>");
   return { repoPath, prompt };
 }
-
-const repositoryUntracked = (root: string): string[] => {
-  const list = Bun.spawnSync(["git", "-C", root, "ls-files", "--others", "--exclude-standard", "-z"], {
-    stdout: "pipe",
-    stderr: "pipe",
-    maxBuffer: 1024 * 1024,
-  });
-  if (list.exitCode) throw Error("Current directory must be a Git repository");
-  return list.stdout.toString().split("\0").filter(Boolean);
-};
 
 /** Only human commands connect, answer questions, approve untracked files, or grant local authority. */
 export default function remoteExtension(pi: ExtensionAPI, client = new RemoteClient()): void {
@@ -365,13 +356,25 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           const prompt = (await ctx.ui.editor("Remote task prompt"))?.trim();
           if (prompt) {
             const root = ctx.cwd ?? process.cwd();
-            const untracked = repositoryUntracked(root);
+            const untracked = await repositoryUntracked(root);
             const approvedUntracked =
-              untracked.length && (await ctx.ui.confirm("Include untracked files?", renderRemote(untracked)))
-                ? untracked
+              !untracked.incomplete &&
+              untracked.count &&
+              (await ctx.ui.confirm(
+                "Include untracked files?",
+                renderRemote({
+                  paths: untracked.preview,
+                  count: untracked.count,
+                  note: `Showing ${untracked.preview.length} of ${untracked.count}; approval includes all ${untracked.count} untracked paths.`,
+                }),
+              ))
+                ? untracked.paths
                 : [];
-            if (untracked.length && !approvedUntracked.length)
-              ctx.ui.notify("Untracked files omitted; sending tracked files only.", "info");
+            if (untracked.count && !approvedUntracked.length)
+              ctx.ui.notify(
+                `Untracked files omitted (${untracked.incomplete ? "at least " : ""}${untracked.count}); sending tracked files only.`,
+                "info",
+              );
             publish(
               summary(
                 await launchRepository(client, {
@@ -541,15 +544,27 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             if (!Array.isArray(include) || include.some((p: unknown) => typeof p !== "string"))
               throw Error("include must be an explicit list of untracked paths");
             const root = ctx.cwd ?? process.cwd();
-            const untracked = repositoryUntracked(root);
-            if (!include.length && untracked.length) {
+            const untracked = await repositoryUntracked(root);
+            if (!include.length && untracked.count) {
               publish({
-                untrackedOmitted: untracked,
-                question:
-                  'Transfer these untracked files too? Default is tracked only. Explicitly approve paths with /remote launch-repo-json {"prompt":"...","include":["path"]}.',
+                untrackedOmitted: untracked.preview,
+                untrackedCount: untracked.count,
+                untrackedCountIncomplete: untracked.incomplete,
+                question: `Omitting ${untracked.incomplete ? "at least " : ""}${untracked.count} untracked files by default. ${untracked.incomplete ? "Listing incomplete; bulk approval unavailable. " : ""}Explicitly approve paths with /remote launch-repo-json {"prompt":"...","include":["path"]}.`,
               });
-              if (ctx.hasUI && (await ctx.ui.confirm("Include untracked files?", renderRemote(untracked))))
-                include = untracked;
+              if (
+                !untracked.incomplete &&
+                ctx.hasUI &&
+                (await ctx.ui.confirm(
+                  "Include untracked files?",
+                  renderRemote({
+                    paths: untracked.preview,
+                    count: untracked.count,
+                    note: `Showing ${untracked.preview.length} of ${untracked.count}; approval includes all ${untracked.count} untracked paths.`,
+                  }),
+                ))
+              )
+                include = untracked.paths;
             } else if (
               include.length &&
               ctx.hasUI &&

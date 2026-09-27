@@ -2,6 +2,7 @@ import { serviceRemoteTask } from "./services";
 import { Database } from "bun:sqlite";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, chmod, open, stat } from "node:fs/promises";
+import { openSync, closeSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -88,8 +89,16 @@ const MAX_CACHE_BYTES = 128 * 1024 * 1024;
 export function remoteStatePath(): string {
   return join(homedir(), ".die", "remote", "state.json");
 }
-/** Open the lock database without touching it through a second file descriptor. */
+/** Create before SQLite opens it. EEXIST must not open/close the existing inode:
+ * closing any descriptor for it can drop another SQLite connection's POSIX locks.
+ * This synchronous create/close also cannot interleave with another JS client here.
+ */
 export function openRemoteLockDatabase(path: string): Database {
+  try {
+    closeSync(openSync(path, "wx", 0o600));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+  }
   return new Database(path);
 }
 
@@ -107,12 +116,9 @@ export class RemoteClient {
       // OS-backed SQLite locking releases on client death; a stale mkdir lock would
       // strand the very reconnect needed to reconcile an ambiguous launch.
       const lock = this.path + ".lock.sqlite";
-      // SQLite creates the lock database itself. Opening/closing it through another
-      // descriptor releases POSIX process locks held by a concurrent SQLite connection.
       const database = openRemoteLockDatabase(lock);
       let acquired = false;
       try {
-        await chmod(lock, 0o600);
         database.exec("PRAGMA busy_timeout=0");
         for (let attempt = 0; attempt < 100; attempt++) {
           try {
