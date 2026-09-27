@@ -1,3 +1,4 @@
+import { listRemoteArtifacts, getRemoteArtifact } from "./artifacts";
 import { repositoryRequest } from "./repository-wire";
 import { OwnerCapabilityMailbox } from "./capability-runtime";
 import { capabilityNeeds } from "./services";
@@ -12,6 +13,7 @@ import {
   mkdirSync,
   openSync,
   readFileSync,
+  readdirSync,
   renameSync,
   statSync,
   writeSync,
@@ -195,6 +197,28 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         },
       };
     }
+    if (
+      (req.op === "launch" || req.op === "repository-upload") &&
+      !existsSync(location(req.taskId)) &&
+      readdirSync(tasks).length >= 100
+    )
+      return error(
+        "task_limit",
+        "Remote task retention limit (100) reached; preserve artifacts and retire old task directories before launching more",
+      );
+    if (req.op === "artifact") {
+      const dir = location(req.taskId);
+      if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown artifact task");
+      if (req.action === "list") return { artifacts: listRemoteArtifacts(dir) };
+      if (
+        req.action !== "get" ||
+        typeof req.name !== "string" ||
+        typeof req.sha256 !== "string" ||
+        typeof req.offset !== "number"
+      )
+        return error("invalid_artifact", "Invalid artifact request");
+      return getRemoteArtifact(dir, { name: req.name, sha256: req.sha256, offset: req.offset });
+    }
     if (req.op === "repository-upload" || req.op === "repository-result") {
       const dir = location(req.taskId);
       const state = existsSync(statePath(req.taskId)) ? saved(req.taskId).task.state : undefined;
@@ -250,6 +274,15 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           return error("journal_gap", String(e));
         }
       }
+      const active = readdirSync(tasks).filter((id) => {
+        try {
+          return ["accepted", "running"].includes(saved(id).task.state);
+        } catch {
+          return false;
+        }
+      }).length;
+      if (active >= 8)
+        return error("active_limit", "Remote active task limit (8) reached; sync or cancel existing tasks first");
       if (!isAbsolute(req.repoPath) || !statSync(req.repoPath).isDirectory() || !existsSync(join(req.repoPath, ".git")))
         return error("invalid_repo", "repoPath must be an existing absolute Git repository");
       if (typeof req.prompt !== "string" || !req.prompt.trim() || Buffer.byteLength(req.prompt) > 128 * 1024)
@@ -275,7 +308,12 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
       };
       const hash = intent(req, profile);
 
-      mkdirSync(location(req.taskId), { mode: 0o700 });
+      const taskDirectory = location(req.taskId);
+      if (existsSync(taskDirectory)) {
+        const prepared = join(taskDirectory, "repository-ready.json");
+        if (!existsSync(prepared) || read<{ checkout: string }>(prepared).checkout !== req.repoPath)
+          return error("repository_incomplete", "Existing task directory is not the verified prepared checkout");
+      } else mkdirSync(taskDirectory, { mode: 0o700 });
       const tasksFd = openSync(tasks, "r");
       try {
         fsyncSync(tasksFd);
@@ -401,6 +439,13 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           value.task.capabilities = await box.pending();
           value.task.capabilityNeeds = capabilityNeeds(location(req.taskId));
         } else await box.terminal("Task " + value.task.state);
+        if (!["accepted", "running"].includes(value.task.state)) {
+          try {
+            value.task.artifacts = listRemoteArtifacts(location(req.taskId));
+          } catch (error) {
+            value.task.artifactError = String(error);
+          }
+        }
         return { task: value.task, ...events(req.taskId, req.cursor) };
       } catch (e) {
         return error("journal_gap", String(e));
@@ -442,6 +487,11 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     return;
   const path = join(location(taskId), "events.jsonl");
   let journal: number | undefined;
+  if (initial.task.cancelRequested || existsSync(join(location(taskId), "cancel.json"))) {
+    initial.task.state = "cancelled";
+    await publishTerminal(taskId, initial);
+    return;
+  }
   let child: ReturnType<typeof spawn> | undefined;
   let failure: string | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -600,6 +650,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
             continue;
           }
           if (!promptSent) {
+            if (existsSync(join(location(taskId), "cancel.json"))) continue;
             promptSent = true;
             child?.stdin?.write(
               JSON.stringify({
@@ -667,6 +718,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
               activeJobs?: number;
               pendingMessages?: boolean;
               questions?: unknown[];
+              textOutputGap?: string;
               error?: string;
             }>(runtimePath);
             if (
@@ -678,6 +730,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
               throw new Error(runtime.error || "Missing native runtime checkpoint");
             if (runtime.activeJobs > 0 || runtime.pendingMessages) continue;
             initial.task.questions = runtime.questions;
+            initial.task.textOutputGap = runtime.textOutputGap;
             if (runtime.questions.length) {
               checkpoints.push(
                 locked(async () => {
@@ -714,7 +767,13 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     const watchdog = () => {
       // A native question waits for a human, not a one-hour RPC turn deadline.
       // A dispatched answer is uncertain if it does not settle within the deadline.
-      if (initial.task.questions?.length && !existsSync(join(location(taskId), "answer.json"))) {
+      const answerFile = join(location(taskId), "answer.json");
+      const slot = existsSync(answerFile) ? read<{ id: string }>(answerFile) : undefined;
+      if (
+        initial.task.questions?.some(
+          (q) => (q as { status?: string; id?: string }).status === "pending" && (q as { id?: string }).id !== slot?.id,
+        )
+      ) {
         timer = setTimeout(watchdog, 60 * 60 * 1000);
         return;
       }

@@ -31,8 +31,11 @@ export type RemoteTask = {
   lastSync?: string;
   lastError?: string;
   repository?: unknown;
+  localArtifacts?: unknown;
+  artifactsComplete?: boolean;
   integrationError?: string;
   cancelRequested?: boolean;
+  replyDelivery?: Record<string, { replyId: string; status: "uncertain" | "delivered"; error?: string }>;
   replies?: Record<
     string,
     { id: string; owner: { sessionId: string; branchId: string }; version: number; text: string; replyId: string }
@@ -51,10 +54,10 @@ function object(value: unknown): Record<string, unknown> {
   if (typeof result.error === "string" && typeof result.code === "string") throw new Error(result.error);
   return result;
 }
-function hello(value: unknown): Hello {
+function hello(value: unknown, requireModel = true): Hello {
   const h = object(value),
     p = object(h.profile);
-  if (!p.model)
+  if (requireModel && !p.model)
     throw new Error(
       "Remote normal profile has no model. Configure normal in ~/.die/subagents.json on the Linux server; local credentials/models are never copied.",
     );
@@ -67,12 +70,12 @@ function hello(value: unknown): Hello {
     typeof h.version !== "string" ||
     h.platform !== "linux" ||
     p.name !== "normal" ||
-    typeof p.model !== "string" ||
+    (typeof p.model !== "string" && !(p.model === undefined && !requireModel)) ||
     !["configured", "missing", "unknown"].includes(String(p.auth)) ||
     (p.thinking !== undefined && typeof p.thinking !== "string")
   )
     throw new Error("Unsupported remote hello");
-  return h as Hello;
+  return { ...h, profile: { ...p, model: p.model ?? "" } } as Hello;
 }
 const MAX_CACHE_BYTES = 128 * 1024 * 1024;
 
@@ -250,7 +253,7 @@ export class RemoteClient {
       }
       try {
         // Recheck identity before retry. A lost reply is not permission to POST to a new owner.
-        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }));
+        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
           throw new Error("Remote owner changed; launch outcome unknown, no retry");
         const reply = object(
@@ -293,7 +296,7 @@ export class RemoteClient {
       try {
         if (!c || c.host !== task.host || c.hello.ownerId !== task.ownerId || c.hello.epoch !== task.epoch)
           throw new Error("Task belongs to another remote owner; cached transcript only");
-        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }));
+        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
           throw new Error(
             "Remote owner changed (server restart or replaced state); outcome unknown; cached transcript only",
@@ -335,6 +338,14 @@ export class RemoteClient {
             task.task.state === snapshot.state
           )
             task.task = snapshot as Task;
+          const reply = snapshot.reply as { replyId?: string; status?: string } | undefined;
+          if (reply && (reply.status === "delivered" || reply.status === "uncertain")) {
+            for (const [id, intent] of Object.entries(task.replies ?? {}))
+              if (intent.replyId === reply.replyId) {
+                task.replyDelivery ??= {};
+                task.replyDelivery[id] = { replyId: intent.replyId, status: reply.status };
+              }
+          }
           task.outcome = "accepted";
           task.lastSync = new Date().toISOString();
           delete task.lastError;
@@ -358,7 +369,7 @@ export class RemoteClient {
       const identity = expected ?? task ?? c.hello;
       if (c.hello.ownerId !== identity.ownerId || c.hello.epoch !== identity.epoch || (task && task.host !== c.host))
         throw Error("Remote owner changed; no request sent");
-      const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }));
+      const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
       if (current.ownerId !== identity.ownerId || current.epoch !== identity.epoch)
         throw Error("Remote owner changed; outcome unknown");
       return object(
@@ -368,7 +379,10 @@ export class RemoteClient {
   }
   async updateTask(
     taskId: string,
-    changes: Pick<RemoteTask, "repository" | "integrationError" | "cancelRequested">,
+    changes: Pick<
+      RemoteTask,
+      "repository" | "integrationError" | "cancelRequested" | "localArtifacts" | "artifactsComplete"
+    >,
   ): Promise<void> {
     return this.exclusive(async () => {
       const state = await this.read();
@@ -436,11 +450,13 @@ export class RemoteClient {
           throw new Error("Question owner/version is stale; sync before answering");
       }
       task.replies[input.id] = reply;
+      task.replyDelivery ??= {};
+      task.replyDelivery[input.id] = { replyId: reply.replyId, status: "uncertain" };
       await this.save(state); // preserve reply identity before SSH; lost responses are uncertain
       try {
-        const current = hello(await this.transport(connection.host, connection.diePath, { op: "hello" }));
+        const current = hello(await this.transport(connection.host, connection.diePath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch) throw new Error("Remote owner changed");
-        object(
+        const response = object(
           await this.transport(connection.host, connection.diePath, {
             op: "answer",
             ownerId: task.ownerId,
@@ -449,9 +465,13 @@ export class RemoteClient {
             ...reply,
           }),
         );
+        const receipt = object(response.task).reply as { replyId?: string; status?: string } | undefined;
+        if (receipt?.replyId === reply.replyId && receipt.status === "delivered")
+          task.replyDelivery[input.id] = { replyId: reply.replyId, status: "delivered" };
         delete task.lastError;
       } catch (error) {
         task.lastError = "Native reply outcome uncertain: " + String(error);
+        task.replyDelivery[input.id] = { replyId: reply.replyId, status: "uncertain", error: String(error) };
         await this.save(state);
         throw new Error(task.lastError + "; retry only this question with the same replyId");
       }
@@ -467,6 +487,8 @@ export class RemoteClient {
         t.task?.state === "accepted" ||
         t.task?.state === "running" ||
         t.outcome === "unknown" ||
+        t.transcriptComplete === false ||
+        t.artifactsComplete === false ||
         (!!t.integrationError && t.task?.state === "done"),
     );
     const batch = Array.from(

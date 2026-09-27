@@ -16,6 +16,7 @@ export async function runRemoteControl(): Promise<void> {
     const text = Buffer.concat(chunks).toString("utf8");
     const request = JSON.parse(text) as RemoteRequest;
     const fields: Record<string, string[]> = {
+      artifact: ["action", "name", "sha256", "offset"],
       hello: [],
       launch: ["repoPath", "prompt", "model", "thinking"],
       sync: ["cursor"],

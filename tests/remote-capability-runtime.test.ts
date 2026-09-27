@@ -102,3 +102,25 @@ test("sensitive paths denied, explicit skills and read-only git tools", async ()
     await f.clean();
   }
 });
+
+test("concurrent capability requests across mailbox instances obey the pending bound", async () => {
+  const f = await fixture();
+  try {
+    await f.owner.acceptGrant({ id: "grant_parallel", taskId: "task1", kinds: ["repo.read"] });
+    const requests = await Promise.allSettled(
+      Array.from({ length: 40 }, (_, n) =>
+        new OwnerCapabilityMailbox(f.owner.taskDir, "task1").request(
+          "grant_parallel",
+          "repo.read",
+          "file",
+          "request_" + n,
+        ),
+      ),
+    );
+    expect(requests.filter((r) => r.status === "fulfilled")).toHaveLength(32);
+    expect(requests.filter((r) => r.status === "rejected")).toHaveLength(8);
+    expect(await f.owner.pending()).toHaveLength(32);
+  } finally {
+    await f.clean();
+  }
+});

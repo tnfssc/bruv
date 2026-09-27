@@ -131,6 +131,17 @@ export function captureRepository(
   if (dir === root || (relative(root, dir).split("/")[0] !== ".." && !isAbsolute(relative(root, dir))))
     throw Error("artifacts must be outside repository");
   assertRoot(root);
+  const entries = names(git(root, ["ls-tree", "-rlz", "HEAD"]));
+  const baseBytes = entries.reduce((sum, row) => sum + Number(row.split("\t")[0]!.trim().split(/\s+/).at(-1)), 0);
+  const currentBytes = names(git(root, ["ls-files", "-z"])).reduce((sum, name) => {
+    try {
+      return sum + statSync(join(root, name)).size;
+    } catch {
+      return sum;
+    }
+  }, 0);
+  if (!Number.isFinite(baseBytes) || baseBytes > MAX || currentBytes > MAX)
+    throw Error("Repository snapshot exceeds 128 MiB checkout limit");
   const available = untracked(root);
   const selected = [...approvedUntracked];
   const sensitive = [...names(git(root, ["ls-files", "-z"])), ...selected].filter(sensitiveRepoPath);
@@ -146,9 +157,9 @@ export function captureRepository(
   const base = fingerprint(root);
   mkdirSync(dir, { mode: 0o700 }); // refuse existing artifact directory
   const bundle = join(dir, "input.bundle");
-  git(root, ["bundle", "create", bundle, "HEAD"]);
   const checkout = join(dir, "snapshot-checkout");
-  git(dir, ["clone", "-q", bundle, checkout]);
+  // Local alternates avoid copying reachable history. The later orphan bundle contains only task input.
+  git(dir, ["clone", "--shared", "-q", root, checkout]);
   const diff = git(root, ["diff", "--no-ext-diff", "--no-textconv", "--binary", "--full-index", "HEAD", "--"]);
   if (diff.length) git(checkout, ["apply", "--index", "--binary", "-"], diff);
   for (const p of selected) {
@@ -217,8 +228,46 @@ export function collectRepositoryResult(checkout: string, snapshot: string, patc
     snapshot,
     "--",
   ]);
-  writeFileSync(patchPath, patch, { flag: "wx", mode: 0o600 });
-  return { snapshot, patch: patchPath, sha256: hash(patch), untracked: untracked(root) };
+  const extra = untracked(root),
+    parts = [patch];
+  let total = patch.length;
+  for (const name of extra) {
+    if (!regular(root, name) || sensitiveRepoPath(name))
+      throw Error("Remote untracked path cannot be automatically exported: " + name);
+    if (statSync(join(root, name)).size > MAX) throw Error("Remote untracked result exceeds limit");
+    const diff = Bun.spawnSync(
+      [
+        "git",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "-C",
+        root,
+        "diff",
+        "--no-index",
+        "--no-ext-diff",
+        "--no-textconv",
+        "--binary",
+        "--",
+        "/dev/null",
+        name,
+      ],
+      {
+        stdout: "pipe",
+        stderr: "pipe",
+        maxBuffer: MAX,
+        timeout: 60_000,
+        env: { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null" },
+      },
+    );
+    if (diff.exitCode !== 0 && diff.exitCode !== 1) throw Error("Cannot preserve remote untracked review patch");
+    const bytes = Buffer.from(diff.stdout);
+    total += bytes.length;
+    if (total > MAX) throw Error("Remote review patch exceeds limit");
+    parts.push(bytes);
+  }
+  const complete = Buffer.concat(parts);
+  writeFileSync(patchPath, complete, { flag: "wx", mode: 0o600 });
+  return { snapshot, patch: patchPath, sha256: hash(complete), untracked: extra };
 }
 export type RepositoryReturn = {
   status: "applied" | "no_changes" | "review";
@@ -243,7 +292,8 @@ export function integrateRepositoryResult(
   });
   if (result.snapshot !== manifest.snapshot || hash(patch) !== result.sha256)
     return review("result identity or patch digest mismatch");
-  if (result.untracked.length) return review("remote untracked files need manual review; bytes not included");
+  if (result.untracked.length)
+    return review("remote untracked files are preserved in the review patch; manual review required");
   try {
     if (fingerprint(root) !== manifest.base || text(git(root, ["rev-parse", "HEAD"])) !== manifest.head)
       return review("local HEAD, index or tracked work changed since capture");

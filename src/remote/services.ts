@@ -1,3 +1,4 @@
+import { syncRemoteArtifacts } from "./artifacts";
 import { createHash, randomUUID } from "node:crypto";
 import {
   existsSync,
@@ -33,6 +34,12 @@ function atomic(path: string, value: unknown) {
     closeSync(fd);
   }
   renameSync(tmp, path);
+  const directory = openSync(dirname(path), "r");
+  try {
+    fsyncSync(directory);
+  } finally {
+    closeSync(directory);
+  }
 }
 function local(client: RemoteClient) {
   const dir = join(dirname(client.path), "capability-grants");
@@ -94,8 +101,25 @@ export async function serviceRemoteTask(client: RemoteClient, task: RemoteTask) 
       }
     }
   }
-  const repository = await returnRepository(client, task);
-  if (repository) await client.updateTask(task.taskId, { repository, integrationError: undefined });
+  const errors: string[] = [];
+  try {
+    const repository = await returnRepository(client, task);
+    if (repository) await client.updateTask(task.taskId, { repository });
+  } catch (error) {
+    errors.push("Repository return: " + String(error));
+  }
+  try {
+    if (task.task?.artifactError) throw Error(String(task.task.artifactError));
+    if (Array.isArray(task.task?.artifacts)) {
+      await client.updateTask(task.taskId, { artifactsComplete: false });
+      const manifest = await syncRemoteArtifacts(client, task);
+      await client.updateTask(task.taskId, { localArtifacts: manifest, artifactsComplete: true });
+    }
+  } catch (error) {
+    errors.push("Offline text artifacts: " + String(error));
+  }
+  if (errors.length) throw Error(errors.join("; "));
+  if (task.integrationError) await client.updateTask(task.taskId, { integrationError: undefined });
 }
 export function capabilityNeeds(taskDir: string): unknown[] {
   const dir = join(taskDir, "capability-needs");

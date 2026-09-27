@@ -6,6 +6,13 @@ import { launchRepository, retryRepository, repositoryPreparations } from "./rep
 import { grantCapabilities, revokeCapability } from "./services";
 import type { CapabilityKind } from "./capabilities";
 
+/** Keep untrusted remote text printable even for terminals accepting C1/bidi controls. */
+export const renderRemote = (value: unknown) =>
+  (JSON.stringify(value, null, 2) ?? "null").replace(
+    /[-‪-‮⁦-⁩]/g,
+    (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"),
+  );
+
 export function parseRemoteLaunch(input: string): { repoPath: string; prompt: string } {
   const start = /^\s*launch\s+/.exec(input);
   if (!start) throw new Error("Usage: /remote launch <absolute-remote-repo-path> <prompt>");
@@ -37,7 +44,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   const operations = createRemoteOperations(client),
     summary = summarizeRemoteTask;
   const publish = (result: unknown) =>
-    pi.sendMessage({ customType: "die-remote", content: JSON.stringify(result, null, 2), display: true });
+    pi.sendMessage({ customType: "die-remote", content: renderRemote(result), display: true });
   let inFlight = false,
     closed = false;
   const seen = new Map<string, string>();
@@ -54,9 +61,14 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           outcome: task.outcome,
           eventCount: task.cursor,
           questions: task.task?.questions,
+          replyDelivery: task.replyDelivery,
           capabilityNeeds: task.task?.capabilityNeeds,
           capabilities: task.task?.capabilities,
           repository: task.repository,
+          artifacts: task.localArtifacts,
+          transcriptComplete: task.transcriptComplete,
+          artifactsComplete: task.artifactsComplete,
+          transcriptWarning: task.task?.textOutputGap,
           error: task.lastError ?? task.integrationError ?? task.task?.error,
           cancelRequested: task.cancelRequested,
           cached: true,
@@ -153,12 +165,12 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
                 question:
                   'Transfer these untracked files too? Default is tracked only. Explicitly approve paths with /remote launch-repo-json {"prompt":"...","include":["path"]}.',
               });
-              if (ctx.hasUI && (await ctx.ui.confirm("Include untracked files?", JSON.stringify(untracked))))
+              if (ctx.hasUI && (await ctx.ui.confirm("Include untracked files?", renderRemote(untracked))))
                 include = untracked;
             } else if (
               include.length &&
               ctx.hasUI &&
-              !(await ctx.ui.confirm("Transfer these untracked files?", JSON.stringify(include)))
+              !(await ctx.ui.confirm("Transfer these untracked files?", renderRemote(include)))
             )
               throw Error("Untracked transfer not approved");
             result = summary(
@@ -182,16 +194,20 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             );
             let selected = pending.find((p) => p.task.taskId === rest[0] && p.q.id === rest[1]),
               text: string;
-            if (selected) text = input.replace(/^\s*answer\s+\S+\s+\S+\s+/, "");
+            if (selected) text = input.match(/^\s*answer\s+\S+\s+\S+\s+([\s\S]*)$/)?.[1] ?? "";
             else {
+              if (rest[0] && state.tasks[rest[0]])
+                throw Error("Targeted question is not pending; inspect /remote status before retrying");
               selected = pending.find((p) => p.q.id === rest[0]);
-              if (selected) text = input.replace(/^\s*answer\s+\S+\s+/, "");
+              if (selected) text = input.match(/^\s*answer\s+\S+\s+([\s\S]*)$/)?.[1] ?? "";
               else {
+                if (rest[0]?.startsWith("q_")) throw Error("Targeted question is not pending; no answer sent");
                 if (pending.length !== 1) throw Error("Choose a pending question from /remote status");
                 selected = pending[0]!;
-                text = input.replace(/^\s*answer\s+/, "");
+                text = input.replace(/^\s*answer(?:\s+|$)/, "");
               }
             }
+            if (!text.trim()) throw Error("Answer text is required; no answer sent");
             const prior = selected.task.replies?.[selected.q.id];
             result = summary(
               await client.answer(selected.task.taskId, {

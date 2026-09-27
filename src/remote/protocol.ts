@@ -1,7 +1,18 @@
+import type { RemoteArtifact, ArtifactPage } from "./artifacts";
 import type { RepositoryRequest } from "./repository-wire";
 import type { GrantMetadata } from "./capability-runtime";
 import type { Reply } from "./capabilities";
 export type RemoteRequest =
+  | {
+      op: "artifact";
+      ownerId: string;
+      epoch: string;
+      taskId: string;
+      action: "list" | "get";
+      name?: string;
+      sha256?: string;
+      offset?: number;
+    }
   | (RepositoryRequest & { ownerId: string; epoch: string })
   | { op: "cancel"; ownerId: string; epoch: string; taskId: string }
   | { op: "capability-grant"; ownerId: string; epoch: string; taskId: string; grant: GrantMetadata }
@@ -38,12 +49,17 @@ export type RemoteTask = {
   profile: { name: "normal"; model: string; thinking?: string };
   error?: string;
   questions?: unknown[];
+  artifacts?: RemoteArtifact[];
+  artifactError?: string;
+  textOutputGap?: string;
   capabilities?: unknown[];
   capabilityNeeds?: unknown[];
   cancelRequested?: boolean;
   reply?: { replyId: string; status: "delivered" | "uncertain" };
 };
 export type RemoteResponse =
+  | { artifacts: RemoteArtifact[] }
+  | ArtifactPage
   | { offset: number; checkout?: string; snapshot?: string; result?: unknown; total?: number; data?: string }
   | { accepted: boolean }
   | {

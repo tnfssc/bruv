@@ -81,6 +81,23 @@ const pause = (ms: number, signal?: AbortSignal) =>
     signal?.addEventListener("abort", done, { once: true });
   });
 
+const requestQueues = new Map<string, Promise<void>>();
+async function serializeRequest<T>(key: string, run: () => Promise<T>): Promise<T> {
+  const prior = requestQueues.get(key) ?? Promise.resolve();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const queued = prior.then(() => gate);
+  requestQueues.set(key, queued);
+  await prior;
+  try {
+    return await run();
+  } finally {
+    release();
+    if (requestQueues.get(key) === queued) requestQueues.delete(key);
+  }
+}
 export type GrantMetadata = { id: string; taskId: string; kinds: CapabilityKind[] };
 /** Owner storage: instantiate with root/tasks/taskId. One owner process serializes reply/terminal operations. */
 export class OwnerCapabilityMailbox {
@@ -117,6 +134,11 @@ export class OwnerCapabilityMailbox {
     if (grant.taskId !== this.taskId || !id(grant.id)) throw new Error("Grant task mismatch");
     checkKinds(grant.kinds);
     if (await read(this.terminalPath())) throw new Error("Task terminal");
+    const grants = await readdir(join(this.dir(), "grants")).catch((error) => {
+      if (error.code === "ENOENT") return [] as string[];
+      throw error;
+    });
+    if (grants.length >= 64 && !grants.includes(grant.id + ".json")) throw Error("Capability grant limit reached");
     const value = { id: grant.id, taskId: this.taskId, kinds: [...grant.kinds] };
     try {
       await durable(this.grantPath(grant.id), value);
@@ -143,7 +165,15 @@ export class OwnerCapabilityMailbox {
       if (!conflict(e)) throw e;
     }
   }
-  async request(
+  request(
+    grantId: string,
+    kindName: CapabilityKind,
+    input: string,
+    requestId: string = randomUUID(),
+  ): Promise<Request> {
+    return serializeRequest(this.taskDir, () => this.createRequest(grantId, kindName, input, requestId));
+  }
+  private async createRequest(
     grantId: string,
     kindName: CapabilityKind,
     input: string,
@@ -160,6 +190,11 @@ export class OwnerCapabilityMailbox {
     const grant = await this.grant(grantId);
     if (!grant || !grant.kinds.includes(kindName) || (await read(this.terminalPath())))
       throw new Error("No active task grant");
+    const records = await readdir(join(this.dir(), "requests")).catch((error) => {
+      if (error.code === "ENOENT") return [] as string[];
+      throw error;
+    });
+    if (records.length >= 1024) throw Error("Capability mailbox retention limit reached");
     const pending = await this.pending();
     if (pending.length >= 32) throw new Error("Too many pending capability requests");
     try {

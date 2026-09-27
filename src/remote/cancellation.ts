@@ -1,3 +1,4 @@
+import { captureNativeJobText } from "./job-artifacts";
 import { getSessionHost } from "../session/host-access";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { writeFileSync, renameSync } from "node:fs";
@@ -46,9 +47,10 @@ export function registerRemoteCancellationRuntime(pi: ExtensionAPI) {
           let active = 0;
           for (let page = 0; page < 100; page++) {
             const state = (await host.list({ cursor, count: 100 })) as {
-              jobs: Array<{ status: string }>;
+              jobs: Array<{ id?: string; status: string }>;
               nextCursor?: number | string;
             };
+            await captureNativeJobText(host, runtime, state.jobs);
             active += state.jobs.filter(
               (j) => !["completed", "failed", "cancelled", "stopped", "killed"].includes(j.status),
             ).length;

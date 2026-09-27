@@ -180,6 +180,30 @@ test.skipIf(process.platform !== "linux")(
       expect(await handleRemoteRequest(answer)).toMatchObject({ task: { state: "running" } });
       expect(await handleRemoteRequest({ ...answer, text: "no" })).toMatchObject({ code: "answer_conflict" });
       expect(JSON.parse(readFileSync(join(replyDir, "answer.json"), "utf8"))).toMatchObject(answer);
+      // A delivered first answer must not permanently occupy the task's reply slot.
+      let nextState = JSON.parse(readFileSync(join(replyDir, "state.json"), "utf8"));
+      nextState.task.questions = [{ ...question, id: "q2" }];
+      writeFileSync(join(replyDir, "state.json"), JSON.stringify(nextState));
+      const second = { ...answer, id: "q2", replyId: "reply_second" };
+      expect(await handleRemoteRequest(second)).toMatchObject({ code: "answer_conflict" });
+      nextState.task.reply = { replyId: answer.replyId, status: "delivered" };
+      writeFileSync(join(replyDir, "state.json"), JSON.stringify(nextState));
+      writeFileSync(
+        join(replyDir, "answers", answer.replyId + ".json"),
+        JSON.stringify({ request: answer, status: "delivered" }),
+      );
+      expect(await handleRemoteRequest(second)).toMatchObject({
+        task: { reply: { replyId: "reply_second", status: "uncertain" } },
+      });
+      expect(await handleRemoteRequest(answer)).toMatchObject({
+        task: { reply: { replyId: answer.replyId, status: "delivered" } },
+      });
+      expect(JSON.parse(readFileSync(join(replyDir, "answer.json"), "utf8")).id).toBe("q2");
+      nextState = JSON.parse(readFileSync(join(replyDir, "state.json"), "utf8"));
+      nextState.task.state = "cancelled";
+      writeFileSync(join(replyDir, "state.json"), JSON.stringify(nextState));
+      expect(await handleRemoteRequest(second)).toMatchObject({ code: "not_running" });
+
       // Exercise the owner mailbox -> RPC command -> ledger acknowledgement, without
       // pretending stdin text is a native answer (the child here is a protocol fixture).
       const liveReq = { ...request, taskId: "question_dispatch", prompt: "ask" };

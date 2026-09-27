@@ -1,3 +1,4 @@
+import { captureNativeJobText } from "./job-artifacts";
 import { registerRemoteCancellationRuntime } from "./cancellation";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { openSync, closeSync, writeFileSync, fsyncSync, renameSync } from "node:fs";
@@ -83,16 +84,18 @@ export function registerRemoteRuntime(pi: ExtensionAPI): void {
       if (!host) throw new Error("Remote child session host unavailable");
       let cursor: number | string | undefined;
       let activeJobs = 0;
+      let textOutputGap: string | undefined;
       for (let page = 0; ; page++) {
         if (page >= 100) throw new Error("Remote job inspection page limit");
         const result = (await host.list({ cursor, count: 100 })) as {
-          jobs: Array<{ status: string }>;
+          jobs: Array<{ id?: string; status: string }>;
           nextCursor?: number | string;
         };
         if (!Array.isArray(result.jobs)) throw new Error("Remote job state unavailable");
         activeJobs += result.jobs.filter(
           (job) => !["completed", "failed", "cancelled", "stopped"].includes(job.status),
         ).length;
+        textOutputGap = (await captureNativeJobText(host, path, result.jobs)) ?? textOutputGap;
         if (result.nextCursor === undefined) break;
         if (result.nextCursor === cursor) throw new Error("Remote job cursor repeated");
         cursor = result.nextCursor;
@@ -103,6 +106,7 @@ export function registerRemoteRuntime(pi: ExtensionAPI): void {
       save({
         settled: true,
         activeJobs,
+        textOutputGap,
         pendingMessages: ctx.hasPendingMessages(),
         questions,
         sessionFile: ctx.sessionManager.getSessionFile(),

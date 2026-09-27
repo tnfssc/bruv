@@ -7,3 +7,7 @@ Evidence (2026-09-27): parent baseline `/tmp/die-remote-full-regression.log` sho
 ## Expanded Docker acceptance fixture (in progress)
 
 The opt-in Linux Docker/SSH fake-provider harness now tests a real native question with an owner/version-targeted answer through the normal CLI execute bridge, owner model continuation and final response, and reconnect refresh without an explicit sync. It continues to check pinned host keys, disconnected owner completion, and offline paged transcript. The provider is deterministic and explicitly fake; this is not Mac, real-provider, or external-host evidence. Syntax bundling of the changed harness and fake provider passed with Bun 1.4.2. The combined production binary and Docker run still require parent integration of the concurrent native-answer/autosync worker; no pass is claimed yet. Cancellation, repo transfer/return, and capability waiting remain unverified in this harness until their production APIs and combined binary are available.
+
+## Integrated normal-session follow-up
+
+See [integrated-normal-session.md](integrated-normal-session.md) and src/remote/README.md for the assembled native answers, automatic sync, snapshot/return, explicit read-only local capabilities, cancellation and offline text artifacts. That note records current gate state and limits; this first-slice note remains historical evidence, not the current feature boundary. Live remains execute-only.

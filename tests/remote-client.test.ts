@@ -239,3 +239,49 @@ test("targeted answer pins reply ID before transport, rejects changed intent, bo
   expect(requests.filter((r) => r.op === "sync")).toHaveLength(1);
   expect((await c.transcript("one")).task?.state).toBe("done");
 });
+
+test("restart automatically finishes a partially cached terminal transcript", async () => {
+  let offline = false;
+  const transport: Transport = async (_host, _path, r) => {
+    if (r.op === "hello") return h();
+    if (r.op === "launch") return { task: { taskId: r.taskId, state: "accepted" } };
+    if (r.cursor === 0)
+      return {
+        task: { taskId: r.taskId, state: "done" },
+        events: [{ seq: 1, event: { type: "message_end", text: "first" } }],
+        cursor: 1,
+        hasMore: true,
+      };
+    if (offline) throw Error("link lost after first terminal page");
+    return {
+      task: { taskId: r.taskId, state: "done" },
+      events: [{ seq: 2, event: { type: "message_end", text: "final" } }],
+      cursor: 2,
+      hasMore: false,
+    };
+  };
+  const client = await fixture(transport);
+  await client.connect("fixture");
+  await client.launch("/repo", "work", "partial");
+  offline = true;
+  await expect(client.sync("partial")).rejects.toThrow("link lost");
+  expect((await client.transcript("partial")).transcriptComplete).toBe(false);
+  offline = false;
+  const resumed = new RemoteClient(client.path, transport);
+  await resumed.syncActive();
+  expect((await resumed.transcript("partial")).events).toHaveLength(2);
+  expect((await resumed.transcript("partial")).transcriptComplete).toBe(true);
+});
+
+test("existing task catch-up is independent of a subsequently removed default profile", async () => {
+  let removed = false;
+  const client = await fixture(async (_host, _path, r) => {
+    if (r.op === "hello") return removed ? { ...h(), profile: { name: "normal", auth: "missing" } } : h();
+    if (r.op === "launch") return { task: { taskId: r.taskId, state: "accepted" } };
+    return { task: { taskId: r.taskId, state: "done" }, events: [], cursor: 0, hasMore: false };
+  });
+  await client.connect("fixture");
+  await client.launch("/repo", "work", "configured_once");
+  removed = true;
+  expect((await client.sync("configured_once")).task?.state).toBe("done");
+});

@@ -7,6 +7,7 @@ import {
   mkdirSync,
   openSync,
   readFileSync,
+  readSync,
   readdirSync,
   realpathSync,
   renameSync,
@@ -40,6 +41,27 @@ function atomic(path: string, value: unknown) {
     closeSync(fd);
   }
   renameSync(tmp, path);
+  const directory = openSync(dirname(path), "r");
+  try {
+    fsyncSync(directory);
+  } finally {
+    closeSync(directory);
+  }
+}
+function sameChunk(path: string, offset: number, data: Buffer) {
+  const fd = openSync(path, "r");
+  try {
+    const current = Buffer.alloc(data.length);
+    let n = 0;
+    while (n < current.length) {
+      const read = readSync(fd, current, n, current.length - n, offset + n);
+      if (!read) break;
+      n += read;
+    }
+    return n === data.length && current.equals(data);
+  } finally {
+    closeSync(fd);
+  }
 }
 export type RepositoryRequest =
   | {
@@ -92,12 +114,7 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
     const size = existsSync(bundle) ? statSync(bundle).size : 0;
     if (req.offset > size) throw Error("Repository chunk gap");
     if (req.offset < size) {
-      if (
-        req.offset + data.length > size ||
-        !readFileSync(bundle)
-          .subarray(req.offset, req.offset + data.length)
-          .equals(data)
-      )
+      if (req.offset + data.length > size || !sameChunk(bundle, req.offset, data))
         throw Error("Repository retry chunk conflict");
     } else {
       const fd = openSync(bundle, "a", 0o600);
@@ -116,17 +133,44 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
     // A crash during clone can only leave this unaccepted, task-owned directory.
     rmSync(checkout, { recursive: true, force: true });
     const env = { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null", GIT_TERMINAL_PROMPT: "0" };
-    const clone = Bun.spawnSync(["git", "-c", "core.hooksPath=/dev/null", "clone", "-q", bundle, checkout], {
-      env,
-      stdout: "pipe",
-      stderr: "pipe",
-      timeout: 60_000,
-      maxBuffer: 1024 * 1024,
-    });
+    const clone = Bun.spawnSync(
+      ["git", "-c", "core.hooksPath=/dev/null", "clone", "--no-checkout", "-q", bundle, checkout],
+      {
+        env,
+        stdout: "pipe",
+        stderr: "pipe",
+        timeout: 60_000,
+        maxBuffer: 1024 * 1024,
+      },
+    );
     if (clone.exitCode !== 0) throw Error("Remote snapshot clone failed: " + clone.stderr.toString().slice(0, 1000));
     const head = Bun.spawnSync(["git", "-C", checkout, "rev-parse", "HEAD"], { env });
     if (head.exitCode !== 0 || head.stdout.toString().trim() !== req.snapshot)
       throw Error("Remote snapshot revision mismatch");
+    const tree = Bun.spawnSync(["git", "-C", checkout, "ls-tree", "-rlz", "HEAD"], {
+      env,
+      stdout: "pipe",
+      stderr: "pipe",
+      timeout: 10_000,
+      maxBuffer: 16 * 1024 * 1024,
+    });
+    const entries = tree.stdout.toString().split("\0").filter(Boolean);
+    let expanded = 0;
+    for (const row of entries) {
+      const [mode, type, _oid, size] = row.split("\t")[0]!.trim().split(/\s+/);
+      if (!["100644", "100755"].includes(mode!) || type !== "blob" || !Number.isSafeInteger(Number(size)))
+        throw Error("Unsupported remote snapshot tree entry");
+      expanded += Number(size);
+    }
+    if (tree.exitCode !== 0 || expanded > MAX) throw Error("Remote checkout exceeds 128 MiB limit");
+    const history = Bun.spawnSync(["git", "-C", checkout, "rev-list", "--count", "HEAD"], { env, timeout: 10_000 });
+    if (history.exitCode !== 0 || history.stdout.toString().trim() !== "1")
+      throw Error("Repository upload must be an orphan snapshot without history");
+    const checkoutResult = Bun.spawnSync(
+      ["git", "-c", "core.hooksPath=/dev/null", "-C", checkout, "checkout", "--force", "HEAD"],
+      { env, stdout: "pipe", stderr: "pipe", timeout: 60_000, maxBuffer: 1024 * 1024 },
+    );
+    if (checkoutResult.exitCode !== 0) throw Error("Remote snapshot checkout failed");
     const result = { offset, checkout, snapshot: req.snapshot };
     atomic(ready, result);
     return result;
@@ -215,6 +259,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
   const data = readFileSync(descriptor.snapshot.bundle);
   if (!data.length || data.length > MAX)
     throw Error("Repository snapshot exceeds 128 MiB transfer limit; artifacts retained");
+  const sha256 = digest(data);
   let checkout: string | undefined;
   for (let offset = 0; offset < data.length; offset += CHUNK) {
     const response = (await client.control(
@@ -222,7 +267,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
         op: "repository-upload",
         taskId: id,
         snapshot: descriptor.snapshot.snapshot,
-        sha256: digest(data),
+        sha256,
         total: data.length,
         offset,
         data: data.subarray(offset, offset + CHUNK).toString("base64"),
@@ -287,6 +332,11 @@ export async function returnRepository(client: RemoteClient, task: RemoteTask): 
   const db = new Database(join(lockDir, digest(descriptor.root) + ".sqlite"));
   try {
     db.exec("PRAGMA busy_timeout=0; BEGIN EXCLUSIVE");
+    const latest = read<Descriptor>(file);
+    if (latest.outcome) {
+      db.exec("COMMIT");
+      return latest.outcome;
+    }
     descriptor.outcome = integrateRepositoryResult(
       descriptor.root,
       descriptor.snapshot,

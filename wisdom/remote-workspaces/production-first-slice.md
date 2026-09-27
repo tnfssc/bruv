@@ -23,3 +23,7 @@ Full parent regression exposed real Live break: 1232 pass18skip2fail, live-gpt-t
 Live integration fix ae5a25c integrated as add0a3b: remote operations now typed execute globals routed in agent extension, no extra active direct tool. Human-only connection route retained. Parent formatting/lint pass after formatting bridge; full rebuilt suite including DIE_REMOTE_E2E=1 task_8b3f529c running, log /tmp/die-remote-final-all.log. Worker passing Live and E2E evidence in execute-live-integration.md.
 
 Final parent rebuilt full suite including Docker SSH acceptance passed task_8b3f529c; log /tmp/die-remote-final-all.log. Typecheck/format/lint pass. This closes review gates for first production-code slice, not real Mac/provider proof. User host directive remains Docker only. Next missing native remote answers, automatic progress sync/UI, repo transfer/return and client capabilities are not shipped in this slice. No new values; whole-path regression caught Live incompatibility under existing principle.
+
+## Integrated normal-session follow-up
+
+See [integrated-normal-session.md](integrated-normal-session.md) and src/remote/README.md for the assembled native answers, automatic sync, snapshot/return, explicit read-only local capabilities, cancellation and offline text artifacts. That note records current gate state and limits; this first-slice note remains historical evidence, not the current feature boundary. Live remains execute-only.

@@ -19,6 +19,7 @@ test("orphan snapshot omits history; chunk replay is idempotent and result is te
     writeFileSync(join(repo, "secret"), "OLD_SECRET_MUST_NOT_TRANSFER");
     git(repo, "add", ".");
     git(repo, "-c", "user.name=T", "-c", "user.email=t@invalid", "commit", "-qm", "old");
+    const oldSecret = git(repo, "rev-parse", "HEAD:secret");
     rmSync(join(repo, "secret"));
     writeFileSync(join(repo, "file"), randomBytes(400000).toString("hex"));
     git(repo, "add", "-A");
@@ -43,6 +44,7 @@ test("orphan snapshot omits history; chunk replay is idempotent and result is te
       if (first.checkout) checkout = first.checkout;
     }
     expect(git(checkout, "rev-list", "--count", "HEAD")).toBe("1");
+    expect(Bun.spawnSync(["git", "-C", checkout, "cat-file", "-e", oldSecret]).exitCode).not.toBe(0);
     expect(git(checkout, "ls-tree", "-r", "--name-only", "HEAD")).toBe("file");
     expect(() =>
       repositoryRequest(taskDir, { op: "repository-result", taskId: "task1", offset: 0 }, "running"),

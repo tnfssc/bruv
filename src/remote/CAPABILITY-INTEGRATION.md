@@ -1,3 +1,5 @@
+Production wiring is now in services.ts, owner.ts, runtime.ts and the typed execute bridge. This file describes module interfaces; see README.md and wisdom/remote-workspaces/integrated-normal-session.md for whole-path evidence and limits.
+
 # Durable remote capabilities — integration hooks
 
 This module is infrastructure, **not wired into transport or the remote child yet**. Do not announce usable capabilities until the parent integrates the protocol and runtime tool. The transport must authenticate/pin ownerId + epoch + taskId before invoking these hooks; never accept a task directory or localRoot from a remote payload. Keep the task directory private (0700); request/grant/reply files are immutable, fsynced and atomically linked. Reply/terminal/revoke operations for a task must be serialized in the owning process. Do not run multiple independent owner writers for the same task directory. No arbitrary tool: names, shell or machine-wide grants.
@@ -16,7 +18,7 @@ const accepted = await box.reply(reply); // false means stale/terminal/revoked; 
 // On stop/end: await box.terminal(); On revoke: await box.revoke(grantId).
 ```
 
-Provide the runtime child an authenticated grantId + taskId via private configuration and use DIE_REMOTE_RUNTIME_FILE (runtime.json) to determine the task directory only if the parent created/pinned that path; do not trust an environment string supplied by a remote requester. The owner executes the mailbox Promise; the child needs a typed remote.requestCapability tool bridge to the owner, not a fake model completion. Preserve requestId across retries/restarts; same ID with changed payload is rejected. Sync may repeat requests, and authenticated clients should reply with the same persisted reply intent. Do not blindly replay uncertain **mutation** intents; these grants support only read-only operations.
+Provide the runtime child an authenticated grantId + taskId via private configuration and use DIE_REMOTE_RUNTIME_STATE (runtime.json) to determine the task directory only if the parent created/pinned that path; do not trust an environment string supplied by a remote requester. The owner executes the mailbox Promise; the child needs a typed remote.requestCapability tool bridge to the owner, not a fake model completion. Preserve requestId across retries/restarts; same ID with changed payload is rejected. Sync may repeat requests, and authenticated clients should reply with the same persisted reply intent. Do not blindly replay uncertain **mutation** intents; these grants support only read-only operations.
 
 Client (persist in a local **client-owned** 0700 directory, not the remote task directory):
 
