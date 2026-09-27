@@ -37,13 +37,18 @@ export class QuestionPicker implements Component, Focusable {
     return Math.max(1, Math.min(8, this.rows() - 7));
   }
   private createList(): SelectList {
-    return new SelectList(this.filtered, this.listSize, {
-      selectedPrefix: (s) => this.theme.fg("accent", s),
-      selectedText: (s) => this.theme.fg("accent", s),
-      description: (s) => this.theme.fg("muted", s),
-      scrollInfo: (s) => this.theme.fg("dim", s),
-      noMatch: (s) => this.theme.fg("warning", s),
-    });
+    return new SelectList(
+      this.filtered,
+      this.listSize,
+      {
+        selectedPrefix: (s) => this.theme.fg("accent", s),
+        selectedText: (s) => this.theme.fg("accent", s),
+        description: (s) => this.theme.fg("muted", s),
+        scrollInfo: (s) => this.theme.fg("dim", s),
+        noMatch: (s) => this.theme.fg("warning", s),
+      },
+      { maxPrimaryColumnWidth: 80 },
+    );
   }
   handleInput(data: string): void {
     if (this.keys.matches(data, "tui.select.cancel")) {
@@ -92,6 +97,7 @@ export class QuestionPicker implements Component, Focusable {
     const detail = [
       ...wrapTextWithAnsi(this.title, width),
       ...(selected ? ["", ...wrapTextWithAnsi(selected.label, width)] : []),
+      ...(selected?.description ? ["", ...wrapTextWithAnsi(selected.description, width)] : []),
     ];
     const height = Math.max(1, this.rows());
     const room = Math.max(0, height - 3 - input.length - list.length);

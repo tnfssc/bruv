@@ -6,7 +6,15 @@ import { launchRepository, retryRepository, repositoryPreparations } from "./rep
 import { grantCapabilities, revokeCapability } from "./services";
 import type { CapabilityKind } from "./capabilities";
 import { QuestionPicker } from "../questions/picker";
-import { inboxItems, questionOptions, taskActions, remoteCompletions, pendingQuestions, remoteLabel } from "./menu";
+import {
+  inboxItems,
+  questionOptions,
+  taskActions,
+  remoteCompletions,
+  pendingQuestions,
+  remoteLabel,
+  taskOwned,
+} from "./menu";
 
 /** Keep untrusted remote text printable even for terminals accepting C1/bidi controls. */
 export const renderRemote = (value: unknown) =>
@@ -151,8 +159,9 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         if (choice === "connect") {
           const host = (await ctx.ui.editor("SSH host (configured name)"))?.trim();
           if (!host) continue;
-          const path = (await ctx.ui.editor("Remote die path (blank for default)"))?.trim();
-          publish(await client.connect(host, path || undefined));
+          const path = await ctx.ui.editor("Remote die path (blank for default)");
+          if (path === undefined) continue;
+          publish(await client.connect(host, path.trim() || undefined));
           continue;
         }
         if (choice === "launch") {
@@ -190,9 +199,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             )
               throw Error("Question changed or has a saved reply; no new answer sent");
             publish(
-              summary(
-                await client.answer(taskId!, { id: q.id, owner: q.owner!, version: q.version!, text: answer.trim() }),
-              ),
+              summary(await client.answer(taskId!, { id: q.id, owner: q.owner!, version: q.version!, text: answer })),
             );
             break;
           }
@@ -206,11 +213,19 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             const action = await pick(
               ctx,
               "Task · " + remoteLabel(task.prompt),
-              taskActions(task, !!(await client.status()).connection),
+              taskActions(task, taskOwned(task, await client.status())),
             );
             if (!action) break;
-            if (action === "transcript") publish(await operations({ op: "transcript", taskId: id, offset: 0 }));
+            if (action === "transcript") {
+              publish(await operations({ op: "transcript", taskId: id, offset: 0 }));
+              return; // Let the human read the conversation instead of covering it with another picker.
+            }
             if (action === "sync") publish(summary(await client.sync(id)));
+            if (action.startsWith("reply:")) {
+              const saved = task.replies?.[action.slice(6)];
+              if (saved && (await ctx.ui.confirm("Reconcile saved reply?", remoteLabel(saved.text))))
+                publish(summary(await client.answer(id, saved)));
+            }
             if (action === "retry") {
               const saved = await client.transcript(id);
               publish(

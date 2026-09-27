@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Linux-only real CLI / SSH / owner / explicitly fake provider test. No external SSH host or real provider.
 set -euo pipefail
+# The fixture is a human parent CLI, even when launched from a die worker.
+unset DIE_SUBAGENT_DEPTH DIE_SUBAGENT_TYPE DIE_REMOTE_RUNTIME_STATE
 cd "$(dirname "$0")/.."
 for tool in docker ssh ssh-keygen timeout python3; do command -v "$tool" >/dev/null || { echo "missing $tool" >&2; exit 1; }; done
 if [[ "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-pty-e2e.ts ]]; then command -v tmux >/dev/null || { echo "missing tmux" >&2; exit 1; }; fi
@@ -15,7 +17,7 @@ cp tests/fixtures/remote-e2e/{Dockerfile,entrypoint.sh,sshd_config,models.json,s
 cp "$BUN_BIN" "$tmp/build/bun"; cp "$DIE_BIN" "$tmp/build/die"
 cp "$tmp/hostkey" "$tmp/client.pub" "$tmp/keys/"
 chmod 644 "$tmp/build"/*; chmod 755 "$tmp/build/bun" "$tmp/build/die" "$tmp/build/entrypoint.sh"
-printf 'normal CLI die %s sha256 %s\n' "$("$DIE_BIN" --version)" "$(sha256sum "$DIE_BIN" | cut -d ' ' -f 1)"
+printf 'normal CLI die %s sha256 %s\n' "$(HOME="$tmp/home" "$DIE_BIN" --version)" "$(sha256sum "$DIE_BIN" | cut -d ' ' -f 1)"
 timeout 180 docker build -q -t "$name" "$tmp/build" >/dev/null
 for attempt in {1..8}; do
  if docker run -d --name "$name" --memory 1g --cpus 2 --pids-limit 192 -p 127.0.0.1::2222 --mount "type=bind,src=$tmp/keys,dst=/keys,readonly" "$name" >"$tmp/container-id"; then break; fi

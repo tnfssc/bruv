@@ -18,11 +18,17 @@ const server = Bun.serve({
     const cancelTask = userText.includes("REMOTE_FIXTURE_CANCEL");
     const menuTask = userText.includes("REMOTE_FIXTURE_MENU_");
     const questionTask = (body.messages ?? []).some(
-      (m) => m.role === "user" && JSON.stringify(m.content).includes("REMOTE_FIXTURE_QUESTION") || JSON.stringify(m.content).includes("REMOTE_FIXTURE_MENU_"),
+      (m) =>
+        (m.role === "user" && JSON.stringify(m.content).includes("REMOTE_FIXTURE_QUESTION")) ||
+        JSON.stringify(m.content).includes("REMOTE_FIXTURE_MENU_"),
     );
     const answered =
       questionTask &&
-      (body.messages ?? []).some((m) => JSON.stringify(m.content).includes(menuTask ? "REMOTE_FIXTURE_MENU_CONTINUED" : "REMOTE_FIXTURE_ANSWER_ACCEPTED"));
+      (body.messages ?? []).some((m) =>
+        JSON.stringify(m.content).includes(
+          menuTask ? "REMOTE_FIXTURE_MENU_CONTINUED" : "REMOTE_FIXTURE_ANSWER_ACCEPTED",
+        ),
+      );
     const calls = (body.messages ?? []).filter(
       (item) => item.role === "tool" && item.tool_call_id === "fixture-remote-execute",
     );

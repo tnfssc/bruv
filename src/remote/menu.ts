@@ -23,23 +23,58 @@ export const pendingQuestions = (state: Pick<RemoteState, "tasks">) =>
       .filter((q) => q.status === "pending" && !task.replies?.[q.id])
       .map((q) => ({ task, q })),
   );
+export const taskOwned = (task: RemoteTask, state: RemoteState) =>
+  !!state.connection &&
+  task.host === state.connection.host &&
+  task.ownerId === state.connection.hello.ownerId &&
+  task.epoch === state.connection.hello.epoch;
 export function inboxItems(state: RemoteState): Item[] {
   const online = !!state.connection;
   return [
     ...pendingQuestions(state).map(({ task, q }) => ({
-      value: (online ? "question:" : "offline:question:") + task.taskId + ":" + q.id,
+      value: (taskOwned(task, state) && !task.lastError ? "question:" : "offline:question:") + task.taskId + ":" + q.id,
       label: "Question: " + title(q.text ?? q.question ?? "Untitled question"),
-      description: (online ? "" : "Unavailable offline · ") + title(task.prompt) + " · " + task.taskId.slice(0, 12),
+      description:
+        (taskOwned(task, state) && !task.lastError ? "" : "Answer unavailable · sync pinned owner first · ") +
+        title(task.prompt) +
+        " · " +
+        task.taskId.slice(0, 12),
     })),
+    ...Object.values(state.tasks).flatMap((task) =>
+      Object.entries(task.replyDelivery ?? {})
+        .filter(([, delivery]) => delivery.status === "uncertain")
+        .map(([id]) => ({
+          value: "task:" + task.taskId,
+          label:
+            "Reply uncertain: " +
+            title(
+              ((task.task?.questions ?? []) as RemoteQuestion[]).find((q) => q.id === id)?.text ??
+                ((task.task?.questions ?? []) as RemoteQuestion[]).find((q) => q.id === id)?.question ??
+                id,
+            ),
+          description: title(task.prompt) + " · saved reply retained; open task to reconcile",
+        })),
+    ),
     ...Object.values(state.tasks).map((task) => ({
       value: "task:" + task.taskId,
       label: "Task: " + title(task.prompt || task.repoPath) + " [" + (task.task?.state ?? task.outcome) + "]",
-      description: task.host + " · " + task.taskId.slice(0, 12) + (task.lastError ? " · " + task.lastError : ""),
+      description: remoteLabel(
+        (task.task?.state ?? task.outcome) +
+          " · " +
+          task.host +
+          " · cached · " +
+          task.taskId.slice(0, 12) +
+          (task.lastError ? " · " + task.lastError : ""),
+      ),
     })),
     { value: "connect", label: "Connect…", description: "Configured SSH host" },
     ...(online
       ? [
-          { value: "launch", label: "Launch local repository…", description: "Explicit snapshot and prompt" },
+          {
+            value: "launch",
+            label: "Launch local repository…",
+            description: "Explicit snapshot and prompt · requires SSH; unavailable offline",
+          },
           { value: "refresh", label: "Refresh from remote", description: "Sync active tasks now" },
         ]
       : [
@@ -62,12 +97,34 @@ export function taskActions(task: RemoteTask, online: boolean): Item[] {
     { value: "transcript", label: "View cached transcript", description: "Available offline" },
     ...(online
       ? [
-          { value: "sync", label: "Sync task", description: "Fetch owner updates" },
+          {
+            value: "sync",
+            label: "Sync task",
+            description: task.lastError
+              ? "Retry failed sync; other actions unavailable until fresh"
+              : "Fetch owner updates",
+          },
+          ...Object.entries(task.replyDelivery ?? {})
+            .filter(([, d]) => d.status === "uncertain")
+            .map(([id]) => ({
+              value: "reply:" + id,
+              label: "Reconcile saved reply",
+              description: "Same saved text and reply identity; never a new answer",
+            })),
           ...(task.outcome === "unknown"
             ? [{ value: "retry", label: "Reconcile uncertain launch", description: "Same task ID and owner only" }]
             : []),
-          ...(["accepted", "running"].includes(task.task?.state ?? "")
+          ...(!task.lastError && ["accepted", "running"].includes(task.task?.state ?? "")
             ? [{ value: "cancel", label: "Cancel task…", description: "Requires confirmation" }]
+            : []),
+          ...(task.lastError
+            ? [
+                {
+                  value: "offline",
+                  label: "Cancel unavailable (last sync failed)",
+                  description: "Sync the pinned owner first",
+                },
+              ]
             : []),
         ]
       : [

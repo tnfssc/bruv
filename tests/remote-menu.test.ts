@@ -32,7 +32,10 @@ const task = {
     ],
   },
 } as RemoteTask;
-const state = { tasks: { "task-a": task }, connection: { host: "host" } } as unknown as RemoteState;
+const state = {
+  tasks: { "task-a": task },
+  connection: { host: "host", hello: { ownerId: "owner", epoch: "epoch" } },
+} as unknown as RemoteState;
 test("remote inbox has searchable actionable labels and relevant completion IDs", () => {
   expect(inboxItems(state).map((i) => i.label)).toEqual(
     expect.arrayContaining([
@@ -80,4 +83,36 @@ test("uncertain replies are never offered as new questions; offline actions are 
 
 test("untrusted remote labels are printable", () => {
   expect(remoteLabel("hello\x1b[2J\u202eevil")).toBe("hello [2J evil");
+});
+
+test("cached offline and foreign-owner questions are visible but not answer actions", () => {
+  const failed = { ...task, lastError: "SSH offline" };
+  const row = inboxItems({ ...state, tasks: { "task-a": failed } }).find((i) => i.label.startsWith("Question:"))!;
+  expect(row.value).toStartWith("offline:");
+  expect(row.description).toContain("unavailable");
+  expect(taskActions(failed, true).some((i) => i.value === "cancel")).toBe(false);
+  expect(taskActions(failed, true).some((i) => i.value === "sync")).toBe(true);
+  const foreign = { ...task, ownerId: "different-owner" };
+  expect(
+    inboxItems({ ...state, tasks: { "task-a": foreign } }).find((i) => i.label.startsWith("Question:"))!.value,
+  ).toStartWith("offline:");
+});
+test("uncertain reply remains actionable without offering a replacement answer", () => {
+  const uncertain = {
+    ...task,
+    replies: {
+      "q-one": {
+        id: "q-one",
+        owner: { sessionId: "s", branchId: "b" },
+        version: 1,
+        text: "North region",
+        replyId: "reply",
+      },
+    },
+    replyDelivery: { "q-one": { replyId: "reply", status: "uncertain" as const } },
+  };
+  const rows = inboxItems({ ...state, tasks: { "task-a": uncertain } });
+  expect(rows.some((i) => i.label.startsWith("Question:"))).toBe(false);
+  expect(rows.find((i) => i.label.startsWith("Reply uncertain:"))?.description).toContain("saved reply retained");
+  expect(taskActions(uncertain, true).find((i) => i.value === "reply:q-one")?.label).toBe("Reconcile saved reply");
 });

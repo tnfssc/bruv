@@ -171,6 +171,8 @@ test("no-args inbox binds selected choice to freshly synced owner/version, Escap
     taskId: "task-one",
     prompt: "Ship docs",
     host: "host",
+    ownerId: "owner",
+    epoch: "epoch",
     outcome: "accepted",
     events: [],
     cursor: 0,
@@ -189,7 +191,10 @@ test("no-args inbox binds selected choice to freshly synced owner/version, Escap
     },
   });
   const client = {
-    status: async () => ({ connection: { host: "host" }, tasks: { "task-one": task() } }),
+    status: async () => ({
+      connection: { host: "host", hello: { ownerId: "owner", epoch: "epoch" } },
+      tasks: { "task-one": task() },
+    }),
     sync: async () => task(),
     answer: async (...a: any[]) => {
       answers.push(a);
@@ -241,4 +246,42 @@ test("no-args inbox binds selected choice to freshly synced owner/version, Escap
   selections.push("enter", "esc", "esc");
   await command.handler("", ctx);
   expect(answers).toHaveLength(0);
+});
+
+test("connect editor Escape never connects, even after entering a host", async () => {
+  let command: any;
+  const connects: unknown[] = [];
+  remoteExtension(
+    {
+      on() {},
+      registerCommand(_n: string, c: any) {
+        command = c;
+      },
+      sendMessage() {},
+    } as any,
+    { status: async () => ({ tasks: {} }), connect: async (...args: any[]) => connects.push(args) } as any,
+  );
+  const choices = ["connect", undefined];
+  const edits = ["fixture-host", undefined];
+  const ctx = {
+    hasUI: true,
+    ui: {
+      custom: async (factory: any) => {
+        let result: string | undefined;
+        factory(
+          { terminal: { rows: 30 }, requestRender() {} },
+          { fg: (_c: string, t: string) => t },
+          {},
+          (v: string | undefined) => {
+            result = v;
+          },
+        );
+        return choices.shift();
+      },
+      editor: async () => edits.shift(),
+      notify() {},
+    },
+  };
+  await command.handler("", ctx);
+  expect(connects).toEqual([]);
 });

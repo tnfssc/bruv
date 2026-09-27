@@ -1,4 +1,4 @@
-/** Run real dist/die --mode rpc against isolated fake model and pinned Docker SSH host. */
+/** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -74,6 +74,9 @@ const state = () =>
       string,
       {
         cursor: number;
+        lastError?: string;
+        cancelRequested?: boolean;
+        replies?: Record<string, unknown>;
         repoPath: string;
         repository?: { status: string; artifact: string };
         localArtifacts?: { complete: boolean; files: Record<string, { path: string }> };
@@ -83,7 +86,14 @@ const state = () =>
           state: string;
           capabilityNeeds?: unknown[];
           capabilities?: unknown[];
-          questions?: Array<{ id: string; text: string; owner: unknown; version: number; status: string; answer?: string }>;
+          questions?: Array<{
+            id: string;
+            text: string;
+            owner: unknown;
+            version: number;
+            status: string;
+            answer?: string;
+          }>;
         };
       }
     >;
@@ -122,7 +132,18 @@ const launchRpc = (cwd = home) => {
     while (!predicate()) {
       if (child.exitCode !== null) throw new Error("RPC exited while " + label + ": " + stderr);
       if (Date.now() - start > limit)
-        throw new Error("RPC timeout " + label + "; stderr=" + stderr + "; events=" + JSON.stringify(events.slice(-8)));
+        throw new Error(
+          "RPC timeout " +
+            label +
+            "; stderr=" +
+            stderr +
+            "; pane=" +
+            spawnSync("tmux", ["-L", "die-remote-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
+              encoding: "utf8",
+            }).stdout +
+            "; events=" +
+            JSON.stringify(events.slice(-4)),
+        );
       await Bun.sleep(40);
     }
   };
@@ -135,16 +156,35 @@ const ssh = (...args: string[]) =>
   });
 // Real tmux PTY against the same disposable native owner; no local question ledger is created.
 const tmux = (...args: string[]) => {
-  const result = spawnSync("tmux", ["-L", "die-remote-pty-" + process.pid, ...args], { encoding: "utf8", timeout: 10000 });
+  const result = spawnSync("tmux", ["-L", "die-remote-pty-" + process.pid, ...args], {
+    encoding: "utf8",
+    timeout: 10000,
+  });
   assert.equal(result.status, 0, result.stderr);
   return result.stdout;
 };
 const ownerQuestion = (taskId: string): { status: string; answer?: string } => {
-  const result = spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "cat /root/.die/remote-owner/tasks/" + taskId + "/session.jsonl.questions.json"], {encoding:"utf8", timeout:6000});
+  const result = spawnSync(
+    "ssh",
+    [
+      "-F",
+      process.env.FIXTURE_SSH_CONFIG!,
+      "fixture-owner",
+      "cat /root/.die/remote-owner/tasks/" + taskId + "/session.jsonl.questions.json",
+    ],
+    { encoding: "utf8", timeout: 6000 },
+  );
   assert.equal(result.status, 0, result.stderr);
   return JSON.parse(result.stdout)[0];
 };
 const pane = () => tmux("capture-pane", "-p", "-t", "remote");
+const evidence = (name: string) => {
+  const dir = process.env.DIE_REMOTE_PTY_ARTIFACTS;
+  if (dir) {
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, name + ".txt"), pane());
+  }
+};
 const key = (...keys: string[]) => tmux("send-keys", "-t", "remote", ...keys);
 const type = (text: string) => tmux("send-keys", "-t", "remote", "-l", text);
 const until = async (needle: string, timeout = 12000) => {
@@ -162,74 +202,185 @@ try {
   const rpc = launchRpc();
   rpc.send("/remote connect fixture-owner /usr/local/bin/die");
   await rpc.wait(() => existsSync(statePath) && !!state().connection, "remote connection");
-  const launch = async (suffix: string) => {
+  const launch = async (suffix: string, question = true) => {
     const before = new Set(Object.keys(state().tasks));
-    rpc.send("/remote launch /fixture/repo REMOTE_FIXTURE_MENU_" + suffix);
+    rpc.send("/remote launch /fixture/repo " + (question ? "REMOTE_FIXTURE_MENU_" : "REMOTE_FIXTURE_") + suffix);
     await rpc.wait(() => Object.keys(state().tasks).some((id) => !before.has(id)), "native task launch", 30000);
     const id = Object.keys(state().tasks).find((id) => !before.has(id))!;
-    await rpc.wait(() => !!state().tasks[id]?.task?.questions?.length, "native question", 30000);
+    if (question) await rpc.wait(() => !!state().tasks[id]?.task?.questions?.length, "native question", 30000);
+    else await rpc.wait(() => state().tasks[id]?.task?.state === "running", "native running task", 30000);
     return id;
   };
   const first = await launch("CHOICE");
   const second = await launch("FREE_TEXT");
   // Spawn the compiled CLI, not a mocked picker or RPC UI. tmux owns the PTY.
-  const cmd = ["env", "HOME=" + home, "DIE_CODING_AGENT_DIR=" + agentDir, die, "--offline", "--no-approve", "--provider", "fixture", "--model", "fixture-model"].map(quote).join(" ");
+  const cmd = [
+    "env",
+    "HOME=" + home,
+    "DIE_CODING_AGENT_DIR=" + agentDir,
+    die,
+    "--offline",
+    "--no-approve",
+    "--provider",
+    "fixture",
+    "--model",
+    "fixture-model",
+  ]
+    .map(quote)
+    .join(" ");
   tmux("new-session", "-d", "-s", "remote", "-x", "120", "-y", "35", cmd);
   await until("REMOTE_FIXTURE_MENU_QUESTION");
-  type("/remote"); key("Enter");
-  await until("REMOTE_FIXTURE_MENU_QUESTION", 20000);
+  type("/remote answer ");
+  await until("→ Question:");
+  evidence("question-completion");
+  key("Tab");
+  await until("/remote answer " + first);
+  key("C-u");
+  type("/remote");
+  key("Enter");
+  await until("Remote · inbox", 20000);
+  evidence("inbox");
   // Task filter must narrow the inbox without submitting either owner question.
   type("FREE_TEXT");
-  await until("FREE_TEXT");
-  assert(pane().includes(second), "search did not expose matching task");
+  key("Down");
+  await until("Task: REMOTE_FIXTURE_MENU_FREE_TEXT");
+  assert(pane().includes("Task: REMOTE_FIXTURE_MENU_FREE_TEXT"), "search did not expose matching task\n" + pane());
+  assert(!pane().includes("Task: REMOTE_FIXTURE_MENU_CHOICE"), "search left the unrelated task visible");
+  evidence("filtered-inbox");
   // Escape is navigation only: neither owner question may be answered by closing the menu.
   key("Escape");
   await Bun.sleep(200);
   assert.equal(ownerQuestion(first).status, "pending");
   assert.equal(ownerQuestion(second).status, "pending");
-  type("/remote"); key("Enter");
-  await until("REMOTE_FIXTURE_MENU_QUESTION");
+  type("/remote");
   key("Enter");
-  await until("REMOTE_FIXTURE_MENU_FIRST");
+  await until("Remote · inbox");
+  key("Enter");
+  await until("→ REMOTE_FIXTURE_MENU_FIRST");
+  key("Down");
   // Narrow wrapping must retain the long choice's end, not silently truncate it.
   tmux("resize-window", "-t", "remote", "-x", "50", "-y", "20");
   await Bun.sleep(180);
   assert(pane().includes("NARROW_TERMINAL"), pane());
-  key("Down", "Enter");
-  await rpc.wait(() => ownerQuestion(first).status !== "pending" || ownerQuestion(second).status !== "pending", "PTY choice submitted", 20000);
-  const answeredId = [first,second].find((id) => ownerQuestion(id).status !== "pending")!;
+  evidence("narrow-choice");
+  key("Enter");
+  await rpc.wait(
+    () => ownerQuestion(first).status !== "pending" || ownerQuestion(second).status !== "pending",
+    "PTY choice submitted",
+    20000,
+  );
+  const answeredId = [first, second].find((id) => ownerQuestion(id).status !== "pending")!;
   assert(answeredId, "choice did not submit");
   const unansweredId = answeredId === first ? second : first;
-  assert.equal(ownerQuestion(answeredId).answer, "REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TAIL_VISIBLE_ON_NARROW_TERMINAL");
-  type("/remote"); key("Enter");
-  await until("REMOTE_FIXTURE_MENU_QUESTION");
+  assert.equal(
+    ownerQuestion(answeredId).answer,
+    "REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TAIL_VISIBLE_ON_NARROW_TERMINAL",
+  );
+  await until("Remote · inbox");
   key("Enter");
-  await until("REMOTE_FIXTURE_MENU_FIRST");
+  await until("→ REMOTE_FIXTURE_MENU_FIRST");
   key("Down", "Down", "Enter");
   await until("enter submit");
-  type("REMOTE_FIXTURE_MENU_CONTINUED free text"); key("Enter");
+  type("Discarded remote draft");
+  key("Escape");
+  await until("→ REMOTE_FIXTURE_MENU_FIRST");
+  assert.equal(ownerQuestion(unansweredId).status, "pending");
+  key("Down", "Down", "Enter");
+  await until("enter submit");
+  type("REMOTE_FIXTURE_MENU_CONTINUED free text");
+  await Bun.sleep(100);
+  evidence("custom-editor");
+  key("Enter");
   await rpc.wait(() => ownerQuestion(unansweredId).status !== "pending", "PTY free-text submitted", 20000);
   assert.equal(ownerQuestion(unansweredId).answer, "REMOTE_FIXTURE_MENU_CONTINUED free text");
+  await until("Remote · inbox");
+  key("Escape");
   const staleId = await launch("STALE");
-  type("/remote"); key("Enter");
-  await until("REMOTE_FIXTURE_MENU_QUESTION");
-  key("Enter"); await until("REMOTE_FIXTURE_MENU_FIRST");
+  type("/remote");
+  key("Enter");
+  await until("Remote · inbox");
+  key("Enter");
+  await until("→ REMOTE_FIXTURE_MENU_FIRST");
   const staleQ = state().tasks[staleId]!.task!.questions![0]!;
+  const stablePickerFrame = pane();
   rpc.send("/remote answer " + staleId + " " + staleQ.id + " REMOTE_FIXTURE_MENU_CONTINUED external answer");
   await rpc.wait(() => ownerQuestion(staleId).status !== "pending", "external answer creates stale picker", 20000);
+  await Bun.sleep(5500); // Cross the production refresh timer while the other client changes this question.
+  assert.equal(pane(), stablePickerFrame, "background refresh disturbed the open picker");
   key("Enter");
   await until("Question changed");
+  evidence("stale-rejected");
   assert.equal(ownerQuestion(staleId).answer, "REMOTE_FIXTURE_MENU_CONTINUED external answer");
-  type("/remote an"); key("Tab");
+  tmux("resize-window", "-t", "remote", "-x", "120", "-y", "35");
+  type("/remote an");
+  await until("→ answer");
+  evidence("subcommand-completion");
+  key("Tab");
   await until("/remote answer");
   key("C-u");
+  type("/remote sync ");
+  await until("→ Task:");
+  evidence("task-completion");
+  key("Tab");
+  await until("/remote sync " + first);
+  key("C-u");
+  const cancelled = await launch("CANCEL", false);
+  type("/remote");
+  key("Enter");
+  await until("Remote · inbox");
+  type("REMOTE_FIXTURE_CANCEL");
+  await until("Task: REMOTE_FIXTURE_CANCEL");
+  key("Enter");
+  await until("View cached transcript");
+  type("Cancel");
+  await until("→ Cancel task");
+  key("Enter");
+  await until("Cancel remote task?");
+  key("Escape");
+  await until("View cached transcript");
+  assert(!state().tasks[cancelled]?.cancelRequested, "Escape requested cancellation");
+  type("Cancel");
+  await until("→ Cancel task");
+  key("Enter");
+  await until("Cancel remote task?");
+  evidence("cancel-confirmation");
+  key("Enter");
+  await rpc.wait(() => state().tasks[cancelled]?.task?.state === "cancelled", "menu task cancellation", 20000);
+  await until("View cached transcript");
+  key("Escape");
+  await until("Remote · inbox");
+  key("Escape");
+  const offline = await launch("OFFLINE");
+  const stopped = spawnSync("docker", ["stop", "-t", "1", container], { encoding: "utf8", timeout: 15000 });
+  assert.equal(stopped.status, 0, stopped.stderr);
+  rpc.send("/remote sync " + offline);
+  await rpc.wait(() => !!state().tasks[offline]?.lastError, "offline state", 20000);
+  type("/remote");
+  key("Enter");
+  await until("Remote · inbox");
+  type("OFFLINE");
+  await until("Answer unavailable");
+  evidence("offline-inbox");
+  key("Enter");
+  await Bun.sleep(150);
+  assert(pane().includes("Remote · inbox"), "offline answer became actionable");
+  assert(!state().tasks[offline]?.replies, "offline question saved a reply");
+  key("Down", "Enter");
+  await until("View cached transcript");
+  evidence("offline-task");
+  key("Enter");
+  await until("cached");
   // Remote interaction must never create a local user-question ledger.
-  const localLedgers = spawnSync("find", [home, "-name", "*.questions.json"], {encoding:"utf8"});
+  const localLedgers = spawnSync("find", [home, "-name", "*.questions.json"], { encoding: "utf8" });
   assert.equal(localLedgers.status, 0, localLedgers.stderr);
   assert.equal(localLedgers.stdout.trim(), "", "remote UI wrote local user questions");
-  console.log("PASS compiled CLI PTY remote menu navigation, choice, free text, narrow choice, autocomplete, cancellation; native Docker SSH owner questions");
+  console.log(
+    "PASS compiled CLI PTY remote menu navigation, choice, free text, narrow choice, subcommand/task/question autocomplete, Escape, task cancellation, stale rejection, quiet picker, offline read; native Docker SSH owner questions",
+  );
 } finally {
-  try { tmux("kill-server"); } catch {}
+  try {
+    tmux("kill-server");
+  } catch {}
   for (const child of rpcChildren) if (child.exitCode === null) child.kill("SIGKILL");
   provider.stop(true);
 }
