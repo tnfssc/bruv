@@ -32,3 +32,7 @@ Values unchanged: existing values already require one owner, durable uncertainty
 Validation recorded: Bun check passed; 527 passed / 10 opt-in skips / 0 failures across 81 jobs, task, Live, T3, remote and subagent-extension files. Docker-only compiled CLI integration passed separately. A final targeted pagination test also covers a newly launched random ID sorting before the previous page. Paid/real-provider and PTY tests were not run for this change.
 
 Final review fixed an additional inspect truthfulness edge: SSH journal sequence starts at one, so a first event with seq=1 is not output loss. A focused regression and final typecheck cover it; this is independent of the compiled parent-wake proof.
+
+## Native bridge local-phase pagination review
+
+A native bridge session with more local jobs than one page and no SSH jobs lost the remaining locals: the local-phase early return applied only without a native bridge, so the list fell through to an empty SSH phase with no cursor. Keep the local cursor until the pinned local slice is drained; fetch native total without consuming the native cursor so totals remain complete on local-only pages. Regression in `tests/remote-jobs.test.ts` checks page-size boundaries and empty local/native/SSH combinations for no drops or duplicates. The focused test failed before the fix (missing third local ID), then passed after; `bun run check` passed. This is a feature-local pagination lesson; values already cover no quiet loss and honest proof, so no values edit.

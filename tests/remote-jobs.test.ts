@@ -172,6 +172,80 @@ test("three-source pagination crosses native to SSH without skipping or repeatin
   }
 });
 
+test("native pagination preserves every phase with empty native and SSH sources", async () => {
+  for (const [localCount, nativeCount, sshCount] of [
+    [3, 0, 0],
+    [2, 0, 0],
+    [2, 0, 2],
+    [3, 0, 2],
+    [0, 3, 0],
+    [0, 0, 3],
+    [3, 3, 0],
+    [0, 0, 0],
+  ]) {
+    const { client, adapter } = await fixture();
+    for (let i = 0; i < sshCount; i++) await client.launch("/repo", "prompt", "ssh" + i, undefined, "session-A");
+    const manager = new TaskManager(() => {});
+    const native = Array.from({ length: nativeCount }, (_, i) => ({ taskId: "native" + i, status: "running" }));
+    const factory = () => ({
+      list: async ({ cursor, count }: { cursor: string; count: number }) => {
+        const offset = Number(cursor);
+        const tasks = native.slice(offset, offset + count);
+        return {
+          tasks,
+          total: native.length,
+          nextCursor: offset + tasks.length < native.length ? String(offset + tasks.length) : undefined,
+        };
+      },
+      close: async () => {},
+    });
+    const service = new JobService(
+      manager,
+      () => ({ depth: 0 }),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      { T3_MCP_URL: "http://localhost:8080", T3_MCP_BEARER_TOKEN: "test" },
+      factory as any,
+      undefined,
+      adapter,
+    );
+    const ctx = { cwd: process.cwd(), sessionManager: { getSessionFile: () => "session-A" } } as any;
+    const signal = new AbortController().signal;
+    try {
+      const locals: string[] = [];
+      for (let i = 0; i < localCount; i++)
+        locals.push(
+          ((await service.handle("shell", { command: "printf local", waitSeconds: 1 }, ctx, signal)) as { id: string })
+            .id,
+        );
+      const ids: string[] = [];
+      let cursor: string | undefined;
+      let pages = 0;
+      do {
+        const page = (await service.handle("jobs.list", { count: 2, ...(cursor ? { cursor } : {}) }, ctx, signal)) as {
+          jobs: Array<{ id: string }>;
+          nextCursor?: string;
+          total: number;
+        };
+        expect(page.total).toBe(localCount + nativeCount + sshCount);
+        expect(page.jobs.length).toBeLessThanOrEqual(2);
+        ids.push(...page.jobs.map((job) => job.id));
+        cursor = page.nextCursor;
+        expect(++pages).toBeLessThan(10);
+      } while (cursor);
+      expect(ids).toEqual([
+        ...locals,
+        ...native.map((task) => task.taskId),
+        ...Array.from({ length: sshCount }, (_, i) => sshJobId("ssh" + i)),
+      ]);
+    } finally {
+      await manager.shutdown();
+    }
+  }
+});
+
 test("mixed pages pin totals across a local-only first page, bound cursors and discriminate raw SSH IDs", async () => {
   const { client, adapter } = await fixture();
   await client.launch("/repo", "prompt", "same", undefined, "session-A");

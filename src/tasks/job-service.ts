@@ -745,8 +745,21 @@ export class JobService {
             ...local.slice(Math.min(state.localOffset, localEnd), Math.min(localEnd, state.localOffset + count)),
           );
           state.localOffset = Math.min(localEnd, state.localOffset + jobs.length);
-          if (state.localOffset < localEnd && bridge.kind !== "remote")
-            return { jobs, total: localEnd + ssh.length, nextCursor: encodeMixedCursor(state) };
+          if (state.localOffset < localEnd) {
+            // Keep the local phase until its pinned slice is exhausted. Native pagination
+            // starts only after that; asking for the total here must not consume tasks.
+            if (bridge.kind === "remote" && state.nativeTotal === undefined) {
+              const page = await this.#withNative(bridge, (adapter) =>
+                adapter.list({ cursor: state.nativeCursor, count: 1 }, signal),
+              );
+              state.nativeTotal = page.total;
+            }
+            return {
+              jobs,
+              total: state.localLimit + (state.nativeTotal ?? 0) + state.sshLimit,
+              nextCursor: encodeMixedCursor(state),
+            };
+          }
           if (state.localOffset >= localEnd) state.phase = "native";
         }
         let nativeTotal = state.nativeTotal ?? 0;
