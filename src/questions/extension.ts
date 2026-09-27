@@ -157,12 +157,15 @@ export function registerQuestions(
       const text = q.text ?? q.question ?? "Untitled question";
       const options = (q.choices ?? []).map((choice, index) => ({ value: String(index), label: choice }));
       if (q.allowFreeText !== false) options.push({ value: "write", label: "Write an answer…" });
-      const selected = options.length ? await pick(text, options) : undefined;
-      if (selected === undefined) continue;
-      const answer = selected === "write" ? await ctx.ui.editor(text) : q.choices?.[Number(selected)];
-      if (!answer?.trim()) continue;
-      await service.handle("questions.answer", { id: q.id, answer: answer.trim(), owner: q.owner, version: q.version });
-      await refresh();
+      while (true) {
+        const selected = options.length ? await pick(text, options) : undefined;
+        if (selected === undefined) break; // Escape from choices returns to the inbox.
+        const answer = selected === "write" ? await ctx.ui.editor(text) : q.choices?.[Number(selected)];
+        if (!answer?.trim()) continue; // Empty/cancelled editor returns to this question's choices.
+        await service.handle("questions.answer", { id: q.id, answer: answer.trim(), owner: q.owner, version: q.version });
+        await refresh();
+        break;
+      }
     }
   };
 

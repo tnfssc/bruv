@@ -274,7 +274,7 @@ test("interactive inbox answers only selected choice, advances, and escape leave
     { id: "q_second", text: "Why?", status: "pending", version: 1, owner: { sessionId: "s", branchId: "b" } },
   ];
   const replies: any[] = [];
-  const picks = ["q_first", "1", "q_second", "write", undefined];
+  const picks = ["q_first", "1", "q_second", "write", undefined, undefined];
   const titles: string[] = [];
   const ctx: any = {
     mode: "tui",
@@ -319,8 +319,40 @@ test("interactive inbox answers only selected choice, advances, and escape leave
   await command.handler("", ctx);
   expect(replies).toEqual([{ id: "q_first", answer: "production", owner: questions[0].owner, version: 2 }]);
   expect(questions[1].status).toBe("pending");
-  expect(titles).toHaveLength(5);
+  expect(titles).toHaveLength(6);
   expect((await command.getArgumentCompletions("ans"))[0].label).toBe("answer");
+});
+
+test("cancelled or empty free text retries choices; Escape from choices returns to inbox without mutation", async () => {
+  let command: any;
+  const question = { id: "q_one", text: "Why?", status: "pending", version: 1, owner: { sessionId: "s", branchId: "b" } };
+  const answers: any[] = [];
+  const picks = ["q_one", "write", "write", "write", undefined];
+  const editorReplies = [undefined, "   ", "valid answer"];
+  const titles: string[] = [];
+  const ctx: any = { mode: "tui", ui: {
+    custom: async (factory: any) => {
+      const picker = factory({ terminal: { rows: 24 }, requestRender() {} },
+        { fg: (_: string, s: string) => s }, { matches: () => false }, () => {});
+      titles.push(picker.render(80).join("\n"));
+      return picks.shift();
+    },
+    editor: async () => editorReplies.shift(), notify() {}, setStatus() {},
+  } };
+  registerQuestions({ on() {}, registerCommand(_: string, value: any) { command = value; } } as any,
+    () => ({ handle(method: string, params: any) {
+      if (method === "questions.list") return [question];
+      if (method === "questions.answer") { answers.push(params); question.status = "answered"; }
+    } }));
+  await command.handler("", ctx);
+  expect(titles.slice(1, 4).every((title) => title.includes("Why?"))).toBe(true);
+  expect(answers).toEqual([{ id: "q_one", answer: "valid answer", owner: question.owner, version: 1 }]);
+  question.status = "pending";
+  picks.push("q_one", undefined, undefined);
+  await command.handler("", ctx);
+  expect(answers).toHaveLength(1);
+  expect(question.status).toBe("pending");
+  expect(titles.at(-1)).toContain("Questions · 1 unanswered");
 });
 
 test("picker wraps full long labels at narrow width and filters without answering on escape", async () => {

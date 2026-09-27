@@ -97,11 +97,10 @@ test.skipIf(!hasTmux)(
       await until("enter submit");
       await type("Discard this draft");
       await key("Escape");
-      await until("1 unanswered");
+      expect(await until("Write an answer")).toContain("Skip");
       expect(service.get(ctx, second.id).status).toBe("pending");
-      await key("Enter");
-      await until("Write an answer");
       await key("Down", "Enter");
+      await until("enter submit");
       await type("A reproducible free text answer");
       await key("Enter");
       await until("2 saved");

@@ -22,8 +22,17 @@ test.skipIf(!hasTmux)(
     const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
     const frame = async () => (await tmux("capture-pane", "-p", "-t", name)).stdout;
     const send = async (text: string) => {
-      await tmux("send-keys", "-t", name, "-l", text);
-      await tmux("send-keys", "-t", name, "Enter");
+      expect((await tmux("send-keys", "-t", name, "-l", text)).code).toBe(0);
+      // tmux queues literal keys; wait until the composer has consumed them before Enter.
+      await until(" " + text);
+      // Slash argument completion consumes the first Enter when an ID is selected.
+      // A second Enter submits only if the exact command is still in the composer.
+      expect((await tmux("send-keys", "-t", name, "Enter")).code).toBe(0);
+      if (text.startsWith("/questions ")) {
+        await Bun.sleep(80);
+        if ((await frame()).includes(" " + text))
+          expect((await tmux("send-keys", "-t", name, "Enter")).code).toBe(0);
+      }
     };
     const until = async (text: string) => {
       let value = "";
