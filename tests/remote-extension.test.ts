@@ -1132,9 +1132,9 @@ test("local capability revocation is pinned to its task and never sends another 
     client.control = async () => {
       if (++attempts === 1) throw Error("owner reply lost");
     };
-    await expect(revokeCapability(client, "first", grant.id)).rejects.toThrow("owner reply lost");
+    expect(await revokeCapability(client, "first", grant.id)).toMatchObject({ revoked: true, ownerNotified: false });
     expect(localCapabilityGrants(client, "first")).toEqual([]);
-    expect(await revokeCapability(client, "first", grant.id)).toMatchObject({ revoked: true });
+    expect(await revokeCapability(client, "first", grant.id)).toMatchObject({ revoked: true, ownerNotified: true });
     expect(attempts).toBe(2);
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -1205,6 +1205,153 @@ test("bounded untracked preview distinguishes exact from incomplete path counts"
     expect(exact).toMatchObject({ paths: ["first", "second"], count: 2, incomplete: false });
     const limited = await repositoryUntracked(dir, 8);
     expect(limited).toMatchObject({ paths: [], preview: ["first"], count: 2, incomplete: true });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("offline terminal menu revokes only the selected local grant; Escape and denial leave authority intact", async () => {
+  const { mkdtemp, rm } = await import("node:fs/promises");
+  const { join } = await import("node:path");
+  const { tmpdir } = await import("node:os");
+  const { ClientCapabilityStore } = await import("../src/remote/capability-runtime");
+  const { localCapabilityGrants } = await import("../src/remote/services");
+  const dir = await mkdtemp(join(tmpdir(), "remote-offline-menu-"));
+  try {
+    const store = new ClientCapabilityStore(join(dir, "capability-grants"));
+    const grant = await store.grant("first", dir, ["repo.read"], "grant_first");
+    await store.grant("second", dir, ["repo.read"], "grant_second");
+    const task: any = {
+      taskId: "first",
+      prompt: "Old task",
+      host: "host",
+      ownerId: "owner",
+      epoch: "epoch",
+      events: [],
+      task: { state: "completed" },
+    };
+    const state: any = { tasks: { first: task }, connection: undefined };
+    const calls: string[] = [],
+      messages: any[] = [];
+    const client: any = {
+      path: join(dir, "state.json"),
+      status: async () => state,
+      sync: async () => {
+        throw Error("remote unavailable");
+      },
+      control: async () => {
+        throw Error("wrong-owner dispatch");
+      },
+    };
+    let command: any;
+    remoteExtension(
+      {
+        on() {},
+        registerCommand(_n: string, c: any) {
+          command = c;
+        },
+        sendMessage(m: any) {
+          messages.push(m);
+        },
+      } as any,
+      client,
+    );
+    const run = async (confirm: boolean, escape = false) => {
+      let picks = 0;
+      await command.handler("", {
+        hasUI: true,
+        ui: {
+          setStatus() {},
+          custom: async () => {
+            const value = ["task:first", "capabilities", escape ? undefined : "revoke:0", undefined][picks++];
+            calls.push("pick:" + value);
+            return value;
+          },
+          confirm: async (_title: string, details: string) => {
+            expect(details).toContain("Old task");
+            expect(details).toContain(grant.id);
+            calls.push("confirm");
+            return confirm;
+          },
+        },
+      });
+    };
+    await run(false);
+    expect(localCapabilityGrants(client, "first")).toHaveLength(1);
+    await run(true, true);
+    expect(localCapabilityGrants(client, "first")).toHaveLength(1);
+    await run(true);
+    expect(localCapabilityGrants(client, "first")).toEqual([]);
+    expect(localCapabilityGrants(client, "second")).toHaveLength(1);
+    expect(messages.at(-1).content).toContain("Owner not notified");
+    expect(calls.filter((x) => x === "confirm")).toHaveLength(2);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("changed-owner accepted task loses local grant without wrong-owner dispatch", async () => {
+  const { mkdtemp, rm } = await import("node:fs/promises");
+  const { join } = await import("node:path");
+  const { tmpdir } = await import("node:os");
+  const { ClientCapabilityStore } = await import("../src/remote/capability-runtime");
+  const { localCapabilityGrants } = await import("../src/remote/services");
+  const dir = await mkdtemp(join(tmpdir(), "remote-owner-revoke-"));
+  try {
+    const client: any = {
+      path: join(dir, "state.json"),
+      sync: () => {
+        throw Error("no remote sync");
+      },
+      control: () => {
+        throw Error("wrong owner dispatch");
+      },
+    };
+    const store = new ClientCapabilityStore(join(dir, "capability-grants"));
+    await store.grant("one", dir, ["repo.read"], "grant_owner");
+    const task: any = {
+      taskId: "one",
+      prompt: "Pinned task",
+      host: "host",
+      ownerId: "old",
+      epoch: "epoch",
+      task: { state: "running" },
+      events: [],
+    };
+    const state: any = {
+      tasks: { one: task },
+      connection: { host: "host", hello: { ownerId: "new", epoch: "epoch" } },
+    };
+    client.status = async () => state;
+    let cmd: any;
+    const output: any[] = [];
+    remoteExtension(
+      {
+        on() {},
+        registerCommand(_n: string, c: any) {
+          cmd = c;
+        },
+        sendMessage(m: any) {
+          output.push(m);
+        },
+      } as any,
+      client,
+    );
+    let picks = 0;
+    await cmd.handler("", {
+      hasUI: true,
+      ui: {
+        setStatus() {},
+        custom: async (_: any) => {
+          // Inspect picker options through the mock's QuestionPicker return by selecting known values.
+          return ["task:one", "capabilities", "revoke:0", undefined][picks++];
+        },
+        confirm: async () => true,
+      },
+    });
+    expect(localCapabilityGrants(client, "one")).toEqual([]);
+    expect(output.at(-1).content).toContain("Owner not notified");
+    expect(picks).toBe(5);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

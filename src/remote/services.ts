@@ -102,13 +102,23 @@ export function localCapabilityGrants(client: RemoteClient, taskId: string, incl
       ];
     });
 }
-export async function revokeCapability(client: RemoteClient, taskId: string, grantId: string) {
+export async function revokeCapability(
+  client: RemoteClient,
+  taskId: string,
+  grantId: string,
+  delivery?: { notify: boolean; ownerId: string; epoch: string },
+) {
   // A lost owner reply must remain retryable after the durable local revocation.
   if (!localCapabilityGrants(client, taskId, true).some((grant) => grant.id === grantId))
     throw Error("No local grant for this task; no revoke sent");
   await local(client).store.revoke(grantId);
-  await client.control({ op: "capability-revoke", taskId, grantId });
-  return { revoked: true, grantId };
+  if (delivery && !delivery.notify) return { revoked: true, grantId, ownerNotified: false };
+  try {
+    await client.control({ op: "capability-revoke", taskId, grantId }, delivery);
+    return { revoked: true, grantId, ownerNotified: true };
+  } catch {
+    return { revoked: true, grantId, ownerNotified: false };
+  }
 }
 export async function serviceRemoteTask(client: RemoteClient, task: RemoteTask) {
   if (task.task?.state === "running" || task.task?.state === "accepted") {

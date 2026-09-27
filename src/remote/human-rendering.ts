@@ -207,7 +207,13 @@ export function renderHuman(value: unknown, kind = "result"): string {
       "Read-only named authority for this task; not arbitrary shell or credentials.",
     ].join("\n");
   if (v.revoked === true && v.grantId)
-    return "Local capability revoked · " + safe(v.grantId) + "\nOwner acknowledged revocation.";
+    return (
+      "Local capability revoked · " +
+      safe(v.grantId) +
+      (v.ownerNotified === true
+        ? "\nOwner acknowledged revocation."
+        : "\nOwner not notified; local authority has ended.")
+    );
   if (kind === "error" && v.error) return "Remote error: " + detail(v.error) + (v.hint ? "\n" + detail(v.hint) : "");
   if (kind === "status") {
     const tasks = Array.isArray(v.tasks) ? (v.tasks as RemoteTask[]) : [];

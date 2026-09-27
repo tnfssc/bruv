@@ -102,7 +102,7 @@ export function questionOptions(q: RemoteQuestion): Item[] {
     ...(q.allowFreeText === false ? [] : [{ value: "write", label: "Write an answer…" }]),
   ];
 }
-export function taskActions(task: RemoteTask, online: boolean): Item[] {
+export function taskActions(task: RemoteTask, online: boolean, hasLocalGrants = false): Item[] {
   return [
     { value: "transcript", label: "View cached transcript", description: "Available offline" },
     {
@@ -112,17 +112,17 @@ export function taskActions(task: RemoteTask, online: boolean): Item[] {
         ? "Saved conflict reason and local artifact path · available offline"
         : "Saved status, errors and pending requests · available offline",
     },
+    ...(hasLocalGrants || (online && !task.lastError && ["accepted", "running"].includes(task.task?.state ?? ""))
+      ? [
+          {
+            value: "capabilities",
+            label: "Local capabilities…",
+            description: "Revoke local grants offline; new grants require a live pinned owner",
+          },
+        ]
+      : []),
     ...(online
       ? [
-          ...(!task.lastError && ["accepted", "running"].includes(task.task?.state ?? "")
-            ? [
-                {
-                  value: "capabilities",
-                  label: "Local capabilities…",
-                  description: "Human-only grants and revocation · scoped to this task and local repo",
-                },
-              ]
-            : []),
           {
             value: "sync",
             label: "Sync task",

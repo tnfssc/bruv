@@ -233,18 +233,31 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         throw Error("Capability action unavailable: pinned owner changed, offline, or task ended; no grant sent");
       return task;
     };
-    let task = await freshTask();
+    let task = pinned;
+    let stateAtOpen: import("./client").RemoteState | undefined;
+    try {
+      stateAtOpen = await client.status();
+    } catch {
+      /* Revocation still works from the selected cached task. */
+    }
+    const canGrant =
+      !!stateAtOpen &&
+      taskOwned(pinned, stateAtOpen) &&
+      !pinned.lastError &&
+      ["accepted", "running"].includes(pinned.task?.state ?? "");
     const needs = Array.isArray(task.task?.capabilityNeeds)
       ? (task.task.capabilityNeeds as { id: string; kind: string; input: string }[])
       : [];
     const grants = localCapabilityGrants(client, id);
     const choice = await pick(ctx, "Local capabilities · " + remoteLabel(task.prompt), [
-      ...needs.map((need, i) => ({
+      ...(canGrant ? needs : []).map((need, i) => ({
         value: "need:" + i,
         label: "Request: " + remoteLabel(need.kind),
         description: remoteLabel(need.input || "No input supplied"),
       })),
-      { value: "choose", label: "Choose a capability…", description: "Explicit read-only local repository authority" },
+      ...(canGrant
+        ? [{ value: "choose", label: "Choose a capability…", description: "Requires a live pinned owner" }]
+        : []),
       ...grants.map((grant, i) => ({
         value: "revoke:" + i,
         label: "Revoke: " + remoteLabel(grant.kinds.join(", ")),
@@ -261,18 +274,33 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           "Task: " +
             remoteLabel(task.prompt) +
             "\nLocal repository: " +
-            grant.repoRoot +
+            remoteLabel(grant.repoRoot) +
             "\nAuthority: " +
-            grant.kinds.join(", ") +
+            remoteLabel(grant.kinds.join(", ")) +
             "\nGrant: " +
-            grant.id,
+            remoteLabel(grant.id) +
+            "\nLocal authority ends immediately; owner notification may fail offline.",
         ))
       )
         return;
-      await freshTask();
       if (!localCapabilityGrants(client, id).some((g) => g.id === grant.id))
         throw Error("Grant changed; no revoke sent");
-      publish(await revokeCapability(client, id, grant.id));
+      // Never sync before ending local authority. Only attempt notification for the same pinned owner.
+      let notify = false;
+      try {
+        const state = await client.status();
+        const current = state.tasks[id];
+        notify =
+          !!current &&
+          current.host === pinned.host &&
+          current.ownerId === pinned.ownerId &&
+          current.epoch === pinned.epoch &&
+          !current.lastError &&
+          taskOwned(current, state);
+      } catch {
+        /* Local revocation must not depend on status availability. */
+      }
+      publish(await revokeCapability(client, id, grant.id, { notify, ownerId: pinned.ownerId, epoch: pinned.epoch }));
       return;
     }
     const need = choice.startsWith("need:") ? needs[Number(choice.slice(5))] : undefined;
@@ -287,6 +315,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     }
     if (!kind || !/^(repo\.read|tool:git-status|tool:git-diff|skill:[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63})$/.test(kind))
       throw Error("Invalid capability kind; no grant sent");
+    task = await freshTask();
     const root = ctx.cwd ?? process.cwd();
     const check = Bun.spawnSync(["git", "-C", root, "rev-parse", "--show-toplevel"], {
       stdout: "pipe",
@@ -432,7 +461,11 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             const action = await pick(
               ctx,
               "Task · " + remoteLabel(task.prompt),
-              taskActions(task, taskOwned(task, await client.status())),
+              taskActions(
+                task,
+                taskOwned(task, await client.status()),
+                typeof client.path === "string" && localCapabilityGrants(client, id).length > 0,
+              ),
             );
             if (!action) break;
             if (action === "capabilities") {
