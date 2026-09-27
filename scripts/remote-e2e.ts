@@ -1,4 +1,7 @@
-/** Run real dist/die --mode rpc against isolated fake model and pinned Docker SSH host. */
+/** Run real dist/die --mode rpc against isolated fake model and pinned Docker SSH host.
+ * Parent completion wake is deliberately tested separately by remote-jobs-e2e.ts:
+ * this proof kills its original parent before the independent owner finishes.
+ */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

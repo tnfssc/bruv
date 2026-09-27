@@ -13,6 +13,7 @@ const server = Bun.serve({
       .filter((m) => m.role === "user")
       .map((m) => JSON.stringify(m.content))
       .join("\n");
+    const jobsProof = userText.match(/REMOTE_JOBS_PROOF_([AB])/)?.[1];
     const repoTask = userText.includes("REMOTE_FIXTURE_REPO_");
     const capabilityTask = userText.includes("REMOTE_FIXTURE_CAPABILITY");
     const cancelTask = userText.includes("REMOTE_FIXTURE_CANCEL");
@@ -37,8 +38,8 @@ const server = Bun.serve({
       JSON.stringify({ calls: calls.length, at: Date.now() }) + "\n",
     );
     if (answered) writeFileSync("/tmp/fixture-native-answer-finished", "yes");
-    const finished = !questionTask && existsSync("/tmp/fixture-owner-job-finished");
-    if (finished) writeFileSync("/tmp/fixture-owner-finished-model", "yes");
+    const finished = !questionTask && existsSync(jobsProof ? "/tmp/fixture-jobs-proof-" + jobsProof : "/tmp/fixture-owner-job-finished");
+    if (finished) writeFileSync(jobsProof ? "/tmp/fixture-owner-finished-" + jobsProof : "/tmp/fixture-owner-finished-model", "yes");
     const delta = answered
       ? { role: "assistant", content: "REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED" }
       : calls.length
@@ -53,7 +54,7 @@ const server = Bun.serve({
                   : questionTask
                     ? "Waiting for the real native question answer"
                     : finished
-                      ? "REMOTE_FIXTURE_FINISHED_ON_OWNER"
+                      ? jobsProof ? "REMOTE_JOBS_PROOF_FINISHED_" + jobsProof : "REMOTE_FIXTURE_FINISHED_ON_OWNER"
                       : "REMOTE_FIXTURE_WAITING_FOR_JOB",
           }
         : {
@@ -66,7 +67,9 @@ const server = Bun.serve({
                 function: {
                   name: "execute",
                   arguments: JSON.stringify({
-                    code: repoTask
+                    code: jobsProof
+                      ? `console.log(await shell("sleep 5; touch /tmp/fixture-jobs-proof-${jobsProof}; echo REMOTE_JOBS_PROOF_TOOL_${jobsProof}",{waitSeconds:0}))`
+                      : repoTask
                       ? 'console.log(await shell("sleep 2; printf \\"remote tracked edit\\\\n\\" > tracked.txt; echo REMOTE_REPO_TOOL_DONE",{waitSeconds:3}));'
                       : capabilityTask
                         ? 'console.log(await remote.requestCapability({kind:"repo.read",input:"on-demand.txt",requestId:"fixture_cap_file"})); console.log(await remote.requestCapability({kind:"tool:git-status",input:"",requestId:"fixture_cap_tool"})); console.log(await remote.requestCapability({kind:"skill:review",input:"",requestId:"fixture_cap_skill"})); console.log(await shell("touch /tmp/fixture-capability-finished"));'
