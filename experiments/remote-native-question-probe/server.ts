@@ -18,6 +18,7 @@ await writeFile(
   }),
 );
 const ownerIdentity = randomUUID();
+const experienceLog = process.env.EXPERIENCE_MODE === "1" ? new (await import("/opt/log.ts")).EventLog(root + "/experience-events.jsonl") : undefined;
 const events: any[] = [],
   requests: string[] = [];
 let error = "",
@@ -69,8 +70,11 @@ void (async () => {
       if (process.env.EXPERIENCE_MODE === "1" && lineBytes.length > 65536) { error = "RPC event exceeds 65536 bytes; transcript incomplete"; rpc.kill(); return; }
       const line = new TextDecoder("utf-8", {fatal:true}).decode(lineBytes);
       if (line) {
-        events.push(JSON.parse(line));
-        if (events.length > 180) {
+        const event=JSON.parse(line);
+        if(experienceLog) { try { experienceLog.append(event); } catch(e) { error=String(e)+"; transcript incomplete"; rpc.kill(); return; } }
+        events.push(event);
+        if(experienceLog && events.length>180)events.shift();
+        if (!experienceLog && events.length > 180) {
           error = "event cap";
           rpc.kill();
           return;
@@ -157,7 +161,16 @@ const server = Bun.serve({
     if (req.headers.get("authorization") !== "Bearer " + token)
       return new Response("unauthorized", { status: 401 });
     if (path === "/experience/hello") return Response.json({protocol:1, identity:ownerIdentity, epoch:1, provider:"loopback", model:"loopback-model", reasoning:"off", auth:"FAKE provider; no credentials verified", phase: started ? "accepted" : "idle"});
-    if (path === "/experience/events") return Response.json({identity:ownerIdentity, epoch:1, events, cap:180, error, questions: await ledger(), started, launchId, answerSent, fixtureComplete: events.some(e => e.type === "message_end" && e.message?.role === "assistant" && JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
+    if (path === "/experience/events") {
+      const url=new URL(req.url);
+      if(experienceLog){
+        let page;
+        try { page=experienceLog.page(Number(url.searchParams.get("after")),url.searchParams.get("cursor")||""); }
+        catch(e){return new Response("gap/corrupt journal: "+String(e),{status:409})}
+        return Response.json({identity:ownerIdentity,epoch:1,...page,error,questions:await ledger(),started,launchId,answerSent,fixtureComplete:events.some(e=>e.type==="message_end"&&e.message?.role==="assistant"&&JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
+      }
+      return Response.json({identity:ownerIdentity, epoch:1, events, cap:180, error, questions: await ledger(), started, launchId, answerSent, fixtureComplete: events.some(e => e.type === "message_end" && e.message?.role === "assistant" && JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
+    }
     if (path === "/experience/launch" && req.method === "POST") {
       const input = await req.json().catch(() => null);
       if (!input || input.v !== 1 || input.profile !== "fixture" || typeof input.id !== "string" || !/^[a-zA-Z0-9_-]{1,64}$/.test(input.id)) return new Response("invalid launch", {status:400});

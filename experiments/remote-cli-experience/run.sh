@@ -24,8 +24,10 @@ ssh-keygen -q -t ed25519 -N '' -f "$tmp/wrong"
 mkdir "$tmp/owner-context" "$tmp/sshd-keys"
 cp "$tmp/hostkey" "$tmp/client.pub" "$tmp/sshd-keys/"
 cp experiments/remote-native-question-probe/{Dockerfile,server.ts,policy.ts} "$tmp/owner-context/"
+cp experiments/remote-cli-experience/log.ts "$tmp/owner-context/"
+sed -i "/COPY policy.ts/a COPY log.ts /opt/log.ts" "$tmp/owner-context/Dockerfile"
 cp "$BUN_BIN" "$tmp/owner-context/bun"; cp "$DIE_BIN" "$tmp/owner-context/die"
-chmod 644 "$tmp/owner-context"/{Dockerfile,server.ts,policy.ts}
+chmod 644 "$tmp/owner-context"/{Dockerfile,server.ts,policy.ts,log.ts}
 chmod 755 "$tmp/owner-context"/{bun,die}
 printf 'staged die: %s sha256 %s\n' "$("$DIE_BIN" --version)" "$(sha256sum "$DIE_BIN" | cut -d' ' -f1)"
 printf '{"version":"%s","sha256":"%s"}\n' "$("$DIE_BIN" --version)" "$(sha256sum "$DIE_BIN" | cut -d' ' -f1)" > "$tmp/provenance"
@@ -95,6 +97,7 @@ kill "$ssh_pid"; wait "$ssh_pid" 2>/dev/null || true; ssh_pid=''
 client offline > "$tmp/offline.out"
 grep -q 'waiting for answer' "$tmp/offline.out"
 grep -q 'tool_execution_end' "$tmp/offline.out"
+grep -q 'durable paged events' "$tmp/offline.out"
 if client status > "$tmp/disconnected.out" 2>&1; then echo 'status unexpectedly online' >&2; exit 1; fi
 manual "${1:-}"
 start_ssh
@@ -118,5 +121,5 @@ kill "$ssh_pid" 2>/dev/null || true; wait "$ssh_pid" 2>/dev/null || true; ssh_pi
 client offline > "$tmp/final-offline.out"
 grep -q 'SAVED ANSWER OBSERVED' "$tmp/final-offline.out"
 grep -q 'tool_execution_end' "$tmp/final-offline.out"
-if [[ -n "${LAB_EXPERIENCE_STATE:-}" ]]; then cp "$tmp/state.json" "$LAB_EXPERIENCE_STATE"; fi
-printf 'PASS pinned SSH, offline cached bounded RPC event prefix, exact native question, follow-up; %s events\n' "$(python3 -c 'import json,sys;print(len(json.load(open(sys.argv[1]))["events"]))' "$tmp/state.json")"
+if [[ -n "${LAB_EXPERIENCE_STATE:-}" ]]; then cp "$tmp/state.json" "$LAB_EXPERIENCE_STATE"; cp "$tmp/state.json.events" "$LAB_EXPERIENCE_STATE.events"; fi
+printf 'PASS pinned SSH, offline durable paged RPC events, exact native question, follow-up; %s events\n' "$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["count"])' "$tmp/state.json")"

@@ -1,15 +1,20 @@
+import {EventLog,PAGE,MAX_RECORD} from './log';
 import {readFileSync, writeFileSync, renameSync, openSync, fsyncSync, closeSync, existsSync} from 'node:fs';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,createHash} from 'node:crypto';
 const [cmd,...args]=process.argv.slice(2);
 const path=process.env.REMOTE_CLI_STATE || '/tmp/remote-cli-experience.json';
-type State={intent?:{id:string,profile:string,stage:string}, identity?:string, epoch?:number, events:any[], question?:any, answer?:{id:string,version:number,stage:string}, synced?:string, error?:string, refusal?:string, cap?:number};
-const state:State=existsSync(path)?JSON.parse(readFileSync(path,'utf8')):{events:[]};
+type State={intent?:{id:string,profile:string,stage:string}, identity?:string, epoch?:number, events?:any[], cursor?:string, count?:number, question?:any, answer?:{id:string,version:number,stage:string}, synced?:string, error?:string, refusal?:string, cap?:number};
+const state:State=existsSync(path)?JSON.parse(readFileSync(path,'utf8')):{cursor:"genesis",count:0};
+const journal=new EventLog(path+".events");
+if(state.events?.length)throw Error("old bounded prefix state cannot be upgraded silently; use new state path");
+if((state.count||0)>journal.count || (state.count===journal.count && state.cursor && state.cursor!==journal.cursor))throw Error("local cursor gap/corrupt journal; no complete transcript claim");
+state.count=journal.count;state.cursor=journal.cursor;
 function save(){const tmp=path+'.tmp'; const fd=openSync(tmp,'w',0o600); try {writeFileSync(fd,JSON.stringify(state));fsyncSync(fd)}finally{closeSync(fd)} renameSync(tmp,path);const d=openSync(path.slice(0,path.lastIndexOf('/')+1)||'.','r');try{fsyncSync(d)}finally{closeSync(d)}}
 const base='http://127.0.0.1:'+process.env.REMOTE_CLI_PORT;
-async function get(p:string,body?:object){const r=await fetch(base+p,{method:body?'POST':'GET',headers:{authorization:'Bearer '+process.env.REMOTE_CLI_TOKEN,'content-type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(2500)}); const text=await r.text();if(!r.ok)throw Error('HTTP '+r.status+': '+text.slice(0,200));return JSON.parse(text)}
-function local(online=false){console.log('FAKE provider fixture | bounded event prefix | owner '+(state.identity||'unobserved')+' epoch '+(state.epoch??'unobserved')+' | count '+state.events.length+'/'+(state.cap||180)+' | last sync '+(state.synced||'never')+' | '+(state.refusal||'no detected gap/overflow')); console.log('launch '+(state.intent?.id||'none')+' '+(state.intent?.stage||'not launched')+(state.error?' | '+state.error:''));if(state.question)console.log('question '+state.question.id+' '+state.question.status+' delivery '+(state.question.delivery||'not confirmed')+' '+state.question.text+(online && state.question.status==='pending' && !state.answer && !state.refusal?' (answer with: answer '+state.question.id+' A)':' (do not resend without sync confirmation)'));if(state.answer)console.log('answer '+state.answer.id+' '+state.answer.stage);}
+async function get(p:string,body?:object){const r=await fetch(base+p,{method:body?'POST':'GET',headers:{authorization:'Bearer '+process.env.REMOTE_CLI_TOKEN,'content-type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(2500)}); const reader=r.body!.getReader();let chunks:Uint8Array[]=[];let size=0;while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>PAGE*MAX_RECORD+65536){await reader.cancel();throw Error('oversized response; no merge')}chunks.push(value)}const text=Buffer.concat(chunks).toString('utf8');if(!r.ok)throw Error('HTTP '+r.status+': '+text.slice(0,200));return JSON.parse(text)}
+function local(online=false){console.log('FAKE provider fixture | durable paged events | owner '+(state.identity||'unobserved')+' epoch '+(state.epoch??'unobserved')+' | count '+journal.count+' persisted'+' | last sync '+(state.synced||'never')+' | '+(state.refusal||'no detected gap/overflow')); console.log('launch '+(state.intent?.id||'none')+' '+(state.intent?.stage||'not launched')+(state.error?' | '+state.error:''));if(state.question)console.log('question '+state.question.id+' '+state.question.status+' delivery '+(state.question.delivery||'not confirmed')+' '+state.question.text+(online && state.question.status==='pending' && !state.answer && !state.refusal?' (answer with: answer '+state.question.id+' A)':' (do not resend without sync confirmation)'));if(state.answer)console.log('answer '+state.answer.id+' '+state.answer.stage);}
 try {
- if(cmd==='offline'||cmd==='transcript'){local();for(let i=0;i<state.events.length;i++)console.log('event '+(i+1)+' '+JSON.stringify(state.events[i]));if(cmd==='transcript')console.log('Bounded owner event prefix only; no history before owner epoch or beyond cap.');}
+ if(cmd==='offline'||cmd==='transcript'){local();for(let offset=0,cursor='genesis';offset<journal.count;){const page=journal.page(offset,cursor);for(const r of page.events)console.log('event '+r.seq+' '+JSON.stringify(r.event));offset=page.next;cursor=page.cursor}if(cmd==='transcript')console.log('Persisted full owner event text; large file artifacts are separate.');}
  else if(cmd==='connect'){const h=await get('/experience/hello');console.log('FAKE provider fixture | owner '+h.identity+' epoch '+h.epoch+' protocol '+h.protocol+' | '+h.provider+'/'+h.model+' reasoning '+h.reasoning+' | '+h.auth);}
  else if(cmd==='launch'){
    if(state.refusal?.includes('owner changed'))throw Error(state.refusal);
@@ -19,15 +24,20 @@ try {
    catch(e){if(String(e).includes('owner changed'))state.refusal='owner changed between hello and launch POST: acceptance unknown; do not replay';if(!['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage=state.refusal?'pending / acceptance unknown':/^Error: HTTP (400|409):/.test(String(e)) ? 'rejected by owner (inspect conflict)' : 'pending / acceptance unknown';save();throw e}
  }
  else if(cmd==='sync'||cmd==='status'){
-   const h=await get('/experience/hello');const page=await get('/experience/events');
-   if(h.identity!==page.identity||h.epoch!==page.epoch){state.refusal='owner changed during sync: unknown; no merge';save();throw Error(state.refusal)}
+   const h=await get('/experience/hello');
    if(state.identity && (state.identity!==h.identity||state.epoch!==h.epoch)){state.refusal='owner identity/epoch changed: unknown; do not replay launch';save();throw Error(state.refusal)}
-   if(page.error) {state.error='owner error: '+page.error;state.refusal='overflow/gap refusal: '+page.error;save();throw Error(state.error+'; no complete transcript claim')}
-   if(page.events.length<state.events.length || state.events.some((e,i)=>JSON.stringify(e)!==JSON.stringify(page.events[i]))){state.refusal='transcript gap or changed prefix at cursor '+state.events.length+'; no merge';save();throw Error(state.refusal)}
-   state.identity=h.identity;state.epoch=h.epoch;state.events=page.events;state.cap=page.cap||180;state.question=page.questions?.[0];state.synced=new Date().toISOString();state.refusal=undefined; if(state.answer?.stage.startsWith('rejected') && state.question?.status==='pending')state.answer=undefined; if(state.answer && state.question?.id===state.answer.id && state.question.replyVersion===state.answer.version && state.question.status==='answered' && state.question.delivery==='delivered')state.answer.stage='delivered (sync confirmed)';
+   let page:any;
+   try { do {
+     page=await get('/experience/events?after='+journal.count+'&cursor='+encodeURIComponent(journal.cursor));
+     if(h.identity!==page.identity||h.epoch!==page.epoch){state.refusal='owner changed during sync: unknown; no merge';save();throw Error(state.refusal)}
+     if(page.error){state.error='owner error: '+page.error;state.refusal='gap refusal: '+page.error;save();throw Error(state.error+'; no complete transcript claim')}
+     if(!Array.isArray(page.events)||page.events.length>PAGE||!Number.isSafeInteger(page.total)||page.total<journal.count||page.next!==journal.count+page.events.length||page.next>page.total||page.events.length===0&&page.next<page.total){throw Error('invalid page/gap; no merge')}
+     for(const r of page.events){if(r.seq!==journal.count+1||r.prev!==journal.cursor||r.hash!==createHash('sha256').update(JSON.stringify({seq:r.seq,prev:r.prev,event:r.event})).digest('hex')||Buffer.byteLength(JSON.stringify(r))>MAX_RECORD)throw Error('event sequence/size gap; no merge');journal.append(r.event);if(journal.cursor!==r.hash)throw Error('event hash mismatch; no merge');state.count=journal.count;state.cursor=journal.cursor;save()}
+   } while(page.next<page.total); } catch(e){state.refusal='gap/corrupt sync refusal: '+String(e);save();throw e}
+   state.identity=h.identity;state.epoch=h.epoch;state.count=journal.count;state.cursor=journal.cursor;state.question=page.questions?.[0];state.synced=new Date().toISOString();state.refusal=undefined; if(state.answer?.stage.startsWith('rejected') && state.question?.status==='pending')state.answer=undefined; if(state.answer && state.question?.id===state.answer.id && state.question.replyVersion===state.answer.version && state.question.status==='answered' && state.question.delivery==='delivered')state.answer.stage='delivered (sync confirmed)';
    if(state.intent && page.launchId===state.intent.id)state.intent.stage=state.question?.status==='pending'?'waiting for answer':state.question?.status==='answered'&&state.question?.delivery==='delivered'&&page.fixtureComplete?'fixture complete':'accepted';
    else if(state.intent && !['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage='pending / acceptance unknown';
-   save();local(true);console.log('remote now: '+(state.intent?.stage||'idle')+' | cursor '+state.events.length+' / 180 bound');
+   save();local(true);console.log('remote now: '+(state.intent?.stage||'idle')+' | cursor '+journal.count+' persisted');
  }
  else if(cmd==='answer'){
    if(state.refusal || state.answer || !state.identity || !state.question||state.question.id!==args[0]||state.question.status!=='pending')throw Error('no matching cached pending native question; sync first');
