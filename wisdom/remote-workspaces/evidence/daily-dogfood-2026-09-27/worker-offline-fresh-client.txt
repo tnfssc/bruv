@@ -1,0 +1,35 @@
+
+
+ [die-remote]
+
+ Remote f68ab457-2028-439a-bdd1-948ce5545046 · offline; cached state only: Error: SSH remote control failed: ssh:
+ connect to host 127.0.0.1 port 33016: Connection refused
+
+
+ [die-remote]
+
+ Remote f68ab457-2028-439a-bdd1-948ce5545046 · question q_f87a19f2-1a6f-4062-b382-1886f4321840:
+ REMOTE_FIXTURE_MENU_QUESTION · /remote to answer
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Remote · inbox
+
+Question: REMOTE_FIXTURE_MENU_QUESTION
+
+Answer unavailable · sync pinned owner first · REMOTE_FIXTURE_MENU_OFFLINE · f68ab457-202
+> REMOTE_FIXTURE_MENU_OFFLINE
+→ Question: REMOTE_FIXTURE_MENU_QUESTION                                          Answer unavailable · sync pinned own
+  Task: REMOTE_FIXTURE_MENU_OFFLINE [running]                                     running · fixture-owner · cached · f
+↑↓ · PgUp/PgDn details · type · Enter · Esc
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+remote: 2 active · 2 question(s) · offline (cached) $0.000 C0.8% cache est ?                               fixture-model
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,35 @@
+
+ Remote error: Error: Question changed or has a saved reply; no new answer sent
+ No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.
+
+
+ [die-remote]
+
+ Remote f97c65c5-4dba-47df-8e15-9bdfba955fe8 · done
+ REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED
+
+
+ [die-remote]
+
+ Remote aa4f28bf-3b05-4770-8bf0-0ed9785b5ab2 · cancelled · cancel confirmed (terminal)
+ Cancellation: request acknowledged; observed task state: cancelled (terminal).
+ Last synchronized state, not live status. /remote transcript aa4f28bf-3b05-4770-8bf0-0ed9785b5ab2 for full events.
+
+
+ [die-remote]
+
+ Remote aa4f28bf-3b05-4770-8bf0-0ed9785b5ab2 · cancelled
+
+
+
+die-a86675007a5e-task_f0abdd8e · mode: orchestrator · $0.000 · ctx 1.8% · cache est ?                      fixture-model
+
+
+
+
+
+
+
+
+
+

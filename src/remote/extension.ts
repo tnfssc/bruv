@@ -4,7 +4,7 @@ import { RemoteClient } from "./client";
 import { publishRemoteJobObservations } from "./job-observations";
 import { createRemoteOperations, summarizeRemoteTask } from "./operations";
 import { launchRepository, retryRepository, repositoryPreparations } from "./repository-wire";
-import { grantCapabilities, revokeCapability } from "./services";
+import { grantCapabilities, revokeCapability, localCapabilityGrants } from "./services";
 import type { CapabilityKind } from "./capabilities";
 import { QuestionPicker } from "../questions/picker";
 import { renderHuman, RemoteAttention, assistantText, remoteStatus } from "./human-rendering";
@@ -45,6 +45,16 @@ export function parseRemoteLaunch(input: string): { repoPath: string; prompt: st
   return { repoPath, prompt };
 }
 
+const repositoryUntracked = (root: string): string[] => {
+  const list = Bun.spawnSync(["git", "-C", root, "ls-files", "--others", "--exclude-standard", "-z"], {
+    stdout: "pipe",
+    stderr: "pipe",
+    maxBuffer: 1024 * 1024,
+  });
+  if (list.exitCode) throw Error("Current directory must be a Git repository");
+  return list.stdout.toString().split("\0").filter(Boolean);
+};
+
 /** Only human commands connect, answer questions, approve untracked files, or grant local authority. */
 export default function remoteExtension(pi: ExtensionAPI, client = new RemoteClient()): void {
   registerRemoteRuntime(pi);
@@ -57,9 +67,11 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   const publish = (result: unknown, kind?: string) =>
     pi.sendMessage({ customType: "die-remote", content: renderHuman(result, kind), display: true });
   let sessionFile: string | undefined;
+  let sessionGeneration = 0;
   let inFlight = false,
     closed = false,
     picking = false,
+    menuSnapshot: string | undefined,
     ui: { setStatus?: (key: string, value: string | undefined) => void } | undefined;
   const attention = new RemoteAttention();
   let lastStatus: string | undefined;
@@ -73,31 +85,51 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       pi.appendEntry?.("die-remote-active", { taskId: task.taskId });
     }
   };
+  const menuFingerprint = (state: import("./client").RemoteState) =>
+    JSON.stringify({
+      items: inboxItems(state),
+      needs: Object.values(state.tasks).map((task) => task.task?.capabilityNeeds),
+    });
   const refresh = async () => {
-    if (inFlight || closed || picking) return;
+    if (inFlight || closed) return;
     inFlight = true;
+    const generation = sessionGeneration;
+    const current = () => !closed && generation === sessionGeneration;
     let syncError: unknown;
     try {
       // Observe the cache before sync: a completion produced by this sync is new,
       // while a terminal result already on disk is not a fresh-session notice.
       if (initialSnapshot) {
         try {
-          rememberActive(await client.status());
+          const baseline = await client.status();
+          if (!current()) return;
+          rememberActive(baseline);
         } catch {
           /* Retry baseline on next refresh. */
         }
       }
+      if (!current()) return;
       try {
         await client.syncActive();
       } catch (error) {
         syncError = error;
       }
+      if (!current()) return;
       const state = await client.status();
-      if (closed) return;
+      if (!current()) return;
+      if (picking) {
+        const changed = menuSnapshot !== undefined && menuSnapshot !== menuFingerprint(state);
+        ui?.setStatus?.(
+          "die-remote",
+          "remote: menu snapshot " +
+            (syncError ? "offline" : changed ? "updated" : "current") +
+            " · Refresh from remote to reload",
+        );
+        return;
+      }
       const baseline = initialSnapshot;
       initialSnapshot = false;
       publishRemoteJobObservations(state, sessionFile);
-      if (picking) return;
       const status = remoteStatus(state, !!syncError);
       if (lastStatus !== status) {
         ui?.setStatus?.("die-remote", status);
@@ -115,6 +147,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         publish(notice);
       rememberActive(state);
     } catch (error) {
+      if (!current()) return;
       // A global cache/status failure must not masquerade as a healthy connection.
       const status = "remote: offline (cached state unavailable)";
       if (!picking && !closed && lastStatus !== status) {
@@ -128,6 +161,8 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           publish(notice);
     } finally {
       inFlight = false;
+      // A new session may have requested refresh while this old one was awaiting I/O.
+      if (!closed && generation !== sessionGeneration) void refresh();
     }
   };
   let timer: ReturnType<typeof setInterval> | undefined;
@@ -140,6 +175,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   };
   startRefresh();
   pi.on("session_start", async (_event, ctx) => {
+    sessionGeneration++;
     sessionFile = ctx?.sessionManager?.getSessionFile?.();
     closed = false;
     startRefresh();
@@ -160,6 +196,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     void refresh();
   });
   pi.on("session_shutdown", async () => {
+    sessionGeneration++;
     closed = true;
     sessionFile = undefined;
     if (timer) clearInterval(timer);
@@ -189,15 +226,125 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           () => tui.terminal.rows,
         ),
     ) as Promise<string | undefined>;
+  const capabilityMenu = async (ctx: any, pinned: import("./client").RemoteTask) => {
+    const id = pinned.taskId;
+    const freshTask = async () => {
+      const task = await client.sync(id);
+      const state = await client.status();
+      if (
+        task.host !== pinned.host ||
+        task.ownerId !== pinned.ownerId ||
+        task.epoch !== pinned.epoch ||
+        !taskOwned(task, state) ||
+        task.lastError ||
+        !["accepted", "running"].includes(task.task?.state ?? "")
+      )
+        throw Error("Capability action unavailable: pinned owner changed, offline, or task ended; no grant sent");
+      return task;
+    };
+    let task = await freshTask();
+    const needs = Array.isArray(task.task?.capabilityNeeds)
+      ? (task.task.capabilityNeeds as { id: string; kind: string; input: string }[])
+      : [];
+    const grants = localCapabilityGrants(client, id);
+    const choice = await pick(ctx, "Local capabilities · " + remoteLabel(task.prompt), [
+      ...needs.map((need, i) => ({
+        value: "need:" + i,
+        label: "Request: " + remoteLabel(need.kind),
+        description: remoteLabel(need.input || "No input supplied"),
+      })),
+      { value: "choose", label: "Choose a capability…", description: "Explicit read-only local repository authority" },
+      ...grants.map((grant, i) => ({
+        value: "revoke:" + i,
+        label: "Revoke: " + remoteLabel(grant.kinds.join(", ")),
+        description: remoteLabel(grant.repoRoot) + " · " + grant.id.slice(0, 18),
+      })),
+    ]);
+    if (!choice) return;
+    if (choice.startsWith("revoke:")) {
+      const grant = grants[Number(choice.slice(7))];
+      if (!grant) return;
+      if (
+        !(await ctx.ui.confirm(
+          "Revoke local capability for this task?",
+          "Task: " +
+            remoteLabel(task.prompt) +
+            "\nLocal repository: " +
+            grant.repoRoot +
+            "\nAuthority: " +
+            grant.kinds.join(", ") +
+            "\nGrant: " +
+            grant.id,
+        ))
+      )
+        return;
+      await freshTask();
+      if (!localCapabilityGrants(client, id).some((g) => g.id === grant.id))
+        throw Error("Grant changed; no revoke sent");
+      publish(await revokeCapability(client, id, grant.id));
+      return;
+    }
+    const need = choice.startsWith("need:") ? needs[Number(choice.slice(5))] : undefined;
+    let kind = need?.kind;
+    if (choice === "choose") {
+      const selected = await pick(ctx, "Read-only local authority", [
+        ...["repo.read", "tool:git-status", "tool:git-diff"].map((value) => ({ value, label: value })),
+        { value: "skill", label: "Named skill…", description: "Enter skill:name" },
+      ]);
+      if (!selected) return;
+      kind = selected === "skill" ? (await ctx.ui.editor("Capability kind (skill:name)"))?.trim() : selected;
+    }
+    if (!kind || !/^(repo\.read|tool:git-status|tool:git-diff|skill:[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63})$/.test(kind))
+      throw Error("Invalid capability kind; no grant sent");
+    const root = ctx.cwd ?? process.cwd();
+    const check = Bun.spawnSync(["git", "-C", root, "rev-parse", "--show-toplevel"], {
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    if (check.exitCode) throw Error("Capabilities require the current Git repository");
+    const scope = check.stdout.toString().trim();
+    const details =
+      "Task: " +
+      remoteLabel(task.prompt) +
+      "\nPinned owner: " +
+      task.host +
+      " / " +
+      task.ownerId +
+      "\nLocal repository: " +
+      scope +
+      "\nAuthority: " +
+      kind +
+      (need ? "\nRemote request: " + remoteLabel(need.input || "(empty)") : "\nNo specific remote request selected") +
+      "\nRead-only repository access only; no credentials or arbitrary shell. This grants the entire named kind for this task, not just one request.";
+    if (!(await ctx.ui.confirm("HUMAN authorization required · grant local capability?", details))) return;
+    task = await freshTask();
+    if (
+      need &&
+      !(task.task?.capabilityNeeds as any[] | undefined)?.some(
+        (n) => n.id === need.id && n.kind === need.kind && n.input === need.input,
+      )
+    )
+      throw Error("Remote request changed; no grant sent");
+    const recheck = Bun.spawnSync(["git", "-C", root, "rev-parse", "--show-toplevel"], {
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    if (recheck.exitCode || recheck.stdout.toString().trim() !== scope)
+      throw Error("Local repository scope changed; no grant sent");
+    publish(await grantCapabilities(client, id, scope, [kind as CapabilityKind]));
+  };
   const inbox = async (ctx: any) => {
     if (!ctx.hasUI) {
       publish(await operations({ op: "status" }), "status");
       return;
     }
+    ui = ctx.ui;
     picking = true;
     try {
       while (true) {
         const state = await client.status();
+        menuSnapshot = menuFingerprint(state);
+        ui?.setStatus?.("die-remote", "remote: menu snapshot · Refresh from remote to reload");
         const choice = await pick(ctx, "Remote · inbox", inboxItems(state));
         if (!choice) return;
         if (choice.startsWith("offline")) continue;
@@ -216,16 +363,26 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         }
         if (choice === "launch") {
           const prompt = (await ctx.ui.editor("Remote task prompt"))?.trim();
-          if (prompt)
+          if (prompt) {
+            const root = ctx.cwd ?? process.cwd();
+            const untracked = repositoryUntracked(root);
+            const approvedUntracked =
+              untracked.length && (await ctx.ui.confirm("Include untracked files?", renderRemote(untracked)))
+                ? untracked
+                : [];
+            if (untracked.length && !approvedUntracked.length)
+              ctx.ui.notify("Untracked files omitted; sending tracked files only.", "info");
             publish(
               summary(
                 await launchRepository(client, {
-                  localRoot: ctx.cwd ?? process.cwd(),
+                  localRoot: root,
+                  approvedUntracked,
                   prompt,
                   jobSessionFile: ctx.sessionManager?.getSessionFile?.(),
                 }),
               ),
             );
+          }
           continue;
         }
         if (choice.startsWith("question:")) {
@@ -275,6 +432,14 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               taskActions(task, taskOwned(task, await client.status())),
             );
             if (!action) break;
+            if (action === "capabilities") {
+              await capabilityMenu(ctx, task);
+              continue;
+            }
+            if (action === "details") {
+              publish(summary(task));
+              return; // Keep saved details visible instead of covering them with the picker.
+            }
             if (action === "transcript") {
               publish(await operations({ op: "transcript", taskId: id, offset: 0 }), "transcript");
               return; // Let the human read the conversation instead of covering it with another picker.
@@ -326,6 +491,10 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       );
     } finally {
       picking = false;
+      menuSnapshot = undefined;
+      // The snapshot banner describes an open picker, not the normal chat view.
+      ui?.setStatus?.("die-remote", undefined);
+      lastStatus = undefined;
     }
   };
   pi.registerCommand("remote", {
@@ -372,13 +541,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             if (!Array.isArray(include) || include.some((p: unknown) => typeof p !== "string"))
               throw Error("include must be an explicit list of untracked paths");
             const root = ctx.cwd ?? process.cwd();
-            const list = Bun.spawnSync(["git", "-C", root, "ls-files", "--others", "--exclude-standard", "-z"], {
-              stdout: "pipe",
-              stderr: "pipe",
-              maxBuffer: 1024 * 1024,
-            });
-            if (list.exitCode) throw Error("Current directory must be a Git repository");
-            const untracked = list.stdout.toString().split("\0").filter(Boolean);
+            const untracked = repositoryUntracked(root);
             if (!include.length && untracked.length) {
               publish({
                 untrackedOmitted: untracked,
@@ -493,7 +656,14 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               "Usage: /remote connect|status|launch|launch-repo|launch-repo-json|answer|grant|revoke|cancel|retry|sync|transcript",
             );
         }
-        publish(result, rawTranscript ? "transcript-raw" : op === "status" || op === "transcript" || op === "connect" ? op : undefined);
+        publish(
+          result,
+          rawTranscript
+            ? "transcript-raw"
+            : op === "status" || op === "transcript" || op === "connect"
+              ? op
+              : undefined,
+        );
         void refresh();
       } catch (error) {
         publish(

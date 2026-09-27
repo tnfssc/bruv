@@ -187,6 +187,8 @@ const evidence = (name: string) => {
 };
 const key = (...keys: string[]) => tmux("send-keys", "-t", "remote", ...keys);
 // Capture only terminal text; the owner/RPC JSON remains available separately for machine assertions.
+// Only the declared freshness footer may change under a modal; every picker/search/selection row stays exact.
+const withoutFreshness = (frame: string) => frame.replace(/^remote: menu snapshot.*$/gm, "[freshness footer]");
 const historyPane = () => tmux("capture-pane", "-p", "-S", "-", "-t", "remote");
 const noChatJson = (frame: string) =>
   assert(
@@ -329,7 +331,12 @@ try {
   rpc.send("/remote answer " + staleId + " " + staleQ.id + " REMOTE_FIXTURE_MENU_CONTINUED external answer");
   await rpc.wait(() => ownerQuestion(staleId).status !== "pending", "external answer creates stale picker", 20000);
   await Bun.sleep(5500); // Cross the production refresh timer while the other client changes this question.
-  assert.equal(pane(), stablePickerFrame, "background refresh disturbed the open picker");
+  assert(pane().includes("menu snapshot updated"), "open stale picker lacks freshness indication");
+  assert.equal(
+    withoutFreshness(pane()),
+    withoutFreshness(stablePickerFrame),
+    "background refresh disturbed the open picker",
+  );
   key("Enter");
   await until("Question changed");
   evidence("stale-rejected");
@@ -434,6 +441,48 @@ try {
   evidence("human-transcript");
   tmux("resize-window", "-t", "remote", "-x", "120", "-y", "35");
   await Bun.sleep(150);
+  // Long owner prompt must remain searchable on a narrow real terminal, without losing its tail.
+  const longName = "LONG_NAME_" + "segment_".repeat(18) + "VISIBLE_TAIL";
+  const longId = await launch(longName);
+  tmux("resize-window", "-t", "remote", "-x", "50", "-y", "20");
+  type("/remote");
+  key("Enter");
+  await until("Remote · inbox");
+  type("VISIBLE_TAIL");
+  await until("VISIBLE_TAIL");
+  evidence("long-task-narrow");
+  assert(pane().includes("VISIBLE_TAIL"), "long task tail hidden at narrow width");
+  key("Escape");
+  tmux("resize-window", "-t", "remote", "-x", "120", "-y", "35");
+  // The owner and cached question identity survive a fresh compiled client process.
+  const pinnedOwner = JSON.stringify(state().connection);
+  tmux("kill-session", "-t", "remote");
+  tmux("new-session", "-d", "-s", "remote", "-x", "120", "-y", "35", cmd);
+  await until("REMOTE_FIXTURE_MENU_QUESTION", 20000);
+  assert.equal(JSON.stringify(state().connection), pinnedOwner, "fresh client lost pinned owner");
+  type("/remote");
+  key("Enter");
+  await until("Remote · inbox");
+  type("VISIBLE_TAIL");
+  await until("VISIBLE_TAIL");
+  evidence("fresh-client-owner");
+  key("Escape");
+  // Keep a picker open across a separate native task's completion; it must not steal input.
+  const finishing = await launch("FINISH_WHILE_MENU_OPEN", false);
+  type("/remote");
+  key("Enter");
+  await until("Remote · inbox");
+  type("FINISH_WHILE_MENU_OPEN");
+  await until("Task: REMOTE_FIXTURE_FINISH_WHILE_MENU_OPEN");
+  const openFrame = pane();
+  await rpc.wait(() => state().tasks[finishing]?.task?.state === "done", "owner completion under menu", 25000);
+  await Bun.sleep(6000);
+  assert(pane().includes("menu snapshot updated"), "completion under picker lacks freshness indication");
+  assert.equal(withoutFreshness(pane()), withoutFreshness(openFrame), "owner completion displaced open picker");
+  evidence("completion-menu-open");
+  key("Escape");
+  await until("REMOTE_FIXTURE", 15000);
+  // The exact historical startup replay count is separately owned by task_c7a78d5a.
   const offline = await launch("OFFLINE");
   const stopped = spawnSync("docker", ["stop", "-t", "1", container], { encoding: "utf8", timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
@@ -446,18 +495,31 @@ try {
   type("/remote");
   key("Enter");
   await until("Remote · inbox");
-  type("OFFLINE");
+  type("REMOTE_FIXTURE_MENU_OFFLINE");
   await until("Answer unavailable");
   evidence("offline-inbox");
   key("Enter");
   await Bun.sleep(150);
   assert(pane().includes("Remote · inbox"), "offline answer became actionable");
   assert(!state().tasks[offline]?.replies, "offline question saved a reply");
+  type("REMOTE_FIXTURE_MENU_OFFLINE");
+  await until("Task: REMOTE_FIXTURE_MENU_OFFLINE");
   key("Down", "Enter");
   await until("View cached transcript");
   evidence("offline-task");
   key("Enter");
   await until("cached");
+  tmux("kill-session", "-t", "remote");
+  tmux("new-session", "-d", "-s", "remote", "-x", "120", "-y", "35", cmd);
+  await until("remote:", 20000);
+  type("/remote");
+  key("Enter");
+  await until("Remote · inbox");
+  type("REMOTE_FIXTURE_MENU_OFFLINE");
+  await until("Answer unavailable");
+  evidence("offline-fresh-client");
+  assert(!pane().includes("→ Answer"), "offline startup offered actionable answer");
+  key("Escape");
   // Remote interaction must never create a local user-question ledger.
   const localLedgers = spawnSync("find", [home, "-name", "*.questions.json"], { encoding: "utf8" });
   assert.equal(localLedgers.status, 0, localLedgers.stderr);

@@ -1,0 +1,55 @@
+bun test v1.4.2 (744846f84)
+
+tests/remote-session-switch.test.ts:
+46 |     task.task.state = "done";
+47 |     baseline.resolve({ tasks: { [task.taskId]: staleTask } });
+48 |     // Wait for both status calls / notification processing without depending on the 5s poll timer.
+49 |     for (let i = 0; i < 10 && statusCalls < 2; i++) await Bun.sleep(0);
+50 |     await Bun.sleep(0);
+51 |     expect(messages.filter((message) => message.includes("Remote old-session · done"))).toEqual([]);
+                                                                                             ^
+error: expect(received).toEqual(expected)
+
+- []
++ [
++   "Remote old-session · done",
++ ]
+
+- Expected  - 1
++ Received  + 3
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/remote-session-switch.test.ts:51:89)
+(fail) a refresh awaiting its baseline cannot adopt an unowned task into the next UI session [1.87ms]
+81 |     await handlers.get("session_shutdown")!();
+82 |     task.task.state = "done";
+83 |     await start("B"); release.resolve();
+84 |     for (let i = 0; i < 20 && syncs < 2; i++) await Bun.sleep(0);
+85 |     await Bun.sleep(0);
+86 |     expect(syncs).toBe(2);
+                       ^
+error: expect(received).toBe(expected)
+
+Expected: 2
+Received: 1
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/remote-session-switch.test.ts:86:19)
+(fail) a switched-away refresh cannot publish late sync results [0.43ms]
+81 |     await handlers.get("session_shutdown")!();
+82 |     task.task.state = "done";
+83 |     await start("B"); release.resolve();
+84 |     for (let i = 0; i < 20 && syncs < 2; i++) await Bun.sleep(0);
+85 |     await Bun.sleep(0);
+86 |     expect(syncs).toBe(2);
+                       ^
+error: expect(received).toBe(expected)
+
+Expected: 2
+Received: 1
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/remote-session-switch.test.ts:86:19)
+(fail) a switched-away refresh cannot publish late sync errors [0.27ms]
+
+ 0 pass
+ 3 fail
+ 3 expect() calls
+Ran 3 tests across 1 file. [39.00ms]

@@ -66,31 +66,163 @@ test.each([
 });
 
 const page = (events: unknown[], extra: Record<string, unknown> = {}) => ({
-  taskId: "task", offset: 0, events: events.map((event, i) => ({ seq: i + 1, event })), ...extra,
+  taskId: "task",
+  offset: 0,
+  events: events.map((event, i) => ({ seq: i + 1, event })),
+  ...extra,
 });
 
 test("cached transcript reads as conversation and tools, not machine JSON", () => {
-  const output = renderHuman(page([
-    { type: "message_end", message: { role: "user", content: [{ type: "text", text: "Investigate" }, { type: "image", mimeType: "image/png", data: "secret" }] } },
-    { type: "message_end", message: { role: "assistant", content: [{ type: "text", text: "Running check" }, { type: "toolCall", name: "shell", arguments: { command: "ls" } }, { type: "text", text: "Done" }], textSignature: "secret" } },
-    { type: "tool_execution_start", toolName: "shell", args: { command: "ls" }, requestId: "internal" },
-    { type: "tool_execution_end", toolName: "shell", result: { content: [{ type: "text", text: "file.ts\nsecond line" }] } },
-    { type: "message_end", message: { role: "toolResult", toolName: "shell", isError: true, content: [{ type: "text", text: "permission denied" }] } },
-    { type: "message_end", message: { role: "assistant", content: "Final answer" } },
-  ]), "transcript");
-  for (const text of ["#1 user:\nInvestigate", "[image image/png]", "#2 assistant:\nRunning check", "Tool call shell", "file.ts\nsecond line", "Tool result shell (error)", "permission denied", "Final answer"]) expect(output).toContain(text);
-  for (const text of ["textSignature", "secret", "requestId", '"type":"message_end"']) expect(output).not.toContain(text);
+  const output = renderHuman(
+    page([
+      {
+        type: "message_end",
+        message: {
+          role: "user",
+          content: [
+            { type: "text", text: "Investigate" },
+            { type: "image", mimeType: "image/png", data: "secret" },
+          ],
+        },
+      },
+      {
+        type: "message_end",
+        message: {
+          role: "assistant",
+          content: [
+            { type: "text", text: "Running check" },
+            { type: "toolCall", name: "shell", arguments: { command: "ls" } },
+            { type: "text", text: "Done" },
+          ],
+          textSignature: "secret",
+        },
+      },
+      { type: "tool_execution_start", toolName: "shell", args: { command: "ls" }, requestId: "internal" },
+      {
+        type: "tool_execution_end",
+        toolName: "shell",
+        result: { content: [{ type: "text", text: "file.ts\nsecond line" }] },
+      },
+      {
+        type: "message_end",
+        message: {
+          role: "toolResult",
+          toolName: "shell",
+          isError: true,
+          content: [{ type: "text", text: "permission denied" }],
+        },
+      },
+      { type: "message_end", message: { role: "assistant", content: "Final answer" } },
+    ]),
+    "transcript",
+  );
+  for (const text of [
+    "#1 user:\nInvestigate",
+    "[image image/png]",
+    "#2 assistant:\nRunning check",
+    "Tool call shell",
+    "file.ts\nsecond line",
+    "Tool result shell (error)",
+    "permission denied",
+    "Final answer",
+  ])
+    expect(output).toContain(text);
+  for (const text of ["textSignature", "secret", "requestId", '"type":"message_end"'])
+    expect(output).not.toContain(text);
 });
 
 test("unknown and lifecycle events, paging, transcript gaps and explicit raw remain visible", () => {
-  const input = page([
-    { type: "agent_start" },
-    { type: "new_event", payload: { useful: "visible", textSignature: "internal" } },
-    { type: "tool_execution_update", toolName: "shell", partialResult: { content: [{ type: "text", text: "still running" }] } },
-  ], { offset: 50, nextOffset: 53, transcriptComplete: false, task: { textOutputGap: "lost bytes" } });
+  const input = page(
+    [
+      { type: "agent_start" },
+      { type: "new_event", payload: { useful: "visible", textSignature: "internal" } },
+      {
+        type: "tool_execution_update",
+        toolName: "shell",
+        partialResult: { content: [{ type: "text", text: "still running" }] },
+      },
+    ],
+    { offset: 50, nextOffset: 53, transcriptComplete: false, task: { textOutputGap: "lost bytes" } },
+  );
   const output = renderHuman(input, "transcript");
-  for (const text of ["offset 50", "#1 agent_start", "new_event", "visible", "still running", "/remote transcript task 53", "transcript incomplete", "lost bytes"]) expect(output).toContain(text);
+  for (const text of [
+    "offset 50",
+    "#1 agent_start",
+    "new_event",
+    "visible",
+    "still running",
+    "/remote transcript task 53",
+    "transcript incomplete",
+    "lost bytes",
+  ])
+    expect(output).toContain(text);
   expect(output).not.toContain("textSignature");
   expect(renderHuman(input, "transcript-raw")).toContain("textSignature");
   expect(renderHuman(page([], { offset: 53 }), "transcript")).toContain("End of cached transcript.");
+});
+
+test("conflict details identify the retained artifact without implying automatic application", () => {
+  const text = renderHuman({
+    taskId: "conflict",
+    events: [],
+    task: { state: "done" },
+    repository: { status: "review", reason: "local file changed", artifact: "/safe/return.patch" },
+  });
+  expect(text).toContain("local file changed");
+  expect(text).toContain("/safe/return.patch");
+  expect(text).toContain("Inspect local worktree before applying");
+});
+
+test("saved task details describe capability waits without granting access", () => {
+  const text = renderHuman({
+    taskId: "cap",
+    events: [],
+    task: {
+      state: "running",
+      capabilityNeeds: [{ kind: "repo.read", input: "on-demand.txt" }],
+      questions: [{ id: "q", status: "pending", text: "Choose region" }],
+    },
+  });
+  expect(text).toContain("repo.read");
+  expect(text).toContain("on-demand.txt");
+  expect(text).toContain("Choose region");
+  expect(text).toContain("not granted");
+});
+
+test("human capability outcomes are readable scoped receipts, not protocol JSON", () => {
+  const grant = renderHuman({ grant: { id: "g", taskId: "t", kinds: ["repo.read"] }, scope: "/fixture/repo" });
+  for (const value of [
+    "Local capability granted",
+    "task t",
+    "Authority: repo.read",
+    "Local repository: /fixture/repo",
+    "Grant: g",
+  ])
+    expect(grant).toContain(value);
+  expect(grant).not.toContain('"grant":');
+  expect(renderHuman({ revoked: true, grantId: "g" })).toBe(
+    "Local capability revoked · g\nOwner acknowledged revocation.",
+  );
+});
+
+test("known lifecycle message envelopes remain readable without losing new event fields", () => {
+  const input = page([
+    {
+      type: "agent_end",
+      messages: [{ role: "assistant", content: [{ type: "text", text: "Finished" }], usage: { internal: 7 } }],
+      willRetry: false,
+      future: "kept",
+    },
+    {
+      type: "turn_end",
+      message: { role: "assistant", content: "Turn finished" },
+      toolResults: [{ role: "toolResult", toolName: "shell", content: "ok" }],
+    },
+  ]);
+  const output = renderHuman(input, "transcript");
+  for (const text of ["Finished", "Turn finished", "Tool result shell", "kept", "willRetry"])
+    expect(output).toContain(text);
+  expect(output).not.toContain('"role":"assistant"');
+  expect(output).not.toContain('"usage"');
+  expect(renderHuman(input, "transcript-raw")).toContain('"usage"');
 });

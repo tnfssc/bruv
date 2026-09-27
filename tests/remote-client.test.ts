@@ -2,7 +2,7 @@ import { afterEach, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { RemoteClient, type Transport } from "../src/remote/client";
+import { RemoteClient, openRemoteLockDatabase, type Transport } from "../src/remote/client";
 const dirs: string[] = [];
 afterEach(async () => {
   for (const d of dirs.splice(0)) await rm(d, { recursive: true, force: true });
@@ -144,6 +144,37 @@ test("independent client instances serialize local state writes", async () => {
   await first.connect("box");
   await Promise.all([first.launch("/repo", "one", "one"), second.launch("/repo", "two", "two")]);
   expect(Object.keys((await first.status()).tasks).sort()).toEqual(["one", "two"]);
+});
+
+test("opening a second lock connection does not release the first SQLite lock", async () => {
+  let child: ReturnType<typeof Bun.spawn> | undefined;
+  let probed = false;
+  const c = await fixture(async () => {
+    const second = openRemoteLockDatabase(c.path + ".lock.sqlite");
+    second.close();
+    const source =
+      "import { Database } from 'bun:sqlite'; const db = new Database(" +
+      JSON.stringify(c.path + ".lock.sqlite") +
+      "); db.exec('PRAGMA busy_timeout=0'); try { db.exec('BEGIN EXCLUSIVE'); console.log('acquired'); db.exec('COMMIT'); } catch (e) { console.log(e.code); } finally { db.close(); }";
+    child = Bun.spawn([process.execPath, "--eval", source], { stdout: "pipe", stderr: "pipe" });
+    const exit = await child.exited;
+    const output = await new Response(child.stdout as ReadableStream).text();
+    const error = await new Response(child.stderr as ReadableStream).text();
+    expect(exit).toBe(0);
+    expect(error).toBe("");
+    probed = true;
+    expect(output.trim()).toBe("SQLITE_BUSY");
+    return h();
+  });
+  try {
+    await c.connect("box");
+    expect(probed).toBe(true);
+    expect((await c.status()).connection?.host).toBe("box");
+    expect((await stat(c.path + ".lock.sqlite")).mode & 0o777).toBe(0o600);
+  } finally {
+    child?.kill();
+    if (child) await child.exited;
+  }
 });
 
 test("killed client releases state lock and reopens the same durable ambiguous ID", async () => {

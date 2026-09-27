@@ -1,0 +1,35 @@
+ This project is not trusted. Project .die resources and packages are ignored. Use /trust to save a trust decision,
+ then restart pi.
+
+ Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys on` to ~/.tmux.conf
+ and restart tmux.
+
+
+ [die-remote]
+
+ Remote af69d51e-73b0-413e-a942-121bab6c62a6 · question q_703a8d9a-1698-459b-8f49-7b84133efbb2:
+ REMOTE_FIXTURE_MENU_QUESTION · /remote to answer
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Remote · inbox
+
+Question: REMOTE_FIXTURE_MENU_QUESTION
+
+REMOTE_FIXTURE_MENU_LONG_NAME_segment_segment_segment_segment_segment_segment_segment_segment_segment_segment_segment_se
+gment_segment_segment_segment_segment_segment_segment_VISIBLE_TAIL · af69d51e-73b
+> VISIBLE_TAIL
+→ Question: REMOTE_FIXTURE_MENU_QUESTION                                          REMOTE_FIXTURE_MENU_LONG_NAME_segmen
+  Task: REMOTE_FIXTURE_MENU_LONG_NAME_segment_segment_segment_segment_segment_se  running · fixture-owner · cached · a
+↑↓ · PgUp/PgDn details · type · Enter · Esc
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+remote: menu snapshot · Refresh from remote to reload $0.000 C0.1% cache est ?                             fixture-model
+
+
+
+
+
+
+
+
+

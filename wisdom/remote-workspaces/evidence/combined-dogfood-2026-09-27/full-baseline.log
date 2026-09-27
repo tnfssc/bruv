@@ -1,0 +1,2530 @@
+bun test v1.4.2 (744846f84)
+
+tests/agent-progress.test.ts:
+(pass) fragmented UTF-8 events expose tools/output without reasoning or images [1.52ms]
+(pass) oversized records are discarded and framing recovers [1.46ms]
+(pass) model failures and retry recovery are observable [0.09ms]
+(pass) incomplete last JSON line is flushed and malformed output remains inspectable [1.32ms]
+(pass) cooperative handoff exposes pending ownership and its progress text [0.10ms]
+(pass) final assistant text ends receiving status without claiming process completion [0.08ms]
+
+tests/agent-session.test.ts:
+(pass) agent sessions are durable before any model response, linked and clearly named [10.46ms]
+(pass) explicit task title names the durable child without replacing its identity [3.57ms]
+
+tests/architecture.test.ts:
+(pass) runtime never imports build tools or archived research [23.63ms]
+(pass) history and shared session contracts do not import feature controllers [21.76ms]
+(pass) T3 adapters cannot become another task execution owner [19.72ms]
+(pass) active T3 inputs and agent composition have one maintained home [0.29ms]
+
+tests/attention-sdk.test.ts:
+(pass) real SDK print session keeps repeated attention boundaries subscription-bounded [1408.68ms]
+
+tests/auto-shake-sdk.test.ts:
+(pass) normal automatic threshold shake wins over compaction and continues the prompt [16.84ms]
+(pass) Codex automatic threshold shake wins over compaction and continues the prompt [7.20ms]
+(pass) overflow-triggered automatic shake retries the provider once instead of ending the turn [7.34ms]
+(pass) a preview below 75 percent leaves history untouched when the existing compaction path cancels [11.11ms]
+
+tests/background-interrupt-tui.test.ts:
+(skip) Escape cancels execute waiting while its managed job survives and resumes
+
+tests/background-ux-tui.test.ts:
+(skip) real TUI backgrounds execute, stays responsive, and automatically resumes once
+
+tests/background-ux.test.ts:
+(skip) natural nested-agent workflow returns control before descendants finish
+
+tests/cache-affine-compaction-live.test.ts:
+(skip) live cache-affine checkpoint, cold baseline, and resumed usage
+
+tests/cache-affine-compaction-sdk.test.ts:
+(pass) openai-codex actual SDK compaction preserves provider prefix and thinking [10.10ms]
+(pass) anthropic actual SDK compaction preserves provider prefix and thinking [10.26ms]
+(pass) fresh compaction reconciles implicit before_agent_start tools [5.49ms]
+(pass) fresh compaction reconciles explicit before_agent_start tools [3.82ms]
+
+tests/cache-affine-compaction.test.ts:
+(pass) cache-affine compaction request > preserves the exact fully transformed context, system, and tools [0.33ms]
+(pass) cache-affine compaction request > counts the transcript system/tool frame once in the compaction input budget [0.10ms]
+(pass) cache-affine compaction request > summarizes the whole current conversation regardless of Pi's replay boundary [0.10ms]
+(pass) cache-affine compaction request > rejects a stale snapshot leaf and any untransformed raw tail [0.07ms]
+(pass) cache-affine compaction request > allows a text-only assistant response after an otherwise unmodified cached prefix [0.09ms]
+(pass) cache-affine compaction request > rejects context transforms that change message boundaries [0.04ms]
+(pass) cache-affine compaction request > keeps the replay tail in the model-facing history being summarized [0.05ms]
+(pass) cache-affine compaction request > does not insert raw retained content into the summary instruction [0.07ms]
+(pass) cache-affine compaction request > charges transformed-prefix growth against the context window [0.09ms]
+(pass) cache-affine compaction request > falls back rather than sending an overflowing fork [0.07ms]
+(pass) provider serialization guard > requires the entire old native wire sequence and cache-affecting fields [0.14ms]
+(pass) provider serialization guard > accepts Anthropic cache marker relocation while preserving policy [0.18ms]
+(pass) summary validation > accepts text and rejects errors, cancellation, length and tool calls [0.07ms]
+(pass) extension lifecycle > passes model/thinking/session identity, never executes tools, and returns usage checkpoint [0.71ms]
+(pass) extension lifecycle > cancels rather than duplicating inference after a paid unusable response [1.05ms]
+(pass) extension lifecycle > makes unavailable preparation observable without flattening raw history [0.30ms]
+(pass) extension lifecycle > provider errors and aborts cancel without alternate inference [0.62ms]
+(pass) provider guard never treats tool-input cache_control keys as cache metadata [0.07ms]
+(pass) absent or blank custom focus adds no footer [0.23ms]
+(pass) summary focus is literal data without boundary disclaimers [0.10ms]
+(pass) instruction frame ownership lifecycle > independent managers sharing one persisted id never share ownership [0.11ms]
+(pass) instruction frame ownership lifecycle > shutdown/reload/new clearing and in-place session switches cannot revive a frame [0.07ms]
+
+tests/cache-countdown-sdk.test.ts:
+(pass) SDK provider pipeline records only the calling agent and survives disk resume [6.76ms]
+(pass) payload rejection before fetch does not reset the estimate [4.63ms]
+(pass) successful terminal observation covers transports without an HTTP hook [3.18ms]
+(pass) actual SDK HTTP hook does not record rejected responses [9.00ms]
+
+tests/cache-countdown-tui.test.ts:
+(pass) real PTY shows unknown estimate and /cache-ttl persists a validated value [650.34ms]
+
+tests/cache-countdown.test.ts:
+(pass) cache countdown > is per-agent/model, coarse, warning-colored state, expired, and unknown [0.21ms]
+(pass) cache countdown > restores durable exact-model calls without allowing descendant resets [0.09ms]
+(pass) cache countdown > a branch-local shake invalidates only earlier cache observations [0.04ms]
+(pass) cache countdown > validates durations and strict persisted settings [0.24ms]
+(pass) cache countdown > public command persists separately and records observed attempts [1.21ms]
+(pass) cache countdown > model-less SDK responses use the sole request snapshot and reject unsuccessful statuses [0.29ms]
+(pass) cache countdown > correlates distinguishable interleaved responses and blocks ambiguous overlap [0.44ms]
+(pass) cache countdown > attempt IDs are unique and observer diagnostics contain no private failure data [0.31ms]
+(pass) cache countdown > warns about corrupt cache settings without changing them [0.50ms]
+(pass) cache countdown > provider observers are nonfatal and append failure causes no model drift [0.22ms]
+
+tests/ci-runner.test.ts:
+(pass) Linux runs all ordered gates in the pinned web checkout with deterministic tests [44.56ms]
+(pass) a failed gate stops immediately and preserves its output [15.70ms]
+(pass) macOS lane runs only its device-free source and Live checks [15.45ms]
+
+tests/cli.test.ts:
+(pass) compiled die CLI > is standalone and reports the product version [248.37ms]
+(pass) compiled die CLI > exposes branded help and uses ~/.die instead of ~/.pi [268.68ms]
+(pass) compiled die CLI > does not rewrite materialized runtime assets on later launches [480.54ms]
+(pass) compiled die CLI > rejects removed generic tool-selection options [667.29ms]
+(pass) compiled die CLI > self-update help and argument errors never invoke the SDK updater [292.55ms]
+86 |         DIE_INSTALL_DIR: installDir,
+87 |         DIE_SKIP_BUILD: "1",
+88 |       },
+89 |     });
+90 | 
+91 |     expect(result.code).toBe(0);
+                             ^
+error: expect(received).toBe(expected)
+
+Expected: 0
+Received: 1
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/cli.test.ts:91:25)
+(fail) compiled die CLI > installs atomically into the requested local bin directory [45.38ms]
+
+tests/completion-batcher.test.ts:
+(pass) task completion batching > coalesces a burst of 50 completions into one notification [40.34ms]
+(pass) task completion batching > maximum wait prevents starvation under continuous completions [151.07ms]
+(pass) task completion batching > contains batch flush callback failures without retrying [30.51ms]
+(pass) task completion batching > reset starts a fresh session after disposal [30.32ms]
+(pass) task completion batching > dispose prevents later additions from rearming timers [30.31ms]
+
+tests/completion-notification.test.ts:
+(pass) completion notifications > never exceed 5,000 characters [0.73ms]
+(pass) completion notifications > makes shortened commands explicit and preserves both ends [0.07ms]
+(pass) completion notifications > includes complete summaries when the batch fits [0.05ms]
+(pass) failed agent progress is not labeled as a successful final answer [0.05ms]
+
+tests/conversation-density.test.ts:
+(pass) native conversation density adapter > gives first and consecutive users one unhighlighted boundary row [7.00ms]
+(pass) native conversation density adapter > uses one plain row at every native user predecessor and successor [1.97ms]
+(pass) native conversation density adapter > keeps internal user Markdown and successor image rows outside plain boundaries [0.32ms]
+(pass) native conversation density adapter > does not consume meaningful trailing rows from prior output [0.25ms]
+(pass) native conversation density adapter > keeps user boundaries dense through streaming updates and history-style rebuilds [0.83ms]
+(pass) native conversation density adapter > keeps one visible handoff message through invisible tool carriers and density rendering [1.40ms]
+(pass) native conversation density adapter > compacts displayed thinking prose gaps while preserving normal answer Markdown [6.74ms]
+(pass) native conversation density adapter > compacts Responses-style summaries accumulated in one thinking block while streaming and final [0.58ms]
+(pass) native conversation density adapter > retains thinking blank lines that protect lists and fenced code [0.80ms]
+(pass) native conversation density adapter > preserves Markdown boundaries across separate thinking parts [0.44ms]
+(pass) native conversation density adapter > compacts consecutive non-user boundaries except status-to-prose [0.33ms]
+(pass) native conversation density adapter > keeps thinking compaction through hide/show, streaming updates, and resize [0.73ms]
+(pass) native conversation density adapter > keeps statuses compact through thinking and separates following prose [0.36ms]
+(pass) native conversation density adapter > separates tool status from prose but not pure thinking [0.26ms]
+(pass) native conversation density adapter > tracks mixed and streaming assistant transitions after a status [0.41ms]
+(pass) native conversation density adapter > preserves expanded tool content, image-bearing layout, and failure text [6.51ms]
+(pass) native conversation density adapter > restores only wrappers it still owns [0.20ms]
+(pass) native conversation density adapter > restores the native thinking renderer and original source parts [0.28ms]
+(pass) native conversation density adapter > untracks removed and cleared components, then rebuilds and reinstalls cleanly [0.53ms]
+(pass) native conversation density adapter > restores user padding and adjacent standalone spacers when detached [0.26ms]
+(pass) native conversation density adapter > preserves a foreign addChild wrapper installed after the density adapter [0.21ms]
+(pass) native conversation density adapter > keeps dense native rows aligned with their original mouse hit areas [0.50ms]
+(pass) native conversation density adapter > foreign render chains stop applying density after disposal [0.16ms]
+
+tests/cooperative-handoff.test.ts:
+(pass) Pi honors cooperative batch termination: allYield=true [3.02ms]
+(pass) Pi honors cooperative batch termination: allYield=false [2.94ms]
+
+tests/current-pipeline-live.test.ts:
+(skip) current pipeline live: fresh resume and uncaptured tool results
+
+tests/current-pipeline-sdk.test.ts:
+(pass) fresh compacts current transformed conversation without a warm capture [4.74ms]
+(pass) uncaptured-tool-results compacts current transformed conversation without a warm capture [5.36ms]
+(pass) changed-prefix compacts current transformed conversation without a warm capture [8.53ms]
+(pass) automatic compacts current transformed conversation without a warm capture [4.33ms]
+(pass) tail-rewrite compacts current transformed conversation without a warm capture [4.19ms]
+(pass) empty-context compacts current transformed conversation without a warm capture [3.34ms]
+(pass) over-limit compacts current transformed conversation without a warm capture [4.25ms]
+
+tests/diagnostics.test.ts:
+(pass) diagnostics discard caller extras and durable replay rejects extras [2.95ms]
+(pass) hostile getters and proxies never escape diagnostic recording [0.20ms]
+(pass) invalid enum and oversized identifiers fail closed [0.06ms]
+(pass) ring, durable budget, dedup, throwing and reentrant sinks stay bounded [1.81ms]
+(pass) reload seeds the lifetime durable cap and scoped recorders expire [1.39ms]
+(pass) bounded replay searches backward for diagnostics and reports scan loss [0.62ms]
+(pass) extension guards same-manager switches and preserves shutdown diagnostics [0.38ms]
+(pass) extension refuses persistence when the active leaf cannot be restored [0.08ms]
+(pass) extension preflights restoration and reports unavoidable post-append restoration failure [0.12ms]
+(pass) actual SDK keeps the runtime leaf stable and reopened diagnostics context-transparent [2.60ms]
+(pass) diagnostic getters cannot substitute unvalidated values after validation [0.06ms]
+
+tests/editor.test.ts:
+(pass) borderless editor > idle chevron shares a stable gutter with the cursor and input [4.19ms]
+(pass) borderless editor > multiline, wrapping, Unicode and scroll indicators [2.13ms]
+(pass) borderless editor > native app shortcuts, paste, and history remain functional [0.43ms]
+(pass) borderless editor > spinner replaces the chevron without moving input or adding rows [0.45ms]
+(pass) borderless editor > mouse coordinates account for the gutter and removed borders [0.58ms]
+(pass) borderless editor > autocomplete rows survive, select with keyboard and mouse [32.05ms]
+
+tests/error-diagnostic.test.ts:
+(pass) isolated runner error diagnostics > restores an Error message omitted from a nonempty stack [0.10ms]
+(pass) isolated runner error diagnostics > does not trust Error property getters or non-Error conversion hooks [0.11ms]
+(pass) isolated runner error diagnostics > bounds diagnostics while retaining the useful prefix [0.03ms]
+
+tests/execute-handoff.test.ts:
+(pass) execute handoff notice: inline [0.51ms]
+(pass) execute handoff notice: background [0.12ms]
+(pass) execute handoff notice: error [0.19ms]
+(pass) cooperative handoff releases a foreground wait, preserves its job, and notifies once [2.93ms]
+(pass) handoff validates progress text: 42 [0.52ms]
+(pass) handoff validates progress text:  [0.23ms]
+(pass) handoff validates progress text:     [0.11ms]
+(pass) handoff validates progress text: xxxxxxxxxx [0.14ms]
+
+tests/execute-output-capture.test.ts:
+(pass) 4000 combined characters stay inline without files, including many short lines [1.00ms]
+(pass) 4001 combined characters spill both complete streams to unique session files [2.37ms]
+(pass) preserves UTF-8 bytes split across chunks at the spill boundary [0.84ms]
+(pass) flushes incomplete UTF-8 at stream end before deciding whether to spill [0.51ms]
+(pass) reports an unwritable artifact location without claiming complete files exist [0.48ms]
+(pass) standalone captures use discoverable temporary files that survive completion [0.52ms]
+(pass) enforces one explicit byte budget across stdout and stderr [0.72ms]
+(pass) closes artifact handles when a stream pump rejects [1.14ms]
+(pass) default capture budget bounds artifacts while continuing to drain output [12.77ms]
+(pass) zero capture budget is explicit and preserves the separate inline preview [0.49ms]
+(pass) capture limits count UTF-8 bytes, not characters [0.28ms]
+(pass) zero capture budget creates no spill directories or paths above the preview threshold [0.37ms]
+(pass) streams arriving after capture budget exhaustion do not create empty artifacts [0.62ms]
+
+tests/execution-previews-tui.test.ts:
+(pass) real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure [902.35ms]
+
+tests/execution-previews.test.ts:
+(pass) collapsed execute call and settled result are deterministic single rows [0.18ms]
+(pass) collapsed handoff results present their progress text once without requiring expansion [0.18ms]
+(pass) handoff-only execute calls still settle to one visible progress message [0.10ms]
+(pass) shared renderer state prevents Pi call/result composition from adding a second row [0.08ms]
+(pass) execute previews apply configurable horizontal padding and deduct it from content width [0.28ms]
+(pass) execute tool wiring supplies configured padding to call and result renderers [0.57ms]
+(pass) expanded execute keeps source/result grouping inside configured padding [0.22ms]
+(pass) expanded execute includes the full command and output [0.07ms]
+(pass) task completion and attention collapse to recognizable summaries without output [0.40ms]
+(pass) attention notices use normal terminal color without weakening failures [0.22ms]
+(pass) failed task and execute summaries retain failure status [0.11ms]
+(pass) execute completion labels use structured outcomes and never infer false success [0.21ms]
+(pass) mixed completion batches preserve order and color each task outcome [0.18ms]
+(pass) collapsed rows are control-safe and bounded at small widths [1.84ms]
+(pass) images remain summarized collapsed and represented by Pi content [0.11ms]
+(pass) full-batch diagnostics retain a failure omitted after the first 50 tasks [0.39ms]
+(pass) legacy or incomplete completion metadata renders unknown rather than success [0.28ms]
+(pass) mixed failure and attention indicators precede truncatable descriptions [0.30ms]
+(pass) untrusted task metadata is sanitized before terminal coloring [0.12ms]
+(pass) collapsed execute puts truncation, image, and background diagnostics before long code [0.28ms]
+(pass) execute error flag takes precedence over handoff success [0.07ms]
+(pass) collapsed execute uses one compact truncation marker and hides output-file counts [0.17ms]
+(pass) preparing and running execute calls share the compact executing label [0.14ms]
+
+tests/footer.test.ts:
+(pass) compact extension footer > Live reactive line stays in existing compact status row [2.07ms]
+(pass) compact extension footer > pending questions remain in ordinary-color compact footer through progress updates [0.36ms]
+(pass) compact extension footer > braille animation stays one row and within narrow terminal widths [2.70ms]
+(pass) compact extension footer > /status toggles details without replacing the editor or changing the draft [1.01ms]
+(pass) compact extension footer > default is one row including tasks, cost, context, model and thinking [1.01ms]
+(pass) compact extension footer > keeps historical fast-session dollar cost unavailable after explicit off [0.22ms]
+(pass) compact extension footer > persisted voice increments survive resume and incomplete billing is explicit [0.23ms]
+(pass) compact extension footer > caches reduced history until session position changes [0.46ms]
+(pass) compact extension footer > puts task count beside the directory without losing usage or model information [0.08ms]
+(pass) compact extension footer > clears completed counts and preserves other extensions' statuses [0.13ms]
+(pass) compact extension footer > respects narrow widths, Unicode paths, ANSI styles, and live counts [0.58ms]
+(pass) compact extension footer > includes tool/summary usage and unknown post-compaction context [0.14ms]
+(pass) compact extension footer > does not abbreviate directories outside the home or leak path newlines [0.04ms]
+(pass) compact extension footer > uses setFooter only in TUI mode and disposes its reactive subscription [0.21ms]
+(pass) both footer modes combine costs without adding child tokens or context [0.16ms]
+(pass) disposing the footer suppresses an in-flight cost refresh redraw [0.19ms]
+(pass) footer includes failed compaction attempt costs without changing context usage [0.13ms]
+(pass) cache estimate keeps footer usage layout and uses a bounded disposable minute timer [0.49ms]
+(pass) compact UI owns initial footer disposal across switches and shutdown [0.18ms]
+(pass) footer cache notices an append followed by branching back between renders [0.13ms]
+(pass) remote work and attention remain named in compact footer, not a hidden extra-status count [0.29ms]
+
+tests/foreground-stop.test.ts:
+(pass) foreground stop waits for execute response ACK and does not claim abort means completion [0.22ms]
+(pass) foreground stop does not cross session or cancelled delivery and surfaces errors [0.11ms]
+
+tests/goals-live.test.ts:
+(skip) live goal mode completes a harmless temporary-file criterion
+
+tests/goals-marker-sdk.test.ts:
+(pass) goal transport token never reaches provider or resumed history; typed lookalikes remain literal [14.69ms]
+
+tests/goals-sdk.test.ts:
+(pass) real offline assembly changes only messages across goal set, update, and clear [541.67ms]
+(pass) real SDK reconciles helper waiting through task-complete and completes [435.16ms]
+(pass) real SDK print completion cycles pause within bounded agent runs [854.49ms]
+(pass) real SDK print completion cycles accept distinct explicit milestones [1604.29ms]
+(pass) real SDK reports auth preparation failure before provider dispatch [1.54ms]
+(pass) live goal fixture reaches an intercepted real-runtime provider offline [12.53ms]
+
+tests/goals-tui.test.ts:
+(pass) real TUI accepts /goal before the first ordinary turn [651.33ms]
+
+tests/goals.test.ts:
+(pass) goal durable state > requires fields and replays validated append-only entries [0.49ms]
+(pass) goal durable state > fails closed on corrupt, future, and obsolete updates [0.18ms]
+(pass) goal durable state > corrupt restore reports affected waiting job references [0.28ms]
+(pass) goal durable state > does not mutate memory when durable append fails [0.14ms]
+(pass) goal durable state > waiting accepts only currently owned running jobs [0.11ms]
+(pass) no-progress guard counts each run and ignores revision bumps [0.08ms]
+(pass) explicit progress resets the guard once, while repeated evidence does not [0.05ms]
+(pass) active progress is bounded and duplicate milestones are idempotent [0.37ms]
+(pass) only active goals continue and waiting interruption pauses [0.47ms]
+(pass) successful execute handoff waits only when owned work is running [0.21ms]
+(pass) model-facing updates reject runtime-owned waiting bookkeeping [0.09ms]
+(pass) helper-created goal bounds repeated direct handoff completion cycles [0.40ms]
+(pass) failed-job waiting and completion turns retain the no-progress bound [0.54ms]
+(pass) distinct explicit milestones sustain repeated waiting completion turns [0.70ms]
+(pass) same-status helper revisions cannot evade the automatic-turn bound [0.36ms]
+(pass) notifications do not impersonate queued user input [0.12ms]
+(pass) goal guidance is conditional and accompanies every persisted status [0.70ms]
+(pass) waiting job completion reactivates at the next turn boundary [0.17ms]
+(pass) foreground question suppresses completion continuation until answered without changing goal status [0.23ms]
+(pass) queued goal reminder is rejected if foreground becomes blocked after it was sent [0.26ms]
+(pass) child-only question does not suppress goal continuation [0.10ms]
+(pass) resumed waiting work that is no longer owned pauses visibly [0.18ms]
+(pass) continuation relies on the assembled authoritative state without duplicating it [0.20ms]
+(pass) slash command initializes before session_start and invalidates reminders [0.19ms]
+(pass) runtime refreshes goal state after same-manager branch navigation [0.21ms]
+(pass) goal history is durable JSONL and branch scoped [0.85ms]
+(pass) resumed waiting goal preserves all affected task references in pause explanation [0.29ms]
+(pass) queued reminder tokens are stripped only from valid extension turns [0.29ms]
+
+tests/gpt-live-context.test.ts:
+(pass) voice observations are bounded, quoted, and mark truncation without per-chunk JSON [5.67ms]
+
+tests/gpt-live-delegation.test.ts:
+(pass) GPT-Live contextual delegation > offset snapshot is bounded provisional data, not a final transcript or invented task [0.98ms]
+(pass) GPT-Live contextual delegation > dedupes concurrently and across interruption; backend work continues [0.21ms]
+(pass) GPT-Live contextual delegation > late fragment correction suppresses stale spoken dispatch claims [0.13ms]
+(pass) GPT-Live contextual delegation > untrusted job output and failures cannot become spoken results [0.37ms]
+(pass) GPT-Live contextual delegation > model target cannot smuggle cancellation or invented tool args into host [0.18ms]
+(pass) GPT-Live contextual delegation > rejects invalid IDs and bounds memory without replay eviction [2.05ms]
+(pass) dispatch rejection after interruption or close cannot produce stale commentary [0.35ms]
+(pass) delayed delegation uses saved host context at its offset, not future task or conversation state [0.17ms]
+(pass) accepted delegations consume speech once; late corrections remain available [0.29ms]
+(pass) distinct concurrent delegations do not dispatch the same pending fragments twice [0.20ms]
+(pass) failed admission releases reserved fragments for a new delegation [0.18ms]
+(pass) evicting already handled fragments does not invent missing speech [0.83ms]
+(pass) pending eviction is missing only when admission fails [0.79ms]
+(pass) tiny deltas retain a whole request and silence does not consume it [2.24ms]
+(pass) UTF-8 serialized byte limit is real and a single oversized fragment is not silently ignored [0.55ms]
+(pass) a reasonable multi-chunk request longer than 4096 characters is retained exactly [0.28ms]
+(pass) an old delegation cannot acknowledge future loss and then dispatch its suffix [0.20ms]
+(pass) late correction before a new followup stays separate, not fused into a new command [0.14ms]
+
+tests/gpt-live-playback.test.ts:
+(pass) GPT-Live processed capture activity (heuristic, not VAD) > requires sustained speech and hysteretic quiet; no per-amplitude-tick transition [0.47ms]
+(pass) GPT-Live processed capture activity (heuristic, not VAD) > requires exact processed capture frame [0.05ms]
+(pass) GPT-Live bounded playback recovery > speech flushes output, suppresses during speech and quiet guard, then automatically resumes arriving stream [0.72ms]
+(pass) GPT-Live bounded playback recovery > overflow fails closed and flushes; cannot accumulate seconds of queued PCM [0.11ms]
+(pass) GPT-Live bounded playback recovery > invalid output is rejected, but does not gate microphone or count as speech [0.03ms]
+(pass) GPT-Live queue paces at most an 80ms native reserve even after a delayed timer [0.27ms]
+(pass) local interruption flushes immediately despite an outstanding native pipe write [0.18ms]
+(pass) noise during settling resets the guard; renewed speech flushes again; no indefinite mute [0.20ms]
+(pass) hard output errors do not silently recover when capture becomes quiet [0.12ms]
+
+tests/gpt-live-request.test.ts:
+(pass) ordinary speech has no transport wrapper or automatic policy sermon [0.04ms]
+(pass) overlapping provisional alternatives are not fabricated into one command [0.02ms]
+(pass) missing speech refuses a partial request; retained speech is never sliced again [0.02ms]
+
+tests/gpt-live-session.test.ts:
+(pass) official primary Live handshake and continuous microphone resampling; no Realtime commands [2.78ms]
+(pass) interleaved provisional transcripts and offset-only client delegation, dedupe, scoped updates [0.82ms]
+(pass) bounded queue, malformed PCM and abrupt disconnect fail without inventing final usage [0.32ms]
+(pass) final usage is only known on session.closed, early provider errors are sanitized [0.28ms]
+(pass) rejects different resolved model or delegation before audio can flow [0.14ms]
+(pass) timeout and explicit close invalidate pending handshake and stale callbacks [10.27ms]
+(pass) close deadline reports unknown final usage and no queued PCM survives closure [10.21ms]
+(pass) general host observations use nullable delegation and enforce conservative text token budget [0.15ms]
+(pass) explicit quota and model errors are classified without leaking raw content or fallback [0.16ms]
+(pass) GPT-Live cumulative usage and final billing event reach cost callback [0.13ms]
+(pass) typed context stays distinct; append acknowledgments mark timeline delivery, not task or speech completion [0.25ms]
+(pass) unacknowledged context is bounded and a matched acknowledgment restores capacity [0.56ms]
+
+tests/gpt-live-waveform.test.ts:
+(pass) continuous GPT waveform survives irregular aligned wire chunks byte-for-byte [2.68ms]
+(pass) continuous local speech causes one flush, not a repeated per-frame crackle loop [0.45ms]
+(pass) processed 20ms capture frames resample identically to continuous PCM with no chunk spikes [7.07ms]
+
+tests/herdr-agent-state.test.ts:
+(pass) built-in Herdr agent state > reports session refs, working/blocked/idle, monotonic seq, and release only on quit [97.13ms]
+(pass) built-in Herdr agent state > running background tasks keep pane working after agent settles [72.02ms]
+(pass) built-in Herdr agent state > real background jobs keep Herdr working across foreground and staggered completion [1940.27ms]
+(pass) built-in Herdr agent state > replacement owns reporting and stale runtime quit cannot release it [72.17ms]
+(pass) built-in Herdr agent state > quit drops queued working before release when a socket is stalled [21.54ms]
+(pass) built-in Herdr agent state > is disabled for inherited child workers and non-UI sessions [30.80ms]
+(pass) built-in Herdr agent state > native RPC children never claim the root Herdr reporter [72.16ms]
+(pass) built-in Herdr agent state > unavailable endpoints and synchronous connector failures are nonfatal and prompt [30.99ms]
+(pass) built-in Herdr agent state > stalled sends preserve wire sequence order and the final working state [252.57ms]
+(pass) built-in Herdr agent state > quit is awaited and a concurrent replacement cancels release retries [31.56ms]
+(pass) built-in Herdr agent state > non-quit restart reattaches one blocked listener and bounds outbound metadata [21.74ms]
+(pass) built-in Herdr agent state > malformed depth and spawned role fail closed [0.10ms]
+
+tests/history-disk-retrieval.test.ts:
+(pass) disk history retrieval traverses metadata, preserving originals, branches, refs and live exclusions [261.79ms]
+
+tests/history-publication-collision.test.ts:
+(pass) a publication collision leaves SessionManager unchanged and permits recovery [242.56ms]
+
+tests/history-sdk-087.test.ts:
+(pass) Pi 0.87 disk-backed session projection compatibility > matches the real SDK for context edits and compaction system checkpoints [281.07ms]
+
+tests/history-storage-cleanup.test.ts:
+(pass) temporary preparation and failed factories leave no live-process pending journals [274.30ms]
+
+tests/history-storage-io.test.ts:
+(pass) disk entry store I/O correctness > scanJsonl propagates visitor exceptions rather than treating them as malformed JSON [0.65ms]
+(pass) disk entry store I/O correctness > scans Unicode, CRLF, records larger than the scan buffer, and repairs a valid unterminated tail before append [4.70ms]
+(pass) disk entry store I/O correctness > retries short writes and rolls back failed partial appends in an isolated subprocess [37.28ms]
+(pass) disk entry store I/O correctness > failed first-assistant publication rolls back the pending append and can be retried [1.12ms]
+(pass) disk entry store I/O correctness > a failed spool unlink does not undo successful publication [35.77ms]
+(pass) disk entry store I/O correctness > failed atomic replacement leaves a pending journal usable and publishable [0.84ms]
+(pass) disk entry store I/O correctness > duplicate IDs retain distinct physical records while ID lookup resolves to the last record [0.36ms]
+(pass) disk entry store I/O correctness > cache retains exact bounded serialized buffers rather than parsed graphs [0.68ms]
+
+tests/history-storage-lifecycle.test.ts:
+(pass) owned SDK lifecycle keeps rewrite bodies, sorted trees, migrations, paths and discovery isolation [291.15ms]
+
+tests/history-storage.test.ts:
+(pass) disk-backed SessionManager SDK compatibility > matches an unpatched subprocess for flush, reopen, branch, reset, fork, and newSession [282.41ms]
+(pass) disk-backed SessionManager SDK compatibility > keeps compacted originals and stable references across reopen while context stays compact [281.50ms]
+
+tests/history.test.ts:
+(pass) original history > searches original active-branch dialogue after compaction with stable provenance [1.67ms]
+(pass) original history > does not cross inactive branches [0.12ms]
+(pass) original history > preserves shake, hidden-context, and private-reasoning exclusions [0.41ms]
+(pass) original history > requires explicit opt-in and session file for cross-session access [1.54ms]
+(pass) original history > applies a new shake to old search and read cursor snapshots [0.44ms]
+(pass) original history > does not undo historical exclusions when compaction carry trims IDs [0.38ms]
+(pass) original history > cross-session loading is read-only and rejects missing, empty, and oversized files [1.39ms]
+(pass) original history > rejects a FIFO promptly without opening it for blocking reads [1.20ms]
+(pass) original history > reports Unicode-insensitive match offsets in original UTF-16 coordinates [0.17ms]
+(pass) original history > fails closed when active-branch traversal exceeds its work bound [0.36ms]
+(pass) original history > rejects excessive exclusion work rather than dropping exclusions [9.89ms]
+(pass) original history > rejects an oversized text part instead of scanning unbounded bytes [1.93ms]
+(pass) original history > bounds and pages search and reads, and rejects cursors after branch changes [0.47ms]
+(pass) original history > owned read pages preserve exact UTF-16 code units [0.26ms]
+
+tests/install-local.test.ts:
+(pass) local installer > installs only the verified standalone executable [10.00ms]
+(pass) local installer > atomically replaces an existing executable without staging leftovers [7.33ms]
+(pass) local installer > preserves the installed executable when VERSION_STATUS fails [7.47ms]
+(pass) local installer > preserves the installed executable when SELF_TEST_STATUS fails [9.22ms]
+(pass) local installer > Mac arm64 builds and embeds the helper before validating the candidate [11.11ms]
+(pass) local installer > trusted Mac prebuilt skips both builds, not verification [9.21ms]
+(pass) local installer > Linux aarch64 does not build/embed a Mac helper [8.46ms]
+(pass) local installer > Darwin x86_64 does not build/embed a Mac helper [10.85ms]
+
+tests/instruction-continuity-sdk.test.ts:
+(pass) SDK keeps die's complete instruction frame across custom tool continuation (custom=false, empty=false) [9.52ms]
+(pass) SDK keeps die's complete instruction frame across custom tool continuation (custom=true, empty=false) [5.49ms]
+(pass) SDK keeps die's complete instruction frame across custom tool continuation (custom=false, empty=true) [5.70ms]
+(pass) fresh compaction prepares the frame and redacted context for a later custom multi-tool turn [7.16ms]
+
+tests/instruction-mode.test.ts:
+(pass) /mode reports, validates, persists and changes instructions only [0.37ms]
+(pass) resume uses the latest valid session mode and child mode is isolated [0.11ms]
+(pass) latest corrupt mode is an authority boundary and falls back safely [0.07ms]
+(pass) bounded mode replacement preserves framing before and after it [0.10ms]
+(pass) resume reads only the active branch [0.05ms]
+(pass) failed mode persistence leaves memory, status, and frame unchanged [0.10ms]
+(pass) a real SessionManager branch ignores mode entries on the abandoned branch [0.33ms]
+(pass) a real disk reopen produces a byte-identical mode prompt [0.79ms]
+
+tests/job-attention.test.ts:
+(pass) one fake-clock scheduler batches 50+ quiet/review deadlines and noisy activity causes no timer storm [38.97ms]
+(pass) snooze defers quiet and review coherently; watch opt-out persists until enabled [1.27ms]
+(pass) completion/cancellation clean scheduler state without attention or automatic kills [1.71ms]
+(pass) validated SDK service helpers expose snooze and persistent watch control [1.08ms]
+(pass) TaskManager pending/event contracts are snapshot-based and attention text is bounded evidence [0.98ms]
+(pass) noisy activity keeps scheduler work and retained state bounded by active jobs [47.02ms]
+(pass) late attachment uses existing activity and watch grace does not fabricate activity [0.76ms]
+(pass) large clock jumps use arithmetic catchup and intervals must be finite [0.56ms]
+(pass) raw agent model chunks emit one activity even when reasoning is not retained [3.46ms]
+(pass) transient inspection errors retain monitoring until pending confirms completion [1.13ms]
+
+tests/job-bridge-protocol.test.ts:
+(pass) server classifies malformed envelope or frame without retaining payload: protocol_invalid:22 [1.41ms]
+(pass) server classifies malformed envelope or frame without retaining payload: protocol_invalid:39 [1.12ms]
+(pass) server classifies malformed envelope or frame without retaining payload: frame_oversize:1048577 [1.49ms]
+(pass) invalid ACK and parent cancellation release requests exactly once with distinct causes [9.28ms]
+(pass) client EPIPE has a stable symbolic category rather than generic disconnect [1.27ms]
+(pass) client and server reject an accumulated oversized frame before concatenating it [2.33ms]
+(pass) client and server accept multi-frame chunks larger than one frame limit [5.64ms]
+(pass) acknowledged non-launch RPCs release request cancellation listeners immediately [5.61ms]
+(pass) failed RPCs release controllers while foreground ACK ownership stays provisional [0.78ms]
+
+tests/job-bridge.test.ts:
+(pass) execute helpers multiplex responses, reject errors, and do not print implicitly [159.60ms]
+(pass) job helpers without a session bridge fail clearly [153.20ms]
+58 |       jobHandler: (method, params, signal) => service.handle(method, params, { cwd: process.cwd() } as any, signal),
+59 |     });
+60 |   try {
+61 |     const fast = await execute('console.log(JSON.stringify(await shell("printf inline")))');
+62 |     expect(fast.exitCode).toBe(0);
+63 |     expect(JSON.parse(fast.stdout)).toMatchObject({
+                                         ^
+error: expect(received).toMatchObject(expected)
+
+  {
+    "background": false,
+-   "output": "inline",
++   "baseOffset": 0,
++   "command": "printf inline",
++   "completedAt": "2026-09-27T20:26:29.796Z",
++   "cwd": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e",
++   "elapsedMs": 66,
++   "exitCode": 0,
++   "hasMore": false,
++   "id": "task_a7200780",
++   "kind": "command",
++   "lastActivityAt": "2026-09-27T20:26:29.796Z",
++   "nextOffset": 365,
++   "output": 
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ inline"
++ ,
++   "outputEnd": 365,
++   "outputLost": false,
++   "pid": 3080409,
++   "requestedOffset": 0,
++   "startedAt": "2026-09-27T20:26:29.730Z",
+    "status": "completed",
++   "stdinOpen": false,
++   "timedOut": false,
+  }
+
+- Expected  - 1
++ Received  + 25
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/job-bridge.test.ts:63:37)
+(fail) foreground work returns inline; background work survives execute and accepts input [220.57ms]
+128 |     expect(result.timedOut).toBe(false);
+129 |     expect(manager.inspect(taskId).status).toBe("running");
+130 |     await manager.write(taskId, "go\n", true);
+131 |     await manager.wait(taskId);
+132 |     expect(notifications).toHaveLength(1);
+133 |     expect(notifications[0].output).toBe("survived");
+                                          ^
+error: expect(received).toBe(expected)
+
+- "survived"
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ survived"
+
+- Expected  - 1
++ Received  + 5
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/job-bridge.test.ts:133:37)
+(fail) canceling execute after a delayed job spawn transfers notification ownership without killing its job [559.99ms]
+(pass) bridge budgets reject oversized messages without corrupting subsequent calls [210.12ms]
+(pass) shell defaults to a three-second foreground budget; zero wait and timeout stay independent [3980.19ms]
+(pass) canceling concurrent bridge waits hands off every launched job exactly once [219.34ms]
+266 |         },
+267 |       },
+268 |     );
+269 |     expect(result.cancelled).toBe(true);
+270 |     expect(notifications).toHaveLength(1);
+271 |     expect(notifications[0]).toMatchObject({
+                                   ^
+error: expect(received).toMatchObject(expected)
+
+  {
+-   "output": "raced",
++   "agent": undefined,
++   "background": false,
++   "baseOffset": 0,
++   "command": "printf raced",
++   "completedAt": "2026-09-27T20:26:34.997Z",
++   "cwd": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e",
++   "exitCode": 0,
++   "hasMore": false,
++   "id": "task_68422bea",
++   "kind": "command",
++   "lastActivityAt": "2026-09-27T20:26:34.997Z",
++   "nextOffset": 364,
++   "output": 
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ raced"
++ ,
++   "outputEnd": 364,
++   "outputLost": false,
++   "pid": 3081197,
++   "requestedOffset": 0,
++   "signal": undefined,
++   "startedAt": "2026-09-27T20:26:34.931Z",
+    "status": "completed",
++   "stdinOpen": false,
++   "timedOut": false,
++   "workspace": undefined,
+  }
+
+- Expected  - 1
++ Received  + 28
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/job-bridge.test.ts:271:30)
+(fail) disconnect before an inline response is acknowledged restores completion notification ownership [227.51ms]
+(pass) registered execute preserves ACK ownership through its wrapper for batch subagents [158.94ms]
+342 |         jobHandler: (method, params, signal) => service.handle(method, params, { cwd: process.cwd() } as any, signal),
+343 |       },
+344 |     );
+345 |     expect(result.exitCode).toBe(7);
+346 |     expect(notifications).toHaveLength(1);
+347 |     expect(notifications[0].output).toBe("delivered");
+                                          ^
+error: expect(received).toBe(expected)
+
+- "delivered"
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ delivered"
+
+- Expected  - 1
++ Received  + 5
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/job-bridge.test.ts:347:37)
+(fail) ACK is provisional until clean worker exit [232.30ms]
+381 |       code: "frame_oversize",
+382 |       outcome: "fallback",
+383 |       dispatch: "response",
+384 |     });
+385 |     expect(notifications).toHaveLength(1);
+386 |     expect(notifications[0].output).toBe("retained");
+                                          ^
+error: expect(received).toBe(expected)
+
+- "retained"
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ retained"
+
+- Expected  - 1
++ Received  + 5
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/job-bridge.test.ts:386:37)
+(fail) oversized reply releases foreground ownership exactly once [217.58ms]
+427 |     expect(pending.status).toBe("running");
+428 |     expect(notifications).toHaveLength(0);
+429 |     await manager.write(pending.id, "done\n", true);
+430 |     await manager.wait(pending.id);
+431 |     expect(notifications).toHaveLength(1);
+432 |     expect(notifications[0]).toMatchObject({
+                                   ^
+error: expect(received).toMatchObject(expected)
+
+  {
++   "agent": undefined,
++   "baseOffset": 0,
++   "command": "read value; printf pending:$value",
++   "completedAt": "2026-09-27T20:26:35.886Z",
++   "cwd": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e",
++   "exitCode": 0,
++   "hasMore": false,
+    "id": "task_7568dbc6",
+-   "output": "pending:done",
++   "kind": "command",
++   "lastActivityAt": "2026-09-27T20:26:35.886Z",
++   "nextOffset": 371,
++   "output": 
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ pending:done"
++ ,
++   "outputEnd": 371,
++   "outputLost": false,
++   "pid": 3081495,
++   "requestedOffset": 0,
++   "signal": undefined,
++   "startedAt": "2026-09-27T20:26:35.819Z",
++   "status": "completed",
++   "stdinOpen": false,
++   "timedOut": false,
++   "workspace": undefined,
+  }
+
+- Expected  - 1
++ Received  + 27
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/job-bridge.test.ts:432:30)
+(fail) registered execute handoff separates completed delivery from pending wait cancellation [276.33ms]
+(pass) handler failure releases inline ownership from a partial batch [191.55ms]
+(pass) execute exposes attention helper RPCs through the single bridge [182.78ms]
+(pass) goal helpers share the single execute bridge and do not print implicitly [160.24ms]
+(pass) history helpers share the execute bridge with explicit parameters [158.74ms]
+(pass) execute cannot read T3 bridge credentials while parent job capability remains available [145.89ms]
+
+tests/job-service.test.ts:
+(pass) job helper validation rejects invalid inputs before spawning [0.83ms]
+43 |       "shell",
+44 |       { command: "cat >/dev/null; printf eof", waitSeconds: 1 },
+45 |       ctx,
+46 |       signal,
+47 |     )) as { status: string; output: string; stdinOpen?: boolean };
+48 |     expect(closed).toMatchObject({ status: "completed", output: "eof", stdinOpen: false });
+                        ^
+error: expect(received).toMatchObject(expected)
+
+  {
+-   "output": "eof",
++   "agent": undefined,
++   "background": false,
++   "baseOffset": 0,
++   "command": "cat >/dev/null; printf eof",
++   "completedAt": "2026-09-27T20:26:36.793Z",
++   "cwd": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e",
++   "elapsedMs": 64,
++   "exitCode": 0,
++   "hasMore": false,
++   "id": "task_cf0e92f7",
++   "kind": "command",
++   "lastActivityAt": "2026-09-27T20:26:36.792Z",
++   "nextOffset": 362,
++   "output": 
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ eof"
++ ,
++   "outputEnd": 362,
++   "outputLost": false,
++   "pid": 3081669,
++   "requestedOffset": 0,
++   "signal": undefined,
++   "startedAt": "2026-09-27T20:26:36.729Z",
+    "status": "completed",
+    "stdinOpen": false,
++   "timedOut": false,
++   "workspace": undefined,
+  }
+
+- Expected  - 1
++ Received  + 28
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/job-service.test.ts:48:20)
+(fail) shell closes stdin by default while explicit open input remains writable [64.12ms]
+(pass) records metadata-only dispatch lifecycle against the supplied session recorder [62.54ms]
+(pass) profile settings, child identity, and three-tier limits survive helper migration [1.86ms]
+(pass) partial subagent spawn failure stops and notifies already-launched workers [2.67ms]
+246 |         { cwd: process.cwd() } as any,
+247 |         signal,
+248 |       )) as { status: string; output: string };
+249 |       expect(foreground).toHaveBeenCalledTimes(1);
+250 |       expect(result.status).toBe("completed");
+251 |       expect(result.output).toBe("ok");
+                                  ^
+error: expect(received).toBe(expected)
+
+- "ok"
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ ok"
+
+- Expected  - 1
++ Received  + 5
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/job-service.test.ts:251:29)
+(fail) optional and failing refresh callbacks cannot strand successful launches [69.31ms]
+(pass) healthy inspection polling does not produce per-poll diagnostics [0.93ms]
+
+tests/last-used-cli-model.test.ts:
+(pass) last-used CLI model > recognizes only direct root TUI selections [0.08ms]
+(pass) last-used CLI model > persists provider and model after an explicit /model choice [0.25ms]
+(pass) last-used CLI model > automatic restores, command overrides, and children do not overwrite defaults [0.18ms]
+(pass) saved choice survives a fresh settings instance without changing unrelated settings [1.39ms]
+
+tests/live-audio-lifecycle.test.ts:
+(pass) Live audio protocol boundary > hello does not start audio; normal stop closes once without error [0.99ms]
+(pass) Live audio protocol boundary > failure notifies once after ready and detaches data/drain [0.32ms]
+(pass) Live audio protocol boundary > flush rejects unsent stale playback; written bytes are not retractable [0.21ms]
+(pass) Live audio protocol boundary > pre-aborted launch does not own a worker; aborted start closes [0.22ms]
+(pass) Live audio protocol boundary > playback frame and queue bounded in milliseconds [0.13ms]
+
+tests/live-audio.test.ts:
+(pass) hello does not start mic; start waits ready, capture fixed 20ms and playback metadata [2.72ms]
+(pass) handshake mismatch, timeout, exit, and late events close process [20.55ms]
+(pass) reject oversized, malformed, truncated and invalid capture; sanitize helper errors [5.14ms]
+(pass) FIFO and bounded pending input under stalled backpressure [1.59ms]
+(pass) process exit during active write and invalid generation [1.28ms]
+(pass) stop timeout kills even if worker never acknowledges; malformed stdout is rejected [12.70ms]
+(pass) structured setup error preserves only bounded domain and numeric code [0.66ms]
+(pass) bounded native ready metadata and full-duplex capture during queued playback [2.86ms]
+(pass) ready channel metadata is optional and independently sanitized [4.96ms]
+
+tests/live-auth-lifecycle.test.ts:
+(pass) Live credential lifecycle > explicitly imports into ModelRuntime auth storage and preserves unrelated providers [7.24ms]
+(pass) Live credential lifecycle > does not read live.env or overwrite an existing Google API key [1.73ms]
+(pass) Live credential lifecycle > reports OAuth without secrets, refuses it, and never replaces it [0.72ms]
+(pass) atomic import preserves a Google OAuth credential installed by another writer after review [1.72ms]
+(pass) concurrent imports have one winner and leave migration files intact [18.13ms]
+(pass) cancel before import and before locked write cannot persist a key [1.47ms]
+(pass) ambient Google API key is reused without migrating or persisting it [0.80ms]
+(pass) corrupt canonical storage is not overwritten by migration [1.10ms]
+(pass) stored key status is metadata only and does not resolve command references [0.50ms]
+(pass) default factory honors die's configured auth directory and reuses the canonical provider key [1.05ms]
+(pass) cancelled credential inspection and factory calls fail before resolving key material [0.59ms]
+(pass) OpenAI Live uses only canonical openai API key, never codex OAuth or Google's key [1.83ms]
+(pass) OpenAI OAuth is refused without exposing its access token [0.70ms]
+
+tests/live-config.test.ts:
+(pass) Live voice settings (offline) > missing file defaults Google; saved choice survives reload without a key [1.02ms]
+(pass) Live voice settings (offline) > GPT-Live selection persists and survives provider switches [0.31ms]
+(pass) Live voice settings (offline) > rejects mismatched and invented models instead of fallback [0.12ms]
+
+tests/live-cost.test.ts:
+(pass) provider-reported CLI voice cost > GPT-Live cumulative duration, duplicates, out-of-order, final correction; backend remains unknown [0.25ms]
+(pass) provider-reported CLI voice cost > Realtime charges text and audio separately and never charges a repeated response [0.08ms]
+(pass) provider-reported CLI voice cost > Gemini uses modality detail and per-turn cumulative snapshots with reset [0.18ms]
+(pass) provider-reported CLI voice cost > Gemini cached counts and both SDK detail spellings are unknown, not full-rate [0.13ms]
+(pass) provider-reported CLI voice cost > unknown usage/pricing is never recorded as zero [0.06ms]
+
+tests/live-credentials.test.ts:
+(pass) Live credentials > parses literal assignment without executing shell [0.14ms]
+(pass) Live credentials > requires private regular file and never leaks file contents [0.89ms]
+(pass) credential file reads reject oversized and non-regular sources with opaque errors [0.37ms]
+
+tests/live-dispatch-budget.test.ts:
+(pass) live dispatch budget blocks the fifth provider call and distinguishes runtime invocations [0.40ms]
+(pass) live runtime readiness rejects missing auth before provider dispatch [0.11ms]
+(pass) live runtime readiness resolves usable auth with a refresh margin [0.07ms]
+
+tests/live-embedded-helper.test.ts:
+(pass) private per-launch extraction is verified and independently cleaned up [0.88ms]
+(pass) reject corrupt content before writing and never follow a hostile shared cache symlink [0.52ms]
+(pass) platform gating leaves stable targets untouched and missing or tampered assets fail closed [0.32ms]
+(pass) real compiled bundle extracts embedded bytes after original payload disappears [220.41ms]
+
+tests/live-execute-controls.test.ts:
+(pass) execute live.stop uses the actual scoped host route, and does not route to jobs [32.07ms]
+(pass) stopWork helper response is acknowledged before scoped foreground cancellation [28.82ms]
+
+tests/live-extension.test.ts:
+(pass) Live voice > session switch revokes callbacks before asynchronous teardown and late audio launch [4.33ms]
+(pass) Live voice > direct execute owner is acquired before provider and audio [0.51ms]
+(pass) Live voice > scoped execute self-stop awaits mic and provider teardown, not job cancellation [1.53ms]
+(pass) Live voice > Gemini provider reported close failure persists incomplete cost after valid usage [0.38ms]
+(pass) Live voice > Gemini provider thrown close failure persists incomplete cost after valid usage [0.14ms]
+(pass) Live voice > self-stop does not claim teardown of a still-pending audio launch [2.27ms]
+(pass) Live voice > provider socket close errors still release audio and are not acknowledged as success [0.22ms]
+(pass) Live voice > self-stop reports audio teardown failure rather than claiming completion [0.28ms]
+(pass) Live voice > transcripts reach owner history while the viewport stays bounded and partial stop is not final [120.85ms]
+(pass) Live voice > autocomplete lists only Live actions and filters prefixes without side effects [0.40ms]
+(pass) Live voice > bare Live toggles on and off while explicit start and stop stay idempotent [1.53ms]
+(pass) Live voice > bare Live cancels pending helper without late activation [1.28ms]
+(pass) Live voice > bare Live cancels pending provider without late activation [2.29ms]
+(pass) Live voice > bare Live cancels pending auth without stale setup or audio [1.29ms]
+(pass) Live voice > bare /live starts directly without a picker or confirmation [0.15ms]
+(pass) Live voice > status does not inspect auth or open audio [0.07ms]
+(pass) Live voice > status reports the direct main owner and only execute [0.15ms]
+(pass) Live voice > status distinguishes partial transcription from provider-marked completion [0.18ms]
+(pass) Live voice > owner acquisition failure fails closed before provider or audio, without a host fallback [0.35ms]
+(pass) Live voice > full duplex, bounded frames, interruption flushes but turnComplete does not [202.93ms]
+(pass) Live voice > stop while helper hello is pending disposes late helper without opening devices [1.25ms]
+(pass) Live voice > provider rejection and helper error tear down without exposing error text [0.35ms]
+(pass) Live voice > mic-check requires consent, never uses key/provider and discards capture [0.85ms]
+(pass) Live voice > mic-check reports safe native stage and NSError number without helper text [0.12ms]
+(pass) Live voice > session change aborts pending mic-check before devices open [1.15ms]
+(pass) Live voice > unknown helper code never reaches UI [0.16ms]
+(pass) Live voice > provider output during setup is held until audio ready; overflow fails visibly [5.20ms]
+(pass) Live voice > platform gate precedes consent, and session shutdown stops without touching agent [0.29ms]
+(pass) Live voice > transcript deltas join without invented spaces and capture keeps running while speaking [121.38ms]
+(pass) Live voice > stop invalidates pending auth and concurrent starts have one owner [1.34ms]
+(pass) local speaker-check wiring > consent and local gate precede runner; never calls key, provider, host or audio on decline [0.13ms]
+(pass) local speaker-check wiring > summary is bounded and provider disconnected; no agent job or auth path [0.33ms]
+(pass) local speaker-check wiring > stop aborts active measurement; prevents stale result and start/mic overlap [1.24ms]
+(pass) local speaker-check wiring > shutdown invalidates pending consent and session change aborts active runner [1.21ms]
+(pass) local speaker-check wiring > runner exceptions are not leaked to UI [0.08ms]
+(pass) real local speaker runner uses only injected native audio, never auth/provider/host [2322.72ms]
+(pass) direct entry and focused setup > missing-key bare /live opens setup and cancelling never opens audio [0.60ms]
+(pass) direct entry and focused setup > setup alone stays offline; only Start voice opens the session [0.42ms]
+(pass) direct entry and focused setup > toggle invalidates a pending setup start choice [1.42ms]
+(pass) direct entry and focused setup > stop invalidates a pending setup start choice [1.25ms]
+(pass) direct entry and focused setup > shutdown invalidates a pending setup start choice [1.21ms]
+(pass) direct entry and focused setup > sessionStart invalidates a pending setup start choice [1.20ms]
+(pass) direct entry and focused setup > shutdown during credential inspection prevents stale setup UI [1.19ms]
+(pass) direct entry and focused setup > local restriction precedes direct auth and setup [0.12ms]
+(pass) missing auth can be configured then explicitly started from setup [0.33ms]
+(pass) Live waveform goes through setStatus, follows PCM, native drain, interruption and stop [411.58ms]
+(pass) rejected Live startup leaves no animation updates [181.49ms]
+(pass) Live model and credential setup > all models visible regardless of selected provider; labels reflect resolver readiness, not network access [0.68ms]
+(pass) Live model and credential setup > explicit GPT and Gemini thinking choices atomically switch provider and round-trip with remembered models [0.42ms]
+(pass) Live model and credential setup > picker crosses from either provider and cancellation does not save or launch [0.23ms]
+(pass) Live model and credential setup > provider config does not switch model or start mic; missing key and OAuth remain setup-needed [0.31ms]
+(pass) Live model and credential setup > failed save, cancelled picker and active run leave selection untouched [0.36ms]
+(pass) Realtime startup diagnostics reach the terminal safely > adapter connect failure retains classified detail without raw exception [0.52ms]
+(pass) Realtime startup diagnostics reach the terminal safely > constructor failure names its stage and withholds arbitrary text [0.20ms]
+(pass) Realtime startup diagnostics reach the terminal safely > rejected lazy connect names its stage and withholds arbitrary text [0.12ms]
+(pass) Realtime full and mini localhost HTTP diagnostics survive the extension callback [8.41ms]
+(pass) branch navigation waits for admitted tool results before moving the owning branch [1.45ms]
+(pass) extended thinking stays busy across filler turn completion until provider idle [0.21ms]
+(pass) GPT-Live routes client delegation to selected main owner, keeps transcript provisional and voice stop leaves work untouched [6.80ms]
+(pass) rejected GPT admission leaves speech available for a later delegation [2.52ms]
+(pass) voice failures render truthful warnings without stopping agent work [6.52ms]
+(pass) real Realtime session accepts a 50-second reply below the playback queue bound [9.97ms]
+(pass) GPT-Live replays connecting replies as commentary without speaking ordinary context [0.44ms]
+
+tests/live-gpt-live-provider.acceptance.test.ts:
+(skip) paid GPT-Live start, paced silence PCM, finalized close
+
+tests/live-gpt-tui.test.ts:
+(pass) GPT streaming keeps passive JSON in history but renders only the bounded Live transcript widget [1375.64ms]
+
+tests/live-host-access.test.ts:
+(pass) shared task host remains separate; Live refuses a missing main owner instead of bridging to text [4.01ms]
+
+tests/live-host-bridge.test.ts:
+(pass) session host routes task operations through the supplied port, with confirmation and scope guards [0.57ms]
+(pass) Live host authority > steers configured agent exactly once across voice reconnect and rejects changed replay [0.40ms]
+(pass) Live host authority > existing dispatcher controls inspect scope and context is bounded [0.30ms]
+(pass) Live host authority > stop requires trusted confirmation, denial and failure deduplicated [0.19ms]
+(pass) Live host authority > completion subscriptions survive voice listener replacement and ignore subscriber failures [0.27ms]
+(pass) Live host authority > native completion is observed only after a scoped active snapshot; no synthetic completion on errors [0.72ms]
+(pass) Live host authority > handoff quotes scoped received text and provides complete branch export beyond 24k [2.51ms]
+(pass) Live host authority > single oversize entry is not silently skipped; ephemeral branch can be exported [1.38ms]
+(pass) Live host authority > snapshot is immutable, reused across reconnects, and excludes sibling entries [3.16ms]
+(pass) Live host authority > branch switch while snapshot I/O waits aborts delivery; shared content follows expiry [81.72ms]
+(pass) Live host authority > delivery error retains immutable content for other readers until expiry [1.84ms]
+(pass) Live host authority > expired snapshots are reclaimed but unexpired budget is not evicted [60.35ms]
+(pass) Live host authority > failed steer retained; no accidental retry [0.30ms]
+(pass) actual TaskManager + JobService dispatch stays within owner [5.21ms]
+(pass) GPT-Live host entry point > delegates once to same configured agent without asserting final ASR or executing tools [0.39ms]
+(pass) GPT-Live host entry point > delegation validates bounds, scope and delivery errors [0.17ms]
+(pass) configured-agent stop following a GPT-Live delegation requires trusted confirmation, even after voice detaches [0.29ms]
+
+tests/live-long-audio.test.ts:
+(pass) long paced generated audio > OpenAI accepts >48 seconds within one response [18.76ms]
+(pass) long paced generated audio > OpenAI completed responses and tool continuation do not share an audio budget [12.76ms]
+(pass) long paced generated audio > OpenAI VAD revisions and a failed response cannot poison later paced audio [24.50ms]
+(pass) long paced generated audio > OpenAI still rejects malformed, empty, odd and oversized output packets [0.64ms]
+(pass) long paced generated audio > Gemini accepts long paced audio and a new turn after interruption [13.94ms]
+(pass) stalled playback retains only the pending budget regardless of generated duration [0.59ms]
+
+tests/live-macos-ci.test.ts:
+(pass) macOS Live CI prepares source CLI assets without building the web runtime [0.24ms]
+
+tests/live-main-integration.test.ts:
+(pass) main Live owns first-turn instructions, actual execute and background completion without spawning text model [828.42ms]
+(pass) Live first turn applies production context and before/after tool hooks; typed route cannot steal owner [177.10ms]
+(pass) Live close releases exclusive owner; interruption does not cancel an asynchronous job [798.25ms]
+(pass) switching the on-disk session invalidates stale Live calls without a model request [3.65ms]
+(pass) explicit jobs.stopWork cancels only isolated fixture work and does not run the text model [393.54ms]
+(pass) main Live receives capability and delegation guidance in its assembled root and execute tool [3.72ms]
+(pass) custom root prompt is byte-identical to ordinary prompt assembly before first text model turn [3.49ms]
+(pass) real live.stop helper returns after teardown without self-cancelling execute or background jobs [189.63ms]
+(pass) overlapping executes keep canonical pairs contiguous while deferring every other owner record [350.80ms]
+(pass) unfinished ASR is revoked at turn boundary, interruption and close; a new final utterance admits tools [189.99ms]
+(pass) ordinary branch appends keep Live authority, duplicate tool calls do not replay side effects [199.00ms]
+(pass) prompt-dependent per-turn changes fail closed instead of dispatching with stale instructions [3.26ms]
+(pass) gemini-3.8-live direct function call executes real shell and receives async completion on its voice wire [713.41ms]
+(pass) gemini-3.8-live-extended-thinking direct function call executes real shell and receives async completion on its voice wire [734.61ms]
+(pass) stop voice then stop work in one real execute still cancels the draining voice foreground after its report [195.09ms]
+(pass) paired GPT delta stream remains canonical passive history without TUI bubbles or model turns [4.23ms]
+(pass) paired backend survives production input routing: voice and typed turns each run once [5.59ms]
+(pass) paired backend resumes from production async task notification without inventing a user turn [508.26ms]
+(pass) paired execute can stop voice then work through the production scoped helpers [188.32ms]
+(pass) GPT Live spoken delegation reaches Pi as one clean provisional request [111.19ms]
+
+tests/live-main-owner.test.ts:
+(pass) direct Live main owner > owns actual Pi registered execute and final root/project/hook instructions without streaming text [9.17ms]
+(pass) direct Live main owner > uses Pi's effective root instructions, registered tool and hooks without text model [1.06ms]
+(pass) direct Live main owner > blocks tool before execution; validates arguments and refuses busy text agent [0.61ms]
+(pass) direct Live main owner > terminal event preserves canonical long output, artifacts, images and job identity [0.31ms]
+(pass) direct Live main owner > production Live events render through pinned ToolExecutionComponent and execute renderers [12.99ms]
+(pass) direct Live main owner > forwards intermediate updates through the ordinary Pi event shape [0.48ms]
+(pass) direct Live main owner > close fences ordinary text until admitted execute has recorded its result [0.51ms]
+(pass) direct Live main owner > records host updates and only labels incomplete transcripts provisional [0.21ms]
+(pass) direct Live main owner > stale branch invalidates callbacks [0.19ms]
+(pass) acquisition reserves before hooks and cancellation cannot leave a late owner [0.34ms]
+(pass) detected speech gates execute until final transcription and hook preparation; stop releases the gate [0.42ms]
+(pass) before-agent-start setActiveTools denial is not undone by Live acquisition [0.17ms]
+(pass) paired voice stop without a backend turn restores the ordinary prompt options [0.14ms]
+(pass) GPT-Live delegation reuses one configured session turn, retries never rerun and voice stop does not cancel work [1.32ms]
+(pass) paired stop-work fences queued work but allows a later new request without restarting voice [0.24ms]
+
+tests/live-notice.test.ts:
+(pass) main Live startup does not show a redundant ownership notice [0.09ms]
+
+tests/live-openai-provider.acceptance.test.ts:
+(skip) real OpenAI accepts the GA Live configuration and configured-agent tool schema
+
+tests/live-orchestration.test.ts:
+(pass) small honest tool set routes send, steering, authorized inspection and explicit cancellation [0.62ms]
+(pass) context injection is bounded and truthfully marked as truncated data [0.09ms]
+(pass) host events and tool output cannot become agent instructions [0.25ms]
+(pass) completed authority is latest-only, single-use and expires at a fixed monotonic deadline [0.16ms]
+(pass) capture rejects overflow before trimming and consumes authority on ambiguous host failure [0.26ms]
+(pass) agent_send tombstones rejected identities across input lifetimes and SDK IDs [0.23ms]
+(pass) agent_steer tombstones rejected identities across input lifetimes and SDK IDs [0.22ms]
+(pass) request tombstones never evict at capacity, including across activity and expiry [1.26ms]
+
+tests/live-paired-runtime.test.ts:
+(pass) paired owner delegates a real Pi prompt, tool execution and completion to the selected backend [5.84ms]
+(pass) paired Pi wakes its canonical backend on an async job completion without a synthetic user turn [2177.92ms]
+
+tests/live-passive-history.test.ts:
+(pass) passive voice history never enters coder context, including restored sessions [0.17ms]
+(pass) only the associated spoken turn receives a minimal uncertainty fact, including replay [0.13ms]
+(pass) an unmatched audit record cannot label a subsequent typed request as voice [0.03ms]
+(pass) old snapshot user prompts replay as speech rather than repeated transport dumps [0.19ms]
+(pass) overlap remains separate model context, not words added to user speech [0.06ms]
+(pass) legacy missing speech and repeated delegations never manufacture a user request [0.09ms]
+(pass) the reported old loss prefix cannot replay as user instructions when its audit records missing speech [0.05ms]
+
+tests/live-picker-tui.test.ts:
+PICKER 80 cols
+
+ PICKER FIXTURE LOADED
+
+────────────────────────────────────────────────────────────────────────────────
+
+ Live voice model
+
+ → gemini-3.8-live · Google Gemini · API key needed (OAuth) (selected)
+   gemini-3.8-live-extended-thinking · Google Gemini · API key needed (OAuth)
+   gpt-realtime-2.1 · OpenAI · key configured
+   gpt-realtime-2.1-mini · OpenAI · key configured
+   gpt-live-1 · OpenAI · key configured
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────
+$0.000 C0% cache est ? die-a86675007a5e-task_f0abdd8e                     gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESELECTED 80 cols
+
+ Live voice: OpenAI · gpt-live-1.
+
+────────────────────────────────────────────────────────────────────────────────
+
+ Live voice model
+
+ → gemini-3.8-live · Google Gemini · API key needed (OAuth)
+   gemini-3.8-live-extended-thinking · Google Gemini · API key needed (OAuth)
+   gpt-realtime-2.1 · OpenAI · key configured
+   gpt-realtime-2.1-mini · OpenAI · key configured
+   gpt-live-1 · OpenAI · key configured (selected)
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────
+$0.000 C0% cache est ? die-a86675007a5e-task_f0abdd8e                     gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROVIDER 80 cols
+
+ Live voice: OpenAI · gpt-live-1.
+
+────────────────────────────────────────────────────────────────────────────────
+
+ Configure Live provider credentials
+
+ → Google Gemini
+   OpenAI
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────
+$0.000 C0% cache est ? die-a86675007a5e-task_f0abdd8e                     gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SETUP 80 cols
+
+ Live voice: OpenAI · gpt-live-1.
+
+────────────────────────────────────────────────────────────────────────────────
+
+ OpenAI API key configured
+
+ → Done
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────
+$0.000 C0% cache est ? die-a86675007a5e-task_f0abdd8e                     gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STATUS 80 cols
+
+ Live off · OpenAI voice model gpt-live-1.
+
+
+$0.000 C0% cache est ? die-a86675007a5e-task_f0abdd8e                     gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(pass) Live picker real terminal 80 columns [2812.27ms]
+PICKER 120 cols
+
+ PICKER FIXTURE LOADED
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ Live voice model
+
+ → gemini-3.8-live · Google Gemini · API key needed (OAuth) (selected)
+   gemini-3.8-live-extended-thinking · Google Gemini · API key needed (OAuth)
+   gpt-realtime-2.1 · OpenAI · key configured
+   gpt-realtime-2.1-mini · OpenAI · key configured
+   gpt-live-1 · OpenAI · key configured
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+die-a86675007a5e-task_f0abdd8e · mode: orchestrator · $0.000 · ctx 0% · cache est ?                               gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESELECTED 120 cols
+
+ Live voice: OpenAI · gpt-live-1.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ Live voice model
+
+ → gemini-3.8-live · Google Gemini · API key needed (OAuth)
+   gemini-3.8-live-extended-thinking · Google Gemini · API key needed (OAuth)
+   gpt-realtime-2.1 · OpenAI · key configured
+   gpt-realtime-2.1-mini · OpenAI · key configured
+   gpt-live-1 · OpenAI · key configured (selected)
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+die-a86675007a5e-task_f0abdd8e · mode: orchestrator · $0.000 · ctx 0% · cache est ?                               gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROVIDER 120 cols
+
+ Live voice: OpenAI · gpt-live-1.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ Configure Live provider credentials
+
+ → Google Gemini
+   OpenAI
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+die-a86675007a5e-task_f0abdd8e · mode: orchestrator · $0.000 · ctx 0% · cache est ?                               gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SETUP 120 cols
+
+ Live voice: OpenAI · gpt-live-1.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ OpenAI API key configured
+
+ → Done
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+die-a86675007a5e-task_f0abdd8e · mode: orchestrator · $0.000 · ctx 0% · cache est ?                               gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STATUS 120 cols
+
+ Live off · OpenAI voice model gpt-live-1.
+
+
+die-a86675007a5e-task_f0abdd8e · mode: orchestrator · $0.000 · ctx 0% · cache est ?                               gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(pass) Live picker real terminal 120 columns [2737.98ms]
+
+tests/live-platform.test.ts:
+(pass) native live platform paths > source and compiled helper paths are not based on the user's project [0.09ms]
+(pass) native live platform paths > preserves audio daemon discovery but strips model credentials [0.07ms]
+
+tests/live-playback.test.ts:
+(pass) live playback scheduler > played estimate excludes enqueue and pending writes; accrues only accepted playback time [0.70ms]
+(pass) live playback scheduler > native ring feedback delays estimate, without moving it backwards [0.28ms]
+(pass) live playback scheduler > interrupt resets estimate; old success and failed write never credit new epoch [0.70ms]
+(pass) live playback scheduler > burst of seconds drains at wall time; turnComplete retains every sample including fractional tail [5.03ms]
+(pass) live playback scheduler > turn boundaries do not flush; partial chunks join, but adjacent turns remain distinct [0.21ms]
+(pass) live playback scheduler > native feedback only adds throttle; recovery after a stall is bounded to a cushion [0.45ms]
+(pass) live playback scheduler > late timers keep reserve with 1ms native blocks and none [4.46ms]
+(pass) live playback scheduler > late timers keep reserve with 1ms native blocks and stale-zero [4.02ms]
+(pass) live playback scheduler > late timers keep reserve with 1ms native blocks and delayed-coarse [3.76ms]
+(pass) live playback scheduler > late timers keep reserve with 10ms native blocks and none [3.42ms]
+(pass) live playback scheduler > late timers keep reserve with 10ms native blocks and stale-zero [3.82ms]
+(pass) live playback scheduler > late timers keep reserve with 10ms native blocks and delayed-coarse [3.37ms]
+(pass) live playback scheduler > late timers keep reserve with 32ms native blocks and none [3.35ms]
+(pass) live playback scheduler > late timers keep reserve with 32ms native blocks and stale-zero [3.48ms]
+(pass) live playback scheduler > late timers keep reserve with 32ms native blocks and delayed-coarse [3.29ms]
+(pass) live playback scheduler > low feedback racing write completion cannot create unbounded refill [0.45ms]
+(pass) live playback scheduler > interrupt discards unsent old generation, native flush gates new output; stale write rejection harmless [0.24ms]
+(pass) live playback scheduler > pending budget is large enough for long replies; exceeded bound reports once, no silent drop [1.90ms]
+(pass) live playback scheduler > stalled pipe write does not start extra writes and stop prevents future output [0.18ms]
+(pass) live playback scheduler > pre-ready interruption flushes before first new frame and close during flush cancels output [0.11ms]
+(pass) live playback scheduler > flush failure is visible and cannot send audio until another interruption [0.15ms]
+
+tests/live-probe-input.test.ts:
+(pass) source, historical study and disclosure are explicit [0.16ms]
+(pass) bounded JSONL preserves UTF-8 across chunks; cutoff and malformed input [3.90ms]
+
+tests/live-prompt.test.ts:
+(pass) Live voice instruction > supports noncoding requests through the configured agent without promising access [0.03ms]
+(pass) Live voice instruction > delegates saving and research without requiring a model-written transcript [0.05ms]
+(pass) Live voice instruction > distinguishes delivery from completion and doesn't claim unavailable speech [0.02ms]
+
+tests/live-provider.acceptance.test.ts:
+(skip) real Gemini accepts the native Live SDK session configuration
+
+tests/live-session.test.ts:
+(pass) voice-only SDK session > direct main agent uses external instructions and dispatches execute once [0.37ms]
+(pass) voice-only SDK session > Gemini SDK usageMetadata reaches billing without audio render [0.11ms]
+(pass) voice-only SDK session > extended-thinking selected endpoint retains direct owner setup and transcription finality [0.30ms]
+(pass) voice-only SDK session > ready only after SDK setup-accepted promise, VAD, mic and end idempotence [0.24ms]
+(pass) voice-only SDK session > interrupted packet audio discarded; only interruption flushes, transcript metadata retained [0.26ms]
+(pass) voice-only SDK session > normal completion and local transport failure never count as provider interruption [0.10ms]
+(pass) voice-only SDK session > invalid output mime/rate, alignment, base64 and packet size fail safely once [0.23ms]
+(pass) voice-only SDK session > aggregate transcript limit gives explicit terminal error [0.10ms]
+(pass) voice-only SDK session > close during pending connect cancels immediately, late result closed, no callbacks [0.13ms]
+(pass) voice-only SDK session > SDK close/error, goAway and reentrant callbacks cannot revive session or escape [0.26ms]
+(pass) voice-only SDK session > setup never completes: bounded timeout, no late mic or duplicate failure [0.19ms]
+(pass) voice-only SDK session > send reentrant close and onState connecting close prevent late mic [0.12ms]
+(pass) main Gemini context retains large history and completion explicitly triggers voice [0.15ms]
+
+tests/live-setup-diagnostics.test.ts:
+(pass) startup graph ordering and catch-stage coverage [0.15ms]
+
+tests/live-setup.test.ts:
+(pass) configured setup offers only start or done, without reading a key [0.31ms]
+(pass) missing auth gives focused instructions and only available next actions [0.16ms]
+(pass) import is explicit and does not automatically start voice [0.15ms]
+(pass) OAuth setup never offers import or replacement [0.10ms]
+(pass) failed import hides exception and remains cancellable [0.23ms]
+(pass) cancelled inspection and late start choice cannot authorize voice [0.18ms]
+(pass) cancelled import cannot show a ready menu or start [0.13ms]
+
+tests/live-speaker-check.test.ts:
+(pass) known delayed residual has normalized correlation and lag [141.37ms]
+(pass) off-grid delays and inverted phase are detected without decimation aliases [268.72ms]
+(pass) uncorrelated broadband noise is not called echo [149.73ms]
+(pass) silence, clipping, missing capture and loud background are honest [4.72ms]
+(pass) runner uses only audio factory, returns sanitized summary, and closes [2306.00ms]
+(pass) abort during start and hung stop are bounded [322.37ms]
+(pass) terminal native error is sanitized and closed [1.11ms]
+(pass) aborted before launch never calls audio factory [0.07ms]
+(pass) processing metadata is included only when validated [2305.07ms]
+(pass) late factory completion is closed after abort [1.91ms]
+(pass) capture overflow and pending playback remain inconclusive [4632.52ms]
+(pass) abort interrupts an uncooperative playback write and closes owned audio [611.71ms]
+(pass) six-second deadline closes a hung start without external abort [6002.69ms]
+(pass) submitted PCM buffer is cleared after abort [605.23ms]
+
+tests/live-speaker-summary.test.ts:
+(pass) summary keeps evidence actionable and unknown honest [0.08ms]
+(pass) summary exposes measurement and processing without claiming absolute quality [0.05ms]
+
+tests/live-spoken-tui.test.ts:
+(pass) real tmux Pi renderer shows a delegated spoken user turn without transport dump [999.94ms]
+
+tests/live-status.test.ts:
+(pass) live is interactive local root CLI only [0.10ms]
+
+tests/live-tool-result.test.ts:
+(pass) small results retain structured content and errors [0.08ms]
+(pass) large and image-bearing results have a bounded wire preview and complete readable artifact [0.76ms]
+(pass) unserializable tool results report failure instead of fabricating success [3.71ms]
+(pass) small image still identifies visual modality loss and retains data in artifact [0.36ms]
+
+tests/live-tools.test.ts:
+(pass) SDK orchestration seam > advertises NON_BLOCKING and processes audio while agent work is pending; duplicate and cancellation do not restart/stop work [130.89ms]
+(pass) SDK orchestration seam > failures sanitized, oversized args rejected, normal results retained, and disconnect never cancels execution [1.04ms]
+(pass) host context coalesces bounded updates, reports gaps, and keeps audio live after 65k cumulative [2295.79ms]
+(pass) tool concurrency is bounded without blocking microphone and cancellation does not call host stop [0.53ms]
+(pass) an undispatched tool request is revoked on disconnect, and new messages cannot dispatch [0.15ms]
+(pass) duplicate SDK IDs replay completed bounded response without re-execution [0.25ms]
+(pass) context bursts share one bounded packet and a pending close sends nothing [260.51ms]
+(pass) update flood drops old observations honestly while audio continues [136.80ms]
+(pass) Session exposes allowlisted typed reasons, never exception messages or unknown codes [0.44ms]
+
+tests/live-transcript.test.ts:
+(pass) complete received text persists while viewport clips long lines without history banner [0.30ms]
+(pass) model-contract final segments are distinct; turn boundaries and interruptions do not imply hearing [0.16ms]
+(pass) interleaved speakers persist in received order without dropping either speaker [0.05ms]
+(pass) nonfinal input is persisted in bounded chunks without truncation [0.14ms]
+(pass) exactly full final chunks retain their final boundary [0.07ms]
+(pass) GPT-Live groups adjacent provisional deltas by speaker and timestamp without declaring final ASR [0.17ms]
+(pass) GPT-Live groups bound duration and size, and idle pause saves final provisional group [40.33ms]
+(pass) late GPT-Live corrections keep arrival order without joining a newer time span [0.20ms]
+(pass) finishing a live voice draft does not shrink the transcript widget [0.21ms]
+
+tests/live-tui-startup.test.ts:
+(pass) source CLI startup already ready (clean checkout) sends no trust keys [0.07ms]
+(pass) source CLI trust prompt uses session-only approval before asserting fixture loaded [0.06ms]
+
+tests/live-waveform.test.ts:
+(pass) Live footer waveform > PCM response, silence, empty and fixed terminal width [0.31ms]
+(pass) Live footer waveform > capture continues during output, then falls back to quiet listening; interrupt clears output now [0.30ms]
+(pass) ordinary speech moves, quiet scheduled frames lower output, and old mic peaks do not return [0.17ms]
+
+tests/llm.test.ts:
+(skip) GPT-5.6 Luna completes an authenticated die request
+(skip) GPT-5.6 Luna uses execute for a realistic TypeScript file workflow
+(skip) GPT-5.6 Luna sees an image returned by execute
+(skip) GPT-5.6 Luna recovers from an execute tool error
+(skip) GPT-5.6 Luna uses unified shell helper inline
+(skip) GPT-5.6 Luna uses unified shell helper in background
+(skip) GPT-5.6 Luna unified subagent diagnostics persist tool history
+
+tests/local-agent-termination.test.ts:
+(pass) local agent termination bridge > SIGTERM drains only the signalled agent manager, once, before exit [1.25ms]
+(pass) local agent termination bridge > waits for shutdown and detaches on session replacement [3.37ms]
+
+tests/main-agent-mode-sdk.test.ts:
+(pass) real SDK defaults main frame to orchestrator and switches to a prose-free fast mode without model/thinking mutation [4.70ms]
+(pass) real SDK preserves an explicit custom prompt containing marker examples across /mode [3.47ms]
+(pass) real SDK restores root instruction mode from durable session history [3.04ms]
+(pass) real SDK child identity and delegation depth ignore inherited root mode [2.83ms]
+(pass) /mode before the first ordinary SDK request controls its startup frame [2.14ms]
+(pass) project marker examples and later hook framing survive mode replacement [3.33ms]
+(pass) /mode before the first request overrides a mode restored by a real resume [3.20ms]
+
+tests/main-agent-mode-tui.test.ts:
+(pass) real TUI /mode reports and switches the root instruction mode [1600.19ms]
+
+tests/manual-release.test.ts:
+(pass) manual release preparation > prepares version and notes in an isolated local git fixture without publishing [148.98ms]
+(pass) manual release preparation > bumps patch by default, including when package lags behind latest tag [0.22ms]
+(pass) manual release preparation > preserves a version already prepared on develop [0.02ms]
+(pass) manual release preparation > refuses prerelease and malformed versions [0.05ms]
+(pass) manual release preparation > dispatch pins gates and publication to prepared commit without dropping native and updater gates [0.87ms]
+
+tests/manual-shake-sdk.test.ts:
+(pass) actual SDK preserves a transformed tool group when the result side changes [5.75ms]
+(pass) actual SDK preserves a transformed tool group when the call side changes [4.04ms]
+(pass) actual SDK preserves first post-shake overflow compaction and retries once [8.61ms]
+(pass) actual SDK uses post-shake context for pre-request automatic compaction threshold [5.70ms]
+(pass) actual SDK aborts provider dispatch after a carry-forward persistence failure [2.83ms]
+
+tests/manual-shake.test.ts:
+(pass) manual shake projection > pairs completed protocol and retains user, mixed prose, finals, and attachments in order [0.28ms]
+(pass) manual shake projection > matches duplicate verbatim messages by occurrence without removing later dialogue [0.19ms]
+(pass) manual shake projection > preserves an entire tool batch when either transformed side no longer matches [0.24ms]
+(pass) manual shake projection > preserves chronology-ambiguous duplicate content after an upstream exclusion [0.13ms]
+(pass) manual shake projection > preserves an entire protocol group when a marker selects calls but omits their result [0.08ms]
+(pass) manual shake projection > removes an exact group beside an ambiguous transformed group [0.11ms]
+(pass) manual shake projection > refuses unresolved, orphaned, and duplicate protocol IDs [0.08ms]
+(pass) manual shake projection > repeated shake is a no-op until a new completed trace exists [0.09ms]
+(pass) manual shake projection > preserves prior context exclusions instead of restoring filtered messages [0.12ms]
+(pass) manual shake marker validation and bounds > rejects malformed newest markers instead of falling back to an older valid record [0.13ms]
+(pass) manual shake marker validation and bounds > bounds an oversized active projection and trims IDs no longer in the active window [3.04ms]
+(pass) manual shake durability and SDK projection > survives JSONL reload, is branch-scoped, and serializes through the real SDK converter [1.47ms]
+(pass) manual shake durability and SDK projection > plain summary and shaken retained tail survive SDK JSONL reload [0.67ms]
+(pass) manual command safeguards > persists before projection, keeps background ownership external, and carries state after compaction [0.42ms]
+(pass) manual command safeguards > repeated-shake estimates start from prior projection rather than original trace [0.64ms]
+(pass) manual command safeguards > a malformed latest marker fails the context hook closed [0.24ms]
+(pass) manual command safeguards > rejects a shake whose branch or work state changes during an async context hook [0.41ms]
+(pass) manual command safeguards > rejects a shake when the model changes during an async context hook [0.27ms]
+(pass) manual command safeguards > refuses active batches and opaque native checkpoints without durable mutation [0.17ms]
+(pass) manual shake diagnostic persistence guards > append refusal leaves projection and invalidation untouched [0.33ms]
+(pass) manual shake diagnostic persistence guards > carry-forward append failure is notified and keeps the context hook failed closed [0.19ms]
+(pass) manual shake diagnostic persistence guards > carry failure is scoped to its session and cleared on session start [0.19ms]
+(pass) manual shake diagnostic persistence guards > records static outcomes for opaque, ambiguous, stale, and successful decisions only [9.25ms]
+(pass) shake-before-compaction policy > accepts exact 75% character reduction and rejects just below it [0.08ms]
+(pass) shake-before-compaction policy > qualifying shake persists once, invalidates snapshots, and wins before native and normal handlers [0.81ms]
+(pass) shake-before-compaction policy > rejected and no-op previews do not mutate context and fall through [0.34ms]
+(pass) shake-before-compaction policy > preview and persistence failures preserve fallback ownership and atomic active state [0.65ms]
+
+tests/native-compaction.test.ts:
+(pass) native Codex request > appends the documented trigger at explicitly standard tier without changing provider identity [0.10ms]
+(pass) native Codex request > rejects unsupported and already compacted payloads [0.04ms]
+(pass) native Codex request > uses the installed Codex backend path [0.06ms]
+(pass) native Codex request > parses one opaque item and accounts cached, uncached, and output tokens [0.32ms]
+(pass) native Codex request > rejects plaintext or mixed output instead of calling it native [0.18ms]
+(pass) native Codex request > requires exact and consistent opaque items [0.08ms]
+(pass) native Codex request > rejects negative or internally inconsistent accounting [0.07ms]
+(pass) native Codex request > retains billable usage on failed terminals [0.04ms]
+(pass) native Codex request > observes exact native dispatch, including fetch failure but not pre-dispatch abort [2.16ms]
+(pass) native Codex request > performs one cancellable request and never changes normal request fields [0.67ms]
+(pass) opaque checkpoint adapter > survives JSON roundtrip and replays exact item only for the original model [0.44ms]
+(pass) fail-closed checkpoint lifecycle > allows an opaque checkpoint when live context omits an empty failed assistant [0.96ms]
+(pass) fail-closed checkpoint lifecycle > keeps nonempty failed replies and missing message kinds fail-closed [0.88ms]
+(pass) fail-closed checkpoint lifecycle > read-only transformed-context previews preserve a complete native request capture [0.22ms]
+(pass) fail-closed checkpoint lifecycle > explicit invalidation prevents a pre-shake native snapshot from being reused [0.09ms]
+(pass) fail-closed checkpoint lifecycle > records individual native fallback reasons and releases the cache-affine hook [0.60ms]
+(pass) fail-closed checkpoint lifecycle > ignores only reconstructed custom timestamps when checking discarded-message coverage [1.24ms]
+(pass) fail-closed checkpoint lifecycle > aborts a switched-model request before a provider payload can proceed [0.13ms]
+(pass) fail-closed checkpoint lifecycle > cancels custom and missing-snapshot compaction rather than flattening a checkpoint [0.13ms]
+(pass) fail-closed checkpoint lifecycle > usage append failure cannot replace a billable provider failure or permit fallback [0.70ms]
+(pass) fail-closed checkpoint lifecycle > refreshes observers only after native HTTP success and isolates observer failures [0.69ms]
+(pass) fail-closed checkpoint lifecycle > session changes during deferred credentials prevent fetch and new-session observations [0.31ms]
+(pass) fail-closed checkpoint lifecycle > session changes during deferred HTTP prevent a checkpoint in the new session [0.41ms]
+(pass) fail-closed checkpoint lifecycle > constructs provider-equivalent OAuth and cache headers [0.09ms]
+(pass) fail-closed checkpoint lifecycle > permits thinking changes without changing opaque identity [0.09ms]
+(pass) fail-closed checkpoint lifecycle > rejects unknown checkpoint versions and missing serialized opaque items [0.15ms]
+(pass) fail-closed checkpoint lifecycle > notice edits preserve replay and deterministic job facts [0.07ms]
+(pass) fail-closed checkpoint lifecycle > blocks lossy branch summaries but permits navigation without summarizing [0.09ms]
+(pass) native transport boundaries > parses fragmented SSE frames, including split UTF-8 [0.39ms]
+(pass) native transport boundaries > treats CRLF as one line ending with event headers [0.18ms]
+(pass) native transport boundaries > parses multiline data and every byte boundary, including CRLF and UTF-8 [0.52ms]
+(pass) native transport boundaries > supports lone-CR SSE framing split at every byte [0.46ms]
+(pass) native transport boundaries > returns and cancels the body immediately after a completed event [0.17ms]
+(pass) native transport boundaries > keeps a completed result when the connection resets afterward [0.17ms]
+(pass) native transport boundaries > retains usage on failed, incomplete, and cancelled terminals [0.42ms]
+(pass) native transport boundaries > aborts and cleans up an in-flight response body [1.26ms]
+(pass) native transport boundaries > cancels oversized response reads [3.38ms]
+(pass) stream-only terminal accepts exactly one completed opaque item [0.16ms]
+
+tests/native-fast-mode.test.ts:
+(pass) exact provider/model/auth allowlist rejects lookalikes before dispatch [0.26ms]
+(pass) fast mode rejects the wrong authentication surface [1.25ms]
+(pass) /fast is safe status; on requires consent and state is session/model/branch bound [4.75ms]
+(pass) enabling and restoring fast fail visibly without the pinned runtime seam [0.28ms]
+(pass) consent is rejected if session, branch, or model changes while confirmation is open [0.14ms]
+(pass) compaction snapshot is request-local and explicit off affects only later requests [6.76ms]
+(pass) actual Pi streamSimple OpenAI serialization carries injected fast tier [0.48ms]
+(pass) actual Pi streamSimple Codex SSE serialization carries priority and preserves request settings [0.55ms]
+(pass) actual Pi streamSimple Codex WebSocket frame carries priority [1.90ms]
+(pass) actual ModelRuntime request snapshot ignores model changes during delayed auth preparation [2.85ms]
+(pass) real AgentSession ModelRuntime guard survives swallowed hook throws and stops late mutation before mock fetch [2.79ms]
+(pass) real ModelRuntime blocks corrupt-record at zero fetch dispatches [1.80ms]
+(pass) real ModelRuntime blocks wrong-auth at zero fetch dispatches [1.24ms]
+(pass) real ModelRuntime blocks unsupported-model at zero fetch dispatches [1.63ms]
+(pass) fast refusals and the concrete tier guard emit privacy-bounded static diagnostics [0.26ms]
+(pass) fast checkpoint append failure is a controlled refusal with no setting [0.20ms]
+(pass) append-then-throw restores the active leaf and cannot enable premium fast mode [0.24ms]
+(pass) append-then-throw while opting out keeps prior premium consent unusable [0.22ms]
+
+tests/no-web-voice.test.ts:
+(pass) maintained web patch retains web runtime without voice routes, controls or FD bridge [3.71ms]
+(pass) CLI /live offers Gemini, Realtime and client-delegated GPT-Live [0.04ms]
+
+tests/offline-process-isolation.test.ts:
+(pass) test TUI processes cannot use an inherited Herdr pane identity [847.58ms]
+
+tests/openai-session-diagnostics.test.ts:
+(pass) session rejection names safe code, type and structural field including indexed tools [0.58ms]
+(pass) untrusted tokens, fields, message and metadata never surface [0.26ms]
+(pass) friendly quota diagnosis is preserved without raw provider text [0.07ms]
+
+tests/openai-session-schema.test.ts:
+(pass) OpenAI GA setup schema contract (offline) > gpt-realtime-2.1 sends the complete supported setup with actual orchestration tools [5.73ms]
+(pass) OpenAI GA setup schema contract (offline) > gpt-realtime-2.1-mini sends the complete supported setup with actual orchestration tools [0.32ms]
+(pass) OpenAI GA setup schema contract (offline) > output PCM rate is present on the real setup payload [0.25ms]
+(pass) OpenAI GA setup schema contract (offline) > schema fixture rejects missing output PCM rate rather than blindly acknowledging [0.76ms]
+(pass) OpenAI GA setup schema contract (offline) > schema fixture rejects wrong PCM rate rather than blindly acknowledging [0.33ms]
+(pass) OpenAI GA setup schema contract (offline) > schema fixture rejects beta-era top-level field rather than blindly acknowledging [0.38ms]
+(pass) OpenAI GA setup schema contract (offline) > schema fixture rejects invalid tool name rather than blindly acknowledging [0.33ms]
+(pass) OpenAI GA setup schema contract (offline) > schema fixture rejects invalid tool schema rather than blindly acknowledging [0.24ms]
+(pass) OpenAI GA setup schema contract (offline) > schema fixture rejects mixed output modalities rather than blindly acknowledging [0.33ms]
+(pass) OpenAI GA setup schema contract (offline) > schema fixture rejects invalid tool choice rather than blindly acknowledging [0.27ms]
+(pass) OpenAI GA setup schema contract (offline) > schema fixture rejects invalid transcription config rather than blindly acknowledging [0.28ms]
+
+tests/openai-session.test.ts:
+(pass) OpenAI GA offline protocol > both exact Realtime IDs reach the WebSocket URL without aliasing [2.67ms]
+(pass) OpenAI GA offline protocol > model documented, setup first, ready on acknowledgement only; no key in events [0.22ms]
+(pass) OpenAI GA offline protocol > streaming resampling has identical bytes across arbitrary chunk splits and correct duration [0.49ms]
+(pass) OpenAI GA offline protocol > only completed input carries handoff authority, host context stays instructions data [130.67ms]
+(pass) OpenAI GA offline protocol > direct main execute receives external root prompt and bounded result [10.60ms]
+(pass) OpenAI GA offline protocol > tool call id is executed/replied once; invalid call rejected; no late reply after close [0.58ms]
+(pass) OpenAI GA offline protocol > truncate to heard audio, not generated audio; epoch flush and late events discarded [0.46ms]
+(pass) OpenAI GA offline protocol > close before handshake settles connect and ignores late callbacks [0.07ms]
+(pass) OpenAI GA offline protocol > queued items map the second item start after unheard earlier audio [0.50ms]
+(pass) OpenAI GA offline protocol > provider errors close without leaking message or late tool response [0.14ms]
+(pass) OpenAI GA offline protocol > finished input is authoritative; output completion is not proof of playback [0.21ms]
+(pass) OpenAI GA offline protocol > VAD interrupts queued audio immediately; cancelled response does not interrupt twice [0.23ms]
+(pass) GA lifecycle and authority regressions > real Bun loopback WebSocket transmits Authorization header (no external endpoint) [2.40ms]
+(pass) GA lifecycle and authority regressions > default ws transport completes an authenticated session setup over localhost [2.26ms]
+(pass) GA lifecycle and authority regressions > late completed after VAD and new input cannot close the next generation [0.34ms]
+(pass) GA lifecycle and authority regressions > late completed cleanup keeps accepted tool result but never resumes revoked response [0.32ms]
+(pass) GA lifecycle and authority regressions > completed response invalidated by speech without a successor cannot finish turn [0.13ms]
+(pass) GA lifecycle and authority regressions > out-of-order ASR remains displayable but cannot authorize a newer response [0.15ms]
+(pass) GA lifecycle and authority regressions > parallel tool outputs coalesce after response.done, speech revokes continuation without revoking accepted work [0.26ms]
+(pass) GA lifecycle and authority regressions > cancelled response rejects late tool events, failed lifecycle surfaces sanitized error [0.19ms]
+(pass) GA lifecycle and authority regressions > fresh speech revokes continuation while accepted job still publishes one result [0.20ms]
+(pass) GA lifecycle and authority regressions > deferred sensitive call is revoked by newer speech before ASR arrives [0.18ms]
+(pass) integration lifecycle guards > undispatched tool is revoked by close [1.21ms]
+(pass) integration lifecycle guards > undispatched tool is revoked by speech [1.13ms]
+(pass) integration lifecycle guards > duplicate completed ASR does not re-grant consumed authority [0.20ms]
+(pass) integration lifecycle guards > stalled socket send queue fails closed without growing microphone backlog [0.24ms]
+(pass) speech before the first audio delta suppresses old output and labels received transcript interrupted [0.29ms]
+(pass) server cancellation without a speech event revokes late ASR authority [0.20ms]
+(pass) closing synchronously from connecting state never creates a socket [0.10ms]
+(pass) explicit provider failures preserve selected model and redact untrusted messages [0.49ms]
+(pass) Realtime handshake diagnostics (offline) > only allowlisted transport metadata reaches diagnostics [0.06ms]
+(pass) Realtime handshake diagnostics (offline) > session rejection and premature close report distinct safe connect failures [0.14ms]
+(pass) Realtime handshake diagnostics (offline) > malformed and oversized rejection bodies retain status without leaking contents [4.96ms]
+(pass) Realtime handshake diagnostics (offline) > stalled rejection is bounded and closes the original connection [11.56ms]
+(pass) Realtime handshake diagnostics (offline) > ws rejected local upgrades report actual HTTP status and allowlisted code without private data [9.98ms]
+(pass) transport initialization failures identify the safe stage, never exception text [0.27ms]
+(pass) Realtime response.done usage is emitted once per response ID [0.21ms]
+(pass) main context is preserved and wakes only one Realtime response without replacing root instructions [0.25ms]
+
+tests/output-buffer.test.ts:
+(pass) bounded task output buffer > retains only the configured tail without whole-buffer concatenation [0.08ms]
+(pass) bounded task output buffer > copies incoming buffer slices instead of retaining pooled backing slabs [0.05ms]
+(pass) bounded task output buffer > supports cursor pagination across chunks [0.03ms]
+(pass) bounded task output buffer > bounds metadata for pathological tiny writes [13.40ms]
+(pass) bounded task output buffer > copies only the retained tail of one oversized write [0.11ms]
+(pass) bounded task output buffer > can release retained prefixes while preserving logical offsets [0.06ms]
+
+tests/phase2-native-live.test.ts:
+(skip) native Codex live checkpoint and disk-resumed recall
+
+tests/phase2-native-sdk.test.ts:
+(pass) native Codex real SDK: auth, checkpoint, repeat, disk resume, and incompatible model guard [14.80ms]
+
+tests/prepare-assets.test.ts:
+(pass) build asset preparation > keeps only required assets and does not rewrite unchanged files [37.05ms]
+
+tests/prompt-delivery.test.ts:
+Registered guidance reaches Pi session: 7975 characters
+(pass) Pi session assembles the registered execute guidance into its system prompt [7.87ms]
+(pass) production tasks extension guidance reaches the actual stream context [3.81ms]
+
+tests/prompt-preview.test.ts:
+(pass) offline preview captures production prompt, tool definition, and injected messages [4.51ms]
+(pass) root modes and explicitly selected project guidance pass through real assembly [3.70ms]
+(pass) selected project base and append are included without loading settings or writing project state [4.14ms]
+(pass) workspace reference and role judgment reach real root and child assembly [8.13ms]
+(pass) custom child base and append preserve role framing without injecting Die API prose [3.18ms]
+
+tests/prompts.test.ts:
+(pass) working values frame the agent separately from tool reference [0.14ms]
+(pass) background notice identifies jobs and deferred results without turn-management coaching [0.06ms]
+(pass) roles keep contribution prose without delegation commentary [0.07ms]
+(pass) fast and normal root modes add no behavioral prose while retaining owned placeholders [0.04ms]
+(pass) Markdown is the complete source of the system and tool guidance [0.27ms]
+(pass) wisdom guidance has one canonical Markdown source [0.09ms]
+(pass) Die base is a Pi custom prompt with execute guidance [0.15ms]
+(pass) execute tool description uses the embedded Markdown source [0.35ms]
+(pass) worktree API facts stay in reference and isolation judgment stays in orchestrator roles [0.07ms]
+(pass) orchestrators use persistent worktree locations for ongoing work [0.04ms]
+
+tests/provider-prompt.test.ts:
+(pass) Codex serializes the complete system prompt as instructions without a network request [0.36ms]
+
+tests/publish-release.test.ts:
+(pass) release retry decisions > new tag is pushed, same SHA reused, conflicting tag fails [0.06ms]
+(pass) release retry decisions > complete published or draft release needs no duplicate upload [0.09ms]
+(pass) release retry decisions > partial draft repairs only missing verified assets [0.05ms]
+(pass) release retry decisions > unknown, duplicate, wrong size or digest fails closed [0.08ms]
+(pass) finds an existing draft when tag lookup returns 404 [0.38ms]
+(pass) fails closed when draft list cannot be read [0.08ms]
+
+tests/questions-bridge.test.ts:
+(pass) real isolated execute asks without waiting and exposes block/read/resolve, not answer [212.60ms]
+(pass) actual isolated questions helper returns actionable results and rejects stale writes [203.17ms]
+
+tests/questions-extension.test.ts:
+(pass) question commands keep status pinned without stealing focus or repeating notices [3.43ms]
+(pass) CLI binds the ID without flattening free-text spacing [0.22ms]
+(pass) CLI lists actionable short IDs and resolves them without guessing ambiguous prefixes [0.48ms]
+(pass) empty list and failed refresh remain visibly distinct [0.16ms]
+(pass) corrupt question data has a readable command error [0.09ms]
+(pass) no-history sessions do not show a passive questions failure [0.15ms]
+(pass) detail uses the same unambiguous short ID as list, including saved-answer recovery [0.22ms]
+(pass) interactive inbox answers only selected choice, advances, and escape leaves data untouched [0.82ms]
+(pass) cancelled or empty free text retries choices; Escape from choices returns to inbox without mutation [1.43ms]
+(pass) picker wraps full long labels at narrow width and filters without answering on escape [0.67ms]
+
+tests/questions-interactive-tui.test.ts:
+(pass) real /questions inbox, editor and choice persist only on submit [1339.08ms]
+
+tests/questions-picker.test.ts:
+(pass) bounded frame; PgDn reaches title and selected label tails without changing selection [16.49ms]
+(pass) resize retains chosen item in visible list and clamps detail scroll [0.59ms]
+(pass) arrows, filtering and cancel keep menu semantics [0.50ms]
+(pass) moderately long label tail remains visible at 48x18 [0.13ms]
+(pass) changing choice or filter resets detail page, tiny screens retain selected item [0.76ms]
+
+tests/questions-runtime.test.ts:
+(pass) saved answer queues until idle settlement, unrelated turns do not erase pending [8.29ms]
+(pass) restart keeps durable answers but does not replay; explicit resume dispatches once [3.02ms]
+(pass) navigation and stopWork pause discard queued wake; pending background result is not a question answer [4.93ms]
+(pass) tool answers and unsupported child/web operations fail closed [0.26ms]
+(pass) late old-session callbacks cannot replace the navigated manager [0.24ms]
+(pass) explicit resume queue is bounded by pending-question capacity [7.92ms]
+(pass) durable dispatch claim fences a restart after host acceptance but failed receipt write [1.84ms]
+(pass) only foreground blockers suppress goal reminders, including the queued answer turn [1.74ms]
+(pass) answering a pending question after restart saves it without guessing owner availability [2.61ms]
+(pass) two attached runtimes cannot claim the same saved reply twice [2.84ms]
+(pass) cancel withdraws the question without releasing blocked goal work [1.81ms]
+
+tests/questions-sdk.test.ts:
+(pass) real Pi command delivers saved reply in one new turn without a visible metadata bubble [35.07ms]
+
+tests/questions-tui.test.ts:
+(pass) real TUI keeps questions near composer after progress, cancellation and reload [1944.58ms]
+
+tests/questions.test.ts:
+(pass) nonblocking, context, choices, explicit block and resolution survive reload [1.32ms]
+(pass) dedup after progress, sibling fork is read-only, navigation during lock wait [41.22ms]
+(pass) bounded ledger and answer/cancel race without loss [66.27ms]
+(pass) navigation to an ancestor is history only; deeper sibling forks cannot answer [0.64ms]
+(pass) execute diagnostic sibling does not steal question ownership from toolResult [0.77ms]
+(pass) diagnostic-only child does not fork an owner at the root or tool anchor [0.32ms]
+(pass) a real continuation through an inline diagnostic keeps ownership against a later sibling fork [0.35ms]
+(pass) diagnostic chains preserve ancestor and sibling ownership [0.25ms]
+(pass) a question anchored on a diagnostic still has a distinct owner [0.28ms]
+
+tests/release-reuse.test.ts:
+(pass) release dry run reuse > accepts completed same-repository develop push at exact SHA with one live artifact [0.49ms]
+(pass) release dry run reuse > rejects PR, dispatch, fork, wrong SHA/branch/workflow, pending and failed run [0.20ms]
+(pass) release dry run reuse > rejects missing, expired, duplicate or empty artifact and mismatched workflow [0.25ms]
+No reusable dry run; running full release verification: GitHub API HTTP 403
+(pass) release dry run reuse > API errors or invalid inputs fall back to full build [0.21ms]
+
+tests/release-workflows.test.ts:
+(pass) release automation > native Live CI has no legacy SoX or candidate bundle path [0.19ms]
+(pass) release automation > all workflow actions use audited immutable commits and tool versions stay aligned [1.10ms]
+(pass) release automation > CI and release cache downloads only with pinned dependency and source inputs [0.88ms]
+(pass) release automation > CI is deterministic, locked, credential-free, and retains failure logs [0.29ms]
+(pass) release automation > macOS Live CI checks native runtime without opening devices or using credentials [0.28ms]
+(pass) release automation > tag release is version-gated and builds Linux x64/arm64, macOS arm64, and Android binaries [0.68ms]
+(pass) release automation > stable publication waits for actual Mac payload gates and retains raw assets [0.49ms]
+(pass) release automation > release validator handles mismatch and prerelease versions without a real tag [0.08ms]
+(pass) release automation > publish selects only notes for the validated tag and fails closed [0.74ms]
+(pass) release automation > CLI release validator derives the expected tag from package.json [9.92ms]
+(pass) release automation > generated attribution bundle contains full Pi and Bun license notices [100.46ms]
+(pass) release automation > attribution generation fails when a required transitive dependency is missing [2.10ms]
+(pass) release automation > Pi fallback fails closed for unknown packages and unpinned versions [1.20ms]
+(pass) release automation > license input budget is checked before an oversized file is read [0.69ms]
+(pass) release automation > embedded vendor license banners are preserved [0.20ms]
+(pass) release cache environment retains source identity variables [0.58ms]
+
+tests/remote-artifacts.test.ts:
+(pass) catalog includes entire journal and execute spill, not tool preview; returns exact offline bytes [5.50ms]
+(pass) mid-download change leaves incomplete manifest and retry refetches [2.14ms]
+(pass) rejects escapes, symlinks, oversized files, bad offsets and altered chunks [3.76ms]
+(pass) refuses symlinked execute directory and noncontiguous page [0.67ms]
+
+tests/remote-capabilities.test.ts:
+(pass) explicit repo grant, bounded read and no other task/kind [1.52ms]
+(pass) traversal, symlink, oversized, binary and nonregular denied [1.05ms]
+(pass) offline waiting, reply identity, duplicate, revoke, cancellation and retry [1.00ms]
+(pass) named tool/skill handlers only; output and request limits [0.61ms]
+(pass) revocation during slow handler suppresses late result [0.39ms]
+
+tests/remote-capability-runtime.test.ts:
+(pass) offline request survives reload, explicitly granted read and idempotent fenced reply [8.15ms]
+(pass) offline execute remains pending; abort, deadline, revoke and terminal fence [106.66ms]
+(pass) sensitive paths denied, explicit skills and read-only git tools [12.25ms]
+(pass) concurrent capability requests across mailbox instances obey the pending bound [90.32ms]
+(pass) an explicit regrant after revocation gets a new durable authority without reviving the old one [8.14ms]
+
+tests/remote-e2e.test.ts:
+(skip) normal CLI Docker/SSH fake-provider owner continues, answers native question, and reconnects
+(skip) compiled CLI /remote native question PTY
+
+tests/remote-job-artifacts.test.ts:
+(pass) native job text is paged into task-owned offline artifacts before buffers disappear [0.60ms]
+
+tests/remote-job-delivery.test.ts:
+(pass) session-scoped SSH observations and delivery > ownership source is isolated; stale unknown cannot reopen terminal [0.17ms]
+(pass) session-scoped SSH observations and delivery > persistent terminal dedup ignores artifact preview, retries with stable envelope [1.65ms]
+(pass) durable claims fence concurrent dispatch; uncertain crashes replay only after lease [1.69ms]
+(pass) actionable waits dedup across refresh/restart and terminal supersedes queued waits [0.99ms]
+(pass) dispatch failures remain retryable with stable id and a bounded automatic attempt budget [1.33ms]
+
+tests/remote-job-observations.test.ts:
+(pass) shared SSH cache observations stay in their durable parent session [0.24ms]
+(pass) unknown with an error is not terminal; waits carry human-only instructions [0.09ms]
+(pass) terminal observations suppress stale waits and bound assistant output [0.07ms]
+
+tests/remote-jobs-e2e.test.ts:
+(skip) compiled normal CLI real execute remote.launch yields and wakes through session-isolated jobs coordinator
+
+tests/remote-jobs.test.ts:
+(pass) SSH namespace reverses safely, session ownership is durable before launch and retries cannot steal [7.83ms]
+(pass) cached inspect is bounded, offline stopWork is partial and completed jobs remain visible [3.39ms]
+(pass) JobService paginates local then SSH without duplicates, rejects unsupported SSH methods [74.12ms]
+(pass) three-source pagination crosses native to SSH without skipping or repeating [3.95ms]
+(pass) native pagination preserves every phase with empty native and SSH sources [908.12ms]
+(pass) mixed pages pin totals across a local-only first page, bound cursors and discriminate raw SSH IDs [228.69ms]
+(pass) confirmed cancelled work is terminal, and cached transcript gaps are surfaced [2.20ms]
+(pass) confirmed cancellation without a terminal observation remains pending offline [1.38ms]
+(pass) new SSH launches cannot shift a paginated snapshot even when their IDs sort earlier [2.45ms]
+(pass) the SSH journal starts at sequence one, not a lost-output gap [1.40ms]
+
+tests/remote-owner.test.ts:
+(pass) remote handshake, pinned launch, immutable intent and unknown recovery [688.97ms]
+
+tests/remote-repository-wire.test.ts:
+(pass) orphan snapshot omits history; chunk replay is idempotent and result is terminal fenced [155.54ms]
+(pass) repository preparation pins parent before upload and retry retains it [60.03ms]
+
+tests/remote-repository.test.ts:
+(pass) capture current tracked state and safe return without touching staged index [108.63ms]
+(pass) local drift, remote creations and remote untracked bytes are review only [104.55ms]
+(pass) explicit untracked transfer and hidden tracked edits [72.10ms]
+
+tests/remote-runtime.test.ts:
+(pass) owner completion checkpoint reads actual paged jobs and pending-message state [0.77ms]
+
+tests/remote-ssh.test.ts:
+(pass) SSH oversized peer is bounded and force-stopped even when it ignores TERM [1120.04ms]
+
+tests/resume-safeguards.test.ts:
+(pass) durable agent metadata drives picker labels and deliberate child confirmation [3.20ms]
+(pass) root sessions are not confirmation-gated [0.36ms]
+(pass) picker adapter decorates only the active die directory and non-TUI resumes do not prompt [1.73ms]
+(pass) unreadable session metadata remains unknown rather than labeled root [0.19ms]
+(pass) picker adapters remain callable through foreign wrappers after shutdown and reinstall [0.92ms]
+(pass) malformed roles stay unknown and task IDs are safe and bounded [1.18ms]
+
+tests/session-boundaries.test.ts:
+(pass) shared session code has no provider or task implementation dependencies [0.46ms]
+(pass) agent runtime composes the shared owner without depending on provider implementations [0.26ms]
+(pass) history reads shake records without loading the agent command [0.14ms]
+
+tests/session-costs-tui.test.ts:
+(pass) real footer includes nested costs, updates while idle, and restores on resume [3243.52ms]
+
+tests/session-costs.test.ts:
+(pass) SessionCostTracker > recursively sums each die-agent descendant once and excludes unrelated sessions, branches, and cycles [3.63ms]
+(pass) SessionCostTracker > resumes existing JSONL and incrementally includes appended partial usage from failed or killed children [1.21ms]
+(pass) SessionCostTracker > discovers later nested sessions, honors header fallback only for die agents, and ignores root cost [0.86ms]
+(pass) SessionCostTracker > rejects an ordinary fork that copied die-agent metadata [0.49ms]
+(pass) SessionCostTracker > sanitizes negative costs and deduplicates repeated entry ids per session [0.47ms]
+(pass) SessionCostTracker > resets costs after truncation and atomic replacement [0.99ms]
+(pass) SessionCostTracker > coalesces concurrent refreshes and supports a synthetic missing root [0.55ms]
+(pass) counts failed compaction usage once without treating arbitrary custom entries as costs [0.52ms]
+
+tests/session-identity.test.ts:
+(pass) session identity preserves persistent paths and gives ephemeral sessions distinct stable identities [0.26ms]
+
+tests/session-input.test.ts:
+(pass) history finality is not input authority; only explicit completed input can be consumed [0.14ms]
+(pass) activity, oversized capture and expiration revoke input without forgetting attempted IDs [0.09ms]
+(pass) request ledger fails closed at capacity [0.10ms]
+
+tests/smoke-script.test.ts:
+(pass) standalone smoke builds by default, while explicit reuse keeps the same CLI checks without rebuilding [28.45ms]
+(pass) reuse requires an executable binary and invalid arguments cannot trigger a build [6.12ms]
+(pass) CI and release smoke reuse their preceding build [0.26ms]
+
+tests/startup-tui.test.ts:
+(pass) quiet startup hides Pi promotion and skill inventory without disabling skills or warnings [1104.23ms]
+
+tests/startup.test.ts:
+(pass) quiet startup > uses Pi's quietStartup override without changing resource behavior [0.72ms]
+(pass) quiet startup > does not persist the product override to user settings [0.77ms]
+(pass) quiet startup > restores the startup getter for callers and tests [0.36ms]
+
+tests/stop-work.test.ts:
+(pass) stopWork reports local pending and error without touching unrelated managers [0.61ms]
+(pass) stopWork pages scoped native descendants, retains partial discovery and cancellation failures [0.69ms]
+(pass) stopWork distinguishes observed native cancellation from already-finished work [0.24ms]
+
+tests/subagent-extension.test.ts:
+(pass) root and all agent profiles expose only execute [2.62ms]
+(pass) unconfigured native fast startup adds no UI output [0.33ms]
+(pass) resumed leaf identity is retained in instructions [0.38ms]
+(pass) rpc agent_end flushes an already-completed job before Pi settles [92.46ms]
+(pass) print idle boundary still resumes background jobs [69.62ms]
+(pass) json idle boundary still resumes background jobs [67.94ms]
+(pass) print agent_end wakes on attention while a job is still running [339.72ms]
+(pass) attention and a racing completion produce one deduplicated parent wakeup [68.03ms]
+(pass) root values are part of the agent frame and explicit user prompts retain precedence [0.63ms]
+(pass) user custom prompt keeps child role without disabled-delegation prose [0.43ms]
+(pass) session lifecycle resets resumed child identity when returning to root [0.82ms]
+(pass) spawned child environment remains the identity floor before metadata is attached [0.40ms]
+(pass) spawned environment roles cannot be changed by resumed metadata [0.77ms]
+(pass) mixed completion and attention reserve bounded evidence for both [80.33ms]
+(pass) invalid child marker never restores root or delegation: undefined [0.81ms]
+(pass) invalid child marker never restores root or delegation: null [0.37ms]
+(pass) invalid child marker never restores root or delegation: {"type":"unknown","depth":1} [0.30ms]
+(pass) invalid child marker never restores root or delegation: {"type":"orchestrator","depth":0} [0.31ms]
+(pass) invalid child marker never restores root or delegation: {"type":"normal","depth":1.5} [0.23ms]
+(pass) unreadable child metadata fails closed [0.34ms]
+(pass) malformed trailing branch entry fails closed instead of retaining root privileges [0.39ms]
+(pass) throwing identity data getter fails closed [0.45ms]
+(pass) shutdown persists every shell ownership cause without duplicating inspect content [4.07ms]
+(pass) GPT-Live delegation cannot bypass the current agent jobs.stop confirmation [0.86ms]
+(pass) owned SSH completion wakes the shared print boundary once, including finish-before-subscription [2.62ms]
+(pass) SSH human-action wait uses shared attention and lets print yield without granting anything [1.89ms]
+
+tests/subagent-profiles.test.ts:
+(pass) subagent profiles > defaults inherit and explicit thinking off is preserved [0.14ms]
+(pass) subagent profiles > invalid settings fail closed [0.53ms]
+(pass) subagent profiles > only root and first-level orchestrators delegate [0.05ms]
+(pass) subagent profiles > missing file inherits; saves roundtrip; malformed file errors [0.87ms]
+
+tests/subagent-settings-tui.test.ts:
+(pass) real TUI searches profile models, keeps selection, and saves [1726.42ms]
+
+tests/subagent-settings-ui.test.ts:
+(pass) fuzzy model/provider search, independent settings and selection preservation [1.58ms]
+(pass) escape from picker returns to the same row; escape from overview discards [0.47ms]
+(pass) inherit resets model and thinking without manual IDs [0.18ms]
+(pass) empty search results cannot select; empty catalog still supports inheritance [0.54ms]
+(pass) unavailable configured model remains visible and can be retained [0.35ms]
+(pass) narrow rendering stays within width and model input receives focus [0.56ms]
+(pass) command persists only on Save [1.15ms]
+(pass) malformed settings are reported and never overwritten [0.27ms]
+(pass) non-TUI gives file guidance without prompting [0.15ms]
+(pass) provider/model search prefers the exact model over a shorter prefix [0.72ms]
+
+tests/system-prompt.test.ts:
+(pass) injects Die base before Pi's positional prompt boundary [0.16ms]
+(pass) preserves explicit CLI system prompts [0.03ms]
+(pass) preserves project and global SYSTEM.md overrides [0.47ms]
+
+tests/t3-android-packaging.test.ts:
+(pass) Android optional native dependency is staged and verified [0.63ms]
+(pass) fff-node is loaded on demand and unsupported Android search is a typed failure [0.76ms]
+
+tests/task-lifecycle.test.ts:
+(pass) ownership index survives recreation, retains every child past completion preview limit, and stays protected [0.89ms]
+(pass) recorder binds original session path, bounds storage, and does not follow symlinks [9.05ms]
+(pass) short writes are completed without partial JSON records [0.33ms]
+(pass) concurrent processes serialize records or explicitly report bounded contention [10.14ms]
+(pass) live contention is nonfatal and SIGKILL releases the kernel lock [11.76ms]
+(pass) an unavailable locking backend fails closed with a coalesced diagnostic [0.32ms]
+(pass) compiled executable loads libc flock and writes a protected index [207.04ms]
+
+tests/task-manager.test.ts:
+(pass) asynchronous task manager > spawn returns while the process continues and completion is reported [233.80ms]
+(pass) asynchronous task manager > contains completion callback failures on normal process close [21.28ms]
+(pass) asynchronous task manager > contains callback failures in an aborted-completed foreground race [23.14ms]
+(pass) asynchronous task manager > supports incremental inspection with output cursors [22.47ms]
+(pass) asynchronous task manager > keeps UTF-8 characters intact across inspection pages [11.07ms]
+(pass) asynchronous task manager > can await completion without emitting an automatic notification [25.99ms]
+(pass) asynchronous task manager > writes standard input and can close it [25.53ms]
+(pass) asynchronous task manager > can start with closed input for non-interactive agents [23.40ms]
+(pass) asynchronous task manager > bounds retained output from noisy processes [31.89ms]
+(pass) asynchronous task manager > completion and wait preserve the final output with the smaller page cap [11.67ms]
+(pass) asynchronous task manager > runs 50 concurrent tasks without losing results [244.43ms]
+(pass) asynchronous task manager > reports metadata-only task-child mappings through the lifecycle hook [25.84ms]
+(pass) asynchronous task manager > exposes the first termination cause immediately and keeps it stable [1.06ms]
+(pass) asynchronous task manager > attributes automatic timeout and shutdown termination separately [11.70ms]
+(pass) asynchronous task manager > terminates running process groups [0.55ms]
+(pass) asynchronous task manager > shutdown can be awaited before the host exits and is idempotent [80.22ms]
+(pass) asynchronous task manager > shutdown kills descendants after the shell exits and output pipes close [42.13ms]
+(pass) asynchronous task manager > shutdown escalates when a process ignores SIGTERM [61.34ms]
+(pass) live agent inspection survives kill and success delivers only the final answer [22.54ms]
+(pass) JSON-mode model errors count as failure even when the child exits zero [3.54ms]
+(pass) foreground/background completion races deliver each result exactly once [79.62ms]
+(pass) completed output aggregate budget > bounds many completed jobs while retaining IDs, status, and honest cursors [134.98ms]
+(pass) completed output aggregate budget > keeps active output under its per-task cap, then applies a Unicode-safe completed budget [165.81ms]
+(pass) completion observers see budgeted manager state while delivery preserves the final answer [5.00ms]
+(pass) stopping a workspace agent also stops its owned background setup [1.06ms]
+(pass) preparation failure closes owned setup and repeated preparation teardown leaves no active jobs [3.90ms]
+
+tests/task-monitor-tui.test.ts:
+(pass) real TUI /ps selects live jobs and only stops the confirmed target [8641.57ms]
+(pass) real TUI /resume selects a durable child and requires explicit confirmation [1258.26ms]
+
+tests/task-monitor.test.ts:
+(pass) monitor selects, shows bounded live output, confirms stop, and cleans resources [184.83ms]
+(pass) empty registry and no-output state are explicit [1.38ms]
+(pass) rows 0-9 stay bounded and tiny frames retain the actionable identity [2.81ms]
+(pass) /ps uses the supplied shared registry and refuses non-TUI [0.24ms]
+(pass) inspect view is explicit, bounded, navigable, and Escape returns to the list [31.81ms]
+(pass) confirmation freezes identity and selection survives asynchronous updates [65.40ms]
+(pass) render is height bounded, keeps selection visible, and strips terminal controls [8.57ms]
+(pass) subscribe supplies events while zero-argument listeners remain compatible [1.26ms]
+
+tests/tool-schema.test.ts:
+(pass) only execute is registered with a provider-friendly schema [1.68ms]
+
+tests/tui-harness.test.ts:
+(pass) interactive TUI harness > provides its inspection and interaction commands [24.95ms]
+(pass) interactive TUI harness > auto-kills only the session named demo [3294.36ms]
+
+tests/turn-boundaries.test.ts:
+(pass) only a complete all-yield batch is a control boundary [0.29ms]
+
+tests/typescript-execution.test.ts:
+(pass) execute process lifecycle and output > captures separate streams, errors, and early exits [399.57ms]
+(pass) execute process lifecycle and output > applies a configurable combined output byte limit and reports truncation [183.39ms]
+(pass) execute process lifecycle and output > uses the concise no-output fallback [200.62ms]
+(pass) execute process lifecycle and output > returns short output inline and spills complete streams above 4000 combined characters [354.56ms]
+(pass) execute process lifecycle and output > saves long output on failure and preserves output across the spill boundary [192.02ms]
+(pass) execute process lifecycle and output > does not launch already-cancelled code [0.47ms]
+(pass) execute process lifecycle and output > reports spawn failures and tolerates early stdin closure [3.62ms]
+(pass) execute process lifecycle and output > escalates timeouts when SIGTERM is ignored [707.25ms]
+(pass) execute process lifecycle and output > keeps the first racing termination cause [43.82ms]
+(pass) execute process lifecycle and output > cancels a running process and escalates [278.18ms]
+(pass) execute process lifecycle and output > cleans surviving descendants with inherited output pipes [195.48ms]
+(pass) execute process lifecycle and output > cleans surviving descendants with closed output pipes [191.98ms]
+(pass) execute process lifecycle and output > bounds huge Unicode output without splitting a retained character [189.87ms]
+(pass) execute process lifecycle and output > keeps decoded binary output within the response byte budget [181.66ms]
+(pass) execute process lifecycle and output > does not report a cancellation handler's zero exit as success [608.50ms]
+(pass) execute process lifecycle and output > bounds many short lines and preserves the final output [184.38ms]
+(pass) execute process lifecycle and output > keeps full captured output after cancellation [276.65ms]
+(pass) execute process lifecycle and output > tool result exposes session-backed output files to the model [190.94ms]
+(pass) execute process lifecycle and output > marks cancellation as a tool error and rejects calls after session shutdown [0.59ms]
+(pass) unsupported-image results keep the image for Pi to omit and use the concise advisory [209.31ms]
+(pass) execute shutdown cancellation is classified and a new session receives a fresh controller [179.97ms]
+(pass) registered execute exposes configurable capture limits and truncation details [166.68ms]
+
+tests/typescript-images.test.ts:
+(pass) execute image output > exposes showImage without the old emitImage alias [348.43ms]
+(pass) execute image output > makes showImage available to dynamically imported modules [166.24ms]
+(pass) execute image output > returns a local image without treating logs as image records or writing temporary files [359.17ms]
+(pass) execute image output > supports sliced bytes, ArrayBuffer, Blob, and Bun.file with ordered concurrent emissions [167.80ms]
+(pass) execute image output > accepts PNG, JPEG, and WebP while rejecting GIF [379.27ms]
+(pass) execute image output > resizes oversized file and byte inputs without changing originals [2736.72ms]
+(pass) execute image output > rejects empty, unsupported, missing, oversized, and excess-count images [878.15ms]
+(pass) execute image output > a failed oversized resize can be caught before showing a valid image [270.48ms]
+(pass) execute image output > enforces total bytes and transports images larger than pipe capacity [520.57ms]
+(pass) execute image output > allows catching invalid input before emitting a valid image [166.16ms]
+(pass) execute image output > discards images on failure or timeout [676.41ms]
+(pass) execute image output > rejects malformed private output and kills channel floods [350.58ms]
+(pass) execute image output > does not use a private descriptor when invoked outside execute [179.74ms]
+(pass) execute image output > validates format headers and untrusted frame metadata [0.51ms]
+
+tests/typescript-runner.test.ts:
+(pass) isolated TypeScript runner > transpiles TypeScript in memory and supports files and commands [181.04ms]
+(pass) isolated TypeScript runner > supports top-level modules, lazy imports, and require [184.83ms]
+(pass) isolated TypeScript runner > provides filesystem-style module globals in paths containing spaces [191.41ms]
+(pass) isolated TypeScript runner > resolves installed packages for static and lazy imports [303.34ms]
+(pass) isolated TypeScript runner > preserves identity across static, dynamic, and transitive imports [162.11ms]
+(pass) isolated TypeScript runner > loads a representative installed package with transitive dependencies [709.24ms]
+(pass) isolated TypeScript runner > resolves computed and nested dynamic imports without eagerly loading missing modules [172.97ms]
+(pass) isolated TypeScript runner > respects package export conditions, patterns, and private subpaths [179.23ms]
+(pass) isolated TypeScript runner > preserves native CommonJS identity across transitive computed require, cycles, and module.require [193.00ms]
+(pass) isolated TypeScript runner > preserves require evaluation errors without retrying another package entry [196.53ms]
+(pass) isolated TypeScript runner > loads local dependency graphs and built-ins through each import style [176.33ms]
+(pass) isolated TypeScript runner > preserves dependency URLs, relative assets, runtime imports, and lazy failures [179.99ms]
+(pass) isolated TypeScript runner > supports package imports and caches failed module evaluation [168.83ms]
+(pass) isolated TypeScript runner > transpiles external TypeScript before lexing type-only imports [175.92ms]
+(pass) isolated TypeScript runner > uses canonical onLoad paths for symlinked pnpm-style graphs [175.90ms]
+(pass) isolated TypeScript runner > registers ESM graphs reached by native and root CommonJS require [167.14ms]
+(pass) isolated TypeScript runner > resolves computed dynamic imports from native CommonJS [156.11ms]
+(pass) isolated TypeScript runner > honors every require.resolve options.paths entry [163.01ms]
+(pass) isolated TypeScript runner > reports syntax errors and explicit early exits [387.17ms]
+(pass) isolated TypeScript runner > sanitizes in-memory module URLs in failures [186.82ms]
+(pass) isolated TypeScript runner > reports transpilation or execution failures [181.12ms]
+
+tests/update-v071-release-compat.test.ts:
+(pass) v0.7.1 replaces die-linux-x64 using official URLs and staged raw asset + sha256 [1.72ms]
+(pass) v0.7.1 replaces die-linux-arm64 using official URLs and staged raw asset + sha256 [0.49ms]
+(pass) v0.7.1 replaces die-darwin-arm64 using official URLs and staged raw asset + sha256 [0.54ms]
+(pass) v0.7.1 replaces die-android-arm64 using official URLs and staged raw asset + sha256 [0.45ms]
+(pass) checksum mismatch leaves original unchanged [0.74ms]
+(pass) checksum wrong filename leaves original unchanged [0.28ms]
+(pass) binary network failure leaves original unchanged [0.22ms]
+(pass) checksum network failure leaves original unchanged [0.25ms]
+(pass) release network failure leaves original unchanged [0.14ms]
+(pass) prerelease leaves original unchanged [0.18ms]
+(pass) flagged prerelease leaves original unchanged [0.14ms]
+(pass) draft leaves original unchanged [0.15ms]
+(pass) tarball instead of raw release asset leaves original unchanged [0.14ms]
+(pass) concurrent replacement after download is not overwritten [0.69ms]
+(pass) fixture preflight rejects tar-shaped payload, even with valid checksum [0.15ms]
+
+tests/update.test.ts:
+(pass) die self-update > source guard rejects before any network [0.17ms]
+(pass) die self-update > real private compiled Bun fixture is accepted and lookalikes are rejected [245.05ms]
+(pass) die self-update > current and newer fetch only release metadata [0.71ms]
+(pass) die self-update > maps supported update assets [0.06ms]
+(pass) die self-update > downloads the matching macOS asset [1.17ms]
+(pass) die self-update > unsupported platform rejects before fetch [0.09ms]
+(pass) die self-update > requires official exact asset URLs [0.67ms]
+(pass) die self-update > rejects wrong hash [0.66ms]
+(pass) die self-update > rejects malformed checksum [0.55ms]
+(pass) die self-update > rejects binary HTTP failure [0.30ms]
+(pass) die self-update > rejects checksum HTTP failure [0.38ms]
+(pass) die self-update > malformed, prerelease, and missing release assets stop before binary [0.16ms]
+(pass) die self-update > updates and preserves mode [0.70ms]
+(pass) die self-update > updates symlink target and preserves symlink [0.71ms]
+(pass) die self-update > rejects checksum with a filename that does not match the binary asset [0.37ms]
+(pass) die self-update > truncated body fails checksum [0.31ms]
+(pass) die self-update > concurrent target change aborts commit [0.66ms]
+(pass) die self-update > replacement failure keeps old target and cleans staging [0.64ms]
+(pass) permission failure preserves executable without staging leftovers [0.49ms]
+(pass) metadata network failure preserves executable [0.54ms]
+(pass) a real compiled executable safely replaces itself [1739.94ms]
+
+tests/wisdom-extension.test.ts:
+(pass) project wisdom extension > injects vetted wisdom guidance for root agents [0.19ms]
+(pass) project wisdom extension > does not inject wisdom guidance into child agents [0.02ms]
+(pass) project wisdom extension > /wisdom reports the durable location [0.11ms]
+(pass) project wisdom extension > /wisdom is root-only [0.05ms]
+(pass) project wisdom extension > jobsChanged is kept as a no-op integration hook [0.03ms]
+
+tests/worker-handoff.test.ts:
+(pass) worker handoff acknowledges before intentionally exiting [196.35ms]
+(pass) a rejected handoff reports the handler error and continues no further [162.90ms]
+(pass) handoff without a bridge retains the unavailable rejection [157.63ms]
+(pass) handoff unwinds cleanup but does not swallow cleanup errors [160.17ms]
+(pass) compiled runner preserves cleanup messages omitted from Error.stack [158.02ms]
+
+tests/worktree-workspace.test.ts:
+(pass) local worktree workspace > parses JSONC setup and preserves async false [39.81ms]
+(pass) local worktree workspace > pins one commit and creates argv-safe retained branches without dirty files [35.68ms]
+(pass) local worktree workspace > rejects one explicit branch for a prompt batch before workspace side effects [0.91ms]
+(pass) local worktree workspace > rejects option/control refs, invalid task identities, and managed path collisions [24.93ms]
+(pass) local worktree workspace > rejects branch reuse rather than resetting it [24.55ms]
+(pass) local worktree workspace > waitSeconds zero returns a cancellable child while blocking setup is still preparing [31.50ms]
+(pass) local worktree workspace > the child deadline includes worktree setup and prevents provider start [118.09ms]
+(pass) local worktree workspace > repository setup runs automatically without trust approval while child trust remains denied [129.70ms]
+(pass) local worktree workspace > a synchronous setup failure retains every batch identity without killing siblings [99.79ms]
+
+tests/remote-client.test.ts:
+(pass) pins intent before first network POST; uncertain retry uses identical ID only [3.02ms]
+(pass) changed owner prevents retry and sync; cache remains available offline [3.53ms]
+(pass) paginated sync persists contiguous pages and does not clobber accepted task after offline [3.32ms]
+(pass) rejects gaps without persisting bad transcript and never accepts hostile host [1.96ms]
+(pass) lost launch reply blocks automatic fresh-ID repeat of the same intent [1.59ms]
+(pass) missing remote model fails explicitly without copying a local default [0.41ms]
+(pass) independent client instances serialize local state writes [32.15ms]
+(pass) opening a second lock connection does not release the first SQLite lock [6.64ms]
+(pass) killed client releases state lock and reopens the same durable ambiguous ID [23.08ms]
+(pass) unknown task snapshot carries its error and native questions rather than losing status [2.13ms]
+(pass) targeted answer pins reply ID before transport, rejects changed intent, bounded reconnect sync [5.01ms]
+(pass) restart automatically finishes a partially cached terminal transcript [2.60ms]
+(pass) existing task catch-up is independent of a subsequently removed default profile [1.67ms]
+(pass) cancel retains local intent and pinned retry after changed-connection [4.11ms]
+(pass) cancel retains local intent and pinned retry after offline-hello [3.11ms]
+(pass) cancel retains local intent and pinned retry after lost-cancel [3.29ms]
+(pass) uncertain cancel stays uncertain across changed owner and only terminal sync proves cancellation [5.40ms]
+
+tests/remote-extension.test.ts:
+(pass) remote uses execute bridge while human output persists in conversation [2.53ms]
+(pass) remote launch preserves raw prompt and quoted repository paths [0.13ms]
+(pass) accepted retry syncs; uncertain retry retains same launch ID [0.55ms]
+(pass) execute remote methods use configured client, never accept a host [0.34ms]
+(pass) remote presentation escapes terminal and bidi control text [0.06ms]
+(pass) stale targeted or missing-text remote answers never fall through to a different question [0.97ms]
+(pass) no-args inbox binds selected choice to freshly synced owner/version, Escape never submits [1.45ms]
+(pass) connect editor Escape never connects, even after entering a host [0.20ms]
+(pass) cancel confirmation open then offline refuses dispatch [0.69ms]
+(pass) cancel confirmation open then changed-owner refuses dispatch [0.05ms]
+(pass) many polls do not append routine progress; transitions and reconnect are semantic [0.55ms]
+(pass) human transcript preserves every event and offset while task summary extracts final assistant [0.32ms]
+(pass) poll UI is compact, cleanup clears status, and open picker receives no chat interruption [3.65ms]
+(pass) capability, delivery uncertainty, blocked, failure and integration review get single notices [0.23ms]
+(pass) sync command renders final assistant text from full client task, not stripped RPC summary [0.21ms]
+(pass) attention deduplicates hundreds of polls, reconnects and volatile diagnostics while reporting new identities [1.86ms]
+(pass) compact status retains unresolved attention after active tasks end and clears resolved questions [0.12ms]
+(pass) session branch attention rehydrates on reload without poll spam [30.72ms]
+(pass) each genuine outage and recovery is noticed once, including recovery after session reload [0.51ms]
+(pass) failure is one useful notice and explicit delivery responses distinguish request from outcome [0.34ms]
+(pass) remote refresher projects only this parent's jobs and does not duplicate terminal/artifact UI messages [20.64ms]
+(pass) session-owned completion stays in jobs while human footer retains actionable state [10.40ms]
+(pass) human direct launch binds the command's parent session without exposing JSON [0.39ms]
+(pass) fresh sessions baseline legacy unowned results, but live transitions and reloads keep their own history [57.22ms]
+(pass) unowned task active before shutdown completes during restart and is delivered only to that session [46.08ms]
+(pass) completion first seen during startup sync is not mistaken for historical cache [15.42ms]
+(pass) review action exposes cached conflict artifact and leaves picker without contacting owner [0.37ms]
+(pass) menu repository launch asks about untracked files before snapshot or transfer [4.79ms]
+
+tests/remote-human-rendering.test.ts:
+(pass) preparation-only status preserves both recovery states, without pretending no work exists [0.12ms]
+(pass) mixed status includes task and orphan preparation [0.05ms]
+(pass) uncertain answer identifies question and saved reply in task and status [0.12ms]
+(pass) cancel delivery requested (requested locally) vs not terminal [0.09ms]
+(pass) cancel delivery uncertain (delivery uncertain) vs not terminal [0.03ms]
+(pass) cancel delivery confirmed (request acknowledged) vs not terminal [0.03ms]
+(pass) cancel delivery confirmed (request acknowledged) vs terminal [0.03ms]
+(pass) cached transcript reads as conversation and tools, not machine JSON [0.27ms]
+(pass) unknown and lifecycle events, paging, transcript gaps and explicit raw remain visible [0.18ms]
+(pass) conflict details identify the retained artifact without implying automatic application [0.08ms]
+(pass) saved task details describe capability waits without granting access [0.10ms]
+
+tests/remote-menu.test.ts:
+(pass) remote inbox has searchable actionable labels and relevant completion IDs [0.46ms]
+(pass) uncertain replies are never offered as new questions; offline actions are visibly unavailable [0.08ms]
+(pass) untrusted remote labels are printable [0.01ms]
+(pass) cached offline and foreign-owner questions are visible but not answer actions [0.08ms]
+(pass) uncertain reply remains actionable without offering a replacement answer [0.12ms]
+(pass) cancel delivery status is shown apart from terminal observation [0.04ms]
+(pass) SSH connection discovery explains usernames and aliases [0.02ms]
+(pass) fully typed remote commands submit instead of reselecting identical autocomplete [0.03ms]
+(pass) returned conflicts are discoverable from inbox and readable offline [0.06ms]
+
+tests/t3/local-notifications.test.ts:
+(pass) T3 local notification outbox > persists before delivery and survives crash/reload [1.03ms]
+(pass) T3 local notification outbox > replays one stable identity after an ambiguous ACK and then removes it [21.30ms]
+(pass) T3 local notification outbox > a late ACK from a replaced connection cannot clobber newer rows [0.42ms]
+(pass) T3 local notification outbox > completion durably supersedes attention for the same task [0.26ms]
+(pass) a completion arriving during an in-flight ACK is delivered without another user turn [0.94ms]
+(pass) completion identity survives duplicate terminal callback even after ACK [0.27ms]
+(pass) idle pending delivery retries after outage without another enqueue [1878.05ms]
+(pass) Stop cancels retry delay and never sends a post-stop request [35.85ms]
+(pass) capacity is reserved before launch, without sacrificing terminal records [191.69ms]
+(pass) a rejected attention cannot starve another task completion [875.35ms]
+
+tests/t3/native-routing.test.ts:
+(pass) native contract fixture is exact version 1 [0.65ms]
+(pass) scoped execute routing uses native launch/observe/list/cancel without local child ownership [8.47ms]
+197 |       ["jobs.setWatch", { id: "native-task-1", enabled: false }],
+198 |     ] as const)
+199 |       await expect(service.handle(method, input, ctx, signal)).rejects.toThrow("unsupported");
+200 | 
+201 |     const shell = (await service.handle("shell", { command: "printf local", waitSeconds: 1 }, ctx, signal)) as any;
+202 |     expect(shell.output).toBe("local");
+                               ^
+error: expect(received).toBe(expected)
+
+- "local"
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ local"
+
+- Expected  - 1
++ Received  + 5
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/t3/native-routing.test.ts:202:26)
+(fail) scoped native affordances reject waiting and stream controls while local shell stays faithful [73.29ms]
+(pass) adapter replays an ambiguous launch with exactly the persisted request identity [0.36ms]
+(pass) adapter does not retry permanent protocol or authorization rejection [0.12ms]
+(pass) typed backend rejection is not mistaken for a task or reflected into output [0.11ms]
+(pass) launch intent survives ACK while durable pending bookkeeping is released [1.61ms]
+(pass) bounded launch bookkeeping eviction preserves replay identity [2.59ms]
+(pass) execute response ACK retires durable pending launch bookkeeping [2.94ms]
+(pass) identical concurrent native calls get distinct durable intents and replay by execute ordinal [2.75ms]
+(pass) mixed pagination keeps the backend cursor stable when local membership changes [0.61ms]
+(pass) stopping an already completed native task does not claim cancellation [0.15ms]
+(pass) launch ledger path serialization is concurrent-safe and releases churned paths [16.67ms]
+636 |         waitSeconds: 2,
+637 |       },
+638 |       { cwd: process.cwd() } as any,
+639 |       new AbortController().signal,
+640 |     )) as any;
+641 |     expect(result.output).toBe("||safe-value");
+                                ^
+error: expect(received).toBe(expected)
+
+- "||safe-value"
++ "mise ERROR error parsing config file: ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml
++ mise ERROR Config files in ~/.die/worktrees/die-a86675007a5e-task_f0abdd8e/mise.toml are not trusted.
++ Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
++ mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
++ ||safe-value"
+
+- Expected  - 1
++ Received  + 5
+
+      at <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/t3/native-routing.test.ts:641:27)
+(fail) model-directed shell environments omit T3 credentials but retain unrelated variables [70.42ms]
+(pass) native worktree batches reuse the first resolved immutable base [2.38ms]
+
+tests/t3/production-bridge.test.ts:
+(pass) bridge authorization is all-or-nothing and endpoint credentials are rejected [0.14ms]
+(pass) partial bridge context fails closed without spawning a local child [0.21ms]
+(pass) MCP client sends scoped auth/protocol/session headers, parses bounded SSE, and deletes its session [3.60ms]
+(pass) MCP client rejects oversized finite responses [7.07ms]
+(pass) MCP client reconnects one expired session and preserves the tool request [2.72ms]
+(pass) aborted MCP requests stop promptly and close remains bounded [21.59ms]
+(pass) repeated client sessions release every server session [8.39ms]
+(pass) MCP client enforces the delegation allowlist and request key before transport [0.17ms]
+(pass) MCP client does not retry a 400 mutation and redacts reflected server errors [2.48ms]
+(pass) MCP client rejects malformed and mismatched RPC responses [2.30ms]
+(pass) matching chunked SSE returns and cancels without remote EOF [3.05ms]
+(pass) close aborts initialize, waits for settlement, then deletes an acquired session [2.67ms]
+(pass) close during a tool body prevents success and releases the session [2.52ms]
+(pass) concurrent expired requests share one reconnect and preserve each request [2.35ms]
+(pass) SSE multiline JSON survives CRLF split across chunks without waiting for EOF [0.41ms]
+(pass) cancelling one shared initialize waiter leaves the other caller and cleanup owned [2.28ms]
+(pass) native launch replays empty JSON and truncated SSE success with the same key [4.23ms]
+(pass) native launch replays an internal timeout but not caller abort or HTTP auth rejection [56.63ms]
+
+tests/t3/web-launcher-process.test.ts:
+(pass) POSIX web launcher escalates only its stubborn backend group and preserves TERM status [5224.61ms]
+(pass) POSIX web launcher reaps its group when a signalled backend leader exits early [250.72ms]
+(pass) repeated clean backend exits release signal listeners and file descriptors [93.22ms]
+
+tests/t3/web-launcher.test.ts:
+(pass) web configures the embedded backend on loopback with separate T3 state [0.14ms]
+(pass) web forwards T3 options and explicit development executable overrides [0.08ms]
+(pass) compiled die web dispatches directly to the backend and preserves its exit status [198.98ms]
+(pass) compiled die web reports a missing backend without entering the agent [158.28ms]
+(pass) web respects explicit defaults: [ "--base-dir", "/custom" ] [0.13ms]
+(pass) web respects explicit defaults: [ "--base-dir=/custom" ] [0.01ms]
+(pass) web respects explicit defaults: [ "--host=127.0.0.2" ] [0.01ms]
+(pass) embedded web settings enable only Die on first run [1.23ms]
+(pass) embedded web settings preserve unrelated configuration [0.49ms]
+(pass) embedded web settings refuse malformed existing files [0.30ms]
+(pass) embedded web settings refuse malformed structures: {"value":null} [0.26ms]
+(pass) embedded web settings refuse malformed structures: {"value":[]} [0.16ms]
+(pass) embedded web settings refuse malformed structures: {"value":{"providers":[]}} [0.19ms]
+(pass) embedded web settings refuse malformed structures: {"value":{"providerInstances":{"pi":{"config":"bad"}}}} [0.15ms]
+
+tests/t3/web-runtime.test.ts:
+(pass) all web builders copy the maintained bootstrap to the same packaged filename [0.19ms]
+(pass) web archive is deterministic and extracts privately by content hash [2.72ms]
+(pass) web archive rejects corrupt payloads without publishing an extraction [0.57ms]
+(pass) concurrent web extraction publishes one complete runtime and cleans staging [1.04ms]
+(pass) web extraction refuses a symlinked content-addressed target [0.47ms]
+93 | test("standalone executable opens embedded web CLI without Node, Bun, or sidecar on PATH", async () => {
+94 |   const temporary = await mkdtemp(join(tmpdir(), "die-web-standalone-"));
+95 |   try {
+96 |     const sourceBinary = resolve(process.env.DIE_WEB_BINARY ?? resolve(import.meta.dir, "../../dist/die"));
+97 |     const binary = join(temporary, "die");
+98 |     await copyFile(sourceBinary, binary);
+               ^
+ENOSPC: no space left on device, copyfile '/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/dist/die' -> '/tmp/die-web-standalone-DLrEAd/die'
+    path: "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/dist/die",
+    dest: "/tmp/die-web-standalone-DLrEAd/die",
+ syscall: "copyfile",
+   errno: -28,
+    code: "ENOSPC"
+
+      at async <anonymous> (/home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/tests/t3/web-runtime.test.ts:98:11)
+(fail) standalone executable opens embedded web CLI without Node, Bun, or sidecar on PATH [92.39ms]
+
+tests/t3/web-source.test.ts:
+(pass) web source verification requires the exact canonical patch without changing the real index [38.44ms]
+
+tests/t3/web-task-events.test.ts:
+(pass) web task lifecycle events > emits one bounded start/completion NDJSON record with only public fields [0.24ms]
+(pass) web task lifecycle events > flag-off RPC, TUI, and JSON modes produce no traffic [0.04ms]
+(pass) web task lifecycle events > activity and stopping events produce no traffic [0.03ms]
+
+20 tests skipped:
+(skip) Escape cancels execute waiting while its managed job survives and resumes
+(skip) real TUI backgrounds execute, stays responsive, and automatically resumes once
+(skip) natural nested-agent workflow returns control before descendants finish
+(skip) live cache-affine checkpoint, cold baseline, and resumed usage
+(skip) current pipeline live: fresh resume and uncaptured tool results
+(skip) live goal mode completes a harmless temporary-file criterion
+(skip) paid GPT-Live start, paced silence PCM, finalized close
+(skip) real OpenAI accepts the GA Live configuration and configured-agent tool schema
+(skip) real Gemini accepts the native Live SDK session configuration
+(skip) GPT-5.6 Luna completes an authenticated die request
+(skip) GPT-5.6 Luna uses execute for a realistic TypeScript file workflow
+(skip) GPT-5.6 Luna sees an image returned by execute
+(skip) GPT-5.6 Luna recovers from an execute tool error
+(skip) GPT-5.6 Luna uses unified shell helper inline
+(skip) GPT-5.6 Luna uses unified shell helper in background
+(skip) GPT-5.6 Luna unified subagent diagnostics persist tool history
+(skip) native Codex live checkpoint and disk-resumed recall
+(skip) normal CLI Docker/SSH fake-provider owner continues, answers native question, and reconnects
+(skip) compiled CLI /remote native question PTY
+(skip) compiled normal CLI real execute remote.launch yields and wakes through session-isolated jobs coordinator
+
+
+12 tests failed:
+(fail) compiled die CLI > installs atomically into the requested local bin directory [45.38ms]
+(fail) foreground work returns inline; background work survives execute and accepts input [220.57ms]
+(fail) canceling execute after a delayed job spawn transfers notification ownership without killing its job [559.99ms]
+(fail) disconnect before an inline response is acknowledged restores completion notification ownership [227.51ms]
+(fail) ACK is provisional until clean worker exit [232.30ms]
+(fail) oversized reply releases foreground ownership exactly once [217.58ms]
+(fail) registered execute handoff separates completed delivery from pending wait cancellation [276.33ms]
+(fail) shell closes stdin by default while explicit open input remains writable [64.12ms]
+(fail) optional and failing refresh callbacks cannot strand successful launches [69.31ms]
+(fail) scoped native affordances reject waiting and stream controls while local shell stays faithful [73.29ms]
+(fail) model-directed shell environments omit T3 credentials but retain unrelated variables [70.42ms]
+(fail) standalone executable opens embedded web CLI without Node, Bun, or sidecar on PATH [92.39ms]
+
+ 1322 pass
+ 20 skip
+ 12 fail
+ 30678 expect() calls
+Ran 1354 tests across 190 files. [125.81s]

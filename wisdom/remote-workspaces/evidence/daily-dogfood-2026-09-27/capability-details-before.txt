@@ -1,0 +1,30 @@
+ Warning: transcript incomplete.
+ Last synchronized state, not live status. /remote transcript
+ 3191926d-f998-4da1-b5cd-625e11d10e21 for full events.
+
+ ⚠ Task attention · SSH job ssh:MzE5MTkyNmQtZjk5OC00ZGExLWI1Y2QtNjI1ZTExZDEwZTIx needs h...
+ ✓ executed · 1 background · console.log(await shell("sleep 12; echo DAILY_LOCAL_FINISHE...
+
+ DAILY_COORDINATOR_YIELD_LOCAL_AND_REMOTE
+ ✓ task_de8af5e0 executed
+
+ DAILY_COORDINATOR_REMOTE_COMPLETION_ACK
+
+ [die-remote]
+
+ Remote 3191926d-f998-4da1-b5cd-625e11d10e21 · running · capability request pending
+ Last synchronized state, not live status. /remote transcript
+ 3191926d-f998-4da1-b5cd-625e11d10e21 for full events.
+
+
+
+remote: 1 active · 2 review $0.000 C12.8% cache est 59m repo                   daily-fixture
+
+
+
+
+
+
+
+
+

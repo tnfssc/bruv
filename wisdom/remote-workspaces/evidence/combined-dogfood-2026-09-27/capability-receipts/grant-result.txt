@@ -1,0 +1,35 @@
+
+ Remote fa4b81dd-be87-43c6-95d6-6675b27a9f09 · capability request: tool:git-diff · tracked.txt · /remote to review
+
+
+ [die-remote]
+
+ Remote error: Error: Remote request changed; no grant sent
+ No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.
+
+
+ [die-remote]
+
+ Local capability granted · task fa4b81dd-be87-43c6-95d6-6675b27a9f09
+ Authority: repo.read
+ Local repository:
+ /home/tnfssc/.die/worktrees/die-a86675007a5e-task_f0abdd8e/.cache/remote-e2e.Ivdyz5/home/capability-test-repo
+ Grant: grant_51aeb5a0a141ab346dfe8eecbbe5116c0dd26fe48e30a44beeddd4334dd10f83
+ Read-only named authority for this task; not arbitrary shell or credentials.
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Task · REMOTE_FIXTURE_CAPABILITY_PTY
+
+View cached transcript
+
+Available offline
+> Filter…
+→ View cached transcript                                                          Available offline
+  View saved task details                                                         Saved status, errors and pending req
+  Local capabilities…                                                             Human-only grants and revocation · s
+  Sync task                                                                       Fetch owner updates
+  Cancel task…                                                                    Requires confirmation
+↑↓ · PgUp/PgDn details · type · Enter · Esc
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+remote: menu snapshot current · Refresh from remote to reload $0.000 C0.8% cache est ?                     fixture-model

@@ -16,7 +16,7 @@ writeFileSync(
   JSON.stringify({
     providers: {
       fixture: {
-        baseUrl: "http://127.0.0.1:18765/v1",
+        baseUrl: process.env.FIXTURE_PROVIDER_URL!,
         api: "openai-completions",
         apiKey: "fixture-only",
         models: [{ id: "fixture-parent", name: "parent fixture", contextWindow: 32000, maxTokens: 1024 }],

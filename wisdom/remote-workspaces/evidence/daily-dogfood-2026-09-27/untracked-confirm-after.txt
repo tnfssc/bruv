@@ -1,0 +1,30 @@
+ Remote 2db5f355-d19e-44dd-87f3-c43e0dce12ec · repository result review needed: remote
+ untracked files are preserved in the review patch; manual review required
+
+
+ [die-remote]
+
+ Remote 2db5f355-d19e-44dd-87f3-c43e0dce12ec · done
+ REMOTE_FIXTURE_REPO_FINISHED
+
+
+────────────────────────────────────────────────────────────────────────────────────────────
+
+ Include untracked files?
+ ["tracked.txt"]
+
+ → Yes
+   No
+
+ ↑↓ navigate  enter select  escape/ctrl+c cancel
+
+────────────────────────────────────────────────────────────────────────────────────────────
+remote: 2 review $0.000 C0.3% cache est ? repo                                fixture-parent
+
+
+
+
+
+
+
+

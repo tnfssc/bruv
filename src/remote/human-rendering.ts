@@ -88,29 +88,37 @@ const displayData = (value: unknown): unknown => {
   if (Array.isArray(value)) return value.map(displayData);
   if (value && typeof value === "object")
     return Object.fromEntries(
-      Object.entries(value).filter(([key]) => ![
-        "textSignature", "signature", "partialJson", "requestId", "rpcId", "ownerId", "epoch",
-      ].includes(key)).map(([key, item]) => [key, displayData(item)]),
+      Object.entries(value)
+        .filter(
+          ([key]) =>
+            !["textSignature", "signature", "partialJson", "requestId", "rpcId", "ownerId", "epoch"].includes(key),
+        )
+        .map(([key, item]) => [key, displayData(item)]),
     );
   return value;
 };
-const readable = (value: unknown): string =>
-  typeof value === "string" ? safe(value) : detail(displayData(value));
+const readable = (value: unknown): string => (typeof value === "string" ? safe(value) : detail(displayData(value)));
 const contentText = (value: unknown): string => {
   if (typeof value === "string") return safe(value);
   if (!Array.isArray(value)) return value == null ? "" : readable(value);
-  return value.map((part) => {
-    if (typeof part === "string") return safe(part);
-    const p = obj(part);
-    if (p.type === "text" || p.type === "thinking") return safe(p.text ?? "");
-    if (p.type === "toolCall") return "Tool call " + safe(p.name ?? "unknown") +
-      (p.arguments === undefined ? "" : " " + readable(p.arguments));
-    if (p.type === "image") return "[image" + (p.mimeType ? " " + safe(p.mimeType) : "") + "]";
-    return readable(part);
-  }).filter(Boolean).join("\n");
+  return value
+    .map((part) => {
+      if (typeof part === "string") return safe(part);
+      const p = obj(part);
+      if (p.type === "text" || p.type === "thinking") return safe(p.text ?? "");
+      if (p.type === "toolCall")
+        return (
+          "Tool call " + safe(p.name ?? "unknown") + (p.arguments === undefined ? "" : " " + readable(p.arguments))
+        );
+      if (p.type === "image") return "[image" + (p.mimeType ? " " + safe(p.mimeType) : "") + "]";
+      return readable(part);
+    })
+    .filter(Boolean)
+    .join("\n");
 };
 function transcriptRow(row: any): string {
-  const e = obj(row.event), m = obj(e.message);
+  const e = obj(row.event),
+    m = obj(e.message);
   const prefix = "#" + safe(row.seq ?? "?") + " ";
   if (e.type === "message_end" && m.role) {
     const role = m.role === "toolResult" ? "Tool result" : safe(m.role);
@@ -120,18 +128,57 @@ function transcriptRow(row: any): string {
   }
   if (e.type === "tool_execution_start" || e.type === "tool_execution_end" || e.type === "tool_execution_update") {
     const name = safe(e.toolName ?? e.name ?? "unknown");
-    const label = e.type === "tool_execution_start" ? "Tool call " :
-      e.type === "tool_execution_end" ? "Tool finished " : "Tool update ";
-    const payload = e.type === "tool_execution_start" ? e.args : e.type === "tool_execution_end" ? e.result : e.partialResult;
-    const remainder = e.type === "tool_execution_start" || !obj(payload).content ? "" :
-      readable(Object.fromEntries(Object.entries(obj(payload)).filter(([key]) => key !== "content")));
-    return prefix + label + name + (e.isError ? " (error)" : "") +
-      (payload === undefined ? "" : ":\n" + (e.type === "tool_execution_start" ? readable(payload) :
-        contentText(obj(payload).content ?? payload)) + (remainder === "{}" ? "" : "\n" + remainder));
+    const label =
+      e.type === "tool_execution_start"
+        ? "Tool call "
+        : e.type === "tool_execution_end"
+          ? "Tool finished "
+          : "Tool update ";
+    const payload =
+      e.type === "tool_execution_start" ? e.args : e.type === "tool_execution_end" ? e.result : e.partialResult;
+    const remainder =
+      e.type === "tool_execution_start" || !obj(payload).content
+        ? ""
+        : readable(Object.fromEntries(Object.entries(obj(payload)).filter(([key]) => key !== "content")));
+    return (
+      prefix +
+      label +
+      name +
+      (e.isError ? " (error)" : "") +
+      (payload === undefined
+        ? ""
+        : ":\n" +
+          (e.type === "tool_execution_start" ? readable(payload) : contentText(obj(payload).content ?? payload)) +
+          (remainder === "{}" ? "" : "\n" + remainder))
+    );
+  }
+  if (e.type === "turn_end" || e.type === "agent_end") {
+    const messages = [
+      e.message,
+      ...(Array.isArray(e.messages) ? e.messages : []),
+      ...(Array.isArray(e.toolResults) ? e.toolResults : []),
+    ].filter(Boolean);
+    const extra = Object.fromEntries(
+      Object.entries(e).filter(([key]) => !["type", "message", "messages", "toolResults"].includes(key)),
+    );
+    return (
+      prefix +
+      safe(e.type) +
+      (messages.length
+        ? ":\n" +
+          messages.map((message) => transcriptRow({ seq: row.seq, event: { type: "message_end", message } })).join("\n")
+        : "") +
+      (Object.keys(extra).length ? "\n" + readable(extra) : "")
+    );
   }
   // Do not pretend unknown events are empty; retain their meaningful data in the human view.
-  return prefix + safe(e.type ?? "event") +
-    (Object.keys(e).length > 1 ? ": " + readable(Object.fromEntries(Object.entries(e).filter(([key]) => key !== "type"))) : "");
+  return (
+    prefix +
+    safe(e.type ?? "event") +
+    (Object.keys(e).length > 1
+      ? ": " + readable(Object.fromEntries(Object.entries(e).filter(([key]) => key !== "type")))
+      : "")
+  );
 }
 export function renderHuman(value: unknown, kind = "result"): string {
   const v = obj(value);
@@ -139,7 +186,9 @@ export function renderHuman(value: unknown, kind = "result"): string {
     const rows = Array.isArray(v.events) ? v.events : [];
     return [
       "Remote transcript \u00B7 " + safe(v.taskId) + " \u00B7 offset " + (v.offset ?? 0),
-      ...rows.map((r: any) => kind === "transcript-raw" ? "#" + safe(r.seq ?? "?") + " " + detail(r.event) : transcriptRow(r)),
+      ...rows.map((r: any) =>
+        kind === "transcript-raw" ? "#" + safe(r.seq ?? "?") + " " + detail(r.event) : transcriptRow(r),
+      ),
       v.nextOffset !== undefined
         ? "More: /remote transcript " + safe(v.taskId) + " " + v.nextOffset + (kind === "transcript-raw" ? " raw" : "")
         : "End of cached transcript.",
@@ -149,6 +198,16 @@ export function renderHuman(value: unknown, kind = "result"): string {
       .filter(Boolean)
       .join("\n");
   }
+  if (v.grant && v.scope)
+    return [
+      "Local capability granted · task " + safe(v.grant.taskId),
+      "Authority: " + (Array.isArray(v.grant.kinds) ? v.grant.kinds.map(safe).join(", ") : "unknown"),
+      "Local repository: " + safe(v.scope),
+      "Grant: " + safe(v.grant.id),
+      "Read-only named authority for this task; not arbitrary shell or credentials.",
+    ].join("\n");
+  if (v.revoked === true && v.grantId)
+    return "Local capability revoked · " + safe(v.grantId) + "\nOwner acknowledged revocation.";
   if (kind === "error" && v.error) return "Remote error: " + detail(v.error) + (v.hint ? "\n" + detail(v.hint) : "");
   if (kind === "status") {
     const tasks = Array.isArray(v.tasks) ? (v.tasks as RemoteTask[]) : [];
@@ -195,7 +254,24 @@ export function renderHuman(value: unknown, kind = "result"): string {
       t.integrationError && "Result review: " + detail(t.integrationError),
       obj(t.repository).status === "review" &&
         "Repository result review: " + detail(obj(t.repository).reason ?? "returned changes require review"),
+      obj(t.repository).status === "review" &&
+        obj(t.repository).artifact &&
+        "Inspect local worktree before applying. Local review artifact: " + safe(obj(t.repository).artifact),
       t.task?.error && "Task error: " + detail(t.task.error),
+      ...((t.task?.questions as any[] | undefined) ?? [])
+        .filter((q) => q.status === "pending")
+        .map((q) => "Question " + safe(q.id) + ": " + safe(q.text ?? q.question) + " · /remote to answer"),
+      ...((t.task?.capabilityNeeds as any[] | undefined) ?? []).map(
+        (need) =>
+          "Capability requested (not granted): " +
+          safe(need.kind) +
+          (need.input ? " · " + safe(need.input) : "") +
+          "\nHuman approval only: /remote grant " +
+          safe(t.taskId) +
+          " " +
+          safe(need.kind) +
+          " (read-only access to the current local repository)",
+      ),
       ...replyLines(t),
       cancellationLine(t),
       t.transcriptComplete === false && "Warning: transcript incomplete.",

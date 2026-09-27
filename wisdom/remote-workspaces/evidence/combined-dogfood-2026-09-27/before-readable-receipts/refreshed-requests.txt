@@ -1,0 +1,35 @@
+ This project is not trusted. Project .die resources and packages are ignored. Use /trust to save a trust decision,
+ then restart pi.
+
+ Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys on` to ~/.tmux.conf
+ and restart tmux.
+
+
+ [die-remote]
+
+ Remote 1ef636a0-c5d2-4e47-ae26-7c7a3ce32610 · capability request: repo.read · on-demand.txt · /remote to review
+
+
+ [die-remote]
+
+ Remote 1ef636a0-c5d2-4e47-ae26-7c7a3ce32610 · capability request: shell.execute · rm -rf / · /remote to review
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Local capabilities · REMOTE_FIXTURE_CAPABILITY_PTY
+
+Request: repo.read
+
+on-demand.txt
+> Filter…
+→ Request: repo.read                                                              on-demand.txt
+  Request: shell.execute                                                          rm -rf /
+  Request: tool:git-diff                                                          tracked.txt
+  Choose a capability…                                                            Explicit read-only local repository
+↑↓ · PgUp/PgDn details · type · Enter · Esc
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+remote: menu snapshot · Refresh from remote to reload $0.000 C0.2% cache est ? capability-test-repo        fixture-model
+
+
+
+
