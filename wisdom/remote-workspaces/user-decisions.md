@@ -20,3 +20,7 @@ Saved answers read and used on 2026-09-27. These override earlier recommendation
 Broad repo access is not whole-machine permission or a security sandbox for arbitrary shell code. Do not silently expand paths or transfer credentials. Automatic integration must preserve local work and refuse ambiguous/conflicting results; define and test the safe case. Full offline text requires durable sync and explicit gap handling, not a renamed snapshot. Existing server-default profile and no automatic duplicate-run decisions stand.
 
 Next: extend the single integrated CLI path with durable paged transcript catchup and repo handoff/automatic-safe return. Capability execution follows in the same path. Actual Mac/provider verification still open. Values unchanged; user decisions narrow the design, existing safety and honest-state rules apply.
+
+## Production follow-up (2026-09-27)
+
+The [normal-conversation SSH slice](production-ssh-slice.md) now documents the production module, lasting worktrees, run instructions, verification, and remaining boundaries. Existing repo/capability/model decisions above still stand; this first slice explicitly selects an existing remote repo rather than transferring the current local workspace.
