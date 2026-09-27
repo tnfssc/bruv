@@ -133,3 +133,7 @@ SSH/native-question hardening passed both parent runners and is pushed through d
 ## Integrated CLI first slice
 
 Discovery synthesis committed at 3218622. Worker task_2711fe5c builds a single experimental CLI flow (connect, launch, status, sync, offline transcript, native answer), reusing fixture pieces where possible. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_2711fe5c; branch die/integrated-remote-cli-experience-first-s-2711fe5c; base 3218622. Require human-readable commands, honest stale/unknown states, full retained events or explicit gaps, and fake-provider Docker proof. Capability and repo return are later slices in this same experience. Parent reviews/reruns before integration and push. No production remote support or actual Mac proof implied.
+
+## User answers adopted; integrated flow continues
+
+All seven saved replies read, recorded in user-decisions.md, then resolved as used. Base cb80112. Durable sync worker task_373d107c owns integrated CLI/server sync in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_373d107c, branch die/durable-transcript-in-integrated-remote--373d107c. Repo helper worker task_c62d3f48 owns experiments/remote-cli-experience/repo/ in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_c62d3f48, branch die/safe-automatic-repo-result-integration-h-c62d3f48. No overlapping CLI/server edits. Parent must review, integrate helpers into same user path, test combined Docker/native flow and push validated checkpoints. Mac capability and real host/provider validation remain after these slices.
