@@ -1,3 +1,4 @@
+import { registerRemoteCancellationRuntime } from "./cancellation";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { openSync, closeSync, writeFileSync, fsyncSync, renameSync } from "node:fs";
 import { dirname } from "node:path";
@@ -9,6 +10,7 @@ import { QuestionService } from "../questions/service";
 export function registerRemoteRuntime(pi: ExtensionAPI): void {
   const path = process.env.DIE_REMOTE_RUNTIME_STATE;
   if (!path) return;
+  registerRemoteCancellationRuntime(pi);
   const save = (value: unknown) => {
     const tmp = path + "." + process.pid;
     const fd = openSync(tmp, "w", 0o600);

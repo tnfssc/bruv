@@ -10,28 +10,34 @@ export async function runRemoteControl(): Promise<void> {
     let bytes = 0;
     for await (const chunk of Bun.stdin.stream()) {
       bytes += chunk.byteLength;
-      if (bytes > 256 * 1024) throw new Error("Remote request exceeds 256 KiB");
+      if (bytes > 1024 * 1024) throw new Error("Remote request exceeds 1 MiB");
       chunks.push(chunk);
     }
     const text = Buffer.concat(chunks).toString("utf8");
     const request = JSON.parse(text) as RemoteRequest;
-    if (!request || typeof request !== "object" || !["hello", "launch", "sync", "answer"].includes(request.op))
-      throw new Error("Invalid request");
-    const allowed =
-      request.op === "hello"
-        ? ["op"]
-        : request.op === "launch"
-          ? ["op", "ownerId", "epoch", "taskId", "repoPath", "prompt", "model", "thinking"]
-          : request.op === "answer"
-            ? ["op", "ownerId", "epoch", "taskId", "id", "owner", "version", "text", "replyId"]
-            : ["op", "ownerId", "epoch", "taskId", "cursor"];
-    if (Object.keys(request).some((key) => !allowed.includes(key)))
-      throw new Error("Unsupported remote request field (per-task overrides are not supported)");
+    const fields: Record<string, string[]> = {
+      hello: [],
+      launch: ["repoPath", "prompt", "model", "thinking"],
+      sync: ["cursor"],
+      answer: ["id", "owner", "version", "text", "replyId"],
+      cancel: [],
+      "repository-upload": ["snapshot", "sha256", "total", "offset", "data"],
+      "repository-result": ["offset"],
+      "capability-grant": ["grant"],
+      "capability-revoke": ["grantId"],
+      "capability-reply": ["reply"],
+    };
+    if (!request || typeof request !== "object" || !Object.hasOwn(fields, request.op)) throw Error("Invalid request");
+    const allowed = ["op", ...(request.op === "hello" ? [] : ["ownerId", "epoch", "taskId"]), ...fields[request.op]!];
+    if (Object.keys(request).some((key) => !allowed.includes(key))) throw Error("Unsupported remote request field");
     response = await handleRemoteRequest(request);
   } catch (cause) {
     response = { code: "request_failed", error: String(cause) };
   }
-  process.stdout.write(JSON.stringify(response) + "\n");
+  // CLI exits explicitly after this promise: wait for the complete pipe write, not just enqueueing it.
+  await new Promise<void>((resolve, reject) =>
+    process.stdout.write(JSON.stringify(response) + "\n", (error) => (error ? reject(error) : resolve())),
+  );
 }
 export async function runRemoteOwner(taskId: string): Promise<void> {
   await runOwnerTask(taskId);

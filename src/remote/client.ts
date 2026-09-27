@@ -1,3 +1,4 @@
+import { serviceRemoteTask } from "./services";
 import { Database } from "bun:sqlite";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, chmod, open, stat } from "node:fs/promises";
@@ -23,11 +24,15 @@ export type RemoteTask = {
   prompt: string;
   overrides?: { model?: string; thinking?: string };
   cursor: number;
+  transcriptComplete?: boolean;
   events: RemoteEvent[];
   task?: Task;
   outcome: "unknown" | "accepted";
   lastSync?: string;
   lastError?: string;
+  repository?: unknown;
+  integrationError?: string;
+  cancelRequested?: boolean;
   replies?: Record<
     string,
     { id: string; owner: { sessionId: string; branchId: string }; version: number; text: string; replyId: string }
@@ -200,7 +205,7 @@ export class RemoteClient {
             t.host === c.host &&
             t.repoPath === repoPath &&
             t.prompt === prompt &&
-            (t.outcome === "unknown" || t.task?.state !== "done"),
+            (t.outcome === "unknown" || t.transcriptComplete === false || t.task?.state !== "done"),
         );
         if (uncertain)
           throw new Error(
@@ -263,6 +268,7 @@ export class RemoteClient {
         delete task.lastError;
         task.task = object(reply.task) as Task;
         task.outcome = "accepted";
+        task.transcriptComplete = false;
         await this.save(state);
         return task;
       } catch (error) {
@@ -278,7 +284,7 @@ export class RemoteClient {
       }
     });
   }
-  sync(taskId: string): Promise<RemoteTask> {
+  private syncRaw(taskId: string): Promise<RemoteTask> {
     return this.exclusive(async () => {
       const state = await this.read(),
         task = state.tasks[taskId],
@@ -321,6 +327,7 @@ export class RemoteClient {
           if (r.cursor !== seq || (r.hasMore && !events.length)) throw new Error("Invalid sync cursor");
           task.events.push(...events);
           task.cursor = seq;
+          task.transcriptComplete = !r.hasMore;
           // A stale owner snapshot must not erase an already observed terminal result.
           if (
             !task.task ||
@@ -341,6 +348,49 @@ export class RemoteClient {
         throw error;
       }
     });
+  }
+  async control(request: Record<string, unknown>, expected?: { ownerId: string; epoch: string }): Promise<unknown> {
+    return this.exclusive(async () => {
+      const state = await this.read(),
+        c = state.connection;
+      if (!c) throw Error("Use /remote connect first");
+      const task = typeof request.taskId === "string" ? state.tasks[request.taskId] : undefined;
+      const identity = expected ?? task ?? c.hello;
+      if (c.hello.ownerId !== identity.ownerId || c.hello.epoch !== identity.epoch || (task && task.host !== c.host))
+        throw Error("Remote owner changed; no request sent");
+      const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }));
+      if (current.ownerId !== identity.ownerId || current.epoch !== identity.epoch)
+        throw Error("Remote owner changed; outcome unknown");
+      return object(
+        await this.transport(c.host, c.diePath, { ...request, ownerId: identity.ownerId, epoch: identity.epoch }),
+      );
+    });
+  }
+  async updateTask(
+    taskId: string,
+    changes: Pick<RemoteTask, "repository" | "integrationError" | "cancelRequested">,
+  ): Promise<void> {
+    return this.exclusive(async () => {
+      const state = await this.read();
+      const task = state.tasks[taskId];
+      if (!task) throw Error("Unknown remote task");
+      Object.assign(task, changes);
+      await this.save(state);
+    });
+  }
+  async sync(taskId: string): Promise<RemoteTask> {
+    const task = await this.syncRaw(taskId);
+    try {
+      await serviceRemoteTask(this, task);
+    } catch (error) {
+      await this.updateTask(taskId, { integrationError: String(error) });
+    }
+    return this.transcript(taskId);
+  }
+  async cancel(taskId: string): Promise<RemoteTask> {
+    await this.updateTask(taskId, { cancelRequested: true });
+    await this.control({ op: "cancel", taskId });
+    return this.sync(taskId);
   }
   answer(
     taskId: string,
@@ -413,7 +463,11 @@ export class RemoteClient {
   async syncActive(limit = 10): Promise<void> {
     const state = await this.read();
     const active = Object.values(state.tasks).filter(
-      (t) => t.task?.state === "accepted" || t.task?.state === "running",
+      (t) =>
+        t.task?.state === "accepted" ||
+        t.task?.state === "running" ||
+        t.outcome === "unknown" ||
+        (!!t.integrationError && t.task?.state === "done"),
     );
     const batch = Array.from(
       { length: Math.min(active.length, Math.max(0, Math.min(10, limit))) },

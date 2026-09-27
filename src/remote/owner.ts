@@ -1,3 +1,6 @@
+import { repositoryRequest } from "./repository-wire";
+import { OwnerCapabilityMailbox } from "./capability-runtime";
+import { capabilityNeeds } from "./services";
 import { Database } from "bun:sqlite";
 import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
@@ -192,6 +195,45 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         },
       };
     }
+    if (req.op === "repository-upload" || req.op === "repository-result") {
+      const dir = location(req.taskId);
+      const state = existsSync(statePath(req.taskId)) ? saved(req.taskId).task.state : undefined;
+      return repositoryRequest(dir, req, state) as RemoteResponse;
+    }
+    if (
+      req.op === "cancel" ||
+      req.op === "capability-grant" ||
+      req.op === "capability-revoke" ||
+      req.op === "capability-reply"
+    ) {
+      const dir = location(req.taskId);
+      if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown taskId");
+      const value = saved(req.taskId),
+        box = new OwnerCapabilityMailbox(dir, req.taskId);
+      if (req.op === "cancel") {
+        if (["accepted", "running"].includes(value.task.state)) {
+          value.task.cancelRequested = true;
+          persist(req.taskId, value);
+          if (!existsSync(join(dir, "cancel.json")))
+            atomic(join(dir, "cancel.json"), { requestedAt: new Date().toISOString() });
+          await box.terminal("Cancellation requested");
+        }
+        return { task: value.task, ...events(req.taskId) };
+      }
+      if (!["accepted", "running"].includes(value.task.state) || value.task.cancelRequested)
+        return error("task_ended", "Task is terminal or cancellation requested");
+      if (req.op === "capability-grant") {
+        if (req.grant.taskId !== req.taskId) return error("grant_conflict", "Grant task mismatch");
+        await box.acceptGrant(req.grant);
+        return { accepted: true };
+      }
+      if (req.op === "capability-revoke") {
+        await box.revoke(req.grantId);
+        return { accepted: true };
+      }
+      if (req.reply.taskId !== req.taskId) return error("reply_conflict", "Capability task mismatch");
+      return { accepted: await box.reply(req.reply) };
+    }
     if (req.op === "launch") {
       location(req.taskId);
       if (existsSync(statePath(req.taskId))) {
@@ -292,6 +334,16 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         typeof req.id !== "string"
       )
         return error("invalid_answer", "Invalid targeted native reply");
+      const receipt = join(location(req.taskId), "answers", req.replyId + ".json");
+      if (existsSync(receipt)) {
+        const prior = read<{ request: typeof req; status: "delivered" | "uncertain" }>(receipt);
+        if (JSON.stringify(prior.request) !== JSON.stringify(req))
+          return error("answer_conflict", "Reply ID reused with different intent");
+        return {
+          task: { ...value.task, reply: { replyId: req.replyId, status: prior.status } },
+          ...events(req.taskId),
+        };
+      }
       const questions = value.task.questions;
       if (
         !Array.isArray(questions) ||
@@ -310,13 +362,16 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
       const path = join(location(req.taskId), "answer.json");
       if (existsSync(path)) {
         const prior = read<typeof req>(path);
-        if (JSON.stringify({ ...prior, dispatch: undefined }) !== JSON.stringify(req))
-          return error("answer_conflict", "Reply already queued or uncertain; do not replace it");
-      } else {
-        atomic(path, req); // Durable before acknowledging or writing to the native RPC process.
-        value.task.reply = { replyId: req.replyId, status: "uncertain" };
-        persist(req.taskId, value);
+        if (prior.replyId !== req.replyId && value.task.reply?.status !== "delivered")
+          return error("answer_conflict", "Previous reply outcome remains uncertain");
+        if (prior.replyId === req.replyId && JSON.stringify({ ...prior, dispatch: undefined }) !== JSON.stringify(req))
+          return error("answer_conflict", "Reply intent conflict");
       }
+      mkdirSync(dirname(receipt), { recursive: true, mode: 0o700 });
+      atomic(receipt, { request: req, status: "uncertain" });
+      atomic(path, req);
+      value.task.reply = { replyId: req.replyId, status: "uncertain" };
+      persist(req.taskId, value);
       return { task: value.task, ...events(req.taskId) };
     }
     if (req.op === "sync") {
@@ -341,6 +396,11 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         }
       }
       try {
+        const box = new OwnerCapabilityMailbox(location(req.taskId), req.taskId);
+        if (["accepted", "running"].includes(value.task.state) && !value.task.cancelRequested) {
+          value.task.capabilities = await box.pending();
+          value.task.capabilityNeeds = capabilityNeeds(location(req.taskId));
+        } else await box.terminal("Task " + value.task.state);
         return { task: value.task, ...events(req.taskId, req.cursor) };
       } catch (e) {
         return error("journal_gap", String(e));
@@ -355,7 +415,12 @@ async function publishTerminal(taskId: string, result: Saved) {
     const current = saved(taskId);
     // A terminal record is immutable; do not replace an earlier uncertainty with a stale snapshot.
     if (current.task.state !== "accepted" && current.task.state !== "running") return;
-    current.task = { ...result.task, reply: current.task.reply ?? result.task.reply };
+    current.task = {
+      ...result.task,
+      cancelRequested: current.task.cancelRequested,
+      reply: current.task.reply ?? result.task.reply,
+    };
+    await new OwnerCapabilityMailbox(location(taskId), taskId).terminal("Task " + result.task.state);
     persist(taskId, current);
   });
 }
@@ -446,7 +511,32 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     const checkpoints: Promise<unknown>[] = [];
     // A single durable reply slot. Mark dispatching before sending: after a crash the
     // owner must never replay a possibly accepted command into a second session.
+    let cancellationAt = 0;
+    let cancelled = false;
     const answerTimer = setInterval(() => {
+      if (existsSync(join(location(taskId), "cancel.json")) && child?.stdin?.writable) {
+        if (!cancellationAt) {
+          cancellationAt = Date.now();
+          record({ type: "cancel_requested" });
+          child.stdin.write(
+            JSON.stringify({ id: "remote-cancel", type: "prompt", message: "/die-remote-cancel" }) + "\n",
+          );
+        }
+        const reportFile = join(location(taskId), "cancel-report.json");
+        if (existsSync(reportFile)) {
+          const report = read<{ settled?: boolean }>(reportFile);
+          cancelled = report.settled === true;
+          if (!cancelled) failure = "Cancellation acknowledged but native work exit is unconfirmed";
+          record({ type: "cancel_report", report });
+          stopChild(true);
+          return;
+        }
+        if (Date.now() - cancellationAt > 20_000) {
+          failure = "Cancellation outcome unknown: native checkpoint unavailable";
+          stopChild();
+          return;
+        }
+      }
       if (failure || ended || !promptSent || !child?.stdin?.writable) return;
       const path = join(location(taskId), "answer.json");
       if (!existsSync(path)) return;
@@ -523,6 +613,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         if (event?.type === "response" && typeof event.id === "string" && event.id.startsWith("remote-answer-")) {
           const request = read<Extract<RemoteRequest, { op: "answer" }>>(join(location(taskId), "answer.json"));
           const ledger = join(location(taskId), "session.jsonl.questions.json");
+          if (event.id !== "remote-answer-" + request.replyId) continue;
           let delivered = false;
           try {
             delivered =
@@ -545,6 +636,11 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
               const current = saved(taskId);
               if (current.task.state !== "running") return;
               current.task.reply = { replyId: request.replyId, status: delivered ? "delivered" : "uncertain" };
+              const { dispatch: _dispatch, ...accepted } = request as typeof request & { dispatch?: string };
+              atomic(join(location(taskId), "answers", request.replyId + ".json"), {
+                request: accepted,
+                status: current.task.reply.status,
+              });
               persist(taskId, current);
             }).catch((e) => {
               failure = "Native reply result persistence failed: " + String(e);
@@ -562,6 +658,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
           modelError = undefined;
         }
         if (event?.type === "agent_settled") {
+          if (existsSync(join(location(taskId), "cancel.json"))) continue;
           // The normal extension checkpoint runs before RPC agent_settled. A yielded
           // model turn must not close the CLI and kill its still-running jobs.
           try {
@@ -638,8 +735,11 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       read<Array<{ status: string; delivery?: string }>>(ledger).some(
         (q) => q.status === "pending" || (q.status === "answered" && q.delivery !== "delivered"),
       );
-    initial.task.state =
-      code === 0 && promptSent && ended && !failure && !modelError && !pendingQuestion ? "done" : "unknown";
+    initial.task.state = cancelled
+      ? "cancelled"
+      : code === 0 && promptSent && ended && !failure && !modelError && !pendingQuestion && !cancellationAt
+        ? "done"
+        : "unknown";
     if (initial.task.state === "unknown")
       initial.task.error =
         failure ||

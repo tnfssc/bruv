@@ -18,21 +18,25 @@ const provider = Bun.serve({
     if (request.method !== "POST" || !new URL(request.url).pathname.endsWith("/chat/completions"))
       return new Response("not found", { status: 404 });
     const body = (await request.json()) as { messages: Array<{ role: string; tool_call_id?: string }> };
-    const answering = body.messages.some((m) => m.role === "user" &&
-      JSON.stringify(m).includes("REMOTE_FIXTURE_SEND_NATIVE_ANSWER"));
-    const callId = answering ? "fixture-remote-answer" : "fixture-remote-launch";
-    const question = answering
-      ? Object.entries(state().tasks).find(([, task]) => task.task?.questions?.some((q) => q.text === "REMOTE_FIXTURE_NATIVE_QUESTION"))
-      : undefined;
-    const native = question?.[1].task?.questions?.find((q) => q.text === "REMOTE_FIXTURE_NATIVE_QUESTION");
-    const code = answering
-      ? `console.log(await remote.answer(${JSON.stringify(question?.[0])}, ${JSON.stringify({ id: native?.id, owner: native?.owner, version: native?.version, text: "REMOTE_FIXTURE_ANSWER_ACCEPTED" })}))`
-      : 'console.log(await remote.launch({repoPath: "/fixture/repo", prompt: "Inspect the repository with execute and say REMOTE_FIXTURE_FINISHED_ON_OWNER"}))';
+    const callId = "fixture-remote-launch";
+    const code =
+      'console.log(await remote.launch({repoPath: "/fixture/repo", prompt: "Inspect the repository with execute and say REMOTE_FIXTURE_FINISHED_ON_OWNER"}))';
     const response = body.messages.some((m) => m.role === "tool" && m.tool_call_id === callId)
       ? { role: "assistant", content: "LOCAL_FIXTURE_ACK" }
-      : { role: "assistant", tool_calls: [{ index: 0, id: callId, type: "function", function: {
-        name: "execute", arguments: JSON.stringify({ code }),
-      } }] };
+      : {
+          role: "assistant",
+          tool_calls: [
+            {
+              index: 0,
+              id: callId,
+              type: "function",
+              function: {
+                name: "execute",
+                arguments: JSON.stringify({ code }),
+              },
+            },
+          ],
+        };
     localCalls++;
     const event = (delta: object, finish_reason: string | null) => ({
       id: "local-fixture",
@@ -71,7 +75,7 @@ const state = () =>
       {
         cursor: number;
         events: Array<{ event: unknown }>;
-        task?: { state: string; questions?: Array<{ text: string; owner: unknown; version: number }> };
+        task?: { state: string; questions?: Array<{ id: string; text: string; owner: unknown; version: number }> };
       }
     >;
   };
@@ -191,10 +195,11 @@ try {
   reconnect.send("/remote launch /fixture/repo REMOTE_FIXTURE_QUESTION");
   await reconnect.wait(() => Object.keys(state().tasks).length === 2, "native question task accepted");
   const questionId = Object.keys(state().tasks).find((id) => id !== taskId)!;
-  for (let i = 0; i < 100 && !state().tasks[questionId]!.task?.questions?.length; i++) {
-    reconnect.send("/remote sync " + questionId);
-    await Bun.sleep(100);
-  }
+  await reconnect.wait(
+    () => !!state().tasks[questionId]!.task?.questions?.length,
+    "automatic pending native question refresh",
+    30000,
+  );
   const questionTask = state().tasks[questionId]!.task;
   if (!questionTask?.questions?.length)
     console.error(
@@ -213,17 +218,23 @@ try {
     questionTask?.questions?.[0]?.owner && questionTask.questions[0].version > 0,
     "native question identity/version absent",
   );
-  reconnect.send("REMOTE_FIXTURE_SEND_NATIVE_ANSWER");
-  await reconnect.wait(
-    () => reconnect.events.some((e) => e.type === "tool_execution_end" && e.toolName === "execute" && !e.isError &&
-      JSON.stringify(e).includes("REMOTE_FIXTURE_ANSWER_ACCEPTED")),
-    "native targeted answer from client execute", 30000,
+  reconnect.send(
+    "/remote answer " + questionId + " " + questionTask!.questions![0]!.id + " REMOTE_FIXTURE_ANSWER_ACCEPTED",
   );
-  await reconnect.wait(() => ssh("test -f /tmp/fixture-native-answer-finished").status === 0,
-    "native answer reached owner model", 30000);
-  await reconnect.wait(() => state().tasks[questionId]!.task?.state === "done", "answered remote task completion", 30000);
-  assert(JSON.stringify(state().tasks[questionId]!.events).includes("REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED"),
-    "answered owner conversation did not continue to final response");
+  await reconnect.wait(
+    () => ssh("test -f /tmp/fixture-native-answer-finished").status === 0,
+    "native answer reached owner model",
+    30000,
+  );
+  await reconnect.wait(
+    () => state().tasks[questionId]!.task?.state === "done",
+    "answered remote task completion",
+    30000,
+  );
+  assert(
+    JSON.stringify(state().tasks[questionId]!.events).includes("REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED"),
+    "answered owner conversation did not continue to final response",
+  );
   reconnect.child.kill("SIGKILL");
   const callsBeforeOffline = localCalls;
   const stopped = spawnSync("docker", ["stop", container], { encoding: "utf8", timeout: 15000 });

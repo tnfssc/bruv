@@ -8,7 +8,8 @@ import { OwnerCapabilityMailbox, ClientCapabilityStore } from "../src/remote/cap
 
 const fixture = async () => {
   const root = await mkdtemp(join(tmpdir(), "die-capability-"));
-  const repo = join(root, "repo"); await mkdir(repo);
+  const repo = join(root, "repo");
+  await mkdir(repo);
   const owner = new OwnerCapabilityMailbox(join(root, "tasks", "task1"), "task1");
   const client = new ClientCapabilityStore(join(root, "local-grants"));
   return { root, repo, owner, client, clean: () => rm(root, { recursive: true, force: true }) };
@@ -30,7 +31,9 @@ test("offline request survives reload, explicitly granted read and idempotent fe
     expect(await again.pending()).toEqual([]);
     expect(again.reply({ ...reply, value: "changed" })).rejects.toThrow("conflict");
     expect(again.request(grant.id, "repo.read", "different", request.id)).rejects.toThrow("conflict");
-  } finally { await f.clean(); }
+  } finally {
+    await f.clean();
+  }
 });
 test("offline execute remains pending; abort, deadline, revoke and terminal fence", async () => {
   const f = await fixture();
@@ -39,21 +42,26 @@ test("offline execute remains pending; abort, deadline, revoke and terminal fenc
     await f.owner.acceptGrant(grant);
     const ac = new AbortController();
     const promise = f.owner.execute(grant.id, "repo.read", "README.md", { signal: ac.signal });
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
     expect((await f.owner.pending()).length).toBe(1);
-    ac.abort(); await expect(promise).rejects.toThrow("cancelled");
+    ac.abort();
+    await expect(promise).rejects.toThrow("cancelled");
     expect(await f.owner.pending()).toEqual([]);
     const request = await f.owner.request(grant.id, "repo.read", "README.md");
     await expect(f.owner.awaitReply(request, { deadlineMs: 1 })).rejects.toThrow("deadline");
     expect(await f.owner.pending()).toEqual([]);
     const revokeRequest = await f.owner.request(grant.id, "repo.read", "README.md");
     await f.owner.revoke(grant.id);
-    expect(await f.owner.reply({ requestId: request.id, grantId: grant.id, taskId: "task1", value: "fake" })).toBe(false);
+    expect(await f.owner.reply({ requestId: request.id, grantId: grant.id, taskId: "task1", value: "fake" })).toBe(
+      false,
+    );
     expect(f.owner.awaitReply(revokeRequest)).rejects.toThrow("revoked");
     await f.owner.terminal();
     expect(await f.owner.pending()).toEqual([]);
     expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow();
-  } finally { await f.clean(); }
+  } finally {
+    await f.clean();
+  }
 });
 test("sensitive paths denied, explicit skills and read-only git tools", async () => {
   const f = await fixture();
@@ -66,8 +74,19 @@ test("sensitive paths denied, explicit skills and read-only git tools", async ()
     await writeFile(join(f.repo, ".agents", "skills", "review", "SKILL.md"), "review rules");
     await writeFile(join(f.repo, ".env"), "PASSWORD=secret");
     await writeFile(join(f.repo, "credentials.json"), "secret");
-    const grant = await f.client.grant("task1", f.repo, ["repo.read", "skill:review", "tool:git-status", "tool:git-diff"]);
-    const req = (kind: typeof grant.kinds[number], input: string) => ({ id: randomUUID(), grantId: grant.id, taskId: "task1", kind, input });
+    const grant = await f.client.grant("task1", f.repo, [
+      "repo.read",
+      "skill:review",
+      "tool:git-status",
+      "tool:git-diff",
+    ]);
+    const req = (kind: (typeof grant.kinds)[number], input: string) => ({
+      id: randomUUID(),
+      grantId: grant.id,
+      taskId: "task1",
+      kind,
+      input,
+    });
     expect((await f.client.serve(req("repo.read", ".env"))).error).toContain("denied");
     expect((await f.client.serve(req("repo.read", "credentials.json"))).error).toContain("denied");
     expect((await f.client.serve(req("repo.read", "../x"))).error).toContain("denied");
@@ -79,5 +98,7 @@ test("sensitive paths denied, explicit skills and read-only git tools", async ()
     expect((await f.client.serve(req("tool:git-status", "extra"))).error).toContain("empty");
     await f.client.revoke(grant.id);
     expect(f.client.serve(req("skill:review", ""))).rejects.toThrow("grant");
-  } finally { await f.clean(); }
+  } finally {
+    await f.clean();
+  }
 });

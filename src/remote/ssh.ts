@@ -35,7 +35,9 @@ export const sshTransport: Transport = async (host, diePath, request) => {
       ],
       { stdio: ["pipe", "pipe", "pipe"] },
     );
-    let out = "", err = "", bytes = 0;
+    let out = "",
+      err = "",
+      bytes = 0;
     let failure: Error | undefined;
     let forceTimer: ReturnType<typeof setTimeout> | undefined;
     const abort = (message: string) => {
@@ -46,7 +48,10 @@ export const sshTransport: Transport = async (host, diePath, request) => {
       forceTimer.unref();
     };
     const timer = setTimeout(() => abort("SSH remote control timed out; outcome unknown"), 30_000);
-    const cleanup = () => { clearTimeout(timer); if (forceTimer) clearTimeout(forceTimer); };
+    const cleanup = () => {
+      clearTimeout(timer);
+      if (forceTimer) clearTimeout(forceTimer);
+    };
     child.stdout.setEncoding("utf8");
     child.stderr.setEncoding("utf8");
     child.stdout.on("data", (s: string) => {

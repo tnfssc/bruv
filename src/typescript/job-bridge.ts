@@ -99,6 +99,9 @@ export interface ExecuteJobGlobals {
   remote: {
     status(): Promise<unknown>;
     launch(input: Omit<Extract<RemoteOperation, { op: "launch" }>, "op">): Promise<unknown>;
+    launchRepository(input: Omit<Extract<RemoteOperation, { op: "launchRepository" }>, "op">): Promise<unknown>;
+    requestCapability(input: Omit<Extract<RemoteOperation, { op: "requestCapability" }>, "op">): Promise<unknown>;
+    cancel(taskId: string): Promise<unknown>;
     sync(taskId: string): Promise<unknown>;
     transcript(taskId: string, offset?: number): Promise<unknown>;
   };
@@ -343,8 +346,10 @@ export function installJobGlobals(socket?: Duplex): { finish(): Promise<void> } 
     },
     remote: {
       status: async () => request("remote", { op: "status" }),
-      launch: async (input) =>
-        request("remote", { ...input, op: "launch" }),
+      launch: async (input) => request("remote", { ...input, op: "launch" }),
+      launchRepository: async (input) => request("remote", { ...input, op: "launchRepository" }),
+      requestCapability: async (input) => request("remote", { ...input, op: "requestCapability" }),
+      cancel: async (taskId) => request("remote", { op: "cancel", taskId }),
       sync: async (taskId) => request("remote", { op: "sync", taskId }),
       transcript: async (taskId, offset) => request("remote", { op: "transcript", taskId, offset }),
     },

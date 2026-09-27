@@ -1,6 +1,10 @@
+import { sensitiveRepoPath } from "./security";
 /** Git repository handoff. The caller owns task IDs, transport, artifact retention and serialization. */
 import { createHash } from "node:crypto";
 import {
+  constants,
+  fstatSync,
+  readSync,
   closeSync,
   chmodSync,
   mkdirSync,
@@ -18,18 +22,28 @@ const text = (b: Buffer) => b.toString("utf8").trim();
 const names = (b: Buffer) => b.toString("utf8").split("\0").filter(Boolean);
 const MAX = 128 * 1024 * 1024;
 function git(cwd: string, args: string[], input?: Buffer, allowedFailure = false): Buffer {
-  const r = Bun.spawnSync(["git", "-C", cwd, ...args], {
+  const r = Bun.spawnSync(["git", "-c", "core.hooksPath=/dev/null", "-c", "core.fsmonitor=false", "-C", cwd, ...args], {
     stdin: input ?? undefined,
     stdout: "pipe",
     stderr: "pipe",
     maxBuffer: MAX,
-    env: { ...process.env, GIT_NO_REPLACE_OBJECTS: "1", GIT_OPTIONAL_LOCKS: "0", GIT_TERMINAL_PROMPT: "0" },
+    timeout: 60_000,
+    env: {
+      ...process.env,
+      GIT_NO_REPLACE_OBJECTS: "1",
+      GIT_OPTIONAL_LOCKS: "0",
+      GIT_TERMINAL_PROMPT: "0",
+      GIT_CONFIG_NOSYSTEM: "1",
+      GIT_CONFIG_GLOBAL: "/dev/null",
+    },
   });
   if (r.exitCode !== 0 && !allowedFailure)
     throw new Error("Git " + args[0] + " failed: " + text(Buffer.from(r.stderr)).slice(0, 1000));
   return r.exitCode === 0 ? Buffer.from(r.stdout) : Buffer.alloc(0);
 }
 function assertRoot(root: string) {
+  if (git(root, ["config", "--local", "--get-regexp", "^filter\\."], undefined, true).length)
+    throw Error("repository clean/smudge filters unsupported for automatic handoff");
   if (text(git(root, ["rev-parse", "--show-toplevel"])) !== root) throw Error("repository must be its worktree root");
   if (text(git(root, ["config", "--bool", "--get", "core.sparseCheckout"], undefined, true)) === "true")
     throw Error("sparse checkout unsupported");
@@ -46,7 +60,16 @@ function fingerprint(root: string): string {
   assertRoot(root);
   const head = git(root, ["rev-parse", "HEAD"]);
   const index = git(root, ["ls-files", "--stage", "-z"]);
-  const work = git(root, ["diff", "--no-ext-diff", "--binary", "--no-renames", "--full-index", "HEAD", "--"]);
+  const work = git(root, [
+    "diff",
+    "--no-ext-diff",
+    "--no-textconv",
+    "--binary",
+    "--no-renames",
+    "--full-index",
+    "HEAD",
+    "--",
+  ]);
   return hash(Buffer.concat([head, index, work]));
 }
 function untracked(root: string) {
@@ -68,6 +91,24 @@ function regular(root: string, name: string): boolean {
     return false;
   }
 }
+function snapshotFile(root: string, name: string): Buffer {
+  const fd = openSync(join(root, name), constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+  try {
+    const st = fstatSync(fd);
+    if (!st.isFile() || st.size > MAX) throw Error("Selected untracked file exceeds snapshot bound");
+    const data = Buffer.alloc(st.size + 1);
+    let n = 0;
+    while (n < data.length) {
+      const count = readSync(fd, data, n, data.length - n, null);
+      if (!count) break;
+      n += count;
+    }
+    if (n !== st.size) throw Error("Selected untracked file changed during capture");
+    return data.subarray(0, n);
+  } finally {
+    closeSync(fd);
+  }
+}
 export interface RepositorySnapshot {
   version: 1;
   base: string;
@@ -75,7 +116,7 @@ export interface RepositorySnapshot {
   snapshot: string;
   selectedUntracked: string[];
   omittedUntracked: string[];
-  /** Bundle includes reachable history, including old secrets. Review before sending. */
+  /** Bundle contains an orphan snapshot, not local commit history. */
   bundle: string;
   manifest: string;
 }
@@ -92,39 +133,50 @@ export function captureRepository(
   assertRoot(root);
   const available = untracked(root);
   const selected = [...approvedUntracked];
+  const sensitive = [...names(git(root, ["ls-files", "-z"])), ...selected].filter(sensitiveRepoPath);
+  if (sensitive.length)
+    throw Error(
+      "Repository contains credential/config paths that are not automatically transferred: " + sensitive.join(", "),
+    );
   if (new Set(selected).size !== selected.length || selected.some((p) => !available.includes(p) || !regular(root, p)))
     throw Error("ask before transferring untracked files; approval must name exact regular paths");
-  const hashes = selected.map((p) => hash(readFileSync(join(root, p))));
+  if (selected.length > 256 || selected.reduce((n, p) => n + statSync(join(root, p)).size, 0) > MAX)
+    throw Error("Selected untracked files exceed capture limit");
+  const hashes = selected.map((p) => hash(snapshotFile(root, p)));
   const base = fingerprint(root);
   mkdirSync(dir, { mode: 0o700 }); // refuse existing artifact directory
   const bundle = join(dir, "input.bundle");
   git(root, ["bundle", "create", bundle, "HEAD"]);
   const checkout = join(dir, "snapshot-checkout");
   git(dir, ["clone", "-q", bundle, checkout]);
-  const diff = git(root, ["diff", "--no-ext-diff", "--binary", "--full-index", "HEAD", "--"]);
+  const diff = git(root, ["diff", "--no-ext-diff", "--no-textconv", "--binary", "--full-index", "HEAD", "--"]);
   if (diff.length) git(checkout, ["apply", "--index", "--binary", "-"], diff);
   for (const p of selected) {
     const target = join(checkout, p);
     mkdirSync(dirname(target), { recursive: true });
-    writeFileSync(target, readFileSync(join(root, p)), { mode: 0o600 });
+    writeFileSync(target, snapshotFile(root, p), { mode: 0o600 });
     chmodSync(target, statSync(join(root, p)).mode & 0o777);
     git(checkout, ["add", "--", p]);
   }
-  git(checkout, [
-    "-c",
-    "user.name=Remote snapshot",
-    "-c",
-    "user.email=snapshot@example.invalid",
-    "commit",
-    "-q",
-    "--allow-empty",
-    "-m",
-    "Immutable task input",
-  ]);
+  // Transfer only an orphan snapshot, never reachable local history or deleted secrets.
+  const tree = text(git(checkout, ["write-tree"]));
+  const commit = text(
+    git(checkout, [
+      "-c",
+      "user.name=Remote snapshot",
+      "-c",
+      "user.email=snapshot@example.invalid",
+      "commit-tree",
+      tree,
+      "-m",
+      "Immutable task input",
+    ]),
+  );
+  git(checkout, ["update-ref", "HEAD", commit]);
   if (
     fingerprint(root) !== base ||
     JSON.stringify(untracked(root)) !== JSON.stringify(available) ||
-    selected.some((p, i) => !regular(root, p) || hash(readFileSync(join(root, p))) !== hashes[i])
+    selected.some((p, i) => !regular(root, p) || hash(snapshotFile(root, p)) !== hashes[i])
   )
     throw Error("repository changed during capture; discard artifacts");
   // The bundle used by the transport must include the synthetic snapshot commit.
@@ -155,7 +207,16 @@ export function collectRepositoryResult(checkout: string, snapshot: string, patc
   assertRoot(root);
   if (!/^[a-f0-9]{40,64}$/.test(snapshot) || !text(git(root, ["merge-base", snapshot, "HEAD"])).startsWith(snapshot))
     throw Error("remote checkout no longer descends from snapshot");
-  const patch = git(root, ["diff", "--no-ext-diff", "--binary", "--full-index", "--no-renames", snapshot, "--"]);
+  const patch = git(root, [
+    "diff",
+    "--no-ext-diff",
+    "--no-textconv",
+    "--binary",
+    "--full-index",
+    "--no-renames",
+    snapshot,
+    "--",
+  ]);
   writeFileSync(patchPath, patch, { flag: "wx", mode: 0o600 });
   return { snapshot, patch: patchPath, sha256: hash(patch), untracked: untracked(root) };
 }

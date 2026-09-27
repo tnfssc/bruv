@@ -18,10 +18,18 @@ test("remote uses execute bridge while human output persists in conversation", a
     registerCommand: (name: string, command: any) => commands.set(name, command),
     sendMessage: (message: any) => messages.push(message),
   };
-  remoteExtension(pi as any, { status: async () => ({ tasks: {} }) } as any);
+  remoteExtension(
+    pi as any,
+    { path: "/nonexistent/remote-test/state.json", status: async () => ({ tasks: {} }) } as any,
+  );
   expect(active).toEqual(["execute"]);
   expect(tools).toEqual([]);
-  expect(await createRemoteOperations({ status: async () => ({ tasks: {} }) } as any)({ op: "status" })).toMatchObject({
+  expect(
+    await createRemoteOperations({
+      path: "/nonexistent/remote-test/state.json",
+      status: async () => ({ tasks: {} }),
+    } as any)({ op: "status" }),
+  ).toMatchObject({
     cached: true,
     tasks: [],
   });
@@ -55,6 +63,7 @@ test("accepted retry syncs; uncertain retry retains same launch ID", async () =>
     },
   };
   const client = {
+    path: "/nonexistent/remote-test/state.json",
     transcript: async () => ({ ...task, outcome }),
     sync: async (id: string) => {
       calls.push("sync:" + id);
@@ -79,6 +88,7 @@ test("execute remote methods use configured client, never accept a host", async 
   const calls: unknown[][] = [];
   const pi = { on() {}, registerCommand() {}, sendMessage() {} };
   const client = {
+    path: "/nonexistent/remote-test/state.json",
     launch: async (...args: unknown[]) => {
       calls.push(args);
       return { events: [], taskId: "id" };
