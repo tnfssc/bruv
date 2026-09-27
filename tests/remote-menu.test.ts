@@ -134,3 +134,10 @@ test("SSH connection discovery explains usernames and aliases", () => {
     "user@host or configured SSH alias",
   );
 });
+
+test("fully typed remote commands submit instead of reselecting identical autocomplete", () => {
+  expect(remoteCompletions("status", state)).toBeNull();
+  expect(remoteCompletions("sync task-a", state)).toBeNull();
+  expect(remoteCompletions("transcript task-a", state)).toBeNull();
+  expect(remoteCompletions("stat", state)?.[0]?.value).toBe("status");
+});
