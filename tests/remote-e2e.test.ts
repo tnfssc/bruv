@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 // Deliberately opt-in: Docker/SSH Linux fixture runs the built normal CLI, not source mocks.
 // Build first, then DIE_REMOTE_E2E=1 bun test tests/remote-e2e.test.ts.
 test.skipIf(process.platform !== "linux" || process.env.DIE_REMOTE_E2E !== "1")(
-  "normal CLI SSH owner continues after RPC client disconnect and syncs transcript",
+  "normal CLI Docker/SSH fake-provider owner continues, answers native question, and reconnects",
   async () => {
     const runner = resolve(import.meta.dir, "../scripts/remote-e2e.sh");
     const child = Bun.spawn(["bash", runner], {
@@ -21,5 +21,5 @@ test.skipIf(process.platform !== "linux" || process.env.DIE_REMOTE_E2E !== "1")(
     expect(code, stderr + "\n" + stdout).toBe(0);
     expect(stdout).toContain("PASS normal CLI RPC agent remote execute helper");
   },
-  240_000,
+  300_000,
 );

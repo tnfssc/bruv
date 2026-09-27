@@ -12,6 +12,9 @@ const server = Bun.serve({
     const questionTask = (body.messages ?? []).some(
       (m) => m.role === "user" && JSON.stringify(m.content).includes("REMOTE_FIXTURE_QUESTION"),
     );
+    const answered = questionTask && (body.messages ?? []).some(
+      (m) => JSON.stringify(m.content).includes("REMOTE_FIXTURE_ANSWER_ACCEPTED"),
+    );
     const calls = (body.messages ?? []).filter(
       (item) => item.role === "tool" && item.tool_call_id === "fixture-remote-execute",
     );
@@ -19,9 +22,12 @@ const server = Bun.serve({
       "/tmp/fixture-owner-provider-requests",
       JSON.stringify({ calls: calls.length, at: Date.now() }) + "\n",
     );
+    if (answered) writeFileSync("/tmp/fixture-native-answer-finished", "yes");
     const finished = !questionTask && existsSync("/tmp/fixture-owner-job-finished");
     if (finished) writeFileSync("/tmp/fixture-owner-finished-model", "yes");
-    const delta = calls.length
+    const delta = answered
+      ? { role: "assistant", content: "REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED" }
+      : calls.length
       ? {
           role: "assistant",
           content: questionTask
@@ -55,7 +61,7 @@ const server = Bun.serve({
       model: "fixture-model",
       choices: [{ index: 0, delta, finish_reason }],
     });
-    const events = [emit(delta, null), emit({}, calls.length ? "stop" : "tool_calls")];
+    const events = [emit(delta, null), emit({}, answered || calls.length ? "stop" : "tool_calls")];
     return new Response(events.map((e) => "data: " + JSON.stringify(e) + "\n\n").join("") + "data: [DONE]\n\n", {
       headers: { "content-type": "text/event-stream" },
     });

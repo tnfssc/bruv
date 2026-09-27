@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Linux-only real CLI / SSH / owner / fake-provider test. No experiment dependencies.
+# Linux-only real CLI / SSH / owner / explicitly fake provider test. No external SSH host or real provider.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 for tool in docker ssh ssh-keygen timeout python3; do command -v "$tool" >/dev/null || { echo "missing $tool" >&2; exit 1; }; done
