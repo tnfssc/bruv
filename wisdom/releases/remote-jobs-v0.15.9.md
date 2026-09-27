@@ -5,3 +5,7 @@ User reported raw polling JSON and no coordinator response. Combined quiet rende
 Review evidence and retained frames in wisdom/remote-workspaces/combined-ui-jobs-validation.md. Job dispatch crash acknowledgment limits in jobs-integration.md. No Mac/real-provider/exactly-once claim. Values reviewed; existing human UX, ownership, bounded-use and whole-path checks apply. No new value. Config discovery remains parked. No local install.
 
 Preparing v0.15.9. Await hosted success then verify stable release assets and SOURCE.txt before publication claim.
+
+Pushed1f249df; workflow https://github.com/tnfssc/die/actions/runs/36344930624 running. Watch /tmp/die-v0159-release-watch.log. Await gates and asset verification.
+
+Published v0.15.9: workflow36344930624 succeeded. Stable non-draft release verified with all12 assets; SOURCE.txt commit1f249df13caab5671389ff5bbbacc6bd75f85bf4. https://github.com/tnfssc/die/releases/tag/v0.15.9 . No local install performed; remote Docker evidence and crash acknowledgment limits remain as documented. Values unchanged.
