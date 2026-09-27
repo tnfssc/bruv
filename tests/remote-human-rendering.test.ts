@@ -204,3 +204,25 @@ test("human capability outcomes are readable scoped receipts, not protocol JSON"
     "Local capability revoked · g\nOwner acknowledged revocation.",
   );
 });
+
+test("known lifecycle message envelopes remain readable without losing new event fields", () => {
+  const input = page([
+    {
+      type: "agent_end",
+      messages: [{ role: "assistant", content: [{ type: "text", text: "Finished" }], usage: { internal: 7 } }],
+      willRetry: false,
+      future: "kept",
+    },
+    {
+      type: "turn_end",
+      message: { role: "assistant", content: "Turn finished" },
+      toolResults: [{ role: "toolResult", toolName: "shell", content: "ok" }],
+    },
+  ]);
+  const output = renderHuman(input, "transcript");
+  for (const text of ["Finished", "Turn finished", "Tool result shell", "kept", "willRetry"])
+    expect(output).toContain(text);
+  expect(output).not.toContain('"role":"assistant"');
+  expect(output).not.toContain('"usage"');
+  expect(renderHuman(input, "transcript-raw")).toContain('"usage"');
+});

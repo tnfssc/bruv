@@ -13,10 +13,30 @@ mkdirSync(agentDir, { recursive: true });
 const provider = Bun.serve({
   hostname: "127.0.0.1",
   port: 0,
-  fetch: () => new Response([
-    { id: "fixture", object: "chat.completion.chunk", created: 1, model: "fixture-model", choices: [{ index: 0, delta: { role: "assistant", content: "FIXTURE_COORDINATOR_ACK" }, finish_reason: null }] },
-    { id: "fixture", object: "chat.completion.chunk", created: 1, model: "fixture-model", choices: [{ index: 0, delta: {}, finish_reason: "stop" }] },
-  ].map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n").join("") + "data: [DONE]\n\n", { headers: { "content-type": "text/event-stream" } }),
+  fetch: () =>
+    new Response(
+      [
+        {
+          id: "fixture",
+          object: "chat.completion.chunk",
+          created: 1,
+          model: "fixture-model",
+          choices: [
+            { index: 0, delta: { role: "assistant", content: "FIXTURE_COORDINATOR_ACK" }, finish_reason: null },
+          ],
+        },
+        {
+          id: "fixture",
+          object: "chat.completion.chunk",
+          created: 1,
+          model: "fixture-model",
+          choices: [{ index: 0, delta: {}, finish_reason: "stop" }],
+        },
+      ]
+        .map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n")
+        .join("") + "data: [DONE]\n\n",
+      { headers: { "content-type": "text/event-stream" } },
+    ),
 });
 writeFileSync(
   join(agentDir, "models.json"),
@@ -236,9 +256,19 @@ try {
   assert.equal(state().tasks[a].jobSessionFile, oldSession);
   assert.equal(state().tasks[b].jobSessionFile, newSession);
   const newHistory = tmux("capture-pane", "-p", "-S", "-", "-t", "recovery");
-  assert(!newHistory.includes(a) && !newHistory.includes("ANSWERED_OUTSIDE_NEW_SESSION"), "old task notice entered new session scrollback");
-  const newMessages = readFileSync(newSession, "utf8").split("\n").filter(Boolean).map((line) => JSON.parse(line)).filter((entry) => entry.type === "message");
-  assert(!JSON.stringify(newMessages).includes(a) && !JSON.stringify(newMessages).includes("ANSWERED_OUTSIDE_NEW_SESSION"), "old task notice entered new session journal");
+  assert(
+    !newHistory.includes(a) && !newHistory.includes("ANSWERED_OUTSIDE_NEW_SESSION"),
+    "old task notice entered new session scrollback",
+  );
+  const newMessages = readFileSync(newSession, "utf8")
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => JSON.parse(line))
+    .filter((entry) => entry.type === "message");
+  assert(
+    !JSON.stringify(newMessages).includes(a) && !JSON.stringify(newMessages).includes("ANSWERED_OUTSIDE_NEW_SESSION"),
+    "old task notice entered new session journal",
+  );
   type("/resume");
   await wait(() => pane().includes("DOGFOOD_OLD_SESSION"), "actual resume menu");
   capture("resume-picker");

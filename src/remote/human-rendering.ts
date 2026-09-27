@@ -152,6 +152,25 @@ function transcriptRow(row: any): string {
           (remainder === "{}" ? "" : "\n" + remainder))
     );
   }
+  if (e.type === "turn_end" || e.type === "agent_end") {
+    const messages = [
+      e.message,
+      ...(Array.isArray(e.messages) ? e.messages : []),
+      ...(Array.isArray(e.toolResults) ? e.toolResults : []),
+    ].filter(Boolean);
+    const extra = Object.fromEntries(
+      Object.entries(e).filter(([key]) => !["type", "message", "messages", "toolResults"].includes(key)),
+    );
+    return (
+      prefix +
+      safe(e.type) +
+      (messages.length
+        ? ":\n" +
+          messages.map((message) => transcriptRow({ seq: row.seq, event: { type: "message_end", message } })).join("\n")
+        : "") +
+      (Object.keys(extra).length ? "\n" + readable(extra) : "")
+    );
+  }
   // Do not pretend unknown events are empty; retain their meaningful data in the human view.
   return (
     prefix +
