@@ -58,11 +58,20 @@ done
 if [[ "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-recovery-e2e.ts ]]; then
 cat > "$tmp/bin/ssh" <<EOF
 #!/bin/sh
-# Only the opt-in recovery fixture intercepts an answer; ordinary readiness SSH is untouched.
+# Only the opt-in recovery fixture drops accepted responses; readiness SSH is untouched.
 case "\$*" in
   *--remote-control*)
     IFS= read -r request || exit 1
     case "\$request" in
+      *'"op":"launch"'*'REMOTE_FIXTURE_MENU_LOST_LAUNCH'*)
+        if test -f "$tmp/drop-next-launch"; then
+          response=\$(printf '%s\n' "\$request" | /usr/bin/ssh -F "$tmp/home/.ssh/config" "\$@") || exit 1
+          python3 -c 'import json,sys; q=json.loads(sys.argv[1]); r=json.loads(sys.argv[2]); assert q["op"] == "launch" and q["taskId"] == r["task"]["taskId"] and r["task"]["state"] in ("accepted", "running")' "\$request" "\$response" || exit 1
+          printf '%s\n' "\$response" > "$tmp/dropped-launch.json"
+          mv "$tmp/drop-next-launch" "$tmp/launch-drop-used"
+          echo 'fixture: accepted owner launch response intentionally lost' >&2
+          exit 42
+        fi ;;
       *'"op":"answer"'*)
         if test -f "$tmp/drop-next-answer"; then
           response=\$(printf '%s\n' "\$request" | /usr/bin/ssh -F "$tmp/home/.ssh/config" "\$@") || exit 1

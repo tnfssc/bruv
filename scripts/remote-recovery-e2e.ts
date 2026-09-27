@@ -30,6 +30,14 @@ const ownerQuestion = (id: string): any => {
   const r = spawnSync("/usr/bin/ssh", ["-F",process.env.FIXTURE_SSH_CONFIG!,"fixture-owner", "cat /root/.die/remote-owner/tasks/"+id+"/session.jsonl.questions.json"], {encoding:"utf8",timeout:6000});
   assert.equal(r.status,0,r.stderr); return JSON.parse(r.stdout)[0];
 };
+const ownerSaved = (id: string): any => {
+  const r = spawnSync("/usr/bin/ssh", ["-F",process.env.FIXTURE_SSH_CONFIG!,"fixture-owner", "cat /root/.die/remote-owner/tasks/"+id+"/state.json"], {encoding:"utf8",timeout:6000});
+  assert.equal(r.status,0,r.stderr); return JSON.parse(r.stdout);
+};
+const ownerTaskIds = (): string[] => {
+  const r = spawnSync("/usr/bin/ssh", ["-F",process.env.FIXTURE_SSH_CONFIG!,"fixture-owner", "ls -1 /root/.die/remote-owner/tasks"], {encoding:"utf8",timeout:6000});
+  assert.equal(r.status,0,r.stderr); return r.stdout.trim().split("\n").filter(Boolean).sort();
+};
 const launch = async (command: (s:string)=>void, name:string) => {
   const before = new Set(Object.keys(state().tasks)); command("/remote launch /fixture/repo REMOTE_FIXTURE_MENU_"+name);
   await wait(() => Object.keys(state().tasks).some(id=>!before.has(id)), "launch " + name);
@@ -40,6 +48,33 @@ const launch = async (command: (s:string)=>void, name:string) => {
 try {
   send("/remote connect fixture-owner /usr/local/bin/die");
   await wait(() => existsSync(statePath) && !!state().connection, "connect");
+  // Discard only a genuine successful launch reply after the owner accepted it.
+  // The cached uncertain intent must be retried with its original taskId.
+  writeFileSync(join(drop,"drop-next-launch"),"one-shot\n");
+  const beforeLaunch = new Set(Object.keys(state().tasks));
+  send("/remote launch /fixture/repo REMOTE_FIXTURE_MENU_LOST_LAUNCH");
+  await wait(() => existsSync(join(drop,"launch-drop-used")), "owner accepted launch before reply drop");
+  const acceptedLaunch = JSON.parse(readFileSync(join(drop,"dropped-launch.json"),"utf8"));
+  const launchId = acceptedLaunch.task.taskId;
+  assert(!beforeLaunch.has(launchId));
+  await wait(() => state().tasks[launchId]?.lastError, "uncertain launch persisted");
+  assert.equal(state().tasks[launchId].outcome,"unknown");
+  assert.match(state().tasks[launchId].lastError,/accepted owner launch response intentionally lost/);
+  await wait(() => rpcOut.includes("Launch outcome unknown for " + launchId), "uncertain launch surfaced to RPC");
+  await wait(() => !!state().tasks[launchId]?.task?.questions?.length || !!ownerSaved(launchId).pid, "owner native launch");
+  const ownerBefore = ownerSaved(launchId);
+  assert(ownerBefore.pid && ownerBefore.startTime, "owner persisted native process identity");
+  const idsBefore = ownerTaskIds();
+  send("/remote retry " + launchId);
+  await wait(() => state().tasks[launchId]?.outcome === "accepted", "same taskId launch recovered");
+  await wait(() => !!state().tasks[launchId]?.task?.questions?.length, "recovered native question");
+  const ownerAfter = ownerSaved(launchId);
+  assert.deepEqual(ownerTaskIds(),idsBefore,"retry created an extra owner task");
+  assert.equal(ownerAfter.pid,ownerBefore.pid,"retry dispatched a second native process");
+  assert.equal(ownerAfter.startTime,ownerBefore.startTime,"retry changed native process identity");
+  assert.equal(state().tasks[launchId].task.taskId,launchId);
+  console.log("accepted launch reply lost, same taskId recovered",launchId,"owner pid",ownerBefore.pid,"owner task count",idsBefore.length);
+
   const lost = await launch(send, "LOST_REPLY");
   const q = state().tasks[lost].task.questions[0];
   writeFileSync(join(drop,"drop-next-answer"),"one-shot\n");
