@@ -1,0 +1,5 @@
+# Picker viewport and detail paging
+
+The shared question picker uses a height budget rather than emitting every wrapped title and selected label into the overlay. Keep the Pi SelectList intact and resize its visible count instead of slicing its rendered rows: it centers the selected item and emits its own scroll indicator. Preserve the selected item with setSelectedIndex when rebuilding on resize. The title and selected label share a scrollable detail stream; PgUp/PgDn page that stream, while arrows still move the choice and reset detail to the top. Filtering also resets it. A 48x18 screen must still show the tail of moderately long choice labels without paging. Test both reachability and height, not just truncation.
+
+This applies to embedded picker overlays where terminal row count can change mid-selection; it does not prescribe navigation keys for other TUI surfaces. See tests/questions-picker.test.ts and src/questions/picker.ts. values.md remains unchanged: its existing guidance on checking real behavior and keeping changes small covers this local lesson.
