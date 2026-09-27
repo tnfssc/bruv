@@ -712,3 +712,88 @@ test("remote refresher projects only this parent's jobs and does not duplicate t
     clearRemoteJobEvents(b);
   }
 });
+
+test("session-owned completion stays in jobs while human footer retains actionable state", async () => {
+  const handlers = new Map<string, Function>();
+  const messages: any[] = [];
+  const statuses: any[] = [];
+  const session = "/fixture/owned-human-footer";
+  const task: any = {
+    taskId: "owned",
+    jobSessionFile: session,
+    ownerId: "owner",
+    epoch: "epoch",
+    host: "host",
+    repoPath: "/repo",
+    prompt: "Review output",
+    cursor: 1,
+    events: [],
+    outcome: "accepted",
+    task: { taskId: "owned", state: "done", questions: [{ id: "q", version: 1, status: "pending", text: "Review?" }] },
+  };
+  remoteExtension(
+    {
+      on: (name: string, fn: Function) => handlers.set(name, fn),
+      registerCommand() {},
+      sendMessage: (m: any) => messages.push(m),
+    } as any,
+    {
+      path: "/nonexistent/fixture/state.json",
+      syncActive: async () => {},
+      status: async () => ({ tasks: { owned: task } }),
+    } as any,
+  );
+  try {
+    await handlers.get("session_start")!(
+      {},
+      {
+        hasUI: true,
+        ui: { setStatus: (...args: any[]) => statuses.push(args) },
+        sessionManager: { getSessionFile: () => session },
+      },
+    );
+    await Bun.sleep(10);
+    expect(messages).toEqual([]);
+    expect(statuses.at(-1)[1]).toContain("1 question(s)");
+    expect(statuses.at(-1)[1]).toBe("remote: 1 question(s)");
+    expect(
+      remoteJobEvents(session)
+        .snapshot()
+        .map((t) => t.taskId),
+    ).toEqual(["owned"]);
+  } finally {
+    await handlers.get("session_shutdown")!();
+    clearRemoteJobEvents(session);
+  }
+  expect(statuses.at(-1)).toEqual(["die-remote", undefined]);
+});
+
+test("human direct launch binds the command's parent session without exposing JSON", async () => {
+  let command: any;
+  const calls: any[] = [],
+    messages: any[] = [];
+  remoteExtension(
+    {
+      on() {},
+      registerCommand: (_: string, value: any) => {
+        command = value;
+      },
+      sendMessage: (m: any) => messages.push(m),
+    } as any,
+    {
+      path: "/nonexistent/fixture/state.json",
+      launch: async (...args: any[]) => {
+        calls.push(args);
+        return { taskId: "owned", events: [], outcome: "accepted", task: { state: "running" } };
+      },
+      syncActive: async () => {},
+      status: async () => ({ tasks: {} }),
+    } as any,
+  );
+  await command.handler('launch "/repo with spaces" do useful work', {
+    sessionManager: { getSessionFile: () => "/fixture/human-parent" },
+  });
+  expect(calls).toEqual([["/repo with spaces", "do useful work", undefined, undefined, "/fixture/human-parent"]]);
+  expect(messages[0].content).toContain("running");
+  expect(messages[0].content).not.toContain('"taskId"');
+});

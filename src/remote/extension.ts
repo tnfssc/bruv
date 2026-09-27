@@ -86,7 +86,10 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         pi.appendEntry?.("die-remote-attention", { key }),
       ))
         publish(notice);
-      for (const notice of attention.update({ ...state, tasks: Object.fromEntries(Object.entries(state.tasks).filter(([, task]) => !task.jobSessionFile)) }, (key) => pi.appendEntry?.("die-remote-attention", { key })))
+      for (const notice of attention.update(
+        { ...state, tasks: Object.fromEntries(Object.entries(state.tasks).filter(([, task]) => !task.jobSessionFile)) },
+        (key) => pi.appendEntry?.("die-remote-attention", { key }),
+      ))
         publish(notice);
     } catch (error) {
       // A global cache/status failure must not masquerade as a healthy connection.
