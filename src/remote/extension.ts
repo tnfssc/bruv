@@ -6,7 +6,7 @@ import { launchRepository, retryRepository, repositoryPreparations } from "./rep
 import { grantCapabilities, revokeCapability } from "./services";
 import type { CapabilityKind } from "./capabilities";
 import { QuestionPicker } from "../questions/picker";
-import { renderHuman, RemoteAttention, assistantText } from "./human-rendering";
+import { renderHuman, RemoteAttention, assistantText, remoteStatus } from "./human-rendering";
 import {
   inboxItems,
   questionOptions,
@@ -49,7 +49,10 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   registerRemoteRuntime(pi);
   if (process.env.DIE_REMOTE_RUNTIME_STATE) return;
   const operations = createRemoteOperations(client),
-    summary = (task: import("./client").RemoteTask) => ({ ...summarizeRemoteTask(task), finalAssistantText: assistantText(task.events) });
+    summary = (task: import("./client").RemoteTask) => ({
+      ...summarizeRemoteTask(task),
+      finalAssistantText: assistantText(task.events),
+    });
   const publish = (result: unknown, kind?: string) =>
     pi.sendMessage({ customType: "die-remote", content: renderHuman(result, kind), display: true });
   let inFlight = false,
@@ -61,18 +64,29 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   const refresh = async () => {
     if (inFlight || closed || picking) return;
     inFlight = true;
+    let syncError: unknown;
     try {
-      try { await client.syncActive(); } catch { /* Read saved state even when owner is offline. */ }
+      try {
+        await client.syncActive();
+      } catch (error) {
+        syncError = error;
+      }
       const state = await client.status();
       if (picking || closed) return;
-      const active = Object.values(state.tasks).filter((t) => ["accepted", "running"].includes(t.task?.state ?? ""));
-      const status = active.length ? "remote: " + active.length + " active" +
-        (active.some((t) => t.lastError) ? " · offline" : "") +
-        (active.some((t) => (t.task?.questions as unknown[] | undefined)?.length) ? " · questions" : "") : undefined;
-      if (lastStatus !== status) { ui?.setStatus?.("die-remote", status); lastStatus = status; }
-      for (const notice of attention.update(state)) publish(notice);
+      const status = remoteStatus(state, !!syncError);
+      if (lastStatus !== status) {
+        ui?.setStatus?.("die-remote", status);
+        lastStatus = status;
+      }
+      for (const notice of attention.update(state, (key) => pi.appendEntry?.("die-remote-attention", { key })))
+        publish(notice);
     } catch {
-      // syncActive records task-specific offline errors; cached transcript stays available.
+      // A global cache/status failure must not masquerade as a healthy connection.
+      const status = "remote: offline (cached state unavailable)";
+      if (!picking && !closed && lastStatus !== status) {
+        ui?.setStatus?.("die-remote", status);
+        lastStatus = status;
+      }
     } finally {
       inFlight = false;
     }
@@ -84,6 +98,13 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   pi.on("session_start", async (_event, ctx) => {
     ui = ctx.hasUI ? ctx.ui : undefined;
     lastStatus = undefined;
+    attention.reset();
+    attention.restore(
+      (ctx.sessionManager?.getBranch?.() ?? [])
+        .filter((entry: any) => entry.type === "custom" && entry.customType === "die-remote-attention")
+        .map((entry: any) => entry.data?.key)
+        .filter((key: unknown): key is string => typeof key === "string"),
+    );
     void refresh();
   });
   pi.on("session_shutdown", async () => {
@@ -132,7 +153,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           continue;
         }
         if (choice === "connect") {
-          const host = (await ctx.ui.editor("SSH host (configured name)"))?.trim();
+          const host = (await ctx.ui.editor("SSH user@host or configured alias"))?.trim();
           if (!host) continue;
           const path = await ctx.ui.editor("Remote die path (blank for default)");
           if (path === undefined) continue;
@@ -233,10 +254,13 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         }
       }
     } catch (error) {
-      publish({
-        error: String(error),
-        hint: "No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.",
-      }, "error");
+      publish(
+        {
+          error: String(error),
+          hint: "No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.",
+        },
+        "error",
+      );
     } finally {
       picking = false;
     }
@@ -254,7 +278,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         switch (op) {
           case "connect":
             if (!rest[0] || rest.length > 2)
-              throw Error("Usage: /remote connect <configured-ssh-host> [absolute-remote-die-path]");
+              throw Error("Usage: /remote connect <user@host-or-configured-alias> [absolute-remote-die-path]");
             result = {
               host: rest[0],
               ...(await client.connect(rest[0], rest[1])),
@@ -400,10 +424,13 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         publish(result, op === "status" || op === "transcript" || op === "connect" ? op : undefined);
         void refresh();
       } catch (error) {
-        publish({
-          error: String(error),
-          hint: "/remote status shows saved task/question IDs. Offline transcript remains available; uncertain operations must reconcile the same ID.",
-        }, "error");
+        publish(
+          {
+            error: String(error),
+            hint: "/remote status shows saved task/question IDs. Offline transcript remains available; uncertain operations must reconcile the same ID.",
+          },
+          "error",
+        );
       }
     },
   });
