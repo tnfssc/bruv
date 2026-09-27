@@ -128,3 +128,7 @@ test("cancel delivery status is shown apart from terminal observation", () => {
   expect(row.description).toContain("cancellation uncertain");
   expect(row.description).toContain("terminal state is separate");
 });
+
+ test("SSH connection discovery explains usernames and aliases", () => {
+  expect(inboxItems({ tasks: {} } as RemoteState).find((item) => item.value === "connect")?.description).toBe("user@host or configured SSH alias");
+});

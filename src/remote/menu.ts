@@ -72,7 +72,7 @@ export function inboxItems(state: RemoteState): Item[] {
           (task.lastError ? " · " + task.lastError : ""),
       ),
     })),
-    { value: "connect", label: "Connect…", description: "Configured SSH host" },
+    { value: "connect", label: "Connect…", description: "user@host or configured SSH alias" },
     ...(online
       ? [
           {
