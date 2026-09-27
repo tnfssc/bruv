@@ -1,0 +1,90 @@
+/** Compiled disposable owner recovery + in-app session switch. Run via remote-e2e.sh. */
+import { spawn, spawnSync } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
+import { strict as assert } from "node:assert";
+const home = process.env.HOME!, die = process.env.DIE_BIN!, drop = process.env.FIXTURE_DROP_DIR!;
+const statePath = join(home, ".die/remote/state.json");
+const agentDir = process.env.DIE_CODING_AGENT_DIR!;
+mkdirSync(agentDir, { recursive: true });
+// Commands only: no LLM calls, keys, or real provider endpoint.
+const provider = Bun.serve({ hostname:"127.0.0.1", port:0, fetch: () => new Response("no model calls in command-only fixture", {status:500}) });
+writeFileSync(join(agentDir,"models.json"), JSON.stringify({providers:{fixture:{baseUrl:"http://127.0.0.1:"+provider.port+"/v1",api:"openai-completions",apiKey:"fixture-only",models:[{id:"fixture-model",name:"fixture",contextWindow:32000,maxTokens:1024}]}}}));
+const tmuxName = "die-recovery-" + process.pid;
+const tmux = (...args: string[]) => {
+  const r = spawnSync("tmux", ["-L", tmuxName, ...args], { encoding: "utf8", timeout: 10000 });
+  assert.equal(r.status, 0, r.stderr); return r.stdout;
+};
+const pane = () => tmux("capture-pane", "-p", "-t", "recovery");
+const key = (...keys: string[]) => tmux("send-keys", "-t", "recovery", ...keys);
+const type = (s: string) => { tmux("set-buffer", "-b", "fixture", s); tmux("paste-buffer", "-b", "fixture", "-t", "recovery"); key("Enter"); };
+const state = (): any => JSON.parse(readFileSync(statePath, "utf8"));
+const wait = async (fn: () => boolean, label: string, ms = 30000) => {
+  const start = Date.now(); while (!fn()) { if (Date.now() - start > ms) throw Error("timeout " + label + " pane=" + pane() + " state=" + (existsSync(statePath) ? JSON.stringify(state()).slice(-1000) : "none")); await Bun.sleep(80); }
+};
+const rpc = spawn(die, ["--mode", "rpc", "--offline", "--no-approve", "--provider", "fixture", "--model", "fixture-model", "--no-session"], {cwd:home, env:{...process.env,HOME:home,DIE_CODING_AGENT_DIR:agentDir},stdio:["pipe","pipe","pipe"]});
+let rpcOut = "", rpcErr = "";
+rpc.stdout.on("data", x => rpcOut += x); rpc.stderr.on("data", x => rpcErr += x);
+const send = (s: string) => rpc.stdin.write(JSON.stringify({type:"prompt",message:s}) + "\n");
+const ownerQuestion = (id: string): any => {
+  const r = spawnSync("/usr/bin/ssh", ["-F",process.env.FIXTURE_SSH_CONFIG!,"fixture-owner", "cat /root/.die/remote-owner/tasks/"+id+"/session.jsonl.questions.json"], {encoding:"utf8",timeout:6000});
+  assert.equal(r.status,0,r.stderr); return JSON.parse(r.stdout)[0];
+};
+const launch = async (command: (s:string)=>void, name:string) => {
+  const before = new Set(Object.keys(state().tasks)); command("/remote launch /fixture/repo REMOTE_FIXTURE_MENU_"+name);
+  await wait(() => Object.keys(state().tasks).some(id=>!before.has(id)), "launch " + name);
+  const id = Object.keys(state().tasks).find(id=>!before.has(id))!;
+  await wait(() => !!state().tasks[id]?.task?.questions?.length, "question " + name);
+  return id;
+};
+try {
+  send("/remote connect fixture-owner /usr/local/bin/die");
+  await wait(() => existsSync(statePath) && !!state().connection, "connect");
+  const lost = await launch(send, "LOST_REPLY");
+  const q = state().tasks[lost].task.questions[0];
+  writeFileSync(join(drop,"drop-next-answer"),"one-shot\n");
+  send("/remote answer " + lost + " " + q.id + " ACCEPTED_ON_OWNER");
+  await wait(() => existsSync(join(drop,"drop-used")) && !!state().tasks[lost]?.replyDelivery?.[q.id], "dropped accepted reply");
+  assert(existsSync(join(drop,"dropped-reply.json")));
+  const accepted = JSON.parse(readFileSync(join(drop,"dropped-reply.json"),"utf8"));
+  const replyId = state().tasks[lost].replies[q.id].replyId;
+  assert.equal(accepted.task.reply.replyId,replyId);
+  assert.equal(state().tasks[lost].replyDelivery[q.id].status,"uncertain");
+  assert.equal(ownerQuestion(lost).answer,"ACCEPTED_ON_OWNER");
+  send("/remote sync " + lost);
+  await wait(() => state().tasks[lost]?.task?.reply?.replyId === replyId, "sync receipt");
+  send("/remote answer " + lost + " " + q.id + " ACCEPTED_ON_OWNER");
+  await wait(() => state().tasks[lost]?.replyDelivery?.[q.id]?.status === "delivered", "same reply recovered");
+  assert.equal(state().tasks[lost].replies[q.id].replyId,replyId);
+  assert.equal(ownerQuestion(lost).answer,"ACCEPTED_ON_OWNER");
+  console.log("accepted reply lost after owner response, reconciled same replyId",replyId,"owner status",accepted.task.reply.status,"rpc",rpcOut.slice(-500));
+
+  // Run real interactive binary in tmux. PATH is explicit: fish/tmux may reset it.
+  const quote = (x:string) => "'" + x.replaceAll("'", "'\\''") + "'";
+  const cmd = ["env","PATH="+process.env.PATH,"HOME="+home,"DIE_CODING_AGENT_DIR="+agentDir,die,"--offline","--no-approve","--provider","fixture","--model","fixture-model"].map(quote).join(" ");
+  tmux("new-session","-d","-s","recovery","-x","120","-y","35",cmd);
+  await wait(() => pane().includes("fixture-model"), "interactive model ready");
+  await Bun.sleep(2500); // startup notices can render before the input handler is ready
+  const a = await launch(type,"SWITCH_OLD");
+  await wait(() => !!state().tasks[a].jobSessionFile, "old session owner");
+  const oldSession = state().tasks[a].jobSessionFile;
+  const oldFrame = pane();
+  type("/new");
+  await Bun.sleep(600);
+  const b = await launch(type,"SWITCH_NEW");
+  await wait(() => !!state().tasks[b].jobSessionFile, "new session owner");
+  const newSession = state().tasks[b].jobSessionFile;
+  assert.notEqual(newSession,oldSession,"/new did not change in-app session");
+  assert.equal(state().tasks[a].jobSessionFile,oldSession,"switch adopted previous task");
+  const questionA = state().tasks[a].task.questions[0];
+  send("/remote answer "+a+" "+questionA.id+" ANSWERED_OUTSIDE_NEW_SESSION");
+  await wait(() => ownerQuestion(a).answer === "ANSWERED_OUTSIDE_NEW_SESSION", "external old answer");
+  await Bun.sleep(6000); // real background refresh, not a renderer unit test
+  const newFrame = pane();
+  assert(!newFrame.includes("ANSWERED_OUTSIDE_NEW_SESSION") && !newFrame.includes(a),"old-session completion entered new session");
+  assert.equal(state().tasks[a].jobSessionFile,oldSession);
+  assert.equal(state().tasks[b].jobSessionFile,newSession);
+  console.log("in-app /new owner boundaries",oldSession,newSession,"oldFrame",oldFrame.slice(-160),"newFrame",newFrame.slice(-160));
+} finally {
+  rpc.kill(); provider.stop(); try {tmux("kill-server");} catch {};
+}
