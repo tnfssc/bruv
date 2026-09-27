@@ -12,3 +12,5 @@ Evidence (Bun 1.4.2; staged real die 0.15.4 sha256 6a4b0a5775dc244320f1580dc5bc8
 Not verified: Mac, real provider, large file transfer, disk-persistent server restart, automatic repository return. No user pending questions modified. The original bounded-prefix state cannot be silently upgraded; start with a new local state path.
 
 Parent integrated as 8f5a6c3. Read-only review task_7dfc2007 and parent Docker/native reruns task_fc8629c6 pending. Logs /tmp/die-durable-cli-parent.log and /tmp/die-durable-native-parent.log. Do not push until reviewed. Repo helper integrated separately, still needs same-path wiring.
+
+Parent Docker/native reruns and six repo-helper tests passed. Review follow-up task_7a104844 in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7a104844, branch die/check-durable-sync-crash-boundaries-and--7a104844, checks journal-ahead-of-metadata crash case and moving catchup target with regression tests. Review allegations need source verification, not blind fixes. Parent reviews/reruns then pushes; combined repo wiring still pending.
