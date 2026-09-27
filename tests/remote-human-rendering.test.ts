@@ -200,9 +200,14 @@ test("human capability outcomes are readable scoped receipts, not protocol JSON"
   ])
     expect(grant).toContain(value);
   expect(grant).not.toContain('"grant":');
-  expect(renderHuman({ revoked: true, grantId: "g" })).toBe(
+  expect(renderHuman({ revoked: true, grantId: "g", ownerNotified: true })).toBe(
     "Local capability revoked · g\nOwner acknowledged revocation.",
   );
+  for (const ownerNotified of [false, undefined]) {
+    expect(renderHuman({ revoked: true, grantId: "g", ownerNotified })).toBe(
+      "Local capability revoked · g\nOwner not notified; local authority has ended.",
+    );
+  }
 });
 
 test("known lifecycle message envelopes remain readable without losing new event fields", () => {

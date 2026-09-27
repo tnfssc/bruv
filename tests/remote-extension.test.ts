@@ -1256,14 +1256,14 @@ test("offline terminal menu revokes only the selected local grant; Escape and de
       } as any,
       client,
     );
-    const run = async (confirm: boolean, escape = false) => {
+    const run = async (confirm: boolean, escapeMenu = false) => {
       let picks = 0;
       await command.handler("", {
         hasUI: true,
         ui: {
           setStatus() {},
           custom: async () => {
-            const value = ["task:first", "capabilities", escape ? undefined : "revoke:0", undefined][picks++];
+            const value = ["task:first", "capabilities", escapeMenu ? undefined : "revoke:0", undefined][picks++];
             calls.push("pick:" + value);
             return value;
           },

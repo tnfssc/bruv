@@ -3,10 +3,10 @@ import os, pty, subprocess, tempfile, json, time, select, re, pathlib, shutil
 binary=os.path.abspath('dist/die')
 home=tempfile.mkdtemp(prefix='die-remote-pty-')
 root=pathlib.Path(home)/'.die/remote'; grants=root/'capability-grants'; grants.mkdir(parents=True)
-(root/'state.json').write_text(json.dumps({'tasks':{'proof1':{'taskId':'proof1','host':'unreachable.invalid','ownerId':'owner1','epoch':'epoch1','prompt':'Offline proof task','repoPath':'/tmp','outcome':'completed','events':[],'task':{'state':'completed'}}}}))
+(root/'state.json').write_text(json.dumps({'tasks':{'proof1':{'taskId':'proof1','host':'unreachable.invalid','ownerId':'owner1','epoch':'epoch1','prompt':'Offline proof task','repoPath':'/tmp','outcome':'accepted','events':[],'task':{'state':'done'}}}}))
 (grants/'grant_proof.json').write_text(json.dumps({'id':'grant_proof','taskId':'proof1','repoRoot':'/tmp','kinds':['repo.read']}))
 master,slave=pty.openpty(); env=dict(os.environ,HOME=home,TERM='xterm-256color',NO_COLOR='1'); env.pop('DIE_REMOTE_RUNTIME_STATE',None); env.pop('OPENAI_API_KEY',None)
-p=subprocess.Popen([binary,'--model','openai/gpt-4o-mini'],stdin=slave,stdout=slave,stderr=slave,env=env,start_new_session=True); os.close(slave)
+p=subprocess.Popen([binary,'--offline','--no-approve','--model','openai/gpt-4o-mini'],stdin=slave,stdout=slave,stderr=slave,env=env,start_new_session=True); os.close(slave)
 transcript=bytearray()
 def read(sec=1):
  end=time.monotonic()+sec
