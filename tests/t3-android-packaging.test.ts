@@ -14,11 +14,13 @@ test("Android optional native dependency is staged and verified", () => {
 });
 
 test("fff-node is loaded on demand and unsupported Android search is a typed failure", () => {
-  const index = patch.split("diff --git a/apps/server/src/workspace/WorkspaceSearchIndex.ts ")[1]?.split("diff --git ")[0];
+  const index = patch
+    .split("diff --git a/apps/server/src/workspace/WorkspaceSearchIndex.ts ")[1]
+    ?.split("diff --git ")[0];
   expect(index).toBeDefined();
   expect(index).toContain('-const { FileFinder } = requireForFff("@ff-labs/fff-node")');
   expect(index).toContain('+      if (process.platform === "android") {');
   expect(index).toContain('+        throw new Error("Workspace search is unavailable on Android');
   expect(index).toContain('+      const { FileFinder } = requireForFff("@ff-labs/fff-node")');
-  expect(index).toContain('new WorkspaceSearchIndexCreateFailed({');
+  expect(index).toContain("new WorkspaceSearchIndexCreateFailed({");
 });
