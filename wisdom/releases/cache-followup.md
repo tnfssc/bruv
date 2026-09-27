@@ -15,3 +15,7 @@ Fixed workflow pushed 02327ad. actionlint passed; 16 tests pass. Valid hosted co
 User requested accurate mise.toml. Parent added Node 24.21.0 and pnpm bootstrap 11.27.1 alongside Bun 1.4.2, matching CI/release/live workflows. T3 packageManager selects pnpm 11.10.0 inside its checkout; comment records distinction. No global tool installation or trust change implied. Values unchanged.
 
 Cold CI 36309732905 cancelled by newer mise push, not test failure; macOS succeeded and saved cache. Hosted annotation showed cache v4 Node20 deprecated. Parent verified latest actions/cache v6.1.0 immutable SHA 55cc8345863c7cc4c66a329aec7e433d2d1c52a9 and action.yml using node24 via GitHub API; updated pins, actionlint + 16 tests pass. New push will supersede CI again; wait final stable run before warm rerun.
+
+Hosted release dry-run 36309732944 passed and saved pnpm-11.10.0-Linux-X64-d56f76d98708b275f4af8dbe9cd7608597eaf8ad76b2802621ddfce12d9f1377 (~998 MB) plus Bun Linux (~209 MB); macOS Bun (~56 MB) also saved. Full log /tmp/die-cache-cold-release-full.log. Latest CI 36309940829 still running; after it completes rerun same SHA for warm-hit proof. Cache action now v6.1.0/node24 on latest e7e92b4.
+
+Warm proof complete: CI 36309940829 attempt 2 passed on same e7e92b4. Logs /tmp/die-cache-warm-full.log show primary-key hits for pnpm Linux and Bun; pnpm install resolved 849, reused 848, downloaded 0; deployment reused 159, downloaded 0. Full build/tests still ran. This closes dependency-cache hosted verification, not build-output caching. Values unchanged.
