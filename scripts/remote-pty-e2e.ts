@@ -193,9 +193,18 @@ const noChatJson = (frame: string) =>
     !/"(?:taskId|eventCount|lastAssistant|transcriptComplete|replyDelivery)"\s*:/.test(frame),
     "structured remote poll leaked into human chat\n" + frame,
   );
-const command = (text: string) => {
+const command = async (text: string, expected: string) => {
+  const before = historyPane().split("[die-remote]").length;
+  key("C-u");
   type(text);
   key("Enter");
+  const deadline = Date.now() + 20000;
+  while (Date.now() < deadline) {
+    const messages = historyPane().split("[die-remote]");
+    if (messages.length > before && messages.at(-1)!.replace(/\s+/g, "").includes(expected.replace(/\s+/g, ""))) return;
+    await Bun.sleep(100);
+  }
+  throw new Error("No rendered command result: " + text + "\n" + pane());
 };
 const type = (text: string) => tmux("send-keys", "-t", "remote", "-l", text);
 const until = async (needle: string, timeout = 12000) => {
@@ -391,33 +400,36 @@ try {
   assert.equal(historyPane(), cancelledFrame, "cancelled state was announced repeatedly");
   evidence("cancelled-once");
   // Explicit human commands are distinct from structured execute/RPC operations.
-  command("/remote status");
+  await command("/remote status", "cached observations");
   await until(cancelled);
   noChatJson(historyPane());
   evidence("human-status");
-  command("/remote sync " + first);
+  await command("/remote sync " + first, "Last synchronized state");
   await until(first);
   noChatJson(historyPane());
   evidence("human-sync");
-  const transcriptBefore = historyPane();
-  command("/remote transcript " + first + " " + Math.max(0, state().tasks[first]!.cursor - 30));
-  await rpc.wait(
-    () => historyPane() !== transcriptBefore && pane().includes("REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED"),
-    "requested final transcript content",
-    20000,
+  await command(
+    "/remote transcript " + answeredId + " " + Math.max(0, state().tasks[answeredId]!.cursor - 30),
+    "REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED",
   );
-  assert(historyPane().includes("REMOTE_FIXTURE_MENU_CONTINUED"), "requested transcript omitted answer");
-  noChatJson(historyPane());
+  const answerOffset = state().tasks[unansweredId]!.events.findIndex((row) =>
+    JSON.stringify(row.event).includes("REMOTE_FIXTURE_MENU_CONTINUED"),
+  );
+  assert(answerOffset >= 0, "fixture answer absent from source transcript");
+  await command("/remote transcript " + unansweredId + " " + answerOffset, "REMOTE_FIXTURE_MENU_CONTINUED");
+  // Explicit transcript content can itself contain structured tool/event text. The
+  // no-envelope assertions above apply to routine notices and status/sync, not to
+  // arbitrary content the human explicitly requested in the transcript.
   evidence("human-transcript");
   const offline = await launch("OFFLINE");
   const stopped = spawnSync("docker", ["stop", "-t", "1", container], { encoding: "utf8", timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
-  command("/remote sync " + offline);
+  await command("/remote sync " + offline, "cached");
   rpc.send("/remote sync " + offline);
   await rpc.wait(() => !!state().tasks[offline]?.lastError, "offline state", 20000);
   await rpc.wait(() => /offline|unreachable|unavailable/i.test(pane()), "offline human notice", 20000);
   assert(/offline|unreachable|unavailable/i.test(historyPane()), "offline command implied fresh owner state");
-  noChatJson(historyPane());
+  noChatJson(historyPane().split("[die-remote]").at(-1)!);
   type("/remote");
   key("Enter");
   await until("Remote · inbox");

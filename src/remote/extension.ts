@@ -78,15 +78,24 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         ui?.setStatus?.("die-remote", status);
         lastStatus = status;
       }
+      for (const notice of attention.connection("owner", !!syncError, syncError, (key) =>
+        pi.appendEntry?.("die-remote-attention", { key }),
+      ))
+        publish(notice);
       for (const notice of attention.update(state, (key) => pi.appendEntry?.("die-remote-attention", { key })))
         publish(notice);
-    } catch {
+    } catch (error) {
       // A global cache/status failure must not masquerade as a healthy connection.
       const status = "remote: offline (cached state unavailable)";
       if (!picking && !closed && lastStatus !== status) {
         ui?.setStatus?.("die-remote", status);
         lastStatus = status;
       }
+      if (!picking && !closed)
+        for (const notice of attention.connection("owner", true, error, (key) =>
+          pi.appendEntry?.("die-remote-attention", { key }),
+        ))
+          publish(notice);
     } finally {
       inFlight = false;
     }

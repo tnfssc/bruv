@@ -543,6 +543,7 @@ test("attention deduplicates hundreds of polls, reconnects and volatile diagnost
   task.lastError = undefined;
   expect(attention.update(state).join(" ")).toContain("recovered");
   task.lastError = "ssh: reconnect timeout";
+  expect(attention.update(state).join(" ")).toContain("offline");
   expect(attention.update(state)).toEqual([]);
   task.task.questions[0].status = "resolved";
   expect(attention.update(state)).toEqual([]);
@@ -620,4 +621,33 @@ test("session branch attention rehydrates on reload without poll spam", async ()
   await new Promise((resolve) => setTimeout(resolve, 10));
   expect(messages.filter((m) => m.content.includes("Review?"))).toHaveLength(2);
   await second.get("session_shutdown")!();
+});
+
+test("each genuine outage and recovery is noticed once, including recovery after session reload", () => {
+  const saved: string[] = [];
+  const a = new RemoteAttention();
+  const remember = (key: string) => saved.push(key);
+  expect(a.connection("owner", true, "unreachable", remember)).toHaveLength(1);
+  for (let i = 0; i < 300; i++) expect(a.connection("owner", true, "diagnostic " + i, remember)).toEqual([]);
+  const restored = new RemoteAttention();
+  restored.restore(saved);
+  expect(restored.connection("owner", true, "different diagnostic", remember)).toEqual([]);
+  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("recovered");
+  expect(restored.connection("owner", false, undefined, remember)).toEqual([]);
+  expect(restored.connection("owner", true, "new outage", remember)[0]).toContain("new outage");
+  expect(restored.connection("owner", false, undefined, remember)[0]).toContain("recovered");
+  expect(saved).toHaveLength(4);
+});
+
+test("failure is one useful notice and explicit delivery responses distinguish request from outcome", () => {
+  const task: any = { taskId: "t", events: [], task: { state: "failed", error: "Provider rejected request" } };
+  const attention = new RemoteAttention();
+  expect(attention.update({ tasks: { t: task } } as any)).toEqual(["Remote t · failed: Provider rejected request"]);
+  expect(attention.update({ tasks: { t: task } } as any)).toEqual([]);
+  task.replyDelivery = { q: { replyId: "reply", status: "delivered" } };
+  task.cancelDelivery = { status: "confirmed" };
+  const rendered = renderHuman(task);
+  expect(rendered).toContain("delivered to owner (not proof it was used)");
+  expect(rendered).toContain("request acknowledged; observed task state: failed");
+  expect(renderHuman(new Error("Readable transport error"))).toContain("Readable transport error");
 });

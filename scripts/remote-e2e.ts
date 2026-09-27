@@ -399,8 +399,9 @@ try {
         e.data?.messages?.some((message: any) => {
           if (message.customType !== "die-remote" || typeof message.content !== "string") return false;
           // Human transcript is readable conversation text, not the structured operations API.
-          return message.content.includes("REMOTE_FIXTURE_FINISHED_ON_OWNER") &&
-            !message.content.trimStart().startsWith("{");
+          return (
+            message.content.includes("REMOTE_FIXTURE_FINISHED_ON_OWNER") && !message.content.trimStart().startsWith("{")
+          );
         }),
     );
   // Read the actual normal conversation history, not merely a cache file.
