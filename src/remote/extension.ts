@@ -338,6 +338,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         if (ctx.hasUI) ui = ctx.ui;
         const [op, ...rest] = input.trim().split(/\s+/);
         let result: unknown;
+        let rawTranscript = false;
         switch (op) {
           case "connect":
             if (!rest[0] || rest.length > 2)
@@ -475,19 +476,24 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           case "sync":
             result = summary(await client.sync(await choose(rest[0])));
             break;
-          case "transcript":
+          case "transcript": {
+            const raw = rest.at(-1) === "raw";
+            const page = raw ? rest.slice(0, -1) : rest;
+            if (page.length > 2) throw Error("Usage: /remote transcript [taskId] [offset] [raw]");
             result = await operations({
               op: "transcript",
-              taskId: await choose(rest[0]),
-              offset: rest[1] === undefined ? 0 : Number(rest[1]),
+              taskId: await choose(page[0]),
+              offset: page[1] === undefined ? 0 : Number(page[1]),
             });
+            rawTranscript = raw;
             break;
+          }
           default:
             throw Error(
               "Usage: /remote connect|status|launch|launch-repo|launch-repo-json|answer|grant|revoke|cancel|retry|sync|transcript",
             );
         }
-        publish(result, op === "status" || op === "transcript" || op === "connect" ? op : undefined);
+        publish(result, rawTranscript ? "transcript-raw" : op === "status" || op === "transcript" || op === "connect" ? op : undefined);
         void refresh();
       } catch (error) {
         publish(

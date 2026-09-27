@@ -83,19 +83,68 @@ export function taskLine(t: RemoteTask): string {
     (problems.length ? " \u00B7 " + problems.join(" \u00B7 ") : "")
   );
 }
+/** Display all cached rows, including unfamiliar event kinds, without protocol-only fields. */
+const displayData = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map(displayData);
+  if (value && typeof value === "object")
+    return Object.fromEntries(
+      Object.entries(value).filter(([key]) => ![
+        "textSignature", "signature", "partialJson", "requestId", "rpcId", "ownerId", "epoch",
+      ].includes(key)).map(([key, item]) => [key, displayData(item)]),
+    );
+  return value;
+};
+const readable = (value: unknown): string =>
+  typeof value === "string" ? safe(value) : detail(displayData(value));
+const contentText = (value: unknown): string => {
+  if (typeof value === "string") return safe(value);
+  if (!Array.isArray(value)) return value == null ? "" : readable(value);
+  return value.map((part) => {
+    if (typeof part === "string") return safe(part);
+    const p = obj(part);
+    if (p.type === "text" || p.type === "thinking") return safe(p.text ?? "");
+    if (p.type === "toolCall") return "Tool call " + safe(p.name ?? "unknown") +
+      (p.arguments === undefined ? "" : " " + readable(p.arguments));
+    if (p.type === "image") return "[image" + (p.mimeType ? " " + safe(p.mimeType) : "") + "]";
+    return readable(part);
+  }).filter(Boolean).join("\n");
+};
+function transcriptRow(row: any): string {
+  const e = obj(row.event), m = obj(e.message);
+  const prefix = "#" + safe(row.seq ?? "?") + " ";
+  if (e.type === "message_end" && m.role) {
+    const role = m.role === "toolResult" ? "Tool result" : safe(m.role);
+    const title = role === "Tool result" && m.toolName ? role + " " + safe(m.toolName) : role;
+    const body = contentText(m.content);
+    return prefix + title + (m.isError ? " (error)" : "") + (body ? ":\n" + body : " (empty)");
+  }
+  if (e.type === "tool_execution_start" || e.type === "tool_execution_end" || e.type === "tool_execution_update") {
+    const name = safe(e.toolName ?? e.name ?? "unknown");
+    const label = e.type === "tool_execution_start" ? "Tool call " :
+      e.type === "tool_execution_end" ? "Tool finished " : "Tool update ";
+    const payload = e.type === "tool_execution_start" ? e.args : e.type === "tool_execution_end" ? e.result : e.partialResult;
+    const remainder = e.type === "tool_execution_start" || !obj(payload).content ? "" :
+      readable(Object.fromEntries(Object.entries(obj(payload)).filter(([key]) => key !== "content")));
+    return prefix + label + name + (e.isError ? " (error)" : "") +
+      (payload === undefined ? "" : ":\n" + (e.type === "tool_execution_start" ? readable(payload) :
+        contentText(obj(payload).content ?? payload)) + (remainder === "{}" ? "" : "\n" + remainder));
+  }
+  // Do not pretend unknown events are empty; retain their meaningful data in the human view.
+  return prefix + safe(e.type ?? "event") +
+    (Object.keys(e).length > 1 ? ": " + readable(Object.fromEntries(Object.entries(e).filter(([key]) => key !== "type"))) : "");
+}
 export function renderHuman(value: unknown, kind = "result"): string {
   const v = obj(value);
-  if (kind === "transcript") {
+  if (kind === "transcript" || kind === "transcript-raw") {
     const rows = Array.isArray(v.events) ? v.events : [];
     return [
       "Remote transcript \u00B7 " + safe(v.taskId) + " \u00B7 offset " + (v.offset ?? 0),
-      ...rows.map(
-        (r: any) => "#" + safe(r.seq ?? "?") + " " + safe(obj(r.event).type ?? "event") + " \u00B7 " + detail(r.event),
-      ),
+      ...rows.map((r: any) => kind === "transcript-raw" ? "#" + safe(r.seq ?? "?") + " " + detail(r.event) : transcriptRow(r)),
       v.nextOffset !== undefined
-        ? "More: /remote transcript " + safe(v.taskId) + " " + v.nextOffset
+        ? "More: /remote transcript " + safe(v.taskId) + " " + v.nextOffset + (kind === "transcript-raw" ? " raw" : "")
         : "End of cached transcript.",
       v.transcriptComplete === false && "Warning: transcript incomplete.",
+      v.task?.textOutputGap && "Warning: transcript gap: " + detail(v.task.textOutputGap),
     ]
       .filter(Boolean)
       .join("\n");
