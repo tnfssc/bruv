@@ -1,0 +1,66 @@
+diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
+index 20aed70..53977ac 100644
+--- a/apps/web/vite.config.ts
++++ b/apps/web/vite.config.ts
+@@ -14,6 +14,7 @@ import { DEV_PROXIED_PATH_PREFIXES } from "@t3tools/shared/devProxy";
+ import { loadRepoEnv } from "../../scripts/lib/public-config";
+ import { thirdPartyLicensesPlugin } from "../../scripts/lib/third-party-licenses";
+ import { tailwindPlugins } from "./vite/tailwind";
++import { shikiDataAssets } from "./vite/shikiAssets";
+ 
+ const repoEnv = loadRepoEnv();
+ Object.assign(process.env, repoEnv);
+@@ -156,8 +157,10 @@ const allowedHosts = [".ts.net", ...configuredAllowedHosts];
+ export default defineConfig(() => {
+   return {
+     assetsInclude: ["**/*.wasm"],
++    worker: { format: "es", plugins: () => [shikiDataAssets()] },
+     plugins: [
+       devCompressionPlugin(),
++      shikiDataAssets(),
+       thirdPartyLicensesPlugin({
+         bundleName: "web",
+         configFile: new URL("../../third-party-licenses.config.json", import.meta.url),
+diff --git a/apps/web/vite/shikiAssets.ts b/apps/web/vite/shikiAssets.ts
+new file mode 100644
+index 0000000..88f16eb
+--- /dev/null
++++ b/apps/web/vite/shikiAssets.ts
+@@ -0,0 +1,37 @@
++import { createRequire } from "node:module";
++import { dirname, join } from "node:path";
++import { readFileSync } from "node:fs";
++import type { Plugin } from "vite-plus";
++
++// Pierre's worker imports shiki/wasm (a base64 JS module). Load the same pinned
++// Oniguruma binary as a native asset, on demand when the WASM engine is selected.
++const requireFromWorker = createRequire(import.meta.url);
++const workerPath = new URL(import.meta.resolve("@pierre/diffs/worker/worker.js")).pathname;
++const shikiWasmModule = createRequire(workerPath).resolve("shiki/wasm");
++const onigWasm = join(dirname(shikiWasmModule), "onig.wasm");
++
++export function shikiDataAssets(): Plugin {
++  return {
++    name: "t3code:shiki-data-assets",
++    apply: "build",
++    transform(code, id) {
++      // The bundled Shiki loader imports this module through shiki/wasm.
++      // Replace the base64 JS module at its source, in both the browser and
++      // the separate worker compilation (whose Vite plugin pipeline differs).
++      if (/[\/]@shikijs[\/]engine-oniguruma[\/]dist[\/]wasm-inlined\.mjs$/.test(id)) {
++        const asset = this.emitFile({ type: "asset", name: "onig.wasm", source: readFileSync(onigWasm) });
++        return { code: `export default async function instantiate(info) { const response = await fetch(import.meta.ROLLUP_FILE_URL_${asset}); const result = WebAssembly.instantiateStreaming ? await WebAssembly.instantiateStreaming(response, info) : await WebAssembly.instantiate(await response.arrayBuffer(), info); return result.instance.exports; }`, map: null };
++      }
++      // Shiki grammars are JSON data wrapped in JS; preserve the module's
++      // imports/exports and lazy boundaries, but ship the large payloads as
++      // JSON assets instead of parsing hundreds of KB of JS source.
++      if (!/[\/]@shikijs[\/]langs[\/]dist[\/](?:emacs-lisp|cpp)\.mjs$/.test(id)) return;
++      const match = /Object\.freeze\(JSON\.parse\(("(?:\\.|[^"\\])*")\)\)/.exec(code);
++      if (!match) throw new Error(`Unexpected Shiki grammar format: ${id}`);
++      const json = JSON.parse(match[1]!);
++      JSON.parse(json); // fail the build if Shiki's expected data shape changes
++      const asset = this.emitFile({ type: "asset", name: id.endsWith("cpp.mjs") ? "cpp.json" : "emacs-lisp.json", source: json });
++      return { code: code.replace(match[0], `Object.freeze(await (await fetch(import.meta.ROLLUP_FILE_URL_${asset})).json())`), map: null };
++    },
++  };
++}
