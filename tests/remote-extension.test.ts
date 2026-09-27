@@ -162,3 +162,126 @@ test("stale targeted or missing-text remote answers never fall through to a diff
   expect(replies[0][0]).toBe("task_one");
   expect(replies[0][1]).toMatchObject({ id: "q_current", version: 2, text: "no thanks" });
 });
+
+test("no-args inbox binds selected choice to freshly synced owner/version, Escape never submits", async () => {
+  let command: any;
+  let version = 3;
+  const answers: any[] = [];
+  const task = () => ({
+    taskId: "task-one",
+    prompt: "Ship docs",
+    host: "host",
+    ownerId: "owner",
+    epoch: "epoch",
+    outcome: "accepted",
+    events: [],
+    cursor: 0,
+    task: {
+      state: "running",
+      questions: [
+        {
+          id: "q-one",
+          status: "pending",
+          text: "Which style?",
+          choices: ["Compact", "Extended"],
+          owner: { sessionId: "s", branchId: "b" },
+          version,
+        },
+      ],
+    },
+  });
+  const client = {
+    status: async () => ({
+      connection: { host: "host", hello: { ownerId: "owner", epoch: "epoch" } },
+      tasks: { "task-one": task() },
+    }),
+    sync: async () => task(),
+    answer: async (...a: any[]) => {
+      answers.push(a);
+      return task();
+    },
+  };
+  const pi = {
+    on() {},
+    registerCommand(_name: string, c: any) {
+      command = c;
+    },
+    sendMessage() {},
+  };
+  remoteExtension(pi as any, client as any);
+  const keys = {
+    matches: (data: string, name: string) =>
+      data === (name === "tui.select.confirm" ? "enter" : name === "tui.select.cancel" ? "esc" : "never"),
+  };
+  const selections = ["enter", "enter", "esc"];
+  const ctx = {
+    hasUI: true,
+    ui: {
+      custom: async (factory: any) => {
+        let result: string | undefined;
+        const component = factory(
+          { terminal: { rows: 32 }, requestRender() {} },
+          { fg: (_color: string, text: string) => text },
+          keys,
+          (v: string | undefined) => {
+            result = v;
+          },
+        );
+        component.handleInput(selections.shift() ?? "esc");
+        return result;
+      },
+      editor: async () => undefined,
+      notify() {},
+    },
+  };
+  await command.handler("", ctx);
+  expect(answers).toHaveLength(1);
+  expect(answers[0][1]).toMatchObject({
+    id: "q-one",
+    text: "Compact",
+    version: 3,
+    owner: { sessionId: "s", branchId: "b" },
+  });
+  answers.length = 0;
+  selections.push("enter", "esc", "esc");
+  await command.handler("", ctx);
+  expect(answers).toHaveLength(0);
+});
+
+test("connect editor Escape never connects, even after entering a host", async () => {
+  let command: any;
+  const connects: unknown[] = [];
+  remoteExtension(
+    {
+      on() {},
+      registerCommand(_n: string, c: any) {
+        command = c;
+      },
+      sendMessage() {},
+    } as any,
+    { status: async () => ({ tasks: {} }), connect: async (...args: any[]) => connects.push(args) } as any,
+  );
+  const choices = ["connect", undefined];
+  const edits = ["fixture-host", undefined];
+  const ctx = {
+    hasUI: true,
+    ui: {
+      custom: async (factory: any) => {
+        let result: string | undefined;
+        factory(
+          { terminal: { rows: 30 }, requestRender() {} },
+          { fg: (_c: string, t: string) => t },
+          {},
+          (v: string | undefined) => {
+            result = v;
+          },
+        );
+        return choices.shift();
+      },
+      editor: async () => edits.shift(),
+      notify() {},
+    },
+  };
+  await command.handler("", ctx);
+  expect(connects).toEqual([]);
+});

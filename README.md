@@ -34,6 +34,24 @@ die -r                      # Pick a saved session to resume
 
 Inside `die`, type `/` to see available commands.
 
+## Questions and remote work
+
+In the terminal, `/questions` opens the current conversation’s question inbox.
+`/remote` opens the SSH remote-work inbox, including questions from remote tasks.
+These are separate owners: a remote task’s question is answered through `/remote`,
+not the local `/questions` inbox.
+
+Type to search a menu, use arrow keys and Enter to select, and Escape to go back
+without submitting. PgUp/PgDn scroll long question or choice text.
+Questions offer their saved choices and, when allowed, a
+custom-answer editor. Command completion also supports explicit `/remote`
+subcommands and task/question targets; copying IDs is not required for the menus.
+
+Remote cached state remains readable offline. Answering requires a fresh owner
+and question version. An uncertain reply is not a confirmed answer: reconcile
+the saved reply rather than replacing it with a new one. Explicit commands and
+the noninteractive RPC interface remain available.
+
 ## Web UI
 
 Run `die web` and open the local URL it prints. The browser interface is built on [T3 Code](https://github.com/pingdotgg/t3code). It comes in the executable, so you need no separate Node or Bun install.

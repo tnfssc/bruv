@@ -107,13 +107,14 @@ test.skipIf(!hasTmux)(
       expect(service.get(ctx, second.id).answer).toBe("A reproducible free text answer");
       // Completion comes from the live command registry, not a picker fixture.
       await type("/questions de");
+      expect(await until("→ detail")).toContain("/questions de");
       await key("Tab");
       expect(await until("/questions detail")).toContain("/questions detail");
       await key("C-u");
       const stale = await service.ask(ctx, {
         text: "A long question about narrow terminal rendering and whether the selected choice is still fully readable?",
         choices: [
-          "An intentionally long option that must remain fully readable even when the terminal is narrow",
+          "An intentionally long option that must remain fully readable even on a narrow choice label",
           "Alternative",
         ],
         allowFreeText: false,
@@ -127,7 +128,7 @@ test.skipIf(!hasTmux)(
       expect((await tmux("resize-window", "-t", "q", "-x", "48", "-y", "18")).code).toBe(0);
       await Bun.sleep(150);
       const narrow = await frame();
-      expect(narrow).toContain("terminal is narrow");
+      expect(narrow).toContain("narrow choice label");
       expect(narrow).toContain("Alternative");
       // Mutate the snapshot while the choice picker is open; the runtime must reject it.
       await service.block(ctx, {

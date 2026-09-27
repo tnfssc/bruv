@@ -16,12 +16,19 @@ const server = Bun.serve({
     const repoTask = userText.includes("REMOTE_FIXTURE_REPO_");
     const capabilityTask = userText.includes("REMOTE_FIXTURE_CAPABILITY");
     const cancelTask = userText.includes("REMOTE_FIXTURE_CANCEL");
+    const menuTask = userText.includes("REMOTE_FIXTURE_MENU_");
     const questionTask = (body.messages ?? []).some(
-      (m) => m.role === "user" && JSON.stringify(m.content).includes("REMOTE_FIXTURE_QUESTION"),
+      (m) =>
+        (m.role === "user" && JSON.stringify(m.content).includes("REMOTE_FIXTURE_QUESTION")) ||
+        JSON.stringify(m.content).includes("REMOTE_FIXTURE_MENU_"),
     );
     const answered =
       questionTask &&
-      (body.messages ?? []).some((m) => JSON.stringify(m.content).includes("REMOTE_FIXTURE_ANSWER_ACCEPTED"));
+      (body.messages ?? []).some((m) =>
+        JSON.stringify(m.content).includes(
+          menuTask ? "REMOTE_FIXTURE_MENU_CONTINUED" : "REMOTE_FIXTURE_ANSWER_ACCEPTED",
+        ),
+      );
     const calls = (body.messages ?? []).filter(
       (item) => item.role === "tool" && item.tool_call_id === "fixture-remote-execute",
     );
@@ -66,7 +73,9 @@ const server = Bun.serve({
                         : cancelTask
                           ? 'console.log(await shell("echo $$ > /tmp/fixture-cancel-pid; touch /tmp/fixture-cancel-started; sleep 120; touch /tmp/fixture-cancel-unwanted",{waitSeconds:0}));'
                           : questionTask
-                            ? 'const q=await questions.ask({text:"REMOTE_FIXTURE_NATIVE_QUESTION",dedupKey:"remote-question"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Need real human answer",foreground:true})'
+                            ? menuTask
+                              ? 'const q=await questions.ask({text:"REMOTE_FIXTURE_MENU_QUESTION",choices:["REMOTE_FIXTURE_MENU_FIRST","REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TAIL_VISIBLE_ON_NARROW_TERMINAL"],allowFreeText:true,dedupKey:"remote-menu-question"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Need menu answer",foreground:true})'
+                              : 'const q=await questions.ask({text:"REMOTE_FIXTURE_NATIVE_QUESTION",dedupKey:"remote-question"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Need real human answer",foreground:true})'
                             : 'console.log("REMOTE_LONG_TEXT_BEGIN"+"x".repeat(9000)+"REMOTE_LONG_TEXT_END"); const r=await shell(\'sleep 3; pwd; git status --porcelain; echo REMOTE_FIXTURE_EXECUTED_ON_OWNER; touch /tmp/fixture-owner-job-finished\', {waitSeconds:0}); console.log(r)',
                   }),
                 },

@@ -4,6 +4,8 @@ Remote controls live in the ordinary CLI conversation. Main Live still has **exe
 
 ## Flow
 
+In the normal interactive CLI, `/remote` opens a searchable inbox (type to filter, arrows, Enter; Esc backs without changes). Pending questions open selectable choices or a custom answer editor; tasks show readable prompt/state and a cached transcript, with explicit sync, reconciliation and confirmed cancellation where available. Offline controls are labeled unavailable; saved uncertain answers are not offered as new unanswered questions. Command completion supplies task/question labels with stable IDs. Explicit commands remain available.
+
 - `/remote connect fixture-owner /usr/local/bin/die`: choose an already configured SSH alias (our acceptance fixture is disposable Docker Linux). Server normal model/profile is reported. Discovery does not copy credentials or verify provider access.
 - `/remote launch <absolute-remote-repo> <prompt>` uses an existing remote checkout.
 - `/remote launch-repo <prompt>` snapshots current-repo tracked staged/unstaged work, without changing the local index/work or sending local history. Untracked paths require human approval; default/refusal omits them. `/remote launch-repo-json` accepts an object with prompt, optional include path array, taskId, model and thinking. Known credential/config paths are rejected; this is not content secret scanning.
