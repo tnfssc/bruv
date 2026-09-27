@@ -45,7 +45,12 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
       nextOffset: offset + events.length < task.events.length ? offset + events.length : undefined,
     };
   };
-  return async (args: RemoteOperation, cwd = process.cwd(), signal?: AbortSignal): Promise<unknown> => {
+  return async (
+    args: RemoteOperation,
+    cwd = process.cwd(),
+    signal?: AbortSignal,
+    jobSessionFile?: string,
+  ): Promise<unknown> => {
     if (!args || typeof args !== "object") throw new Error("Invalid remote operation");
     switch (args.op) {
       case "status":
@@ -55,6 +60,7 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
         return summary(
           await launchRepository(client, {
             prompt: args.prompt,
+            jobSessionFile,
             taskId: args.taskId,
             model: args.model,
             thinking: args.thinking,
@@ -77,9 +83,10 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
             args.repoPath,
             args.prompt,
             args.taskId,
-            ...(args.model !== undefined || args.thinking !== undefined
-              ? [{ model: args.model, thinking: args.thinking }]
-              : []),
+            args.model !== undefined || args.thinking !== undefined
+              ? { model: args.model, thinking: args.thinking }
+              : undefined,
+            jobSessionFile,
           ),
         );
       case "sync":

@@ -1,0 +1,31 @@
+bun test v1.4.2 (744846f84)
+
+tests/remote-extension.test.ts:
+(pass) remote uses execute bridge while human output persists in conversation [2.46ms]
+(pass) remote launch preserves raw prompt and quoted repository paths [0.16ms]
+(pass) accepted retry syncs; uncertain retry retains same launch ID [0.56ms]
+(pass) execute remote methods use configured client, never accept a host [0.44ms]
+(pass) remote presentation escapes terminal and bidi control text [0.06ms]
+(pass) stale targeted or missing-text remote answers never fall through to a different question [0.88ms]
+(pass) no-args inbox binds selected choice to freshly synced owner/version, Escape never submits [1.58ms]
+(pass) connect editor Escape never connects, even after entering a host [0.19ms]
+(pass) cancel confirmation open then offline refuses dispatch [0.56ms]
+(pass) cancel confirmation open then changed-owner refuses dispatch [0.06ms]
+(pass) many polls do not append routine progress; transitions and reconnect are semantic [0.67ms]
+(pass) human transcript preserves every event and offset while task summary extracts final assistant [0.10ms]
+(pass) poll UI is compact, cleanup clears status, and open picker receives no chat interruption [3.74ms]
+(pass) capability, delivery uncertainty, blocked, failure and integration review get single notices [0.21ms]
+(pass) sync command renders final assistant text from full client task, not stripped RPC summary [0.19ms]
+(pass) attention deduplicates hundreds of polls, reconnects and volatile diagnostics while reporting new identities [1.43ms]
+(pass) compact status retains unresolved attention after active tasks end and clears resolved questions [0.13ms]
+(pass) session branch attention rehydrates on reload without poll spam [30.85ms]
+(pass) each genuine outage and recovery is noticed once, including recovery after session reload [0.27ms]
+(pass) failure is one useful notice and explicit delivery responses distinguish request from outcome [0.19ms]
+(pass) remote refresher projects only this parent's jobs and does not duplicate terminal/artifact UI messages [20.79ms]
+(pass) session-owned completion stays in jobs while human footer retains actionable state [10.47ms]
+(pass) human direct launch binds the command's parent session without exposing JSON [0.35ms]
+
+ 23 pass
+ 0 fail
+ 1014 expect() calls
+Ran 23 tests across 1 file. [115.00ms]

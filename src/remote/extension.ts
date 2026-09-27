@@ -1,6 +1,7 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerRemoteRuntime } from "./runtime";
 import { RemoteClient } from "./client";
+import { publishRemoteJobObservations } from "./job-observations";
 import { createRemoteOperations, summarizeRemoteTask } from "./operations";
 import { launchRepository, retryRepository, repositoryPreparations } from "./repository-wire";
 import { grantCapabilities, revokeCapability } from "./services";
@@ -55,6 +56,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     });
   const publish = (result: unknown, kind?: string) =>
     pi.sendMessage({ customType: "die-remote", content: renderHuman(result, kind), display: true });
+  let sessionFile: string | undefined;
   let inFlight = false,
     closed = false,
     picking = false,
@@ -72,7 +74,9 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         syncError = error;
       }
       const state = await client.status();
-      if (picking || closed) return;
+      if (closed) return;
+      publishRemoteJobObservations(state, sessionFile);
+      if (picking) return;
       const status = remoteStatus(state, !!syncError);
       if (lastStatus !== status) {
         ui?.setStatus?.("die-remote", status);
@@ -82,7 +86,10 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         pi.appendEntry?.("die-remote-attention", { key }),
       ))
         publish(notice);
-      for (const notice of attention.update(state, (key) => pi.appendEntry?.("die-remote-attention", { key })))
+      for (const notice of attention.update(
+        { ...state, tasks: Object.fromEntries(Object.entries(state.tasks).filter(([, task]) => !task.jobSessionFile)) },
+        (key) => pi.appendEntry?.("die-remote-attention", { key }),
+      ))
         publish(notice);
     } catch (error) {
       // A global cache/status failure must not masquerade as a healthy connection.
@@ -100,11 +107,19 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       inFlight = false;
     }
   };
-  const timer = setInterval(() => {
-    void refresh();
-  }, 5000);
-  timer.unref();
+  let timer: ReturnType<typeof setInterval> | undefined;
+  const startRefresh = () => {
+    if (timer) clearInterval(timer);
+    timer = setInterval(() => {
+      void refresh();
+    }, 5000);
+    timer.unref();
+  };
+  startRefresh();
   pi.on("session_start", async (_event, ctx) => {
+    sessionFile = ctx?.sessionManager?.getSessionFile?.();
+    closed = false;
+    startRefresh();
     ui = ctx.hasUI ? ctx.ui : undefined;
     lastStatus = undefined;
     attention.reset();
@@ -118,7 +133,9 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   });
   pi.on("session_shutdown", async () => {
     closed = true;
-    clearInterval(timer);
+    sessionFile = undefined;
+    if (timer) clearInterval(timer);
+    timer = undefined;
     ui?.setStatus?.("die-remote", undefined);
   });
   const choose = async (id?: string) => {
@@ -171,7 +188,16 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         }
         if (choice === "launch") {
           const prompt = (await ctx.ui.editor("Remote task prompt"))?.trim();
-          if (prompt) publish(summary(await launchRepository(client, { localRoot: ctx.cwd ?? process.cwd(), prompt })));
+          if (prompt)
+            publish(
+              summary(
+                await launchRepository(client, {
+                  localRoot: ctx.cwd ?? process.cwd(),
+                  prompt,
+                  jobSessionFile: ctx.sessionManager?.getSessionFile?.(),
+                }),
+              ),
+            );
           continue;
         }
         if (choice.startsWith("question:")) {
@@ -300,7 +326,9 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             break;
           case "launch": {
             const { repoPath, prompt } = parseRemoteLaunch(input);
-            result = summary(await client.launch(repoPath, prompt));
+            result = summary(
+              await client.launch(repoPath, prompt, undefined, undefined, ctx.sessionManager?.getSessionFile?.()),
+            );
             break;
           }
           case "launch-repo":
@@ -339,6 +367,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             result = summary(
               await launchRepository(client, {
                 localRoot: root,
+                jobSessionFile: ctx.sessionManager?.getSessionFile?.(),
                 prompt: args.prompt,
                 taskId: args.taskId,
                 approvedUntracked: include,

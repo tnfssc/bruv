@@ -1,0 +1,14 @@
+bun test v1.4.2 (744846f84)
+
+tests/t3/web-runtime.test.ts:
+(pass) all web builders copy the maintained bootstrap to the same packaged filename [0.33ms]
+(pass) web archive is deterministic and extracts privately by content hash [4.17ms]
+(pass) web archive rejects corrupt payloads without publishing an extraction [0.64ms]
+(pass) concurrent web extraction publishes one complete runtime and cleans staging [1.78ms]
+(pass) web extraction refuses a symlinked content-addressed target [0.68ms]
+(pass) standalone executable opens embedded web CLI without Node, Bun, or sidecar on PATH [4387.41ms]
+
+ 6 pass
+ 0 fail
+ 25 expect() calls
+Ran 6 tests across 1 file. [4.40s]

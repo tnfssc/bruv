@@ -31,3 +31,9 @@ Eight active owner tasks; 100 retained owner/client task slots; 128 MiB snapshot
 Sparse checkout, skip-worktree/assume-unchanged, unmerged index, tracked symlinks/gitlinks and configured clean/smudge filters are not automatically handed off. Trusted repo roots and SSH owner are assumed. State/cache are OS-user-wide, stated on connect.
 
 Validation here is Linux Docker/SSH with an explicitly deterministic fake provider and native CLI/unit tests. **No Mac, real-provider deployment, publication, installation or release claim.** Parent owns release gates.
+
+## Session jobs
+
+A launch made from a durable CLI session records that parent before SSH dispatch. Its cached projection appears in jobs.list/inspect/stop/stopWork under a disjoint ssh: job ID (base64url of raw taskId). Keep raw taskId for remote methods. Old unowned tasks remain human /remote cache entries, not another session's jobs. SSH inspect is bounded cached journal output with staleness/gaps; stdin/watch/snooze are unsupported. Offline stopWork may be partial or pending, not stopped.
+
+Owned terminal and human-action waits feed the existing agent completion batch and print/JSON parent boundary. Remote refresh is discovery, not a second completion inbox; artifact refreshes do not resend terminal output. A durable per-session outbox deduplicates and leases dispatch attempts. Host dispatch acceptance is not a proven atomic parent-response ACK: a crash can replay an uncertain envelope, and a host's volatile accepted queue remains an unproven loss window. See ../../wisdom/remote-workspaces/jobs-integration.md for recovery, UI merge seams and proof. Live remains execute-only.

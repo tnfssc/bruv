@@ -199,6 +199,7 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
 }
 
 type Descriptor = {
+  jobSessionFile?: string;
   root: string;
   prompt: string;
   snapshot: RepositorySnapshot;
@@ -207,6 +208,8 @@ type Descriptor = {
   outcome?: RepositoryReturn;
 };
 export type RepositoryLaunch = {
+  /** Local parent attribution only; never sent to the SSH worker. */
+  jobSessionFile?: string;
   localRoot: string;
   prompt: string;
   taskId?: string;
@@ -236,6 +239,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
   if (existsSync(file)) {
     descriptor = read(file);
     if (
+      (args.jobSessionFile !== undefined && descriptor.jobSessionFile !== args.jobSessionFile) ||
       descriptor.root !== realpathSync(args.localRoot) ||
       descriptor.prompt !== args.prompt ||
       JSON.stringify(descriptor.owner) !== JSON.stringify(owner) ||
@@ -248,6 +252,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
     mkdirSync(dir, { mode: 0o700 });
     const snapshot = captureRepository(args.localRoot, join(dir, "snapshot"), args.approvedUntracked);
     descriptor = {
+      jobSessionFile: args.jobSessionFile,
       root: realpathSync(args.localRoot),
       prompt: args.prompt,
       snapshot,
@@ -277,7 +282,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
     if (response.checkout) checkout = response.checkout;
   }
   if (!checkout) throw Error("Remote repository preparation unconfirmed; retry same task ID " + id);
-  await client.launch(checkout, args.prompt, id, descriptor.profile);
+  await client.launch(checkout, args.prompt, id, descriptor.profile, descriptor.jobSessionFile);
   await client.updateTask(id, {
     repository: {
       status: "awaiting_remote_result",
@@ -374,6 +379,7 @@ export async function repositoryPreparations(client: RemoteClient) {
 export async function retryRepository(client: RemoteClient, id: string) {
   const descriptor = read<Descriptor>(join(directory(client, id), "handoff.json"));
   return launchRepository(client, {
+    jobSessionFile: descriptor.jobSessionFile,
     localRoot: descriptor.root,
     prompt: descriptor.prompt,
     taskId: id,
