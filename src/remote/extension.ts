@@ -5,6 +5,8 @@ import { createRemoteOperations, summarizeRemoteTask } from "./operations";
 import { launchRepository, retryRepository, repositoryPreparations } from "./repository-wire";
 import { grantCapabilities, revokeCapability } from "./services";
 import type { CapabilityKind } from "./capabilities";
+import { QuestionPicker } from "../questions/picker";
+import { inboxItems, questionOptions, taskActions, remoteCompletions, pendingQuestions, remoteLabel } from "./menu";
 
 /** Keep untrusted remote text printable even for terminals accepting C1/bidi controls. */
 export const renderRemote = (value: unknown) =>
@@ -46,14 +48,16 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   const publish = (result: unknown) =>
     pi.sendMessage({ customType: "die-remote", content: renderRemote(result), display: true });
   let inFlight = false,
-    closed = false;
+    closed = false,
+    picking = false;
   const seen = new Map<string, string>();
   const refresh = async () => {
-    if (inFlight || closed) return;
+    if (inFlight || closed || picking) return;
     inFlight = true;
     try {
       await client.syncActive();
       const tasks = Object.values((await client.status()).tasks).slice(-20);
+      if (picking) return;
       for (const task of tasks) {
         const notice = {
           taskId: task.taskId,
@@ -114,10 +118,129 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     if (!tasks.length && preparations.length === 1) return preparations[0]!.taskId;
     throw Error("Choose a task from /remote status; more than one task is available");
   };
+  const pick = (ctx: any, title: string, items: { value: string; label: string; description?: string }[]) =>
+    ctx.ui.custom(
+      (tui: any, theme: any, keys: any, done: (value?: string) => void) =>
+        new QuestionPicker(
+          title,
+          items,
+          theme,
+          keys,
+          done,
+          () => tui.requestRender(),
+          () => tui.terminal.rows,
+        ),
+    ) as Promise<string | undefined>;
+  const inbox = async (ctx: any) => {
+    if (!ctx.hasUI) {
+      publish(await operations({ op: "status" }));
+      return;
+    }
+    picking = true;
+    try {
+      while (true) {
+        const state = await client.status();
+        const choice = await pick(ctx, "Remote · inbox", inboxItems(state));
+        if (!choice) return;
+        if (choice.startsWith("offline")) continue;
+        if (choice === "refresh") {
+          // Explicit refresh, unlike the timer, may contact the owner while the menu is open.
+          await client.syncActive();
+          continue;
+        }
+        if (choice === "connect") {
+          const host = (await ctx.ui.editor("SSH host (configured name)"))?.trim();
+          if (!host) continue;
+          const path = (await ctx.ui.editor("Remote die path (blank for default)"))?.trim();
+          publish(await client.connect(host, path || undefined));
+          continue;
+        }
+        if (choice === "launch") {
+          const prompt = (await ctx.ui.editor("Remote task prompt"))?.trim();
+          if (prompt) publish(summary(await launchRepository(client, { localRoot: ctx.cwd ?? process.cwd(), prompt })));
+          continue;
+        }
+        if (choice.startsWith("question:")) {
+          const [, taskId, questionId] = choice.split(":");
+          // Sync before selecting an answer. Never recompose an existing uncertain reply from a new choice.
+          const fresh = await client.sync(taskId!);
+          const q = pendingQuestions({ tasks: { [taskId!]: fresh } }).find((item) => item.q.id === questionId)?.q;
+          if (!q) {
+            ctx.ui.notify("Question no longer pending; no answer sent", "warning");
+            continue;
+          }
+          while (true) {
+            const options = questionOptions(q);
+            const answerChoice = await pick(ctx, remoteLabel(q.text ?? q.question ?? "Remote question"), options);
+            if (!answerChoice) break;
+            const answer =
+              answerChoice === "write"
+                ? await ctx.ui.editor(remoteLabel(q.text ?? q.question ?? "Answer"))
+                : q.choices?.[Number(answerChoice)];
+            if (!answer?.trim()) continue;
+            // Validate latest ledger identity/version, not an old inbox snapshot. Client persists reply before transport.
+            const latest = await client.sync(taskId!);
+            const current = pendingQuestions({ tasks: { [taskId!]: latest } }).find((item) => item.q.id === q.id)?.q;
+            if (
+              !current ||
+              current.version !== q.version ||
+              current.owner?.sessionId !== q.owner?.sessionId ||
+              current.owner?.branchId !== q.owner?.branchId ||
+              latest.replies?.[q.id]
+            )
+              throw Error("Question changed or has a saved reply; no new answer sent");
+            publish(
+              summary(
+                await client.answer(taskId!, { id: q.id, owner: q.owner!, version: q.version!, text: answer.trim() }),
+              ),
+            );
+            break;
+          }
+          continue;
+        }
+        if (choice.startsWith("task:")) {
+          const id = choice.slice(5);
+          while (true) {
+            const task = (await client.status()).tasks[id];
+            if (!task) break;
+            const action = await pick(
+              ctx,
+              "Task · " + remoteLabel(task.prompt),
+              taskActions(task, !!(await client.status()).connection),
+            );
+            if (!action) break;
+            if (action === "transcript") publish(await operations({ op: "transcript", taskId: id, offset: 0 }));
+            if (action === "sync") publish(summary(await client.sync(id)));
+            if (action === "retry") {
+              const saved = await client.transcript(id);
+              publish(
+                summary(
+                  saved.outcome === "accepted"
+                    ? await client.sync(id)
+                    : await client.launch(saved.repoPath, saved.prompt, saved.taskId, saved.overrides),
+                ),
+              );
+            }
+            if (action === "cancel" && (await ctx.ui.confirm("Cancel remote task?", remoteLabel(task.prompt))))
+              publish(summary(await client.cancel(id)));
+          }
+        }
+      }
+    } catch (error) {
+      publish({
+        error: String(error),
+        hint: "No new answer should be inferred from a failed/uncertain submission; inspect saved status.",
+      });
+    } finally {
+      picking = false;
+    }
+  };
   pi.registerCommand("remote", {
+    getArgumentCompletions: async (prefix) => remoteCompletions(prefix, await client.status()),
     description:
       "Remote connect/status, launch/launch-repo, answer, grant/revoke, cancel, retry, sync, transcript (single active task selected automatically)",
     handler: async (input, ctx) => {
+      if (!input.trim()) return inbox(ctx);
       try {
         const [op, ...rest] = input.trim().split(/\s+/);
         let result: unknown;

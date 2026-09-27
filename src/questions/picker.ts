@@ -75,7 +75,7 @@ export class QuestionPicker implements Component, Focusable {
       ...wrapTextWithAnsi(this.title, width),
       ...this.input.render(width),
       ...this.list.render(width),
-      ...(selected ? ["", ...wrapTextWithAnsi(selected.label, width)] : []),
+      ...(selected ? ["", ...wrapTextWithAnsi(selected.label, width).slice(0, Math.max(1, this.rows() - 15))] : []),
       this.theme.fg("dim", "↑↓ move · type filter · Enter · Esc"),
       this.theme.fg("accent", "─".repeat(width)),
     ];
