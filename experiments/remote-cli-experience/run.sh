@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-for t in docker ssh ssh-keygen python3 sha256sum timeout; do command -v "$t" >/dev/null || { echo "missing required tool: $t" >&2; exit 1; }; done
+for t in docker ssh ssh-keygen python3 sha256sum timeout curl; do command -v "$t" >/dev/null || { echo "missing required tool: $t" >&2; exit 1; }; done
 BUN_BIN="${BUN_BIN:-$(command -v bun)}"
 DIE_BIN="${DIE_BIN:-dist/die-remote-cli-experience}"
 for b in "$BUN_BIN" "$DIE_BIN"; do test -x "$b" || { echo "missing executable: $b" >&2; exit 1; }; done
@@ -78,21 +78,65 @@ client(){ REMOTE_CLI_STATE="$tmp/state.json" REMOTE_CLI_PORT="$local_port" REMOT
 # Only pinned SSH forwards owner traffic. Interactive pauses accept CLI commands in this process.
 manual(){
  [[ "${1:-}" != "--interactive" ]] && return
- echo "Manual CLI: connect | launch | status | sync | transcript | offline | answer <id> A; type continue to advance."
+ echo "Manual CLI: connect | launch | launch-repo <root> --allow-history-bundle [--grant-repo-read] | status | sync | serve-read | cancel-file-task | transcript | offline | answer <id> A; type continue to advance."
  while true; do read -r -p "remote-cli> " line || break; [[ "$line" == continue ]] && break; read -r -a words <<< "$line"; [[ "${#words[@]}" -eq 0 ]] || client "${words[@]}"; done
 }
 
 start_ssh
 client connect | tee "$tmp/connect.out"
 manual "${1:-}"
-if [[ "${1:-}" == --repo-safe || "${1:-}" == --repo-conflict ]]; then
+if [[ "${1:-}" == --repo-safe || "${1:-}" == --repo-conflict || "${1:-}" == --repo-read || "${1:-}" == --repo-read-denied || "${1:-}" == --repo-read-cancel ]]; then
  repo="$tmp/fixture-repo"; mkdir "$repo"; git -C "$repo" init -q; git -C "$repo" config user.email fixture@example.invalid; git -C "$repo" config user.name Fixture
  printf 'base\n' > "$repo/fixture.txt"; git -C "$repo" add fixture.txt; git -C "$repo" commit -qm base
  printf 'staged\n' >> "$repo/fixture.txt"; git -C "$repo" add fixture.txt
  printf 'unstaged\n' >> "$repo/fixture.txt"; printf 'secret not sent\n' > "$repo/omitted.secret"
- client launch-repo "$repo" --allow-history-bundle | tee "$tmp/launch.out"
+ if [[ "${1:-}" == --repo-read || "${1:-}" == --repo-read-denied || "${1:-}" == --repo-read-cancel ]]; then printf "CAPABILITY_FILE_OK: fresh offline-only fixture\n" > "$repo/on-demand.txt"; client launch-repo "$repo" --allow-history-bundle --grant-repo-read | tee "$tmp/launch.out"; else client launch-repo "$repo" --allow-history-bundle | tee "$tmp/launch.out"; fi
  test ! -e "$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["repo"]["folder"])' "$tmp/state.json")/snapshot/omitted.secret"
 else client launch | tee "$tmp/launch.out"; fi
+if [[ "${1:-}" == --repo-read || "${1:-}" == --repo-read-denied || "${1:-}" == --repo-read-cancel ]]; then
+ test ! -e "$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["repo"]["folder"])' "$tmp/state.json")/snapshot/on-demand.txt"
+ client launch > "$tmp/retry.out"
+ for i in {1..150}; do client sync > "$tmp/sync.out"; grep -q 'repo_file_read_requested' "$tmp/state.json.events" && break; sleep .1; done
+ grep -q 'repo_file_read_requested' "$tmp/state.json.events"
+ kill "$ssh_pid"; wait "$ssh_pid" 2>/dev/null || true; ssh_pid=''
+ client offline > "$tmp/offline.out"
+ grep -q 'INDEPENDENT REMOTE STEP' "$tmp/offline.out"
+ grep -q repo_file_read_requested "$tmp/offline.out"
+ if client serve-read > "$tmp/disconnected.out" 2>&1; then echo 'served while disconnected' >&2; exit 1; fi
+ start_ssh
+ client sync > "$tmp/reconnect.out"
+ request_id="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["fileRequest"]["id"])' "$tmp/state.json")"
+ task_id="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["intent"]["id"])' "$tmp/state.json")"
+ owner_id="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["identity"])' "$tmp/state.json")"
+ reply(){ curl -sS -o "$tmp/http-body" -w '%{http_code}' -H "Authorization: Bearer $(cat "$tmp/token")" -H 'Content-Type: application/json' -d "$1" "http://127.0.0.1:$local_port/experience/file-reply"; }
+ payload(){ python3 -c 'import json,sys;print(json.dumps(dict(owner=sys.argv[1],task=sys.argv[2],id=sys.argv[3],status="ok",text=sys.argv[4],error="")))' "$1" "$2" "$3" "$4"; }
+ test "$(reply "$(payload stale "$task_id" "$request_id" bad)")" == 409
+ test "$(reply "$(payload "$owner_id" stale "$request_id" bad)")" == 409
+ test "$(reply "$(payload "$owner_id" "$task_id" stale bad)")" == 409
+ if [[ "${1:-}" == --repo-read-cancel ]]; then
+   client cancel-file-task
+   test "$(reply "$(payload "$owner_id" "$task_id" "$request_id" late)")" == 409
+   if client serve-read > "$tmp/cancel-refusal.out" 2>&1; then echo 'cancelled task served' >&2; exit 1; fi
+   client sync > "$tmp/cancel-sync.out"; client offline > "$tmp/cancel-offline.out"
+   grep -q repo_file_task_cancelled "$tmp/cancel-offline.out"
+   docker rm -f "$id-sshd" "$id-owner" >/dev/null
+   echo 'PASS cancelled pending file task remains ended, late response rejected'; exit 0
+ fi
+ if [[ "${1:-}" == --repo-read-denied ]]; then rm "$repo/on-demand.txt"; fi
+ client serve-read | tee "$tmp/read.out"
+ client serve-read | tee "$tmp/duplicate.out"
+ test "$(reply "$(payload "$owner_id" "$task_id" "$request_id" conflict)")" == 409
+ grep -q duplicate "$tmp/duplicate.out"
+ for i in {1..100}; do client sync > "$tmp/final.out"; grep -q 'task ended' "$tmp/final.out" && break; sleep .1; done
+ grep -q 'task ended' "$tmp/final.out"
+ test "$(reply "$(payload "$owner_id" "$task_id" "$request_id" "CAPABILITY_FILE_OK: fresh offline-only fixture")")" == 409
+ client offline > "$tmp/final-offline.out"
+ if [[ "${1:-}" == --repo-read-denied ]]; then grep -q 'FILE READ DENIED OR ERROR' "$tmp/final-offline.out"; grep -q 'file read denied' "$tmp/final-offline.out"; else grep -q 'CAPABILITY_FILE_OK' "$tmp/final-offline.out"; fi
+ if [[ "${1:-}" == --repo-read ]]; then grep -q 'REMOTE FILE CONTENT' "$tmp/final-offline.out"; fi
+ docker rm -f "$id-sshd" "$id-owner" >/dev/null
+ echo 'PASS pinned SSH on-demand repo read, offline independent step, wait/resume and real execute consumption'
+ exit 0
+fi
 client launch | tee "$tmp/retry.out"
 for i in {1..100}; do
  client sync > "$tmp/sync.out"

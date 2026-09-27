@@ -23,6 +23,11 @@ const experienceLog = process.env.EXPERIENCE_MODE === "1" ? new (await import("/
 const events: any[] = [],
   requests: string[] = [];
 let repoTask: {id:string,snapshot:string,patch?:string}|undefined;
+let fileMode=false;
+let fileRequest: {id:string,task:string,path:string,status:"pending"|"ok"|"denied",text?:string,error?:string}|undefined;
+let taskEnded=false;
+function capEvent(type:string, detail:object){experienceLog?.append({type, ...detail});}
+
 let error = "",
   started = false,
   answerSent = false,
@@ -77,6 +82,7 @@ void (async () => {
         const event=JSON.parse(line);
         if(experienceLog) { try { experienceLog.append(event); } catch(e) { error=String(e)+"; transcript incomplete"; rpc.kill(); return; } }
         events.push(event);
+        if(fileMode && event.type==="message_end" && event.message?.role==="assistant" && JSON.stringify(event.message.content).includes("FILE READ RESULT:"))taskEnded=true;
         if(experienceLog && events.length>180)events.shift();
         if (!experienceLog && events.length > 180) {
           error = "event cap";
@@ -142,6 +148,12 @@ const server = Bun.serve({
       if (req.headers.get("authorization") !== "Bearer " + token) return new Response("unauthorized", { status: 401 });
       const body = JSON.stringify(await req.json());
       requests.push(body.slice(-50000));
+      if(fileMode){
+        if(requests.length===1)return call('independent', 'console.log("INDEPENDENT REMOTE STEP completed before file request")');
+        if(requests.length===2)return call('file-read', 'const headers={authorization:"Bearer "+process.env.PROBE_TOKEN,"content-type":"application/json"}; const url="http://127.0.0.1:8080/experience/file-request"; const p=await fetch(url,{method:"POST",headers,body:JSON.stringify({task:"'+launchId+'",owner:"'+ownerIdentity+'",path:"on-demand.txt"})}); if(!p.ok)throw Error("request rejected: "+await p.text()); const q=await p.json(); console.log("FILE REQUEST "+q.id); let result; for(let n=0;n<1200;n++){const r=await fetch(url+"?task="+q.task+"&id="+q.id,{headers});result=await r.json();if(result.status!=="pending")break; await new Promise(r=>setTimeout(r,100))} if(result.status==="pending")throw Error("file read still waiting; no result"); if(result.status!=="ok")throw Error("file read "+result.status+": "+result.error); console.log("REMOTE FILE CONTENT "+result.text);');
+        if(requests.length===3)return sse({role:"assistant",content:"FILE READ RESULT: "+(body.includes("REMOTE FILE CONTENT CAPABILITY_FILE_OK: fresh offline-only fixture")?"CAPABILITY_FILE_OK":"FILE READ DENIED OR ERROR")},"stop");
+        return new Response("unexpected file mode turn",{status:500});
+      }
       if (requests.length === 1 && repoTask) return call("repo-edit", 'if(process.cwd()!=="/work/task-repo")throw Error("die outside task checkout"); const p="/work/task-repo/fixture.txt"; await Bun.write(p,(await Bun.file(p).text())+"remote-die-edit"); for(const cmd of [["config","user.email","fixture@example.invalid"],["config","user.name","Fixture"],["add","fixture.txt"],["commit","-m","fixture-edit"]]){const r=Bun.spawnSync({cmd:["git",...cmd],cwd:"/work/task-repo"}); if(r.exitCode!==0)throw Error(new TextDecoder().decode(r.stderr)); console.log(new TextDecoder().decode(r.stdout))} await Bun.write(p,(await Bun.file(p).text())+"remote-unstaged-edit");');
       const turn=requests.length-(repoTask ? 1 : 0);
       if (turn === 1)
@@ -167,6 +179,33 @@ const server = Bun.serve({
     }
     if (req.headers.get("authorization") !== "Bearer " + token)
       return new Response("unauthorized", { status: 401 });
+    if(path==="/experience/cancel-file-task" && req.method==="POST" && process.env.EXPERIENCE_MODE==="1"){
+      const input=await req.json().catch(()=>null);
+      if(!fileMode || input?.owner!==ownerIdentity || input?.task!==launchId || !started || taskEnded)return new Response('stale or ended task',{status:409});
+      taskEnded=true;capEvent('repo_file_task_cancelled',{task:launchId,request:fileRequest?.id});
+      rpc.kill();return Response.json({task:launchId,ended:true});
+    }
+    if(path === "/experience/file-request" && process.env.EXPERIENCE_MODE === "1"){
+      if(!fileMode || !started || taskEnded || !repoTask || repoTask.id!==launchId)return new Response("task unavailable",{status:409});
+      if(req.method==="POST"){
+        const input=await req.json().catch(()=>null);
+        if(input?.owner!==ownerIdentity || input?.task!==launchId || input?.path!=="on-demand.txt")return new Response("owner/task/path mismatch",{status:409});
+        if(!fileRequest){fileRequest={id:randomUUID(),task:launchId,path:input.path,status:"pending"};capEvent("repo_file_read_requested",{request:fileRequest});await writeFile(root+"/file-request.json",JSON.stringify(fileRequest));}
+        return Response.json(fileRequest);
+      }
+      const u=new URL(req.url);
+      if(u.searchParams.get('task')!==launchId || u.searchParams.get('id')!==fileRequest?.id)return new Response("stale request",{status:409});
+      return Response.json(fileRequest);
+    }
+    if(path==="/experience/file-reply" && req.method==="POST" && process.env.EXPERIENCE_MODE==="1"){
+      const input=await req.json().catch(()=>null);
+      if(!fileMode || !started || !fileRequest || input?.owner!==ownerIdentity || input?.task!==launchId || input?.id!==fileRequest.id || !['ok','denied'].includes(input.status) || typeof input.text!=='string' || typeof input.error!=='string' || input.text.length>16384 || input.error.length>512) return new Response('stale or invalid reply',{status:409});
+      if(fileRequest.status!=='pending')return fileRequest.status===input.status && fileRequest.text===input.text && fileRequest.error===input.error ? Response.json({duplicate:true,ended:taskEnded}) : new Response('conflicting reply',{status:409});
+      if(taskEnded)return new Response('terminal task; late reply refused',{status:409});
+      fileRequest={...fileRequest,status:input.status,text:input.text,error:input.error};
+      capEvent('repo_file_read_resolved',{request:fileRequest});await writeFile(root+'/file-request.json',JSON.stringify(fileRequest));
+      return Response.json({accepted:true});
+    }
     if (path === "/experience/hello") return Response.json({protocol:1, identity:ownerIdentity, epoch:1, provider:"loopback", model:"loopback-model", reasoning:"off", auth:"FAKE provider; no credentials verified", phase: started ? "accepted" : "idle"});
     if (path === "/experience/events") {
       const url=new URL(req.url);
@@ -174,7 +213,7 @@ const server = Bun.serve({
         let page;
         try { page=experienceLog.page(Number(url.searchParams.get("after")),url.searchParams.get("cursor")||"",url.searchParams.has("through")?Number(url.searchParams.get("through")):undefined); }
         catch(e){return new Response("gap/corrupt journal: "+String(e),{status:409})}
-        return Response.json({identity:ownerIdentity,epoch:1,...page,error,questions:await ledger(),started,launchId,answerSent,fixtureComplete:events.some(e=>e.type==="message_end"&&e.message?.role==="assistant"&&JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
+        return Response.json({identity:ownerIdentity,epoch:1,...page,error,questions:await ledger(),started,launchId,answerSent,fileRequest,taskEnded,fixtureComplete:events.some(e=>e.type==="message_end"&&e.message?.role==="assistant"&&JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
       }
       return Response.json({identity:ownerIdentity, epoch:1, events, cap:180, error, questions: await ledger(), started, launchId, answerSent, fixtureComplete: events.some(e => e.type === "message_end" && e.message?.role === "assistant" && JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
     }
@@ -211,11 +250,13 @@ const server = Bun.serve({
       if (input.identity !== ownerIdentity || input.epoch !== 1) return new Response("owner changed", {status:409});
       if (started) return launchId === input.id ? Response.json({id:launchId, duplicate:true, phase:"accepted"}) : new Response("owner busy", {status:409});
       if (repoTask && repoTask.id !== input.id) return new Response("repo task id mismatch",{status:409});
+      if(input.fileRead && (!repoTask || repoTask.id!==input.id))return new Response("repo required for file read",{status:409});
+      fileMode=input.fileRead===true;
       launchId = input.id;
       started = true;
       startRpc();
       await writeFile(root + "/launch.json", JSON.stringify({id:launchId}));
-      rpc.stdin.write(JSON.stringify({id:"start", type:"prompt", message:"Ask fixture question with actual questions helpers and yield."}) + "\n");
+      rpc.stdin.write(JSON.stringify({id:"start", type:"prompt", message:fileMode?"Complete independent step, then read on-demand.txt via granted client capability; report file content.":"Ask fixture question with actual questions helpers and yield."}) + "\n");
       return Response.json({id:launchId, duplicate:false, phase:"accepted"});
     }
     if (path === "/start" && req.method === "POST") {

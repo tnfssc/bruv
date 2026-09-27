@@ -1,5 +1,6 @@
+import {readGrantedFile} from './repo-read';
 import {EventLog,PAGE,MAX_RECORD} from './log';
-import {readFileSync, writeFileSync, renameSync, openSync, fsyncSync, closeSync, existsSync} from 'node:fs';
+import {readFileSync, writeFileSync, renameSync, openSync, fsyncSync, closeSync, existsSync, realpathSync} from 'node:fs';
 import {randomUUID,createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
 import {resolve,dirname,join} from 'node:path';
@@ -7,7 +8,7 @@ import {mkdirSync} from 'node:fs';
 const [rawCmd,...args]=process.argv.slice(2);
 const cmd=rawCmd==='launch-repo'?'launch':rawCmd;
 const path=process.env.REMOTE_CLI_STATE || '/tmp/remote-cli-experience.json';
-type State={repo?:{root:string,folder:string,snapshot:string,omitted:string[],returnStatus?:string,artifact?:string},intent?:{id:string,profile:string,stage:string}, identity?:string, epoch?:number, events?:any[], cursor?:string, count?:number, question?:any, answer?:{id:string,version:number,stage:string}, synced?:string, error?:string, refusal?:string, cap?:number};
+type State={repo?:{root:string,folder:string,snapshot:string,omitted:string[],returnStatus?:string,artifact?:string,readGrant?:boolean},fileRequest?:any,fileReply?:{id:string,status:string,text:string,error:string},taskEnded?:boolean,intent?:{id:string,profile:string,stage:string}, identity?:string, epoch?:number, events?:any[], cursor?:string, count?:number, question?:any, answer?:{id:string,version:number,stage:string}, synced?:string, error?:string, refusal?:string, cap?:number};
 const state:State=existsSync(path)?JSON.parse(readFileSync(path,'utf8')):{cursor:"genesis",count:0};
 const journal=new EventLog(path+".events");
 const lagged=(state.count||0)<journal.count;
@@ -26,7 +27,7 @@ function repoStatus(){if(state.repo)console.log('repo '+state.repo.root+' snapsh
 async function get(p:string,body?:object){const r=await fetch(base+p,{method:body?'POST':'GET',headers:{authorization:'Bearer '+process.env.REMOTE_CLI_TOKEN,'content-type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(2500)}); const reader=r.body!.getReader();let chunks:Uint8Array[]=[];let size=0;while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>Math.max(PAGE*MAX_RECORD+65536,6_000_000)){await reader.cancel();throw Error('oversized response; no merge')}chunks.push(value)}const text=Buffer.concat(chunks).toString('utf8');if(!r.ok)throw Error('HTTP '+r.status+': '+text.slice(0,200));return JSON.parse(text)}
 if(lagged)save();
 function hasCompletionEvent(){for(let offset=0,cursor='genesis';offset<journal.count;){const p=journal.page(offset,cursor);if(p.events.some((r:any)=>r.event?.type==='message_end' && r.event.message?.role==='assistant' && JSON.stringify(r.event.message.content).includes('SAVED ANSWER OBSERVED')))return true;offset=p.next;cursor=p.cursor}return false}
-function local(online=false){console.log('FAKE provider fixture | durable paged events | owner '+(state.identity||'unobserved')+' epoch '+(state.epoch??'unobserved')+' | count '+journal.count+' persisted'+' | last observed-through sync '+(state.synced||'never')+' (owner may advance)'+' | '+(state.refusal||'no detected gap/overflow')); console.log('launch '+(state.intent?.id||'none')+' '+(state.intent?.stage||'not launched')+(state.error?' | '+state.error:''));if(state.question)console.log('native question metadata (not transcript proof) '+state.question.id+' '+state.question.status+' delivery '+(state.question.delivery||'not confirmed')+' '+state.question.text+(online && state.question.status==='pending' && !state.answer && !state.refusal?' (answer with: answer '+state.question.id+' A)':' (do not resend without sync confirmation)'));if(state.answer)console.log('answer '+state.answer.id+' '+state.answer.stage);repoStatus();}
+function local(online=false){console.log('FAKE provider fixture | durable paged events | owner '+(state.identity||'unobserved')+' epoch '+(state.epoch??'unobserved')+' | count '+journal.count+' persisted'+' | last observed-through sync '+(state.synced||'never')+' (owner may advance)'+' | '+(state.refusal||'no detected gap/overflow')); console.log('launch '+(state.intent?.id||'none')+' '+(state.intent?.stage||'not launched')+(state.error?' | '+state.error:''));if(state.question)console.log('native question metadata (not transcript proof) '+state.question.id+' '+state.question.status+' delivery '+(state.question.delivery||'not confirmed')+' '+state.question.text+(online && state.question.status==='pending' && !state.answer && !state.refusal?' (answer with: answer '+state.question.id+' A)':' (do not resend without sync confirmation)'));if(state.answer)console.log('answer '+state.answer.id+' '+state.answer.stage);repoStatus();if(state.repo?.readGrant)console.log('explicit current-repo file-read grant | '+(state.fileRequest?.id||'no request')+' '+(state.fileRequest?.status||'')+(state.taskEnded?' | task ended':''));}
 try {
  if(cmd==='offline'||cmd==='transcript'){local();for(let offset=0,cursor='genesis';offset<journal.count;){const page=journal.page(offset,cursor);for(const r of page.events)console.log('event '+r.seq+' '+JSON.stringify(r.event));offset=page.next;cursor=page.cursor}if(cmd==='transcript')console.log('Persisted full owner event text; large file artifacts are separate.');}
  else if(cmd==='connect'){const h=await get('/experience/hello');console.log('FAKE provider fixture | owner '+h.identity+' epoch '+h.epoch+' protocol '+h.protocol+' | '+h.provider+'/'+h.model+' reasoning '+h.reasoning+' | '+h.auth);}
@@ -35,17 +36,17 @@ try {
    if(rawCmd==='launch-repo'){
      if(state.intent)throw Error('task already selected; launch retries use launch');
      if(!args[0]||args[1]!=='--allow-history-bundle')throw Error('launch-repo <repository root> --allow-history-bundle [--include <exact untracked path> ...]; Git history may contain secrets');
-     const included:string[]=[];
-     for(let i=2;i<args.length;i+=2){if(args[i]!=='--include'||!args[i+1])throw Error('use --include <exact untracked path>');included.push(args[i+1])}
+     const included:string[]=[];const readGrant=args.includes("--grant-repo-read");
+     for(let i=2;i<args.length;i+=1){if(args[i]==='--grant-repo-read')continue;if(args[i]!=='--include'||!args[i+1])throw Error('use --include <exact untracked path>');included.push(args[++i])}
      const id=randomUUID(),root=resolve(args[0]),folder=path+'.repo-'+id;
      const manifest=adapter('capture',root,folder,...included);
-     state.repo={root,folder,snapshot:manifest.snapshot,omitted:manifest.omittedUntracked};
+     state.repo={root:realpathSync(root),folder,snapshot:manifest.snapshot,omitted:manifest.omittedUntracked,readGrant};
      state.intent={id,profile:'fixture',stage:'pending'};save();
      console.log('capture '+manifest.snapshot+' | omitted untracked '+JSON.stringify(manifest.omittedUntracked)+' | explicit history bundle includes reachable Git history (potential secrets); use disposable fixture only');
    }
    if(!state.intent){state.intent={id:randomUUID(),profile:'fixture',stage:'pending'};save()}
    console.log('launch intent '+state.intent.id+' saved locally before send');
-   try {const h=await get('/experience/hello');if(state.identity && (state.identity!==h.identity||state.epoch!==h.epoch)){state.refusal='owner changed: launch acceptance unknown; do not replay';save();throw Error(state.refusal)}if(!state.identity){state.identity=h.identity;state.epoch=h.epoch;save()}if(state.repo){const bundleFile=join(state.repo.folder,'snapshot.bundle');git('-C',join(state.repo.folder,'snapshot'),'bundle','create',bundleFile,'HEAD');const bundle=readFileSync(bundleFile).toString('base64');if(bundle.length>8_000_000)throw Error('bundle too large; no launch');await get('/experience/repo',{id:state.intent.id,identity:state.identity,epoch:state.epoch,snapshot:state.repo.snapshot,bundle});}const a=await get('/experience/launch',{v:1,profile:state.intent.profile,id:state.intent.id,identity:state.identity,epoch:state.epoch});if(!['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage='accepted';save();console.log('accepted '+a.id+(a.duplicate?' (deduplicated)':''));}
+   try {const h=await get('/experience/hello');if(state.identity && (state.identity!==h.identity||state.epoch!==h.epoch)){state.refusal='owner changed: launch acceptance unknown; do not replay';save();throw Error(state.refusal)}if(!state.identity){state.identity=h.identity;state.epoch=h.epoch;save()}if(state.repo){const bundleFile=join(state.repo.folder,'snapshot.bundle');git('-C',join(state.repo.folder,'snapshot'),'bundle','create',bundleFile,'HEAD');const bundle=readFileSync(bundleFile).toString('base64');if(bundle.length>8_000_000)throw Error('bundle too large; no launch');await get('/experience/repo',{id:state.intent.id,identity:state.identity,epoch:state.epoch,snapshot:state.repo.snapshot,bundle});}const a=await get('/experience/launch',{v:1,profile:state.intent.profile,id:state.intent.id,identity:state.identity,epoch:state.epoch,fileRead:!!state.repo?.readGrant});if(!['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage='accepted';save();console.log('accepted '+a.id+(a.duplicate?' (deduplicated)':''));}
    catch(e){if(String(e).includes('owner changed'))state.refusal='owner changed between hello and launch POST: acceptance unknown; do not replay';if(!['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage=state.refusal?'pending / acceptance unknown':/^Error: HTTP (400|409):/.test(String(e)) ? 'rejected by owner (inspect conflict)' : 'pending / acceptance unknown';save();throw e}
  }
  else if(cmd==='sync'||cmd==='status'){
@@ -61,7 +62,7 @@ try {
      if(!Array.isArray(page.events)||page.events.length>PAGE||!Number.isSafeInteger(page.total)||page.total<target!||target!<journal.count||page.next!==journal.count+page.events.length||page.next>target!||page.events.length===0&&page.next<target!){throw Error('invalid page/gap; no merge')}
      for(const r of page.events){if(r.seq!==journal.count+1||r.prev!==journal.cursor||r.hash!==createHash('sha256').update(JSON.stringify({seq:r.seq,prev:r.prev,event:r.event})).digest('hex')||Buffer.byteLength(JSON.stringify(r))>MAX_RECORD)throw Error('event sequence/size gap; no merge');journal.append(r.event);if(journal.cursor!==r.hash)throw Error('event hash mismatch; no merge');state.count=journal.count;state.cursor=journal.cursor;save()}
    } while(journal.count<target!); } catch(e){state.refusal='gap/corrupt sync refusal: '+String(e);save();throw e}
-   state.identity=h.identity;state.epoch=h.epoch;state.count=journal.count;state.cursor=journal.cursor;state.question=page.total===target?page.questions?.[0]:undefined;state.synced=new Date().toISOString();state.refusal=undefined; if(state.answer?.stage.startsWith('rejected') && state.question?.status==='pending')state.answer=undefined; if(state.answer && state.question?.id===state.answer.id && state.question.replyVersion===state.answer.version && state.question.status==='answered' && state.question.delivery==='delivered')state.answer.stage='delivered (sync confirmed)';
+   state.identity=h.identity;state.epoch=h.epoch;state.count=journal.count;state.cursor=journal.cursor;state.question=page.total===target?page.questions?.[0]:undefined;state.fileRequest=page.total===target?page.fileRequest:undefined;state.taskEnded=page.taskEnded;state.synced=new Date().toISOString();state.refusal=undefined; if(state.answer?.stage.startsWith('rejected') && state.question?.status==='pending')state.answer=undefined; if(state.answer && state.question?.id===state.answer.id && state.question.replyVersion===state.answer.version && state.question.status==='answered' && state.question.delivery==='delivered')state.answer.stage='delivered (sync confirmed)';
    if(state.intent && page.launchId===state.intent.id)state.intent.stage=state.question?.status==='pending'?'waiting for answer':state.question?.status==='answered'&&state.question?.delivery==='delivered'&&page.fixtureComplete && hasCompletionEvent()?'fixture complete':'accepted';
    else if(state.intent && !['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage='pending / acceptance unknown';
    save();local(true);console.log('remote now: '+(state.intent?.stage||'idle')+' | observed through cursor '+journal.count+' persisted (owner may advance)');
@@ -79,11 +80,26 @@ try {
    const outcome=Array.isArray(r.omittedRemoteUntracked)&&r.omittedRemoteUntracked.length===0 ? adapter('integrate',state.repo.root,join(state.repo.folder,'manifest.json'),artifact,join(state.repo.folder,'receipts')) : {status:'review',reason:'remote untracked files omitted; no automatic integration: '+JSON.stringify(r.omittedRemoteUntracked)};
    state.repo.returnStatus=outcome.status==='review' && state.repo.returnStatus?.startsWith('applied') ? 'applied (duplicate refused: '+outcome.reason+')' : outcome.status+(outcome.reason?' — '+outcome.reason:'');save();repoStatus();
  }
+ else if(cmd==='cancel-file-task'){
+   if(!state.repo?.readGrant || !state.intent || state.refusal || state.taskEnded)throw Error('no active granted file task; sync first');
+   const h=await get('/experience/hello');if(h.identity!==state.identity||h.epoch!==state.epoch)throw Error('owner changed; no cancellation');
+   await get('/experience/cancel-file-task',{owner:state.identity,task:state.intent.id});
+   state.taskEnded=true;save();console.log('file task cancelled; sync for durable event');
+ }
+ else if(cmd==='serve-read'){
+   if(!state.repo?.readGrant || !state.intent || state.refusal)throw Error('no explicit repo read grant or sync refusal');
+   const h=await get('/experience/hello');if(h.identity!==state.identity||h.epoch!==state.epoch)throw Error('owner changed; no read');
+   const q=state.fileRequest;if(!q || q.task!==state.intent.id || q.status!=='pending' || state.taskEnded)throw Error('no live pending request; sync first');
+   if(state.fileReply && state.fileReply.id!==q.id)throw Error('previous reply unresolved; sync first');
+   if(!state.fileReply){let status='ok',text='',error='';try{text=readGrantedFile(state.repo.root,q.path)}catch(e){status='denied';error=String(e).slice(0,512)}state.fileReply={id:q.id,status,text,error};save()}
+   const r=await get('/experience/file-reply',{owner:state.identity,task:state.intent.id,id:q.id,...state.fileReply});
+   console.log('repo file reply '+q.id+' '+state.fileReply.status+(r.duplicate?' (duplicate)':''));
+ }
  else if(cmd==='answer'){
    if(state.refusal || state.answer || !state.identity || !state.question||state.question.id!==args[0]||state.question.status!=='pending')throw Error('no matching cached pending native question; sync first');
    if(args[1]!=='A')throw Error('fixture permits exact choice A only');
    const q=state.question;state.answer={id:q.id,version:q.version,stage:'sending / outcome unknown'};save();console.log('sending exact native question '+q.id+' owner '+JSON.stringify(q.owner)+' version '+q.version);
    try{await get('/answer',{id:q.id,choice:args[1],owner:q.owner,version:q.version,identity:state.identity,epoch:state.epoch});state.answer.stage='submitted / delivery unconfirmed';save();console.log('reply submitted; delivery not yet confirmed. Run sync.')}catch(e){state.answer.stage=String(e).startsWith('Error: HTTP 409')?'rejected (sync before retry)':'outcome unknown (sync before retry)';save();throw e}
  }
- else throw Error('commands: connect | launch | launch-repo <root> --allow-history-bundle [--include path] | return | status | sync | transcript | offline | answer <question-id> A');
+ else throw Error('commands: connect | launch | launch-repo <root> --allow-history-bundle [--include path] [--grant-repo-read] | serve-read | cancel-file-task | return | status | sync | transcript | offline | answer <question-id> A');
 }catch(e){console.error('ERROR '+String(e));process.exitCode=1}
