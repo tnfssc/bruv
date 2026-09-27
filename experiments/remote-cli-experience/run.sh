@@ -25,7 +25,7 @@ mkdir "$tmp/owner-context" "$tmp/sshd-keys"
 cp "$tmp/hostkey" "$tmp/client.pub" "$tmp/sshd-keys/"
 cp experiments/remote-native-question-probe/{Dockerfile,server.ts,policy.ts} "$tmp/owner-context/"
 cp experiments/remote-cli-experience/log.ts "$tmp/owner-context/"
-sed -i "/COPY policy.ts/a COPY log.ts /opt/log.ts" "$tmp/owner-context/Dockerfile"
+sed -i "/COPY policy.ts/a COPY log.ts /opt/log.ts\nRUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/*" "$tmp/owner-context/Dockerfile"
 cp "$BUN_BIN" "$tmp/owner-context/bun"; cp "$DIE_BIN" "$tmp/owner-context/die"
 chmod 644 "$tmp/owner-context"/{Dockerfile,server.ts,policy.ts,log.ts}
 chmod 755 "$tmp/owner-context"/{bun,die}
@@ -85,7 +85,14 @@ manual(){
 start_ssh
 client connect | tee "$tmp/connect.out"
 manual "${1:-}"
-client launch | tee "$tmp/launch.out"
+if [[ "${1:-}" == --repo-safe || "${1:-}" == --repo-conflict ]]; then
+ repo="$tmp/fixture-repo"; mkdir "$repo"; git -C "$repo" init -q; git -C "$repo" config user.email fixture@example.invalid; git -C "$repo" config user.name Fixture
+ printf 'base\n' > "$repo/fixture.txt"; git -C "$repo" add fixture.txt; git -C "$repo" commit -qm base
+ printf 'staged\n' >> "$repo/fixture.txt"; git -C "$repo" add fixture.txt
+ printf 'unstaged\n' >> "$repo/fixture.txt"; printf 'secret not sent\n' > "$repo/omitted.secret"
+ client launch-repo "$repo" --allow-history-bundle | tee "$tmp/launch.out"
+ test ! -e "$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["repo"]["folder"])' "$tmp/state.json")/snapshot/omitted.secret"
+else client launch | tee "$tmp/launch.out"; fi
 client launch | tee "$tmp/retry.out"
 for i in {1..100}; do
  client sync > "$tmp/sync.out"
@@ -113,6 +120,18 @@ for i in {1..100}; do
  sleep .1
 done
 grep -q ' fixture complete' "$tmp/final.out" || { cat "$tmp/final.out" >&2; exit 1; }
+if [[ "${1:-}" == --repo-safe || "${1:-}" == --repo-conflict ]]; then
+ if [[ "${1:-}" == --repo-conflict ]]; then printf 'local divergence\n' >> "$repo/fixture.txt"; fi
+ client return | tee "$tmp/return.out"
+ test -s "$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["repo"]["artifact"])' "$tmp/state.json")"
+ if [[ "${1:-}" == --repo-safe ]]; then
+   grep -q 'return applied' "$tmp/return.out"; grep -q 'remote-die-editremote-unstaged-edit' "$repo/fixture.txt"
+   git -C "$repo" diff --cached | grep -q staged
+   git -C "$repo" ls-files --others --exclude-standard | grep -q omitted.secret
+ else grep -q 'return review' "$tmp/return.out"; ! grep -q remote-die-edit "$repo/fixture.txt"; fi
+ client return | tee "$tmp/duplicate.out"
+ if [[ "${1:-}" == --repo-safe ]]; then grep -q 'duplicate refused' "$tmp/duplicate.out"; else grep -q 'return review' "$tmp/duplicate.out"; fi
+ fi
 client transcript > "$tmp/transcript.out"
 grep -q 'SAVED ANSWER OBSERVED' "$tmp/transcript.out"
 grep -q 'tool_execution_end' "$tmp/transcript.out"

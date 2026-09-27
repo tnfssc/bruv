@@ -1,4 +1,5 @@
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import { allowedAnswer, allowedScopedAnswer } from "./policy";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 const root = "/work",
@@ -21,12 +22,15 @@ const ownerIdentity = randomUUID();
 const experienceLog = process.env.EXPERIENCE_MODE === "1" ? new (await import("/opt/log.ts")).EventLog(root + "/experience-events.jsonl") : undefined;
 const events: any[] = [],
   requests: string[] = [];
+let repoTask: {id:string,snapshot:string,patch?:string}|undefined;
 let error = "",
   started = false,
   answerSent = false,
   duplicateSent = false,
   launchId = "";
-const rpc = Bun.spawn(
+let rpc: ReturnType<typeof Bun.spawn>;
+function startRpc() {
+  rpc = Bun.spawn(
   [
     "/opt/die",
     "--mode",
@@ -40,7 +44,7 @@ const rpc = Bun.spawn(
     "loopback-model",
   ],
   {
-    cwd: root,
+    cwd: repoTask ? root + "/task-repo" : root,
     env: {
       ...process.env,
       HOME: root,
@@ -85,6 +89,7 @@ void (async () => {
   }
   if (pending.length) error = "incomplete RPC line at EOF; transcript incomplete";
 })().catch((e) => (error += String(e)));
+}
 const ledger = async (): Promise<any[]> => {
   try {
     return JSON.parse(await readFile(root + "/probe.jsonl.questions.json", "utf8"));
@@ -137,15 +142,17 @@ const server = Bun.serve({
       if (req.headers.get("authorization") !== "Bearer " + token) return new Response("unauthorized", { status: 401 });
       const body = JSON.stringify(await req.json());
       requests.push(body.slice(-50000));
-      if (requests.length === 1)
+      if (requests.length === 1 && repoTask) return call("repo-edit", 'if(process.cwd()!=="/work/task-repo")throw Error("die outside task checkout"); const p="/work/task-repo/fixture.txt"; await Bun.write(p,(await Bun.file(p).text())+"remote-die-edit"); for(const cmd of [["config","user.email","fixture@example.invalid"],["config","user.name","Fixture"],["add","fixture.txt"],["commit","-m","fixture-edit"]]){const r=Bun.spawnSync({cmd:["git",...cmd],cwd:"/work/task-repo"}); if(r.exitCode!==0)throw Error(new TextDecoder().decode(r.stderr)); console.log(new TextDecoder().decode(r.stdout))} await Bun.write(p,(await Bun.file(p).text())+"remote-unstaged-edit");');
+      const turn=requests.length-(repoTask ? 1 : 0);
+      if (turn === 1)
         return call(
           "ask",
           'const q=await questions.ask({text:"Choose fixture target?",choices:["A","B"],allowFreeText:false,dedupKey:"fixture-target"}); console.log(JSON.stringify({id:q.id,owner:q.owner,version:q.version,status:q.status})); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Await explicit fixture answer",foreground:true});',
         );
-      if (requests.length === 2 && body.includes("Await explicit fixture answer"))
+      if (turn === 2 && body.includes("Await explicit fixture answer"))
         return sse({ role: "assistant", content: "WAITING FOR EXPLICIT ANSWER" }, "stop");
       if (
-        requests.length === 3 &&
+        turn === 3 &&
         body.includes("reply_") &&
         body.includes("Choose fixture target?")
       )
@@ -153,7 +160,7 @@ const server = Bun.serve({
           "read",
           'const q=(await questions.list()).find(x=>x.text==="Choose fixture target?"); console.log(JSON.stringify({id:q.id,status:q.status,answer:q.answer,replyId:q.replyId,owner:q.owner,version:q.version,delivery:q.delivery}));',
         );
-      if (requests.length === 4 && body.includes("replyId") && body.includes("A"))
+      if (turn === 4 && body.includes("replyId") && body.includes("A"))
         return sse({ role: "assistant", content: "SAVED ANSWER OBSERVED" }, "stop");
       error = "unexpected model request " + requests.length + " " + body.slice(-600);
       return new Response(error, { status: 500 });
@@ -171,13 +178,42 @@ const server = Bun.serve({
       }
       return Response.json({identity:ownerIdentity, epoch:1, events, cap:180, error, questions: await ledger(), started, launchId, answerSent, fixtureComplete: events.some(e => e.type === "message_end" && e.message?.role === "assistant" && JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
     }
+    if (path === "/experience/repo" && req.method === "POST" && process.env.EXPERIENCE_MODE === "1") {
+      const input = await req.json().catch(() => null);
+      if (!input || input.identity !== ownerIdentity || input.epoch !== 1 || !/^[a-zA-Z0-9_-]{1,64}$/.test(input.id || "") || !/^[a-f0-9]{40}$/.test(input.snapshot || "") || typeof input.bundle !== "string" || input.bundle.length > 8_000_000) return new Response("invalid repo input", {status:400});
+      if (repoTask) return repoTask.id === input.id && repoTask.snapshot === input.snapshot ? Response.json({id:input.id,duplicate:true}) : new Response("repo already staged",{status:409});
+      if (started) return new Response("already launched",{status:409});
+      const bytes=Buffer.from(input.bundle,'base64');
+      if (bytes.length > 6_000_000 || bytes.toString('base64') !== input.bundle) return new Response("invalid bundle",{status:400});
+      await writeFile(root + '/input.bundle',bytes);
+      const run=spawnSync('git',['clone','-q',root+'/input.bundle',root+'/task-repo']);
+      if(run.status !== 0) return new Response('bundle clone failed', {status:400});
+      const head=spawnSync('git',['-C',root+'/task-repo','rev-parse','HEAD']);
+      if(head.status !== 0 || head.stdout.toString().trim() !== input.snapshot) return new Response('snapshot mismatch',{status:400});
+      repoTask={id:input.id,snapshot:input.snapshot};
+      return Response.json({id:input.id,snapshot:input.snapshot});
+    }
+    if (path === "/experience/repo-result" && process.env.EXPERIENCE_MODE === "1") {
+      const url=new URL(req.url);
+      if (!repoTask || !started || url.searchParams.get('id') !== repoTask.id || !events.some(e=>e.type==='message_end' && e.message?.role==='assistant' && JSON.stringify(e.message.content).includes('SAVED ANSWER OBSERVED'))) return new Response('task not complete', {status:409});
+      if (!repoTask.patch) {
+        const diff=spawnSync('git',['-C',root+'/task-repo','diff','--binary','--no-renames',repoTask.snapshot,'--'],{maxBuffer:6_000_000});
+        if(diff.status!==0 || diff.stdout.length>4_000_000) return new Response('result too large or failed',{status:409});
+        repoTask.patch=diff.stdout.toString('base64');
+      }
+      const others=spawnSync('git',['-C',root+'/task-repo','ls-files','--others','--exclude-standard','-z'],{maxBuffer:64_000});
+      if(others.status!==0 || others.stdout.length>16_000) return new Response('untracked inventory failed or too large',{status:409});
+      return Response.json({id:repoTask.id,snapshot:repoTask.snapshot,patch:repoTask.patch,sha256:createHash('sha256').update(Buffer.from(repoTask.patch,'base64')).digest('hex'),omittedRemoteUntracked:others.stdout.toString('utf8').split('\0').filter(Boolean)});
+    }
     if (path === "/experience/launch" && req.method === "POST") {
       const input = await req.json().catch(() => null);
       if (!input || input.v !== 1 || input.profile !== "fixture" || typeof input.id !== "string" || !/^[a-zA-Z0-9_-]{1,64}$/.test(input.id)) return new Response("invalid launch", {status:400});
       if (input.identity !== ownerIdentity || input.epoch !== 1) return new Response("owner changed", {status:409});
       if (started) return launchId === input.id ? Response.json({id:launchId, duplicate:true, phase:"accepted"}) : new Response("owner busy", {status:409});
+      if (repoTask && repoTask.id !== input.id) return new Response("repo task id mismatch",{status:409});
       launchId = input.id;
       started = true;
+      startRpc();
       await writeFile(root + "/launch.json", JSON.stringify({id:launchId}));
       rpc.stdin.write(JSON.stringify({id:"start", type:"prompt", message:"Ask fixture question with actual questions helpers and yield."}) + "\n");
       return Response.json({id:launchId, duplicate:false, phase:"accepted"});
@@ -185,6 +221,7 @@ const server = Bun.serve({
     if (path === "/start" && req.method === "POST") {
       if (started) return new Response("already started", { status: 409 });
       started = true;
+      startRpc();
       rpc.stdin.write(
         JSON.stringify({
           id: "start",
@@ -249,6 +286,6 @@ const server = Bun.serve({
   },
 });
 setTimeout(() => {
-  rpc.kill();
+  rpc?.kill();
   server.stop(true);
 }, process.env.EXPERIENCE_MODE === "1" ? 900000 : 55000);

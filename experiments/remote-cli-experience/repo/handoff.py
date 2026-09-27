@@ -86,7 +86,7 @@ def result(remote, manifest_path, patch_path):
     manifest = json.loads(Path(manifest_path).read_text())
     remote = Path(remote).resolve()
     git(remote, 'merge-base', '--is-ancestor', manifest['snapshot'], 'HEAD')
-    patch = git(remote, 'diff', '--binary', '--no-renames', manifest['snapshot'], 'HEAD', '--')
+    patch = git(remote, 'diff', '--binary', '--no-renames', manifest['snapshot'], '--')
     Path(patch_path).write_bytes(patch)
     return dict(patch=str(Path(patch_path).resolve()), sha256=digest(patch), bytes=len(patch))
 

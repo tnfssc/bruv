@@ -65,6 +65,15 @@ class HandoffTests(unittest.TestCase):
         self.assertEqual((self.local / 'code.txt').read_text(), 'base\nstaged\nunstaged\nremote\n')
         self.assertEqual(self.integrate(patch)['status'], 'review')
 
+    def test_result_includes_remote_staged_and_unstaged_tracked_edits(self):
+        put(self.remote, 'code.txt', 'base\nstaged\nunstaged\nremote staged\n')
+        git(self.remote, 'add', 'code.txt')
+        put(self.remote, 'code.txt', 'base\nstaged\nunstaged\nremote staged\nremote unstaged\n')
+        patch = self.folder / 'result.patch'
+        result(self.remote, self.folder / 'manifest.json', patch)
+        self.assertEqual(self.integrate(patch)['status'], 'applied')
+        self.assertEqual((self.local / 'code.txt').read_text(), 'base\nstaged\nunstaged\nremote staged\nremote unstaged\n')
+
     def test_changed_index_or_head_or_worktree_refuses_without_mutation(self):
         patch = self.make_result()
         put(self.local, 'other.txt', 'changed\n')

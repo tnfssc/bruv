@@ -1,9 +1,13 @@
 import {EventLog,PAGE,MAX_RECORD} from './log';
 import {readFileSync, writeFileSync, renameSync, openSync, fsyncSync, closeSync, existsSync} from 'node:fs';
 import {randomUUID,createHash} from 'node:crypto';
-const [cmd,...args]=process.argv.slice(2);
+import {spawnSync} from 'node:child_process';
+import {resolve,dirname,join} from 'node:path';
+import {mkdirSync} from 'node:fs';
+const [rawCmd,...args]=process.argv.slice(2);
+const cmd=rawCmd==='launch-repo'?'launch':rawCmd;
 const path=process.env.REMOTE_CLI_STATE || '/tmp/remote-cli-experience.json';
-type State={intent?:{id:string,profile:string,stage:string}, identity?:string, epoch?:number, events?:any[], cursor?:string, count?:number, question?:any, answer?:{id:string,version:number,stage:string}, synced?:string, error?:string, refusal?:string, cap?:number};
+type State={repo?:{root:string,folder:string,snapshot:string,omitted:string[],returnStatus?:string,artifact?:string},intent?:{id:string,profile:string,stage:string}, identity?:string, epoch?:number, events?:any[], cursor?:string, count?:number, question?:any, answer?:{id:string,version:number,stage:string}, synced?:string, error?:string, refusal?:string, cap?:number};
 const state:State=existsSync(path)?JSON.parse(readFileSync(path,'utf8')):{cursor:"genesis",count:0};
 const journal=new EventLog(path+".events");
 const lagged=(state.count||0)<journal.count;
@@ -14,18 +18,34 @@ if((state.count||0)<journal.count){state.question=undefined;state.synced=undefin
 state.count=journal.count;state.cursor=journal.cursor;
 function save(){const tmp=path+'.tmp'; const fd=openSync(tmp,'w',0o600); try {writeFileSync(fd,JSON.stringify(state));fsyncSync(fd)}finally{closeSync(fd)} renameSync(tmp,path);const d=openSync(path.slice(0,path.lastIndexOf('/')+1)||'.','r');try{fsyncSync(d)}finally{closeSync(d)}}
 const base='http://127.0.0.1:'+process.env.REMOTE_CLI_PORT;
-async function get(p:string,body?:object){const r=await fetch(base+p,{method:body?'POST':'GET',headers:{authorization:'Bearer '+process.env.REMOTE_CLI_TOKEN,'content-type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(2500)}); const reader=r.body!.getReader();let chunks:Uint8Array[]=[];let size=0;while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>PAGE*MAX_RECORD+65536){await reader.cancel();throw Error('oversized response; no merge')}chunks.push(value)}const text=Buffer.concat(chunks).toString('utf8');if(!r.ok)throw Error('HTTP '+r.status+': '+text.slice(0,200));return JSON.parse(text)}
+const helper=join(import.meta.dir,'repo/handoff.py');
+function adapter(...a:string[]){const r=spawnSync('python3',[helper,...a],{encoding:'utf8'});if(r.status!==0)throw Error('repo adapter: '+r.stderr.trim());return JSON.parse(r.stdout)}
+function git(...a:string[]){const r=spawnSync('git',a,{encoding:'utf8'});if(r.status!==0)throw Error('git: '+r.stderr.trim());return r.stdout.trim()}
+function repoStatus(){if(state.repo)console.log('repo '+state.repo.root+' snapshot '+state.repo.snapshot+' | omitted untracked '+JSON.stringify(state.repo.omitted)+' | return '+(state.repo.returnStatus||'not fetched')+(state.repo.artifact?' | artifact '+state.repo.artifact:''))}
+
+async function get(p:string,body?:object){const r=await fetch(base+p,{method:body?'POST':'GET',headers:{authorization:'Bearer '+process.env.REMOTE_CLI_TOKEN,'content-type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(2500)}); const reader=r.body!.getReader();let chunks:Uint8Array[]=[];let size=0;while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>Math.max(PAGE*MAX_RECORD+65536,6_000_000)){await reader.cancel();throw Error('oversized response; no merge')}chunks.push(value)}const text=Buffer.concat(chunks).toString('utf8');if(!r.ok)throw Error('HTTP '+r.status+': '+text.slice(0,200));return JSON.parse(text)}
 if(lagged)save();
 function hasCompletionEvent(){for(let offset=0,cursor='genesis';offset<journal.count;){const p=journal.page(offset,cursor);if(p.events.some((r:any)=>r.event?.type==='message_end' && r.event.message?.role==='assistant' && JSON.stringify(r.event.message.content).includes('SAVED ANSWER OBSERVED')))return true;offset=p.next;cursor=p.cursor}return false}
-function local(online=false){console.log('FAKE provider fixture | durable paged events | owner '+(state.identity||'unobserved')+' epoch '+(state.epoch??'unobserved')+' | count '+journal.count+' persisted'+' | last observed-through sync '+(state.synced||'never')+' (owner may advance)'+' | '+(state.refusal||'no detected gap/overflow')); console.log('launch '+(state.intent?.id||'none')+' '+(state.intent?.stage||'not launched')+(state.error?' | '+state.error:''));if(state.question)console.log('native question metadata (not transcript proof) '+state.question.id+' '+state.question.status+' delivery '+(state.question.delivery||'not confirmed')+' '+state.question.text+(online && state.question.status==='pending' && !state.answer && !state.refusal?' (answer with: answer '+state.question.id+' A)':' (do not resend without sync confirmation)'));if(state.answer)console.log('answer '+state.answer.id+' '+state.answer.stage);}
+function local(online=false){console.log('FAKE provider fixture | durable paged events | owner '+(state.identity||'unobserved')+' epoch '+(state.epoch??'unobserved')+' | count '+journal.count+' persisted'+' | last observed-through sync '+(state.synced||'never')+' (owner may advance)'+' | '+(state.refusal||'no detected gap/overflow')); console.log('launch '+(state.intent?.id||'none')+' '+(state.intent?.stage||'not launched')+(state.error?' | '+state.error:''));if(state.question)console.log('native question metadata (not transcript proof) '+state.question.id+' '+state.question.status+' delivery '+(state.question.delivery||'not confirmed')+' '+state.question.text+(online && state.question.status==='pending' && !state.answer && !state.refusal?' (answer with: answer '+state.question.id+' A)':' (do not resend without sync confirmation)'));if(state.answer)console.log('answer '+state.answer.id+' '+state.answer.stage);repoStatus();}
 try {
  if(cmd==='offline'||cmd==='transcript'){local();for(let offset=0,cursor='genesis';offset<journal.count;){const page=journal.page(offset,cursor);for(const r of page.events)console.log('event '+r.seq+' '+JSON.stringify(r.event));offset=page.next;cursor=page.cursor}if(cmd==='transcript')console.log('Persisted full owner event text; large file artifacts are separate.');}
  else if(cmd==='connect'){const h=await get('/experience/hello');console.log('FAKE provider fixture | owner '+h.identity+' epoch '+h.epoch+' protocol '+h.protocol+' | '+h.provider+'/'+h.model+' reasoning '+h.reasoning+' | '+h.auth);}
  else if(cmd==='launch'){
    if(state.refusal?.includes('owner changed'))throw Error(state.refusal);
+   if(rawCmd==='launch-repo'){
+     if(state.intent)throw Error('task already selected; launch retries use launch');
+     if(!args[0]||args[1]!=='--allow-history-bundle')throw Error('launch-repo <repository root> --allow-history-bundle [--include <exact untracked path> ...]; Git history may contain secrets');
+     const included:string[]=[];
+     for(let i=2;i<args.length;i+=2){if(args[i]!=='--include'||!args[i+1])throw Error('use --include <exact untracked path>');included.push(args[i+1])}
+     const id=randomUUID(),root=resolve(args[0]),folder=path+'.repo-'+id;
+     const manifest=adapter('capture',root,folder,...included);
+     state.repo={root,folder,snapshot:manifest.snapshot,omitted:manifest.omittedUntracked};
+     state.intent={id,profile:'fixture',stage:'pending'};save();
+     console.log('capture '+manifest.snapshot+' | omitted untracked '+JSON.stringify(manifest.omittedUntracked)+' | explicit history bundle includes reachable Git history (potential secrets); use disposable fixture only');
+   }
    if(!state.intent){state.intent={id:randomUUID(),profile:'fixture',stage:'pending'};save()}
    console.log('launch intent '+state.intent.id+' saved locally before send');
-   try {const h=await get('/experience/hello');if(state.identity && (state.identity!==h.identity||state.epoch!==h.epoch)){state.refusal='owner changed: launch acceptance unknown; do not replay';save();throw Error(state.refusal)}if(!state.identity){state.identity=h.identity;state.epoch=h.epoch;save()}const a=await get('/experience/launch',{v:1,profile:state.intent.profile,id:state.intent.id,identity:state.identity,epoch:state.epoch});if(!['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage='accepted';save();console.log('accepted '+a.id+(a.duplicate?' (deduplicated)':''));}
+   try {const h=await get('/experience/hello');if(state.identity && (state.identity!==h.identity||state.epoch!==h.epoch)){state.refusal='owner changed: launch acceptance unknown; do not replay';save();throw Error(state.refusal)}if(!state.identity){state.identity=h.identity;state.epoch=h.epoch;save()}if(state.repo){const bundleFile=join(state.repo.folder,'snapshot.bundle');git('-C',join(state.repo.folder,'snapshot'),'bundle','create',bundleFile,'HEAD');const bundle=readFileSync(bundleFile).toString('base64');if(bundle.length>8_000_000)throw Error('bundle too large; no launch');await get('/experience/repo',{id:state.intent.id,identity:state.identity,epoch:state.epoch,snapshot:state.repo.snapshot,bundle});}const a=await get('/experience/launch',{v:1,profile:state.intent.profile,id:state.intent.id,identity:state.identity,epoch:state.epoch});if(!['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage='accepted';save();console.log('accepted '+a.id+(a.duplicate?' (deduplicated)':''));}
    catch(e){if(String(e).includes('owner changed'))state.refusal='owner changed between hello and launch POST: acceptance unknown; do not replay';if(!['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage=state.refusal?'pending / acceptance unknown':/^Error: HTTP (400|409):/.test(String(e)) ? 'rejected by owner (inspect conflict)' : 'pending / acceptance unknown';save();throw e}
  }
  else if(cmd==='sync'||cmd==='status'){
@@ -46,11 +66,24 @@ try {
    else if(state.intent && !['waiting for answer','fixture complete'].includes(state.intent.stage))state.intent.stage='pending / acceptance unknown';
    save();local(true);console.log('remote now: '+(state.intent?.stage||'idle')+' | observed through cursor '+journal.count+' persisted (owner may advance)');
  }
+ else if(cmd==='return'){
+   if(!state.repo||!state.intent||state.refusal||state.intent.stage!=='fixture complete')throw Error('repo task not confirmed complete by sync; no return');
+   const h=await get('/experience/hello');if(h.identity!==state.identity||h.epoch!==state.epoch)throw Error('owner changed; no return');
+   const r=await get('/experience/repo-result?id='+encodeURIComponent(state.intent.id));
+   if(r.id!==state.intent.id||r.snapshot!==state.repo.snapshot||typeof r.patch!=='string'||r.patch.length>6_000_000)throw Error('result identity/size mismatch');
+   const patch=Buffer.from(r.patch,'base64');if(patch.toString('base64')!==r.patch||createHash('sha256').update(patch).digest('hex')!==r.sha256)throw Error('result hash mismatch');
+   const artifact=join(state.repo.folder,'result.patch');
+   if(existsSync(artifact)){if(!readFileSync(artifact).equals(patch))throw Error('previous result differs; refuse');}
+   else {const fd=openSync(artifact,'wx',0o600);try{writeFileSync(fd,patch);fsyncSync(fd)}finally{closeSync(fd)}}
+   state.repo.artifact=artifact;if(!state.repo.returnStatus)state.repo.returnStatus='saved; integration not attempted';save();
+   const outcome=Array.isArray(r.omittedRemoteUntracked)&&r.omittedRemoteUntracked.length===0 ? adapter('integrate',state.repo.root,join(state.repo.folder,'manifest.json'),artifact,join(state.repo.folder,'receipts')) : {status:'review',reason:'remote untracked files omitted; no automatic integration: '+JSON.stringify(r.omittedRemoteUntracked)};
+   state.repo.returnStatus=outcome.status==='review' && state.repo.returnStatus?.startsWith('applied') ? 'applied (duplicate refused: '+outcome.reason+')' : outcome.status+(outcome.reason?' — '+outcome.reason:'');save();repoStatus();
+ }
  else if(cmd==='answer'){
    if(state.refusal || state.answer || !state.identity || !state.question||state.question.id!==args[0]||state.question.status!=='pending')throw Error('no matching cached pending native question; sync first');
    if(args[1]!=='A')throw Error('fixture permits exact choice A only');
    const q=state.question;state.answer={id:q.id,version:q.version,stage:'sending / outcome unknown'};save();console.log('sending exact native question '+q.id+' owner '+JSON.stringify(q.owner)+' version '+q.version);
    try{await get('/answer',{id:q.id,choice:args[1],owner:q.owner,version:q.version,identity:state.identity,epoch:state.epoch});state.answer.stage='submitted / delivery unconfirmed';save();console.log('reply submitted; delivery not yet confirmed. Run sync.')}catch(e){state.answer.stage=String(e).startsWith('Error: HTTP 409')?'rejected (sync before retry)':'outcome unknown (sync before retry)';save();throw e}
  }
- else throw Error('commands: connect | launch | status | sync | transcript | offline | answer <question-id> A');
+ else throw Error('commands: connect | launch | launch-repo <root> --allow-history-bundle [--include path] | return | status | sync | transcript | offline | answer <question-id> A');
 }catch(e){console.error('ERROR '+String(e));process.exitCode=1}
