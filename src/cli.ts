@@ -167,8 +167,17 @@ const { installDiskBackedSessionManager } = await import("./history/session-mana
 installDiskBackedSessionManager();
 // The UI extension imports Pi's CustomEditor, so it must also load only after
 // die's runtime paths and product metadata are configured.
-const [{ default: asynchronousTasksExtension }, { default: herdrAgentStateExtension }, { default: liveExtension }, { default: remoteExtension }] =
-  await Promise.all([import("./agent/extension"), import("./herdr-agent-state"), import("./live/extension"), import("./remote/extension")]);
+const [
+  { default: asynchronousTasksExtension },
+  { default: herdrAgentStateExtension },
+  { default: liveExtension },
+  { default: remoteExtension },
+] = await Promise.all([
+  import("./agent/extension"),
+  import("./herdr-agent-state"),
+  import("./live/extension"),
+  import("./remote/extension"),
+]);
 const [{ installQuietStartup }, { installConversationDensity }] = await Promise.all([
   import("./ui/startup"),
   import("./ui/conversation-density"),

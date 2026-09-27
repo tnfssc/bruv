@@ -10,10 +10,13 @@ test.skipIf(process.platform !== "linux" || process.env.DIE_REMOTE_E2E !== "1")(
     const child = Bun.spawn(["bash", runner], {
       cwd: resolve(import.meta.dir, ".."),
       env: { ...process.env, BUN_BIN: process.execPath },
-      stdout: "pipe", stderr: "pipe",
+      stdout: "pipe",
+      stderr: "pipe",
     });
     const [stdout, stderr, code] = await Promise.all([
-      new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited,
+      new Response(child.stdout).text(),
+      new Response(child.stderr).text(),
+      child.exited,
     ]);
     expect(code, stderr + "\n" + stdout).toBe(0);
     expect(stdout).toContain("PASS normal CLI RPC agent remote tool");
