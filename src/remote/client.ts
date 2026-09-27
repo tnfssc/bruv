@@ -88,6 +88,11 @@ const MAX_CACHE_BYTES = 128 * 1024 * 1024;
 export function remoteStatePath(): string {
   return join(homedir(), ".die", "remote", "state.json");
 }
+/** Open the lock database without touching it through a second file descriptor. */
+export function openRemoteLockDatabase(path: string): Database {
+  return new Database(path);
+}
+
 export class RemoteClient {
   private queue: Promise<unknown> = Promise.resolve();
   private syncOffset = 0;
@@ -102,11 +107,12 @@ export class RemoteClient {
       // OS-backed SQLite locking releases on client death; a stale mkdir lock would
       // strand the very reconnect needed to reconcile an ambiguous launch.
       const lock = this.path + ".lock.sqlite";
-      const file = await open(lock, "a", 0o600);
-      await file.close();
-      const database = new Database(lock);
+      // SQLite creates the lock database itself. Opening/closing it through another
+      // descriptor releases POSIX process locks held by a concurrent SQLite connection.
+      const database = openRemoteLockDatabase(lock);
       let acquired = false;
       try {
+        await chmod(lock, 0o600);
         database.exec("PRAGMA busy_timeout=0");
         for (let attempt = 0; attempt < 100; attempt++) {
           try {

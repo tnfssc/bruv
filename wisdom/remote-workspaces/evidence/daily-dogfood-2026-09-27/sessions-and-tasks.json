@@ -1,0 +1,70 @@
+{
+  "container": "die-remote-e2e-3021689-23118",
+  "home": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home",
+  "repository": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/repo",
+  "baselineBinary": "4e2e9b4d9d49130d2c6440a0d1df00eb2d80bf928301945d4cfd8f8f2e2caa11",
+  "finalBinary": "4529a01f0f70feb11743cd11310c8ef3fbd6bbf34e73f175a5f17724f4947062",
+  "tasks": [
+    {
+      "id": "91d3c6b0-5dc3-4d73-94ae-23a1e271e96a",
+      "prompt": "REMOTE_FIXTURE_REPO_CONFLICT check my dirty README and preserve all work — a deliberately lengthy daily task name",
+      "state": "done",
+      "session": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/daily.jsonl",
+      "repository": {
+        "status": "review",
+        "reason": "remote untracked files are preserved in the review patch; manual review required",
+        "artifact": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/.die/remote/repositories/91d3c6b0-5dc3-4d73-94ae-23a1e271e96a/result.patch"
+      }
+    },
+    {
+      "id": "e2670459-7341-419d-bd81-593d560da84d",
+      "prompt": "REMOTE_JOBS_PROOF_A daily concurrent local and remote",
+      "state": "done",
+      "session": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/concurrent.jsonl"
+    },
+    {
+      "id": "3191926d-f998-4da1-b5cd-625e11d10e21",
+      "prompt": "REMOTE_FIXTURE_CAPABILITY",
+      "state": "cancelled",
+      "session": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/retry.jsonl"
+    },
+    {
+      "id": "e7fb6cea-670b-4b5c-9e78-f09b8f051242",
+      "prompt": "REMOTE_JOBS_PROOF_A daily concurrent local and remote",
+      "state": "done",
+      "session": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/retry.jsonl"
+    },
+    {
+      "id": "71d87827-f1ae-422c-8256-12fbd35ac6de",
+      "prompt": "REMOTE_FIXTURE_REPO_OLD_COMPLETED",
+      "state": "done"
+    },
+    {
+      "id": "2db5f355-d19e-44dd-87f3-c43e0dce12ec",
+      "prompt": "REMOTE_FIXTURE_REPO_UNTRACKED_DAILY",
+      "state": "done",
+      "repository": {
+        "status": "review",
+        "reason": "remote untracked files are preserved in the review patch; manual review required",
+        "artifact": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/.die/remote/repositories/2db5f355-d19e-44dd-87f3-c43e0dce12ec/result.patch"
+      }
+    },
+    {
+      "id": "2e4a93f9-99c9-4490-a94f-27000b6367fb",
+      "prompt": "REMOTE_FIXTURE_REPO_UNTRACKED_FINAL",
+      "state": "done",
+      "session": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/old-replay.jsonl",
+      "repository": {
+        "status": "review",
+        "reason": "remote untracked files are preserved in the review patch; manual review required",
+        "artifact": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/.die/remote/repositories/2e4a93f9-99c9-4490-a94f-27000b6367fb/result.patch"
+      }
+    },
+    {
+      "id": "9b38cc82-5047-4296-9355-4fb2f59ded6c",
+      "prompt": "REMOTE_JOBS_PROOF_A daily concurrent local and remote",
+      "state": "done",
+      "session": "/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5d85da46/.cache/remote-e2e.uA5m0J/home/concurrent-fixed.jsonl"
+    }
+  ]
+}

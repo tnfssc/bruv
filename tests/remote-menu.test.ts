@@ -76,6 +76,7 @@ test("uncertain replies are never offered as new questions; offline actions are 
   expect(inboxItems(offline).find((i) => i.label.startsWith("Question:"))?.value).toStartWith("offline:");
   expect(taskActions(task, false).map((i) => i.label)).toEqual([
     "View cached transcript",
+    "View saved task details",
     "Sync / cancel unavailable (offline)",
   ]);
   expect(questionOptions({ id: "q", status: "pending", allowFreeText: false, choices: ["Only"] })).toHaveLength(1);
@@ -140,4 +141,19 @@ test("fully typed remote commands submit instead of reselecting identical autoco
   expect(remoteCompletions("sync task-a", state)).toBeNull();
   expect(remoteCompletions("transcript task-a", state)).toBeNull();
   expect(remoteCompletions("stat", state)?.[0]?.value).toBe("status");
+});
+
+test("returned conflicts are discoverable from inbox and readable offline", () => {
+  const review = {
+    ...task,
+    task: { ...task.task, state: "done" },
+    repository: { status: "review", artifact: "/safe/return.patch", reason: "local file changed" },
+  } as RemoteTask;
+  const items = inboxItems({ tasks: { "task-a": review } } as RemoteState);
+  expect(items.find((i) => i.value === "task:task-a")?.description).toContain("review needed");
+  expect(taskActions(review, false)).toContainEqual({
+    value: "details",
+    label: "Review returned changes",
+    description: "Saved conflict reason and local artifact path · available offline",
+  });
 });

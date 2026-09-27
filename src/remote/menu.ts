@@ -17,6 +17,7 @@ export const remoteLabel = (text: string) =>
     .replace(/\s+/g, " ")
     .trim();
 const title = remoteLabel;
+const returnedReview = (task: RemoteTask) => (task.repository as { status?: string } | undefined)?.status === "review";
 export const pendingQuestions = (state: Pick<RemoteState, "tasks">) =>
   Object.values(state.tasks).flatMap((task) =>
     ((task.task?.questions ?? []) as RemoteQuestion[])
@@ -69,6 +70,10 @@ export function inboxItems(state: RemoteState): Item[] {
             : task.cancelRequested
               ? " · cancellation requested locally"
               : "") +
+          (returnedReview(task) || task.integrationError ? " · review needed" : "") +
+          (Array.isArray(task.task?.capabilityNeeds) && task.task.capabilityNeeds.length
+            ? " · capability request pending"
+            : "") +
           (task.lastError ? " · " + task.lastError : ""),
       ),
     })),
@@ -100,6 +105,13 @@ export function questionOptions(q: RemoteQuestion): Item[] {
 export function taskActions(task: RemoteTask, online: boolean): Item[] {
   return [
     { value: "transcript", label: "View cached transcript", description: "Available offline" },
+    {
+      value: "details",
+      label: returnedReview(task) ? "Review returned changes" : "View saved task details",
+      description: returnedReview(task)
+        ? "Saved conflict reason and local artifact path · available offline"
+        : "Saved status, errors and pending requests · available offline",
+    },
     ...(online
       ? [
           {
