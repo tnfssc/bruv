@@ -826,3 +826,43 @@ test("review action exposes cached conflict artifact and leaves picker without c
   expect(messages.at(-1).content).toContain("/safe/return.patch");
   expect(messages.at(-1).content).toContain("Inspect local worktree before applying");
 });
+
+test("menu repository launch asks about untracked files before snapshot or transfer", async () => {
+  const { mkdtemp, writeFile, rm } = await import("node:fs/promises");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const dir = await mkdtemp(join(tmpdir(), "remote-menu-untracked-"));
+  try {
+    Bun.spawnSync(["git", "init", dir]);
+    await writeFile(join(dir, "new-file.txt"), "private local draft");
+    let command: any;
+    const confirmations: string[] = [];
+    const picks = ["launch", undefined];
+    remoteExtension(
+      {
+        on() {},
+        registerCommand(_n: string, c: any) {
+          command = c;
+        },
+        sendMessage() {},
+      } as any,
+      { path: join(dir, "cache/state.json"), status: async () => ({ tasks: {}, connection: {} }) } as any,
+    );
+    await command.handler("", {
+      cwd: dir,
+      hasUI: true,
+      ui: {
+        custom: async () => picks.shift(),
+        editor: async () => "Review local draft",
+        confirm: async (title: string, body: string) => {
+          confirmations.push(title + "\n" + body);
+          throw Error("Stop before any snapshot");
+        },
+      },
+    });
+    expect(confirmations).toHaveLength(1);
+    expect(confirmations[0]).toContain("new-file.txt");
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

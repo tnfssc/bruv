@@ -45,6 +45,16 @@ export function parseRemoteLaunch(input: string): { repoPath: string; prompt: st
   return { repoPath, prompt };
 }
 
+const repositoryUntracked = (root: string): string[] => {
+  const list = Bun.spawnSync(["git", "-C", root, "ls-files", "--others", "--exclude-standard", "-z"], {
+    stdout: "pipe",
+    stderr: "pipe",
+    maxBuffer: 1024 * 1024,
+  });
+  if (list.exitCode) throw Error("Current directory must be a Git repository");
+  return list.stdout.toString().split("\0").filter(Boolean);
+};
+
 /** Only human commands connect, answer questions, approve untracked files, or grant local authority. */
 export default function remoteExtension(pi: ExtensionAPI, client = new RemoteClient()): void {
   registerRemoteRuntime(pi);
@@ -188,16 +198,26 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         }
         if (choice === "launch") {
           const prompt = (await ctx.ui.editor("Remote task prompt"))?.trim();
-          if (prompt)
+          if (prompt) {
+            const root = ctx.cwd ?? process.cwd();
+            const untracked = repositoryUntracked(root);
+            const approvedUntracked =
+              untracked.length && (await ctx.ui.confirm("Include untracked files?", renderRemote(untracked)))
+                ? untracked
+                : [];
+            if (untracked.length && !approvedUntracked.length)
+              ctx.ui.notify("Untracked files omitted; sending tracked files only.", "info");
             publish(
               summary(
                 await launchRepository(client, {
-                  localRoot: ctx.cwd ?? process.cwd(),
+                  localRoot: root,
+                  approvedUntracked,
                   prompt,
                   jobSessionFile: ctx.sessionManager?.getSessionFile?.(),
                 }),
               ),
             );
+          }
           continue;
         }
         if (choice.startsWith("question:")) {
@@ -347,13 +367,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             if (!Array.isArray(include) || include.some((p: unknown) => typeof p !== "string"))
               throw Error("include must be an explicit list of untracked paths");
             const root = ctx.cwd ?? process.cwd();
-            const list = Bun.spawnSync(["git", "-C", root, "ls-files", "--others", "--exclude-standard", "-z"], {
-              stdout: "pipe",
-              stderr: "pipe",
-              maxBuffer: 1024 * 1024,
-            });
-            if (list.exitCode) throw Error("Current directory must be a Git repository");
-            const untracked = list.stdout.toString().split("\0").filter(Boolean);
+            const untracked = repositoryUntracked(root);
             if (!include.length && untracked.length) {
               publish({
                 untrackedOmitted: untracked,
