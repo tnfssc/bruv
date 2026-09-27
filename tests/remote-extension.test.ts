@@ -1,6 +1,7 @@
 import { createRemoteOperations } from "../src/remote/operations";
 import { expect, test } from "bun:test";
 import remoteExtension, { parseRemoteLaunch, renderRemote } from "../src/remote/extension";
+import { RemoteAttention, renderHuman } from "../src/remote/human-rendering";
 
 test("remote uses execute bridge while human output persists in conversation", async () => {
   let active = ["execute"];
@@ -35,7 +36,8 @@ test("remote uses execute bridge while human output persists in conversation", a
   });
   await commands.get("remote").handler("status", {});
   expect(messages[0].display).toBe(true);
-  expect(JSON.parse(messages[0].content)).toMatchObject({ cached: true, tasks: [] });
+  expect(messages[0].content).toContain("No saved tasks");
+  expect(messages[0].content).not.toContain("\"cached\"");
 });
 
 test("remote launch preserves raw prompt and quoted repository paths", () => {
@@ -157,7 +159,7 @@ test("stale targeted or missing-text remote answers never fall through to a diff
   await command.handler("answer task_one q_current", {});
   await command.handler("answer", {});
   expect(replies).toHaveLength(0);
-  expect(messages.every((m) => JSON.parse(m.content).error)).toBe(true);
+  expect(messages.every((m) => m.content.startsWith("Remote error:"))).toBe(true);
   await command.handler("answer no thanks", {});
   expect(replies[0][0]).toBe("task_one");
   expect(replies[0][1]).toMatchObject({ id: "q_current", version: 2, text: "no thanks" });
@@ -345,3 +347,90 @@ for (const change of ["offline", "changed-owner"] as const) {
     expect(messages.some((m) => JSON.stringify(m).includes("no cancel sent"))).toBe(true);
   });
 }
+
+
+test("many polls do not append routine progress; transitions and reconnect are semantic", () => {
+  const attention = new RemoteAttention();
+  const t: any = { taskId: "t", outcome: "accepted", events: [], cursor: 1, task: { state: "running", questions: [] } };
+  const poll = () => attention.update({ tasks: { t } } as any).join("\n");
+  expect(poll()).toBe("");
+  for (let i = 0; i < 100; i++) { t.cursor++; t.events.push({ seq: i, event: { type: "tool_update" } }); expect(poll()).toBe(""); }
+  t.task.questions = [{ status: "pending", id: "q", version: 1, owner: { sessionId: "s", branchId: "b" }, text: "Which?" }];
+  expect(poll()).toContain("Which?");
+  expect(poll()).toBe("");
+  t.lastError = "SSH unavailable";
+  expect(poll()).toContain("offline");
+  expect(poll()).toBe("");
+  delete t.lastError;
+  expect(poll()).toContain("recovered");
+  expect(poll()).toBe("");
+  t.task.questions.push({ status: "pending", id: "new", version: 1, owner: { sessionId: "s", branchId: "b" }, text: "New question" });
+  expect(poll()).toContain("New question");
+  t.task.questions = [];
+  expect(poll()).toBe("");
+  t.task.state = "done";
+  t.events.push({ seq: 101, event: { type: "message_end", message: { role: "assistant", content: [{ type: "text", text: "Finished work" }, { type: "toolCall", text: "hidden" }] } } });
+  expect(poll()).toContain("Finished work");
+  expect(poll()).toBe("");
+});
+
+test("human transcript preserves every event and offset while task summary extracts final assistant", () => {
+  const events = [{ seq: 1, event: { type: "tool_result", data: "all details" } }, { seq: 2, event: { type: "message_end", message: { role: "assistant", content: [{ type: "text", text: "Readable result" }] } } }];
+  const task: any = { taskId: "t", task: { state: "done" }, outcome: "accepted", events };
+  expect(renderHuman(task)).toContain("Readable result");
+  expect(renderHuman(task)).not.toContain("message_end");
+  const transcript = renderHuman({ ...task, offset: 0, nextOffset: 2 }, "transcript");
+  expect(transcript).toContain("all details");
+  expect(transcript).toContain("Readable result");
+  expect(transcript).toContain("/remote transcript t 2");
+});
+
+
+test("poll UI is compact, cleanup clears status, and open picker receives no chat interruption", async () => {
+  const handlers = new Map<string, any>(), messages: any[] = [], statuses: any[] = [];
+  let command: any, release!: () => void;
+  const task: any = { taskId: "id", prompt: "work", outcome: "accepted", cursor: 1, events: [], task: { state: "running" } };
+  remoteExtension({ on: (name: string, fn: any) => handlers.set(name, fn), registerCommand: (_: string, c: any) => command = c, sendMessage: (m: any) => messages.push(m) } as any,
+    { status: async () => ({ tasks: { id: task } }), syncActive: async () => {}, sync: async () => task } as any);
+  const ctx: any = { hasUI: true, ui: { setStatus: (...args: any[]) => statuses.push(args), custom: async () => new Promise(resolve => release = () => resolve(undefined)) } };
+  await handlers.get("session_start")({}, ctx);
+  await new Promise(resolve => setTimeout(resolve, 0));
+  expect(statuses.at(-1)).toEqual(["die-remote", "remote: 1 active"]);
+  expect(messages).toHaveLength(0);
+  const menu = command.handler("", ctx);
+  task.task.questions = [{ id: "q", version: 1, status: "pending", text: "Open menu question" }];
+  await handlers.get("session_start")({}, ctx);
+  await new Promise(resolve => setTimeout(resolve, 0));
+  expect(messages).toHaveLength(0);
+  release(); await menu;
+  await handlers.get("session_start")({}, ctx);
+  await new Promise(resolve => setTimeout(resolve, 0));
+  expect(messages.filter(m => m.content.includes("Open menu question"))).toHaveLength(1);
+  await handlers.get("session_shutdown")();
+  expect(statuses.at(-1)).toEqual(["die-remote", undefined]);
+});
+
+test("capability, delivery uncertainty, blocked, failure and integration review get single notices", () => {
+  const a = new RemoteAttention(), t: any = { taskId: "x", task: { state: "running" }, outcome: "accepted", events: [] };
+  const poll = () => a.update({ tasks: { x: t } } as any).join("\n");
+  t.task.capabilityNeeds = [{ kind: "repo.read", input: "src" }];
+  expect(poll()).toContain("capability request"); expect(poll()).toBe("");
+  t.replyDelivery = { q: { replyId: "reply-1", status: "uncertain" } };
+  expect(poll()).toContain("delivery uncertain"); expect(poll()).toBe("");
+  t.task.state = "unknown";
+  expect(poll()).toContain("unknown"); expect(poll()).toBe("");
+  t.task.error = "model failed";
+  expect(poll()).toContain("model failed"); expect(poll()).toBe("");
+  t.integrationError = "conflicts need review";
+  expect(poll()).toContain("conflicts need review"); expect(poll()).toBe("");
+});
+
+
+test("sync command renders final assistant text from full client task, not stripped RPC summary", async () => {
+  let command: any; const messages: any[] = [];
+  remoteExtension({ on() {}, registerCommand(_name: string, c: any) { command = c; }, sendMessage(m: any) { messages.push(m); } } as any,
+    { sync: async () => ({ taskId: "task", outcome: "accepted", task: { state: "done" }, events: [{ seq: 1, event: { type: "message_end", message: { role: "assistant", content: [{ type: "text", text: "Human conclusion" }] } } }] }) } as any);
+  await command.handler("sync task", {});
+  expect(messages[0].content).toContain("Human conclusion");
+  expect(messages[0].content).not.toContain("message_end");
+});
