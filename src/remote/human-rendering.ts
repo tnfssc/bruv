@@ -149,6 +149,14 @@ export function renderHuman(value: unknown, kind = "result"): string {
       .filter(Boolean)
       .join("\n");
   }
+  if (v.grant && v.scope) return [
+    "Local capability granted · task " + safe(v.grant.taskId),
+    "Authority: " + (Array.isArray(v.grant.kinds) ? v.grant.kinds.map(safe).join(", ") : "unknown"),
+    "Local repository: " + safe(v.scope),
+    "Grant: " + safe(v.grant.id),
+    "Read-only named authority for this task; not arbitrary shell or credentials.",
+  ].join("\n");
+  if (v.revoked === true && v.grantId) return "Local capability revoked · " + safe(v.grantId) + "\nOwner acknowledged revocation.";
   if (kind === "error" && v.error) return "Remote error: " + detail(v.error) + (v.hint ? "\n" + detail(v.hint) : "");
   if (kind === "status") {
     const tasks = Array.isArray(v.tasks) ? (v.tasks as RemoteTask[]) : [];

@@ -122,3 +122,10 @@ test("saved task details describe capability waits without granting access", () 
   expect(text).toContain("Choose region");
   expect(text).toContain("not granted");
 });
+
+test("human capability outcomes are readable scoped receipts, not protocol JSON", () => {
+  const grant = renderHuman({ grant: { id: "g", taskId: "t", kinds: ["repo.read"] }, scope: "/fixture/repo" });
+  for (const value of ["Local capability granted", "task t", "Authority: repo.read", "Local repository: /fixture/repo", "Grant: g"]) expect(grant).toContain(value);
+  expect(grant).not.toContain('"grant":');
+  expect(renderHuman({ revoked: true, grantId: "g" })).toBe("Local capability revoked · g\nOwner acknowledged revocation.");
+});
