@@ -18,20 +18,21 @@ const provider = Bun.serve({
     if (request.method !== "POST" || !new URL(request.url).pathname.endsWith("/chat/completions"))
       return new Response("not found", { status: 404 });
     const body = (await request.json()) as { messages: Array<{ role: string; tool_call_id?: string }> };
-    const response = body.messages.some((m) => m.role === "tool" && m.tool_call_id === "fixture-remote-launch")
+    const callId = "fixture-remote-launch";
+    const code =
+      'console.log(await remote.launch({repoPath: "/fixture/repo", prompt: "Inspect the repository with execute and say REMOTE_FIXTURE_FINISHED_ON_OWNER"}))';
+    const response = body.messages.some((m) => m.role === "tool" && m.tool_call_id === callId)
       ? { role: "assistant", content: "LOCAL_FIXTURE_ACK" }
       : {
           role: "assistant",
           tool_calls: [
             {
               index: 0,
-              id: "fixture-remote-launch",
+              id: callId,
               type: "function",
               function: {
                 name: "execute",
-                arguments: JSON.stringify({
-                  code: 'console.log(await remote.launch({repoPath: "/fixture/repo", prompt: "Inspect the repository with execute and say REMOTE_FIXTURE_FINISHED_ON_OWNER"}))',
-                }),
+                arguments: JSON.stringify({ code }),
               },
             },
           ],
@@ -73,14 +74,23 @@ const state = () =>
       string,
       {
         cursor: number;
+        repoPath: string;
+        repository?: { status: string; artifact: string };
+        localArtifacts?: { complete: boolean; files: Record<string, { path: string }> };
+        artifactsComplete?: boolean;
         events: Array<{ event: unknown }>;
-        task?: { state: string; questions?: Array<{ text: string; owner: unknown; version: number }> };
+        task?: {
+          state: string;
+          capabilityNeeds?: unknown[];
+          capabilities?: unknown[];
+          questions?: Array<{ id: string; text: string; owner: unknown; version: number }>;
+        };
       }
     >;
   };
-const launchRpc = () => {
+const launchRpc = (cwd = home) => {
   const child = spawn(die, ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model", "--no-session"], {
-    cwd: home,
+    cwd,
     env: { ...process.env, HOME: home, DIE_CODING_AGENT_DIR: agentDir },
     stdio: ["pipe", "pipe", "pipe"],
   });
@@ -96,7 +106,10 @@ const launchRpc = () => {
       buffer = buffer.slice(pos + 1);
       if (line) {
         try {
-          events.push(JSON.parse(line));
+          const event = JSON.parse(line);
+          events.push(event);
+          if (event.type === "extension_ui_request" && event.method === "confirm")
+            child.stdin.write(JSON.stringify({ type: "extension_ui_response", id: event.id, confirmed: false }) + "\n");
         } catch {
           throw new Error("Invalid RPC JSON: " + line);
         }
@@ -174,7 +187,8 @@ try {
   assert(ownerFinished, "owner continued after local RPC client exit");
   assert.equal(localCalls, callsAtDisconnect, "disconnected client must not make provider calls");
   const reconnect = launchRpc();
-  reconnect.send("/remote sync " + taskId);
+  // Reconnect should refresh active tasks without a manual sync.
+  reconnect.send("/remote status");
   await reconnect.wait(
     () => state().tasks[taskId]!.task?.state === "done",
     "offline transcript sync after reconnect",
@@ -193,12 +207,13 @@ try {
   reconnect.send("/remote launch /fixture/repo REMOTE_FIXTURE_QUESTION");
   await reconnect.wait(() => Object.keys(state().tasks).length === 2, "native question task accepted");
   const questionId = Object.keys(state().tasks).find((id) => id !== taskId)!;
-  for (let i = 0; i < 100 && state().tasks[questionId]!.task?.state !== "unknown"; i++) {
-    reconnect.send("/remote sync " + questionId);
-    await Bun.sleep(100);
-  }
+  await reconnect.wait(
+    () => !!state().tasks[questionId]!.task?.questions?.length,
+    "automatic pending native question refresh",
+    30000,
+  );
   const questionTask = state().tasks[questionId]!.task;
-  if (questionTask?.state !== "unknown")
+  if (!questionTask?.questions?.length)
     console.error(
       "QUESTION DEBUG",
       ssh(
@@ -209,13 +224,169 @@ try {
           "/events.jsonl; cat /tmp/fixture-owner-provider-requests",
       ).stdout,
     );
-  assert.equal(questionTask?.state, "unknown", "unanswered native question must not be called done");
+  assert.equal(questionTask?.state, "running", "unanswered native question must stay running");
   assert.equal(questionTask?.questions?.[0]?.text, "REMOTE_FIXTURE_NATIVE_QUESTION");
   assert(
     questionTask?.questions?.[0]?.owner && questionTask.questions[0].version > 0,
     "native question identity/version absent",
   );
+  reconnect.send(
+    "/remote answer " + questionId + " " + questionTask!.questions![0]!.id + " REMOTE_FIXTURE_ANSWER_ACCEPTED",
+  );
+  await reconnect.wait(
+    () => ssh("test -f /tmp/fixture-native-answer-finished").status === 0,
+    "native answer reached owner model",
+    30000,
+  );
+  await reconnect.wait(
+    () => state().tasks[questionId]!.task?.state === "done",
+    "answered remote task completion",
+    30000,
+  );
+  assert(
+    JSON.stringify(state().tasks[questionId]!.events).includes("REMOTE_FIXTURE_NATIVE_ANSWER_CONTINUED"),
+    "answered owner conversation did not continue to final response",
+  );
   reconnect.child.kill("SIGKILL");
+  // Current-repo tracked dirty transfer, explicit omission, safe return and conflict artifacts.
+  const localRepo = join(home, "local-repo");
+  mkdirSync(localRepo);
+  const git = (...args: string[]) => {
+    const r = spawnSync("git", ["-C", localRepo, ...args], { encoding: "utf8" });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  git("init", "-q");
+  writeFileSync(join(localRepo, "tracked.txt"), "base\n");
+  git("add", "tracked.txt");
+  git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base");
+  writeFileSync(join(localRepo, "tracked.txt"), "staged\n");
+  git("add", "tracked.txt");
+  writeFileSync(join(localRepo, "tracked.txt"), "dirty tracked input\n");
+  writeFileSync(join(localRepo, "on-demand.txt"), "LOCAL_ON_DEMAND_CONTENT\n");
+  mkdirSync(join(localRepo, ".agents", "skills", "review"), { recursive: true });
+  writeFileSync(join(localRepo, ".agents", "skills", "review", "SKILL.md"), "LOCAL_REVIEW_SKILL\n");
+  const originalIndex = git("ls-files", "--stage");
+  let repoRpc = launchRpc(localRepo);
+  const nextTask = async (command: string) => {
+    const previous = new Set(Object.keys(state().tasks));
+    repoRpc.send(command);
+    await repoRpc.wait(
+      () => Object.keys(state().tasks).some((id) => !previous.has(id)),
+      "repository/capability launch accepted",
+      30000,
+    );
+    return Object.keys(state().tasks).find((id) => !previous.has(id))!;
+  };
+  const safeId = await nextTask("/remote launch-repo REMOTE_FIXTURE_REPO_SAFE");
+  await repoRpc.wait(
+    () => state().tasks[safeId]!.repository?.status === "applied",
+    "automatic safe repo return",
+    60000,
+  );
+  assert.equal(readFileSync(join(localRepo, "tracked.txt"), "utf8"), "remote tracked edit\n");
+  assert.equal(git("ls-files", "--stage"), originalIndex, "local staged index was changed");
+  assert(
+    repoRpc.events.some((e) => e.type === "extension_ui_request" && e.method === "confirm"),
+    "untracked transfer was not asked before omission",
+  );
+  assert.equal(
+    ssh("test ! -e " + state().tasks[safeId]!.repoPath + "/on-demand.txt").status,
+    0,
+    "unapproved untracked content transferred",
+  );
+  writeFileSync(join(localRepo, "tracked.txt"), "second input\n");
+  const conflictId = await nextTask("/remote launch-repo REMOTE_FIXTURE_REPO_CONFLICT");
+  writeFileSync(join(localRepo, "tracked.txt"), "LOCAL_CONFLICT_PRESERVED\n");
+  await repoRpc.wait(
+    () => state().tasks[conflictId]!.repository?.status === "review",
+    "conflicting local change retained for review",
+    60000,
+  );
+  assert.equal(readFileSync(join(localRepo, "tracked.txt"), "utf8"), "LOCAL_CONFLICT_PRESERVED\n");
+  assert.equal(git("ls-files", "--stage"), originalIndex);
+  assert(
+    readFileSync(state().tasks[conflictId]!.repository!.artifact, "utf8").includes("remote tracked edit"),
+    "review artifact missing remote patch bytes",
+  );
+  const capabilityId = await nextTask("/remote launch-repo REMOTE_FIXTURE_CAPABILITY");
+  await repoRpc.wait(
+    () => !!state().tasks[capabilityId]!.task?.capabilityNeeds?.length,
+    "missing capability grant surfaced",
+    30000,
+  );
+  repoRpc.child.kill("SIGKILL");
+  await new Promise((resolve) => repoRpc.child.once("exit", resolve));
+  await Bun.sleep(1000);
+  assert.equal(
+    ssh("test ! -e /tmp/fixture-capability-finished").status,
+    0,
+    "capability silently ran while local client was offline/ungranted",
+  );
+  repoRpc = launchRpc(localRepo);
+  repoRpc.send("/remote grant " + capabilityId + " repo.read tool:git-status skill:review");
+  await repoRpc.wait(
+    () => state().tasks[capabilityId]!.task?.state === "done",
+    "explicit local file/tool/skill grant after reconnect",
+    90000,
+  );
+  const capabilityText = JSON.stringify(state().tasks[capabilityId]!.events);
+  assert(
+    capabilityText.includes("LOCAL_ON_DEMAND_CONTENT") && capabilityText.includes("LOCAL_REVIEW_SKILL"),
+    "local capability tool/skill results missing from offline transcript",
+  );
+  const cancelledId = await nextTask("/remote launch /fixture/repo REMOTE_FIXTURE_CANCEL");
+  await repoRpc.wait(
+    () => ssh("test -e /tmp/fixture-cancel-started").status === 0,
+    "native background job started",
+    30000,
+  );
+  repoRpc.send("/remote cancel " + cancelledId);
+  await repoRpc.wait(
+    () => state().tasks[cancelledId]!.task?.state === "cancelled",
+    "native remote cancellation reached stopped checkpoint",
+    40000,
+  );
+  assert.equal(
+    ssh("test ! -e /tmp/fixture-cancel-unwanted; ! kill -0 $(cat /tmp/fixture-cancel-pid) 2>/dev/null").status,
+    0,
+    "cancelled native shell still alive",
+  );
+  await repoRpc.wait(
+    () => state().tasks[capabilityId]!.artifactsComplete === true,
+    "offline text artifacts synchronized",
+    30000,
+  );
+  const cachedFiles = Object.values(state().tasks[capabilityId]!.localArtifacts?.files ?? {});
+  assert(cachedFiles.length, "task-owned text artifacts absent");
+  assert(
+    cachedFiles.some((file) => readFileSync(file.path, "utf8").includes("LOCAL_ON_DEMAND_CONTENT")),
+    "cached artifacts lost complete tool text",
+  );
+  await repoRpc.wait(
+    () => state().tasks[taskId]!.artifactsComplete === true,
+    "large execute and native job text artifacts synchronized",
+    30000,
+  );
+  const longFiles = Object.values(state().tasks[taskId]!.localArtifacts?.files ?? {});
+  assert(
+    longFiles.some(
+      (file) =>
+        file.path.endsWith("/stdout.log") &&
+        readFileSync(file.path, "utf8").includes("REMOTE_LONG_TEXT_BEGIN" + "x".repeat(9000) + "REMOTE_LONG_TEXT_END"),
+    ),
+    "complete large execute stdout was not cached separately from preview",
+  );
+  assert(
+    longFiles.some(
+      (file) =>
+        file.path.includes("execute-job-") &&
+        readFileSync(file.path, "utf8").includes("REMOTE_FIXTURE_EXECUTED_ON_OWNER"),
+    ),
+    "full native background job text was not cached before owner exit",
+  );
+  repoRpc.child.kill("SIGKILL");
+  const callsBeforeOffline = localCalls;
   const stopped = spawnSync("docker", ["stop", container], { encoding: "utf8", timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
   const offline = launchRpc();
@@ -244,10 +415,10 @@ try {
     offlineHasFinal(),
     "offline human paged transcript did not render final assistant output in normal conversation",
   );
-  assert.equal(localCalls, callsAtDisconnect, "offline transcript must not call a provider");
+  assert.equal(localCalls, callsBeforeOffline, "offline transcript must not call a provider");
   offline.child.kill("SIGKILL");
   console.log(
-    "PASS normal CLI RPC agent remote execute helper, human connect, pinned SSH, independent owner, reconnect sync, native question detection, server-offline paged human transcript; events=" +
+    "PASS normal CLI RPC agent remote execute helper, human connect, pinned SSH, independent owner, automatic reconnect sync, native question answer/continuation, server-offline paged human transcript, dirty repo safe/index-preserving return and conflict review, explicit offline-waiting file/tool/skill grants, native cancellation, cached text artifacts; events=" +
       state().tasks[taskId]!.cursor,
   );
 } finally {

@@ -1,5 +1,5 @@
+import { serviceRemoteTask } from "./services";
 import { Database } from "bun:sqlite";
-import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, chmod, open, stat } from "node:fs/promises";
 import { homedir } from "node:os";
@@ -22,92 +22,42 @@ export type RemoteTask = {
   epoch: string;
   repoPath: string;
   prompt: string;
+  overrides?: { model?: string; thinking?: string };
   cursor: number;
+  transcriptComplete?: boolean;
   events: RemoteEvent[];
   task?: Task;
   outcome: "unknown" | "accepted";
   lastSync?: string;
   lastError?: string;
+  repository?: unknown;
+  localArtifacts?: unknown;
+  artifactsComplete?: boolean;
+  integrationError?: string;
+  cancelRequested?: boolean;
+  replyDelivery?: Record<string, { replyId: string; status: "uncertain" | "delivered"; error?: string }>;
+  replies?: Record<
+    string,
+    { id: string; owner: { sessionId: string; branchId: string }; version: number; text: string; replyId: string }
+  >;
 };
 export type RemoteState = {
   connection?: { host: string; diePath: string; hello: Hello };
   tasks: Record<string, RemoteTask>;
 };
 export type Transport = (host: string, diePath: string, request: Record<string, unknown>) => Promise<unknown>;
-const validHost = (host: string) => /^[a-zA-Z0-9_][a-zA-Z0-9_.@-]*$/.test(host) && !host.startsWith("-");
-const validPath = (path: string) => path === "die" || (path.startsWith("/") && !/[\r\n\0]/.test(path));
-const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
-
-/** One SSH stdio invocation per operation. SSH's remote command is a shell string: quote only the executable. */
-export const sshTransport: Transport = async (host, diePath, request) => {
-  if (!validHost(host) || !validPath(diePath)) throw new Error("Invalid SSH alias or remote die path");
-  return await new Promise((resolve, reject) => {
-    const child = spawn(
-      "ssh",
-      [
-        "-T",
-        "-o",
-        "BatchMode=yes",
-        "-o",
-        "StrictHostKeyChecking=yes",
-        "-o",
-        "UpdateHostKeys=no",
-        "-o",
-        "ClearAllForwardings=yes",
-        "-o",
-        "ForwardAgent=no",
-        "-o",
-        "ForwardX11=no",
-        "-o",
-        "GSSAPIDelegateCredentials=no",
-        "-o",
-        "PermitLocalCommand=no",
-        "--",
-        host,
-        quote(diePath) + " --remote-control",
-      ],
-      { stdio: ["pipe", "pipe", "pipe"] },
-    );
-    let out = "",
-      err = "";
-    const timer = setTimeout(() => child.kill(), 30_000);
-    child.stdout.setEncoding("utf8");
-    child.stderr.setEncoding("utf8");
-    child.stdout.on("data", (s: string) => {
-      out += s;
-      if (out.length > 4_000_000) child.kill();
-    });
-    child.stderr.on("data", (s: string) => {
-      err += s;
-      if (err.length > 4000) err = err.slice(-4000);
-    });
-    child.on("error", (error) => {
-      clearTimeout(timer);
-      reject(error);
-    });
-    child.on("close", (code) => {
-      clearTimeout(timer);
-      if (code !== 0) return reject(new Error("SSH remote control failed: " + (err.trim() || "exit " + code)));
-      try {
-        resolve(JSON.parse(out));
-      } catch {
-        reject(new Error("Remote die returned no protocol JSON; use a compatible remote-enabled Linux build"));
-      }
-    });
-    child.stdin.on("error", () => {});
-    child.stdin.end(JSON.stringify(request) + "\n");
-  });
-};
+export { sshTransport } from "./ssh";
+import { sshTransport, validHost, validPath } from "./ssh";
 function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid remote response");
   const result = value as Record<string, unknown>;
   if (typeof result.error === "string" && typeof result.code === "string") throw new Error(result.error);
   return result;
 }
-function hello(value: unknown): Hello {
+function hello(value: unknown, requireModel = true): Hello {
   const h = object(value),
     p = object(h.profile);
-  if (!p.model)
+  if (requireModel && !p.model)
     throw new Error(
       "Remote normal profile has no model. Configure normal in ~/.die/subagents.json on the Linux server; local credentials/models are never copied.",
     );
@@ -120,12 +70,12 @@ function hello(value: unknown): Hello {
     typeof h.version !== "string" ||
     h.platform !== "linux" ||
     p.name !== "normal" ||
-    typeof p.model !== "string" ||
+    (typeof p.model !== "string" && !(p.model === undefined && !requireModel)) ||
     !["configured", "missing", "unknown"].includes(String(p.auth)) ||
     (p.thinking !== undefined && typeof p.thinking !== "string")
   )
     throw new Error("Unsupported remote hello");
-  return h as Hello;
+  return { ...h, profile: { ...p, model: p.model ?? "" } } as Hello;
 }
 const MAX_CACHE_BYTES = 128 * 1024 * 1024;
 
@@ -134,6 +84,7 @@ export function remoteStatePath(): string {
 }
 export class RemoteClient {
   private queue: Promise<unknown> = Promise.resolve();
+  private syncOffset = 0;
   constructor(
     readonly path = remoteStatePath(),
     readonly transport: Transport = sshTransport,
@@ -235,7 +186,12 @@ export class RemoteClient {
   status(): Promise<RemoteState> {
     return this.read();
   }
-  launch(repoPath: string, prompt: string, taskId?: string): Promise<RemoteTask> {
+  launch(
+    repoPath: string,
+    prompt: string,
+    taskId?: string,
+    overrides?: { model?: string; thinking?: string },
+  ): Promise<RemoteTask> {
     return this.exclusive(async () => {
       if (
         !repoPath.startsWith("/") ||
@@ -252,7 +208,7 @@ export class RemoteClient {
             t.host === c.host &&
             t.repoPath === repoPath &&
             t.prompt === prompt &&
-            (t.outcome === "unknown" || t.task?.state !== "done"),
+            (t.outcome === "unknown" || t.transcriptComplete === false || t.task?.state !== "done"),
         );
         if (uncertain)
           throw new Error(
@@ -273,7 +229,8 @@ export class RemoteClient {
           task.ownerId !== c.hello.ownerId ||
           task.epoch !== c.hello.epoch ||
           task.repoPath !== repoPath ||
-          task.prompt !== prompt
+          task.prompt !== prompt ||
+          JSON.stringify(task.overrides ?? {}) !== JSON.stringify(overrides ?? {})
         )
           throw new Error("Task ID is pinned to a different owner or intent; refusal to retry");
         if (task.outcome === "accepted") return task;
@@ -286,6 +243,7 @@ export class RemoteClient {
           epoch: c.hello.epoch,
           repoPath,
           prompt,
+          overrides,
           cursor: 0,
           events: [],
           outcome: "unknown",
@@ -295,7 +253,7 @@ export class RemoteClient {
       }
       try {
         // Recheck identity before retry. A lost reply is not permission to POST to a new owner.
-        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }));
+        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
           throw new Error("Remote owner changed; launch outcome unknown, no retry");
         const reply = object(
@@ -306,12 +264,14 @@ export class RemoteClient {
             taskId,
             repoPath,
             prompt,
+            ...overrides,
           }),
         );
         if (object(reply.task).taskId !== taskId) throw new Error("Invalid launch response task ID");
         delete task.lastError;
         task.task = object(reply.task) as Task;
         task.outcome = "accepted";
+        task.transcriptComplete = false;
         await this.save(state);
         return task;
       } catch (error) {
@@ -327,7 +287,7 @@ export class RemoteClient {
       }
     });
   }
-  sync(taskId: string): Promise<RemoteTask> {
+  private syncRaw(taskId: string): Promise<RemoteTask> {
     return this.exclusive(async () => {
       const state = await this.read(),
         task = state.tasks[taskId],
@@ -336,7 +296,7 @@ export class RemoteClient {
       try {
         if (!c || c.host !== task.host || c.hello.ownerId !== task.ownerId || c.hello.epoch !== task.epoch)
           throw new Error("Task belongs to another remote owner; cached transcript only");
-        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }));
+        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
           throw new Error(
             "Remote owner changed (server restart or replaced state); outcome unknown; cached transcript only",
@@ -370,6 +330,7 @@ export class RemoteClient {
           if (r.cursor !== seq || (r.hasMore && !events.length)) throw new Error("Invalid sync cursor");
           task.events.push(...events);
           task.cursor = seq;
+          task.transcriptComplete = !r.hasMore;
           // A stale owner snapshot must not erase an already observed terminal result.
           if (
             !task.task ||
@@ -377,6 +338,14 @@ export class RemoteClient {
             task.task.state === snapshot.state
           )
             task.task = snapshot as Task;
+          const reply = snapshot.reply as { replyId?: string; status?: string } | undefined;
+          if (reply && (reply.status === "delivered" || reply.status === "uncertain")) {
+            for (const [id, intent] of Object.entries(task.replies ?? {}))
+              if (intent.replyId === reply.replyId) {
+                task.replyDelivery ??= {};
+                task.replyDelivery[id] = { replyId: intent.replyId, status: reply.status };
+              }
+          }
           task.outcome = "accepted";
           task.lastSync = new Date().toISOString();
           delete task.lastError;
@@ -390,6 +359,150 @@ export class RemoteClient {
         throw error;
       }
     });
+  }
+  async control(request: Record<string, unknown>, expected?: { ownerId: string; epoch: string }): Promise<unknown> {
+    return this.exclusive(async () => {
+      const state = await this.read(),
+        c = state.connection;
+      if (!c) throw Error("Use /remote connect first");
+      const task = typeof request.taskId === "string" ? state.tasks[request.taskId] : undefined;
+      const identity = expected ?? task ?? c.hello;
+      if (c.hello.ownerId !== identity.ownerId || c.hello.epoch !== identity.epoch || (task && task.host !== c.host))
+        throw Error("Remote owner changed; no request sent");
+      const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
+      if (current.ownerId !== identity.ownerId || current.epoch !== identity.epoch)
+        throw Error("Remote owner changed; outcome unknown");
+      return object(
+        await this.transport(c.host, c.diePath, { ...request, ownerId: identity.ownerId, epoch: identity.epoch }),
+      );
+    });
+  }
+  async updateTask(
+    taskId: string,
+    changes: Pick<
+      RemoteTask,
+      "repository" | "integrationError" | "cancelRequested" | "localArtifacts" | "artifactsComplete"
+    >,
+  ): Promise<void> {
+    return this.exclusive(async () => {
+      const state = await this.read();
+      const task = state.tasks[taskId];
+      if (!task) throw Error("Unknown remote task");
+      Object.assign(task, changes);
+      await this.save(state);
+    });
+  }
+  async sync(taskId: string): Promise<RemoteTask> {
+    const task = await this.syncRaw(taskId);
+    try {
+      await serviceRemoteTask(this, task);
+    } catch (error) {
+      await this.updateTask(taskId, { integrationError: String(error) });
+    }
+    return this.transcript(taskId);
+  }
+  async cancel(taskId: string): Promise<RemoteTask> {
+    await this.updateTask(taskId, { cancelRequested: true });
+    await this.control({ op: "cancel", taskId });
+    return this.sync(taskId);
+  }
+  answer(
+    taskId: string,
+    input: {
+      id: string;
+      owner: { sessionId: string; branchId: string };
+      version: number;
+      text: string;
+      replyId?: string;
+    },
+  ): Promise<RemoteTask> {
+    return this.exclusive(async () => {
+      const state = await this.read();
+      const task = state.tasks[taskId],
+        connection = state.connection;
+      if (
+        !task ||
+        !connection ||
+        task.host !== connection.host ||
+        task.ownerId !== connection.hello.ownerId ||
+        task.epoch !== connection.hello.epoch
+      )
+        throw new Error("Remote question belongs to another owner; no answer sent");
+      if (!input.text?.trim() || Buffer.byteLength(input.text) > 16_384) throw new Error("Invalid answer");
+      if (!task.replies) task.replies = {};
+      const prior = task.replies[input.id];
+      const reply = { ...input, replyId: input.replyId ?? prior?.replyId ?? randomUUID() };
+      if (prior && JSON.stringify(prior) !== JSON.stringify(reply))
+        throw new Error("Conflicting or uncertain reply; cannot replace it");
+      if (!prior) {
+        const question = (
+          task.task?.questions as
+            | Array<{ id: string; owner: typeof input.owner; version: number; status: string }>
+            | undefined
+        )?.find((q) => q.id === input.id);
+        if (
+          !question ||
+          question.status !== "pending" ||
+          question.version !== input.version ||
+          question.owner?.sessionId !== input.owner?.sessionId ||
+          question.owner?.branchId !== input.owner?.branchId
+        )
+          throw new Error("Question owner/version is stale; sync before answering");
+      }
+      task.replies[input.id] = reply;
+      task.replyDelivery ??= {};
+      task.replyDelivery[input.id] = { replyId: reply.replyId, status: "uncertain" };
+      await this.save(state); // preserve reply identity before SSH; lost responses are uncertain
+      try {
+        const current = hello(await this.transport(connection.host, connection.diePath, { op: "hello" }), false);
+        if (current.ownerId !== task.ownerId || current.epoch !== task.epoch) throw new Error("Remote owner changed");
+        const response = object(
+          await this.transport(connection.host, connection.diePath, {
+            op: "answer",
+            ownerId: task.ownerId,
+            epoch: task.epoch,
+            taskId,
+            ...reply,
+          }),
+        );
+        const receipt = object(response.task).reply as { replyId?: string; status?: string } | undefined;
+        if (receipt?.replyId === reply.replyId && receipt.status === "delivered")
+          task.replyDelivery[input.id] = { replyId: reply.replyId, status: "delivered" };
+        delete task.lastError;
+      } catch (error) {
+        task.lastError = "Native reply outcome uncertain: " + String(error);
+        task.replyDelivery[input.id] = { replyId: reply.replyId, status: "uncertain", error: String(error) };
+        await this.save(state);
+        throw new Error(task.lastError + "; retry only this question with the same replyId");
+      }
+      await this.save(state);
+      return task;
+    });
+  }
+  /** Bounded refresh; one failed task does not prevent others from updating. */
+  async syncActive(limit = 10): Promise<void> {
+    const state = await this.read();
+    const active = Object.values(state.tasks).filter(
+      (t) =>
+        t.task?.state === "accepted" ||
+        t.task?.state === "running" ||
+        t.outcome === "unknown" ||
+        t.transcriptComplete === false ||
+        t.artifactsComplete === false ||
+        (!!t.integrationError && t.task?.state === "done"),
+    );
+    const batch = Array.from(
+      { length: Math.min(active.length, Math.max(0, Math.min(10, limit))) },
+      (_, i) => active[(this.syncOffset + i) % active.length]!,
+    );
+    this.syncOffset = active.length ? (this.syncOffset + batch.length) % active.length : 0;
+    for (const task of batch) {
+      try {
+        await this.sync(task.taskId);
+      } catch {
+        /* lastError remains available in the cache */
+      }
+    }
   }
   async transcript(taskId: string): Promise<RemoteTask> {
     const task = (await this.read()).tasks[taskId];

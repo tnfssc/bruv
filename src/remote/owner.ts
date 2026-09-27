@@ -1,3 +1,7 @@
+import { listRemoteArtifacts, getRemoteArtifact } from "./artifacts";
+import { repositoryRequest } from "./repository-wire";
+import { OwnerCapabilityMailbox } from "./capability-runtime";
+import { capabilityNeeds } from "./services";
 import { Database } from "bun:sqlite";
 import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
@@ -9,6 +13,7 @@ import {
   mkdirSync,
   openSync,
   readFileSync,
+  readdirSync,
   renameSync,
   statSync,
   writeSync,
@@ -52,7 +57,14 @@ function location(id: string) {
   if (!/^[a-zA-Z0-9_-]{1,128}$/.test(id)) throw new Error("Invalid taskId");
   return join(tasks, id);
 }
-type Saved = { task: RemoteTask; intent: string; pid?: number; startTime?: string; boot: string };
+type Saved = {
+  task: RemoteTask;
+  intent: string;
+  pid?: number;
+  startTime?: string;
+  boot: string;
+  overrides?: { model?: string; thinking?: string };
+};
 function processInfo(pid: number) {
   const fields = readFileSync("/proc/" + pid + "/stat", "utf8")
     .split(") ")[1]!
@@ -185,11 +197,76 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         },
       };
     }
+    if (
+      (req.op === "launch" || req.op === "repository-upload") &&
+      !existsSync(location(req.taskId)) &&
+      readdirSync(tasks).length >= 100
+    )
+      return error(
+        "task_limit",
+        "Remote task retention limit (100) reached; preserve artifacts and retire old task directories before launching more",
+      );
+    if (req.op === "artifact") {
+      const dir = location(req.taskId);
+      if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown artifact task");
+      if (req.action === "list") return { artifacts: listRemoteArtifacts(dir) };
+      if (
+        req.action !== "get" ||
+        typeof req.name !== "string" ||
+        typeof req.sha256 !== "string" ||
+        typeof req.offset !== "number"
+      )
+        return error("invalid_artifact", "Invalid artifact request");
+      return getRemoteArtifact(dir, { name: req.name, sha256: req.sha256, offset: req.offset });
+    }
+    if (req.op === "repository-upload" || req.op === "repository-result") {
+      const dir = location(req.taskId);
+      const state = existsSync(statePath(req.taskId)) ? saved(req.taskId).task.state : undefined;
+      return repositoryRequest(dir, req, state) as RemoteResponse;
+    }
+    if (
+      req.op === "cancel" ||
+      req.op === "capability-grant" ||
+      req.op === "capability-revoke" ||
+      req.op === "capability-reply"
+    ) {
+      const dir = location(req.taskId);
+      if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown taskId");
+      const value = saved(req.taskId),
+        box = new OwnerCapabilityMailbox(dir, req.taskId);
+      if (req.op === "cancel") {
+        if (["accepted", "running"].includes(value.task.state)) {
+          value.task.cancelRequested = true;
+          persist(req.taskId, value);
+          if (!existsSync(join(dir, "cancel.json")))
+            atomic(join(dir, "cancel.json"), { requestedAt: new Date().toISOString() });
+          await box.terminal("Cancellation requested");
+        }
+        return { task: value.task, ...events(req.taskId) };
+      }
+      if (!["accepted", "running"].includes(value.task.state) || value.task.cancelRequested)
+        return error("task_ended", "Task is terminal or cancellation requested");
+      if (req.op === "capability-grant") {
+        if (req.grant.taskId !== req.taskId) return error("grant_conflict", "Grant task mismatch");
+        await box.acceptGrant(req.grant);
+        return { accepted: true };
+      }
+      if (req.op === "capability-revoke") {
+        await box.revoke(req.grantId);
+        return { accepted: true };
+      }
+      if (req.reply.taskId !== req.taskId) return error("reply_conflict", "Capability task mismatch");
+      return { accepted: await box.reply(req.reply) };
+    }
     if (req.op === "launch") {
       location(req.taskId);
       if (existsSync(statePath(req.taskId))) {
         const existing = saved(req.taskId);
-        if (existing.intent !== intent(req, existing.task.profile))
+        if (
+          existing.intent !== intent(req, existing.task.profile) ||
+          existing.overrides?.model !== req.model ||
+          existing.overrides?.thinking !== req.thinking
+        )
           return error("intent_conflict", "taskId already accepted with different intent");
         try {
           return { task: existing.task, ...events(req.taskId) };
@@ -197,17 +274,46 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           return error("journal_gap", String(e));
         }
       }
+      const active = readdirSync(tasks).filter((id) => {
+        try {
+          return ["accepted", "running"].includes(saved(id).task.state);
+        } catch {
+          return false;
+        }
+      }).length;
+      if (active >= 8)
+        return error("active_limit", "Remote active task limit (8) reached; sync or cancel existing tasks first");
       if (!isAbsolute(req.repoPath) || !statSync(req.repoPath).isDirectory() || !existsSync(join(req.repoPath, ".git")))
         return error("invalid_repo", "repoPath must be an existing absolute Git repository");
       if (typeof req.prompt !== "string" || !req.prompt.trim() || Buffer.byteLength(req.prompt) > 128 * 1024)
         return error("invalid_prompt", "Nonempty prompt up to 128 KiB required");
       const normal = (await loadProfiles(join(process.env.HOME ?? homedir(), ".die", "subagents.json"))).normal;
-      if (!normal.model)
+      if (!normal.model && !req.model)
         return error("missing_model", "Configure remote normal profile model in ~/.die/subagents.json");
-      const profile = { name: "normal" as const, model: normal.model, thinking: normal.thinking ?? "off" };
+      if (
+        req.model !== undefined &&
+        (typeof req.model !== "string" || !/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:/-]+$/.test(req.model))
+      )
+        return error("invalid_model", "Expected provider/model override");
+      if (
+        req.thinking !== undefined &&
+        (typeof req.thinking !== "string" ||
+          !["off", "minimal", "low", "medium", "high", "xhigh"].includes(req.thinking))
+      )
+        return error("invalid_thinking", "Invalid thinking override");
+      const profile = {
+        name: "normal" as const,
+        model: req.model ?? normal.model!,
+        thinking: req.thinking ?? normal.thinking ?? "off",
+      };
       const hash = intent(req, profile);
 
-      mkdirSync(location(req.taskId), { mode: 0o700 });
+      const taskDirectory = location(req.taskId);
+      if (existsSync(taskDirectory)) {
+        const prepared = join(taskDirectory, "repository-ready.json");
+        if (!existsSync(prepared) || read<{ checkout: string }>(prepared).checkout !== req.repoPath)
+          return error("repository_incomplete", "Existing task directory is not the verified prepared checkout");
+      } else mkdirSync(taskDirectory, { mode: 0o700 });
       const tasksFd = openSync(tasks, "r");
       try {
         fsyncSync(tasksFd);
@@ -218,6 +324,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         intent: hash,
         task: { taskId: req.taskId, state: "accepted", repoPath: req.repoPath, profile },
         boot: identity.boot,
+        overrides: { model: req.model, thinking: req.thinking },
       };
       persist(req.taskId, value);
       atomic(join(location(req.taskId), "request.json"), { prompt: req.prompt });
@@ -247,6 +354,78 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         return error("journal_gap", String(e));
       }
     }
+    if (req.op === "answer") {
+      location(req.taskId);
+      if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown taskId");
+      const value = saved(req.taskId);
+      if (value.task.state !== "running")
+        return error("not_running", "Remote session is not running; answer was not sent");
+      if (
+        !/^[a-zA-Z0-9_-]{1,128}$/.test(req.replyId) ||
+        typeof req.text !== "string" ||
+        !req.text.trim() ||
+        Buffer.byteLength(req.text) > 16_384 ||
+        !Number.isSafeInteger(req.version) ||
+        !req.owner ||
+        typeof req.owner.sessionId !== "string" ||
+        typeof req.owner.branchId !== "string" ||
+        typeof req.id !== "string"
+      )
+        return error("invalid_answer", "Invalid targeted native reply");
+      const receipt = join(location(req.taskId), "answers", req.replyId + ".json");
+      if (existsSync(receipt)) {
+        const prior = read<{ request: typeof req; status: "delivered" | "uncertain" }>(receipt);
+        if (JSON.stringify(prior.request) !== JSON.stringify(req))
+          return error("answer_conflict", "Reply ID reused with different intent");
+        if (prior.status === "uncertain") {
+          // Receipt is committed before the command slot. Recover that exact pre-dispatch
+          // crash window, but never rewrite an existing (possibly dispatched) same-ID slot.
+          const slotPath = join(location(req.taskId), "answer.json");
+          const slot = existsSync(slotPath) ? read<{ replyId: string }>(slotPath) : undefined;
+          const oldReceipt = slot ? join(location(req.taskId), "answers", slot.replyId + ".json") : undefined;
+          const oldDelivered =
+            oldReceipt && existsSync(oldReceipt) && read<{ status: string }>(oldReceipt).status === "delivered";
+          if (!slot || (slot.replyId !== req.replyId && oldDelivered)) {
+            atomic(slotPath, req);
+            value.task.reply = { replyId: req.replyId, status: "uncertain" };
+            persist(req.taskId, value);
+          }
+        }
+        return {
+          task: { ...value.task, reply: { replyId: req.replyId, status: prior.status } },
+          ...events(req.taskId),
+        };
+      }
+      const questions = value.task.questions;
+      if (
+        !Array.isArray(questions) ||
+        !questions.some((item) => {
+          const q = item as { id?: string; status?: string; version?: number; owner?: typeof req.owner };
+          return (
+            q.id === req.id &&
+            q.status === "pending" &&
+            q.version === req.version &&
+            q.owner?.sessionId === req.owner.sessionId &&
+            q.owner?.branchId === req.owner.branchId
+          );
+        })
+      )
+        return error("stale_question", "Question is not pending at this owner/version; sync before answering");
+      const path = join(location(req.taskId), "answer.json");
+      if (existsSync(path)) {
+        const prior = read<typeof req>(path);
+        if (prior.replyId !== req.replyId && value.task.reply?.status !== "delivered")
+          return error("answer_conflict", "Previous reply outcome remains uncertain");
+        if (prior.replyId === req.replyId && JSON.stringify({ ...prior, dispatch: undefined }) !== JSON.stringify(req))
+          return error("answer_conflict", "Reply intent conflict");
+      }
+      mkdirSync(dirname(receipt), { recursive: true, mode: 0o700 });
+      atomic(receipt, { request: req, status: "uncertain" });
+      atomic(path, req);
+      value.task.reply = { replyId: req.replyId, status: "uncertain" };
+      persist(req.taskId, value);
+      return { task: value.task, ...events(req.taskId) };
+    }
     if (req.op === "sync") {
       location(req.taskId);
       if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown taskId");
@@ -269,6 +448,18 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         }
       }
       try {
+        const box = new OwnerCapabilityMailbox(location(req.taskId), req.taskId);
+        if (["accepted", "running"].includes(value.task.state) && !value.task.cancelRequested) {
+          value.task.capabilities = await box.pending();
+          value.task.capabilityNeeds = capabilityNeeds(location(req.taskId));
+        } else await box.terminal("Task " + value.task.state);
+        if (!["accepted", "running"].includes(value.task.state)) {
+          try {
+            value.task.artifacts = listRemoteArtifacts(location(req.taskId));
+          } catch (error) {
+            value.task.artifactError = String(error);
+          }
+        }
         return { task: value.task, ...events(req.taskId, req.cursor) };
       } catch (e) {
         return error("journal_gap", String(e));
@@ -283,7 +474,12 @@ async function publishTerminal(taskId: string, result: Saved) {
     const current = saved(taskId);
     // A terminal record is immutable; do not replace an earlier uncertainty with a stale snapshot.
     if (current.task.state !== "accepted" && current.task.state !== "running") return;
-    current.task = result.task;
+    current.task = {
+      ...result.task,
+      cancelRequested: current.task.cancelRequested,
+      reply: current.task.reply ?? result.task.reply,
+    };
+    await new OwnerCapabilityMailbox(location(taskId), taskId).terminal("Task " + result.task.state);
     persist(taskId, current);
   });
 }
@@ -305,6 +501,11 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     return;
   const path = join(location(taskId), "events.jsonl");
   let journal: number | undefined;
+  if (initial.task.cancelRequested || existsSync(join(location(taskId), "cancel.json"))) {
+    initial.task.state = "cancelled";
+    await publishTerminal(taskId, initial);
+    return;
+  }
   let child: ReturnType<typeof spawn> | undefined;
   let failure: string | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -371,6 +572,56 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     let ended = false;
     let promptSent = false;
     let modelError: string | undefined;
+    const checkpoints: Promise<unknown>[] = [];
+    // A single durable reply slot. Mark dispatching before sending: after a crash the
+    // owner must never replay a possibly accepted command into a second session.
+    let cancellationAt = 0;
+    let cancelled = false;
+    const answerTimer = setInterval(() => {
+      if (existsSync(join(location(taskId), "cancel.json")) && child?.stdin?.writable) {
+        if (!cancellationAt) {
+          cancellationAt = Date.now();
+          record({ type: "cancel_requested" });
+          child.stdin.write(
+            JSON.stringify({ id: "remote-cancel", type: "prompt", message: "/die-remote-cancel" }) + "\n",
+          );
+        }
+        const reportFile = join(location(taskId), "cancel-report.json");
+        if (existsSync(reportFile)) {
+          const report = read<{ settled?: boolean }>(reportFile);
+          cancelled = report.settled === true;
+          if (!cancelled) failure = "Cancellation acknowledged but native work exit is unconfirmed";
+          record({ type: "cancel_report", report });
+          stopChild(true);
+          return;
+        }
+        if (Date.now() - cancellationAt > 20_000) {
+          failure = "Cancellation outcome unknown: native checkpoint unavailable";
+          stopChild();
+          return;
+        }
+      }
+      if (failure || ended || !promptSent || !child?.stdin?.writable) return;
+      const path = join(location(taskId), "answer.json");
+      if (!existsSync(path)) return;
+      try {
+        const request = read<Extract<RemoteRequest, { op: "answer" }> & { dispatch?: string }>(path);
+        if (request.dispatch) return;
+        request.dispatch = "uncertain";
+        atomic(path, request);
+        child.stdin.write(
+          JSON.stringify({
+            id: "remote-answer-" + request.replyId,
+            type: "prompt",
+            message: "/remote-native-answer " + Buffer.from(JSON.stringify(request)).toString("base64url"),
+          }) + "\n",
+        );
+      } catch (error) {
+        failure = "Native answer dispatch uncertain: " + String(error);
+        stopChild();
+      }
+    }, 200);
+    answerTimer.unref();
 
     child.stdout!.setEncoding("utf8");
     child.stdout!.on("data", (chunk: string) => {
@@ -413,6 +664,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
             continue;
           }
           if (!promptSent) {
+            if (existsSync(join(location(taskId), "cancel.json"))) continue;
             promptSent = true;
             child?.stdin?.write(
               JSON.stringify({
@@ -422,6 +674,44 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
               }) + "\n",
             );
           }
+        }
+        if (event?.type === "response" && typeof event.id === "string" && event.id.startsWith("remote-answer-")) {
+          const request = read<Extract<RemoteRequest, { op: "answer" }>>(join(location(taskId), "answer.json"));
+          const ledger = join(location(taskId), "session.jsonl.questions.json");
+          if (event.id !== "remote-answer-" + request.replyId) continue;
+          let delivered = false;
+          try {
+            delivered =
+              event.success === true &&
+              read<Array<{ id: string; replyId?: string; replyVersion?: number; status: string; delivery?: string }>>(
+                ledger,
+              ).some(
+                (q) =>
+                  q.id === request.id &&
+                  q.replyId === request.replyId &&
+                  q.replyVersion === request.version &&
+                  q.status === "answered" &&
+                  q.delivery === "delivered",
+              );
+          } catch {
+            /* missing or unreadable native ledger is uncertain */
+          }
+          checkpoints.push(
+            locked(async () => {
+              const current = saved(taskId);
+              if (current.task.state !== "running") return;
+              current.task.reply = { replyId: request.replyId, status: delivered ? "delivered" : "uncertain" };
+              const { dispatch: _dispatch, ...accepted } = request as typeof request & { dispatch?: string };
+              atomic(join(location(taskId), "answers", request.replyId + ".json"), {
+                request: accepted,
+                status: current.task.reply.status,
+              });
+              persist(taskId, current);
+            }).catch((e) => {
+              failure = "Native reply result persistence failed: " + String(e);
+              stopChild();
+            }),
+          );
         }
         if (event?.type === "message_end") {
           const message = event.message;
@@ -433,6 +723,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
           modelError = undefined;
         }
         if (event?.type === "agent_settled") {
+          if (existsSync(join(location(taskId), "cancel.json"))) continue;
           // The normal extension checkpoint runs before RPC agent_settled. A yielded
           // model turn must not close the CLI and kill its still-running jobs.
           try {
@@ -441,6 +732,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
               activeJobs?: number;
               pendingMessages?: boolean;
               questions?: unknown[];
+              textOutputGap?: string;
               error?: string;
             }>(runtimePath);
             if (
@@ -451,10 +743,22 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
             )
               throw new Error(runtime.error || "Missing native runtime checkpoint");
             if (runtime.activeJobs > 0 || runtime.pendingMessages) continue;
+            initial.task.questions = runtime.questions;
+            initial.task.textOutputGap = runtime.textOutputGap;
             if (runtime.questions.length) {
-              failure =
-                "Native question unresolved; remote answering unavailable. Resume the recorded remote session only after this owner has exited.";
-              initial.task.questions = runtime.questions;
+              checkpoints.push(
+                locked(async () => {
+                  const current = saved(taskId);
+                  if (current.task.state === "running") {
+                    current.task.questions = runtime.questions;
+                    persist(taskId, current);
+                  }
+                }).catch((e) => {
+                  failure = "Question checkpoint failed: " + String(e);
+                  stopChild();
+                }),
+              );
+              continue;
             }
             ended = true;
           } catch (error) {
@@ -474,30 +778,47 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       /* child exit is handled below */
     });
     child.stdin!.write(JSON.stringify({ id: "remote-config", type: "get_state" }) + "\n");
-    timer = setTimeout(
-      () => {
-        failure = "RPC timed out";
-        stopChild();
-      },
-      60 * 60 * 1000,
-    );
+    const watchdog = () => {
+      // A native question waits for a human, not a one-hour RPC turn deadline.
+      // A dispatched answer is uncertain if it does not settle within the deadline.
+      const answerFile = join(location(taskId), "answer.json");
+      const slot = existsSync(answerFile) ? read<{ id: string }>(answerFile) : undefined;
+      if (
+        initial.task.questions?.some(
+          (q) => (q as { status?: string; id?: string }).status === "pending" && (q as { id?: string }).id !== slot?.id,
+        )
+      ) {
+        timer = setTimeout(watchdog, 60 * 60 * 1000);
+        return;
+      }
+      failure = "RPC timed out";
+      stopChild();
+    };
+    timer = setTimeout(watchdog, 60 * 60 * 1000);
     const code = await new Promise<number | null>((resolve, reject) => {
       child!.on("error", reject);
       child!.on("close", resolve);
     });
+    clearInterval(answerTimer);
+    await Promise.all(checkpoints);
     if (buffer.length && !failure) failure = "Truncated RPC output";
     const ledger = session + ".questions.json";
     const pendingQuestion =
       existsSync(ledger) &&
-      read<Array<{ status: string }>>(ledger).some((q) => q.status === "pending" || q.status === "answered");
-    initial.task.state =
-      code === 0 && promptSent && ended && !failure && !modelError && !pendingQuestion ? "done" : "unknown";
+      read<Array<{ status: string; delivery?: string }>>(ledger).some(
+        (q) => q.status === "pending" || (q.status === "answered" && q.delivery !== "delivered"),
+      );
+    initial.task.state = cancelled
+      ? "cancelled"
+      : code === 0 && promptSent && ended && !failure && !modelError && !pendingQuestion && !cancellationAt
+        ? "done"
+        : "unknown";
     if (initial.task.state === "unknown")
       initial.task.error =
         failure ||
         modelError ||
         (pendingQuestion
-          ? "Native question unresolved; remote answering unavailable"
+          ? "Native question unresolved when remote session exited"
           : "RPC exited without verified native settlement (exit " + code + ")");
     await publishTerminal(taskId, initial);
   } catch (e) {

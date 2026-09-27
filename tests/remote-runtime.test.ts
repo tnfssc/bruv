@@ -12,6 +12,7 @@ test("owner completion checkpoint reads actual paged jobs and pending-message st
     const handlers = new Map<string, Function>();
     let pages = 0;
     registerRemoteRuntime({
+      registerCommand() {},
       on: (event: string, fn: Function) => handlers.set(event, fn),
       events: {
         emit: (_name: string, request: any) =>

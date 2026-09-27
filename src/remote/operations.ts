@@ -1,7 +1,13 @@
+import { launchRepository, repositoryPreparations } from "./repository-wire";
+import { requestLocalCapability } from "./services";
+import type { CapabilityKind } from "./capabilities";
 import { RemoteClient, type RemoteTask } from "./client";
 export type RemoteOperation =
   | { op: "status" }
-  | { op: "launch"; repoPath: string; prompt: string; taskId?: string }
+  | { op: "launchRepository"; prompt: string; taskId?: string; model?: string; thinking?: string }
+  | { op: "cancel"; taskId: string }
+  | { op: "requestCapability"; kind: CapabilityKind; input: string; requestId?: string }
+  | { op: "launch"; repoPath: string; prompt: string; taskId?: string; model?: string; thinking?: string }
   | { op: "sync"; taskId: string }
   | { op: "transcript"; taskId: string; offset?: number };
 
@@ -20,7 +26,12 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
   const summary = summarizeRemoteTask;
   const status = async () => {
     const state = await client.status();
-    return { connection: state.connection, cached: true, tasks: Object.values(state.tasks).map(summary) };
+    return {
+      connection: state.connection,
+      cached: true,
+      tasks: Object.values(state.tasks).map(summary),
+      repositoryPreparations: await repositoryPreparations(client),
+    };
   };
   const transcript = async (id: string, offset = 0) => {
     if (!Number.isSafeInteger(offset) || offset < 0)
@@ -34,11 +45,26 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
       nextOffset: offset + events.length < task.events.length ? offset + events.length : undefined,
     };
   };
-  return async (args: RemoteOperation): Promise<unknown> => {
+  return async (args: RemoteOperation, cwd = process.cwd(), signal?: AbortSignal): Promise<unknown> => {
     if (!args || typeof args !== "object") throw new Error("Invalid remote operation");
     switch (args.op) {
       case "status":
         return status();
+      case "launchRepository":
+        if (typeof args.prompt !== "string" || !args.prompt.trim()) throw Error("Repository launch requires a prompt");
+        return summary(
+          await launchRepository(client, {
+            prompt: args.prompt,
+            taskId: args.taskId,
+            model: args.model,
+            thinking: args.thinking,
+            localRoot: cwd,
+          }),
+        );
+      case "requestCapability":
+        return requestLocalCapability(args, signal);
+      case "cancel":
+        return summary(await client.cancel(args.taskId));
       case "launch":
         if (
           typeof args.repoPath !== "string" ||
@@ -46,7 +72,16 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
           (args.taskId !== undefined && typeof args.taskId !== "string")
         )
           throw new Error("launch requires repoPath and prompt (optional taskId)");
-        return summary(await client.launch(args.repoPath, args.prompt, args.taskId));
+        return summary(
+          await client.launch(
+            args.repoPath,
+            args.prompt,
+            args.taskId,
+            ...(args.model !== undefined || args.thinking !== undefined
+              ? [{ model: args.model, thinking: args.thinking }]
+              : []),
+          ),
+        );
       case "sync":
         if (typeof args.taskId !== "string") throw new Error("sync requires taskId");
         return summary(await client.sync(args.taskId));

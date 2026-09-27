@@ -1,6 +1,6 @@
 import { createRemoteOperations } from "../src/remote/operations";
 import { expect, test } from "bun:test";
-import remoteExtension, { parseRemoteLaunch } from "../src/remote/extension";
+import remoteExtension, { parseRemoteLaunch, renderRemote } from "../src/remote/extension";
 
 test("remote uses execute bridge while human output persists in conversation", async () => {
   let active = ["execute"];
@@ -18,10 +18,18 @@ test("remote uses execute bridge while human output persists in conversation", a
     registerCommand: (name: string, command: any) => commands.set(name, command),
     sendMessage: (message: any) => messages.push(message),
   };
-  remoteExtension(pi as any, { status: async () => ({ tasks: {} }) } as any);
+  remoteExtension(
+    pi as any,
+    { path: "/nonexistent/remote-test/state.json", status: async () => ({ tasks: {} }) } as any,
+  );
   expect(active).toEqual(["execute"]);
   expect(tools).toEqual([]);
-  expect(await createRemoteOperations({ status: async () => ({ tasks: {} }) } as any)({ op: "status" })).toMatchObject({
+  expect(
+    await createRemoteOperations({
+      path: "/nonexistent/remote-test/state.json",
+      status: async () => ({ tasks: {} }),
+    } as any)({ op: "status" }),
+  ).toMatchObject({
     cached: true,
     tasks: [],
   });
@@ -55,6 +63,7 @@ test("accepted retry syncs; uncertain retry retains same launch ID", async () =>
     },
   };
   const client = {
+    path: "/nonexistent/remote-test/state.json",
     transcript: async () => ({ ...task, outcome }),
     sync: async (id: string) => {
       calls.push("sync:" + id);
@@ -79,6 +88,7 @@ test("execute remote methods use configured client, never accept a host", async 
   const calls: unknown[][] = [];
   const pi = { on() {}, registerCommand() {}, sendMessage() {} };
   const client = {
+    path: "/nonexistent/remote-test/state.json",
     launch: async (...args: unknown[]) => {
       calls.push(args);
       return { events: [], taskId: "id" };
@@ -99,4 +109,56 @@ test("execute remote methods use configured client, never accept a host", async 
   await expect(
     createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "p", host: "bad" } as any),
   ).resolves.toBeDefined();
+});
+
+test("remote presentation escapes terminal and bidi control text", () => {
+  const text = renderRemote({ text: "\x1b[2J\x9b31m\u202efile\nnext" });
+  expect(text).not.toContain("\x1b");
+  expect(text).not.toContain("\x9b");
+  expect(text).not.toContain("\u202e");
+  expect(text).toContain("\\u009b");
+  expect(text).toContain("\\u202e");
+  expect(text).toContain("\\nnext");
+});
+
+test("stale targeted or missing-text remote answers never fall through to a different question", async () => {
+  let command: any;
+  const messages: any[] = [];
+  const replies: any[] = [];
+  const task = {
+    taskId: "task_one",
+    events: [],
+    task: {
+      state: "running",
+      questions: [{ id: "q_current", owner: { sessionId: "s", branchId: "b" }, version: 2, status: "pending" }],
+    },
+  };
+  remoteExtension(
+    {
+      on() {},
+      registerCommand(_name: string, value: any) {
+        command = value;
+      },
+      sendMessage(value: any) {
+        messages.push(value);
+      },
+    } as any,
+    {
+      path: "/nonexistent/remote-test/state.json",
+      status: async () => ({ tasks: { task_one: task } }),
+      answer: async (...args: any[]) => {
+        replies.push(args);
+        return task;
+      },
+    } as any,
+  );
+  await command.handler("answer task_one q_old yes", {});
+  await command.handler("answer q_old yes", {});
+  await command.handler("answer task_one q_current", {});
+  await command.handler("answer", {});
+  expect(replies).toHaveLength(0);
+  expect(messages.every((m) => JSON.parse(m.content).error)).toBe(true);
+  await command.handler("answer no thanks", {});
+  expect(replies[0][0]).toBe("task_one");
+  expect(replies[0][1]).toMatchObject({ id: "q_current", version: 2, text: "no thanks" });
 });

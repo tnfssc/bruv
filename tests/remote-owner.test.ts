@@ -70,6 +70,13 @@ test.skipIf(process.platform !== "linux")(
         task: { state: "unknown", error: "Owner exited without durable completion; task will not be relaunched" },
       });
       expect(await handleRemoteRequest(request)).toMatchObject({ task: { state: "unknown" } });
+      const override = { ...request, taskId: "explicit_profile", model: "example/override", thinking: "high" };
+      expect(await handleRemoteRequest(override, "/bin/true")).toMatchObject({
+        task: { profile: { model: "example/override", thinking: "high" } },
+      });
+      expect(await handleRemoteRequest({ ...override, model: "example/other" })).toMatchObject({
+        code: "intent_conflict",
+      });
       writeFileSync(join(home, ".die", "subagents.json"), JSON.stringify({ normal: {} }));
       expect(await handleRemoteRequest({ ...request, taskId: "missing_default" })).toMatchObject({
         code: "missing_model",
@@ -146,6 +153,115 @@ test.skipIf(process.platform !== "linux")(
         if ("task" in result) expect(result.task.error).toContain(expected);
         expect(await handleRemoteRequest(req)).toMatchObject({ task: { state: "unknown" } });
       }
+      // Native reply ingress pins the question owner/version and persists one intent;
+      // retrying after a lost control response cannot replace or duplicate it.
+      const replyReq = { ...request, taskId: "answer_slot", prompt: "reply" };
+      await handleRemoteRequest(replyReq, "/bin/true");
+      const replyDir = join(home, ".die", "remote-owner", "tasks", replyReq.taskId);
+      const replyStatePath = join(replyDir, "state.json");
+      const replyState = JSON.parse(readFileSync(replyStatePath, "utf8"));
+      const question = { id: "q1", owner: { sessionId: "s", branchId: "b" }, version: 2, status: "pending" };
+      replyState.task.state = "running";
+      replyState.task.questions = [question];
+      writeFileSync(replyStatePath, JSON.stringify(replyState));
+      const answer = {
+        op: "answer" as const,
+        ownerId: hello.ownerId,
+        epoch: hello.epoch,
+        taskId: replyReq.taskId,
+        id: question.id,
+        owner: question.owner,
+        version: 2,
+        text: "yes",
+        replyId: "reply1",
+      };
+      expect(await handleRemoteRequest({ ...answer, version: 1 })).toMatchObject({ code: "stale_question" });
+      expect(await handleRemoteRequest(answer)).toMatchObject({ task: { state: "running" } });
+      expect(await handleRemoteRequest(answer)).toMatchObject({ task: { state: "running" } });
+      expect(await handleRemoteRequest({ ...answer, text: "no" })).toMatchObject({ code: "answer_conflict" });
+      expect(JSON.parse(readFileSync(join(replyDir, "answer.json"), "utf8"))).toMatchObject(answer);
+      // Simulate control-process death after its durable receipt but before command publication.
+      rmSync(join(replyDir, "answer.json"));
+      expect(await handleRemoteRequest(answer)).toMatchObject({
+        task: { reply: { replyId: answer.replyId, status: "uncertain" } },
+      });
+      expect(JSON.parse(readFileSync(join(replyDir, "answer.json"), "utf8"))).toMatchObject(answer);
+
+      // A delivered first answer must not permanently occupy the task's reply slot.
+      let nextState = JSON.parse(readFileSync(join(replyDir, "state.json"), "utf8"));
+      nextState.task.questions = [{ ...question, id: "q2" }];
+      writeFileSync(join(replyDir, "state.json"), JSON.stringify(nextState));
+      const second = { ...answer, id: "q2", replyId: "reply_second" };
+      expect(await handleRemoteRequest(second)).toMatchObject({ code: "answer_conflict" });
+      nextState.task.reply = { replyId: answer.replyId, status: "delivered" };
+      writeFileSync(join(replyDir, "state.json"), JSON.stringify(nextState));
+      writeFileSync(
+        join(replyDir, "answers", answer.replyId + ".json"),
+        JSON.stringify({ request: answer, status: "delivered" }),
+      );
+      expect(await handleRemoteRequest(second)).toMatchObject({
+        task: { reply: { replyId: "reply_second", status: "uncertain" } },
+      });
+      expect(await handleRemoteRequest(answer)).toMatchObject({
+        task: { reply: { replyId: answer.replyId, status: "delivered" } },
+      });
+      expect(JSON.parse(readFileSync(join(replyDir, "answer.json"), "utf8")).id).toBe("q2");
+      nextState = JSON.parse(readFileSync(join(replyDir, "state.json"), "utf8"));
+      nextState.task.state = "cancelled";
+      writeFileSync(join(replyDir, "state.json"), JSON.stringify(nextState));
+      expect(await handleRemoteRequest(second)).toMatchObject({ code: "not_running" });
+
+      // Exercise the owner mailbox -> RPC command -> ledger acknowledgement, without
+      // pretending stdin text is a native answer (the child here is a protocol fixture).
+      const liveReq = { ...request, taskId: "question_dispatch", prompt: "ask" };
+      await handleRemoteRequest(liveReq, "/bin/true");
+      const liveDir = join(home, ".die", "remote-owner", "tasks", liveReq.taskId);
+      const liveStatePath = join(liveDir, "state.json");
+      const liveState = JSON.parse(readFileSync(liveStatePath, "utf8"));
+      liveState.task.state = "accepted";
+      liveState.pid = process.pid;
+      liveState.startTime = saved.startTime;
+      writeFileSync(liveStatePath, JSON.stringify(liveState));
+      const liveRpc = join(home, "answer-rpc.sh");
+      writeFileSync(
+        liveRpc,
+        [
+          "#!/bin/sh",
+          'while [ "$1" != "--session" ]; do shift; done',
+          'session="$2"',
+          handshake(liveState.task.profile),
+          'echo \'{"settled":true,"activeJobs":0,"pendingMessages":false,"questions":[{"id":"q1","status":"pending","version":2,"owner":{"sessionId":"s","branchId":"b"}}]}\' > "$DIE_REMOTE_RUNTIME_STATE"',
+          'echo \'{"type":"agent_settled"}\'',
+          "read reply",
+          'printf "%s" "$reply" > "' + join(liveDir, "command.json") + '"',
+          'echo \'[{"id":"q1","status":"answered","replyVersion":2,"replyId":"reply_live","delivery":"delivered"}]\' > "$session.questions.json"',
+          'echo \'{"type":"response","id":"remote-answer-reply_live","success":true}\'',
+          'echo \'{"settled":true,"activeJobs":0,"pendingMessages":false,"questions":[]}\' > "$DIE_REMOTE_RUNTIME_STATE"',
+          'echo \'{"type":"agent_settled"}\'',
+          "",
+        ].join("\n"),
+      );
+      chmodSync(liveRpc, 0o700);
+      const running = runOwnerTask(liveReq.taskId, liveRpc);
+      let observed = false;
+      for (let attempt = 0; attempt < 100; attempt++) {
+        const state = JSON.parse(readFileSync(liveStatePath, "utf8"));
+        if (state.task.questions?.length) {
+          observed = true;
+          break;
+        }
+        await Bun.sleep(20);
+      }
+      expect(observed).toBe(true);
+      const liveAnswer = { ...answer, taskId: liveReq.taskId, replyId: "reply_live" };
+      expect(await handleRemoteRequest(liveAnswer)).toMatchObject({ task: { state: "running" } });
+      await running;
+      expect(JSON.parse(readFileSync(join(liveDir, "command.json"), "utf8")).message).toStartWith(
+        "/remote-native-answer ",
+      );
+      expect(
+        await handleRemoteRequest({ op: "sync", ownerId: hello.ownerId, epoch: hello.epoch, taskId: liveReq.taskId }),
+      ).toMatchObject({ task: { state: "done", reply: { replyId: "reply_live", status: "delivered" } } });
       const questionReq = { ...request, taskId: "question_pending", prompt: "question" };
       await handleRemoteRequest(questionReq, "/bin/true");
       const questionDir = join(home, ".die", "remote-owner", "tasks", questionReq.taskId);
@@ -177,7 +293,7 @@ test.skipIf(process.platform !== "linux")(
           taskId: questionReq.taskId,
         }),
       ).toMatchObject({
-        task: { state: "unknown", error: "Native question unresolved; remote answering unavailable" },
+        task: { state: "unknown", error: "Native question unresolved when remote session exited" },
       });
       expect(
         await handleRemoteRequest({
