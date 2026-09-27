@@ -1,23 +1,23 @@
 import { Database } from "bun:sqlite";
-import { randomUUID, createHash } from "node:crypto";
+import { spawn } from "node:child_process";
+import { createHash, randomUUID } from "node:crypto";
 import {
   closeSync,
   existsSync,
+  fstatSync,
+  fsyncSync,
   mkdirSync,
   openSync,
   readFileSync,
   renameSync,
   statSync,
   writeSync,
-  fsyncSync,
-  fstatSync,
 } from "node:fs";
 import { homedir, platform } from "node:os";
 import { dirname, isAbsolute, join } from "node:path";
-import { spawn } from "node:child_process";
+import pkg from "../../package.json" with { type: "json" };
 import { loadProfiles } from "../tasks/subagent-profiles";
 import type { RemoteRequest, RemoteResponse, RemoteTask } from "./protocol";
-import pkg from "../../package.json" with { type: "json" };
 
 const root = join(process.env.HOME ?? homedir(), ".die", "remote-owner");
 const tasks = join(root, "tasks");
@@ -278,6 +278,16 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
   });
 }
 
+async function publishTerminal(taskId: string, result: Saved) {
+  await locked(async () => {
+    const current = saved(taskId);
+    // A terminal record is immutable; do not replace an earlier uncertainty with a stale snapshot.
+    if (current.task.state !== "accepted" && current.task.state !== "running") return;
+    current.task = result.task;
+    persist(taskId, current);
+  });
+}
+
 export async function runOwnerTask(taskId: string, executable = process.execPath): Promise<void> {
   location(taskId);
   // A launched owner owns only its recorded PID. Never run an uncertain accepted task again.
@@ -329,8 +339,14 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         stopChild();
       }
     };
-    initial.task.state = "running";
-    persist(taskId, initial);
+    await locked(async () => {
+      // Sync uses this lock for its read, liveness check, and unknown transition.
+      // Never publish a stale owner snapshot across that transaction.
+      const current = saved(taskId);
+      if (current.task.state !== "accepted") throw new Error("Owner state changed before start");
+      current.task.state = "running";
+      persist(taskId, current);
+    });
     const { model, thinking } = initial.task.profile;
     const slash = model.indexOf("/");
     const session = join(location(taskId), "session.jsonl");
@@ -483,12 +499,12 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         (pendingQuestion
           ? "Native question unresolved; remote answering unavailable"
           : "RPC exited without verified native settlement (exit " + code + ")");
-    persist(taskId, initial);
+    await publishTerminal(taskId, initial);
   } catch (e) {
     stopChild();
     initial.task.state = "unknown";
     initial.task.error = failure || String(e);
-    persist(taskId, initial);
+    await publishTerminal(taskId, initial);
   } finally {
     if (timer) clearTimeout(timer);
     if (shutdownTimer) clearTimeout(shutdownTimer);
