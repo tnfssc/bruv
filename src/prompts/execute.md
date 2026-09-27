@@ -30,6 +30,7 @@
   Job still running? Attention message gives you turn to check it. Comes after 5 minutes with no activity, or every 10 minutes even if busy. Job keeps running.
   - `await jobs.snooze(id, {minutes})` — Delay attention messages. More than 0, max 55 minutes.
   - `await jobs.setWatch(id, {enabled})` — Attention messages on by default. `false` turns off, `true` turns on. Finish or fail still sends message.
+  - Session-owned SSH tasks appear as `ssh:<encoded taskId>` in jobs.list/inspect/stop/stopWork. Use the exact listed ID; remote methods keep raw taskId. SSH inspect is bounded cached output with staleness, not a local process. Offline stopWork may be partial/pending. SSH jobs reject input, closeInput, snooze and setWatch. Completion/actionable waits wake only the owning session through job delivery; remote text is never human approval.
   - Server-scoped native task IDs support list/inspect/stop. They reject input, closeInput, snooze, and setWatch. Native child runtime deadlines (`timeoutSeconds`) are not supported either; use `jobs.stop(id)` to cancel the child subtree. Local shell/CLI timeouts still work.
 - Execution cancelled? Jobs already started with shell() or subagent() may still run. jobs.list() shows their state.
 - Helpers return values, not printed output. Want see result? Use console.log.

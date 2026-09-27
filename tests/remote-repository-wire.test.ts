@@ -4,7 +4,7 @@ import { randomBytes, createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { captureRepository } from "../src/remote/repository";
-import { repositoryRequest } from "../src/remote/repository-wire";
+import { repositoryRequest, launchRepository, retryRepository } from "../src/remote/repository-wire";
 function git(root: string, ...args: string[]) {
   const r = Bun.spawnSync(["git", "-C", root, ...args]);
   if (r.exitCode) throw Error(r.stderr.toString());
@@ -57,6 +57,47 @@ test("orphan snapshot omits history; chunk replay is idempotent and result is te
     };
     expect(result.result.snapshot).toBe(snapshot.snapshot);
     expect(result.offset).toBeGreaterThan(0);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("repository preparation pins parent before upload and retry retains it", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "remote-repo-parent-")),
+    repo = join(dir, "repo");
+  try {
+    mkdirSync(repo);
+    git(repo, "init", "-q");
+    writeFileSync(join(repo, "file"), "content");
+    git(repo, "add", ".");
+    git(repo, "-c", "user.name=T", "-c", "user.email=t@invalid", "commit", "-qm", "initial");
+    let offline = true;
+    const launches: unknown[][] = [];
+    const client = {
+      path: join(dir, "state.json"),
+      status: async () => ({ connection: { hello: { ownerId: "owner", epoch: "epoch" } } }),
+      control: async () => {
+        if (offline) throw Error("offline upload");
+        return { checkout: "/remote/checkout" };
+      },
+      launch: async (...args: unknown[]) => {
+        launches.push(args);
+      },
+      updateTask: async () => {},
+      transcript: async () => ({ taskId: "id", events: [] }),
+    };
+    const args = { localRoot: repo, prompt: "work", taskId: "id", jobSessionFile: "/parent/a.jsonl" };
+    await expect(launchRepository(client as any, args)).rejects.toThrow("offline upload");
+    expect(JSON.parse(readFileSync(join(dir, "repositories/id/handoff.json"), "utf8")).jobSessionFile).toBe(
+      args.jobSessionFile,
+    );
+    offline = false;
+    await expect(launchRepository(client as any, { ...args, jobSessionFile: "/parent/b.jsonl" })).rejects.toThrow(
+      "intent conflict",
+    );
+    await retryRepository(client as any, "id");
+    expect(launches).toHaveLength(1);
+    expect(launches[0][4]).toBe(args.jobSessionFile);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

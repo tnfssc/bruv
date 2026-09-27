@@ -1,3 +1,4 @@
+import { remoteJobEvents } from "../src/remote/job-events";
 import { getSessionHost } from "../src/session/host-access";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -680,5 +681,71 @@ test("GPT-Live delegation cannot bypass the current agent jobs.stop confirmation
   } finally {
     mock.mockRestore();
     await e.fire("session_shutdown", {}, ctx);
+  }
+});
+
+test("owned SSH completion wakes the shared print boundary once, including finish-before-subscription", async () => {
+  const root = mkdtempSync(join(tmpdir(), "ssh-parent-boundary-"));
+  const a = load(),
+    b = load(),
+    fileA = join(root, "a.jsonl"),
+    fileB = join(root, "b.jsonl");
+  const ctxA = contextFixture({ sessionManager: { getSessionFile: () => fileA } }),
+    ctxB = contextFixture({ sessionManager: { getSessionFile: () => fileB } });
+  try {
+    await a.fire("session_start", {}, ctxA);
+    await b.fire("session_start", {}, ctxB);
+    const source = remoteJobEvents(fileA),
+      job = { ownerId: "owner", epoch: "epoch", taskId: "ssh-task", state: "running" as const };
+    source.publish(job);
+    const boundary = a.fire("agent_end", { messages: [] }, ctxA);
+    source.publish({ ...job, state: "done", preview: "first terminal" });
+    await Promise.race([
+      boundary,
+      Bun.sleep(2000).then(() => {
+        throw Error("SSH print boundary did not wake");
+      }),
+    ]);
+    expect(a.messages.filter((m) => m.customType === "task-complete")).toHaveLength(1);
+    expect(b.messages.filter((m) => m.customType === "task-complete")).toHaveLength(0);
+    source.publish({ ...job, state: "done", preview: "artifact refresh" });
+    await a.fire("agent_end", { messages: [] }, ctxA);
+    expect(a.messages.filter((m) => m.customType === "task-complete")).toHaveLength(1);
+  } finally {
+    await a.fire("session_shutdown", {}, ctxA);
+    await b.fire("session_shutdown", {}, ctxB);
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+test("SSH human-action wait uses shared attention and lets print yield without granting anything", async () => {
+  const root = mkdtempSync(join(tmpdir(), "ssh-question-boundary-")),
+    file = join(root, "a.jsonl"),
+    e = load();
+  const ctx = contextFixture({ sessionManager: { getSessionFile: () => file } });
+  try {
+    await e.fire("session_start", {}, ctx);
+    const source = remoteJobEvents(file),
+      job = {
+        ownerId: "owner",
+        epoch: "epoch",
+        taskId: "ssh-wait",
+        state: "running" as const,
+        actionable: "Human /remote answer required for question q version 1",
+      };
+    source.publish(job);
+    await Promise.race([
+      e.fire("agent_end", { messages: [] }, ctx),
+      Bun.sleep(2000).then(() => {
+        throw Error("SSH actionable print boundary hung");
+      }),
+    ]);
+    expect(e.messages.filter((m) => m.customType === "task-attention")).toHaveLength(1);
+    source.publish({ ...job, preview: "new transcript" });
+    await e.fire("agent_end", { messages: [] }, ctx);
+    expect(e.messages.filter((m) => m.customType === "task-attention")).toHaveLength(1);
+    expect(e.messages.find((m) => m.customType === "task-attention").content).toContain("not human approval");
+  } finally {
+    await e.fire("session_shutdown", {}, ctx);
+    rmSync(root, { recursive: true, force: true });
   }
 });

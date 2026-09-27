@@ -1,3 +1,4 @@
+import { clearRemoteJobEvents, remoteJobEvents } from "../src/remote/job-events";
 import { createRemoteOperations } from "../src/remote/operations";
 import { expect, test } from "bun:test";
 import remoteExtension, { parseRemoteLaunch, renderRemote } from "../src/remote/extension";
@@ -98,7 +99,14 @@ test("execute remote methods use configured client, never accept a host", async 
   };
   remoteExtension(pi as any, client as any);
   await createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "do work", taskId: "id" });
-  expect(calls).toEqual([["/repo", "do work", "id"]]);
+  expect(calls).toEqual([["/repo", "do work", "id", undefined, undefined]]);
+  await createRemoteOperations(client as any)(
+    { op: "launch", repoPath: "/repo", prompt: "owned", taskId: "owned" },
+    "/repo",
+    undefined,
+    "/sessions/parent.jsonl",
+  );
+  expect(calls.at(-1)).toEqual(["/repo", "owned", "owned", undefined, "/sessions/parent.jsonl"]);
   expect(await createRemoteOperations(client as any)({ op: "transcript", taskId: "id", offset: 50 })).toMatchObject({
     events: [50, 51, 52, 53, 54],
     offset: 50,
@@ -345,3 +353,56 @@ for (const change of ["offline", "changed-owner"] as const) {
     expect(messages.some((m) => JSON.stringify(m).includes("no cancel sent"))).toBe(true);
   });
 }
+
+test("remote refresher projects only this parent's jobs and does not duplicate terminal/artifact UI messages", async () => {
+  const handlers = new Map<string, Function>(),
+    messages: any[] = [];
+  const a = "/fixture/session-owned-a",
+    b = "/fixture/session-owned-b";
+  const task = (taskId: string, jobSessionFile: string) => ({
+    taskId,
+    jobSessionFile,
+    ownerId: "owner",
+    epoch: "epoch",
+    host: "host",
+    repoPath: "/repo",
+    prompt: "p",
+    cursor: 0,
+    events: [],
+    outcome: "accepted",
+    task: { taskId, state: "done" },
+  });
+  const state = { tasks: { a: task("a", a), b: task("b", b) } };
+  remoteExtension(
+    {
+      on: (name: string, fn: Function) => handlers.set(name, fn),
+      registerCommand() {},
+      sendMessage: (m: any) => messages.push(m),
+    } as any,
+    { path: "/nonexistent/fixture/state.json", syncActive: async () => {}, status: async () => state } as any,
+  );
+  try {
+    await handlers.get("session_start")!({}, { sessionManager: { getSessionFile: () => a } });
+    await Bun.sleep(10);
+    expect(
+      remoteJobEvents(a)
+        .snapshot()
+        .map((t) => t.taskId),
+    ).toEqual(["a"]);
+    expect(remoteJobEvents(b).snapshot()).toEqual([]);
+    expect(messages).toEqual([]);
+    await handlers.get("session_shutdown")!();
+    await handlers.get("session_start")!({}, { sessionManager: { getSessionFile: () => b } });
+    await Bun.sleep(10);
+    expect(
+      remoteJobEvents(b)
+        .snapshot()
+        .map((t) => t.taskId),
+    ).toEqual(["b"]);
+    expect(messages).toEqual([]);
+  } finally {
+    await handlers.get("session_shutdown")!();
+    clearRemoteJobEvents(a);
+    clearRemoteJobEvents(b);
+  }
+});

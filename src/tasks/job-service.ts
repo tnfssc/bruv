@@ -117,25 +117,49 @@ export interface JobDiagnosticInput {
 export type JobDiagnosticRecorder = (input: JobDiagnosticInput) => void;
 export type T3TaskAdapterFactory = (config: Extract<T3BridgeEnvironment, { kind: "remote" }>) => T3TaskAdapter;
 
-type MixedListCursor = { phase: "local" | "native" | "ssh"; localLimit: number; localOffset: number; nativeCursor: string; sshLimit: number; sshOffset: number; nativeTotal?: number };
+type MixedListCursor = {
+  phase: "local" | "native" | "ssh";
+  localLimit: number;
+  localOffset: number;
+  nativeCursor: string;
+  sshLimit: number;
+  sshOffset: number;
+  nativeTotal?: number;
+};
 const MIXED_CURSOR_PREFIX = "jobs-v2.";
 function encodeMixedCursor(cursor: MixedListCursor): string {
   const encoded = MIXED_CURSOR_PREFIX + Buffer.from(JSON.stringify(cursor)).toString("base64url");
-  if (encoded.length > 2048 || cursor.nativeCursor.length > 1024) throw new Error("Native jobs.list cursor exceeds supported bounds");
+  if (encoded.length > 2048 || cursor.nativeCursor.length > 1024)
+    throw new Error("Native jobs.list cursor exceeds supported bounds");
   return encoded;
 }
 function decodeMixedCursor(value: string): MixedListCursor {
   if (!value.startsWith(MIXED_CURSOR_PREFIX) || value.length > 2048) throw new Error("Invalid jobs.list cursor");
   let cursor: MixedListCursor;
-  try { cursor = JSON.parse(Buffer.from(value.slice(MIXED_CURSOR_PREFIX.length), "base64url").toString("utf8")); }
-  catch { throw new Error("Invalid jobs.list cursor"); }
-  if (!cursor || !["local", "native", "ssh"].includes(cursor.phase) ||
-      !Number.isSafeInteger(cursor.localLimit) || cursor.localLimit < 0 ||
-      !Number.isSafeInteger(cursor.localOffset) || cursor.localOffset < 0 || cursor.localOffset > cursor.localLimit ||
-      !Number.isSafeInteger(cursor.sshLimit) || cursor.sshLimit < 0 ||
-      !Number.isSafeInteger(cursor.sshOffset) || cursor.sshOffset < 0 || cursor.sshOffset > cursor.sshLimit ||
-      typeof cursor.nativeCursor !== "string" || cursor.nativeCursor.length > 1024) throw new Error("Invalid jobs.list cursor");
-  if (cursor.nativeTotal !== undefined && (!Number.isSafeInteger(cursor.nativeTotal) || cursor.nativeTotal < 0)) throw new Error("Invalid jobs.list cursor");
+  try {
+    cursor = JSON.parse(Buffer.from(value.slice(MIXED_CURSOR_PREFIX.length), "base64url").toString("utf8"));
+  } catch {
+    throw new Error("Invalid jobs.list cursor");
+  }
+  if (
+    !cursor ||
+    !["local", "native", "ssh"].includes(cursor.phase) ||
+    !Number.isSafeInteger(cursor.localLimit) ||
+    cursor.localLimit < 0 ||
+    !Number.isSafeInteger(cursor.localOffset) ||
+    cursor.localOffset < 0 ||
+    cursor.localOffset > cursor.localLimit ||
+    !Number.isSafeInteger(cursor.sshLimit) ||
+    cursor.sshLimit < 0 ||
+    !Number.isSafeInteger(cursor.sshOffset) ||
+    cursor.sshOffset < 0 ||
+    cursor.sshOffset > cursor.sshLimit ||
+    typeof cursor.nativeCursor !== "string" ||
+    cursor.nativeCursor.length > 1024
+  )
+    throw new Error("Invalid jobs.list cursor");
+  if (cursor.nativeTotal !== undefined && (!Number.isSafeInteger(cursor.nativeTotal) || cursor.nativeTotal < 0))
+    throw new Error("Invalid jobs.list cursor");
   return cursor;
 }
 
@@ -688,51 +712,92 @@ export class JobService {
         if (bridge.kind !== "remote" && !ssh.length && typeof params.cursor !== "string") {
           const offset = params.cursor ?? 0;
           const jobs = local.slice(offset, offset + count);
-          return { jobs, total: local.length, nextCursor: offset + jobs.length < local.length ? offset + jobs.length : undefined };
+          return {
+            jobs,
+            total: local.length,
+            nextCursor: offset + jobs.length < local.length ? offset + jobs.length : undefined,
+          };
         }
-        const state: MixedListCursor = typeof params.cursor === "string" ? decodeMixedCursor(params.cursor) :
-          bridge.kind === "remote" && typeof params.cursor === "number" && params.cursor > local.length ?
-          { phase: "native", localLimit: local.length, localOffset: local.length, nativeCursor: String(params.cursor - local.length), sshLimit: ssh.length, sshOffset: 0 } :
-          { phase: "local", localLimit: local.length, localOffset: params.cursor ?? 0, nativeCursor: "0", sshLimit: ssh.length, sshOffset: 0 };
+        const state: MixedListCursor =
+          typeof params.cursor === "string"
+            ? decodeMixedCursor(params.cursor)
+            : bridge.kind === "remote" && typeof params.cursor === "number" && params.cursor > local.length
+              ? {
+                  phase: "native",
+                  localLimit: local.length,
+                  localOffset: local.length,
+                  nativeCursor: String(params.cursor - local.length),
+                  sshLimit: ssh.length,
+                  sshOffset: 0,
+                }
+              : {
+                  phase: "local",
+                  localLimit: local.length,
+                  localOffset: params.cursor ?? 0,
+                  nativeCursor: "0",
+                  sshLimit: ssh.length,
+                  sshOffset: 0,
+                };
         const jobs: unknown[] = [];
         const localEnd = Math.min(state.localLimit, local.length);
         if (state.phase === "local") {
-          jobs.push(...local.slice(Math.min(state.localOffset, localEnd), Math.min(localEnd, state.localOffset + count)));
+          jobs.push(
+            ...local.slice(Math.min(state.localOffset, localEnd), Math.min(localEnd, state.localOffset + count)),
+          );
           state.localOffset = Math.min(localEnd, state.localOffset + jobs.length);
-          if (state.localOffset < localEnd && bridge.kind !== "remote") return { jobs, total: localEnd + ssh.length, nextCursor: encodeMixedCursor(state) };
+          if (state.localOffset < localEnd && bridge.kind !== "remote")
+            return { jobs, total: localEnd + ssh.length, nextCursor: encodeMixedCursor(state) };
           if (state.localOffset >= localEnd) state.phase = "native";
         }
         let nativeTotal = state.nativeTotal ?? 0;
         if (bridge.kind === "remote" && (state.phase !== "ssh" || state.nativeTotal === undefined)) {
           const remaining = count - jobs.length;
-          const page = await this.#withNative(bridge, (adapter) => adapter.list({ cursor: state.phase === "ssh" ? "0" : state.nativeCursor, count: Math.max(1, remaining) }, signal));
+          const page = await this.#withNative(bridge, (adapter) =>
+            adapter.list(
+              { cursor: state.phase === "ssh" ? "0" : state.nativeCursor, count: Math.max(1, remaining) },
+              signal,
+            ),
+          );
           nativeTotal = state.nativeTotal ?? page.total;
           state.nativeTotal = nativeTotal;
           if (state.phase === "native") {
-            if (remaining > 0) jobs.push(...page.tasks.slice(0, remaining).map((task) => this.#nativeProjection(task, true)));
+            if (remaining > 0)
+              jobs.push(...page.tasks.slice(0, remaining).map((task) => this.#nativeProjection(task, true)));
             if (remaining === 0 || page.nextCursor !== undefined) {
               if (remaining > 0) {
-                if (page.tasks.length === 0 || page.nextCursor === state.nativeCursor) throw new Error("Native task list did not advance");
+                if (page.tasks.length === 0 || page.nextCursor === state.nativeCursor)
+                  throw new Error("Native task list did not advance");
                 state.nativeCursor = page.nextCursor!;
               }
-              return { jobs, total: state.localLimit + nativeTotal + state.sshLimit, nextCursor: encodeMixedCursor(state) };
+              return {
+                jobs,
+                total: state.localLimit + nativeTotal + state.sshLimit,
+                nextCursor: encodeMixedCursor(state),
+              };
             }
             state.phase = "ssh";
           }
         } else state.phase = "ssh";
         const sshEnd = Math.min(state.sshLimit, ssh.length);
         if (jobs.length < count) {
-          const page = ssh.slice(Math.min(state.sshOffset, sshEnd), Math.min(sshEnd, state.sshOffset + count - jobs.length));
+          const page = ssh.slice(
+            Math.min(state.sshOffset, sshEnd),
+            Math.min(sshEnd, state.sshOffset + count - jobs.length),
+          );
           jobs.push(...page);
           state.sshOffset = Math.min(sshEnd, state.sshOffset + page.length);
         }
-        return { jobs, total: state.localLimit + nativeTotal + state.sshLimit,
-          nextCursor: state.sshOffset < sshEnd ? encodeMixedCursor(state) : undefined };
+        return {
+          jobs,
+          total: state.localLimit + nativeTotal + state.sshLimit,
+          nextCursor: state.sshOffset < sshEnd ? encodeMixedCursor(state) : undefined,
+        };
       }
       case "jobs.inspect": {
         const params = z.parse(Inspect, input);
         if (isSshJobId(params.id)) {
-          if (!this.remoteJobs || !ctx.sessionManager?.getSessionFile()) throw new Error("SSH jobs unavailable in this session");
+          if (!this.remoteJobs || !ctx.sessionManager?.getSessionFile())
+            throw new Error("SSH jobs unavailable in this session");
           return this.remoteJobs.inspect(ctx.sessionManager.getSessionFile()!, params.id, params.offset, params.limit);
         }
         if (this.#isLocalTask(params.id)) return preview(this.manager.inspect(params.id, params.offset, params.limit));
@@ -740,7 +805,11 @@ export class JobService {
         if (bridge.kind === "remote") {
           await this.#assertNativeId(params.id, ctx, signal);
           const result = await this.#withNative(bridge, (adapter) => adapter.observe(params.id, signal));
-          if (result.output === undefined) return { ...this.#nativeProjection(result), ...(result.outputTruncated ? { transcriptAvailableInChildThread: true, outputLost: true } : {}) };
+          if (result.output === undefined)
+            return {
+              ...this.#nativeProjection(result),
+              ...(result.outputTruncated ? { transcriptAvailableInChildThread: true, outputLost: true } : {}),
+            };
           const bytes = Buffer.from(result.output);
           const offset = Math.min(params.offset ?? 0, bytes.length);
           const window = bytes.subarray(offset, offset + (params.limit ?? 5000) + 3);
@@ -860,12 +929,16 @@ export class JobService {
           }
         const sessionFile = ctx.sessionManager?.getSessionFile();
         if (this.remoteJobs && !sessionFile)
-          discoveryError = [discoveryError, "SSH jobs require a durable parent session for cancellation discovery"].filter(Boolean).join("; ");
+          discoveryError = [discoveryError, "SSH jobs require a durable parent session for cancellation discovery"]
+            .filter(Boolean)
+            .join("; ");
         if (this.remoteJobs && sessionFile) {
           const sshReport = await this.remoteJobs.stopWork(sessionFile);
           results.push(...sshReport.jobs);
           if (!sshReport.discoveryComplete || sshReport.outcome === "partial")
-            discoveryError = [discoveryError, sshReport.discoveryError ?? "SSH cancellation incomplete or offline"].filter(Boolean).join("; ");
+            discoveryError = [discoveryError, sshReport.discoveryError ?? "SSH cancellation incomplete or offline"]
+              .filter(Boolean)
+              .join("; ");
         }
         this.#refresh();
         return {
@@ -883,7 +956,8 @@ export class JobService {
       case "jobs.stop": {
         const params = z.parse(Id, input);
         if (isSshJobId(params.id)) {
-          if (!this.remoteJobs || !ctx.sessionManager?.getSessionFile()) throw new Error("SSH jobs unavailable in this session");
+          if (!this.remoteJobs || !ctx.sessionManager?.getSessionFile())
+            throw new Error("SSH jobs unavailable in this session");
           return this.remoteJobs.stop(ctx.sessionManager.getSessionFile()!, params.id);
         }
         if (!this.#isLocalTask(params.id)) {

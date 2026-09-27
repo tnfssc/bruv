@@ -19,6 +19,8 @@ export type RemoteTask = {
   taskId: string;
   /** Immutable parent session attribution, committed with launch intent before SSH. */
   jobSessionFile?: string;
+  /** Monotonic local launch order keeps jobs cursors stable when random IDs sort earlier. */
+  jobSequence?: number;
   host: string;
   ownerId: string;
   epoch: string;
@@ -246,7 +248,13 @@ export class RemoteClient {
         if (Object.keys(state.tasks).length >= 100) throw new Error("Remote cache task limit (100) reached");
         task = {
           taskId,
-          ...(sessionFile ? { jobSessionFile: sessionFile } : {}),
+          ...(sessionFile
+            ? {
+                jobSessionFile: sessionFile,
+                jobSequence:
+                  Object.values(state.tasks).reduce((max, task) => Math.max(max, task.jobSequence ?? 0), 0) + 1,
+              }
+            : {}),
           host: c.host,
           ownerId: c.hello.ownerId,
           epoch: c.hello.epoch,
