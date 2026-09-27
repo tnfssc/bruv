@@ -44,11 +44,13 @@ Look at what already does job before adding another way. More state, more layers
 
 From: [worktree design](t3/t3-worktree-design.md), [resource triage](resources/memory-resource-judgment.md), [CI deduplication](ci/ci-trigger-dedup.md), [source CLI fixtures](live/macos-live-ci-source-cli.md).
 
-## 8. Show what is real
+## 8. Make it human. Show what is real
 
 UI, tools, and logs must tell truth. User and agent surfaces are core behavior. Check rendered views and actual tool prompts/results. Keep needed state clear; leave out extra subtitles and internal metadata. Unknown is not zero. Summary is not full transcript. Watching is not steering. Message arrived does not mean work done. Unresolved state must stay easy to find after its notice scrolls away. Show what needs action and which work is blocked. Show gaps and failures. Optional logging must not change main work or hide its error.
 
-From: [task UI semantics](t3/t3-task-ui-research.md), [pending questions](questions/persistent-questions-proposal.md), [surface review](questions/final-surface-review.md), [empty cost summary](t3/t3-preview-hide-empty-cost-summary.md), [diagnostics](quality/diagnostics.md).
+Human flows need human controls. Offer menus, keyboard navigation, search or autocomplete, and a clear way back where they help. Do not make people copy IDs or learn command syntax for routine choices. A working API or command parser is not a finished user experience. Test the real rendered flow from discovery to action, including cancel, retry and narrow screens. Keep explicit commands for scripts and expert use; do not force interactive menus into automation. Backend tests cannot stand in for this check.
+
+From: [remote human UI follow-up](remote-workspaces/human-ui-followup.md), [interactive question acceptance](questions/interactive-cli-handoff.md), [task UI semantics](t3/t3-task-ui-research.md), [pending questions](questions/persistent-questions-proposal.md), [surface review](questions/final-surface-review.md), [empty cost summary](t3/t3-preview-hide-empty-cost-summary.md), [diagnostics](quality/diagnostics.md).
 
 ## 9. Know what a change means
 
