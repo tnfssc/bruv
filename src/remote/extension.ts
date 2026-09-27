@@ -4,6 +4,30 @@ import { toolParameters } from "../tool-schema";
 import { registerRemoteRuntime } from "./runtime";
 import { RemoteClient, type RemoteTask } from "./client";
 
+export function parseRemoteLaunch(input: string): { repoPath: string; prompt: string } {
+  const start = /^\s*launch\s+/.exec(input);
+  if (!start) throw new Error("Usage: /remote launch <absolute-remote-repo-path> <prompt>");
+  let i = start[0].length,
+    repoPath = "",
+    quote = "";
+  for (; i < input.length; i++) {
+    const c = input[i]!;
+    if (c === "\\" && quote !== "'") {
+      if (++i >= input.length) throw new Error("Incomplete path escape");
+      repoPath += input[i];
+    } else if (quote) {
+      if (c === quote) quote = "";
+      else repoPath += c;
+    } else if (c === "'" || c === '"') quote = c;
+    else if (/\s/.test(c)) break;
+    else repoPath += c;
+  }
+  if (quote) throw new Error("Unclosed repository path quote");
+  const prompt = input.slice(i + 1);
+  if (!repoPath || !prompt.trim()) throw new Error("Usage: /remote launch <absolute-remote-repo-path> <prompt>");
+  return { repoPath, prompt };
+}
+
 const Parameters = z.object({
   op: z.enum(["status", "launch", "sync", "transcript"]),
   repoPath: z.optional(z.string()),
@@ -92,15 +116,15 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             result = {
               host: rest[0],
               ...(await client.connect(rest[0], rest[1])),
-              scope: "Existing remote repository only; no local files, tools, or credentials copied",
+              scope:
+                "Host configuration and transcript cache are shared across this OS user’s sessions. Existing remote repository only; no local files, tools, or credentials copied",
             };
             break;
           case "status":
             result = await status();
             break;
           case "launch": {
-            const repoPath = rest.shift(),
-              prompt = rest.join(" ");
+            const { repoPath, prompt } = parseRemoteLaunch(input);
             if (!repoPath || !prompt) throw new Error("Usage: /remote launch <absolute-remote-repo-path> <prompt>");
             result = summary(await client.launch(repoPath, prompt));
             break;
@@ -108,7 +132,11 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           case "retry": {
             if (rest.length !== 1) throw new Error("Usage: /remote retry <taskId>");
             const saved = await client.transcript(rest[0]!);
-            result = summary(await client.launch(saved.repoPath, saved.prompt, saved.taskId));
+            result = summary(
+              saved.outcome === "accepted"
+                ? await client.sync(saved.taskId)
+                : await client.launch(saved.repoPath, saved.prompt, saved.taskId),
+            );
             break;
           }
           case "sync":
