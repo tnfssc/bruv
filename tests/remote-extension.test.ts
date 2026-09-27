@@ -285,3 +285,63 @@ test("connect editor Escape never connects, even after entering a host", async (
   await command.handler("", ctx);
   expect(connects).toEqual([]);
 });
+
+for (const change of ["offline", "changed-owner"] as const) {
+  test("cancel confirmation open then " + change + " refuses dispatch", async () => {
+    let command: any;
+    let phase = 0;
+    let cancels = 0;
+    const task = {
+      taskId: "id",
+      prompt: "work",
+      host: "host",
+      ownerId: "owner",
+      epoch: "epoch",
+      outcome: "accepted",
+      events: [],
+      cursor: 0,
+      task: { state: "running" },
+    };
+    const client = {
+      status: async () => ({
+        connection: {
+          host: "host",
+          hello: { ownerId: phase && change === "changed-owner" ? "other" : "owner", epoch: "epoch" },
+        },
+        tasks: { id: phase && change === "offline" ? { ...task, lastError: "offline" } : task },
+      }),
+      cancel: async () => {
+        cancels++;
+        return task;
+      },
+    };
+    const messages: any[] = [];
+    remoteExtension(
+      {
+        on() {},
+        registerCommand(_n: string, c: any) {
+          command = c;
+        },
+        sendMessage(m: any) {
+          messages.push(m);
+        },
+      } as any,
+      client as any,
+    );
+    const choices = ["task:id", "cancel"];
+    await command.handler("", {
+      hasUI: true,
+      ui: {
+        custom: async () => choices.shift(),
+        editor: async () => undefined,
+        confirm: async () => {
+          phase = 1;
+          return true;
+        },
+        notify() {},
+      },
+    });
+    expect(cancels).toBe(0);
+    expect(messages.some((m) => JSON.stringify(m).includes("no cancel sent"))).toBe(true);
+  });
+}

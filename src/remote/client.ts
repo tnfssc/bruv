@@ -35,6 +35,8 @@ export type RemoteTask = {
   artifactsComplete?: boolean;
   integrationError?: string;
   cancelRequested?: boolean;
+  /** Durable local intent is separate from delivery and observed terminal state. */
+  cancelDelivery?: { status: "requested" | "uncertain" | "confirmed"; error?: string };
   replyDelivery?: Record<string, { replyId: string; status: "uncertain" | "delivered"; error?: string }>;
   replies?: Record<
     string,
@@ -402,8 +404,56 @@ export class RemoteClient {
     return this.transcript(taskId);
   }
   async cancel(taskId: string): Promise<RemoteTask> {
-    await this.updateTask(taskId, { cancelRequested: true });
-    await this.control({ op: "cancel", taskId });
+    await this.exclusive(async () => {
+      const state = await this.read();
+      const task = state.tasks[taskId];
+      if (!task) throw Error("Unknown remote task");
+      task.cancelRequested = true; // Preserve intent even when delivery is refused or offline.
+      task.cancelDelivery ??= { status: "requested" };
+      await this.save(state);
+      if (task.cancelDelivery.status === "confirmed") return;
+      const c = state.connection;
+      if (!c || c.host !== task.host || c.hello.ownerId !== task.ownerId || c.hello.epoch !== task.epoch) {
+        task.cancelDelivery = {
+          status: task.cancelDelivery.status,
+          error: "Pinned owner unavailable; no new cancel sent",
+        };
+        await this.save(state);
+        throw Error("Pinned owner unavailable; no cancel sent; local cancellation intent retained");
+      }
+      let current: Hello;
+      try {
+        current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
+      } catch (error) {
+        task.cancelDelivery = { status: task.cancelDelivery.status, error: String(error) };
+        await this.save(state);
+        throw Error("Cannot verify pinned owner; no cancel sent; local cancellation intent retained: " + String(error));
+      }
+      if (current.ownerId !== task.ownerId || current.epoch !== task.epoch) {
+        task.cancelDelivery = { status: task.cancelDelivery.status, error: "Remote owner changed; no new cancel sent" };
+        await this.save(state);
+        throw Error("Remote owner changed; no cancel sent; local cancellation intent retained");
+      }
+      task.cancelDelivery = { status: "uncertain" };
+      await this.save(state); // A lost response must not look like confirmation.
+      try {
+        const response = object(
+          await this.transport(c.host, c.diePath, {
+            op: "cancel",
+            taskId,
+            ownerId: task.ownerId,
+            epoch: task.epoch,
+          }),
+        );
+        if (object(response.task).taskId !== taskId) throw Error("Invalid cancel acknowledgement");
+      } catch (error) {
+        task.cancelDelivery = { status: "uncertain", error: String(error) };
+        await this.save(state);
+        throw Error("Cancellation delivery uncertain; retry on the same pinned owner: " + String(error));
+      }
+      task.cancelDelivery = { status: "confirmed" };
+      await this.save(state);
+    });
     return this.sync(taskId);
   }
   answer(

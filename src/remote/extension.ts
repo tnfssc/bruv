@@ -236,15 +236,31 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
                 ),
               );
             }
-            if (action === "cancel" && (await ctx.ui.confirm("Cancel remote task?", remoteLabel(task.prompt))))
+            if (action === "cancel" && (await ctx.ui.confirm("Cancel remote task?", remoteLabel(task.prompt)))) {
+              // The picker and confirmation can stay open while connection or task changes.
+              const fresh = await client.status();
+              const pinned = fresh.tasks[id];
+              if (
+                !pinned ||
+                pinned.host !== task.host ||
+                pinned.ownerId !== task.ownerId ||
+                pinned.epoch !== task.epoch ||
+                !taskOwned(pinned, fresh) ||
+                pinned.lastError ||
+                !["accepted", "running"].includes(pinned.task?.state ?? "")
+              )
+                throw Error(
+                  "Cancellation unavailable: pinned owner offline, changed, or task no longer active; no cancel sent",
+                );
               publish(summary(await client.cancel(id)));
+            }
           }
         }
       }
     } catch (error) {
       publish({
         error: String(error),
-        hint: "No new answer should be inferred from a failed/uncertain submission; inspect saved status.",
+        hint: "No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.",
       });
     } finally {
       picking = false;

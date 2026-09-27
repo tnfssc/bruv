@@ -116,3 +116,15 @@ test("uncertain reply remains actionable without offering a replacement answer",
   expect(rows.find((i) => i.label.startsWith("Reply uncertain:"))?.description).toContain("saved reply retained");
   expect(taskActions(uncertain, true).find((i) => i.value === "reply:q-one")?.label).toBe("Reconcile saved reply");
 });
+
+test("cancel delivery status is shown apart from terminal observation", () => {
+  const uncertain = {
+    ...task,
+    cancelRequested: true,
+    cancelDelivery: { status: "uncertain" as const },
+    task: { taskId: task.taskId, state: "running" },
+  };
+  const row = inboxItems({ ...state, tasks: { "task-a": uncertain } }).find((i) => i.value === "task:task-a")!;
+  expect(row.description).toContain("cancellation uncertain");
+  expect(row.description).toContain("terminal state is separate");
+});

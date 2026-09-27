@@ -64,6 +64,11 @@ export function inboxItems(state: RemoteState): Item[] {
           task.host +
           " · cached · " +
           task.taskId.slice(0, 12) +
+          (task.cancelDelivery
+            ? " · cancellation " + task.cancelDelivery.status + " (terminal state is separate)"
+            : task.cancelRequested
+              ? " · cancellation requested locally"
+              : "") +
           (task.lastError ? " · " + task.lastError : ""),
       ),
     })),

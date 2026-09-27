@@ -285,3 +285,74 @@ test("existing task catch-up is independent of a subsequently removed default pr
   removed = true;
   expect((await client.sync("configured_once")).task?.state).toBe("done");
 });
+
+for (const failure of ["changed-connection", "offline-hello", "lost-cancel"] as const) {
+  test("cancel retains local intent and pinned retry after " + failure, async () => {
+    let broken = false;
+    const sent: string[] = [];
+    const c = await fixture(async (host, _path, r) => {
+      if (r.op === "hello") {
+        if (broken && failure === "offline-hello") throw Error("offline");
+        return h();
+      }
+      if (r.op === "launch") return { task: { taskId: r.taskId, state: "running" } };
+      if (r.op === "cancel") {
+        sent.push(host);
+        if (broken && failure === "lost-cancel") throw Error("lost response");
+        return { task: { taskId: r.taskId, state: "running" } };
+      }
+      return { task: { taskId: r.taskId, state: "running" }, events: [], cursor: 0, hasMore: false };
+    });
+    await c.connect("box");
+    await c.launch("/repo", "work", "id");
+    broken = true;
+    if (failure === "changed-connection") await c.connect("other-box");
+    await expect(c.cancel("id")).rejects.toThrow(failure === "lost-cancel" ? "uncertain" : "no cancel sent");
+    const saved = await c.transcript("id");
+    expect(saved.cancelRequested).toBe(true);
+    expect(saved.cancelDelivery?.status).toBe(failure === "lost-cancel" ? "uncertain" : "requested");
+    expect(saved.task?.state).toBe("running");
+    expect(sent).toEqual(failure === "lost-cancel" ? ["box"] : []);
+    broken = false;
+    if (failure === "changed-connection") await c.connect("box");
+    expect((await c.cancel("id")).cancelDelivery?.status).toBe("confirmed");
+    expect(sent).toEqual(failure === "lost-cancel" ? ["box", "box"] : ["box"]);
+    expect((await c.transcript("id")).task?.state).toBe("running"); // ACK is not terminal truth.
+  });
+}
+
+test("uncertain cancel stays uncertain across changed owner and only terminal sync proves cancellation", async () => {
+  let epoch = "one",
+    fail = true,
+    terminal = false,
+    posts = 0;
+  const c = await fixture(async (_host, _path, r) => {
+    if (r.op === "hello") return h(epoch);
+    if (r.op === "launch") return { task: { taskId: r.taskId, state: "running" } };
+    if (r.op === "cancel") {
+      posts++;
+      if (fail) throw Error("lost response");
+      return { task: { taskId: r.taskId, state: "running" } };
+    }
+    return {
+      task: { taskId: r.taskId, state: terminal ? "cancelled" : "running" },
+      events: [],
+      cursor: 0,
+      hasMore: false,
+    };
+  });
+  await c.connect("box");
+  await c.launch("/repo", "work", "id");
+  await expect(c.cancel("id")).rejects.toThrow("uncertain");
+  epoch = "two";
+  await expect(c.cancel("id")).rejects.toThrow("no cancel sent");
+  expect((await c.transcript("id")).cancelDelivery?.status).toBe("uncertain");
+  expect(posts).toBe(1);
+  epoch = "one";
+  fail = false;
+  expect((await c.cancel("id")).task?.state).toBe("running");
+  terminal = true;
+  expect((await c.sync("id")).task?.state).toBe("cancelled");
+  await c.cancel("id");
+  expect(posts).toBe(2); // Confirmed request is not resent; terminal observation is retained.
+});
