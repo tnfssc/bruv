@@ -1,0 +1,1 @@
+{"providers":{"fixture":{"baseUrl":"http://127.0.0.1:18765/v1","api":"openai-completions","apiKey":"fixture-only-no-real-credentials","models":[{"id":"fixture-model","name":"remote fixture","contextWindow":32000,"maxTokens":1024}]}}}
