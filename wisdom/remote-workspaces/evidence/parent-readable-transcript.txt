@@ -1,0 +1,30 @@
+ This project is not trusted. Project .die resources and packages are ignored. Use /trust to save a
+ trust decision, then restart pi.
+
+ Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys
+ on` to ~/.tmux.conf and restart tmux.
+
+
+ [die-remote]
+
+ Remote transcript · old-smoke · offset 0
+ #1 assistant:
+ SAVED RESULT: tests could not run because Bun was unavailable.
+ End of cached transcript.
+
+
+
+die:develop · mode: orchestrator · $0.000 · ctx 0% · cache est ?                              gpt-4o
+
+
+
+
+
+
+
+
+
+
+
+
+
