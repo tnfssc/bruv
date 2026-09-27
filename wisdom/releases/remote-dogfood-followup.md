@@ -7,3 +7,7 @@ Review fixed lock creation0600 without reopening existing inode, bounded incompl
 Same binary parent supplemental capability PTY, actual accepted reply drop recovery/in-app new+resume and offline revocation PTY passed task791cc96b; logs /tmp/die-parent-{capability-dogfood,recovery-dogfood,offline-revoke}.log. All checks isolated storage, Docker fake provider. No real Mac/provider/host user cache or install touched. Lost reply proof bounded, not general crash exactly-once.
 
 Value8 strengthened in this work: use daily flows, not only fresh fixtures. Config discovery remains PARKED. Prepare release only after these gates; await hosted success/assets verification before claim.
+
+Pushed d9eb19e; v0.15.10 workflow https://github.com/tnfssc/die/actions/runs/36351306358. Watch /tmp/die-v01510-release-watch.log. Await hosted success and asset/source verification.
+
+Published v0.15.10. Workflow36351306358 succeeded including actual Mac binary/updater gate. Verified stable non-draft release all12 assets and SOURCE.txt commit d9eb19e9488fa74f4bc65ac5c053133905aa7966. https://github.com/tnfssc/die/releases/tag/v0.15.10 . No local install done. Remote daily-use proof remains Linux Docker/fake-provider, not a real Mac→server session.
