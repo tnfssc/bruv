@@ -89,7 +89,10 @@ describe("release automation", () => {
   test("CI and release cache downloads only with pinned dependency and source inputs", async () => {
     for (const path of ["ci", "release"]) {
       const workflow = Bun.YAML.parse(await read(`.github/workflows/${path}.yml`)) as {
-        jobs: Record<string, { env?: Record<string, string>; steps: { uses?: string; with?: Record<string, string> }[] }>;
+        jobs: Record<
+          string,
+          { env?: Record<string, string>; steps: { uses?: string; with?: Record<string, string> }[] }
+        >;
       };
       const job = workflow.jobs[path === "ci" ? "test" : "release"]!;
       expect(job.env?.BUN_INSTALL_CACHE_DIR).toBe("${{ runner.temp }}/die-bun-cache");
@@ -100,7 +103,9 @@ describe("release automation", () => {
       expect(caches[0]?.with?.key).toContain("hashFiles('bun.lock', 'package.json')");
       expect(caches[1]?.with?.path).toBe(job.env?.PNPM_CONFIG_STORE_DIR);
       expect(caches[1]?.with?.key).toContain("pnpm-11.10.0-");
-      expect(caches[1]?.with?.key).toContain("hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch')");
+      expect(caches[1]?.with?.key).toContain(
+        "hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch')",
+      );
       for (const cache of caches) {
         expect(cache.with?.key).toContain("${{ runner.os }}-${{ runner.arch }}");
         expect(cache.with?.["restore-keys"]).toBeUndefined();
@@ -358,4 +363,15 @@ describe("release automation", () => {
     expect(highlight.slice(0, 250)).toContain("License: BSD-3-Clause");
     expect(marked.slice(0, 300)).toContain("MIT License");
   });
+});
+
+test("release cache environment retains source identity variables", async () => {
+  const workflow = Bun.YAML.parse(await read(".github/workflows/release.yml")) as {
+    jobs: Record<string, { name?: string; env?: Record<string, string> }>;
+  };
+  const job = Object.values(workflow.jobs).find((job) => job.name === "Linux, macOS, and Android release")!;
+  expect(job.env?.RELEASE_SHA).toContain("needs.prepare-manual.outputs.sha");
+  expect(job.env?.RELEASE_TAG).toContain("needs.prepare-manual.outputs.tag");
+  expect(job.env?.BUN_INSTALL_CACHE_DIR).toContain("runner.temp");
+  expect(job.env?.PNPM_CONFIG_STORE_DIR).toContain("runner.temp");
 });

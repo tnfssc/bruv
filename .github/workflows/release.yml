@@ -119,10 +119,9 @@ jobs:
     env:
       RELEASE_SHA: ${{ needs.prepare-manual.outputs.sha || github.sha }}
       RELEASE_TAG: ${{ needs.prepare-manual.outputs.tag || github.ref_name }}
-    timeout-minutes: 40
-    env:
       BUN_INSTALL_CACHE_DIR: ${{ runner.temp }}/die-bun-cache
       PNPM_CONFIG_STORE_DIR: ${{ runner.temp }}/die-pnpm-store
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
