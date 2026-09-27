@@ -30,3 +30,5 @@ Tests cover durable ownership, session isolation, mixed pagination, malformed na
 Values unchanged: existing values already require one owner, durable uncertainty, bounded output, honest proof and preserving human authority. This is a feature implementation, not a new general rule.
 
 Validation recorded: Bun check passed; 527 passed / 10 opt-in skips / 0 failures across 81 jobs, task, Live, T3, remote and subagent-extension files. Docker-only compiled CLI integration passed separately. A final targeted pagination test also covers a newly launched random ID sorting before the previous page. Paid/real-provider and PTY tests were not run for this change.
+
+Final review fixed an additional inspect truthfulness edge: SSH journal sequence starts at one, so a first event with seq=1 is not output loss. A focused regression and final typecheck cover it; this is independent of the compiled parent-wake proof.

@@ -300,3 +300,14 @@ test("new SSH launches cannot shift a paginated snapshot even when their IDs sor
     await manager.shutdown();
   }
 });
+
+test("the SSH journal starts at sequence one, not a lost-output gap", async () => {
+  const { client, adapter } = await fixture();
+  await client.launch("/repo", "one", "one", undefined, "session");
+  const state = await client.read();
+  state.tasks.one!.events = [{ seq: 1, event: { text: "complete first event" } }];
+  await Bun.write(client.path, JSON.stringify(state));
+  const page = await adapter.inspect("session", sshJobId("one"), 0, 5000);
+  expect(page.outputLost).toBe(false);
+  expect(page.transcriptGap).toBeUndefined();
+});

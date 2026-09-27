@@ -133,7 +133,7 @@ export function createRemoteJobsAdapter(client: RemoteClient): RemoteJobsAdapter
         outputLost:
           safe.start > 0 ||
           offset > position ||
-          (task.events[0]?.seq ?? 0) > 0 ||
+          (task.events[0]?.seq ?? 1) > 1 ||
           task.events.some((event, index) => index > 0 && event.seq !== task.events[index - 1]!.seq + 1),
       };
     },
