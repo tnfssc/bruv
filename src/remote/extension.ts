@@ -492,6 +492,9 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     } finally {
       picking = false;
       menuSnapshot = undefined;
+      // The snapshot banner describes an open picker, not the normal chat view.
+      ui?.setStatus?.("die-remote", undefined);
+      lastStatus = undefined;
     }
   };
   pi.registerCommand("remote", {

@@ -1105,6 +1105,7 @@ test("open remote menu signals snapshot freshness without rewriting the picker o
   expect(messages).toHaveLength(0);
   release(undefined);
   await run;
+  expect(statuses.at(-1)).toBeUndefined();
 });
 
 test("local capability revocation is pinned to its task and never sends another task's grant", async () => {
