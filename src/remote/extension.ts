@@ -23,7 +23,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     events: undefined,
     cached: true,
     observation: task.lastError
-      ? "Current outcome unknown: " + task.lastError
+      ? "Current remote status unavailable; cached observation only: " + task.lastError
       : "Last synchronized state, not live status",
     eventCount: task.events.length,
   });
@@ -89,7 +89,11 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           case "connect":
             if (!rest[0] || rest.length > 2)
               throw new Error("Usage: /remote connect <configured-ssh-host> [absolute-remote-die-path]");
-            result = await client.connect(rest[0], rest[1]);
+            result = {
+              host: rest[0],
+              ...(await client.connect(rest[0], rest[1])),
+              scope: "Existing remote repository only; no local files, tools, or credentials copied",
+            };
             break;
           case "status":
             result = await status();

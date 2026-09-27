@@ -71,7 +71,14 @@ writeFileSync(
 const state = () =>
   JSON.parse(readFileSync(statePath, "utf8")) as {
     connection?: unknown;
-    tasks: Record<string, { cursor: number; events: Array<{ event: unknown }>; task?: { state: string } }>;
+    tasks: Record<
+      string,
+      {
+        cursor: number;
+        events: Array<{ event: unknown }>;
+        task?: { state: string; questions?: Array<{ text: string; owner: unknown; version: number }> };
+      }
+    >;
   };
 const launchRpc = () => {
   const child = spawn(die, ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model", "--no-session"], {
@@ -179,33 +186,70 @@ try {
   const transcript = JSON.stringify(state().tasks[taskId]!.events);
   assert(transcript.includes("REMOTE_FIXTURE_WAITING_FOR_JOB"), "owner did not yield while background job ran");
   assert(transcript.includes("REMOTE_FIXTURE_EXECUTED_ON_OWNER"), "actual owner background job output absent");
-  assert(transcript.includes("REMOTE_FIXTURE_FINISHED_ON_OWNER"), "actual owner final answer absent");
+  const hasFinal = (row: any) =>
+    row.event?.type === "message_end" &&
+    row.event?.message?.role === "assistant" &&
+    row.event.message.content?.some((c: any) => c.type === "text" && c.text === "REMOTE_FIXTURE_FINISHED_ON_OWNER");
+  assert(state().tasks[taskId]!.events.some(hasFinal), "actual owner final assistant message absent");
+  // A native question is created by the real execute/questions API, not a fixture ledger.
+  reconnect.send("/remote launch /fixture/repo REMOTE_FIXTURE_QUESTION");
+  await reconnect.wait(() => Object.keys(state().tasks).length === 2, "native question task accepted");
+  const questionId = Object.keys(state().tasks).find((id) => id !== taskId)!;
+  for (let i = 0; i < 100 && state().tasks[questionId]!.task?.state !== "unknown"; i++) {
+    reconnect.send("/remote sync " + questionId);
+    await Bun.sleep(100);
+  }
+  const questionTask = state().tasks[questionId]!.task;
+  if (questionTask?.state !== "unknown")
+    console.error(
+      "QUESTION DEBUG",
+      ssh(
+        "cat /root/.die/remote-owner/tasks/" +
+          questionId +
+          "/runtime.json; tail -c 3000 /root/.die/remote-owner/tasks/" +
+          questionId +
+          "/events.jsonl; cat /tmp/fixture-owner-provider-requests",
+      ).stdout,
+    );
+  assert.equal(questionTask?.state, "unknown", "unanswered native question must not be called done");
+  assert.equal(questionTask?.questions?.[0]?.text, "REMOTE_FIXTURE_NATIVE_QUESTION");
+  assert(
+    questionTask?.questions?.[0]?.owner && questionTask.questions[0].version > 0,
+    "native question identity/version absent",
+  );
   reconnect.child.kill("SIGKILL");
   const stopped = spawnSync("docker", ["stop", container], { encoding: "utf8", timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
   const offline = launchRpc();
-  offline.send("/remote transcript " + taskId);
+  for (let offset = 0; offset < state().tasks[taskId]!.cursor; offset += 50)
+    offline.send("/remote transcript " + taskId + " " + offset);
+  const offlineHasFinal = () =>
+    offline.events.some(
+      (e) =>
+        e.id === "offline-history" &&
+        e.data?.messages?.some((message: any) => {
+          if (message.customType !== "die-remote" || typeof message.content !== "string") return false;
+          try {
+            return JSON.parse(message.content).events?.some(hasFinal);
+          } catch {
+            return false;
+          }
+        }),
+    );
   // Read the actual normal conversation history, not merely a cache file.
   for (let i = 0; i < 100; i++) {
     offline.child.stdin.write(JSON.stringify({ id: "offline-history", type: "get_messages" }) + "\n");
     await Bun.sleep(50);
-    if (
-      offline.events.some(
-        (e) => e.id === "offline-history" && JSON.stringify(e).includes("REMOTE_FIXTURE_EXECUTED_ON_OWNER"),
-      )
-    )
-      break;
+    if (offlineHasFinal()) break;
   }
   assert(
-    offline.events.some(
-      (e) => e.id === "offline-history" && JSON.stringify(e).includes("REMOTE_FIXTURE_EXECUTED_ON_OWNER"),
-    ),
-    "offline human transcript did not render actual tool output in normal conversation",
+    offlineHasFinal(),
+    "offline human paged transcript did not render final assistant output in normal conversation",
   );
   assert.equal(localCalls, callsAtDisconnect, "offline transcript must not call a provider");
   offline.child.kill("SIGKILL");
   console.log(
-    "PASS normal CLI RPC agent remote tool, human connect, pinned SSH, independent owner, reconnect sync and server-offline human transcript; events=" +
+    "PASS normal CLI RPC agent remote tool, human connect, pinned SSH, independent owner, reconnect sync, native question detection, server-offline paged human transcript; events=" +
       state().tasks[taskId]!.cursor,
   );
 } finally {

@@ -9,6 +9,7 @@ export type RemoteTask = {
   repoPath: string;
   profile: { name: "normal"; model: string; thinking?: string };
   error?: string;
+  questions?: unknown[];
 };
 export type RemoteResponse =
   | {

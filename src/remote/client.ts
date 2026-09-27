@@ -56,6 +56,12 @@ export const sshTransport: Transport = async (host, diePath, request) => {
         "ClearAllForwardings=yes",
         "-o",
         "ForwardAgent=no",
+        "-o",
+        "ForwardX11=no",
+        "-o",
+        "GSSAPIDelegateCredentials=no",
+        "-o",
+        "PermitLocalCommand=no",
         "--",
         host,
         quote(diePath) + " --remote-control",
@@ -85,7 +91,7 @@ export const sshTransport: Transport = async (host, diePath, request) => {
       try {
         resolve(JSON.parse(out));
       } catch {
-        reject(new Error("Invalid remote JSON response"));
+        reject(new Error("Remote die returned no protocol JSON; use a compatible remote-enabled Linux build"));
       }
     });
     child.stdin.on("error", () => {});
@@ -95,7 +101,7 @@ export const sshTransport: Transport = async (host, diePath, request) => {
 function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid remote response");
   const result = value as Record<string, unknown>;
-  if (typeof result.error === "string") throw new Error(result.error);
+  if (typeof result.error === "string" && typeof result.code === "string") throw new Error(result.error);
   return result;
 }
 function hello(value: unknown): Hello {
@@ -112,7 +118,7 @@ function hello(value: unknown): Hello {
     typeof h.epoch !== "string" ||
     !h.epoch ||
     typeof h.version !== "string" ||
-    typeof h.platform !== "string" ||
+    h.platform !== "linux" ||
     p.name !== "normal" ||
     typeof p.model !== "string" ||
     !["configured", "missing", "unknown"].includes(String(p.auth)) ||
@@ -242,11 +248,15 @@ export class RemoteClient {
       if (!c) throw new Error("Connect via /remote connect first");
       if (!taskId) {
         const uncertain = Object.values(state.tasks).find(
-          (t) => t.host === c.host && t.repoPath === repoPath && t.prompt === prompt && t.outcome === "unknown",
+          (t) =>
+            t.host === c.host &&
+            t.repoPath === repoPath &&
+            t.prompt === prompt &&
+            (t.outcome === "unknown" || t.task?.state !== "done"),
         );
         if (uncertain)
           throw new Error(
-            "An identical launch has unknown outcome: " +
+            "An identical launch has unknown outcome or is still active: " +
               uncertain.taskId +
               ". Sync or retry that same taskId; no new task was sent.",
           );
@@ -268,6 +278,7 @@ export class RemoteClient {
           throw new Error("Task ID is pinned to a different owner or intent; refusal to retry");
         if (task.outcome === "accepted") return task;
       } else {
+        if (Object.keys(state.tasks).length >= 100) throw new Error("Remote cache task limit (100) reached");
         task = {
           taskId,
           host: c.host,

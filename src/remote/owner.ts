@@ -1,3 +1,4 @@
+import { Database } from "bun:sqlite";
 import { randomUUID, createHash } from "node:crypto";
 import {
   closeSync,
@@ -6,7 +7,6 @@ import {
   openSync,
   readFileSync,
   renameSync,
-  rmSync,
   statSync,
   writeSync,
   fsyncSync,
@@ -88,22 +88,35 @@ function error(code: string, detail: string): RemoteResponse {
 }
 async function locked<T>(fn: () => Promise<T>): Promise<T> {
   mkdirSync(root, { recursive: true, mode: 0o700 });
-  const path = join(root, "lock");
-  for (let n = 0; n < 100; n++) {
-    try {
-      mkdirSync(path, { mode: 0o700 });
+  const path = join(root, "control-lock.sqlite");
+  const fd = openSync(path, "a", 0o600);
+  closeSync(fd);
+  const database = new Database(path);
+  let acquired = false;
+  try {
+    database.exec("PRAGMA busy_timeout=0");
+    for (let attempt = 0; attempt < 100; attempt++) {
       try {
-        return await fn();
-      } finally {
-        rmSync(path, { recursive: true, force: true });
+        database.exec("BEGIN EXCLUSIVE");
+        acquired = true;
+        break;
+      } catch (error) {
+        if (!(error instanceof Error) || !/locked|busy/i.test(error.message)) throw error;
+        await Bun.sleep(30);
       }
-    } catch (e) {
-      if ((e as NodeJS.ErrnoException).code !== "EEXIST") throw e;
-      await Bun.sleep(30);
+    }
+    if (!acquired) throw new Error("Remote control is busy; retry the same request ID");
+    database.exec("CREATE TABLE IF NOT EXISTS control_lock (id INTEGER)");
+    return await fn();
+  } finally {
+    try {
+      if (acquired) database.exec("COMMIT");
+    } finally {
+      database.close();
     }
   }
-  throw new Error("Remote owner locked; manual inspection required");
 }
+
 function intent(req: Extract<RemoteRequest, { op: "launch" }>, profile: RemoteTask["profile"]) {
   return createHash("sha256")
     .update(JSON.stringify([req.repoPath, req.prompt, profile]))
@@ -128,7 +141,11 @@ function events(id: string, cursor = 0) {
     if (!line) continue;
     if (Buffer.byteLength(line) > MAX_LINE) throw new Error("Journal gap: oversized row");
     let row: { seq: number; event: unknown };
-    try { row = JSON.parse(line); } catch { throw new Error("Journal gap: corrupt row"); }
+    try {
+      row = JSON.parse(line);
+    } catch {
+      throw new Error("Journal gap: corrupt row");
+    }
     if (!row || row.seq !== ++sequence || !("event" in row)) throw new Error("Journal gap: noncontiguous row");
     rows.push(row);
   }
@@ -163,7 +180,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         profile: {
           name: "normal",
           model: normal.model,
-          thinking: normal.thinking,
+          thinking: normal.thinking ?? "off",
           auth: normal.model ? "unknown" : "missing",
         },
       };
@@ -174,17 +191,20 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         const existing = saved(req.taskId);
         if (existing.intent !== intent(req, existing.task.profile))
           return error("intent_conflict", "taskId already accepted with different intent");
-        try { return { task: existing.task, ...events(req.taskId) }; }
-        catch (e) { return error("journal_gap", String(e)); }
+        try {
+          return { task: existing.task, ...events(req.taskId) };
+        } catch (e) {
+          return error("journal_gap", String(e));
+        }
       }
       if (!isAbsolute(req.repoPath) || !statSync(req.repoPath).isDirectory() || !existsSync(join(req.repoPath, ".git")))
         return error("invalid_repo", "repoPath must be an existing absolute Git repository");
-      if (typeof req.prompt !== "string" || !req.prompt.trim())
-        return error("invalid_prompt", "Nonempty prompt required");
+      if (typeof req.prompt !== "string" || !req.prompt.trim() || Buffer.byteLength(req.prompt) > 128 * 1024)
+        return error("invalid_prompt", "Nonempty prompt up to 128 KiB required");
       const normal = (await loadProfiles(join(process.env.HOME ?? homedir(), ".die", "subagents.json"))).normal;
       if (!normal.model)
         return error("missing_model", "Configure remote normal profile model in ~/.die/subagents.json");
-      const profile = { name: "normal" as const, model: normal.model, thinking: normal.thinking };
+      const profile = { name: "normal" as const, model: normal.model, thinking: normal.thinking ?? "off" };
       const hash = intent(req, profile);
 
       mkdirSync(location(req.taskId), { mode: 0o700 });
@@ -208,10 +228,10 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           env: process.env,
         });
         // spawn may emit an asynchronous error; check the immediate pid before acknowledging.
-        if (!child.pid) throw new Error("Owner process did not start");
         child.on("error", () => {
           /* launch may fail after spawn returns; sync reports unknown */
         });
+        if (!child.pid) throw new Error("Owner process did not start");
         child.unref();
         value.pid = child.pid;
         value.startTime = processInfo(child.pid).startTime;
@@ -221,8 +241,11 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         value.task.error = String(e);
         persist(req.taskId, value);
       }
-      try { return { task: value.task, ...events(req.taskId) }; }
-      catch (e) { return error("journal_gap", String(e)); }
+      try {
+        return { task: value.task, ...events(req.taskId) };
+      } catch (e) {
+        return error("journal_gap", String(e));
+      }
     }
     if (req.op === "sync") {
       location(req.taskId);
@@ -245,8 +268,11 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           persist(req.taskId, value);
         }
       }
-      try { return { task: value.task, ...events(req.taskId, req.cursor) }; }
-      catch (e) { return error("journal_gap", String(e)); }
+      try {
+        return { task: value.task, ...events(req.taskId, req.cursor) };
+      } catch (e) {
+        return error("journal_gap", String(e));
+      }
     }
     return error("invalid_request", "Unsupported operation");
   });
@@ -260,13 +286,25 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     await Bun.sleep(20);
     initial = saved(taskId);
   }
-  if (initial.pid !== process.pid || initial.boot !== boot() ||
-      initial.startTime !== processInfo(process.pid).startTime || initial.task.state !== "accepted") return;
+  if (
+    initial.pid !== process.pid ||
+    initial.boot !== boot() ||
+    initial.startTime !== processInfo(process.pid).startTime ||
+    initial.task.state !== "accepted"
+  )
+    return;
   const path = join(location(taskId), "events.jsonl");
   let journal: number | undefined;
   let child: ReturnType<typeof spawn> | undefined;
   let failure: string | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let shutdownTimer: ReturnType<typeof setTimeout> | undefined;
+  const stopChild = (graceful = false) => {
+    if (!child?.pid) return;
+    if (graceful) child.stdin?.end();
+    else child.kill();
+    shutdownTimer ??= setTimeout(() => child?.kill("SIGKILL"), 2_000);
+  };
   try {
     // A preexisting or malformed journal is not safe to append from sequence one.
     if (existsSync(path) && statSync(path).size) throw new Error("Existing journal; cannot replay owner");
@@ -279,7 +317,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         if (Buffer.byteLength(line) > MAX_LINE || fstatSync(journal!).size + Buffer.byteLength(line) > MAX_JOURNAL)
           throw new Error("RPC journal limit exceeded");
         const bytes = Buffer.from(line);
-        for (let offset = 0; offset < bytes.length;) {
+        for (let offset = 0; offset < bytes.length; ) {
           const written = writeSync(journal!, bytes, offset, bytes.length - offset);
           if (!written) throw new Error("Short journal write");
           offset += written;
@@ -288,7 +326,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         seq++;
       } catch (e) {
         failure = "Journal write failed: " + String(e);
-        child?.kill();
+        stopChild();
       }
     };
     initial.task.state = "running";
@@ -296,11 +334,26 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     const { model, thinking } = initial.task.profile;
     const slash = model.indexOf("/");
     const session = join(location(taskId), "session.jsonl");
-    const args = ["--mode", "rpc", "--session", session, "--provider", model.slice(0, slash), "--model", model.slice(slash + 1)];
+    const args = [
+      "--mode",
+      "rpc",
+      "--session",
+      session,
+      "--provider",
+      model.slice(0, slash),
+      "--model",
+      model.slice(slash + 1),
+    ];
     if (thinking) args.push("--thinking", thinking);
-    child = spawn(executable, args, { cwd: initial.task.repoPath, stdio: ["pipe", "pipe", "pipe"] });
+    const runtimePath = join(location(taskId), "runtime.json");
+    child = spawn(executable, args, {
+      cwd: initial.task.repoPath,
+      stdio: ["pipe", "pipe", "pipe"],
+      env: { ...process.env, DIE_REMOTE_RUNTIME_STATE: runtimePath },
+    });
     let buffer = "";
     let ended = false;
+    let promptSent = false;
     let modelError: string | undefined;
 
     child.stdout!.setEncoding("utf8");
@@ -309,7 +362,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       buffer += chunk;
       if (Buffer.byteLength(buffer) > MAX_LINE && !buffer.includes("\n")) {
         failure = "RPC line limit exceeded";
-        child?.kill();
+        stopChild();
         return;
       }
       let pos: number;
@@ -318,55 +371,127 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         buffer = buffer.slice(pos + 1);
         if (Buffer.byteLength(line) > MAX_LINE) {
           failure = "RPC line limit exceeded";
-          child?.kill();
+          stopChild();
           break;
         }
         let event: any;
-        try { event = JSON.parse(line); }
-        catch { failure = "Invalid RPC JSON output"; child?.kill(); break; }
+        try {
+          event = JSON.parse(line);
+        } catch {
+          failure = "Invalid RPC JSON output";
+          stopChild();
+          break;
+        }
         record(event);
+        if (event?.type === "response" && event.id === "remote-config") {
+          const effective = event.data?.model;
+          if (
+            !event.success ||
+            effective?.provider !== model.slice(0, slash) ||
+            effective?.id !== model.slice(slash + 1) ||
+            event.data?.thinkingLevel !== thinking
+          ) {
+            failure =
+              "Remote CLI selected a different or unavailable model/thinking configuration; prompt was not sent";
+            stopChild(true);
+            continue;
+          }
+          if (!promptSent) {
+            promptSent = true;
+            child?.stdin?.write(
+              JSON.stringify({
+                id: "remote-prompt",
+                type: "prompt",
+                message: read<{ prompt: string }>(join(location(taskId), "request.json")).prompt,
+              }) + "\n",
+            );
+          }
+        }
         if (event?.type === "message_end") {
           const message = event.message;
           if (message?.stopReason === "error" || message?.stopReason === "aborted" || message?.errorMessage)
             modelError = String(message.errorMessage || message.stopReason);
         }
-        if (event?.type === "agent_end" && !event.willRetry) {
-          ended = true;
-          child?.stdin?.end();
+        if (event?.type === "agent_start") {
+          ended = false;
+          modelError = undefined;
+        }
+        if (event?.type === "agent_settled") {
+          // The normal extension checkpoint runs before RPC agent_settled. A yielded
+          // model turn must not close the CLI and kill its still-running jobs.
+          try {
+            const runtime = read<{
+              settled: boolean;
+              activeJobs?: number;
+              pendingMessages?: boolean;
+              questions?: unknown[];
+              error?: string;
+            }>(runtimePath);
+            if (
+              !runtime.settled ||
+              runtime.error ||
+              typeof runtime.activeJobs !== "number" ||
+              !Array.isArray(runtime.questions)
+            )
+              throw new Error(runtime.error || "Missing native runtime checkpoint");
+            if (runtime.activeJobs > 0 || runtime.pendingMessages) continue;
+            if (runtime.questions.length) {
+              failure =
+                "Native question unresolved; remote answering unavailable. Resume the recorded remote session only after this owner has exited.";
+              initial.task.questions = runtime.questions;
+            }
+            ended = true;
+          } catch (error) {
+            failure = "Cannot verify remote task completion: " + String(error);
+          }
+          stopChild(true);
         }
       }
       if (Buffer.byteLength(buffer) > MAX_LINE) {
         failure = "RPC line limit exceeded";
-        child?.kill();
+        stopChild();
       }
     });
     child.stderr!.setEncoding("utf8");
     child.stderr!.on("data", (chunk: string) => record({ type: "stderr", text: chunk }));
-    child.stdin!.on("error", () => { /* child exit is handled below */ });
-    child.stdin!.write(JSON.stringify({
-      id: "remote-prompt", type: "prompt",
-      message: read<{ prompt: string }>(join(location(taskId), "request.json")).prompt,
-    }) + "\n");
-    timer = setTimeout(() => { failure = "RPC timed out"; child?.kill(); }, 60 * 60 * 1000);
+    child.stdin!.on("error", () => {
+      /* child exit is handled below */
+    });
+    child.stdin!.write(JSON.stringify({ id: "remote-config", type: "get_state" }) + "\n");
+    timer = setTimeout(
+      () => {
+        failure = "RPC timed out";
+        stopChild();
+      },
+      60 * 60 * 1000,
+    );
     const code = await new Promise<number | null>((resolve, reject) => {
       child!.on("error", reject);
       child!.on("close", resolve);
     });
     if (buffer.length && !failure) failure = "Truncated RPC output";
     const ledger = session + ".questions.json";
-    const pendingQuestion = existsSync(ledger) && (read<Array<{ status: string }>>(ledger)).some(q => q.status === "pending" || q.status === "answered");
-    initial.task.state = code === 0 && ended && !failure && !modelError && !pendingQuestion ? "done" : "unknown";
+    const pendingQuestion =
+      existsSync(ledger) &&
+      read<Array<{ status: string }>>(ledger).some((q) => q.status === "pending" || q.status === "answered");
+    initial.task.state =
+      code === 0 && promptSent && ended && !failure && !modelError && !pendingQuestion ? "done" : "unknown";
     if (initial.task.state === "unknown")
-      initial.task.error = failure || modelError || (pendingQuestion ? "Native question unresolved; remote answering unavailable" :
-        "RPC exited without successful agent_end (exit " + code + ")");
+      initial.task.error =
+        failure ||
+        modelError ||
+        (pendingQuestion
+          ? "Native question unresolved; remote answering unavailable"
+          : "RPC exited without verified native settlement (exit " + code + ")");
     persist(taskId, initial);
   } catch (e) {
-    child?.kill();
+    stopChild();
     initial.task.state = "unknown";
     initial.task.error = failure || String(e);
     persist(taskId, initial);
   } finally {
     if (timer) clearTimeout(timer);
+    if (shutdownTimer) clearTimeout(shutdownTimer);
     if (journal !== undefined) closeSync(journal);
   }
 }

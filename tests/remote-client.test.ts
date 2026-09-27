@@ -178,3 +178,31 @@ test("killed client releases state lock and reopens the same durable ambiguous I
     await child.exited;
   }
 });
+
+test("unknown task snapshot carries its error and native questions rather than losing status", async () => {
+  const c = await fixture(async (_h, _p, r) =>
+    r.op === "hello"
+      ? h()
+      : r.op === "launch"
+        ? { task: { taskId: r.taskId, state: "running" } }
+        : {
+            task: {
+              taskId: r.taskId,
+              state: "unknown",
+              error: "Native question unresolved",
+              questions: [{ text: "Answer needed" }],
+            },
+            events: [],
+            cursor: 0,
+            hasMore: false,
+          },
+  );
+  await c.connect("box");
+  await c.launch("/repo", "p", "id1");
+  expect((await c.sync("id1")).task).toMatchObject({
+    state: "unknown",
+    error: "Native question unresolved",
+    questions: [{ text: "Answer needed" }],
+  });
+  expect((await c.transcript("id1")).task?.state).toBe("unknown");
+});

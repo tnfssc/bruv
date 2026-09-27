@@ -6,7 +6,12 @@ const server = Bun.serve({
   async fetch(request) {
     if (request.method !== "POST" || !new URL(request.url).pathname.endsWith("/chat/completions"))
       return new Response("not found", { status: 404 });
-    const body = (await request.json()) as { messages?: Array<{ role: string; tool_call_id?: string }> };
+    const body = (await request.json()) as {
+      messages?: Array<{ role: string; tool_call_id?: string; content?: unknown }>;
+    };
+    const questionTask = (body.messages ?? []).some(
+      (m) => m.role === "user" && JSON.stringify(m.content).includes("REMOTE_FIXTURE_QUESTION"),
+    );
     const calls = (body.messages ?? []).filter(
       (item) => item.role === "tool" && item.tool_call_id === "fixture-remote-execute",
     );
@@ -14,10 +19,17 @@ const server = Bun.serve({
       "/tmp/fixture-owner-provider-requests",
       JSON.stringify({ calls: calls.length, at: Date.now() }) + "\n",
     );
-    const finished = existsSync("/tmp/fixture-owner-job-finished");
+    const finished = !questionTask && existsSync("/tmp/fixture-owner-job-finished");
     if (finished) writeFileSync("/tmp/fixture-owner-finished-model", "yes");
     const delta = calls.length
-      ? { role: "assistant", content: finished ? "REMOTE_FIXTURE_FINISHED_ON_OWNER" : "REMOTE_FIXTURE_WAITING_FOR_JOB" }
+      ? {
+          role: "assistant",
+          content: questionTask
+            ? "Waiting for the real native question answer"
+            : finished
+              ? "REMOTE_FIXTURE_FINISHED_ON_OWNER"
+              : "REMOTE_FIXTURE_WAITING_FOR_JOB",
+        }
       : {
           role: "assistant",
           tool_calls: [
@@ -28,7 +40,9 @@ const server = Bun.serve({
               function: {
                 name: "execute",
                 arguments: JSON.stringify({
-                  code: "const r=await shell('sleep 3; pwd; git status --porcelain; echo REMOTE_FIXTURE_EXECUTED_ON_OWNER; touch /tmp/fixture-owner-job-finished', {waitSeconds:0}); console.log(r)",
+                  code: questionTask
+                    ? 'const q=await questions.ask({text:"REMOTE_FIXTURE_NATIVE_QUESTION",dedupKey:"remote-question"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Need real human answer",foreground:true})'
+                    : "const r=await shell('sleep 3; pwd; git status --porcelain; echo REMOTE_FIXTURE_EXECUTED_ON_OWNER; touch /tmp/fixture-owner-job-finished', {waitSeconds:0}); console.log(r)",
                 }),
               },
             },
