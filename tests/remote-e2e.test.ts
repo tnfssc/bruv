@@ -19,7 +19,7 @@ test.skipIf(process.platform !== "linux" || process.env.DIE_REMOTE_E2E !== "1")(
       child.exited,
     ]);
     expect(code, stderr + "\n" + stdout).toBe(0);
-    expect(stdout).toContain("PASS normal CLI RPC agent remote tool");
+    expect(stdout).toContain("PASS normal CLI RPC agent remote execute helper");
   },
   240_000,
 );

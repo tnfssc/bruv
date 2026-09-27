@@ -1,7 +1,8 @@
+import { createRemoteOperations } from "../src/remote/operations";
 import { expect, test } from "bun:test";
 import remoteExtension, { parseRemoteLaunch } from "../src/remote/extension";
 
-test("remote is active in the normal core tool set and human output persists in conversation", async () => {
+test("remote uses execute bridge while human output persists in conversation", async () => {
   let active = ["execute"];
   const handlers = new Map<string, Function>();
   const commands = new Map<string, any>();
@@ -18,13 +19,15 @@ test("remote is active in the normal core tool set and human output persists in 
     sendMessage: (message: any) => messages.push(message),
   };
   remoteExtension(pi as any, { status: async () => ({ tasks: {} }) } as any);
-  await handlers.get("session_start")!();
-  expect(active).toEqual(["execute", "remote"]);
-  expect(tools.map((t) => t.name)).toEqual(["remote"]);
+  expect(active).toEqual(["execute"]);
+  expect(tools).toEqual([]);
+  expect(await createRemoteOperations({ status: async () => ({ tasks: {} }) } as any)({ op: "status" })).toMatchObject({
+    cached: true,
+    tasks: [],
+  });
   await commands.get("remote").handler("status", {});
   expect(messages[0].display).toBe(true);
   expect(JSON.parse(messages[0].content)).toMatchObject({ cached: true, tasks: [] });
-  expect(tools[0].description).toContain("SAME taskId");
 });
 
 test("remote launch preserves raw prompt and quoted repository paths", () => {
@@ -70,4 +73,30 @@ test("accepted retry syncs; uncertain retry retains same launch ID", async () =>
   expect(calls).toEqual(["sync:id", "launch:id"]);
   await command.handler("connect host", {});
   expect(messages.at(-1).content).toContain("shared across");
+});
+
+test("execute remote methods use configured client, never accept a host", async () => {
+  const calls: unknown[][] = [];
+  const pi = { on() {}, registerCommand() {}, sendMessage() {} };
+  const client = {
+    launch: async (...args: unknown[]) => {
+      calls.push(args);
+      return { events: [], taskId: "id" };
+    },
+    sync: async (id: string) => ({ events: [], taskId: id }),
+    transcript: async (id: string) => ({ events: Array.from({ length: 55 }, (_, i) => i), taskId: id }),
+  };
+  remoteExtension(pi as any, client as any);
+  await createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "do work", taskId: "id" });
+  expect(calls).toEqual([["/repo", "do work", "id"]]);
+  expect(await createRemoteOperations(client as any)({ op: "transcript", taskId: "id", offset: 50 })).toMatchObject({
+    events: [50, 51, 52, 53, 54],
+    offset: 50,
+  });
+  await expect(createRemoteOperations(client as any)({ op: "transcript", taskId: "id", offset: -1 })).rejects.toThrow(
+    "offset",
+  );
+  await expect(
+    createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "p", host: "bad" } as any),
+  ).resolves.toBeDefined();
 });

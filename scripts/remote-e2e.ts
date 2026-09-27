@@ -28,11 +28,9 @@ const provider = Bun.serve({
               id: "fixture-remote-launch",
               type: "function",
               function: {
-                name: "remote",
+                name: "execute",
                 arguments: JSON.stringify({
-                  op: "launch",
-                  repoPath: "/fixture/repo",
-                  prompt: "Inspect the repository with execute and say REMOTE_FIXTURE_FINISHED_ON_OWNER",
+                  code: 'console.log(await remote.launch({repoPath: "/fixture/repo", prompt: "Inspect the repository with execute and say REMOTE_FIXTURE_FINISHED_ON_OWNER"}))',
                 }),
               },
             },
@@ -141,17 +139,17 @@ try {
   const cli = launchRpc();
   cli.send("/remote connect fixture-owner /usr/local/bin/die");
   await cli.wait(() => existsSync(statePath) && !!state().connection, "human /remote connect");
-  cli.send("Launch the already-configured remote repo with the remote tool");
-  await cli.wait(() => Object.keys(state().tasks).length === 1, "agent remote tool launch", 30000);
+  cli.send("Launch the already-configured remote repo with the remote execute helper");
+  await cli.wait(() => Object.keys(state().tasks).length === 1, "agent remote execute launch", 30000);
   const [taskId] = Object.keys(state().tasks);
   assert(taskId);
   await cli.wait(
-    () => cli.events.some((e) => e.type === "tool_execution_end" && e.toolName === "remote"),
-    "real remote tool completion",
+    () => cli.events.some((e) => e.type === "tool_execution_end" && e.toolName === "execute"),
+    "real remote execute completion",
     30000,
   );
   assert(
-    cli.events.some((e) => e.type === "tool_execution_end" && e.toolName === "remote" && !e.isError),
+    cli.events.some((e) => e.type === "tool_execution_end" && e.toolName === "execute" && !e.isError),
     JSON.stringify(cli.events.slice(-8)),
   );
   // Client disappears before the independent owner model finishes. No provider calls on this client afterward.
@@ -249,7 +247,7 @@ try {
   assert.equal(localCalls, callsAtDisconnect, "offline transcript must not call a provider");
   offline.child.kill("SIGKILL");
   console.log(
-    "PASS normal CLI RPC agent remote tool, human connect, pinned SSH, independent owner, reconnect sync, native question detection, server-offline paged human transcript; events=" +
+    "PASS normal CLI RPC agent remote execute helper, human connect, pinned SSH, independent owner, reconnect sync, native question detection, server-offline paged human transcript; events=" +
       state().tasks[taskId]!.cursor,
   );
 } finally {

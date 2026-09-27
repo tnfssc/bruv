@@ -1,3 +1,4 @@
+import { createRemoteOperations, type RemoteOperation } from "../remote/operations";
 import { registerQuestions } from "../questions/extension";
 import { registerQuestionRuntime } from "../questions/runtime";
 import { currentMainOwner, currentMainToolOwner } from "../live/main-owner";
@@ -525,9 +526,11 @@ export default function asynchronousTasksExtension(
   projectWisdom = registerProjectWisdom(pi, {
     isRoot: () => subagentDepth === 0,
   });
+  const remoteOperations = createRemoteOperations();
   const executeControl = registerExecuteTool(
     pi,
     async (ctx, method, params, signal) => {
+      if (method === "remote") return remoteOperations(params as RemoteOperation);
       if (method.startsWith("history.")) return history.handle(method, params, ctx);
       if (method.startsWith("goal.")) return Promise.resolve(goals.handle(method, params));
       if (method.startsWith("questions.")) return questions.handle(ctx, method, params);

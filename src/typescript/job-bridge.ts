@@ -95,6 +95,12 @@ export interface ExecuteJobGlobals {
     clear(): Promise<unknown>;
   };
   live: { stop(): Promise<unknown> };
+  remote: {
+    status(): Promise<unknown>;
+    launch(input: { repoPath: string; prompt: string; taskId?: string }): Promise<unknown>;
+    sync(taskId: string): Promise<unknown>;
+    transcript(taskId: string, offset?: number): Promise<unknown>;
+  };
   questions: {
     ask(input: {
       text: string;
@@ -147,6 +153,7 @@ declare global {
   var jobs: ExecuteJobGlobals["jobs"];
   var live: ExecuteJobGlobals["live"];
   var questions: ExecuteJobGlobals["questions"];
+  var remote: ExecuteJobGlobals["remote"];
 }
 
 /** Signal a confirmed cooperative handoff to the execute runner. */
@@ -332,6 +339,12 @@ export function installJobGlobals(socket?: Duplex): { finish(): Promise<void> } 
     handoff: async (message): Promise<never> => {
       await request("handoff", { message });
       throw new HandoffSignal();
+    },
+    remote: {
+      status: async () => request("remote", { op: "status" }),
+      launch: async (input) => request("remote", { op: "launch", repoPath: input.repoPath, prompt: input.prompt, taskId: input.taskId }),
+      sync: async (taskId) => request("remote", { op: "sync", taskId }),
+      transcript: async (taskId, offset) => request("remote", { op: "transcript", taskId, offset }),
     },
     history: {
       search: async (input) => request("history.search", input),
