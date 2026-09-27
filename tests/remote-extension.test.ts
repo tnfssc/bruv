@@ -1007,3 +1007,127 @@ test("menu repository launch asks about untracked files before snapshot or trans
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test("capability menu shows remote request details and refuses changed owner after HUMAN confirmation", async () => {
+  let command: any;
+  let owner = "owner";
+  let picks = 0;
+  const messages: any[] = [];
+  const task: any = {
+    taskId: "task1",
+    host: "host",
+    ownerId: "owner",
+    epoch: "epoch",
+    prompt: "Investigate",
+    events: [],
+    task: {
+      state: "running",
+      capabilityNeeds: [{ id: "req1", kind: "tool:git-status", input: "Check working tree before proceeding" }],
+    },
+  };
+  const client: any = {
+    path: "/tmp/remote-capability-menu-test/state.json",
+    status: async () => ({
+      connection: { host: "host", hello: { ownerId: owner, epoch: "epoch" } },
+      tasks: { task1: task },
+    }),
+    sync: async () => task,
+    control: async () => {
+      throw Error("must not dispatch");
+    },
+  };
+  remoteExtension(
+    {
+      on() {},
+      registerCommand(_n: string, c: any) {
+        command = c;
+      },
+      sendMessage(m: any) {
+        messages.push(m);
+      },
+    } as any,
+    client,
+  );
+  await command.handler("", {
+    hasUI: true,
+    cwd: process.cwd(),
+    ui: {
+      setStatus() {},
+      custom: async () => ["task:task1", "capabilities", "need:0", undefined][picks++],
+      confirm: async (title: string, details: string) => {
+        expect(title).toContain("HUMAN authorization");
+        expect(details).toContain("Check working tree before proceeding");
+        expect(details).toContain("Local repository:");
+        expect(details).toContain("entire named kind");
+        owner = "different";
+        return true;
+      },
+    },
+  });
+  expect(messages.at(-1).content).toContain("no grant sent");
+});
+
+test("open remote menu signals snapshot freshness without rewriting the picker or transcript", async () => {
+  let command: any;
+  let release!: (choice?: string) => void;
+  const statuses: string[] = [];
+  const messages: any[] = [];
+  let openings = 0;
+  remoteExtension(
+    {
+      on() {},
+      registerCommand(_n: string, c: any) {
+        command = c;
+      },
+      sendMessage(m: any) {
+        messages.push(m);
+      },
+    } as any,
+    { status: async () => ({ tasks: {} }) } as any,
+  );
+  const run = command.handler("", {
+    hasUI: true,
+    ui: {
+      setStatus(_key: string, value: string) {
+        statuses.push(value);
+      },
+      custom: () => {
+        openings++;
+        return new Promise<string | undefined>((resolve) => {
+          release = resolve;
+        });
+      },
+    },
+  });
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  expect(statuses.at(-1)).toContain("menu snapshot");
+  expect(openings).toBe(1);
+  expect(messages).toHaveLength(0);
+  release(undefined);
+  await run;
+});
+
+test("local capability revocation is pinned to its task and never sends another task's grant", async () => {
+  const { mkdtemp, rm } = await import("node:fs/promises");
+  const { join } = await import("node:path");
+  const { tmpdir } = await import("node:os");
+  const { ClientCapabilityStore } = await import("../src/remote/capability-runtime");
+  const { localCapabilityGrants, revokeCapability } = await import("../src/remote/services");
+  const dir = await mkdtemp(join(tmpdir(), "remote-grant-menu-"));
+  const client: any = {
+    path: join(dir, "state.json"),
+    control: async () => {
+      throw Error("wrong task dispatched");
+    },
+  };
+  try {
+    const store = new ClientCapabilityStore(join(dir, "capability-grants"));
+    const grant = await store.grant("first", dir, ["repo.read"], "grant_test1");
+    expect(localCapabilityGrants(client, "first").map((g) => g.id)).toEqual([grant.id]);
+    expect(localCapabilityGrants(client, "second")).toEqual([]);
+    expect(revokeCapability(client, "second", grant.id)).rejects.toThrow("No active local grant");
+    expect(localCapabilityGrants(client, "first")).toHaveLength(1);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

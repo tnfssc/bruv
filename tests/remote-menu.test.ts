@@ -157,3 +157,11 @@ test("returned conflicts are discoverable from inbox and readable offline", () =
     description: "Saved conflict reason and local artifact path · available offline",
   });
 });
+
+test("live task exposes human capability menu, but offline/ended tasks cannot grant", () => {
+  const task: any = { taskId: "t", prompt: "Review", task: { state: "running" }, events: [] };
+  expect(taskActions(task, true).some((item) => item.value === "capabilities")).toBe(true);
+  expect(taskActions(task, false).some((item) => item.value === "capabilities")).toBe(false);
+  task.task.state = "done";
+  expect(taskActions(task, true).some((item) => item.value === "capabilities")).toBe(false);
+});

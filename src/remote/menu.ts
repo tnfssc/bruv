@@ -114,6 +114,15 @@ export function taskActions(task: RemoteTask, online: boolean): Item[] {
     },
     ...(online
       ? [
+          ...(!task.lastError && ["accepted", "running"].includes(task.task?.state ?? "")
+            ? [
+                {
+                  value: "capabilities",
+                  label: "Local capabilities…",
+                  description: "Human-only grants and revocation · scoped to this task and local repo",
+                },
+              ]
+            : []),
           {
             value: "sync",
             label: "Sync task",
