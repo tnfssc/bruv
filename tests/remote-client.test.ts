@@ -206,3 +206,36 @@ test("unknown task snapshot carries its error and native questions rather than l
   });
   expect((await c.transcript("id1")).task?.state).toBe("unknown");
 });
+
+test("targeted answer pins reply ID before transport, rejects changed intent, bounded reconnect sync", async () => {
+  const requests: any[] = [];
+  let fail = true;
+  const owner = { sessionId: "s", branchId: "b" };
+  const q = { id: "q1", owner, version: 2, status: "pending" };
+  const c = await fixture(async (_host, _path, r) => {
+    requests.push(r);
+    if (r.op === "hello") return h();
+    if (r.op === "launch") return { task: { taskId: r.taskId, state: "running", questions: [q] } };
+    if (r.op === "answer") {
+      if (fail) {
+        fail = false;
+        throw Error("lost acknowledgement");
+      }
+      return { task: { taskId: r.taskId, state: "running" } };
+    }
+    if (r.op === "sync") return { task: { taskId: r.taskId, state: "done" }, events: [], cursor: 0, hasMore: false };
+    throw Error("invalid request");
+  });
+  await c.connect("myhost");
+  await c.launch("/repo", "prompt", "one");
+  await c.launch("/repo", "another", "two");
+  await expect(c.answer("one", { id: "q1", owner, version: 1, text: "yes" })).rejects.toThrow("stale");
+  await expect(c.answer("one", { id: "q1", owner, version: 2, text: "yes" })).rejects.toThrow("uncertain");
+  const replyId = (await c.transcript("one")).replies!.q1!.replyId;
+  await expect(c.answer("one", { id: "q1", owner, version: 2, text: "no" })).rejects.toThrow("Conflicting");
+  await c.answer("one", { id: "q1", owner, version: 2, text: "yes" });
+  expect(requests.filter((r) => r.op === "answer").map((r) => r.replyId)).toEqual([replyId, replyId]);
+  await c.syncActive(1);
+  expect(requests.filter((r) => r.op === "sync")).toHaveLength(1);
+  expect((await c.transcript("one")).task?.state).toBe("done");
+});

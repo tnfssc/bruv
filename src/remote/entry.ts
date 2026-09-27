@@ -15,14 +15,16 @@ export async function runRemoteControl(): Promise<void> {
     }
     const text = Buffer.concat(chunks).toString("utf8");
     const request = JSON.parse(text) as RemoteRequest;
-    if (!request || typeof request !== "object" || !["hello", "launch", "sync"].includes(request.op))
+    if (!request || typeof request !== "object" || !["hello", "launch", "sync", "answer"].includes(request.op))
       throw new Error("Invalid request");
     const allowed =
       request.op === "hello"
         ? ["op"]
         : request.op === "launch"
-          ? ["op", "ownerId", "epoch", "taskId", "repoPath", "prompt"]
-          : ["op", "ownerId", "epoch", "taskId", "cursor"];
+          ? ["op", "ownerId", "epoch", "taskId", "repoPath", "prompt", "model", "thinking"]
+          : request.op === "answer"
+            ? ["op", "ownerId", "epoch", "taskId", "id", "owner", "version", "text", "replyId"]
+            : ["op", "ownerId", "epoch", "taskId", "cursor"];
     if (Object.keys(request).some((key) => !allowed.includes(key)))
       throw new Error("Unsupported remote request field (per-task overrides are not supported)");
     response = await handleRemoteRequest(request);

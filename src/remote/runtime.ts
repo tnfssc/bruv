@@ -26,6 +26,54 @@ export function registerRemoteRuntime(pi: ExtensionAPI): void {
       closeSync(dir);
     }
   };
+  pi.registerCommand("remote-native-answer", {
+    description: "Internal persisted remote question reply",
+    handler: async (encoded, ctx) => {
+      const input = JSON.parse(Buffer.from(encoded.trim(), "base64url").toString("utf8")) as {
+        id: string;
+        owner: { sessionId: string; branchId: string };
+        version: number;
+        text: string;
+        replyId: string;
+      };
+      const service = new QuestionService();
+      const answer = await service.answer(ctx, input);
+      if (answer.delivery === "delivered") return; // idempotent retry, no second turn
+      if (answer.delivery === "dispatching") return; // uncertain: never replay
+      const queued = await service.setDelivery(ctx, {
+        id: answer.id,
+        owner: answer.owner,
+        version: answer.version,
+        delivery: "queued",
+      });
+      const claimed = await service.setDelivery(ctx, {
+        id: queued.id,
+        owner: queued.owner,
+        version: queued.version,
+        delivery: "dispatching",
+      });
+      pi.sendMessage(
+        {
+          customType: "question-answer",
+          display: false,
+          content:
+            "Saved answer for " +
+            claimed.id +
+            ":\n" +
+            JSON.stringify(claimed) +
+            "\nUse this saved reply in a new parent turn. Do not replay prior tool calls or resume a native child in place.",
+          details: { questionId: claimed.id, replyKey: claimed.replyId, owner: claimed.owner },
+        },
+        { triggerTurn: true, deliverAs: "followUp" },
+      );
+      await service.setDelivery(ctx, {
+        id: claimed.id,
+        owner: claimed.owner,
+        version: claimed.version,
+        delivery: "delivered",
+      });
+    },
+  });
   pi.on("agent_start", async () => save({ settled: false }));
   pi.on("agent_settled", async (_event, ctx) => {
     try {

@@ -1,7 +1,7 @@
 import { RemoteClient, type RemoteTask } from "./client";
 export type RemoteOperation =
   | { op: "status" }
-  | { op: "launch"; repoPath: string; prompt: string; taskId?: string }
+  | { op: "launch"; repoPath: string; prompt: string; taskId?: string; model?: string; thinking?: string }
   | { op: "sync"; taskId: string }
   | { op: "transcript"; taskId: string; offset?: number };
 
@@ -46,7 +46,16 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
           (args.taskId !== undefined && typeof args.taskId !== "string")
         )
           throw new Error("launch requires repoPath and prompt (optional taskId)");
-        return summary(await client.launch(args.repoPath, args.prompt, args.taskId));
+        return summary(
+          await client.launch(
+            args.repoPath,
+            args.prompt,
+            args.taskId,
+            ...(args.model !== undefined || args.thinking !== undefined
+              ? [{ model: args.model, thinking: args.thinking }]
+              : []),
+          ),
+        );
       case "sync":
         if (typeof args.taskId !== "string") throw new Error("sync requires taskId");
         return summary(await client.sync(args.taskId));

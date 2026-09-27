@@ -21,12 +21,17 @@ export type RemoteTask = {
   epoch: string;
   repoPath: string;
   prompt: string;
+  overrides?: { model?: string; thinking?: string };
   cursor: number;
   events: RemoteEvent[];
   task?: Task;
   outcome: "unknown" | "accepted";
   lastSync?: string;
   lastError?: string;
+  replies?: Record<
+    string,
+    { id: string; owner: { sessionId: string; branchId: string }; version: number; text: string; replyId: string }
+  >;
 };
 export type RemoteState = {
   connection?: { host: string; diePath: string; hello: Hello };
@@ -71,6 +76,7 @@ export function remoteStatePath(): string {
 }
 export class RemoteClient {
   private queue: Promise<unknown> = Promise.resolve();
+  private syncOffset = 0;
   constructor(
     readonly path = remoteStatePath(),
     readonly transport: Transport = sshTransport,
@@ -172,7 +178,12 @@ export class RemoteClient {
   status(): Promise<RemoteState> {
     return this.read();
   }
-  launch(repoPath: string, prompt: string, taskId?: string): Promise<RemoteTask> {
+  launch(
+    repoPath: string,
+    prompt: string,
+    taskId?: string,
+    overrides?: { model?: string; thinking?: string },
+  ): Promise<RemoteTask> {
     return this.exclusive(async () => {
       if (
         !repoPath.startsWith("/") ||
@@ -210,7 +221,8 @@ export class RemoteClient {
           task.ownerId !== c.hello.ownerId ||
           task.epoch !== c.hello.epoch ||
           task.repoPath !== repoPath ||
-          task.prompt !== prompt
+          task.prompt !== prompt ||
+          JSON.stringify(task.overrides ?? {}) !== JSON.stringify(overrides ?? {})
         )
           throw new Error("Task ID is pinned to a different owner or intent; refusal to retry");
         if (task.outcome === "accepted") return task;
@@ -223,6 +235,7 @@ export class RemoteClient {
           epoch: c.hello.epoch,
           repoPath,
           prompt,
+          overrides,
           cursor: 0,
           events: [],
           outcome: "unknown",
@@ -243,6 +256,7 @@ export class RemoteClient {
             taskId,
             repoPath,
             prompt,
+            ...overrides,
           }),
         );
         if (object(reply.task).taskId !== taskId) throw new Error("Invalid launch response task ID");
@@ -327,6 +341,92 @@ export class RemoteClient {
         throw error;
       }
     });
+  }
+  answer(
+    taskId: string,
+    input: {
+      id: string;
+      owner: { sessionId: string; branchId: string };
+      version: number;
+      text: string;
+      replyId?: string;
+    },
+  ): Promise<RemoteTask> {
+    return this.exclusive(async () => {
+      const state = await this.read();
+      const task = state.tasks[taskId],
+        connection = state.connection;
+      if (
+        !task ||
+        !connection ||
+        task.host !== connection.host ||
+        task.ownerId !== connection.hello.ownerId ||
+        task.epoch !== connection.hello.epoch
+      )
+        throw new Error("Remote question belongs to another owner; no answer sent");
+      if (!input.text?.trim() || Buffer.byteLength(input.text) > 16_384) throw new Error("Invalid answer");
+      if (!task.replies) task.replies = {};
+      const prior = task.replies[input.id];
+      const reply = { ...input, replyId: input.replyId ?? prior?.replyId ?? randomUUID() };
+      if (prior && JSON.stringify(prior) !== JSON.stringify(reply))
+        throw new Error("Conflicting or uncertain reply; cannot replace it");
+      if (!prior) {
+        const question = (
+          task.task?.questions as
+            | Array<{ id: string; owner: typeof input.owner; version: number; status: string }>
+            | undefined
+        )?.find((q) => q.id === input.id);
+        if (
+          !question ||
+          question.status !== "pending" ||
+          question.version !== input.version ||
+          question.owner?.sessionId !== input.owner?.sessionId ||
+          question.owner?.branchId !== input.owner?.branchId
+        )
+          throw new Error("Question owner/version is stale; sync before answering");
+      }
+      task.replies[input.id] = reply;
+      await this.save(state); // preserve reply identity before SSH; lost responses are uncertain
+      try {
+        const current = hello(await this.transport(connection.host, connection.diePath, { op: "hello" }));
+        if (current.ownerId !== task.ownerId || current.epoch !== task.epoch) throw new Error("Remote owner changed");
+        object(
+          await this.transport(connection.host, connection.diePath, {
+            op: "answer",
+            ownerId: task.ownerId,
+            epoch: task.epoch,
+            taskId,
+            ...reply,
+          }),
+        );
+        delete task.lastError;
+      } catch (error) {
+        task.lastError = "Native reply outcome uncertain: " + String(error);
+        await this.save(state);
+        throw new Error(task.lastError + "; retry only this question with the same replyId");
+      }
+      await this.save(state);
+      return task;
+    });
+  }
+  /** Bounded refresh; one failed task does not prevent others from updating. */
+  async syncActive(limit = 10): Promise<void> {
+    const state = await this.read();
+    const active = Object.values(state.tasks).filter(
+      (t) => t.task?.state === "accepted" || t.task?.state === "running",
+    );
+    const batch = Array.from(
+      { length: Math.min(active.length, Math.max(0, Math.min(10, limit))) },
+      (_, i) => active[(this.syncOffset + i) % active.length]!,
+    );
+    this.syncOffset = active.length ? (this.syncOffset + batch.length) % active.length : 0;
+    for (const task of batch) {
+      try {
+        await this.sync(task.taskId);
+      } catch {
+        /* lastError remains available in the cache */
+      }
+    }
   }
   async transcript(taskId: string): Promise<RemoteTask> {
     const task = (await this.read()).tasks[taskId];

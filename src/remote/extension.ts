@@ -36,9 +36,58 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   const transcript = (taskId: string, offset = 0) => operations({ op: "transcript", taskId, offset });
   const publish = (result: unknown) =>
     pi.sendMessage({ customType: "die-remote", content: JSON.stringify(result, null, 2), display: true });
+  // Background sync is bounded and never creates a second owner. Offline errors remain
+  // visible in the cache; reconnection resumes from the saved cursor.
+  let inFlight = false;
+  const seen = new Map<string, string>();
+  const refresh = async () => {
+    if (inFlight) return;
+    inFlight = true;
+    try {
+      await client.syncActive();
+      const state = await client.status();
+      for (const task of Object.values(state.tasks)) {
+        if (
+          !task.task ||
+          (!["done", "unknown"].includes(task.task.state) &&
+            !(Array.isArray(task.task.questions) && task.task.questions.length))
+        )
+          continue;
+        const fingerprint = JSON.stringify([task.task.state, task.task.error, task.task.questions]);
+        if (!seen.has(task.taskId) && (!task.lastSync || Date.now() - Date.parse(task.lastSync) > 60_000)) {
+          seen.set(task.taskId, fingerprint);
+          continue;
+        }
+        if (seen.get(task.taskId) === fingerprint) continue;
+        seen.set(task.taskId, fingerprint);
+        pi.sendMessage({
+          customType: "die-remote",
+          display: true,
+          content: JSON.stringify({
+            taskId: task.taskId,
+            state: task.task.state,
+            questions: task.task.questions,
+            error: task.task.error,
+            cached: true,
+          }),
+        });
+      }
+    } catch {
+      /* local cache continues to serve offline */
+    } finally {
+      inFlight = false;
+    }
+  };
+  const timer = setInterval(() => {
+    void refresh();
+  }, 5_000);
+  timer.unref();
+  pi.on("session_start", async () => {
+    void refresh();
+  });
   pi.registerCommand("remote", {
     description:
-      "Remote SSH owner: connect <configured-host> [absolute-die-path], status, launch <absolute-repo-path> <prompt>, retry <taskId>, sync <taskId>, transcript <taskId> [offset]",
+      "Remote SSH owner: connect <configured-host> [absolute-die-path], status, launch <absolute-repo-path> <prompt>, retry <taskId>, answer <taskId> <question-id> <text>, sync <taskId>, transcript <taskId> [offset]",
     handler: async (input, ctx) => {
       try {
         const [op, ...rest] = input.trim().split(/\s+/);
@@ -82,7 +131,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             result = await transcript(rest[0], rest[1] === undefined ? 0 : Number(rest[1]));
             break;
           default:
-            throw new Error("Usage: /remote connect|status|launch|retry|sync|transcript");
+            throw new Error("Usage: /remote connect|status|launch|retry|answer|sync|transcript");
         }
         publish(result);
       } catch (error) {
