@@ -321,7 +321,9 @@ test("actual SDK uses post-shake context for pre-request automatic compaction th
       extensionFactories: [{ name: "die-tasks", factory: tasks }],
     });
     await loader.reload();
-    const model = { ...getModel("openai", "gpt-4o")!, contextWindow: 12000, maxTokens: 4000 };
+    // Threshold is 8k, but leave enough room for the SDK compactor to prepare
+    // its summary request; a tight context can cancel compaction before dispatch.
+    const model = { ...getModel("openai", "gpt-4o")!, contextWindow: 20000, maxTokens: 4000 };
     ({ session } = await createAgentSession({
       cwd: dir,
       agentDir: dir,
@@ -330,12 +332,12 @@ test("actual SDK uses post-shake context for pre-request automatic compaction th
       modelRuntime: runtime,
       sessionManager: manager,
       settingsManager: SettingsManager.inMemory({
-        compaction: { enabled: true, reserveTokens: 5000, keepRecentTokens: 200 },
+        compaction: { enabled: true, reserveTokens: 12000, keepRecentTokens: 200 },
       }),
       tools: ["execute"],
     }));
     await session.bindExtensions({ mode: "print" });
-    expect(session.model.contextWindow).toBe(12000);
+    expect(session.model.contextWindow).toBe(20000);
     expect(session.autoCompactionEnabled).toBe(true);
     const contexts: any[] = [];
     session.agent.streamFunction = (_model: any, context: any) => {
@@ -369,10 +371,13 @@ test("actual SDK uses post-shake context for pre-request automatic compaction th
     for (let index = 0; index < 5; index++) {
       const user = {
         role: "user",
-        content: "genuine history " + "content ".repeat(600),
+        content: "genuine history " + "content ".repeat(900),
         timestamp: Date.now() + index,
       } as any;
-      const reply = assistant([{ type: "text", text: "history " + index }], index === 4 ? staleUsage : smallUsage);
+      const reply = assistant(
+        [{ type: "text", text: "history " + index }],
+        index === 4 ? { ...staleUsage, input: 9000, totalTokens: 9005 } : smallUsage,
+      );
       manager.appendMessage(user);
       manager.appendMessage(reply);
       session.agent.state.messages.push(user, reply);
