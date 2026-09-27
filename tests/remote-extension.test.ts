@@ -797,3 +797,144 @@ test("human direct launch binds the command's parent session without exposing JS
   expect(messages[0].content).toContain("running");
   expect(messages[0].content).not.toContain('"taskId"');
 });
+
+test("fresh sessions baseline legacy unowned results, but live transitions and reloads keep their own history", async () => {
+  const entries: any[] = [],
+    messages: any[] = [];
+  const task = (taskId: string, state: string, jobSessionFile?: string): any => ({
+    taskId,
+    jobSessionFile,
+    ownerId: "owner",
+    epoch: "epoch",
+    events: [],
+    outcome: "accepted",
+    task: {
+      state,
+      questions: taskId === "legacy" ? [{ id: "q", version: 1, status: "pending", text: "Review?" }] : [],
+    },
+  });
+  const state: any = {
+    tasks: {
+      legacy: task("legacy", "done"),
+      other: task("other", "done", "/other-session"),
+      live: task("live", "running"),
+    },
+  };
+  const make = () => {
+    const handlers = new Map<string, Function>();
+    let command: any;
+    remoteExtension(
+      {
+        on: (name: string, fn: Function) => handlers.set(name, fn),
+        registerCommand: (_: string, value: any) => {
+          command = value;
+        },
+        sendMessage: (m: any) => messages.push(m),
+        appendEntry: (customType: string, data: any) => entries.push({ type: "custom", customType, data }),
+      } as any,
+      {
+        path: "/nonexistent/fixture/state.json",
+        syncActive: async () => {},
+        status: async () => state,
+      } as any,
+    );
+    return { handlers, command };
+  };
+  const start = async (instance: ReturnType<typeof make>, branch: any[]) => {
+    await instance.handlers.get("session_start")!(
+      {},
+      { sessionManager: { getBranch: () => branch, getSessionFile: () => "/current-session" } },
+    );
+    await Bun.sleep(15);
+  };
+  let instance = make();
+  try {
+    await start(instance, entries);
+    expect(messages.map((m) => m.content).join(" ")).toContain("Review?");
+    expect(messages.map((m) => m.content).join(" ")).not.toContain("Remote legacy · done");
+    expect(messages.map((m) => m.content).join(" ")).not.toContain("Remote other · done");
+    await instance.handlers.get("session_shutdown")!();
+    instance = make();
+    await start(instance, []); // another fresh session must not replay the cached result
+    expect(messages.map((m) => m.content).join(" ")).not.toContain("Remote legacy · done");
+    state.tasks.live.task.state = "done";
+    await instance.command.handler("status", { hasUI: false }); // explicit status is still accessible
+    await Bun.sleep(10);
+    expect(messages.map((m) => m.content).filter((text: string) => text.includes("Remote live · done"))).toHaveLength(
+      1,
+    );
+    await instance.handlers.get("session_shutdown")!();
+    instance = make();
+    await start(instance, entries); // reload: previously delivered completion not replayed
+    expect(messages.map((m) => m.content).filter((text: string) => text.includes("Remote live · done"))).toHaveLength(
+      1,
+    );
+    expect(messages.map((m) => m.content).some((text: string) => text.includes("legacy"))).toBe(true);
+  } finally {
+    await instance.handlers.get("session_shutdown")!();
+  }
+});
+
+test("unowned task active before shutdown completes during restart and is delivered only to that session", async () => {
+  const entries: any[] = [],
+    messages: any[] = [];
+  const task: any = { taskId: "restart", events: [], task: { state: "running" } };
+  const make = () => {
+    const handlers = new Map<string, Function>();
+    remoteExtension(
+      {
+        on: (n: string, f: Function) => handlers.set(n, f),
+        registerCommand() {},
+        appendEntry: (customType: string, data: any) => entries.push({ type: "custom", customType, data }),
+        sendMessage: (m: any) => messages.push(m),
+      } as any,
+      { syncActive: async () => {}, status: async () => ({ tasks: { restart: task } }) } as any,
+    );
+    return handlers;
+  };
+  const start = async (h: Map<string, Function>, branch: any[]) => {
+    await h.get("session_start")!({}, { sessionManager: { getBranch: () => branch } });
+    await Bun.sleep(15);
+  };
+  let handlers = make();
+  try {
+    await start(handlers, entries);
+    await handlers.get("session_shutdown")!();
+    task.task.state = "done";
+    handlers = make();
+    await start(handlers, entries);
+    expect(messages.filter((m) => m.content.includes("Remote restart · done"))).toHaveLength(1);
+    await handlers.get("session_shutdown")!();
+    handlers = make();
+    await start(handlers, []);
+    expect(messages.filter((m) => m.content.includes("Remote restart · done"))).toHaveLength(1);
+  } finally {
+    await handlers.get("session_shutdown")!();
+  }
+});
+
+test("completion first seen during startup sync is not mistaken for historical cache", async () => {
+  const handlers = new Map<string, Function>();
+  const messages: any[] = [];
+  const task: any = { taskId: "during-sync", events: [], task: { state: "running" } };
+  remoteExtension(
+    {
+      on: (n: string, f: Function) => handlers.set(n, f),
+      registerCommand() {},
+      sendMessage: (m: any) => messages.push(m),
+    } as any,
+    {
+      syncActive: async () => {
+        task.task.state = "done";
+      },
+      status: async () => ({ tasks: { "during-sync": task } }),
+    } as any,
+  );
+  try {
+    await handlers.get("session_start")!({}, { sessionManager: { getBranch: () => [] } });
+    await Bun.sleep(15);
+    expect(messages.filter((m) => m.content.includes("Remote during-sync · done"))).toHaveLength(1);
+  } finally {
+    await handlers.get("session_shutdown")!();
+  }
+});

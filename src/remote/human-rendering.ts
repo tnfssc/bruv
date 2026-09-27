@@ -201,7 +201,11 @@ export class RemoteAttention {
     ];
   }
 
-  update(state: RemoteState, onEmit?: (key: string) => void): string[] {
+  update(
+    state: RemoteState,
+    onEmit?: (key: string) => void,
+    suppressTerminal?: (task: RemoteTask) => boolean,
+  ): string[] {
     const notices: string[] = [];
     for (const t of Object.values(state.tasks)) {
       const id = t.taskId;
@@ -254,8 +258,14 @@ export class RemoteAttention {
         !(stateName === "unknown" && t.lastError)
       ) {
         const final = stateName === "done" ? assistantText(t.events) : undefined;
+        const terminalKey = "terminal:" + stateName + ":" + (final ?? t.task?.error ?? "");
+        if (suppressTerminal?.(t)) {
+          // A pre-existing cached result is a baseline, not an event in this session.
+          this.emitted.add(JSON.stringify([id, terminalKey]));
+          continue;
+        }
         add(
-          "terminal:" + stateName + ":" + (final ?? t.task?.error ?? ""),
+          terminalKey,
           stateName === "done"
             ? "done" + (final ? "\n" + final : "")
             : safe(stateName) + (t.task?.error ? ": " + detail(t.task.error) : ""),

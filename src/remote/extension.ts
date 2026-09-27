@@ -63,11 +63,30 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     ui: { setStatus?: (key: string, value: string | undefined) => void } | undefined;
   const attention = new RemoteAttention();
   let lastStatus: string | undefined;
+  let initialSnapshot = true;
+  const activeInSession = new Set<string>();
+  const rememberActive = (state: import("./client").RemoteState) => {
+    for (const task of Object.values(state.tasks)) {
+      if (task.jobSessionFile || !["accepted", "running"].includes(task.task?.state ?? "")) continue;
+      if (activeInSession.has(task.taskId)) continue;
+      activeInSession.add(task.taskId);
+      pi.appendEntry?.("die-remote-active", { taskId: task.taskId });
+    }
+  };
   const refresh = async () => {
     if (inFlight || closed || picking) return;
     inFlight = true;
     let syncError: unknown;
     try {
+      // Observe the cache before sync: a completion produced by this sync is new,
+      // while a terminal result already on disk is not a fresh-session notice.
+      if (initialSnapshot) {
+        try {
+          rememberActive(await client.status());
+        } catch {
+          /* Retry baseline on next refresh. */
+        }
+      }
       try {
         await client.syncActive();
       } catch (error) {
@@ -75,6 +94,8 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       }
       const state = await client.status();
       if (closed) return;
+      const baseline = initialSnapshot;
+      initialSnapshot = false;
       publishRemoteJobObservations(state, sessionFile);
       if (picking) return;
       const status = remoteStatus(state, !!syncError);
@@ -89,8 +110,10 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       for (const notice of attention.update(
         { ...state, tasks: Object.fromEntries(Object.entries(state.tasks).filter(([, task]) => !task.jobSessionFile)) },
         (key) => pi.appendEntry?.("die-remote-attention", { key }),
+        baseline ? (task) => !activeInSession.has(task.taskId) : undefined,
       ))
         publish(notice);
+      rememberActive(state);
     } catch (error) {
       // A global cache/status failure must not masquerade as a healthy connection.
       const status = "remote: offline (cached state unavailable)";
@@ -123,6 +146,11 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     ui = ctx.hasUI ? ctx.ui : undefined;
     lastStatus = undefined;
     attention.reset();
+    initialSnapshot = true;
+    activeInSession.clear();
+    for (const entry of (ctx.sessionManager?.getBranch?.() ?? []) as any[])
+      if (entry.type === "custom" && entry.customType === "die-remote-active" && typeof entry.data?.taskId === "string")
+        activeInSession.add(entry.data.taskId);
     attention.restore(
       (ctx.sessionManager?.getBranch?.() ?? [])
         .filter((entry: any) => entry.type === "custom" && entry.customType === "die-remote-attention")
