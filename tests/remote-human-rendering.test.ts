@@ -64,3 +64,31 @@ test.each([
     else expect(text).not.toContain("for terminal truth");
   }
 });
+
+test("conflict details identify the retained artifact without implying automatic application", () => {
+  const text = renderHuman({
+    taskId: "conflict",
+    events: [],
+    task: { state: "done" },
+    repository: { status: "review", reason: "local file changed", artifact: "/safe/return.patch" },
+  });
+  expect(text).toContain("local file changed");
+  expect(text).toContain("/safe/return.patch");
+  expect(text).toContain("Inspect local worktree before applying");
+});
+
+test("saved task details describe capability waits without granting access", () => {
+  const text = renderHuman({
+    taskId: "cap",
+    events: [],
+    task: {
+      state: "running",
+      capabilityNeeds: [{ kind: "repo.read", input: "on-demand.txt" }],
+      questions: [{ id: "q", status: "pending", text: "Choose region" }],
+    },
+  });
+  expect(text).toContain("repo.read");
+  expect(text).toContain("on-demand.txt");
+  expect(text).toContain("Choose region");
+  expect(text).toContain("not granted");
+});

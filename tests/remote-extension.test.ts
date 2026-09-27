@@ -797,3 +797,32 @@ test("human direct launch binds the command's parent session without exposing JS
   expect(messages[0].content).toContain("running");
   expect(messages[0].content).not.toContain('"taskId"');
 });
+
+test("review action exposes cached conflict artifact and leaves picker without contacting owner", async () => {
+  let command: any;
+  const messages: any[] = [];
+  let picks = 0;
+  const task = {
+    taskId: "review",
+    prompt: "Dirty snapshot",
+    events: [],
+    task: { state: "done" },
+    repository: { status: "review", reason: "local conflict", artifact: "/safe/return.patch" },
+  };
+  remoteExtension(
+    {
+      on() {},
+      registerCommand(_n: string, c: any) {
+        command = c;
+      },
+      sendMessage(m: any) {
+        messages.push(m);
+      },
+    } as any,
+    { status: async () => ({ tasks: { review: task } }) } as any,
+  );
+  await command.handler("", { hasUI: true, ui: { custom: async () => ["task:review", "details"][picks++] } });
+  expect(picks).toBe(2);
+  expect(messages.at(-1).content).toContain("/safe/return.patch");
+  expect(messages.at(-1).content).toContain("Inspect local worktree before applying");
+});

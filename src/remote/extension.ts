@@ -247,6 +247,10 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               taskActions(task, taskOwned(task, await client.status())),
             );
             if (!action) break;
+            if (action === "details") {
+              publish(summary(task));
+              return; // Keep saved details visible instead of covering them with the picker.
+            }
             if (action === "transcript") {
               publish(await operations({ op: "transcript", taskId: id, offset: 0 }), "transcript");
               return; // Let the human read the conversation instead of covering it with another picker.

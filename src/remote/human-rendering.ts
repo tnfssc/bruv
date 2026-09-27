@@ -146,7 +146,24 @@ export function renderHuman(value: unknown, kind = "result"): string {
       t.integrationError && "Result review: " + detail(t.integrationError),
       obj(t.repository).status === "review" &&
         "Repository result review: " + detail(obj(t.repository).reason ?? "returned changes require review"),
+      obj(t.repository).status === "review" &&
+        obj(t.repository).artifact &&
+        "Inspect local worktree before applying. Local review artifact: " + safe(obj(t.repository).artifact),
       t.task?.error && "Task error: " + detail(t.task.error),
+      ...((t.task?.questions as any[] | undefined) ?? [])
+        .filter((q) => q.status === "pending")
+        .map((q) => "Question " + safe(q.id) + ": " + safe(q.text ?? q.question) + " · /remote to answer"),
+      ...((t.task?.capabilityNeeds as any[] | undefined) ?? []).map(
+        (need) =>
+          "Capability requested (not granted): " +
+          safe(need.kind) +
+          (need.input ? " · " + safe(need.input) : "") +
+          "\nHuman approval only: /remote grant " +
+          safe(t.taskId) +
+          " " +
+          safe(need.kind) +
+          " (read-only access to the current local repository)",
+      ),
       ...replyLines(t),
       cancellationLine(t),
       t.transcriptComplete === false && "Warning: transcript incomplete.",
