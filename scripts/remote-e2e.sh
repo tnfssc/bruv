@@ -3,6 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 for tool in docker ssh ssh-keygen timeout python3; do command -v "$tool" >/dev/null || { echo "missing $tool" >&2; exit 1; }; done
+if [[ "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-pty-e2e.ts ]]; then command -v tmux >/dev/null || { echo "missing tmux" >&2; exit 1; }; fi
 DIE_BIN="${DIE_BIN:-$PWD/dist/die}"; BUN_BIN="${BUN_BIN:-$(command -v bun)}"
 test -x "$DIE_BIN" && test -x "$BUN_BIN" || { echo 'build dist/die first and supply BUN_BIN if necessary' >&2; exit 1; }
 name="die-remote-e2e-$$-$RANDOM"; mkdir -p "${TMPDIR:-$PWD/.cache}"; tmp="$(mktemp -d "${TMPDIR:-$PWD/.cache}/remote-e2e.XXXXXX")"; trap 'docker logs --tail 35 "$name" >&2 || true' ERR; trap 'docker rm -f "$name" >/dev/null 2>&1 || true; docker image rm "$name" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
@@ -51,4 +52,4 @@ cat > "$tmp/bin/ssh" <<EOF
 exec /usr/bin/ssh -F "$tmp/home/.ssh/config" "\$@"
 EOF
 chmod 755 "$tmp/bin/ssh"
-DOCKER_HOST="$(docker context inspect --format '{{.Endpoints.docker.Host}}')" PATH="$tmp/bin:$PATH" HOME="$tmp/home" DIE_CODING_AGENT_DIR="$tmp/home/agent" DIE_BIN="$DIE_BIN" FIXTURE_CONTAINER="$name" FIXTURE_SSH_CONFIG="$tmp/home/.ssh/config" "$BUN_BIN" scripts/remote-e2e.ts
+DOCKER_HOST="$(docker context inspect --format '{{.Endpoints.docker.Host}}')" PATH="$tmp/bin:$PATH" HOME="$tmp/home" DIE_CODING_AGENT_DIR="$tmp/home/agent" DIE_BIN="$DIE_BIN" FIXTURE_CONTAINER="$name" FIXTURE_SSH_CONFIG="$tmp/home/.ssh/config" "$BUN_BIN" "${REMOTE_E2E_SCRIPT:-scripts/remote-e2e.ts}"

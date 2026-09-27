@@ -1,0 +1,9 @@
+# Compiled remote PTY acceptance (2026-09-27)
+
+Worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_b42aa24e-a86675007a5e-task_60d187ca (die/compiled-remote-cli-pty-acceptance-60d187ca). Tests and fixtures only.
+
+Opt in: DIE_REMOTE_PTY_E2E=1 DIE_BIN=$PWD/dist/die BUN_BIN=/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun test tests/remote-e2e.test.ts. The script uses pinned SSH, loopback Docker SSH, deterministic fake remote provider, compiled local/container die and real tmux PTY. RPC seeds two independently owned native questions; the PTY checks no-argument menu search, Escape, choice and free-text, narrow choices, autocomplete and stale picker rejection. Native answer evidence comes from owner ledger via SSH; local question ledger must not appear. Existing remote-e2e stays default unless REMOTE_E2E_SCRIPT selects PTY.
+
+Build used absolute Bun 1.4.2 and scripts/build.ts --reuse-web --outfile=dist/die. Linked dependencies/static assets from /home/tnfssc/Code/die for build only; compiled CLI belongs to worktree (SHA256 3cb5cbe19d50213d2ce8fd876b9fcc1322da9eb47bc9d9369489806d785f919d). Packed web runtime SHA256 7686d28f46c1731ace8eab80dee6fdea0e9e2c0201337f72e461a40107bcfcbd. tsc --noEmit -p tsconfig.json passes.
+
+Red result before menu integration: Docker SSH native questions created (pending status, version 2, choices present in compiled CLI); old UI /remote with no args printed Usage: /remote connect|status|... rather than opening a menu; PTY timed out. First attempt was invalid due editing runner while Bash executed it; stable rerun produced expected red UX result. No green PTY acceptance yet. Integrate menu, rebuild from integrated source, rerun; adapt exact menu labels/navigation if needed without weakening native ledger, stale and no-local-question assertions. No real provider, public SSH, install, release or credentials.
