@@ -32,3 +32,5 @@ This note applies existing values: truthful user/agent surfaces, exact whole-pat
 ## Parent release checkpoint
 
 Capability read/denial/cancel parent fixtures passed; bounded-read review fix and growth regression passed with final Docker read rerun. Production suite 1216 pass / 17 skip / 0 fail, check passed. Formatting and lint gates now pass (existing warnings remain); fixed picker void-return lint and formatted four question files, reran all 35 question tests. Version prepared as 0.15.5 after fetching current tags. Notes support/release-v0.15.5.md distinguish production questions from experimental remote fixtures. Next push reviewed preparation then dispatch release.yml on develop and follow SAME run through all platform gates; do not claim published before final release/asset checks. Values unchanged after broad review: repeated ownership/evidence/surface findings apply existing values rather than needing a new rule.
+
+Dispatched release run https://github.com/tnfssc/die/actions/runs/36302402467 on pushed 8ccc646. Parent watcher writes /tmp/die-release-v0155-watch.log. Await full run before release claims; inspect same run on failure.
