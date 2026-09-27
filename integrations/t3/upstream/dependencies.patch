@@ -1,0 +1,177 @@
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 0b13fbe2..e8ebbce9 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -3,6 +3,7 @@ lockfileVersion: '9.0'
+ settings:
+   autoInstallPeers: true
+   excludeLinksFromLockfile: false
++  injectWorkspacePackages: true
+ 
+ catalogs:
+   default:
+@@ -298,7 +299,7 @@ importers:
+         version: link:../../packages/contracts
+       '@t3tools/mobile-markdown-text':
+         specifier: file:./modules/t3-markdown-text
+-        version: file:apps/mobile/modules/t3-markdown-text(6f0a94b6f541bbd4be3f343e27991996)
++        version: file:apps/mobile/modules/t3-markdown-text(b8418475aff8c87b83ea386e209b7ca1)
+       '@t3tools/mobile-review-diff-native':
+         specifier: file:./modules/t3-review-diff
+         version: file:apps/mobile/modules/t3-review-diff
+@@ -561,7 +562,7 @@ importers:
+         version: link:../../packages/tailscale
+       '@t3tools/web':
+         specifier: workspace:*
+-        version: link:../web
++        version: file:apps/web(@clerk/electron-passkeys@0.0.3)(@date-fns/tz@1.5.0)(@tiptap/extension-list@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(date-fns@4.4.0)(electron-store@8.2.0)(electron@44.4.2)(scheduler@0.27.0)(use-sync-external-store@1.6.0(react@19.2.6))
+       '@types/node':
+         specifier: 24.12.4
+         version: 24.12.4
+@@ -4768,6 +4769,12 @@ packages:
+     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
+     engines: {node: '>=10'}
+ 
++  '@t3tools/client-runtime@file:packages/client-runtime':
++    resolution: {directory: packages/client-runtime, type: directory}
++
++  '@t3tools/contracts@file:packages/contracts':
++    resolution: {directory: packages/contracts, type: directory}
++
+   '@t3tools/mobile-markdown-text@file:apps/mobile/modules/t3-markdown-text':
+     resolution: {directory: apps/mobile/modules/t3-markdown-text, type: directory}
+     peerDependencies:
+@@ -4788,6 +4795,12 @@ packages:
+   '@t3tools/mobile-terminal-native@file:apps/mobile/modules/t3-terminal':
+     resolution: {directory: apps/mobile/modules/t3-terminal, type: directory}
+ 
++  '@t3tools/shared@file:packages/shared':
++    resolution: {directory: packages/shared, type: directory}
++
++  '@t3tools/web@file:apps/web':
++    resolution: {directory: apps/web, type: directory}
++
+   '@tabler/icons-react-native@3.44.0':
+     resolution: {integrity: sha512-/Ppp68bpl9vQQsI/c+YiDC9dnLq4JUo0YI5qP72OQMC1WmCaRzdYn3CU79q01M2L3MfXO9a8WctWN8ay1Odkow==}
+     peerDependencies:
+@@ -14934,10 +14947,27 @@ snapshots:
+     dependencies:
+       defer-to-connect: 2.0.1
+ 
+-  '@t3tools/mobile-markdown-text@file:apps/mobile/modules/t3-markdown-text(6f0a94b6f541bbd4be3f343e27991996)':
++  '@t3tools/client-runtime@file:packages/client-runtime':
++    dependencies:
++      '@t3tools/contracts': file:packages/contracts
++      '@t3tools/shared': file:packages/shared
++      effect: 4.0.0-rc.115(patch_hash=0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5)
++      mdast-util-directive: 3.1.0
++      micromark-extension-directive: 4.0.0
++      micromark-util-character: 2.1.1
++      remark-parse: 11.0.0
++      unified: 11.0.5
++    transitivePeerDependencies:
++      - supports-color
++
++  '@t3tools/contracts@file:packages/contracts':
++    dependencies:
++      effect: 4.0.0-rc.115(patch_hash=0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5)
++
++  '@t3tools/mobile-markdown-text@file:apps/mobile/modules/t3-markdown-text(b8418475aff8c87b83ea386e209b7ca1)':
+     dependencies:
+-      '@t3tools/client-runtime': link:packages/client-runtime
+-      '@t3tools/shared': link:packages/shared
++      '@t3tools/client-runtime': file:packages/client-runtime
++      '@t3tools/shared': file:packages/shared
+       expo: 57.0.18(41fd11498a34454c91128cdad32f22f8)
+       expo-asset: 57.0.15(expo@57.0.18)(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.2.16)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)(typescript@7.0.2)
+       expo-clipboard: 57.0.1(expo@57.0.18)(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.2.16)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3)
+@@ -14951,6 +14981,79 @@ snapshots:
+ 
+   '@t3tools/mobile-terminal-native@file:apps/mobile/modules/t3-terminal': {}
+ 
++  '@t3tools/shared@file:packages/shared':
++    dependencies:
++      '@noble/curves': 1.9.1
++      '@noble/hashes': 1.8.0
++      '@t3tools/contracts': file:packages/contracts
++      effect: 4.0.0-rc.115(patch_hash=0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5)
++      jose: 6.2.2
++      yaml: 2.9.0
++
++  '@t3tools/web@file:apps/web(@clerk/electron-passkeys@0.0.3)(@date-fns/tz@1.5.0)(@tiptap/extension-list@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(date-fns@4.4.0)(electron-store@8.2.0)(electron@44.4.2)(scheduler@0.27.0)(use-sync-external-store@1.6.0(react@19.2.6))':
++    dependencies:
++      '@base-ui/react': 1.5.0(@date-fns/tz@1.5.0)(@types/react@19.2.16)(date-fns@4.4.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@clerk/electron': 0.0.44(@clerk/electron-passkeys@0.0.3)(electron-store@8.2.0)(electron@44.4.2)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@clerk/react': 6.16.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@daypicker/react': 10.0.1(@types/react@19.2.16)(react@19.2.6)
++      '@dnd-kit/core': 6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@dnd-kit/modifiers': 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
++      '@dnd-kit/sortable': 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
++      '@dnd-kit/utilities': 3.2.2(react@19.2.6)
++      '@effect/atom-react': 4.0.0-rc.115(effect@4.0.0-rc.115(patch_hash=0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5))(react@19.2.6)(scheduler@0.27.0)
++      '@formkit/auto-animate': 0.9.0
++      '@legendapp/list': 3.3.5(patch_hash=680cc6a5c5b4a4032e467e7b3fde22f89a84c0ee2e6eac6fda737d6277cc0806)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@noble/hashes': 1.8.0
++      '@pierre/diffs': 1.3.0-beta.10(patch_hash=0ccee155b93b63d810e2c1a40c1fd676fb6fbcfa72cf6430dcedf1a3ae475ab4)(@shikijs/themes@4.3.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@pierre/trees': 1.0.0-beta.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@t3tools/client-runtime': file:packages/client-runtime
++      '@t3tools/contracts': file:packages/contracts
++      '@t3tools/shared': file:packages/shared
++      '@tanstack/react-pacer': 0.19.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@tanstack/react-router': 1.170.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@tiptap/core': 3.31.3(@tiptap/pm@3.31.3)
++      '@tiptap/extension-code': 3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))
++      '@tiptap/extension-task-item': 3.31.3(@tiptap/extension-list@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))
++      '@tiptap/extension-task-list': 3.31.3(@tiptap/extension-list@3.31.3(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3))
++      '@tiptap/pm': 3.31.3
++      '@tiptap/react': 3.31.3(@floating-ui/dom@1.7.6)(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3)(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
++      '@tiptap/starter-kit': 3.31.3
++      class-variance-authority: 0.7.1
++      culori: 4.0.2
++      effect: 4.0.0-rc.115(patch_hash=0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5)
++      hast-util-to-html: 9.0.5
++      hast-util-to-jsx-runtime: 2.3.6
++      heic-to: 1.5.2
++      jose: 6.2.2
++      jsonc-parser: 3.3.1
++      jszip: 3.10.1
++      lucide-react: 0.564.0(react@19.2.6)
++      react: 19.2.6
++      react-dom: 19.2.6(react@19.2.6)
++      react-markdown: 10.1.0(@types/react@19.2.16)(react@19.2.6)
++      rehype-raw: 7.0.0
++      rehype-sanitize: 6.0.0
++      remark-breaks: 4.0.0
++      remark-gfm: 4.0.1
++      tailwind-merge: 3.6.0
++      zustand: 5.0.14(@types/react@19.2.16)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
++    transitivePeerDependencies:
++      - '@clerk/electron-passkeys'
++      - '@date-fns/tz'
++      - '@floating-ui/dom'
++      - '@shikijs/themes'
++      - '@tiptap/extension-list'
++      - '@types/react'
++      - '@types/react-dom'
++      - date-fns
++      - electron
++      - electron-store
++      - immer
++      - react-native
++      - scheduler
++      - supports-color
++      - use-sync-external-store
++
+   '@tabler/icons-react-native@3.44.0(react-native-svg@15.15.4(react-native@0.86.3(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.2.16)(bufferutil@4.1.0)(react@19.2.3)(utf-8-validate@6.0.6))(react@19.2.3))(react@19.2.3)':
+     dependencies:
+       '@tabler/icons': 3.44.0
+diff --git a/pnpm-workspace.yaml b/pnpm-workspace.yaml
+index 1ace5591..319fff41 100644
+--- a/pnpm-workspace.yaml
++++ b/pnpm-workspace.yaml
+@@ -1,3 +1,5 @@
++injectWorkspacePackages: true
++
+ packages:
+   - apps/*
+   - infra/*

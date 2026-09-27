@@ -40,7 +40,7 @@ const root = resolve(import.meta.dir, "../../..");
 export async function buildWeb(): Promise<void> {
   const source = resolve(process.env.DIE_T3_SOURCE ?? root + "/.cache/die-t3code-" + sourcePin.revision);
   const output = resolve(root, "dist/die-web");
-  const patch = resolve(root, "integrations/t3/upstream/die.patch");
+  const patches = ["die.patch", "dependencies.patch"].map((name) => resolve(root, "integrations/t3/upstream", name));
   async function run(args: string[], cwd = source): Promise<void> {
     const child = Bun.spawn(args, { cwd, stdin: "inherit", stdout: "inherit", stderr: "inherit" });
     const code = await child.exited;
@@ -60,13 +60,15 @@ export async function buildWeb(): Promise<void> {
   if (git(["rev-parse", "HEAD"]) !== sourcePin.revision) {
     throw new Error("T3 checkout does not match integrations/t3/upstream/source.json; use a fresh checkout.");
   }
-  try {
-    git(["apply", "--reverse", "--check", patch]);
-  } catch {
-    git(["apply", "--check", patch]);
-    await run(["git", "apply", patch]);
+  for (const patch of patches) {
+    try {
+      git(["apply", "--reverse", "--check", patch]);
+    } catch {
+      git(["apply", "--check", patch]);
+      await run(["git", "apply", patch]);
+    }
   }
-  await verifyWebSource(source, patch);
+  await verifyWebSource(source, patches);
   await run(["pnpm", "install", "--frozen-lockfile"]);
   // Bundlers erase types; validate the final patched backend before packaging it.
   await run([source + "/node_modules/.bin/tsc", "--noEmit"], source + "/apps/server");
@@ -74,22 +76,26 @@ export async function buildWeb(): Promise<void> {
   await run(["pnpm", "--filter", "t3", "build:bundle"]);
   await cp(source + "/apps/web/dist", source + "/apps/server/dist/client", { recursive: true });
   await rm(output, { recursive: true, force: true });
-  await run(["pnpm", "--filter", "t3", "deploy", "--prod", "--legacy", output]);
-  // Legacy deploy leaves the package self-reference pointing back to the checkout.
+  await run(["pnpm", "--filter", "t3", "deploy", "--prod", output]);
+  // Keep the packaged self-reference local even if pnpm changes its deploy layout.
   const selfReference = output + "/node_modules/.pnpm/node_modules/t3";
   await rm(selfReference, { force: true });
   await symlink("../../..", selfReference);
   await verifyPortableOptionalDependencies(output);
   await cp(source + "/LICENSE", output + "/LICENSE-T3CODE");
   await cp(root + "/integrations/t3/upstream/bootstrap.mjs", output + "/bootstrap.mjs");
-  const patchHash = new Bun.CryptoHasher("sha256").update(await Bun.file(patch).bytes()).digest("hex");
+  const patchHashes = await Promise.all(
+    patches.map(async (patch) => new Bun.CryptoHasher("sha256").update(await Bun.file(patch).bytes()).digest("hex")),
+  );
   await Bun.write(
     output + "/SOURCE.txt",
     [
       "T3 source: " + sourcePin.repository,
       "Revision: " + sourcePin.revision,
       "Die patch: integrations/t3/upstream/die.patch",
-      "Patch-SHA256: " + patchHash,
+      "Patch-SHA256: " + patchHashes[0],
+      "Dependencies patch: integrations/t3/upstream/dependencies.patch",
+      "Dependencies-Patch-SHA256: " + patchHashes[1],
       "Bun runtime: " + Bun.version,
       "Native assets: " + process.platform + "-" + process.arch,
       "",

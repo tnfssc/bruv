@@ -4,10 +4,11 @@ This is the maintained resource/tooling boundary for the embedded T3 runtime.
 Runtime code lives in `src/t3/`; direct tests live in `tests/t3/`.
 
 - **One upstream input set:** `upstream/source.json` pins the repository and revision,
-  `upstream/die.patch` is the canonical patch, and `upstream/bootstrap.mjs` is
+  `upstream/die.patch` is the canonical patch, `upstream/dependencies.patch` is the
+  incremental native-deploy workspace patch, and `upstream/bootstrap.mjs` is
   the packaged bootstrap. Builds, CI, and release attestation share these inputs.
 - **One build:** `bun run build:web` runs `build/build.ts`;
-  `build/verify-source.ts` rejects anything other than pinned HEAD plus that patch.
+  `build/verify-source.ts` rejects anything other than pinned HEAD plus both patches.
   `scripts/build.ts` remains the overall CLI/package orchestrator, including bootstrap
   refresh for `--reuse-web`. Generated output stays in `dist/` and revision-keyed `.cache/`.
 - **Maintained gates:** `gates/` contains acceptance harnesses and migration templates.

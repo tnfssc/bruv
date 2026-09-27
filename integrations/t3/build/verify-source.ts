@@ -4,10 +4,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 /** Check build inputs, not just whether the patch can reverse-apply. Use a
- * disposable index for HEAD plus the canonical patch. Leave the checkout index
+ * disposable index for HEAD plus the ordered patches. Leave the checkout index
  * alone. Do not let other tracked or untracked source enter the build.
  */
-export async function verifyWebSource(source: string, patch: string): Promise<void> {
+export async function verifyWebSource(source: string, patches: string[]): Promise<void> {
   const temporary = await mkdtemp(join(tmpdir(), "die-web-source-"));
   const env = { ...process.env, GIT_INDEX_FILE: join(temporary, "index") };
   function git(args: string[]): string {
@@ -19,11 +19,11 @@ export async function verifyWebSource(source: string, patch: string): Promise<vo
   }
   try {
     git(["read-tree", "HEAD"]);
-    git(["apply", "--cached", "--binary", patch]);
+    for (const patch of patches) git(["apply", "--cached", "--binary", patch]);
     try {
       git(["diff", "--no-ext-diff", "--exit-code"]);
     } catch {
-      throw new Error("T3 checkout differs from HEAD + integrations/t3/upstream/die.patch; use a fresh checkout.");
+      throw new Error("T3 checkout differs from HEAD + integrations/t3/upstream/{die,dependencies}.patch; use a fresh checkout.");
     }
     if (git(["ls-files", "--others", "--exclude-standard", "-z"]).length > 0) {
       throw new Error("T3 checkout contains untracked source; use a fresh checkout.");
