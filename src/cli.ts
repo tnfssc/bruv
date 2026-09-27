@@ -140,6 +140,25 @@ process.env.PI_SKIP_VERSION_CHECK = "1";
 // die owns the compiled entry point, including Pi's Bun-specific setup.
 registerBunOAuthFlows();
 
+// SSH stdio control and detached Linux task owners are internal production
+// entry points. They do not start a local conversation or a public listener.
+if (cliArgs[0] === "--remote-control" || cliArgs[0] === "--remote-owner") {
+  const { runRemoteControl, runRemoteOwner } = await import("./remote/entry");
+  try {
+    if (cliArgs[0] === "--remote-control") {
+      if (cliArgs.length !== 1) throw new Error("Usage: die --remote-control");
+      await runRemoteControl();
+    } else {
+      if (cliArgs.length !== 2) throw new Error("Usage: die --remote-owner <taskId>");
+      await runRemoteOwner(cliArgs[1]!);
+    }
+    process.exit(0);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
+}
+
 // This must be dynamic: PI_PACKAGE_DIR has to be set before Pi initializes its
 // product metadata and asset paths.
 const { main } = await import("@earendil-works/pi-coding-agent");
@@ -148,8 +167,8 @@ const { installDiskBackedSessionManager } = await import("./history/session-mana
 installDiskBackedSessionManager();
 // The UI extension imports Pi's CustomEditor, so it must also load only after
 // die's runtime paths and product metadata are configured.
-const [{ default: asynchronousTasksExtension }, { default: herdrAgentStateExtension }, { default: liveExtension }] =
-  await Promise.all([import("./agent/extension"), import("./herdr-agent-state"), import("./live/extension")]);
+const [{ default: asynchronousTasksExtension }, { default: herdrAgentStateExtension }, { default: liveExtension }, { default: remoteExtension }] =
+  await Promise.all([import("./agent/extension"), import("./herdr-agent-state"), import("./live/extension"), import("./remote/extension")]);
 const [{ installQuietStartup }, { installConversationDensity }] = await Promise.all([
   import("./ui/startup"),
   import("./ui/conversation-density"),
@@ -200,6 +219,7 @@ try {
       { name: "die-tools", factory: asynchronousTasksExtension, hidden: true },
       { name: "die-herdr-agent-state", factory: herdrAgentStateExtension, hidden: true },
       { name: "die-live", factory: liveExtension, hidden: true },
+      { name: "die-remote", factory: remoteExtension, hidden: true },
     ],
   });
 } finally {
