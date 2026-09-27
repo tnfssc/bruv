@@ -17948,26 +17948,28 @@ diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
 index 1d710f27..53977ac5 100644
 --- a/apps/web/vite.config.ts
 +++ b/apps/web/vite.config.ts
-@@ -14,6 +14,7 @@ import { DEV_PROXIED_PATH_PREFIXES } from "@t3tools/shared/devProxy";
+@@ -14,6 +14,8 @@ import { DEV_PROXIED_PATH_PREFIXES } from "@t3tools/shared/devProxy";
  import { loadRepoEnv } from "../../scripts/lib/public-config";
  import { thirdPartyLicensesPlugin } from "../../scripts/lib/third-party-licenses";
  import { tailwindPlugins } from "./vite/tailwind";
 +import { shikiDataAssets } from "./vite/shikiAssets";
++import { libheifBrowser } from "./vite/libheifBrowser";
  
  const repoEnv = loadRepoEnv();
  Object.assign(process.env, repoEnv);
-@@ -156,8 +157,10 @@ const allowedHosts = [".ts.net", ...configuredAllowedHosts];
+@@ -156,8 +158,11 @@ const allowedHosts = [".ts.net", ...configuredAllowedHosts];
  export default defineConfig(() => {
    return {
      assetsInclude: ["**/*.wasm"],
-+    worker: { format: "es", plugins: () => [shikiDataAssets()] },
++    worker: { format: "es", plugins: () => [shikiDataAssets(), libheifBrowser()] },
      plugins: [
        devCompressionPlugin(),
 +      shikiDataAssets(),
++      libheifBrowser(),
        thirdPartyLicensesPlugin({
          bundleName: "web",
          configFile: new URL("../../third-party-licenses.config.json", import.meta.url),
-@@ -282,6 +285,24 @@ export default defineConfig(() => {
+@@ -282,6 +287,24 @@ export default defineConfig(() => {
        emptyOutDir: true,
        manifest: true,
        sourcemap: buildSourcemap,
@@ -17992,6 +17994,40 @@ index 1d710f27..53977ac5 100644
      },
      test: {
        projects: [defineProject(unitTestProject)],
+diff --git a/apps/web/vite/libheifBrowser.ts b/apps/web/vite/libheifBrowser.ts
+new file mode 100644
+index 00000000..00000000
+--- /dev/null
++++ b/apps/web/vite/libheifBrowser.ts
+@@ -0,0 +1,28 @@
++import type { Plugin } from "vite-plus";
++
++// libheif-js 1.23.2 ships one Emscripten glue file for both Node and browsers.
++// The browser worker passes wasmBinary explicitly; its Node filesystem and
++// crypto branches cannot run there, but their static require() calls trigger
++// Rolldown browser-external warnings. Remove only those branches before
++// module resolution. Fail on upstream changes rather than silently shipping
++// different glue or replacing Node APIs with fake browser shims.
++export function libheifBrowser(): Plugin {
++  return {
++    name: "t3code:libheif-browser-worker",
++    enforce: "pre",
++    transform(code, id) {
++      if (!/[/\\]libheif-js[/\\]libheif-wasm[/\\]libheif\.js$/.test(id)) return;
++      const nodeLoader = /if\(ge\)\{.*?\}else(?=\(Yr\|\|me\)\&\&)/s;
++      const nodeRandom = /if\(ge\)try\{.*?\}catch\{\}/s;
++      const nodeStdin = /if\(ge\)\{var r=256,_=Buffer\.alloc\(r\).*?\}else (?=typeof window)/s;
++      if (!nodeLoader.test(code) || !nodeRandom.test(code) || !nodeStdin.test(code)) {
++        throw new Error("Unexpected libheif-js glue layout: review browser-only worker transform");
++      }
++      const browserCode = code.replace(nodeLoader, "").replace(nodeRandom, "").replace(nodeStdin, "");
++      if (/require\(["'](?:fs|path|crypto)["']\)/.test(browserCode)) {
++        throw new Error("Node imports remain in libheif browser worker");
++      }
++      return { code: browserCode, map: null };
++    },
++  };
++}
 diff --git a/apps/web/vite/shikiAssets.ts b/apps/web/vite/shikiAssets.ts
 new file mode 100644
 index 00000000..acba3a04
