@@ -165,7 +165,7 @@ const server = Bun.serve({
       const url=new URL(req.url);
       if(experienceLog){
         let page;
-        try { page=experienceLog.page(Number(url.searchParams.get("after")),url.searchParams.get("cursor")||""); }
+        try { page=experienceLog.page(Number(url.searchParams.get("after")),url.searchParams.get("cursor")||"",url.searchParams.has("through")?Number(url.searchParams.get("through")):undefined); }
         catch(e){return new Response("gap/corrupt journal: "+String(e),{status:409})}
         return Response.json({identity:ownerIdentity,epoch:1,...page,error,questions:await ledger(),started,launchId,answerSent,fixtureComplete:events.some(e=>e.type==="message_end"&&e.message?.role==="assistant"&&JSON.stringify(e.message.content).includes("SAVED ANSWER OBSERVED"))});
       }

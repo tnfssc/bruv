@@ -26,6 +26,7 @@ export class EventLog {
     }
   }
   get count(){return this.offsets.length}
+  cursorAt(count:number){if(!Number.isSafeInteger(count)||count<0||count>this.count)throw Error("invalid journal cursor position");return count?this.hashes[count-1]:"genesis"}
   get cursor(){return this.hashes.at(-1)||'genesis'}
   append(event:any){
     const seq=this.count+1,prev=this.cursor;
@@ -35,11 +36,12 @@ export class EventLog {
     writeSync(this.fd,line);fsyncSync(this.fd);
     this.offsets.push(this.size);this.hashes.push(hash);this.size+=Buffer.byteLength(line);
   }
-  page(after:number,cursor:string){
+  page(after:number,cursor:string,through=this.count){
     if(!Number.isSafeInteger(after)||after<0||after>this.count||cursor!==(after?this.hashes[after-1]:'genesis'))throw Error('gap or cursor mismatch');
+    if(!Number.isSafeInteger(through)||through<after||through>this.count)throw Error('invalid page boundary');
     if(statSync(this.path).size!==this.size)throw Error('journal size changed or truncated');
     const events:any[]=[];
-    for(let i=after;i<Math.min(this.count,after+PAGE);i++){
+    for(let i=after;i<Math.min(through,after+PAGE);i++){
       const length=(this.offsets[i+1]??this.size)-this.offsets[i];
       if(length>MAX_RECORD)throw Error('oversized journal page record');
       const buf=Buffer.alloc(length);if(readSync(this.fd,buf,0,length,this.offsets[i])!==length)throw Error('truncated journal page');
