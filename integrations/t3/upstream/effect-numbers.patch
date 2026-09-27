@@ -42,8 +42,35 @@ index b9ec9a87..2c6e7a84 100644
  const decodeServerRuntimeState = Schema.decodeEffect(ServerRuntimeState);
  
  const isProcessAlive = (pid: number): boolean => {
+diff --git a/apps/server/scripts/t3-sqlite-state.test.ts b/apps/server/scripts/t3-sqlite-state.test.ts
+index e0c734e1..ab33c21d 100644
+--- a/apps/server/scripts/t3-sqlite-state.test.ts
++++ b/apps/server/scripts/t3-sqlite-state.test.ts
+@@ -56,6 +56,22 @@ it.layer(NodeServices.layer)("t3-sqlite-state", (it) => {
+     }),
+   );
+ 
++  it.effect("preserves nonfinite SQLite REAL values as JSON-safe strings", () =>
++    Effect.gen(function* () {
++      const fs = yield* FileSystem.FileSystem;
++      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-sqlite-state-reals-" });
++      yield* createFixtureDatabase(baseDir);
++      const result = yield* runSqliteState({
++        operation: "query", baseDir,
++        sql: "SELECT 1e999 AS positive, -1e999 AS negative, 0.0 / 0.0 AS undefined_real",
++      });
++      assert.equal(result.operation, "query");
++      if (result.operation === "query") {
++        assert.deepStrictEqual(result.rows, [{ positive: "Infinity", negative: "-Infinity", undefined_real: null }]);
++      }
++    }),
++  );
++
+   it.effect("queries an isolated database through Effect SQL", () =>
+     Effect.gen(function* () {
+       const fs = yield* FileSystem.FileSystem;
 diff --git a/apps/server/scripts/t3-sqlite-state.ts b/apps/server/scripts/t3-sqlite-state.ts
-index 2298cfd4..9f409a7e 100644
+index 2298cfd4..1310e252 100644
 --- a/apps/server/scripts/t3-sqlite-state.ts
 +++ b/apps/server/scripts/t3-sqlite-state.ts
 @@ -94,8 +94,8 @@ export class SqliteStateDatabaseError extends Schema.TaggedError<SqliteStateData
@@ -57,6 +84,17 @@ index 2298cfd4..9f409a7e 100644
  ]);
  const SqliteStateRow = Schema.Record(Schema.String, SqliteStateValue);
  const SqliteStateQueryResult = Schema.Struct({
+@@ -165,6 +165,10 @@ function normalizeSqliteValue(value: RawSqliteValue): typeof SqliteStateValue.Ty
+   if (value instanceof Uint8Array) {
+     return Array.from(value);
+   }
++  // SQLite REAL may contain +/-Infinity; JSON has no non-finite numeric representation.
++  // Preserve the value visibly instead of failing to encode the whole query result
++  // or silently converting it to null. (SQLite already maps NaN to NULL.)
++  if (typeof value === "number" && !Number.isFinite(value)) return String(value);
+   return value;
+ }
+ 
 diff --git a/apps/server/src/assets/AssetAccess.ts b/apps/server/src/assets/AssetAccess.ts
 index 8dbd1c75..d7ce383a 100644
 --- a/apps/server/src/assets/AssetAccess.ts
@@ -432,66 +470,38 @@ index 4a5d0a00..eb911c91 100644
  ) {
 diff --git a/apps/server/src/numericContracts.test.ts b/apps/server/src/numericContracts.test.ts
 new file mode 100644
-index 00000000..6ec7e664
+index 00000000..c63533ef
 --- /dev/null
 +++ b/apps/server/src/numericContracts.test.ts
-@@ -0,0 +1,60 @@
+@@ -0,0 +1,32 @@
 +import { describe, expect, it } from "@effect/vitest";
 +import * as Schema from "effect/Schema";
 +
++import { ClaudeCodeProfileSchema } from "./provider/ClaudeModelManifest.ts";
 +import { EventNdjsonLogConfigurationError } from "./provider/Layers/EventNdjsonLogger.ts";
-+
-+// These are the numeric shapes used at the different boundaries: JSON payloads,
-+// optional provider fields, SQLite row values and tagged diagnostic errors.
-+const jsonPayload = Schema.fromJsonString(Schema.Struct({ expiresAt: Schema.Finite }));
-+const providerPayload = Schema.Struct({
-+  billingCycleEnd: Schema.optional(Schema.Union([Schema.String, Schema.Finite])),
-+  percent: Schema.optional(Schema.NullOr(Schema.Finite)),
-+});
-+const sqliteRow = Schema.Struct({ count: Schema.Finite, isStreaming: Schema.Finite });
 +
 +const nonfinite = [NaN, Infinity, -Infinity];
 +
-+describe("finite numeric boundaries", () => {
-+  it("accepts finite wire values and rejects nonfinite encoding before JSON turns them into null", () => {
-+    expect(Schema.encodeSync(jsonPayload)({ expiresAt: 0 })).toBe('{"expiresAt":0}');
-+    expect(Schema.decodeSync(jsonPayload)('{"expiresAt":1700000000000}')).toEqual({
-+      expiresAt: 1700000000000,
++describe("numeric boundaries", () => {
++  it("rejects nonfinite context limits in the exported Claude profile schema", () => {
++    const decode = Schema.decodeUnknownSync(ClaudeCodeProfileSchema);
++    expect(decode({ fixedContextWindowTokens: 0, contextWindowTokens: { opus: 200000 } })).toEqual({
++      fixedContextWindowTokens: 0, contextWindowTokens: { opus: 200000 },
 +    });
 +    for (const value of nonfinite) {
-+      expect(() => Schema.encodeSync(jsonPayload)({ expiresAt: value })).toThrow();
-+      expect(() => Schema.decodeUnknownSync(jsonPayload)({ expiresAt: value })).toThrow();
++      expect(() => decode({ fixedContextWindowTokens: value })).toThrow();
++      expect(() => decode({ contextWindowTokens: { opus: value } })).toThrow();
 +    }
 +  });
 +
-+  it("retains optional/null/string provider values but rejects nonfinite percentages and timestamps", () => {
-+    const decode = Schema.decodeUnknownSync(providerPayload);
-+    expect(decode({})).toEqual({});
-+    expect(decode({ billingCycleEnd: "2026-09-27", percent: null })).toEqual({
-+      billingCycleEnd: "2026-09-27", percent: null,
-+    });
-+    expect(decode({ billingCycleEnd: 123, percent: 100 })).toEqual({ billingCycleEnd: 123, percent: 100 });
-+    for (const value of nonfinite) {
-+      expect(() => decode({ percent: value })).toThrow();
-+      expect(() => decode({ billingCycleEnd: value })).toThrow();
-+    }
-+  });
-+
-+  it("accepts SQL finite counts/boolean flags including zero, not nonfinite row data", () => {
-+    const decode = Schema.decodeUnknownSync(sqliteRow);
-+    expect(decode({ count: 0, isStreaming: 1 })).toEqual({ count: 0, isStreaming: 1 });
-+    for (const value of nonfinite) {
-+      expect(() => decode({ count: value, isStreaming: 0 })).toThrow();
-+      expect(() => decode({ count: 0, isStreaming: value })).toThrow();
-+    }
-+  });
-+
-+  it("rejects nonfinite diagnostic values at the real tagged-error schema", () => {
++  it("preserves rejected numeric options in the real tagged diagnostic error", () => {
 +    const decode = Schema.decodeUnknownSync(EventNdjsonLogConfigurationError);
-+    const error = { _tag: "EventNdjsonLogConfigurationError", filePath: "events.ndjson", option: "maxBufferedBytes", value: 5, minimum: 1 };
-+    expect(decode(error).value).toBe(5);
 +    for (const value of nonfinite) {
-+      expect(() => decode({ ...error, value })).toThrow();
++      const error = new EventNdjsonLogConfigurationError({
++        filePath: "events.ndjson", option: "maxBufferedBytes", value, minimum: 1,
++      });
++      expect(Object.is(decode(error).value, value)).toBe(true);
++      expect(error.message).toContain(String(value));
 +      expect(() => decode({ ...error, minimum: value })).toThrow();
 +    }
 +  });
@@ -1028,17 +1038,40 @@ index 2a9fb56c..a6cf60a5 100644
        result: Schema.Unknown,
      }),
    ),
+diff --git a/apps/server/src/provider/Layers/EventNdjsonLogger.test.ts b/apps/server/src/provider/Layers/EventNdjsonLogger.test.ts
+index e87372e0..c24f3343 100644
+--- a/apps/server/src/provider/Layers/EventNdjsonLogger.test.ts
++++ b/apps/server/src/provider/Layers/EventNdjsonLogger.test.ts
+@@ -50,6 +50,17 @@ function parseLogLine(line: string) {
+ }
+ 
+ describe("EventNdjsonLogger", () => {
++  it.effect("reports nonfinite configuration values without losing the invalid input", () =>
++    Effect.gen(function* () {
++      for (const value of [NaN, Infinity, -Infinity]) {
++        const error = yield* makeEventNdjsonLogStore("events.ndjson", { maxBytes: value }).pipe(Effect.flip);
++        if (error._tag !== "EventNdjsonLogConfigurationError") throw error;
++        assert.equal(Object.is(error.value, value), true);
++        assert.include(error.message, String(value));
++      }
++    }),
++  );
++
+   it.effect("summarizes circular events without exposing their contents in diagnostics", () => {
+     const messages: Array<unknown> = [];
+     const logCapture = Logger.make<unknown, void>(({ message }) => {
 diff --git a/apps/server/src/provider/Layers/EventNdjsonLogger.ts b/apps/server/src/provider/Layers/EventNdjsonLogger.ts
-index 7068f3d6..6d3f2994 100644
+index 7068f3d6..8f243074 100644
 --- a/apps/server/src/provider/Layers/EventNdjsonLogger.ts
 +++ b/apps/server/src/provider/Layers/EventNdjsonLogger.ts
-@@ -96,8 +96,8 @@ export class EventNdjsonLogConfigurationError extends Schema.TaggedError<EventNd
+@@ -96,8 +96,10 @@ export class EventNdjsonLogConfigurationError extends Schema.TaggedError<EventNd
    {
      filePath: Schema.String,
      option: Schema.String,
--    value: Schema.Number,
++    // The rejected option is diagnostic data: NaN and infinities must remain reportable.
++    // @effect-diagnostics-next-line schemaNumber:off -- preserves the complete number domain only for this invalid-input payload.
+     value: Schema.Number,
 -    minimum: Schema.Number,
-+    value: Schema.Finite,
 +    minimum: Schema.Finite,
    },
  ) {
