@@ -7,3 +7,5 @@ Worker task_b140d54e, worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task
 Existing values already say user surfaces are core behavior. The gap is applying that value: a command being available and parseable is not proof a person can comfortably use it. No values change yet.
 
 Implementation 88492bc is ready but not yet integrated. Acceptance worker task_1911ca67 in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_1911ca67, branch die/end-to-end-interactive-questions-accepta-1911ca67, will cherry-pick it and test actual persisted /questions via disposable PTY. Read-only reviewer task_fe96aa12 checks interaction and ownership. Parent should integrate only after full-flow evidence, not just picker fixture.
+
+Review task_fe96aa12 found one UX issue to check before integration: cancelling or submitting empty free text jumps back to the whole inbox instead of the selected question choices. Prefer returning to choices so the user can retry without reopening. Review found no confirmed ownership/autocomplete/RPC blocker; actual free-text and stale-version paths still need acceptance coverage. Parent should reconcile this with task_1911ca67 results.
