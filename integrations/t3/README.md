@@ -28,3 +28,24 @@ and old-pin investigation history. They are not current gates or alternate build
 and are not automatically executed. Archived files retain historical paths and provenance;
 those paths are not compatibility aliases. Generic CLI scripts, native helpers, and
 release notes retain their role roots (`scripts/`, `native/`, `support/`).
+
+## Pinned browser/server build
+
+The canonical `upstream/die.patch` includes the reviewed installer modernization.
+It scopes pnpm to the shipped server, browser, shared packages and typecheck scripts;
+it is not an upstream desktop/mobile build checkout. Modern injected-workspace
+deploy preserves native optional assets and the local package self-reference.
+
+Browser codecs and syntax data remain lazy: HEIC uses an external WASM worker;
+Shiki uses native Oniguruma WASM and JSON grammar assets instead of large JS
+wrappers. The original 500 kB JavaScript warning threshold is unchanged. Run
+`T3_WEB_DIST=<source>/apps/web/dist node --test upstream/chunks*.test.mjs` from
+this directory after a production build. `upstream/heic.browser.test.mjs` also
+requires `T3_HEIC_SAMPLE`, `PLAYWRIGHT_MODULE`, and optionally
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE` for real browser conversion checks.
+
+Compiler idioms preserve cancellation/error contracts. Finite schemas express
+wire/domain constraints, not a blanket numeric rewrite: the invalid numeric
+configuration error intentionally retains `Schema.Number` with the compiler’s
+documented single-site exemption. See the numeric-contract wisdom and the final
+installer validation handoff for evidence and compatibility decisions.
