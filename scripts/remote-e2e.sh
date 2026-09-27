@@ -5,7 +5,7 @@ set -euo pipefail
 unset DIE_SUBAGENT_DEPTH DIE_SUBAGENT_TYPE DIE_REMOTE_RUNTIME_STATE
 cd "$(dirname "$0")/.."
 for tool in docker ssh ssh-keygen timeout python3 curl; do command -v "$tool" >/dev/null || { echo "missing $tool" >&2; exit 1; }; done
-if [[ "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-pty-e2e.ts ]]; then command -v tmux >/dev/null || { echo "missing tmux" >&2; exit 1; }; fi
+if [[ "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-pty-e2e.ts || "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-capability-pty-e2e.ts ]]; then command -v tmux >/dev/null || { echo "missing tmux" >&2; exit 1; }; fi
 DIE_BIN="${DIE_BIN:-$PWD/dist/die}"; BUN_BIN="${BUN_BIN:-$(command -v bun)}"
 test -x "$DIE_BIN" && test -x "$BUN_BIN" || { echo 'build dist/die first and supply BUN_BIN if necessary' >&2; exit 1; }
 name="die-remote-e2e-$$-$RANDOM"; mkdir -p "${TMPDIR:-$PWD/.cache}"; tmp="$(mktemp -d "${TMPDIR:-$PWD/.cache}/remote-e2e.XXXXXX")"; trap 'docker logs --tail 35 "$name" >&2 || true' ERR; trap 'docker rm -f "$name" >/dev/null 2>&1 || true; docker image rm "$name" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
