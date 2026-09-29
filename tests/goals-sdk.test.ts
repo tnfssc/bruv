@@ -162,7 +162,9 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
                 arguments: {
                   code:
                     "await shell(" +
-                    JSON.stringify(`sh -c 'while [ ! -f ${releaseJob} ]; do sleep 0.01; done; echo sdk-job'`) +
+                    JSON.stringify(
+                      `sh -c 'while [ ! -f "$1" ]; do sleep 0.01; done; echo sdk-job' sh ${JSON.stringify(releaseJob)}`,
+                    ) +
                     ',{waitSeconds:0}); await handoff("Waiting for owned SDK job")',
                 },
               },

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { AuthStorage } from "../node_modules/@earendil-works/pi-coding-agent/dist/core/auth-storage.js";
 import { ModelRegistry, ModelRuntime, ModelSelectorComponent, initTheme } from "@earendil-works/pi-coding-agent";
 
 // Offline only: bundled upstream catalog, isolated config, and a nonfunctional runtime key.
@@ -6,7 +7,11 @@ import { ModelRegistry, ModelRuntime, ModelSelectorComponent, initTheme } from "
 // it does not prove account access or make a model request.
 describe("bundled GPT-6.1 Sol models", () => {
   test("registry retains upstream IDs, provider APIs, capabilities and prices", async () => {
-    const runtime = await ModelRuntime.create({ modelsPath: null, allowModelNetwork: false });
+    const runtime = await ModelRuntime.create({
+      credentials: AuthStorage.inMemory(),
+      modelsPath: null,
+      allowModelNetwork: false,
+    });
     const registry = new ModelRegistry(runtime);
     for (const [provider, api, baseUrl, minimal] of [
       ["openai", "openai-responses", "https://api.openai.com/v1", null],
@@ -53,39 +58,55 @@ describe("bundled GPT-6.1 Sol models", () => {
     }
   });
 
-  test("configured offline provider appears in the real model selector and can be selected", async () => {
-    const runtime = await ModelRuntime.create({ modelsPath: null, allowModelNetwork: false });
-    await runtime.setRuntimeApiKey("openai", "offline-test-key");
-    const registry = new ModelRegistry(runtime);
-    const model = registry.find("openai", "gpt-6.1-sol");
-    expect(model).toBeDefined();
-    expect(registry.getAvailable().some((entry) => entry === model)).toBe(true);
-    let selected: typeof model;
-    // Picker refreshes on construction; force its catalog refresh to remain offline too.
-    const refresh = runtime.refresh.bind(runtime);
-    runtime.refresh = (options = {}) => refresh({ ...options, allowNetwork: false });
-    initTheme("dark");
-    const selector = new ModelSelectorComponent(
-      { requestRender() {} } as any,
-      model!,
-      runtime,
-      [],
-      (value) => {
-        selected = value;
-      },
-      () => {},
-      "gpt-6.1-sol",
-    );
-    try {
-      const matches = (selector as any).filteredModels.filter(
-        (item: any) => item.provider === "openai" && item.id === "gpt-6.1-sol",
+  test.each(["openai", "openai-codex"])(
+    "configured offline %s provider appears in the real model selector and can be selected",
+    async (provider) => {
+      const credentials = AuthStorage.inMemory(
+        provider === "openai-codex"
+          ? {
+              "openai-codex": {
+                type: "oauth",
+                access: "offline-test-access",
+                refresh: "offline-test-refresh",
+                expires: Date.now() + 3_600_000,
+              },
+            }
+          : {},
       );
-      expect(matches).toHaveLength(1);
-      expect(matches[0].model).toBe(model);
-      (selector as any).handleSelect(matches[0].model);
-      expect(selected).toBe(model);
-    } finally {
-      selector.dispose();
-    }
-  });
+      const runtime = await ModelRuntime.create({ credentials, modelsPath: null, allowModelNetwork: false });
+      if (provider === "openai") await runtime.setRuntimeApiKey(provider, "offline-test-key");
+      const registry = new ModelRegistry(runtime);
+      const model = registry.find(provider, "gpt-6.1-sol");
+      expect(model).toBeDefined();
+      expect(registry.getAvailable().some((entry) => entry === model)).toBe(true);
+      let selected: typeof model;
+      // Picker refreshes on construction; force its catalog refresh to remain offline too.
+      const refresh = runtime.refresh.bind(runtime);
+      runtime.refresh = (options = {}) => refresh({ ...options, allowNetwork: false });
+      initTheme("dark");
+      const selector = new ModelSelectorComponent(
+        { requestRender() {} } as any,
+        model!,
+        runtime,
+        [],
+        (value) => {
+          selected = value;
+        },
+        () => {},
+        "gpt-6.1-sol",
+      );
+      try {
+        const matches = (selector as any).filteredModels.filter(
+          (item: any) => item.provider === provider && item.id === "gpt-6.1-sol",
+        );
+        expect(matches).toHaveLength(1);
+        expect(matches[0].model).toBe(model);
+        expect(selector.render(100).join("\n")).toContain("gpt-6.1-sol");
+        selector.handleInput("\r");
+        expect(selected).toBe(model);
+      } finally {
+        selector.dispose();
+      }
+    },
+  );
 });

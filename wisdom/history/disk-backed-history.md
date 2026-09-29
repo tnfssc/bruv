@@ -1,6 +1,6 @@
 # Disk-backed original session history
 
-Before making session, Die CLI installs own adapter for pinned Pi 0.85.1 SessionManager. Original JSONL stays source of truth. SDK can still read it. Compaction does **not** delete originals or swap in summaries. Reopen keeps IDs, branches, labels, compaction details, and history refs.
+Before making session, Die CLI installs own adapter for pinned Pi 0.99.1 SessionManager. Original JSONL stays source of truth. SDK can still read it. Compaction does **not** delete originals or swap in summaries. Reopen keeps IDs, branches, labels, compaction details, and history refs.
 
 ## Memory contract
 
@@ -13,7 +13,7 @@ Before making session, Die CLI installs own adapter for pinned Pi 0.85.1 Session
 
 ## Persistence and compatibility
 
-New sessions keep Pi's delayed visibility. Before first assistant response, originals go to private pending spool in same directory. First-assistant publish creates advertised path without overwriting an existing file. Reset/switch and normal process exit remove owned pending spools. Abrupt stop can leave pending spool. It is not recovered session. Pi's old pre-assistant durability kept entries only in RAM. This does not weaken it.
+New sessions keep Pi's delayed visibility. Before the first user or assistant message, originals go to private pending spool in same directory. First-user-or-assistant publication creates advertised path without overwriting an existing file. Reset/switch and normal process exit remove owned pending spools. Abrupt stop can leave pending spool. It is not recovered session. Pi 0.99.1 publishes at the first user message so interrupted first turns remain discoverable; setup-only sessions still stay hidden. See [upgrade evidence](../dependencies/pi-0.99.1-sol-upgrade.md).
 
 Appends are synchronous. They retry short writes. Failed partial append rolls back new bytes. Rewrites/migrations write temporary journal, then atomically replace destination. Failure keeps prior file. SDK parity tests cover Version 1/2 migration, branch copies, forks, reload, labels and context settings. Rewrite keeps existing symlink aliases. Existing entries are read-only API values. Mutating object does not persist it.
 

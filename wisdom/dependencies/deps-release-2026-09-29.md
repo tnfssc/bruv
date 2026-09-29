@@ -9,3 +9,5 @@ Pi 0.99.1 was installed and assessed, then rolled back to 0.87.1. It typechecked
 Values reviewed; existing guidance to test risky dependency behavior and leave honest validation evidence applies without a new general rule.
 
 Test environment note: using `TMPDIR=$PWD/.cache/test-tmp` makes the existing live-embedded-helper test fail because it asserts the temporary path does not contain `cache/`. Its focused rerun passes with `TMPDIR=$HOME/.die/tmp-dep-0d0740eb`. The full suite then passed with that neutral temp directory: 1348 pass, 20 skip, 0 fail (1368 tests / 191 files). This is a test path assumption, not a ws failure.
+
+Follow-up: the separately tested [Pi 0.99.1 / GPT-6.1 Sol upgrade](pi-0.99.1-sol-upgrade.md) addresses this deferred adapter audit and validates goal/TUI behavior, with clean frozen-install and fresh web-build evidence. This note remains the record of v0.15.11, not the later upgrade.

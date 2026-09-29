@@ -44,6 +44,14 @@ describe("compiled die CLI", () => {
     expect(await Bun.file(join(home, ".pi", "agent", "settings.json")).exists()).toBe(false);
   });
 
+  test("bundled offline catalog offers GPT-6.1 Sol for OpenAI without a model request", async () => {
+    const result = await run([binary, "--list-models", "gpt-6.1-sol"], {
+      env: { ...isolatedEnv(), PI_OFFLINE: "1", OPENAI_API_KEY: "offline-catalog-only" },
+    });
+    expect(result.code).toBe(0);
+    expect(result.stdout).toMatch(/openai\s+gpt-6\.1-sol\s+272K\s+128K\s+yes\s+yes/);
+  });
+
   test("does not rewrite materialized runtime assets on later launches", async () => {
     const runtime = join(home, ".die", "runtime", packageVersion);
     expect((await run([binary, "--version"], { env: isolatedEnv() })).code).toBe(0);

@@ -17,8 +17,8 @@ const sessionManagerHash = createHash("sha256")
   .update(await readFile(join(piRoot, "dist/core/session-manager.js")))
   .digest("hex");
 if (
-  piPackage.version !== "0.87.1" ||
-  sessionManagerHash !== "d365ffb5a189915c3af93953daf751bff45fe46222b05c426f8d8b845946bebf"
+  piPackage.version !== "0.99.1" ||
+  sessionManagerHash !== "046b6a1109ac3f0ed893bb85bf0648709362fa926a5da75761216cf2fcf9d926"
 ) {
   throw new Error("Unsupported Pi SessionManager: review the disk-backed history adapter before updating Pi");
 }

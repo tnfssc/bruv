@@ -4,7 +4,7 @@
 
 Install the owned adapter before calling Pi's main SDK function and before creating any persistent `SessionManager`. Dynamically import `src/history/session-manager`, call `installDiskBackedSessionManager()`, then dynamically import and call `@earendil-works/pi-coding-agent` main.
 
-The installer can run more than once. It patches the one SDK `SessionManager` class exported by pinned `@earendil-works/pi-coding-agent` 0.85.1. It does not change SDK or `node_modules` files. `SessionManager.inMemory()` deliberately stays native and in memory.
+The installer can run more than once. It patches the one SDK `SessionManager` class exported by pinned `@earendil-works/pi-coding-agent` 0.99.1. It does not change SDK or `node_modules` files. `SessionManager.inMemory()` deliberately stays native and in memory.
 
 ## Behavior and ownership
 
@@ -16,7 +16,7 @@ The public native APIs still materialize their results:
 - `getEntry()` returns one complete entry.
 - `buildContextEntries()` and `buildSessionContext()` choose the active path and compaction window from metadata, then load only those entries.
 
-New sessions keep Pi's rule that a file is hidden before the first assistant message. Until then, records go to a private spool in the same directory and the advertised session path does not exist. Publication makes a no-overwrite hard link, then removes the spool. Reset, new-session, switch, and normal process exit remove owned spools. Existing empty explicit files keep Pi's immediate-header behavior.
+New sessions keep Pi's rule that a file is hidden before the first user or assistant message. Until then, records go to a private spool in the same directory and the advertised session path does not exist. Publication makes a no-overwrite hard link, then removes the spool. Reset, new-session, switch, and normal process exit remove owned spools. Existing empty explicit files keep Pi's immediate-header behavior.
 
 Loads stream. Version 1/2 migration takes two streaming passes and uses atomic replacement. Rewrites use temporary files in the same directory, then fsync and rename. Stored byte offsets are rebuilt only after replacement succeeds. Normal appends keep the original JSONL as the only authority. There are no summaries or lossy sidecars.
 
