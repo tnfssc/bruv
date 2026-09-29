@@ -162,7 +162,7 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
                 arguments: {
                   code:
                     "await shell(" +
-                    JSON.stringify(`while [ ! -f ${JSON.stringify(releaseJob)} ]; do sleep 0.01; done; echo sdk-job`) +
+                    JSON.stringify(`sh -c 'while [ ! -f ${releaseJob} ]; do sleep 0.01; done; echo sdk-job'`) +
                     ',{waitSeconds:0}); await handoff("Waiting for owned SDK job")',
                 },
               },
@@ -247,7 +247,6 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
                 .filter((entry: any) => entry.type === "custom" && entry.customType === "die-goal")
                 .at(-1) as any;
               handoffGoalStatus = latestGoal?.data.goal?.status;
-              await Bun.write(releaseJob, "release");
             }),
         },
         {
@@ -275,11 +274,20 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
       tools: ["execute"],
     }));
 
-    await session.prompt("Begin");
+    const prompt = session.prompt("Begin");
+    for (let attempt = 0; attempt < 100 && handoffGoalStatus !== "waiting"; attempt++) await Bun.sleep(10);
 
-    // The fixture releases the child from tool_execution_end only after the
-    // production goal listener has persisted the handoff's waiting state.
+    // Keep the owned job gated until the handoff has settled: completion must
+    // never be fabricated by a failed shell command or an eager reminder.
     expect(handoffGoalStatus).toBe("waiting");
+    expect(calls).toBe(1); // A handoff does not itself request another provider turn.
+    const waitingGoal = manager
+      .getEntries()
+      .filter((entry: any) => entry.customType === "die-goal")
+      .at(-1) as any;
+    expect(waitingGoal.data.goal).toMatchObject({ status: "waiting" });
+    await Bun.write(releaseJob, "release");
+    await prompt;
     for (let attempt = 0; attempt < 100 && calls < 3; attempt++) await Bun.sleep(10);
     expect({ calls, settled }).toMatchObject({ calls: 3 });
     expect(prompts[0]).toContain("Status: active");
@@ -296,7 +304,8 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
       .map((entry: any) => entry.data.goal?.status)
       .filter(Boolean);
     expect(goalStatuses.slice(-3)).toEqual(["waiting", "active", "completed"]);
-    expect(entries.some((entry: any) => entry.customType === "task-complete")).toBe(true);
+    const completion = entries.find((entry: any) => entry.customType === "task-complete") as any;
+    expect(completion?.details?.taskStatusCounts).toMatchObject({ completed: 1, failed: 0 });
     const last = entries
       .filter((entry: any) => entry.type === "custom" && entry.customType === "die-goal")
       .at(-1) as any;

@@ -78,6 +78,40 @@ test.skipIf(!hasTmux)(
         objective: "TUI objective",
         status: "active",
       });
+
+      // Pi 0.99.1 must continue routing later slash commands through the same
+      // extension, without treating them as provider/user turns.
+      await tmux("send-keys", "-t", name, "-l", "/goal pause Awaiting review");
+      await tmux("send-keys", "-t", name, "Enter");
+      let pausedEntries: any[] = [];
+      for (let attempt = 0; attempt < 100; attempt++) {
+        pausedEntries = (await readFile(sessionFile, "utf8"))
+          .trim()
+          .split("\n")
+          .map((line) => JSON.parse(line));
+        if (pausedEntries.some((entry) => entry.customType === "die-goal" && entry.data.goal?.status === "paused"))
+          break;
+        await Bun.sleep(50);
+      }
+      expect(pausedEntries.filter((entry) => entry.customType === "die-goal").at(-1)?.data.goal).toMatchObject({
+        status: "paused",
+        pauseReason: "Awaiting review",
+      });
+      expect(
+        pausedEntries.some(
+          (entry) => entry.type === "message" && JSON.stringify(entry.message).includes("/goal pause"),
+        ),
+      ).toBe(false);
+
+      await tmux("send-keys", "-t", name, "-l", "/goal status");
+      await tmux("send-keys", "-t", name, "Enter");
+      for (let attempt = 0; attempt < 100; attempt++) {
+        frame = (await capture()).stdout;
+        if (frame.includes("Status: paused") && frame.includes("Awaiting review")) break;
+        await Bun.sleep(50);
+      }
+      expect(frame).toContain("Status: paused");
+      expect(frame).toContain("Awaiting review");
     } finally {
       await tmux("kill-server").catch(() => ({ code: 1, stdout: "", stderr: "" }));
       await rm(home, { recursive: true, force: true });
