@@ -3,7 +3,7 @@ import { test, expect } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { ExtensionAPI, ExtensionContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionToolContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { registerExecuteTool } from "../src/typescript/extension";
 import { TaskManager } from "../src/tasks/task-manager";
 import { JobService } from "../src/tasks/job-service";
@@ -41,7 +41,7 @@ test("voice-facing declaration dispatches to existing execute tool and child run
         getLeafId: () => "fixture-leaf",
         getSessionFile: () => join(cwd, "fixture.jsonl"),
       },
-    } as unknown as ExtensionContext;
+    } as unknown as ExtensionToolContext;
     // The provider declaration here is deliberately only a test adapter; current Live does not advertise execute.
     const declaration = { name: tool.name, parametersJsonSchema: tool.parameters };
     expect(declaration.parametersJsonSchema).toBe(tool.parameters);
@@ -92,7 +92,7 @@ test("execute bridge launches real async shell and inspects completed bounded ou
       getLeafId: () => "isolated-job-leaf",
       getSessionFile: () => join(cwd, "fixture.jsonl"),
     },
-  } as unknown as ExtensionContext;
+  } as unknown as ExtensionToolContext;
   registerExecuteTool(
     pi,
     (context, method, params, signal) => service.handle(method, params, context, signal),

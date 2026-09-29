@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import type { ExtensionAPI, ExtensionContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionToolContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { inspectDiagnostics } from "../src/diagnostics";
 import { executeIsolated, formatResult } from "../src/typescript/execution";
 import { registerExecuteTool } from "../src/typescript/extension";
@@ -318,7 +318,7 @@ describe("execute process lifecycle and output", () => {
     const ctx = {
       cwd: directory,
       sessionManager: { getSessionFile: () => sessionFile },
-    } as unknown as ExtensionContext;
+    } as unknown as ExtensionToolContext;
     const result = await tool.execute("long", { code: 'console.log("x".repeat(6000));' }, undefined, undefined, ctx);
     const details = result.details as { stdoutPath: string };
     expect(details.stdoutPath).toStartWith(sessionFile + ".artifacts/");
@@ -337,7 +337,7 @@ describe("execute process lifecycle and output", () => {
         shutdown = handler;
       },
     } as unknown as ExtensionAPI);
-    const ctx = { cwd: directory } as ExtensionContext;
+    const ctx = { cwd: directory } as ExtensionToolContext;
     await expect(
       tool.execute("cancel", { code: "console.log(1)" }, AbortSignal.abort(), undefined, ctx),
     ).rejects.toThrow("Execution cancelled");
@@ -366,7 +366,7 @@ test("unsupported-image results keep the image for Pi to omit and use the concis
     { code: `await showImage(Buffer.from(${JSON.stringify(encoded)}, "base64"));` },
     undefined,
     undefined,
-    { cwd: directory, model: { input: ["text"] } } as unknown as ExtensionContext,
+    { cwd: directory, model: { input: ["text"] } } as unknown as ExtensionToolContext,
   );
   const content = result.content as Array<{ type: string; text?: string }>;
   expect(content[0]!.text).toEndWith("This model can't take images. Images not sent.");
@@ -393,7 +393,7 @@ test("execute shutdown cancellation is classified and a new session receives a f
     binary,
   );
   await handlers.get("session_shutdown")!();
-  const ctx = { cwd: process.cwd() } as ExtensionContext;
+  const ctx = { cwd: process.cwd() } as ExtensionToolContext;
   await expect(tool.execute("closed", { code: "console.log(1)" }, undefined, undefined, ctx)).rejects.toThrow(
     "Execution cancelled",
   );
@@ -433,7 +433,7 @@ test("registered execute exposes configurable capture limits and truncation deta
     {
       cwd: directory,
       sessionManager: { getSessionFile: () => join(directory, "budget-session.jsonl") },
-    } as unknown as ExtensionContext,
+    } as unknown as ExtensionToolContext,
   );
   expect(result.details).toMatchObject({
     outputByteLimit: 1000,

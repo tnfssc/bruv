@@ -1,5 +1,5 @@
 import { expect, spyOn, test } from "bun:test";
-import type { ExtensionAPI, ExtensionContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionToolContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { TaskManager } from "../src/tasks/task-manager";
 import * as execution from "../src/typescript/execution";
 import { registerExecuteTool } from "../src/typescript/extension";
@@ -38,7 +38,7 @@ for (const mode of ["inline", "background", "error"] as const)
       );
       const pending = tool.execute("test", { code: "" }, undefined, undefined, {
         cwd: process.cwd(),
-      } as ExtensionContext);
+      } as ExtensionToolContext);
       if (mode === "error") {
         await expect(pending).rejects.toThrow("Background jobs: background-one");
       } else {
@@ -112,7 +112,7 @@ test("cooperative handoff releases a foreground wait, preserves its job, and not
     );
     const result = await tool.execute("handoff", { code: "" }, undefined, undefined, {
       cwd: process.cwd(),
-    } as ExtensionContext);
+    } as ExtensionToolContext);
     expect(result.terminate).toBe(true);
     expect((result.details as any).handoff).toBe("Waiting for a dependency");
     expect((result.details as any).backgroundJobs).toEqual([id]);
@@ -157,7 +157,7 @@ for (const message of [42, "", "   ", "x".repeat(2001)])
         on() {},
       } as unknown as ExtensionAPI);
       await expect(
-        tool.execute("bad", { code: "" }, undefined, undefined, { cwd: process.cwd() } as ExtensionContext),
+        tool.execute("bad", { code: "" }, undefined, undefined, { cwd: process.cwd() } as ExtensionToolContext),
       ).rejects.toThrow();
       expect(accepted).toBe(false);
     } finally {
