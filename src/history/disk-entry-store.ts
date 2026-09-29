@@ -224,7 +224,13 @@ function metadata(entry: SessionEntry, offset: number, length: number): EntryMet
 }
 
 export function metadataSkeleton(meta: EntryMetadata): SessionEntry {
-  return { type: meta.type, id: meta.id, parentId: meta.parentId, timestamp: meta.timestamp } as SessionEntry;
+  return {
+    type: meta.type,
+    id: meta.id,
+    parentId: meta.parentId,
+    timestamp: meta.timestamp,
+    ...(meta.type === "session_info" ? { name: meta.name } : {}),
+  } as SessionEntry;
 }
 
 export class DiskEntryStore {
@@ -241,7 +247,7 @@ export class DiskEntryStore {
   // only to callers and are never retained by the store.
   private cache = new Map<string, Buffer>();
   private cacheBytes = 0;
-  private hasAssistant = false;
+  private hasConversation = false;
 
   private constructor(targetPath: string, budgetBytes: number, flushed: boolean, activePath: string) {
     this.targetPath = resolve(targetPath);
@@ -386,11 +392,11 @@ export class DiskEntryStore {
       closeSync(fd);
     }
     const meta = metadata(entry, location.offset, location.length);
-    if (!this.flushed && (this.hasAssistant || meta.messageRole === "assistant")) {
+    if (!this.flushed && (this.hasConversation || meta.messageRole === "user" || meta.messageRole === "assistant")) {
       try {
         this.publish();
       } catch (error) {
-        // Publication is part of the first-assistant append transaction. Keep
+        // Publication is part of the first-user-or-assistant append transaction. Keep
         // the pending journal and its in-memory indexes at their prior state so
         // the manager can safely leave its leaf unchanged and retry later.
         let rollbackFd: number | undefined;
@@ -408,7 +414,7 @@ export class DiskEntryStore {
     this.entries.push(meta);
     this.byId.set(meta.id, meta);
     this.remember(location.bytes, meta);
-    this.hasAssistant ||= meta.messageRole === "assistant";
+    this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";
   }
 
   private publish(): void {
@@ -464,7 +470,7 @@ export class DiskEntryStore {
     this.cache.clear();
     this.cacheBytes = 0;
     let header: SessionHeader | undefined;
-    this.hasAssistant = false;
+    this.hasConversation = false;
     scanJsonl(this.activePath, ({ entry, offset, length }, index) => {
       if (index === 0 && (entry.type !== "session" || typeof entry.id !== "string"))
         throw new Error("Session file has no valid initial header: " + this.targetPath);
@@ -475,7 +481,7 @@ export class DiskEntryStore {
       const meta = metadata(entry as SessionEntry, offset, length);
       this.entries.push(meta);
       this.byId.set(meta.id, meta);
-      this.hasAssistant ||= meta.messageRole === "assistant";
+      this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";
     });
     if (!header) throw new Error(`Session file has no header: ${this.targetPath}`);
     this.header = header;

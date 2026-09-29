@@ -96,9 +96,9 @@ test("temporary preparation and failed factories leave no live-process pending j
         clean();
       } finally { globalThis.Date = RealDate; }
       const fresh = SessionManager.create(root, root);
-      fresh.appendMessage({role:"user",content:"still owned",timestamp:1});
+      fresh.appendThinkingLevelChange("off");
       assert.equal(pending().length, 1);
-      assert.equal(fresh.getEntries()[0].message.content, "still owned");
+      assert.equal(fresh.getEntries()[0].type, "thinking_level_change");
       disposeDiskBackedSessionManager(fresh);
       clean();
       console.log("ok");

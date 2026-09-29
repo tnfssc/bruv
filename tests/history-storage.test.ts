@@ -83,7 +83,7 @@ describe("disk-backed SessionManager SDK compatibility", () => {
     const [native, adapted] = await Promise.all([runScenario(nativeRoot, false), runScenario(adaptedRoot, true)]);
     expect(adapted).toEqual(native);
     expect(adapted.before).toBe(false);
-    expect(adapted.afterUser).toBe(false);
+    expect(adapted.afterUser).toBe(true);
     expect(adapted.afterAssistant).toBe(true);
     expect(adapted.flushedTypes).toEqual(["session", "message", "message"]);
     expect(adapted.resumed).toEqual({ count: 2, leafIsAnswer: true, fileMatches: true });
@@ -93,7 +93,7 @@ describe("disk-backed SessionManager SDK compatibility", () => {
     expect(adapted.branchCopy.types).toEqual(["message", "message", "message", "message"]);
     expect(JSON.stringify(adapted.branchCopy.contents)).toContain("branch assistant");
     expect(adapted.fork.count).toBe(6);
-    expect(adapted.newSession).toEqual({ changed: true, empty: 0, absentBeforeAssistant: true, persisted: true });
+    expect(adapted.newSession).toEqual({ changed: true, empty: 0, absentBeforeAssistant: false, persisted: true });
   }, 30_000);
 
   test("keeps compacted originals and stable references across reopen while context stays compact", async () => {

@@ -185,7 +185,7 @@ function openStore(path: string): DiskEntryStore {
 }
 
 /**
- * Put the 0.87.x disk-backed implementation on the SDK class. Call this before
+ * Put the 0.99.x disk-backed implementation on the SDK class. Call this before
  * importing or calling the SDK CLI main function. Leave in-memory managers alone.
  */
 export function installDiskBackedSessionManager(): void {
@@ -213,6 +213,7 @@ export function installDiskBackedSessionManager(): void {
     appendContextEdit: prototype.appendContextEdit,
     getHeader: prototype.getHeader,
     getSessionName: prototype.getSessionName,
+    getEntryCount: prototype.getEntryCount,
   };
 
   prototype._appendEntry = function (this: SessionManager, entry: SessionEntry): void {
@@ -264,7 +265,7 @@ export function installDiskBackedSessionManager(): void {
         : target.fileEntries.filter((entry): entry is SessionEntry => entry.type !== "session");
     const leafId = target.leafId;
     // Native _rewriteFile always writes, even for a header-only file. Delayed
-    // first-assistant publication is handled by callers, not by this method.
+    // first-user-or-assistant publication is handled by callers, not by this method.
     adopt(this, DiskEntryStore.fromEntries(target.sessionFile, header, entries, true));
     target.leafId = leafId;
   };
@@ -395,14 +396,13 @@ export function installDiskBackedSessionManager(): void {
   prototype.getHeader = function (this: SessionManager): SessionHeader | null {
     return state(this)?.store.header ?? original.getHeader.call(this);
   };
+  // 0.99.1 reads fileEntries directly for the footer. Session-info skeletons
+  // retain their tiny name field so the native fast path stays correct.
   prototype.getSessionName = function (this: SessionManager): string | undefined {
-    const owned = state(this);
-    if (!owned) return original.getSessionName.call(this);
-    for (let i = owned.store.entries.length - 1; i >= 0; i--) {
-      const meta = owned.store.entries[i];
-      if (meta.type === "session_info") return meta.name?.trim() || undefined;
-    }
-    return undefined;
+    return original.getSessionName.call(this);
+  };
+  prototype.getEntryCount = function (this: SessionManager): number {
+    return state(this)?.store.byId.size ?? original.getEntryCount.call(this);
   };
   prototype.getTree = function (this: SessionManager): SessionTreeNode[] {
     const owned = state(this);

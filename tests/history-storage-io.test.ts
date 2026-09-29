@@ -153,32 +153,38 @@ test("short writes", () => {
     ]);
     expect(exitCode, `short-write subprocess failed:\n${stdout}\n${stderr}`).toBe(0);
   });
-  test("failed first-assistant publication rolls back the pending append and can be retried", async () => {
+  test("failed first-user publication rolls back the pending append and can be retried", async () => {
     const path = await temporaryFile();
     const store = DiskEntryStore.pending(path, header(), 1024);
-    store.append(message("before", "must survive"));
+    store.append({
+      type: "thinking_level_change",
+      id: "before",
+      parentId: null,
+      timestamp: "2026-01-01T00:00:00.000Z",
+      thinkingLevel: "off",
+    } as SessionEntry);
     store.materialize("before");
     const internals = store as unknown as {
       cache: Map<string, Buffer>;
       cacheBytes: number;
-      hasAssistant: boolean;
+      hasConversation: boolean;
     };
     const cachedBefore = [...internals.cache].map(([key, bytes]) => [key, Buffer.from(bytes)] as const);
     const cacheBytesBefore = internals.cacheBytes;
     await writeFile(path, "collision sentinel\n");
 
-    expect(() => store.append(assistant("failed", "before"))).toThrow();
+    expect(() => store.append(message("failed", "must retry", "before"))).toThrow();
 
     expect(await readFile(path, "utf8")).toBe("collision sentinel\n");
     expect(store.entries.map(({ id }) => id)).toEqual(["before"]);
     expect(store.byId.has("failed")).toBe(false);
     expect(() => store.materialize("failed")).toThrow("not found");
-    expect(internals.hasAssistant).toBe(false);
+    expect(internals.hasConversation).toBe(false);
     expect(internals.cacheBytes).toBe(cacheBytesBefore);
     expect([...internals.cache].map(([key, bytes]) => [key, bytes] as const)).toEqual(cachedBefore);
 
     await rm(path);
-    store.append(assistant("recovered", "before"));
+    store.append(message("recovered", "persisted", "before"));
     expect(store.flushed).toBe(true);
     expect(store.entries.map(({ id }) => id)).toEqual(["before", "recovered"]);
     expect(DiskEntryStore.open(path).entries.map(({ id }) => id)).toEqual(["before", "recovered"]);
