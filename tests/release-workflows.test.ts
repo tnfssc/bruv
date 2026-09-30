@@ -167,7 +167,7 @@ describe("release automation", () => {
     expect(workflow).toContain('- "v*"');
     expect(workflow).toContain("workflow_dispatch:");
     expect(workflow).toContain("!contains(github.ref_name, '-')");
-    expect(workflow).toContain("needs: [reuse-check, prepare-manual, mac-helper]");
+    expect(workflow).toContain("needs: [reuse-check, prepare-manual, mac-helper, plan]");
     expect(workflow).toContain("scripts/build-live-helper.sh");
     expect(workflow).toContain("Mach-O 64-bit (executable arm64|arm64 executable)");
     expect(workflow).toContain("-fsanitize=address,undefined");

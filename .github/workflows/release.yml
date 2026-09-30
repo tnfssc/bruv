@@ -16,6 +16,28 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  plan:
+    name: Plan develop dry run (not release proof)
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      full: ${{ steps.plan.outputs.full }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
+      - id: plan
+        name: Plan complete develop push
+        shell: bash
+        env:
+          BASE: ${{ github.event.before }}
+        run: bun scripts/ci-selective.ts --base "$BASE"
+
   prepare-manual:
     if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/develop' }}
     runs-on: ubuntu-24.04
@@ -81,8 +103,8 @@ jobs:
     name: Native macOS arm64 helper (no devices)
     runs-on: macos-15
     timeout-minutes: 10
-    needs: [reuse-check, prepare-manual]
-    if: ${{ always() && (github.event_name != 'workflow_dispatch' || needs.prepare-manual.result == 'success') && (github.ref == 'refs/heads/develop' || (github.event_name == 'push' && !contains(github.ref_name, '-'))) && (needs.reuse-check.result == 'skipped' || (needs.reuse-check.result == 'success' && needs.reuse-check.outputs.run_id == '')) }}
+    needs: [reuse-check, prepare-manual, plan]
+    if: ${{ always() && (github.event_name != 'push' || github.ref != 'refs/heads/develop' || (needs.plan.result == 'success' && needs.plan.outputs.full == 'true')) && (github.event_name != 'workflow_dispatch' || needs.prepare-manual.result == 'success') && (github.ref == 'refs/heads/develop' || (github.event_name == 'push' && !contains(github.ref_name, '-'))) && (needs.reuse-check.result == 'skipped' || (needs.reuse-check.result == 'success' && needs.reuse-check.outputs.run_id == '')) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -116,8 +138,8 @@ jobs:
           retention-days: 2
   release:
     # Develop runs the same gates without publishing; prerelease tags stay excluded.
-    needs: [reuse-check, prepare-manual, mac-helper]
-    if: ${{ always() && (github.ref == 'refs/heads/develop' || (github.event_name == 'push' && !contains(github.ref_name, '-'))) && (github.event_name != 'workflow_dispatch' || needs.prepare-manual.result == 'success') && needs.mac-helper.result == 'success' }}
+    needs: [reuse-check, prepare-manual, mac-helper, plan]
+    if: ${{ always() && (github.event_name != 'push' || github.ref != 'refs/heads/develop' || (needs.plan.result == 'success' && needs.plan.outputs.full == 'true')) && (github.ref == 'refs/heads/develop' || (github.event_name == 'push' && !contains(github.ref_name, '-'))) && (github.event_name != 'workflow_dispatch' || needs.prepare-manual.result == 'success') && needs.mac-helper.result == 'success' }}
     name: Linux, macOS, and Android release
     runs-on: ubuntu-24.04
     env:

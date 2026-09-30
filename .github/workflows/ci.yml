@@ -4,22 +4,93 @@ on:
   push:
     branches: [develop]
   pull_request:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
+  feedback:
+    name: Selected feedback (not full validation)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      mode: ${{ steps.plan.outputs.mode }}
+      full: ${{ steps.plan.outputs.full }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
+      - name: Resolve complete comparison
+        id: comparison
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          EXPECTED_HEAD: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          base=""
+          if [[ "$EVENT" == pull_request ]]; then
+            # Compare the tested merge tree to its actual target parent, not a stale
+            # payload base or a head-only merge-base diff. Invalid topology is full.
+            if [[ "$(git rev-parse HEAD)" == "$EXPECTED_HEAD" ]] &&
+               [[ "$(git rev-list --parents -n 1 HEAD | wc -w)" -eq 3 ]] &&
+               [[ "$(git rev-parse HEAD^2)" == "$PR_HEAD" ]]; then
+              candidate=$(git rev-parse HEAD^1)
+              if tree=$(git merge-tree --write-tree "$candidate" "$PR_HEAD") &&
+                 [[ "$tree" == "$(git rev-parse HEAD^{tree})" ]]; then
+                base="$candidate"
+              fi
+            fi
+          elif [[ "$EVENT" == push ]]; then
+            # The selector resolves before..HEAD, including every pushed commit.
+            # Zero, absent or unavailable before values deliberately plan full.
+            base="$BEFORE"
+          fi
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+      - name: Plan validation
+        id: plan
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ steps.comparison.outputs.base }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT" == schedule || "$EVENT" == workflow_dispatch ]]; then
+            printf 'mode=full\nfull=true\n' >> "$GITHUB_OUTPUT"
+            echo 'Full reconciliation requested.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            bun scripts/ci-selective.ts --base "$BASE"
+          fi
+      - name: Run selected checks from clean source
+        if: ${{ steps.plan.outputs.full == 'false' && (steps.plan.outputs.mode == 'docs' || steps.plan.outputs.mode == 'selected') }}
+        shell: bash
+        env:
+          BASE: ${{ steps.comparison.outputs.base }}
+        run: bun scripts/ci-selective.ts --base "$BASE" --run
+
   test:
-    name: Bun 1.4.2 / Linux x64
+    name: Full validation / Linux x64
+    needs: feedback
+    if: ${{ needs.feedback.outputs.full == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0 # Exact v0.7.1 updater compatibility tests read the stable tag.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -66,11 +137,15 @@ jobs:
           retention-days: 14
 
   live-macos:
-    name: Local Live / macOS (no audio devices or API)
+    name: Full validation / macOS Live (no devices or API)
+    needs: feedback
+    if: ${{ needs.feedback.outputs.full == 'true' }}
     runs-on: macos-15
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.2
@@ -91,3 +166,30 @@ jobs:
       - name: Shared macOS Live gate
         shell: bash
         run: bun run ci:macos
+
+  required:
+    name: CI policy
+    needs: [feedback, test, live-macos]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Require the planned validation outcomes
+        shell: bash
+        env:
+          FEEDBACK: ${{ needs.feedback.result }}
+          MODE: ${{ needs.feedback.outputs.mode }}
+          FULL: ${{ needs.feedback.outputs.full }}
+          LINUX: ${{ needs.test.result }}
+          MACOS: ${{ needs.live-macos.result }}
+        run: |
+          set -euo pipefail
+          [[ "$FEEDBACK" == success ]] || exit 1
+          if [[ "$FULL" == true && "$MODE" == full ]]; then
+            [[ "$LINUX" == success && "$MACOS" == success ]] || exit 1
+          elif [[ "$FULL" == false && ("$MODE" == docs || "$MODE" == selected) ]]; then
+            [[ "$LINUX" == skipped && "$MACOS" == skipped ]] || exit 1
+          else
+            echo 'Missing or inconsistent validation plan' >&2
+            exit 1
+          fi
