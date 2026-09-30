@@ -46,6 +46,9 @@ run_step 'Offline default OpenAI transport' openai-transport.log "$root" bun scr
 # The pinned source may live outside this checkout. Test the binary built above,
 # not a dist path inferred from the upstream source location.
 export T3_V2_DIE_BINARY="${T3_V2_DIE_BINARY:-$root/dist/die}"
+run_step 'Typecheck web backend' web-typecheck.log "$web_source/apps/server" ../../node_modules/.bin/tsc --noEmit
+run_step 'Typecheck web client' web-client-typecheck.log "$web_source/apps/web" ../../node_modules/.bin/tsc --noEmit
+run_step 'Typecheck terminal client' terminal-client-typecheck.log "$web_source/packages/client-runtime" ../../node_modules/.bin/tsc --noEmit
 run_step 'Validate web backend' web-tests.log "$web_source/apps/server" ../../node_modules/.bin/vp test run \
   src/provider/Layers/PiProvider.test.ts src/auth/EnvironmentAuth.test.ts src/serverRuntimeStartup.test.ts \
   src/terminal/NodePtyAdapter.test.ts src/terminal/BunPtyAdapter.test.ts src/terminal/Manager.test.ts \
@@ -53,12 +56,16 @@ run_step 'Validate web backend' web-tests.log "$web_source/apps/server" ../../no
   src/orchestration-v2/NativeDieIntegration.production.test.ts src/orchestration-v2/ProjectionStore.test.ts \
   src/orchestration-v2/ProviderContinuationService.test.ts src/orchestration-v2/LocalJobNotification.test.ts \
   src/orchestration-v2/NativeUsageAccounting.test.ts src/orchestration-v2/Adapters/PiAdapterV2.test.ts \
-  src/resourceTelemetry/ResourceTelemetry.test.ts
+  src/resourceTelemetry/ResourceTelemetry.test.ts src/device/AgentDeviceTarget.test.ts src/provider/Layers/EventNdjsonLogger.test.ts
 run_step 'Validate focused web model behavior' web-model-tests.log "$web_source/apps/web" \
   ../../node_modules/.bin/vp test run --project unit src/composerDraftStore.test.ts src/lib/chatThreadActions.test.ts
 run_step 'Validate web contracts' web-contract-tests.log "$web_source/packages/contracts" \
   ../../node_modules/.bin/vp test run src/browserProfile.test.ts src/orchestratorMcp.test.ts src/providerRuntime.test.ts
 run_step 'Validate client projection' web-client-runtime-tests.log "$web_source/packages/client-runtime" \
   ../../node_modules/.bin/vp test run src/state/orchestrationV2Projection.test.ts
+run_step 'Validate web cache regressions' web-cache-tests.log "$web_source/apps/web" \
+  ../../node_modules/.bin/vp test run src/lib/syntaxHighlighting.test.ts src/components/pullRequest/pullRequestDetail.logic.test.ts src/components/chat/nativeUsageCost.logic.test.ts
+run_step 'Validate terminal client recovery' terminal-client-tests.log "$web_source/packages/client-runtime" \
+  ../../node_modules/.bin/vp test run src/rpc/client.test.ts src/state/terminalSession.test.ts
 run_step 'Deterministic tests' tests.log "$root" env DIE_RUN_LLM_TESTS=0 bun test ./tests
 run_step 'Standalone smoke test' smoke.log "$root" bun run smoke -- --reuse-build

@@ -401,10 +401,14 @@ test("release cache environment retains source identity variables", async () => 
 });
 
 // Full CI inventories remain required for actual releases, alongside release-only gates.
-test("release validation includes the full CI web test union", async () => {
+test("full CI and release retain the same web validation union", async () => {
   const ci = await read("scripts/ci.sh");
   const workflow = await read(".github/workflows/release.yml");
   for (const path of new Set(ci.match(/src\/[\w/.]+\.test\.ts/g))) expect(workflow).toContain(path);
+  for (const path of new Set(workflow.match(/src\/[\w/.]+\.test\.ts/g))) expect(ci).toContain(path);
+  for (const area of ["apps/server", "apps/web", "packages/client-runtime"]) {
+    expect(ci).toContain(`"$web_source/${area}" ../../node_modules/.bin/tsc --noEmit`);
+  }
   expect(workflow).toContain("bun scripts/offline-openai-default-transport.ts");
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
   expect(workflow).toContain("T3_V2_DIE_BINARY: ${{ github.workspace }}/dist/die");

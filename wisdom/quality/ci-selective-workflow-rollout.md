@@ -58,10 +58,15 @@ checkout does not persist credentials, and no pull_request_target runs.
 
 ## CI versus release
 
-CI alone validates ordinary PRs and develop pushes using selected/full lanes.
+CI alone validates ordinary PRs and develop pushes. Selected-only feedback is
+not full confidence for executable changes; the parent is tightening ordinary
+executable-change policy separately, without expanding allowlists.
 High-risk changes still run full Linux build, root and web tests plus macOS Live
 validation; full CI takes minutes, not the measured narrow-source 46 seconds.
-Nightly/manual full reconciliation remains required.
+Nightly/manual full reconciliation remains required. Full CI retains the former
+release-only source checks too: backend/client typechecks, device/event logging,
+web cache regressions and terminal recovery. Final release binary/browser/Mac/
+updater gates remain release-specific, not claimed as per-push coverage.
 
 Release packages binaries only on manual dispatch from develop or stable tag
 pushes. Routine develop commits never run release packaging. There is no develop
