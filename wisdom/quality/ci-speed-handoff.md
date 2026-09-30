@@ -1,5 +1,7 @@
 # CI speed handoff
 
+> Superseded scope: the user rejected the narrow source-tier approach as not satisfying their intent. It has been removed. See [full-path simplification](../ci/full-path-simplification.md) for current work. Executable changes again require full CI. The 46-second source probe below is historical reduced-scope evidence, not task completion.
+
 ## User goal and decisions
 
 User asked for routine CI under one minute, requested Tavily research, and repeatedly asked the parent to parallelize and cut the right corners. Do not turn selected feedback into a claim of full validation. Keep actual failures visible. Use focused proof for small changes and hosted full gates; stop repeating whole local suites or review rounds without cause. See [fast delivery](fast-delivery.md). Values10 updated from this repeated feedback.

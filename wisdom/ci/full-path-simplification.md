@@ -1,21 +1,46 @@
-# Simplify the full CI path
+# Faster CI, same confidence
 
-User saw full Linux CI7m09 and Release9m09 on the same change and rejected added complexity without speeding the default. On2026-09-30 they asked to fix it. Do not sell source46s as universal improvement.
+## User intent
 
-Decision: ordinary commits run CI once. Release packaging runs only on stable tag or explicit manual release. Remove develop release dry-runs and their now-unneeded cross-run reuse machinery, not add another artifact-sharing workflow. Preserve all actual release gates/manual version prep/publish checks. Pack embedded web once, then compile four targets from that verified same-run archive. No general remote artifact cache.
+Make normal work fast. Keep the relevant confidence. Keep the pipeline simple. The user rejected our 46-second selected-source probe as reward hacking. It ran fewer checks; it did not solve full CI speed. Do not call it completion.
 
-Workers from e561bda: task_9548f76c owns workflow/trigger simplification in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_9548f76c, branch die/simplify-ci-and-release-triggers-9548f76c. task_0995ee59 owns pack-once in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_0995ee59, branch die/pack-embedded-web-once-for-release-targe-0995ee59. Proposed flag --reuse-packed-web. Prior task_9e9090d4 for shared full producer was cancelled before implementation; no changes to integrate.
+## Shipped correction
 
-Parent: review pieces while focused checks run, integrate, prove only CI starts on develop push, and verify actual release flow without waiving gates. No extra full local cycles. Record code removed and actual hosted timings. Full high-risk CI still takes minutes; do not claim pack-once alone makes it under60s. Values already cover simple design and fast parallel delivery; no new value needed.
+- All executable, build, test and unknown changes need full CI. Only safe reference-doc edits get a cheap path.
+- Keep cumulative trusted-baseline planning and the fail-closed CI policy gate.
+- Remove the selected-source allowlists, guard and scheduler. Product remote CLI/PTy tests stay.
+- Release runs only for stable tags or explicit dispatch, not every develop push. Move its unique source/web checks into ordinary full CI. Actual releases still run final browser, native-helper, macOS binary/updater and publication gates.
+- Same-workspace packed-web receipts landed c935911. They are not cross-run cache authorization.
+- Latest pushed 8ce5eaf fixes the CI command-inventory fixture. Typecheck and 32 focused planner/workflow tests passed; fixture 3 tests/24 assertions passed; packed reuse/workflow 38 tests/416 assertions passed.
 
-## Correction after user challenged reward hacking
+## Parallel root tests
 
-The user wants faster normal work with dependable validation and less complexity, not a narrow comment-only benchmark or relevant checks moved out of sight. The earlier source46s tier was real but narrower coverage; calling the whole CI problem solved or saying no checks weakened overstated it. Treat that as a limited measurement, not acceptance.
+Use Bun 1.4.2 native `bun test --parallel=4 ./tests`, with existing DIE_RUN_LLM_TESTS=0.
+Worker custom runner 5a5a2cf was integrated c730abd, then reverted 46cb147 before pushing. Native Bun avoids 247 lines of scheduler and a narrower .test.ts discovery glob.
+Native full current suite: 1420 pass/20 skip/0 fail, 203 files, 51.77s locally. This includes 5 obsolete custom-runner tests since removed with that helper. No product tests or timeout policy were removed. This is not whole-CI or hosted time.
+See [root-test parallelism](root-test-parallelism.md) for resource audit, controlled worker comparison, evidence and durable worker branch.
 
-Ordinary executable changes must retain full validation until equivalent faster coverage is proven. Moving affected SDK/integration checks to nightly merely because they exceed the time budget is not an acceptable optimization. Docs may skip genuinely irrelevant builds. Use actual representative changed code/component inputs, compare coverage and elapsed/runner time, and measure complexity removed.
+## Earlier hosted failures
 
-Concrete work now: stop duplicated routine release packaging; exact web input/byte identity to reuse unchanged payload while still compiling/testing current CLI; bounded process shards of the COMPLETE root suite, with partition-union proof and all failures propagated. task_2a8c9cf8 owns new shard runner/tests in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_2a8c9cf8, branch die/speed-full-root-tests-without-dropping-c-2a8c9cf8. Workflow and pack workers received PARENT_VALIDATION_CONTRACT.md / PARENT_FULL_COVERAGE_GOAL.md. No broader success claim until real full-coverage hosted measurements.
+- Correction run 36774743001 failed only an obsolete CI-runner fixture; fixed 8ce5eaf.
+- Run 36775922476 failed fresh packing: receipt tree() calls Bun.file.bytes() on upstream .claude/skills, a symlink to a directory. Fixed in worker 64a909b, integrated 10e9364, with real fresh/warm build proof and a regression. Log /home/tnfssc/.die/ci-pack-hosted-failure.log.
+- Receipt GITHUB_ACTION input also varies between fresh and target shell steps. Exclude invocation metadata, not actual build settings; fixed with a step-metadata regression.
+- Do not claim the latest hosted gate is green or publish another release.
 
-Workflow simplification5392c76+9217ce3 integrated locally as a65fb2d+f38b3d7. 369net lines removed; obsolete dry-run lookup/reuse tests deleted, source checks union retained. Not pushed yet. Narrow machinery removal task_fb9e3eb6 in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_fb9e3eb6, branch die/remove-narrow-selected-test-ci-machinery-fb9e3eb6, basef38b3d7; owns selector cleanup and CI docs/full routing, preserving actual remote CLI/PTy behavioral tests. Pack and complete-suite shard work remain parallel. Parent must integrate these, avoid duplicate backend/web tsc already performed by buildWeb, wire packed archive and shard commands once known, then run focused+hosted complete proof.
+## Integrated cache work
 
-Narrow-path removal a394db2 integrated425e107 (initial git signing hit full/tmp; continued with TMPDIR underhome). Parent found/fixed optional-head typing and restored regular-file mode checks plus no external diff/textconv. Real-Git docs regression covers dirty tree/missing baseline/mode drift; typecheck/focused task_879aee1e pending. Product remote CLI/PTy tests remain. This restores full executable coverage, deletes narrow runtime guard/scheduler/allowlist machinery, and makes prior46s result explicitly historical reduced-scope feedback.
+Task task_23c5c02a. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_23c5c02a. Branch die/reuse-unchanged-web-build-in-full-confid-23c5c02a, base c935911.
+It owns CI YAML/ci.sh, real exact-input web cache, reproducible producer environment, source/dependency preparation on cache hits, native root parallel invocation, full web/root overlap where safe, helper fixes and focused tests. All current behavioral checks stay. Cache miss/corruption must rebuild. Save only from trusted default branch; PR restore is read-only. No credential, node_modules or unchecked dist cache.
+Parent Release --reuse-packed-web edits are committed fd84441. Worker CI-only test edits merged alongside them. Parent sent native runner result and hosted symlink failure through PARENT_NATIVE_AND_HOSTED_BLOCKER.md in worker tree. Do not commit PARENT notes.
+
+## Finish
+
+Worker 64a909b integrated 10e9364. One expected CI fixture conflict used the worker version: it includes the preserved union and failure tests for the new parallel groups. Parent typecheck and 58 focused tests/665 assertions pass. Run actual cold/warm hosted full-confidence CI. Include setup/queue/aggregate time. Do not run repetitive full local suites merely to look careful. Native local full proof already passed. Under-minute full hosted CI is not proved.
+
+Use TMPDIR=/home/tnfssc/.die/tmp-pi-removal for Git signing and commands; /tmp is full. Local pnpm 11.27.1 is at $TMPDIR/bunx-1000-pnpm@11.27.1/node_modules/.bin. GitHub CI installs it normally.
+
+Values 2 and 10 now state the confidence contract and parallel/focused verification lesson. No new value is needed for choosing native Bun over a custom scheduler.
+
+Read-only cache review task_628ca308 found no concrete unsafe stale-hit or lost behavioral check in the in-progress flow. It checked exact key coverage, controlled environment, source/deps on hits, digest/size fallback, trusted save/read-only restore and both test-group exits. Known symlink and GitHub-action metadata bugs remained the implementer fix/proof duty. No need another review round without a new reason.
+
+Local cache proof: warm full gate129.990s,1426root+650web passes,20existing opt-in skips,zero failures. It removed source/dist/root node_modules first, kept only download stores and exact web payload, and made an isolated CLI source edit. Cold208.252s reached the producer and web suite but failed stale fixture assertions, since corrected; not a clean matched all-green baseline. See packed-web-reuse.md for commands/logs. Native parallel uses Bun discovery; no custom runner ships. Net against e561bda before correction: about681 fewer lines, not a speed metric. Hosted proof is next.
