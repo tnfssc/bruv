@@ -57,3 +57,10 @@ test("preserves project and global SYSTEM.md overrides", async () => {
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test("config receives no session-only prompt option", () => {
+  for (const args of [["config"], ["config", "--help"], ["config", "-l", "--approve"]]) {
+    expect(withDieSystemPrompt(args, { cwd: "/missing", agentDir: "/missing" })).toBe(args);
+  }
+  expect(withDieSystemPrompt(["--", "config"], { cwd: "/missing", agentDir: "/missing" })).toContain("--system-prompt");
+});

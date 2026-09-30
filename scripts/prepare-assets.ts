@@ -1,3 +1,4 @@
+import { preparePiHost } from "./pi-host-adaptation";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -22,6 +23,8 @@ if (
 ) {
   throw new Error("Unsupported Pi SessionManager: review the disk-backed history adapter before updating Pi");
 }
+
+await preparePiHost(piRoot);
 
 const assets: Array<[string, string]> = [
   ["dist/modes/interactive/theme/dark.json", "theme/dark.json"],

@@ -161,6 +161,8 @@ if (cliArgs[0] === "--remote-control" || cliArgs[0] === "--remote-owner") {
 
 // This must be dynamic: PI_PACKAGE_DIR has to be set before Pi initializes its
 // product metadata and asset paths.
+const { assertDiePiHost } = await import("./pi-host");
+assertDiePiHost();
 const { main } = await import("@earendil-works/pi-coding-agent");
 // Install the owned synchronous journal adapter before any SDK session is created.
 const { installDiskBackedSessionManager } = await import("./history/session-manager");

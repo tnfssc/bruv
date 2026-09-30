@@ -16,6 +16,10 @@ export function withDieSystemPrompt(
   args: string[],
   options: { cwd?: string; agentDir?: string; projectTrusted?: boolean } = {},
 ): string[] {
+  // The config command parses its own flags before session startup. It has no
+  // model prompt and must not receive session-only --system-prompt.
+  if (args[0] === "config") return args;
+
   const boundary = optionBoundary(args);
   if (args.slice(0, boundary).includes("--system-prompt")) return args;
 
