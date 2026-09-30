@@ -192,7 +192,9 @@ export function plan(cwd: string, base?: string, head = "HEAD") {
               resolve(dirname(entry.tests[0]), i.path).replace(/\.ts$/, "") !==
                 resolve(entry.source).replace(/\.ts$/, ""),
           ) ||
-          /\b(?:Bun|process|globalThis)\b|\b(?:fetch|require|eval|Function)\s*\(/.test(source)
+          /\b(?:Bun|process|globalThis)\b|\b(?:fetch|require|eval|Function)\s*\(|\bimport\s*(?:(?:\/\*[\s\S]*?\*\/|\/\/[^\n]*\n)\s*)*\(/.test(
+            source,
+          )
         )
           blocker = `direct unit test gained unaudited dependency/IO: ${entry.tests[0]}`;
       }

@@ -386,3 +386,25 @@ test("a valid non-full explicit head different from checkout is refused", () => 
   expect(result.status).not.toBe(0);
   expect(result.stderr).toContain("clean tracked checkout at planned head");
 });
+
+test("direct unit tests reject opaque imports on both base and head", () => {
+  for (const entry of Object.values(classes)) {
+    for (const expression of [
+      'import(["node", "fs"].join(":"))',
+      'import /* gap */ (["node", "fs"].join(":"))',
+      'import // gap\n (["node", "fs"].join(":"))',
+    ]) {
+      const r = repo();
+      const original = readFileSync(entry.tests[0], "utf8");
+      r.put(entry.tests[0], original);
+      const base = r.commit();
+      r.put(
+        entry.tests[0],
+        original + "\nconst fs = await " + expression + '; const reference = fs.readFileSync("README.md", "utf8");',
+      );
+      const head = r.commit();
+      expect(plan(r.cwd, base, head).full).toBe(true);
+      expect(plan(r.cwd, head, base).full).toBe(true);
+    }
+  }
+});
