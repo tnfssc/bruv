@@ -35,7 +35,8 @@ echo "completed $*"
 `;
   writeFileSync(join(bin, "bun"), stub, { mode: 0o755 });
   for (const subdir of ["apps/server", "apps/web", "packages/contracts", "packages/client-runtime"]) {
-    writeFileSync(join(web, subdir, "../../node_modules/.bin/vp"), stub, { mode: 0o755 });
+    for (const command of ["vp", "tsc"])
+      writeFileSync(join(web, subdir, "../../node_modules/.bin/" + command), stub, { mode: 0o755 });
   }
   const calls = join(root, "calls");
   const result = spawnSync("bash", [join(root, "scripts/ci.sh"), lane], {
@@ -70,15 +71,22 @@ test("Linux runs all ordered gates in the pinned web checkout with deterministic
     "run check",
     "run build",
     "scripts/offline-openai-default-transport.ts",
+    "--noEmit",
+    "--noEmit",
+    "--noEmit",
     "test run src/provider/Layers/PiProvider.test.ts",
     "test run --project",
     "test run src/browserProfile.test.ts",
     "test run src/state/orchestrationV2Projection.test.ts",
+    "test run src/lib/syntaxHighlighting.test.ts",
+    "test run src/rpc/client.test.ts",
     "test ./tests",
     "run smoke --",
   ]);
-  expect(calls[7]).toContain("/web-source/apps/server|");
-  expect(calls[11]).toContain("test ./tests");
+  expect(calls.find((line) => line.includes("src/provider/Layers/PiProvider.test.ts"))).toContain(
+    "/web-source/apps/server|",
+  );
+  expect(calls.at(-2)).toContain("test ./tests");
   expect(readFileSync(join(root, "artifacts/ci/tests.log"), "utf8")).toContain("llm=0");
   expect(readFileSync(join(root, "artifacts/ci/smoke.log"), "utf8")).toContain("completed");
 });
