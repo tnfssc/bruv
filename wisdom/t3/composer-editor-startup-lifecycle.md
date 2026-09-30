@@ -113,3 +113,7 @@ Values remain unchanged: values 1 (finish the real behavior), 2 (honest proof), 
 one schedule, not proof of lifecycle safety. Keep real rendered acceptance and
 add a deterministic invalid-lifetime regression rather than retrying the gate
 or hiding console errors.
+
+## Hosted closure
+
+Parent integrated this as c32a42b and pushed with9745aa1. Hosted full CI36770807934 passed. Release dry-run36770807953 passed its unchanged final Linux browser initial boot/reload gate and actual Mac/updater gates. This closes the observed hosted blocker without suppressing console errors. No new release was published by the dry-run.

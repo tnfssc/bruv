@@ -16,9 +16,9 @@ User asked for routine CI under one minute, requested Tavily research, and repea
 
 Release dry-runs36761523355 and36762688740 failed unchanged real browser gate with Tiptap view.dom before available. Not waived. Worker fixed real upstream controlled-selection lifecycle guard and reproduced4regression failures before/172focused passes after; actual never-mounted/destroyed Editor cases, both modes. Root/upstream typecheck and patched-source verification pass; packaged candidate passes unchanged browser gate. Exact hosted timing trigger remains unproven.
 
-Fix worker f01c77b integrated locally as c32a42b, not pushed yet. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_cacd84d1, branch die/investigate-hosted-editor-mount-failure-cacd84d1. See ../t3/composer-editor-startup-lifecycle.md. Parent should commit proof/values notes, push the browser fix, and monitor fresh hosted full CI+release dry-run. No new release dispatch needed or authorized for this follow-up. Browser work does not negate measured CI speed.
+Fix worker f01c77b integrated as c32a42b, pushed with proof/values commit9745aa1. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_cacd84d1, branch die/investigate-hosted-editor-mount-failure-cacd84d1. See ../t3/composer-editor-startup-lifecycle.md. Hosted CI36770807934 and release dry-run36770807953 both passed, including the unchanged final Linux browser boot/reload and actual Mac binary/updater gates; watchers task_7759c1e2 and task_98f0e9c0, logs /home/tnfssc/.die/ci-final-hosted.log and /home/tnfssc/.die/ci-browser-fix-hosted.log. Validation is complete. Publication was correctly skipped for the develop dry-run; no new release was made. No new release dispatch needed or authorized for this follow-up. Browser work does not negate measured CI speed.
 
-A gh query for full workflow runs at b08f5c4 is shell job task_3a0748f0 (may still run); inspect result. Current probe run36770502052 succeeded and PR11 is closed. No local installed die replacement.
+The b08f5c4 full-run query timed out at GitHub API; no success claim from that query. Current probe run36770502052 succeeded and PR11 is closed. No local installed die replacement.
 
 ## Pickup references
 
