@@ -1,0 +1,21 @@
+# Simplify the full CI path
+
+User saw full Linux CI7m09 and Release9m09 on the same change and rejected added complexity without speeding the default. On2026-09-30 they asked to fix it. Do not sell source46s as universal improvement.
+
+Decision: ordinary commits run CI once. Release packaging runs only on stable tag or explicit manual release. Remove develop release dry-runs and their now-unneeded cross-run reuse machinery, not add another artifact-sharing workflow. Preserve all actual release gates/manual version prep/publish checks. Pack embedded web once, then compile four targets from that verified same-run archive. No general remote artifact cache.
+
+Workers from e561bda: task_9548f76c owns workflow/trigger simplification in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_9548f76c, branch die/simplify-ci-and-release-triggers-9548f76c. task_0995ee59 owns pack-once in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_0995ee59, branch die/pack-embedded-web-once-for-release-targe-0995ee59. Proposed flag --reuse-packed-web. Prior task_9e9090d4 for shared full producer was cancelled before implementation; no changes to integrate.
+
+Parent: review pieces while focused checks run, integrate, prove only CI starts on develop push, and verify actual release flow without waiving gates. No extra full local cycles. Record code removed and actual hosted timings. Full high-risk CI still takes minutes; do not claim pack-once alone makes it under60s. Values already cover simple design and fast parallel delivery; no new value needed.
+
+## Correction after user challenged reward hacking
+
+The user wants faster normal work with dependable validation and less complexity, not a narrow comment-only benchmark or relevant checks moved out of sight. The earlier source46s tier was real but narrower coverage; calling the whole CI problem solved or saying no checks weakened overstated it. Treat that as a limited measurement, not acceptance.
+
+Ordinary executable changes must retain full validation until equivalent faster coverage is proven. Moving affected SDK/integration checks to nightly merely because they exceed the time budget is not an acceptable optimization. Docs may skip genuinely irrelevant builds. Use actual representative changed code/component inputs, compare coverage and elapsed/runner time, and measure complexity removed.
+
+Concrete work now: stop duplicated routine release packaging; exact web input/byte identity to reuse unchanged payload while still compiling/testing current CLI; bounded process shards of the COMPLETE root suite, with partition-union proof and all failures propagated. task_2a8c9cf8 owns new shard runner/tests in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_2a8c9cf8, branch die/speed-full-root-tests-without-dropping-c-2a8c9cf8. Workflow and pack workers received PARENT_VALIDATION_CONTRACT.md / PARENT_FULL_COVERAGE_GOAL.md. No broader success claim until real full-coverage hosted measurements.
+
+Workflow simplification5392c76+9217ce3 integrated locally as a65fb2d+f38b3d7. 369net lines removed; obsolete dry-run lookup/reuse tests deleted, source checks union retained. Not pushed yet. Narrow machinery removal task_fb9e3eb6 in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_fb9e3eb6, branch die/remove-narrow-selected-test-ci-machinery-fb9e3eb6, basef38b3d7; owns selector cleanup and CI docs/full routing, preserving actual remote CLI/PTy behavioral tests. Pack and complete-suite shard work remain parallel. Parent must integrate these, avoid duplicate backend/web tsc already performed by buildWeb, wire packed archive and shard commands once known, then run focused+hosted complete proof.
+
+Narrow-path removal a394db2 integrated425e107 (initial git signing hit full/tmp; continued with TMPDIR underhome). Parent found/fixed optional-head typing and restored regular-file mode checks plus no external diff/textconv. Real-Git docs regression covers dirty tree/missing baseline/mode drift; typecheck/focused task_879aee1e pending. Product remote CLI/PTy tests remain. This restores full executable coverage, deletes narrow runtime guard/scheduler/allowlist machinery, and makes prior46s result explicitly historical reduced-scope feedback.
