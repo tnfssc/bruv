@@ -14,7 +14,10 @@ import { packWebArchive } from "../src/t3/web/archive";
 
 const temporary: string[] = [];
 const originalSource = process.env.DIE_T3_SOURCE;
+const originalPath = process.env.PATH;
 afterEach(async () => {
+  if (originalPath === undefined) delete process.env.PATH;
+  else process.env.PATH = originalPath;
   if (originalSource === undefined) delete process.env.DIE_T3_SOURCE;
   else process.env.DIE_T3_SOURCE = originalSource;
   for (const path of temporary.splice(0)) await rm(path, { recursive: true, force: true });
@@ -23,7 +26,14 @@ async function fixture(links = false) {
   const root = await mkdtemp(resolve(tmpdir(), "die-packed-test-"));
   temporary.push(root);
   const source = resolve(root, "source");
+  const bin = resolve(root, "bin");
   await mkdir(source);
+  await mkdir(bin);
+  const pnpmVersion = resolve(root, "pnpm-version");
+  await Bun.write(pnpmVersion, "9.15.0\n");
+  await Bun.write(resolve(bin, "pnpm"), `#!/bin/sh\ncat "${pnpmVersion}"\n`);
+  await chmod(resolve(bin, "pnpm"), 0o755);
+  process.env.PATH = bin + ":" + (originalPath ?? "");
   const git = (...args: string[]) => execFileSync("git", ["-C", source, ...args], { encoding: "utf8" }).trim();
   git("init", "-q");
   await Bun.write(source + "/input", "original\n");
@@ -194,6 +204,14 @@ test("legacy repack invalidates receipt before it can fail", async () => {
     }),
   ).rejects.toThrow("repack failed");
   await expect(verifyPackedWeb(f.root)).rejects.toThrow();
+});
+
+test("pnpm version drift changes the packed input identity", async () => {
+  const f = await fixture();
+  const key = await packedWebInputKey(f.root);
+  await Bun.write(f.root + "/pnpm-version", "9.15.1\n");
+  expect(await packedWebInputKey(f.root)).not.toBe(key);
+  await expect(verifyPackedWeb(f.root)).rejects.toThrow("build inputs changed");
 });
 
 test("CLI-only edits do not change web content key or invalidate reuse", async () => {
