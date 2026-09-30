@@ -22,6 +22,23 @@ required where noted.
 Neither probe uses a source checkout or a hardcoded upstream pin. They are manual
 resource investigations, not automatically discovered release tests.
 
+## Packaged browser startup regression
+
+Launch a reviewed package with private HOME/cache/base-dir and `--no-browser`. Then:
+
+```bash
+T3_STARTUP_ACCEPT=1 T3_STARTUP_URL=http://127.0.0.1:<port> \
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright/index.mjs \
+PLAYWRIGHT_CHROMIUM_EXECUTABLE=/absolute/path/to/chromium \
+node --test integrations/t3/gates/startup.browser.test.mjs
+```
+
+This verifies two cold browser contexts and reloads against the actual embedded
+client and backend without model calls. It requires an explicitly isolated loopback
+server and installed browser tools; it does not install them. Production builds
+(including `--reuse-web`) also automatically reject cyclic static chunk graphs via
+`upstream/chunks-startup.test.mjs`. Asset-size checks alone do not prove startup.
+
 ## Canonical checkout identity
 
 ```bash

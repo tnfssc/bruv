@@ -38,7 +38,11 @@ deploy preserves native optional assets and the local package self-reference.
 
 Browser codecs and syntax data remain lazy: HEIC uses an external WASM worker;
 Shiki uses native Oniguruma WASM and JSON grammar assets instead of large JS
-wrappers. The original 500 kB JavaScript warning threshold is unchanged. Run
+wrappers. The original 500 kB JavaScript warning threshold is unchanged. Artificial vendor/size
+chunk groups are deliberately absent: they broke production initialization. A large
+shared chunk warning is preferable to a client that cannot boot. Both fresh and
+reused builds reject cyclic static emitted chunk graphs; the manual packaged browser
+startup regression is documented in `gates/README.md`. Run
 `T3_WEB_DIST=<source>/apps/web/dist node --test upstream/chunks*.test.mjs` from
 this directory after a production build. `upstream/heic.browser.test.mjs` also
 requires `T3_HEIC_SAMPLE`, `PLAYWRIGHT_MODULE`, and optionally

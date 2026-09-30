@@ -1,5 +1,10 @@
 # Installer source fixes and residual diagnostics (2026-09-27)
 
+> Startup correction: [v0.15.12 packaged browser failure](../t3/v01512-browser-startup.md).
+> The bounded vendor groups below later proved to break full browser startup.
+> Codec-only browser and HTTP probes did not cover mounting the application.
+> Those groups are now removed; the large-chunk warning is intentionally visible.
+
 Implemented, not audit-only. **Not an entirely diagnostic-free transcript:** two
 Rolldown plugin-timing advisories remain visible. No push, tag, publish, version
 bump, or change to v0.15.5 run 36302402467.

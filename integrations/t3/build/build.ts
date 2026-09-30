@@ -38,6 +38,13 @@ async function verifyPortableOptionalDependencies(output: string): Promise<void>
 }
 
 const root = resolve(import.meta.dir, "../../..");
+export function verifyWebChunks(clientDirectory: string): void {
+  execFileSync("node", ["--test", resolve(root, "integrations/t3/upstream/chunks-startup.test.mjs")], {
+    env: { ...process.env, T3_WEB_DIST: clientDirectory },
+    stdio: "inherit",
+  });
+}
+
 export async function buildWeb(): Promise<void> {
   const source = resolve(process.env.DIE_T3_SOURCE ?? root + "/.cache/die-t3code-" + sourcePin.revision);
   const output = resolve(root, "dist/die-web");
@@ -73,6 +80,9 @@ export async function buildWeb(): Promise<void> {
   await run([source + "/node_modules/.bin/tsc", "--noEmit"], source + "/apps/server");
   await run([source + "/node_modules/.bin/tsc", "--noEmit"], source + "/apps/web");
   await run(["pnpm", "--filter", "@t3tools/web", "build"]);
+  // Verify the emitted graph: source typechecks and asset sizes miss
+  // cyclic chunk initialization failures in the production browser graph.
+  verifyWebChunks(resolve(source, "apps/web/dist"));
   await run(["pnpm", "--filter", "t3", "build:bundle"]);
   await cp(source + "/apps/web/dist", source + "/apps/server/dist/client", { recursive: true });
   await rm(output, { recursive: true, force: true });

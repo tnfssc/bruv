@@ -17969,28 +17969,12 @@ index 1d710f27..53977ac5 100644
        thirdPartyLicensesPlugin({
          bundleName: "web",
          configFile: new URL("../../third-party-licenses.config.json", import.meta.url),
-@@ -282,6 +287,24 @@ export default defineConfig(() => {
+@@ -282,6 +287,8 @@ export default defineConfig(() => {
        emptyOutDir: true,
        manifest: true,
        sourcemap: buildSourcemap,
-+      rollupOptions: {
-+        output: {
-+          codeSplitting: {
-+            maxSize: 380_000,
-+            minShareCount: 1,
-+            groups: [
-+              { name: "thread-status", test: (id) => id.includes("/src/components/ThreadStatusIndicators"), maxSize: 340_000, entriesAware: true, includeDependenciesRecursively: false },
-+              { name: "command-palette", test: (id) => id.includes("/src/components/CommandPalette") || id.includes("/src/components/ThreadCommandSubtitle"), maxSize: 340_000, entriesAware: true, includeDependenciesRecursively: false },
-+              { name: "router", test: (id) => id.includes("/node_modules/@tanstack/router-core/") || id.includes("/node_modules/@tanstack/react-router/"), maxSize: 340_000, entriesAware: true, includeDependenciesRecursively: false },
-+              { name: "calendar", test: (id) => id.includes("/node_modules/date-fns/") || id.includes("/node_modules/@date-fns/") || id.includes("/node_modules/@daypicker/"), maxSize: 300_000, entriesAware: true, includeDependenciesRecursively: false },
-+              { name: "git-controls", test: (id) => id.includes("/src/components/GitActionsControl") || id.includes("/src/components/BranchToolbar"), maxSize: 320_000, entriesAware: true, includeDependenciesRecursively: false },
-+              { name: "contracts", test: (id) => id.includes("/packages/contracts/src/"), maxSize: 300_000, entriesAware: true, includeDependenciesRecursively: false },
-+              { name: "floating-ui", test: (id) => id.includes("/node_modules/@floating-ui/") || id.includes("/node_modules/@base-ui/react/"), maxSize: 300_000, entriesAware: true, includeDependenciesRecursively: false },
-+              { name: "effect", test: (id) => id.includes("/node_modules/effect/dist/"), maxSize: 350_000, entriesAware: true, includeDependenciesRecursively: false },
-+            ],
-+          },
-+        },
-+      },
++      // Let Rolldown preserve module initialization order. Artificial vendor/size
++      // groups introduced cyclic chunks with uninitialized Effect/schema/UI bindings.
      },
      test: {
        projects: [defineProject(unitTestProject)],
