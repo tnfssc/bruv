@@ -1,5 +1,7 @@
 # Full root tests in parallel
 
+Current shared hosted gate budgets three native root workers plus one web worker. Four-root standalone proof below is historical; the earlier four-root plus two-web overlap exposed timing fixtures under load. No deadline or product assertion was relaxed. Root clock/child-event fixtures now control the intended ordering explicitly.
+
 Use the pinned Bun1.4.2 native runner: `DIE_RUN_LLM_TESTS=0 bun test --parallel=4 ./tests`. It keeps Bun discovery, assertions, timeouts and existing opt-in skips. Do not maintain a separate file allowlist or partial-test tier. CI still owns prerequisites/build once, all web checks and smoke.
 
 The custom runner worker measured one vsfour processes with unchanged coverage (proof below). Parent then checked `bun test --help` and found native --parallel support. One full native run on current parent tree passed1420/skipped20/failed0 across203files in51.77s, log /home/tnfssc/.die/ci-native-parallel-proof.log. That tree includes5tests of the now-unneeded custom runner; deleting those removes obsolete machinery tests, not product checks. Native timing had no CPU affinity cap and cannot be compared as a controlled ratio with the worker four-CPU table. Neither result includes hosted setup, build or web checks.
