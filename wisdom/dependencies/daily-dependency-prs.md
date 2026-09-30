@@ -1,3 +1,5 @@
+> Hosted acceptance complete: real product PR [#9](https://github.com/tnfssc/die/pull/9) created, reviewed, and updated in place by two successful runs. A failed run preserved its old head. See [exact evidence and limits](hosted-pr-acceptance.md#reuse-and-failure-path-verified).
+
 # Daily dependency PRs — custom workflow (2026-09-30)
 
 The user superseded the Dependabot design below: use our daily + manual GitHub Actions workflow, attempt all root updates including aligned Pi, and let breaking changes visibly fail for human repair. Do not automate SDK hash changes or migrations. The active owner is `.github/workflows/dependency-updates.yml`; root Dependabot config is removed.
