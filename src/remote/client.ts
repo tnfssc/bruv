@@ -1,3 +1,4 @@
+// CI timing probe: exercise the audited remote-source feedback tier.
 import { serviceRemoteTask } from "./services";
 import { Database } from "bun:sqlite";
 import { randomUUID } from "node:crypto";
