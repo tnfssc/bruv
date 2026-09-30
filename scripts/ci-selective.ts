@@ -1,3 +1,11 @@
+import {
+  classifyRemoteChange,
+  remoteSourceCommands,
+  remoteTests,
+  processSourceTests,
+  fullTierConsumers,
+  reverseSourceTests,
+} from "./ci-remote-source";
 import { spawnSync } from "node:child_process";
 import { appendFileSync, mkdirSync, writeFileSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -53,7 +61,7 @@ export function isDoc(path: string): boolean {
     /^wisdom\/(?:ci|quality|live|remote-workspaces|dependencies|configuration)\/[a-z0-9][a-z0-9-]*\.md$/.test(path)
   );
 }
-export function select(changes: Change[], blocker?: string) {
+export function select(changes: Change[], blocker?: string, base?: string) {
   const decisions: Decision[] = changes.map((change) => {
     const path = change.paths[0];
     if (!["A", "M"].includes(change.status) || change.paths.length !== 1)
@@ -69,6 +77,13 @@ export function select(changes: Change[], blocker?: string) {
             "exact audited source/test class; select listed direct-consumer and source contracts (not complete CLI/artifact validation)",
         };
     }
+    const remote = classifyRemoteChange({ path, status: change.status });
+    if (remote !== "full")
+      return {
+        ...change,
+        selected: remote === "reference" ? "docs" : "remote-source",
+        reason: "audited remote subsystem source feedback; compiled and broad SDK consumers remain full-tier",
+      };
     return {
       ...change,
       selected: "full",
@@ -82,8 +97,19 @@ export function select(changes: Change[], blocker?: string) {
   ].filter((s): s is string => !!s);
   const full = reasons.length > 0;
   const selected = [...new Set(decisions.map((d) => d.selected).filter((s) => s !== "docs" && s !== "full"))].sort();
-  const tests = [...new Set(selected.flatMap((s) => [...classes[s as keyof typeof classes].tests]))].sort();
+  const tests = [
+    ...new Set(
+      selected.flatMap((s) =>
+        s === "remote-source" ? [...remoteTests, ...processSourceTests] : [...classes[s as keyof typeof classes].tests],
+      ),
+    ),
+  ].sort();
   const files = [...new Set(changes.flatMap((c) => c.paths).filter((p) => p.endsWith(".ts")))].sort();
+  const remoteCommands = selected.includes("remote-source")
+    ? remoteSourceCommands(base ?? "0".repeat(40), "bun")
+        .slice(1)
+        .map((c) => c.argv)
+    : [];
   const commands = full
     ? [["bash", "scripts/ci.sh", "linux"]]
     : selected.length
@@ -93,8 +119,23 @@ export function select(changes: Change[], blocker?: string) {
           ["node_modules/.bin/biome", "format", ...files],
           ["node_modules/.bin/biome", "lint", ...files],
           ["bun", "run", "check"],
-          ["bun", "test", "./tests/ci-selective.test.ts"],
-          ["bun", "test", ...tests.map((p) => `./${p}`)],
+          ["bun", "test", "./tests/ci-selective.test.ts", "./tests/ci-remote-source.test.ts"],
+          ...(remoteCommands.length ? remoteCommands : [["bun", "test", ...tests.map((p) => `./${p}`)]]),
+          ...(remoteCommands.length && selected.some((s) => s !== "remote-source")
+            ? [
+                [
+                  "bun",
+                  "test",
+                  ...[
+                    ...new Set(
+                      selected
+                        .filter((s) => s !== "remote-source")
+                        .flatMap((s) => [...classes[s as keyof typeof classes].tests]),
+                    ),
+                  ].map((p) => `./${p}`),
+                ],
+              ]
+            : []),
           ["bun", "test", "./tests/pi-host.test.ts", "--test-name-pattern", "^source CLI"],
         ]
       : [["bun", "test", "./tests/ci-selective.test.ts"]];
@@ -104,6 +145,8 @@ export function select(changes: Change[], blocker?: string) {
     full,
     selected: full ? [] : selected,
     tests: full ? [] : tests,
+    affectedSourcePopulation: selected.includes("remote-source") ? [...reverseSourceTests] : [],
+    fullTierRemoteConsumers: selected.includes("remote-source") ? [...fullTierConsumers] : [],
     sourceCliContracts:
       !full && selected.length
         ? [
@@ -199,7 +242,7 @@ export function plan(cwd: string, base?: string, head = "HEAD") {
           blocker = `direct unit test gained unaudited dependency/IO: ${entry.tests[0]}`;
       }
     }
-    return { ...select(changes, blocker), base: baseSha, head: headSha };
+    return { ...select(changes, blocker, baseSha), base: baseSha, head: headSha };
   } catch (error) {
     return { ...select(changes, error instanceof Error ? error.message : String(error)), base: baseSha, head: headSha };
   }

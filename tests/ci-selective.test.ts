@@ -75,13 +75,14 @@ describe("conservative union selection", () => {
     expect(p.commands.some((c) => c.includes("--frozen-lockfile"))).toBe(true);
     expect(p.commands.some((c) => c.includes("check"))).toBe(true);
   });
-  test("only audited direct unit test changes are fast", () => {
+  test("only audited direct or subsystem test changes are fast", () => {
     for (const c of Object.values(classes)) expect(select([change(c.tests[0])]).mode).toBe("selected");
-    expect(select([change("tests/remote-extension.test.ts")]).full).toBe(true);
+    expect(select([change("tests/remote-extension.test.ts")]).selected).toEqual(["remote-source"]);
+    expect(select([change("tests/remote-new.test.ts")]).full).toBe(true);
   });
   test("unknowns, fixtures, shared, build, dependencies, workflow and selector always override", () => {
     for (const path of [
-      "src/remote/client.ts",
+      "src/remote/new.ts",
       "src/live/extension.ts",
       "src/new.ts",
       "src/ui/footer.ts",
@@ -407,4 +408,37 @@ test("direct unit tests reject opaque imports on both base and head", () => {
       expect(plan(r.cwd, head, base).full).toBe(true);
     }
   }
+});
+
+test("remote subsystem commands use the resolved cumulative base and preserve full exclusions", () => {
+  const base = "a".repeat(40);
+  const p = select([change("src/remote/client.ts"), change("README.md")], undefined, base);
+  expect(p.mode).toBe("selected");
+  expect(p.selected).toEqual(["remote-source"]);
+  expect(p.tests).toContain("tests/ci-remote-cli-source.test.ts");
+  expect(p.commands.some((c) => c.includes("--changed=" + base))).toBe(true);
+  expect(p.commands.some((c) => c.includes("./tests/ci-remote-source.test.ts"))).toBe(true);
+  expect(p.fullTierRemoteConsumers).toContain("tests/remote-e2e.test.ts");
+  expect(p.commands.flat()).not.toContain("tests/remote-e2e.test.ts");
+  expect(select([change("src/remote/client.ts"), change("src/cli.ts")], undefined, base).full).toBe(true);
+  for (const status of ["D", "R100", "T"])
+    expect(select([change("src/remote/client.ts", status)], undefined, base).full).toBe(true);
+  const union = select([change("src/remote/client.ts"), change(classes.waveform.source)], undefined, base);
+  expect(union.selected).toEqual(["remote-source", "waveform"]);
+  expect(union.commands.some((c) => c.includes("./tests/live-waveform.test.ts"))).toBe(true);
+});
+
+test("remote plan resolves symbolic base before affected-test execution", () => {
+  const r = repo();
+  r.put("src/remote/client.ts", "export const state = 1;");
+  const base = r.commit();
+  r.put("src/remote/client.ts", "export const state = 2;");
+  const head = r.commit();
+  const p = plan(r.cwd, "HEAD^", "HEAD");
+  expect(p.base).toBe(base);
+  expect(p.head).toBe(head);
+  expect(p.selected).toEqual(["remote-source"]);
+  expect(p.commands.some((c) => c.includes("--changed=" + base))).toBe(true);
+  expect(p.commands.flat()).not.toContain("--changed=HEAD^");
+  expect(p.affectedSourcePopulation).toContain("tests/job-service.test.ts");
 });

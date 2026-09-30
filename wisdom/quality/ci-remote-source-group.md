@@ -147,3 +147,11 @@ and the above behaviors; hosted p95 and parent integration remain to be proved.
 Values unchanged: existing truth-of-proof, ownership, bounded execution and
 simplest-working-design values already cover this lesson. This note records
 specific evidence and limits, not another general value.
+
+## Parent integration policy
+
+Integrated helper commit9486685 as6482461. Parent wires source/reference decisions into the existing selector, uses resolved cumulative base for Bun --changed, unions mixed classes, keeps status/revision/mode/unknown fallbacks, and runs source-tier policy tests with installed dependencies. Docs-only runs remain dependency-free selector tests. Fresh Pi assets are prepared once by the common runner (typecheck preparation is idempotent). Source-only pi-host variants remain an additional parent-selected boundary.
+
+The worker recommended an enforced full premerge gate. Current product decision instead exposes an honestly named selected-feedback tier and CI policy; it does not claim complete premerge/artifact proof. No branch protection was changed (repo had none). Unknown/high-risk changes, scheduled/manual CI and actual releases still run full validation. This deliberate separation is needed for routine fast feedback; a green selected lane must not be described as all tests passing.
+
+The worker typecheck gap was an old base fixture and is fixed in parent. Hosted proof is pending.
