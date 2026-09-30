@@ -112,7 +112,9 @@ describe("release automation", () => {
       );
       for (const cache of caches) {
         expect(cache.with?.key).toContain("${{ runner.os }}-${{ runner.arch }}");
-        expect(cache.with?.["restore-keys"]).toBeUndefined();
+        expect(cache.with?.["restore-keys"]).toMatch(
+          /^(bun-1\.4\.2|pnpm-11\.10\.0)-\$\{\{ runner.os \}\}-\$\{\{ runner.arch \}\}-$/,
+        );
         expect(cache.with?.path).not.toMatch(/node_modules|dist|HOME/);
       }
     }
@@ -248,7 +250,11 @@ describe("release automation", () => {
       "needs.release.result == 'success' || needs.reuse-assets.result == 'success'",
     );
     const browserCommands = workflow.jobs["linux-browser-boot"]!.steps.map((step) => step.run ?? "").join("\n");
-    expect(browserCommands).toContain("install --with-deps chromium");
+    expect(browserCommands).toContain("bash scripts/setup-release-browser.sh");
+    const setup = await read("scripts/setup-release-browser.sh");
+    expect(setup).toContain("playwright-core@1.60.0");
+    expect(setup).toContain("install --only-shell chromium");
+    expect(setup).toContain("install-deps chromium");
     expect(browserCommands).toContain("bun integrations/t3/gates/release-browser-boot.ts dist/release/die-linux-x64");
     const macCommands = workflow.jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");
     expect(macCommands).toContain("verify-v071-update.ts");

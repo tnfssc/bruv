@@ -31,6 +31,7 @@ jobs:
         with:
           bun-version: 1.4.2
       # Only download stores: never restore node_modules, patched source, dist, or credentials.
+      # Partial-key download hits are safe: frozen installs and source verification still run.
       - name: Configure package download stores
         shell: bash
         run: |
@@ -41,12 +42,14 @@ jobs:
         with:
           path: ${{ runner.temp }}/die-bun-cache
           key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
       - name: Cache pinned T3 pnpm package store
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/die-pnpm-store
           # The source pin includes its upstream lockfile; the patch can change its dependencies.
           key: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch') }}
+          restore-keys: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y tmux
@@ -81,6 +84,7 @@ jobs:
         with:
           path: ${{ runner.temp }}/die-bun-cache
           key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
         run: brew install tmux
       # Source-only probe and fake Live tests; does not replace Linux build checks.

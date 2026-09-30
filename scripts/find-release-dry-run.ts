@@ -86,7 +86,8 @@ export async function findDryRun(
 if (import.meta.main) {
   const run = await findDryRun(
     process.env.GITHUB_REPOSITORY ?? "",
-    process.env.GITHUB_SHA ?? "",
+    // Manual preparation can commit version/notes after the dispatch SHA.
+    process.env.RELEASE_SHA ?? process.env.GITHUB_SHA ?? "",
     process.env.GH_TOKEN ?? "",
   );
   if (run) process.stdout.write(String(run));

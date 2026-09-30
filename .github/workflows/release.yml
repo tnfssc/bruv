@@ -51,8 +51,9 @@ jobs:
           echo "Prepared $tag at $(git rev-parse HEAD); publication waits for all release gates." >> "$GITHUB_STEP_SUMMARY"
 
   reuse-check:
-    name: Find successful develop dry run at tag commit
-    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-') }}
+    name: Find successful develop dry run at exact release commit
+    needs: prepare-manual
+    if: ${{ always() && (github.event_name == 'workflow_dispatch' && needs.prepare-manual.result == 'success' || github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-')) }}
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -61,12 +62,15 @@ jobs:
       run_id: ${{ steps.lookup.outputs.run_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.prepare-manual.outputs.sha || github.sha }}
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.2
       - id: lookup
         name: Look up verified assets
         env:
+          RELEASE_SHA: ${{ needs.prepare-manual.outputs.sha || github.sha }}
           GH_TOKEN: ${{ github.token }}
         run: |
           run_id=$(bun scripts/find-release-dry-run.ts)
@@ -135,6 +139,7 @@ jobs:
         with:
           bun-version: 1.4.2
       # Only download stores: never restore node_modules, patched source, dist, or credentials.
+      # Partial-key download hits are safe: frozen installs and source verification still run.
       - name: Configure package download stores
         shell: bash
         run: |
@@ -145,12 +150,14 @@ jobs:
         with:
           path: ${{ runner.temp }}/die-bun-cache
           key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
       - name: Cache pinned T3 pnpm package store
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/die-pnpm-store
           # The source pin includes its upstream lockfile; the patch can change its dependencies.
           key: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch') }}
+          restore-keys: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-
       - name: Resolve pinned T3 source checkout
         shell: bash
         run: echo "DIE_T3_SOURCE=$GITHUB_WORKSPACE/.cache/die-t3code-$(bun -e 'console.log(require("./integrations/t3/upstream/source.json").revision)')" >> "$GITHUB_ENV"
@@ -288,14 +295,19 @@ jobs:
 
   reuse-assets:
     name: Stage assets from verified develop dry run
-    if: ${{ needs.reuse-check.outputs.run_id != '' }}
-    needs: reuse-check
+    if: ${{ always() && needs.reuse-check.result == 'success' && needs.reuse-check.outputs.run_id != '' }}
+    needs: [reuse-check, prepare-manual]
     runs-on: ubuntu-24.04
+    env:
+      RELEASE_SHA: ${{ needs.prepare-manual.outputs.sha || github.sha }}
+      RELEASE_TAG: ${{ needs.prepare-manual.outputs.tag || github.ref_name }}
     permissions:
       contents: read
       actions: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.prepare-manual.outputs.sha || github.sha }}
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: stable-release-assets
@@ -306,13 +318,13 @@ jobs:
         with:
           bun-version: 1.4.2
       - name: Validate tag matches package version
-        run: bun scripts/validate-release-tag.ts "$GITHUB_REF_NAME"
+        run: bun scripts/validate-release-tag.ts "$RELEASE_TAG"
       - name: Verify downloaded staged files
         shell: bash
         run: |
           cd dist/release
-          grep -Fx "Commit: $GITHUB_SHA" SOURCE.txt
-          grep -Fx "Tag: $GITHUB_REF_NAME" SOURCE.txt
+          grep -Fx "Commit: $RELEASE_SHA" SOURCE.txt
+          grep -Fx "Tag: $RELEASE_TAG" SOURCE.txt
           for binary in die-linux-x64 die-linux-arm64 die-darwin-arm64 die-android-arm64; do
             test -s "$binary"
             test -s "$binary.sha256"
@@ -343,16 +355,14 @@ jobs:
         with:
           name: stable-release-assets
           path: dist/release
+      - name: Cache pinned Chromium harness downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/release-browser/chromium
+          key: playwright-1.60.0-ubuntu24.04-headless-${{ runner.os }}-${{ runner.arch }}
       - name: Install isolated browser harness
         shell: bash
-        run: |
-          export PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/release-browser/chromium"
-          echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
-          echo "RELEASE_BOOT_PLAYWRIGHT=$RUNNER_TEMP/release-browser/node_modules/playwright-core/index.mjs" >> "$GITHUB_ENV"
-          mkdir -p "$RUNNER_TEMP/release-browser"
-          printf '{"private":true}\n' > "$RUNNER_TEMP/release-browser/package.json"
-          bun add --cwd "$RUNNER_TEMP/release-browser" playwright-core@1.60.0
-          bun "$RUNNER_TEMP/release-browser/node_modules/playwright-core/cli.js" install --with-deps chromium
+        run: bash scripts/setup-release-browser.sh
       - name: Require real UI from final Linux binary, then reload
         shell: bash
         run: |
