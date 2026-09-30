@@ -1,3 +1,4 @@
+import { invalidatePackedWeb, recordVerifiedPackedWeb } from "../../../scripts/packed-web";
 import { execFileSync } from "node:child_process";
 import { access, cp, mkdir, readdir, readFile, rm, symlink } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -46,6 +47,7 @@ export function verifyWebChunks(clientDirectory: string): void {
 }
 
 export async function buildWeb(): Promise<void> {
+  await invalidatePackedWeb(root);
   const source = resolve(process.env.DIE_T3_SOURCE ?? root + "/.cache/die-t3code-" + sourcePin.revision);
   const output = resolve(root, "dist/die-web");
   const patch = resolve(root, "integrations/t3/upstream/die.patch");
@@ -109,6 +111,7 @@ export async function buildWeb(): Promise<void> {
   );
   const archive = resolve(root, "dist/die-web.archive.gz");
   const hash = await packWebArchive(output, archive, { exclude: ["launcher.mjs", "t3"] });
+  await recordVerifiedPackedWeb(root, source);
   console.log("Built " + archive + " (sha256 " + hash + ")");
 }
 
