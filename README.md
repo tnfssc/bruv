@@ -110,3 +110,5 @@ Type `/live` in the local terminal to start talking; type it again to stop. Choo
 Use `/live setup` to check provider credentials. OpenAI Live requires a configured OpenAI API key; Codex OAuth alone is not sufficient. Keys stay out of chat. `/live stop` ends voice, not your agent’s jobs. Speech interruption does not cancel work; ask explicitly to stop work. GPT-Live speech transcripts remain provisional, and ambiguous requests may require clarification.
 
 For troubleshooting, use `/live status`, `/live mic-check`, or `/live speaker-check`. The checks ask before opening devices and do not connect to Google. The speaker check plays a short test sound; it is not proof that speech echo or interruptions work on every route. `die --live-self-test` checks the embedded helper without opening devices.
+
+<!-- Hosted CI timing probe: docs-only classification; no rendered content change. -->
