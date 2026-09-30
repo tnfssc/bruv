@@ -131,3 +131,11 @@ Source selected commands sum to 34.743s; install --frozen-lockfile took 0.794s (
 Both runs executed plan and selected-run commands `bun scripts/ci-selective.ts --base "$BASE"` (selected execution adds `--run`) and CI policy required feedback success with mode selected/docs, full=false, and both full producers skipped. Logs inspected, including actual emitted commands above; no test failures or policy workarounds. API snapshots and complete logs retained locally at `/tmp/ci-timing-b43e6c1d/` (temporary, run URLs above are hosted evidence).
 
 Local shell startup emitted an untrusted mise.toml warning; no trust/config change performed. Git SSH printed an unsupported id_rsa warning but pushes and remote verification succeeded via available authentication. No local Bun execution was required.
+
+## Parallel follow-up: 46 seconds
+
+Run https://github.com/tnfssc/die/actions/runs/36770502052 on draft PR11. Base b08f5c4bd574da41ebcbc85c2c9bbdba05a2b9c0; source probe cbbb31cc0784ab0983d3ae9e63cf452dfe689229 adds only a comment to src/remote/client.ts. Correctly selected remote-source. Created2026-09-30T20:08:14Z; completed/updated20:09:00Z: **46s end-to-end**. Feedback job35s (20:08:18–20:08:53), policy4s (20:08:56–20:09:00), includes scheduling/setup/teardown. Full Linux/macOS skipped by selected policy. PR closed without merge; branch/worktree retained.
+
+All same selected commands ran. Frozen install965ms, preparation28ms, format280ms, lint75ms, typecheck2115ms, selector/policy tests3515ms. Three overlapping processes exited0/0/0: remote group21957ms, affected reverse6354ms, source CLI contracts7936ms. This is one hosted follow-up, not p95. The14s end-to-end improvement over60s includes scheduling variance; do not attribute all14s to overlap. Local controlled comparisons measured6.4–8.2s savings.
+
+This demonstrates under-minute source feedback for the audited remote tier. Docs previously20s. Other shared/high-risk/unknown classes still take full validation; historical candidate coverage is not a claim all historical commits were tested. Logs: /home/tnfssc/.die/ci-parallel-source-probe.log.
