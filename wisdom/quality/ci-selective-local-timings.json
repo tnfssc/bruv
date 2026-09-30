@@ -1,0 +1,165 @@
+{
+  "context": "no dist, regenerated assets, preexisting root deps via symlink, frozen install excluded (not authorized), Bun 1.4.2 local Linux",
+  "records": [
+    {
+      "name": "remote",
+      "ms": 8318,
+      "steps": [
+        {
+          "command": ["bun", "run", "prepare:assets"],
+          "ms": 22,
+          "exitCode": 0
+        },
+        {
+          "command": ["node_modules/.bin/biome", "format", "src/remote/human-rendering.ts"],
+          "ms": 49,
+          "exitCode": 0
+        },
+        {
+          "command": ["node_modules/.bin/biome", "lint", "src/remote/human-rendering.ts"],
+          "ms": 76,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "run", "check"],
+          "ms": 1200,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "test", "./tests/ci-selective.test.ts"],
+          "ms": 1566,
+          "exitCode": 0
+        },
+        {
+          "command": [
+            "bun",
+            "test",
+            "./tests/live-spoken-tui.test.ts",
+            "./tests/remote-extension.test.ts",
+            "./tests/remote-human-rendering.test.ts",
+            "./tests/remote-session-switch.test.ts"
+          ],
+          "ms": 1382,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "test", "./tests/pi-host.test.ts", "--test-name-pattern", "^source CLI"],
+          "ms": 4021,
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "waveform",
+      "ms": 21994,
+      "steps": [
+        {
+          "command": ["bun", "run", "prepare:assets"],
+          "ms": 19,
+          "exitCode": 0
+        },
+        {
+          "command": ["node_modules/.bin/biome", "format", "src/live/waveform.ts"],
+          "ms": 49,
+          "exitCode": 0
+        },
+        {
+          "command": ["node_modules/.bin/biome", "lint", "src/live/waveform.ts"],
+          "ms": 49,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "run", "check"],
+          "ms": 1201,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "test", "./tests/ci-selective.test.ts"],
+          "ms": 1519,
+          "exitCode": 0
+        },
+        {
+          "command": [
+            "bun",
+            "test",
+            "./tests/footer.test.ts",
+            "./tests/live-extension.test.ts",
+            "./tests/live-gpt-tui.test.ts",
+            "./tests/live-host-access.test.ts",
+            "./tests/live-main-integration.test.ts",
+            "./tests/live-notice.test.ts",
+            "./tests/live-picker-tui.test.ts",
+            "./tests/live-spoken-tui.test.ts",
+            "./tests/live-waveform.test.ts"
+          ],
+          "ms": 15207,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "test", "./tests/pi-host.test.ts", "--test-name-pattern", "^source CLI"],
+          "ms": 3946,
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "union",
+      "ms": 23039,
+      "steps": [
+        {
+          "command": ["bun", "run", "prepare:assets"],
+          "ms": 21,
+          "exitCode": 0
+        },
+        {
+          "command": ["node_modules/.bin/biome", "format", "src/live/waveform.ts", "src/remote/human-rendering.ts"],
+          "ms": 140,
+          "exitCode": 0
+        },
+        {
+          "command": ["node_modules/.bin/biome", "lint", "src/live/waveform.ts", "src/remote/human-rendering.ts"],
+          "ms": 75,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "run", "check"],
+          "ms": 1254,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "test", "./tests/ci-selective.test.ts"],
+          "ms": 1570,
+          "exitCode": 0
+        },
+        {
+          "command": [
+            "bun",
+            "test",
+            "./tests/footer.test.ts",
+            "./tests/live-extension.test.ts",
+            "./tests/live-gpt-tui.test.ts",
+            "./tests/live-host-access.test.ts",
+            "./tests/live-main-integration.test.ts",
+            "./tests/live-notice.test.ts",
+            "./tests/live-picker-tui.test.ts",
+            "./tests/live-spoken-tui.test.ts",
+            "./tests/live-waveform.test.ts",
+            "./tests/remote-extension.test.ts",
+            "./tests/remote-human-rendering.test.ts",
+            "./tests/remote-session-switch.test.ts"
+          ],
+          "ms": 15808,
+          "exitCode": 0
+        },
+        {
+          "command": ["bun", "test", "./tests/pi-host.test.ts", "--test-name-pattern", "^source CLI"],
+          "ms": 4168,
+          "exitCode": 0
+        }
+      ]
+    }
+  ],
+  "measuredAt": "2026-09-30",
+  "selectorTests": "24 passing",
+  "hostedP95": "unknown"
+}
