@@ -203,16 +203,16 @@ describe("release automation", () => {
     expect(workflow).toContain("Embedded T3 Code source:");
     expect(workflow).toContain("Patch-SHA256:");
     expect(workflow).toContain(
-      "bun run build -- --reuse-web --target=bun-linux-x64-baseline --outfile=./dist/release/die-linux-x64",
+      "bun run build -- --reuse-packed-web --target=bun-linux-x64-baseline --outfile=./dist/release/die-linux-x64",
     );
     expect(workflow).toContain(
-      "bun run build -- --reuse-web --target=bun-linux-arm64 --outfile=./dist/release/die-linux-arm64",
+      "bun run build -- --reuse-packed-web --target=bun-linux-arm64 --outfile=./dist/release/die-linux-arm64",
     );
     expect(workflow).toContain(
-      "bun run build -- --reuse-web --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/die-darwin-arm64",
+      "bun run build -- --reuse-packed-web --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/die-darwin-arm64",
     );
     expect(workflow).toContain(
-      "bun run build -- --reuse-web --target=bun-android-arm64 --outfile=./dist/release/die-android-arm64",
+      "bun run build -- --reuse-packed-web --target=bun-android-arm64 --outfile=./dist/release/die-android-arm64",
     );
     expect(workflow).not.toContain("die-web-linux-x64.tar.gz");
     expect(workflow).not.toContain("Package web sidecar");

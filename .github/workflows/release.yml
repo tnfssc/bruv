@@ -177,15 +177,15 @@ jobs:
         run: |
           test -s artifacts/release/mac-helper/live-audio
           file artifacts/release/mac-helper/live-audio | grep -E 'Mach-O 64-bit (executable arm64|arm64 executable)'
-      # TODO(parent): switch final target builds to --reuse-packed-web once the pack-once interface lands.
+      # The initial fresh build owns web preparation; target builds only verify and embed its archive.
       - name: Build release binaries with embedded web application
         shell: bash
         run: |
-          bun run build -- --reuse-web --target=bun-linux-x64-baseline --outfile=./dist/release/die-linux-x64 2>&1 | tee artifacts/release/build-linux-x64.log
+          bun run build -- --reuse-packed-web --target=bun-linux-x64-baseline --outfile=./dist/release/die-linux-x64 2>&1 | tee artifacts/release/build-linux-x64.log
           test "$(./dist/release/die-linux-x64 --version)" = "$(bun -p 'require("./package.json").version')"
-          bun run build -- --reuse-web --target=bun-linux-arm64 --outfile=./dist/release/die-linux-arm64 2>&1 | tee artifacts/release/build-linux-arm64.log
-          bun run build -- --reuse-web --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/die-darwin-arm64 2>&1 | tee artifacts/release/build-darwin-arm64.log
-          bun run build -- --reuse-web --target=bun-android-arm64 --outfile=./dist/release/die-android-arm64 2>&1 | tee artifacts/release/build-android-arm64.log
+          bun run build -- --reuse-packed-web --target=bun-linux-arm64 --outfile=./dist/release/die-linux-arm64 2>&1 | tee artifacts/release/build-linux-arm64.log
+          bun run build -- --reuse-packed-web --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/die-darwin-arm64 2>&1 | tee artifacts/release/build-darwin-arm64.log
+          bun run build -- --reuse-packed-web --target=bun-android-arm64 --outfile=./dist/release/die-android-arm64 2>&1 | tee artifacts/release/build-android-arm64.log
           chmod 0755 ./dist/release/die-linux-x64 ./dist/release/die-linux-arm64 ./dist/release/die-darwin-arm64 ./dist/release/die-android-arm64
       - name: Generate production dependency notices
         shell: bash
