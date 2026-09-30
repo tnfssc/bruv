@@ -1,3 +1,4 @@
+// Hosted CI timing probe: remote-source classification; no runtime behavior change.
 import { serviceRemoteTask } from "./services";
 import { Database } from "bun:sqlite";
 import { randomUUID } from "node:crypto";
