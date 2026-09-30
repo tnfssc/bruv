@@ -1,57 +1,95 @@
 import { describe, expect, test } from "bun:test";
-import { resolve } from "node:path";
+import { markdownVersionSummary, selectDependencyNames, validatePiAlignment } from "../scripts/update-dependencies";
 
-const root = resolve(import.meta.dir, "..");
-const read = (path: string) => Bun.file(resolve(root, path)).text();
+const manifest = {
+  dependencies: {
+    "@earendil-works/pi-ai": "0.99.1",
+    "@earendil-works/pi-server": "0.99.1",
+    exact: "1.2.3",
+    major: "^1.0.0",
+    "resolve.exports": "2.0.2",
+  },
+  devDependencies: {
+    "@earendil-works/pi-tui": "0.99.1",
+    "@types/bun": "1.4.2",
+    typescript: "7.0.2",
+    exact: "1.2.3",
+  },
+};
 
-describe("daily dependency PRs", () => {
-  test("native Bun updates are daily, root-only, grouped, and target develop", async () => {
-    const config = Bun.YAML.parse(await read(".github/dependabot.yml")) as {
-      version: number;
-      updates: Record<string, unknown>[];
-    };
-    expect(config.version).toBe(2);
-    expect(config.updates).toHaveLength(1);
-    expect(config.updates[0]).toEqual({
-      "package-ecosystem": "bun",
-      directory: "/",
-      "target-branch": "develop",
-      schedule: { interval: "daily", time: "06:00", timezone: "Etc/UTC" },
-      "open-pull-requests-limit": 1,
-      groups: { "root-bun-dependencies": { patterns: ["*"] } },
-      ignore: [{ "dependency-name": "@earendil-works/pi-*" }],
-    });
-    expect(await Bun.file(resolve(root, "bun.lock")).exists()).toBe(true);
-    expect(await Bun.file(resolve(root, "bun.lockb")).exists()).toBe(false);
+describe("root dependency updater", () => {
+  test("selects all root names including exact, major and Pi pins, excluding the Bun toolchain", () => {
+    expect(selectDependencyNames(manifest)).toEqual([
+      "@earendil-works/pi-ai",
+      "@earendil-works/pi-server",
+      "@earendil-works/pi-tui",
+      "exact",
+      "major",
+      "resolve.exports",
+      "typescript",
+    ]);
+    expect(selectDependencyNames({})).toEqual([]);
   });
 
-  test("all checked Pi packages remain excluded from blind updates", async () => {
-    const manifest = JSON.parse(await read("package.json"));
-    const pi = Object.entries(manifest.dependencies).filter(([name]) => name.startsWith("@earendil-works/pi-"));
-    expect(pi).toHaveLength(4);
-    for (const [, version] of pi) expect(version).toBe("0.99.1");
-    const prepare = await read("scripts/prepare-assets.ts");
-    expect(prepare).toContain('piPackage.version !== "0.99.1"');
-    expect(prepare).toContain('createHash("sha256")');
+  test("validates Pi alignment across both root dependency sections", () => {
+    expect(() => validatePiAlignment(manifest)).not.toThrow();
+    expect(() => validatePiAlignment({})).not.toThrow();
+    expect(() =>
+      validatePiAlignment({
+        ...manifest,
+        devDependencies: { "@earendil-works/pi-tui": "0.100.0" },
+      }),
+    ).toThrow("not aligned");
+    expect(() => validatePiAlignment({ dependencies: { "other/pi-ai": "1", "other/pi-server": "2" } })).not.toThrow();
   });
 
-  test("Dependabot PRs use existing read-only, secret-free CI", async () => {
-    const ci = Bun.YAML.parse(await read(".github/workflows/ci.yml")) as {
-      on: Record<string, unknown>;
-      permissions: Record<string, string>;
-      jobs: Record<string, { steps: { uses?: string; run?: string }[] }>;
-    };
-    expect(Object.hasOwn(ci.on, "pull_request")).toBe(true);
-    expect(ci.permissions).toEqual({ contents: "read" });
-    expect(ci.jobs.test.steps.some((step) => step.run === "bun run ci")).toBe(true);
-    expect(ci.jobs["live-macos"].steps.some((step) => step.run === "bun run ci:macos")).toBe(true);
-    const source = await read(".github/workflows/ci.yml");
-    expect(source).not.toContain("secrets.");
-    expect(source).not.toContain("dependabot[bot]");
-    for (const job of Object.values(ci.jobs)) {
-      for (const step of job.steps) {
-        if (step.uses) expect(step.uses).toMatch(/@[a-f0-9]{40}$/);
-      }
+  test("summarizes changed versions, additions and removals in both sections", () => {
+    const summary = markdownVersionSummary(
+      { dependencies: { exact: "1.0.0", removed: "1" }, devDependencies: { typescript: "6" } },
+      { dependencies: { exact: "2.0.0", added: "3" }, devDependencies: { typescript: "7" } },
+    );
+    expect(summary).toContain("| dependencies | exact | 1.0.0 | 2.0.0 |");
+    expect(summary).toContain("| dependencies | added | — | 3 |");
+    expect(summary).toContain("| dependencies | removed | 1 | — |");
+    expect(summary).toContain("| devDependencies | typescript | 6 | 7 |");
+    expect(summary).not.toContain("lockfile-only");
+  });
+
+  test("notes lockfile-only changes when declarations are unchanged", () => {
+    expect(markdownVersionSummary(manifest, manifest)).toContain("lockfile-only");
+    expect(markdownVersionSummary({}, {})).toContain("No root dependency version declarations changed");
+  });
+
+  test("fixture allows only resolve.exports in the exact private dispatch environment", () => {
+    expect(
+      selectDependencyNames(manifest, {
+        fixture: true,
+        env: {
+          GITHUB_REPOSITORY: "tnfssc/die-dependency-pr-fixture-20260930",
+          GITHUB_EVENT_NAME: "workflow_dispatch",
+        },
+      }),
+    ).toEqual(["resolve.exports"]);
+  });
+
+  test("fixture denies missing, wrong repository and wrong event environments", () => {
+    for (const env of [
+      {},
+      { GITHUB_REPOSITORY: "tnfssc/die", GITHUB_EVENT_NAME: "workflow_dispatch" },
+      { GITHUB_REPOSITORY: "tnfssc/die-dependency-pr-fixture-20260930", GITHUB_EVENT_NAME: "push" },
+    ]) {
+      expect(() => selectDependencyNames(manifest, { fixture: true, env })).toThrow("--fixture is only allowed");
     }
+  });
+
+  test("CLI denies fixture before spawning an update", async () => {
+    const child = Bun.spawn([process.execPath, "scripts/update-dependencies.ts", "--fixture"], {
+      cwd: new URL("../", import.meta.url).pathname,
+      env: { ...process.env, GITHUB_REPOSITORY: "tnfssc/die", GITHUB_EVENT_NAME: "workflow_dispatch" },
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    expect(await child.exited).toBe(1);
+    expect(await new Response(child.stderr).text()).toContain("--fixture is only allowed");
   });
 });
