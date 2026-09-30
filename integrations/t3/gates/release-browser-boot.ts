@@ -13,6 +13,7 @@ const binary = resolve(process.argv[2] || "dist/release/die-linux-x64");
 const proofPath = resolve(process.env.RELEASE_BOOT_PROOF || "artifacts/release/browser-boot.json");
 const temp = await mkdtemp(join(tmpdir(), "die-release-boot-"));
 const errors: string[] = [];
+const canceledTelemetry: string[] = [];
 const passes: { navigation: string; surface: string }[] = [];
 let output = "";
 let backend: ChildProcess | undefined;
@@ -74,7 +75,16 @@ try {
   // Attach BEFORE goto, including failed module/chunk loads during the first boot.
   page.on("pageerror", (e: Error) => errors.push("pageerror: " + e.message));
   page.on("console", (msg: any) => { if (msg.type() === "error") errors.push("console: " + msg.text()); });
-  page.on("requestfailed", (req: any) => errors.push("requestfailed: " + req.url() + " " + req.failure()?.errorText));
+  page.on("requestfailed", (req: any) => {
+    const error = req.failure()?.errorText;
+    // Telemetry cancels in-flight exports during cleanup/reload. This is not a
+    // missing app asset. Keep every other failed request fatal.
+    if (error === "net::ERR_ABORTED" && new URL(req.url()).pathname === "/api/observability/v1/traces") {
+      canceledTelemetry.push(req.url());
+      return;
+    }
+    errors.push("requestfailed: " + req.url() + " " + error);
+  });
   page.on("response", (res: any) => {
     if (res.status() >= 400) errors.push("HTTP " + res.status() + ": " + res.url());
   });
@@ -115,7 +125,7 @@ try {
   const visibleText = page ? await page.locator("body").innerText().catch(() => "") : "";
   if (page && failure) await page.screenshot({ path: proofPath + ".png" }).catch(() => {});
   await writeFile(proofPath, JSON.stringify({ passed: !failure, binary, binarySha256, passes,
-    errors, failure, visibleText, serverOutput: output }, null, 2) + "\n");
+    errors, canceledTelemetry, failure, visibleText, serverOutput: output }, null, 2) + "\n");
   if (browser) await browser.close().catch(() => {});
   if (backend?.pid) {
     try { process.kill(-backend.pid, "SIGTERM"); } catch {}

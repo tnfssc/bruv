@@ -60,3 +60,13 @@ CI stores `release-linux-browser-boot-proof` even after a gate failure.
 Values unchanged: existing “test built thing”, “say what proof shows”, and
 “show what user actually sees” already cover this lesson. Source regression
 checks and HTTP 200 alone cannot prove a packaged browser startup.
+
+## Integrated fix check
+
+Parent ran this gate against the fix worker’s `dist/die-startup-gated`.
+Initial load and reload both reached the app with no browser errors. Binary SHA256
+`ffc133d2a7d2af3323c33a5410a0a39a3d8f4a22f0bb03f5d55dcf46a5d39840`.
+The first run found an expected canceled telemetry export during cleanup.
+Only `net::ERR_ABORTED` for `/api/observability/v1/traces` is now nonfatal;
+these cancellations stay in proof. All asset failures and other request failures
+still fail the gate. Final release CI must repeat this on its own artifact.
