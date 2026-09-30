@@ -20,7 +20,7 @@ export function selectDependencyNames(manifest: DependencyManifest, options: Upd
   if (options.fixture) {
     const env = options.env ?? {};
     if (env.GITHUB_REPOSITORY !== fixtureRepository || env.GITHUB_EVENT_NAME !== "workflow_dispatch") {
-      throw new Error("--fixture is only allowed for workflow_dispatch in " + fixtureRepository);
+      throw new Error(`--fixture is only allowed for workflow_dispatch in ${fixtureRepository}`);
     }
     if (!names.includes("resolve.exports")) throw new Error("Fixture requires root dependency resolve.exports");
     return ["resolve.exports"];
@@ -35,7 +35,7 @@ export function validatePiAlignment(manifest: DependencyManifest): void {
   );
   if (new Set(entries.map(([, version]) => version)).size > 1) {
     throw new Error(
-      "Root Pi package versions are not aligned: " + entries.map(([name, version]) => name + "=" + version).join(", "),
+      `Root Pi package versions are not aligned: ${entries.map(([name, version]) => `${name}=${version}`).join(", ")}`,
     );
   }
 }
@@ -92,7 +92,7 @@ if (import.meta.main) {
         stderr: "inherit",
       });
       const exitCode = await child.exited;
-      if (exitCode !== 0) throw new Error("bun update failed with exit code " + exitCode);
+      if (exitCode !== 0) throw new Error(`bun update failed with exit code ${exitCode}`);
     }
     const after = (await manifestFile.json()) as DependencyManifest;
     for (const section of sections) {

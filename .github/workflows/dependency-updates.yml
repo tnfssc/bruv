@@ -65,6 +65,7 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git reset --mixed HEAD
           git add package.json bun.lock
           git commit -m 'chore(deps): update root Bun dependencies'
           echo 'changed=true' >> "$GITHUB_OUTPUT"
@@ -76,7 +77,7 @@ jobs:
         run: |
           set -euo pipefail
           bun run generate:notices 2>&1 | tee artifacts/dependency-update/notices.log
-          git diff --exit-code
+          git diff HEAD --exit-code
       - name: Package validated commit and review body
         if: steps.candidate.outputs.changed == 'true'
         env:
@@ -149,6 +150,10 @@ jobs:
           git bundle verify candidate/candidate.bundle
           git fetch candidate/candidate.bundle HEAD
           [[ "$(git rev-parse FETCH_HEAD)" == "$SHA" ]]
+          [[ "$(git rev-parse "$SHA^")" == "$BASE" ]]
+          while IFS= read -r file; do
+            case "$file" in package.json|bun.lock) ;; *) echo "Unexpected candidate file: $file"; exit 1 ;; esac
+          done < <(git diff --name-only "$BASE" "$SHA")
           branch=automation/daily-dependencies
           previous=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
           git push --force-with-lease="refs/heads/$branch:$previous" origin "$SHA:refs/heads/$branch"

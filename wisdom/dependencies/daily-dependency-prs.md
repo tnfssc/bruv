@@ -1,3 +1,80 @@
+# Daily dependency PRs — custom workflow (2026-09-30)
+
+The user superseded the Dependabot design below: use our daily + manual GitHub Actions workflow, attempt all root updates including aligned Pi, and let breaking changes visibly fail for human repair. Do not automate SDK hash changes or migrations. The active owner is `.github/workflows/dependency-updates.yml`; root Dependabot config is removed.
+
+Implementation worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e16383d5
+Branch: die/custom-daily-dependency-pr-workflow-e16383d5
+Script worker: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e16383d5-a86675007a5e-task_4473c92c, branch die/dependency-updater-script-and-tests-4473c92c.
+Review worker: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e16383d5-a86675007a5e-task_b76dff8d, branch die/review-daily-dependency-automation-b76dff8d.
+
+## Current contract
+
+- Daily 06:00 UTC and workflow_dispatch; checkout develop, not arbitrary input refs.
+- Explicit `bun update --latest <root names>` updates exact pins and major releases, including every root Pi package. Assert Pi versions aligned. Preserve @types/bun, Bun/Node/pnpm pins and vendor source pins. No source guard rewrites.
+- Commit candidate before shared Linux CI (frozen install, format/lint/typecheck/build, web and deterministic tests, smoke), then generate notices. No-change still runs checks, creates no PR. Any failure blocks publication; manual migration is expected for incompatible Pi.
+- Read-only validation job; separate write-token job only transports a validated Git bundle and calls git/gh, never runs dependencies. Pinned actions, no PAT or new secrets. One owned branch automation/daily-dependencies and one open PR against develop. Do not edit this bot branch by hand; take recovery patch to a separate branch.
+- GITHUB_TOKEN suppresses normal PR-triggered CI. Body links exact validated commit SHA and updater run. It does NOT claim macOS/ordinary PR CI passed, bypass branch protection, auto-merge, or release. Required PR checks may need a human-authorized run.
+- Artifacts kept 7 days: candidate patch, summary, successful commit bundle/body, last 1 MiB per CI/update/notices log. Logs on GitHub have full output. Failed runs leave prior successful PR untouched, not relabeled as current success.
+- If develop advances during checks, publication fails and needs rerun. If PR creation is disabled, validated branch/artifacts remain recoverable; enable setting and rerun.
+
+## Parent-owned hosted operation
+
+Enable repository Settings → Actions → General → Workflow permissions → **Allow GitHub Actions to create and approve pull requests** (the workflow only creates/edits, never approves). Organization policy must permit it and contents/pull-requests write for the publish job. No secret setup. Scheduled workflows must exist on the repository default branch; keep that copy and develop implementation in sync.
+
+Production dispatch after publication:
+
+```sh
+gh workflow run dependency-updates.yml --repo tnfssc/die --ref develop
+gh run list --repo tnfssc/die --workflow dependency-updates.yml --limit 5
+gh run watch RUN_ID --repo tnfssc/die --exit-status
+gh run download RUN_ID --repo tnfssc/die --name dependency-candidate --dir artifacts/dependency-run-RUN_ID
+gh pr list --repo tnfssc/die --base develop --head automation/daily-dependencies
+```
+
+### Controlled changed-success fixture (not product proof)
+
+Use existing private tnfssc/die-dependency-pr-fixture-20260930. Replace its old tiny Dependabot fixture tree with a **full snapshot of this implementation**, preserving the fixture repository's .git and production history/tags needed by CI (v0.7.1), remove its old Dependabot config, keep default/develop branch consistent. Parent owns these GitHub writes. Do not publish production downgrades.
+
+Parent setup recipe (run from this implementation checkout; use a new durable clone so existing fixture work is untouched):
+
+```sh
+fixture="$HOME/.die/worktrees/die-custom-dependency-fixture-20260930"
+gh repo clone tnfssc/die-dependency-pr-fixture-20260930 "$fixture"
+git -C "$fixture" switch develop
+git -C "$fixture" rm -r --ignore-unmatch .
+git archive HEAD | tar -x -C "$fixture"
+git -C "$fixture" fetch https://github.com/tnfssc/die.git tag v0.7.1
+(cd "$fixture" && bun -e 'const p=await Bun.file("package.json").json(); p.dependencies["resolve.exports"]="2.0.2"; await Bun.write("package.json", JSON.stringify(p,null,2)+"\n")' && bun install && git add -A && git commit -m 'test(deps): isolated custom updater baseline')
+git -C "$fixture" push origin develop refs/tags/v0.7.1
+# If default branch is not develop, publish the workflow there too (schedule/dispatch discovery).
+```
+
+In the private fixture checkout only, set resolve.exports to 2.0.2 and run `bun install`, then commit/push that fixture baseline to develop. This deliberately old independent dependency is already proven by the previous fixture. Keep all other production pins unchanged. Use the exact same workflow and CI script; fixture mode merely limits updater selection to resolve.exports. The script denies fixture mode except manual dispatch in that exact repo.
+
+```sh
+gh workflow run dependency-updates.yml --repo tnfssc/die-dependency-pr-fixture-20260930 --ref develop -f fixture=true
+gh run list --repo tnfssc/die-dependency-pr-fixture-20260930 --workflow dependency-updates.yml --limit 5
+gh run watch RUN_ID --repo tnfssc/die-dependency-pr-fixture-20260930 --exit-status
+gh pr list --repo tnfssc/die-dependency-pr-fixture-20260930 --base develop --head automation/daily-dependencies
+gh pr view PR_NUMBER --repo tnfssc/die-dependency-pr-fixture-20260930 --json url,body,headRefOid,files,mergeable,statusCheckRollup
+gh pr diff PR_NUMBER --repo tnfssc/die-dependency-pr-fixture-20260930
+```
+
+Review actual hosted PR title/body (TEST ONLY), two-file diff, version summary, base develop, exact head SHA matching updater body, full successful validation/publish jobs and run links. Record proof in hosted-pr-acceptance.md. A fixture PR does not prove a merge-ready product upgrade. Native Dependabot queued jobs are no longer part of acceptance.
+
+## Local implementation evidence
+
+- Independent review found staged-file leakage at candidate commit; fixed by resetting the index before staging only package.json/bun.lock, rejecting any other changed path in publish, checking the candidate's sole parent equals BASE, and checking both staged/unstaged drift after validation.
+- Focused updater/workflow tests: 9 pass / 52 assertions. Actionlint v1.7.7 and git diff --check pass. Repository format check passes. Frozen root install and third-party notices pass (128 packages, 552399 bytes).
+- Disposable real-registry fixture probe upgraded exact resolve.exports 2.0.2 → 2.0.3, generated the version table, passed frozen install and a conditional-export behavior check. Separate local Git bundle probe preserved exact candidate SHA/parent across validation/publish repositories. Neither is hosted PR evidence.
+- Full shared Linux CI was launched on this implementation tree using Bun 1.4.2, Node 24.21.0, pnpm 11.27.1 (vendor independently selects its pinned 11.10.0). Final outcome recorded below. Initial attempts encountered missing PATH tooling; resolved with explicit executable paths and disposable pnpm install, not project configuration changes.
+
+Values reassessed: existing values 1/2 require real hosted output and honest evidence; 3 requires one owner; 7 favors straightforward updates/failures; 9 keeps human review of dependency semantics. No general values edit needed.
+
+---
+
+## Historical superseded Dependabot plan (not current instructions)
+
 # Daily root dependency PRs
 
 Use native Dependabot, not a custom GITHUB_TOKEN PR creator. GitHub now supports the text-based Bun lockfile (Bun >=1.1.39): [supported ecosystems](https://docs.github.com/en/code-security/dependabot/ecosystems-supported-by-dependabot/supported-ecosystems-and-repositories#bun). This avoids token-created PRs silently missing pull_request CI and adds no actions, PAT, or new secrets.

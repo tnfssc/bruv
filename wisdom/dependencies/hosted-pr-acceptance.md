@@ -9,3 +9,7 @@ Follow-up worker task_10879f72: /home/tnfssc/.die/worktrees/die-a86675007a5e-tas
 ## Live fixture state
 
 Created private https://github.com/tnfssc/die-dependency-pr-fixture-20260930 . Persistent local repo: /home/tnfssc/.die/worktrees/die-dependency-pr-fixture-20260930, develop at 1e1a862. Baseline CI 36669260148 passed. Dependabot runs 36669261802 and 36669259875 still queued at 04:58 UTC, over 25 minutes; label dependabot, no runner, no steps, no annotations. No PR yet. Actions enabled/all; GitHub status reports operational. Read-only diagnosis task_fcb6f68b investigating setup versus queue delay. Do not claim completion or create fake production updates.
+
+## Superseding custom workflow decision (2026-09-30)
+
+User now requests our own daily/manual updater; native Dependabot queue is not required. See [current design and exact hosted commands](daily-dependency-prs.md). The implementation validates the exact candidate commit before a separate write-token job opens the PR; GITHUB_TOKEN suppression of ordinary PR CI is explicit in the body. Controlled fixture mode is restricted to manual dispatch in the existing private fixture repo and requires the full implementation snapshot there. Parent owns publication, settings, run dispatch and real PR quality review. Do not mark hosted acceptance complete from local tests.
