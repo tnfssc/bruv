@@ -135,7 +135,7 @@ describe("release automation", () => {
     expect(runner).toContain("bun run lint");
     expect(runner).toContain("bun run check");
     expect(runner).toContain("bun run build");
-    expect(runner).toContain("env DIE_RUN_LLM_TESTS=0 bun test --parallel=4 ./tests");
+    expect(runner).toContain("env DIE_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests");
     expect(runner).toContain("bun run smoke");
     expect(workflow).toContain("if: failure()");
     expect(workflow).toContain("actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a");

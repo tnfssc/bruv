@@ -51,9 +51,10 @@ run_step 'Offline default OpenAI transport' openai-transport.log "$root" bun scr
 export T3_V2_DIE_BINARY="${T3_V2_DIE_BINARY:-$root/dist/die}"
 # Build/prerequisites are complete. Both groups only read the compiled payload
 # and pinned source; tests own temporary homes/ports and have separate log files.
+# Four hosted CPU slots: three root workers plus one web worker, not six competitors.
 run_step 'Current-CLI web validation' web-validation.log "$root" bash scripts/ci-web-validation.sh &
 web_pid=$!
-run_step 'Complete root tests (four bounded workers)' tests.log "$root" env DIE_RUN_LLM_TESTS=0 bun test --parallel=4 ./tests &
+run_step 'Complete root tests (three bounded workers)' tests.log "$root" env DIE_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests &
 root_pid=$!
 status=0
 wait "$web_pid" || status=1

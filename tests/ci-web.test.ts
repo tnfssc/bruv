@@ -108,7 +108,7 @@ test("workflow uses exact read-only restore, trusted default-branch save and pre
   const runner = await Bun.file(resolve(import.meta.dir, "../scripts/ci.sh")).text();
   expect(runner).toContain('wait "$web_pid" || status=1');
   expect(runner).toContain('wait "$root_pid" || status=1');
-  expect(runner).toContain("bun test --parallel=4 ./tests");
+  expect(runner).toContain("bun test --parallel=3 ./tests");
   expect(runner).toContain("--reuse-packed-web");
   const validation = await Bun.file(resolve(import.meta.dir, "../scripts/ci-web-validation.sh")).text();
   expect(validation).not.toContain("Typecheck web backend");

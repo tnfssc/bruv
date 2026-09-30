@@ -31,7 +31,7 @@ printf '%s|%s|%s\n' "$(basename "$0")" "$PWD" "$*" >> "$CALLS"
 printf '%s\n' "$TMPDIR" >> "$TEMP_CALLS"
 if [[ "$(basename "$0")" == bun && "$1" == -e ]]; then echo pinned-revision; exit 0; fi
 if [[ "$*" == "$FAIL" ]]; then echo intentional-failure; exit 37; fi
-if [[ "$*" == "test --parallel=4 ./tests" ]]; then echo "llm=$DIE_RUN_LLM_TESTS"; fi
+if [[ "$*" == "test --parallel=3 ./tests" ]]; then echo "llm=$DIE_RUN_LLM_TESTS"; fi
 echo "completed $*"
 `;
   writeFileSync(join(bin, "bun"), stub, { mode: 0o755 });
@@ -84,7 +84,7 @@ test("Linux completes all gates with only post-build validation groups unordered
       "test run src/state/orchestrationV2Projection.test.ts",
       "test run src/lib/syntaxHighlighting.test.ts",
       "test run src/rpc/client.test.ts",
-      "test --parallel=4 ./tests",
+      "test --parallel=3 ./tests",
     ].sort(),
   );
   expect(commands.at(-1)).toBe("run smoke --");
@@ -100,12 +100,12 @@ test("explicit CI cache mode prepares verified web then compiles current CLI wit
   expect(commands.indexOf("--no-env-file scripts/ci-web.ts build")).toBe(4);
   expect(commands.indexOf("scripts/build.ts --reuse-packed-web")).toBe(5);
   expect(commands).not.toContain("run build");
-  expect(commands).toContain("test --parallel=4 ./tests");
+  expect(commands).toContain("test --parallel=3 ./tests");
   expect(commands.at(-1)).toBe("run smoke -- --reuse-build");
 });
 
 test("a failed concurrent group still waits for the other and prevents smoke", () => {
-  const { root, result, calls } = run("linux", "test --parallel=4 ./tests");
+  const { root, result, calls } = run("linux", "test --parallel=3 ./tests");
   expect(result.status).toBe(1);
   expect(calls.some((line) => line.includes("src/rpc/client.test.ts"))).toBe(true);
   expect(calls.some((line) => line.includes("run smoke"))).toBe(false);
@@ -115,7 +115,7 @@ test("a failed concurrent group still waits for the other and prevents smoke", (
 test("a failed web group still completes root tests and prevents smoke", () => {
   const { root, result, calls } = run("linux", "--noEmit");
   expect(result.status).toBe(1);
-  expect(calls.some((line) => line.includes("test --parallel=4 ./tests"))).toBe(true);
+  expect(calls.some((line) => line.includes("test --parallel=3 ./tests"))).toBe(true);
   expect(calls.some((line) => line.includes("run smoke"))).toBe(false);
   expect(readFileSync(join(root, "artifacts/ci/terminal-client-typecheck.log"), "utf8")).toContain(
     "intentional-failure",
