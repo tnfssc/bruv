@@ -1,32 +1,57 @@
-# T3 boot fix and release v0.15.13
+# T3 browser startup fix: v0.15.13
 
-User sees `T3 Code could not load.` on latest stable v0.15.12. Fix underway. Do not publish until compiled browser boot passes.
+Published https://github.com/tnfssc/die/releases/tag/v0.15.13 on 2026-09-30.
+Stable, non-draft, all 12 expected assets present. SOURCE.txt matches tag commit
+`92efde9f0cdc1d1fdf34382dabe803f7257fa66f`.
+Dry run 36703153676 passed. Publication run 36704291531 reused those exact
+assets and passed browser and Mac updater gates again. No local install.
+No redundant published binary download; only SOURCE.txt was read after release.
 
-- Fix worker: task_5adb044a. Worktree `/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5adb044a`, branch `die/fix-released-t3-startup-failure-5adb044a`. Owns root cause and product regression tests.
-- Release gate worker: task_6a1d394b. Worktree `/home/tnfssc/.die/worktrees/die-a86675007a5e-task_6a1d394b`, branch `die/gate-release-on-browser-boot-6a1d394b`. Owns mandatory compiled browser gate, not product code.
-- Research found release checks only prove CLI and transport, not browser boot. Existing preservation acceptance can run a relocated compiled executable with Chromium.
+## Cause and fix
 
-Next: review and combine worker commits, test integrated compiled binary, write release notes, push develop and dispatch Release workflow. Manual workflow prepares next patch version and publishes only after gates. Verify published release/assets without redundant binary hash download (see release-verification-preference.md). No local install requested.
+Artificial vendor/size chunk splitting made a cyclic initialization graph.
+The real v0.15.12 Linux release served HTML but Chromium showed
+`T3 Code could not load.` and an Effect initialization TypeError.
+Removed unsafe chunk overrides; kept lazy imports and codec/data assets.
+A real large-chunk warning remains. Startup matters more than hiding warnings.
+See [root cause and proof](../t3/v01512-browser-startup.md).
 
-Values reviewed. Existing delivered-path proof and human UI checks cover this bug; revisit after root cause is known.
+Fresh and reused builds now reject cyclic or incomplete emitted static graphs.
+Publication requires Chromium cold boot and reload of the final Linux binary.
+See [browser gate](linux-release-browser-boot-gate.md). Canceled trace exports
+are logged but not treated as missing assets; all other request errors fail.
 
-## Integration
+## Proof
 
-Cherry-picked gate 86f59ce as 3e8391c,
-then fixed expected canceled trace exports in 1f50909. Product fix 25688b3 is
-integrated as 8a3efcb. All worker code is reviewed.
+- Full local build from new canonical source checkout passed frozen install,
+  upstream typechecks, web/backend bundle, deploy, archive and compile.
+- Local suite: **1367 pass, 20 skip, 0 fail** across 196 files.
+- Root typecheck and format pass. Lint has warnings/info, no errors.
+- Fresh root binary 0.15.13 passed real browser cold load and reload with no
+  page/console errors. Proof: `artifacts/release/browser-boot-root-v01513.json`.
+- Root binary SHA256: 90a5a50a7291b1c55cf3a1f1434209f742046ba041ceeedfc1dfc3d480f55a10.
+  This is local proof, not the hosted release hash.
+- Hosted gates cover final Linux browser boot/reload, Mac helper/updater,
+  portable binaries, licenses, deterministic tests and package checks.
 
-Root gate passed cold boot and reload on the worker compiled candidate (proof
-in artifacts/release/browser-boot.json). Root typecheck passed. Full local
-canonical build is now running with the worker’s verified source checkout:
-`DIE_T3_SOURCE=/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5adb044a/.cache/t3-startup`.
-The default source cache still has the old patch; do not reset someone else’s
-cache. Initial attempts stopped before build due to that mismatch and missing
-pnpm. Repo-local corepack shim `.cache/release-tool-bin` supplies pnpm.
-Build log: `/var/tmp/die-t3-full-build.log`.
+## Pickup and limits
 
-Prepared package/notes for v0.15.13. Push develop for exact-commit dry run,
-then publish its tag only after local checks and hosted gates pass. CI now
-requires final Linux browser cold load/reload as well as Mac updater/native gates.
-Values: strengthened Value 1 with shipped-entry startup proof, linking root
-cause wisdom. No new value.
+Fix worker: `/home/tnfssc/.die/worktrees/die-a86675007a5e-task_5adb044a`,
+branch `die/fix-released-t3-startup-failure-5adb044a`, commit 25688b3.
+Gate worker: `/home/tnfssc/.die/worktrees/die-a86675007a5e-task_6a1d394b`,
+branch `die/gate-release-on-browser-boot-6a1d394b`, commit 86f59ce.
+Parent integrated both and fixed worker.format literal typing, gate formatting,
+and workflow test assertions. No unfinished product work remains for this fix.
+
+Root clean source: `.cache/die-t3-v01513-clean`. The default source cache
+still has the old patch; use the clean source via DIE_T3_SOURCE rather than
+resetting someone else's cache. A repo-local corepack shim in
+`.cache/release-tool-bin` supplies pnpm. Reused worker dependency symlinks
+had missing license files; fresh install fixed that local build setup issue.
+Local logs: `/var/tmp/die-t3-clean-build.log` and
+`/var/tmp/die-t3-full-tests2.log`. Earlier failed dry runs were superseded;
+only the successful exact-commit runs above are release proof.
+
+Wisdom records the root cause, gate and release. Value 1 was strengthened:
+build-size/file checks do not prove startup; run the shipped entry point.
+No new value. No paid provider calls or real Mac device tests were claimed.
