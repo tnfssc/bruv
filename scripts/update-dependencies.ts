@@ -77,8 +77,9 @@ export function markdownVersionSummary(before: DependencyManifest, after: Depend
 
 /** Include transitive changes too: root declarations can stay unchanged. */
 export function markdownLockSummary(beforeText: string, afterText: string): string {
-  const before = Bun.JSONC.parse(beforeText).packages as Record<string, [string, ...unknown[]]>;
-  const after = Bun.JSONC.parse(afterText).packages as Record<string, [string, ...unknown[]]>;
+  type Lock = { packages: Record<string, [string, ...unknown[]]> };
+  const before = (Bun.JSONC.parse(beforeText) as Lock).packages;
+  const after = (Bun.JSONC.parse(afterText) as Lock).packages;
   const rows = [...new Set([...Object.keys(before), ...Object.keys(after)])]
     .sort()
     .filter((name) => before[name]?.[0] !== after[name]?.[0])
