@@ -28,7 +28,7 @@ test("daily and manual updater replaces Dependabot with pinned actions and split
   expect(await Bun.file(new URL("../.github/dependabot.yml", import.meta.url)).exists()).toBe(false);
   expect(workflow.permissions).toEqual({ contents: "read" });
   expect(workflow.jobs.validate.permissions).toBeUndefined();
-  expect(workflow.jobs.publish.permissions).toEqual({ contents: "write", "pull-requests": "write" });
+  expect(workflow.jobs.publish.permissions).toEqual({ contents: "write", "pull-requests": "write", statuses: "write" });
   expect(source).not.toContain("secrets.");
   for (const job of Object.values(workflow.jobs)) {
     for (const step of job.steps) {
@@ -61,4 +61,12 @@ test("publishes only changed successful candidates after shared CI and notices",
   expect(source).toContain("git diff HEAD --exit-code");
   expect(source).toContain("retention-days: 7");
   expect(source).toContain("tail -c 1048576");
+});
+
+test("one fixed PR branch has exact-candidate validation linked on GitHub", () => {
+  expect(source).toContain("branch=automation/daily-dependencies");
+  expect(source).toContain("--state open --json number");
+  expect(source).toContain('gh pr edit "$number"');
+  expect(source).toContain("repos/$GITHUB_REPOSITORY/statuses/$SHA");
+  expect(source).toContain("dependency-update/Linux validation");
 });

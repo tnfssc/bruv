@@ -125,6 +125,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      statuses: write
     steps:
       # Never install or execute candidate dependencies in the write-token job.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -157,6 +158,10 @@ jobs:
           branch=automation/daily-dependencies
           previous=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
           git push --force-with-lease="refs/heads/$branch:$previous" origin "$SHA:refs/heads/$branch"
+          gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
+            -f state=success -f context='dependency-update/Linux validation' \
+            -f description='Shared Linux CI and notices passed for this exact commit' \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           title='chore(deps): update root Bun dependencies'
           if [[ "$FIXTURE" == true ]]; then title='test(deps): isolated fixture update (not production)'; fi
           number=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$branch" --base develop --state open --json number --jq '.[0].number // empty')
