@@ -6,10 +6,10 @@ import {
   fullTierConsumers,
   reverseSourceTests,
 } from "./ci-remote-source";
+import { remoteBatchStart, runSelectedCommands } from "./ci-selective-runner";
 import { spawnSync } from "node:child_process";
-import { appendFileSync, mkdirSync, writeFileSync, mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { dirname, resolve, join } from "node:path";
+import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 
 // Deliberately exact inputs. Extending these requires a consumer/contract audit.
 export const classes = {
@@ -288,29 +288,11 @@ if (import.meta.main) {
     )
       throw new Error("runner requires clean tracked checkout at planned head");
     if (args.includes("--prepared-deps") && process.env.CI) throw new Error("--prepared-deps is forbidden in CI");
-    const runTmp = mkdtempSync(join(tmpdir(), "die-selective-"));
-    try {
-      for (const command of p.commands) {
-        if (args.includes("--prepared-deps") && command[1] === "install") continue;
-        const started = performance.now();
-        console.error(`==> ${JSON.stringify(command)}`);
-        const result = spawnSync(command[0], command.slice(1), {
-          stdio: "inherit",
-          env: {
-            ...process.env,
-            TMPDIR: runTmp,
-            DIE_RUN_LLM_TESTS: "0",
-            DIE_PROBE_EXECUTABLE: `${process.cwd()}/tests/fixtures/live-execute-cli.sh`,
-          },
-        });
-        console.error(`elapsed ms: ${Math.round(performance.now() - started)}`);
-        if (result.error || result.status !== 0) {
-          process.exitCode = result.status || 1;
-          break;
-        }
-      }
-    } finally {
-      rmSync(runTmp, { recursive: true, force: true });
-    }
+    const started = performance.now();
+    process.exitCode = await runSelectedCommands(p.commands, {
+      parallelStart: remoteBatchStart(p),
+      preparedDeps: args.includes("--prepared-deps"),
+    });
+    console.error(`Selected overall exit=${process.exitCode}; elapsed ms: ${Math.round(performance.now() - started)}`);
   }
 }

@@ -12,7 +12,8 @@ theme=runtime/'dist/modes/interactive/theme'
 theme.parent.mkdir(parents=True,exist_ok=True)
 theme.symlink_to(runtime/'theme',target_is_directory=True)
 master,slave=pty.openpty(); env=dict(os.environ,HOME=home,TERM='xterm-256color',NO_COLOR='1'); env.pop('DIE_REMOTE_RUNTIME_STATE',None); env.pop('OPENAI_API_KEY',None)
-p=subprocess.Popen(command+['--offline','--no-approve','--model','openai/gpt-4o-mini'],stdin=slave,stdout=slave,stderr=slave,env=env,start_new_session=True); os.close(slave)
+# Inherit the selective runner process group so cancellation reaches the CLI too.
+p=subprocess.Popen(command+['--offline','--no-approve','--model','openai/gpt-4o-mini'],stdin=slave,stdout=slave,stderr=slave,env=env); os.close(slave)
 transcript=bytearray()
 def read(sec=1):
  end=time.monotonic()+sec

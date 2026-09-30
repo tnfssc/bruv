@@ -354,9 +354,9 @@ test("source CLI contracts explicitly exclude compiled pi-host variants", () => 
   const p = select([change(classes.waveform.source)]);
   expect(p.commands).toContainEqual(["bun", "test", "./tests/pi-host.test.ts", "--test-name-pattern", "^source CLI"]);
   expect(p.tests).toContain("tests/live-spoken-tui.test.ts");
-  const runnerSource = readFileSync(runner, "utf8");
+  const runnerSource = readFileSync("scripts/ci-selective-runner.ts", "utf8");
   expect(runnerSource).toContain("DIE_PROBE_EXECUTABLE:");
-  expect(runnerSource).toContain("/tests/fixtures/live-execute-cli.sh");
+  expect(runnerSource).toContain("tests/fixtures/live-execute-cli.sh");
   const source = readFileSync("tests/live-main-integration.test.ts", "utf8");
   expect(source).toContain("process.env.DIE_PROBE_EXECUTABLE ??");
 });
