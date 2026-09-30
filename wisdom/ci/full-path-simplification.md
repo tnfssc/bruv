@@ -1,58 +1,62 @@
-# Faster CI, same confidence
+# Faster full-source CI
 
-## User intent
+## Intent and correction
 
-Make normal work fast. Keep the relevant confidence. Keep the pipeline simple. The user rejected our 46-second selected-source probe as reward hacking. It ran fewer checks; it did not solve full CI speed. Do not call it completion.
+The user wants normal work fast, with the relevant confidence and less machinery. Our earlier 46-second selected-source probe ran fewer checks. The user rejected it as reward hacking. That tier is removed; its timing is not completion.
 
-## Shipped correction
+All executable, build, test and unknown changes now require full ordinary CI. Only safe edits to existing reference docs use a cheap path. Keep the cumulative trusted baseline and fail-closed CI policy gate. Product remote CLI/PTy tests stay.
 
-- All executable, build, test and unknown changes need full CI. Only safe reference-doc edits get a cheap path.
-- Keep cumulative trusted-baseline planning and the fail-closed CI policy gate.
-- Remove the selected-source allowlists, guard and scheduler. Product remote CLI/PTy tests stay.
-- Release runs only for stable tags or explicit dispatch, not every develop push. Move its unique source/web checks into ordinary full CI. Actual releases still run final browser, native-helper, macOS binary/updater and publication gates.
-- Same-workspace packed-web receipts landed c935911. They are not cross-run cache authorization.
-- Latest pushed 8ce5eaf fixes the CI command-inventory fixture. Typecheck and 32 focused planner/workflow tests passed; fixture 3 tests/24 assertions passed; packed reuse/workflow 38 tests/416 assertions passed.
+## What ships
 
-## Parallel root tests
+- Use native Bun parallel tests, not our custom scheduler or maintained test-file list. Linux uses three root workers plus one web worker. macOS uses three workers. The hosted Linux runner reported four CPU slots.
+- Reuse only an exact, checked web payload. CLI sources are excluded from its producer key; pin, patch, bootstrap, producer/packer code, locks, tools, platform and controlled build environment are included. Bad/missing cache rebuilds.
+- Cache hits still prepare a fresh pinned checkout and frozen dependencies, then build the current CLI and run every current-CLI behavioral test. No source, node_modules, credentials or prebuilt CLI is restored.
+- PR cache restore is read-only. Saves require a successful run on the trusted default branch (confirmed develop).
+- Root and web test groups overlap after build. Both failures propagate. All existing web selections and client-runtime typecheck stay. Server/web typechecks belong to the same-input producer, not duplicate standalone calls.
+- Release target binaries embed one verified archive with --reuse-packed-web instead of repeated repacking. Fresh local/release builds remain fresh by default.
+- Use installed tmux when present. Linux fetches shallow HEAD plus the exact v0.7.1 updater tag; baseline planning still has full history. The real shallow fixture passed all 15 updater compatibility tests.
 
-Use Bun 1.4.2 native `bun test --parallel=4 ./tests`, with existing DIE_RUN_LLM_TESTS=0.
-Worker custom runner 5a5a2cf was integrated c730abd, then reverted 46cb147 before pushing. Native Bun avoids 247 lines of scheduler and a narrower .test.ts discovery glob.
-Native full current suite: 1420 pass/20 skip/0 fail, 203 files, 51.77s locally. This includes 5 obsolete custom-runner tests since removed with that helper. No product tests or timeout policy were removed. This is not whole-CI or hosted time.
-See [root-test parallelism](root-test-parallelism.md) for resource audit, controlled worker comparison, evidence and durable worker branch.
+Coverage boundary: Release no longer runs on every develop push. Final packaged-browser, Mac-binary and updater gates now run only for actual releases. Ordinary CI keeps the complete root/source/web union, but is **not identical to the old combined CI plus Release-on-every-push pipeline**. Do not count removal of packaging as an execution speedup of those checks. Release readiness still needs actual Release gates. No further release was published; v0.15.14 is unchanged.
 
-## Earlier hosted failures
+## Hosted proof
 
-- Correction run 36774743001 failed only an obsolete CI-runner fixture; fixed 8ce5eaf.
-- Run 36775922476 failed fresh packing: receipt tree() calls Bun.file.bytes() on upstream .claude/skills, a symlink to a directory. Fixed in worker 64a909b, integrated 10e9364, with real fresh/warm build proof and a regression. Log /home/tnfssc/.die/ci-pack-hosted-failure.log.
-- Receipt GITHUB_ACTION input also varies between fresh and target shell steps. Exclude invocation metadata, not actual build settings; fixed with a step-metadata regression.
-- Do not claim the latest hosted gate is green or publish another release.
+Both runs used commit **23e7f2075275e501e04b16156a8e3b269cc3b586**. Both passed every planned job and CI policy. One sample each, not p95.
 
-## Integrated cache work
+| Run | Event | Whole workflow | Linux gate | Linux job | macOS job |
+| --- | --- | --- | --- | --- | --- |
+| [36782905694](https://github.com/tnfssc/die/actions/runs/36782905694) | push, cold payload | **341s (5m41s)** | 257s | 311s | 38s |
+| [36783585589](https://github.com/tnfssc/die/actions/runs/36783585589) | workflow_dispatch, warm payload | **202s (3m22s)** | 148s | 176s | 41s |
 
-Task task_23c5c02a. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_23c5c02a. Branch die/reuse-unchanged-web-build-in-full-confid-23c5c02a, base c935911.
-It owns CI YAML/ci.sh, real exact-input web cache, reproducible producer environment, source/dependency preparation on cache hits, native root parallel invocation, full web/root overlap where safe, helper fixes and focused tests. All current behavioral checks stay. Cache miss/corruption must rebuild. Save only from trusted default branch; PR restore is read-only. No credential, node_modules or unchecked dist cache.
-Parent Release --reuse-packed-web edits are committed fd84441. Worker CI-only test edits merged alongside them. Parent sent native runner result and hosted symlink failure through PARENT_NATIVE_AND_HOSTED_BLOCKER.md in worker tree. Do not commit PARENT notes.
+Whole time is createdAt to updatedAt, including setup, queue, cache/post work and aggregate gate. Cold: 21:59:43Z–22:05:24Z; warm: 22:06:20Z–22:09:42Z, 2026-09-30. Warm logged an exact verified payload hit. Cold saved that payload successfully.
 
-## Finish
+Both Linux runs: **1,438 root passes, 20 existing opt-in skips, zero failures, 203 files**. All **650 web tests** passed (281+158+26+9+138+38), with typechecks, transport, current CLI compilation and smoke. macOS: 285 passes, 3 existing opt-in skips, zero failures across 41 files. No test filter or timeout increase.
 
-Worker 64a909b integrated 10e9364. One expected CI fixture conflict used the worker version: it includes the preserved union and failure tests for the new parallel groups. Parent typecheck and 58 focused tests/665 assertions pass. Run actual cold/warm hosted full-confidence CI. Include setup/queue/aggregate time. Do not run repetitive full local suites merely to look careful. Native local full proof already passed. Under-minute full hosted CI is not proved.
+Full logs: /home/tnfssc/.die/ci-full-cold-green.log and /home/tnfssc/.die/ci-full-warm-green.log. Earlier worker local warm 129.990s was not hosted acceptance. The earlier local cold 208.252s failed fixture assertions and is not a matched green baseline.
 
-Use TMPDIR=/home/tnfssc/.die/tmp-pi-removal for Git signing and commands; /tmp is full. Local pnpm 11.27.1 is at $TMPDIR/bunx-1000-pnpm@11.27.1/node_modules/.bin. GitHub CI installs it normally.
+## What the failures taught us
 
-Values 2 and 10 now state the confidence contract and parallel/focused verification lesson. No new value is needed for choosing native Bun over a custom scheduler.
+- Hosted receipt creation followed upstream .claude/skills as a file. Internal directory links now record link identity; their owned targets are hashed normally. External/excluded-tree links fail closed. GITHUB_ACTION is step metadata, not a payload input.
+- Fake receipt fixtures repeatedly launched real pnpm. A private version shim reduced them from about20s to about2s; explicit version drift and real native archive smoke remain. Production tool checks were not removed.
+- Eight pagination scenarios and four shell-budget cases shared one 5s test timer. They are separate default-timeout cases now. All elapsed-time and result assertions remain.
+- Notification tests now control child-close and attention-clock events through the real TaskManager. They test the intended coalescing window, not OS scheduling luck. Repeat-flush checks still require exactly one wakeup.
+- Native web replay counted a marker anywhere in message history. Replay and terminal requests both contain it. The fixture now forces exact initial/replay/terminal phases and checks two identical responses, two completed runs, one projected output, scoped authorization and cancellation. The old filter fails deterministically in the negative control. See [fixture phases](../t3/t3-native-hosted-fixture-phases.md).
 
-Read-only cache review task_628ca308 found no concrete unsafe stale-hit or lost behavioral check in the in-progress flow. It checked exact key coverage, controlled environment, source/deps on hits, digest/size fallback, trusted save/read-only restore and both test-group exits. Known symlink and GitHub-action metadata bugs remained the implementer fix/proof duty. No need another review round without a new reason.
+## Still needs care
 
-Local cache proof: warm full gate129.990s,1426root+650web passes,20existing opt-in skips,zero failures. It removed source/dist/root node_modules first, kept only download stores and exact web payload, and made an isolated CLI source edit. Cold208.252s reached the producer and web suite but failed stale fixture assertions, since corrected; not a clean matched all-green baseline. See packed-web-reuse.md for commands/logs. Native parallel uses Bun discovery; no custom runner ships. Net against e561bda before correction: about681 fewer lines, not a speed metric. Hosted proof is next.
+**Under one minute is not achieved.** Warm preparation was about41s, CLI compile8s, and overlapping root/web groups about94s. The root suite alone took89.50s on the hosted runner. Keep the whole-workflow number visible. Do not replace it with one fast step or local timing.
 
-Hosted run36780027410 failed (not a cache-hit proof): macOS passed51s; cold Linux root1446cases reached6failures and backend web281cases reached1failure. Root issues are repeated pnpm startup inside fake receipt fixtures, combined multi-scenario5s tests, and coalescing fixtures that assume child exit beats a real timer. Native web assertion parentContinuations.length expected1 got2 under load is under investigation, not accepted as harmless. Log /home/tnfssc/.die/ci-full-cache-cold-failure.log.
+The prior pnpm cache was998,280,461 compressed bytes and took28s to restore. Upstream supportedArchitectures installs all OS/CPU/libc targets for portable production. A future host-only dependency preparation path on a verified payload hit may help. It is not implemented or proved. Do not drop portable producer dependencies or web checks. Native worker-budget tuning is also unproved beyond the accepted3+1 run.
 
-Follow-up owners: task_58c6e2d7 normal in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_58c6e2d7, branch die/make-timing-fixtures-deterministic-witho-58c6e2d7 owns job-bridge/remote-jobs/subagent-extension tests (preserve all assertions and time bounds). task_b3cc2c03 fast completed7c8ca34, integratede022426: fixture-owned pnpm version shim+real version-drift assertion, no production version check removed. Receipt tests25pass in1.84s instead20s, native compiled smoke retained. task_1b9334b7 read-only diagnoses native web continuation count.
+## Code and pickup
 
-Parent resource fix pending: three native root workers plus one web Vitest worker share public hosted4CPUs; previous4+2 oversubscribed. No test filtering or timeout changes. Focused integrated runner/key/release/receipt53tests/519assertions pass2.01s. Need new full hosted cold pass, then warm full proof. All prior under-minute caveats remain.
+Key owners: scripts/ci-web.ts, scripts/packed-web.ts, integrations/t3/build/build.ts, scripts/ci.sh, scripts/ci-web-validation.sh, .github/workflows/{ci,release}.yml. See [cache design](packed-web-reuse.md) and [native root proof](root-test-parallelism.md).
 
-Root timing worker45bf4f8 integrated:63tests/306assertions and14changed scenarios under4CPU affinity+2competitors pass. No production code, deadline relaxation, or assertion removal. Web diagnosis found marker-history request counting conflates intended replay with later terminal continuation; task_3a9ad30d owns exact-phase fixture fix in canonical die.patch, worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_3a9ad30d, branch die/fix-native-web-replay-fixture-accounting-3a9ad30d.
+Durable completed worker worktrees under /home/tnfssc/.die/worktrees/:
+- die-a86675007a5e-task_23c5c02a, branch die/reuse-unchanged-web-build-in-full-confid-23c5c02a, commit64a909b → integrated10e9364.
+- die-a86675007a5e-task_58c6e2d7, branch die/make-timing-fixtures-deterministic-witho-58c6e2d7, commit45bf4f8 → integratedc75aa7a.
+- die-a86675007a5e-task_3a9ad30d, branch die/fix-native-web-replay-fixture-accounting-3a9ad30d, commite1c313b → integrated426d57c.
+- Custom shard worker5a5a2cf remains only as historical proof; it was reverted. Native Bun owns discovery/execution.
 
-Setup corner cuts: use installed tmux rather than unconditional apt/brew work; Linux fetches shallowHEAD plus exactv0.7.1 tag, while baseline-planning job retains full history. An actual shallow clone with onlyHEAD/tag passed all15updater compatibility tests/85assertions. Workflow24focusedtests pass. Hosted prior setup took62s (including28s to restore998MBcompressed pnpm store); producer35s preparation+146s bundle, root90s under4+2contention. Warm hosted end-to-end cannot honestly be called under1min. No new dependency-cache architecture yet.
+No workers or hosted proof runs remain active. Final proof docs are the only follow-up. Use TMPDIR=/home/tnfssc/.die/tmp-pi-removal for Git signing and tools; /tmp filled during this work. Local pnpm11.27.1 is at $TMPDIR/bunx-1000-pnpm@11.27.1/node_modules/.bin; CI sets it up normally.
 
-Native web fixture worker e1c313b integrated426d57c. It now forces exact initial/replay/terminal phases, delays terminal response with a barrier, waits for both completed parent runs and terminal assistant output, and preserves one projected execute output/child/cancellation/authorization checks. Both execute responses remain identical; replay skips a second handoff only when its idempotently recovered child is already completed. Negative control restores old history filter and deterministically gets2instead1. Real focused test1/1 passes; wholecanonicalpatch applied and extractedfixture matched tested source. See wisdom/t3/t3-native-hosted-fixture-phases.md. Parent final typecheck+60focusedtests/671assertions pass2.29s. Ready to push reliability/setup fixes and repeat hosted full cold, then full warm. No timeout increase.
+Values2 and10 were updated for confidence, honest scope and parallel/focused verification. No further value was added: fixture counting and timing errors fit the existing proof rule.
