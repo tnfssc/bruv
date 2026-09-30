@@ -44950,3 +44950,116 @@ index 5ad117f1..658fb4f8 100644
      "@t3tools/shared": "workspace:*",
      "@t3tools/tailscale": "workspace:*",
      "effect": "catalog:",
+diff --git a/apps/web/src/components/ComposerPromptEditorTiptap.test.tsx b/apps/web/src/components/ComposerPromptEditorTiptap.test.tsx
+new file mode 100644
+index 00000000..923918bd
+--- /dev/null
++++ b/apps/web/src/components/ComposerPromptEditorTiptap.test.tsx
+@@ -0,0 +1,91 @@
++import { createRef } from "react";
++import { act, create, type ReactTestRenderer } from "react-test-renderer";
++import { Editor } from "@tiptap/core";
++import StarterKit from "@tiptap/starter-kit";
++import { Schema } from "@tiptap/pm/model";
++import { TextSelection } from "@tiptap/pm/state";
++import { afterEach, expect, it, vi } from "vite-plus/test";
++
++const lifecycle = vi.hoisted(() => ({ editor: null as unknown }));
++vi.mock("@tiptap/react", () => ({
++  useEditor: () => lifecycle.editor,
++  EditorContent: () => null,
++  ReactNodeViewRenderer: () => () => null,
++  NodeViewWrapper: () => null,
++}));
++import {
++  ComposerPromptEditorTiptap,
++  type ComposerPromptEditorHandle,
++} from "./ComposerPromptEditorTiptap";
++
++let root: ReactTestRenderer | undefined;
++afterEach(async () => {
++  if (root) await act(() => root!.unmount());
++  root = undefined;
++  vi.unstubAllGlobals();
++});
++
++it.each([
++  { richTextEnabled: false, destroyed: false },
++  { richTextEnabled: true, destroyed: false },
++  { richTextEnabled: false, destroyed: true },
++  { richTextEnabled: true, destroyed: true },
++])(
++  "defers selection with no view (rich text: $richTextEnabled, destroyed: $destroyed)",
++  async ({ richTextEnabled, destroyed }) => {
++    vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
++    // Both an unmounted and a destroyed Tiptap instance have a throwing view
++    // proxy. Core reports isDestroyed for either case when the view is absent.
++    const retired = new Editor({
++      element: null,
++      extensions: [StarterKit],
++      content: { type: "doc", content: [{ type: "paragraph" }] },
++    });
++    if (destroyed) retired.destroy();
++    expect(retired.isDestroyed).toBe(true);
++    expect(() => retired.view.dom).toThrow("The editor view is not available");
++    const unavailableView = vi.spyOn(retired, "view", "get");
++    lifecycle.editor = retired;
++    vi.stubGlobal("document", { activeElement: null });
++    const editorRef = createRef<ComposerPromptEditorHandle>();
++    const props = {
++      richTextEnabled,
++      value: "hello",
++      cursor: 3,
++      contextRecords: new Map(),
++      skills: [],
++      disabled: false,
++      placeholder: "prompt",
++      onChange: vi.fn(),
++      onPaste: vi.fn(),
++      editorRef,
++    };
++    await act(() => {
++      root = create(<ComposerPromptEditorTiptap {...props} />);
++    });
++    expect(unavailableView).not.toHaveBeenCalled();
++
++    const schema = new Schema({
++      nodes: { doc: { content: "paragraph+" }, paragraph: { content: "text*" }, text: {} },
++    });
++    const doc = schema.node("doc", null, [schema.node("paragraph", null, [schema.text("hello")])]);
++    const setTextSelection = vi.fn();
++    const dom = {};
++    lifecycle.editor = {
++      isDestroyed: false,
++      isInitialized: false,
++      setEditable: vi.fn(),
++      state: { doc, selection: TextSelection.create(doc, 1) },
++      view: { dom },
++      commands: { setTextSelection },
++    };
++    await act(() => root!.update(<ComposerPromptEditorTiptap {...props} />));
++    // The deferred first selection must not have been marked as applied.
++    expect(setTextSelection).toHaveBeenCalledExactlyOnceWith(4);
++    await act(() => root!.update(<ComposerPromptEditorTiptap {...props} cursor={5} />));
++    // Preserve the existing rule: cursor-only updates do not focus the editor.
++    expect(setTextSelection).toHaveBeenCalledTimes(1);
++    expect(props.onChange).not.toHaveBeenCalled();
++    retired.destroy();
++  },
++);
+diff --git a/apps/web/src/components/ComposerPromptEditorTiptap.tsx b/apps/web/src/components/ComposerPromptEditorTiptap.tsx
+index 89b9242f..89a67557 100644
+--- a/apps/web/src/components/ComposerPromptEditorTiptap.tsx
++++ b/apps/web/src/components/ComposerPromptEditorTiptap.tsx
+@@ -1024,7 +1024,10 @@ function ComposerPromptEditorTiptapInner(props: ComposerPromptEditorProps) {
+ 
+   // Controlled value/cursor from the store (history recall, chip insertion…).
+   useLayoutEffect(() => {
+-    if (!editor) return;
++    // useEditor can retire a render-time instance before its passive mount
++    // effect runs. Wait for its replacement before consuming the initial
++    // selection or touching the view of that unmounted instance.
++    if (!editor || editor.isDestroyed) return;
+     const initialSelection = !hasAppliedControlledSelectionRef.current;
+     hasAppliedControlledSelectionRef.current = true;
+     const normalizedCursor = clampCollapsedComposerCursor(value, cursor);

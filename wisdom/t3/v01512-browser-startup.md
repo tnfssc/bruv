@@ -99,3 +99,9 @@ pinned that existing value with `"es" as const` in the canonical patch.
 Earlier isolated browser typecheck proof does not cover this installed full-build
 state. The full build then passed both upstream typechecks and entered bundling.
 Final integrated build/release proof belongs in the v0.15.13 release note.
+
+## Separate lifecycle follow-up
+
+The CI speed rollout later exposed an existing Tiptap composer lifetime bug,
+not another chunk-cycle failure. See [composer startup lifecycle evidence and
+regression](composer-editor-startup-lifecycle.md). Keep these diagnoses separate.
