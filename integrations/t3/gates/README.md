@@ -125,3 +125,28 @@ evidence, not source inputs.
 Candidate builders/exporters and their inputs are preserved under
 `experiments/t3/production-v2/archive/`. They are historical, not alternate
 ways to build or update the canonical inputs. No archive is run automatically.
+
+## Final release browser boot (mandatory CI gate)
+
+`release-browser-boot.ts` launches the downloaded final
+`dist/release/die-linux-x64`, not a source/dev server. It uses fresh HOME,
+XDG cache/config/data/state, agent state, web state and browser profile; no provider
+credentials are inherited. Chromium errors are collected before navigation. Both
+initial load and reload must show a real setup dialog with Continue, or the app's
+New thread/model-picker UI, with the boot splash removed and no load failure.
+The release workflow runs this for freshly built and reused assets, and publication
+requires its success. Failure proof includes browser errors, server output and a
+screenshot when a browser page exists.
+
+Local rerun with an existing playwright-core install and Chromium:
+
+```bash
+RELEASE_BOOT_PLAYWRIGHT=/absolute/path/to/playwright-core/index.mjs \
+RELEASE_BOOT_CHROMIUM=/absolute/path/to/chrome \
+bun integrations/t3/gates/release-browser-boot.ts dist/release/die-linux-x64
+```
+
+`RELEASE_BOOT_PROOF` overrides `artifacts/release/browser-boot.json`.
+A binary argument can select another compiled artifact for investigation; only the
+final release artifact is release proof. The script never builds, publishes, or
+changes the package version.
