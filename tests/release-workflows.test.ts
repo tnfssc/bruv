@@ -41,13 +41,15 @@ describe("release automation", () => {
     const native = await read(".github/workflows/live.yml");
     expect(ci).not.toContain("brew install sox");
     expect(ci).toContain("bun run ci:macos");
-    expect(await read("scripts/ci.sh")).toContain("bun test tests/live-*.test.ts");
+    expect(await read("scripts/ci.sh")).toContain("bun test --parallel=3 tests/live-*.test.ts");
     expect(native).not.toContain("inputs.bundle");
     expect(native).not.toContain("live-candidate");
   });
   test("all workflow actions use audited immutable commits and tool versions stay aligned", async () => {
     const pins = new Map([
       ["actions/cache", "55cc8345863c7cc4c66a329aec7e433d2d1c52a9"],
+      ["actions/cache/restore", "55cc8345863c7cc4c66a329aec7e433d2d1c52a9"],
+      ["actions/cache/save", "55cc8345863c7cc4c66a329aec7e433d2d1c52a9"],
       ["actions/checkout", "3d3c42e5aac5ba805825da76410c181273ba90b1"],
       ["actions/setup-node", "820762786026740c76f36085b0efc47a31fe5020"],
       ["actions/upload-artifact", "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"],
@@ -133,7 +135,7 @@ describe("release automation", () => {
     expect(runner).toContain("bun run lint");
     expect(runner).toContain("bun run check");
     expect(runner).toContain("bun run build");
-    expect(runner).toContain("env DIE_RUN_LLM_TESTS=0 bun test ./tests");
+    expect(runner).toContain("env DIE_RUN_LLM_TESTS=0 bun test --parallel=4 ./tests");
     expect(runner).toContain("bun run smoke");
     expect(workflow).toContain("if: failure()");
     expect(workflow).toContain("actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a");
@@ -153,7 +155,7 @@ describe("release automation", () => {
     const runner = await read("scripts/ci.sh");
     const lane = runner.split('if [[ "$lane" == macos ]]; then')[1]!.split("\nfi")[0]!;
     expect(lane).toContain("bun run prepare:assets");
-    expect(lane).toContain("bun test tests/live-*.test.ts");
+    expect(lane).toContain("bun test --parallel=3 tests/live-*.test.ts");
     expect(lane).not.toMatch(/API_KEY|live.env|SoxAudioAdapter|\b(rec|play) /);
     expect(commands).not.toContain("sox");
     expect(commands).not.toContain("checkAudioCapabilities");
@@ -402,13 +404,18 @@ test("release cache environment retains source identity variables", async () => 
 
 // Full CI inventories remain required for actual releases, alongside release-only gates.
 test("full CI and release retain the same web validation union", async () => {
-  const ci = await read("scripts/ci.sh");
+  const runner = await read("scripts/ci.sh");
+  const validation = await read("scripts/ci-web-validation.sh");
+  const producer = await read("integrations/t3/build/build.ts");
+  const ci = runner + "\n" + validation;
+  expect(runner).toContain("bash scripts/ci-web-validation.sh");
   const workflow = await read(".github/workflows/release.yml");
   for (const path of new Set(ci.match(/src\/[\w/.]+\.test\.ts/g))) expect(workflow).toContain(path);
   for (const path of new Set(workflow.match(/src\/[\w/.]+\.test\.ts/g))) expect(ci).toContain(path);
-  for (const area of ["apps/server", "apps/web", "packages/client-runtime"]) {
-    expect(ci).toContain(`"$web_source/${area}" ../../node_modules/.bin/tsc --noEmit`);
+  for (const area of ["apps/server", "apps/web"]) {
+    expect(producer).toContain(`[source + "/node_modules/.bin/tsc", "--noEmit"], source + "/${area}"`);
   }
+  expect(validation).toContain('"$web_source/packages/client-runtime" ../../node_modules/.bin/tsc --noEmit');
   expect(workflow).toContain("bun scripts/offline-openai-default-transport.ts");
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
   expect(workflow).toContain("T3_V2_DIE_BINARY: ${{ github.workspace }}/dist/die");

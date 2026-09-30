@@ -13,7 +13,7 @@ test("macOS Live CI prepares source CLI assets without building the web runtime"
   const prepare = lane.indexOf("bun run prepare:assets");
   expect(lane).not.toContain("bun run build");
   expect(macOSJob).not.toContain("--reuse-web");
-  const tests = lane.indexOf("bun test tests/live-*.test.ts");
+  const tests = lane.indexOf("bun test --parallel=3 tests/live-*.test.ts");
   expect(prepare).toBeGreaterThanOrEqual(0);
   expect(tests).toBeGreaterThan(prepare);
   const fixture = readFileSync(resolve(import.meta.dir, "live-execute-controls.test.ts"), "utf8");

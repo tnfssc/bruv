@@ -46,10 +46,10 @@ export function verifyWebChunks(clientDirectory: string): void {
   });
 }
 
-export async function buildWeb(): Promise<void> {
-  await invalidatePackedWeb(root);
+export async function prepareWebSource(
+  options: { verify?: (source: string, patch: string) => Promise<void> } = {},
+): Promise<string> {
   const source = resolve(process.env.DIE_T3_SOURCE ?? root + "/.cache/die-t3code-" + sourcePin.revision);
-  const output = resolve(root, "dist/die-web");
   const patch = resolve(root, "integrations/t3/upstream/die.patch");
   async function run(args: string[], cwd = source): Promise<void> {
     const child = Bun.spawn(args, { cwd, stdin: "inherit", stdout: "inherit", stderr: "inherit" });
@@ -77,7 +77,21 @@ export async function buildWeb(): Promise<void> {
     await run(["git", "apply", patch]);
   }
   await verifyWebSource(source, patch);
+  await options.verify?.(source, patch);
   await run(["pnpm", "install", "--frozen-lockfile"]);
+  return source;
+}
+
+export async function buildWeb(options: { prepared?: boolean } = {}): Promise<void> {
+  await invalidatePackedWeb(root);
+  const source = options.prepared ? resolve(root, ".cache/die-t3code-" + sourcePin.revision) : await prepareWebSource();
+  const output = resolve(root, "dist/die-web");
+  const patch = resolve(root, "integrations/t3/upstream/die.patch");
+  async function run(args: string[], cwd = source): Promise<void> {
+    const child = Bun.spawn(args, { cwd, stdin: "inherit", stdout: "inherit", stderr: "inherit" });
+    const code = await child.exited;
+    if (code !== 0) throw new Error(args[0] + " failed (exit " + code + ")");
+  }
   // Bundlers erase types; validate both patched application graphs before packaging.
   await run([source + "/node_modules/.bin/tsc", "--noEmit"], source + "/apps/server");
   await run([source + "/node_modules/.bin/tsc", "--noEmit"], source + "/apps/web");

@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from "bun:test";
 import { execFileSync } from "node:child_process";
-import { chmod, mkdtemp, mkdir, rm, stat } from "node:fs/promises";
+import { chmod, mkdtemp, mkdir, rm, stat, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import {
@@ -19,7 +19,7 @@ afterEach(async () => {
   else process.env.DIE_T3_SOURCE = originalSource;
   for (const path of temporary.splice(0)) await rm(path, { recursive: true, force: true });
 });
-async function fixture() {
+async function fixture(links = false) {
   const root = await mkdtemp(resolve(tmpdir(), "die-packed-test-"));
   temporary.push(root);
   const source = resolve(root, "source");
@@ -28,6 +28,11 @@ async function fixture() {
   git("init", "-q");
   await Bun.write(source + "/input", "original\n");
   await Bun.write(source + "/.gitignore", ".env*\nnode_modules/\n");
+  if (links) {
+    await Bun.write(source + "/.agents/skills/input", "skill input");
+    await mkdir(source + "/.claude");
+    await symlink("../.agents/skills", source + "/.claude/skills");
+  }
   git("add", ".");
   git("-c", "user.name=Test", "-c", "user.email=test@example.org", "commit", "-qm", "fixture");
   await Bun.write(source + "/input", "patched\n");
@@ -209,4 +214,32 @@ test("npm install configuration is a guarded input", async () => {
     if (old === undefined) delete process.env.npm_config_registry;
     else process.env.npm_config_registry = old;
   }
+});
+
+test("GitHub shell-step identity is metadata for same-run reuse", async () => {
+  const old = process.env.GITHUB_ACTION;
+  process.env.GITHUB_ACTION = "__run";
+  try {
+    const f = await fixture();
+    process.env.GITHUB_ACTION = "__run_9";
+    expect(await verifyPackedWeb(f.root)).toBeTruthy();
+  } finally {
+    if (old === undefined) delete process.env.GITHUB_ACTION;
+    else process.env.GITHUB_ACTION = old;
+  }
+});
+
+test("internal directory symlinks are recorded without following directories or omitting target inputs", async () => {
+  const f = await fixture(true);
+  expect(await verifyPackedWeb(f.root)).toBeTruthy();
+  await Bun.write(f.source + "/.agents/skills/input", "changed skill input");
+  await expect(verifyPackedWeb(f.root)).rejects.toThrow();
+});
+test("external input-tree symlinks fail closed", async () => {
+  const f = await fixture();
+  const external = await mkdtemp(resolve(tmpdir(), "die-packed-external-"));
+  temporary.push(external);
+  await Bun.write(external + "/input", "mutable external input");
+  await symlink(external, f.root + "/integrations/t3/external");
+  await expect(verifyPackedWeb(f.root)).rejects.toThrow("escapes the owned input tree");
 });

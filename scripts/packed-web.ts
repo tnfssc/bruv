@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { lstat, readlink, readdir, realpath, rename, rm } from "node:fs/promises";
-import { resolve, join } from "node:path";
+import { resolve, join, relative as relativePath, sep } from "node:path";
 import { verifyWebSource } from "../integrations/t3/build/verify-source";
 
 // Local producer receipt, NOT an artifact-cache trust mechanism. Never restore it
@@ -18,10 +18,18 @@ async function tree(directory: string): Promise<string> {
       if (entry.isDirectory()) await walk(join(path, entry.name), name + "/");
       else {
         const absolute = join(path, entry.name);
-        const metadata = entry.isSymbolicLink()
-          ? "symlink:" + (await readlink(absolute))
-          : String((await lstat(absolute)).mode & 0o777);
-        entries.push([name, metadata + ":" + hash(await Bun.file(absolute).bytes())]);
+        if (entry.isSymbolicLink()) {
+          const target = await realpath(absolute);
+          const within = relativePath(directory, target);
+          if (within === ".." || within.startsWith(".." + sep) || within.split(sep).some((part) => excluded.has(part)))
+            throw new Error("Packed web input symlink escapes the owned input tree: " + name);
+          // Internal targets are hashed by the normal tree walk. Do not follow
+          // directory links (or cycles), and never omit external mutable inputs.
+          entries.push([name, "symlink:" + (await readlink(absolute))]);
+        } else {
+          const metadata = String((await lstat(absolute)).mode & 0o777);
+          entries.push([name, metadata + ":" + hash(await Bun.file(absolute).bytes())]);
+        }
       }
     }
   }
@@ -53,7 +61,7 @@ async function identity(root: string, source: string) {
     Object.entries(process.env)
       .filter(
         ([key]) =>
-          !/^(npm_(lifecycle_(event|script)$|package_(json|name|version)$|execpath$|node_execpath$|command$|config_(user_agent|local_prefix)$)|_$|SHLVL$|PWD$|OLDPWD$|INIT_CWD$|DIE_T3_SOURCE$|PATH$|GITHUB_(ENV|OUTPUT|STEP_SUMMARY|STATE)$)/.test(
+          !/^(npm_(lifecycle_(event|script)$|package_(json|name|version)$|execpath$|node_execpath$|command$|config_(user_agent|local_prefix)$)|_$|SHLVL$|PWD$|OLDPWD$|INIT_CWD$|DIE_T3_SOURCE$|PATH$|GITHUB_(ACTION|ENV|OUTPUT|STEP_SUMMARY|STATE)$)/.test(
             key,
           ),
       )

@@ -30,42 +30,33 @@ if [[ "$lane" == macos ]]; then
   # This is the separate device-free macOS lane, not the Linux gate.
   run_step 'Prepare assets' macos-assets.log "$root" bun run prepare:assets
   run_step 'Offline OpenAI source probe' macos-openai-transport.log "$root" bun scripts/offline-openai-default-transport.ts --source-only
-  run_step 'Deterministic Live tests' macos-live-tests.log "$root" bun test tests/live-*.test.ts
+  run_step 'Deterministic Live tests' macos-live-tests.log "$root" bun test --parallel=3 tests/live-*.test.ts
   exit 0
 fi
-
-# Keep this in sync with the pinned revision used by build-web.ts.
-source_pin="$(bun -e 'console.log(require("./integrations/t3/upstream/source.json").revision)')"
-web_source="${DIE_T3_SOURCE:-$root/.cache/die-t3code-$source_pin}"
 
 run_step 'Format check' format.log "$root" bun run format:check
 run_step 'Lint' lint.log "$root" bun run lint
 run_step 'Typecheck' typecheck.log "$root" bun run check
-run_step 'Build' build.log "$root" bun run build
+if [[ "${DIE_CI_WEB_CACHE:-0}" == 1 ]]; then
+  run_step 'Prepare verified pinned web payload' web-producer.log "$root" bun --no-env-file scripts/ci-web.ts build
+  # Typecheck already prepared root assets. Keep the same invocation environment
+  # as the receipt owner (npm scripts inject an additional NODE variable).
+  run_step 'Build current CLI' build.log "$root" bun scripts/build.ts --reuse-packed-web
+else
+  run_step 'Build' build.log "$root" bun run build
+fi
 run_step 'Offline default OpenAI transport' openai-transport.log "$root" bun scripts/offline-openai-default-transport.ts
 # The pinned source may live outside this checkout. Test the binary built above,
 # not a dist path inferred from the upstream source location.
 export T3_V2_DIE_BINARY="${T3_V2_DIE_BINARY:-$root/dist/die}"
-run_step 'Typecheck web backend' web-typecheck.log "$web_source/apps/server" ../../node_modules/.bin/tsc --noEmit
-run_step 'Typecheck web client' web-client-typecheck.log "$web_source/apps/web" ../../node_modules/.bin/tsc --noEmit
-run_step 'Typecheck terminal client' terminal-client-typecheck.log "$web_source/packages/client-runtime" ../../node_modules/.bin/tsc --noEmit
-run_step 'Validate web backend' web-tests.log "$web_source/apps/server" ../../node_modules/.bin/vp test run \
-  src/provider/Layers/PiProvider.test.ts src/auth/EnvironmentAuth.test.ts src/serverRuntimeStartup.test.ts \
-  src/terminal/NodePtyAdapter.test.ts src/terminal/BunPtyAdapter.test.ts src/terminal/Manager.test.ts \
-  src/terminal/SubscriberStream.test.ts src/mcp/DieTaskService.test.ts src/mcp/OrchestratorMcpService.test.ts \
-  src/orchestration-v2/NativeDieIntegration.production.test.ts src/orchestration-v2/ProjectionStore.test.ts \
-  src/orchestration-v2/ProviderContinuationService.test.ts src/orchestration-v2/LocalJobNotification.test.ts \
-  src/orchestration-v2/NativeUsageAccounting.test.ts src/orchestration-v2/Adapters/PiAdapterV2.test.ts \
-  src/resourceTelemetry/ResourceTelemetry.test.ts src/device/AgentDeviceTarget.test.ts src/provider/Layers/EventNdjsonLogger.test.ts
-run_step 'Validate focused web model behavior' web-model-tests.log "$web_source/apps/web" \
-  ../../node_modules/.bin/vp test run --project unit src/composerDraftStore.test.ts src/lib/chatThreadActions.test.ts
-run_step 'Validate web contracts' web-contract-tests.log "$web_source/packages/contracts" \
-  ../../node_modules/.bin/vp test run src/browserProfile.test.ts src/orchestratorMcp.test.ts src/providerRuntime.test.ts
-run_step 'Validate client projection' web-client-runtime-tests.log "$web_source/packages/client-runtime" \
-  ../../node_modules/.bin/vp test run src/state/orchestrationV2Projection.test.ts
-run_step 'Validate web cache regressions' web-cache-tests.log "$web_source/apps/web" \
-  ../../node_modules/.bin/vp test run src/lib/syntaxHighlighting.test.ts src/components/pullRequest/pullRequestDetail.logic.test.ts src/components/chat/nativeUsageCost.logic.test.ts
-run_step 'Validate terminal client recovery' terminal-client-tests.log "$web_source/packages/client-runtime" \
-  ../../node_modules/.bin/vp test run src/rpc/client.test.ts src/state/terminalSession.test.ts
-run_step 'Deterministic tests' tests.log "$root" env DIE_RUN_LLM_TESTS=0 bun test ./tests
+# Build/prerequisites are complete. Both groups only read the compiled payload
+# and pinned source; tests own temporary homes/ports and have separate log files.
+run_step 'Current-CLI web validation' web-validation.log "$root" bash scripts/ci-web-validation.sh &
+web_pid=$!
+run_step 'Complete root tests (four bounded workers)' tests.log "$root" env DIE_RUN_LLM_TESTS=0 bun test --parallel=4 ./tests &
+root_pid=$!
+status=0
+wait "$web_pid" || status=1
+wait "$root_pid" || status=1
+[[ "$status" == 0 ]] || exit "$status"
 run_step 'Standalone smoke test' smoke.log "$root" bun run smoke -- --reuse-build
