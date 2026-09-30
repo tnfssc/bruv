@@ -6487,10 +6487,10 @@ index 00000000..0b79fd65
 +});
 diff --git a/apps/server/src/orchestration-v2/NativeDieIntegration.production.test.ts b/apps/server/src/orchestration-v2/NativeDieIntegration.production.test.ts
 new file mode 100644
-index 00000000..67e142de
+index 00000000..ac6bd23d
 --- /dev/null
 +++ b/apps/server/src/orchestration-v2/NativeDieIntegration.production.test.ts
-@@ -0,0 +1,800 @@
+@@ -0,0 +1,863 @@
 +// @effect-diagnostics preferSchemaOverJson:off globalConsoleInEffect:off missingEffectContext:off missingLayerContext:off anyUnknownInErrorContext:off globalFetchInEffect:off nodeBuiltinImport:off globalTimers:off
 +/** End-to-end contract: real Die routes subagent/jobs through die_task_launch, die_task_observe, die_task_list, and die_task_cancel. */
 +import * as NodeServices from "@effect/platform-node/NodeServices";
@@ -6668,6 +6668,18 @@ index 00000000..67e142de
 +          const parentReadyReached = new Promise<void>((resolveReached) => {
 +            markParentReadyReached = resolveReached;
 +          });
++          type ParentPhase = "initial" | "replay" | "terminal";
++          const parentRequests: { phase: ParentPhase; payload: any }[] = [];
++          const parentResponses: ParentPhase[] = [];
++          let releaseTerminalResponse!: () => void;
++          const terminalResponseRelease = new Promise<void>((release) => {
++            releaseTerminalResponse = release;
++          });
++          let markTerminalRequestReached!: () => void;
++          const terminalRequestReached = new Promise<void>((reached) => {
++            markTerminalRequestReached = reached;
++          });
++          const parentExecuteCodes: string[] = [];
 +          let parentExecuteResponses = 0;
 +          const model = createServer(async (req, res) => {
 +            if (req.method === "GET" && req.url === "/parent-ready") {
@@ -6691,7 +6703,6 @@ index 00000000..67e142de
 +            }
 +            const payload = await body(req);
 +            requests.push(payload);
-+            const text = JSON.stringify(payload.messages ?? []);
 +            const userText = JSON.stringify(
 +              (payload.messages ?? []).filter((m: any) => m.role === "user"),
 +            );
@@ -6771,12 +6782,21 @@ index 00000000..67e142de
 +              );
 +              return;
 +            }
-+            if (
-+              (isParent || text.includes("INTEGRATED_PARENT_CONTINUATION")) &&
-+              parentExecuteResponses < 2
-+            ) {
++            // The marker survives in history. Classify by the scripted response phase,
++            // not by counting every request containing the earlier execute result.
++            const phase: ParentPhase =
++              parentExecuteResponses === 0
++                ? "initial"
++                : parentExecuteResponses === 1
++                  ? "replay"
++                  : "terminal";
++            expect(isParent).toBe(true);
++            parentRequests.push({ phase, payload });
++            if (phase !== "terminal") {
++              parentResponses.push(phase);
 +              parentExecuteResponses += 1;
-+              const code = `const a=await subagent({type:"orchestrator",prompt:"INTEGRATED_SUCCESS_CHILD"}); if(!a.background) throw new Error("NOT_NATIVE_ASYNC"); const first=await jobs.inspect(a.id); const listed=await jobs.list({count:20}); const pending=await subagent({type:"orchestrator",prompt:"INTEGRATED_CANCEL_CHILD"}); const deadline=Date.now()+10000; while(!(await (await fetch("http://127.0.0.1:${(model.address() as { port: number }).port}/cancel-ready")).json()).ready) { if(Date.now()>deadline) throw new Error("CANCEL_CHILD_DID_NOT_REACH_MODEL"); await new Promise(r=>setTimeout(r,20)); } const cancel=await jobs.stop(pending.id); const cancelAgain=await jobs.stop(pending.id); console.log("INTEGRATED_PARENT_CONTINUATION"+JSON.stringify({taskId:a.id,background:a.background,firstStatus:first.status,listHasTask:listed.jobs.some(x=>x.id===a.id),cancelStatus:cancel.status,cancelAgainStatus:cancelAgain.status})); await fetch("http://127.0.0.1:${(model.address() as { port: number }).port}/parent-ready"); await handoff("INTEGRATED_PARENT_HANDOFF");`;
++              const code = `const a=await subagent({type:"orchestrator",prompt:"INTEGRATED_SUCCESS_CHILD"}); if(!a.background) throw new Error("NOT_NATIVE_ASYNC"); const first=await jobs.inspect(a.id); const listed=await jobs.list({count:20}); const pending=await subagent({type:"orchestrator",prompt:"INTEGRATED_CANCEL_CHILD"}); const deadline=Date.now()+10000; while(!(await (await fetch("http://127.0.0.1:${(model.address() as { port: number }).port}/cancel-ready")).json()).ready) { if(Date.now()>deadline) throw new Error("CANCEL_CHILD_DID_NOT_REACH_MODEL"); await new Promise(r=>setTimeout(r,20)); } const cancel=await jobs.stop(pending.id); const cancelAgain=await jobs.stop(pending.id); console.log("INTEGRATED_PARENT_CONTINUATION"+JSON.stringify({taskId:a.id,background:a.background,firstStatus:first.status,listHasTask:listed.jobs.some(x=>x.id===a.id),cancelStatus:cancel.status,cancelAgainStatus:cancelAgain.status})); if(first.status!=="completed") { await fetch("http://127.0.0.1:${(model.address() as { port: number }).port}/parent-ready"); await handoff("INTEGRATED_PARENT_HANDOFF"); }`;
++              parentExecuteCodes.push(code);
 +              return sse(res, [
 +                {
 +                  ...base,
@@ -6801,6 +6821,9 @@ index 00000000..67e142de
 +                { ...base, choices: [{ index: 0, delta: {}, finish_reason: "tool_calls" }] },
 +              ]);
 +            }
++            markTerminalRequestReached();
++            await terminalResponseRelease;
++            parentResponses.push("terminal");
 +            return sse(res, [
 +              {
 +                ...base,
@@ -6867,6 +6890,11 @@ index 00000000..67e142de
 +            acceptance: {} as Record<string, unknown>,
 +            modelAddress: (model.address() as { address: string }).address,
 +            getParentExecuteResponses: () => parentExecuteResponses,
++            parentRequests,
++            parentResponses,
++            parentExecuteCodes,
++            terminalRequestReached,
++            releaseTerminalResponse,
 +          };
 +        }),
 +        (fixture) =>
@@ -7052,6 +7080,15 @@ index 00000000..67e142de
 +                ),
 +              );
 +              fixture.releaseSuccessRequest();
++              // Force terminal arrival before final assertions, but delay its response.
++              // This catches both the history-marker ambiguity and premature completion.
++              yield* Effect.promise(() => fixture.terminalRequestReached);
++              const beforeTerminal = yield* orchestrator.getThreadProjection(PARENT);
++              expect(fixture.parentResponses).toEqual(["initial", "replay"]);
++              expect(
++                beforeTerminal.runs.filter((run: any) => run.status === "completed"),
++              ).toHaveLength(1);
++              fixture.releaseTerminalResponse();
 +
 +              const parent = yield* waitFor(
 +                orchestrator,
@@ -7067,10 +7104,10 @@ index 00000000..67e142de
 +                        s.status === "interrupted" ||
 +                        s.status === "cancelled",
 +                    ) &&
-+                  fixture.requests.some((request: any) =>
-+                    JSON.stringify(request.messages ?? []).includes(
-+                      "INTEGRATED_PARENT_CONTINUATION",
-+                    ),
++                  fixture.parentResponses.includes("terminal") &&
++                  p.turnItems.some(
++                    (item: any) =>
++                      item.type === "assistant_message" && item.text === "INTEGRATED_PARENT_DONE",
 +                  ) &&
 +                  p.runs.filter((run: any) => run.status === "completed").length === 2 &&
 +                  p.contextTransfers.some(
@@ -7120,10 +7157,24 @@ index 00000000..67e142de
 +                ),
 +              );
 +              expect(nestedRequests).toHaveLength(1);
-+              const parentContinuations = fixture.requests.filter((r: any) =>
-+                JSON.stringify(r.messages ?? []).includes("INTEGRATED_PARENT_CONTINUATION"),
++              expect(fixture.parentRequests.map((r) => r.phase)).toEqual([
++                "initial",
++                "replay",
++                "terminal",
++              ]);
++              expect(fixture.parentResponses).toEqual(["initial", "replay", "terminal"]);
++              const parentContinuations = fixture.parentRequests.filter(
++                (r) => r.phase === "replay",
 +              );
 +              expect(parentContinuations).toHaveLength(1);
++              for (const { phase, payload } of fixture.parentRequests) {
++                const hasExecuteResult = (payload.messages ?? []).some(
++                  (m: any) =>
++                    m.role === "tool" &&
++                    JSON.stringify(m.content).includes("INTEGRATED_PARENT_CONTINUATION"),
++                );
++                expect(hasExecuteResult).toBe(phase !== "initial");
++              }
 +              const endpoint = McpProviderSession.readMcpProviderSession(PARENT)?.endpoint;
 +              expect(endpoint).toBeDefined();
 +              const unauthorized = yield* Effect.promise(() =>
@@ -7149,6 +7200,13 @@ index 00000000..67e142de
 +              const successProjection = yield* orchestrator.getThreadProjection(successThreadId);
 +              const cancelProjection = yield* orchestrator.getThreadProjection(cancelledThreadId);
 +              expect(successProjection.runs).toHaveLength(1);
++              for (const nested of cancelProjection.subagents) {
++                expect(["cancelled", "interrupted"]).toContain(nested.status);
++              }
++              expect(cancelProjection.runs).toHaveLength(1);
++              expect(
++                cancelProjection.subagents.filter((s: any) => s.origin === "app_owned"),
++              ).toHaveLength(1);
 +              expect(["claimed", "delivered", "acknowledged"]).toContain(
 +                success.completionDelivery.state,
 +              );
@@ -7165,11 +7223,15 @@ index 00000000..67e142de
 +                (item: any) => item.type === "dynamic_tool" && item.toolName === "execute",
 +              );
 +              expect(fixture.getParentExecuteResponses()).toBe(2);
++              expect(fixture.parentExecuteCodes).toHaveLength(2);
++              expect(fixture.parentExecuteCodes[1]).toBe(fixture.parentExecuteCodes[0]);
 +              // Replayed identical native tool identity is projected once, not duplicated.
 +              expect(executeOutputs).toHaveLength(1);
 +              for (const output of executeOutputs) {
 +                expect(String(output.output)).toContain(success.id);
 +                expect(String(output.output)).toContain(cancelled.id);
++                expect(String(output.output)).toContain('"cancelStatus":"cancelled"');
++                expect(String(output.output)).toContain('"cancelAgainStatus":"cancelled"');
 +              }
 +              for (const request of fixture.requests)
 +                expect(request.tools.map((t: any) => t.function.name)).toEqual(["execute"]);
@@ -7231,6 +7293,7 @@ index 00000000..67e142de
 +            else process.env.DIE_SUBAGENT_PROFILES_PATH = fixture.previousProfilesPath;
 +            fixture.releaseParentReady();
 +            fixture.releaseSuccessRequest();
++            fixture.releaseTerminalResponse();
 +            for (const res of fixture.hanging) res.destroy();
 +            fixture.model.closeAllConnections();
 +            fixture.model.close();
