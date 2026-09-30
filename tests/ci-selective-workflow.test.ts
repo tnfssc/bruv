@@ -3,7 +3,6 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { findDryRun } from "../scripts/find-release-dry-run";
 
 type Step = {
   name?: string;
@@ -94,7 +93,7 @@ test("fast feedback plans and executes in one Bun-only job without full provisio
     "oven-sh/setup-bun",
   ]);
   expect(job.steps[0]!.with).toEqual({ "fetch-depth": 0, "persist-credentials": false });
-  for (const s of [...job.steps, ...release.jobs.plan!.steps]) {
+  for (const s of job.steps) {
     expect(s.run ?? "").not.toContain("${{");
   }
   const run = step(job, "Run selected checks from clean source");
@@ -131,48 +130,55 @@ test("aggregate rejects every failed, cancelled, skipped or inconsistent require
     expect(run(mode!, full!, "success", "skipped", "skipped")).not.toBe(0);
 });
 
-test("develop narrow plans never build/reuse/publish; manual and tags retain real gates", () => {
-  for (const mode of ["false", "true", ""]) {
-    for (const result of ["success", "skipped", "failure", "cancelled"]) {
-      const needs = {
-        plan: { result, outputs: { full: mode } },
-        "prepare-manual": { result: "skipped" },
-        "reuse-check": { result: "skipped", outputs: { run_id: "" } },
-        "mac-helper": { result: "success" },
-      };
-      const github = { event_name: "push", ref: "refs/heads/develop", ref_name: "develop" };
-      for (const id of ["release", "mac-helper"]) {
-        expect(release.jobs[id]!.needs).toContain("plan");
-        expect(enabled(release.jobs[id]!.if!, github, needs)).toBe(mode === "true" && result === "success");
-      }
-      expect(enabled(release.jobs["reuse-check"]!.if!, github, needs)).toBe(false);
-      expect(enabled(release.jobs.publish!.if!, github, needs)).toBe(false);
-    }
-  }
-  for (const event of ["workflow_dispatch", "push"]) {
-    const github = {
-      event_name: event,
-      ref: event === "push" ? "refs/tags/v1.0.0" : "refs/heads/develop",
-      ref_name: event === "push" ? "v1.0.0" : "develop",
-    };
+test("only manual and stable tag releases package; all publication gates fail closed", () => {
+  expect(release.on.push).toEqual({ tags: ["v*"] });
+  expect(release.on.workflow_dispatch).toBeDefined();
+  expect(release.on.pull_request).toBeUndefined();
+  expect(Object.keys(release.jobs)).toEqual([
+    "prepare-manual",
+    "mac-helper",
+    "release",
+    "linux-browser-boot",
+    "mac-release-smoke",
+    "publish",
+  ]);
+  for (const [event, ref, allowed] of [
+    ["push", "refs/heads/develop", false],
+    ["pull_request", "refs/pull/1/merge", false],
+    ["push", "refs/tags/v1.0.0-beta.1", false],
+    ["push", "refs/tags/v1.0.0", true],
+    ["workflow_dispatch", "refs/heads/develop", true],
+    ["workflow_dispatch", "refs/heads/main", false],
+  ] as const) {
+    const github = { event_name: event, ref, ref_name: ref.split("/").at(-1)! };
+    const prepared = event === "workflow_dispatch" && ref === "refs/heads/develop";
     const needs = {
-      plan: { result: "skipped", outputs: {} },
-      "prepare-manual": { result: event === "push" ? "skipped" : "success" },
-      "reuse-check": { result: "success", outputs: { run_id: "" } },
+      "prepare-manual": { result: prepared ? "success" : "skipped" },
       "mac-helper": { result: "success" },
       release: { result: "success" },
-      "reuse-assets": { result: "skipped" },
       "linux-browser-boot": { result: "success" },
       "mac-release-smoke": { result: "success" },
     };
-    expect(enabled(release.jobs.plan!.if!, github, needs)).toBe(false);
-    for (const id of ["release", "mac-helper", "publish"])
-      expect(enabled(release.jobs[id]!.if!, github, needs)).toBe(true);
-    needs["linux-browser-boot"].result = "skipped";
-    expect(enabled(release.jobs.publish!.if!, github, needs)).toBe(false);
-    needs["linux-browser-boot"].result = "success";
-    needs["mac-release-smoke"].result = "failure";
-    expect(enabled(release.jobs.publish!.if!, github, needs)).toBe(false);
+    expect(enabled(release.jobs["prepare-manual"]!.if!, github, needs)).toBe(prepared);
+    for (const id of ["mac-helper", "release", "publish"])
+      expect(enabled(release.jobs[id]!.if!, github, needs)).toBe(allowed);
+    if (!allowed) continue;
+    for (const result of ["failure", "cancelled", "skipped"]) {
+      for (const id of ["release", "linux-browser-boot", "mac-release-smoke"] as const) {
+        needs[id].result = result;
+        expect(enabled(release.jobs.publish!.if!, github, needs)).toBe(false);
+        needs[id].result = "success";
+      }
+      needs["mac-helper"].result = result;
+      expect(enabled(release.jobs.release!.if!, github, needs)).toBe(false);
+      needs["mac-helper"].result = "success";
+      if (prepared) {
+        needs["prepare-manual"].result = result;
+        for (const id of ["mac-helper", "release", "publish"])
+          expect(enabled(release.jobs[id]!.if!, github, needs)).toBe(false);
+        needs["prepare-manual"].result = "success";
+      }
+    }
   }
 });
 
@@ -241,33 +247,4 @@ test("PR comparison keeps tested merge parent; missing trusted push baseline req
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
-});
-
-test("a green narrow develop release workflow with no assets cannot be reused", async () => {
-  const sha = "a".repeat(40);
-  const repo = "example/die";
-  const responses = [
-    { id: 10, path: ".github/workflows/release.yml" },
-    {
-      workflow_runs: [
-        {
-          id: 20,
-          workflow_id: 10,
-          path: ".github/workflows/release.yml",
-          event: "push",
-          head_branch: "develop",
-          head_sha: sha,
-          status: "completed",
-          conclusion: "success",
-          repository: { full_name: repo },
-          head_repository: { full_name: repo },
-        },
-      ],
-    },
-    { total_count: 0, artifacts: [] },
-  ];
-  let calls = 0;
-  const fetcher = Object.assign(async () => Response.json(responses[calls++]), { preconnect: fetch.preconnect });
-  expect(await findDryRun(repo, sha, "read-only-test-token", fetcher)).toBeUndefined();
-  expect(calls).toBe(3);
 });

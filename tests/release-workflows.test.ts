@@ -167,19 +167,19 @@ describe("release automation", () => {
     expect(workflow).toContain('- "v*"');
     expect(workflow).toContain("workflow_dispatch:");
     expect(workflow).toContain("!contains(github.ref_name, '-')");
-    expect(workflow).toContain("needs: [reuse-check, prepare-manual, mac-helper, plan]");
+    expect(workflow).toContain("needs: [prepare-manual, mac-helper]");
     expect(workflow).toContain("scripts/build-live-helper.sh");
     expect(workflow).toContain("Mach-O 64-bit (executable arm64|arm64 executable)");
     expect(workflow).toContain("-fsanitize=address,undefined");
     expect(workflow).toContain("actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c");
     expect(workflow).toContain("--live-helper=./artifacts/release/mac-helper/live-audio");
     expect(workflow).toContain("stable-release-assets");
-    expect(workflow).toContain("needs: [release, reuse-assets, linux-browser-boot, mac-release-smoke, prepare-manual]");
+    expect(workflow).toContain("needs: [release, linux-browser-boot, mac-release-smoke, prepare-manual]");
     expect(workflow).toContain("bun scripts/verify-v071-update.ts dist/release/die-darwin-arm64");
     expect(workflow).toContain("--live-self-test");
     expect(workflow).toContain("permissions:\n  contents: read");
     expect(workflow).toContain("contents: write");
-    expect(workflow).toContain('validate-release-tag.ts "$tag"');
+    expect(workflow).toContain('validate-release-tag.ts "$RELEASE_TAG"');
     expect(workflow).toContain("apt-get install -y tmux");
     expect(workflow).toContain("bun run lint");
     expect(workflow.indexOf("bun run build")).toBeLessThan(workflow.indexOf("bun test ./tests"));
@@ -228,27 +228,22 @@ describe("release automation", () => {
       >;
     };
     expect(Object.keys(workflow.on)).toEqual(["workflow_dispatch", "push"]);
-    expect(workflow.on.push).toEqual({ branches: ["develop"], tags: ["v*"] });
+    expect(workflow.on.push).toEqual({ tags: ["v*"] });
     expect(workflow.jobs.publish!.if).toBe(
-      "${{ always() && (github.event_name == 'workflow_dispatch' && needs.prepare-manual.result == 'success' || github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) && needs.linux-browser-boot.result == 'success' && needs.mac-release-smoke.result == 'success' && (needs.release.result == 'success' || needs.reuse-assets.result == 'success') }}",
+      "${{ always() && (github.event_name == 'workflow_dispatch' && needs.prepare-manual.result == 'success' || github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-')) && needs.linux-browser-boot.result == 'success' && needs.mac-release-smoke.result == 'success' && needs.release.result == 'success' }}",
     );
     expect(workflow.jobs.publish!.needs).toEqual([
       "release",
-      "reuse-assets",
       "linux-browser-boot",
       "mac-release-smoke",
       "prepare-manual",
     ]);
-    expect(workflow.jobs["mac-release-smoke"]!.needs).toEqual(["release", "reuse-assets", "prepare-manual"]);
-    expect(workflow.jobs["mac-release-smoke"]!.if).toContain(
-      "needs.release.result == 'success' || needs.reuse-assets.result == 'success'",
-    );
+    expect(workflow.jobs["mac-release-smoke"]!.needs).toEqual(["release", "prepare-manual"]);
+    expect(workflow.jobs["mac-release-smoke"]!.if).toContain("needs.release.result == 'success'");
     expect(workflow.jobs.release!.permissions?.contents).not.toBe("write");
     expect(workflow.jobs.publish!.permissions?.contents).toBe("write");
-    expect(workflow.jobs["linux-browser-boot"]!.needs).toEqual(["release", "reuse-assets", "prepare-manual"]);
-    expect(workflow.jobs["linux-browser-boot"]!.if).toContain(
-      "needs.release.result == 'success' || needs.reuse-assets.result == 'success'",
-    );
+    expect(workflow.jobs["linux-browser-boot"]!.needs).toEqual(["release", "prepare-manual"]);
+    expect(workflow.jobs["linux-browser-boot"]!.if).toContain("needs.release.result == 'success'");
     const browserCommands = workflow.jobs["linux-browser-boot"]!.steps.map((step) => step.run ?? "").join("\n");
     expect(browserCommands).toContain("bash scripts/setup-release-browser.sh");
     const setup = await read("scripts/setup-release-browser.sh");
@@ -403,4 +398,16 @@ test("release cache environment retains source identity variables", async () => 
   for (const job of Object.values(workflow.jobs)) {
     expect(JSON.stringify(job.env ?? {})).not.toContain("runner.temp");
   }
+});
+
+// Full CI inventories remain required for actual releases, alongside release-only gates.
+test("release validation includes the full CI web test union", async () => {
+  const ci = await read("scripts/ci.sh");
+  const workflow = await read(".github/workflows/release.yml");
+  for (const path of new Set(ci.match(/src\/[\w/.]+\.test\.ts/g))) expect(workflow).toContain(path);
+  expect(workflow).toContain("bun scripts/offline-openai-default-transport.ts");
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(workflow).toContain("T3_V2_DIE_BINARY: ${{ github.workspace }}/dist/die");
+  expect(workflow).toContain("bun test ./tests");
+  expect(workflow).toContain("bun run smoke -- --reuse-build");
 });

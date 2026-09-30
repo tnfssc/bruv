@@ -56,22 +56,22 @@ No contributor title, branch name or filename is interpolated into shell. Event
 SHAs are passed as quoted environment values. PR token permissions are read-only,
 checkout does not persist credentials, and no pull_request_target runs.
 
-## Develop dry run versus release
+## CI versus release
 
-Release workflow adds a Bun-only plan job **only** for develop pushes, using the
-same successful CI ancestor..HEAD selector contract. The native helper and release producer
-both depend directly on a successful full=true plan. Docs/selected plans skip
-expensive release producers and downstream browser/Mac gates; they produce **no**
-stable-release-assets artifact. A skipped plan alone never authorizes a producer.
+CI alone validates ordinary PRs and develop pushes using selected/full lanes.
+High-risk changes still run full Linux build, root and web tests plus macOS Live
+validation; full CI takes minutes, not the measured narrow-source 46 seconds.
+Nightly/manual full reconciliation remains required.
 
-Actual stable tag and manual requests skip this plan by design. Their existing
-exact-SHA lookup, prepared manual SHA, full-build-on-no-reuse behavior, version
-validation, verified asset staging, browser/Mac gates, and publication conditions
-remain required. The manual path does not wait for a bot push workflow. Prerelease
-exclusion is unchanged. Existing lookup additionally requires an exact successful
-trusted develop run and a unique nonempty unexpired stable-release-assets artifact;
-therefore a successful narrow develop workflow with no artifact is not reusable.
-No selective job uploads release assets or is referenced by publication.
+Release packages binaries only on manual dispatch from develop or stable tag
+pushes. Routine develop commits never run release packaging. There is no develop
+dry-run producer, exact-SHA lookup or cross-run asset reuse. Every actual release
+runs fresh full validation (backend/model/contracts/projection/cache/terminal,
+root tests and build), native helper, final browser, Mac and old-updater gates.
+Manual preparation still creates the next-version commit on latest develop;
+prepared SHA/tag and tag/version consistency bind validation to publication.
+Only the final gated publish job has publication authority. No replacement
+workflow or shared-artifact protocol is needed.
 
 ## Rollout (human-owned; no automatic push/dispatch/release)
 
@@ -88,12 +88,11 @@ No selective job uploads release assets or is referenced by publication.
    only after observing that it is present on docs, selected and full PR events.
    Requiring conditional Full validation jobs would accept skipped statuses or
    block narrow PRs; use policy to enforce applicability. External automations must
-   distinguish selected feedback from full proof. Do not require Release dry-run
-   gates for eligible narrow pushes.
+   distinguish selected feedback from full proof. Release is not a routine push gate.
 4. Before advertising <60s, measure hosted docs and each enabled source class on
    clean runners, cold and warm dependencies, including job startup and the final
    policy job. Record runner-start-to-policy-result and event-to-result p50/p95,
-   queue time, release plan overhead and selector hit rate. Separate the <60s
+   queue time and selector hit rate. Separate the <60s
    feedback target from full fallback/release latency. The extra aggregate runner
    can dominate short docs checks; do not omit correctness to hit a timing number.
 5. Human-trigger representative PR/develop tests: docs, each source class,
@@ -103,10 +102,10 @@ No selective job uploads release assets or is referenced by publication.
    failure. Confirm event/condition behavior and exact checked-out SHA in summaries.
 6. Human-trigger a nightly/manual full reconciliation and compare selected mappings
    against full failures before expanding scope. Inspect final release gates on
-   a controlled manual/tag test separately; narrow green develop runs must not be
-   returned by reuse lookup. No release was dispatched by this implementation.
+   a controlled manual/tag test separately. Develop pushes must create CI only,
+   never Release packaging. No release was dispatched by this implementation.
 7. Roll back selective eligibility by making the selector conservatively emit full
-   for affected classes (or force full in both plan jobs); keep CI policy present.
+   for affected classes (or force full in CI planning); keep CI policy present.
    Investigate any missed failure with full-CI reproduction before reenabling.
 
 ## Local validation

@@ -139,3 +139,9 @@ Run https://github.com/tnfssc/die/actions/runs/36770502052 on draft PR11. Base b
 All same selected commands ran. Frozen install965ms, preparation28ms, format280ms, lint75ms, typecheck2115ms, selector/policy tests3515ms. Three overlapping processes exited0/0/0: remote group21957ms, affected reverse6354ms, source CLI contracts7936ms. This is one hosted follow-up, not p95. The14s end-to-end improvement over60s includes scheduling variance; do not attribute all14s to overlap. Local controlled comparisons measured6.4–8.2s savings.
 
 This demonstrates under-minute source feedback for the audited remote tier. Docs previously20s. Other shared/high-risk/unknown classes still take full validation; historical candidate coverage is not a claim all historical commits were tested. Logs: /home/tnfssc/.die/ci-parallel-source-probe.log.
+
+The 46s result measures only the narrow remote-source tier above. It is not a
+general CI claim: high-risk changes still require minutes of full build/root/web
+and macOS validation. Routine develop pushes now run CI only; Release packaging
+is reserved for manual dispatch and stable tags. Historical develop dry-run
+observations above describe the old workflow, not the current event policy.

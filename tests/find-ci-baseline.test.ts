@@ -125,11 +125,13 @@ test("API failures, malformed or missing history, workflow mismatch and unavaila
   expect(await findCiBaseline(repo, f.good, "private", f.cwd, api([run(f.source)]).fetcher)).toBeUndefined();
   expect(await findCiBaseline(repo, f.head, "", f.cwd, api([run(f.good)]).fetcher)).toBeUndefined();
 });
-test("both push plans use the same fail-closed CI helper, never event.before", () => {
-  for (const file of ["ci", "release"]) {
-    const yaml = readFileSync(".github/workflows/" + file + ".yml", "utf8");
-    expect(yaml).toContain("base=$(bun scripts/find-ci-baseline.ts)");
-    expect(yaml).not.toContain("github.event.before");
-    expect(yaml).toContain("actions: read");
-  }
+test("CI push planning uses the fail-closed helper; Release has no develop plan", () => {
+  const ci = readFileSync(".github/workflows/ci.yml", "utf8");
+  expect(ci).toContain("base=$(bun scripts/find-ci-baseline.ts)");
+  expect(ci).not.toContain("github.event.before");
+  expect(ci).toContain("actions: read");
+  const release = readFileSync(".github/workflows/release.yml", "utf8");
+  expect(release).not.toContain("find-ci-baseline");
+  expect(release).not.toContain("ci-selective");
+  expect(release).not.toContain("actions: read");
 });
