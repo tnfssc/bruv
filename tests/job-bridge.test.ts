@@ -153,7 +153,7 @@ test("bridge budgets reject oversized messages without corrupting subsequent cal
   expect(result.stdout).toContain("still works");
 });
 
-test("shell defaults to a three-second foreground budget; zero wait and timeout stay independent", async () => {
+test("shell defaults to a three-second foreground budget", async () => {
   const notifications: any[] = [];
   const manager = new TaskManager((t) => notifications.push(t));
   const service = new JobService(
@@ -167,20 +167,60 @@ test("shell defaults to a three-second foreground budget; zero wait and timeout 
       jobHandler: (m, p, signal) => service.handle(m, p, { cwd: process.cwd() } as any, signal),
     });
   try {
-    let started = Date.now();
+    const started = Date.now();
     const normal = await execute('console.log(JSON.stringify(await shell("read value", {closeInput:false})))');
     const elapsed = Date.now() - started;
     expect(normal.exitCode).toBe(0);
     expect(JSON.parse(normal.stdout).background).toBe(true);
     expect(elapsed).toBeGreaterThanOrEqual(2900);
     expect(elapsed).toBeLessThan(4900);
-    started = Date.now();
+    expect(notifications).toHaveLength(0);
+  } finally {
+    await manager.shutdown();
+  }
+});
+
+test("shell zero wait returns immediately", async () => {
+  const notifications: any[] = [];
+  const manager = new TaskManager((t) => notifications.push(t));
+  const service = new JobService(
+    manager,
+    () => ({ depth: 0 }),
+    () => {},
+  );
+  const execute = (code: string) =>
+    executeIsolated(code, process.cwd(), undefined, 5000, {
+      executablePath: binary,
+      jobHandler: (m, p, signal) => service.handle(m, p, { cwd: process.cwd() } as any, signal),
+    });
+  try {
+    const started = Date.now();
     const immediate = await execute(
       'console.log(JSON.stringify(await shell("read value", {waitSeconds:0,closeInput:false})))',
     );
     expect(immediate.exitCode).toBe(0);
     expect(JSON.parse(immediate.stdout).background).toBe(true);
     expect(Date.now() - started).toBeLessThan(1000);
+    expect(notifications).toHaveLength(0);
+  } finally {
+    await manager.shutdown();
+  }
+});
+
+test("shell timeout stays independent of the default foreground budget", async () => {
+  const notifications: any[] = [];
+  const manager = new TaskManager((t) => notifications.push(t));
+  const service = new JobService(
+    manager,
+    () => ({ depth: 0 }),
+    () => {},
+  );
+  const execute = (code: string) =>
+    executeIsolated(code, process.cwd(), undefined, 5000, {
+      executablePath: binary,
+      jobHandler: (m, p, signal) => service.handle(m, p, { cwd: process.cwd() } as any, signal),
+    });
+  try {
     const timeout = await execute(
       'console.log(JSON.stringify(await shell("read value", {timeoutSeconds:0.2,closeInput:false})))',
     );
@@ -190,6 +230,26 @@ test("shell defaults to a three-second foreground budget; zero wait and timeout 
       status: "killed",
       timedOut: true,
     });
+    expect(notifications).toHaveLength(0);
+  } finally {
+    await manager.shutdown();
+  }
+});
+
+test("shell failure returns inline without a completion notification", async () => {
+  const notifications: any[] = [];
+  const manager = new TaskManager((t) => notifications.push(t));
+  const service = new JobService(
+    manager,
+    () => ({ depth: 0 }),
+    () => {},
+  );
+  const execute = (code: string) =>
+    executeIsolated(code, process.cwd(), undefined, 5000, {
+      executablePath: binary,
+      jobHandler: (m, p, signal) => service.handle(m, p, { cwd: process.cwd() } as any, signal),
+    });
+  try {
     const failure = await execute('console.log(JSON.stringify(await shell("exit 7")))');
     expect(failure.exitCode).toBe(0);
     expect(JSON.parse(failure.stdout)).toMatchObject({

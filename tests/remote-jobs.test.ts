@@ -172,17 +172,17 @@ test("three-source pagination crosses native to SSH without skipping or repeatin
   }
 });
 
-test("native pagination preserves every phase with empty native and SSH sources", async () => {
-  for (const [localCount, nativeCount, sshCount] of [
-    [3, 0, 0],
-    [2, 0, 0],
-    [2, 0, 2],
-    [3, 0, 2],
-    [0, 3, 0],
-    [0, 0, 3],
-    [3, 3, 0],
-    [0, 0, 0],
-  ]) {
+for (const [localCount, nativeCount, sshCount] of [
+  [3, 0, 0],
+  [2, 0, 0],
+  [2, 0, 2],
+  [3, 0, 2],
+  [0, 3, 0],
+  [0, 0, 3],
+  [3, 3, 0],
+  [0, 0, 0],
+])
+  test(`native pagination preserves every phase (local=${localCount}, native=${nativeCount}, SSH=${sshCount})`, async () => {
     const { client, adapter } = await fixture();
     for (let i = 0; i < sshCount; i++) await client.launch("/repo", "prompt", "ssh" + i, undefined, "session-A");
     const manager = new TaskManager(() => {});
@@ -243,8 +243,7 @@ test("native pagination preserves every phase with empty native and SSH sources"
     } finally {
       await manager.shutdown();
     }
-  }
-});
+  });
 
 test("mixed pages pin totals across a local-only first page, bound cursors and discriminate raw SSH IDs", async () => {
   const { client, adapter } = await fixture();

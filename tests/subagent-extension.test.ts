@@ -3,6 +3,9 @@ import { getSessionHost } from "../src/session/host-access";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import * as childProcess from "node:child_process";
+import { EventEmitter } from "node:events";
+import { PassThrough } from "node:stream";
 import { taskLifecycleFile } from "../src/tasks/task-lifecycle";
 import { afterEach, expect, spyOn, test } from "bun:test";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
@@ -291,8 +294,62 @@ test("print agent_end wakes on attention while a job is still running", async ()
   }
 });
 
+// These notification tests control the close event, not OS scheduling. Real shell
+// execution is covered separately; a loaded child must not accidentally turn a
+// completion-in-the-coalescing-window fixture into an attention-only boundary.
+function controlledChildren() {
+  const children: Array<{ complete: (output?: string) => void }> = [];
+  const mock = spyOn(childProcess, "spawn").mockImplementation(() => {
+    const child = new EventEmitter() as any;
+    child.stdin = new PassThrough();
+    child.stdout = new PassThrough();
+    child.stderr = new PassThrough();
+    let closed = false;
+    const close = (code: number | null, signal: string | null, output = "") => {
+      if (closed) return;
+      closed = true;
+      if (output) child.stdout.write(output);
+      child.emit("close", code, signal);
+    };
+    child.kill = (signal: string) => {
+      close(null, signal);
+      return true;
+    };
+    children.push({ complete: (output = "") => close(0, null, output) });
+    return child;
+  });
+  return { children, restore: () => mock.mockRestore() };
+}
+
+function attentionClockFixture() {
+  let now = Date.now(),
+    nextTimer = 1;
+  const timers = new Map<number, { at: number; callback: () => void }>();
+  const clock = {
+    now: () => now,
+    setTimeout: (callback: () => void, delay: number) => {
+      const id = nextTimer++;
+      timers.set(id, { at: now + delay, callback });
+      return id;
+    },
+    clearTimeout: (id: unknown) => timers.delete(id as number),
+  };
+  const advance = (ms: number) => {
+    now += ms;
+    for (;;) {
+      const due = [...timers].find(([, timer]) => timer.at <= now);
+      if (!due) break;
+      timers.delete(due[0]);
+      due[1].callback();
+    }
+  };
+  return { clock, advance };
+}
+
 test("attention and a racing completion produce one deduplicated parent wakeup", async () => {
-  const e = load(0, undefined, { attention: { quietMs: 15, reviewMs: 1000 } });
+  const { clock, advance } = attentionClockFixture();
+  const children = controlledChildren();
+  const e = load(0, undefined, { attention: { quietMs: 15, reviewMs: 1000, clock } });
   let rpc: any;
   const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
     rpc = options!.jobHandler;
@@ -316,18 +373,21 @@ test("attention and a racing completion produce one deduplicated parent wakeup",
     const ctx = contextFixture({ mode: "print", signal });
     const task = await rpc("shell", { command: "read value; printf done", waitSeconds: 0, closeInput: false }, signal);
     const boundary = e.fire("agent_end", { messages: [] }, ctx);
-    await Bun.sleep(25);
+    advance(15);
     await rpc("jobs.input", { id: task.id, data: "go\n", closeInput: true }, signal);
+    expect(e.messages).toHaveLength(0);
+    children.children[0].complete("done");
     await boundary;
-    const deadline = Date.now() + 2000;
-    while (!e.messages.length && Date.now() < deadline) await Bun.sleep(10);
     expect(e.messages).toHaveLength(1);
     expect(e.messages[0].customType).toBe("task-complete");
     expect(e.messages[0].content).toContain("completed");
     // Stale attention for the now-completed task is removed from the same batch.
     expect(e.messages[0].content).not.toContain("attention checkpoint");
+    await e.fire("agent_end", { messages: [] }, ctx);
+    expect(e.messages).toHaveLength(1);
   } finally {
     mock.mockRestore();
+    children.restore();
     await e.fire("session_shutdown", {}, contextFixture());
   }
 });
@@ -441,27 +501,8 @@ test("spawned environment roles cannot be changed by resumed metadata", async ()
 });
 
 test("mixed completion and attention reserve bounded evidence for both", async () => {
-  let now = Date.now(),
-    nextTimer = 1;
-  const timers = new Map<number, { at: number; callback: () => void }>();
-  const clock = {
-    now: () => now,
-    setTimeout: (callback: () => void, delay: number) => {
-      const id = nextTimer++;
-      timers.set(id, { at: now + delay, callback });
-      return id;
-    },
-    clearTimeout: (id: unknown) => timers.delete(id as number),
-  };
-  const advance = (ms: number) => {
-    now += ms;
-    for (;;) {
-      const due = [...timers].find(([, timer]) => timer.at <= now);
-      if (!due) break;
-      timers.delete(due[0]);
-      due[1].callback();
-    }
-  };
+  const { clock, advance } = attentionClockFixture();
+  const children = controlledChildren();
   const e = load(0, undefined, {
     attention: { quietMs: 15, reviewMs: 1000, clock },
   });
@@ -499,7 +540,8 @@ test("mixed completion and attention reserve bounded evidence for both", async (
     const boundary = e.fire("agent_end", { messages: [] }, ctx);
     advance(15);
     await rpc("jobs.input", { id: finishing.id, data: "go\n", closeInput: true }, signal);
-    while ((await rpc("jobs.inspect", { id: finishing.id }, signal)).status === "running") await Bun.sleep(1);
+    expect(e.messages).toHaveLength(0);
+    children.children[1].complete("x".repeat(20000));
     await boundary;
     expect(e.messages).toHaveLength(1);
     const message = e.messages[0];
@@ -509,10 +551,13 @@ test("mixed completion and attention reserve bounded evidence for both", async (
     expect(message.content).toContain(idle.id);
     expect(message.content).toContain("attention checkpoint");
     expect(message.details.omittedAttention).toBe(0);
+    await e.fire("agent_end", { messages: [] }, contextFixture({ mode: "rpc", signal }));
+    expect(e.messages).toHaveLength(1);
     await rpc("jobs.stop", { id: idle.id }, signal);
   } finally {
     mock.mockRestore();
     await e.fire("session_shutdown", {}, contextFixture());
+    children.restore();
   }
 });
 
