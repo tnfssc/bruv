@@ -1,0 +1,11 @@
+{
+  "name": "die-dependency-automation-test-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test ./tests"
+  },
+  "dependencies": {
+    "resolve.exports": "2.0.2"
+  }
+}

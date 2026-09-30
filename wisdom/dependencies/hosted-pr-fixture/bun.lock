@@ -1,0 +1,15 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "die-dependency-automation-test-fixture",
+      "dependencies": {
+        "resolve.exports": "2.0.2",
+      },
+    },
+  },
+  "packages": {
+    "resolve.exports": ["resolve.exports@2.0.2", "", {}, "sha512-X2UW6Nw3n/aMgDVy+0rSqgHlv39WZAlZrXCdnbyEiKm17DSqHX4MmQMaST3FbeWR5FTuRcUwYAziZajji0Y7mg=="],
+  }
+}
