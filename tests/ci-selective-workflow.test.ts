@@ -57,7 +57,7 @@ test("unconditional routine checks, nightly and manual full reconciliation", () 
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
   expect(ci.jobs.required!.if).toBe("${{ always() }}");
   expect(ci.jobs.required!.needs).toEqual(["feedback", "test", "live-macos"]);
-  expect(ci.jobs.feedback!.name).toContain("not full validation");
+  expect(ci.jobs.feedback!.name).toContain("not executable validation");
   for (const job of [ci.jobs.test!, ci.jobs["live-macos"]!]) {
     expect(job.name).toStartWith("Full validation /");
     expect(job.needs).toBe("feedback");
@@ -96,7 +96,7 @@ test("fast feedback plans and executes in one Bun-only job without full provisio
   for (const s of job.steps) {
     expect(s.run ?? "").not.toContain("${{");
   }
-  const run = step(job, "Run selected checks from clean source");
+  const run = step(job, "Run docs classifier checks");
   expect(run.run).toBe('bun scripts/ci-selective.ts --base "$BASE" --run');
   for (const [mode, full, expected] of [
     ["docs", "false", true],
@@ -104,7 +104,7 @@ test("fast feedback plans and executes in one Bun-only job without full provisio
     ["full", "true", false],
     ["", "", false],
   ] as const) {
-    expect(enabled(run.if!, {}, {}, { plan: { outputs: { mode, full } } })).toBe(expected);
+    expect(enabled(run.if!, {}, {}, { plan: { outputs: { mode, full } } })).toBe(mode === "docs" && full === "false");
   }
 });
 
@@ -112,7 +112,7 @@ test("aggregate rejects every failed, cancelled, skipped or inconsistent require
   const command = ci.jobs.required!.steps[0]!.run!;
   const run = (mode: string, full: string, feedback: string, linux: string, macos: string) =>
     shell(command, { MODE: mode, FULL: full, FEEDBACK: feedback, LINUX: linux, MACOS: macos }).status;
-  for (const mode of ["docs", "selected"]) expect(run(mode, "false", "success", "skipped", "skipped")).toBe(0);
+  for (const mode of ["docs"]) expect(run(mode, "false", "success", "skipped", "skipped")).toBe(0);
   expect(run("full", "true", "success", "success", "success")).toBe(0);
   for (const bad of ["skipped", "failure", "cancelled", ""]) {
     expect(run("selected", "false", bad, "skipped", "skipped")).not.toBe(0);
@@ -124,7 +124,7 @@ test("aggregate rejects every failed, cancelled, skipped or inconsistent require
     ["", ""],
     ["docs", "true"],
     ["full", "false"],
-    ["selected", ""],
+    ["docs", ""],
     ["unknown", "false"],
   ])
     expect(run(mode!, full!, "success", "skipped", "skipped")).not.toBe(0);

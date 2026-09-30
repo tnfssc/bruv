@@ -14,6 +14,7 @@ function fixture() {
   dirs.push(cwd);
   const git = (...args: string[]) => execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
   git("init", "-q");
+  writeFileSync(join(cwd, ".gitignore"), "artifacts/\n");
   git("config", "user.email", "test@example.org");
   git("config", "user.name", "Test");
   const commit = (path: string, text: string) => {

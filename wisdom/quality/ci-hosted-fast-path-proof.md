@@ -145,3 +145,5 @@ general CI claim: high-risk changes still require minutes of full build/root/web
 and macOS validation. Routine develop pushes now run CI only; Release packaging
 is reserved for manual dispatch and stable tags. Historical develop dry-run
 observations above describe the old workflow, not the current event policy.
+
+Correction (current policy): the historical 46s run was reduced-scope source feedback, not full validation or current CI completion. Executable, test, build, and unknown changes now require full CI; only audited human-reference docs use the lightweight classifier path.

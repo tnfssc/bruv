@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    name: Selected feedback (not full validation)
+    name: Docs-only feedback (not executable validation)
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
@@ -77,8 +77,8 @@ jobs:
           else
             bun scripts/ci-selective.ts --base "$BASE"
           fi
-      - name: Run selected checks from clean source
-        if: ${{ steps.plan.outputs.full == 'false' && (steps.plan.outputs.mode == 'docs' || steps.plan.outputs.mode == 'selected') }}
+      - name: Run docs classifier checks
+        if: ${{ steps.plan.outputs.full == 'false' && (steps.plan.outputs.mode == 'docs') }}
         shell: bash
         env:
           BASE: ${{ steps.comparison.outputs.base }}
@@ -190,7 +190,7 @@ jobs:
           [[ "$FEEDBACK" == success ]] || exit 1
           if [[ "$FULL" == true && "$MODE" == full ]]; then
             [[ "$LINUX" == success && "$MACOS" == success ]] || exit 1
-          elif [[ "$FULL" == false && ("$MODE" == docs || "$MODE" == selected) ]]; then
+          elif [[ "$FULL" == false && "$MODE" == docs ]]; then
             [[ "$LINUX" == skipped && "$MACOS" == skipped ]] || exit 1
           else
             echo 'Missing or inconsistent validation plan' >&2
