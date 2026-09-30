@@ -422,3 +422,18 @@ test("full CI and release retain the same web validation union", async () => {
   expect(workflow).toContain("bun test ./tests");
   expect(workflow).toContain("bun run smoke -- --reuse-build");
 });
+
+test("full Linux fetches the exact updater fixture without all history", async () => {
+  const workflow = Bun.YAML.parse(await read(".github/workflows/ci.yml")) as any;
+  const checkout = (job: any) => job.steps.find((step: any) => step.uses?.startsWith("actions/checkout@"));
+  expect(checkout(workflow.jobs.test).with["fetch-depth"]).toBe(1);
+  expect(
+    workflow.jobs.test.steps.some(
+      (step: any) => step.run === "git fetch --no-tags --depth=1 origin refs/tags/v0.7.1:refs/tags/v0.7.1",
+    ),
+  ).toBe(true);
+  expect(checkout(workflow.jobs.feedback).with["fetch-depth"]).toBe(0);
+  expect(workflow.jobs.test.steps.find((step: any) => step.name === "Install required PTY tooling").run).toContain(
+    "command -v tmux >/dev/null ||",
+  );
+});

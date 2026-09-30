@@ -94,7 +94,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          fetch-depth: 0 # Exact v0.7.1 updater compatibility tests read the stable tag.
+          fetch-depth: 1
+      - name: Fetch exact updater compatibility source
+        run: git fetch --no-tags --depth=1 origin refs/tags/v0.7.1:refs/tags/v0.7.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.21.0
@@ -126,7 +128,10 @@ jobs:
           restore-keys: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
         shell: bash
-        run: sudo apt-get update && sudo apt-get install -y tmux
+        run: |
+          command -v tmux >/dev/null || { sudo apt-get update && sudo apt-get install -y tmux; }
+          tmux -V
+          echo "CPU slots: $(getconf _NPROCESSORS_ONLN)"
       # Exact web payload only: no partial-key fallback, source/deps still prepared.
       - name: Compute pinned web producer key
         id: web-key
@@ -188,7 +193,9 @@ jobs:
           key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
           restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
-        run: brew install tmux
+        run: |
+          command -v tmux >/dev/null || brew install tmux
+          tmux -V
       # Source-only probe and fake Live tests; does not replace Linux build checks.
       - name: Shared macOS Live gate
         shell: bash
