@@ -17961,7 +17961,7 @@ index 1d710f27..53977ac5 100644
  export default defineConfig(() => {
    return {
      assetsInclude: ["**/*.wasm"],
-+    worker: { format: "es", plugins: () => [shikiDataAssets(), libheifBrowser()] },
++    worker: { format: "es" as const, plugins: () => [shikiDataAssets(), libheifBrowser()] },
      plugins: [
        devCompressionPlugin(),
 +      shikiDataAssets(),

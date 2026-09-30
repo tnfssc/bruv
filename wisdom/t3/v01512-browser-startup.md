@@ -90,3 +90,12 @@ schema typechecks, and a working backend can pass while production initializatio
 fails. Prefer honest size diagnostics to semantic damage. Value 1 now explicitly
 states that build-size/file checks do not prove startup, with this note linked;
 no new value added.
+
+## Parent full-build follow-up
+
+After frozen pnpm install, the canonical full build caught TS2769 in Vite config:
+worker.format widened to string after removing the chunk override. The parent
+pinned that existing value with `"es" as const` in the canonical patch.
+Earlier isolated browser typecheck proof does not cover this installed full-build
+state. The full build then passed both upstream typechecks and entered bundling.
+Final integrated build/release proof belongs in the v0.15.13 release note.
