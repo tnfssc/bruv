@@ -257,7 +257,7 @@ test("a green narrow develop release workflow with no assets cannot be reused", 
     { total_count: 0, artifacts: [] },
   ];
   let calls = 0;
-  const fetcher = (async () => Response.json(responses[calls++])) as typeof fetch;
+  const fetcher = Object.assign(async () => Response.json(responses[calls++]), { preconnect: fetch.preconnect });
   expect(await findDryRun(repo, sha, "read-only-test-token", fetcher)).toBeUndefined();
   expect(calls).toBe(3);
 });
