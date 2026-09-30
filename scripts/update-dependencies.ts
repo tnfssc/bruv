@@ -75,6 +75,28 @@ export function markdownVersionSummary(before: DependencyManifest, after: Depend
   ].join("\n");
 }
 
+/** Include transitive changes too: root declarations can stay unchanged. */
+export function markdownLockSummary(beforeText: string, afterText: string): string {
+  const before = Bun.JSONC.parse(beforeText).packages as Record<string, [string, ...unknown[]]>;
+  const after = Bun.JSONC.parse(afterText).packages as Record<string, [string, ...unknown[]]>;
+  const rows = [...new Set([...Object.keys(before), ...Object.keys(after)])]
+    .sort()
+    .filter((name) => before[name]?.[0] !== after[name]?.[0])
+    .map((name) => "| " + name + " | " + (before[name]?.[0] ?? "—") + " | " + (after[name]?.[0] ?? "—") + " |");
+  if (rows.length === 0)
+    return "\n## Lockfile packages\n\nNo resolved package versions changed; review any lockfile metadata diff.\n";
+  return [
+    "",
+    "## Lockfile packages (including transitives)",
+    "",
+    "| Package key | Before | After |",
+    "| --- | --- | --- |",
+    ...rows.slice(0, 200),
+    ...(rows.length > 200 ? ["", "Further package changes omitted; see the full lockfile diff."] : []),
+    "",
+  ].join("\n");
+}
+
 if (import.meta.main) {
   try {
     const args = process.argv.slice(2);
@@ -83,6 +105,8 @@ if (import.meta.main) {
     const root = fileURLToPath(new URL("../", import.meta.url));
     const manifestFile = Bun.file(new URL("../package.json", import.meta.url));
     const before = (await manifestFile.json()) as DependencyManifest;
+    const lockFile = Bun.file(new URL("../bun.lock", import.meta.url));
+    const beforeLock = await lockFile.text();
     const names = selectDependencyNames(before, { fixture: args.includes("--fixture"), env: process.env });
     if (names.length > 0) {
       const child = Bun.spawn([process.execPath, "update", "--latest", ...names], {
@@ -103,7 +127,10 @@ if (import.meta.main) {
     validatePiAlignment(after);
     const artifactDir = new URL("../artifacts/dependency-update/", import.meta.url);
     await mkdir(artifactDir, { recursive: true });
-    await Bun.write(new URL("versions.md", artifactDir), markdownVersionSummary(before, after));
+    await Bun.write(
+      new URL("versions.md", artifactDir),
+      markdownVersionSummary(before, after) + markdownLockSummary(beforeLock, await lockFile.text()),
+    );
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;

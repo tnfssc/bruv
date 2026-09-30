@@ -1,5 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { markdownVersionSummary, selectDependencyNames, validatePiAlignment } from "../scripts/update-dependencies";
+import {
+  markdownLockSummary,
+  markdownVersionSummary,
+  selectDependencyNames,
+  validatePiAlignment,
+} from "../scripts/update-dependencies";
 
 const manifest = {
   dependencies: {
@@ -92,4 +97,22 @@ describe("root dependency updater", () => {
     expect(await child.exited).toBe(1);
     expect(await new Response(child.stderr).text()).toContain("--fixture is only allowed");
   });
+});
+
+test("lockfile summary names transitive updates and additions/removals without metadata noise", () => {
+  const before =
+    '{"packages":{"@types/node":["@types/node@26.6.1","old hash"],"gone":["gone@1"],"same":["same@1","old metadata"],},}';
+  const after = JSON.stringify({
+    packages: {
+      "@types/node": ["@types/node@26.6.3", "new hash"],
+      added: ["added@2"],
+      same: ["same@1", "new metadata"],
+    },
+  });
+  const summary = markdownLockSummary(before, after);
+  expect(summary).toContain("| @types/node | @types/node@26.6.1 | @types/node@26.6.3 |");
+  expect(summary).toContain("| gone | gone@1 | — |");
+  expect(summary).toContain("| added | — | added@2 |");
+  expect(summary).not.toContain("| same |");
+  expect(markdownLockSummary(after, after)).toContain("No resolved package versions changed");
 });
