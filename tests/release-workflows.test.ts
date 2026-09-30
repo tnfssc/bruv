@@ -172,7 +172,7 @@ describe("release automation", () => {
     expect(workflow).toContain("actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c");
     expect(workflow).toContain("--live-helper=./artifacts/release/mac-helper/live-audio");
     expect(workflow).toContain("stable-release-assets");
-    expect(workflow).toContain("needs: [release, reuse-assets, mac-release-smoke, prepare-manual]");
+    expect(workflow).toContain("needs: [release, reuse-assets, linux-browser-boot, mac-release-smoke, prepare-manual]");
     expect(workflow).toContain("bun scripts/verify-v071-update.ts dist/release/die-darwin-arm64");
     expect(workflow).toContain("--live-self-test");
     expect(workflow).toContain("permissions:\n  contents: read");
@@ -217,7 +217,7 @@ describe("release automation", () => {
     expect(workflow).not.toMatch(/bun-(windows|darwin-x64|linux-arm32)/);
   });
 
-  test("stable publication waits for actual Mac payload gates and retains raw assets", async () => {
+  test("stable publication waits for actual browser and Mac payload gates and retains raw assets", async () => {
     const workflow = Bun.YAML.parse(await read(".github/workflows/release.yml")) as {
       on: Record<string, unknown>;
       jobs: Record<
@@ -228,15 +228,28 @@ describe("release automation", () => {
     expect(Object.keys(workflow.on)).toEqual(["workflow_dispatch", "push"]);
     expect(workflow.on.push).toEqual({ branches: ["develop"], tags: ["v*"] });
     expect(workflow.jobs.publish!.if).toBe(
-      "${{ always() && (github.event_name == 'workflow_dispatch' && needs.prepare-manual.result == 'success' || github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) && needs.mac-release-smoke.result == 'success' && (needs.release.result == 'success' || needs.reuse-assets.result == 'success') }}",
+      "${{ always() && (github.event_name == 'workflow_dispatch' && needs.prepare-manual.result == 'success' || github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) && needs.linux-browser-boot.result == 'success' && needs.mac-release-smoke.result == 'success' && (needs.release.result == 'success' || needs.reuse-assets.result == 'success') }}",
     );
-    expect(workflow.jobs.publish!.needs).toEqual(["release", "reuse-assets", "mac-release-smoke", "prepare-manual"]);
+    expect(workflow.jobs.publish!.needs).toEqual([
+      "release",
+      "reuse-assets",
+      "linux-browser-boot",
+      "mac-release-smoke",
+      "prepare-manual",
+    ]);
     expect(workflow.jobs["mac-release-smoke"]!.needs).toEqual(["release", "reuse-assets", "prepare-manual"]);
     expect(workflow.jobs["mac-release-smoke"]!.if).toContain(
       "needs.release.result == 'success' || needs.reuse-assets.result == 'success'",
     );
     expect(workflow.jobs.release!.permissions?.contents).not.toBe("write");
     expect(workflow.jobs.publish!.permissions?.contents).toBe("write");
+    expect(workflow.jobs["linux-browser-boot"]!.needs).toEqual(["release", "reuse-assets", "prepare-manual"]);
+    expect(workflow.jobs["linux-browser-boot"]!.if).toContain(
+      "needs.release.result == 'success' || needs.reuse-assets.result == 'success'",
+    );
+    const browserCommands = workflow.jobs["linux-browser-boot"]!.steps.map((step) => step.run ?? "").join("\n");
+    expect(browserCommands).toContain("install --with-deps chromium");
+    expect(browserCommands).toContain("bun integrations/t3/gates/release-browser-boot.ts dist/release/die-linux-x64");
     const macCommands = workflow.jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");
     expect(macCommands).toContain("verify-v071-update.ts");
     expect(macCommands).toContain("--live-self-test");
