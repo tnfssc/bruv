@@ -46,19 +46,20 @@ Invalid/missing topology or a different/conflicted tree gives the selector an em
 base and requires full CI. Tests create a real target-advanced merge and a forged
 wrong-tree merge to verify this behavior.
 
-Pushes pass the event's complete `before` SHA to the selector, with checked-out
-HEAD as the tested revision: all commits in the push, not just HEAD^, are included.
-Zero/missing/unavailable before values are not replaced with a guessed parent.
-The selector must resolve them conservatively to full. Full history is fetched so
-multi-commit pushes and available force-push bases can be examined without GitHub's
-path API limits. No contributor title, branch name or filename is interpolated into
-shell. Event SHAs are passed as quoted environment values. PR token permissions are
-read-only, checkout does not persist credentials, and no pull_request_target runs.
+Develop pushes compare from a successful trusted CI push ancestor to the exact
+checked-out tested HEAD, not event.before. Thus failed/cancelled source changes
+remain in the next push's diff even when that push edits only docs. Missing or
+uncertain baselines plan full, with no before/HEAD^ fallback. Full git history is
+fetched and lookup is bounded to one API page; see
+[the cumulative baseline contract](../ci/selective-push-baseline.md).
+No contributor title, branch name or filename is interpolated into shell. Event
+SHAs are passed as quoted environment values. PR token permissions are read-only,
+checkout does not persist credentials, and no pull_request_target runs.
 
 ## Develop dry run versus release
 
 Release workflow adds a Bun-only plan job **only** for develop pushes, using the
-same complete before..HEAD selector contract. The native helper and release producer
+same successful CI ancestor..HEAD selector contract. The native helper and release producer
 both depend directly on a successful full=true plan. Docs/selected plans skip
 expensive release producers and downstream browser/Mac gates; they produce **no**
 stable-release-assets artifact. A skipped plan alone never authorizes a producer.

@@ -17,6 +17,9 @@ concurrency:
 
 jobs:
   plan:
+    permissions:
+      contents: read
+      actions: read
     name: Plan develop dry run (not release proof)
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
     runs-on: ubuntu-24.04
@@ -35,8 +38,11 @@ jobs:
         name: Plan complete develop push
         shell: bash
         env:
-          BASE: ${{ github.event.before }}
-        run: bun scripts/ci-selective.ts --base "$BASE"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          base=$(bun scripts/find-ci-baseline.ts)
+          bun scripts/ci-selective.ts --base "$base"
 
   prepare-manual:
     if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/develop' }}

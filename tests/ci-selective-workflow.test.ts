@@ -176,7 +176,7 @@ test("develop narrow plans never build/reuse/publish; manual and tags retain rea
   }
 });
 
-test("PR comparison uses validated tested merge parent; push preserves the complete before SHA", () => {
+test("PR comparison keeps tested merge parent; missing trusted push baseline requires full", () => {
   const root = mkdtempSync(join(tmpdir(), "die-merge-plan-"));
   const git = (...args: string[]) => {
     const r = spawnSync("git", args, { cwd: root, encoding: "utf8" });
@@ -203,14 +203,24 @@ test("PR comparison uses validated tested merge parent; push preserves the compl
     const target = git("rev-parse", "HEAD");
     git("merge", "--no-ff", "feature", "-m", "tested merge");
     const merge = git("rev-parse", "HEAD");
-    const command = step(ci.jobs.feedback!, "Resolve complete comparison").run!;
+    const command = step(ci.jobs.feedback!, "Resolve complete comparison").run!.replace(
+      "bun scripts/find-ci-baseline.ts",
+      JSON.stringify(process.execPath) + " " + JSON.stringify(join(process.cwd(), "scripts/find-ci-baseline.ts")),
+    );
     const run = (event: string, prHead = head, expectedHead = merge, before = initial) => {
       const output = join(root, "output");
       writeFileSync(output, "");
       expect(
         shell(
           command,
-          { EVENT: event, PR_HEAD: prHead, EXPECTED_HEAD: expectedHead, BEFORE: before, GITHUB_OUTPUT: output },
+          {
+            EVENT: event,
+            PR_HEAD: prHead,
+            EXPECTED_HEAD: expectedHead,
+            BEFORE: before,
+            GH_TOKEN: "",
+            GITHUB_OUTPUT: output,
+          },
           root,
         ).status,
       ).toBe(0);
@@ -219,8 +229,8 @@ test("PR comparison uses validated tested merge parent; push preserves the compl
     expect(run("pull_request")).toBe("base=" + target + "\n");
     expect(run("pull_request", initial)).toBe("base=\n");
     expect(run("pull_request", head, initial)).toBe("base=\n");
-    expect(run("push")).toBe("base=" + initial + "\n");
-    expect(run("push", head, merge, "0".repeat(40))).toBe("base=" + "0".repeat(40) + "\n");
+    expect(run("push")).toBe("base=\n");
+    expect(run("push", head, merge, "0".repeat(40))).toBe("base=\n");
     expect(run("schedule")).toBe("base=\n");
     // A commit with valid parents but a tree unlike GitHub's actual merge must be full.
     const wrong = git("commit-tree", initial + "^{tree}", "-p", target, "-p", head, "-m", "wrong merge tree");

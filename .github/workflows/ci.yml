@@ -17,6 +17,9 @@ permissions:
 
 jobs:
   feedback:
+    permissions:
+      contents: read
+      actions: read
     name: Selected feedback (not full validation)
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -36,7 +39,7 @@ jobs:
         shell: bash
         env:
           EVENT: ${{ github.event_name }}
-          BEFORE: ${{ github.event.before }}
+          GH_TOKEN: ${{ github.token }}
           PR_HEAD: ${{ github.event.pull_request.head.sha }}
           EXPECTED_HEAD: ${{ github.sha }}
         run: |
@@ -55,9 +58,9 @@ jobs:
               fi
             fi
           elif [[ "$EVENT" == push ]]; then
-            # The selector resolves before..HEAD, including every pushed commit.
-            # Zero, absent or unavailable before values deliberately plan full.
-            base="$BEFORE"
+            # Carry all changes since successful trusted CI, not just this push.
+            # No baseline (including API uncertainty) deliberately plans full.
+            base=$(bun scripts/find-ci-baseline.ts)
           fi
           echo "base=$base" >> "$GITHUB_OUTPUT"
       - name: Plan validation
