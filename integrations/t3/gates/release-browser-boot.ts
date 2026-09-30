@@ -29,14 +29,19 @@ async function waitFor(fn: () => Promise<boolean>, label: string) {
   const deadline = Date.now() + 45000;
   do {
     check(!errors.length, errors.join("\n"));
-    check(!backend || (backend.exitCode === null && backend.signalCode === null), "release binary exited before " + label);
+    check(
+      !backend || (backend.exitCode === null && backend.signalCode === null),
+      "release binary exited before " + label,
+    );
     if (await fn()) return;
     await sleep(100);
   } while (Date.now() < deadline);
   throw new Error("timed out waiting for " + label);
 }
 try {
-  binarySha256 = createHash("sha256").update(await readFile(binary)).digest("hex");
+  binarySha256 = createHash("sha256")
+    .update(await readFile(binary))
+    .digest("hex");
   const home = join(temp, "home");
   const workspace = join(temp, "workspace");
   const agent = join(temp, "agent");
@@ -48,33 +53,63 @@ try {
   const port = (reserve.address() as { port: number }).port;
   await new Promise<void>((r) => reserve.close(() => r()));
   const origin = "http://127.0.0.1:" + port;
-  backend = spawn(binary, ["web", "--no-browser", "--host", "127.0.0.1", "--port", String(port),
-    "--base-dir", join(temp, "web"), "--auto-bootstrap-project-from-cwd"], {
-    cwd: workspace, detached: true, stdio: ["ignore", "pipe", "pipe"],
-    env: {
-      HOME: home, TMPDIR: temp, PATH: "/usr/bin:/bin", LANG: "C.UTF-8",
-      XDG_CACHE_HOME: join(temp, "cache"), XDG_STATE_HOME: join(temp, "state"),
-      XDG_CONFIG_HOME: join(temp, "config"), XDG_DATA_HOME: join(temp, "data"),
-      PI_CODING_AGENT_DIR: agent, DIE_CODING_AGENT_DIR: agent,
-      DIE_WEB_DIE_BINARY: binary, HERDR_ENV: "0",
+  backend = spawn(
+    binary,
+    [
+      "web",
+      "--no-browser",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      String(port),
+      "--base-dir",
+      join(temp, "web"),
+      "--auto-bootstrap-project-from-cwd",
+    ],
+    {
+      cwd: workspace,
+      detached: true,
+      stdio: ["ignore", "pipe", "pipe"],
+      env: {
+        HOME: home,
+        TMPDIR: temp,
+        PATH: "/usr/bin:/bin",
+        LANG: "C.UTF-8",
+        XDG_CACHE_HOME: join(temp, "cache"),
+        XDG_STATE_HOME: join(temp, "state"),
+        XDG_CONFIG_HOME: join(temp, "config"),
+        XDG_DATA_HOME: join(temp, "data"),
+        PI_CODING_AGENT_DIR: agent,
+        DIE_CODING_AGENT_DIR: agent,
+        DIE_WEB_DIE_BINARY: binary,
+        HERDR_ENV: "0",
+      },
     },
-  });
+  );
   backend.on("error", (e) => errors.push("binary launch: " + e.message));
   for (const stream of [backend.stdout!, backend.stderr!])
-    stream.on("data", (data) => { output = (output + data.toString()).slice(-100000); });
+    stream.on("data", (data) => {
+      output = (output + data.toString()).slice(-100000);
+    });
   await waitFor(async () => {
-    try { return (await fetch(origin, { signal: AbortSignal.timeout(1000) })).ok; }
-    catch { return false; }
+    try {
+      return (await fetch(origin, { signal: AbortSignal.timeout(1000) })).ok;
+    } catch {
+      return false;
+    }
   }, "packaged HTTP listener");
   const { chromium } = await import(process.env.RELEASE_BOOT_PLAYWRIGHT || "playwright-core");
   browser = await chromium.launch({
-    headless: true, executablePath: process.env.RELEASE_BOOT_CHROMIUM || undefined,
+    headless: true,
+    executablePath: process.env.RELEASE_BOOT_CHROMIUM || undefined,
     args: ["--no-sandbox", "--disable-dev-shm-usage"],
   });
   page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   // Attach BEFORE goto, including failed module/chunk loads during the first boot.
   page.on("pageerror", (e: Error) => errors.push("pageerror: " + e.message));
-  page.on("console", (msg: any) => { if (msg.type() === "error") errors.push("console: " + msg.text()); });
+  page.on("console", (msg: any) => {
+    if (msg.type() === "error") errors.push("console: " + msg.text());
+  });
   page.on("requestfailed", (req: any) => {
     const error = req.failure()?.errorText;
     // Telemetry cancels in-flight exports during cleanup/reload. This is not a
@@ -99,10 +134,12 @@ try {
       check(!(await page.locator("#boot-error").isVisible()), "boot error is visible");
       if (await page.locator("#boot-shell").count()) return false;
       const setup = page.getByRole("dialog").filter({ has: page.getByText("Set up T3 Code", { exact: true }) });
-      if (await setup.isVisible() && await setup.getByRole("button", { name: "Continue", exact: true }).isVisible())
+      if ((await setup.isVisible()) && (await setup.getByRole("button", { name: "Continue", exact: true }).isVisible()))
         surface = "setup";
-      else if (await page.getByText("New thread", { exact: true }).first().isVisible()
-        || await page.locator('[data-chat-provider-model-picker="true"]').first().isVisible())
+      else if (
+        (await page.getByText("New thread", { exact: true }).first().isVisible()) ||
+        (await page.locator('[data-chat-provider-model-picker="true"]').first().isVisible())
+      )
         surface = "app";
       return !!surface;
     };
@@ -122,15 +159,40 @@ try {
   process.exitCode = 1;
 } finally {
   await mkdir(dirname(proofPath), { recursive: true });
-  const visibleText = page ? await page.locator("body").innerText().catch(() => "") : "";
+  const visibleText = page
+    ? await page
+        .locator("body")
+        .innerText()
+        .catch(() => "")
+    : "";
   if (page && failure) await page.screenshot({ path: proofPath + ".png" }).catch(() => {});
-  await writeFile(proofPath, JSON.stringify({ passed: !failure, binary, binarySha256, passes,
-    errors, canceledTelemetry, failure, visibleText, serverOutput: output }, null, 2) + "\n");
+  await writeFile(
+    proofPath,
+    JSON.stringify(
+      {
+        passed: !failure,
+        binary,
+        binarySha256,
+        passes,
+        errors,
+        canceledTelemetry,
+        failure,
+        visibleText,
+        serverOutput: output,
+      },
+      null,
+      2,
+    ) + "\n",
+  );
   if (browser) await browser.close().catch(() => {});
   if (backend?.pid) {
-    try { process.kill(-backend.pid, "SIGTERM"); } catch {}
+    try {
+      process.kill(-backend.pid, "SIGTERM");
+    } catch {}
     await Promise.race([once(backend, "exit"), sleep(3000)]).catch(() => {});
-    try { process.kill(-backend.pid, "SIGKILL"); } catch {}
+    try {
+      process.kill(-backend.pid, "SIGKILL");
+    } catch {}
   }
   await rm(temp, { recursive: true, force: true });
 }
