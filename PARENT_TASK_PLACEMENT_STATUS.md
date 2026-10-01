@@ -1,6 +1,6 @@
 # Remote task placement — implementation contract
 
-Base: develop 7304688da483207dba1cf04c9d61023a188d7e00. Tree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c; branch remote/task-placement. PR12 remains parked; no wholesale carryover.
+Pinned base: origin/develop a349a8ad4f698a43024589581845adafcb2fb1f2 (parent-fetched PR13 merge; tree identical to launch base 7304688). Lead docs rebased before implementation; worker commits will be cherry-picked individually, never their old ancestry. Tree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c; branch remote/task-placement. PR12 remains parked; no wholesale carryover.
 
 ## Scope and contract
 - Normal subagent launch gains orthogonal target choice; omitted means current runtime (LOCAL at local root). One human-authorized pinned SSH target initially, identified by its configured name. No agent connect/host selection/credentials.
@@ -24,3 +24,11 @@ Base: develop 7304688da483207dba1cf04c9d61023a188d7e00. Tree: /home/tnfssc/.die/
 
 ## Verification plan
 Focused common path and profile/ownership/unknown/cancel/untracked tests, typecheck, then compiled native-terminal CLI against isolated Docker SSH/fake inference. No repeated full suite and no placeholder packaged-product claim. Record honest gaps and source+binary SHA only after source freeze.
+
+## Active delegate ownership
+- task_9973edae backend: remote/task-placement-backend; tree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c-a86675007a5e-task_9973edae
+- task_da9b9740 task path: remote/task-placement-jobs; tree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c-a86675007a5e-task_da9b9740
+- task_607d8168 human questions: remote/task-placement-questions; tree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c-a86675007a5e-task_607d8168
+- task_09184036 acceptance fixture: remote/task-placement-proof; tree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c-a86675007a5e-task_09184036
+
+Shared launch interface agreed before edits: target is an optional string naming the authorized connection host (local/current runtime default); RepositoryLaunch.placement carries profile, parentDepth, parentType, and workspace. Remote worktree is an isolated snapshot-backed checkout, not transferred full history. Dependencies linked read-only to existing installation and local assets prepared.

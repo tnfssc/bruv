@@ -55,7 +55,7 @@ test("unknown with an error is not terminal; waits carry human-only instructions
   };
   const observation = remoteJobObservation(t);
   expect(observation.state).toBe("unknown");
-  expect(observation.actionable).toContain("Human /remote answer");
+  expect(observation.actionable).toContain("Human /questions answer");
   expect(observation.actionable).toContain('"version":2');
   expect(observation.actionable).toContain("repo.read");
   t.replies = {
@@ -72,4 +72,12 @@ test("terminal observations suppress stale waits and bound assistant output", ()
   expect(observation.state).toBe("done");
   expect(observation.actionable).toBeUndefined();
   expect(observation.preview!.length).toBeLessThanOrEqual(4000);
+});
+
+test("normal parent result includes protected repository return before potentially long output", () => {
+  const t = task("returned", "/session");
+  t.task = { taskId: "returned", state: "done" };
+  t.repository = { status: "review", artifact: "/artifacts/return.patch", reason: "Parent tracked file changed" };
+  t.events = [{ seq: 1, event: { type: "message_end", message: { role: "assistant", content: "x".repeat(20000) } } }];
+  expect(remoteJobObservation(t).preview).toContain("Parent tracked file changed");
 });
