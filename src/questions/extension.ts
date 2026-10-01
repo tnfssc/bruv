@@ -27,6 +27,12 @@ type Question = {
   remote?: import("./service").RemoteQuestionSource;
 };
 
+const STALE_EXTENSION_CONTEXT = "This extension ctx is stale after session replacement or reload.";
+
+function isStaleExtensionContext(error: unknown): boolean {
+  return error instanceof Error && error.message.startsWith(STALE_EXTENSION_CONTEXT);
+}
+
 function records(value: unknown): Question[] {
   if (Array.isArray(value)) return value as Question[];
   if (value && typeof value === "object") {
@@ -112,7 +118,15 @@ export function registerQuestions(
         );
     } catch {
       // Commands report errors; background refresh must not create notice spam.
-      if (token === generation && context === current) current.ui.setStatus("die-questions", "/questions unavailable");
+      if (token === generation && context === current) {
+        try {
+          current.ui.setStatus("die-questions", "/questions unavailable");
+        } catch (statusError) {
+          // Pi invalidates a command context as soon as a session is replaced,
+          // before its shutdown hook necessarily runs. Ignore only that lifecycle error.
+          if (!isStaleExtensionContext(statusError)) throw statusError;
+        }
+      }
     }
   };
 
