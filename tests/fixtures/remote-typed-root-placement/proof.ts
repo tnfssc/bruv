@@ -64,3 +64,31 @@ export function assertWorkOnce(rows: any[]) {
   assert.equal(child.depth, 1);
   assert.notEqual(child.cwd, rows.find((r) => r.phase === "root-start").cwd, "child did not use worktree");
 }
+
+export function assertReplyRecovered(state: any, request: any, requests: any[], work: any[]) {
+  assert.equal(request.op, "command");
+  assert.equal(request.command.kind, "prompt");
+  assertOnePrompt(state, request.command.text);
+  const saved = state.commands[request.commandId];
+  assert(saved, "reconcile changed command identity");
+  assert.deepEqual(saved.command, request.command);
+  assert.equal(saved.receipt.commandId, request.commandId);
+  assert.equal(saved.receipt.error, undefined);
+  const sends = requests.filter(r => r.op === "command" && r.command?.text === request.command.text);
+  assert.equal(sends.length, 1, "lost prompt resent");
+  assert.equal(sends[0].commandId, request.commandId);
+  assert(requests.some(r => r.op === "command-status" && r.commandId === request.commandId), "no status reconciliation");
+  assert.equal(work.length, 1, "missing/duplicated lost-reply execution");
+  assert.equal(work[0].role, "root");
+  assert.equal(work[0].depth, 0);
+  assert.equal(work[0].cwd, state.intent.repoPath);
+}
+export function assertCancelledJob(state: any, id: string, result: any) {
+  const stop = completedCommands(state, "jobs.stop");
+  assert.equal(stop.length, 1, "missing/duplicated cancellation");
+  assert.equal(stop[0].command.id, id, "cancelled wrong job");
+  assert.equal(stop[0].receipt.error, undefined, "cancellation failed");
+  assert.equal(result.id, id, "inspected wrong cancelled job");
+  assert(["cancelled", "canceled", "stopped", "failed"].includes(result.status), "job not terminal after cancellation");
+  // A completed receipt/stop request alone is not evidence that its process exited.
+}

@@ -1,3 +1,7 @@
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, writeFileSync, rmSync, existsSync } from "node:fs";
+import { join } from "node:path";
+import { shouldDrop } from "./fixtures/remote-typed-root-placement/reply-loss";
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import {
@@ -14,6 +18,8 @@ import {
   assertSnapshot,
   assertWorkOnce,
   questionsFromReceipt,
+  assertReplyRecovered,
+  assertCancelledJob,
 } from "./fixtures/remote-typed-root-placement/proof";
 const user = (content: string) => ({ role: "user", content });
 const done = (id: string) => ({ role: "tool", tool_call_id: id, content: "ok" });
@@ -235,4 +241,97 @@ describe("typed fixture infrastructure safety", () => {
     const settings = JSON.parse(read("tests/fixtures/remote-typed-root-placement/settings.json"));
     expect(settings.defaultModel).toBe("typed-root");
   });
+});
+
+
+describe("typed root failure acceptance guards", () => {
+  test("loss triggers only the designated prompt, not status or unrelated controls", () => {
+    const command = { op: "command", command: { kind: "prompt", text: "ROOT_REPLY_LOSS once" } };
+    expect(shouldDrop(command)).toBe(true);
+    expect(shouldDrop({ ...command, op: "command-status" })).toBe(false);
+    expect(shouldDrop({ op: "command", command: { kind: "abort" } })).toBe(false);
+    expect(shouldDrop({ op: "command", command: { kind: "prompt", text: "normal" } })).toBe(false);
+  });
+  test("unknown recovery requires exact identity, one send, status and one real execution", () => {
+    const request = { op: "command", commandId: "lost", command: { kind: "prompt", text: "ROOT_REPLY_LOSS once" } };
+    const s: any = { intent: { repoPath: "/server" }, commands: { lost: { command: request.command,
+      receipt: { state: "completed", commandId: "lost" } } } };
+    const requests = [request, { op: "command-status", commandId: "lost" }];
+    const work = [{ role: "root", depth: 0, cwd: "/server" }];
+    assertReplyRecovered(s, request, requests, work);
+    expect(() => assertReplyRecovered(s, request, [...requests, request], work)).toThrow();
+    expect(() => assertReplyRecovered(s, request, [request], work)).toThrow();
+    expect(() => assertReplyRecovered(s, request, requests, [...work, ...work])).toThrow();
+    expect(() => assertReplyRecovered(s, request, requests, [])).toThrow();
+    expect(() => assertReplyRecovered(s, request, requests, [{ ...work[0], depth: 1 }])).toThrow();
+    s.commands.lost.receipt.state = "unknown";
+    expect(() => assertReplyRecovered(s, request, requests, work)).toThrow();
+    s.commands.lost.receipt.state = "completed";
+    s.commands.lost.receipt.error = "failed";
+    expect(() => assertReplyRecovered(s, request, requests, work)).toThrow();
+  });
+  test("cancel request must target the inspected terminal non-success job", () => {
+    const s: any = { commands: { stop: { command: { kind: "jobs.stop", id: "job" },
+      receipt: { state: "completed" } } } };
+    assertCancelledJob(s, "job", { id: "job", status: "cancelled" });
+    for (const status of ["running", "completed", "unknown", "queued"])
+      expect(() => assertCancelledJob(s, "job", { id: "job", status })).toThrow();
+    expect(() => assertCancelledJob(s, "other", { id: "job", status: "failed" })).toThrow();
+    s.commands.stop.receipt.error = "unsupported";
+    expect(() => assertCancelledJob(s, "job", { id: "job", status: "failed" })).toThrow();
+  });
+  test("provider failure prompts emit executable tools, no synthetic receipts", () => {
+    for (const text of ["ROOT_REPLY_LOSS", "ROOT_RUNNING_JOB"]) {
+      const generated = code(response(request("typed-root", [user(text)])));
+      expect(() => new Function("return async function(){" + generated + "}" )).not.toThrow();
+      expect(generated).not.toContain("receipt");
+      if (text === "ROOT_RUNNING_JOB") {
+        expect(generated).toContain("shell(");
+        expect(generated).toContain("600000");
+        expect(generated).toContain("waitSeconds:0");
+      } else expect(generated).toContain("appendFileSync");
+    }
+  });
+  test("runner proves unknown before reconnect and process exit beyond stop acknowledgment", () => {
+    const runner = readFileSync(new URL("../scripts/remote-root-placement-e2e.ts", import.meta.url), "utf8");
+    expect(runner).toContain('receipt.state === "unknown"');
+    expect(runner).toContain("assertReplyRecovered(");
+    expect(runner).toContain("kill -0 $(cat /tmp/root-running-pid)");
+    expect(runner).toContain("assertCancelledJob(");
+    expect(runner).toContain("noStartupOrInference: true");
+    expect(runner).toContain("reply loss is not owner crash");
+  });
+});
+
+
+test("reply-loss relay really forwards once, discards bytes and gates status until release", () => {
+  const dir = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "typed-root-relay-test-"));
+  try {
+    const fakeSSH = join(dir, "fake-ssh");
+    // Isolated executable stand-in tests relay mechanics, NOT backend/SSH acceptance.
+    writeFileSync(fakeSSH, "#!/bin/sh\ncat > " + JSON.stringify(join(dir, "forwarded.json")) +
+      "\nprintf '%s' '{\"commandId\":\"lost\",\"state\":\"completed\"}'\n", { mode: 0o700 });
+    writeFileSync(join(dir, "armed"), "fixture only");
+    const request = { op: "command", commandId: "lost", command: { kind: "prompt", text: "ROOT_REPLY_LOSS once" } };
+    const relay = (input: any) => spawnSync(process.execPath,
+      [new URL("./fixtures/remote-typed-root-placement/reply-loss.ts", import.meta.url).pathname,
+        fakeSSH, "/nonexistent-fixture-config", dir, "fixture", "die --remote-root-control"],
+      { input: JSON.stringify(input) + "\n", encoding: "utf8" });
+    const loss = relay(request);
+    expect(loss.status).toBe(255);
+    expect(loss.stdout).toBe("");
+    expect(JSON.parse(readFileSync(join(dir, "forwarded.json"), "utf8"))).toEqual(request);
+    const saved = JSON.parse(readFileSync(join(dir, "lost.json"), "utf8"));
+    expect(saved.request).toEqual(request);
+    expect(saved.response).toEqual({ commandId: "lost", state: "completed" });
+    rmSync(join(dir, "forwarded.json"));
+    const status = { op: "command-status", commandId: "lost" };
+    expect(relay(status).status).toBe(255);
+    expect(existsSync(join(dir, "forwarded.json"))).toBe(false);
+    rmSync(join(dir, "armed"));
+    const reconciled = relay(status);
+    expect(reconciled.status).toBe(0);
+    expect(JSON.parse(reconciled.stdout)).toEqual(saved.response);
+    expect(JSON.parse(readFileSync(join(dir, "forwarded.json"), "utf8"))).toEqual(status);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
 });

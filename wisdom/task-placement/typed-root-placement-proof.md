@@ -53,3 +53,29 @@ Remaining actual acceptance gaps are reported in receipts: unknown reply recover
 running cancellation, unsupported source/isolation modes. Idle /abort isn't a
 running cancellation proof; assertion-unit unknown rejection isn't backend crash
 recovery proof. See fixture README for exact commands and expected artifacts.
+
+## Follow-up gap scenarios (2026-10-01)
+
+Branch remote/task-placement-root-proof-gaps extends only the existing fixture,
+runner, focused tests and wisdom. Read lead ROOT_OWNER_INTEGRATION.md and
+ROOT_TYPED_CONTRACT.md from the parent tree (owner still integrating). No production
+changes or full acceptance run. Direct Bun 1.4.2 focused fixture tests now pass 22/22,
+including a real subprocess exercise of the discard/status-gate relay mechanics.
+
+Combined runner now demands a genuine unknown local receipt after an actual
+successful server SSH command reply is discarded; captures it before reconnect;
+then requires exact saved identity, command-status reconciliation, one send and
+one server tool execution. The gate is fixture-only, no durable ledger edits or
+fake backend response. The third root launches an actual long-lived shell process;
+human /ps cancellation must have a running pre-inspect, successful typed stop,
+terminal non-success post-inspect and dead PID, not just stop acknowledgment.
+CLI full-history/worktree and conflicting source requests must reject before any
+startup/inference/source mutation. Source roots still have real second-turn edits,
+with new explicit local-diff/absent-outcome checks after both turns, followed by
+successful-close-only protected return. Fault root detaches without close/return.
+
+Honest gaps remain in receipt: backend dispatching crash becoming unknown,
+streaming-root abort, unsupported mode rejection at the server-protocol boundary.
+These are NOT proved by reply loss, shell-job cancellation or CLI rejection.
+Full acceptance must wait for the combined binary. If layout/terminal details need
+adaptation, preserve these semantics and fail-closed assertions.

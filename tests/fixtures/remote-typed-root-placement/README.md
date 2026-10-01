@@ -62,9 +62,25 @@ explicitly authorizes --remote-include authorized.txt, and changes local guard.t
 AFTER capture. Return must remain a review patch, preserving local source. That
 patch must start from ROOT_RETURN_TWO, not replay ROOT_TRACKED_DIRTY.
 
-Unknown reply recovery, cancellation of a RUNNING root/job, and unsupported modes
-are NOT actual-binary proofs here. Receipt lists these gaps explicitly. Focused
-assertion tests reject unknown receipts but do not claim server recovery coverage.
+Additional acceptance scenarios (not yet run against the combined binary):
+- A fixture SSH shim forwards the real ROOT_REPLY_LOSS command, records its real
+  successful reply, then discards the bytes with exit 255. It gates status reads
+  until a genuine durable local unknown receipt is captured. Detach/reattach must
+  reconcile the same command ID via command-status, with exactly one send and one
+  server tool execution. No production transport or ledger is edited.
+- The same third root launches a 600-second server shell process. Human /ps uses
+  inspection, Cancel, and confirmation. Assertions require prior running state,
+  successful typed stop, terminal non-success inspection, actual PID disappearance,
+  and no natural-finish marker. The root stays running; detach does NOT return source.
+- Full-history and worktree CLI requests and conflicting existing-repo/local-source
+  choices must fail with specific errors and no root/state/source/inference changes.
+
+The two source-return roots explicitly check local diff and absent outcome after
+both first and second turns. Only successful close permits safe/review return.
+Remaining gaps stay explicit: owner crash/dispatching-to-unknown is NOT reply-loss
+recovery; running shell cancellation is NOT streaming-root abort; CLI rejection
+is NOT server protocol rejection. Focused tests are fixture/guard tests, not Docker
+or compiled-binary acceptance.
 
 ## Artifacts / schema assumptions
 

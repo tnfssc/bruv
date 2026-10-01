@@ -24,6 +24,8 @@ import {
   assertWorkOnce,
   completedCommands,
   questionsFromReceipt,
+  assertReplyRecovered,
+  assertCancelledJob,
 } from "../tests/fixtures/remote-typed-root-placement/proof";
 
 const probe = process.argv.slice(2).includes("--probe");
@@ -67,6 +69,7 @@ const home = join(root, "home"),
   build = join(root, "build"),
   repo = join(root, "repo");
 const socket = join(root, "tmux.sock");
+const faultDir = join(root, "reply-loss");
 for (const dir of [
   home,
   agent,
@@ -76,6 +79,7 @@ for (const dir of [
   join(home, ".die"),
   join(root, "keys"),
   join(root, "bin"),
+  faultDir,
   join(build, "runtime"),
 ])
   mkdirSync(dir, { recursive: true, mode: 0o700 });
@@ -267,7 +271,8 @@ try {
     { mode: 0o600 },
   );
   const sshBin = run("/bin/sh", ["-c", "command -v ssh"]);
-  writeFileSync(join(root, "bin", "ssh"), "#!/bin/sh\nexec " + quote(sshBin) + " -F " + quote(sshConfig) + ' "$@"\n', {
+  writeFileSync(join(root, "bin", "ssh"), "#!/bin/sh\nexec " +
+    [bun, join(fixture, "reply-loss.ts"), sshBin, sshConfig, faultDir].map(quote).join(" ") + ' "$@"\n', {
     mode: 0o755,
   });
   env.PATH = join(root, "bin") + ":" + env.PATH;
@@ -305,9 +310,9 @@ try {
       ? "not performed (infrastructure only)"
       : "one-time fixture human authorization seeded explicitly via pinned RemoteClient.connect",
     actualMissingProof: [
-      "uncertain/unknown command reply recovery",
-      "cancellation of a running root/job",
-      "unsupported source/isolation modes",
+      "server crash with durable dispatching-to-unknown command (reply loss is not owner crash)",
+      "abort of an actively streaming root turn (running shell-job cancellation is separate)",
+      "unsupported modes rejected by server protocol (CLI rejects full-history/worktree requests only)",
     ],
     scenarios: [],
   };
@@ -455,6 +460,7 @@ try {
         // Drift occurs AFTER capture and AFTER our prior successful return. No reset/replay.
         writeFileSync(join(repo, "guard.txt"), "ROOT_PARENT_DRIFT\n");
       }
+      const activeLocalDiff = run("git", ["-C", repo, "diff"]);
       type(first);
       await wait(
         "server child completed and real root question saved",
@@ -502,10 +508,14 @@ try {
       assert.equal(answers[0].command.text, ANSWER);
       assert(answers[0].command.replyId);
       assertSameRoot(before, answered);
+      assert.equal(answered.outcome, undefined, "first turn returned source before close");
+      assert.equal(run("git", ["-C", repo, "diff"]), activeLocalDiff, "first turn mutated local source");
       type(second);
       await wait("second explicit real root turn", () => pane().includes("ROOT_SECOND_DONE_" + upper), 120000);
       assertOnePrompt(rootState(id), second);
       assertSameRoot(before, rootState(id));
+      assert.equal(rootState(id).outcome, undefined, "second turn returned source before close");
+      assert.equal(run("git", ["-C", repo, "diff"]), activeLocalDiff, "second turn mutated local source");
       assertWorkOnce(workRows(side));
       const afterJournal = journal(rootState(id));
       assert(afterJournal.startsWith(beforeJournal), "second turn replaced server journal");
@@ -614,6 +624,102 @@ try {
     // Explicit HUMAN CLI include permission; fresh new root on the prior source result.
     await proveScenario("drift", ["--remote-fresh", "--remote-include", "authorized.txt"]);
     assert.equal(rootFiles().length, 2);
+
+    // Unsupported requests must fail before startup, inference, or source capture.
+    const untouched = { roots: rootFiles().map(json), diff: run("git", ["-C", repo, "diff"]),
+      inference: ssh("cat /tmp/root-placement-inference.jsonl"), connection: json(statePath) };
+    for (const extra of [
+      ["--remote-history", "full"],
+      ["--remote-workspace", "worktree"],
+      ["--remote-repo", "/tmp/unsupported", "--remote-source", repo],
+    ]) {
+      const r = raw(binary, ["--place", ALIAS, ...extra], { cwd: repo });
+      assert(r.status !== null && r.status !== 0, "unsupported mode was accepted");
+      assert.match(r.stderr + r.stdout, /Unsupported remote main-session argument|different source choices/);
+      assert.deepEqual(rootFiles().map(json), untouched.roots, "unsupported mode changed root pointers");
+      assert.equal(run("git", ["-C", repo, "diff"]), untouched.diff);
+      assert.equal(ssh("cat /tmp/root-placement-inference.jsonl"), untouched.inference);
+      assert.deepEqual(json(statePath), untouched.connection);
+      writeFileSync(join(artifacts, "unsupported-" + extra[0].slice(2) + ".txt"), r.stdout + r.stderr);
+    }
+    receipt.scenarios.push({ side: "unsupported-cli-modes", fullHistory: "rejected", worktree: "rejected",
+      conflictingSource: "rejected", noStartupOrInference: true });
+    saveReceipt();
+
+    // Lose an ACTUAL successful SSH reply, not a mocked transport result or edited ledger.
+    const priorRootIDs = new Set(rootFiles().map(f => json(f).intent.sessionId));
+    writeFileSync(join(faultDir, "armed"), "fixture only");
+    start(["--remote-fresh"]);
+    await ready();
+    await wait("third root pointer", () => rootFiles().length === 3);
+    const faultID = rootFiles().map(json).find(s => !priorRootIDs.has(s.intent.sessionId)).intent.sessionId;
+    await wait("third root running", () => rootState(faultID).record?.state === "running");
+    const beforeLoss = rootState(faultID);
+    const faultLocalDiff = run("git", ["-C", repo, "diff"]);
+    const lostPrompt = "ROOT_REPLY_LOSS execute once while my SSH reply is discarded";
+    type(lostPrompt);
+    await wait("actual discarded SSH reply", () => existsSync(join(faultDir, "lost.json")));
+    const lost = json(join(faultDir, "lost.json"));
+    assert.equal(lost.request.command.text, lostPrompt);
+    assert.equal(lost.response.commandId, lost.request.commandId);
+    await wait("durable unknown local receipt", () =>
+      rootState(faultID).commands[lost.request.commandId]?.receipt.state === "unknown");
+    copyFileSync(rootFiles().find(f => json(f).intent.sessionId === faultID)!, join(artifacts, "reply-loss-unknown-root.json"));
+    await wait("lost-reply work actually ran", () => ssh("test ! -f /tmp/root-reply-loss-work.jsonl || wc -l < /tmp/root-reply-loss-work.jsonl") === "1");
+    capture("reply-loss-unknown-before-detach");
+    await detach();
+    rmSync(join(faultDir, "armed"));
+    start();
+    await ready();
+    await wait("reattach reconciles same command identity", () =>
+      rootState(faultID).commands[lost.request.commandId]?.receipt.state === "completed");
+    assertSameRoot(beforeLoss, rootState(faultID));
+    assert.equal(rootFiles().length, 3, "reattach created another root");
+    await wait("same root finished lost-reply turn", () => pane().includes("ROOT_REPLY_LOSS_DONE"));
+    const work = ssh("cat /tmp/root-reply-loss-work.jsonl").split("\n").filter(Boolean).map(l => JSON.parse(l));
+    const requests = readFileSync(join(faultDir, "requests.jsonl"), "utf8").split("\n").filter(Boolean).map(l => JSON.parse(l));
+    assertReplyRecovered(rootState(faultID), lost.request, requests, work);
+    assert.equal(rootState(faultID).outcome, undefined, "reply reconciliation returned active source");
+    copyFileSync(join(faultDir, "lost.json"), join(artifacts, "reply-loss-discarded-response.json"));
+    copyFileSync(join(faultDir, "requests.jsonl"), join(artifacts, "reply-loss-ssh-requests.jsonl"));
+    capture("reply-loss-reconciled-no-resend");
+
+    // Real background process stays live until the HUMAN /ps Cancel + confirmation.
+    type("ROOT_RUNNING_JOB launch a long-lived server shell job for human cancellation");
+    await wait("running shell job saved", () => ssh("test ! -f /tmp/root-running-job.json || cat /tmp/root-running-job.json").startsWith("{"));
+    const running = JSON.parse(ssh("cat /tmp/root-running-job.json"));
+    assert(running.background, "job finished before cancellation");
+    await wait("server job process live", () => ssh("test ! -f /tmp/root-running-pid || { kill -0 $(cat /tmp/root-running-pid) && echo live; }") === "live");
+    type("/ps");
+    await wait("normal running job picker", () => pane().includes("Jobs on "));
+    key("Enter");
+    await wait("running shell inspection and cancel action", () => pane().includes("ROOT_CANCEL_RUNNING") && pane().includes("Cancel "));
+    const pre = completedCommands(rootState(faultID), "jobs.inspect").at(-1);
+    assert.equal(pre.command.id, running.id);
+    assert.equal(pre.receipt.result.status, "running");
+    key("Down", "Enter");
+    await wait("normal human cancellation confirmation", () => pane().includes("Cancel this job?"));
+    key("Down", "Enter");
+    await wait("typed running job stop receipt", () => completedCommands(rootState(faultID), "jobs.stop").length === 1);
+    await wait("real server process exited", () => ssh("if kill -0 $(cat /tmp/root-running-pid) 2>/dev/null; then echo live; else echo gone; fi") === "gone");
+    type("/ps");
+    await wait("post-cancel job picker", () => pane().includes("Jobs on "));
+    key("Enter");
+    await wait("post-cancel authoritative inspect", () => completedCommands(rootState(faultID), "jobs.inspect").length > 1);
+    const post = completedCommands(rootState(faultID), "jobs.inspect").at(-1);
+    assertCancelledJob(rootState(faultID), running.id, post.receipt.result);
+    assert.equal(ssh("test ! -e /tmp/root-running-finished && echo unfinished"), "unfinished");
+    assert.equal(rootState(faultID).record.state, "running", "job cancellation closed root");
+    assert.equal(rootState(faultID).outcome, undefined, "job cancellation returned active source");
+    capture("running-job-cancelled");
+    key("Escape");
+    await detach(); // No successful close: this root must not export/integrate source.
+    assert.equal(run("git", ["-C", repo, "diff"]), faultLocalDiff, "fault root returned source without close");
+    writeFileSync(join(artifacts, "fault-root-state.json"), JSON.stringify(rootState(faultID), null, 2));
+    receipt.scenarios.push({ side: "reply-loss-and-running-job", rootID: faultID,
+      commandID: lost.request.commandId, unknownPersisted: true, reconciledWithoutResend: true,
+      workExecutedOnce: true, cancelledJobID: running.id, processExited: true, sourceReturned: false });
+    saveReceipt();
     const inference = ssh("cat /tmp/root-placement-inference.jsonl");
     assert(inference.includes('"model":"typed-root"'));
     assert(inference.includes('"model":"typed-root-normal"'));
@@ -625,7 +731,7 @@ try {
     saveReceipt();
     passed = true;
     console.log(
-      "PASS actual combined CLI: typed server root, empty local models/auth, two turns per root, same journal/question after detach, normal question/jobs pickers, role0 shell + server child worktree, tracked orphan snapshot, safe close return and explicit include/drift review, no cumulative replay",
+      "PASS actual combined CLI: typed server root, empty local models/auth, two turns per root, same journal/question after detach, normal question/jobs pickers, role0 shell + server child worktree, tracked orphan snapshot, safe close return and explicit include/drift review, no cumulative replay, actual lost SSH reply reconciliation, running shell cancellation, unsupported CLI modes",
     );
     console.log("Not proved by this run:", receipt.actualMissingProof.join("; "));
   }
