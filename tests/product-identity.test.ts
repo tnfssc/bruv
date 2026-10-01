@@ -11,7 +11,7 @@ test("bruv package and update assets use the unchanged repository", () => {
   expect(product.bin).toEqual({ bruv: "dist/bruv" });
   expect(RELEASES_URL).toBe("https://api.github.com/repos/tnfssc/die/releases/latest");
   for (const [target, asset] of Object.entries(UPDATE_ASSETS)) {
-    expect(asset).toBe(`bruv-${target}`);
+    expect(String(asset)).toBe(`bruv-${target}`);
   }
 });
 

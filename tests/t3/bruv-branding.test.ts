@@ -11,6 +11,7 @@ test("canonical T3 patch uses Bruv services while retaining upstream Effect APIs
   expect(patch).toContain('"BRUV_WEB_BRUV_BINARY"');
   expect(patch).toContain("Effect.die(");
   expect(patch).toContain("Effect.orDie");
+  expect(patch).not.toContain("the token must bruv");
   expect(patch).not.toMatch(/(?:Effect|Layer)\.orBruv|(?:Cause|Stream)\.bruv|Cause\.isBruvReason/);
   const additions = patch
     .split("\n")

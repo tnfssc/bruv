@@ -9396,7 +9396,7 @@ index e6764f1e91467deebea798d16755acfe2e2a531b..021c03b4f5f41c91612598e8a33ecb69
    },
  ) {
 diff --git a/apps/server/src/orchestration-v2/ProviderSessionManager.test.ts b/apps/server/src/orchestration-v2/ProviderSessionManager.test.ts
-index 8d2947094aaa704454c9b8f9f776f5f2f5d3b95b..0db72f6a00797f4e5c276596b5a9a0b69616dc26 100644
+index 8d2947094aaa704454c9b8f9f776f5f2f5d3b95b..4abbd90e5f5bd571afd66b369762969c41b6ec19 100644
 --- a/apps/server/src/orchestration-v2/ProviderSessionManager.test.ts
 +++ b/apps/server/src/orchestration-v2/ProviderSessionManager.test.ts
 @@ -1,9 +1,13 @@
@@ -9623,7 +9623,7 @@ index 8d2947094aaa704454c9b8f9f776f5f2f5d3b95b..0db72f6a00797f4e5c276596b5a9a0b6
  
          const slot = McpProviderSession.readMcpProviderSession(threadId);
          assert.equal(
-@@ -1570,12 +1634,17 @@ it.effect("ProviderSessionManagerV2 terminal detach revokes the thread's MCP cre
+@@ -1570,7 +1634,12 @@ it.effect("ProviderSessionManagerV2 terminal detach revokes the thread's MCP cre
        yield* eventSink.write({
          events: [yield* makeThreadCreatedEvent({ idAllocator, threadId, now })],
        });
@@ -9637,12 +9637,6 @@ index 8d2947094aaa704454c9b8f9f776f5f2f5d3b95b..0db72f6a00797f4e5c276596b5a9a0b6
        const issued = (yield* Ref.get(mcpConfigs)).at(-1);
        const token = issued?.authorizationHeader.replace(/^Bearer\s+/, "");
        assert.isDefined(yield* registry.resolve(token!));
- 
--      // Archive/delete detaches carry revokeMcpCredential: the token must die
-+      // Archive/delete detaches carry revokeMcpCredential: the token must bruv
-       // with the thread even though the shared provider process lives on.
-       yield* manager.detach({
-         providerSessionId,
 @@ -1677,15 +1746,588 @@ it.effect("ProviderSessionManagerV2 persists release when session scope close ha
        yield* Effect.yieldNow;
        const projection = yield* projectionStore.getThreadProjection(threadId);
