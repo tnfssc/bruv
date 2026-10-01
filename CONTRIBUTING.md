@@ -18,6 +18,13 @@ messages are easiest to review.
    bun install --frozen-lockfile
    ```
 
+If an existing checkout has Pi dependencies adapted for the old die build,
+restore pristine locked dependencies before building bruv:
+
+```sh
+bun install --frozen-lockfile --force --backend=copyfile --cache-dir .cache/bruv-bun-install
+```
+
 3. Run the deterministic checks:
 
    ```sh
