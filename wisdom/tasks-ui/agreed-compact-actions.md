@@ -1,0 +1,31 @@
+# Agreed compact streamed actions and canonical tasks
+
+## Authority and final rules
+
+[Full human decisions](ui-discussion-checkpoint.md) include superseded proposals. The user has now authorized implementation. This summary uses the final choices, not the early draft cc7f181 (preserved in history).
+
+- Foreground: one animated spinner from tool-call start, initially alone; label grows with parsed tokens and remains beside the spinner while code streams and runs. Success is ✓ label, not a plain label. Failure is ✗ label — actual concise error. No executing/executed boilerplate, separator dot, raw code, or duplicate settled row. Schema label precedes code; no new prompt-order instruction. Code-first streams stay safe.
+- Successful text output stays collapsed; existing Ctrl-O reveals existing source/output. No collapsed truncation/image count/background count. Images remain. Storage failure is distinct: ✓ label — ⚠ couldn’t save full output.
+- Background launch and completion share ONE row per typed task identity. Static ↗ title while active; ✓ title on actual successful completion; ✗ title — exit N only with recorded failure code; ✗ title — failed without code; ⊘ title — cancelled only after confirmation; ✗ title — timed out only actual timeout. Unknown and human input are ? title — status unknown / needs your input. Missing title uses existing ID. Multiple tasks, tasks without source call, snapshots and reopen must remain truthful. No model-prose parsing, child-count guesses, new coordinator, or backend rewrite.
+- All default failures/warnings are single-line. Expanded diagnostics remain. Quiet5m/review10m and N more checks are hidden only from human transcript; wakes/cadence/owner delivery unchanged. Rare real aggregates retain ✗ N more tasks failed, ⊘ N more tasks cancelled, ? N more tasks unresolved, ? Task update — status unknown. Never invent test counts.
+- Hidden thinking has no placeholder; existing toggle unchanged. Hide only transient Tool output: collapsed. Expanded notice/header/wrapper/stdout/stderr unchanged. Footer cost/context/cache/model/thinking/path all untouched; hiding cache was REJECTED.
+- Local normal conversation and placed-root align; preserve display:false hiding for snapshots/streaming/expanded, /ps and /questions authority, source return and thin-client responsibilities.
+
+## Ownership and baseline
+
+Integration worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_77080c99
+Branch: die/implement-agreed-compact-streamed-action-77080c99
+Fetched origin/develop bada7e5 (repo origin already tnfssc/bruv). Draft rebased cleanly from cc7f181 to 7627cdc on that base. Fetch succeeded; an SSH id_rsa libcrypto warning was observed, not a rename failure. No broad branding edits.
+
+Independent durable workers (base 7627cdc):
+- Foreground: task_5d10e9d2
+- Typed background lifecycle/canonical rows: task_a9b2e181
+- Placed-root presenter: task_0720c30e, branch die/placed-root-normal-transcript-alignment-0720c30e
+- Native PTY harness: task_b0cca465, branch die/native-pty-capture-scenario-tooling-b0cca465
+Each worktree is beneath /home/tnfssc/.die/worktrees/die-a86675007a5e-task_77080c99-a86675007a5e-task_<ID suffix>; exact receipts are completed below.
+
+## Validation scope
+
+Use focused regressions and real SDK event transitions plus native compiled PTY appearance. New readable screen text and screenshots must show actual new source, not recycled pixels or source/hash assertions. Reuse actual cached web archive honestly as local UI proof, never fabricate its absent manifest. Parent owns CI/push/PR/merge/release; no upload/paid providers/real hosts in this work.
+
+Values reviewed: existing 8 (honest UI/appearance) and 10 (bounded parallel work and durable handoff) already cover this feature. No new value or broad value rewrite.
