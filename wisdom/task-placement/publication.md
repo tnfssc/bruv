@@ -37,3 +37,19 @@ CI36872054281 cleared all14 disposed-context failures. One unchanged MCP acquire
 Worker90c3765 synchronized close with the client reading mcp-session-id, not server ReadableStream.start. Production code unchanged. The original settlement-before-delete and session-ID assertions remain. Test passed10/10 and all18 production bridge tests passed. Parent integrated and runs typecheck in the prepared feature tree; worker broad typecheck lacked generated assets. This is a fixture premise fix, not an acquired-session cleanup exemption. Final executable bytee7dd047… is unchanged by this test-only patch.
 
 CI36874686991 passed full Linux. Mac alone caught an unchanged host-bridge test subscribing after awaited checks, when the tiny task could already be completed. Parent moved subscription before the first await; all17 host-bridge tests pass. Production unchanged; all ownership, confirmation, completion and output assertions remain. See wisdom/live/host-bridge-completion-fixture.md. Fresh whole CI, not old-run retry, remains required.
+
+## Merged; full Release running
+
+Full CI36876199745 passed Linux and Mac on74e2ccf. PR15 marked ready and merged with exact-head guard at09f88d91b8e65a583bf2217b95c4af1782e610f3,2026-10-01T14:33:29Z. Video comment https://github.com/tnfssc/die/pull/15#issuecomment-5932629742.
+
+Parent dispatched release.yml on develop. Full Release36877672023 started on09f88d9, https://github.com/tnfssc/die/actions/runs/36877672023. Latest stable before dispatch v0.15.18; expected patch v0.15.19. Do not call this published yet. Wait same run through packaging/native/browser/Mac/updater/Publish; check actual stable release and exact12 assets without downloading binaries merely to hash again. Do not push develop while this gate pins its preparation SHA. Parent root workspace has unrelated dirty prompts/wisdom; no reset or discard.
+
+## Published v0.15.19
+
+Full Release36877672023 passed every job: preparation, native Mac helper, all-platform package, final Linux browser boot/reload, actual Mac binary/old updater, and stable Publish. Stable non-draft/non-prerelease v0.15.19 published2026-10-01T14:49:10Z at https://github.com/tnfssc/die/releases/tag/v0.15.19.
+
+Tag4509dc53440cc3ea9af9a6abea70011df77423e8 differs from reviewed merge09f88d9 only by package0.15.18→0.15.19. All12 expected assets present: four Android/Linux/Mac binaries, their four SHA256 files, LICENSE, SOURCE.txt, THIRD_PARTY_LICENSES.txt and THIRD_PARTY_NOTICES.md. Parent did not download big binaries merely to hash again; hosted gates produced/verified/uploaded the same bytes.
+
+Full root+child placement, ordinary controls, source approval/return, PR/video and release are done. Known limits remain explicit in this doc/PR; no paid/WAN or live voice/web-root proof claim. Video link expires2026-10-08; local captured proof and reproducible renderer stay in lasting paths above.
+
+Wisdom includes design/product boundaries, source approval/diagnostic tips, typed root/controls, honest proofs, SDK context lifecycle and two observed fixture timing lessons. Value7 was refined to reuse one work model across backends and joined the existing product-first rule. No further general values were added: lifecycle and fixture details belong with their systems; existing ownership/recovery/proof values cover them.
