@@ -95,7 +95,7 @@ export class MergedTaskMonitorSource implements TaskMonitorSource {
           id: job.id,
           kind: "ssh",
           status: job.status,
-          command: job.host,
+          command: job.title ?? job.command ?? job.host,
           cwd: job.host,
           startedAt: "",
           baseOffset: 0,

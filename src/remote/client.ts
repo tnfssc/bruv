@@ -31,6 +31,7 @@ export type RemoteTask = {
   epoch: string;
   repoPath: string;
   prompt: string;
+  title?: string;
   overrides?: { model?: string; thinking?: string };
   placement?: RemotePlacement;
   cursor: number;
@@ -219,6 +220,7 @@ export class RemoteClient {
     sessionFile?: string,
     placement?: RemotePlacement,
     jobQuestionOwner?: { sessionId: string; branchId: string },
+    title?: string,
   ): Promise<RemoteTask> {
     return this.exclusive(async () => {
       if (placement !== undefined) validatePlacement(placement);
@@ -264,6 +266,7 @@ export class RemoteClient {
           task.epoch !== c.hello.epoch ||
           task.repoPath !== repoPath ||
           task.prompt !== prompt ||
+          task.title !== title ||
           JSON.stringify(task.jobQuestionOwner) !== JSON.stringify(jobQuestionOwner) ||
           JSON.stringify(task.placement) !== JSON.stringify(placement) ||
           JSON.stringify(task.overrides ?? {}) !== JSON.stringify(overrides ?? {})
@@ -287,6 +290,7 @@ export class RemoteClient {
           epoch: c.hello.epoch,
           repoPath,
           prompt,
+          title,
           overrides,
           placement,
           cursor: 0,

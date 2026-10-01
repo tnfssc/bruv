@@ -509,6 +509,7 @@ export class JobService {
                   jobQuestionOwner: { sessionId, branchId },
                   localRoot: ctx.cwd,
                   prompt,
+                  ...(params.title === undefined ? {} : { title: params.title }),
                   taskId,
                   ...(params.model === undefined ? {} : { model: params.model }),
                   ...(params.thinking === undefined ? {} : { thinking: params.thinking }),

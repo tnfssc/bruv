@@ -77,6 +77,7 @@ async function fixture(host = "box") {
       args.jobSessionFile,
       args.placement,
       args.jobQuestionOwner,
+      args.title,
     );
     await client.updateTask(task.taskId, { repository: { snapshot: "snapshot-sha", history: "snapshot-only" } });
     return client.transcript(task.taskId);
@@ -441,4 +442,17 @@ test("normal jobs target discovery is cached authorization, local default, and s
     default: "local",
     targets: [{ name: "local" }, { name: "box" }],
   });
+});
+
+test("normal task titles survive placement in cached progress", async () => {
+  const f = await fixture();
+  const job = await f
+    .service()
+    .handle(
+      "subagent",
+      { target: "box", prompt: "long task instructions", title: "Readable title" },
+      f.context(),
+      identity("title"),
+    );
+  expect(job).toMatchObject({ title: "Readable title", command: "Readable title" });
 });

@@ -14,6 +14,10 @@ const INSPECT_BYTES = 5000;
 const COMMAND_CHARS = 300;
 const RENDER_INTERVAL_MS = 100;
 
+function displayId(id: string): string {
+  return id.startsWith("ssh:") && id.length > 28 ? "ssh:…" + id.slice(-12) : id;
+}
+
 function age(ms: number): string {
   const seconds = Math.max(0, Math.floor(ms / 1000));
   if (seconds < 60) return seconds + "s";
@@ -112,7 +116,7 @@ export class TaskMonitorPanel implements Component, Focusable {
     if (!this.confirming) return undefined;
     return this.theme.fg(
       "error",
-      "Stop " + this.confirming.id + " (" + this.confirming.identity + ")? Enter/y confirm · Esc/n cancel",
+      "Stop " + displayId(this.confirming.id) + " (" + this.confirming.identity + ")? Enter/y confirm · Esc/n cancel",
     );
   }
   private move(delta: number) {
@@ -222,7 +226,7 @@ export class TaskMonitorPanel implements Component, Focusable {
         Math.max(task.baseOffset, task.outputEnd - INSPECT_BYTES),
         INSPECT_BYTES,
       );
-      identityLine = this.theme.bold(this.theme.fg("accent", "Inspect " + task.id));
+      identityLine = this.theme.bold(this.theme.fg("accent", "Inspect " + displayId(task.id)));
       lines.push(
         identityLine,
         this.theme.fg(
@@ -279,7 +283,7 @@ export class TaskMonitorPanel implements Component, Focusable {
         const role = listed.ssh ? "ssh " + listed.status + " stale" : listed.agent ? listed.agent.type : listed.kind;
         const label =
           (selected ? "› " : "  ") +
-          this.theme.fg(selected ? "accent" : "muted", listed.id) +
+          this.theme.fg(selected ? "accent" : "muted", displayId(listed.id)) +
           " " +
           this.theme.fg(
             listed.agent?.type === "orchestrator" ? "warning" : listed.agent ? "accent" : "dim",

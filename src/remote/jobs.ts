@@ -23,6 +23,8 @@ export function isSshJobId(id: string): boolean {
 
 export type SshJob = {
   id: string;
+  command?: string;
+  title?: string;
   kind: "ssh";
   source: "ssh";
   status: "running" | "completed" | "failed" | "cancelled" | "unknown";
@@ -50,6 +52,7 @@ export type SshLaunchRequest = {
   jobQuestionOwner?: { sessionId: string; branchId: string };
   localRoot: string;
   prompt: string;
+  title?: string;
   taskId: string;
   source?: SourceSelection;
   model?: string;
@@ -123,6 +126,8 @@ function project(task: RemoteTask): SshJob {
           : "unknown";
   return {
     id: sshJobId(task.taskId),
+    command: task.title ?? task.prompt,
+    ...(task.title ? { title: task.title } : {}),
     kind: "ssh",
     source: "ssh",
     status,
@@ -153,6 +158,8 @@ export function createRemoteJobsAdapter(
   function projectPreparation(record: SourcePreparation): SshLaunchResult {
     return {
       id: sshJobId(record.intent.taskId),
+      command: record.intent.title ?? record.intent.prompt,
+      ...(record.intent.title ? { title: record.intent.title } : {}),
       kind: "ssh",
       source: "ssh",
       status: record.state === "cancelled" ? "cancelled" : "unknown",
@@ -266,6 +273,7 @@ export function createRemoteJobsAdapter(
             ownerId: connection.hello.ownerId,
             epoch: connection.hello.epoch,
             prompt: request.prompt,
+            ...(request.title === undefined ? {} : { title: request.title }),
             placement: request.placement,
             ...(request.model === undefined ? {} : { model: request.model }),
             ...(request.thinking === undefined ? {} : { thinking: request.thinking }),
@@ -285,6 +293,7 @@ export function createRemoteJobsAdapter(
         jobQuestionOwner: request.jobQuestionOwner,
         localRoot: request.localRoot,
         prompt: request.prompt,
+        ...(request.title === undefined ? {} : { title: request.title }),
         taskId: request.taskId,
         ...(request.model === undefined ? {} : { model: request.model }),
         ...(request.thinking === undefined ? {} : { thinking: request.thinking }),

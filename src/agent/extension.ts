@@ -1,3 +1,4 @@
+import { remoteCompletionSummary } from "../remote/job-observations";
 import { registerRemoteCancellationService } from "../remote/cancellation";
 import { createHash } from "node:crypto";
 import { RemoteClient } from "../remote/client";
@@ -310,12 +311,7 @@ export default function asynchronousTasksExtension(
         remoteCompletions.length
           ? "SSH jobs completed:\n" +
             remoteCompletions
-              .map(({ id, observation }) =>
-                `${sshJobId(observation.taskId)} ${observation.state} (delivery ${id})${observation.preview ? ` — ${observation.preview}` : ""}`.slice(
-                  0,
-                  430,
-                ),
-              )
+              .map(({ observation }) => remoteCompletionSummary(observation, sshJobId(observation.taskId)))
               .join("\n")
           : "",
         actionable.length ? actionable.join("\n") : "",

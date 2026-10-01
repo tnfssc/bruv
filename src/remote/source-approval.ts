@@ -14,6 +14,7 @@ export type SourceIntent = {
   ownerId: string;
   epoch: string;
   prompt: string;
+  title?: string;
   placement: unknown;
   model?: string;
   thinking?: string;

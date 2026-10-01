@@ -64,6 +64,8 @@ export interface SubagentOptions extends Options {
   title?: string;
   type?: "fast" | "normal" | "orchestrator";
   workspace?: SubagentWorkspace;
+  /** Optional source files requiring a saved, scope-bound human decision before transfer. */
+  source?: { includeUntracked: string[]; retryTaskId?: string };
   /** Omit/current runtime, "local", or an already human-pinned SSH connection name. */
   target?: string;
   /** Supported explicit destination overrides; named SSH targets only. */

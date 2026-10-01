@@ -225,6 +225,7 @@ type Descriptor = {
   jobQuestionOwner?: { sessionId: string; branchId: string };
   root: string;
   prompt: string;
+  title?: string;
   snapshot: RepositorySnapshot;
   owner: { ownerId: string; epoch: string };
   profile: { model?: string; thinking?: string };
@@ -238,6 +239,7 @@ export type RepositoryLaunch = {
   localRoot: string;
   placement?: RemotePlacement;
   prompt: string;
+  title?: string;
   taskId?: string;
   approvedUntracked?: string[];
   model?: string;
@@ -328,6 +330,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
       JSON.stringify(descriptor.jobQuestionOwner) !== JSON.stringify(args.jobQuestionOwner) ||
       descriptor.root !== realpathSync(args.localRoot) ||
       descriptor.prompt !== args.prompt ||
+      descriptor.title !== args.title ||
       (args.preparedSnapshot !== undefined &&
         JSON.stringify(descriptor.snapshot) !== JSON.stringify(args.preparedSnapshot)) ||
       JSON.stringify(descriptor.placement) !== JSON.stringify(args.placement) ||
@@ -349,6 +352,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
       jobQuestionOwner: args.jobQuestionOwner,
       root: realpathSync(args.localRoot),
       prompt: args.prompt,
+      title: args.title,
       snapshot,
       owner,
       profile: { model: args.model, thinking: args.thinking },
@@ -386,6 +390,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
     descriptor.jobSessionFile,
     descriptor.placement,
     descriptor.jobQuestionOwner,
+    descriptor.title,
   );
   await client.updateTask(id, {
     repository: {
@@ -478,6 +483,7 @@ export async function repositoryPreparations(client: RemoteClient) {
         state: "prepared_not_confirmed_launched",
         localRoot: descriptor.root,
         prompt: descriptor.prompt,
+        title: descriptor.title,
         artifact: join(base, id),
       };
     });
