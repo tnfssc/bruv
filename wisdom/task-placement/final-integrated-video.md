@@ -11,3 +11,7 @@ Run with explicit input paths:
       --output /home/tnfssc/.die/probes/task-placement-final-integrated-video
 
 The renderer checks the frozen source commit and binary SHA against both proof receipts (networkMode: none), then records capture paths/hashes, redaction counts, viewport extents, freeze receipt hash, exact binary hash, and resulting MP4 hash/size. Generated video/screens/receipt stay in the durable output directory; do not commit generated files or treat replay as packaged-product, real-provider, or real-host acceptance.
+
+## Presentation correction
+
+This older acceptance replay contains visible fixture/debug jargon and is not a clean product demo. Do not relabel or rewrite its original captures. See [the separate clean product scenario](clean-product-video.md) for newly executed natural work, visible-frame auditing and the remaining offscreen product metadata finding. Parent owns replacement publication.
