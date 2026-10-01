@@ -16,15 +16,14 @@ Parent records don't authorize child/sub-agent sessions.
 
 ## Supported surfaces and wire values
 
-The allowlist is exact instead of prefix-based:
+Supported surfaces, not model aliases, determine the wire tier:
 
-- OpenAI API, official `openai` Responses endpoint/auth surface: `gpt-6-astra`, `gpt-5.6-sol`, and `gpt-5.3-codex`. The request uses `service_tier: "fast"`.
-- Codex with ChatGPT sign-in, official `openai-codex` endpoint/auth surface: `gpt-6-astra`, `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.5`, and `gpt-5.4`.
-  The official Codex source maps Fast to the legacy-equivalent wire value `service_tier: "priority"`.
+- OpenAI API, official `openai` Responses endpoint with API-key auth: `service_tier: "fast"`.
+- Codex, official `openai-codex` endpoint with ChatGPT sign-in: `service_tier: "priority"`, matching the official Codex client's Fast wire mapping.
 
-The official Codex model snapshot explicitly advertises the priority tier for each listed alias, including Luna; support isn't inferred from the `gpt-5.6` prefix. `gpt-5.3-codex-spark` and `gpt-5.4-mini` are intentionally excluded.
-Spark is a separate model, not native fast mode.
-Custom gateways, alternate endpoints, Anthropic, and other providers are rejected before dispatch.
+Die forwards the selected model alias unchanged and lets the provider validate model/tier availability. There is no hardcoded model allowlist or prefix check. The old catalog gate rejected `gpt-6.1-sol` even on the supported Codex surface; adding one alias would only postpone the same failure for the next catalog change. An alias being forwarded does not guarantee premium support: provider errors remain provider errors, with no automatic retry or model swap.
+
+Explicit opt-in, billing consent, exact session/branch/model authorization, endpoint checks, and auth routing remain required. Custom gateways, alternate endpoints, Anthropic, and other providers are rejected before dispatch. This removes a stale capability guess, not a billing or routing boundary.
 
 Anthropic support is deferred.
 Its native API mechanism is `speed: "fast"` plus the `fast-mode-2026-02-01` beta header, not an effort change.
@@ -72,9 +71,17 @@ No tier from a captured ordinary request leaks into compaction.
 
 ## Source evidence
 
-Pinned sources used for this allowlist and wire mapping:
+Sources for provider mechanics and wire mapping (not a model capability allowlist):
 
 - OpenAI API Fast mode: https://developers.openai.com/api/docs/guides/fast-mode
-- OpenAI Codex commit `ad931a45b201e3877d6ba542ba5dbbd85e7e31b4`, model catalog (including the explicit Luna and Terra `priority` service tiers): https://github.com/openai/codex/blob/ad931a45b201e3877d6ba542ba5dbbd85e7e31b4/codex-rs/models-manager/models.json
-- The same pinned Codex commit's request mapping (`Fast => "priority"`, while both `fast` and `priority` parse as Fast): https://github.com/openai/codex/blob/ad931a45b201e3877d6ba542ba5dbbd85e7e31b4/codex-rs/protocol/src/config_types.rs#L527-L550
-- Pinned model capability check: https://github.com/openai/codex/blob/ad931a45b201e3877d6ba542ba5dbbd85e7e31b4/codex-rs/protocol/src/openai_models.rs#L905-L914
+- Pinned Codex commit `ad931a45b201e3877d6ba542ba5dbbd85e7e31b4` request mapping (`Fast => "priority"`, while both `fast` and `priority` parse as Fast): https://github.com/openai/codex/blob/ad931a45b201e3877d6ba542ba5dbbd85e7e31b4/codex-rs/protocol/src/config_types.rs#L527-L550
+
+## Alias-forwarding fix handoff (2026-10-01)
+
+- Worktree: `/home/tnfssc/.die/worktrees/die-a86675007a5e-task_df2e76e7`.
+- Branch: `die/remove-native-fast-model-alias-gate-df2e76e7`.
+- Resume state: implementation complete; commit on this branch, not merged into parent. Inspect `git log -1` for the fix commit. No running work or pending decisions. Next step is parent review/integration.
+- Evidence: `bun test tests/native-fast-mode.test.ts tests/sol-model-catalog.test.ts` (23 pass), `bun test tests/native-compaction.test.ts` (41 pass). Alias forwarding includes `gpt-6.1-sol`, formerly excluded aliases, and an unknown future alias on both official surfaces; untouched/on/off wire tiers remain covered.
+- Environment: dependencies installed with `bun install --frozen-lockfile`; the worktree's mise config was untrusted, so tests used the installed Bun 1.4.2 binary at `/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun` without changing trust settings.
+- Remaining limitation: offline serializers/SDK tests, not a billable provider call; actual alias/tier availability is deliberately provider-owned.
+- Values review: `wisdom/values.md` unchanged. Value 7 already says to remove speculative defenses while preserving essential protections; this feature-specific decision applies that value rather than introducing a new general lesson.
