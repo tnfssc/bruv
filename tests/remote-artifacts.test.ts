@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { ARTIFACT_CHUNK, getRemoteArtifact, listRemoteArtifacts, syncRemoteArtifacts } from "../src/remote/artifacts";
 const roots: string[] = [];
 function fixture() {
-  const root = mkdtempSync(join(tmpdir(), "die-artifact-"));
+  const root = mkdtempSync(join(tmpdir(), "bruv-artifact-"));
   roots.push(root);
   const remote = join(root, "owner", "task");
   mkdirSync(remote, { recursive: true });

@@ -5,8 +5,8 @@ import { join, resolve } from "node:path";
 import { run } from "./helpers";
 
 test("real TUI searches profile models, keeps selection, and saves", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-profile-pty-"));
-  const socket = "die-profiles-" + process.pid + "-" + Date.now();
+  const home = await mkdtemp(join(tmpdir(), "bruv-profile-pty-"));
+  const socket = "bruv-profiles-" + process.pid + "-" + Date.now();
   const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
   const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
   async function frameContaining(text: string) {
@@ -20,11 +20,11 @@ test("real TUI searches profile models, keeps selection, and saves", async () =>
   }
   const key = (...keys: string[]) => tmux("send-keys", "-t", "profiles", ...keys);
   try {
-    const binary = resolve(import.meta.dir, "../dist/die");
+    const binary = resolve(import.meta.dir, "../dist/bruv");
     const launch = [
       "env",
       "HOME=" + home,
-      "DIE_CODING_AGENT_DIR=" + join(home, ".die", "agent"),
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       "OPENAI_API_KEY=offline-test-placeholder",
       binary,
       "--offline",
@@ -60,7 +60,7 @@ test("real TUI searches profile models, keeps selection, and saves", async () =>
     // Returning from thinking keeps row 1 selected. Five downs reaches Save.
     await key("Down", "Down", "Down", "Down", "Down", "Enter");
     await frameContaining("Saved");
-    const saved = JSON.parse(await readFile(join(home, ".die", "subagents.json"), "utf8"));
+    const saved = JSON.parse(await readFile(join(home, ".bruv", "subagents.json"), "utf8"));
     if (saved.fast.model !== "openai/gpt-4o") console.log(searchFrame);
     expect(saved.fast.model).toBe("openai/gpt-4o");
     expect(saved.fast.thinking).toBe("off");

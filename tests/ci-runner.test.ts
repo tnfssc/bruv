@@ -10,7 +10,7 @@ afterEach(() => {
 });
 
 function run(lane: "linux" | "macos", fail = "", cache = false) {
-  const root = mkdtempSync(join(tmpdir(), "die-ci-runner-"));
+  const root = mkdtempSync(join(tmpdir(), "bruv-ci-runner-"));
   fixtures.push(root);
   const bin = join(root, "bin");
   const web = join(root, "web-source");
@@ -31,7 +31,7 @@ printf '%s|%s|%s\n' "$(basename "$0")" "$PWD" "$*" >> "$CALLS"
 printf '%s\n' "$TMPDIR" >> "$TEMP_CALLS"
 if [[ "$(basename "$0")" == bun && "$1" == -e ]]; then echo pinned-revision; exit 0; fi
 if [[ "$*" == "$FAIL" ]]; then echo intentional-failure; exit 37; fi
-if [[ "$*" == "test --parallel=3 ./tests" ]]; then echo "llm=$DIE_RUN_LLM_TESTS"; fi
+if [[ "$*" == "test --parallel=3 ./tests" ]]; then echo "llm=$BRUV_RUN_LLM_TESTS"; fi
 echo "completed $*"
 `;
   writeFileSync(join(bin, "bun"), stub, { mode: 0o755 });
@@ -45,8 +45,8 @@ echo "completed $*"
     env: {
       ...process.env,
       PATH: bin + ":" + process.env.PATH,
-      DIE_T3_SOURCE: web,
-      DIE_CI_WEB_CACHE: cache ? "1" : "0",
+      BRUV_T3_SOURCE: web,
+      BRUV_CI_WEB_CACHE: cache ? "1" : "0",
       CALLS: calls,
       FAIL: fail,
       TMPDIR: parentTmp,
@@ -56,7 +56,7 @@ echo "completed $*"
   });
   const temps = readFileSync(join(root, "temp-calls"), "utf8").trim().split("\n");
   expect(new Set(temps).size).toBe(1);
-  expect(temps[0]).toStartWith(parentTmp + "/die-ci.");
+  expect(temps[0]).toStartWith(parentTmp + "/bruv-ci.");
   expect(existsSync(temps[0]!)).toBe(false);
   expect(readFileSync(join(parentTmp, "user-session"), "utf8")).toBe("leave alone");
   return { root, result, calls: readFileSync(calls, "utf8").trim().split("\n") };

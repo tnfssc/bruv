@@ -4,10 +4,10 @@ import * as piMain from "../node_modules/@earendil-works/pi-coding-agent/dist/ma
 import * as piArgs from "../node_modules/@earendil-works/pi-coding-agent/dist/cli/args.js";
 import { builtInExtensions } from "../node_modules/@earendil-works/pi-coding-agent/dist/extensions/index.js";
 
-export function assertDiePiHost(
+export function assertBruvPiHost(
   state: { mainPrepared?: boolean; argsPrepared?: boolean; builtInNames: (string | undefined)[] } = {
-    mainPrepared: (piMain as typeof piMain & { dieHostAdapted?: boolean }).dieHostAdapted,
-    argsPrepared: (piArgs as typeof piArgs & { dieHostAdapted?: boolean }).dieHostAdapted,
+    mainPrepared: (piMain as typeof piMain & { bruvHostAdapted?: boolean }).bruvHostAdapted,
+    argsPrepared: (piArgs as typeof piArgs & { bruvHostAdapted?: boolean }).bruvHostAdapted,
     builtInNames: builtInExtensions.map((extension) => extension.name),
   },
 ): void {
@@ -19,6 +19,6 @@ export function assertDiePiHost(
     state.builtInNames.length !== 1 ||
     state.builtInNames[0] !== "llama.cpp"
   ) {
-    throw new Error("Pi host is not prepared for die; run bun run prepare:assets before starting the source CLI.");
+    throw new Error("Pi host is not prepared for bruv; run bun run prepare:assets before starting the source CLI.");
   }
 }

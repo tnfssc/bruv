@@ -1,7 +1,7 @@
 # Typed remote root placement proof
 
 This NEW fixture is independent of the existing finite-child placement runner.
-It tests one server Die/Pi RPC session, with laptop terminal presentation of typed
+It tests one server Bruv/Pi RPC session, with laptop terminal presentation of typed
 prompt/abort/jobs/questions facets. It does **not** test a TTY relay. Server SSH
 refuses TTYs; only the host uses tmux to automate human keys.
 
@@ -10,19 +10,19 @@ refuses TTYs; only the host uses tmux to automate human keys.
 Use direct Bun 1.4.2, not a mise shim:
 
 ~~~sh
-export TMPDIR=/home/tnfssc/.die/tmp-pi-removal
+export TMPDIR=/home/tnfssc/.bruv/tmp-pi-removal
 BUN=/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun
 $BUN test tests/remote-typed-root-placement-fixture.test.ts
 $BUN scripts/remote-root-placement-e2e.ts --probe
-DIE_BIN=/absolute/path/to/combined/compiled/die $BUN scripts/remote-root-placement-e2e.ts
+BRUV_BIN=/absolute/path/to/combined/compiled/bruv $BUN scripts/remote-root-placement-e2e.ts
 ~~~
 
-DIE_BIN is mandatory outside probe mode. It must combine the lead CLI/extension
+BRUV_BIN is mandatory outside probe mode. It must combine the lead CLI/extension
 wiring, root-owner backend (task_ebba316b, remote/task-placement-root-owner), and
-root client (task_8f4236df, remote/task-placement-root-client). No implicit dist/die
+root client (task_8f4236df, remote/task-placement-root-client). No implicit dist/bruv
 candidate is accepted. Do not claim acceptance from probe mode or focused tests.
 
-Default cached base: die-remote-e2e-2434886-5027:latest. Override with
+Default cached base: bruv-remote-e2e-2434886-5027:latest. Override with
 REMOTE_ROOT_PLACEMENT_BASE_IMAGE only for an already-cached local SSH/git image.
 Docker builds and containers use network:none; pulls/package installs are absent.
 A docker exec byte relay connects the isolated container's loopback SSH socket.

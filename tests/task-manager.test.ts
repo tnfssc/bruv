@@ -324,7 +324,7 @@ describe("asynchronous task manager", () => {
   test.skipIf(process.platform !== "linux")(
     "shutdown kills descendants after the shell exits and output pipes close",
     async () => {
-      const directory = await mkdtemp(join(tmpdir(), "die-shutdown-"));
+      const directory = await mkdtemp(join(tmpdir(), "bruv-shutdown-"));
       const ready = join(directory, "child.pid");
       const quote = (text: string) => `'${text.replaceAll("'", "'\\''")}'`;
       const childCode = `const fs = require("node:fs"); process.on("SIGTERM", () => {}); fs.closeSync(1); fs.closeSync(2); fs.writeFileSync(${JSON.stringify(ready)}, String(process.pid)); setInterval(() => {}, 1000);`;
@@ -560,7 +560,7 @@ test("stopping a workspace agent also stops its owned background setup", async (
   const agent = manager.spawn({
     ...commandLaunch("sleep 30"),
     kind: "agent",
-    workspace: { kind: "worktree", path: "/var/tmp/die-owned-worktree", setupTaskId: setup.id },
+    workspace: { kind: "worktree", path: "/var/tmp/bruv-owned-worktree", setupTaskId: setup.id },
   });
   manager.kill(agent.id);
   expect(manager.inspect(setup.id).termination?.cause).toBe("user-stop");

@@ -14,7 +14,7 @@ import { registerQuestionRuntime } from "../src/questions/runtime";
 import { registerQuestions } from "../src/questions/extension";
 
 test("real Pi command delivers saved reply in one new turn without a visible metadata bubble", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-questions-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-questions-sdk-"));
   let session: any;
   try {
     const model = getModel("anthropic", "claude-sonnet-4-5")!;

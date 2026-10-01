@@ -14,7 +14,7 @@ import { join } from "node:path";
 import { createTaskLifecycleRecorder, taskLifecycleFile, TASK_LIFECYCLE_MAX_BYTES } from "../src/tasks/task-lifecycle";
 
 test("ownership index survives recreation, retains every child past completion preview limit, and stays protected", () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-lifecycle-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-lifecycle-"));
   try {
     const session = join(dir, "owner.jsonl");
     const record = createTaskLifecycleRecorder(session);
@@ -45,7 +45,7 @@ test("ownership index survives recreation, retains every child past completion p
 });
 
 test("recorder binds original session path, bounds storage, and does not follow symlinks", () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-lifecycle-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-lifecycle-"));
   try {
     let session = join(dir, "old.jsonl");
     const record = createTaskLifecycleRecorder(session);
@@ -77,7 +77,7 @@ test("recorder binds original session path, bounds storage, and does not follow 
 });
 
 test("short writes are completed without partial JSON records", () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-lifecycle-short-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-lifecycle-short-"));
   try {
     const session = join(dir, "owner.jsonl");
     let calls = 0;
@@ -106,7 +106,7 @@ test("short writes are completed without partial JSON records", () => {
 });
 
 test("concurrent processes serialize records or explicitly report bounded contention", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-lifecycle-concurrent-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-lifecycle-concurrent-"));
   try {
     const session = join(dir, "owner.jsonl");
     const modulePath = join(import.meta.dir, "../src/tasks/task-lifecycle.ts");
@@ -149,7 +149,7 @@ test("concurrent processes serialize records or explicitly report bounded conten
 });
 
 test("live contention is nonfatal and SIGKILL releases the kernel lock", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-lifecycle-kill-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-lifecycle-kill-"));
   let child: ReturnType<typeof Bun.spawn> | undefined;
   try {
     const session = join(dir, "owner.jsonl");
@@ -191,7 +191,7 @@ test("live contention is nonfatal and SIGKILL releases the kernel lock", async (
 });
 
 test("an unavailable locking backend fails closed with a coalesced diagnostic", () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-lifecycle-no-lock-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-lifecycle-no-lock-"));
   try {
     const session = join(dir, "owner.jsonl");
     const failures: string[] = [];
@@ -212,7 +212,7 @@ test("an unavailable locking backend fails closed with a coalesced diagnostic", 
 
 test("compiled executable loads libc flock and writes a protected index", async () => {
   if (process.platform !== "linux" || process.arch !== "x64") return;
-  const dir = mkdtempSync(join(tmpdir(), "die-lifecycle-compiled-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-lifecycle-compiled-"));
   try {
     const entry = join(dir, "entry.ts");
     const executable = join(dir, "lifecycle-smoke");

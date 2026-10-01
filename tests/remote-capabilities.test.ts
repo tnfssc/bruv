@@ -9,7 +9,7 @@ afterEach(async () => {
   dirs = [];
 });
 async function repo() {
-  const d = await mkdtemp(join(tmpdir(), "die-cap-"));
+  const d = await mkdtemp(join(tmpdir(), "bruv-cap-"));
   dirs.push(d);
   await mkdir(join(d, "sub"));
   await writeFile(join(d, "sub", "ok.txt"), "hello");

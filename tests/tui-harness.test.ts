@@ -2,12 +2,12 @@ import { afterAll, describe, expect, test } from "bun:test";
 import { resolve } from "node:path";
 import { run } from "./helpers";
 
-const socket = `die-test-${process.pid}-${Date.now()}`;
+const socket = `bruv-test-${process.pid}-${Date.now()}`;
 const harness = resolve(import.meta.dir, "../scripts/tui-harness.ts");
 const env = {
   ...process.env,
-  DIE_TUI_SOCKET: socket,
-  DIE_TUI_TIMEOUT_SECONDS: "1",
+  BRUV_TUI_SOCKET: socket,
+  BRUV_TUI_TIMEOUT_SECONDS: "1",
 };
 
 async function harnessCommand(...args: string[]) {

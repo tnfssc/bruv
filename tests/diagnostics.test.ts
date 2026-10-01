@@ -24,7 +24,7 @@ import { MANUAL_SHAKE_ENTRY } from "../src/history/shake-record";
 import { NATIVE_FAST_ENTRY } from "../src/agent/native-fast-mode";
 
 const valid = { component: "provider", code: "provider_failed", outcome: "failed" } as const;
-const entry = (data: unknown) => ({ type: "custom", customType: "die-diagnostic", data });
+const entry = (data: unknown) => ({ type: "custom", customType: "bruv-diagnostic", data });
 
 function expectRecord(value: any, core = valid) {
   expect(value).toMatchObject({ version: 1, ...core });
@@ -289,7 +289,7 @@ test("extension preflights restoration and reports unavoidable post-append resto
 });
 
 test("actual SDK keeps the runtime leaf stable and reopened diagnostics context-transparent", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-diagnostics-sdk-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-diagnostics-sdk-"));
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   try {
     const manager = SessionManager.create(root, join(root, "sessions"));
@@ -376,7 +376,7 @@ test("actual SDK keeps the runtime leaf stable and reopened diagnostics context-
     const append = manager.appendCustomEntry.bind(manager);
     manager.appendCustomEntry = ((type: string, data?: unknown) => {
       const id = append(type, data);
-      if (type === "die-diagnostic") throw new Error("append completed, observer failed");
+      if (type === "bruv-diagnostic") throw new Error("append completed, observer failed");
       return id;
     }) as typeof manager.appendCustomEntry;
     expect(() => recordDiagnostic(manager, { ...valid, outcome: "fallback" })).not.toThrow();
@@ -397,7 +397,7 @@ test("actual SDK keeps the runtime leaf stable and reopened diagnostics context-
       fast,
     );
     expect(diagnosticRecords(reopened.getEntries())).toHaveLength(2);
-    expect(reopened.getLeafEntry()).toMatchObject({ type: "custom", customType: "die-diagnostic" });
+    expect(reopened.getLeafEntry()).toMatchObject({ type: "custom", customType: "bruv-diagnostic" });
   } finally {
     session?.dispose();
     await rm(root, { recursive: true, force: true });

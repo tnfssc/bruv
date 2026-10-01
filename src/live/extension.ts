@@ -23,7 +23,7 @@ import { LiveWaveform } from "./waveform";
 import { TranscriptLog } from "../session/transcript";
 import { type VoiceCallbacks, type VoiceOrchestration, type VoiceProvider } from "./types";
 
-const ID = "die-live";
+const ID = "bruv-live";
 const MAX_VISIBLE = 8;
 const clean = (value: string) =>
   stripVTControlCharacters(value)
@@ -110,7 +110,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       if (this.sessionId !== this.ctx.sessionManager?.getSessionId?.()) return;
       pi.appendEntry(VOICE_COST_ENTRY, entry);
       // Footer reads persisted usage; request a redraw only on provider events.
-      this.ctx.ui.setStatus("die-live-cost", entry.unknown ? "unknown" : "updated");
+      this.ctx.ui.setStatus("bruv-live-cost", entry.unknown ? "unknown" : "updated");
     });
     readonly sessionId: string | undefined;
     private stopping?: Promise<LiveStopResult>;
@@ -337,7 +337,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           })(),
         ]);
         this.cost.close(providerFinalized);
-        this.ctx.ui.setStatus("die-live-cost", undefined);
+        this.ctx.ui.setStatus("bruv-live-cost", undefined);
         return { stopped: errors.length === 0, errors, jobsUnchanged: true as const };
       })().finally(() => {
         if (stoppingRun === this) stoppingRun = undefined;
@@ -630,7 +630,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         if (this.alive)
           this.fail(
             stage === "main-owner"
-              ? "Cannot start main Live. Wait for the text turn to finish, then retry /live. If it persists, restart Die; the ordinary prompt/runtime could not be acquired."
+              ? "Cannot start main Live. Wait for the text turn to finish, then retry /live. If it persists, restart Bruv; the ordinary prompt/runtime could not be acquired."
               : this.audio
                 ? "Voice startup failed [" + stage + "]; details withheld"
                 : audioLaunchDiagnostic(),

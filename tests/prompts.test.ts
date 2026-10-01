@@ -2,10 +2,10 @@ import { expect, test } from "bun:test";
 import {
   backgroundHandoff,
   collaborationGuidance,
-  dieSystemPrompt,
+  bruvSystemPrompt,
   executeGuidance,
   executeReference,
-  isDieSystemPrompt,
+  isBruvSystemPrompt,
   mainAgentGuidance,
   subagentGuidance,
   workingValues,
@@ -75,7 +75,7 @@ test("fast and normal root modes add no behavioral prose while retaining owned p
   for (const mode of ["fast", "normal"] as const) {
     const guidance = mainAgentGuidance(mode, "test-owner");
     expect(guidance).toBe(
-      "<!-- die:main-agent-mode:test-owner:start -->\n\n<!-- die:main-agent-mode:test-owner:end -->",
+      "<!-- bruv:main-agent-mode:test-owner:start -->\n\n<!-- bruv:main-agent-mode:test-owner:end -->",
     );
     expect(guidance).not.toContain("You build and fix code");
     expect(guidance).not.toContain("main agent in fast instruction mode");
@@ -110,9 +110,9 @@ Write wisdom? Look for lesson that belongs in values too. Before big work ends o
 Write prompts and wisdom in same voice as rest. Short words. Short sentences. Plain talk. Read nearby text first. No formal policy talk. Keep exact names and facts when they matter.`);
 });
 
-test("Die base is a Pi custom prompt with execute guidance", () => {
-  const prompt = dieSystemPrompt();
-  expect(prompt).toStartWith('You help user build software. You work inside a coding tool named "die".');
+test("Bruv base is a Pi custom prompt with execute guidance", () => {
+  const prompt = bruvSystemPrompt();
+  expect(prompt).toStartWith('You help user build software. You work inside a coding tool named "bruv".');
   expect(prompt).not.toContain("Be concise in your responses");
   expect(prompt).not.toContain("Show file paths clearly when working with files");
   expect(prompt).not.toContain("Available tools:");
@@ -120,9 +120,9 @@ test("Die base is a Pi custom prompt with execute guidance", () => {
   expect(prompt).toContain("\n\nGuidelines:\n");
   for (const item of executeGuidance) expect(prompt).toContain("- " + item);
   expect(prompt).not.toContain("Current working directory:");
-  expect(isDieSystemPrompt({ customPrompt: prompt })).toBe(true);
-  expect(isDieSystemPrompt({ customPrompt: "user-owned" })).toBe(false);
-  expect(isDieSystemPrompt(undefined)).toBe(false);
+  expect(isBruvSystemPrompt({ customPrompt: prompt })).toBe(true);
+  expect(isBruvSystemPrompt({ customPrompt: "user-owned" })).toBe(false);
+  expect(isBruvSystemPrompt(undefined)).toBe(false);
 });
 
 test("execute tool description uses the embedded Markdown source", async () => {
@@ -169,7 +169,7 @@ test("orchestrators use persistent worktree locations for ongoing work", () => {
     expect(guidance).toContain("Use the worktree path it returns");
     expect(guidance).toContain("Make manual worktrees in a place that lasts");
     expect(guidance).toContain("not \u0060/tmp\u0060 or \u0060/var/tmp\u0060");
-    expect(guidance).toContain("DIE_WORKTREE_ROOT");
+    expect(guidance).toContain("BRUV_WORKTREE_ROOT");
     expect(guidance).toContain("not code or release work still underway");
     expect(guidance).toContain("Save the worktree path and branch");
   }

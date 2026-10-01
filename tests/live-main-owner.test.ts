@@ -13,7 +13,7 @@ import { createAssistantMessageEventStream, getModel } from "@earendil-works/pi-
 import tasks from "../src/agent/extension";
 import { stripTerminalSequences } from "@earendil-works/pi-tui";
 import { registerExecuteTool } from "../src/typescript/extension";
-import { dieSystemPrompt } from "../src/prompts";
+import { bruvSystemPrompt } from "../src/prompts";
 import { beforeAll, describe, expect, test } from "bun:test";
 import { bindInstructionContinuitySession } from "../src/agent/instruction-continuity";
 import { acquireMainOwner, beforeOrdinaryPrompt, currentMainOwner } from "../src/live/main-owner";
@@ -121,7 +121,7 @@ function fixture() {
 
 describe("direct Live main owner", () => {
   test("owns actual Pi registered execute and final root/project/hook instructions without streaming text", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-live-owner-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-live-owner-"));
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     try {
       const loader = new DefaultResourceLoader({
@@ -131,10 +131,10 @@ describe("direct Live main owner", () => {
         noSkills: true,
         noThemes: true,
         noPromptTemplates: true,
-        systemPrompt: dieSystemPrompt(),
+        systemPrompt: bruvSystemPrompt(),
         appendSystemPrompt: ["PROJECT_CONTEXT_FOR_VOICE"],
         extensionFactories: [
-          { name: "die-tasks", factory: tasks },
+          { name: "bruv-tasks", factory: tasks },
           {
             name: "post-hook",
             factory: (pi) =>

@@ -102,8 +102,8 @@ async function run(root: string, adapted: boolean) {
 
 describe("Pi 0.99.1 disk-backed session projection compatibility", () => {
   test("matches the real SDK for context edits and compaction system checkpoints", async () => {
-    const nativeRoot = await mkdtemp(join(tmpdir(), "die-history-099-native-"));
-    const adaptedRoot = await mkdtemp(join(tmpdir(), "die-history-099-adapted-"));
+    const nativeRoot = await mkdtemp(join(tmpdir(), "bruv-history-099-native-"));
+    const adaptedRoot = await mkdtemp(join(tmpdir(), "bruv-history-099-adapted-"));
     roots.push(nativeRoot, adaptedRoot);
     const [native, adapted] = await Promise.all([run(nativeRoot, false), run(adaptedRoot, true)]);
 

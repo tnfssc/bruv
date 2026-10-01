@@ -143,7 +143,7 @@ test("SDK raw preparation requires the recorded shake-discarded tool group; proj
 });
 
 test("disk reopen retains genuine shake marker and original opaque transport", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-shake-coverage-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-shake-coverage-"));
   try {
     const manager = fixture(SessionManager.create(dir, dir));
     // SDK saves the journal when an assistant exists; reopen the actual file.
@@ -261,7 +261,7 @@ test("ordinary signed reasoning outside the durable marker must still be covered
 });
 
 test("native dispatch uses the ordinary serialized shaken prefix and unchanged SDK cut, fresh and reopened", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-native-shake-dispatch-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-shake-dispatch-"));
   const originalFetch = globalThis.fetch;
   try {
     const manager = fixture(SessionManager.create(dir, dir));

@@ -3,7 +3,7 @@ import { AuthStorage } from "../node_modules/@earendil-works/pi-coding-agent/dis
 import { ModelRegistry, ModelRuntime, ModelSelectorComponent, initTheme } from "@earendil-works/pi-coding-agent";
 
 // Offline only: bundled upstream catalog, isolated config, and a nonfunctional runtime key.
-// This checks what Die's Pi-backed registry and interactive picker actually consume;
+// This checks what Bruv's Pi-backed registry and interactive picker actually consume;
 // it does not prove account access or make a model request.
 describe("bundled GPT-6.1 Sol models", () => {
   test("registry retains upstream IDs, provider APIs, capabilities and prices", async () => {

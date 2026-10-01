@@ -36,7 +36,7 @@ for (const [provider, id, api] of [
   ["anthropic", "claude-sonnet-4-5", anthropic],
 ] as const) {
   test(provider + " actual SDK compaction preserves provider prefix and thinking", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-compact-sdk-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-compact-sdk-"));
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     let networkCalls = 0;
     const notifications: string[] = [];
@@ -154,7 +154,7 @@ for (const [provider, id, api] of [
             name: "observe",
             factory: (pi) => {
               pi.on("before_provider_headers", (event) => {
-                event.headers["x-die-fixture-routing"] = "same-route";
+                event.headers["x-bruv-fixture-routing"] = "same-route";
               });
               pi.on("before_agent_start", (_e, ctx) => {
                 const ui = ctx.ui;
@@ -168,7 +168,7 @@ for (const [provider, id, api] of [
               });
             },
           },
-          { name: "die-tasks", factory: provider === "openai-codex" ? phase1Fixture : tasks },
+          { name: "bruv-tasks", factory: provider === "openai-codex" ? phase1Fixture : tasks },
         ],
       });
       await loader.reload();
@@ -221,7 +221,7 @@ for (const [provider, id, api] of [
       const first = captured[0].payload,
         last = captured[1].payload;
       expect(last.tools).toEqual(first.tools);
-      expect(captured[1].headers["x-die-fixture-routing"]).toBe("same-route");
+      expect(captured[1].headers["x-bruv-fixture-routing"]).toBe("same-route");
       if (provider === "openai-codex") {
         expect(last.instructions).toBe(first.instructions);
         expect(last.reasoning).toEqual(first.reasoning);
@@ -252,7 +252,7 @@ for (const [provider, id, api] of [
 
 for (const explicitSelection of [false, true]) {
   test(`fresh compaction reconciles ${explicitSelection ? "explicit" : "implicit"} before_agent_start tools`, async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-compact-fresh-tools-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-compact-fresh-tools-"));
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     let networkCalls = 0;
     const payloads: any[] = [];
@@ -369,7 +369,7 @@ for (const explicitSelection of [false, true]) {
               });
             },
           },
-          { name: "die-tasks", factory: tasks },
+          { name: "bruv-tasks", factory: tasks },
         ],
       });
       await loader.reload();

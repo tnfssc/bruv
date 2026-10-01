@@ -11,7 +11,7 @@ import {
 import { createAssistantMessageEventStream, getModel } from "@earendil-works/pi-ai/compat";
 import { installCurrentConversationAdapter } from "../src/agent/instruction-continuity";
 import { acquireMainOwner } from "../src/live/main-owner";
-import { dieSystemPrompt } from "../src/prompts";
+import { bruvSystemPrompt } from "../src/prompts";
 import { registerExecuteTool } from "../src/typescript/extension";
 
 test("paired owner delegates a real Pi prompt, tool execution and completion to the selected backend", async () => {
@@ -28,7 +28,7 @@ test("paired owner delegates a real Pi prompt, tool execution and completion to 
       noSkills: true,
       noThemes: true,
       noPromptTemplates: true,
-      systemPrompt: dieSystemPrompt(),
+      systemPrompt: bruvSystemPrompt(),
       extensionFactories: [
         {
           name: "paired-observe",
@@ -140,7 +140,7 @@ test("paired Pi wakes its canonical backend on an async job completion without a
       noSkills: true,
       noThemes: true,
       noPromptTemplates: true,
-      systemPrompt: dieSystemPrompt(),
+      systemPrompt: bruvSystemPrompt(),
       extensionFactories: [
         {
           name: "paired-async",

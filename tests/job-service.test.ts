@@ -106,7 +106,7 @@ test("records metadata-only dispatch lifecycle against the supplied session reco
 });
 
 test("profile settings, child identity, and three-tier limits survive helper migration", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-jobs-profile-")),
+  const dir = await mkdtemp(join(tmpdir(), "bruv-jobs-profile-")),
     path = join(dir, "profiles.json");
   await writeFile(path, JSON.stringify({ fast: { model: "p/quick", thinking: "off" } }));
   const manager = new TaskManager(() => {}),
@@ -160,7 +160,7 @@ test("profile settings, child identity, and three-tier limits survive helper mig
     expect(launches[0]!.title).toBe("Inspect renderer");
     expect(launches[0]!.args).toContain("p/quick");
     expect(launches[0]!.args).toContain("off");
-    expect(launches[0]!.env?.DIE_SUBAGENT_TYPE).toBe("fast");
+    expect(launches[0]!.env?.BRUV_SUBAGENT_TYPE).toBe("fast");
     expect(foreground.mock.calls[0]![1]).toBe(1000);
     for (const type of ["fast", "normal"]) {
       policy = { depth: 1, type };
@@ -172,7 +172,7 @@ test("profile settings, child identity, and three-tier limits survive helper mig
     );
     await service.handle("subagent", { type: "fast", prompt: "x" }, ctx, signal);
     expect(launches[1]!.title).toBeUndefined();
-    expect(launches[1]!.env?.DIE_SUBAGENT_DEPTH).toBe("2");
+    expect(launches[1]!.env?.BRUV_SUBAGENT_DEPTH).toBe("2");
     policy = { depth: 2, type: "orchestrator" };
     await expect(service.handle("subagent", { prompt: "x" }, ctx, signal)).rejects.toThrow("two levels");
   } finally {
@@ -184,7 +184,7 @@ test("profile settings, child identity, and three-tier limits survive helper mig
 });
 
 test("partial subagent spawn failure stops and notifies already-launched workers", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-jobs-partial-spawn-")),
+  const dir = await mkdtemp(join(tmpdir(), "bruv-jobs-partial-spawn-")),
     profilesPath = join(dir, "profiles.json");
   await writeFile(profilesPath, JSON.stringify({ fast: { model: "fixture/fast" } }));
   const notifications: any[] = [],
@@ -281,7 +281,7 @@ test("healthy inspection polling does not produce per-poll diagnostics", async (
 });
 
 test("local subagent title reaches the real background completion without parsing its prompt", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-title-delivery-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-title-delivery-"));
   const profilesPath = join(dir, "profiles.json");
   await writeFile(profilesPath, JSON.stringify({ fast: { model: "fixture/fast" } }));
   let deliver!: (task: any) => void;

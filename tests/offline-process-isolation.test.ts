@@ -6,7 +6,7 @@ import { join, resolve } from "node:path";
 import { run } from "./helpers";
 
 test("test TUI processes cannot use an inherited Herdr pane identity", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-offline-isolation-"));
+  const home = await mkdtemp(join(tmpdir(), "bruv-offline-isolation-"));
   const herdrSocket = join(home, "recording.sock");
   const paneId = "real-looking-host-pane";
   const requests: Array<{ method?: string; params?: { pane_id?: string } }> = [];
@@ -38,17 +38,17 @@ test("test TUI processes cannot use an inherited Herdr pane identity", async () 
   process.env.HERDR_SOCKET_PATH = herdrSocket;
   process.env.HERDR_PANE_ID = paneId;
 
-  const tmuxSocket = `die-offline-isolation-${process.pid}-${Date.now()}`;
+  const tmuxSocket = `bruv-offline-isolation-${process.pid}-${Date.now()}`;
   const tmux = (...args: string[]) => run(["tmux", "-L", tmuxSocket, ...args]);
   const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
   try {
     const launch = [
       "env",
       "HOME=" + home,
-      "DIE_SUBAGENT_DEPTH=0",
-      "DIE_CODING_AGENT_DIR=" + join(home, ".die", "agent"),
+      "BRUV_SUBAGENT_DEPTH=0",
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       "OPENAI_API_KEY=offline-test-placeholder",
-      resolve(import.meta.dir, "../dist/die"),
+      resolve(import.meta.dir, "../dist/bruv"),
       "--offline",
       "--no-approve",
       "--no-session",

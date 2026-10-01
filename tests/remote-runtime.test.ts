@@ -6,8 +6,8 @@ import { registerRemoteRuntime } from "../src/remote/runtime";
 
 test("owner completion checkpoint reads actual paged jobs and pending-message state", async () => {
   const dir = mkdtempSync(join(tmpdir(), "remote-runtime-"));
-  const previous = process.env.DIE_REMOTE_RUNTIME_STATE;
-  process.env.DIE_REMOTE_RUNTIME_STATE = join(dir, "runtime.json");
+  const previous = process.env.BRUV_REMOTE_RUNTIME_STATE;
+  process.env.BRUV_REMOTE_RUNTIME_STATE = join(dir, "runtime.json");
   try {
     const handlers = new Map<string, Function>();
     let pages = 0;
@@ -23,12 +23,12 @@ test("owner completion checkpoint reads actual paged jobs and pending-message st
       },
     } as any);
     await handlers.get("agent_start")!();
-    expect(JSON.parse(readFileSync(process.env.DIE_REMOTE_RUNTIME_STATE!, "utf8"))).toEqual({ settled: false });
+    expect(JSON.parse(readFileSync(process.env.BRUV_REMOTE_RUNTIME_STATE!, "utf8"))).toEqual({ settled: false });
     await handlers.get("agent_settled")!(
       {},
       { hasPendingMessages: () => true, sessionManager: { getLeafId: () => null, getSessionFile: () => "/session" } },
     );
-    expect(JSON.parse(readFileSync(process.env.DIE_REMOTE_RUNTIME_STATE!, "utf8"))).toMatchObject({
+    expect(JSON.parse(readFileSync(process.env.BRUV_REMOTE_RUNTIME_STATE!, "utf8"))).toMatchObject({
       settled: true,
       activeJobs: 1,
       pendingMessages: true,
@@ -36,8 +36,8 @@ test("owner completion checkpoint reads actual paged jobs and pending-message st
     });
     expect(pages).toBe(2);
   } finally {
-    if (previous === undefined) delete process.env.DIE_REMOTE_RUNTIME_STATE;
-    else process.env.DIE_REMOTE_RUNTIME_STATE = previous;
+    if (previous === undefined) delete process.env.BRUV_REMOTE_RUNTIME_STATE;
+    else process.env.BRUV_REMOTE_RUNTIME_STATE = previous;
     rmSync(dir, { recursive: true, force: true });
   }
 });

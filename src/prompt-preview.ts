@@ -18,7 +18,7 @@ import {
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
 import { GoalStore } from "./goals/store";
-import { dieSystemPrompt, type MainAgentMode } from "./prompts";
+import { bruvSystemPrompt, type MainAgentMode } from "./prompts";
 import asynchronousTasksExtension from "./agent/extension";
 
 export const PREVIEW_ROLES = ["root", "fast", "normal", "orchestrator"] as const;
@@ -81,7 +81,7 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
   if (!["fast", "normal", "orchestrator"].includes(rootMode)) throw new Error(`Invalid root mode: ${rootMode}`);
   if (role !== "root" && options.rootMode !== undefined) throw new Error("rootMode applies only to the root role");
 
-  const scratch = await mkdtemp(join(tmpdir(), "die-prompt-preview-"));
+  const scratch = await mkdtemp(join(tmpdir(), "bruv-prompt-preview-"));
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   try {
     const selectedProject = options.project ? resolve(options.project) : undefined;
@@ -93,8 +93,8 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
 
     const manager = SessionManager.inMemory(cwd);
     if (role === "root") {
-      if (rootMode !== "orchestrator") manager.appendCustomEntry("die-instruction-mode", { mode: rootMode });
-    } else manager.appendCustomEntry("die-agent", { type: role, depth: 1 });
+      if (rootMode !== "orchestrator") manager.appendCustomEntry("bruv-instruction-mode", { mode: rootMode });
+    } else manager.appendCustomEntry("bruv-agent", { type: role, depth: 1 });
 
     if (options.goal) {
       const goals = new GoalStore((type, data) => manager.appendCustomEntry(type, data));
@@ -106,31 +106,31 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
       goals.update({ status: "paused", reason: "Representative prompt preview" });
     }
 
-    const projectSystemPath = join(cwd, ".die", "SYSTEM.md");
+    const projectSystemPath = join(cwd, ".bruv", "SYSTEM.md");
     const projectSystemSelected = !!selectedProject && (await exists(projectSystemPath));
-    const selectedSystemPrompt = projectSystemSelected ? await readFile(projectSystemPath, "utf8") : dieSystemPrompt();
+    const selectedSystemPrompt = projectSystemSelected ? await readFile(projectSystemPath, "utf8") : bruvSystemPrompt();
     // The preview role is explicit and must not inherit the caller's own child
     // environment (for example when this script is launched from execute). The
     // production extension reads identity synchronously when its factory runs.
     const previewExtension: typeof asynchronousTasksExtension = (pi, extensionOptions) => {
-      const priorDepth = process.env.DIE_SUBAGENT_DEPTH;
-      const priorType = process.env.DIE_SUBAGENT_TYPE;
-      process.env.DIE_SUBAGENT_DEPTH = role === "root" ? "0" : "1";
-      if (role === "root") delete process.env.DIE_SUBAGENT_TYPE;
-      else process.env.DIE_SUBAGENT_TYPE = role;
+      const priorDepth = process.env.BRUV_SUBAGENT_DEPTH;
+      const priorType = process.env.BRUV_SUBAGENT_TYPE;
+      process.env.BRUV_SUBAGENT_DEPTH = role === "root" ? "0" : "1";
+      if (role === "root") delete process.env.BRUV_SUBAGENT_TYPE;
+      else process.env.BRUV_SUBAGENT_TYPE = role;
       try {
         asynchronousTasksExtension(pi, extensionOptions);
       } finally {
-        if (priorDepth === undefined) delete process.env.DIE_SUBAGENT_DEPTH;
-        else process.env.DIE_SUBAGENT_DEPTH = priorDepth;
-        if (priorType === undefined) delete process.env.DIE_SUBAGENT_TYPE;
-        else process.env.DIE_SUBAGENT_TYPE = priorType;
+        if (priorDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+        else process.env.BRUV_SUBAGENT_DEPTH = priorDepth;
+        if (priorType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+        else process.env.BRUV_SUBAGENT_TYPE = priorType;
       }
     };
     // Empty in-memory settings prevent project package resolution/configuration
     // from doing work during an otherwise read-only offline preview.
     const settingsManager = SettingsManager.inMemory({}, { projectTrusted: true });
-    const appendPath = join(cwd, ".die", "APPEND_SYSTEM.md");
+    const appendPath = join(cwd, ".bruv", "APPEND_SYSTEM.md");
     const appendSelected = !!selectedProject && (await exists(appendPath));
     const loader = new DefaultResourceLoader({
       cwd,
@@ -143,7 +143,7 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
       noPromptTemplates: true,
       noThemes: true,
       systemPrompt: selectedSystemPrompt,
-      extensionFactories: [{ name: "die-tasks", factory: previewExtension }],
+      extensionFactories: [{ name: "bruv-tasks", factory: previewExtension }],
     });
     await loader.reload();
 
@@ -201,9 +201,9 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
         cwd,
         transientSession: true,
         included: [
-          projectSystemSelected ? projectSystemPath : "Die production system prompt",
+          projectSystemSelected ? projectSystemPath : "Bruv production system prompt",
           "Pi production system-prompt assembly",
-          "Die production prompt/context extension hooks",
+          "Bruv production prompt/context extension hooks",
           ...(selectedProject ? ["project/ancestor AGENTS.md files discovered by Pi"] : []),
           ...(appendSelected ? [appendPath] : []),
           ...(options.goal ? ["representative paused goal state"] : []),

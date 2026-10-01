@@ -2,12 +2,12 @@ import { expect, test } from "bun:test";
 import { GPTLiveSession } from "../src/live/gpt-live-session";
 
 // Explicit paid transport-only acceptance. No auth-store lookup, devices or automatic retry.
-const enabled = process.env.DIE_RUN_GPT_LIVE_ACCEPTANCE === "1";
+const enabled = process.env.BRUV_RUN_GPT_LIVE_ACCEPTANCE === "1";
 (enabled ? test : test.skip)(
   "paid GPT-Live start, paced silence PCM, finalized close",
   async () => {
-    const key = process.env.DIE_GPT_LIVE_ACCEPTANCE_API_KEY;
-    if (!key) throw new Error("Explicit DIE_GPT_LIVE_ACCEPTANCE_API_KEY required");
+    const key = process.env.BRUV_GPT_LIVE_ACCEPTANCE_API_KEY;
+    if (!key) throw new Error("Explicit BRUV_GPT_LIVE_ACCEPTANCE_API_KEY required");
     const errors: string[] = [];
     let finalized = false;
     const voice = new GPTLiveSession({

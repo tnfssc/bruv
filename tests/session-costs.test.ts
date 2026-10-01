@@ -15,19 +15,19 @@ const assistant = (total: number) => ({ type: "message", message: { role: "assis
 const tool = (total: number) => ({ type: "message", message: { role: "toolResult", usage: usage(total) } });
 
 async function fixture() {
-  const dir = await mkdtemp(join(tmpdir(), "die-session-costs-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-session-costs-"));
   dirs.push(dir);
   const root = join(dir, "root.jsonl");
   await writeFile(root, line({ type: "session", version: 3 }));
   return { dir, root };
 }
 
-async function session(path: string, parent: string, entries: unknown[], dieAgent = true) {
+async function session(path: string, parent: string, entries: unknown[], bruvAgent = true) {
   await writeFile(
     path,
     [
       { type: "session", version: 3, parentSession: parent },
-      ...(dieAgent ? [{ type: "custom", customType: "die-agent", data: { parentSessionFile: parent } }] : []),
+      ...(bruvAgent ? [{ type: "custom", customType: "bruv-agent", data: { parentSessionFile: parent } }] : []),
       ...entries,
     ]
       .map(line)
@@ -36,7 +36,7 @@ async function session(path: string, parent: string, entries: unknown[], dieAgen
 }
 
 describe("SessionCostTracker", () => {
-  test("recursively sums each die-agent descendant once and excludes unrelated sessions, branches, and cycles", async () => {
+  test("recursively sums each bruv-agent descendant once and excludes unrelated sessions, branches, and cycles", async () => {
     const { dir, root } = await fixture();
     const child = join(dir, "child.jsonl");
     const grandchild = join(dir, "grandchild.jsonl");
@@ -48,7 +48,7 @@ describe("SessionCostTracker", () => {
     ]);
     await session(grandchild, child, [assistant(5)]);
     await session(join(dir, "unrelated.jsonl"), join(dir, "other-root.jsonl"), [assistant(100)]);
-    // Pi branches have parentSession too, but are not spawned die agents.
+    // Pi branches have parentSession too, but are not spawned bruv agents.
     await session(join(dir, "ordinary-branch.jsonl"), root, [assistant(100)], false);
     const cycleA = join(dir, "cycle-a.jsonl"),
       cycleB = join(dir, "cycle-b.jsonl");
@@ -81,7 +81,7 @@ describe("SessionCostTracker", () => {
     expect(await tracker.refresh()).toBe(12);
   });
 
-  test("discovers later nested sessions, honors header fallback only for die agents, and ignores root cost", async () => {
+  test("discovers later nested sessions, honors header fallback only for bruv agents, and ignores root cost", async () => {
     const { dir, root } = await fixture();
     await appendFile(root, line(assistant(50)));
     const tracker = new SessionCostTracker(root, dir);
@@ -92,7 +92,7 @@ describe("SessionCostTracker", () => {
       child,
       [
         line({ type: "session", version: 3, parentSession: root }),
-        line({ type: "custom", customType: "die-agent", data: {} }),
+        line({ type: "custom", customType: "bruv-agent", data: {} }),
         line(assistant(2)),
       ].join(""),
     );
@@ -104,19 +104,19 @@ describe("SessionCostTracker", () => {
     expect(await tracker.refresh()).toBe(5);
   });
 
-  test("rejects an ordinary fork that copied die-agent metadata", async () => {
+  test("rejects an ordinary fork that copied bruv-agent metadata", async () => {
     const { dir, root } = await fixture();
     const child = join(dir, "child.jsonl");
     await session(child, root, [assistant(2)]);
 
     // A real fork/clone gets a new session header, but copies the source entries,
-    // including its custom die-agent record and usage.
+    // including its custom bruv-agent record and usage.
     const fork = join(dir, "fork.jsonl");
     await writeFile(
       fork,
       [
         line({ type: "session", version: 3, parentSession: child }),
-        line({ type: "custom", customType: "die-agent", data: { parentSessionFile: root } }),
+        line({ type: "custom", customType: "bruv-agent", data: { parentSessionFile: root } }),
         line(assistant(2)),
         line(assistant(100)),
       ].join(""),
@@ -171,7 +171,7 @@ describe("SessionCostTracker", () => {
 
 test("counts failed compaction usage once without treating arbitrary custom entries as costs", async () => {
   const { dir, root } = await fixture();
-  const failed = { id: "attempt", type: "custom", customType: "die-compaction-attempt", data: { usage: usage(2) } };
+  const failed = { id: "attempt", type: "custom", customType: "bruv-compaction-attempt", data: { usage: usage(2) } };
   await session(join(dir, "child.jsonl"), root, [
     failed,
     failed,

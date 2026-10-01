@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("disk history retrieval traverses metadata, preserving originals, branches, refs and live exclusions", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-disk-retrieval-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-disk-retrieval-"));
   try {
     const child = Bun.spawn(
       [

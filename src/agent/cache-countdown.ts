@@ -8,7 +8,7 @@ import { recordDiagnostic } from "../diagnostics.js";
 import { subscribeProviderAttempts } from "./provider-attempts";
 
 export const DEFAULT_CACHE_TTL_MS = 60 * 60 * 1000;
-export const CACHE_CALL_ENTRY = "die-cache-call";
+export const CACHE_CALL_ENTRY = "bruv-cache-call";
 export const CACHE_OBSERVATION_RECORDED = "cache_observation_recorded";
 export const CACHE_CORRELATION_UNAVAILABLE = "cache_correlation_unavailable";
 export const CACHE_HTTP_REJECTED = "http_rejected";
@@ -31,7 +31,7 @@ export interface CacheEstimate {
 }
 
 export function cacheSettingsPath(): string {
-  return join(homedir(), ".die", "cache-settings.json");
+  return join(homedir(), ".bruv", "cache-settings.json");
 }
 export function parseCacheSettings(value: unknown): CacheSettings {
   if (typeof value !== "object" || value === null || Array.isArray(value))
@@ -149,7 +149,7 @@ export class CacheCountdown {
     for (const entry of manager.getBranch?.() ?? manager.getEntries()) {
       // A shake changes the serialized prompt prefix. Do not display a TTL for
       // the pre-shake request after resume; later observed calls repopulate it.
-      if (entry.type === "custom" && entry.customType === "die-manual-shake") this.calls.clear();
+      if (entry.type === "custom" && entry.customType === "bruv-manual-shake") this.calls.clear();
       else if (entry.type === "custom" && entry.customType === CACHE_CALL_ENTRY && validCall(entry.data)) {
         const key = entry.data.provider + "/" + entry.data.model;
         this.calls.set(key, Math.max(this.calls.get(key) ?? 0, entry.data.timestamp));

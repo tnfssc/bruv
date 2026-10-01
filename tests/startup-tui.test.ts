@@ -5,9 +5,9 @@ import { join, resolve } from "node:path";
 import { run } from "./helpers";
 
 test("quiet startup hides Pi promotion and skill inventory without disabling skills or warnings", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-startup-pty-"));
-  const agentDir = join(home, ".die", "agent");
-  const socket = `die-startup-${process.pid}-${Date.now()}`;
+  const home = await mkdtemp(join(tmpdir(), "bruv-startup-pty-"));
+  const agentDir = join(home, ".bruv", "agent");
+  const socket = `bruv-startup-${process.pid}-${Date.now()}`;
   const session = "startup";
   const artifactDir = join(
     resolve(import.meta.dir, "../artifacts/tui"),
@@ -45,11 +45,11 @@ test("quiet startup hides Pi promotion and skill inventory without disabling ski
       "---\nname: malformed-fixture\n---\n\n# Missing description\n",
     );
 
-    const binary = resolve(import.meta.dir, "../dist/die");
+    const binary = resolve(import.meta.dir, "../dist/bruv");
     const launch = [
       "env",
       "HOME=" + home,
-      "DIE_CODING_AGENT_DIR=" + agentDir,
+      "BRUV_CODING_AGENT_DIR=" + agentDir,
       "OPENAI_API_KEY=offline-test-placeholder",
       binary,
       "--offline",

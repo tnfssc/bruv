@@ -32,10 +32,10 @@ export async function readSessionRole(path: string): Promise<SessionRole> {
     const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0);
     let malformedAgentMetadata = false;
     for (const line of buffer.subarray(0, bytesRead).toString("utf8").split("\n")) {
-      if (!line.includes('"die-agent"')) continue;
+      if (!line.includes('"bruv-agent"')) continue;
       try {
         const entry = JSON.parse(line);
-        if (entry?.type === "custom" && entry.customType === "die-agent") {
+        if (entry?.type === "custom" && entry.customType === "bruv-agent") {
           const type = parseRoleType(entry.data?.type);
           if (!type) return { kind: "unknown" };
           const taskId = sanitizeTaskId(entry.data?.taskId);

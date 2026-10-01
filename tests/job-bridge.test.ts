@@ -6,7 +6,7 @@ import { TaskManager } from "../src/tasks/task-manager";
 import { executeIsolated } from "../src/typescript/execution";
 import { registerExecuteTool } from "../src/typescript/extension";
 
-const binary = resolve(import.meta.dir, "../dist/die");
+const binary = resolve(import.meta.dir, "../dist/bruv");
 test("execute helpers multiplex responses, reject errors, and do not print implicitly", async () => {
   const seen: string[] = [];
   const result = await executeIsolated(
@@ -610,7 +610,7 @@ test("history helpers share the execute bridge with explicit parameters", async 
       executablePath: binary,
       jobHandler: async (method, params) => {
         seen.push([method, params]);
-        return method === "history.search" ? { ref: "die-history-v1:s:e:0" } : { text: "evidence" };
+        return method === "history.search" ? { ref: "bruv-history-v1:s:e:0" } : { text: "evidence" };
       },
     },
   );
@@ -618,21 +618,21 @@ test("history helpers share the execute bridge with explicit parameters", async 
   expect(result.stdout.trim()).toBe("evidence");
   expect(seen).toEqual([
     ["history.search", { query: "needle", limit: 2 }],
-    ["history.read", { ref: "die-history-v1:s:e:0", maxChars: 9 }],
+    ["history.read", { ref: "bruv-history-v1:s:e:0", maxChars: 9 }],
   ]);
 });
 
 test("execute cannot read T3 bridge credentials while parent job capability remains available", async () => {
   const oldUrl = process.env.T3_MCP_URL;
   const oldToken = process.env.T3_MCP_BEARER_TOKEN;
-  const oldSafe = process.env.DIE_SAFE_SENTINEL;
+  const oldSafe = process.env.BRUV_SAFE_SENTINEL;
   process.env.T3_MCP_URL = "http://secret.invalid/mcp";
   process.env.T3_MCP_BEARER_TOKEN = "SECRET_EXECUTE_TOKEN";
-  process.env.DIE_SAFE_SENTINEL = "visible";
+  process.env.BRUV_SAFE_SENTINEL = "visible";
   const seen: string[] = [];
   try {
     const result = await executeIsolated(
-      'console.log(JSON.stringify({url:process.env.T3_MCP_URL,token:process.env.T3_MCP_BEARER_TOKEN,safe:process.env.DIE_SAFE_SENTINEL,job:await subagent({prompt:"work",type:"fast"})}))',
+      'console.log(JSON.stringify({url:process.env.T3_MCP_URL,token:process.env.T3_MCP_BEARER_TOKEN,safe:process.env.BRUV_SAFE_SENTINEL,job:await subagent({prompt:"work",type:"fast"})}))',
       process.cwd(),
       undefined,
       3_000,
@@ -656,7 +656,7 @@ test("execute cannot read T3 bridge credentials while parent job capability rema
     else process.env.T3_MCP_URL = oldUrl;
     if (oldToken === undefined) delete process.env.T3_MCP_BEARER_TOKEN;
     else process.env.T3_MCP_BEARER_TOKEN = oldToken;
-    if (oldSafe === undefined) delete process.env.DIE_SAFE_SENTINEL;
-    else process.env.DIE_SAFE_SENTINEL = oldSafe;
+    if (oldSafe === undefined) delete process.env.BRUV_SAFE_SENTINEL;
+    else process.env.BRUV_SAFE_SENTINEL = oldSafe;
   }
 });

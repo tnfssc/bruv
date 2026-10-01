@@ -59,7 +59,7 @@ describe("remote placement scripted inference fixture (not acceptance)", () => {
     expect(start).toContain('workspace:{kind:"worktree"}');
     expect(start).not.toContain("target:");
     expect(start).not.toContain("model:");
-    expect(start).toContain("DIE_SUBAGENT_TYPE");
+    expect(start).toContain("BRUV_SUBAGENT_TYPE");
     expect(start).toContain("orchestrator");
     expect(start).toContain("git rev-list --count HEAD");
     expect(start).toContain("never-upload.txt");
@@ -67,7 +67,7 @@ describe("remote placement scripted inference fixture (not acceptance)", () => {
   test("normal child probes real server tools, worktree and role refusal", () => {
     const child = code(response(request("placement-normal", [user("PLACEMENT_NORMAL_CHILD_CLEAN")])));
     expect(child).toContain("test -f .git");
-    expect(child).toContain("DIE_SUBAGENT_DEPTH");
+    expect(child).toContain("BRUV_SUBAGENT_DEPTH");
     expect(child).toContain("PLACEMENT_NORMAL_ROLE_REFUSED");
     expect(child).not.toContain("target:");
   });

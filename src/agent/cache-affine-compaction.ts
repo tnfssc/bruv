@@ -401,7 +401,7 @@ export function registerCacheAffineCompaction(
 ): void {
   installCurrentConversationAdapter();
   let snapshot: Snapshot | undefined;
-  // die's inline extension is loaded after discovered/CLI extensions, so this
+  // bruv's inline extension is loaded after discovered/CLI extensions, so this
   // sees the final chained context and current per-turn system prompt.
   pi.on("context", (event, ctx) => {
     if (!ctx.model || isReadOnlyCompactionContext()) return;
@@ -421,7 +421,7 @@ export function registerCacheAffineCompaction(
       ...(same ? { providerPayload: snapshot!.providerPayload, headers: snapshot!.headers } : {}),
     };
   });
-  // This hook runs last as part of die's inline extension and therefore records
+  // This hook runs last as part of bruv's inline extension and therefore records
   // the actual provider payload after earlier payload rewrites.
   pi.on("before_provider_headers", (event) => {
     if (snapshot) snapshot.headers = { ...event.headers };
@@ -585,7 +585,7 @@ export function registerCacheAffineCompaction(
       // Mark first: a failing append must not be retried by the surrounding catch.
       responseUsageRecorded = true;
       try {
-        pi.appendEntry("die-compaction-attempt", {
+        pi.appendEntry("bruv-compaction-attempt", {
           strategy: "cache-affine-plaintext",
           stopReason: paidResponse.stopReason,
           usage: paidResponse.usage,

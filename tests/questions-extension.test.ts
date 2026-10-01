@@ -47,7 +47,7 @@ test("question commands keep status pinned without stealing focus or repeating n
   registerQuestions(pi, () => service);
   hooks.get("session_start")!({}, ctx);
   await new Promise((r) => setTimeout(r, 0));
-  expect(statuses.get("die-questions")).toBe("1 question pending");
+  expect(statuses.get("bruv-questions")).toBe("1 question pending");
   hooks.get("agent_end")!({}, ctx);
   await new Promise((r) => setTimeout(r, 0));
   expect(notices).toEqual([]);
@@ -57,9 +57,9 @@ test("question commands keep status pinned without stealing focus or repeating n
   expect(notices.pop()).toContain("q1");
   await command.handler("answer q1 deploy now", ctx);
   expect(notices.pop()).toBe("Answer saved for q1");
-  expect(statuses.get("die-questions")).toBe("1 question · 1 saved");
+  expect(statuses.get("bruv-questions")).toBe("1 question · 1 saved");
   hooks.get("session_shutdown")!({}, ctx);
-  expect(statuses.has("die-questions")).toBe(false);
+  expect(statuses.has("bruv-questions")).toBe(false);
 });
 
 test("CLI binds the ID without flattening free-text spacing", async () => {

@@ -89,7 +89,7 @@ async function fixture(model: any, manager: SessionManager, dir: string) {
     noSkills: true,
     noThemes: true,
     noPromptTemplates: true,
-    extensionFactories: [{ name: "die-tasks", factory: tasks }],
+    extensionFactories: [{ name: "bruv-tasks", factory: tasks }],
   });
   await loader.reload();
   const created = await createAgentSession({
@@ -112,7 +112,7 @@ async function fixture(model: any, manager: SessionManager, dir: string) {
 function shakeEntries(manager: SessionManager): any[] {
   return manager
     .getEntries()
-    .filter((entry: any) => entry.type === "custom" && entry.customType === "die-manual-shake");
+    .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-manual-shake");
 }
 
 const model = getModel("openai-codex", "gpt-5.6-luna")!;
@@ -183,7 +183,7 @@ function assertPayload(input: any[]) {
 }
 
 test("real SDK /shake preserves native checkpoint exactly once, kept tail, post-checkpoint prose and disk reopen", async () => {
-  const dir = await mkdtemp("/var/tmp/die-native-shake-sdk-");
+  const dir = await mkdtemp("/var/tmp/bruv-native-shake-sdk-");
   let session: any;
   try {
     const manager = SessionManager.create(dir, dir);
@@ -379,7 +379,7 @@ test("hook-excluded active IDs never accumulate in a durable shake, hidden dupli
 });
 
 test("SDK active-boundary semantics omit older retained checkpoints without losing their journal bytes", async () => {
-  const dir = await mkdtemp("/var/tmp/die-native-shake-nested-");
+  const dir = await mkdtemp("/var/tmp/bruv-native-shake-nested-");
   let session: any;
   try {
     const manager = SessionManager.create(dir, dir);

@@ -58,12 +58,12 @@ test("missing auth gives focused instructions and only available next actions", 
 });
 
 test("import is explicit and does not automatically start voice", async () => {
-  const t = fixture({ state: "missing", canImport: true }, ["Import ~/.die/live.env", "Done"]);
+  const t = fixture({ state: "missing", canImport: true }, ["Import ~/.bruv/live.env", "Done"]);
   expect(await runLiveSetup(t.ui, t.credentials, t.controller.signal, () => true)).toBe(false);
   expect(t.imports).toBe(1);
   expect(t.notices[0]).toContain("Import saves");
   expect(t.notices[0]).not.toContain("Create");
-  expect(t.dialogs[0]?.options).toEqual(["Import ~/.die/live.env", "Recheck", "Cancel"]);
+  expect(t.dialogs[0]?.options).toEqual(["Import ~/.bruv/live.env", "Recheck", "Cancel"]);
   expect(t.dialogs[1]?.options).toEqual(["Start voice", "Done"]);
 });
 
@@ -76,7 +76,7 @@ test("OAuth setup never offers import or replacement", async () => {
 });
 
 test("failed import hides exception and remains cancellable", async () => {
-  const t = fixture({ state: "missing", canImport: true }, ["Import ~/.die/live.env", "Cancel"]);
+  const t = fixture({ state: "missing", canImport: true }, ["Import ~/.bruv/live.env", "Cancel"]);
   t.credentials.importLiveEnv = async () => {
     throw new Error("SECRET key");
   };
@@ -102,7 +102,7 @@ test("cancelled inspection and late start choice cannot authorize voice", async 
 });
 
 test("cancelled import cannot show a ready menu or start", async () => {
-  const t = fixture({ state: "missing", canImport: true }, ["Import ~/.die/live.env"]);
+  const t = fixture({ state: "missing", canImport: true }, ["Import ~/.bruv/live.env"]);
   t.credentials.importLiveEnv = async () => {
     t.controller.abort();
     return { imported: false, status: { state: "missing", canImport: true } };

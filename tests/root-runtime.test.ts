@@ -62,14 +62,14 @@ test("private IPC exposes actual persisted questions with trusted pinned human a
   const f = fixture(),
     socket = join(f.directory, "r.sock"),
     token = "trusted-owner-token";
-  const oldSocket = process.env.DIE_ROOT_RUNTIME_SOCKET,
-    oldToken = process.env.DIE_ROOT_RUNTIME_TOKEN,
-    oldType = process.env.DIE_SUBAGENT_TYPE,
-    oldDepth = process.env.DIE_SUBAGENT_DEPTH;
-  delete process.env.DIE_SUBAGENT_TYPE;
-  delete process.env.DIE_SUBAGENT_DEPTH;
-  process.env.DIE_ROOT_RUNTIME_SOCKET = socket;
-  process.env.DIE_ROOT_RUNTIME_TOKEN = token;
+  const oldSocket = process.env.BRUV_ROOT_RUNTIME_SOCKET,
+    oldToken = process.env.BRUV_ROOT_RUNTIME_TOKEN,
+    oldType = process.env.BRUV_SUBAGENT_TYPE,
+    oldDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  delete process.env.BRUV_SUBAGENT_TYPE;
+  delete process.env.BRUV_SUBAGENT_DEPTH;
+  process.env.BRUV_ROOT_RUNTIME_SOCKET = socket;
+  process.env.BRUV_ROOT_RUNTIME_TOKEN = token;
   try {
     registerRootRuntime(f.pi, jobs);
     await f.emit("session_start");
@@ -132,14 +132,14 @@ test("private IPC exposes actual persisted questions with trusted pinned human a
     expect(await rootFacetRequest(socket, token, { kind: "close" })).toMatchObject({ settled: true });
   } finally {
     await f.emit("session_shutdown");
-    if (oldType === undefined) delete process.env.DIE_SUBAGENT_TYPE;
-    else process.env.DIE_SUBAGENT_TYPE = oldType;
-    if (oldDepth === undefined) delete process.env.DIE_SUBAGENT_DEPTH;
-    else process.env.DIE_SUBAGENT_DEPTH = oldDepth;
-    if (oldSocket === undefined) delete process.env.DIE_ROOT_RUNTIME_SOCKET;
-    else process.env.DIE_ROOT_RUNTIME_SOCKET = oldSocket;
-    if (oldToken === undefined) delete process.env.DIE_ROOT_RUNTIME_TOKEN;
-    else process.env.DIE_ROOT_RUNTIME_TOKEN = oldToken;
+    if (oldType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+    else process.env.BRUV_SUBAGENT_TYPE = oldType;
+    if (oldDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = oldDepth;
+    if (oldSocket === undefined) delete process.env.BRUV_ROOT_RUNTIME_SOCKET;
+    else process.env.BRUV_ROOT_RUNTIME_SOCKET = oldSocket;
+    if (oldToken === undefined) delete process.env.BRUV_ROOT_RUNTIME_TOKEN;
+    else process.env.BRUV_ROOT_RUNTIME_TOKEN = oldToken;
     f.cleanup();
   }
 });

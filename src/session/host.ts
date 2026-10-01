@@ -38,7 +38,7 @@ const MAX_TEXT = 4096;
 export const SNAPSHOT_TTL_MS = 24 * 60 * 60 * 1000;
 export const SNAPSHOT_MAX_BYTES = 16 * 1024 * 1024;
 export const SNAPSHOT_MAX_FILES = 64;
-export const SNAPSHOT_DIR = join(tmpdir(), "die-live-transcript-snapshots-" + (process.getuid?.() ?? "user"));
+export const SNAPSHOT_DIR = join(tmpdir(), "bruv-live-transcript-snapshots-" + (process.getuid?.() ?? "user"));
 const LOCK = join(SNAPSHOT_DIR, ".lock");
 
 async function withSnapshotLock<T>(run: () => Promise<T>): Promise<T> {

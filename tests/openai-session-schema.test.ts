@@ -4,7 +4,7 @@ import { OpenAIRealtimeSession, type RealtimeSocket } from "../src/live/openai-s
 import { orchestrationTools } from "../src/live/orchestration";
 import liveSystemInstruction from "../src/prompts/live.md" with { type: "text" };
 
-// Deliberately strict contract for the subset die sends, not a claim to implement
+// Deliberately strict contract for the subset bruv sends, not a claim to implement
 // the entire GA API. Source: openai-node/src/resources/realtime/realtime.ts,
 // RealtimeSessionCreateRequest / RealtimeAudioFormats (checked 2026-09-24).
 // The SDK types mark rate optional, but the live mini endpoint rejected an omitted

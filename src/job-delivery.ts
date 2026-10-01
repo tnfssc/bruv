@@ -1,8 +1,8 @@
-export const JOB_RESPONSE_ACK_EVENT = "die:job-response-ack";
-const ACK_CAPABLE = Symbol.for("die.job-response-ack-capable");
+export const JOB_RESPONSE_ACK_EVENT = "bruv:job-response-ack";
+const ACK_CAPABLE = Symbol.for("bruv.job-response-ack-capable");
 
-const RESPONSE_DELIVERY_SIGNAL = Symbol.for("die.job-response-delivery-signal");
-const REQUEST_IDENTITY = Symbol.for("die.job-request-identity");
+const RESPONSE_DELIVERY_SIGNAL = Symbol.for("bruv.job-response-delivery-signal");
+const REQUEST_IDENTITY = Symbol.for("bruv.job-request-identity");
 export interface JobRequestIdentity {
   /** Durable identity of the outer execute tool call. */
   executeInvocationId: string;

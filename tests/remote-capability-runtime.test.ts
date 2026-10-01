@@ -8,7 +8,7 @@ import { execFileSync } from "node:child_process";
 import { OwnerCapabilityMailbox, ClientCapabilityStore } from "../src/remote/capability-runtime";
 
 const fixture = async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-capability-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-capability-"));
   const repo = join(root, "repo");
   await mkdir(repo);
   const owner = new OwnerCapabilityMailbox(join(root, "tasks", "task1"), "task1");

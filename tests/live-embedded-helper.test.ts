@@ -35,7 +35,7 @@ test("reject corrupt content before writing and never follow a hostile shared ca
   try {
     await mkdir(victim);
     await writeFile(join(victim, "live-audio"), "preserve");
-    await symlink(victim, join(root, "die-live-cache"));
+    await symlink(victim, join(root, "bruv-live-cache"));
     await expect(extractNativeHelper(Buffer.from("corrupt"), hash, root)).rejects.toThrow("integrity");
     const fresh = await extractNativeHelper(bytes, hash, root);
     expect(fresh.path).not.toContain("cache/");
@@ -46,7 +46,7 @@ test("reject corrupt content before writing and never follow a hostile shared ca
   }
 });
 test("platform gating leaves stable targets untouched and missing or tampered assets fail closed", async () => {
-  const missing = { path: join(tmpdir(), "nonexistent-die-live"), sha256: hash };
+  const missing = { path: join(tmpdir(), "nonexistent-bruv-live"), sha256: hash };
   expect(await resolveEmbeddedNativeHelper("linux", "arm64", missing)).toBeUndefined();
   expect(await resolveEmbeddedNativeHelper("darwin", "x64", missing)).toBeUndefined();
   await expect(resolveEmbeddedNativeHelper("darwin", "arm64", missing)).rejects.toThrow();

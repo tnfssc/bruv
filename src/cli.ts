@@ -4,7 +4,7 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { registerBunOAuthFlows } from "@earendil-works/pi-ai/bun-oauth";
-import diePackage from "../package.json";
+import bruvPackage from "../package.json";
 import assetImage from "../runtime-assets/assets/clankolas.png" with { type: "file" };
 import exportTemplate from "../runtime-assets/export-html/template.html" with { type: "file" };
 import highlight from "../runtime-assets/export-html/vendor/highlight.min.js" with { type: "file" };
@@ -13,15 +13,15 @@ import metadata from "../runtime-assets/package.json" with { type: "file" };
 import themeDark from "../runtime-assets/theme/dark.json" with { type: "file" };
 import themeLight from "../runtime-assets/theme/light.json" with { type: "file" };
 import themeSchema from "../runtime-assets/theme/theme-schema.json" with { type: "file" };
-import { withDieSystemPrompt } from "./system-prompt";
+import { withBruvSystemPrompt } from "./system-prompt";
 import { formatThrownValue } from "./typescript/error-diagnostic";
 import { INTERNAL_TYPESCRIPT_RUNNER_ARG, runTypeScriptFromStdin } from "./typescript/runner";
-import { updateDie } from "./update";
+import { updateBruv } from "./update";
 
 const cliArgs = process.argv.slice(2);
 // Hidden offline transport diagnostic. No normal CLI path reaches this branch.
 if (cliArgs[0] === "--offline-openai-transport-probe") {
-  if (cliArgs.length !== 1 || process.env.DIE_OFFLINE_OPENAI_TRANSPORT_PROBE !== "loopback-fake-key") {
+  if (cliArgs.length !== 1 || process.env.BRUV_OFFLINE_OPENAI_TRANSPORT_PROBE !== "loopback-fake-key") {
     console.error("Offline OpenAI transport probe requires its explicit loopback test gate.");
     process.exit(1);
   }
@@ -30,32 +30,36 @@ if (cliArgs[0] === "--offline-openai-transport-probe") {
   process.exit(0);
 }
 if (cliArgs[0] === "--live-self-test") {
-  if (cliArgs.length !== 1) throw new Error("Usage: die --live-self-test");
+  if (cliArgs.length !== 1) throw new Error("Usage: bruv --live-self-test");
   const { testEmbeddedNativeHelper } = await import("./live/self-test");
   await testEmbeddedNativeHelper();
   process.exit(0);
 }
 if (cliArgs[0] === "update") {
   if (cliArgs.length === 2 && ["--help", "-h"].includes(cliArgs[1]!)) {
-    console.log("Usage: die update\n\nInstall the latest stable release of this executable after SHA256 verification.");
+    console.log(
+      "Usage: bruv update\n\nInstall the latest stable release of this executable after SHA256 verification.",
+    );
     process.exit(0);
   }
   if (cliArgs.length !== 1) {
-    console.error("Usage: die update");
+    console.error("Usage: bruv update");
     process.exit(1);
   }
   try {
-    console.log("Checking for die updates...");
-    const result = await updateDie({
-      currentVersion: diePackage.version,
-      onDownload: (version) => console.log("Downloading die " + version + "..."),
+    console.log("Checking for bruv updates...");
+    const result = await updateBruv({
+      currentVersion: bruvPackage.version,
+      onDownload: (version) => console.log("Downloading bruv " + version + "..."),
     });
     console.log(
       result.status === "updated"
-        ? "Updated die to " + result.version + ". Restart running die sessions and web servers to fully use the update."
+        ? "Updated bruv to " +
+            result.version +
+            ". Restart running bruv sessions and web servers to fully use the update."
         : result.status === "current"
-          ? "die is already current (" + result.version + ")"
-          : "die is newer than the latest release (" + result.version + ")",
+          ? "bruv is already current (" + result.version + ")"
+          : "bruv is newer than the latest release (" + result.version + ")",
     );
     process.exit(0);
   } catch (error) {
@@ -91,12 +95,12 @@ for (const argument of cliArgs) {
   if (argument === "--") break;
   const option = argument.split("=", 1)[0];
   if (removedToolOptions.has(option)) {
-    console.error(`${option} is not supported by die; its core tool set is fixed by the current product phase.`);
+    console.error(`${option} is not supported by bruv; its core tool set is fixed by the current product phase.`);
     process.exit(1);
   }
 }
 
-const runtimeRoot = join(homedir(), ".die", "runtime", diePackage.version);
+const runtimeRoot = join(homedir(), ".bruv", "runtime", bruvPackage.version);
 const embeddedAssets: Array<[string, string]> = [
   [metadata as unknown as string, "package.json"],
   [assetImage, "assets/clankolas.png"],
@@ -130,14 +134,14 @@ for (const [source, relativeTarget] of embeddedAssets) {
   }
 }
 
-process.title = "die";
-process.env.AI_AGENT = "die";
+process.title = "bruv";
+process.env.AI_AGENT = "bruv";
 process.env.PI_CODING_AGENT = "true";
 process.env.PI_PACKAGE_DIR = runtimeRoot;
-// Die owns explicit self-updates; suppress Pi's separate update lookup and banner.
+// Bruv owns explicit self-updates; suppress Pi's separate update lookup and banner.
 process.env.PI_SKIP_VERSION_CHECK = "1";
 
-// die owns the compiled entry point, including Pi's Bun-specific setup.
+// bruv owns the compiled entry point, including Pi's Bun-specific setup.
 registerBunOAuthFlows();
 
 // SSH stdio control and detached Linux task owners are internal production
@@ -146,10 +150,10 @@ if (cliArgs[0] === "--remote-control" || cliArgs[0] === "--remote-owner") {
   const { runRemoteControl, runRemoteOwner } = await import("./remote/entry");
   try {
     if (cliArgs[0] === "--remote-control") {
-      if (cliArgs.length !== 1) throw new Error("Usage: die --remote-control");
+      if (cliArgs.length !== 1) throw new Error("Usage: bruv --remote-control");
       await runRemoteControl();
     } else {
-      if (cliArgs.length !== 2) throw new Error("Usage: die --remote-owner <taskId>");
+      if (cliArgs.length !== 2) throw new Error("Usage: bruv --remote-owner <taskId>");
       await runRemoteOwner(cliArgs[1]!);
     }
     process.exit(0);
@@ -164,10 +168,10 @@ if (cliArgs[0] === "--remote-root-control" || cliArgs[0] === "--remote-root-owne
   const { runRootControl, runRootOwner } = await import("./remote/root-entry");
   try {
     if (cliArgs[0] === "--remote-root-control") {
-      if (cliArgs.length !== 1) throw new Error("Usage: die --remote-root-control");
+      if (cliArgs.length !== 1) throw new Error("Usage: bruv --remote-root-control");
       await runRootControl();
     } else {
-      if (cliArgs.length !== 2) throw new Error("Usage: die --remote-root-owner <sessionId>");
+      if (cliArgs.length !== 2) throw new Error("Usage: bruv --remote-root-owner <sessionId>");
       await runRootOwner(cliArgs[1]!);
     }
     process.exit(0);
@@ -195,14 +199,14 @@ try {
 
 // This must be dynamic: PI_PACKAGE_DIR has to be set before Pi initializes its
 // product metadata and asset paths.
-const { assertDiePiHost } = await import("./pi-host");
-assertDiePiHost();
+const { assertBruvPiHost } = await import("./pi-host");
+assertBruvPiHost();
 const { main } = await import("@earendil-works/pi-coding-agent");
 // Install the owned synchronous journal adapter before any SDK session is created.
 const { installDiskBackedSessionManager } = await import("./history/session-manager");
 installDiskBackedSessionManager();
 // The UI extension imports Pi's CustomEditor, so it must also load only after
-// die's runtime paths and product metadata are configured.
+// bruv's runtime paths and product metadata are configured.
 const [
   { default: asynchronousTasksExtension },
   { default: herdrAgentStateExtension },
@@ -232,7 +236,7 @@ function filterHelp(text: string): string {
       continue;
     }
     if (line.includes(" update [source|self|pi]")) {
-      filtered.push("  update                 Update die to the latest stable release");
+      filtered.push("  update                 Update bruv to the latest stable release");
       continue;
     }
     if (["--no-tools", "--no-builtin-tools", "--tools,", "--exclude-tools"].some((option) => line.includes(option)))
@@ -267,12 +271,12 @@ if (topLevelHelp) {
     originalLog(...values.map((value) => (typeof value === "string" ? filterHelp(value) : value)));
 }
 try {
-  await main(withDieSystemPrompt(cliArgs), {
+  await main(withBruvSystemPrompt(cliArgs), {
     extensionFactories: [
-      { name: "die-tools", factory: asynchronousTasksExtension, hidden: true },
-      { name: "die-herdr-agent-state", factory: herdrAgentStateExtension, hidden: true },
-      { name: "die-live", factory: liveExtension, hidden: true },
-      { name: "die-remote", factory: remoteExtension, hidden: true },
+      { name: "bruv-tools", factory: asynchronousTasksExtension, hidden: true },
+      { name: "bruv-herdr-agent-state", factory: herdrAgentStateExtension, hidden: true },
+      { name: "bruv-live", factory: liveExtension, hidden: true },
+      { name: "bruv-remote", factory: remoteExtension, hidden: true },
     ],
   });
 } finally {

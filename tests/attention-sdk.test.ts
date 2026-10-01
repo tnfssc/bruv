@@ -23,7 +23,7 @@ const usage = {
 };
 
 test("real SDK print session keeps repeated attention boundaries subscription-bounded", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-attention-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-attention-sdk-"));
   let session: any;
   const originalSubscribe = TaskManager.prototype.subscribe;
   const originalWait = TaskManager.prototype.wait;
@@ -64,11 +64,11 @@ test("real SDK print session keeps repeated attention boundaries subscription-bo
       noThemes: true,
       extensionFactories: [
         {
-          name: "die-tasks",
+          name: "bruv-tasks",
           factory: (pi) =>
             tasks(pi, {
               attention: { quietMs: 5, reviewMs: 10 },
-              executablePath: join(dirname(fileURLToPath(import.meta.url)), "..", "dist", "die"),
+              executablePath: join(dirname(fileURLToPath(import.meta.url)), "..", "dist", "bruv"),
             }),
         },
       ],

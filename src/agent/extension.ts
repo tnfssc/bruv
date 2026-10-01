@@ -18,7 +18,7 @@ import { registerOperationDiagnostics } from "../diagnostics-extension";
 import { type GoalRuntime, registerGoalMode } from "../goals/extension";
 import { HistoryService } from "../history/service";
 import { type ProjectWisdomRuntime, registerProjectWisdom } from "../wisdom/extension";
-import { collaborationGuidance, isDieSystemPrompt, subagentGuidance } from "../prompts";
+import { collaborationGuidance, isBruvSystemPrompt, subagentGuidance } from "../prompts";
 import { registerExecuteTool } from "../typescript/extension";
 import { completionPreview } from "../ui/execution-previews";
 import { createCompactUI } from "../ui/footer";
@@ -112,8 +112,8 @@ export default function asynchronousTasksExtension(
   registerSubagentSettings(pi, options.profilesPath);
   // Environment identity is the floor for genuinely spawned child processes.
   // A root process may switch among root and child sessions in the same closure.
-  const environmentDepth = Math.max(0, Number.parseInt(process.env.DIE_SUBAGENT_DEPTH ?? "0", 10) || 0);
-  const rawEnvironmentType = process.env.DIE_SUBAGENT_TYPE;
+  const environmentDepth = Math.max(0, Number.parseInt(process.env.BRUV_SUBAGENT_DEPTH ?? "0", 10) || 0);
+  const rawEnvironmentType = process.env.BRUV_SUBAGENT_TYPE;
   const environmentType = SUBAGENT_TYPES.includes(rawEnvironmentType as (typeof SUBAGENT_TYPES)[number])
     ? rawEnvironmentType
     : undefined;
@@ -146,7 +146,7 @@ export default function asynchronousTasksExtension(
         // Access each possibly hostile property inside this guarded scan.
         const type = (candidate as Record<string, unknown>).type;
         const customType = (candidate as Record<string, unknown>).customType;
-        if (type === "custom" && customType === "die-agent") {
+        if (type === "custom" && customType === "bruv-agent") {
           marker = candidate as Record<string, unknown>;
           break;
         }
@@ -243,7 +243,7 @@ export default function asynchronousTasksExtension(
   const updateTaskStatus = () => {
     const running = manager?.list().filter((task) => task.status === "running").length ?? 0;
     pi.events?.emit?.("herdr:tasks", { running });
-    taskUi?.setStatus("die-tasks", running > 0 ? `${running} task${running === 1 ? "" : "s"} running` : undefined);
+    taskUi?.setStatus("bruv-tasks", running > 0 ? `${running} task${running === 1 ? "" : "s"} running` : undefined);
   };
 
   let t3NativeSession = false;
@@ -522,7 +522,7 @@ export default function asynchronousTasksExtension(
   registerResumeSafeguards(pi);
 
   const questions = registerQuestionRuntime(pi, {
-    supported: () => (subagentDepth === 0 || !!process.env.DIE_REMOTE_RUNTIME_STATE) && !t3NativeSession,
+    supported: () => (subagentDepth === 0 || !!process.env.BRUV_REMOTE_RUNTIME_STATE) && !t3NativeSession,
   });
   registerQuestions(pi, (ctx) => questions.commands(ctx));
 
@@ -860,10 +860,10 @@ export default function asynchronousTasksExtension(
     scopeInstructionContinuity(ctx.sessionManager as object);
     // Explicit user system prompts retain their existing override semantics.
     const custom = !!event.systemPromptOptions?.customPrompt;
-    // Pi assembled Die's base with dynamic append/context/skill/cwd sections.
+    // Pi assembled Bruv's base with dynamic append/context/skill/cwd sections.
     // A user-owned custom base remains untouched at root, but children must
     // retain their role identity and delegation boundary on every base.
-    const userCustom = custom && !isDieSystemPrompt(event.systemPromptOptions);
+    const userCustom = custom && !isBruvSystemPrompt(event.systemPromptOptions);
     if (userCustom && subagentDepth === 0) return;
     const role = subagentDepth > 0 ? subagentGuidance(agentType ?? "normal") : instructionMode.guidance(ctx, false);
     const additions = [userCustom ? "" : collaborationGuidance(), role].filter(Boolean).join("\n\n");
@@ -927,7 +927,7 @@ export default function asynchronousTasksExtension(
     sessionHost?.close();
     sessionHost = undefined;
     clearInstructionContinuity(ctx.sessionManager as object);
-    taskUi?.setStatus("die-tasks", undefined);
+    taskUi?.setStatus("bruv-tasks", undefined);
     instructionMode.shutdown();
     await t3LocalDelivery?.stop();
     t3LocalDelivery = undefined;

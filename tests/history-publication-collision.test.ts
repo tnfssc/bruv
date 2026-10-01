@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("a publication collision leaves SessionManager unchanged and permits recovery", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-history-publication-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-history-publication-"));
   try {
     const script = String.raw`
       const { readFileSync, rmSync, writeFileSync } = await import("node:fs");

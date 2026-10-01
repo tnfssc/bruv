@@ -2,57 +2,57 @@ import { expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { dieSystemPrompt } from "../src/prompts";
-import { withDieSystemPrompt } from "../src/system-prompt";
+import { bruvSystemPrompt } from "../src/prompts";
+import { withBruvSystemPrompt } from "../src/system-prompt";
 
-test("injects Die base before Pi's positional prompt boundary", () => {
+test("injects Bruv base before Pi's positional prompt boundary", () => {
   expect(
-    withDieSystemPrompt(["--model", "x", "--", "hello"], {
+    withBruvSystemPrompt(["--model", "x", "--", "hello"], {
       cwd: "/missing",
       agentDir: "/missing",
     }),
-  ).toEqual(["--model", "x", "--system-prompt", dieSystemPrompt(), "--", "hello"]);
+  ).toEqual(["--model", "x", "--system-prompt", bruvSystemPrompt(), "--", "hello"]);
 });
 
 test("preserves explicit CLI system prompts", () => {
   const args = ["--system-prompt", "USER_BASE", "question"];
-  expect(withDieSystemPrompt(args, { cwd: "/missing", agentDir: "/missing" })).toBe(args);
+  expect(withBruvSystemPrompt(args, { cwd: "/missing", agentDir: "/missing" })).toBe(args);
   const positional = ["--", "--system-prompt", "not-an-option"];
-  expect(withDieSystemPrompt(positional, { cwd: "/missing", agentDir: "/missing" })).not.toBe(positional);
+  expect(withBruvSystemPrompt(positional, { cwd: "/missing", agentDir: "/missing" })).not.toBe(positional);
 });
 
 test("preserves project and global SYSTEM.md overrides", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-system-prompt-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-system-prompt-"));
   try {
     const cwd = join(root, "project"),
       agentDir = join(root, "agent");
-    await mkdir(join(cwd, ".die"), { recursive: true });
+    await mkdir(join(cwd, ".bruv"), { recursive: true });
     await mkdir(agentDir, { recursive: true });
-    await writeFile(join(cwd, ".die", "SYSTEM.md"), "PROJECT");
+    await writeFile(join(cwd, ".bruv", "SYSTEM.md"), "PROJECT");
     const projectArgs: string[] = [];
-    expect(withDieSystemPrompt(projectArgs, { cwd, agentDir, projectTrusted: true })).toBe(projectArgs);
+    expect(withBruvSystemPrompt(projectArgs, { cwd, agentDir, projectTrusted: true })).toBe(projectArgs);
 
     const deniedArgs = ["--no-approve"];
-    expect(withDieSystemPrompt(deniedArgs, { cwd, agentDir })).toEqual([
+    expect(withBruvSystemPrompt(deniedArgs, { cwd, agentDir })).toEqual([
       "--no-approve",
       "--system-prompt",
-      dieSystemPrompt(),
+      bruvSystemPrompt(),
     ]);
     const lastTrustFlagWins = ["--no-approve", "--approve"];
-    expect(withDieSystemPrompt(lastTrustFlagWins, { cwd, agentDir })).toBe(lastTrustFlagWins);
+    expect(withBruvSystemPrompt(lastTrustFlagWins, { cwd, agentDir })).toBe(lastTrustFlagWins);
 
     const explicitlyDenied: string[] = [];
     expect(
-      withDieSystemPrompt(explicitlyDenied, {
+      withBruvSystemPrompt(explicitlyDenied, {
         cwd,
         agentDir,
         projectTrusted: false,
       }),
-    ).toEqual(["--system-prompt", dieSystemPrompt()]);
-    await rm(join(cwd, ".die", "SYSTEM.md"));
+    ).toEqual(["--system-prompt", bruvSystemPrompt()]);
+    await rm(join(cwd, ".bruv", "SYSTEM.md"));
     await writeFile(join(agentDir, "SYSTEM.md"), "GLOBAL");
     const globalArgs: string[] = [];
-    expect(withDieSystemPrompt(globalArgs, { cwd, agentDir })).toBe(globalArgs);
+    expect(withBruvSystemPrompt(globalArgs, { cwd, agentDir })).toBe(globalArgs);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -60,7 +60,9 @@ test("preserves project and global SYSTEM.md overrides", async () => {
 
 test("config receives no session-only prompt option", () => {
   for (const args of [["config"], ["config", "--help"], ["config", "-l", "--approve"]]) {
-    expect(withDieSystemPrompt(args, { cwd: "/missing", agentDir: "/missing" })).toBe(args);
+    expect(withBruvSystemPrompt(args, { cwd: "/missing", agentDir: "/missing" })).toBe(args);
   }
-  expect(withDieSystemPrompt(["--", "config"], { cwd: "/missing", agentDir: "/missing" })).toContain("--system-prompt");
+  expect(withBruvSystemPrompt(["--", "config"], { cwd: "/missing", agentDir: "/missing" })).toContain(
+    "--system-prompt",
+  );
 });

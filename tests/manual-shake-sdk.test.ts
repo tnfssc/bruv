@@ -91,7 +91,7 @@ function errorResponse(messageText: string): ReturnType<typeof createAssistantMe
 
 for (const changedSide of ["result", "call"] as const) {
   test("actual SDK preserves a transformed tool group when the " + changedSide + " side changes", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-shake-sdk-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-shake-sdk-"));
     let session: any;
     try {
       const manager = SessionManager.inMemory(dir);
@@ -142,7 +142,7 @@ for (const changedSide of ["result", "call"] as const) {
                 };
               }),
           },
-          { name: "die-tasks", factory: tasks },
+          { name: "bruv-tasks", factory: tasks },
         ],
       });
       await loader.reload();
@@ -164,7 +164,7 @@ for (const changedSide of ["result", "call"] as const) {
       };
       await session.prompt("/shake");
       expect(
-        manager.getEntries().some((entry: any) => entry.type === "custom" && entry.customType === "die-manual-shake"),
+        manager.getEntries().some((entry: any) => entry.type === "custom" && entry.customType === "bruv-manual-shake"),
       ).toBe(true);
       const reportedBefore = Number(
         notices.find((notice) => notice.startsWith("Shake complete"))?.match(/~(\d+) →/)?.[1],
@@ -193,7 +193,7 @@ for (const changedSide of ["result", "call"] as const) {
 }
 
 test("actual SDK preserves first post-shake overflow compaction and retries once", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-shake-overflow-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-shake-overflow-"));
   let session: any;
   try {
     const manager = SessionManager.inMemory(dir);
@@ -220,7 +220,7 @@ test("actual SDK preserves first post-shake overflow compaction and retries once
       noSkills: true,
       noThemes: true,
       noPromptTemplates: true,
-      extensionFactories: [{ name: "die-tasks", factory: tasks }],
+      extensionFactories: [{ name: "bruv-tasks", factory: tasks }],
     });
     await loader.reload();
     // Pi 0.87 estimates recovery context from its durable projection after
@@ -299,7 +299,7 @@ test("actual SDK preserves first post-shake overflow compaction and retries once
 }, 10_000);
 
 test("actual SDK uses post-shake context for pre-request automatic compaction threshold", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-shake-threshold-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-shake-threshold-"));
   let session: any;
   try {
     const manager = SessionManager.inMemory(dir);
@@ -318,7 +318,7 @@ test("actual SDK uses post-shake context for pre-request automatic compaction th
       noSkills: true,
       noThemes: true,
       noPromptTemplates: true,
-      extensionFactories: [{ name: "die-tasks", factory: tasks }],
+      extensionFactories: [{ name: "bruv-tasks", factory: tasks }],
     });
     await loader.reload();
     // Threshold is 8k, but leave enough room for the SDK compactor to prepare
@@ -354,7 +354,7 @@ test("actual SDK uses post-shake context for pre-request automatic compaction th
       );
     await session.prompt("/shake");
     expect(
-      manager.getEntries().some((entry: any) => entry.type === "custom" && entry.customType === "die-manual-shake"),
+      manager.getEntries().some((entry: any) => entry.type === "custom" && entry.customType === "bruv-manual-shake"),
     ).toBe(true);
     const costAfterShake = manager
       .getEntries()
@@ -398,7 +398,7 @@ test("actual SDK uses post-shake context for pre-request automatic compaction th
 }, 10_000);
 
 test("actual SDK aborts provider dispatch after a carry-forward persistence failure", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-shake-failclosed-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-shake-failclosed-"));
   let session: any;
   const originalFetch = globalThis.fetch;
   try {

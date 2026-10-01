@@ -13,7 +13,7 @@ afterEach(async () => {
 });
 
 async function fixture(initialAuth?: object) {
-  const dir = await mkdtemp(join(tmpdir(), "die-live-auth-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-live-auth-"));
   dirs.push(dir);
   const authPath = join(dir, "auth.json");
   if (initialAuth) await writeFile(authPath, JSON.stringify(initialAuth), { mode: 0o600 });
@@ -178,17 +178,17 @@ test("stored key status is metadata only and does not resolve command references
   expect(await service.status()).toEqual({ state: "stored_api_key", canImport: false });
 });
 
-test("default factory honors die's configured auth directory and reuses the canonical provider key", async () => {
+test("default factory honors bruv's configured auth directory and reuses the canonical provider key", async () => {
   const { dir } = await fixture({ google: { type: "api_key", key: "fake-canonical-google-key" } });
-  const previous = process.env.DIE_CODING_AGENT_DIR;
-  process.env.DIE_CODING_AGENT_DIR = dir;
+  const previous = process.env.BRUV_CODING_AGENT_DIR;
+  process.env.BRUV_CODING_AGENT_DIR = dir;
   try {
     const service = await createDefaultLiveCredentialService();
     expect(await service.status()).toEqual({ state: "stored_api_key", canImport: false });
     expect(await service.loadKey()).toBe("fake-canonical-google-key");
   } finally {
-    if (previous === undefined) delete process.env.DIE_CODING_AGENT_DIR;
-    else process.env.DIE_CODING_AGENT_DIR = previous;
+    if (previous === undefined) delete process.env.BRUV_CODING_AGENT_DIR;
+    else process.env.BRUV_CODING_AGENT_DIR = previous;
   }
 });
 

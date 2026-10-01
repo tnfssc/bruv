@@ -6,9 +6,9 @@ import { run } from "./helpers";
 import { waitForLiveTuiStartup } from "./live-tui-startup";
 
 test("real tmux Pi renderer shows a delegated spoken user turn without transport dump", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-spoken-tui-"));
+  const home = await mkdtemp(join(tmpdir(), "bruv-spoken-tui-"));
   const root = resolve(import.meta.dir, "..");
-  const socket = "die-spoken-" + process.pid;
+  const socket = "bruv-spoken-" + process.pid;
   const tmux = (...args: string[]) =>
     run([Bun.which("tmux") ?? "/usr/bin/tmux", "-L", socket, "-f", join(home, "tmux.conf"), ...args]);
   const frame = async () => (await tmux("capture-pane", "-p", "-t", "spoken")).stdout;
@@ -17,9 +17,9 @@ test("real tmux Pi renderer shows a delegated spoken user turn without transport
     // Source CLI needs the generated local runtime assets even when run as a standalone test.
     expect((await run([process.execPath, join(root, "scripts/prepare-assets.ts")], { cwd: root })).code).toBe(0);
     const { version } = await Bun.file(join(root, "package.json")).json();
-    const themeDir = join(home, ".die/runtime", version, "dist/modes/interactive");
+    const themeDir = join(home, ".bruv/runtime", version, "dist/modes/interactive");
     await mkdir(themeDir, { recursive: true });
-    await symlink(join(home, ".die/runtime", version, "theme"), join(themeDir, "theme"));
+    await symlink(join(home, ".bruv/runtime", version, "theme"), join(themeDir, "theme"));
     await writeFile(
       join(home, "tmux.conf"),
       (await readFile(join(root, "scripts/tmux.conf"), "utf8")) +
@@ -30,7 +30,7 @@ test("real tmux Pi renderer shows a delegated spoken user turn without transport
       "HOME=" + home,
       "PI_OFFLINE=1",
       "OPENAI_API_KEY=offline-test-key",
-      "DIE_SUBAGENT_DEPTH=0",
+      "BRUV_SUBAGENT_DEPTH=0",
       process.execPath,
       join(root, "src/cli.ts"),
       "--offline",
@@ -57,7 +57,7 @@ test("real tmux Pi renderer shows a delegated spoken user turn without transport
       if (screen.includes("Check this repo status") && screen.includes("OFFLINE_DELEGATED_REPLY")) break;
       await Bun.sleep(100);
     }
-    if (process.env.DIE_LIVE_TUI_CAPTURE) await writeFile(process.env.DIE_LIVE_TUI_CAPTURE, screen);
+    if (process.env.BRUV_LIVE_TUI_CAPTURE) await writeFile(process.env.BRUV_LIVE_TUI_CAPTURE, screen);
     expect(screen).toContain("Check this repo status, then explain any changes before editing files.");
     expect(screen).not.toContain("Earlier speech was not retained; this is the captured portion:");
     expect(screen).not.toContain("Overlapping provisional voice fragments:");

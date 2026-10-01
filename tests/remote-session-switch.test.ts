@@ -57,7 +57,7 @@ test("a refresh awaiting its baseline cannot adopt an unowned task into the next
     for (let i = 0; i < 10 && statusCalls < 2; i++) await Bun.sleep(0);
     await Bun.sleep(0);
     expect(messages.filter((message) => message.includes("Remote old-session · done"))).toEqual([]);
-    expect(entries.filter((entry) => entry.type === "die-remote-active")).toEqual([]);
+    expect(entries.filter((entry) => entry.type === "bruv-remote-active")).toEqual([]);
   } finally {
     await handlers.get("session_shutdown")!();
   }

@@ -573,7 +573,7 @@ export function installShakeAccountingAdapter(): void {
   const originalUsage = prototype.getContextUsage;
   if (typeof originalCheck !== "function" || typeof originalUsage !== "function")
     throw new Error(
-      "die manual shake is unsupported by this Pi runtime: required AgentSession accounting seams are unavailable",
+      "bruv manual shake is unsupported by this Pi runtime: required AgentSession accounting seams are unavailable",
     );
   const lacksFreshUsage = (owner: typeof prototype): boolean => {
     const manager = owner.sessionManager;

@@ -79,7 +79,7 @@ export function response(body: RequestBody): object {
         "orch-start",
         "const proof=await shell(" +
           JSON.stringify(
-            'set -eux; test "$DIE_SUBAGENT_TYPE" = orchestrator; test "$DIE_SUBAGENT_DEPTH" = 1; test -n "$DIE_REMOTE_RUNTIME_STATE"; test -f /opt/fixture/placement-host; grep -qx "' +
+            'set -eux; test "$BRUV_SUBAGENT_TYPE" = orchestrator; test "$BRUV_SUBAGENT_DEPTH" = 1; test -n "$BRUV_REMOTE_RUNTIME_STATE"; test -f /opt/fixture/placement-host; grep -qx "' +
               expected +
               '" tracked.txt; test ! -e never-upload.txt; test "$(git rev-list --count HEAD)" = 1; test -z "$(git remote)"; pwd > /tmp/placement-orchestrator-' +
               side +
@@ -136,7 +136,7 @@ export function response(body: RequestBody): object {
         "normal-tools",
         "const proof=await shell(" +
           JSON.stringify(
-            'set -eux; test "$DIE_SUBAGENT_TYPE" = normal; test "$DIE_SUBAGENT_DEPTH" = 2; test -f /opt/fixture/placement-host; test -f .git; grep -qx "' +
+            'set -eux; test "$BRUV_SUBAGENT_TYPE" = normal; test "$BRUV_SUBAGENT_DEPTH" = 2; test -f /opt/fixture/placement-host; test -f .git; grep -qx "' +
               expected +
               '" tracked.txt; test ! -e never-upload.txt; pwd > /tmp/placement-normal-' +
               side +

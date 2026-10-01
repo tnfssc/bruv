@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { resolve } from "node:path";
 
-test.skipIf(process.platform !== "linux" || process.env.DIE_REMOTE_JOBS_E2E !== "1")(
+test.skipIf(process.platform !== "linux" || process.env.BRUV_REMOTE_JOBS_E2E !== "1")(
   "compiled normal CLI real execute jobs.targets/subagent(target) yields and wakes through session-isolated jobs coordinator",
   async () => {
     const child = Bun.spawn(["bash", resolve(import.meta.dir, "../scripts/remote-e2e.sh")], {

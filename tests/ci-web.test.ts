@@ -18,7 +18,7 @@ afterEach(async () => {
   for (const path of temporary.splice(0)) await rm(path, { recursive: true, force: true });
 });
 async function fixture() {
-  const root = await mkdtemp(resolve(tmpdir(), "die-ci-web-"));
+  const root = await mkdtemp(resolve(tmpdir(), "bruv-ci-web-"));
   temporary.push(root);
   for (const file of webInputs) await Bun.write(resolve(root, file), file);
   return root;
@@ -27,11 +27,11 @@ const tools = { bun: "pinned", node: "pinned", pnpm: "pinned", compiler: "pinned
 test("CI web key is workspace/run independent, CLI source independent, and owns every producer input", async () => {
   // Release runners legitimately set this for their own T3 build. Exercise that
   // inherited state, retain the custom-source guard, then use a clean fixture env.
-  const previousSource = process.env.DIE_T3_SOURCE;
+  const previousSource = process.env.BRUV_T3_SOURCE;
   try {
-    process.env.DIE_T3_SOURCE = "/release/runner/custom-t3-source";
-    await expect(ciWebInputKey(await fixture(), tools)).rejects.toThrow("owns DIE_T3_SOURCE");
-    delete process.env.DIE_T3_SOURCE;
+    process.env.BRUV_T3_SOURCE = "/release/runner/custom-t3-source";
+    await expect(ciWebInputKey(await fixture(), tools)).rejects.toThrow("owns BRUV_T3_SOURCE");
+    delete process.env.BRUV_T3_SOURCE;
 
     const a = await fixture(),
       b = await fixture();
@@ -48,8 +48,8 @@ test("CI web key is workspace/run independent, CLI source independent, and owns 
     expect(await ciWebInputKey(a, tools)).not.toBe(key);
     expect(await ciWebInputKey(b, { ...tools, node: "other" })).not.toBe(key);
   } finally {
-    if (previousSource === undefined) delete process.env.DIE_T3_SOURCE;
-    else process.env.DIE_T3_SOURCE = previousSource;
+    if (previousSource === undefined) delete process.env.BRUV_T3_SOURCE;
+    else process.env.BRUV_T3_SOURCE = previousSource;
   }
 });
 test("producer environment does not inherit credentials, workflow identity or Vite configuration", async () => {
@@ -126,5 +126,5 @@ test("workflow uses exact read-only restore, trusted default-branch save and pre
   expect(validation).not.toContain("Typecheck web backend");
   expect(validation).not.toContain("Typecheck web client");
   expect(validation).toContain("Typecheck terminal client");
-  expect(validation).toContain("NativeDieIntegration.production.test.ts");
+  expect(validation).toContain("NativeBruvIntegration.production.test.ts");
 });

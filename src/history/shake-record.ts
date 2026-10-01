@@ -1,5 +1,5 @@
 /** Persisted manual-shake checkpoint contract. Keep validation and wire values stable. */
-export const MANUAL_SHAKE_ENTRY = "die-manual-shake";
+export const MANUAL_SHAKE_ENTRY = "bruv-manual-shake";
 export const MANUAL_SHAKE_VERSION = 1;
 export const MAX_IDS_PER_KIND = 2048;
 export const MAX_RECORD_BYTES = 256 * 1024;

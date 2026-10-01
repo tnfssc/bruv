@@ -7,7 +7,7 @@ import { DEFAULT_EXECUTE_OUTPUT_BYTE_LIMIT, ExecuteOutputCapture } from "../src/
 
 let directory: string;
 beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), "die-capture-test-"));
+  directory = await mkdtemp(join(tmpdir(), "bruv-capture-test-"));
 });
 afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
@@ -83,7 +83,7 @@ test("reports an unwritable artifact location without claiming complete files ex
 
 test("standalone captures use discoverable temporary files that survive completion", async () => {
   const result = await capture(["x".repeat(5000)], [], "");
-  expect(basename(dirname(result.stdoutPath!))).toStartWith("die-execute-");
+  expect(basename(dirname(result.stdoutPath!))).toStartWith("bruv-execute-");
   try {
     expect(await readFile(result.stdoutPath!, "utf8")).toBe("x".repeat(5000));
     if (process.platform !== "win32") {

@@ -13,17 +13,17 @@ import {
 import { packWebArchive } from "../src/t3/web/archive";
 
 const temporary: string[] = [];
-const originalSource = process.env.DIE_T3_SOURCE;
+const originalSource = process.env.BRUV_T3_SOURCE;
 const originalPath = process.env.PATH;
 afterEach(async () => {
   if (originalPath === undefined) delete process.env.PATH;
   else process.env.PATH = originalPath;
-  if (originalSource === undefined) delete process.env.DIE_T3_SOURCE;
-  else process.env.DIE_T3_SOURCE = originalSource;
+  if (originalSource === undefined) delete process.env.BRUV_T3_SOURCE;
+  else process.env.BRUV_T3_SOURCE = originalSource;
   for (const path of temporary.splice(0)) await rm(path, { recursive: true, force: true });
 });
 async function fixture(links = false) {
-  const root = await mkdtemp(resolve(tmpdir(), "die-packed-test-"));
+  const root = await mkdtemp(resolve(tmpdir(), "bruv-packed-test-"));
   temporary.push(root);
   const source = resolve(root, "source");
   const bin = resolve(root, "bin");
@@ -58,7 +58,7 @@ async function fixture(links = false) {
     "integrations/t3/upstream/bootstrap.mjs",
   ])
     await Bun.write(resolve(root, file), file === "package.json" ? '{"type":"module"}' : file);
-  await Bun.write(root + "/integrations/t3/upstream/die.patch", patch);
+  await Bun.write(root + "/integrations/t3/upstream/bruv.patch", patch);
   await Bun.write(
     root + "/integrations/t3/upstream/source.json",
     JSON.stringify({ revision: git("rev-parse", "HEAD") }),
@@ -76,15 +76,15 @@ async function fixture(links = false) {
     "-qm",
     "producer",
   ]);
-  const payload = root + "/dist/die-web";
+  const payload = root + "/dist/bruv-web";
   await Bun.write(payload + "/bootstrap.mjs", "console.log('fixture');");
-  const archive = root + "/dist/die-web.archive.gz";
+  const archive = root + "/dist/bruv-web.archive.gz";
   let packs = 0;
   const pack = async () => {
     packs++;
     return packWebArchive(payload, archive);
   };
-  process.env.DIE_T3_SOURCE = source;
+  process.env.BRUV_T3_SOURCE = source;
   await prepareWebPayload(root, "fresh", {
     fresh: async () => {
       await pack();
@@ -121,7 +121,7 @@ test("one verified packing supports four compile targets without touching archiv
 for (const file of [
   "integrations/t3/upstream/bootstrap.mjs",
   "integrations/t3/upstream/source.json",
-  "integrations/t3/upstream/die.patch",
+  "integrations/t3/upstream/bruv.patch",
   "integrations/t3/build/build.ts",
   "src/t3/web/archive.ts",
   "scripts/packed-web.ts",
@@ -130,7 +130,7 @@ for (const file of [
   "source/input",
   "source/.env.local",
   "source/node_modules/.modules.yaml",
-  "dist/die-web.archive.gz",
+  "dist/bruv-web.archive.gz",
 ]) {
   test("reject changed input: " + file, async () => {
     const f = await fixture();
@@ -140,7 +140,7 @@ for (const file of [
 }
 test("reject missing, malformed, expired, foreign workspace and invalidated receipts", async () => {
   const f = await fixture();
-  const receipt = f.root + "/dist/die-web.archive.manifest.json";
+  const receipt = f.root + "/dist/bruv-web.archive.manifest.json";
   const original = await Bun.file(receipt).json();
   for (const change of [
     { created: 0 },
@@ -173,7 +173,7 @@ test("verified archive embeds into a real native compiled executable unchanged",
   const entry = f.root + "/smoke.ts";
   await Bun.write(
     entry,
-    'import archive from "./dist/die-web.archive.gz" with { type: "file" }; console.log(new Bun.CryptoHasher("sha256").update(await Bun.file(archive).bytes()).digest("hex"));',
+    'import archive from "./dist/bruv-web.archive.gz" with { type: "file" }; console.log(new Bun.CryptoHasher("sha256").update(await Bun.file(archive).bytes()).digest("hex"));',
   );
   const outfile = f.root + "/compiled-smoke";
   const result = await Bun.build({ entrypoints: [entry], compile: { outfile } });
@@ -289,7 +289,7 @@ test("internal directory symlinks are recorded without following directories or 
 });
 test("external input-tree symlinks fail closed", async () => {
   const f = await fixture();
-  const external = await mkdtemp(resolve(tmpdir(), "die-packed-external-"));
+  const external = await mkdtemp(resolve(tmpdir(), "bruv-packed-external-"));
   temporary.push(external);
   await Bun.write(external + "/input", "mutable external input");
   await symlink(external, f.root + "/integrations/t3/external");

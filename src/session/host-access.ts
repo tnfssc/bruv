@@ -1,7 +1,7 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { SessionHost } from "./host";
 
-const HOST_ACCESS = "die:session:host-access";
+const HOST_ACCESS = "bruv:session:host-access";
 interface AccessRequest {
   context: ExtensionContext;
   accept(host: SessionHost | undefined): void;

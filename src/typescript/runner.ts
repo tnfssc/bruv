@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { createImageHelper, IMAGE_CHANNEL_ENV } from "./images";
 import { HandoffSignal, installJobGlobals, openWorkerJobBridge } from "./job-bridge";
 
-export const INTERNAL_TYPESCRIPT_RUNNER_ARG = "--die-internal-execute";
+export const INTERNAL_TYPESCRIPT_RUNNER_ARG = "--bruv-internal-execute";
 
 function resolutionError(message: string, code: string): Error {
   const error = new Error(message) as Error & { code?: string };
@@ -98,7 +98,7 @@ function rewriteImports(javascript: string, entryFilename: string): string {
       replacements.push({
         start: imported.importStart,
         end: imported.dynamicStart,
-        value: `globalThis.__dieExecuteImportFrom.bind(null, ${JSON.stringify(dirname(entryFilename))})`,
+        value: `globalThis.__bruvExecuteImportFrom.bind(null, ${JSON.stringify(dirname(entryFilename))})`,
       });
       continue;
     }
@@ -126,7 +126,7 @@ export async function runTypeScriptFromStdin(): Promise<void> {
   if (!source.trim()) throw new Error("No TypeScript source was provided");
 
   const cwd = process.cwd();
-  const entryFilename = join(cwd, "__die_execute__.ts");
+  const entryFilename = join(cwd, "__bruv_execute__.ts");
   await init();
 
   let registerEsmGraph: (filename: string) => void;
@@ -214,9 +214,9 @@ export async function runTypeScriptFromStdin(): Promise<void> {
   Object.assign(globalThis, {
     showImage: images.showImage,
     require: executeRequire,
-    __dieExecuteDirname: cwd,
-    __dieExecuteFilename: entryFilename,
-    __dieExecuteImportFrom: (from: string, value: unknown, options?: ImportCallOptions) => {
+    __bruvExecuteDirname: cwd,
+    __bruvExecuteFilename: entryFilename,
+    __bruvExecuteImportFrom: (from: string, value: unknown, options?: ImportCallOptions) => {
       const specifier = String(value);
       if (specifier.startsWith("file:")) {
         const resolved = fileURLToPath(specifier);
@@ -240,8 +240,8 @@ export async function runTypeScriptFromStdin(): Promise<void> {
     target: "bun",
     define: {
       require: "globalThis.require",
-      __dirname: "globalThis.__dieExecuteDirname",
-      __filename: "globalThis.__dieExecuteFilename",
+      __dirname: "globalThis.__bruvExecuteDirname",
+      __filename: "globalThis.__bruvExecuteFilename",
     },
   });
   const transpiled = transpiler.transformSync(source);
@@ -252,7 +252,7 @@ export async function runTypeScriptFromStdin(): Promise<void> {
   // package directory is similarly unacceptable. Dynamic imports extend this
   // graph immediately before importing their target.
   Bun.plugin({
-    name: `die-execute-resolver-${crypto.randomUUID()}`,
+    name: `bruv-execute-resolver-${crypto.randomUUID()}`,
     setup(builder) {
       builder.onResolve({ filter: /^[^./#]/ }, (args) => {
         if (isBuiltin(args.path) || args.path === "bun" || args.path.includes(":")) return;
@@ -309,7 +309,7 @@ export async function runTypeScriptFromStdin(): Promise<void> {
     const loader = extension === ".jsx" ? "jsx" : "js";
     const filter = new RegExp("^" + filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$");
     Bun.plugin({
-      name: `die-execute-esm-${crypto.randomUUID()}`,
+      name: `bruv-execute-esm-${crypto.randomUUID()}`,
       setup(builder) {
         builder.onLoad({ filter }, () => ({ contents: rewriteImports(moduleJavascript, filename), loader }));
       },

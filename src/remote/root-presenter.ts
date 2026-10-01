@@ -340,7 +340,7 @@ export class RootTranscript {
   }
 }
 export type RootPresenterOptions = { prompt?: string; pollMs?: number };
-/** Die-owned Pi component frontend. Disconnect is detach, never root abort. */
+/** Bruv-owned Pi component frontend. Disconnect is detach, never root abort. */
 export async function presentRemoteRoot(client: RootClient, options: RootPresenterOptions = {}): Promise<void> {
   const tui = new TuiMainScreen(new ProcessTerminal());
   const transcript = new RootTranscript();
@@ -436,7 +436,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
       if (modal) return modal.render(width);
       return [
         ...new Text(
-          accent("Die · " + client.read().target.name + " · root " + (transcript.record?.state ?? "connecting")),
+          accent("Bruv · " + client.read().target.name + " · root " + (transcript.record?.state ?? "connecting")),
         ).render(width),
         ...transcript.render(width),
         ...new Text(safe(transcript.progress)).render(width),

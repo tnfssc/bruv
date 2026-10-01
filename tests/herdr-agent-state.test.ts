@@ -16,8 +16,8 @@ const savedEnv = {
   HERDR_ENV: process.env.HERDR_ENV,
   HERDR_SOCKET_PATH: process.env.HERDR_SOCKET_PATH,
   HERDR_PANE_ID: process.env.HERDR_PANE_ID,
-  DIE_SUBAGENT_DEPTH: process.env.DIE_SUBAGENT_DEPTH,
-  DIE_SUBAGENT_TYPE: process.env.DIE_SUBAGENT_TYPE,
+  BRUV_SUBAGENT_DEPTH: process.env.BRUV_SUBAGENT_DEPTH,
+  BRUV_SUBAGENT_TYPE: process.env.BRUV_SUBAGENT_TYPE,
 };
 
 function restoreEnv(): void {
@@ -104,7 +104,7 @@ function harness(options: { ui?: boolean; idle?: boolean; path?: string; id?: st
 }
 
 async function socketRecorder() {
-  const dir = await mkdtemp(join(tmpdir(), "die-herdr-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-herdr-"));
   const path = join(dir, "herdr.sock");
   const requests: WireRequest[] = [];
   const server: Server = net.createServer((socket) => {
@@ -143,8 +143,8 @@ function enable(path: string, depth = "0"): void {
   process.env.HERDR_ENV = "1";
   process.env.HERDR_SOCKET_PATH = path;
   process.env.HERDR_PANE_ID = "w-test:p-root";
-  process.env.DIE_SUBAGENT_DEPTH = depth;
-  delete process.env.DIE_SUBAGENT_TYPE;
+  process.env.BRUV_SUBAGENT_DEPTH = depth;
+  delete process.env.BRUV_SUBAGENT_TYPE;
 }
 
 describe("built-in Herdr agent state", () => {
@@ -152,7 +152,7 @@ describe("built-in Herdr agent state", () => {
     const recorder = await socketRecorder();
     try {
       enable(recorder.path);
-      const h = harness({ path: "/tmp/die-session.jsonl", id: "fallback", idle: true });
+      const h = harness({ path: "/tmp/bruv-session.jsonl", id: "fallback", idle: true });
       registerHerdrAgentState(h.pi);
       h.fire("session_start", { reason: "startup" });
       await waitFor(() => recorder.requests.length >= 2);
@@ -175,10 +175,10 @@ describe("built-in Herdr agent state", () => {
       await waitFor(() => recorder.requests.some((request) => request.method === "pane.release_agent"));
       expect(replacement.busHandlers.get("herdr:blocked")?.size ?? 0).toBe(0);
 
-      const relevant = recorder.requests.filter((request) => request.params.source === "herdr:die");
+      const relevant = recorder.requests.filter((request) => request.params.source === "herdr:bruv");
       expect(relevant.every((request) => request.params.agent === "pi")).toBe(true);
       expect(relevant.find((request) => request.method === "pane.report_agent_session")?.params).toMatchObject({
-        agent_session_path: "/tmp/die-session.jsonl",
+        agent_session_path: "/tmp/bruv-session.jsonl",
         session_start_source: "startup",
       });
       const seq = relevant.map((request) => request.params.seq as number);
@@ -327,7 +327,7 @@ describe("built-in Herdr agent state", () => {
   });
 
   test("quit drops queued working before release when a socket is stalled", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-herdr-stall-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-herdr-stall-"));
     const path = join(dir, "herdr.sock");
     const requests: WireRequest[] = [];
     const server = net.createServer((socket) => {
@@ -390,7 +390,7 @@ describe("built-in Herdr agent state", () => {
       await waitFor(() => recorder.requests.some((request) => request.params.agent_session_id === "root-tui"));
       const beforeChild = recorder.requests.length;
 
-      // Native T3 children are separate Die RPC processes. They may inherit
+      // Native T3 children are separate Bruv RPC processes. They may inherit
       // the root's Herdr socket environment and can have depth zero, so mode —
       // not depth alone — is the authority boundary.
       const child = harness({ id: "native-rpc-child", mode: "rpc", ui: true });
@@ -419,7 +419,7 @@ describe("built-in Herdr agent state", () => {
   });
 
   test("unavailable endpoints and synchronous connector failures are nonfatal and prompt", async () => {
-    const missing = join(tmpdir(), "die-herdr-missing-" + Math.random().toString(36).slice(2) + ".sock");
+    const missing = join(tmpdir(), "bruv-herdr-missing-" + Math.random().toString(36).slice(2) + ".sock");
     enable(missing);
     const unavailable = harness({ id: "offline" });
     registerHerdrAgentState(unavailable.pi);
@@ -447,7 +447,7 @@ describe("built-in Herdr agent state", () => {
   });
 
   test("stalled sends preserve wire sequence order and the final working state", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-herdr-order-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-herdr-order-"));
     const path = join(dir, "herdr.sock");
     const requests: WireRequest[] = [];
     let stallFirst = true;
@@ -495,7 +495,7 @@ describe("built-in Herdr agent state", () => {
   });
 
   test("quit is awaited and a concurrent replacement cancels release retries", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-herdr-replace-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-herdr-replace-"));
     const path = join(dir, "herdr.sock");
     const requests: WireRequest[] = [];
     const server = net.createServer((socket) => {
@@ -572,7 +572,7 @@ describe("built-in Herdr agent state", () => {
     expect(malformed.handlers.size).toBe(0);
 
     enable("/tmp/unused-herdr.sock", "0");
-    process.env.DIE_SUBAGENT_TYPE = "normal";
+    process.env.BRUV_SUBAGENT_TYPE = "normal";
     const spawned = harness();
     registerHerdrAgentState(spawned.pi);
     expect(spawned.handlers.size).toBe(0);

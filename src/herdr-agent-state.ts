@@ -4,8 +4,8 @@ import type { ExtensionAPI, ExtensionContext, SessionShutdownEvent } from "@eare
 import { recordDiagnostic } from "./diagnostics";
 
 /** Built-in Herdr reporting derived from Herdr's managed Pi integration v8. */
-const SOURCE = "herdr:die";
-// Herdr 0.7.x does not render a die identity, so use its compatible Pi identity.
+const SOURCE = "herdr:bruv";
+// Herdr 0.7.x does not render a bruv identity, so use its compatible Pi identity.
 const COMPATIBLE_AGENT = "pi";
 const FIRST_TIMEOUT_MS = 250;
 const RETRY_TIMEOUT_MS = 750;
@@ -52,8 +52,8 @@ function boundedText(value: unknown, limit: number): string | undefined {
 function readConfig(connect: Connect = (endpoint) => net.createConnection(endpoint)): RuntimeConfig | undefined {
   const socketPath = process.env.HERDR_SOCKET_PATH;
   const paneId = boundedText(process.env.HERDR_PANE_ID, MAX_PANE_ID_LENGTH);
-  const rawDepth = process.env.DIE_SUBAGENT_DEPTH ?? "0";
-  const childRole = process.env.DIE_SUBAGENT_TYPE?.trim();
+  const rawDepth = process.env.BRUV_SUBAGENT_DEPTH ?? "0";
+  const childRole = process.env.BRUV_SUBAGENT_TYPE?.trim();
   if (!/^(0|[1-9]\d*)$/.test(rawDepth)) return undefined;
   const depth = Number(rawDepth);
   if (

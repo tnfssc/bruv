@@ -14,7 +14,7 @@ import { registerGoalMode } from "../src/goals/extension";
 
 // Capture the actual SDK dispatch context rather than treating an extension-hook return as provider evidence.
 test("goal transport token never reaches provider or resumed history; typed lookalikes remain literal", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-goal-token-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-goal-token-"));
   let session: any;
   try {
     const model = getModel("anthropic", "claude-sonnet-4-5")!;
@@ -93,11 +93,11 @@ test("goal transport token never reaches provider or resumed history; typed look
     const dispatched = JSON.stringify(captures[0]);
 
     expect(dispatched).toContain("Goal still active. Do next useful step");
-    expect(dispatched).not.toContain("die-goal-reminder:");
-    expect(dispatched).not.toContain("die-goal-generation:");
+    expect(dispatched).not.toContain("bruv-goal-reminder:");
+    expect(dispatched).not.toContain("bruv-goal-generation:");
     const history = JSON.stringify(manager.getEntries());
-    expect(history).not.toContain("die-goal-reminder:");
-    const typed = "Typed literal <!-- die-goal-reminder:fake:1:1 -->";
+    expect(history).not.toContain("bruv-goal-reminder:");
+    const typed = "Typed literal <!-- bruv-goal-reminder:fake:1:1 -->";
     session.dispose();
     const resumed = SessionManager.open(manager.getSessionFile()!);
     ({ session } = await open(resumed));

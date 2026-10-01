@@ -24,7 +24,7 @@ const MAX_EXCLUDED_ENTRY_IDS = 100_000;
 const MAX_INDEXED_PARTS = 100_000;
 const MAX_INDEXED_TEXT_BYTES = 64 * 1024 * 1024;
 const MAX_TEXT_PART_BYTES = 4 * 1024 * 1024;
-const REF_PREFIX = "die-history-v1";
+const REF_PREFIX = "bruv-history-v1";
 const CURSOR_PREFIX = "dhc1.";
 
 type Manager = Pick<SessionManager, "getSessionId" | "getSessionFile" | "getCwd" | "getLeafId" | "getBranch"> &
@@ -224,7 +224,7 @@ function ref(sessionId: string, entryId: string, part: number): string {
 function parseRef(value: unknown): { sessionId: string; entryId: string; part: number } {
   if (typeof value !== "string") throw new Error("History ref must be a string");
   if (value.length > 300) throw new Error("Invalid history ref");
-  const match = /^die-history-v1:([^:]{1,128}):([^:]{1,128}):(\d+)$/.exec(value);
+  const match = /^bruv-history-v1:([^:]{1,128}):([^:]{1,128}):(\d+)$/.exec(value);
   if (!match?.[1] || !match[2]) throw new Error("Invalid history ref");
   const part = Number(match[3]);
   if (!Number.isSafeInteger(part)) throw new Error("Invalid history ref");

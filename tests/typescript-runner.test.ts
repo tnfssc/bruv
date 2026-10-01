@@ -4,11 +4,11 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { INTERNAL_TYPESCRIPT_RUNNER_ARG } from "../src/typescript/runner";
 
-const binary = resolve(import.meta.dir, "../dist/die");
+const binary = resolve(import.meta.dir, "../dist/bruv");
 let directory: string;
 
 beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), "die-typescript-test-"));
+  directory = await mkdtemp(join(tmpdir(), "bruv-typescript-test-"));
 });
 
 afterEach(async () => {
@@ -77,7 +77,7 @@ describe("isolated TypeScript runner", () => {
     const result = await runTypeScript("console.log(__dirname, __filename)", spaced);
 
     expect(result.code).toBe(0);
-    expect(result.stdout.trim()).toBe(`${spaced} ${join(spaced, "__die_execute__.ts")}`);
+    expect(result.stdout.trim()).toBe(`${spaced} ${join(spaced, "__bruv_execute__.ts")}`);
     expect(result.stdout).not.toContain("%20");
   });
 

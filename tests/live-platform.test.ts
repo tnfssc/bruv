@@ -2,12 +2,14 @@ import { describe, expect, test } from "bun:test";
 import { audioEnvironment, defaultHelperPath } from "../src/live/audio";
 describe("native live platform paths", () => {
   test("source and compiled helper paths are not based on the user's project", () => {
-    expect(defaultHelperPath("linux", "file:///opt/die/src/live/audio.ts", "/usr/bin/bun")).toBe(
-      "/opt/die/dist/live-audio-linux",
+    expect(defaultHelperPath("linux", "file:///opt/bruv/src/live/audio.ts", "/usr/bin/bun")).toBe(
+      "/opt/bruv/dist/live-audio-linux",
     );
-    expect(defaultHelperPath("darwin", "file:///$bunfs/root/die", "/opt/die/bin/die")).toBe("/opt/die/bin/live-audio");
-    expect(defaultHelperPath("linux", "file:///$bunfs/root/die", "/opt/die/bin/die")).toBe(
-      "/opt/die/bin/live-audio-linux",
+    expect(defaultHelperPath("darwin", "file:///$bunfs/root/bruv", "/opt/bruv/bin/bruv")).toBe(
+      "/opt/bruv/bin/live-audio",
+    );
+    expect(defaultHelperPath("linux", "file:///$bunfs/root/bruv", "/opt/bruv/bin/bruv")).toBe(
+      "/opt/bruv/bin/live-audio-linux",
     );
   });
   test("preserves audio daemon discovery but strips model credentials", () => {

@@ -4,13 +4,13 @@ import { resolve } from "node:path";
 import { LIVE_PROVIDERS } from "../src/live/providers";
 
 const root = resolve(import.meta.dir, "..");
-const patch = readFileSync(resolve(root, "integrations/t3/upstream/die.patch"), "utf8");
+const patch = readFileSync(resolve(root, "integrations/t3/upstream/bruv.patch"), "utf8");
 
 test("maintained web patch retains web runtime without voice routes, controls or FD bridge", () => {
-  expect(patch).toContain("apps/server/src/auth/DieWebAuth.ts");
+  expect(patch).toContain("apps/server/src/auth/BruvWebAuth.ts");
   expect(patch).toContain("apps/web/src/");
   expect(patch).not.toMatch(
-    /DIE_WEB_VOICE|PiVoiceChannels|VoiceRoute|VoiceControls|src\/live\/controller|src\/voice\//i,
+    /BRUV_WEB_VOICE|PiVoiceChannels|VoiceRoute|VoiceControls|src\/live\/controller|src\/voice\//i,
   );
   const files = [...patch.matchAll(/^diff --git a\/(.*?) b\//gm)].map((match) => match[1]);
   expect(files.some((file) => file.startsWith("apps/web/src/"))).toBe(true);

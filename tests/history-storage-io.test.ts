@@ -12,7 +12,7 @@ afterEach(async () => {
 });
 
 async function temporaryFile(name = "session.jsonl"): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "die-history-io-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-history-io-"));
   roots.push(root);
   return join(root, name);
 }

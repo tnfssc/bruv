@@ -5,8 +5,8 @@ import { join, resolve } from "node:path";
 import { run } from "./helpers";
 
 test("real PTY shows unknown estimate and /cache-ttl persists a validated value", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-cache-pty-"));
-  const socket = "die-cache-" + process.pid + "-" + Date.now(),
+  const home = await mkdtemp(join(tmpdir(), "bruv-cache-pty-"));
+  const socket = "bruv-cache-" + process.pid + "-" + Date.now(),
     session = "cache";
   const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
   const quote = (v: string) => "'" + v.replaceAll("'", "'\''") + "'";
@@ -21,11 +21,11 @@ test("real PTY shows unknown estimate and /cache-ttl persists a validated value"
     throw Error("Missing " + text + " in:\n" + frame);
   }
   try {
-    const binary = resolve(import.meta.dir, "../dist/die");
+    const binary = resolve(import.meta.dir, "../dist/bruv");
     const launch = [
       "env",
       "HOME=" + home,
-      "DIE_CODING_AGENT_DIR=" + join(home, ".die", "agent"),
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       "OPENAI_API_KEY=offline",
       binary,
       "--offline",
@@ -45,7 +45,7 @@ test("real PTY shows unknown estimate and /cache-ttl persists a validated value"
     expect(await waitFor("Cache TTL estimate set to 30m")).toContain(
       "does not guarantee provider cache retention or hits",
     );
-    expect(JSON.parse(await readFile(join(home, ".die", "cache-settings.json"), "utf8"))).toEqual({
+    expect(JSON.parse(await readFile(join(home, ".bruv", "cache-settings.json"), "utf8"))).toEqual({
       cacheTtlMs: 1_800_000,
     });
   } finally {

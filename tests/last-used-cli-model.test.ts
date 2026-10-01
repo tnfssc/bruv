@@ -95,7 +95,7 @@ describe("last-used CLI model", () => {
 });
 
 test("saved choice survives a fresh settings instance without changing unrelated settings", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-model-default-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-model-default-"));
   try {
     const cwd = join(dir, "project");
     const agentDir = join(dir, "agent");

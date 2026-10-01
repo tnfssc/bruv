@@ -11,7 +11,7 @@ import {
   SessionManager,
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
-import { dieSystemPrompt } from "../src/prompts";
+import { bruvSystemPrompt } from "../src/prompts";
 import tasks from "../src/agent/extension";
 
 const usage = {
@@ -28,8 +28,8 @@ for (const { customPrompt, emptyFrame } of [
   { customPrompt: "EXPLICIT_CUSTOM_SYSTEM_PROMPT", emptyFrame: false },
   { customPrompt: undefined, emptyFrame: true },
 ] as const) {
-  test(`SDK keeps die's complete instruction frame across custom tool continuation (custom=${!!customPrompt}, empty=${emptyFrame})`, async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-frame-sdk-"));
+  test(`SDK keeps bruv's complete instruction frame across custom tool continuation (custom=${!!customPrompt}, empty=${emptyFrame})`, async () => {
+    const dir = await mkdtemp(join(tmpdir(), "bruv-frame-sdk-"));
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     try {
       let frameHookCalls = 0;
@@ -40,7 +40,7 @@ for (const { customPrompt, emptyFrame } of [
         noSkills: true,
         noThemes: true,
         noPromptTemplates: true,
-        systemPrompt: customPrompt ?? dieSystemPrompt(),
+        systemPrompt: customPrompt ?? bruvSystemPrompt(),
         appendSystemPrompt: ["APPENDED_PROJECT_CONTEXT"],
         extensionFactories: [
           {
@@ -51,16 +51,16 @@ for (const { customPrompt, emptyFrame } of [
                 return { systemPrompt: event.systemPrompt + "\n\nEXTRA_EXTENSION_INSTRUCTION" };
               }),
           },
-          { name: "die-tasks", factory: tasks },
-          // A framing hook loaded after die must also survive custom turns.
+          { name: "bruv-tasks", factory: tasks },
+          // A framing hook loaded after bruv must also survive custom turns.
           {
-            name: "post-die-frame",
+            name: "post-bruv-frame",
             factory: (pi) =>
               pi.on("before_agent_start", (event) => ({
                 systemPrompt: emptyFrame
                   ? ""
                   : event.systemPrompt +
-                    "\n\nPOST_DIE_EXTENSION_INSTRUCTION" +
+                    "\n\nPOST_BRUV_EXTENSION_INSTRUCTION" +
                     (event.prompt.includes("normal subsequent") ? "::UPDATED" : ""),
               })),
           },
@@ -147,13 +147,13 @@ for (const { customPrompt, emptyFrame } of [
         expect(initial).toBe("");
       } else {
         expect(initial).toContain("EXTRA_EXTENSION_INSTRUCTION");
-        expect(initial).toContain("POST_DIE_EXTENSION_INSTRUCTION");
+        expect(initial).toContain("POST_BRUV_EXTENSION_INSTRUCTION");
         expect(initial).toContain("APPENDED_PROJECT_CONTEXT");
         if (customPrompt) {
           expect(initial).toContain(customPrompt);
-          expect(initial).not.toContain("You are die");
+          expect(initial).not.toContain("You are bruv");
         } else {
-          expect(initial).toContain("die");
+          expect(initial).toContain("bruv");
           expect(initial).toContain("Quick work? Finish it.");
         }
       }
@@ -171,7 +171,7 @@ for (const { customPrompt, emptyFrame } of [
 }
 
 test("fresh compaction prepares the frame and redacted context for a later custom multi-tool turn", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-fresh-frame-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-fresh-frame-sdk-"));
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   try {
     const model = getModel("anthropic", "claude-sonnet-4-5")!;
@@ -220,9 +220,9 @@ test("fresh compaction prepares the frame and redacted context for a later custo
       noThemes: true,
       noPromptTemplates: true,
       extensionFactories: [
-        { name: "die-tasks", factory: tasks },
+        { name: "bruv-tasks", factory: tasks },
         {
-          name: "after-die",
+          name: "after-bruv",
           factory: (pi) => {
             pi.on("before_agent_start", (event) => {
               frameCalls++;

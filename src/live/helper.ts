@@ -13,7 +13,7 @@ export async function extractNativeHelper(
 ): Promise<ExtractedHelper> {
   if (!/^[a-f0-9]{64}$/.test(expectedSha256) || createHash("sha256").update(bytes).digest("hex") !== expectedSha256)
     throw new Error("Embedded audio helper failed integrity check");
-  const directory = await mkdtemp(join(temporaryRoot, "die-live-"));
+  const directory = await mkdtemp(join(temporaryRoot, "bruv-live-"));
   const path = join(directory, "live-audio");
   const cleanup = () => rm(directory, { recursive: true, force: true });
   try {

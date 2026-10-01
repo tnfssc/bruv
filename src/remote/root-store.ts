@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { homedir } from "node:os";
 import type { RootIntent, RootRecord, RootCommand, RootCommandReceipt, RootObservation } from "./root-contract";
 
-export const rootDirectory = () => join(process.env.HOME ?? homedir(), ".die", "remote-owner", "roots");
+export const rootDirectory = () => join(process.env.HOME ?? homedir(), ".bruv", "remote-owner", "roots");
 export function rootId(id: unknown): asserts id is string {
   if (typeof id !== "string" || !/^[a-zA-Z0-9_-]{1,100}$/.test(id)) throw Error("Invalid root identifier");
 }

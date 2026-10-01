@@ -19,7 +19,7 @@ test("SSH oversized peer is bounded and force-stopped even when it ignores TERM"
         "-e",
         "import {sshTransport} from " +
           JSON.stringify(resolve("src/remote/ssh.ts")) +
-          '; try { await sshTransport("fixture", "die", {op:"hello"}); process.exit(2); } catch (e) { console.log(String(e)); }',
+          '; try { await sshTransport("fixture", "bruv", {op:"hello"}); process.exit(2); } catch (e) { console.log(String(e)); }',
       ],
       {
         env: { ...process.env, PATH: root + ":" + process.env.PATH },

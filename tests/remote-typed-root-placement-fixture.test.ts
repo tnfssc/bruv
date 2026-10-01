@@ -30,8 +30,8 @@ const throughQuestion = [first, done("root-start-clean"), user("ROOT_NORMAL_DONE
 describe("uniquely named typed root placement fixture (not binary acceptance)", () => {
   test("root is role0 server tools plus ordinary no-target child worktree", () => {
     const start = code(response(request("typed-root", [first])));
-    expect(start).toContain("DIE_SUBAGENT_TYPE:-root");
-    expect(start).toContain("DIE_SUBAGENT_DEPTH:-0");
+    expect(start).toContain("BRUV_SUBAGENT_TYPE:-root");
+    expect(start).toContain("BRUV_SUBAGENT_DEPTH:-0");
     expect(start).toContain("/opt/fixture/typed-root-host");
     expect(start).toContain("test ! -e never-upload.txt");
     expect(start).toContain("git rev-list --count HEAD");
@@ -43,7 +43,7 @@ describe("uniquely named typed root placement fixture (not binary acceptance)", 
     const child = code(response(request("typed-root-normal", [user("ROOT_NORMAL_CLEAN")])));
     expect(child).toContain("test -f .git");
     expect(JSON.parse(child.match(/^const p=await shell\((.*),\{waitSeconds:3\}\)/)![1])).toContain(
-      'DIE_SUBAGENT_DEPTH" = 1',
+      'BRUV_SUBAGENT_DEPTH" = 1',
     );
     expect(child).toContain("ROOT_NORMAL_DELEGATION_REFUSED");
     expect(child).not.toContain("target:");
@@ -221,7 +221,7 @@ describe("typed fixture infrastructure safety", () => {
   test("network none, no local inference, explicit binary, normal picker answer", () => {
     const runner = read("scripts/remote-root-placement-e2e.ts");
     expect(runner).toContain('"--network",\n    "none"');
-    expect(runner).toContain("process.env.DIE_BIN");
+    expect(runner).toContain("process.env.BRUV_BIN");
     expect(runner).not.toContain("parentProvider");
     expect(runner).not.toContain("Bun.serve");
     expect(runner).toContain("new RemoteClient().connect");
@@ -329,7 +329,7 @@ test("reply-loss relay really forwards once, discards bytes and gates status unt
           "/nonexistent-fixture-config",
           dir,
           "fixture",
-          "die --remote-root-control",
+          "bruv --remote-root-control",
         ],
         { input: JSON.stringify(input) + "\n", encoding: "utf8" },
       );

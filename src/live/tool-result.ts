@@ -24,7 +24,7 @@ export async function voiceToolResult(result: unknown, artifactDirectory?: strin
   if (bytes <= 64 * 1024 && !hasImage) return { output: result ?? null };
   try {
     if (artifactDirectory) await mkdir(artifactDirectory, { recursive: true, mode: 0o700 });
-    const directory = await mkdtemp(join(artifactDirectory ?? tmpdir(), "die-live-tool-"));
+    const directory = await mkdtemp(join(artifactDirectory ?? tmpdir(), "bruv-live-tool-"));
     const path = join(directory, "result.json");
     await writeFile(path, serialized, { mode: 0o600 });
     return {

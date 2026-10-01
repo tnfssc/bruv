@@ -131,7 +131,7 @@ export function registerGoalMode(
     const id = String(++reminderSequence);
     if (queuedReminderIds.size >= 16) queuedReminderIds.delete(queuedReminderIds.values().next().value!);
     queuedReminderIds.add(id);
-    const message = continuation(goal) + `\n\n<!-- die-goal-reminder:${reminderEpoch}:${generation}:${id} -->`;
+    const message = continuation(goal) + `\n\n<!-- bruv-goal-reminder:${reminderEpoch}:${generation}:${id} -->`;
     controller.markAutomaticStart(goal);
     pi.sendUserMessage(message, { deliverAs: "followUp" });
   };
@@ -207,7 +207,7 @@ export function registerGoalMode(
         ...event.messages,
         {
           role: "custom" as const,
-          customType: "die-goal-state",
+          customType: "bruv-goal-state",
           content: `Goal guidance:\n${goalGuidance.trimEnd()}\n\nPersistent goal state (authoritative):\n${formatGoal(goal)}`,
           display: false,
           timestamp: Date.now(),
@@ -220,7 +220,7 @@ export function registerGoalMode(
     context = ctx;
     ensureStore(ctx);
     if (event.source === "extension") {
-      const match = /<!-- die-goal-reminder:([^:>]+):(\d+):(\d+) -->/.exec(event.text);
+      const match = /<!-- bruv-goal-reminder:([^:>]+):(\d+):(\d+) -->/.exec(event.text);
       if (match) {
         const accepted =
           match[1] === reminderEpoch && Number(match[2]) === generation && queuedReminderIds.has(match[3]!);

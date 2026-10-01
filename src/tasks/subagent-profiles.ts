@@ -32,7 +32,7 @@ const ProfilesSchema = z.strictObject({
 });
 export type Profiles = Record<SubagentType, { model?: string; thinking?: ThinkingLevel }>;
 export function profilesPath(): string {
-  return join(homedir(), ".die", "subagents.json");
+  return join(homedir(), ".bruv", "subagents.json");
 }
 export function parseProfiles(value: unknown): Profiles {
   const parsed = z.parse(ProfilesSchema, value);

@@ -23,7 +23,7 @@ async function fixture(host = "box") {
   let offline = false;
   let posts = 0;
   const cancelled = new Set<string>();
-  const client = new RemoteClient(join(dir, "state.json"), async (_host, _die, req) => {
+  const client = new RemoteClient(join(dir, "state.json"), async (_host, _bruv, req) => {
     if (offline) throw Error("offline");
     if (req.op === "hello")
       return {
@@ -333,7 +333,7 @@ test("omitted and explicit local target preserve local launch/wait/model, even w
     }
     expect(waits).toEqual([1000, 1000]);
     expect(launches[0]?.args).toContain("laptop/must-not-forward");
-    expect(launches[0]?.env.DIE_SUBAGENT_DEPTH).toBe("1");
+    expect(launches[0]?.env.BRUV_SUBAGENT_DEPTH).toBe("1");
     expect(f.requests).toHaveLength(0);
   } finally {
     prepared.mockRestore();

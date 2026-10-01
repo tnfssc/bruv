@@ -178,7 +178,7 @@ export async function requestLocalCapability(
   args: { kind: CapabilityKind; input: string; requestId?: string },
   signal?: AbortSignal,
 ): Promise<string> {
-  const runtime = process.env.DIE_REMOTE_RUNTIME_STATE;
+  const runtime = process.env.BRUV_REMOTE_RUNTIME_STATE;
   if (!runtime) throw Error("Local capability requests are only available inside an owned remote task");
   const taskDir = dirname(runtime),
     taskId = basename(taskDir),

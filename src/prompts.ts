@@ -41,7 +41,7 @@ export const MAIN_AGENT_MODES = ["fast", "normal", "orchestrator"] as const;
 export type MainAgentMode = (typeof MAIN_AGENT_MODES)[number];
 function mainModeMarkers(owner: string): [string, string] {
   // owner is generated internally, not derived from project or user text.
-  return [`<!-- die:main-agent-mode:${owner}:start -->`, `<!-- die:main-agent-mode:${owner}:end -->`];
+  return [`<!-- bruv:main-agent-mode:${owner}:start -->`, `<!-- bruv:main-agent-mode:${owner}:end -->`];
 }
 
 export function mainAgentGuidance(mode: MainAgentMode, owner: string): string {
@@ -50,7 +50,7 @@ export function mainAgentGuidance(mode: MainAgentMode, owner: string): string {
   return start + "\n" + source + "\n" + end;
 }
 
-/** Replace only the region with this Die session's unguessable owner marker. */
+/** Replace only the region with this Bruv session's unguessable owner marker. */
 export function replaceMainAgentGuidance(prompt: string, mode: MainAgentMode, owner: string): string {
   const [startMarker, endMarker] = mainModeMarkers(owner);
   const start = prompt.indexOf(startMarker);
@@ -61,15 +61,15 @@ export function replaceMainAgentGuidance(prompt: string, mode: MainAgentMode, ow
 }
 
 /**
- * Give Pi Die's base as a structured custom prompt. Pi still adds user text,
+ * Give Pi Bruv's base as a structured custom prompt. Pi still adds user text,
  * project context, skills, and cwd.
  */
-export function dieSystemPrompt(): string {
+export function bruvSystemPrompt(): string {
   const guidelines = executeGuidance;
   return identity.trimEnd() + "\n\nGuidelines:\n" + guidelines.map((line) => "- " + line).join("\n");
 }
 
-/** Return true only for Die's injected base. All other custom prompts belong to the user. */
-export function isDieSystemPrompt(options: Pick<BuildSystemPromptOptions, "customPrompt"> | undefined): boolean {
-  return options?.customPrompt === dieSystemPrompt();
+/** Return true only for Bruv's injected base. All other custom prompts belong to the user. */
+export function isBruvSystemPrompt(options: Pick<BuildSystemPromptOptions, "customPrompt"> | undefined): boolean {
+  return options?.customPrompt === bruvSystemPrompt();
 }

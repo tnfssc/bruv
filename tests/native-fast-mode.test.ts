@@ -393,7 +393,7 @@ test("actual Pi streamSimple Codex WebSocket frame carries priority", async () =
 });
 
 test("actual ModelRuntime request snapshot ignores model changes during delayed auth preparation", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-fast-snapshot-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-fast-snapshot-"));
   const originalFetch = globalThis.fetch;
   try {
     const base = getModel("openai", "gpt-5.3-codex")!;
@@ -474,7 +474,7 @@ test("actual ModelRuntime request snapshot ignores model changes during delayed 
 });
 
 test("real AgentSession ModelRuntime guard survives swallowed hook throws and stops late mutation before mock fetch", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-fast-boundary-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-fast-boundary-"));
   const originalFetch = globalThis.fetch;
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   let dispatches = 0;
@@ -561,7 +561,7 @@ test("real AgentSession ModelRuntime guard survives swallowed hook throws and st
 
 for (const scenario of ["corrupt-record", "wrong-auth", "unsupported-model"] as const) {
   test(`real ModelRuntime blocks ${scenario} at zero fetch dispatches`, async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-fast-reject-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-fast-reject-"));
     const originalFetch = globalThis.fetch;
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     let dispatches = 0;

@@ -6,8 +6,8 @@ import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { run } from "./helpers";
 
 test("real footer includes nested costs, updates while idle, and restores on resume", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-cost-pty-"));
-  const socket = "die-cost-" + process.pid + "-" + Date.now();
+  const home = await mkdtemp(join(tmpdir(), "bruv-cost-pty-"));
+  const socket = "bruv-cost-" + process.pid + "-" + Date.now();
   const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
   const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
   async function frameContaining(text: string) {
@@ -41,19 +41,19 @@ test("real footer includes nested costs, updates while idle, and restores on res
     const root = SessionManager.create(home, join(home, "sessions"));
     append(root, 0.125);
     const child = SessionManager.create(home, join(home, "sessions"), { parentSession: root.getSessionFile() });
-    child.appendCustomEntry("die-agent", { parentSessionFile: root.getSessionFile(), type: "orchestrator", depth: 1 });
+    child.appendCustomEntry("bruv-agent", { parentSessionFile: root.getSessionFile(), type: "orchestrator", depth: 1 });
     append(child, 0.25);
     const worker = SessionManager.create(home, join(home, "sessions"), { parentSession: child.getSessionFile() });
-    worker.appendCustomEntry("die-agent", { parentSessionFile: child.getSessionFile(), type: "fast", depth: 2 });
+    worker.appendCustomEntry("bruv-agent", { parentSessionFile: child.getSessionFile(), type: "fast", depth: 2 });
     append(worker, 0.5);
     const unrelated = SessionManager.create(home, join(home, "sessions"));
     append(unrelated, 9);
     const launch = [
       "env",
       "HOME=" + home,
-      "DIE_CODING_AGENT_DIR=" + join(home, ".die", "agent"),
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       "OPENAI_API_KEY=offline-test-placeholder",
-      resolve(import.meta.dir, "../dist/die"),
+      resolve(import.meta.dir, "../dist/bruv"),
       "--offline",
       "--no-approve",
       "--session",

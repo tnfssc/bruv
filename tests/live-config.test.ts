@@ -7,7 +7,7 @@ import { modelForProvider } from "../src/live/providers";
 
 describe("Live voice settings (offline)", () => {
   test("missing file defaults Google; saved choice survives reload without a key", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-live-config-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-live-config-"));
     const path = join(dir, "live-settings.json");
     try {
       const initial = await loadLiveConfig(path);
@@ -41,7 +41,7 @@ describe("Live voice settings (offline)", () => {
     }
   });
   test("GPT-Live selection persists and survives provider switches", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-gpt-live-config-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-gpt-live-config-"));
     const path = join(dir, "live-settings.json");
     const chosen = { provider: "openai" as const, model: "gpt-live-1" as const, openaiModel: "gpt-live-1" as const };
     try {

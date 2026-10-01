@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { recordDiagnostic } from "../diagnostics";
 import { GOAL_STATUSES, type GoalEntry, type GoalState, type GoalStatus } from "./types";
 
-export const GOAL_ENTRY_TYPE = "die-goal";
+export const GOAL_ENTRY_TYPE = "bruv-goal";
 const MAX_FIELD = 4_000;
 const MAX_ITEMS = 20;
 const MAX_PROGRESS_ITEMS = 8;

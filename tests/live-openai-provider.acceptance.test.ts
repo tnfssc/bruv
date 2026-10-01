@@ -5,7 +5,7 @@ import { orchestrationTools } from "../src/live/orchestration";
 
 // PAID, KEY-ACCESS OPT-IN: run only after explicit user consent. No devices,
 // generated response, or real agent dispatch. Passing proves session setup only.
-test.skipIf(process.env.DIE_RUN_OPENAI_LIVE_ACCEPTANCE !== "1")(
+test.skipIf(process.env.BRUV_RUN_OPENAI_LIVE_ACCEPTANCE !== "1")(
   "real OpenAI accepts the GA Live configuration and configured-agent tool schema",
   async () => {
     const controller = new AbortController();

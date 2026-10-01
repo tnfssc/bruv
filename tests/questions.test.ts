@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { QuestionService } from "../src/questions/service";
 
 function fixture() {
-  const dir = mkdtempSync(join(tmpdir(), "die-questions-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-questions-"));
   let leaf = "root";
   let entries: Array<{ id: string; parentId: string | null; type?: string; customType?: string }> = [
     { id: "root", parentId: null },
@@ -185,7 +185,7 @@ test("execute diagnostic sibling does not steal question ownership from toolResu
       checkpoint: "Wait",
       foreground: true,
     });
-    f.move("diagnostic", "assistant-tool-call", "custom", "die-diagnostic");
+    f.move("diagnostic", "assistant-tool-call", "custom", "bruv-diagnostic");
     f.move("tool-result", "assistant-tool-call", "message");
     f.move("assistant-waiting", "tool-result", "message");
     expect(service.get(f.ctx, q.id).readOnly).toBe(false);
@@ -227,12 +227,12 @@ test("diagnostic-only child does not fork an owner at the root or tool anchor", 
   try {
     const service = new QuestionService();
     const root = await service.ask(f.ctx, { text: "Root" });
-    f.move("root-diagnostic", "root", "custom", "die-diagnostic");
+    f.move("root-diagnostic", "root", "custom", "bruv-diagnostic");
     f.navigate("root");
     expect(service.get(f.ctx, root.id).readOnly).toBe(false);
     f.move("anchor", "root");
     const anchored = await service.ask(f.ctx, { text: "Anchor" });
-    f.move("anchor-diagnostic", "anchor", "custom", "die-diagnostic");
+    f.move("anchor-diagnostic", "anchor", "custom", "bruv-diagnostic");
     f.navigate("anchor");
     expect(service.get(f.ctx, anchored.id).readOnly).toBe(false);
     f.move("custom-fork", "anchor", "custom", "other-bookkeeping");
@@ -249,7 +249,7 @@ test("a real continuation through an inline diagnostic keeps ownership against a
     const service = new QuestionService();
     f.move("anchor-inline", "root", "message");
     const q = await service.ask(f.ctx, { text: "Choose" });
-    f.move("inline-diagnostic", "anchor-inline", "custom", "die-diagnostic");
+    f.move("inline-diagnostic", "anchor-inline", "custom", "bruv-diagnostic");
     f.move("original-after-diagnostic", "inline-diagnostic", "message");
     expect(service.get(f.ctx, q.id).readOnly).toBe(false);
     f.move("later-fork", "anchor-inline", "message");
@@ -271,8 +271,8 @@ test("diagnostic chains preserve ancestor and sibling ownership", async () => {
     const s = new QuestionService();
     f.move("anchor-chain", "root", "message");
     const q = await s.ask(f.ctx, { text: "Choose" });
-    f.move("d1", "anchor-chain", "custom", "die-diagnostic");
-    f.move("d2", "d1", "custom", "die-diagnostic");
+    f.move("d1", "anchor-chain", "custom", "bruv-diagnostic");
+    f.move("d2", "d1", "custom", "bruv-diagnostic");
     f.move("original-chain", "d2", "message");
     f.navigate("anchor-chain");
     expect(s.get(f.ctx, q.id).readOnly).toBe(true);
@@ -290,7 +290,7 @@ test("a question anchored on a diagnostic still has a distinct owner", async () 
   const f = fixture();
   try {
     const s = new QuestionService();
-    f.move("diagnostic-owner", "root", "custom", "die-diagnostic");
+    f.move("diagnostic-owner", "root", "custom", "bruv-diagnostic");
     const q = await s.ask(f.ctx, { text: "Diagnostic leaf" });
     f.move("owned-child", "diagnostic-owner", "message");
     expect(s.get(f.ctx, q.id).readOnly).toBe(false);
@@ -307,8 +307,8 @@ test("asking after diagnostic-only children keeps the conversation anchor, not a
   const f = fixture();
   try {
     const service = new QuestionService();
-    f.move("diagnostic", "root", "custom", "die-diagnostic");
-    f.move("diagnostic-chain", "diagnostic", "custom", "die-diagnostic");
+    f.move("diagnostic", "root", "custom", "bruv-diagnostic");
+    f.move("diagnostic-chain", "diagnostic", "custom", "bruv-diagnostic");
     f.navigate("root");
     const question = await service.ask(f.ctx, { text: "Human choice?" });
     expect(question.owner.branchId).toBe("root");

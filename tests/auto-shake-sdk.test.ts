@@ -92,7 +92,7 @@ async function fixture(model: any, manager: SessionManager, dir: string) {
     noSkills: true,
     noThemes: true,
     noPromptTemplates: true,
-    extensionFactories: [{ name: "die-tasks", factory: tasks }],
+    extensionFactories: [{ name: "bruv-tasks", factory: tasks }],
   });
   await loader.reload();
   const created = await createAgentSession({
@@ -115,7 +115,7 @@ async function fixture(model: any, manager: SessionManager, dir: string) {
 function shakeEntries(manager: SessionManager): any[] {
   return manager
     .getEntries()
-    .filter((entry: any) => entry.type === "custom" && entry.customType === "die-manual-shake");
+    .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-manual-shake");
 }
 
 for (const [name, baseModel] of [
@@ -123,7 +123,7 @@ for (const [name, baseModel] of [
   ["Codex", getModel("openai-codex", "gpt-5.6-luna")!],
 ] as const) {
   test(name + " automatic threshold shake wins over compaction and continues the prompt", async () => {
-    const dir = await mkdtemp("/var/tmp/die-auto-shake-sdk-");
+    const dir = await mkdtemp("/var/tmp/bruv-auto-shake-sdk-");
     let session: any;
     try {
       const model = { ...baseModel, contextWindow: 12000, maxTokens: 4000 };
@@ -159,7 +159,7 @@ for (const [name, baseModel] of [
 }
 
 test("overflow-triggered automatic shake retries the provider once instead of ending the turn", async () => {
-  const dir = await mkdtemp("/var/tmp/die-auto-shake-overflow-");
+  const dir = await mkdtemp("/var/tmp/bruv-auto-shake-overflow-");
   let session: any;
   try {
     const model = { ...getModel("openai", "gpt-4o")!, contextWindow: 12000, maxTokens: 4000 };
@@ -193,7 +193,7 @@ test("overflow-triggered automatic shake retries the provider once instead of en
 }, 10_000);
 
 test("a preview below 75 percent leaves history untouched when the existing compaction path cancels", async () => {
-  const dir = await mkdtemp("/var/tmp/die-auto-shake-reject-");
+  const dir = await mkdtemp("/var/tmp/bruv-auto-shake-reject-");
   let session: any;
   try {
     const model = { ...getModel("openai", "gpt-4o")!, contextWindow: 12000, maxTokens: 4000 };

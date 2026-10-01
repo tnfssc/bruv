@@ -4,12 +4,12 @@ import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
 import { run } from "./helpers";
 
-const enabled = process.env.DIE_RUN_LLM_TESTS === "1";
+const enabled = process.env.BRUV_RUN_LLM_TESTS === "1";
 test.skipIf(!enabled)(
   "Escape cancels execute waiting while its managed job survives and resumes",
   async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-interrupt-ux-"));
-    const socket = "die-interrupt-ux-" + process.pid + "-" + Date.now();
+    const dir = await mkdtemp(join(tmpdir(), "bruv-interrupt-ux-"));
+    const socket = "bruv-interrupt-ux-" + process.pid + "-" + Date.now();
     const tmux = (...args: string[]) =>
       run(["tmux", "-L", socket, "-f", resolve(import.meta.dir, "../scripts/tmux.conf"), ...args]);
     const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
@@ -43,9 +43,9 @@ test.skipIf(!enabled)(
       );
       const launch = [
         "env",
-        "DIE_SUBAGENT_DEPTH=0",
-        "DIE_SUBAGENT_TYPE=",
-        resolve(import.meta.dir, "../dist/die"),
+        "BRUV_SUBAGENT_DEPTH=0",
+        "BRUV_SUBAGENT_TYPE=",
+        resolve(import.meta.dir, "../dist/bruv"),
         "--session",
         file,
         "--provider",
@@ -53,7 +53,7 @@ test.skipIf(!enabled)(
         "--model",
         "gpt-5.6-luna",
         "--thinking",
-        process.env.DIE_UX_THINKING ?? "minimal",
+        process.env.BRUV_UX_THINKING ?? "minimal",
       ]
         .map(quote)
         .join(" ");

@@ -260,14 +260,14 @@ class RpcPort implements RootSessionPort {
     readonly socket: string,
     readonly token: string,
   ) {
-    const env = { ...process.env, DIE_ROOT_RUNTIME_SOCKET: socket, DIE_ROOT_RUNTIME_TOKEN: token };
+    const env = { ...process.env, BRUV_ROOT_RUNTIME_SOCKET: socket, BRUV_ROOT_RUNTIME_TOKEN: token };
     // A placed root never inherits a child role or a parent's routed worker bridge.
     for (const key of Object.keys(env))
       if (
-        key.startsWith("DIE_SUBAGENT_") ||
-        key.startsWith("DIE_REMOTE_RUNTIME_") ||
-        key.startsWith("DIE_T3_") ||
-        key === "DIE_REMOTE_RUNTIME_STATE"
+        key.startsWith("BRUV_SUBAGENT_") ||
+        key.startsWith("BRUV_REMOTE_RUNTIME_") ||
+        key.startsWith("BRUV_T3_") ||
+        key === "BRUV_REMOTE_RUNTIME_STATE"
       )
         delete (env as Record<string, string | undefined>)[key];
     this.child = spawn(executable, args, { cwd, env, stdio: ["pipe", "pipe", "pipe"] });
@@ -584,7 +584,7 @@ export async function runRootOwner(
     else {
       const socket = join(
         tmpdir(),
-        "die-root-" + createHash("sha256").update(initial.ownerClaim!).digest("hex").slice(0, 16) + ".sock",
+        "bruv-root-" + createHash("sha256").update(initial.ownerClaim!).digest("hex").slice(0, 16) + ".sock",
       );
       if (Buffer.byteLength(socket) > 100) throw Error("Root private IPC socket path exceeds Unix limit");
       const sessionFile = join(store.path(sessionId), "session.jsonl");

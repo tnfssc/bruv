@@ -253,7 +253,7 @@ describe("manual shake marker validation and bounds", () => {
 
 describe("manual shake durability and SDK projection", () => {
   test("survives JSONL reload, is branch-scoped, and serializes through the real SDK converter", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-shake-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-shake-"));
     try {
       const manager = SessionManager.create(dir, dir);
       const before = manager.appendMessage({ role: "user", content: "before", timestamp: 1 });
@@ -298,7 +298,7 @@ describe("manual shake durability and SDK projection", () => {
   });
 
   test("plain summary and shaken retained tail survive SDK JSONL reload", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-shake-compact-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-shake-compact-"));
     try {
       const manager = SessionManager.create(dir, dir);
       manager.appendMessage({ role: "user", content: "old", timestamp: 1 });

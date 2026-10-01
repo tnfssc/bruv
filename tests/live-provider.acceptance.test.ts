@@ -4,7 +4,7 @@ import { VoiceSession } from "../src/live/session";
 import { orchestrationTools } from "../src/live/orchestration";
 
 // Explicit paid opt-in. Uses canonical provider auth; never imports a file or opens devices.
-test.skipIf(process.env.DIE_RUN_GEMINI_LIVE_ACCEPTANCE !== "1")(
+test.skipIf(process.env.BRUV_RUN_GEMINI_LIVE_ACCEPTANCE !== "1")(
   "real Gemini accepts the native Live SDK session configuration",
   async () => {
     const controller = new AbortController();

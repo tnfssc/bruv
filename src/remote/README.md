@@ -13,7 +13,7 @@ await subagent({
 });
 ```
 
-Target is separate from role and workspace. Omit target for current-runtime execution: local roots stay local; deliberately server-placed agents keep descendants there. No per-task SSH connection ceremony. The destination uses its installed Die and configured profile/model. Placement never resets delegation depth or turns workers into orchestrators.
+Target is separate from role and workspace. Omit target for current-runtime execution: local roots stay local; deliberately server-placed agents keep descendants there. No per-task SSH connection ceremony. The destination uses its installed Bruv and configured profile/model. Placement never resets delegation depth or turns workers into orchestrators.
 
 Use normal jobs to observe, inspect and cancel, and ordinary human questions to answer decisions. Refresh and safe repository return happen automatically. Closing the client detaches; reopening observes the same saved task. An unreachable run is unknown, not failed and not permission to launch a duplicate. Agent remote.launch/launchRepository helpers reject: all routine launches pass normal delegation policy.
 
@@ -29,7 +29,7 @@ The commands below are retained for explicit setup and backend diagnosis, not th
 
 In the normal interactive CLI, `/remote` opens a searchable inbox (type to filter, arrows, Enter; Esc backs without changes). Pending questions open selectable choices or a custom answer editor; tasks show readable prompt/state and a cached transcript, with explicit sync, reconciliation and confirmed cancellation where available. Transcript pages show readable user/assistant turns and tool calls/results, numbered cached events, next offsets and gap warnings. Use `/remote transcript [taskId] [offset] raw` to inspect original event JSON explicitly; the machine `remote.transcript` operation always returns original events (50 per page). Offline controls are labeled unavailable; saved uncertain answers are not offered as new unanswered questions. Command completion supplies task/question labels with stable IDs. Explicit commands remain available.
 
-- `/remote connect fixture-owner /usr/local/bin/die`: choose an already configured SSH alias (our acceptance fixture is disposable Docker Linux). Server normal model/profile is reported. Discovery does not copy credentials or verify provider access.
+- `/remote connect fixture-owner /usr/local/bin/bruv`: choose an already configured SSH alias (our acceptance fixture is disposable Docker Linux). Server normal model/profile is reported. Discovery does not copy credentials or verify provider access.
 - `/remote launch <absolute-remote-repo> <prompt>` uses an existing remote checkout.
 - `/remote launch-repo <prompt>` snapshots current-repo tracked staged/unstaged work, without changing the local index/work or sending local history. Untracked paths require human approval; default/refusal omits them. `/remote launch-repo-json` accepts an object with prompt, optional include path array, taskId, model and thinking. Known credential/config paths are rejected; this is not content secret scanning.
 - Active work refreshes automatically in bounded batches. Closing the client detaches, not cancels. Reopening catches up from the saved cursor. Progress, questions, capability needs, completion, safe return/review and text-artifact availability appear in the conversation.

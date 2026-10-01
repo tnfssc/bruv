@@ -16,8 +16,8 @@ const usage = {
 };
 
 test("real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-preview-pty-"));
-  const socket = "die-preview-" + process.pid + "-" + Date.now();
+  const home = await mkdtemp(join(tmpdir(), "bruv-preview-pty-"));
+  const socket = "bruv-preview-" + process.pid + "-" + Date.now();
   const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
   const key = (...keys: string[]) => tmux("send-keys", "-t", "preview", ...keys);
   const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
@@ -85,11 +85,11 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
         omittedAttention: 0,
       },
     );
-    const binary = resolve(import.meta.dir, "../dist/die");
+    const binary = resolve(import.meta.dir, "../dist/bruv");
     const launch = [
       "env",
       "HOME=" + home,
-      "DIE_CODING_AGENT_DIR=" + join(home, ".die", "agent"),
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       "OPENAI_API_KEY=offline-test-placeholder",
       binary,
       "--offline",

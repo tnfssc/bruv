@@ -1,17 +1,17 @@
 # Source-only companion to the full-tier compiled proof; no dist fallback.
 import os, pty, subprocess, tempfile, json, time, select, re, pathlib, shutil
 command=[os.environ['BUN_BIN'], os.path.abspath('src/cli.ts')]
-home=tempfile.mkdtemp(prefix='die-remote-pty-')
-root=pathlib.Path(home)/'.die/remote'; grants=root/'capability-grants'; grants.mkdir(parents=True)
+home=tempfile.mkdtemp(prefix='bruv-remote-pty-')
+root=pathlib.Path(home)/'.bruv/remote'; grants=root/'capability-grants'; grants.mkdir(parents=True)
 (root/'state.json').write_text(json.dumps({'tasks':{'proof1':{'taskId':'proof1','host':'unreachable.invalid','ownerId':'owner1','epoch':'epoch1','prompt':'Offline proof task','repoPath':home,'outcome':'accepted','events':[],'task':{'state':'done'}}}}))
 (grants/'grant_proof.json').write_text(json.dumps({'id':'grant_proof','taskId':'proof1','repoRoot':home,'kinds':['repo.read']}))
 # Match the source renderer layout used by live-spoken-tui.test.ts.
 version=json.loads(pathlib.Path('package.json').read_text())['version']
-runtime=pathlib.Path(home)/'.die/runtime'/version
+runtime=pathlib.Path(home)/'.bruv/runtime'/version
 theme=runtime/'dist/modes/interactive/theme'
 theme.parent.mkdir(parents=True,exist_ok=True)
 theme.symlink_to(runtime/'theme',target_is_directory=True)
-master,slave=pty.openpty(); env=dict(os.environ,HOME=home,TERM='xterm-256color',NO_COLOR='1'); env.pop('DIE_REMOTE_RUNTIME_STATE',None); env.pop('OPENAI_API_KEY',None)
+master,slave=pty.openpty(); env=dict(os.environ,HOME=home,TERM='xterm-256color',NO_COLOR='1'); env.pop('BRUV_REMOTE_RUNTIME_STATE',None); env.pop('OPENAI_API_KEY',None)
 # Inherit the selective runner process group so cancellation reaches the CLI too.
 p=subprocess.Popen(command+['--offline','--no-approve','--model','openai/gpt-4o-mini'],stdin=slave,stdout=slave,stderr=slave,env=env); os.close(slave)
 transcript=bytearray()

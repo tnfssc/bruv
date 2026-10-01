@@ -37,7 +37,7 @@ import { rootSshTransport } from "./root-transport";
 const hash = (x: string | Buffer) => createHash("sha256").update(x).digest("hex");
 const CHUNK = 256 * 1024,
   MAX = 32 * 1024 * 1024;
-export type RootTarget = { name: string; host: string; diePath: string; ownerId: string; epoch: string };
+export type RootTarget = { name: string; host: string; bruvPath: string; ownerId: string; epoch: string };
 export type RootClientOptions = {
   target: RootTarget;
   cwd: string;
@@ -117,7 +117,7 @@ export class RootClient {
       timeout: 10_000,
     });
     if (sourceRoot.exitCode === 0) cwd = realpathSync(sourceRoot.stdout.toString().trim());
-    const base = options.stateDir ?? join(homedir(), ".die", "remote", "roots");
+    const base = options.stateDir ?? join(homedir(), ".bruv", "remote", "roots");
     mkdirSync(base, { recursive: true, mode: 0o700 });
     chmodSync(base, 0o700);
     const key = hash(options.target.name + "\0" + cwd);
@@ -235,10 +235,10 @@ export class RootClient {
     return next;
   }
   private async request(state: RootLocalState, request: RootRequest): Promise<any> {
-    const h = object(await this.transport(state.target.host, state.target.diePath, { op: "hello" }));
+    const h = object(await this.transport(state.target.host, state.target.bruvPath, { op: "hello" }));
     if (h.ownerId !== state.target.ownerId || h.epoch !== state.target.epoch)
       throw Error("Remote root owner/epoch changed; request refused");
-    return object(await this.transport(state.target.host, state.target.diePath, request));
+    return object(await this.transport(state.target.host, state.target.bruvPath, request));
   }
   private identity(s: RootLocalState) {
     return { ownerId: s.intent.ownerId, epoch: s.intent.epoch, sessionId: s.intent.sessionId };

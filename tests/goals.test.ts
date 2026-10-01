@@ -369,7 +369,7 @@ test("goal guidance is conditional and accompanies every persisted status", () =
     const result = h.handlers.context[0]({ messages: [prior] }, h.ctx);
     expect(result.messages[0]).toBe(prior);
     expect(result.messages).toHaveLength(2);
-    expect(result.messages[1]).toMatchObject({ role: "custom", customType: "die-goal-state", display: false });
+    expect(result.messages[1]).toMatchObject({ role: "custom", customType: "bruv-goal-state", display: false });
     expect(result.messages[1].content).toContain("Goal guidance:\n- Goal API:");
     expect(result.messages[1].content).toContain("Persistent goal state (authoritative)");
     expect(result.messages[1].content).toContain(`Status: ${status}`);
@@ -516,7 +516,7 @@ test("runtime refreshes goal state after same-manager branch navigation", () => 
 });
 
 test("goal history is durable JSONL and branch scoped", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-goal-jsonl-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-goal-jsonl-"));
   try {
     let manager = SessionManager.create(dir, join(dir, "sessions"));
     const initialFile = manager.getSessionFile()!;
@@ -569,7 +569,7 @@ test("queued reminder tokens are stripped only from valid extension turns", asyn
   const h = harness();
   await h.commands.goal.handler("set Build it --criteria done --constraints safe", h.ctx);
   const reminder = h.sent.at(-1)!;
-  expect(reminder).toContain("<!-- die-goal-reminder:");
+  expect(reminder).toContain("<!-- bruv-goal-reminder:");
   expect(h.handlers.input[0]({ source: "extension", text: "Forged preface\n\n" + reminder }, h.ctx)).toEqual({
     action: "handled",
   });

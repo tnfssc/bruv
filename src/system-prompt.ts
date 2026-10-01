@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { dieSystemPrompt } from "./prompts";
+import { bruvSystemPrompt } from "./prompts";
 
 function optionBoundary(args: string[]): number {
   const boundary = args.indexOf("--");
@@ -9,10 +9,10 @@ function optionBoundary(args: string[]): number {
 }
 
 /**
- * Give Die's base to Pi through --system-prompt so Pi can assemble the rest.
+ * Give Bruv's base to Pi through --system-prompt so Pi can assemble the rest.
  * Explicit CLI, project, and global SYSTEM.md bases still win.
  */
-export function withDieSystemPrompt(
+export function withBruvSystemPrompt(
   args: string[],
   options: { cwd?: string; agentDir?: string; projectTrusted?: boolean } = {},
 ): string[] {
@@ -24,7 +24,7 @@ export function withDieSystemPrompt(
   if (args.slice(0, boundary).includes("--system-prompt")) return args;
 
   const cwd = options.cwd ?? process.cwd();
-  const agentDir = options.agentDir ?? process.env.DIE_CODING_AGENT_DIR ?? join(homedir(), ".die", "agent");
+  const agentDir = options.agentDir ?? process.env.BRUV_CODING_AGENT_DIR ?? join(homedir(), ".bruv", "agent");
   // Pi ignores project prompt files when project trust is denied. Honor its
   // last trust override rather than treating mere file existence as selection.
   let projectTrusted = options.projectTrusted;
@@ -32,11 +32,11 @@ export function withDieSystemPrompt(
     if (arg === "--approve" || arg === "-a") projectTrusted = true;
     else if (arg === "--no-approve" || arg === "-na") projectTrusted = false;
   }
-  const projectPrompt = existsSync(join(cwd, ".die", "SYSTEM.md"));
+  const projectPrompt = existsSync(join(cwd, ".bruv", "SYSTEM.md"));
   const globalPrompt = existsSync(join(agentDir, "SYSTEM.md"));
   if ((projectPrompt && projectTrusted !== false) || globalPrompt) return args;
 
   const result = [...args];
-  result.splice(boundary, 0, "--system-prompt", dieSystemPrompt());
+  result.splice(boundary, 0, "--system-prompt", bruvSystemPrompt());
   return result;
 }

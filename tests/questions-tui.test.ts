@@ -10,8 +10,8 @@ const hasTmux = (await run(["sh", "-c", "command -v tmux >/dev/null"])).code ===
 test.skipIf(!hasTmux)(
   "real TUI keeps questions near composer after progress, cancellation and reload",
   async () => {
-    const home = await mkdtemp(join(tmpdir(), "die-questions-tui-"));
-    const socket = "die-questions-" + process.pid + "-" + Date.now(),
+    const home = await mkdtemp(join(tmpdir(), "bruv-questions-tui-"));
+    const socket = "bruv-questions-" + process.pid + "-" + Date.now(),
       name = "questions";
     const seed = SessionManager.create(home, join(home, "sessions"));
     seed.appendCustomEntry("question-test", { seed: true });
@@ -65,12 +65,12 @@ test.skipIf(!hasTmux)(
       const launch = [
         "env",
         "-u",
-        "DIE_SUBAGENT_DEPTH",
+        "BRUV_SUBAGENT_DEPTH",
         "-u",
-        "DIE_SUBAGENT_TYPE",
+        "BRUV_SUBAGENT_TYPE",
         "HOME=" + home,
         "OPENAI_API_KEY=offline-test-placeholder",
-        resolve(import.meta.dir, "../dist/die"),
+        resolve(import.meta.dir, "../dist/bruv"),
         "--offline",
         "--no-approve",
         "--session",
@@ -93,7 +93,7 @@ test.skipIf(!hasTmux)(
       expect(detailFrame).toContain("Need the next audio test");
       expect(detailFrame).toContain(q.id.slice(0, 10) + " [pending");
       expect(detailFrame).not.toContain(q.id + " [pending");
-      if (process.env.DIE_QUESTIONS_FRAME) await writeFile(process.env.DIE_QUESTIONS_FRAME, detailFrame);
+      if (process.env.BRUV_QUESTIONS_FRAME) await writeFile(process.env.BRUV_QUESTIONS_FRAME, detailFrame);
       await send("/questions cancel " + second.id);
       await until("1 /questions");
       await tmux("kill-session", "-t", name);

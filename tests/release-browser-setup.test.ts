@@ -10,7 +10,7 @@ afterEach(() => {
 });
 
 function setup(mode: string) {
-  const root = mkdtempSync(join(tmpdir(), "die-browser-setup-"));
+  const root = mkdtempSync(join(tmpdir(), "bruv-browser-setup-"));
   fixtures.push(root);
   const bin = join(root, "bin");
   mkdirSync(bin);

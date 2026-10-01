@@ -13,20 +13,20 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import tasks from "../src/agent/extension";
 
-test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
+test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
   "native Codex live checkpoint and disk-resumed recall",
   async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-native-live-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-native-live-"));
     const artifact = resolve("artifacts/compaction/native-live-" + Date.now() + ".json");
     const evidence: any = { phase: "setup", requests: [], notices: [] };
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     let restoreNotify = () => {};
     try {
       const model = getModels("openai-codex").find(
-        (m) => m.id === (process.env.DIE_COMPACTION_MODEL ?? "gpt-5.6-luna"),
+        (m) => m.id === (process.env.BRUV_COMPACTION_MODEL ?? "gpt-5.6-luna"),
       );
-      if (!model) throw Error("Unknown DIE_COMPACTION_MODEL");
-      const agentDir = process.env.DIE_CODING_AGENT_DIR ?? join(homedir(), ".die", "agent");
+      if (!model) throw Error("Unknown BRUV_COMPACTION_MODEL");
+      const agentDir = process.env.BRUV_CODING_AGENT_DIR ?? join(homedir(), ".bruv", "agent");
       const runtime = await ModelRuntime.create({
         authPath: join(agentDir, "auth.json"),
         modelsPath: null,
@@ -97,7 +97,7 @@ test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
                 });
               },
             },
-            { name: "die-tasks", factory: tasks },
+            { name: "bruv-tasks", factory: tasks },
           ],
         });
         await loader.reload();

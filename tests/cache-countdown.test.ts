@@ -58,13 +58,13 @@ describe("cache countdown", () => {
     countdown.restore(
       context("p", "m", [
         { type: "custom", customType: CACHE_CALL_ENTRY, data: { timestamp: 1000, provider: "p", model: "m" } },
-        { type: "custom", customType: "die-manual-shake", data: {} },
+        { type: "custom", customType: "bruv-manual-shake", data: {} },
       ]),
     );
     expect(countdown.estimate(context("p", "m"), 3000).state).toBe("unknown");
     countdown.restore(
       context("p", "m", [
-        { type: "custom", customType: "die-manual-shake", data: {} },
+        { type: "custom", customType: "bruv-manual-shake", data: {} },
         { type: "custom", customType: CACHE_CALL_ENTRY, data: { timestamp: 2000, provider: "p", model: "m" } },
       ]),
     );
@@ -80,7 +80,7 @@ describe("cache countdown", () => {
     expect(() => parseCacheSettings({ cacheTtlMs: 60000, extra: true })).toThrow("unknown setting");
   });
   test("public command persists separately and records observed attempts", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-cache-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-cache-"));
     const path = join(dir, "cache-settings.json"),
       userPath = join(dir, "settings.json");
     try {
@@ -251,7 +251,7 @@ describe("cache countdown", () => {
     ).toBe(true);
   });
   test("warns about corrupt cache settings without changing them", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-cache-corrupt-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-cache-corrupt-"));
     const path = join(dir, "cache-settings.json");
     try {
       const corrupt = "{ definitely not json";

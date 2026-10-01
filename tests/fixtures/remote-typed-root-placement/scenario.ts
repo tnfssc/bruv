@@ -32,14 +32,14 @@ export function response(body: RequestBody): object {
     log +
     '").text():"")+JSON.stringify({phase:"' +
     phase +
-    '",cwd:process.cwd(),role:process.env.DIE_SUBAGENT_TYPE??"root",depth:Number(process.env.DIE_SUBAGENT_DEPTH??0)})+"\\n");';
+    '",cwd:process.cwd(),role:process.env.BRUV_SUBAGENT_TYPE??"root",depth:Number(process.env.BRUV_SUBAGENT_DEPTH??0)})+"\\n");';
   if (body.model === "typed-root-normal") {
     if (!called(body, "root-normal-" + side))
       return execute(
         "root-normal-" + side,
         "const p=await shell(" +
           JSON.stringify(
-            'set -eu; test "$DIE_SUBAGENT_TYPE" = normal; test "$DIE_SUBAGENT_DEPTH" = 1; test -f /opt/fixture/typed-root-host; test -f .git; grep -qx "' +
+            'set -eu; test "$BRUV_SUBAGENT_TYPE" = normal; test "$BRUV_SUBAGENT_DEPTH" = 1; test -f /opt/fixture/typed-root-host; test -f .git; grep -qx "' +
               expected +
               '" tracked.txt; test ! -e never-upload.txt; test "$(git rev-list --count HEAD)" = 1; ' +
               (drift ? 'grep -qx "ROOT_INCLUDED_BY_HUMAN" authorized.txt; ' : "test ! -e authorized.txt; ") +
@@ -68,7 +68,7 @@ export function response(body: RequestBody): object {
     if (!called(body, "root-reply-loss"))
       return execute(
         "root-reply-loss",
-        'const fs=require("node:fs");fs.appendFileSync("/tmp/root-reply-loss-work.jsonl",JSON.stringify({role:process.env.DIE_SUBAGENT_TYPE??"root",depth:Number(process.env.DIE_SUBAGENT_DEPTH??0),cwd:process.cwd()})+"\\n");console.log("ROOT_REPLY_LOSS_WORK_ONCE");',
+        'const fs=require("node:fs");fs.appendFileSync("/tmp/root-reply-loss-work.jsonl",JSON.stringify({role:process.env.BRUV_SUBAGENT_TYPE??"root",depth:Number(process.env.BRUV_SUBAGENT_DEPTH??0),cwd:process.cwd()})+"\\n");console.log("ROOT_REPLY_LOSS_WORK_ONCE");',
       );
     return say("ROOT_REPLY_LOSS_DONE");
   }
@@ -78,7 +78,7 @@ export function response(body: RequestBody): object {
       "root-start-" + side,
       "const p=await shell(" +
         JSON.stringify(
-          'set -eu; test "${DIE_SUBAGENT_TYPE:-root}" = root; test "${DIE_SUBAGENT_DEPTH:-0}" = 0; test -f /opt/fixture/typed-root-host; grep -qx "' +
+          'set -eu; test "${BRUV_SUBAGENT_TYPE:-root}" = root; test "${BRUV_SUBAGENT_DEPTH:-0}" = 0; test -f /opt/fixture/typed-root-host; grep -qx "' +
             expected +
             '" tracked.txt; test ! -e never-upload.txt; test "$(git rev-list --count HEAD)" = 1; ' +
             (drift ? 'grep -qx "ROOT_INCLUDED_BY_HUMAN" authorized.txt; ' : "test ! -e authorized.txt; ") +
