@@ -311,7 +311,10 @@ test("matching chunked SSE returns and cancels without remote EOF", async () => 
 });
 
 test("close aborts initialize, waits for settlement, then deletes an acquired session", async () => {
-  let initializeStarted = false;
+  let sessionHeaderReceived!: () => void;
+  const acquiredSessionHeader = new Promise<void>((resolve) => {
+    sessionHeaderReceived = resolve;
+  });
   const order: string[] = [];
   const endpoint = listen(async (request) => {
     if (request.method === "DELETE") {
@@ -324,7 +327,6 @@ test("close aborts initialize, waits for settlement, then deletes an acquired se
     return new Response(
       new ReadableStream({
         start(controller) {
-          initializeStarted = true;
           order.push("initialize-body");
           controller.enqueue(new TextEncoder().encode(" "));
         },
@@ -340,12 +342,38 @@ test("close aborts initialize, waits for settlement, then deletes an acquired se
       },
     );
   });
-  const client = new T3McpClient(endpoint, "token");
-  const pending = client.initialize().catch((error) => error);
-  while (!initializeStarted) await Bun.sleep(1);
-  await client.close();
-  expect(await pending).toBeInstanceOf(Error);
-  expect(order.indexOf("delete")).toBeGreaterThan(order.indexOf("settled"));
+  const nativeFetch = globalThis.fetch;
+  const fetchSpy = spyOn(globalThis, "fetch").mockImplementation((async (input, init) => {
+    const response = await nativeFetch(input, init);
+    if (init?.method !== "POST") return response;
+    const headers = new Proxy(response.headers, {
+      get(target, property) {
+        if (property === "get")
+          return (name: string) => {
+            const value = target.get(name);
+            if (name === "mcp-session-id" && value === "close-init-session") sessionHeaderReceived();
+            return value;
+          };
+        const value = Reflect.get(target, property, target);
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
+    return new Proxy(response, {
+      get(target, property) {
+        return property === "headers" ? headers : Reflect.get(target, property, target);
+      },
+    });
+  }) as typeof fetch);
+  try {
+    const client = new T3McpClient(endpoint, "token");
+    const pending = client.initialize().catch((error) => error);
+    await acquiredSessionHeader;
+    await client.close();
+    expect(await pending).toBeInstanceOf(Error);
+    expect(order.indexOf("delete")).toBeGreaterThan(order.indexOf("settled"));
+  } finally {
+    fetchSpy.mockRestore();
+  }
 });
 
 test("close during a tool body prevents success and releases the session", async () => {

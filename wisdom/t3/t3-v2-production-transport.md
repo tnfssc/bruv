@@ -45,3 +45,7 @@ TypeScript verification: `bunx tsc --noEmit`. Diff whitespace verification: `git
 
 ## Integration followup
 Coordinator added split-CRLF/multiline SSE regression and normalization repair, independent cancellation of shared initialize waiters with owned handshake tracking, and fail-closed empty scoped variables. Client/tests formatted. Focused transport16 tests/55 assertions plus source verifier1 test/5 assertions pass. This remains preparatory transport, not an enabled native-job implementation.
+
+## CI close/initialize fixture follow-up
+
+The close-during-initialize fixture must synchronize after the client reads the `mcp-session-id` response header, not when the server stream starts: server `ReadableStream.start` can run before the client has received headers or recorded the session. The regression test wraps native fetch and signals on that header read, then retains its settlement-before-DELETE and session-ID assertions. CI 36872054281 failed on the earlier premature checkpoint; this was a test premise race, not evidence of a production session leak.
