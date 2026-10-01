@@ -177,7 +177,7 @@ describe("release automation", () => {
     expect(workflow).toContain("--live-helper=./artifacts/release/mac-helper/live-audio");
     expect(workflow).toContain("stable-release-assets");
     expect(workflow).toContain("needs: [release, linux-browser-boot, mac-release-smoke, prepare-manual]");
-    expect(workflow).toContain("bun scripts/verify-v071-update.ts dist/release/bruv-darwin-arm64");
+    expect(workflow).toContain("bun scripts/verify-update.ts dist/release/bruv-darwin-arm64");
     expect(workflow).toContain("--live-self-test");
     expect(workflow).toContain("permissions:\n  contents: read");
     expect(workflow).toContain("contents: write");
@@ -254,7 +254,7 @@ describe("release automation", () => {
     expect(setup).toContain("install-deps chromium");
     expect(browserCommands).toContain("bun integrations/t3/gates/release-browser-boot.ts dist/release/bruv-linux-x64");
     const macCommands = workflow.jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");
-    expect(macCommands).toContain("verify-v071-update.ts");
+    expect(macCommands).toContain("verify-update.ts");
     expect(macCommands).toContain("--live-self-test");
     expect(macCommands).not.toContain('"type":"start"');
   });
@@ -423,15 +423,15 @@ test("full CI and release retain the same web validation union", async () => {
   expect(workflow).toContain("bun run smoke -- --reuse-build");
 });
 
-test("full Linux fetches the exact updater fixture without all history", async () => {
+test("full Linux does not fetch a legacy updater fixture", async () => {
   const workflow = Bun.YAML.parse(await read(".github/workflows/ci.yml")) as any;
   const checkout = (job: any) => job.steps.find((step: any) => step.uses?.startsWith("actions/checkout@"));
   expect(checkout(workflow.jobs.test).with["fetch-depth"]).toBe(1);
   expect(
     workflow.jobs.test.steps.some(
-      (step: any) => step.run === "git fetch --no-tags --depth=1 origin refs/tags/v0.7.1:refs/tags/v0.7.1",
+      (step: any) => typeof step.run === "string" && /git fetch.*refs\/tags\/v0\.7\.1/.test(step.run),
     ),
-  ).toBe(true);
+  ).toBe(false);
   expect(checkout(workflow.jobs.feedback).with["fetch-depth"]).toBe(0);
   expect(workflow.jobs.test.steps.find((step: any) => step.name === "Install required PTY tooling").run).toContain(
     "command -v tmux >/dev/null ||",
