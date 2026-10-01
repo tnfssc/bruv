@@ -230,3 +230,8 @@ The strongest current tests are:
 - Patch-added `PiAdapter.test.ts`: bounded die task lifecycle plus Pi subagent/workflow event normalization.
 
 What is notably absent: a current v2 projection integration test (there is no projection), task-detail/transcript tests, task navigation tests, and independent task stop/input tests.
+
+
+## TUI task-monitor assertion
+
+Stopping a task is a cancellation, not a failure: real-UI tests should assert the rendered cancelled state. Keep terminal-status assertions aligned with the user-visible lifecycle label; do not weaken the UI check. (CI PR #14 follow-up, 2026-10-01.)
