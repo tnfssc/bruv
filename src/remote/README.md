@@ -1,8 +1,31 @@
-# Normal-session remote work
+# SSH backend for placed tasks
 
-Remote controls live in the ordinary CLI conversation. Main Live still has **execute only**. Only human `/remote connect` changes the SSH alias. Strict host-key checking stays enabled; SSH agent, X11 and credential delegation are disabled.
+## Ordinary delegation
 
-## Flow
+After one-time human setup of a pinned named SSH target, use the normal task API:
+
+```ts
+await subagent({
+  target: "fixture-owner", // exact human-authorized SSH connection name
+  type: "orchestrator",
+  prompt: "Implement and test this change on the server",
+  workspace: { kind: "worktree" },
+});
+```
+
+Target is separate from role and workspace. Omit target for current-runtime execution: local roots stay local; deliberately server-placed agents keep descendants there. No per-task SSH connection ceremony. The destination uses its installed Die and configured profile/model. Placement never resets delegation depth or turns workers into orchestrators.
+
+Use normal jobs to observe, inspect and cancel, and ordinary human questions to answer decisions. Refresh and safe repository return happen automatically. Closing the client detaches; reopening observes the same saved task. An unreachable run is unknown, not failed and not permission to launch a duplicate. Agent remote.launch/launchRepository helpers reject: all routine launches pass normal delegation policy.
+
+The SSH workspace is an isolated snapshot-backed checkout. Default source includes current tracked edits; explicit baseRef selects that source revision. Git history and credentials are not transferred. This is not equivalent to a full-history local Git worktree. Untracked paths need explicit human approval; omission is reported. Return applies only against the pinned safe parent baseline; conflicts and ambiguity stay as review artifacts.
+
+Main-agent remote attach and a fleet UI are not part of this child slice. Ownership is relative to the parent session/runtime, not a presumed laptop.
+
+Only human /remote connect changes the SSH alias. Strict host-key checking stays enabled; SSH agent, X11 and credential delegation are disabled. New local capability grants remain human-owned setup, never an automatic task answer.
+
+## Legacy expert diagnostics and setup
+
+The commands below are retained for explicit setup and backend diagnosis, not the everyday placed-task lifecycle.
 
 In the normal interactive CLI, `/remote` opens a searchable inbox (type to filter, arrows, Enter; Esc backs without changes). Pending questions open selectable choices or a custom answer editor; tasks show readable prompt/state and a cached transcript, with explicit sync, reconciliation and confirmed cancellation where available. Transcript pages show readable user/assistant turns and tool calls/results, numbered cached events, next offsets and gap warnings. Use `/remote transcript [taskId] [offset] raw` to inspect original event JSON explicitly; the machine `remote.transcript` operation always returns original events (50 per page). Offline controls are labeled unavailable; saved uncertain answers are not offered as new unanswered questions. Command completion supplies task/question labels with stable IDs. Explicit commands remain available.
 
