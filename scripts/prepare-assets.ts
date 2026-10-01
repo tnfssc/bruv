@@ -1,4 +1,4 @@
-import { preparePiHost } from "./pi-host-adaptation";
+import { piHostPatches, preparePiHost } from "./pi-host-adaptation";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -17,9 +17,11 @@ const piPackage = JSON.parse(await readFile(join(piRoot, "package.json"), "utf8"
 const sessionManagerHash = createHash("sha256")
   .update(await readFile(join(piRoot, "dist/core/session-manager.js")))
   .digest("hex");
+const sessionManagerPatch = piHostPatches.find((patch) => patch.path === "dist/core/session-manager.js");
+if (!sessionManagerPatch) throw new Error("Missing Pi session scan adaptation");
 if (
   piPackage.version !== "0.99.1" ||
-  sessionManagerHash !== "046b6a1109ac3f0ed893bb85bf0648709362fa926a5da75761216cf2fcf9d926"
+  ![sessionManagerPatch.originalSha256, sessionManagerPatch.adaptedSha256].includes(sessionManagerHash)
 ) {
   throw new Error("Unsupported Pi SessionManager: review the disk-backed history adapter before updating Pi");
 }

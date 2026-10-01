@@ -21,7 +21,7 @@ No lossy sidecar. No required new session format. Load rebuilds offset index fro
 
 Supported mode has one writer on local POSIX filesystem with hard links and atomic rename. It does not coordinate concurrent writers, independently rewritten/open hard-linked aliases, or external replacement without explicit reload. Normal appends keep Pi's synchronous, non-fsync durability semantics. No database-style power-loss transaction promise. No automatic history expiry or disk quota. User still must manage disk capacity.
 
-Project owns integration in `src/history/session-manager.ts` and `disk-entry-store.ts`. It does not patch installed dependencies. Build/check setup verifies pinned SDK version and SessionManager source hash. SDK upgrade needs direct adapter review. Private SDK entrypoints and private-field changes are not supported public APIs.
+Project owns integration in `src/history/session-manager.ts` and `disk-entry-store.ts`. The history adapter does not patch installed dependencies. A separate guarded host adaptation now fixes native resume scans: [resume scan abort](resume-scan-abort.md). Build/check setup verifies pinned SDK version and original or exact host-adapted SessionManager source hash. SDK upgrade needs direct adapter review. Private SDK entrypoints and private-field changes are not supported public APIs.
 
 ## Validation
 
