@@ -53,7 +53,13 @@ test("natural actions contain no fixture markers and keep default child target",
 });
 
 test("finished conversation stays short enough to leave actions visible", () => {
-  const final = response({model:"studio", messages:[{role:"user", content:ANSWER}, {role:"tool", tool_call_id:"write-notes", content:"ok"}]}) as {content:string};
+  const final = response({
+    model: "studio",
+    messages: [
+      { role: "user", content: ANSWER },
+      { role: "tool", tool_call_id: "write-notes", content: "ok" },
+    ],
+  }) as { content: string };
   expect(final.content.split("\n").length).toBeLessThanOrEqual(6);
   expect(final.content).toContain("Use /close");
 });

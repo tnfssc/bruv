@@ -27,7 +27,10 @@ const binary = process.env.DIE_BIN ? resolve(process.env.DIE_BIN) : "";
 const binarySource = process.env.DIE_BINARY_SOURCE;
 const expectedBinarySha = process.env.DIE_BINARY_SHA256;
 assert(binarySource && /^[0-9a-f]{40}$/.test(binarySource), "Set DIE_BINARY_SOURCE to the reviewed full source commit");
-assert(expectedBinarySha && /^[0-9a-f]{64}$/.test(expectedBinarySha), "Set DIE_BINARY_SHA256 to the reviewed binary digest");
+assert(
+  expectedBinarySha && /^[0-9a-f]{64}$/.test(expectedBinarySha),
+  "Set DIE_BINARY_SHA256 to the reviewed binary digest",
+);
 const base = process.env.REMOTE_ROOT_PLACEMENT_BASE_IMAGE ?? "die-remote-e2e-2434886-5027:latest";
 assert(
   base,
@@ -53,10 +56,17 @@ const artifacts = process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS
   ? resolve(process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS)
   : mkdtempSync(join(tmpBase, "remote-root-placement-artifacts-"));
 mkdirSync(artifacts, { recursive: true });
-assert(readdirSync(artifacts).every(name => name.startsWith("failed-")), "Choose an empty artifact directory (or one containing only preserved failed-* takes)");
+assert(
+  readdirSync(artifacts).every((name) => name.startsWith("failed-")),
+  "Choose an empty artifact directory (or one containing only preserved failed-* takes)",
+);
 const toolingSourcesSha256: Record<string, string> = {};
 mkdirSync(join(artifacts, "tooling-sources"), { recursive: true });
-for (const file of ["scripts/task-placement-clean-capture.ts", "scripts/task-placement-clean-video.py", "scripts/fixtures/task-placement-clean/scenario.ts"]) {
+for (const file of [
+  "scripts/task-placement-clean-capture.ts",
+  "scripts/task-placement-clean-video.py",
+  "scripts/fixtures/task-placement-clean/scenario.ts",
+]) {
   const contents = readFileSync(join(source, file));
   writeFileSync(join(artifacts, "tooling-sources", file.split("/").at(-1)!), contents);
   toolingSourcesSha256[file] = createHash("sha256").update(contents).digest("hex");
@@ -460,7 +470,16 @@ try {
           "Local native CLI compiled from the recorded source commit and existing archive; not a hosted release packaging claim. Tooling checkout is separate.",
         toolingCommit: run("git", ["-C", source, "rev-parse", "HEAD"]),
         toolingSourcesSha256,
-        toolingTreeDirty: !!run("git", ["-C", source, "status", "--porcelain", "--", "scripts/task-placement-clean-capture.ts", "scripts/task-placement-clean-video.py", "scripts/fixtures/task-placement-clean"]),
+        toolingTreeDirty: !!run("git", [
+          "-C",
+          source,
+          "status",
+          "--porcelain",
+          "--",
+          "scripts/task-placement-clean-capture.ts",
+          "scripts/task-placement-clean-video.py",
+          "scripts/fixtures/task-placement-clean",
+        ]),
         baseImageId: imageId,
         networkMode: "none",
         localInference: "none",
