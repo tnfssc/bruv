@@ -47,6 +47,23 @@ function padded(component: Component, padding: number): Component {
 
 export interface ExecutePreviewState {
   resultVisible?: boolean;
+  spinnerFrame?: number;
+  spinnerTimer?: ReturnType<typeof setInterval>;
+}
+
+const actionFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+export function stopExecutePreviewAnimation(state: ExecutePreviewState): void {
+  if (state.spinnerTimer) clearInterval(state.spinnerTimer);
+  state.spinnerTimer = undefined;
+}
+function startExecutePreviewAnimation(state: ExecutePreviewState | undefined, invalidate?: () => void): void {
+  if (!state || !invalidate || state.spinnerTimer || state.resultVisible) return;
+  state.spinnerFrame ??= 0;
+  state.spinnerTimer = setInterval(() => {
+    state.spinnerFrame = ((state.spinnerFrame ?? 0) + 1) % actionFrames.length;
+    invalidate();
+  }, 80);
+  state.spinnerTimer.unref?.();
 }
 
 export function executeInputPreview(
@@ -57,9 +74,11 @@ export function executeInputPreview(
   _executionStarted = true,
   padding = 0,
   label?: unknown,
+  invalidate?: () => void,
 ): Component {
+  startExecutePreviewAnimation(state, invalidate);
   const source = typeof code === "string" ? code : "";
-  const summary = actionLabel(label, source);
+  const summary = typeof label === "string" ? oneLine(label) : "";
   return padded(
     component((width) => {
       // Pi vertically composes call and result slots. Suppress the call slot once
@@ -70,7 +89,9 @@ export function executeInputPreview(
           truncateToWidth(theme.fg("toolTitle", "Execute · TypeScript"), width),
           ...foldedRows(source, width, 0, 0, true).map((line) => theme.fg("muted", line)),
         ];
-      const line = theme.fg("toolTitle", summary);
+      const line =
+        theme.fg("accent", actionFrames[state?.spinnerFrame ?? 0]!) +
+        (summary ? " " + theme.fg("toolTitle", summary) : "");
       return [truncateToWidth(line, width)];
     }),
     padding,
@@ -108,6 +129,27 @@ function statusSummary(
   return { icon: "?", color: "warning", text: "Outcome unknown" };
 }
 
+function conciseExecuteError(details: ExecuteDetails | undefined, full: string): string {
+  if (details?.cancelled) return "cancelled";
+  if (details?.timedOut) return "timed out";
+  // Formatted execute payloads can contain ordinary stdout even on failure.
+  // Use stderr (or a direct SDK exception), never promote stdout to an error.
+  const fallback = /^Execution /.test(full) ? (full.split("\nstderr:\n")[1] ?? "") : full;
+  const evidence =
+    typeof details?.imageError === "string"
+      ? details.imageError
+      : typeof details?.stderr === "string" && details.stderr.trim()
+        ? details.stderr
+        : fallback;
+  const lines = plain(evidence)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line && !/^(?:Execution (?:completed|failed)|stdout:|stderr:|at\s|\d+\s*\||[\s^|]+$)/.test(line));
+  const reason = lines.find((line) => /^(?:\w*Error|error):/.test(line)) ?? lines[0];
+  if (reason) return oneLine(reason);
+  return typeof details?.exitCode === "number" ? "exit " + details.exitCode : "failed";
+}
+
 export function executeOutputPreview(
   result: TextResult,
   expanded: boolean,
@@ -117,8 +159,12 @@ export function executeOutputPreview(
   state?: ExecutePreviewState,
   padding = 0,
   label?: unknown,
+  isPartial = false,
 ): Component {
-  if (state) state.resultVisible = true;
+  if (state) {
+    state.resultVisible = true;
+    if (!isPartial) stopExecutePreviewAnimation(state);
+  }
   const full = result.content
     .filter((part) => part.type === "text")
     .map((part) => part.text ?? "")
@@ -126,32 +172,34 @@ export function executeOutputPreview(
   const details = result.details as ExecuteDetails | undefined;
   const status = statusSummary(details, isError);
   const source = typeof code === "string" ? code : "";
-  const summary = actionLabel(label, code);
-  const imageCount = Array.isArray(details?.images)
-    ? details.images.length
-    : result.content.filter((part) => part.type === "image").length;
-  const truncated = details?.stdoutLost === true || details?.stderrLost === true;
-  const backgroundCount =
-    !details?.handoff && Array.isArray(details?.backgroundJobs) ? details.backgroundJobs.length : 0;
-  const diagnostic = [
-    truncated ? "truncated" : "",
-    details?.outputArtifactErrors ? "⚠ output save error" : "",
-    imageCount ? imageCount + " image" + (imageCount === 1 ? "" : "s") : "",
-    backgroundCount ? backgroundCount + " background" : "",
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  const summary = actionLabel(label, "");
   const handoff = typeof details?.handoff === "string" ? details.handoff.trim() : "";
   return padded(
     component((width) => {
       if (width < 1) return [];
+      if (!expanded && isPartial) {
+        const caption = typeof label === "string" ? oneLine(label) : "";
+        return [
+          truncateToWidth(
+            theme.fg("accent", actionFrames[state?.spinnerFrame ?? 0]!) +
+              (caption ? " " + theme.fg("toolTitle", caption) : ""),
+            width,
+          ),
+        ];
+      }
       if (!expanded && handoff && status.color === "success") {
         const prefix = "↪ ";
         const rows = foldedRows(handoff, Math.max(1, width - prefix.length), 0, 0, true).map((line, index) =>
           truncateToWidth((index === 0 ? theme.fg("success", prefix) : " ".repeat(prefix.length)) + line, width),
         );
-        return truncated || details?.outputArtifactErrors
-          ? [truncateToWidth(theme.fg("warning", diagnostic), width), ...rows]
+        return details?.outputArtifactErrors
+          ? [
+              truncateToWidth(
+                theme.fg("success", "✓ " + summary) + theme.fg("warning", " — ⚠ couldn’t save full output"),
+                width,
+              ),
+              ...rows,
+            ]
           : rows;
       }
       if (expanded) {
@@ -164,11 +212,15 @@ export function executeOutputPreview(
         if (details?.outputArtifactErrors) lines.push(theme.fg("warning", "… execute could not save all output"));
         return lines.map((line) => truncateToWidth(line, width));
       }
-      const suffix = [diagnostic, summary].filter(Boolean).join(" · ");
-      const line = status.text
-        ? theme.fg(status.color, status.icon + " " + status.text) + theme.fg("muted", " · " + suffix)
-        : theme.fg("toolTitle", suffix);
-      return [truncateToWidth(line, width)];
+      const failed = status.color === "error";
+      const reason = failed ? conciseExecuteError(details, full) : status.text;
+      const row = theme.fg(
+        failed ? "error" : status.color,
+        (failed ? "✗" : status.color === "success" ? "✓" : "?") + " " + summary,
+      );
+      const warning = details?.outputArtifactErrors ? "⚠ couldn’t save full output" : "";
+      const suffix = [reason, warning].filter(Boolean).join(" — ");
+      return [truncateToWidth(row + (suffix ? " — " + theme.fg(failed ? "error" : "warning", suffix) : ""), width)];
     }),
     padding,
   );

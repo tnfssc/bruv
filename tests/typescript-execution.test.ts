@@ -326,7 +326,7 @@ describe("execute process lifecycle and output", () => {
     expect(JSON.stringify(result.content)).toContain(details.stdoutPath);
   });
 
-  test("marks cancellation as a tool error and rejects calls after session shutdown", async () => {
+  test("marks cancellation and calls after session shutdown as tool errors with details", async () => {
     let tool!: ToolDefinition;
     let shutdown!: () => Promise<void>;
     registerExecuteTool({
@@ -338,13 +338,13 @@ describe("execute process lifecycle and output", () => {
       },
     } as unknown as ExtensionAPI);
     const ctx = { cwd: directory } as ExtensionToolContext;
-    await expect(
-      tool.execute("cancel", { code: "console.log(1)" }, AbortSignal.abort(), undefined, ctx),
-    ).rejects.toThrow("Execution cancelled");
+    const cancelled = await tool.execute("cancel", { code: "console.log(1)" }, AbortSignal.abort(), undefined, ctx);
+    expect(cancelled.isError).toBe(true);
+    expect((cancelled.details as { cancelled: boolean }).cancelled).toBe(true);
     await shutdown();
-    await expect(tool.execute("shutdown", { code: "console.log(1)" }, undefined, undefined, ctx)).rejects.toThrow(
-      "Execution cancelled",
-    );
+    const afterShutdown = await tool.execute("shutdown", { code: "console.log(1)" }, undefined, undefined, ctx);
+    expect(afterShutdown.isError).toBe(true);
+    expect((afterShutdown.details as { cancelled: boolean }).cancelled).toBe(true);
   });
 });
 
@@ -394,9 +394,9 @@ test("execute shutdown cancellation is classified and a new session receives a f
   );
   await handlers.get("session_shutdown")!();
   const ctx = { cwd: process.cwd() } as ExtensionToolContext;
-  await expect(tool.execute("closed", { code: "console.log(1)" }, undefined, undefined, ctx)).rejects.toThrow(
-    "Execution cancelled",
-  );
+  const closed = await tool.execute("closed", { code: "console.log(1)" }, undefined, undefined, ctx);
+  expect(closed.isError).toBe(true);
+  expect(closed.details.cancelled).toBe(true);
   handlers.get("session_start")!();
   const result = await tool.execute("fresh", { code: "console.log(2)" }, undefined, undefined, ctx);
   expect(result.details.stdout.trim()).toBe("2");

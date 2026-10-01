@@ -4,7 +4,12 @@ import { diagnosticRecorder, inspectDiagnostics } from "../diagnostics";
 import { backgroundHandoff, executeGuidance } from "../prompts";
 import executeDescription from "../prompts/execute-description.md" with { type: "text" };
 import { toolParameters } from "../tool-schema";
-import { executeInputPreview, executeOutputPreview } from "../ui/execution-previews";
+import {
+  type ExecutePreviewState,
+  executeInputPreview,
+  executeOutputPreview,
+  stopExecutePreviewAnimation,
+} from "../ui/execution-previews";
 import { executeIsolated, formatResult } from "./execution";
 import { withJobCancellation } from "../job-delivery";
 import { stopCurrentLive } from "../live/lifecycle-access";
@@ -12,8 +17,8 @@ import { stopCurrentLive } from "../live/lifecycle-access";
 const HandoffParameters = z.object({ message: z.string().check(z.minLength(1), z.maxLength(2000)) });
 
 const ExecuteParameters = z.object({
-  code: z.string(),
   label: z.optional(z.string()),
+  code: z.string(),
   timeoutSeconds: z.optional(z.number().check(z.minimum(0.1))),
   outputByteLimit: z.optional(z.number().check(z.int(), z.minimum(0), z.maximum(Number.MAX_SAFE_INTEGER))),
 });
@@ -38,6 +43,12 @@ export function registerExecuteTool(
       }
       return padding;
     });
+  const previewStates = new Set<ExecutePreviewState>();
+  const stopAnimations = () => {
+    for (const state of previewStates) stopExecutePreviewAnimation(state);
+    previewStates.clear();
+  };
+  pi.on("agent_end", stopAnimations);
   let shutdown = new AbortController();
   pi.on("session_start", () => {
     if (shutdown.signal.aborted) shutdown = new AbortController();
@@ -45,6 +56,7 @@ export function registerExecuteTool(
   const active = new Set<Promise<unknown>>();
   const foreground = new Map<AbortController, unknown>();
   pi.on("session_shutdown", async () => {
+    stopAnimations();
     shutdown.abort("shutdown");
     foreground.clear();
     await Promise.allSettled([...active]);
@@ -58,8 +70,9 @@ export function registerExecuteTool(
     promptGuidelines: executeGuidance,
     parameters: toolParameters(ExecuteParameters),
     renderShell: "self",
-    renderCall: (args, theme, context) =>
-      executeInputPreview(
+    renderCall: (args, theme, context) => {
+      if (!context.state.resultVisible) previewStates.add(context.state);
+      return executeInputPreview(
         (args as { code?: unknown } | undefined)?.code,
         context.expanded,
         theme,
@@ -67,9 +80,12 @@ export function registerExecuteTool(
         context.executionStarted,
         getOutputPad(context.cwd),
         (args as { label?: unknown } | undefined)?.label,
-      ),
-    renderResult: (result, options, theme, context) =>
-      executeOutputPreview(
+        context.invalidate,
+      );
+    },
+    renderResult: (result, options, theme, context) => {
+      if (!options.isPartial) previewStates.delete(context.state);
+      return executeOutputPreview(
         result,
         options.expanded,
         context.isError,
@@ -78,7 +94,9 @@ export function registerExecuteTool(
         context.state,
         getOutputPad(context.cwd),
         (context.args as { label?: unknown } | undefined)?.label,
-      ),
+        options.isPartial,
+      );
+    },
     async execute(toolCallId, input, signal, _onUpdate, ctx) {
       const params = z.parse(ExecuteParameters, input);
       const owner = ctx.sessionManager;
@@ -164,13 +182,14 @@ export function registerExecuteTool(
         if (result.images.length && ctx.model && !ctx.model.input.includes("image")) {
           text += "\n\nThis model can't take images. Images not sent.";
         }
-        // Pi marks tool failures only when execute throws, not via isError in
-        // the returned object. Include bounded diagnostics in that exception.
-        if (result.exitCode !== 0 || result.timedOut || result.cancelled || result.imageError) throw new Error(text);
+        // Pi 0.99.1 honors returned isError. Keep structured evidence in persisted
+        // failures too, including task launches captured before an outer error.
+        const isError = result.exitCode !== 0 || result.timedOut || result.cancelled || Boolean(result.imageError);
         const { images, ...details } = result;
         return {
           content: [{ type: "text" as const, text }, ...images],
-          ...(handoffMessage !== undefined ? { terminate: true } : {}),
+          isError,
+          ...(!isError && handoffMessage !== undefined ? { terminate: true } : {}),
           // Don't duplicate base64 payloads in persisted tool details.
           details: {
             ...details,
