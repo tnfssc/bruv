@@ -1,0 +1,29 @@
+{
+  "providers": {
+    "fixture": {
+      "baseUrl": "http://127.0.0.1:18765/v1",
+      "api": "openai-completions",
+      "apiKey": "placement-fixture-no-credentials",
+      "models": [
+        {
+          "id": "placement-parent",
+          "name": "placement-parent",
+          "contextWindow": 64000,
+          "maxTokens": 4096
+        },
+        {
+          "id": "placement-orchestrator",
+          "name": "placement-orchestrator",
+          "contextWindow": 64000,
+          "maxTokens": 4096
+        },
+        {
+          "id": "placement-normal",
+          "name": "placement-normal",
+          "contextWindow": 64000,
+          "maxTokens": 4096
+        }
+      ]
+    }
+  }
+}

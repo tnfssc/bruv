@@ -1,0 +1,10 @@
+{
+  "normal": {
+    "model": "fixture/placement-normal",
+    "thinking": "off"
+  },
+  "orchestrator": {
+    "model": "fixture/placement-orchestrator",
+    "thinking": "off"
+  }
+}
