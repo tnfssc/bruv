@@ -353,3 +353,10 @@ test("reply-loss relay really forwards once, discards bytes and gates status unt
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("modal transitions inspect the live screen rather than stale terminal scrollback", () => {
+  const runner = readFileSync(new URL("../scripts/remote-root-placement-e2e.ts", import.meta.url), "utf8");
+  expect(runner).toContain('const screen = () => tmux("capture-pane", "-p", "-t", "root-placement")');
+  expect(runner).toContain('screen().includes("/questions") && screen().includes("/close")');
+  expect(runner).toContain('screen().includes("Back")');
+});

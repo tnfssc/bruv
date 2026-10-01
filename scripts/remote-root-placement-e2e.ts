@@ -119,6 +119,7 @@ const run = (command: string, args: string[], options: Parameters<typeof raw>[2]
 const docker = (...args: string[]) => run("docker", args);
 const tmux = (...args: string[]) => run("tmux", ["-f", "/dev/null", "-S", socket, ...args]);
 const pane = () => tmux("capture-pane", "-p", "-S", "-", "-t", "root-placement");
+const screen = () => tmux("capture-pane", "-p", "-t", "root-placement");
 const capture = (label: string) => writeFileSync(join(artifacts, label + ".txt"), pane());
 const type = (message: string) => {
   tmux("send-keys", "-t", "root-placement", "-l", message);
@@ -401,7 +402,7 @@ try {
       ptyStarted = true;
     };
     const ready = async () =>
-      wait("typed root terminal controls", () => pane().includes("/questions") && pane().includes("/close"));
+      wait("typed root terminal controls", () => screen().includes("/questions") && screen().includes("/close"));
     const detach = async () => {
       key("C-d");
       await wait(
@@ -433,7 +434,7 @@ try {
       await wait(
         "normal human question picker",
         () =>
-          pane().includes("Human questions") &&
+          screen().includes("Human questions") &&
           pane().includes(questionText(side)) &&
           completedCommands(rootState(id), "questions.list").length > count,
         90000,
@@ -475,7 +476,7 @@ try {
       const q = await showQuestion(id, side);
       capture(side + "-01-question-picker");
       key("Escape");
-      await wait("picker dismissed", () => pane().includes("/close"));
+      await wait("picker dismissed", () => screen().includes("/close"));
       const before = rootState(id),
         beforeJournal = journal(before);
       assertOnePrompt(before, first);
@@ -533,7 +534,7 @@ try {
       capture(side + "-04-second-root-turn");
       // /ps is the ordinary tasks picker backed by the root jobs facet.
       type("/ps");
-      await wait("normal tasks picker", () => pane().includes("Jobs"));
+      await wait("normal tasks picker", () => screen().includes("Jobs"));
       const lists = completedCommands(rootState(id), "jobs.list");
       assert(lists.length);
       const jobs = lists.at(-1).receipt.result;
@@ -547,7 +548,7 @@ try {
       key("Enter");
       await wait(
         "normal selected task inspection",
-        () => completedCommands(rootState(id), "jobs.inspect").length > 0 && pane().includes("Back"),
+        () => completedCommands(rootState(id), "jobs.inspect").length > 0 && screen().includes("Back"),
       );
       const inspection = completedCommands(rootState(id), "jobs.inspect").at(-1);
       assert.equal(inspection.command.id, child.id, "task picker inspected the wrong job");
@@ -732,17 +733,17 @@ try {
       () => ssh("test ! -f /tmp/root-running-pid || { kill -0 $(cat /tmp/root-running-pid) && echo live; }") === "live",
     );
     type("/ps");
-    await wait("normal running job picker", () => pane().includes("Jobs on "));
+    await wait("normal running job picker", () => screen().includes("Jobs on "));
     key("Enter");
     await wait(
       "running shell inspection and cancel action",
-      () => pane().includes("ROOT_CANCEL_RUNNING") && pane().includes("Cancel "),
+      () => pane().includes("ROOT_CANCEL_RUNNING") && screen().includes("Cancel "),
     );
     const pre = completedCommands(rootState(faultID), "jobs.inspect").at(-1);
     assert.equal(pre.command.id, running.id);
     assert.equal(pre.receipt.result.status, "running");
     key("Down", "Enter");
-    await wait("normal human cancellation confirmation", () => pane().includes("Cancel this job?"));
+    await wait("normal human cancellation confirmation", () => screen().includes("Cancel this job?"));
     key("Down", "Enter");
     await wait("typed running job stop receipt", () => completedCommands(rootState(faultID), "jobs.stop").length === 1);
     await wait(
@@ -750,7 +751,7 @@ try {
       () => ssh("if kill -0 $(cat /tmp/root-running-pid) 2>/dev/null; then echo live; else echo gone; fi") === "gone",
     );
     type("/ps");
-    await wait("post-cancel job picker", () => pane().includes("Jobs on "));
+    await wait("post-cancel job picker", () => screen().includes("Jobs on "));
     key("Enter");
     await wait(
       "post-cancel authoritative inspect",
