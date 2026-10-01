@@ -235,3 +235,5 @@ What is notably absent: a current v2 projection integration test (there is no pr
 ## TUI task-monitor assertion
 
 Stopping a task is a cancellation, not a failure: real-UI tests should assert the rendered cancelled state. Keep terminal-status assertions aligned with the user-visible lifecycle label; do not weaken the UI check. (CI PR #14 follow-up, 2026-10-01.)
+
+The other stale assertion was `task_fixture executed`; completed task notices now say `task_fixture finished`. Updated exact labels only. Both failing files pass locally: 3 tests, 82 assertions. Compiled the current CLI with the existing web archive for these terminal-only tests; the fresh all-product build was blocked by local pnpm PATH setup. CI still runs its normal full build. Values unchanged: this is an observed failure and a small fix.
