@@ -1,6 +1,6 @@
 # Third-party notices
 
-Die is built on Pi and includes third-party dependencies and the Bun runtime.
+Bruv is built on Pi and includes third-party dependencies and the Bun runtime.
 Those components remain subject to their own licenses; the project's MIT license
 does not replace them.
 

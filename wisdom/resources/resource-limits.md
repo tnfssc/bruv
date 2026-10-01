@@ -1,6 +1,6 @@
 # Resource ownership and limits
 
-Die keeps useful history, but bounds automatic caches and output retention.
+Bruv keeps useful history, but bounds automatic caches and output retention.
 These policies apply starting with v0.4.0.
 
 ## Job output
@@ -25,7 +25,7 @@ The execute tool has a **10 MiB (10,485,760-byte)** combined stdout/stderr compl
 Its optional `outputByteLimit` argument accepts a non-negative safe integer.
 A value of zero disables complete-byte retention, not the separately bounded inline preview.
 
-Above the byte limit, Die continues draining the child output but does not append excess bytes to capture artifacts.
+Above the byte limit, Bruv continues draining the child output but does not append excess bytes to capture artifacts.
 The response clearly reports truncation.
 `outputBytes` counts observed bytes, `capturedOutputBytes` counts retained bytes, and `outputTruncated` distinguishes limited capture from complete output.
 Per-stream counters and artifact errors are still available.
@@ -40,7 +40,7 @@ These are application output policies, not a security sandbox: execute code can 
 ## Durable artifacts
 
 Session-backed execute artifact paths remain evidence tied to the session.
-Die does not silently expire them while keeping the session and its references.
+Bruv does not silently expire them while keeping the session and its references.
 No automatic global TTL or session-deletion command is introduced by these fixes.
 Cumulative disk consumption can grow with saved work.
 Users should choose to archive/delete obsolete session evidence and associated artifacts when no longer needed, not while an execution is writing them.
@@ -71,7 +71,7 @@ Evicting an old draft's cache entry does not delete the draft or its content.
 ## Persistent original history
 
 Persistent Pi session journals are still the source-of-truth JSONL files.
-Die indexes entry locations and keeps at most **4 MiB of serialized historical entry bodies** in its cache, loading originals when requested.
+Bruv indexes entry locations and keeps at most **4 MiB of serialized historical entry bodies** in its cache, loading originals when requested.
 This does not delete originals or replace them with summaries.
 Branches, stable history references and retrieval exclusions remain supported.
 In-memory sessions retain their native behavior.
@@ -104,4 +104,4 @@ Deleted log paths are recreated safely on later writes.
 
 Pi keyed locks retire only after their final holder/waiter leaves.
 Optional Pi extension task trackers keep at most 50 finished records each, while active records stay live.
-The default Die task projection keeps its existing 50-entry policy.
+The default Bruv task projection keeps its existing 50-entry policy.

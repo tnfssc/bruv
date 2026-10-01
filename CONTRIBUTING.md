@@ -1,6 +1,6 @@
-# Contributing to die
+# Contributing to bruv
 
-Thanks for helping improve die. Small, focused changes with tests and clear commit
+Thanks for helping improve bruv. Small, focused changes with tests and clear commit
 messages are easiest to review.
 
 ## Set up a development checkout
@@ -8,8 +8,8 @@ messages are easiest to review.
 1. Fork the repository, then clone your fork and enter the checkout:
 
    ```sh
-   git clone https://github.com/YOUR-ACCOUNT/die.git
-   cd die
+   git clone https://github.com/YOUR-ACCOUNT/die.git bruv
+   cd bruv
    ```
 
 2. Install `tmux` (required by real-PTY tests), [Bun 1.4.2](https://bun.sh/), Node 24.21.0 and pnpm 11.27.1. Restore the exact lockfile:
@@ -33,14 +33,14 @@ or local configuration.
 
 ## Test policy
 
-The normal test suite is deterministic. It must not need credentials or a paid model. Tests that make real model requests use the `DIE_RUN_LLM_TESTS=1` guard. They are opt-in, may cost money, and do not run in CI. Enable them only when you understand the cost and have set your own provider credentials. Prefer pure tests and offline SDK fixtures. Use the
+The normal test suite is deterministic. It must not need credentials or a paid model. Tests that make real model requests use the `BRUV_RUN_LLM_TESTS=1` guard. They are opt-in, may cost money, and do not run in CI. Enable them only when you understand the cost and have set your own provider credentials. Prefer pure tests and offline SDK fixtures. Use the
 real TUI harness when terminal behavior itself is under test, and keep diagnostics
 bounded so failures remain readable. Preserve the suite's skip accounting: a gated
-fixture must remain discovered and skipped when `DIE_RUN_LLM_TESTS` is unset rather
+fixture must remain discovered and skipped when `BRUV_RUN_LLM_TESTS` is unset rather
 than disappearing behind conditional test registration.
 
 Goal lifecycle changes should test the pure store/controller contract. Where the Pi boundary matters, also use an offline SDK or TUI fixture. The natural real-model goal smoke
-is `tests/goals-live.test.ts`. Run it only with `DIE_RUN_LLM_TESTS=1` and configured
+is `tests/goals-live.test.ts`. Run it only with `BRUV_RUN_LLM_TESTS=1` and configured
 credentials. It creates temporary local resources and writes bounded evidence under
 ignored `artifacts/goals/`. Do not describe a mocked SDK stream as live-model evidence.
 
