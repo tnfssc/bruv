@@ -24,6 +24,7 @@ test("orphan snapshot omits history; chunk replay is idempotent and result is te
     writeFileSync(join(repo, "file"), randomBytes(400000).toString("hex"));
     git(repo, "add", "-A");
     git(repo, "-c", "user.name=T", "-c", "user.email=t@invalid", "commit", "-qm", "current");
+    writeFileSync(join(repo, "file"), readFileSync(join(repo, "file"), "utf8") + "\ncurrent tracked edit\n");
     const snapshot = captureRepository(repo, join(dir, "snapshot"));
     const bytes = readFileSync(snapshot.bundle);
     expect(bytes.length).toBeGreaterThan(256 * 1024);
@@ -34,6 +35,7 @@ test("orphan snapshot omits history; chunk replay is idempotent and result is te
         op: "repository-upload" as const,
         taskId: "task1",
         snapshot: snapshot.snapshot,
+        workspace: { kind: "worktree" as const, branch: "feature/pinned" },
         sha256: createHash("sha256").update(bytes).digest("hex"),
         total: bytes.length,
         offset,
@@ -44,6 +46,12 @@ test("orphan snapshot omits history; chunk replay is idempotent and result is te
       if (first.checkout) checkout = first.checkout;
     }
     expect(git(checkout, "rev-list", "--count", "HEAD")).toBe("1");
+    expect(git(checkout, "branch", "--show-current")).toBe("feature/pinned");
+    expect(readFileSync(join(checkout, "file"), "utf8").endsWith("current tracked edit\n")).toBe(true);
+    const childWorktree = join(dir, "server-child-worktree");
+    git(checkout, "worktree", "add", "--detach", childWorktree, "HEAD");
+    writeFileSync(join(childWorktree, "file"), "isolated child edit");
+    expect(readFileSync(join(checkout, "file"), "utf8")).not.toBe("isolated child edit");
     expect(Bun.spawnSync(["git", "-C", checkout, "cat-file", "-e", oldSecret]).exitCode).not.toBe(0);
     expect(git(checkout, "ls-tree", "-r", "--name-only", "HEAD")).toBe("file");
     expect(() =>
@@ -86,11 +94,23 @@ test("repository preparation pins parent before upload and retry retains it", as
       updateTask: async () => {},
       transcript: async () => ({ taskId: "id", events: [] }),
     };
-    const args = { localRoot: repo, prompt: "work", taskId: "id", jobSessionFile: "/parent/a.jsonl" };
+    const placement = {
+      profile: "orchestrator" as const,
+      parentDepth: 0,
+      workspace: { kind: "worktree" as const, baseRef: "HEAD", branch: "task/isolated" },
+    };
+    const args = { localRoot: repo, prompt: "work", taskId: "id", jobSessionFile: "/parent/a.jsonl", placement };
     await expect(launchRepository(client as any, args)).rejects.toThrow("offline upload");
     expect(JSON.parse(readFileSync(join(dir, "repositories/id/handoff.json"), "utf8")).jobSessionFile).toBe(
       args.jobSessionFile,
     );
+    writeFileSync(join(repo, "file"), "later local edits must not enter retry");
+    await expect(launchRepository(client as any, { ...args, taskId: undefined })).rejects.toThrow(
+      "Retry that same task ID",
+    );
+    await expect(
+      launchRepository(client as any, { ...args, placement: { ...placement, profile: "fast" } }),
+    ).rejects.toThrow("intent conflict");
     offline = false;
     await expect(launchRepository(client as any, { ...args, jobSessionFile: "/parent/b.jsonl" })).rejects.toThrow(
       "intent conflict",
@@ -98,6 +118,8 @@ test("repository preparation pins parent before upload and retry retains it", as
     await retryRepository(client as any, "id");
     expect(launches).toHaveLength(1);
     expect(launches[0][4]).toBe(args.jobSessionFile);
+    expect(launches[0][5]).toEqual(placement);
+    expect(readFileSync(join(dir, "repositories/id/snapshot/snapshot-checkout/file"), "utf8")).toBe("content");
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

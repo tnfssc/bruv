@@ -108,6 +108,120 @@ test.skipIf(process.platform !== "linux")(
       expect(done).toMatchObject({ task: { state: "done" } });
       expect("events" in done && done.events.at(-1)?.event).toMatchObject({ type: "agent_settled" });
 
+      // Destination selects the requested role, never a normal-profile fallback.
+      writeFileSync(
+        join(home, ".die", "subagents.json"),
+        JSON.stringify({
+          normal: { model: "changed/model" },
+          fast: { model: "example/fast" },
+          orchestrator: { model: "example/orchestrator" },
+        }),
+      );
+      expect(
+        await handleRemoteRequest(
+          {
+            ...request,
+            taskId: "no_isolation",
+            placement: { profile: "normal", parentDepth: 0, workspace: { kind: "inherit" } },
+          },
+          "/bin/true",
+        ),
+      ).toMatchObject({ code: "repository_required" });
+      const wrongDir = join(home, ".die", "remote-owner", "tasks", "wrong_workspace");
+      mkdirSync(wrongDir);
+      writeFileSync(
+        join(wrongDir, "repository-ready.json"),
+        JSON.stringify({ checkout: repo, workspace: { kind: "inherit" } }),
+      );
+      expect(
+        await handleRemoteRequest(
+          {
+            ...request,
+            taskId: "wrong_workspace",
+            placement: { profile: "normal", parentDepth: 0, workspace: { kind: "worktree", branch: "isolated" } },
+          },
+          "/bin/true",
+        ),
+      ).toMatchObject({ code: "workspace_conflict" });
+      for (const role of ["fast", "normal", "orchestrator"] as const) {
+        const placement = { profile: role, parentDepth: 0, workspace: { kind: "inherit" as const } };
+        const req = { ...request, taskId: "placed_" + role, placement };
+        const preparedDir = join(home, ".die", "remote-owner", "tasks", req.taskId);
+        mkdirSync(preparedDir);
+        writeFileSync(
+          join(preparedDir, "repository-ready.json"),
+          JSON.stringify({ checkout: repo, workspace: placement.workspace }),
+        );
+        const accepted = await handleRemoteRequest(req, "/bin/true");
+        expect(accepted).toMatchObject({ task: { profile: { name: role }, placement } });
+        expect(
+          await handleRemoteRequest({
+            ...req,
+            placement: { ...placement, parentDepth: 1, parentType: "orchestrator" },
+          }),
+        ).toMatchObject({ code: "intent_conflict" });
+        const path = join(home, ".die", "remote-owner", "tasks", req.taskId, "state.json");
+        const state = JSON.parse(readFileSync(path, "utf8"));
+        state.task.state = "accepted";
+        state.pid = process.pid;
+        state.startTime = saved.startTime;
+        writeFileSync(path, JSON.stringify(state));
+        const script = join(home, req.taskId + ".sh"),
+          envFile = join(home, req.taskId + ".env");
+        writeFileSync(
+          script,
+          "#!/bin/sh\n" +
+            handshake(state.task.profile) +
+            'printf "%s:%s" "$DIE_SUBAGENT_TYPE" "$DIE_SUBAGENT_DEPTH" > "' +
+            envFile +
+            '"\n' +
+            `echo '{"jobs":[]}' > "$DIE_REMOTE_RUNTIME_STATE"\necho '{"type":"agent_settled"}'\n`,
+        );
+        chmodSync(script, 0o700);
+        await runOwnerTask(req.taskId, script);
+        expect(readFileSync(envFile, "utf8")).toBe(role + ":1");
+      }
+      for (const placement of [
+        { profile: "normal", parentDepth: 1, parentType: "normal" },
+        { profile: "normal", parentDepth: 1, parentType: "fast" },
+        { profile: "normal", parentDepth: 2, parentType: "orchestrator" },
+        { profile: "normal", parentDepth: -1 },
+      ]) {
+        expect(
+          await handleRemoteRequest(
+            {
+              ...request,
+              taskId: "forbidden_role",
+              placement: { ...placement, workspace: { kind: "inherit" } },
+            } as any,
+            "/bin/true",
+          ),
+        ).toMatchObject({ code: "invalid_placement" });
+      }
+      const nested = {
+        ...request,
+        taskId: "nested_role",
+        placement: {
+          profile: "fast" as const,
+          parentDepth: 1,
+          parentType: "orchestrator" as const,
+          workspace: { kind: "inherit" as const },
+        },
+      };
+      const nestedDir = join(home, ".die", "remote-owner", "tasks", nested.taskId);
+      mkdirSync(nestedDir);
+      writeFileSync(
+        join(nestedDir, "repository-ready.json"),
+        JSON.stringify({ checkout: repo, workspace: nested.placement.workspace }),
+      );
+      expect(
+        await handleRemoteRequest({ ...nested, model: "example/explicit", thinking: "high" }, "/bin/true"),
+      ).toMatchObject({ task: { profile: { name: "fast", model: "example/explicit", thinking: "high" } } });
+      writeFileSync(join(home, ".die", "subagents.json"), JSON.stringify({ normal: { model: "changed/model" } }));
+      expect(await handleRemoteRequest({ ...nested, taskId: "missing_fast" }, "/bin/true")).toMatchObject({
+        code: "missing_model",
+      });
+
       // Real RPC message_end errors must override a superficially successful agent_end.
       for (const [id, output, expected] of [
         [

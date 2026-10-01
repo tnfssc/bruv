@@ -1,3 +1,4 @@
+import { validatePlacement, validateWorkspace, type RemotePlacement, type RemoteWorkspace } from "./placement";
 import { Database } from "bun:sqlite";
 import { createHash, randomUUID } from "node:crypto";
 import {
@@ -68,16 +69,18 @@ export type RepositoryRequest =
       op: "repository-upload";
       taskId: string;
       snapshot: string;
+      workspace?: RemoteWorkspace;
       sha256: string;
       total: number;
       offset: number;
       data: string;
     }
   | { op: "repository-result"; taskId: string; offset: number };
-type Upload = { snapshot: string; sha256: string; total: number };
+type Upload = { snapshot: string; sha256: string; total: number; workspace?: RemoteWorkspace };
 /** Called under the owner's control lock and identity fence. Never accepts a path from the peer. */
 export function repositoryRequest(dir: string, req: RepositoryRequest, state?: string): unknown {
   if (req.op === "repository-upload") {
+    if (req.workspace !== undefined) validateWorkspace(req.workspace);
     if (
       !/^[a-f0-9]{40,64}$/.test(req.snapshot) ||
       !/^[a-f0-9]{64}$/.test(req.sha256) ||
@@ -99,7 +102,7 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
     )
       throw Error("Invalid repository chunk");
     mkdirSync(dir, { recursive: true, mode: 0o700 });
-    const intent = { snapshot: req.snapshot, sha256: req.sha256, total: req.total };
+    const intent = { snapshot: req.snapshot, sha256: req.sha256, total: req.total, workspace: req.workspace };
     const meta = join(dir, "repository-upload.json"),
       bundle = join(dir, "input.bundle"),
       ready = join(dir, "repository-ready.json");
@@ -171,7 +174,23 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
       { env, stdout: "pipe", stderr: "pipe", timeout: 60_000, maxBuffer: 1024 * 1024 },
     );
     if (checkoutResult.exitCode !== 0) throw Error("Remote snapshot checkout failed");
-    const result = { offset, checkout, snapshot: req.snapshot };
+    if (req.workspace?.kind === "worktree" && req.workspace.branch) {
+      const branch = req.workspace.branch;
+      const valid = Bun.spawnSync(["git", "check-ref-format", "--branch", branch], {
+        env,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+      if (valid.exitCode !== 0 || valid.stdout.toString().trim() !== branch)
+        throw Error("Invalid requested workspace branch");
+      const switched = Bun.spawnSync(["git", "-C", checkout, "checkout", "-B", branch, req.snapshot], {
+        env,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+      if (switched.exitCode !== 0) throw Error("Cannot preserve requested workspace branch");
+    }
+    const result = { offset, checkout, snapshot: req.snapshot, workspace: req.workspace };
     atomic(ready, result);
     return result;
   }
@@ -205,12 +224,14 @@ type Descriptor = {
   snapshot: RepositorySnapshot;
   owner: { ownerId: string; epoch: string };
   profile: { model?: string; thinking?: string };
+  placement?: RemotePlacement;
   outcome?: RepositoryReturn;
 };
 export type RepositoryLaunch = {
   /** Local parent attribution only; never sent to the SSH worker. */
   jobSessionFile?: string;
   localRoot: string;
+  placement?: RemotePlacement;
   prompt: string;
   taskId?: string;
   approvedUntracked?: string[];
@@ -223,12 +244,34 @@ function directory(client: RemoteClient, id: string) {
 }
 /** Human approval for approvedUntracked must be obtained before this call. No history is uploaded. */
 export async function launchRepository(client: RemoteClient, args: RepositoryLaunch): Promise<RemoteTask> {
+  if (args.placement !== undefined) validatePlacement(args.placement);
   const root = Bun.spawnSync(["git", "-C", args.localRoot, "rev-parse", "--show-toplevel"], {
     stdout: "pipe",
     stderr: "pipe",
   });
   if (root.exitCode) throw Error("Current directory is not a Git repository");
   args = { ...args, localRoot: root.stdout.toString().trim() };
+  if (!args.taskId) {
+    const state = await client.status();
+    const base = join(dirname(client.path), "repositories");
+    if (existsSync(base))
+      for (const priorId of readdirSync(base)) {
+        const priorFile = join(base, priorId, "handoff.json");
+        if (!existsSync(priorFile)) continue;
+        const prior = read<Descriptor>(priorFile);
+        const task = state.tasks?.[priorId];
+        if (
+          prior.root === realpathSync(args.localRoot) &&
+          prior.prompt === args.prompt &&
+          (!task || task.outcome === "unknown" || !["done", "cancelled"].includes(task.task?.state ?? ""))
+        )
+          throw Error(
+            "Repository launch is prepared, active or uncertain: " +
+              priorId +
+              ". Retry that same task ID; no new snapshot sent.",
+          );
+      }
+  }
   const id = args.taskId ?? randomUUID(),
     dir = directory(client, id),
     file = join(dir, "handoff.json");
@@ -242,6 +285,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
       (args.jobSessionFile !== undefined && descriptor.jobSessionFile !== args.jobSessionFile) ||
       descriptor.root !== realpathSync(args.localRoot) ||
       descriptor.prompt !== args.prompt ||
+      JSON.stringify(descriptor.placement) !== JSON.stringify(args.placement) ||
       JSON.stringify(descriptor.owner) !== JSON.stringify(owner) ||
       JSON.stringify(descriptor.profile) !== JSON.stringify({ model: args.model, thinking: args.thinking }) ||
       JSON.stringify(descriptor.snapshot.selectedUntracked) !== JSON.stringify(args.approvedUntracked ?? [])
@@ -250,7 +294,9 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
   } else {
     mkdirSync(dirname(dir), { recursive: true, mode: 0o700 });
     mkdirSync(dir, { mode: 0o700 });
-    const snapshot = captureRepository(args.localRoot, join(dir, "snapshot"), args.approvedUntracked);
+    const snapshot = captureRepository(args.localRoot, join(dir, "snapshot"), args.approvedUntracked, {
+      baseRef: args.placement?.workspace.kind === "worktree" ? args.placement.workspace.baseRef : undefined,
+    });
     descriptor = {
       jobSessionFile: args.jobSessionFile,
       root: realpathSync(args.localRoot),
@@ -258,6 +304,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
       snapshot,
       owner,
       profile: { model: args.model, thinking: args.thinking },
+      placement: args.placement,
     };
     atomic(file, descriptor);
   }
@@ -272,6 +319,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
         op: "repository-upload",
         taskId: id,
         snapshot: descriptor.snapshot.snapshot,
+        workspace: descriptor.placement?.workspace,
         sha256,
         total: data.length,
         offset,
@@ -282,11 +330,13 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
     if (response.checkout) checkout = response.checkout;
   }
   if (!checkout) throw Error("Remote repository preparation unconfirmed; retry same task ID " + id);
-  await client.launch(checkout, args.prompt, id, descriptor.profile, descriptor.jobSessionFile);
+  await client.launch(checkout, args.prompt, id, descriptor.profile, descriptor.jobSessionFile, descriptor.placement);
   await client.updateTask(id, {
     repository: {
       status: "awaiting_remote_result",
       snapshot: descriptor.snapshot.snapshot,
+      source: descriptor.snapshot.source,
+      workspace: descriptor.placement?.workspace,
       omittedUntracked: descriptor.snapshot.omittedUntracked,
       selectedUntracked: descriptor.snapshot.selectedUntracked,
       artifact: dir,
@@ -384,6 +434,7 @@ export async function retryRepository(client: RemoteClient, id: string) {
     prompt: descriptor.prompt,
     taskId: id,
     approvedUntracked: descriptor.snapshot.selectedUntracked,
+    placement: descriptor.placement,
     ...descriptor.profile,
   });
 }
