@@ -8,6 +8,10 @@ until a maintainer renames the repository separately. Release assets use `bruv-*
 
 ## Install
 
+The commands below target bruv release assets. Until the first bruv release is
+published, use [Build from source](#build-from-source); older releases retain their
+original asset names.
+
 Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64:
 
 ```sh
