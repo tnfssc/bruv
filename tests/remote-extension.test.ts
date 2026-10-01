@@ -100,11 +100,17 @@ test("execute remote methods use configured client, never accept a host", async 
     transcript: async (id: string) => ({ events: Array.from({ length: 55 }, (_, i) => i), taskId: id }),
   };
   remoteExtension(pi as any, client as any);
-  await expect(createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "do work", taskId: "id" })).rejects.toThrow("subagent");
-  await expect(createRemoteOperations(client as any)(
-    { op: "launch", repoPath: "/repo", prompt: "owned", taskId: "owned" },
-    "/repo", undefined, "/sessions/parent.jsonl",
-  )).rejects.toThrow("subagent");
+  await expect(
+    createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "do work", taskId: "id" }),
+  ).rejects.toThrow("subagent");
+  await expect(
+    createRemoteOperations(client as any)(
+      { op: "launch", repoPath: "/repo", prompt: "owned", taskId: "owned" },
+      "/repo",
+      undefined,
+      "/sessions/parent.jsonl",
+    ),
+  ).rejects.toThrow("subagent");
   expect(calls).toEqual([]);
   expect(await createRemoteOperations(client as any)({ op: "transcript", taskId: "id", offset: 50 })).toMatchObject({
     events: [50, 51, 52, 53, 54],

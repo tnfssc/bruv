@@ -57,7 +57,9 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
         return status();
       case "launchRepository":
       case "launch":
-        throw new Error("Remote task launch uses subagent({ target: <authorized name>, ... }); legacy remote launch helpers cannot bypass delegation role/depth policy.");
+        throw new Error(
+          "Remote task launch uses subagent({ target: <authorized name>, ... }); legacy remote launch helpers cannot bypass delegation role/depth policy.",
+        );
       case "requestCapability":
         return requestLocalCapability(args, signal);
       case "cancel":

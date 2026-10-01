@@ -4,21 +4,27 @@ import { existsSync, readFileSync, writeFileSync, appendFileSync } from "node:fs
 import { join } from "node:path";
 
 export function shouldDrop(request: any): boolean {
-  return request?.op === "command" && request.command?.kind === "prompt" &&
-    request.command.text.includes("ROOT_REPLY_LOSS");
+  return (
+    request?.op === "command" && request.command?.kind === "prompt" && request.command.text.includes("ROOT_REPLY_LOSS")
+  );
 }
 export function runRelay(ssh: string, config: string, dir: string, args: string[]): number {
-  if (!args.some(a => a.includes("--remote-root-control"))) {
+  if (!args.some((a) => a.includes("--remote-root-control"))) {
     const r = spawnSync(ssh, ["-F", config, ...args], { stdio: "inherit" });
     return r.status ?? 1;
   }
   const input = readFileSync(0, "utf8");
   const request = JSON.parse(input);
   appendFileSync(join(dir, "requests.jsonl"), JSON.stringify(request) + "\n");
-  const lost = join(dir, "lost.json"), gate = join(dir, "armed");
+  const lost = join(dir, "lost.json"),
+    gate = join(dir, "armed");
   // Keep the saved local receipt genuinely unknown until the test explicitly releases it.
-  if (existsSync(gate) && existsSync(lost) && request.op === "command-status" &&
-      request.commandId === JSON.parse(readFileSync(lost, "utf8")).request.commandId) {
+  if (
+    existsSync(gate) &&
+    existsSync(lost) &&
+    request.op === "command-status" &&
+    request.commandId === JSON.parse(readFileSync(lost, "utf8")).request.commandId
+  ) {
     process.stderr.write("fixture reply-loss status gate\n");
     return 255;
   }

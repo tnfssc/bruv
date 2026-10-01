@@ -24,8 +24,12 @@ test("remote orchestrator descendants keep destination environment but never che
 });
 
 test("human root facet authority is absent from all model-directed tool environments", () => {
- const parent = { DIE_ROOT_RUNTIME_SOCKET: "/private/root.sock", DIE_ROOT_RUNTIME_TOKEN: "human-authority", HOME: "/server" };
- expect(scrubT3BridgeEnvironment(parent)).toEqual({HOME:"/server"});
- expect(childAgentEnvironment(parent)).toEqual({HOME:"/server"});
- expect(parent.DIE_ROOT_RUNTIME_TOKEN).toBe("human-authority");
+  const parent = {
+    DIE_ROOT_RUNTIME_SOCKET: "/private/root.sock",
+    DIE_ROOT_RUNTIME_TOKEN: "human-authority",
+    HOME: "/server",
+  };
+  expect(scrubT3BridgeEnvironment(parent)).toEqual({ HOME: "/server" });
+  expect(childAgentEnvironment(parent)).toEqual({ HOME: "/server" });
+  expect(parent.DIE_ROOT_RUNTIME_TOKEN).toBe("human-authority");
 });

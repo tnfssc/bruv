@@ -57,13 +57,19 @@ export function response(body: RequestBody): object {
   if (body.model !== "typed-root")
     throw Error("unexpected model: " + body.model + "; server root settings/profile must be used");
   if (userHas(body, "ROOT_RUNNING_JOB")) {
-    if (!called(body, "root-running-job")) return execute("root-running-job",
-      'const p=await shell("exec /usr/local/bin/bun -e \'require(\\"node:fs\\").writeFileSync(\\"/tmp/root-running-pid\\",String(process.pid)); console.log(\\"ROOT_CANCEL_RUNNING\\"); setTimeout(()=>{require(\\"node:fs\\").writeFileSync(\\"/tmp/root-running-finished\\",\\"unexpected\\")},600000)\'",{waitSeconds:0});await Bun.write("/tmp/root-running-job.json",JSON.stringify(p));console.log(p);');
+    if (!called(body, "root-running-job"))
+      return execute(
+        "root-running-job",
+        'const p=await shell("exec /usr/local/bin/bun -e \'require(\\"node:fs\\").writeFileSync(\\"/tmp/root-running-pid\\",String(process.pid)); console.log(\\"ROOT_CANCEL_RUNNING\\"); setTimeout(()=>{require(\\"node:fs\\").writeFileSync(\\"/tmp/root-running-finished\\",\\"unexpected\\")},600000)\'",{waitSeconds:0});await Bun.write("/tmp/root-running-job.json",JSON.stringify(p));console.log(p);',
+      );
     return say("ROOT_RUNNING_JOB_READY");
   }
   if (userHas(body, "ROOT_REPLY_LOSS")) {
-    if (!called(body, "root-reply-loss")) return execute("root-reply-loss",
-      'const fs=require("node:fs");fs.appendFileSync("/tmp/root-reply-loss-work.jsonl",JSON.stringify({role:process.env.DIE_SUBAGENT_TYPE??"root",depth:Number(process.env.DIE_SUBAGENT_DEPTH??0),cwd:process.cwd()})+"\\n");console.log("ROOT_REPLY_LOSS_WORK_ONCE");');
+    if (!called(body, "root-reply-loss"))
+      return execute(
+        "root-reply-loss",
+        'const fs=require("node:fs");fs.appendFileSync("/tmp/root-reply-loss-work.jsonl",JSON.stringify({role:process.env.DIE_SUBAGENT_TYPE??"root",depth:Number(process.env.DIE_SUBAGENT_DEPTH??0),cwd:process.cwd()})+"\\n");console.log("ROOT_REPLY_LOSS_WORK_ONCE");',
+      );
     return say("ROOT_REPLY_LOSS_DONE");
   }
   if (!userHas(body, "ROOT_START_" + upper)) return say("ROOT_READY_FOR_NORMAL_PROMPT");
