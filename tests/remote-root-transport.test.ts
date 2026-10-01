@@ -18,7 +18,7 @@ test("typed root SSH uses one JSON request, no TTY/session shell/credentials for
         "-e",
         "import {rootSshTransport} from " +
           JSON.stringify(resolve("src/remote/root-transport.ts")) +
-          "; console.log(JSON.stringify(await rootSshTransport('fixture','/fixture/die',{op:'hello'})))",
+          "; console.log(JSON.stringify(await rootSshTransport('fixture','/fixture/bruv',{op:'hello'})))",
       ],
       { env: { ...process.env, PATH: dir + ":" + process.env.PATH }, stdout: "pipe", stderr: "pipe" },
     );
@@ -30,7 +30,7 @@ test("typed root SSH uses one JSON request, no TTY/session shell/credentials for
     expect(response.args).not.toContain("-t");
     expect(response.args).toContain("ForwardAgent=no");
     expect(response.args).toContain("StrictHostKeyChecking=yes");
-    expect(response.args.at(-1)).toBe("'/fixture/die' --remote-root-control");
+    expect(response.args.at(-1)).toBe("'/fixture/bruv' --remote-root-control");
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

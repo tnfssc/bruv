@@ -55,10 +55,10 @@ export type RemoteTask = {
   >;
 };
 export type RemoteState = {
-  connection?: { host: string; diePath: string; hello: Hello };
+  connection?: { host: string; bruvPath: string; hello: Hello };
   tasks: Record<string, RemoteTask>;
 };
-export type Transport = (host: string, diePath: string, request: Record<string, unknown>) => Promise<unknown>;
+export type Transport = (host: string, bruvPath: string, request: Record<string, unknown>) => Promise<unknown>;
 export { sshTransport } from "./ssh";
 import { sshTransport, validHost, validPath } from "./ssh";
 function object(value: unknown): Record<string, unknown> {
@@ -73,7 +73,7 @@ function hello(value: unknown, requireModel = false): Hello {
     p = object(h.profile);
   if (requireModel && !p.model)
     throw new Error(
-      "Remote normal profile has no model. Configure normal in ~/.die/subagents.json on the Linux server; local credentials/models are never copied.",
+      "Remote normal profile has no model. Configure normal in ~/.bruv/subagents.json on the Linux server; local credentials/models are never copied.",
     );
   if (
     h.protocol !== 1 ||
@@ -95,7 +95,7 @@ function hello(value: unknown, requireModel = false): Hello {
 const MAX_CACHE_BYTES = 128 * 1024 * 1024;
 
 export function remoteStatePath(): string {
-  return join(homedir(), ".die", "remote", "state.json");
+  return join(homedir(), ".bruv", "remote", "state.json");
 }
 /** Create before SQLite opens it. EEXIST must not open/close the existing inode:
  * closing any descriptor for it can drop another SQLite connection's POSIX locks.
@@ -199,12 +199,12 @@ export class RemoteClient {
       throw e;
     }
   }
-  connect(host: string, diePath = "die"): Promise<Hello> {
+  connect(host: string, bruvPath = "bruv"): Promise<Hello> {
     return this.exclusive(async () => {
-      if (!validHost(host) || !validPath(diePath)) throw new Error("Invalid SSH alias or remote die path");
-      const h = hello(await this.transport(host, diePath, { op: "hello" }));
+      if (!validHost(host) || !validPath(bruvPath)) throw new Error("Invalid SSH alias or remote bruv path");
+      const h = hello(await this.transport(host, bruvPath, { op: "hello" }));
       const state = await this.read();
-      state.connection = { host, diePath, hello: h };
+      state.connection = { host, bruvPath, hello: h };
       await this.save(state);
       return h;
     });
@@ -302,13 +302,13 @@ export class RemoteClient {
       }
       try {
         // Recheck identity before retry. A lost reply is not permission to POST to a new owner.
-        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
+        const current = hello(await this.transport(c.host, c.bruvPath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
           throw new Error("Remote owner changed; launch outcome unknown, no retry");
         if (placement && current.taskPlacement !== 1)
           throw new Error("Destination does not support task placement; no launch sent and no role fallback");
         const reply = object(
-          await this.transport(c.host, c.diePath, {
+          await this.transport(c.host, c.bruvPath, {
             op: "launch",
             ownerId: task.ownerId,
             epoch: task.epoch,
@@ -354,14 +354,14 @@ export class RemoteClient {
       try {
         if (!c || c.host !== task.host || c.hello.ownerId !== task.ownerId || c.hello.epoch !== task.epoch)
           throw new Error("Task belongs to another remote owner; cached transcript only");
-        const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
+        const current = hello(await this.transport(c.host, c.bruvPath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
           throw new Error(
             "Remote owner changed (server restart or replaced state); outcome unknown; cached transcript only",
           );
         for (let page = 0; page < 1000; page++) {
           const r = object(
-            await this.transport(c.host, c.diePath, {
+            await this.transport(c.host, c.bruvPath, {
               op: "sync",
               ownerId: task.ownerId,
               epoch: task.epoch,
@@ -427,11 +427,11 @@ export class RemoteClient {
       const identity = expected ?? task ?? c.hello;
       if (c.hello.ownerId !== identity.ownerId || c.hello.epoch !== identity.epoch || (task && task.host !== c.host))
         throw Error("Remote owner changed; no request sent");
-      const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
+      const current = hello(await this.transport(c.host, c.bruvPath, { op: "hello" }), false);
       if (current.ownerId !== identity.ownerId || current.epoch !== identity.epoch)
         throw Error("Remote owner changed; outcome unknown");
       return object(
-        await this.transport(c.host, c.diePath, { ...request, ownerId: identity.ownerId, epoch: identity.epoch }),
+        await this.transport(c.host, c.bruvPath, { ...request, ownerId: identity.ownerId, epoch: identity.epoch }),
       );
     });
   }
@@ -479,7 +479,7 @@ export class RemoteClient {
       }
       let current: Hello;
       try {
-        current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
+        current = hello(await this.transport(c.host, c.bruvPath, { op: "hello" }), false);
       } catch (error) {
         task.cancelDelivery = { status: task.cancelDelivery.status, error: String(error) };
         await this.save(state);
@@ -494,7 +494,7 @@ export class RemoteClient {
       await this.save(state); // A lost response must not look like confirmation.
       try {
         const response = object(
-          await this.transport(c.host, c.diePath, {
+          await this.transport(c.host, c.bruvPath, {
             op: "cancel",
             taskId,
             ownerId: task.ownerId,
@@ -560,10 +560,10 @@ export class RemoteClient {
       task.replyDelivery[input.id] = { replyId: reply.replyId, status: "uncertain" };
       await this.save(state); // preserve reply identity before SSH; lost responses are uncertain
       try {
-        const current = hello(await this.transport(connection.host, connection.diePath, { op: "hello" }), false);
+        const current = hello(await this.transport(connection.host, connection.bruvPath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch) throw new Error("Remote owner changed");
         const response = object(
-          await this.transport(connection.host, connection.diePath, {
+          await this.transport(connection.host, connection.bruvPath, {
             op: "answer",
             ownerId: task.ownerId,
             epoch: task.epoch,

@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 
 const root = resolve(import.meta.dir, "..");
 test("source CLI remote entry validates request fields and preserves JSON pipe boundary", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-remote-source-cli-"));
+  const home = await mkdtemp(join(tmpdir(), "bruv-remote-source-cli-"));
   try {
     for (const request of [
       "{",

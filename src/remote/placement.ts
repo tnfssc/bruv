@@ -40,7 +40,7 @@ export function remoteChildEnvironment(env: NodeJS.ProcessEnv, placement?: Remot
   if (placement) validatePlacement(placement);
   return {
     ...env,
-    DIE_SUBAGENT_TYPE: placement?.profile ?? "normal",
-    DIE_SUBAGENT_DEPTH: String(placement ? placement.parentDepth + 1 : 1),
+    BRUV_SUBAGENT_TYPE: placement?.profile ?? "normal",
+    BRUV_SUBAGENT_DEPTH: String(placement ? placement.parentDepth + 1 : 1),
   };
 }

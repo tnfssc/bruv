@@ -5,11 +5,11 @@ import { join } from "node:path";
 import { OpenAIRealtimeSession, defaultSocket } from "../src/live/openai-session";
 import { orchestrationTools } from "../src/live/orchestration";
 
-if (process.env.DIE_REALTIME_SETUP_PROBE !== "1") {
-  console.error("Probe disabled; explicit DIE_REALTIME_SETUP_PROBE=1 required");
+if (process.env.BRUV_REALTIME_SETUP_PROBE !== "1") {
+  console.error("Probe disabled; explicit BRUV_REALTIME_SETUP_PROBE=1 required");
   process.exit(2);
 }
-const path = join(homedir(), ".die", "openai-test.env");
+const path = join(homedir(), ".bruv", "openai-test.env");
 let session: OpenAIRealtimeSession | undefined;
 let deadline: ReturnType<typeof setTimeout> | undefined;
 try {

@@ -5,13 +5,13 @@ import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promis
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-const enabled = process.env.DIE_RUN_LLM_TESTS === "1";
-const binary = resolve(import.meta.dir, "../dist/die");
+const enabled = process.env.BRUV_RUN_LLM_TESTS === "1";
+const binary = resolve(import.meta.dir, "../dist/bruv");
 
 test.skipIf(!enabled)(
   "natural nested-agent workflow returns control before descendants finish",
   async () => {
-    const directory = await mkdtemp(join(tmpdir(), "die-nested-ux-"));
+    const directory = await mkdtemp(join(tmpdir(), "bruv-nested-ux-"));
     const sessionDir = join(directory, "sessions");
     const evidence: any[] = [];
     let child: ReturnType<typeof spawn> | undefined;
@@ -35,7 +35,7 @@ test.skipIf(!enabled)(
           "--model",
           "gpt-5.6-luna",
           "--thinking",
-          process.env.DIE_UX_THINKING ?? "minimal",
+          process.env.BRUV_UX_THINKING ?? "minimal",
           "--mode",
           "json",
           "--session",
@@ -45,7 +45,7 @@ test.skipIf(!enabled)(
         ],
         {
           cwd: directory,
-          env: { ...process.env, DIE_SUBAGENT_DEPTH: "0", DIE_SUBAGENT_TYPE: "" },
+          env: { ...process.env, BRUV_SUBAGENT_DEPTH: "0", BRUV_SUBAGENT_TYPE: "" },
           stdio: ["ignore", "pipe", "pipe"],
         },
       );
@@ -91,7 +91,7 @@ test.skipIf(!enabled)(
           .trim()
           .split("\n")
           .map((line) => JSON.parse(line));
-        const metadata = entries.find((e) => e.type === "custom" && e.customType === "die-agent")?.data;
+        const metadata = entries.find((e) => e.type === "custom" && e.customType === "bruv-agent")?.data;
         const messages = entries.filter((e) => e.type === "message");
         const calls = messages.flatMap((e) =>
           e.message.role === "assistant"

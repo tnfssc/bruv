@@ -8,12 +8,12 @@ import { executeIsolated, formatResult } from "../src/typescript/execution";
 import { registerExecuteTool } from "../src/typescript/extension";
 import { makePng } from "./image-fixture";
 
-const binary = resolve(import.meta.dir, "../dist/die");
+const binary = resolve(import.meta.dir, "../dist/bruv");
 let directory: string;
 const cleanupPids = new Set<number>();
 
 beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), "die-execution-"));
+  directory = await mkdtemp(join(tmpdir(), "bruv-execution-"));
 });
 afterEach(async () => {
   for (const pid of cleanupPids) {

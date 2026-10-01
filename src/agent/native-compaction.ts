@@ -30,7 +30,7 @@ export function isReadOnlyCompactionContext(): boolean {
 
 export const NATIVE_CODEX_COMPACTION_VERSION = 1;
 export const NATIVE_CODEX_SUMMARY = noticeTemplate.trimEnd();
-export const NATIVE_CODEX_USAGE_ENTRY = "die-compaction-attempt";
+export const NATIVE_CODEX_USAGE_ENTRY = "bruv-compaction-attempt";
 export type CodexCompactionItem = { type: "compaction"; id: string; encrypted_content: string };
 export type NativeCodexCompactionDetails = {
   strategy: "codex-native";
@@ -658,7 +658,7 @@ export function registerNativeCodexCompaction(
         cancellation: "safety",
       });
       blockOrdinaryRequest = invalid
-        ? "Unsupported or damaged opaque Codex checkpoint. Use a compatible die version or branch before the checkpoint."
+        ? "Unsupported or damaged opaque Codex checkpoint. Use a compatible bruv version or branch before the checkpoint."
         : "This session contains an opaque Codex checkpoint that cannot be sent to the selected API/provider. Switch back to its Codex API/provider (" +
           incompatible!.provider +
           ") or start a new session.";

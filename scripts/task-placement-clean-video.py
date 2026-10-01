@@ -53,7 +53,7 @@ timeline=[];redactions=[]
 for row in source_timeline:
  path=out/row['path'];raw=path.read_bytes();screen=raw.decode()
  # The only text substitution is this disclosed disposable HOME prefix.
- screen,count=re.subn(r'/home/tnfssc/\.die/(?:tmp-pi-removal|probes)/[^/\s]+/home','[demo HOME]',screen)
+ screen,count=re.subn(r'/home/tnfssc/\.bruv/(?:tmp-pi-removal|probes)/[^/\s]+/home','[demo HOME]',screen)
  assert len(screen.splitlines())<=44, 'Never discard terminal rows'
  row['screen']=screen;timeline.append(row);redactions.append({'step':row['step'],'count':count,'originalSha256':sha(raw)})
 timeline.append(dict(timeline[-1],t=receipt['durationSeconds']))
@@ -113,7 +113,7 @@ for f in range(frames):
  t=f/fps
  while i+1<len(rows) and rows[i+1]['t']<=t:i+=1
  r=rows[i];im=Image.new('RGB',(W,H),'#0b1220');draw=ImageDraw.Draw(im)
- draw.text((36,20),'die — work on a named server',font=title,fill='#f8fafc')
+ draw.text((36,20),'bruv — work on a named server',font=title,fill='#f8fafc')
  draw.text((36,60),'Actual CLI capture replay · isolated Docker SSH · fake inference',font=small,fill='#94a3b8')
  draw.text((36,102),r['caption'],font=captionfont,fill='#67e8f9')
  draw.rounded_rectangle((30,143,1570,1135),radius=9,fill='#111827',outline='#334155')

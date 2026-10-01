@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { registerQuestionRuntime } from "../src/questions/runtime";
 
 function harness() {
-  const dir = mkdtempSync(join(tmpdir(), "die-question-runtime-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-question-runtime-"));
   const handlers = new Map<string, (event: any, ctx: any) => void>();
   const sent: Array<{ message: any; options: any }> = [];
   let idle = false,

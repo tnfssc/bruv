@@ -12,20 +12,20 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import phase1Fixture from "./phase1-compaction-fixture";
 
-test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
+test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
   "current pipeline live: fresh resume and uncaptured tool results",
   async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-current-live-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-current-live-"));
     const artifact = resolve("artifacts/compaction/current-live-" + Date.now() + ".json");
     const evidence: any = { phase: "setup", requests: [], payloads: [] };
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     try {
       const model = getModels("openai-codex").find(
-        (m) => m.id === (process.env.DIE_COMPACTION_MODEL ?? "gpt-5.6-luna"),
+        (m) => m.id === (process.env.BRUV_COMPACTION_MODEL ?? "gpt-5.6-luna"),
       );
-      if (!model) throw Error("Unknown DIE_COMPACTION_MODEL");
+      if (!model) throw Error("Unknown BRUV_COMPACTION_MODEL");
       const runtime = await ModelRuntime.create({
-        authPath: join(process.env.DIE_CODING_AGENT_DIR ?? join(homedir(), ".die", "agent"), "auth.json"),
+        authPath: join(process.env.BRUV_CODING_AGENT_DIR ?? join(homedir(), ".bruv", "agent"), "auth.json"),
         modelsPath: null,
         refreshOnCreate: false,
       });

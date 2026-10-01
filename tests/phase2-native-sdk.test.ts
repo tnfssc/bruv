@@ -31,7 +31,7 @@ const usage = {
 const sentinel = "phase2-offline-serializer";
 
 test("native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume, and provider guard", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-native-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-sdk-"));
   const originalFetch = globalThis.fetch;
   const sent: any[] = [];
   const compactRequests: any[] = [];
@@ -181,7 +181,7 @@ test("native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume,
               });
             },
           },
-          { name: "die-tasks", factory: tasks },
+          { name: "bruv-tasks", factory: tasks },
         ],
       });
       await loader.reload();
@@ -308,7 +308,7 @@ test("native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume,
     expect(compactRequests).toHaveLength(3);
     const attempts = manager
       .getEntries()
-      .filter((e) => e.type === "custom" && e.customType === "die-compaction-attempt") as any[];
+      .filter((e) => e.type === "custom" && e.customType === "bruv-compaction-attempt") as any[];
     expect(attempts).toHaveLength(1);
     expect(attempts[0].data.usage.cost.total).toBeGreaterThan(0);
     manager.appendMessage({

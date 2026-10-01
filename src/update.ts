@@ -1,14 +1,14 @@
 import { createHash } from "node:crypto";
 import { chmod, mkdtemp, realpath, rename, rm, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import diePackage from "../package.json";
+import bruvPackage from "../package.json";
 
-export const RELEASES_URL = "https://api.github.com/repos/tnfssc/die/releases/latest";
+export const RELEASES_URL = "https://api.github.com/repos/tnfssc/bruv/releases/latest";
 export const UPDATE_ASSETS = {
-  "linux-x64": "die-linux-x64",
-  "linux-arm64": "die-linux-arm64",
-  "darwin-arm64": "die-darwin-arm64",
-  "android-arm64": "die-android-arm64",
+  "linux-x64": "bruv-linux-x64",
+  "linux-arm64": "bruv-linux-arm64",
+  "darwin-arm64": "bruv-darwin-arm64",
+  "android-arm64": "bruv-android-arm64",
 } as const;
 export type UpdateAssetKey = keyof typeof UPDATE_ASSETS;
 export const UPDATE_ASSET = UPDATE_ASSETS["linux-x64"];
@@ -41,9 +41,9 @@ function errorMessage(error: unknown): string {
 export function isCompiledInvocation(moduleUrl = import.meta.url): boolean {
   return moduleUrl.startsWith("file:///$bunfs/");
 }
-export async function updateDie(deps: UpdateDeps = {}): Promise<UpdateResult> {
+export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
   if (!(deps.compiled ?? isCompiledInvocation()))
-    throw new Error("Refusing to self-update a source Bun invocation; run the compiled die executable.");
+    throw new Error("Refusing to self-update a source Bun invocation; run the compiled bruv executable.");
   const platform = deps.platform ?? process.platform;
   const arch = deps.arch ?? process.arch;
   const updateAsset = updateAssetFor(platform, arch);
@@ -51,13 +51,13 @@ export async function updateDie(deps: UpdateDeps = {}): Promise<UpdateResult> {
     throw new Error(
       "Self-update is currently supported only on Linux x64/arm64, macOS arm64, and Android/Termux arm64.",
     );
-  const current = deps.currentVersion ?? diePackage.version;
+  const current = deps.currentVersion ?? bruvPackage.version;
   const currentParts = version(current);
   if (!currentParts) throw new Error("Cannot self-update this development version: " + current);
   const http = deps.fetch ?? fetch;
   const request = (url: string, accept: string) =>
     http(url, {
-      headers: { accept, "user-agent": "die/" + current },
+      headers: { accept, "user-agent": "bruv/" + current },
       signal: AbortSignal.timeout(300_000),
     });
   let release: unknown;
@@ -82,7 +82,7 @@ export async function updateDie(deps: UpdateDeps = {}): Promise<UpdateResult> {
   const assets: unknown[] = Array.isArray(release.assets) ? release.assets : [];
   const assetUrl = (name: string): string => {
     const matches = assets.filter((asset): asset is Record<string, unknown> => isRecord(asset) && asset.name === name);
-    const expected = "https://github.com/tnfssc/die/releases/download/" + encodeURIComponent(tag) + "/" + name;
+    const expected = "https://github.com/tnfssc/bruv/releases/download/" + encodeURIComponent(tag) + "/" + name;
     if (matches.length !== 1 || matches[0]?.browser_download_url !== expected)
       throw new Error("The release is missing a valid official " + name + " asset.");
     return expected;
@@ -96,7 +96,7 @@ export async function updateDie(deps: UpdateDeps = {}): Promise<UpdateResult> {
     original = await stat(target);
     if (!original.isFile()) throw new Error("not a regular file");
   } catch (error) {
-    throw new Error("Cannot locate or inspect die executable: " + errorMessage(error));
+    throw new Error("Cannot locate or inspect bruv executable: " + errorMessage(error));
   }
   deps.onDownload?.(latest);
   let bytes: Uint8Array;
@@ -106,7 +106,7 @@ export async function updateDie(deps: UpdateDeps = {}): Promise<UpdateResult> {
     bytes = new Uint8Array(await response.arrayBuffer());
     if (!bytes.length) throw new Error("empty download");
   } catch (error) {
-    throw new Error("Unable to download die " + latest + ": " + errorMessage(error));
+    throw new Error("Unable to download bruv " + latest + ": " + errorMessage(error));
   }
   try {
     const response = await request(checksumUrl, "text/plain");
@@ -121,8 +121,8 @@ export async function updateDie(deps: UpdateDeps = {}): Promise<UpdateResult> {
   }
   let stage: string | undefined;
   try {
-    stage = await mkdtemp(join(dirname(target), ".die-update-"));
-    const stagedBinary = join(stage, "die");
+    stage = await mkdtemp(join(dirname(target), ".bruv-update-"));
+    const stagedBinary = join(stage, "bruv");
     const mode = (Number(original.mode) & 0o777) | 0o100;
     await writeFile(stagedBinary, bytes, { mode, flag: "wx" });
     await chmod(stagedBinary, mode);
@@ -134,11 +134,11 @@ export async function updateDie(deps: UpdateDeps = {}): Promise<UpdateResult> {
       now.mtimeMs !== original.mtimeMs ||
       now.ctimeMs !== original.ctimeMs
     )
-      throw new Error("die executable changed during the update; run die update again");
+      throw new Error("bruv executable changed during the update; run bruv update again");
     await rename(stagedBinary, target);
   } catch (error) {
     throw new Error(
-      "Could not replace die at " + target + "; check installation-directory permissions: " + errorMessage(error),
+      "Could not replace bruv at " + target + "; check installation-directory permissions: " + errorMessage(error),
     );
   } finally {
     if (stage) await rm(stage, { recursive: true, force: true }).catch(() => undefined);

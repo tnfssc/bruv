@@ -36,9 +36,9 @@ assert(
 const source = resolve(import.meta.dir, "..");
 const fixture = join(source, "tests/fixtures/remote-typed-root-placement");
 const bun = resolve(process.env.BUN_BIN ?? "/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun");
-assert(probe || process.env.DIE_BIN, "Set DIE_BIN to the actual combined compiled CLI; no implicit candidate");
-const binary = process.env.DIE_BIN ? resolve(process.env.DIE_BIN) : "";
-const base = process.env.REMOTE_ROOT_PLACEMENT_BASE_IMAGE ?? "die-remote-e2e-2434886-5027:latest";
+assert(probe || process.env.BRUV_BIN, "Set BRUV_BIN to the actual combined compiled CLI; no implicit candidate");
+const binary = process.env.BRUV_BIN ? resolve(process.env.BRUV_BIN) : "";
+const base = process.env.REMOTE_ROOT_PLACEMENT_BASE_IMAGE ?? "bruv-remote-e2e-2434886-5027:latest";
 assert(
   base,
   "Supply REMOTE_ROOT_PLACEMENT_BASE_IMAGE: a cached local OS/SSH fixture image. No pulls/apt/WAN are allowed.",
@@ -54,7 +54,7 @@ function assertExternal(path: string) {
   const r = relative(realpathSync(source), canonical);
   assert(r && (r === ".." || r.startsWith("../") || isAbsolute(r)), "Fixture output must be outside the repository");
 }
-const tmpBase = resolve(process.env.TMPDIR ?? "/home/tnfssc/.die/tmp-pi-removal");
+const tmpBase = resolve(process.env.TMPDIR ?? "/home/tnfssc/.bruv/tmp-pi-removal");
 assertExternal(tmpBase);
 if (process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS) assertExternal(process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS);
 mkdirSync(tmpBase, { recursive: true });
@@ -63,7 +63,7 @@ const artifacts = process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS
   ? resolve(process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS)
   : mkdtempSync(join(tmpBase, "remote-root-placement-artifacts-"));
 mkdirSync(artifacts, { recursive: true });
-const name = "die-root-placement-" + process.pid + "-" + Date.now();
+const name = "bruv-root-placement-" + process.pid + "-" + Date.now();
 const home = join(root, "home"),
   agent = join(home, "agent"),
   build = join(root, "build"),
@@ -76,14 +76,14 @@ for (const dir of [
   build,
   repo,
   join(home, ".ssh"),
-  join(home, ".die"),
+  join(home, ".bruv"),
   join(root, "keys"),
   join(root, "bin"),
   faultDir,
   join(build, "runtime"),
 ])
   mkdirSync(dir, { recursive: true, mode: 0o700 });
-// Deliberately do not inherit DIE_*, provider tokens, SSH agents, or a worker's role/depth.
+// Deliberately do not inherit BRUV_*, provider tokens, SSH agents, or a worker's role/depth.
 const env: Record<string, string> = {
   PATH: process.env.PATH ?? "/usr/bin:/bin",
   HOME: home,
@@ -94,7 +94,7 @@ const env: Record<string, string> = {
   XDG_CONFIG_HOME: join(home, "config"),
   XDG_CACHE_HOME: join(home, "cache"),
   XDG_STATE_HOME: join(home, "state"),
-  DIE_CODING_AGENT_DIR: agent,
+  BRUV_CODING_AGENT_DIR: agent,
   GIT_CONFIG_GLOBAL: "/dev/null",
   GIT_CONFIG_NOSYSTEM: "1",
   GIT_TERMINAL_PROMPT: "0",
@@ -134,8 +134,8 @@ const files = (dir: string): string[] =>
         d.isDirectory() ? files(join(dir, d.name)) : d.isFile() ? [join(dir, d.name)] : [],
       );
 const json = (file: string) => JSON.parse(readFileSync(file, "utf8"));
-const statePath = join(home, ".die", "remote", "state.json");
-const rootsDir = join(home, ".die", "remote", "roots");
+const statePath = join(home, ".bruv", "remote", "state.json");
+const rootsDir = join(home, ".bruv", "remote", "roots");
 const rootFiles = () => files(rootsDir).filter((f) => f.endsWith("/root.json"));
 const rootState = (id?: string): any => {
   const rows = rootFiles().map(json);
@@ -156,7 +156,7 @@ let containerStarted = false,
 let passed = false;
 console.log("Typed root placement artifacts:", artifacts);
 try {
-  // Resolve Docker endpoint before changing HOME; do not read a real Die/SSH/provider config.
+  // Resolve Docker endpoint before changing HOME; do not read a real Bruv/SSH/provider config.
   const dockerHost =
     process.env.DOCKER_HOST ??
     run("docker", ["context", "inspect", "--format", "{{.Endpoints.docker.Host}}"], {
@@ -167,7 +167,7 @@ try {
     run("/bin/sh", ["-c", 'command -v "$1"', "check", tool]);
   assert(existsSync(bun), "BUN_BIN is missing");
   if (!probe)
-    assert(existsSync(binary), "Build the final combined compiled CLI and set DIE_BIN; probe is not acceptance");
+    assert(existsSync(binary), "Build the final combined compiled CLI and set BRUV_BIN; probe is not acceptance");
   const imageId = docker("image", "inspect", base!, "--format", "{{.Id}}");
   assert.match(imageId, /^sha256:[0-9a-f]{64}$/);
   docker(
@@ -198,8 +198,8 @@ try {
   copyFileSync(bun, join(build, "runtime", "bun"));
   chmodSync(join(build, "runtime", "bun"), 0o755);
   if (!probe) {
-    copyFileSync(binary, join(build, "runtime", "die"));
-    chmodSync(join(build, "runtime", "die"), 0o755);
+    copyFileSync(binary, join(build, "runtime", "bruv"));
+    chmodSync(join(build, "runtime", "bruv"), 0o755);
   }
   copyFileSync(join(root, "hostkey"), join(root, "keys", "hostkey"));
   copyFileSync(join(root, "client.pub"), join(root, "keys", "client.pub"));
@@ -340,7 +340,7 @@ try {
         JSON.stringify(join(source, "src/remote/client.ts")) +
         ";console.log(await new RemoteClient().connect(" +
         JSON.stringify(ALIAS) +
-        ',"/usr/local/bin/die"));',
+        ',"/usr/local/bin/bruv"));',
     ]);
     assert.equal(json(statePath).connection.host, ALIAS);
     const pinned = JSON.stringify(json(statePath).connection);
@@ -350,7 +350,7 @@ try {
       !files(home).some((f) => /\/(auth|models|settings|subagents)\.json$/.test(f)),
       "local provider/profile config leaked into fixture",
     );
-    assert(!Object.keys(env).some((k) => /API_KEY|TOKEN|SECRET|DIE_SUBAGENT|DIE_REMOTE_OWNER/.test(k)));
+    assert(!Object.keys(env).some((k) => /API_KEY|TOKEN|SECRET|BRUV_SUBAGENT|BRUV_REMOTE_OWNER/.test(k)));
     run("git", ["-C", repo, "init", "-q"]);
     run("git", ["-C", repo, "config", "user.email", "fixture@invalid"]);
     run("git", ["-C", repo, "config", "user.name", "Typed root fixture"]);

@@ -12,13 +12,13 @@ import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import extension from "../src/agent/extension";
 import * as execution from "../src/typescript/execution";
 
-const originalDepth = process.env.DIE_SUBAGENT_DEPTH,
-  originalType = process.env.DIE_SUBAGENT_TYPE;
+const originalDepth = process.env.BRUV_SUBAGENT_DEPTH,
+  originalType = process.env.BRUV_SUBAGENT_TYPE;
 afterEach(() => {
-  if (originalDepth === undefined) delete process.env.DIE_SUBAGENT_DEPTH;
-  else process.env.DIE_SUBAGENT_DEPTH = originalDepth;
-  if (originalType === undefined) delete process.env.DIE_SUBAGENT_TYPE;
-  else process.env.DIE_SUBAGENT_TYPE = originalType;
+  if (originalDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+  else process.env.BRUV_SUBAGENT_DEPTH = originalDepth;
+  if (originalType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+  else process.env.BRUV_SUBAGENT_TYPE = originalType;
 });
 
 type FixtureContext = ExtensionContext & {
@@ -86,9 +86,9 @@ function contextFixture(
   };
 }
 function load(depth = 0, type?: string, options: any = {}) {
-  process.env.DIE_SUBAGENT_DEPTH = String(depth);
-  if (type) process.env.DIE_SUBAGENT_TYPE = type;
-  else delete process.env.DIE_SUBAGENT_TYPE;
+  process.env.BRUV_SUBAGENT_DEPTH = String(depth);
+  if (type) process.env.BRUV_SUBAGENT_TYPE = type;
+  else delete process.env.BRUV_SUBAGENT_TYPE;
   const tools = new Map<string, any>(),
     handlers = new Map<string, Function[]>(),
     messages: any[] = [];
@@ -148,8 +148,8 @@ test("unconfigured native fast startup adds no UI output", async () => {
   const ctx = contextFixture();
   await e.fire("session_start", {}, ctx);
   expect(ctx.notices).toEqual([]);
-  expect(ctx.statuses.has("die-native-fast")).toBe(false);
-  expect(ctx.statuses.get("die-mode")).toBe("mode: orchestrator");
+  expect(ctx.statuses.has("bruv-native-fast")).toBe(false);
+  expect(ctx.statuses.get("bruv-mode")).toBe("mode: orchestrator");
   await e.fire("session_shutdown", {}, ctx);
 });
 
@@ -159,7 +159,7 @@ test("resumed leaf identity is retained in instructions", async () => {
     entries: [
       {
         type: "custom",
-        customType: "die-agent",
+        customType: "bruv-agent",
         data: { type: "fast", depth: 1 },
       },
     ],
@@ -437,7 +437,7 @@ test("session lifecycle resets resumed child identity when returning to root", a
     entries: [
       {
         type: "custom",
-        customType: "die-agent",
+        customType: "bruv-agent",
         data: { type: "normal", depth: 1 },
       },
     ],
@@ -482,7 +482,7 @@ test("spawned environment roles cannot be changed by resumed metadata", async ()
     const entries = [
       {
         type: "custom",
-        customType: "die-agent",
+        customType: "bruv-agent",
         data: { type: item.metadata, depth: 1 },
       },
     ];
@@ -574,10 +574,10 @@ for (const data of [
       entries: [
         {
           type: "custom",
-          customType: "die-agent",
+          customType: "bruv-agent",
           data: { type: "orchestrator", depth: 1 },
         },
-        { type: "custom", customType: "die-agent", data },
+        { type: "custom", customType: "bruv-agent", data },
       ],
     });
     await e.fire("session_start", {}, ctx);
@@ -608,7 +608,7 @@ test("malformed trailing branch entry fails closed instead of retaining root pri
   const entries: any[] = [
     {
       type: "custom",
-      customType: "die-agent",
+      customType: "bruv-agent",
       data: { type: "orchestrator", depth: 1 },
     },
   ];
@@ -622,7 +622,7 @@ test("malformed trailing branch entry fails closed instead of retaining root pri
 });
 
 test("throwing identity data getter fails closed", async () => {
-  const marker = { type: "custom", customType: "die-agent" } as Record<string, unknown>;
+  const marker = { type: "custom", customType: "bruv-agent" } as Record<string, unknown>;
   Object.defineProperty(marker, "data", {
     get: () => {
       throw new Error("hostile");
@@ -638,7 +638,7 @@ test("throwing identity data getter fails closed", async () => {
 });
 
 test("shutdown persists every shell ownership cause without duplicating inspect content", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-extension-lifecycle-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-extension-lifecycle-"));
   const sessionFile = join(dir, "root.jsonl");
   const ctx = contextFixture({
     sessionManager: { getSessionFile: () => sessionFile },

@@ -4,7 +4,7 @@ This is the maintained resource/tooling boundary for the embedded T3 runtime.
 Runtime code lives in `src/t3/`; direct tests live in `tests/t3/`.
 
 - **One upstream input set:** `upstream/source.json` pins the repository and revision,
-  `upstream/die.patch` is the canonical patch, and `upstream/bootstrap.mjs` is
+  `upstream/bruv.patch` is the canonical patch, and `upstream/bootstrap.mjs` is
   the packaged bootstrap. Builds, CI, and release attestation share these inputs.
 - **One build:** `bun run build:web` runs `build/build.ts`;
   `build/verify-source.ts` rejects anything other than pinned HEAD plus that patch.
@@ -31,7 +31,7 @@ release notes retain their role roots (`scripts/`, `native/`, `support/`).
 
 ## Pinned browser/server build
 
-The canonical `upstream/die.patch` includes the reviewed installer modernization.
+The canonical `upstream/bruv.patch` includes the reviewed installer modernization.
 It scopes pnpm to the shipped server, browser, shared packages and typecheck scripts;
 it is not an upstream desktop/mobile build checkout. Modern injected-workspace
 deploy preserves native optional assets and the local package self-reference.
@@ -53,3 +53,20 @@ wire/domain constraints, not a blanket numeric rewrite: the invalid numeric
 configuration error intentionally retains `Schema.Number` with the compiler’s
 documented single-site exemption. See the numeric-contract wisdom and the final
 installer validation handoff for evidence and compatibility decisions.
+
+## Updating the canonical patch
+
+Edit a disposable checkout at the revision in `upstream/source.json` after applying
+`upstream/bruv.patch`, then export the actual Git source:
+
+```bash
+bun integrations/t3/build/regenerate-patch.ts /absolute/path/to/patched-checkout
+```
+
+The exporter checks the pin, uses a disposable index, includes file renames and
+regenerates Git blob IDs, and verifies the result against the actual checkout.
+Do not perform text replacement on a patch or hand-edit hashes. The upstream
+repository/revision pin stays unchanged for product-only edits. The web builder
+regenerates `SOURCE.txt`, the archive digest, and the verified payload receipt.
+Bruv is a fresh identity: its `BRUV_*` environment, `.bruv` state, MCP tool names,
+services and cache/artifact names do not fall back to Die identities.

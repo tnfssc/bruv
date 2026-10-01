@@ -5,12 +5,12 @@ import { join, resolve } from "node:path";
 import { run } from "./helpers";
 
 const root = resolve(import.meta.dir, "..");
-const binary = join(root, "dist/die");
+const binary = join(root, "dist/bruv");
 const packageVersion = ((await Bun.file(join(root, "package.json")).json()) as { version: string }).version;
 let home: string;
 
 beforeEach(async () => {
-  home = await mkdtemp(join(tmpdir(), "die-cli-test-"));
+  home = await mkdtemp(join(tmpdir(), "bruv-cli-test-"));
 });
 
 afterEach(async () => {
@@ -21,7 +21,7 @@ function isolatedEnv(): Record<string, string> {
   return { HOME: home, PATH: "/nonexistent" };
 }
 
-describe("compiled die CLI", () => {
+describe("compiled bruv CLI", () => {
   test("is standalone and reports the product version", async () => {
     const result = await run([binary, "--version"], { env: isolatedEnv() });
 
@@ -29,18 +29,18 @@ describe("compiled die CLI", () => {
     expect(result.stdout.trim()).toBe(packageVersion);
   });
 
-  test("exposes branded help and uses ~/.die instead of ~/.pi", async () => {
+  test("exposes branded help and uses ~/.bruv instead of ~/.pi", async () => {
     const result = await run([binary, "--help"], { env: isolatedEnv() });
 
     expect(result.code).toBe(0);
-    expect(result.stdout).toStartWith("die - AI coding assistant");
+    expect(result.stdout).toStartWith("bruv - AI coding assistant");
     expect(result.stdout).not.toContain("bash, edit, write tools");
     expect(result.stdout).not.toContain("--no-tools");
     expect(result.stdout).not.toContain("--no-builtin-tools");
     expect(result.stdout).not.toContain("--exclude-tools");
     expect(result.stdout).not.toContain("--tools,");
     expect(result.stdout).not.toContain(" update [source|self|pi]");
-    expect(await Bun.file(join(home, ".die", "runtime", packageVersion, "package.json")).exists()).toBe(true);
+    expect(await Bun.file(join(home, ".bruv", "runtime", packageVersion, "package.json")).exists()).toBe(true);
     expect(await Bun.file(join(home, ".pi", "agent", "settings.json")).exists()).toBe(false);
   });
 
@@ -53,7 +53,7 @@ describe("compiled die CLI", () => {
   });
 
   test("does not rewrite materialized runtime assets on later launches", async () => {
-    const runtime = join(home, ".die", "runtime", packageVersion);
+    const runtime = join(home, ".bruv", "runtime", packageVersion);
     expect((await run([binary, "--version"], { env: isolatedEnv() })).code).toBe(0);
     const files = (await readdir(runtime, { recursive: true, withFileTypes: true }))
       .filter((entry) => entry.isFile())
@@ -71,17 +71,17 @@ describe("compiled die CLI", () => {
     for (const option of ["--no-tools", "--no-builtin-tools", "--tools=read", "--exclude-tools=bash"]) {
       const result = await run([binary, option], { env: isolatedEnv() });
       expect(result.code).toBe(1);
-      expect(result.stderr).toContain("is not supported by die");
+      expect(result.stderr).toContain("is not supported by bruv");
     }
   });
 
   test("self-update help and argument errors never invoke the SDK updater", async () => {
     const help = await run([binary, "update", "--help"], { env: isolatedEnv() });
     expect(help.code).toBe(0);
-    expect(help.stdout).toContain("Usage: die update");
+    expect(help.stdout).toContain("Usage: bruv update");
     const invalid = await run([binary, "update", "self"], { env: isolatedEnv() });
     expect(invalid.code).toBe(1);
-    expect(invalid.stderr).toContain("Usage: die update");
+    expect(invalid.stderr).toContain("Usage: bruv update");
   });
 
   test("installs atomically into the requested local bin directory", async () => {
@@ -91,14 +91,14 @@ describe("compiled die CLI", () => {
       env: {
         ...process.env,
         HOME: home,
-        DIE_INSTALL_DIR: installDir,
-        DIE_SKIP_BUILD: "1",
+        BRUV_INSTALL_DIR: installDir,
+        BRUV_SKIP_BUILD: "1",
       },
     });
 
     expect(result.code).toBe(0);
-    expect(result.stdout).toContain(`Installed die to ${join(installDir, "die")}`);
-    const installed = await run([join(installDir, "die"), "--version"], { env: isolatedEnv() });
+    expect(result.stdout).toContain(`Installed bruv to ${join(installDir, "bruv")}`);
+    const installed = await run([join(installDir, "bruv"), "--version"], { env: isolatedEnv() });
     expect(installed.code).toBe(0);
     expect(installed.stdout.trim()).toBe(packageVersion);
   });

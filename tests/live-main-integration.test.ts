@@ -17,7 +17,7 @@ import {
 import asynchronousTasksExtension from "../src/agent/extension";
 import { installCurrentConversationAdapter } from "../src/agent/instruction-continuity";
 import { acquireMainOwner, type MainOwner } from "../src/live/main-owner";
-import { dieSystemPrompt } from "../src/prompts";
+import { bruvSystemPrompt } from "../src/prompts";
 import {
   createAssistantMessageEventStream,
   getCurrentSystemPrompt,
@@ -26,28 +26,28 @@ import {
 import { VoiceSession } from "../src/live/session";
 import { registerLiveStop } from "../src/live/lifecycle-access";
 
-// Release/Linux gates build dist/die first. The source-only macOS lane uses
+// Release/Linux gates build dist/bruv first. The source-only macOS lane uses
 // the existing real CLI wrapper, never a mock runtime or a skipped test.
-const compiled = resolve(import.meta.dir, "../dist/die");
+const compiled = resolve(import.meta.dir, "../dist/bruv");
 const executable =
-  process.env.DIE_PROBE_EXECUTABLE ??
+  process.env.BRUV_PROBE_EXECUTABLE ??
   (existsSync(compiled) ? compiled : resolve(import.meta.dir, "fixtures/live-execute-cli.sh"));
 const cleanup: Array<() => Promise<void> | void> = [];
-const depth = process.env.DIE_SUBAGENT_DEPTH,
-  kind = process.env.DIE_SUBAGENT_TYPE;
+const depth = process.env.BRUV_SUBAGENT_DEPTH,
+  kind = process.env.BRUV_SUBAGENT_TYPE;
 afterEach(async () => {
   while (cleanup.length) await cleanup.pop()?.();
-  if (depth === undefined) delete process.env.DIE_SUBAGENT_DEPTH;
-  else process.env.DIE_SUBAGENT_DEPTH = depth;
-  if (kind === undefined) delete process.env.DIE_SUBAGENT_TYPE;
-  else process.env.DIE_SUBAGENT_TYPE = kind;
+  if (depth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+  else process.env.BRUV_SUBAGENT_DEPTH = depth;
+  if (kind === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+  else process.env.BRUV_SUBAGENT_TYPE = kind;
 });
 
 async function fixture(options: { hooks?: boolean; customPrompt?: string; dynamicPrompt?: boolean } = {}) {
-  process.env.DIE_SUBAGENT_DEPTH = "0";
-  delete process.env.DIE_SUBAGENT_TYPE;
+  process.env.BRUV_SUBAGENT_DEPTH = "0";
+  delete process.env.BRUV_SUBAGENT_TYPE;
   installCurrentConversationAdapter();
-  const dir = await mkdtemp(join(tmpdir(), "die-live-main-vertical-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-live-main-vertical-"));
   cleanup.push(() => rm(dir, { recursive: true, force: true }));
   const manager = SessionManager.create(dir, join(dir, "sessions"));
   let pi!: ExtensionAPI;
@@ -60,13 +60,13 @@ async function fixture(options: { hooks?: boolean; customPrompt?: string; dynami
     noSkills: true,
     noPromptTemplates: true,
     noThemes: true,
-    systemPrompt: options.customPrompt ?? dieSystemPrompt(),
+    systemPrompt: options.customPrompt ?? bruvSystemPrompt(),
     appendSystemPromptOverride: () => ["VERTICAL_CUSTOM_APPEND"],
     agentsFilesOverride: () => ({
       agentsFiles: [{ path: join(dir, "AGENTS.md"), content: "VERTICAL_PROJECT_GUIDANCE" }],
     }),
     extensionFactories: [
-      { name: "die-tasks", factory: (api) => asynchronousTasksExtension(api, { executablePath: executable }) },
+      { name: "bruv-tasks", factory: (api) => asynchronousTasksExtension(api, { executablePath: executable }) },
       {
         name: "vertical-capture",
         factory: (api) => {
@@ -929,7 +929,7 @@ test("GPT Live spoken delegation reaches Pi as one clean provisional request", a
   expect(audits).toHaveLength(3);
   expect(JSON.stringify(audits)).toContain("uncertain");
   const capture = JSON.stringify(observed, null, 2);
-  if (process.env.DIE_LIVE_INPUT_CAPTURE) writeFileSync(process.env.DIE_LIVE_INPUT_CAPTURE, capture + "\n");
+  if (process.env.BRUV_LIVE_INPUT_CAPTURE) writeFileSync(process.env.BRUV_LIVE_INPUT_CAPTURE, capture + "\n");
   const first = JSON.stringify(observed[0]);
   const second = JSON.stringify(observed[1]);
   expect(first.match(/Check this repo status/g) ?? []).toHaveLength(1);

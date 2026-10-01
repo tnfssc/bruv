@@ -124,11 +124,11 @@ export async function dispatchRootFacet(
 
 /** One private socket per real root session. The owner retains the RPC stream. */
 export function registerRootRuntime(pi: ExtensionAPI, services: RootJobs): void {
-  const socket = process.env.DIE_ROOT_RUNTIME_SOCKET,
-    token = process.env.DIE_ROOT_RUNTIME_TOKEN;
+  const socket = process.env.BRUV_ROOT_RUNTIME_SOCKET,
+    token = process.env.BRUV_ROOT_RUNTIME_TOKEN;
   if (!socket && !token) return;
   if (!socket || !token) throw Error("Incomplete root runtime IPC configuration");
-  if (process.env.DIE_SUBAGENT_TYPE || Number(process.env.DIE_SUBAGENT_DEPTH ?? 0) !== 0)
+  if (process.env.BRUV_SUBAGENT_TYPE || Number(process.env.BRUV_SUBAGENT_DEPTH ?? 0) !== 0)
     throw Error("Root runtime cannot run as a child");
   let context: ExtensionContext | undefined, server: Server | undefined;
   let serial = Promise.resolve();

@@ -18,7 +18,7 @@ const accepted = await box.reply(reply); // false means stale/terminal/revoked; 
 // On stop/end: await box.terminal(); On revoke: await box.revoke(grantId).
 ```
 
-Provide the runtime child an authenticated grantId + taskId via private configuration and use DIE_REMOTE_RUNTIME_STATE (runtime.json) to determine the task directory only if the parent created/pinned that path; do not trust an environment string supplied by a remote requester. The owner executes the mailbox Promise; the child needs a typed remote.requestCapability tool bridge to the owner, not a fake model completion. Preserve requestId across retries/restarts; same ID with changed payload is rejected. Sync may repeat requests, and authenticated clients should reply with the same persisted reply intent. Do not blindly replay uncertain **mutation** intents; these grants support only read-only operations.
+Provide the runtime child an authenticated grantId + taskId via private configuration and use BRUV_REMOTE_RUNTIME_STATE (runtime.json) to determine the task directory only if the parent created/pinned that path; do not trust an environment string supplied by a remote requester. The owner executes the mailbox Promise; the child needs a typed remote.requestCapability tool bridge to the owner, not a fake model completion. Preserve requestId across retries/restarts; same ID with changed payload is rejected. Sync may repeat requests, and authenticated clients should reply with the same persisted reply intent. Do not blindly replay uncertain **mutation** intents; these grants support only read-only operations.
 
 Client (persist in a local **client-owned** 0700 directory, not the remote task directory):
 

@@ -8,7 +8,7 @@ function fixture() {
     aborted = 0,
     fail = false;
   const controller = new AbortController();
-  Object.defineProperty(controller.signal, Symbol.for("die.job-response-ack-capable"), { value: true });
+  Object.defineProperty(controller.signal, Symbol.for("bruv.job-response-ack-capable"), { value: true });
   const observed: unknown[] = [];
   const ctx = {
     isIdle: () => idle,

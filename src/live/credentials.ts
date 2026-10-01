@@ -11,7 +11,7 @@ const GOOGLE_PROVIDER = "google";
 const OPENAI_PROVIDER = "openai";
 export type LiveProviderId = "google" | "openai";
 
-export const liveCredentialsPath = () => join(homedir(), ".die", "live.env");
+export const liveCredentialsPath = () => join(homedir(), ".bruv", "live.env");
 
 /** Deliberately not a shell/dotenv evaluator. Never include the source in errors. */
 export function parseLiveKey(source: string): string {
@@ -44,7 +44,7 @@ export async function loadLiveKey(path = liveCredentialsPath()): Promise<string>
     if (bytesRead > 16_384) throw new Error("unsafe");
     return parseLiveKey(buffer.subarray(0, bytesRead).toString("utf8"));
   } catch {
-    throw new Error("Live key unavailable. Use a user-owned ~/.die/live.env (0600) with GEMINI_API_KEY.");
+    throw new Error("Live key unavailable. Use a user-owned ~/.bruv/live.env (0600) with GEMINI_API_KEY.");
   } finally {
     await file?.close();
   }
@@ -160,7 +160,7 @@ export async function createDefaultLiveCredentialService(
 ): Promise<LiveCredentialService> {
   signal?.throwIfAborted();
   const credentials = AuthStorage.create(
-    join(process.env.DIE_CODING_AGENT_DIR ?? join(homedir(), ".die", "agent"), "auth.json"),
+    join(process.env.BRUV_CODING_AGENT_DIR ?? join(homedir(), ".bruv", "agent"), "auth.json"),
   );
   const runtime = await ModelRuntime.create({
     credentials,

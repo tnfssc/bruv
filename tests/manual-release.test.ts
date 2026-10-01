@@ -7,7 +7,7 @@ import { nextReleaseVersion } from "../scripts/prepare-manual-release";
 
 describe("manual release preparation", () => {
   test("prepares version and notes in an isolated local git fixture without publishing", async () => {
-    const root = await mkdtemp(join(tmpdir(), "die-manual-release-"));
+    const root = await mkdtemp(join(tmpdir(), "bruv-manual-release-"));
     const git = (...args: string[]) => {
       const result = spawnSync("git", args, { cwd: root, encoding: "utf8" });
       expect(result.status, result.stderr).toBe(0);
@@ -94,13 +94,13 @@ describe("manual release preparation", () => {
     const release = jobs.release!.steps.map((step) => step.run ?? "").join("\n");
     expect(release).toContain('"$RELEASE_SHA"');
     expect(release).toContain('"$RELEASE_TAG"');
-    expect(release).toContain("sha256sum die-linux-x64");
+    expect(release).toContain("sha256sum bruv-linux-x64");
     const publish = jobs.publish!.steps.map((step) => step.run ?? "").join("\n");
     expect(publish).toContain("bun scripts/publish-release.ts");
     const implementation = await Bun.file("scripts/publish-release.ts").text();
     expect(implementation).toContain('git("push"');
     expect(implementation).toContain("--verify-tag");
-    expect(implementation).toContain("die-android-arm64.sha256");
+    expect(implementation).toContain("bruv-android-arm64.sha256");
     expect(implementation).toContain("THIRD_PARTY_LICENSES.txt");
   });
 });

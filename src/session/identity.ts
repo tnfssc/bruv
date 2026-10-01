@@ -14,5 +14,5 @@ export function sessionIdentity(
   const safePath = "--" + cwd.replace(/^[/\\]/, "").replace(/[/\\:]/g, "-") + "--";
   const directory = manager.getSessionDir() || join(getAgentDir(), "sessions", safePath);
   // This is an identity only: no fake parent session is written to disk.
-  return { file: join(directory, ".die-ephemeral-" + id + ".jsonl"), directory };
+  return { file: join(directory, ".bruv-ephemeral-" + id + ".jsonl"), directory };
 }

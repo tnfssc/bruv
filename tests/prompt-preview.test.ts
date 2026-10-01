@@ -60,7 +60,7 @@ test("offline preview captures production prompt, tool definition, and injected 
 });
 
 test("root modes and explicitly selected project guidance pass through real assembly", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-prompt-preview-project-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-prompt-preview-project-"));
   try {
     await writeFile(join(dir, "AGENTS.md"), "PROJECT_PREVIEW_GUIDANCE");
     const preview = await createPromptPreview({ project: dir, rootMode: "fast" });
@@ -79,15 +79,18 @@ test("root modes and explicitly selected project guidance pass through real asse
 });
 
 test("selected project base and append are included without loading settings or writing project state", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-prompt-preview-custom-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-prompt-preview-custom-"));
   const fetch = spyOn(globalThis, "fetch").mockImplementation((() => {
     throw new Error("prompt preview attempted network access");
   }) as unknown as typeof globalThis.fetch);
   try {
-    await mkdir(join(dir, ".die"));
-    await writeFile(join(dir, ".die", "SYSTEM.md"), "CUSTOM_PREVIEW_BASE");
-    await writeFile(join(dir, ".die", "APPEND_SYSTEM.md"), "CUSTOM_PREVIEW_APPEND");
-    await writeFile(join(dir, ".die", "settings.json"), JSON.stringify({ packages: ["npm:preview-must-not-install"] }));
+    await mkdir(join(dir, ".bruv"));
+    await writeFile(join(dir, ".bruv", "SYSTEM.md"), "CUSTOM_PREVIEW_BASE");
+    await writeFile(join(dir, ".bruv", "APPEND_SYSTEM.md"), "CUSTOM_PREVIEW_APPEND");
+    await writeFile(
+      join(dir, ".bruv", "settings.json"),
+      JSON.stringify({ packages: ["npm:preview-must-not-install"] }),
+    );
     const before = await readdir(dir);
     const preview = await createPromptPreview({ project: dir, goal: "CUSTOM_GOAL" });
     expect(preview.systemPrompt).toContain("CUSTOM_PREVIEW_BASE");
@@ -117,12 +120,12 @@ test("workspace reference and role judgment reach real root and child assembly",
   }
 });
 
-test("custom child base and append preserve role framing without injecting Die API prose", async () => {
-  const dir = await mkdtemp(join("/var/tmp", "die-workspace-prompt-"));
+test("custom child base and append preserve role framing without injecting Bruv API prose", async () => {
+  const dir = await mkdtemp(join("/var/tmp", "bruv-workspace-prompt-"));
   try {
-    await mkdir(join(dir, ".die"));
-    await writeFile(join(dir, ".die", "SYSTEM.md"), "WORKSPACE_CUSTOM_BASE");
-    await writeFile(join(dir, ".die", "APPEND_SYSTEM.md"), "WORKSPACE_CUSTOM_APPEND");
+    await mkdir(join(dir, ".bruv"));
+    await writeFile(join(dir, ".bruv", "SYSTEM.md"), "WORKSPACE_CUSTOM_BASE");
+    await writeFile(join(dir, ".bruv", "APPEND_SYSTEM.md"), "WORKSPACE_CUSTOM_APPEND");
     const preview = await createPromptPreview({ project: dir, role: "orchestrator" });
     expect(preview.preview.networkRequests).toBe(0);
     expect(preview.systemPrompt).toContain("WORKSPACE_CUSTOM_BASE");

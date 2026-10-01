@@ -1,6 +1,6 @@
 /** Explicit paid OpenAI Realtime text-input probe. No desktop reads, real tool dispatch or audio playback.
  * Setup: bun install --frozen-lockfile; bun scripts/prepare-assets.ts.
- * Run: DIE_CAPABILITY_PROBE=1 bun scripts/probe-live-capability.ts --disclose-root baseline:jobs grounding:jobs
+ * Run: BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-capability.ts --disclose-root baseline:jobs grounding:jobs
  * Output JSONL includes model-generated code: review before sharing. Never execute it.
  */
 import WebSocket from "ws";
@@ -9,7 +9,7 @@ import { loadLiveConfig } from "../src/live/config";
 import { createPromptPreview } from "../src/prompt-preview";
 import { createHash } from "node:crypto";
 
-if (process.env.DIE_CAPABILITY_PROBE !== "1") throw Error("Set DIE_CAPABILITY_PROBE=1 for paid probe");
+if (process.env.BRUV_CAPABILITY_PROBE !== "1") throw Error("Set BRUV_CAPABILITY_PROBE=1 for paid probe");
 const args = process.argv.slice(2);
 if (args[0] !== "--disclose-root")
   throw Error(
@@ -41,7 +41,7 @@ const key = await service.loadKey(); // Never log or serialize credentials.
 const preview = await createPromptPreview({ rootMode: "orchestrator", message: "Synthetic Live capability probe" });
 const root = preview.systemPrompt;
 const guidance =
-  "\n\nYou are the same main Die agent in Live. Your execute tool is available in this voice turn. It runs JavaScript in the Die host; jobs.list(), shell(), and subagent() are host helpers inside execute, not direct function names. If the user asks for an action, call execute to perform the authorized action before reporting its result. Do not infer inability from the audio interface. If a tool has not run, say so; do not claim work completed. For audio cleanup, delegate to a worker using subagent through execute rather than asking the user to run a command.";
+  "\n\nYou are the same main Bruv agent in Live. Your execute tool is available in this voice turn. It runs JavaScript in the Bruv host; jobs.list(), shell(), and subagent() are host helpers inside execute, not direct function names. If the user asks for an action, call execute to perform the authorized action before reporting its result. Do not infer inability from the audio interface. If a tool has not run, say so; do not claim work completed. For audio cleanup, delegate to a worker using subagent through execute rather than asking the user to run a command.";
 const intention =
   "\n\nWhen an authorized request asks you to do something, select the needed execute call now instead of describing a command. Only a tool response confirms an action happened. If you just refused because you thought you lacked filesystem, shell, or audio-processing ability, reassess the available execute tool and attempt the safe requested action. Voice input/output does not remove host tools.";
 const description =

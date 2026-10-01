@@ -7,7 +7,7 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { run } from "../helpers";
 
-const binary = resolve(process.env.DIE_WEB_BINARY ?? resolve(import.meta.dir, "../../dist/die"));
+const binary = resolve(process.env.BRUV_WEB_BINARY ?? resolve(import.meta.dir, "../../dist/bruv"));
 
 async function waitForPid(path: string): Promise<number> {
   for (let attempt = 0; attempt < 200; attempt++) {
@@ -78,12 +78,12 @@ setInterval(() => {}, 1000);
 test.skipIf(process.platform === "win32")(
   "POSIX web launcher escalates only its stubborn backend group and preserves TERM status",
   async () => {
-    const root = await mkdtemp(join(tmpdir(), "die-web-owned-group-"));
+    const root = await mkdtemp(join(tmpdir(), "bruv-web-owned-group-"));
     const tracked = new Set<number>();
     try {
       const fixture = await writeBackend(root, false);
       const launcher = spawn(binary, ["web", "--no-browser", "--base-dir", join(root, "base")], {
-        env: { ...process.env, HOME: root, DIE_WEB_SERVER: fixture.backend },
+        env: { ...process.env, HOME: root, BRUV_WEB_SERVER: fixture.backend },
         stdio: "ignore",
       });
       tracked.add(launcher.pid!);
@@ -115,12 +115,12 @@ test.skipIf(process.platform === "win32")(
 test.skipIf(process.platform === "win32")(
   "POSIX web launcher reaps its group when a signalled backend leader exits early",
   async () => {
-    const root = await mkdtemp(join(tmpdir(), "die-web-early-leader-"));
+    const root = await mkdtemp(join(tmpdir(), "bruv-web-early-leader-"));
     const tracked = new Set<number>();
     try {
       const fixture = await writeBackend(root, true);
       const launcher = spawn(binary, ["web", "--no-browser", "--base-dir", join(root, "base")], {
-        env: { ...process.env, HOME: root, DIE_WEB_SERVER: fixture.backend },
+        env: { ...process.env, HOME: root, BRUV_WEB_SERVER: fixture.backend },
         stdio: "ignore",
       });
       tracked.add(launcher.pid!);
@@ -150,7 +150,7 @@ test.skipIf(process.platform === "win32")(
 test.skipIf(process.platform !== "linux")(
   "repeated clean backend exits release signal listeners and file descriptors",
   async () => {
-    const root = await mkdtemp(join(tmpdir(), "die-web-clean-exit-"));
+    const root = await mkdtemp(join(tmpdir(), "bruv-web-clean-exit-"));
     try {
       const probe = join(root, "probe.ts");
       const launcherUrl = pathToFileURL(resolve(import.meta.dir, "../../src/t3/web/launcher.ts")).href;
@@ -167,7 +167,7 @@ console.log(JSON.stringify({ before, after: snapshot() }));
       );
       const result = await run([process.execPath, probe], {
         cwd: root,
-        env: { ...process.env, HOME: root, DIE_WEB_SERVER: "/bin/true" },
+        env: { ...process.env, HOME: root, BRUV_WEB_SERVER: "/bin/true" },
       });
       expect(result.code).toBe(0);
       expect(result.stderr).toBe("");

@@ -5,7 +5,7 @@ import { join, resolve } from "node:path";
 
 const gate = resolve(import.meta.dir, "../../integrations/t3/upstream/chunks-startup.test.mjs");
 async function check(files: Record<string, string>) {
-  const directory = await mkdtemp(join(tmpdir(), "die-chunks-"));
+  const directory = await mkdtemp(join(tmpdir(), "bruv-chunks-"));
   try {
     await mkdir(join(directory, "assets"));
     for (const [name, code] of Object.entries(files)) await writeFile(join(directory, "assets", name), code);

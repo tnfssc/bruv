@@ -11,7 +11,7 @@ afterEach(async () => {
 });
 
 async function fixture(settings: object = {}) {
-  const root = await mkdtemp(join(tmpdir(), "die-startup-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-startup-"));
   const agentDir = join(root, "agent");
   await Bun.write(join(agentDir, "settings.json"), JSON.stringify(settings));
   cleanup.push(() => rm(root, { recursive: true, force: true }));

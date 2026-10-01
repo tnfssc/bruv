@@ -16,14 +16,14 @@ import { assertLiveRuntimeReady, installLiveDispatchBudget, type LiveDispatchEvi
 
 // This is a paid, single-scenario smoke test, not a claim about general goal quality.
 // No mocked stream is used: /goal is dispatched by the SDK and the configured model
-// must use die's real execute/goal helpers to create and complete the criterion.
-test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
+// must use bruv's real execute/goal helpers to create and complete the criterion.
+test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
   "live goal mode completes a harmless temporary-file criterion",
   async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-goal-live-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-goal-live-"));
     const evidenceDir = resolve("artifacts/goals");
     const evidenceFile = join(evidenceDir, "live-" + Date.now() + ".json");
-    const marker = "DIE_GOAL_CRITERION=" + randomUUID();
+    const marker = "BRUV_GOAL_CRITERION=" + randomUUID();
     const criterionFile = join(dir, "criterion.txt");
     const transport = "sse";
     const evidence: Record<string, unknown> = {
@@ -42,12 +42,12 @@ test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
     let workflow: Promise<void> | undefined;
 
     try {
-      const modelId = process.env.DIE_GOAL_MODEL ?? process.env.DIE_COMPACTION_MODEL ?? "gpt-5.6-luna";
+      const modelId = process.env.BRUV_GOAL_MODEL ?? process.env.BRUV_COMPACTION_MODEL ?? "gpt-5.6-luna";
       const model = getModels("openai-codex").find((candidate) => candidate.id === modelId);
-      if (!model) throw new Error("Unknown DIE_GOAL_MODEL: " + modelId);
+      if (!model) throw new Error("Unknown BRUV_GOAL_MODEL: " + modelId);
       evidence.model = model.provider + "/" + model.id;
 
-      const agentDir = process.env.DIE_CODING_AGENT_DIR ?? join(homedir(), ".die", "agent");
+      const agentDir = process.env.BRUV_CODING_AGENT_DIR ?? join(homedir(), ".bruv", "agent");
       const runtime = await ModelRuntime.create({
         authPath: join(agentDir, "auth.json"),
         modelsPath: null,
@@ -69,10 +69,10 @@ test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
         noPromptTemplates: true,
         extensionFactories: [
           {
-            name: "die-tasks",
+            name: "bruv-tasks",
             factory: (pi) =>
               tasks(pi, {
-                executablePath: resolve(import.meta.dir, "../dist/die"),
+                executablePath: resolve(import.meta.dir, "../dist/bruv"),
               }),
           },
         ],
@@ -142,7 +142,7 @@ test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
         expect(artifact.toString("utf8")).toBe(marker);
         const goalEntries = manager!
           .getEntries()
-          .filter((entry: any) => entry.type === "custom" && entry.customType === "die-goal") as any[];
+          .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-goal") as any[];
         const completed = goalEntries.at(-1)?.data?.goal;
         expect(completed).toMatchObject({ status: "completed" });
         expect(typeof completed.evidence).toBe("string");
@@ -158,7 +158,7 @@ test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
           durableLines.some((line) => {
             const entry = JSON.parse(line);
             return (
-              entry.type === "custom" && entry.customType === "die-goal" && entry.data?.goal?.status === "completed"
+              entry.type === "custom" && entry.customType === "bruv-goal" && entry.data?.goal?.status === "completed"
             );
           }),
         ).toBe(true);
@@ -191,7 +191,7 @@ test.skipIf(process.env.DIE_RUN_LLM_TESTS !== "1")(
       evidence.requests = requestEvidence;
       evidence.usage = usageEvidence;
       const goalEntries =
-        manager?.getEntries().filter((entry: any) => entry.type === "custom" && entry.customType === "die-goal") ?? [];
+        manager?.getEntries().filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-goal") ?? [];
       const latestGoal = (goalEntries.at(-1) as any)?.data?.goal;
       if (latestGoal) {
         evidence.goal = {

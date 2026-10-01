@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("owned SDK lifecycle keeps rewrite bodies, sorted trees, migrations, paths and discovery isolation", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-history-lifecycle-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-history-lifecycle-"));
   try {
     const child = Bun.spawn(
       [

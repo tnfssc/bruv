@@ -89,7 +89,7 @@ test("narrow rendering stays within width and model input receives focus", () =>
   expect(ui.component.render(0)).toEqual([]);
 });
 async function fixture(run: (path: string) => Promise<void>) {
-  const dir = await mkdtemp(join(tmpdir(), "die-profile-ui-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-profile-ui-"));
   try {
     await run(join(dir, "subagents.json"));
   } finally {

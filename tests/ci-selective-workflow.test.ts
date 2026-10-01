@@ -64,7 +64,7 @@ test("unconditional routine checks, nightly and manual full reconciliation", () 
     expect(enabled(job.if!, {}, { feedback: { outputs: { full: "true" } } })).toBe(true);
     expect(enabled(job.if!, {}, { feedback: { outputs: { full: "false" } } })).toBe(false);
   }
-  const root = mkdtempSync(join(tmpdir(), "die-reconcile-"));
+  const root = mkdtempSync(join(tmpdir(), "bruv-reconcile-"));
   try {
     for (const event of ["schedule", "workflow_dispatch"]) {
       const output = join(root, event);
@@ -183,7 +183,7 @@ test("only manual and stable tag releases package; all publication gates fail cl
 });
 
 test("PR comparison keeps tested merge parent; missing trusted push baseline requires full", () => {
-  const root = mkdtempSync(join(tmpdir(), "die-merge-plan-"));
+  const root = mkdtempSync(join(tmpdir(), "bruv-merge-plan-"));
   const git = (...args: string[]) => {
     const r = spawnSync("git", args, { cwd: root, encoding: "utf8" });
     if (r.status !== 0) throw new Error(r.stderr);

@@ -1,4 +1,4 @@
-/** Offline, non-production Live-facing execute probe. Run with DIE_PROBE_EXECUTABLE=absolute/path/to/dist/die bun test this-file. */
+/** Offline, non-production Live-facing execute probe. Run with BRUV_PROBE_EXECUTABLE=absolute/path/to/dist/bruv bun test this-file. */
 import { test, expect } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -8,12 +8,12 @@ import { registerExecuteTool } from "../src/typescript/extension";
 import { TaskManager } from "../src/tasks/task-manager";
 import { JobService } from "../src/tasks/job-service";
 
-const executable = process.env.DIE_PROBE_EXECUTABLE;
+const executable = process.env.BRUV_PROBE_EXECUTABLE;
 if (!executable?.startsWith("/"))
-  throw new Error("Set DIE_PROBE_EXECUTABLE to a locally built Die binary; no user jobs are started");
+  throw new Error("Set BRUV_PROBE_EXECUTABLE to a locally built Bruv binary; no user jobs are started");
 
 test("voice-facing declaration dispatches to existing execute tool and child runtime", async () => {
-  const cwd = await mkdtemp(join(tmpdir(), "die-live-execute-probe-"));
+  const cwd = await mkdtemp(join(tmpdir(), "bruv-live-execute-probe-"));
   try {
     let tool!: ToolDefinition;
     const handlerCalls: Array<{ method: string; params: unknown }> = [];
@@ -75,7 +75,7 @@ test("voice-facing declaration dispatches to existing execute tool and child run
 // Isolated owner fixture: REAL local manager/service and process; no provider or model child.
 // It does not exercise production Pi session ownership, completion routing, or permission UI.
 test("execute bridge launches real async shell and inspects completed bounded output", async () => {
-  const cwd = await mkdtemp(join(tmpdir(), "die-live-job-probe-"));
+  const cwd = await mkdtemp(join(tmpdir(), "bruv-live-job-probe-"));
   const manager = new TaskManager(() => {});
   const service = new JobService(manager, () => ({ depth: 0 }));
   let tool!: ToolDefinition;

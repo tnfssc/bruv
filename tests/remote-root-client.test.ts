@@ -10,11 +10,11 @@ afterEach(() => {
   for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
 });
 function setup() {
-  const dir = mkdtempSync(join(tmpdir(), "die-root-client-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-root-client-"));
   dirs.push(dir);
   const cwd = join(dir, "repo");
   mkdirSync(cwd);
-  const target = { name: "fixture", host: "fixture", diePath: "die", ownerId: "owner", epoch: "epoch" };
+  const target = { name: "fixture", host: "fixture", bruvPath: "bruv", ownerId: "owner", epoch: "epoch" };
   let record: RootRecord;
   let lose = false,
     gap = false,

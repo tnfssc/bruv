@@ -1,3 +1,5 @@
+> **Historical task-placement handoff:** original die names and evidence paths are retained. For current bruv commands and state paths, see [README](README.md).
+
 # Current result: implementation complete, parent review/freeze handoff
 
 Both compiled child and typed-root acceptance PASS on the same native CLI. See PARENT_TASK_PLACEMENT_HANDOFF.md for exact evidence, remaining proof/product limits and worker push safety incident. Source committed; no release/video claim. Historical scope/ownership log follows.

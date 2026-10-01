@@ -7,7 +7,7 @@ import { prepareAgentSession } from "../src/tasks/agent-session";
 import { readSessionRole, registerResumeSafeguards } from "../src/tasks/resume-safeguards";
 
 test("durable agent metadata drives picker labels and deliberate child confirmation", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-resume-role-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-resume-role-"));
   try {
     const prepared = await prepareAgentSession(dir, dir, {
       type: "normal",
@@ -50,7 +50,7 @@ test("durable agent metadata drives picker labels and deliberate child confirmat
 });
 
 test("root sessions are not confirmation-gated", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-resume-root-")),
+  const dir = await mkdtemp(join(tmpdir(), "bruv-resume-root-")),
     file = join(dir, "root.jsonl");
   try {
     await writeFile(file, '{"type":"session"}\n');
@@ -78,11 +78,11 @@ test("root sessions are not confirmation-gated", async () => {
   }
 });
 
-test("picker adapter decorates only the active die directory and non-TUI resumes do not prompt", async () => {
-  const dieDir = await mkdtemp(join(tmpdir(), "die-picker-scope-")),
+test("picker adapter decorates only the active bruv directory and non-TUI resumes do not prompt", async () => {
+  const bruvDir = await mkdtemp(join(tmpdir(), "bruv-picker-scope-")),
     otherDir = await mkdtemp(join(tmpdir(), "other-picker-scope-"));
   try {
-    const child = await prepareAgentSession(dieDir, dieDir, {
+    const child = await prepareAgentSession(bruvDir, bruvDir, {
       type: "fast",
       model: "p/model",
       depth: 1,
@@ -100,7 +100,7 @@ test("picker adapter decorates only the active die directory and non-TUI resumes
       {},
       { mode: "tui", sessionManager: { getSessionFile: () => child.agent.sessionFile } },
     );
-    expect((await SessionManager.list(dieDir, dieDir))[0]?.name).toContain("◇ worker · fast");
+    expect((await SessionManager.list(bruvDir, bruvDir))[0]?.name).toContain("◇ worker · fast");
     expect((await SessionManager.list(otherDir, otherDir))[0]?.name).not.toContain("◇ worker");
     let confirms = 0;
     expect(
@@ -120,17 +120,17 @@ test("picker adapter decorates only the active die directory and non-TUI resumes
     expect(confirms).toBe(0);
     await handlers.get("session_shutdown")?.();
   } finally {
-    await rm(dieDir, { recursive: true, force: true });
+    await rm(bruvDir, { recursive: true, force: true });
     await rm(otherDir, { recursive: true, force: true });
   }
 });
 
 test("unreadable session metadata remains unknown rather than labeled root", async () => {
-  expect((await readSessionRole(join(tmpdir(), "missing-die-session-" + Date.now()))).kind).toBe("unknown");
+  expect((await readSessionRole(join(tmpdir(), "missing-bruv-session-" + Date.now()))).kind).toBe("unknown");
 });
 
 test("picker adapters remain callable through foreign wrappers after shutdown and reinstall", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-picker-compose-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-picker-compose-"));
   const nativeList = SessionManager.list,
     nativeListAll = SessionManager.listAll;
   const handlers = new Map<string, Function>();
@@ -180,7 +180,7 @@ test("picker adapters remain callable through foreign wrappers after shutdown an
 });
 
 test("malformed roles stay unknown and task IDs are safe and bounded", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-resume-metadata-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-resume-metadata-"));
   try {
     const unknown = join(dir, "unknown.jsonl"),
       missing = join(dir, "missing.jsonl"),
@@ -188,17 +188,17 @@ test("malformed roles stay unknown and task IDs are safe and bounded", async () 
       safe = join(dir, "safe.jsonl");
     await writeFile(
       unknown,
-      JSON.stringify({ type: "custom", customType: "die-agent", data: { type: "admin", taskId: "task_bad" } }) + "\n",
+      JSON.stringify({ type: "custom", customType: "bruv-agent", data: { type: "admin", taskId: "task_bad" } }) + "\n",
     );
     await writeFile(
       missing,
-      JSON.stringify({ type: "custom", customType: "die-agent", data: { taskId: "task_bad" } }) + "\n",
+      JSON.stringify({ type: "custom", customType: "bruv-agent", data: { taskId: "task_bad" } }) + "\n",
     );
-    await writeFile(broken, '{"type":"custom","customType":"die-agent","data":');
+    await writeFile(broken, '{"type":"custom","customType":"bruv-agent","data":');
     const unsafeId = "task_ok\n\x1b]52;c;owned\x07" + "x".repeat(100);
     await writeFile(
       safe,
-      JSON.stringify({ type: "custom", customType: "die-agent", data: { type: "orchestrator", taskId: unsafeId } }) +
+      JSON.stringify({ type: "custom", customType: "bruv-agent", data: { type: "orchestrator", taskId: unsafeId } }) +
         "\n",
     );
     expect(await readSessionRole(unknown)).toEqual({ kind: "unknown" });

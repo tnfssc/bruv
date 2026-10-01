@@ -77,8 +77,8 @@ async function runScenario(root: string, adapted: boolean) {
 
 describe("disk-backed SessionManager SDK compatibility", () => {
   test("matches an unpatched subprocess for flush, reopen, branch, reset, fork, and newSession", async () => {
-    const nativeRoot = await mkdtemp(join(tmpdir(), "die-history-native-"));
-    const adaptedRoot = await mkdtemp(join(tmpdir(), "die-history-adapted-"));
+    const nativeRoot = await mkdtemp(join(tmpdir(), "bruv-history-native-"));
+    const adaptedRoot = await mkdtemp(join(tmpdir(), "bruv-history-adapted-"));
     roots.push(nativeRoot, adaptedRoot);
     const [native, adapted] = await Promise.all([runScenario(nativeRoot, false), runScenario(adaptedRoot, true)]);
     expect(adapted).toEqual(native);
@@ -97,7 +97,7 @@ describe("disk-backed SessionManager SDK compatibility", () => {
   }, 30_000);
 
   test("keeps compacted originals and stable references across reopen while context stays compact", async () => {
-    const root = await mkdtemp(join(tmpdir(), "die-history-compaction-"));
+    const root = await mkdtemp(join(tmpdir(), "bruv-history-compaction-"));
     roots.push(root);
     const compactScenario = `
 const { join } = await import("node:path");

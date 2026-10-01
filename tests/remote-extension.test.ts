@@ -459,7 +459,7 @@ test("poll UI is compact, cleanup clears status, and open picker receives no cha
   };
   await handlers.get("session_start")({}, ctx);
   await new Promise((resolve) => setTimeout(resolve, 0));
-  expect(statuses.at(-1)).toEqual(["die-remote", "remote: 1 active"]);
+  expect(statuses.at(-1)).toEqual(["bruv-remote", "remote: 1 active"]);
   expect(messages).toHaveLength(0);
   const menu = command.handler("", ctx);
   task.task.questions = [{ id: "q", version: 1, status: "pending", text: "Open menu question" }];
@@ -472,7 +472,7 @@ test("poll UI is compact, cleanup clears status, and open picker receives no cha
   await new Promise((resolve) => setTimeout(resolve, 0));
   expect(messages.filter((m) => m.content.includes("Open menu question"))).toHaveLength(1);
   await handlers.get("session_shutdown")();
-  expect(statuses.at(-1)).toEqual(["die-remote", undefined]);
+  expect(statuses.at(-1)).toEqual(["bruv-remote", undefined]);
 });
 
 test("capability, delivery uncertainty, blocked, failure and integration review get single notices", () => {
@@ -768,7 +768,7 @@ test("session-owned completion and questions stay in normal jobs/questions, not 
     await handlers.get("session_shutdown")!();
     clearRemoteJobEvents(session);
   }
-  expect(statuses.at(-1)).toEqual(["die-remote", undefined]);
+  expect(statuses.at(-1)).toEqual(["bruv-remote", undefined]);
 });
 
 test("human direct launch binds the command's parent session without exposing JSON", async () => {

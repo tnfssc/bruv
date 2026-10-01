@@ -3,11 +3,11 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { runWeb } from "../../../src/t3/web/launcher";
-const root = await mkdtemp(join(tmpdir(), "die-leak-web-")),
+const root = await mkdtemp(join(tmpdir(), "bruv-leak-web-")),
   quick = join(root, "quick.sh"),
   stubborn = join(root, "stubborn.sh"),
   graceful = join(root, "graceful.sh"),
-  binary = resolve(import.meta.dir, "../../../dist/die"),
+  binary = resolve(import.meta.dir, "../../../dist/bruv"),
   owned = new Set<number>();
 const alive = (pid: number) => {
   try {
@@ -46,7 +46,7 @@ const snap = async (label: string) => {
 try {
   await writeFile(quick, "#!/bin/sh\nexit 0\n");
   await chmod(quick, 0o700);
-  process.env.DIE_WEB_SERVER = quick;
+  process.env.BRUV_WEB_SERVER = quick;
   process.env.HOME = root;
   const before = await snap("baseline");
   for (let i = 0; i < 10; i++) if ((await runWeb(["--no-browser"])) !== 0) throw Error("warm failed " + i);
@@ -63,7 +63,7 @@ try {
   );
   await chmod(stubborn, 0o700);
   const launcher = spawn(binary, ["web", "--no-browser", "--base-dir", join(root, "base")], {
-    env: { ...process.env, DIE_WEB_SERVER: stubborn, HOME: root },
+    env: { ...process.env, BRUV_WEB_SERVER: stubborn, HOME: root },
     stdio: "ignore",
   });
   owned.add(launcher.pid!);
@@ -91,7 +91,7 @@ try {
   );
   await chmod(graceful, 0o700);
   const launcher2 = spawn(binary, ["web", "--no-browser", "--base-dir", join(root, "base2")], {
-    env: { ...process.env, DIE_WEB_SERVER: graceful, HOME: root },
+    env: { ...process.env, BRUV_WEB_SERVER: graceful, HOME: root },
     stdio: "ignore",
   });
   owned.add(launcher2.pid!);

@@ -1,5 +1,5 @@
 import { placementReply } from "../tests/fixtures/remote-e2e/placement-parent";
-/** Run real dist/die --mode rpc against isolated fake model and pinned Docker SSH host.
+/** Run real dist/bruv --mode rpc against isolated fake model and pinned Docker SSH host.
  * Parent completion wake is deliberately tested separately by remote-jobs-e2e.ts:
  * this proof kills its original parent before the independent owner finishes.
  */
@@ -8,11 +8,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { strict as assert } from "node:assert";
-const die = process.env.DIE_BIN!;
+const bruv = process.env.BRUV_BIN!;
 const container = process.env.FIXTURE_CONTAINER!;
 const home = homedir();
-const statePath = join(home, ".die/remote/state.json");
-const agentDir = process.env.DIE_CODING_AGENT_DIR!;
+const statePath = join(home, ".bruv/remote/state.json");
+const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
@@ -92,9 +92,9 @@ for (const args of [
 }
 assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
 const launchRpc = (cwd = launchRepo) => {
-  const child = spawn(die, ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model"], {
+  const child = spawn(bruv, ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model"], {
     cwd,
-    env: { ...process.env, HOME: home, DIE_CODING_AGENT_DIR: agentDir },
+    env: { ...process.env, HOME: home, BRUV_CODING_AGENT_DIR: agentDir },
     stdio: ["pipe", "pipe", "pipe"],
   });
   rpcChildren.push(child);
@@ -166,7 +166,7 @@ try {
   // A different known-hosts file must not authenticate this server.
   assert.notEqual(wrong.status, 0, "SSH unexpectedly trusted an unpinned host key");
   const cli = launchRpc();
-  cli.send("/remote connect fixture-owner /usr/local/bin/die");
+  cli.send("/remote connect fixture-owner /usr/local/bin/bruv");
   await cli.wait(() => existsSync(statePath) && !!state().connection, "human /remote connect");
   cli.send("REMOTE_FIXTURE_BASIC");
   await cli.wait(() => Object.keys(state().tasks).length === 1, "agent remote execute launch", 30000);
@@ -233,9 +233,9 @@ try {
     console.error(
       "QUESTION DEBUG",
       ssh(
-        "cat /root/.die/remote-owner/tasks/" +
+        "cat /root/.bruv/remote-owner/tasks/" +
           questionId +
-          "/runtime.json; tail -c 3000 /root/.die/remote-owner/tasks/" +
+          "/runtime.json; tail -c 3000 /root/.bruv/remote-owner/tasks/" +
           questionId +
           "/events.jsonl; cat /tmp/fixture-owner-provider-requests",
       ).stdout,
@@ -442,7 +442,7 @@ try {
       (e) =>
         e.id === "offline-history" &&
         e.data?.messages?.some((message: any) => {
-          if (message.customType !== "die-remote" || typeof message.content !== "string") return false;
+          if (message.customType !== "bruv-remote" || typeof message.content !== "string") return false;
           // Human transcript is readable conversation text, not the structured operations API.
           return (
             message.content.includes("REMOTE_FIXTURE_FINISHED_ON_OWNER") && !message.content.trimStart().startsWith("{")

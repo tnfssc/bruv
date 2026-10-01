@@ -261,7 +261,7 @@ export class ExecuteOutputCapture {
         await mkdir(root, { recursive: true, mode: 0o700 });
         this.#directory = join(root, `execute-${Date.now()}-${randomUUID()}`);
       } else {
-        this.#directory = join(tmpdir(), `die-execute-${Date.now()}-${randomUUID()}`);
+        this.#directory = join(tmpdir(), `bruv-execute-${Date.now()}-${randomUUID()}`);
       }
       await mkdir(this.#directory, { mode: 0o700 });
     } catch (error) {

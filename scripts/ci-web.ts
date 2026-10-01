@@ -20,7 +20,7 @@ export const webInputs = [
   "integrations/t3/build/build.ts",
   "integrations/t3/build/verify-source.ts",
   "integrations/t3/upstream/source.json",
-  "integrations/t3/upstream/die.patch",
+  "integrations/t3/upstream/bruv.patch",
   "integrations/t3/upstream/bootstrap.mjs",
   "integrations/t3/upstream/chunks-startup.test.mjs",
 ];
@@ -57,8 +57,8 @@ export async function rejectRootConfiguration(directory: string): Promise<void> 
     if ((entry.startsWith(".env") && entry !== ".env.example") || [".npmrc", ".pnpmfile.cjs"].includes(entry))
       throw new Error("CI web producer rejects configuration outside its contract: " + entry);
   }
-  if (process.env.DIE_T3_SOURCE)
-    throw new Error("CI web producer owns DIE_T3_SOURCE; use the fresh local build for custom sources");
+  if (process.env.BRUV_T3_SOURCE)
+    throw new Error("CI web producer owns BRUV_T3_SOURCE; use the fresh local build for custom sources");
 }
 export async function ciWebInputKey(directory: string, toolchain?: Record<string, string>): Promise<string> {
   await rejectRootConfiguration(directory);
@@ -157,8 +157,8 @@ async function main() {
   const [command, detail] = process.argv.slice(2);
   if (command === "--producer") {
     const pin = await Bun.file(resolve(root, "integrations/t3/upstream/source.json")).json();
-    const source = resolve(root, ".cache/die-t3code-" + pin.revision);
-    const patch = resolve(root, "integrations/t3/upstream/die.patch");
+    const source = resolve(root, ".cache/bruv-t3code-" + pin.revision);
+    const patch = resolve(root, "integrations/t3/upstream/bruv.patch");
     if (detail === "prepare") {
       // Pinned license generation owns this output cache; never consume a user
       // populated copy in a new producer. Source/deps/dist are not restored.
@@ -181,9 +181,9 @@ async function main() {
   await produce("prepare");
   if (key !== (await ciWebInputKey(root))) throw new Error("Producer inputs changed during preparation");
   const pin = await Bun.file(resolve(root, "integrations/t3/upstream/source.json")).json();
-  const source = resolve(root, ".cache/die-t3code-" + pin.revision);
+  const source = resolve(root, ".cache/bruv-t3code-" + pin.revision);
   const cache = resolve(root, ".cache/ci-packed-web");
-  const archive = resolve(root, "dist/die-web.archive.gz");
+  const archive = resolve(root, "dist/bruv-web.archive.gz");
   if (await cacheDigest(cache, key)) {
     await mkdir(dirname(archive), { recursive: true });
     await cp(resolve(cache, "payload.gz"), archive);

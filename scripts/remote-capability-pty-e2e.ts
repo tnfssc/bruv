@@ -5,11 +5,11 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { strict as assert } from "node:assert";
-const die = process.env.DIE_BIN!;
+const bruv = process.env.BRUV_BIN!;
 const container = process.env.FIXTURE_CONTAINER!;
 const home = homedir();
-const statePath = join(home, ".die/remote/state.json");
-const agentDir = process.env.DIE_CODING_AGENT_DIR!;
+const statePath = join(home, ".bruv/remote/state.json");
+const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
@@ -100,11 +100,11 @@ for (const args of [
 assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
 const launchRpc = (cwd = launchRepo, diagnostic = false) => {
   const child = spawn(
-    die,
+    bruv,
     ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model", ...(diagnostic ? ["--no-session"] : [])],
     {
       cwd,
-      env: { ...process.env, HOME: home, DIE_CODING_AGENT_DIR: agentDir },
+      env: { ...process.env, HOME: home, BRUV_CODING_AGENT_DIR: agentDir },
       stdio: ["pipe", "pipe", "pipe"],
     },
   );
@@ -142,7 +142,7 @@ const launchRpc = (cwd = launchRepo, diagnostic = false) => {
             "; stderr=" +
             stderr +
             "; pane=" +
-            spawnSync("tmux", ["-L", "die-capability-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
+            spawnSync("tmux", ["-L", "bruv-capability-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
               encoding: "utf8",
             }).stdout +
             "; events=" +
@@ -160,7 +160,7 @@ const ssh = (...args: string[]) =>
   });
 // Real tmux PTY against the same disposable native owner; no local question ledger is created.
 const tmux = (...args: string[]) => {
-  const result = spawnSync("tmux", ["-L", "die-capability-pty-" + process.pid, ...args], {
+  const result = spawnSync("tmux", ["-L", "bruv-capability-pty-" + process.pid, ...args], {
     encoding: "utf8",
     timeout: 10000,
   });
@@ -174,7 +174,7 @@ const ownerQuestion = (taskId: string): { status: string; answer?: string } => {
       "-F",
       process.env.FIXTURE_SSH_CONFIG!,
       "fixture-owner",
-      "cat /root/.die/remote-owner/tasks/" + taskId + "/session.jsonl.questions.json",
+      "cat /root/.bruv/remote-owner/tasks/" + taskId + "/session.jsonl.questions.json",
     ],
     { encoding: "utf8", timeout: 6000 },
   );
@@ -183,7 +183,7 @@ const ownerQuestion = (taskId: string): { status: string; answer?: string } => {
 };
 const pane = () => tmux("capture-pane", "-p", "-t", "remote");
 const evidence = (name: string) => {
-  const dir = process.env.DIE_REMOTE_PTY_ARTIFACTS;
+  const dir = process.env.BRUV_REMOTE_PTY_ARTIFACTS;
   if (dir) {
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, name + ".txt"), pane());
@@ -198,7 +198,7 @@ const noChatJson = (frame: string) =>
     "structured remote poll leaked into human chat\n" + frame,
   );
 const command = async (text: string, expected: string) => {
-  const before = historyPane().split("[die-remote]").length;
+  const before = historyPane().split("[bruv-remote]").length;
   key("C-u");
   type(text);
   // Let the real editor consume the pasted command before dispatching Enter.
@@ -207,7 +207,7 @@ const command = async (text: string, expected: string) => {
   key("Enter");
   const deadline = Date.now() + 20000;
   while (Date.now() < deadline) {
-    const messages = historyPane().split("[die-remote]");
+    const messages = historyPane().split("[bruv-remote]");
     if (messages.length > before && messages.at(-1)!.replace(/\s+/g, "").includes(expected.replace(/\s+/g, ""))) return;
     await Bun.sleep(100);
   }
@@ -231,7 +231,7 @@ mkdirSync(repo, { recursive: true });
 writeFileSync(join(repo, "on-demand.txt"), "disposable fixture only\n");
 assert.equal(spawnSync("git", ["init", "-q", repo]).status, 0);
 assert.equal(spawnSync("git", ["-C", repo, "add", "on-demand.txt"]).status, 0);
-const grantDir = join(home, ".die/remote/capability-grants");
+const grantDir = join(home, ".bruv/remote/capability-grants");
 const allGrants = (id: string) =>
   existsSync(grantDir)
     ? readdirSync(grantDir)
@@ -288,7 +288,7 @@ const select = async (label: string) => {
 try {
   assert.equal(ssh("true").status, 0, "disposable owner unreachable");
   const rpc = launchRpc(launchRepo, true);
-  rpc.send("/remote connect fixture-owner /usr/local/bin/die");
+  rpc.send("/remote connect fixture-owner /usr/local/bin/bruv");
   await rpc.wait(() => existsSync(statePath) && !!state().connection, "owner connection");
   // The migrated agent path is independently exercised; never force owned jobs into the legacy diagnostic inbox.
   const owned = launchRpc();
@@ -328,14 +328,14 @@ try {
   // The owner publishes arbitrary saved requests. Inject an unsupported kind *only into this disposable
   // fixture's owner ledger* to assert that rendering it never turns it into an authorizable action.
   const unsupported = { id: "fixture_unsupported", taskId: id, kind: "shell.execute", input: "rm -rf /" };
-  assert.equal(ssh("mkdir -p /root/.die/remote-owner/tasks/" + id + "/capability-needs").status, 0);
+  assert.equal(ssh("mkdir -p /root/.bruv/remote-owner/tasks/" + id + "/capability-needs").status, 0);
   const injected = spawnSync(
     "ssh",
     [
       "-F",
       process.env.FIXTURE_SSH_CONFIG!,
       "fixture-owner",
-      "cat > /root/.die/remote-owner/tasks/" + id + "/capability-needs/fixture_unsupported.json",
+      "cat > /root/.bruv/remote-owner/tasks/" + id + "/capability-needs/fixture_unsupported.json",
     ],
     { input: JSON.stringify(unsupported), encoding: "utf8", timeout: 6000 },
   );
@@ -345,8 +345,8 @@ try {
   const cmd = [
     "env",
     "HOME=" + home,
-    "DIE_CODING_AGENT_DIR=" + agentDir,
-    die,
+    "BRUV_CODING_AGENT_DIR=" + agentDir,
+    bruv,
     "--offline",
     "--no-approve",
     "--provider",
@@ -371,7 +371,7 @@ try {
   evidence("requests-and-unsupported");
   // An owner change during a displayed menu must not silently rewrite the human's current choice.
   const extra = { id: "fixture_new_request", taskId: id, kind: "tool:git-diff", input: "tracked.txt" };
-  const extraFile = "/root/.die/remote-owner/tasks/" + id + "/capability-needs/fixture_new_request.json";
+  const extraFile = "/root/.bruv/remote-owner/tasks/" + id + "/capability-needs/fixture_new_request.json";
   assert.equal(
     spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "cat > " + extraFile], {
       input: JSON.stringify(extra),
@@ -411,7 +411,7 @@ try {
   await openCapabilities();
   await select("repo.read");
   await until("HUMAN authorization required");
-  const capFile = "/root/.die/remote-owner/tasks/" + id + "/capability-needs/fixture_cap_file.json";
+  const capFile = "/root/.bruv/remote-owner/tasks/" + id + "/capability-needs/fixture_cap_file.json";
   const original = ssh("cat " + capFile);
   assert.equal(original.status, 0, original.stderr);
   assert.equal(ssh("rm " + capFile).status, 0);
@@ -474,5 +474,5 @@ try {
 } finally {
   for (const child of rpcChildren) child.kill();
   provider.stop();
-  spawnSync("tmux", ["-L", "die-capability-pty-" + process.pid, "kill-server"]);
+  spawnSync("tmux", ["-L", "bruv-capability-pty-" + process.pid, "kill-server"]);
 }

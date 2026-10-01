@@ -15,7 +15,7 @@ import { registerExecuteTool } from "../src/typescript/extension";
 
 for (const allYield of [true, false])
   test("Pi honors cooperative batch termination: allYield=" + allYield, async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-handoff-batch-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-handoff-batch-"));
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     try {
       let tool!: ToolDefinition;

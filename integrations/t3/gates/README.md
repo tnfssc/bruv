@@ -1,9 +1,9 @@
 # Maintained T3 acceptance harnesses
 
 These scripts check the canonical T3 source pinned by `integrations/t3/upstream/source.json` with
-`integrations/t3/upstream/die.patch`. Retained harnesses default to the revision-keyed checkout:
+`integrations/t3/upstream/bruv.patch`. Retained harnesses default to the revision-keyed checkout:
 
-`<repository>/.cache/die-t3code-<integrations/t3/upstream/source.json revision>`
+`<repository>/.cache/bruv-t3code-<integrations/t3/upstream/source.json revision>`
 
 Set `T3_V2_CANDIDATE` only to review an equivalent checkout elsewhere. Harnesses
 never install dependencies. Prepare the pinned checkout and its dependencies first.
@@ -14,7 +14,7 @@ required where noted.
 ## Manual offline probes
 
 - `bun integrations/t3/gates/launcher-runtime.ts`: Linux local fake-backend lifecycle
-  and exact owned-PID cleanup; requires a built `dist/die`.
+  and exact owned-PID cleanup; requires a built `dist/bruv`.
 - `bun integrations/t3/gates/rpc-smoke.ts`: compiled CLI RPC with a loopback fake
   model and T3 task events, no provider API. `--serve` intentionally keeps the fixture
   server running for manual browser work.
@@ -43,7 +43,7 @@ server and installed browser tools; it does not install them. Production builds
 
 ```bash
 REVISION=$(bun -e 'console.log((await Bun.file("integrations/t3/upstream/source.json").json()).revision)')
-CHECKOUT="$PWD/.cache/die-t3code-$REVISION"
+CHECKOUT="$PWD/.cache/bruv-t3code-$REVISION"
 HEAD=$(git -C "$CHECKOUT" rev-parse HEAD)
 test "$HEAD" = "$REVISION"
 ```
@@ -69,16 +69,16 @@ Both launchers fail closed unless checkout HEAD, binary path, binary hash, and t
 explicit acceptance flag are given. They do not install, build, or release.
 
 ```bash
-BIN=/absolute/path/to/reviewed/die
+BIN=/absolute/path/to/reviewed/bruv
 SHA=$(sha256sum "$BIN" | cut -d' ' -f1)
 T3_V2_ACCEPT_CANDIDATE=1 \
-T3_V2_DIE_BINARY="$BIN" \
+T3_V2_BRUV_BINARY="$BIN" \
 T3_V2_EXPECT_CHECKOUT_HEAD="$HEAD" \
 T3_V2_EXPECT_BINARY_SHA256="$SHA" \
 bun integrations/t3/gates/browser-acceptance.ts
 
 T3_V2_ACCEPT_CANDIDATE=1 \
-T3_V2_DIE_BINARY="$BIN" \
+T3_V2_BRUV_BINARY="$BIN" \
 T3_V2_EXPECT_CHECKOUT_HEAD="$HEAD" \
 T3_V2_EXPECT_BINARY_SHA256="$SHA" \
 bun integrations/t3/gates/native-acceptance.ts
@@ -87,14 +87,14 @@ bun integrations/t3/gates/native-acceptance.ts
 Browser acceptance also needs Chromium and `playwright-core` already
 available. Optional overrides are documented by the `T3_V2_*` constants at the top
 of each script. Native acceptance needs the candidate's
-`NativeDieIntegration.production.test.ts` and prepared dependency tree.
+`NativeBruvIntegration.production.test.ts` and prepared dependency tree.
 
 ## Migration acceptance
 
 The migration harness tests the historical pre-adoption production source
 `a9b49a7df0a4261dcc438d4493cc3154a1d9819e`, with the pre-adoption canonical
 patch from `c6fe280`, upgrading in place to the preview revision in
-`integrations/t3/upstream/source.json` plus `integrations/t3/upstream/die.patch`. Each checkout needs its own prepared dependency tree. Its installed lockfile must exactly match
+`integrations/t3/upstream/source.json` plus `integrations/t3/upstream/bruv.patch`. Each checkout needs its own prepared dependency tree. Its installed lockfile must exactly match
 `pnpm-lock.yaml`. The harness never clones or installs and never writes package
 caches. Override checkout or patch paths with
 `T3_V2_MIGRATION_PRODUCTION`, `T3_V2_MIGRATION_PREVIEW`,
@@ -130,7 +130,7 @@ plus the expected patch.
 - `preservation-acceptance.ts` validates same-server shell-card and completion
   preservation against an exact packaged binary.
 - `worktree-acceptance.ts` validates local and native structured-worktree behavior.
-  It needs `T3_WORKTREE_ACCEPT=1`, `T3_WORKTREE_DIE_BINARY`,
+  It needs `T3_WORKTREE_ACCEPT=1`, `T3_WORKTREE_BRUV_BINARY`,
   `T3_WORKTREE_EXPECT_SHA256`, and `T3_V2_EXPECT_CHECKOUT_HEAD`.
 
 These live gates write proof only to their configured artifact paths. Proof files,
@@ -146,7 +146,7 @@ ways to build or update the canonical inputs. No archive is run automatically.
 ## Final release browser boot (mandatory CI gate)
 
 `release-browser-boot.ts` launches the downloaded final
-`dist/release/die-linux-x64`, not a source/dev server. It uses fresh HOME,
+`dist/release/bruv-linux-x64`, not a source/dev server. It uses fresh HOME,
 XDG cache/config/data/state, agent state, web state and browser profile; no provider
 credentials are inherited. Chromium errors are collected before navigation. Both
 initial load and reload must show a real setup dialog with Continue, or the app's
@@ -160,7 +160,7 @@ Local rerun with an existing playwright-core install and Chromium:
 ```bash
 RELEASE_BOOT_PLAYWRIGHT=/absolute/path/to/playwright-core/index.mjs \
 RELEASE_BOOT_CHROMIUM=/absolute/path/to/chrome \
-bun integrations/t3/gates/release-browser-boot.ts dist/release/die-linux-x64
+bun integrations/t3/gates/release-browser-boot.ts dist/release/bruv-linux-x64
 ```
 
 `RELEASE_BOOT_PROOF` overrides `artifacts/release/browser-boot.json`.

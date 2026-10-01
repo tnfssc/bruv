@@ -30,20 +30,20 @@ export async function runLiveSetup(
       status.state === "oauth"
         ? "Live needs a Google API key. Your Google OAuth credential will not be replaced. Manage Google credentials outside Live, then recheck."
         : canImport
-          ? "Import saves the key from ~/.die/live.env to Google provider auth. Existing credentials are never replaced."
-          : "Create ~/.die/live.env in a local editor with one GEMINI_API_KEY assignment. Set permissions to 0600 before entering the key; do not overwrite an existing file. Never paste keys into chat or shell commands. Return here to import into Google provider auth.";
+          ? "Import saves the key from ~/.bruv/live.env to Google provider auth. Existing credentials are never replaced."
+          : "Create ~/.bruv/live.env in a local editor with one GEMINI_API_KEY assignment. Set permissions to 0600 before entering the key; do not overwrite an existing file. Never paste keys into chat or shell commands. Return here to import into Google provider auth.";
     if (explained !== instructions) {
       ui.notify(instructions, "info");
       explained = instructions;
     }
     if (signal.aborted) return false;
     const choice = await ui.select("Google API key required", [
-      ...(canImport ? ["Import ~/.die/live.env"] : []),
+      ...(canImport ? ["Import ~/.bruv/live.env"] : []),
       "Recheck",
       "Cancel",
     ]);
     if (signal.aborted || !choice || choice === "Cancel") return false;
-    if (choice === "Import ~/.die/live.env" && canImport) {
+    if (choice === "Import ~/.bruv/live.env" && canImport) {
       try {
         await credentials.importLiveEnv(undefined, signal);
       } catch {

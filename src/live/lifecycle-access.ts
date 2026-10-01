@@ -1,6 +1,6 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-const STOP = "die:live:stop";
+const STOP = "bruv:live:stop";
 export type LiveStopResult = { stopped: boolean; errors: string[]; jobsUnchanged: true };
 type Request = {
   context: ExtensionContext;

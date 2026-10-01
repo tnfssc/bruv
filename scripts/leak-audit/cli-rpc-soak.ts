@@ -1,20 +1,20 @@
 #!/usr/bin/env bun
 /**
- * Soak the real Die RPC lifecycle against a local OpenAI-compatible fake. Touch
- * only this run's temporary HOME, loopback listener, and spawned Die PID.
+ * Soak the real Bruv RPC lifecycle against a local OpenAI-compatible fake. Touch
+ * only this run's temporary HOME, loopback listener, and spawned Bruv PID.
  */
 import { chmod, mkdir, mkdtemp, readdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
-const cycles = Number(process.env.DIE_SOAK_CYCLES ?? 120);
-const newOnly = process.env.DIE_SOAK_NEW_ONLY === "1";
-const root = await mkdtemp("/var/tmp/die-cli-runtime-soak-");
+const cycles = Number(process.env.BRUV_SOAK_CYCLES ?? 120);
+const newOnly = process.env.BRUV_SOAK_NEW_ONLY === "1";
+const root = await mkdtemp("/var/tmp/bruv-cli-runtime-soak-");
 await chmod(root, 0o700);
 const home = join(root, "home");
 const agentDir = join(root, "agent");
 await mkdir(home, { recursive: true, mode: 0o700 });
 await mkdir(agentDir, { recursive: true, mode: 0o700 });
-await mkdir(join(home, ".die"), { recursive: true, mode: 0o700 });
+await mkdir(join(home, ".bruv"), { recursive: true, mode: 0o700 });
 let requestCount = 0;
 let server: ReturnType<typeof Bun.serve> | undefined;
 
@@ -113,19 +113,19 @@ await writeFile(
   { mode: 0o600 },
 );
 
-const binary = resolve(import.meta.dir, "../../dist/die");
-if (!(await Bun.file(binary).exists())) throw new Error("dist/die missing; run bun run build");
+const binary = resolve(import.meta.dir, "../../dist/bruv");
+if (!(await Bun.file(binary).exists())) throw new Error("dist/bruv missing; run bun run build");
 const child = Bun.spawn([binary, "--mode", "rpc", "--offline", "--provider", "soak", "--model", "soak-model"], {
   cwd: root,
   env: {
     ...process.env,
     HOME: home,
     PI_CODING_AGENT_DIR: agentDir,
-    DIE_CODING_AGENT_DIR: agentDir,
+    BRUV_CODING_AGENT_DIR: agentDir,
     PI_OFFLINE: "1",
     HERDR_ENV: "0",
-    DIE_SUBAGENT_DEPTH: "0",
-    DIE_SUBAGENT_TYPE: "",
+    BRUV_SUBAGENT_DEPTH: "0",
+    BRUV_SUBAGENT_TYPE: "",
   },
   stdin: "pipe",
   stdout: "pipe",

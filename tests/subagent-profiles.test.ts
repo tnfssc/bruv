@@ -36,7 +36,7 @@ describe("subagent profiles", () => {
     expect(canDelegate(2, "orchestrator")).toBe(false);
   });
   test("missing file inherits; saves roundtrip; malformed file errors", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-profiles-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-profiles-"));
     const path = join(dir, "nested", "subagents.json");
     try {
       expect(await loadProfiles(path)).toEqual(parseProfiles({}));

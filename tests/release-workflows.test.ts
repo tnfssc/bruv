@@ -98,19 +98,19 @@ describe("release automation", () => {
       };
       const job = workflow.jobs[path === "ci" ? "test" : "release"]!;
       expect(await read(`.github/workflows/${path}.yml`)).toContain(
-        'echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/die-bun-cache"',
+        'echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache"',
       );
       expect(await read(`.github/workflows/${path}.yml`)).toContain(
-        'echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/die-pnpm-store"',
+        'echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store"',
       );
       const caches = job.steps.filter((step) => step.uses?.startsWith("actions/cache@"));
       expect(caches).toHaveLength(2);
-      expect(caches[0]?.with?.path).toBe("${{ runner.temp }}/die-bun-cache");
+      expect(caches[0]?.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
       expect(caches[0]?.with?.key).toContain("hashFiles('bun.lock', 'package.json')");
-      expect(caches[1]?.with?.path).toBe("${{ runner.temp }}/die-pnpm-store");
+      expect(caches[1]?.with?.path).toBe("${{ runner.temp }}/bruv-pnpm-store");
       expect(caches[1]?.with?.key).toContain("pnpm-11.10.0-");
       expect(caches[1]?.with?.key).toContain(
-        "hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch')",
+        "hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/bruv.patch')",
       );
       for (const cache of caches) {
         expect(cache.with?.key).toContain("${{ runner.os }}-${{ runner.arch }}");
@@ -135,11 +135,11 @@ describe("release automation", () => {
     expect(runner).toContain("bun run lint");
     expect(runner).toContain("bun run check");
     expect(runner).toContain("bun run build");
-    expect(runner).toContain("env DIE_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests");
+    expect(runner).toContain("env BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests");
     expect(runner).toContain("bun run smoke");
     expect(workflow).toContain("if: failure()");
     expect(workflow).toContain("actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a");
-    expect(workflow).not.toContain('DIE_RUN_LLM_TESTS: "1"');
+    expect(workflow).not.toContain('BRUV_RUN_LLM_TESTS: "1"');
     expect(workflow).not.toMatch(/API_KEY|AUTH_TOKEN/);
   });
 
@@ -177,7 +177,7 @@ describe("release automation", () => {
     expect(workflow).toContain("--live-helper=./artifacts/release/mac-helper/live-audio");
     expect(workflow).toContain("stable-release-assets");
     expect(workflow).toContain("needs: [release, linux-browser-boot, mac-release-smoke, prepare-manual]");
-    expect(workflow).toContain("bun scripts/verify-v071-update.ts dist/release/die-darwin-arm64");
+    expect(workflow).toContain("bun scripts/verify-update.ts dist/release/bruv-darwin-arm64");
     expect(workflow).toContain("--live-self-test");
     expect(workflow).toContain("permissions:\n  contents: read");
     expect(workflow).toContain("contents: write");
@@ -189,34 +189,34 @@ describe("release automation", () => {
     expect(workflow).toContain("--target=bun-linux-arm64");
     expect(workflow).toContain("--target=bun-darwin-arm64");
     expect(workflow).toContain("--target=bun-android-arm64");
-    expect(workflow).toContain('test "$(./dist/release/die-linux-x64 --version)" = "$(bun -p');
+    expect(workflow).toContain('test "$(./dist/release/bruv-linux-x64 --version)" = "$(bun -p');
     expect(workflow).toContain("GH_TOKEN: ${{ github.token }}");
-    expect(workflow).toContain("die-linux-x64.sha256");
-    expect(workflow).toContain("die-linux-arm64.sha256");
-    expect(workflow).toContain("die-darwin-arm64.sha256");
-    expect(workflow).toContain("die-android-arm64.sha256");
+    expect(workflow).toContain("bruv-linux-x64.sha256");
+    expect(workflow).toContain("bruv-linux-arm64.sha256");
+    expect(workflow).toContain("bruv-darwin-arm64.sha256");
+    expect(workflow).toContain("bruv-android-arm64.sha256");
     expect(workflow).toContain("THIRD_PARTY_NOTICES.md");
     expect(workflow).toContain("bun run generate:notices");
     expect(workflow).toContain("THIRD_PARTY_LICENSES.txt");
     expect(workflow).toContain("EMBEDDED T3 CODE BACKEND LICENSING");
     expect(workflow).toContain("src/terminal/BunPtyAdapter.test.ts");
-    expect(workflow).toContain("dist/die-web/LICENSE-T3CODE");
+    expect(workflow).toContain("dist/bruv-web/LICENSE-T3CODE");
     expect(workflow).toContain("SOURCE.txt");
     expect(workflow).toContain("Embedded T3 Code source:");
     expect(workflow).toContain("Patch-SHA256:");
     expect(workflow).toContain(
-      "bun run build -- --reuse-packed-web --target=bun-linux-x64-baseline --outfile=./dist/release/die-linux-x64",
+      "bun run build -- --reuse-packed-web --target=bun-linux-x64-baseline --outfile=./dist/release/bruv-linux-x64",
     );
     expect(workflow).toContain(
-      "bun run build -- --reuse-packed-web --target=bun-linux-arm64 --outfile=./dist/release/die-linux-arm64",
+      "bun run build -- --reuse-packed-web --target=bun-linux-arm64 --outfile=./dist/release/bruv-linux-arm64",
     );
     expect(workflow).toContain(
-      "bun run build -- --reuse-packed-web --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/die-darwin-arm64",
+      "bun run build -- --reuse-packed-web --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/bruv-darwin-arm64",
     );
     expect(workflow).toContain(
-      "bun run build -- --reuse-packed-web --target=bun-android-arm64 --outfile=./dist/release/die-android-arm64",
+      "bun run build -- --reuse-packed-web --target=bun-android-arm64 --outfile=./dist/release/bruv-android-arm64",
     );
-    expect(workflow).not.toContain("die-web-linux-x64.tar.gz");
+    expect(workflow).not.toContain("bruv-web-linux-x64.tar.gz");
     expect(workflow).not.toContain("Package web sidecar");
     expect(workflow).not.toMatch(/bun-(windows|darwin-x64|linux-arm32)/);
   });
@@ -252,9 +252,9 @@ describe("release automation", () => {
     expect(setup).toContain("playwright-core@1.60.0");
     expect(setup).toContain("install --only-shell chromium");
     expect(setup).toContain("install-deps chromium");
-    expect(browserCommands).toContain("bun integrations/t3/gates/release-browser-boot.ts dist/release/die-linux-x64");
+    expect(browserCommands).toContain("bun integrations/t3/gates/release-browser-boot.ts dist/release/bruv-linux-x64");
     const macCommands = workflow.jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");
-    expect(macCommands).toContain("verify-v071-update.ts");
+    expect(macCommands).toContain("verify-update.ts");
     expect(macCommands).toContain("--live-self-test");
     expect(macCommands).not.toContain('"type":"start"');
   });
@@ -274,7 +274,7 @@ describe("release automation", () => {
     expect(implementation).toContain('"--notes-file",');
     expect(implementation).not.toContain("--notes-file support/release-v0.11.1.md");
     expect(implementation.indexOf("scripts/select-release-notes.ts")).toBeLessThan(implementation.indexOf('"create",'));
-    const directory = await mkdtemp(join(tmpdir(), "die-release-notes-"));
+    const directory = await mkdtemp(join(tmpdir(), "bruv-release-notes-"));
     try {
       await mkdir(join(directory, "support"));
       await Bun.write(join(directory, "support/release-v9.8.7.md"), "current release\n");
@@ -303,7 +303,7 @@ describe("release automation", () => {
   });
 
   test("generated attribution bundle contains full Pi and Bun license notices", async () => {
-    const directory = await mkdtemp(join(tmpdir(), "die-notices-"));
+    const directory = await mkdtemp(join(tmpdir(), "bruv-notices-"));
     const output = join(directory, "THIRD_PARTY_LICENSES.txt");
     try {
       const result = Bun.spawnSync({
@@ -331,7 +331,7 @@ describe("release automation", () => {
   });
 
   test("attribution generation fails when a required transitive dependency is missing", async () => {
-    const directory = await mkdtemp(join(tmpdir(), "die-notices-required-"));
+    const directory = await mkdtemp(join(tmpdir(), "bruv-notices-required-"));
     try {
       await writeNoticeFixture(directory, ["present"], {
         present: { manifest: { dependencies: { missing: "1.0.0" } }, license: "MIT\n" },
@@ -349,7 +349,7 @@ describe("release automation", () => {
       ["@earendil-works/not-pi", "0.99.1"],
       ["@earendil-works/pi-ai", "0.85.1"],
     ]) {
-      const directory = await mkdtemp(join(tmpdir(), "die-notices-fallback-"));
+      const directory = await mkdtemp(join(tmpdir(), "bruv-notices-fallback-"));
       try {
         await writeNoticeFixture(directory, [name], { [name]: { manifest: { version } } });
         await expect(generateThirdPartyNotices(directory, join(directory, "notices.txt"))).rejects.toThrow(
@@ -362,7 +362,7 @@ describe("release automation", () => {
   });
 
   test("license input budget is checked before an oversized file is read", async () => {
-    const directory = await mkdtemp(join(tmpdir(), "die-notices-budget-"));
+    const directory = await mkdtemp(join(tmpdir(), "bruv-notices-budget-"));
     try {
       await writeNoticeFixture(directory, ["large-license"], {
         "large-license": { manifest: {}, license: "x".repeat(512) },
@@ -395,8 +395,8 @@ test("release cache environment retains source identity variables", async () => 
   expect(job.env?.RELEASE_SHA).toContain("needs.prepare-manual.outputs.sha");
   expect(job.env?.RELEASE_TAG).toContain("needs.prepare-manual.outputs.tag");
   const source = await read(".github/workflows/release.yml");
-  expect(source).toContain('echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/die-bun-cache"');
-  expect(source).toContain('echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/die-pnpm-store"');
+  expect(source).toContain('echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache"');
+  expect(source).toContain('echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store"');
   for (const job of Object.values(workflow.jobs)) {
     expect(JSON.stringify(job.env ?? {})).not.toContain("runner.temp");
   }
@@ -418,20 +418,20 @@ test("full CI and release retain the same web validation union", async () => {
   expect(validation).toContain('"$web_source/packages/client-runtime" ../../node_modules/.bin/tsc --noEmit');
   expect(workflow).toContain("bun scripts/offline-openai-default-transport.ts");
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
-  expect(workflow).toContain("T3_V2_DIE_BINARY: ${{ github.workspace }}/dist/die");
+  expect(workflow).toContain("T3_V2_BRUV_BINARY: ${{ github.workspace }}/dist/bruv");
   expect(workflow).toContain("bun test ./tests");
   expect(workflow).toContain("bun run smoke -- --reuse-build");
 });
 
-test("full Linux fetches the exact updater fixture without all history", async () => {
+test("full Linux does not fetch a legacy updater fixture", async () => {
   const workflow = Bun.YAML.parse(await read(".github/workflows/ci.yml")) as any;
   const checkout = (job: any) => job.steps.find((step: any) => step.uses?.startsWith("actions/checkout@"));
   expect(checkout(workflow.jobs.test).with["fetch-depth"]).toBe(1);
   expect(
     workflow.jobs.test.steps.some(
-      (step: any) => step.run === "git fetch --no-tags --depth=1 origin refs/tags/v0.7.1:refs/tags/v0.7.1",
+      (step: any) => typeof step.run === "string" && /git fetch.*refs\/tags\/v0\.7\.1/.test(step.run),
     ),
-  ).toBe(true);
+  ).toBe(false);
   expect(checkout(workflow.jobs.feedback).with["fetch-depth"]).toBe(0);
   expect(workflow.jobs.test.steps.find((step: any) => step.name === "Install required PTY tooling").run).toContain(
     "command -v tmux >/dev/null ||",

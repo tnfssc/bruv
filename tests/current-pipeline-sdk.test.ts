@@ -13,7 +13,7 @@ import {
   SessionManager,
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
-import { dieSystemPrompt } from "../src/prompts";
+import { bruvSystemPrompt } from "../src/prompts";
 import tasks from "../src/agent/extension";
 import phase1Fixture from "./phase1-compaction-fixture";
 
@@ -45,7 +45,7 @@ for (const scenario of [
   const provider = "anthropic" as const;
   const api = anthropic;
   test(scenario + " compacts current transformed conversation without a warm capture", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-compact-sdk-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-compact-sdk-"));
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     let networkCalls = 0;
     const notifications: string[] = [];
@@ -161,7 +161,7 @@ for (const scenario of [
         noSkills: true,
         noThemes: true,
         noPromptTemplates: true,
-        systemPrompt: dieSystemPrompt(),
+        systemPrompt: bruvSystemPrompt(),
         extensionFactories: [
           {
             name: "observe",
@@ -216,7 +216,7 @@ for (const scenario of [
                 };
               });
               pi.on("before_provider_headers", (event) => {
-                event.headers["x-die-fixture-routing"] = "same-route";
+                event.headers["x-bruv-fixture-routing"] = "same-route";
               });
               pi.on("before_agent_start", (_e, ctx) => {
                 const ui = ctx.ui;
@@ -230,7 +230,7 @@ for (const scenario of [
               });
             },
           },
-          { name: "die-tasks", factory: tasks },
+          { name: "bruv-tasks", factory: tasks },
         ],
       });
       await loader.reload();
@@ -337,7 +337,7 @@ for (const scenario of [
       expect(last.metadata).toEqual({ user_id: "pipeline-fixture" });
       if (scenario === "changed-prefix") expect(wire).toContain("CURRENT_REWRITTEN_PREFIX");
       expect(last.tools.some((t: any) => t.name === "execute")).toBe(true);
-      expect(captured.at(-1).headers["x-die-fixture-routing"]).toBe("same-route");
+      expect(captured.at(-1).headers["x-bruv-fixture-routing"]).toBe("same-route");
       if (ordinaryCount) {
         expect(last.tools).toEqual(captured[0].payload.tools);
         expect(last.system).toEqual(captured[0].payload.system);

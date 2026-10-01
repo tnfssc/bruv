@@ -48,7 +48,7 @@ function bridgeError(text: string, code: JobBridgeDiagnosticCode, dispatch: Brid
   return error;
 }
 
-export const JOB_BRIDGE_ENV = "DIE_JOB_BRIDGE";
+export const JOB_BRIDGE_ENV = "BRUV_JOB_BRIDGE";
 export const MAX_JOB_BRIDGE_FRAME_BYTES = 1024 * 1024;
 
 type JobHandler = (method: string, params: unknown, signal: AbortSignal) => Promise<unknown>;

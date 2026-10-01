@@ -22,24 +22,24 @@ export const piHostPatches: readonly Patch[] = [
   {
     path: "dist/main.js",
     originalSha256: "bb36969572097bc657b85b42954a78f4be42afc5dfd63453a7d97d53165657b2",
-    adaptedSha256: "246c9259bc2cb2e1f145125d0e591676bc5dab97de106c4144d6e2cf7f7586c1",
+    adaptedSha256: "bb1f03e5be8a21f5cd28450325628562e37e9f8c596486c2ee7a6c32b2392dde",
     replacements: [
       ['import { loadMcpCommand } from "./extensions/mcp/cli.lazy.js";\n', ""],
       [
         "        const { runMcpCommand } = await loadMcpCommand();\n        process.exitCode = await runMcpCommand(args.slice(1), { cwd, agentDir });",
-        '        console.error("MCP is not a built-in die command.");\n        process.exitCode = 1;',
+        '        console.error("MCP is not a built-in bruv command.");\n        process.exitCode = 1;',
       ],
-      ["//# sourceMappingURL=main.js.map", "export const dieHostAdapted = true;\n//# sourceMappingURL=main.js.map"],
+      ["//# sourceMappingURL=main.js.map", "export const bruvHostAdapted = true;\n//# sourceMappingURL=main.js.map"],
     ],
   },
   {
     path: "dist/cli/args.js",
     originalSha256: "9b06126b71ef7871ba08b43eeb255788772881ab200fe587bb971306766f3c50",
-    adaptedSha256: "7b203b6fd1da59e20d190e85260669d3da9a9c1800de587ecbfbfea040158311",
+    adaptedSha256: "0ce67721550898f24242282d13728c1a1f0db78926929d05425c2312addc7a08",
     replacements: [
       [`  \${APP_NAME} mcp <command>             Check MCP servers, sign in to or out of OAuth servers\n`, ""],
       ["install/remove/uninstall/update/list/config/auth/mcp", "install/remove/uninstall/update/list/config/auth"],
-      ["//# sourceMappingURL=args.js.map", "export const dieHostAdapted = true;\n//# sourceMappingURL=args.js.map"],
+      ["//# sourceMappingURL=args.js.map", "export const bruvHostAdapted = true;\n//# sourceMappingURL=args.js.map"],
     ],
   },
   {
@@ -65,7 +65,7 @@ export function adaptPiHostFile(patch: Patch, text: string): string {
   const digest = hash(text);
   if (digest === patch.adaptedSha256) return text;
   if (digest !== patch.originalSha256)
-    throw new Error(`Unsupported Pi host file: ${patch.path}; review die's host adaptations before updating Pi`);
+    throw new Error(`Unsupported Pi host file: ${patch.path}; review bruv's host adaptations before updating Pi`);
   let result = patch.content ?? text;
   for (const [before, after] of patch.replacements ?? []) {
     if (result.split(before).length !== 2) throw new Error(`Pi host adaptation anchor changed: ${patch.path}`);

@@ -15,7 +15,7 @@ await subagent({
 `{ kind: "worktree", baseRef?, branch? }`. `title` gives the task or thread a
 readable name. Worktrees need a Git repository. By default, each starts from the
 parent's current commit. Use `baseRef` to pick another local commit or ref. Leave
-out branch to get a unique readable name. An explicit branch must be new. Die
+out branch to get a unique readable name. An explicit branch must be new. Bruv
 never resets an existing branch.
 
 A `prompts: string[]` batch makes one worktree per child. All children start from
@@ -50,11 +50,11 @@ Use `jobs.inspect` to inspect a child and `jobs.stop` to cancel its owned work.
 You can inspect a local worktree job while it prepares, before its provider starts.
 Its timeout includes preparation. Inspection shows the workspace identity and
 path, plus preparation and setup state. After a server restart, an unclear native
-preparation result is reported as uncertain. Die does not guess by running it
+preparation result is reported as uncertain. Bruv does not guess by running it
 again.
 
 Worktrees and branches stay after success, failure, or cancellation. This leaves
-them ready for review, a PR, or follow-up work. Die does not clean them up, copy
+them ready for review, a PR, or follow-up work. Bruv does not clean them up, copy
 secrets, create PRs, move sidebar items, or keep syncing a parent's result after
 direct follow-up in the child.
 

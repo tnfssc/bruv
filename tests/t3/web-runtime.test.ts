@@ -11,12 +11,12 @@ test("all web builders copy the maintained bootstrap to the same packaged filena
     const contents = await Bun.file(join(root, script)).text();
     expect(contents).toContain("integrations/t3/upstream/bootstrap.mjs");
     expect(contents).toContain("bootstrap.mjs");
-    expect(contents).not.toContain("support/die-web-bootstrap.mjs");
+    expect(contents).not.toContain("support/bruv-web-bootstrap.mjs");
   }
 });
 
 test("web archive is deterministic and extracts privately by content hash", async () => {
-  const temporary = await mkdtemp(join(tmpdir(), "die-web-runtime-"));
+  const temporary = await mkdtemp(join(tmpdir(), "bruv-web-runtime-"));
   try {
     const source = join(temporary, "source");
     await mkdir(join(source, "dist"), { recursive: true });
@@ -28,6 +28,10 @@ test("web archive is deterministic and extracts privately by content hash", asyn
     const firstHash = await packWebArchive(source, first);
     const secondHash = await packWebArchive(source, second);
     expect(secondHash).toBe(firstHash);
+    expect(new TextDecoder().decode(Bun.gunzipSync(await Bun.file(first).bytes()).slice(0, 9))).toBe("BRUVWEB1\n");
+    await expect(
+      extractWebArchive(Bun.gzipSync(Buffer.from("DIEWEB1\n")), join(temporary, "legacy-cache")),
+    ).rejects.toThrow();
     expect(await readFile(second)).toEqual(await readFile(first));
 
     const cache = join(temporary, "cache");
@@ -44,7 +48,7 @@ test("web archive is deterministic and extracts privately by content hash", asyn
 });
 
 test("web archive rejects corrupt payloads without publishing an extraction", async () => {
-  const temporary = await mkdtemp(join(tmpdir(), "die-web-corrupt-"));
+  const temporary = await mkdtemp(join(tmpdir(), "bruv-web-corrupt-"));
   try {
     await expect(extractWebArchive(new Uint8Array([1, 2, 3]), join(temporary, "cache"))).rejects.toThrow();
     expect((await Array.fromAsync(new Bun.Glob("**/*").scan(join(temporary, "cache")))).length).toBe(0);
@@ -54,7 +58,7 @@ test("web archive rejects corrupt payloads without publishing an extraction", as
 });
 
 test("concurrent web extraction publishes one complete runtime and cleans staging", async () => {
-  const temporary = await mkdtemp(join(tmpdir(), "die-web-concurrent-"));
+  const temporary = await mkdtemp(join(tmpdir(), "bruv-web-concurrent-"));
   try {
     const source = join(temporary, "source");
     await mkdir(source);
@@ -74,7 +78,7 @@ test("concurrent web extraction publishes one complete runtime and cleans stagin
 });
 
 test("web extraction refuses a symlinked content-addressed target", async () => {
-  const temporary = await mkdtemp(join(tmpdir(), "die-web-symlink-"));
+  const temporary = await mkdtemp(join(tmpdir(), "bruv-web-symlink-"));
   try {
     const source = join(temporary, "source");
     const cache = join(temporary, "cache");
@@ -91,10 +95,10 @@ test("web extraction refuses a symlinked content-addressed target", async () => 
 });
 
 test("standalone executable opens embedded web CLI without Node, Bun, or sidecar on PATH", async () => {
-  const temporary = await mkdtemp(join(tmpdir(), "die-web-standalone-"));
+  const temporary = await mkdtemp(join(tmpdir(), "bruv-web-standalone-"));
   try {
-    const sourceBinary = resolve(process.env.DIE_WEB_BINARY ?? resolve(import.meta.dir, "../../dist/die"));
-    const binary = join(temporary, "die");
+    const sourceBinary = resolve(process.env.BRUV_WEB_BINARY ?? resolve(import.meta.dir, "../../dist/bruv"));
+    const binary = join(temporary, "bruv");
     await copyFile(sourceBinary, binary);
     await chmod(binary, 0o700);
     const child = Bun.spawn([binary, "web", "--help"], {
@@ -123,7 +127,7 @@ test("standalone executable opens embedded web CLI without Node, Bun, or sidecar
     if (code! !== 0) throw new Error(`Standalone web help exited ${code!}: ${stderr!}\n${stdout!}`);
     expect(code!).toBe(0);
     expect(stdout!).toContain("Run the T3 Code server");
-    const markers = await Array.fromAsync(new Bun.Glob("*/.complete").scan(join(temporary, ".cache/die/web-runtime")));
+    const markers = await Array.fromAsync(new Bun.Glob("*/.complete").scan(join(temporary, ".cache/bruv/web-runtime")));
     expect(markers).toHaveLength(1);
   } finally {
     await rm(temporary, { recursive: true, force: true });

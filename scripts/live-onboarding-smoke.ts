@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dir, "..");
-const binary = resolve(process.env.DIE_LIVE_SMOKE_BINARY ?? join(root, "dist/die"));
+const binary = resolve(process.env.BRUV_LIVE_SMOKE_BINARY ?? join(root, "dist/bruv"));
 function requireExecutable(name: string): string {
   const path = Bun.which(name);
   if (!path) throw new Error(`${name} is required for the compiled Live onboarding smoke`);
@@ -14,12 +14,12 @@ function requireExecutable(name: string): string {
 const tmux = requireExecutable("tmux");
 if (!(await Bun.file(binary).exists())) throw new Error(`${binary} is missing; build the compiled CLI first`);
 
-const directory = await mkdtemp(join(tmpdir(), "die-live-onboarding-"));
-const executable = join(directory, "die");
+const directory = await mkdtemp(join(tmpdir(), "bruv-live-onboarding-"));
+const executable = join(directory, "bruv");
 const home = join(directory, "home");
 const fakeBin = join(directory, "bin");
 const invocationLog = join(directory, "audio-invocations");
-const socket = `die-live-onboarding-${process.pid}`;
+const socket = `bruv-live-onboarding-${process.pid}`;
 const target = "smoke:0.0";
 const fakeKey = "fake-compiled-onboarding-key-12345";
 
@@ -57,9 +57,9 @@ function key(value: string): void {
 try {
   await copyFile(binary, executable);
   await chmod(executable, 0o700);
-  await mkdir(join(home, ".die"), { recursive: true });
+  await mkdir(join(home, ".bruv"), { recursive: true });
   await mkdir(fakeBin, { recursive: true });
-  await writeFile(join(home, ".die", "live.env"), `GEMINI_API_KEY=${fakeKey}\n`, { mode: 0o600 });
+  await writeFile(join(home, ".bruv", "live.env"), `GEMINI_API_KEY=${fakeKey}\n`, { mode: 0o600 });
 
   // Discovery may find these names, but setup must never execute either device command.
   for (const name of ["live-audio", "live-audio-linux", "rec", "play"]) {
@@ -84,7 +84,7 @@ try {
 
   run(["send-keys", "-t", target, "-l", "/live"]);
   key("Enter");
-  let frame = await waitFor("Import ~/.die/live.env");
+  let frame = await waitFor("Import ~/.bruv/live.env");
   assert.ok(frame.includes("Google API key required"));
   assert.ok(!frame.includes("Audio tools:"));
   assert.ok(!frame.includes(fakeKey));
@@ -104,11 +104,11 @@ try {
     assert.match(frame, new RegExp("(?:→ |    )" + action + "(?:\\n|$)"));
   assert.ok(!frame.includes("live-lab"));
 
-  const authPath = join(home, ".die", "agent", "auth.json");
+  const authPath = join(home, ".bruv", "agent", "auth.json");
   const auth = JSON.parse(await readFile(authPath, "utf8"));
   assert.deepEqual(auth, { google: { type: "api_key", key: fakeKey } });
   assert.equal((await stat(authPath)).mode & 0o777, 0o600);
-  const sourcePath = join(home, ".die", "live.env");
+  const sourcePath = join(home, ".bruv", "live.env");
   assert.equal((await stat(sourcePath)).mode & 0o777, 0o600);
   assert.equal(await readFile(sourcePath, "utf8"), `GEMINI_API_KEY=${fakeKey}\n`);
   assert.equal(await Bun.file(invocationLog).exists(), false, "setup unexpectedly executed an audio command");

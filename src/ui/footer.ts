@@ -128,12 +128,12 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
       usage = entry.message.usage;
     } else if (entry.type === "compaction" || entry.type === "branch_summary") {
       usage = entry.usage;
-    } else if (entry.type === "custom" && entry.customType === "die-compaction-attempt") {
+    } else if (entry.type === "custom" && entry.customType === "bruv-compaction-attempt") {
       usage = (entry.data as { usage?: Usage })?.usage;
     }
     if (
       entry.type === "custom" &&
-      entry.customType === "die-native-fast-mode" &&
+      entry.customType === "bruv-native-fast-mode" &&
       entry.data &&
       typeof entry.data === "object" &&
       (entry.data as { enabled?: unknown }).enabled === true
@@ -171,7 +171,9 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
 }
 
 function hasUnavailableFastCost(history: FooterHistory, statuses: ReadonlyMap<string, string>): boolean {
-  return statuses.get("die-native-fast")?.includes("cost estimate unavailable") === true || history.unavailableFastCost;
+  return (
+    statuses.get("bruv-native-fast")?.includes("cost estimate unavailable") === true || history.unavailableFastCost
+  );
 }
 
 function cacheBadge(estimate: CacheEstimate | undefined, theme: Theme): string | undefined {
@@ -212,13 +214,13 @@ export function renderDetailedFooter(
   const fastCostUnavailable = hasUnavailableFastCost(history, statuses);
   const subscription = model && (model.provider === "kimi-coding" || ctx.modelRegistry.isUsingOAuth(model));
   if (fastCostUnavailable) stats.push("$? (fast billing)");
-  else if (cost || descendantCost || subscription || history.unknownVoiceCost || statuses.get("die-live"))
+  else if (cost || descendantCost || subscription || history.unknownVoiceCost || statuses.get("bruv-live"))
     stats.push(
       "$" +
         (cost + descendantCost).toFixed(3) +
         (history.unknownVoiceCost
           ? "+? (voice usage incomplete)"
-          : statuses.get("die-live")
+          : statuses.get("bruv-live")
             ? "~ (live voice pending)"
             : descendantCost
               ? " total"
@@ -246,12 +248,12 @@ export function renderDetailedFooter(
     if (visibleWidth(stats.join(" ")) + 2 + visibleWidth(withProvider) <= width) modelText = withProvider;
   }
   const lines = [
-    pathWithTasks(path, statuses.get("die-tasks"), width, theme),
+    pathWithTasks(path, statuses.get("bruv-tasks"), width, theme),
     columns(theme.fg("dim", stats.join(" ")), theme.fg("dim", singleLine(modelText)), width),
   ];
   // Keep statuses owned by other extensions visible on their own row.
   const others = [...statuses]
-    .filter(([key]) => key !== "die-tasks" && key !== "die-live-cost")
+    .filter(([key]) => key !== "bruv-tasks" && key !== "bruv-live-cost")
     .sort(([a], [b]) => a.localeCompare(b));
   if (others.length) lines.push(truncateToWidth(others.map(([, value]) => singleLine(value)).join(" "), width));
   return lines;
@@ -269,9 +271,9 @@ export function renderCompactFooter(
   const project = singleLine(basename(ctx.sessionManager.getCwd()) || "/");
   const branch = data.getGitBranch();
   const statuses = data.getExtensionStatuses();
-  const task = singleLine(statuses.get("die-tasks") ?? "").replace(/^(\d+ tasks?) running$/, "$1");
+  const task = singleLine(statuses.get("bruv-tasks") ?? "").replace(/^(\d+ tasks?) running$/, "$1");
   const shortTask = task.replace(/^(\d+) tasks?$/, "$1t");
-  const questionStatus = singleLine(statuses.get("die-questions") ?? "");
+  const questionStatus = singleLine(statuses.get("bruv-questions") ?? "");
   const questionCount = questionStatus.match(/^([0-9]+) questions?(?: pending)?/);
   const savedQuestions = questionStatus.match(/ · ([0-9]+) saved/)?.[1];
   const questions = questionStatus
@@ -298,9 +300,9 @@ export function renderCompactFooter(
         (savedQuestions ? " " + savedQuestions + " saved" : "")
       : "/questions unavailable"
     : "";
-  const mode = singleLine(statuses.get("die-mode") ?? "");
+  const mode = singleLine(statuses.get("bruv-mode") ?? "");
   // Native fast mode owns the bolt badge; it is provider status, never an editor spinner.
-  const nativeFast = singleLine(statuses.get("die-native-fast") ?? "");
+  const nativeFast = singleLine(statuses.get("bruv-native-fast") ?? "");
   const shortNativeFast = nativeFast.includes("confirmed")
     ? "fast✓"
     : nativeFast.includes("downgraded")
@@ -310,17 +312,17 @@ export function renderCompactFooter(
         : nativeFast
           ? "fast?"
           : "";
-  const live = singleLine(statuses.get("die-live") ?? "");
-  const remote = singleLine(statuses.get("die-remote") ?? "");
+  const live = singleLine(statuses.get("bruv-live") ?? "");
+  const remote = singleLine(statuses.get("bruv-remote") ?? "");
   const otherCount = [...statuses.keys()].filter(
     (key) =>
-      key !== "die-tasks" &&
-      key !== "die-questions" &&
-      key !== "die-remote" &&
-      key !== "die-mode" &&
-      key !== "die-native-fast" &&
-      key !== "die-live" &&
-      key !== "die-live-cost",
+      key !== "bruv-tasks" &&
+      key !== "bruv-questions" &&
+      key !== "bruv-remote" &&
+      key !== "bruv-mode" &&
+      key !== "bruv-native-fast" &&
+      key !== "bruv-live" &&
+      key !== "bruv-live-cost",
   ).length;
   const extra = otherCount ? `+${otherCount} status` : "";
   const history = readFooterHistory(ctx);
@@ -329,7 +331,7 @@ export function renderCompactFooter(
     ? "$?"
     : history.unknownVoiceCost
       ? knownCost + "+?"
-      : statuses.get("die-live")
+      : statuses.get("bruv-live")
         ? knownCost + "~"
         : knownCost;
   const percent = ctx.getContextUsage()?.percent;

@@ -4,7 +4,7 @@ import type { ImageContent } from "@earendil-works/pi-ai";
 import { AgentSession, type NormalizedBuildSystemPromptOptions } from "@earendil-works/pi-coding-agent";
 
 /**
- * Keep Die's instruction continuity behind this compatibility boundary.
+ * Keep Bruv's instruction continuity behind this compatibility boundary.
  *
  * Pi's public extension API frames each turn but does not expose the classic
  * session that prepares requests. This module owns the pinned private
@@ -55,7 +55,7 @@ const classicSessions = new WeakMap<object, ClassicSession>();
 // A persisted session id is not an owner identity: two in-memory managers may
 // legitimately load the same session. Key by the manager and guard every access
 // with its current id so a manager reused for new/resume cannot inherit a frame.
-const dieInstructionFrames = new WeakMap<object, InstructionFrame>();
+const bruvInstructionFrames = new WeakMap<object, InstructionFrame>();
 
 function currentSessionId(sessionManager: object | undefined): string | undefined {
   if (!sessionManager) return undefined;
@@ -65,25 +65,25 @@ function currentSessionId(sessionManager: object | undefined): string | undefine
 
 function currentInstructionFrame(sessionManager: object | undefined): InstructionFrame | undefined {
   const id = currentSessionId(sessionManager);
-  const frame = sessionManager ? dieInstructionFrames.get(sessionManager) : undefined;
+  const frame = sessionManager ? bruvInstructionFrames.get(sessionManager) : undefined;
   if (frame && frame.sessionId === id) return frame;
   // A SessionManager can change its active session in place. Delete stale state
   // eagerly rather than allowing a later switch back to revive it.
-  if (frame && sessionManager) dieInstructionFrames.delete(sessionManager);
+  if (frame && sessionManager) bruvInstructionFrames.delete(sessionManager);
   return undefined;
 }
 
-/** Start continuity for the manager's current die-owned session. */
+/** Start continuity for the manager's current bruv-owned session. */
 export function scopeInstructionContinuity(sessionManager: object | undefined): void {
   const sessionId = currentSessionId(sessionManager);
   if (!sessionManager || !sessionId) return;
-  if (!currentInstructionFrame(sessionManager)) dieInstructionFrames.set(sessionManager, { sessionId });
+  if (!currentInstructionFrame(sessionManager)) bruvInstructionFrames.set(sessionManager, { sessionId });
 }
 
 /** Release all compatibility objects owned by this manager. */
 export function clearInstructionContinuity(sessionManager: object | undefined): void {
   if (!sessionManager) return;
-  dieInstructionFrames.delete(sessionManager);
+  bruvInstructionFrames.delete(sessionManager);
   classicSessions.delete(sessionManager);
 }
 
@@ -130,7 +130,7 @@ let classicAdapterInstalled = false;
 /**
  * Install the process-wide classic Pi adapter once.
  *
- * The prototype patch only watches sessions. Manager scope decides whether Die
+ * The prototype patch only watches sessions. Manager scope decides whether Bruv
  * may carry an instruction frame. This pins AgentSession._buildRuntime and
  * AgentSession._runAgentPrompt. It does not edit node_modules or make up a turn.
  */
@@ -141,7 +141,7 @@ export function installCurrentConversationAdapter(): void {
   const buildRuntime = prototype._buildRuntime;
   if (typeof runAgentPrompt !== "function" || typeof buildRuntime !== "function") {
     throw new Error(
-      "die instruction continuity is unsupported by this Pi runtime: required private AgentSession._runAgentPrompt/_buildRuntime seams are unavailable",
+      "bruv instruction continuity is unsupported by this Pi runtime: required private AgentSession._runAgentPrompt/_buildRuntime seams are unavailable",
     );
   }
   classicAdapterInstalled = true;

@@ -83,7 +83,7 @@ function fixture() {
     path,
     service,
     intent,
-    appendObservation(id: string, parentId = leaf, customType = "die-diagnostic") {
+    appendObservation(id: string, parentId = leaf, customType = "bruv-diagnostic") {
       observations.push({ id, parentId, type: "custom", customType });
     },
     navigate: (value: string) => {
@@ -219,7 +219,7 @@ async function adapterFixture() {
   let offline = false;
   let transportCalls = 0;
   let launches = 0;
-  const client = new RemoteClient(f.path, async (_host, _die, req) => {
+  const client = new RemoteClient(f.path, async (_host, _bruv, req) => {
     transportCalls++;
     if (offline) throw Error("offline fixture");
     if (req.op === "hello")

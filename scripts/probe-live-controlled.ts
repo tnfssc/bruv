@@ -1,5 +1,5 @@
 /** Paid text-input probe. --source reads an explicitly selected private JSONL; generated code is never run.
- * DIE_CAPABILITY_PROBE=1 bun scripts/probe-live-controlled.ts --synthetic --disclose-private en:fresh:baseline
+ * BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-controlled.ts --synthetic --disclose-private en:fresh:baseline
  * Historical snapshots require --source FILE --study-2026-09-25 --disclose-private. Keep output private.
  */
 import WebSocket from "ws";
@@ -9,7 +9,7 @@ import { createDefaultLiveCredentialService } from "../src/live/credentials";
 import { loadLiveConfig } from "../src/live/config";
 import { createPromptPreview } from "../src/prompt-preview";
 
-if (process.env.DIE_CAPABILITY_PROBE !== "1") throw Error("Set DIE_CAPABILITY_PROBE=1 for paid sessions");
+if (process.env.BRUV_CAPABILITY_PROBE !== "1") throw Error("Set BRUV_CAPABILITY_PROBE=1 for paid sessions");
 const input = probeArgs(process.argv.slice(2), "controlled");
 const conditions = input.trials;
 if (!conditions.length || conditions.length > 48) throw Error("Pass 1–48 explicit conditions");
@@ -49,7 +49,7 @@ const hash = (s: string) => createHash("sha256").update(s).digest("hex");
 const guidance =
   "\n\nLive has the same operational scope as the main agent, not just coding. execute runs JS/TS and can use Bun and shell() for filesystem/commands or subagent() for delegated work. On an authorized request to ACT, call execute to attempt the work (or delegate the actual task), rather than only speaking a command recipe or promising action. A previous assistant inability claim is not a permission boundary: check the tools available now. Ask for missing specifics only when needed; report a blocker only after confirming it. Helpers return values; console.log values you need to see. Never claim a tool call succeeded before seeing its result.";
 const globals =
-  "\n\nInside execute, shell(), subagent(), jobs and handoff() are already provided global helpers. Do not import them from a die module; there is no such module. Use await shell(command, {waitSeconds: 3}) and console.log its returned result.";
+  "\n\nInside execute, shell(), subagent(), jobs and handoff() are already provided global helpers. Do not import them from a bruv module; there is no such module. Use await shell(command, {waitSeconds: 3}) and console.log its returned result.";
 const example =
   "\n\nExample: User: 'Please act: ask an agent to draft a cleanup command for my recording.wav.' Assistant calls execute with code like: const r=await subagent({prompt:'Draft a cleanup command for recording.wav without running it'});console.log(r); Then the assistant describes only the observed result, not a completed audio edit.";
 const target: Record<string, string> = {

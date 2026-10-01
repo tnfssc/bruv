@@ -5,8 +5,8 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { run } from "./helpers";
 
-const enabled = process.env.DIE_RUN_LLM_TESTS === "1";
-const binary = resolve(import.meta.dir, "../dist/die");
+const enabled = process.env.BRUV_RUN_LLM_TESTS === "1";
+const binary = resolve(import.meta.dir, "../dist/bruv");
 const artifactsRoot = resolve(import.meta.dir, "../artifacts/tui");
 
 type Entry = Record<string, any>;
@@ -110,11 +110,11 @@ function safeSession(all: Entry[]) {
 test.skipIf(!enabled)(
   "real TUI backgrounds execute, stays responsive, and automatically resumes once",
   async () => {
-    const fixture = await mkdtemp(join(tmpdir(), "die-background-ux-"));
+    const fixture = await mkdtemp(join(tmpdir(), "bruv-background-ux-"));
     const stamp = new Date().toISOString().replaceAll(":", "-");
     const artifactDir = join(artifactsRoot, "background-ux-" + stamp);
     const sessionFile = join(fixture, "session.jsonl");
-    const socket = "die-background-ux-" + process.pid + "-" + Date.now();
+    const socket = "bruv-background-ux-" + process.pid + "-" + Date.now();
     const name = "background-ux";
     const evidence: Evidence = { startedAt: Date.now(), events: [], toolArgs: [], frameExcerpts: [] };
     const tmux = (...args: string[]) =>
@@ -147,8 +147,8 @@ test.skipIf(!enabled)(
         "Validate this fixture project: run ./slow-check.sh (it takes about 25 seconds), and while it is running inspect the independent local file independent-notes.txt. Report the check result and the note contents. Be efficient and leave no child processes behind.";
       const launch = [
         "env",
-        "DIE_SUBAGENT_DEPTH=0",
-        "DIE_SUBAGENT_TYPE=",
+        "BRUV_SUBAGENT_DEPTH=0",
+        "BRUV_SUBAGENT_TYPE=",
         binary,
         "--session",
         sessionFile,
@@ -157,7 +157,7 @@ test.skipIf(!enabled)(
         "--model",
         "gpt-5.6-luna",
         "--thinking",
-        process.env.DIE_UX_THINKING ?? "minimal",
+        process.env.BRUV_UX_THINKING ?? "minimal",
       ]
         .map(quote)
         .join(" ");

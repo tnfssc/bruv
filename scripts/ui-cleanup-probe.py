@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real-terminal acceptance probe for Die's compact tool/task conversation UI.
+"""Real-terminal acceptance probe for Bruv's compact tool/task conversation UI.
 
 Runs a compiled binary in an isolated tmux PTY against a loopback-only scripted
 OpenAI-completions endpoint.  It writes screen/request evidence under the chosen
@@ -112,7 +112,7 @@ def strip_ansi(s: str) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--binary", default="dist/die", help="compiled die binary to exercise")
+    ap.add_argument("--binary", default="dist/bruv", help="compiled bruv binary to exercise")
     ap.add_argument("--artifact-prefix", default="artifacts/ui-cleanup-final")
     ap.add_argument("--timeout", type=float, default=35.0)
     args = ap.parse_args()
@@ -126,7 +126,7 @@ def main() -> int:
     prefix.parent.mkdir(parents=True, exist_ok=True)
     token = uuid.uuid4().hex
     home = prefix.parent / ("ui-cleanup-work-" + token)
-    agent_dir, tmpdir = home / ".die" / "agent", home / "tmp"
+    agent_dir, tmpdir = home / ".bruv" / "agent", home / "tmp"
     agent_dir.mkdir(parents=True); tmpdir.mkdir()
     fixture = Fixture(); fixture.start()
     models = {"providers":{"fixture":{"baseUrl":f"http://127.0.0.1:{fixture.port}/v1",
@@ -138,12 +138,12 @@ def main() -> int:
     tmux_conf.write_text("set -g extended-keys on\nset -g extended-keys-format csi-u\nset -g history-limit 20000\n", encoding="utf-8")
     session = "probe"
     tmux = ["tmux", "-S", str(home / "tmux.sock")]
-    env = os.environ.copy(); env.update({"HOME":str(home), "DIE_CODING_AGENT_DIR":str(agent_dir),
+    env = os.environ.copy(); env.update({"HOME":str(home), "BRUV_CODING_AGENT_DIR":str(agent_dir),
         "TMPDIR":str(tmpdir), "PI_OFFLINE":"1", "NO_COLOR":"0", "TERM":"xterm-256color"})
     launch = [str(binary), "--no-session", "--no-approve", "--offline", "--provider", "fixture",
               "--model", "fixture-model", "--thinking", "medium", "FIRST_USER_MARKER"]
     command = "env " + " ".join(shlex.quote(k+"="+env[k]) for k in
-        ["HOME","DIE_CODING_AGENT_DIR","TMPDIR","PI_OFFLINE","NO_COLOR","TERM"]) + " " + " ".join(map(shlex.quote, launch))
+        ["HOME","BRUV_CODING_AGENT_DIR","TMPDIR","PI_OFFLINE","NO_COLOR","TERM"]) + " " + " ".join(map(shlex.quote, launch))
     plain = ansi = ""; assertions: dict[str, object] = {}; error = None
     deadline = time.monotonic() + args.timeout
     def capture(esc=False, history=True):

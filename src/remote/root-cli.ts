@@ -17,7 +17,7 @@ export type RemoteRootCLIOptions = {
   remoteClient?: RemoteClient;
 };
 export function assertRootStartupContext(env: NodeJS.ProcessEnv = process.env): void {
-  const depth = Number(env.DIE_SUBAGENT_DEPTH ?? "0");
+  const depth = Number(env.BRUV_SUBAGENT_DEPTH ?? "0");
   if (!Number.isSafeInteger(depth) || depth !== 0 || env.T3_MCP_URL || env.T3_MCP_BEARER_TOKEN)
     throw Error(
       "Main-agent placement cannot reset a delegated/scoped agent role or depth; use normal subagent placement",
@@ -38,7 +38,7 @@ export async function runRemoteRoot(options: RemoteRootCLIOptions): Promise<void
     target = {
       name: options.place,
       host: connection.host,
-      diePath: connection.diePath,
+      bruvPath: connection.bruvPath,
       ownerId: connection.hello.ownerId,
       epoch: connection.hello.epoch,
     };

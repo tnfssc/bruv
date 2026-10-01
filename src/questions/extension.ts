@@ -81,7 +81,7 @@ export function registerQuestions(
     if (!current) return;
     // No-history sessions cannot own durable questions. This is not a storage failure.
     if (current.sessionManager?.getSessionFile && !current.sessionManager.getSessionFile()) {
-      current.ui.setStatus("die-questions", undefined);
+      current.ui.setStatus("bruv-questions", undefined);
       return;
     }
     const token = generation;
@@ -107,7 +107,7 @@ export function registerQuestions(
       const cancelled = open.some((q) => q.status === "cancelled" && q.blocked);
       if (token === generation && context === current)
         current.ui.setStatus(
-          "die-questions",
+          "bruv-questions",
           open.length
             ? open.length +
                 " question" +
@@ -120,7 +120,7 @@ export function registerQuestions(
       // Commands report errors; background refresh must not create notice spam.
       if (token === generation && context === current) {
         try {
-          current.ui.setStatus("die-questions", "/questions unavailable");
+          current.ui.setStatus("bruv-questions", "/questions unavailable");
         } catch (statusError) {
           // Pi invalidates a command context as soon as a session is replaced,
           // before its shutdown hook necessarily runs. Ignore only that lifecycle error.
@@ -359,7 +359,7 @@ export function registerQuestions(
   });
   pi.on("session_shutdown", () => {
     generation++;
-    context?.ui.setStatus("die-questions", undefined);
+    context?.ui.setStatus("bruv-questions", undefined);
     context = undefined;
     unsubscribe?.();
     unsubscribe = undefined;

@@ -3,23 +3,23 @@ import { getSessionHost } from "../session/host-access";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { writeFileSync, renameSync } from "node:fs";
 import { dirname, join } from "node:path";
-const EVENT = "die:remote:cancel-native-work";
+const EVENT = "bruv:remote:cancel-native-work";
 type Request = { ctx: ExtensionContext; resolve: (value: unknown) => void; reject: (error: unknown) => void };
 /** Native task ownership stays with the existing job service, not a second PID walker. */
 export function registerRemoteCancellationService(
   pi: ExtensionAPI,
   cancel: (ctx: ExtensionContext) => Promise<unknown>,
 ) {
-  if (!process.env.DIE_REMOTE_RUNTIME_STATE) return;
+  if (!process.env.BRUV_REMOTE_RUNTIME_STATE) return;
   pi.events.on(EVENT, (value: unknown) => {
     const req = value as Request;
     void cancel(req.ctx).then(req.resolve, req.reject);
   });
 }
 export function registerRemoteCancellationRuntime(pi: ExtensionAPI) {
-  const runtime = process.env.DIE_REMOTE_RUNTIME_STATE;
+  const runtime = process.env.BRUV_REMOTE_RUNTIME_STATE;
   if (!runtime) return;
-  pi.registerCommand("die-remote-cancel", {
+  pi.registerCommand("bruv-remote-cancel", {
     description: "Private owner cancellation checkpoint",
     handler: async (_input, ctx) => {
       let report: unknown;

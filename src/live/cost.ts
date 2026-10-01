@@ -1,5 +1,5 @@
 /** Voice billing is separate from Pi/agent usage. Only provider usage events move totals. */
-export const VOICE_COST_ENTRY = "die-live-cost";
+export const VOICE_COST_ENTRY = "bruv-live-cost";
 const number = (v: unknown): number | undefined =>
   typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : undefined;
 const tokenCount = (v: unknown): number | undefined =>

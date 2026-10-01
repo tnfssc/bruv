@@ -16,7 +16,7 @@ import {
 import { installDiskBackedSessionManager } from "../src/history/session-manager";
 
 installDiskBackedSessionManager();
-const dir = await mkdtemp(join(tmpdir(), "die-history-sdk-soak-"));
+const dir = await mkdtemp(join(tmpdir(), "bruv-history-sdk-soak-"));
 const model = getModel("anthropic", "claude-sonnet-4-5")!;
 const usage = {
   input: 10,

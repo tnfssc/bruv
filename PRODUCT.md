@@ -1,4 +1,4 @@
-# die — Product Reference
+# bruv — Product Reference
 
 > This document records the product direction and decisions stated by the user in this project conversation. Those statements are the source of truth. Implementation details may support them, but must not silently become product requirements.
 
@@ -19,7 +19,7 @@ existing provider credentials are preserved. Setup alone opens no devices and
 makes no paid connection. Starting voice sends microphone audio to Google and
 may incur API charges.
 
-Voice can hand work to the configured die agent and inspect jobs. Stopping or
+Voice can hand work to the configured bruv agent and inspect jobs. Stopping or
 interrupting voice does not cancel agent work. /live stop ends voice;
 /live status and opt-in mic/speaker checks are for troubleshooting, not the
 normal entry screen. Native startup, reply tails, interruption handling and
@@ -60,7 +60,7 @@ This section describes the current product. The phase/milestone sections below k
 
 ### September 12 prompt and stdin decisions
 
-- User reviewed prompt sources line by line: keep broad values in simple caveman-style language, API facts in tool documentation, and no arbitrary limit on doing a whole job in one execution. Remove the hardcoded concision/path guidelines. Identity names "die" as a coding tool.
+- User reviewed prompt sources line by line: keep broad values in simple caveman-style language, API facts in tool documentation, and no arbitrary limit on doing a whole job in one execution. Remove the hardcoded concision/path guidelines. Identity names "bruv" as a coding tool.
 - Favor practical working solutions, fewer parts/state, and greenfield by default. Backward compatibility is needed only when the user explicitly requests it. Rebuilding from scratch is allowed when useful.
 - User explicitly authorized changing shell stdin to closed by default. Set `closeInput: false` at launch for later input. `jobs.input()` itself still leaves stdin open unless explicitly closed. This supersedes the historical instruction below not to change shell stdin semantics silently. Installation/release remains separately authorized.
 
@@ -68,7 +68,7 @@ This section describes the current product. The phase/milestone sections below k
 
 User authorized fixing the review findings and strengthening validation. Existing dirty work and failed evidence are preserved.
 
-- [x] Keep effective instructions through notification-triggered multi-tool turns, without repeating arbitrary framing-hook side effects. SDK coverage includes successful tool results, custom/empty prompts, frame updates, owning-manager isolation, lifecycle cleanup and fresh compaction. Root added a failing next-turn-refresh regression and synchronized the SDK private override immediately. Red evidence: `/tmp/die-frame-refresh-red.log`.
+- [x] Keep effective instructions through notification-triggered multi-tool turns, without repeating arbitrary framing-hook side effects. SDK coverage includes successful tool results, custom/empty prompts, frame updates, owning-manager isolation, lifecycle cleanup and fresh compaction. Root added a failing next-turn-refresh regression and synchronized the SDK private override immediately. Red evidence: `/tmp/bruv-frame-refresh-red.log`.
 - [x] Resolve transitive installed-package imports in the compiled execute worker. 21 compiled runner tests now cover representative SDK imports, TypeScript erasure, symlinked graphs, native CJS cycles/cache/conditions, mixed ESM/CJS, lazy imports, assets and failed evaluation identity. Intermediate non-bundling revision passed 14/15 runner tests but failed the representative SDK CommonJS dependency (`graceful-fs`). Compiled Bun skips runtime onResolve for external imports. This failed evidence is retained. A directory-scanning fallback was rejected for per-execute overhead.
 - [x] Recover notification ownership if the execute connection disappears before inline delivery is acknowledged. ACKs commit only after clean worker exit. Production composite waits keep separate delivery identity. Regressions cover disconnect, crash-after-ACK, oversized/error replies, batched subagents, partial batch failure and inline-then-handoff without duplicate notice. Root verified 45 focused ownership/handoff tests. Later integrated gates passed (see milestones below).
 - [x] Parse native compaction SSE incrementally, stop at terminal events, and keep available usage on failures/cancellation. Root verified 27 native protocol/SDK tests, including CRLF/UTF-8 fragmentation, reset/no-EOF completion, cancellation, byte bounds and duplicate final output rejection.
@@ -76,6 +76,8 @@ User authorized fixing the review findings and strengthening validation. Existin
 Root integration review rejected two incomplete first passes: graph bundling changed module identity/asset semantics, and acknowledgement metadata was lost through the production composite AbortSignal. Native parsing also needed CRLF-boundary and duplicate-final-item checks. These are being corrected before acceptance, not papered over by passing isolated tests.
 
 - [x] Integrate regressions, typecheck/build/smoke and real-terminal/model validation. Earlier medium successes do not establish minimal-reasoning reliability, and previous passing tests missed real integration bugs.
+
+> **Historical record below:** original product names, commands, paths and release evidence are retained. Current branding is bruv; see [README](README.md) and the [rename handoff](wisdom/packaging/bruv-rename.md).
 
 ## Historical plan — Job attention checkpoints and cache countdown (implemented)
 

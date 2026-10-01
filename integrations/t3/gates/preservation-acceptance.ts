@@ -10,9 +10,9 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import sourcePin from "../upstream/source.json";
 const ROOT = resolve(import.meta.dirname, "../../..");
-const DIE = resolve(process.env.T3_V2_PACKAGED_BINARY || join(ROOT, "dist/die-t3-v2-candidate"));
+const BRUV = resolve(process.env.T3_V2_PACKAGED_BINARY || join(ROOT, "dist/bruv-t3-v2-candidate"));
 const EXPECT = process.env.T3_V2_EXPECT_BINARY_SHA256 || "";
-const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE || join(ROOT, ".cache/die-t3code-" + sourcePin.revision));
+const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE || join(ROOT, ".cache/bruv-t3code-" + sourcePin.revision));
 const ARTIFACT = resolve(
   process.env.T3_V2_PRESERVATION_PROOF || join(ROOT, "artifacts/t3-v2-preservation-acceptance.json"),
 );
@@ -108,17 +108,17 @@ async function chromiumPath() {
 const hash = (b: Uint8Array) => createHash("sha256").update(b).digest("hex");
 const redact = (s: string) => s.replace(/(token|authorization|api[_-]?key)([\s:=\"']+)[^\s\"']+/gi, "$1$2<redacted>");
 check(process.env.T3_V2_ACCEPT_CANDIDATE === "1", "set T3_V2_ACCEPT_CANDIDATE=1 after selecting candidate");
-const source = await Bun.file(DIE).bytes(),
+const source = await Bun.file(BRUV).bytes(),
   binarySha256 = hash(source);
 check(!EXPECT || EXPECT === binarySha256, "binary digest mismatch: expected " + EXPECT + ", got " + binarySha256);
-const temp = await mkdtemp(join(tmpdir(), "die-t3-v2-preservation-"));
+const temp = await mkdtemp(join(tmpdir(), "bruv-t3-v2-preservation-"));
 await chmod(temp, 0o700);
 const home = join(temp, "home"),
-  baseDir = join(home, ".die/web"),
+  baseDir = join(home, ".bruv/web"),
   agentDir = join(temp, "agent"),
   workspace = join(temp, "workspace"),
   bin = join(temp, "bin"),
-  runtimeDie = join(bin, "die");
+  runtimeBruv = join(bin, "bruv");
 await Promise.all([
   mkdir(join(baseDir, "userdata"), { recursive: true }),
   mkdir(join(agentDir, "extensions"), { recursive: true }),
@@ -126,9 +126,9 @@ await Promise.all([
   mkdir(bin, { recursive: true }),
   mkdir(resolve(ARTIFACT, ".."), { recursive: true }),
 ]);
-await copyFile(DIE, runtimeDie);
-await chmod(runtimeDie, 0o700);
-check(hash(await Bun.file(runtimeDie).bytes()) === binarySha256, "relocated digest changed");
+await copyFile(BRUV, runtimeBruv);
+await chmod(runtimeBruv, 0o700);
+check(hash(await Bun.file(runtimeBruv).bytes()) === binarySha256, "relocated digest changed");
 for (const n of ["sh", "bash", "fish", "git", "sleep", "printf", "env", "uname"]) {
   const p = Bun.which(n);
   if (p) await symlink(p, join(bin, n));
@@ -242,7 +242,7 @@ await writeFile(
         pi: {
           driver: "pi",
           enabled: true,
-          config: { binaryPath: runtimeDie, customModels: ["deterministic/preservation-deterministic"] },
+          config: { binaryPath: runtimeBruv, customModels: ["deterministic/preservation-deterministic"] },
         },
       },
     },
@@ -283,7 +283,7 @@ try {
   reserve.close();
   await once(reserve, "close");
   backend = spawn(
-    runtimeDie,
+    runtimeBruv,
     [
       "web",
       "--no-browser",
@@ -305,12 +305,12 @@ try {
         PATH: bin,
         LANG: "C.UTF-8",
         PI_CODING_AGENT_DIR: agentDir,
-        DIE_CODING_AGENT_DIR: agentDir,
+        BRUV_CODING_AGENT_DIR: agentDir,
         HERDR_ENV: "0",
-        DIE_SUBAGENT_TYPE: "",
-        DIE_SUBAGENT_DEPTH: "0",
-        DIE_WEB_TASK_EVENTS: "1",
-        DIE_WEB_DIE_BINARY: runtimeDie,
+        BRUV_SUBAGENT_TYPE: "",
+        BRUV_SUBAGENT_DEPTH: "0",
+        BRUV_WEB_TASK_EVENTS: "1",
+        BRUV_WEB_BRUV_BINARY: runtimeBruv,
       },
     },
   );
@@ -471,7 +471,7 @@ try {
     reloaded.includes(M.pendingPrompt) && /Running printf/i.test(reloaded) && page.url() === historyUrl;
   const settings = JSON.parse(await readFile(join(baseDir, "userdata/settings.json"), "utf8"));
   const settingsPreserved =
-    settings.preservationSentinel?.keep === true && settings.providerInstances?.pi?.config?.binaryPath === runtimeDie;
+    settings.preservationSentinel?.keep === true && settings.providerInstances?.pi?.config?.binaryPath === runtimeBruv;
   const lifecycleTimeline = lifecycleTrace();
   const unsolicitedActivity = lifecycleTimeline.some((event) => event.lastError?.includes("outside an active T3 turn"));
   const failedRuns = lifecycleTimeline.filter((event) => event.event === "run.updated" && event.status === "failed");

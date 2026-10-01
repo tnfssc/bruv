@@ -11,7 +11,7 @@ export interface LiveConfig {
   openaiModel?: typeof import("./providers").LIVE_PROVIDERS.openai.models[number];
 }
 export function liveConfigPath(): string {
-  return join(homedir(), ".die", "live-settings.json");
+  return join(homedir(), ".bruv", "live-settings.json");
 }
 export function parseLiveConfig(value: unknown): LiveConfig {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid Live settings");

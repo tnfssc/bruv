@@ -15,15 +15,15 @@ import {
 } from "../../../src/t3/tasks/native-task";
 
 const root = resolve(import.meta.dir, "../../..");
-const candidate = resolve(process.env.T3_V2_CANDIDATE ?? resolve(root, ".cache/die-t3code-" + sourcePin.revision));
+const candidate = resolve(process.env.T3_V2_CANDIDATE ?? resolve(root, ".cache/bruv-t3code-" + sourcePin.revision));
 const requireCandidate = createRequire(candidate + "/packages/contracts/package.json");
 const Schema = await import(pathToFileURL(requireCandidate.resolve("effect/Schema")).href);
 const backend = await import(pathToFileURL(candidate + "/packages/contracts/src/orchestratorMcp.ts").href);
 const cases = [
-  [fixture.launch, T3TaskLaunchInputSchema, backend.DieTaskLaunchInput, T3TaskResultSchema, backend.DieTaskResult],
-  [fixture.observe, T3TaskIdInputSchema, backend.DieTaskObserveInput, T3TaskResultSchema, backend.DieTaskResult],
-  [fixture.cancel, T3TaskIdInputSchema, backend.DieTaskCancelInput, T3TaskResultSchema, backend.DieTaskResult],
-  [fixture.list, T3TaskListInputSchema, backend.DieTaskListInput, T3TaskListResultSchema, backend.DieTaskListResult],
+  [fixture.launch, T3TaskLaunchInputSchema, backend.BruvTaskLaunchInput, T3TaskResultSchema, backend.BruvTaskResult],
+  [fixture.observe, T3TaskIdInputSchema, backend.BruvTaskObserveInput, T3TaskResultSchema, backend.BruvTaskResult],
+  [fixture.cancel, T3TaskIdInputSchema, backend.BruvTaskCancelInput, T3TaskResultSchema, backend.BruvTaskResult],
+  [fixture.list, T3TaskListInputSchema, backend.BruvTaskListInput, T3TaskListResultSchema, backend.BruvTaskListResult],
 ] as const;
 for (const [entry, rootInput, backendInput, rootResult, backendResult] of cases) {
   const args = z.parse(rootInput, entry.arguments);
@@ -37,10 +37,10 @@ for (const [entry, rootInput, backendInput, rootResult, backendResult] of cases)
 const workspaceLaunch = {
   ...fixture.launch.arguments,
   title: "Independent parser work",
-  workspace: { kind: "worktree", baseRef: "a".repeat(40), branch: "die/parser" },
+  workspace: { kind: "worktree", baseRef: "a".repeat(40), branch: "bruv/parser" },
 };
 assert.deepEqual(
-  Schema.decodeUnknownSync(backend.DieTaskLaunchInput)(workspaceLaunch, { onExcessProperty: "error" }),
+  Schema.decodeUnknownSync(backend.BruvTaskLaunchInput)(workspaceLaunch, { onExcessProperty: "error" }),
   z.parse(T3TaskLaunchInputSchema, workspaceLaunch),
 );
 for (const preparationStatus of ["preparing", "ready", "failed", "uncertain"]) {
@@ -49,13 +49,13 @@ for (const preparationStatus of ["preparing", "ready", "failed", "uncertain"]) {
     workspace: {
       kind: "worktree",
       baseRef: "a".repeat(40),
-      branch: "die/parser",
+      branch: "bruv/parser",
       worktreePath: "/private/worktrees/parser",
       preparationStatus,
     },
   };
   assert.deepEqual(
-    Schema.decodeUnknownSync(backend.DieTaskResult)(result, { onExcessProperty: "error" }),
+    Schema.decodeUnknownSync(backend.BruvTaskResult)(result, { onExcessProperty: "error" }),
     z.parse(T3TaskResultSchema, result),
   );
 }
@@ -65,6 +65,6 @@ for (const workspace of [
 ]) {
   const input = { ...fixture.launch.arguments, workspace };
   assert.throws(() => z.parse(T3TaskLaunchInputSchema, input));
-  assert.throws(() => Schema.decodeUnknownSync(backend.DieTaskLaunchInput)(input, { onExcessProperty: "error" }));
+  assert.throws(() => Schema.decodeUnknownSync(backend.BruvTaskLaunchInput)(input, { onExcessProperty: "error" }));
 }
 console.log("PASS canonical/root structured workspace input, preparation states, and excess-field rejection");

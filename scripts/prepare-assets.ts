@@ -62,10 +62,10 @@ await writeIfChanged(
   join(output, "package.json"),
   `${JSON.stringify(
     {
-      name: "die",
+      name: "bruv",
       version,
       description: "A coding agent built on Pi",
-      piConfig: { name: "die", configDir: ".die" },
+      piConfig: { name: "bruv", configDir: ".bruv" },
     },
     null,
     2,

@@ -13,13 +13,13 @@ afterEach(async () => {
 });
 
 async function fixture() {
-  const root = await mkdtemp(join(tmpdir(), "die-worktree-test-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-worktree-test-"));
   owned.push(root);
   const repo = join(root, "repo");
   execFileSync("mkdir", [repo]);
   execFileSync("git", ["init", "-q", repo]);
   execFileSync("git", ["-C", repo, "config", "user.email", "test@example.invalid"]);
-  execFileSync("git", ["-C", repo, "config", "user.name", "Die Test"]);
+  execFileSync("git", ["-C", repo, "config", "user.name", "Bruv Test"]);
   await writeFile(join(repo, "tracked.txt"), "committed\n");
   execFileSync("git", ["-C", repo, "add", "tracked.txt"]);
   execFileSync("git", ["-C", repo, "commit", "-qm", "base"]);
@@ -62,7 +62,7 @@ describe("local worktree workspace", () => {
     const second = await createWorktree(source, { taskId: "task_two", root: worktrees });
     expect(first.baseOid).toBe(second.baseOid);
     expect(first.path).not.toBe(second.path);
-    expect(first.branch).toMatch(/^die\/feature-touch-pwned-/);
+    expect(first.branch).toMatch(/^bruv\/feature-touch-pwned-/);
     expect(await readFile(join(first.path, "tracked.txt"), "utf8")).toBe("committed\n");
     await expect(readFile(join(first.path, "secret.env"), "utf8")).rejects.toThrow();
     expect(execFileSync("git", ["-C", first.path, "rev-parse", "HEAD"], { encoding: "utf8" }).trim()).toBe(
@@ -129,8 +129,8 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldRoot = process.env.DIE_WORKTREE_ROOT;
-    process.env.DIE_WORKTREE_ROOT = worktrees;
+    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
+    process.env.BRUV_WORKTREE_ROOT = worktrees;
     const manager = new TaskManager(() => {}, 25);
     const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined, {});
     try {
@@ -159,8 +159,8 @@ describe("local worktree workspace", () => {
         expect((await manager.wait(stopped.workspace.setupTaskId)).status).toBe("killed");
     } finally {
       await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.DIE_WORKTREE_ROOT;
-      else process.env.DIE_WORKTREE_ROOT = oldRoot;
+      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
+      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
     }
   });
 
@@ -179,8 +179,8 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldRoot = process.env.DIE_WORKTREE_ROOT;
-    process.env.DIE_WORKTREE_ROOT = worktrees;
+    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
+    process.env.BRUV_WORKTREE_ROOT = worktrees;
     const manager = new TaskManager(() => {}, 25);
     const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined, {});
     try {
@@ -202,8 +202,8 @@ describe("local worktree workspace", () => {
       expect(stopped.workspace?.preparationError).toBe("timed out");
     } finally {
       await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.DIE_WORKTREE_ROOT;
-      else process.env.DIE_WORKTREE_ROOT = oldRoot;
+      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
+      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
     }
   });
 
@@ -223,8 +223,8 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldRoot = process.env.DIE_WORKTREE_ROOT;
-    process.env.DIE_WORKTREE_ROOT = worktrees;
+    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
+    process.env.BRUV_WORKTREE_ROOT = worktrees;
     const manager = new TaskManager(() => {}, 25);
     const activate = spyOn(manager, "activatePreparedAgent");
     const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined, {});
@@ -255,8 +255,8 @@ describe("local worktree workspace", () => {
       if (current.status === "running") manager.kill(result.id);
     } finally {
       await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.DIE_WORKTREE_ROOT;
-      else process.env.DIE_WORKTREE_ROOT = oldRoot;
+      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
+      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
     }
   });
 
@@ -275,8 +275,8 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldRoot = process.env.DIE_WORKTREE_ROOT;
-    process.env.DIE_WORKTREE_ROOT = worktrees;
+    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
+    process.env.BRUV_WORKTREE_ROOT = worktrees;
     const manager = new TaskManager(() => {}, 25);
     const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined, {});
     try {
@@ -298,8 +298,8 @@ describe("local worktree workspace", () => {
       expect(manager.inspect(results[2].id).termination).toBeUndefined();
     } finally {
       await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.DIE_WORKTREE_ROOT;
-      else process.env.DIE_WORKTREE_ROOT = oldRoot;
+      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
+      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
     }
   });
 });

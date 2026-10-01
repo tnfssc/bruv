@@ -35,7 +35,7 @@ await Bun.sleep(100);
 console.log("scan complete");`;
 
 async function scan(mode: "late" | "active" | "normal", all = false) {
-  const dir = await mkdtemp(join(tmpdir(), "die-resume-stream-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-resume-stream-"));
   try {
     const code = script
       .replace("__MANAGER__", JSON.stringify(manager))

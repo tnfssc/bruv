@@ -220,7 +220,7 @@ export async function createWorktree(
   const id = options.taskId;
   if (!/^task_[a-zA-Z0-9_-]+$/.test(id)) throw new Error("Invalid workspace task ID");
   const branch =
-    options.branch ?? `die/${slug(options.title ?? basename(source.sourcePath))}-${id.replace(/^task_/, "")}`;
+    options.branch ?? `bruv/${slug(options.title ?? basename(source.sourcePath))}-${id.replace(/^task_/, "")}`;
   validateRefInput(branch, "branch");
   await git(source.sourcePath, ["check-ref-format", "--branch", branch], options.signal);
   const exists = await git(
@@ -231,7 +231,7 @@ export async function createWorktree(
   );
   if (exists !== undefined) throw new Error(`Worktree branch already exists: ${branch}`);
   const identity = createHash("sha256").update(source.commonGitDir).digest("hex").slice(0, 12);
-  const root = resolve(options.root ?? process.env.DIE_WORKTREE_ROOT ?? join(homedir(), ".die", "worktrees"));
+  const root = resolve(options.root ?? process.env.BRUV_WORKTREE_ROOT ?? join(homedir(), ".bruv", "worktrees"));
   await mkdir(root, { recursive: true, mode: 0o700 });
   if ((await realpath(root)) !== root) throw new Error("Managed worktree root must not be a symlink");
   const path = join(root, `${slug(basename(source.sourcePath))}-${identity}-${id}`);

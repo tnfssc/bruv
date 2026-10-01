@@ -185,7 +185,7 @@ describe("OpenAI GA offline protocol", () => {
     await Bun.sleep(10);
     const output = JSON.parse(f.socket.events.find((e) => e.item?.call_id === "c1")?.item.output);
     expect(output.truncated).toBe(true);
-    expect(output.artifactPath).toContain("die-live-tool-");
+    expect(output.artifactPath).toContain("bruv-live-tool-");
     f.session.close();
   });
   test("tool call id is executed/replied once; invalid call rejected; no late reply after close", async () => {

@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 
 const home = homedir(),
-  agentDir = process.env.DIE_CODING_AGENT_DIR!;
+  agentDir = process.env.BRUV_CODING_AGENT_DIR!;
 // Parent CLIs are fresh roots in the isolated fixture HOME, not this test worker's role.
 // Source artifacts, sessions, configuration and caches must stay outside the Git source.
 assert(process.env.FIXTURE_CONTAINER && process.env.FIXTURE_PROVIDER_URL && agentDir.startsWith(home + "/"));
@@ -15,7 +15,7 @@ const cliEnv: Record<string, string> = {
   HOME: home,
   PATH: process.env.PATH!,
   TMPDIR: process.env.TMPDIR!,
-  DIE_CODING_AGENT_DIR: agentDir,
+  BRUV_CODING_AGENT_DIR: agentDir,
   SHELL: "/bin/sh",
   LANG: "C.UTF-8",
   XDG_CONFIG_HOME: join(home, "config"),
@@ -40,7 +40,7 @@ git("commit", "-qm", "initial");
 // A tracked dirty edit proves placement uses current source, not the owner's pre-existing repo.
 writeFileSync(join(repo, "README.md"), "REMOTE_JOBS_CURRENT_SOURCE\n");
 assert(!existsSync(join(home, ".git")), "must never Git-init HOME");
-const statePath = join(home, ".die/remote/state.json");
+const statePath = join(home, ".bruv/remote/state.json");
 const clients: ReturnType<typeof spawn>[] = [];
 // The only provider lives in the Docker fixture. This host process is a real CLI client.
 mkdirSync(agentDir, { recursive: true });
@@ -63,7 +63,7 @@ const state = () =>
   };
 function launch(side: string, session: string) {
   const child = spawn(
-    process.env.DIE_BIN!,
+    process.env.BRUV_BIN!,
     ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-parent", "--session", session],
     { cwd: repo, env: cliEnv, stdio: ["pipe", "pipe", "pipe"] },
   );
@@ -111,7 +111,7 @@ try {
   assert.equal(ssh("true").status, 0, "pinned fixture SSH unavailable");
   // Exercise the compiled CLI's non-interactive JSON boundary as well as its RPC lifecycle.
   const printed = spawnSync(
-    process.env.DIE_BIN!,
+    process.env.BRUV_BIN!,
     [
       "--print",
       "--mode",
@@ -134,7 +134,7 @@ try {
   assert(printed.stdout.includes("REMOTE_JOBS_PRINT_JSON_OK"), "print/json response missing: " + printed.stdout);
   const a = launch("A", join(home, "a.jsonl")),
     b = launch("B", join(home, "b.jsonl"));
-  a.send("/remote connect fixture-owner /usr/local/bin/die");
+  a.send("/remote connect fixture-owner /usr/local/bin/bruv");
   await a.wait(() => existsSync(statePath) && !!JSON.parse(readFileSync(statePath, "utf8")).connection, "connect");
   a.send("REMOTE_JOBS_PROOF_A launch using execute");
   await a.wait(() => existsSync(join(home, "jobs-A.json")), "first async placement launch");

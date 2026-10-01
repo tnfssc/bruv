@@ -7,7 +7,7 @@ See [the historical audit report](../../wisdom/resources/memory-resource-audit.m
 - `session-journal.ts`: synthetic history retention and reset/GC.
 - `bridge-retention.ts`: in-memory bridge requests and listener/heap counts.
 - `execution-runtime.ts`: execute success, spill, timeout, abort, owned-descendant cleanup.
-- `cli-rpc-soak.ts`: CLI using a local fake model; optional `DIE_SOAK_CYCLES` and `DIE_SOAK_NEW_ONLY`.
+- `cli-rpc-soak.ts`: CLI using a local fake model; optional `BRUV_SOAK_CYCLES` and `BRUV_SOAK_NEW_ONLY`.
 
 These probes do not assert an old web source pin. The maintained T3 offline
 [launcher and RPC probes](../../integrations/t3/gates/README.md) live with T3 gates

@@ -4,7 +4,7 @@ import { recordDiagnostic } from "../diagnostics";
 import { MAIN_AGENT_MODES, type MainAgentMode, mainAgentGuidance, replaceMainAgentGuidance } from "../prompts";
 import { updateCurrentInstructionFrame } from "./instruction-continuity";
 
-export const INSTRUCTION_MODE_ENTRY = "die-instruction-mode";
+export const INSTRUCTION_MODE_ENTRY = "bruv-instruction-mode";
 
 function parsedMode(value: unknown): MainAgentMode | undefined {
   return typeof value === "string" && MAIN_AGENT_MODES.includes(value as MainAgentMode)
@@ -17,7 +17,7 @@ function sessionOwner(sessionId: string | undefined): string {
   // byte-identical (and therefore cache-affine). The digest keeps session IDs
   // opaque if a prompt is logged or inspected.
   return createHash("sha256")
-    .update("die-main-agent-mode\0")
+    .update("bruv-main-agent-mode\0")
     .update(sessionId ?? "")
     .digest("hex");
 }
@@ -54,7 +54,7 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
   let owner = sessionOwner(undefined);
   let sessionId: string | undefined;
   let explicitCustom = false;
-  const status = () => ui?.setStatus("die-mode", isRoot() ? "mode: " + mode : undefined);
+  const status = () => ui?.setStatus("bruv-mode", isRoot() ? "mode: " + mode : undefined);
   const describe = () => mode + " (instructions only; model and thinking unchanged)";
   const resetFrameIdentity = (ctx: ExtensionContext) => {
     const nextId = ctx.sessionManager?.getSessionId?.();
@@ -117,7 +117,7 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
 
   return {
     get: () => mode,
-    /** Record whether this frame is a user override and create die's owned block. */
+    /** Record whether this frame is a user override and create bruv's owned block. */
     guidance(ctx: ExtensionContext, custom: boolean): string {
       resetFrameIdentity(ctx);
       explicitCustom = custom;
@@ -134,7 +134,7 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
       status();
     },
     shutdown() {
-      ui?.setStatus("die-mode", undefined);
+      ui?.setStatus("bruv-mode", undefined);
       ui = undefined;
       explicitCustom = false;
     },

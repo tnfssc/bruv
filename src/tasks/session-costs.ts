@@ -11,7 +11,7 @@ interface CachedSession {
   pendingLength: number;
   cost: number;
   entryIds: Set<string>;
-  dieAgent: boolean;
+  bruvAgent: boolean;
   parents: Set<string>;
   metadataSize: number;
 }
@@ -32,7 +32,7 @@ function usageCost(entry: any): number {
     usage = entry.message.usage;
   } else if (entry?.type === "compaction" || entry?.type === "branch_summary") {
     usage = entry.usage;
-  } else if (entry?.type === "custom" && entry.customType === "die-compaction-attempt") {
+  } else if (entry?.type === "custom" && entry.customType === "bruv-compaction-attempt") {
     usage = entry.data?.usage;
   }
   const total = usage?.cost?.total;
@@ -81,13 +81,13 @@ function emptySession(inode: bigint | number): CachedSession {
     pendingLength: 0,
     cost: 0,
     entryIds: new Set(),
-    dieAgent: false,
+    bruvAgent: false,
     parents: new Set(),
     metadataSize: -1,
   };
 }
 
-/** Add up usage from one session's die-agent descendants as it arrives. */
+/** Add up usage from one session's bruv-agent descendants as it arrives. */
 export class SessionCostTracker {
   readonly rootFile: string;
   readonly sessionDir: string;
@@ -143,7 +143,7 @@ export class SessionCostTracker {
         cached = emptySession(inode);
         this.sessions.set(path, cached);
       }
-      if (cached.metadataSize === size || (cached.dieAgent && cached.metadataSize >= 0)) return;
+      if (cached.metadataSize === size || (cached.bruvAgent && cached.metadataSize >= 0)) return;
       await this.readMetadata(path, cached, size);
     });
 
@@ -152,7 +152,7 @@ export class SessionCostTracker {
     while (changed) {
       changed = false;
       for (const [path, session] of this.sessions) {
-        if (descendants.has(path) || !session.dieAgent) continue;
+        if (descendants.has(path) || !session.bruvAgent) continue;
         if ([...session.parents].some((parent) => descendants.has(parent))) {
           descendants.add(path);
           changed = true;
@@ -194,7 +194,7 @@ export class SessionCostTracker {
           if (entry?.type === "session" && typeof entry.parentSession === "string") {
             headerParent = pathKey(entry.parentSession, dirname(path));
           }
-          if (entry?.type === "custom" && entry.customType === "die-agent") {
+          if (entry?.type === "custom" && entry.customType === "bruv-agent") {
             if (typeof entry.data?.parentSessionFile === "string") {
               explicitParents.push(pathKey(entry.data.parentSessionFile, dirname(path)));
             } else {
@@ -209,10 +209,10 @@ export class SessionCostTracker {
 
       session.parents.clear();
       // A normal pi fork copies custom entries. Its new header points at the
-      // fork source while copied die-agent metadata still points elsewhere.
+      // fork source while copied bruv-agent metadata still points elsewhere.
       const copiedMetadata = Boolean(headerParent && explicitParents.some((parent) => parent !== headerParent));
-      session.dieAgent = !copiedMetadata && (explicitParents.length > 0 || hasFallbackMarker);
-      if (session.dieAgent) {
+      session.bruvAgent = !copiedMetadata && (explicitParents.length > 0 || hasFallbackMarker);
+      if (session.bruvAgent) {
         for (const parent of explicitParents) session.parents.add(parent);
         if (explicitParents.length === 0 && hasFallbackMarker && headerParent) session.parents.add(headerParent);
       }

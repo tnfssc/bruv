@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "die",
+      "name": "bruv",
       "dependencies": {
         "@earendil-works/pi-ai": "0.99.1",
         "@earendil-works/pi-coding-agent": "0.99.1",

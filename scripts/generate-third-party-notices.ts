@@ -122,7 +122,7 @@ export async function generateThirdPartyNotices(
   }
 
   const lines = [
-    "DIE THIRD-PARTY LICENSE AND COPYRIGHT NOTICES",
+    "BRUV THIRD-PARTY LICENSE AND COPYRIGHT NOTICES",
     "",
     "Generated from the installed production dependency graph. This bundle reproduces",
     "packaged LICENSE/COPYING/NOTICE files; it is attribution information, not legal advice.",

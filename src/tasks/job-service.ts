@@ -303,7 +303,7 @@ export class JobService {
     if (isSshJobId(result.taskId)) throw new Error("Native task ID conflicts with SSH namespace");
     const projected = { ...result } as Record<string, unknown>;
     // T3 is the sole terminal-delivery owner. Launch never carries a terminal
-    // answer into Die's completion/notification path.
+    // answer into Bruv's completion/notification path.
     if (omitOutput) delete projected.output;
     return {
       ...projected,
@@ -444,7 +444,7 @@ export class JobService {
                 }
                 // The authenticated backend is authoritative for effective profile and
                 // depth. The strict adapter validates the profile enum; do not compare
-                // either value with process-local DIE_SUBAGENT_* policy.
+                // either value with process-local BRUV_SUBAGENT_* policy.
                 await this.#acknowledgeLaunch(ledger, clientRequestId, signal);
                 launched.push(this.#nativeProjection(result, true));
               }
@@ -578,13 +578,13 @@ export class JobService {
                     "--",
                     prompt,
                   ],
-                  displayCommand: "die agent [" + type + "]: " + (params.title ?? prompt),
+                  displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
                   ...(params.title === undefined ? {} : { title: params.title }),
                   cwd: ctx.cwd,
                   env: {
                     ...childAgentEnvironment(process.env),
-                    DIE_SUBAGENT_DEPTH: String(depth + 1),
-                    DIE_SUBAGENT_TYPE: type,
+                    BRUV_SUBAGENT_DEPTH: String(depth + 1),
+                    BRUV_SUBAGENT_TYPE: type,
                   },
                   timeoutMs: params.timeoutSeconds ? params.timeoutSeconds * 1000 : undefined,
                   closeStdin: true,
@@ -629,7 +629,7 @@ export class JobService {
           const id = "task_" + randomUUID().slice(0, 8);
           return this.manager.prepareAgent({
             id,
-            displayCommand: "die agent [" + type + "]: " + (params.title ?? prompt),
+            displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
             ...(params.title === undefined ? {} : { title: params.title }),
             cwd: ctx.cwd,
             workspace:
@@ -703,8 +703,8 @@ export class JobService {
                   ...scrubT3BridgeEnvironment(process.env),
                   T3CODE_PROJECT_ROOT: worktreeSource.sourcePath,
                   T3CODE_WORKTREE_PATH: workspaceSummary.path,
-                  DIE_PROJECT_ROOT: worktreeSource.sourcePath,
-                  DIE_WORKTREE_PATH: workspaceSummary.path,
+                  BRUV_PROJECT_ROOT: worktreeSource.sourcePath,
+                  BRUV_WORKTREE_PATH: workspaceSummary.path,
                   NO_COLOR: "1",
                   FORCE_COLOR: "0",
                 },
@@ -772,13 +772,13 @@ export class JobService {
                 "--",
                 prompt,
               ],
-              displayCommand: "die agent [" + type + "]: " + (params.title ?? prompt),
+              displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
               ...(params.title === undefined ? {} : { title: params.title }),
               cwd: workspaceSummary.path,
               env: {
                 ...childAgentEnvironment(process.env),
-                DIE_SUBAGENT_DEPTH: String(depth + 1),
-                DIE_SUBAGENT_TYPE: type,
+                BRUV_SUBAGENT_DEPTH: String(depth + 1),
+                BRUV_SUBAGENT_TYPE: type,
               },
               timeoutMs: undefined,
               closeStdin: true,

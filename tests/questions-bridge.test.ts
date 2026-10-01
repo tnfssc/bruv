@@ -6,7 +6,7 @@ import { QuestionService } from "../src/questions/service";
 import { executeIsolated } from "../src/typescript/execution";
 
 test("real isolated execute asks without waiting and exposes block/read/resolve, not answer", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-question-bridge-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-question-bridge-"));
   const service = new QuestionService();
   const ctx = {
     sessionManager: {
@@ -23,7 +23,7 @@ test("real isolated execute asks without waiting and exposes block/read/resolve,
       undefined,
       5000,
       {
-        executablePath: resolve(import.meta.dir, "../dist/die"),
+        executablePath: resolve(import.meta.dir, "../dist/bruv"),
         jobHandler: async (method, params) => service.handle(method, params, ctx),
       },
     );
@@ -38,7 +38,7 @@ test("real isolated execute asks without waiting and exposes block/read/resolve,
 });
 
 test("actual isolated questions helper returns actionable results and rejects stale writes", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "die-question-bridge-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-question-bridge-"));
   const service = new QuestionService();
   const ctx = {
     sessionManager: {
@@ -51,7 +51,7 @@ test("actual isolated questions helper returns actionable results and rejects st
   try {
     const code = `const a=await questions.ask({text:"First?"}); const b=await questions.ask({text:"Second?"}); console.log("ASK",JSON.stringify(a)); console.log("LIST",JSON.stringify(await questions.list())); console.log("GET",JSON.stringify(await questions.get(a.id))); console.log("ANSWER_HELPER",typeof questions.answer); const closed=await questions.cancel({id:b.id,owner:b.owner,version:b.version}); console.log("CANCEL",JSON.stringify(closed)); try {await questions.cancel({id:b.id,owner:b.owner,version:b.version})}catch(e){console.log("STALE",e.message)}; for(let i=0;i<19;i++) await questions.ask({text:"Extra "+i}); try{await questions.ask({text:"Overflow"})}catch(e){console.log("CAP",e.message)};`;
     const result = await executeIsolated(code, process.cwd(), undefined, 5000, {
-      executablePath: resolve(import.meta.dir, "../dist/die"),
+      executablePath: resolve(import.meta.dir, "../dist/bruv"),
       jobHandler: async (method, params) => service.handle(method, params, ctx),
     });
     expect(result.exitCode).toBe(0);

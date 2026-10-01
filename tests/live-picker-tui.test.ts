@@ -8,9 +8,9 @@ import { waitForLiveTuiStartup } from "./live-tui-startup";
 // Real source CLI and Pi renderer; fake only credentials/config and forbidden I/O.
 for (const width of [80, 120])
   test("Live picker real terminal " + width + " columns", async () => {
-    const home = await mkdtemp(join(tmpdir(), "die-picker-tui-"));
+    const home = await mkdtemp(join(tmpdir(), "bruv-picker-tui-"));
     const root = resolve(import.meta.dir, "..");
-    const socket = "die-picker-" + process.pid + "-" + width;
+    const socket = "bruv-picker-" + process.pid + "-" + width;
     const tmux = (...args: string[]) =>
       run([Bun.which("tmux") ?? "/usr/bin/tmux", "-L", socket, "-f", join(home, "tmux.conf"), ...args]);
     const frame = async () => (await tmux("capture-pane", "-p", "-t", "picker")).stdout;
@@ -33,14 +33,14 @@ for (const width of [80, 120])
     const quote = (v: string) => "'" + v.replaceAll("'", "'\\''") + "'";
     try {
       const { version } = await Bun.file(join(root, "package.json")).json();
-      const themeDir = join(home, ".die/runtime", version, "dist/modes/interactive");
+      const themeDir = join(home, ".bruv/runtime", version, "dist/modes/interactive");
       await mkdir(themeDir, { recursive: true });
-      await symlink(join(home, ".die/runtime", version, "theme"), join(themeDir, "theme"));
+      await symlink(join(home, ".bruv/runtime", version, "theme"), join(themeDir, "theme"));
       const launch = [
         "env",
         "HOME=" + home,
         "PI_OFFLINE=1",
-        "DIE_SUBAGENT_DEPTH=0",
+        "BRUV_SUBAGENT_DEPTH=0",
         "OPENAI_API_KEY=offline-placeholder",
         process.execPath,
         join(root, "src/cli.ts"),

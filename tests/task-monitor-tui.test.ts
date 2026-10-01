@@ -7,8 +7,8 @@ import { join, resolve } from "node:path";
 import { run } from "./helpers";
 
 test("real TUI /ps selects live jobs and only stops the confirmed target", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-ps-tui-")),
-    agentDir = join(home, ".die", "agent");
+  const home = await mkdtemp(join(tmpdir(), "bruv-ps-tui-")),
+    agentDir = join(home, ".bruv", "agent");
   await mkdir(agentDir, { recursive: true });
   let requests = 0;
   const server = Bun.serve({
@@ -83,24 +83,24 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     readinessExtension,
     `export default async function (pi) {
   await new Promise((resolve) => setTimeout(resolve, 5500));
-  pi.registerCommand("die-test-ready", {
+  pi.registerCommand("bruv-test-ready", {
     description: "TUI startup handshake",
-    handler: async (_args, ctx) => ctx.ui.notify("DIE_TEST_READY", "info"),
+    handler: async (_args, ctx) => ctx.ui.notify("BRUV_TEST_READY", "info"),
   });
   await Bun.write(${JSON.stringify(readinessMarker)}, "registered");
 }`,
   );
-  const socket = "die-ps-" + process.pid + "-" + Date.now(),
+  const socket = "bruv-ps-" + process.pid + "-" + Date.now(),
     name = "ps";
   const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
   const quote = (v: string) => "'" + v.replaceAll("'", "'\''") + "'";
   const capture = async () => (await tmux("capture-pane", "-p", "-t", name)).stdout;
   try {
-    const binary = resolve(import.meta.dir, "../dist/die"),
+    const binary = resolve(import.meta.dir, "../dist/bruv"),
       launch = [
         "env",
         "HOME=" + home,
-        "DIE_CODING_AGENT_DIR=" + agentDir,
+        "BRUV_CODING_AGENT_DIR=" + agentDir,
         binary,
         "--no-approve",
         "--no-session",
@@ -132,16 +132,16 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
       await Bun.sleep(50);
     }
     expect(await Bun.file(readinessMarker).exists()).toBe(true);
-    await tmux("send-keys", "-t", name, "-l", "/die-test-ready");
+    await tmux("send-keys", "-t", name, "-l", "/bruv-test-ready");
     // This is a harmless command probe, not a prompt: retrying it cannot start
     // another job. It is complete only when the real submit handler accepts it.
     while (Date.now() < startupDeadline) {
       await tmux("send-keys", "-t", name, "Enter");
       frame = await capture();
-      if (frame.includes("DIE_TEST_READY")) break;
+      if (frame.includes("BRUV_TEST_READY")) break;
       await Bun.sleep(50);
     }
-    expect(frame).toContain("DIE_TEST_READY");
+    expect(frame).toContain("BRUV_TEST_READY");
     // The readiness probe is not an LLM turn and must not create duplicate work.
     expect(requests).toBe(0);
     await tmux("send-keys", "-t", name, "-l", "start");
@@ -200,7 +200,7 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
 }, 20000);
 
 test("real TUI /resume selects a durable child and requires explicit confirmation", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-resume-tui-")),
+  const home = await mkdtemp(join(tmpdir(), "bruv-resume-tui-")),
     sessions = join(home, "sessions");
   const root = SessionManager.create(home, sessions),
     rootFile = root.getSessionFile()!;
@@ -210,17 +210,17 @@ test("real TUI /resume selects a durable child and requires explicit confirmatio
     depth: 1,
     parentSessionFile: rootFile,
   });
-  const socket = "die-resume-" + process.pid + "-" + Date.now(),
+  const socket = "bruv-resume-" + process.pid + "-" + Date.now(),
     name = "resume";
   const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
   const quote = (v: string) => "'" + v.replaceAll("'", "'\''") + "'";
   const capture = async () => (await tmux("capture-pane", "-p", "-t", name)).stdout;
   try {
-    const binary = resolve(import.meta.dir, "../dist/die");
+    const binary = resolve(import.meta.dir, "../dist/bruv");
     const launch = [
       "env",
       "HOME=" + home,
-      "DIE_CODING_AGENT_DIR=" + join(home, ".die", "agent"),
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       binary,
       "--offline",
       "--no-approve",

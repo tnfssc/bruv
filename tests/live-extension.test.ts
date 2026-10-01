@@ -180,7 +180,7 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
         notices.push(value);
       },
       setStatus: (key: string, value?: string) => {
-        if (key === "die-live-cost") return;
+        if (key === "bruv-live-cost") return;
         status.push(value);
       },
       setWidget: (_: string, value?: string[]) => {
@@ -385,11 +385,11 @@ describe("Live voice", () => {
         promptTokensDetails: [{ modality: "AUDIO", tokenCount: 100 }],
         candidatesTokensDetails: [{ modality: "TEXT", tokenCount: 20 }],
       });
-      expect(t.transcriptEntries.filter((entry) => entry.type === "die-live-cost").map((entry) => entry.data)).toEqual([
-        { cost: (100 * 3 + 20 * 4.5) / 1e6 },
-      ]);
+      expect(t.transcriptEntries.filter((entry) => entry.type === "bruv-live-cost").map((entry) => entry.data)).toEqual(
+        [{ cost: (100 * 3 + 20 * 4.5) / 1e6 }],
+      );
       expect((await t.stop()).stopped).toBe(false);
-      expect(t.transcriptEntries.filter((entry) => entry.type === "die-live-cost").at(-1)?.data).toEqual({
+      expect(t.transcriptEntries.filter((entry) => entry.type === "bruv-live-cost").at(-1)?.data).toEqual({
         cost: 0,
         unknown: true,
       });

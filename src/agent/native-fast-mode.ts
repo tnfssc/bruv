@@ -3,7 +3,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { lazyStream, type Model } from "@earendil-works/pi-ai";
 import { recordDiagnostic } from "../diagnostics.js";
 
-export const NATIVE_FAST_ENTRY = "die-native-fast-mode";
+export const NATIVE_FAST_ENTRY = "bruv-native-fast-mode";
 const ENTRY_VERSION = 1;
 const OPENAI_BASE_URL = "https://api.openai.com/v1";
 const CODEX_BASE_URL = "https://chatgpt.com/backend-api";
@@ -475,7 +475,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     ui = ctx.ui;
     const active = currentSetting(ctx);
     ui?.setStatus(
-      "die-native-fast",
+      "bruv-native-fast",
       active ? statusText(active.enabled, active.enabled ? evidence : "requested") : undefined,
     );
   };
@@ -640,7 +640,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     refreshStatus(ctx);
   });
   pi.on("session_shutdown", () => {
-    ui?.setStatus("die-native-fast", undefined);
+    ui?.setStatus("bruv-native-fast", undefined);
     if (boundRuntime) detachConcreteRequestGuard(boundRuntime, controller);
     boundRuntime = undefined;
     controller.context = undefined;

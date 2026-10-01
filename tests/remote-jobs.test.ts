@@ -22,7 +22,7 @@ async function fixture() {
   const dir = await mkdtemp(join(tmpdir(), "remote-jobs-"));
   dirs.push(dir);
   let offline = false;
-  const client = new RemoteClient(join(dir, "state.json"), async (_host, _die, req) => {
+  const client = new RemoteClient(join(dir, "state.json"), async (_host, _bruv, req) => {
     if (req.op === "hello") {
       if (offline) throw new Error("offline");
       return hello;

@@ -43,8 +43,8 @@ test("/mode reports, validates, persists and changes instructions only", async (
   expect(f.notices.at(-1)).toMatchObject({ kind: "error", message: "Usage: /mode fast|normal|orchestrator" });
   await f.command.handler("fast", f.ctx);
   expect(f.mode.get()).toBe("fast");
-  expect(f.appended).toEqual([{ type: "die-instruction-mode", data: { mode: "fast" } }]);
-  expect(f.statuses.at(-1)).toEqual({ key: "die-mode", value: "mode: fast" });
+  expect(f.appended).toEqual([{ type: "bruv-instruction-mode", data: { mode: "fast" } }]);
+  expect(f.statuses.at(-1)).toEqual({ key: "bruv-mode", value: "mode: fast" });
   expect(f.notices.at(-1).message).toContain("model and thinking unchanged");
   await f.command.handler("fast", f.ctx);
   expect(f.appended).toHaveLength(1);
@@ -52,12 +52,12 @@ test("/mode reports, validates, persists and changes instructions only", async (
 
 test("resume uses the latest valid session mode and child mode is isolated", async () => {
   const resumed = fixture(true, [
-    { type: "custom", customType: "die-instruction-mode", data: { mode: "normal" } },
-    { type: "custom", customType: "die-instruction-mode", data: { mode: "invalid" } },
-    { type: "custom", customType: "die-instruction-mode", data: { mode: "fast" } },
+    { type: "custom", customType: "bruv-instruction-mode", data: { mode: "normal" } },
+    { type: "custom", customType: "bruv-instruction-mode", data: { mode: "invalid" } },
+    { type: "custom", customType: "bruv-instruction-mode", data: { mode: "fast" } },
   ]);
   expect(resumed.mode.get()).toBe("fast");
-  const child = fixture(false, [{ type: "custom", customType: "die-instruction-mode", data: { mode: "fast" } }]);
+  const child = fixture(false, [{ type: "custom", customType: "bruv-instruction-mode", data: { mode: "fast" } }]);
   await child.command.handler("normal", child.ctx);
   expect(child.mode.get()).toBe("orchestrator");
   expect(child.appended).toEqual([]);
@@ -85,7 +85,7 @@ test("bounded mode replacement preserves framing before and after it", () => {
   const switched = replaceMainAgentGuidance(frame, "normal", owner);
   expect(switched).toStartWith("CUSTOM BEFORE");
   expect(switched).toEndWith("CUSTOM AFTER");
-  expect(switched).toContain("<!-- die:main-agent-mode:owned-test-region:start -->\n\n");
+  expect(switched).toContain("<!-- bruv:main-agent-mode:owned-test-region:start -->\n\n");
   expect(switched).not.toContain("You build and fix code.");
   expect(switched).not.toContain("You lead work.");
   const restored = replaceMainAgentGuidance(switched, "orchestrator", owner);
@@ -96,8 +96,8 @@ test("bounded mode replacement preserves framing before and after it", () => {
 });
 
 test("resume reads only the active branch", () => {
-  const abandoned = { type: "custom", customType: "die-instruction-mode", data: { mode: "fast" } };
-  const active = { type: "custom", customType: "die-instruction-mode", data: { mode: "normal" } };
+  const abandoned = { type: "custom", customType: "bruv-instruction-mode", data: { mode: "fast" } };
+  const active = { type: "custom", customType: "bruv-instruction-mode", data: { mode: "normal" } };
   const f = fixture(true, [active]);
   f.ctx.sessionManager.getEntries = () => [active, abandoned];
   f.mode.refresh(f.ctx);
@@ -108,13 +108,13 @@ test("failed mode persistence leaves memory, status, and frame unchanged", async
   const f = fixture(true, [], new Error("disk full"));
   await f.command.handler("fast", f.ctx);
   expect(f.mode.get()).toBe("orchestrator");
-  expect(f.statuses.at(-1)).toEqual({ key: "die-mode", value: "mode: orchestrator" });
+  expect(f.statuses.at(-1)).toEqual({ key: "bruv-mode", value: "mode: orchestrator" });
   expect(f.notices.at(-1)).toMatchObject({ kind: "error" });
   expect(f.notices.at(-1).message).toContain("disk full");
 });
 
 test("a real SessionManager branch ignores mode entries on the abandoned branch", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-mode-branch-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-mode-branch-"));
   try {
     const manager = SessionManager.create(dir, dir);
     const activeMode = manager.appendCustomEntry(INSTRUCTION_MODE_ENTRY, { mode: "normal" });
@@ -149,7 +149,7 @@ test("a real SessionManager branch ignores mode entries on the abandoned branch"
 });
 
 test("a real disk reopen produces a byte-identical mode prompt", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-mode-reopen-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-mode-reopen-"));
   try {
     const created = SessionManager.create(dir, dir);
     await Bun.write(created.getSessionFile()!, JSON.stringify(created.getHeader()) + "\n");
@@ -166,7 +166,7 @@ test("a real disk reopen produces a byte-identical mode prompt", async () => {
     const beforeRestart = render(SessionManager.open(file));
     const afterRestart = render(SessionManager.open(file));
     expect(afterRestart).toBe(beforeRestart);
-    expect(afterRestart).toContain("<!-- die:main-agent-mode:");
+    expect(afterRestart).toContain("<!-- bruv:main-agent-mode:");
     expect(afterRestart).not.toContain("You build and fix code.");
     expect(afterRestart).not.toContain("You lead work.");
   } finally {

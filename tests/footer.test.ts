@@ -23,13 +23,13 @@ import { CacheCountdown } from "../src/agent/cache-countdown";
 const theme = { fg: (color: string, text: string) => `\x1b[${color === "accent" ? 36 : 90}m${text}\x1b[0m` } as Theme;
 const plain = (lines: string[]) => lines.map((line) => Bun.stripANSI(line));
 function fixture() {
-  const statuses = new Map<string, string>([["die-tasks", "30 tasks running"]]);
+  const statuses = new Map<string, string>([["bruv-tasks", "30 tasks running"]]);
   const usage = { input: 6900, output: 813, cacheRead: 0, cacheWrite: 0, cost: { total: 0.002 } };
   const ctx = {
     mode: "tui",
     sessionManager: {
       getEntries: () => [{ type: "message", message: { role: "assistant", usage } }],
-      getCwd: () => join(homedir(), "Code/die"),
+      getCwd: () => join(homedir(), "Code/bruv"),
       getSessionName: () => undefined,
     },
     model: { id: "gpt-5.6-luna", provider: "openai-codex", reasoning: true, contextWindow: 272000 },
@@ -51,7 +51,7 @@ describe("compact extension footer", () => {
   test("Live reactive line stays in existing compact status row", () => {
     const { ctx, data, statuses } = fixture();
     const voice = "Live speaking  " + renderWave(0.12, 2);
-    statuses.set("die-live", voice);
+    statuses.set("bruv-live", voice);
     for (const width of [60, 90, 140]) {
       const lines = plain(renderSingleRowFooter(ctx, data, theme, width));
       expect(lines).toHaveLength(1);
@@ -62,23 +62,23 @@ describe("compact extension footer", () => {
   });
   test("pending questions remain in ordinary-color compact footer through progress updates", () => {
     const { ctx, data, statuses } = fixture();
-    statuses.set("die-questions", "2 questions pending");
-    statuses.set("die-tasks", "1 task running");
+    statuses.set("bruv-questions", "2 questions pending");
+    statuses.set("bruv-tasks", "1 task running");
     for (const width of [40, 60, 100]) {
       const line = renderSingleRowFooter(ctx, data, theme, width)[0]!;
       expect(Bun.stripANSI(line)).toMatch(/2 \/questions/);
       expect(Bun.stripANSI(line)).not.toContain("+1 status");
       expect(visibleWidth(line)).toBeLessThanOrEqual(width);
     }
-    statuses.delete("die-tasks");
-    statuses.set("die-live", "Live speaking");
+    statuses.delete("bruv-tasks");
+    statuses.set("bruv-live", "Live speaking");
     expect(Bun.stripANSI(renderSingleRowFooter(ctx, data, theme, 100)[0]!)).toContain("2 /questions");
   });
   test("braille animation stays one row and within narrow terminal widths", () => {
     const { ctx, data, statuses } = fixture();
     for (const width of [1, 10, 24, 40, 60, 90])
       for (let phase = 0; phase < 8; phase++) {
-        statuses.set("die-live", "Live speaking  " + renderWave(0.2, phase));
+        statuses.set("bruv-live", "Live speaking  " + renderWave(0.2, phase));
         const lines = renderSingleRowFooter(ctx, data, theme, width);
         expect(lines).toHaveLength(1);
         expect(visibleWidth(lines[0]!)).toBeLessThanOrEqual(width);
@@ -122,12 +122,12 @@ describe("compact extension footer", () => {
     const { ctx, data, statuses } = fixture();
     const lines = plain(renderSingleRowFooter(ctx, data, theme, 120));
     expect(lines).toHaveLength(1);
-    expect(lines[0]).toContain("die:develop · 30 tasks · $0.002 · ctx 1%");
+    expect(lines[0]).toContain("bruv:develop · 30 tasks · $0.002 · ctx 1%");
     expect(lines[0]).toEndWith("gpt-5.6-luna · medium");
-    statuses.set("die-mode", "mode: fast");
+    statuses.set("bruv-mode", "mode: fast");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("mode: fast");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).not.toContain("+1 status");
-    statuses.set("die-native-fast", " fast requested (tier/cost estimate unavailable)");
+    statuses.set("bruv-native-fast", " fast requested (tier/cost estimate unavailable)");
     const fastFooter = plain(renderSingleRowFooter(ctx, data, theme, 120))[0]!;
     expect(fastFooter).toContain(" fast requested (tier/cost estimate unavailable)");
     expect(fastFooter).toContain("$?");
@@ -143,7 +143,7 @@ describe("compact extension footer", () => {
     }
     const narrow = plain(renderSingleRowFooter(ctx, data, theme, 44))[0]!;
     for (const value of ["30t", "$?", "C1%", "gpt-5.6-luna"]) expect(narrow).toContain(value);
-    statuses.delete("die-tasks");
+    statuses.delete("bruv-tasks");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).not.toContain("tasks");
   });
 
@@ -153,10 +153,10 @@ describe("compact extension footer", () => {
     ctx.sessionManager.getEntries = () =>
       [
         ...entries,
-        { type: "custom", customType: "die-native-fast-mode", data: { enabled: true } },
-        { type: "custom", customType: "die-native-fast-mode", data: { enabled: false } },
+        { type: "custom", customType: "bruv-native-fast-mode", data: { enabled: true } },
+        { type: "custom", customType: "bruv-native-fast-mode", data: { enabled: false } },
       ] as ReturnType<ExtensionContext["sessionManager"]["getEntries"]>;
-    statuses.set("die-native-fast", " fast off");
+    statuses.set("bruv-native-fast", " fast off");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$?");
     expect(plain(renderDetailedFooter(ctx, data, theme, 150))[1]).toContain("$? (fast billing)");
   });
@@ -167,13 +167,13 @@ describe("compact extension footer", () => {
     ctx.sessionManager.getEntries = () =>
       [
         ...base,
-        { type: "custom", customType: "die-live-cost", data: { cost: 0.004 } },
-        { type: "custom", customType: "die-live-cost", data: { cost: 0.006 } },
-        { type: "custom", customType: "die-live-cost", data: { cost: 0, unknown: true } },
+        { type: "custom", customType: "bruv-live-cost", data: { cost: 0.004 } },
+        { type: "custom", customType: "bruv-live-cost", data: { cost: 0.006 } },
+        { type: "custom", customType: "bruv-live-cost", data: { cost: 0, unknown: true } },
       ] as ReturnType<ExtensionContext["sessionManager"]["getEntries"]>;
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$0.012+?");
     expect(plain(renderDetailedFooter(ctx, data, theme, 150))[1]).toContain("$0.012+? (voice usage incomplete)");
-    statuses.set("die-live-cost", "updated");
+    statuses.set("bruv-live-cost", "updated");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).not.toContain("+1 status");
   });
 
@@ -197,10 +197,10 @@ describe("compact extension footer", () => {
     expect(calls).toBe(1);
 
     // A live provider status remains live and does not force history materialization.
-    statuses.set("die-native-fast", "fast requested (tier/cost estimate unavailable)");
+    statuses.set("bruv-native-fast", "fast requested (tier/cost estimate unavailable)");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$?");
     expect(calls).toBe(1);
-    statuses.delete("die-native-fast");
+    statuses.delete("bruv-native-fast");
 
     const appendedUsage = { input: 10, output: 1, cacheRead: 0, cacheWrite: 0, cost: { total: 0.003 } };
     entries.push({ type: "message", message: { role: "assistant", usage: appendedUsage } } as (typeof entries)[number]);
@@ -219,7 +219,7 @@ describe("compact extension footer", () => {
 
     entries.push({
       type: "custom",
-      customType: "die-native-fast-mode",
+      customType: "bruv-native-fast-mode",
       data: { enabled: true },
     } as (typeof entries)[number]);
     leaf = "entry-3";
@@ -231,17 +231,17 @@ describe("compact extension footer", () => {
     const { ctx, data } = fixture();
     const lines = plain(renderDetailedFooter(ctx, data, theme, 150));
     expect(lines).toHaveLength(2);
-    expect(lines[0]).toBe("~/Code/die (develop) • 30 tasks");
+    expect(lines[0]).toBe("~/Code/bruv (develop) • 30 tasks");
     expect(lines[1]).toContain("↑6.9k ↓813 $0.002 (sub) 1.0%/272k");
     expect(lines[1]).toEndWith("(openai-codex) gpt-5.6-luna • medium");
   });
 
   test("clears completed counts and preserves other extensions' statuses", () => {
     const { ctx, data, statuses } = fixture();
-    statuses.set("die-tasks", "1 task running");
+    statuses.set("bruv-tasks", "1 task running");
     expect(plain(renderDetailedFooter(ctx, data, theme, 100))[0]).toEndWith(" • 1 task");
-    statuses.delete("die-tasks");
-    expect(plain(renderDetailedFooter(ctx, data, theme, 100))[0]).toBe("~/Code/die (develop)");
+    statuses.delete("bruv-tasks");
+    expect(plain(renderDetailedFooter(ctx, data, theme, 100))[0]).toBe("~/Code/bruv (develop)");
     statuses.set("review", "review\nin progress");
     expect(plain(renderDetailedFooter(ctx, data, theme, 100))[2]).toBe("review in progress");
   });
@@ -255,7 +255,7 @@ describe("compact extension footer", () => {
       for (const line of lines) expect(visibleWidth(line)).toBeLessThanOrEqual(width);
       if (width >= 10) expect(Bun.stripANSI(lines[0])).toContain("30 tasks");
     }
-    statuses.set("die-tasks", "50 tasks running");
+    statuses.set("bruv-tasks", "50 tasks running");
     expect(plain(renderDetailedFooter(ctx, data, theme, 40))[0]).toContain("50 tasks");
     expect(renderDetailedFooter(ctx, data, theme, 0)).toEqual([]);
   });
@@ -317,7 +317,7 @@ describe("compact extension footer", () => {
     const alternate = { fg: (_color: string, text: string) => text } as Theme;
     Object.defineProperty(ctx.ui, "theme", { value: alternate });
     component.invalidate();
-    expect(component.render(150)[0]).toBe("~/Code/die (develop) • 30 tasks");
+    expect(component.render(150)[0]).toBe("~/Code/bruv (develop) • 30 tasks");
     component.dispose?.();
     expect(disposed).toBe(true);
   });
@@ -383,7 +383,7 @@ test("footer includes failed compaction attempt costs without changing context u
       ...entries,
       {
         type: "custom",
-        customType: "die-compaction-attempt",
+        customType: "bruv-compaction-attempt",
         data: { usage: { input: 100, output: 10, cacheRead: 200, cacheWrite: 0, cost: { total: 0.004 } } },
       },
     ] as ReturnType<ExtensionContext["sessionManager"]["getEntries"]>;
@@ -513,7 +513,7 @@ test("footer cache notices an append followed by branching back between renders"
   // appendMessage advances the leaf; branch(oldLeaf) restores it before a render.
   entries.push({
     type: "custom",
-    customType: "die-compaction-attempt",
+    customType: "bruv-compaction-attempt",
     data: {
       usage: { input: 1, output: 1, cacheRead: 0, cacheWrite: 0, cost: { total: 0.003 } },
     },
@@ -525,7 +525,7 @@ test("footer cache notices an append followed by branching back between renders"
 
 test("remote work and attention remain named in compact footer, not a hidden extra-status count", () => {
   const { ctx, data, statuses } = fixture();
-  statuses.set("die-remote", "remote: 1 active");
+  statuses.set("bruv-remote", "remote: 1 active");
   for (const width of [50, 90, 120]) {
     const rows = plain(renderSingleRowFooter(ctx, data, theme, width));
     expect(rows).toHaveLength(1);
@@ -533,8 +533,8 @@ test("remote work and attention remain named in compact footer, not a hidden ext
     expect(rows[0]).not.toContain("+1 status");
     expect(visibleWidth(rows[0]!)).toBeLessThanOrEqual(width);
   }
-  statuses.set("die-remote", "remote: 1 question(s) · offline (cached)");
+  statuses.set("bruv-remote", "remote: 1 question(s) · offline (cached)");
   expect(plain(renderSingleRowFooter(ctx, data, theme, 90))[0]).toContain("offline (cached)");
-  statuses.delete("die-remote");
+  statuses.delete("bruv-remote");
   expect(plain(renderSingleRowFooter(ctx, data, theme, 90))[0]).not.toContain("remote:");
 });

@@ -239,7 +239,7 @@ describe("Live host authority", () => {
     const f = fixture();
     const entry = (speaker: string, text: string, status = "final") => ({
       type: "custom",
-      customType: "die-live-transcript",
+      customType: "bruv-live-transcript",
       data: { speaker, text, status },
     });
     f.transcriptEntries.push(entry("You", "spoken request"), entry("Voice", "generated answer", "interrupted"));
@@ -276,12 +276,12 @@ describe("Live host authority", () => {
     const huge = "large:" + "q".repeat(30000);
     f.transcriptEntries.push({
       type: "custom",
-      customType: "die-live-transcript",
+      customType: "bruv-live-transcript",
       data: { speaker: "You", text: huge, status: "final" },
     });
     f.transcriptEntries.push({
       type: "custom",
-      customType: "die-live-transcript",
+      customType: "bruv-live-transcript",
       data: { speaker: "Voice", text: "newest", status: "final" },
     });
     await f.bridge.send("oversize", "export all");
@@ -302,7 +302,7 @@ describe("Live host authority", () => {
     const token = crypto.randomUUID();
     const entry = (text: string) => ({
       type: "custom",
-      customType: "die-live-transcript",
+      customType: "bruv-live-transcript",
       data: { speaker: "You", text, status: "final" },
     });
     f.transcriptEntries.push(entry(token + "a".repeat(25000)));
@@ -339,7 +339,7 @@ describe("Live host authority", () => {
     const token = crypto.randomUUID();
     f.transcriptEntries.push({
       type: "custom",
-      customType: "die-live-transcript",
+      customType: "bruv-live-transcript",
       data: { speaker: "You", text: token + "x".repeat(25000), status: "final" },
     });
     await mkdir(SNAPSHOT_DIR, { recursive: true, mode: 0o700 });
@@ -365,7 +365,7 @@ describe("Live host authority", () => {
     const token = crypto.randomUUID();
     f.transcriptEntries.push({
       type: "custom",
-      customType: "die-live-transcript",
+      customType: "bruv-live-transcript",
       data: { speaker: "You", text: token + "q".repeat(25000), status: "final" },
     });
     await expect(f.bridge.send("failure-cleanup", "export")).rejects.toThrow("delivery failed");
@@ -379,7 +379,7 @@ describe("Live host authority", () => {
     const token = crypto.randomUUID();
     const entry = (text: string) => ({
       type: "custom",
-      customType: "die-live-transcript",
+      customType: "bruv-live-transcript",
       data: { speaker: "You", text, status: "final" },
     });
     f.transcriptEntries.push(entry(token + "a".repeat(25000)));

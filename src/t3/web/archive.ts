@@ -1,7 +1,7 @@
 import { chmod, lstat, mkdir, readFile, readlink, readdir, rename, rm, symlink, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 
-const MAGIC = "DIEWEB1\n";
+const MAGIC = "BRUVWEB1\n";
 
 type ArchiveEntry =
   | { path: string; type: "directory"; mode: number }

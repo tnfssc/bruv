@@ -25,7 +25,7 @@ import pkg from "../../package.json" with { type: "json" };
 import { loadProfiles, THINKING_LEVELS, type ThinkingLevel } from "../tasks/subagent-profiles";
 import type { RemoteRequest, RemoteResponse, RemoteTask } from "./protocol";
 
-const root = join(process.env.HOME ?? homedir(), ".die", "remote-owner");
+const root = join(process.env.HOME ?? homedir(), ".bruv", "remote-owner");
 const tasks = join(root, "tasks");
 const boot = () => {
   try {
@@ -187,7 +187,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
     if (req?.op !== "hello" && (req?.ownerId !== identity.ownerId || req?.epoch !== identity.epoch))
       return error("owner_changed", "Owner identity or boot epoch changed");
     if (req.op === "hello") {
-      const normal = (await loadProfiles(join(process.env.HOME ?? homedir(), ".die", "subagents.json"))).normal;
+      const normal = (await loadProfiles(join(process.env.HOME ?? homedir(), ".bruv", "subagents.json"))).normal;
       return {
         protocol: 1,
         taskPlacement: 1,
@@ -301,9 +301,9 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
       if (typeof req.prompt !== "string" || !req.prompt.trim() || Buffer.byteLength(req.prompt) > 128 * 1024)
         return error("invalid_prompt", "Nonempty prompt up to 128 KiB required");
       const name = req.placement?.profile ?? "normal";
-      const configured = (await loadProfiles(join(process.env.HOME ?? homedir(), ".die", "subagents.json")))[name];
+      const configured = (await loadProfiles(join(process.env.HOME ?? homedir(), ".bruv", "subagents.json")))[name];
       if (!configured.model && !req.model)
-        return error("missing_model", "Configure remote " + name + " profile model in ~/.die/subagents.json");
+        return error("missing_model", "Configure remote " + name + " profile model in ~/.bruv/subagents.json");
       if (
         req.model !== undefined &&
         (typeof req.model !== "string" || !/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:/-]+$/.test(req.model))
@@ -588,7 +588,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     child = spawn(executable, args, {
       cwd: initial.task.repoPath,
       stdio: ["pipe", "pipe", "pipe"],
-      env: { ...remoteChildEnvironment(process.env, initial.task.placement), DIE_REMOTE_RUNTIME_STATE: runtimePath },
+      env: { ...remoteChildEnvironment(process.env, initial.task.placement), BRUV_REMOTE_RUNTIME_STATE: runtimePath },
     });
     let buffer = "";
     let ended = false;
@@ -605,7 +605,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
           cancellationAt = Date.now();
           record({ type: "cancel_requested" });
           child.stdin.write(
-            JSON.stringify({ id: "remote-cancel", type: "prompt", message: "/die-remote-cancel" }) + "\n",
+            JSON.stringify({ id: "remote-cancel", type: "prompt", message: "/bruv-remote-cancel" }) + "\n",
           );
         }
         const reportFile = join(location(taskId), "cancel-report.json");

@@ -12,7 +12,7 @@ import {
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
 import { MAX_NO_PROGRESS_CONTINUATIONS } from "../src/goals/controller";
-import { dieSystemPrompt } from "../src/prompts";
+import { bruvSystemPrompt } from "../src/prompts";
 import tasks from "../src/agent/extension";
 import { installLiveDispatchBudget } from "./live-dispatch-budget";
 
@@ -26,7 +26,7 @@ const usage = {
 };
 
 test("real offline assembly changes only messages across goal set, update, and clear", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-goal-context-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-goal-context-sdk-"));
   let session: any;
   try {
     const model = getModel("anthropic", "claude-sonnet-4-5")!;
@@ -83,11 +83,11 @@ test("real offline assembly changes only messages across goal set, update, and c
       noSkills: true,
       noThemes: true,
       noPromptTemplates: true,
-      systemPrompt: dieSystemPrompt(),
+      systemPrompt: bruvSystemPrompt(),
       extensionFactories: [
         {
-          name: "die-tasks",
-          factory: (pi) => tasks(pi, { executablePath: resolve(import.meta.dir, "../dist/die") }),
+          name: "bruv-tasks",
+          factory: (pi) => tasks(pi, { executablePath: resolve(import.meta.dir, "../dist/bruv") }),
         },
       ],
     });
@@ -108,7 +108,7 @@ test("real offline assembly changes only messages across goal set, update, and c
 
     const systems = contexts.map((context) => context.systemPrompt);
     const tools = contexts.map((context) => context.tools);
-    expect(systems[0]).toContain(dieSystemPrompt());
+    expect(systems[0]).toContain(bruvSystemPrompt());
     expect(new Set(systems).size).toBe(1);
     expect(new Set(tools).size).toBe(1);
     for (const systemPrompt of systems) expect(systemPrompt).not.toContain("Goal API:");
@@ -131,7 +131,7 @@ test("real offline assembly changes only messages across goal set, update, and c
 }, 15_000);
 
 test("real SDK reconciles helper waiting through task-complete and completes", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-goal-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-goal-sdk-"));
   const releaseJob = join(dir, "release-sdk-job");
   let session: any;
   try {
@@ -201,7 +201,7 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
     runtime.streamSimple = scripted as any;
 
     const manager = SessionManager.create(dir, join(dir, "sessions"));
-    manager.appendCustomEntry("die-goal", {
+    manager.appendCustomEntry("bruv-goal", {
       version: 1,
       operation: "set",
       at: "2026-01-01T00:00:00Z",
@@ -232,10 +232,10 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
             }),
         },
         {
-          name: "die-tasks",
+          name: "bruv-tasks",
           factory: (pi) =>
             tasks(pi, {
-              executablePath: resolve(import.meta.dir, "../dist/die"),
+              executablePath: resolve(import.meta.dir, "../dist/bruv"),
             }),
         },
         {
@@ -246,7 +246,7 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
                 return;
               const latestGoal = manager
                 .getEntries()
-                .filter((entry: any) => entry.type === "custom" && entry.customType === "die-goal")
+                .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-goal")
                 .at(-1) as any;
               handoffGoalStatus = latestGoal?.data.goal?.status;
             }),
@@ -256,7 +256,7 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
           factory: (pi) =>
             pi.on("context", (event) => ({
               messages: event.messages.map((message: any) =>
-                message.role === "custom" && message.customType === "die-goal-state"
+                message.role === "custom" && message.customType === "bruv-goal-state"
                   ? { ...message, content: message.content.replaceAll("FILTER_RAW", "FILTERED") }
                   : message,
               ),
@@ -285,7 +285,7 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
     expect(calls).toBe(1); // A handoff does not itself request another provider turn.
     const waitingGoal = manager
       .getEntries()
-      .filter((entry: any) => entry.customType === "die-goal")
+      .filter((entry: any) => entry.customType === "bruv-goal")
       .at(-1) as any;
     expect(waitingGoal.data.goal).toMatchObject({ status: "waiting" });
     await Bun.write(releaseJob, "release");
@@ -302,14 +302,14 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
 
     const entries = manager.getEntries();
     const goalStatuses = entries
-      .filter((entry: any) => entry.type === "custom" && entry.customType === "die-goal")
+      .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-goal")
       .map((entry: any) => entry.data.goal?.status)
       .filter(Boolean);
     expect(goalStatuses.slice(-3)).toEqual(["waiting", "active", "completed"]);
     const completion = entries.find((entry: any) => entry.customType === "task-complete") as any;
     expect(completion?.details?.taskStatusCounts).toMatchObject({ completed: 1, failed: 0 });
     const last = entries
-      .filter((entry: any) => entry.type === "custom" && entry.customType === "die-goal")
+      .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-goal")
       .at(-1) as any;
     expect(last.data.goal).toMatchObject({
       status: "completed",
@@ -325,7 +325,7 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
 }, 15_000);
 
 async function runRealPrintCompletionCycles(recordMilestones: boolean) {
-  const dir = await mkdtemp(join(tmpdir(), "die-goal-print-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-goal-print-sdk-"));
   let session: any;
   try {
     const model = getModel("anthropic", "claude-sonnet-4-5")!;
@@ -423,7 +423,10 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
             });
           },
         },
-        { name: "die-tasks", factory: (pi) => tasks(pi, { executablePath: resolve(import.meta.dir, "../dist/die") }) },
+        {
+          name: "bruv-tasks",
+          factory: (pi) => tasks(pi, { executablePath: resolve(import.meta.dir, "../dist/bruv") }),
+        },
       ],
     });
     await loader.reload();
@@ -452,7 +455,7 @@ test("real SDK print completion cycles pause within bounded agent runs", async (
   expect(result.ended).toBe(result.calls);
   expect(result.calls).toBeLessThanOrEqual(MAX_NO_PROGRESS_CONTINUATIONS + 1);
   const goals: any[] = result.entries.filter(
-    (entry: any) => entry.type === "custom" && entry.customType === "die-goal",
+    (entry: any) => entry.type === "custom" && entry.customType === "bruv-goal",
   );
   expect(goals.at(-1)?.data.goal).toMatchObject({
     status: "paused",
@@ -469,7 +472,7 @@ test("real SDK print completion cycles accept distinct explicit milestones", asy
   expect(result.ended).toBe(MAX_NO_PROGRESS_CONTINUATIONS + 3);
   expect(result.calls).toBe(MAX_NO_PROGRESS_CONTINUATIONS + 4);
   const goals: any[] = result.entries.filter(
-    (entry: any) => entry.type === "custom" && entry.customType === "die-goal",
+    (entry: any) => entry.type === "custom" && entry.customType === "bruv-goal",
   );
   expect(goals.some((entry: any) => entry.data.goal?.status === "paused")).toBe(false);
   expect(goals.at(-1)?.data.goal).toMatchObject({
@@ -479,7 +482,7 @@ test("real SDK print completion cycles accept distinct explicit milestones", asy
 }, 15_000);
 
 test("real SDK reports auth preparation failure before provider dispatch", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-goal-auth-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-goal-auth-sdk-"));
   let restoreBudget: (() => void) | undefined;
   try {
     const model = getModel("openai-codex", "gpt-5.6-luna")!;
@@ -511,7 +514,7 @@ test("real SDK reports auth preparation failure before provider dispatch", async
 });
 
 test("live goal fixture reaches an intercepted real-runtime provider offline", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-goal-provider-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-goal-provider-sdk-"));
   let session: any;
   let restoreBudget: (() => void) | undefined;
   let restoreProvider: (() => void) | undefined;
@@ -552,8 +555,8 @@ test("live goal fixture reaches an intercepted real-runtime provider offline", a
       noPromptTemplates: true,
       extensionFactories: [
         {
-          name: "die-tasks",
-          factory: (pi) => tasks(pi, { executablePath: resolve(import.meta.dir, "../dist/die") }),
+          name: "bruv-tasks",
+          factory: (pi) => tasks(pi, { executablePath: resolve(import.meta.dir, "../dist/bruv") }),
         },
       ],
     });
@@ -590,7 +593,7 @@ test("live goal fixture reaches an intercepted real-runtime provider offline", a
     expect(assistant.errorMessage).toContain("OFFLINE_PROVIDER_INTERCEPT");
     const latestGoal = manager
       .getEntries()
-      .filter((entry: any) => entry.type === "custom" && entry.customType === "die-goal")
+      .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-goal")
       .at(-1) as any;
     expect(latestGoal.data.goal).toMatchObject({
       status: "paused",

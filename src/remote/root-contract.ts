@@ -74,4 +74,4 @@ export type RootRequest =
       workspace?: { kind: "inherit" } | { kind: "worktree"; baseRef?: string; branch?: string };
     })
   | (RootIdentity & { op: "repository-result"; sessionId: string; offset: number });
-export type RootTransport = (host: string, diePath: string, request: RootRequest) => Promise<unknown>;
+export type RootTransport = (host: string, bruvPath: string, request: RootRequest) => Promise<unknown>;

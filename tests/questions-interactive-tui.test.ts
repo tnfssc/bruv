@@ -10,8 +10,8 @@ const hasTmux = (await run(["sh", "-c", "command -v tmux >/dev/null"])).code ===
 test.skipIf(!hasTmux)(
   "real /questions inbox, editor and choice persist only on submit",
   async () => {
-    const home = await mkdtemp(join(tmpdir(), "die-interactive-questions-"));
-    const socket = "die-qinteractive-" + process.pid + "-" + Date.now();
+    const home = await mkdtemp(join(tmpdir(), "bruv-interactive-questions-"));
+    const socket = "bruv-qinteractive-" + process.pid + "-" + Date.now();
     const session = SessionManager.create(home, join(home, "sessions"));
     session.appendCustomEntry("test-seed", {});
     const file = session.getSessionFile()!;
@@ -37,12 +37,12 @@ test.skipIf(!hasTmux)(
     const launch = [
       "env",
       "-u",
-      "DIE_SUBAGENT_DEPTH",
+      "BRUV_SUBAGENT_DEPTH",
       "-u",
-      "DIE_SUBAGENT_TYPE",
+      "BRUV_SUBAGENT_TYPE",
       "HOME=" + home,
       "OPENAI_API_KEY=offline-test-placeholder",
-      resolve(import.meta.dir, "../dist/die"),
+      resolve(import.meta.dir, "../dist/bruv"),
       "--offline",
       "--no-approve",
       "--session",

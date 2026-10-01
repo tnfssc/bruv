@@ -80,7 +80,7 @@ describe("root dependency updater", () => {
   test("fixture denies missing, wrong repository and wrong event environments", () => {
     for (const env of [
       {},
-      { GITHUB_REPOSITORY: "tnfssc/die", GITHUB_EVENT_NAME: "workflow_dispatch" },
+      { GITHUB_REPOSITORY: "tnfssc/bruv", GITHUB_EVENT_NAME: "workflow_dispatch" },
       { GITHUB_REPOSITORY: "tnfssc/die-dependency-pr-fixture-20260930", GITHUB_EVENT_NAME: "push" },
     ]) {
       expect(() => selectDependencyNames(manifest, { fixture: true, env })).toThrow("--fixture is only allowed");
@@ -90,7 +90,7 @@ describe("root dependency updater", () => {
   test("CLI denies fixture before spawning an update", async () => {
     const child = Bun.spawn([process.execPath, "scripts/update-dependencies.ts", "--fixture"], {
       cwd: new URL("../", import.meta.url).pathname,
-      env: { ...process.env, GITHUB_REPOSITORY: "tnfssc/die", GITHUB_EVENT_NAME: "workflow_dispatch" },
+      env: { ...process.env, GITHUB_REPOSITORY: "tnfssc/bruv", GITHUB_EVENT_NAME: "workflow_dispatch" },
       stdout: "pipe",
       stderr: "pipe",
     });

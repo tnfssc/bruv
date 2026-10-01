@@ -2,13 +2,13 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { chmod, lstat, mkdir, mkdtemp, readdir, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { UPDATE_ASSETS, isCompiledInvocation, updateAssetFor, updateDie } from "../src/update";
+import { UPDATE_ASSETS, isCompiledInvocation, updateAssetFor, updateBruv } from "../src/update";
 
-const body = new TextEncoder().encode("new compiled die");
+const body = new TextEncoder().encode("new compiled bruv");
 const hash = createHash("sha256").update(body).digest("hex");
-const releaseUrl = "https://api.github.com/repos/tnfssc/die/releases/latest";
+const releaseUrl = "https://api.github.com/repos/tnfssc/bruv/releases/latest";
 const dirs = new Set<string>();
-const root = (tag: string) => "https://github.com/tnfssc/die/releases/download/" + tag + "/";
+const root = (tag: string) => "https://github.com/tnfssc/bruv/releases/download/" + tag + "/";
 const deps = (fetch: typeof globalThis.fetch, executable: string, extra: Record<string, unknown> = {}) => ({
   fetch,
   executable,
@@ -19,9 +19,9 @@ const deps = (fetch: typeof globalThis.fetch, executable: string, extra: Record<
   ...extra,
 });
 async function target(kind = "file") {
-  const dir = await mkdtemp("/var/tmp/die-update-test-");
+  const dir = await mkdtemp("/var/tmp/bruv-update-test-");
   dirs.add(dir);
-  const path = join(dir, "die");
+  const path = join(dir, "bruv");
   if (kind === "directory") {
     await mkdir(path);
     await writeFile(join(path, "old"), "old");
@@ -29,7 +29,7 @@ async function target(kind = "file") {
   return { dir, path };
 }
 function fixture(tag = "v0.3.0", opts: any = {}) {
-  const asset = opts.asset || "die-linux-x64";
+  const asset = opts.asset || "bruv-linux-x64";
   const bin = root(tag) + asset,
     sum = bin + ".sha256",
     calls: string[] = [];
@@ -60,11 +60,11 @@ afterEach(async () => {
   dirs.clear();
 });
 
-describe("die self-update", () => {
+describe("bruv self-update", () => {
   test("source guard rejects before any network", async () => {
     let calls = 0;
     await expect(
-      updateDie({
+      updateBruv({
         compiled: false,
         platform: "linux",
         arch: "x64",
@@ -79,7 +79,7 @@ describe("die self-update", () => {
   test("real private compiled Bun fixture is accepted and lookalikes are rejected", async () => {
     expect(isCompiledInvocation("file:///tmp/$bunfs/source.ts")).toBe(false);
     expect(isCompiledInvocation("file:///project-$bunfs/source.ts")).toBe(false);
-    const dir = await mkdtemp("/var/tmp/die-compiled-fixture-");
+    const dir = await mkdtemp("/var/tmp/bruv-compiled-fixture-");
     dirs.add(dir);
     const out = join(dir, "fixture");
     const build = Bun.spawn(
@@ -104,7 +104,7 @@ describe("die self-update", () => {
       ["0.2.15", "v0.2.14", "newer"],
     ]) {
       const f = fixture(tag);
-      await expect(updateDie(deps(f.fetch, "/no-target", { currentVersion: current }))).resolves.toMatchObject({
+      await expect(updateBruv(deps(f.fetch, "/no-target", { currentVersion: current }))).resolves.toMatchObject({
         status,
       });
       expect(f.calls).toEqual([releaseUrl]);
@@ -118,22 +118,22 @@ describe("die self-update", () => {
     expect(updateAssetFor("darwin", "x64")).toBeUndefined();
   });
   test("downloads the matching macOS asset", async () => {
-    const f = fixture("v0.3.0", { asset: "die-darwin-arm64" });
+    const f = fixture("v0.3.0", { asset: "bruv-darwin-arm64" });
     const x = await target();
-    await expect(updateDie(deps(f.fetch, x.path, { platform: "darwin", arch: "arm64" }))).resolves.toMatchObject({
+    await expect(updateBruv(deps(f.fetch, x.path, { platform: "darwin", arch: "arm64" }))).resolves.toMatchObject({
       status: "updated",
     });
     expect(await Bun.file(x.path).bytes()).toEqual(body);
     expect(f.calls).toEqual([
       releaseUrl,
-      root("v0.3.0") + "die-darwin-arm64",
-      root("v0.3.0") + "die-darwin-arm64.sha256",
+      root("v0.3.0") + "bruv-darwin-arm64",
+      root("v0.3.0") + "bruv-darwin-arm64.sha256",
     ]);
   });
   test("unsupported platform rejects before fetch", async () => {
     let calls = 0;
     await expect(
-      updateDie({
+      updateBruv({
         platform: "win32",
         arch: "x64",
         compiled: true,
@@ -144,18 +144,22 @@ describe("die self-update", () => {
     ).rejects.toThrow("Linux x64/arm64, macOS arm64, and Android/Termux arm64");
     expect(calls).toBe(0);
   });
-  test("requires official exact asset URLs", async () => {
+  test.each([
+    ["foreign repository", "https://example.invalid/bruv-linux-x64"],
+    // The renamed repository must be used even if GitHub redirects the old slug.
+    ["legacy repository", "https://github.com/tnfssc/die/releases/download/v0.3.0/bruv-linux-x64"],
+  ])("requires canonical exact asset URLs: %s", async (_label, url) => {
     const f = fixture("v0.3.0", {
       release: {
         tag_name: "v0.3.0",
         assets: [
-          { name: "die-linux-x64", browser_download_url: "https://example.invalid/die-linux-x64" },
-          { name: "die-linux-x64.sha256", browser_download_url: root("v0.3.0") + "die-linux-x64.sha256" },
+          { name: "bruv-linux-x64", browser_download_url: url },
+          { name: "bruv-linux-x64.sha256", browser_download_url: root("v0.3.0") + "bruv-linux-x64.sha256" },
         ],
       },
     });
     const x = await target();
-    await expect(updateDie(deps(f.fetch, x.path))).rejects.toThrow();
+    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow();
     expect(f.calls).toEqual([releaseUrl]);
   });
   test.each([
@@ -166,7 +170,7 @@ describe("die self-update", () => {
   ])("rejects %s", async (_n, opts, msg) => {
     const x = await target();
     const f = fixture("v0.3.0", opts);
-    await expect(updateDie(deps(f.fetch, x.path))).rejects.toThrow(msg);
+    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow(msg);
     expect(await Bun.file(x.path).text()).toBe("old");
   });
   test("malformed, prerelease, and missing release assets stop before binary", async () => {
@@ -176,48 +180,48 @@ describe("die self-update", () => {
       { tag_name: "v0.3.0", assets: [] },
     ]) {
       const f = fixture("v0.3.0", { release });
-      await expect(updateDie(deps(f.fetch, "/no-target"))).rejects.toThrow();
+      await expect(updateBruv(deps(f.fetch, "/no-target"))).rejects.toThrow();
       expect(f.calls).toEqual([releaseUrl]);
     }
   });
   test("updates and preserves mode", async () => {
     const x = await target();
-    await updateDie(deps(fixture().fetch, x.path));
-    expect(await Bun.file(x.path).text()).toBe("new compiled die");
+    await updateBruv(deps(fixture().fetch, x.path));
+    expect(await Bun.file(x.path).text()).toBe("new compiled bruv");
     expect((await stat(x.path)).mode & 0o777).toBe(0o754);
   });
   test("updates symlink target and preserves symlink", async () => {
     const x = await target();
     const link = join(x.dir, "link");
     await symlink(x.path, link);
-    await updateDie(deps(fixture().fetch, link));
+    await updateBruv(deps(fixture().fetch, link));
     expect((await lstat(link)).isSymbolicLink()).toBe(true);
-    expect(new TextDecoder().decode(await readFile(x.path))).toBe("new compiled die");
+    expect(new TextDecoder().decode(await readFile(x.path))).toBe("new compiled bruv");
   });
   test("rejects checksum with a filename that does not match the binary asset", async () => {
     const x = await target();
     const f = fixture("v0.3.0", { checksumFile: "other-binary" });
-    await expect(updateDie(deps(f.fetch, x.path))).rejects.toThrow("Checksum verification failed");
+    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow("Checksum verification failed");
     expect(await Bun.file(x.path).text()).toBe("old");
   });
   test("truncated body fails checksum", async () => {
     const x = await target();
     const f = fixture("v0.3.0", { binaryBody: body.slice(0, 3) });
-    await expect(updateDie(deps(f.fetch, x.path))).rejects.toThrow("Checksum verification failed");
+    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow("Checksum verification failed");
   });
   test("concurrent target change aborts commit", async () => {
     const x = await target();
     const f = fixture("v0.3.0", { mutate: () => writeFile(x.path, "changed") });
-    await expect(updateDie(deps(f.fetch, x.path))).rejects.toThrow();
+    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow();
     expect(await Bun.file(x.path).text()).toBe("changed");
-    expect((await readdir(x.dir)).filter((name) => name.startsWith(".die-update-"))).toEqual([]);
+    expect((await readdir(x.dir)).filter((name) => name.startsWith(".bruv-update-"))).toEqual([]);
   });
   test("replacement failure keeps old target and cleans staging", async () => {
     const x = await target("directory");
     const f = fixture();
-    await expect(updateDie(deps(f.fetch, x.path))).rejects.toThrow(/Could not replace|not a regular file/);
+    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow(/Could not replace|not a regular file/);
     expect(await Bun.file(join(x.path, "old")).text()).toBe("old");
-    expect((await readdir(x.dir)).filter((n) => n.startsWith(".die-update-")).length).toBe(0);
+    expect((await readdir(x.dir)).filter((n) => n.startsWith(".bruv-update-")).length).toBe(0);
   });
 });
 
@@ -225,9 +229,9 @@ test.skipIf(process.getuid?.() === 0)("permission failure preserves executable w
   const x = await target();
   await chmod(x.dir, 0o500);
   try {
-    await expect(updateDie(deps(fixture().fetch, x.path))).rejects.toThrow("permissions");
+    await expect(updateBruv(deps(fixture().fetch, x.path))).rejects.toThrow("permissions");
     expect(await Bun.file(x.path).text()).toBe("old");
-    expect((await readdir(x.dir)).filter((name) => name.startsWith(".die-update-"))).toEqual([]);
+    expect((await readdir(x.dir)).filter((name) => name.startsWith(".bruv-update-"))).toEqual([]);
   } finally {
     await chmod(x.dir, 0o700);
   }
@@ -237,12 +241,12 @@ test("metadata network failure preserves executable", async () => {
   const offline = (async () => {
     throw new Error("offline");
   }) as unknown as typeof globalThis.fetch;
-  await expect(updateDie(deps(offline, x.path))).rejects.toThrow("Unable to check");
+  await expect(updateBruv(deps(offline, x.path))).rejects.toThrow("Unable to check");
   expect(await Bun.file(x.path).text()).toBe("old");
 });
 
 test("a real compiled executable safely replaces itself", async () => {
-  const dir = await mkdtemp("/var/tmp/die-self-update-fixture-");
+  const dir = await mkdtemp("/var/tmp/bruv-self-update-fixture-");
   dirs.add(dir);
   const current = join(dir, "current");
   const replacement = join(dir, "replacement");
@@ -258,7 +262,7 @@ test("a real compiled executable safely replaces itself", async () => {
     expect(await build.exited, errors).toBe(0);
   }
   const first = Bun.spawn([current], {
-    env: { ...process.env, DIE_TEST_UPDATE_PAYLOAD: replacement },
+    env: { ...process.env, BRUV_TEST_UPDATE_PAYLOAD: replacement },
     stdout: "pipe",
     stderr: "pipe",
   });
@@ -278,5 +282,5 @@ test("a real compiled executable safely replaces itself", async () => {
       .update(await Bun.file(replacement).bytes())
       .digest("hex"),
   );
-  expect((await readdir(dir)).filter((name) => name.startsWith(".die-update-"))).toEqual([]);
+  expect((await readdir(dir)).filter((name) => name.startsWith(".bruv-update-"))).toEqual([]);
 });

@@ -9,7 +9,7 @@ import { QuestionService } from "../questions/service";
 /** Private owner-child checkpoint, using native jobs/questions rather than model text.
  * The owner supplies this path only to its child. No network listener or local capability grant. */
 export function registerRemoteRuntime(pi: ExtensionAPI): void {
-  const path = process.env.DIE_REMOTE_RUNTIME_STATE;
+  const path = process.env.BRUV_REMOTE_RUNTIME_STATE;
   if (!path) return;
   registerRemoteCancellationRuntime(pi);
   const save = (value: unknown) => {

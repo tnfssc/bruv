@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
-import { RELEASES_URL, UPDATE_ASSET, updateDie } from "../src/update";
-const payload = process.env.DIE_TEST_UPDATE_PAYLOAD;
+import { RELEASES_URL, UPDATE_ASSET, updateBruv } from "../src/update";
+const payload = process.env.BRUV_TEST_UPDATE_PAYLOAD;
 if (!payload) throw new Error("Private updater test payload is required");
 const bytes = await Bun.file(payload).bytes();
-const root = "https://github.com/tnfssc/die/releases/download/v0.3.0/";
+const root = "https://github.com/tnfssc/bruv/releases/download/v0.3.0/";
 const digest = createHash("sha256").update(bytes).digest("hex");
 const mockFetch = (async (input: RequestInfo | URL) => {
   const url = String(input);
@@ -18,4 +18,4 @@ const mockFetch = (async (input: RequestInfo | URL) => {
   if (url === root + UPDATE_ASSET + ".sha256") return new Response(digest + "  " + UPDATE_ASSET + "\n");
   throw new Error("Unexpected test URL");
 }) as unknown as typeof fetch;
-console.log(JSON.stringify(await updateDie({ currentVersion: "0.2.15", fetch: mockFetch })));
+console.log(JSON.stringify(await updateBruv({ currentVersion: "0.2.15", fetch: mockFetch })));

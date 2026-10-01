@@ -10,7 +10,7 @@ import { clearRemoteJobEvents } from "../src/remote/job-events";
 import { RemoteClient, type RemoteState } from "../src/remote/client";
 
 function harness() {
-  const dir = mkdtempSync(join(tmpdir(), "die-remote-question-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-remote-question-"));
   let leaf = "root";
   const entries: Array<{ id: string; parentId: string | null }> = [{ id: "root", parentId: null }];
   const ctx: any = {
@@ -33,7 +33,7 @@ function harness() {
     allowFreeText: false,
   };
   const state: RemoteState = {
-    connection: { host: "pinned", diePath: "die", hello: { ownerId: "owner", epoch: "epoch", protocol: 1 } as any },
+    connection: { host: "pinned", bruvPath: "bruv", hello: { ownerId: "owner", epoch: "epoch", protocol: 1 } as any },
     tasks: {
       t: {
         taskId: "t",

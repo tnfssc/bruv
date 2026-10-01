@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
-/** Real die RPC smoke backed by a loopback OpenAI-compatible model. */
+/** Real bruv RPC smoke backed by a loopback OpenAI-compatible model. */
 import { chmod, mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
-const fixtureRoot = await mkdtemp("/var/tmp/die-web-rpc-smoke-");
+const fixtureRoot = await mkdtemp("/var/tmp/bruv-web-rpc-smoke-");
 await chmod(fixtureRoot, 0o700);
 const home = join(fixtureRoot, "home");
 const agentDir = join(fixtureRoot, "pi-agent");
@@ -33,14 +33,14 @@ function completion(delta: Record<string, unknown>, finishReason: string) {
   const created = Math.floor(Date.now() / 1000);
   const chunks = [
     {
-      id: "die-web-rpc-smoke",
+      id: "bruv-web-rpc-smoke",
       object: "chat.completion.chunk",
       created,
       model: "loopback-model",
       choices: [{ index: 0, delta, finish_reason: null }],
     },
     {
-      id: "die-web-rpc-smoke",
+      id: "bruv-web-rpc-smoke",
       object: "chat.completion.chunk",
       created,
       model: "loopback-model",
@@ -63,25 +63,25 @@ try {
       const body = await request.json();
       requests.push(body);
       const serialized = JSON.stringify(body);
-      if (serialized.includes("die_rpc_loopback_execute"))
-        return completion({ role: "assistant", content: "DIE_RPC_LOOPBACK_PARENT_OK" }, "stop");
-      if (serialized.includes("DIE_RPC_LOOPBACK_WORKER_PROMPT"))
-        return completion({ role: "assistant", content: "DIE_RPC_LOOPBACK_WORKER_OK" }, "stop");
+      if (serialized.includes("bruv_rpc_loopback_execute"))
+        return completion({ role: "assistant", content: "BRUV_RPC_LOOPBACK_PARENT_OK" }, "stop");
+      if (serialized.includes("BRUV_RPC_LOOPBACK_WORKER_PROMPT"))
+        return completion({ role: "assistant", content: "BRUV_RPC_LOOPBACK_WORKER_OK" }, "stop");
       return completion(
         {
           role: "assistant",
           tool_calls: [
             {
               index: 0,
-              id: "die_rpc_loopback_execute",
+              id: "bruv_rpc_loopback_execute",
               type: "function",
               function: {
                 name: "execute",
                 arguments: JSON.stringify({
                   code: [
-                    'const shellResult = await shell("printf DIE_RPC_LOOPBACK_SHELL_OK", { waitSeconds: 10 });',
-                    'const agentResult = await subagent({ type: "fast", prompt: "DIE_RPC_LOOPBACK_WORKER_PROMPT: reply exactly DIE_RPC_LOOPBACK_WORKER_OK", waitSeconds: 20, timeoutSeconds: 30 });',
-                    'console.log(JSON.stringify({ fixture: "die-web-rpc", shellResult, agentResult }));',
+                    'const shellResult = await shell("printf BRUV_RPC_LOOPBACK_SHELL_OK", { waitSeconds: 10 });',
+                    'const agentResult = await subagent({ type: "fast", prompt: "BRUV_RPC_LOOPBACK_WORKER_PROMPT: reply exactly BRUV_RPC_LOOPBACK_WORKER_OK", waitSeconds: 20, timeoutSeconds: 30 });',
+                    'console.log(JSON.stringify({ fixture: "bruv-web-rpc", shellResult, agentResult }));',
                   ].join("\n"),
                 }),
               },
@@ -110,19 +110,19 @@ try {
     ) + "\n",
     { mode: 0o600 },
   );
-  await mkdir(join(home, ".die"), { recursive: true, mode: 0o700 });
+  await mkdir(join(home, ".bruv"), { recursive: true, mode: 0o700 });
   await writeFile(
-    join(home, ".die", "subagents.json"),
+    join(home, ".bruv", "subagents.json"),
     JSON.stringify({ fast: { model: "loopback/loopback-model", thinking: "off" } }, null, 2) + "\n",
     { mode: 0o600 },
   );
 
-  // Subagents re-exec process.execPath, so this must be compiled die, not Bun running src/cli.ts.
-  const binary = resolve(import.meta.dir, "../../../dist/die");
-  assert(await Bun.file(binary).exists(), "dist/die is missing; run 'bun run build' first");
+  // Subagents re-exec process.execPath, so this must be compiled bruv, not Bun running src/cli.ts.
+  const binary = resolve(import.meta.dir, "../../../dist/bruv");
+  assert(await Bun.file(binary).exists(), "dist/bruv is missing; run 'bun run build' first");
   // Leave the same isolated loopback model running for the browser smoke.
   if (process.argv.includes("--serve")) {
-    const wrapper = join(fixtureRoot, "die-fixture");
+    const wrapper = join(fixtureRoot, "bruv-fixture");
     await writeFile(
       wrapper,
       "#!/bin/sh\nexec " + JSON.stringify(binary) + ' --provider loopback --model loopback-model "$@"\n',
@@ -139,12 +139,12 @@ try {
         ...process.env,
         HOME: home,
         PI_CODING_AGENT_DIR: agentDir,
-        DIE_CODING_AGENT_DIR: agentDir,
+        BRUV_CODING_AGENT_DIR: agentDir,
         HERDR_ENV: "0",
-        DIE_WEB_TASK_EVENTS: "1",
+        BRUV_WEB_TASK_EVENTS: "1",
         PI_OFFLINE: "1",
-        DIE_SUBAGENT_DEPTH: "0",
-        DIE_SUBAGENT_TYPE: "",
+        BRUV_SUBAGENT_DEPTH: "0",
+        BRUV_SUBAGENT_TYPE: "",
       },
       stdin: "pipe",
       stdout: "pipe",
@@ -200,10 +200,10 @@ try {
   await stdoutPromise;
   const stderr = await stderrPromise;
   await writeFile(join(fixtureRoot, "rpc-events.jsonl"), stdout, { mode: 0o600 });
-  await writeFile(join(fixtureRoot, "die-stderr.log"), stderr, { mode: 0o600 });
+  await writeFile(join(fixtureRoot, "bruv-stderr.log"), stderr, { mode: 0o600 });
   await writeFile(join(fixtureRoot, "model-requests.json"), JSON.stringify(requests, null, 2) + "\n", { mode: 0o600 });
 
-  assert(exitCode === 0, "die exited " + exitCode + "; see die-stderr.log");
+  assert(exitCode === 0, "bruv exited " + exitCode + "; see bruv-stderr.log");
   const events = stdout
     .split("\n")
     .filter(Boolean)
@@ -232,13 +232,13 @@ try {
     taskOutput.shellResult?.kind === "command" && taskOutput.shellResult?.status === "completed",
     "shell task summary is not structured",
   );
-  assert(taskOutput.shellResult?.output === "DIE_RPC_LOOPBACK_SHELL_OK", "shell task output was not captured");
+  assert(taskOutput.shellResult?.output === "BRUV_RPC_LOOPBACK_SHELL_OK", "shell task output was not captured");
   assert(
     taskOutput.agentResult?.kind === "agent" && taskOutput.agentResult?.status === "completed",
     "subagent task summary is not structured",
   );
-  assert(taskOutput.agentResult?.output === "DIE_RPC_LOOPBACK_WORKER_OK", "subagent task output was not captured");
-  const taskEvents = events.filter((event) => event.type === "die_task_event");
+  assert(taskOutput.agentResult?.output === "BRUV_RPC_LOOPBACK_WORKER_OK", "subagent task output was not captured");
+  const taskEvents = events.filter((event) => event.type === "bruv_task_event");
   assert(taskEvents.length === 4, "expected exactly start/completion for command and agent");
   for (const kind of ["command", "agent"]) {
     const records = taskEvents.filter((event) => event.task?.kind === kind);
@@ -252,14 +252,14 @@ try {
     );
   }
   assert(
-    events.some((event) => JSON.stringify(event).includes("DIE_RPC_LOOPBACK_PARENT_OK")),
+    events.some((event) => JSON.stringify(event).includes("BRUV_RPC_LOOPBACK_PARENT_OK")),
     "missing final parent model output",
   );
   assert(requests.length >= 3, "loopback model did not receive parent/tool/subagent turns");
-  console.log("die web RPC smoke passed; artifacts: " + fixtureRoot);
+  console.log("bruv web RPC smoke passed; artifacts: " + fixtureRoot);
 } catch (error) {
   console.error(error);
-  console.error("die web RPC smoke artifacts: " + fixtureRoot);
+  console.error("bruv web RPC smoke artifacts: " + fixtureRoot);
   process.exitCode = 1;
 } finally {
   server?.stop(true);

@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
 # Linux-only real CLI / SSH / owner / explicitly fake provider test. No external SSH host or real provider.
 set -euo pipefail
-# The fixture is a human parent CLI, even when launched from a die worker.
-unset DIE_SUBAGENT_DEPTH DIE_SUBAGENT_TYPE DIE_REMOTE_RUNTIME_STATE
+# The fixture is a human parent CLI, even when launched from a bruv worker.
+unset BRUV_SUBAGENT_DEPTH BRUV_SUBAGENT_TYPE BRUV_REMOTE_RUNTIME_STATE
 cd "$(dirname "$0")/.."
 for tool in docker ssh ssh-keygen timeout python3 curl; do command -v "$tool" >/dev/null || { echo "missing $tool" >&2; exit 1; }; done
 if [[ "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-pty-e2e.ts || "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-capability-pty-e2e.ts || "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-recovery-e2e.ts ]]; then command -v tmux >/dev/null || { echo "missing tmux" >&2; exit 1; }; fi
-DIE_BIN="${DIE_BIN:-$PWD/dist/die}"; BUN_BIN="${BUN_BIN:-$(command -v bun)}"
-test -x "$DIE_BIN" && test -x "$BUN_BIN" || { echo 'build dist/die first and supply BUN_BIN if necessary' >&2; exit 1; }
-name="die-remote-e2e-$$-$RANDOM"; mkdir -p "${TMPDIR:-$PWD/.cache}"; tmp="$(mktemp -d "${TMPDIR:-$PWD/.cache}/remote-e2e.XXXXXX")"; trap 'docker logs --tail 35 "$name" >&2 || true' ERR; trap 'docker rm -f "$name" >/dev/null 2>&1 || true; docker image rm "$name" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
+BRUV_BIN="${BRUV_BIN:-$PWD/dist/bruv}"; BUN_BIN="${BUN_BIN:-$(command -v bun)}"
+test -x "$BRUV_BIN" && test -x "$BUN_BIN" || { echo 'build dist/bruv first and supply BUN_BIN if necessary' >&2; exit 1; }
+name="bruv-remote-e2e-$$-$RANDOM"; mkdir -p "${TMPDIR:-$PWD/.cache}"; tmp="$(mktemp -d "${TMPDIR:-$PWD/.cache}/remote-e2e.XXXXXX")"; trap 'docker logs --tail 35 "$name" >&2 || true' ERR; trap 'docker rm -f "$name" >/dev/null 2>&1 || true; docker image rm "$name" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
 umask 077
 ssh-keygen -q -t ed25519 -N '' -f "$tmp/client"
 ssh-keygen -q -t ed25519 -N '' -f "$tmp/hostkey"
-mkdir "$tmp/build" "$tmp/keys" "$tmp/bin" "$tmp/home" "$tmp/home/.ssh" "$tmp/home/.die" "$tmp/home/agent"
+mkdir "$tmp/build" "$tmp/keys" "$tmp/bin" "$tmp/home" "$tmp/home/.ssh" "$tmp/home/.bruv" "$tmp/home/agent"
 cp tests/fixtures/remote-e2e/{Dockerfile,entrypoint.sh,sshd_config,models.json,subagents.json,fake-provider.ts} "$tmp/build/"
-cp "$BUN_BIN" "$tmp/build/bun"; cp "$DIE_BIN" "$tmp/build/die"
+cp "$BUN_BIN" "$tmp/build/bun"; cp "$BRUV_BIN" "$tmp/build/bruv"
 cp "$tmp/hostkey" "$tmp/client.pub" "$tmp/keys/"
-chmod 644 "$tmp/build"/*; chmod 755 "$tmp/build/bun" "$tmp/build/die" "$tmp/build/entrypoint.sh"
-printf 'normal CLI die %s sha256 %s\n' "$(HOME="$tmp/home" "$DIE_BIN" --version)" "$(sha256sum "$DIE_BIN" | cut -d ' ' -f 1)"
+chmod 644 "$tmp/build"/*; chmod 755 "$tmp/build/bun" "$tmp/build/bruv" "$tmp/build/entrypoint.sh"
+printf 'normal CLI bruv %s sha256 %s\n' "$(HOME="$tmp/home" "$BRUV_BIN" --version)" "$(sha256sum "$BRUV_BIN" | cut -d ' ' -f 1)"
 timeout 180 docker build -q -t "$name" "$tmp/build" >/dev/null
 for attempt in {1..8}; do
  if docker run -d --name "$name" --memory 1g --cpus 2 --pids-limit 192 -p 127.0.0.1::2222 -p 127.0.0.1::18765 --mount "type=bind,src=$tmp/keys,dst=/keys,readonly" "$name" >"$tmp/container-id"; then break; fi
@@ -95,4 +95,4 @@ exec /usr/bin/ssh -F "$tmp/home/.ssh/config" "\$@"
 EOF
 fi
 chmod 755 "$tmp/bin/ssh"
-DOCKER_HOST="$(docker context inspect --format '{{.Endpoints.docker.Host}}')" PATH="$tmp/bin:$PATH" HOME="$tmp/home" DIE_CODING_AGENT_DIR="$tmp/home/agent" DIE_BIN="$DIE_BIN" FIXTURE_CONTAINER="$name" FIXTURE_PROVIDER_URL="http://$provider_port/v1" FIXTURE_SSH_CONFIG="$tmp/home/.ssh/config" FIXTURE_DROP_DIR="$tmp" "$BUN_BIN" "${REMOTE_E2E_SCRIPT:-scripts/remote-e2e.ts}"
+DOCKER_HOST="$(docker context inspect --format '{{.Endpoints.docker.Host}}')" PATH="$tmp/bin:$PATH" HOME="$tmp/home" BRUV_CODING_AGENT_DIR="$tmp/home/agent" BRUV_BIN="$BRUV_BIN" FIXTURE_CONTAINER="$name" FIXTURE_PROVIDER_URL="http://$provider_port/v1" FIXTURE_SSH_CONFIG="$tmp/home/.ssh/config" FIXTURE_DROP_DIR="$tmp" "$BUN_BIN" "${REMOTE_E2E_SCRIPT:-scripts/remote-e2e.ts}"

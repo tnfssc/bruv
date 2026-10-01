@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { executeIsolated } from "../src/typescript/execution";
 
-const binary = resolve(import.meta.dir, "../dist/die");
+const binary = resolve(import.meta.dir, "../dist/bruv");
 const directories: string[] = [];
 
 afterEach(async () => {
@@ -12,7 +12,7 @@ afterEach(async () => {
 });
 
 test("worker handoff acknowledges before intentionally exiting", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "die-worker-handoff-"));
+  const directory = await mkdtemp(join(tmpdir(), "bruv-worker-handoff-"));
   directories.push(directory);
   const sideEffect = join(directory, "after.txt");
   const calls: Array<{ method: string; params: unknown }> = [];

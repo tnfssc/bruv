@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dir, "..");
-const patch = readFileSync(resolve(root, "integrations/t3/upstream/die.patch"), "utf8");
+const patch = readFileSync(resolve(root, "integrations/t3/upstream/bruv.patch"), "utf8");
 const build = readFileSync(resolve(root, "integrations/t3/build/build.ts"), "utf8");
 
 // Test the shipped canonical patch, not a loose upstream checkout.

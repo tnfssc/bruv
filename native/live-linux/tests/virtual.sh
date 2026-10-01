@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../../.."
 command -v pactl >/dev/null
 pactl info >/dev/null # do not start services or change defaults
-prefix="die_live_$$_$RANDOM"
+prefix="bruv_live_$$_$RANDOM"
 out="$prefix-out"
 mic="$prefix-mic"
 first=$(pactl load-module module-null-sink sink_name="$out")

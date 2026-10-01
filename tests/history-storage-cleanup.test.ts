@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("temporary preparation and failed factories leave no live-process pending journals", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-history-cleanup-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-history-cleanup-"));
   try {
     const child = Bun.spawn(
       [

@@ -7,7 +7,7 @@ const MODEL_LIMIT = 160;
 const THINKING_LIMIT = 80;
 
 export interface WebTaskEventRecord {
-  type: "die_task_event";
+  type: "bruv_task_event";
   event: "started" | "completed";
   task: {
     id: string;
@@ -23,7 +23,7 @@ export function webTaskEvent(event: TaskEvent): WebTaskEventRecord | undefined {
   if (event.type !== "spawned" && event.type !== "completed") return;
   const task = event.task;
   return {
-    type: "die_task_event",
+    type: "bruv_task_event",
     event: event.type === "spawned" ? "started" : "completed",
     task: {
       id: task.id,
@@ -47,11 +47,11 @@ export function webTaskEvent(event: TaskEvent): WebTaskEventRecord | undefined {
 export function createWebTaskEventEmitter(
   mode: string | undefined,
   options: {
-    env?: { DIE_WEB_TASK_EVENTS?: string };
+    env?: { BRUV_WEB_TASK_EVENTS?: string };
     write?: (line: string) => unknown;
   } = {},
 ): (event: TaskEvent) => void {
-  if (mode !== "rpc" || (options.env ?? process.env).DIE_WEB_TASK_EVENTS !== "1") return () => {};
+  if (mode !== "rpc" || (options.env ?? process.env).BRUV_WEB_TASK_EVENTS !== "1") return () => {};
   // Pi guards process.stdout.write in RPC mode; these opted-in protocol records
   // must go directly to the same NDJSON transport, not through the console guard.
   const write = options.write ?? ((line: string) => writeSync(1, line));

@@ -6,13 +6,13 @@ import { run } from "./helpers";
 import { makePng } from "./image-fixture";
 import type { ImageContent, TextContent } from "@earendil-works/pi-ai";
 
-const enabled = process.env.DIE_RUN_LLM_TESTS === "1";
-const binary = resolve(import.meta.dir, "../dist/die");
+const enabled = process.env.BRUV_RUN_LLM_TESTS === "1";
+const binary = resolve(import.meta.dir, "../dist/bruv");
 
 test.skipIf(!enabled)(
-  "GPT-5.6 Luna completes an authenticated die request",
+  "GPT-5.6 Luna completes an authenticated bruv request",
   async () => {
-    const expected = "die automated LLM test passed";
+    const expected = "bruv automated LLM test passed";
     const result = await run([
       binary,
       "--provider",
@@ -35,7 +35,7 @@ test.skipIf(!enabled)(
 test.skipIf(!enabled)(
   "GPT-5.6 Luna uses execute for a realistic TypeScript file workflow",
   async () => {
-    const directory = await mkdtemp(join(tmpdir(), "die-llm-typescript-"));
+    const directory = await mkdtemp(join(tmpdir(), "bruv-llm-typescript-"));
     const expected = "typescript-tool-automation-passed";
     try {
       const result = await run(
@@ -67,7 +67,7 @@ test.skipIf(!enabled)(
 test.skipIf(!enabled)(
   "GPT-5.6 Luna sees an image returned by execute",
   async () => {
-    const directory = await mkdtemp(join(tmpdir(), "die-llm-image-"));
+    const directory = await mkdtemp(join(tmpdir(), "bruv-llm-image-"));
     const png = makePng(320, 240, (x, y) =>
       y < 120 ? (x < 160 ? [255, 0, 0] : [0, 255, 0]) : x < 160 ? [0, 0, 255] : [255, 255, 0],
     );
@@ -237,7 +237,7 @@ for (const waitSeconds of [1, 0])
 test.skipIf(!enabled)(
   "GPT-5.6 Luna unified subagent diagnostics persist tool history",
   async () => {
-    const directory = await mkdtemp(join(tmpdir(), "die-unified-agent-")),
+    const directory = await mkdtemp(join(tmpdir(), "bruv-unified-agent-")),
       marker = "unified-agent-ok";
     try {
       const prompt =
@@ -290,7 +290,7 @@ test.skipIf(!enabled)(
         .trim()
         .split("\n")
         .map((line) => JSON.parse(line));
-      expect(entries.some((e) => e.type === "custom" && e.customType === "die-agent")).toBe(true);
+      expect(entries.some((e) => e.type === "custom" && e.customType === "bruv-agent")).toBe(true);
       expect(
         entries.some(
           (e) => e.type === "message" && e.message.role === "toolResult" && e.message.toolName === "execute",

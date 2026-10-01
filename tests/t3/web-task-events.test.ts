@@ -30,7 +30,7 @@ describe("web task lifecycle events", () => {
   test("emits one bounded start/completion NDJSON record with only public fields", () => {
     const lines: string[] = [];
     const emit = createWebTaskEventEmitter("rpc", {
-      env: { DIE_WEB_TASK_EVENTS: "1" },
+      env: { BRUV_WEB_TASK_EVENTS: "1" },
       write: (line) => lines.push(line),
     });
     emit(spawned);
@@ -40,7 +40,7 @@ describe("web task lifecycle events", () => {
     expect(lines.every((line) => line.endsWith("\n"))).toBe(true);
     const [started, completed] = lines.map((line) => JSON.parse(line));
     expect(started).toMatchObject({
-      type: "die_task_event",
+      type: "bruv_task_event",
       event: "started",
       task: {
         id: "task_fixture",
@@ -65,13 +65,13 @@ describe("web task lifecycle events", () => {
         },
       }),
       createWebTaskEventEmitter("tui", {
-        env: { DIE_WEB_TASK_EVENTS: "1" },
+        env: { BRUV_WEB_TASK_EVENTS: "1" },
         write: () => {
           throw new Error("wrote");
         },
       }),
       createWebTaskEventEmitter("json", {
-        env: { DIE_WEB_TASK_EVENTS: "1" },
+        env: { BRUV_WEB_TASK_EVENTS: "1" },
         write: () => {
           throw new Error("wrote");
         },
@@ -83,7 +83,7 @@ describe("web task lifecycle events", () => {
   test("activity and stopping events produce no traffic", () => {
     const lines: string[] = [];
     const emit = createWebTaskEventEmitter("rpc", {
-      env: { DIE_WEB_TASK_EVENTS: "1" },
+      env: { BRUV_WEB_TASK_EVENTS: "1" },
       write: (line) => lines.push(line),
     });
     emit({ type: "activity", task: spawned.task, source: "output" });

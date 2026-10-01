@@ -12,7 +12,7 @@ import {
 } from "../src/typescript/images";
 import { makePng } from "./image-fixture";
 
-const binary = resolve(import.meta.dir, "../dist/die");
+const binary = resolve(import.meta.dir, "../dist/bruv");
 let directory: string;
 const png = makePng();
 const jpeg = Buffer.from("ffd8ffe00010", "hex");
@@ -22,7 +22,7 @@ const encoded = png.toString("base64");
 const bytesCode = `Buffer.from(${JSON.stringify(encoded)}, "base64")`;
 
 beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), "die-images-"));
+  directory = await mkdtemp(join(tmpdir(), "bruv-images-"));
 });
 afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
@@ -242,9 +242,9 @@ describe("execute image output", () => {
   });
 
   test("does not use a private descriptor when invoked outside execute", async () => {
-    const child = Bun.spawn([binary, "--die-internal-execute"], {
+    const child = Bun.spawn([binary, "--bruv-internal-execute"], {
       cwd: directory,
-      env: { ...process.env, DIE_EXECUTE_IMAGE_CHANNEL: undefined },
+      env: { ...process.env, BRUV_EXECUTE_IMAGE_CHANNEL: undefined },
       stdin: "pipe",
       stdout: "pipe",
       stderr: "pipe",

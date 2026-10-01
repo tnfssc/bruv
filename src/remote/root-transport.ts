@@ -2,12 +2,12 @@ import { spawn } from "node:child_process";
 import type { RootTransport } from "./root-contract";
 
 export const validHost = (host: string) => /^[a-zA-Z0-9_][a-zA-Z0-9_.@-]*$/.test(host) && !host.startsWith("-");
-export const validPath = (path: string) => path === "die" || (path.startsWith("/") && !/[\r\n\0]/.test(path));
+export const validPath = (path: string) => path === "bruv" || (path.startsWith("/") && !/[\r\n\0]/.test(path));
 const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
 
 /** One SSH stdio invocation per operation. SSH's remote command is a shell string: quote only the executable. */
-export const rootSshTransport: RootTransport = async (host, diePath, request) => {
-  if (!validHost(host) || !validPath(diePath)) throw new Error("Invalid SSH alias or remote die path");
+export const rootSshTransport: RootTransport = async (host, bruvPath, request) => {
+  if (!validHost(host) || !validPath(bruvPath)) throw new Error("Invalid SSH alias or remote bruv path");
   return await new Promise((resolve, reject) => {
     const child = spawn(
       "ssh",
@@ -31,7 +31,7 @@ export const rootSshTransport: RootTransport = async (host, diePath, request) =>
         "PermitLocalCommand=no",
         "--",
         host,
-        quote(diePath) + " --remote-root-control",
+        quote(bruvPath) + " --remote-root-control",
       ],
       { stdio: ["pipe", "pipe", "pipe"] },
     );
@@ -75,7 +75,7 @@ export const rootSshTransport: RootTransport = async (host, diePath, request) =>
       try {
         resolve(JSON.parse(out));
       } catch {
-        reject(new Error("Remote die returned no protocol JSON; use a compatible remote-enabled Linux build"));
+        reject(new Error("Remote bruv returned no protocol JSON; use a compatible remote-enabled Linux build"));
       }
     });
     child.stdin.on("error", () => {});

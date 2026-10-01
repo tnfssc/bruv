@@ -10,7 +10,7 @@ p.add_argument('--freeze',required=True,help='path to task-placement-integrated-
 p.add_argument('--child',required=True,help='directory containing actual child captures and receipt')
 p.add_argument('--root',required=True,help='directory containing actual root captures and receipt')
 child='child'; server='root'
-p.add_argument('--output',default='/home/tnfssc/.die/probes/task-placement-final-integrated-video')
+p.add_argument('--output',default='/home/tnfssc/.bruv/probes/task-placement-final-integrated-video')
 args=p.parse_args(); out=pathlib.Path(args.output);out.mkdir(parents=True,exist_ok=True)
 child_dir=pathlib.Path(args.child); root_dir=pathlib.Path(args.root)
 sha=lambda data:hashlib.sha256(data).hexdigest()
@@ -28,7 +28,7 @@ sequence=[
 (18,child,'03-ordinary-questions-menu',40,'Child asks the human through ordinary /questions · actual picker controls'),
 (26,child,'04-explicit-human-choice',40,'Human selects PLACEMENT_HUMAN_APPROVED · not a legacy /remote answer'),
 (32,child,'05-jobs-clean-safe-return',40,'Placed child completes · clean source return verified by the accepted fixture'),
-(40,server,'clean-01-question-picker',44,'Server root: die --place typed-root-owner · no local provider configured'),
+(40,server,'clean-01-question-picker',44,'Server root: bruv --place typed-root-owner · no local provider configured'),
 (48,server,'clean-02-reattached-same-question',44,'Ctrl-D detach; reopen the same root · same saved question, no new session'),
 (56,server,'clean-03-human-answer-choice',44,'Human answers in /questions · tool-capable fake inference runs only on server'),
 (62,server,'clean-04-second-root-turn',44,'Second explicit prompt · same server journal and repository work'),
@@ -45,7 +45,7 @@ for t,d,n,height,caption in sequence:
     # bottom viewport (120x40 child, 120x44 root), without editing its content.
     screen='\n'.join(lines[-height:])
     # Sole content redaction: disposable fixture HOME prefixes, not outcomes.
-    screen,count=re.subn(r'/home/tnfssc/\.die/(?:tmp-pi-removal|probes)/[^/\s]+/home', '[fixture HOME redacted]',screen)
+    screen,count=re.subn(r'/home/tnfssc/\.bruv/(?:tmp-pi-removal|probes)/[^/\s]+/home', '[fixture HOME redacted]',screen)
     step=d+'-'+n
     rows.append(dict(t=t,step=step,caption=caption,screen=screen))
     provenance.append(dict(step=step,path=str(path),sha256=sha(raw),terminalRows=height,originalLines=len(lines),viewportStartLine=max(1,len(lines)-height+1),homeRedactions=count))
@@ -107,7 +107,7 @@ for f in range(frames):
  t=f/fps
  while i+1<len(rows) and rows[i+1]['t']<=t:i+=1
  r=rows[i];im=Image.new('RGB',(W,H),'#0b1220');draw=ImageDraw.Draw(im)
- draw.text((36,20),'die — root + child task placement',font=title,fill='#f8fafc')
+ draw.text((36,20),'bruv — root + child task placement',font=title,fill='#f8fafc')
  draw.text((36,60),f'COMPILED CLI SNAPSHOT REPLAY · source 963401c · {expected[:16]}… · Docker network:none / fake inference',font=small,fill='#94a3b8')
  draw.text((36,102),r['caption'],font=captionfont,fill='#67e8f9')
  draw.rounded_rectangle((30,143,1570,1135),radius=9,fill='#111827',outline='#334155')

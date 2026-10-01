@@ -9,7 +9,7 @@ export async function prepareAgentSession(
   taskId?: string,
   title?: string,
 ) {
-  // Dynamic import: die must initialize its Pi configuration before loading Pi.
+  // Dynamic import: bruv must initialize its Pi configuration before loading Pi.
   const { SessionManager } = await import("@earendil-works/pi-coding-agent");
   const { disposeDiskBackedSessionManager } = await import("../history/session-manager");
   const session = SessionManager.create(cwd, sessionDir || undefined, { parentSession: info.parentSessionFile });
@@ -21,7 +21,7 @@ export async function prepareAgentSession(
     await writeFile(sessionFile, JSON.stringify(session.getHeader()) + "\n", { flag: "wx", mode: 0o600 });
     persisted = SessionManager.open(sessionFile);
     const id = taskId ?? "task_" + randomUUID().slice(0, 8);
-    persisted.appendCustomEntry("die-agent", { ...info, taskId: id });
+    persisted.appendCustomEntry("bruv-agent", { ...info, taskId: id });
     persisted.appendSessionInfo(
       (info.type === "orchestrator" ? "[orchestrator agent] " : "[subagent · " + info.type + "] ") + (title ?? id),
     );

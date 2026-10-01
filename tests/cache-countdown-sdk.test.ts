@@ -81,7 +81,7 @@ async function make(root: string, rejectPayload = false, noHttpHook = false, res
     noPromptTemplates: true,
     extensionFactories: [
       {
-        name: "die",
+        name: "bruv",
         factory: (pi) =>
           tasks(pi, {
             cacheSettingsPath: join(root, "cache-settings.json"),
@@ -111,7 +111,7 @@ async function make(root: string, rejectPayload = false, noHttpHook = false, res
 }
 
 test("SDK provider pipeline records only the calling agent and survives disk resume", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-cache-sdk-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-cache-sdk-"));
   try {
     const a = await make(join(root, "a")),
       b = await make(join(root, "b"));
@@ -142,7 +142,7 @@ test("SDK provider pipeline records only the calling agent and survives disk res
 });
 
 test("payload rejection before fetch does not reset the estimate", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-cache-reject-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-cache-reject-"));
   try {
     const run = await make(root, true);
     await run.session.prompt("reject before network").catch(() => {});
@@ -157,7 +157,7 @@ test("payload rejection before fetch does not reset the estimate", async () => {
 });
 
 test("successful terminal observation covers transports without an HTTP hook", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-cache-terminal-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-cache-terminal-"));
   try {
     const run = await make(root, false, true);
     await run.session.prompt("scripted WebSocket success");
@@ -172,7 +172,7 @@ test("successful terminal observation covers transports without an HTTP hook", a
 });
 
 test("actual SDK HTTP hook does not record rejected responses", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-cache-http-reject-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-cache-http-reject-"));
   try {
     for (const status of [401, 429, 500]) {
       const run = await make(join(root, String(status)), false, false, status);

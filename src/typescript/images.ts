@@ -8,7 +8,7 @@ export const MAX_IMAGE_BYTES = 5_000_000;
 export const MAX_IMAGE_INPUT_BYTES = 25_000_000;
 export const MAX_TOTAL_IMAGE_BYTES = 10_000_000;
 export const MAX_IMAGES = 4;
-export const IMAGE_CHANNEL_ENV = "DIE_EXECUTE_IMAGE_CHANNEL";
+export const IMAGE_CHANNEL_ENV = "BRUV_EXECUTE_IMAGE_CHANNEL";
 // Base64 expansion plus JSON framing; cap the entire private pipe, not stdout.
 export const MAX_IMAGE_CHANNEL_BYTES = Math.ceil(MAX_TOTAL_IMAGE_BYTES / 3) * 4 + 4_096;
 

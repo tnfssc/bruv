@@ -1,3 +1,5 @@
+> **Historical task-placement handoff:** original die names and evidence paths are retained. For current bruv commands and state paths, see [README](README.md).
+
 # Task placement implementation — parent handoff
 
 ## Ready for parent review (not publication)

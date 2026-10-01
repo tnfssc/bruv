@@ -10,10 +10,10 @@ import {
   ModelRuntime,
   SessionManager,
 } from "@earendil-works/pi-coding-agent";
-import { dieSystemPrompt } from "../src/prompts";
+import { bruvSystemPrompt } from "../src/prompts";
 import tasks from "../src/agent/extension";
 
-const COLLISION = "<!-- die:main-agent-mode:start -->\nMARKER_EXAMPLE\n<!-- die:main-agent-mode:end -->";
+const COLLISION = "<!-- bruv:main-agent-mode:start -->\nMARKER_EXAMPLE\n<!-- bruv:main-agent-mode:end -->";
 const usage = {
   input: 0,
   output: 0,
@@ -23,24 +23,24 @@ const usage = {
   cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
 };
 const cleanup: Array<() => void | Promise<void>> = [];
-const originalDepth = process.env.DIE_SUBAGENT_DEPTH,
-  originalType = process.env.DIE_SUBAGENT_TYPE;
+const originalDepth = process.env.BRUV_SUBAGENT_DEPTH,
+  originalType = process.env.BRUV_SUBAGENT_TYPE;
 beforeEach(() => {
-  process.env.DIE_SUBAGENT_DEPTH = "0";
-  delete process.env.DIE_SUBAGENT_TYPE;
+  process.env.BRUV_SUBAGENT_DEPTH = "0";
+  delete process.env.BRUV_SUBAGENT_TYPE;
 });
 afterEach(async () => {
   while (cleanup.length) await cleanup.pop()?.();
-  if (originalDepth === undefined) delete process.env.DIE_SUBAGENT_DEPTH;
-  else process.env.DIE_SUBAGENT_DEPTH = originalDepth;
-  if (originalType === undefined) delete process.env.DIE_SUBAGENT_TYPE;
-  else process.env.DIE_SUBAGENT_TYPE = originalType;
+  if (originalDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+  else process.env.BRUV_SUBAGENT_DEPTH = originalDepth;
+  if (originalType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+  else process.env.BRUV_SUBAGENT_TYPE = originalType;
 });
 
 async function sdk(
   options: { customPrompt?: string; projectMarker?: boolean; entries?: Array<[string, unknown]> } = {},
 ) {
-  const dir = await mkdtemp(join(tmpdir(), "die-main-mode-sdk-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-main-mode-sdk-"));
   cleanup.push(() => rm(dir, { recursive: true, force: true }));
   if (options.projectMarker) await writeFile(join(dir, "AGENTS.md"), "PROJECT_MARKER\n" + COLLISION);
   let manager = options.entries?.length
@@ -60,7 +60,7 @@ async function sdk(
     noSkills: true,
     noThemes: true,
     noPromptTemplates: true,
-    systemPrompt: options.customPrompt ?? dieSystemPrompt(),
+    systemPrompt: options.customPrompt ?? bruvSystemPrompt(),
     extensionFactories: [
       {
         name: "frame-before",
@@ -70,7 +70,7 @@ async function sdk(
             return { systemPrompt: event.systemPrompt + "\nFRAME_BEFORE\n" + COLLISION };
           }),
       },
-      { name: "die-tasks", factory: tasks },
+      { name: "bruv-tasks", factory: tasks },
       {
         name: "frame-after",
         factory: (pi) =>
@@ -171,7 +171,7 @@ test("real SDK preserves an explicit custom prompt containing marker examples ac
 });
 
 test("real SDK restores root instruction mode from durable session history", async () => {
-  const f = await sdk({ entries: [["die-instruction-mode", { mode: "normal" }]] });
+  const f = await sdk({ entries: [["bruv-instruction-mode", { mode: "normal" }]] });
   await f.session.prompt("resumed");
   expect(f.requests[0]).not.toContain("You build and fix code.");
   expect(f.requests[0]).not.toContain("You lead work.");
@@ -180,8 +180,8 @@ test("real SDK restores root instruction mode from durable session history", asy
 test("real SDK child identity and delegation depth ignore inherited root mode", async () => {
   const f = await sdk({
     entries: [
-      ["die-instruction-mode", { mode: "fast" }],
-      ["die-agent", { type: "normal", depth: 2 }],
+      ["bruv-instruction-mode", { mode: "fast" }],
+      ["bruv-agent", { type: "normal", depth: 2 }],
     ],
   });
   await f.session.prompt("child");
@@ -217,7 +217,7 @@ test("project marker examples and later hook framing survive mode replacement", 
 });
 
 test("/mode before the first request overrides a mode restored by a real resume", async () => {
-  const f = await sdk({ entries: [["die-instruction-mode", { mode: "normal" }]] });
+  const f = await sdk({ entries: [["bruv-instruction-mode", { mode: "normal" }]] });
   await f.session.prompt("/mode fast");
   expect(f.requests).toHaveLength(0);
   await f.session.prompt("first resumed request");

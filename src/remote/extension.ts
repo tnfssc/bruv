@@ -58,14 +58,14 @@ export function remoteInboxState(state: import("./client").RemoteState): import(
 /** Only human commands connect, answer questions, approve untracked files, or grant local authority. */
 export default function remoteExtension(pi: ExtensionAPI, client = new RemoteClient()): void {
   registerRemoteRuntime(pi);
-  if (process.env.DIE_REMOTE_RUNTIME_STATE) return;
+  if (process.env.BRUV_REMOTE_RUNTIME_STATE) return;
   const operations = createRemoteOperations(client),
     summary = (task: import("./client").RemoteTask) => ({
       ...summarizeRemoteTask(task),
       finalAssistantText: assistantText(task.events),
     });
   const publish = (result: unknown, kind?: string) =>
-    pi.sendMessage({ customType: "die-remote", content: renderHuman(result, kind), display: true });
+    pi.sendMessage({ customType: "bruv-remote", content: renderHuman(result, kind), display: true });
   let sessionFile: string | undefined;
   let questionContext: import("../questions/service").QuestionContext | undefined;
   let sessionGeneration = 0;
@@ -83,7 +83,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       if (task.jobSessionFile || !["accepted", "running"].includes(task.task?.state ?? "")) continue;
       if (activeInSession.has(task.taskId)) continue;
       activeInSession.add(task.taskId);
-      pi.appendEntry?.("die-remote-active", { taskId: task.taskId });
+      pi.appendEntry?.("bruv-remote-active", { taskId: task.taskId });
     }
   };
   const menuFingerprint = (state: import("./client").RemoteState) =>
@@ -129,7 +129,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       if (picking) {
         const changed = menuSnapshot !== undefined && menuSnapshot !== menuFingerprint(remoteInboxState(state));
         ui?.setStatus?.(
-          "die-remote",
+          "bruv-remote",
           "remote: menu snapshot " +
             (syncError ? "offline" : changed ? "updated" : "current") +
             " · Refresh from remote to reload",
@@ -141,16 +141,16 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       publishRemoteJobObservations(state, sessionFile);
       const status = remoteStatus(remoteInboxState(state), !!syncError);
       if (lastStatus !== status) {
-        ui?.setStatus?.("die-remote", status);
+        ui?.setStatus?.("bruv-remote", status);
         lastStatus = status;
       }
       for (const notice of attention.connection("owner", !!syncError, syncError, (key) =>
-        pi.appendEntry?.("die-remote-attention", { key }),
+        pi.appendEntry?.("bruv-remote-attention", { key }),
       ))
         publish(notice);
       for (const notice of attention.update(
         { ...state, tasks: Object.fromEntries(Object.entries(state.tasks).filter(([, task]) => !task.jobSessionFile)) },
-        (key) => pi.appendEntry?.("die-remote-attention", { key }),
+        (key) => pi.appendEntry?.("bruv-remote-attention", { key }),
         baseline ? (task) => !activeInSession.has(task.taskId) : undefined,
       ))
         publish(notice);
@@ -160,12 +160,12 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       // A global cache/status failure must not masquerade as a healthy connection.
       const status = "remote: offline (cached state unavailable)";
       if (!picking && !closed && lastStatus !== status) {
-        ui?.setStatus?.("die-remote", status);
+        ui?.setStatus?.("bruv-remote", status);
         lastStatus = status;
       }
       if (!picking && !closed)
         for (const notice of attention.connection("owner", true, error, (key) =>
-          pi.appendEntry?.("die-remote-attention", { key }),
+          pi.appendEntry?.("bruv-remote-attention", { key }),
         ))
           publish(notice);
     } finally {
@@ -195,11 +195,15 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     initialSnapshot = true;
     activeInSession.clear();
     for (const entry of (ctx.sessionManager?.getBranch?.() ?? []) as any[])
-      if (entry.type === "custom" && entry.customType === "die-remote-active" && typeof entry.data?.taskId === "string")
+      if (
+        entry.type === "custom" &&
+        entry.customType === "bruv-remote-active" &&
+        typeof entry.data?.taskId === "string"
+      )
         activeInSession.add(entry.data.taskId);
     attention.restore(
       (ctx.sessionManager?.getBranch?.() ?? [])
-        .filter((entry: any) => entry.type === "custom" && entry.customType === "die-remote-attention")
+        .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-remote-attention")
         .map((entry: any) => entry.data?.key)
         .filter((key: unknown): key is string => typeof key === "string"),
     );
@@ -212,7 +216,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     questionContext = undefined;
     if (timer) clearInterval(timer);
     timer = undefined;
-    ui?.setStatus?.("die-remote", undefined);
+    ui?.setStatus?.("bruv-remote", undefined);
   });
   const choose = async (id?: string) => {
     if (id) return id;
@@ -384,7 +388,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       while (true) {
         const state = remoteInboxState(await client.status());
         menuSnapshot = menuFingerprint(state);
-        ui?.setStatus?.("die-remote", "remote: menu snapshot · Refresh from remote to reload");
+        ui?.setStatus?.("bruv-remote", "remote: menu snapshot · Refresh from remote to reload");
         const choice = await pick(ctx, "Remote · inbox", inboxItems(state));
         if (!choice) return;
         if (choice.startsWith("offline")) continue;
@@ -396,7 +400,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         if (choice === "connect") {
           const host = (await ctx.ui.editor("SSH user@host or configured alias"))?.trim();
           if (!host) continue;
-          const path = await ctx.ui.editor("Remote die path (blank for default)");
+          const path = await ctx.ui.editor("Remote bruv path (blank for default)");
           if (path === undefined) continue;
           publish({ host, ...(await client.connect(host, path.trim() || undefined)) }, "connect");
           continue;
@@ -549,7 +553,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       picking = false;
       menuSnapshot = undefined;
       // The snapshot banner describes an open picker, not the normal chat view.
-      ui?.setStatus?.("die-remote", undefined);
+      ui?.setStatus?.("bruv-remote", undefined);
       lastStatus = undefined;
     }
   };
@@ -567,7 +571,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         switch (op) {
           case "connect":
             if (!rest[0] || rest.length > 2)
-              throw Error("Usage: /remote connect <user@host-or-configured-alias> [absolute-remote-die-path]");
+              throw Error("Usage: /remote connect <user@host-or-configured-alias> [absolute-remote-bruv-path]");
             result = {
               host: rest[0],
               ...(await client.connect(rest[0], rest[1])),

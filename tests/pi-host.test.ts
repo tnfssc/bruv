@@ -14,7 +14,7 @@ import {
 import { getModel } from "@earendil-works/pi-ai/compat";
 import { builtInExtensions } from "../node_modules/@earendil-works/pi-coding-agent/dist/extensions/index.js";
 import { adaptPiHostFile, piHostPatches, preparePiHost } from "../scripts/pi-host-adaptation";
-import { assertDiePiHost } from "../src/pi-host";
+import { assertBruvPiHost } from "../src/pi-host";
 import tasks from "../src/agent/extension";
 import { offlineTestEnv, run } from "./helpers";
 
@@ -23,7 +23,7 @@ const piRoot = join(root, "node_modules/@earendil-works/pi-coding-agent");
 const removed = ["mcp", "codemode", "tool-search"];
 const dirs: string[] = [];
 async function temp() {
-  const dir = await mkdtemp(join(tmpdir(), "die-pi-host-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-pi-host-"));
   dirs.push(dir);
   return dir;
 }
@@ -62,7 +62,7 @@ test("Pi host adaptation is exact, idempotent, and rejects dependency drift", as
     expect(adaptPiHostFile(patch, adapted)).toBe(adapted);
     expect(() => adaptPiHostFile(patch, original + "\n// drift")).toThrow("Unsupported Pi host file");
   }
-  assertDiePiHost();
+  assertBruvPiHost();
   expect(builtInExtensions.map((extension) => extension.name)).toEqual(["llama.cpp"]);
 });
 
@@ -73,7 +73,7 @@ test("runtime host gate rejects pristine and partly prepared dependencies", () =
     { mainPrepared: false, argsPrepared: true, builtInNames: ["llama.cpp"] },
     { mainPrepared: true, argsPrepared: true, builtInNames: ["llama.cpp", "mcp"] },
   ])
-    expect(() => assertDiePiHost(state)).toThrow("Pi host is not prepared for die");
+    expect(() => assertBruvPiHost(state)).toThrow("Pi host is not prepared for bruv");
 });
 
 test("adaptation validates all files and version before any writes", async () => {
@@ -141,7 +141,7 @@ test("trusted project overrides and explicit built-in selectors cannot restore r
 });
 
 for (const entry of ["source", "compiled"] as const) {
-  const command = entry === "source" ? [process.execPath, join(root, "src/cli.ts")] : [join(root, "dist/die")];
+  const command = entry === "source" ? [process.execPath, join(root, "src/cli.ts")] : [join(root, "dist/bruv")];
   test(entry + " CLI removes MCP command/help and rejects all explicit removed built-ins", async () => {
     const home = await temp();
     const env = { HOME: home, PATH: process.env.PATH, PI_OFFLINE: "1", HERDR_ENV: "0" };
@@ -161,7 +161,7 @@ for (const entry of ["source", "compiled"] as const) {
     ]) {
       const result = await run([...command, ...args], { cwd: home, env });
       expect(result.code).toBe(1);
-      expect(result.stderr).toContain("MCP is not a built-in die command");
+      expect(result.stderr).toContain("MCP is not a built-in bruv command");
     }
     for (const name of removed) {
       const result = await run([...command, "--offline", "-p", "--no-session", "-e", "builtin:" + name, "fixture"], {
@@ -175,7 +175,7 @@ for (const entry of ["source", "compiled"] as const) {
 
   test(entry + " CLI starts no configured MCP server and preserves user extension registration", async () => {
     const home = await temp();
-    const agentDir = join(home, ".die/agent");
+    const agentDir = join(home, ".bruv/agent");
     await mkdir(agentDir, { recursive: true });
     const marker = join(home, "mcp-started");
     const proof = join(home, "proof.json");
@@ -191,7 +191,7 @@ for (const entry of ["source", "compiled"] as const) {
     });
     await writeFile(join(agentDir, "mcp.json"), config);
     const projectConfig = config.replace('"sentinel":', '"project_sentinel":');
-    await writeFile(join(home, ".die/mcp.json"), projectConfig);
+    await writeFile(join(home, ".bruv/mcp.json"), projectConfig);
     await writeFile(
       join(agentDir, "auth.json"),
       JSON.stringify({ openai: { type: "api_key", key: "offline-fixture" } }),
@@ -254,7 +254,7 @@ for (const entry of ["source", "compiled"] as const) {
       await Bun.sleep(250);
       expect(await Bun.file(marker).exists()).toBe(false);
       expect(await readFile(join(agentDir, "mcp.json"), "utf8")).toBe(config);
-      expect(await readFile(join(home, ".die/mcp.json"), "utf8")).toBe(projectConfig);
+      expect(await readFile(join(home, ".bruv/mcp.json"), "utf8")).toBe(projectConfig);
     } finally {
       proc.kill();
       await proc.exited;
@@ -263,7 +263,7 @@ for (const entry of ["source", "compiled"] as const) {
   }, 15_000);
 }
 
-test("die execute stays active and user-authored codemode tools are not banned", async () => {
+test("bruv execute stays active and user-authored codemode tools are not banned", async () => {
   const dir = await temp();
   const runtime = await ModelRuntime.create({
     authPath: join(dir, "auth.json"),
@@ -280,7 +280,7 @@ test("die execute stays active and user-authored codemode tools are not banned",
     noPromptTemplates: true,
     extensionFactories: [
       ...builtInExtensions,
-      { name: "die-tools", factory: tasks },
+      { name: "bruv-tools", factory: tasks },
       {
         name: "user-code",
         factory: (pi) => {

@@ -8,7 +8,7 @@ import type { T3McpClient } from "../../src/t3/tasks/mcp-client";
 
 const directories: string[] = [];
 function fixture() {
-  const dir = mkdtempSync(join(tmpdir(), "die-t3-notify-"));
+  const dir = mkdtempSync(join(tmpdir(), "bruv-t3-notify-"));
   directories.push(dir);
   const session = join(dir, "session.jsonl");
   writeFileSync(session, "");

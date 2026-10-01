@@ -2,13 +2,13 @@
 /**
  * Live acceptance for structured worktree subagents.
  *
- * This deliberately drives a relocated packaged Die through both the real T3
+ * This deliberately drives a relocated packaged Bruv through both the real T3
  * PiAdapter/native delegation path and the local JobService path.  The only
  * model is a private deterministic OpenAI-compatible loopback server.
  *
  * Required (provided by the release orchestrator):
  *   T3_WORKTREE_ACCEPT=1
- *   T3_WORKTREE_DIE_BINARY=/exact/new/dist/path
+ *   T3_WORKTREE_BRUV_BINARY=/exact/new/dist/path
  *   T3_WORKTREE_EXPECT_SHA256=<sha256>
  * Optional: T3_V2_CANDIDATE=/exact/canonical/t3/checkout (defaults to the pinned checkout)
  *   T3_V2_EXPECT_CHECKOUT_HEAD=<git oid>
@@ -37,9 +37,9 @@ import { join, resolve } from "node:path";
 import sourcePin from "../upstream/source.json";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
-const DIE = resolve(process.env.T3_WORKTREE_DIE_BINARY || join(ROOT, "dist/die-worktree-production"));
+const BRUV = resolve(process.env.T3_WORKTREE_BRUV_BINARY || join(ROOT, "dist/bruv-worktree-production"));
 const EXPECT_SHA = process.env.T3_WORKTREE_EXPECT_SHA256 || "";
-const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE || join(ROOT, ".cache/die-t3code-" + sourcePin.revision));
+const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE || join(ROOT, ".cache/bruv-t3code-" + sourcePin.revision));
 const EXPECT_HEAD = process.env.T3_V2_EXPECT_CHECKOUT_HEAD || "";
 const KEEP = process.env.T3_WORKTREE_KEEP_TEMP === "1";
 const PROOF = resolve(process.env.T3_WORKTREE_PROOF || join(ROOT, "artifacts/worktree-acceptance/proof.json"));
@@ -253,23 +253,23 @@ async function worktrees(repo: string) {
 check(process.env.T3_WORKTREE_ACCEPT === "1", "set T3_WORKTREE_ACCEPT=1 after selecting the coordinated candidate");
 check(EXPECT_SHA, "T3_WORKTREE_EXPECT_SHA256 is required");
 check(EXPECT_HEAD, "T3_V2_EXPECT_CHECKOUT_HEAD is required");
-await Promise.all([access(DIE), access(join(CANDIDATE, ".git"))]);
-const [dieReal, candidateReal, actualSha, actualHead] = await Promise.all([
-  realpath(DIE),
+await Promise.all([access(BRUV), access(join(CANDIDATE, ".git"))]);
+const [bruvReal, candidateReal, actualSha, actualHead] = await Promise.all([
+  realpath(BRUV),
   realpath(CANDIDATE),
-  sha256(DIE),
+  sha256(BRUV),
   command(["git", "rev-parse", "HEAD"], CANDIDATE),
 ]);
 check(actualSha === EXPECT_SHA, `binary hash mismatch: expected ${EXPECT_SHA}, got ${actualSha}`);
 check(actualHead === EXPECT_HEAD, `candidate head mismatch: expected ${EXPECT_HEAD}, got ${actualHead}`);
 
-const temp = await mkdtemp(join(tmpdir(), "die-worktree-acceptance-"));
+const temp = await mkdtemp(join(tmpdir(), "bruv-worktree-acceptance-"));
 await chmod(temp, 0o700);
 const home = join(temp, "home"),
-  baseDir = join(home, ".die/web"),
+  baseDir = join(home, ".bruv/web"),
   agentDir = join(temp, "agent");
 const runtimeBin = join(temp, "bin"),
-  runtimeDie = join(runtimeBin, "die"),
+  runtimeBruv = join(runtimeBin, "bruv"),
   repo = join(temp, "repo");
 const audit = join(temp, "setup-audit"),
   localSessions = join(temp, "local-sessions"),
@@ -284,15 +284,15 @@ await Promise.all([
   mkdir(runtimeTmp),
   mkdir(resolve(PROOF, ".."), { recursive: true }),
 ]);
-await copyFile(dieReal, runtimeDie);
-await chmod(runtimeDie, 0o700);
+await copyFile(bruvReal, runtimeBruv);
+await chmod(runtimeBruv, 0o700);
 for (const name of ["sh", "bash", "git", "sleep", "printf", "env", "uname", "mkdir", "cat", "pwd"]) {
   const path = Bun.which(name);
   if (path) await symlink(path, join(runtimeBin, name));
 }
 for (const name of ["node", "bun", "npm", "pnpm", "npx"])
   check(!Bun.which(name, { PATH: runtimeBin }), "external JS runtime leaked: " + name);
-check((await sha256(runtimeDie)) === actualSha, "relocated binary digest changed");
+check((await sha256(runtimeBruv)) === actualSha, "relocated binary digest changed");
 await command(["git", "init", "--quiet", "--initial-branch=main"], repo);
 await command(["git", "config", "user.email", "acceptance@example.invalid"], repo);
 await command(["git", "config", "user.name", "Worktree Acceptance"], repo);
@@ -499,9 +499,9 @@ await writeFile(
           enabled: true,
           environment: [
             { name: "PI_CODING_AGENT_DIR", value: agentDir, sensitive: false },
-            { name: "DIE_CODING_AGENT_DIR", value: agentDir, sensitive: false },
+            { name: "BRUV_CODING_AGENT_DIR", value: agentDir, sensitive: false },
           ],
-          config: { binaryPath: runtimeDie, customModels: ["deterministic/worktree-deterministic"] },
+          config: { binaryPath: runtimeBruv, customModels: ["deterministic/worktree-deterministic"] },
         },
       },
       defaultProjectScripts: [NATIVE_SETUP_SCRIPT],
@@ -521,7 +521,7 @@ const evidence: any = {
   passed: false,
   startedAt: new Date().toISOString(),
   temp,
-  executable: dieReal,
+  executable: bruvReal,
   sha256: actualSha,
   candidate: candidateReal,
   candidateHead: actualHead,
@@ -535,7 +535,7 @@ try {
   const origin = `http://127.0.0.1:${port}`;
   const launchBackend = (bootstrap = false) => {
     const child = spawn(
-      runtimeDie,
+      runtimeBruv,
       [
         "web",
         "--no-browser",
@@ -559,8 +559,8 @@ try {
           XDG_CACHE_HOME: join(temp, "xdg-cache"),
           XDG_DATA_HOME: join(temp, "xdg-data"),
           PI_CODING_AGENT_DIR: agentDir,
-          DIE_CODING_AGENT_DIR: agentDir,
-          DIE_WEB_DIE_BINARY: runtimeDie,
+          BRUV_CODING_AGENT_DIR: agentDir,
+          BRUV_WEB_BRUV_BINARY: runtimeBruv,
           WORKTREE_ACCEPTANCE_AUDIT: audit,
           NO_PROXY: "127.0.0.1,localhost",
           no_proxy: "127.0.0.1,localhost",
@@ -701,11 +701,11 @@ try {
   backend = undefined;
   console.log("worktree fixture: backend stopped before CLI batch");
 
-  // A second real Die process exercises local JobService; it has no T3 URL and
+  // A second real Bruv process exercises local JobService; it has no T3 URL and
   // therefore cannot accidentally route local preparation through the backend.
   local = Bun.spawn(
     [
-      runtimeDie,
+      runtimeBruv,
       "--approve",
       "--mode",
       "json",
@@ -730,7 +730,7 @@ try {
         XDG_CACHE_HOME: join(temp, "xdg-cache-local"),
         XDG_DATA_HOME: join(temp, "xdg-data-local"),
         PI_CODING_AGENT_DIR: agentDir,
-        DIE_CODING_AGENT_DIR: agentDir,
+        BRUV_CODING_AGENT_DIR: agentDir,
         WORKTREE_ACCEPTANCE_AUDIT: audit,
         NO_PROXY: "127.0.0.1,localhost",
         no_proxy: "127.0.0.1,localhost",
@@ -745,7 +745,7 @@ try {
     localOut = new Response(localStdout).text();
   const [out, err, code] = await Promise.all([localOut, localErr, local.exited]);
   localOutput = out + "\n" + err;
-  check(code === 0, "local Die failed (" + code + "): " + redact(localOutput));
+  check(code === 0, "local Bruv failed (" + code + "): " + redact(localOutput));
   check(localOutput.includes(M.localDone), "local parent did not settle deterministically");
 
   const listed = await worktrees(repo),
@@ -846,7 +846,7 @@ try {
     localSessions: sessions.length,
     lifecycle,
     assertions: [
-      "actual backend + PiAdapter + relocated Die",
+      "actual backend + PiAdapter + relocated Bruv",
       "native and local distinct worktrees from one pinned base",
       "CLI batch runs with native backend stopped and no T3 bridge environment",
       "real private server settings setup (never t3.json auto-import)",

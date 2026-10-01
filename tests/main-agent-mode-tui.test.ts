@@ -5,8 +5,8 @@ import { tmpdir } from "node:os";
 import { run } from "./helpers";
 
 test("real TUI /mode reports and switches the root instruction mode", async () => {
-  const home = await mkdtemp(join(tmpdir(), "die-mode-pty-"));
-  const socket = "die-mode-" + process.pid + "-" + Date.now();
+  const home = await mkdtemp(join(tmpdir(), "bruv-mode-pty-"));
+  const socket = "bruv-mode-" + process.pid + "-" + Date.now();
   const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
   const quote = (value: string) => "'" + value.replaceAll("'", "'\''") + "'";
   async function frameContaining(text: string) {
@@ -24,12 +24,12 @@ test("real TUI /mode reports and switches the root instruction mode", async () =
     await tmux("send-keys", "-t", "mode", "Enter");
   }
   try {
-    const binary = resolve(import.meta.dir, "../dist/die");
+    const binary = resolve(import.meta.dir, "../dist/bruv");
     const launch = [
       "env",
       "HOME=" + home,
-      "DIE_SUBAGENT_DEPTH=0",
-      "DIE_CODING_AGENT_DIR=" + join(home, ".die", "agent"),
+      "BRUV_SUBAGENT_DEPTH=0",
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       "OPENAI_API_KEY=offline-test-placeholder",
       binary,
       "--offline",

@@ -30,8 +30,8 @@ import sourcePin from "../upstream/source.json";
 type OwnedProcess = { pid: number; startTime: string };
 
 const ROOT = resolve(import.meta.dirname, "../../..");
-const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE ?? join(ROOT, ".cache/die-t3code-" + sourcePin.revision));
-const DIE = resolve(process.env.T3_V2_DIE_BINARY ?? "");
+const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE ?? join(ROOT, ".cache/bruv-t3code-" + sourcePin.revision));
+const BRUV = resolve(process.env.T3_V2_BRUV_BINARY ?? "");
 const EXPECT_HEAD = process.env.T3_V2_EXPECT_CHECKOUT_HEAD ?? "";
 const EXPECT_BINARY_SHA256 = process.env.T3_V2_EXPECT_BINARY_SHA256 ?? "";
 const ARTIFACTS = resolve(process.env.T3_V2_BROWSER_ARTIFACTS ?? join(ROOT, "artifacts/t3-v2-production-browser"));
@@ -248,15 +248,15 @@ check(
   process.env.T3_V2_ACCEPT_CANDIDATE === "1",
   "set T3_V2_ACCEPT_CANDIDATE=1 only after web/root workers declare a coherent candidate",
 );
-check(DIE && DIE !== ROOT, "set T3_V2_DIE_BINARY to the exact candidate executable");
+check(BRUV && BRUV !== ROOT, "set T3_V2_BRUV_BINARY to the exact candidate executable");
 check(EXPECT_HEAD, "set T3_V2_EXPECT_CHECKOUT_HEAD to the reviewed candidate commit");
 check(EXPECT_BINARY_SHA256, "set T3_V2_EXPECT_BINARY_SHA256 to the reviewed executable digest");
-await Promise.all([access(join(CANDIDATE, ".git")), access(DIE)]);
-const [candidateReal, dieReal, checkoutHead, binaryHash, candidateWorktreeSha256] = await Promise.all([
+await Promise.all([access(join(CANDIDATE, ".git")), access(BRUV)]);
+const [candidateReal, bruvReal, checkoutHead, binaryHash, candidateWorktreeSha256] = await Promise.all([
   realpath(CANDIDATE),
-  realpath(DIE),
+  realpath(BRUV),
   command(["git", "rev-parse", "HEAD"], CANDIDATE),
-  sha256(DIE),
+  sha256(BRUV),
   worktreeSha256(),
 ]);
 check(checkoutHead === EXPECT_HEAD, `candidate HEAD mismatch: expected ${EXPECT_HEAD}, got ${checkoutHead}`);
@@ -271,10 +271,10 @@ check(bridgeHits, "candidate has no T3_MCP_URL bridge integration; migration is 
 const [playwrightRoot, chromiumPath] = await Promise.all([findPlaywrightRoot(), findChromium()]);
 await access(chromiumPath);
 
-const temp = await mkdtemp(join(tmpdir(), "die-t3-v2-production-browser-"));
+const temp = await mkdtemp(join(tmpdir(), "bruv-t3-v2-production-browser-"));
 await chmod(temp, 0o700);
 const home = join(temp, "home");
-const baseDir = join(home, ".die/web");
+const baseDir = join(home, ".bruv/web");
 const agentDir = join(temp, "agent");
 await Promise.all([
   mkdir(join(baseDir, "userdata"), { recursive: true }),
@@ -286,9 +286,9 @@ await Promise.all([
 const runtimeBin = join(temp, "runtime-bin");
 const workspace = join(temp, "workspace");
 await Promise.all([mkdir(runtimeBin), mkdir(workspace)]);
-const runtimeDie = join(runtimeBin, "die");
-await copyFile(dieReal, runtimeDie);
-await chmod(runtimeDie, 0o700);
+const runtimeBruv = join(runtimeBin, "bruv");
+await copyFile(bruvReal, runtimeBruv);
+await chmod(runtimeBruv, 0o700);
 for (const tool of ["sh", "bash", "fish", "git", "uname", "sleep", "mkdir", "printenv", "env", "ps", "cat"]) {
   const path = Bun.which(tool);
   if (path) await symlink(path, join(runtimeBin, tool));
@@ -296,7 +296,7 @@ for (const tool of ["sh", "bash", "fish", "git", "uname", "sleep", "mkdir", "pri
 for (const tool of ["node", "bun", "npm", "pnpm", "npx"])
   check(Bun.which(tool, { PATH: runtimeBin }) === null, "external runtime leaked into packaged PATH: " + tool);
 await command(["git", "init", "--quiet", workspace]);
-check((await sha256(runtimeDie)) === binaryHash, "relocated executable digest changed");
+check((await sha256(runtimeBruv)) === binaryHash, "relocated executable digest changed");
 const requestKinds: string[] = [];
 const modelTurnSummaries: string[] = [];
 const modelServer = createServer(async (request, response) => {
@@ -443,7 +443,7 @@ await writeFile(
         pi: {
           driver: "pi",
           enabled: true,
-          config: { binaryPath: runtimeDie, customModels: ["deterministic/t3-v2-deterministic"] },
+          config: { binaryPath: runtimeBruv, customModels: ["deterministic/t3-v2-deterministic"] },
         },
       },
     },
@@ -464,7 +464,7 @@ let observedBrowserProcesses: OwnedProcess[] = [];
 let observedBackendProcesses: OwnedProcess[] = [];
 try {
   const port = await reservePort();
-  backend = spawn(runtimeDie, ["web", "--no-browser", "--port", String(port), "--auto-bootstrap-project-from-cwd"], {
+  backend = spawn(runtimeBruv, ["web", "--no-browser", "--port", String(port), "--auto-bootstrap-project-from-cwd"], {
     cwd: workspace,
     detached: true,
     stdio: ["ignore", "pipe", "pipe"],
@@ -474,12 +474,12 @@ try {
       HOME: home,
       TMPDIR: temp,
       PI_CODING_AGENT_DIR: agentDir,
-      DIE_CODING_AGENT_DIR: agentDir,
+      BRUV_CODING_AGENT_DIR: agentDir,
       HERDR_ENV: "0",
-      DIE_SUBAGENT_TYPE: "",
-      DIE_SUBAGENT_DEPTH: "0",
-      DIE_WEB_TASK_EVENTS: "1",
-      DIE_WEB_DIE_BINARY: runtimeDie,
+      BRUV_SUBAGENT_TYPE: "",
+      BRUV_SUBAGENT_DEPTH: "0",
+      BRUV_WEB_TASK_EVENTS: "1",
+      BRUV_WEB_BRUV_BINARY: runtimeBruv,
     },
   });
   const consume = async (stream: NodeJS.ReadableStream) => {
@@ -639,10 +639,10 @@ try {
   check(observedBackendProcesses.length > 0, "candidate backend exited before proof capture");
   proof = {
     passed: true,
-    executable: dieReal,
+    executable: bruvReal,
     executableSha256: binaryHash,
     packagedRuntime: {
-      executable: runtimeDie,
+      executable: runtimeBruv,
       relocatedOnlyExecutable: true,
       externalJavascriptRuntimesOnPath: false,
       workspace,
@@ -681,7 +681,7 @@ try {
     JSON.stringify(
       {
         passed: false,
-        executable: dieReal,
+        executable: bruvReal,
         executableSha256: binaryHash,
         candidateCheckout: candidateReal,
         candidateHead: checkoutHead,

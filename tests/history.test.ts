@@ -43,7 +43,7 @@ function toolResult(id: string, text: string) {
 }
 
 async function persisted() {
-  const dir = await mkdtemp(join(tmpdir(), "die-history-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-history-"));
   dirs.push(dir);
   return SessionManager.create(dir, dir);
 }
@@ -253,7 +253,7 @@ describe("original history", () => {
     expect(await readFile(file)).toEqual(before);
     expect((await stat(file)).mtimeMs).toBe(beforeStat.mtimeMs);
 
-    const dir = await mkdtemp(join(tmpdir(), "die-history-readonly-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-history-readonly-"));
     dirs.push(dir);
     const missing = join(dir, "new", "missing.jsonl");
     await expect(
@@ -283,7 +283,7 @@ describe("original history", () => {
 
   test("rejects a FIFO promptly without opening it for blocking reads", async () => {
     const current = SessionManager.inMemory("/project");
-    const dir = await mkdtemp(join(tmpdir(), "die-history-fifo-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-history-fifo-"));
     dirs.push(dir);
     const fifo = join(dir, "session.fifo");
     const made = Bun.spawnSync(["mkfifo", fifo]);

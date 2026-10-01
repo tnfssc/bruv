@@ -15,10 +15,10 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { registerExecuteTool } from "../src/typescript/extension";
 import asynchronousTasksExtension from "../src/agent/extension";
-import { dieSystemPrompt, executeGuidance, executeReference, workingValues } from "../src/prompts";
+import { bruvSystemPrompt, executeGuidance, executeReference, workingValues } from "../src/prompts";
 
 test("Pi session assembles the registered execute guidance into its system prompt", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-prompt-delivery-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-prompt-delivery-"));
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   try {
     let tool!: ToolDefinition;
@@ -58,7 +58,7 @@ test("Pi session assembles the registered execute guidance into its system promp
 });
 
 test("production tasks extension guidance reaches the actual stream context", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-prompt-stream-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-prompt-stream-"));
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   try {
     const modelRuntime = await ModelRuntime.create({
@@ -75,8 +75,8 @@ test("production tasks extension guidance reaches the actual stream context", as
       noSkills: true,
       noPromptTemplates: true,
       noThemes: true,
-      systemPrompt: dieSystemPrompt(),
-      extensionFactories: [{ name: "die-tasks", factory: asynchronousTasksExtension }],
+      systemPrompt: bruvSystemPrompt(),
+      extensionFactories: [{ name: "bruv-tasks", factory: asynchronousTasksExtension }],
       appendSystemPromptOverride: () => ["KEEP_APPEND_GUIDANCE"],
       agentsFilesOverride: () => ({
         agentsFiles: [{ path: join(dir, "AGENTS.md"), content: "KEEP_PROJECT_GUIDANCE" }],
@@ -126,7 +126,7 @@ test("production tasks extension guidance reaches the actual stream context", as
     for (const value of workingValues) expect(prompt).toContain(value);
     for (const reference of executeReference) expect(prompt).toContain(reference);
     expect(prompt).toContain("await handoff(message)");
-    expect(prompt).toContain('You help user build software. You work inside a coding tool named "die".');
+    expect(prompt).toContain('You help user build software. You work inside a coding tool named "bruv".');
     expect(prompt).not.toContain("Pi documentation (");
     expect(prompt).not.toContain("Main documentation:");
     expect(prompt).not.toContain("Always read pi .md files");

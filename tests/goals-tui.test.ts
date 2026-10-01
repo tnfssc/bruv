@@ -10,8 +10,8 @@ const hasTmux = (await run(["sh", "-c", "command -v tmux >/dev/null"])).code ===
 test.skipIf(!hasTmux)(
   "real TUI accepts /goal before the first ordinary turn",
   async () => {
-    const home = await mkdtemp(join(tmpdir(), "die-goal-tui-"));
-    const socket = `die-goal-${process.pid}-${Date.now()}`;
+    const home = await mkdtemp(join(tmpdir(), "bruv-goal-tui-"));
+    const socket = `bruv-goal-${process.pid}-${Date.now()}`;
     const name = "goal";
     const seed = SessionManager.create(home, join(home, "sessions"));
     const sessionFile = seed.getSessionFile()!;
@@ -25,7 +25,7 @@ test.skipIf(!hasTmux)(
         "env",
         `HOME=${home}`,
         "OPENAI_API_KEY=offline-test-placeholder",
-        resolve(import.meta.dir, "../dist/die"),
+        resolve(import.meta.dir, "../dist/bruv"),
         "--offline",
         "--no-approve",
         "--session",
@@ -73,7 +73,7 @@ test.skipIf(!hasTmux)(
         .trim()
         .split("\n")
         .map((line) => JSON.parse(line));
-      const goal = entries.find((entry) => entry.customType === "die-goal");
+      const goal = entries.find((entry) => entry.customType === "bruv-goal");
       expect(goal.data.goal).toMatchObject({
         objective: "TUI objective",
         status: "active",
@@ -89,11 +89,11 @@ test.skipIf(!hasTmux)(
           .trim()
           .split("\n")
           .map((line) => JSON.parse(line));
-        if (pausedEntries.some((entry) => entry.customType === "die-goal" && entry.data.goal?.status === "paused"))
+        if (pausedEntries.some((entry) => entry.customType === "bruv-goal" && entry.data.goal?.status === "paused"))
           break;
         await Bun.sleep(50);
       }
-      expect(pausedEntries.filter((entry) => entry.customType === "die-goal").at(-1)?.data.goal).toMatchObject({
+      expect(pausedEntries.filter((entry) => entry.customType === "bruv-goal").at(-1)?.data.goal).toMatchObject({
         status: "paused",
         pauseReason: "Awaiting review",
       });

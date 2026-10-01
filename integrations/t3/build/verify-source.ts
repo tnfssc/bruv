@@ -8,7 +8,7 @@ import { join } from "node:path";
  * alone. Do not let other tracked or untracked source enter the build.
  */
 export async function verifyWebSource(source: string, patch: string): Promise<void> {
-  const temporary = await mkdtemp(join(tmpdir(), "die-web-source-"));
+  const temporary = await mkdtemp(join(tmpdir(), "bruv-web-source-"));
   const env = { ...process.env, GIT_INDEX_FILE: join(temporary, "index") };
   function git(args: string[]): string {
     return execFileSync("git", ["-C", source, ...args], {
@@ -23,7 +23,7 @@ export async function verifyWebSource(source: string, patch: string): Promise<vo
     try {
       git(["diff", "--no-ext-diff", "--exit-code"]);
     } catch {
-      throw new Error("T3 checkout differs from HEAD + integrations/t3/upstream/die.patch; use a fresh checkout.");
+      throw new Error("T3 checkout differs from HEAD + integrations/t3/upstream/bruv.patch; use a fresh checkout.");
     }
     if (git(["ls-files", "--others", "--exclude-standard", "-z"]).length > 0) {
       throw new Error("T3 checkout contains untracked source; use a fresh checkout.");

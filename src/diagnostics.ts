@@ -1,5 +1,5 @@
 /** Keep shared operational diagnostics within a strict privacy boundary. */
-export const DIAGNOSTIC_ENTRY_TYPE = "die-diagnostic";
+export const DIAGNOSTIC_ENTRY_TYPE = "bruv-diagnostic";
 
 export const DIAGNOSTIC_CODES = [
   "lifecycle_lock_contended",

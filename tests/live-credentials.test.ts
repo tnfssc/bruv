@@ -24,7 +24,7 @@ describe("Live credentials", () => {
     }
   });
   test("requires private regular file and never leaks file contents", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "die-live-key-test-"));
+    const dir = await mkdtemp(join(tmpdir(), "bruv-live-key-test-"));
     const path = join(dir, "live.env");
     try {
       await writeFile(path, "GEMINI_API_KEY=" + fake, { mode: 0o600 });
@@ -47,7 +47,7 @@ describe("Live credentials", () => {
 });
 
 test("credential file reads reject oversized and non-regular sources with opaque errors", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-live-key-bounds-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-live-key-bounds-"));
   try {
     const path = join(dir, "large");
     await writeFile(path, "GEMINI_API_KEY=" + fake + "\n#" + "x".repeat(16_384), { mode: 0o600 });

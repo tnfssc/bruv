@@ -402,7 +402,7 @@ describe("extension lifecycle", () => {
     expect(await handlers.get("session_before_compact")!(event(), ctx)).toEqual({ cancel: true });
     expect(notices[0]?.[0]).toContain("avoid duplicate inference");
     expect(attempts).toEqual([
-      { type: "die-compaction-attempt", data: { strategy: "cache-affine-plaintext", stopReason: "length", usage } },
+      { type: "bruv-compaction-attempt", data: { strategy: "cache-affine-plaintext", stopReason: "length", usage } },
     ]);
     throwAppend = true;
     const callsBeforeFailure = appendCalls;

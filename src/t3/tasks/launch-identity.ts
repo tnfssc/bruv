@@ -132,7 +132,7 @@ export class T3LaunchIdentityLedger {
       // The sandbox ACK retires local delivery bookkeeping, not the durable
       // execute intent. A crash after that ACK but before the outer tool result
       // commits must still replay the same native child.
-      const clientRequestId = "die-v1:" + T3LaunchIdentityLedger.fingerprint([fingerprint]);
+      const clientRequestId = "bruv-v1:" + T3LaunchIdentityLedger.fingerprint([fingerprint]);
       ledger.pending.push({ fingerprint, clientRequestId });
       await this.#write(ledger); // Must complete before any launch I/O.
       return clientRequestId;

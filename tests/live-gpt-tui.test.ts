@@ -7,8 +7,8 @@ import { waitForLiveTuiStartup } from "./live-tui-startup";
 
 // Actual Pi interactive renderer in a tmux PTY, with a fake GPT stream and fake audio.
 test("GPT streaming keeps passive JSON in history but renders only the bounded Live transcript widget", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-gpt-tui-"));
-  const socket = "die-gpt-tui-" + process.pid + "-" + Date.now();
+  const dir = await mkdtemp(join(tmpdir(), "bruv-gpt-tui-"));
+  const socket = "bruv-gpt-tui-" + process.pid + "-" + Date.now();
   const root = resolve(import.meta.dir, "..");
   const tmux = (...args: string[]) => run(["tmux", "-L", socket, "-f", join(root, "scripts/tmux.conf"), ...args]);
   const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
@@ -23,16 +23,16 @@ test("GPT streaming keeps passive JSON in history but renders only the bounded L
   };
   try {
     const { version } = await Bun.file(join(root, "package.json")).json();
-    const themeDir = join(dir, ".die/runtime", version, "dist/modes/interactive");
+    const themeDir = join(dir, ".bruv/runtime", version, "dist/modes/interactive");
     await mkdir(themeDir, { recursive: true });
     // Source CLI materializes theme assets at runtimeRoot/theme, while the SDK source
     // resolves dist/modes/interactive/theme. This link is confined to the test HOME.
-    await symlink(join(dir, ".die/runtime", version, "theme"), join(themeDir, "theme"));
+    await symlink(join(dir, ".bruv/runtime", version, "theme"), join(themeDir, "theme"));
     const launch = [
       "env",
       "HOME=" + dir,
       "PI_OFFLINE=1",
-      "DIE_SUBAGENT_DEPTH=0",
+      "BRUV_SUBAGENT_DEPTH=0",
       "OPENAI_API_KEY=offline-placeholder",
       process.execPath,
       join(root, "src/cli.ts"),

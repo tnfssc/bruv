@@ -1,5 +1,5 @@
 // Persisted discriminator stays stable for existing session branches.
-export const VOICE_ENTRY = "die-live-transcript";
+export const VOICE_ENTRY = "bruv-live-transcript";
 export type TranscriptEntry = {
   speaker: "You" | "Voice";
   text: string;
