@@ -1,4 +1,13 @@
 import { actionLabel } from "../ui/action-label";
+import {
+  formatTaskRow,
+  taskRowFromLaunch,
+  taskRowKey,
+  taskRowsFromDetails,
+  taskSummaryRowsFromDetails,
+  upsertTaskRow,
+  type TaskRow,
+} from "../ui/task-rows";
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import type { Theme } from "@earendil-works/pi-coding-agent";
@@ -11,6 +20,7 @@ import {
   type MarkdownTheme,
   ProcessTerminal,
   stripTerminalSequences,
+  truncateToWidth,
   Text,
   TuiMainScreen,
 } from "@earendil-works/pi-tui";
@@ -267,12 +277,37 @@ function messageText(message: any, details = false): string {
     .filter(Boolean)
     .join("\n");
 }
+// Status comes from tool protocol fields; only the error caption uses actual tool output.
+function conciseActionError(details: any, full: string): string {
+  if (details?.cancelled) return "cancelled";
+  if (details?.timedOut) return "timed out";
+  // This is execute's own formatter, not arbitrary model prose. Its stdout is not an error.
+  const fallback = /^Execution /.test(full) ? (full.split("\nstderr:\n")[1] ?? "") : full;
+  const evidence =
+    typeof details?.imageError === "string"
+      ? details.imageError
+      : typeof details?.stderr === "string" && details.stderr.trim()
+        ? details.stderr
+        : fallback;
+  const lines = safe(evidence)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !/^(?:Execution (?:completed|failed)|stdout:|stderr:|at\s|\d+\s*\||[\s^|]+$)/.test(line));
+  return (
+    lines.find((line) => /^(?:\w*Error|error):/.test(line)) ??
+    lines[0] ??
+    (typeof details?.exitCode === "number" ? "exit " + details.exitCode : "failed")
+  );
+}
+const actionFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
 /** Bounded conversation projection, independent of provider settings. Server snapshot wins. */
 export class RootTranscript {
   messages: any[] = [];
   streaming?: any;
   progress = "";
   record?: RootRecord;
+  private taskSnapshots = new Map<string, TaskRow>();
   details = false;
   apply(observation: RootObservation) {
     this.record = observation.record;
@@ -282,6 +317,14 @@ export class RootTranscript {
   }
   event(event: any) {
     if (!event || typeof event !== "object") return;
+    // These are the actual server-owned jobs.list snapshots, not model task prose.
+    const facets = event.type === "root_ready" ? event.facets : event.type === "root_facets" ? event : undefined;
+    for (const row of taskRowsFromDetails(facets)) upsertTaskRow(this.taskSnapshots, row);
+    if (Array.isArray(facets?.jobs))
+      for (const job of facets.jobs) {
+        const row = taskRowFromLaunch(job);
+        if (row) upsertTaskRow(this.taskSnapshots, row);
+      }
     if (event.type === "message_start" || event.type === "message_update") this.streaming = event.message;
     if (event.type === "message_end") {
       this.messages.push(event.message);
@@ -290,16 +333,43 @@ export class RootTranscript {
     }
     // Routine lifecycle events are not conversation content. /ps retains task state.
     if (event.type.startsWith("tool_execution_") || event.type === "agent_start" || event.type === "agent_end")
-      this.progress = event.type === "tool_execution_end" && event.isError ? "Action failed" : "";
-    if ((event.type === "task" || event.type === "job" || event.type === "question") && event.display !== false)
-      this.progress = safe(event.title ?? event.text ?? "");
+      this.progress = "";
+    if (event.type === "question" && event.display !== false) this.progress = safe(event.title ?? event.text ?? "");
   }
   toggleDetails() {
     this.details = !this.details;
   }
-  render(width: number): string[] {
+  get pendingAction(): boolean {
+    const visible = [...this.messages, ...(this.streaming ? [this.streaming] : [])].filter((m) => m?.display !== false);
+    const settled = new Set(visible.filter((m) => m?.role === "toolResult").map((m) => m.toolCallId));
+    return visible.some(
+      (m) =>
+        m?.role === "assistant" &&
+        Array.isArray(m.content) &&
+        m.content.some((c: any) => c.type === "toolCall" && (!c.id || !settled.has(c.id))),
+    );
+  }
+  render(width: number, now = Date.now()): string[] {
     const lines: string[] = [];
     const messages = [...this.messages, ...(this.streaming ? [this.streaming] : [])];
+    const taskRows = new Map<string, TaskRow>();
+    for (const m of messages) {
+      if (!m || m.display === false) continue;
+      for (const row of taskRowsFromDetails(m.details)) {
+        upsertTaskRow(taskRows, {
+          ...row,
+          sourceCallId: row.sourceCallId ?? (m.role === "toolResult" ? m.toolCallId : undefined),
+        });
+      }
+    }
+    for (const row of this.taskSnapshots.values()) upsertTaskRow(taskRows, row);
+    const shownTasks = new Set<string>();
+    const task = (row: TaskRow) => {
+      const key = taskRowKey(row);
+      if (shownTasks.has(key)) return;
+      shownTasks.add(key);
+      lines.push(truncateToWidth(formatTaskRow(row), width), "");
+    };
     const calls = new Map<string, any>();
     const results = new Map<string, any>();
     for (const m of messages) {
@@ -314,6 +384,14 @@ export class RootTranscript {
       lines.push(...(markdown ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width), "");
     };
     const action = (call: any, result?: any) => {
+      if (!this.details) {
+        const id = call?.id ?? result?.toolCallId;
+        const launched = [...taskRows.values()].filter((row) => id && row.sourceCallId === id);
+        if (launched.length) {
+          for (const row of launched) task(row);
+          return;
+        }
+      }
       const args = call?.arguments;
       const label = actionLabel(
         args?.label,
@@ -328,6 +406,30 @@ export class RootTranscript {
           : result?.isError || outcome?.imageError || (typeof outcome?.exitCode === "number" && outcome.exitCode !== 0)
             ? "Failed"
             : "";
+      if (!this.details) {
+        // Provider arguments are already incrementally parsed, including incomplete labels.
+        // Never use source as a label: providers can stream code before the label.
+        const caption = actionLabel(
+          args?.label,
+          undefined,
+          result ? safe(call?.name ?? result?.toolName) || "Action" : "",
+        );
+        const title = !result && !args?.label ? "" : caption;
+        const reason = failure
+          ? conciseActionError(outcome, messageText(result))
+          : outcome?.outputArtifactErrors
+            ? "⚠ couldn’t save full output"
+            : "";
+        const icon = result
+          ? outcome?.cancelled
+            ? "⊘"
+            : failure
+              ? "✗"
+              : "✓"
+          : actionFrames[Math.floor(now / 80) % actionFrames.length];
+        lines.push(truncateToWidth(icon + (title ? " " + title : "") + (reason ? " — " + reason : ""), width), "");
+        return;
+      }
       let text = (failure ? "✗ " + failure + " · " : "") + label;
       if (this.details && call) text += "\n" + messageText({ content: [call] }, true);
       if (result && (this.details || failure)) {
@@ -341,6 +443,15 @@ export class RootTranscript {
     const shownCalls = new Set<string>();
     for (const m of messages) {
       if (!m || m.display === false) continue;
+      if (!this.details && (m.customType === "task-complete" || m.customType === "task-attention")) {
+        const rows = taskRowsFromDetails(m.details);
+        for (const row of rows) task(taskRows.get(taskRowKey(row)) ?? row);
+        const summaries = taskSummaryRowsFromDetails(m.details);
+        for (const summary of summaries) lines.push(truncateToWidth(summary.text, width), "");
+        if (!rows.length && !summaries.length && m.customType === "task-complete")
+          lines.push(truncateToWidth("? Task update — status unknown", width), "");
+        continue;
+      }
       if (m.role === "toolResult") {
         // Pair by protocol identity, never by matching labels or source text.
         if (!m.toolCallId || !calls.has(m.toolCallId)) action(undefined, m);
@@ -370,6 +481,7 @@ export class RootTranscript {
           m.role === "assistant",
         );
     }
+    if (!this.details) for (const row of taskRows.values()) task(row);
     return lines;
   }
 }
@@ -522,6 +634,9 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
   process.on("SIGTERM", signal);
   process.on("SIGHUP", signal);
   tui.start();
+  const animation = setInterval(() => {
+    if (!closed && transcript.pendingAction && !transcript.details) tui.requestRender();
+  }, 80);
   let poll: Promise<void> | undefined;
   try {
     for (const e of client.read().events) transcript.event(e.event);
@@ -598,6 +713,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
     cancelModal?.();
     process.off("SIGTERM", signal);
     process.off("SIGHUP", signal);
+    clearInterval(animation);
     tui.stop();
     await poll;
     try {

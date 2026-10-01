@@ -1,4 +1,7 @@
 import { expect, test } from "bun:test";
+import { parseStreamingJson } from "@earendil-works/pi-ai";
+import { taskRowFromLaunch, taskRowsFromDetails, taskRowsFromSessionEntries } from "../src/ui/task-rows";
+import { dispatchRootFacet } from "../src/remote/root-runtime";
 import { RootControls, type RootPresentationControls, RootTranscript } from "../src/remote/root-presenter";
 
 function fixture(receipt: Record<string, unknown> = {}) {
@@ -168,8 +171,9 @@ test("root transcript keeps tool protocol private by default and exposes explici
   });
   t.event({ type: "tool_execution_update", toolName: "execute", partialResult: { content: "partial protocol dump" } });
   const visible = t.render(120).join("\n");
-  expect(visible).toContain("Action");
-  expect(visible).toContain("partial source");
+  expect(visible).toContain("✓ inspect");
+  expect(visible).not.toContain("partial source");
+  expect(visible).not.toContain("Action");
   expect(visible.split("inspect")).toHaveLength(2);
   expect(visible).not.toMatch(/Running|completed/);
   expect(visible).not.toContain("Question saved: q1");
@@ -189,7 +193,7 @@ test("root transcript keeps tool protocol private by default and exposes explici
     type: "message_end",
     message: { role: "toolResult", toolName: "execute", content: "permission denied", isError: true },
   });
-  expect(t.render(120).join("\n")).toContain("✗ Failed · execute");
+  expect(t.render(120).join("\n")).toContain("✗ execute — permission denied");
   expect(t.render(120).join("\n")).toContain("permission denied");
 });
 
@@ -213,46 +217,72 @@ test("internal saved answers stay hidden in snapshots and streaming, even with t
   expect(t.messages).toContain(hidden);
 });
 
-test("root action rows are quiet in flight and settled, with source fallback and useful speakers", () => {
-  for (const [args, expected] of [
-    [{ label: "Read output", code: "console.log(1)" }, "Read output"],
-    [{ code: "console.log(1)" }, "console.log(1)"],
-    [{}, "execute"],
-  ] as const) {
-    const t = new RootTranscript();
-    t.messages = [
-      { role: "user", content: "Please check" },
-      {
-        role: "assistant",
-        content: [
-          { type: "text", text: "I will check." },
-          { type: "toolCall", id: "call", name: "execute", arguments: args },
-        ],
-      },
-    ];
-    const inFlight = t.render(120).join("\n");
-    expect(inFlight).toContain("Please check");
-    expect(inFlight).toContain("I will check.");
-    expect(inFlight.split(expected)).toHaveLength(2);
-    t.event({ type: "tool_execution_start", toolCallId: "call", toolName: "execute" });
-    expect(t.progress).toBe("");
-    t.messages.push({
-      role: "toolResult",
-      toolCallId: "call",
-      toolName: "execute",
-      content: [{ type: "text", text: "RAW_OUTPUT_PRIVATE" }],
-      isError: false,
-    });
-    t.event({ type: "tool_execution_end", toolCallId: "call", toolName: "execute", isError: false });
-    expect(t.progress).toBe("");
-    const settled = t.render(120).join("\n");
-    expect(settled).toBe(inFlight);
-    expect(settled).not.toMatch(/executing|executed|running|completed/i);
-    expect(settled).not.toContain("RAW_OUTPUT_PRIVATE");
-    t.toggleDetails();
-    expect(t.render(120).join("\n")).toContain("RAW_OUTPUT_PRIVATE");
-    if ("code" in args) expect(t.render(120).join("\n")).toContain(args.code);
-  }
+test("normal execute events keep one animated row through partial label, preparation, and execution", () => {
+  const t = new RootTranscript();
+  const partial = (args: any) => ({
+    role: "assistant",
+    content: [{ type: "toolCall", id: "call", name: "execute", arguments: args }],
+  });
+  t.event({ type: "message_start", message: partial({}) });
+  expect(
+    t
+      .render(120, 0)
+      .map((row) => row.trimEnd())
+      .filter(Boolean),
+  ).toEqual(["⠋"]);
+  expect(
+    t
+      .render(120, 80)
+      .map((row) => row.trimEnd())
+      .filter(Boolean),
+  ).toEqual(["⠙"]);
+  expect(t.pendingAction).toBe(true);
+  t.event({ type: "message_update", message: partial(parseStreamingJson('{"code":"RAW_PRIVATE_SOURCE')) });
+  expect(t.render(120, 0).join("\n")).not.toContain("RAW_PRIVATE_SOURCE");
+  expect(t.render(120, 0).join("\n")).not.toContain("execute");
+  t.event({ type: "message_update", message: partial(parseStreamingJson('{"label":"Read RE')) });
+  expect(t.render(120, 0).join("\n")).toContain("⠋ Read RE");
+  const complete = partial({ label: "Read README", code: "RAW_PRIVATE_SOURCE" });
+  t.event({ type: "message_update", message: complete });
+  const preparing = t.render(120, 0);
+  t.event({ type: "message_end", message: complete });
+  t.event({
+    type: "tool_execution_start",
+    toolCallId: "call",
+    toolName: "execute",
+    args: complete.content[0].arguments,
+  });
+  t.event({
+    type: "tool_execution_update",
+    toolCallId: "call",
+    toolName: "execute",
+    partialResult: { content: "RAW_PRIVATE_PARTIAL" },
+  });
+  expect(t.render(120, 0)).toEqual(preparing);
+  const result = {
+    role: "toolResult",
+    toolCallId: "call",
+    toolName: "execute",
+    content: "RAW_PRIVATE_OUTPUT",
+    isError: false,
+    details: { exitCode: 0 },
+  };
+  t.event({ type: "tool_execution_end", toolCallId: "call", toolName: "execute", result, isError: false });
+  t.event({ type: "message_end", message: result });
+  const settled = t.render(120, 0).join("\n");
+  expect(settled).toContain("✓ Read README");
+  expect(settled.split("Read README")).toHaveLength(2);
+  expect(settled).not.toMatch(/RAW_PRIVATE|executing|executed|Action/);
+  expect(t.pendingAction).toBe(false);
+  expect(t.progress).toBe("");
+  const reopened = new RootTranscript();
+  reopened.apply({ record: { messages: t.messages }, events: [] } as any);
+  expect(reopened.render(120, 0)).toEqual(t.render(120, 0));
+  reopened.toggleDetails();
+  const expanded = reopened.render(120, 0).join("\n");
+  expect(expanded).toContain("Tool call call");
+  expect(expanded).toContain("RAW_PRIVATE_SOURCE");
+  expect(expanded).toContain("RAW_PRIVATE_OUTPUT");
 });
 
 test("same-text actions pair only by identity and keep failed and orphan outcomes visible", () => {
@@ -279,9 +309,9 @@ test("same-text actions pair only by identity and keep failed and orphan outcome
     .map((row) => row.trimEnd())
     .join("\n");
   expect(rows.split("Read output")).toHaveLength(3);
-  expect(rows.indexOf("Read output")).toBeLessThan(rows.indexOf("✗ Failed · Read output"));
+  expect(rows.indexOf("Read output")).toBeLessThan(rows.indexOf("✗ Read output — permission denied"));
   expect(rows).toContain("permission denied");
-  expect(rows).toContain("✗ Failed · Action\norphan failure");
+  expect(rows).toContain("✗ Action — orphan failure");
   expect(rows).not.toContain("PRIVATE_SUCCESS");
   t.details = true;
   const expanded = t.render(120).join("\n");
@@ -316,13 +346,287 @@ test("root cancellation and timeout remain clear, and display:false also hides a
   for (const details of [false, true]) {
     t.details = details;
     const rows = t.render(120).join("\n");
-    expect(rows).toContain("✗ Cancelled · Action");
-    expect(rows).toContain("cancelled by user");
-    expect(rows).toContain("✗ Timed out · Action");
-    expect(rows).toContain("time limit reached");
+    if (details) {
+      expect(rows).toContain("✗ Cancelled · Action");
+      expect(rows).toContain("cancelled by user");
+      expect(rows).toContain("✗ Timed out · Action");
+      expect(rows).toContain("time limit reached");
+    } else {
+      expect(rows).toContain("⊘ Action — cancelled");
+      expect(rows).toContain("✗ Action — timed out");
+    }
     expect(rows).toContain("Source return: pending");
     expect(rows).toContain("Human action required");
     expect(rows).toContain("Remote outcome unknown");
     expect(rows).not.toContain("HIDDEN_");
   }
+});
+
+function renderedRows(t: RootTranscript) {
+  return t
+    .render(120, 0)
+    .map((line) => line.trimEnd())
+    .filter(Boolean);
+}
+function launchMessages(jobs: any[], id = "launch") {
+  return [
+    {
+      role: "assistant",
+      content: [
+        { type: "toolCall", id, name: "execute", arguments: { label: "Start tasks", code: "RAW_LAUNCH_SOURCE" } },
+      ],
+    },
+    {
+      role: "toolResult",
+      toolCallId: id,
+      toolName: "execute",
+      isError: false,
+      content: "RAW_LAUNCH_OUTPUT",
+      details: { taskRows: jobs.map((job) => taskRowFromLaunch(job, id)), exitCode: 0 },
+    },
+  ];
+}
+
+test("normal root facet snapshots and task completion update a single canonical row per identity", async () => {
+  const t = new RootTranscript();
+  const jobs = [
+    { id: "tests", kind: "command", title: "Run tests", status: "running" },
+    { id: "guide", kind: "agent", title: "Review guide", status: "running" },
+  ];
+  t.messages = launchMessages(jobs);
+  expect(renderedRows(t)).toEqual(["↗ Run tests", "↗ Review guide"]);
+  const ctx: any = {
+    sessionManager: { getSessionId: () => "s", getSessionFile: () => "session.jsonl", getBranch: () => [] },
+    isIdle: () => true,
+    hasPendingMessages: () => false,
+  };
+  const services: any = {
+    questions: { service: { list: () => [] }, sync: async () => {} },
+    jobs: async (_ctx: any, method: string, params: any) => {
+      expect(method).toBe("jobs.list");
+      return params.cursor ? { jobs: [jobs[1]] } : { jobs: [jobs[0]], nextCursor: "page2" };
+    },
+  };
+  const facets = await dispatchRootFacet({} as any, ctx, services, { kind: "snapshot" });
+  t.event({ type: "root_ready", facets });
+  expect(renderedRows(t)).toEqual(["↗ Run tests", "↗ Review guide"]);
+  const completion = {
+    role: "custom",
+    customType: "task-complete",
+    display: true,
+    content: "do not infer outcome from this prose",
+    details: {
+      tasks: [
+        { ...jobs[0], status: "failed", exitCode: 1 },
+        { ...jobs[1], status: "completed" },
+      ],
+    },
+  };
+  t.event({ type: "message_end", message: completion });
+  expect(renderedRows(t)).toEqual(["✗ Run tests — exit 1", "✓ Review guide"]);
+  t.event({ type: "root_facets", jobs }); // A delayed running snapshot cannot reopen completion.
+  expect(renderedRows(t)).toEqual(["✗ Run tests — exit 1", "✓ Review guide"]);
+  const reopened = new RootTranscript();
+  reopened.apply({ record: { messages: t.messages }, events: [{ event: { type: "root_ready", facets } }] } as any);
+  expect(renderedRows(reopened)).toEqual(renderedRows(t));
+  t.toggleDetails();
+  const expanded = t.render(120, 0).join("\n");
+  expect(expanded).toContain("RAW_LAUNCH_SOURCE");
+  expect(expanded).toContain("RAW_LAUNCH_OUTPUT");
+  expect(expanded).toContain(completion.content);
+});
+
+test("unknown, input, cancellation, timeout and orphan tasks use typed facts rather than prose", () => {
+  const t = new RootTranscript();
+  t.event({
+    type: "root_facets",
+    jobs: [
+      { id: "orphan", kind: "agent", status: "unknown", title: "Review guide" },
+      { id: "ssh:inspect", status: "done", title: "Inspect destination" },
+      { id: "cancelled", kind: "command", status: "killed", title: "Run tests" },
+      { id: "failed", kind: "agent", status: "failed", title: "Review code" },
+      { id: "timeout", kind: "command", status: "failed", timedOut: true, exitCode: 143, title: "Run slow check" },
+      { id: "input", kind: "agent", status: "running", actionable: "permission", title: "Read repository" },
+      { id: "fallback", kind: "agent", status: "running" },
+    ],
+  });
+  t.event({
+    type: "message_end",
+    message: {
+      role: "custom",
+      customType: "task-attention",
+      content: "quiet5m review10m",
+      details: { attention: [{ id: "orphan", reasons: ["quiet", "review"] }] },
+    },
+  });
+  t.event({ type: "job", title: "MODEL_PROSE_CLAIM_SUCCEEDED", status: "completed" });
+  expect(t.progress).toBe("");
+  expect(renderedRows(t)).toEqual([
+    "? Review guide — status unknown",
+    "? Inspect destination — status unknown",
+    "⊘ Run tests — cancelled",
+    "✗ Review code — failed",
+    "✗ Run slow check — timed out",
+    "? Read repository — needs your input",
+    "↗ fallback",
+  ]);
+  t.event({
+    type: "message_end",
+    message: { role: "custom", customType: "task-complete", content: "Task certainly succeeded!" },
+  });
+  expect(renderedRows(t)).toContain("? Task update — status unknown");
+});
+
+test("failure diagnostics and storage warning stay on the same compact action row", () => {
+  const t = new RootTranscript();
+  t.messages = [
+    {
+      role: "assistant",
+      content: [
+        { type: "toolCall", id: "read", name: "execute", arguments: { label: "Read README", code: "RAW_CODE" } },
+      ],
+    },
+    {
+      role: "toolResult",
+      toolCallId: "read",
+      toolName: "execute",
+      isError: true,
+      content: "FULL_ERROR_DETAIL",
+      details: { exitCode: 1, stderr: "permission denied\nEXTRA_ERROR_DETAIL" },
+    },
+    {
+      role: "assistant",
+      content: [{ type: "toolCall", id: "save", name: "execute", arguments: { label: "Read large file" } }],
+    },
+    {
+      role: "toolResult",
+      toolCallId: "save",
+      isError: false,
+      content: "RAW_OUTPUT",
+      details: {
+        exitCode: 0,
+        stdoutLost: true,
+        images: [{ mimeType: "image/png" }],
+        outputArtifactErrors: { stdout: "disk full" },
+      },
+    },
+  ];
+  expect(renderedRows(t)).toEqual([
+    "✗ Read README — permission denied",
+    "✓ Read large file — ⚠ couldn’t save full output",
+  ]);
+  t.toggleDetails();
+  const expanded = t.render(120, 0).join("\n");
+  expect(expanded).toContain("FULL_ERROR_DETAIL");
+  expect(expanded).toContain("RAW_OUTPUT");
+});
+
+test("hidden thinking and display:false tasks stay absent in streaming, snapshots and expanded details", () => {
+  const t = new RootTranscript();
+  const hidden = {
+    role: "custom",
+    display: false,
+    customType: "task-complete",
+    content: "HIDDEN_TASK_NOTICE",
+    details: { tasks: [{ id: "hidden", title: "HIDDEN_TASK_TITLE", kind: "agent", status: "failed" }] },
+  };
+  t.apply({
+    record: {
+      messages: [hidden, { role: "assistant", content: [{ type: "thinking", thinking: "PRIVATE_THINKING" }] }],
+    },
+    events: [],
+  } as any);
+  t.event({ type: "message_update", message: hidden });
+  expect(renderedRows(t)).toEqual([]);
+  expect(t.pendingAction).toBe(false);
+  t.toggleDetails();
+  const expanded = t.render(120, 0).join("\n");
+  expect(expanded).toContain("PRIVATE_THINKING");
+  expect(expanded).not.toContain("HIDDEN_TASK");
+});
+
+test("cached event replay restores background launch identity and orphan outcomes", () => {
+  const messages = launchMessages([
+    { id: "batch-a", kind: "command", status: "running", title: "Run tests" },
+    { id: "batch-b", kind: "agent", status: "running", title: "Review guide" },
+  ]);
+  const events = [
+    ...messages.map((message) => ({ type: "message_end", message })),
+    {
+      type: "root_facets",
+      jobs: [
+        { id: "batch-a", kind: "command", status: "completed", exitCode: 0, title: "Run tests" },
+        { id: "batch-b", kind: "agent", status: "failed", title: "Review guide" },
+        { id: "orphan", deliveryMode: "native-async", status: "unknown" },
+      ],
+    },
+  ];
+  const original = new RootTranscript();
+  const reopened = new RootTranscript();
+  for (const event of events) original.event(event);
+  for (const event of JSON.parse(JSON.stringify(events))) reopened.event(event);
+  expect(renderedRows(original)).toEqual(["✓ Run tests", "✗ Review guide — failed", "? orphan — status unknown"]);
+  expect(renderedRows(reopened)).toEqual(renderedRows(original));
+});
+
+test("typed capped completion summaries preserve adverse omitted outcomes", () => {
+  const t = new RootTranscript();
+  t.event({
+    type: "message_end",
+    message: {
+      role: "custom",
+      customType: "task-complete",
+      content: "RAW_AGGREGATE_NOTICE",
+      details: {
+        tasks: [{ id: "retained", kind: "agent", status: "completed", title: "Review guide" }],
+        taskStatusCounts: { completed: 1, failed: 2, killed: 3, running: 1, unknown: 1 },
+        omittedTasks: 7,
+      },
+    },
+  });
+  expect(renderedRows(t)).toEqual([
+    "✓ Review guide",
+    "✗ 2 more tasks failed",
+    "⊘ 3 more tasks cancelled",
+    "? 2 more tasks unresolved",
+  ]);
+});
+
+test("direct execution exceptions expose a useful error, not formatter header or stdout", () => {
+  const t = new RootTranscript();
+  t.messages = [
+    {
+      role: "assistant",
+      content: [{ type: "toolCall", id: "call", name: "execute", arguments: { label: "Read README" } }],
+    },
+    {
+      role: "toolResult",
+      toolName: "execute",
+      toolCallId: "call",
+      isError: true,
+      content:
+        "Execution failed with exit code 1.\n\nstdout:\nNOT_AN_ERROR\n\nstderr:\n12 | code_line()\n   | ^\nError: permission denied\n    at source.ts:12:3",
+    },
+  ];
+  expect(renderedRows(t)).toEqual(["✗ Read README — Error: permission denied"]);
+  t.messages[1].content = "Execution failed with exit code 1.\n\nstdout:\nNOT_AN_ERROR";
+  expect(renderedRows(t)).toEqual(["✗ Read README — failed"]);
+});
+
+test("typed root task facets replace an in-flight launch row before the execute result", () => {
+  const t = new RootTranscript();
+  const messages = launchMessages([{ id: "job", kind: "command", title: "Run tests", status: "running" }]);
+  t.event({ type: "message_end", message: messages[0] });
+  expect(renderedRows(t)).toEqual(["⠋ Start tasks"]);
+  const taskRows = taskRowsFromSessionEntries(
+    taskRowsFromDetails(messages[1].details).map((data) => ({ type: "custom", customType: "die-task-row", data })),
+  );
+  t.event({
+    type: "root_facets",
+    taskRows,
+    jobs: [{ id: "job", kind: "command", title: "Run tests", status: "running" }],
+  });
+  expect(renderedRows(t)).toEqual(["↗ Run tests"]);
+  t.event({ type: "message_end", message: messages[1] });
+  expect(renderedRows(t)).toEqual(["↗ Run tests"]);
 });
