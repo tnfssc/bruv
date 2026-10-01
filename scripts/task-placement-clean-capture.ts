@@ -24,6 +24,10 @@ const presentation = join(source, "scripts/fixtures/task-placement-clean");
 const bun = resolve(process.env.BUN_BIN ?? "/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun");
 assert(process.env.DIE_BIN, "Set DIE_BIN to the actual combined compiled CLI; no implicit candidate");
 const binary = process.env.DIE_BIN ? resolve(process.env.DIE_BIN) : "";
+const binarySource = process.env.DIE_BINARY_SOURCE;
+const expectedBinarySha = process.env.DIE_BINARY_SHA256;
+assert(binarySource && /^[0-9a-f]{40}$/.test(binarySource), "Set DIE_BINARY_SOURCE to the reviewed full source commit");
+assert(expectedBinarySha && /^[0-9a-f]{64}$/.test(expectedBinarySha), "Set DIE_BINARY_SHA256 to the reviewed binary digest");
 const base = process.env.REMOTE_ROOT_PLACEMENT_BASE_IMAGE ?? "die-remote-e2e-2434886-5027:latest";
 assert(
   base,
@@ -49,6 +53,14 @@ const artifacts = process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS
   ? resolve(process.env.REMOTE_ROOT_PLACEMENT_ARTIFACTS)
   : mkdtempSync(join(tmpBase, "remote-root-placement-artifacts-"));
 mkdirSync(artifacts, { recursive: true });
+assert(readdirSync(artifacts).every(name => name.startsWith("failed-")), "Choose an empty artifact directory (or one containing only preserved failed-* takes)");
+const toolingSourcesSha256: Record<string, string> = {};
+mkdirSync(join(artifacts, "tooling-sources"), { recursive: true });
+for (const file of ["scripts/task-placement-clean-capture.ts", "scripts/task-placement-clean-video.py", "scripts/fixtures/task-placement-clean/scenario.ts"]) {
+  const contents = readFileSync(join(source, file));
+  writeFileSync(join(artifacts, "tooling-sources", file.split("/").at(-1)!), contents);
+  toolingSourcesSha256[file] = createHash("sha256").update(contents).digest("hex");
+}
 const name = "die-root-placement-" + process.pid + "-" + Date.now();
 const home = join(root, "home"),
   agent = join(home, "agent"),
@@ -299,9 +311,8 @@ try {
     20000,
   );
 
-  const expected = "e7dd04755a529eab1f6ba58dbd132a6997eed07b1b84604e3d473114fea21282";
   const binarySha256 = createHash("sha256").update(readFileSync(binary)).digest("hex");
-  assert.equal(binarySha256, expected, "Use only the reviewed final compiled binary");
+  assert.equal(binarySha256, expectedBinarySha, "Use only the reviewed final compiled binary");
   assert.equal(JSON.parse(docker("inspect", name))[0].HostConfig.NetworkMode, "none");
   // One-time explicit authorization for this isolated named server; not part of routine work.
   run(bun, [
@@ -345,7 +356,7 @@ try {
       "-x",
       "120",
       "-y",
-      "32",
+      "40",
       "-c",
       repo,
       command,
@@ -397,7 +408,7 @@ try {
   key("C-d");
   await wait("detach", () => tmux("display-message", "-p", "-t", "root-placement", "#{pane_dead}") === "1");
   assert.equal(tmux("display-message", "-p", "-t", "root-placement", "#{pane_dead_status}"), "0");
-  capture("05-detached"); // tmux successful-exit chrome is a diagnostic, not product footage.
+  capture("05-detached", "Detach locally · the server root and saved question are retained", 34); // Last actual terminal view; successful detach verified above.
   tmux("kill-session", "-t", "root-placement");
   ptyStarted = false;
   start();
@@ -411,7 +422,6 @@ try {
   capture("07-choice", "Choose the level of detail using the normal question picker", 48);
   key("Enter");
   await wait("notes written", () => pane().includes("Added concise getting-started notes"), 120000);
-  tmux("resize-window", "-t", "root-placement", "-x", "120", "-y", "44");
   await Bun.sleep(200);
   assert(!view().includes("Execution failed"), "Do not capture a failed tool as success");
   capture("08-written", "The root writes NOTES.md after your answer", 56);
@@ -445,10 +455,12 @@ try {
         schema: "clean-product-capture-v1",
         binaryPath: binary,
         binarySha256,
-        binarySource: "b0dc1a1",
+        binarySource,
         sourceTruth:
-          "Reviewed final lifecycle-fixed compiled binary; production matches shipped19 except version bump. Tooling checkout is separate.",
+          "Local native CLI compiled from the recorded source commit and existing archive; not a hosted release packaging claim. Tooling checkout is separate.",
         toolingCommit: run("git", ["-C", source, "rev-parse", "HEAD"]),
+        toolingSourcesSha256,
+        toolingTreeDirty: !!run("git", ["-C", source, "status", "--porcelain", "--", "scripts/task-placement-clean-capture.ts", "scripts/task-placement-clean-video.py", "scripts/fixtures/task-placement-clean"]),
         baseImageId: imageId,
         networkMode: "none",
         localInference: "none",
@@ -465,11 +477,12 @@ try {
         ],
         setup: {
           transport: "Docker SSH via local exec proxy",
-          terminal: "120x32 tmux PTY; expanded to 120x44 for the finished notes and source return",
+          terminal: "120x40 tmux PTY throughout; no cropping or viewport expansion to bury transcript",
           localProviderConfig: "empty",
         },
         checks: {
           sameRootAfterReopen: true,
+          detachExitCode: 0,
           sourceUnchangedBeforeClose: true,
           sourceReturnedOnClose: true,
           serverProviderErrors: false,

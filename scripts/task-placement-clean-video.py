@@ -5,30 +5,52 @@ p=argparse.ArgumentParser();p.add_argument('--output',required=True);args=p.pars
 out=pathlib.Path(args.output).resolve();root=str(out)
 sha=lambda b:hashlib.sha256(b).hexdigest()
 receipt=json.loads((out/'capture-receipt.json').read_text())
-assert receipt['binarySha256']=='e7dd04755a529eab1f6ba58dbd132a6997eed07b1b84604e3d473114fea21282'
+assert re.fullmatch(r'[0-9a-f]{64}', receipt['binarySha256'])
+assert re.fullmatch(r'[0-9a-f]{40}', receipt['binarySource'])
 assert receipt['networkMode']=='none'
-banned=[r'PLACEMENT_',r'ROOT_',r'typed-root',r'RootCommand',r'ROOT_READY',r'fixture verified',r'acceptance',r'nonce',r'receipt',r'(?i)toolcode',r'root-proof',r'ROOT_BASE',r'ACK_ONLY',r'query\s+status',r'Saved answer for',r'"replyId"',r'"branchId"',r'Execution failed',r'BuildMessage',r'Pane is dead']
+banned=[r'PLACEMENT_',r'ROOT_',r'typed-root',r'RootCommand',r'fixture verified',r'acceptance',r'nonce',r'receipt',r'(?i)toolcode',r'root-proof',r'ACK_ONLY',r'query\s+status',r'Saved (?:human )?answer for',r'(?m)^\s*(?:assistant|toolResult|user|custom)\s*$',r'Tool:?\s+execute',r'"code"\s*:',r'"owner"\s*:',r'"sessionId"\s*:',r'questions\.(?:ask|block|resolve)\(',r'"replyId"',r'"branchId"',r'Execution failed',r'BuildMessage',r'Pane is dead',r'Tool (?:started|finished):',r'(?m)^.*\] code:']
 source_timeline=json.loads((out/'timeline.json').read_text())
-rendered_paths={r['path'] for r in source_timeline if r['step']!='05-detached'}
+rendered_paths={r['path'] for r in source_timeline}
 originals=[]
 for path in sorted(out.glob('*.txt')):
  if path.name not in ['failure.txt']:
   raw=path.read_bytes();text=raw.decode();hits=[v for v in banned if re.search(v,text)]
-  # Successful tmux exit overlay is retained as automation diagnostics, never terminal product footage.
+  # All scheduled native product snapshots are preserved and audited.
   rendered = path.name in rendered_paths
   if rendered: assert not hits,(path.name,hits)
   originals.append({'path':str(path),'sha256':sha(raw),'markerFindings':hits,'rendered':rendered})
 diagnostic_audit=[]
 for path in sorted((out/'diagnostics').glob('*.scrollback.txt')):
  raw=path.read_bytes();text=raw.decode()
+ assert not [v for v in banned if re.search(v,text)], (path.name, [v for v in banned if re.search(v,text)])
  diagnostic_audit.append({'path':str(path),'sha256':sha(raw),'findings':[v for v in banned if re.search(v,text)],'purpose':'Offscreen full original scrollback; not a rendered viewport'})
 excluded_take_audit=[]
 for path in sorted(out.glob('failed-*/**/*.txt')):
  raw=path.read_bytes();text=raw.decode()
  excluded_take_audit.append({'path':str(path),'sha256':sha(raw),'findings':[v for v in banned if re.search(v,text)],'purpose':'Preserved failed producer attempt; not used for final frames'})
+
+# Confirm private custom context really existed, and did not enter any default capture.
+journal=[json.loads(line) for line in (out/'server-journal.jsonl').read_text().splitlines()]
+hidden=[entry for entry in journal if entry.get('customType')=='question-answer']
+assert len(hidden)==1 and hidden[0]['display'] is False
+private=hidden[0];details=private['details']
+private_tokens=[private['content'], details['questionId'],details['replyKey'],details['owner']['sessionId'],details['owner']['branchId'],'Use this saved reply in a new parent turn']
+default_paths=list(out.glob('*.viewport.txt'))+list((out/'diagnostics').glob('*.scrollback.txt'))
+for path in default_paths:
+ text=path.read_text()
+ assert not [value for value in private_tokens if value in text], path.name
+state=json.loads(next((out/'diagnostics').glob('final-root-*.json')).read_text())
+question_lists=[c['receipt']['result'] for c in state['commands'].values() if c['command']['kind']=='questions.list']
+questions=[q for result in question_lists for q in result if q['id']==details['questionId']]
+assert len(questions)>=3
+identity=lambda q:(q['id'],q['owner'],q['version'])
+assert all(identity(q)==identity(questions[0]) for q in questions)
+privacy_proof={'hiddenCustomMessages':len(hidden),'display':False,'privateTokensAbsentFromDefaultCaptures':len(default_paths),'sameQuestionListObservations':len(questions),'sameQuestionAfterReopen':True}
+(out/'privacy-and-reopen-proof.json').write_text(json.dumps(privacy_proof,indent=2)+'\n')
+receipt['checks'].update(privacy_proof)
+
 timeline=[];redactions=[]
 for row in source_timeline:
- if row['step']=='05-detached': continue # Full original capture kept: tmux-only successful-exit overlay, not product UI.
  path=out/row['path'];raw=path.read_bytes();screen=raw.decode()
  # The only text substitution is this disclosed disposable HOME prefix.
  screen,count=re.subn(r'/home/tnfssc/\.die/(?:tmp-pi-removal|probes)/[^/\s]+/home','[demo HOME]',screen)
@@ -120,5 +142,5 @@ while offset+8<=len(b):
  n=int.from_bytes(b[offset:offset+4],'big');tag=b[offset+4:offset+8].decode('ascii');atoms.append(tag)
  assert n>=8;offset+=n
 assert atoms.index('moov')<atoms.index('mdat')
-receipt.update({'originalCaptures':originals,'diagnosticScrollbackAudit':diagnostic_audit,'failedAttemptCaptureAudit':excluded_take_audit,'scrollbackDisclosure':'The product emits saved-answer internal JSON in full scrollback. This is retained untouched in diagnostic side files. None appears in captured viewport frames; natural final notes preview fills the actual terminal viewport. No filtering, scrollback reclassification of old recordings, or terminal text deletion.','homeRedactions':redactions,'videoSha256':sha(b),'videoBytes':len(b),'captureSha256':sha((out/'screens.jsonl').read_bytes()),'frameCount':frames,'fps':fps,'allRenderedFramesAndCapturesMarkerAudit':'passed','omittedCaptureDisclosure':'The original 05-detached snapshot includes tmux remain-on-exit status0 chrome. It is preserved and audited, but omitted as automation-only footage. The clip shows the normal question picker before detach and the same picker after real reopen; no terminal text, failure or outcome was deleted.','fullyDecoded':True,'codec':'h264','pixelFormat':'yuv420p','faststart':True,'mp4Atoms':atoms,'presentation':'Retimed new actual compiled CLI PTY snapshots; no synthetic typed input/output, no deletion of diagnostic text. Producer uses natural prompts, tool labels and outputs; verification stays in side files.'})
+receipt.update({'originalCaptures':originals,'diagnosticScrollbackAudit':diagnostic_audit,'failedAttemptCaptureAudit':excluded_take_audit,'scrollbackDisclosure':'All original default-view full scrollbacks pass the raw protocol/hidden-answer audit. Successful execute details are collapsed by the actual fixed CLI, not text filtering or large final output. Visual review is recorded separately; hashes and marker scans alone do not establish product cleanliness.','homeRedactions':redactions,'videoSha256':sha(b),'videoBytes':len(b),'captureSha256':sha((out/'screens.jsonl').read_bytes()),'frameCount':frames,'fps':fps,'allRenderedFramesAndCapturesMarkerAudit':'passed','omittedCaptureDisclosure':'No scheduled product snapshot omitted. The successful detach snapshot retains the last actual terminal view; producer suppresses tmux dead-pane chrome. A separate diagnostic-inspection take is preserved and marked rejected, not reused.','fullyDecoded':True,'codec':'h264','pixelFormat':'yuv420p','faststart':True,'mp4Atoms':atoms,'presentation':'Retimed new actual compiled CLI PTY snapshots; no synthetic typed input/output, no deletion of diagnostic text. Producer uses natural prompts, tool labels and outputs; verification stays in side files.'})
 (out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')

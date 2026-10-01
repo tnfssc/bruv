@@ -1,5 +1,7 @@
 # Clean task-placement product demo
 
+Historical, unapproved fixture-only recording. Superseded by [the actual fixed-UI take](fixed-ui-product-video.md); the saved-answer/default dump findings below describe its old binary, not the fixed binary.
+
 The old PR15 clip was real proof, but not a clean product demo: fixture markers, internal queries and test jargon were visible. Do not defend that presentation by observing that fixture strings are outside production source. Preserve acceptance fixtures and original evidence; make a separate natural-language scenario.
 
 ## Deliverable and provenance
@@ -15,7 +17,7 @@ Durable output: /home/tnfssc/.die/probes/task-placement-clean-product-video.
 
 Run with the explicit reviewed binary and an external output directory:
 
-    DIE_BIN=/path/to/die-task-placement-final REMOTE_ROOT_PLACEMENT_ARTIFACTS=/external/clean-demo bun scripts/task-placement-clean-capture.ts
+    DIE_BIN=/path/to/reviewed-die DIE_BINARY_SOURCE=<full-source-commit> DIE_BINARY_SHA256=<reviewed-digest> REMOTE_ROOT_PLACEMENT_ARTIFACTS=/external/clean-demo bun scripts/task-placement-clean-capture.ts
     python3 scripts/task-placement-clean-video.py --output /external/clean-demo
     bun test scripts/task-placement-clean-scenario.test.ts
 
