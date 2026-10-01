@@ -1,3 +1,4 @@
+import { sshJobId } from "../remote/jobs";
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import {
   Box,
@@ -56,9 +57,10 @@ export function executeInputPreview(
   state?: ExecutePreviewState,
   _executionStarted = true,
   padding = 0,
+  label?: unknown,
 ): Component {
   const source = typeof code === "string" ? code : "";
-  const summary = commandSummary(source);
+  const summary = safeMetadata(label) || commandSummary(source);
   return padded(
     component((width) => {
       // Pi vertically composes call and result slots. Suppress the call slot once
@@ -124,6 +126,7 @@ export function executeOutputPreview(
   code?: unknown,
   state?: ExecutePreviewState,
   padding = 0,
+  label?: unknown,
 ): Component {
   if (state) state.resultVisible = true;
   const full = result.content
@@ -133,7 +136,7 @@ export function executeOutputPreview(
   const details = result.details as ExecuteDetails | undefined;
   const status = statusSummary(full, details, isError);
   const source = typeof code === "string" ? code : "";
-  const summary = commandSummary(code);
+  const summary = safeMetadata(label) || commandSummary(code);
   const imageCount = Array.isArray(details?.images)
     ? details.images.length
     : result.content.filter((part) => part.type === "image").length;
@@ -154,9 +157,12 @@ export function executeOutputPreview(
       if (width < 1) return [];
       if (!expanded && handoff && status.color === "success") {
         const prefix = "↪ ";
-        return foldedRows(handoff, Math.max(1, width - prefix.length), 0, 0, true).map((line, index) =>
+        const rows = foldedRows(handoff, Math.max(1, width - prefix.length), 0, 0, true).map((line, index) =>
           truncateToWidth((index === 0 ? theme.fg("success", prefix) : " ".repeat(prefix.length)) + line, width),
         );
+        return truncated || details?.outputArtifactErrors
+          ? [truncateToWidth(theme.fg("warning", diagnostic), width), ...rows]
+          : rows;
       }
       if (expanded) {
         const lines = [
@@ -180,13 +186,30 @@ export function executeOutputPreview(
 }
 
 interface CompletionDetails {
-  tasks?: Array<{ id?: unknown; status?: unknown; exitCode?: unknown; signal?: unknown; timedOut?: unknown }>;
-  attention?: Array<{ id?: unknown }>;
+  tasks?: Array<{
+    id?: unknown;
+    title?: unknown;
+    status?: unknown;
+    exitCode?: unknown;
+    signal?: unknown;
+    timedOut?: unknown;
+  }>;
+  attention?: Array<{ id?: unknown; reasons?: unknown; elapsedMs?: unknown; quietForMs?: unknown }>;
   taskStatusCounts?: Partial<Record<"completed" | "failed" | "killed" | "running" | "unknown", unknown>>;
+  remote?: Array<{ taskId?: unknown; state?: unknown; actionable?: unknown }>;
   taskCount?: unknown;
   attentionCount?: unknown;
   omittedTasks?: unknown;
   omittedAttention?: unknown;
+}
+function attentionSummary(notice: NonNullable<CompletionDetails["attention"]>[number]): string {
+  const id = safeMetadata(notice?.id) || "task";
+  const reasons = Array.isArray(notice?.reasons) ? notice.reasons : [];
+  const duration = (ms: unknown) =>
+    typeof ms === "number" && Number.isFinite(ms) && ms >= 0 ? Math.floor(ms / 60_000) + "m" : "";
+  const quiet = reasons.includes("quiet") ? ["quiet", duration(notice.quietForMs)].filter(Boolean).join(" ") : "";
+  const review = reasons.includes("review") ? ["review", duration(notice.elapsedMs)].filter(Boolean).join(" ") : "";
+  return [id, quiet, review].filter(Boolean).join(" · ");
 }
 function count(value: unknown): number {
   return typeof value === "number" && Number.isSafeInteger(value) && value >= 0 ? value : 0;
@@ -224,9 +247,11 @@ export function completionPreview(
       const omittedAttention = count(details?.omittedAttention);
       const first = oneLine(text.split("\n")[0] ?? "");
 
-      if (kind === "task-attention") {
-        const label = "⚠ Task attention · " + (first || "running task needs attention");
-        return [truncateToWidth(label, width)];
+      const remote = Array.isArray(details?.remote) ? details.remote : [];
+      if (kind === "task-attention" && !remote.length) {
+        const summaries = attention.map(attentionSummary);
+        if (omittedAttention) summaries.push(omittedAttention + " more checks");
+        return [truncateToWidth("Task check · " + (summaries.join(", ") || "update; expand for details"), width)];
       }
 
       const aggregate = details?.taskStatusCounts;
@@ -265,18 +290,30 @@ export function completionPreview(
       }
 
       for (const task of tasks) {
-        const id = safeMetadata(task?.id) || "task";
+        const id = safeMetadata(task?.title) || safeMetadata(task?.id) || "task";
         const status = safeMetadata(task?.status);
-        if (status === "completed") add("success", "✓ " + id + " executed");
-        else if (status === "failed" || status === "killed") add("error", "✗ " + id + " failed");
+        if (task?.timedOut === true) add("error", "✗ " + id + " timed out");
+        else if (status === "completed") add("success", "✓ " + id + " finished");
+        else if (status === "killed") add("error", "✗ " + id + " cancelled");
+        else if (status === "failed") add("error", "✗ " + id + " failed");
         else add("warning", "? " + id + (status ? " " + status : " status unknown"));
       }
 
-      for (const notice of attention) {
-        const id = safeMetadata(notice?.id);
-        add("normal", "⚠ " + (id ? id + " needs attention" : "task needs attention"));
+      for (const row of remote) {
+        const taskId = safeMetadata(row?.taskId);
+        const id = /^[a-zA-Z0-9_-]{1,128}$/.test(taskId) ? sshJobId(taskId) : "SSH task";
+        const state = safeMetadata(row?.state);
+        if (row?.actionable) add("warning", "? " + id + " needs human action");
+        else if (state === "cancelled") add("error", "✗ " + id + " cancelled");
+        // SSH "done" is a terminal observation, not proof of feature success.
+        else if (state === "done") add("normal", id + " finished");
+        else add("warning", "? " + id + (state ? " " + state : " status unknown"));
       }
-      if (omittedAttention) add("normal", "⚠ " + omittedAttention + " more need attention");
+
+      for (const notice of attention) {
+        add("normal", "Task check · " + attentionSummary(notice));
+      }
+      if (omittedAttention) add("normal", omittedAttention + " more checks");
 
       if (omittedTasks && !hasAggregate) add("warning", "? " + omittedTasks + " task details omitted");
       if (!pieces.length) add("warning", "? Task completion · " + (first || "unknown task update"));

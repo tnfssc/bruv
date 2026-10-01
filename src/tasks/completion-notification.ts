@@ -57,6 +57,7 @@ export function formatCompletionNotification(
     const output = task.output.trim();
     const block = [
       `${task.id} ${task.status}`,
+      task.title ? `Title: ${boundedMiddlePreview(task.title, 120)}` : undefined,
       `Command: ${boundedMiddlePreview(task.command, MAX_COMMAND_PREVIEW_CHARS)}`,
       task.exitCode !== undefined ? `Exit code: ${task.exitCode}` : undefined,
       task.signal ? `Signal: ${task.signal}` : undefined,

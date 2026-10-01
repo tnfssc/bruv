@@ -233,6 +233,7 @@ describe("local worktree workspace", () => {
         "subagent",
         {
           prompt: "untrusted",
+          title: "Inspect worktree",
           workspace: { kind: "worktree" },
           waitSeconds: 0,
         },
@@ -246,6 +247,8 @@ describe("local worktree workspace", () => {
         await new Promise((resolve) => setTimeout(resolve, 5));
       }
       const current = manager.inspect(result.id);
+      expect(current.title).toBe("Inspect worktree");
+      expect(activate.mock.calls[0]?.[1].title).toBe("Inspect worktree");
       expect(current.workspace?.setupStatus).toBe("completed");
       expect((activate.mock.calls[0]?.[1] as { args?: string[] } | undefined)?.args).toContain("--no-approve");
       expect(await readFile(markerPath, "utf8")).toBe("");

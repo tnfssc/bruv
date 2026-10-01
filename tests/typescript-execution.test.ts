@@ -426,6 +426,7 @@ test("registered execute exposes configurable capture limits and truncation deta
     "capture-budget",
     {
       code: 'process.stdout.write("x".repeat(6000))',
+      label: "Capture large output",
       outputByteLimit: 1000,
     },
     undefined,
@@ -444,4 +445,6 @@ test("registered execute exposes configurable capture limits and truncation deta
   const content = result.content as Array<{ type: string; text?: string }>;
   expect(content[0]!.text).toContain("Output capture limit reached");
   expect(content[0]!.text).not.toContain("complete output:");
+  expect(content[0]!.text).toContain("xxx");
+  expect(content[0]!.text).not.toContain("Capture large output");
 });
