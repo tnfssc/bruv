@@ -140,7 +140,7 @@ test("task completion and attention collapse to recognizable summaries without o
   const complete = completionPreview(content, false, theme, 0, "task-complete", {
     tasks: [{ id: "task_1", status: "completed", exitCode: 0 }],
   }).render(100);
-  expect(complete.map((line) => line.trimEnd())).toEqual(["✓ task_1 finished"]);
+  expect(complete.map((line) => line.trimEnd())).toEqual(["✓ task_1"]);
   expect(complete.join("\n")).not.toContain("SECRET_OUTPUT");
   const attention = completionPreview(
     "task_2 needs a progress checkpoint.\nSECRET_PROGRESS",
@@ -152,7 +152,7 @@ test("task completion and attention collapse to recognizable summaries without o
       attention: [{ id: "task_2" }],
     },
   ).render(100);
-  expect(attention.map((line) => stripTerminalSequences(line).trimEnd())).toEqual(["Task check · task_2"]);
+  expect(attention).toEqual([]);
   expect(attention.join("\n")).not.toContain("SECRET_PROGRESS");
 });
 
@@ -168,7 +168,8 @@ test("attention notices use normal terminal color without weakening failures", (
   for (const expanded of [false, true]) {
     colors.length = 0;
     const rows = completionPreview(content, expanded, trackingTheme, 0, "task-attention").render(100);
-    expect(rows.join("\n")).toContain(expanded ? "task_2 needs a progress checkpoint" : "Task check");
+    if (expanded) expect(rows.join("\n")).toContain("task_2 needs a progress checkpoint");
+    else expect(rows).toEqual([]);
     expect(colors).not.toContain("warning");
   }
   colors.length = 0;
@@ -177,8 +178,8 @@ test("attention notices use normal terminal color without weakening failures", (
     attention: [{ id: "task_waiting" }],
     omittedAttention: 1,
   }).render(100);
-  expect(mixed[0]).toContain("Task check · task_waiting");
-  expect(mixed[0]).toContain("1 more checks");
+  expect(mixed[0]).not.toContain("Task check");
+  expect(mixed[0]).not.toContain("more checks");
   expect(colors).toContain("error");
   expect(colors).not.toContain("warning");
 });
@@ -187,7 +188,7 @@ test("failed task and execute summaries retain failure status", () => {
   const failedTask = completionPreview("1 asynchronous task completed.\noutput", false, theme, 0, "task-complete", {
     tasks: [{ id: "task_bad", status: "failed", exitCode: 7 }],
   }).render(100);
-  expect(failedTask[0].trimEnd()).toBe("✗ task_bad failed");
+  expect(failedTask[0].trimEnd()).toBe("✗ task_bad — exit 7");
   const failure = executeOutputPreview(
     { content: [{ type: "text", text: "Execution failed with exit code 2.\n\nstderr:\nBAD" }] },
     false,
@@ -239,9 +240,7 @@ test("mixed completion batches preserve order and color each task outcome", () =
       { id: "task_c", status: "completed", exitCode: 0 },
     ],
   }).render(200)[0];
-  expect(row).toContain(
-    "<success>✓ task_a finished</success>, <error>✗ task_b failed</error>, <success>✓ task_c finished</success>",
-  );
+  expect(row).toContain("<success>✓ task_a</success>, <error>✗ task_b — exit 2</error>, <success>✓ task_c</success>");
 });
 
 test("collapsed rows are control-safe and bounded at small widths", () => {
@@ -290,7 +289,7 @@ test("full-batch diagnostics retain a failure omitted after the first 50 tasks",
     32,
   )[0];
   expect(row.startsWith("✗ ")).toBe(true);
-  expect(stripTerminalSequences(row)).toContain("1 omitted task failed");
+  expect(stripTerminalSequences(row)).toContain("1 more tasks failed");
   expect(visibleWidth(row)).toBeLessThanOrEqual(32);
 });
 
@@ -323,7 +322,7 @@ test("all-success legacy task details keep original order without risk markers",
       ],
     }).render(80)[0],
   );
-  expect(row.trimEnd()).toBe("✓ a finished, ✓ b finished");
+  expect(row.trimEnd()).toBe("✓ a, ✓ b");
 });
 
 test("omitted cancellations are reported separately and unknown aggregate omissions stay visible", () => {
@@ -333,9 +332,9 @@ test("omitted cancellations are reported separately and unknown aggregate omissi
     omittedTasks: 2,
   };
   const row = stripTerminalSequences(completionPreview("", false, theme, 0, "task-complete", details).render(300)[0]);
-  expect(row).toContain("1 omitted task cancelled");
-  expect(row).toContain("1 omitted task unresolved");
-  expect(row).not.toContain("omitted task failed");
+  expect(row).toContain("1 more tasks cancelled");
+  expect(row).toContain("1 more tasks unresolved");
+  expect(row).not.toContain("more tasks failed");
 });
 
 test("long titles cannot hide remote actionable, cancelled, unknown, or legacy omitted outcomes", () => {
@@ -358,7 +357,7 @@ test("long titles cannot hide remote actionable, cancelled, unknown, or legacy o
     { tasks: [{ title, status: "completed" }], omittedTasks: 2 },
   ]) {
     const row = stripTerminalSequences(completionPreview("", false, theme, 0, "task-complete", details).render(24)[0]);
-    expect(row).toStartWith(details.remote?.some((item) => item.state === "cancelled") ? "✗? " : "? ");
+    expect(row).toStartWith(details.remote?.some((item) => item.state === "cancelled") ? "⊘? " : "? ");
     expect(visibleWidth(row)).toBeLessThanOrEqual(24);
   }
 });
@@ -376,7 +375,7 @@ test("mixed failure and attention indicators precede truncatable descriptions", 
     tasks: [{ id: "task_bad", status: "failed", signal: "SIGTERM" }],
     attention: [{ id: "task_waiting" }],
   }).render(80)[0];
-  expect(row.trimEnd()).toBe("✗ task_bad failed, Task check · task_waiting");
+  expect(row.trimEnd()).toBe("✗ task_bad — failed");
   expect(visibleWidth(row)).toBeLessThanOrEqual(80);
 });
 
@@ -486,14 +485,14 @@ test("task titles are explicit metadata, not inferred source, and status is only
     { id: "task_e", title: "Uncertain", status: "mystery" },
   ];
   expect(completionPreview("full evidence", false, theme, 0, "task-complete", { tasks }).render(200)[0].trimEnd()).toBe(
-    "✓ Read renderer finished, ✗ Run checks failed, ✗ task_c cancelled, ✗ Slow check timed out, ? Uncertain mystery",
+    "✓ Read renderer, ✗ Run checks — failed, ⊘ task_c — cancelled, ✗ Slow check — timed out, ? Uncertain — status unknown",
   );
   expect(completionPreview("full evidence", true, theme, 0, "task-complete", { tasks }).render(200)[0].trimEnd()).toBe(
     "full evidence",
   );
 });
 
-test("routine attention previews use structured reasons and durations, not warning prose", () => {
+test("routine attention previews are hidden without removing expanded checkpoint evidence", () => {
   const details = {
     attention: [
       { id: "task_a", reasons: ["quiet"], quietForMs: 300_999, elapsedMs: 420_000 },
@@ -503,18 +502,14 @@ test("routine attention previews use structured reasons and durations, not warni
     omittedAttention: 2,
   };
   const evidence = "Long checkpoint request\nSECRET_PROGRESS";
-  expect(completionPreview(evidence, false, theme, 0, "task-attention", details).render(200)[0].trimEnd()).toBe(
-    "Task check · task_a · quiet 5m, task_b · review 10m, task_c · quiet 10m · review 20m, 2 more checks",
-  );
+  expect(completionPreview(evidence, false, theme, 0, "task-attention", details).render(200)).toEqual([]);
   expect(
     completionPreview(evidence, true, theme, 0, "task-attention", details)
       .render(200)
       .map((row) => row.trimEnd())
       .join("\n"),
   ).toBe(evidence);
-  expect(completionPreview(evidence, false, theme, 0, "task-attention").render(200)[0].trimEnd()).toBe(
-    "Task check · update; expand for details",
-  );
+  expect(completionPreview(evidence, false, theme, 0, "task-attention").render(200)).toEqual([]);
 });
 
 test("SSH fallback keeps actionable, cancelled and unknown states visible without inferring success", () => {
@@ -529,11 +524,11 @@ test("SSH fallback keeps actionable, cancelled and unknown states visible withou
     ],
   };
   const row = completionPreview("Remote evidence", false, trackingTheme, 0, "task-attention", details).render(500)[0];
-  expect(row).toContain("ssh:eA finished");
-  expect(row).toContain("<error>✗ ssh:eQ cancelled</error>");
-  expect(row).toContain("<warning>? ssh:eg unknown</warning>");
-  expect(row).toContain("needs human action");
-  expect(row).toContain("SSH task unknown");
+  expect(row).toContain("? ssh:eA — status unknown");
+  expect(row).toContain("<error>⊘ ssh:eQ — cancelled</error>");
+  expect(row).toContain("<warning>? ssh:eg — status unknown</warning>");
+  expect(row).toContain("needs your input");
+  expect(row).toContain("SSH task — status unknown");
   expect(row).not.toContain("<success>");
 });
 
@@ -558,4 +553,20 @@ test("default in-flight and settled action rows keep one label without lifecycle
   expect(executeOutputPreview({ content: [] }, false, false, theme).render(100)).toEqual([
     "? Action — Outcome unknown",
   ]);
+});
+
+test("capped diagnostic aggregates classify actual timeout separately from cancellation", () => {
+  const tasks = Array.from({ length: 51 }, (_, index) => ({
+    id: "task_" + index,
+    kind: "command",
+    command: "test",
+    output: "",
+    status: index === 50 ? "killed" : "completed",
+    timedOut: index === 50,
+  })) as any;
+  const details = completionDiagnosticDetails(tasks, []);
+  expect(details.taskStatusCounts).toEqual({ completed: 50, failed: 1, killed: 0, running: 0, unknown: 0 });
+  const rendered = completionPreview("", false, theme, 0, "task-complete", details).render(500).join("\n");
+  expect(rendered).toContain("✗ 1 more tasks failed");
+  expect(rendered).not.toContain("more tasks cancelled");
 });

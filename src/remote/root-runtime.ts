@@ -1,3 +1,4 @@
+import { taskRowsFromSessionEntries } from "../ui/task-rows";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { createServer, createConnection, type Server } from "node:net";
 import { unlinkSync } from "node:fs";
@@ -100,6 +101,7 @@ export async function dispatchRootFacet(
         pendingMessages: ctx.hasPendingMessages(),
         questions: questions.list(ctx),
         jobs: await allJobs(ctx, services),
+        taskRows: taskRowsFromSessionEntries(ctx.sessionManager.getBranch()),
       };
     case "close": {
       const report = (await services.jobs(ctx, "jobs.stopWork", {})) as {

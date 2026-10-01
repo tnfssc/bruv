@@ -48,6 +48,7 @@ function contextFixture(
   const sessionManager = {
     getSessionId: () => options.sessionId ?? "fixture-session",
     getEntries: () => entries,
+    getBranch: () => entries,
     getLeafId: () => null,
     ...options.sessionManager,
   } as ExtensionContext["sessionManager"];
@@ -93,6 +94,8 @@ function load(depth = 0, type?: string, options: any = {}) {
     handlers = new Map<string, Function[]>(),
     messages: any[] = [];
   let active: string[] = [];
+  const savedEntries: any[] = [];
+  const savedListeners = new Set<(entry: any) => void>();
   const bus = new Map<string, (data: any) => void>();
   const events = {
     on: (name: string, fn: (data: any) => void) => {
@@ -104,6 +107,11 @@ function load(depth = 0, type?: string, options: any = {}) {
   extension(
     {
       events,
+      appendEntry(customType: string, data: unknown) {
+        const entry = { type: "custom", customType, data };
+        savedEntries.push(entry);
+        for (const listener of savedListeners) listener(entry);
+      },
       sendUserMessage: (text: string) => messages.push(text),
       registerTool: (t: any) => tools.set(t.name, t),
       registerCommand() {},
@@ -123,7 +131,18 @@ function load(depth = 0, type?: string, options: any = {}) {
     for (const h of handlers.get(event) ?? []) result = await h(...args);
     return result;
   };
-  return { tools, fire, messages, events, active: () => active };
+  return {
+    tools,
+    fire,
+    messages,
+    events,
+    savedEntries,
+    watchSaved: (listener: (entry: any) => void) => {
+      savedListeners.add(listener);
+      return () => savedListeners.delete(listener);
+    },
+    active: () => active,
+  };
 }
 test("root and all agent profiles expose only execute", async () => {
   for (const [depth, type] of [
@@ -792,5 +811,51 @@ test("SSH human-action wait uses shared attention and lets print yield without g
   } finally {
     await e.fire("session_shutdown", {}, ctx);
     rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("typed background launches survive outer execute error with durable call ownership and real terminal updates", async () => {
+  const e = load();
+  const ctx = contextFixture();
+  await e.fire("session_start", {}, ctx);
+  let terminal!: (data: any) => void;
+  const terminalPromise = new Promise<any>((resolve) => {
+    terminal = resolve;
+  });
+  const detach = e.watchSaved((entry) => {
+    if (entry.customType === "die-task-row" && entry.data.terminal) terminal(entry.data);
+  });
+  const mock = spyOn(execution, "executeIsolated").mockImplementation(
+    async (_code, _cwd, _signal, _timeout, options) => {
+      const job = await options!.jobHandler!("shell", { command: "sleep 0.03; exit 1", waitSeconds: 0 }, _signal!);
+      expect((job as any).background).toBe(true);
+      return {
+        stdout: "",
+        stderr: "OUTER_EXECUTE_FAILURE",
+        exitCode: 1,
+        timedOut: false,
+        cancelled: false,
+        images: [],
+      } as any;
+    },
+  );
+  try {
+    await expect(
+      e.tools.get("execute").execute("launch_then_error", { code: "typed fixture" }, undefined, undefined, ctx),
+    ).rejects.toThrow("OUTER_EXECUTE_FAILURE");
+    const launches = e.savedEntries.filter((entry) => entry.customType === "die-task-row");
+    expect(launches).toHaveLength(1);
+    expect(launches[0].data.sourceCallId).toBe("launch_then_error");
+    expect(launches[0].data.status).toBe("running");
+    const done = await terminalPromise;
+    expect(done.id).toBe(launches[0].data.id);
+    expect(done.sourceCallId).toBe("launch_then_error");
+    expect(done.status).toBe("failed");
+    expect(done.exitCode).toBe(1);
+    expect(done.terminal).toBe(true);
+  } finally {
+    mock.mockRestore();
+    detach();
+    await e.fire("session_shutdown", {}, ctx);
   }
 });

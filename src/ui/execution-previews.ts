@@ -1,5 +1,5 @@
 import { actionError, actionLabel } from "./action-label";
-import { sshJobId } from "../remote/jobs";
+import { formatTaskRow, taskRowColor, taskRowsFromDetails, taskSummaryRowsFromDetails } from "./task-rows";
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import {
   Box,
@@ -205,38 +205,6 @@ export function executeOutputPreview(
   );
 }
 
-interface CompletionDetails {
-  tasks?: Array<{
-    id?: unknown;
-    title?: unknown;
-    status?: unknown;
-    exitCode?: unknown;
-    signal?: unknown;
-    timedOut?: unknown;
-  }>;
-  attention?: Array<{ id?: unknown; reasons?: unknown; elapsedMs?: unknown; quietForMs?: unknown }>;
-  taskStatusCounts?: Partial<Record<"completed" | "failed" | "killed" | "running" | "unknown", unknown>>;
-  remote?: Array<{ taskId?: unknown; title?: unknown; target?: unknown; state?: unknown; actionable?: unknown }>;
-  taskCount?: unknown;
-  attentionCount?: unknown;
-  omittedTasks?: unknown;
-  omittedAttention?: unknown;
-}
-function attentionSummary(notice: NonNullable<CompletionDetails["attention"]>[number]): string {
-  const id = safeMetadata(notice?.id) || "task";
-  const reasons = Array.isArray(notice?.reasons) ? notice.reasons : [];
-  const duration = (ms: unknown) =>
-    typeof ms === "number" && Number.isFinite(ms) && ms >= 0 ? Math.floor(ms / 60_000) + "m" : "";
-  const quiet = reasons.includes("quiet") ? ["quiet", duration(notice.quietForMs)].filter(Boolean).join(" ") : "";
-  const review = reasons.includes("review") ? ["review", duration(notice.elapsedMs)].filter(Boolean).join(" ") : "";
-  return [id, quiet, review].filter(Boolean).join(" · ");
-}
-function count(value: unknown): number {
-  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0 ? value : 0;
-}
-function safeMetadata(value: unknown): string {
-  return typeof value === "string" ? oneLine(value) : "";
-}
 export function completionPreview(
   content: string | Array<{ type: string; text?: string }>,
   expanded: boolean,
@@ -245,7 +213,6 @@ export function completionPreview(
   kind: "task-complete" | "task-attention" = "task-complete",
   rawDetails?: unknown,
 ): Component {
-  const details = rawDetails as CompletionDetails | undefined;
   const text =
     typeof content === "string"
       ? content
@@ -261,107 +228,27 @@ export function completionPreview(
           index === 0 && kind !== "task-attention" ? theme.fg("accent", line) : line,
         );
       if (width < 1) return [];
-      const tasks = Array.isArray(details?.tasks) ? details.tasks : [];
-      const omittedTasks = count(details?.omittedTasks);
-      const attention = Array.isArray(details?.attention) ? details.attention : [];
-      const omittedAttention = count(details?.omittedAttention);
-      const first = oneLine(text.split("\n")[0] ?? "");
-
-      const remote = Array.isArray(details?.remote) ? details.remote : [];
-      if (kind === "task-attention" && !remote.length) {
-        const summaries = attention.map(attentionSummary);
-        if (omittedAttention) summaries.push(omittedAttention + " more checks");
-        return [truncateToWidth("Task check · " + (summaries.join(", ") || "update; expand for details"), width)];
-      }
-
-      const aggregate = details?.taskStatusCounts;
-      const hasAggregate =
-        !!aggregate &&
-        ["completed", "failed", "killed", "running", "unknown"].every(
-          (status) => typeof aggregate[status as keyof typeof aggregate] === "number",
-        );
-      const knownCounts = { completed: 0, failed: 0, killed: 0, running: 0, unknown: 0 };
-      for (const task of tasks) {
-        const status = safeMetadata(task?.status);
-        if (status in knownCounts) knownCounts[status as keyof typeof knownCounts]++;
-        else knownCounts.unknown++;
-      }
-
-      const pieces: string[] = [];
-      let hasFailure = false;
-      let hasUncertainty = false;
-      const add = (color: "success" | "error" | "warning" | "normal", value: string) => {
-        if (!value) return;
-        if (color === "error") hasFailure = true;
-        if (color === "warning") hasUncertainty = true;
-        pieces.push(color === "normal" ? value : theme.fg(color, value));
-      };
-
-      // Metadata can be capped for large batches. Surface an omitted failure
-      // before the ID sequence so narrow terminals cannot make the batch look
-      // successful merely because the failed task was outside the cap.
-      if (hasAggregate) {
-        const omittedFailed = count(aggregate?.failed) - knownCounts.failed;
-        const omittedKilled = count(aggregate?.killed) - knownCounts.killed;
-        if (omittedFailed > 0)
-          add("error", "✗ " + omittedFailed + " omitted task" + (omittedFailed === 1 ? "" : "s") + " failed");
-        if (omittedKilled > 0)
-          add("error", "✗ " + omittedKilled + " omitted task" + (omittedKilled === 1 ? "" : "s") + " cancelled");
-        const omittedUncertain =
-          count(aggregate?.running) + count(aggregate?.unknown) - knownCounts.running - knownCounts.unknown;
-        if (omittedUncertain > 0)
-          add(
-            "warning",
-            "? " + omittedUncertain + " omitted task" + (omittedUncertain === 1 ? "" : "s") + " unresolved",
-          );
-      }
-
-      for (const task of tasks) {
-        const id = safeMetadata(task?.title) || safeMetadata(task?.id) || "task";
-        const status = safeMetadata(task?.status);
-        if (task?.timedOut === true) add("error", "✗ " + id + " timed out");
-        else if (status === "completed") add("success", "✓ " + id + " finished");
-        else if (status === "killed") add("error", "✗ " + id + " cancelled");
-        else if (status === "failed") add("error", "✗ " + id + " failed");
-        else add("warning", "? " + id + (status ? " " + status : " status unknown"));
-      }
-
-      for (const row of remote) {
-        const taskId = safeMetadata(row?.taskId);
-        const title = safeMetadata(row?.title);
-        const target = safeMetadata(row?.target);
-        const id = title
-          ? title + (target ? " · " + target : "")
-          : /^[a-zA-Z0-9_-]{1,128}$/.test(taskId)
-            ? sshJobId(taskId)
-            : "SSH task";
-        const state = safeMetadata(row?.state);
-        if (row?.actionable) add("warning", "? " + id + " needs human action");
-        else if (state === "cancelled") add("error", "✗ " + id + " cancelled");
-        // SSH "done" is a terminal observation, not proof of feature success.
-        else if (state === "done") add("normal", id + " finished");
-        else add("warning", "? " + id + (state ? " " + state : " status unknown"));
-      }
-
-      for (const notice of attention) {
-        add("normal", "Task check · " + attentionSummary(notice));
-      }
-      if (omittedAttention) add("normal", omittedAttention + " more checks");
-
-      if (omittedTasks && !hasAggregate) add("warning", "? " + omittedTasks + " task details omitted");
-      if (!pieces.length) add("warning", "? Task completion · " + (first || "unknown task update"));
-      const row = pieces.join(", ");
-      if (visibleWidth(row) <= width) return [row];
-
-      // Keep compact risk cues ahead of truncatable descriptions. Failure wins
-      // at tiny widths; otherwise both failure and uncertainty stay visible.
-      let indicators = "";
-      if (hasFailure) indicators += theme.fg("error", "✗");
-      if (hasUncertainty) indicators += theme.fg("warning", "?");
-      if (indicators && width <= 1) return [hasFailure ? theme.fg("error", "✗") : theme.fg("warning", "?")];
+      const tasks = taskRowsFromDetails(rawDetails);
+      const summaries = taskSummaryRowsFromDetails(rawDetails);
+      // Quiet/review checkpoints still reach the agent; they are not human rows.
+      if (kind === "task-attention" && !tasks.length) return [];
+      const pieces = [
+        ...summaries.map((row) => ({ color: row.color, text: row.text })),
+        ...tasks.map((row) => ({ color: taskRowColor(row), text: formatTaskRow(row) })),
+      ];
+      if (!pieces.length) pieces.push({ color: "warning", text: "? Task update — status unknown" });
+      const line = pieces.map((row) => theme.fg(row.color, row.text)).join(", ");
+      if (visibleWidth(line) <= width) return [line];
+      const failed = pieces.some((row) => row.text.startsWith("✗"));
+      const cancelled = pieces.some((row) => row.text.startsWith("⊘"));
+      const uncertain = pieces.some((row) => row.color === "warning");
+      const indicators =
+        (failed ? theme.fg("error", "✗") : cancelled ? theme.fg("error", "⊘") : "") +
+        (uncertain ? theme.fg("warning", "?") : "");
+      if (indicators && width <= 1)
+        return [failed ? theme.fg("error", "✗") : cancelled ? theme.fg("error", "⊘") : theme.fg("warning", "?")];
       if (indicators && visibleWidth(indicators) >= width) return [truncateToWidth(indicators, width)];
-      if (indicators) return [truncateToWidth(indicators + " " + row, width)];
-      return [truncateToWidth(row, width)];
+      return [truncateToWidth(indicators ? indicators + " " + line : line, width)];
     }),
   );
   return box;

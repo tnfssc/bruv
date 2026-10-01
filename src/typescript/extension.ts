@@ -1,3 +1,4 @@
+import { taskRowFromLaunch, taskRowKey, type TaskRow } from "../ui/task-rows";
 import { type ExtensionAPI, type ExtensionContext, SettingsManager } from "@earendil-works/pi-coding-agent";
 import * as z from "zod/mini";
 import { diagnosticRecorder, inspectDiagnostics } from "../diagnostics";
@@ -104,6 +105,7 @@ export function registerExecuteTool(
       const ownerLeafId = owner?.getLeafId?.();
       const recordForAttachment = owner ? diagnosticRecorder(owner) : undefined;
       const backgroundIds: string[] = [];
+      const taskRows = new Map<string, TaskRow>();
       const handoffWaits = new AbortController();
       const stopSignal = new AbortController();
       if (owner) foreground.set(stopSignal, owner);
@@ -145,8 +147,14 @@ export function registerExecuteTool(
             const result = await jobHandler(ctx, method, params, withJobCancellation(signal, handoffWaits.signal));
             if (method === "shell" || method === "subagent") {
               for (const job of Array.isArray(result) ? result : [result]) {
-                if (job && typeof job === "object" && job.background === true && typeof job.id === "string")
+                if (job && typeof job === "object" && job.background === true && typeof job.id === "string") {
                   backgroundIds.push(job.id);
+                  const row = taskRowFromLaunch(job, toolCallId, (params as { title?: unknown } | undefined)?.title);
+                  if (row) {
+                    taskRows.set(taskRowKey(row), row);
+                    pi.events?.emit?.("die:task-row-launch", { row, sessionId: ownerSessionId });
+                  }
+                }
               }
             }
             return result;
@@ -196,6 +204,7 @@ export function registerExecuteTool(
             ...(diagnostics.length ? { diagnostics } : {}),
             ...(handoffMessage !== undefined ? { handoff: handoffMessage } : {}),
             backgroundJobs: backgroundIds,
+            taskRows: [...taskRows.values()],
             images: images.map((image) => ({
               mimeType: image.mimeType,
               bytes: Buffer.byteLength(image.data, "base64"),
