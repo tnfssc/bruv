@@ -453,6 +453,12 @@ describe("built-in Herdr agent state", () => {
     let stallFirst = true;
     const server = net.createServer((socket) => {
       let input = "";
+      // The reporter closes its client socket as soon as it receives the
+      // response. A late server-side write completion can therefore report
+      // EPIPE; that is ordinary peer teardown, not a reporter failure.
+      socket.on("error", (error: NodeJS.ErrnoException) => {
+        if (error.code !== "EPIPE") throw error;
+      });
       socket.on("data", (chunk) => {
         input += chunk.toString();
         const newline = input.indexOf("\n");
