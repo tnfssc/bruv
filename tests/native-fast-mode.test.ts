@@ -15,7 +15,6 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { inspectDiagnostics } from "../src/diagnostics";
 import {
-  CODEX_FAST_MODELS,
   FAST_CHECKPOINT_PERSIST_FAILED,
   FAST_GUARD_TIER_MUTATION,
   FAST_REFUSED_AUTH,
@@ -143,12 +142,30 @@ async function wirePayload(
   return body;
 }
 
-test("exact provider/model/auth allowlist rejects lookalikes before dispatch", () => {
-  expect(nativeFastSupport(getModel("openai", "gpt-5.3-codex")!).supported).toBe(true);
-  expect(nativeFastSupport(getModel("openai-codex", "gpt-5.6-luna")!).supported).toBe(true);
-  expect(CODEX_FAST_MODELS.has("gpt-5.3-codex-spark")).toBe(false);
-  expect(nativeFastSupport(getModel("openai-codex", "gpt-5.3-codex-spark")!).supported).toBe(false);
-  expect(nativeFastSupport({ ...getModel("openai-codex", "gpt-5.5")!, id: "gpt-5.4-mini" }).supported).toBe(false);
+for (const provider of ["openai", "openai-codex"] as const) {
+  test(`native fast forwards model aliases on the official ${provider} surface`, async () => {
+    const base = provider === "openai" ? getModel("openai", "gpt-5.3-codex")! : getModel("openai-codex", "gpt-5.5")!;
+    for (const id of ["gpt-6.1-sol", "gpt-5.3-codex-spark", "gpt-5.4-mini", "future-model-alias"]) {
+      const model = { ...base, id };
+      expect(nativeFastSupport(model)).toEqual({
+        supported: true,
+        tier: provider === "openai" ? "fast" : "priority",
+        surface: provider === "openai" ? "api" : "codex",
+      });
+      const h = harness(model, { mode: "print", accept: true });
+      expect((await wirePayload(h)).service_tier).toBeUndefined();
+      await h.command.handler("on", h.ctx);
+      expect(await wirePayload(h)).toMatchObject({
+        model: id,
+        service_tier: provider === "openai" ? "fast" : "priority",
+      });
+      await h.command.handler("off", h.ctx);
+      expect(await wirePayload(h)).toMatchObject({ model: id, service_tier: "default" });
+    }
+  });
+}
+
+test("native fast rejects unofficial provider and endpoint routing", () => {
   const custom = { ...getModel("openai", "gpt-5.3-codex")!, provider: "gateway" };
   expect(nativeFastSupport(custom).supported).toBe(false);
   const proxy = { ...getModel("openai", "gpt-5.3-codex")!, baseUrl: "https://proxy.example/v1" };
@@ -559,7 +576,7 @@ test("real AgentSession ModelRuntime guard survives swallowed hook throws and st
   }
 });
 
-for (const scenario of ["corrupt-record", "wrong-auth", "unsupported-model"] as const) {
+for (const scenario of ["corrupt-record", "wrong-auth", "unsupported-endpoint"] as const) {
   test(`real ModelRuntime blocks ${scenario} at zero fetch dispatches`, async () => {
     const dir = await mkdtemp(join(tmpdir(), "bruv-fast-reject-"));
     const originalFetch = globalThis.fetch;
@@ -567,7 +584,8 @@ for (const scenario of ["corrupt-record", "wrong-auth", "unsupported-model"] as 
     let dispatches = 0;
     try {
       const documented = getModel("openai", "gpt-5.3-codex")!;
-      const model = scenario === "unsupported-model" ? { ...documented, id: "gpt-5.3-codex-lookalike" } : documented;
+      const model =
+        scenario === "unsupported-endpoint" ? { ...documented, baseUrl: "https://proxy.example/v1" } : documented;
       const manager = SessionManager.inMemory(dir);
       manager.appendCustomEntry(NATIVE_FAST_ENTRY, {
         version: scenario === "corrupt-record" ? 99 : 1,
