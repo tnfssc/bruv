@@ -107,10 +107,10 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
       0,
     );
 
-    const compact = await frameContaining("task_fixture executed");
+    const compact = await frameContaining("task_fixture finished");
     expect(compact).toContain("✓ executed");
     expect(compact).toContain("✗ execute failed");
-    expect(compact).toContain("✓ task_fixture executed");
+    expect(compact).toContain("✓ task_fixture finished");
     expect(compact).not.toContain("COMMAND_HIDDEN_5");
     expect(compact).not.toContain("OUTPUT_HIDDEN_5");
     expect(compact).not.toContain("FAILURE_OUTPUT_DETAIL");
@@ -120,7 +120,7 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
 
     expect((await tmux("resize-window", "-t", "preview", "-x", "38", "-y", "40")).code).toBe(0);
     await Bun.sleep(300);
-    const narrow = await frameContaining("task_fixture executed");
+    const narrow = await frameContaining("task_fixture finished");
     for (const line of narrow.split("\n")) expect([...line].length).toBeLessThanOrEqual(38);
     expect(narrow).not.toContain("OUTPUT_HIDDEN_5");
 

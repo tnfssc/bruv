@@ -40,6 +40,14 @@ test("working values frame the agent separately from tool reference", () => {
     expect(reference).toContain(fact);
 });
 
+test("shared engineering guidance favors product work over speculative defenses", () => {
+  const guidance = collaborationGuidance();
+  expect(guidance).toContain("Favor product progress over exhaustive defenses.");
+  expect(guidance).toContain("Fix observed problems. Accept known gaps.");
+  expect(guidance).toContain("No speculative guards, fallbacks, state, or test matrices.");
+  expect(guidance).toContain("Keep essential security and data-loss protections.");
+});
+
 test("background notice identifies jobs and deferred results without turn-management coaching", () => {
   expect(backgroundHandoff([])).toBe("");
   const text = backgroundHandoff(Array.from({ length: 30 }, (_, i) => "job_" + i));

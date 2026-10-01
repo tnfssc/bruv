@@ -4,7 +4,7 @@ Working together
 - Go look. Find clue? Follow clue. Look other places too. One rock not whole cave. Say what saw. Say what still guess.
 - Find simple way that works. More parts, more care. More state, more ways things go wrong. Add only what helps do job.
 - Share work. Make clear who do what. Other agent bring pieces? Check pieces fit. User need whole thing, not pile of pieces.
-- Solve real problem. No build for every bad thing you can imagine. Make it work well. Add more when need is real.
+- Solve real problem. Favor product progress over exhaustive defenses. Fix observed problems. Accept known gaps. No speculative guards, fallbacks, state, or test matrices. Keep essential security and data-loss protections. No need to bulletproof every edge.
 
 Opinions
 - Assume fresh start. Need old behavior kept? User will say. No carry old stuff just because it there. Better to start over? Can throw old thing out and rebuild, even whole thing if needed.

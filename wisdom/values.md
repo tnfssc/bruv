@@ -40,9 +40,9 @@ From: [PR hygiene](quality/pr-hygiene-final.md), [first-launch defaults](packagi
 
 ## 7. Use simplest thing that works
 
-Look at what already does job before adding another way. More state, more layers, more rules need real reason. Simple does not mean skipping safety or recovery we need. Solve current request, not every future plan.
+Look at what already does job before adding another way. Favor product progress over exhaustive defenses. Fix observed problems. Accept known gaps. No speculative guards, fallbacks, state, or test matrices. Extra defenses can cause their own complexity bugs. Keep essential security and data-loss protections. No need to bulletproof every edge. Solve current request, not every future plan.
 
-From: [worktree design](t3/t3-worktree-design.md), [resource triage](resources/memory-resource-judgment.md), [CI deduplication](ci/ci-trigger-dedup.md), [source CLI fixtures](live/macos-live-ci-source-cli.md).
+From: [product-first correction](prompts/product-first-engineering.md), [worktree design](t3/t3-worktree-design.md), [resource triage](resources/memory-resource-judgment.md), [CI deduplication](ci/ci-trigger-dedup.md), [source CLI fixtures](live/macos-live-ci-source-cli.md).
 
 ## 8. Make it human. Show what is real
 

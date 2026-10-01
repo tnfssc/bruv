@@ -3,6 +3,7 @@ import { isDeepStrictEqual } from "node:util";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import { calculateCost, type Model, type Usage } from "@earendil-works/pi-ai";
 import { getPiUserAgent } from "@earendil-works/pi-ai/utils/pi-user-agent";
+import { buildContextEntries } from "@earendil-works/pi-coding-agent";
 import type {
   CompactionEntry,
   CompactionResult,
@@ -14,6 +15,7 @@ import { recordDiagnostic } from "../diagnostics.js";
 import jobsTemplate from "../prompts/compaction-jobs.md" with { type: "text" };
 import noticeTemplate from "../prompts/native-compaction.md" with { type: "text" };
 import { reportProviderAttempt } from "./provider-attempts";
+import { latestShakeRecord, projectShakenRequiredMessages } from "./manual-shake";
 
 const readOnlyContextPreview = new AsyncLocalStorage<boolean>();
 
@@ -442,11 +444,23 @@ function coverageMessageKey(message: AgentMessage): string {
   const { timestamp: _nonsemanticTimestamp, ...semanticMessage } = message;
   return JSON.stringify(semanticMessage);
 }
-function coversDiscardedMessages(c: CapturedRequest, event: SessionBeforeCompactEvent): boolean {
+export function coversDiscardedMessages(c: CapturedRequest, event: SessionBeforeCompactEvent): boolean {
   // The SDK retains failed attempts in the journal but removes them from live
   // context when retrying. An empty failed reply has no model content to cover.
   // Partial replies (including signatures/tool calls) must still be covered.
-  const required = [...event.preparation.messagesToSummarize, ...event.preparation.turnPrefixMessages]
+  let discarded = [...event.preparation.messagesToSummarize, ...event.preparation.turnPrefixMessages];
+  try {
+    const record = latestShakeRecord(event.branchEntries, c.sessionId);
+    if (record) {
+      // Preparation is raw SDK history; the actual provider capture has already
+      // passed through durable shake. Use that same exact projection, with the
+      // full active window proving tool pairing before selecting discarded rows.
+      discarded = projectShakenRequiredMessages(discarded, buildContextEntries(event.branchEntries), record);
+    }
+  } catch {
+    return false; // Invalid durable state cannot authorize content removal.
+  }
+  const required = discarded
     .filter(
       (message) =>
         !(
