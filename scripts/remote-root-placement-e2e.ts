@@ -755,7 +755,7 @@ try {
     key("Enter");
     await wait(
       "post-cancel authoritative inspect",
-      () => completedCommands(rootState(faultID), "jobs.inspect").length > 1,
+      () => completedCommands(rootState(faultID), "jobs.inspect").length > 1 && screen().includes("Back"),
     );
     const post = completedCommands(rootState(faultID), "jobs.inspect").at(-1);
     writeFileSync(
@@ -768,6 +768,7 @@ try {
     assert.equal(rootState(faultID).outcome, undefined, "job cancellation returned active source");
     capture("running-job-cancelled");
     key("Escape");
+    await ready(); // Keep Escape and Ctrl-D separate; an Alt/control chord is not two human actions.
     await detach(); // No successful close: this root must not export/integrate source.
     assert.equal(run("git", ["-C", repo, "diff"]), faultLocalDiff, "fault root returned source without close");
     writeFileSync(join(artifacts, "fault-root-state.json"), JSON.stringify(rootState(faultID), null, 2));
