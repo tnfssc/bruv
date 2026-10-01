@@ -46,8 +46,10 @@ export function parseRootPlacementArgs(args: string[]): { localArgs: string[]; r
     if (!value || value.startsWith("-") || /[\r\n\0]/.test(value)) throw Error(flag + " requires a value");
     if (flag !== "--remote-include" && seen.has(flag)) throw Error("Duplicate root option: " + flag);
     seen.add(flag);
-    if (flag === "--remote-repo") options.remoteRepo = value;
-    else if (flag === "--remote-source") options.cwd = value;
+    if (flag === "--remote-repo") {
+      if (!value.startsWith("/")) throw Error("Remote repository must be an absolute server path");
+      options.remoteRepo = value;
+    } else if (flag === "--remote-source") options.cwd = value;
     else if (flag === "--remote-include") (options.remoteInclude ??= []).push(value);
     else if (flag === "--model") options.model = value;
     else if (flag === "--thinking") {

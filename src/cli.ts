@@ -159,6 +159,22 @@ if (cliArgs[0] === "--remote-control" || cliArgs[0] === "--remote-owner") {
   }
 }
 
+// A placed root is a presentation client, never a second local agent/model/tool loop.
+// Resolve before Pi main() and local provider onboarding. Omitted placement stays local.
+try {
+  const { parseRootPlacementArgs } = await import("./remote/root-options");
+  const placement = parseRootPlacementArgs(cliArgs);
+  if (placement.remote) {
+    const { runRemoteRoot } = await import("./remote/root-cli");
+    await runRemoteRoot(placement.remote);
+    process.exit(0);
+  }
+  if (placement.localArgs !== cliArgs) cliArgs.splice(0, cliArgs.length, ...placement.localArgs);
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+}
+
 // This must be dynamic: PI_PACKAGE_DIR has to be set before Pi initializes its
 // product metadata and asset paths.
 const { assertDiePiHost } = await import("./pi-host");
@@ -212,6 +228,14 @@ function filterHelp(text: string): string {
       continue;
     }
     filtered.push(line.replace("AI coding assistant with read, bash, edit, write tools", "AI coding assistant"));
+    if (line.trim() === "Options:")
+      filtered.push(
+        "  --place <name>         Main agent on a human-authorized target (default: local/current runtime)",
+        "  --remote-source <path> Current tracked source for a placed root (default: current repo)",
+        "  --remote-include <path>Explicit human approval to include an untracked source path",
+        "  --remote-repo <path>   Explicit existing server repo instead of current-source handoff",
+        "  --remote-fresh         Explicitly create a new root rather than reattach saved work",
+      );
   }
   return filtered.join("\n");
 }

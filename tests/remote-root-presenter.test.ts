@@ -4,6 +4,7 @@ function fixture() {
   const commands: any[] = [];
   const picks: string[] = [];
   const notices: string[] = [];
+  const titles: string[] = [];
   const question = {
     id: "not-a-routine-copy-id",
     text: "Choose implementation",
@@ -14,7 +15,7 @@ function fixture() {
   };
   let detached = false;
   const client: any = {
-    read: () => ({ commands: {} }),
+    read: () => ({ commands: {}, target: {name:"builder"} }),
     command: async (command: any) => {
       commands.push(command);
       return { commandId: "c", state: "completed" };
@@ -27,12 +28,12 @@ function fixture() {
     },
   };
   const ui: RootPresentationControls = {
-    choose: async () => picks.shift(),
+    choose: async (title) => {titles.push(title); return picks.shift();},
     answer: async () => "second",
     notice: (text) => notices.push(text),
     detach: () => (detached = true),
   };
-  return { commands, picks, notices, question, controls: new RootControls(client, ui), detached: () => detached };
+  return { commands, picks, notices, titles, question, controls: new RootControls(client, ui), detached: () => detached };
 }
 test("empty local provider config: normal typed prompt and dedicated abort with detach separate", async () => {
   const f = fixture();
@@ -60,6 +61,7 @@ test("/ps normal selected inspect and confirmed cancellation", async () => {
   const f = fixture();
   f.picks.push("job", "stop", "yes");
   await f.controls.submit("/ps");
+  expect(f.titles[0]).toBe("Jobs on builder");
   expect(f.commands).toContainEqual({ kind: "jobs.inspect", id: "job", limit: 5000 });
   expect(f.commands.at(-1)).toEqual({ kind: "jobs.stop", id: "job" });
 });

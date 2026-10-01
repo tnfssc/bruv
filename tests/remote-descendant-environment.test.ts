@@ -2,6 +2,9 @@ import { expect, test } from "bun:test";
 import { childAgentEnvironment, scrubT3BridgeEnvironment } from "../src/delegation-environment";
 test("remote orchestrator descendants keep destination environment but never checkpoint their parent session", () => {
   const parent = {
+    DIE_ROOT_RUNTIME_DIR: "/owner/root",
+    DIE_REMOTE_ROOT_SESSION: "root-session",
+    DIE_AGENT_PLACE: "server",
     HOME: "/server",
     PATH: "/server/bin",
     DIE_REMOTE_RUNTIME_STATE: "/owner/runtime.json",
@@ -10,6 +13,7 @@ test("remote orchestrator descendants keep destination environment but never che
     DIE_SUBAGENT_TYPE: "orchestrator",
   };
   expect(childAgentEnvironment(parent)).toEqual({
+    DIE_AGENT_PLACE: "server",
     HOME: "/server",
     PATH: "/server/bin",
     DIE_SUBAGENT_TYPE: "orchestrator",

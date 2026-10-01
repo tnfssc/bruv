@@ -157,7 +157,7 @@ export class RootControls {
         return;
       }
       const id = await this.ui.choose(
-        "Jobs",
+        "Jobs on " + safe(this.client.read().target.name),
         jobs.map((j) => ({
           value: j.id,
           label: safe(j.title ?? j.command ?? j.id),
@@ -360,7 +360,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
         ...transcript.render(width),
         ...new Text(safe(transcript.progress)).render(width),
         ...status.render(width),
-        ...new Text("/questions · /ps · /abort · /close · Ctrl-D detach").render(width),
+        ...new Text("/questions · /ps · /close · Ctrl-C abort · Ctrl-D detach").render(width),
         ...editor.render(width),
       ];
     },
@@ -385,7 +385,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
         cancelModal?.();
         return { consume: true };
       }
-      detach();
+      void controls.submit("/abort").catch((error) => notice(String(error)));
       return { consume: true };
     }
     if (data === "\x1b" && modal) {
@@ -406,7 +406,12 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
       const snapshot = (transcript.record as any).messages;
       if (Array.isArray(snapshot)) transcript.messages = snapshot.slice(-200);
     }
-    notice(client.read().sourceLabel);
+    notice(
+      client.read().sourceLabel +
+        (client.read().cacheStart > 1
+          ? " · cached transcript starts at event " + client.read().cacheStart + "; older text remains on server"
+          : ""),
+    );
     if (options.prompt) {
       try {
         const receipt = await client.initialPrompt(options.prompt);

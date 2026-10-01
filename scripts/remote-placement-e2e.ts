@@ -492,15 +492,16 @@ try {
     const completions = () =>
       journal().filter(
         (e) =>
-          e.type === "message" &&
-          e.message?.customType === "task-complete" &&
-          JSON.stringify(e).includes("PLACEMENT_ORCHESTRATOR_DONE_"),
+          ((e.type === "custom_message" && e.customType === "task-complete") ||
+            (e.type === "message" && e.message?.customType === "task-complete")) &&
+          String(e.type === "custom_message" ? e.content : e.message?.content).includes("PLACEMENT_ORCHESTRATOR_DONE_"),
       );
     const count = completions().length;
     assert.equal(count, 2, "expected one normal completion per placement");
-    type("/remote sync " + cleanId);
-    await Bun.sleep(6000);
-    assert.equal(completions().length, count, "repeat sync delivered duplicate normal completion");
+    // Ordinary background observation must not redeliver already consumed results.
+    // No manual remote sync/answer/inbox is part of this task lifecycle.
+    await Bun.sleep(12000);
+    assert.equal(completions().length, count, "repeat automatic observation delivered duplicate normal completion");
     tmux("kill-session", "-t", "placement");
     ptyStarted = false;
     await Bun.sleep(500);

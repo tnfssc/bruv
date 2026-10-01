@@ -11,6 +11,7 @@ import {
   existsSync,
   realpathSync,
   chmodSync,
+  readdirSync,
 } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
@@ -108,7 +109,13 @@ export class RootClient {
     this.transport = options.transport ?? rootSshTransport;
   }
   static async open(options: RootClientOptions): Promise<RootClient> {
-    const cwd = realpathSync(options.cwd);
+    let cwd = realpathSync(options.cwd);
+    const sourceRoot = Bun.spawnSync(["git", "-C", cwd, "rev-parse", "--show-toplevel"], {
+      stdout: "pipe",
+      stderr: "pipe",
+      timeout: 10_000,
+    });
+    if (sourceRoot.exitCode === 0) cwd = realpathSync(sourceRoot.stdout.toString().trim());
     const base = options.stateDir ?? join(homedir(), ".die", "remote", "roots");
     mkdirSync(base, { recursive: true, mode: 0o700 });
     chmodSync(base, 0o700);
@@ -121,6 +128,8 @@ export class RootClient {
       if (existsSync(pointer) && !options.fresh)
         directory = join(base, object(JSON.parse(readFileSync(pointer, "utf8"))).sessionId);
       else {
+        if (readdirSync(base).filter((name) => /^[0-9a-f-]{36}$/.test(name)).length >= 100)
+          throw Error("Root session cache limit reached; preserve/export sessions before creating more");
         const sessionId = randomUUID();
         directory = join(base, sessionId);
         mkdirSync(directory, { mode: 0o700 });
@@ -238,6 +247,12 @@ export class RootClient {
       if (s.source && s.intent.repoPath === "pending-upload") {
         const bytes = readFileSync(s.source.bundle);
         const sha256 = hash(bytes);
+        if (
+          s.source.bundleSha256 !== sha256 ||
+          s.source.localRoot !== s.sourceRoot ||
+          !isDeepStrictEqual(JSON.parse(readFileSync(s.source.manifest, "utf8")), s.source)
+        )
+          throw Error("Pinned root source bytes or manifest changed; no transfer sent");
         let offset = 0,
           checkout: string | undefined;
         while (offset < bytes.length) {

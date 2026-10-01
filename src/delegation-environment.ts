@@ -13,5 +13,7 @@ export function scrubT3BridgeEnvironment(env: NodeJS.ProcessEnv): NodeJS.Process
 export function childAgentEnvironment(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
   const child = scrubT3BridgeEnvironment(env);
   delete child.DIE_REMOTE_RUNTIME_STATE;
+  for (const name of Object.keys(child))
+    if (name.startsWith("DIE_REMOTE_ROOT_") || name.startsWith("DIE_ROOT_")) delete child[name];
   return child;
 }

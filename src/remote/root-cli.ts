@@ -15,8 +15,16 @@ export type RemoteRootCLIOptions = {
   target?: RootTarget;
   remoteClient?: RemoteClient;
 };
+export function assertRootStartupContext(env: NodeJS.ProcessEnv = process.env): void {
+  const depth = Number(env.DIE_SUBAGENT_DEPTH ?? "0");
+  if (!Number.isSafeInteger(depth) || depth !== 0 || env.T3_MCP_URL || env.T3_MCP_BEARER_TOKEN)
+    throw Error(
+      "Main-agent placement cannot reset a delegated/scoped agent role or depth; use normal subagent placement",
+    );
+}
 /** Placement is resolved before normal local startup: no onboarding/model registry/tool/coordinator. */
 export async function runRemoteRoot(options: RemoteRootCLIOptions): Promise<void> {
+  assertRootStartupContext();
   if (!options.place || options.place === "local")
     throw Error("Remote root startup requires an explicit authorized named target");
   let target = options.target;
@@ -24,7 +32,7 @@ export async function runRemoteRoot(options: RemoteRootCLIOptions): Promise<void
     if (target.name !== options.place) throw Error("Named target mismatch");
   } else {
     const connection = (await (options.remoteClient ?? new RemoteClient()).read()).connection;
-    if (!connection || connection.host !== options.place)
+    if (!connection || (connection.host === "local" ? "ssh:local" : connection.host) !== options.place)
       throw Error("Place is not the authorized pinned SSH target; connect/authorize the named target first");
     target = {
       name: options.place,

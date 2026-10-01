@@ -18,3 +18,8 @@ Use direct Bun 1.4.2 and TMPDIR=/home/tnfssc/.die/tmp-pi-removal. Dependencies l
 Initial lead checks: 40 focused tests (remote extension/observation/legacy launch rejection) pass. Combined source and end-to-end results follow after integration. Do not treat an intermediate binary as frozen while sources change.
 
 Values: carried the already-approved value 7 refinement from the source wisdom: another backend need not become another user workflow. Existing values 1, 3, 4 and 8 already cover whole-flow proof, one owner, durable uncertain work and truthful state. Approved source design notes copied; no unrelated values edits.
+
+## Integration findings
+Actual compiled child proof exposed seams missed by isolated backend tests: stdin request allowlist lacked placement/workspace; descendants inherited the top owner checkpoint path; saved question branch anchors needed pinning before dispatch; a 430-character completion cut off the real child result behind artifact metadata. Each boundary now has focused regression coverage. Child terminal proof passed at /home/tnfssc/.die/tmp-pi-removal/placement-child-candidate-proof-5 with native candidate SHA e580d8647762257ecd96b5e02b7dcfc4aefb0527b07c7e136b8ca8d3f36b4198, not a final/full-release freeze.
+
+Full scope includes typed root presentation: raw SSH/tmux-only work was stopped and not integrated after parent seam review. Corrected contract ROOT_TYPED_CONTRACT.md separates durable server root owner from a model-free normal terminal client. Lasting active owner/frontend/proof trees and statuses are in PARENT_TASK_PLACEMENT_STATUS.md. Main root production and actual two-turn/root-reconnect proof remain a release gate.
