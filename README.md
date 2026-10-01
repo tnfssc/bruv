@@ -1,8 +1,8 @@
-# bruv
+# bruv CLI
 
 A coding agent built on [Pi](https://pi.dev). One standalone executable gives you a terminal interface, a bundled web UI, Herdr integration, background jobs, sub-agents, and project wisdom.
 
-The product and command are now **bruv**. The GitHub repository is still
+The product is **bruv CLI**, and the command is `bruv`. The GitHub repository is still
 [`tnfssc/die`](https://github.com/tnfssc/die); links intentionally keep that slug
 until a maintainer renames the repository separately. Release assets use `bruv-*`.
 
