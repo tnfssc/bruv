@@ -50,13 +50,14 @@ function fixture() {
   const file = join(dir, "parent.jsonl");
   let leaf = "root";
   let branch = [{ id: "root", parentId: null as string | null }];
+  const observations: Array<{ id: string; parentId: string; type: string; customType: string }> = [];
   const ctx = {
     sessionManager: {
       getSessionId: () => "parent",
       getSessionFile: () => file,
       getLeafId: () => leaf,
       getBranch: () => branch,
-      getEntries: () => branch,
+      getEntries: () => [...branch, ...observations],
     },
   };
   const questions = new QuestionService();
@@ -82,6 +83,9 @@ function fixture() {
     path,
     service,
     intent,
+    appendObservation(id: string, parentId = leaf, customType = "die-diagnostic") {
+      observations.push({ id, parentId, type: "custom", customType });
+    },
     navigate: (value: string) => {
       leaf = value;
       branch = [{ id: value, parentId: null }];
@@ -283,6 +287,7 @@ async function adapterFixture() {
 }
 test("normal jobs track pending source permission, inspect and cancel without remote acceptance", async () => {
   const f = await adapterFixture();
+  f.appendObservation("execute-target-discovery");
   const before = f.counts();
   const pending = await f.adapter.launch(f.request, f.ctx);
   expect(pending.outcome).toBe("not-dispatched");
@@ -409,4 +414,39 @@ test("approval acceptance keeps cached normal-job ordering stable", async () => 
     firstResult.id,
     secondResult.id,
   ]);
+});
+
+// Target discovery and launch diagnostics may be off-branch children of the
+// assistant execute anchor before source preflight asks its question.
+test("source preflight at an execute anchor ignores diagnostic-only children, still needs a human", async () => {
+  const f = fixture();
+  f.appendObservation("target-diagnostic");
+  f.appendObservation("launch-diagnostic", "target-diagnostic");
+  const pending = await f.service.prepare(f.intent, f.ctx);
+  expect(pending.state).toBe("waiting");
+  expect(pending.decision).toBeUndefined();
+  const q = f.questions.get(f.ctx, pending.questionId!);
+  expect(q.owner).toEqual({ sessionId: "parent", branchId: "root" });
+  expect(q.readOnly).toBe(false);
+  expect(q.status).toBe("pending");
+  expect(q.answeredFrom).toBeUndefined();
+  expect(q.blocked?.checkpoint).toContain(f.intent.taskId);
+  expect((await f.service.prepare(f.intent, f.ctx)).state).toBe("waiting");
+  await approve(f, SOURCE_CHOICES[0]);
+  f.continueParent();
+  const ready = await f.service.prepare(f.intent, f.ctx);
+  expect(ready.decision).toBe("include");
+  expect(ready.questionOwner).toEqual(q.owner);
+});
+
+test("source preflight rejects real continuations even through diagnostic-only chains", async () => {
+  for (const inline of [false, true]) {
+    const f = fixture();
+    f.appendObservation("diagnostic");
+    f.appendObservation("continuation", inline ? "diagnostic" : "root", "other-bookkeeping");
+    await expect(f.service.prepare(f.intent, f.ctx)).rejects.toThrow("current branch tip");
+    expect(f.questions.list(f.ctx)).toEqual([]);
+    expect(f.service.get(f.file, f.intent.taskId)?.questionId).toBeUndefined();
+    expect(f.service.get(f.file, f.intent.taskId)?.decision).toBeUndefined();
+  }
 });

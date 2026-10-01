@@ -159,7 +159,7 @@ export class QuestionService {
     }
   }
   // First child of an anchor owns its continuation; later siblings can inspect, not mutate.
-  private owns(ctx: QuestionContext, q: Question): boolean {
+  private owns(ctx: QuestionContext, q: Pick<Question, "owner">): boolean {
     const m = ctx.sessionManager;
     if (m.getSessionId() !== q.owner.sessionId) return false;
     const branch = m.getBranch().map((e) => e.id);
@@ -240,12 +240,17 @@ export class QuestionService {
     const reason = input.reason === undefined ? undefined : text(input.reason, 2000, "reason");
     const taskIds = ids(input.taskIds);
     const owner = activeOwner(ctx);
-    if (ctx.sessionManager.getEntries?.().some((e) => e.parentId === owner.branchId))
+    // Use the same conversation-tip rules as mutation ownership: execute
+    // diagnostics are observations, but real descendants (even below a
+    // diagnostic chain) still make ancestor navigation read-only.
+    if (!this.owns(ctx, { owner }))
       throw new Error("Questions need a current branch tip. Start a new turn before asking on this branch.");
     let created = false;
     const saved = await this.change(path(ctx), (records) => {
       activeOwner(ctx, owner.branchId); // navigation may have changed while waiting for the lock
       if (ctx.sessionManager.getLeafId() !== owner.branchId) throw new Error("Session navigation changed");
+      if (!this.owns(ctx, { owner }))
+        throw new Error("Questions need a current branch tip. Start a new turn before asking on this branch.");
       if (key) {
         const existing = records.find((q) => q.dedupKey === key && this.owns(ctx, q));
         if (existing) {
