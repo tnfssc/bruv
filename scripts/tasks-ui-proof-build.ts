@@ -1,15 +1,16 @@
 /** Local native proof only. Not packaging: the real cached web archive has no manifest. */
-import { copyFile, mkdir, readFile } from "node:fs/promises";
-import { resolve, dirname } from "node:path";
-import { createHash } from "node:crypto";
+
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { mkdir, readFile, rm, symlink } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import { adaptPiHostFile, piHostPatches } from "./pi-host-adaptation";
 
 const root = resolve(import.meta.dir, "..");
 const args = process.argv.slice(2);
 if (args.length !== 2) throw Error("Usage: bun scripts/tasks-ui-proof-build.ts REAL_WEB_ARCHIVE OUTPUT_BINARY");
-const archive = resolve(args[0]!);
-const outfile = resolve(args[1]!);
+const archive = resolve(args[0]);
+const outfile = resolve(args[1]);
 const git = (...args: string[]) => {
   const r = spawnSync("git", args, { cwd: root, encoding: "utf8" });
   if (r.status !== 0) throw Error(r.stderr);
@@ -28,8 +29,12 @@ await import("./prepare-assets");
 const hash = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
 const bytes = await readFile(archive);
 await mkdir(resolve(root, "dist"), { recursive: true });
-if (archive !== resolve(root, "dist/die-web.archive.gz"))
-  await copyFile(archive, resolve(root, "dist/die-web.archive.gz"));
+if (archive !== resolve(root, "dist/die-web.archive.gz")) {
+  // Replace the owned link/file, never copy through a pre-existing cache symlink.
+  const embedded = resolve(root, "dist/die-web.archive.gz");
+  await rm(embedded, { force: true });
+  await symlink(archive, embedded);
+}
 await mkdir(dirname(outfile), { recursive: true });
 const result = await Bun.build({ entrypoints: [resolve(root, "src/cli.ts")], compile: { outfile }, minify: true });
 if (!result.success) throw new AggregateError(result.logs, "Native proof compile failed");

@@ -75,6 +75,7 @@ def plan(n):
                6:"The checks are running.", 7:"The checks passed."}
         if n not in say:
             raise RuntimeError("Unexpected inference request: " + str(n))
+        if n == 6: events[0] = (events[0][0], "background-launch-result")
         events += [(chunk({"content":say[n]}), None), (chunk({}, "stop"), None)]
     return events
 
@@ -83,7 +84,7 @@ class Fixture:
         self.records = []
         self.errors = []
         self.lock = threading.Lock()
-        self.arrived = {s:threading.Event() for s in ["spinner-only","partial-label","label-code-stream","code-first"]}
+        self.arrived = {s:threading.Event() for s in ["spinner-only","partial-label","label-code-stream","code-first","background-launch-result"]}
         self.released = {s:threading.Event() for s in self.arrived}
         self.timeout = timeout
         fixture = self
@@ -132,13 +133,21 @@ def audit(frames):
     checks = {}
     def full(step): return plain(frames[step]["scrollback"])
     def rows(step, label): return [x.strip() for x in full(step).splitlines() if label in x]
-    def one(step, pattern): return len(re.findall(pattern, full(step), re.M)) == 1
-    checks["spinner_only"] = one("spinner-only", r"^\s*" + SPINNER + r"\s*$")
-    checks["partial_label"] = one("partial-label", r"^\s*" + SPINNER + r" Read\s*$")
+    def transcript(step):
+        lines = plain(frames[step]["viewport"]).splitlines()
+        footer = next((i for i in range(len(lines)-1, -1, -1) if "proof-model" in lines[i] and "ctx" in lines[i]), len(lines))
+        # The SDK editor/activity loader is immediately above the footer.
+        # Do not mistake its spinner for the new transcript action spinner.
+        return "\n".join(lines[:max(0, footer-1)])
+    def one(step, pattern, *, tool_spinner=False):
+        text = transcript(step) if tool_spinner else full(step)
+        return len(re.findall(pattern, text, re.M)) == 1
+    checks["spinner_only"] = one("spinner-only", r"^\s*" + SPINNER + r"\s*$", tool_spinner=True)
+    checks["partial_label"] = one("partial-label", r"^\s*" + SPINNER + r" Read\s*$", tool_spinner=True)
     for step in ["label-code-stream", "foreground-running"]:
-        checks[step] = one(step, r"^\s*" + SPINNER + r" Read guide\s*$")
+        checks[step] = one(step, r"^\s*" + SPINNER + r" Read guide\s*$", tool_spinner=True)
     checks["foreground_success"] = one("foreground-success", r"^\s*✓ Read guide\s*$")
-    checks["code_first_spinner"] = one("code-first", r"^\s*" + SPINNER + r"\s*$")
+    checks["code_first_spinner"] = one("code-first", r"^\s*" + SPINNER + r"\s*$", tool_spinner=True)
     checks["code_first_no_raw_source"] = not any(s in full("code-first") for s in ["throw", "permission", "Error(", "execute", "TypeScript"])
     checks["concise_failure"] = one("concise-failure", r"^\s*✗ Read restricted guide — (?:Error: )?permission denied\s*$")
     active = ["background-launched", "background-running"]
@@ -148,12 +157,14 @@ def audit(frames):
     indices = [next((i for i,x in enumerate(full(s).splitlines()) if "Run tests" in x), -1)
                for s in active + ["background-success"]]
     checks["same_background_transcript_row"] = indices[0] >= 0 and len(set(indices)) == 1
+    checks["no_secondary_task_notice"] = not re.search(r"^\s*[✓✗].*\btask_[\w-]+", full("background-success"), re.M)
     collapsed = [s for s in frames if s != "expanded-ctrl-o"]
-    checks["thinking_hidden"] = all(HIDDEN not in full(s) and "Thinking..." not in full(s) for s in collapsed)
+    checks["fixture_trust_warning_absent"] = all("This project is not trusted" not in full(s) for s in frames)
+    checks["thinking_hidden"] = all(HIDDEN not in full(s) and "Thinking..." not in full(s) for s in frames)
     checks["collapsed_notice_hidden"] = all("Tool output: collapsed" not in full(s) for s in collapsed)
-    checks["collapsed_code_output_hidden"] = all(SUCCESS_CODE not in full(s) and "Install, run, and open the local app." not in full(s) for s in collapsed)
+    checks["collapsed_code_output_hidden"] = all(not any(token in full(s) for token in ["await Bun.write", "action-started", "action-release", "GUIDE.md", "throw new Error", "Install, run, and open the local app."]) for s in collapsed)
     expanded = full("expanded-ctrl-o")
-    checks["ctrl_o_code"] = SUCCESS_CODE in expanded
+    checks["ctrl_o_code"] = SUCCESS_CODE in re.sub(r"\s+", " ", expanded)
     checks["ctrl_o_output"] = "Install, run, and open the local app." in expanded
     checks["expanded_notice_preserved"] = "Tool output: expanded" in expanded
     checks["footer_fields_visible"] = all(
@@ -236,8 +247,10 @@ def main():
         run(tmux + ["send-keys", "-t", "proof", "-l", message], env=env)
         run(tmux + ["send-keys", "-t", "proof", "Enter"], env=env)
     try:
+        # --approve is only a session trust override for our disposable fixture cwd.
+        # --no-approve forces an unrelated project-trust warning into every screen.
         command = "env -i " + " ".join(shlex.quote(k + "=" + v) for k,v in env.items()) + " " + " ".join(map(shlex.quote, [
-            str(binary), "--no-session", "--no-approve", "--offline", "--provider", "proof",
+            str(binary), "--no-session", "--approve", "--offline", "--provider", "proof",
             "--model", "proof-model", "--thinking", "medium", "Read the project guide."]))
         run(tmux + ["new-session", "-d", "-x", "110", "-y", "40", "-s", "proof", "-c", str(repo), command], env=env)
         stage("spinner-only"); stage("partial-label"); stage("label-code-stream")
@@ -254,9 +267,10 @@ def main():
         wait("failed action reply", lambda: "The restricted guide could not be read." in plain(pane()))
         capture("concise-failure")
         type_text("Run the project checks in the background.")
-        wait("background launch and reply", lambda: (repo / "background-started").exists() and "The checks are running." in plain(pane()))
+        wait("background launch result", lambda: (repo / "background-started").exists() and fixture.arrived["background-launch-result"].is_set())
         capture("background-launched")
-        time.sleep(.3)
+        fixture.released["background-launch-result"].set()
+        wait("background running reply", lambda: "The checks are running." in plain(pane()))
         capture("background-running")
         (repo / "background-release").touch()
         wait("background terminal delivery", lambda: "The checks passed." in plain(pane()))
@@ -271,6 +285,8 @@ def main():
         try: capture("error-state")
         except Exception: pass
     finally:
+        # Release owned execution barriers even if a capture/screenshot failed.
+        for name in ["action-release", "background-release"]: (repo / name).touch()
         run(tmux + ["kill-server"], env=env, check=False)
         fixture.stop()
         shutil.rmtree(home)

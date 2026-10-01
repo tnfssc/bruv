@@ -38,6 +38,12 @@ class ProofToolingTests(unittest.TestCase):
                 with self.assertRaises(json.JSONDecodeError): json.loads(arguments)
         self.assertEqual(json.loads(arguments), {"code":p.FAIL_CODE, "label":"Read restricted guide"})
 
+    def test_background_launch_capture_precedes_assistant_narration(self):
+        events = p.plan(6)
+        self.assertEqual(events[0][1], "background-launch-result")
+        self.assertNotIn("content", events[0][0]["choices"][0]["delta"])
+        self.assertEqual(events[1][0]["choices"][0]["delta"]["content"], "The checks are running.")
+
     def test_requests_are_bounded(self):
         for n in range(1,8): self.assertTrue(p.plan(n))
         with self.assertRaisesRegex(RuntimeError, "Unexpected inference"): p.plan(8)
@@ -73,7 +79,7 @@ class ProofToolingTests(unittest.TestCase):
             fixture.stop(); worker.join(2)
 
     def screens(self):
-        footer = "\n$0.000 · ctx 0.3% · cache est 60m       proof-model · medium\n"
+        footer = "\n\n \n$0.000 · ctx 0.3% · cache est 60m       proof-model · medium\n"
         rows = {
             "spinner-only":"⠋", "partial-label":"⠙ Read", "label-code-stream":"⠹ Read guide",
             "foreground-running":"⠸ Read guide", "foreground-success":"✓ Read guide",
@@ -87,6 +93,19 @@ class ProofToolingTests(unittest.TestCase):
 
     def test_audit_approved_contract(self):
         self.assertTrue(all(p.audit(self.screens()).values()))
+
+    def test_editor_spinner_cannot_pass_for_transcript_spinner(self):
+        screens = self.screens()
+        for step in ["spinner-only", "code-first"]:
+            screens[step]["viewport"] = "Action\n\n⠋ \n$0.000 · ctx 1% · cache est 60m   proof-model · medium\n"
+        checks = p.audit(screens)
+        self.assertFalse(checks["spinner_only"])
+        self.assertFalse(checks["code_first_spinner"])
+
+    def test_audit_expanded_source_may_wrap(self):
+        screens = self.screens()
+        screens["expanded-ctrl-o"]["scrollback"] = screens["expanded-ctrl-o"]["scrollback"].replace("await Bun.sleep", "await\n Bun.sleep")
+        self.assertTrue(p.audit(screens)["ctrl_o_code"])
 
     def test_audit_rejects_old_draft_plain_success_and_code_leak(self):
         screens = self.screens()
@@ -103,6 +122,14 @@ class ProofToolingTests(unittest.TestCase):
         screens = self.screens()
         screens["background-success"]["scrollback"] = "new duplicate delivery\n" + screens["background-success"]["scrollback"]
         self.assertFalse(p.audit(screens)["same_background_transcript_row"])
+
+    def test_audit_rejects_secondary_id_notice_and_partial_source(self):
+        screens = self.screens()
+        screens["background-success"]["scrollback"] += "✓ task_sample finished\n"
+        screens["label-code-stream"]["scrollback"] += "await Bun.write(\n"
+        checks = p.audit(screens)
+        self.assertFalse(checks["no_secondary_task_notice"])
+        self.assertFalse(checks["collapsed_code_output_hidden"])
 
     def test_audit_does_not_hide_footer_or_expanded_regressions(self):
         screens = self.screens()
