@@ -352,7 +352,7 @@ test("root cancellation and timeout remain clear, and display:false also hides a
       expect(rows).toContain("✗ Timed out · Action");
       expect(rows).toContain("time limit reached");
     } else {
-      expect(rows).toContain("⊘ Action — cancelled");
+      expect(rows).toContain("✗ Action — cancelled");
       expect(rows).toContain("✗ Action — timed out");
     }
     expect(rows).toContain("Source return: pending");

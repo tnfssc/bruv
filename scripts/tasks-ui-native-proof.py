@@ -27,7 +27,8 @@ SUCCESS_CODE = ('await Bun.write("action-started", ""); '
                 'while (!(await Bun.file("action-release").exists())) await Bun.sleep(50); '
                 'console.log(await Bun.file("GUIDE.md").text());')
 FAIL_CODE = 'throw new Error("permission denied")'
-BACKGROUND_CODE = 'await shell("/bin/sh background-check.sh", {waitSeconds:0});'
+BACKGROUND_CODE = ('const task = await shell("/bin/sh background-check.sh", {waitSeconds:0}); '
+                   'await Bun.write("background-task.json", JSON.stringify({id:task.id, title:task.title, kind:task.kind, status:task.status}));')
 
 def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -129,7 +130,8 @@ class Fixture:
 
 # Assertions target approved collapsed presentation, never old fixture markers.
 # Footer/Ctrl-O are captured for review; this does not claim unchanged source.
-def audit(frames):
+def audit(frames, task_id="task_proof"):
+    # shell has no title metadata: use its actual typed launch ID, not execute.label.
     checks = {}
     def full(step): return plain(frames[step]["scrollback"])
     def rows(step, label): return [x.strip() for x in full(step).splitlines() if label in x]
@@ -151,13 +153,15 @@ def audit(frames):
     checks["code_first_no_raw_source"] = not any(s in full("code-first") for s in ["throw", "permission", "Error(", "execute", "TypeScript"])
     checks["concise_failure"] = one("concise-failure", r"^\s*✗ Read restricted guide — (?:Error: )?permission denied\s*$")
     active = ["background-launched", "background-running"]
+    identity = re.escape(task_id)
     for step in active:
-        checks[step] = one(step, r"^\s*↗ Run tests\s*$") and len(rows(step, "Run tests")) == 1
-    checks["background_success"] = one("background-success", r"^\s*✓ Run tests\s*$") and len(rows("background-success", "Run tests")) == 1
-    indices = [next((i for i,x in enumerate(full(s).splitlines()) if "Run tests" in x), -1)
+        checks[step] = one(step, r"^\s*↗ " + identity + r"\s*$") and len(rows(step, task_id)) == 1
+    checks["background_success"] = one("background-success", r"^\s*✓ " + identity + r"\s*$") and len(rows("background-success", task_id)) == 1
+    indices = [next((i for i,x in enumerate(full(s).splitlines()) if task_id in x), -1)
                for s in active + ["background-success"]]
     checks["same_background_transcript_row"] = indices[0] >= 0 and len(set(indices)) == 1
-    checks["no_secondary_task_notice"] = not re.search(r"^\s*[✓✗].*\btask_[\w-]+", full("background-success"), re.M)
+    checks["no_launch_action_duplicate"] = all(not rows(s, "Run tests") for s in active + ["background-success"])
+    checks["no_secondary_task_notice"] = len(re.findall(r"^\s*[✓✗↗].*\btask_[\w-]+", full("background-success"), re.M)) == 1
     collapsed = [s for s in frames if s != "expanded-ctrl-o"]
     checks["fixture_trust_warning_absent"] = all("This project is not trusted" not in full(s) for s in frames)
     checks["thinking_hidden"] = all(HIDDEN not in full(s) and "Thinking..." not in full(s) for s in frames)
@@ -193,6 +197,7 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     fixture = Fixture(args.timeout)
     timeline, frames, error, screenshots = [], {}, None, False
+    task_launch = {}
     tmpbase = Path(os.environ.get("TMPDIR", "/tmp"))
     home = Path(tempfile.mkdtemp(prefix="tasks-ui-proof-", dir=tmpbase))
     agent, repo, temp = home / "agent", home / "repo", home / "tmp"
@@ -268,6 +273,9 @@ def main():
         capture("concise-failure")
         type_text("Run the project checks in the background.")
         wait("background launch result", lambda: (repo / "background-started").exists() and fixture.arrived["background-launch-result"].is_set())
+        task_launch = json.loads((repo / "background-task.json").read_text())
+        if not re.fullmatch(r"task_[\w-]+", task_launch.get("id", "")) or task_launch.get("title"):
+            raise RuntimeError("Expected actual untitled shell launch identity")
         capture("background-launched")
         fixture.released["background-launch-result"].set()
         wait("background running reply", lambda: "The checks are running." in plain(pane()))
@@ -290,13 +298,13 @@ def main():
         run(tmux + ["kill-server"], env=env, check=False)
         fixture.stop()
         shutil.rmtree(home)
-    checks = audit(frames) if all(s in frames for s in ["spinner-only","partial-label","label-code-stream","foreground-running","foreground-success","expanded-ctrl-o","code-first","concise-failure","background-launched","background-running","background-success"]) else {}
+    checks = audit(frames, task_launch.get("id", "MISSING_TYPED_ID")) if all(s in frames for s in ["spinner-only","partial-label","label-code-stream","foreground-running","foreground-success","expanded-ctrl-o","code-first","concise-failure","background-launched","background-running","background-success"]) else {}
     checks["seven_bounded_sdk_requests"] = len(fixture.records) == 7 and not fixture.errors
     checks["screenshots_complete"] = screenshots
     (out / "requests.json").write_text(json.dumps(fixture.records, indent=2) + "\n")
     (out / "build.json").write_text(json.dumps(record, indent=2) + "\n")
     report = {"sourceCommit":record["sourceCommit"], "binarySha256":record["binarySha256"],
-              "error":error, "fixtureErrors":fixture.errors, "checks":checks,
+              "error":error, "fixtureErrors":fixture.errors, "checks":checks, "taskLaunch":task_launch,
               "passed":error is None and bool(checks) and all(checks.values()),
               "screenshotKind":"unedited full ANSI native-PTY replay in cached Chromium",
               "visualReview":"required: parent must open the PNGs; assertion pass is not visual acceptance",

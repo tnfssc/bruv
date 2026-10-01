@@ -1,4 +1,4 @@
-import { actionLabel } from "../ui/action-label";
+import { actionError, actionLabel } from "../ui/action-label";
 import {
   formatTaskRow,
   taskRowFromLaunch,
@@ -277,28 +277,6 @@ function messageText(message: any, details = false): string {
     .filter(Boolean)
     .join("\n");
 }
-// Status comes from tool protocol fields; only the error caption uses actual tool output.
-function conciseActionError(details: any, full: string): string {
-  if (details?.cancelled) return "cancelled";
-  if (details?.timedOut) return "timed out";
-  // This is execute's own formatter, not arbitrary model prose. Its stdout is not an error.
-  const fallback = /^Execution /.test(full) ? (full.split("\nstderr:\n")[1] ?? "") : full;
-  const evidence =
-    typeof details?.imageError === "string"
-      ? details.imageError
-      : typeof details?.stderr === "string" && details.stderr.trim()
-        ? details.stderr
-        : fallback;
-  const lines = safe(evidence)
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line && !/^(?:Execution (?:completed|failed)|stdout:|stderr:|at\s|\d+\s*\||[\s^|]+$)/.test(line));
-  return (
-    lines.find((line) => /^(?:\w*Error|error):/.test(line)) ??
-    lines[0] ??
-    (typeof details?.exitCode === "number" ? "exit " + details.exitCode : "failed")
-  );
-}
 const actionFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
 /** Bounded conversation projection, independent of provider settings. Server snapshot wins. */
@@ -416,17 +394,11 @@ export class RootTranscript {
         );
         const title = !result && !args?.label ? "" : caption;
         const reason = failure
-          ? conciseActionError(outcome, messageText(result))
+          ? actionError(outcome, messageText(result))
           : outcome?.outputArtifactErrors
             ? "⚠ couldn’t save full output"
             : "";
-        const icon = result
-          ? outcome?.cancelled
-            ? "⊘"
-            : failure
-              ? "✗"
-              : "✓"
-          : actionFrames[Math.floor(now / 80) % actionFrames.length];
+        const icon = result ? (failure ? "✗" : "✓") : actionFrames[Math.floor(now / 80) % actionFrames.length];
         lines.push(truncateToWidth(icon + (title ? " " + title : "") + (reason ? " — " + reason : ""), width), "");
         return;
       }

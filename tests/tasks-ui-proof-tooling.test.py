@@ -84,9 +84,9 @@ class ProofToolingTests(unittest.TestCase):
             "spinner-only":"⠋", "partial-label":"⠙ Read", "label-code-stream":"⠹ Read guide",
             "foreground-running":"⠸ Read guide", "foreground-success":"✓ Read guide",
             "code-first":"⠼", "concise-failure":"✓ Read guide\n✗ Read restricted guide — permission denied",
-            "background-launched":"✓ Read guide\n✗ Read restricted guide — permission denied\n↗ Run tests",
-            "background-running":"✓ Read guide\n✗ Read restricted guide — permission denied\n↗ Run tests",
-            "background-success":"✓ Read guide\n✗ Read restricted guide — permission denied\n✓ Run tests",
+            "background-launched":"✓ Read guide\n✗ Read restricted guide — permission denied\n↗ task_proof",
+            "background-running":"✓ Read guide\n✗ Read restricted guide — permission denied\n↗ task_proof",
+            "background-success":"✓ Read guide\n✗ Read restricted guide — permission denied\n✓ task_proof",
             "expanded-ctrl-o":"Tool output: expanded\n" + p.SUCCESS_CODE + "\nInstall, run, and open the local app.",
         }
         return {s:{"viewport":v+footer,"scrollback":v+footer} for s,v in rows.items()}
@@ -117,11 +117,16 @@ class ProofToolingTests(unittest.TestCase):
 
     def test_audit_rejects_duplicate_or_moved_background_row(self):
         screens = self.screens()
-        screens["background-success"]["scrollback"] += "✓ Run tests\n"
+        screens["background-success"]["scrollback"] += "✓ task_proof\n"
         self.assertFalse(p.audit(screens)["background_success"])
         screens = self.screens()
         screens["background-success"]["scrollback"] = "new duplicate delivery\n" + screens["background-success"]["scrollback"]
         self.assertFalse(p.audit(screens)["same_background_transcript_row"])
+
+    def test_audit_rejects_checked_launch_beside_canonical_task(self):
+        screens = self.screens()
+        screens["background-running"]["scrollback"] += "✓ Run tests\n"
+        self.assertFalse(p.audit(screens)["no_launch_action_duplicate"])
 
     def test_audit_rejects_secondary_id_notice_and_partial_source(self):
         screens = self.screens()
