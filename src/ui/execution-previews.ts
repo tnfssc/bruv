@@ -1,4 +1,4 @@
-import { actionLabel } from "./action-label";
+import { actionError, actionLabel } from "./action-label";
 import { sshJobId } from "../remote/jobs";
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import {
@@ -129,27 +129,6 @@ function statusSummary(
   return { icon: "?", color: "warning", text: "Outcome unknown" };
 }
 
-function conciseExecuteError(details: ExecuteDetails | undefined, full: string): string {
-  if (details?.cancelled) return "cancelled";
-  if (details?.timedOut) return "timed out";
-  // Formatted execute payloads can contain ordinary stdout even on failure.
-  // Use stderr (or a direct SDK exception), never promote stdout to an error.
-  const fallback = /^Execution /.test(full) ? (full.split("\nstderr:\n")[1] ?? "") : full;
-  const evidence =
-    typeof details?.imageError === "string"
-      ? details.imageError
-      : typeof details?.stderr === "string" && details.stderr.trim()
-        ? details.stderr
-        : fallback;
-  const lines = plain(evidence)
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line && !/^(?:Execution (?:completed|failed)|stdout:|stderr:|at\s|\d+\s*\||[\s^|]+$)/.test(line));
-  const reason = lines.find((line) => /^(?:\w*Error|error):/.test(line)) ?? lines[0];
-  if (reason) return oneLine(reason);
-  return typeof details?.exitCode === "number" ? "exit " + details.exitCode : "failed";
-}
-
 export function executeOutputPreview(
   result: TextResult,
   expanded: boolean,
@@ -213,7 +192,7 @@ export function executeOutputPreview(
         return lines.map((line) => truncateToWidth(line, width));
       }
       const failed = status.color === "error";
-      const reason = failed ? conciseExecuteError(details, full) : status.text;
+      const reason = failed ? actionError(details, full) : status.text;
       const row = theme.fg(
         failed ? "error" : status.color,
         (failed ? "✗" : status.color === "success" ? "✓" : "?") + " " + summary,
