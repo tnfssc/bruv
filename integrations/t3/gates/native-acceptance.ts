@@ -2,7 +2,7 @@
 /**
  * Launch production T3-v2 native integration acceptance.
  *
- * The candidate test joins the real production backend, a real Die executable,
+ * The candidate test joins the real production backend, a real Bruv executable,
  * and a stable loopback HTTP model fixture. This launcher only gives it an
  * isolated environment and checks its source. It never installs dependencies or
  * starts the user-facing server.
@@ -14,11 +14,11 @@ import { isAbsolute, join, resolve } from "node:path";
 import sourcePin from "../upstream/source.json";
 
 const ROOT = resolve(import.meta.dir, "../../..");
-const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE ?? join(ROOT, ".cache/die-t3code-" + sourcePin.revision));
-const TEST_REL = "apps/server/src/orchestration-v2/NativeDieIntegration.production.test.ts";
+const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE ?? join(ROOT, ".cache/bruv-t3code-" + sourcePin.revision));
+const TEST_REL = "apps/server/src/orchestration-v2/NativeBruvIntegration.production.test.ts";
 const TEST = join(CANDIDATE, TEST_REL);
 const VP = join(CANDIDATE, "node_modules/.bin/vp");
-const requestedDie = process.env.T3_V2_DIE_BINARY ?? "";
+const requestedBruv = process.env.T3_V2_BRUV_BINARY ?? "";
 const keep = process.env.T3_V2_KEEP_TEMP === "1";
 const artifacts = resolve(process.env.T3_V2_NATIVE_ARTIFACTS ?? join(ROOT, "artifacts/t3/native"));
 
@@ -52,21 +52,21 @@ function redact(text: string) {
 }
 
 check(process.env.T3_V2_ACCEPT_CANDIDATE === "1", "set T3_V2_ACCEPT_CANDIDATE=1 after reviewing the candidate");
-check(isAbsolute(requestedDie), "T3_V2_DIE_BINARY must be an absolute path to the reviewed executable");
-await Promise.all([access(CANDIDATE), access(TEST), access(VP), access(requestedDie)]);
-const die = await realpath(requestedDie);
-check((await lstat(die)).isFile(), "T3_V2_DIE_BINARY must resolve to a regular file");
-const [head, expectedHead, dieSha, expectedSha, testSource] = await Promise.all([
+check(isAbsolute(requestedBruv), "T3_V2_BRUV_BINARY must be an absolute path to the reviewed executable");
+await Promise.all([access(CANDIDATE), access(TEST), access(VP), access(requestedBruv)]);
+const bruv = await realpath(requestedBruv);
+check((await lstat(bruv)).isFile(), "T3_V2_BRUV_BINARY must resolve to a regular file");
+const [head, expectedHead, bruvSha, expectedSha, testSource] = await Promise.all([
   command(["git", "rev-parse", "HEAD"], CANDIDATE),
   Promise.resolve(process.env.T3_V2_EXPECT_CHECKOUT_HEAD ?? ""),
-  sha256(die),
+  sha256(bruv),
   Promise.resolve(process.env.T3_V2_EXPECT_BINARY_SHA256 ?? ""),
   readFile(TEST, "utf8"),
 ]);
 check(expectedHead.length === 40 && head === expectedHead, "candidate HEAD does not match T3_V2_EXPECT_CHECKOUT_HEAD");
 check(
-  expectedSha.length === 64 && dieSha === expectedSha.toLowerCase(),
-  "Die SHA-256 does not match T3_V2_EXPECT_BINARY_SHA256",
+  expectedSha.length === 64 && bruvSha === expectedSha.toLowerCase(),
+  "Bruv SHA-256 does not match T3_V2_EXPECT_BINARY_SHA256",
 );
 check(
   !/experiments\/t3-v2|\.runtime\//.test(testSource),
@@ -76,7 +76,7 @@ check(
   testSource.includes("createServer") && testSource.includes("127.0.0.1"),
   "candidate test must own a loopback deterministic HTTP model fixture",
 );
-check(testSource.includes("die_task_launch"), "candidate test does not exercise the native production MCP contract");
+check(testSource.includes("bruv_task_launch"), "candidate test does not exercise the native production MCP contract");
 check(
   !testSource.includes("McpSessionRegistry.testkit") && testSource.includes("mcpSessionRegistryLayer: registryLayer"),
   "candidate test must use the shared real MCP registry, never the fake MCP testkit registry",
@@ -84,7 +84,7 @@ check(
 
 const tempParent = resolve(process.env.T3_V2_TEMP_PARENT ?? tmpdir());
 await mkdir(tempParent, { recursive: true });
-const temp = await mkdtemp(join(tempParent, "die-t3-v2-native-"));
+const temp = await mkdtemp(join(tempParent, "bruv-t3-v2-native-"));
 const home = join(temp, "home");
 await Bun.write(join(temp, ".keep"), "");
 let child: ReturnType<typeof Bun.spawn> | undefined;
@@ -104,10 +104,10 @@ try {
       XDG_DATA_HOME: join(temp, "xdg-data"),
       T3_V2_NATIVE_ACCEPTANCE: "1",
       T3_V2_NATIVE_TEMP: temp,
-      T3_V2_DIE_BINARY: die,
-      DIE_WEB_DIE_BINARY: die,
+      T3_V2_BRUV_BINARY: bruv,
+      BRUV_WEB_BRUV_BINARY: bruv,
       TMPDIR: temp,
-      T3_V2_EXPECT_BINARY_SHA256: dieSha,
+      T3_V2_EXPECT_BINARY_SHA256: bruvSha,
       // The test is required to bind all listeners explicitly to loopback.
       NO_PROXY: "127.0.0.1,localhost",
       no_proxy: "127.0.0.1,localhost",
@@ -122,10 +122,10 @@ try {
   const evidencePath = join(temp, "native-evidence.json");
   const evidence = JSON.parse(await readFile(evidencePath, "utf8"));
   check(evidence?.version === 1, "candidate test did not emit native evidence v1");
-  check(evidence?.die?.sha256 === dieSha, "evidence executable digest mismatch");
+  check(evidence?.bruv?.sha256 === bruvSha, "evidence executable digest mismatch");
   check(evidence?.network?.loopbackOnly === true, "test did not prove loopback-only listeners");
   check(evidence?.teardown?.allOwnedPidsReaped === true, "test did not prove exact owned-PID teardown");
-  check(evidence?.sessions?.dieChildSessionFiles === 0, "Die created forbidden child session files");
+  check(evidence?.sessions?.bruvChildSessionFiles === 0, "Bruv created forbidden child session files");
   check(evidence?.delivery?.foregroundResultAcks === 0, "async-only launch produced a foreground result ACK");
   check(evidence?.delivery?.singleCompletion === 1, "completion was not delivered exactly once");
   check(
@@ -154,7 +154,7 @@ try {
         candidate: CANDIDATE,
         candidateHead: head,
         test: TEST_REL,
-        die: { path: die, sha256: dieSha },
+        bruv: { path: bruv, sha256: bruvSha },
         evidence,
       },
       null,

@@ -8,11 +8,11 @@ const REQUEST_TIMEOUT_MS = 30_000;
 
 const CLOSE_TIMEOUT_MS = 3_000;
 const ALLOWED_TOOLS = new Set([
-  "die_task_launch",
-  "die_task_observe",
-  "die_task_cancel",
-  "die_task_list",
-  "die_local_job_notify",
+  "bruv_task_launch",
+  "bruv_task_observe",
+  "bruv_task_cancel",
+  "bruv_task_list",
+  "bruv_local_job_notify",
 ]);
 const RETRYABLE_TOOLS = ALLOWED_TOOLS;
 
@@ -358,7 +358,7 @@ export class T3McpClient {
           {
             protocolVersion: T3_MCP_PROTOCOL_VERSION,
             capabilities: {},
-            clientInfo: { name: "die", version: "1" },
+            clientInfo: { name: "bruv", version: "1" },
           },
           undefined,
         );
@@ -406,14 +406,14 @@ export class T3McpClient {
     if (!ALLOWED_TOOLS.has(name)) return Promise.reject(new Error("T3 MCP tool is not allowed"));
     if (!args || typeof args !== "object" || Array.isArray(args))
       return Promise.reject(new Error("T3 MCP tool arguments are invalid"));
-    if (name === "die_task_launch" || name === "die_local_job_notify") {
-      const key = name === "die_task_launch" ? args.clientRequestId : args.notificationId;
+    if (name === "bruv_task_launch" || name === "bruv_local_job_notify") {
+      const key = name === "bruv_task_launch" ? args.clientRequestId : args.notificationId;
       if (typeof key !== "string" || key.trim().length === 0 || key.length > MAX_CLIENT_REQUEST_ID_LENGTH)
         return Promise.reject(
           new Error(
             name +
               " requires a nonempty bounded " +
-              (name === "die_task_launch" ? "clientRequestId" : "notificationId"),
+              (name === "bruv_task_launch" ? "clientRequestId" : "notificationId"),
           ),
         );
     }

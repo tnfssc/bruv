@@ -113,7 +113,7 @@ test("MCP client sends scoped auth/protocol/session headers, parses bounded SSE,
     });
   });
   const client = new T3McpClient(endpoint, "scoped-token");
-  expect((await client.callTool("die_task_observe", { taskId: "remote-1" })).structuredContent).toEqual({
+  expect((await client.callTool("bruv_task_observe", { taskId: "remote-1" })).structuredContent).toEqual({
     taskId: "remote-1",
     status: "running",
   });
@@ -140,7 +140,7 @@ test("MCP client rejects oversized finite responses", async () => {
     });
   });
   const client = new T3McpClient(endpoint, "token");
-  await expect(client.callTool("die_task_observe", { taskId: "x" })).rejects.toThrow("exceeds 1 MB");
+  await expect(client.callTool("bruv_task_observe", { taskId: "x" })).rejects.toThrow("exceeds 1 MB");
   await client.close().catch(() => undefined);
 });
 
@@ -168,7 +168,7 @@ test("MCP client reconnects one expired session and preserves the tool request",
     });
   });
   const client = new T3McpClient(endpoint, "token");
-  const result = await client.callTool("die_task_observe", {
+  const result = await client.callTool("bruv_task_observe", {
     taskId: "remote-retry",
   });
   expect(result.structuredContent).toMatchObject({
@@ -187,7 +187,7 @@ test("aborted MCP requests stop promptly and close remains bounded", async () =>
   });
   const client = new T3McpClient(endpoint, "token");
   const controller = new AbortController();
-  const pending = client.callTool("die_task_observe", { taskId: "x" }, controller.signal);
+  const pending = client.callTool("bruv_task_observe", { taskId: "x" }, controller.signal);
   setTimeout(() => controller.abort(), 20);
   await expect(pending).rejects.toThrow();
   await client.close();
@@ -210,7 +210,7 @@ test("repeated client sessions release every server session", async () => {
   });
   for (let index = 0; index < 20; index++) {
     const client = new T3McpClient(endpoint, "token");
-    await client.callTool("die_task_observe", { taskId: "x" });
+    await client.callTool("bruv_task_observe", { taskId: "x" });
     await client.close();
   }
   expect({ initialized, deleted }).toEqual({ initialized: 20, deleted: 20 });
@@ -220,7 +220,7 @@ test("MCP client enforces the delegation allowlist and request key before transp
   const client = new T3McpClient("http://127.0.0.1:1/mcp", "token");
   await expect(client.callTool("create_threads", {})).rejects.toThrow("not allowed");
   for (const clientRequestId of [undefined, "", "   ", "x".repeat(129)]) {
-    await expect(client.callTool("die_task_launch", { clientRequestId })).rejects.toThrow("clientRequestId");
+    await expect(client.callTool("bruv_task_launch", { clientRequestId })).rejects.toThrow("clientRequestId");
   }
   await client.close();
 });
@@ -243,12 +243,12 @@ test("MCP client does not retry a 400 mutation and redacts reflected server erro
   });
   const client = new T3McpClient(endpoint, secret);
   const first = await client
-    .callTool("die_task_launch", { task: "x", clientRequestId: "no-400-retry" })
+    .callTool("bruv_task_launch", { task: "x", clientRequestId: "no-400-retry" })
     .catch((error) => error);
   expect(String(first)).toContain("HTTP 400");
   expect(String(first)).not.toContain(secret);
   expect(calls).toBe(1);
-  const reflected = await client.callTool("die_task_observe", { taskId: "x" }).catch((error) => error);
+  const reflected = await client.callTool("bruv_task_observe", { taskId: "x" }).catch((error) => error);
   expect(String(reflected)).toContain("request failed");
   expect(String(reflected)).not.toContain(secret);
   await client.close();
@@ -266,9 +266,9 @@ test("MCP client rejects malformed and mismatched RPC responses", async () => {
       : Response.json({ jsonrpc: "2.0", id: body.id + 1, result: {} });
   });
   const client = new T3McpClient(endpoint, "token");
-  await expect(client.callTool("die_task_observe", { taskId: "x" })).rejects.toThrow("invalid response");
+  await expect(client.callTool("bruv_task_observe", { taskId: "x" })).rejects.toThrow("invalid response");
   mode = "id";
-  await expect(client.callTool("die_task_observe", { taskId: "x" })).rejects.toThrow("ID mismatch");
+  await expect(client.callTool("bruv_task_observe", { taskId: "x" })).rejects.toThrow("ID mismatch");
   await client.close();
 });
 
@@ -299,7 +299,7 @@ test("matching chunked SSE returns and cancels without remote EOF", async () => 
   });
   const client = new T3McpClient(endpoint, "token");
   const result = await Promise.race([
-    client.callTool("die_task_observe", { taskId: "x" }),
+    client.callTool("bruv_task_observe", { taskId: "x" }),
     Bun.sleep(500).then(() => {
       throw new Error("SSE waited for EOF");
     }),
@@ -398,11 +398,11 @@ test("close during a tool body prevents success and releases the session", async
     );
   });
   const client = new T3McpClient(endpoint, "token");
-  const pending = client.callTool("die_task_observe", { taskId: "x" }).catch((error) => error);
+  const pending = client.callTool("bruv_task_observe", { taskId: "x" }).catch((error) => error);
   while (!toolStarted) await Bun.sleep(1);
   await client.close();
   expect(await pending).toBeInstanceOf(Error);
-  await expect(client.callTool("die_task_observe", { taskId: "x" })).rejects.toThrow("closed");
+  await expect(client.callTool("bruv_task_observe", { taskId: "x" })).rejects.toThrow("closed");
   expect(deleted).toBe(1);
 });
 
@@ -431,8 +431,8 @@ test("concurrent expired requests share one reconnect and preserve each request"
   const client = new T3McpClient(endpoint, "token");
   await client.initialize();
   const results = await Promise.all([
-    client.callTool("die_task_observe", { taskId: "a" }),
-    client.callTool("die_task_observe", { taskId: "b" }),
+    client.callTool("bruv_task_observe", { taskId: "a" }),
+    client.callTool("bruv_task_observe", { taskId: "b" }),
   ]);
   expect(results.map((result: any) => result.structuredContent.taskId).sort()).toEqual(["a", "b"]);
   expect(initializes).toBe(2);
@@ -472,7 +472,7 @@ test("SSE multiline JSON survives CRLF split across chunks without waiting for E
   const fetchSpy = spyOn(globalThis, "fetch").mockImplementation(mockFetch);
   const client = new T3McpClient("http://127.0.0.1/mcp", "token");
   try {
-    const result = await client.callTool("die_task_observe", {
+    const result = await client.callTool("bruv_task_observe", {
       taskId: "split",
     });
     expect(result.structuredContent).toEqual({ taskId: "split" });
@@ -515,10 +515,10 @@ test("cancelling one shared initialize waiter leaves the other caller and cleanu
   const cancelled = new AbortController();
   try {
     const first = client
-      .callTool("die_task_observe", { taskId: "cancelled" }, cancelled.signal)
+      .callTool("bruv_task_observe", { taskId: "cancelled" }, cancelled.signal)
       .catch((error) => error);
     await ready;
-    const second = client.callTool("die_task_observe", { taskId: "survives" });
+    const second = client.callTool("bruv_task_observe", { taskId: "survives" });
     cancelled.abort();
     expect(String(await first)).toContain("aborted");
     release();

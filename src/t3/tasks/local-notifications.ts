@@ -229,7 +229,7 @@ export class T3LocalNotificationDelivery {
         const client = this.clientFactory(this.bridge.url, this.bridge.token);
         this.#client = client;
         try {
-          const result = await client.callTool("die_local_job_notify", {
+          const result = await client.callTool("bruv_local_job_notify", {
             version: 1,
             notificationId: row.notificationId,
             taskId: row.taskId,

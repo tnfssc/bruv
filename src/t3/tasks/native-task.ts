@@ -3,10 +3,10 @@ import { SUBAGENT_TYPES } from "../../tasks/subagent-profiles";
 import { McpAmbiguousResponseError, type T3McpClient, type T3ToolResult } from "./mcp-client";
 
 export const T3_NATIVE_TASK_TOOLS = {
-  launch: "die_task_launch",
-  observe: "die_task_observe",
-  cancel: "die_task_cancel",
-  list: "die_task_list",
+  launch: "bruv_task_launch",
+  observe: "bruv_task_observe",
+  cancel: "bruv_task_cancel",
+  list: "bruv_task_list",
 } as const;
 
 export const T3TaskProfileSchema = z.enum(SUBAGENT_TYPES);

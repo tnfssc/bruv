@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Smoke-test a relocated packaged Die executable as a black box.
+ * Smoke-test a relocated packaged Bruv executable as a black box.
  *
  * Do not import application source. Copy the candidate before launch, then run it
  * with an unusable PATH and isolated HOME, XDG, TMP, and state.
@@ -13,13 +13,13 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
 const repo = resolve(import.meta.dirname, "../../..");
-const source = resolve(process.env.T3_V2_PACKAGED_BINARY ?? join(repo, "dist/die-t3-v2-candidate"));
+const source = resolve(process.env.T3_V2_PACKAGED_BINARY ?? join(repo, "dist/bruv-t3-v2-candidate"));
 const expectedSha = process.env.T3_V2_EXPECT_BINARY_SHA256;
 const buildManifestPath = resolve(process.env.T3_V2_PACKAGED_MANIFEST ?? join(repo, "dist/t3-v2-candidate-build.json"));
 const keep = process.env.T3_V2_KEEP_TEMP === "1";
 const artifactPath = resolve(process.env.T3_V2_PACKAGED_PROOF ?? join(repo, "artifacts/t3-v2-packaged-smoke.json"));
 const tmpRoot = process.env.TMPDIR ?? tmpdir();
-const temp = await mkdtemp(join(tmpRoot, "die-t3-v2-packaged-"));
+const temp = await mkdtemp(join(tmpRoot, "bruv-t3-v2-packaged-"));
 await chmod(temp, 0o700);
 const home = join(temp, "home");
 const xdgCache = join(temp, "cache");
@@ -28,7 +28,7 @@ const xdgState = join(temp, "state");
 const runtimeTmp = join(temp, "tmp");
 const baseDir = join(temp, "state with spaces", "web");
 const relocatedDir = join(temp, "relocated package");
-const relocated = join(relocatedDir, "die-renamed");
+const relocated = join(relocatedDir, "bruv-renamed");
 await Promise.all(
   [home, xdgCache, xdgConfig, xdgState, runtimeTmp, baseDir, relocatedDir].map((p) => mkdir(p, { recursive: true })),
 );
@@ -308,7 +308,7 @@ try {
     processes.slice(1).some((p) => p.exe === relocated),
     "embedded backend is not executing the relocated package runtime",
   );
-  const runtimeRoot = join(xdgCache, "die");
+  const runtimeRoot = join(xdgCache, "bruv");
   const runtimeManifest = await extractedRuntimeManifest(runtimeRoot);
 
   child.kill("SIGTERM");

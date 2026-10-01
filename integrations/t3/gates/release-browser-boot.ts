@@ -9,9 +9,9 @@ import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
-const binary = resolve(process.argv[2] || "dist/release/die-linux-x64");
+const binary = resolve(process.argv[2] || "dist/release/bruv-linux-x64");
 const proofPath = resolve(process.env.RELEASE_BOOT_PROOF || "artifacts/release/browser-boot.json");
-const temp = await mkdtemp(join(tmpdir(), "die-release-boot-"));
+const temp = await mkdtemp(join(tmpdir(), "bruv-release-boot-"));
 const errors: string[] = [];
 const canceledTelemetry: string[] = [];
 const passes: { navigation: string; surface: string }[] = [];
@@ -80,8 +80,8 @@ try {
         XDG_CONFIG_HOME: join(temp, "config"),
         XDG_DATA_HOME: join(temp, "data"),
         PI_CODING_AGENT_DIR: agent,
-        DIE_CODING_AGENT_DIR: agent,
-        DIE_WEB_DIE_BINARY: binary,
+        BRUV_CODING_AGENT_DIR: agent,
+        BRUV_WEB_BRUV_BINARY: binary,
         HERDR_ENV: "0",
       },
     },

@@ -49,8 +49,8 @@ export function verifyWebChunks(clientDirectory: string): void {
 export async function prepareWebSource(
   options: { verify?: (source: string, patch: string) => Promise<void> } = {},
 ): Promise<string> {
-  const source = resolve(process.env.DIE_T3_SOURCE ?? root + "/.cache/die-t3code-" + sourcePin.revision);
-  const patch = resolve(root, "integrations/t3/upstream/die.patch");
+  const source = resolve(process.env.BRUV_T3_SOURCE ?? root + "/.cache/bruv-t3code-" + sourcePin.revision);
+  const patch = resolve(root, "integrations/t3/upstream/bruv.patch");
   async function run(args: string[], cwd = source): Promise<void> {
     const child = Bun.spawn(args, { cwd, stdin: "inherit", stdout: "inherit", stderr: "inherit" });
     const code = await child.exited;
@@ -84,9 +84,11 @@ export async function prepareWebSource(
 
 export async function buildWeb(options: { prepared?: boolean } = {}): Promise<void> {
   await invalidatePackedWeb(root);
-  const source = options.prepared ? resolve(root, ".cache/die-t3code-" + sourcePin.revision) : await prepareWebSource();
-  const output = resolve(root, "dist/die-web");
-  const patch = resolve(root, "integrations/t3/upstream/die.patch");
+  const source = options.prepared
+    ? resolve(root, ".cache/bruv-t3code-" + sourcePin.revision)
+    : await prepareWebSource();
+  const output = resolve(root, "dist/bruv-web");
+  const patch = resolve(root, "integrations/t3/upstream/bruv.patch");
   async function run(args: string[], cwd = source): Promise<void> {
     const child = Bun.spawn(args, { cwd, stdin: "inherit", stdout: "inherit", stderr: "inherit" });
     const code = await child.exited;
@@ -116,14 +118,14 @@ export async function buildWeb(options: { prepared?: boolean } = {}): Promise<vo
     [
       "T3 source: " + sourcePin.repository,
       "Revision: " + sourcePin.revision,
-      "Die patch: integrations/t3/upstream/die.patch",
+      "Bruv patch: integrations/t3/upstream/bruv.patch",
       "Patch-SHA256: " + patchHash,
       "Bun runtime: " + Bun.version,
       "Native assets: " + process.platform + "-" + process.arch,
       "",
     ].join("\n"),
   );
-  const archive = resolve(root, "dist/die-web.archive.gz");
+  const archive = resolve(root, "dist/bruv-web.archive.gz");
   const hash = await packWebArchive(output, archive, { exclude: ["launcher.mjs", "t3"] });
   await recordVerifiedPackedWeb(root, source);
   console.log("Built " + archive + " (sha256 " + hash + ")");

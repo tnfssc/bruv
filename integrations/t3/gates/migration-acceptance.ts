@@ -12,15 +12,15 @@ const PRODUCTION_PATCH_COMMIT = "c6fe280";
 const PRODUCTION_PATCH_SHA256 = "4d73cc3cdc4ad8962358d61bd31d178d3e47b346819bb2562d0b0d590c85ec02";
 const ROOT = resolve(import.meta.dir, "../../..");
 const PRODUCTION = resolve(
-  process.env.T3_V2_MIGRATION_PRODUCTION ?? resolve(ROOT, `.cache/die-t3code-${PRODUCTION_REVISION}`),
+  process.env.T3_V2_MIGRATION_PRODUCTION ?? resolve(ROOT, `.cache/bruv-t3code-${PRODUCTION_REVISION}`),
 );
 const PREVIEW = resolve(
   process.env.T3_V2_MIGRATION_PREVIEW ??
     process.env.T3_V2_CANDIDATE ??
-    resolve(ROOT, `.cache/die-t3code-${sourcePin.revision}`),
+    resolve(ROOT, `.cache/bruv-t3code-${sourcePin.revision}`),
 );
 const PREVIEW_PATCH = resolve(
-  process.env.T3_V2_MIGRATION_PREVIEW_PATCH ?? resolve(ROOT, "integrations/t3/upstream/die.patch"),
+  process.env.T3_V2_MIGRATION_PREVIEW_PATCH ?? resolve(ROOT, "integrations/t3/upstream/bruv.patch"),
 );
 const TMP_ROOT = tmpdir();
 
@@ -67,14 +67,14 @@ async function runBun(directory: string, source: string, state: string, phase?: 
   if (code !== 0) throw new Error(`runner failed (${code}): ${source}${phase ? ` [${phase}]` : ""}`);
 }
 
-const temporary = await mkdtemp(join(TMP_ROOT, "die-t3-v2-current-migration-"));
+const temporary = await mkdtemp(join(TMP_ROOT, "bruv-t3-v2-current-migration-"));
 const suppliedProductionPatch = process.env.T3_V2_MIGRATION_PRODUCTION_PATCH;
 const productionPatch = suppliedProductionPatch
   ? resolve(suppliedProductionPatch)
   : join(temporary, "current-production.patch");
 const suffix = randomUUID();
-const productionRunner = join(PRODUCTION, "apps/server/src", `.die-current-production-migration-${suffix}.ts`);
-const previewRunner = join(PREVIEW, "apps/server/src", `.die-preview-migration-${suffix}.ts`);
+const productionRunner = join(PRODUCTION, "apps/server/src", `.bruv-current-production-migration-${suffix}.ts`);
+const previewRunner = join(PREVIEW, "apps/server/src", `.bruv-preview-migration-${suffix}.ts`);
 const state = join(temporary, "state");
 try {
   if (!suppliedProductionPatch) {

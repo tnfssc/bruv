@@ -1,6 +1,6 @@
 {
   "launch": {
-    "tool": "die_task_launch",
+    "tool": "bruv_task_launch",
     "arguments": {
       "clientRequestId": "11111111-1111-4111-8111-111111111111",
       "prompt": "Implement the worker",
@@ -22,7 +22,7 @@
     }
   },
   "observe": {
-    "tool": "die_task_observe",
+    "tool": "bruv_task_observe",
     "arguments": {
       "taskId": "native-task-1"
     },
@@ -44,7 +44,7 @@
     }
   },
   "cancel": {
-    "tool": "die_task_cancel",
+    "tool": "bruv_task_cancel",
     "arguments": {
       "taskId": "native-task-1"
     },
@@ -64,7 +64,7 @@
     }
   },
   "list": {
-    "tool": "die_task_list",
+    "tool": "bruv_task_list",
     "arguments": {},
     "result": {
       "tasks": [

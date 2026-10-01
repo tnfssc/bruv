@@ -42,7 +42,7 @@ const WEB_PROVIDER_DEFAULTS = {
   antigravity: false,
 } as const;
 
-export async function seedWebSettings(baseDir: string, dieBinary: string): Promise<void> {
+export async function seedWebSettings(baseDir: string, bruvBinary: string): Promise<void> {
   const settingsPath = join(baseDir, "userdata", "settings.json");
   let settings: unknown = {};
   let firstRun = false;
@@ -69,7 +69,7 @@ export async function seedWebSettings(baseDir: string, dieBinary: string): Promi
     ...(firstRun ? { providers: { ...providers, ...firstRunProviders } } : {}),
     providerInstances: {
       ...(firstRun ? firstRunProviderInstances : providerInstances),
-      pi: { ...pi, driver: "pi", enabled: true, config: { ...config, binaryPath: resolve(expandHome(dieBinary)) } },
+      pi: { ...pi, driver: "pi", enabled: true, config: { ...config, binaryPath: resolve(expandHome(bruvBinary)) } },
     },
   };
   await mkdir(dirname(settingsPath), { recursive: true });
@@ -79,19 +79,19 @@ export async function seedWebSettings(baseDir: string, dieBinary: string): Promi
 }
 
 export function webLaunch(args: string[], env: NodeJS.ProcessEnv = process.env, executable = process.execPath) {
-  const server = env.DIE_WEB_SERVER;
+  const server = env.BRUV_WEB_SERVER;
   const hasOption = (name: string) => args.some((arg) => arg === name || arg.startsWith(name + "="));
   return {
     server,
     args: [
       ...(hasOption("--host") ? [] : ["--host", "127.0.0.1"]),
-      ...(hasOption("--base-dir") ? [] : ["--base-dir", join(env.HOME ?? homedir(), ".die", "web")]),
+      ...(hasOption("--base-dir") ? [] : ["--base-dir", join(env.HOME ?? homedir(), ".bruv", "web")]),
       ...args,
     ],
     env: {
       ...env,
-      DIE_WEB_DIE_BINARY: env.DIE_WEB_DIE_BINARY ?? executable,
-      DIE_WEB_TASK_EVENTS: "1",
+      BRUV_WEB_BRUV_BINARY: env.BRUV_WEB_BRUV_BINARY ?? executable,
+      BRUV_WEB_TASK_EVENTS: "1",
     } as NodeJS.ProcessEnv,
   };
 }
@@ -106,14 +106,14 @@ async function runExternal(server: string, args: string[], env: NodeJS.ProcessEn
   try {
     accessSync(server, constants.X_OK);
   } catch {
-    console.error("die web backend is not built. Remove DIE_WEB_SERVER to use the embedded backend.");
+    console.error("bruv web backend is not built. Remove BRUV_WEB_SERVER to use the embedded backend.");
     return 1;
   }
   return new Promise<number>((done) => {
     const ownsProcessGroup = process.platform !== "win32";
     const child = spawn(server, args, { env, stdio: "inherit", detached: ownsProcessGroup });
     // detached makes the POSIX child the leader of a new process group. Capture
-    // that ID once: never infer or signal the launcher's (possibly live die
+    // that ID once: never infer or signal the launcher's (possibly live bruv
     // session) process group.
     const ownedGroup = ownsProcessGroup && child.pid && child.pid !== process.pid ? child.pid : undefined;
     let requestedSignal: "SIGINT" | "SIGTERM" | undefined;
@@ -150,7 +150,7 @@ async function runExternal(server: string, args: string[], env: NodeJS.ProcessEn
     process.on("SIGINT", interrupt);
     process.on("SIGTERM", terminate);
     child.once("error", (error) => {
-      console.error("Cannot start die web: " + error.message);
+      console.error("Cannot start bruv web: " + error.message);
       finish(1);
     });
     child.once("exit", (code, signal) => {
@@ -169,12 +169,12 @@ export async function runWeb(args: string[]): Promise<number> {
   if (launch.server) return runExternal(launch.server, launch.args, launch.env);
   try {
     const baseDir = findBaseDir(launch.args, launch.env);
-    const dieBinary = launch.env.DIE_WEB_DIE_BINARY;
-    if (!dieBinary) throw new Error("DIE_WEB_DIE_BINARY is required");
-    await seedWebSettings(baseDir, dieBinary);
+    const bruvBinary = launch.env.BRUV_WEB_BRUV_BINARY;
+    if (!bruvBinary) throw new Error("BRUV_WEB_BRUV_BINARY is required");
+    await seedWebSettings(baseDir, bruvBinary);
     const cache = launch.env.XDG_CACHE_HOME
-      ? join(launch.env.XDG_CACHE_HOME, "die")
-      : join(launch.env.HOME ?? homedir(), ".cache", "die");
+      ? join(launch.env.XDG_CACHE_HOME, "bruv")
+      : join(launch.env.HOME ?? homedir(), ".cache", "bruv");
     const { embeddedWebRoot } = await import("./embedded");
     const root = await embeddedWebRoot(cache);
     // Compiled Bun's in-process createRequire resolution does not reliably resolve the
@@ -185,7 +185,7 @@ export async function runWeb(args: string[]): Promise<number> {
       BUN_BE_BUN: "1",
     });
   } catch (error) {
-    console.error("Cannot start die web: " + (error as Error).message);
+    console.error("Cannot start bruv web: " + (error as Error).message);
     return 1;
   }
 }

@@ -87,7 +87,7 @@ test("native contract fixture is exact version 1", () => {
 test("scoped execute routing uses native launch/observe/list/cancel without local child ownership", async () => {
   const calls: Array<{ name: string; arguments: Record<string, unknown> }> = [];
   const endpoint = nativeServer(calls);
-  const dir = await mkdtemp(join(tmpdir(), "die-native-root-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-root-"));
   const sessionFile = join(dir, "parent.jsonl");
   await writeFile(sessionFile, "");
   const manager = new TaskManager(() => {});
@@ -148,10 +148,10 @@ test("scoped execute routing uses native launch/observe/list/cancel without loca
     expect(stopped.status).toBe("cancelled");
     expect(stopped.cancellationRequested).toBe(true);
     expect(calls.map((call) => call.name)).toEqual([
-      "die_task_launch",
-      "die_task_observe",
-      "die_task_list",
-      "die_task_cancel",
+      "bruv_task_launch",
+      "bruv_task_observe",
+      "bruv_task_list",
+      "bruv_task_cancel",
     ]);
     expect(calls[0]!.arguments).toMatchObject({
       prompt: fixture.launch.arguments.prompt,
@@ -168,7 +168,7 @@ test("scoped execute routing uses native launch/observe/list/cancel without loca
 test("scoped native affordances reject waiting and stream controls while local shell stays faithful", async () => {
   const calls: Array<{ name: string; arguments: Record<string, unknown> }> = [];
   const endpoint = nativeServer(calls);
-  const dir = await mkdtemp(join(tmpdir(), "die-native-controls-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-controls-"));
   const sessionFile = join(dir, "parent.jsonl");
   await writeFile(sessionFile, "");
   const manager = new TaskManager(() => {});
@@ -258,7 +258,7 @@ test("typed backend rejection is not mistaken for a task or reflected into outpu
 });
 
 test("launch intent survives ACK while durable pending bookkeeping is released", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-native-ledger-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-ledger-"));
   const path = join(dir, "launches.json");
   try {
     const first = new T3LaunchIdentityLedger(path);
@@ -277,7 +277,7 @@ test("launch intent survives ACK while durable pending bookkeeping is released",
 });
 
 test("bounded launch bookkeeping eviction preserves replay identity", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-native-ledger-bound-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-ledger-bound-"));
   const path = join(dir, "launches.json");
   try {
     const ledger = new T3LaunchIdentityLedger(path);
@@ -291,7 +291,7 @@ test("bounded launch bookkeeping eviction preserves replay identity", async () =
         const fingerprint = "intent-" + (index + 1);
         return {
           fingerprint,
-          clientRequestId: "die-v1:" + T3LaunchIdentityLedger.fingerprint([fingerprint]),
+          clientRequestId: "bruv-v1:" + T3LaunchIdentityLedger.fingerprint([fingerprint]),
         };
       }),
     ];
@@ -311,7 +311,7 @@ test("bounded launch bookkeeping eviction preserves replay identity", async () =
 });
 
 test("execute response ACK retires durable pending launch bookkeeping", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-native-ack-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-ack-"));
   const sessionFile = join(dir, "parent.jsonl");
   await writeFile(sessionFile, "");
   const manager = new TaskManager(() => {});
@@ -380,7 +380,7 @@ test("execute response ACK retires durable pending launch bookkeeping", async ()
 });
 
 test("identical concurrent native calls get distinct durable intents and replay by execute ordinal", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-native-concurrent-replay-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-concurrent-replay-"));
   const sessionFile = join(dir, "parent.jsonl");
   await writeFile(sessionFile, "");
   const ledgerPath = sessionFile + ".t3-launches-v1.json";
@@ -599,7 +599,7 @@ test("stopping an already completed native task does not claim cancellation", as
 });
 
 test("launch ledger path serialization is concurrent-safe and releases churned paths", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "die-ledger-churn-"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-ledger-churn-"));
   try {
     const samePath = join(dir, "same.json");
     const same = await Promise.all(
@@ -622,17 +622,17 @@ test("launch ledger path serialization is concurrent-safe and releases churned p
 test("model-directed shell environments omit T3 credentials but retain unrelated variables", async () => {
   const oldUrl = process.env.T3_MCP_URL;
   const oldToken = process.env.T3_MCP_BEARER_TOKEN;
-  const oldSafe = process.env.DIE_SAFE_SENTINEL;
+  const oldSafe = process.env.BRUV_SAFE_SENTINEL;
   process.env.T3_MCP_URL = "http://secret.invalid/mcp";
   process.env.T3_MCP_BEARER_TOKEN = "SECRET_TOKEN";
-  process.env.DIE_SAFE_SENTINEL = "safe-value";
+  process.env.BRUV_SAFE_SENTINEL = "safe-value";
   const manager = new TaskManager(() => {});
   const service = new JobService(manager, () => ({ depth: 0 }));
   try {
     const result = (await service.handle(
       "shell",
       {
-        command: 'printf "%s|%s|%s" "$T3_MCP_URL" "$T3_MCP_BEARER_TOKEN" "$DIE_SAFE_SENTINEL"',
+        command: 'printf "%s|%s|%s" "$T3_MCP_URL" "$T3_MCP_BEARER_TOKEN" "$BRUV_SAFE_SENTINEL"',
         waitSeconds: 2,
       },
       { cwd: process.cwd() } as any,
@@ -644,14 +644,14 @@ test("model-directed shell environments omit T3 credentials but retain unrelated
     else process.env.T3_MCP_URL = oldUrl;
     if (oldToken === undefined) delete process.env.T3_MCP_BEARER_TOKEN;
     else process.env.T3_MCP_BEARER_TOKEN = oldToken;
-    if (oldSafe === undefined) delete process.env.DIE_SAFE_SENTINEL;
-    else process.env.DIE_SAFE_SENTINEL = oldSafe;
+    if (oldSafe === undefined) delete process.env.BRUV_SAFE_SENTINEL;
+    else process.env.BRUV_SAFE_SENTINEL = oldSafe;
     await manager.shutdown();
   }
 });
 
 test("native worktree batches reuse the first resolved immutable base", async () => {
-  const root = await mkdtemp(join(tmpdir(), "die-native-pin-"));
+  const root = await mkdtemp(join(tmpdir(), "bruv-native-pin-"));
   const sessionFile = join(root, "parent.jsonl");
   await writeFile(sessionFile, "");
   const manager = new TaskManager(() => {});
@@ -667,7 +667,7 @@ test("native worktree batches reuse the first resolved immutable base", async ()
         workspace: {
           kind: "worktree",
           baseRef: oid,
-          branch: "die/agent-" + seen.length,
+          branch: "bruv/agent-" + seen.length,
           preparationStatus: "preparing",
         },
       };
