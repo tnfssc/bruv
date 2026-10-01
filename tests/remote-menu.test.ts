@@ -75,8 +75,8 @@ test("uncertain replies are never offered as new questions; offline actions are 
   const offline = { tasks: state.tasks } as RemoteState;
   expect(inboxItems(offline).find((i) => i.label.startsWith("Question:"))?.value).toStartWith("offline:");
   expect(taskActions(task, false).map((i) => i.label)).toEqual([
-    "View cached transcript",
     "View saved task details",
+    "View cached transcript",
     "Sync / cancel unavailable (offline)",
   ]);
   expect(questionOptions({ id: "q", status: "pending", allowFreeText: false, choices: ["Only"] })).toHaveLength(1);
@@ -132,7 +132,7 @@ test("cancel delivery status is shown apart from terminal observation", () => {
 
 test("SSH connection discovery explains usernames and aliases", () => {
   expect(inboxItems({ tasks: {} } as RemoteState).find((item) => item.value === "connect")?.description).toBe(
-    "user@host or configured SSH alias",
+    "user@host or configured SSH alias · uses die on the server",
   );
 });
 

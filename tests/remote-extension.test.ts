@@ -258,7 +258,7 @@ test("no-args inbox binds selected choice to freshly synced owner/version, Escap
   expect(answers).toHaveLength(0);
 });
 
-test("connect editor Escape never connects, even after entering a host", async () => {
+test("connect host editor Escape never connects", async () => {
   let command: any;
   const connects: unknown[] = [];
   remoteExtension(
@@ -272,7 +272,7 @@ test("connect editor Escape never connects, even after entering a host", async (
     { status: async () => ({ tasks: {} }), connect: async (...args: any[]) => connects.push(args) } as any,
   );
   const choices = ["connect", undefined];
-  const edits = ["fixture-host", undefined];
+  const edits = [undefined];
   const ctx = {
     hasUI: true,
     ui: {
@@ -573,7 +573,7 @@ test("compact status retains unresolved attention after active tasks end and cle
   const state = { tasks: { t: task } } as any;
   expect(remoteStatus(state)).toContain("1 question(s)");
   task.task.questions[0].status = "resolved";
-  expect(remoteStatus(state)).toBeUndefined();
+  expect(remoteStatus(state)).toContain("not connected");
   task.integrationError = "conflict";
   expect(remoteStatus(state)).toContain("review");
   task.integrationError = undefined;
@@ -588,7 +588,7 @@ test("compact status retains unresolved attention after active tasks end and cle
   expect(remoteStatus(state)).toContain("offline (cached)");
   task.lastError = undefined;
   expect(remoteStatus(state, true)).toContain("offline (cached)");
-  expect(remoteStatus(state)).toBeUndefined();
+  expect(remoteStatus(state)).toContain("not connected");
 });
 
 test("session branch attention rehydrates on reload without poll spam", async () => {
@@ -987,7 +987,13 @@ test("menu repository launch asks about untracked files before snapshot or trans
         },
         sendMessage() {},
       } as any,
-      { path: join(dir, "cache/state.json"), status: async () => ({ tasks: {}, connection: {} }) } as any,
+      {
+        path: join(dir, "cache/state.json"),
+        status: async () => ({
+          tasks: {},
+          connection: { host: "fixture-host", hello: { ownerId: "owner", epoch: "epoch" } },
+        }),
+      } as any,
     );
     await command.handler("", {
       cwd: dir,
@@ -1100,7 +1106,9 @@ test("open remote menu signals snapshot freshness without rewriting the picker o
     },
   });
   await new Promise((resolve) => setTimeout(resolve, 0));
-  expect(statuses.at(-1)).toContain("menu snapshot");
+  expect(statuses.at(-1)).toContain("not connected");
+  expect(statuses.at(-1)).not.toContain("snapshot");
+  expect(statuses.at(-1)).not.toContain("Refresh");
   expect(openings).toBe(1);
   expect(messages).toHaveLength(0);
   release(undefined);

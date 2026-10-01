@@ -109,7 +109,7 @@ for (const failure of [false, true])
       await Bun.sleep(0);
       expect(syncs).toBe(2);
       expect(messages).toEqual([]);
-      expect(statuses.filter(Boolean).some((status) => status.includes("offline"))).toBe(false);
+      expect(statuses.filter(Boolean).some((status) => status.includes("offline (cached)"))).toBe(false);
     } finally {
       await handlers.get("session_shutdown")!();
     }

@@ -17,6 +17,9 @@ import {
   pendingQuestions,
   remoteLabel,
   taskOwned,
+  remoteMenuStatus,
+  remoteErrorHint,
+  untrackedApprovalText,
 } from "./menu";
 
 /** Safe human-facing renderer. */
@@ -110,12 +113,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       if (!current()) return;
       if (picking) {
         const changed = menuSnapshot !== undefined && menuSnapshot !== menuFingerprint(state);
-        ui?.setStatus?.(
-          "die-remote",
-          "remote: menu snapshot " +
-            (syncError ? "offline" : changed ? "updated" : "current") +
-            " · Refresh from remote to reload",
-        );
+        ui?.setStatus?.("die-remote", remoteMenuStatus(state, changed, !!syncError));
         return;
       }
       const baseline = initialSnapshot;
@@ -352,6 +350,15 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     if (recheck.exitCode || recheck.stdout.toString().trim() !== scope)
       throw Error("Local repository scope changed; no grant sent");
     publish(await grantCapabilities(client, id, scope, [kind as CapabilityKind]));
+    // Refresh after the granted operation, never before ending local authority on revoke.
+    try {
+      await client.sync(id);
+    } catch {
+      ctx.ui.notify(
+        "Local access granted; latest task updates unavailable. Reconnect or read saved task details.",
+        "warning",
+      );
+    }
   };
   const inbox = async (ctx: any) => {
     if (!ctx.hasUI) {
@@ -360,13 +367,19 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     }
     ui = ctx.ui;
     picking = true;
+    let taskAction = "status";
     try {
       while (true) {
         const state = await client.status();
         menuSnapshot = menuFingerprint(state);
-        ui?.setStatus?.("die-remote", "remote: menu snapshot · Refresh from remote to reload");
-        const choice = await pick(ctx, "Remote · inbox", inboxItems(state));
+        ui?.setStatus?.("die-remote", remoteMenuStatus(state));
+        const choice = await pick(
+          ctx,
+          state.connection ? "Remote · " + remoteLabel(state.connection.host) : "Remote · not connected",
+          inboxItems(state),
+        );
         if (!choice) return;
+        taskAction = choice;
         if (choice.startsWith("offline")) continue;
         if (choice === "refresh") {
           // Explicit refresh, unlike the timer, may contact the owner while the menu is open.
@@ -374,11 +387,9 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
           continue;
         }
         if (choice === "connect") {
-          const host = (await ctx.ui.editor("SSH user@host or configured alias"))?.trim();
+          const host = (await ctx.ui.editor("Connect · SSH user@host or alias (uses die on server)"))?.trim();
           if (!host) continue;
-          const path = await ctx.ui.editor("Remote die path (blank for default)");
-          if (path === undefined) continue;
-          publish({ host, ...(await client.connect(host, path.trim() || undefined)) }, "connect");
+          publish({ host, ...(await client.connect(host)) }, "connect");
           continue;
         }
         if (choice === "launch") {
@@ -391,11 +402,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               untracked.count &&
               (await ctx.ui.confirm(
                 "Include untracked files?",
-                renderRemote({
-                  paths: untracked.preview,
-                  count: untracked.count,
-                  note: `Showing ${untracked.preview.length} of ${untracked.count}; approval includes all ${untracked.count} untracked paths.`,
-                }),
+                untrackedApprovalText(untracked.preview, untracked.count),
               ))
                 ? untracked.paths
                 : [];
@@ -414,6 +421,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
                 }),
               ),
             );
+            return; // Keep the handoff visible and allow task attention to appear in chat.
           }
           continue;
         }
@@ -449,7 +457,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             publish(
               summary(await client.answer(taskId!, { id: q.id, owner: q.owner!, version: q.version!, text: answer })),
             );
-            break;
+            return; // Preserve the delivery receipt (including uncertainty), not a stale inbox.
           }
           continue;
         }
@@ -468,6 +476,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
               ),
             );
             if (!action) break;
+            taskAction = action;
             if (action === "capabilities") {
               await capabilityMenu(ctx, task);
               continue;
@@ -521,7 +530,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       publish(
         {
           error: String(error),
-          hint: "No answer or confirmed cancellation should be inferred from a failed/uncertain submission; inspect saved status.",
+          hint: remoteErrorHint(taskAction),
         },
         "error",
       );
@@ -536,12 +545,12 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   pi.registerCommand("remote", {
     getArgumentCompletions: async (prefix) => remoteCompletions(prefix, await client.status()),
     description:
-      "Remote connect/status, launch/launch-repo, answer, grant/revoke, cancel, retry, sync, transcript (single active task selected automatically)",
+      "Connect to a Linux host, launch repository work, and follow saved tasks (open /remote for next actions)",
     handler: async (input, ctx) => {
       if (!input.trim()) return inbox(ctx);
+      const [op, ...rest] = input.trim().split(/\s+/);
       try {
         if (ctx.hasUI) ui = ctx.ui;
-        const [op, ...rest] = input.trim().split(/\s+/);
         let result: unknown;
         let rawTranscript = false;
         switch (op) {
@@ -579,22 +588,24 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             const root = ctx.cwd ?? process.cwd();
             const untracked = await repositoryUntracked(root);
             if (!include.length && untracked.count) {
-              publish({
-                untrackedOmitted: untracked.preview,
-                untrackedCount: untracked.count,
-                untrackedCountIncomplete: untracked.incomplete,
-                question: `Omitting ${untracked.incomplete ? "at least " : ""}${untracked.count} untracked files by default. ${untracked.incomplete ? "Listing incomplete; bulk approval unavailable. " : ""}Explicitly approve paths with /remote launch-repo-json {"prompt":"...","include":["path"]}.`,
-              });
+              publish(
+                "Omitting " +
+                  (untracked.incomplete ? "at least " : "") +
+                  untracked.count +
+                  " untracked files by default.\n" +
+                  untracked.preview.map((path) => "  " + remoteLabel(path)).join("\n") +
+                  "\n" +
+                  (untracked.incomplete ? "Listing incomplete; bulk approval unavailable. " : "") +
+                  (ctx.hasUI && !untracked.incomplete
+                    ? "Choose Yes below to include all; No sends tracked files only."
+                    : 'Explicit inclusion: /remote launch-repo-json {"prompt":"...","include":["path"]}.'),
+              );
               if (
                 !untracked.incomplete &&
                 ctx.hasUI &&
                 (await ctx.ui.confirm(
                   "Include untracked files?",
-                  renderRemote({
-                    paths: untracked.preview,
-                    count: untracked.count,
-                    note: `Showing ${untracked.preview.length} of ${untracked.count}; approval includes all ${untracked.count} untracked paths.`,
-                  }),
+                  untrackedApprovalText(untracked.preview, untracked.count),
                 ))
               )
                 include = untracked.paths;
@@ -717,7 +728,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         publish(
           {
             error: String(error),
-            hint: "/remote status shows saved task/question IDs. Offline transcript remains available; uncertain operations must reconcile the same ID.",
+            hint: remoteErrorHint(op ?? "status"),
           },
           "error",
         );

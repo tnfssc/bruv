@@ -17,6 +17,18 @@ export const remoteLabel = (text: string) =>
     .replace(/\s+/g, " ")
     .trim();
 const title = remoteLabel;
+export const untrackedApprovalText = (paths: string[], count: number) =>
+  "Untracked files (" +
+  count +
+  "):\n" +
+  paths.map((path) => "  " + remoteLabel(path)).join("\n") +
+  "\nShowing " +
+  paths.length +
+  " of " +
+  count +
+  ". Include all " +
+  count +
+  " untracked paths? Choose No to send tracked files only.";
 const returnedReview = (task: RemoteTask) => (task.repository as { status?: string } | undefined)?.status === "review";
 export const pendingQuestions = (state: Pick<RemoteState, "tasks">) =>
   Object.values(state.tasks).flatMap((task) =>
@@ -29,6 +41,60 @@ export const taskOwned = (task: RemoteTask, state: RemoteState) =>
   task.host === state.connection.host &&
   task.ownerId === state.connection.hello.ownerId &&
   task.epoch === state.connection.hello.epoch;
+/** Connection is saved target identity; task errors/freshness remain visible separately. */
+export function remoteMenuStatus(state: RemoteState, changed = false, unavailable = false): string {
+  const hasTasks = Object.keys(state.tasks).length > 0;
+  if (!state.connection)
+    return "remote: not connected · Connect to get started" + (hasTasks ? " · saved tasks available offline" : "");
+  const target = remoteLabel(state.connection.host);
+  const offline = unavailable || Object.values(state.tasks).some((task) => task.lastError && taskOwned(task, state));
+  if (offline) return "remote: " + target + " unavailable · Reconnect or read saved tasks";
+  return (
+    "remote: connected to " +
+    target +
+    (hasTasks
+      ? " · saved view" + (changed ? " updated" : "") + " · Refresh from remote for latest"
+      : " · Launch a task from this repository")
+  );
+}
+
+export function remoteErrorHint(action: string): string {
+  switch (action.split(":")[0]) {
+    case "connect":
+      return "Check the SSH host/alias and that die is installed on the Linux server. Retry /remote connect <host>; for a custom binary use /remote connect <host> <die-path>. Existing saved tasks are unchanged.";
+    case "answer":
+    case "question":
+    case "reply":
+      return "Open the task or /remote status to check saved reply delivery. If uncertain, reconcile the same saved reply; do not submit a replacement answer.";
+    case "cancel":
+      return "Open the task or /remote status to check cancellation delivery and observed task state. A failed request is not confirmed cancellation; sync the pinned owner before retrying.";
+    case "launch":
+    case "launch-repo":
+    case "launch-repo-json":
+    case "retry":
+      return "Check /remote status for a saved launch before retrying. Reconcile an uncertain launch with the same task ID; do not start a duplicate task.";
+    case "grant":
+    case "revoke":
+    case "capabilities":
+      return "Inspect the task’s local capabilities and pinned owner. New grants require a live owner and human authorization; local revocation remains available offline.";
+    case "sync":
+    case "refresh":
+      return "Reconnect to the task’s pinned owner and sync again. Saved transcripts remain available with /remote transcript; sync failure is not task completion.";
+    case "transcript":
+      return "Use /remote status to choose a saved task, then /remote transcript <taskId>. Saved transcript pages are available offline.";
+    default:
+      return "Open /remote for Connect, tasks and next actions; /remote status shows saved task and question IDs.";
+  }
+}
+
+const needsAccess = (task: RemoteTask) =>
+  Array.isArray(task.task?.capabilityNeeds) && task.task.capabilityNeeds.length > 0;
+const taskPriority = (task: RemoteTask) =>
+  needsAccess(task) || returnedReview(task) || task.integrationError || task.lastError || task.outcome === "unknown"
+    ? 0
+    : ["accepted", "running", "blocked"].includes(task.task?.state ?? "")
+      ? 1
+      : 2;
 export function inboxItems(state: RemoteState): Item[] {
   const online = !!state.connection;
   return [
@@ -56,44 +122,53 @@ export function inboxItems(state: RemoteState): Item[] {
           description: title(task.prompt) + " · saved reply retained; open task to reconcile",
         })),
     ),
-    ...Object.values(state.tasks).map((task) => ({
-      value: "task:" + task.taskId,
-      label: "Task: " + title(task.prompt || task.repoPath) + " [" + (task.task?.state ?? task.outcome) + "]",
-      description: remoteLabel(
-        (task.task?.state ?? task.outcome) +
-          " · " +
-          task.host +
-          " · cached · " +
-          task.taskId.slice(0, 12) +
-          (task.cancelDelivery
-            ? " · cancellation " + task.cancelDelivery.status + " (terminal state is separate)"
-            : task.cancelRequested
-              ? " · cancellation requested locally"
+    ...Object.values(state.tasks)
+      .sort((a, b) => taskPriority(a) - taskPriority(b))
+      .map((task) => ({
+        value: "task:" + task.taskId,
+        label:
+          "Task: " +
+          title(task.prompt || task.repoPath) +
+          " [" +
+          (task.task?.state ?? task.outcome) +
+          (needsAccess(task) ? " · local access requested" : "") +
+          "]",
+        description: remoteLabel(
+          (needsAccess(task) ? "Local access requested · " : "") +
+            (task.task?.state ?? task.outcome) +
+            " · " +
+            task.host +
+            " · cached · " +
+            task.taskId.slice(0, 12) +
+            (task.cancelDelivery
+              ? " · cancellation " + task.cancelDelivery.status + " (terminal state is separate)"
+              : task.cancelRequested
+                ? " · cancellation requested locally"
+                : "") +
+            (returnedReview(task) || task.integrationError ? " · review needed" : "") +
+            (Array.isArray(task.task?.capabilityNeeds) && task.task.capabilityNeeds.length
+              ? " · capability request pending"
               : "") +
-          (returnedReview(task) || task.integrationError ? " · review needed" : "") +
-          (Array.isArray(task.task?.capabilityNeeds) && task.task.capabilityNeeds.length
-            ? " · capability request pending"
-            : "") +
-          (task.lastError ? " · " + task.lastError : ""),
-      ),
-    })),
-    { value: "connect", label: "Connect…", description: "user@host or configured SSH alias" },
+            (task.lastError ? " · " + task.lastError : ""),
+        ),
+      })),
     ...(online
       ? [
           {
             value: "launch",
             label: "Launch local repository…",
-            description: "Explicit snapshot and prompt · requires SSH; unavailable offline",
+            description: "Send tracked work and a prompt · untracked files need your approval",
           },
-          { value: "refresh", label: "Refresh from remote", description: "Sync active tasks now" },
+          ...(Object.keys(state.tasks).length
+            ? [{ value: "refresh", label: "Refresh from remote", description: "Sync active tasks now" }]
+            : []),
         ]
-      : [
-          {
-            value: "offline",
-            label: "Launch / refresh unavailable (offline)",
-            description: "Connect first; cached task transcripts remain available",
-          },
-        ]),
+      : []),
+    {
+      value: "connect",
+      label: online ? "Connect to another host…" : "Connect…",
+      description: "user@host or configured SSH alias · uses die on the server",
+    },
   ];
 }
 export function questionOptions(q: RemoteQuestion): Item[] {
@@ -103,11 +178,15 @@ export function questionOptions(q: RemoteQuestion): Item[] {
   ];
 }
 export function taskActions(task: RemoteTask, online: boolean, hasLocalGrants = false): Item[] {
-  return [
+  const actions: Item[] = [
     { value: "transcript", label: "View cached transcript", description: "Available offline" },
     {
       value: "details",
-      label: returnedReview(task) ? "Review returned changes" : "View saved task details",
+      label: returnedReview(task)
+        ? "Review returned changes"
+        : task.task?.state === "done"
+          ? "Read result and details"
+          : "View saved task details",
       description: returnedReview(task)
         ? "Saved conflict reason and local artifact path · available offline"
         : "Saved status, errors and pending requests · available offline",
@@ -116,8 +195,8 @@ export function taskActions(task: RemoteTask, online: boolean, hasLocalGrants = 
       ? [
           {
             value: "capabilities",
-            label: "Local capabilities…",
-            description: "Revoke local grants offline; new grants require a live pinned owner",
+            label: needsAccess(task) ? "Review local access request…" : "Local capabilities…",
+            description: "Human authorization required · revoke offline; grant only to a live pinned owner",
           },
         ]
       : []),
@@ -161,6 +240,10 @@ export function taskActions(task: RemoteTask, online: boolean, hasLocalGrants = 
           },
         ]),
   ];
+  const next = needsAccess(task) && actions.some((item) => item.value === "capabilities") ? "capabilities" : "details";
+  return next
+    ? [...actions.filter((item) => item.value === next), ...actions.filter((item) => item.value !== next)]
+    : actions;
 }
 const verbs = [
   "connect",
@@ -182,7 +265,18 @@ export function remoteCompletions(prefix: string, state: RemoteState): Item[] | 
   if (!match)
     return verbs.includes(prefix)
       ? null
-      : verbs.filter((v) => v.startsWith(prefix)).map((v) => ({ value: v, label: v }));
+      : (prefix
+          ? verbs.filter((v) => v !== "launch-repo-json" || prefix.startsWith("launch-repo-"))
+          : [
+              "connect",
+              "status",
+              ...(state.connection ? ["launch-repo"] : []),
+              ...(pendingQuestions(state).length ? ["answer"] : []),
+              ...(Object.keys(state.tasks).length ? ["sync", "transcript"] : []),
+            ]
+        )
+          .filter((v) => v.startsWith(prefix))
+          .map((v) => ({ value: v, label: v }));
   const [, verb, typed] = match;
   if (verb === "answer") {
     const scoped = /^(\S+)\s+(\S*)$/.exec(typed);
