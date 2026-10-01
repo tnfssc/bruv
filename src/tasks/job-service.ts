@@ -785,6 +785,16 @@ export class JobService {
         this.#refresh();
         return params.prompts ? results : results[0];
       }
+      case "jobs.targets": {
+        z.parse(z.strictObject({}), input);
+        const current = { name: "local", kind: "current-runtime", authorized: true, default: true };
+        const native = t3BridgeEnvironment(this.environment).kind === "remote";
+        return {
+          targets: [current, ...(!native && this.remoteJobs?.targets ? await this.remoteJobs.targets() : [])],
+          default: "local",
+          observation: "Named targets reflect saved human authorization, not verified connectivity or provider access",
+        };
+      }
       case "jobs.list": {
         const params = z.parse(List, input);
         const local = this.manager.list().map(preview);

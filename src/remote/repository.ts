@@ -111,6 +111,9 @@ function snapshotFile(root: string, name: string): Buffer {
 }
 export interface RepositorySnapshot {
   version: 1;
+  /** Local-only origin and transfer-byte digest for trusted preapproved snapshots. */
+  localRoot?: string;
+  bundleSha256?: string;
   base: string;
   head: string;
   snapshot: string;
@@ -227,6 +230,8 @@ export function captureRepository(
   const manifest = join(dir, "manifest.json");
   const snapshot: RepositorySnapshot = {
     version: 1,
+    localRoot: root,
+    bundleSha256: hash(readFileSync(bundle)),
     base,
     head: text(git(root, ["rev-parse", "HEAD"])),
     snapshot: text(git(checkout, ["rev-parse", "HEAD"])),

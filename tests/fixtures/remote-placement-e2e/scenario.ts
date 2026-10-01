@@ -47,10 +47,10 @@ export function response(body: RequestBody): object {
     if (!called(body, launch))
       return execute(
         launch,
-        'const state=await remote.status(); if(state.connection?.host!=="' +
+        'const state=await jobs.targets(); const target=state.targets.find(t=>t.name==="' +
           ALIAS +
-          '") throw Error("fixture target not human-pinned"); ' +
-          'const job=await subagent({type:"orchestrator",target:state.connection.host,prompt:"PLACEMENT_ORCHESTRATOR_' +
+          '"&&t.authorized); if(!target) throw Error("fixture target not human-pinned"); ' +
+          'const job=await subagent({type:"orchestrator",target:target.name,prompt:"PLACEMENT_ORCHESTRATOR_' +
           side.toUpperCase() +
           '",workspace:{kind:"worktree"},waitSeconds:0}); console.log(job); ' +
           'await Bun.write(process.env.HOME+"/placement-job-' +
@@ -79,7 +79,7 @@ export function response(body: RequestBody): object {
         "orch-start",
         "const proof=await shell(" +
           JSON.stringify(
-            'set -eu; test "$DIE_SUBAGENT_TYPE" = orchestrator; test "$DIE_SUBAGENT_DEPTH" = 1; test -n "$DIE_REMOTE_RUNTIME_STATE"; test -f /opt/fixture/placement-host; grep -qx "' +
+            'set -eux; test "$DIE_SUBAGENT_TYPE" = orchestrator; test "$DIE_SUBAGENT_DEPTH" = 1; test -n "$DIE_REMOTE_RUNTIME_STATE"; test -f /opt/fixture/placement-host; grep -qx "' +
               expected +
               '" tracked.txt; test ! -e never-upload.txt; test "$(git rev-list --count HEAD)" = 1; test -z "$(git remote)"; pwd > /tmp/placement-orchestrator-' +
               side +
@@ -136,7 +136,7 @@ export function response(body: RequestBody): object {
         "normal-tools",
         "const proof=await shell(" +
           JSON.stringify(
-            'set -eu; test "$DIE_SUBAGENT_TYPE" = normal; test "$DIE_SUBAGENT_DEPTH" = 2; test -f /opt/fixture/placement-host; test -f .git; grep -qx "' +
+            'set -eux; test "$DIE_SUBAGENT_TYPE" = normal; test "$DIE_SUBAGENT_DEPTH" = 2; test -f /opt/fixture/placement-host; test -f .git; grep -qx "' +
               expected +
               '" tracked.txt; test ! -e never-upload.txt; pwd > /tmp/placement-normal-' +
               side +

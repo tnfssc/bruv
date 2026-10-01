@@ -420,3 +420,25 @@ test("explicit destination model/thinking overrides reach named placement and ne
       ),
   ).rejects.toThrow();
 });
+
+test("normal jobs target discovery is cached authorization, local default, and scoped native cannot escape", async () => {
+  const f = await fixture();
+  expect(await f.service().handle("jobs.targets", {}, f.context(), identity("targets"))).toMatchObject({
+    default: "local",
+    targets: [
+      { name: "local", default: true },
+      { name: "box", authorized: true, default: false, cached: true },
+    ],
+  });
+  expect(f.posts()).toBe(0);
+  expect(
+    await f
+      .service(undefined, { T3_MCP_URL: "http://backend.invalid/mcp", T3_MCP_BEARER_TOKEN: "fixture" })
+      .handle("jobs.targets", {}, f.context(), identity("native-targets")),
+  ).toMatchObject({ targets: [{ name: "local" }] });
+  f.offline(true);
+  expect(await f.service().handle("jobs.targets", {}, f.context(), identity("targets-offline"))).toMatchObject({
+    default: "local",
+    targets: [{ name: "local" }, { name: "box" }],
+  });
+});

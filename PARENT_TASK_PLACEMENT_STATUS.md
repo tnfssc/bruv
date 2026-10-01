@@ -54,3 +54,11 @@ Shared launch interface agreed before edits: target is an optional string naming
 5. Parent review/freeze, ONE final role-separated demo, full hosted release gates, then parent-owned push/PR/new release. Lead does not publish. No root deferral in final deliverable.
 
 Integrated worker commits: task path f897a049 -> 8889a90; backend f003770f -> bc50210. Backend shared launch contract includes RemoteClient.launch sixth placement argument, hello.taskPlacement=1, matching response placement/profile enforcement, and model-neutral connection.
+
+## Root correction and current ownership
+Parent root seam research explicitly rules out raw SSH TTY/tmux as the sole presentation integration. task_659e1c05 and task_cf62e5c1 both stopped with exit143; their lasting trees remain references only, no rejected root code integrated. ROOT_TYPED_CONTRACT.md and src/remote/root-contract.ts define typed root commands/observations before edits.
+- task_ebba316b server-root owner/runtime/facets: remote/task-placement-root-owner, tree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c-a86675007a5e-task_ebba316b.
+- task_8f4236df thin root client/normal terminal presenter/source return: remote/task-placement-root-client, tree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c-a86675007a5e-task_8f4236df.
+Lead owns hidden root CLI/runtime wiring and combined root proof. Empty local provider settings must work; server is sole actual agent.
+
+Child integration: questions 6267adb and monitor 787c508 integrated; server child checkpoints no longer overwrite parent runtime, top placed child real questions enabled, launch branch owner persisted before SSH. Native-terminal candidate compiled (real existing archive, no packaged receipt claim), NOT frozen/final. Candidate proof caught stale fixture state/descriptor receipt paths plus missing strict wire placement/workspace fields and snapshot origin remote; fixes retain all semantic assertions. Normal jobs.targets now provides authorized target discovery (local/current default), avoiding routine remote.status. Prepared-source trusted hook validates source root, manifest and bundle SHA before transfer; original approved bytes never recaptured.

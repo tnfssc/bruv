@@ -147,6 +147,9 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
       },
     );
     if (clone.exitCode !== 0) throw Error("Remote snapshot clone failed: " + clone.stderr.toString().slice(0, 1000));
+    // The bundle is a transfer artifact, not a configured source remote or history promise.
+    const detachedSource = Bun.spawnSync(["git", "-C", checkout, "remote", "remove", "origin"], { env });
+    if (detachedSource.exitCode !== 0) throw Error("Cannot remove snapshot transfer remote");
     const head = Bun.spawnSync(["git", "-C", checkout, "rev-parse", "HEAD"], { env });
     if (head.exitCode !== 0 || head.stdout.toString().trim() !== req.snapshot)
       throw Error("Remote snapshot revision mismatch");
@@ -239,7 +242,43 @@ export type RepositoryLaunch = {
   approvedUntracked?: string[];
   model?: string;
   thinking?: string;
+  /** Trusted internal human-source approval receipt. Never accepted from the agent launch schema. */
+  preparedSnapshot?: RepositorySnapshot;
+  preparedSnapshotSha256?: string;
 };
+function validatePreparedSnapshot(args: RepositoryLaunch): RepositorySnapshot {
+  const snapshot = args.preparedSnapshot;
+  if (
+    !snapshot ||
+    snapshot.version !== 1 ||
+    snapshot.localRoot !== realpathSync(args.localRoot) ||
+    !snapshot.bundleSha256 ||
+    !/^[a-f0-9]{64}$/.test(snapshot.bundleSha256)
+  )
+    throw Error("Prepared repository snapshot lacks pinned source identity/digest");
+  if (args.preparedSnapshotSha256 !== snapshot.bundleSha256)
+    throw Error("Prepared repository snapshot differs from the human-approved transfer digest");
+  const manifest = read(snapshot.manifest);
+  if (
+    JSON.stringify(manifest) !== JSON.stringify(snapshot) ||
+    digest(readFileSync(snapshot.bundle)) !== snapshot.bundleSha256
+  )
+    throw Error("Prepared repository snapshot manifest or bytes changed after human approval");
+  if (JSON.stringify(snapshot.selectedUntracked) !== JSON.stringify(args.approvedUntracked ?? []))
+    throw Error("Prepared repository snapshot does not match human-approved paths");
+  const requestedRef = args.placement?.workspace.kind === "worktree" ? args.placement.workspace.baseRef : undefined;
+  if (snapshot.source?.requestedRef !== requestedRef || snapshot.source?.history !== "orphan-baseline")
+    throw Error("Prepared repository snapshot source does not match requested workspace");
+  return snapshot;
+}
+/** Trusted handoff for the normal human-source permission adapter; no recapture after approval. */
+export async function launchPreparedRepository(
+  client: RemoteClient,
+  args: RepositoryLaunch & { preparedSnapshot: RepositorySnapshot; preparedSnapshotSha256: string },
+): Promise<RemoteTask> {
+  validatePreparedSnapshot(args);
+  return launchRepository(client, args);
+}
 function directory(client: RemoteClient, id: string) {
   if (!/^[a-zA-Z0-9_-]{1,100}$/.test(id)) throw Error("Invalid repository task ID");
   return join(dirname(client.path), "repositories", id);
@@ -247,6 +286,7 @@ function directory(client: RemoteClient, id: string) {
 /** Human approval for approvedUntracked must be obtained before this call. No history is uploaded. */
 export async function launchRepository(client: RemoteClient, args: RepositoryLaunch): Promise<RemoteTask> {
   if (args.placement !== undefined) validatePlacement(args.placement);
+  if (args.preparedSnapshot) validatePreparedSnapshot(args);
   const root = Bun.spawnSync(["git", "-C", args.localRoot, "rev-parse", "--show-toplevel"], {
     stdout: "pipe",
     stderr: "pipe",
@@ -288,6 +328,8 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
       JSON.stringify(descriptor.jobQuestionOwner) !== JSON.stringify(args.jobQuestionOwner) ||
       descriptor.root !== realpathSync(args.localRoot) ||
       descriptor.prompt !== args.prompt ||
+      (args.preparedSnapshot !== undefined &&
+        JSON.stringify(descriptor.snapshot) !== JSON.stringify(args.preparedSnapshot)) ||
       JSON.stringify(descriptor.placement) !== JSON.stringify(args.placement) ||
       JSON.stringify(descriptor.owner) !== JSON.stringify(owner) ||
       JSON.stringify(descriptor.profile) !== JSON.stringify({ model: args.model, thinking: args.thinking }) ||
@@ -297,9 +339,11 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
   } else {
     mkdirSync(dirname(dir), { recursive: true, mode: 0o700 });
     mkdirSync(dir, { mode: 0o700 });
-    const snapshot = captureRepository(args.localRoot, join(dir, "snapshot"), args.approvedUntracked, {
-      baseRef: args.placement?.workspace.kind === "worktree" ? args.placement.workspace.baseRef : undefined,
-    });
+    const snapshot =
+      args.preparedSnapshot ??
+      captureRepository(args.localRoot, join(dir, "snapshot"), args.approvedUntracked, {
+        baseRef: args.placement?.workspace.kind === "worktree" ? args.placement.workspace.baseRef : undefined,
+      });
     descriptor = {
       jobSessionFile: args.jobSessionFile,
       jobQuestionOwner: args.jobQuestionOwner,

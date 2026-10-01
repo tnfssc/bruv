@@ -24,6 +24,7 @@
   - A nonzero exit is a failed job result, not a thrown exception.
 - `await handoff(message)` shows message, gives user turn. Code after it no run. shell() and subagent() jobs keep going. Job finish? Agent get turn again. Normal reply with no tool call gives turn back too. handoff() does same from inside execute.
 - Job API:
+  - `await jobs.targets()` — List current-runtime/local default and any saved human-authorized named target. Cached authorization is not verified connectivity or provider access. No task setup ceremony.
   - `await jobs.list({cursor?, count?})` — See your jobs. Default 20, max 100. Got cursor? Use for next page.
   - `await jobs.inspect(id, {offset?, limit?})` — See job state, output, errors, child session path. Max 5,000 bytes. `nextOffset` gives next page.
   - `await jobs.input(id, data, {closeInput?})` — Send input. Input stays open unless `closeInput: true`.

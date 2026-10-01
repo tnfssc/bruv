@@ -17,4 +17,4 @@ Use direct Bun 1.4.2 and TMPDIR=/home/tnfssc/.die/tmp-pi-removal. Dependencies l
 
 Initial lead checks: 40 focused tests (remote extension/observation/legacy launch rejection) pass. Combined source and end-to-end results follow after integration. Do not treat an intermediate binary as frozen while sources change.
 
-Values unchanged: existing values 1, 3, 4, 7 and 8 already require whole-flow proof, one owner, durable uncertain work, reuse of the normal workflow and truthful state. The approved source design notes were copied into the branch; no unrelated values edits.
+Values: carried the already-approved value 7 refinement from the source wisdom: another backend need not become another user workflow. Existing values 1, 3, 4 and 8 already cover whole-flow proof, one owner, durable uncertain work and truthful state. Approved source design notes copied; no unrelated values edits.

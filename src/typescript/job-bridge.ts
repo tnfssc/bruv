@@ -139,6 +139,7 @@ export interface ExecuteJobGlobals {
     cancel(input: { id: string; owner: { sessionId: string; branchId: string }; version: number }): Promise<unknown>;
   };
   jobs: {
+    targets(): Promise<unknown>;
     list(options?: Options): Promise<unknown>;
     inspect(id: string, options?: Options): Promise<unknown>;
     input(id: string, data?: unknown, options?: Options): Promise<unknown>;
@@ -378,6 +379,7 @@ export function installJobGlobals(socket?: Duplex): { finish(): Promise<void> } 
       cancel: async (input) => request("questions.cancel", input),
     },
     jobs: {
+      targets: async () => request("jobs.targets", {}),
       list: async (options) => request("jobs.list", options ?? {}),
       inspect: async (id, options) => request("jobs.inspect", combine(options, { id })),
       input: async (id, data, options) => request("jobs.input", combine(options, { id, data })),

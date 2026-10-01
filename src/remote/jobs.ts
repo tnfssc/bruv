@@ -62,6 +62,17 @@ export type SshLaunchResult = SshJob & {
 };
 export type RepositoryLauncher = (client: RemoteClient, args: Omit<SshLaunchRequest, "target">) => Promise<RemoteTask>;
 export interface RemoteJobsAdapter {
+  /** Cached human-authorized destinations; never connects or changes authority. */
+  targets?(): Promise<
+    Array<{
+      name: string;
+      kind: "ssh";
+      authorized: true;
+      default: false;
+      cached: true;
+      modelSelection: "destination-profile";
+    }>
+  >;
   launch(request: SshLaunchRequest): Promise<SshLaunchResult>;
   list(sessionFile: string): Promise<SshJob[]>;
   inspect(
@@ -140,6 +151,21 @@ export function createRemoteJobsAdapter(
     return task;
   }
   return {
+    async targets() {
+      const { connection } = await client.read();
+      return connection
+        ? [
+            {
+              name: connection.host === "local" ? "ssh:local" : connection.host,
+              kind: "ssh" as const,
+              authorized: true as const,
+              default: false as const,
+              cached: true as const,
+              modelSelection: "destination-profile" as const,
+            },
+          ]
+        : [];
+    },
     async launch(request) {
       const { profile, parentDepth, parentType, workspace } = request.placement;
       // Defense in depth for callers other than JobService. Check delegation

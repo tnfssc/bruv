@@ -104,7 +104,7 @@ const files = (dir: string): string[] =>
         d.isDirectory() ? files(join(dir, d.name)) : d.isFile() ? [join(dir, d.name)] : [],
       );
 const json = (file: string) => JSON.parse(readFileSync(file, "utf8"));
-const statePath = join(home, ".die", "remote-client.json");
+const statePath = join(home, ".die", "remote", "state.json");
 const state = () => (existsSync(statePath) ? json(statePath) : { tasks: {} });
 const questionRows = () => {
   const file = join(home, "placement-human-questions.json");
@@ -452,7 +452,7 @@ try {
     assert.equal(git("rev-parse", "HEAD"), localHead, "return rewrote parent history");
     const descriptors = () =>
       files(join(home, ".die"))
-        .filter((f) => f.endsWith("descriptor.json"))
+        .filter((f) => f.endsWith("handoff.json"))
         .map((f) => ({ file: f, data: json(f) }));
     const cleanDescriptor = descriptors().find((d) => d.data.prompt?.includes("PLACEMENT_ORCHESTRATOR_CLEAN"));
     assert(cleanDescriptor, "missing durable snapshot provenance descriptor");

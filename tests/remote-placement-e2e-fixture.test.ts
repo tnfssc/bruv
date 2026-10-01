@@ -43,9 +43,11 @@ describe("remote placement scripted inference fixture (not acceptance)", () => {
   });
   test("parent launches ordinary subagent only after reading human pinned alias", () => {
     const launch = code(response(request("placement-parent", [user("PLACEMENT_START_CLEAN")])));
-    expect(launch).toContain("remote.status()");
+    expect(launch).toContain("jobs.targets()");
+    expect(launch).not.toContain("remote.status()");
+    expect(launch).toContain("&&t.authorized");
     expect(launch).toContain(ALIAS);
-    expect(launch).toContain('subagent({type:"orchestrator",target:state.connection.host');
+    expect(launch).toContain('subagent({type:"orchestrator",target:target.name');
     expect(launch).toContain('workspace:{kind:"worktree"}');
     expect(launch).not.toContain("remote.launch");
     expect(launch).not.toContain("remote.connect");
