@@ -25,20 +25,32 @@ async function fixture() {
 }
 const tools = { bun: "pinned", node: "pinned", pnpm: "pinned", compiler: "pinned", os: "pinned", libc: "pinned" };
 test("CI web key is workspace/run independent, CLI source independent, and owns every producer input", async () => {
-  const a = await fixture(),
-    b = await fixture();
-  const key = await ciWebInputKey(a, tools);
-  expect(await ciWebInputKey(b, tools)).toBe(key);
-  await Bun.write(a + "/src/cli.ts", "current CLI behavioral changes");
-  expect(await ciWebInputKey(a, tools)).toBe(key);
-  for (const file of webInputs) {
-    await Bun.write(resolve(a, file), file + " changed");
+  // Release runners legitimately set this for their own T3 build. Exercise that
+  // inherited state, retain the custom-source guard, then use a clean fixture env.
+  const previousSource = process.env.DIE_T3_SOURCE;
+  try {
+    process.env.DIE_T3_SOURCE = "/release/runner/custom-t3-source";
+    await expect(ciWebInputKey(await fixture(), tools)).rejects.toThrow("owns DIE_T3_SOURCE");
+    delete process.env.DIE_T3_SOURCE;
+
+    const a = await fixture(),
+      b = await fixture();
+    const key = await ciWebInputKey(a, tools);
+    expect(await ciWebInputKey(b, tools)).toBe(key);
+    await Bun.write(a + "/src/cli.ts", "current CLI behavioral changes");
+    expect(await ciWebInputKey(a, tools)).toBe(key);
+    for (const file of webInputs) {
+      await Bun.write(resolve(a, file), file + " changed");
+      expect(await ciWebInputKey(a, tools)).not.toBe(key);
+      await Bun.write(resolve(a, file), file);
+    }
+    await chmod(a + "/integrations/t3/upstream/bootstrap.mjs", 0o755);
     expect(await ciWebInputKey(a, tools)).not.toBe(key);
-    await Bun.write(resolve(a, file), file);
+    expect(await ciWebInputKey(b, { ...tools, node: "other" })).not.toBe(key);
+  } finally {
+    if (previousSource === undefined) delete process.env.DIE_T3_SOURCE;
+    else process.env.DIE_T3_SOURCE = previousSource;
   }
-  await chmod(a + "/integrations/t3/upstream/bootstrap.mjs", 0o755);
-  expect(await ciWebInputKey(a, tools)).not.toBe(key);
-  expect(await ciWebInputKey(b, { ...tools, node: "other" })).not.toBe(key);
 });
 test("producer environment does not inherit credentials, workflow identity or Vite configuration", async () => {
   const root = await fixture();
