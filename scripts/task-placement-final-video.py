@@ -1,27 +1,27 @@
 #!/usr/bin/env python3
 """Build the final native-terminal replay from accepted frozen-byte proof captures.
 Adapted renderer: task_80e67b72/scripts/remote-video-replay.py (not its scenario).
-Run from repository root: python3 scripts/task-placement-final-video.py
+Run with explicit --freeze, --child and --root inputs; output defaults to the durable integrated-video probe directory.
 No product execution, network, config copying, or synthetic terminal interaction.
 """
 import argparse, pathlib, hashlib, json, re
 p=argparse.ArgumentParser()
-p.add_argument('--proofs',default='/home/tnfssc/.die/tmp-pi-removal')
-p.add_argument('--frozen-tree',default='/home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c')
-p.add_argument('--output',default='.die/probes/task-placement-final-video')
-args=p.parse_args(); root=args.output
-out=pathlib.Path(root);out.mkdir(parents=True,exist_ok=True)
-proofs=pathlib.Path(args.proofs); frozen=pathlib.Path(args.frozen_tree)
+p.add_argument('--freeze',required=True,help='path to task-placement-integrated-freeze.json')
+p.add_argument('--child',required=True,help='directory containing actual child captures and receipt')
+p.add_argument('--root',required=True,help='directory containing actual root captures and receipt')
+child='child'; server='root'
+p.add_argument('--output',default='/home/tnfssc/.die/probes/task-placement-final-integrated-video')
+args=p.parse_args(); out=pathlib.Path(args.output);out.mkdir(parents=True,exist_ok=True)
+child_dir=pathlib.Path(args.child); root_dir=pathlib.Path(args.root)
 sha=lambda data:hashlib.sha256(data).hexdigest()
-expected='a5b4b280be56c7ce2a8826c6d46aaf949d1bf9cb856459d404dc52f0f085ce1e'
-freeze=json.loads((frozen/'dist/task-placement-freeze.json').read_text())
-assert freeze['sourceCommit']=='df2123e97d9acbe1244cde54c33faa2929a1fae6'
-assert sha((frozen/'dist/die-task-placement-frozen').read_bytes())==expected==freeze['binarySha256']
-child='placement-combined-child-proof';server='remote-root-placement-artifacts-0zcXla'
-for name in (child,server):
-    receipt=json.loads((proofs/name/'receipt.json').read_text())
-    assert receipt['binarySha256']==expected and receipt['networkMode']=='none'
-# t is editorial hold timing, not original execution timing. No added terminal text.
+freeze_path=pathlib.Path(args.freeze); freeze=json.loads(freeze_path.read_text())
+expected='a48c9a99470474916c568eab2b675cc906444397d124bef89633a834f9a2f6ee'
+assert freeze['sourceCommit']=='963401c5a4c07813376d6596e23ee8571d3f5464'
+assert freeze['binarySha256']==expected
+for label,directory in (('child',child_dir),('root',root_dir)):
+    proof=json.loads((directory/'receipt.json').read_text())
+    assert proof['binarySha256']==expected and proof['networkMode']=='none', (label,proof.get('binarySha256'),proof.get('networkMode'))
+root=str(out)
 sequence=[
 (0,child,'01-human-connect',40,'One-time authorization · fixture host only; setup is not the daily workflow'),
 (8,child,'02-question-before-restart',40,'Ordinary subagent to placement-owner · local ACK-only parent; tools run on server'),
@@ -39,20 +39,20 @@ sequence=[
 ]
 rows=[]; provenance=[]
 for t,d,n,height,caption in sequence:
-    path=proofs/d/(n+'.txt'); raw=path.read_bytes(); text=raw.decode()
+    path=(child_dir if d=='child' else root_dir)/(n+'.txt'); raw=path.read_bytes(); text=raw.decode()
     lines=text.removesuffix('\n').split('\n')
     # These captures include scrollback (-S -). Recover the original terminal's
     # bottom viewport (120x40 child, 120x44 root), without editing its content.
     screen='\n'.join(lines[-height:])
     # Sole content redaction: disposable fixture HOME prefixes, not outcomes.
-    screen,count=re.subn(r'/home/tnfssc/\.die/tmp-pi-removal/(?:remote-placement-e2e-[^/\s]+|remote-root-placement-e2e-[^/\s]+)/home', '[fixture HOME redacted]',screen)
+    screen,count=re.subn(r'/home/tnfssc/\.die/(?:tmp-pi-removal|probes)/[^/\s]+/home', '[fixture HOME redacted]',screen)
     step=d+'-'+n
     rows.append(dict(t=t,step=step,caption=caption,screen=screen))
     provenance.append(dict(step=step,path=str(path),sha256=sha(raw),terminalRows=height,originalLines=len(lines),viewportStartLine=max(1,len(lines)-height+1),homeRedactions=count))
 rows.append(dict(rows[-1],t=100))
 (out/'screens.jsonl').write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in rows))
 (out/'freeze-receipt.json').write_text(json.dumps(freeze,indent=2)+'\n')
-receipt=dict(schema='task-placement-final-video-v1',sourceCommit=freeze['sourceCommit'],binarySha256=expected,freezeReceipt=str(frozen/'dist/task-placement-freeze.json'),originalCaptures=provenance,captureSha256=sha((out/'screens.jsonl').read_bytes()),durationSeconds=100,actualMenuControlsVisible=True,boundary='Existing actual compiled CLI captures; Docker network:none SSH; fake inference. Child local ACK-only fake parent is distinct from server tool-capable fake provider. Server root has no local provider credentials. No new execution, real hosts, or paid APIs.',replay='Retimed native snapshot replay; no invented terminal input. Scrollback cropped to original terminal viewport. Only content redaction is disclosed disposable fixture HOME prefix.',limits=['Not a live keystroke recording','One-time authorization is separate from routine placement','Native terminal proof, not release/web-packaging or paid-provider acceptance','Clean return shown; drift safety is accepted fixture evidence, not shown here'])
+receipt=dict(schema='task-placement-final-video-v1',sourceCommit=freeze['sourceCommit'],binarySha256=expected,freezeReceipt=str(freeze_path),freezeReceiptSha256=sha(freeze_path.read_bytes()),originalCaptures=provenance,captureSha256=sha((out/'screens.jsonl').read_bytes()),durationSeconds=100,actualMenuControlsVisible=True,boundary='Existing actual compiled CLI captures; Docker network:none SSH; fake inference. Child local ACK-only fake parent is distinct from server tool-capable fake provider. Server root has no local provider credentials. No new execution, real hosts, or paid APIs.',replay='Retimed native snapshot replay; no invented terminal input. Scrollback cropped to original terminal viewport. Only content redaction is disclosed disposable fixture HOME prefix.',limits=['Not a live keystroke recording','One-time authorization is separate from routine placement','Native terminal proof, not release/web-packaging or paid-provider acceptance','Clean return shown; drift safety is accepted fixture evidence, not shown here'])
 import sys,json,re,math,subprocess,unicodedata,os
 from PIL import Image,ImageDraw,ImageFont
 rows=[json.loads(x) for x in open(root+'/screens.jsonl')]
@@ -108,7 +108,7 @@ for f in range(frames):
  while i+1<len(rows) and rows[i+1]['t']<=t:i+=1
  r=rows[i];im=Image.new('RGB',(W,H),'#0b1220');draw=ImageDraw.Draw(im)
  draw.text((36,20),'die — root + child task placement',font=title,fill='#f8fafc')
- draw.text((36,60),'REAL COMPILED CLI · snapshot replay (retimed) · Docker network:none SSH · fake inference · HOME redacted',font=small,fill='#94a3b8')
+ draw.text((36,60),f'COMPILED CLI SNAPSHOT REPLAY · source 963401c · {expected[:16]}… · Docker network:none / fake inference',font=small,fill='#94a3b8')
  draw.text((36,102),r['caption'],font=captionfont,fill='#67e8f9')
  draw.rounded_rectangle((30,143,1570,1135),radius=9,fill='#111827',outline='#334155')
  drawscreen(draw,r['screen'])
