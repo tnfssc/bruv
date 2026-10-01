@@ -45,3 +45,9 @@ Task d6023c4c found no separate concrete defect. It checked cli/startup, convers
 ## Integration checks
 
 Parent cherry-picked a25c9b9 as fb1d401 on fix/task-rows-resume. Reviewed the localized render hook and teardown behavior. 101 tests passed across task-rows, execution-previews, conversation-density, footer, and resume-safeguards (677 assertions). Configured Biome format and lint passed on changed source/tests; git diff --check passed. A broader biome check also enabled import-assist rules not used by project gates and reported existing import ordering; no unrelated rewrite made. Hosted CI and independent visual proof still pending.
+
+## Independent UI acceptance
+
+12/12 checks passed against integrated source 7f0002d (fix fb1d401). Actual tmux UI exercised cold startup, repeated in-app /resume and /reload, and repeated switches between two copied sessions. No moved, duplicate, or stale task rows. Pre-fix source reproduced four hot resume/reload failures. Parent reviewed cold and resumed captures. Evidence report, commands, exact revisions and 34 full capture sets: /home/tnfssc/bruv-evidence/resume-fix-20261001/ (fixed-source/). Capture display tool sometimes omits unchanged glyphs; worker checked original PNG conversation pixels and found them identical across cold/resume/reload/switch-back. No screenshot bytes altered. This is credential-free saved-journal source acceptance, not compiled release binary proof. Original journals unchanged; private tmux cleaned up.
+
+After review, values stay unchanged: value 8 already covers real session switch/reopen flows and honest visual evidence. The concrete lesson and reproduction stay here.
