@@ -1,0 +1,34 @@
+# v0.15.15
+
+- Record green hosted cold and warm full CI results
+- Record hosted timing failures and confidence-preserving fixes
+- test(t3): make hosted native replay fixture phases deterministic
+- Avoid redundant CI tool installs and fetch only needed test history
+- Make hosted job timing fixtures independent and deterministic
+- Budget full CI workers across the hosted CPU pool
+- Speed up packed web fixtures with pnpm shim
+- Record full-confidence CI proof and native parallel ownership
+- ci: reuse exact checked web payload with full parallel validation
+- Compile release targets from one verified web archive
+- Revert "Run complete deterministic root tests in bounded isolated process shards"
+- Run complete deterministic root tests in bounded isolated process shards
+- Update CI runner fixture for preserved web validation union
+- build: compile additional targets from verified packed web
+- Preserve full CI confidence and remove duplicate routine packaging
+- Restrict fast CI to docs-only planning
+- Retain former release source validation in full CI
+- Reserve release packaging for manual requests and stable tags
+- Record passing hosted CI and browser lifecycle validation [skip ci]
+- Record 46-second hosted source CI and faster delivery lessons
+- Guard composer controlled selection against unavailable Tiptap views
+- Record hosted selective CI timings and parallel runner validation
+- Overlap audited remote-only CI test processes after serial prerequisites
+- Select remote subsystem source checks without rebuilding embedded web
+- Add audited remote subsystem source feedback group
+- Keep selective push checks cumulative since trusted successful CI
+- Reject opaque imports in selective direct-test inputs
+- Record selective CI research and fix Bun fetch fixture typing
+- Add conservative selective CI source planner and regression runner
+- Wire selective CI feedback with fail-closed policy and full reconciliation
+- Speed up release browser setup and exact-commit asset reuse
+- Record verified v0.15.14 release [skip ci]
