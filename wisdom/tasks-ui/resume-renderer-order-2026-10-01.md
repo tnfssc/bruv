@@ -51,3 +51,11 @@ Parent cherry-picked a25c9b9 as fb1d401 on fix/task-rows-resume. Reviewed the lo
 12/12 checks passed against integrated source 7f0002d (fix fb1d401). Actual tmux UI exercised cold startup, repeated in-app /resume and /reload, and repeated switches between two copied sessions. No moved, duplicate, or stale task rows. Pre-fix source reproduced four hot resume/reload failures. Parent reviewed cold and resumed captures. Evidence report, commands, exact revisions and 34 full capture sets: /home/tnfssc/bruv-evidence/resume-fix-20261001/ (fixed-source/). Capture display tool sometimes omits unchanged glyphs; worker checked original PNG conversation pixels and found them identical across cold/resume/reload/switch-back. No screenshot bytes altered. This is credential-free saved-journal source acceptance, not compiled release binary proof. Original journals unchanged; private tmux cleaned up.
 
 After review, values stay unchanged: value 8 already covers real session switch/reopen flows and honest visual evidence. The concrete lesson and reproduction stay here.
+
+## Hosted validation hold
+
+PR https://github.com/tnfssc/bruv/pull/21 at 3399263. Hosted CI 36930539074 failed one unrelated MCP test: tests/t3/production-bridge.test.ts:373 saw delete at index 1 before settled at index 2. macOS passed. Release not dispatched; do not bypass this gate. Investigation task_a01fa749 owns branch bruv/fix-observed-mcp-shutdown-ci-failure-a01fa749 at /home/tnfssc/.bruv/worktrees/die-a86675007a5e-task_a01fa749. Base 3399263. Full CI failure log: /home/tnfssc/bruv-evidence/resume-fix-20261001/ci-failure.log. Parent will review and integrate the narrow fix, then rerun CI, merge PR, and dispatch Release on develop.
+
+## CI test correction
+
+Reviewed and integrated a7b915a as 04d3759. The MCP test observed remote server cancellation rather than owned client cleanup; those events have no required network order. The correction spies on actual client reader cleanup, and adds a deterministic cleanup gate proving DELETE waits. Removing the production drain caused the new assertion to fail. Worker ran 1,900 repeated bridge tests and 44 related tests; parent integrated bridge/task-row run passed 36 tests, 141 assertions. No MCP product change. Details and caveats in ../t3/mcp-close-ci-observation.md. CI will rerun; release remains gated.
