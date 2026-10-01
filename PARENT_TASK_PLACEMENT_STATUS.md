@@ -1,3 +1,7 @@
+# Current result: implementation complete, parent review/freeze handoff
+
+Both compiled child and typed-root acceptance PASS on the same native CLI. See PARENT_TASK_PLACEMENT_HANDOFF.md for exact evidence, remaining proof/product limits and worker push safety incident. Source committed; no release/video claim. Historical scope/ownership log follows.
+
 # USER FULL-SCOPE UPDATE — applies before old slice notes below
 
 Read PARENT_FULL_RELEASE_SCOPE.md now. User requires whole end-to-end delivery and new release; root/main-agent placement is required before publication, not a later follow-up. Parent owns push/PR/video/full Release. First child slice remains first increment, not final scope. Update this status/worker contracts to full scope.
