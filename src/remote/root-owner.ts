@@ -292,7 +292,8 @@ class RpcPort implements RootSessionPort {
             typeof event.id === "string"
           )
             this.dialogs.set(event.id, event.method);
-          for (const listener of this.listeners) listener(event);
+          // RPC acknowledgements are owner-private; get_state may include provider headers.
+          if (event.type !== "response") for (const listener of this.listeners) listener(event);
           if (event.type === "response" && typeof event.id === "string") {
             const pending = this.pending.get(event.id);
             if (!pending) continue;
@@ -387,6 +388,7 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
     snapshotAt = 0;
   const inflight = new Set<Promise<unknown>>();
   const unlisten = port.onEvent((event) => {
+    if ((event as { type?: string })?.type === "response") return;
     try {
       store.append(id, event);
       if ((event as { type?: string })?.type === "root_event_gap") store.unknown(id, "Root event journal gap");
@@ -442,10 +444,23 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
     store.transaction(() => {
       const current = store.get(id);
       if (current.record.state === "unknown") throw Error(current.record.error ?? "Root startup became unknown");
-      current.record = { ...current.record, state: "running", model: state.model, sessionFile: state.sessionFile };
+      current.record = {
+        ...current.record,
+        state: "running",
+        model: { provider: state.model!.provider, id: state.model!.id },
+        sessionFile: state.sessionFile,
+      };
       store.save(current);
     });
-    store.append(id, { type: "root_ready", state, facets: snapshot });
+    store.append(id, {
+      type: "root_ready",
+      state: {
+        model: { provider: state.model.provider, id: state.model.id },
+        thinkingLevel: state.thinkingLevel,
+        sessionFile: state.sessionFile,
+      },
+      facets: snapshot,
+    });
     async function finishCommand(receipt: RootCommandReceipt, task: () => Promise<unknown>) {
       try {
         const result = await task();

@@ -121,6 +121,10 @@ test("create resolves exact persisted request/intent and never launches twice af
 test("ordinary root fake inference, observe, detach, exact command replay, child settlement and successful close", async () => {
   const f = fixture(),
     port = new FakeInference();
+  Object.assign(port.model, {
+    headers: { Authorization: "fixture-secret-never-project" },
+    apiKey: "fixture-secret-never-project",
+  });
   let owner: Promise<void> | undefined;
   try {
     await handleRootRequest(
@@ -133,6 +137,7 @@ test("ordinary root fake inference, observe, detach, exact command replay, child
       },
     );
     await until(() => f.store.get("session").record.state === "running");
+    port.emit({ type: "response", id: "private", data: { model: port.model } });
     const command: RootRequest = {
       op: "command",
       ...identity,
@@ -157,7 +162,8 @@ test("ordinary root fake inference, observe, detach, exact command replay, child
       { op: "observe", ...identity, sessionId: "session", cursor: 0 },
       f.options,
     )) as RootObservation;
-    expect(view.record.model).toEqual(port.model);
+    expect(view.record.model).toEqual({ provider: port.model.provider, id: port.model.id });
+    expect(JSON.stringify(view)).not.toContain("fixture-secret-never-project");
     expect(view.events.some((e) => (e.event as { type: string }).type === "message_end")).toBe(true);
     expect(view.events.map((e) => e.seq)).toEqual(view.events.map((_, i) => i + 1));
     port.settled = false;

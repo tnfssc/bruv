@@ -32,6 +32,12 @@ export function parseRootPlacementArgs(args: string[]): { localArgs: string[]; r
   const seen = new Set<string>();
   for (let i = 0; i < args.length; i++) {
     const flag = args[i]!;
+    // The thin client loads no packages/provider; offline startup does not prohibit its explicit SSH target.
+    if (flag === "--offline") {
+      if (seen.has(flag)) throw Error("Duplicate root option");
+      seen.add(flag);
+      continue;
+    }
     if (flag === "--remote-fresh") {
       if (seen.has(flag)) throw Error("Duplicate root option");
       seen.add(flag);
