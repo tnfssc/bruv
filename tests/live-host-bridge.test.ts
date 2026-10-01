@@ -445,13 +445,13 @@ test("actual TaskManager + JobService dispatch stays within owner", async () => 
     sendUserMessage: () => {},
     confirmStop: async () => false,
   } as unknown as SessionAuthority);
+  const updates: unknown[] = [];
+  bridge.subscribe((update) => updates.push(update));
   expect(((await bridge.list()) as { jobs: { id: string }[] }).jobs[0]?.id).toBe(task.id);
   const inspected = (await bridge.inspect(task.id)) as { id: string };
   expect(inspected.id).toBe(task.id);
   await expect(bridge.inspect("not-owned")).rejects.toThrow("Unknown task");
   await expect(bridge.stop("stop-1", task.id)).rejects.toThrow("confirm");
-  const updates: unknown[] = [];
-  bridge.subscribe((update) => updates.push(update));
   await manager.wait(task.id);
   expect(updates).toContainEqual({ type: "completed", id: task.id, status: "completed" });
   const result = (await bridge.inspect(task.id)) as { status: string; output: string };

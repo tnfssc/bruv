@@ -35,3 +35,5 @@ CI36872054281 cleared all14 disposed-context failures. One unchanged MCP acquire
 ## MCP fixture checkpoint fixed
 
 Worker90c3765 synchronized close with the client reading mcp-session-id, not server ReadableStream.start. Production code unchanged. The original settlement-before-delete and session-ID assertions remain. Test passed10/10 and all18 production bridge tests passed. Parent integrated and runs typecheck in the prepared feature tree; worker broad typecheck lacked generated assets. This is a fixture premise fix, not an acquired-session cleanup exemption. Final executable bytee7dd047… is unchanged by this test-only patch.
+
+CI36874686991 passed full Linux. Mac alone caught an unchanged host-bridge test subscribing after awaited checks, when the tiny task could already be completed. Parent moved subscription before the first await; all17 host-bridge tests pass. Production unchanged; all ownership, confirmation, completion and output assertions remain. See wisdom/live/host-bridge-completion-fixture.md. Fresh whole CI, not old-run retry, remains required.
