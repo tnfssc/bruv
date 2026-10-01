@@ -1,7 +1,10 @@
-import type { RemoteClient, RemoteTask } from "./client";
-import { launchRepository } from "./repository-wire";
+import { type QuestionContext, QuestionService } from "../questions/service";
 import { canDelegate, SUBAGENT_TYPES } from "../tasks/subagent-profiles";
 import type { WorkspaceRequest } from "../tasks/worktree-workspace";
+import type { RemoteClient, RemoteTask } from "./client";
+import type { RepositorySnapshot } from "./repository";
+import { launchRepository } from "./repository-wire";
+import { SourceApprovalService, type SourcePreparation, type SourceSelection } from "./source-approval";
 
 /** SSH task IDs cannot collide with local or native task IDs. */
 export function sshJobId(taskId: string): string {
@@ -26,7 +29,7 @@ export type SshJob = {
   remoteState?: string;
   observedAt?: string;
   stale: true;
-  outcome: "accepted" | "unknown";
+  outcome: "accepted" | "unknown" | "not-dispatched";
   cancelRequested?: boolean;
   lastError?: string;
   transcriptGap?: boolean;
@@ -39,6 +42,7 @@ export type SshJob = {
   host: string;
   ownerId: string;
   epoch: string;
+  sourceApproval?: { taskId: string; questionId?: string; state: string; retry: string; omissionReason?: string };
 };
 export type SshLaunchRequest = {
   target: string;
@@ -47,6 +51,7 @@ export type SshLaunchRequest = {
   localRoot: string;
   prompt: string;
   taskId: string;
+  source?: SourceSelection;
   model?: string;
   thinking?: string;
   placement: {
@@ -60,7 +65,14 @@ export type SshLaunchResult = SshJob & {
   output: string;
   background: true;
 };
-export type RepositoryLauncher = (client: RemoteClient, args: Omit<SshLaunchRequest, "target">) => Promise<RemoteTask>;
+export type RepositoryLauncher = (
+  client: RemoteClient,
+  args: Omit<SshLaunchRequest, "target" | "source"> & {
+    approvedUntracked?: string[];
+    preparedSnapshot?: RepositorySnapshot;
+    preparedSnapshotSha256?: string;
+  },
+) => Promise<RemoteTask>;
 export interface RemoteJobsAdapter {
   /** Cached human-authorized destinations; never connects or changes authority. */
   targets?(): Promise<
@@ -73,7 +85,7 @@ export interface RemoteJobsAdapter {
       modelSelection: "destination-profile";
     }>
   >;
-  launch(request: SshLaunchRequest): Promise<SshLaunchResult>;
+  launch(request: SshLaunchRequest, approvalContext?: QuestionContext): Promise<SshLaunchResult>;
   list(sessionFile: string): Promise<SshJob[]>;
   inspect(
     sessionFile: string,
@@ -136,7 +148,43 @@ function project(task: RemoteTask): SshJob {
 export function createRemoteJobsAdapter(
   client: RemoteClient,
   repositoryLauncher: RepositoryLauncher = launchRepository,
+  approvals = new SourceApprovalService(client.path, new QuestionService()),
 ): RemoteJobsAdapter {
+  function projectPreparation(record: SourcePreparation): SshLaunchResult {
+    return {
+      id: sshJobId(record.intent.taskId),
+      kind: "ssh",
+      source: "ssh",
+      status: record.state === "cancelled" ? "cancelled" : "unknown",
+      outcome: "not-dispatched",
+      stale: true,
+      target: record.intent.target,
+      host: record.intent.target === "ssh:local" ? "local" : record.intent.target,
+      ownerId: record.intent.ownerId,
+      epoch: record.intent.epoch,
+      output:
+        record.omissionReason ??
+        (record.state === "waiting"
+          ? "Waiting for human source approval through /questions"
+          : record.state === "cancelled"
+            ? "Source handoff cancelled before dispatch"
+            : "Pinned source approval saved; dispatch unconfirmed. Retry the same task ID."),
+      background: true,
+      sourceApproval: {
+        taskId: record.intent.taskId,
+        questionId: record.questionId,
+        state: record.state,
+        retry: "Retry the same subagent intent with source.retryTaskId=" + record.intent.taskId,
+        ...(record.omissionReason ? { omissionReason: record.omissionReason } : {}),
+      },
+      provenance: {
+        kind: "snapshot",
+        history: "snapshot-only",
+        selectedUntracked: [],
+        omittedUntracked: record.include.snapshot.omittedUntracked.concat(record.intent.includeUntracked),
+      },
+    };
+  }
   async function owned(sessionFile: string): Promise<RemoteTask[]> {
     if (!sessionFile) throw new Error("SSH jobs require a durable parent session");
     const state = await client.read();
@@ -166,7 +214,7 @@ export function createRemoteJobsAdapter(
           ]
         : [];
     },
-    async launch(request) {
+    async launch(request, approvalContext) {
       const { profile, parentDepth, parentType, workspace } = request.placement;
       // Defense in depth for callers other than JobService. Check delegation
       // before looking at any target/connection or performing repository work.
@@ -184,6 +232,10 @@ export function createRemoteJobsAdapter(
       const authorizedTarget = connection.host === "local" ? "ssh:local" : connection.host;
       if (request.target !== authorizedTarget)
         throw new Error("SSH target must match the already human-pinned connection.host: " + authorizedTarget);
+      let preparation = approvals.get(request.jobSessionFile, request.taskId);
+      if (preparation) request = { ...request, jobQuestionOwner: preparation.questionOwner };
+      if (request.source && workspace.kind === "worktree" && workspace.baseRef !== undefined)
+        throw Error("Untracked inclusion requires current-source snapshot, not an explicit baseRef");
       const existing = state.tasks[request.taskId];
       const assertOwner = (task: RemoteTask) => {
         if (
@@ -197,9 +249,38 @@ export function createRemoteJobsAdapter(
           throw new Error("SSH launch identity/parent ownership conflict");
       };
       if (existing) assertOwner(existing);
-      // Explicit allowlist: even an untyped caller cannot smuggle a human-only
-      // approvedUntracked list or backend authority fields into repository transfer.
-      const args: Omit<SshLaunchRequest, "target"> = {
+      if (request.source || preparation) {
+        if (!request.source || !approvalContext)
+          throw Error("Source approval retry requires the original source selection and parent question context");
+        if (request.source.retryTaskId && !preparation)
+          throw Error("Unknown source approval retry task ID in this parent session");
+        if (request.source.retryTaskId && request.source.retryTaskId !== request.taskId)
+          throw Error("Source approval retry task ID conflict");
+        if (existing && !preparation) throw Error("Cannot add source inclusion to an already dispatched task");
+        preparation = await approvals.prepare(
+          {
+            taskId: request.taskId,
+            jobSessionFile: request.jobSessionFile,
+            localRoot: request.localRoot,
+            target: request.target,
+            ownerId: connection.hello.ownerId,
+            epoch: connection.hello.epoch,
+            prompt: request.prompt,
+            placement: request.placement,
+            ...(request.model === undefined ? {} : { model: request.model }),
+            ...(request.thinking === undefined ? {} : { thinking: request.thinking }),
+            includeUntracked: request.source.includeUntracked,
+          },
+          approvalContext,
+          Object.values(state.tasks).reduce((max, task) => Math.max(max, task.jobSequence ?? 0), 0),
+        );
+        request = { ...request, jobQuestionOwner: preparation.questionOwner };
+        if (preparation.state !== "ready")
+          return existing ? { ...project(existing), output: "", background: true } : projectPreparation(preparation);
+      }
+      // Only the durable human-owned source preflight may populate the trusted
+      // snapshot arguments; untyped agent callers cannot smuggle these fields.
+      const args: Parameters<RepositoryLauncher>[1] = {
         jobSessionFile: request.jobSessionFile,
         jobQuestionOwner: request.jobQuestionOwner,
         localRoot: request.localRoot,
@@ -208,12 +289,29 @@ export function createRemoteJobsAdapter(
         ...(request.model === undefined ? {} : { model: request.model }),
         ...(request.thinking === undefined ? {} : { thinking: request.thinking }),
         placement: { profile, parentDepth, ...(parentType === undefined ? {} : { parentType }), workspace },
+        ...(preparation
+          ? {
+              approvedUntracked: preparation.decision === "include" ? preparation.intent.includeUntracked : [],
+              preparedSnapshot: approvals.snapshot(preparation),
+              preparedSnapshotSha256:
+                preparation.decision === "include" ? preparation.include.sha256 : preparation.omit.sha256,
+            }
+          : {}),
       };
       let task: RemoteTask;
       try {
-        // No approvedUntracked argument exists on this agent-facing contract.
+        // Source selection is a request, not an approval.
         // Destination profiles are resolved by the server, never this laptop.
-        task = await repositoryLauncher(client, args);
+        if (preparation && repositoryLauncher === launchRepository) {
+          const wire = (await import("./repository-wire")) as unknown as {
+            launchPreparedRepository?: RepositoryLauncher;
+          };
+          if (!wire.launchPreparedRepository)
+            throw Error(
+              "Pinned source preparation requires the trusted launchPreparedRepository integration; no bytes dispatched",
+            );
+          task = await wire.launchPreparedRepository(client, args);
+        } else task = await repositoryLauncher(client, args);
       } catch (error) {
         const retained = (await client.read()).tasks[request.taskId];
         if (!retained) {
@@ -231,9 +329,11 @@ export function createRemoteJobsAdapter(
         task = retained;
       }
       assertOwner(task);
+      if (approvals.get(request.jobSessionFile, request.taskId)?.state === "cancelled")
+        task = await client.cancel(request.taskId);
       return {
         ...project(task),
-        output: "",
+        output: preparation?.omissionReason ?? "",
         background: true,
         provenance: task.repository ?? { kind: "snapshot", history: "snapshot-only" },
         workspace: {
@@ -247,9 +347,53 @@ export function createRemoteJobsAdapter(
       };
     },
     async list(sessionFile) {
-      return (await owned(sessionFile)).map(project);
+      const tasks = await owned(sessionFile);
+      const preparations = approvals.list(sessionFile);
+      // Keep the preflight's original position after acceptance. Otherwise a
+      // pending approval becoming a remote task can move across a jobs cursor.
+      const entries = tasks.map((task) => {
+        const preparation = preparations.find((p) => p.intent.taskId === task.taskId);
+        return {
+          job: project(task),
+          order: preparation
+            ? [preparation.order.afterSequence, 1, preparation.order.ordinal]
+            : [task.jobSequence ?? 0, 0, 0],
+        };
+      });
+      for (const preparation of preparations) {
+        if (tasks.some((task) => task.taskId === preparation.intent.taskId)) continue;
+        entries.push({
+          job: projectPreparation(preparation),
+          order: [preparation.order.afterSequence, 1, preparation.order.ordinal],
+        });
+      }
+      return entries
+        .sort(
+          (a, b) =>
+            a.order[0]! - b.order[0]! ||
+            a.order[1]! - b.order[1]! ||
+            a.order[2]! - b.order[2]! ||
+            a.job.id.localeCompare(b.job.id),
+        )
+        .map((entry) => entry.job);
     },
     async inspect(sessionFile, id, offset = 0, limit = 5000) {
+      const preparation = approvals.get(sessionFile, sshTaskId(id));
+      const dispatched = (await owned(sessionFile)).some((t) => t.taskId === sshTaskId(id));
+      if (preparation && !dispatched) {
+        const result = projectPreparation(preparation);
+        const output = Buffer.from(result.output)
+          .subarray(offset, offset + limit)
+          .toString("utf8");
+        return {
+          ...result,
+          output,
+          requestedOffset: offset,
+          nextOffset: offset + Buffer.byteLength(output),
+          hasMore: false,
+          outputLost: false,
+        };
+      }
       const task = await find(sessionFile, id);
       const { utf8SafeSlice } = await import("../tasks/task-manager");
       const pieces: Buffer[] = [];
@@ -278,6 +422,12 @@ export function createRemoteJobsAdapter(
       };
     },
     async stop(sessionFile, id) {
+      const preparation = approvals.get(sessionFile, sshTaskId(id));
+      if (preparation) {
+        const cancelled = await approvals.cancel(sessionFile, sshTaskId(id));
+        if (!(await owned(sessionFile)).some((t) => t.taskId === sshTaskId(id)))
+          return { ...projectPreparation(cancelled), cancellationRequested: true };
+      }
       const current = await find(sessionFile, id);
       if (current.task?.state === "done" || current.task?.state === "cancelled")
         return { ...project(current), cancellationRequested: false };
@@ -300,6 +450,15 @@ export function createRemoteJobsAdapter(
         status?: string;
         error?: string;
       }> = [];
+      for (const preparation of approvals.list(sessionFile)) {
+        if (tasks.some((t) => t.taskId === preparation.intent.taskId) || preparation.state === "cancelled") continue;
+        try {
+          await approvals.cancel(sessionFile, preparation.intent.taskId);
+          jobs.push({ id: sshJobId(preparation.intent.taskId), kind: "ssh", outcome: "finished", status: "cancelled" });
+        } catch (error) {
+          jobs.push({ id: sshJobId(preparation.intent.taskId), kind: "ssh", outcome: "error", error: String(error) });
+        }
+      }
       for (const task of tasks) {
         const id = sshJobId(task.taskId);
         if (task.task?.state === "done" || task.task?.state === "cancelled") continue;
