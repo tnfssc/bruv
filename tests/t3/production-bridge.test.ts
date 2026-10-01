@@ -330,9 +330,6 @@ test("close aborts initialize, waits for settlement, then deletes an acquired se
           order.push("initialize-body");
           controller.enqueue(new TextEncoder().encode(" "));
         },
-        cancel() {
-          order.push("settled");
-        },
       }),
       {
         headers: {
@@ -346,6 +343,21 @@ test("close aborts initialize, waits for settlement, then deletes an acquired se
   const fetchSpy = spyOn(globalThis, "fetch").mockImplementation((async (input, init) => {
     const response = await nativeFetch(input, init);
     if (init?.method !== "POST") return response;
+    // Server-side cancellation is a later HTTP event, not client settlement.
+    const body = response.body!;
+    const getReader = body.getReader.bind(body);
+    body.getReader = (() => {
+      const reader = getReader();
+      const cancel = reader.cancel.bind(reader);
+      reader.cancel = async (reason) => {
+        try {
+          await cancel(reason);
+        } finally {
+          order.push("settled");
+        }
+      };
+      return reader;
+    }) as typeof body.getReader;
     const headers = new Proxy(response.headers, {
       get(target, property) {
         if (property === "get")
@@ -370,8 +382,73 @@ test("close aborts initialize, waits for settlement, then deletes an acquired se
     await acquiredSessionHeader;
     await client.close();
     expect(await pending).toBeInstanceOf(Error);
-    expect(order.indexOf("delete")).toBeGreaterThan(order.indexOf("settled"));
+    expect(order).toEqual(["initialize-body", "settled", "delete"]);
   } finally {
+    fetchSpy.mockRestore();
+  }
+});
+
+test("close drains client response reader cleanup before DELETE", async () => {
+  let bodyReaderAcquired!: () => void;
+  const acquiredBodyReader = new Promise<void>((resolve) => (bodyReaderAcquired = resolve));
+  let cleanupStarted!: () => void;
+  const cleaningUp = new Promise<void>((resolve) => (cleanupStarted = resolve));
+  let finishCleanup!: () => void;
+  const cleanup = new Promise<void>((resolve) => (finishCleanup = resolve));
+  const order: string[] = [];
+  const fetchSpy = spyOn(globalThis, "fetch").mockImplementation((async (_input, init) => {
+    if (init?.method === "DELETE") {
+      order.push("delete");
+      expect(new Headers(init.headers).get("mcp-session-id")).toBe("drain-init-session");
+      return new Response(null, { status: 204 });
+    }
+    expect(JSON.parse(String(init?.body)).method).toBe("initialize");
+    const response = new Response(
+      new ReadableStream<Uint8Array>({
+        start(controller) {
+          init?.signal?.addEventListener(
+            "abort",
+            () => {
+              order.push("abort");
+              controller.error(new Error("request aborted"));
+            },
+            { once: true },
+          );
+        },
+      }),
+      { headers: { "content-type": "application/json", "mcp-session-id": "drain-init-session" } },
+    );
+    const body = response.body!;
+    const getReader = body.getReader.bind(body);
+    // Hold the client's reader cleanup, not a remote server's cancel callback.
+    body.getReader = (() => {
+      const reader = getReader();
+      const cancel = reader.cancel.bind(reader);
+      reader.cancel = async () => {
+        order.push("draining");
+        cleanupStarted();
+        await cleanup;
+        await cancel().catch(() => undefined);
+        order.push("settled");
+      };
+      bodyReaderAcquired();
+      return reader;
+    }) as typeof body.getReader;
+    return response;
+  }) as typeof fetch);
+  try {
+    const client = new T3McpClient("http://127.0.0.1/mcp", "token");
+    const pending = client.initialize().catch((error) => error);
+    await acquiredBodyReader;
+    const closing = client.close();
+    await cleaningUp;
+    expect(order).toEqual(["abort", "draining"]);
+    finishCleanup();
+    await closing;
+    expect(await pending).toBeInstanceOf(Error);
+    expect(order).toEqual(["abort", "draining", "settled", "delete"]);
+  } finally {
+    finishCleanup();
     fetchSpy.mockRestore();
   }
 });

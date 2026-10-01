@@ -33,6 +33,7 @@ type CustomShape = Component & {
 /** The SDK retains typed messages on reopen. Project them, never parse visible text. */
 export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () => []): () => void {
   const originalAdd = Container.prototype.addChild;
+  const originalRender = Container.prototype.render;
   const restored = new WeakMap<Component, { original: Component["render"]; wrapper: Component["render"] }>();
   const references = new Set<WeakRef<Component>>();
   const finalized = new FinalizationRegistry<WeakRef<Component>>((reference) => references.delete(reference));
@@ -40,7 +41,9 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
   function adapt(parent: Container, child: Component): void {
     if (!(child instanceof ToolExecutionComponent) && !(child instanceof CustomMessageComponent)) return;
     if (restored.has(child)) return;
-    const original = child.render;
+    // CustomMessageComponent inherits Container.render. Do not retain this install's
+    // render hook as its original, or uninstall would leave a session closure behind.
+    const original = child.render === render ? originalRender : child.render;
     const reference = new WeakRef(child);
     references.add(reference);
     finalized.register(child, reference);
@@ -129,10 +132,19 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
     originalAdd.call(this, child);
     adapt(this, child);
   }
+  function render(this: Container, width: number): string[] {
+    // In-app /resume and /reload rebuild the transcript before session_start installs us.
+    // Pi renders children directly (and records their heights for mouse dispatch), so
+    // wrap existing children before delegating to its normal render implementation.
+    if (active) for (const child of this.children) adapt(this, child);
+    return originalRender.call(this, width);
+  }
   Container.prototype.addChild = add;
+  Container.prototype.render = render;
   return () => {
     active = false;
     if (Container.prototype.addChild === add) Container.prototype.addChild = originalAdd;
+    if (Container.prototype.render === render) Container.prototype.render = originalRender;
     for (const reference of references) {
       const child = reference.deref();
       const record = child && restored.get(child);
