@@ -103,6 +103,11 @@ On GitHub (including mobile): **Actions → Release → Run workflow → develop
 - Released binaries currently support Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64.
 - Credentials and model configuration are supplied at runtime, like Pi.
 - State is stored under `~/.bruv`. This is a fresh namespace: existing `~/.die` data is untouched and is not automatically migrated or read.
+- CLI sessions and configuration use `~/.bruv/agent`; web state uses `~/.bruv/web`.
+  Extracted web payloads use `$XDG_CACHE_HOME/bruv/web-runtime`, or
+  `~/.cache/bruv/web-runtime` when XDG cache home is unset. Project prompt files
+  now live in `.bruv/`; app environment overrides use `BRUV_*`.
+- Install bruv separately from die. The old executable is not renamed or removed; old `die update` versions still expect old asset names.
 - See `wisdom/` for durable project context and deeper feature notes.
 
 ## Resource limits
