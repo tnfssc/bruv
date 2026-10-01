@@ -37,3 +37,11 @@ Values unchanged. Value 8 already calls for checking real reopen and session-swi
 ## Fix in progress
 
 User asked to fix, check similar bugs, push and release. Primary fix: task_ec55a2df, branch bruv/fix-task-row-adaptation-across-resume-ec55a2df, worktree /home/tnfssc/.bruv/worktrees/die-a86675007a5e-task_ec55a2df. Related lifecycle audit: task_d6023c4c, branch bruv/audit-related-session-renderer-lifecycle-d6023c4c, worktree /home/tnfssc/.bruv/worktrees/die-a86675007a5e-task_d6023c4c. Parent integrates commits and releases through the manual Release workflow after checks. No release dispatched yet.
+
+## Related lifecycle audit
+
+Task d6023c4c found no separate concrete defect. It checked cli/startup, conversation-density, quiet-tool-ui, footer, resume-safeguards, TypeScript execution previews, and Pi replacement/rebuild/reset ordering. Other transcript adapters install before Pi starts and stay active through switches. Footer listeners/timers and picker wrappers have teardown. Execution animations stop on shutdown. 59 focused tests passed; an in-memory five-rebuild probe kept spacing, hidden-thinking suppression, and detached-method restoration. This was code/test review, not live UI proof. No speculative fixes added.
+
+## Integration checks
+
+Parent cherry-picked a25c9b9 as fb1d401 on fix/task-rows-resume. Reviewed the localized render hook and teardown behavior. 101 tests passed across task-rows, execution-previews, conversation-density, footer, and resume-safeguards (677 assertions). Configured Biome format and lint passed on changed source/tests; git diff --check passed. A broader biome check also enabled import-assist rules not used by project gates and reported existing import ordering; no unrelated rewrite made. Hosted CI and independent visual proof still pending.
