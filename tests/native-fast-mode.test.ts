@@ -144,7 +144,7 @@ async function wirePayload(
 
 for (const provider of ["openai", "openai-codex"] as const) {
   test(`native fast forwards model aliases on the official ${provider} surface`, async () => {
-    const base = getModel(provider, provider === "openai" ? "gpt-5.3-codex" : "gpt-5.5")!;
+    const base = provider === "openai" ? getModel("openai", "gpt-5.3-codex")! : getModel("openai-codex", "gpt-5.5")!;
     for (const id of ["gpt-6.1-sol", "gpt-5.3-codex-spark", "gpt-5.4-mini", "future-model-alias"]) {
       const model = { ...base, id };
       expect(nativeFastSupport(model)).toEqual({
