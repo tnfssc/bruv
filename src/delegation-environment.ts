@@ -6,6 +6,9 @@ export function scrubT3BridgeEnvironment(env: NodeJS.ProcessEnv): NodeJS.Process
   const scrubbed = { ...env };
   delete scrubbed[T3_MCP_URL_ENV];
   delete scrubbed[T3_MCP_BEARER_ENV];
+  // Human presentation authority is not a model-directed tool capability.
+  delete scrubbed.DIE_ROOT_RUNTIME_SOCKET;
+  delete scrubbed.DIE_ROOT_RUNTIME_TOKEN;
   return scrubbed;
 }
 
