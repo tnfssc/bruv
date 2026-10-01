@@ -6,6 +6,7 @@ export type RootStartupOptions = {
   remoteInclude?: string[];
   model?: string;
   thinking?: string;
+  projectTrusted?: boolean;
   fresh?: boolean;
 };
 /** Parse only the deliberate placement boundary; normal targetless startup stays byte-for-byte unchanged. */
@@ -33,6 +34,12 @@ export function parseRootPlacementArgs(args: string[]): { localArgs: string[]; r
   for (let i = 0; i < args.length; i++) {
     const flag = args[i]!;
     // The thin client loads no packages/provider; offline startup does not prohibit its explicit SSH target.
+    if (flag === "--approve" || flag === "--no-approve") {
+      if (seen.has("projectTrust")) throw Error("Specify project trust once");
+      seen.add("projectTrust");
+      options.projectTrusted = flag === "--approve";
+      continue;
+    }
     if (flag === "--offline") {
       if (seen.has(flag)) throw Error("Duplicate root option");
       seen.add(flag);

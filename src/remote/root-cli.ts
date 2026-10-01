@@ -7,6 +7,7 @@ export type RemoteRootCLIOptions = {
   prompt?: string;
   model?: string;
   thinking?: string;
+  projectTrusted?: boolean;
   remoteRepo?: string;
   remoteInclude?: string[];
   workspace?: RootClientOptions["workspace"];

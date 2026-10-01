@@ -35,3 +35,11 @@ test("root placement is explicit named choice and source stays distinct", () => 
 test("offline thin client still uses its explicit authorized SSH target without local provider startup", () => {
   expect(parseRootPlacementArgs(["--offline", "--place", "builder"]).remote).toEqual({ place: "builder" });
 });
+
+test("project trust is explicit placement intent, never silently dropped", () => {
+  expect(parseRootPlacementArgs(["--place", "builder", "--no-approve"]).remote).toEqual({
+    place: "builder",
+    projectTrusted: false,
+  });
+  expect(() => parseRootPlacementArgs(["--place", "builder", "--approve", "--no-approve"])).toThrow("trust once");
+});

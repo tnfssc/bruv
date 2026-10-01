@@ -107,7 +107,9 @@ export function validateRootCommand(command: RootCommand) {
   }
 }
 function validateIntent(intent: RootIntent, identity: RootIdentity) {
-  strict(intent, ["ownerId", "epoch", "sessionId", "role", "depth", "repoPath", "model", "thinking"]);
+  strict(intent, ["ownerId", "epoch", "sessionId", "role", "depth", "repoPath", "model", "thinking", "projectTrusted"]);
+  if (intent.projectTrusted !== undefined && typeof intent.projectTrusted !== "boolean")
+    throw Error("Invalid root project trust override");
   rootId(intent.sessionId);
   if (intent.ownerId !== identity.ownerId || intent.epoch !== identity.epoch)
     throw Error("Owner identity or boot epoch changed");
@@ -587,6 +589,8 @@ export async function runRootOwner(
       if (Buffer.byteLength(socket) > 100) throw Error("Root private IPC socket path exceeds Unix limit");
       const sessionFile = join(store.path(sessionId), "session.jsonl");
       const args = ["--mode", "rpc", "--session", sessionFile];
+      if (initial.record.intent.projectTrusted !== undefined)
+        args.push(initial.record.intent.projectTrusted ? "--approve" : "--no-approve");
       if (initial.record.intent.model) {
         const i = initial.record.intent.model.indexOf("/");
         args.push(

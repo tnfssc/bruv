@@ -7,6 +7,7 @@ export type RootIntent = RootIdentity & {
   repoPath: string;
   model?: string;
   thinking?: string;
+  projectTrusted?: boolean;
 };
 export type RootCommand =
   | { kind: "prompt"; text: string }

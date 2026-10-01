@@ -46,6 +46,7 @@ export type RootClientOptions = {
   remoteInclude?: string[];
   model?: string;
   thinking?: string;
+  projectTrusted?: boolean;
   workspace?: { kind: "inherit" } | { kind: "worktree"; baseRef?: string; branch?: string };
   fresh?: boolean;
   transport?: RootTransport;
@@ -152,6 +153,7 @@ export class RootClient {
             sessionId,
             role: "root",
             depth: 0,
+            ...(options.projectTrusted === undefined ? {} : { projectTrusted: options.projectTrusted }),
             repoPath: options.remoteRepo ?? "pending-upload",
             ...(options.model ? { model: options.model } : {}),
             ...(options.thinking ? { thinking: options.thinking } : {}),
@@ -187,6 +189,7 @@ export class RootClient {
     if (options.remoteRepo !== undefined && state.intent.repoPath !== options.remoteRepo)
       throw Error("Saved root source differs; use an explicit fresh root");
     if (
+      (options.projectTrusted !== undefined && state.intent.projectTrusted !== options.projectTrusted) ||
       (options.model !== undefined && state.intent.model !== options.model) ||
       (options.thinking !== undefined && state.intent.thinking !== options.thinking)
     )
