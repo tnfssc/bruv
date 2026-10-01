@@ -49,3 +49,7 @@ Coordinator added split-CRLF/multiline SSE regression and normalization repair, 
 ## CI close/initialize fixture follow-up
 
 The close-during-initialize fixture must synchronize after the client reads the `mcp-session-id` response header, not when the server stream starts: server `ReadableStream.start` can run before the client has received headers or recorded the session. The regression test wraps native fetch and signals on that header read, then retains its settlement-before-DELETE and session-ID assertions. CI 36872054281 failed on the earlier premature checkpoint; this was a test premise race, not evidence of a production session leak.
+
+## 2026-10-01 CI observation correction
+
+The current close test now observes client reader cleanup, not server-side disconnect processing. A gated cleanup test retains strict abort/drain-before-DELETE proof; product close behavior is unchanged. See [MCP close CI observation and mutation proof](mcp-close-ci-observation.md).
