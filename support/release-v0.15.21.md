@@ -1,0 +1,44 @@
+# v0.15.21
+
+- Merge pull request #20 from tnfssc/ui/compact-actions-release
+- Assert durable tasks and visible errors through original rejection API
+- Keep real execution and original cancellation assertions in UI acceptance
+- Preserve execute failure and compact Live labels
+- Align UI acceptance fixtures with canonical cancellation rows
+- Preserve deferred expanded root view during compact UI refresh
+- Record renamed native UI proof and exact handoff limits
+- Adapt native UI proof to newly published bruv runtime paths
+- Verify terminal root task with fresh normal task-list snapshot
+- Fix native-observed root task duplication and retain outer action evidence
+- Render canonical typed background task rows across lifecycle and reopen
+- Align presenter error captions and audit true shell task identity
+- Align placed-root transcript with compact actions and typed task rows
+- Validate native capture gates and truthful screenshot audits
+- Prepare native proof assets without dependency writes
+- Add gated native tasks UI proof tooling
+- Share concise actual-error summaries between conversation presenters
+- Render continuous foreground action rows with compact outcomes
+- Record final human UI decisions and implementation ownership
+- Keep normal conversation action rows quiet and singular
+- Merge pull request #19 from tnfssc/rename/bruv
+- fix: use canonical bruv repository after GitHub rename
+- docs: link bruv rename PR handoff
+- docs: record parent review and develop integration
+- Merge remote-tracking branch 'origin/develop' into rename/bruv
+- docs: record bruv rename validation and PR handoff
+- fix: preserve ordinary language in canonical rename patch
+- Rename T3 product runtime and canonical patch to bruv
+- docs: use bruv CLI product name
+- Merge pull request #18 from tnfssc/die/remove-native-fast-model-alias-gate-df2e76e7
+- build: drop legacy updater tag fetch and document fresh Pi preparation
+- Rename product packaging and release tooling to bruv
+- test: use current bruv updater in release workflow assertions
+- Rename core runtime and test branding to bruv
+- Fix native fast alias test catalog typechecking
+- docs: describe fresh bruv state and cache namespaces
+- docs: record confirmed bruv CLI name
+- docs: align local CI source recipe with bruv integration
+- test: assert bruv identity and untouched legacy state
+- docs: clarify first bruv release asset availability
+- docs: introduce bruv branding and preserve historical boundaries
+- Remove native fast mode model alias allowlists
