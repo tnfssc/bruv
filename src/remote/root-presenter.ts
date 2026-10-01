@@ -1,21 +1,22 @@
-import {
-  Editor,
-  Text,
-  Markdown,
-  TuiMainScreen,
-  ProcessTerminal,
-  getKeybindings,
-  stripTerminalSequences,
-  type Component,
-  type EditorTheme,
-  type MarkdownTheme,
-} from "@earendil-works/pi-tui";
-import type { Theme } from "@earendil-works/pi-coding-agent";
-import { QuestionPicker } from "../questions/picker";
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import {
+  type Component,
+  Editor,
+  type EditorTheme,
+  getKeybindings,
+  Markdown,
+  type MarkdownTheme,
+  ProcessTerminal,
+  stripTerminalSequences,
+  Text,
+  TuiMainScreen,
+} from "@earendil-works/pi-tui";
+import { QuestionPicker } from "../questions/picker";
 import type { RootClient } from "./root-client";
-import type { RootObservation, RootRecord, RootCommand, RootDialog } from "./root-contract";
+import type { RootCommand, RootDialog, RootObservation, RootRecord } from "./root-contract";
+
 const plain = (s: string) => s;
 const accent = (s: string) => "\x1b[36m" + s + "\x1b[0m";
 const safe = (s: unknown) =>
@@ -260,7 +261,9 @@ function messageText(message: any, details = false): string {
       if (c.type === "text") return safe(c.text);
       if (c.type === "thinking") return details ? safe(c.thinking ?? c.text ?? "") : "";
       if (c.type === "toolCall")
-        return details ? "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments)) : "Running " + safe(c.name);
+        return details
+          ? "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments))
+          : "Running " + safe(c.arguments?.label ?? c.name);
       return "";
     })
     .filter(Boolean)
@@ -301,15 +304,31 @@ export class RootTranscript {
   }
   render(width: number): string[] {
     const lines: string[] = [];
-    for (const m of [...this.messages, ...(this.streaming ? [this.streaming] : [])]) {
-      if (!m) continue;
-      const role = m.role === "user" ? "You" : m.role === "assistant" ? "Assistant" : "Tool result";
+    const messages = [...this.messages, ...(this.streaming ? [this.streaming] : [])];
+    const labels = new Map<string, string>();
+    for (const m of messages) {
+      if (!m || m.display === false || !Array.isArray(m.content)) continue;
+      for (const c of m.content)
+        if (c.type === "toolCall" && c.id) labels.set(c.id, safe(c.arguments?.label ?? c.name));
+    }
+    for (const m of messages) {
+      if (!m || m.display === false) continue;
+      const role =
+        m.role === "user"
+          ? "You"
+          : m.role === "assistant"
+            ? "Assistant"
+            : m.role === "toolResult"
+              ? "Action"
+              : "Notice";
       lines.push(...new Text(accent(role), 0, 0).render(width));
       let text: string;
       if (m.role === "toolResult") {
-        const name = safe(m.toolName ?? "tool");
+        const name = labels.get(m.toolCallId) ?? safe(m.toolName ?? "tool");
         const output = typeof m.content === "string" ? safe(m.content) : messageText(m, this.details);
-        text = (m.isError ? name + " failed" : name + " result") + (output ? "\n" + output : "");
+        text =
+          (m.isError ? name + " failed" : name + " completed") +
+          ((this.details || m.isError) && output ? "\n" + output : "");
         if (this.details && m.toolCallId) text = "Tool call " + safe(m.toolCallId) + "\n" + text;
       } else text = messageText(m, this.details);
       lines.push(

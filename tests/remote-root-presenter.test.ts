@@ -1,5 +1,6 @@
-import { test, expect } from "bun:test";
-import { RootControls, RootTranscript, type RootPresentationControls } from "../src/remote/root-presenter";
+import { expect, test } from "bun:test";
+import { RootControls, type RootPresentationControls, RootTranscript } from "../src/remote/root-presenter";
+
 function fixture(receipt: Record<string, unknown> = {}) {
   const commands: any[] = [];
   const picks: string[] = [];
@@ -99,7 +100,7 @@ test("normal user/assistant/tool progress and authoritative snapshot replace his
   t.event({ type: "tool_execution_start", toolName: "shell" });
   expect(t.render(80).join("\n")).toContain("hello");
   expect(t.render(80).join("\n")).toContain("Working");
-  expect(t.progress).toBe("Tool: shell");
+  expect(t.progress).toBe("Running shell");
   t.apply({
     record: { state: "running", messages: [{ role: "assistant", content: "authoritative" }] } as any,
     events: [],
@@ -169,8 +170,9 @@ test("root transcript keeps tool protocol private by default and exposes explici
   const visible = t.render(120).join("\n");
   expect(visible).toContain("Assistant");
   expect(visible).toContain("Running execute");
-  expect(visible).toContain("execute result");
-  expect(visible).toContain("Question saved: q1");
+  expect(visible).toContain("inspect completed");
+  expect(visible).toContain("Running inspect");
+  expect(visible).not.toContain("Question saved: q1");
   expect(visible).not.toContain("assistant");
   expect(visible).not.toContain("toolResult");
   expect(visible).not.toContain("JSON.stringify");
@@ -180,11 +182,33 @@ test("root transcript keeps tool protocol private by default and exposes explici
   t.toggleDetails();
   const detail = t.render(120).join("\n");
   expect(detail).toContain("questions.ask");
+  expect(detail).toContain("Question saved: q1");
   expect(detail).toContain("Tool call call-1");
+  t.toggleDetails();
   t.event({
     type: "message_end",
     message: { role: "toolResult", toolName: "execute", content: "permission denied", isError: true },
   });
   expect(t.render(120).join("\n")).toContain("execute failed");
   expect(t.render(120).join("\n")).toContain("permission denied");
+});
+
+test("internal saved answers stay hidden in snapshots and streaming, even with tool details open", () => {
+  const t = new RootTranscript();
+  const hidden = {
+    role: "custom",
+    customType: "question-answer",
+    display: false,
+    content: 'Saved human answer: {"owner":"private-answer-owner"}',
+  };
+  t.apply({ record: { messages: [{ role: "assistant", content: "Notes are ready" }, hidden] }, events: [] } as any);
+  t.event({ type: "message_update", message: hidden });
+  for (const details of [false, true]) {
+    t.details = details;
+    const visible = t.render(120).join("\n");
+    expect(visible).toContain("Notes are ready");
+    expect(visible).not.toContain("private-answer-owner");
+    expect(visible).not.toContain("Saved human answer");
+  }
+  expect(t.messages).toContain(hidden);
 });
