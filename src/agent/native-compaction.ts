@@ -468,12 +468,21 @@ function coversDiscardedMessages(c: CapturedRequest, event: SessionBeforeCompact
     leaf = event.branchEntries.findIndex((e) => e.id === c.leafId);
   return boundary >= 0 && leaf >= boundary - 1;
 }
-function nativeAssistant(message: AgentMessage, d: NativeCodexCompactionDetails): AgentMessage {
+/** Replay stays within the checkpoint's Codex API/provider boundary. The pinned
+ * Model catalog has no comp_hash: like Codex, missing hashes do not establish
+ * incompatibility. Model ID alone is not a compaction compatibility check. */
+function canReplayNativeCheckpoint(d: NativeCodexCompactionDetails, model: Model<any> | undefined): boolean {
+  return model?.api === d.api && model.provider === d.provider;
+}
+function nativeAssistant(message: AgentMessage, d: NativeCodexCompactionDetails, selectedModel: string): AgentMessage {
   return {
     role: "assistant",
     api: d.api,
     provider: d.provider,
-    model: d.model,
+    // Transport-only shim: pi-ai drops empty signed thinking across model IDs.
+    // This is a compaction item, not reasoning produced by the selected model;
+    // the persisted entry, d.model provenance, and d.item remain untouched.
+    model: selectedModel,
     content: [{ type: "thinking", thinking: "", thinkingSignature: JSON.stringify(d.item) }],
     usage: {
       input: 0,
@@ -510,17 +519,15 @@ export function adaptNativeCompactionMessages(messages: AgentMessage[], ctx: Ext
     if (
       (message as any).summary !== entry?.summary ||
       !isNativeCodexCompactionDetails(d) ||
-      ctx.model?.api !== d.api ||
-      ctx.model.provider !== d.provider ||
-      ctx.model.id !== d.model
+      !canReplayNativeCheckpoint(d, ctx.model)
     )
       return message;
     return d.runtimeState
       ? [
-          nativeAssistant(message, d),
+          nativeAssistant(message, d, ctx.model!.id),
           { role: "user", content: d.runtimeState, timestamp: message.timestamp } as AgentMessage,
         ]
-      : nativeAssistant(message, d);
+      : nativeAssistant(message, d, ctx.model!.id);
   });
 }
 type NativeFallbackCode =
@@ -623,9 +630,7 @@ export function registerNativeCodexCompaction(
     const entries = nativeEntriesInContext(ctx);
     const invalid = entries.some((e) => !isNativeCodexCompactionDetails(e.details));
     const checkpoints = nativeDetailsInContext(ctx);
-    const incompatible = checkpoints.find(
-      (d) => ctx.model?.api !== d.api || ctx.model.provider !== d.provider || ctx.model.id !== d.model,
-    );
+    const incompatible = checkpoints.find((d) => !canReplayNativeCheckpoint(d, ctx.model));
     if (invalid || incompatible) {
       bestEffortDiagnostic(ctx, {
         component: "compaction",
@@ -637,11 +642,9 @@ export function registerNativeCodexCompaction(
       });
       blockOrdinaryRequest = invalid
         ? "Unsupported or damaged opaque Codex checkpoint. Use a compatible die version or branch before the checkpoint."
-        : "This session contains an opaque Codex checkpoint that cannot be sent to the selected provider/model. Switch back to " +
+        : "This session contains an opaque Codex checkpoint that cannot be sent to the selected API/provider. Switch back to its Codex API/provider (" +
           incompatible!.provider +
-          "/" +
-          incompatible!.model +
-          " or start a new session.";
+          ") or start a new session.";
       ctx.ui?.notify?.(blockOrdinaryRequest, "error");
       ctx.abort();
       return { messages: event.messages };
@@ -735,7 +738,7 @@ export function registerNativeCodexCompaction(
           dispatch: "none",
           cancellation: "safety",
         });
-        ctx.ui?.notify?.("Compaction cancelled: switch back to the checkpoint's original Codex model first.", "error");
+        ctx.ui?.notify?.("Compaction cancelled: switch back to the checkpoint's Codex API/provider first.", "error");
         return { cancel: true };
       }
       return;

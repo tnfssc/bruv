@@ -282,7 +282,7 @@ describe("native Codex request", () => {
 });
 
 describe("opaque checkpoint adapter", () => {
-  test("survives JSON roundtrip and replays exact item only for the original model", () => {
+  test("survives JSON roundtrip and replays the exact item across Codex model IDs without changing provenance", () => {
     const manager = SessionManager.inMemory();
     const first = manager.appendMessage({ role: "user", content: [{ type: "text", text: "old" }], timestamp: 1 });
     manager.appendMessage({ role: "user", content: [{ type: "text", text: "tail" }], timestamp: 2 });
@@ -320,9 +320,51 @@ describe("opaque checkpoint adapter", () => {
       },
     );
     expect(wire[0]).toEqual(item);
-    const switched = adaptNativeCompactionMessages(messages, { ...ctx, model: { ...model, id: "other" } } as any);
-    expect(switched[0].role).toBe("compactionSummary");
-    expect((switched[0] as any).summary).toBe(NATIVE_CODEX_SUMMARY);
+    const before = JSON.stringify(manager.getEntries());
+    const selected = { ...model, id: "other" };
+    const switched = adaptNativeCompactionMessages(messages, { ...ctx, model: selected } as any);
+    expect(switched[0]).toMatchObject({ role: "assistant", model: selected.id });
+    expect(
+      convertResponsesMessages(
+        selected,
+        normalizeContext({ messages: convertToLlm(switched) }),
+        new Set([model.provider]),
+        { includeSystemPrompt: false },
+      ).filter((x: any) => x.type === "compaction"),
+    ).toEqual([item]);
+    expect(JSON.stringify(manager.getEntries())).toBe(before);
+    expect(details.model).toBe(model.id);
+    expect(details.item).toEqual(item);
+    for (const wrong of [
+      { ...selected, provider: "foreign" },
+      { ...selected, api: "openai-responses" },
+    ]) {
+      const blocked = adaptNativeCompactionMessages(messages, { ...ctx, model: wrong } as any);
+      expect(blocked[0].role).toBe("compactionSummary");
+    }
+    // The bridge must not relabel ordinary encrypted reasoning on a model switch.
+    const ordinary = [
+      {
+        ...adapted[0],
+        content: [
+          {
+            type: "thinking",
+            thinking: "",
+            thinkingSignature: JSON.stringify({ type: "reasoning", id: "rs_old", encrypted_content: "reasoning-only" }),
+          },
+        ],
+      },
+    ] as AgentMessage[];
+    const unchanged = adaptNativeCompactionMessages(ordinary, { ...ctx, model: selected } as any);
+    expect(unchanged).toEqual(ordinary);
+    expect(
+      convertResponsesMessages(
+        selected,
+        normalizeContext({ messages: convertToLlm(unchanged) }),
+        new Set([model.provider]),
+        { includeSystemPrompt: false },
+      ),
+    ).toEqual([]);
   });
 });
 
@@ -587,6 +629,16 @@ describe("fail-closed checkpoint lifecycle", () => {
       (
         await run((h, manager) => {
           h.handlers.get("context")!({ messages: manager.buildSessionContext().messages }, h.ctx);
+          h.handlers.get("before_provider_headers")!({ headers: {} }, h.ctx);
+          h.handlers.get("before_provider_request")!({ payload }, h.ctx);
+          h.ctx.model = { ...model, id: "other" };
+        })
+      ).code,
+    ).toBe("identity_stale");
+    expect(
+      (
+        await run((h, manager) => {
+          h.handlers.get("context")!({ messages: manager.buildSessionContext().messages }, h.ctx);
         })
       ).code,
     ).toBe("payload_missing");
@@ -701,13 +753,42 @@ describe("fail-closed checkpoint lifecycle", () => {
     }
   });
 
-  test("aborts a switched-model request before a provider payload can proceed", () => {
-    const h = harness(checkpointManager(), { ...model, provider: "foreign", api: "openai-responses" });
-    const messages = buildSessionContext(h.ctx.sessionManager.getEntries()).messages;
-    h.handlers.get("context")!({ messages }, h.ctx);
-    expect(h.aborted).toBe(1);
-    expect(() => h.handlers.get("before_provider_request")!({ payload: {} }, h.ctx)).toThrow("cannot be sent");
-    expect(h.notifications[0]).toContain("Switch back");
+  test("allows a compatible switched checkpoint but still blocks missing or changed serialized ciphertext", () => {
+    for (const input of [[], [{ type: "compaction", id: "cmp_guard", encrypted_content: "changed" }]]) {
+      const h = harness(checkpointManager(), { ...model, id: "other" });
+      const result = h.handlers.get("context")!(
+        { messages: h.ctx.sessionManager.buildSessionContext().messages },
+        h.ctx,
+      );
+      expect(h.aborted).toBe(0);
+      expect(result.messages[0]).toMatchObject({ role: "assistant", model: "other" });
+      expect(() =>
+        h.handlers.get("before_provider_request")!({ payload: { ...payload, model: "other", input } }, h.ctx),
+      ).toThrow("lost during provider serialization");
+      expect(h.aborted).toBe(1);
+    }
+  });
+  test("noncheckpoint switching leaves ordinary messages unchanged", () => {
+    const manager = SessionManager.inMemory();
+    manager.appendMessage({ role: "user", content: "ordinary", timestamp: 1 });
+    const messages = manager.buildSessionContext().messages;
+    const h = harness(manager, { ...model, id: "other" });
+    expect(h.handlers.get("context")!({ messages }, h.ctx).messages).toEqual(messages);
+    h.handlers.get("before_provider_request")!({ payload: { ...payload, model: "other" } }, h.ctx);
+    expect(h.aborted).toBe(0);
+  });
+  test("aborts a wrong-provider/API request before a provider payload can proceed", () => {
+    for (const wrong of [
+      { ...model, provider: "foreign" },
+      { ...model, api: "openai-responses" },
+    ]) {
+      const h = harness(checkpointManager(), wrong);
+      const messages = buildSessionContext(h.ctx.sessionManager.getEntries()).messages;
+      h.handlers.get("context")!({ messages }, h.ctx);
+      expect(h.aborted).toBe(1);
+      expect(() => h.handlers.get("before_provider_request")!({ payload: {} }, h.ctx)).toThrow("cannot be sent");
+      expect(h.notifications[0]).toContain("Switch back");
+    }
   });
   test("cancels custom and missing-snapshot compaction rather than flattening a checkpoint", async () => {
     const manager = checkpointManager(),
@@ -951,6 +1032,60 @@ describe("fail-closed checkpoint lifecycle", () => {
       expect(observed.map((value) => value.observedAt)).toEqual(["dispatch"]);
       expect(h.entries).toEqual([]);
       expect(manager.getEntries()).toEqual([]);
+    } finally {
+      unsubscribe();
+      globalThis.fetch = oldFetch;
+    }
+  });
+
+  test("model selection during deferred HTTP rejects a stale native compaction even within Codex", async () => {
+    const manager = SessionManager.inMemory();
+    manager.appendMessage({ role: "user", content: "ordinary", timestamp: 1 });
+    const h = harness(manager, model);
+    h.ctx.modelRegistry.getApiKeyAndHeaders = async () => ({
+      ok: true,
+      headers: { Authorization: "Bearer hidden", "chatgpt-account-id": "acct" },
+    });
+    h.handlers.get("context")!({ messages: manager.buildSessionContext().messages }, h.ctx);
+    h.handlers.get("before_provider_headers")!({ headers: {} }, h.ctx);
+    h.handlers.get("before_provider_request")!({ payload }, h.ctx);
+    const branch = manager.getBranch();
+    const event: any = {
+      type: "session_before_compact",
+      branchEntries: branch,
+      signal: new AbortController().signal,
+      preparation: {
+        firstKeptEntryId: branch[0].id,
+        messagesToSummarize: [],
+        turnPrefixMessages: [],
+        tokensBefore: 10,
+        fileOps: { read: new Set(), written: new Set(), edited: new Set() },
+        settings: { enabled: true, reserveTokens: 1, keepRecentTokens: 1 },
+      },
+    };
+    let resolveFetch!: (response: Response) => void;
+    const oldFetch = globalThis.fetch;
+    globalThis.fetch = (() => new Promise<Response>((resolve) => (resolveFetch = resolve))) as any;
+    const observed: any[] = [];
+    const unsubscribe = subscribeProviderAttempts(manager, (value) => observed.push(value));
+    try {
+      const pending = h.handlers.get("session_before_compact")!(event, h.ctx);
+      while (!resolveFetch) await Promise.resolve();
+      h.ctx.model = { ...model, id: "other" };
+      h.handlers.get("model_select")!({ type: "model_select", model: h.ctx.model }, h.ctx);
+      const item = { type: "compaction", id: "cmp_stale", encrypted_content: "opaque" };
+      const body =
+        "data: " +
+        JSON.stringify({
+          type: "response.completed",
+          response: { status: "completed", output: [item], usage: { input_tokens: 4, output_tokens: 1 } },
+        }) +
+        "\n\n";
+      resolveFetch(new Response(body, { status: 200 }));
+      expect(await pending).toEqual({ cancel: true });
+      expect(observed.map((value) => value.observedAt)).toEqual(["dispatch"]);
+      expect(h.entries).toEqual([]);
+      expect(manager.getEntries()).toEqual(branch);
     } finally {
       unsubscribe();
       globalThis.fetch = oldFetch;

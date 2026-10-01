@@ -30,7 +30,7 @@ const usage = {
 };
 const sentinel = "phase2-offline-serializer";
 
-test("native Codex real SDK: auth, checkpoint, repeat, disk resume, and incompatible model guard", async () => {
+test("native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume, and provider guard", async () => {
   const dir = await mkdtemp(join(tmpdir(), "die-native-sdk-"));
   const originalFetch = globalThis.fetch;
   const sent: any[] = [];
@@ -39,7 +39,8 @@ test("native Codex real SDK: auth, checkpoint, repeat, disk resume, and incompat
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   let restoreNotify = () => {};
   let nativeMode: "success" | "failure" = "success";
-  const model = getModel("openai-codex", "gpt-5.6-luna")!;
+  const model = getModel("openai-codex", "gpt-6-astra")!;
+  const selected = getModel("openai-codex", "gpt-6.1-sol")!;
   try {
     globalThis.fetch = (async (url: any, init: any) => {
       expect(String(url)).toEndWith("/codex/responses");
@@ -154,6 +155,9 @@ test("native Codex real SDK: auth, checkpoint, repeat, disk resume, and incompat
     }
     runtime.streamSimple = fixtureStream as any;
     async function open(manager: SessionManager) {
+      // Each SDK session gets a fresh offline transport seam; do not inherit
+      // wrappers bound to the disposed session's extension context.
+      runtime.streamSimple = fixtureStream as any;
       const loader = new DefaultResourceLoader({
         cwd: dir,
         agentDir: dir,
@@ -215,9 +219,15 @@ test("native Codex real SDK: auth, checkpoint, repeat, disk resume, and incompat
       timestamp: 2,
     });
     session = await open(manager);
-    await session.prompt("Keep current detail. " + "recent-context ".repeat(150));
+    await session.setModel(selected);
+    await session.prompt("Ordinary model switch before any checkpoint.");
     expect(sent).toHaveLength(1);
-    const originalPayload = sent[0];
+    expect(sent[0].model).toBe(selected.id);
+    expect(sent[0].input.some((x: any) => x.type === "compaction")).toBe(false);
+    await session.setModel(model);
+    await session.prompt("Keep current detail. " + "recent-context ".repeat(150));
+    expect(sent).toHaveLength(2);
+    const originalPayload = sent.at(-1);
     await session.compact();
     expect(compactRequests).toHaveLength(1);
     for (const key of ["model", "instructions", "tools", "reasoning", "prompt_cache_key"])
@@ -234,11 +244,41 @@ test("native Codex real SDK: auth, checkpoint, repeat, disk resume, and incompat
     expect(persisted).toContain("Original durable fact");
     expect(persisted).toContain("opaque-fixture-1");
     expect(first.summary).not.toContain("opaque-fixture-1");
+    const originalDiskEntry = persisted
+      .split("\n")
+      .filter(Boolean)
+      .find((line) => JSON.parse(line).id === first.id)!;
+    const originalEntry = JSON.stringify(first);
+    const originalItem = structuredClone(first.details.item);
+    expect(first.details.model).toBe(model.id);
+    await session.setModel(selected);
     await session.prompt("Continue after checkpoint. " + "new-detail ".repeat(180));
+    expect(sent.at(-1).model).toBe(selected.id);
+    expect(sent.at(-1).input.filter((x: any) => x.type === "compaction")).toEqual([originalItem]);
+    expect(JSON.stringify(manager.getEntries().find((e) => e.id === first.id))).toBe(originalEntry);
+    expect(
+      (await readFile(disk, "utf8"))
+        .split("\n")
+        .filter(Boolean)
+        .find((line) => JSON.parse(line).id === first.id),
+    ).toBe(originalDiskEntry);
     expect(sent.at(-1).input.filter((x: any) => x.type === "compaction")).toEqual([
       { type: "compaction", id: "cmp_fixture_1", encrypted_content: "opaque-fixture-1" },
     ]);
+    restoreNotify();
+    session.dispose();
+    session = undefined;
+    manager = SessionManager.open(disk);
+    session = await open(manager);
+    await session.setModel(selected);
+    const beforeDiskResume = sent.length;
+    await session.prompt("Reconstruct Astra checkpoint on disk and continue with Sol. " + "disk-detail ".repeat(160));
+    expect(sent.at(-1).model).toBe(selected.id);
+    expect(sent.at(-1).input.filter((x: any) => x.type === "compaction")).toEqual([originalItem]);
+    expect(sent).toHaveLength(beforeDiskResume + 1);
+    expect(JSON.stringify(manager.getEntries().find((e) => e.id === first.id))).toBe(originalEntry);
     await session.compact();
+    expect(compactRequests[1].model).toBe(selected.id);
     expect(
       compactRequests[1].input.some((x: any) => x.type === "compaction" && x.encrypted_content === "opaque-fixture-1"),
     ).toBe(true);
@@ -247,10 +287,14 @@ test("native Codex real SDK: auth, checkpoint, repeat, disk resume, and incompat
     session = undefined;
     manager = SessionManager.open(disk);
     session = await open(manager);
+    await session.setModel(model);
+    const beforeSecondDiskResume = sent.length;
     await session.prompt("Resume from disk, preserving native state. " + "resumed-context ".repeat(160));
     expect(sent.at(-1).input.filter((x: any) => x.type === "compaction")).toEqual([
       { type: "compaction", id: "cmp_fixture_2", encrypted_content: "opaque-fixture-2" },
     ]);
+    expect(sent).toHaveLength(beforeSecondDiskResume + 1);
+    expect(sent.at(-1).model).toBe(model.id);
     const checkpoints = () => manager.getEntries().filter((e) => e.type === "compaction").length;
     const beforeCount = checkpoints(),
       beforeSent = sent.length;
@@ -285,12 +329,19 @@ test("native Codex real SDK: auth, checkpoint, repeat, disk resume, and incompat
     await expect(session.compact()).rejects.toThrow();
     expect(compactRequests).toHaveLength(3);
     expect(checkpoints()).toBe(beforeCount);
-    await session.setModel(getModel("openai-codex", "gpt-5.6-sol")!);
-    await session.prompt("Do not proceed without the original context.").catch(() => {});
-    expect(sent).toHaveLength(beforeSent);
+    await session.setModel(selected);
+    await session.prompt("Normal Codex switching still preserves the opaque context.");
+    expect(sent).toHaveLength(beforeSent + 1);
+    expect(sent.at(-1).model).toBe(selected.id);
+    expect(sent.at(-1).input.filter((x: any) => x.type === "compaction")).toEqual([
+      { type: "compaction", id: "cmp_fixture_2", encrypted_content: "opaque-fixture-2" },
+    ]);
+    await session.setModel({ ...selected, api: "openai-responses" });
+    await session.prompt("Wrong API on the same provider must be blocked.").catch(() => {});
+    expect(sent).toHaveLength(beforeSent + 1);
     await session.setModel(getModel("anthropic", "claude-sonnet-4-5")!);
     await session.prompt("Foreign-provider request must also be blocked.").catch(() => {});
-    expect(sent).toHaveLength(beforeSent);
+    expect(sent).toHaveLength(beforeSent + 1);
     expect(notices.some((n) => /native|opaque/i.test(n))).toBe(true);
   } finally {
     restoreNotify();
