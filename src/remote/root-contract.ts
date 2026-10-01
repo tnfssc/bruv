@@ -33,6 +33,7 @@ export type RootCommandReceipt = {
   error?: string;
 };
 export type RootDialog = {
+  type?: "extension_ui_request";
   id: string;
   method: "select" | "confirm" | "input" | "editor";
   title?: string;
