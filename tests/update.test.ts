@@ -6,9 +6,9 @@ import { UPDATE_ASSETS, isCompiledInvocation, updateAssetFor, updateBruv } from 
 
 const body = new TextEncoder().encode("new compiled bruv");
 const hash = createHash("sha256").update(body).digest("hex");
-const releaseUrl = "https://api.github.com/repos/tnfssc/die/releases/latest";
+const releaseUrl = "https://api.github.com/repos/tnfssc/bruv/releases/latest";
 const dirs = new Set<string>();
-const root = (tag: string) => "https://github.com/tnfssc/die/releases/download/" + tag + "/";
+const root = (tag: string) => "https://github.com/tnfssc/bruv/releases/download/" + tag + "/";
 const deps = (fetch: typeof globalThis.fetch, executable: string, extra: Record<string, unknown> = {}) => ({
   fetch,
   executable,
@@ -144,12 +144,16 @@ describe("bruv self-update", () => {
     ).rejects.toThrow("Linux x64/arm64, macOS arm64, and Android/Termux arm64");
     expect(calls).toBe(0);
   });
-  test("requires official exact asset URLs", async () => {
+  test.each([
+    ["foreign repository", "https://example.invalid/bruv-linux-x64"],
+    // The renamed repository must be used even if GitHub redirects the old slug.
+    ["legacy repository", "https://github.com/tnfssc/die/releases/download/v0.3.0/bruv-linux-x64"],
+  ])("requires canonical exact asset URLs: %s", async (_label, url) => {
     const f = fixture("v0.3.0", {
       release: {
         tag_name: "v0.3.0",
         assets: [
-          { name: "bruv-linux-x64", browser_download_url: "https://example.invalid/bruv-linux-x64" },
+          { name: "bruv-linux-x64", browser_download_url: url },
           { name: "bruv-linux-x64.sha256", browser_download_url: root("v0.3.0") + "bruv-linux-x64.sha256" },
         ],
       },

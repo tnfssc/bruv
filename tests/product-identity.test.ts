@@ -6,10 +6,10 @@ import product from "../package.json";
 import { RELEASES_URL, UPDATE_ASSETS } from "../src/update";
 import { run } from "./helpers";
 
-test("bruv package and update assets use the unchanged repository", () => {
+test("bruv package and update assets use the canonical repository", () => {
   expect(product.name).toBe("bruv");
   expect(product.bin).toEqual({ bruv: "dist/bruv" });
-  expect(RELEASES_URL).toBe("https://api.github.com/repos/tnfssc/die/releases/latest");
+  expect(RELEASES_URL).toBe("https://api.github.com/repos/tnfssc/bruv/releases/latest");
   for (const [target, asset] of Object.entries(UPDATE_ASSETS)) {
     expect(String(asset)).toBe(`bruv-${target}`);
   }

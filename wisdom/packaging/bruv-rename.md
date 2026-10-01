@@ -4,8 +4,10 @@
 
 - Worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_74b29f92
 - Branch: rename/bruv; base: 5485b09460814a441601fd63e9013d73f320f297.
-- Parent owns review and PR publication. Nothing pushed, merged, released or installed.
-  The GitHub repository and real user configuration were not changed.
+- Initial implementation handoff: parent owned review and PR publication. That
+  session pushed, merged, released and installed nothing, and changed neither the
+  GitHub repository nor real user configuration. Later publication and the human
+  repository rename are recorded below.
 - User-confirmed product name: **bruv CLI**; executable/command: **bruv**.
   See [name decision](bruv-name.md); this is not trademark clearance.
 - Integrated core commit: 713833b (worker 13bf0ad); packaging: 0b7c524
@@ -40,11 +42,13 @@ The old die updater expects old asset names and is not a bruv migration route.
 Root release tests and scripts/verify-update.ts now exercise the current updater;
 the historical v0.7.1 extraction and CI tag fetch were removed rather than falsified.
 
-The actual repository stays https://github.com/tnfssc/die. Clone, issue, API and
-release-download URLs intentionally retain that slug; release assets there are now
-bruv-{linux-x64,linux-arm64,darwin-arm64,android-arm64}. A human can rename the GitHub
-repository separately and update links afterward. README notes that these install
-commands require the first bruv release; source builds work before publication.
+At the initial implementation/checks on 2026-10-01, the repository was still
+https://github.com/tnfssc/die. Clone, issue, API and release-download URLs retained
+that then-valid slug; release assets were renamed to
+bruv-{linux-x64,linux-arm64,darwin-arm64,android-arm64}. The human subsequently
+renamed the repository to **tnfssc/bruv**; see the follow-up below. README still
+notes that install commands require the first bruv release; source builds work
+before publication.
 
 ## Canonical T3 and adaptation provenance
 
@@ -137,10 +141,11 @@ generated and verified. No gates were weakened to bypass these.
 
 ## Residual identifiers and limits
 
-Read-only integrated review found no active old-name aliases, automatic .die fallback,
+The initial read-only integrated review on 2026-10-01 found no active old-name aliases, automatic .die fallback,
 broken tnfssc/bruv URLs, or producer/consumer naming mismatch. Residual die references:
 
-- Actual tnfssc/die repository/API/release URLs, plus the real dependency-PR fixture slug.
+- Then-current tnfssc/die repository/API/release URLs (updated in the follow-up
+  below), plus the real dependency-PR fixture slug (preserved).
 - LICENSE retains "die project contributors": legal attribution, not current branding.
 - Upstream Effect.die/orDie, Layer.orDie, Cause.die/isDieReason, Stream.die and defect
   tag Die; ordinary English (including the corrected verb and "bodies"); opaque
@@ -160,8 +165,9 @@ was not smuggled into this rename.
 
 No hosted CI/release run, real macOS/native audio or Android/arm64 execution, paid
 provider, Docker/SSH acceptance or device test is claimed. The suite's 20 opt-in skips
-remain deliberate. Publishing bruv assets and separately renaming the repository are
-parent/human follow-ups, not actions taken here.
+remain deliberate. At this initial checkpoint, publishing bruv assets and separately renaming the
+repository remained parent/human follow-ups, not actions taken by the implementation
+session. The subsequent human repository rename is recorded below.
 
 ## Wisdom and values
 
@@ -183,3 +189,59 @@ Parent pushed rename/bruv and opened [PR #19](https://github.com/tnfssc/die/pull
 against develop. It was open and mergeable at publication; hosted checks were
 still running. The original checkout stays on develop and clean. Do not merge or
 publish a release as part of this task.
+
+## Confirmed repository rename follow-up (2026-10-01)
+
+After PR publication, the human renamed GitHub **tnfssc/die → tnfssc/bruv**.
+Parent verified `gh repo view` returns canonical `tnfssc/bruv`; the current PR is
+[PR #19](https://github.com/tnfssc/bruv/pull/19). The publication link and earlier
+validation above remain dated evidence, not a claim that the repository is still
+awaiting rename.
+
+Updated active README installation/repository links and wisdom index, the contributing fork clone
+example, updater API and exact release-download allowlist, compiled updater gate,
+and product-repository test fixtures/expectations to `tnfssc/bruv`. The independent
+`tnfssc/die-dependency-pr-fixture-20260930` identity remains real and unchanged.
+Historical release/PR/action evidence, original branch/worktree paths, third-party
+identities and legal attribution are preserved.
+
+Reviewed `.github/workflows`: no active hardcoded old product slug remains.
+Checkout/API/status/PR/release/source provenance use GitHub repository context or
+`GITHUB_REPOSITORY`, which now resolves to the canonical slug. No workflow edit
+is needed. This follow-up makes no user configuration/install changes, remote
+repository rename, push, PR or release publication.
+
+Follow-up worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_ac1fe302;
+branch `rename/bruv-repo-links`, based on `8741a5c` from `rename/bruv`.
+
+Local follow-up validation:
+
+- Frozen-lockfile dependencies installed only in this worktree, using copyfile.
+- `bun run check` passed; focused source/updater/release/dependency/CI-baseline and
+  identity tests: **60 pass / 0 fail**, 244 assertions across 6 files.
+  The exact-URL regression rejects the old product repository slug, even if
+  GitHub would redirect it. The private compiled self-replacement fixture was
+  rebuilt from current updater source by the tests.
+- `bun run prepare:assets` and `bun scripts/build.ts --reuse-web` passed. This
+  rebuilt the current CLI/updater, repacking a worktree-local copy of the unchanged
+  bruv web runtime from the initial rename worktree; it was **not** a fresh T3
+  source/web build. Chunk-startup validation passed, and the repacked archive
+  SHA256 remained `666de4314c2ca9c977a555c99811200eca85e67dafcd80287018a787d6dd0d1e`.
+- Staged the rebuilt binary as `dist/release/bruv-linux-x64` with a checksum
+  sidecar. `scripts/verify-update.ts` passed against that asset: bad checksum
+  preserved the private executable; valid canonical URLs replaced it with
+  matching SHA256, and the replacement ran `--version` as `0.15.20`.
+  Rebuilt CLI SHA256: `8e55de69bd2decfbbc5813a7fda50ff0a2da89134ff0eee174d7b5998184098c`.
+- Changed TypeScript files passed Biome format checks; `git diff --check` passed.
+
+The first optional CI-baseline test run lacked Git on the child PATH; rerunning
+with explicit Bun/Node/system tool paths passed without product changes. The
+first compiled gate hit `/tmp` ENOSPC during replacement; rerunning with this
+worktree's `.cache/bruv-repo-gate` as TMPDIR passed. No guard was weakened.
+Successful logs are in `artifacts/bruv-repo-rename/{install,focused-tests,
+typecheck,format,rebuild,compiled-updater}.log` in the follow-up worktree.
+No full suite, fresh web/browser/native/cross-platform run or hosted CI/release
+is claimed for this URL-only follow-up. Parent owns cherry-pick and PR push.
+
+Rename/name/index wisdom updated; values unchanged because existing truthful
+evidence, ownership and focused-validation guidance already covers this work.

@@ -2,9 +2,8 @@
 
 A coding agent built on [Pi](https://pi.dev). One standalone executable gives you a terminal interface, a bundled web UI, Herdr integration, background jobs, sub-agents, and project wisdom.
 
-The product is **bruv CLI**, and the command is `bruv`. The GitHub repository is still
-[`tnfssc/die`](https://github.com/tnfssc/die); links intentionally keep that slug
-until a maintainer renames the repository separately. Release assets use `bruv-*`.
+The product is **bruv CLI**, and the command is `bruv`. The GitHub repository is
+[`tnfssc/bruv`](https://github.com/tnfssc/bruv). Release assets use `bruv-*`.
 
 ## Install
 
@@ -15,7 +14,7 @@ original asset names.
 Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64:
 
 ```sh
-os="$(uname -s | tr A-Z a-z)"; [ "$(uname -o 2>/dev/null)" = Android ] && os=android; asset="bruv-$os-$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/x64/)"; mkdir -p ~/.local/bin && cd "$(mktemp -d)" && curl -fLO "https://github.com/tnfssc/die/releases/latest/download/$asset" && curl -fLO "https://github.com/tnfssc/die/releases/latest/download/$asset.sha256" && (sha256sum -c "$asset.sha256" 2>/dev/null || shasum -a 256 -c "$asset.sha256") && install -m 755 "$asset" ~/.local/bin/bruv
+os="$(uname -s | tr A-Z a-z)"; [ "$(uname -o 2>/dev/null)" = Android ] && os=android; asset="bruv-$os-$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/x64/)"; mkdir -p ~/.local/bin && cd "$(mktemp -d)" && curl -fLO "https://github.com/tnfssc/bruv/releases/latest/download/$asset" && curl -fLO "https://github.com/tnfssc/bruv/releases/latest/download/$asset.sha256" && (sha256sum -c "$asset.sha256" 2>/dev/null || shasum -a 256 -c "$asset.sha256") && install -m 755 "$asset" ~/.local/bin/bruv
 ```
 
 Put `~/.local/bin` on your `PATH`. Then run:

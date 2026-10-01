@@ -8,7 +8,7 @@ messages are easiest to review.
 1. Fork the repository, then clone your fork and enter the checkout:
 
    ```sh
-   git clone https://github.com/YOUR-ACCOUNT/die.git bruv
+   git clone https://github.com/YOUR-ACCOUNT/bruv.git bruv
    cd bruv
    ```
 

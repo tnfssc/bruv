@@ -40,10 +40,10 @@ test("finds an existing draft when tag lookup returns 404", async () => {
     return Response.json([{ tag_name: "v0.15.3", draft: true, assets }]);
   }) as unknown as typeof fetch;
   try {
-    expect((await findRelease("tnfssc/die", "v0.15.3", "token"))?.assets).toEqual(assets);
+    expect((await findRelease("tnfssc/bruv", "v0.15.3", "token"))?.assets).toEqual(assets);
     expect(urls).toEqual([
-      "https://api.github.com/repos/tnfssc/die/releases/tags/v0.15.3",
-      "https://api.github.com/repos/tnfssc/die/releases?per_page=100&page=1",
+      "https://api.github.com/repos/tnfssc/bruv/releases/tags/v0.15.3",
+      "https://api.github.com/repos/tnfssc/bruv/releases?per_page=100&page=1",
     ]);
   } finally {
     globalThis.fetch = original;
@@ -55,7 +55,7 @@ test("fails closed when draft list cannot be read", async () => {
   let calls = 0;
   globalThis.fetch = (async () => new Response(null, { status: ++calls === 1 ? 404 : 403 })) as unknown as typeof fetch;
   try {
-    expect(findRelease("tnfssc/die", "v0.15.3", "token")).rejects.toThrow("HTTP 403");
+    expect(findRelease("tnfssc/bruv", "v0.15.3", "token")).rejects.toThrow("HTTP 403");
   } finally {
     globalThis.fetch = original;
   }

@@ -15,8 +15,8 @@ const targets: [NodeJS.Platform, string, string][] = [
   ["darwin", "arm64", names[2]],
   ["android", "arm64", names[3]],
 ];
-const api = "https://api.github.com/repos/tnfssc/die/releases/latest";
-const root = "https://github.com/tnfssc/die/releases/download/v0.8.0/";
+const api = "https://api.github.com/repos/tnfssc/bruv/releases/latest";
+const root = "https://github.com/tnfssc/bruv/releases/download/v0.8.0/";
 const digest = (data: Uint8Array) => createHash("sha256").update(data).digest("hex");
 let temp: string;
 

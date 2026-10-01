@@ -3,7 +3,7 @@ import { RELEASES_URL, UPDATE_ASSET, updateBruv } from "../src/update";
 const payload = process.env.BRUV_TEST_UPDATE_PAYLOAD;
 if (!payload) throw new Error("Private updater test payload is required");
 const bytes = await Bun.file(payload).bytes();
-const root = "https://github.com/tnfssc/die/releases/download/v0.3.0/";
+const root = "https://github.com/tnfssc/bruv/releases/download/v0.3.0/";
 const digest = createHash("sha256").update(bytes).digest("hex");
 const mockFetch = (async (input: RequestInfo | URL) => {
   const url = String(input);

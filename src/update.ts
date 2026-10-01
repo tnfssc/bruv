@@ -3,7 +3,7 @@ import { chmod, mkdtemp, realpath, rename, rm, stat, writeFile } from "node:fs/p
 import { dirname, join } from "node:path";
 import bruvPackage from "../package.json";
 
-export const RELEASES_URL = "https://api.github.com/repos/tnfssc/die/releases/latest";
+export const RELEASES_URL = "https://api.github.com/repos/tnfssc/bruv/releases/latest";
 export const UPDATE_ASSETS = {
   "linux-x64": "bruv-linux-x64",
   "linux-arm64": "bruv-linux-arm64",
@@ -82,7 +82,7 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
   const assets: unknown[] = Array.isArray(release.assets) ? release.assets : [];
   const assetUrl = (name: string): string => {
     const matches = assets.filter((asset): asset is Record<string, unknown> => isRecord(asset) && asset.name === name);
-    const expected = "https://github.com/tnfssc/die/releases/download/" + encodeURIComponent(tag) + "/" + name;
+    const expected = "https://github.com/tnfssc/bruv/releases/download/" + encodeURIComponent(tag) + "/" + name;
     if (matches.length !== 1 || matches[0]?.browser_download_url !== expected)
       throw new Error("The release is missing a valid official " + name + " asset.");
     return expected;

@@ -29,7 +29,7 @@ try {
   await writeFile(join(directory, "src/update.ts"), source);
   await writeFile(join(directory, "package.json"), JSON.stringify(metadata));
   await writeFile(join(directory, "candidate"), bytes);
-  const root = "https://github.com/tnfssc/die/releases/download/v" + version + "/";
+  const root = "https://github.com/tnfssc/bruv/releases/download/v" + version + "/";
   await writeFile(
     join(directory, "runner.ts"),
     'import { updateBruv } from "./src/update";\n' +
@@ -44,7 +44,7 @@ try {
       ").arrayBuffer();\n" +
       "const result = await updateBruv({ fetch: async (input) => {\n" +
       "const url = String(input);\n" +
-      'if (url === "https://api.github.com/repos/tnfssc/die/releases/latest") return Response.json({tag_name: ' +
+      'if (url === "https://api.github.com/repos/tnfssc/bruv/releases/latest") return Response.json({tag_name: ' +
       JSON.stringify("v" + version) +
       ', prerelease:false, draft:false, assets:[asset,asset+".sha256"].map(name=>({name,browser_download_url:root+name}))});\n' +
       "if (url === root+asset) return new Response(bytes);\n" +
