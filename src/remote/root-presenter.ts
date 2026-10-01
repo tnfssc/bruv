@@ -76,7 +76,7 @@ export class RootControls {
     private client: Pick<RootClient, "command" | "result" | "read">,
     private ui: RootPresentationControls,
   ) {}
-  private async send(command: RootCommand) {
+  private async dispatch(command: RootCommand) {
     const state = this.client.read();
     for (const [id, saved] of Object.entries(state.commands)) {
       if (saved.receipt.state === "completed") continue;
@@ -96,6 +96,11 @@ export class RootControls {
     }
     return this.client.command(command);
   }
+  private async send(command: RootCommand) {
+    const receipt = await this.dispatch(command);
+    if (receipt.error) throw Error(receipt.error);
+    return receipt;
+  }
   async submit(text: string): Promise<void> {
     text = text.trim();
     if (!text) return;
@@ -105,7 +110,7 @@ export class RootControls {
     }
     if (text === "/abort") {
       const r = await this.send({ kind: "abort" });
-      this.ui.notice("Abort " + r.state + " (presentation remains attached)");
+      this.ui.notice("Abort request " + r.state + " (presentation remains attached)" + (r.result === undefined ? "" : " · " + safe(JSON.stringify(r.result))));
       return;
     }
     if (text === "/close") {
@@ -178,7 +183,7 @@ export class RootControls {
       ]);
       if (confirm === "yes") {
         const r = await this.send({ kind: "jobs.stop", id: job.id });
-        this.ui.notice("Job cancellation " + r.state);
+        this.ui.notice("Job cancellation request " + r.state + (r.result === undefined ? "" : " · " + safe(JSON.stringify(r.result))));
       }
       return;
     }
@@ -415,15 +420,22 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
     if (options.prompt) {
       try {
         const receipt = await client.initialPrompt(options.prompt);
-        notice("Startup prompt " + receipt.state);
+        notice(receipt.error ? "Startup prompt rejected: " + safe(receipt.error) : "Startup prompt " + receipt.state);
       } catch (error) {
         notice(String(error));
       }
     }
+    const reportedErrors = new Set<string>();
     poll = (async () => {
       while (!closed) {
         try {
-          await client.reconcile();
+          const receipts = await client.reconcile();
+          for (const receipt of receipts) {
+            if (receipt.error && !reportedErrors.has(receipt.commandId)) {
+              reportedErrors.add(receipt.commandId);
+              notice("Remote action rejected: " + safe(receipt.error));
+            }
+          }
           let observation: RootObservation;
           let pages = 0;
           do {

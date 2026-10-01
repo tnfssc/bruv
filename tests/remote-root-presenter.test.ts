@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
 import { RootControls, RootTranscript, type RootPresentationControls } from "../src/remote/root-presenter";
-function fixture() {
+function fixture(receipt: Record<string, unknown> = {}) {
   const commands: any[] = [];
   const picks: string[] = [];
   const notices: string[] = [];
@@ -18,7 +18,7 @@ function fixture() {
     read: () => ({ commands: {}, target: {name:"builder"} }),
     command: async (command: any) => {
       commands.push(command);
-      return { commandId: "c", state: "completed" };
+      return { commandId: "c", state: "completed", ...receipt };
     },
     result: async (command: any) => {
       commands.push(command);
@@ -97,4 +97,16 @@ test("normal user/assistant/tool progress and authoritative snapshot replace his
   });
   expect(t.messages).toHaveLength(1);
   expect(t.render(80).join("\n")).toContain("authoritative");
+});
+
+test("completed control receipt does not hide an error or claim pending cancellation stopped", async () => {
+  const rejected = fixture({ error: "runtime unavailable; outcome unknown" });
+  await expect(rejected.controls.submit("/abort")).rejects.toThrow("outcome unknown");
+  expect(rejected.notices).toEqual([]);
+  const pending = fixture({ result: { stopped: false, pending: true } });
+  pending.picks.push("job", "stop", "yes");
+  await pending.controls.submit("/ps");
+  expect(pending.notices.at(-1)).toContain("cancellation request completed");
+  expect(pending.notices.at(-1)).toContain('"stopped":false');
+  expect(pending.notices.at(-1)).toContain('"pending":true');
 });
