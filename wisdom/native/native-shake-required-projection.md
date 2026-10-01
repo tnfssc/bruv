@@ -89,3 +89,9 @@ Projection worker: `/home/tnfssc/.die/worktrees/die-a86675007a5e-task_eed5eff8-a
 branch `die/fix-recorded-shake-coverage-mismatch-7cc4e8f3`.
 Independent diagnosis: sibling worktree ending `task_50e6765f`, note
 `NATIVE_COMPACTION_REVIEW.md` (metadata-only historical replay).
+
+## PR handoff
+
+PR: https://github.com/tnfssc/die/pull/14 (base develop).
+Clean PR worktree: `/home/tnfssc/.die/worktrees/die-native-compaction-pr`; branch `fix/native-compaction-shake-coverage`.
+This branch passed 86 focused tests, typecheck, and diff check after preparing runtime assets. No install or release. User asked to stop speculative hardening; fresh-capture and OAuth work were left out. The shared product-first prompt/value change is separate.
