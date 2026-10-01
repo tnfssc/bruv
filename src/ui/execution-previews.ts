@@ -6,6 +6,7 @@ import {
   getKeybindings,
   stripTerminalSequences,
   truncateToWidth,
+  visibleWidth,
   wrapTextWithAnsi,
 } from "@earendil-works/pi-tui";
 
@@ -268,18 +269,25 @@ export function completionPreview(
       }
 
       const pieces: string[] = [];
+      let hasFailure = false;
+      let hasUncertainty = false;
       const add = (color: "success" | "error" | "warning" | "normal", value: string) => {
-        if (value) pieces.push(color === "normal" ? value : theme.fg(color, value));
+        if (!value) return;
+        if (color === "error") hasFailure = true;
+        if (color === "warning") hasUncertainty = true;
+        pieces.push(color === "normal" ? value : theme.fg(color, value));
       };
 
       // Metadata can be capped for large batches. Surface an omitted failure
       // before the ID sequence so narrow terminals cannot make the batch look
       // successful merely because the failed task was outside the cap.
       if (hasAggregate) {
-        const omittedFailures =
-          count(aggregate?.failed) + count(aggregate?.killed) - knownCounts.failed - knownCounts.killed;
-        if (omittedFailures > 0)
-          add("error", "✗ " + omittedFailures + " omitted task" + (omittedFailures === 1 ? "" : "s") + " failed");
+        const omittedFailed = count(aggregate?.failed) - knownCounts.failed;
+        const omittedKilled = count(aggregate?.killed) - knownCounts.killed;
+        if (omittedFailed > 0)
+          add("error", "✗ " + omittedFailed + " omitted task" + (omittedFailed === 1 ? "" : "s") + " failed");
+        if (omittedKilled > 0)
+          add("error", "✗ " + omittedKilled + " omitted task" + (omittedKilled === 1 ? "" : "s") + " cancelled");
         const omittedUncertain =
           count(aggregate?.running) + count(aggregate?.unknown) - knownCounts.running - knownCounts.unknown;
         if (omittedUncertain > 0)
@@ -317,7 +325,18 @@ export function completionPreview(
 
       if (omittedTasks && !hasAggregate) add("warning", "? " + omittedTasks + " task details omitted");
       if (!pieces.length) add("warning", "? Task completion · " + (first || "unknown task update"));
-      return [truncateToWidth(pieces.join(", "), width)];
+      const row = pieces.join(", ");
+      if (visibleWidth(row) <= width) return [row];
+
+      // Keep compact risk cues ahead of truncatable descriptions. Failure wins
+      // at tiny widths; otherwise both failure and uncertainty stay visible.
+      let indicators = "";
+      if (hasFailure) indicators += theme.fg("error", "✗");
+      if (hasUncertainty) indicators += theme.fg("warning", "?");
+      if (indicators && width <= 1) return [hasFailure ? theme.fg("error", "✗") : theme.fg("warning", "?")];
+      if (indicators && visibleWidth(indicators) >= width) return [truncateToWidth(indicators, width)];
+      if (indicators) return [truncateToWidth(indicators + " " + row, width)];
+      return [truncateToWidth(row, width)];
     }),
   );
   return box;

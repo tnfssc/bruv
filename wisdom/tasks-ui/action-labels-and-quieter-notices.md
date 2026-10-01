@@ -45,3 +45,10 @@ The normal fresh build stopped because pnpm was missing. Did not install it or r
 ## Values
 
 Reviewed wisdom/values.md again. It stays unchanged. Values 1, 2, 8, and 10 already cover real wiring, honest UI state, bounded proof, and a code-backed handoff. This is a feature-local recipe, not a new general rule.
+
+## Follow-up: narrow completion rows and omitted outcomes
+
+- Omitted aggregate outcomes now distinguish failed tasks from killed/cancelled tasks; unresolved/running omissions remain explicitly uncertain. Do not collapse cancellation into failure prose.
+- When a collapsed row exceeds its width and includes a failure/cancellation/timeout or uncertainty, prepend compact outcome markers before truncatable task descriptions. Failure is first at one cell; practical widths retain both failure and uncertainty markers. Rows that fully fit preserve their original task order and wording. Expanded evidence remains unchanged.
+- Coverage: long titled success followed by failure and unknown, 1/2/24/30-cell rendering, capped cancellation plus unknown aggregate counts, remote actionable/cancelled/unknown states, legacy omitted details, all-success legacy task labels, and existing terminal-control sanitation. Focused execution-preview tests: 32 passed (184 assertions); this fixture is renderer-level, not an interactive terminal acceptance run.
+- Limits: extra summary markers appear only when a row truncates. A width of one can expose only the strongest marker; descriptions and secondary details still require expansion. Legacy aggregate-less omissions remain a generic uncertain “task details omitted” message. No action-label/schema/title plumbing, expanded transcript, grouping, scheduler, or wakeup behavior changed.

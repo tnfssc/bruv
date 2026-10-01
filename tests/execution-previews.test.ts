@@ -293,8 +293,78 @@ test("full-batch diagnostics retain a failure omitted after the first 50 tasks",
   const row = completionPreview("51 asynchronous tasks completed.", false, theme, 0, "task-complete", details).render(
     32,
   )[0];
-  expect(row.startsWith("✗ 1 omitted task failed")).toBe(true);
+  expect(row.startsWith("✗ ")).toBe(true);
+  expect(stripTerminalSequences(row)).toContain("1 omitted task failed");
   expect(visibleWidth(row)).toBeLessThanOrEqual(32);
+});
+
+test("truncated completion rows reserve leading failure and uncertainty markers", () => {
+  const long = "A very long successful task title " + "x".repeat(100);
+  const details = {
+    tasks: [
+      { id: "first", title: long, status: "completed" },
+      { id: "later", status: "failed" },
+      { id: "uncertain", status: "unknown" },
+    ],
+  };
+  const row = completionPreview("update", false, theme, 0, "task-complete", details).render(30)[0];
+  expect(stripTerminalSequences(row)).toStartWith("✗? ");
+  expect(visibleWidth(row)).toBeLessThanOrEqual(30);
+  expect(
+    stripTerminalSequences(completionPreview("update", false, theme, 0, "task-complete", details).render(1)[0]),
+  ).toBe("✗");
+  expect(
+    stripTerminalSequences(completionPreview("update", false, theme, 0, "task-complete", details).render(2)[0]),
+  ).toStartWith("✗?");
+});
+
+test("all-success legacy task details keep original order without risk markers", () => {
+  const row = stripTerminalSequences(
+    completionPreview("ignored", false, theme, 0, "task-complete", {
+      tasks: [
+        { id: "a", status: "completed" },
+        { id: "b", status: "completed" },
+      ],
+    }).render(80)[0],
+  );
+  expect(row.trimEnd()).toBe("✓ a finished, ✓ b finished");
+});
+
+test("omitted cancellations are reported separately and unknown aggregate omissions stay visible", () => {
+  const details = {
+    tasks: Array.from({ length: 50 }, (_, i) => ({ id: "ok" + i, status: "completed" })),
+    taskStatusCounts: { completed: 50, failed: 0, killed: 1, running: 0, unknown: 1 },
+    omittedTasks: 2,
+  };
+  const row = stripTerminalSequences(completionPreview("", false, theme, 0, "task-complete", details).render(300)[0]);
+  expect(row).toContain("1 omitted task cancelled");
+  expect(row).toContain("1 omitted task unresolved");
+  expect(row).not.toContain("omitted task failed");
+});
+
+test("long titles cannot hide remote actionable, cancelled, unknown, or legacy omitted outcomes", () => {
+  const title = "success " + "x".repeat(100);
+  for (const details of [
+    {
+      tasks: [{ title, status: "completed" }],
+      remote: [
+        { taskId: "f", state: "cancelled" },
+        { taskId: "u", state: "unknown" },
+      ],
+    },
+    {
+      tasks: [{ title, status: "completed" }],
+      remote: [
+        { taskId: "a", state: "running", actionable: true },
+        { taskId: "u", state: "unknown" },
+      ],
+    },
+    { tasks: [{ title, status: "completed" }], omittedTasks: 2 },
+  ]) {
+    const row = stripTerminalSequences(completionPreview("", false, theme, 0, "task-complete", details).render(24)[0]);
+    expect(row).toStartWith(details.remote?.some((item) => item.state === "cancelled") ? "✗? " : "? ");
+    expect(visibleWidth(row)).toBeLessThanOrEqual(24);
+  }
 });
 
 test("legacy or incomplete completion metadata renders unknown rather than success", () => {
