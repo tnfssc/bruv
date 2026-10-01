@@ -1,3 +1,12 @@
+import { installSdkTaskRows } from "../ui/sdk-task-rows";
+import {
+  taskRowFromLaunch,
+  taskRowFromRemote,
+  taskRowKey,
+  taskRowsFromDetails,
+  upsertTaskRow,
+  type TaskRow,
+} from "../ui/task-rows";
 import { registerRootRuntime } from "../remote/root-runtime";
 import { remoteCompletionSummary } from "../remote/job-observations";
 import { registerRemoteCancellationService } from "../remote/cancellation";
@@ -62,18 +71,19 @@ export function completionDiagnosticDetails(tasks: TaskInspection[], notices: At
     unknown: 0,
   };
   for (const task of tasks) {
-    switch (task.status) {
-      case "completed":
-      case "failed":
-      case "killed":
-      case "running":
-        taskStatusCounts[task.status]++;
-        break;
-      default:
-        taskStatusCounts.unknown++;
-    }
+    const row = taskRowFromLaunch(task);
+    const status = row?.status;
+    if (status === "succeeded") taskStatusCounts.completed++;
+    else if (status === "failed") taskStatusCounts.failed++;
+    else if (status === "cancelled") taskStatusCounts.killed++;
+    else if (status === "running") taskStatusCounts.running++;
+    else taskStatusCounts.unknown++;
   }
   return {
+    taskRows: tasks.slice(0, 50).flatMap((task) => {
+      const row = taskRowFromLaunch(task);
+      return row ? [row] : [];
+    }),
     tasks: tasks.slice(0, 50).map(({ output: _output, command, ...summary }) => ({
       ...summary,
       command: command.slice(0, 400),
@@ -211,6 +221,25 @@ export default function asynchronousTasksExtension(
   let manager: TaskManager | undefined;
   let detachLocalTermination: (() => void) | undefined;
   let owningContext: ExtensionContext | undefined;
+  const transcriptRows = new Map<string, TaskRow>();
+  let restoreTaskRows: (() => void) | undefined;
+  const recordTaskRow = (row: TaskRow) => {
+    const current = transcriptRows.get(taskRowKey(row));
+    const next = upsertTaskRow(transcriptRows, row);
+    if (JSON.stringify(current) === JSON.stringify(next)) return;
+    // UI metadata is optional; a write failure must not change job execution.
+    try {
+      pi.appendEntry("die-task-row", next);
+    } catch {}
+  };
+  pi.events?.on?.("die:task-row-launch", (value: unknown) => {
+    const event = value as { row: TaskRow; sessionId?: string };
+    if (event.sessionId !== owningContext?.sessionManager?.getSessionId?.()) return;
+    recordTaskRow(event.row);
+    const actual = event.row.source === "local" ? manager?.list().find((task) => task.id === event.row.id) : undefined;
+    const latest = actual && taskRowFromLaunch(actual, event.row.sourceCallId);
+    if (latest) recordTaskRow(latest);
+  });
   let managerRecorder: ((input: Parameters<typeof recordDiagnostic>[1]) => void) | undefined;
   let detachManagerDiagnostics: (() => void) | undefined;
   let attention: JobAttentionScheduler | undefined;
@@ -494,6 +523,10 @@ export default function asynchronousTasksExtension(
         if (event.type === "activity") return;
         if (event.type === "completed") reconcileProjectWisdom();
         const task = event.task;
+        if (owner?.getSessionId?.() === sessionId && owner === owningContext?.sessionManager) {
+          const row = taskRowFromLaunch(task);
+          if (row && transcriptRows.has(taskRowKey(row))) recordTaskRow(row);
+        }
         lifecycle({
           event: event.type,
           at: new Date().toISOString(),
@@ -871,6 +904,17 @@ export default function asynchronousTasksExtension(
   });
 
   pi.on("session_start", async (_event, ctx) => {
+    owningContext = ctx;
+    transcriptRows.clear();
+    for (const entry of ctx.sessionManager.getBranch()) {
+      if (entry.type === "custom" && entry.customType === "die-task-row") {
+        for (const row of taskRowsFromDetails({ taskRows: [entry.data] }))
+          upsertTaskRow(transcriptRows, row.status === "running" ? { ...row, status: "unknown" } : row);
+      }
+    }
+    restoreTaskRows?.();
+    restoreTaskRows =
+      ctx.mode === "tui" ? installSdkTaskRows(ctx.ui.theme, () => [...transcriptRows.values()]) : undefined;
     notificationBatch.reset();
     disposeRemote();
     await t3LocalDelivery?.stop();
@@ -897,6 +941,8 @@ export default function asynchronousTasksExtension(
         remoteOutbox.replay();
         const source = remoteJobEvents(sessionFile);
         const observe = (event: RemoteJobObservation) => {
+          const row = taskRowFromRemote(event);
+          if (row && transcriptRows.has(taskRowKey(row))) recordTaskRow(row);
           remoteOutbox?.enqueue(event);
           if (remoteOutbox?.pending().length) notificationBatch.add({ kind: "remote" });
           scheduleRemoteRetry();
@@ -921,6 +967,8 @@ export default function asynchronousTasksExtension(
   });
 
   pi.on("session_shutdown", async (_event, ctx) => {
+    restoreTaskRows?.();
+    restoreTaskRows = undefined;
     currentMainOwner(ctx.sessionManager)?.stopForeground();
     currentMainOwner(ctx.sessionManager)?.close();
     // Pi emits this before reload/new/resume/fork as well as final quit.

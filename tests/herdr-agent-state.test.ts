@@ -88,6 +88,7 @@ function harness(options: { ui?: boolean; idle?: boolean; path?: string; id?: st
       getSessionDir: () => undefined,
       getCwd: () => process.cwd(),
       getEntries: () => [],
+      getBranch: () => [],
       getLeafId: () => null,
     },
     modelRegistry: { isUsingOAuth: () => false },

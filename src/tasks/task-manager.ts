@@ -109,6 +109,8 @@ export interface AgentPreparationLaunch {
 }
 
 export interface TaskSummary {
+  /** Whether completion belongs to the background delivery path, not an inline wait. */
+  background?: boolean;
   title?: string;
   agent?: AgentInfo;
   workspace?: WorkspaceSummary;
@@ -789,6 +791,7 @@ export class TaskManager {
     } = task;
     return {
       ...summary,
+      background: task.notifyOnComplete,
       ...(summary.agent ? { agent: { ...summary.agent } } : {}),
       ...(summary.workspace ? { workspace: { ...summary.workspace } } : {}),
       ...(summary.termination ? { termination: { ...summary.termination } } : {}),

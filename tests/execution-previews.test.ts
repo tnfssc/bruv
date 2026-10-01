@@ -20,12 +20,8 @@ const success = {
 };
 
 test("collapsed execute call and settled result are deterministic single rows", () => {
-  expect(executeInputPreview(code, false, theme, undefined, true).render(100)).toEqual([
-    '… executing · console.log("first"); console.log("last");',
-  ]);
-  expect(executeOutputPreview(success, false, false, theme, code).render(120)).toEqual([
-    '✓ executed · console.log("first"); console.log("last");',
-  ]);
+  expect(executeInputPreview(code, false, theme, undefined, true).render(100)).toEqual(["⠋"]);
+  expect(executeOutputPreview(success, false, false, theme, code).render(120)).toEqual(["✓ Action"]);
 });
 
 test("collapsed handoff results present their progress text once without requiring expansion", () => {
@@ -81,7 +77,7 @@ test("execute previews apply configurable horizontal padding and deduct it from 
       expect(row.startsWith(" ".repeat(padding))).toBe(true);
       expect(visibleWidth(row)).toBeLessThanOrEqual(12);
     }
-    expect(stripTerminalSequences(call[0]).slice(padding)).toStartWith("…");
+    expect(stripTerminalSequences(call[0]).slice(padding)).toStartWith("⠋");
     expect(stripTerminalSequences(result[0]).slice(padding)).toStartWith("✓");
   }
 });
@@ -117,8 +113,8 @@ test("execute tool wiring supplies configured padding to call and result rendere
     () => 2,
   );
   if (!tool) throw new Error("execute tool was not registered");
-  expect(tool.renderCall(context.args, theme, context).render(80)[0]).toStartWith("  … executing");
-  expect(tool.renderResult(success, { expanded: false }, theme, context).render(80)[0]).toStartWith("  ✓ executed");
+  expect(tool.renderCall(context.args, theme, context).render(80)[0]).toStartWith("  ⠋");
+  expect(tool.renderResult(success, { expanded: false }, theme, context).render(80)[0]).toStartWith("  ✓ Action");
 });
 
 test("expanded execute keeps source/result grouping inside configured padding", () => {
@@ -144,7 +140,7 @@ test("task completion and attention collapse to recognizable summaries without o
   const complete = completionPreview(content, false, theme, 0, "task-complete", {
     tasks: [{ id: "task_1", status: "completed", exitCode: 0 }],
   }).render(100);
-  expect(complete.map((line) => line.trimEnd())).toEqual(["✓ task_1 finished"]);
+  expect(complete.map((line) => line.trimEnd())).toEqual(["✓ task_1"]);
   expect(complete.join("\n")).not.toContain("SECRET_OUTPUT");
   const attention = completionPreview(
     "task_2 needs a progress checkpoint.\nSECRET_PROGRESS",
@@ -156,7 +152,7 @@ test("task completion and attention collapse to recognizable summaries without o
       attention: [{ id: "task_2" }],
     },
   ).render(100);
-  expect(attention.map((line) => stripTerminalSequences(line).trimEnd())).toEqual(["Task check · task_2"]);
+  expect(attention).toEqual([]);
   expect(attention.join("\n")).not.toContain("SECRET_PROGRESS");
 });
 
@@ -172,7 +168,8 @@ test("attention notices use normal terminal color without weakening failures", (
   for (const expanded of [false, true]) {
     colors.length = 0;
     const rows = completionPreview(content, expanded, trackingTheme, 0, "task-attention").render(100);
-    expect(rows.join("\n")).toContain(expanded ? "task_2 needs a progress checkpoint" : "Task check");
+    if (expanded) expect(rows.join("\n")).toContain("task_2 needs a progress checkpoint");
+    else expect(rows).toEqual([]);
     expect(colors).not.toContain("warning");
   }
   colors.length = 0;
@@ -181,8 +178,8 @@ test("attention notices use normal terminal color without weakening failures", (
     attention: [{ id: "task_waiting" }],
     omittedAttention: 1,
   }).render(100);
-  expect(mixed[0]).toContain("Task check · task_waiting");
-  expect(mixed[0]).toContain("1 more checks");
+  expect(mixed[0]).not.toContain("Task check");
+  expect(mixed[0]).not.toContain("more checks");
   expect(colors).toContain("error");
   expect(colors).not.toContain("warning");
 });
@@ -191,7 +188,7 @@ test("failed task and execute summaries retain failure status", () => {
   const failedTask = completionPreview("1 asynchronous task completed.\noutput", false, theme, 0, "task-complete", {
     tasks: [{ id: "task_bad", status: "failed", exitCode: 7 }],
   }).render(100);
-  expect(failedTask[0].trimEnd()).toBe("✗ task_bad failed");
+  expect(failedTask[0].trimEnd()).toBe("✗ task_bad — exit 7");
   const failure = executeOutputPreview(
     { content: [{ type: "text", text: "Execution failed with exit code 2.\n\nstderr:\nBAD" }] },
     false,
@@ -200,7 +197,7 @@ test("failed task and execute summaries retain failure status", () => {
     "throw new Error()",
   ).render(100);
   expect(failure).toHaveLength(1);
-  expect(failure[0]).toContain("✗ execute failed");
+  expect(failure[0]).toBe("✗ Action — BAD");
 });
 
 test("execute completion labels use structured outcomes and never infer false success", () => {
@@ -214,9 +211,9 @@ test("execute completion labels use structured outcomes and never infer false su
     )
       .render(80)[0]
       .trimEnd();
-  expect(render({ exitCode: 0 })).toBe("✓ executed · work()");
+  expect(render({ exitCode: 0 })).toBe("✓ Action");
   expect(render({ handoff: "continue later" })).toBe("↪ continue later");
-  expect(render({ exitCode: 9 })).toBe("✗ execute failed · work()");
+  expect(render({ exitCode: 9 })).toBe("✗ Action — exit 9");
   expect(
     executeOutputPreview(
       { content: [{ type: "text", text: "Execution failed with exit code 17." }], details: { exitCode: 17 } },
@@ -227,11 +224,11 @@ test("execute completion labels use structured outcomes and never infer false su
     )
       .render(80)[0]
       .trimEnd(),
-  ).toBe('✗ execute failed · await shell("exit 17")');
-  expect(render({ exitCode: 0, cancelled: true })).toBe("✗ execute failed · work()");
-  expect(render({ exitCode: 0, timedOut: true })).toBe("✗ execute failed · work()");
-  expect(render(undefined)).toBe("? Execution completed. · work()");
-  expect(render({}, true)).toBe("✗ execute failed · work()");
+  ).toBe("✗ Action — exit 17");
+  expect(render({ exitCode: 0, cancelled: true })).toBe("✗ Action — cancelled");
+  expect(render({ exitCode: 0, timedOut: true })).toBe("✗ Action — timed out");
+  expect(render(undefined)).toBe("? Action — Outcome unknown");
+  expect(render({}, true)).toBe("✗ Action — failed");
 });
 
 test("mixed completion batches preserve order and color each task outcome", () => {
@@ -243,9 +240,7 @@ test("mixed completion batches preserve order and color each task outcome", () =
       { id: "task_c", status: "completed", exitCode: 0 },
     ],
   }).render(200)[0];
-  expect(row).toContain(
-    "<success>✓ task_a finished</success>, <error>✗ task_b failed</error>, <success>✓ task_c finished</success>",
-  );
+  expect(row).toContain("<success>✓ task_a</success>, <error>✗ task_b — exit 2</error>, <success>✓ task_c</success>");
 });
 
 test("collapsed rows are control-safe and bounded at small widths", () => {
@@ -267,7 +262,7 @@ test("collapsed rows are control-safe and bounded at small widths", () => {
   expect(foldedRows("text", 0, 3, 3, false)).toEqual([]);
 });
 
-test("images remain summarized collapsed and represented by Pi content", () => {
+test("image counts stay hidden collapsed and images remain represented by Pi content", () => {
   const rendered = executeOutputPreview(
     { content: [{ type: "image" }], details: { exitCode: 0, stdout: "", stderr: "", images: [{}] } },
     false,
@@ -276,7 +271,7 @@ test("images remain summarized collapsed and represented by Pi content", () => {
     "showImage()",
   ).render(80);
   expect(rendered).toHaveLength(1);
-  expect(rendered[0]).toContain("1 image");
+  expect(rendered[0]).toBe("✓ Action");
 });
 
 test("full-batch diagnostics retain a failure omitted after the first 50 tasks", () => {
@@ -294,7 +289,7 @@ test("full-batch diagnostics retain a failure omitted after the first 50 tasks",
     32,
   )[0];
   expect(row.startsWith("✗ ")).toBe(true);
-  expect(stripTerminalSequences(row)).toContain("1 omitted task failed");
+  expect(stripTerminalSequences(row)).toContain("1 more tasks failed");
   expect(visibleWidth(row)).toBeLessThanOrEqual(32);
 });
 
@@ -327,7 +322,7 @@ test("all-success legacy task details keep original order without risk markers",
       ],
     }).render(80)[0],
   );
-  expect(row.trimEnd()).toBe("✓ a finished, ✓ b finished");
+  expect(row.trimEnd()).toBe("✓ a, ✓ b");
 });
 
 test("omitted cancellations are reported separately and unknown aggregate omissions stay visible", () => {
@@ -337,9 +332,9 @@ test("omitted cancellations are reported separately and unknown aggregate omissi
     omittedTasks: 2,
   };
   const row = stripTerminalSequences(completionPreview("", false, theme, 0, "task-complete", details).render(300)[0]);
-  expect(row).toContain("1 omitted task cancelled");
-  expect(row).toContain("1 omitted task unresolved");
-  expect(row).not.toContain("omitted task failed");
+  expect(row).toContain("1 more tasks cancelled");
+  expect(row).toContain("1 more tasks unresolved");
+  expect(row).not.toContain("more tasks failed");
 });
 
 test("long titles cannot hide remote actionable, cancelled, unknown, or legacy omitted outcomes", () => {
@@ -362,7 +357,7 @@ test("long titles cannot hide remote actionable, cancelled, unknown, or legacy o
     { tasks: [{ title, status: "completed" }], omittedTasks: 2 },
   ]) {
     const row = stripTerminalSequences(completionPreview("", false, theme, 0, "task-complete", details).render(24)[0]);
-    expect(row).toStartWith(details.remote?.some((item) => item.state === "cancelled") ? "✗? " : "? ");
+    expect(row).toStartWith(details.remote?.some((item) => item.state === "cancelled") ? "⊘? " : "? ");
     expect(visibleWidth(row)).toBeLessThanOrEqual(24);
   }
 });
@@ -380,7 +375,7 @@ test("mixed failure and attention indicators precede truncatable descriptions", 
     tasks: [{ id: "task_bad", status: "failed", signal: "SIGTERM" }],
     attention: [{ id: "task_waiting" }],
   }).render(80)[0];
-  expect(row.trimEnd()).toBe("✗ task_bad failed, Task check · task_waiting");
+  expect(row.trimEnd()).toBe("✗ task_bad — failed");
   expect(visibleWidth(row)).toBeLessThanOrEqual(80);
 });
 
@@ -393,24 +388,23 @@ test("untrusted task metadata is sanitized before terminal coloring", () => {
   expect(stripTerminalSequences(row)).not.toContain("\x07");
 });
 
-test("collapsed execute puts truncation, image, and background diagnostics before long code", () => {
+test("collapsed execute hides truncation, image, background counts and raw source", () => {
+  const result = {
+    content: [{ type: "text", text: "Execution completed." }, { type: "image" }],
+    details: { exitCode: 0, stdoutLost: true, stderrLost: true, images: [{}], backgroundJobs: ["a", "b"] },
+  };
   const row = executeOutputPreview(
-    {
-      content: [{ type: "text", text: "Execution completed." }, { type: "image" }],
-      details: { exitCode: 0, stdoutLost: true, stderrLost: true, images: [{}], backgroundJobs: ["a", "b"] },
-    },
+    result,
     false,
     false,
     theme,
     "LONG_COMMAND_SUFFIX".repeat(20),
+    undefined,
+    0,
+    "Read output",
   ).render(82)[0];
-  expect(row).toContain("truncated");
-  expect(row).not.toContain("previews");
-  expect(row).not.toContain("output file");
-  expect(row).toContain("1 image");
-  expect(row).toContain("2 background");
-  expect(row.indexOf("truncated")).toBeLessThan(row.indexOf("LONG_COMMAND_SUFFIX"));
-  expect(visibleWidth(row)).toBeLessThanOrEqual(82);
+  expect(row).toBe("✓ Read output");
+  expect(result.content[1].type).toBe("image");
 });
 
 test("execute error flag takes precedence over handoff success", () => {
@@ -420,35 +414,30 @@ test("execute error flag takes precedence over handoff success", () => {
     true,
     theme,
   ).render(80)[0];
-  expect(row).toStartWith("✗ execute failed");
+  expect(row).toBe("✗ Action — failed");
 });
 
-test("collapsed execute uses one compact truncation marker and hides output-file counts", () => {
+test("collapsed execute hides truncation marker and output-file counts", () => {
   const result = {
     ...success,
     details: { exitCode: 0, stdoutLost: true, stderrLost: true, stdoutPath: "/tmp/stdout", stderrPath: "/tmp/stderr" },
   };
-  const rows = executeOutputPreview(result, false, false, theme, 'console.log("large")').render(160);
-  expect(rows.map((row) => stripTerminalSequences(row).trimEnd())).toEqual([
-    '✓ executed · truncated · console.log("large")',
-  ]);
+  expect(executeOutputPreview(result, false, false, theme, code).render(160)).toEqual(["✓ Action"]);
 });
 
-test("preparing and running execute calls share the compact executing label", () => {
+test("preparing and in-flight calls show the same spinner and compact action label", () => {
   for (const started of [false, true]) {
-    expect(executeInputPreview('console.log("work")', false, theme, undefined, started).render(100)).toEqual([
-      '… executing · console.log("work")',
+    expect(executeInputPreview(code, false, theme, undefined, started, 0, "Read output").render(100)).toEqual([
+      "⠋ Read output",
     ]);
   }
 });
 
 test("action labels replace source only in collapsed previews and sanitize plain text", () => {
   const label = "\x1b[31mRead\x1b[0m\n task UI\u0007";
-  expect(executeInputPreview(code, false, theme, undefined, true, 0, label).render(100)).toEqual([
-    "… executing · Read task UI",
-  ]);
+  expect(executeInputPreview(code, false, theme, undefined, true, 0, label).render(100)).toEqual(["⠋ Read task UI"]);
   expect(executeOutputPreview(success, false, false, theme, code, undefined, 0, label).render(100)).toEqual([
-    "✓ executed · Read task UI",
+    "✓ Read task UI",
   ]);
   for (const absent of [undefined, null, 12, " ", "\x1b[31m\x1b[0m"]) {
     expect(executeOutputPreview(success, false, false, theme, code, undefined, 0, absent).render(120)).toEqual(
@@ -461,24 +450,29 @@ test("action labels replace source only in collapsed previews and sanitize plain
   expect(expanded).not.toContain("Read task UI");
 });
 
-test("labels cannot hide failed, uncertain, truncated, or unsaved execution output", () => {
-  const label = "Run checks " + "x".repeat(200);
-  for (const details of [{ exitCode: 1 }, { timedOut: true }, { cancelled: true }]) {
+test("collapsed execute keeps useful failure and save warning on the action row, but no truncation notice", () => {
+  const label = "Run checks";
+  for (const [details, reason] of [
+    [{ exitCode: 1 }, "exit 1"],
+    [{ timedOut: true }, "timed out"],
+    [{ cancelled: true }, "cancelled"],
+  ] as const) {
     expect(
-      executeOutputPreview({ ...success, details }, false, false, theme, code, undefined, 0, label).render(40)[0],
-    ).toStartWith("✗ execute failed");
+      executeOutputPreview({ ...success, details }, false, false, theme, code, undefined, 0, label).render(80)[0],
+    ).toBe("✗ Run checks — " + reason);
   }
   expect(
-    executeOutputPreview({ ...success, details: {} }, false, false, theme, code, undefined, 0, label).render(40)[0],
-  ).toStartWith("?");
+    executeOutputPreview({ ...success, details: {} }, false, false, theme, code, undefined, 0, label).render(80)[0],
+  ).toBe("? Run checks — Outcome unknown");
   for (const handoff of [undefined, "Work continues"]) {
     const result = {
       ...success,
       details: { exitCode: 0, handoff, stdoutLost: true, outputArtifactErrors: { stdout: "disk full" } },
     };
-    const row = executeOutputPreview(result, false, false, theme, code, undefined, 0, label).render(80)[0];
-    expect(row).toContain("truncated");
-    expect(row).toContain("⚠ output save error");
+    const rows = executeOutputPreview(result, false, false, theme, code, undefined, 0, label).render(80);
+    expect(rows[0]).toBe("✓ Run checks — ⚠ couldn’t save full output");
+    expect(rows.join("\n")).not.toContain("truncated");
+    if (handoff) expect(rows[1]).toBe("↪ Work continues");
   }
 });
 
@@ -491,14 +485,14 @@ test("task titles are explicit metadata, not inferred source, and status is only
     { id: "task_e", title: "Uncertain", status: "mystery" },
   ];
   expect(completionPreview("full evidence", false, theme, 0, "task-complete", { tasks }).render(200)[0].trimEnd()).toBe(
-    "✓ Read renderer finished, ✗ Run checks failed, ✗ task_c cancelled, ✗ Slow check timed out, ? Uncertain mystery",
+    "✓ Read renderer, ✗ Run checks — failed, ⊘ task_c — cancelled, ✗ Slow check — timed out, ? Uncertain — status unknown",
   );
   expect(completionPreview("full evidence", true, theme, 0, "task-complete", { tasks }).render(200)[0].trimEnd()).toBe(
     "full evidence",
   );
 });
 
-test("routine attention previews use structured reasons and durations, not warning prose", () => {
+test("routine attention previews are hidden without removing expanded checkpoint evidence", () => {
   const details = {
     attention: [
       { id: "task_a", reasons: ["quiet"], quietForMs: 300_999, elapsedMs: 420_000 },
@@ -508,18 +502,14 @@ test("routine attention previews use structured reasons and durations, not warni
     omittedAttention: 2,
   };
   const evidence = "Long checkpoint request\nSECRET_PROGRESS";
-  expect(completionPreview(evidence, false, theme, 0, "task-attention", details).render(200)[0].trimEnd()).toBe(
-    "Task check · task_a · quiet 5m, task_b · review 10m, task_c · quiet 10m · review 20m, 2 more checks",
-  );
+  expect(completionPreview(evidence, false, theme, 0, "task-attention", details).render(200)).toEqual([]);
   expect(
     completionPreview(evidence, true, theme, 0, "task-attention", details)
       .render(200)
       .map((row) => row.trimEnd())
       .join("\n"),
   ).toBe(evidence);
-  expect(completionPreview(evidence, false, theme, 0, "task-attention").render(200)[0].trimEnd()).toBe(
-    "Task check · update; expand for details",
-  );
+  expect(completionPreview(evidence, false, theme, 0, "task-attention").render(200)).toEqual([]);
 });
 
 test("SSH fallback keeps actionable, cancelled and unknown states visible without inferring success", () => {
@@ -534,10 +524,49 @@ test("SSH fallback keeps actionable, cancelled and unknown states visible withou
     ],
   };
   const row = completionPreview("Remote evidence", false, trackingTheme, 0, "task-attention", details).render(500)[0];
-  expect(row).toContain("ssh:eA finished");
-  expect(row).toContain("<error>✗ ssh:eQ cancelled</error>");
-  expect(row).toContain("<warning>? ssh:eg unknown</warning>");
-  expect(row).toContain("needs human action");
-  expect(row).toContain("SSH task unknown");
+  expect(row).toContain("? ssh:eA — status unknown");
+  expect(row).toContain("<error>⊘ ssh:eQ — cancelled</error>");
+  expect(row).toContain("<warning>? ssh:eg — status unknown</warning>");
+  expect(row).toContain("needs your input");
+  expect(row).toContain("SSH task — status unknown");
   expect(row).not.toContain("<success>");
+});
+
+test("default in-flight and settled action rows keep one label without lifecycle vocabulary", () => {
+  for (const [source, label, caption] of [
+    ["console.log(1)", undefined, ""],
+    ["console.log(1)", "Read output", "Read output"],
+    [undefined, undefined, ""],
+  ]) {
+    const state: ExecutePreviewState = {};
+    const call = executeInputPreview(source, false, theme, state, true, 0, label);
+    expect(call.render(100)).toEqual(["⠋" + (caption ? " " + caption : "")]);
+    const result = executeOutputPreview(success, false, false, theme, source, state, 0, label);
+    expect([...call.render(100), ...result.render(100)]).toEqual(["✓ " + (caption || "Action")]);
+    expect(result.render(100).join("\n")).not.toMatch(/executing|executed|running|completed/i);
+    expect(result.render(100).join("\n")).not.toContain("stdout");
+  }
+  expect(executeOutputPreview({ content: [], details: { exitCode: 8 } }, false, false, theme).render(100)).toEqual([
+    "✗ Action — exit 8",
+  ]);
+  expect(executeOutputPreview({ content: [] }, false, true, theme).render(100)).toEqual(["✗ Action — failed"]);
+  expect(executeOutputPreview({ content: [] }, false, false, theme).render(100)).toEqual([
+    "? Action — Outcome unknown",
+  ]);
+});
+
+test("capped diagnostic aggregates classify actual timeout separately from cancellation", () => {
+  const tasks = Array.from({ length: 51 }, (_, index) => ({
+    id: "task_" + index,
+    kind: "command",
+    command: "test",
+    output: "",
+    status: index === 50 ? "killed" : "completed",
+    timedOut: index === 50,
+  })) as any;
+  const details = completionDiagnosticDetails(tasks, []);
+  expect(details.taskStatusCounts).toEqual({ completed: 50, failed: 1, killed: 0, running: 0, unknown: 0 });
+  const rendered = completionPreview("", false, theme, 0, "task-complete", details).render(500).join("\n");
+  expect(rendered).toContain("✗ 1 more tasks failed");
+  expect(rendered).not.toContain("more tasks cancelled");
 });

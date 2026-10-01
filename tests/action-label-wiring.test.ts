@@ -58,13 +58,13 @@ test("native Pi tool component uses labels pending/settled and expands full sour
   );
   component.setArgsComplete();
   component.markExecutionStarted();
-  expect(plain(component.render(100))).toBe("… executing · Read task UI");
+  expect(plain(component.render(100))).toMatch(/^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] Read task UI$/);
   component.updateResult({
     content: [{ type: "text", text: "Execution completed with exit code 0.\nOUTPUT_SENTINEL" }],
     details: { exitCode: 0 },
     isError: false,
   });
-  expect(plain(component.render(100))).toBe("✓ executed · Read task UI");
+  expect(plain(component.render(100))).toBe("✓ Read task UI");
   component.setExpanded(true);
   const expanded = plain(component.render(100));
   expect(expanded).toContain(args.code);
@@ -76,7 +76,7 @@ test("native Pi tool component uses labels pending/settled and expands full sour
     details: { exitCode: 1 },
     isError: true,
   });
-  expect(plain(component.render(100))).toBe("✗ execute failed · Read task UI");
+  expect(plain(component.render(100))).toBe("✗ Read task UI — failed evidence");
 });
 
 test("native Pi completion component receives explicit title metadata and retains expanded evidence", () => {
@@ -105,12 +105,12 @@ test("native Pi completion component receives explicit title metadata and retain
     undefined,
     0,
   );
-  expect(plain(component.render(100))).toBe("✓ Inspect renderer finished");
+  expect(plain(component.render(100))).toBe("✓ Inspect renderer");
   component.setExpanded(true);
   expect(plain(component.render(100))).toContain("WORKER_SENTINEL");
 });
 
-test("native Pi attention component shows neutral metadata summary and full checkpoint evidence", () => {
+test("native Pi attention component hides routine checks but retains expanded checkpoint evidence", () => {
   const evidence = "task_fixture needs a progress checkpoint.\nPROGRESS_SENTINEL";
   const component = new CustomMessageComponent(
     {
@@ -126,7 +126,7 @@ test("native Pi attention component shows neutral metadata summary and full chec
     undefined,
     0,
   );
-  expect(plain(component.render(100))).toBe("Task check · task_fixture · quiet 5m");
+  expect(plain(component.render(100))).toBe("");
   component.setExpanded(true);
   expect(plain(component.render(100))).toContain("PROGRESS_SENTINEL");
 });

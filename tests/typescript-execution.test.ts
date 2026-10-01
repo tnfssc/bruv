@@ -448,3 +448,54 @@ test("registered execute exposes configurable capture limits and truncation deta
   expect(content[0]!.text).toContain("xxx");
   expect(content[0]!.text).not.toContain("Capture large output");
 });
+
+test("inline helper completion keeps canonical task identity without becoming background handoff prose", async () => {
+  let tool: any;
+  registerExecuteTool(
+    {
+      on() {},
+      registerTool(value: unknown) {
+        tool = value;
+      },
+    } as unknown as ExtensionAPI,
+    async (_ctx, method) => ({
+      id: method === "subagent" ? "helper" : "shell",
+      kind: method === "subagent" ? "agent" : "command",
+      ...(method === "subagent" ? { title: "Review guide" } : {}),
+      status: "completed",
+      exitCode: 0,
+      background: false,
+    }),
+    binary,
+  );
+  const ctx = { cwd: directory } as ExtensionToolContext;
+  const helper = await tool.execute(
+    "inline-helper",
+    { label: "Ask a helper", code: 'await subagent({prompt:"Review the guide",title:"Review guide"});' },
+    undefined,
+    undefined,
+    ctx,
+  );
+  expect(helper.isError).toBe(false);
+  expect(helper.details.backgroundJobs).toEqual([]);
+  expect(helper.details.taskRows).toEqual([
+    {
+      id: "helper",
+      source: "local",
+      sourceCallId: "inline-helper",
+      title: "Review guide",
+      status: "succeeded",
+      terminal: true,
+      exitCode: 0,
+    },
+  ]);
+  const foreground = await tool.execute(
+    "inline-shell",
+    { label: "Read guide", code: 'await shell("cat GUIDE.md");' },
+    undefined,
+    undefined,
+    ctx,
+  );
+  expect(foreground.isError).toBe(false);
+  expect(foreground.details.taskRows).toEqual([]);
+});

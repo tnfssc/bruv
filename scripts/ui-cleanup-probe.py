@@ -163,11 +163,12 @@ def main() -> int:
         raise TimeoutError(f"timed out waiting for {marker}")
     try:
         run(tmux+["-f", str(tmux_conf), "new-session","-d","-s",session,"-x","120","-y","36","-c",str(home),command], env=env)
-        wait_for('… executing · Read fixture output')
+        wait_for('Read fixture output')
         active_plain, active_ansi = capture(False), capture(True)
-        Path(str(prefix)+"-executing-plain.txt").write_text(active_plain, encoding="utf-8")
-        Path(str(prefix)+"-executing-ansi.txt").write_text(active_ansi, encoding="utf-8")
-        assertions["executing_row"] = '… executing · Read fixture output' in strip_ansi(active_plain)
+        Path(str(prefix)+"-inflight-plain.txt").write_text(active_plain, encoding="utf-8")
+        Path(str(prefix)+"-inflight-ansi.txt").write_text(active_ansi, encoding="utf-8")
+        assertions["inflight_row"] = len(re.findall(r'^\s*Read fixture output\s*$', strip_ansi(active_plain), re.MULTILINE)) == 1
+        assertions["inflight_quiet"] = not re.search(r'\b(executing|executed|Running|completed)\b', strip_ansi(active_plain))
         wait_for("FINAL_FIRST_MARKER")
         run(tmux+["send-keys","-t",session,"C-o"], timeout=3)
         time.sleep(.25)
@@ -195,11 +196,12 @@ def main() -> int:
     lines = [x.rstrip() for x in clean.splitlines()]
     def has(pattern): return re.search(pattern, clean, re.MULTILINE) is not None
     assertions["six_bounded_requests"] = len(fixture.records) == 6
-    assertions["success_row"] = has(r'^\s*✓ executed · Read fixture output\s*$')
-    assertions["error_row"] = has(r'^\s*✗ execute failed · Trigger expected error\s*$')
-    assertions["long_row_truncated_only"] = has(r'^\s*✓ executed · truncated · Read large output\s*$')
+    assertions["success_row"] = len(re.findall(r'^\s*Read fixture output\s*$', clean, re.MULTILINE)) == 1
+    assertions["settled_quiet_actions"] = not re.search(r'\b(executing|executed|Running)\b', clean)
+    assertions["error_row"] = has(r'^\s*✗ Failed · Trigger expected error\s*$')
+    assertions["long_row_truncated_only"] = has(r'^\s*truncated · Read large output\s*$')
     assertions["no_output_file_count"] = not has(r'(?i)(output file|output artifact|\d+ output)')
-    assertions["handoff_row"] = has(r'^\s*↪ TASKS_WAITING_MARKER\s*$') and not has(r'^\s*✓ executed · \d+ background')
+    assertions["handoff_row"] = has(r'^\s*↪ TASKS_WAITING_MARKER\s*$') and not has(r'^\s*\d+ background')
     batch_re = r'^\s*✓ (task_[A-Za-z0-9_-]+) finished, ✗ (task_[A-Za-z0-9_-]+) failed, ✓ (task_[A-Za-z0-9_-]+) finished\s*$'
     assertions["ordered_task_batch"] = has(batch_re)
     def spacing(think, prose, preceding_pattern):
@@ -211,8 +213,8 @@ def main() -> int:
         exactly_one_blank = pi == ti + 2 and lines[ti+1].strip() == ""
         return no_gap_thinking and exactly_one_blank
     direct = next((i for i,x in enumerate(lines) if "DIRECT_PROSE_MARKER" in x), -1)
-    assertions["direct_prose_spacing"] = direct >= 2 and lines[direct-1].strip() == "" and '✓ executed · Read fixture output' in lines[direct-2]
-    assertions["first_spacing"] = spacing("THINK_FIRST_MARKER", "FINAL_FIRST_MARKER", r"✓ executed · truncated")
+    assertions["direct_prose_spacing"] = direct >= 2 and lines[direct-1].strip() == "" and 'Read fixture output' in lines[direct-2]
+    assertions["first_spacing"] = spacing("THINK_FIRST_MARKER", "FINAL_FIRST_MARKER", r"truncated")
     assertions["batch_spacing"] = spacing("THINK_BATCH_MARKER", "FINAL_BATCH_MARKER", r"✓ task_.*finished, ✗ task_.*failed, ✓ task_.*finished")
     assertions["markers_present"] = all(x in clean for x in ["THINK_FIRST_MARKER","FINAL_FIRST_MARKER","THINK_BATCH_MARKER","FINAL_BATCH_MARKER"])
     assertions["no_unexpected_request"] = "UNEXPECTED_REQUEST_MARKER" not in clean

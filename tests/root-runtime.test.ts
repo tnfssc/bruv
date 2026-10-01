@@ -192,3 +192,29 @@ test("close does not certify incomplete cancellation discovery or active childre
     f.cleanup();
   }
 });
+
+test("root facet snapshots project durable typed task rows and retain call ownership without stale regression", async () => {
+  const f = fixture();
+  try {
+    const running = {
+      id: "actual-task",
+      source: "local",
+      status: "running",
+      terminal: false,
+      title: "Run tests",
+      sourceCallId: "launch-call",
+    };
+    const failed = { ...running, status: "failed", terminal: true, exitCode: 1 };
+    f.ctx.sessionManager.getBranch = (() => [
+      { type: "custom", customType: "die-task-row", data: running },
+      { type: "custom", customType: "die-task-row", data: failed },
+      { type: "custom", customType: "die-task-row", data: running },
+      { type: "custom", customType: "unrelated", data: { ...failed, id: "not-a-task" } },
+    ]) as any;
+    const value = (await dispatchRootFacet(f.pi, f.ctx, jobs, { kind: "snapshot" })) as any;
+    expect(value.taskRows).toEqual([failed]);
+    expect(value.jobs).toEqual([]);
+  } finally {
+    f.cleanup();
+  }
+});

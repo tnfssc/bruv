@@ -1,3 +1,13 @@
+import { actionError, actionLabel } from "../ui/action-label";
+import {
+  formatTaskRow,
+  taskRowFromLaunch,
+  taskRowKey,
+  taskRowsFromDetails,
+  taskSummaryRowsFromDetails,
+  upsertTaskRow,
+  type TaskRow,
+} from "../ui/task-rows";
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import type { Theme } from "@earendil-works/pi-coding-agent";
@@ -10,6 +20,7 @@ import {
   type MarkdownTheme,
   ProcessTerminal,
   stripTerminalSequences,
+  truncateToWidth,
   Text,
   TuiMainScreen,
 } from "@earendil-works/pi-tui";
@@ -260,21 +271,48 @@ function messageText(message: any, details = false): string {
     .map((c: any) => {
       if (c.type === "text") return safe(c.text);
       if (c.type === "thinking") return details ? safe(c.thinking ?? c.text ?? "") : "";
-      if (c.type === "toolCall")
-        return details
-          ? "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments))
-          : "Running " + safe(c.arguments?.label ?? c.name);
+      if (c.type === "toolCall" && details) return "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments));
       return "";
     })
     .filter(Boolean)
     .join("\n");
 }
+function expandedRootTranscript(messages: any[], width: number): string[] {
+  const lines: string[] = [];
+  const labels = new Map<string, string>();
+  for (const m of messages) {
+    if (!m || m.display === false || !Array.isArray(m.content)) continue;
+    for (const c of m.content) if (c.type === "toolCall" && c.id) labels.set(c.id, safe(c.arguments?.label ?? c.name));
+  }
+  for (const m of messages) {
+    if (!m || m.display === false) continue;
+    const role =
+      m.role === "user" ? "You" : m.role === "assistant" ? "Assistant" : m.role === "toolResult" ? "Action" : "Notice";
+    lines.push(...new Text(accent(role), 0, 0).render(width));
+    let text: string;
+    if (m.role === "toolResult") {
+      const name = labels.get(m.toolCallId) ?? safe(m.toolName ?? "tool");
+      const output = typeof m.content === "string" ? safe(m.content) : messageText(m, true);
+      text = (m.isError ? name + " failed" : name + " completed") + (output ? "\n" + output : "");
+      if (m.toolCallId) text = "Tool call " + safe(m.toolCallId) + "\n" + text;
+    } else text = messageText(m, true);
+    lines.push(
+      ...(m.role === "assistant" ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width),
+      "",
+    );
+  }
+  return lines;
+}
+
+const actionFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
 /** Bounded conversation projection, independent of provider settings. Server snapshot wins. */
 export class RootTranscript {
   messages: any[] = [];
   streaming?: any;
   progress = "";
   record?: RootRecord;
+  private taskSnapshots = new Map<string, TaskRow>();
   details = false;
   apply(observation: RootObservation) {
     this.record = observation.record;
@@ -284,58 +322,174 @@ export class RootTranscript {
   }
   event(event: any) {
     if (!event || typeof event !== "object") return;
+    // These are the actual server-owned jobs.list snapshots, not model task prose.
+    const facets = event.type === "root_ready" ? event.facets : event.type === "root_facets" ? event : undefined;
+    for (const row of taskRowsFromDetails(facets)) upsertTaskRow(this.taskSnapshots, row);
+    if (Array.isArray(facets?.jobs))
+      for (const job of facets.jobs) {
+        // Inline shell/helper work is represented by its foreground action.
+        // Older/native/SSH summaries without this local flag remain observable.
+        if (job.background === false) continue;
+        const row = taskRowFromLaunch(job);
+        if (row) upsertTaskRow(this.taskSnapshots, row);
+      }
     if (event.type === "message_start" || event.type === "message_update") this.streaming = event.message;
     if (event.type === "message_end") {
       this.messages.push(event.message);
       this.messages = this.messages.slice(-200);
       this.streaming = undefined;
     }
-    if (event.type === "tool_execution_start") this.progress = "Running " + safe(event.toolName);
-    if (event.type === "tool_execution_update") this.progress = "Running " + safe(event.toolName);
-    if (event.type === "tool_execution_end")
-      this.progress = "Tool " + safe(event.toolName) + (event.isError ? " failed" : " completed");
-    if (event.type === "agent_start") this.progress = "Assistant working";
-    if (event.type === "agent_end") this.progress = "Ready";
-    if (event.type === "task" || event.type === "job" || event.type === "question")
-      this.progress = safe(event.title ?? event.text ?? event.status ?? event.type);
+    // Routine lifecycle events are not conversation content. /ps retains task state.
+    if (event.type.startsWith("tool_execution_") || event.type === "agent_start" || event.type === "agent_end")
+      this.progress = "";
+    if (event.type === "question" && event.display !== false) this.progress = safe(event.title ?? event.text ?? "");
   }
   toggleDetails() {
     this.details = !this.details;
   }
-  render(width: number): string[] {
+  get pendingAction(): boolean {
+    const visible = [...this.messages, ...(this.streaming ? [this.streaming] : [])].filter((m) => m?.display !== false);
+    const settled = new Set(visible.filter((m) => m?.role === "toolResult").map((m) => m.toolCallId));
+    return visible.some(
+      (m) =>
+        m?.role === "assistant" &&
+        Array.isArray(m.content) &&
+        m.content.some((c: any) => c.type === "toolCall" && (!c.id || !settled.has(c.id))),
+    );
+  }
+  render(width: number, now = Date.now()): string[] {
     const lines: string[] = [];
     const messages = [...this.messages, ...(this.streaming ? [this.streaming] : [])];
-    const labels = new Map<string, string>();
-    for (const m of messages) {
-      if (!m || m.display === false || !Array.isArray(m.content)) continue;
-      for (const c of m.content)
-        if (c.type === "toolCall" && c.id) labels.set(c.id, safe(c.arguments?.label ?? c.name));
-    }
+    if (this.details) return expandedRootTranscript(messages, width);
+    const taskRows = new Map<string, TaskRow>();
     for (const m of messages) {
       if (!m || m.display === false) continue;
-      const role =
-        m.role === "user"
-          ? "You"
-          : m.role === "assistant"
-            ? "Assistant"
-            : m.role === "toolResult"
-              ? "Action"
-              : "Notice";
-      lines.push(...new Text(accent(role), 0, 0).render(width));
-      let text: string;
-      if (m.role === "toolResult") {
-        const name = labels.get(m.toolCallId) ?? safe(m.toolName ?? "tool");
-        const output = typeof m.content === "string" ? safe(m.content) : messageText(m, this.details);
-        text =
-          (m.isError ? name + " failed" : name + " completed") +
-          ((this.details || m.isError) && output ? "\n" + output : "");
-        if (this.details && m.toolCallId) text = "Tool call " + safe(m.toolCallId) + "\n" + text;
-      } else text = messageText(m, this.details);
-      lines.push(
-        ...(m.role === "assistant" ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width),
-        "",
-      );
+      for (const row of taskRowsFromDetails(m.details)) {
+        upsertTaskRow(taskRows, {
+          ...row,
+          sourceCallId: row.sourceCallId ?? (m.role === "toolResult" ? m.toolCallId : undefined),
+        });
+      }
     }
+    for (const row of this.taskSnapshots.values()) upsertTaskRow(taskRows, row);
+    const shownTasks = new Set<string>();
+    const task = (row: TaskRow, warning = "") => {
+      const key = taskRowKey(row);
+      if (shownTasks.has(key)) return;
+      shownTasks.add(key);
+      lines.push(truncateToWidth(formatTaskRow(row) + warning, width), "");
+    };
+    const calls = new Map<string, any>();
+    const results = new Map<string, any>();
+    for (const m of messages) {
+      if (!m || m.display === false) continue;
+      if (m.role === "toolResult" && m.toolCallId) results.set(m.toolCallId, m);
+      if (m.role === "assistant" && Array.isArray(m.content))
+        for (const c of m.content) if (c.type === "toolCall" && c.id) calls.set(c.id, c);
+    }
+    const append = (role: string, text: string, markdown = false) => {
+      if (!text) return;
+      lines.push(...new Text(accent(role), 0, 0).render(width));
+      lines.push(...(markdown ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width), "");
+    };
+    const action = (call: any, result?: any) => {
+      const outcome = result?.details;
+      const failure = outcome?.cancelled
+        ? "Cancelled"
+        : outcome?.timedOut
+          ? "Timed out"
+          : result?.isError || outcome?.imageError || (typeof outcome?.exitCode === "number" && outcome.exitCode !== 0)
+            ? "Failed"
+            : "";
+      if (!this.details) {
+        const id = call?.id ?? result?.toolCallId;
+        const launched = [...taskRows.values()].filter((row) => id && row.sourceCallId === id);
+        if (launched.length) {
+          for (const [index, row] of launched.entries())
+            task(row, !failure && index === 0 && outcome?.outputArtifactErrors ? " — ⚠ couldn’t save full output" : "");
+          if (!failure) {
+            if (typeof outcome?.handoff === "string") append("Assistant", safe(outcome.handoff), true);
+            return;
+          }
+          // A launched task is not evidence that the surrounding action succeeded.
+        }
+      }
+      const args = call?.arguments;
+      const label = actionLabel(
+        args?.label,
+        args?.code ?? args?.command ?? args?.path,
+        safe(call?.name ?? result?.toolName) || "Action",
+      );
+      if (!this.details) {
+        // Provider arguments are already incrementally parsed, including incomplete labels.
+        // Never use source as a label: providers can stream code before the label.
+        const caption = actionLabel(
+          args?.label,
+          undefined,
+          result ? safe(call?.name ?? result?.toolName) || "Action" : "",
+        );
+        const title = !result && !args?.label ? "" : caption;
+        const reason = failure
+          ? actionError(outcome, messageText(result))
+          : outcome?.outputArtifactErrors
+            ? "⚠ couldn’t save full output"
+            : "";
+        const icon = result ? (failure ? "✗" : "✓") : actionFrames[Math.floor(now / 80) % actionFrames.length];
+        lines.push(truncateToWidth(icon + (title ? " " + title : "") + (reason ? " — " + reason : ""), width), "");
+        return;
+      }
+      let text = (failure ? "✗ " + failure + " · " : "") + label;
+      if (this.details && call) text += "\n" + messageText({ content: [call] }, true);
+      if (result && (this.details || failure)) {
+        const output = messageText(result, this.details);
+        if (output) text += "\n" + output;
+      }
+      if (this.details && (call?.id ?? result?.toolCallId))
+        text = "Tool call " + safe(call?.id ?? result?.toolCallId) + "\n" + text;
+      append("Action", text);
+    };
+    const shownCalls = new Set<string>();
+    for (const m of messages) {
+      if (!m || m.display === false) continue;
+      if (!this.details && (m.customType === "task-complete" || m.customType === "task-attention")) {
+        const rows = taskRowsFromDetails(m.details);
+        for (const row of rows) task(taskRows.get(taskRowKey(row)) ?? row);
+        const summaries = taskSummaryRowsFromDetails(m.details);
+        for (const summary of summaries) lines.push(truncateToWidth(summary.text, width), "");
+        if (!rows.length && !summaries.length && m.customType === "task-complete")
+          lines.push(truncateToWidth("? Task update — status unknown", width), "");
+        continue;
+      }
+      if (m.role === "toolResult") {
+        // Pair by protocol identity, never by matching labels or source text.
+        if (!m.toolCallId || !calls.has(m.toolCallId)) action(undefined, m);
+        continue;
+      }
+      if (m.role === "assistant" && Array.isArray(m.content)) {
+        let content: any[] = [];
+        const flush = () => {
+          append("Assistant", messageText({ content }, this.details), true);
+          content = [];
+        };
+        for (const c of m.content) {
+          if (c.type !== "toolCall") {
+            content.push(c);
+            continue;
+          }
+          flush();
+          if (c.id && shownCalls.has(c.id)) continue;
+          if (c.id) shownCalls.add(c.id);
+          action(c, c.id ? results.get(c.id) : undefined);
+        }
+        flush();
+      } else
+        append(
+          m.role === "user" ? "You" : m.role === "assistant" ? "Assistant" : "Notice",
+          messageText(m, this.details),
+          m.role === "assistant",
+        );
+    }
+    if (!this.details) for (const row of taskRows.values()) task(row);
     return lines;
   }
 }
@@ -488,6 +642,9 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
   process.on("SIGTERM", signal);
   process.on("SIGHUP", signal);
   tui.start();
+  const animation = setInterval(() => {
+    if (!closed && transcript.pendingAction && !transcript.details) tui.requestRender();
+  }, 80);
   let poll: Promise<void> | undefined;
   try {
     for (const e of client.read().events) transcript.event(e.event);
@@ -564,6 +721,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
     cancelModal?.();
     process.off("SIGTERM", signal);
     process.off("SIGHUP", signal);
+    clearInterval(animation);
     tui.stop();
     await poll;
     try {
