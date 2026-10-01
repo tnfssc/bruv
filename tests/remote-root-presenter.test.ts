@@ -131,3 +131,60 @@ test("normal SDK dialogs are human answered with typed controls and detach never
   await detached.controls.dialog({ id: "pending", method: "input", title: "Enter choice" }, () => false);
   expect(detached.commands).toEqual([]);
 });
+
+test("root transcript keeps tool protocol private by default and exposes explicit details", () => {
+  const t = new RootTranscript();
+  t.event({
+    type: "message_end",
+    message: {
+      role: "assistant",
+      content: [
+        {
+          type: "toolCall",
+          id: "call-1",
+          name: "execute",
+          arguments: { label: "inspect", code: "await questions.ask({text:'secret'})" },
+        },
+      ],
+    },
+  });
+  t.event({
+    type: "message_end",
+    message: {
+      role: "toolResult",
+      toolName: "execute",
+      toolCallId: "call-1",
+      content: "Question saved: q1",
+      isError: false,
+    },
+  });
+  t.event({
+    type: "message_update",
+    message: {
+      role: "assistant",
+      content: [{ type: "toolCall", name: "execute", arguments: { code: "partial source" } }],
+    },
+  });
+  t.event({ type: "tool_execution_update", toolName: "execute", partialResult: { content: "partial protocol dump" } });
+  const visible = t.render(120).join("\n");
+  expect(visible).toContain("Assistant");
+  expect(visible).toContain("Running execute");
+  expect(visible).toContain("execute result");
+  expect(visible).toContain("Question saved: q1");
+  expect(visible).not.toContain("assistant");
+  expect(visible).not.toContain("toolResult");
+  expect(visible).not.toContain("JSON.stringify");
+  expect(visible).not.toContain("secret");
+  expect(visible).not.toContain("partial source");
+  expect(t.progress).toBe("Running execute");
+  t.toggleDetails();
+  const detail = t.render(120).join("\n");
+  expect(detail).toContain("questions.ask");
+  expect(detail).toContain("Tool call call-1");
+  t.event({
+    type: "message_end",
+    message: { role: "toolResult", toolName: "execute", content: "permission denied", isError: true },
+  });
+  expect(t.render(120).join("\n")).toContain("execute failed");
+  expect(t.render(120).join("\n")).toContain("permission denied");
+});

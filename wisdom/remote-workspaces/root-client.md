@@ -11,3 +11,10 @@ Observation validates contiguous sequence pages before committing cursor. A gap 
 Source integration calls integrateRepositoryResult against the original source directory/baseline under a repo SQLite lock. Changed HEAD/index/work, complex changes and remote untracked changes remain explicit review artifacts. The source return target is the runtime that initiated this root, not a hardcoded laptop. Receipts fence repeated applications; closed result remains durable on reconnect.
 
 Tests use injected typed transports and isolated fixture directories. No real SSH targets, credentials, provider APIs or recording are needed. A combined terminal proof must still use the actual server runtime + CLI wiring after backend/frontend source integration; unit tests are not that proof.
+
+
+## Root transcript default rendering fix (2026-10-01)
+
+A fixture-only marker search did not prove the normal root UI was safe to demo: real tool messages exposed protocol role names, serialized execute arguments/source, and partial toolResult dumps. `RootTranscript` now labels people as You/Assistant, presents tool calls as concise actions, retains completed tool output and explicit failure text, and keeps partial progress concise. Ctrl-O toggles expert tool-call details; it is shown in the normal controls. The underlying observation/events remain unchanged.
+
+Receipt: worktree `die-a86675007a5e-task_4a76ba31`, branch `die/fix-raw-diagnostic-rendering-in-placed-r-4a76ba31`; `bun test tests/remote-root-presenter.test.ts` attempted with cached Bun 1.4.2, blocked before tests because this worktree has no `node_modules` (`@earendil-works/pi-tui` missing). No install was run. Focused proof still needed after dependency availability: run that test, `bunx biome format --check src/remote/root-presenter.ts tests/remote-root-presenter.test.ts`, and `bunx tsc --noEmit`; compile with project documented `scripts/build.ts` recipe and existing cached web payload if the payload is available. No binary or tmux capture was produced.

@@ -253,18 +253,16 @@ export class RootControls {
       this.ui.notice("Prompt delivery unknown; identity saved, never automatically replayed");
   }
 }
-function messageText(message: any): string {
+function messageText(message: any, details = false): string {
   if (typeof message?.content === "string") return safe(message.content);
   return (message?.content ?? [])
-    .map((c: any) =>
-      c.type === "text"
-        ? safe(c.text)
-        : c.type === "thinking"
-          ? ""
-          : c.type === "toolCall"
-            ? "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments))
-            : "",
-    )
+    .map((c: any) => {
+      if (c.type === "text") return safe(c.text);
+      if (c.type === "thinking") return details ? safe(c.thinking ?? c.text ?? "") : "";
+      if (c.type === "toolCall")
+        return details ? "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments)) : "Running " + safe(c.name);
+      return "";
+    })
     .filter(Boolean)
     .join("\n");
 }
@@ -274,6 +272,7 @@ export class RootTranscript {
   streaming?: any;
   progress = "";
   record?: RootRecord;
+  details = false;
   apply(observation: RootObservation) {
     this.record = observation.record;
     for (const { event } of observation.events) this.event(event);
@@ -282,30 +281,37 @@ export class RootTranscript {
   }
   event(event: any) {
     if (!event || typeof event !== "object") return;
-    if (event.type === "message_start" || event.type === "message_update") {
-      this.streaming = event.message;
-    }
+    if (event.type === "message_start" || event.type === "message_update") this.streaming = event.message;
     if (event.type === "message_end") {
       this.messages.push(event.message);
       this.messages = this.messages.slice(-200);
       this.streaming = undefined;
     }
-    if (event.type === "tool_execution_start") this.progress = "Tool: " + safe(event.toolName);
-    if (event.type === "tool_execution_update")
-      this.progress = "Tool: " + safe(event.toolName) + " · " + messageText(event.partialResult);
+    if (event.type === "tool_execution_start") this.progress = "Running " + safe(event.toolName);
+    if (event.type === "tool_execution_update") this.progress = "Running " + safe(event.toolName);
     if (event.type === "tool_execution_end")
-      this.progress = "Tool: " + safe(event.toolName) + (event.isError ? " failed" : " completed");
+      this.progress = "Tool " + safe(event.toolName) + (event.isError ? " failed" : " completed");
     if (event.type === "agent_start") this.progress = "Assistant working";
     if (event.type === "agent_end") this.progress = "Ready";
     if (event.type === "task" || event.type === "job" || event.type === "question")
       this.progress = safe(event.title ?? event.text ?? event.status ?? event.type);
   }
+  toggleDetails() {
+    this.details = !this.details;
+  }
   render(width: number): string[] {
     const lines: string[] = [];
     for (const m of [...this.messages, ...(this.streaming ? [this.streaming] : [])]) {
       if (!m) continue;
-      lines.push(...new Text(accent(safe(m.role ?? "assistant")), 0, 0).render(width));
-      const text = messageText(m);
+      const role = m.role === "user" ? "You" : m.role === "assistant" ? "Assistant" : "Tool result";
+      lines.push(...new Text(accent(role), 0, 0).render(width));
+      let text: string;
+      if (m.role === "toolResult") {
+        const name = safe(m.toolName ?? "tool");
+        const output = typeof m.content === "string" ? safe(m.content) : messageText(m, this.details);
+        text = (m.isError ? name + " failed" : name + " result") + (output ? "\n" + output : "");
+        if (this.details && m.toolCallId) text = "Tool call " + safe(m.toolCallId) + "\n" + text;
+      } else text = messageText(m, this.details);
       lines.push(
         ...(m.role === "assistant" ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width),
         "",
@@ -416,7 +422,11 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
         ...transcript.render(width),
         ...new Text(safe(transcript.progress)).render(width),
         ...status.render(width),
-        ...new Text("/questions · /ps · /close · Ctrl-C abort · Ctrl-D detach").render(width),
+        ...new Text(
+          "/questions · /ps · /close · Ctrl-O " +
+            (transcript.details ? "hide details" : "tool details") +
+            " · Ctrl-C abort · Ctrl-D detach",
+        ).render(width),
         ...editor.render(width),
       ];
     },
@@ -432,6 +442,11 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
   tui.addChild(root);
   tui.setFocus(editor);
   tui.addInputListener((data) => {
+    if (data === "\x0f" && !modal) {
+      transcript.toggleDetails();
+      tui.requestRender();
+      return { consume: true };
+    }
     if (data === "\x04") {
       detach();
       return { consume: true };
