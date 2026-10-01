@@ -33,10 +33,17 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
   try {
     const session = SessionManager.create(home, join(home, "sessions"));
     session.appendMessage({ role: "user", content: "Preview fixture", timestamp: Date.now() });
-    const appendTool = (id: string, code: string, text: string, details: JsonObject, isError: boolean) => {
+    const appendTool = (
+      id: string,
+      label: string,
+      code: string,
+      text: string,
+      details: JsonObject,
+      isError: boolean,
+    ) => {
       session.appendMessage({
         role: "assistant",
-        content: [{ type: "toolCall", id, name: "execute", arguments: { code } }],
+        content: [{ type: "toolCall", id, name: "execute", arguments: { label, code } }],
         api: "openai-completions",
         provider: "openai",
         model: "gpt-4o",
@@ -56,6 +63,7 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
     };
     appendTool(
       "success-call",
+      "Read fixture",
       "// COMMAND_FIRST\n" + Array.from({ length: 12 }, (_, i) => "// COMMAND_HIDDEN_" + i).join("\n"),
       "Execution completed with exit code 0.\n\nstdout:\n" +
         Array.from({ length: 12 }, (_, i) => "OUTPUT_HIDDEN_" + i).join("\n"),
@@ -69,6 +77,7 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
     );
     appendTool(
       "failure-call",
+      "Read restricted fixture",
       "throw new Error('FAILURE_COMMAND_DETAIL')",
       "Execution failed with exit code 7.\n\nstderr:\nFAILURE_OUTPUT_DETAIL",
       { exitCode: 7, stdout: "", stderr: "FAILURE_OUTPUT_DETAIL", images: [] },
@@ -107,21 +116,22 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
       0,
     );
 
-    const compact = await frameContaining("task_fixture finished");
-    expect(compact).toContain("// COMMAND_FIRST");
+    const compact = await frameContaining("task_fixture");
+    expect(compact).toContain("✓ Read fixture");
+    expect(compact).not.toContain("// COMMAND_FIRST");
     expect(compact).not.toMatch(/executing|executed|running|completed/i);
-    expect(compact).toContain("✗ Failed");
-    expect(compact).toContain("✓ task_fixture finished");
+    expect(compact).toContain("✗ Read restricted fixture — FAILURE_OUTPUT_DETAIL");
+    expect(compact).toContain("✓ task_fixture");
     expect(compact).not.toContain("COMMAND_HIDDEN_5");
     expect(compact).not.toContain("OUTPUT_HIDDEN_5");
-    expect(compact).not.toContain("FAILURE_OUTPUT_DETAIL");
+    expect(compact).not.toContain("FAILURE_COMMAND_DETAIL");
     expect(compact).not.toContain("TASK_OUTPUT_DETAIL");
     // A settled tool is one combined renderer row, not separate call/result rows.
-    expect(compact.split("\n").filter((line) => line.includes("// COMMAND_FIRST")).length).toBe(1);
+    expect(compact.split("\n").filter((line) => line.includes("✓ Read fixture")).length).toBe(1);
 
     expect((await tmux("resize-window", "-t", "preview", "-x", "38", "-y", "40")).code).toBe(0);
     await Bun.sleep(300);
-    const narrow = await frameContaining("task_fixture finished");
+    const narrow = await frameContaining("task_fixture");
     for (const line of narrow.split("\n")) expect([...line].length).toBeLessThanOrEqual(38);
     expect(narrow).not.toContain("OUTPUT_HIDDEN_5");
 

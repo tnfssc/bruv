@@ -155,6 +155,11 @@ test("handoff remains readable beside canonical launch rows", () => {
   (component as any).result.details.exitCode = 0;
   parent.addChild(component);
   expect(plain(parent.render(100))).toEqual(["↗ Run tests", "↪ Work continues. You can ask another question."]);
+  (component as any).result.details.outputArtifactErrors = { stdout: "disk full" };
+  expect(plain(parent.render(100))).toEqual([
+    "↗ Run tests — ⚠ couldn’t save full output",
+    "↪ Work continues. You can ask another question.",
+  ]);
 });
 test("quiet/review notices are human-invisible but expanded evidence remains", () => {
   const details = { attention: [{ id: "one", reasons: ["quiet", "review"] }], omittedAttention: 3 };
@@ -185,11 +190,15 @@ test("real shell manager launches and terminal events retain the actual task ide
     const launched = manager.spawn({
       kind: "command",
       title: "Run tests",
+      notifyOnComplete: false,
       command: "/bin/sh",
       args: ["-c", "sleep 0.03; exit 1"],
       displayCommand: "test",
       cwd: process.cwd(),
     });
+    expect(launched.background).toBe(false);
+    expect((await manager.foreground(launched.id, 0)).background).toBe(true);
+    expect(manager.list()[0]?.background).toBe(true);
     expect(formatTaskRow(rows.get("local:" + launched.id)!)).toBe("↗ Run tests");
     const terminal = await manager.wait(launched.id);
     expect(terminal.exitCode).toBe(1);

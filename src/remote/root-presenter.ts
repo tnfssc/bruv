@@ -300,6 +300,9 @@ export class RootTranscript {
     for (const row of taskRowsFromDetails(facets)) upsertTaskRow(this.taskSnapshots, row);
     if (Array.isArray(facets?.jobs))
       for (const job of facets.jobs) {
+        // Inline shell/helper work is represented by its foreground action.
+        // Older/native/SSH summaries without this local flag remain observable.
+        if (job.background === false) continue;
         const row = taskRowFromLaunch(job);
         if (row) upsertTaskRow(this.taskSnapshots, row);
       }
@@ -342,11 +345,11 @@ export class RootTranscript {
     }
     for (const row of this.taskSnapshots.values()) upsertTaskRow(taskRows, row);
     const shownTasks = new Set<string>();
-    const task = (row: TaskRow) => {
+    const task = (row: TaskRow, warning = "") => {
       const key = taskRowKey(row);
       if (shownTasks.has(key)) return;
       shownTasks.add(key);
-      lines.push(truncateToWidth(formatTaskRow(row), width), "");
+      lines.push(truncateToWidth(formatTaskRow(row) + warning, width), "");
     };
     const calls = new Map<string, any>();
     const results = new Map<string, any>();
@@ -362,20 +365,6 @@ export class RootTranscript {
       lines.push(...(markdown ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width), "");
     };
     const action = (call: any, result?: any) => {
-      if (!this.details) {
-        const id = call?.id ?? result?.toolCallId;
-        const launched = [...taskRows.values()].filter((row) => id && row.sourceCallId === id);
-        if (launched.length) {
-          for (const row of launched) task(row);
-          return;
-        }
-      }
-      const args = call?.arguments;
-      const label = actionLabel(
-        args?.label,
-        args?.code ?? args?.command ?? args?.path,
-        safe(call?.name ?? result?.toolName) || "Action",
-      );
       const outcome = result?.details;
       const failure = outcome?.cancelled
         ? "Cancelled"
@@ -384,6 +373,25 @@ export class RootTranscript {
           : result?.isError || outcome?.imageError || (typeof outcome?.exitCode === "number" && outcome.exitCode !== 0)
             ? "Failed"
             : "";
+      if (!this.details) {
+        const id = call?.id ?? result?.toolCallId;
+        const launched = [...taskRows.values()].filter((row) => id && row.sourceCallId === id);
+        if (launched.length) {
+          for (const [index, row] of launched.entries())
+            task(row, !failure && index === 0 && outcome?.outputArtifactErrors ? " — ⚠ couldn’t save full output" : "");
+          if (!failure) {
+            if (typeof outcome?.handoff === "string") append("Assistant", safe(outcome.handoff), true);
+            return;
+          }
+          // A launched task is not evidence that the surrounding action succeeded.
+        }
+      }
+      const args = call?.arguments;
+      const label = actionLabel(
+        args?.label,
+        args?.code ?? args?.command ?? args?.path,
+        safe(call?.name ?? result?.toolName) || "Action",
+      );
       if (!this.details) {
         // Provider arguments are already incrementally parsed, including incomplete labels.
         // Never use source as a label: providers can stream code before the label.

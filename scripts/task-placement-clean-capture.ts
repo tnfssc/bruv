@@ -401,6 +401,14 @@ try {
   capture("01-start", "Start a root session on studio · authorization already completed", 0);
   type("Please add getting-started notes. Ask a helper to review the guide first.");
   await wait("saved question", () => view().includes("saved a question"), 120000);
+  assert.equal(
+    view()
+      .split("\n")
+      .filter((line) => line.trim() === "↗ Review the project guide").length,
+    1,
+    "one active canonical helper row",
+  );
+  assert(!view().includes("✓ Ask a helper to review the guide"), "no separate checked helper-launch action");
   capture("02-work", "The root asks a normal helper to review the guide in a server worktree", 8);
   // Verify actual server child placement in its authoritative journal, offscreen.
   await wait(
@@ -437,6 +445,14 @@ try {
   await wait("notes written", () => pane().includes("Added concise getting-started notes"), 120000);
   await Bun.sleep(200);
   assert(!view().includes("Execution failed"), "Do not capture a failed tool as success");
+  assert.equal(
+    view()
+      .split("\n")
+      .filter((line) => line.trim() === "✓ Review the project guide").length,
+    1,
+    "one successful canonical helper row after reopen",
+  );
+  assert(!view().includes("✓ Ask a helper to review the guide"), "reopen must not duplicate helper-launch success");
   capture("08-written", "The root writes NOTES.md after your answer", 56);
   assert.equal(readFileSync(join(repo, "NOTES.md"), "utf8"), "# Getting started\n\nNotes to follow.\n");
   type("/close");

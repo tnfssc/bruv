@@ -23,7 +23,7 @@ export function response(body: RequestBody): object {
       return execute(
         "read-guide",
         "Read the project guide",
-        'const guide = await Bun.file("README.md").text(); console.log(guide);',
+        'await Bun.sleep(2000); const guide = await Bun.file("README.md").text(); console.log(guide);',
       );
     return say("The guide needs three steps: install, run, and open the local app. Keep the introduction short.");
   }
@@ -57,7 +57,7 @@ export function response(body: RequestBody): object {
     return execute(
       "review-guide",
       "Ask a helper to review the guide",
-      'await subagent({type:"normal", title:"Review the project guide", prompt:"Read README.md and suggest a short getting-started outline.", workspace:{kind:"worktree"}});',
+      'await subagent({type:"normal", title:"Review the project guide", waitSeconds:0, prompt:"Read README.md and suggest a short getting-started outline.", workspace:{kind:"worktree"}});',
     );
   if (!called(body, "ask-detail"))
     return execute(

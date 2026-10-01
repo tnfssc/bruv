@@ -630,3 +630,34 @@ test("typed root task facets replace an in-flight launch row before the execute 
   t.event({ type: "message_end", message: messages[1] });
   expect(renderedRows(t)).toEqual(["↗ Run tests"]);
 });
+
+test("root job snapshots do not duplicate inline foreground work but keep orphan background tasks", () => {
+  const t = new RootTranscript();
+  t.messages = launchMessages([]);
+  t.event({
+    type: "root_facets",
+    jobs: [
+      { id: "inline", kind: "agent", title: "Fast helper", status: "completed", exitCode: 0, background: false },
+      { id: "orphan", kind: "agent", title: "Background helper", status: "running", background: true },
+    ],
+  });
+  expect(renderedRows(t)).toEqual(["✓ Start tasks", "↗ Background helper"]);
+});
+
+test("root canonical launch preserves handoff, output-save warning and independent outer failure", () => {
+  const t = new RootTranscript();
+  t.messages = launchMessages([{ id: "guide", kind: "agent", title: "Review guide", status: "running" }]);
+  const result = t.messages[1];
+  result.details.handoff = "Work continues. You can ask another question.";
+  result.details.outputArtifactErrors = { stdout: "disk full" };
+  const handoff = renderedRows(t);
+  expect(handoff).toContain("↗ Review guide — ⚠ couldn’t save full output");
+  expect(handoff).toContain("Work continues. You can ask another question.");
+  expect(handoff.join("\n")).not.toContain("✓ Start tasks");
+  delete result.details.handoff;
+  delete result.details.outputArtifactErrors;
+  result.isError = true;
+  result.details.exitCode = 1;
+  result.details.stderr = "permission denied";
+  expect(renderedRows(t)).toEqual(["↗ Review guide", "✗ Start tasks — permission denied"]);
+});

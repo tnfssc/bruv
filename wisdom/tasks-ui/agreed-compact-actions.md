@@ -29,3 +29,13 @@ Each worktree is beneath /home/tnfssc/.die/worktrees/die-a86675007a5e-task_77080
 Use focused regressions and real SDK event transitions plus native compiled PTY appearance. New readable screen text and screenshots must show actual new source, not recycled pixels or source/hash assertions. Reuse actual cached web archive honestly as local UI proof, never fabricate its absent manifest. Parent owns CI/push/PR/merge/release; no upload/paid providers/real hosts in this work.
 
 Values reviewed: existing 8 (honest UI/appearance) and 10 (bounded parallel work and durable handoff) already cover this feature. No new value or broad value rewrite.
+
+## Native review correction before acceptance
+
+First integrated native source a9cb864 passed the local 25-check capture, but root take1 was REJECTED after actual screen review: its helper finished inside the default foreground wait, so background-only capture omitted sourceCallId and the jobs facet produced a second checked helper row. Do not present root-native-capture-1 as acceptance.
+
+The fix records every typed subagent result as a canonical task, even when it finishes inline; only actually background results populate backgroundJobs/model handoff prose. Inline shell calls remain normal foreground actions. TaskSummary now exposes the manager’s existing background-delivery fact (notifyOnComplete); root ignores those explicit inline jobs as orphan rows without changing /ps, lifecycle ownership, cadence or wakes. Native/SSH/old summaries without this local flag remain observable.
+
+Review also found root’s early task-row return hid independent outer execute failure/handoff/storage errors. Those now remain visible; successful launch storage warnings share the first canonical row, not a duplicate checked launch action. SDK background row composition preserves the same warning and handoff separation. Focused tests retain actual structured isError/details and typed launch identity; no expectation was weakened to infer success.
+
+The placed-root scenario now explicitly requests async waitSeconds:0 and holds the fixture helper two seconds so the actual native viewport must show one ↗ named helper before completion, then one ✓ named helper after reopen, with no separately checked launch label. The assertion now rejects the exact observed defect.

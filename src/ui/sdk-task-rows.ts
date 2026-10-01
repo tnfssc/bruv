@@ -18,7 +18,11 @@ type ToolShape = Component & {
   args?: { code?: unknown };
   imageComponents?: Component[];
   imageSpacers?: Component[];
-  result?: { details?: { handoff?: string }; content: Array<{ type: string; text?: string }>; isError?: boolean };
+  result?: {
+    details?: { handoff?: string; outputArtifactErrors?: unknown };
+    content: Array<{ type: string; text?: string }>;
+    isError?: boolean;
+  };
 };
 type CustomShape = Component & {
   _expanded: boolean;
@@ -80,7 +84,13 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
       if (tool && !owned.length) return original.call(this, width);
       const padding = custom?.outputPad ?? 1;
       const available = Math.max(0, width - padding * 2);
-      const lines = owned.map((row) => theme.fg(taskRowColor(row), formatTaskRow(row)));
+      const lines = owned.map(
+        (row, index) =>
+          theme.fg(taskRowColor(row), formatTaskRow(row)) +
+          (index === 0 && !tool?.result?.isError && tool?.result?.details?.outputArtifactErrors
+            ? theme.fg("warning", " — ⚠ couldn’t save full output")
+            : ""),
+      );
       if (custom) {
         lines.push(...taskSummaryRowsFromDetails(custom.message.details).map((row) => theme.fg(row.color, row.text)));
         if (
@@ -95,7 +105,7 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
       else if (tool?.result?.details?.handoff)
         result.push(
           ...executeOutputPreview(
-            tool.result,
+            { ...tool.result, details: { ...tool.result.details, outputArtifactErrors: undefined } },
             false,
             tool.result.isError === true,
             theme,

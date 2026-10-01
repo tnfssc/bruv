@@ -147,9 +147,18 @@ export function registerExecuteTool(
             const result = await jobHandler(ctx, method, params, withJobCancellation(signal, handoffWaits.signal));
             if (method === "shell" || method === "subagent") {
               for (const job of Array.isArray(result) ? result : [result]) {
-                if (job && typeof job === "object" && job.background === true && typeof job.id === "string") {
-                  backgroundIds.push(job.id);
-                  const row = taskRowFromLaunch(job, toolCallId, (params as { title?: unknown } | undefined)?.title);
+                if (
+                  job &&
+                  typeof job === "object" &&
+                  typeof job.id === "string" &&
+                  (method === "subagent" || job.background === true)
+                ) {
+                  if (job.background === true) backgroundIds.push(job.id);
+                  const row = taskRowFromLaunch(
+                    job,
+                    toolCallId,
+                    method === "subagent" ? (params as { title?: unknown } | undefined)?.title : undefined,
+                  );
                   if (row) {
                     taskRows.set(taskRowKey(row), row);
                     pi.events?.emit?.("die:task-row-launch", { row, sessionId: ownerSessionId });
