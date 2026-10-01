@@ -3,6 +3,7 @@ import { copyFile, mkdir, readFile } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
+import { adaptPiHostFile, piHostPatches } from "./pi-host-adaptation";
 
 const root = resolve(import.meta.dir, "..");
 const args = process.argv.slice(2);
@@ -16,6 +17,14 @@ const git = (...args: string[]) => {
 };
 if (git("status", "--porcelain", "--untracked-files=no")) throw Error("Commit tracked source before building proof");
 const sourceCommit = git("rev-parse", "HEAD");
+// Shared cached dependencies are read-only. Preparation may copy owned assets,
+// but must not need to patch any shared Pi host file.
+for (const patch of piHostPatches) {
+  const before = await readFile(resolve(root, "node_modules/@earendil-works/pi-coding-agent", patch.path), "utf8");
+  if (before !== adaptPiHostFile(patch, before))
+    throw Error("Cached Pi host needs adaptation; refuse dependency writes");
+}
+await import("./prepare-assets");
 const hash = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
 const bytes = await readFile(archive);
 await mkdir(resolve(root, "dist"), { recursive: true });
