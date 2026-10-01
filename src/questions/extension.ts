@@ -24,7 +24,14 @@ type Question = {
   replyId?: string;
   delivery?: string;
   resolutionReason?: string;
+  remote?: import("./service").RemoteQuestionSource;
 };
+
+const STALE_EXTENSION_CONTEXT = "This extension ctx is stale after session replacement or reload.";
+
+function isStaleExtensionContext(error: unknown): boolean {
+  return error instanceof Error && error.message.startsWith(STALE_EXTENSION_CONTEXT);
+}
 
 function records(value: unknown): Question[] {
   if (Array.isArray(value)) return value as Question[];
@@ -111,7 +118,15 @@ export function registerQuestions(
         );
     } catch {
       // Commands report errors; background refresh must not create notice spam.
-      if (token === generation && context === current) current.ui.setStatus("die-questions", "/questions unavailable");
+      if (token === generation && context === current) {
+        try {
+          current.ui.setStatus("die-questions", "/questions unavailable");
+        } catch (statusError) {
+          // Pi invalidates a command context as soon as a session is replaced,
+          // before its shutdown hook necessarily runs. Ignore only that lifecycle error.
+          if (!isStaleExtensionContext(statusError)) throw statusError;
+        }
+      }
     }
   };
 
@@ -236,6 +251,15 @@ export function registerQuestions(
             [
               renderQuestion(question, displayId),
               question.requester && "Requester: " + question.requester,
+              question.remote &&
+                "Remote ledger: " +
+                  question.remote.host +
+                  " · " +
+                  question.remote.taskId +
+                  " · " +
+                  question.remote.id +
+                  " v" +
+                  question.remote.version,
               question.reason && "Why: " + question.reason,
               question.choices?.length &&
                 "Choices: " +
@@ -253,16 +277,26 @@ export function registerQuestions(
                 question.blocked &&
                 "Cancelled; follow-up needs a new plan, not a guessed answer.",
               question.status === "answered" &&
-                (question.delivery === "dispatching"
-                  ? "Answer saved · delivery uncertain; check parent chat"
-                  : question.delivery === "delivered"
-                    ? "Answer sent to parent"
-                    : question.delivery === "queued"
-                      ? "Answer saved · waiting for parent"
-                      : "Answer saved · /questions resume " + displayId),
+                (question.remote && !question.answer
+                  ? "Remote ledger says answered; no local human reply inferred."
+                  : question.delivery === "dispatching"
+                    ? question.remote
+                      ? "Human answer saved · remote delivery uncertain; reconnect to reconcile. No duplicate answer will be sent."
+                      : "Answer saved · delivery uncertain; check parent chat"
+                    : question.delivery === "delivered"
+                      ? question.remote
+                        ? "Human answer delivered to pinned remote owner"
+                        : "Answer sent to parent"
+                      : question.delivery === "queued"
+                        ? "Answer saved · waiting for parent"
+                        : "Answer saved · /questions resume " + displayId),
               question.resolutionReason && "Closed: " + question.resolutionReason,
               question.taskIds?.length &&
-                "Tasks: " + question.taskIds.join(", ") + ". Child in-place replies are not supported.",
+                "Tasks: " +
+                  question.taskIds.join(", ") +
+                  (question.remote
+                    ? ". Reply is human-only through the pinned remote ledger."
+                    : ". Child in-place replies are not supported."),
             ]
               .filter(Boolean)
               .join("\n"),
@@ -279,8 +313,15 @@ export function registerQuestions(
           ctx.ui.notify("Answer saved for " + id, "info");
         } else if (verb === "resume") {
           if (!id || rest.length) throw new Error("Usage: /questions resume <id>");
-          await service.handle("questions.resume", { id: await resolveId(service, id) });
-          ctx.ui.notify("Saved answer queued for a new parent turn: " + id, "info");
+          const resumed = (await service.handle("questions.resume", { id: await resolveId(service, id) })) as Question;
+          ctx.ui.notify(
+            resumed.remote
+              ? (resumed.remote.replyState === "delivered"
+                  ? "Remote human reply delivered: "
+                  : "Remote human reply saved; outcome uncertain: ") + id
+              : "Saved answer queued for a new parent turn: " + id,
+            "info",
+          );
         } else if (verb === "cancel") {
           if (!id || rest.length) throw new Error("Usage: /questions cancel <id>");
           await service.handle("questions.cancel", { id: await resolveId(service, id) });

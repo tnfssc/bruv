@@ -3,6 +3,8 @@ export type RemoteJobObservation = {
   ownerId: string;
   epoch: string;
   taskId: string;
+  title?: string;
+  target?: string;
   state: "running" | "unknown" | "done" | "cancelled";
   preview?: string;
   /** A question or capability request requiring user action (not permission to answer/grant). */

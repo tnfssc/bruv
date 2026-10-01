@@ -197,7 +197,7 @@ interface CompletionDetails {
   }>;
   attention?: Array<{ id?: unknown; reasons?: unknown; elapsedMs?: unknown; quietForMs?: unknown }>;
   taskStatusCounts?: Partial<Record<"completed" | "failed" | "killed" | "running" | "unknown", unknown>>;
-  remote?: Array<{ taskId?: unknown; state?: unknown; actionable?: unknown }>;
+  remote?: Array<{ taskId?: unknown; title?: unknown; target?: unknown; state?: unknown; actionable?: unknown }>;
   taskCount?: unknown;
   attentionCount?: unknown;
   omittedTasks?: unknown;
@@ -309,7 +309,13 @@ export function completionPreview(
 
       for (const row of remote) {
         const taskId = safeMetadata(row?.taskId);
-        const id = /^[a-zA-Z0-9_-]{1,128}$/.test(taskId) ? sshJobId(taskId) : "SSH task";
+        const title = safeMetadata(row?.title);
+        const target = safeMetadata(row?.target);
+        const id = title
+          ? title + (target ? " · " + target : "")
+          : /^[a-zA-Z0-9_-]{1,128}$/.test(taskId)
+            ? sshJobId(taskId)
+            : "SSH task";
         const state = safeMetadata(row?.state);
         if (row?.actionable) add("warning", "? " + id + " needs human action");
         else if (state === "cancelled") add("error", "✗ " + id + " cancelled");

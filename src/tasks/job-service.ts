@@ -1,19 +1,16 @@
 import { randomUUID } from "node:crypto";
-import { isSshJobId, sshTaskId, type RemoteJobsAdapter } from "../remote/jobs";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as z from "zod/mini";
+import { childAgentEnvironment, scrubT3BridgeEnvironment } from "../delegation-environment";
 import {
   getJobRequestIdentity,
   getJobResponseDeliverySignal,
   JOB_RESPONSE_ACK_EVENT,
   supportsJobResponseAcknowledgement,
 } from "../job-delivery";
-import { prepareAgentSession } from "./agent-session";
-import { type JobAttentionScheduler, MAX_SNOOZE_MINUTES } from "./job-attention";
+import { isSshJobId, type RemoteJobsAdapter, type SshLaunchResult, sshTaskId } from "../remote/jobs";
 import { sessionIdentity } from "../session/identity";
-import { canDelegate, loadProfiles, resolveProfile, SUBAGENT_TYPES } from "./subagent-profiles";
 import { T3LaunchIdentityLedger } from "../t3/tasks/launch-identity";
-import { scrubT3BridgeEnvironment } from "../delegation-environment";
 import { type T3BridgeEnvironment, T3McpClient, t3BridgeEnvironment } from "../t3/tasks/mcp-client";
 import {
   T3NativeTaskAdapter,
@@ -22,6 +19,9 @@ import {
   type T3TaskResult,
   T3TaskResultSchema,
 } from "../t3/tasks/native-task";
+import { prepareAgentSession } from "./agent-session";
+import { type JobAttentionScheduler, MAX_SNOOZE_MINUTES } from "./job-attention";
+import { canDelegate, loadProfiles, resolveProfile, SUBAGENT_TYPES, THINKING_LEVELS } from "./subagent-profiles";
 import { type TaskManager, type TaskSummary, utf8SafeSlice } from "./task-manager";
 import { boundedMiddlePreview } from "./text-preview";
 import { createWorktree, resolveWorktreeSource, setupShell, type WorkspaceRequest } from "./worktree-workspace";
@@ -54,12 +54,34 @@ const Workspace = z.discriminatedUnion("kind", [
     ),
   }),
 ]);
+const Source = z.strictObject({
+  includeUntracked: z
+    .array(z.string().check(z.minLength(1), z.maxLength(1024)))
+    .check(z.minLength(1), z.maxLength(256)),
+  retryTaskId: z.optional(
+    z.string().check(
+      z.minLength(1),
+      z.maxLength(100),
+      z.refine((v) => /^[a-zA-Z0-9_-]+$/.test(v), "Invalid source retry task ID"),
+    ),
+  ),
+});
 const Agent = z.strictObject({
   type: z.optional(z.enum(SUBAGENT_TYPES)),
   prompt: z.optional(z.string().check(z.minLength(1))),
   prompts: z.optional(z.array(z.string().check(z.minLength(1))).check(z.minLength(1))),
   title: z.optional(z.string().check(z.minLength(1), z.maxLength(120))),
   workspace: z.optional(Workspace),
+  target: z.optional(z.string().check(z.minLength(1), z.maxLength(256))),
+  source: z.optional(Source),
+  model: z.optional(
+    z.string().check(
+      z.minLength(3),
+      z.maxLength(512),
+      z.refine((value) => /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:/-]+$/.test(value), "Use provider/model"),
+    ),
+  ),
+  thinking: z.optional(z.enum(THINKING_LEVELS)),
   waitSeconds,
   timeoutSeconds,
 });
@@ -358,6 +380,14 @@ export class JobService {
           throw new Error("An explicit workspace branch is only valid for a single prompt");
         const bridge = t3BridgeEnvironment(this.environment);
         if (bridge.kind === "remote") {
+          if (params.source)
+            throw new Error("Scoped native subagents already own their source; cross-source inclusion is unsupported");
+          if (params.model !== undefined || params.thinking !== undefined)
+            throw new Error("Explicit model/thinking overrides are unsupported for scoped native subagents");
+          // A scoped backend owns policy. Placement must never escape it via a
+          // laptop policy or a second SSH connection. "local" means this runtime.
+          if (params.target !== undefined && params.target !== "local")
+            throw new Error("Explicit cross-placement is unsupported for scoped native subagents");
           if (params.waitSeconds !== undefined && params.waitSeconds !== 0)
             throw new Error(
               "Positive waitSeconds is unsupported for scoped native subagents; omit it or use 0 for asynchronous launch",
@@ -432,6 +462,81 @@ export class JobService {
         if (!canDelegate(depth, parentType)) throw new Error("Only orchestrator agents can delegate");
         if (depth > 0 && type === "orchestrator")
           throw new Error("Spawned orchestrators may only delegate to fast/normal workers");
+        if (params.source && (params.target === undefined || params.target === "local"))
+          throw new Error("Untracked source inclusion applies to explicit cross-placement current-source handoff");
+        if (params.source?.retryTaskId && prompts.length !== 1)
+          throw new Error("Source approval followup retries one pinned task at a time");
+        if (params.target !== undefined && params.target !== "local") {
+          if (!this.remoteJobs) throw new Error("SSH subagent placement is unavailable in this session");
+          if (params.waitSeconds !== undefined && params.waitSeconds !== 0)
+            throw new Error("SSH subagents are async-only; omit waitSeconds or use 0");
+          if (params.timeoutSeconds !== undefined)
+            throw new Error("timeoutSeconds is unsupported for SSH subagents; use jobs.stop(id)");
+          const requestIdentity = getJobRequestIdentity(signal);
+          if (!requestIdentity)
+            throw new Error("SSH subagent launch requires durable execute invocation and call identity");
+          const sessionFile = ctx.sessionManager?.getSessionFile();
+          if (!sessionFile) throw new Error("SSH subagent launch requires a durable parent session");
+          const branchId = ctx.sessionManager.getLeafId();
+          const sessionId = ctx.sessionManager.getSessionId();
+          if (!branchId || !sessionId) throw new Error("SSH subagent launch requires a saved parent branch");
+          const ledger = this.#launchLedger(ctx);
+          const launched: SshLaunchResult[] = [];
+          try {
+            for (const [index, prompt] of prompts.entries()) {
+              signal.throwIfAborted();
+              // Scope the durable execute intent to its parent session. Target
+              // is deliberately not part of identity: a retry cannot create a
+              // second SSH task by changing its launch arguments.
+              const fingerprint = T3LaunchIdentityLedger.fingerprint([
+                "ssh-execute-call-v1",
+                sessionFile,
+                requestIdentity.executeInvocationId,
+                String(requestIdentity.callIndex),
+                String(index),
+              ]);
+              const clientRequestId = await ledger.reserve(fingerprint);
+              // Repository IDs have a filesystem-safe alphabet; reserve() remains
+              // authoritative and deterministic even after response acknowledgement.
+              const taskId =
+                params.source?.retryTaskId ?? "task_" + T3LaunchIdentityLedger.fingerprint([clientRequestId]);
+              signal.throwIfAborted();
+              const result = await this.remoteJobs.launch(
+                {
+                  target: params.target,
+                  ...(params.source ? { source: params.source } : {}),
+                  jobSessionFile: sessionFile,
+                  jobQuestionOwner: { sessionId, branchId },
+                  localRoot: ctx.cwd,
+                  prompt,
+                  ...(params.title === undefined ? {} : { title: params.title }),
+                  taskId,
+                  ...(params.model === undefined ? {} : { model: params.model }),
+                  ...(params.thinking === undefined ? {} : { thinking: params.thinking }),
+                  placement: {
+                    profile: type,
+                    parentDepth: depth,
+                    ...(parentType === undefined ? {} : { parentType: parentType as T3TaskProfile }),
+                    workspace,
+                  },
+                },
+                ctx,
+              );
+              await this.#acknowledgeLaunch(ledger, clientRequestId, signal);
+              launched.push(result);
+            }
+          } catch (error) {
+            if (!launched.length) throw error;
+            const ids = launched.map((item) => item.id).join(", ");
+            throw new Error("SSH batch launch failed; retained launched task IDs: " + ids, { cause: error });
+          }
+          this.#refresh();
+          return params.prompts ? launched : launched[0];
+        }
+        if (params.model !== undefined || params.thinking !== undefined)
+          throw new Error(
+            "Per-task model/thinking overrides currently require a named SSH target; local tasks use configured profiles",
+          );
         const { model, thinking } = resolveProfile(await loadProfiles(this.profilesPath), type, {
           model: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
           thinking: ctx.thinkingLevel,
@@ -477,7 +582,7 @@ export class JobService {
                   ...(params.title === undefined ? {} : { title: params.title }),
                   cwd: ctx.cwd,
                   env: {
-                    ...scrubT3BridgeEnvironment(process.env),
+                    ...childAgentEnvironment(process.env),
                     DIE_SUBAGENT_DEPTH: String(depth + 1),
                     DIE_SUBAGENT_TYPE: type,
                   },
@@ -671,7 +776,7 @@ export class JobService {
               ...(params.title === undefined ? {} : { title: params.title }),
               cwd: workspaceSummary.path,
               env: {
-                ...scrubT3BridgeEnvironment(process.env),
+                ...childAgentEnvironment(process.env),
                 DIE_SUBAGENT_DEPTH: String(depth + 1),
                 DIE_SUBAGENT_TYPE: type,
               },
@@ -704,6 +809,16 @@ export class JobService {
         );
         this.#refresh();
         return params.prompts ? results : results[0];
+      }
+      case "jobs.targets": {
+        z.parse(z.strictObject({}), input);
+        const current = { name: "local", kind: "current-runtime", authorized: true, default: true };
+        const native = t3BridgeEnvironment(this.environment).kind === "remote";
+        return {
+          targets: [current, ...(!native && this.remoteJobs?.targets ? await this.remoteJobs.targets() : [])],
+          default: "local",
+          observation: "Named targets reflect saved human authorization, not verified connectivity or provider access",
+        };
       }
       case "jobs.list": {
         const params = z.parse(List, input);

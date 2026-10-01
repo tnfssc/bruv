@@ -1,10 +1,35 @@
-import { mkdirSync, readFileSync, writeFileSync, renameSync, openSync, closeSync, unlinkSync } from "node:fs";
+import {
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+  renameSync,
+  openSync,
+  closeSync,
+  unlinkSync,
+  fsyncSync,
+} from "node:fs";
 import { dirname } from "node:path";
 import { randomUUID } from "node:crypto";
 import { DIAGNOSTIC_ENTRY_TYPE } from "../diagnostics";
 
 export type QuestionOwner = { sessionId: string; branchId: string };
+/** Remote ledger identity is provenance, never agent answer authority. */
+export type RemoteQuestionSource = {
+  taskId: string;
+  host: string;
+  ownerId: string;
+  epoch: string;
+  id: string;
+  owner: QuestionOwner;
+  version: number;
+  taskState?: string;
+  observedVersion: number;
+  observedStatus: Question["status"];
+  replyState?: "saved" | "uncertain" | "delivered";
+  error?: string;
+};
 export type Question = {
+  remote?: RemoteQuestionSource;
   id: string;
   owner: QuestionOwner;
   text: string;
@@ -84,8 +109,20 @@ function read(file: string): Question[] {
 function write(file: string, records: Question[]): void {
   const temp = file + "." + randomUUID() + ".tmp";
   try {
-    writeFileSync(temp, JSON.stringify(records), { flag: "wx", mode: 0o600 });
+    const fd = openSync(temp, "wx", 0o600);
+    try {
+      writeFileSync(fd, JSON.stringify(records));
+      fsyncSync(fd);
+    } finally {
+      closeSync(fd);
+    }
     renameSync(temp, file);
+    const directory = openSync(dirname(file), "r");
+    try {
+      fsyncSync(directory);
+    } finally {
+      closeSync(directory);
+    }
   } catch (error) {
     try {
       unlinkSync(temp);
@@ -122,7 +159,7 @@ export class QuestionService {
     }
   }
   // First child of an anchor owns its continuation; later siblings can inspect, not mutate.
-  private owns(ctx: QuestionContext, q: Question): boolean {
+  private owns(ctx: QuestionContext, q: Pick<Question, "owner">): boolean {
     const m = ctx.sessionManager;
     if (m.getSessionId() !== q.owner.sessionId) return false;
     const branch = m.getBranch().map((e) => e.id);
@@ -166,7 +203,10 @@ export class QuestionService {
     ancestors.add(current.branchId);
     return read(path(ctx))
       .filter((q) => q.owner.sessionId === current.sessionId && ancestors.has(q.owner.branchId))
-      .map((q) => ({ ...q, readOnly: !this.owns(ctx, q) }));
+      .map((q) => ({
+        ...q,
+        readOnly: !this.owns(ctx, q) || !!(q.remote && ["done", "cancelled"].includes(q.remote.taskState ?? "")),
+      }));
   }
   get(ctx: QuestionContext, id: string): Question {
     const q = this.list(ctx).find((q) => q.id === id);
@@ -200,15 +240,21 @@ export class QuestionService {
     const reason = input.reason === undefined ? undefined : text(input.reason, 2000, "reason");
     const taskIds = ids(input.taskIds);
     const owner = activeOwner(ctx);
-    if (ctx.sessionManager.getEntries?.().some((e) => e.parentId === owner.branchId))
+    // Use the same conversation-tip rules as mutation ownership: execute
+    // diagnostics are observations, but real descendants (even below a
+    // diagnostic chain) still make ancestor navigation read-only.
+    if (!this.owns(ctx, { owner }))
       throw new Error("Questions need a current branch tip. Start a new turn before asking on this branch.");
     let created = false;
     const saved = await this.change(path(ctx), (records) => {
       activeOwner(ctx, owner.branchId); // navigation may have changed while waiting for the lock
       if (ctx.sessionManager.getLeafId() !== owner.branchId) throw new Error("Session navigation changed");
+      if (!this.owns(ctx, { owner }))
+        throw new Error("Questions need a current branch tip. Start a new turn before asking on this branch.");
       if (key) {
         const existing = records.find((q) => q.dedupKey === key && this.owns(ctx, q));
         if (existing) {
+          if (existing.remote) throw new Error("Remote human question is ledger-owned; dedupKey cannot acquire it");
           if (
             JSON.stringify([
               existing.text,
@@ -283,6 +329,7 @@ export class QuestionService {
     const taskIds = ids(input.taskIds);
     if (!input.foreground && !taskIds?.length) throw new Error("Block requires foreground or task IDs");
     return this.mutate(ctx, input, (q) => {
+      remoteOwned(q);
       check(q, input.version);
       q.blocked = { checkpoint, ...(input.foreground ? { foreground: true } : {}), ...(taskIds ? { taskIds } : {}) };
       return true;
@@ -292,6 +339,7 @@ export class QuestionService {
     const reason = text(input?.reason, 2000, "reason");
     return this.mutate(ctx, input, (q) => {
       if (q.version !== input.version) throw new Error("Stale question version: current " + q.version);
+      remoteOwned(q);
       if (q.status === "resolved") throw new Error("Question already resolved");
       q.status = "resolved";
       q.resolutionReason = reason;
@@ -312,6 +360,8 @@ export class QuestionService {
       )
         return false;
       check(q, input.version);
+      if (q.remote && ["done", "cancelled"].includes(q.remote.taskState ?? ""))
+        throw new Error("Remote task is terminal; question is history only");
       if (q.choices && q.allowFreeText === false && !q.choices.includes(answer))
         throw new Error("Answer must match a choice");
       q.status = "answered";
@@ -320,6 +370,7 @@ export class QuestionService {
       q.replyId = input.replyId ?? "reply_" + randomUUID();
       q.replyVersion = input.version;
       q.delivery = "resume-needed";
+      if (q.remote) q.remote.replyState = "saved";
       accepted = true;
       return true;
     });
@@ -328,6 +379,7 @@ export class QuestionService {
   }
   cancel(ctx: QuestionContext, input: QuestionMutation): Promise<Question> {
     return this.mutate(ctx, input, (q) => {
+      remoteOwned(q);
       if (q.version !== input.version) throw new Error("Stale question version: current " + q.version);
       if (q.status !== "pending" && q.status !== "answered") throw new Error("Question already " + q.status);
       q.status = "cancelled";
@@ -349,7 +401,124 @@ export class QuestionService {
         throw new Error("Reply dispatch already claimed or not queued");
       if ((input.delivery === "delivered" || input.delivery === "resume-needed") && q.delivery !== "dispatching")
         throw new Error("Reply has no active dispatch claim");
+      remoteOwned(q);
       q.delivery = input.delivery;
+      return true;
+    });
+  }
+  /** Trusted projection route only. The remote ledger, not an agent tool, closes or retargets a mirror. */
+  async reflectRemote(
+    ctx: QuestionContext,
+    source: Omit<RemoteQuestionSource, "observedVersion" | "observedStatus" | "replyState" | "error">,
+    snapshot: Pick<Question, "text" | "status" | "choices" | "allowFreeText" | "reason" | "replyId" | "delivery">,
+    parentOwner?: QuestionOwner,
+  ): Promise<Question> {
+    const owner = activeOwner(ctx, parentOwner?.branchId);
+    if (parentOwner && parentOwner.sessionId !== owner.sessionId) throw new Error("Parent question owner mismatch");
+    const question = text(snapshot.text, 8000, "question");
+    let created = false;
+    const saved = await this.change(path(ctx), (records) => {
+      if (JSON.stringify(activeOwner(ctx, owner.branchId)) !== JSON.stringify(owner))
+        throw new Error("Session navigation changed");
+      const matches = (q: Question) =>
+        q.remote &&
+        JSON.stringify([
+          q.remote.taskId,
+          q.remote.host,
+          q.remote.ownerId,
+          q.remote.epoch,
+          q.remote.id,
+          q.remote.owner.sessionId,
+          q.remote.owner.branchId,
+        ]) ===
+          JSON.stringify([
+            source.taskId,
+            source.host,
+            source.ownerId,
+            source.epoch,
+            source.id,
+            source.owner.sessionId,
+            source.owner.branchId,
+          ]);
+      let q = records.find(matches);
+      if (q && !this.owns(ctx, q)) return { result: { ...q, readOnly: true }, changed: false };
+      if (!q) {
+        if (!parentOwner && ctx.sessionManager.getLeafId() !== owner.branchId)
+          throw new Error("Session navigation changed");
+        // Do not create historical closed questions that never needed this parent human.
+        if (
+          records.length >= maxPending + maxHistory ||
+          records.filter((q) => q.status === "pending").length >= maxPending
+        )
+          throw new Error("Question ledger full; remote question remains pending remotely");
+        const now = new Date().toISOString();
+        q = {
+          id: "q_" + randomUUID(),
+          owner,
+          text: question,
+          status: snapshot.status,
+          version: 1,
+          createdAt: now,
+          updatedAt: now,
+          requester: "SSH · " + source.host,
+          taskIds: ["ssh:" + encodeURIComponent(source.taskId)],
+          remote: { ...source, observedVersion: source.version, observedStatus: snapshot.status },
+        };
+        if (!this.owns(ctx, q)) throw new Error("Question launch branch is history only");
+        records.push(q);
+        created = true;
+      }
+      const before = JSON.stringify(q);
+      q.remote!.taskState = source.taskState;
+      q.remote!.observedVersion = source.version;
+      q.remote!.observedStatus = snapshot.status;
+      // Once saved, a human reply retains its original target/version forever.
+      if (!q.replyId) {
+        q.remote!.version = source.version;
+        q.text = question;
+        q.choices = snapshot.choices;
+        q.allowFreeText = snapshot.allowFreeText;
+        q.reason = snapshot.reason;
+        q.status = snapshot.status;
+      } else if (snapshot.replyId === q.replyId && snapshot.delivery === "delivered") {
+        q.remote!.replyState = "delivered";
+        q.delivery = "delivered";
+        delete q.remote!.error;
+      } else if (snapshot.status === "cancelled" || snapshot.status === "resolved") {
+        q.status = snapshot.status;
+      }
+      const changed = created || before !== JSON.stringify(q);
+      if (changed && !created) {
+        q.version++;
+        q.updatedAt = new Date().toISOString();
+      }
+      return { result: q, changed };
+    });
+    if (created) this.onAsked?.(saved);
+    return saved;
+  }
+  /** Claim durable human intent before transport. Uncertain claims are NEVER automatically replayed. */
+  claimRemoteReply(ctx: QuestionContext, input: QuestionMutation): Promise<Question> {
+    return this.mutate(ctx, input, (q) => {
+      if (q.version !== input.version) throw new Error("Stale question version: current " + q.version);
+      if (!q.remote || q.status !== "answered" || q.answeredFrom !== "cli" || !q.replyId || !q.answer)
+        throw new Error("No explicit human remote reply");
+      if (q.remote.replyState !== "saved") throw new Error("Remote reply already claimed; reconcile, do not resend");
+      q.remote.replyState = "uncertain";
+      q.delivery = "dispatching";
+      return true;
+    });
+  }
+  finishRemoteReply(
+    ctx: QuestionContext,
+    input: QuestionMutation & { replyId: string; delivered: boolean; error?: string },
+  ): Promise<Question> {
+    return this.mutate(ctx, input, (q) => {
+      // A concurrent sync may change the local version; receipt identity is the durable CAS here.
+      if (!q.remote || q.replyId !== input.replyId || q.remote.replyState !== "uncertain") return false;
+      q.remote.replyState = input.delivered ? "delivered" : "uncertain";
+      q.delivery = input.delivered ? "delivered" : "dispatching";
+      q.remote.error = input.error;
       return true;
     });
   }
@@ -385,4 +554,9 @@ function ids(value: unknown): string[] | undefined {
 function check(q: Question, version: number): void {
   if (q.version !== version) throw new Error("Stale question version: current " + q.version);
   if (q.status !== "pending") throw new Error("Question already " + q.status);
+}
+
+function remoteOwned(q: Question): void {
+  if (q.remote)
+    throw new Error("Remote human question is ledger-owned; agents cannot resolve, cancel, block or dispatch it");
 }

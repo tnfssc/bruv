@@ -1,3 +1,5 @@
+import { registerRootRuntime } from "../remote/root-runtime";
+import { remoteCompletionSummary } from "../remote/job-observations";
 import { registerRemoteCancellationService } from "../remote/cancellation";
 import { createHash } from "node:crypto";
 import { RemoteClient } from "../remote/client";
@@ -310,12 +312,7 @@ export default function asynchronousTasksExtension(
         remoteCompletions.length
           ? "SSH jobs completed:\n" +
             remoteCompletions
-              .map(({ id, observation }) =>
-                `${sshJobId(observation.taskId)} ${observation.state} (delivery ${id})${observation.preview ? ` — ${observation.preview}` : ""}`.slice(
-                  0,
-                  430,
-                ),
-              )
+              .map(({ observation }) => remoteCompletionSummary(observation, sshJobId(observation.taskId)))
               .join("\n")
           : "",
         actionable.length ? actionable.join("\n") : "",
@@ -522,10 +519,11 @@ export default function asynchronousTasksExtension(
     return manager;
   };
 
-  registerTaskMonitor(pi, getManager);
   registerResumeSafeguards(pi);
 
-  const questions = registerQuestionRuntime(pi, { supported: () => subagentDepth === 0 && !t3NativeSession });
+  const questions = registerQuestionRuntime(pi, {
+    supported: () => (subagentDepth === 0 || !!process.env.DIE_REMOTE_RUNTIME_STATE) && !t3NativeSession,
+  });
   registerQuestions(pi, (ctx) => questions.commands(ctx));
 
   goals = registerGoalMode(
@@ -549,7 +547,9 @@ export default function asynchronousTasksExtension(
   const history = new HistoryService();
   let service: JobService | undefined;
   const remoteClient = new RemoteClient();
+  questions.configureRemote(remoteClient);
   const remoteJobs = createRemoteJobsAdapter(remoteClient);
+  registerTaskMonitor(pi, getManager, remoteJobs);
   const getService = (ctx: ExtensionContext) => {
     taskUi = ctx.ui;
     owningContext = ctx;
@@ -576,6 +576,10 @@ export default function asynchronousTasksExtension(
       );
     return service;
   };
+  registerRootRuntime(pi, {
+    questions: { service: questions.service, sync: (ctx) => questions.syncRemote(ctx) },
+    jobs: (ctx, method, params) => getService(ctx).handle(method, params, ctx, new AbortController().signal),
+  });
   let sessionHost: SessionHost | undefined;
   registerSessionHost(pi, (ctx) => {
     if (ctx.sessionManager !== owningContext?.sessionManager) return undefined;

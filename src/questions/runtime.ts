@@ -1,6 +1,8 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { currentMainToolOwner } from "../live/main-owner";
 import { QuestionService, type Question } from "./service";
+import { RemoteQuestionBridge, observeRemoteQuestions, type RemoteQuestionClient } from "../remote/question-bridge";
+import type { RemoteState } from "../remote/client";
 
 /** A reply starts a new parent turn. It never holds or revives an execute stack. */
 export function registerQuestionRuntime(
@@ -8,6 +10,7 @@ export function registerQuestionRuntime(
   options: { supported: () => boolean; hasMainToolOwner?: (manager: object) => boolean },
 ) {
   const service = new QuestionService();
+  let remoteBridge: RemoteQuestionBridge | undefined;
   let context: ExtensionContext | undefined;
   let epoch = 0;
   let stopped = false;
@@ -108,6 +111,16 @@ export function registerQuestionRuntime(
   };
   service.onAnswered = async (question, raw) => {
     const ctx = raw as ExtensionContext;
+    if (question.remote) {
+      try {
+        if (!remoteBridge || !options.supported() || context?.sessionManager !== ctx.sessionManager)
+          throw new Error("Remote reply saved; parent remote bridge is not active");
+        await remoteBridge.dispatch(ctx, question.id);
+      } finally {
+        changed();
+      }
+      return;
+    }
     const key = replyKey(question);
     if (
       !stopped &&
@@ -143,6 +156,7 @@ export function registerQuestionRuntime(
     if (navigation) closed = false;
     if (context && context.sessionManager !== ctx.sessionManager) {
       if (!navigation) return false;
+      observeRemoteQuestions(context.sessionManager);
       epoch++;
       queued.clear();
       delivered.clear();
@@ -150,10 +164,25 @@ export function registerQuestionRuntime(
       stopped = false;
     }
     context = ctx;
+    observeRemoteQuestions(ctx.sessionManager, async (state) => {
+      if (closed || context?.sessionManager !== ctx.sessionManager || !options.supported()) return;
+      try {
+        await remoteBridge?.sync(ctx, state);
+      } finally {
+        changed();
+      }
+    });
     return true;
   };
-  pi.on("session_start", (_event, ctx) => {
+  pi.on("session_start", async (_event, ctx) => {
     attach(ctx, true);
+    if (options.supported()) {
+      try {
+        await remoteBridge?.sync(ctx);
+      } catch {
+        /* Keep the durable projection offline. */
+      }
+    }
     changed();
   });
   pi.on("session_tree", (_event, ctx) => {
@@ -176,6 +205,7 @@ export function registerQuestionRuntime(
   pi.on("session_shutdown", () => {
     pause();
     closed = true;
+    if (context) observeRemoteQuestions(context.sessionManager);
     context = undefined;
     delivered.clear();
     createdHere.clear();
@@ -183,6 +213,15 @@ export function registerQuestionRuntime(
   });
   return {
     service,
+    /** Wire the SAME client used by the normal SSH jobs adapter; no host selection here. */
+    configureRemote(client: RemoteQuestionClient) {
+      remoteBridge = new RemoteQuestionBridge(service, client);
+    },
+    async syncRemote(ctx: ExtensionContext, state?: RemoteState) {
+      if (!attach(ctx) || !options.supported()) return;
+      await remoteBridge?.sync(ctx, state);
+      changed();
+    },
     pause,
     hasBlockingQuestions() {
       if (!context || !options.supported()) return false;
@@ -208,6 +247,7 @@ export function registerQuestionRuntime(
         throw new Error(
           "Answer in /questions answer <id> <text>. Tool or voice transcript text is not a targeted user reply.",
         );
+      await remoteBridge?.sync(ctx);
       const result = await service.handle(method, params, ctx);
       changed();
       return projectResult(result);
@@ -224,6 +264,7 @@ export function registerQuestionRuntime(
         async handle(method: string, params: Record<string, unknown> = {}) {
           if (context?.sessionManager !== ctx.sessionManager) throw new Error("Question session is no longer active.");
           if (!options.supported()) throw new Error("Questions are supported in the parent CLI session only.");
+          await remoteBridge?.sync(ctx);
           if (method === "questions.answer" || method === "questions.cancel" || method === "questions.resume") {
             const q = service.get(ctx, String(params.id));
             if (
@@ -233,6 +274,14 @@ export function registerQuestionRuntime(
                 q.status !== "pending")
             )
               throw new Error("Question changed while open; reopen /questions to answer the current question.");
+            if (method === "questions.resume" && q.remote) {
+              if (!remoteBridge) throw new Error("Parent remote bridge is not active");
+              try {
+                return await remoteBridge.dispatch(ctx, q.id, { retry: true });
+              } finally {
+                changed();
+              }
+            }
             if (method === "questions.resume") {
               if (q.readOnly) throw new Error("Question belongs to the original branch; this is history only.");
               if (q.status !== "answered") throw new Error("Only a saved answer can be resumed.");
@@ -272,7 +321,7 @@ export function registerQuestionRuntime(
                   })
                 : await service.cancel(ctx, input);
             changed();
-            return result;
+            return q.remote ? service.get(ctx, q.id) : result;
           }
           return projectResult(await service.handle(method, params, ctx));
         },

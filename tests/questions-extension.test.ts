@@ -411,3 +411,101 @@ test("picker wraps full long labels at narrow width and filters without answerin
   picker.handleInput("\x1b");
   expect(done).toEqual([undefined]);
 });
+
+test("in-flight refresh after SDK context invalidation reports no stale-context failure", async () => {
+  let failRefresh!: (error: Error) => void;
+  const pending = new Promise((_resolve, reject) => {
+    failRefresh = reject;
+  });
+  let calls = 0;
+  let stale = false;
+  let statusCalls = 0;
+  const hooks = new Map<string, any>();
+  const { refresh } = registerQuestions(
+    {
+      on(name: string, fn: any) {
+        hooks.set(name, fn);
+      },
+      registerCommand() {},
+    } as any,
+    () => ({ handle: () => (++calls === 1 ? [] : pending) }),
+  );
+  const ctx = {
+    ui: {
+      setStatus() {
+        statusCalls++;
+        if (stale) throw new Error("This extension ctx is stale after session replacement or reload.");
+      },
+    },
+  };
+  hooks.get("session_start")({}, ctx);
+  await Promise.resolve();
+  stale = true;
+  const work = refresh();
+  failRefresh(new Error("remote status refresh failed"));
+  await expect(work).resolves.toBeUndefined();
+  expect(statusCalls).toBe(2);
+});
+
+test("refresh completing after session shutdown does not touch the disposed context", async () => {
+  const hooks = new Map<string, any>();
+  let failRefresh!: (error: Error) => void;
+  const pending = new Promise((_resolve, reject) => {
+    failRefresh = reject;
+  });
+  let calls = 0;
+  let stale = false;
+  let statusCalls = 0;
+  const { refresh } = registerQuestions(
+    {
+      on(name: string, fn: any) {
+        hooks.set(name, fn);
+      },
+      registerCommand() {},
+    } as any,
+    () => ({ handle: () => (++calls === 1 ? [] : pending) }),
+  );
+  const ctx = {
+    ui: {
+      setStatus() {
+        if (stale) throw new Error("This extension ctx is stale after session replacement or reload.");
+        statusCalls++;
+      },
+    },
+  };
+  hooks.get("session_start")({}, ctx);
+  await Promise.resolve();
+  const work = refresh();
+  hooks.get("session_shutdown")();
+  stale = true;
+  failRefresh(new Error("remote status refresh failed"));
+  await expect(work).resolves.toBeUndefined();
+  expect(statusCalls).toBe(2);
+});
+
+test("refresh still propagates non-lifecycle status errors", async () => {
+  let calls = 0;
+  const hooks = new Map<string, any>();
+  let statusCalls = 0;
+  const { refresh } = registerQuestions(
+    {
+      on(name: string, fn: any) {
+        hooks.set(name, fn);
+      },
+      registerCommand() {},
+    } as any,
+    () => ({ handle: () => (++calls === 1 ? [] : Promise.reject(new Error("refresh failed"))) }),
+  );
+  hooks.get("session_start")(
+    {},
+    {
+      ui: {
+        setStatus() {
+          if (++statusCalls > 1) throw new Error("status failure");
+        },
+      },
+    },
+  );
+  await Promise.resolve();
+  await expect(refresh()).rejects.toThrow("status failure");
+});

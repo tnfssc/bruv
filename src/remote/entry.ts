@@ -2,6 +2,26 @@ import { handleRemoteRequest, runOwnerTask } from "./owner";
 import type { RemoteRequest, RemoteResponse } from "./protocol";
 export type { RemoteRequest, RemoteResponse } from "./protocol";
 
+/** Keep the compiled stdin boundary aligned with the strict placed-task wire contract. */
+export function validateRemoteRequestFields(request: RemoteRequest): void {
+  const fields: Record<string, string[]> = {
+    artifact: ["action", "name", "sha256", "offset"],
+    hello: [],
+    launch: ["repoPath", "prompt", "model", "thinking", "placement"],
+    sync: ["cursor"],
+    answer: ["id", "owner", "version", "text", "replyId"],
+    cancel: [],
+    "repository-upload": ["snapshot", "sha256", "total", "offset", "data", "workspace"],
+    "repository-result": ["offset"],
+    "capability-grant": ["grant"],
+    "capability-revoke": ["grantId"],
+    "capability-reply": ["reply"],
+  };
+  if (!request || typeof request !== "object" || !Object.hasOwn(fields, request.op)) throw Error("Invalid request");
+  const allowed = ["op", ...(request.op === "hello" ? [] : ["ownerId", "epoch", "taskId"]), ...fields[request.op]!];
+  if (Object.keys(request).some((key) => !allowed.includes(key))) throw Error("Unsupported remote request field");
+}
+
 /** One JSON request per process, one JSON response on stdout. Diagnostics belong on stderr. */
 export async function runRemoteControl(): Promise<void> {
   let response: RemoteResponse;
@@ -15,22 +35,7 @@ export async function runRemoteControl(): Promise<void> {
     }
     const text = Buffer.concat(chunks).toString("utf8");
     const request = JSON.parse(text) as RemoteRequest;
-    const fields: Record<string, string[]> = {
-      artifact: ["action", "name", "sha256", "offset"],
-      hello: [],
-      launch: ["repoPath", "prompt", "model", "thinking"],
-      sync: ["cursor"],
-      answer: ["id", "owner", "version", "text", "replyId"],
-      cancel: [],
-      "repository-upload": ["snapshot", "sha256", "total", "offset", "data"],
-      "repository-result": ["offset"],
-      "capability-grant": ["grant"],
-      "capability-revoke": ["grantId"],
-      "capability-reply": ["reply"],
-    };
-    if (!request || typeof request !== "object" || !Object.hasOwn(fields, request.op)) throw Error("Invalid request");
-    const allowed = ["op", ...(request.op === "hello" ? [] : ["ownerId", "epoch", "taskId"]), ...fields[request.op]!];
-    if (Object.keys(request).some((key) => !allowed.includes(key))) throw Error("Unsupported remote request field");
+    validateRemoteRequestFields(request);
     response = await handleRemoteRequest(request);
   } catch (cause) {
     response = { code: "request_failed", error: String(cause) };

@@ -1,7 +1,11 @@
 import { expect, test } from "bun:test";
 import type { RemoteTask } from "../src/remote/client";
 import { clearRemoteJobEvents, remoteJobEvents } from "../src/remote/job-events";
-import { publishRemoteJobObservations, remoteJobObservation } from "../src/remote/job-observations";
+import {
+  publishRemoteJobObservations,
+  remoteJobObservation,
+  remoteCompletionSummary,
+} from "../src/remote/job-observations";
 
 const task = (id: string, session?: string): RemoteTask => ({
   taskId: id,
@@ -55,7 +59,7 @@ test("unknown with an error is not terminal; waits carry human-only instructions
   };
   const observation = remoteJobObservation(t);
   expect(observation.state).toBe("unknown");
-  expect(observation.actionable).toContain("Human /remote answer");
+  expect(observation.actionable).toContain("Human /questions answer");
   expect(observation.actionable).toContain('"version":2');
   expect(observation.actionable).toContain("repo.read");
   t.replies = {
@@ -72,4 +76,31 @@ test("terminal observations suppress stale waits and bound assistant output", ()
   expect(observation.state).toBe("done");
   expect(observation.actionable).toBeUndefined();
   expect(observation.preview!.length).toBeLessThanOrEqual(4000);
+});
+
+test("normal parent result includes protected repository return before potentially long output", () => {
+  const t = task("returned", "/session");
+  t.task = { taskId: "returned", state: "done" };
+  t.repository = { status: "review", artifact: "/artifacts/return.patch", reason: "Parent tracked file changed" };
+  t.events = [{ seq: 1, event: { type: "message_end", message: { role: "assistant", content: "x".repeat(20000) } } }];
+  expect(remoteJobObservation(t).preview).toContain("Parent tracked file changed");
+});
+
+test("bounded normal completion includes the actual child result and safe return, not long artifact metadata", () => {
+  const t = task("done", "/parent");
+  t.task = { taskId: "done", state: "done" };
+  t.repository = { status: "applied", artifact: "/long/".repeat(100) };
+  t.events = [
+    {
+      seq: 1,
+      event: {
+        type: "message_end",
+        message: { role: "assistant", content: [{ type: "text", text: "ACTUAL_CHILD_RESULT" }] },
+      },
+    },
+  ];
+  const text = remoteCompletionSummary(remoteJobObservation(t), "ssh:encoded");
+  expect(text).toContain("ACTUAL_CHILD_RESULT");
+  expect(text).toContain("return applied");
+  expect(text.length).toBeLessThanOrEqual(430);
 });

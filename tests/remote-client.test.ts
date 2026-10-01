@@ -14,6 +14,7 @@ async function fixture(transport: Transport) {
 }
 const h = (epoch = "one") => ({
   protocol: 1,
+  taskPlacement: 1,
   ownerId: "owner",
   epoch,
   version: "1",
@@ -132,9 +133,19 @@ test("lost launch reply blocks automatic fresh-ID repeat of the same intent", as
   await expect(c.launch("/repo", "p")).rejects.toThrow("identical launch has unknown outcome");
   expect(posts).toBe(1);
 });
-test("missing remote model fails explicitly without copying a local default", async () => {
-  const c = await fixture(async () => ({ ...h(), profile: { name: "normal", auth: "missing" } }));
-  await expect(c.connect("box")).rejects.toThrow("Remote normal profile has no model");
+test("connection is model-neutral; missing destination default fails without copying a local model", async () => {
+  const c = await fixture(async (_host, _path, request) => {
+    if (request.op === "hello") return { ...h(), profile: { name: "normal", auth: "missing" } };
+    if (!request.model) return { error: "Configure remote normal profile model", code: "missing_model" };
+    return { task: { taskId: request.taskId, state: "accepted", profile: { name: "normal", model: request.model } } };
+  });
+  expect((await c.connect("box")).profile.model).toBe("");
+  await expect(c.launch("/repo", "default work", "no_default")).rejects.toThrow(
+    "Configure remote normal profile model",
+  );
+  expect((await c.launch("/repo", "override work", "override", { model: "supported/explicit" })).task).toMatchObject({
+    profile: { name: "normal", model: "supported/explicit" },
+  });
 });
 test("independent client instances serialize local state writes", async () => {
   const transport: Transport = async (_h, _p, r) =>
@@ -398,4 +409,93 @@ test("new lock database is private before transport runs and stays private on re
   await c.connect("box");
   await c.connect("box");
   expect(calls).toBe(2);
+});
+
+test("placement role/depth/workspace is durable before POST and cannot change on uncertain retry", async () => {
+  const requests: any[] = [];
+  let lost = true;
+  const client = await fixture(async (_host, _path, request) => {
+    if (request.op === "hello") return h();
+    requests.push(request);
+    const saved = JSON.parse(await readFile(client.path, "utf8"));
+    expect(saved.tasks.placed.placement).toEqual(request.placement);
+    if (lost) throw Error("lost response");
+    return {
+      task: {
+        taskId: request.taskId,
+        state: "accepted",
+        profile: { name: "orchestrator" },
+        placement: request.placement,
+      },
+    };
+  });
+  await client.connect("configured-host");
+  const placement = {
+    profile: "orchestrator" as const,
+    parentDepth: 0,
+    workspace: { kind: "worktree" as const, branch: "task/one" },
+  };
+  await expect(client.launch("/repo", "placed work", "placed", undefined, "/parent", placement)).rejects.toThrow(
+    "lost response",
+  );
+  await expect(
+    client.launch("/repo", "placed work", "placed", undefined, "/parent", { ...placement, profile: "normal" }),
+  ).rejects.toThrow("different owner or intent");
+  await expect(client.launch("/repo", "placed work", undefined, undefined, "/parent", placement)).rejects.toThrow(
+    "unknown outcome",
+  );
+  lost = false;
+  await client.launch("/repo", "placed work", "placed", undefined, "/parent", placement);
+  expect(requests.map((r) => r.taskId)).toEqual(["placed", "placed"]);
+  expect(requests[0].placement).toEqual(requests[1].placement);
+  await expect(
+    client.launch("/repo", "new", "forbidden", undefined, "/parent", {
+      ...placement,
+      parentDepth: 1,
+      parentType: "normal",
+    }),
+  ).rejects.toThrow("orchestrator");
+  expect(requests).toHaveLength(2);
+});
+
+test("older destinations cannot silently downgrade a placed task to legacy normal", async () => {
+  let posts = 0;
+  const client = await fixture(async (_host, _path, request) => {
+    if (request.op === "hello") return { ...h(), taskPlacement: undefined };
+    posts++;
+    return { task: { taskId: request.taskId, state: "accepted" } };
+  });
+  await client.connect("box");
+  await expect(
+    client.launch("/repo", "work", "placed", undefined, "/parent", {
+      profile: "orchestrator",
+      parentDepth: 0,
+      workspace: { kind: "inherit" },
+    }),
+  ).rejects.toThrow("does not support task placement");
+  expect(posts).toBe(0);
+});
+
+test("a destination role mismatch is uncertain, not silently accepted", async () => {
+  const client = await fixture(async (_host, _path, request) =>
+    request.op === "hello"
+      ? h()
+      : {
+          task: {
+            taskId: request.taskId,
+            state: "accepted",
+            profile: { name: "normal" },
+            placement: request.placement,
+          },
+        },
+  );
+  await client.connect("box");
+  await expect(
+    client.launch("/repo", "work", "placed", undefined, "/parent", {
+      profile: "fast",
+      parentDepth: 0,
+      workspace: { kind: "inherit" },
+    }),
+  ).rejects.toThrow("different task role or placement");
+  expect((await client.transcript("placed")).outcome).toBe("unknown");
 });

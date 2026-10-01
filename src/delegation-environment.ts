@@ -6,5 +6,17 @@ export function scrubT3BridgeEnvironment(env: NodeJS.ProcessEnv): NodeJS.Process
   const scrubbed = { ...env };
   delete scrubbed[T3_MCP_URL_ENV];
   delete scrubbed[T3_MCP_BEARER_ENV];
+  // Human presentation authority is not a model-directed tool capability.
+  delete scrubbed.DIE_ROOT_RUNTIME_SOCKET;
+  delete scrubbed.DIE_ROOT_RUNTIME_TOKEN;
   return scrubbed;
+}
+
+/** A child is a distinct session. Do not let its checkpoints overwrite its SSH owner parent. */
+export function childAgentEnvironment(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const child = scrubT3BridgeEnvironment(env);
+  delete child.DIE_REMOTE_RUNTIME_STATE;
+  for (const name of Object.keys(child))
+    if (name.startsWith("DIE_REMOTE_ROOT_") || name.startsWith("DIE_ROOT_")) delete child[name];
+  return child;
 }

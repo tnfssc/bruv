@@ -80,3 +80,53 @@ test("explicit untracked transfer and hidden tracked edits", () => {
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("explicit baseRef pins that commit, not current edits; return cannot overwrite a different baseline", () => {
+  const { dir, root } = fixture();
+  try {
+    const base = git(root, "rev-parse", "HEAD");
+    writeFileSync(join(root, "file"), "later\n");
+    git(root, "add", "file");
+    git(root, "-c", "user.name=T", "-c", "user.email=t@example.invalid", "commit", "-qm", "later");
+    writeFileSync(join(root, "file"), "current edits\n");
+    const manifest = captureRepository(root, join(dir, "snapshot"), [], { baseRef: base });
+    expect(manifest.source).toEqual({
+      kind: "commit",
+      commit: base,
+      requestedRef: base,
+      history: "orphan-baseline",
+      matchesCurrent: false,
+    });
+    const checkout = join(dir, "snapshot", "snapshot-checkout");
+    expect(readFileSync(join(checkout, "file"), "utf8")).toBe("base\n");
+    expect(git(checkout, "rev-list", "--count", "HEAD")).toBe("1");
+    expect(manifest.snapshot).not.toBe(base);
+    writeFileSync(join(checkout, "file"), "remote\n");
+    const result = collectRepositoryResult(checkout, manifest.snapshot, join(dir, "patch"));
+    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toMatchObject({
+      status: "review",
+      reason: expect.stringContaining("source commit"),
+    });
+    expect(readFileSync(join(root, "file"), "utf8")).toBe("current edits\n");
+    writeFileSync(join(root, "untracked"), "private");
+    expect(() => captureRepository(root, join(dir, "refused"), ["untracked"], { baseRef: base })).toThrow(
+      "cannot include current untracked",
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("explicit HEAD with matching tracked state returns safely without importing history", () => {
+  const { dir, root } = fixture();
+  try {
+    const m = captureRepository(root, join(dir, "snapshot"), [], { baseRef: "HEAD" });
+    expect(m.source?.matchesCurrent).toBe(true);
+    const checkout = join(dir, "snapshot", "snapshot-checkout");
+    writeFileSync(join(checkout, "file"), "remote\n");
+    const result = collectRepositoryResult(checkout, m.snapshot, join(dir, "patch"));
+    expect(integrateRepositoryResult(root, m, result, join(dir, "receipts")).status).toBe("applied");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

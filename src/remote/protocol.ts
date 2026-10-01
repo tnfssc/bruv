@@ -1,3 +1,4 @@
+import type { RemotePlacement } from "./placement";
 import type { RemoteArtifact, ArtifactPage } from "./artifacts";
 import type { RepositoryRequest } from "./repository-wire";
 import type { GrantMetadata } from "./capability-runtime";
@@ -26,6 +27,7 @@ export type RemoteRequest =
       taskId: string;
       repoPath: string;
       prompt: string;
+      placement?: RemotePlacement;
       model?: string;
       thinking?: string;
     }
@@ -46,7 +48,8 @@ export type RemoteTask = {
   taskId: string;
   state: "accepted" | "running" | "done" | "unknown" | "cancelled";
   repoPath: string;
-  profile: { name: "normal"; model: string; thinking?: string };
+  placement?: RemotePlacement;
+  profile: { name: "fast" | "normal" | "orchestrator"; model: string; thinking?: string };
   error?: string;
   questions?: unknown[];
   artifacts?: RemoteArtifact[];
@@ -64,6 +67,7 @@ export type RemoteResponse =
   | { accepted: boolean }
   | {
       protocol: 1;
+      taskPlacement?: 1;
       ownerId: string;
       epoch: string;
       version: string;

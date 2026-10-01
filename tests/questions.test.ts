@@ -302,3 +302,40 @@ test("a question anchored on a diagnostic still has a distinct owner", async () 
     f.cleanup();
   }
 });
+
+test("asking after diagnostic-only children keeps the conversation anchor, not a historical descendant", async () => {
+  const f = fixture();
+  try {
+    const service = new QuestionService();
+    f.move("diagnostic", "root", "custom", "die-diagnostic");
+    f.move("diagnostic-chain", "diagnostic", "custom", "die-diagnostic");
+    f.navigate("root");
+    const question = await service.ask(f.ctx, { text: "Human choice?" });
+    expect(question.owner.branchId).toBe("root");
+    expect(question.status).toBe("pending");
+    expect(service.get(f.ctx, question.id).readOnly).toBe(false);
+    f.move("real-child", "diagnostic-chain", "message");
+    f.navigate("root");
+    await expect(service.ask(f.ctx, { text: "History cannot ask" })).rejects.toThrow("current branch tip");
+    expect(service.get(f.ctx, question.id).readOnly).toBe(true);
+  } finally {
+    f.cleanup();
+  }
+});
+
+test("ask revalidates the conversation tip after waiting for the question ledger lock", async () => {
+  const f = fixture();
+  try {
+    const service = new QuestionService();
+    const lock = f.file + ".questions.json.lock";
+    writeFileSync(lock, "busy");
+    const pending = service.ask(f.ctx, { text: "Do not save after a continuation" });
+    f.move("real-child", "root", "message");
+    f.navigate("root");
+    unlinkSync(lock);
+    await expect(pending).rejects.toThrow("current branch tip");
+    expect(service.list(f.ctx)).toEqual([]);
+  } finally {
+    f.cleanup();
+  }
+});

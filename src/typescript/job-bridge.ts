@@ -64,6 +64,13 @@ export interface SubagentOptions extends Options {
   title?: string;
   type?: "fast" | "normal" | "orchestrator";
   workspace?: SubagentWorkspace;
+  /** Optional source files requiring a saved, scope-bound human decision before transfer. */
+  source?: { includeUntracked: string[]; retryTaskId?: string };
+  /** Omit/current runtime, "local", or an already human-pinned SSH connection name. */
+  target?: string;
+  /** Supported explicit destination overrides; named SSH targets only. */
+  model?: string;
+  thinking?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
   waitSeconds?: number;
   timeoutSeconds?: number;
 }
@@ -134,6 +141,7 @@ export interface ExecuteJobGlobals {
     cancel(input: { id: string; owner: { sessionId: string; branchId: string }; version: number }): Promise<unknown>;
   };
   jobs: {
+    targets(): Promise<unknown>;
     list(options?: Options): Promise<unknown>;
     inspect(id: string, options?: Options): Promise<unknown>;
     input(id: string, data?: unknown, options?: Options): Promise<unknown>;
@@ -373,6 +381,7 @@ export function installJobGlobals(socket?: Duplex): { finish(): Promise<void> } 
       cancel: async (input) => request("questions.cancel", input),
     },
     jobs: {
+      targets: async () => request("jobs.targets", {}),
       list: async (options) => request("jobs.list", options ?? {}),
       inspect: async (id, options) => request("jobs.inspect", combine(options, { id })),
       input: async (id, data, options) => request("jobs.input", combine(options, { id, data })),

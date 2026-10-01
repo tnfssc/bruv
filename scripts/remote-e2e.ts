@@ -1,3 +1,4 @@
+import { placementReply } from "../tests/fixtures/remote-e2e/placement-parent";
 /** Run real dist/die --mode rpc against isolated fake model and pinned Docker SSH host.
  * Parent completion wake is deliberately tested separately by remote-jobs-e2e.ts:
  * this proof kills its original parent before the independent owner finishes.
@@ -12,6 +13,9 @@ const container = process.env.FIXTURE_CONTAINER!;
 const home = homedir();
 const statePath = join(home, ".die/remote/state.json");
 const agentDir = process.env.DIE_CODING_AGENT_DIR!;
+process.env.GIT_CONFIG_GLOBAL = "/dev/null";
+process.env.GIT_CONFIG_SYSTEM = "/dev/null";
+process.env.GIT_CONFIG_NOSYSTEM = "1";
 let localCalls = 0;
 const rpcChildren: ReturnType<typeof spawn>[] = [];
 const provider = Bun.serve({
@@ -20,26 +24,10 @@ const provider = Bun.serve({
   async fetch(request) {
     if (request.method !== "POST" || !new URL(request.url).pathname.endsWith("/chat/completions"))
       return new Response("not found", { status: 404 });
-    const body = (await request.json()) as { messages: Array<{ role: string; tool_call_id?: string }> };
-    const callId = "fixture-remote-launch";
-    const code =
-      'console.log(await remote.launch({repoPath: "/fixture/repo", prompt: "Inspect the repository with execute and say REMOTE_FIXTURE_FINISHED_ON_OWNER"}))';
-    const response = body.messages.some((m) => m.role === "tool" && m.tool_call_id === callId)
-      ? { role: "assistant", content: "LOCAL_FIXTURE_ACK" }
-      : {
-          role: "assistant",
-          tool_calls: [
-            {
-              index: 0,
-              id: callId,
-              type: "function",
-              function: {
-                name: "execute",
-                arguments: JSON.stringify({ code }),
-              },
-            },
-          ],
-        };
+    const body = (await request.json()) as {
+      messages: Array<{ role: string; tool_call_id?: string; content?: unknown }>;
+    };
+    const response = placementReply(body.messages);
     localCalls++;
     const event = (delta: object, finish_reason: string | null) => ({
       id: "local-fixture",
@@ -91,8 +79,20 @@ const state = () =>
       }
     >;
   };
-const launchRpc = (cwd = home) => {
-  const child = spawn(die, ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model", "--no-session"], {
+const launchRepo = join(home, "launch-source");
+mkdirSync(launchRepo, { recursive: true });
+writeFileSync(join(launchRepo, "README.md"), "isolated placement source\n");
+for (const args of [
+  ["init", "-q"],
+  ["add", "README.md"],
+  ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base"],
+]) {
+  const result = spawnSync("git", ["-C", launchRepo, ...args], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+}
+assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
+const launchRpc = (cwd = launchRepo) => {
+  const child = spawn(die, ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model"], {
     cwd,
     env: { ...process.env, HOME: home, DIE_CODING_AGENT_DIR: agentDir },
     stdio: ["pipe", "pipe", "pipe"],
@@ -125,7 +125,20 @@ const launchRpc = (cwd = home) => {
     while (!predicate()) {
       if (child.exitCode !== null) throw new Error("RPC exited while " + label + ": " + stderr);
       if (Date.now() - start > limit)
-        throw new Error("RPC timeout " + label + "; stderr=" + stderr + "; events=" + JSON.stringify(events.slice(-8)));
+        throw new Error(
+          "RPC timeout " +
+            label +
+            "; stderr=" +
+            stderr +
+            "; events=" +
+            JSON.stringify(
+              events
+                .filter(
+                  (e) => e.type === "tool_execution_end" || (e.type === "message_end" && e.message?.role !== "system"),
+                )
+                .slice(-6),
+            ),
+        );
       await Bun.sleep(40);
     }
   };
@@ -155,7 +168,7 @@ try {
   const cli = launchRpc();
   cli.send("/remote connect fixture-owner /usr/local/bin/die");
   await cli.wait(() => existsSync(statePath) && !!state().connection, "human /remote connect");
-  cli.send("Launch the already-configured remote repo with the remote execute helper");
+  cli.send("REMOTE_FIXTURE_BASIC");
   await cli.wait(() => Object.keys(state().tasks).length === 1, "agent remote execute launch", 30000);
   const [taskId] = Object.keys(state().tasks);
   assert(taskId);
@@ -207,7 +220,7 @@ try {
     row.event.message.content?.some((c: any) => c.type === "text" && c.text === "REMOTE_FIXTURE_FINISHED_ON_OWNER");
   assert(state().tasks[taskId]!.events.some(hasFinal), "actual owner final assistant message absent");
   // A native question is created by the real execute/questions API, not a fixture ledger.
-  reconnect.send("/remote launch /fixture/repo REMOTE_FIXTURE_QUESTION");
+  reconnect.send("REMOTE_FIXTURE_QUESTION");
   await reconnect.wait(() => Object.keys(state().tasks).length === 2, "native question task accepted");
   const questionId = Object.keys(state().tasks).find((id) => id !== taskId)!;
   await reconnect.wait(
@@ -273,15 +286,42 @@ try {
   let repoRpc = launchRpc(localRepo);
   const nextTask = async (command: string) => {
     const previous = new Set(Object.keys(state().tasks));
+    let pendingId: string | undefined;
     repoRpc.send(command);
+    if (command === "REMOTE_FIXTURE_REPO_SAFE") {
+      const proof = join(home, "placement-REMOTE_FIXTURE_REPO_SAFE.json");
+      await repoRpc.wait(() => existsSync(proof), "normal placement source preflight", 30000);
+      const pending = JSON.parse(readFileSync(proof, "utf8")).launch;
+      pendingId = pending.id;
+      assert.equal(pending.sourceApproval.state, "waiting");
+      assert(pending.sourceApproval.questionId, "untracked inclusion did not ask a human question");
+      assert.equal(Object.keys(state().tasks).length, previous.size, "unapproved task dispatched before human answer");
+      await repoRpc.wait(() => repoRpc.events.some((e) => e.type === "agent_end"), "source parent yielded");
+      repoRpc.send("/questions answer " + pending.sourceApproval.questionId + " Omit untracked files");
+      repoRpc.send(command + " PLACEMENT_RETRY");
+    }
     await repoRpc.wait(
       () => Object.keys(state().tasks).some((id) => !previous.has(id)),
       "repository/capability launch accepted",
       30000,
     );
-    return Object.keys(state().tasks).find((id) => !previous.has(id))!;
+    const id = Object.keys(state().tasks).find((id) => !previous.has(id))!;
+    const proof = join(home, "placement-" + command + ".json");
+    await repoRpc.wait(
+      () =>
+        existsSync(proof) &&
+        JSON.parse(readFileSync(proof, "utf8")).launch.id === "ssh:" + Buffer.from(id).toString("base64url"),
+      "stable returned normal job ID",
+    );
+    if (pendingId)
+      assert.equal(
+        JSON.parse(readFileSync(proof, "utf8")).launch.id,
+        pendingId,
+        "source retry changed reserved job identity",
+      );
+    return id;
   };
-  const safeId = await nextTask("/remote launch-repo REMOTE_FIXTURE_REPO_SAFE");
+  const safeId = await nextTask("REMOTE_FIXTURE_REPO_SAFE");
   await repoRpc.wait(
     () => state().tasks[safeId]!.repository?.status === "applied",
     "automatic safe repo return",
@@ -290,8 +330,10 @@ try {
   assert.equal(readFileSync(join(localRepo, "tracked.txt"), "utf8"), "remote tracked edit\n");
   assert.equal(git("ls-files", "--stage"), originalIndex, "local staged index was changed");
   assert(
-    repoRpc.events.some((e) => e.type === "extension_ui_request" && e.method === "confirm"),
-    "untracked transfer was not asked before omission",
+    JSON.parse(readFileSync(join(home, "placement-REMOTE_FIXTURE_REPO_SAFE.json"), "utf8")).launch.id.startsWith(
+      "ssh:",
+    ),
+    "normal source approval retry did not preserve a tracked SSH job",
   );
   assert.equal(
     ssh("test ! -e " + state().tasks[safeId]!.repoPath + "/on-demand.txt").status,
@@ -299,7 +341,7 @@ try {
     "unapproved untracked content transferred",
   );
   writeFileSync(join(localRepo, "tracked.txt"), "second input\n");
-  const conflictId = await nextTask("/remote launch-repo REMOTE_FIXTURE_REPO_CONFLICT");
+  const conflictId = await nextTask("REMOTE_FIXTURE_REPO_CONFLICT");
   writeFileSync(join(localRepo, "tracked.txt"), "LOCAL_CONFLICT_PRESERVED\n");
   await repoRpc.wait(
     () => state().tasks[conflictId]!.repository?.status === "review",
@@ -312,7 +354,7 @@ try {
     readFileSync(state().tasks[conflictId]!.repository!.artifact, "utf8").includes("remote tracked edit"),
     "review artifact missing remote patch bytes",
   );
-  const capabilityId = await nextTask("/remote launch-repo REMOTE_FIXTURE_CAPABILITY");
+  const capabilityId = await nextTask("REMOTE_FIXTURE_CAPABILITY");
   await repoRpc.wait(
     () => !!state().tasks[capabilityId]!.task?.capabilityNeeds?.length,
     "missing capability grant surfaced",
@@ -338,13 +380,13 @@ try {
     capabilityText.includes("LOCAL_ON_DEMAND_CONTENT") && capabilityText.includes("LOCAL_REVIEW_SKILL"),
     "local capability tool/skill results missing from offline transcript",
   );
-  const cancelledId = await nextTask("/remote launch /fixture/repo REMOTE_FIXTURE_CANCEL");
+  const cancelledId = await nextTask("REMOTE_FIXTURE_CANCEL");
   await repoRpc.wait(
     () => ssh("test -e /tmp/fixture-cancel-started").status === 0,
     "native background job started",
     30000,
   );
-  repoRpc.send("/remote cancel " + cancelledId);
+  repoRpc.send("REMOTE_FIXTURE_CANCEL PLACEMENT_STOP");
   await repoRpc.wait(
     () => state().tasks[cancelledId]!.task?.state === "cancelled",
     "native remote cancellation reached stopped checkpoint",
@@ -420,7 +462,7 @@ try {
   assert.equal(localCalls, callsBeforeOffline, "offline transcript must not call a provider");
   offline.child.kill("SIGKILL");
   console.log(
-    "PASS normal CLI RPC agent remote execute helper, human connect, pinned SSH, independent owner, automatic reconnect sync, native question answer/continuation, server-offline paged human transcript, dirty repo safe/index-preserving return and conflict review, explicit offline-waiting file/tool/skill grants, native cancellation, cached text artifacts; events=" +
+    "PASS normal CLI RPC normal subagent target, human connect, pinned SSH, independent owner, automatic reconnect sync, native question answer/continuation, server-offline paged human transcript, dirty repo safe/index-preserving return and conflict review, explicit offline-waiting file/tool/skill grants, native cancellation, cached text artifacts; events=" +
       state().tasks[taskId]!.cursor,
   );
 } finally {

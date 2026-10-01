@@ -111,9 +111,20 @@ function snapshotFile(root: string, name: string): Buffer {
 }
 export interface RepositorySnapshot {
   version: 1;
+  /** Local-only origin and transfer-byte digest for trusted preapproved snapshots. */
+  localRoot?: string;
+  bundleSha256?: string;
   base: string;
   head: string;
   snapshot: string;
+  /** Original source identity is provenance only; the transported baseline has no history. */
+  source?: {
+    kind: "current-tracked" | "commit";
+    commit: string;
+    requestedRef?: string;
+    history: "orphan-baseline";
+    matchesCurrent: boolean;
+  };
   selectedUntracked: string[];
   omittedUntracked: string[];
   /** Bundle contains an orphan snapshot, not local commit history. */
@@ -125,13 +136,23 @@ export function captureRepository(
   repo: string,
   artifactDir: string,
   approvedUntracked: string[] = [],
+  options: { baseRef?: string } = {},
 ): RepositorySnapshot {
   const root = realpathSync(repo);
   const dir = resolve(artifactDir);
   if (dir === root || (relative(root, dir).split("/")[0] !== ".." && !isAbsolute(relative(root, dir))))
     throw Error("artifacts must be outside repository");
   assertRoot(root);
-  const entries = names(git(root, ["ls-tree", "-rlz", "HEAD"]));
+  const sourceCommit = text(
+    git(root, ["rev-parse", "--verify", "--end-of-options", (options.baseRef ?? "HEAD") + "^{commit}"]),
+  );
+  if (options.baseRef !== undefined && approvedUntracked.length)
+    throw Error("Explicit baseRef snapshots cannot include current untracked files");
+  const entries = names(git(root, ["ls-tree", "-rlz", sourceCommit]));
+  for (const row of options.baseRef === undefined ? [] : entries) {
+    if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]!))
+      throw Error("Source commit contains unsupported or credential/config paths");
+  }
   const baseBytes = entries.reduce((sum, row) => sum + Number(row.split("\t")[0]!.trim().split(/\s+/).at(-1)), 0);
   const currentBytes = names(git(root, ["ls-files", "-z"])).reduce((sum, name) => {
     try {
@@ -160,7 +181,17 @@ export function captureRepository(
   const checkout = join(dir, "snapshot-checkout");
   // Local alternates avoid copying reachable history. The later orphan bundle contains only task input.
   git(dir, ["clone", "--shared", "-q", root, checkout]);
-  const diff = git(root, ["diff", "--no-ext-diff", "--no-textconv", "--binary", "--full-index", "HEAD", "--"]);
+  git(checkout, ["checkout", "--detach", sourceCommit]);
+  const sourceDiff = git(root, [
+    "diff",
+    "--no-ext-diff",
+    "--no-textconv",
+    "--binary",
+    "--full-index",
+    sourceCommit,
+    "--",
+  ]);
+  const diff = options.baseRef === undefined ? sourceDiff : Buffer.alloc(0);
   if (diff.length) git(checkout, ["apply", "--index", "--binary", "-"], diff);
   for (const p of selected) {
     const target = join(checkout, p);
@@ -171,6 +202,10 @@ export function captureRepository(
   }
   // Transfer only an orphan snapshot, never reachable local history or deleted secrets.
   const tree = text(git(checkout, ["write-tree"]));
+  for (const row of names(git(checkout, ["ls-tree", "-rlz", tree]))) {
+    if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]!))
+      throw Error("Snapshot tree contains unsupported or credential/config paths");
+  }
   const commit = text(
     git(checkout, [
       "-c",
@@ -195,9 +230,18 @@ export function captureRepository(
   const manifest = join(dir, "manifest.json");
   const snapshot: RepositorySnapshot = {
     version: 1,
+    localRoot: root,
+    bundleSha256: hash(readFileSync(bundle)),
     base,
     head: text(git(root, ["rev-parse", "HEAD"])),
     snapshot: text(git(checkout, ["rev-parse", "HEAD"])),
+    source: {
+      kind: options.baseRef === undefined ? "current-tracked" : "commit",
+      commit: sourceCommit,
+      requestedRef: options.baseRef,
+      history: "orphan-baseline",
+      matchesCurrent: options.baseRef === undefined || !sourceDiff.length,
+    },
     selectedUntracked: selected,
     omittedUntracked: available.filter((p) => !selected.includes(p)),
     bundle,
@@ -301,6 +345,8 @@ export function integrateRepositoryResult(
     return review("local repository state unsupported or unreadable; inspect before return");
   }
   if (!patch.length) return { status: "no_changes", artifact: result.patch };
+  if (manifest.source?.matchesCurrent === false)
+    return review("requested source commit differs from captured local tracked state; manual integration required");
   const summary = text(git(root, ["apply", "--summary", "-"], patch, true));
   if (summary) return review("creation, deletion or mode change requires review");
   const stats = git(root, ["apply", "--numstat", "-z", "-"], patch, true);

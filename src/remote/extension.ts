@@ -3,6 +3,7 @@ import { registerRemoteRuntime } from "./runtime";
 import { RemoteClient } from "./client";
 import { repositoryUntracked } from "./untracked-preview";
 import { publishRemoteJobObservations } from "./job-observations";
+import { publishRemoteQuestionState } from "./question-bridge";
 import { createRemoteOperations, summarizeRemoteTask } from "./operations";
 import { launchRepository, retryRepository, repositoryPreparations } from "./repository-wire";
 import { grantCapabilities, revokeCapability, localCapabilityGrants } from "./services";
@@ -46,6 +47,14 @@ export function parseRemoteLaunch(input: string): { repoPath: string; prompt: st
   return { repoPath, prompt };
 }
 
+/** Owned tasks use jobs and /questions; the legacy inbox is diagnostics for unowned work only. */
+export function remoteInboxState(state: import("./client").RemoteState): import("./client").RemoteState {
+  return {
+    ...state,
+    tasks: Object.fromEntries(Object.entries(state.tasks).filter(([, task]) => !task.jobSessionFile)),
+  };
+}
+
 /** Only human commands connect, answer questions, approve untracked files, or grant local authority. */
 export default function remoteExtension(pi: ExtensionAPI, client = new RemoteClient()): void {
   registerRemoteRuntime(pi);
@@ -58,6 +67,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   const publish = (result: unknown, kind?: string) =>
     pi.sendMessage({ customType: "die-remote", content: renderHuman(result, kind), display: true });
   let sessionFile: string | undefined;
+  let questionContext: import("../questions/service").QuestionContext | undefined;
   let sessionGeneration = 0;
   let inFlight = false,
     closed = false,
@@ -108,8 +118,16 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       if (!current()) return;
       const state = await client.status();
       if (!current()) return;
+      if (questionContext) {
+        try {
+          await publishRemoteQuestionState(questionContext, state);
+        } catch {
+          /* /questions reports ledger errors. */
+        }
+        if (!current()) return;
+      }
       if (picking) {
-        const changed = menuSnapshot !== undefined && menuSnapshot !== menuFingerprint(state);
+        const changed = menuSnapshot !== undefined && menuSnapshot !== menuFingerprint(remoteInboxState(state));
         ui?.setStatus?.(
           "die-remote",
           "remote: menu snapshot " +
@@ -121,7 +139,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       const baseline = initialSnapshot;
       initialSnapshot = false;
       publishRemoteJobObservations(state, sessionFile);
-      const status = remoteStatus(state, !!syncError);
+      const status = remoteStatus(remoteInboxState(state), !!syncError);
       if (lastStatus !== status) {
         ui?.setStatus?.("die-remote", status);
         lastStatus = status;
@@ -168,6 +186,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
   pi.on("session_start", async (_event, ctx) => {
     sessionGeneration++;
     sessionFile = ctx?.sessionManager?.getSessionFile?.();
+    questionContext = ctx;
     closed = false;
     startRefresh();
     ui = ctx.hasUI ? ctx.ui : undefined;
@@ -190,6 +209,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     sessionGeneration++;
     closed = true;
     sessionFile = undefined;
+    questionContext = undefined;
     if (timer) clearInterval(timer);
     timer = undefined;
     ui?.setStatus?.("die-remote", undefined);
@@ -362,7 +382,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     picking = true;
     try {
       while (true) {
-        const state = await client.status();
+        const state = remoteInboxState(await client.status());
         menuSnapshot = menuFingerprint(state);
         ui?.setStatus?.("die-remote", "remote: menu snapshot · Refresh from remote to reload");
         const choice = await pick(ctx, "Remote · inbox", inboxItems(state));

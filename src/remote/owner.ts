@@ -1,3 +1,4 @@
+import { validatePlacement, remoteChildEnvironment } from "./placement";
 import { listRemoteArtifacts, getRemoteArtifact } from "./artifacts";
 import { repositoryRequest } from "./repository-wire";
 import { OwnerCapabilityMailbox } from "./capability-runtime";
@@ -21,7 +22,7 @@ import {
 import { homedir, platform } from "node:os";
 import { dirname, isAbsolute, join } from "node:path";
 import pkg from "../../package.json" with { type: "json" };
-import { loadProfiles } from "../tasks/subagent-profiles";
+import { loadProfiles, THINKING_LEVELS, type ThinkingLevel } from "../tasks/subagent-profiles";
 import type { RemoteRequest, RemoteResponse, RemoteTask } from "./protocol";
 
 const root = join(process.env.HOME ?? homedir(), ".die", "remote-owner");
@@ -131,7 +132,11 @@ async function locked<T>(fn: () => Promise<T>): Promise<T> {
 
 function intent(req: Extract<RemoteRequest, { op: "launch" }>, profile: RemoteTask["profile"]) {
   return createHash("sha256")
-    .update(JSON.stringify([req.repoPath, req.prompt, profile]))
+    .update(
+      JSON.stringify(
+        req.placement ? [req.repoPath, req.prompt, profile, req.placement] : [req.repoPath, req.prompt, profile],
+      ),
+    )
     .digest("hex");
 }
 const MAX_JOURNAL = 32 * 1024 * 1024;
@@ -185,6 +190,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
       const normal = (await loadProfiles(join(process.env.HOME ?? homedir(), ".die", "subagents.json"))).normal;
       return {
         protocol: 1,
+        taskPlacement: 1,
         ownerId: identity.ownerId,
         epoch: identity.epoch,
         version: pkg.version,
@@ -274,6 +280,13 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           return error("journal_gap", String(e));
         }
       }
+      if (req.placement !== undefined) {
+        try {
+          validatePlacement(req.placement);
+        } catch (e) {
+          return error("invalid_placement", String(e));
+        }
+      }
       const active = readdirSync(tasks).filter((id) => {
         try {
           return ["accepted", "running"].includes(saved(id).task.state);
@@ -287,9 +300,10 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         return error("invalid_repo", "repoPath must be an existing absolute Git repository");
       if (typeof req.prompt !== "string" || !req.prompt.trim() || Buffer.byteLength(req.prompt) > 128 * 1024)
         return error("invalid_prompt", "Nonempty prompt up to 128 KiB required");
-      const normal = (await loadProfiles(join(process.env.HOME ?? homedir(), ".die", "subagents.json"))).normal;
-      if (!normal.model && !req.model)
-        return error("missing_model", "Configure remote normal profile model in ~/.die/subagents.json");
+      const name = req.placement?.profile ?? "normal";
+      const configured = (await loadProfiles(join(process.env.HOME ?? homedir(), ".die", "subagents.json")))[name];
+      if (!configured.model && !req.model)
+        return error("missing_model", "Configure remote " + name + " profile model in ~/.die/subagents.json");
       if (
         req.model !== undefined &&
         (typeof req.model !== "string" || !/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:/-]+$/.test(req.model))
@@ -297,14 +311,13 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         return error("invalid_model", "Expected provider/model override");
       if (
         req.thinking !== undefined &&
-        (typeof req.thinking !== "string" ||
-          !["off", "minimal", "low", "medium", "high", "xhigh"].includes(req.thinking))
+        (typeof req.thinking !== "string" || !THINKING_LEVELS.includes(req.thinking as ThinkingLevel))
       )
         return error("invalid_thinking", "Invalid thinking override");
       const profile = {
-        name: "normal" as const,
-        model: req.model ?? normal.model!,
-        thinking: req.thinking ?? normal.thinking ?? "off",
+        name,
+        model: req.model ?? configured.model!,
+        thinking: req.thinking ?? configured.thinking ?? "off",
       };
       const hash = intent(req, profile);
 
@@ -313,7 +326,16 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         const prepared = join(taskDirectory, "repository-ready.json");
         if (!existsSync(prepared) || read<{ checkout: string }>(prepared).checkout !== req.repoPath)
           return error("repository_incomplete", "Existing task directory is not the verified prepared checkout");
-      } else mkdirSync(taskDirectory, { mode: 0o700 });
+        if (req.placement) {
+          const preparedWorkspace = read<{ workspace?: unknown }>(prepared).workspace;
+          if (JSON.stringify(preparedWorkspace) !== JSON.stringify(req.placement.workspace))
+            return error("workspace_conflict", "Prepared snapshot does not match requested workspace isolation");
+        }
+      } else {
+        if (req.placement)
+          return error("repository_required", "Placed tasks require a verified isolated repository snapshot");
+        mkdirSync(taskDirectory, { mode: 0o700 });
+      }
       const tasksFd = openSync(tasks, "r");
       try {
         fsyncSync(tasksFd);
@@ -322,7 +344,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
       }
       const value: Saved = {
         intent: hash,
-        task: { taskId: req.taskId, state: "accepted", repoPath: req.repoPath, profile },
+        task: { taskId: req.taskId, state: "accepted", repoPath: req.repoPath, profile, placement: req.placement },
         boot: identity.boot,
         overrides: { model: req.model, thinking: req.thinking },
       };
@@ -332,7 +354,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         const child = spawn(executable, ["--remote-owner", req.taskId], {
           detached: true,
           stdio: "ignore",
-          env: process.env,
+          env: remoteChildEnvironment(process.env, req.placement),
         });
         // spawn may emit an asynchronous error; check the immediate pid before acknowledging.
         child.on("error", () => {
@@ -566,7 +588,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     child = spawn(executable, args, {
       cwd: initial.task.repoPath,
       stdio: ["pipe", "pipe", "pipe"],
-      env: { ...process.env, DIE_REMOTE_RUNTIME_STATE: runtimePath },
+      env: { ...remoteChildEnvironment(process.env, initial.task.placement), DIE_REMOTE_RUNTIME_STATE: runtimePath },
     });
     let buffer = "";
     let ended = false;

@@ -42,6 +42,8 @@ From: [PR hygiene](quality/pr-hygiene-final.md), [first-launch defaults](packagi
 
 Look at what already does job before adding another way. Favor product progress over exhaustive defenses. Fix observed problems. Accept known gaps. No speculative guards, fallbacks, state, or test matrices. Extra defenses can cause their own complexity bugs. Keep essential security and data-loss protections. No need to bulletproof every edge. Solve current request, not every future plan.
 
+Another backend for the same job need not become another user workflow. Reuse the model that owns the work. Keep real differences clear. A different job may need a different flow. See [remote task placement](remote-workspaces/task-placement-design.md).
+
 From: [product-first correction](prompts/product-first-engineering.md), [worktree design](t3/t3-worktree-design.md), [resource triage](resources/memory-resource-judgment.md), [CI deduplication](ci/ci-trigger-dedup.md), [source CLI fixtures](live/macos-live-ci-source-cli.md).
 
 ## 8. Make it human. Show what is real

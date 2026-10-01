@@ -1,3 +1,4 @@
+import { validatePlacement, type RemotePlacement } from "./placement";
 import { serviceRemoteTask } from "./services";
 import { Database } from "bun:sqlite";
 import { randomUUID } from "node:crypto";
@@ -8,6 +9,7 @@ import { join } from "node:path";
 
 export type Hello = {
   protocol: 1;
+  taskPlacement?: 1;
   ownerId: string;
   epoch: string;
   version: string;
@@ -20,6 +22,8 @@ export type RemoteTask = {
   taskId: string;
   /** Immutable parent session attribution, committed with launch intent before SSH. */
   jobSessionFile?: string;
+  /** Immutable parent branch anchor for late human-question projection. Never sent to the server. */
+  jobQuestionOwner?: { sessionId: string; branchId: string };
   /** Monotonic local launch order keeps jobs cursors stable when random IDs sort earlier. */
   jobSequence?: number;
   host: string;
@@ -27,7 +31,9 @@ export type RemoteTask = {
   epoch: string;
   repoPath: string;
   prompt: string;
+  title?: string;
   overrides?: { model?: string; thinking?: string };
+  placement?: RemotePlacement;
   cursor: number;
   transcriptComplete?: boolean;
   events: RemoteEvent[];
@@ -61,7 +67,8 @@ function object(value: unknown): Record<string, unknown> {
   if (typeof result.error === "string" && typeof result.code === "string") throw new Error(result.error);
   return result;
 }
-function hello(value: unknown, requireModel = true): Hello {
+// Connection authorizes a place, not a role. Destination validates the selected profile at launch.
+function hello(value: unknown, requireModel = false): Hello {
   const h = object(value),
     p = object(h.profile);
   if (requireModel && !p.model)
@@ -70,6 +77,7 @@ function hello(value: unknown, requireModel = true): Hello {
     );
   if (
     h.protocol !== 1 ||
+    (h.taskPlacement !== undefined && h.taskPlacement !== 1) ||
     typeof h.ownerId !== "string" ||
     !h.ownerId ||
     typeof h.epoch !== "string" ||
@@ -210,8 +218,14 @@ export class RemoteClient {
     taskId?: string,
     overrides?: { model?: string; thinking?: string },
     sessionFile?: string,
+    placement?: RemotePlacement,
+    jobQuestionOwner?: { sessionId: string; branchId: string },
+    title?: string,
   ): Promise<RemoteTask> {
     return this.exclusive(async () => {
+      if (placement !== undefined) validatePlacement(placement);
+      if (jobQuestionOwner && (!sessionFile || !jobQuestionOwner.sessionId || !jobQuestionOwner.branchId))
+        throw new Error("Parent question ownership requires a durable session and branch");
       if (
         !repoPath.startsWith("/") ||
         !prompt.trim() ||
@@ -252,6 +266,9 @@ export class RemoteClient {
           task.epoch !== c.hello.epoch ||
           task.repoPath !== repoPath ||
           task.prompt !== prompt ||
+          task.title !== title ||
+          JSON.stringify(task.jobQuestionOwner) !== JSON.stringify(jobQuestionOwner) ||
+          JSON.stringify(task.placement) !== JSON.stringify(placement) ||
           JSON.stringify(task.overrides ?? {}) !== JSON.stringify(overrides ?? {})
         )
           throw new Error("Task ID is pinned to a different owner or intent; refusal to retry");
@@ -263,6 +280,7 @@ export class RemoteClient {
           ...(sessionFile
             ? {
                 jobSessionFile: sessionFile,
+                jobQuestionOwner,
                 jobSequence:
                   Object.values(state.tasks).reduce((max, task) => Math.max(max, task.jobSequence ?? 0), 0) + 1,
               }
@@ -272,7 +290,9 @@ export class RemoteClient {
           epoch: c.hello.epoch,
           repoPath,
           prompt,
+          title,
           overrides,
+          placement,
           cursor: 0,
           events: [],
           outcome: "unknown",
@@ -285,6 +305,8 @@ export class RemoteClient {
         const current = hello(await this.transport(c.host, c.diePath, { op: "hello" }), false);
         if (current.ownerId !== task.ownerId || current.epoch !== task.epoch)
           throw new Error("Remote owner changed; launch outcome unknown, no retry");
+        if (placement && current.taskPlacement !== 1)
+          throw new Error("Destination does not support task placement; no launch sent and no role fallback");
         const reply = object(
           await this.transport(c.host, c.diePath, {
             op: "launch",
@@ -294,9 +316,16 @@ export class RemoteClient {
             repoPath,
             prompt,
             ...overrides,
+            placement: task.placement,
           }),
         );
         if (object(reply.task).taskId !== taskId) throw new Error("Invalid launch response task ID");
+        if (
+          placement &&
+          (object(object(reply.task).profile).name !== placement.profile ||
+            JSON.stringify(object(reply.task).placement) !== JSON.stringify(placement))
+        )
+          throw new Error("Destination returned a different task role or placement; outcome unknown, do not relaunch");
         delete task.lastError;
         task.task = object(reply.task) as Task;
         task.outcome = "accepted";

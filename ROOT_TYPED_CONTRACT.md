@@ -1,0 +1,11 @@
+# Root corrective contract before implementation
+
+Parent explicitly requires typed presentation/session facets; raw SSH TTY/tmux is not accepted as sole product. task_659e1c05 stopped exit143; its lasting tree is reference only for owner identity and repository source, not accepted frontend/PTY lifecycle. task_cf62e5c1 stop requested; do not reuse wrong raw-TTY proof. No code from either integrated.
+
+Shared types are src/remote/root-contract.ts. Root create is idempotent requestId+sessionId+immutable intent and role root/depth0; ownerId/epoch pin uses existing authorized SSH identity. Server owns one installed Die/Pi session; no local provider/tool/coordinator. Root must remain active when presentation disconnects. Store/daemon implementation may reuse sound existing child owner transport principles, but not finite child launch semantics.
+
+Typed prompt/abort/question/jobs/close commands have durable command IDs and exact intent binding. Save before dispatch, reconcile after reply loss, dispatching crash stays unknown, never automatic duplicate. Observation is ordered paged events plus authoritative session snapshot. Ordinary terminal presenter consumes these facets; /questions and /ps use normal selectable controls, not a remote inbox or copy-ID loop. Empty local provider settings allowed. Local default unchanged.
+
+Root backend worker owns root server/protocol validation/store/runtime and tests; frontend worker owns typed SSH transport/client/presenter/root-cli and source capture/return client glue. Lead owns src/cli.ts wiring and src/agent/extension.ts root runtime registration plus combined proof. root-contract.ts shared changes must be called out in handoff. Fixture worker restarts only after this contract implemented.
+
+Root source uses current tracked snapshot by default, explicitly human-selected untracked paths only, requested source/isolation reported honestly. Backend can reuse repositoryRequest in root-owned directory; export only after confirmed successful close. Client integration uses original pinned baseline with safe review fallback. Explicit remote existing repo must be labeled as such, no fake current-source parity. Model is destination configured default, explicit supported override; role remains root.
