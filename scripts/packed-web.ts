@@ -55,13 +55,15 @@ async function identity(root: string, source: string) {
     inputs[file] = (await installed.exists()) ? hash(await installed.bytes()) : "absent";
   }
   // npm lifecycle/step plumbing and PATH are invocation metadata, not payload
-  // configuration. Tool versions are checked separately. Hash other inherited
+  // configuration. GitHub command-file paths (including artifact reporting)
+  // roll over per step; they are not web inputs. Tool versions are checked
+  // separately. Hash other inherited
   // variables without writing their potentially secret values to the receipt.
   const environment = Object.fromEntries(
     Object.entries(process.env)
       .filter(
         ([key]) =>
-          !/^(npm_(lifecycle_(event|script)$|package_(json|name|version)$|execpath$|node_execpath$|command$|config_(user_agent|local_prefix)$)|_$|SHLVL$|PWD$|OLDPWD$|INIT_CWD$|DIE_T3_SOURCE$|PATH$|GITHUB_(ACTION|ENV|OUTPUT|STEP_SUMMARY|STATE)$)/.test(
+          !/^(npm_(lifecycle_(event|script)$|package_(json|name|version)$|execpath$|node_execpath$|command$|config_(user_agent|local_prefix)$)|_$|SHLVL$|PWD$|OLDPWD$|INIT_CWD$|DIE_T3_SOURCE$|PATH$|GITHUB_(ACTION|ARTIFACTS(_LIST)?|ENV|OUTPUT|PATH|STEP_SUMMARY|STATE)$)/.test(
             key,
           ),
       )

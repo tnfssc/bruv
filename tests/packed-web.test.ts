@@ -247,6 +247,40 @@ test("GitHub shell-step identity is metadata for same-run reuse", async () => {
   }
 });
 
+test.each(["GITHUB_PATH", "GITHUB_ARTIFACTS", "GITHUB_ARTIFACTS_LIST"])(
+  "GitHub %s command-file rollover preserves same-run packed identity",
+  async (variable) => {
+    const old = process.env[variable];
+    const prefix = variable === "GITHUB_PATH" ? "add_path" : variable.slice(7).toLowerCase();
+    process.env[variable] = "/home/runner/work/_temp/_runner_file_commands/" + prefix + "_producer";
+    try {
+      const f = await fixture();
+      const key = await packedWebInputKey(f.root);
+      process.env[variable] = "/home/runner/work/_temp/_runner_file_commands/" + prefix + "_release_target";
+      expect(await verifyPackedWeb(f.root)).toBeTruthy();
+      expect(await packedWebInputKey(f.root)).toBe(key);
+    } finally {
+      if (old === undefined) delete process.env[variable];
+      else process.env[variable] = old;
+    }
+  },
+);
+
+test("GitHub build context is still guarded, not all GITHUB variables are metadata", async () => {
+  const old = process.env.GITHUB_REF;
+  process.env.GITHUB_REF = "refs/heads/develop";
+  try {
+    const f = await fixture();
+    const key = await packedWebInputKey(f.root);
+    process.env.GITHUB_REF = "refs/tags/v0.15.15";
+    expect(await packedWebInputKey(f.root)).not.toBe(key);
+    await expect(verifyPackedWeb(f.root)).rejects.toThrow("build inputs changed");
+  } finally {
+    if (old === undefined) delete process.env.GITHUB_REF;
+    else process.env.GITHUB_REF = old;
+  }
+});
+
 test("internal directory symlinks are recorded without following directories or omitting target inputs", async () => {
   const f = await fixture(true);
   expect(await verifyPackedWeb(f.root)).toBeTruthy();

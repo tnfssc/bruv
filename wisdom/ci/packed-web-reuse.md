@@ -4,7 +4,7 @@ Ordinary executable changes still run full Linux validation and device-free macO
 
 ## Two distinct receipts
 
-The existing packed-web receipt binds a trusted fresh producer to its current workspace, source checkout, installed dependencies and inherited environment, with a short lifetime. It is **not** cross-run authority. GITHUB_ACTION is shell-step metadata, excluded for same-run release target reuse; actual build configuration remains guarded.
+The existing packed-web receipt binds a trusted fresh producer to its current workspace, source checkout, installed dependencies and inherited environment, with a short lifetime. It is **not** cross-run authority. GITHUB_ACTION and runner command-file paths are shell-step metadata, excluded for same-run release target reuse; actual build configuration remains guarded. See [Release command-file drift](release-packed-web-command-files.md) for the runner2.337.0 cause and regression proof.
 
 The opt-in CI owner (bun --no-env-file scripts/ci-web.ts key|build) has a separate exact content key. It owns the source pin (including upstream lockfile), canonical patch, bootstrap, producer/verifier, chunk check, pure-Bun packer, tool configuration, actual Bun/Node/pnpm/compiler/libc/OS versions and platform/architecture. CLI sources do not enter this key. Root package.json/bun.lock are included because the chunk checker imports es-module-lexer from that locked graph. Changed upstream locks require a new source pin or canonical patch. Producer inputs changing during preparation/build fail rather than publish ambiguous evidence.
 
