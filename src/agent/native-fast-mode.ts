@@ -86,16 +86,6 @@ export async function withStandardProviderTier<T>(_owner: object, run: () => Pro
 // Exact model aliases evidenced by the provider documentation/source snapshot.
 // Do not broaden these with family-prefix matching: similarly named mini/Spark
 // models do not inherit native fast-mode support.
-export const OPENAI_FAST_MODELS = new Set(["gpt-6-astra", "gpt-5.6-sol", "gpt-5.3-codex"]);
-export const CODEX_FAST_MODELS = new Set([
-  "gpt-6-astra",
-  "gpt-5.6-sol",
-  "gpt-5.6-terra",
-  "gpt-5.6-luna",
-  "gpt-5.5",
-  "gpt-5.4",
-]);
-
 type Setting = {
   version: 1;
   sessionId: string;
@@ -203,8 +193,6 @@ export function nativeFastSupport(
         supported: false,
         reason: "OpenAI native fast mode requires the official openai Responses endpoint and auth surface.",
       };
-    if (!OPENAI_FAST_MODELS.has(model.id))
-      return { supported: false, reason: `OpenAI native fast mode is not documented for model alias "${model.id}".` };
     return { supported: true, tier: "fast", surface: "api" };
   }
   if (model.provider === "openai-codex") {
@@ -213,8 +201,6 @@ export function nativeFastSupport(
         supported: false,
         reason: "Codex native fast mode requires ChatGPT sign-in on the official Codex endpoint.",
       };
-    if (!CODEX_FAST_MODELS.has(model.id))
-      return { supported: false, reason: `Codex native fast mode is not evidenced for model alias "${model.id}".` };
     // The official Codex client maps its user-facing Fast tier to this legacy
     // wire value. OpenAI documents priority and fast as equivalent.
     return { supported: true, tier: "priority", surface: "codex" };
