@@ -1,7 +1,7 @@
 import { clearRemoteJobEvents, remoteJobEvents } from "../src/remote/job-events";
 import { createRemoteOperations } from "../src/remote/operations";
 import { expect, test } from "bun:test";
-import remoteExtension, { parseRemoteLaunch, renderRemote } from "../src/remote/extension";
+import remoteExtension, { parseRemoteLaunch, renderRemote, remoteInboxState } from "../src/remote/extension";
 import { RemoteAttention, remoteStatus, renderHuman } from "../src/remote/human-rendering";
 
 test("remote uses execute bridge while human output persists in conversation", async () => {
@@ -711,7 +711,7 @@ test("remote refresher projects only this parent's jobs and does not duplicate t
   }
 });
 
-test("session-owned completion stays in jobs while human footer retains actionable state", async () => {
+test("session-owned completion and questions stay in normal jobs/questions, not remote footer", async () => {
   const handlers = new Map<string, Function>();
   const messages: any[] = [];
   const statuses: any[] = [];
@@ -752,8 +752,7 @@ test("session-owned completion stays in jobs while human footer retains actionab
     );
     await Bun.sleep(10);
     expect(messages).toEqual([]);
-    expect(statuses.at(-1)[1]).toContain("1 question(s)");
-    expect(statuses.at(-1)[1]).toBe("remote: 1 question(s)");
+    expect(statuses.some(([, value]) => String(value).includes("question(s)"))).toBe(false);
     expect(
       remoteJobEvents(session)
         .snapshot()
@@ -1353,4 +1352,16 @@ test("changed-owner accepted task loses local grant without wrong-owner dispatch
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test("owned SSH tasks use normal questions and jobs, never a second routine remote inbox", () => {
+  const owned: any = {
+    taskId: "normal",
+    jobSessionFile: "/parent/session.jsonl",
+    task: { state: "running", questions: [{ id: "q", status: "pending" }] },
+  };
+  const legacy: any = { taskId: "legacy", task: { state: "running" } };
+  const state: any = { tasks: { normal: owned, legacy }, connection: { host: "pinned" } };
+  expect(remoteInboxState(state).tasks).toEqual({ legacy });
+  expect(state.tasks.normal).toBe(owned); // diagnostic status remains intact
 });
