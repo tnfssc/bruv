@@ -466,7 +466,7 @@ describe("manual command safeguards", () => {
     }
   });
 
-  test("refuses active batches and opaque native checkpoints without durable mutation", async () => {
+  test("refuses active batches and invalid opaque native checkpoints without durable mutation", async () => {
     const active = SessionManager.inMemory();
     completed(active, "a");
     const h1 = harness(active, false);
@@ -479,7 +479,7 @@ describe("manual command safeguards", () => {
     const h2 = harness(native);
     await h2.command.handler("", h2.ctx);
     expect(h2.appended).toEqual([]);
-    expect(h2.notices[0]![0]).toContain("opaque native Codex");
+    expect(h2.notices[0]![0]).toContain("unsupported or damaged opaque native checkpoint");
   });
 });
 

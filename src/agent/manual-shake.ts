@@ -22,7 +22,11 @@ import {
 } from "../history/shake-record";
 import { recordDiagnostic } from "../diagnostics.js";
 import { getInstructionContinuitySession } from "./instruction-continuity";
-import { withReadOnlyCompactionContext } from "./native-compaction";
+import {
+  adaptNativeCompactionMessages,
+  isNativeCodexCompactionDetails,
+  withReadOnlyCompactionContext,
+} from "./native-compaction";
 
 /** Keep a durable manual context projection per branch. Session JSONL stays append-only. */
 export const SHAKE_REFUSED_ACTIVE_WORK = "request_blocked";
@@ -162,7 +166,29 @@ function toolResultId(message: AgentMessage): string | undefined {
   const id = (message as AgentMessage & { toolCallId?: unknown }).toolCallId;
   return validId(id) ? id : undefined;
 }
+// The transport shim is a checkpoint, never ordinary assistant reasoning.
+function isNativeShim(message: AgentMessage): boolean {
+  if (message.role !== "assistant" || !Array.isArray(message.content)) return false;
+  return message.content.some((part) => {
+    if (!isRecord(part) || part.type !== "thinking" || typeof part.thinkingSignature !== "string") return false;
+    try {
+      return JSON.parse(part.thinkingSignature)?.type === "compaction";
+    } catch {
+      return false;
+    }
+  });
+}
+
+// SDK active entries contain the newest checkpoint at index zero, its kept
+// tail, then post-checkpoint entries. Retained older compactions emit nothing.
+function activeShakeEntries(entries: readonly SessionEntry[]): SessionEntry[] {
+  return entries.filter(
+    (entry, index) =>
+      !(entry.type === "compaction" && index > 0) && !(entry.type === "message" && isNativeShim(entry.message)),
+  );
+}
 function removableAssistantBlockCount(message: AgentMessage): number {
+  if (isNativeShim(message)) return 0;
   if (message.role !== "assistant" || !Array.isArray(message.content)) return 0;
   return message.content.filter((part) => isRecord(part) && (part.type === "thinking" || part.type === "toolCall"))
     .length;
@@ -174,6 +200,7 @@ export function buildShakePlan(
   sessionId: string,
   prior = latestShakeRecord(entries, sessionId),
 ): ShakePlan {
+  entries = activeShakeEntries(entries);
   const activeEntryIds = new Set(entries.map((entry) => entry.id));
   // Compaction removes old entries from active context. Do not carry their IDs forever.
   const assistantIds = new Set((prior?.assistantEntryIds ?? []).filter((id) => activeEntryIds.has(id)));
@@ -297,11 +324,21 @@ function projection(
   incoming: readonly AgentMessage[],
   entries: readonly SessionEntry[],
   record: ShakeRecord,
-): { messages: AgentMessage[]; removedAssistantBlocks: number; removedToolResults: number } {
+): {
+  messages: AgentMessage[];
+  removedAssistantBlocks: number;
+  removedToolResults: number;
+  assistantEntryIds: string[];
+  toolResultEntryIds: string[];
+} {
+  entries = activeShakeEntries(entries);
   const source: SourceMessage[] = entries.flatMap((entry) =>
     sessionEntryToContextMessages(entry).map((message) => ({ entry, message, json: JSON.stringify(message) })),
   );
   const matches = exactOccurrenceMatches(incoming, source);
+  for (const [sourceIndex, incomingIndex] of matches) {
+    if (isNativeShim(incoming[incomingIndex]!)) matches.delete(sourceIndex);
+  }
   const incomingToSource = new Map([...matches].map(([sourceIndex, incomingIndex]) => [incomingIndex, sourceIndex]));
   const selectedAssistants = new Set(record.assistantEntryIds);
   const selectedResults = new Set(record.toolResultEntryIds);
@@ -365,7 +402,13 @@ function projection(
     });
     return content.length ? [{ ...message, content } as AgentMessage] : [];
   });
-  return { messages, removedAssistantBlocks, removedToolResults };
+  return {
+    messages,
+    removedAssistantBlocks,
+    removedToolResults,
+    assistantEntryIds: [...selectedAssistants].filter((id) => eligibleEntries.has(id)),
+    toolResultEntryIds: [...selectedResults].filter((id) => eligibleEntries.has(id)),
+  };
 }
 
 /** Project the transformed messages that arrived. Keep unclear protocol batches
@@ -388,17 +431,78 @@ export function shouldShakeBeforeCompaction(before: readonly AgentMessage[], aft
 export function estimateContext(messages: readonly AgentMessage[]): number {
   return messages.reduce((total, message) => total + estimateTokens(message), 0);
 }
-function hasOpaqueNativeCheckpoint(entries: readonly SessionEntry[]): boolean {
-  return entries.some(
-    (entry) => entry.type === "compaction" && isRecord(entry.details) && entry.details.strategy === "codex-native",
-  );
+function hasActiveNativeCheckpoint(entries: readonly SessionEntry[]): boolean {
+  const entry = entries[0];
+  return entry?.type === "compaction" && isRecord(entry.details) && entry.details.strategy === "codex-native";
+}
+
+/** Validate the checkpoint boundary before a local preview or durable change.
+ * Either the SDK summary or the exact native shim plus runtime-state survives. */
+function assertNativeShakeContext(
+  entries: readonly SessionEntry[],
+  ctx: ExtensionContext,
+  incoming?: readonly AgentMessage[],
+): void {
+  const checkpoint = entries[0];
+  if (
+    checkpoint?.type !== "compaction" ||
+    !isRecord(checkpoint.details) ||
+    checkpoint.details.strategy !== "codex-native"
+  )
+    return;
+  const d = checkpoint.details;
+  if (!isNativeCodexCompactionDetails(d) || ctx.model?.api !== d.api || ctx.model?.provider !== d.provider) {
+    throw new Error(
+      "Shake refused: unsupported or damaged opaque native checkpoint, or incompatible API/provider; no context was changed.",
+    );
+  }
+  if (!incoming) return;
+  const summary = sessionEntryToContextMessages(checkpoint).filter((message) => message.role === "compactionSummary");
+  const adapted = adaptNativeCompactionMessages(summary, ctx);
+  const count = (message: AgentMessage) => incoming.filter((m) => JSON.stringify(m) === JSON.stringify(message)).length;
+  const rawIntact = summary.every((m) => count(m) === 1);
+  const shimIntact = adapted.every((m) => count(m) === 1);
+  // Mixed or duplicated representations are ambiguous; don't save a marker.
+  if (
+    rawIntact === shimIntact ||
+    incoming.filter(isNativeShim).length !== (rawIntact ? 0 : 1) ||
+    (rawIntact ? adapted : summary).some((m) => count(m) !== 0)
+  ) {
+    throw new Error(
+      "Shake refused: native checkpoint or runtime state changed or became ambiguous in context hooks; no context was changed.",
+    );
+  }
+}
+
+function matchedShakeRecord(
+  entries: readonly SessionEntry[],
+  sessionId: string,
+  record: ShakeRecord,
+  projected: { assistantEntryIds: string[]; toolResultEntryIds: string[] },
+): ShakeRecord {
+  const prior = latestShakeRecord(entries, sessionId);
+  const active = new Set(activeShakeEntries(entries).map((entry) => entry.id));
+  return {
+    ...record,
+    assistantEntryIds: [
+      ...new Set([...(prior?.assistantEntryIds ?? []).filter((id) => active.has(id)), ...projected.assistantEntryIds]),
+    ],
+    toolResultEntryIds: [
+      ...new Set([
+        ...(prior?.toolResultEntryIds ?? []).filter((id) => active.has(id)),
+        ...projected.toolResultEntryIds,
+      ]),
+    ],
+  };
 }
 
 async function currentTransformedContext(
   ctx: ExtensionContext,
   entries: readonly SessionEntry[],
 ): Promise<AgentMessage[]> {
-  const raw = entries.flatMap(sessionEntryToContextMessages);
+  // Use the SDK canonical projection (including context edits), not a flattened
+  // journal or older retained compaction summaries.
+  const raw = ctx.sessionManager.buildSessionProjection().messages;
   const session = getInstructionContinuitySession(ctx.sessionManager as object);
   const agent = session?.agent;
   const transform = agent?.transformContext;
@@ -528,7 +632,7 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
       signal: ctx.signal,
     };
     const entries = snapshot.manager.buildContextEntries();
-    if (hasOpaqueNativeCheckpoint(entries) || event.signal?.aborted) return;
+    if (hasActiveNativeCheckpoint(entries) || event.signal?.aborted) return;
     let plan: ShakePlan;
     let beforeMessages: AgentMessage[];
     try {
@@ -553,7 +657,7 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
     if (!shouldShakeBeforeCompaction(beforeMessages, projected.messages)) return;
     const priorLeaf = ctx.sessionManager.getLeafId();
     try {
-      pi.appendEntry(MANUAL_SHAKE_ENTRY, plan.record);
+      pi.appendEntry(MANUAL_SHAKE_ENTRY, matchedShakeRecord(entries, snapshot.sessionId, plan.record, projected));
     } catch {
       restoreLeaf(ctx.sessionManager, priorLeaf);
       return;
@@ -591,7 +695,7 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
     const prior = latestShakeRecord(ctx.sessionManager.getBranch(), sessionId);
     if (!prior) return;
     const activeEntries = ctx.sessionManager.buildContextEntries();
-    const active = new Set(activeEntries.map((entry) => entry.id));
+    const active = new Set(activeShakeEntries(activeEntries).map((entry) => entry.id));
     const record: ShakeRecord = {
       ...prior,
       sessionId,
@@ -647,21 +751,20 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
         return;
       }
       const entries = snapshot.manager.buildContextEntries();
-      if (hasOpaqueNativeCheckpoint(entries)) {
-        shakeDiagnostic(ctx, SHAKE_REFUSED_OPAQUE_CHECKPOINT, "blocked", operationId);
-        ctx.ui.notify(
-          "Shake refused: this branch contains opaque native Codex checkpoint state. Branch before the checkpoint or continue without shaking; die will not flatten or relabel it.",
-          "error",
-        );
-        return;
-      }
       let plan: ShakePlan;
       let beforeMessages: AgentMessage[];
       try {
         plan = buildShakePlan(entries, snapshot.sessionId);
+        assertNativeShakeContext(entries, ctx);
         beforeMessages = await currentTransformedContext(ctx, entries);
+        assertNativeShakeContext(entries, ctx, beforeMessages);
       } catch (error) {
-        shakeDiagnostic(ctx, SHAKE_REFUSED_CONTEXT_FAILURE, "failed", operationId);
+        shakeDiagnostic(
+          ctx,
+          hasActiveNativeCheckpoint(entries) ? SHAKE_REFUSED_OPAQUE_CHECKPOINT : SHAKE_REFUSED_CONTEXT_FAILURE,
+          "failed",
+          operationId,
+        );
         ctx.ui.notify(error instanceof Error ? error.message : String(error), "error");
         return;
       }
@@ -705,7 +808,8 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
       if (!projected.removedAssistantBlocks && !projected.removedToolResults) {
         shakeDiagnostic(ctx, SHAKE_NOOP, "noop", operationId, 0);
         ctx.ui.notify(
-          "Shake made no changes: active transformed context has no unambiguous newly eligible completed execution trace.",
+          "Shake made no changes: active transformed context has no unambiguous newly eligible completed execution trace." +
+            (hasActiveNativeCheckpoint(entries) ? " Native checkpoint remains unchanged." : ""),
           "info",
         );
         return;
@@ -714,7 +818,8 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
       const after = estimateContext(projected.messages);
       const priorLeaf = ctx.sessionManager.getLeafId();
       try {
-        pi.appendEntry(MANUAL_SHAKE_ENTRY, plan.record);
+        // Only persist newly proven matches, never IDs of excluded hook output.
+        pi.appendEntry(MANUAL_SHAKE_ENTRY, matchedShakeRecord(entries, snapshot.sessionId, plan.record, projected));
       } catch {
         restoreLeaf(ctx.sessionManager, priorLeaf);
         shakeDiagnostic(ctx, SHAKE_CHECKPOINT_PERSIST_FAILED, "failed", operationId);

@@ -497,12 +497,12 @@ function nativeAssistant(message: AgentMessage, d: NativeCodexCompactionDetails,
   } as AgentMessage;
 }
 function nativeEntriesInContext(ctx: ExtensionContext): CompactionEntry[] {
-  return ctx.sessionManager
-    .buildContextEntries()
-    .filter(
-      (e): e is CompactionEntry =>
-        e.type === "compaction" && isRecord(e.details) && e.details.strategy === "codex-native",
-    );
+  // SDK projection emits only the newest checkpoint at index zero. Older
+  // compactions in its kept range are archived entries, not replay items.
+  const entry = ctx.sessionManager.buildContextEntries()[0];
+  return entry?.type === "compaction" && isRecord(entry.details) && entry.details.strategy === "codex-native"
+    ? [entry]
+    : [];
 }
 function nativeDetailsInContext(ctx: ExtensionContext): NativeCodexCompactionDetails[] {
   return nativeEntriesInContext(ctx).flatMap((e) => (isNativeCodexCompactionDetails(e.details) ? [e.details] : []));
@@ -510,7 +510,10 @@ function nativeDetailsInContext(ctx: ExtensionContext): NativeCodexCompactionDet
 /** Bridge to the pinned pi-ai converter. thinkingSignature carries internal replay
  * data. It does not mean pi-ai officially supports compaction items. */
 export function adaptNativeCompactionMessages(messages: AgentMessage[], ctx: ExtensionContext): AgentMessage[] {
-  const compactions = ctx.sessionManager.buildContextEntries().filter((e) => e.type === "compaction");
+  const compactions = ctx.sessionManager
+    .buildContextEntries()
+    .slice(0, 1)
+    .filter((e) => e.type === "compaction");
   let index = 0;
   return messages.flatMap((message) => {
     if (message.role !== "compactionSummary") return message;
