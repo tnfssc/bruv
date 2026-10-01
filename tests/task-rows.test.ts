@@ -137,15 +137,97 @@ test("live typed lifecycle snapshots update launch row even when completion noti
   live = [row("one", "failed")];
   expect(plain(parent.render(100))).toEqual(["✗ Run tests — failed"]);
 });
-test("reopen reconstructs canonical owners solely from persisted typed details", () => {
-  restores.push(installSdkTaskRows(theme));
-  const launchRows = JSON.parse(JSON.stringify([row()]));
-  const terminalRows = JSON.parse(JSON.stringify([row("one", "failed", { exitCode: 1 })]));
+for (const installFirst of [true, false]) {
+  test(
+    "persisted task rows stay at launch when " + (installFirst ? "installed before build" : "built before install"),
+    () => {
+      if (installFirst) restores.push(installSdkTaskRows(theme));
+      const launchRows = JSON.parse(JSON.stringify([row("one"), row("two"), row("three")]));
+      const terminalRows = JSON.parse(
+        JSON.stringify([row("one", "failed", { exitCode: 1 }), row("two", "completed"), row("three", "killed")]),
+      );
+      const root = new Container();
+      const parent = new Container();
+      root.addChild(parent);
+      parent.addChild(new Text("Before launch", 0, 0));
+      const launch = tool(launchRows);
+      parent.addChild(launch);
+      for (const [index, terminal] of terminalRows.entries()) {
+        parent.addChild(new Text("Reply " + (index + 1), 0, 0));
+        parent.addChild(notice([terminal]));
+      }
+      parent.addChild(notice(launchRows)); // Older replay must not undo terminal truth.
+      if (!installFirst) {
+        expect(plain(root.render(100))).toContain("✓ Start tests");
+        restores.push(installSdkTaskRows(theme));
+      }
+      const expected = [
+        "Before launch",
+        "✗ Run tests — exit 1",
+        "✓ Run tests",
+        "⊘ Run tests — cancelled",
+        "Reply 1",
+        "Reply 2",
+        "Reply 3",
+      ];
+      expect(plain(root.render(100))).toEqual(expected);
+      const wrapped = launch.render;
+      expect(plain(root.render(100))).toEqual(expected);
+      expect(launch.render).toBe(wrapped);
+      launch.setExpanded(true);
+      expect(plain(root.render(100))).toContain("LAUNCH OUTPUT");
+      (parent.children[3] as CustomMessageComponent).setExpanded(true);
+      expect(plain(root.render(100))).toContain("EXPANDED NOTICE EVIDENCE");
+      launch.setExpanded(false);
+      (parent.children[3] as CustomMessageComponent).setExpanded(false);
+      expect(plain(root.render(100))).toEqual(expected);
+    },
+  );
+}
+test("shutdown and reinstall use only the new session snapshot and restore SDK renders", () => {
+  const originalAdd = Container.prototype.addChild;
+  const originalRender = Container.prototype.render;
+  const originalCustomRender = CustomMessageComponent.prototype.render;
+  let oldReads = 0;
+  const stopOld = installSdkTaskRows(theme, () => {
+    oldReads++;
+    return [row("one", "failed", { title: "Old session", exitCode: 1 })];
+  });
+  restores.push(stopOld);
   const parent = new Container();
-  parent.addChild(tool(launchRows));
-  parent.addChild(notice(terminalRows));
-  parent.addChild(notice(launchRows));
-  expect(plain(parent.render(100))).toEqual(["✗ Run tests — exit 1"]);
+  const oldLaunch = tool([]);
+  const oldNotice = notice([row("one", "running", { title: "Old session" })]);
+  parent.addChild(oldLaunch);
+  parent.addChild(oldNotice);
+  expect(plain(parent.render(100))).toEqual(["✗ Old session — exit 1"]);
+  stopOld();
+  restores.pop();
+  expect(Container.prototype.addChild).toBe(originalAdd);
+  expect(Container.prototype.render).toBe(originalRender);
+  expect(oldLaunch.render).toBe(ToolExecutionComponent.prototype.render);
+  expect(oldNotice.render).toBe(originalCustomRender);
+  const readsAtShutdown = oldReads;
+  // Pi replaces transcript children during the uninstalled gap, then session_start installs.
+  parent.clear();
+  const newLaunch = tool([]);
+  const newNotice = notice([row("one", "running", { title: "New session" })]);
+  parent.addChild(newLaunch);
+  parent.addChild(newNotice);
+  expect(plain(parent.render(100))).toContain("✓ Start tests");
+  let live = [row("one", "running", { title: "New session" })];
+  const stopNew = installSdkTaskRows(theme, () => live);
+  restores.push(stopNew);
+  expect(plain(parent.render(100))).toEqual(["↗ New session"]);
+  live = [row("one", "completed", { title: "New session" })];
+  expect(plain(parent.render(100))).toEqual(["✓ New session"]);
+  expect(oldReads).toBe(readsAtShutdown);
+  stopNew();
+  restores.pop();
+  expect(Container.prototype.addChild).toBe(originalAdd);
+  expect(Container.prototype.render).toBe(originalRender);
+  expect(newLaunch.render).toBe(ToolExecutionComponent.prototype.render);
+  expect(newNotice.render).toBe(originalCustomRender);
+  expect(plain(parent.render(100))).toContain("✓ Start tests");
 });
 test("handoff remains readable beside canonical launch rows", () => {
   restores.push(installSdkTaskRows(theme));
@@ -210,11 +292,10 @@ test("real shell manager launches and terminal events retain the actual task ide
   }
 });
 
-test("canonical SDK launch preserves actual native image components and avoids a checked launch", () => {
+test("already-built SDK launch preserves actual native image components and avoids a checked launch", () => {
   const prior = getCapabilities();
   setCapabilities({ ...prior, images: "kitty" });
   try {
-    restores.push(installSdkTaskRows(theme));
     const parent = new Container();
     const component = tool([row()]);
     component.updateResult({
@@ -223,7 +304,9 @@ test("canonical SDK launch preserves actual native image components and avoids a
       isError: false,
     });
     parent.addChild(component);
+    restores.push(installSdkTaskRows(theme));
     const rendered = parent.render(100).join("\n");
+    expect(parent.render(100).join("\n")).toBe(rendered);
     expect((component as any).imageComponents).toHaveLength(1);
     expect(rendered).toContain("↗ Run tests");
     expect(rendered).toContain("\x1b_G");
@@ -232,12 +315,12 @@ test("canonical SDK launch preserves actual native image components and avoids a
     setCapabilities(prior);
   }
 });
-test("canonical SDK rows retain useful actual outer error after task launch", () => {
-  restores.push(installSdkTaskRows(theme));
+test("already-built SDK rows retain useful actual outer error after task launch", () => {
   const parent = new Container();
   const component = tool([row()]);
   (component as any).result.isError = true;
   parent.addChild(component);
+  restores.push(installSdkTaskRows(theme));
   expect(plain(parent.render(100))).toContain("↗ Run tests");
   expect(plain(parent.render(100))).toContain("LAUNCH OUTPUT");
 });
