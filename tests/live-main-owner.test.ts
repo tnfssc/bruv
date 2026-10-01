@@ -13,8 +13,9 @@ import { createAssistantMessageEventStream, getModel } from "@earendil-works/pi-
 import tasks from "../src/agent/extension";
 import { stripTerminalSequences } from "@earendil-works/pi-tui";
 import { registerExecuteTool } from "../src/typescript/extension";
+import * as execution from "../src/typescript/execution";
 import { bruvSystemPrompt } from "../src/prompts";
-import { beforeAll, describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, spyOn, test } from "bun:test";
 import { bindInstructionContinuitySession } from "../src/agent/instruction-continuity";
 import { acquireMainOwner, beforeOrdinaryPrompt, currentMainOwner } from "../src/live/main-owner";
 
@@ -57,7 +58,7 @@ function fixture() {
         description: "execute",
         parameters: {
           type: "object",
-          properties: { code: { type: "string" } },
+          properties: { label: { type: "string" }, code: { type: "string" } },
           required: ["code"],
           additionalProperties: false,
         },
@@ -123,6 +124,16 @@ describe("direct Live main owner", () => {
   test("owns actual Pi registered execute and final root/project/hook instructions without streaming text", async () => {
     const dir = await mkdtemp(join(tmpdir(), "bruv-live-owner-"));
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
+    const isolated = spyOn(execution, "executeIsolated").mockResolvedValue({
+      exitCode: 0,
+      stdout: "live visible",
+      stderr: "",
+      stdoutLost: false,
+      stderrLost: false,
+      timedOut: false,
+      cancelled: false,
+      images: [],
+    });
     try {
       const loader = new DefaultResourceLoader({
         cwd: dir,
@@ -184,9 +195,12 @@ describe("direct Live main owner", () => {
       expect(toolEvents.map((event) => event.type)).toEqual(["tool_execution_start", "tool_execution_end"]);
       expect(toolEvents[0].args).toEqual({});
       expect(toolEvents[1].isError).toBe(true);
-      const run = owner.orchestration.execute({ name: "execute", args: { code: "console.log('live visible')" } });
+      const run = owner.orchestration.execute({
+        name: "execute",
+        args: { label: "Print live marker", code: "console.log('live visible')" },
+      });
       await Promise.resolve();
-      expect(toolEvents[2].args).toEqual({ code: "console.log('live visible')" });
+      expect(toolEvents[2].args).toEqual({ label: "Print live marker", code: "console.log('live visible')" });
       let actualTool: any;
       registerExecuteTool(
         {
@@ -209,10 +223,13 @@ describe("direct Live main owner", () => {
         dir,
       );
       view.markExecutionStarted();
-      expect(view.render(120).map(stripTerminalSequences).join("\n")).toContain("live visible");
+      expect(view.render(120).map(stripTerminalSequences).join("\n")).toContain("Print live marker");
+      expect(view.render(120).map(stripTerminalSequences).join("\n")).not.toContain("console.log('live visible')");
       await run;
       view.updateResult({ ...toolEvents.at(-1).result, isError: toolEvents.at(-1).isError });
       view.setExpanded(true);
+      expect(view.render(120).map(stripTerminalSequences).join("\n")).toContain("console.log('live visible')");
+      expect(view.render(120).map(stripTerminalSequences).join("\n")).toContain("stdout:");
       expect(view.render(120).map(stripTerminalSequences).join("\n")).toContain("live visible");
       unsubscribe();
       await session.prompt("typed to active live owner");
@@ -257,6 +274,7 @@ describe("direct Live main owner", () => {
         ),
       ).toBe(true);
     } finally {
+      isolated.mockRestore();
       await session?.dispose();
       await rm(dir, { recursive: true, force: true });
     }
@@ -347,7 +365,10 @@ describe("direct Live main owner", () => {
     };
     (f.session._toolRegistry.get("execute") as any).execute = async () => output;
     const owner = await acquireMainOwner({} as any, f.ctx);
-    const run = owner.orchestration.execute({ name: "execute", args: { code: "await shell('long')" } });
+    const run = owner.orchestration.execute({
+      name: "execute",
+      args: { label: "Run long shell task", code: "await shell('long')" },
+    });
     await Promise.resolve();
     const start = f.events[0];
     expect(start.type).toBe("tool_execution_start");
@@ -364,13 +385,15 @@ describe("direct Live main owner", () => {
     const visible = (tool: ToolExecutionComponent) => tool.render(120).map(stripTerminalSequences).join("\n");
     const live = component(start.args);
     live.markExecutionStarted();
-    expect(visible(live)).toContain("await shell('long')");
+    expect(visible(live)).toContain("Run long shell task");
+    expect(visible(live)).not.toContain("await shell('long')");
     await run;
     const end = f.events.at(-1);
     live.updateResult({ ...end.result, isError: end.isError });
-    expect(visible(live)).toContain("await shell('long')");
-    expect(visible(live)).toContain("1 background");
+    expect(visible(live)).toContain("Run long shell task");
+    expect(visible(live)).not.toContain("await shell('long')");
     live.setExpanded(true);
+    expect(visible(live)).toContain("await shell('long')");
     expect(visible(live)).toContain("job_42");
     expect(visible(live)).toContain("/path/to/stdout.log");
     expect(visible(live).match(/large/g)?.length).toBe(2000);
@@ -384,13 +407,16 @@ describe("direct Live main owner", () => {
     const denied = fixture();
     denied.deny();
     const deniedOwner = await acquireMainOwner({} as any, denied.ctx);
-    await deniedOwner.orchestration.execute({ name: "execute", args: { code: "blocked()" } });
+    await deniedOwner.orchestration.execute({ name: "execute", args: { label: "Attempt blocked", code: "blocked()" } });
     const error = component(denied.events[0].args);
     error.markExecutionStarted();
     error.updateResult({ ...denied.events[1].result, isError: true });
-    expect(visible(error)).toContain("failed");
+    expect(visible(error)).toContain("permission denied");
+    expect(visible(error)).toContain("Attempt blocked");
+    expect(visible(error)).not.toContain("blocked()");
     error.setExpanded(true);
     expect(visible(error)).toContain("permission denied");
+    expect(visible(error)).toContain("blocked()");
     deniedOwner.close();
     await deniedOwner.released;
     owner.close();

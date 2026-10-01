@@ -63,3 +63,7 @@ After these captures, src/remote/root-presenter.ts acquired an uncommitted expan
 ## Parent final-scope correction
 
 Parent integration tree /home/tnfssc/.die/worktrees/bruv-compact-ui-release-20261001, branch ui/compact-actions-release, starts atbf47296. Original orchestrator tree and its concurrent uncommitted edit remain untouched. Parent reviewed that edit against published expanded RootTranscript and independently adopted the restoration in the clean tree, simplifying constant expressions. Expanded detail ordering/role captions remain as before; compact rows alone pair results by call identity. New feature tests had accidentally required changed expanded captions and ordering, contrary to the user’s deferred scope. Their expanded expectations now assert original ordering/raw result visibility; all compact outcome/privacy assertions remain. A new regression checks original assistant/tool argument/Action/result layout and hidden-message filtering.
+
+## Contract note from Mac CI follow-up
+
+Tool-call failures and caller cancellation remain rejected executions; a compact display change must not turn them into successful `isError` results. Emit launched task rows at launch so they remain visible if a later execution fails, and retain truthful failure output in the error. Live short labels are typed optional execute arguments, not prompt instructions; default rendering hides source until expansion.

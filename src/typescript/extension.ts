@@ -199,9 +199,11 @@ export function registerExecuteTool(
         if (result.images.length && ctx.model && !ctx.model.input.includes("image")) {
           text += "\n\nThis model can't take images. Images not sent.";
         }
-        // Pi 0.99.1 honors returned isError. Keep structured evidence in persisted
-        // failures too, including task launches captured before an outer error.
+        // Preserve Pi's rejected-tool contract for failures while retaining the
+        // complete formatted failure (including output and background task handoff).
+        // Launch rows were emitted at launch, so rejection cannot hide persisted work.
         const isError = result.exitCode !== 0 || result.timedOut || result.cancelled || Boolean(result.imageError);
+        if (isError) throw new Error(text);
         const { images, ...details } = result;
         return {
           content: [{ type: "text" as const, text }, ...images],
