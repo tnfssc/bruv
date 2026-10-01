@@ -7,6 +7,7 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
   type ModelSelectEvent,
+  type ThinkingLevelSelectEvent,
 } from "@earendil-works/pi-coding-agent";
 import {
   isExplicitRootCliModelSelection,
@@ -46,14 +47,16 @@ describe("last-used CLI model", () => {
     let handler: ((event: ModelSelectEvent, ctx: ExtensionContext) => Promise<void>) | undefined;
     const pi = {
       on(name: string, candidate: typeof handler) {
-        expect(name).toBe("model_select");
-        handler = candidate;
+        if (name === "model_select") handler = candidate;
       },
     } as unknown as ExtensionAPI;
     const writes: string[] = [];
     const settings: ModelDefaultSettings = {
       setDefaultModelAndProvider(provider, modelId) {
         writes.push(`${provider}/${modelId}`);
+      },
+      setDefaultThinkingLevel() {
+        throw new Error("model choices must not rewrite thinking defaults");
       },
       async flush() {},
       drainErrors: () => [],
@@ -74,7 +77,11 @@ describe("last-used CLI model", () => {
 
   test("automatic restores, command overrides, and children do not overwrite defaults", async () => {
     let handler: ((event: ModelSelectEvent, ctx: ExtensionContext) => Promise<void>) | undefined;
-    const pi = { on: (_name: string, candidate: typeof handler) => (handler = candidate) } as unknown as ExtensionAPI;
+    const pi = {
+      on: (name: string, candidate: typeof handler) => {
+        if (name === "model_select") handler = candidate;
+      },
+    } as unknown as ExtensionAPI;
     let root = true;
     let creates = 0;
     registerLastUsedCliModel(
@@ -103,10 +110,19 @@ test("saved choice survives a fresh settings instance without changing unrelated
     await mkdir(agentDir);
     await Bun.write(
       join(agentDir, "settings.json"),
-      JSON.stringify({ defaultProvider: "old", defaultModel: "old-model", theme: "light" }),
+      JSON.stringify({
+        defaultProvider: "old",
+        defaultModel: "old-model",
+        defaultThinkingLevel: "low",
+        theme: "light",
+      }),
     );
     let handler: ((event: ModelSelectEvent, ctx: ExtensionContext) => Promise<void>) | undefined;
-    const pi = { on: (_name: string, candidate: typeof handler) => (handler = candidate) } as unknown as ExtensionAPI;
+    const pi = {
+      on: (name: string, candidate: typeof handler) => {
+        if (name === "model_select") handler = candidate;
+      },
+    } as unknown as ExtensionAPI;
     registerLastUsedCliModel(
       pi,
       () => true,
@@ -116,8 +132,111 @@ test("saved choice survives a fresh settings instance without changing unrelated
     const fresh = SettingsManager.create(cwd, agentDir);
     expect(fresh.getDefaultProvider()).toBe("anthropic");
     expect(fresh.getDefaultModel()).toBe("claude-test");
+    expect(fresh.getDefaultThinkingLevel()).toBe("low");
     expect((await Bun.file(join(agentDir, "settings.json")).json()).theme).toBe("light");
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+function thinkingEvent(level: ThinkingLevelSelectEvent["level"] = "high"): ThinkingLevelSelectEvent {
+  return { type: "thinking_level_select", level, previousLevel: "medium" };
+}
+
+test("thinking picker and cycle choices survive new sessions, including off", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-thinking-default-"));
+  try {
+    const cwd = join(dir, "project");
+    const agentDir = join(dir, "agent");
+    await mkdir(cwd);
+    await mkdir(agentDir);
+    await Bun.write(
+      join(agentDir, "settings.json"),
+      JSON.stringify({
+        defaultProvider: "anthropic",
+        defaultModel: "claude-test",
+        defaultThinkingLevel: "medium",
+        theme: "light",
+      }),
+    );
+    let handler: ((event: ThinkingLevelSelectEvent, ctx: ExtensionContext) => Promise<void>) | undefined;
+    const pi = {
+      on(name: string, candidate: typeof handler) {
+        if (name === "thinking_level_select") handler = candidate;
+      },
+    } as unknown as ExtensionAPI;
+    registerLastUsedCliModel(
+      pi,
+      () => true,
+      () => SettingsManager.create(cwd, agentDir),
+    );
+    for (const level of ["high", "off"] as const) {
+      await handler!(thinkingEvent(level), context());
+      const fresh = SettingsManager.create(cwd, agentDir);
+      expect(fresh.getDefaultThinkingLevel()).toBe(level);
+      expect(fresh.getDefaultProvider()).toBe("anthropic");
+      expect(fresh.getDefaultModel()).toBe("claude-test");
+      expect((await Bun.file(join(agentDir, "settings.json")).json()).theme).toBe("light");
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("thinking events in automation and child sessions do not overwrite defaults", async () => {
+  let handler: ((event: ThinkingLevelSelectEvent, ctx: ExtensionContext) => Promise<void>) | undefined;
+  const pi = {
+    on(name: string, candidate: typeof handler) {
+      if (name === "thinking_level_select") handler = candidate;
+    },
+  } as unknown as ExtensionAPI;
+  let root = true;
+  let creates = 0;
+  registerLastUsedCliModel(
+    pi,
+    () => root,
+    () => {
+      creates++;
+      throw new Error("settings should not be opened");
+    },
+  );
+  for (const mode of ["print", "json", "rpc"] as const) await handler!(thinkingEvent(), context(mode));
+  root = false;
+  await handler!(thinkingEvent(), context());
+  expect(creates).toBe(0);
+});
+
+test("thinking persistence failures notify the user", async () => {
+  let handler: ((event: ThinkingLevelSelectEvent, ctx: ExtensionContext) => Promise<void>) | undefined;
+  const pi = {
+    on(name: string, candidate: typeof handler) {
+      if (name === "thinking_level_select") handler = candidate;
+    },
+  } as unknown as ExtensionAPI;
+  let flushed = false;
+  registerLastUsedCliModel(
+    pi,
+    () => true,
+    () => ({
+      setDefaultModelAndProvider() {},
+      setDefaultThinkingLevel(level) {
+        expect(level).toBe("high");
+      },
+      async flush() {
+        flushed = true;
+      },
+      drainErrors() {
+        expect(flushed).toBe(true);
+        return [{ error: new Error("write failed") }];
+      },
+    }),
+  );
+  const notifications: string[] = [];
+  const ctx = context();
+  ctx.ui.notify = (message, kind) => {
+    expect(kind).toBe("warning");
+    notifications.push(message);
+  };
+  await handler!(thinkingEvent(), ctx);
+  expect(notifications).toEqual(["Could not save default thinking level: write failed"]);
 });

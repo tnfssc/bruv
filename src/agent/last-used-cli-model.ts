@@ -3,10 +3,12 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
   type ModelSelectEvent,
+  type ThinkingLevelSelectEvent,
 } from "@earendil-works/pi-coding-agent";
 
 export interface ModelDefaultSettings {
   setDefaultModelAndProvider(provider: string, modelId: string): void;
+  setDefaultThinkingLevel(level: ThinkingLevelSelectEvent["level"]): void;
   flush(): Promise<void>;
   drainErrors(): Array<{ error: Error }>;
 }
@@ -47,6 +49,20 @@ export function registerLastUsedCliModel(
     const errors = settings.drainErrors();
     if (errors.length > 0) {
       ctx.ui.notify(`Could not save default model: ${errors[0]!.error.message}`, "warning");
+    }
+  });
+
+  // Pi emits this for the thinking picker and cycle key. Startup and history
+  // restoration assign session state directly, without emitting this event.
+  pi.on("thinking_level_select", async (event, ctx) => {
+    if (!isRootSession() || ctx.mode !== "tui") return;
+
+    const settings = createSettings(ctx.cwd);
+    settings.setDefaultThinkingLevel(event.level);
+    await settings.flush();
+    const errors = settings.drainErrors();
+    if (errors.length > 0) {
+      ctx.ui.notify(`Could not save default thinking level: ${errors[0]!.error.message}`, "warning");
     }
   });
 }
