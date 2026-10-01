@@ -1,5 +1,13 @@
 # Action labels and quieter task notices
 
+## October correction: quiet normal conversation
+
+The latest user correction supersedes September's executing/executed terminology. Normal execution is one short action label (source/command fallback when absent), unchanged after a successful tool result. RootTranscript pairs calls/results by toolCallId, not label text, and does not add a second successful result row or routine lifecycle progress. Labels describe attempts, never feature success. Local Pi call/result slots retain their existing shared-state composition; both presenters use the same small label helper.
+
+Errors, cancellation, timeout, unknown outcomes, handoff and output-loss notices remain visible. /ps task state, human-action/source-return safety notices, noninteractive execution payloads and explicit Ctrl-O source/output are not quieted. display:false remains hidden even in details; Ctrl-T thinking behavior is unchanged. No new settings, grouping, scheduling or provider/session/permission changes. Existing value8 already covers this distinction and actual rendered appearance; no value-set expansion is needed.
+
+Parent must approve the actual in-flight and settled appearance before any publication. Native proof uses the real existing task4a76ba31 web archive with direct Bun.build; that is native UI proof, not fresh web or hosted release packaging. No producer manifest is fabricated.
+
 ## Choice
 
 The user approved short execute action labels, human task names in completion rows, and neutral routine task checks. They will use the existing Ctrl+T toggle themselves. No thinking toggle, settings, grouping, live task-status design, scheduler timing, execution, or capture policy changed.

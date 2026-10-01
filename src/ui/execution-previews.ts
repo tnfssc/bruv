@@ -1,3 +1,4 @@
+import { actionLabel } from "./action-label";
 import { sshJobId } from "../remote/jobs";
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import {
@@ -47,9 +48,6 @@ function padded(component: Component, padding: number): Component {
 export interface ExecutePreviewState {
   resultVisible?: boolean;
 }
-function commandSummary(code: unknown): string {
-  return typeof code === "string" ? oneLine(code) : "";
-}
 
 export function executeInputPreview(
   code: unknown,
@@ -61,7 +59,7 @@ export function executeInputPreview(
   label?: unknown,
 ): Component {
   const source = typeof code === "string" ? code : "";
-  const summary = safeMetadata(label) || commandSummary(source);
+  const summary = actionLabel(label, source);
   return padded(
     component((width) => {
       // Pi vertically composes call and result slots. Suppress the call slot once
@@ -72,10 +70,7 @@ export function executeInputPreview(
           truncateToWidth(theme.fg("toolTitle", "Execute · TypeScript"), width),
           ...foldedRows(source, width, 0, 0, true).map((line) => theme.fg("muted", line)),
         ];
-      const line =
-        theme.fg("warning", "…") +
-        theme.fg("toolTitle", " executing") +
-        (summary ? theme.fg("muted", " · " + summary) : "");
+      const line = theme.fg("toolTitle", summary);
       return [truncateToWidth(line, width)];
     }),
     padding,
@@ -101,22 +96,16 @@ type ExecuteDetails = {
   backgroundJobs?: string[];
 };
 function statusSummary(
-  full: string,
   details: ExecuteDetails | undefined,
   isError: boolean,
 ): { icon: string; color: "success" | "error" | "warning"; text: string } {
-  const first = oneLine(full.split("\n")[0] ?? "");
-  // Structured result details, rather than prose intended for the model, are
-  // authoritative. This keeps cancelled and non-zero executions from ever
-  // acquiring a success treatment when their wording changes.
-  if (isError || details?.imageError || details?.timedOut || details?.cancelled)
-    return { icon: "✗", color: "error", text: "execute failed" };
-  if (details?.handoff) return { icon: "✓", color: "success", text: "executed" };
-  if (typeof details?.exitCode === "number") {
-    const ok = details.exitCode === 0;
-    return { icon: ok ? "✓" : "✗", color: ok ? "success" : "error", text: ok ? "executed" : "execute failed" };
-  }
-  return { icon: "?", color: "warning", text: first || "execute result" };
+  // Structured outcomes, not model-facing prose, determine failure notices.
+  if (details?.cancelled) return { icon: "✗", color: "error", text: "Cancelled" };
+  if (details?.timedOut) return { icon: "✗", color: "error", text: "Timed out" };
+  if (isError || details?.imageError || (typeof details?.exitCode === "number" && details.exitCode !== 0))
+    return { icon: "✗", color: "error", text: "Failed" };
+  if (details?.handoff || details?.exitCode === 0) return { icon: "", color: "success", text: "" };
+  return { icon: "?", color: "warning", text: "Outcome unknown" };
 }
 
 export function executeOutputPreview(
@@ -135,9 +124,9 @@ export function executeOutputPreview(
     .map((part) => part.text ?? "")
     .join("\n");
   const details = result.details as ExecuteDetails | undefined;
-  const status = statusSummary(full, details, isError);
+  const status = statusSummary(details, isError);
   const source = typeof code === "string" ? code : "";
-  const summary = safeMetadata(label) || commandSummary(code);
+  const summary = actionLabel(label, code);
   const imageCount = Array.isArray(details?.images)
     ? details.images.length
     : result.content.filter((part) => part.type === "image").length;
@@ -176,10 +165,9 @@ export function executeOutputPreview(
         return lines.map((line) => truncateToWidth(line, width));
       }
       const suffix = [diagnostic, summary].filter(Boolean).join(" · ");
-      const line =
-        theme.fg(status.color, status.icon) +
-        theme.fg("toolTitle", " " + status.text) +
-        (suffix ? theme.fg("muted", " · " + suffix) : "");
+      const line = status.text
+        ? theme.fg(status.color, status.icon + " " + status.text) + theme.fg("muted", " · " + suffix)
+        : theme.fg("toolTitle", suffix);
       return [truncateToWidth(line, width)];
     }),
     padding,

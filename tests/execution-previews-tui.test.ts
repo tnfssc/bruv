@@ -108,15 +108,16 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
     );
 
     const compact = await frameContaining("task_fixture finished");
-    expect(compact).toContain("✓ executed");
-    expect(compact).toContain("✗ execute failed");
+    expect(compact).toContain("// COMMAND_FIRST");
+    expect(compact).not.toMatch(/executing|executed|running|completed/i);
+    expect(compact).toContain("✗ Failed");
     expect(compact).toContain("✓ task_fixture finished");
     expect(compact).not.toContain("COMMAND_HIDDEN_5");
     expect(compact).not.toContain("OUTPUT_HIDDEN_5");
     expect(compact).not.toContain("FAILURE_OUTPUT_DETAIL");
     expect(compact).not.toContain("TASK_OUTPUT_DETAIL");
     // A settled tool is one combined renderer row, not separate call/result rows.
-    expect(compact.split("\n").filter((line) => line.includes("✓ executed")).length).toBe(1);
+    expect(compact.split("\n").filter((line) => line.includes("// COMMAND_FIRST")).length).toBe(1);
 
     expect((await tmux("resize-window", "-t", "preview", "-x", "38", "-y", "40")).code).toBe(0);
     await Bun.sleep(300);

@@ -21,10 +21,10 @@ const success = {
 
 test("collapsed execute call and settled result are deterministic single rows", () => {
   expect(executeInputPreview(code, false, theme, undefined, true).render(100)).toEqual([
-    '… executing · console.log("first"); console.log("last");',
+    'console.log("first"); console.log("last");',
   ]);
   expect(executeOutputPreview(success, false, false, theme, code).render(120)).toEqual([
-    '✓ executed · console.log("first"); console.log("last");',
+    'console.log("first"); console.log("last");',
   ]);
 });
 
@@ -81,8 +81,8 @@ test("execute previews apply configurable horizontal padding and deduct it from 
       expect(row.startsWith(" ".repeat(padding))).toBe(true);
       expect(visibleWidth(row)).toBeLessThanOrEqual(12);
     }
-    expect(stripTerminalSequences(call[0]).slice(padding)).toStartWith("…");
-    expect(stripTerminalSequences(result[0]).slice(padding)).toStartWith("✓");
+    expect(stripTerminalSequences(call[0]).slice(padding)).toStartWith("x");
+    expect(stripTerminalSequences(result[0]).slice(padding)).toStartWith("x");
   }
 });
 
@@ -117,8 +117,10 @@ test("execute tool wiring supplies configured padding to call and result rendere
     () => 2,
   );
   if (!tool) throw new Error("execute tool was not registered");
-  expect(tool.renderCall(context.args, theme, context).render(80)[0]).toStartWith("  … executing");
-  expect(tool.renderResult(success, { expanded: false }, theme, context).render(80)[0]).toStartWith("  ✓ executed");
+  expect(tool.renderCall(context.args, theme, context).render(80)[0]).toStartWith('  console.log("first");');
+  expect(tool.renderResult(success, { expanded: false }, theme, context).render(80)[0]).toStartWith(
+    '  console.log("first");',
+  );
 });
 
 test("expanded execute keeps source/result grouping inside configured padding", () => {
@@ -200,7 +202,7 @@ test("failed task and execute summaries retain failure status", () => {
     "throw new Error()",
   ).render(100);
   expect(failure).toHaveLength(1);
-  expect(failure[0]).toContain("✗ execute failed");
+  expect(failure[0]).toContain("✗ Failed");
 });
 
 test("execute completion labels use structured outcomes and never infer false success", () => {
@@ -214,9 +216,9 @@ test("execute completion labels use structured outcomes and never infer false su
     )
       .render(80)[0]
       .trimEnd();
-  expect(render({ exitCode: 0 })).toBe("✓ executed · work()");
+  expect(render({ exitCode: 0 })).toBe("work()");
   expect(render({ handoff: "continue later" })).toBe("↪ continue later");
-  expect(render({ exitCode: 9 })).toBe("✗ execute failed · work()");
+  expect(render({ exitCode: 9 })).toBe("✗ Failed · work()");
   expect(
     executeOutputPreview(
       { content: [{ type: "text", text: "Execution failed with exit code 17." }], details: { exitCode: 17 } },
@@ -227,11 +229,11 @@ test("execute completion labels use structured outcomes and never infer false su
     )
       .render(80)[0]
       .trimEnd(),
-  ).toBe('✗ execute failed · await shell("exit 17")');
-  expect(render({ exitCode: 0, cancelled: true })).toBe("✗ execute failed · work()");
-  expect(render({ exitCode: 0, timedOut: true })).toBe("✗ execute failed · work()");
-  expect(render(undefined)).toBe("? Execution completed. · work()");
-  expect(render({}, true)).toBe("✗ execute failed · work()");
+  ).toBe('✗ Failed · await shell("exit 17")');
+  expect(render({ exitCode: 0, cancelled: true })).toBe("✗ Cancelled · work()");
+  expect(render({ exitCode: 0, timedOut: true })).toBe("✗ Timed out · work()");
+  expect(render(undefined)).toBe("? Outcome unknown · work()");
+  expect(render({}, true)).toBe("✗ Failed · work()");
 });
 
 test("mixed completion batches preserve order and color each task outcome", () => {
@@ -420,7 +422,7 @@ test("execute error flag takes precedence over handoff success", () => {
     true,
     theme,
   ).render(80)[0];
-  expect(row).toStartWith("✗ execute failed");
+  expect(row).toStartWith("✗ Failed");
 });
 
 test("collapsed execute uses one compact truncation marker and hides output-file counts", () => {
@@ -429,26 +431,22 @@ test("collapsed execute uses one compact truncation marker and hides output-file
     details: { exitCode: 0, stdoutLost: true, stderrLost: true, stdoutPath: "/tmp/stdout", stderrPath: "/tmp/stderr" },
   };
   const rows = executeOutputPreview(result, false, false, theme, 'console.log("large")').render(160);
-  expect(rows.map((row) => stripTerminalSequences(row).trimEnd())).toEqual([
-    '✓ executed · truncated · console.log("large")',
-  ]);
+  expect(rows.map((row) => stripTerminalSequences(row).trimEnd())).toEqual(['truncated · console.log("large")']);
 });
 
-test("preparing and running execute calls share the compact executing label", () => {
+test("preparing and in-flight calls show the same compact action label", () => {
   for (const started of [false, true]) {
     expect(executeInputPreview('console.log("work")', false, theme, undefined, started).render(100)).toEqual([
-      '… executing · console.log("work")',
+      'console.log("work")',
     ]);
   }
 });
 
 test("action labels replace source only in collapsed previews and sanitize plain text", () => {
   const label = "\x1b[31mRead\x1b[0m\n task UI\u0007";
-  expect(executeInputPreview(code, false, theme, undefined, true, 0, label).render(100)).toEqual([
-    "… executing · Read task UI",
-  ]);
+  expect(executeInputPreview(code, false, theme, undefined, true, 0, label).render(100)).toEqual(["Read task UI"]);
   expect(executeOutputPreview(success, false, false, theme, code, undefined, 0, label).render(100)).toEqual([
-    "✓ executed · Read task UI",
+    "Read task UI",
   ]);
   for (const absent of [undefined, null, 12, " ", "\x1b[31m\x1b[0m"]) {
     expect(executeOutputPreview(success, false, false, theme, code, undefined, 0, absent).render(120)).toEqual(
@@ -463,10 +461,14 @@ test("action labels replace source only in collapsed previews and sanitize plain
 
 test("labels cannot hide failed, uncertain, truncated, or unsaved execution output", () => {
   const label = "Run checks " + "x".repeat(200);
-  for (const details of [{ exitCode: 1 }, { timedOut: true }, { cancelled: true }]) {
+  for (const [details, notice] of [
+    [{ exitCode: 1 }, "Failed"],
+    [{ timedOut: true }, "Timed out"],
+    [{ cancelled: true }, "Cancelled"],
+  ] as const) {
     expect(
       executeOutputPreview({ ...success, details }, false, false, theme, code, undefined, 0, label).render(40)[0],
-    ).toStartWith("✗ execute failed");
+    ).toStartWith("✗ " + notice);
   }
   expect(
     executeOutputPreview({ ...success, details: {} }, false, false, theme, code, undefined, 0, label).render(40)[0],
@@ -540,4 +542,27 @@ test("SSH fallback keeps actionable, cancelled and unknown states visible withou
   expect(row).toContain("needs human action");
   expect(row).toContain("SSH task unknown");
   expect(row).not.toContain("<success>");
+});
+
+test("default in-flight and settled action rows keep one label without lifecycle vocabulary", () => {
+  for (const [source, label, expected] of [
+    ["console.log(1)", undefined, "console.log(1)"],
+    ["console.log(1)", "Read output", "Read output"],
+    [undefined, undefined, "Action"],
+  ]) {
+    const state: ExecutePreviewState = {};
+    const call = executeInputPreview(source, false, theme, state, true, 0, label);
+    expect(call.render(100)).toEqual([expected as string]);
+    const result = executeOutputPreview(success, false, false, theme, source, state, 0, label);
+    expect([...call.render(100), ...result.render(100)]).toEqual([expected as string]);
+    expect(result.render(100).join("\n")).not.toMatch(/executing|executed|running|completed/i);
+    expect(result.render(100).join("\n")).not.toContain("stdout");
+  }
+  expect(executeOutputPreview({ content: [], details: { exitCode: 8 } }, false, false, theme).render(100)).toEqual([
+    "✗ Failed · Action",
+  ]);
+  expect(executeOutputPreview({ content: [] }, false, true, theme).render(100)).toEqual(["✗ Failed · Action"]);
+  expect(executeOutputPreview({ content: [] }, false, false, theme).render(100)).toEqual([
+    "? Outcome unknown · Action",
+  ]);
 });

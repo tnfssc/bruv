@@ -1,3 +1,4 @@
+import { actionLabel } from "../ui/action-label";
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import type { Theme } from "@earendil-works/pi-coding-agent";
@@ -260,10 +261,7 @@ function messageText(message: any, details = false): string {
     .map((c: any) => {
       if (c.type === "text") return safe(c.text);
       if (c.type === "thinking") return details ? safe(c.thinking ?? c.text ?? "") : "";
-      if (c.type === "toolCall")
-        return details
-          ? "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments))
-          : "Running " + safe(c.arguments?.label ?? c.name);
+      if (c.type === "toolCall" && details) return "Tool: " + safe(c.name) + " " + safe(JSON.stringify(c.arguments));
       return "";
     })
     .filter(Boolean)
@@ -290,14 +288,11 @@ export class RootTranscript {
       this.messages = this.messages.slice(-200);
       this.streaming = undefined;
     }
-    if (event.type === "tool_execution_start") this.progress = "Running " + safe(event.toolName);
-    if (event.type === "tool_execution_update") this.progress = "Running " + safe(event.toolName);
-    if (event.type === "tool_execution_end")
-      this.progress = "Tool " + safe(event.toolName) + (event.isError ? " failed" : " completed");
-    if (event.type === "agent_start") this.progress = "Assistant working";
-    if (event.type === "agent_end") this.progress = "Ready";
-    if (event.type === "task" || event.type === "job" || event.type === "question")
-      this.progress = safe(event.title ?? event.text ?? event.status ?? event.type);
+    // Routine lifecycle events are not conversation content. /ps retains task state.
+    if (event.type.startsWith("tool_execution_") || event.type === "agent_start" || event.type === "agent_end")
+      this.progress = event.type === "tool_execution_end" && event.isError ? "Action failed" : "";
+    if ((event.type === "task" || event.type === "job" || event.type === "question") && event.display !== false)
+      this.progress = safe(event.title ?? event.text ?? "");
   }
   toggleDetails() {
     this.details = !this.details;
@@ -305,36 +300,75 @@ export class RootTranscript {
   render(width: number): string[] {
     const lines: string[] = [];
     const messages = [...this.messages, ...(this.streaming ? [this.streaming] : [])];
-    const labels = new Map<string, string>();
-    for (const m of messages) {
-      if (!m || m.display === false || !Array.isArray(m.content)) continue;
-      for (const c of m.content)
-        if (c.type === "toolCall" && c.id) labels.set(c.id, safe(c.arguments?.label ?? c.name));
-    }
+    const calls = new Map<string, any>();
+    const results = new Map<string, any>();
     for (const m of messages) {
       if (!m || m.display === false) continue;
-      const role =
-        m.role === "user"
-          ? "You"
-          : m.role === "assistant"
-            ? "Assistant"
-            : m.role === "toolResult"
-              ? "Action"
-              : "Notice";
+      if (m.role === "toolResult" && m.toolCallId) results.set(m.toolCallId, m);
+      if (m.role === "assistant" && Array.isArray(m.content))
+        for (const c of m.content) if (c.type === "toolCall" && c.id) calls.set(c.id, c);
+    }
+    const append = (role: string, text: string, markdown = false) => {
+      if (!text) return;
       lines.push(...new Text(accent(role), 0, 0).render(width));
-      let text: string;
-      if (m.role === "toolResult") {
-        const name = labels.get(m.toolCallId) ?? safe(m.toolName ?? "tool");
-        const output = typeof m.content === "string" ? safe(m.content) : messageText(m, this.details);
-        text =
-          (m.isError ? name + " failed" : name + " completed") +
-          ((this.details || m.isError) && output ? "\n" + output : "");
-        if (this.details && m.toolCallId) text = "Tool call " + safe(m.toolCallId) + "\n" + text;
-      } else text = messageText(m, this.details);
-      lines.push(
-        ...(m.role === "assistant" ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width),
-        "",
+      lines.push(...(markdown ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width), "");
+    };
+    const action = (call: any, result?: any) => {
+      const args = call?.arguments;
+      const label = actionLabel(
+        args?.label,
+        args?.code ?? args?.command ?? args?.path,
+        safe(call?.name ?? result?.toolName) || "Action",
       );
+      const outcome = result?.details;
+      const failure = outcome?.cancelled
+        ? "Cancelled"
+        : outcome?.timedOut
+          ? "Timed out"
+          : result?.isError || outcome?.imageError || (typeof outcome?.exitCode === "number" && outcome.exitCode !== 0)
+            ? "Failed"
+            : "";
+      let text = (failure ? "✗ " + failure + " · " : "") + label;
+      if (this.details && call) text += "\n" + messageText({ content: [call] }, true);
+      if (result && (this.details || failure)) {
+        const output = messageText(result, this.details);
+        if (output) text += "\n" + output;
+      }
+      if (this.details && (call?.id ?? result?.toolCallId))
+        text = "Tool call " + safe(call?.id ?? result?.toolCallId) + "\n" + text;
+      append("Action", text);
+    };
+    const shownCalls = new Set<string>();
+    for (const m of messages) {
+      if (!m || m.display === false) continue;
+      if (m.role === "toolResult") {
+        // Pair by protocol identity, never by matching labels or source text.
+        if (!m.toolCallId || !calls.has(m.toolCallId)) action(undefined, m);
+        continue;
+      }
+      if (m.role === "assistant" && Array.isArray(m.content)) {
+        let content: any[] = [];
+        const flush = () => {
+          append("Assistant", messageText({ content }, this.details), true);
+          content = [];
+        };
+        for (const c of m.content) {
+          if (c.type !== "toolCall") {
+            content.push(c);
+            continue;
+          }
+          flush();
+          if (c.id && shownCalls.has(c.id)) continue;
+          if (c.id) shownCalls.add(c.id);
+          action(c, c.id ? results.get(c.id) : undefined);
+        }
+        flush();
+      } else
+        append(
+          m.role === "user" ? "You" : m.role === "assistant" ? "Assistant" : "Notice",
+          messageText(m, this.details),
+          m.role === "assistant",
+        );
     }
     return lines;
   }
