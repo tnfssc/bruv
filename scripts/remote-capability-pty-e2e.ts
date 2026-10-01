@@ -1,3 +1,4 @@
+import { placementReply } from "../tests/fixtures/remote-e2e/placement-parent";
 /** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -9,6 +10,9 @@ const container = process.env.FIXTURE_CONTAINER!;
 const home = homedir();
 const statePath = join(home, ".die/remote/state.json");
 const agentDir = process.env.DIE_CODING_AGENT_DIR!;
+process.env.GIT_CONFIG_GLOBAL = "/dev/null";
+process.env.GIT_CONFIG_SYSTEM = "/dev/null";
+process.env.GIT_CONFIG_NOSYSTEM = "1";
 let localCalls = 0;
 const rpcChildren: ReturnType<typeof spawn>[] = [];
 const provider = Bun.serve({
@@ -17,26 +21,10 @@ const provider = Bun.serve({
   async fetch(request) {
     if (request.method !== "POST" || !new URL(request.url).pathname.endsWith("/chat/completions"))
       return new Response("not found", { status: 404 });
-    const body = (await request.json()) as { messages: Array<{ role: string; tool_call_id?: string }> };
-    const callId = "fixture-remote-launch";
-    const code =
-      'console.log(await remote.launch({repoPath: "/fixture/repo", prompt: "Inspect the repository with execute and say REMOTE_FIXTURE_FINISHED_ON_OWNER"}))';
-    const response = body.messages.some((m) => m.role === "tool" && m.tool_call_id === callId)
-      ? { role: "assistant", content: "LOCAL_FIXTURE_ACK" }
-      : {
-          role: "assistant",
-          tool_calls: [
-            {
-              index: 0,
-              id: callId,
-              type: "function",
-              function: {
-                name: "execute",
-                arguments: JSON.stringify({ code }),
-              },
-            },
-          ],
-        };
+    const body = (await request.json()) as {
+      messages: Array<{ role: string; tool_call_id?: string; content?: unknown }>;
+    };
+    const response = placementReply(body.messages);
     localCalls++;
     const event = (delta: object, finish_reason: string | null) => ({
       id: "local-fixture",
@@ -98,12 +86,28 @@ const state = () =>
       }
     >;
   };
-const launchRpc = (cwd = home) => {
-  const child = spawn(die, ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model", "--no-session"], {
-    cwd,
-    env: { ...process.env, HOME: home, DIE_CODING_AGENT_DIR: agentDir },
-    stdio: ["pipe", "pipe", "pipe"],
-  });
+const launchRepo = join(home, "launch-source");
+mkdirSync(launchRepo, { recursive: true });
+writeFileSync(join(launchRepo, "README.md"), "isolated placement source\n");
+for (const args of [
+  ["init", "-q"],
+  ["add", "README.md"],
+  ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base"],
+]) {
+  const result = spawnSync("git", ["-C", launchRepo, ...args], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+}
+assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
+const launchRpc = (cwd = launchRepo, diagnostic = false) => {
+  const child = spawn(
+    die,
+    ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model", ...(diagnostic ? ["--no-session"] : [])],
+    {
+      cwd,
+      env: { ...process.env, HOME: home, DIE_CODING_AGENT_DIR: agentDir },
+      stdio: ["pipe", "pipe", "pipe"],
+    },
+  );
   rpcChildren.push(child);
   const events: any[] = [];
   let stderr = "",
@@ -283,9 +287,36 @@ const select = async (label: string) => {
 };
 try {
   assert.equal(ssh("true").status, 0, "disposable owner unreachable");
-  const rpc = launchRpc();
+  const rpc = launchRpc(launchRepo, true);
   rpc.send("/remote connect fixture-owner /usr/local/bin/die");
   await rpc.wait(() => existsSync(statePath) && !!state().connection, "owner connection");
+  // The migrated agent path is independently exercised; never force owned jobs into the legacy diagnostic inbox.
+  const owned = launchRpc();
+  owned.send("REMOTE_FIXTURE_REPO_PROBE");
+  const proof = join(home, "placement-REMOTE_FIXTURE_REPO_PROBE.json");
+  await owned.wait(() => existsSync(proof), "normal agent placement", 30000);
+  const launched = JSON.parse(readFileSync(proof, "utf8"));
+  assert(
+    launched.discovery.targets.some(
+      (target: any) => target.name === "fixture-owner" && target.authorized && target.kind === "ssh",
+    ),
+  );
+  const ownedId = Buffer.from(launched.launch.id.slice(4), "base64url").toString();
+  await owned.wait(
+    () => state().tasks[ownedId]?.task?.state === "done",
+    "normal destination policy and shell completion",
+    30000,
+  );
+  assert(
+    JSON.stringify(state().tasks[ownedId]!.events).includes("REMOTE_REPO_TOOL_DONE"),
+    "normal child did not execute on owner",
+  );
+  console.log(
+    "PROOF normal agent jobs.targets/subagent(target): normal/depth1, delegation denied, real destination shell and terminal result",
+  );
+  owned.child.kill("SIGKILL");
+
+  // Human unowned diagnostic task: legacy capability UI must remain covered, not mapped into owned jobs.
   rpc.send("/remote launch /fixture/repo REMOTE_FIXTURE_CAPABILITY_PTY");
   await rpc.wait(
     () => Object.values(state().tasks).some((t) => t.task?.capabilityNeeds?.length),

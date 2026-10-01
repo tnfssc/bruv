@@ -85,6 +85,7 @@ const server = Bun.serve({
       .map((m) => JSON.stringify(m.content))
       .join("\n");
     const jobsProof = userText.match(/REMOTE_JOBS_PROOF_([AB])/)?.[1];
+    const normalPlacement = userText.includes("REMOTE_FIXTURE_NORMAL_PLACEMENT");
     const repoTask = userText.includes("REMOTE_FIXTURE_REPO_");
     const capabilityTask = userText.includes("REMOTE_FIXTURE_CAPABILITY");
     const cancelTask = userText.includes("REMOTE_FIXTURE_CANCEL");
@@ -146,19 +147,23 @@ const server = Bun.serve({
                 function: {
                   name: "execute",
                   arguments: JSON.stringify({
-                    code: jobsProof
-                      ? `if(process.env.DIE_SUBAGENT_TYPE!=="normal" || process.env.DIE_SUBAGENT_DEPTH!=="1") throw Error("Destination normal/depth1 policy missing"); let denied; try {await subagent({target:"fixture-owner",prompt:"must not delegate"})} catch(e){denied=String(e)} if(!denied?.includes("Only orchestrator agents can delegate")) throw Error("Normal worker delegation was not denied: "+denied); await Bun.write("/tmp/fixture-jobs-policy-${jobsProof}",denied); console.log(await shell("grep -q REMOTE_JOBS_CURRENT_SOURCE README.md && sleep 5 && touch /tmp/fixture-jobs-proof-${jobsProof} && echo REMOTE_JOBS_PROOF_TOOL_${jobsProof}",{waitSeconds:0}))`
-                      : repoTask
-                        ? 'console.log(await shell("sleep 2; printf \\"remote tracked edit\\\\n\\" > tracked.txt; echo REMOTE_REPO_TOOL_DONE",{waitSeconds:3}));'
-                        : capabilityTask
-                          ? 'console.log(await remote.requestCapability({kind:"repo.read",input:"on-demand.txt",requestId:"fixture_cap_file"})); console.log(await remote.requestCapability({kind:"tool:git-status",input:"",requestId:"fixture_cap_tool"})); console.log(await remote.requestCapability({kind:"skill:review",input:"",requestId:"fixture_cap_skill"})); console.log(await shell("touch /tmp/fixture-capability-finished"));'
-                          : cancelTask
-                            ? 'console.log(await shell("echo $$ > /tmp/fixture-cancel-pid; touch /tmp/fixture-cancel-started; sleep 120; touch /tmp/fixture-cancel-unwanted",{waitSeconds:0}));'
-                            : questionTask
-                              ? menuTask
-                                ? 'const q=await questions.ask({text:"REMOTE_FIXTURE_MENU_QUESTION",choices:["REMOTE_FIXTURE_MENU_FIRST","REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TAIL_VISIBLE_ON_NARROW_TERMINAL"],allowFreeText:true,dedupKey:"remote-menu-question"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Need menu answer",foreground:true})'
-                                : 'const q=await questions.ask({text:"REMOTE_FIXTURE_NATIVE_QUESTION",dedupKey:"remote-question"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Need real human answer",foreground:true})'
-                              : 'console.log("REMOTE_LONG_TEXT_BEGIN"+"x".repeat(9000)+"REMOTE_LONG_TEXT_END"); const r=await shell(\'sleep 3; pwd; git status --porcelain; echo REMOTE_FIXTURE_EXECUTED_ON_OWNER; touch /tmp/fixture-owner-job-finished\', {waitSeconds:0}); console.log(r)',
+                    code:
+                      (normalPlacement
+                        ? `if(process.env.DIE_SUBAGENT_TYPE!=="normal" || process.env.DIE_SUBAGENT_DEPTH!=="1") throw Error("Destination normal/depth1 policy missing"); if(!${questionTask}){let denied; try {await subagent({target:"fixture-owner",prompt:"must not delegate"})} catch(e){denied=String(e)} if(!denied?.includes("Only orchestrator agents can delegate")) throw Error("Normal worker delegation was not denied: "+denied); } `
+                        : "") +
+                      (jobsProof
+                        ? `if(process.env.DIE_SUBAGENT_TYPE!=="normal" || process.env.DIE_SUBAGENT_DEPTH!=="1") throw Error("Destination normal/depth1 policy missing"); let denied; try {await subagent({target:"fixture-owner",prompt:"must not delegate"})} catch(e){denied=String(e)} if(!denied?.includes("Only orchestrator agents can delegate")) throw Error("Normal worker delegation was not denied: "+denied); await Bun.write("/tmp/fixture-jobs-policy-${jobsProof}",denied); console.log(await shell("grep -q REMOTE_JOBS_CURRENT_SOURCE README.md && sleep 5 && touch /tmp/fixture-jobs-proof-${jobsProof} && echo REMOTE_JOBS_PROOF_TOOL_${jobsProof}",{waitSeconds:0}))`
+                        : repoTask
+                          ? 'console.log(await shell("sleep 2; printf \\"remote tracked edit\\\\n\\" > tracked.txt; echo REMOTE_REPO_TOOL_DONE",{waitSeconds:3}));'
+                          : capabilityTask
+                            ? 'console.log(await remote.requestCapability({kind:"repo.read",input:"on-demand.txt",requestId:"fixture_cap_file"})); console.log(await remote.requestCapability({kind:"tool:git-status",input:"",requestId:"fixture_cap_tool"})); console.log(await remote.requestCapability({kind:"skill:review",input:"",requestId:"fixture_cap_skill"})); console.log(await shell("touch /tmp/fixture-capability-finished"));'
+                            : cancelTask
+                              ? 'console.log(await shell("echo $$ > /tmp/fixture-cancel-pid; touch /tmp/fixture-cancel-started; sleep 120; touch /tmp/fixture-cancel-unwanted",{waitSeconds:0}));'
+                              : questionTask
+                                ? menuTask
+                                  ? 'const q=await questions.ask({text:"REMOTE_FIXTURE_MENU_QUESTION",choices:["REMOTE_FIXTURE_MENU_FIRST","REMOTE_FIXTURE_MENU_SECOND_LONG_CHOICE_WITH_TAIL_VISIBLE_ON_NARROW_TERMINAL"],allowFreeText:true,dedupKey:"remote-menu-question"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Need menu answer",foreground:true})'
+                                  : 'const q=await questions.ask({text:"REMOTE_FIXTURE_NATIVE_QUESTION",dedupKey:"remote-question"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Need real human answer",foreground:true})'
+                                : 'console.log("REMOTE_LONG_TEXT_BEGIN"+"x".repeat(9000)+"REMOTE_LONG_TEXT_END"); const r=await shell(\'sleep 3; pwd; git status --porcelain; echo REMOTE_FIXTURE_EXECUTED_ON_OWNER; touch /tmp/fixture-owner-job-finished\', {waitSeconds:0}); console.log(r)'),
                   }),
                 },
               },

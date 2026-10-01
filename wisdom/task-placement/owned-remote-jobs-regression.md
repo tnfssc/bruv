@@ -27,7 +27,9 @@ Supplied compiled candidate (no package rebuild): /home/tnfssc/.die/worktrees/di
 - Biome format on owned files; git diff --check clean. Shell startup prints an unrelated untrusted mise config warning; direct Bun runs succeed without changing trust/config.
 - No real credentials/host/config/cache modifications, paid APIs, WAN provider proof, placeholder web/video, or full suite.
 
-## Exact unconverted legacy paths (intentionally parked)
+## Legacy paths at the time of this gate (superseded for three runners)
+
+The three runner agent helpers below have since migrated: see [remaining runner regression](remote-runner-placement-regression.md). These historical limits describe this gate only, not the current runner implementations.
 
 - scripts/remote-e2e.ts:26: agent remote.launch; also old human /remote launch and launch-repo RPC flows for questions/source return/conflict/capability/cancel. Separate PR12 integration, not this owned gate.
 - scripts/remote-pty-e2e.ts:23: agent remote.launch; /remote launch menu flow at :232. Separate PTY/question UI proof.
