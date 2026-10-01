@@ -131,7 +131,7 @@ struct Live {
     apm->ApplyConfig(config);
     if (apm->Initialize() != 0) { error("audio_start", "Could not initialize echo processing"); stop(); return; }
     loop = pa_mainloop_new();
-    if (loop) context = pa_context_new(pa_mainloop_get_api(loop), "die-live");
+    if (loop) context = pa_context_new(pa_mainloop_get_api(loop), "bruv-live");
     if (!context || pa_context_connect(context, nullptr, PA_CONTEXT_NOFLAGS, nullptr) < 0) {
       error("audio_start", "Could not connect to audio server"); stop(); return;
     }

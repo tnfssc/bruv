@@ -6,19 +6,19 @@ if (process.argv.length > 3 || (process.argv[2] && process.argv[2] !== "--source
   throw new Error("Usage: bun scripts/offline-openai-default-transport.ts [--source-only]");
 }
 const bun = process.execPath;
-const exe = resolve(import.meta.dir, "../dist/die");
+const exe = resolve(import.meta.dir, "../dist/bruv");
 const source = resolve(import.meta.dir, "../src/cli.ts");
 const env = Object.fromEntries(
   Object.entries(process.env).filter(([key]) => !/(?:API_KEY|TOKEN|SECRET|CREDENTIAL|PASSWORD)/i.test(key)),
 );
-env.DIE_OFFLINE_OPENAI_TRANSPORT_PROBE = "loopback-fake-key";
+env.BRUV_OFFLINE_OPENAI_TRANSPORT_PROBE = "loopback-fake-key";
 for (const [label, command] of [
   ["SOURCE", [bun, source, "--offline-openai-transport-probe"]],
   ["FULL compiled CLI", [exe, "--offline-openai-transport-probe"]],
 ] as const) {
   if (process.argv[2] === "--source-only" && label !== "SOURCE") continue;
   const denied = Bun.spawnSync([...command], {
-    env: { ...env, DIE_OFFLINE_OPENAI_TRANSPORT_PROBE: "" },
+    env: { ...env, BRUV_OFFLINE_OPENAI_TRANSPORT_PROBE: "" },
     stdout: "pipe",
     stderr: "pipe",
     timeout: 15000,

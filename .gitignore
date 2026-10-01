@@ -1,7 +1,7 @@
 node_modules/
 runtime-assets/
 dist/
-.die-harness/
+.bruv-harness/
 artifacts/
 *.log
 

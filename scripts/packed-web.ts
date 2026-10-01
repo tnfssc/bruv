@@ -4,8 +4,8 @@ import { resolve, join, relative as relativePath, sep } from "node:path";
 import { verifyWebSource } from "../integrations/t3/build/verify-source";
 
 // Local producer receipt, NOT an artifact-cache trust mechanism. Never restore it
-// from elsewhere. dist/die-web is deliberately not consulted by consumers.
-const manifestName = "dist/die-web.archive.manifest.json";
+// from elsewhere. dist/bruv-web is deliberately not consulted by consumers.
+const manifestName = "dist/bruv-web.archive.manifest.json";
 const lifetime = 12 * 60 * 60 * 1000;
 const hash = (bytes: Uint8Array | string) => new Bun.CryptoHasher("sha256").update(bytes).digest("hex");
 const excluded = new Set([".git", "node_modules", "dist", ".turbo"]);
@@ -37,7 +37,7 @@ async function tree(directory: string): Promise<string> {
   return hash(JSON.stringify(entries));
 }
 async function identity(root: string, source: string) {
-  const patch = resolve(root, "integrations/t3/upstream/die.patch");
+  const patch = resolve(root, "integrations/t3/upstream/bruv.patch");
   const pin = await Bun.file(resolve(root, "integrations/t3/upstream/source.json")).json();
   const revision = execFileSync("git", ["-C", source, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
   if (revision !== pin.revision) throw new Error("Packed web source pin mismatch");
@@ -63,7 +63,7 @@ async function identity(root: string, source: string) {
     Object.entries(process.env)
       .filter(
         ([key]) =>
-          !/^(npm_(lifecycle_(event|script)$|package_(json|name|version)$|execpath$|node_execpath$|command$|config_(user_agent|local_prefix)$)|_$|SHLVL$|PWD$|OLDPWD$|INIT_CWD$|DIE_T3_SOURCE$|PATH$|GITHUB_(ACTION|ARTIFACTS(_LIST)?|ENV|OUTPUT|PATH|STEP_SUMMARY|STATE)$)/.test(
+          !/^(npm_(lifecycle_(event|script)$|package_(json|name|version)$|execpath$|node_execpath$|command$|config_(user_agent|local_prefix)$)|_$|SHLVL$|PWD$|OLDPWD$|INIT_CWD$|BRUV_T3_SOURCE$|PATH$|GITHUB_(ACTION|ARTIFACTS(_LIST)?|ENV|OUTPUT|PATH|STEP_SUMMARY|STATE)$)/.test(
             key,
           ),
       )
@@ -90,11 +90,11 @@ function inputKey(value: Awaited<ReturnType<typeof identity>>): string {
 /** Exact content key for a future trusted restore owner; no origin authorization. */
 export async function packedWebInputKey(root: string): Promise<string> {
   const pin = await Bun.file(resolve(root, "integrations/t3/upstream/source.json")).json();
-  const source = resolve(process.env.DIE_T3_SOURCE ?? root + "/.cache/die-t3code-" + pin.revision);
+  const source = resolve(process.env.BRUV_T3_SOURCE ?? root + "/.cache/bruv-t3code-" + pin.revision);
   return inputKey(await identity(root, source));
 }
 async function archiveIdentity(root: string) {
-  const bytes = await Bun.file(resolve(root, "dist/die-web.archive.gz")).bytes();
+  const bytes = await Bun.file(resolve(root, "dist/bruv-web.archive.gz")).bytes();
   if (!bytes.length) throw new Error("Packed web archive is empty");
   return { sha256: hash(bytes), size: bytes.length };
 }
@@ -128,7 +128,7 @@ export async function verifyPackedWeb(root: string): Promise<string> {
     )
       throw new Error("missing or expired producer identity");
     const pin = await Bun.file(resolve(root, "integrations/t3/upstream/source.json")).json();
-    const source = resolve(process.env.DIE_T3_SOURCE ?? root + "/.cache/die-t3code-" + pin.revision);
+    const source = resolve(process.env.BRUV_T3_SOURCE ?? root + "/.cache/bruv-t3code-" + pin.revision);
     if (JSON.stringify(manifest.identity) !== JSON.stringify(await identity(root, source)))
       throw new Error("build inputs changed");
     if (manifest.inputKey !== inputKey(manifest.identity)) throw new Error("input key mismatch");

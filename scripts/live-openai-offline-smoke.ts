@@ -1,5 +1,5 @@
 /** Offline compiled-provider smoke. Loopback only, fake key, no devices or external API.
- * bun build --compile scripts/live-openai-offline-smoke.ts --outfile /tmp/die-openai-smoke
+ * bun build --compile scripts/live-openai-offline-smoke.ts --outfile /tmp/bruv-openai-smoke
  */
 import { OpenAIRealtimeSession, defaultSocket } from "../src/live/openai-session";
 let configured = false,

@@ -8,7 +8,7 @@ import { buildWeb, verifyWebChunks } from "../integrations/t3/build/build";
 const root = resolve(import.meta.dir, "..");
 let reuseWeb = false;
 let reusePackedWeb = false;
-let output = "dist/die";
+let output = "dist/bruv";
 let target: string | undefined;
 let helper: string | undefined;
 for (const argument of process.argv.slice(2)) {
@@ -26,8 +26,8 @@ if (target === "") throw new Error("--target requires a value");
 if (helper === "") throw new Error("--live-helper requires a path");
 const plugins = helper ? [await nativeHelperPlugin(helper, target ?? `bun-${process.platform}-${process.arch}`)] : [];
 const outfile = resolve(root, output);
-const webDirectory = resolve(root, "dist/die-web");
-const archive = resolve(root, "dist/die-web.archive.gz");
+const webDirectory = resolve(root, "dist/bruv-web");
+const archive = resolve(root, "dist/bruv-web.archive.gz");
 
 await prepareWebPayload(root, reusePackedWeb ? "packed" : reuseWeb ? "repack" : "fresh", {
   fresh: buildWeb,

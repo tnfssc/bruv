@@ -3,7 +3,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 log_dir="$root/artifacts/ci"
 source_pin="$(cd "$root" && bun -e 'console.log(require("./integrations/t3/upstream/source.json").revision)')"
-web_source="${DIE_T3_SOURCE:-$root/.cache/die-t3code-$source_pin}"
+web_source="${BRUV_T3_SOURCE:-$root/.cache/bruv-t3code-$source_pin}"
 run_step() {
   local label="$1" log="$2" directory="$3"
   shift 3
@@ -16,8 +16,8 @@ run_step 'Typecheck terminal client' terminal-client-typecheck.log "$web_source/
 run_step 'Validate web backend' web-tests.log "$web_source/apps/server" ../../node_modules/.bin/vp test run \
   src/provider/Layers/PiProvider.test.ts src/auth/EnvironmentAuth.test.ts src/serverRuntimeStartup.test.ts \
   src/terminal/NodePtyAdapter.test.ts src/terminal/BunPtyAdapter.test.ts src/terminal/Manager.test.ts \
-  src/terminal/SubscriberStream.test.ts src/mcp/DieTaskService.test.ts src/mcp/OrchestratorMcpService.test.ts \
-  src/orchestration-v2/NativeDieIntegration.production.test.ts src/orchestration-v2/ProjectionStore.test.ts \
+  src/terminal/SubscriberStream.test.ts src/mcp/BruvTaskService.test.ts src/mcp/OrchestratorMcpService.test.ts \
+  src/orchestration-v2/NativeBruvIntegration.production.test.ts src/orchestration-v2/ProjectionStore.test.ts \
   src/orchestration-v2/ProviderContinuationService.test.ts src/orchestration-v2/LocalJobNotification.test.ts \
   src/orchestration-v2/NativeUsageAccounting.test.ts src/orchestration-v2/Adapters/PiAdapterV2.test.ts \
   src/resourceTelemetry/ResourceTelemetry.test.ts src/device/AgentDeviceTarget.test.ts src/provider/Layers/EventNdjsonLogger.test.ts --maxWorkers=1

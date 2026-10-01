@@ -5,11 +5,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { strict as assert } from "node:assert";
-const die = process.env.DIE_BIN!;
+const bruv = process.env.BRUV_BIN!;
 const container = process.env.FIXTURE_CONTAINER!;
 const home = homedir();
-const statePath = join(home, ".die/remote/state.json");
-const agentDir = process.env.DIE_CODING_AGENT_DIR!;
+const statePath = join(home, ".bruv/remote/state.json");
+const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
@@ -100,11 +100,11 @@ for (const args of [
 assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
 const launchRpc = (cwd = launchRepo, diagnostic = false) => {
   const child = spawn(
-    die,
+    bruv,
     ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model", ...(diagnostic ? ["--no-session"] : [])],
     {
       cwd,
-      env: { ...process.env, HOME: home, DIE_CODING_AGENT_DIR: agentDir },
+      env: { ...process.env, HOME: home, BRUV_CODING_AGENT_DIR: agentDir },
       stdio: ["pipe", "pipe", "pipe"],
     },
   );
@@ -142,7 +142,7 @@ const launchRpc = (cwd = launchRepo, diagnostic = false) => {
             "; stderr=" +
             stderr +
             "; pane=" +
-            spawnSync("tmux", ["-L", "die-remote-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
+            spawnSync("tmux", ["-L", "bruv-remote-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
               encoding: "utf8",
             }).stdout +
             "; events=" +
@@ -160,7 +160,7 @@ const ssh = (...args: string[]) =>
   });
 // Real tmux PTY against the same disposable native owner; no local question ledger is created.
 const tmux = (...args: string[]) => {
-  const result = spawnSync("tmux", ["-L", "die-remote-pty-" + process.pid, ...args], {
+  const result = spawnSync("tmux", ["-L", "bruv-remote-pty-" + process.pid, ...args], {
     encoding: "utf8",
     timeout: 10000,
   });
@@ -174,7 +174,7 @@ const ownerQuestion = (taskId: string): { status: string; answer?: string } => {
       "-F",
       process.env.FIXTURE_SSH_CONFIG!,
       "fixture-owner",
-      "cat /root/.die/remote-owner/tasks/" + taskId + "/session.jsonl.questions.json",
+      "cat /root/.bruv/remote-owner/tasks/" + taskId + "/session.jsonl.questions.json",
     ],
     { encoding: "utf8", timeout: 6000 },
   );
@@ -183,7 +183,7 @@ const ownerQuestion = (taskId: string): { status: string; answer?: string } => {
 };
 const pane = () => tmux("capture-pane", "-p", "-t", "remote");
 const evidence = (name: string) => {
-  const dir = process.env.DIE_REMOTE_PTY_ARTIFACTS;
+  const dir = process.env.BRUV_REMOTE_PTY_ARTIFACTS;
   if (dir) {
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, name + ".txt"), pane());
@@ -200,7 +200,7 @@ const noChatJson = (frame: string) =>
     "structured remote poll leaked into human chat\n" + frame,
   );
 const command = async (text: string, expected: string) => {
-  const before = historyPane().split("[die-remote]").length;
+  const before = historyPane().split("[bruv-remote]").length;
   key("C-u");
   type(text);
   // Let the real editor consume the pasted command before dispatching Enter.
@@ -209,7 +209,7 @@ const command = async (text: string, expected: string) => {
   key("Enter");
   const deadline = Date.now() + 20000;
   while (Date.now() < deadline) {
-    const messages = historyPane().split("[die-remote]");
+    const messages = historyPane().split("[bruv-remote]");
     if (messages.length > before && messages.at(-1)!.replace(/\s+/g, "").includes(expected.replace(/\s+/g, ""))) return;
     await Bun.sleep(100);
   }
@@ -229,7 +229,7 @@ const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
 try {
   assert.equal(spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "true"]).status, 0);
   const rpc = launchRpc(launchRepo, true);
-  rpc.send("/remote connect fixture-owner /usr/local/bin/die");
+  rpc.send("/remote connect fixture-owner /usr/local/bin/bruv");
   await rpc.wait(() => existsSync(statePath) && !!state().connection, "remote connection");
   const launch = async (suffix: string, question = true) => {
     const before = new Set(Object.keys(state().tasks));
@@ -247,8 +247,8 @@ try {
   const cmd = [
     "env",
     "HOME=" + home,
-    "DIE_CODING_AGENT_DIR=" + agentDir,
-    die,
+    "BRUV_CODING_AGENT_DIR=" + agentDir,
+    bruv,
     "--offline",
     "--no-approve",
     "--provider",
@@ -522,7 +522,7 @@ try {
   await rpc.wait(() => !!state().tasks[offline]?.lastError, "offline state", 20000);
   await rpc.wait(() => /offline|unreachable|unavailable/i.test(pane()), "offline human notice", 20000);
   assert(/offline|unreachable|unavailable/i.test(historyPane()), "offline command implied fresh owner state");
-  noChatJson(historyPane().split("[die-remote]").at(-1)!);
+  noChatJson(historyPane().split("[bruv-remote]").at(-1)!);
   type("/remote");
   key("Enter");
   await until("Remote · inbox");

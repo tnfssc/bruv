@@ -12,12 +12,12 @@ const paid = process.argv.includes("--provider");
 const args = process.argv.slice(2);
 if (
   process.platform !== "linux" ||
-  process.env.DIE_LIVE_ISOLATED !== "1" ||
+  process.env.BRUV_LIVE_ISOLATED !== "1" ||
   args.some((a) => a !== "--provider") ||
-  (paid && process.env.DIE_RUN_LIVE_ACCEPTANCE !== "1")
+  (paid && process.env.BRUV_RUN_LIVE_ACCEPTANCE !== "1")
 ) {
   console.error(
-    "Linux isolated wrapper required; paid mode additionally requires --provider and DIE_RUN_LIVE_ACCEPTANCE=1",
+    "Linux isolated wrapper required; paid mode additionally requires --provider and BRUV_RUN_LIVE_ACCEPTANCE=1",
   );
   process.exit(2);
 }
@@ -173,9 +173,9 @@ async function checkRoutes(pid: number, mic: string, output: string) {
 async function main() {
   // No default route changes and no daemon auto-start: fail if daemon/tools are absent.
   await run("pactl", ["info"]);
-  const helper = resolve(process.env.DIE_LIVE_HELPER ?? "dist/live-audio-linux");
+  const helper = resolve(process.env.BRUV_LIVE_HELPER ?? "dist/live-audio-linux");
   await access(helper);
-  const tag = "die_accept_" + process.pid + "_" + randomBytes(5).toString("hex");
+  const tag = "bruv_accept_" + process.pid + "_" + randomBytes(5).toString("hex");
   const mic = tag + "_input",
     output = tag + "_output";
   const modules: string[] = [];

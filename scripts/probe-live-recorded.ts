@@ -1,5 +1,5 @@
 /** Paid text-transcript Realtime fixture: intercepted tools only; never evaluates generated code.
- * DIE_CAPABILITY_PROBE=1 bun scripts/probe-live-recorded.ts --source FILE --study-2026-09-25 --disclose-private weather:fresh:baseline
+ * BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-recorded.ts --source FILE --study-2026-09-25 --disclose-private weather:fresh:baseline
  * Sends private root/transcript to configured provider; output may echo private text. Keep output OUTSIDE repository.
  */
 import WebSocket from "ws";
@@ -9,7 +9,7 @@ import { createDefaultLiveCredentialService } from "../src/live/credentials";
 import { loadLiveConfig } from "../src/live/config";
 import { createPromptPreview } from "../src/prompt-preview";
 
-if (process.env.DIE_CAPABILITY_PROBE !== "1") throw Error("Explicitly opt into paid probe");
+if (process.env.BRUV_CAPABILITY_PROBE !== "1") throw Error("Explicitly opt into paid probe");
 const input = probeArgs(process.argv.slice(2), "recorded");
 const plan = input.trials;
 if (!plan.length || plan.length > 24) throw Error("Pass 1–24 explicit trials");

@@ -1,10 +1,10 @@
 {
-  "name": "die",
+  "name": "bruv",
   "version": "0.15.20",
   "private": true,
   "type": "module",
   "bin": {
-    "die": "dist/die"
+    "bruv": "dist/bruv"
   },
   "scripts": {
     "ci": "bash ./scripts/ci.sh linux",
@@ -13,7 +13,7 @@
     "build": "bun run prepare:assets && bun ./scripts/build.ts",
     "check": "bun run prepare:assets && tsc --noEmit",
     "test": "bun run build && bun test ./tests",
-    "test:llm": "bun run build && DIE_RUN_LLM_TESTS=1 bun test ./tests/llm.test.ts",
+    "test:llm": "bun run build && BRUV_RUN_LLM_TESTS=1 bun test ./tests/llm.test.ts",
     "install:local": "./scripts/install-local.sh",
     "smoke": "./scripts/smoke.sh",
     "tui": "bun ./scripts/tui-harness.ts",

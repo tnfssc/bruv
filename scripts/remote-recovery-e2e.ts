@@ -4,10 +4,10 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { strict as assert } from "node:assert";
 const home = process.env.HOME!,
-  die = process.env.DIE_BIN!,
+  bruv = process.env.BRUV_BIN!,
   drop = process.env.FIXTURE_DROP_DIR!;
-const statePath = join(home, ".die/remote/state.json");
-const agentDir = process.env.DIE_CODING_AGENT_DIR!;
+const statePath = join(home, ".bruv/remote/state.json");
+const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
 mkdirSync(agentDir, { recursive: true });
 // Local fake coordinator acknowledges task attention; no tools, real keys, or external provider.
 const provider = Bun.serve({
@@ -51,7 +51,7 @@ writeFileSync(
     },
   }),
 );
-const tmuxName = "die-recovery-" + process.pid;
+const tmuxName = "bruv-recovery-" + process.pid;
 const tmux = (...args: string[]) => {
   const r = spawnSync("tmux", ["-L", tmuxName, ...args], { encoding: "utf8", timeout: 10000 });
   assert.equal(r.status, 0, r.stderr);
@@ -59,7 +59,7 @@ const tmux = (...args: string[]) => {
 };
 const pane = () => tmux("capture-pane", "-p", "-t", "recovery");
 const capture = (name: string) => {
-  const dir = process.env.DIE_REMOTE_PTY_ARTIFACTS;
+  const dir = process.env.BRUV_REMOTE_PTY_ARTIFACTS;
   if (dir) {
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, name + ".txt"), pane());
@@ -88,9 +88,9 @@ const wait = async (fn: () => boolean, label: string, ms = 30000) => {
   }
 };
 const rpc = spawn(
-  die,
+  bruv,
   ["--mode", "rpc", "--offline", "--no-approve", "--provider", "fixture", "--model", "fixture-model", "--no-session"],
-  { cwd: home, env: { ...process.env, HOME: home, DIE_CODING_AGENT_DIR: agentDir }, stdio: ["pipe", "pipe", "pipe"] },
+  { cwd: home, env: { ...process.env, HOME: home, BRUV_CODING_AGENT_DIR: agentDir }, stdio: ["pipe", "pipe", "pipe"] },
 );
 let rpcOut = "",
   rpcErr = "";
@@ -104,7 +104,7 @@ const ownerQuestion = (id: string): any => {
       "-F",
       process.env.FIXTURE_SSH_CONFIG!,
       "fixture-owner",
-      "cat /root/.die/remote-owner/tasks/" + id + "/session.jsonl.questions.json",
+      "cat /root/.bruv/remote-owner/tasks/" + id + "/session.jsonl.questions.json",
     ],
     { encoding: "utf8", timeout: 6000 },
   );
@@ -114,7 +114,12 @@ const ownerQuestion = (id: string): any => {
 const ownerSaved = (id: string): any => {
   const r = spawnSync(
     "/usr/bin/ssh",
-    ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "cat /root/.die/remote-owner/tasks/" + id + "/state.json"],
+    [
+      "-F",
+      process.env.FIXTURE_SSH_CONFIG!,
+      "fixture-owner",
+      "cat /root/.bruv/remote-owner/tasks/" + id + "/state.json",
+    ],
     { encoding: "utf8", timeout: 6000 },
   );
   assert.equal(r.status, 0, r.stderr);
@@ -123,7 +128,7 @@ const ownerSaved = (id: string): any => {
 const ownerTaskIds = (): string[] => {
   const r = spawnSync(
     "/usr/bin/ssh",
-    ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "ls -1 /root/.die/remote-owner/tasks"],
+    ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "ls -1 /root/.bruv/remote-owner/tasks"],
     { encoding: "utf8", timeout: 6000 },
   );
   assert.equal(r.status, 0, r.stderr);
@@ -138,7 +143,7 @@ const launch = async (command: (s: string) => void, name: string) => {
   return id;
 };
 try {
-  send("/remote connect fixture-owner /usr/local/bin/die");
+  send("/remote connect fixture-owner /usr/local/bin/bruv");
   await wait(() => existsSync(statePath) && !!state().connection, "connect");
   // Discard only a genuine successful launch reply after the owner accepted it.
   // The cached uncertain intent must be retried with its original taskId.
@@ -212,8 +217,8 @@ try {
     "env",
     "PATH=" + process.env.PATH,
     "HOME=" + home,
-    "DIE_CODING_AGENT_DIR=" + agentDir,
-    die,
+    "BRUV_CODING_AGENT_DIR=" + agentDir,
+    bruv,
     "--offline",
     "--no-approve",
     "--provider",

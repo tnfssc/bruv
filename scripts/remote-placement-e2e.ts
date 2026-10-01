@@ -25,17 +25,17 @@ assert(
 const source = resolve(import.meta.dir, "..");
 const fixture = join(source, "tests/fixtures/remote-placement-e2e");
 const bun = resolve(process.env.BUN_BIN ?? "/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun");
-const binary = resolve(process.env.DIE_BIN ?? join(source, "dist/die"));
+const binary = resolve(process.env.BRUV_BIN ?? join(source, "dist/bruv"));
 const base = process.env.REMOTE_PLACEMENT_BASE_IMAGE;
 assert(base, "Supply REMOTE_PLACEMENT_BASE_IMAGE: a cached local OS/SSH fixture image. No pulls/apt/WAN are allowed.");
-const tmpBase = process.env.TMPDIR ?? "/home/tnfssc/.die/tmp-pi-removal";
+const tmpBase = process.env.TMPDIR ?? "/home/tnfssc/.bruv/tmp-pi-removal";
 mkdirSync(tmpBase, { recursive: true });
 const root = mkdtempSync(join(tmpBase, "remote-placement-e2e-"));
 const artifacts = process.env.REMOTE_PLACEMENT_ARTIFACTS
   ? resolve(process.env.REMOTE_PLACEMENT_ARTIFACTS)
   : mkdtempSync(join(tmpBase, "remote-placement-artifacts-"));
 mkdirSync(artifacts, { recursive: true });
-const name = "die-placement-" + process.pid + "-" + Date.now();
+const name = "bruv-placement-" + process.pid + "-" + Date.now();
 const home = join(root, "home"),
   agent = join(home, "agent"),
   build = join(root, "build"),
@@ -48,13 +48,13 @@ for (const dir of [
   build,
   repo,
   join(home, ".ssh"),
-  join(home, ".die"),
+  join(home, ".bruv"),
   join(root, "keys"),
   join(root, "bin"),
   join(build, "runtime"),
 ])
   mkdirSync(dir, { recursive: true, mode: 0o700 });
-// Deliberately do not inherit DIE_*, provider tokens, SSH agents, or a worker's role/depth.
+// Deliberately do not inherit BRUV_*, provider tokens, SSH agents, or a worker's role/depth.
 const env: Record<string, string> = {
   PATH: process.env.PATH ?? "/usr/bin:/bin",
   HOME: home,
@@ -65,7 +65,7 @@ const env: Record<string, string> = {
   XDG_CONFIG_HOME: join(home, "config"),
   XDG_CACHE_HOME: join(home, "cache"),
   XDG_STATE_HOME: join(home, "state"),
-  DIE_CODING_AGENT_DIR: agent,
+  BRUV_CODING_AGENT_DIR: agent,
   GIT_CONFIG_GLOBAL: "/dev/null",
   GIT_CONFIG_NOSYSTEM: "1",
   GIT_TERMINAL_PROMPT: "0",
@@ -104,7 +104,7 @@ const files = (dir: string): string[] =>
         d.isDirectory() ? files(join(dir, d.name)) : d.isFile() ? [join(dir, d.name)] : [],
       );
 const json = (file: string) => JSON.parse(readFileSync(file, "utf8"));
-const statePath = join(home, ".die", "remote", "state.json");
+const statePath = join(home, ".bruv", "remote", "state.json");
 const state = () => (existsSync(statePath) ? json(statePath) : { tasks: {} });
 const questionRows = () => {
   const file = join(home, "placement-human-questions.json");
@@ -128,7 +128,7 @@ let parentProvider: ReturnType<typeof Bun.serve> | undefined;
 let passed = false;
 console.log("Placement artifacts:", artifacts);
 try {
-  // Resolve Docker endpoint before changing HOME; do not read a real Die/SSH/provider config.
+  // Resolve Docker endpoint before changing HOME; do not read a real Bruv/SSH/provider config.
   const dockerHost =
     process.env.DOCKER_HOST ??
     run("docker", ["context", "inspect", "--format", "{{.Endpoints.docker.Host}}"], {
@@ -139,7 +139,7 @@ try {
     run("/bin/sh", ["-c", 'command -v "$1"', "check", tool]);
   assert(existsSync(bun), "BUN_BIN is missing");
   if (!probe)
-    assert(existsSync(binary), "Build the final combined compiled CLI and set DIE_BIN; probe is not acceptance");
+    assert(existsSync(binary), "Build the final combined compiled CLI and set BRUV_BIN; probe is not acceptance");
   const imageId = docker("image", "inspect", base!, "--format", "{{.Id}}");
   assert.match(imageId, /^sha256:[0-9a-f]{64}$/);
   docker(
@@ -169,8 +169,8 @@ try {
   copyFileSync(bun, join(build, "runtime", "bun"));
   chmodSync(join(build, "runtime", "bun"), 0o755);
   if (!probe) {
-    copyFileSync(binary, join(build, "runtime", "die"));
-    chmodSync(join(build, "runtime", "die"), 0o755);
+    copyFileSync(binary, join(build, "runtime", "bruv"));
+    chmodSync(join(build, "runtime", "bruv"), 0o755);
   }
   copyFileSync(join(root, "hostkey"), join(root, "keys", "hostkey"));
   copyFileSync(join(root, "client.pub"), join(root, "keys", "client.pub"));
@@ -300,7 +300,7 @@ try {
     writeFileSync(join(agent, "models.json"), JSON.stringify(models));
     // If the destination accidentally inherits the parent's profile, inference fails loudly.
     writeFileSync(
-      join(home, ".die", "subagents.json"),
+      join(home, ".bruv", "subagents.json"),
       JSON.stringify({
         normal: { model: "fixture/placement-local-wrong" },
         orchestrator: { model: "fixture/placement-local-wrong" },
@@ -343,7 +343,7 @@ try {
     start();
     await wait("compiled CLI initial model", () => pane().includes("placement-parent"));
     await Bun.sleep(2000);
-    type("/remote connect " + ALIAS + " /usr/local/bin/die");
+    type("/remote connect " + ALIAS + " /usr/local/bin/bruv");
     await wait("one human pinned connection", () => state().connection?.host === ALIAS);
     const pinned = JSON.stringify(state().connection);
     capture("01-human-connect");
@@ -354,7 +354,7 @@ try {
       await wait("ordinary questions API capture", () => pane().includes("PLACEMENT_QUESTIONS_CAPTURED_" + index));
     };
     const ownerQuestions = (id: string) =>
-      JSON.parse(ssh("cat /root/.die/remote-owner/tasks/" + id + "/session.jsonl.questions.json"));
+      JSON.parse(ssh("cat /root/.bruv/remote-owner/tasks/" + id + "/session.jsonl.questions.json"));
     const waitOwnerQuestion = async (id: string) => {
       await wait(
         "real server question persisted",
@@ -364,7 +364,7 @@ try {
             name,
             "test",
             "-f",
-            "/root/.die/remote-owner/tasks/" + id + "/session.jsonl.questions.json",
+            "/root/.bruv/remote-owner/tasks/" + id + "/session.jsonl.questions.json",
           ]).status === 0,
         90000,
       );
@@ -451,7 +451,7 @@ try {
     assert.equal(readFileSync(join(repo, "never-upload.txt"), "utf8"), "PLACEMENT_NEVER_UPLOAD\n");
     assert.equal(git("rev-parse", "HEAD"), localHead, "return rewrote parent history");
     const descriptors = () =>
-      files(join(home, ".die"))
+      files(join(home, ".bruv"))
         .filter((f) => f.endsWith("handoff.json"))
         .map((f) => ({ file: f, data: json(f) }));
     const cleanDescriptor = descriptors().find((d) => d.data.prompt?.includes("PLACEMENT_ORCHESTRATOR_CLEAN"));
@@ -510,7 +510,7 @@ try {
     await Bun.sleep(6000);
     assert.equal(completions().length, count, "reconnect replayed a consumed completion");
     assert.equal(Object.keys(state().tasks).length, 2, "restart duplicated remote task");
-    const ownerCount = ssh("find /root/.die/remote-owner/tasks -mindepth 1 -maxdepth 1 -type d | wc -l");
+    const ownerCount = ssh("find /root/.bruv/remote-owner/tasks -mindepth 1 -maxdepth 1 -type d | wc -l");
     assert.equal(ownerCount, "2", "server descendants became extra SSH placements or restart duplicated owner launch");
     const requestLog = ssh("cat /tmp/placement-inference.jsonl");
     assert(!requestLog.includes("placement-local-wrong"), "destination inherited local profile");

@@ -4,14 +4,14 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 
 export const assetNames = [
-  "die-linux-x64",
-  "die-linux-x64.sha256",
-  "die-linux-arm64",
-  "die-linux-arm64.sha256",
-  "die-darwin-arm64",
-  "die-darwin-arm64.sha256",
-  "die-android-arm64",
-  "die-android-arm64.sha256",
+  "bruv-linux-x64",
+  "bruv-linux-x64.sha256",
+  "bruv-linux-arm64",
+  "bruv-linux-arm64.sha256",
+  "bruv-darwin-arm64",
+  "bruv-darwin-arm64.sha256",
+  "bruv-android-arm64",
+  "bruv-android-arm64.sha256",
   "LICENSE",
   "THIRD_PARTY_NOTICES.md",
   "THIRD_PARTY_LICENSES.txt",

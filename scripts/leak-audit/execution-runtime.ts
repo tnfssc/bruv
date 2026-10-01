@@ -2,8 +2,8 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { executeIsolated } from "../../src/typescript/execution";
-const binary = resolve(import.meta.dir, "../../dist/die"),
-  root = await mkdtemp(join(tmpdir(), "die-leak-execution-")),
+const binary = resolve(import.meta.dir, "../../dist/bruv"),
+  root = await mkdtemp(join(tmpdir(), "bruv-leak-execution-")),
   sessionFile = join(root, "session.jsonl");
 const owned = new Set<number>(),
   samples: any[] = [];

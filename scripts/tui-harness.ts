@@ -1,21 +1,21 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, join, resolve } from "node:path";
 
-const SOCKET = process.env.DIE_TUI_SOCKET ?? "die-harness";
+const SOCKET = process.env.BRUV_TUI_SOCKET ?? "bruv-harness";
 const root = resolve(import.meta.dir, "..");
-const stateDir = join(root, ".die-harness");
+const stateDir = join(root, ".bruv-harness");
 const artifactsDir = join(root, "artifacts", "tui");
-const timeoutSeconds = Number(process.env.DIE_TUI_TIMEOUT_SECONDS ?? 60 * 60);
+const timeoutSeconds = Number(process.env.BRUV_TUI_TIMEOUT_SECONDS ?? 60 * 60);
 const [command = "help", session = "test", ...args] = Bun.argv.slice(2);
 const offlineEnv = { ...process.env, HERDR_ENV: "0", HERDR_SOCKET_PATH: undefined, HERDR_PANE_ID: undefined };
 
 type State = { artifactDir: string; transcript: string; expiresAt?: string };
 
 function usage(): never {
-  console.log(`die TUI harness
+  console.log(`bruv TUI harness
 
 Usage:
-  bun run tui start [session] [die args...]  Start die in a detached PTY
+  bun run tui start [session] [bruv args...]  Start bruv in a detached PTY
   bun run tui frame [session] [file]         Capture the visible frame
   bun run tui history [session] [file]       Capture full pane history
   bun run tui send <session> <text>          Submit a steering message
@@ -97,7 +97,7 @@ switch (command) {
     const transcript = join(artifactDir, "transcript.ansi");
     await mkdir(artifactDir, { recursive: true });
 
-    const dieArgs = ["--provider", "openai-codex", "--model", "gpt-5.6-luna", ...args];
+    const bruvArgs = ["--provider", "openai-codex", "--model", "gpt-5.6-luna", ...args];
     const launch = [
       "env",
       "-u",
@@ -105,8 +105,8 @@ switch (command) {
       "-u",
       "HERDR_PANE_ID",
       "HERDR_ENV=0",
-      join(root, "dist", "die"),
-      ...dieArgs,
+      join(root, "dist", "bruv"),
+      ...bruvArgs,
     ]
       .map(shellQuote)
       .join(" ");
@@ -115,7 +115,7 @@ switch (command) {
     if (session === "demo") {
       if (!Number.isFinite(timeoutSeconds) || timeoutSeconds <= 0) throw new Error("Invalid demo timeout");
       const watchdog = `sleep ${Math.ceil(timeoutSeconds)}; tmux -L ${SOCKET} kill-session -t ${shellQuote(session)} 2>/dev/null || true`;
-      await tmux(["new-window", "-d", "-t", session, "-n", "__die_timeout", watchdog]);
+      await tmux(["new-window", "-d", "-t", session, "-n", "__bruv_timeout", watchdog]);
       expiresAt = new Date(Date.now() + timeoutSeconds * 1000).toISOString();
     }
     await tmux(["pipe-pane", "-o", "-t", `${session}:0.0`, `cat >> ${shellQuote(transcript)}`]);

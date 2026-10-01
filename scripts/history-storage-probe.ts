@@ -59,7 +59,7 @@ async function child(mode: Mode): Promise<void> {
     installDiskBackedSessionManager();
   }
   const { SessionManager } = await import("@earendil-works/pi-coding-agent");
-  const root = mkdtempSync(join(tmpdir(), `die-history-storage-${mode}-`));
+  const root = mkdtempSync(join(tmpdir(), `bruv-history-storage-${mode}-`));
   const sessions = join(root, "sessions");
   let manager: SessionManager | undefined = SessionManager.create(root, sessions);
   let originalBytes = 0;

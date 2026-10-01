@@ -11,7 +11,7 @@ Capture the real production prompt assembly without a network or model call.
 The default uses a temporary isolated project; external project context is excluded.
 
 Options:
-  --project <path>  Select project/ancestor instruction files and .die/{SYSTEM,APPEND_SYSTEM}.md
+  --project <path>  Select project/ancestor instruction files and .bruv/{SYSTEM,APPEND_SYSTEM}.md
   --role <role>     root (default), fast, normal, or orchestrator; non-root values are child roles
   --mode <mode>     Root instruction mode: fast, normal, or orchestrator (default)
   --message <text>  User message assembled into the captured request

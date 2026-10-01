@@ -6,7 +6,15 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!!node_modules", "!!runtime-assets", "!!dist", "!!.die-harness", "!!artifacts", "!!experiments"]
+    "includes": [
+      "**",
+      "!!node_modules",
+      "!!runtime-assets",
+      "!!dist",
+      "!!.bruv-harness",
+      "!!artifacts",
+      "!!experiments"
+    ]
   },
   "formatter": {
     "enabled": true,

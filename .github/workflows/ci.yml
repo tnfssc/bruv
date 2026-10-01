@@ -111,20 +111,20 @@ jobs:
       - name: Configure package download stores
         shell: bash
         run: |
-          echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/die-bun-cache" >> "$GITHUB_ENV"
-          echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/die-pnpm-store" >> "$GITHUB_ENV"
+          echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache" >> "$GITHUB_ENV"
+          echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store" >> "$GITHUB_ENV"
       - name: Cache Bun package downloads
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ${{ runner.temp }}/die-bun-cache
+          path: ${{ runner.temp }}/bruv-bun-cache
           key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
           restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
       - name: Cache pinned T3 pnpm package store
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ${{ runner.temp }}/die-pnpm-store
+          path: ${{ runner.temp }}/bruv-pnpm-store
           # The source pin includes its upstream lockfile; the patch can change its dependencies.
-          key: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/die.patch') }}
+          key: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/bruv.patch') }}
           restore-keys: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
         shell: bash
@@ -150,7 +150,7 @@ jobs:
       - name: Shared Linux CI gate
         shell: bash
         env:
-          DIE_CI_WEB_CACHE: "1"
+          BRUV_CI_WEB_CACHE: "1"
         run: bun run ci
       # PRs (including same-repo PRs) never save/promote executable cache entries.
       - name: Save verified pinned web payload (trusted default branch only)
@@ -184,12 +184,12 @@ jobs:
       - name: Configure package download stores
         shell: bash
         run: |
-          echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/die-bun-cache" >> "$GITHUB_ENV"
-          echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/die-pnpm-store" >> "$GITHUB_ENV"
+          echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache" >> "$GITHUB_ENV"
+          echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store" >> "$GITHUB_ENV"
       - name: Cache Bun package downloads
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ${{ runner.temp }}/die-bun-cache
+          path: ${{ runner.temp }}/bruv-bun-cache
           key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
           restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
