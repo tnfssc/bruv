@@ -27,6 +27,38 @@ export function assistantText(events: Array<{ event: unknown }> = []): string | 
     if (text) return safe(text);
   }
 }
+// The launch prompt is the existing human task title; IDs remain available for commands.
+const taskTitle = (t: RemoteTask) => {
+  const prompt = safe(t.prompt).replace(/\s+/g, " ").trim();
+  return prompt ? (prompt.length > 160 ? prompt.slice(0, 157) + "…" : prompt) : safe(t.taskId);
+};
+const repositoryLines = (t: RemoteTask): string[] => {
+  const r = obj(t.repository);
+  if (!t.repository && !terminal(t)) return [];
+  const status =
+    r.status === "applied"
+      ? "applied (recorded local return)"
+      : r.status === "no_changes"
+        ? "no changes"
+        : r.status === "review"
+          ? "review needed; application not confirmed"
+          : "unknown; application not confirmed";
+  return [
+    "Repository return: " + status + (r.reason ? " · " + detail(r.reason) : ""),
+    r.status === "review" && "Inspect local worktree before applying.",
+    r.artifact && "Local return artifact: " + safe(r.artifact),
+    r.receipt && "Local return receipt: " + safe(r.receipt),
+  ].filter(Boolean) as string[];
+};
+const artifactLines = (t: RemoteTask): string[] => {
+  const manifest = obj(t.localArtifacts);
+  return [
+    (t.artifactsComplete === false || manifest.complete === false) && "Warning: local artifact sync incomplete.",
+    ...Object.values(obj(manifest.files)).map((file) => file?.path && "Saved artifact: " + safe(file.path)),
+  ].filter(Boolean) as string[];
+};
+const questionAction = (t: RemoteTask, id: string) =>
+  t.replies?.[id] || t.replyDelivery?.[id] ? "saved reply; reconcile in /remote" : "/remote to answer";
 const terminal = (t: RemoteTask) => ["done", "cancelled", "failed"].includes(t.task?.state ?? "");
 const replyLines = (t: RemoteTask) =>
   Object.entries(t.replyDelivery ?? {}).map(
@@ -62,6 +94,8 @@ export function taskLine(t: RemoteTask): string {
     t.lastError && "offline (cached)",
     t.integrationError && "result review needed",
     obj(t.repository).status === "review" && "repository result review needed",
+    obj(t.repository).status === "applied" && "repository return applied",
+    obj(t.repository).status === "no_changes" && "repository return: no changes",
     t.task?.state === "blocked" && "blocked",
     t.task?.error && "failed",
     t.task?.textOutputGap && "transcript gap",
@@ -77,10 +111,11 @@ export function taskLine(t: RemoteTask): string {
     problems.push("cancel " + safe(t.cancelDelivery.status) + (terminal(t) ? " (terminal)" : " (not terminal)"));
   else if (t.cancelRequested && !terminal(t)) problems.push("cancel requested (not terminal)");
   return (
-    safe(t.taskId) +
+    taskTitle(t) +
     " \u00B7 " +
     safe(t.task?.state ?? t.outcome ?? "unknown") +
-    (problems.length ? " \u00B7 " + problems.join(" \u00B7 ") : "")
+    (problems.length ? " \u00B7 " + problems.join(" \u00B7 ") : "") +
+    (t.prompt?.trim() ? " · task " + safe(t.taskId) : "")
   );
 }
 /** Display all cached rows, including unfamiliar event kinds, without protocol-only fields. */
@@ -221,14 +256,14 @@ export function renderHuman(value: unknown, kind = "result"): string {
     return [
       "Remote \u00B7 " +
         (v.connection ? "SSH target " + safe(v.connection.host) : "not connected") +
-        " (cached observations)",
+        (tasks.length || preparations.length ? " (cached observations)" : ""),
       ...tasks.map(
         (t) =>
           taskLine(t) +
           (t.lastError ? "\n  " + detail(t.lastError) : "") +
           ((t.task?.questions as any[] | undefined) ?? [])
             .filter((q) => q.status === "pending")
-            .map((q) => "\n  Question " + safe(q.id) + ": " + safe(q.text ?? q.question))
+            .map((q) => "\n  Question: " + safe(q.text ?? q.question) + " (question " + safe(q.id) + ")")
             .join("") +
           replyLines(t)
             .map((line) => "\n  " + line)
@@ -249,24 +284,42 @@ export function renderHuman(value: unknown, kind = "result"): string {
       ),
       tasks.length || preparations.length
         ? "Use /remote to act; /remote transcript <taskId> for saved task events."
-        : "No saved tasks or repository preparations.",
+        : "No saved tasks or repository preparations. " +
+          (v.connection
+            ? "Open /remote to launch work from this repository."
+            : "Open /remote and choose Connect to get started."),
     ].join("\n");
   }
   if (v.taskId) {
     const t = v as RemoteTask;
+    const final =
+      t.task?.state === "done"
+        ? v.finalAssistantText
+          ? safe(v.finalAssistantText)
+          : assistantText(t.events)
+        : undefined;
     return [
-      "Remote " + taskLine(t),
-      t.lastError && "Offline; cached observation: " + detail(t.lastError),
-      t.integrationError && "Result review: " + detail(t.integrationError),
-      obj(t.repository).status === "review" &&
-        "Repository result review: " + detail(obj(t.repository).reason ?? "returned changes require review"),
-      obj(t.repository).status === "review" &&
-        obj(t.repository).artifact &&
-        "Inspect local worktree before applying. Local review artifact: " + safe(obj(t.repository).artifact),
-      t.task?.error && "Task error: " + detail(t.task.error),
+      "Remote " + taskTitle(t) + " · " + safe(t.task?.state ?? t.outcome ?? "unknown"),
       ...((t.task?.questions as any[] | undefined) ?? [])
         .filter((q) => q.status === "pending")
-        .map((q) => "Question " + safe(q.id) + ": " + safe(q.text ?? q.question) + " · /remote to answer"),
+        .map(
+          (q) =>
+            "Question: " +
+            safe(q.text ?? q.question) +
+            " · " +
+            questionAction(t, q.id) +
+            " (question " +
+            safe(q.id) +
+            ")",
+        ),
+      ["accepted", "running"].includes(t.task?.state ?? "") && "Next: /remote for saved progress and actions.",
+      ...repositoryLines(t),
+      t.task?.state === "done" &&
+        (final
+          ? "Saved assistant text:\n" + final
+          : "No saved assistant text available; inspect the cached transcript."),
+      t.task?.error && "Task error: " + detail(t.task.error),
+      t.integrationError && "Result review: " + detail(t.integrationError),
       ...((t.task?.capabilityNeeds as any[] | undefined) ?? []).map(
         (need) =>
           "Capability requested (not granted): " +
@@ -280,14 +333,27 @@ export function renderHuman(value: unknown, kind = "result"): string {
       ),
       ...replyLines(t),
       cancellationLine(t),
-      t.transcriptComplete === false && "Warning: transcript incomplete.",
-      t.task?.state === "done" && (v.finalAssistantText || assistantText(t.events)),
+      t.cancelRequested && !t.cancelDelivery && !terminal(t) && "Cancel requested; terminal state not yet confirmed.",
+      t.transcriptComplete === false &&
+        (terminal(t)
+          ? "Warning: transcript incomplete."
+          : "Transcript: partial cached observations; completion not confirmed."),
+      t.task?.textOutputGap && "Warning: transcript gap: " + detail(t.task.textOutputGap),
+      ...artifactLines(t),
+      t.lastError && "Offline; cached observation: " + detail(t.lastError),
+      "Task: " + safe(t.taskId),
       "Last synchronized state, not live status. /remote transcript " + safe(t.taskId) + " for full events.",
     ]
       .filter(Boolean)
       .join("\n");
   }
-  if (kind === "connect") return "Remote connected to " + safe(v.host) + ". " + safe(v.scope ?? "");
+  if (kind === "connect")
+    return (
+      "Remote connected to " +
+      safe(v.host) +
+      ". Open /remote to launch work from this repository. " +
+      safe(v.scope ?? "")
+    );
   return detail(value);
 }
 /** Attention is identified by durable subject, not the changing poll payload. */
@@ -314,7 +380,13 @@ export class RemoteAttention {
     }
   }
 
-  connection(id: string, offline: boolean, error?: unknown, onEmit?: (key: string) => void): string[] {
+  connection(
+    id: string,
+    offline: boolean,
+    error?: unknown,
+    onEmit?: (key: string) => void,
+    title = safe(id),
+  ): string[] {
     const prior = this.connections.get(id);
     if ((!prior && !offline) || prior?.offline === offline) return [];
     const transition = (prior?.transition ?? 0) + 1;
@@ -324,11 +396,12 @@ export class RemoteAttention {
     onEmit?.(key);
     return [
       "Remote " +
-        safe(id) +
+        title +
         " · " +
         (offline
           ? "offline; cached state only" + (error ? ": " + detail(error) : "")
-          : "connection recovered; state synchronized"),
+          : "connection recovered; state synchronized") +
+        (title !== safe(id) ? "\nTask: " + safe(id) : ""),
     ];
   }
 
@@ -340,31 +413,41 @@ export class RemoteAttention {
     const notices: string[] = [];
     for (const t of Object.values(state.tasks)) {
       const id = t.taskId;
-      const add = (subject: string, text: string) => {
+      let primaryIndex = notices.length;
+      const add = (subject: string, text: string, secondary = false) => {
         const key = JSON.stringify([id, subject]);
         if (this.emitted.has(key)) return;
         this.emitted.add(key);
         onEmit?.(key);
-        notices.push("Remote " + safe(id) + " · " + text);
+        const notice = "Remote " + taskTitle(t) + " · " + text + (t.prompt?.trim() ? "\nTask: " + safe(id) : "");
+        if (secondary) notices.push(notice);
+        else notices.splice(primaryIndex++, 0, notice);
       };
-      notices.push(...this.connection(id, !!t.lastError, t.lastError, onEmit));
+      notices.push(...this.connection(id, !!t.lastError, t.lastError, onEmit, taskTitle(t)));
       if (obj(t.repository).status === "review")
         add(
           "repository-review:" + (obj(t.repository).artifact ?? ""),
-          "repository result review needed: " + detail(obj(t.repository).reason ?? "returned changes require review"),
+          "repository result review needed\n" + repositoryLines(t).join("\n"),
         );
-      if (t.task?.state === "blocked")
-        add("blocked", "blocked; /remote to review pending questions or capability requests");
       if (t.integrationError)
         add("review:" + t.integrationError, "result review needed: " + detail(t.integrationError));
       if (t.task?.error && !["failed", "unknown"].includes(t.task.state))
         add("error:" + t.task.error, "failed: " + detail(t.task.error));
-      if (t.task?.textOutputGap) add("gap:" + t.task.textOutputGap, "transcript gap: " + detail(t.task.textOutputGap));
+      if (t.task?.textOutputGap)
+        add("gap:" + t.task.textOutputGap, "transcript gap: " + detail(t.task.textOutputGap), true);
+      if (t.transcriptComplete === false && terminal(t))
+        add("transcript-incomplete", "Warning: transcript incomplete; /remote to inspect saved results", true);
       for (const q of (t.task?.questions as any[] | undefined) ?? [])
         if (q.status === "pending")
           add(
             "question:" + q.id + ":" + q.version + ":" + JSON.stringify(q.owner),
-            "question " + safe(q.id) + ": " + safe(q.text ?? q.question) + " · /remote to answer",
+            "Question: " +
+              safe(q.text ?? q.question) +
+              " · " +
+              questionAction(t, q.id) +
+              " (question " +
+              safe(q.id) +
+              ")",
           );
       for (const need of (t.task?.capabilityNeeds as any[] | undefined) ?? [])
         add(
@@ -374,12 +457,18 @@ export class RemoteAttention {
             (need?.input ? " · " + safe(need.input) : "") +
             " · /remote to review",
         );
+      if (t.task?.state === "blocked")
+        add("blocked", "blocked; /remote to review pending questions or capability requests");
       if (t.replyDelivery)
         for (const [questionId, reply] of Object.entries(t.replyDelivery))
           if (reply.status === "uncertain")
             add(
               "reply:" + questionId + ":" + reply.replyId,
-              "answer delivery uncertain; reconcile saved reply before retrying",
+              "answer delivery uncertain; /remote to reconcile saved reply before retrying (question " +
+                safe(questionId) +
+                "; reply " +
+                safe(reply.replyId) +
+                ")",
             );
       if (t.cancelRequested && !["cancelled", "done", "failed"].includes(t.task?.state ?? ""))
         add("cancel", "cancel requested; terminal state not yet confirmed");
@@ -390,6 +479,15 @@ export class RemoteAttention {
       ) {
         const final = stateName === "done" ? assistantText(t.events) : undefined;
         const terminalKey = "terminal:" + stateName + ":" + (final ?? t.task?.error ?? "");
+        const repositorySubject = t.repository ? "repository-return:" + JSON.stringify(t.repository) : undefined;
+        const repositoryKey = repositorySubject && JSON.stringify([id, repositorySubject]);
+        // Return metadata can arrive after completion. Report that outcome without replaying assistant text.
+        if (repositorySubject && this.emitted.has(JSON.stringify([id, terminalKey])) && !suppressTerminal?.(t))
+          add(repositorySubject, repositoryLines(t).join("\n"));
+        if (repositoryKey && !this.emitted.has(repositoryKey)) {
+          this.emitted.add(repositoryKey);
+          onEmit?.(repositoryKey);
+        }
         if (suppressTerminal?.(t)) {
           // A pre-existing cached result is a baseline, not an event in this session.
           this.emitted.add(JSON.stringify([id, terminalKey]));
@@ -398,7 +496,9 @@ export class RemoteAttention {
         add(
           terminalKey,
           stateName === "done"
-            ? "done" + (final ? "\n" + final : "")
+            ? "done\n" +
+                repositoryLines(t).join("\n") +
+                (final ? "\nSaved assistant text:\n" + final : "\nNo saved assistant text available.")
             : safe(stateName) + (t.task?.error ? ": " + detail(t.task.error) : ""),
         );
       }

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { renderHuman, taskLine } from "../src/remote/human-rendering";
+import { renderHuman, taskLine, RemoteAttention } from "../src/remote/human-rendering";
 import type { RemoteTask } from "../src/remote/client";
 
 const task = (state = "running") => ({ taskId: "task-1", task: { state }, events: [] }) as unknown as RemoteTask;
@@ -230,4 +230,169 @@ test("known lifecycle message envelopes remain readable without losing new event
   expect(output).not.toContain('"role":"assistant"');
   expect(output).not.toContain('"usage"');
   expect(renderHuman(input, "transcript-raw")).toContain('"usage"');
+});
+
+const titledTask = (state = "done") =>
+  ({
+    ...task(state),
+    prompt: "Update the tracked fixture file",
+    transcriptComplete: true,
+    events: [{ seq: 1, event: { type: "message_end", message: { role: "assistant", content: "Useful conclusion" } } }],
+  }) as RemoteTask;
+
+test("saved results lead with work and recorded return, before cached diagnostics and IDs", () => {
+  const t = {
+    ...titledTask(),
+    lastError: "SSH timeout",
+    integrationError: "artifact fetch failed",
+    repository: { status: "applied", artifact: "/local/result.patch", receipt: "/local/receipt.json" },
+    localArtifacts: { complete: false, files: { log: { path: "/local/log.txt" } } },
+    artifactsComplete: false,
+    transcriptComplete: false,
+    task: { state: "done", textOutputGap: "missing events" },
+  } as unknown as RemoteTask;
+  const before = JSON.stringify(t);
+  const text = renderHuman(t);
+  expect(text.split("\n")[0]).toBe("Remote Update the tracked fixture file · done");
+  expect(text).toContain("Repository return: applied (recorded local return)");
+  for (const value of [
+    "/local/result.patch",
+    "/local/receipt.json",
+    "/local/log.txt",
+    "artifact fetch failed",
+    "missing events",
+    "transcript incomplete",
+    "artifact sync incomplete",
+    "SSH timeout",
+    "/remote transcript task-1",
+    "not live status",
+  ])
+    expect(text).toContain(value);
+  expect(text.indexOf("Useful conclusion")).toBeLessThan(text.indexOf("Warning:"));
+  expect(text.indexOf("Useful conclusion")).toBeLessThan(text.indexOf("SSH timeout"));
+  expect(text.indexOf("Useful conclusion")).toBeLessThan(text.indexOf("Task: task-1"));
+  expect(taskLine(t)).toStartWith("Update the tracked fixture file · done");
+  expect(taskLine(t)).toContain("task task-1");
+  expect(status([t])).toContain("repository return applied");
+  expect(JSON.stringify(t)).toBe(before); // human formatting cannot mutate automation data
+});
+
+test.each([
+  [undefined, "unknown; application not confirmed"],
+  [{ status: "future", artifact: "/local/patch" }, "unknown; application not confirmed"],
+  [
+    { status: "review", reason: "local file changed", artifact: "/local/patch", receipt: "/local/attempt" },
+    "review needed; application not confirmed",
+  ],
+  [{ status: "no_changes", artifact: "/local/patch" }, "no changes"],
+] as const)("done does not imply application: %j", (repository, expected) => {
+  const text = renderHuman({ ...titledTask(), repository });
+  expect(text).toContain("Repository return: " + expected);
+  expect(text).not.toContain("Repository return: applied");
+  if (repository?.status === "review") {
+    expect(text).toContain("local file changed");
+    expect(text).toContain("Inspect local worktree before applying");
+    expect(text).toContain("/local/attempt");
+  }
+});
+
+test.each(["running", "blocked", "failed", "cancelled"])(
+  "%s never presents cached assistant text as a completion",
+  (state) => {
+    const text = renderHuman({ ...titledTask(state), task: { state, error: "observed failure" } });
+    expect(text).not.toContain("Useful conclusion");
+    expect(text).not.toContain("Saved assistant text:");
+    expect(text).toContain("observed failure");
+  },
+);
+
+test("question notices lead with title and question, keeping uncertainty and gap diagnostics", () => {
+  const t = {
+    ...titledTask("running"),
+    lastError: "SSH unavailable",
+    replyDelivery: { q: { replyId: "reply-1", status: "uncertain" } },
+    task: {
+      state: "running",
+      textOutputGap: "gap detail",
+      questions: [{ id: "q", status: "pending", text: "Which region?" }],
+    },
+  } as unknown as RemoteTask;
+  const attention = new RemoteAttention();
+  const state = { tasks: { "task-1": t } } as any;
+  const notices = attention.update(state);
+  expect(notices[0]).toStartWith(
+    "Remote Update the tracked fixture file · Question: Which region? · saved reply; reconcile in /remote",
+  );
+  expect(notices[0]).toContain("question q");
+  expect(notices[0]).toContain("Task: task-1");
+  for (const value of [
+    "SSH unavailable",
+    "gap detail",
+    "answer delivery uncertain",
+    "reconcile saved reply before retrying",
+    "reply-1",
+  ])
+    expect(notices.join("\n")).toContain(value);
+  expect(attention.update(state)).toEqual([]);
+});
+
+test("completion reports applied return, assistant text, and incomplete transcript without UUID-first framing", () => {
+  const t = { ...titledTask(), repository: { status: "applied", artifact: "/local/patch" }, transcriptComplete: false };
+  const notices = new RemoteAttention().update({ tasks: { "task-1": t } } as any);
+  expect(notices[0]).toStartWith("Remote Update the tracked fixture file · done");
+  expect(notices[0]).toContain("Repository return: applied");
+  expect(notices[0]).toContain("/local/patch");
+  expect(notices[0]).toContain("Saved assistant text:\nUseful conclusion");
+  expect(notices.join("\n")).toContain("transcript incomplete");
+});
+
+test("late repository outcome is noticed once without replaying completed assistant text, including reload", () => {
+  const t = titledTask();
+  const state = { tasks: { "task-1": t } } as any;
+  const attention = new RemoteAttention();
+  const keys: string[] = [];
+  expect(attention.update(state, (key) => keys.push(key)).join("\n")).toContain("Repository return: unknown");
+  t.repository = { status: "applied", artifact: "/local/patch", receipt: "/local/receipt" };
+  const update = attention.update(state, (key) => keys.push(key)).join("\n");
+  expect(update).toContain("Repository return: applied");
+  expect(update).toContain("/local/receipt");
+  expect(update).not.toContain("Useful conclusion");
+  expect(attention.update(state)).toEqual([]);
+  const restored = new RemoteAttention();
+  restored.restore(keys);
+  expect(restored.update(state)).toEqual([]);
+  const baseline = new RemoteAttention();
+  expect(baseline.update(state, undefined, () => true)).toEqual([]);
+  expect(baseline.update(state)).toEqual([]);
+});
+
+test("accepted launch is a prompt-first handoff, not a terminal transcript warning", () => {
+  const text = renderHuman({ ...titledTask("accepted"), transcriptComplete: false });
+  expect(text).toStartWith("Remote Update the tracked fixture file · accepted\nNext: /remote");
+  expect(text).toContain("partial cached observations; completion not confirmed");
+  expect(text).not.toContain("Warning: transcript incomplete");
+  expect(text).not.toContain("Useful conclusion");
+  expect(text).toContain("not live status");
+});
+
+test("fresh status/connect explains the next human action without fake cached work", () => {
+  const fresh = renderHuman({ tasks: [] }, "status");
+  expect(fresh).toContain("Open /remote and choose Connect");
+  expect(fresh).not.toContain("cached observations");
+  expect(renderHuman({ connection: { host: "fixture" }, tasks: [] }, "status")).toContain(
+    "launch work from this repository",
+  );
+  expect(renderHuman({ host: "fixture" }, "connect")).toContain("Open /remote to launch work");
+});
+
+test("a pending question with a saved reply offers reconciliation, not a new answer", () => {
+  const t = {
+    ...titledTask("running"),
+    replies: { q: {} },
+    task: { state: "running", questions: [{ id: "q", status: "pending", text: "Which?" }] },
+  } as unknown as RemoteTask;
+  expect(renderHuman(t)).toContain("Question: Which? · saved reply; reconcile in /remote");
+  expect(new RemoteAttention().update({ tasks: { t } } as any).join("\n")).toContain(
+    "Question: Which? · saved reply; reconcile in /remote",
+  );
 });
