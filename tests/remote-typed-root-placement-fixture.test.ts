@@ -243,7 +243,6 @@ describe("typed fixture infrastructure safety", () => {
   });
 });
 
-
 describe("typed root failure acceptance guards", () => {
   test("loss triggers only the designated prompt, not status or unrelated controls", () => {
     const command = { op: "command", command: { kind: "prompt", text: "ROOT_REPLY_LOSS once" } };
@@ -254,8 +253,10 @@ describe("typed root failure acceptance guards", () => {
   });
   test("unknown recovery requires exact identity, one send, status and one real execution", () => {
     const request = { op: "command", commandId: "lost", command: { kind: "prompt", text: "ROOT_REPLY_LOSS once" } };
-    const s: any = { intent: { repoPath: "/server" }, commands: { lost: { command: request.command,
-      receipt: { state: "completed", commandId: "lost" } } } };
+    const s: any = {
+      intent: { repoPath: "/server" },
+      commands: { lost: { command: request.command, receipt: { state: "completed", commandId: "lost" } } },
+    };
     const requests = [request, { op: "command-status", commandId: "lost" }];
     const work = [{ role: "root", depth: 0, cwd: "/server" }];
     assertReplyRecovered(s, request, requests, work);
@@ -271,9 +272,11 @@ describe("typed root failure acceptance guards", () => {
     expect(() => assertReplyRecovered(s, request, requests, work)).toThrow();
   });
   test("cancel request must target the inspected terminal non-success job", () => {
-    const s: any = { commands: { stop: { command: { kind: "jobs.stop", id: "job" },
-      receipt: { state: "completed" } } } };
+    const s: any = {
+      commands: { stop: { command: { kind: "jobs.stop", id: "job" }, receipt: { state: "completed" } } },
+    };
     assertCancelledJob(s, "job", { id: "job", status: "cancelled" });
+    assertCancelledJob(s, "job", { id: "job", status: "killed" });
     for (const status of ["running", "completed", "unknown", "queued"])
       expect(() => assertCancelledJob(s, "job", { id: "job", status })).toThrow();
     expect(() => assertCancelledJob(s, "other", { id: "job", status: "failed" })).toThrow();
@@ -283,7 +286,7 @@ describe("typed root failure acceptance guards", () => {
   test("provider failure prompts emit executable tools, no synthetic receipts", () => {
     for (const text of ["ROOT_REPLY_LOSS", "ROOT_RUNNING_JOB"]) {
       const generated = code(response(request("typed-root", [user(text)])));
-      expect(() => new Function("return async function(){" + generated + "}" )).not.toThrow();
+      expect(() => new Function("return async function(){" + generated + "}")).not.toThrow();
       expect(generated).not.toContain("receipt");
       if (text === "ROOT_RUNNING_JOB") {
         expect(generated).toContain("shell(");
@@ -303,20 +306,33 @@ describe("typed root failure acceptance guards", () => {
   });
 });
 
-
 test("reply-loss relay really forwards once, discards bytes and gates status until release", () => {
   const dir = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "typed-root-relay-test-"));
   try {
     const fakeSSH = join(dir, "fake-ssh");
     // Isolated executable stand-in tests relay mechanics, NOT backend/SSH acceptance.
-    writeFileSync(fakeSSH, "#!/bin/sh\ncat > " + JSON.stringify(join(dir, "forwarded.json")) +
-      "\nprintf '%s' '{\"commandId\":\"lost\",\"state\":\"completed\"}'\n", { mode: 0o700 });
+    writeFileSync(
+      fakeSSH,
+      "#!/bin/sh\ncat > " +
+        JSON.stringify(join(dir, "forwarded.json")) +
+        '\nprintf \'%s\' \'{"commandId":"lost","state":"completed"}\'\n',
+      { mode: 0o700 },
+    );
     writeFileSync(join(dir, "armed"), "fixture only");
     const request = { op: "command", commandId: "lost", command: { kind: "prompt", text: "ROOT_REPLY_LOSS once" } };
-    const relay = (input: any) => spawnSync(process.execPath,
-      [new URL("./fixtures/remote-typed-root-placement/reply-loss.ts", import.meta.url).pathname,
-        fakeSSH, "/nonexistent-fixture-config", dir, "fixture", "die --remote-root-control"],
-      { input: JSON.stringify(input) + "\n", encoding: "utf8" });
+    const relay = (input: any) =>
+      spawnSync(
+        process.execPath,
+        [
+          new URL("./fixtures/remote-typed-root-placement/reply-loss.ts", import.meta.url).pathname,
+          fakeSSH,
+          "/nonexistent-fixture-config",
+          dir,
+          "fixture",
+          "die --remote-root-control",
+        ],
+        { input: JSON.stringify(input) + "\n", encoding: "utf8" },
+      );
     const loss = relay(request);
     expect(loss.status).toBe(255);
     expect(loss.stdout).toBe("");
@@ -333,5 +349,7 @@ test("reply-loss relay really forwards once, discards bytes and gates status unt
     expect(reconciled.status).toBe(0);
     expect(JSON.parse(reconciled.stdout)).toEqual(saved.response);
     expect(JSON.parse(readFileSync(join(dir, "forwarded.json"), "utf8"))).toEqual(status);
-  } finally { rmSync(dir, { recursive: true, force: true }); }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

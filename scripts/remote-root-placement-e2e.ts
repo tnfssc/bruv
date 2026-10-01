@@ -757,6 +757,10 @@ try {
       () => completedCommands(rootState(faultID), "jobs.inspect").length > 1,
     );
     const post = completedCommands(rootState(faultID), "jobs.inspect").at(-1);
+    writeFileSync(
+      join(artifacts, "running-cancel-receipt.json"),
+      JSON.stringify({ state: rootState(faultID), result: post.receipt.result }, null, 2),
+    );
     assertCancelledJob(rootState(faultID), running.id, post.receipt.result);
     assert.equal(ssh("test ! -e /tmp/root-running-finished && echo unfinished"), "unfinished");
     assert.equal(rootState(faultID).record.state, "running", "job cancellation closed root");
