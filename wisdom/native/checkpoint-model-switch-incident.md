@@ -42,7 +42,7 @@ Superseded task_042241cf left an uncommitted reject-only patch in /home/tnfssc/.
 
 The user also linked Release 36813685812/job 110214202400. Release sets DIE_T3_SOURCE; the cache-key fixture assumed it absent. Production correctly rejects custom sources. Worker a6da360 integrated as 82cdcff after the version bump 0aba473. The fixture checks rejection, clears its own input and restores caller state. No production guard was weakened.
 
-30 focused tests passed with inherited DIE_T3_SOURCE. Log: /home/tnfssc/.die/release-cache-env-regression.log. Commit 82cdcff is pushed; ordinary CI 36815463809 passed. No Release was dispatched. An old pinned job does not pick up a new commit on rerun. Version 0.15.15 is prepared, not confirmed published.
+30 focused tests passed with inherited DIE_T3_SOURCE. Log: /home/tnfssc/.die/release-cache-env-regression.log. Commit 82cdcff is pushed; ordinary CI 36815463809 passed. No Release was dispatched. An old pinned job does not pick up a new commit on rerun. At that point v0.15.15 was only prepared. It later [published after the user asked to release](../releases/v01515-release.md).
 
 ## Lesson
 
