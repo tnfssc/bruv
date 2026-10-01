@@ -455,6 +455,11 @@ try {
   assert(!view().includes("✓ Ask a helper to review the guide"), "reopen must not duplicate helper-launch success");
   capture("08-written", "The root writes NOTES.md after your answer", 56);
   assert.equal(readFileSync(join(repo, "NOTES.md"), "utf8"), "# Getting started\n\nNotes to follow.\n");
+  // /ps was intentionally captured while active. Read a new authoritative terminal snapshot.
+  type("/ps");
+  await wait("terminal jobs menu", () => view().includes("Jobs"));
+  key("Escape");
+  await Bun.sleep(300);
   type("/close");
   await wait("source return", () => view().includes("Source return: applied"), 120000);
   capture("09-return", "/close · changes return safely to the local project", 65);
@@ -468,7 +473,7 @@ try {
   const jobLists = Object.values(state.commands)
     .filter((c: any) => c.command.kind === "jobs.list")
     .map((c: any) => c.receipt.result.jobs);
-  const child = jobLists.flat().find((j: any) => j.title === "Review the project guide");
+  const child = jobLists.flat().findLast((j: any) => j.title === "Review the project guide");
   assert.equal(child.status, "completed");
   assert.equal(child.agent.type, "normal");
   assert.equal(child.agent.depth, 1);
