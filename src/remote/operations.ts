@@ -1,4 +1,4 @@
-import { launchRepository, repositoryPreparations } from "./repository-wire";
+import { repositoryPreparations } from "./repository-wire";
 import { requestLocalCapability } from "./services";
 import type { CapabilityKind } from "./capabilities";
 import { RemoteClient, type RemoteTask } from "./client";
@@ -56,39 +56,12 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
       case "status":
         return status();
       case "launchRepository":
-        if (typeof args.prompt !== "string" || !args.prompt.trim()) throw Error("Repository launch requires a prompt");
-        return summary(
-          await launchRepository(client, {
-            prompt: args.prompt,
-            jobSessionFile,
-            taskId: args.taskId,
-            model: args.model,
-            thinking: args.thinking,
-            localRoot: cwd,
-          }),
-        );
+      case "launch":
+        throw new Error("Remote task launch uses subagent({ target: <authorized name>, ... }); legacy remote launch helpers cannot bypass delegation role/depth policy.");
       case "requestCapability":
         return requestLocalCapability(args, signal);
       case "cancel":
         return summary(await client.cancel(args.taskId));
-      case "launch":
-        if (
-          typeof args.repoPath !== "string" ||
-          typeof args.prompt !== "string" ||
-          (args.taskId !== undefined && typeof args.taskId !== "string")
-        )
-          throw new Error("launch requires repoPath and prompt (optional taskId)");
-        return summary(
-          await client.launch(
-            args.repoPath,
-            args.prompt,
-            args.taskId,
-            args.model !== undefined || args.thinking !== undefined
-              ? { model: args.model, thinking: args.thinking }
-              : undefined,
-            jobSessionFile,
-          ),
-        );
       case "sync":
         if (typeof args.taskId !== "string") throw new Error("sync requires taskId");
         return summary(await client.sync(args.taskId));

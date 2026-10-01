@@ -100,15 +100,12 @@ test("execute remote methods use configured client, never accept a host", async 
     transcript: async (id: string) => ({ events: Array.from({ length: 55 }, (_, i) => i), taskId: id }),
   };
   remoteExtension(pi as any, client as any);
-  await createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "do work", taskId: "id" });
-  expect(calls).toEqual([["/repo", "do work", "id", undefined, undefined]]);
-  await createRemoteOperations(client as any)(
+  await expect(createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "do work", taskId: "id" })).rejects.toThrow("subagent");
+  await expect(createRemoteOperations(client as any)(
     { op: "launch", repoPath: "/repo", prompt: "owned", taskId: "owned" },
-    "/repo",
-    undefined,
-    "/sessions/parent.jsonl",
-  );
-  expect(calls.at(-1)).toEqual(["/repo", "owned", "owned", undefined, "/sessions/parent.jsonl"]);
+    "/repo", undefined, "/sessions/parent.jsonl",
+  )).rejects.toThrow("subagent");
+  expect(calls).toEqual([]);
   expect(await createRemoteOperations(client as any)({ op: "transcript", taskId: "id", offset: 50 })).toMatchObject({
     events: [50, 51, 52, 53, 54],
     offset: 50,
@@ -118,7 +115,8 @@ test("execute remote methods use configured client, never accept a host", async 
   );
   await expect(
     createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "p", host: "bad" } as any),
-  ).resolves.toBeDefined();
+  ).rejects.toThrow("subagent");
+  expect(calls).toEqual([]);
 });
 
 test("remote presentation escapes terminal and bidi control text", () => {
