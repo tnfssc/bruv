@@ -549,6 +549,7 @@ export default function asynchronousTasksExtension(
   const history = new HistoryService();
   let service: JobService | undefined;
   const remoteClient = new RemoteClient();
+  questions.configureRemote(remoteClient);
   const remoteJobs = createRemoteJobsAdapter(remoteClient);
   const getService = (ctx: ExtensionContext) => {
     taskUi = ctx.ui;

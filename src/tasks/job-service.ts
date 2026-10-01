@@ -452,6 +452,9 @@ export class JobService {
             throw new Error("SSH subagent launch requires durable execute invocation and call identity");
           const sessionFile = ctx.sessionManager?.getSessionFile();
           if (!sessionFile) throw new Error("SSH subagent launch requires a durable parent session");
+          const branchId = ctx.sessionManager.getLeafId();
+          const sessionId = ctx.sessionManager.getSessionId();
+          if (!branchId || !sessionId) throw new Error("SSH subagent launch requires a saved parent branch");
           const ledger = this.#launchLedger(ctx);
           const launched: SshLaunchResult[] = [];
           try {
@@ -475,6 +478,7 @@ export class JobService {
               const result = await this.remoteJobs.launch({
                 target: params.target,
                 jobSessionFile: sessionFile,
+                jobQuestionOwner: { sessionId, branchId },
                 localRoot: ctx.cwd,
                 prompt,
                 taskId,

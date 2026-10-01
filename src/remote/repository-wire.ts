@@ -219,6 +219,7 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
 
 type Descriptor = {
   jobSessionFile?: string;
+  jobQuestionOwner?: { sessionId: string; branchId: string };
   root: string;
   prompt: string;
   snapshot: RepositorySnapshot;
@@ -230,6 +231,7 @@ type Descriptor = {
 export type RepositoryLaunch = {
   /** Local parent attribution only; never sent to the SSH worker. */
   jobSessionFile?: string;
+  jobQuestionOwner?: { sessionId: string; branchId: string };
   localRoot: string;
   placement?: RemotePlacement;
   prompt: string;
@@ -283,6 +285,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
     descriptor = read(file);
     if (
       (args.jobSessionFile !== undefined && descriptor.jobSessionFile !== args.jobSessionFile) ||
+      JSON.stringify(descriptor.jobQuestionOwner) !== JSON.stringify(args.jobQuestionOwner) ||
       descriptor.root !== realpathSync(args.localRoot) ||
       descriptor.prompt !== args.prompt ||
       JSON.stringify(descriptor.placement) !== JSON.stringify(args.placement) ||
@@ -299,6 +302,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
     });
     descriptor = {
       jobSessionFile: args.jobSessionFile,
+      jobQuestionOwner: args.jobQuestionOwner,
       root: realpathSync(args.localRoot),
       prompt: args.prompt,
       snapshot,
@@ -330,7 +334,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
     if (response.checkout) checkout = response.checkout;
   }
   if (!checkout) throw Error("Remote repository preparation unconfirmed; retry same task ID " + id);
-  await client.launch(checkout, args.prompt, id, descriptor.profile, descriptor.jobSessionFile, descriptor.placement);
+  await client.launch(checkout, args.prompt, id, descriptor.profile, descriptor.jobSessionFile, descriptor.placement, descriptor.jobQuestionOwner);
   await client.updateTask(id, {
     repository: {
       status: "awaiting_remote_result",
@@ -430,6 +434,7 @@ export async function retryRepository(client: RemoteClient, id: string) {
   const descriptor = read<Descriptor>(join(directory(client, id), "handoff.json"));
   return launchRepository(client, {
     jobSessionFile: descriptor.jobSessionFile,
+    jobQuestionOwner: descriptor.jobQuestionOwner,
     localRoot: descriptor.root,
     prompt: descriptor.prompt,
     taskId: id,

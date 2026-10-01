@@ -28,6 +28,7 @@ async function fixture(host = "box") {
     if (req.op === "hello")
       return {
         protocol: 1,
+        taskPlacement: 1,
         ownerId: "owner",
         epoch: "epoch",
         version: "1",
@@ -36,7 +37,7 @@ async function fixture(host = "box") {
       };
     if (req.op === "launch") {
       posts++;
-      return { task: { taskId: req.taskId, state: "accepted" } };
+      return { task: { taskId: req.taskId, state: "accepted", profile: {name: (req.placement as any)?.profile ?? "normal"}, placement: req.placement } };
     }
     if (req.op === "sync")
       return {
@@ -60,14 +61,15 @@ async function fixture(host = "box") {
     const old = intents.get(args.taskId);
     if (old && old !== intent) throw Error("Repository launch retry intent conflict");
     intents.set(args.taskId, intent);
-    // Fake repository backend: only this isolated fixture uses the legacy launch
-    // to populate the durable client state. Production calls launchRepository.
+    // Isolated repository fixture preserves the real placed-launch protocol and parent branch identity.
     const task = await client.launch(
       "/snapshot",
       args.prompt,
       args.taskId,
       { model: args.model, thinking: args.thinking },
       args.jobSessionFile,
+      args.placement,
+      args.jobQuestionOwner,
     );
     await client.updateTask(task.taskId, { repository: { snapshot: "snapshot-sha", history: "snapshot-only" } });
     return client.transcript(task.taskId);
@@ -99,6 +101,7 @@ async function fixture(host = "box") {
       sessionManager: {
         getSessionFile: () => join(dir, session + ".jsonl"),
         getSessionId: () => session,
+        getLeafId: () => session + "-branch",
         getSessionDir: () => dir,
       },
     }) as any;
@@ -148,6 +151,7 @@ test("SSH uses normal async launch with destination profile and honest snapshot 
       provenance: { snapshot: "snapshot-sha" },
     });
     expect(f.requests.at(-1)).toMatchObject({
+      jobQuestionOwner: {sessionId: "parent-A", branchId: "parent-A-branch"},
       placement: { profile: type, parentDepth: 0, workspace: { kind: "worktree", baseRef: "v1", branch: "feature" } },
     });
     expect(f.requests.at(-1)?.model).toBeUndefined();

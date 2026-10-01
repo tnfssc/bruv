@@ -22,6 +22,8 @@ export type RemoteTask = {
   taskId: string;
   /** Immutable parent session attribution, committed with launch intent before SSH. */
   jobSessionFile?: string;
+  /** Immutable parent branch anchor for late human-question projection. Never sent to the server. */
+  jobQuestionOwner?: { sessionId: string; branchId: string };
   /** Monotonic local launch order keeps jobs cursors stable when random IDs sort earlier. */
   jobSequence?: number;
   host: string;
@@ -216,9 +218,12 @@ export class RemoteClient {
     overrides?: { model?: string; thinking?: string },
     sessionFile?: string,
     placement?: RemotePlacement,
+    jobQuestionOwner?: { sessionId: string; branchId: string },
   ): Promise<RemoteTask> {
     return this.exclusive(async () => {
       if (placement !== undefined) validatePlacement(placement);
+      if (jobQuestionOwner && (!sessionFile || !jobQuestionOwner.sessionId || !jobQuestionOwner.branchId))
+        throw new Error("Parent question ownership requires a durable session and branch");
       if (
         !repoPath.startsWith("/") ||
         !prompt.trim() ||
@@ -259,6 +264,7 @@ export class RemoteClient {
           task.epoch !== c.hello.epoch ||
           task.repoPath !== repoPath ||
           task.prompt !== prompt ||
+          JSON.stringify(task.jobQuestionOwner) !== JSON.stringify(jobQuestionOwner) ||
           JSON.stringify(task.placement) !== JSON.stringify(placement) ||
           JSON.stringify(task.overrides ?? {}) !== JSON.stringify(overrides ?? {})
         )
@@ -271,6 +277,7 @@ export class RemoteClient {
           ...(sessionFile
             ? {
                 jobSessionFile: sessionFile,
+                jobQuestionOwner,
                 jobSequence:
                   Object.values(state.tasks).reduce((max, task) => Math.max(max, task.jobSequence ?? 0), 0) + 1,
               }

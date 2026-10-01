@@ -43,6 +43,7 @@ export type SshJob = {
 export type SshLaunchRequest = {
   target: string;
   jobSessionFile: string;
+  jobQuestionOwner?: { sessionId: string; branchId: string };
   localRoot: string;
   prompt: string;
   taskId: string;
@@ -164,7 +165,8 @@ export function createRemoteJobsAdapter(
           task.jobSessionFile !== request.jobSessionFile ||
           task.host !== connection.host ||
           task.ownerId !== connection.hello.ownerId ||
-          task.epoch !== connection.hello.epoch
+          task.epoch !== connection.hello.epoch ||
+          JSON.stringify(task.jobQuestionOwner) !== JSON.stringify(request.jobQuestionOwner)
         )
           throw new Error("SSH launch identity/parent ownership conflict");
       };
