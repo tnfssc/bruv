@@ -6,7 +6,7 @@ Implementation tree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7c7fed9c,
 The live contract and delegate paths are in PARENT_TASK_PLACEMENT_STATUS.md. Backend worker task_9973edae owns destination role/depth and snapshot workspace transfer; task_da9b9740 normal launch/job schema and identity; task_607d8168 ordinary human questions; task_09184036 disposable compiled-terminal acceptance runner. Each uses a lasting worktree and separate branch. Lead combines/reviews; parent owns final review, PR and video. No push/merge/release or recording here.
 
 ## Why these choices
-Target is an orthogonal optional named choice. The one authorized target is the already human-pinned SSH connection name. No arbitrary host chooser or agent connect authority. Omitted target means current runtime, not UI machine. Thus deliberately server-placed descendants remain there. Main-agent remote attach remains a later rollout without making parent ownership laptop-specific.
+Target is an orthogonal optional named choice. The one authorized target is the already human-pinned SSH connection name. No arbitrary host chooser or agent connect authority. Omitted target means current runtime, not UI machine. Thus deliberately server-placed descendants remain there. Full updated scope includes main-agent remote attach with a thin client, without making parent ownership laptop-specific. Child placement is sequencing, not the final deliverable.
 
 Task launch must pass one delegation policy. Legacy agent remote.launch/launchRepository now reject with subagent guidance: leaving them able to spawn normal workers would preserve a role/depth bypass and second routine launch lifecycle. Human diagnostic commands may remain; ordinary work uses subagent/jobs/questions.
 

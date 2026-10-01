@@ -19,7 +19,7 @@ Use normal jobs to observe, inspect and cancel, and ordinary human questions to 
 
 The SSH workspace is an isolated snapshot-backed checkout. Default source includes current tracked edits; explicit baseRef selects that source revision. Git history and credentials are not transferred. This is not equivalent to a full-history local Git worktree. Untracked paths need explicit human approval; omission is reported. Return applies only against the pinned safe parent baseline; conflicts and ambiguity stay as review artifacts.
 
-Main-agent remote attach and a fleet UI are not part of this child slice. Ownership is relative to the parent session/runtime, not a presumed laptop.
+Full scope includes main-agent remote sessions with a thin client; implementation and root acceptance must complete before release. A fleet UI is not required. Ownership is relative to the parent session/runtime, not a presumed laptop.
 
 Only human /remote connect changes the SSH alias. Strict host-key checking stays enabled; SSH agent, X11 and credential delegation are disabled. New local capability grants remain human-owned setup, never an automatic task answer.
 
