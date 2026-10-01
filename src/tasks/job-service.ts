@@ -474,6 +474,7 @@ export class JobService {
                     prompt,
                   ],
                   displayCommand: "die agent [" + type + "]: " + (params.title ?? prompt),
+                  ...(params.title === undefined ? {} : { title: params.title }),
                   cwd: ctx.cwd,
                   env: {
                     ...scrubT3BridgeEnvironment(process.env),
@@ -524,6 +525,7 @@ export class JobService {
           return this.manager.prepareAgent({
             id,
             displayCommand: "die agent [" + type + "]: " + (params.title ?? prompt),
+            ...(params.title === undefined ? {} : { title: params.title }),
             cwd: ctx.cwd,
             workspace:
               workspace.kind === "worktree"
@@ -666,6 +668,7 @@ export class JobService {
                 prompt,
               ],
               displayCommand: "die agent [" + type + "]: " + (params.title ?? prompt),
+              ...(params.title === undefined ? {} : { title: params.title }),
               cwd: workspaceSummary.path,
               env: {
                 ...scrubT3BridgeEnvironment(process.env),

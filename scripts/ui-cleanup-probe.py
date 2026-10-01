@@ -43,8 +43,11 @@ await handoff("TASKS_WAITING_MARKER");'''),
     }
     if n in calls:
         call_id, code = calls[n]
+        arguments = {"code": code}
+        if n in (1, 2, 3):
+            arguments["label"] = {1: "Read fixture output", 2: "Trigger expected error", 3: "Read large output"}[n]
         events = [chunk({"role":"assistant", "tool_calls":[{"index":0,"id":call_id,
-            "type":"function","function":{"name":"execute","arguments":json.dumps({"code":code})}}]}),
+            "type":"function","function":{"name":"execute","arguments":json.dumps(arguments)}}]}),
                   chunk({}, "tool_calls")]
         if n == 2:
             events.insert(0, chunk({"content":"DIRECT_PROSE_MARKER"}))
@@ -160,12 +163,20 @@ def main() -> int:
         raise TimeoutError(f"timed out waiting for {marker}")
     try:
         run(tmux+["-f", str(tmux_conf), "new-session","-d","-s",session,"-x","120","-y","36","-c",str(home),command], env=env)
-        wait_for('… executing · console.log("SUCCESS_OUTPUT")')
+        wait_for('… executing · Read fixture output')
         active_plain, active_ansi = capture(False), capture(True)
         Path(str(prefix)+"-executing-plain.txt").write_text(active_plain, encoding="utf-8")
         Path(str(prefix)+"-executing-ansi.txt").write_text(active_ansi, encoding="utf-8")
-        assertions["executing_row"] = '… executing · console.log("SUCCESS_OUTPUT")' in strip_ansi(active_plain)
+        assertions["executing_row"] = '… executing · Read fixture output' in strip_ansi(active_plain)
         wait_for("FINAL_FIRST_MARKER")
+        run(tmux+["send-keys","-t",session,"C-o"], timeout=3)
+        time.sleep(.25)
+        expanded = capture(False)
+        Path(str(prefix)+"-expanded-plain.txt").write_text(expanded, encoding="utf-8")
+        assertions["expanded_source"] = 'console.log("SUCCESS_OUTPUT"); await Bun.sleep(1200)' in expanded
+        assertions["expanded_output"] = any(x.strip() == "SUCCESS_OUTPUT" for x in expanded.splitlines())
+        run(tmux+["send-keys","-t",session,"C-o"], timeout=3)
+        time.sleep(.25)
         run(tmux+["send-keys","-t",session,"-l","SECOND_USER_MARKER"], timeout=3)
         run(tmux+["send-keys","-t",session,"Enter"], timeout=3)
         wait_for("FINAL_BATCH_MARKER")
@@ -184,12 +195,12 @@ def main() -> int:
     lines = [x.rstrip() for x in clean.splitlines()]
     def has(pattern): return re.search(pattern, clean, re.MULTILINE) is not None
     assertions["six_bounded_requests"] = len(fixture.records) == 6
-    assertions["success_row"] = has(r'^\s*✓ executed · console\.log\("SUCCESS_OUTPUT"\); await Bun\.sleep\(1200\)\s*$')
-    assertions["error_row"] = has(r'^\s*✗ execute failed · throw new Error\("EXPECTED_BOOM"\)\s*$')
-    assertions["long_row_truncated_only"] = has(r'^\s*✓ executed · truncated · console\.log\("L"\.repeat\(6000\)\)\s*$')
+    assertions["success_row"] = has(r'^\s*✓ executed · Read fixture output\s*$')
+    assertions["error_row"] = has(r'^\s*✗ execute failed · Trigger expected error\s*$')
+    assertions["long_row_truncated_only"] = has(r'^\s*✓ executed · truncated · Read large output\s*$')
     assertions["no_output_file_count"] = not has(r'(?i)(output file|output artifact|\d+ output)')
-    assertions["handoff_row"] = has(r'^\s*✓ executed · const a = await shell') and not has(r'^\s*✓ executed · \d+ background')
-    batch_re = r'^\s*✓ (task_[A-Za-z0-9_-]+) executed, ✗ (task_[A-Za-z0-9_-]+) failed, ✓ (task_[A-Za-z0-9_-]+) executed\s*$'
+    assertions["handoff_row"] = has(r'^\s*↪ TASKS_WAITING_MARKER\s*$') and not has(r'^\s*✓ executed · \d+ background')
+    batch_re = r'^\s*✓ (task_[A-Za-z0-9_-]+) finished, ✗ (task_[A-Za-z0-9_-]+) failed, ✓ (task_[A-Za-z0-9_-]+) finished\s*$'
     assertions["ordered_task_batch"] = has(batch_re)
     def spacing(think, prose, preceding_pattern):
         ti = next((i for i,x in enumerate(lines) if think in x), -1)
@@ -200,9 +211,9 @@ def main() -> int:
         exactly_one_blank = pi == ti + 2 and lines[ti+1].strip() == ""
         return no_gap_thinking and exactly_one_blank
     direct = next((i for i,x in enumerate(lines) if "DIRECT_PROSE_MARKER" in x), -1)
-    assertions["direct_prose_spacing"] = direct >= 2 and lines[direct-1].strip() == "" and '✓ executed · console.log("SUCCESS_OUTPUT")' in lines[direct-2]
+    assertions["direct_prose_spacing"] = direct >= 2 and lines[direct-1].strip() == "" and '✓ executed · Read fixture output' in lines[direct-2]
     assertions["first_spacing"] = spacing("THINK_FIRST_MARKER", "FINAL_FIRST_MARKER", r"✓ executed · truncated")
-    assertions["batch_spacing"] = spacing("THINK_BATCH_MARKER", "FINAL_BATCH_MARKER", r"✓ task_.*executed, ✗ task_.*failed, ✓ task_.*executed")
+    assertions["batch_spacing"] = spacing("THINK_BATCH_MARKER", "FINAL_BATCH_MARKER", r"✓ task_.*finished, ✗ task_.*failed, ✓ task_.*finished")
     assertions["markers_present"] = all(x in clean for x in ["THINK_FIRST_MARKER","FINAL_FIRST_MARKER","THINK_BATCH_MARKER","FINAL_BATCH_MARKER"])
     assertions["no_unexpected_request"] = "UNEXPECTED_REQUEST_MARKER" not in clean
     assertions["ansi_evidence"] = chr(27) + "[" in ansi

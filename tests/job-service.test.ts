@@ -156,7 +156,8 @@ test("profile settings, child identity, and three-tier limits survive helper mig
     sessionManager: { getSessionDir: () => dir, getSessionFile: () => undefined },
   } as any;
   try {
-    await service.handle("subagent", { type: "fast", prompt: "scout" }, ctx, signal);
+    await service.handle("subagent", { type: "fast", prompt: "scout", title: "Inspect renderer" }, ctx, signal);
+    expect(launches[0]!.title).toBe("Inspect renderer");
     expect(launches[0]!.args).toContain("p/quick");
     expect(launches[0]!.args).toContain("off");
     expect(launches[0]!.env?.DIE_SUBAGENT_TYPE).toBe("fast");
@@ -170,6 +171,7 @@ test("profile settings, child identity, and three-tier limits survive helper mig
       "fast/normal",
     );
     await service.handle("subagent", { type: "fast", prompt: "x" }, ctx, signal);
+    expect(launches[1]!.title).toBeUndefined();
     expect(launches[1]!.env?.DIE_SUBAGENT_DEPTH).toBe("2");
     policy = { depth: 2, type: "orchestrator" };
     await expect(service.handle("subagent", { prompt: "x" }, ctx, signal)).rejects.toThrow("two levels");
@@ -275,5 +277,45 @@ test("healthy inspection polling does not produce per-poll diagnostics", async (
     expect(records).toHaveLength(1);
   } finally {
     await manager.shutdown();
+  }
+});
+
+test("local subagent title reaches the real background completion without parsing its prompt", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "die-title-delivery-"));
+  const profilesPath = join(dir, "profiles.json");
+  await writeFile(profilesPath, JSON.stringify({ fast: { model: "fixture/fast" } }));
+  let deliver!: (task: any) => void;
+  const completion = new Promise<any>((resolve) => {
+    deliver = resolve;
+  });
+  const manager = new TaskManager(deliver);
+  const originalSpawn = manager.spawn.bind(manager);
+  const spawn = spyOn(manager, "spawn").mockImplementation((launch) =>
+    originalSpawn({
+      ...launch,
+      command: process.execPath,
+      args: ["-e", "setTimeout(() => {}, 30)"],
+    }),
+  );
+  const service = new JobService(manager, () => ({ depth: 0 }), undefined, profilesPath);
+  try {
+    const launch = (await service.handle(
+      "subagent",
+      { type: "fast", prompt: "Arbitrary source is not a title", title: "Inspect renderer", waitSeconds: 0 },
+      {
+        cwd: dir,
+        model: { provider: "fixture", id: "parent" },
+        sessionManager: { getSessionDir: () => dir, getSessionFile: () => undefined },
+      } as any,
+      signal,
+    )) as any;
+    expect(launch).toMatchObject({ title: "Inspect renderer", background: true });
+    const completed = await completion;
+    expect(completed).toMatchObject({ id: launch.id, title: "Inspect renderer", status: "completed" });
+    expect(manager.inspect(launch.id).title).toBe("Inspect renderer");
+  } finally {
+    spawn.mockRestore();
+    await manager.shutdown();
+    await rm(dir, { recursive: true, force: true });
   }
 });

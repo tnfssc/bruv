@@ -13,6 +13,7 @@ const HandoffParameters = z.object({ message: z.string().check(z.minLength(1), z
 
 const ExecuteParameters = z.object({
   code: z.string(),
+  label: z.optional(z.string()),
   timeoutSeconds: z.optional(z.number().check(z.minimum(0.1))),
   outputByteLimit: z.optional(z.number().check(z.int(), z.minimum(0), z.maximum(Number.MAX_SAFE_INTEGER))),
 });
@@ -65,6 +66,7 @@ export function registerExecuteTool(
         context.state,
         context.executionStarted,
         getOutputPad(context.cwd),
+        (args as { label?: unknown } | undefined)?.label,
       ),
     renderResult: (result, options, theme, context) =>
       executeOutputPreview(
@@ -75,6 +77,7 @@ export function registerExecuteTool(
         (context.args as { code?: unknown } | undefined)?.code,
         context.state,
         getOutputPad(context.cwd),
+        (context.args as { label?: unknown } | undefined)?.label,
       ),
     async execute(toolCallId, input, signal, _onUpdate, ctx) {
       const params = z.parse(ExecuteParameters, input);

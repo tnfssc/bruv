@@ -82,6 +82,8 @@ export type TaskEvent =
 export type TaskEventListener = (event: TaskEvent) => void;
 
 export interface TaskLaunch {
+  /** Human task name, supplied explicitly by the launcher. */
+  title?: string;
   id?: string;
   agent?: AgentInfo;
   workspace?: WorkspaceSummary;
@@ -97,6 +99,7 @@ export interface TaskLaunch {
 }
 
 export interface AgentPreparationLaunch {
+  title?: string;
   id: string;
   displayCommand: string;
   cwd: string;
@@ -106,6 +109,7 @@ export interface AgentPreparationLaunch {
 }
 
 export interface TaskSummary {
+  title?: string;
   agent?: AgentInfo;
   workspace?: WorkspaceSummary;
   id: string;
@@ -195,6 +199,7 @@ export class TaskManager {
     const preparationController = new AbortController();
     const task: ManagedTask = {
       id: launch.id,
+      ...(launch.title === undefined ? {} : { title: launch.title }),
       workspace: { ...launch.workspace, preparationStatus: "preparing" },
       kind: "agent",
       command: launch.displayCommand,
@@ -286,6 +291,7 @@ export class TaskManager {
       task = prepared;
       task.agent = launch.agent ? { ...launch.agent, phase: "starting", events: 0 } : undefined;
       task.workspace = launch.workspace ? { ...launch.workspace, preparationStatus: "ready" } : undefined;
+      if (launch.title !== undefined) task.title = launch.title;
       task.command = launch.displayCommand;
       task.cwd = launch.cwd;
       task.pid = child.pid;
@@ -301,6 +307,7 @@ export class TaskManager {
       });
       task = {
         id,
+        ...(launch.title === undefined ? {} : { title: launch.title }),
         agent: launch.agent ? { ...launch.agent, phase: "starting", events: 0 } : undefined,
         workspace: launch.workspace ? { ...launch.workspace } : undefined,
         kind: launch.kind,

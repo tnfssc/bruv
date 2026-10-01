@@ -595,3 +595,30 @@ test("preparation failure closes owned setup and repeated preparation teardown l
   expect(manager.pending()).toHaveLength(0);
   await manager.shutdown();
 });
+
+test("explicit titles survive launch, preparation, activation, summaries and completion delivery", async () => {
+  const { manager, completion } = managerWithCompletion();
+  const task = manager.spawn({ ...commandLaunch("printf done"), title: "Read renderer" });
+  expect(task.title).toBe("Read renderer");
+  expect(manager.list()[0]?.title).toBe("Read renderer");
+  expect((await completion).title).toBe("Read renderer");
+  expect(manager.inspect(task.id).title).toBe("Read renderer");
+  manager.prepareAgent({
+    id: "prepared_title",
+    title: "Run checks",
+    displayCommand: "arbitrary prompt",
+    cwd: process.cwd(),
+    workspace: { kind: "inherit", path: process.cwd() },
+  });
+  const activated = manager.activatePreparedAgent("prepared_title", commandLaunch("printf checked"));
+  expect(activated.title).toBe("Run checks");
+  expect((await manager.wait(activated.id)).title).toBe("Run checks");
+  manager.prepareAgent({
+    id: "failed_title",
+    title: "Prepare workspace",
+    displayCommand: "unrelated",
+    cwd: process.cwd(),
+    workspace: { kind: "inherit", path: process.cwd() },
+  });
+  expect(manager.failPreparedAgent("failed_title", new Error("fixture failure")).title).toBe("Prepare workspace");
+});
