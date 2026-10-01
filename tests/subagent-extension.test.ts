@@ -840,18 +840,18 @@ test("typed background launches survive outer execute error with durable call ow
     },
   );
   try {
-    const result = await e.tools
+    const failure = await e.tools
       .get("execute")
-      .execute("launch_then_error", { code: "typed fixture" }, undefined, undefined, ctx);
-    expect(result.isError).toBe(true);
-    expect(result.details.exitCode).toBe(1);
-    expect(result.details.stderr).toBe("OUTER_EXECUTE_FAILURE");
-    expect(result.details.taskRows).toHaveLength(1);
-    expect(result.details.taskRows[0].sourceCallId).toBe("launch_then_error");
+      .execute("launch_then_error", { code: "typed fixture" }, undefined, undefined, ctx)
+      .catch((error: unknown) => error);
+    expect(failure).toBeInstanceOf(Error);
+    expect(failure.message).toContain("Execution failed with exit code 1.");
+    expect(failure.message).toContain("OUTER_EXECUTE_FAILURE");
     const launches = e.savedEntries.filter((entry) => entry.customType === "die-task-row");
     expect(launches).toHaveLength(1);
     expect(launches[0].data.sourceCallId).toBe("launch_then_error");
     expect(launches[0].data.status).toBe("running");
+    expect(failure.message).toContain(launches[0].data.id);
     const done = await terminalPromise;
     expect(done.id).toBe(launches[0].data.id);
     expect(done.sourceCallId).toBe("launch_then_error");

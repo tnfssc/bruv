@@ -245,7 +245,7 @@ test("SDK active action animation is stopped at agent end even without a result"
   expect(redraws()).toBe(stoppedRedraws);
 });
 
-test("real SDK tool execution preserves structured failure evidence instead of dropping details in a throw", async () => {
+test("real SDK rejected tool execution preserves actual failure output and concise rendering", async () => {
   const directory = await mkdtemp(join(tmpdir(), "die-foreground-error-"));
   try {
     const executable = join(directory, "fixture-execute");
@@ -277,9 +277,10 @@ test("real SDK tool execution preserves structured failure evidence instead of d
       },
     );
     expect(outcome.isError).toBe(true);
-    expect(outcome.result.details.exitCode).toBe(7);
-    expect(outcome.result.details.stderr).toBe("permission denied\n");
-    expect(outcome.result.details.backgroundJobs).toEqual([]);
+    const failure = outcome.result.content.map((part: any) => part.text ?? "").join("\n");
+    expect(failure).toContain("Execution failed with exit code 7.");
+    expect(failure).toContain("ordinary output");
+    expect(failure).toContain("permission denied");
     const component = new ToolExecutionComponent(
       "execute",
       "error-call",
