@@ -473,7 +473,10 @@ try {
   const jobLists = Object.values(state.commands)
     .filter((c: any) => c.command.kind === "jobs.list")
     .map((c: any) => c.receipt.result.jobs);
-  const child = jobLists.flat().findLast((j: any) => j.title === "Review the project guide");
+  const child = jobLists
+    .flat()
+    .reverse()
+    .find((j: any) => j.title === "Review the project guide");
   assert.equal(child.status, "completed");
   assert.equal(child.agent.type, "normal");
   assert.equal(child.agent.depth, 1);

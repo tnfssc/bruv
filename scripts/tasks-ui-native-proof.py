@@ -219,7 +219,7 @@ def main():
     # or real user configuration. All tool scripts run in the disposable repo.
     env = {"PATH":"/usr/bin:/bin:" + str(Path(args.bun).parent), "HOME":str(home),
            "SHELL":"/bin/sh", "TMPDIR":str(temp), "TERM":"xterm-256color", "LANG":"C.UTF-8",
-           "DIE_CODING_AGENT_DIR":str(agent), "PI_OFFLINE":"1", "NO_COLOR":"0",
+           "BRUV_CODING_AGENT_DIR":str(agent), "PI_OFFLINE":"1", "NO_COLOR":"0",
            "XDG_CONFIG_HOME":str(home / "config"), "XDG_CACHE_HOME":str(home / "cache"),
            "XDG_STATE_HOME":str(home / "state"), "GIT_CONFIG_GLOBAL":"/dev/null", "GIT_CONFIG_NOSYSTEM":"1"}
     tmux = ["tmux", "-f", str(conf), "-S", str(home / "tmux.sock")]

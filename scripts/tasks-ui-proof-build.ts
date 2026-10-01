@@ -29,9 +29,9 @@ await import("./prepare-assets");
 const hash = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
 const bytes = await readFile(archive);
 await mkdir(resolve(root, "dist"), { recursive: true });
-if (archive !== resolve(root, "dist/die-web.archive.gz")) {
+if (archive !== resolve(root, "dist/bruv-web.archive.gz")) {
   // Replace the owned link/file, never copy through a pre-existing cache symlink.
-  const embedded = resolve(root, "dist/die-web.archive.gz");
+  const embedded = resolve(root, "dist/bruv-web.archive.gz");
   await rm(embedded, { force: true });
   await symlink(archive, embedded);
 }

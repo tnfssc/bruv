@@ -39,3 +39,11 @@ The fix records every typed subagent result as a canonical task, even when it fi
 Review also found root’s early task-row return hid independent outer execute failure/handoff/storage errors. Those now remain visible; successful launch storage warnings share the first canonical row, not a duplicate checked launch action. SDK background row composition preserves the same warning and handoff separation. Focused tests retain actual structured isError/details and typed launch identity; no expectation was weakened to infer success.
 
 The placed-root scenario now explicitly requests async waitSeconds:0 and holds the fixture helper two seconds so the actual native viewport must show one ↗ named helper before completion, then one ✓ named helper after reopen, with no separately checked launch label. The assertion now rejects the exact observed defect.
+
+## Upstream rename integrated during final validation
+
+Final freshness fetch found origin/develop eaf8827 (merged PR19, the full human-owned bruv rename), newer than initial bada7e5. Rebased all feature commits cleanly, no conflicts. The unrelated rename work is preserved; there is no feature diff to footer or execute model prompts. Preserved pre-rename branch: die/ui-before-bruv-rebase-77080c99.
+
+Actual rename blocker: the old read-only cache failed the new Pi-host hash check for dist/main.js. No shared dependency was changed. Switched this worktree’s symlink to the already prepared, read-only /home/tnfssc/.die/worktrees/die-a86675007a5e-task_ac1fe302/node_modules cache, verified every cached patch before===adaptPiHostFile(before), and prepared only local runtime-assets. Proof-only paths changed to BRUV_CODING_AGENT_DIR and dist/bruv-web.archive.gz to match the new compiled entrypoint; existing root capture environment changes came from upstream. Use the actual cached bruv archive in that rename worktree for subsequent native proof. No install, fabricated manifest, or broad feature branding rewrite.
+
+Root take at pre-rebase 5119d17 passed both new visible canonical-row checks but the receipt still selected its first (now deliberately running) /ps snapshot. Capture now reads a fresh normal /ps snapshot before close and verifies that latest typed snapshot is completed. Prior takes are retained as rejected/incomplete, not silently reused.
