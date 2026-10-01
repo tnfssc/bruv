@@ -2,7 +2,7 @@
 
 Use this when changing remote CLI presentation, not SSH policy or return guards.
 
-Observed setup and connected dogfood: [setup](setup-ux-dogfood-2026-10-01.md), [connected journey](ux-dogfood-2026-10-01.md). Those hands-on notes exposed an unnecessary binary-path editor, refresh jargon before any work, generic uncertainty advice on Connect failure, buried access requests, and a transcript-first debug firehose.
+Observed in local setup and connected dogfood notes (`setup-ux-dogfood-2026-10-01.md`, `ux-dogfood-2026-10-01.md`, retained in the parent handoff with terminal artifacts). Those hands-on notes exposed an unnecessary binary-path editor, refresh jargon before any work, generic uncertainty advice on Connect failure, buried access requests, and a transcript-first debug firehose.
 
 ## Small coherent changes
 
@@ -16,7 +16,7 @@ Observed setup and connected dogfood: [setup](setup-ux-dogfood-2026-10-01.md), [
 
 ## Proof and limits
 
-Focused regressions exercise the human flow and leave pinned owner, question identity/version, stored replies, cancellation truth, explicit untracked approval, capability authorization and current-branch integration guards intact. Compiled terminal acceptance uses a separate HOME/repository, loopback Docker owner, explicit SSH-config wrapper, fake owner provider and ACK-only local provider. No paid calls or real-host app configuration/credentials.
+151 remote regressions pass (3 opt-in integrations skipped); direct Bun typecheck passes. Focused regressions exercise the human flow and leave pinned owner, question identity/version, stored replies, cancellation truth, explicit untracked approval, capability authorization and current-branch integration guards intact. Compiled terminal acceptance uses a separate HOME/repository, loopback Docker owner, explicit SSH-config wrapper, fake owner provider and ACK-only local provider. No paid calls or real-host app configuration/credentials.
 
 Evidence/proof counts and binary hash are handed off with the PR work; fixture/video files are not feature commits. Production build wrapper needs the packed-web manifest (direct compile uses the existing real payload). This is not WAN/provider-quality/security-policy acceptance. No disconnect redesign or transcript protocol redesign.
 
