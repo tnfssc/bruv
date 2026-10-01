@@ -6,7 +6,7 @@ import {
   stripTerminalSequences,
   truncateToWidth,
 } from "@earendil-works/pi-tui";
-import type { TaskManager, TaskSummary } from "../tasks/task-manager";
+import { monitorActive, type MonitorTask, type TaskMonitorSource } from "../tasks/task-monitor-source";
 
 const OUTPUT_BYTES = 2400;
 const OUTPUT_LINES = 12;
@@ -64,7 +64,7 @@ function cleanOutput(value: string): string[] {
 export class TaskMonitorPanel implements Component, Focusable {
   private selected = 0;
   private selectedId?: string;
-  private confirming?: { id: string; identity: string };
+  private confirming?: { id: string; identity: string; ownership?: string };
   private inspecting = false;
   private disposed = false;
   private renderTimer?: ReturnType<typeof setTimeout>;
@@ -79,19 +79,20 @@ export class TaskMonitorPanel implements Component, Focusable {
   }
 
   constructor(
-    private manager: TaskManager,
+    private manager: TaskMonitorSource,
     private theme: Theme,
     private keys: KeybindingsManager,
     private done: () => void,
     private changed: () => void,
     private maxRows: () => number = () => process.stdout.rows || 24,
+    private releaseSource: () => void = () => {},
   ) {
     this.unsubscribe = manager.subscribe(() => this.scheduleRender());
     this.clock = setInterval(() => this.scheduleRender(), 1000);
     this.clock.unref?.();
   }
-  private running(): TaskSummary[] {
-    return this.manager.list().filter((task) => task.status === "running");
+  private running(): MonitorTask[] {
+    return this.manager.list().filter((task) => monitorActive(task));
   }
   private scheduleRender() {
     if (this.disposed || this.renderTimer) return;
@@ -101,7 +102,7 @@ export class TaskMonitorPanel implements Component, Focusable {
     }, RENDER_INTERVAL_MS);
     this.renderTimer.unref?.();
   }
-  private syncSelection(tasks: TaskSummary[]): void {
+  private syncSelection(tasks: MonitorTask[]): void {
     const preserved = this.selectedId && tasks.findIndex((task) => task.id === this.selectedId);
     if (typeof preserved === "number" && preserved >= 0) this.selected = preserved;
     else this.selected = Math.max(0, Math.min(this.selected, tasks.length - 1));
@@ -138,8 +139,8 @@ export class TaskMonitorPanel implements Component, Focusable {
       if (terminalRows(this.maxRows()) === 0) return;
       if (confirm || data.toLowerCase() === "y") {
         const target = this.confirming;
-        const task = this.manager.list().find((task) => task.id === target.id && task.status === "running");
-        if (task) this.manager.kill(target.id);
+        const task = this.manager.list().find((task) => task.id === target.id && monitorActive(task));
+        if (task && task.monitorIdentity === target.ownership) this.manager.kill(target.id);
         this.confirming = undefined;
         this.changed();
         return;
@@ -178,7 +179,7 @@ export class TaskMonitorPanel implements Component, Focusable {
       this.syncSelection(tasks);
       const task = tasks[this.selected];
       if (task) {
-        this.confirming = { id: task.id, identity: cleanCommand(task.command) };
+        this.confirming = { id: task.id, identity: cleanCommand(task.command), ownership: task.monitorIdentity };
         this.changed();
       }
     }
@@ -188,7 +189,12 @@ export class TaskMonitorPanel implements Component, Focusable {
     const height = terminalRows(this.maxRows());
     const tasks = this.running();
     this.syncSelection(tasks);
-    const lines: string[] = [this.theme.fg("accent", "─".repeat(width)), this.theme.bold("Running jobs")];
+    const lines: string[] = [
+      this.theme.fg("accent", "─".repeat(width)),
+      this.theme.bold(
+        tasks.some((task) => task.status === "unknown") ? "Running jobs · unknown SSH observations" : "Running jobs",
+      ),
+    ];
     if (!tasks.length) {
       lines.push(
         "",
@@ -196,12 +202,13 @@ export class TaskMonitorPanel implements Component, Focusable {
           "muted",
           this.manager.list().length ? "No jobs are running." : "No jobs have been started in this session.",
         ),
-        "",
+        this.manager.notice ? this.theme.fg("warning", cleanCommand(this.manager.notice)) : "",
         this.stopPrompt() ?? this.theme.fg("dim", "Esc close"),
         this.theme.fg("accent", "─".repeat(width)),
       );
       return fitRows(lines, height, this.stopPrompt()).map((line) => truncateToWidth(line, width));
     }
+    if (this.manager.notice) lines.push(this.theme.fg("warning", cleanCommand(this.manager.notice)));
     lines.push("");
     let identityLine: string | undefined;
     const task = tasks[this.selected];
@@ -220,13 +227,24 @@ export class TaskMonitorPanel implements Component, Focusable {
         identityLine,
         this.theme.fg(
           "dim",
-          [
-            task.agent ? "agent " + task.agent.type : task.kind,
-            task.pid ? "pid " + task.pid : "pid unavailable",
-            task.cwd,
-          ].join(" · "),
+          cleanCommand(
+            [
+              task.agent ? "agent " + task.agent.type : task.kind,
+              task.ssh
+                ? "owner " + task.ssh.ownerId + " · epoch " + task.ssh.epoch
+                : task.pid
+                  ? "pid " + task.pid
+                  : "pid unavailable",
+              task.cwd,
+            ].join(" · "),
+          ),
         ),
-        this.theme.fg("muted", "Bounded output · last " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines"),
+        this.theme.fg(
+          "muted",
+          task.ssh
+            ? "SSH cached output · first " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines"
+            : "Bounded output · last " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines",
+        ),
       );
       const outputLines = cleanOutput(inspection.output).slice(-outputRows);
       if (task.outputEnd === 0) lines.push(this.theme.fg("dim", "No output available yet."));
@@ -258,7 +276,7 @@ export class TaskMonitorPanel implements Component, Focusable {
         const listed = tasks[i],
           selected = i === this.selected;
         if (!listed) continue;
-        const role = listed.agent ? listed.agent.type : listed.kind;
+        const role = listed.ssh ? "ssh " + listed.status + " stale" : listed.agent ? listed.agent.type : listed.kind;
         const label =
           (selected ? "› " : "  ") +
           this.theme.fg(selected ? "accent" : "muted", listed.id) +
@@ -270,14 +288,19 @@ export class TaskMonitorPanel implements Component, Focusable {
           " " +
           cleanCommand(listed.command) +
           "  " +
-          this.theme.fg("dim", age(Date.now() - Date.parse(listed.startedAt)));
+          this.theme.fg("dim", listed.ssh ? "cached observation" : age(Date.now() - Date.parse(listed.startedAt)));
         const line = selected ? this.theme.bold(label) : label;
         if (selected) identityLine = line;
         lines.push(line);
       }
       lines.push(
         "",
-        this.theme.fg("muted", "Live preview · last " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines"),
+        this.theme.fg(
+          "muted",
+          task.ssh
+            ? "SSH cached output · first " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines"
+            : "Live preview · last " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines",
+        ),
       );
       const inspection = this.manager.inspect(
         task.id,
@@ -303,6 +326,23 @@ export class TaskMonitorPanel implements Component, Focusable {
         );
       }
     }
+    if (task.ssh) {
+      lines.push(
+        this.theme.fg(
+          "warning",
+          cleanCommand(
+            "SSH " +
+              task.status +
+              " · stale observation " +
+              (task.ssh.observedAt ?? "unavailable") +
+              (task.ssh.remoteState ? " · remote " + task.ssh.remoteState : "") +
+              (task.ssh.cancelRequested ? " · cancellation " + (task.ssh.cancelDelivery ?? "pending") : ""),
+          ),
+        ),
+      );
+      const note = task.monitorNote ?? task.ssh.lastError;
+      if (note) lines.push(this.theme.fg("warning", cleanCommand(note)));
+    }
     const stopPrompt = this.stopPrompt();
     lines.push(
       "",
@@ -322,6 +362,7 @@ export class TaskMonitorPanel implements Component, Focusable {
     if (this.disposed) return;
     this.disposed = true;
     this.unsubscribe();
+    this.releaseSource();
     if (this.renderTimer) clearTimeout(this.renderTimer);
     if (this.clock) clearInterval(this.clock);
   }
