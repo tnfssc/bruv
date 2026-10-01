@@ -18,6 +18,8 @@ export function validatePlacement(placement: RemotePlacement): void {
     throw Error("Invalid remote task role/depth");
   if (!canDelegate(placement.parentDepth, placement.parentType))
     throw Error("Only root or orchestrator agents below depth 2 can delegate");
+  if (placement.parentDepth > 0 && placement.profile === "orchestrator")
+    throw Error("Spawned orchestrators may only delegate to fast/normal workers");
   validateWorkspace(placement.workspace);
 }
 export function validateWorkspace(workspace: RemoteWorkspace): void {

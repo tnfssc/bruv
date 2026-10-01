@@ -43,7 +43,7 @@
   - `await questions.block({id, owner, version, checkpoint, foreground?, taskIds?})` records which follow-up now needs the answer. Name the next step in checkpoint. Set foreground only if the parent cannot continue. This does not pause a child process. If no safe work remains, yield; no execute stack waits for the reply.
   - `await questions.resolve({id, owner, version, reason})` closes a question after using its answer or when it is no longer needed. `await questions.cancel({id, owner, version})` withdraws it, not an answer or permission to guess.
   - The user replies with /questions answer <id> <text>. A saved reply starts a new parent turn when safe, not code after an old await. Read the saved reply ID; do not repeat handled work. After a stop or reload, /questions resume <id> requests a new turn. Answer saved, queued, delivered and used are distinct.
-  - Live may ask and read the same state. Do not bind provisional or ordinary speech to a question. Targeted voice replies, web projection and child in-place replies are not supported. A child should give its parent the question and checkpoint; the parent can record it with requester/task IDs.
+  - Live may ask and read the same state. Do not bind provisional or ordinary speech to a question. Targeted voice replies and web projection are not supported. A child returns routine clarification and its checkpoint to its parent through task results; the parent decides follow-up. Explicit human questions and new permissions use the human-owned saved question flow, never an agent-invented answer.
 - History API:
   - `await history.search({query, cursor?, limit?, excerptChars?})` — Find text in current conversation branch. Returns short matches and a `ref` for each.
   - `await history.read({ref, cursor?, maxChars?})` — Read original text at that ref.
@@ -55,3 +55,5 @@
 
 - Live selection: `/live model` lists voice models across providers and selects the matching provider; `/live provider` configures credentials, not a model filter. Credential readiness is local, not verified API access.
 - Live voice: `await live.stop()` awaits this session’s mic/playback/provider teardown and preserves jobs. Read the result; errors are not a completed stop. For an explicit stop-work request use `await jobs.stopWork()`; it requests current-session async descendant cancellation, then foreground cancellation after its response is delivered. Pending/partial results are not stopped. If the user explicitly asks for both, call live.stop first. Neither runs on ordinary speech interruption.
+
+Named SSH subagents accept explicit `model: "provider/model"` and supported `thinking` overrides; omission uses the destination profile. These overrides are rejected for current-runtime and scoped-native launches rather than silently ignored.

@@ -381,3 +381,11 @@ test("unconfirmed repository preparation exposes the same reserved identity on r
   }
   expect(ids[0]).toBe(ids[1]);
 });
+
+test("explicit destination model/thinking overrides reach named placement and never silently affect local launches", async () => {
+  const f = await fixture();
+  await f.service().handle("subagent", {target:"box",prompt:"override",model:"server/explicit",thinking:"low"}, f.context(), identity("override"));
+  expect(f.requests.at(-1)).toMatchObject({model:"server/explicit",thinking:"low"});
+  await expect(f.service().handle("subagent", {prompt:"local",model:"server/explicit"}, f.context(), identity("local-override"))).rejects.toThrow("named SSH target");
+  await expect(f.service().handle("subagent", {target:"box",prompt:"bad",model:"not-a-provider-model"}, f.context(), identity("bad-override"))).rejects.toThrow();
+});

@@ -11,7 +11,7 @@ import {
 import { prepareAgentSession } from "./agent-session";
 import { type JobAttentionScheduler, MAX_SNOOZE_MINUTES } from "./job-attention";
 import { sessionIdentity } from "../session/identity";
-import { canDelegate, loadProfiles, resolveProfile, SUBAGENT_TYPES } from "./subagent-profiles";
+import { canDelegate, loadProfiles, resolveProfile, SUBAGENT_TYPES, THINKING_LEVELS } from "./subagent-profiles";
 import { T3LaunchIdentityLedger } from "../t3/tasks/launch-identity";
 import { scrubT3BridgeEnvironment } from "../delegation-environment";
 import { type T3BridgeEnvironment, T3McpClient, t3BridgeEnvironment } from "../t3/tasks/mcp-client";
@@ -61,6 +61,8 @@ const Agent = z.strictObject({
   title: z.optional(z.string().check(z.minLength(1), z.maxLength(120))),
   workspace: z.optional(Workspace),
   target: z.optional(z.string().check(z.minLength(1), z.maxLength(256))),
+  model: z.optional(z.string().check(z.minLength(3), z.maxLength(512), z.refine((value) => /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:/-]+$/.test(value), "Use provider/model"))),
+  thinking: z.optional(z.enum(THINKING_LEVELS)),
   waitSeconds,
   timeoutSeconds,
 });
@@ -359,6 +361,8 @@ export class JobService {
           throw new Error("An explicit workspace branch is only valid for a single prompt");
         const bridge = t3BridgeEnvironment(this.environment);
         if (bridge.kind === "remote") {
+          if (params.model !== undefined || params.thinking !== undefined)
+            throw new Error("Explicit model/thinking overrides are unsupported for scoped native subagents");
           // A scoped backend owns policy. Placement must never escape it via a
           // laptop policy or a second SSH connection. "local" means this runtime.
           if (params.target !== undefined && params.target !== "local")
@@ -474,6 +478,8 @@ export class JobService {
                 localRoot: ctx.cwd,
                 prompt,
                 taskId,
+                ...(params.model === undefined ? {} : { model: params.model }),
+                ...(params.thinking === undefined ? {} : { thinking: params.thinking }),
                 placement: {
                   profile: type,
                   parentDepth: depth,
@@ -492,6 +498,8 @@ export class JobService {
           this.#refresh();
           return params.prompts ? launched : launched[0];
         }
+        if (params.model !== undefined || params.thinking !== undefined)
+          throw new Error("Per-task model/thinking overrides currently require a named SSH target; local tasks use configured profiles");
         const { model, thinking } = resolveProfile(await loadProfiles(this.profilesPath), type, {
           model: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
           thinking: ctx.thinkingLevel,

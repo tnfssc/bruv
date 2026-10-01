@@ -66,6 +66,9 @@ export interface SubagentOptions extends Options {
   workspace?: SubagentWorkspace;
   /** Omit/current runtime, "local", or an already human-pinned SSH connection name. */
   target?: string;
+  /** Supported explicit destination overrides; named SSH targets only. */
+  model?: string;
+  thinking?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
   waitSeconds?: number;
   timeoutSeconds?: number;
 }
