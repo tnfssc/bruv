@@ -62,3 +62,9 @@ Parent updated scripts/ui-cleanup-probe.py and ran the actual compiled CLI in an
 The first adapted PTY probe had a stale handoff assertion; the screen showed the correct ↪ progress row. Fixed the probe expectation, not the product. A --reuse-packed-web build was blocked by a missing archive manifest; no manifest was forged. The tested disposable CLI used the existing web archive; this is not a fresh-web release claim. No install, version bump, settings change or live provider call.
 
 PR branch planned: die/action-labels-quieter-notices-20261001. Durable PR worktree: /home/tnfssc/.die/worktrees/die-action-labels-pr-20261001. Base: develop. Only feature-owned files belong in it. Other root remote notes and values.md edits are separate work. Values stayed unchanged for this feature; existing honest-UI and bounded-proof values cover the decisions.
+
+## PR build handoff
+
+PR worktree and branch above are now real and pushed. The supported CLI build passed with --reuse-web and an output on /home: artifacts/die-action-label-verified-cli. It checked the existing production web chunk graph, repacked the unchanged web runtime, compiled the CLI, and printed version 0.15.17. This is an official CLI build using existing web output, not a fresh web-source build.
+
+An earlier output under /tmp failed because its tmpfs was full. It also briefly blocked Git signing. Removed only this feature's two disposable binaries, then retried successfully with build temp/output on /home. No other /tmp data was removed. Missing pnpm is not a blocker for the supported --reuse-web path. No install or release was requested.
