@@ -47,3 +47,13 @@ The user also linked Release 36813685812/job 110214202400. Release sets DIE_T3_S
 ## Lesson
 
 Check upstream behavior before turning an uncertain assumption into a user restriction. Local rejection tests cannot establish a provider limitation. Value 2 now says this explicitly. The feature details stay here.
+
+## Follow-up: /shake refusal after release
+
+After v0.15.15 published, the user pasted the opaque-checkpoint /shake refusal again. The release deliberately left this guard unchanged. Parent acknowledged that distinction and started task_9565c84f to check safe pruning of visible completed execution trace while preserving the checkpoint, not a force bypass or encrypted-state rewrite.
+
+Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_9565c84f; branch die/make-shake-preserve-native-checkpoints-a-9565c84f; base919e4a7. Worker owns shake code/tests and its own feature wisdom. It must inspect SDK active-window semantics, transformed synthetic checkpoint preservation, persisted projection, disk replay and request payloads. No eligible visible trace should be a clear no-op. Do not silently include hidden precheckpoint history, prune the native replay shim, or remove unresolved/stale state guards. Automatic shake-before-compaction needs the same proof or a stated deferral. No new release or paid/live probe has been started for this follow-up.
+
+Values unchanged for this follow-up so far: exact proof and preserving user history already cover the task.
+
+Follow-up implemented: worker ae10763 integrated as f3f0059. Parent reran 79 focused tests (454 assertions), all passed. Worker typecheck passed. Log /home/tnfssc/.die/native-shake-parent.log. See [shake semantics and proof](../compaction/shake-native-checkpoint.md). Manual shake now keeps the effective checkpoint/shim/runtime-state while pruning unambiguous visible trace; no new trace is an honest no-op. Automatic native shake remains deferred. This follow-up is not in v0.15.15. Ordinary hosted CI follows push; no new Release is dispatched here. Values unchanged: the existing proof and user-state values apply.
