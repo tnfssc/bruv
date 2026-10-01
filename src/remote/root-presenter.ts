@@ -277,6 +277,33 @@ function messageText(message: any, details = false): string {
     .filter(Boolean)
     .join("\n");
 }
+function expandedRootTranscript(messages: any[], width: number): string[] {
+  const lines: string[] = [];
+  const labels = new Map<string, string>();
+  for (const m of messages) {
+    if (!m || m.display === false || !Array.isArray(m.content)) continue;
+    for (const c of m.content) if (c.type === "toolCall" && c.id) labels.set(c.id, safe(c.arguments?.label ?? c.name));
+  }
+  for (const m of messages) {
+    if (!m || m.display === false) continue;
+    const role =
+      m.role === "user" ? "You" : m.role === "assistant" ? "Assistant" : m.role === "toolResult" ? "Action" : "Notice";
+    lines.push(...new Text(accent(role), 0, 0).render(width));
+    let text: string;
+    if (m.role === "toolResult") {
+      const name = labels.get(m.toolCallId) ?? safe(m.toolName ?? "tool");
+      const output = typeof m.content === "string" ? safe(m.content) : messageText(m, true);
+      text = (m.isError ? name + " failed" : name + " completed") + (output ? "\n" + output : "");
+      if (m.toolCallId) text = "Tool call " + safe(m.toolCallId) + "\n" + text;
+    } else text = messageText(m, true);
+    lines.push(
+      ...(m.role === "assistant" ? new Markdown(text, 0, 0, markdownTheme) : new Text(text, 0, 0)).render(width),
+      "",
+    );
+  }
+  return lines;
+}
+
 const actionFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
 /** Bounded conversation projection, independent of provider settings. Server snapshot wins. */
@@ -333,6 +360,7 @@ export class RootTranscript {
   render(width: number, now = Date.now()): string[] {
     const lines: string[] = [];
     const messages = [...this.messages, ...(this.streaming ? [this.streaming] : [])];
+    if (this.details) return expandedRootTranscript(messages, width);
     const taskRows = new Map<string, TaskRow>();
     for (const m of messages) {
       if (!m || m.display === false) continue;

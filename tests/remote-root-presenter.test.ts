@@ -315,7 +315,8 @@ test("same-text actions pair only by identity and keep failed and orphan outcome
   expect(rows).not.toContain("PRIVATE_SUCCESS");
   t.details = true;
   const expanded = t.render(120).join("\n");
-  expect(expanded.indexOf("PRIVATE_SUCCESS")).toBeLessThan(expanded.indexOf("Tool call second"));
+  // Expanded details keep original message order; compact actions alone pair by call identity.
+  expect(expanded.indexOf("Tool call second")).toBeLessThan(expanded.indexOf("PRIVATE_SUCCESS"));
   expect(expanded).toContain("first_source()");
   expect(expanded).toContain("second_source()");
 });
@@ -347,9 +348,10 @@ test("root cancellation and timeout remain clear, and display:false also hides a
     t.details = details;
     const rows = t.render(120).join("\n");
     if (details) {
-      expect(rows).toContain("✗ Cancelled · Action");
+      // Keep the shipped expanded transcript, including the actual result text.
+      expect(rows).toContain("Action");
       expect(rows).toContain("cancelled by user");
-      expect(rows).toContain("✗ Timed out · Action");
+      expect(rows).not.toContain("✗ Timed out · Action");
       expect(rows).toContain("time limit reached");
     } else {
       expect(rows).toContain("✗ Action — cancelled");
@@ -660,4 +662,37 @@ test("root canonical launch preserves handoff, output-save warning and independe
   result.details.exitCode = 1;
   result.details.stderr = "permission denied";
   expect(renderedRows(t)).toEqual(["↗ Review guide", "✗ Start tasks — permission denied"]);
+});
+
+test("expanded root transcript keeps shipped message order, captions and raw details", () => {
+  const t = new RootTranscript();
+  t.messages = [
+    {
+      role: "assistant",
+      content: [
+        { type: "text", text: "Inspecting the guide." },
+        {
+          type: "toolCall",
+          id: "original-call",
+          name: "execute",
+          arguments: { label: "Read guide", code: "readGuide()" },
+        },
+      ],
+    },
+    { role: "toolResult", toolName: "execute", toolCallId: "original-call", content: "guide output", isError: false },
+    { role: "custom", display: false, content: "hidden answer" },
+  ];
+  t.details = true;
+  const rows = t
+    .render(120, 0)
+    .map((line) => line.trimEnd())
+    .join("\n")
+    .replace(/\x1b\[[0-9;]*m/g, "");
+  expect(rows).toContain("Assistant");
+  expect(rows).toContain("Inspecting the guide.");
+  expect(rows).toContain('Tool: execute {"label":"Read guide","code":"readGuide()"}');
+  expect(rows).toContain("Action\nTool call original-call\nRead guide completed\nguide output");
+  expect(rows.indexOf("Inspecting the guide.")).toBeLessThan(rows.indexOf("Action"));
+  expect(rows).not.toContain("hidden answer");
+  expect(rows).not.toContain("✓ Read guide");
 });
