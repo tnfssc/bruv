@@ -168,3 +168,16 @@ parent/human follow-ups, not actions taken here.
 Entry docs and maintained user guides are updated; historical evidence remains.
 Values unchanged: existing ownership, truthful evidence and coherent delivery
 principles cover this rename. No new general rule is needed.
+
+## Parent review and publication
+
+Parent review found no concrete core/packaging regressions; 114 focused tests
+passed. Product title is bruv CLI; command remains bruv.
+
+Before PR publication, merged current origin/develop (bada7e5, PR #18 native-fast
+alias fix) without conflicts. Post-merge native-fast and identity tests: 22 pass,
+0 fail. Post-merge bun run check passed. The larger suite and compiled artifacts
+above were checked before this small upstream merge; hosted CI checks the PR head.
+
+Parent will push rename/bruv and open the PR against develop. Do not merge or
+publish a release as part of this task.
