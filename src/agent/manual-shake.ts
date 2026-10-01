@@ -326,6 +326,7 @@ function projection(
   record: ShakeRecord,
 ): {
   messages: AgentMessage[];
+  byIncoming: AgentMessage[][];
   removedAssistantBlocks: number;
   removedToolResults: number;
   assistantEntryIds: string[];
@@ -367,8 +368,23 @@ function projection(
   });
   const exactEntry = (entryId: string) =>
     (sourceIndexesByEntry.get(entryId) ?? []).every((index) => matches.has(index));
+  // Validate each protocol group, not the whole window: an unrelated pending
+  // or archived orphan must not prevent projection of a complete shaken group.
+  const plan = buildShakePlan(entries, record.sessionId, record);
+  const invalidProtocolIds = new Set([...plan.unresolvedToolCallIds, ...plan.orphanToolResultIds]);
+  const unsafeAssistants = new Set(
+    source.flatMap(({ entry, message }) =>
+      message.role === "assistant" &&
+      message.content.some(
+        (part) => isRecord(part) && part.type === "toolCall" && (!validId(part.id) || invalidProtocolIds.has(part.id)),
+      )
+        ? [entry.id]
+        : [],
+    ),
+  );
   const eligibleEntries = new Set<string>();
   for (const assistantEntryId of selectedAssistants) {
+    if (unsafeAssistants.has(assistantEntryId)) continue;
     const group = groups.get(assistantEntryId) ?? new Set([assistantEntryId]);
     // A marker is atomic at the protocol-group level. In particular, never
     // remove selected tool calls unless every associated result was also
@@ -383,7 +399,7 @@ function projection(
 
   let removedAssistantBlocks = 0;
   let removedToolResults = 0;
-  const messages = incoming.flatMap((message, incomingIndex) => {
+  const byIncoming = incoming.map((message, incomingIndex): AgentMessage[] => {
     const sourceIndex = incomingToSource.get(incomingIndex);
     if (sourceIndex === undefined) return [message];
     const sourceMessage = source[sourceIndex];
@@ -403,7 +419,8 @@ function projection(
     return content.length ? [{ ...message, content } as AgentMessage] : [];
   });
   return {
-    messages,
+    messages: byIncoming.flat(),
+    byIncoming,
     removedAssistantBlocks,
     removedToolResults,
     assistantEntryIds: [...selectedAssistants].filter((id) => eligibleEntries.has(id)),
@@ -419,6 +436,29 @@ export function projectShakenContext(
   record: ShakeRecord,
 ): AgentMessage[] {
   return projection(incoming, entries, record).messages;
+}
+/** Use the full active window as pairing evidence, then select the SDK's
+ * discarded slice. A split turn may keep a result whose call is discarded.
+ * Unmatched/ambiguous required copies remain required, never silently dropped. */
+export function projectShakenRequiredMessages(
+  required: readonly AgentMessage[],
+  entries: readonly SessionEntry[],
+  record: ShakeRecord,
+): AgentMessage[] {
+  const source: SourceMessage[] = activeShakeEntries(entries).flatMap((entry) =>
+    sessionEntryToContextMessages(entry).map((message) => ({ entry, message, json: JSON.stringify(message) })),
+  );
+  const matches = exactOccurrenceMatches(required, source);
+  const requiredToSource = new Map([...matches].map(([sourceIndex, requiredIndex]) => [requiredIndex, sourceIndex]));
+  const projected = projection(
+    source.map((item) => item.message),
+    entries,
+    record,
+  );
+  return required.flatMap((message, index) => {
+    const sourceIndex = requiredToSource.get(index);
+    return sourceIndex === undefined ? [message] : (projected.byIncoming[sourceIndex] ?? [message]);
+  });
 }
 export function contextCharacters(messages: readonly AgentMessage[]): number {
   // Compare the exact same deterministic representation on both sides. This is
