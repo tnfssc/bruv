@@ -179,5 +179,7 @@ alias fix) without conflicts. Post-merge native-fast and identity tests: 22 pass
 0 fail. Post-merge bun run check passed. The larger suite and compiled artifacts
 above were checked before this small upstream merge; hosted CI checks the PR head.
 
-Parent will push rename/bruv and open the PR against develop. Do not merge or
+Parent pushed rename/bruv and opened [PR #19](https://github.com/tnfssc/die/pull/19)
+against develop. It was open and mergeable at publication; hosted checks were
+still running. The original checkout stays on develop and clean. Do not merge or
 publish a release as part of this task.
