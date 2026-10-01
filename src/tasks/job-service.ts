@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { isSshJobId, sshTaskId, type RemoteJobsAdapter } from "../remote/jobs";
+import { isSshJobId, sshTaskId, type RemoteJobsAdapter, type SshLaunchResult } from "../remote/jobs";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as z from "zod/mini";
 import {
@@ -60,6 +60,7 @@ const Agent = z.strictObject({
   prompts: z.optional(z.array(z.string().check(z.minLength(1))).check(z.minLength(1))),
   title: z.optional(z.string().check(z.minLength(1), z.maxLength(120))),
   workspace: z.optional(Workspace),
+  target: z.optional(z.string().check(z.minLength(1), z.maxLength(256))),
   waitSeconds,
   timeoutSeconds,
 });
@@ -358,6 +359,10 @@ export class JobService {
           throw new Error("An explicit workspace branch is only valid for a single prompt");
         const bridge = t3BridgeEnvironment(this.environment);
         if (bridge.kind === "remote") {
+          // A scoped backend owns policy. Placement must never escape it via a
+          // laptop policy or a second SSH connection. "local" means this runtime.
+          if (params.target !== undefined && params.target !== "local")
+            throw new Error("Explicit cross-placement is unsupported for scoped native subagents");
           if (params.waitSeconds !== undefined && params.waitSeconds !== 0)
             throw new Error(
               "Positive waitSeconds is unsupported for scoped native subagents; omit it or use 0 for asynchronous launch",
@@ -432,6 +437,61 @@ export class JobService {
         if (!canDelegate(depth, parentType)) throw new Error("Only orchestrator agents can delegate");
         if (depth > 0 && type === "orchestrator")
           throw new Error("Spawned orchestrators may only delegate to fast/normal workers");
+        if (params.target !== undefined && params.target !== "local") {
+          if (!this.remoteJobs) throw new Error("SSH subagent placement is unavailable in this session");
+          if (params.waitSeconds !== undefined && params.waitSeconds !== 0)
+            throw new Error("SSH subagents are async-only; omit waitSeconds or use 0");
+          if (params.timeoutSeconds !== undefined)
+            throw new Error("timeoutSeconds is unsupported for SSH subagents; use jobs.stop(id)");
+          const requestIdentity = getJobRequestIdentity(signal);
+          if (!requestIdentity)
+            throw new Error("SSH subagent launch requires durable execute invocation and call identity");
+          const sessionFile = ctx.sessionManager?.getSessionFile();
+          if (!sessionFile) throw new Error("SSH subagent launch requires a durable parent session");
+          const ledger = this.#launchLedger(ctx);
+          const launched: SshLaunchResult[] = [];
+          try {
+            for (const [index, prompt] of prompts.entries()) {
+              signal.throwIfAborted();
+              // Scope the durable execute intent to its parent session. Target
+              // is deliberately not part of identity: a retry cannot create a
+              // second SSH task by changing its launch arguments.
+              const fingerprint = T3LaunchIdentityLedger.fingerprint([
+                "ssh-execute-call-v1",
+                sessionFile,
+                requestIdentity.executeInvocationId,
+                String(requestIdentity.callIndex),
+                String(index),
+              ]);
+              const clientRequestId = await ledger.reserve(fingerprint);
+              // Repository IDs have a filesystem-safe alphabet; reserve() remains
+              // authoritative and deterministic even after response acknowledgement.
+              const taskId = "task_" + T3LaunchIdentityLedger.fingerprint([clientRequestId]);
+              signal.throwIfAborted();
+              const result = await this.remoteJobs.launch({
+                target: params.target,
+                jobSessionFile: sessionFile,
+                localRoot: ctx.cwd,
+                prompt,
+                taskId,
+                placement: {
+                  profile: type,
+                  parentDepth: depth,
+                  ...(parentType === undefined ? {} : { parentType: parentType as T3TaskProfile }),
+                  workspace,
+                },
+              });
+              await this.#acknowledgeLaunch(ledger, clientRequestId, signal);
+              launched.push(result);
+            }
+          } catch (error) {
+            if (!launched.length) throw error;
+            const ids = launched.map((item) => item.id).join(", ");
+            throw new Error("SSH batch launch failed; retained launched task IDs: " + ids, { cause: error });
+          }
+          this.#refresh();
+          return params.prompts ? launched : launched[0];
+        }
         const { model, thinking } = resolveProfile(await loadProfiles(this.profilesPath), type, {
           model: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
           thinking: ctx.thinkingLevel,

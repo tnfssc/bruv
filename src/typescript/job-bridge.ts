@@ -64,6 +64,8 @@ export interface SubagentOptions extends Options {
   title?: string;
   type?: "fast" | "normal" | "orchestrator";
   workspace?: SubagentWorkspace;
+  /** Omit/current runtime, "local", or an already human-pinned SSH connection name. */
+  target?: string;
   waitSeconds?: number;
   timeoutSeconds?: number;
 }

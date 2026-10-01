@@ -1,4 +1,7 @@
 import type { RemoteClient, RemoteTask } from "./client";
+import { launchRepository } from "./repository-wire";
+import { canDelegate, SUBAGENT_TYPES } from "../tasks/subagent-profiles";
+import type { WorkspaceRequest } from "../tasks/worktree-workspace";
 
 /** SSH task IDs cannot collide with local or native task IDs. */
 export function sshJobId(taskId: string): string {
@@ -29,11 +32,36 @@ export type SshJob = {
   transcriptGap?: boolean;
   transcriptComplete?: boolean;
   cancelDelivery?: string;
+  /** Normal placement name; "ssh:local" disambiguates the reserved runtime name. */
+  target: string;
+  workspace?: unknown;
+  provenance?: unknown;
   host: string;
   ownerId: string;
   epoch: string;
 };
+export type SshLaunchRequest = {
+  target: string;
+  jobSessionFile: string;
+  localRoot: string;
+  prompt: string;
+  taskId: string;
+  model?: string;
+  thinking?: string;
+  placement: {
+    profile: "fast" | "normal" | "orchestrator";
+    parentDepth: number;
+    parentType?: "fast" | "normal" | "orchestrator";
+    workspace: WorkspaceRequest;
+  };
+};
+export type SshLaunchResult = SshJob & {
+  output: string;
+  background: true;
+};
+export type RepositoryLauncher = (client: RemoteClient, args: Omit<SshLaunchRequest, "target">) => Promise<RemoteTask>;
 export interface RemoteJobsAdapter {
+  launch(request: SshLaunchRequest): Promise<SshLaunchResult>;
   list(sessionFile: string): Promise<SshJob[]>;
   inspect(
     sessionFile: string,
@@ -86,12 +114,17 @@ function project(task: RemoteTask): SshJob {
     (task.events[0]?.seq ?? 1) > 1
       ? { transcriptGap: true }
       : {}),
+    target: task.host === "local" ? "ssh:local" : task.host,
+    ...(task.repository ? { provenance: task.repository } : {}),
     host: task.host,
     ownerId: task.ownerId,
     epoch: task.epoch,
   };
 }
-export function createRemoteJobsAdapter(client: RemoteClient): RemoteJobsAdapter {
+export function createRemoteJobsAdapter(
+  client: RemoteClient,
+  repositoryLauncher: RepositoryLauncher = launchRepository,
+): RemoteJobsAdapter {
   async function owned(sessionFile: string): Promise<RemoteTask[]> {
     if (!sessionFile) throw new Error("SSH jobs require a durable parent session");
     const state = await client.read();
@@ -106,6 +139,84 @@ export function createRemoteJobsAdapter(client: RemoteClient): RemoteJobsAdapter
     return task;
   }
   return {
+    async launch(request) {
+      const { profile, parentDepth, parentType, workspace } = request.placement;
+      // Defense in depth for callers other than JobService. Check delegation
+      // before looking at any target/connection or performing repository work.
+      if (!Number.isSafeInteger(parentDepth) || parentDepth < 0 || parentDepth >= 2)
+        throw new Error("Delegation is limited to two levels below the root");
+      if (!canDelegate(parentDepth, parentType)) throw new Error("Only orchestrator agents can delegate");
+      if (!SUBAGENT_TYPES.includes(profile)) throw new Error("Invalid subagent profile");
+      if (parentDepth > 0 && profile === "orchestrator")
+        throw new Error("Spawned orchestrators may only delegate to fast/normal workers");
+      if (!request.jobSessionFile) throw new Error("SSH jobs require a durable parent session");
+      sshJobId(request.taskId); // Validate before filesystem or transport work.
+      const state = await client.read();
+      const connection = state.connection;
+      if (!connection) throw new Error("SSH placement requires an already human-pinned /remote connection");
+      const authorizedTarget = connection.host === "local" ? "ssh:local" : connection.host;
+      if (request.target !== authorizedTarget)
+        throw new Error("SSH target must match the already human-pinned connection.host: " + authorizedTarget);
+      const existing = state.tasks[request.taskId];
+      const assertOwner = (task: RemoteTask) => {
+        if (
+          task.taskId !== request.taskId ||
+          task.jobSessionFile !== request.jobSessionFile ||
+          task.host !== connection.host ||
+          task.ownerId !== connection.hello.ownerId ||
+          task.epoch !== connection.hello.epoch
+        )
+          throw new Error("SSH launch identity/parent ownership conflict");
+      };
+      if (existing) assertOwner(existing);
+      // Explicit allowlist: even an untyped caller cannot smuggle a human-only
+      // approvedUntracked list or backend authority fields into repository transfer.
+      const args: Omit<SshLaunchRequest, "target"> = {
+        jobSessionFile: request.jobSessionFile,
+        localRoot: request.localRoot,
+        prompt: request.prompt,
+        taskId: request.taskId,
+        ...(request.model === undefined ? {} : { model: request.model }),
+        ...(request.thinking === undefined ? {} : { thinking: request.thinking }),
+        placement: { profile, parentDepth, ...(parentType === undefined ? {} : { parentType }), workspace },
+      };
+      let task: RemoteTask;
+      try {
+        // No approvedUntracked argument exists on this agent-facing contract.
+        // Destination profiles are resolved by the server, never this laptop.
+        task = await repositoryLauncher(client, args);
+      } catch (error) {
+        const retained = (await client.read()).tasks[request.taskId];
+        if (!retained) {
+          // Preparation may have an uncertain durable repository descriptor even
+          // before a task record. Expose the reserved ID; retries reuse it.
+          throw new Error(
+            "SSH launch failed or unconfirmed; retained task ID: " + sshJobId(request.taskId) + "; " + String(error),
+            { cause: error },
+          );
+        }
+        assertOwner(retained);
+        // Only uncertain transport outcomes are results. A deterministic conflict
+        // or policy rejection must not be disguised as a successful replay.
+        if (retained.outcome !== "unknown" || !/outcome unknown/i.test(String(error))) throw error;
+        task = retained;
+      }
+      assertOwner(task);
+      return {
+        ...project(task),
+        output: "",
+        background: true,
+        provenance: task.repository ?? { kind: "snapshot", history: "snapshot-only" },
+        workspace: {
+          kind: workspace.kind,
+          path: task.repoPath,
+          source: "snapshot",
+          history: "snapshot-only",
+          ...(workspace.kind === "worktree" && workspace.baseRef ? { requestedBaseRef: workspace.baseRef } : {}),
+          ...(workspace.kind === "worktree" && workspace.branch ? { requestedBranch: workspace.branch } : {}),
+        },
+      };
+    },
     async list(sessionFile) {
       return (await owned(sessionFile)).map(project);
     },
