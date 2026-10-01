@@ -8,3 +8,10 @@ export function scrubT3BridgeEnvironment(env: NodeJS.ProcessEnv): NodeJS.Process
   delete scrubbed[T3_MCP_BEARER_ENV];
   return scrubbed;
 }
+
+/** A child is a distinct session. Do not let its checkpoints overwrite its SSH owner parent. */
+export function childAgentEnvironment(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const child = scrubT3BridgeEnvironment(env);
+  delete child.DIE_REMOTE_RUNTIME_STATE;
+  return child;
+}

@@ -17,6 +17,7 @@ const job = (patch: Partial<SshJob> = {}): SshJob => ({
   stale: true,
   outcome: "unknown",
   host: "fixture-host",
+  target: "fixture-host",
   ownerId: "fixture-owner",
   epoch: "epoch-1",
   ...patch,

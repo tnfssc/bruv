@@ -13,7 +13,7 @@ import { type JobAttentionScheduler, MAX_SNOOZE_MINUTES } from "./job-attention"
 import { sessionIdentity } from "../session/identity";
 import { canDelegate, loadProfiles, resolveProfile, SUBAGENT_TYPES, THINKING_LEVELS } from "./subagent-profiles";
 import { T3LaunchIdentityLedger } from "../t3/tasks/launch-identity";
-import { scrubT3BridgeEnvironment } from "../delegation-environment";
+import { scrubT3BridgeEnvironment, childAgentEnvironment } from "../delegation-environment";
 import { type T3BridgeEnvironment, T3McpClient, t3BridgeEnvironment } from "../t3/tasks/mcp-client";
 import {
   T3NativeTaskAdapter,
@@ -61,7 +61,13 @@ const Agent = z.strictObject({
   title: z.optional(z.string().check(z.minLength(1), z.maxLength(120))),
   workspace: z.optional(Workspace),
   target: z.optional(z.string().check(z.minLength(1), z.maxLength(256))),
-  model: z.optional(z.string().check(z.minLength(3), z.maxLength(512), z.refine((value) => /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:/-]+$/.test(value), "Use provider/model"))),
+  model: z.optional(
+    z.string().check(
+      z.minLength(3),
+      z.maxLength(512),
+      z.refine((value) => /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:/-]+$/.test(value), "Use provider/model"),
+    ),
+  ),
   thinking: z.optional(z.enum(THINKING_LEVELS)),
   waitSeconds,
   timeoutSeconds,
@@ -503,7 +509,9 @@ export class JobService {
           return params.prompts ? launched : launched[0];
         }
         if (params.model !== undefined || params.thinking !== undefined)
-          throw new Error("Per-task model/thinking overrides currently require a named SSH target; local tasks use configured profiles");
+          throw new Error(
+            "Per-task model/thinking overrides currently require a named SSH target; local tasks use configured profiles",
+          );
         const { model, thinking } = resolveProfile(await loadProfiles(this.profilesPath), type, {
           model: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
           thinking: ctx.thinkingLevel,
@@ -549,7 +557,7 @@ export class JobService {
                   ...(params.title === undefined ? {} : { title: params.title }),
                   cwd: ctx.cwd,
                   env: {
-                    ...scrubT3BridgeEnvironment(process.env),
+                    ...childAgentEnvironment(process.env),
                     DIE_SUBAGENT_DEPTH: String(depth + 1),
                     DIE_SUBAGENT_TYPE: type,
                   },
@@ -743,7 +751,7 @@ export class JobService {
               ...(params.title === undefined ? {} : { title: params.title }),
               cwd: workspaceSummary.path,
               env: {
-                ...scrubT3BridgeEnvironment(process.env),
+                ...childAgentEnvironment(process.env),
                 DIE_SUBAGENT_DEPTH: String(depth + 1),
                 DIE_SUBAGENT_TYPE: type,
               },

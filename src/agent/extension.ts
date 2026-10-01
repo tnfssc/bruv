@@ -522,10 +522,11 @@ export default function asynchronousTasksExtension(
     return manager;
   };
 
-  registerTaskMonitor(pi, getManager);
   registerResumeSafeguards(pi);
 
-  const questions = registerQuestionRuntime(pi, { supported: () => subagentDepth === 0 && !t3NativeSession });
+  const questions = registerQuestionRuntime(pi, {
+    supported: () => (subagentDepth === 0 || !!process.env.DIE_REMOTE_RUNTIME_STATE) && !t3NativeSession,
+  });
   registerQuestions(pi, (ctx) => questions.commands(ctx));
 
   goals = registerGoalMode(
@@ -551,6 +552,7 @@ export default function asynchronousTasksExtension(
   const remoteClient = new RemoteClient();
   questions.configureRemote(remoteClient);
   const remoteJobs = createRemoteJobsAdapter(remoteClient);
+  registerTaskMonitor(pi, getManager, remoteJobs);
   const getService = (ctx: ExtensionContext) => {
     taskUi = ctx.ui;
     owningContext = ctx;

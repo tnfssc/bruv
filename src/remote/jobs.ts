@@ -175,6 +175,7 @@ export function createRemoteJobsAdapter(
       // approvedUntracked list or backend authority fields into repository transfer.
       const args: Omit<SshLaunchRequest, "target"> = {
         jobSessionFile: request.jobSessionFile,
+        jobQuestionOwner: request.jobQuestionOwner,
         localRoot: request.localRoot,
         prompt: request.prompt,
         taskId: request.taskId,

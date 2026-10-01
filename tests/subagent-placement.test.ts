@@ -37,7 +37,14 @@ async function fixture(host = "box") {
       };
     if (req.op === "launch") {
       posts++;
-      return { task: { taskId: req.taskId, state: "accepted", profile: {name: (req.placement as any)?.profile ?? "normal"}, placement: req.placement } };
+      return {
+        task: {
+          taskId: req.taskId,
+          state: "accepted",
+          profile: { name: (req.placement as any)?.profile ?? "normal" },
+          placement: req.placement,
+        },
+      };
     }
     if (req.op === "sync")
       return {
@@ -151,7 +158,7 @@ test("SSH uses normal async launch with destination profile and honest snapshot 
       provenance: { snapshot: "snapshot-sha" },
     });
     expect(f.requests.at(-1)).toMatchObject({
-      jobQuestionOwner: {sessionId: "parent-A", branchId: "parent-A-branch"},
+      jobQuestionOwner: { sessionId: "parent-A", branchId: "parent-A-branch" },
       placement: { profile: type, parentDepth: 0, workspace: { kind: "worktree", baseRef: "v1", branch: "feature" } },
     });
     expect(f.requests.at(-1)?.model).toBeUndefined();
@@ -388,8 +395,28 @@ test("unconfirmed repository preparation exposes the same reserved identity on r
 
 test("explicit destination model/thinking overrides reach named placement and never silently affect local launches", async () => {
   const f = await fixture();
-  await f.service().handle("subagent", {target:"box",prompt:"override",model:"server/explicit",thinking:"low"}, f.context(), identity("override"));
-  expect(f.requests.at(-1)).toMatchObject({model:"server/explicit",thinking:"low"});
-  await expect(f.service().handle("subagent", {prompt:"local",model:"server/explicit"}, f.context(), identity("local-override"))).rejects.toThrow("named SSH target");
-  await expect(f.service().handle("subagent", {target:"box",prompt:"bad",model:"not-a-provider-model"}, f.context(), identity("bad-override"))).rejects.toThrow();
+  await f
+    .service()
+    .handle(
+      "subagent",
+      { target: "box", prompt: "override", model: "server/explicit", thinking: "low" },
+      f.context(),
+      identity("override"),
+    );
+  expect(f.requests.at(-1)).toMatchObject({ model: "server/explicit", thinking: "low" });
+  await expect(
+    f
+      .service()
+      .handle("subagent", { prompt: "local", model: "server/explicit" }, f.context(), identity("local-override")),
+  ).rejects.toThrow("named SSH target");
+  await expect(
+    f
+      .service()
+      .handle(
+        "subagent",
+        { target: "box", prompt: "bad", model: "not-a-provider-model" },
+        f.context(),
+        identity("bad-override"),
+      ),
+  ).rejects.toThrow();
 });

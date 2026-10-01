@@ -334,7 +334,15 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
     if (response.checkout) checkout = response.checkout;
   }
   if (!checkout) throw Error("Remote repository preparation unconfirmed; retry same task ID " + id);
-  await client.launch(checkout, args.prompt, id, descriptor.profile, descriptor.jobSessionFile, descriptor.placement, descriptor.jobQuestionOwner);
+  await client.launch(
+    checkout,
+    args.prompt,
+    id,
+    descriptor.profile,
+    descriptor.jobSessionFile,
+    descriptor.placement,
+    descriptor.jobQuestionOwner,
+  );
   await client.updateTask(id, {
     repository: {
       status: "awaiting_remote_result",
