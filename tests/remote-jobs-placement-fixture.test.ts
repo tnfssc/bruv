@@ -2,11 +2,12 @@ import { afterAll, beforeAll, expect, test } from "bun:test";
 import { resolve } from "node:path";
 
 // Exercise the actual deterministic provider's generated execute, without SSH or a paid provider.
-let provider: ReturnType<typeof Bun.spawn>;
+let provider: Bun.Subprocess<"ignore", "ignore", "pipe">;
 let url: string;
 beforeAll(async () => {
   provider = Bun.spawn([process.execPath, resolve(import.meta.dir, "fixtures/remote-e2e/fake-provider.ts")], {
     env: { PATH: process.env.PATH, FIXTURE_PROVIDER_PORT: "0", FIXTURE_PROVIDER_HOST: "127.0.0.1" },
+    stdin: "ignore",
     stdout: "ignore",
     stderr: "pipe",
   });

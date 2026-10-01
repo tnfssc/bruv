@@ -1,3 +1,4 @@
+import { registerRootRuntime } from "../remote/root-runtime";
 import { remoteCompletionSummary } from "../remote/job-observations";
 import { registerRemoteCancellationService } from "../remote/cancellation";
 import { createHash } from "node:crypto";
@@ -575,6 +576,10 @@ export default function asynchronousTasksExtension(
       );
     return service;
   };
+  registerRootRuntime(pi, {
+    questions: { service: questions.service, sync: (ctx) => questions.syncRemote(ctx) },
+    jobs: (ctx, method, params) => getService(ctx).handle(method, params, ctx, new AbortController().signal),
+  });
   let sessionHost: SessionHost | undefined;
   registerSessionHost(pi, (ctx) => {
     if (ctx.sessionManager !== owningContext?.sessionManager) return undefined;

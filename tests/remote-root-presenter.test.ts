@@ -15,7 +15,7 @@ function fixture(receipt: Record<string, unknown> = {}) {
   };
   let detached = false;
   const client: any = {
-    read: () => ({ commands: {}, target: {name:"builder"} }),
+    read: () => ({ commands: {}, target: { name: "builder" } }),
     command: async (command: any) => {
       commands.push(command);
       return { commandId: "c", state: "completed", ...receipt };
@@ -28,12 +28,23 @@ function fixture(receipt: Record<string, unknown> = {}) {
     },
   };
   const ui: RootPresentationControls = {
-    choose: async (title) => {titles.push(title); return picks.shift();},
+    choose: async (title) => {
+      titles.push(title);
+      return picks.shift();
+    },
     answer: async () => "second",
     notice: (text) => notices.push(text),
     detach: () => (detached = true),
   };
-  return { commands, picks, notices, titles, question, controls: new RootControls(client, ui), detached: () => detached };
+  return {
+    commands,
+    picks,
+    notices,
+    titles,
+    question,
+    controls: new RootControls(client, ui),
+    detached: () => detached,
+  };
 }
 test("empty local provider config: normal typed prompt and dedicated abort with detach separate", async () => {
   const f = fixture();
@@ -109,4 +120,14 @@ test("completed control receipt does not hide an error or claim pending cancella
   expect(pending.notices.at(-1)).toContain("cancellation request completed");
   expect(pending.notices.at(-1)).toContain('"stopped":false');
   expect(pending.notices.at(-1)).toContain('"pending":true');
+});
+
+test("normal SDK dialogs are human answered with typed controls and detach never responds", async () => {
+  const f = fixture();
+  f.picks.push("yes");
+  await f.controls.dialog({ id: "dialog", method: "confirm", title: "Stop active work?" });
+  expect(f.commands.at(-1)).toEqual({ kind: "ui.respond", id: "dialog", confirmed: true });
+  const detached = fixture();
+  await detached.controls.dialog({ id: "pending", method: "input", title: "Enter choice" }, () => false);
+  expect(detached.commands).toEqual([]);
 });

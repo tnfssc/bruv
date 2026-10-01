@@ -31,7 +31,16 @@ export type RootCommandReceipt = {
   result?: unknown;
   error?: string;
 };
+export type RootDialog = {
+  id: string;
+  method: "select" | "confirm" | "input" | "editor";
+  title?: string;
+  message?: string;
+  options?: string[];
+  prefill?: string;
+};
 export type RootRecord = {
+  dialogs?: RootDialog[];
   intent: RootIntent;
   state: "accepted" | "running" | "closed" | "unknown";
   sessionFile?: string;

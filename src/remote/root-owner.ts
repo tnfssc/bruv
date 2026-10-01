@@ -484,6 +484,8 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
           inflight.add(task);
           void task.finally(() => inflight.delete(task));
         } else if (command.kind === "ui.respond") {
+          // Hide the prompt before writing; an uncertain human response must not be solicited/replayed.
+          store.append(id, { type: "root_ui_response", id: command.id });
           await finishCommand(receipt, () =>
             port.ui ? port.ui(command) : Promise.reject(new RootAcknowledgedError("Root UI facet unavailable")),
           );

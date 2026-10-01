@@ -466,3 +466,22 @@ test("typed UI dialog response is ledgered and retried by command ID without res
     f.cleanup();
   }
 });
+
+test("pending SDK dialogs survive presentation reconnect and claimed responses are never solicited twice", () => {
+  const dir = mkdtempSync(join(tmpdir(), "root-dialog-store-"));
+  try {
+    let store = new RootStore(dir);
+    store.accept(root(dir), "request");
+    store.append("session", { type: "extension_ui_request", id: "human", method: "confirm", title: "Stop work?" });
+    store.close();
+    store = new RootStore(dir);
+    expect(store.observe("session", 1).record.dialogs).toEqual([
+      { type: "extension_ui_request", id: "human", method: "confirm", title: "Stop work?" },
+    ]);
+    store.append("session", { type: "root_ui_response", id: "human" });
+    expect(store.observe("session", 2).record.dialogs).toEqual([]);
+    store.close();
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

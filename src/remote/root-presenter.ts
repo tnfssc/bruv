@@ -15,7 +15,7 @@ import { QuestionPicker } from "../questions/picker";
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import type { RootClient } from "./root-client";
-import type { RootObservation, RootRecord, RootCommand } from "./root-contract";
+import type { RootObservation, RootRecord, RootCommand, RootDialog } from "./root-contract";
 const plain = (s: string) => s;
 const accent = (s: string) => "\x1b[36m" + s + "\x1b[0m";
 const safe = (s: unknown) =>
@@ -92,6 +92,11 @@ export class RootControls {
           throw Error("Question answer outcome is uncertain; cannot replace saved intent");
         return this.client.command(saved.command, id);
       }
+      if (command.kind === "ui.respond" && saved.command.kind === "ui.respond" && saved.command.id === command.id) {
+        if (!isDeepStrictEqual(saved.command, command))
+          throw Error("Dialog response outcome uncertain; cannot replace saved intent");
+        return this.client.command(saved.command, id);
+      }
       if (isDeepStrictEqual(saved.command, command)) return this.client.command(saved.command, id);
     }
     return this.client.command(command);
@@ -100,6 +105,43 @@ export class RootControls {
     const receipt = await this.dispatch(command);
     if (receipt.error) throw Error(receipt.error);
     return receipt;
+  }
+  async dialog(dialog: RootDialog, attached: () => boolean = () => true): Promise<void> {
+    let response: RootCommand;
+    if (dialog.method === "confirm") {
+      const selected = await this.ui.choose(safe(dialog.title) + " " + safe(dialog.message), [
+        { value: "no", label: "No" },
+        { value: "yes", label: "Yes" },
+      ]);
+      response =
+        selected === undefined
+          ? { kind: "ui.respond", id: dialog.id, cancelled: true }
+          : { kind: "ui.respond", id: dialog.id, confirmed: selected === "yes" };
+    } else if (dialog.method === "select") {
+      const selected = await this.ui.choose(
+        safe(dialog.title),
+        (dialog.options ?? []).map((label, i) => ({ value: String(i), label: safe(label) })),
+      );
+      response =
+        selected === undefined
+          ? { kind: "ui.respond", id: dialog.id, cancelled: true }
+          : { kind: "ui.respond", id: dialog.id, value: dialog.options![Number(selected)]! };
+    } else {
+      const value = await this.ui.answer({
+        id: dialog.id,
+        text: safe(dialog.title ?? dialog.message),
+        owner: { sessionId: "", branchId: "" },
+        version: 0,
+        status: "pending",
+      });
+      response =
+        value === undefined
+          ? { kind: "ui.respond", id: dialog.id, cancelled: true }
+          : { kind: "ui.respond", id: dialog.id, value };
+    }
+    if (!attached()) return; // Disconnect detaches; it does not answer/cancel a server dialog.
+    const receipt = await this.send(response);
+    this.ui.notice("Dialog response request " + receipt.state + " (application acknowledgement unavailable)");
   }
   async submit(text: string): Promise<void> {
     text = text.trim();
@@ -110,7 +152,12 @@ export class RootControls {
     }
     if (text === "/abort") {
       const r = await this.send({ kind: "abort" });
-      this.ui.notice("Abort request " + r.state + " (presentation remains attached)" + (r.result === undefined ? "" : " · " + safe(JSON.stringify(r.result))));
+      this.ui.notice(
+        "Abort request " +
+          r.state +
+          " (presentation remains attached)" +
+          (r.result === undefined ? "" : " · " + safe(JSON.stringify(r.result))),
+      );
       return;
     }
     if (text === "/close") {
@@ -183,7 +230,11 @@ export class RootControls {
       ]);
       if (confirm === "yes") {
         const r = await this.send({ kind: "jobs.stop", id: job.id });
-        this.ui.notice("Job cancellation request " + r.state + (r.result === undefined ? "" : " · " + safe(JSON.stringify(r.result))));
+        this.ui.notice(
+          "Job cancellation request " +
+            r.state +
+            (r.result === undefined ? "" : " · " + safe(JSON.stringify(r.result))),
+        );
       }
       return;
     }
@@ -426,6 +477,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
       }
     }
     const reportedErrors = new Set<string>();
+    const shownDialogs = new Set<string>();
     poll = (async () => {
       while (!closed) {
         try {
@@ -443,6 +495,11 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
             transcript.apply(observation);
             tui.requestRender();
           } while (observation.hasMore && !closed && ++pages < 20);
+          const dialog = observation.record.dialogs?.find((d) => !shownDialogs.has(d.id));
+          if (dialog && observation.record.state === "running" && !modal && !submitting) {
+            shownDialogs.add(dialog.id);
+            await controls.dialog(dialog, () => !closed);
+          }
           if (observation.record.state === "closed") {
             const result = await client.returnSource();
             notice(

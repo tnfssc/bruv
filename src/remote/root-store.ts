@@ -160,6 +160,17 @@ export class RootStore {
     this.transaction(() => {
       const r = this.get(session);
       r.seq++;
+      const e = event as { type?: string; id?: string; method?: string };
+      if (
+        e?.type === "extension_ui_request" &&
+        typeof e.id === "string" &&
+        ["select", "confirm", "input", "editor"].includes(e.method ?? "")
+      ) {
+        const dialogs = r.record.dialogs ?? [];
+        if (dialogs.length >= 20 && !dialogs.some((d) => d.id === e.id)) throw Error("Too many pending root dialogs");
+        r.record.dialogs = [...dialogs.filter((d) => d.id !== e.id), event as import("./root-contract").RootDialog];
+      }
+      if (e?.type === "root_ui_response") r.record.dialogs = (r.record.dialogs ?? []).filter((d) => d.id !== e.id);
       this.save(r);
       this.db.query("INSERT INTO events(session,seq,event,bytes) VALUES(?,?,?,?)").run(session, r.seq, text, bytes);
       let total = (

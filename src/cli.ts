@@ -159,6 +159,24 @@ if (cliArgs[0] === "--remote-control" || cliArgs[0] === "--remote-owner") {
   }
 }
 
+// Typed root control is human-client transport, not an agent helper or raw TTY.
+if (cliArgs[0] === "--remote-root-control" || cliArgs[0] === "--remote-root-owner") {
+  const { runRootControl, runRootOwner } = await import("./remote/root-entry");
+  try {
+    if (cliArgs[0] === "--remote-root-control") {
+      if (cliArgs.length !== 1) throw new Error("Usage: die --remote-root-control");
+      await runRootControl();
+    } else {
+      if (cliArgs.length !== 2) throw new Error("Usage: die --remote-root-owner <sessionId>");
+      await runRootOwner(cliArgs[1]!);
+    }
+    process.exit(0);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
+}
+
 // A placed root is a presentation client, never a second local agent/model/tool loop.
 // Resolve before Pi main() and local provider onboarding. Omitted placement stays local.
 try {
