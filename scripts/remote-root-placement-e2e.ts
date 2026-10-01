@@ -271,10 +271,15 @@ try {
     { mode: 0o600 },
   );
   const sshBin = run("/bin/sh", ["-c", "command -v ssh"]);
-  writeFileSync(join(root, "bin", "ssh"), "#!/bin/sh\nexec " +
-    [bun, join(fixture, "reply-loss.ts"), sshBin, sshConfig, faultDir].map(quote).join(" ") + ' "$@"\n', {
-    mode: 0o755,
-  });
+  writeFileSync(
+    join(root, "bin", "ssh"),
+    "#!/bin/sh\nexec " +
+      [bun, join(fixture, "reply-loss.ts"), sshBin, sshConfig, faultDir].map(quote).join(" ") +
+      ' "$@"\n',
+    {
+      mode: 0o755,
+    },
+  );
   env.PATH = join(root, "bin") + ":" + env.PATH;
   const ssh = (...args: string[]) => run(sshBin, ["-F", sshConfig, ALIAS, ...args]);
   await wait(
@@ -501,6 +506,10 @@ try {
       capture(side + "-03-human-answer-choice");
       key("Enter");
       await wait("human answer continues same root", () => pane().includes("ROOT_ANSWER_DONE_" + upper), 120000);
+      await wait(
+        "human answer command acknowledgement",
+        () => completedCommands(rootState(id), "questions.answer").length === 1,
+      );
       const answered = rootState(id);
       const answers = completedCommands(answered, "questions.answer");
       assert.equal(answers.length, 1);
@@ -626,8 +635,12 @@ try {
     assert.equal(rootFiles().length, 2);
 
     // Unsupported requests must fail before startup, inference, or source capture.
-    const untouched = { roots: rootFiles().map(json), diff: run("git", ["-C", repo, "diff"]),
-      inference: ssh("cat /tmp/root-placement-inference.jsonl"), connection: json(statePath) };
+    const untouched = {
+      roots: rootFiles().map(json),
+      diff: run("git", ["-C", repo, "diff"]),
+      inference: ssh("cat /tmp/root-placement-inference.jsonl"),
+      connection: json(statePath),
+    };
     for (const extra of [
       ["--remote-history", "full"],
       ["--remote-workspace", "worktree"],
@@ -642,17 +655,24 @@ try {
       assert.deepEqual(json(statePath), untouched.connection);
       writeFileSync(join(artifacts, "unsupported-" + extra[0].slice(2) + ".txt"), r.stdout + r.stderr);
     }
-    receipt.scenarios.push({ side: "unsupported-cli-modes", fullHistory: "rejected", worktree: "rejected",
-      conflictingSource: "rejected", noStartupOrInference: true });
+    receipt.scenarios.push({
+      side: "unsupported-cli-modes",
+      fullHistory: "rejected",
+      worktree: "rejected",
+      conflictingSource: "rejected",
+      noStartupOrInference: true,
+    });
     saveReceipt();
 
     // Lose an ACTUAL successful SSH reply, not a mocked transport result or edited ledger.
-    const priorRootIDs = new Set(rootFiles().map(f => json(f).intent.sessionId));
+    const priorRootIDs = new Set(rootFiles().map((f) => json(f).intent.sessionId));
     writeFileSync(join(faultDir, "armed"), "fixture only");
     start(["--remote-fresh"]);
     await ready();
     await wait("third root pointer", () => rootFiles().length === 3);
-    const faultID = rootFiles().map(json).find(s => !priorRootIDs.has(s.intent.sessionId)).intent.sessionId;
+    const faultID = rootFiles()
+      .map(json)
+      .find((s) => !priorRootIDs.has(s.intent.sessionId)).intent.sessionId;
     await wait("third root running", () => rootState(faultID).record?.state === "running");
     const beforeLoss = rootState(faultID);
     const faultLocalDiff = run("git", ["-C", repo, "diff"]);
@@ -662,22 +682,38 @@ try {
     const lost = json(join(faultDir, "lost.json"));
     assert.equal(lost.request.command.text, lostPrompt);
     assert.equal(lost.response.commandId, lost.request.commandId);
-    await wait("durable unknown local receipt", () =>
-      rootState(faultID).commands[lost.request.commandId]?.receipt.state === "unknown");
-    copyFileSync(rootFiles().find(f => json(f).intent.sessionId === faultID)!, join(artifacts, "reply-loss-unknown-root.json"));
-    await wait("lost-reply work actually ran", () => ssh("test ! -f /tmp/root-reply-loss-work.jsonl || wc -l < /tmp/root-reply-loss-work.jsonl") === "1");
+    await wait(
+      "durable unknown local receipt",
+      () => rootState(faultID).commands[lost.request.commandId]?.receipt.state === "unknown",
+    );
+    copyFileSync(
+      rootFiles().find((f) => json(f).intent.sessionId === faultID)!,
+      join(artifacts, "reply-loss-unknown-root.json"),
+    );
+    await wait(
+      "lost-reply work actually ran",
+      () => ssh("test ! -f /tmp/root-reply-loss-work.jsonl || wc -l < /tmp/root-reply-loss-work.jsonl") === "1",
+    );
     capture("reply-loss-unknown-before-detach");
     await detach();
     rmSync(join(faultDir, "armed"));
     start();
     await ready();
-    await wait("reattach reconciles same command identity", () =>
-      rootState(faultID).commands[lost.request.commandId]?.receipt.state === "completed");
+    await wait(
+      "reattach reconciles same command identity",
+      () => rootState(faultID).commands[lost.request.commandId]?.receipt.state === "completed",
+    );
     assertSameRoot(beforeLoss, rootState(faultID));
     assert.equal(rootFiles().length, 3, "reattach created another root");
     await wait("same root finished lost-reply turn", () => pane().includes("ROOT_REPLY_LOSS_DONE"));
-    const work = ssh("cat /tmp/root-reply-loss-work.jsonl").split("\n").filter(Boolean).map(l => JSON.parse(l));
-    const requests = readFileSync(join(faultDir, "requests.jsonl"), "utf8").split("\n").filter(Boolean).map(l => JSON.parse(l));
+    const work = ssh("cat /tmp/root-reply-loss-work.jsonl")
+      .split("\n")
+      .filter(Boolean)
+      .map((l) => JSON.parse(l));
+    const requests = readFileSync(join(faultDir, "requests.jsonl"), "utf8")
+      .split("\n")
+      .filter(Boolean)
+      .map((l) => JSON.parse(l));
     assertReplyRecovered(rootState(faultID), lost.request, requests, work);
     assert.equal(rootState(faultID).outcome, undefined, "reply reconciliation returned active source");
     copyFileSync(join(faultDir, "lost.json"), join(artifacts, "reply-loss-discarded-response.json"));
@@ -686,14 +722,22 @@ try {
 
     // Real background process stays live until the HUMAN /ps Cancel + confirmation.
     type("ROOT_RUNNING_JOB launch a long-lived server shell job for human cancellation");
-    await wait("running shell job saved", () => ssh("test ! -f /tmp/root-running-job.json || cat /tmp/root-running-job.json").startsWith("{"));
+    await wait("running shell job saved", () =>
+      ssh("test ! -f /tmp/root-running-job.json || cat /tmp/root-running-job.json").startsWith("{"),
+    );
     const running = JSON.parse(ssh("cat /tmp/root-running-job.json"));
     assert(running.background, "job finished before cancellation");
-    await wait("server job process live", () => ssh("test ! -f /tmp/root-running-pid || { kill -0 $(cat /tmp/root-running-pid) && echo live; }") === "live");
+    await wait(
+      "server job process live",
+      () => ssh("test ! -f /tmp/root-running-pid || { kill -0 $(cat /tmp/root-running-pid) && echo live; }") === "live",
+    );
     type("/ps");
     await wait("normal running job picker", () => pane().includes("Jobs on "));
     key("Enter");
-    await wait("running shell inspection and cancel action", () => pane().includes("ROOT_CANCEL_RUNNING") && pane().includes("Cancel "));
+    await wait(
+      "running shell inspection and cancel action",
+      () => pane().includes("ROOT_CANCEL_RUNNING") && pane().includes("Cancel "),
+    );
     const pre = completedCommands(rootState(faultID), "jobs.inspect").at(-1);
     assert.equal(pre.command.id, running.id);
     assert.equal(pre.receipt.result.status, "running");
@@ -701,11 +745,17 @@ try {
     await wait("normal human cancellation confirmation", () => pane().includes("Cancel this job?"));
     key("Down", "Enter");
     await wait("typed running job stop receipt", () => completedCommands(rootState(faultID), "jobs.stop").length === 1);
-    await wait("real server process exited", () => ssh("if kill -0 $(cat /tmp/root-running-pid) 2>/dev/null; then echo live; else echo gone; fi") === "gone");
+    await wait(
+      "real server process exited",
+      () => ssh("if kill -0 $(cat /tmp/root-running-pid) 2>/dev/null; then echo live; else echo gone; fi") === "gone",
+    );
     type("/ps");
     await wait("post-cancel job picker", () => pane().includes("Jobs on "));
     key("Enter");
-    await wait("post-cancel authoritative inspect", () => completedCommands(rootState(faultID), "jobs.inspect").length > 1);
+    await wait(
+      "post-cancel authoritative inspect",
+      () => completedCommands(rootState(faultID), "jobs.inspect").length > 1,
+    );
     const post = completedCommands(rootState(faultID), "jobs.inspect").at(-1);
     assertCancelledJob(rootState(faultID), running.id, post.receipt.result);
     assert.equal(ssh("test ! -e /tmp/root-running-finished && echo unfinished"), "unfinished");
@@ -716,9 +766,17 @@ try {
     await detach(); // No successful close: this root must not export/integrate source.
     assert.equal(run("git", ["-C", repo, "diff"]), faultLocalDiff, "fault root returned source without close");
     writeFileSync(join(artifacts, "fault-root-state.json"), JSON.stringify(rootState(faultID), null, 2));
-    receipt.scenarios.push({ side: "reply-loss-and-running-job", rootID: faultID,
-      commandID: lost.request.commandId, unknownPersisted: true, reconciledWithoutResend: true,
-      workExecutedOnce: true, cancelledJobID: running.id, processExited: true, sourceReturned: false });
+    receipt.scenarios.push({
+      side: "reply-loss-and-running-job",
+      rootID: faultID,
+      commandID: lost.request.commandId,
+      unknownPersisted: true,
+      reconciledWithoutResend: true,
+      workExecutedOnce: true,
+      cancelledJobID: running.id,
+      processExited: true,
+      sourceReturned: false,
+    });
     saveReceipt();
     const inference = ssh("cat /tmp/root-placement-inference.jsonl");
     assert(inference.includes('"model":"typed-root"'));
