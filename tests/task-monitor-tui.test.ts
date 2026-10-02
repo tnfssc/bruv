@@ -181,25 +181,25 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     expect(jobsBeforeConfirmation).toContain(stoppedTaskId!);
     expect(jobsBeforeConfirmation).toContain("ALPHA");
     expect(jobsBeforeConfirmation).toContain("BETA");
-    expect(frame).not.toContain("⊘ " + stoppedTaskId + " — cancelled");
+    expect(frame).not.toContain("⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled");
     await tmux("send-keys", "-t", name, "y");
     frame = await pollFrame(capture, (frame) => {
       const running = frame.slice(frame.lastIndexOf("Running jobs"));
       return (
-        frame.includes("⊘ " + stoppedTaskId + " — cancelled") &&
+        frame.includes("⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled") &&
         running.includes(alphaTaskId!) &&
         running.includes("ALPHA") &&
         !running.includes(stoppedTaskId!) &&
         !running.includes("BETA")
       );
     });
-    expect(frame).toContain("⊘ " + stoppedTaskId + " — cancelled");
+    expect(frame).toContain("⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled");
     const remainingJobs = frame.slice(frame.lastIndexOf("Running jobs"));
     expect(remainingJobs).toContain(alphaTaskId!);
     expect(remainingJobs).toContain("ALPHA");
     expect(remainingJobs).not.toContain(stoppedTaskId!);
     expect(remainingJobs).not.toContain("BETA");
-    expect(frame).not.toContain("⊘ " + alphaTaskId + " — cancelled");
+    expect(frame).not.toContain("⊘ sh -c 'while :; do echo ALPHA-live; sleep 1; done' — cancelled");
     await tmux("send-keys", "-t", name, "Escape");
     frame = await pollFrame(capture, (frame) => !frame.includes("Running jobs"));
     expect(frame).not.toContain("Running jobs");

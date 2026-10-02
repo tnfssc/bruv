@@ -47,10 +47,9 @@ async function sdk(
 ) {
   const dir = await mkdtemp(join(tmpdir(), "bruv-main-mode-sdk-"));
   cleanup.push(() => rm(dir, { recursive: true, force: true }));
-  if (options.wisdomDir) {
-    await mkdir(join(dir, ".bruv"));
-    await writeFile(join(dir, ".bruv", "settings.json"), JSON.stringify({ wisdomDir: options.wisdomDir }));
-  }
+  // This fixture is its own project even when TMPDIR sits inside a checkout.
+  await mkdir(join(dir, ".bruv"));
+  await writeFile(join(dir, ".bruv", "settings.json"), JSON.stringify({ wisdomDir: options.wisdomDir }));
   if (options.projectMarker) await writeFile(join(dir, "AGENTS.md"), "PROJECT_MARKER\n" + COLLISION);
   let manager = options.entries?.length
     ? SessionManager.create(dir, join(dir, "sessions"))
