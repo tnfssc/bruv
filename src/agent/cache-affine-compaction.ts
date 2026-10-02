@@ -19,16 +19,12 @@ import { withStandardProviderTier } from "./native-fast-mode";
 export const CACHE_AFFINE_COMPACTION_VERSION = 5;
 
 type Snapshot = {
-  /** Keep this for the old pure request-builder API. Production prepares live state. */
-  messages?: AgentMessage[];
   systemPrompt?: string;
   tools?: Tool[];
-  leafId: string | null;
   model: Model<any>;
   thinkingLevel: ExtensionContext["thinkingLevel"];
   sessionId: string;
   providerPayload?: unknown;
-  headers?: Record<string, string | null>;
 };
 
 type PreparedConversation = {
@@ -48,15 +44,6 @@ import {
   getInstructionContinuitySession,
   installCurrentConversationAdapter,
   setCurrentInstructionFrame,
-} from "./instruction-continuity";
-
-export {
-  bindCurrentCompactionSession,
-  clearInstructionContinuity,
-  installCurrentConversationAdapter,
-  scopeInstructionContinuity,
-  setCurrentInstructionFrame,
-  updateCurrentInstructionFrame,
 } from "./instruction-continuity";
 
 async function prepareCurrentConversation(
@@ -265,56 +252,6 @@ function prepareCacheAffineRequest(
   };
 }
 
-export function buildCacheAffineRequest(
-  snapshot: Snapshot,
-  event: SessionBeforeCompactEvent,
-  customInstructions = event.customInstructions,
-): CacheAffineRequest | undefined {
-  // Compatibility helper for deterministic request-shape tests. Production does
-  // not use this captured context; it calls prepareCurrentConversation above.
-  if (
-    !snapshot.messages ||
-    snapshot.leafId === null ||
-    !event.branchEntries.some((entry) => entry.id === snapshot.leafId)
-  )
-    return undefined;
-  const currentRaw = convertToLlm(buildSessionContext(event.branchEntries).messages);
-  const priorRaw = convertToLlm(buildSessionContext(event.branchEntries, snapshot.leafId).messages);
-  const transformed = convertToLlm(snapshot.messages);
-  if (priorRaw.length > currentRaw.length || !jsonEqual(priorRaw, currentRaw.slice(0, priorRaw.length)))
-    return undefined;
-  if (transformed.length !== priorRaw.length) return undefined;
-  const rawSuffix = currentRaw.slice(priorRaw.length);
-  if (rawSuffix.length) {
-    const safe = rawSuffix.every(
-      (message) =>
-        message.role === "assistant" &&
-        message.content.every((part) => part.type === "text" || part.type === "thinking"),
-    );
-    if (!safe || !jsonEqual(transformed, priorRaw)) return undefined;
-  }
-  const history = [...transformed, ...rawSuffix];
-  const result = prepareCacheAffineRequest(
-    snapshot,
-    event,
-    {
-      messages: normalizeContext({
-        systemPrompt: snapshot.systemPrompt,
-        messages: history,
-        tools: snapshot.tools,
-      }).messages,
-      rawMessages: currentRaw,
-      systemPrompt: snapshot.systemPrompt ?? "",
-      tools: snapshot.tools ?? [],
-      complete: async () => {
-        throw new Error("not available in request-only helper");
-      },
-    },
-    customInstructions,
-  );
-  return "request" in result ? result.request : undefined;
-}
-
 function jsonEqual(a: unknown, b: unknown): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
@@ -403,7 +340,7 @@ export function registerCacheAffineCompaction(
   let snapshot: Snapshot | undefined;
   // bruv's inline extension is loaded after discovered/CLI extensions, so this
   // sees the final chained context and current per-turn system prompt.
-  pi.on("context", (event, ctx) => {
+  pi.on("context", (_event, ctx) => {
     if (!ctx.model || isReadOnlyCompactionContext()) return;
     const same =
       snapshot?.sessionId === ctx.sessionManager.getSessionId() &&
@@ -411,21 +348,16 @@ export function registerCacheAffineCompaction(
       snapshot.model.id === ctx.model.id &&
       snapshot.thinkingLevel === ctx.thinkingLevel;
     snapshot = {
-      messages: structuredClone(event.messages),
       systemPrompt: ctx.getSystemPrompt(),
       tools: activeTools(pi),
-      leafId: ctx.sessionManager.getLeafId(),
       model: ctx.model,
       thinkingLevel: ctx.thinkingLevel,
       sessionId: ctx.sessionManager.getSessionId(),
-      ...(same ? { providerPayload: snapshot!.providerPayload, headers: snapshot!.headers } : {}),
+      ...(same ? { providerPayload: snapshot!.providerPayload } : {}),
     };
   });
   // This hook runs last as part of bruv's inline extension and therefore records
   // the actual provider payload after earlier payload rewrites.
-  pi.on("before_provider_headers", (event) => {
-    if (snapshot) snapshot.headers = { ...event.headers };
-  });
   pi.on("before_provider_request", (event) => {
     if (snapshot) snapshot.providerPayload = structuredClone(event.payload);
   });
@@ -451,7 +383,6 @@ export function registerCacheAffineCompaction(
         ? snapshot
         : ctx.model
           ? {
-              leafId: ctx.sessionManager.getLeafId(),
               model: ctx.model,
               thinkingLevel: ctx.thinkingLevel,
               sessionId: ctx.sessionManager.getSessionId(),
@@ -609,7 +540,7 @@ export function registerCacheAffineCompaction(
     let prefixRejection: string | undefined;
     let priorPayloadAffine: boolean | undefined;
     try {
-      const response = await withStandardProviderTier(ctx.sessionManager as object, () =>
+      const response = await withStandardProviderTier(() =>
         current.complete(request, answerTokens, (payload: unknown) => {
           // A prior wire request is evidence for prefix reuse, not permission to
           // prepare the current conversation. When available, compare it here.
@@ -721,7 +652,7 @@ export function registerCacheAffineCompaction(
       }
       bestEffortCompactionDiagnostic(ctx, {
         component: "provider",
-        code: callerCancelled ? "caller_aborted" : payloadAccepted ? "provider_failed" : "provider_failed",
+        code: callerCancelled ? "caller_aborted" : "provider_failed",
         outcome: callerCancelled ? "cancelled" : "failed",
         operationId,
         dispatch: paidResponse ? "response" : payloadAccepted ? "unknown" : "none",

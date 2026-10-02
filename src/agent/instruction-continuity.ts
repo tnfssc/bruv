@@ -117,9 +117,6 @@ export function bindInstructionContinuitySession(session: ClassicSession): void 
   }
 }
 
-/** Keep the old name for explicit compaction embedders. */
-export const bindCurrentCompactionSession = bindInstructionContinuitySession;
-
 /** Return only the classic session owned by this in-memory manager. */
 export function getInstructionContinuitySession(sessionManager: object): ClassicSession | undefined {
   return classicSessions.get(sessionManager);

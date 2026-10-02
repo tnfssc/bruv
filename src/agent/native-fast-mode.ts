@@ -1,3 +1,4 @@
+import { restoreLeaf } from "../session/restore-leaf";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { lazyStream, type Model } from "@earendil-works/pi-ai";
@@ -12,16 +13,6 @@ const volatileOptOuts = new WeakMap<object, Set<string>>();
 
 function settingScope(sessionId: string, provider: string, model: string): string {
   return `${sessionId}\0${provider}\0${model}`;
-}
-function restoreLeaf(manager: ExtensionContext["sessionManager"], priorLeaf: string | null | undefined): void {
-  if (priorLeaf === undefined) return;
-  try {
-    const mutable = manager as unknown as { resetLeaf?: () => void; branch?: (id: string) => void };
-    if (priorLeaf === null) mutable.resetLeaf?.();
-    else mutable.branch?.(priorLeaf);
-  } catch {
-    // The original operation already failed; callers remain fail-closed.
-  }
 }
 
 export const FAST_REFUSED_INVALID_COMMAND = "request_blocked";
@@ -76,10 +67,9 @@ function commandDiagnostic(
   fastDiagnostic(ctx.sessionManager as object, code, outcome, operationId, cancellation);
 }
 
-/** Keep only this async compaction request at standard price. Keep the owner for
- * source compatibility. AsyncLocalStorage stops other requests in the same
- * session from inheriting the compaction tier. */
-export async function withStandardProviderTier<T>(_owner: object, run: () => Promise<T>): Promise<T> {
+/** Keep only this async compaction request at standard price. AsyncLocalStorage
+ * stops overlapping requests in the same session from inheriting its tier. */
+export async function withStandardProviderTier<T>(run: () => Promise<T>): Promise<T> {
   return standardTierScope.run(true, run);
 }
 
@@ -95,7 +85,6 @@ type Setting = {
   costAcknowledged: boolean;
   timestamp: number;
 };
-export type FastEvidence = "requested";
 
 type Payload = Record<string, unknown>;
 function record(value: unknown): value is Payload {
@@ -222,12 +211,11 @@ function authSurfaceMatches(ctx: ExtensionContext, surface: "api" | "codex", mod
   return surface === "codex" ? oauth : !oauth;
 }
 
-function statusText(enabled: boolean, _evidence: FastEvidence): string {
+function statusText(enabled: boolean): string {
   return enabled ? " fast requested (tier/cost estimate unavailable)" : " fast off";
 }
 
 type RequestAuthorization = {
-  sessionId: string;
   provider: string;
   model: string;
   oauth: boolean;
@@ -391,7 +379,6 @@ function detachConcreteRequestGuard(runtime: object, controller: FastController)
 
 export function registerNativeFastMode(pi: ExtensionAPI) {
   let ui: ExtensionContext["ui"] | undefined;
-  let evidence: FastEvidence = "requested";
   const controller: FastController = {
     capture(model, requestedSessionId) {
       const ctx = controller.context;
@@ -399,7 +386,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         return;
       if (standardTierScope.getStore() && officialSurface(model)) {
         return {
-          sessionId: requestedSessionId,
           operationId: crypto.randomUUID(),
           manager: ctx.sessionManager as object,
           provider: model.provider,
@@ -412,7 +398,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       if (found.kind === "absent") return;
       if (found.kind === "invalid")
         return {
-          sessionId: requestedSessionId,
           operationId: crypto.randomUUID(),
           manager: ctx.sessionManager as object,
           provider: model.provider,
@@ -423,7 +408,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       const active = found.value;
       if (!active.enabled) {
         return {
-          sessionId: requestedSessionId,
           operationId: crypto.randomUUID(),
           manager: ctx.sessionManager as object,
           provider: model.provider,
@@ -446,7 +430,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
               : "OpenAI API fast mode requires API-key authentication."
             : undefined;
       return {
-        sessionId: requestedSessionId,
         operationId: crypto.randomUUID(),
         manager: ctx.sessionManager as object,
         provider: model.provider,
@@ -474,10 +457,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     bindContext(ctx);
     ui = ctx.ui;
     const active = currentSetting(ctx);
-    ui?.setStatus(
-      "bruv-native-fast",
-      active ? statusText(active.enabled, active.enabled ? evidence : "requested") : undefined,
-    );
+    ui?.setStatus("bruv-native-fast", active ? statusText(active.enabled) : undefined);
   };
 
   pi.registerCommand("fast", {
@@ -495,7 +475,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         const description = !active
           ? "off (no model-bound setting in this session)"
           : active.enabled
-            ? statusText(true, evidence).replace(/^ /, "") +
+            ? statusText(true).replace(/^ /, "") +
               "; response-tier evidence is unavailable until the runtime exposes it"
             : "off (explicit default/standard tier)";
         ctx.ui.notify(`Native fast mode: ${description}. Model and thinking are unchanged.`, "info");
@@ -615,7 +595,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       volatileOptOuts
         .get(ctx.sessionManager as object)
         ?.delete(settingScope(consentScope.sessionId, model.provider, model.id));
-      evidence = "requested";
       refreshStatus(ctx);
       ctx.ui.notify(
         action === "on"
@@ -627,7 +606,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
   });
 
   pi.on("session_start", (_event, ctx) => {
-    evidence = "requested";
     const compatibilityError = bindContext(ctx);
     refreshStatus(ctx);
     if (currentSetting(ctx)?.enabled && compatibilityError) {
@@ -636,7 +614,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     }
   });
   pi.on("model_select", (_event, ctx) => {
-    evidence = "requested";
     refreshStatus(ctx);
   });
   pi.on("session_shutdown", () => {

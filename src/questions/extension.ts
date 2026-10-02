@@ -1,3 +1,4 @@
+import type { Question as SavedQuestion } from "./service";
 import { QuestionPicker } from "./picker";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
@@ -6,26 +7,7 @@ export interface QuestionCommands {
   handle(method: string, params?: Record<string, unknown>): unknown | Promise<unknown>;
   subscribe?(listener: () => void): () => void;
 }
-type Question = {
-  id: string;
-  text?: string;
-  question?: string;
-  status?: string;
-  answer?: string;
-  readOnly?: boolean;
-  owner?: { sessionId: string; branchId: string };
-  version?: number;
-  requester?: string;
-  taskIds?: string[];
-  reason?: string;
-  choices?: string[];
-  allowFreeText?: boolean;
-  blocked?: { checkpoint: string; foreground?: boolean; taskIds?: string[] };
-  replyId?: string;
-  delivery?: string;
-  resolutionReason?: string;
-  remote?: import("./service").RemoteQuestionSource;
-};
+type Question = Partial<SavedQuestion> & Pick<SavedQuestion, "id" | "text">;
 
 const STALE_EXTENSION_CONTEXT = "This extension ctx is stale after session replacement or reload.";
 
@@ -34,13 +16,7 @@ function isStaleExtensionContext(error: unknown): boolean {
 }
 
 function records(value: unknown): Question[] {
-  if (Array.isArray(value)) return value as Question[];
-  if (value && typeof value === "object") {
-    const object = value as Record<string, unknown>;
-    for (const key of ["questions", "items", "entries"])
-      if (Array.isArray(object[key])) return object[key] as Question[];
-  }
-  return [];
+  return Array.isArray(value) ? (value as Question[]) : [];
 }
 
 function shortId(question: Question, all: Question[]): string {
@@ -61,7 +37,7 @@ function renderQuestion(question: Question, id = question.id): string {
             : "") +
         "]"
       : "",
-    question.text ?? question.question ?? "",
+    question.text,
   ]
     .filter(Boolean)
     .join(" ");
@@ -163,13 +139,13 @@ export function registerQuestions(
         "Questions · " + pending.length + " unanswered",
         pending.map((q) => ({
           value: q.id,
-          label: q.text ?? q.question ?? "Untitled question",
+          label: q.text,
           description: q.reason,
         })),
       );
       if (!id) return;
       const q = pending.find((item) => item.id === id)!;
-      const text = q.text ?? q.question ?? "Untitled question";
+      const text = q.text;
       const options = (q.choices ?? []).map((choice, index) => ({ value: String(index), label: choice }));
       if (q.allowFreeText !== false) options.push({ value: "write", label: "Write an answer…" });
       while (true) {
@@ -207,14 +183,10 @@ export function registerQuestions(
                 ? q.status === "pending"
                 : true,
           )
-          .filter(
-            (q) =>
-              !q.readOnly &&
-              (q.id.startsWith(typed) || (q.text ?? q.question ?? "").toLowerCase().includes(typed.toLowerCase())),
-          )
+          .filter((q) => !q.readOnly && (q.id.startsWith(typed) || q.text.toLowerCase().includes(typed.toLowerCase())))
           .map((q) => ({
             value: verb + " " + q.id,
-            label: (q.text ?? q.question ?? q.id).replace(/\s+/g, " "),
+            label: q.text.replace(/\s+/g, " "),
             description: q.status,
           }));
       } catch {

@@ -1,3 +1,4 @@
+import { restoreLeaf } from "../src/session/restore-leaf";
 import { normalizeContext } from "@earendil-works/pi-ai";
 import { expect, test } from "bun:test";
 import { zstdDecompressSync } from "node:zlib";
@@ -256,11 +257,11 @@ test("compaction snapshot is request-local and explicit off affects only later r
   const model = getModel("openai", "gpt-5.3-codex")!;
   const h = harness(model, { mode: "print", accept: true });
   await h.command.handler("on", h.ctx);
-  expect((await withStandardProviderTier(h.ctx.sessionManager, () => wirePayload(h))).service_tier).toBe("default");
+  expect((await withStandardProviderTier(() => wirePayload(h))).service_tier).toBe("default");
   expect((await wirePayload(h)).service_tier).toBe("fast");
 
   let release!: () => void;
-  const scoped = withStandardProviderTier(h.ctx.sessionManager, async () => {
+  const scoped = withStandardProviderTier(async () => {
     await new Promise<void>((resolve) => (release = resolve));
     return wirePayload(h);
   });
@@ -768,4 +769,26 @@ test("append-then-throw while opting out keeps prior premium consent unusable", 
   failWrite = false;
   await command.handler("on", ctx);
   expect(registration.currentSetting(ctx)).toMatchObject({ enabled: true, costAcknowledged: true });
+});
+
+// All three failure paths use this same best-effort view restoration.
+test("leaf restoration preserves absent, empty and branched views without masking failure", () => {
+  const restored: Array<string | null> = [];
+  const manager = { resetLeaf: () => restored.push(null), branch: (id: string) => restored.push(id) } as any;
+  restoreLeaf(manager, undefined);
+  expect(restored).toEqual([]);
+  restoreLeaf(manager, null);
+  restoreLeaf(manager, "prior-leaf");
+  expect(restored).toEqual([null, "prior-leaf"]);
+  expect(() => restoreLeaf({} as any, "prior-leaf")).not.toThrow();
+  const broken = {
+    resetLeaf() {
+      throw new Error("reset failed");
+    },
+    branch() {
+      throw new Error("branch failed");
+    },
+  } as any;
+  expect(() => restoreLeaf(broken, null)).not.toThrow();
+  expect(() => restoreLeaf(broken, "prior-leaf")).not.toThrow();
 });

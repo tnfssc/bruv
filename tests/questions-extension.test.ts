@@ -7,7 +7,7 @@ test("question commands keep status pinned without stealing focus or repeating n
   let command!: { handler: (args: string, ctx: ExtensionContext) => Promise<void> };
   const statuses = new Map<string, string>();
   const notices: string[] = [];
-  const questions = [{ id: "q1", question: "Choose a target?", status: "pending" }];
+  const questions = [{ id: "q1", text: "Choose a target?", status: "pending" }];
   let changed = () => {};
   const service = {
     subscribe: (callback: () => void) => {

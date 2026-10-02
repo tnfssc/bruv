@@ -26,7 +26,7 @@ import { attachDiagnosticSink, diagnosticRecorder, recordDiagnostic } from "../d
 import { registerOperationDiagnostics } from "../diagnostics-extension";
 import { type GoalRuntime, registerGoalMode } from "../goals/extension";
 import { HistoryService } from "../history/service";
-import { type ProjectWisdomRuntime, registerProjectWisdom } from "../wisdom/extension";
+import { registerProjectWisdom } from "../wisdom/extension";
 import { collaborationGuidance, isBruvSystemPrompt, subagentGuidance } from "../prompts";
 import { registerExecuteTool } from "../typescript/extension";
 import { completionPreview } from "../ui/execution-previews";
@@ -432,26 +432,9 @@ export default function asynchronousTasksExtension(
       notificationBatch.add({ kind: "attention", notice });
     },
     flush: () => notificationBatch.flush(),
-    // Completion owns the shared batcher's disposal.
-    dispose: () => {},
   };
 
   let goals: GoalRuntime;
-  let projectWisdom: ProjectWisdomRuntime | undefined;
-  const reconcileProjectWisdom = () => {
-    const runtime = projectWisdom;
-    if (!runtime) return;
-    // Completion can race both pending-record installation and an already-running
-    // reconciliation. Recheck once its current pass drains so the terminal edge
-    // cannot be absorbed by that in-flight promise.
-    void runtime
-      .jobsChanged()
-      .then(() => runtime.jobsChanged())
-      .catch(() => {
-        // Reconciliation reports actionable failures through UI; never leak a
-        // detached lifecycle promise as an unhandled rejection.
-      });
-  };
   const getManager = (ctx = owningContext) => {
     if (t3NativeSession && !t3LocalDelivery)
       throw new Error("T3 local jobs require an available durable notification outbox");
@@ -521,7 +504,6 @@ export default function asynchronousTasksExtension(
       manager.subscribe((event) => {
         emitWebTask(event);
         if (event.type === "activity") return;
-        if (event.type === "completed") reconcileProjectWisdom();
         const task = event.task;
         if (owner?.getSessionId?.() === sessionId && owner === owningContext?.sessionManager) {
           const row = taskRowFromLaunch(task);
@@ -652,7 +634,7 @@ export default function asynchronousTasksExtension(
   pi.on("turn_end", () => {
     sessionHost?.observe({ type: "turn_end" });
   });
-  projectWisdom = registerProjectWisdom(pi, {
+  registerProjectWisdom(pi, {
     isRoot: () => subagentDepth === 0,
   });
   const remoteOperations = createRemoteOperations(remoteClient);
@@ -982,7 +964,6 @@ export default function asynchronousTasksExtension(
     t3NativeSession = false;
     completions.dispose();
     disposeRemote();
-    attentions.dispose();
     attention?.dispose();
     await manager?.shutdown();
     detachLocalTermination?.();

@@ -1,3 +1,4 @@
+import { restoreLeaf } from "../session/restore-leaf";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { isDeepStrictEqual } from "node:util";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
@@ -410,12 +411,7 @@ export async function requestNativeCodexCompaction(args: {
   const init: RequestInit = { method: "POST", headers, body: JSON.stringify(body), signal: args.signal };
   args.signal?.throwIfAborted();
   // A synchronous fetch throw is not evidence that a request left the process.
-  let pending: Promise<Response>;
-  try {
-    pending = (args.fetch ?? globalThis.fetch)(url, init);
-  } catch (error) {
-    throw error;
-  }
+  const pending = (args.fetch ?? globalThis.fetch)(url, init);
   args.onDispatch?.(args.model);
   const response = await pending;
   if (!response.ok) {
@@ -569,17 +565,6 @@ function nativeFallbackCode(
   if (request.headers === undefined) return "headers_missing";
   if (!buildNativeCodexRequest(request.payload)) return "payload_incompatible";
   if (!coversDiscardedMessages(request, event)) return "coverage_incomplete";
-}
-
-function restoreLeaf(manager: ExtensionContext["sessionManager"], priorLeaf: string | null | undefined): void {
-  if (priorLeaf === undefined) return;
-  try {
-    const mutable = manager as unknown as { resetLeaf?: () => void; branch?: (id: string) => void };
-    if (priorLeaf === null) mutable.resetLeaf?.();
-    else mutable.branch?.(priorLeaf);
-  } catch {
-    // The owning operation remains conservative if restoring the view fails.
-  }
 }
 
 function bestEffortDiagnostic(ctx: ExtensionContext, diagnostic: Parameters<typeof recordDiagnostic>[1]): void {

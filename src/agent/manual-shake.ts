@@ -1,3 +1,4 @@
+import { restoreLeaf } from "../session/restore-leaf";
 import type { ToolResultMessage } from "@earendil-works/pi-ai";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import {
@@ -45,16 +46,6 @@ export const SHAKE_INVALID_CHECKPOINT = "state_invalid";
 const projectionFailures = new WeakMap<object, { sessionId: string; error: Error }>();
 // Successful compaction-time shakes observed by the AgentSession lifecycle adapter.
 const compactionShakeApplications = new WeakMap<object, number>();
-function restoreLeaf(manager: ExtensionContext["sessionManager"], priorLeaf: string | null | undefined): void {
-  if (priorLeaf === undefined) return;
-  try {
-    const mutable = manager as unknown as { resetLeaf?: () => void; branch?: (id: string) => void };
-    if (priorLeaf === null) mutable.resetLeaf?.();
-    else mutable.branch?.(priorLeaf);
-  } catch {
-    // The owning operation remains failed closed.
-  }
-}
 type ShakeGuardController = { context?: ExtensionContext };
 type ShakeRuntimeSeam = { prepareRequest: (model: unknown, options?: Record<string, any>) => Promise<unknown> };
 type ShakeRuntimePatch = {

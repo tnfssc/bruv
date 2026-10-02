@@ -196,7 +196,6 @@ export function installDiskBackedSessionManager(): void {
   const prototype: any = SessionManager.prototype;
   const original = {
     create: klass.create,
-    inMemory: klass.inMemory,
     newSession: prototype.newSession,
     appendEntry: prototype._appendEntry,
     createBranchedSession: prototype.createBranchedSession,
@@ -212,7 +211,6 @@ export function installDiskBackedSessionManager(): void {
     buildSessionContext: prototype.buildSessionContext,
     appendContextEdit: prototype.appendContextEdit,
     getHeader: prototype.getHeader,
-    getSessionName: prototype.getSessionName,
     getEntryCount: prototype.getEntryCount,
   };
 
@@ -397,10 +395,7 @@ export function installDiskBackedSessionManager(): void {
     return state(this)?.store.header ?? original.getHeader.call(this);
   };
   // 1.0.0 reads fileEntries directly for the footer. Session-info skeletons
-  // retain their tiny name field so the native fast path stays correct.
-  prototype.getSessionName = function (this: SessionManager): string | undefined {
-    return original.getSessionName.call(this);
-  };
+  // retain their tiny name field, so leave SDK getSessionName unchanged.
   prototype.getEntryCount = function (this: SessionManager): number {
     return state(this)?.store.byId.size ?? original.getEntryCount.call(this);
   };
@@ -550,9 +545,7 @@ export function installDiskBackedSessionManager(): void {
     });
   };
 
-  // Keep the SDK's explicitly in-memory implementation and all static listing APIs.
-  klass.inMemory = original.inMemory;
-
+  // The SDK's in-memory implementation and static listing APIs stay unchanged.
   klass.forkFrom = (
     sourcePath: string,
     targetCwd: string,

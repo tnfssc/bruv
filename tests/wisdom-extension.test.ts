@@ -23,8 +23,8 @@ function fixture(root = true) {
       handlers.set(name, existing);
     },
   } as any;
-  const runtime = registerProjectWisdom(pi, { isRoot: () => root });
-  return { commands, handlers, notices, ctx, runtime };
+  registerProjectWisdom(pi, { isRoot: () => root });
+  return { commands, handlers, notices, ctx };
 }
 
 describe("project wisdom extension", () => {
@@ -66,9 +66,5 @@ describe("project wisdom extension", () => {
       message: "Project wisdom is unavailable outside the root agent.",
       severity: "warning",
     });
-  });
-
-  test("jobsChanged is kept as a no-op integration hook", async () => {
-    await expect(fixture().runtime.jobsChanged()).resolves.toBeUndefined();
   });
 });

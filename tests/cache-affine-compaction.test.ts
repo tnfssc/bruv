@@ -3,30 +3,28 @@ import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { convertToLlm } from "@earendil-works/pi-coding-agent";
 import { inspectDiagnostics } from "../src/diagnostics";
 import {
-  bindCurrentCompactionSession,
-  buildCacheAffineRequest,
-  clearInstructionContinuity,
   isCacheAffineProviderPayload,
   isUsableSummaryResponse,
   registerCacheAffineCompaction,
+} from "../src/agent/cache-affine-compaction";
+import {
+  bindInstructionContinuitySession,
+  clearInstructionContinuity,
   scopeInstructionContinuity,
   setCurrentInstructionFrame,
-} from "../src/agent/cache-affine-compaction";
+} from "../src/agent/instruction-continuity";
 
-function wireProvider(ctx: any, pi: any) {
+function wireProvider(ctx: any, pi: any, transformContext?: (messages: any[]) => any[]) {
   if (!ctx.modelRegistry) return;
-  bindCurrentCompactionSession({
+  bindInstructionContinuitySession({
     sessionManager: ctx.sessionManager,
     agent: {
       state: { systemPrompt: ctx.getSystemPrompt(), tools: pi.getAllTools() },
       convertToLlm,
+      transformContext,
       streamFunction: (m: any, c: any, o: any) => ({ result: () => ctx.modelRegistry.completeSimple(m, c, o) }),
     },
   } as any);
-  ctx.modelRegistry.getApiKeyAndHeaders = async () => ({ ok: true, apiKey: "offline" });
-  ctx.modelRegistry.getProvider = () => ({
-    streamSimple: (m: any, c: any, o: any) => ({ result: () => ctx.modelRegistry.completeSimple(m, c, o) }),
-  });
 }
 
 const usage = {
@@ -88,26 +86,54 @@ function event(overrides: any = {}) {
   } as any;
 }
 
-function snapshot(overrides: any = {}) {
-  return {
-    messages: [user("HOOKED-old-user"), assistant("old-assistant"), user("tail-user"), assistant("tail-assistant")],
-    leafId: "4",
-    systemPrompt: "actual post-hook system",
-    tools: [{ name: "execute", description: "run", parameters: { type: "object" } }],
-    model,
+const tools = [{ name: "execute", description: "run", parameters: { type: "object" } }];
+
+// Exercise the shipped preparation and dispatch path, not a captured-prefix model.
+async function currentRequest(compactEvent = event(), options: any = {}) {
+  const handlers = new Map<string, Function>();
+  let request: any;
+  const pi = {
+    on: (name: string, fn: Function) => handlers.set(name, fn),
+    getActiveTools: () => ["execute"],
+    getAllTools: () => tools,
+  } as any;
+  registerCacheAffineCompaction(pi);
+  const ctx = {
+    model: options.model ?? model,
     thinkingLevel: "high",
-    sessionId: "stable-session",
-    ...overrides,
-  };
+    getSystemPrompt: () => options.systemPrompt ?? "actual post-hook system",
+    sessionManager: { getSessionId: () => "stable-session" },
+    modelRegistry: {
+      completeSimple: async (_model: any, context: any, streamOptions: any) => {
+        request = { messages: context.messages, outputTokens: streamOptions.maxTokens };
+        await streamOptions.onPayload({ input: [] });
+        return assistant("## Goal\nContinue");
+      },
+    },
+  } as any;
+  wireProvider(
+    ctx,
+    pi,
+    options.transform ??
+      ((messages: any[]) => {
+        const firstUser = messages.find((message) => message.role === "user");
+        if (firstUser) firstUser.content = [{ type: "text", text: "HOOKED-old-user" }];
+        return messages;
+      }),
+  );
+  await handlers.get("context")!({ messages: [] }, ctx);
+  const result = await handlers.get("session_before_compact")!(compactEvent, ctx);
+  if (!request) expect(result).toEqual({ cancel: true });
+  return request;
 }
 
 describe("cache-affine compaction request", () => {
-  test("preserves the exact fully transformed context, system, and tools", () => {
-    const request = buildCacheAffineRequest(snapshot(), event())!;
+  test("preserves the exact fully transformed context, system, and tools", async () => {
+    const request = await currentRequest();
     expect(request.messages[0]).toMatchObject({
       role: "system",
       content: "actual post-hook system",
-      toolsAdded: snapshot().tools,
+      toolsAdded: tools,
     });
     expect((request.messages[1] as any).content[0].text).toBe("HOOKED-old-user");
     expect((request.messages[3] as any).content[0].text).toBe("tail-user");
@@ -115,17 +141,20 @@ describe("cache-affine compaction request", () => {
     expect((request.messages.at(-1) as any).content[0].text).toContain("Summarize the whole conversation above.");
   });
 
-  test("counts the transcript system/tool frame once in the compaction input budget", () => {
-    const request = buildCacheAffineRequest({ ...snapshot(), systemPrompt: "frame ".repeat(4000) }, event())!;
+  test("counts the transcript system/tool frame once in the compaction input budget", async () => {
+    // Make the context ceiling bind: a double-charged frame cannot fit.
+    const request = await currentRequest(event(), {
+      systemPrompt: "frame ".repeat(4000),
+      model: { ...model, contextWindow: 13_000 },
+    });
     expect(request).toBeDefined();
-    expect(request.estimatedInputTokens).toBeGreaterThan(6000);
-    expect(request.estimatedInputTokens).toBeLessThan(8000);
-    expect(request.messages.filter((message) => message.role === "system")).toHaveLength(1);
+    expect(request.outputTokens).toBeGreaterThan(5000);
+    expect(request.outputTokens).toBeLessThan(6500);
+    expect(request.messages.filter((message: any) => message.role === "system")).toHaveLength(1);
   });
 
-  test("summarizes the whole current conversation regardless of Pi's replay boundary", () => {
-    const request = buildCacheAffineRequest(
-      snapshot(),
+  test("summarizes the whole current conversation regardless of Pi's replay boundary", async () => {
+    const request = await currentRequest(
       event({
         preparation: {
           ...event().preparation,
@@ -134,7 +163,7 @@ describe("cache-affine compaction request", () => {
           isSplitTurn: true,
         },
       }),
-    )!;
+    );
     const prompt = (request.messages.at(-1) as any).content[0].text;
     expect(prompt).toContain("Summarize the whole conversation above.");
     expect(prompt).not.toContain("retained tail");
@@ -143,55 +172,77 @@ describe("cache-affine compaction request", () => {
     expect(request).not.toHaveProperty("summaryScope");
   });
 
-  test("rejects a stale snapshot leaf and any untransformed raw tail", () => {
-    expect(buildCacheAffineRequest(snapshot({ leafId: "missing" }), event())).toBeUndefined();
-    expect(
-      buildCacheAffineRequest(snapshot({ leafId: "2", messages: snapshot().messages.slice(0, 2) }), event()),
-    ).toBeUndefined();
-  });
-
-  test("allows a text-only assistant response after an otherwise unmodified cached prefix", () => {
-    const assistantTailEntries = [entries[0], entries[1], { ...entries[3], id: "3", parentId: "2" }];
-    const assistantTailEvent = event({
-      branchEntries: assistantTailEntries,
-      preparation: { ...event().preparation, firstKeptEntryId: "3" },
+  test("prepares current tool results and boundary-changing redaction", async () => {
+    const toolResult = {
+      role: "toolResult",
+      toolCallId: "call",
+      toolName: "execute",
+      content: [{ type: "text", text: "current-result" }],
+      isError: false,
+      timestamp: 3,
+    };
+    const branchEntries = [
+      ...entries,
+      {
+        type: "message",
+        id: "5",
+        parentId: "4",
+        timestamp: "2026-01-01",
+        message: {
+          ...assistant(""),
+          content: [{ type: "toolCall", id: "call", name: "execute", arguments: {} }],
+          stopReason: "toolUse",
+        },
+      },
+      { type: "message", id: "6", parentId: "5", timestamp: "2026-01-01", message: toolResult },
+    ];
+    const request = await currentRequest(event({ branchEntries }), {
+      transform: (messages: any[]) => messages.filter((message) => message.role !== "user"),
     });
-    const request = buildCacheAffineRequest(
-      snapshot({ messages: [user("old-user"), assistant("old-assistant")], leafId: "2" }),
-      assistantTailEvent,
-    )!;
-    expect((request.messages[3] as any).content[0].text).toBe("tail-assistant");
+    expect(JSON.stringify(request.messages)).not.toContain("old-user");
+    expect(JSON.stringify(request.messages)).toContain("current-result");
+    expect(request.messages.filter((message: any) => message.role === "user")).toHaveLength(1);
   });
 
-  test("rejects context transforms that change message boundaries", () => {
-    expect(buildCacheAffineRequest(snapshot({ messages: snapshot().messages.slice(1) }), event())).toBeUndefined();
-  });
-
-  test("keeps the replay tail in the model-facing history being summarized", () => {
-    const request = buildCacheAffineRequest(snapshot(), event())!;
+  test("keeps the replay tail in the model-facing history being summarized", async () => {
+    const request = await currentRequest();
     expect((request.messages[3] as any).content[0].text).toBe("tail-user");
     expect((request.messages[4] as any).content[0].text).toBe("tail-assistant");
     expect((request.messages.at(-1) as any).content[0].text).toContain("whole conversation above");
   });
 
-  test("does not insert raw retained content into the summary instruction", () => {
-    const request = buildCacheAffineRequest(snapshot(), event())!;
+  test("does not insert raw retained content into the summary instruction", async () => {
+    const request = await currentRequest();
     const serialized = JSON.stringify(request.messages);
     expect(serialized.split("tail-user")).toHaveLength(2);
     expect(serialized).not.toContain("retained-tail anchor");
   });
 
-  test("charges transformed-prefix growth against the context window", () => {
-    const expanded = snapshot({
-      messages: [user("x".repeat(40_000)), assistant("old-assistant"), user("tail-user"), assistant("tail-assistant")],
-      model: { ...model, contextWindow: 12_000 },
-    });
-    expect(buildCacheAffineRequest(expanded, event())).toBeUndefined();
+  test("charges transformed-prefix growth against the context window", async () => {
+    expect(
+      await currentRequest(event(), {
+        model: { ...model, contextWindow: 12_000 },
+        transform: (messages: any[]) => {
+          messages.find((message) => message.role === "user").content = [{ type: "text", text: "x".repeat(40_000) }];
+          return messages;
+        },
+      }),
+    ).toBeUndefined();
   });
 
-  test("falls back rather than sending an overflowing fork", () => {
+  test("cancels before dispatch when the summary reserve is too small", async () => {
+    expect(
+      await currentRequest(
+        event({
+          preparation: { ...event().preparation, settings: { ...event().preparation.settings, reserveTokens: 1024 } },
+        }),
+      ),
+    ).toBeUndefined();
+  });
+
+  test("cancels rather than sending an overflowing fork", async () => {
     const overflow = event({ reason: "overflow", preparation: { ...event().preparation, tokensBefore: 99_000 } });
-    expect(buildCacheAffineRequest(snapshot(), overflow)).toBeUndefined();
+    expect(await currentRequest(overflow)).toBeUndefined();
   });
 });
 
@@ -321,7 +372,7 @@ describe("extension lifecycle", () => {
       },
     } as any;
     wireProvider(ctx, pi);
-    await handlers.get("context")!({ messages: snapshot().messages }, ctx);
+    await handlers.get("context")!({ messages: entries.map((entry) => entry.message) }, ctx);
     await handlers.get("before_provider_request")!(
       {
         payload: {
@@ -397,7 +448,7 @@ describe("extension lifecycle", () => {
       },
     } as any;
     wireProvider(ctx, pi);
-    await handlers.get("context")!({ messages: snapshot().messages }, ctx);
+    await handlers.get("context")!({ messages: entries.map((entry) => entry.message) }, ctx);
     await handlers.get("before_provider_request")!({ payload: { input: [{ role: "user", content: "old" }] } }, ctx);
     expect(await handlers.get("session_before_compact")!(event(), ctx)).toEqual({ cancel: true });
     expect(notices[0]?.[0]).toContain("avoid duplicate inference");
@@ -437,7 +488,7 @@ describe("extension lifecycle", () => {
       sessionManager: { getLeafId: () => "2", getSessionId: () => "stable-session" },
     } as any;
     wireProvider(ctx, pi);
-    await handlers.get("context")!({ messages: snapshot().messages.slice(0, 2) }, ctx);
+    await handlers.get("context")!({ messages: entries.slice(0, 2).map((entry) => entry.message) }, ctx);
     await handlers.get("before_provider_request")!({ payload: { input: [{}] } }, ctx);
     expect(await handlers.get("session_before_compact")!(event(), ctx)).toEqual({ cancel: true });
     expect(notices[0]).toContain("this Pi runtime has no current-context preparation seam");
@@ -468,7 +519,7 @@ describe("extension lifecycle", () => {
       },
     } as any;
     wireProvider(ctx, pi);
-    await handlers.get("context")!({ messages: snapshot().messages }, ctx);
+    await handlers.get("context")!({ messages: entries.map((entry) => entry.message) }, ctx);
     await handlers.get("before_provider_request")!({ payload: { input: [{ role: "user", content: "old" }] } }, ctx);
     expect(await handlers.get("session_before_compact")!(event(), ctx)).toEqual({ cancel: true });
     expect(inspectDiagnostics(ctx.sessionManager).records.at(-1)).toMatchObject({
@@ -508,9 +559,9 @@ test("provider guard never treats tool-input cache_control keys as cache metadat
   expect(isCacheAffineProviderPayload(before, after)).toBe(false);
 });
 
-test("absent or blank custom focus adds no footer", () => {
+test("absent or blank custom focus adds no footer", async () => {
   for (const focus of [undefined, "", "   "]) {
-    const request = buildCacheAffineRequest(snapshot(), event(), focus)!;
+    const request = await currentRequest(event({ customInstructions: focus }));
     const prompt = (request.messages.at(-1) as any).content[0].text;
     expect(prompt).not.toContain("Additional user focus:");
     expect(prompt).not.toContain("No additional focus was requested");
@@ -519,8 +570,8 @@ test("absent or blank custom focus adds no footer", () => {
   }
 });
 
-test("summary focus is literal data without boundary disclaimers", () => {
-  const request = buildCacheAffineRequest(snapshot(), event(), "Preserve $& and {{tailAnchor}} literally")!;
+test("summary focus is literal data without boundary disclaimers", async () => {
+  const request = await currentRequest(event({ customInstructions: "Preserve $& and {{tailAnchor}} literally" }));
   const prompt = (request.messages.at(-1) as any).content[0].text;
   expect(prompt).toContain("Additional user focus: Preserve $& and {{tailAnchor}} literally");
   expect(prompt).not.toContain("durable checkpoint boundary");

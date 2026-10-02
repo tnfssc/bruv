@@ -1157,6 +1157,25 @@ describe("native transport boundaries", () => {
       response: { status: "completed", output: [item], usage: { input_tokens: 4, output_tokens: 1, total_tokens: 5 } },
     }) +
     "\n\n";
+  test("synchronous fetch failure propagates without observing a dispatch", async () => {
+    const failure = new Error("synchronous fixture failure");
+    let dispatches = 0;
+    await expect(
+      requestNativeCodexCompaction({
+        payload,
+        headers,
+        model,
+        fetch: (() => {
+          throw failure;
+        }) as unknown as typeof globalThis.fetch,
+        onDispatch: () => {
+          dispatches++;
+        },
+      }),
+    ).rejects.toBe(failure);
+    expect(dispatches).toBe(0);
+  });
+
   test("parses fragmented SSE frames, including split UTF-8", async () => {
     const item = { type: "compaction" as const, id: "cmp_fragmented", encrypted_content: "opaque-🔐" };
     const bytes = new TextEncoder().encode(completed(item));
