@@ -58,3 +58,23 @@ Branch: bruv/fix-observed-bruv-in-t3-browser-acceptan-5e045d3c
 Base: a99daabadc04ef8dd59a8eefdf3b46d11df9cc2f. Separate upstream checkout.
 Reduction task_09a4f35b runs concurrently; parent must compose their actual source
 diffs (especially provider identity) and regenerate/verify canonical patch.
+
+## Further reduction integrated; browser fixes split
+
+Reduction b8d80b9 integrated as b08d229. Patch 365318 -> 356496 bytes (2.4%),
+74 -> 73 files. Production additions 2398 -> 2335; actual production source
+shrinks only 29 lines. Tests unchanged at 3578 added lines. Removed unused state,
+duplicate enabled computation and unused UI marker; retained authority/delivery.
+See further-patch-reduction.md for focused/native/browser build proof and limits.
+
+Task_5e045d3c was stopped after >25min without new tool output, and exit143 was
+confirmed. It produced no committed fix. New narrow workers start from b08d229:
+- Route/restart fix task_0dea6e78: worktree
+  /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0dea6e78, branch
+  bruv/fix-exact-conversation-reload-and-restar-0dea6e78.
+- Provider warning task_127f41c6: worktree
+  /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_127f41c6, branch
+  bruv/fix-embedded-bruv-provider-compatibility-127f41c6.
+Both own separate upstream checkouts and must return focused source deltas. Parent
+composes them and runs final compiled browser flow, including child/Stop if not
+covered already. No success claim for browser reload until those checks pass.
