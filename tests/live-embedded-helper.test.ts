@@ -38,7 +38,7 @@ test("reject corrupt content before writing and never follow a hostile shared ca
     await symlink(victim, join(root, "bruv-live-cache"));
     await expect(extractNativeHelper(Buffer.from("corrupt"), hash, root)).rejects.toThrow("integrity");
     const fresh = await extractNativeHelper(bytes, hash, root);
-    expect(fresh.path).not.toContain("cache/");
+    expect(fresh.path).not.toContain(join(root, "bruv-live-cache"));
     expect(await readFile(join(victim, "live-audio"), "utf8")).toBe("preserve");
     await fresh.cleanup();
   } finally {
