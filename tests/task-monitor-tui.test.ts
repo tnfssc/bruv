@@ -4,7 +4,7 @@ import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { prepareAgentSession } from "../src/tasks/agent-session";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { capturePane, pollFrame, shellQuote as quote, tmuxRunner } from "./tui-helpers";
+import { capturePane, frameContaining, pollFrame, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 test("real TUI /ps selects live jobs and only stops the confirmed target", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-ps-tui-")),
@@ -153,35 +153,55 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     expect(frame).toContain("ALPHA");
     expect(frame).toContain("BETA");
     await tmux("send-keys", "-t", name, "Enter");
-    await Bun.sleep(200);
-    frame = await capture();
+    // A spawned job can be listed before its first stdout chunk arrives. Wait for
+    // output in the actual inspect view, not a guessed process-startup delay.
+    frame = await frameContaining(capture, ["Inspect task_", "ALPHA-live"]);
     expect(frame).toContain("Inspect task_");
     expect(frame).toContain("ALPHA");
+    const alphaTaskId = frame.match(/Inspect (task_\w+)/)?.[1];
+    expect(alphaTaskId).toBeDefined();
     await tmux("send-keys", "-t", name, "-l", "i");
-    await Bun.sleep(200);
-    frame = await capture();
+    frame = await pollFrame(capture, (frame) => frame.includes("Running jobs") && !frame.includes("Inspect task_"));
     expect(frame).toContain("Running jobs");
     expect(frame).not.toContain("Inspect task_");
     await tmux("send-keys", "-t", name, "Down");
-    await Bun.sleep(300);
-    frame = await capture();
+    frame = await pollFrame(capture, (frame) => frame.slice(frame.lastIndexOf("Live preview")).includes("BETA-live"));
     expect(frame).toContain("BETA-live");
+    expect(frame.slice(frame.lastIndexOf("Live preview"))).toContain("BETA-live");
     await tmux("send-keys", "-t", name, "x");
-    await Bun.sleep(100);
-    frame = await capture();
+    frame = await frameContaining(capture, ["Stop task_", "BETA"]);
     expect(frame).toContain("Stop task_");
     expect(frame).toContain("BETA");
     const stoppedTaskId = frame.match(/Stop (task_\w+)/)?.[1];
     expect(stoppedTaskId).toBeDefined();
+    expect(stoppedTaskId).not.toBe(alphaTaskId);
+    // Opening the confirmation must not stop either task.
+    const jobsBeforeConfirmation = frame.slice(frame.lastIndexOf("Running jobs"));
+    expect(jobsBeforeConfirmation).toContain(alphaTaskId!);
+    expect(jobsBeforeConfirmation).toContain(stoppedTaskId!);
+    expect(jobsBeforeConfirmation).toContain("ALPHA");
+    expect(jobsBeforeConfirmation).toContain("BETA");
+    expect(frame).not.toContain("⊘ " + stoppedTaskId + " — cancelled");
     await tmux("send-keys", "-t", name, "y");
-    await Bun.sleep(700);
-    frame = await capture();
+    frame = await pollFrame(capture, (frame) => {
+      const running = frame.slice(frame.lastIndexOf("Running jobs"));
+      return (
+        frame.includes("⊘ " + stoppedTaskId + " — cancelled") &&
+        running.includes(alphaTaskId!) &&
+        running.includes("ALPHA") &&
+        !running.includes(stoppedTaskId!) &&
+        !running.includes("BETA")
+      );
+    });
     expect(frame).toContain("⊘ " + stoppedTaskId + " — cancelled");
-    expect(frame.slice(frame.lastIndexOf("Running jobs"))).toContain("ALPHA");
-    expect(frame.slice(frame.lastIndexOf("Running jobs"))).not.toContain("BETA");
+    const remainingJobs = frame.slice(frame.lastIndexOf("Running jobs"));
+    expect(remainingJobs).toContain(alphaTaskId!);
+    expect(remainingJobs).toContain("ALPHA");
+    expect(remainingJobs).not.toContain(stoppedTaskId!);
+    expect(remainingJobs).not.toContain("BETA");
+    expect(frame).not.toContain("⊘ " + alphaTaskId + " — cancelled");
     await tmux("send-keys", "-t", name, "Escape");
-    await Bun.sleep(600);
-    frame = await capture();
+    frame = await pollFrame(capture, (frame) => !frame.includes("Running jobs"));
     expect(frame).not.toContain("Running jobs");
   } finally {
     server.stop(true);

@@ -10,7 +10,7 @@ import { McpAmbiguousResponseError } from "../../src/t3/tasks/mcp-client";
 import { T3NativeTaskAdapter, T3TaskResultSchema } from "../../src/t3/tasks/native-task";
 import { TaskManager } from "../../src/tasks/task-manager";
 import { serveJobBridge } from "../../src/typescript/job-bridge";
-import { withJobRequestIdentity } from "../../src/job-delivery";
+import { getJobRequestIdentity, withJobRequestIdentity } from "../../src/job-delivery";
 
 const fixture = JSON.parse(
   await readFile(new URL("../../integrations/t3/fixtures/native-task-contract.json", import.meta.url), "utf8"),
@@ -368,24 +368,33 @@ test("identical concurrent native calls get distinct durable intents and replay 
     T3_MCP_URL: "http://backend.invalid/mcp",
     T3_MCP_BEARER_TOKEN: "server-issued",
   };
-  const originalIds: string[] = [];
-  const replayedIds: string[] = [];
+  const originalIds = new Map<number, string>();
+  const replayedIds = new Map<number, string>();
   const managers: TaskManager[] = [];
 
   const run = async (replay: boolean) => {
     const manager = new TaskManager(() => {});
     managers.push(manager);
+    // Force opposite adapter arrival orders without relying on filesystem timing.
+    const delayedCallIndex = replay ? 2 : 1;
+    let releaseDelayedCall!: () => void;
+    const otherCallArrived = new Promise<void>((resolve) => {
+      releaseDelayedCall = resolve;
+    });
     const adapter = {
-      async launch(input: any) {
+      async launch(input: any, signal: AbortSignal) {
+        const { callIndex } = getJobRequestIdentity(signal)!;
         const ids = replay ? replayedIds : originalIds;
-        ids.push(input.clientRequestId);
+        expect(ids.has(callIndex)).toBe(false);
+        ids.set(callIndex, input.clientRequestId);
+        if (callIndex !== delayedCallIndex) releaseDelayedCall();
         if (!replay) throw new Error("ambiguous launch response");
-        const ordinal = originalIds.indexOf(input.clientRequestId);
-        if (ordinal < 0) throw new Error("replay did not recover its durable call identity");
+        if (input.clientRequestId !== originalIds.get(callIndex))
+          throw new Error("replay did not recover its durable call identity");
         return {
           ...fixture.launch.result,
-          taskId: "native-task-" + (ordinal + 1),
-          childThreadId: "child-thread-" + (ordinal + 1),
+          taskId: "native-task-" + callIndex,
+          childThreadId: "child-thread-" + callIndex,
           profile: "normal",
           depth: 2,
         };
@@ -416,7 +425,10 @@ test("identical concurrent native calls get distinct durable intents and replay 
     });
     const bridge = serveJobBridge(
       stream,
-      (method, params, signal) => service.handle(method, params, context(sessionFile), signal),
+      async (method, params, signal) => {
+        if (getJobRequestIdentity(signal)!.callIndex === delayedCallIndex) await otherCallArrived;
+        return service.handle(method, params, context(sessionFile), signal);
+      },
       new AbortController().signal,
       undefined,
       "durable-execute-tool-call",
@@ -451,13 +463,30 @@ test("identical concurrent native calls get distinct durable intents and replay 
     const failed = await run(false);
     expect(failed).toHaveLength(2);
     expect(failed.every((response) => typeof response.error === "string")).toBe(true);
-    expect(originalIds).toHaveLength(2);
-    expect(new Set(originalIds).size).toBe(2);
+    expect([...originalIds.keys()]).toEqual([2, 1]);
+    expect(new Set(originalIds.values()).size).toBe(2);
     expect(await Bun.file(ledgerPath).exists()).toBe(false);
 
     const recovered = await run(true);
-    expect(replayedIds).toEqual(originalIds);
-    expect(recovered.map((response) => response.result.id).sort()).toEqual(["native-task-1", "native-task-2"]);
+    expect([...replayedIds.keys()]).toEqual([1, 2]);
+    expect(recovered).toHaveLength(2);
+    expect(new Set(recovered.map((response) => response.id)).size).toBe(2);
+    for (const callIndex of [1, 2]) {
+      const fingerprint = T3LaunchIdentityLedger.fingerprint([
+        "execute-call-v1",
+        "durable-execute-tool-call",
+        String(callIndex),
+        "0",
+      ]);
+      const expectedId = "bruv-v1:" + T3LaunchIdentityLedger.fingerprint([fingerprint]);
+      expect(originalIds.get(callIndex)).toBe(expectedId);
+      expect(replayedIds.get(callIndex)).toBe(originalIds.get(callIndex));
+      expect(failed.find((response) => response.id === callIndex)?.error).toBe("ambiguous launch response");
+      expect(recovered.find((response) => response.id === callIndex)).toMatchObject({
+        id: callIndex,
+        result: { id: "native-task-" + callIndex, childThreadId: "child-thread-" + callIndex },
+      });
+    }
   } finally {
     await Promise.all(managers.map((manager) => manager.shutdown()));
     await rm(dir, { recursive: true, force: true });
