@@ -48,3 +48,13 @@ See ../releases/v0.15.24-pi.md and ../dependencies/pi-1.0-upgrade.md.
 
 Wisdom records the new direction and restart point. Values unchanged: existing
 values 7 and 9 already favor fewer owned parts and deliberate upstream adoption.
+
+## Resumed
+
+User said continue. Both old agents were confirmed killed. Prior implementation
+worktree was clean at 6d9e981; no partial implementation was found there.
+New implementation owner: task_4eb8a4a8 (orchestrator).
+Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8
+Branch: bruv/resume-t3-upstream-adoption-and-patch-re-4eb8a4a8
+Base: 92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be.
+Parent reviews/integrates; worker owns source migration and proof. No publish.
