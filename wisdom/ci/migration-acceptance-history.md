@@ -11,3 +11,16 @@ migration suites passed22tests/403assertions; format and diff checks passed.
 Release success and normal CI success are separate claims. Check both before
 saying all validation is green. Values unchanged: existing whole-path/honest
 proof guidance already covers this distinction. Hosted CI result still pending.
+
+Pushed c9706fc42a4fa704d7f0fe6182586543604d167c. Full CI run37026802906:
+https://github.com/tnfssc/bruv/actions/runs/37026802906
+Await completion; historical failed runs remain failed rather than being relabeled.
+
+## Hosted result
+
+Run37026802906 completed successfully on c9706fc42a4fa704d7f0fe6182586543604d167c.
+Linux full validation, macOS Live/device-free validation and CI policy all passed.
+This closes the shallow-history CI blocker. v0.15.25 release success remains a
+separate verified run. This final result note is committed locally only, to avoid
+starting another full run solely to record the completed run. Code fix and its
+regression were already pushed and validated at c9706fc.
