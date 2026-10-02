@@ -1,6 +1,6 @@
 import { getCurrentSystemPrompt } from "@earendil-works/pi-ai";
 import { afterEach, beforeEach, expect, test } from "bun:test";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { type AssistantMessage, createAssistantMessageEventStream, getModel } from "@earendil-works/pi-ai/compat";
@@ -38,10 +38,19 @@ afterEach(async () => {
 });
 
 async function sdk(
-  options: { customPrompt?: string; projectMarker?: boolean; entries?: Array<[string, unknown]> } = {},
+  options: {
+    customPrompt?: string;
+    projectMarker?: boolean;
+    entries?: Array<[string, unknown]>;
+    wisdomDir?: string;
+  } = {},
 ) {
   const dir = await mkdtemp(join(tmpdir(), "bruv-main-mode-sdk-"));
   cleanup.push(() => rm(dir, { recursive: true, force: true }));
+  if (options.wisdomDir) {
+    await mkdir(join(dir, ".bruv"));
+    await writeFile(join(dir, ".bruv", "settings.json"), JSON.stringify({ wisdomDir: options.wisdomDir }));
+  }
   if (options.projectMarker) await writeFile(join(dir, "AGENTS.md"), "PROJECT_MARKER\n" + COLLISION);
   let manager = options.entries?.length
     ? SessionManager.create(dir, join(dir, "sessions"))
@@ -127,8 +136,8 @@ test("real SDK defaults main frame to orchestrator and switches to a prose-free 
   expect(f.requests[0]).not.toContain("In addition to the tools above");
   expect(f.requests[0]).toContain("shell 3 seconds");
   expect(f.requests[0]).toContain("<cwd>\n" + f.manager.getCwd() + "\n</cwd>");
-  expect(f.requests[0]).toContain("Project wisdom lives in wisdom/.");
-  expect(f.requests[0]).toContain("Values live in wisdom/values.md.");
+  expect(f.requests[0]).toContain(`Project wisdom lives in ${join(f.manager.getCwd(), "wisdom")}/.`);
+  expect(f.requests[0]).toContain(`Values live in ${join(f.manager.getCwd(), "wisdom", "values.md")}.`);
   expect(f.requests[0]).toContain("Before big work ends or changes hands");
   expect(f.requests[0]).not.toContain("Pi documentation (read only");
   expect(f.requests[0]).toContain("FRAME_BEFORE");
@@ -224,4 +233,13 @@ test("/mode before the first request overrides a mode restored by a real resume"
   expect(f.requests[0]).not.toContain("main agent in fast instruction mode");
   expect(f.requests[0]).not.toContain("You build and fix code.");
   expect(f.requests[0]).not.toContain("You lead work.");
+});
+
+test("real SDK injects the project's configured wisdom and values paths", async () => {
+  const f = await sdk({ wisdomDir: "docs/agent-notes" });
+  await f.session.prompt("configured wisdom");
+  const directory = join(f.manager.getCwd(), "docs", "agent-notes");
+  expect(f.requests[0]).toContain(`Project wisdom lives in ${directory}/.`);
+  expect(f.requests[0]).toContain(`Values live in ${join(directory, "values.md")}.`);
+  expect(f.requests[0]).not.toContain("{{wisdomDir}}");
 });

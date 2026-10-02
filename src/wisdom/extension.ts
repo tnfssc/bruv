@@ -1,5 +1,7 @@
+import { join } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import wisdomGuidance from "../prompts/wisdom.md" with { type: "text" };
+import { projectWisdomDir } from "./location";
 
 export interface ProjectWisdomOptions {
   isRoot: () => boolean;
@@ -19,14 +21,18 @@ export function registerProjectWisdom(pi: ExtensionAPI, options: ProjectWisdomOp
     async handler(_args, ctx) {
       if (!rootAllowed(options.isRoot))
         return ctx.ui.notify("Project wisdom is unavailable outside the root agent.", "warning");
-      return ctx.ui.notify("Project wisdom lives in wisdom/. Put it with the feature or system it explains.");
+      const directory = projectWisdomDir(ctx.cwd, ctx.isProjectTrusted());
+      return ctx.ui.notify(`Project wisdom lives in ${directory}/. Put it with the feature or system it explains.`);
     },
   });
 
-  pi.on("before_agent_start", (event) => {
+  pi.on("before_agent_start", (event, ctx) => {
     if (!rootAllowed(options.isRoot)) return;
-    return {
-      systemPrompt: event.systemPrompt + "\n\n" + wisdomGuidance.trimEnd(),
-    };
+    const directory = projectWisdomDir(ctx.cwd, ctx.isProjectTrusted());
+    const guidance = wisdomGuidance
+      .trimEnd()
+      .replaceAll("{{wisdomDir}}", () => directory)
+      .replaceAll("{{valuesPath}}", () => join(directory, "values.md"));
+    return { systemPrompt: `${event.systemPrompt}\n\n${guidance}` };
   });
 }

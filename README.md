@@ -67,6 +67,23 @@ The bundled source is pinned to the official **preview** channel (`v0.0.43-previ
 
 Chat with bruv, switch models and agent modes, follow background agents, review changes, and use the integrated terminal. The server binds to `127.0.0.1` by default. Run `bruv web --help` for options.
 
+## Project wisdom
+
+Project wisdom defaults to `wisdom/` at the project root. Set one field in
+`.bruv/settings.json` to use another directory:
+
+```json
+{
+  "wisdomDir": "docs/agent-notes"
+}
+```
+
+Merge the field into existing settings. Relative paths start at the project root,
+not the current shell directory. `/wisdom` reports the resolved location; agent
+guidance points to that same directory and its `values.md`. This only changes
+where agents look and write: it does not create or move files. See
+[project wisdom](./wisdom/wisdom-system/project-wisdom.md) for scope and workspaces.
+
 ## Subagent workspaces
 
 Subagents share the current checkout by default. Work that needs isolation can use a separate Git worktree and branch. The configured setup runs there. CLI worktrees do not need the web server. See [subagent workspaces](./wisdom/worktrees/subagent-workspaces.md) for the API and retention behavior.
