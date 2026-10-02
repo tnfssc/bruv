@@ -68,3 +68,12 @@ from this reproduction.
 
 Values unchanged: existing values 1, 2, 6, 7 and 10 already cover real first-frame
 proof, honest limits, user-work safety, simple fixes and durable handoff.
+
+## Parent integration
+
+Integrated on develop as c4af41c. Parent reviewed the startup adapter and PTY
+regression, then reran startup/editor/footer tests in the main checkout:
+32 pass, 335 assertions. git diff --check passed. The compiled PTY proof above
+comes from the worker worktree, not a new main-checkout build.
+The installed /home/tnfssc/.local/bin/bruv was not replaced. Shipping or local
+installation remains a separate next step; no release was requested here.
