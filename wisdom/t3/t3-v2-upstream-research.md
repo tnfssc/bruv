@@ -206,3 +206,25 @@ The practical options are:
 - GitHub's ordinary PR file/commit JSON is capped/truncated for huge PRs such as #2829/#4664. The actual branch Git tree and source were fetched instead, so source conclusions do not depend on that truncated listing.
 - The exact later commit that removed #4779's separate activation model from current #2829 could not be established because a partial-clone pickaxe repeatedly timed out during lazy blob fetching. Both immutable endpoint schemas were directly inspected.
 - Current #2829 URLs point at immutable researched head a9b49a7d. The branch itself is mutable; re-check PR metadata/head before implementation decisions.
+
+## Official release recheck (2026-10-02)
+
+User wants to switch to official stable T3 once orchestrator v2 is there, and
+remove patches that upstream makes unnecessary. This is conditional on stable
+availability, not permission to switch to a preview or the unmerged branch.
+
+Checked official GitHub metadata after bruv v0.15.24 publication. Latest stable
+T3 release is [v0.0.44](https://github.com/pingdotgg/t3code/releases/tag/v0.0.44),
+published 2026-09-29T20:48:58Z, commit 451afcb22d93f06cb24f9bc16703404564952553.
+[PR #2829](https://github.com/pingdotgg/t3code/pull/2829) is still OPEN, unmerged.
+Complete recursive trees (truncated=false) for stable v0.0.44 and main at
+54084ae1e6c32809db040e4fa571c80fdf2d8ae4 have no orchestration-v2/orchestrationV2
+paths. Official nightly/preview releases exist; they are prereleases, not proof
+that v2 reached stable. No source pin or patch was changed. Current bruv pin
+remains b488c57f3f9f1688e31c53daee99e29dd1d0baa2.
+
+Next time: recheck stable release contents and #2829, then compare each owned
+patch with upstream before repinning. Remove patches whose behavior is now
+upstream; verify bruv-specific native/task/browser behavior on the built result.
+Values unchanged: existing values 1, 2, 7 and 9 cover official-source proof, fewer
+owned parts, and deliberate dependency behavior changes.
