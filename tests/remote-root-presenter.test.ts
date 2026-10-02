@@ -700,3 +700,31 @@ test("expanded root transcript keeps shipped message order, captions and raw det
   expect(rows).not.toContain("hidden answer");
   expect(rows).not.toContain("✓ Read guide");
 });
+
+test("root replay keeps a readable launch name through unnamed native completion snapshots", () => {
+  const launched = {
+    id: "task_26de42bf",
+    kind: "agent",
+    deliveryMode: "native-async",
+    status: "running",
+    title: "Inspect renderer",
+  };
+  const messages = launchMessages([launched]);
+  const t = new RootTranscript();
+  t.messages = messages;
+  expect(renderedRows(t)).toEqual(["↗ Inspect renderer"]);
+  const entries = [
+    { type: "message", message: messages[1] },
+    {
+      type: "custom",
+      customType: "die-task-row",
+      data: taskRowFromLaunch({ ...launched, title: undefined, status: "completed" }, "launch"),
+    },
+  ];
+  t.event({
+    type: "root_facets",
+    taskRows: taskRowsFromSessionEntries(JSON.parse(JSON.stringify(entries))),
+    jobs: [{ ...launched, title: undefined, status: "completed", background: true }],
+  });
+  expect(renderedRows(t)).toEqual(["✓ Inspect renderer"]);
+});

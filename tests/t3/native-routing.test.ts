@@ -1,3 +1,4 @@
+import { taskRowFromLaunch } from "../../src/ui/task-rows";
 import { afterEach, expect, spyOn, test } from "bun:test";
 import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -721,3 +722,61 @@ test("native worktree batches reuse the first resolved immutable base", async ()
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test.each([
+  { title: "Review guide", prompt: "Inspect the guide", expected: "Review guide" },
+  { title: undefined, prompt: "Inspect the guide\nAdd tests", expected: "Inspect the guide Add tests" },
+])(
+  "native task names survive title-less backend replies and parent resume: %s",
+  async ({ title, prompt, expected }) => {
+    const calls: Array<{ name: string; arguments: Record<string, unknown> }> = [];
+    const dir = await mkdtemp(join(tmpdir(), "bruv-native-names-"));
+    const sessionFile = join(dir, "parent.jsonl");
+    await writeFile(sessionFile, "");
+    const manager = new TaskManager(() => {});
+    const environment = { T3_MCP_URL: nativeServer(calls), T3_MCP_BEARER_TOKEN: "server-issued" };
+    const ctx = context(sessionFile);
+    const signal = withJobRequestIdentity(new AbortController().signal, {
+      executeInvocationId: "name-launch",
+      callIndex: 1,
+    });
+    try {
+      const service = new JobService(
+        manager,
+        () => ({ depth: 0 }),
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        environment,
+      );
+      const launch = (await service.handle("subagent", { prompt, ...(title ? { title } : {}) }, ctx, signal)) as any;
+      expect(launch.title).toBe(expected);
+      expect(calls[0].arguments.title).toBe(expected);
+      // Native v1 replies carry no name. The parent already persists UI metadata,
+      // so reopen from that same branch rather than adding a second title ledger.
+      const entries = JSON.parse(
+        JSON.stringify([{ type: "custom", customType: "die-task-row", data: taskRowFromLaunch(launch, "call") }]),
+      );
+      ctx.sessionManager.getBranch = () => entries;
+      const resumed = new JobService(
+        manager,
+        () => ({ depth: 0 }),
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        environment,
+      );
+      const inspected = (await resumed.handle("jobs.inspect", { id: launch.id }, ctx, signal)) as any;
+      expect(inspected).toMatchObject({ title: expected, status: "completed", output: "done" });
+      const listed = (await resumed.handle("jobs.list", {}, ctx, signal)) as any;
+      expect(listed.jobs[0].title).toBe(expected);
+      const stopped = (await resumed.handle("jobs.stop", { id: launch.id }, ctx, signal)) as any;
+      expect(stopped).toMatchObject({ title: expected, status: "cancelled" });
+    } finally {
+      await manager.shutdown();
+      await rm(dir, { recursive: true, force: true });
+    }
+  },
+);

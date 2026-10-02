@@ -195,7 +195,7 @@ test("profile settings, child identity, and three-tier limits survive helper mig
       "fast/normal",
     );
     await service.handle("subagent", { type: "fast", prompt: "x" }, ctx, signal);
-    expect(launches[1]!.title).toBeUndefined();
+    expect(launches[1]!.title).toBe("x");
     expect(launches[1]!.env?.BRUV_SUBAGENT_DEPTH).toBe("2");
     policy = { depth: 2, type: "orchestrator" };
     await expect(service.handle("subagent", { prompt: "x" }, ctx, signal)).rejects.toThrow("two levels");
@@ -304,7 +304,11 @@ test("healthy inspection polling does not produce per-poll diagnostics", async (
   }
 });
 
-test("local subagent title reaches the real background completion without parsing its prompt", async () => {
+test.each([
+  { title: "Inspect renderer", prompt: "Arbitrary source is not a title", expected: "Inspect renderer" },
+  { title: undefined, prompt: "Inspect renderer\nThen add tests", expected: "Inspect renderer Then add tests" },
+  { title: "   ", prompt: "Inspect renderer", expected: "Inspect renderer" },
+])("local subagent name survives launch, real completion and inspection: %s", async ({ title, prompt, expected }) => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-title-delivery-"));
   const profilesPath = join(dir, "profiles.json");
   await writeFile(profilesPath, JSON.stringify({ fast: { model: "fixture/fast" } }));
@@ -325,7 +329,7 @@ test("local subagent title reaches the real background completion without parsin
   try {
     const launch = (await service.handle(
       "subagent",
-      { type: "fast", prompt: "Arbitrary source is not a title", title: "Inspect renderer", waitSeconds: 0 },
+      { type: "fast", prompt, ...(title === undefined ? {} : { title }), waitSeconds: 0 },
       {
         cwd: dir,
         model: { provider: "fixture", id: "parent" },
@@ -333,10 +337,10 @@ test("local subagent title reaches the real background completion without parsin
       } as any,
       signal,
     )) as any;
-    expect(launch).toMatchObject({ title: "Inspect renderer", background: true });
+    expect(launch).toMatchObject({ title: expected, background: true });
     const completed = await completion;
-    expect(completed).toMatchObject({ id: launch.id, title: "Inspect renderer", status: "completed" });
-    expect(manager.inspect(launch.id).title).toBe("Inspect renderer");
+    expect(completed).toMatchObject({ id: launch.id, title: expected, status: "completed" });
+    expect(manager.inspect(launch.id).title).toBe(expected);
   } finally {
     spawn.mockRestore();
     await manager.shutdown();

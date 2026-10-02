@@ -1,4 +1,4 @@
-import { stripTerminalSequences } from "@earendil-works/pi-tui";
+import { launchTaskTitle, taskTitle as clean } from "../tasks/task-title";
 import { sshJobId } from "../remote/jobs";
 
 /** Canonical, serializable transcript row. Identity comes only from typed jobs. */
@@ -6,6 +6,7 @@ export type TaskRow = {
   id: string;
   source: "local" | "native" | "ssh";
   title?: string;
+  fallbackTitle?: string;
   status: "running" | "succeeded" | "failed" | "cancelled" | "unknown" | "needs-input";
   terminal: boolean;
   exitCode?: number;
@@ -15,13 +16,6 @@ export type TaskRow = {
 export function taskRowKey(row: Pick<TaskRow, "source" | "id">): string {
   return row.source + ":" + row.id;
 }
-const clean = (value: unknown): string =>
-  typeof value === "string"
-    ? stripTerminalSequences(value)
-        .replace(/[\x00-\x1f\x7f-\x9f]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim()
-    : "";
 const record = (value: unknown): Record<string, unknown> | undefined =>
   value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;
 
@@ -37,6 +31,8 @@ export function taskRowFromLaunch(value: unknown, sourceCallId?: string, launchT
       : task.kind === "command" || task.kind === "agent"
         ? "local"
         : "native";
+  const title = clean(task.title) || clean(launchTitle);
+  const fallbackTitle = launchTaskTitle(undefined, task.command ?? task.prompt);
   const status = task.status;
   const exitCode = typeof task.exitCode === "number" && Number.isInteger(task.exitCode) ? task.exitCode : undefined;
   const timedOut = task.timedOut === true;
@@ -52,7 +48,8 @@ export function taskRowFromLaunch(value: unknown, sourceCallId?: string, launchT
   return {
     id,
     source,
-    ...(clean(task.title) || clean(launchTitle) ? { title: clean(task.title) || clean(launchTitle) } : {}),
+    ...(title ? { title } : {}),
+    ...(fallbackTitle ? { fallbackTitle } : {}),
     status: outcome,
     terminal,
     ...(exitCode === undefined ? {} : { exitCode }),
@@ -74,14 +71,20 @@ export function upsertTaskRow(rows: Map<string, TaskRow>, next: TaskRow): TaskRo
   const key = taskRowKey(next);
   const old = rows.get(key);
   if (old?.terminal && (!next.terminal || (old.status !== "unknown" && next.status === "unknown"))) {
-    const row = { ...old, title: next.title || old.title, sourceCallId: next.sourceCallId || old.sourceCallId };
+    const row = {
+      ...old,
+      title: clean(next.title) || clean(old.title) || undefined,
+      fallbackTitle: clean(next.fallbackTitle) || clean(old.fallbackTitle) || undefined,
+      sourceCallId: next.sourceCallId || old.sourceCallId,
+    };
     rows.set(key, row);
     return row;
   }
   const row = {
     ...old,
     ...next,
-    title: next.title || old?.title,
+    title: clean(next.title) || clean(old?.title) || undefined,
+    fallbackTitle: clean(next.fallbackTitle) || clean(old?.fallbackTitle) || undefined,
     sourceCallId: next.sourceCallId || old?.sourceCallId,
   };
   rows.set(key, row);
@@ -125,7 +128,7 @@ export function taskRowColor(row: TaskRow): "accent" | "success" | "error" | "wa
         : "warning";
 }
 export function formatTaskRow(row: TaskRow): string {
-  const title = clean(row.title) || clean(row.id);
+  const title = clean(row.title) || clean(row.fallbackTitle) || clean(row.id);
   switch (row.status) {
     case "running":
       return "↗ " + title;
@@ -192,8 +195,13 @@ export function taskRowsFromSessionEntries(entries: ReadonlyArray<unknown>): Tas
   const rows = new Map<string, TaskRow>();
   for (const value of entries) {
     const entry = record(value);
-    if (entry?.type !== "custom" || entry.customType !== "die-task-row") continue;
-    for (const row of taskRowsFromDetails({ taskRows: [entry.data] })) upsertTaskRow(rows, row);
+    const details =
+      entry?.type === "custom" && entry.customType === "die-task-row"
+        ? { taskRows: [entry.data] }
+        : entry?.type === "message" && record(entry.message)?.role === "toolResult"
+          ? record(entry.message)?.details
+          : undefined;
+    for (const row of taskRowsFromDetails(details)) upsertTaskRow(rows, row);
   }
   return [...rows.values()];
 }

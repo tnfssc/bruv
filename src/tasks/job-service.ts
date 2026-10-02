@@ -1,3 +1,5 @@
+import { launchTaskTitle } from "./task-title";
+import { taskRowsFromSessionEntries } from "../ui/task-rows";
 import { randomUUID } from "node:crypto";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as z from "zod/mini";
@@ -266,7 +268,14 @@ export class JobService {
     return new T3LaunchIdentityLedger(path);
   }
 
-  #nativeProjection(result: T3TaskResult, omitOutput = false): Record<string, unknown> {
+  #nativeTitle(ctx: ExtensionContext, id: string): string | undefined {
+    const row = taskRowsFromSessionEntries(ctx.sessionManager?.getBranch?.() ?? []).find(
+      (row) => row.source === "native" && row.id === id,
+    );
+    return row?.title || row?.fallbackTitle;
+  }
+
+  #nativeProjection(result: T3TaskResult, omitOutput = false, title?: string): Record<string, unknown> {
     if (isSshJobId(result.taskId)) throw new Error("Native task ID conflicts with SSH namespace");
     const projected = { ...result } as Record<string, unknown>;
     // T3 is the sole terminal-delivery owner. Launch never carries a terminal
@@ -275,6 +284,7 @@ export class JobService {
     return {
       ...projected,
       id: result.taskId,
+      ...(title ? { title } : {}),
       kind: "agent",
       background: true,
       deliveryMode: "native-async",
@@ -385,7 +395,7 @@ export class JobService {
                       clientRequestId,
                       prompt,
                       profile: type,
-                      ...(params.title === undefined ? {} : { title: params.title }),
+                      title: launchTaskTitle(params.title, prompt) || "Agent task",
                       ...(params.workspace === undefined
                         ? {}
                         : {
@@ -408,7 +418,9 @@ export class JobService {
                 // The authenticated backend is authoritative for effective profile and
                 // depth. The strict adapter validates the profile enum; do not compare
                 // either value with process-local BRUV_SUBAGENT_* policy.
-                launched.push(this.#nativeProjection(result, true));
+                launched.push(
+                  this.#nativeProjection(result, true, launchTaskTitle(params.title, prompt) || "Agent task"),
+                );
               }
             } catch (error) {
               if (!launched.length) throw error;
@@ -471,7 +483,7 @@ export class JobService {
                   jobQuestionOwner: { sessionId, branchId },
                   localRoot: ctx.cwd,
                   prompt,
-                  ...(params.title === undefined ? {} : { title: params.title }),
+                  title: launchTaskTitle(params.title, prompt) || "Agent task",
                   taskId,
                   ...(params.model === undefined ? {} : { model: params.model }),
                   ...(params.thinking === undefined ? {} : { thinking: params.thinking }),
@@ -514,7 +526,7 @@ export class JobService {
               parentSessionFile: ctx.sessionManager ? sessionIdentity(ctx.sessionManager)?.file : undefined,
             },
             taskId,
-            params.title,
+            launchTaskTitle(params.title, prompt) || "Agent task",
           );
           return {
             ...prepared,
@@ -533,7 +545,7 @@ export class JobService {
               prompt,
             ],
             displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
-            ...(params.title === undefined ? {} : { title: params.title }),
+            title: launchTaskTitle(params.title, prompt) || "Agent task",
             cwd,
             env: {
               ...childAgentEnvironment(process.env),
@@ -598,7 +610,7 @@ export class JobService {
           return this.manager.prepareAgent({
             id,
             displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
-            ...(params.title === undefined ? {} : { title: params.title }),
+            title: launchTaskTitle(params.title, prompt) || "Agent task",
             cwd: ctx.cwd,
             workspace: { kind: "worktree", path: ctx.cwd, baseRef: workspace.baseRef ?? "HEAD" },
             timeoutMs: params.timeoutSeconds ? params.timeoutSeconds * 1000 : undefined,
@@ -815,7 +827,11 @@ export class JobService {
           state.nativeTotal = nativeTotal;
           if (state.phase === "native") {
             if (remaining > 0)
-              jobs.push(...page.tasks.slice(0, remaining).map((task) => this.#nativeProjection(task, true)));
+              jobs.push(
+                ...page.tasks
+                  .slice(0, remaining)
+                  .map((task) => this.#nativeProjection(task, true, this.#nativeTitle(ctx, task.taskId))),
+              );
             if (remaining === 0 || page.nextCursor !== undefined) {
               if (remaining > 0) {
                 if (page.tasks.length === 0 || page.nextCursor === state.nativeCursor)
@@ -860,7 +876,7 @@ export class JobService {
           const result = await this.#withNative(bridge, (adapter) => adapter.observe(params.id, signal));
           if (result.output === undefined)
             return {
-              ...this.#nativeProjection(result),
+              ...this.#nativeProjection(result, false, this.#nativeTitle(ctx, result.taskId)),
               ...(result.outputTruncated ? { transcriptAvailableInChildThread: true, outputLost: true } : {}),
             };
           const bytes = Buffer.from(result.output);
@@ -869,10 +885,11 @@ export class JobService {
           const safe = utf8SafeSlice(window, params.limit ?? 5000);
           const nextOffset = offset + safe.end;
           return {
-            ...this.#nativeProjection({
-              ...result,
-              output: window.subarray(safe.start, safe.end).toString("utf8"),
-            }),
+            ...this.#nativeProjection(
+              { ...result, output: window.subarray(safe.start, safe.end).toString("utf8") },
+              false,
+              this.#nativeTitle(ctx, result.taskId),
+            ),
             requestedOffset: params.offset ?? 0,
             nextOffset,
             hasMore: nextOffset < bytes.length,
@@ -1020,7 +1037,7 @@ export class JobService {
             const result = await this.#withNative(bridge, (adapter) => adapter.cancel(params.id, signal));
             this.#refresh();
             return {
-              ...this.#nativeProjection(result, true),
+              ...this.#nativeProjection(result, true, this.#nativeTitle(ctx, result.taskId)),
               ...(result.status === "running" || result.status === "cancelled" ? { cancellationRequested: true } : {}),
             };
           }

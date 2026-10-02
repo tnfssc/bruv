@@ -11,6 +11,7 @@ import {
   taskRowFromRemote,
   taskRowKey,
   taskRowsFromDetails,
+  taskRowsFromSessionEntries,
   taskSummaryRowsFromDetails,
   upsertTaskRow,
   type TaskRow,
@@ -342,4 +343,72 @@ test("native title can come from the actual typed launch input without parsing s
       )!,
     ),
   ).toBe("✗ Review guide — failed");
+});
+
+test("typed command previews recover legacy task IDs without replacing explicit names", () => {
+  const rows = new Map<string, TaskRow>();
+  upsertTaskRow(
+    rows,
+    taskRowFromLaunch({ id: "task_26de42bf", kind: "command", status: "running", title: "Run focused tests" })!,
+  );
+  upsertTaskRow(
+    rows,
+    taskRowFromLaunch({
+      id: "task_26de42bf",
+      kind: "command",
+      status: "completed",
+      command: "bun test tests/task-rows.test.ts",
+      title: "  ",
+    })!,
+  );
+  expect(formatTaskRow([...rows.values()][0])).toBe("✓ Run focused tests");
+  expect(
+    formatTaskRow(
+      taskRowFromLaunch({
+        id: "task_c9fcc1c8",
+        kind: "command",
+        status: "failed",
+        exitCode: 2,
+        command: "bun run check",
+        output: "Everything succeeded",
+      })!,
+    ),
+  ).toBe("✗ bun run check — exit 2");
+  expect(
+    formatTaskRow(
+      taskRowFromLaunch({ id: "unknown", kind: "agent", status: "completed", output: "Readable but not metadata" })!,
+    ),
+  ).toBe("✓ unknown");
+});
+
+test("SDK replay recovers a name from typed launch details and keeps the recorded terminal outcome", () => {
+  const entries = [
+    {
+      type: "message",
+      message: {
+        role: "toolResult",
+        details: { tasks: [{ id: "task_c9fcc1c8", kind: "command", status: "running", command: "bun run check" }] },
+      },
+    },
+    {
+      type: "custom",
+      customType: "die-task-row",
+      data: {
+        id: "task_c9fcc1c8",
+        source: "local",
+        status: "failed",
+        terminal: true,
+        exitCode: 1,
+        sourceCallId: "call",
+      },
+    },
+  ];
+  const restored = taskRowsFromSessionEntries(JSON.parse(JSON.stringify(entries)));
+  expect(restored).toHaveLength(1);
+  expect(formatTaskRow(restored[0])).toBe("✗ bun run check — exit 1");
+  const parent = new Container();
+  parent.addChild(tool([taskRowFromLaunch({ id: "task_c9fcc1c8", kind: "command", status: "running" }, "call")!]));
+  parent.addChild(notice(restored));
+  restores.push(installSdkTaskRows(theme, () => restored));
+  expect(plain(parent.render(100))).toEqual(["✗ bun run check — exit 1"]);
 });

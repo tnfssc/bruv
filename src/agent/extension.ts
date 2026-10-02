@@ -4,6 +4,7 @@ import {
   taskRowFromRemote,
   taskRowKey,
   taskRowsFromDetails,
+  taskRowsFromSessionEntries,
   upsertTaskRow,
   type TaskRow,
 } from "../ui/task-rows";
@@ -888,12 +889,8 @@ export default function asynchronousTasksExtension(
   pi.on("session_start", async (_event, ctx) => {
     owningContext = ctx;
     transcriptRows.clear();
-    for (const entry of ctx.sessionManager.getBranch()) {
-      if (entry.type === "custom" && entry.customType === "die-task-row") {
-        for (const row of taskRowsFromDetails({ taskRows: [entry.data] }))
-          upsertTaskRow(transcriptRows, row.status === "running" ? { ...row, status: "unknown" } : row);
-      }
-    }
+    for (const row of taskRowsFromSessionEntries(ctx.sessionManager.getBranch()))
+      upsertTaskRow(transcriptRows, row.status === "running" ? { ...row, status: "unknown" } : row);
     restoreTaskRows?.();
     restoreTaskRows =
       ctx.mode === "tui" ? installSdkTaskRows(ctx.ui.theme, () => [...transcriptRows.values()]) : undefined;
