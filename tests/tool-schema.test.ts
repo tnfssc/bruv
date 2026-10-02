@@ -3,6 +3,7 @@ import * as z from "zod/mini";
 import { validateToolArguments, type JsonObject } from "@earendil-works/pi-ai";
 import { toolParameters } from "../src/tool-schema";
 import extension from "../src/agent/extension";
+import { setupProbeOrchestration } from "../src/live/setup-probe";
 test("only execute is registered with a provider-friendly schema", () => {
   const tools: any[] = [];
   extension({
@@ -16,6 +17,9 @@ test("only execute is registered with a provider-friendly schema", () => {
     on() {},
   } as any);
   expect(tools.map((t) => t.name)).toEqual(["execute"]);
+  expect(setupProbeOrchestration().tools).toEqual(
+    tools.map(({ name, description, parameters }) => ({ name, description, parametersJsonSchema: parameters })),
+  );
   expect(tools[0].promptSnippet).toBe("Run JS/TS.");
   expect(tools[0].parameters).toMatchObject({
     type: "object",

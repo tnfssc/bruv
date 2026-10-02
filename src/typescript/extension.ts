@@ -3,8 +3,7 @@ import { type ExtensionAPI, type ExtensionContext, SettingsManager } from "@eare
 import * as z from "zod/mini";
 import { diagnosticRecorder, inspectDiagnostics } from "../diagnostics";
 import { backgroundHandoff, executeGuidance } from "../prompts";
-import executeDescription from "../prompts/execute-description.md" with { type: "text" };
-import { toolParameters } from "../tool-schema";
+import { ExecuteParameters, executeDeclaration } from "./definition";
 import {
   type ExecutePreviewState,
   executeInputPreview,
@@ -16,13 +15,6 @@ import { withJobCancellation } from "../job-delivery";
 import { stopCurrentLive } from "../live/lifecycle-access";
 
 const HandoffParameters = z.object({ message: z.string().check(z.minLength(1), z.maxLength(2000)) });
-
-const ExecuteParameters = z.object({
-  label: z.optional(z.string()),
-  code: z.string(),
-  timeoutSeconds: z.optional(z.number().check(z.minimum(0.1))),
-  outputByteLimit: z.optional(z.number().check(z.int(), z.minimum(0), z.maximum(Number.MAX_SAFE_INTEGER))),
-});
 
 export function registerExecuteTool(
   pi: ExtensionAPI,
@@ -64,12 +56,10 @@ export function registerExecuteTool(
   });
 
   pi.registerTool({
-    name: "execute",
+    ...executeDeclaration(),
     label: "Execute",
-    description: executeDescription.trimEnd(),
     promptSnippet: "Run JS/TS.",
     promptGuidelines: executeGuidance,
-    parameters: toolParameters(ExecuteParameters),
     renderShell: "self",
     renderCall: (args, theme, context) => {
       if (!context.state.resultVisible) previewStates.add(context.state);
