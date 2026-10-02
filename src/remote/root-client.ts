@@ -1,18 +1,8 @@
+import { downloadRepositoryResult } from "./repository-download";
+import { durableJsonReplace } from "./durable-json";
 import { isDeepStrictEqual } from "node:util";
 import { randomUUID, createHash } from "node:crypto";
-import {
-  mkdirSync,
-  readFileSync,
-  writeFileSync,
-  renameSync,
-  openSync,
-  closeSync,
-  fsyncSync,
-  existsSync,
-  realpathSync,
-  chmodSync,
-  readdirSync,
-} from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync, existsSync, realpathSync, chmodSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { Database } from "bun:sqlite";
@@ -20,7 +10,6 @@ import {
   captureRepository,
   integrateRepositoryResult,
   type RepositorySnapshot,
-  type RepositoryResult,
   type RepositoryReturn,
 } from "./repository";
 import type {
@@ -77,23 +66,8 @@ function object(value: unknown): any {
   return r;
 }
 function atomic(path: string, value: unknown) {
-  const data = JSON.stringify(value);
-  if (Buffer.byteLength(data) > MAX) throw Error("Root cache full; preserve it before continuing");
-  const tmp = path + "." + randomUUID();
-  const fd = openSync(tmp, "wx", 0o600);
-  try {
-    writeFileSync(fd, data);
-    fsyncSync(fd);
-  } finally {
-    closeSync(fd);
-  }
-  renameSync(tmp, path);
-  const dir = openSync(join(path, ".."), "r");
-  try {
-    fsyncSync(dir);
-  } finally {
-    closeSync(dir);
-  }
+  if (Buffer.byteLength(JSON.stringify(value)) > MAX) throw Error("Root cache full; preserve it before continuing");
+  durableJsonReplace(path, value);
 }
 /** No local provider, tools or session. This is only a durable presentation pointer. */
 export class RootClient {
@@ -408,32 +382,12 @@ export class RootClient {
       const record = this.record(observed.record, s);
       if (record.state !== "closed" || record.exitCode !== 0)
         throw Error("Source return requires confirmed closed successful root; active/unknown is not safe");
-      const parts: Buffer[] = [];
-      let offset = 0,
-        result: RepositoryResult | undefined;
-      for (;;) {
-        const r = await this.request(s, { op: "repository-result", ...this.identity(s), offset });
-        const bytes = Buffer.from(r.data ?? "", "base64");
-        if (
-          bytes.toString("base64") !== r.data ||
-          !Number.isSafeInteger(r.total) ||
-          r.total < 0 ||
-          r.total > MAX ||
-          bytes.length > CHUNK ||
-          r.offset !== offset + bytes.length ||
-          r.offset > r.total ||
-          (r.offset < r.total && !bytes.length) ||
-          (result && JSON.stringify(result) !== JSON.stringify(r.result))
-        )
-          throw Error("Invalid root repository result page");
-        result = r.result;
-        parts.push(bytes);
-        offset = r.offset;
-        if (offset === r.total) break;
-      }
-      const patch = Buffer.concat(parts);
-      if (!result || result.snapshot !== s.source.snapshot || hash(patch) !== result.sha256)
-        throw Error("Root result digest or source mismatch");
+      const { result, patch } = await downloadRepositoryResult(
+        (offset) => this.request(s, { op: "repository-result", ...this.identity(s), offset }),
+        s.source.snapshot,
+        MAX,
+        { pageError: "Invalid root repository result page", integrityError: "Root result digest or source mismatch" },
+      );
       const path = join(this.directory, "result.patch");
       writeFileSync(path, patch, { mode: 0o600 });
       const base = join(this.directory, "..", "repo-locks");

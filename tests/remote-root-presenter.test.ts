@@ -1,8 +1,22 @@
 import { expect, test } from "bun:test";
 import { parseStreamingJson } from "@earendil-works/pi-ai";
 import { taskRowFromLaunch, taskRowsFromDetails, taskRowsFromSessionEntries } from "../src/ui/task-rows";
+import type { RootObservation } from "../src/remote/root-contract";
 import { dispatchRootFacet } from "../src/remote/root-runtime";
 import { RootControls, type RootPresentationControls, RootTranscript } from "../src/remote/root-presenter";
+
+function replay(messages: unknown[], extraEvents: unknown[] = []): RootObservation {
+  const events = [...messages.map((message) => ({ type: "message_end", message })), ...extraEvents];
+  return {
+    record: {
+      state: "running",
+      intent: { ownerId: "owner", epoch: "epoch", sessionId: "s", role: "root", depth: 0, repoPath: "/repo" },
+    },
+    events: events.map((event, index) => ({ seq: index + 1, event })),
+    cursor: events.length,
+    hasMore: false,
+  };
+}
 
 function fixture(receipt: Record<string, unknown> = {}) {
   const commands: any[] = [];
@@ -81,7 +95,6 @@ test("/ps normal selected inspect and confirmed cancellation", async () => {
   expect(f.commands.at(-1)).toEqual({ kind: "jobs.stop", id: "job" });
 });
 test("unresolved prompt blocks routine duplicate typing", async () => {
-  const f = fixture();
   const c = new RootControls(
     {
       read: () => ({ commands: { c: { command: { kind: "prompt", text: "once" }, receipt: { state: "unknown" } } } }),
@@ -93,7 +106,7 @@ test("unresolved prompt blocks routine duplicate typing", async () => {
   );
   await expect(c.submit("once")).rejects.toThrow("No duplicate");
 });
-test("normal user/assistant/tool progress and authoritative snapshot replace history", () => {
+test("normal user/assistant/tool progress and observations append completed messages", () => {
   const t = new RootTranscript();
   t.event({ type: "message_end", message: { role: "user", content: "hello" } });
   t.event({
@@ -104,13 +117,9 @@ test("normal user/assistant/tool progress and authoritative snapshot replace his
   expect(t.render(80).join("\n")).toContain("hello");
   expect(t.render(80).join("\n")).toContain("Working");
   expect(t.progress).toBe("");
-  t.apply({
-    record: { state: "running", messages: [{ role: "assistant", content: "authoritative" }] } as any,
-    events: [],
-    cursor: 0,
-    hasMore: false,
-  });
-  expect(t.messages).toHaveLength(1);
+  t.apply(replay([{ role: "assistant", content: "authoritative" }]));
+  expect(t.messages).toHaveLength(2);
+  expect(t.render(80).join("\n")).toContain("hello");
   expect(t.render(80).join("\n")).toContain("authoritative");
 });
 
@@ -197,7 +206,7 @@ test("root transcript keeps tool protocol private by default and exposes explici
   expect(t.render(120).join("\n")).toContain("permission denied");
 });
 
-test("internal saved answers stay hidden in snapshots and streaming, even with tool details open", () => {
+test("internal saved answers stay hidden in replay and streaming, even with tool details open", () => {
   const t = new RootTranscript();
   const hidden = {
     role: "custom",
@@ -205,7 +214,7 @@ test("internal saved answers stay hidden in snapshots and streaming, even with t
     display: false,
     content: 'Saved human answer: {"owner":"private-answer-owner"}',
   };
-  t.apply({ record: { messages: [{ role: "assistant", content: "Notes are ready" }, hidden] }, events: [] } as any);
+  t.apply(replay([{ role: "assistant", content: "Notes are ready" }, hidden]));
   t.event({ type: "message_update", message: hidden });
   for (const details of [false, true]) {
     t.details = details;
@@ -276,7 +285,7 @@ test("normal execute events keep one animated row through partial label, prepara
   expect(t.pendingAction).toBe(false);
   expect(t.progress).toBe("");
   const reopened = new RootTranscript();
-  reopened.apply({ record: { messages: t.messages }, events: [] } as any);
+  reopened.apply(replay(t.messages));
   expect(reopened.render(120, 0)).toEqual(t.render(120, 0));
   reopened.toggleDetails();
   const expanded = reopened.render(120, 0).join("\n");
@@ -409,7 +418,7 @@ test("normal root facet snapshots and task completion update a single canonical 
       return params.cursor ? { jobs: [jobs[1]] } : { jobs: [jobs[0]], nextCursor: "page2" };
     },
   };
-  const facets = await dispatchRootFacet({} as any, ctx, services, { kind: "snapshot" });
+  const facets = await dispatchRootFacet(ctx, services, { kind: "snapshot" });
   t.event({ type: "root_ready", facets });
   expect(renderedRows(t)).toEqual(["↗ Run tests", "↗ Review guide"]);
   const completion = {
@@ -429,7 +438,7 @@ test("normal root facet snapshots and task completion update a single canonical 
   t.event({ type: "root_facets", jobs }); // A delayed running snapshot cannot reopen completion.
   expect(renderedRows(t)).toEqual(["✗ Run tests — exit 1", "✓ Review guide"]);
   const reopened = new RootTranscript();
-  reopened.apply({ record: { messages: t.messages }, events: [{ event: { type: "root_ready", facets } }] } as any);
+  reopened.apply(replay(t.messages, [{ type: "root_ready", facets }]));
   expect(renderedRows(reopened)).toEqual(renderedRows(t));
   t.toggleDetails();
   const expanded = t.render(120, 0).join("\n");
@@ -523,7 +532,7 @@ test("failure diagnostics and storage warning stay on the same compact action ro
   expect(expanded).toContain("RAW_OUTPUT");
 });
 
-test("hidden thinking and display:false tasks stay absent in streaming, snapshots and expanded details", () => {
+test("hidden thinking and display:false tasks stay absent in streaming, replay and expanded details", () => {
   const t = new RootTranscript();
   const hidden = {
     role: "custom",
@@ -532,12 +541,7 @@ test("hidden thinking and display:false tasks stay absent in streaming, snapshot
     content: "HIDDEN_TASK_NOTICE",
     details: { tasks: [{ id: "hidden", title: "HIDDEN_TASK_TITLE", kind: "agent", status: "failed" }] },
   };
-  t.apply({
-    record: {
-      messages: [hidden, { role: "assistant", content: [{ type: "thinking", thinking: "PRIVATE_THINKING" }] }],
-    },
-    events: [],
-  } as any);
+  t.apply(replay([hidden, { role: "assistant", content: [{ type: "thinking", thinking: "PRIVATE_THINKING" }] }]));
   t.event({ type: "message_update", message: hidden });
   expect(renderedRows(t)).toEqual([]);
   expect(t.pendingAction).toBe(false);

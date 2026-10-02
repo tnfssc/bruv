@@ -1,17 +1,7 @@
+import { durableJsonReplace } from "./durable-json";
 import { syncRemoteArtifacts } from "./artifacts";
 import { createHash, randomUUID } from "node:crypto";
-import {
-  existsSync,
-  rmSync,
-  mkdirSync,
-  readFileSync,
-  readdirSync,
-  renameSync,
-  writeFileSync,
-  openSync,
-  closeSync,
-  fsyncSync,
-} from "node:fs";
+import { existsSync, rmSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import type { RemoteClient, RemoteTask } from "./client";
 import { ClientCapabilityStore, OwnerCapabilityMailbox } from "./capability-runtime";
@@ -25,21 +15,7 @@ const kinds = (kind: string) =>
   /^skill:[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$/.test(kind);
 function atomic(path: string, value: unknown) {
   mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
-  const tmp = path + "." + randomUUID();
-  const fd = openSync(tmp, "wx", 0o600);
-  try {
-    writeFileSync(fd, JSON.stringify(value));
-    fsyncSync(fd);
-  } finally {
-    closeSync(fd);
-  }
-  renameSync(tmp, path);
-  const directory = openSync(dirname(path), "r");
-  try {
-    fsyncSync(directory);
-  } finally {
-    closeSync(directory);
-  }
+  durableJsonReplace(path, value);
 }
 function local(client: RemoteClient) {
   const dir = join(dirname(client.path), "capability-grants");

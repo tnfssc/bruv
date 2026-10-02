@@ -1,3 +1,5 @@
+import { downloadRepositoryResult, type RepositoryResultPage } from "./repository-download";
+import { durableJsonReplace } from "./durable-json";
 import { validatePlacement, validateWorkspace, type RemotePlacement, type RemoteWorkspace } from "./placement";
 import { Database } from "bun:sqlite";
 import { createHash, randomUUID } from "node:crypto";
@@ -11,7 +13,6 @@ import {
   readSync,
   readdirSync,
   realpathSync,
-  renameSync,
   rmSync,
   statSync,
   writeFileSync,
@@ -32,23 +33,7 @@ const MAX = 128 * 1024 * 1024;
 const CHUNK = 256 * 1024;
 const digest = (data: Buffer | string) => createHash("sha256").update(data).digest("hex");
 const read = <T>(path: string): T => JSON.parse(readFileSync(path, "utf8"));
-function atomic(path: string, value: unknown) {
-  const tmp = path + "." + randomUUID();
-  const fd = openSync(tmp, "wx", 0o600);
-  try {
-    writeFileSync(fd, JSON.stringify(value));
-    fsyncSync(fd);
-  } finally {
-    closeSync(fd);
-  }
-  renameSync(tmp, path);
-  const directory = openSync(dirname(path), "r");
-  try {
-    fsyncSync(directory);
-  } finally {
-    closeSync(directory);
-  }
-}
+
 function sameChunk(path: string, offset: number, data: Buffer) {
   const fd = openSync(path, "r");
   try {
@@ -110,7 +95,7 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
       if (JSON.stringify(read(meta)) !== JSON.stringify(intent)) throw Error("Repository upload intent conflict");
     } else {
       if (state) throw Error("Cannot attach repository to an already accepted task");
-      atomic(meta, intent);
+      durableJsonReplace(meta, intent);
     }
     if (existsSync(ready)) return read(ready);
     if (state) throw Error("Accepted task has incomplete repository upload; review required");
@@ -194,7 +179,7 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
       if (switched.exitCode !== 0) throw Error("Cannot preserve requested workspace branch");
     }
     const result = { offset, checkout, snapshot: req.snapshot, workspace: req.workspace };
-    atomic(ready, result);
+    durableJsonReplace(ready, result);
     return result;
   }
   if (state !== "done") throw Error("Repository result requires confirmed successful task completion");
@@ -207,7 +192,7 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
   else {
     if (existsSync(patch)) rmSync(patch);
     result = collectRepositoryResult(join(dir, "checkout"), meta.snapshot, patch);
-    atomic(resultFile, result);
+    durableJsonReplace(resultFile, result);
   }
   const bytes = readFileSync(patch);
   if (bytes.length > MAX || req.offset > bytes.length) throw Error("Repository result exceeds bounds");
@@ -358,7 +343,7 @@ export async function launchRepository(client: RemoteClient, args: RepositoryLau
       profile: { model: args.model, thinking: args.thinking },
       placement: args.placement,
     };
-    atomic(file, descriptor);
+    durableJsonReplace(file, descriptor);
   }
   const data = readFileSync(descriptor.snapshot.bundle);
   if (!data.length || data.length > MAX)
@@ -412,37 +397,18 @@ export async function returnRepository(client: RemoteClient, task: RemoteTask): 
   const descriptor = read<Descriptor>(file);
   if (descriptor.outcome) return descriptor.outcome;
   if (task.task?.state !== "done") return;
-  const parts: Buffer[] = [];
-  let offset = 0;
-  let result: RepositoryResult | undefined;
-  for (let page = 0; page <= MAX / CHUNK; page++) {
-    const r = (await client.control({ op: "repository-result", taskId: task.taskId, offset }, descriptor.owner)) as {
-      result: RepositoryResult;
-      total: number;
-      offset: number;
-      data: string;
-    };
-    const bytes = Buffer.from(r.data, "base64");
-    if (
-      !Number.isSafeInteger(r.total) ||
-      r.total < 0 ||
-      r.total > MAX ||
-      bytes.length > CHUNK ||
-      r.offset !== offset + bytes.length ||
-      r.offset > r.total ||
-      (r.offset < r.total && !bytes.length) ||
-      (result && JSON.stringify(result) !== JSON.stringify(r.result))
-    )
-      throw Error("Invalid repository result page");
-    result = r.result;
-    parts.push(bytes);
-    offset = r.offset;
-    if (offset === r.total) break;
-  }
-  if (!result || digest(Buffer.concat(parts)) !== result.sha256 || result.snapshot !== descriptor.snapshot.snapshot)
-    throw Error("Repository result digest or snapshot mismatch");
+  const { result, patch: bytes } = await downloadRepositoryResult(
+    async (offset) =>
+      (await client.control(
+        { op: "repository-result", taskId: task.taskId, offset },
+        descriptor.owner,
+      )) as RepositoryResultPage,
+    descriptor.snapshot.snapshot,
+    MAX,
+    { maxPages: MAX / CHUNK },
+  );
   const patch = join(dir, "result.patch");
-  writeFileSync(patch, Buffer.concat(parts), { mode: 0o600 });
+  writeFileSync(patch, bytes, { mode: 0o600 });
   const lockDir = join(dirname(client.path), "repo-locks");
   mkdirSync(lockDir, { recursive: true, mode: 0o700 });
   const db = new Database(join(lockDir, digest(descriptor.root) + ".sqlite"));
@@ -459,7 +425,7 @@ export async function returnRepository(client: RemoteClient, task: RemoteTask): 
       { ...result, patch },
       join(dir, "receipts"),
     );
-    atomic(file, descriptor);
+    durableJsonReplace(file, descriptor);
     db.exec("COMMIT");
   } finally {
     db.close();

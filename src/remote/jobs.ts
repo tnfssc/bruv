@@ -3,7 +3,7 @@ import { canDelegate, SUBAGENT_TYPES } from "../tasks/subagent-profiles";
 import type { WorkspaceRequest } from "../tasks/worktree-workspace";
 import type { RemoteClient, RemoteTask } from "./client";
 import type { RepositorySnapshot } from "./repository";
-import { launchRepository } from "./repository-wire";
+import { launchRepository, launchPreparedRepository } from "./repository-wire";
 import { SourceApprovalService, type SourcePreparation, type SourceSelection } from "./source-approval";
 
 /** SSH task IDs cannot collide with local or native task IDs. */
@@ -288,6 +288,14 @@ export function createRemoteJobsAdapter(
       }
       // Only the durable human-owned source preflight may populate the trusted
       // snapshot arguments; untyped agent callers cannot smuggle these fields.
+      const prepared = preparation
+        ? {
+            approvedUntracked: preparation.decision === "include" ? preparation.intent.includeUntracked : [],
+            preparedSnapshot: approvals.snapshot(preparation),
+            preparedSnapshotSha256:
+              preparation.decision === "include" ? preparation.include.sha256 : preparation.omit.sha256,
+          }
+        : undefined;
       const args: Parameters<RepositoryLauncher>[1] = {
         jobSessionFile: request.jobSessionFile,
         jobQuestionOwner: request.jobQuestionOwner,
@@ -298,28 +306,14 @@ export function createRemoteJobsAdapter(
         ...(request.model === undefined ? {} : { model: request.model }),
         ...(request.thinking === undefined ? {} : { thinking: request.thinking }),
         placement: { profile, parentDepth, ...(parentType === undefined ? {} : { parentType }), workspace },
-        ...(preparation
-          ? {
-              approvedUntracked: preparation.decision === "include" ? preparation.intent.includeUntracked : [],
-              preparedSnapshot: approvals.snapshot(preparation),
-              preparedSnapshotSha256:
-                preparation.decision === "include" ? preparation.include.sha256 : preparation.omit.sha256,
-            }
-          : {}),
+        ...prepared,
       };
       let task: RemoteTask;
       try {
         // Source selection is a request, not an approval.
         // Destination profiles are resolved by the server, never this laptop.
-        if (preparation && repositoryLauncher === launchRepository) {
-          const wire = (await import("./repository-wire")) as unknown as {
-            launchPreparedRepository?: RepositoryLauncher;
-          };
-          if (!wire.launchPreparedRepository)
-            throw Error(
-              "Pinned source preparation requires the trusted launchPreparedRepository integration; no bytes dispatched",
-            );
-          task = await wire.launchPreparedRepository(client, args);
+        if (prepared && repositoryLauncher === launchRepository) {
+          task = await launchPreparedRepository(client, { ...args, ...prepared });
         } else task = await repositoryLauncher(client, args);
       } catch (error) {
         const retained = (await client.read()).tasks[request.taskId];

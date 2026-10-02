@@ -317,8 +317,6 @@ export class RootTranscript {
   apply(observation: RootObservation) {
     this.record = observation.record;
     for (const { event } of observation.events) this.event(event);
-    const snapshot = (observation.record as any).messages;
-    if (Array.isArray(snapshot)) this.messages = snapshot.slice(-200);
   }
   event(event: any) {
     if (!event || typeof event !== "object") return;
@@ -401,57 +399,38 @@ export class RootTranscript {
           : result?.isError || outcome?.imageError || (typeof outcome?.exitCode === "number" && outcome.exitCode !== 0)
             ? "Failed"
             : "";
-      if (!this.details) {
-        const id = call?.id ?? result?.toolCallId;
-        const launched = [...taskRows.values()].filter((row) => id && row.sourceCallId === id);
-        if (launched.length) {
-          for (const [index, row] of launched.entries())
-            task(row, !failure && index === 0 && outcome?.outputArtifactErrors ? " — ⚠ couldn’t save full output" : "");
-          if (!failure) {
-            if (typeof outcome?.handoff === "string") append("Assistant", safe(outcome.handoff), true);
-            return;
-          }
-          // A launched task is not evidence that the surrounding action succeeded.
+      const id = call?.id ?? result?.toolCallId;
+      const launched = [...taskRows.values()].filter((row) => id && row.sourceCallId === id);
+      if (launched.length) {
+        for (const [index, row] of launched.entries())
+          task(row, !failure && index === 0 && outcome?.outputArtifactErrors ? " — ⚠ couldn’t save full output" : "");
+        if (!failure) {
+          if (typeof outcome?.handoff === "string") append("Assistant", safe(outcome.handoff), true);
+          return;
         }
+        // A launched task is not evidence that the surrounding action succeeded.
       }
       const args = call?.arguments;
-      const label = actionLabel(
+      // Provider arguments are already incrementally parsed, including incomplete labels.
+      // Never use source as a label: providers can stream code before the label.
+      const caption = actionLabel(
         args?.label,
-        args?.code ?? args?.command ?? args?.path,
-        safe(call?.name ?? result?.toolName) || "Action",
+        undefined,
+        result ? safe(call?.name ?? result?.toolName) || "Action" : "",
       );
-      if (!this.details) {
-        // Provider arguments are already incrementally parsed, including incomplete labels.
-        // Never use source as a label: providers can stream code before the label.
-        const caption = actionLabel(
-          args?.label,
-          undefined,
-          result ? safe(call?.name ?? result?.toolName) || "Action" : "",
-        );
-        const title = !result && !args?.label ? "" : caption;
-        const reason = failure
-          ? actionError(outcome, messageText(result))
-          : outcome?.outputArtifactErrors
-            ? "⚠ couldn’t save full output"
-            : "";
-        const icon = result ? (failure ? "✗" : "✓") : actionFrames[Math.floor(now / 80) % actionFrames.length];
-        lines.push(truncateToWidth(icon + (title ? " " + title : "") + (reason ? " — " + reason : ""), width), "");
-        return;
-      }
-      let text = (failure ? "✗ " + failure + " · " : "") + label;
-      if (this.details && call) text += "\n" + messageText({ content: [call] }, true);
-      if (result && (this.details || failure)) {
-        const output = messageText(result, this.details);
-        if (output) text += "\n" + output;
-      }
-      if (this.details && (call?.id ?? result?.toolCallId))
-        text = "Tool call " + safe(call?.id ?? result?.toolCallId) + "\n" + text;
-      append("Action", text);
+      const title = !result && !args?.label ? "" : caption;
+      const reason = failure
+        ? actionError(outcome, messageText(result))
+        : outcome?.outputArtifactErrors
+          ? "⚠ couldn’t save full output"
+          : "";
+      const icon = result ? (failure ? "✗" : "✓") : actionFrames[Math.floor(now / 80) % actionFrames.length];
+      lines.push(truncateToWidth(icon + (title ? " " + title : "") + (reason ? " — " + reason : ""), width), "");
     };
     const shownCalls = new Set<string>();
     for (const m of messages) {
       if (!m || m.display === false) continue;
-      if (!this.details && (m.customType === "task-complete" || m.customType === "task-attention")) {
+      if (m.customType === "task-complete" || m.customType === "task-attention") {
         const rows = taskRowsFromDetails(m.details);
         for (const row of rows) task(taskRows.get(taskRowKey(row)) ?? row);
         const summaries = taskSummaryRowsFromDetails(m.details);
@@ -468,7 +447,7 @@ export class RootTranscript {
       if (m.role === "assistant" && Array.isArray(m.content)) {
         let content: any[] = [];
         const flush = () => {
-          append("Assistant", messageText({ content }, this.details), true);
+          append("Assistant", messageText({ content }), true);
           content = [];
         };
         for (const c of m.content) {
@@ -485,11 +464,11 @@ export class RootTranscript {
       } else
         append(
           m.role === "user" ? "You" : m.role === "assistant" ? "Assistant" : "Notice",
-          messageText(m, this.details),
+          messageText(m),
           m.role === "assistant",
         );
     }
-    if (!this.details) for (const row of taskRows.values()) task(row);
+    for (const row of taskRows.values()) task(row);
     return lines;
   }
 }
@@ -650,8 +629,6 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
     for (const e of client.read().events) transcript.event(e.event);
     if (client.read().record) {
       transcript.record = client.read().record;
-      const snapshot = (transcript.record as any).messages;
-      if (Array.isArray(snapshot)) transcript.messages = snapshot.slice(-200);
     }
     notice(
       client.read().sourceLabel +
@@ -707,8 +684,6 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
           const cached = client.read();
           if (cached.record) {
             transcript.record = cached.record;
-            if (Array.isArray((cached.record as any).messages))
-              transcript.messages = (cached.record as any).messages.slice(-200);
           }
           notice("Remote observation unavailable: " + String(error) + " · saved root retained");
         }

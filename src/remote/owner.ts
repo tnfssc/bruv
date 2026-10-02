@@ -1,3 +1,4 @@
+import { durableJsonReplace } from "./durable-json";
 import { validatePlacement, remoteChildEnvironment } from "./placement";
 import { listRemoteArtifacts, getRemoteArtifact } from "./artifacts";
 import { repositoryRequest } from "./repository-wire";
@@ -15,7 +16,6 @@ import {
   openSync,
   readFileSync,
   readdirSync,
-  renameSync,
   statSync,
   writeSync,
 } from "node:fs";
@@ -34,23 +34,7 @@ const boot = () => {
     throw new Error("Linux boot_id unavailable");
   }
 };
-function atomic(path: string, value: unknown) {
-  const tmp = path + "." + randomUUID();
-  const fd = openSync(tmp, "wx", 0o600);
-  try {
-    writeSync(fd, JSON.stringify(value));
-    fsyncSync(fd);
-  } finally {
-    closeSync(fd);
-  }
-  renameSync(tmp, path);
-  const dir = openSync(dirname(path), "r");
-  try {
-    fsyncSync(dir);
-  } finally {
-    closeSync(dir);
-  }
-}
+
 function read<T>(path: string): T {
   return JSON.parse(readFileSync(path, "utf8")) as T;
 }
@@ -79,7 +63,7 @@ function saved(id: string) {
   return read<Saved>(statePath(id));
 }
 function persist(id: string, value: Saved) {
-  atomic(statePath(id), value);
+  durableJsonReplace(statePath(id), value);
 }
 function owner() {
   mkdirSync(tasks, { recursive: true, mode: 0o700 });
@@ -89,11 +73,11 @@ function owner() {
     const identity = read<{ ownerId: string; epoch: string; boot: string }>(path);
     if (identity.boot === currentBoot) return identity;
     const next = { ownerId: identity.ownerId, epoch: randomUUID(), boot: currentBoot };
-    atomic(path, next);
+    durableJsonReplace(path, next);
     return next;
   }
   const next = { ownerId: randomUUID(), epoch: randomUUID(), boot: currentBoot };
-  atomic(path, next);
+  durableJsonReplace(path, next);
   return next;
 }
 function error(code: string, detail: string): RemoteResponse {
@@ -245,7 +229,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           value.task.cancelRequested = true;
           persist(req.taskId, value);
           if (!existsSync(join(dir, "cancel.json")))
-            atomic(join(dir, "cancel.json"), { requestedAt: new Date().toISOString() });
+            durableJsonReplace(join(dir, "cancel.json"), { requestedAt: new Date().toISOString() });
           await box.terminal("Cancellation requested");
         }
         return { task: value.task, ...events(req.taskId) };
@@ -349,7 +333,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         overrides: { model: req.model, thinking: req.thinking },
       };
       persist(req.taskId, value);
-      atomic(join(location(req.taskId), "request.json"), { prompt: req.prompt });
+      durableJsonReplace(join(location(req.taskId), "request.json"), { prompt: req.prompt });
       try {
         const child = spawn(executable, ["--remote-owner", req.taskId], {
           detached: true,
@@ -408,7 +392,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           const oldDelivered =
             oldReceipt && existsSync(oldReceipt) && read<{ status: string }>(oldReceipt).status === "delivered";
           if (!slot || (slot.replyId !== req.replyId && oldDelivered)) {
-            atomic(slotPath, req);
+            durableJsonReplace(slotPath, req);
             value.task.reply = { replyId: req.replyId, status: "uncertain" };
             persist(req.taskId, value);
           }
@@ -442,8 +426,8 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
           return error("answer_conflict", "Reply intent conflict");
       }
       mkdirSync(dirname(receipt), { recursive: true, mode: 0o700 });
-      atomic(receipt, { request: req, status: "uncertain" });
-      atomic(path, req);
+      durableJsonReplace(receipt, { request: req, status: "uncertain" });
+      durableJsonReplace(path, req);
       value.task.reply = { replyId: req.replyId, status: "uncertain" };
       persist(req.taskId, value);
       return { task: value.task, ...events(req.taskId) };
@@ -630,7 +614,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
         const request = read<Extract<RemoteRequest, { op: "answer" }> & { dispatch?: string }>(path);
         if (request.dispatch) return;
         request.dispatch = "uncertain";
-        atomic(path, request);
+        durableJsonReplace(path, request);
         child.stdin.write(
           JSON.stringify({
             id: "remote-answer-" + request.replyId,
@@ -724,7 +708,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
               if (current.task.state !== "running") return;
               current.task.reply = { replyId: request.replyId, status: delivered ? "delivered" : "uncertain" };
               const { dispatch: _dispatch, ...accepted } = request as typeof request & { dispatch?: string };
-              atomic(join(location(taskId), "answers", request.replyId + ".json"), {
+              durableJsonReplace(join(location(taskId), "answers", request.replyId + ".json"), {
                 request: accepted,
                 status: current.task.reply.status,
               });

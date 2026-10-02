@@ -6,9 +6,14 @@ export const validPath = (path: string) => path === "bruv" || (path.startsWith("
 const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
 
 /** One SSH stdio invocation per operation. SSH's remote command is a shell string: quote only the executable. */
-export const sshTransport: Transport = async (host, bruvPath, request) => {
+export async function sshControl<T>(
+  entrypoint: "--remote-control" | "--remote-root-control",
+  host: string,
+  bruvPath: string,
+  request: unknown,
+): Promise<T> {
   if (!validHost(host) || !validPath(bruvPath)) throw new Error("Invalid SSH alias or remote bruv path");
-  return await new Promise((resolve, reject) => {
+  return await new Promise<T>((resolve, reject) => {
     const child = spawn(
       "ssh",
       [
@@ -31,7 +36,7 @@ export const sshTransport: Transport = async (host, bruvPath, request) => {
         "PermitLocalCommand=no",
         "--",
         host,
-        quote(bruvPath) + " --remote-control",
+        quote(bruvPath) + " " + entrypoint,
       ],
       { stdio: ["pipe", "pipe", "pipe"] },
     );
@@ -81,4 +86,7 @@ export const sshTransport: Transport = async (host, bruvPath, request) => {
     child.stdin.on("error", () => {});
     child.stdin.end(JSON.stringify(request) + "\n");
   });
-};
+}
+
+export const sshTransport: Transport = (host, bruvPath, request) =>
+  sshControl("--remote-control", host, bruvPath, request);

@@ -3,6 +3,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { registerQuestionRuntime } from "../src/questions/runtime";
 import { QuestionService } from "../src/questions/service";
 import {
   dispatchRootFacet,
@@ -36,7 +37,9 @@ function fixture() {
     sendMessage: (message: unknown) => messages.push(message),
     registerCommand: (name: string) => commands.push(name),
   } as unknown as ExtensionAPI;
+  const runtime = registerQuestionRuntime(pi, { supported: () => true, hasMainToolOwner: () => false });
   return {
+    questions: { service: runtime.service, sync: (ctx: ExtensionContext) => runtime.syncRemote(ctx) },
     directory,
     ctx,
     pi,
@@ -50,7 +53,7 @@ function fixture() {
     },
   };
 }
-const jobs: RootJobs = {
+const jobs: Omit<RootJobs, "questions"> = {
   jobs: async (_ctx, method, params) =>
     method === "jobs.stopWork"
       ? { discoveryComplete: true, outcome: "acknowledged", jobs: [] }
@@ -71,10 +74,10 @@ test("private IPC exposes actual persisted questions with trusted pinned human a
   process.env.BRUV_ROOT_RUNTIME_SOCKET = socket;
   process.env.BRUV_ROOT_RUNTIME_TOKEN = token;
   try {
-    registerRootRuntime(f.pi, jobs);
+    registerRootRuntime(f.pi, { ...jobs, questions: f.questions });
     await f.emit("session_start");
     expect(f.commands).toEqual([]);
-    const service = new QuestionService();
+    const service = f.questions.service;
     const question = await service.ask(f.ctx, { text: "Approve this?", choices: ["yes", "no"], allowFreeText: false });
     expect(await rootFacetRequest(socket, token, { kind: "questions.list" })).toEqual(service.list(f.ctx));
     await expect(
@@ -162,7 +165,7 @@ test("configured ordinary QuestionService owns native/SSH continuation with no b
         },
       },
     };
-    await dispatchRootFacet(f.pi, f.ctx, configured, {
+    await dispatchRootFacet(f.ctx, configured, {
       kind: "questions.answer",
       id: question.id,
       owner: question.owner,
@@ -182,9 +185,8 @@ test("close does not certify incomplete cancellation discovery or active childre
   const f = fixture();
   try {
     const result = await dispatchRootFacet(
-      f.pi,
       f.ctx,
-      { jobs: async () => ({ discoveryComplete: false, outcome: "partial" }) },
+      { questions: f.questions, jobs: async () => ({ discoveryComplete: false, outcome: "partial" }) },
       { kind: "close" },
     );
     expect(result).toMatchObject({ settled: false, error: "Root cancellation discovery incomplete" });
@@ -211,7 +213,7 @@ test("root facet snapshots project durable typed task rows and retain call owner
       { type: "custom", customType: "die-task-row", data: running },
       { type: "custom", customType: "unrelated", data: { ...failed, id: "not-a-task" } },
     ]) as any;
-    const value = (await dispatchRootFacet(f.pi, f.ctx, jobs, { kind: "snapshot" })) as any;
+    const value = (await dispatchRootFacet(f.ctx, { ...jobs, questions: f.questions }, { kind: "snapshot" })) as any;
     expect(value.taskRows).toEqual([failed]);
     expect(value.jobs).toEqual([]);
   } finally {

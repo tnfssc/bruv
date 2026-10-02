@@ -2,11 +2,11 @@ import { taskRowsFromSessionEntries } from "../ui/task-rows";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { createServer, createConnection, type Server } from "node:net";
 import { unlinkSync } from "node:fs";
-import { QuestionService } from "../questions/service";
+import type { QuestionService } from "../questions/service";
 import type { RootCommand } from "./root-contract";
 
 export type RootJobs = {
-  questions?: { service: QuestionService; sync(ctx: ExtensionContext): Promise<void> };
+  questions: { service: QuestionService; sync(ctx: ExtensionContext): Promise<void> };
   jobs(
     ctx: ExtensionContext,
     method: "jobs.list" | "jobs.inspect" | "jobs.stop" | "jobs.stopWork",
@@ -34,54 +34,16 @@ async function allJobs(ctx: ExtensionContext, services: RootJobs) {
   throw Error("Root job discovery incomplete");
 }
 /** Trusted presentation facets. Deliberately not registered as commands/tools/helpers. */
-export async function dispatchRootFacet(
-  pi: ExtensionAPI,
-  ctx: ExtensionContext,
-  services: RootJobs,
-  input: RootFacet,
-): Promise<unknown> {
-  const questions = services.questions?.service ?? new QuestionService();
-  await services.questions?.sync(ctx);
+export async function dispatchRootFacet(ctx: ExtensionContext, services: RootJobs, input: RootFacet): Promise<unknown> {
+  const questions = services.questions.service;
+  await services.questions.sync(ctx);
   switch (input.kind) {
     case "questions.list":
       return questions.list(ctx);
     case "questions.answer": {
       const answer = await questions.answer(ctx, input);
       // The normal runtime owns local continuation and SSH question dispatch. Do not send a second turn.
-      if (services.questions) return questions.get(ctx, answer.id);
-      if (answer.delivery === "delivered" || answer.delivery === "dispatching") return answer;
-      const queued = await questions.setDelivery(ctx, {
-        id: answer.id,
-        owner: answer.owner,
-        version: answer.version,
-        delivery: "queued",
-      });
-      const claimed = await questions.setDelivery(ctx, {
-        id: queued.id,
-        owner: queued.owner,
-        version: queued.version,
-        delivery: "dispatching",
-      });
-      pi.sendMessage(
-        {
-          customType: "question-answer",
-          display: false,
-          content:
-            "Saved human answer for " +
-            claimed.id +
-            ":\n" +
-            JSON.stringify(claimed) +
-            "\nUse this saved reply in a new parent turn; do not replay prior tool calls or resume a child in place.",
-          details: { questionId: claimed.id, replyKey: claimed.replyId, owner: claimed.owner },
-        },
-        { triggerTurn: true, deliverAs: "followUp" },
-      );
-      return questions.setDelivery(ctx, {
-        id: claimed.id,
-        owner: claimed.owner,
-        version: claimed.version,
-        delivery: "delivered",
-      });
+      return questions.get(ctx, answer.id);
     }
     case "jobs.list": {
       const { kind, ...params } = input;
@@ -156,7 +118,7 @@ export function registerRootRuntime(pi: ExtensionAPI, services: RootJobs): void 
             try {
               const request = JSON.parse(text.trim());
               if (request.token !== token || !context) throw Error("Invalid root facet authority");
-              const value = await dispatchRootFacet(pi, context, services, request.command);
+              const value = await dispatchRootFacet(context, services, request.command);
               connection.end(JSON.stringify({ ok: true, value }) + "\n");
             } catch (error) {
               connection.end(JSON.stringify({ ok: false, error: String(error) }) + "\n");
