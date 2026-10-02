@@ -218,12 +218,10 @@ const [
   import("./live/extension"),
   import("./remote/extension"),
 ]);
-const [{ installQuietStartup }, { installConversationDensity }, { installQuietToolUi }] = await Promise.all([
-  import("./ui/startup"),
-  import("./ui/conversation-density"),
-  import("./ui/quiet-tool-ui"),
-]);
+const [{ installQuietStartup, installStartupEditor }, { installConversationDensity }, { installQuietToolUi }] =
+  await Promise.all([import("./ui/startup"), import("./ui/conversation-density"), import("./ui/quiet-tool-ui")]);
 const restoreStartupSettings = installQuietStartup();
+const restoreStartupEditor = installStartupEditor();
 const restoreQuietToolUi = installQuietToolUi();
 const restoreConversationDensity = installConversationDensity();
 
@@ -284,6 +282,7 @@ try {
 } finally {
   restoreConversationDensity();
   restoreQuietToolUi();
+  restoreStartupEditor();
   restoreStartupSettings();
   console.log = originalLog;
 }

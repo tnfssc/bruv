@@ -99,3 +99,60 @@ test("quiet startup hides Pi promotion and skill inventory without disabling ski
     await rm(home, { recursive: true, force: true });
   }
 }, 15_000);
+
+// tmux answers Pi's terminal-color queries before its first scheduled paint.
+// A plain PTY does not: Pi's real 100ms color wait exposes the startup editor.
+test.skipIf(process.platform !== "linux")(
+  "first PTY paint is compact before terminal colors and session_start",
+  async () => {
+    const home = await mkdtemp(join(tmpdir(), "bruv-first-paint-"));
+    const artifactDir = join(
+      resolve(import.meta.dir, "../artifacts/tui"),
+      "first-paint-" + new Date().toISOString().replaceAll(":", "-"),
+    );
+    const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
+    const launch = [
+      "env",
+      "HOME=" + home,
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
+      "HERDR_ENV=0",
+      "OPENAI_API_KEY=offline-test-placeholder",
+      resolve(import.meta.dir, "../dist/bruv"),
+      "--offline",
+      "--no-approve",
+      "--no-session",
+      "--provider",
+      "openai",
+      "--model",
+      "gpt-4o",
+    ]
+      .map(quote)
+      .join(" ");
+    const child = Bun.spawn(["script", "-q", "-e", "-c", "stty rows 40 cols 120; exec " + launch, "/dev/null"], {
+      cwd: home,
+      stdin: "pipe",
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, TERM: "xterm-256color", HERDR_ENV: "0" },
+    });
+    const output = new Response(child.stdout).text();
+    const errors = new Response(child.stderr).text();
+    let stream = "";
+    try {
+      await Bun.sleep(1000);
+      child.stdin.write("\x04");
+      child.stdin.end();
+      expect(await child.exited).toBe(0);
+      stream = Bun.stripANSI(await output);
+      expect(await errors).toBe("");
+      expect(stream).toContain("\uF460");
+      expect(stream).not.toMatch(/\u2500{3,}/);
+    } finally {
+      child.kill();
+      await mkdir(artifactDir, { recursive: true });
+      await writeFile(join(artifactDir, "startup-stream.txt"), stream || Bun.stripANSI(await output));
+      await rm(home, { recursive: true, force: true });
+    }
+  },
+  10_000,
+);
