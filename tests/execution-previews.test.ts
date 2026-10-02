@@ -9,7 +9,6 @@ import {
   type ExecutePreviewState,
   executeInputPreview,
   executeOutputPreview,
-  foldedRows,
 } from "../src/ui/execution-previews";
 
 const theme = { fg: (_color: string, text: string) => text } as any;
@@ -20,7 +19,7 @@ const success = {
 };
 
 test("collapsed execute call and settled result are deterministic single rows", () => {
-  expect(executeInputPreview(code, false, theme, undefined, true).render(100)).toEqual(["⠋"]);
+  expect(executeInputPreview(code, false, theme, undefined).render(100)).toEqual(["⠋"]);
   expect(executeOutputPreview(success, false, false, theme, code).render(120)).toEqual(["✓ Action"]);
 });
 
@@ -43,7 +42,7 @@ test("collapsed handoff results present their progress text once without requiri
 test("handoff-only execute calls still settle to one visible progress message", () => {
   const state: ExecutePreviewState = {};
   const message = "Waiting for the user to continue.";
-  const call = executeInputPreview('await handoff("' + message + '")', false, theme, state, true);
+  const call = executeInputPreview('await handoff("' + message + '")', false, theme, state);
   const result = executeOutputPreview(
     {
       content: [{ type: "text", text: "Execution handed off.\n\n" + message }],
@@ -63,7 +62,7 @@ test("handoff-only execute calls still settle to one visible progress message", 
 
 test("shared renderer state prevents Pi call/result composition from adding a second row", () => {
   const state: ExecutePreviewState = {};
-  const call = executeInputPreview(code, false, theme, state, true);
+  const call = executeInputPreview(code, false, theme, state);
   expect(call.render(100)).toHaveLength(1);
   const result = executeOutputPreview(success, false, false, theme, code, state);
   expect([...call.render(100), ...result.render(100)]).toHaveLength(1);
@@ -71,7 +70,7 @@ test("shared renderer state prevents Pi call/result composition from adding a se
 
 test("execute previews apply configurable horizontal padding and deduct it from content width", () => {
   for (const padding of [0, 1, 2]) {
-    const call = executeInputPreview("x".repeat(80), false, theme, undefined, true, padding).render(12);
+    const call = executeInputPreview("x".repeat(80), false, theme, undefined, padding).render(12);
     const result = executeOutputPreview(success, false, false, theme, "x".repeat(80), undefined, padding).render(12);
     for (const row of [...call, ...result]) {
       expect(row.startsWith(" ".repeat(padding))).toBe(true);
@@ -259,7 +258,7 @@ test("collapsed rows are control-safe and bounded at small widths", () => {
     }
   }
   expect(JSON.stringify(result)).toBe(before);
-  expect(foldedRows("text", 0, 3, 3, false)).toEqual([]);
+  expect(executeInputPreview("text", true, theme).render(0)).toEqual([]);
 });
 
 test("image counts stay hidden collapsed and images remain represented by Pi content", () => {
@@ -425,17 +424,14 @@ test("collapsed execute hides truncation marker and output-file counts", () => {
   expect(executeOutputPreview(result, false, false, theme, code).render(160)).toEqual(["✓ Action"]);
 });
 
-test("preparing and in-flight calls show the same spinner and compact action label", () => {
-  for (const started of [false, true]) {
-    expect(executeInputPreview(code, false, theme, undefined, started, 0, "Read output").render(100)).toEqual([
-      "⠋ Read output",
-    ]);
-  }
+test("calls show a spinner and compact action label", () => {
+  // SDK partial/start transitions are covered in foreground-execution-sdk.test.ts.
+  expect(executeInputPreview(code, false, theme, undefined, 0, "Read output").render(100)).toEqual(["⠋ Read output"]);
 });
 
 test("action labels replace source only in collapsed previews and sanitize plain text", () => {
   const label = "\x1b[31mRead\x1b[0m\n task UI\u0007";
-  expect(executeInputPreview(code, false, theme, undefined, true, 0, label).render(100)).toEqual(["⠋ Read task UI"]);
+  expect(executeInputPreview(code, false, theme, undefined, 0, label).render(100)).toEqual(["⠋ Read task UI"]);
   expect(executeOutputPreview(success, false, false, theme, code, undefined, 0, label).render(100)).toEqual([
     "✓ Read task UI",
   ]);
@@ -539,7 +535,7 @@ test("default in-flight and settled action rows keep one label without lifecycle
     [undefined, undefined, ""],
   ]) {
     const state: ExecutePreviewState = {};
-    const call = executeInputPreview(source, false, theme, state, true, 0, label);
+    const call = executeInputPreview(source, false, theme, state, 0, label);
     expect(call.render(100)).toEqual(["⠋" + (caption ? " " + caption : "")]);
     const result = executeOutputPreview(success, false, false, theme, source, state, 0, label);
     expect([...call.render(100), ...result.render(100)]).toEqual(["✓ " + (caption || "Action")]);

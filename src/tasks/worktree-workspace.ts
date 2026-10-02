@@ -60,84 +60,6 @@ async function mustGit(cwd: string, args: string[], signal?: AbortSignal) {
   return result;
 }
 
-/** Strip JSONC comments and trailing commas without changing string contents. */
-export function parseJsonc(text: string): unknown {
-  let output = "",
-    string = false,
-    escaped = false,
-    lineComment = false,
-    blockComment = false;
-  for (let index = 0; index < text.length; index++) {
-    const char = text.charAt(index),
-      next = text[index + 1];
-    if (lineComment) {
-      if (char === "\n" || char === "\r") {
-        lineComment = false;
-        output += char;
-      } else output += " ";
-      continue;
-    }
-    if (blockComment) {
-      if (char === "*" && next === "/") {
-        output += "  ";
-        index++;
-        blockComment = false;
-      } else output += char === "\n" || char === "\r" ? char : " ";
-      continue;
-    }
-    if (string) {
-      output += char;
-      if (escaped) escaped = false;
-      else if (char === "\\") escaped = true;
-      else if (char === '"') string = false;
-      continue;
-    }
-    if (char === '"') {
-      string = true;
-      output += char;
-      continue;
-    }
-    if (char === "/" && next === "/") {
-      output += "  ";
-      index++;
-      lineComment = true;
-      continue;
-    }
-    if (char === "/" && next === "*") {
-      output += "  ";
-      index++;
-      blockComment = true;
-      continue;
-    }
-    output += char;
-  }
-  let cleaned = "",
-    quoted = false,
-    slash = false;
-  for (let index = 0; index < output.length; index++) {
-    const char = output.charAt(index);
-    if (quoted) {
-      cleaned += char;
-      if (slash) slash = false;
-      else if (char === "\\") slash = true;
-      else if (char === '"') quoted = false;
-      continue;
-    }
-    if (char === '"') {
-      quoted = true;
-      cleaned += char;
-      continue;
-    }
-    if (char === ",") {
-      let look = index + 1;
-      while (look < output.length && /\s/.test(output.charAt(look))) look++;
-      if (output[look] === "}" || output[look] === "]") continue;
-    }
-    cleaned += char;
-  }
-  return JSON.parse(cleaned);
-}
-
 export async function readWorktreeSetup(sourcePath: string): Promise<WorktreeSetup | undefined> {
   let text: string;
   try {
@@ -150,7 +72,7 @@ export async function readWorktreeSetup(sourcePath: string): Promise<WorktreeSet
   }
   let value: unknown;
   try {
-    value = parseJsonc(text);
+    value = Bun.JSONC.parse(text);
   } catch (error) {
     throw new Error("Invalid t3.json", { cause: error });
   }

@@ -350,12 +350,9 @@ export class JobService {
         const params = z.parse(Shell, input);
         if (!params.command.trim()) throw new Error("shell requires a nonempty command");
         this.beforeLocalShellLaunch?.();
-        const executable =
-          process.platform === "win32" ? (process.env.ComSpec ?? "cmd.exe") : (process.env.SHELL ?? "/bin/sh");
         const task = this.manager.spawn({
           kind: "command",
-          command: executable,
-          args: process.platform === "win32" ? ["/d", "/s", "/c", params.command] : ["-lc", params.command],
+          ...setupShell(params.command),
           displayCommand: params.command,
           cwd: ctx.cwd,
           closeStdin: params.closeInput ?? true,
@@ -430,7 +427,6 @@ export class JobService {
                                 ? { ...params.workspace, baseRef: pinnedBaseRef }
                                 : params.workspace,
                           }),
-                      ...(params.timeoutSeconds === undefined ? {} : { timeoutMs: params.timeoutSeconds * 1000 }),
                     },
                     signal,
                   ),
@@ -541,54 +537,61 @@ export class JobService {
           model: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined,
           thinking: ctx.thinkingLevel,
         });
+        const prepareLaunch = async (cwd: string, prompt: string, taskId?: string, continuityArgs: string[] = []) => {
+          const prepared = await prepareAgentSession(
+            cwd,
+            ctx.sessionManager?.getSessionDir(),
+            {
+              type,
+              model,
+              thinking,
+              depth: depth + 1,
+              parentSessionFile: ctx.sessionManager ? sessionIdentity(ctx.sessionManager)?.file : undefined,
+            },
+            taskId,
+            params.title,
+          );
+          return {
+            ...prepared,
+            command: process.execPath,
+            args: [
+              ...continuityArgs,
+              "--session",
+              prepared.agent.sessionFile,
+              "--mode",
+              "json",
+              "-p",
+              "--model",
+              model,
+              ...(thinking ? ["--thinking", thinking] : []),
+              "--",
+              prompt,
+            ],
+            displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
+            ...(params.title === undefined ? {} : { title: params.title }),
+            cwd,
+            env: {
+              ...childAgentEnvironment(process.env),
+              BRUV_SUBAGENT_DEPTH: String(depth + 1),
+              BRUV_SUBAGENT_TYPE: type,
+            },
+            closeStdin: true,
+            notifyOnComplete: false,
+          };
+        };
         // Inherited launches retain their established spawn/wait/failure ownership.
         if (workspace.kind === "inherit") {
           const spawned: TaskSummary[] = [];
           try {
             for (const prompt of prompts) {
               signal.throwIfAborted();
-              const prepared = await prepareAgentSession(
-                ctx.cwd,
-                ctx.sessionManager?.getSessionDir(),
-                {
-                  type,
-                  model,
-                  thinking,
-                  depth: depth + 1,
-                  parentSessionFile: ctx.sessionManager ? sessionIdentity(ctx.sessionManager)?.file : undefined,
-                },
-                undefined,
-                params.title,
-              );
+              const launch = await prepareLaunch(ctx.cwd, prompt);
               signal.throwIfAborted();
               spawned.push(
                 this.manager.spawn({
-                  ...prepared,
+                  ...launch,
                   kind: "agent",
-                  command: process.execPath,
-                  args: [
-                    "--session",
-                    prepared.agent.sessionFile,
-                    "--mode",
-                    "json",
-                    "-p",
-                    "--model",
-                    model,
-                    ...(thinking ? ["--thinking", thinking] : []),
-                    "--",
-                    prompt,
-                  ],
-                  displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
-                  ...(params.title === undefined ? {} : { title: params.title }),
-                  cwd: ctx.cwd,
-                  env: {
-                    ...childAgentEnvironment(process.env),
-                    BRUV_SUBAGENT_DEPTH: String(depth + 1),
-                    BRUV_SUBAGENT_TYPE: type,
-                  },
                   timeoutMs: params.timeoutSeconds ? params.timeoutSeconds * 1000 : undefined,
-                  closeStdin: true,
-                  notifyOnComplete: false,
                 }),
               );
             }
@@ -632,10 +635,7 @@ export class JobService {
             displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
             ...(params.title === undefined ? {} : { title: params.title }),
             cwd: ctx.cwd,
-            workspace:
-              workspace.kind === "worktree"
-                ? { kind: "worktree", path: ctx.cwd, baseRef: workspace.baseRef ?? "HEAD" }
-                : { kind: "inherit", path: ctx.cwd },
+            workspace: { kind: "worktree", path: ctx.cwd, baseRef: workspace.baseRef ?? "HEAD" },
             timeoutMs: params.timeoutSeconds ? params.timeoutSeconds * 1000 : undefined,
             notifyOnComplete: false,
           });
@@ -650,22 +650,17 @@ export class JobService {
           if (preparationSignals.every((item) => item.aborted) && !sourceController.signal.aborted)
             sourceController.abort(new Error("Workspace preparation cancelled"));
         };
-        if (workspace.kind === "worktree")
-          for (const item of preparationSignals) item.addEventListener("abort", abortSourceIfUnused, { once: true });
-        const worktreeSourcePromise =
-          workspace.kind === "worktree"
-            ? (async () => {
-                try {
-                  return await resolveWorktreeSource(ctx.cwd, workspace.baseRef ?? "HEAD", sourceController.signal);
-                } finally {
-                  for (const item of preparationSignals) item.removeEventListener("abort", abortSourceIfUnused);
-                }
-              })()
-            : Promise.resolve(undefined);
+        for (const item of preparationSignals) item.addEventListener("abort", abortSourceIfUnused, { once: true });
+        const worktreeSourcePromise = (async () => {
+          try {
+            return await resolveWorktreeSource(ctx.cwd, workspace.baseRef ?? "HEAD", sourceController.signal);
+          } finally {
+            for (const item of preparationSignals) item.removeEventListener("abort", abortSourceIfUnused);
+          }
+        })();
 
         const sourceTrusted = typeof ctx.isProjectTrusted === "function" && ctx.isProjectTrusted();
-        const childContinuityArgs: string[] =
-          workspace.kind === "worktree" ? [sourceTrusted ? "--approve" : "--no-approve"] : [];
+        const childContinuityArgs = [sourceTrusted ? "--approve" : "--no-approve"];
         const optionBoundary = process.argv.indexOf("--");
         const optionArgs = process.argv.slice(0, optionBoundary < 0 ? process.argv.length : optionBoundary);
         for (let index = 0; index < optionArgs.length - 1; index++) {
@@ -679,19 +674,17 @@ export class JobService {
           try {
             const worktreeSource = await worktreeSourcePromise;
             prepSignal.throwIfAborted();
-            const workspaceSummary = worktreeSource
-              ? await createWorktree(worktreeSource, {
-                  taskId: task.id,
-                  title: params.title ?? (prompts.length > 1 ? "agent-" + (index + 1) : undefined),
-                  branch: workspace.kind === "worktree" ? workspace.branch : undefined,
-                  signal: prepSignal,
-                  onPlanned: (planned) => this.manager.updatePreparedWorkspace(task.id, planned),
-                })
-              : { kind: "inherit" as const, path: ctx.cwd };
+            const workspaceSummary = await createWorktree(worktreeSource, {
+              taskId: task.id,
+              title: params.title ?? (prompts.length > 1 ? "agent-" + (index + 1) : undefined),
+              branch: workspace.branch,
+              signal: prepSignal,
+              onPlanned: (planned) => this.manager.updatePreparedWorkspace(task.id, planned),
+            });
             prepSignal.throwIfAborted();
             this.manager.updatePreparedWorkspace(task.id, workspaceSummary);
 
-            if (worktreeSource?.setup) {
+            if (worktreeSource.setup) {
               const setupCommand = setupShell(worktreeSource.setup.command);
               const setupTask = this.manager.spawn({
                 kind: "command",
@@ -741,48 +734,12 @@ export class JobService {
             }
 
             prepSignal.throwIfAborted();
-            const prepared = await prepareAgentSession(
-              workspaceSummary.path,
-              ctx.sessionManager?.getSessionDir(),
-              {
-                type,
-                model,
-                thinking,
-                depth: depth + 1,
-                parentSessionFile: ctx.sessionManager ? sessionIdentity(ctx.sessionManager)?.file : undefined,
-              },
-              task.id,
-              params.title,
-            );
+            const launch = await prepareLaunch(workspaceSummary.path, prompt, task.id, childContinuityArgs);
             prepSignal.throwIfAborted();
             this.manager.activatePreparedAgent(task.id, {
-              ...prepared,
+              ...launch,
               workspace: workspaceSummary,
-              command: process.execPath,
-              args: [
-                ...childContinuityArgs,
-                "--session",
-                prepared.agent.sessionFile,
-                "--mode",
-                "json",
-                "-p",
-                "--model",
-                model,
-                ...(thinking ? ["--thinking", thinking] : []),
-                "--",
-                prompt,
-              ],
-              displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
-              ...(params.title === undefined ? {} : { title: params.title }),
-              cwd: workspaceSummary.path,
-              env: {
-                ...childAgentEnvironment(process.env),
-                BRUV_SUBAGENT_DEPTH: String(depth + 1),
-                BRUV_SUBAGENT_TYPE: type,
-              },
               timeoutMs: undefined,
-              closeStdin: true,
-              notifyOnComplete: false,
             });
           } catch (error) {
             const current = this.manager.inspect(task.id);

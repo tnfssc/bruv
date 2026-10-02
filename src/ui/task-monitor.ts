@@ -218,14 +218,12 @@ export class TaskMonitorPanel implements Component, Focusable {
     const task = tasks[this.selected];
     // syncSelection above guarantees a selected task whenever the running list is non-empty.
     if (!task) return lines.map((line) => truncateToWidth(line, width));
+    let outputRows: number;
+    const outputBytes = this.inspecting ? INSPECT_BYTES : OUTPUT_BYTES;
     if (this.inspecting) {
       const metadataRows = 9 + (task.agent?.lastActivityAt ? 1 : 0);
-      const outputRows = Math.max(1, Math.min(OUTPUT_LINES, height - metadataRows));
-      const inspection = this.manager.inspect(
-        task.id,
-        Math.max(task.baseOffset, task.outputEnd - INSPECT_BYTES),
-        INSPECT_BYTES,
-      );
+      outputRows = Math.max(1, Math.min(OUTPUT_LINES, height - metadataRows));
+
       identityLine = this.theme.bold(this.theme.fg("accent", "Inspect " + displayId(task.id)));
       lines.push(
         identityLine,
@@ -250,24 +248,6 @@ export class TaskMonitorPanel implements Component, Focusable {
             : "Bounded output · last " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines",
         ),
       );
-      const outputLines = cleanOutput(inspection.output).slice(-outputRows);
-      if (task.outputEnd === 0) lines.push(this.theme.fg("dim", "No output available yet."));
-      else if (!outputLines.some((line) => line.trim()))
-        lines.push(this.theme.fg("dim", "Output received, but it is whitespace only."));
-      else lines.push(...outputLines.map((line) => "  " + line));
-      if (task.agent?.lastActivityAt) {
-        const quiet = Date.now() - Date.parse(task.agent.lastActivityAt);
-        lines.push(
-          this.theme.fg(
-            "dim",
-            "Agent quiet for " +
-              age(quiet) +
-              " · " +
-              (task.agent.phase ?? "running") +
-              (task.agent.events !== undefined ? " · " + task.agent.events + " events" : ""),
-          ),
-        );
-      }
     } else {
       const hasActivity = !!task.agent?.lastActivityAt;
       const fixedRows = 8 + (hasActivity ? 1 : 0);
@@ -306,29 +286,30 @@ export class TaskMonitorPanel implements Component, Focusable {
             : "Live preview · last " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines",
         ),
       );
-      const inspection = this.manager.inspect(
-        task.id,
-        Math.max(task.baseOffset, task.outputEnd - OUTPUT_BYTES),
-        OUTPUT_BYTES,
+      outputRows = previewRows;
+    }
+    const inspection = this.manager.inspect(
+      task.id,
+      Math.max(task.baseOffset, task.outputEnd - outputBytes),
+      outputBytes,
+    );
+    const outputLines = cleanOutput(inspection.output).slice(-outputRows);
+    if (task.outputEnd === 0) lines.push(this.theme.fg("dim", "No output available yet."));
+    else if (!outputLines.some((line) => line.trim()))
+      lines.push(this.theme.fg("dim", "Output received, but it is whitespace only."));
+    else lines.push(...outputLines.map((line) => "  " + line));
+    if (task.agent?.lastActivityAt) {
+      const quiet = Date.now() - Date.parse(task.agent.lastActivityAt);
+      lines.push(
+        this.theme.fg(
+          "dim",
+          "Agent quiet for " +
+            age(quiet) +
+            " · " +
+            (task.agent.phase ?? "running") +
+            (task.agent.events !== undefined ? " · " + task.agent.events + " events" : ""),
+        ),
       );
-      const outputLines = cleanOutput(inspection.output).slice(-previewRows);
-      if (task.outputEnd === 0) lines.push(this.theme.fg("dim", "No output available yet."));
-      else if (!outputLines.some((line) => line.trim()))
-        lines.push(this.theme.fg("dim", "Output received, but it is whitespace only."));
-      else lines.push(...outputLines.map((line) => "  " + line));
-      if (task.agent?.lastActivityAt) {
-        const quiet = Date.now() - Date.parse(task.agent.lastActivityAt);
-        lines.push(
-          this.theme.fg(
-            "dim",
-            "Agent quiet for " +
-              age(quiet) +
-              " · " +
-              (task.agent.phase ?? "running") +
-              (task.agent.events !== undefined ? " · " + task.agent.events + " events" : ""),
-          ),
-        );
-      }
     }
     if (task.ssh) {
       lines.push(

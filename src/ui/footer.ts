@@ -276,30 +276,24 @@ export function renderCompactFooter(
   const questionStatus = singleLine(statuses.get("bruv-questions") ?? "");
   const questionCount = questionStatus.match(/^([0-9]+) questions?(?: pending)?/);
   const savedQuestions = questionStatus.match(/ · ([0-9]+) saved/)?.[1];
-  const questions = questionStatus
-    ? questionCount
-      ? questionCount[1] +
-        " /questions" +
-        (questionStatus.includes("follow-up blocked")
-          ? " · follow-up blocked"
-          : questionStatus.includes("waiting on you")
-            ? " · waiting on you"
-            : "") +
-        (savedQuestions ? " · " + savedQuestions + " saved" : "")
-      : questionStatus
-    : "";
-  const shortQuestions = questionStatus
-    ? questionCount
-      ? questionCount[1] +
-        " /questions" +
-        (questionStatus.includes("follow-up blocked")
-          ? " blocked"
-          : questionStatus.includes("waiting on you")
-            ? " waiting"
-            : "") +
-        (savedQuestions ? " " + savedQuestions + " saved" : "")
-      : "/questions unavailable"
-    : "";
+  const questionState = questionStatus.includes("follow-up blocked")
+    ? [" · follow-up blocked", " blocked"]
+    : questionStatus.includes("waiting on you")
+      ? [" · waiting on you", " waiting"]
+      : ["", ""];
+  const questionLabel = (short: boolean) =>
+    questionStatus
+      ? questionCount
+        ? questionCount[1] +
+          " /questions" +
+          questionState[short ? 1 : 0] +
+          (savedQuestions ? (short ? " " : " · ") + savedQuestions + " saved" : "")
+        : short
+          ? "/questions unavailable"
+          : questionStatus
+      : "";
+  const questions = questionLabel(false);
+  const shortQuestions = questionLabel(true);
   const mode = singleLine(statuses.get("bruv-mode") ?? "");
   // Native fast mode owns the bolt badge; it is provider status, never an editor spinner.
   const nativeFast = singleLine(statuses.get("bruv-native-fast") ?? "");
@@ -345,72 +339,14 @@ export function renderCompactFooter(
   const modelWithThinking = model + (ctx.model?.reasoning ? ` · ${ctx.thinkingLevel ?? "off"}` : "");
   const accent = (text: string) => (text ? theme.fg("accent", text) : "");
   const cacheText = cacheBadge(cache, theme) ?? "";
+  const placement = [accent(live), accent(remote)];
+  const full = [accent(task), questions, accent(mode), accent(nativeFast), cost, context("ctx "), cacheText, extra];
+  const short = [accent(shortNativeFast), cost, context("C"), cacheText];
   const candidates: [string[], string, string][] = [
-    [
-      [
-        accent(live),
-        accent(remote),
-        branch ? `${project}:${singleLine(branch)}` : project,
-        accent(task),
-        questions,
-        accent(mode),
-        accent(nativeFast),
-        cost,
-        context("ctx "),
-        cacheText,
-        extra,
-      ],
-      modelWithThinking,
-      " · ",
-    ],
-    [
-      [
-        accent(live),
-        accent(remote),
-        project,
-        accent(task),
-        questions,
-        accent(mode),
-        accent(nativeFast),
-        cost,
-        context("ctx "),
-        cacheText,
-        extra,
-      ],
-      modelWithThinking,
-      " · ",
-    ],
-    [
-      [
-        accent(live),
-        accent(remote),
-        accent(shortTask),
-        shortQuestions,
-        accent(shortNativeFast),
-        cost,
-        context("C"),
-        cacheText,
-        project,
-        extra,
-      ],
-      model,
-      " ",
-    ],
-    [
-      [
-        shortQuestions,
-        accent(live),
-        accent(remote),
-        accent(shortTask),
-        accent(shortNativeFast),
-        cost,
-        context("C"),
-        cacheText,
-        extra,
-      ],
-      model,
-      " ",
-    ],
+    [[...placement, branch ? `${project}:${singleLine(branch)}` : project, ...full], modelWithThinking, " · "],
+    [[...placement, project, ...full], modelWithThinking, " · "],
+    [[...placement, accent(shortTask), shortQuestions, ...short, project, extra], model, " "],
+    [[shortQuestions, ...placement, accent(shortTask), ...short, extra], model, " "],
   ];
   for (const [parts, right, separator] of candidates) {
     const left = parts.filter(Boolean).join(separator);

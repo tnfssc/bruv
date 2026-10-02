@@ -1,11 +1,12 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
+import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { JobService } from "../src/tasks/job-service";
 import { TaskManager } from "../src/tasks/task-manager";
-import { createWorktree, parseJsonc, readWorktreeSetup, resolveWorktreeSource } from "../src/tasks/worktree-workspace";
+import { createWorktree, readWorktreeSetup, resolveWorktreeSource } from "../src/tasks/worktree-workspace";
 
 const owned: string[] = [];
 afterEach(async () => {
@@ -41,12 +42,43 @@ describe("local worktree workspace", () => {
       }],
     }`,
     );
-    expect(parseJsonc('{"value": "//,}",}')).toEqual({ value: "//,}" });
     expect(await readWorktreeSetup(repo)).toMatchObject({
       command: "printf ',} // literal' > setup.txt",
       async: false,
       configDigest: expect.any(String),
     });
+  });
+
+  test("JSONC preserves escaped strings and hashes original config bytes", async () => {
+    const { repo } = await fixture();
+    const command = 'printf "/* literal */ //,} \\"quoted\\""';
+    const text =
+      '{/* setup */ "scripts": [' +
+      JSON.stringify({ name: "setup", command, runOnWorktreeCreate: true }) +
+      ", // trailing comment\n],}";
+    await writeFile(join(repo, "t3.json"), text);
+    expect(await readWorktreeSetup(repo)).toEqual({
+      command,
+      async: true,
+      configDigest: createHash("sha256").update(text).digest("hex"),
+    });
+  });
+
+  test("rejects malformed JSONC that the removed scanner silently accepted", async () => {
+    const { repo } = await fixture();
+    // The scanner erased an unclosed comment and accepted a comma-only array.
+    for (const text of ['{"scripts": []} /* unfinished', '{"scripts": [,]}']) {
+      await writeFile(join(repo, "t3.json"), text);
+      await expect(readWorktreeSetup(repo)).rejects.toThrow("Invalid t3.json");
+    }
+  });
+
+  test("keeps config size and setup schema checks", async () => {
+    const { repo } = await fixture();
+    await writeFile(join(repo, "t3.json"), " ".repeat(1_000_001));
+    await expect(readWorktreeSetup(repo)).rejects.toThrow("Unable to read t3.json");
+    await writeFile(join(repo, "t3.json"), '{"scripts":[{"name":"setup","command":"echo ok","async":"false"}]}');
+    await expect(readWorktreeSetup(repo)).rejects.toThrow("Invalid t3.json script async");
   });
 
   test("pins one commit and creates argv-safe retained branches without dirty files", async () => {
@@ -223,11 +255,31 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
+    const oldArgv = process.argv;
+    process.argv = [
+      oldArgv[0],
+      oldArgv[1],
+      "--system-prompt",
+      "fixture-system",
+      "--append-system-prompt",
+      "fixture-append",
+      "--",
+      "--system-prompt",
+      "do-not-copy",
+    ];
     const oldRoot = process.env.BRUV_WORKTREE_ROOT;
     process.env.BRUV_WORKTREE_ROOT = worktrees;
     const manager = new TaskManager(() => {}, 25);
     const activate = spyOn(manager, "activatePreparedAgent");
-    const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined, {});
+    const service = new JobService(
+      manager,
+      () => ({ depth: 0 }),
+      undefined,
+      join(root, "profiles.json"),
+      undefined,
+      undefined,
+      {},
+    );
     try {
       const result = (await service.handle(
         "subagent",
@@ -250,10 +302,36 @@ describe("local worktree workspace", () => {
       expect(current.title).toBe("Inspect worktree");
       expect(activate.mock.calls[0]?.[1].title).toBe("Inspect worktree");
       expect(current.workspace?.setupStatus).toBe("completed");
-      expect((activate.mock.calls[0]?.[1] as { args?: string[] } | undefined)?.args).toContain("--no-approve");
+      const launch = activate.mock.calls[0]![1];
+      expect(launch.args).toEqual([
+        "--no-approve",
+        "--system-prompt",
+        "fixture-system",
+        "--append-system-prompt",
+        "fixture-append",
+        "--session",
+        launch.agent!.sessionFile,
+        "--mode",
+        "json",
+        "-p",
+        "--model",
+        "test/model",
+        "--",
+        "untrusted",
+      ]);
+      expect(launch).toMatchObject({
+        id: result.id,
+        cwd: current.workspace!.path,
+        closeStdin: true,
+        notifyOnComplete: false,
+        env: { BRUV_SUBAGENT_DEPTH: "1", BRUV_SUBAGENT_TYPE: "normal" },
+      });
+      // The reserved task owns the deadline from preparation onward.
+      expect(launch.timeoutMs).toBeUndefined();
       expect(await readFile(markerPath, "utf8")).toBe("");
       if (current.status === "running") manager.kill(result.id);
     } finally {
+      process.argv = oldArgv;
       await manager.shutdown();
       if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
       else process.env.BRUV_WORKTREE_ROOT = oldRoot;

@@ -78,7 +78,6 @@ export function registerExecuteTool(
         context.expanded,
         theme,
         context.state,
-        context.executionStarted,
         getOutputPad(context.cwd),
         (args as { label?: unknown } | undefined)?.label,
         context.invalidate,

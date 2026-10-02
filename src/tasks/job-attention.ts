@@ -223,19 +223,9 @@ export class JobAttentionScheduler {
       this.#stateVisits++;
       next = Math.min(next, this.#deadline(state));
     }
-    if (!Number.isFinite(next)) {
-      if (this.#timer !== undefined) this.#clock.clearTimeout(this.#timer);
-      this.#timer = undefined;
-      this.#scheduledAt = Infinity;
-      return;
-    }
-    // Do not postpone/recreate an existing timer on output. It will recheck the
-    // moved deadline once, then arm the next actual deadline.
-    if (this.#timer !== undefined && this.#scheduledAt <= next) return;
-    if (this.#timer !== undefined) this.#clock.clearTimeout(this.#timer);
-    this.#scheduledAt = next;
-    this.#timerSchedules++;
-    this.#timer = this.#clock.setTimeout(() => this.#fire(), Math.min(2_147_483_647, Math.max(0, next - this.#now())));
+    // Do not postpone an earlier timer; it will recheck the moved deadline.
+    if (Number.isFinite(next)) this.#armIfEarlier(next);
+    else this.#clearTimer();
   }
 
   #fire(): void {

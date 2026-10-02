@@ -312,7 +312,7 @@ export function installJobGlobals(socket?: Duplex): { finish(): Promise<void> } 
 
   const request = (method: string, params: unknown): Promise<unknown> => {
     if (!socket || closed || finishing) {
-      const code = socket ? "request_blocked" : "request_blocked";
+      const code = "request_blocked";
       return Promise.reject(bridgeError(socket ? "Job bridge is closing" : unavailable, code, "none", socket));
     }
     const id = nextId++;
@@ -572,9 +572,6 @@ export function serveJobBridge(
     // error frame successfully.
     if (!delivered) {
       bridgeDiagnostic(diagnosticOwner, "delivery_failed", "failed", "response");
-      request.reply = "failed";
-      request.controller?.abort();
-      request.controller = undefined;
     }
     try {
       line = `${JSON.stringify(response)}\n`;

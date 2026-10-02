@@ -383,23 +383,8 @@ export class TaskManager {
         inspection.output = answer.subarray(safe.start, safe.end).toString("utf8");
         task.completionOutput = inspection.output;
       }
-      const resolveTask = task.resolveCompletion;
       task.process = undefined;
-      task.completion = undefined;
-      task.resolveCompletion = undefined;
-      // Delivery keeps its bounded snapshot, but observers must see the settled
-      // manager storage already within the completed-output budget.
-      this.#retainCompletedOutput(task);
-      resolveTask?.(inspection);
-      this.#emit({ type: "completed", task: this.#summary(task) });
-      this.#diagnostic({
-        component: "jobs",
-        code: "JOBS_TASK_COMPLETED",
-        outcome: task.termination ? "cancelled" : task.status === "completed" ? "success" : "failed",
-        taskId: id,
-        ...(task.termination ? { cancellation: this.#cancellation(task.termination.cause) } : {}),
-      });
-      if (!this.#shuttingDown && task.notifyOnComplete) this.#notify(inspection);
+      this.#publishCompletion(task, inspection);
     });
 
     if (launch.timeoutMs && !task.timeout) {
@@ -647,16 +632,21 @@ export class TaskManager {
     task.stdinOpen = false;
     task.preparationController = undefined;
     const inspection = this.inspect(task.id, Math.max(task.baseOffset, task.outputEnd - MAX_INSPECT_BYTES));
+    this.#publishCompletion(task, inspection);
+  }
+
+  #publishCompletion(task: ManagedTask, inspection: TaskInspection): void {
     const resolveTask = task.resolveCompletion;
     task.completion = undefined;
     task.resolveCompletion = undefined;
+    // Delivery keeps its bounded snapshot; observers see storage already within budget.
     this.#retainCompletedOutput(task);
     resolveTask?.(inspection);
     this.#emit({ type: "completed", task: this.#summary(task) });
     this.#diagnostic({
       component: "jobs",
       code: "JOBS_TASK_COMPLETED",
-      outcome: task.termination ? "cancelled" : "failed",
+      outcome: task.termination ? "cancelled" : task.status === "completed" ? "success" : "failed",
       taskId: task.id,
       ...(task.termination ? { cancellation: this.#cancellation(task.termination.cause) } : {}),
     });

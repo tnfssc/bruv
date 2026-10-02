@@ -156,10 +156,34 @@ test("profile settings, child identity, and three-tier limits survive helper mig
     sessionManager: { getSessionDir: () => dir, getSessionFile: () => undefined },
   } as any;
   try {
-    await service.handle("subagent", { type: "fast", prompt: "scout", title: "Inspect renderer" }, ctx, signal);
+    await service.handle(
+      "subagent",
+      { type: "fast", prompt: "scout", title: "Inspect renderer", timeoutSeconds: 2 },
+      ctx,
+      signal,
+    );
     expect(launches[0]!.title).toBe("Inspect renderer");
-    expect(launches[0]!.args).toContain("p/quick");
-    expect(launches[0]!.args).toContain("off");
+    expect(launches[0]!.args).toEqual([
+      "--session",
+      launches[0]!.agent!.sessionFile,
+      "--mode",
+      "json",
+      "-p",
+      "--model",
+      "p/quick",
+      "--thinking",
+      "off",
+      "--",
+      "scout",
+    ]);
+    expect(launches[0]).toMatchObject({
+      command: process.execPath,
+      cwd: dir,
+      timeoutMs: 2000,
+      closeStdin: true,
+      notifyOnComplete: false,
+    });
+    expect(launches[0]!.workspace).toBeUndefined();
     expect(launches[0]!.env?.BRUV_SUBAGENT_TYPE).toBe("fast");
     expect(foreground.mock.calls[0]![1]).toBe(1000);
     for (const type of ["fast", "normal"]) {

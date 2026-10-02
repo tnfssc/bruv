@@ -4,7 +4,6 @@ import type { Theme } from "@earendil-works/pi-coding-agent";
 import {
   Box,
   type Component,
-  getKeybindings,
   stripTerminalSequences,
   truncateToWidth,
   visibleWidth,
@@ -20,20 +19,8 @@ function plain(text: string): string {
 function oneLine(text: string): string {
   return plain(text).replace(/\s+/g, " ").trim();
 }
-function expandHint(): string {
-  const keys = getKeybindings().getKeys("app.tools.expand");
-  return keys.length ? keys.join("/") + " to expand" : "expand for more";
-}
-export function foldedRows(text: string, width: number, head: number, tail: number, expanded: boolean): string[] {
-  if (width < 1 || !text) return [];
-  const rows = wrapTextWithAnsi(plain(text), width);
-  if (expanded || rows.length <= head + tail) return rows;
-  const hidden = rows.length - head - tail;
-  return [
-    ...rows.slice(0, head),
-    truncateToWidth("… (" + hidden + " lines hidden; " + expandHint() + ")", width),
-    ...(tail ? rows.slice(-tail) : []),
-  ];
+function wrappedRows(text: string, width: number): string[] {
+  return width < 1 || !text ? [] : wrapTextWithAnsi(plain(text), width);
 }
 function component(render: (width: number) => string[]): Component {
   return { render, invalidate() {} };
@@ -71,7 +58,6 @@ export function executeInputPreview(
   expanded: boolean,
   theme: Theme,
   state?: ExecutePreviewState,
-  _executionStarted = true,
   padding = 0,
   label?: unknown,
   invalidate?: () => void,
@@ -87,7 +73,7 @@ export function executeInputPreview(
       if (expanded)
         return [
           truncateToWidth(theme.fg("toolTitle", "Execute · TypeScript"), width),
-          ...foldedRows(source, width, 0, 0, true).map((line) => theme.fg("muted", line)),
+          ...wrappedRows(source, width).map((line) => theme.fg("muted", line)),
         ];
       const line =
         theme.fg("accent", actionFrames[state?.spinnerFrame ?? 0]!) +
@@ -168,7 +154,7 @@ export function executeOutputPreview(
       }
       if (!expanded && handoff && status.color === "success") {
         const prefix = "↪ ";
-        const rows = foldedRows(handoff, Math.max(1, width - prefix.length), 0, 0, true).map((line, index) =>
+        const rows = wrappedRows(handoff, Math.max(1, width - prefix.length)).map((line, index) =>
           truncateToWidth((index === 0 ? theme.fg("success", prefix) : " ".repeat(prefix.length)) + line, width),
         );
         return details?.outputArtifactErrors
@@ -184,9 +170,9 @@ export function executeOutputPreview(
       if (expanded) {
         const lines = [
           theme.fg("toolTitle", "Execute · TypeScript"),
-          ...foldedRows(source, width, 0, 0, true).map((line) => theme.fg("muted", line)),
+          ...wrappedRows(source, width).map((line) => theme.fg("muted", line)),
           "",
-          ...foldedRows(full, width, 0, 0, true),
+          ...wrappedRows(full, width),
         ];
         if (details?.outputArtifactErrors) lines.push(theme.fg("warning", "… execute could not save all output"));
         return lines.map((line) => truncateToWidth(line, width));
@@ -224,7 +210,7 @@ export function completionPreview(
   box.addChild(
     component((width) => {
       if (expanded)
-        return foldedRows(text, width, 0, 0, true).map((line, index) =>
+        return wrappedRows(text, width).map((line, index) =>
           index === 0 && kind !== "task-attention" ? theme.fg("accent", line) : line,
         );
       if (width < 1) return [];
