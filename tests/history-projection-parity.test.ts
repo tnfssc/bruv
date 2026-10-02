@@ -1,3 +1,4 @@
+import { run as runProcess } from "./helpers";
 import { afterEach, describe, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -85,17 +86,14 @@ console.log(JSON.stringify({
 `;
 
 async function run(root: string, adapted: boolean) {
-  const child = Bun.spawn([process.execPath, "-e", scenario], {
+  const {
+    stdout,
+    stderr,
+    code: exitCode,
+  } = await runProcess([process.execPath, "-e", scenario], {
     cwd: join(import.meta.dir, ".."),
     env: { ...process.env, SCENARIO_ROOT: root, USE_DISK_HISTORY: adapted ? "1" : "0" },
-    stdout: "pipe",
-    stderr: "pipe",
   });
-  const [stdout, stderr, exitCode] = await Promise.all([
-    new Response(child.stdout).text(),
-    new Response(child.stderr).text(),
-    child.exited,
-  ]);
   if (exitCode !== 0) throw new Error(`scenario failed (${exitCode}): ${stderr}`);
   return JSON.parse(stdout.trim().split("\n").at(-1)!);
 }

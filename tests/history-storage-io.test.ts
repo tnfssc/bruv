@@ -1,3 +1,4 @@
+import { run as runProcess } from "./helpers";
 import { afterEach, describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -140,17 +141,14 @@ test("short writes", () => {
 });
 `,
     );
-    const child = Bun.spawn([Bun.which("bun")!, "test", script], {
+    const {
+      stdout,
+      stderr,
+      code: exitCode,
+    } = await runProcess([Bun.which("bun")!, "test", script], {
       cwd: join(import.meta.dir, ".."),
       env: { ...process.env, SHORT_WRITE_PATH: path },
-      stdout: "pipe",
-      stderr: "pipe",
     });
-    const [stdout, stderr, exitCode] = await Promise.all([
-      new Response(child.stdout).text(),
-      new Response(child.stderr).text(),
-      child.exited,
-    ]);
     expect(exitCode, `short-write subprocess failed:\n${stdout}\n${stderr}`).toBe(0);
   });
   test("failed first-user publication rolls back the pending append and can be retried", async () => {
@@ -222,17 +220,14 @@ test("cleanup failure", () => {
 });
 `,
     );
-    const child = Bun.spawn([Bun.which("bun")!, "test", script], {
+    const {
+      stdout,
+      stderr,
+      code: exitCode,
+    } = await runProcess([Bun.which("bun")!, "test", script], {
       cwd: join(import.meta.dir, ".."),
       env: { ...process.env, CLEANUP_FAILURE_PATH: path },
-      stdout: "pipe",
-      stderr: "pipe",
     });
-    const [stdout, stderr, exitCode] = await Promise.all([
-      new Response(child.stdout).text(),
-      new Response(child.stderr).text(),
-      child.exited,
-    ]);
     expect(exitCode, `cleanup-failure subprocess failed:\n${stdout}\n${stderr}`).toBe(0);
   });
 

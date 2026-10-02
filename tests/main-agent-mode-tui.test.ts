@@ -2,22 +2,13 @@ import { expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
-import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 test("real TUI /mode reports and switches the root instruction mode", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-mode-pty-"));
   const socket = "bruv-mode-" + process.pid + "-" + Date.now();
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-  const quote = (value: string) => "'" + value.replaceAll("'", "'\''") + "'";
-  async function frameContaining(text: string) {
-    let frame = "";
-    for (let attempt = 0; attempt < 80; attempt++) {
-      frame = (await tmux("capture-pane", "-p", "-t", "mode")).stdout;
-      if (frame.includes(text)) return frame;
-      await Bun.sleep(50);
-    }
-    throw new Error("Missing " + text + " in frame:\n" + frame);
-  }
+  const tmux = tmuxRunner(socket);
+  const frameContaining = (text: string) => waitForText(async () => (await capturePane(tmux, "mode")).stdout, text, 80);
   async function command(value: string) {
     await tmux("send-keys", "-t", "mode", "-l", value);
     await Bun.sleep(100);

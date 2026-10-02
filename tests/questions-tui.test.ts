@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { QuestionService } from "../src/questions/service";
 import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 const hasTmux = (await run(["sh", "-c", "command -v tmux >/dev/null"])).code === 0;
 
 test.skipIf(!hasTmux)(
@@ -18,9 +19,9 @@ test.skipIf(!hasTmux)(
     const file = seed.getSessionFile()!;
     const service = new QuestionService();
     const ctx = { sessionManager: seed };
-    const quote = (v: string) => "'" + v.replaceAll("'", "'\''") + "'";
-    const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-    const frame = async () => (await tmux("capture-pane", "-p", "-t", name)).stdout;
+
+    const tmux = tmuxRunner(socket);
+    const frame = async () => (await capturePane(tmux, name)).stdout;
     const send = async (text: string) => {
       expect((await tmux("send-keys", "-t", name, "-l", text)).code).toBe(0);
       // tmux queues literal keys; wait until the composer has consumed them before Enter.
@@ -33,15 +34,7 @@ test.skipIf(!hasTmux)(
         if ((await frame()).includes(" " + text)) expect((await tmux("send-keys", "-t", name, "Enter")).code).toBe(0);
       }
     };
-    const until = async (text: string) => {
-      let value = "";
-      for (let i = 0; i < 100; i++) {
-        value = await frame();
-        if (value.includes(text)) return value;
-        await Bun.sleep(50);
-      }
-      throw new Error("Missing " + text + "\n" + value);
-    };
+    const until = (text: string) => waitForText(frame, text, 100, 50);
     try {
       await writeFile(file, [seed.getHeader(), ...seed.getEntries()].map((v) => JSON.stringify(v)).join("\n") + "\n");
       const q = await service.ask(ctx, {

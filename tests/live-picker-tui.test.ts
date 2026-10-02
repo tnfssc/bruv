@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 import { waitForLiveTuiStartup } from "./live-tui-startup";
 
 // Real source CLI and Pi renderer; fake only credentials/config and forbidden I/O.
@@ -11,18 +11,9 @@ for (const width of [80, 120])
     const home = await mkdtemp(join(tmpdir(), "bruv-picker-tui-"));
     const root = resolve(import.meta.dir, "..");
     const socket = "bruv-picker-" + process.pid + "-" + width;
-    const tmux = (...args: string[]) =>
-      run([Bun.which("tmux") ?? "/usr/bin/tmux", "-L", socket, "-f", join(home, "tmux.conf"), ...args]);
-    const frame = async () => (await tmux("capture-pane", "-p", "-t", "picker")).stdout;
-    const until = async (expected: string | string[]) => {
-      const texts = Array.isArray(expected) ? expected : [expected];
-      for (let n = 0; n < 100; n++) {
-        const value = await frame();
-        if (texts.every((text) => value.includes(text))) return value;
-        await Bun.sleep(80);
-      }
-      throw new Error("Missing " + texts.join(", ") + " in actual terminal:\n" + (await frame()));
-    };
+    const tmux = tmuxRunner(socket, join(home, "tmux.conf"), Bun.which("tmux") ?? "/usr/bin/tmux");
+    const frame = async () => (await capturePane(tmux, "picker")).stdout;
+    const until = (text: string | string[]) => waitForText(frame, text, 100, 80);
     const send = async (text: string, expected: string) => {
       await tmux("send-keys", "-t", "picker", "-l", text);
       await Bun.sleep(120);
@@ -30,7 +21,7 @@ for (const width of [80, 120])
       await Bun.sleep(250);
       if (!(await frame()).includes(expected)) await tmux("send-keys", "-t", "picker", "Enter");
     };
-    const quote = (v: string) => "'" + v.replaceAll("'", "'\\''") + "'";
+
     try {
       const { version } = await Bun.file(join(root, "package.json")).json();
       const themeDir = join(home, ".bruv/runtime", version, "dist/modes/interactive");

@@ -3,20 +3,20 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { IDLE_PROMPT_ICON } from "../src/ui/editor";
-import { run } from "./helpers";
+import { capturePane, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 for (const mode of ["fullscreen", "regular"] as const) {
   test("real terminal prompt/footer adjacency: " + mode, async () => {
     const home = await mkdtemp(join(tmpdir(), "bruv-editor-spacing-"));
     const socket = "bruv-spacing-" + mode + "-" + process.pid + "-" + Date.now();
     const artifactDir = resolve(import.meta.dir, "../artifacts/tui", socket);
-    const tmux = (...args: string[]) => run(["tmux", "-L", socket, "-f", join(home, "tmux.conf"), ...args]);
-    const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
+    const tmux = tmuxRunner(socket, join(home, "tmux.conf"));
+
     const frames: Record<string, string> = {};
     async function frameWhen(predicate: (lines: string[]) => boolean): Promise<string[]> {
       let lines: string[] = [];
       for (let attempt = 0; attempt < 100; attempt++) {
-        const capture = await tmux("capture-pane", "-p", "-t", "spacing");
+        const capture = await capturePane(tmux, "spacing");
         expect(capture.code).toBe(0);
         lines = capture.stdout
           .replace(/\n$/, "")

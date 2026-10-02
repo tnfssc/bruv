@@ -4,7 +4,7 @@ import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { prepareAgentSession } from "../src/tasks/agent-session";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { run } from "./helpers";
+import { capturePane, pollFrame, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 test("real TUI /ps selects live jobs and only stops the confirmed target", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-ps-tui-")),
@@ -92,9 +92,8 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
   );
   const socket = "bruv-ps-" + process.pid + "-" + Date.now(),
     name = "ps";
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-  const quote = (v: string) => "'" + v.replaceAll("'", "'\''") + "'";
-  const capture = async () => (await tmux("capture-pane", "-p", "-t", name)).stdout;
+  const tmux = tmuxRunner(socket);
+  const capture = async () => (await capturePane(tmux, name)).stdout;
   try {
     const binary = resolve(import.meta.dir, "../dist/bruv"),
       launch = [
@@ -146,19 +145,11 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     expect(requests).toBe(0);
     await tmux("send-keys", "-t", name, "-l", "start");
     await tmux("send-keys", "-t", name, "Enter");
-    for (let i = 0; i < 120; i++) {
-      frame = await capture();
-      if (frame.includes("FIXTURE_READY")) break;
-      await Bun.sleep(50);
-    }
+    frame = await pollFrame(capture, (frame) => frame.includes("FIXTURE_READY"), 120);
     expect(frame).toContain("FIXTURE_READY");
     await tmux("send-keys", "-t", name, "-l", "/ps");
     await tmux("send-keys", "-t", name, "Enter");
-    for (let i = 0; i < 100; i++) {
-      frame = await capture();
-      if (frame.includes("ALPHA") && frame.includes("BETA")) break;
-      await Bun.sleep(50);
-    }
+    frame = await pollFrame(capture, (frame) => frame.includes("ALPHA") && frame.includes("BETA"), 100);
     expect(frame).toContain("ALPHA");
     expect(frame).toContain("BETA");
     await tmux("send-keys", "-t", name, "Enter");
@@ -212,9 +203,9 @@ test("real TUI /resume selects a durable child and requires explicit confirmatio
   });
   const socket = "bruv-resume-" + process.pid + "-" + Date.now(),
     name = "resume";
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-  const quote = (v: string) => "'" + v.replaceAll("'", "'\''") + "'";
-  const capture = async () => (await tmux("capture-pane", "-p", "-t", name)).stdout;
+  const tmux = tmuxRunner(socket);
+
+  const capture = async () => (await capturePane(tmux, name)).stdout;
   try {
     const binary = resolve(import.meta.dir, "../dist/bruv");
     const launch = [
@@ -230,27 +221,14 @@ test("real TUI /resume selects a durable child and requires explicit confirmatio
       .map(quote)
       .join(" ");
     expect((await tmux("new-session", "-d", "-s", name, "-x", "100", "-y", "30", "-c", home, launch)).code).toBe(0);
-    let frame = "";
-    for (let i = 0; i < 100; i++) {
-      frame = await capture();
-      if (frame.includes("/model")) break;
-      await Bun.sleep(50);
-    }
+    let frame = await pollFrame(capture, (frame) => frame.includes("/model"), 100);
     await tmux("send-keys", "-t", name, "-l", "/resume");
     await tmux("send-keys", "-t", name, "Enter");
-    for (let i = 0; i < 100; i++) {
-      frame = await capture();
-      if (frame.includes("worker") && frame.includes("fast")) break;
-      await Bun.sleep(50);
-    }
+    frame = await pollFrame(capture, (frame) => frame.includes("worker") && frame.includes("fast"), 100);
     expect(frame).toContain("worker");
     expect(frame).toContain("fast");
     await tmux("send-keys", "-t", name, "Enter");
-    for (let i = 0; i < 100; i++) {
-      frame = await capture();
-      if (frame.includes("Enter worker child (fast) session?")) break;
-      await Bun.sleep(50);
-    }
+    frame = await pollFrame(capture, (frame) => frame.includes("Enter worker child (fast) session?"), 100);
     expect(frame).toContain("Enter worker child (fast) session?");
     expect(frame).toContain(child.id);
     await tmux("send-keys", "-t", name, "Down", "Enter");

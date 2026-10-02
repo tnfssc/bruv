@@ -5,6 +5,7 @@ import { join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { QuestionService } from "../src/questions/service";
 import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 const hasTmux = (await run(["sh", "-c", "command -v tmux >/dev/null"])).code === 0;
 test.skipIf(!hasTmux)(
@@ -17,23 +18,15 @@ test.skipIf(!hasTmux)(
     const file = session.getSessionFile()!;
     const service = new QuestionService();
     const ctx = { sessionManager: session };
-    const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
+    const tmux = tmuxRunner(socket);
     const key = async (...keys: string[]) => {
       expect((await tmux("send-keys", "-t", "q", ...keys)).code).toBe(0);
     };
     const type = async (text: string) => {
       expect((await tmux("send-keys", "-t", "q", "-l", text)).code).toBe(0);
     };
-    const frame = async () => (await tmux("capture-pane", "-p", "-t", "q")).stdout;
-    const until = async (marker: string) => {
-      let f = "";
-      for (let i = 0; i < 100; i++) {
-        f = await frame();
-        if (f.includes(marker)) return f;
-        await Bun.sleep(60);
-      }
-      throw new Error("Missing " + marker + "\n" + f);
-    };
+    const frame = async () => (await capturePane(tmux, "q")).stdout;
+    const until = (text: string) => waitForText(frame, text, 100, 60);
     const launch = [
       "env",
       "-u",
@@ -52,7 +45,7 @@ test.skipIf(!hasTmux)(
       "--model",
       "gpt-4o",
     ]
-      .map((v) => "'" + v.replaceAll("'", "'\''") + "'")
+      .map(quote)
       .join(" ");
     try {
       await writeFile(

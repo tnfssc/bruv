@@ -3,16 +3,16 @@ import { mkdtemp, mkdir, rm, symlink, writeFile, readFile } from "node:fs/promis
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { run } from "./helpers";
+import { capturePane, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 import { waitForLiveTuiStartup } from "./live-tui-startup";
 
 test("real tmux Pi renderer shows a delegated spoken user turn without transport dump", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-spoken-tui-"));
   const root = resolve(import.meta.dir, "..");
   const socket = "bruv-spoken-" + process.pid;
-  const tmux = (...args: string[]) =>
-    run([Bun.which("tmux") ?? "/usr/bin/tmux", "-L", socket, "-f", join(home, "tmux.conf"), ...args]);
-  const frame = async () => (await tmux("capture-pane", "-p", "-t", "spoken")).stdout;
-  const quote = (v: string) => "'" + v.replaceAll("'", "'\''") + "'";
+  const tmux = tmuxRunner(socket, join(home, "tmux.conf"), Bun.which("tmux") ?? "/usr/bin/tmux");
+  const frame = async () => (await capturePane(tmux, "spoken")).stdout;
+
   try {
     // Source CLI needs the generated local runtime assets even when run as a standalone test.
     expect((await run([process.execPath, join(root, "scripts/prepare-assets.ts")], { cwd: root })).code).toBe(0);

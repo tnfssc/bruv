@@ -4,6 +4,7 @@ import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { run } from "./helpers";
+import { capturePane, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 const hasTmux = (await run(["sh", "-c", "command -v tmux >/dev/null"])).code === 0;
 
@@ -15,9 +16,8 @@ test.skipIf(!hasTmux)(
     const name = "goal";
     const seed = SessionManager.create(home, join(home, "sessions"));
     const sessionFile = seed.getSessionFile()!;
-    const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-    const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
-    const capture = () => tmux("capture-pane", "-p", "-S", "-", "-t", name);
+    const tmux = tmuxRunner(socket);
+    const capture = () => capturePane(tmux, name, true);
 
     try {
       await writeFile(sessionFile, JSON.stringify(seed.getHeader()) + "\n", { flag: "wx" });

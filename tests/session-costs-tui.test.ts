@@ -3,22 +3,14 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
-import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 test("real footer includes nested costs, updates while idle, and restores on resume", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-cost-pty-"));
   const socket = "bruv-cost-" + process.pid + "-" + Date.now();
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-  const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
-  async function frameContaining(text: string) {
-    let frame = "";
-    for (let attempt = 0; attempt < 100; attempt++) {
-      frame = (await tmux("capture-pane", "-p", "-t", "cost")).stdout;
-      if (frame.includes(text)) return frame;
-      await Bun.sleep(50);
-    }
-    throw new Error("Missing " + text + " in frame:\n" + frame);
-  }
+  const tmux = tmuxRunner(socket);
+  const frameContaining = (text: string) =>
+    waitForText(async () => (await capturePane(tmux, "cost")).stdout, text, 100);
   const append = (session: SessionManager, cost: number) =>
     session.appendMessage({
       role: "assistant",

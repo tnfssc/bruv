@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 import { waitForLiveTuiStartup } from "./live-tui-startup";
 
 // Actual Pi interactive renderer in a tmux PTY, with a fake GPT stream and fake audio.
@@ -10,17 +10,10 @@ test("GPT streaming keeps passive JSON in history but renders only the bounded L
   const dir = await mkdtemp(join(tmpdir(), "bruv-gpt-tui-"));
   const socket = "bruv-gpt-tui-" + process.pid + "-" + Date.now();
   const root = resolve(import.meta.dir, "..");
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, "-f", join(root, "scripts/tmux.conf"), ...args]);
-  const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
-  const frame = async () => (await tmux("capture-pane", "-p", "-S", "-", "-t", "gpt")).stdout;
-  const until = async (texts: string[]) => {
-    for (let n = 0; n < 80; n++) {
-      const value = await frame();
-      if (texts.every((text) => value.includes(text))) return value;
-      await Bun.sleep(100);
-    }
-    throw new Error("No " + texts.join(", ") + " in actual terminal:\n" + (await frame()));
-  };
+  const tmux = tmuxRunner(socket, join(root, "scripts/tmux.conf"));
+
+  const frame = async () => (await capturePane(tmux, "gpt", true)).stdout;
+  const until = (text: string[]) => waitForText(frame, text, 80, 100);
   try {
     const { version } = await Bun.file(join(root, "package.json")).json();
     const themeDir = join(dir, ".bruv/runtime", version, "dist/modes/interactive");

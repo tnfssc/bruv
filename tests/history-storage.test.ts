@@ -1,3 +1,4 @@
+import { run as runProcess } from "./helpers";
 import { afterEach, describe, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -60,17 +61,14 @@ console.log(JSON.stringify(result));
 `;
 
 async function runScenario(root: string, adapted: boolean) {
-  const child = Bun.spawn([process.execPath, "-e", scenario], {
+  const {
+    stdout,
+    stderr,
+    code: exitCode,
+  } = await runProcess([process.execPath, "-e", scenario], {
     cwd: join(import.meta.dir, ".."),
     env: { ...process.env, SCENARIO_ROOT: root, USE_DISK_HISTORY: adapted ? "1" : "0" },
-    stdout: "pipe",
-    stderr: "pipe",
   });
-  const [stdout, stderr, exitCode] = await Promise.all([
-    new Response(child.stdout).text(),
-    new Response(child.stderr).text(),
-    child.exited,
-  ]);
   if (exitCode !== 0) throw new Error(`scenario failed (${exitCode}): ${stderr}`);
   return JSON.parse(stdout.trim().split("\n").at(-1)!);
 }
@@ -121,17 +119,14 @@ const compaction = manager.getEntry(compactionId);
 const contextText = JSON.stringify(manager.buildSessionContext().messages);
 console.log(JSON.stringify({ originalSurvived: originalEntry.message.content === original, referenceSurvived: compaction.firstKeptEntryId === keptId, rewrittenDetailsSurvived: compaction.details?.strategy === "cache-affine-plaintext" && compaction.details?.rewritten === true, summary: contextText.includes("tiny summary"), kept: contextText.includes("kept tail"), after: contextText.includes("after compaction"), omittedOriginal: !contextText.includes("ORIGINAL-EVIDENCE"), fileSize: statSync(file).size, originalLength: original.length }));
 `;
-    const child = Bun.spawn([process.execPath, "-e", compactScenario], {
+    const {
+      stdout,
+      stderr,
+      code: exitCode,
+    } = await runProcess([process.execPath, "-e", compactScenario], {
       cwd: join(import.meta.dir, ".."),
       env: { ...process.env, SCENARIO_ROOT: root },
-      stdout: "pipe",
-      stderr: "pipe",
     });
-    const [stdout, stderr, exitCode] = await Promise.all([
-      new Response(child.stdout).text(),
-      new Response(child.stderr).text(),
-      child.exited,
-    ]);
     if (exitCode !== 0) throw new Error(`compaction scenario failed (${exitCode}): ${stderr}`);
     const result = JSON.parse(stdout.trim().split("\n").at(-1)!);
     expect(result).toMatchObject({

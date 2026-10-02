@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 test("quiet startup hides Pi promotion and skill inventory without disabling skills or warnings", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-startup-pty-"));
@@ -13,19 +13,11 @@ test("quiet startup hides Pi promotion and skill inventory without disabling ski
     resolve(import.meta.dir, "../artifacts/tui"),
     `quiet-startup-${new Date().toISOString().replaceAll(":", "-")}`,
   );
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-  const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
-  const capture = (history = false) => tmux("capture-pane", "-p", "-t", session, ...(history ? ["-S", "-"] : []));
+  const tmux = tmuxRunner(socket);
+  const capture = (history = false) => capturePane(tmux, session, history);
 
-  async function frameContaining(text: string, history = false): Promise<string> {
-    let frame = "";
-    for (let attempt = 0; attempt < 100; attempt++) {
-      frame = (await capture(history)).stdout;
-      if (frame.includes(text)) return frame;
-      await Bun.sleep(50);
-    }
-    throw new Error(`Missing ${text} in frame:\n${frame}`);
-  }
+  const frameContaining = (text: string, history = false) =>
+    waitForText(async () => (await capture(history)).stdout, text);
 
   let startupFrame = "";
   let autocompleteFrame = "";
@@ -111,7 +103,7 @@ for (const mode of ["default fullscreen", "regular"] as const) {
         resolve(import.meta.dir, "../artifacts/tui"),
         `first-paint-${mode.replaceAll(" ", "-")}-` + new Date().toISOString().replaceAll(":", "-"),
       );
-      const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
+
       const launch = [
         "env",
         "HOME=" + home,

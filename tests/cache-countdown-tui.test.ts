@@ -2,24 +2,15 @@ import { expect, test } from "bun:test";
 import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 test("real PTY shows unknown estimate and /cache-ttl persists a validated value", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-cache-pty-"));
   const socket = "bruv-cache-" + process.pid + "-" + Date.now(),
     session = "cache";
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-  const quote = (v: string) => "'" + v.replaceAll("'", "'\''") + "'";
-  const capture = () => tmux("capture-pane", "-p", "-t", session, "-S", "-");
-  async function waitFor(text: string) {
-    let frame = "";
-    for (let i = 0; i < 100; i++) {
-      frame = (await capture()).stdout;
-      if (frame.includes(text)) return frame;
-      await Bun.sleep(50);
-    }
-    throw Error("Missing " + text + " in:\n" + frame);
-  }
+  const tmux = tmuxRunner(socket);
+  const capture = () => capturePane(tmux, session, true);
+  const waitFor = (text: string) => waitForText(async () => (await capture()).stdout, text);
   try {
     const binary = resolve(import.meta.dir, "../dist/bruv");
     const launch = [

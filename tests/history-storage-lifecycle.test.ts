@@ -1,3 +1,4 @@
+import { run as runProcess } from "./helpers";
 import { expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -6,7 +7,7 @@ import { join } from "node:path";
 test("owned SDK lifecycle keeps rewrite bodies, sorted trees, migrations, paths and discovery isolation", async () => {
   const root = await mkdtemp(join(tmpdir(), "bruv-history-lifecycle-"));
   try {
-    const child = Bun.spawn(
+    const { stdout, stderr, code } = await runProcess(
       [
         process.execPath,
         "-e",
@@ -96,13 +97,8 @@ test("owned SDK lifecycle keeps rewrite bodies, sorted trees, migrations, paths 
       console.log("ok");
     `,
       ],
-      { cwd: join(import.meta.dir, ".."), env: { ...process.env, PROBE_ROOT: root }, stdout: "pipe", stderr: "pipe" },
+      { cwd: join(import.meta.dir, ".."), env: { ...process.env, PROBE_ROOT: root } },
     );
-    const [code, stdout, stderr] = await Promise.all([
-      child.exited,
-      new Response(child.stdout).text(),
-      new Response(child.stderr).text(),
-    ]);
     expect({ code, stderr }).toEqual({ code: 0, stderr: "" });
     expect(stdout.trim()).toBe("ok");
   } finally {

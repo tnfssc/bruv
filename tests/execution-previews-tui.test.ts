@@ -4,7 +4,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
-import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 const usage = {
   input: 0,
@@ -18,18 +18,11 @@ const usage = {
 test("real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-preview-pty-"));
   const socket = "bruv-preview-" + process.pid + "-" + Date.now();
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
+  const tmux = tmuxRunner(socket);
   const key = (...keys: string[]) => tmux("send-keys", "-t", "preview", ...keys);
-  const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
-  async function frameContaining(text: string, history = false) {
-    let frame = "";
-    for (let attempt = 0; attempt < 80; attempt++) {
-      frame = (await tmux("capture-pane", "-p", "-t", "preview", ...(history ? ["-S", "-"] : []))).stdout;
-      if (frame.includes(text)) return frame;
-      await Bun.sleep(50);
-    }
-    throw new Error("Missing " + text + " in frame:\n" + frame);
-  }
+
+  const frameContaining = (text: string, history = false) =>
+    waitForText(async () => (await capturePane(tmux, "preview", history)).stdout, text, 80);
   try {
     const session = SessionManager.create(home, join(home, "sessions"));
     session.appendMessage({ role: "user", content: "Preview fixture", timestamp: Date.now() });

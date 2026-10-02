@@ -2,22 +2,14 @@ import { test, expect } from "bun:test";
 import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { run } from "./helpers";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 test("real TUI searches profile models, keeps selection, and saves", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-profile-pty-"));
   const socket = "bruv-profiles-" + process.pid + "-" + Date.now();
-  const tmux = (...args: string[]) => run(["tmux", "-L", socket, ...args]);
-  const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
-  async function frameContaining(text: string) {
-    let frame = "";
-    for (let attempt = 0; attempt < 80; attempt++) {
-      frame = (await tmux("capture-pane", "-p", "-t", "profiles")).stdout;
-      if (frame.includes(text)) return frame;
-      await Bun.sleep(50);
-    }
-    throw new Error("Missing " + text + " in frame:\n" + frame);
-  }
+  const tmux = tmuxRunner(socket);
+  const frameContaining = (text: string) =>
+    waitForText(async () => (await capturePane(tmux, "profiles")).stdout, text, 80);
   const key = (...keys: string[]) => tmux("send-keys", "-t", "profiles", ...keys);
   try {
     const binary = resolve(import.meta.dir, "../dist/bruv");
