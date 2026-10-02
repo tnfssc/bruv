@@ -2,12 +2,19 @@
 // started after a fresh dependency checkout must prepare assets/adaptation first.
 import * as piMain from "../node_modules/@earendil-works/pi-coding-agent/dist/main.js";
 import * as piArgs from "../node_modules/@earendil-works/pi-coding-agent/dist/cli/args.js";
+import * as piChatViewport from "../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/chat-viewport.js";
 import { builtInExtensions } from "../node_modules/@earendil-works/pi-coding-agent/dist/extensions/index.js";
 
 export function assertBruvPiHost(
-  state: { mainPrepared?: boolean; argsPrepared?: boolean; builtInNames: (string | undefined)[] } = {
+  state: {
+    mainPrepared?: boolean;
+    argsPrepared?: boolean;
+    viewportPrepared?: boolean;
+    builtInNames: (string | undefined)[];
+  } = {
     mainPrepared: (piMain as typeof piMain & { bruvHostAdapted?: boolean }).bruvHostAdapted,
     argsPrepared: (piArgs as typeof piArgs & { bruvHostAdapted?: boolean }).bruvHostAdapted,
+    viewportPrepared: (piChatViewport as typeof piChatViewport & { bruvHostAdapted?: boolean }).bruvHostAdapted,
     builtInNames: builtInExtensions.map((extension) => extension.name),
   },
 ): void {
@@ -16,6 +23,7 @@ export function assertBruvPiHost(
   if (
     !state.mainPrepared ||
     !state.argsPrepared ||
+    !state.viewportPrepared ||
     state.builtInNames.length !== 1 ||
     state.builtInNames[0] !== "llama.cpp"
   ) {
