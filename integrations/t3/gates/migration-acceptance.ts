@@ -7,9 +7,9 @@ import { dirname, join, resolve } from "node:path";
 import sourcePin from "../upstream/source.json";
 import { verifyWebSource } from "../build/verify-source";
 
-const PRODUCTION_REVISION = "a9b49a7df0a4261dcc438d4493cc3154a1d9819e";
-const PRODUCTION_PATCH_COMMIT = "c6fe280";
-const PRODUCTION_PATCH_SHA256 = "4d73cc3cdc4ad8962358d61bd31d178d3e47b346819bb2562d0b0d590c85ec02";
+const PRODUCTION_REVISION = "b488c57f3f9f1688e31c53daee99e29dd1d0baa2";
+const PRODUCTION_PATCH_COMMIT = "92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be";
+const PRODUCTION_PATCH_PATH = "integrations/t3/upstream/bruv.patch";
 const ROOT = resolve(import.meta.dir, "../../..");
 const PRODUCTION = resolve(
   process.env.T3_V2_MIGRATION_PRODUCTION ?? resolve(ROOT, `.cache/bruv-t3code-${PRODUCTION_REVISION}`),
@@ -77,11 +77,10 @@ const productionRunner = join(PRODUCTION, "apps/server/src", `.bruv-current-prod
 const previewRunner = join(PREVIEW, "apps/server/src", `.bruv-preview-migration-${suffix}.ts`);
 const state = join(temporary, "state");
 try {
-  if (!suppliedProductionPatch) {
-    const bytes = git(ROOT, ["show", `${PRODUCTION_PATCH_COMMIT}:web/t3.patch`], null) as Buffer;
-    await writeFile(productionPatch, bytes);
-  }
-  if (sha256(await Bun.file(productionPatch).bytes()) !== PRODUCTION_PATCH_SHA256)
+  // Anchor even an explicitly supplied patch to the actual shipped root commit.
+  const canonicalProductionPatch = git(ROOT, ["show", `${PRODUCTION_PATCH_COMMIT}:${PRODUCTION_PATCH_PATH}`], null) as Buffer;
+  if (!suppliedProductionPatch) await writeFile(productionPatch, canonicalProductionPatch);
+  if (sha256(await Bun.file(productionPatch).bytes()) !== sha256(canonicalProductionPatch))
     throw new Error("current-production canonical patch hash mismatch");
   const previewManifest = (await Bun.file(resolve(ROOT, "integrations/t3/upstream/source.json")).json()) as {
     revision: string;

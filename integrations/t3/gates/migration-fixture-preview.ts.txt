@@ -32,12 +32,22 @@ const observed = await Effect.runPromise(Effect.gen(function* () {
   const projection = yield* projections.getThreadProjection(threadId);
   const usage = nativeThreadUsageReport(threadId, [projection]);
   const migration = Number((yield* sql`SELECT MAX(migration_id) AS id FROM effect_sql_migrations`)[0]?.id);
+  const migrationLedger = yield* sql`SELECT migration_id AS id, name FROM effect_sql_migrations WHERE migration_id >= 53 ORDER BY migration_id`;
   const eventCount = Number((yield* sql`SELECT COUNT(*) AS count FROM orchestration_events WHERE application_event_version = 2`)[0]?.count);
-  return { projection, usage, migration, eventCount };
+  return { projection, usage, migration, migrationLedger, eventCount };
 }).pipe(Effect.provide(runtime)));
 
 const { projection, usage } = observed;
-assert.equal(observed.migration, 54);
+assert.equal(fixture.productionRevision, "b488c57f3f9f1688e31c53daee99e29dd1d0baa2");
+assert.equal(fixture.migration, 54);
+assert.equal(fixture.eventCount, 13);
+assert.equal(observed.migration, 56);
+assert.deepEqual(observed.migrationLedger, [
+  { id: 53, name: "PullRequestFilesViewed" },
+  { id: 54, name: "ProjectionThreadsAutoSettleDisabledAt" },
+  { id: 55, name: "OrchestrationV2" },
+  { id: 56, name: "RemoveRedundantProjectionIndexes" },
+]);
 assert.equal(observed.eventCount, fixture.eventCount);
 assert.equal(projection.thread.id, threadId);
 assert.equal(projection.thread.title, "Current production native migration fixture");
@@ -92,7 +102,7 @@ assert.deepEqual(settings.usagePriceOverrides["gpt-5.4"], { inputCostPerMillionT
 assert.equal(sha256(settingsPath), settingsHashBefore);
 assert.equal(sha256(settingsPath), fixture.settingsSha256);
 const semantic = {
-  migration: observed.migration, eventCount: observed.eventCount,
+  migration: observed.migration, migrationLedger: observed.migrationLedger, eventCount: observed.eventCount,
   graph: { thread: projection.thread.id, runs: projection.runs.map((run) => run.id), nodes: projection.nodes.map((node) => node.id), jobs: projection.subagents.map((job) => job.id) },
   provider: { sessions: projection.providerSessions.map((session) => session.id), threads: projection.providerThreads.map((thread) => thread.id), turns: projection.providerTurns.map((turn) => turn.id) },
   history: projection.messages.map((message) => [message.role, message.text]), usage: usage.own,

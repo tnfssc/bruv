@@ -242,10 +242,11 @@ let migration: unknown;
 try {
   migration = check.prepare("SELECT MAX(migration_id) AS id FROM effect_sql_migrations").get()?.id;
   assert.equal(migration, 54);
+  assert.equal(check.prepare("SELECT name FROM effect_sql_migrations WHERE migration_id = 54").get()?.name, "OrchestrationV2");
   assert.equal(check.prepare("SELECT COUNT(*) AS count FROM orchestration_events WHERE application_event_version = 2").get()?.count, 13);
 } finally { check.close(); }
 const manifest = {
-  productionRevision: "a9b49a7df0a4261dcc438d4493cc3154a1d9819e",
+  productionRevision: "b488c57f3f9f1688e31c53daee99e29dd1d0baa2",
   migration, eventCount: result.eventCount, lastSequence: result.lastSequence,
   databaseSha256: sha256(databasePath), settingsSha256: sha256(settingsPath),
 };
