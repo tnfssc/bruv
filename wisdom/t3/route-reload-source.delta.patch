@@ -1,0 +1,141 @@
+diff --git a/apps/web/src/components/ThreadRouteView.tsx b/apps/web/src/components/ThreadRouteView.tsx
+index d8a9eb1964fd3e60528a6e90b88887172cafddb4..0ca71466df01be3267d375cad6c3f4b7b7f0a397 100644
+--- a/apps/web/src/components/ThreadRouteView.tsx
++++ b/apps/web/src/components/ThreadRouteView.tsx
+@@ -72,7 +72,6 @@ export function ThreadRouteView({ target }: { target: ThreadRouteTarget }) {
+   );
+   const serverThreadShell = serverThread;
+   const environmentThreadRefs = useEnvironmentThreadRefs(serverThreadRef?.environmentId ?? null);
+-  const bootstrapComplete = shell.data?.snapshot._tag === "Some";
+   const draftThread = useComposerDraftStore((store) =>
+     serverThreadRef ? store.getDraftThreadByRef(serverThreadRef) : null,
+   );
+@@ -99,7 +98,7 @@ export function ThreadRouteView({ target }: { target: ThreadRouteTarget }) {
+     serverThreadRef ? store.hasDraftThreadsInEnvironment(serverThreadRef.environmentId) : false,
+   );
+   const renderState = resolveThreadRouteRenderState({
+-    bootstrapComplete,
++    shellStatus: shell.data?.status,
+     serverThreadExists: serverThreadShell !== null,
+     serverThreadDeleted: serverThreadShell?.deletedAt != null,
+     draftThreadExists: draftThread !== null,
+@@ -142,7 +141,7 @@ export function ThreadRouteView({ target }: { target: ThreadRouteTarget }) {
+   }, [canonicalThreadRef, draftSession, navigate, target.kind]);
+ 
+   useEffect(() => {
+-    if (target.kind !== "server" || !bootstrapComplete) {
++    if (target.kind !== "server") {
+       return;
+     }
+     // Navigation already resolved onto this path, so a drop aimed here
+@@ -155,7 +154,7 @@ export function ThreadRouteView({ target }: { target: ThreadRouteTarget }) {
+         void navigate({ to: "/", replace: true });
+       }
+     }
+-  }, [bootstrapComplete, environmentHasAnyThreads, navigate, renderState, target]);
++  }, [environmentHasAnyThreads, navigate, renderState, target]);
+ 
+   useEffect(() => {
+     if (target.kind !== "server" || !serverThreadStarted || !draftThread) {
+diff --git a/apps/web/src/threadRoutes.test.ts b/apps/web/src/threadRoutes.test.ts
+index 34380d12668914e42043103e932dffdc5d1a5687..7028e6b2c8c49000a24ef439b8e312defa0dc8a8 100644
+--- a/apps/web/src/threadRoutes.test.ts
++++ b/apps/web/src/threadRoutes.test.ts
+@@ -97,7 +97,7 @@ describe("threadRoutes", () => {
+   it("renders authoritative server-thread shells when bootstrap is complete", () => {
+     expect(
+       resolveThreadRouteRenderState({
+-        bootstrapComplete: true,
++        shellStatus: "live",
+         serverThreadExists: true,
+         serverThreadDeleted: false,
+         draftThreadExists: false,
+@@ -108,7 +108,7 @@ describe("threadRoutes", () => {
+   it("renders server threads and local drafts when they are ready", () => {
+     expect(
+       resolveThreadRouteRenderState({
+-        bootstrapComplete: true,
++        shellStatus: "live",
+         serverThreadExists: true,
+         serverThreadDeleted: false,
+         draftThreadExists: false,
+@@ -116,7 +116,7 @@ describe("threadRoutes", () => {
+     ).toBe("ready");
+     expect(
+       resolveThreadRouteRenderState({
+-        bootstrapComplete: true,
++        shellStatus: "live",
+         serverThreadExists: false,
+         serverThreadDeleted: false,
+         draftThreadExists: true,
+@@ -127,7 +127,7 @@ describe("threadRoutes", () => {
+   it("distinguishes bootstrap loading from a missing thread", () => {
+     expect(
+       resolveThreadRouteRenderState({
+-        bootstrapComplete: false,
++        shellStatus: "empty",
+         serverThreadExists: false,
+         serverThreadDeleted: false,
+         draftThreadExists: false,
+@@ -135,7 +135,7 @@ describe("threadRoutes", () => {
+     ).toBe("loading");
+     expect(
+       resolveThreadRouteRenderState({
+-        bootstrapComplete: true,
++        shellStatus: "live",
+         serverThreadExists: false,
+         serverThreadDeleted: false,
+         draftThreadExists: false,
+@@ -143,10 +143,24 @@ describe("threadRoutes", () => {
+     ).toBe("missing");
+   });
+ 
++  it.each([undefined, "empty", "cached", "synchronizing"] as const)(
++    "does not redirect a thread absent from a %s shell",
++    (shellStatus) => {
++      expect(
++        resolveThreadRouteRenderState({
++          shellStatus,
++          serverThreadExists: false,
++          serverThreadDeleted: false,
++          draftThreadExists: false,
++        }),
++      ).toBe("loading");
++    },
++  );
++
+   it("redirects deleted server threads", () => {
+     expect(
+       resolveThreadRouteRenderState({
+-        bootstrapComplete: true,
++        shellStatus: "live",
+         serverThreadExists: true,
+         serverThreadDeleted: true,
+         draftThreadExists: false,
+diff --git a/apps/web/src/threadRoutes.ts b/apps/web/src/threadRoutes.ts
+index 8d6c036669c60a2e42f93cd63f0ad42e4af70277..ba14c8e30b9ae6477172366b4e907c44710f9ba5 100644
+--- a/apps/web/src/threadRoutes.ts
++++ b/apps/web/src/threadRoutes.ts
+@@ -1,4 +1,5 @@
+ import { scopeThreadRef } from "@t3tools/client-runtime/environment";
++import type { EnvironmentShellStatus } from "@t3tools/client-runtime/state/shell";
+ import type { EnvironmentId, ScopedThreadRef, ThreadId } from "@t3tools/contracts";
+ import type { DraftId } from "./composerDraftStore";
+ 
+@@ -21,12 +22,14 @@ type DraftThreadRouteState = {
+ export type ThreadRouteRenderState = "loading" | "ready" | "missing";
+ 
+ export function resolveThreadRouteRenderState(input: {
+-  bootstrapComplete: boolean;
++  shellStatus: EnvironmentShellStatus | undefined;
+   serverThreadExists: boolean;
+   serverThreadDeleted: boolean;
+   draftThreadExists: boolean;
+ }): ThreadRouteRenderState {
+-  if (!input.bootstrapComplete) {
++  // Cached snapshots can predate this thread. Only the synchronized live shell
++  // can establish that a canonical route is missing (and may be redirected).
++  if (input.shellStatus !== "live") {
+     return "loading";
+   }
+   if (input.draftThreadExists) {

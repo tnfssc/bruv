@@ -89,3 +89,82 @@ change was returned. Its test setup failed loading effect/Deferred; no red/green
 claim. Parent must apply its exact two-file commit diff to the final route source,
 run provider tests with that installed graph, regenerate canonical patch and
 validate combined compiled browser prompt/reload/restart and no warning.
+
+## Focused route reload fix (task_0dea6e78)
+
+Supersedes stopped task_5e045d3c for route reload only; provider advisory is owned
+separately. Root worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0dea6e78.
+Durable upstream source: /home/tnfssc/.bruv/worktrees/t3-route-0dea6e78, detached at
+66a91077f9abf6e171aad0ceab2519d7272f3ff3. Started with b08d229's reduced patch;
+t3-reduction-09a4f35b was not edited. Baseline source tree object (including added
+files): f62207d2e97b6ac97a8f755e15fb10049f04da82. Source stays uncommitted at the
+pin so maintained regenerate-patch.ts can verify/export it.
+
+Reduced compiled baseline reproduced in /var/tmp/bruv-route-baseline-ms8H6Y.
+Instrumented compiled browser reproduction: /var/tmp/bruv-route-diagnostic-jdMFDO.
+The missing-thread redirect ran with shell status `synchronizing`: snapshot sequence 3 held only the old empty bootstrap thread,
+not the settled conversation in SQLite. ThreadRouteView treated any Some
+snapshot as bootstrapComplete, redirected to `/`, then EventRouter selected the
+bootstrap thread. This is not server history loss.
+
+Fix: route render-state resolver consumes the existing shell status. Only `live`
+can resolve a missing/deleted server thread and trigger navigation. Existing
+cached threads still render during loading. No timers, cache persistence changes,
+backend changes, or provider policy changes. Regression adds the observed cached
+and synchronizing states (plus empty/uninitialized) to existing route tests.
+
+Upstream source-only delta against b08d229 reduced baseline:
+`wisdom/t3/route-reload-source.delta.patch` (three web source/test files). Apply
+this to a checkout with the reduced patch, combine the provider worker delta,
+then regenerate the canonical patch from that actual combined source. Do not
+apply our whole canonical patch on top of the separate provider fix.
+
+Harness worker: task_3da5f93e, branch
+`bruv/browser-reload-and-real-restart-probe-3da5f93e`, worktree
+`/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0dea6e78-5442693331ce-task_3da5f93e`.
+
+Validation: all 14 threadRoutes tests passed; web tsc --noEmit passed; production
+web build and chunk-startup verification passed. Canonical patch regenerated
+with integrations/t3/build/regenerate-patch.ts (which verifies the actual tree).
+Initial fast acceptance reused the unchanged reduced-baseline server payload.
+Then built the complete runtime from the verified fixed source with maintained
+`buildWeb({prepared:true})` (both server/web typechecks, web and server production
+bundles, deploy and portable dependency verification), and compiled with
+`scripts/build.ts --reuse-packed-web`. Full build log:
+/var/tmp/bruv-route-full-build.log. Embedded SOURCE.txt records the exact pin and
+canonical patch hash; no stale baseline metadata is shipped in the final binary.
+
+Compiled browser acceptance passed: /tmp/bruv-route-probe-J92FlX/proof.json;
+concise retained evidence and binary/patch hashes: route-reload-proof.json.
+Actual web process 2415530 exited, TCP listener closed, then new process 2417265
+served the same userdata on the same port. All three checkpoints (settled,
+page-reload, process-restart-reload) retained exact conversation URL, one prompt,
+one AUDIT_BROWSER_RESPONSE_TOOL_OK response, loopback/audit-b and normal mode.
+Real shell PID 2416886 returned AUDIT_TOOL_OUTCOME and wrote the private fixture
+file. Probe shutdown verified both processes/listeners gone; no paid/user data.
+Provider advisory still exists intentionally. Native-child/Stop combined browser
+acceptance belongs to parent; this probe makes no claim about it.
+
+Recipe (Bun 1.4.2, Linux; only private fixture directories):
+
+```sh
+BRUV_ROUTE_PROBE_BINARY="$PWD/dist/bruv" \
+BRUV_ROUTE_PROBE_PLAYWRIGHT=/absolute/path/to/playwright-core/index.mjs \
+BRUV_ROUTE_PROBE_CHROMIUM=/absolute/path/to/chrome \
+bun integrations/t3/upstream/browser-route-reload.probe.ts
+```
+
+Probe creates an isolated HOME, loopback model endpoint, browser session, Git
+workspace and SQLite userdata; keeps artifacts at its printed temporary path.
+Root branch: `bruv/fix-exact-conversation-reload-and-restar-0dea6e78`.
+No release, push, global install or version change.
+
+Source delta was applied to a temporary index of the reduced baseline and
+reconstructed fixed source tree c3a76c727c98af51e95543832b82c068616e9f6e exactly.
+Values unchanged: real compiled-path evidence and existing authoritative-history
+principles cover this fix; no new general rule is needed.
+
+Final fully rebuilt binary passed the committed probe again (all three
+checkpoints): /var/tmp/bruv-route-full-acceptance.log. Restart screenshot reviewed:
+conversation response, changed fixture file, Audit Beta and normal remain visible.
+The unrelated unsupported-Bruv advisory remains visible as expected.
