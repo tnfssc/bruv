@@ -1,5 +1,6 @@
 import { grantCapabilities, revokeCapability } from "../src/remote/services";
-import { test, expect } from "bun:test";
+import { test, expect, spyOn } from "bun:test";
+import * as fsPromises from "node:fs/promises";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -38,41 +39,72 @@ test("offline request survives reload, explicitly granted read and idempotent fe
     expect(await again.reply(reply)).toBe(true);
     expect(await again.execute(grant.id, "repo.read", "README.md", { requestId: request.id })).toBe("hello");
     expect(await again.pending()).toEqual([]);
-    expect(again.reply({ ...reply, value: "changed" })).rejects.toThrow("conflict");
-    expect(again.request(grant.id, "repo.read", "different", request.id)).rejects.toThrow("conflict");
+    await expect(again.reply({ ...reply, value: "changed" })).rejects.toThrow("conflict");
+    await expect(again.request(grant.id, "repo.read", "different", request.id)).rejects.toThrow("conflict");
   } finally {
     await f.clean();
   }
 });
-test("offline execute remains pending; abort, deadline, revoke and terminal fence", async () => {
-  const f = await fixture();
-  try {
-    const grant = await f.client.grant("task1", f.repo, ["repo.read"]);
-    await f.owner.acceptGrant(grant);
+test.each([0, 250])(
+  "offline execute remains pending; abort, deadline, revoke and terminal fence (fsync delay %i ms)",
+  async (delayMs) => {
+    const f = await fixture();
     const ac = new AbortController();
-    const promise = f.owner.execute(grant.id, "repo.read", "README.md", { signal: ac.signal });
-    await new Promise((r) => setTimeout(r, 100));
-    expect((await f.owner.pending()).length).toBe(1);
-    ac.abort();
-    await expect(promise).rejects.toThrow("cancelled");
-    expect(await f.owner.pending()).toEqual([]);
-    const request = await f.owner.request(grant.id, "repo.read", "README.md");
-    await expect(f.owner.awaitReply(request, { deadlineMs: 1 })).rejects.toThrow("deadline");
-    expect(await f.owner.pending()).toEqual([]);
-    const revokeRequest = await f.owner.request(grant.id, "repo.read", "README.md");
-    await f.owner.revoke(grant.id);
-    await expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow();
-    expect(await f.owner.reply({ requestId: request.id, grantId: grant.id, taskId: "task1", value: "fake" })).toBe(
-      false,
-    );
-    expect(f.owner.awaitReply(revokeRequest)).rejects.toThrow("revoked");
-    await f.owner.terminal();
-    expect(await f.owner.pending()).toEqual([]);
-    expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow();
-  } finally {
-    await f.clean();
-  }
-});
+    let promise: Promise<string> | undefined;
+    let restoreOpen = () => {};
+    try {
+      const grant = await f.client.grant("task1", f.repo, ["repo.read"]);
+      await f.owner.acceptGrant(grant);
+      const requestId = randomUUID();
+      let delayedSync = false;
+      if (delayMs) {
+        // Hold the real temp-file fsync beyond the old 100 ms assumption, without bypassing durability.
+        const open = fsPromises.open;
+        const slowOpen = spyOn(fsPromises, "open").mockImplementation(async (...args: Parameters<typeof open>) => {
+          const fd = await open(...args);
+          if (String(args[0]).includes("/requests/" + requestId + ".json.")) {
+            const sync = fd.sync.bind(fd);
+            fd.sync = async () => {
+              await Bun.sleep(delayMs);
+              await sync();
+              delayedSync = true;
+            };
+          }
+          return fd;
+        });
+        restoreOpen = () => slowOpen.mockRestore();
+      }
+      promise = f.owner.execute(grant.id, "repo.read", "README.md", { requestId, signal: ac.signal });
+      // Observe rejection immediately, even if a publication/assertion fails before the abort check.
+      void promise.catch(() => {});
+      // Same-ID requests are serialized and idempotent: this joins execute's durable publication.
+      await f.owner.request(grant.id, "repo.read", "README.md", requestId);
+      expect(delayedSync).toBe(delayMs > 0);
+      expect((await f.owner.pending()).length).toBe(1);
+      ac.abort();
+      await expect(promise).rejects.toThrow("cancelled");
+      expect(await f.owner.pending()).toEqual([]);
+      const request = await f.owner.request(grant.id, "repo.read", "README.md");
+      await expect(f.owner.awaitReply(request, { deadlineMs: 1 })).rejects.toThrow("deadline");
+      expect(await f.owner.pending()).toEqual([]);
+      const revokeRequest = await f.owner.request(grant.id, "repo.read", "README.md");
+      await f.owner.revoke(grant.id);
+      await expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow();
+      expect(await f.owner.reply({ requestId: request.id, grantId: grant.id, taskId: "task1", value: "fake" })).toBe(
+        false,
+      );
+      await expect(f.owner.awaitReply(revokeRequest)).rejects.toThrow("revoked");
+      await f.owner.terminal();
+      expect(await f.owner.pending()).toEqual([]);
+      await expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow();
+    } finally {
+      ac.abort();
+      await promise?.catch(() => {});
+      restoreOpen();
+      await f.clean();
+    }
+  },
+);
 test("sensitive paths denied, explicit skills and read-only git tools", async () => {
   const f = await fixture();
   try {
@@ -109,7 +141,7 @@ test("sensitive paths denied, explicit skills and read-only git tools", async ()
     await writeFile(join(f.repo, "file.txt"), "x".repeat(CAPABILITY_MAX_BYTES));
     expect((await f.client.serve(req("tool:git-diff", "file.txt"))).error).toContain("output exceeds limit");
     await f.client.revoke(grant.id);
-    expect(f.client.serve(req("skill:review", ""))).rejects.toThrow("grant");
+    await expect(f.client.serve(req("skill:review", ""))).rejects.toThrow("grant");
   } finally {
     await f.clean();
   }
