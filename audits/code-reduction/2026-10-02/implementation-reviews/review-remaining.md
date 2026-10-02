@@ -1,0 +1,18 @@
+# Independent remaining-scope regression review
+
+Compared `7fbab062ae6700c96bc20304b8bb3babe4ed3405` with `d80d7058a2f5481f067586fd7042fe2746cff4ae`. Read wisdom/values.md and the Live, remote, web and tooling implementation notes; did not read the large audit inventory. No source edits.
+
+## Findings
+
+**None: no material feature-preservation regression identified in the reviewed changes.** No minimal fix recommended.
+
+## Reviewed ownership seams
+
+- **Live:** companion-only branches were removed from the provider transports, while the ordinary main-owner execute path remains. Google and OpenAI models/commands remain available. The shared backend queue retains synchronous admission, branch/explicit-stop fences, admitted work after voice release, per-turn prompt reset, error routing and the single in-flight decrement/release check. Provider dispatch still rejects undispatched cancelled calls; dispatched work remains owned by execute.
+- **Remote:** capability file confinement remains unchanged; migrated assertions exercise ClientCapabilityStore/OwnerCapabilityMailbox, including identity/kind/input bounds, durable replay, abort/deadline/revoke/terminal fences and late-result suppression. Shared SSH preserves quoting, fixed control entrypoints, strict host checking, forwarding restrictions, response bounds and timeout/escalation. Durable JSON callers retain directory creation and cache bounds. Shared repository downloads retain each caller's byte/page bounds, identity/hash checks and workflow/receipt ownership. Root facets use the configured question service rather than a second delivery owner. Prepared repository launch remains gated by pinned human-owned source preparation.
+- **Web:** assessed the canonical patch against pinned upstream **66a91077f9abf6e171aad0ceab2519d7272f3ff3**, using the supplied owned patched source, not stale caches. Temporary comparison indexes applied both baseline and reviewed patches against that revision; the reviewed patch's indexed contents had **zero diff against the supplied source**. Compared actual resulting source changes. Deterministic IDs retain strict bounded legacy mappings (including die-v1); the dead ledger ACK listener is distinct from execute ACK. The Effect-native delegation walk preserves the credential issuer's trusted-edge, nearest-profile, depth, cycle, terminal/disposed and fail-closed checks. All **nine** original delivery cases remain in DelegatedCompletionDelivery with the local real WorkspacePaths/PlatformTestLayer variant. Request-context/tool-option/owned-task refactors do not expand authority.
+- **Tooling:** inspected extracted offline Docker/SSH and loopback RPC fixtures, web process/SSE helpers, study transport/callers, asset preparation, packed-web wrapper removal and TUI session checks. Offline environment isolation, pinned SSH keys, network-none/no-pull behavior, exact owned-resource cleanup, false trust replies and caller-owned diagnostics/assertions remain. Study outputs remain synthetic; model-supplied code is recorded, not dispatched or evaluated. Study-specific deadlines, transcript caps and continuation limits remain.
+
+## Proof limits
+
+This was a static/diff review with bounded offline Git patch/source checks, not a duplicate test/build gate. No paid/provider/device/SSH/Docker systems launched. No new concrete unresolved regression concern found. Acoustic/provider/macOS and full merged runtime acceptance remain outside this review; parent owns the running Linux gate. The retained cancellation semaphore and independently reproduced old MCP cancellation/question-PTY failures are not reported as cleanup regressions.

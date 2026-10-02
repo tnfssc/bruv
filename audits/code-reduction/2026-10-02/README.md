@@ -1,5 +1,7 @@
 # Code reduction audit
 
+**Implementation is complete:** [actual changes and validation](implementation.md). The audit below records the original baseline, not current file contents. Feature and archive cuts were not taken.
+
 **User constraint: keep important features. No feature cuts are approved. Preserve current behavior by default; feature-cut tables below are options for discussion only. Start with proved dead code and behavior-preserving simplification.**
 
 **Complete: 689/689 files and 160,840/160,840 physical lines reviewed. No unread gaps.**
