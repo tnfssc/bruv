@@ -41,8 +41,8 @@ int main(void) {
     LLCore *core = ll_create();
     assert(core);
     int16_t samples[480] = {1};
-    for (int i = 0; i < LL_PLAY_BLOCKS; ++i) assert(ll_play_push(core, samples, 480, 0));
-    assert(!ll_play_push(core, samples, 480, 0));
+    for (int i = 0; i < LL_PLAY_BLOCKS; ++i) assert(ll_play_push_batch(core, samples, 480, 0));
+    assert(!ll_play_push_batch(core, samples, 480, 0));
     ll_flush(core, 1);
     assert(ll_queued_ms(core) == 0);
     float output[960];

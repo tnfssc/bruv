@@ -7,25 +7,16 @@ import { isLiveModel, type LiveModelId, type LiveProviderId, defaultLiveConfig }
 export interface LiveConfig {
   provider: LiveProviderId;
   model: LiveModelId;
-  googleModel?: typeof import("./providers").GOOGLE_LIVE_MODELS[number];
-  openaiModel?: typeof import("./providers").LIVE_PROVIDERS.openai.models[number];
 }
 export function liveConfigPath(): string {
   return join(homedir(), ".bruv", "live-settings.json");
 }
 export function parseLiveConfig(value: unknown): LiveConfig {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid Live settings");
-  const { provider, model, openaiModel, googleModel } = value as Record<string, unknown>;
+  const { provider, model } = value as Record<string, unknown>;
   if ((provider !== "google" && provider !== "openai") || !isLiveModel(provider, model))
     throw new Error("Invalid Live provider/model selection");
-  if (openaiModel !== undefined && !isLiveModel("openai", openaiModel)) throw new Error("Invalid OpenAI voice model");
-  if (googleModel !== undefined && !isLiveModel("google", googleModel)) throw new Error("Invalid Google voice model");
-  return {
-    provider,
-    model,
-    ...(googleModel === undefined ? {} : { googleModel: googleModel as LiveConfig["googleModel"] }),
-    ...(openaiModel === undefined ? {} : { openaiModel: openaiModel as LiveConfig["openaiModel"] }),
-  };
+  return { provider, model };
 }
 export async function loadLiveConfig(path = liveConfigPath()): Promise<LiveConfig> {
   try {

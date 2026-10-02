@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { z } from "zod";
 import { OpenAIRealtimeSession, type RealtimeSocket } from "../src/live/openai-session";
-import { orchestrationTools } from "../src/live/orchestration";
-import liveSystemInstruction from "../src/prompts/live.md" with { type: "text" };
+import { setupProbeOrchestration } from "../src/live/setup-probe";
+import { bruvSystemPrompt } from "../src/prompts";
 
 // Deliberately strict contract for the subset bruv sends, not a claim to implement
 // the entire GA API. Source: openai-node/src/resources/realtime/realtime.ts,
@@ -10,13 +10,14 @@ import liveSystemInstruction from "../src/prompts/live.md" with { type: "text" }
 // The SDK types mark rate optional, but the live mini endpoint rejected an omitted
 // session.audio.output.format.rate with missing_required_parameter (2026-09-24).
 const pcm = z.strictObject({ type: z.literal("audio/pcm"), rate: z.literal(24000).optional() });
-const property: z.ZodType = z.lazy(() =>
-  z.union([
-    z.strictObject({ type: z.literal("string"), minLength: z.number().optional(), maxLength: z.number().optional() }),
-    z.strictObject({ type: z.literal("integer"), minimum: z.number().optional(), maximum: z.number().optional() }),
-    z.strictObject({ anyOf: z.array(property).min(1) }),
-  ]),
-);
+const property = z.union([
+  z.strictObject({ type: z.literal("string"), minLength: z.number().optional(), maxLength: z.number().optional() }),
+  z.strictObject({
+    type: z.enum(["integer", "number"]),
+    minimum: z.number().optional(),
+    maximum: z.number().optional(),
+  }),
+]);
 const setup = z.strictObject({
   type: z.literal("session.update"),
   session: z.strictObject({
@@ -47,7 +48,7 @@ const setup = z.strictObject({
           type: z.literal("object"),
           properties: z.record(z.string(), property),
           required: z.array(z.string()),
-          additionalProperties: z.literal(false),
+          additionalProperties: z.literal(false).optional(),
         }),
       }),
     ),
@@ -104,7 +105,7 @@ function connect(
   const session = new OpenAIRealtimeSession(
     { onReady: () => ready++, onError: (error) => errors.push(error) },
     () => socket,
-    { tools: orchestrationTools, userTranscript: () => {}, execute: async () => ({}) },
+    setupProbeOrchestration(),
     model,
   );
   const pending = session.connect("offline-placeholder");
@@ -122,15 +123,15 @@ function connect(
 
 describe("OpenAI GA setup schema contract (offline)", () => {
   for (const model of ["gpt-realtime-2.1", "gpt-realtime-2.1-mini"] as const) {
-    test(model + " sends the complete supported setup with actual orchestration tools", async () => {
+    test(model + " sends the complete supported setup with registered execute tool", async () => {
       const f = connect(undefined, model);
       await f.pending;
       expect(f.session.state).toBe("ready");
       expect(f.ready).toBe(1);
       expect(f.errors).toEqual([]);
-      expect(f.socket.events[0].session.instructions).toBe(liveSystemInstruction);
+      expect(f.socket.events[0].session.instructions).toBe(bruvSystemPrompt());
       expect(f.socket.events[0].session.tools).toEqual(
-        orchestrationTools.map((tool) => ({
+        setupProbeOrchestration().tools.map((tool) => ({
           type: "function",
           name: tool.name,
           description: tool.description,

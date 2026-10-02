@@ -80,8 +80,6 @@ struct Live {
 
   Live(const char* a, const char* b) : source(a), sink(b) {}
   ~Live() { stop(); }
-  static void contextState(pa_context*, void*) {}
-  static void streamState(pa_stream*, void*) {}
   static void onRead(pa_stream* stream, size_t, void* userdata) {
     auto& self = *static_cast<Live*>(userdata);
     while (pa_stream_readable_size(stream) > 0) {
@@ -135,7 +133,6 @@ struct Live {
     if (!context || pa_context_connect(context, nullptr, PA_CONTEXT_NOFLAGS, nullptr) < 0) {
       error("audio_start", "Could not connect to audio server"); stop(); return;
     }
-    pa_context_set_state_callback(context, contextState, this);
     capture.clear(); captureHead = 0; packetHalf = 0; lastQueued = -1; audioUntil = {};
     startTime = chrono::steady_clock::now();
     running = true;
@@ -146,8 +143,6 @@ struct Live {
     input = pa_stream_new(context, "voice capture", &mic, nullptr);
     outputStream = pa_stream_new(context, "voice playback", &speaker, nullptr);
     if (!input || !outputStream) return false;
-    pa_stream_set_state_callback(input, streamState, this);
-    pa_stream_set_state_callback(outputStream, streamState, this);
     pa_stream_set_read_callback(input, onRead, this);
     pa_buffer_attr ia{uint32_t(-1), uint32_t(-1), uint32_t(-1), uint32_t(-1), 320};
     pa_buffer_attr oa{1920, 960, uint32_t(-1), 480, uint32_t(-1)};

@@ -54,14 +54,8 @@ export interface VoiceOrchestration {
   tools: FunctionDeclaration[];
   /** Effective ordinary root instructions, supplied by the main-agent owner. */
   instructions?: string;
-  /** Calls are owned by the main agent, not the legacy speech handoff authority. */
-  directMainAgent?: boolean;
   /** Session-owned directory for complete results that exceed the voice wire budget. */
   artifactDirectory?: string;
-  /** Completed input speech only; never host updates or model output. */
-  userTranscript(text: string): void;
-  /** Revoke pending authority on fresh input or interruption, not model turn completion. */
-  beginUserTurn?(): void;
   execute(call: { id?: string; name?: string; args?: Record<string, unknown> }): Promise<unknown>;
 }
 

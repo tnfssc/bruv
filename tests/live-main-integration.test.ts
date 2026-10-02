@@ -170,7 +170,6 @@ test("main Live owns first-turn instructions, actual execute and background comp
   expect(instructions).toContain("VERTICAL_CUSTOM_APPEND");
   expect(instructions).toContain("You lead work.");
   expect(instructions).toContain("shell 3 seconds");
-  expect(f.owner.orchestration.directMainAgent).toBe(true);
   expect(f.owner.orchestration.tools.map((t) => t.name)).toEqual(["execute"]);
   f.owner.inputTranscript("Launch isolated local marker job");
   const launch = await f.owner.orchestration.execute({

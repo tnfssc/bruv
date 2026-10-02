@@ -68,7 +68,7 @@ const defaults: LiveDependencies = {
     (await createDefaultLiveCredentialService(signal, provider)).loadKey(signal),
   config: { load: loadLiveConfig, save: saveLiveConfig },
   voice: (callbacks, orchestration, provider = "google", model = OPENAI_REALTIME_MODELS[0]) => {
-    if (!orchestration?.directMainAgent || !orchestration.instructions)
+    if (!orchestration?.instructions)
       throw new Error(
         "Main Live requires the current ordinary root owner and execute runtime; no companion fallback is available",
       );
@@ -150,7 +150,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     outputBytes = 0;
     turns = 0;
     queuedMs = 0;
-    readonly lines: string[] = [];
     constructor(readonly ctx: ExtensionContext) {
       this.sessionId = ctx.sessionManager?.getSessionId?.();
       const playbackOptions: ConstructorParameters<typeof PlaybackScheduler>[0] = {
@@ -213,7 +212,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         this.ctx.ui.setStatus(ID, status);
         this.lastStatus = status;
       }
-      const visible = [...this.lines.slice(-1), ...this.transcriptLog.view(clean)].slice(-MAX_VISIBLE);
+      const visible = this.transcriptLog.view(clean).slice(-MAX_VISIBLE);
       const widget = JSON.stringify(visible);
       if (widget !== this.lastWidget) {
         this.ctx.ui.setWidget(ID, visible.length ? visible : undefined);
@@ -248,7 +247,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       this.owner?.interrupt();
       this.outputUtterance = "";
       if (!this.alive || epoch <= this.generation) return;
-      this.orchestration?.beginUserTurn?.();
       this.inputUtterance = "";
       this.transcriptLog.finish("Voice", "interrupted");
       this.transcriptLog.finish("You", "partial");
@@ -292,7 +290,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       this.waveTimer = undefined;
       this.waveform.resetOutput();
       this.pendingBytes = 0;
-      this.lines.length = 0;
       this.transcriptLog.reset();
       if (this.renderTimer) clearTimeout(this.renderTimer);
       this.renderTimer = undefined;
@@ -555,7 +552,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
               onInputActivity: () => {
                 if (!this.alive) return;
                 this.owner?.beginInput?.();
-                this.orchestration?.beginUserTurn?.();
                 this.inputUtterance = "";
                 this.transcriptLog.finish("You", "partial");
               },
@@ -818,18 +814,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           ...selected,
           provider: choice.provider,
           model: choice.model,
-          googleModel:
-            choice.provider === "google"
-              ? (choice.model as LiveConfig["googleModel"])
-              : selected.provider === "google"
-                ? (selected.model as LiveConfig["googleModel"])
-                : selected.googleModel,
-          openaiModel:
-            choice.provider === "openai"
-              ? (choice.model as LiveConfig["openaiModel"])
-              : selected.provider === "openai"
-                ? (selected.model as LiveConfig["openaiModel"])
-                : selected.openaiModel,
         };
         saving = true;
         try {

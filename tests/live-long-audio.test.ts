@@ -136,7 +136,6 @@ describe("long paced generated audio", () => {
   test("OpenAI completed responses and tool continuation do not share an audio budget", async () => {
     const h = await openai({
       tools: [{ name: "session_context", parametersJsonSchema: { type: "object" } }],
-      userTranscript: () => {},
       execute: async () => ({ content: [{ type: "text", text: "done" }] }),
     });
     await stream(response(h.socket, "tool"), h.pipe, 25);

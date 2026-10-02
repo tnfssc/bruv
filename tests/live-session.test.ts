@@ -1,7 +1,7 @@
 import { ThinkingLevel } from "@google/genai";
 import { describe, expect, test } from "bun:test";
 import { VoiceSession } from "../src/live/session.js";
-import liveSystemInstruction from "../src/prompts/live.md" with { type: "text" };
+import { bruvSystemPrompt } from "../src/prompts";
 import type { LiveAdapter, LiveParams, LiveConnection } from "../src/live/types.js";
 
 function harness() {
@@ -65,9 +65,7 @@ describe("voice-only SDK session", () => {
     const calls: unknown[] = [];
     const s = new VoiceSession({}, h.adapter, {
       instructions: "ordinary root prompt",
-      directMainAgent: true,
       tools: [{ name: "execute", parametersJsonSchema: { type: "object", properties: { code: { type: "string" } } } }],
-      userTranscript: () => {},
       execute: async (call) => {
         calls.push(call);
         return { content: [{ type: "text", text: "done" }] };
@@ -116,9 +114,7 @@ describe("voice-only SDK session", () => {
       h.adapter,
       {
         instructions: "root",
-        directMainAgent: true,
         tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
-        userTranscript: () => {},
         execute: async () => ({ content: [] }),
       },
       "gemini-3.8-live-extended-thinking",
@@ -165,7 +161,7 @@ describe("voice-only SDK session", () => {
       realtimeInputConfig: { automaticActivityDetection: { disabled: false } },
     });
     expect(h.params.config?.tools).toBeUndefined();
-    expect(h.params.config?.systemInstruction).toBe(liveSystemInstruction);
+    expect(h.params.config?.systemInstruction).toBe(bruvSystemPrompt());
     h.params.callbacks.onmessage(msg({ setupComplete: {} }));
     expect(s.state).toBe("connecting");
     expect(h.sends).toHaveLength(0);
@@ -417,9 +413,7 @@ test("main Gemini context retains large history and completion explicitly trigge
   const h = harness();
   const s = new VoiceSession({}, h.adapter, {
     instructions: "root",
-    directMainAgent: true,
     tools: [],
-    userTranscript() {},
     async execute() {},
   });
   const pending = s.connect("fake");
@@ -432,5 +426,8 @@ test("main Gemini context retains large history and completion explicitly trigge
     { turns: [{ role: "user", parts: [{ text: history }] }], turnComplete: false },
     { turns: [{ role: "user", parts: [{ text: "job completed" }] }], turnComplete: true },
   ]);
+  s.sendContext("é".repeat(524_289));
+  expect(s.state).toBe("closed");
+  expect(h.sends).toHaveLength(2);
   s.close();
 });

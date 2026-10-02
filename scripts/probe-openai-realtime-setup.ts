@@ -3,12 +3,12 @@ import { lstat, readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { OpenAIRealtimeSession, defaultSocket } from "../src/live/openai-session";
-import { orchestrationTools } from "../src/live/orchestration";
 
 if (process.env.BRUV_REALTIME_SETUP_PROBE !== "1") {
   console.error("Probe disabled; explicit BRUV_REALTIME_SETUP_PROBE=1 required");
   process.exit(2);
 }
+const { setupProbeOrchestration } = await import("../src/live/setup-probe");
 const path = join(homedir(), ".bruv", "openai-test.env");
 let session: OpenAIRealtimeSession | undefined;
 let deadline: ReturnType<typeof setTimeout> | undefined;
@@ -56,7 +56,7 @@ try {
       });
       return socket;
     },
-    { tools: orchestrationTools, userTranscript: () => {}, execute: async () => ({}) },
+    setupProbeOrchestration(),
     "gpt-realtime-2.1-mini",
   );
   await Promise.race([

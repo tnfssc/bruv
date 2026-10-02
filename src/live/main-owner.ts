@@ -389,6 +389,37 @@ async function acquire(
     // Provider callbacks cannot await ASR delivery; execute admission awaits this same promise.
     void turnPreparation.catch(() => {});
   };
+  const queueBackendTurn = (
+    admitted: () => boolean,
+    run: () => Promise<void>,
+    onError?: (error: unknown) => void,
+  ): Promise<void> => {
+    const operation = delegatedTail
+      .catch(() => {})
+      .then(async () => {
+        if (!admitted()) return;
+        backendRunning = true;
+        const start = session.agent.state.messages.length;
+        // Each ordinary turn rebuilds its own tool and instruction frame.
+        session._runSystemPromptOptions = undefined;
+        try {
+          await runDelegatedMainTurn(manager, run);
+          const reply = session.agent.state.messages
+            .slice(start)
+            .filter((m) => m.role === "assistant")
+            .flatMap((m) => m.content.filter((p) => p.type === "text").map((p) => p.text))
+            .join("\n")
+            .trim();
+          if (reply && sameBranch(owner, manager)) callbacks.onContext?.(reply, { triggerResponse: true });
+        } finally {
+          backendRunning = false;
+        }
+      });
+    return (onError ? operation.catch(onError) : operation).finally(() => {
+      inFlight--;
+      checkRelease();
+    });
+  };
   const owner: MainOwner & { identity: string; accepting: boolean } = {
     identity: key,
     accepting: true,
@@ -438,14 +469,12 @@ async function acquire(
       if (delegated.size >= 256) return Promise.reject(new Error("Live delegation capacity reached"));
       inFlight++;
       const admittedEpoch = backendEpoch;
-      const operation = delegatedTail
-        .catch(() => {})
-        .then(async () => {
-          // Admission was reserved synchronously above. Closing voice does not revoke work.
+      const operation = queueBackendTurn(
+        () => {
+          // Closing voice preserves admission; explicit stop-work and branch changes do not.
           if (admittedEpoch !== backendEpoch) throw new Error("Delegated backend stopped explicitly");
           if (!sameBranch(owner, manager)) throw new Error("Session branch changed before delegation");
           if (provenance !== undefined) {
-            // The original bounded bridge snapshot is audit history, not an agent request.
             session.sessionManager.appendCustomMessageEntry(
               "gpt-live-delegation-snapshot",
               [{ type: "text", text: JSON.stringify(provenance) }],
@@ -453,29 +482,10 @@ async function acquire(
               { requestText: text },
             );
           }
-          backendRunning = true;
-          const start = session.agent.state.messages.length;
-          // The ordinary prompt rebuilds its own selected-tool and instruction frame.
-          session._runSystemPromptOptions = undefined;
-          try {
-            await runDelegatedMainTurn(manager, () =>
-              session.prompt(text, { expandPromptTemplates: false, source: "extension" }),
-            );
-            const reply = session.agent.state.messages
-              .slice(start)
-              .filter((m) => m.role === "assistant")
-              .flatMap((m) => m.content.filter((p) => p.type === "text").map((p) => p.text))
-              .join("\n")
-              .trim();
-            if (reply && sameBranch(owner, manager)) callbacks.onContext?.(reply, { triggerResponse: true });
-          } finally {
-            backendRunning = false;
-          }
-        })
-        .finally(() => {
-          inFlight--;
-          checkRelease();
-        });
+          return true;
+        },
+        () => session.prompt(text, { expandPromptTemplates: false, source: "extension" }),
+      );
       delegated.set(id, { text, operation });
       delegatedTail = operation;
       onAdmitted?.();
@@ -504,44 +514,15 @@ async function acquire(
         admittedNotifications.add(key);
         inFlight++;
         const admittedEpoch = backendEpoch;
-        const operation = delegatedTail
-          .catch(() => {})
-          .then(async () => {
-            if (admittedEpoch !== backendEpoch) return; // explicit stop-work cancels queued continuations
-            if (!sameBranch(owner, manager)) return;
-            backendRunning = true;
-            const start = session.agent.state.messages.length;
-            // The pinned Pi custom-message API invokes the canonical session's agent
-            // with this non-user message. It retains its normal tools, hooks and history.
-            session._runSystemPromptOptions = undefined;
-            try {
-              await runDelegatedMainTurn(manager, () =>
-                session.sendCustomMessage(
-                  {
-                    customType,
-                    content: [{ type: "text", text }],
-                    display: true,
-                    details: metadata?.details,
-                  },
-                  { triggerTurn: true },
-                ),
-              );
-              const reply = session.agent.state.messages
-                .slice(start)
-                .filter((m) => m.role === "assistant")
-                .flatMap((m) => m.content.filter((p) => p.type === "text").map((p) => p.text))
-                .join("\n")
-                .trim();
-              if (reply && sameBranch(owner, manager)) callbacks.onContext?.(reply, { triggerResponse: true });
-            } finally {
-              backendRunning = false;
-            }
-          })
-          .catch((error) => callbacks.onError?.(error instanceof Error ? error.message : String(error)))
-          .finally(() => {
-            inFlight--;
-            checkRelease();
-          });
+        const operation = queueBackendTurn(
+          () => admittedEpoch === backendEpoch && sameBranch(owner, manager),
+          () =>
+            session.sendCustomMessage(
+              { customType, content: [{ type: "text", text }], display: true, details: metadata?.details },
+              { triggerTurn: true },
+            ),
+          (error) => callbacks.onError?.(error instanceof Error ? error.message : String(error)),
+        );
         delegatedTail = operation;
         callbacks.onContext?.(text);
         return;
@@ -612,13 +593,10 @@ async function acquire(
     },
     orchestration: {
       instructions: instruction,
-      directMainAgent: true,
       artifactDirectory: manager.getSessionFile?.() ? manager.getSessionFile() + ".artifacts/live" : undefined,
       tools: [
         { name: "execute", description: tool.description, parametersJsonSchema: tool.parameters },
       ] as VoiceOrchestration["tools"],
-      // Provider transcription callbacks already record each utterance exactly once.
-      userTranscript() {},
       async execute(call) {
         const transcript = pendingTranscript;
         if (transcript && !(await transcript.result)) throw new Error("Live input ended without a final transcript");

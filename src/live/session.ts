@@ -1,7 +1,6 @@
 import { voiceToolResult } from "./tool-result";
 import { Behavior, FunctionResponseScheduling, GoogleGenAI, Modality, ThinkingLevel } from "@google/genai";
-import { toolFailureResponse } from "./tool-failure";
-import liveSystemInstruction from "../prompts/live.md" with { type: "text" };
+import { bruvSystemPrompt } from "../prompts";
 import { VOICE_MODEL, isLiveModel } from "./providers";
 import {
   type LiveAdapter,
@@ -18,11 +17,9 @@ const MAX_INPUT = 3200; // 100 ms PCM16 mono 16 kHz
 const MAX_OUTPUT = 96000; // 2 seconds PCM16 mono 24 kHz per packet
 const MAX_TRANSCRIPT = 4096;
 const CONNECT_TIMEOUT_MS = 15000;
-const MAX_TOOL_BYTES = 16384;
+const MAX_TOOL_BYTES = 1_048_576;
 const MAX_TOOL_CALLS = 256;
 const MAX_PENDING_TOOLS = 16;
-const MAX_CONTEXT = 4096;
-const CONTEXT_GAP = "[Some earlier host updates omitted; ask session_context for current state.]\n";
 const jsonSize = (value: unknown): number => Buffer.byteLength(JSON.stringify(value));
 const base64Bytes = (s: string): number => {
   if (!s || s.length > 128000 || s.length % 4 || !/^[A-Za-z0-9+/]+={0,2}$/.test(s)) return -1;
@@ -41,16 +38,12 @@ export class VoiceSession {
   private inputChars = 0;
   private outputChars = 0;
   private ended = false;
-  private contextPending: string[] = [];
-  private contextTimer?: ReturnType<typeof setTimeout>;
-  private contextGap = false;
   private cancelConnect?: () => void;
   private readonly seenCalls = new Map<
     string,
     { name: string; response?: Record<string, unknown>; dispatched?: boolean; cancelled?: boolean }
   >();
   private pendingTools = 0;
-  private inputRevision = 0;
   constructor(
     private readonly callbacks: VoiceCallbacks,
     private readonly adapter: LiveAdapter = (apiKey) => new GoogleGenAI({ apiKey }),
@@ -125,7 +118,7 @@ export class VoiceSession {
       connecting = this.adapter(apiKey).live.connect({
         model: this.model,
         config: {
-          systemInstruction: this.orchestration?.instructions ?? liveSystemInstruction,
+          systemInstruction: this.orchestration?.instructions ?? bruvSystemPrompt(),
           responseModalities: [Modality.AUDIO],
           ...(this.model === "gemini-3.8-live-extended-thinking"
             ? { thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } }
@@ -213,63 +206,29 @@ export class VoiceSession {
       this.fail("transport_error", "Could not end audio stream");
     }
   }
-  /** Grounded host updates are coalesced and rate-limited; omitted updates are marked, not invented. */
+  /** Send the owner's bounded, labeled main context without rewriting its instructions. */
   sendContext(text: string, options?: { triggerResponse?: boolean }): void {
     if (this.stateValue !== "ready" || !this.connection || !text) return;
-    if (this.orchestration?.directMainAgent) {
-      if (Buffer.byteLength(text) > 1_048_576) {
-        this.fail(
-          "invalid_input",
-          "Main context exceeds the 1 MiB voice wire budget; resume in text to inspect the full branch",
-        );
-        return;
-      }
-      try {
-        this.connection.sendClientContent({
-          turns: [{ role: "user", parts: [{ text }] }],
-          turnComplete: options?.triggerResponse !== false,
-        });
-      } catch {
-        this.fail("transport_error", "Could not send main context");
-      }
+    if (Buffer.byteLength(text) > 1_048_576) {
+      this.fail(
+        "invalid_input",
+        "Main context exceeds the 1 MiB voice wire budget; resume in text to inspect the full branch",
+      );
       return;
     }
-    if (text.length > MAX_CONTEXT) {
-      this.contextGap = true;
-    } else {
-      this.contextPending.push(text);
-      // Bound retained data, dropping oldest complete updates rather than presenting fragments as facts.
-      while (this.contextPending.join("\n").length > MAX_CONTEXT - CONTEXT_GAP.length) {
-        this.contextPending.shift();
-        this.contextGap = true;
-      }
-    }
-    if (!this.contextTimer) {
-      this.contextTimer = setTimeout(() => this.flushContext(), 100);
-      this.contextTimer.unref?.();
-    }
-  }
-  private flushContext(): void {
-    this.contextTimer = undefined;
-    if (this.stateValue !== "ready" || !this.connection) return;
-    const text = (this.contextGap ? CONTEXT_GAP : "") + this.contextPending.join("\n");
-    this.contextPending = [];
-    this.contextGap = false;
-    if (!text) return;
     try {
-      this.connection.sendClientContent({ turns: [{ role: "user", parts: [{ text }] }], turnComplete: false });
+      this.connection.sendClientContent({
+        turns: [{ role: "user", parts: [{ text }] }],
+        turnComplete: options?.triggerResponse !== false,
+      });
     } catch {
-      this.fail("transport_error", "Could not send context");
+      this.fail("transport_error", "Could not send main context");
     }
   }
   closeError?: string;
   close(): void {
-    this.orchestration?.beginUserTurn?.();
     if (this.stateValue === "closed") return;
     ++this.epoch;
-    if (this.contextTimer) clearTimeout(this.contextTimer);
-    this.contextTimer = undefined;
-    this.contextPending = [];
     this.cancelConnect?.();
     const connection = this.connection;
     this.connection = undefined;
@@ -364,9 +323,7 @@ export class VoiceSession {
           !!name &&
           this.orchestration.tools.some((tool) => tool.name === name) &&
           (!call.args ||
-            (typeof call.args === "object" &&
-              !Array.isArray(call.args) &&
-              jsonSize(call.args) <= (this.orchestration.directMainAgent ? 1_048_576 : MAX_TOOL_BYTES)));
+            (typeof call.args === "object" && !Array.isArray(call.args) && jsonSize(call.args) <= MAX_TOOL_BYTES));
       } catch {
         /* malformed or cyclic input */
       }
@@ -374,27 +331,18 @@ export class VoiceSession {
         reply({ error: "Tool request rejected" });
         continue;
       }
-      const inputRevision = this.inputRevision;
       ++this.pendingTools;
-      // Defer invocation: SDK onmessage must return before any agent work begins. An
-      // interruption/cancellation can revoke handoffs only before this dispatch.
-      // The host bridge may enqueue in a later microtask; that is not rechecked here.
+      // Dispatch off the SDK callback; cancellation revokes only undispatched calls.
       void Promise.resolve()
         .then(() => {
-          if (
-            this.stateValue !== "ready" ||
-            entry.cancelled ||
-            (!this.orchestration?.directMainAgent &&
-              (name === "agent_send" || name === "agent_steer") &&
-              inputRevision !== this.inputRevision)
-          )
+          if (this.stateValue !== "ready" || entry.cancelled)
             throw new Error("Tool request invalidated before dispatch");
           entry.dispatched = true;
           return this.orchestration!.execute({ id: call.id, name, args: call.args });
         })
         .then(
           (result) => voiceToolResult(result, this.orchestration?.artifactDirectory).then(reply),
-          (error) => reply(toolFailureResponse(error)),
+          () => reply({ error: "Tool execution failed" }),
         )
         .finally(() => {
           --this.pendingTools;
@@ -408,15 +356,12 @@ export class VoiceSession {
       const entry = this.seenCalls.get(id);
       if (entry && !entry.dispatched && !entry.response && !entry.cancelled) {
         entry.cancelled = true;
-        if (entry.name === "agent_send" || entry.name === "agent_steer") this.orchestration?.beginUserTurn?.();
       }
     }
     const content = message.serverContent;
     // These optional signals are useful revocation evidence, never completion
     // evidence. We do not depend on the provider delivering them.
     if (message.voiceActivity?.voiceActivityType === "ACTIVITY_START" || content?.interimInputTranscription) {
-      ++this.inputRevision;
-      this.orchestration?.beginUserTurn?.();
       this.emit(() => this.callbacks.onInputActivity?.());
       if (this.stateValue !== "ready") return;
     }
@@ -428,9 +373,7 @@ export class VoiceSession {
         this.emit(() => this.callbacks.onInteractionStatus?.(content.interactionStatus as "IN_PROGRESS" | "IDLE"));
         if (this.stateValue !== "ready") return;
       }
-      if (content.inputTranscription || content.interrupted) ++this.inputRevision;
       if (content.interrupted) {
-        this.orchestration?.beginUserTurn?.();
         ++this.diagnostics.serverInterruptions;
         this.diagnostics.lastInterruptedAtMs = performance.now();
         ++this.playbackEpochValue;

@@ -64,11 +64,9 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
       return {
         orchestration: {
           instructions: "Effective main-agent instructions",
-          directMainAgent: true,
           tools: [
             { name: "execute", description: "Run code", parametersJsonSchema: { type: "object", properties: {} } },
           ],
-          userTranscript: () => {},
           execute: async (call: any) => {
             ownerEvents.push(["execute", call]);
             return { ok: true };
@@ -275,9 +273,7 @@ describe("Live voice", () => {
         return {
           orchestration: {
             instructions: "Main instructions",
-            directMainAgent: true,
             tools: [{ name: "execute", description: "Run code", parameters: {} }],
-            userTranscript: () => {},
             execute: async () => ({ ok: true }),
           },
           typedInput: (text: string) => callbacks?.onInput?.(text),
@@ -304,7 +300,6 @@ describe("Live voice", () => {
       },
       voice: (_callbacks, tools) => {
         order.push("provider");
-        expect(tools?.directMainAgent).toBe(true);
         expect(tools?.tools.map((tool) => tool.name)).toEqual(["execute"]);
         return { state: "ready", generation: 0, sendAudio: () => {}, connect: async () => {}, close: () => {} };
       },
@@ -566,7 +561,6 @@ describe("Live voice", () => {
     const t = setup();
     await t.run("start");
     expect(t.ownerAcquires).toBe(1);
-    expect(t.orchestration?.directMainAgent).toBe(true);
     expect(t.orchestration?.tools.map((tool) => tool.name)).toEqual(["execute"]);
     await t.run("status");
     expect(t.notices.at(-1)).toContain("tools configured 1");
@@ -655,8 +649,8 @@ describe("Live voice", () => {
     await running.run("start");
     running.capture.error?.("permission", "SECRET");
     expect(running.notices.join(" ")).toContain("Microphone access denied [permission]");
-    expect(t.notices.join(" ")).not.toContain("SECRET");
-    expect(t.status.at(-1)).toBeUndefined();
+    expect(running.notices.join(" ")).not.toContain("SECRET");
+    expect(running.status.at(-1)).toBeUndefined();
   });
   test("mic-check requires consent, never uses key/provider and discards capture", async () => {
     const declined = setup();
@@ -1121,7 +1115,7 @@ describe("Live model and credential setup", () => {
     expect(t.ownerAcquires).toBe(0);
   });
 
-  test("explicit GPT and Gemini thinking choices atomically switch provider and round-trip with remembered models", async () => {
+  test("explicit GPT and Gemini thinking choices atomically switch provider and round-trip the active selection", async () => {
     let saved: import("../src/live/config").LiveConfig = { provider: "google", model: "gemini-3.8-live" };
     const t = setup({
       config: {
@@ -1133,19 +1127,16 @@ describe("Live model and credential setup", () => {
     });
     await t.run("model gpt-live-1");
     expect(t.notices.at(-1)).toBe("Live voice: OpenAI · gpt-live-1.");
-    expect(saved).toMatchObject({ provider: "openai", model: "gpt-live-1", openaiModel: "gpt-live-1" });
+    expect(saved).toMatchObject({ provider: "openai", model: "gpt-live-1" });
     await t.run("model gemini-3.8-live-extended-thinking");
     expect(saved).toMatchObject({
       provider: "google",
       model: "gemini-3.8-live-extended-thinking",
-      googleModel: "gemini-3.8-live-extended-thinking",
-      openaiModel: "gpt-live-1",
     });
     await t.run("model gpt-realtime-2.1-mini");
     expect(saved).toMatchObject({
       provider: "openai",
       model: "gpt-realtime-2.1-mini",
-      googleModel: "gemini-3.8-live-extended-thinking",
     });
     await t.run("model bogus");
     expect(saved.model).toBe("gpt-realtime-2.1-mini");
@@ -1324,9 +1315,7 @@ test("branch navigation waits for admitted tool results before moving the owning
     owner: async () => ({
       orchestration: {
         instructions: "root",
-        directMainAgent: true,
         tools: [],
-        userTranscript() {},
         async execute() {},
       },
       inputTranscript() {},
@@ -1436,7 +1425,7 @@ test("rejected GPT admission leaves speech available for a later delegation", as
   let attempts = 0;
   const prompts: string[] = [];
   const owner: any = {
-    orchestration: { instructions: "", tools: [], directMainAgent: true },
+    orchestration: { instructions: "", tools: [] },
     delegate: (_id: string, text: string, _snapshot: unknown, admitted: () => void) => {
       prompts.push(text);
       if (++attempts === 1) return Promise.reject(new Error("Not admitted"));
@@ -1489,9 +1478,7 @@ test("voice failures render truthful warnings without stopping agent work", asyn
       owner: async () => ({
         orchestration: {
           instructions: "root",
-          directMainAgent: true,
           tools: [],
-          userTranscript() {},
           async execute() {},
         },
         inputTranscript() {},
@@ -1586,7 +1573,7 @@ test("GPT-Live replays connecting replies as commentary without speaking ordinar
       deliver("Queued completion reply", { triggerResponse: true });
       deliver("Queued background context");
       return {
-        orchestration: { instructions: "root", tools: [], directMainAgent: true },
+        orchestration: { instructions: "root", tools: [] },
         sendContext() {},
         close() {},
         stopForeground() {},

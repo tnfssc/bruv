@@ -20,18 +20,3 @@ export function isLiveModel(provider: LiveProviderId, model: unknown): model is 
 export function defaultLiveConfig(): { provider: LiveProviderId; model: LiveModelId } {
   return { provider: "google", model: VOICE_MODEL };
 }
-export function modelForProvider(
-  provider: LiveProviderId,
-  previous: {
-    provider: LiveProviderId;
-    model: LiveModelId;
-    openaiModel?: (typeof LIVE_PROVIDERS.openai.models)[number];
-    googleModel?: (typeof GOOGLE_LIVE_MODELS)[number];
-  },
-): LiveModelId {
-  return provider === previous.provider
-    ? previous.model
-    : provider === "google"
-      ? (previous.googleModel ?? VOICE_MODEL)
-      : (previous.openaiModel ?? OPENAI_REALTIME_MODELS[0]);
-}

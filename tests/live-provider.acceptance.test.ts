@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { createDefaultLiveCredentialService } from "../src/live/credentials";
 import { VoiceSession } from "../src/live/session";
-import { orchestrationTools } from "../src/live/orchestration";
+import { setupProbeOrchestration } from "../src/live/setup-probe";
 
 // Explicit paid opt-in. Uses canonical provider auth; never imports a file or opens devices.
 test.skipIf(process.env.BRUV_RUN_GEMINI_LIVE_ACCEPTANCE !== "1")(
@@ -11,11 +11,11 @@ test.skipIf(process.env.BRUV_RUN_GEMINI_LIVE_ACCEPTANCE !== "1")(
     const credentials = await createDefaultLiveCredentialService(controller.signal);
     const key = await credentials.loadKey(controller.signal);
     const errors: string[] = [];
-    const voice = new VoiceSession({ onError: (error) => errors.push(error.code) }, undefined, {
-      tools: orchestrationTools,
-      userTranscript() {},
-      execute: async () => ({ status: "denied", reason: "Setup-only acceptance; no agent work" }),
-    });
+    const voice = new VoiceSession(
+      { onError: (error) => errors.push(error.code) },
+      undefined,
+      setupProbeOrchestration(),
+    );
     try {
       await voice.connect(key);
       expect(errors).toEqual([]);

@@ -271,7 +271,6 @@ describe("direct Live main owner", () => {
     const f = fixture();
     const owner = await acquireMainOwner({} as any, f.ctx);
     expect((owner.orchestration as any).instructions).toBe("effective ordinary root + hooks");
-    expect((owner.orchestration as any).directMainAgent).toBe(true);
     expect(owner.orchestration.tools.map((t) => t.name)).toEqual(["execute"]);
     owner.inputTranscript("spoken user");
     owner.outputTranscript("spoken answer");

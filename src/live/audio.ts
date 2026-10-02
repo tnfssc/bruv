@@ -47,7 +47,6 @@ const MAX_LINE = 64 * 1024;
 const MAX_CAPTURE = 640; // 20ms PCM16 mono 16k
 const MAX_PLAY = 9_600; // at most 200ms PCM16 mono 24k per message
 const MAX_PENDING = 64 * 1024; // ~1.3 seconds of encoded PCM at 24k
-const MAX_STDERR = 4096;
 /** Fallback for builds without an embedded helper; source runs use repository dist. */
 export function defaultHelperPath(
   platform: NodeJS.Platform = process.platform,
@@ -122,13 +121,11 @@ export class LiveAudio {
         timer: ReturnType<typeof setTimeout>;
       }
     | undefined;
-  private stderrBytes = 0;
   private currentGeneration = 0;
   readonly diagnostics: AudioDiagnostics = { queuedMs: 0, captureFrames: 0, capturedBytes: 0 };
   private readonly onData = (chunk: Buffer) => this.read(chunk);
-  private readonly onStderr = (chunk: Buffer) => {
-    this.stderrBytes = Math.min(MAX_STDERR, this.stderrBytes + chunk.length);
-  };
+  // Drain stderr without retaining or forwarding native diagnostics.
+  private readonly onStderr = () => {};
   private readonly onError = () => this.fail(new Error("Audio helper process failed"));
   private readonly onExit = () => this.fail(new Error("Audio helper exited"));
   private readonly onInputError = () => this.fail(new Error("Audio helper input failed"));
@@ -361,7 +358,6 @@ export class LiveAudio {
       return Promise.reject(new Error("Stale audio generation; flush before changing generation"));
     if (!Buffer.isBuffer(pcm16) || !pcm16.length || pcm16.length > MAX_PLAY || pcm16.length % 2)
       return Promise.reject(new Error("Invalid playback frame"));
-    this.currentGeneration = gen;
     return this.send({ type: "play", data: pcm16.toString("base64"), generation: gen });
   }
   /** Interrupt with a strictly increasing int32 generation. Drops unsent play writes (their promises reject).

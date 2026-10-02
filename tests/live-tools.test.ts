@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-import { InputHandoffError } from "../src/session/input";
 import { VoiceSession } from "../src/live/session.js";
 import type { LiveAdapter, LiveConnection, LiveParams } from "../src/live/types.js";
 
@@ -28,7 +27,6 @@ function fixture(execute: (call: { id?: string; name?: string; args?: Record<str
   });
   const session = new VoiceSession({ onAudio: (data) => played.push(data) }, adapter, {
     tools: [{ name: "work", description: "do work" }],
-    userTranscript: () => {},
     execute,
   });
   const send = (v: object) => params.callbacks.onmessage(v as Parameters<LiveParams["callbacks"]["onmessage"]>[0]);
@@ -76,8 +74,7 @@ describe("SDK orchestration seam", () => {
     expect(h.responses).toEqual([
       { functionResponses: { scheduling: "WHEN_IDLE", id: "1", name: "work", response: { output: { done: true } } } },
     ]);
-    h.session.sendContext("Job 1 completed");
-    await Bun.sleep(130);
+    h.session.sendContext("Job 1 completed", { triggerResponse: false });
     expect(h.contexts).toEqual([
       { turns: [{ role: "user", parts: [{ text: "Job 1 completed" }] }], turnComplete: false },
     ]);
@@ -97,7 +94,7 @@ describe("SDK orchestration seam", () => {
       toolCall: {
         functionCalls: [
           { id: "bad", name: "work" },
-          { id: "large", name: "work", args: { data: "x".repeat(20000) } },
+          { id: "large", name: "work", args: { data: "x".repeat(1_048_576) } },
           { id: "unknown", name: "missing" },
           { id: "ok", name: "work" },
         ],
@@ -148,7 +145,7 @@ describe("SDK orchestration seam", () => {
   });
 });
 
-test("host context coalesces bounded updates, reports gaps, and keeps audio live after 65k cumulative", async () => {
+test("main context preserves complete updates and keeps audio live after 65k cumulative", async () => {
   let calls = 0;
   const h = fixture(async () => {
     calls++;
@@ -157,17 +154,14 @@ test("host context coalesces bounded updates, reports gaps, and keeps audio live
   for (let i = 0; i < 18; i++) {
     h.session.sendContext(`update ${i} ` + "x".repeat(4000));
     h.session.sendAudio("AAAAAA==");
-    await Bun.sleep(120);
   }
-  h.session.sendContext("dropped " + "x".repeat(4096));
+  h.session.sendContext("large verified " + "x".repeat(4096));
   h.session.sendContext("latest verified status");
-  await Bun.sleep(130);
-  expect(h.contexts).toHaveLength(19);
+  expect(h.contexts).toHaveLength(20);
   expect(h.audio).toHaveLength(18);
   const lastText = (h.contexts.at(-1) as { turns: { parts: { text: string }[] }[] }).turns[0]!.parts[0]!.text;
-  expect(lastText).toContain("[Some earlier host updates omitted;");
   expect(lastText).toContain("latest verified status");
-  expect(lastText).not.toContain("dropped ");
+  expect((h.contexts.at(-2) as any).turns[0].parts[0].text).toBe("large verified " + "x".repeat(4096));
   h.session.sendAudio("AAAAAA==");
   expect(h.audio).toHaveLength(19);
   expect(h.session.state).toBe("ready");
@@ -248,42 +242,37 @@ test("duplicate SDK IDs replay completed bounded response without re-execution",
   );
 });
 
-test("context bursts share one bounded packet and a pending close sends nothing", async () => {
+test("main context preserves each observation and sends nothing after close", async () => {
   const h = fixture(async () => null);
   await h.session.connect("fake");
-  h.session.sendContext("first update");
+  h.session.sendContext("first update", { triggerResponse: false });
   h.session.sendContext("second update");
-  await Bun.sleep(130);
   expect(h.contexts).toEqual([
-    { turns: [{ role: "user", parts: [{ text: "first update\nsecond update" }] }], turnComplete: false },
+    { turns: [{ role: "user", parts: [{ text: "first update" }] }], turnComplete: false },
+    { turns: [{ role: "user", parts: [{ text: "second update" }] }], turnComplete: true },
   ]);
-  h.session.sendContext("not sent after close");
   h.session.close();
-  await Bun.sleep(130);
-  expect(h.contexts).toHaveLength(1);
+  h.session.sendContext("not sent after close");
+  expect(h.contexts).toHaveLength(2);
 });
 
-test("update flood drops old observations honestly while audio continues", async () => {
+test("observation bursts preserve complete data while audio continues", async () => {
   const h = fixture(async () => null);
   await h.session.connect("fake");
   for (let i = 0; i < 1000; i++) {
-    h.session.sendContext(`verified-${i} ` + "x".repeat(100));
+    h.session.sendContext(`verified-${i} ` + "x".repeat(100), { triggerResponse: false });
     h.session.sendAudio("AAAAAA==");
   }
-  await Bun.sleep(130);
-  const packet = (h.contexts[0] as any).turns[0].parts[0].text;
-  expect(h.contexts).toHaveLength(1);
-  expect(packet.length).toBeLessThanOrEqual(4096);
-  expect(packet).toContain("Some earlier host updates omitted");
-  expect(packet).toContain("verified-999");
+  expect(h.contexts).toHaveLength(1000);
+  expect((h.contexts.at(-1) as any).turns[0].parts[0].text).toBe("verified-999 " + "x".repeat(100));
   expect(h.audio).toHaveLength(1000);
   expect(h.session.state).toBe("ready");
   h.session.close();
 });
 
-test("Session exposes allowlisted typed reasons, never exception messages or unknown codes", async () => {
+test("Session tool failures never expose exception messages or custom codes", async () => {
   const h = fixture(async (call) => {
-    const failure = new InputHandoffError("transcript_unavailable");
+    const failure = new Error("secret exception detail");
     failure.message = "secret exception detail";
     if (call.id === "unknown-code") (failure as any).code = "secret_code";
     throw failure;
@@ -303,10 +292,7 @@ test("Session exposes allowlisted typed reasons, never exception messages or unk
       scheduling: "WHEN_IDLE",
       id: "typed",
       name: "work",
-      response: {
-        code: "transcript_unavailable",
-        error: "Handoff requires an eligible completed captured user transcript. This request was not sent.",
-      },
+      response: { error: "Tool execution failed" },
     },
   });
   expect(h.responses).toContainEqual({

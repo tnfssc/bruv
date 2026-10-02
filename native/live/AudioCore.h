@@ -8,7 +8,6 @@
 typedef struct LLCore LLCore;
 LLCore *ll_create(void);
 void ll_destroy(LLCore *core);
-int ll_play_push(LLCore *core, const int16_t *samples, int count, int generation);
 int ll_play_push_batch(LLCore *core, const int16_t *samples, int count, int generation);
 void ll_flush(LLCore *core, int generation);
 int ll_generation(LLCore *core);

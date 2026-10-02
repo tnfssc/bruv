@@ -19,9 +19,6 @@ void ll_flush(LLCore *c, int gen) {
     // Only the command thread writes generations. Callback CAS cannot subtract from a new epoch.
     atomic_store(&c->pending, (uint64_t)(unsigned)gen << 32);
 }
-int ll_play_push(LLCore *c, const int16_t *data, int count, int gen) {
-    return ll_play_push_batch(c, data, count, gen);
-}
 int ll_play_push_batch(LLCore *c, const int16_t *data, int count, int gen) {
     if (count < 1 || count > LL_PLAY_BLOCKS * LL_PLAY_SAMPLES || gen != ll_generation(c)) return 0;
     unsigned blocks = ((unsigned)count + LL_PLAY_SAMPLES - 1) / LL_PLAY_SAMPLES;
@@ -111,10 +108,10 @@ int ll_self_test(void) {
     LLCore *c=ll_create(); if (!c) return 0;
     int16_t a[480]; for(int i=0;i<480;i++) a[i]=1234;
     float out[960];
-    int ok=ll_play_push(c,a,480,0) && ll_queued_ms(c)==20;
-    ll_flush(c,1); ok &= ll_queued_ms(c)==0 && !ll_play_push(c,a,480,0);
+    int ok=ll_play_push_batch(c,a,480,0) && ll_queued_ms(c)==20;
+    ll_flush(c,1); ok &= ll_queued_ms(c)==0 && !ll_play_push_batch(c,a,480,0);
     ll_render(c,out,960,48000); for(int i=0;i<960;i++) ok &= out[i]==0;
-    ok &= ll_play_push(c,a,480,1);
+    ok &= ll_play_push_batch(c,a,480,1);
     ll_render(c,out,960,48000); ok &= out[0]>0 && out[100]>0;
     float cap[1024]={0}, copy[1024]; cap[0]=0.5f;
     ok &= ll_capture_push(c,cap,1024) && ll_capture_pop(c,copy)==1024 && copy[0]==0.5f;
