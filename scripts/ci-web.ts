@@ -23,6 +23,7 @@ export const webInputs = [
   "integrations/t3/upstream/bruv.patch",
   "integrations/t3/upstream/bootstrap.mjs",
   "integrations/t3/upstream/chunks-startup.test.mjs",
+  "integrations/t3/upstream/chunks-large-data.test.mjs",
 ];
 const fixedEnvironment = {
   CI: "true",

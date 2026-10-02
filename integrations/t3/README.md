@@ -55,8 +55,14 @@ uses Bun preload to clear interpreter mode before executing upstream’s ordinar
 CLI entry; argv and shutdown remain upstream-owned.
 
 The original JavaScript warning threshold is unchanged. No artificial vendor/size
-chunk groups are added. Both fresh and reused builds still reject cyclic static
-emitted chunk graphs, and packaged browser startup remains a mandatory gate. Run
+chunk groups are added. Fresh production and reuse-web repack reject cyclic static emitted chunk graphs
+and require real, nonempty upstream HEIC CSP/Shiki WASM, C++/Elisp payloads and
+the dynamic chat route outside the main static closure. Packed reuse trusts the
+verified producer receipt; CI keys include both maintained gates. Retired custom
+sidebar/composer/timeline splits, byte caps, JSON grammar emission and Bruv codec
+adapter paths are not contracts. No compiler or dependency changes restore them.
+Packaged browser startup remains mandatory; manifest checks do not prove real
+HEIC decoding or C++/Elisp tokenization. Run
 `T3_WEB_DIST=<source>/apps/web/dist node --test upstream/chunks*.test.mjs` from
 this directory after a production build. Historical HEIC-specific adapter fixtures
 remain research evidence; current codec behavior is the official implementation.

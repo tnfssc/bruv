@@ -40,7 +40,10 @@ async function verifyPortableOptionalDependencies(output: string): Promise<void>
 
 const root = resolve(import.meta.dir, "../../..");
 export function verifyWebChunks(clientDirectory: string): void {
-  execFileSync("node", ["--test", resolve(root, "integrations/t3/upstream/chunks-startup.test.mjs")], {
+  const gates = ["chunks-startup", "chunks-large-data"].map(
+    (name) => `${root}/integrations/t3/upstream/${name}.test.mjs`,
+  );
+  execFileSync("node", ["--test", ...gates], {
     env: { ...process.env, T3_WEB_DIST: clientDirectory },
     stdio: "inherit",
   });
