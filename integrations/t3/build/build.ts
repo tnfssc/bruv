@@ -85,6 +85,8 @@ export async function prepareWebSource(
     "--filter",
     "@t3tools/web...",
     "--filter",
+    "@t3tools/scripts...",
+    "--filter",
     ".",
     "install",
     "--frozen-lockfile",

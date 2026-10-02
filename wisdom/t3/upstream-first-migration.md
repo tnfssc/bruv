@@ -185,3 +185,9 @@ needs normal hosted release gates, including non-Linux binaries. Unrelated
 untracked footer-gap wisdom/evidence observed in the main checkout was left alone.
 Values unchanged: the existing upstream-adoption and fewer-owned-parts values
 cover this migration; no new general rule is needed.
+
+## Focused further reduction
+
+See [further-patch-reduction.md](further-patch-reduction.md) for the fixed-pin
+follow-up from d195d78: small dead-state/upstream-helper cleanup, fresh-checkout
+build dependency fix, final source/build/native/browser proof and exact limits.
