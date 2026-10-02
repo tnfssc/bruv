@@ -1,0 +1,36 @@
+[
+  [
+    {
+      "path": "scripts/fixtures/task-placement-clean/fake-provider.ts",
+      "lines": 20
+    },
+    {
+      "path": "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
+      "lines": 20
+    }
+  ],
+  [
+    {
+      "path": "tests/fixtures/remote-e2e/sshd_config",
+      "lines": 14
+    },
+    {
+      "path": "tests/fixtures/remote-placement-e2e/sshd_config",
+      "lines": 14
+    },
+    {
+      "path": "tests/fixtures/remote-typed-root-placement/sshd_config",
+      "lines": 14
+    }
+  ],
+  [
+    {
+      "path": "tests/fixtures/remote-typed-root-placement/ssh-proxy.ts",
+      "lines": 10
+    },
+    {
+      "path": "tests/fixtures/remote-placement-e2e/ssh-proxy.ts",
+      "lines": 10
+    }
+  ]
+]

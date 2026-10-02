@@ -1,0 +1,59 @@
+{
+  "baseline": "d80d7058a2f5481f067586fd7042fe2746cff4ae",
+  "files": 689,
+  "physicalLines": 160840,
+  "reviewedLines": 160840,
+  "unreadFiles": 0,
+  "reports": 32,
+  "method": "Union of file and contiguous patch-range review ledgers. Duplicate reads counted once. SHA-256 pins reviewed bytes. Every source/config file has a verdict. Estimates are not implementation diffs.",
+  "groups": {
+    "core": {
+      "files": 45,
+      "lines": 11545
+    },
+    "execution": {
+      "files": 36,
+      "lines": 8798
+    },
+    "experiments1": {
+      "files": 39,
+      "lines": 14475
+    },
+    "experiments2": {
+      "files": 37,
+      "lines": 14450
+    },
+    "experiments3": {
+      "files": 63,
+      "lines": 14451
+    },
+    "live": {
+      "files": 47,
+      "lines": 7754
+    },
+    "remote": {
+      "files": 37,
+      "lines": 9312
+    },
+    "tests1": {
+      "files": 94,
+      "lines": 18083
+    },
+    "tests2": {
+      "files": 91,
+      "lines": 18041
+    },
+    "tests3": {
+      "files": 91,
+      "lines": 18041
+    },
+    "tooling": {
+      "files": 76,
+      "lines": 11093
+    },
+    "web": {
+      "files": 33,
+      "lines": 14797
+    }
+  }
+}
