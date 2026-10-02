@@ -78,3 +78,14 @@ confirmed. It produced no committed fix. New narrow workers start from b08d229:
 Both own separate upstream checkouts and must return focused source deltas. Parent
 composes them and runs final compiled browser flow, including child/Stop if not
 covered already. No success claim for browser reload until those checks pass.
+
+## Provider advisory source fix awaiting composition
+
+Task_127f41c6 returned two-file source change in durable checkout
+/home/tnfssc/.bruv/worktrees/t3-provider-advisory-fix-127f41c6 (HEAD commit).
+It exempts existing trusted embedded Bruv identity in applyProviderCompatibility
+and adds a regular-Pi vs embedded-Bruv regression. No root commit/canonical
+change was returned. Its test setup failed loading effect/Deferred; no red/green
+claim. Parent must apply its exact two-file commit diff to the final route source,
+run provider tests with that installed graph, regenerate canonical patch and
+validate combined compiled browser prompt/reload/restart and no warning.
