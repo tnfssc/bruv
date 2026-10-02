@@ -413,7 +413,7 @@ Reuse the existing terminal probe infrastructure where it fits. Record unsupport
 
 This is a docs-only proposal for review, not an approved implementation. No runtime files changed. The [research](rolling-activity-research.md) records exact source paths, Pi 1.0.0 behavior and bounded component probes. Its possible alternatives are research notes; the recommendations above are the reconciled design.
 
-Draft worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4abbe161. Branch: bruv/draft-rolling-activity-transcript-propos-4abbe161. Draft commit: 2cfd3166. Research worktree/branch are in the research receipt; aa639102 was integrated here as 70d2d5ec. Parent owns the final PR against develop. Base: eb07b0d7, after published v0.15.28.
+Draft worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4abbe161. Branch: bruv/draft-rolling-activity-transcript-propos-4abbe161. Draft commit: 2cfd3166. Research worktree/branch are in the research receipt; aa639102 was integrated here as 70d2d5ec. Proposal PR: https://github.com/tnfssc/bruv/pull/23 against develop. It is open for design review; do not merge or implement without the user’s next decision. Base: eb07b0d7, after published v0.15.28.
 
 Parent reviewed the source and all examples, reconciled click/keyboard facts, chose a safe default for unknown prose, and kept initial scope local. One real local session checkpoint had 86 outer execute calls, 19 canonical task IDs, 19 custom notices and 8 assistant text messages. Those are different measures, not a reason to present an invented combined “tools” count. This is an illustrative sample, not a benchmark or general usage claim.
 
