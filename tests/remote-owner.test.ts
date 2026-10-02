@@ -28,7 +28,12 @@ test.skipIf(process.platform !== "linux")(
     const old = process.env.HOME;
     process.env.HOME = home;
     try {
-      const { handleRemoteRequest, runOwnerTask } = await import("../src/remote/owner");
+      // Other suites can import root-owner (and owner) before this fixture sets HOME.
+      // Give this fixture its own module instance so its state stays under its private HOME.
+      const ownerModule = "../src/remote/owner";
+      const { handleRemoteRequest, runOwnerTask } = (await import(
+        ownerModule + "?fixture=" + encodeURIComponent(home)
+      )) as typeof import("../src/remote/owner");
       mkdirSync(join(home, ".bruv"));
       writeFileSync(
         join(home, ".bruv", "subagents.json"),
