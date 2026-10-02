@@ -9,8 +9,9 @@ test("canonical T3 patch uses Bruv services while retaining upstream Effect APIs
   expect(patch).toContain("class BruvTaskService");
   expect(patch).toContain('"bruv_task_launch"');
   expect(patch).toContain('"BRUV_WEB_BRUV_BINARY"');
-  expect(patch).toContain("Effect.die(");
-  expect(patch).toContain("Effect.orDie");
+  // Upstream API calls no longer have to appear in the maintained delta.
+  expect(patch).not.toContain("diff --git a/apps/server/src/orchestration-v2/NativeUsageAccounting.ts");
+  expect(patch).not.toContain("diff --git a/apps/server/src/orchestration-v2/Adapters/PiRpc.ts");
   expect(patch).not.toContain("the token must bruv");
   expect(patch).not.toMatch(/(?:Effect|Layer)\.orBruv|(?:Cause|Stream)\.bruv|Cause\.isBruvReason/);
   const additions = patch

@@ -31,28 +31,30 @@ release notes retain their role roots (`scripts/`, `native/`, `support/`).
 
 ## Pinned browser/server build
 
-The canonical `upstream/bruv.patch` includes the reviewed installer modernization.
-It scopes pnpm to the shipped server, browser, shared packages and typecheck scripts;
-it is not an upstream desktop/mobile build checkout. Modern injected-workspace
-deploy preserves native optional assets and the local package self-reference.
+The source is official `t3code/codex-turn-mapping`, pinned at the immutable
+revision in `upstream/source.json` (not a stable-release assumption). Official Pi
+support (#7211), Pi 1.0 (#14688), provider adapters, orchestration, usage, history
+and browser codecs/syntax assets remain upstream-owned.
 
-Browser codecs and syntax data remain lazy: HEIC uses an external WASM worker;
-Shiki uses native Oniguruma WASM and JSON grammar assets instead of large JS
-wrappers. The original 500 kB JavaScript warning threshold is unchanged. Artificial vendor/size
-chunk groups are deliberately absent: they broke production initialization. A large
-shared chunk warning is preferable to a client that cannot boot. Both fresh and
-reused builds reject cyclic static emitted chunk graphs; the manual packaged browser
-startup regression is documented in `gates/README.md`. Run
+Bruv keeps its executable/environment boundary, least-privilege native tasks and
+profile/depth policy, durable cancellation/replay, local-shell cards/completion
+notifications, and Bun PTY/lazy native-search packaging. Broad compiler rewrites,
+bespoke Pi usage aggregation and browser codec/syntax adapters are no longer
+maintained here. See [migration evidence](../../wisdom/t3/upstream-first-canonical-source.md).
+
+Workspace selection limits builds to the shipped server/browser/shared packages
+and scripts. The official pnpm lockfile and catalog are unchanged; deploy uses
+pnpm's explicit workspace-copy `--legacy` mode instead of maintaining a second
+injected dependency graph. This is a packaging mode, not a T3 runtime fallback.
+The local package self-reference and portable native optional-asset checks remain
+mandatory. Prepared builds honor `BRUV_T3_SOURCE` too.
+
+The original JavaScript warning threshold is unchanged. No artificial vendor/size
+chunk groups are added. Both fresh and reused builds still reject cyclic static
+emitted chunk graphs, and packaged browser startup remains a mandatory gate. Run
 `T3_WEB_DIST=<source>/apps/web/dist node --test upstream/chunks*.test.mjs` from
-this directory after a production build. `upstream/heic.browser.test.mjs` also
-requires `T3_HEIC_SAMPLE`, `PLAYWRIGHT_MODULE`, and optionally
-`PLAYWRIGHT_CHROMIUM_EXECUTABLE` for real browser conversion checks.
-
-Compiler idioms preserve cancellation/error contracts. Finite schemas express
-wire/domain constraints, not a blanket numeric rewrite: the invalid numeric
-configuration error intentionally retains `Schema.Number` with the compiler’s
-documented single-site exemption. See the numeric-contract wisdom and the final
-installer validation handoff for evidence and compatibility decisions.
+this directory after a production build. Historical HEIC-specific adapter fixtures
+remain research evidence; current codec behavior is the official implementation.
 
 ## Updating the canonical patch
 

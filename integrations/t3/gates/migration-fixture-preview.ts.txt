@@ -32,7 +32,8 @@ const observed = await Effect.runPromise(Effect.gen(function* () {
   const migration = Number((yield* sql`SELECT MAX(migration_id) AS id FROM effect_sql_migrations`)[0]?.id);
   const migrationLedger = yield* sql`SELECT migration_id AS id, name FROM effect_sql_migrations WHERE migration_id >= 53 ORDER BY migration_id`;
   const eventCount = Number((yield* sql`SELECT COUNT(*) AS count FROM orchestration_events WHERE application_event_version = 2`)[0]?.count);
-  return { projection, migration, migrationLedger, eventCount };
+  const threadCount = Number((yield* sql`SELECT COUNT(*) AS count FROM orchestration_v2_projection_threads`)[0]?.count);
+  return { projection, migration, migrationLedger, eventCount, threadCount };
 }).pipe(Effect.provide(runtime)));
 
 const { projection } = observed;
@@ -47,6 +48,10 @@ assert.deepEqual(observed.migrationLedger, [
   { id: 56, name: "RemoveRedundantProjectionIndexes" },
 ]);
 assert.equal(observed.eventCount, fixture.eventCount);
+assert.equal(observed.threadCount, 1);
+assert.equal(projection.providerTurns.length, 1);
+assert.equal(projection.thread.lineage.parentThreadId, null);
+assert.equal(projection.subagents[0]?.childThreadId, null);
 assert.equal(projection.thread.id, threadId);
 assert.equal(projection.thread.title, "Current production native migration fixture");
 assert.equal(projection.thread.runtimeMode, "full-access");

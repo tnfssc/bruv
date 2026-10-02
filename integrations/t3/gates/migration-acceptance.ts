@@ -1,4 +1,4 @@
-/** Isolated current-production -> pinned-preview migration and restart acceptance. */
+/** Isolated historical V2 baseline -> canonical source migration and restart acceptance. */
 import { execFileSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { copyFile, mkdtemp, rm, writeFile } from "node:fs/promises";
@@ -104,7 +104,7 @@ try {
   await copyFile(join(import.meta.dir, "migration-fixture-preview.ts.txt"), previewRunner);
   await runBun(PREVIEW, previewRunner, state, "upgrade");
   await runBun(PREVIEW, previewRunner, state, "restart");
-  console.log("migration acceptance: PASS (current production -> preview -> preview restart)");
+  console.log("migration acceptance: PASS (historical V2 baseline -> canonical source -> restart)");
 } finally {
   await Promise.all([
     rm(productionRunner, { force: true }),

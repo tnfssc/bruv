@@ -1,3 +1,4 @@
+import { buildWeb } from "../../integrations/t3/build/build";
 import { expect, test } from "bun:test";
 import { execFileSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -62,6 +63,23 @@ test("canonical patch regeneration exports source renames without changing the r
     await verifyWebSource(root, patch);
     expect(await readFile(join(root, ".git/index"))).toEqual(before);
   } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("prepared builds honor the explicit source checkout and reject an unpinned HEAD before compiling", async () => {
+  const root = await mkdtemp(join(tmpdir(), "bruv-web-prepared-test-"));
+  const previous = process.env.BRUV_T3_SOURCE;
+  try {
+    execFileSync("git", ["-C", root, "init", "--quiet"]);
+    await writeFile(join(root, "source.ts"), "export const value = 1;\n");
+    execFileSync("git", ["-C", root, "add", "."]);
+    execFileSync("git", ["-C", root, "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "--quiet", "-m", "fixture"]);
+    process.env.BRUV_T3_SOURCE = root;
+    await expect(buildWeb({ prepared: true })).rejects.toThrow("does not match integrations/t3/upstream/source.json");
+  } finally {
+    if (previous === undefined) delete process.env.BRUV_T3_SOURCE;
+    else process.env.BRUV_T3_SOURCE = previous;
     await rm(root, { recursive: true, force: true });
   }
 });

@@ -107,13 +107,16 @@ completed native subagent job, two-message history and turn items, and encoded
 server settings with a provider instance and price override. The preview runner
 opens that same database and settings file, validates them through preview domain
 readers/schemas, then starts a second time and compares a semantic snapshot. This
-is an upgrade/restart compatibility gate. Both revisions currently report schema
-migration 54. The gate does not claim that a new numbered migration ran.
+is an upgrade/restart compatibility gate. The historical production fixture records schema migration 54. The canonical
+66a91077 target must reach migration 56; restart must preserve the semantic snapshot.
+Usage assertions inspect official provider-turn records directly, including token
+counts, confidence/scope and provider-reported cost, rather than the retired Bruv
+subtree report. This historical baseline does not replace a last-release upgrade gate.
 
 ```bash
 TMPDIR=/var/tmp \
 T3_V2_MIGRATION_PRODUCTION=/absolute/path/to/patched-a9b49a7 \
-T3_V2_MIGRATION_PREVIEW=/absolute/path/to/patched-b488c57 \
+T3_V2_MIGRATION_PREVIEW=/absolute/path/to/patched-66a91077 \
 bun integrations/t3/gates/migration-acceptance.ts
 ```
 

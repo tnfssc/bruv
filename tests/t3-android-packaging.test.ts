@@ -10,7 +10,9 @@ const build = readFileSync(resolve(root, "integrations/t3/build/build.ts"), "utf
 test("Android optional native dependency is staged and verified", () => {
   expect(patch).toContain("+  os: [current, android, darwin, linux, win32]");
   expect(build).toContain('"@yuuang/ffi-rs-android-arm64"');
-  expect(patch).toContain("'@yuuang/ffi-rs-android-arm64@1.3.2'");
+  // The official lockfile is unchanged, so dependency records need not be in the delta.
+  // The build must inspect the actual deployed optional dependency graph.
+  expect(build).toContain("await verifyPortableOptionalDependencies(output)");
 });
 
 test("fff-node is loaded on demand and unsupported Android search is a typed failure", () => {
@@ -20,7 +22,8 @@ test("fff-node is loaded on demand and unsupported Android search is a typed fai
   expect(index).toBeDefined();
   expect(index).toContain('-const { FileFinder } = requireForFff("@ff-labs/fff-node")');
   expect(index).toContain('+      if (process.platform === "android") {');
-  expect(index).toContain('+        throw new Error("Workspace search is unavailable on Android');
-  expect(index).toContain('+      const { FileFinder } = requireForFff("@ff-labs/fff-node")');
+  const additions = index!.split("\n").filter((line) => line.startsWith("+")).map((line) => line.slice(1)).join("\n");
+  expect(additions).toMatch(/throw new Error\(\s*"Workspace search is unavailable on Android/);
+  expect(additions).toMatch(/const \{ FileFinder \} = requireForFff\(\s*"@ff-labs\/fff-node"/);
   expect(index).toContain("new WorkspaceSearchIndexCreateFailed({");
 });
