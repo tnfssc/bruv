@@ -78,7 +78,7 @@ test("runtime host gate rejects pristine and partly prepared dependencies", () =
 
 test("adaptation validates all files and version before any writes", async () => {
   const dir = await temp();
-  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "0.99.1" }));
+  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.0" }));
   for (const patch of piHostPatches) {
     await mkdir(dirname(join(dir, patch.path)), { recursive: true });
     await writeFile(join(dir, patch.path), patch.content ? originalRegistry : await readFile(join(piRoot, patch.path)));
@@ -86,7 +86,7 @@ test("adaptation validates all files and version before any writes", async () =>
   await writeFile(join(dir, piHostPatches[2]!.path), "drift");
   await expect(preparePiHost(dir)).rejects.toThrow("Unsupported Pi host file");
   expect(await readFile(join(dir, piHostPatches[0]!.path), "utf8")).toBe(originalRegistry);
-  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "0.99.2" }));
+  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.1" }));
   await expect(preparePiHost(dir)).rejects.toThrow("Unsupported Pi host version");
 });
 
@@ -150,6 +150,13 @@ for (const entry of ["source", "compiled"] as const) {
     expect(help.stdout).not.toContain("mcp");
     expect(help.stdout).not.toContain("codemode");
     expect(help.stdout).not.toContain("tool-search");
+    expect(help.stdout).toContain("TUI mode: regular (default) or fullscreen");
+    const providerOnly = await run([...command, "--offline", "-p", "--no-session", "--provider", "openai"], {
+      cwd: home,
+      env,
+    });
+    expect(providerOnly.code).toBe(1);
+    expect(providerOnly.stderr).toContain("--provider requires --model");
     const configHelp = await run([...command, "config", "--help"], { cwd: home, env });
     expect(configHelp.code).toBe(0);
     expect(configHelp.stdout).toContain("config");
@@ -315,4 +322,13 @@ test("bruv execute stays active and user-authored codemode tools are not banned"
   } finally {
     session.dispose();
   }
+});
+
+test("bruv keeps regular scrollback by default and honors explicit TUI mode", () => {
+  expect(SettingsManager.inMemory().getTuiMode()).toBe("regular");
+  expect(SettingsManager.inMemory({ tuiMode: "fullscreen" }).getTuiMode()).toBe("fullscreen");
+  expect(SettingsManager.inMemory({ tuiMode: "regular" }).getTuiMode()).toBe("regular");
+  const manager = SettingsManager.inMemory();
+  manager.applyOverrides({ tuiMode: "fullscreen" });
+  expect(manager.getTuiMode()).toBe("fullscreen");
 });

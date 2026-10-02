@@ -26,18 +26,18 @@
     "smoke:live-onboarding": "bun ./scripts/live-onboarding-smoke.ts"
   },
   "dependencies": {
-    "@earendil-works/pi-ai": "0.99.1",
-    "@earendil-works/pi-coding-agent": "0.99.1",
-    "@earendil-works/pi-server": "0.99.1",
-    "@earendil-works/pi-tui": "0.99.1",
-    "@google/genai": "2.24.0",
+    "@earendil-works/pi-ai": "1.0.0",
+    "@earendil-works/pi-coding-agent": "1.0.0",
+    "@earendil-works/pi-server": "1.0.0",
+    "@earendil-works/pi-tui": "1.0.0",
+    "@google/genai": "2.26.0",
     "es-module-lexer": "^3.0.2",
     "resolve.exports": "2.0.3",
     "ws": "8.22.0",
     "zod": "4.6.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.14",
+    "@biomejs/biome": "2.5.15",
     "@types/bun": "1.4.2",
     "@types/ws": "8.18.2",
     "typescript": "7.0.2"

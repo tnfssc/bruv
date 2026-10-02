@@ -20,7 +20,7 @@ const sessionManagerHash = createHash("sha256")
 const sessionManagerPatch = piHostPatches.find((patch) => patch.path === "dist/core/session-manager.js");
 if (!sessionManagerPatch) throw new Error("Missing Pi session scan adaptation");
 if (
-  piPackage.version !== "0.99.1" ||
+  piPackage.version !== "1.0.0" ||
   ![sessionManagerPatch.originalSha256, sessionManagerPatch.adaptedSha256].includes(sessionManagerHash)
 ) {
   throw new Error("Unsupported Pi SessionManager: review the disk-backed history adapter before updating Pi");

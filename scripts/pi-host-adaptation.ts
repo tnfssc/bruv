@@ -1,5 +1,6 @@
-// Keep guarded Pi fixes at the host seam. This owns inherited built-in removal
-// and session scan stream cleanup, not user settings or global error handling.
+// Keep guarded Pi fixes at the host seam. This owns inherited built-in removal,
+// session scan stream cleanup, and bruv's terminal default. No saved preferences
+// or global error handling are changed.
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -21,8 +22,8 @@ export const piHostPatches: readonly Patch[] = [
   },
   {
     path: "dist/main.js",
-    originalSha256: "bb36969572097bc657b85b42954a78f4be42afc5dfd63453a7d97d53165657b2",
-    adaptedSha256: "bb1f03e5be8a21f5cd28450325628562e37e9f8c596486c2ee7a6c32b2392dde",
+    originalSha256: "060521b0b81f91948d8ded9139e423e5d0c9e6808a45c81750cc30519de4d2db",
+    adaptedSha256: "b0197a0d0abb0261fac507a9e30c33a5e6a2c4fcedfd28b0d4e29fa2f30be786",
     replacements: [
       ['import { loadMcpCommand } from "./extensions/mcp/cli.lazy.js";\n', ""],
       [
@@ -34,11 +35,15 @@ export const piHostPatches: readonly Patch[] = [
   },
   {
     path: "dist/cli/args.js",
-    originalSha256: "9b06126b71ef7871ba08b43eeb255788772881ab200fe587bb971306766f3c50",
-    adaptedSha256: "0ce67721550898f24242282d13728c1a1f0db78926929d05425c2312addc7a08",
+    originalSha256: "2fcce7d42c5c3766c2c5a69ec582ec0f477977a527b3d01c8933bdaa537162ad",
+    adaptedSha256: "f4b42f50673d2043383a5694f05c8cbfd7f34d7b106576df060460e37068e114",
     replacements: [
       [`  \${APP_NAME} mcp <command>             Check MCP servers, sign in to or out of OAuth servers\n`, ""],
       ["install/remove/uninstall/update/list/config/auth/mcp", "install/remove/uninstall/update/list/config/auth"],
+      [
+        "--tui-mode <mode>              TUI mode: fullscreen (default) or regular",
+        "--tui-mode <mode>              TUI mode: regular (default) or fullscreen",
+      ],
       ["//# sourceMappingURL=args.js.map", "export const bruvHostAdapted = true;\n//# sourceMappingURL=args.js.map"],
     ],
   },
@@ -54,6 +59,19 @@ export const piHostPatches: readonly Patch[] = [
       [
         '        for await (const line of rl) {\n            const entry = parseSessionEntryLine(line);\n            if (!entry)\n                continue;\n            if (!header) {\n                if (entry.type !== "session")\n                    return null;\n                header = entry;\n                continue;\n            }\n            // Extract session name (use latest, including explicit clears)\n            if (entry.type === "session_info") {\n                name = entry.name?.trim() || undefined;\n            }\n            if (entry.type !== "message")\n                continue;\n            messageCount++;\n            const activityTime = getMessageActivityTime(entry);\n            if (typeof activityTime === "number") {\n                lastActivityTime = Math.max(lastActivityTime ?? 0, activityTime);\n            }\n            const message = entry.message;\n            if (!isMessageWithContent(message))\n                continue;\n            if (message.role !== "user" && message.role !== "assistant")\n                continue;\n            const textContent = extractTextContent(message);\n            if (!textContent)\n                continue;\n            allMessages.push(textContent);\n            if (!firstMessage && message.role === "user") {\n                firstMessage = textContent;\n            }\n        }\n',
         '        try {\n            for await (const line of rl) {\n                const entry = parseSessionEntryLine(line);\n                if (!entry)\n                    continue;\n                if (!header) {\n                    if (entry.type !== "session")\n                        return null;\n                    header = entry;\n                    continue;\n                }\n                // Extract session name (use latest, including explicit clears)\n                if (entry.type === "session_info") {\n                    name = entry.name?.trim() || undefined;\n                }\n                if (entry.type !== "message")\n                    continue;\n                messageCount++;\n                const activityTime = getMessageActivityTime(entry);\n                if (typeof activityTime === "number") {\n                    lastActivityTime = Math.max(lastActivityTime ?? 0, activityTime);\n                }\n                const message = entry.message;\n                if (!isMessageWithContent(message))\n                    continue;\n                if (message.role !== "user" && message.role !== "assistant")\n                    continue;\n                const textContent = extractTextContent(message);\n                if (!textContent)\n                    continue;\n                allMessages.push(textContent);\n                if (!firstMessage && message.role === "user") {\n                    firstMessage = textContent;\n                }\n            }\n        } finally {\n            rl.close();\n            input.destroy();\n        }\n',
+      ],
+    ],
+  },
+  {
+    // Pi 1.0 defaults to fullscreen; bruv keeps regular scrollback by default.
+    // Explicit saved/CLI fullscreen selection still wins; no settings are written.
+    path: "dist/core/settings-manager.js",
+    originalSha256: "b3a424ac1af9bd0c380796f9e5d812e2c61755ed3b31dd39982a57bbe0d5a391",
+    adaptedSha256: "039aae263f102167070507dd311981d9d403116a0489591d1486f488862c4fa9",
+    replacements: [
+      [
+        'return this.settings.tuiMode === "regular" ? "regular" : "fullscreen";',
+        'return this.settings.tuiMode === "fullscreen" ? "fullscreen" : "regular";',
       ],
     ],
   },
@@ -77,7 +95,7 @@ export function adaptPiHostFile(patch: Patch, text: string): string {
 
 export async function preparePiHost(piRoot: string): Promise<void> {
   const metadata = JSON.parse(await readFile(join(piRoot, "package.json"), "utf8")) as { version: string };
-  if (metadata.version !== "0.99.1") throw new Error(`Unsupported Pi host version: ${metadata.version}`);
+  if (metadata.version !== "1.0.0") throw new Error(`Unsupported Pi host version: ${metadata.version}`);
   // Validate every file before changing any. A dependency upgrade fails closed.
   const prepared = await Promise.all(
     piHostPatches.map(async (patch) => {

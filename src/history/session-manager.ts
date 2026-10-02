@@ -396,7 +396,7 @@ export function installDiskBackedSessionManager(): void {
   prototype.getHeader = function (this: SessionManager): SessionHeader | null {
     return state(this)?.store.header ?? original.getHeader.call(this);
   };
-  // 0.99.1 reads fileEntries directly for the footer. Session-info skeletons
+  // 1.0.0 reads fileEntries directly for the footer. Session-info skeletons
   // retain their tiny name field so the native fast path stays correct.
   prototype.getSessionName = function (this: SessionManager): string | undefined {
     return original.getSessionName.call(this);

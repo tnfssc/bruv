@@ -70,7 +70,7 @@ async function run(root: string, adapted: boolean) {
   return JSON.parse(stdout.trim().split("\n").at(-1)!);
 }
 
-test("Pi 0.99.1: first-user publication, direct session name and O(1) entry count match native SDK", async () => {
+test("Pi 1.0.0: first-user publication, direct session name and O(1) entry count match native SDK", async () => {
   const nativeRoot = await mkdtemp(join(tmpdir(), "pi-099-native-"));
   const adaptedRoot = await mkdtemp(join(tmpdir(), "pi-099-adapted-"));
   roots.push(nativeRoot, adaptedRoot);

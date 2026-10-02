@@ -26,7 +26,7 @@ export function installQuietStartup(): () => void {
 }
 
 /**
- * Pi 0.99.1 starts painting before awaiting terminal colors and session_start.
+ * Pi 1.0.0 starts painting before awaiting terminal colors and session_start.
  * Replace its not-yet-active default editor before init, rather than installing
  * a custom editor later. Pi must wire startup submit/exit and normal app actions
  * onto this same instance. No terminal start or extension initialization is delayed.

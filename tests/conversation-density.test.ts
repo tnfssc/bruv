@@ -6,7 +6,7 @@ import {
   ToolExecutionComponent,
   UserMessageComponent,
 } from "@earendil-works/pi-coding-agent";
-import { type Component, Container, Spacer, stripTerminalSequences, Text } from "@earendil-works/pi-tui";
+import { Box, type Component, Container, Markdown, Spacer, stripTerminalSequences, Text } from "@earendil-works/pi-tui";
 import { installConversationDensity } from "../src/ui/conversation-density";
 import { executeInputPreview, executeOutputPreview } from "../src/ui/execution-previews";
 
@@ -120,6 +120,16 @@ function blankRuns(lines: string[]): number[] {
 }
 
 describe("native conversation density adapter", () => {
+  test("requires Pi 1.0 direct Markdown rather than the old nested Box", () => {
+    restores.push(installConversationDensity());
+    const user = new UserMessageComponent("message");
+    expect(user.children).toHaveLength(1);
+    expect(user.children[0]).toBeInstanceOf(Markdown);
+    const oldBox = new Box(1, 1);
+    oldBox.addChild(user.children[0]!);
+    user.children = [oldBox];
+    expect(() => new Container().addChild(user)).toThrow("user Markdown shape is unsupported");
+  });
   test("gives first and consecutive users one unhighlighted boundary row", () => {
     restores.push(installConversationDensity());
     const chat = new Container();

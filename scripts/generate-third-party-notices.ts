@@ -3,7 +3,7 @@ import { dirname, join, resolve } from "node:path";
 
 const MAX_PACKAGES = 1000;
 const MAX_BYTES = 4 * 1024 * 1024;
-const PI_VERSION = "0.99.1";
+const PI_VERSION = "1.0.0";
 const pinnedPiPackages = new Set([
   "@earendil-works/chord",
   "@earendil-works/pi-agent-core",

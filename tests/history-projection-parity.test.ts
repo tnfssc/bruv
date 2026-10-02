@@ -100,7 +100,7 @@ async function run(root: string, adapted: boolean) {
   return JSON.parse(stdout.trim().split("\n").at(-1)!);
 }
 
-describe("Pi 0.99.1 disk-backed session projection compatibility", () => {
+describe("Pi 1.0.0 disk-backed session projection compatibility", () => {
   test("matches the real SDK for context edits and compaction system checkpoints", async () => {
     const nativeRoot = await mkdtemp(join(tmpdir(), "bruv-history-099-native-"));
     const adaptedRoot = await mkdtemp(join(tmpdir(), "bruv-history-099-adapted-"));

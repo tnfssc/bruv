@@ -79,7 +79,7 @@ test.skipIf(!hasTmux)(
         status: "active",
       });
 
-      // Pi 0.99.1 must continue routing later slash commands through the same
+      // Pi 1.0.0 must continue routing later slash commands through the same
       // extension, without treating them as provider/user turns.
       await tmux("send-keys", "-t", name, "-l", "/goal pause Awaiting review");
       await tmux("send-keys", "-t", name, "Enter");

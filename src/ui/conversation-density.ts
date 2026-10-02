@@ -5,7 +5,7 @@ import {
   UserMessageComponent,
 } from "@earendil-works/pi-coding-agent";
 import {
-  Box,
+  Markdown,
   type Component,
   Container,
   Spacer,
@@ -19,7 +19,7 @@ type RenderComponent = Component & {
   handleMouse: (event: TuiMouseEvent) => TuiMouseEventResult | undefined;
 };
 type DensityKind = "user" | "non-user";
-type BoxShape = { paddingY: number; invalidate: () => void };
+type UserContentShape = { paddingY: number; invalidate: () => void };
 
 function kind(component: Component): DensityKind | undefined {
   if (component instanceof UserMessageComponent) return "user";
@@ -33,19 +33,21 @@ function kind(component: Component): DensityKind | undefined {
   return undefined;
 }
 
-function userContentBox(component: UserMessageComponent): BoxShape {
+// Pi 1.0 removed the outer Box to avoid retaining two rendered copies.
+// Markdown now owns the same vertical padding; require its exact new shape.
+function userContent(component: UserMessageComponent): UserContentShape {
   const child = component.children[0];
-  if (component.children.length !== 1 || !(child instanceof Box) || !("paddingY" in child)) {
-    throw new Error("Pi 0.85 conversation-density seam changed: user content box shape is unsupported");
+  if (component.children.length !== 1 || !(child instanceof Markdown) || !("paddingY" in child)) {
+    throw new Error("Pi 1.0.0 conversation-density seam changed: user Markdown shape is unsupported");
   }
-  return child as unknown as BoxShape;
+  return child as unknown as UserContentShape;
 }
 
 function setUserVerticalPadding(component: UserMessageComponent, padding: number): void {
-  const box = userContentBox(component);
-  if (box.paddingY === padding) return;
-  box.paddingY = padding;
-  box.invalidate();
+  const content = userContent(component);
+  if (content.paddingY === padding) return;
+  content.paddingY = padding;
+  content.invalidate();
 }
 
 function isOneLineSpacer(component: Component | undefined): component is Spacer {
@@ -170,7 +172,7 @@ function compactThinkingForDisplay(message: AssistantMessageShape): AssistantMes
 function isInvisibleToolCarrier(component: Component): boolean {
   if (!(component instanceof AssistantMessageComponent)) return false;
   if (!("lastMessage" in component) || !("hasToolCalls" in component)) {
-    throw new Error("Pi 0.85 conversation-density seam changed: assistant component shape is unsupported");
+    throw new Error("Pi 1.0.0 conversation-density seam changed: assistant component shape is unsupported");
   }
   const content = (component as unknown as AssistantShape).lastMessage?.content;
   return (
@@ -224,7 +226,7 @@ function isBlank(line: string): boolean {
 }
 
 /**
- * Pi 0.85 puts highlighted vertical padding inside each user message. Each
+ * Pi 1.0.0 puts highlighted vertical padding inside each user message. Each
  * native message also owns the transition space before it. InteractiveMode adds
  * another one-line spacer before later user messages but has no transition-space
  * hook on its chat container.
@@ -245,7 +247,7 @@ function isBlank(line: string): boolean {
 export function installConversationDensity(): () => void {
   const seam = [UserMessageComponent, AssistantMessageComponent, ToolExecutionComponent, CustomMessageComponent];
   if (seam.some((componentClass) => !(componentClass.prototype instanceof Container))) {
-    throw new Error("Pi 0.85 conversation-density seam changed: native message components are not Containers");
+    throw new Error("Pi 1.0.0 conversation-density seam changed: native message components are not Containers");
   }
   const prototype = Container.prototype;
   const originalAddChild = prototype.addChild;
@@ -338,7 +340,7 @@ export function installConversationDensity(): () => void {
     const renderable = component as RenderComponent;
     const restoration = restorations.get(renderable);
     if (!restoration) return;
-    if (renderable instanceof UserMessageComponent && userContentBox(renderable).paddingY === 0) {
+    if (renderable instanceof UserMessageComponent && userContent(renderable).paddingY === 0) {
       setUserVerticalPadding(renderable, 1);
     }
     if (renderable.render === restoration.wrapper) renderable.render = restoration.original;
@@ -366,9 +368,9 @@ export function installConversationDensity(): () => void {
     }
     if (component instanceof UserMessageComponent) {
       adaptUserAdjacentSpacer(this, this.children[index - 1]);
-      const box = userContentBox(component);
-      if (box.paddingY !== 1) {
-        throw new Error("Pi 0.85 conversation-density seam changed: user content box padding is unsupported");
+      const content = userContent(component);
+      if (content.paddingY !== 1) {
+        throw new Error("Pi 1.0.0 conversation-density seam changed: user Markdown padding is unsupported");
       }
       setUserVerticalPadding(component, 0);
     }
@@ -377,12 +379,12 @@ export function installConversationDensity(): () => void {
 
     const renderable = component as RenderComponent;
     if (typeof renderable.render !== "function") {
-      throw new Error("Pi 0.85 conversation-density seam changed: message component has no render method");
+      throw new Error("Pi 1.0.0 conversation-density seam changed: message component has no render method");
     }
     const originalRender = renderable.render;
     const originalMouse = renderable.handleMouse;
     if (typeof originalMouse !== "function") {
-      throw new Error("Pi 0.85 conversation-density seam changed: message component has no mouse handler");
+      throw new Error("Pi 1.0.0 conversation-density seam changed: message component has no mouse handler");
     }
     const assistant =
       renderable instanceof AssistantMessageComponent ? (renderable as unknown as AssistantShape) : undefined;
@@ -390,7 +392,7 @@ export function installConversationDensity(): () => void {
       assistant &&
       (!("lastMessage" in assistant) || !("hasToolCalls" in assistant) || typeof assistant.updateContent !== "function")
     ) {
-      throw new Error("Pi 0.85 conversation-density seam changed: assistant update shape is unsupported");
+      throw new Error("Pi 1.0.0 conversation-density seam changed: assistant update shape is unsupported");
     }
     const originalUpdate = assistant?.updateContent;
     const parentReference = new WeakRef(this);
