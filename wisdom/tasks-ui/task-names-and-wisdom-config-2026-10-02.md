@@ -32,8 +32,12 @@ Two assertions in the first full suite needed updates. The SDK fixture now has a
 
 Packed-web reuse rejected changed inputs. The normal fresh producer ran instead, with pinned pnpm on PATH. No cache guard was bypassed.
 
-## Release checkpoint
+## Release
 
-Expected next patch: v0.15.28. Latest remote release is v0.15.27. Freshness fetch passed; no remote commits missing locally. Release notes: support/release-v0.15.28.md. Next: push, dispatch release.yml on develop, await hosted gates, and verify published version/source/assets. No published release claimed yet.
+Published stable v0.15.28 at 2026-10-02T23:25:57Z: https://github.com/tnfssc/bruv/releases/tag/v0.15.28 . Release notes: support/release-v0.15.28.md.
 
 Wisdom changed for task names, exact failure evidence, config and release handoff. Values unchanged after reviewing both features: the existing simple-config, honest-UI, real-path proof and durable-handoff values cover the lessons. This is feature detail, not a new general rule.
+
+Pushed dd340ec1. Hosted release run https://github.com/tnfssc/bruv/actions/runs/37076563552 passed every gate, including actual Mac binary/updater and final Linux browser boot/reload. All 12 expected assets are present. Downloaded small SOURCE.txt matches tag commit 462970b21e4225b9e66fc4fd2700921e6450b6ce. Parent fast-forwarded to the prepared package version commit. No large binaries were downloaded only to repeat CI hashes. SOURCE.txt is in artifacts/task-names-wisdom/release-v0.15.28/.
+
+Work and release are done. User must update/restart their running binary to use the new code; no user install was changed by this session. Historical rows with no surviving name metadata still use IDs. Real SSH acceptance and Android execution were not claimed. Values stayed unchanged after release review; existing guidance already covers the lessons.
