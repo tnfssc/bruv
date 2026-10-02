@@ -101,6 +101,9 @@ test("real TUI shows one-line collapsed execute/task rows and expandable details
       "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       "OPENAI_API_KEY=offline-test-placeholder",
       binary,
+      // Expanded details exceed the viewport; this test inspects normal terminal scrollback.
+      "--tui-mode",
+      "regular",
       "--offline",
       "--no-approve",
       "--session",

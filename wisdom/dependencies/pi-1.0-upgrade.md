@@ -81,19 +81,21 @@ single-occurrence anchors, result hash, validate-all-before-write behavior and
 runtime host gate still fail closed. The session hash is unchanged:
 `046b6a1109ac3f0ed893bb85bf0648709362fa926a5da75761216cf2fcf9d926`.
 
-Pi's new fullscreen default would change bruv's normal scrollback. A fifth exact
-host patch keeps regular mode when unset and honors explicit saved/CLI fullscreen
-selection, without writing settings. CLI help matches this default. Tests cover
-unset, explicit regular/fullscreen, overrides, source/compiled help and the new
-provider-only error. No fullscreen implementation or guard is bypassed.
+Pi's fullscreen default is adopted unchanged. Follow-up review removed the new
+settings-manager default-preservation patch and TUI-help replacement: a dependency
+upgrade was not a request to retain the old terminal default. The remaining four
+exact host patches keep their protections; args.js's adapted hash is recalculated
+only for removing that help replacement. Explicit saved/CLI `regular` still works.
+Tests cover the upstream unset default, explicit regular/fullscreen, regular
+overrides, source/compiled upstream help and the new provider-only error.
 
 InteractiveMode still starts rendering before its 100ms terminal-color wait and
 session_start. Its editor/init wiring used by c4af41c did not change. The owned
 startup adapter still replaces both default/active editors before native init,
 retaining submit, exit, shortcuts and extension replacement. New quietStartup
 header policy still honors bruv's true getter and explicit verbose diagnostics.
-The real built CLI's plain-PTY whole-output regression passes: compact chevron from
-first paint, no native horizontal border. See
+The original built CLI's regular-mode plain-PTY whole-output regression passed:
+compact chevron from first paint, no native horizontal border. See
 [evidence](evidence/pi-1.0/startup-stream.txt), captured without a provider turn (ANSI and trailing whitespace normalized).
 The native footer can still appear briefly; this fix concerns the editor only.
 
@@ -120,7 +122,7 @@ Pi's npm LICENSE matches `third_party/pi/LICENSE` byte-for-byte. Curated fallbac
 notices require the explicit package allowlist at exact 1.0.0, with unknown/unpinned
 rejection tests preserved. Notice generation finds 128 production packages.
 
-## Validation
+## Original upgrade validation (before default-shim removal)
 
 - Root prepare-assets and TypeScript checks pass against exact 1.0.0.
 - Fresh full web build passes server/web typechecks, emitted chunk startup checks,
@@ -180,3 +182,63 @@ Values unchanged: values 1/2 (built-path evidence and honest limits), 6 (guards 
 user-work safety), 9 (behavioral upgrade review) and 10 (durable handoff) already
 cover this work. No macOS packaging/hardware or paid/live provider entitlement was
 tested. Parent's release CI/signing/publishing remains separate from this worker.
+
+## Fullscreen-default follow-up (2026-10-02)
+
+Worktree: `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_61242e1b`.
+Branch: `bruv/use-pi-1.0-terminal-default-without-comp-61242e1b`.
+Base: `e08ee27029eb71b4310a91d61e6dec0029b5ba9d`. Parent owns release notes,
+integration, version selection, push and release. No version bump or install.
+
+Removed the added settings-manager compatibility patch and the regular-default
+help replacement. No startup fallback or setting write replaces them. The
+necessary density shape fix, quiet startup/editor adapter, dependency updates,
+MCP removal and all existing version/hash/anchor/write-order gates remain intact.
+The expanded execution-preview test requires transcript lines beyond its viewport,
+so it now requests `--tui-mode regular` explicitly. Other TUI fixtures continue
+to exercise the upstream fullscreen default unless they genuinely need scrollback.
+The plain Linux PTY regression runs both unset default and explicit regular,
+asserting alternate-screen entry only for default fullscreen and checking the
+whole startup output for the compact chevron and no native editor border.
+Normalized whole-output streams: [default fullscreen](evidence/pi-1.0/startup-default-fullscreen-stream.txt)
+and [explicit regular](evidence/pi-1.0/startup-regular-stream.txt). They contain no
+provider turn; fullscreen cursor-addressed rows appear concatenated when ANSI is
+stripped, so the test also checks the raw alternate-screen escape separately.
+
+Fresh root dependencies were installed with the frozen lockfile; the published
+Pi 1.0 coding-agent tarball was copied into this owned node_modules before prepare,
+so the host files were pristine rather than inherited cache mutations. The new
+args.js adapted SHA-256 is
+`714c54b8e45f2a8c606716cccab90da407e47f84f1e742dd420dc7d5606b613e`.
+Fresh build (CLI plus web graph/type/chunk/portable/archive checks) passes with
+Bun 1.4.2 and Node 24.21.0; T3 selects pnpm 11.10.0. An initial attempt used
+Node 22.16.0 and failed loading a T3 TypeScript config; selecting the configured
+Node resolved it without product edits or bypassed checks.
+
+Follow-up validation:
+
+- Rebuilt CLI focused gate: **49 pass / 0 fail / 371 assertions**, six files
+  (host, startup, plain-PTY startup, editor, density, execution preview). Both
+  default fullscreen and explicit regular first paint pass; startup diagnostics
+  and skill autocomplete also pass in default fullscreen.
+- Full deterministic root suite: **1696 pass / 20 skip / 0 fail**, 1716 tests
+  across 230 files, 32899 assertions. Command:
+  `BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests`. Only the expanded-details
+  fixture needed explicit regular mode; other default-mode TUI tests pass.
+- Root typecheck, format check, lint and `git diff --check` pass. Lint retains
+  739 warnings / 1090 infos (exit 0). Process-only worktree mise trust was used
+  for validation, not a persistent/global trust change. The outer shell startup
+  still emits its trust diagnostic before this environment is set; test logs
+  are clean and all actual validation commands pass.
+- Fresh compiled CLI SHA-256:
+  `b6e0df0df5c744aa634349195602f2574149b946e579955aba0c0e148a3b35e9`.
+  Fresh web archive SHA-256:
+  `dfc278eb8571168a182c2ec499478cb7611f9926630f837b665dae8b8ba8d9fc`.
+- Local logs: `/tmp/bruv-61242e1b-{build,focused,suite,format,lint}.log`;
+  normalized first-paint evidence is committed above. No concrete blockers
+  from these gates, no assertions/guards disabled and no release actions taken.
+
+Values unchanged: values 7/9 already require removing unnecessary compatibility
+and not preserving behavior without a request; values 1/2/10 cover built-path
+proof and the handoff. Linux/offline validation does not establish macOS hardware
+or paid/live provider behavior.

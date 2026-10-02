@@ -36,14 +36,10 @@ export const piHostPatches: readonly Patch[] = [
   {
     path: "dist/cli/args.js",
     originalSha256: "2fcce7d42c5c3766c2c5a69ec582ec0f477977a527b3d01c8933bdaa537162ad",
-    adaptedSha256: "f4b42f50673d2043383a5694f05c8cbfd7f34d7b106576df060460e37068e114",
+    adaptedSha256: "714c54b8e45f2a8c606716cccab90da407e47f84f1e742dd420dc7d5606b613e",
     replacements: [
       [`  \${APP_NAME} mcp <command>             Check MCP servers, sign in to or out of OAuth servers\n`, ""],
       ["install/remove/uninstall/update/list/config/auth/mcp", "install/remove/uninstall/update/list/config/auth"],
-      [
-        "--tui-mode <mode>              TUI mode: fullscreen (default) or regular",
-        "--tui-mode <mode>              TUI mode: regular (default) or fullscreen",
-      ],
       ["//# sourceMappingURL=args.js.map", "export const bruvHostAdapted = true;\n//# sourceMappingURL=args.js.map"],
     ],
   },
@@ -59,19 +55,6 @@ export const piHostPatches: readonly Patch[] = [
       [
         '        for await (const line of rl) {\n            const entry = parseSessionEntryLine(line);\n            if (!entry)\n                continue;\n            if (!header) {\n                if (entry.type !== "session")\n                    return null;\n                header = entry;\n                continue;\n            }\n            // Extract session name (use latest, including explicit clears)\n            if (entry.type === "session_info") {\n                name = entry.name?.trim() || undefined;\n            }\n            if (entry.type !== "message")\n                continue;\n            messageCount++;\n            const activityTime = getMessageActivityTime(entry);\n            if (typeof activityTime === "number") {\n                lastActivityTime = Math.max(lastActivityTime ?? 0, activityTime);\n            }\n            const message = entry.message;\n            if (!isMessageWithContent(message))\n                continue;\n            if (message.role !== "user" && message.role !== "assistant")\n                continue;\n            const textContent = extractTextContent(message);\n            if (!textContent)\n                continue;\n            allMessages.push(textContent);\n            if (!firstMessage && message.role === "user") {\n                firstMessage = textContent;\n            }\n        }\n',
         '        try {\n            for await (const line of rl) {\n                const entry = parseSessionEntryLine(line);\n                if (!entry)\n                    continue;\n                if (!header) {\n                    if (entry.type !== "session")\n                        return null;\n                    header = entry;\n                    continue;\n                }\n                // Extract session name (use latest, including explicit clears)\n                if (entry.type === "session_info") {\n                    name = entry.name?.trim() || undefined;\n                }\n                if (entry.type !== "message")\n                    continue;\n                messageCount++;\n                const activityTime = getMessageActivityTime(entry);\n                if (typeof activityTime === "number") {\n                    lastActivityTime = Math.max(lastActivityTime ?? 0, activityTime);\n                }\n                const message = entry.message;\n                if (!isMessageWithContent(message))\n                    continue;\n                if (message.role !== "user" && message.role !== "assistant")\n                    continue;\n                const textContent = extractTextContent(message);\n                if (!textContent)\n                    continue;\n                allMessages.push(textContent);\n                if (!firstMessage && message.role === "user") {\n                    firstMessage = textContent;\n                }\n            }\n        } finally {\n            rl.close();\n            input.destroy();\n        }\n',
-      ],
-    ],
-  },
-  {
-    // Pi 1.0 defaults to fullscreen; bruv keeps regular scrollback by default.
-    // Explicit saved/CLI fullscreen selection still wins; no settings are written.
-    path: "dist/core/settings-manager.js",
-    originalSha256: "b3a424ac1af9bd0c380796f9e5d812e2c61755ed3b31dd39982a57bbe0d5a391",
-    adaptedSha256: "039aae263f102167070507dd311981d9d403116a0489591d1486f488862c4fa9",
-    replacements: [
-      [
-        'return this.settings.tuiMode === "regular" ? "regular" : "fullscreen";',
-        'return this.settings.tuiMode === "fullscreen" ? "fullscreen" : "regular";',
       ],
     ],
   },

@@ -150,7 +150,7 @@ for (const entry of ["source", "compiled"] as const) {
     expect(help.stdout).not.toContain("mcp");
     expect(help.stdout).not.toContain("codemode");
     expect(help.stdout).not.toContain("tool-search");
-    expect(help.stdout).toContain("TUI mode: regular (default) or fullscreen");
+    expect(help.stdout).toContain("TUI mode: fullscreen (default) or regular");
     const providerOnly = await run([...command, "--offline", "-p", "--no-session", "--provider", "openai"], {
       cwd: home,
       env,
@@ -324,11 +324,11 @@ test("bruv execute stays active and user-authored codemode tools are not banned"
   }
 });
 
-test("bruv keeps regular scrollback by default and honors explicit TUI mode", () => {
-  expect(SettingsManager.inMemory().getTuiMode()).toBe("regular");
+test("upstream defaults to fullscreen and honors explicit regular mode", () => {
+  expect(SettingsManager.inMemory().getTuiMode()).toBe("fullscreen");
   expect(SettingsManager.inMemory({ tuiMode: "fullscreen" }).getTuiMode()).toBe("fullscreen");
   expect(SettingsManager.inMemory({ tuiMode: "regular" }).getTuiMode()).toBe("regular");
   const manager = SettingsManager.inMemory();
-  manager.applyOverrides({ tuiMode: "fullscreen" });
-  expect(manager.getTuiMode()).toBe("fullscreen");
+  manager.applyOverrides({ tuiMode: "regular" });
+  expect(manager.getTuiMode()).toBe("regular");
 });
