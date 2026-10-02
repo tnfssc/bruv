@@ -13,6 +13,11 @@ export type TaskRow = {
   timedOut?: boolean;
   sourceCallId?: string;
 };
+/** An owning execute label beats a command preview, never an explicit task title. */
+export function taskRowWithExecuteLabel(row: TaskRow, label: unknown): TaskRow {
+  const title = clean(row.title) || clean(label);
+  return title ? { ...row, title } : row;
+}
 export function taskRowKey(row: Pick<TaskRow, "source" | "id">): string {
   return row.source + ":" + row.id;
 }
@@ -193,15 +198,27 @@ export function taskSummaryRowsFromDetails(value: unknown): TaskSummaryRow[] {
 /** Projection of persisted UI metadata on the current branch; no owner mutation. */
 export function taskRowsFromSessionEntries(entries: ReadonlyArray<unknown>): TaskRow[] {
   const rows = new Map<string, TaskRow>();
+  const labels = new Map<string, unknown>();
   for (const value of entries) {
     const entry = record(value);
+    const message = record(entry?.message);
+    if (message?.role === "assistant" && Array.isArray(message.content))
+      for (const value of message.content) {
+        const call = record(value);
+        if (call?.type === "toolCall" && call.name === "execute" && typeof call.id === "string")
+          labels.set(call.id, record(call.arguments)?.label);
+      }
     const details =
       entry?.type === "custom" && entry.customType === "die-task-row"
         ? { taskRows: [entry.data] }
         : entry?.type === "message" && record(entry.message)?.role === "toolResult"
           ? record(entry.message)?.details
           : undefined;
-    for (const row of taskRowsFromDetails(details)) upsertTaskRow(rows, row);
+    for (const row of taskRowsFromDetails(details))
+      upsertTaskRow(rows, {
+        ...row,
+        sourceCallId: row.sourceCallId ?? (message?.role === "toolResult" ? (message.toolCallId as string) : undefined),
+      });
   }
-  return [...rows.values()];
+  return [...rows.values()].map((row) => taskRowWithExecuteLabel(row, labels.get(row.sourceCallId ?? "")));
 }

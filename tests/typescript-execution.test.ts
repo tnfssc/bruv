@@ -499,3 +499,52 @@ test("inline helper completion keeps canonical task identity without becoming ba
   expect(foreground.isError).toBe(false);
   expect(foreground.details.taskRows).toEqual([]);
 });
+
+test("background shells persist execute labels at launch and preserve explicit helper titles", async () => {
+  let tool: any;
+  const events: any[] = [];
+  registerExecuteTool(
+    {
+      on() {},
+      registerTool(value: unknown) {
+        tool = value;
+      },
+      events: {
+        emit(name: string, event: unknown) {
+          events.push({ name, event });
+        },
+      },
+    } as unknown as ExtensionAPI,
+    async (_ctx, method) => ({
+      id: method === "shell" ? "task_26de42bf" : "helper",
+      kind: method === "shell" ? "command" : "agent",
+      status: "running",
+      background: true,
+      ...(method === "shell" ? { command: "bash ENV=long-command" } : { title: "Review guide" }),
+    }),
+    binary,
+  );
+  const input = {
+    label: "Run final repaired root suite",
+    code: 'await shell("bash ENV=long-command", {waitSeconds:0}); await subagent({prompt:"Review",title:"Review guide"});',
+  };
+  const result = await tool.execute("background-call", input, undefined, undefined, {
+    cwd: directory,
+  } as ExtensionToolContext);
+  expect(result.details.taskRows).toMatchObject([
+    { id: "task_26de42bf", title: input.label, sourceCallId: "background-call", status: "running" },
+    { id: "helper", title: "Review guide", sourceCallId: "background-call", status: "running" },
+  ]);
+  expect(events.map(({ event }) => event.row)).toEqual(result.details.taskRows);
+  events.length = 0;
+  await expect(
+    tool.execute(
+      "failed-call",
+      { ...input, code: input.code + 'throw new Error("outer failure");' },
+      undefined,
+      undefined,
+      { cwd: directory } as ExtensionToolContext,
+    ),
+  ).rejects.toThrow("outer failure");
+  expect(events[0].event.row).toMatchObject({ title: input.label, sourceCallId: "failed-call" });
+});

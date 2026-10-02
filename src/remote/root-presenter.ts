@@ -3,6 +3,7 @@ import {
   formatTaskRow,
   taskRowFromLaunch,
   taskRowKey,
+  taskRowWithExecuteLabel,
   taskRowsFromDetails,
   taskSummaryRowsFromDetails,
   upsertTaskRow,
@@ -384,6 +385,10 @@ export class RootTranscript {
       if (m.role === "toolResult" && m.toolCallId) results.set(m.toolCallId, m);
       if (m.role === "assistant" && Array.isArray(m.content))
         for (const c of m.content) if (c.type === "toolCall" && c.id) calls.set(c.id, c);
+    }
+    for (const [key, row] of taskRows) {
+      const call = calls.get(row.sourceCallId ?? "");
+      if (call?.name === "execute") taskRows.set(key, taskRowWithExecuteLabel(row, call.arguments?.label));
     }
     const append = (role: string, text: string, markdown = false) => {
       if (!text) return;

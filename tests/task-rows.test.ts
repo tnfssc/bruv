@@ -412,3 +412,56 @@ test("SDK replay recovers a name from typed launch details and keeps the recorde
   restores.push(installSdkTaskRows(theme, () => restored));
   expect(plain(parent.render(100))).toEqual(["✗ bun run check — exit 1"]);
 });
+
+for (const [id, label] of [
+  ["task_26de42bf", "Run final repaired root suite"],
+  ["task_c9fcc1c8", "Check next release version and remote branch"],
+])
+  test("SDK resume prefers owning execute label over environment command: " + id, () => {
+    const legacy = taskRowFromLaunch(
+      { id, kind: "command", status: "running", command: "bash -lc 'ENV=long-command; run-tests'" },
+      "call",
+    )!;
+    const terminal = { id, source: "local", status: "failed", terminal: true, exitCode: 1, sourceCallId: "call" };
+    const entries = [
+      {
+        type: "message",
+        message: {
+          role: "assistant",
+          content: [{ type: "toolCall", id: "call", name: "execute", arguments: { label, code: "SOURCE" } }],
+        },
+      },
+      { type: "message", message: { role: "toolResult", toolCallId: "call", details: { taskRows: [legacy] } } },
+      { type: "custom", customType: "die-task-row", data: terminal },
+    ];
+    const restored = taskRowsFromSessionEntries(JSON.parse(JSON.stringify(entries)));
+    expect(formatTaskRow(restored[0])).toBe("✗ " + label + " — exit 1");
+    const parent = new Container();
+    const component = tool([legacy]);
+    (component as any).args.label = label;
+    parent.addChild(component);
+    parent.addChild(notice([terminal as TaskRow]));
+    restores.push(installSdkTaskRows(theme, () => restored));
+    expect(plain(parent.render(100))).toEqual(["✗ " + label + " — exit 1"]);
+    component.setExpanded(true);
+    expect(plain(parent.render(100)).join("\n")).toContain("LAUNCH OUTPUT");
+  });
+
+test("SDK label recovery without persisted labels keeps distinct IDs and explicit helper names", () => {
+  const parent = new Container();
+  const component = tool([
+    taskRowFromLaunch({ id: "shell-a", kind: "command", status: "running", command: "long shell command" }, "call")!,
+    taskRowFromLaunch({ id: "shell-b", kind: "command", status: "running" }, "call")!,
+    taskRowFromLaunch({ id: "helper", kind: "agent", title: "Review guide", status: "running" }, "call")!,
+  ]);
+  (component as any).args.label = "Run final repaired root suite";
+  parent.addChild(component);
+  restores.push(installSdkTaskRows(theme));
+  expect(plain(parent.render(100))).toEqual([
+    "↗ Run final repaired root suite",
+    "↗ Run final repaired root suite",
+    "↗ Review guide",
+  ]);
+  (component as any).result.isError = true;
+  expect(plain(parent.render(100))).toContain("LAUNCH OUTPUT");
+});

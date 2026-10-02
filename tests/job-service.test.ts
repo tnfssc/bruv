@@ -1,4 +1,5 @@
 import { expect, spyOn, test } from "bun:test";
+import { formatTaskRow, taskRowFromLaunch, upsertTaskRow, type TaskRow } from "../src/ui/task-rows";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -345,5 +346,37 @@ test.each([
     spawn.mockRestore();
     await manager.shutdown();
     await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("shell records keep command previews out of explicit titles so execute labels survive owner updates", async () => {
+  let completed!: (task: any) => void;
+  const completion = new Promise<any>((resolve) => {
+    completed = resolve;
+  });
+  const manager = new TaskManager(completed);
+  const service = new JobService(manager, () => ({ depth: 0 }));
+  const ctx = { cwd: process.cwd() } as any;
+  try {
+    const launch = (await service.handle(
+      "shell",
+      { command: "sleep 0.05; printf shell-output", waitSeconds: 0 },
+      ctx,
+      signal,
+    )) as any;
+    expect(launch.background).toBe(true);
+    expect(launch.title).toBeUndefined();
+    const rows = new Map<string, TaskRow>();
+    upsertTaskRow(rows, taskRowFromLaunch(launch, "call", "Run final repaired root suite")!);
+    const done = await completion;
+    expect(done.title).toBeUndefined();
+    upsertTaskRow(rows, taskRowFromLaunch(done)!);
+    const owner = (await service.handle("jobs.inspect", { id: launch.id }, ctx, signal)) as any;
+    expect(owner.title).toBeUndefined();
+    upsertTaskRow(rows, taskRowFromLaunch(owner)!);
+    expect(formatTaskRow([...rows.values()][0])).toBe("✓ Run final repaired root suite");
+    expect(owner.output).toContain("shell-output");
+  } finally {
+    await manager.shutdown();
   }
 });

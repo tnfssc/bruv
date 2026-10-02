@@ -5,6 +5,7 @@ import {
   formatTaskRow,
   taskRowColor,
   taskRowKey,
+  taskRowWithExecuteLabel,
   taskRowsFromDetails,
   taskSummaryRowsFromDetails,
   upsertTaskRow,
@@ -15,7 +16,7 @@ type ToolShape = Component & {
   toolName: string;
   toolCallId: string;
   expanded: boolean;
-  args?: { code?: unknown };
+  args?: { code?: unknown; label?: unknown };
   imageComponents?: Component[];
   imageSpacers?: Component[];
   result?: {
@@ -82,6 +83,14 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
             item instanceof ToolExecutionComponent && (item as unknown as ToolShape).toolCallId === row.sourceCallId,
         );
         if (source) owners.set(taskRowKey(row), source);
+      }
+      for (const [key, row] of rows) {
+        const source = parent.children.find(
+          (item) =>
+            item instanceof ToolExecutionComponent && (item as unknown as ToolShape).toolCallId === row.sourceCallId,
+        );
+        if (source instanceof ToolExecutionComponent)
+          rows.set(key, taskRowWithExecuteLabel(row, (source as unknown as ToolShape).args?.label));
       }
       const owned = [...rows.values()].filter((row) => owners.get(taskRowKey(row)) === child);
       if (tool && !owned.length) return original.call(this, width);

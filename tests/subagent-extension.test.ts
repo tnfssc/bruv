@@ -842,7 +842,13 @@ test("typed background launches survive outer execute error with durable call ow
   try {
     const failure = await e.tools
       .get("execute")
-      .execute("launch_then_error", { code: "typed fixture" }, undefined, undefined, ctx)
+      .execute(
+        "launch_then_error",
+        { label: "Run final repaired root suite", code: "typed fixture" },
+        undefined,
+        undefined,
+        ctx,
+      )
       .catch((error: unknown) => error);
     expect(failure).toBeInstanceOf(Error);
     expect(failure.message).toContain("Execution failed with exit code 1.");
@@ -851,10 +857,12 @@ test("typed background launches survive outer execute error with durable call ow
     expect(launches).toHaveLength(1);
     expect(launches[0].data.sourceCallId).toBe("launch_then_error");
     expect(launches[0].data.status).toBe("running");
+    expect(launches[0].data.title).toBe("Run final repaired root suite");
     expect(failure.message).toContain(launches[0].data.id);
     const done = await terminalPromise;
     expect(done.id).toBe(launches[0].data.id);
     expect(done.sourceCallId).toBe("launch_then_error");
+    expect(done.title).toBe("Run final repaired root suite");
     expect(done.status).toBe("failed");
     expect(done.exitCode).toBe(1);
     expect(done.terminal).toBe(true);

@@ -728,3 +728,56 @@ test("root replay keeps a readable launch name through unnamed native completion
   });
   expect(renderedRows(t)).toEqual(["✓ Inspect renderer"]);
 });
+
+test("root resume correlates unnamed shells to execute labels before command previews", () => {
+  const jobs = [
+    { id: "task_26de42bf", kind: "command", status: "running", command: "bash -lc ENV=huge-command" },
+    { id: "second-shell", kind: "command", status: "running", command: "another command" },
+    { id: "helper", kind: "agent", title: "Review guide", status: "running" },
+  ];
+  const messages = launchMessages(jobs);
+  (messages[0].content[0] as any).arguments.label = "Run final repaired root suite";
+  const next = launchMessages(
+    [{ id: "task_c9fcc1c8", kind: "command", status: "running", command: "bash -lc ENV=other-huge-command" }],
+    "next",
+  );
+  (next[0].content[0] as any).arguments.label = "Check next release version and remote branch";
+  messages.push(...next);
+  const entries = [
+    ...messages.map((message) => ({ type: "message", message })),
+    {
+      type: "custom",
+      customType: "die-task-row",
+      data: {
+        id: "task_26de42bf",
+        source: "local",
+        status: "failed",
+        terminal: true,
+        exitCode: 1,
+        sourceCallId: "launch",
+      },
+    },
+    {
+      type: "custom",
+      customType: "die-task-row",
+      data: { id: "task_c9fcc1c8", source: "local", status: "succeeded", terminal: true, sourceCallId: "next" },
+    },
+  ];
+  const t = new RootTranscript();
+  t.messages = JSON.parse(JSON.stringify(messages));
+  expect(renderedRows(t)).toEqual([
+    "↗ Run final repaired root suite",
+    "↗ Run final repaired root suite",
+    "↗ Review guide",
+    "↗ Check next release version and remote branch",
+  ]);
+  t.event({ type: "root_facets", taskRows: taskRowsFromSessionEntries(JSON.parse(JSON.stringify(entries))), jobs: [] });
+  expect(renderedRows(t)).toEqual([
+    "✗ Run final repaired root suite — exit 1",
+    "↗ Run final repaired root suite",
+    "↗ Review guide",
+    "✓ Check next release version and remote branch",
+  ]);
+  t.details = true;
+  expect(t.render(120, 0).join("\n")).toContain("RAW_LAUNCH_SOURCE");
+});

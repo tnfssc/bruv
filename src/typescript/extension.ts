@@ -89,6 +89,7 @@ export function registerExecuteTool(
     },
     async execute(toolCallId, input, signal, _onUpdate, ctx) {
       const params = z.parse(ExecuteParameters, input);
+      const executeLabel = params.label;
       const owner = ctx.sessionManager;
       const ownerSessionId = owner?.getSessionId?.();
       const ownerLeafId = owner?.getLeafId?.();
@@ -146,7 +147,7 @@ export function registerExecuteTool(
                   const row = taskRowFromLaunch(
                     job,
                     toolCallId,
-                    method === "subagent" ? (params as { title?: unknown } | undefined)?.title : undefined,
+                    method === "subagent" ? (params as { title?: unknown } | undefined)?.title : executeLabel,
                   );
                   if (row) {
                     taskRows.set(taskRowKey(row), row);
