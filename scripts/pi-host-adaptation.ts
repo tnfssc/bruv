@@ -1,5 +1,5 @@
 // Keep guarded Pi fixes at the host seam. This owns inherited built-in removal,
-// session scan stream cleanup, and bruv's terminal default. No saved preferences
+// session scan stream cleanup, and compact-editor reservation. No saved preferences
 // or global error handling are changed.
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
@@ -55,6 +55,25 @@ export const piHostPatches: readonly Patch[] = [
       [
         '        for await (const line of rl) {\n            const entry = parseSessionEntryLine(line);\n            if (!entry)\n                continue;\n            if (!header) {\n                if (entry.type !== "session")\n                    return null;\n                header = entry;\n                continue;\n            }\n            // Extract session name (use latest, including explicit clears)\n            if (entry.type === "session_info") {\n                name = entry.name?.trim() || undefined;\n            }\n            if (entry.type !== "message")\n                continue;\n            messageCount++;\n            const activityTime = getMessageActivityTime(entry);\n            if (typeof activityTime === "number") {\n                lastActivityTime = Math.max(lastActivityTime ?? 0, activityTime);\n            }\n            const message = entry.message;\n            if (!isMessageWithContent(message))\n                continue;\n            if (message.role !== "user" && message.role !== "assistant")\n                continue;\n            const textContent = extractTextContent(message);\n            if (!textContent)\n                continue;\n            allMessages.push(textContent);\n            if (!firstMessage && message.role === "user") {\n                firstMessage = textContent;\n            }\n        }\n',
         '        try {\n            for await (const line of rl) {\n                const entry = parseSessionEntryLine(line);\n                if (!entry)\n                    continue;\n                if (!header) {\n                    if (entry.type !== "session")\n                        return null;\n                    header = entry;\n                    continue;\n                }\n                // Extract session name (use latest, including explicit clears)\n                if (entry.type === "session_info") {\n                    name = entry.name?.trim() || undefined;\n                }\n                if (entry.type !== "message")\n                    continue;\n                messageCount++;\n                const activityTime = getMessageActivityTime(entry);\n                if (typeof activityTime === "number") {\n                    lastActivityTime = Math.max(lastActivityTime ?? 0, activityTime);\n                }\n                const message = entry.message;\n                if (!isMessageWithContent(message))\n                    continue;\n                if (message.role !== "user" && message.role !== "assistant")\n                    continue;\n                const textContent = extractTextContent(message);\n                if (!textContent)\n                    continue;\n                allMessages.push(textContent);\n                if (!firstMessage && message.role === "user") {\n                    firstMessage = textContent;\n                }\n            }\n        } finally {\n            rl.close();\n            input.destroy();\n        }\n',
+      ],
+    ],
+  },
+  {
+    path: "dist/modes/interactive/chat-viewport.js",
+    originalSha256: "77ff3d8a3f20950a95cc3b758ab04ee7cffdaba5a490a2390626e781ae30f70a",
+    adaptedSha256: "d8935ff445ff638165a4f11dba32eddea46191377894a8b644ee1511ef36e48f",
+    replacements: [
+      [
+        'import { ScrollView, VStack } from "@earendil-works/pi-tui";\n',
+        'import { ScrollView, VStack } from "@earendil-works/pi-tui";\nimport { getLayoutNode } from "@earendil-works/pi-tui/dist/layout-node.js";\n',
+      ],
+      [
+        "    return {\n        transcript,\n",
+        "    // The dock is reused while native dialogs replace the editor container's child.\n    // Read the active child's explicit compact marker on every layout, not at startup.\n    const editorSlot = getLayoutNode(dock).entries.find((entry) => entry.component === options.editor);\n    Object.defineProperty(editorSlot, \"minSize\", {\n        get: () => options.editor.children?.length === 1 && options.editor.children[0].bruvCompactEditor === true ? 1 : 3,\n    });\n    return {\n        transcript,\n",
+      ],
+      [
+        "//# sourceMappingURL=chat-viewport.js.map",
+        "export const bruvHostAdapted = true;\n//# sourceMappingURL=chat-viewport.js.map",
       ],
     ],
   },
