@@ -163,3 +163,25 @@ branch, not stable; future repins need a new source/gate review.
 Wisdom updated with adoption, audit, migration and native-proof notes. Values unchanged:
 existing 1/2 require shipped proof and honest gaps, 3/4/6 preserve ownership/history,
 and 7/9 already call for fewer owned dependency parts without weakened gates.
+
+## Parent integration
+
+Integrated the full worker range on develop through a567f92. Parent reviewed
+the final source pin, build and preload launch changes, native acceptance JSON,
+and the actual browser screenshot. Runtime/build/source inputs match the worker
+commit 6463518 exactly. Two test files needed only Biome line wrapping; fixed
+without changing assertions. Main-checkout preparation/typecheck and format pass.
+
+Main checkout initially had no dist/bruv, so two compiled launcher checks failed
+with ENOENT. Reused the reviewed worker executable as a local dist test artifact
+(no product install), then reran all selected checks: 32 pass, 107 assertions
+across source guards, migration provenance, branding, Android packaging, launcher,
+and standalone runtime/preload teardown. git diff --check passes. Worker fresh
+build/native/browser/history proof above is reused, not claimed as a second build.
+
+No push, release, version bump or installed executable change. The requested
+branch adoption and reduction are integrated locally. Future publication still
+needs normal hosted release gates, including non-Linux binaries. Unrelated
+untracked footer-gap wisdom/evidence observed in the main checkout was left alone.
+Values unchanged: the existing upstream-adoption and fewer-owned-parts values
+cover this migration; no new general rule is needed.

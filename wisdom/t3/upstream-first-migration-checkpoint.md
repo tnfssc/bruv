@@ -66,3 +66,9 @@ Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8
 Branch: bruv/resume-t3-upstream-adoption-and-patch-re-4eb8a4a8
 Base: 92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be.
 Parent reviews/integrates; worker owns source migration and proof. No publish.
+
+## Parent complete
+
+Full worker range integrated locally through a567f92. Read
+upstream-first-migration.md for final reduction, validation and parent review.
+The branch adoption is no longer paused or pending. No push/release/install.

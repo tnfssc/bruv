@@ -74,7 +74,18 @@ test("prepared builds honor the explicit source checkout and reject an unpinned 
     execFileSync("git", ["-C", root, "init", "--quiet"]);
     await writeFile(join(root, "source.ts"), "export const value = 1;\n");
     execFileSync("git", ["-C", root, "add", "."]);
-    execFileSync("git", ["-C", root, "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "--quiet", "-m", "fixture"]);
+    execFileSync("git", [
+      "-C",
+      root,
+      "-c",
+      "user.name=Test",
+      "-c",
+      "user.email=test@example.invalid",
+      "commit",
+      "--quiet",
+      "-m",
+      "fixture",
+    ]);
     process.env.BRUV_T3_SOURCE = root;
     await expect(buildWeb({ prepared: true })).rejects.toThrow("does not match integrations/t3/upstream/source.json");
   } finally {

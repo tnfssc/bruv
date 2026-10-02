@@ -22,7 +22,11 @@ test("fff-node is loaded on demand and unsupported Android search is a typed fai
   expect(index).toBeDefined();
   expect(index).toContain('-const { FileFinder } = requireForFff("@ff-labs/fff-node")');
   expect(index).toContain('+      if (process.platform === "android") {');
-  const additions = index!.split("\n").filter((line) => line.startsWith("+")).map((line) => line.slice(1)).join("\n");
+  const additions = index!
+    .split("\n")
+    .filter((line) => line.startsWith("+"))
+    .map((line) => line.slice(1))
+    .join("\n");
   expect(additions).toMatch(/throw new Error\(\s*"Workspace search is unavailable on Android/);
   expect(additions).toMatch(/const \{ FileFinder \} = requireForFff\(\s*"@ff-labs\/fff-node"/);
   expect(index).toContain("new WorkspaceSearchIndexCreateFailed({");
