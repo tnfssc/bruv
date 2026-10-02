@@ -67,8 +67,10 @@ test("canonical patch regeneration exports source renames without changing the r
   }
 });
 
-test("prepared builds honor the explicit source checkout and reject an unpinned HEAD before compiling", async () => {
+test("prepared source rejection preserves an existing packed-web receipt", async () => {
   const root = await mkdtemp(join(tmpdir(), "bruv-web-prepared-test-"));
+  const artifactRoot = await mkdtemp(join(tmpdir(), "bruv-web-receipt-test-"));
+  const receipt = join(artifactRoot, "dist/bruv-web.archive.manifest.json");
   const previous = process.env.BRUV_T3_SOURCE;
   try {
     execFileSync("git", ["-C", root, "init", "--quiet"]);
@@ -87,10 +89,15 @@ test("prepared builds honor the explicit source checkout and reject an unpinned 
       "fixture",
     ]);
     process.env.BRUV_T3_SOURCE = root;
-    await expect(buildWeb({ prepared: true })).rejects.toThrow("does not match integrations/t3/upstream/source.json");
+    await Bun.write(receipt, "existing verified receipt\n");
+    await expect(buildWeb({ prepared: true, root: artifactRoot })).rejects.toThrow(
+      "does not match integrations/t3/upstream/source.json",
+    );
+    expect(await readFile(receipt, "utf8")).toBe("existing verified receipt\n");
   } finally {
     if (previous === undefined) delete process.env.BRUV_T3_SOURCE;
     else process.env.BRUV_T3_SOURCE = previous;
     await rm(root, { recursive: true, force: true });
+    await rm(artifactRoot, { recursive: true, force: true });
   }
 });
