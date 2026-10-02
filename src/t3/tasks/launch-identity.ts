@@ -75,10 +75,4 @@ export class T3LaunchIdentityLedger {
     const existing = ledger.pending.find((item) => item.fingerprint === fingerprint);
     return existing?.clientRequestId ?? "bruv-v1:" + T3LaunchIdentityLedger.fingerprint([fingerprint]);
   }
-
-  // Delivery ACK must not erase an old identity needed by crash replay.
-  async acknowledge(clientRequestId: string): Promise<void> {
-    if (!clientRequestId || clientRequestId.length > MAX_CLIENT_REQUEST_ID_LENGTH)
-      throw new Error("Invalid T3 launch request identity");
-  }
 }

@@ -257,7 +257,7 @@ test("typed backend rejection is not mistaken for a task or reflected into outpu
   expect(String(error)).not.toContain("SECRET_FIXTURE_VALUE");
 });
 
-test("launch intent survives ACK while durable pending bookkeeping is released", async () => {
+test("launch identity survives reopening without creating a sidecar", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-native-ledger-"));
   const path = join(dir, "launches.json");
   try {
@@ -266,9 +266,6 @@ test("launch intent survives ACK while durable pending bookkeeping is released",
     expect(await Bun.file(path).exists()).toBe(false);
     const recovered = await new T3LaunchIdentityLedger(path).reserve("same-logical-call");
     expect(recovered).toBe(requestId);
-    await first.acknowledge(requestId);
-    const next = await new T3LaunchIdentityLedger(path).reserve("same-logical-call");
-    expect(next).toBe(requestId);
     expect(await first.reserve("different-logical-call")).not.toBe(requestId);
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -289,7 +286,6 @@ test("bounded legacy mappings preserve old replay identity without writes or evi
     const replacement = await ledger.reserve("intent-256");
     expect(replacement).toBe("bruv-v1:" + T3LaunchIdentityLedger.fingerprint(["intent-256"]));
     expect(await ledger.reserve("intent-0")).toBe(pending[0]!.clientRequestId);
-    await ledger.acknowledge(pending[0]!.clientRequestId);
     expect(await new T3LaunchIdentityLedger(path).reserve("intent-0")).toBe(pending[0]!.clientRequestId);
     expect(await readFile(path, "utf8")).toBe(original);
   } finally {
@@ -593,8 +589,7 @@ test("launch identities are concurrent-safe and leave no multi-session sidecars"
     await Promise.all(
       Array.from({ length: 300 }, async (_, index) => {
         const ledger = new T3LaunchIdentityLedger(join(dir, index + ".json"));
-        const id = await ledger.reserve("fingerprint");
-        await ledger.acknowledge(id);
+        await ledger.reserve("fingerprint");
       }),
     );
     expect((await readdir(dir)).length).toBe(0);

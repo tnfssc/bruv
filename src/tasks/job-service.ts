@@ -2,12 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as z from "zod/mini";
 import { childAgentEnvironment, scrubT3BridgeEnvironment } from "../delegation-environment";
-import {
-  getJobRequestIdentity,
-  getJobResponseDeliverySignal,
-  JOB_RESPONSE_ACK_EVENT,
-  supportsJobResponseAcknowledgement,
-} from "../job-delivery";
+import { getJobRequestIdentity } from "../job-delivery";
 import { isSshJobId, type RemoteJobsAdapter, type SshLaunchResult, sshTaskId } from "../remote/jobs";
 import { sessionIdentity } from "../session/identity";
 import { T3LaunchIdentityLedger } from "../t3/tasks/launch-identity";
@@ -271,34 +266,6 @@ export class JobService {
     return new T3LaunchIdentityLedger(path);
   }
 
-  async #acknowledgeLaunch(
-    ledger: T3LaunchIdentityLedger,
-    clientRequestId: string,
-    signal: AbortSignal,
-  ): Promise<void> {
-    if (!supportsJobResponseAcknowledgement(signal)) {
-      await ledger.acknowledge(clientRequestId);
-      return;
-    }
-    getJobResponseDeliverySignal(signal)?.addEventListener(
-      JOB_RESPONSE_ACK_EVENT,
-      () => {
-        void ledger.acknowledge(clientRequestId).catch(() => {
-          // Keeping the pending key is safe: replay still names the same child.
-          // Disk failure must not become an unhandled rejection after delivery.
-          this.#record({
-            component: "jobs",
-            code: "JOBS_NATIVE_ACK_CLEANUP_FAILED",
-            outcome: "failed",
-            operationId: randomUUID(),
-            dispatch: "response",
-          });
-        });
-      },
-      { once: true },
-    );
-  }
-
   #nativeProjection(result: T3TaskResult, omitOutput = false): Record<string, unknown> {
     if (isSshJobId(result.taskId)) throw new Error("Native task ID conflicts with SSH namespace");
     const projected = { ...result } as Record<string, unknown>;
@@ -441,7 +408,6 @@ export class JobService {
                 // The authenticated backend is authoritative for effective profile and
                 // depth. The strict adapter validates the profile enum; do not compare
                 // either value with process-local BRUV_SUBAGENT_* policy.
-                await this.#acknowledgeLaunch(ledger, clientRequestId, signal);
                 launched.push(this.#nativeProjection(result, true));
               }
             } catch (error) {
@@ -518,7 +484,6 @@ export class JobService {
                 },
                 ctx,
               );
-              await this.#acknowledgeLaunch(ledger, clientRequestId, signal);
               launched.push(result);
             }
           } catch (error) {

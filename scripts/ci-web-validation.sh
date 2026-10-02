@@ -18,7 +18,7 @@ run_step 'Validate web backend' web-tests.log "$web_source/apps/server" ../../no
   src/terminal/NodePtyAdapter.test.ts src/terminal/BunPtyAdapter.test.ts src/terminal/Manager.test.ts \
   src/terminal/SubscriberStream.test.ts src/mcp/BruvTaskService.test.ts src/mcp/OrchestratorMcpService.test.ts \
   src/orchestration-v2/NativeBruvIntegration.production.test.ts src/orchestration-v2/ProjectionStore.test.ts \
-  src/orchestration-v2/ProviderContinuationService.test.ts src/orchestration-v2/LocalJobNotification.test.ts \
+  src/orchestration-v2/ProviderContinuationService.test.ts src/orchestration-v2/DelegatedCompletionDelivery.test.ts \
   src/orchestration-v2/NativeUsageAccounting.test.ts src/orchestration-v2/Adapters/PiAdapterV2.test.ts \
   src/resourceTelemetry/ResourceTelemetry.test.ts src/device/AgentDeviceTarget.test.ts src/provider/Layers/EventNdjsonLogger.test.ts --maxWorkers=1
 run_step 'Validate focused web model behavior' web-model-tests.log "$web_source/apps/web" \
