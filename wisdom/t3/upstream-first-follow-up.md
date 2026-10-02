@@ -30,3 +30,31 @@ Live paid providers, real SSH owners and non-Linux execution remain untested.
 
 Values unchanged: existing real-path proof and fewer-owned-parts guidance covers
 this follow-up. Do not claim everything works from narrower evidence.
+
+## Browser audit result
+
+Read-only task_3b380627 used compiled binary 4ff0f163 with private loopback model
+and browser. Verified Bruv model picker, model Audit Beta (audit-b) selection,
+normal mode persistence, real shell tool execution, visible response, and settled
+turn. Evidence/probe: /var/tmp/bruv-audit-dv8srI (fix worker will preserve it).
+
+Two reproduced failures block an everything-good claim: (1) reload redirects
+settled conversation route to empty bootstrap thread despite original thread and
+settings still in SQLite; (2) ProviderRegistry displays Bruv 0.15.24 unsupported
+>=1.0.0 by applying Pi compatibility policy to Bruv identity. Warning does not
+block submission. The audit corrected an obsolete Send message selector to the
+current Submit message; that selector issue is not a product defect.
+
+Prior native proof restart means replayed parent execution/launch-key reuse, not
+an actual compiled web-server process restart. Browser native child/Stop, expanded
+tool output and actual web restart restoration need focused acceptance. Bruv saved
+questions have no web projection; upstream Pi interactive requests are separate.
+Named SSH placement from scoped native tasks is explicitly rejected. These known
+scope limits must not be described as tested full parity.
+
+Fix worker task_5e045d3c owns focused route/advisory fixes and browser proof.
+Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_5e045d3c
+Branch: bruv/fix-observed-bruv-in-t3-browser-acceptan-5e045d3c
+Base: a99daabadc04ef8dd59a8eefdf3b46d11df9cc2f. Separate upstream checkout.
+Reduction task_09a4f35b runs concurrently; parent must compose their actual source
+diffs (especially provider identity) and regenerate/verify canonical patch.
