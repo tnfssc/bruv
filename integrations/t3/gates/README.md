@@ -144,9 +144,10 @@ evidence, not source inputs.
 
 ## Historical research is not a gate
 
-Candidate builders/exporters and their inputs are preserved under
-`experiments/t3/production-v2/archive/`. They are historical, not alternate
-ways to build or update the canonical inputs. No archive is run automatically.
+Candidate builders/exporters and their inputs have been retired from the checkout.
+[Historical archive recovery](../../../experiments/t3/production-v2/README.md)
+records their exact Git baseline. They are not alternate ways to build or update
+the canonical inputs. Historical prose and preservation evidence remain.
 
 ## Final release browser boot (mandatory CI gate)
 
