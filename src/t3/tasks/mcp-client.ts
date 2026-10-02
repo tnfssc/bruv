@@ -1,5 +1,4 @@
 import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../../delegation-environment";
-import { randomUUID } from "node:crypto";
 
 export const T3_MCP_PROTOCOL_VERSION = "2025-06-18";
 const MAX_RESPONSE_BYTES = 1_000_000;
@@ -14,7 +13,6 @@ const ALLOWED_TOOLS = new Set([
   "bruv_task_list",
   "bruv_local_job_notify",
 ]);
-const RETRYABLE_TOOLS = ALLOWED_TOOLS;
 
 /** A request may have committed but its response was lost. Safe only for stable-key replay. */
 export class McpAmbiguousResponseError extends Error {}
@@ -423,7 +421,7 @@ export class T3McpClient {
       try {
         result = await this.#post("tools/call", { name, arguments: args }, signal);
       } catch (error) {
-        if (!(error instanceof McpHttpError) || error.status !== 404 || !RETRYABLE_TOOLS.has(name)) throw error;
+        if (!(error instanceof McpHttpError) || error.status !== 404) throw error;
         await this.#reconnect(error.sessionId, signal);
         result = await this.#post("tools/call", { name, arguments: args }, signal);
       }
@@ -436,7 +434,6 @@ export class T3McpClient {
       if (toolResult.content !== undefined && !Array.isArray(toolResult.content))
         throw new Error("T3 MCP tool returned an invalid result");
       if (toolResult.isError) throw new Error("T3 " + name + " failed");
-      this.#assertOpen();
       return toolResult;
     });
   }
@@ -489,8 +486,4 @@ export class T3McpClient {
     })();
     return this.#closePromise;
   }
-}
-
-export function newT3RequestId(): string {
-  return randomUUID();
 }

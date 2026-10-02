@@ -14,6 +14,13 @@
  *   T3_V2_EXPECT_CHECKOUT_HEAD=<git oid>
  * Optional: T3_V2_CHROMIUM, T3_WORKTREE_KEEP_TEMP=1, T3_WORKTREE_PROOF=...
  */
+import { completionSse, executeDelta } from "./fixtures/openai";
+import {
+  type OwnedProcess as Owned,
+  processIdentity as proc,
+  processTree as descendants,
+  stopDetachedGroup,
+} from "./fixtures/process";
 import { Database } from "bun:sqlite";
 import { type ChildProcess, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -70,7 +77,6 @@ const NATIVE_SETUP_SCRIPT = {
   async: false,
 };
 
-type Owned = { pid: number; startTime: string };
 type RequestEvidence = {
   at: string;
   route: string;
@@ -131,83 +137,21 @@ async function requestBody(request: IncomingMessage) {
   return JSON.parse(text);
 }
 function sse(response: ServerResponse, delta: Record<string, unknown>, finish: string) {
-  const base = {
-    id: "worktree-acceptance",
-    object: "chat.completion.chunk",
-    created: 1,
-    model: "worktree-deterministic",
-  };
-  const chunks = [
-    { ...base, choices: [{ index: 0, delta, finish_reason: null }] },
-    { ...base, choices: [{ index: 0, delta: {}, finish_reason: finish }] },
-  ];
   response.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-store" });
-  response.end(chunks.map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n").join("") + "data: [DONE]\n\n");
-}
-function tool(response: ServerResponse, id: string, code: string) {
-  sse(
-    response,
-    {
-      role: "assistant",
-      tool_calls: [
-        { index: 0, id, type: "function", function: { name: "execute", arguments: JSON.stringify({ code }) } },
-      ],
-    },
-    "tool_calls",
+  response.end(
+    completionSse({ id: "worktree-acceptance", model: "worktree-deterministic", created: 1 }, delta, finish),
   );
 }
-async function proc(pid: number): Promise<Owned | undefined> {
-  try {
-    const line = await Bun.file(`/proc/${pid}/stat`).text();
-    const fields = line
-      .slice(line.lastIndexOf(") ") + 2)
-      .trim()
-      .split(/\s+/);
-    return { pid, startTime: fields[19] || "" };
-  } catch {
-    return undefined;
-  }
+function tool(response: ServerResponse, id: string, code: string) {
+  sse(response, executeDelta(id, code), "tool_calls");
 }
-async function descendants(roots: number[]) {
-  const todo = [...roots],
-    seen = new Set<number>(),
-    found: Owned[] = [];
-  while (todo.length) {
-    const pid = todo.shift()!;
-    if (seen.has(pid)) continue;
-    seen.add(pid);
-    const identity = await proc(pid);
-    if (!identity) continue;
-    found.push(identity);
-    try {
-      const children = await Bun.file(`/proc/${pid}/task/${pid}/children`).text();
-      todo.push(...children.trim().split(/\s+/).filter(Boolean).map(Number));
-    } catch {}
-  }
-  return found;
-}
+
 async function assertGone(items: Owned[]) {
   const live: number[] = [];
   for (const item of items) if ((await proc(item.pid))?.startTime === item.startTime) live.push(item.pid);
   check(live.length === 0, "owned processes survived teardown: " + live.join(","));
 }
-async function stopGroup(child?: ChildProcess) {
-  if (!child || child.exitCode !== null || !child.pid) return;
-  try {
-    process.kill(-child.pid, "SIGTERM");
-  } catch {
-    child.kill("SIGTERM");
-  }
-  await Promise.race([once(child, "exit"), sleep(6_000)]).catch(() => {});
-  if (child.exitCode === null) {
-    try {
-      process.kill(-child.pid, "SIGKILL");
-    } catch {
-      child.kill("SIGKILL");
-    }
-    await once(child, "exit").catch(() => {});
-  }
-}
+const stopGroup = (child?: ChildProcess) => stopDetachedGroup(child, 6_000);
 async function playwrightRoot() {
   if (process.env.T3_V2_PLAYWRIGHT_ROOT) return resolve(process.env.T3_V2_PLAYWRIGHT_ROOT);
   const pnpm = join(CANDIDATE, "node_modules/.pnpm");

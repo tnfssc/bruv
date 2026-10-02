@@ -2,6 +2,7 @@
 /** Real bruv RPC smoke backed by a loopback OpenAI-compatible model. */
 import { chmod, mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { completionSse } from "./fixtures/openai";
 
 const fixtureRoot = await mkdtemp("/var/tmp/bruv-web-rpc-smoke-");
 await chmod(fixtureRoot, 0o700);
@@ -30,27 +31,16 @@ const requests: unknown[] = [];
 let server: ReturnType<typeof Bun.serve> | undefined;
 
 function completion(delta: Record<string, unknown>, finishReason: string) {
-  const created = Math.floor(Date.now() / 1000);
-  const chunks = [
-    {
-      id: "bruv-web-rpc-smoke",
-      object: "chat.completion.chunk",
-      created,
-      model: "loopback-model",
-      choices: [{ index: 0, delta, finish_reason: null }],
-    },
-    {
-      id: "bruv-web-rpc-smoke",
-      object: "chat.completion.chunk",
-      created,
-      model: "loopback-model",
-      choices: [{ index: 0, delta: {}, finish_reason: finishReason }],
-    },
-  ];
-  return new Response(chunks.map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n").join("") + "data: [DONE]\n\n", {
-    headers: { "content-type": "text/event-stream" },
-  });
+  return new Response(
+    completionSse(
+      { id: "bruv-web-rpc-smoke", model: "loopback-model", created: Math.floor(Date.now() / 1000) },
+      delta,
+      finishReason,
+    ),
+    { headers: { "content-type": "text/event-stream" } },
+  );
 }
+
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error("RPC smoke assertion failed: " + message);
 }

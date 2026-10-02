@@ -1,3 +1,4 @@
+import { completionSse } from "../gates/fixtures/openai";
 /**
  * Linux/Bun, real compiled web backend + real Chromium, no paid providers.
  * BRUV_ROUTE_PROBE_BINARY=/absolute/dist/bruv
@@ -277,17 +278,8 @@ const model = createServer(async (request, response) => {
             },
           ],
         };
-    const chunk = { id: "audit", object: "chat.completion.chunk", created: 1, model: payload.model };
     response.writeHead(200, { "content-type": "text/event-stream" });
-    response.end(
-      "data: " +
-        JSON.stringify({ ...chunk, choices: [{ index: 0, delta, finish_reason: null }] }) +
-        "\n\n" +
-        "data: " +
-        JSON.stringify({ ...chunk, choices: [{ index: 0, delta: {}, finish_reason: tool ? "stop" : "tool_calls" }] }) +
-        "\n\n" +
-        "data: [DONE]\n\n",
-    );
+    response.end(completionSse({ id: "audit", model: payload.model, created: 1 }, delta, tool ? "stop" : "tool_calls"));
   } catch (error) {
     errors.push(`Loopback model: ${String(error)}`);
     response.writeHead(500);

@@ -93,11 +93,7 @@ export class T3LocalNotificationOutbox {
     if (previous) return previous;
     // Attention is a checkpoint, not an append-only event. Keep only the newest
     // checkpoint and let a terminal completion supersede it before persistence.
-    const retained = this.#records.filter(
-      (row) => row.taskId !== input.taskId || (row.kind === "completion" && input.kind === "attention"),
-    );
-    const existingCompletion = retained.find((row) => row.taskId === input.taskId && row.kind === "completion");
-    if (input.kind === "attention" && existingCompletion) return existingCompletion;
+    const retained = this.#records.filter((row) => row.taskId !== input.taskId);
     if (retained.length >= MAX_RECORDS) throw new Error("T3 local notification outbox is full");
     const record: T3LocalNotification = {
       version: 1,

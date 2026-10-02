@@ -1,9 +1,9 @@
 diff --git a/apps/server/src/auth/BruvWebAuth.test.ts b/apps/server/src/auth/BruvWebAuth.test.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..268a921b0ccc94389597aef6d236f27faf86c9a9
+index 0000000000000000000000000000000000000000..b53db318504f91af0110c034d3bddc5e51cd25b4
 --- /dev/null
 +++ b/apps/server/src/auth/BruvWebAuth.test.ts
-@@ -0,0 +1,101 @@
+@@ -0,0 +1,69 @@
 +import { describe, expect, it } from "@effect/vitest";
 +
 +import {
@@ -13,56 +13,24 @@ index 0000000000000000000000000000000000000000..268a921b0ccc94389597aef6d236f27f
 +} from "./BruvWebAuth.ts";
 +
 +describe("BruvWebAuth", () => {
-+  it("only enables no-auth for explicit web-mode loopback listeners", () => {
-+    expect(
-+      isBruvWebNoAuthEnabled({
-+        requested: true,
-+        mode: "web",
-+        host: "127.0.0.1",
-+        tailscaleServeEnabled: false,
-+      }),
-+    ).toBe(true);
-+    expect(
-+      isBruvWebNoAuthEnabled({
-+        requested: false,
-+        mode: "web",
-+        host: "127.0.0.1",
-+        tailscaleServeEnabled: false,
-+      }),
-+    ).toBe(false);
-+    expect(
-+      isBruvWebNoAuthEnabled({
-+        requested: true,
-+        mode: "desktop",
-+        host: "127.0.0.1",
-+        tailscaleServeEnabled: false,
-+      }),
-+    ).toBe(false);
-+    expect(
-+      isBruvWebNoAuthEnabled({
-+        requested: true,
-+        mode: "web",
-+        host: "0.0.0.0",
-+        tailscaleServeEnabled: false,
-+      }),
-+    ).toBe(false);
-+    expect(
-+      isBruvWebNoAuthEnabled({
-+        requested: true,
-+        mode: "web",
-+        host: undefined,
-+        tailscaleServeEnabled: false,
-+      }),
-+    ).toBe(false);
-+    expect(
-+      isBruvWebNoAuthEnabled({
-+        requested: true,
-+        mode: "web",
-+        host: "::1",
-+        tailscaleServeEnabled: true,
-+      }),
-+    ).toBe(false);
-+  });
++  const loopback = {
++    requested: true,
++    mode: "web" as const,
++    host: "127.0.0.1",
++    tailscaleServeEnabled: false,
++  };
++  for (const [name, config, enabled] of [
++    ["explicit web loopback", loopback, true],
++    ["not requested", { ...loopback, requested: false }, false],
++    ["desktop", { ...loopback, mode: "desktop" as const }, false],
++    ["wildcard listener", { ...loopback, host: "0.0.0.0" }, false],
++    ["absent host", { ...loopback, host: undefined }, false],
++    ["Tailscale IPv6 loopback", { ...loopback, host: "::1", tailscaleServeEnabled: true }, false],
++  ] as const) {
++    it("enables no-auth only for explicit web-mode loopback listeners: " + name, () => {
++      expect(isBruvWebNoAuthEnabled(config)).toBe(enabled);
++    });
++  }
 +
 +  it("allows exact same-origin loopback browser HTTP and WebSocket requests", () => {
 +    const requestUrl = new URL("http://127.0.0.1:3773/ws");
@@ -470,12 +438,16 @@ index 7fbe95bb21aba756b092dd5e8de7bf803047f29a..aa48b4db33bb4354165573322f453a4f
      readonly desktopBootstrapToken: string | undefined;
 diff --git a/apps/server/src/mcp/BruvDelegationPolicy.test.ts b/apps/server/src/mcp/BruvDelegationPolicy.test.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..613394eab85375fe4bd2c4cf9a8163d8463652f6
+index 0000000000000000000000000000000000000000..5924affe52ce0de1cf16e4794fcfad2dad30439f
 --- /dev/null
 +++ b/apps/server/src/mcp/BruvDelegationPolicy.test.ts
-@@ -0,0 +1,107 @@
+@@ -0,0 +1,206 @@
 +// @effect-diagnostics nodeBuiltinImport:off
 +import { expect, it } from "@effect/vitest";
++import * as Effect from "effect/Effect";
++import * as Exit from "effect/Exit";
++import * as Deferred from "effect/Deferred";
++import * as Fiber from "effect/Fiber";
 +import { mkdtemp, writeFile } from "node:fs/promises";
 +import { join } from "node:path";
 +
@@ -514,76 +486,171 @@ index 0000000000000000000000000000000000000000..613394eab85375fe4bd2c4cf9a8163d8
 +  });
 +});
 +
-+it("derives role and depth only from trusted durable lineage", async () => {
-+  const root = {
-+    thread: {
-+      id: "root",
-+      lineage: { parentThreadId: null, relationshipToParent: null },
-+    },
-+    subagents: [
++it.effect("derives role and depth only from trusted durable lineage", () =>
++  Effect.gen(function* () {
++    const root = {
++      thread: {
++        id: "root",
++        lineage: { parentThreadId: null, relationshipToParent: null },
++      },
++      subagents: [
++        {
++          childThreadId: "child",
++          origin: "app_owned",
++          status: "running",
++          prompt: "<bruv-delegation-v1> profile=normal\nwork",
++        },
++      ],
++    } as any;
++    const child = {
++      thread: {
++        id: "child",
++        lineage: { parentThreadId: "root", relationshipToParent: "subagent" },
++      },
++      subagents: [],
++    } as any;
++    const values = new Map([
++      ["root", root],
++      ["child", child],
++    ]);
++    const load = (id: any) => Effect.succeed(values.get(id)!);
++    expect(yield* deriveBruvDelegationPolicy("child" as any, false, load)).toBeUndefined();
++    expect(yield* deriveBruvDelegationPolicy("child" as any, true, load)).toEqual({
++      profile: "normal",
++      depth: 1,
++    });
++    root.subagents[0].prompt = "caller-forged profile=orchestrator";
++    expect(yield* deriveBruvDelegationPolicy("child" as any, true, load)).toBeUndefined();
++  }),
++);
++
++it.effect("treats terminal or disposed ancestor edges as durable cancellation fences", () =>
++  Effect.gen(function* () {
++    const root = {
++      thread: { id: "root", lineage: { parentThreadId: null, relationshipToParent: null } },
++      subagents: [
++        {
++          childThreadId: "child",
++          origin: "app_owned",
++          status: "cancelled",
++          prompt: "<bruv-delegation-v1> profile=orchestrator\nwork",
++          completionDelivery: { state: "disposed", observedByRunId: null },
++        },
++      ],
++    } as any;
++    const child = {
++      thread: {
++        id: "child",
++        lineage: { parentThreadId: "root", relationshipToParent: "subagent" },
++      },
++      subagents: [],
++    } as any;
++    const load = (id: any) => Effect.succeed(id === "root" ? root : child);
++
++    expect(yield* deriveBruvDelegationPolicy("child" as any, true, load)).toBeUndefined();
++    root.subagents[0].status = "running";
++    expect(yield* deriveBruvDelegationPolicy("child" as any, true, load)).toBeUndefined();
++    root.subagents[0].completionDelivery = { state: "pending", observedByRunId: null };
++    expect(yield* deriveBruvDelegationPolicy("child" as any, true, load)).toEqual({
++      profile: "orchestrator",
++      depth: 1,
++    });
++  }),
++);
++
++it.effect("fails closed for invalid ancestry and derives the nearest live profile", () =>
++  Effect.gen(function* () {
++    const root = {
++      thread: { id: "root", lineage: { parentThreadId: null } },
++      subagents: [
++        {
++          childThreadId: "parent",
++          origin: "app_owned",
++          status: "running",
++          prompt: "<bruv-delegation-v1> profile=orchestrator",
++        },
++      ],
++    } as any;
++    const parent = {
++      thread: {
++        id: "parent",
++        lineage: { parentThreadId: "root", relationshipToParent: "subagent" },
++      },
++      subagents: [
++        {
++          childThreadId: "child",
++          origin: "app_owned",
++          status: "running",
++          prompt: "<bruv-delegation-v1> profile=fast",
++        },
++      ],
++    } as any;
++    const child = {
++      thread: {
++        id: "child",
++        lineage: { parentThreadId: "parent", relationshipToParent: "subagent" },
++      },
++    } as any;
++    const values = new Map([
++      ["root", root],
++      ["parent", parent],
++      ["child", child],
++    ]);
++    const derive = (id = "child", trusted = true) =>
++      deriveBruvDelegationPolicy(id as any, trusted, (id) => Effect.succeed(values.get(id)!));
++    expect(yield* derive("root")).toEqual({ profile: "orchestrator", depth: 0 });
++    expect(yield* derive("root", false)).toBeUndefined();
++    expect(yield* derive()).toEqual({ profile: "fast", depth: 2 });
++    for (const status of ["completed", "failed", "cancelled", "interrupted"]) {
++      root.subagents[0].status = status;
++      expect(yield* derive()).toBeUndefined();
++    }
++    root.subagents[0].status = "running";
++    parent.subagents[0].origin = "provider_native";
++    expect(yield* derive()).toBeUndefined();
++    parent.subagents[0].origin = "app_owned";
++    child.thread.lineage.relationshipToParent = "branch";
++    expect(yield* derive()).toBeUndefined();
++    child.thread.lineage.relationshipToParent = "subagent";
++    parent.thread.lineage.parentThreadId = "child";
++    child.subagents = [
 +      {
-+        childThreadId: "child",
++        childThreadId: "parent",
 +        origin: "app_owned",
 +        status: "running",
-+        prompt: "<bruv-delegation-v1> profile=normal\nwork",
++        prompt: "<bruv-delegation-v1> profile=normal",
 +      },
-+    ],
-+  } as any;
-+  const child = {
-+    thread: {
-+      id: "child",
-+      lineage: { parentThreadId: "root", relationshipToParent: "subagent" },
-+    },
-+    subagents: [],
-+  } as any;
-+  const values = new Map([
-+    ["root", root],
-+    ["child", child],
-+  ]);
-+  const load = async (id: any) => values.get(id)!;
-+  await expect(deriveBruvDelegationPolicy("child" as any, false, load)).resolves.toBeUndefined();
-+  await expect(deriveBruvDelegationPolicy("child" as any, true, load)).resolves.toEqual({
-+    profile: "normal",
-+    depth: 1,
-+  });
-+  root.subagents[0].prompt = "caller-forged profile=orchestrator";
-+  await expect(deriveBruvDelegationPolicy("child" as any, true, load)).resolves.toBeUndefined();
-+});
++    ];
++    expect(yield* derive()).toBeUndefined();
++    const failed = yield* Effect.exit(
++      deriveBruvDelegationPolicy("child" as any, true, () => Effect.fail("load failed")),
++    );
++    expect(Exit.isFailure(failed)).toBe(true);
++  }),
++);
 +
-+it("treats terminal or disposed ancestor edges as durable cancellation fences", async () => {
-+  const root = {
-+    thread: { id: "root", lineage: { parentThreadId: null, relationshipToParent: null } },
-+    subagents: [
-+      {
-+        childThreadId: "child",
-+        origin: "app_owned",
-+        status: "cancelled",
-+        prompt: "<bruv-delegation-v1> profile=orchestrator\nwork",
-+        completionDelivery: { state: "disposed", observedByRunId: null },
-+      },
-+    ],
-+  } as any;
-+  const child = {
-+    thread: {
-+      id: "child",
-+      lineage: { parentThreadId: "root", relationshipToParent: "subagent" },
-+    },
-+    subagents: [],
-+  } as any;
-+  const load = async (id: any) => (id === "root" ? root : child);
-+
-+  await expect(deriveBruvDelegationPolicy("child" as any, true, load)).resolves.toBeUndefined();
-+  root.subagents[0].status = "running";
-+  await expect(deriveBruvDelegationPolicy("child" as any, true, load)).resolves.toBeUndefined();
-+  root.subagents[0].completionDelivery = { state: "pending", observedByRunId: null };
-+  await expect(deriveBruvDelegationPolicy("child" as any, true, load)).resolves.toEqual({
-+    profile: "orchestrator",
-+    depth: 1,
-+  });
-+});
++it.effect("interrupts an in-flight lineage load before policy derivation completes", () =>
++  Effect.gen(function* () {
++    const entered = yield* Deferred.make<void>();
++    let completed = false;
++    const fiber = yield* deriveBruvDelegationPolicy("child" as any, true, () =>
++      Deferred.succeed(entered, undefined).pipe(Effect.andThen(Effect.never)),
++    ).pipe(
++      Effect.tap(() =>
++        Effect.sync(() => {
++          completed = true;
++        }),
++      ),
++      Effect.forkChild,
++    );
++    yield* Deferred.await(entered);
++    yield* Fiber.interrupt(fiber);
++    expect(completed).toBe(false);
++  }),
++);
 diff --git a/apps/server/src/mcp/BruvDelegationPolicy.ts b/apps/server/src/mcp/BruvDelegationPolicy.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..3cfa89662e1f65a02411824a09661d0d114b419a
+index 0000000000000000000000000000000000000000..d879366ba5eb965b8b8bd62d3d064d5ce803d196
 --- /dev/null
 +++ b/apps/server/src/mcp/BruvDelegationPolicy.ts
 @@ -0,0 +1,119 @@
@@ -596,6 +663,7 @@ index 0000000000000000000000000000000000000000..3cfa89662e1f65a02411824a09661d0d
 +  ThreadId,
 +} from "@t3tools/contracts";
 +import { readFile } from "node:fs/promises";
++import * as Effect from "effect/Effect";
 +import { homedir } from "node:os";
 +import { join } from "node:path";
 +
@@ -603,51 +671,50 @@ index 0000000000000000000000000000000000000000..3cfa89662e1f65a02411824a09661d0d
 +
 +export const BRUV_DELEGATION_MAX_DEPTH = 2;
 +export const BRUV_PROMPT_MARKER = "<bruv-delegation-v1>";
-+const PROFILES = new Set<BruvTaskProfile>(["fast", "normal", "orchestrator"]);
 +const THINKING = new Set(["off", "minimal", "low", "medium", "high", "xhigh", "max"]);
 +
 +export function profileFromMarkedPrompt(prompt: string): BruvTaskProfile | undefined {
-+  if (!prompt.startsWith(BRUV_PROMPT_MARKER)) return undefined;
 +  const match = /^<bruv-delegation-v1> profile=(fast|normal|orchestrator)(?:\s|$)/.exec(prompt);
-+  return match && PROFILES.has(match[1] as BruvTaskProfile)
-+    ? (match[1] as BruvTaskProfile)
-+    : undefined;
++  return match ? (match[1] as BruvTaskProfile) : undefined;
 +}
 +
 +/** Derives role/depth only from trusted process mode and persisted parent/task lineage. */
-+export async function deriveBruvDelegationPolicy(
++export function deriveBruvDelegationPolicy<E, R>(
 +  threadId: ThreadId,
 +  trustedBruvBackend: boolean,
-+  load: (threadId: ThreadId) => Promise<OrchestrationV2ThreadProjection>,
-+): Promise<BruvDelegationPolicy | undefined> {
-+  if (!trustedBruvBackend) return undefined;
-+  let current = await load(threadId);
-+  if (current.thread.lineage.parentThreadId === null) return { profile: "orchestrator", depth: 0 };
-+  let depth = 0;
-+  let profile: BruvTaskProfile | undefined;
-+  const seen = new Set<string>();
-+  while (current.thread.lineage.parentThreadId !== null) {
-+    if (current.thread.lineage.relationshipToParent !== "subagent" || seen.has(current.thread.id))
-+      return undefined;
-+    seen.add(current.thread.id);
-+    const parent = await load(current.thread.lineage.parentThreadId);
-+    const edge = parent.subagents.find((task) => task.childThreadId === current.thread.id);
-+    const edgeProfile = edge === undefined ? undefined : profileFromMarkedPrompt(edge.prompt);
-+    if (
-+      edgeProfile === undefined ||
-+      edge?.origin !== "app_owned" ||
-+      edge.status === "completed" ||
-+      edge.status === "failed" ||
-+      edge.status === "cancelled" ||
-+      edge.status === "interrupted" ||
-+      edge.completionDelivery?.state === "disposed"
-+    )
-+      return undefined;
-+    profile ??= edgeProfile;
-+    depth += 1;
-+    current = parent;
-+  }
-+  return profile === undefined ? undefined : { profile, depth };
++  load: (threadId: ThreadId) => Effect.Effect<OrchestrationV2ThreadProjection, E, R>,
++): Effect.Effect<BruvDelegationPolicy | undefined, E, R> {
++  return Effect.gen(function* () {
++    if (!trustedBruvBackend) return undefined;
++    let current = yield* load(threadId);
++    if (current.thread.lineage.parentThreadId === null)
++      return { profile: "orchestrator", depth: 0 };
++    let depth = 0;
++    let profile: BruvTaskProfile | undefined;
++    const seen = new Set<string>();
++    while (current.thread.lineage.parentThreadId !== null) {
++      if (current.thread.lineage.relationshipToParent !== "subagent" || seen.has(current.thread.id))
++        return undefined;
++      seen.add(current.thread.id);
++      const parent = yield* load(current.thread.lineage.parentThreadId);
++      const edge = parent.subagents.find((task) => task.childThreadId === current.thread.id);
++      const edgeProfile = edge === undefined ? undefined : profileFromMarkedPrompt(edge.prompt);
++      if (
++        edgeProfile === undefined ||
++        edge?.origin !== "app_owned" ||
++        edge.status === "completed" ||
++        edge.status === "failed" ||
++        edge.status === "cancelled" ||
++        edge.status === "interrupted" ||
++        edge.completionDelivery?.state === "disposed"
++      )
++        return undefined;
++      profile ??= edgeProfile;
++      depth += 1;
++      current = parent;
++    }
++    return profile === undefined ? undefined : { profile, depth };
++  });
 +}
 +
 +type ProfileConfig = { readonly model?: string; readonly thinking?: string };
@@ -708,10 +775,10 @@ index 0000000000000000000000000000000000000000..3cfa89662e1f65a02411824a09661d0d
 +}
 diff --git a/apps/server/src/mcp/BruvTaskService.test.ts b/apps/server/src/mcp/BruvTaskService.test.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd89ae52fe2
+index 0000000000000000000000000000000000000000..cdc243b0eb9c30d4269cc325c57ab4b3602e91ba
 --- /dev/null
 +++ b/apps/server/src/mcp/BruvTaskService.test.ts
-@@ -0,0 +1,716 @@
+@@ -0,0 +1,705 @@
 +// @effect-diagnostics anyEffect:off nodeBuiltinImport:off - Git-backed tests use isolated /var/tmp repositories.
 +import { execFile } from "node:child_process";
 +import { mkdtemp, rm, writeFile } from "node:fs/promises";
@@ -783,6 +850,13 @@ index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd8
 +    subagents: [],
 +    contextTransfers: [],
 +  }) as any;
++
++const buildService = <E, R>(
++  services: Layer.Layer<ThreadManagementService | OrchestratorMcpService, E, R>,
++) =>
++  Layer.build(layer.pipe(Layer.provide(services), Layer.provide(threadLaunchLayer))).pipe(
++    Effect.map((built) => Context.get(built, BruvTaskService)),
++  );
 +
 +it.effect(
 +  "launches asynchronously, reads without ACK, deduplicates, and cancels only the subtree",
@@ -866,10 +940,7 @@ index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd8
 +        } as any),
 +        Layer.succeed(OrchestratorMcpService, orchestrator),
 +      );
-+      const built = yield* Layer.build(
-+        layer.pipe(Layer.provide(services), Layer.provide(threadLaunchLayer)),
-+      );
-+      const service = Context.get(built, BruvTaskService);
++      const service = yield* buildService(services);
 +      const launched = yield* service.launch(scope, {
 +        clientRequestId: "request-1",
 +        prompt: "Implement feature",
@@ -985,10 +1056,7 @@ index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd8
 +      } as any),
 +      Layer.succeed(OrchestratorMcpService, orchestrator),
 +    );
-+    const built = yield* Layer.build(
-+      layer.pipe(Layer.provide(services), Layer.provide(threadLaunchLayer)),
-+    );
-+    const service = Context.get(built, BruvTaskService);
++    const service = yield* buildService(services);
 +    yield* service.launch(scope, {
 +      clientRequestId: "same",
 +      prompt: "one",
@@ -1117,10 +1185,7 @@ index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd8
 +        } as any),
 +        Layer.succeed(OrchestratorMcpService, orchestrator),
 +      );
-+      const built = yield* Layer.build(
-+        layer.pipe(Layer.provide(services), Layer.provide(threadLaunchLayer)),
-+      );
-+      const service = Context.get(built, BruvTaskService);
++      const service = yield* buildService(services);
 +      const childScope = {
 +        ...scope,
 +        threadId: "thread-child-race",
@@ -1188,10 +1253,7 @@ index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd8
 +      } as any),
 +      Layer.succeed(OrchestratorMcpService, {} as any),
 +    );
-+    const built = yield* Layer.build(
-+      layer.pipe(Layer.provide(services), Layer.provide(threadLaunchLayer)),
-+    );
-+    const service = Context.get(built, BruvTaskService);
++    const service = yield* buildService(services);
 +    const input = {
 +      version: 1 as const,
 +      notificationId: "stable-notification",
@@ -1262,10 +1324,7 @@ index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd8
 +      } as any),
 +      Layer.succeed(OrchestratorMcpService, {} as any),
 +    );
-+    const built = yield* Layer.build(
-+      layer.pipe(Layer.provide(services), Layer.provide(threadLaunchLayer)),
-+    );
-+    const service = Context.get(built, BruvTaskService);
++    const service = yield* buildService(services);
 +    const exit = yield* Effect.exit(
 +      service.notifyLocalJob(scope, {
 +        version: 1,
@@ -1384,9 +1443,6 @@ index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd8
 +        branch: expect.stringMatching(/^bruv\/isolated-feature-[0-9a-f]{16}$/),
 +        preparationStatus: "preparing",
 +      });
-+      expect(launched.workspace?.kind === "worktree" && launched.workspace.branch).toMatch(
-+        /^bruv\/isolated-feature-[a-f0-9]{16}$/,
-+      );
 +      expect(preparations).toHaveLength(1);
 +      expect(preparations[0]).toMatchObject({
 +        threadId: child.thread.id,
@@ -1430,10 +1486,10 @@ index 0000000000000000000000000000000000000000..8094cc41e97cceb6c4df25a289d52bd8
 +);
 diff --git a/apps/server/src/mcp/BruvTaskService.ts b/apps/server/src/mcp/BruvTaskService.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..44866b22c1b0f40b07e888e4ab09844d85286797
+index 0000000000000000000000000000000000000000..125b03e426e42e2f7147ee9fb8636f138bead617
 --- /dev/null
 +++ b/apps/server/src/mcp/BruvTaskService.ts
-@@ -0,0 +1,606 @@
+@@ -0,0 +1,600 @@
 +// @effect-diagnostics nodeBuiltinImport:off - Git ref resolution is a bounded argv-only subprocess boundary.
 +import { execFile } from "node:child_process";
 +import { createHash } from "node:crypto";
@@ -1461,7 +1517,6 @@ index 0000000000000000000000000000000000000000..44866b22c1b0f40b07e888e4ab09844d
 +import * as Effect from "effect/Effect";
 +import * as Layer from "effect/Layer";
 +import * as Option from "effect/Option";
-+import * as Ref from "effect/Ref";
 +
 +import {
 +  delegatedTaskProgress,
@@ -1579,12 +1634,11 @@ index 0000000000000000000000000000000000000000..44866b22c1b0f40b07e888e4ab09844d
 +      const projection = yield* load(scope.threadId);
 +      return { projection, policy: scope.bruvDelegation };
 +    });
++  const isMarkedOwnedTask = (task: OrchestrationV2Subagent) =>
++    task.origin === "app_owned" && profileFromMarkedPrompt(task.prompt) !== undefined;
 +  const ownedTask = (projection: OrchestrationV2ThreadProjection, taskId: NodeId) => {
 +    const task = projection.subagents.find(
-+      (candidate) =>
-+        candidate.id === taskId &&
-+        candidate.origin === "app_owned" &&
-+        profileFromMarkedPrompt(candidate.prompt) !== undefined,
++      (candidate) => candidate.id === taskId && isMarkedOwnedTask(candidate),
 +    );
 +    return task?.childThreadId === null || task === undefined ? undefined : task;
 +  };
@@ -1915,7 +1969,6 @@ index 0000000000000000000000000000000000000000..44866b22c1b0f40b07e888e4ab09844d
 +        task.delegatedWorkspace?.requestKey !== delegatedWorkspace.requestKey ||
 +        (delegatedWorkspace.kind === "worktree" &&
 +          (task.delegatedWorkspace?.kind !== "worktree" ||
-+            task.delegatedWorkspace.requestKey !== delegatedWorkspace.requestKey ||
 +            task.delegatedWorkspace.requestedBaseRef !== delegatedWorkspace.requestedBaseRef ||
 +            task.delegatedWorkspace.requestedBranch !== delegatedWorkspace.requestedBranch ||
 +            task.delegatedWorkspace.baseRef !== delegatedWorkspace.baseRef ||
@@ -1978,10 +2031,7 @@ index 0000000000000000000000000000000000000000..44866b22c1b0f40b07e888e4ab09844d
 +    Effect.gen(function* () {
 +      const parent = yield* requireBruvScope(scope);
 +      const all = parent.projection.subagents.filter(
-+        (task) =>
-+          task.origin === "app_owned" &&
-+          task.childThreadId !== null &&
-+          profileFromMarkedPrompt(task.prompt) !== undefined,
++        (task) => isMarkedOwnedTask(task) && task.childThreadId !== null,
 +      );
 +      const offset = input.cursor === undefined ? 0 : Number(input.cursor);
 +      if (!Number.isSafeInteger(offset) || offset < 0 || offset > all.length)
@@ -2377,7 +2427,7 @@ index 3f927c283ef87a320c7600ab9cb032a50646cf78..7060a9826c83af694a23f3851abf757f
      Effect.gen(function* () {
        const dispatched = yield* Ref.make<ReadonlyArray<unknown>>([]);
 diff --git a/apps/server/src/mcp/OrchestratorMcpService.ts b/apps/server/src/mcp/OrchestratorMcpService.ts
-index 5fdc7eb81c80f3e00e8c35db34e38cf2c36f7577..dc583247542ed09a13716ed71bbff87a10de6500 100644
+index 5fdc7eb81c80f3e00e8c35db34e38cf2c36f7577..d9505adb275ba937c6518104678b9d52c972087b 100644
 --- a/apps/server/src/mcp/OrchestratorMcpService.ts
 +++ b/apps/server/src/mcp/OrchestratorMcpService.ts
 @@ -1,3 +1,4 @@
@@ -2528,16 +2578,6 @@ index 5fdc7eb81c80f3e00e8c35db34e38cf2c36f7577..dc583247542ed09a13716ed71bbff87a
          return {
            taskId: input.taskId,
            status: "cancel_requested",
-@@ -1939,6 +1957,9 @@ const make = Effect.gen(function* () {
-   });
- });
- 
-+/** Exposed only for stable replay identity tests. */
-+export const __testing = { stableCommandId };
-+
- export const layer: Layer.Layer<
-   OrchestratorMcpService,
-   never,
 diff --git a/apps/server/src/mcp/OrchestratorMcpToolkit.integration.test.ts b/apps/server/src/mcp/OrchestratorMcpToolkit.integration.test.ts
 index 7d20bf512b1088687a552c336def770c3c36b14c..7f572c7a6e86d948d0665a5977722078c097b21b 100644
 --- a/apps/server/src/mcp/OrchestratorMcpToolkit.integration.test.ts
@@ -2601,7 +2641,7 @@ index 7d20bf512b1088687a552c336def770c3c36b14c..7f572c7a6e86d948d0665a5977722078
  
          yield* Effect.gen(function* () {
 diff --git a/apps/server/src/mcp/toolkits/orchestrator/handlers.ts b/apps/server/src/mcp/toolkits/orchestrator/handlers.ts
-index 7dbbd21cb6246aa82041468056916076a3bb169c..b60597ef8c4fe58a138ccaffa8c945c13e5ffa31 100644
+index 7dbbd21cb6246aa82041468056916076a3bb169c..f2aa13418e30ad7e5664f247b88ea46e53c12777 100644
 --- a/apps/server/src/mcp/toolkits/orchestrator/handlers.ts
 +++ b/apps/server/src/mcp/toolkits/orchestrator/handlers.ts
 @@ -1,3 +1,4 @@
@@ -2609,45 +2649,34 @@ index 7dbbd21cb6246aa82041468056916076a3bb169c..b60597ef8c4fe58a138ccaffa8c945c1
  import { OrchestratorToolkit } from "./tools.ts";
  import * as Effect from "effect/Effect";
  
-@@ -6,6 +7,36 @@ import * as OrchestratorMcpService from "../../OrchestratorMcpService.ts";
+@@ -5,7 +6,25 @@ import * as McpInvocationContext from "../../McpInvocationContext.ts";
+ import * as OrchestratorMcpService from "../../OrchestratorMcpService.ts";
  import * as ThreadMetadataMcpService from "../../ThreadMetadataMcpService.ts";
  
++const bruvRequestContext = Effect.gen(function* () {
++  const scope = yield* McpInvocationContext.McpInvocationContext;
++  const service = yield* BruvTaskService;
++  return { scope, service };
++});
++
  const handlers = {
 +  bruv_local_job_notify: (input) =>
-+    Effect.gen(function* () {
-+      const scope = yield* McpInvocationContext.McpInvocationContext;
-+      const service = yield* BruvTaskService;
-+      return yield* service.notifyLocalJob(scope, input);
-+    }),
++    bruvRequestContext.pipe(
++      Effect.flatMap(({ scope, service }) => service.notifyLocalJob(scope, input)),
++    ),
 +  bruv_task_launch: (input) =>
-+    Effect.gen(function* () {
-+      const scope = yield* McpInvocationContext.McpInvocationContext;
-+      const service = yield* BruvTaskService;
-+      return yield* service.launch(scope, input);
-+    }),
++    bruvRequestContext.pipe(Effect.flatMap(({ scope, service }) => service.launch(scope, input))),
 +  bruv_task_observe: ({ taskId }) =>
-+    Effect.gen(function* () {
-+      const scope = yield* McpInvocationContext.McpInvocationContext;
-+      const service = yield* BruvTaskService;
-+      return yield* service.observe(scope, taskId);
-+    }),
++    bruvRequestContext.pipe(Effect.flatMap(({ scope, service }) => service.observe(scope, taskId))),
 +  bruv_task_cancel: (input) =>
-+    Effect.gen(function* () {
-+      const scope = yield* McpInvocationContext.McpInvocationContext;
-+      const service = yield* BruvTaskService;
-+      return yield* service.cancel(scope, input);
-+    }),
++    bruvRequestContext.pipe(Effect.flatMap(({ scope, service }) => service.cancel(scope, input))),
 +  bruv_task_list: (input) =>
-+    Effect.gen(function* () {
-+      const scope = yield* McpInvocationContext.McpInvocationContext;
-+      const service = yield* BruvTaskService;
-+      return yield* service.list(scope, input);
-+    }),
++    bruvRequestContext.pipe(Effect.flatMap(({ scope, service }) => service.list(scope, input))),
    orchestrator_capabilities: () =>
      Effect.gen(function* () {
        const scope = yield* McpInvocationContext.McpInvocationContext;
 diff --git a/apps/server/src/mcp/toolkits/orchestrator/tools.test.ts b/apps/server/src/mcp/toolkits/orchestrator/tools.test.ts
-index de85b6f72e0c21da0d8d3b69cec5e7cd52166e16..90333cfc601e665e39b46739179301239bd82636 100644
+index de85b6f72e0c21da0d8d3b69cec5e7cd52166e16..2f51dbaa98a5b7915bde670a897efad03a78d619 100644
 --- a/apps/server/src/mcp/toolkits/orchestrator/tools.test.ts
 +++ b/apps/server/src/mcp/toolkits/orchestrator/tools.test.ts
 @@ -3,6 +3,10 @@ import { Tool } from "effect/unstable/ai";
@@ -2676,7 +2705,7 @@ index de85b6f72e0c21da0d8d3b69cec5e7cd52166e16..90333cfc601e665e39b4673917930123
        >;
      };
  
-@@ -77,4 +87,24 @@ describe("orchestrator MCP tool guidance", () => {
+@@ -77,4 +87,26 @@ describe("orchestrator MCP tool guidance", () => {
      ]);
      assert.include(ThreadUpdateTool.description ?? "", "Workspace and branch changes");
    });
@@ -2694,6 +2723,8 @@ index de85b6f72e0c21da0d8d3b69cec5e7cd52166e16..90333cfc601e665e39b4673917930123
 +      "prompt",
 +      "profile",
 +      "timeoutMs",
++      "title",
++      "workspace",
 +    ]);
 +    assert.sameMembers([...(launch.required ?? [])], ["clientRequestId", "prompt", "profile"]);
 +    assert.hasAllKeys(schema(BruvTaskObserveTool).properties ?? {}, ["taskId"]);
@@ -2702,7 +2733,7 @@ index de85b6f72e0c21da0d8d3b69cec5e7cd52166e16..90333cfc601e665e39b4673917930123
 +  });
  });
 diff --git a/apps/server/src/mcp/toolkits/orchestrator/tools.ts b/apps/server/src/mcp/toolkits/orchestrator/tools.ts
-index 833e88bd2ae80225635e5a755ca06037642f3ef5..f168a31c97aa73f443a34d9ae04fffc87a953ee3 100644
+index 833e88bd2ae80225635e5a755ca06037642f3ef5..e082af86d5ae7ee1ec95b183cbf9c6a60e03a0db 100644
 --- a/apps/server/src/mcp/toolkits/orchestrator/tools.ts
 +++ b/apps/server/src/mcp/toolkits/orchestrator/tools.ts
 @@ -1,4 +1,13 @@
@@ -2728,18 +2759,22 @@ index 833e88bd2ae80225635e5a755ca06037642f3ef5..f168a31c97aa73f443a34d9ae04fffc8
  const dependencies = [
    McpInvocationContext.McpInvocationContext,
    OrchestratorMcpService.OrchestratorMcpService,
-@@ -42,6 +53,72 @@ const threadMetadataDependencies = [
+@@ -42,6 +53,68 @@ const threadMetadataDependencies = [
    ThreadMetadataMcpService.ThreadMetadataMcpService,
  ];
  
++const bruvToolOptions = {
++  failure: OrchestratorMcpFailure,
++  failureMode: "return" as const,
++  dependencies: bruvTaskDependencies,
++};
++
 +export const BruvLocalJobNotifyTool = Tool.make("bruv_local_job_notify", {
 +  description:
 +    "Commit a durable local Bruv shell completion or attention wake. This authenticated internal tool is not for model-authored calls.",
 +  parameters: BruvLocalJobNotifyInput,
 +  success: BruvLocalJobNotifyResult,
-+  failure: OrchestratorMcpFailure,
-+  failureMode: "return",
-+  dependencies: bruvTaskDependencies,
++  ...bruvToolOptions,
 +})
 +  .annotate(Tool.Title, "Commit local Bruv job notification")
 +  .annotate(Tool.Destructive, true)
@@ -2750,9 +2785,7 @@ index 833e88bd2ae80225635e5a755ca06037642f3ef5..f168a31c97aa73f443a34d9ae04fffc8
 +    "Launch a native Bruv child asynchronously. Identity, role, profile policy, depth, and provider routing are server-authoritative. Completion is delivered by T3; end the turn instead of polling.",
 +  parameters: BruvTaskLaunchInput,
 +  success: BruvTaskResult,
-+  failure: OrchestratorMcpFailure,
-+  failureMode: "return",
-+  dependencies: bruvTaskDependencies,
++  ...bruvToolOptions,
 +})
 +  .annotate(Tool.Title, "Launch native Bruv task")
 +  .annotate(Tool.Destructive, true)
@@ -2763,9 +2796,7 @@ index 833e88bd2ae80225635e5a755ca06037642f3ef5..f168a31c97aa73f443a34d9ae04fffc8
 +    "Read durable native Bruv task state without acknowledging or consuming its completion delivery.",
 +  parameters: BruvTaskObserveInput,
 +  success: BruvTaskResult,
-+  failure: OrchestratorMcpFailure,
-+  failureMode: "return",
-+  dependencies: bruvTaskDependencies,
++  ...bruvToolOptions,
 +})
 +  .annotate(Tool.Title, "Observe native Bruv task")
 +  .annotate(Tool.Readonly, true)
@@ -2777,9 +2808,7 @@ index 833e88bd2ae80225635e5a755ca06037642f3ef5..f168a31c97aa73f443a34d9ae04fffc8
 +    "Explicitly cancel this native Bruv task and its descendants, without cancelling siblings.",
 +  parameters: BruvTaskCancelInput,
 +  success: BruvTaskResult,
-+  failure: OrchestratorMcpFailure,
-+  failureMode: "return",
-+  dependencies: bruvTaskDependencies,
++  ...bruvToolOptions,
 +})
 +  .annotate(Tool.Title, "Cancel native Bruv task subtree")
 +  .annotate(Tool.Destructive, true);
@@ -2789,9 +2818,7 @@ index 833e88bd2ae80225635e5a755ca06037642f3ef5..f168a31c97aa73f443a34d9ae04fffc8
 +    "List a bounded page (count defaults to 20, maximum 100) of durable native Bruv task summaries. Results omit task output and do not acknowledge or consume completion delivery; use nextCursor for another page and observe for bounded output.",
 +  parameters: BruvTaskListInput,
 +  success: BruvTaskListResult,
-+  failure: OrchestratorMcpFailure,
-+  failureMode: "return",
-+  dependencies: bruvTaskDependencies,
++  ...bruvToolOptions,
 +})
 +  .annotate(Tool.Title, "List native Bruv tasks")
 +  .annotate(Tool.Readonly, true)
@@ -2801,7 +2828,7 @@ index 833e88bd2ae80225635e5a755ca06037642f3ef5..f168a31c97aa73f443a34d9ae04fffc8
  const OrchestratorCapabilitiesTool = Tool.make("orchestrator_capabilities", {
    description:
      "List the V2 provider instances and their current models from the same live catalog as the composer, including configured custom models, inherited runtime settings, and app-owned orchestration features available to this T3 thread. For a separate top-level thread in a new or existing worktree, use t3_thread_launch with workspaceStrategy.",
-@@ -238,6 +315,11 @@ const ThreadInterruptTool = Tool.make("t3_thread_interrupt", {
+@@ -238,6 +311,11 @@ const ThreadInterruptTool = Tool.make("t3_thread_interrupt", {
    .annotate(Tool.Destructive, true);
  
  export const OrchestratorToolkit = Toolkit.make(
@@ -2946,18 +2973,10 @@ index 9d1f11d6e287df8d9cbcf3fba4d400abf32eb328..2177623243f7946f12e2c782962472eb
      Effect.gen(function* () {
        const fake = yield* makeFakePi;
 diff --git a/apps/server/src/orchestration-v2/Adapters/PiAdapterV2.ts b/apps/server/src/orchestration-v2/Adapters/PiAdapterV2.ts
-index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b74f8714e 100644
+index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..3f5a1604f014248d424338168692fe426f348cd9 100644
 --- a/apps/server/src/orchestration-v2/Adapters/PiAdapterV2.ts
 +++ b/apps/server/src/orchestration-v2/Adapters/PiAdapterV2.ts
-@@ -45,6 +45,7 @@ import {
-   type ProviderApprovalDecision,
-   type ProviderInstanceId,
-   type OrchestrationV2ProviderTurnTokenUsage,
-+  type TurnTokenUsage,
- } from "@t3tools/contracts";
- import * as Cause from "effect/Cause";
- import * as DateTime from "effect/DateTime";
-@@ -69,6 +70,7 @@ import {
+@@ -69,6 +69,7 @@ import {
    type PiCompactCommand,
  } from "../../provider/PiCommands.ts";
  import { mergeProviderInstanceEnvironment } from "../../provider/ProviderInstanceEnvironment.ts";
@@ -2965,7 +2984,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
  import * as IdAllocator from "../IdAllocator.ts";
  import * as ProviderAdapter from "../ProviderAdapter.ts";
  import {
-@@ -109,6 +111,7 @@ const STREAM_FLUSH_MS = 50;
+@@ -109,6 +110,7 @@ const STREAM_FLUSH_MS = 50;
  const PI_REQUEST_TIMEOUT_MS = 15_000;
  // Session lifecycle hooks reload extensions, MCP servers and language servers.
  const PI_SESSION_TIMEOUT_MS = 60_000;
@@ -2973,12 +2992,11 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
  const PI_SKILL_DISCOVERY_TIMEOUT_MS = 4_000;
  const PI_UNSOLICITED_ACTIVITY_ERROR =
    "Pi started agent work outside an active T3 turn. The session was stopped to prevent invisible tool execution.";
-@@ -269,6 +272,15 @@ interface PiCompactionState {
+@@ -269,6 +271,14 @@ interface PiCompactionState {
    readonly startedAt: DateTime.Utc;
  }
  
 +interface PiBruvShellTask {
-+  readonly externalId: string;
 +  readonly nativeItemId: string;
 +  readonly turn: ActivePiTurn;
 +  readonly description: string;
@@ -2989,7 +3007,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
  interface PiProviderRetryState {
    readonly retry: OrchestrationV2ProviderRetry;
    readonly failure: OrchestrationV2ProviderFailure;
-@@ -462,6 +474,9 @@ export function makePiAdapterV2(
+@@ -462,6 +472,9 @@ export function makePiAdapterV2(
          ProviderAdapter.ProviderAdapterV2Error | Cause.Done
        >();
        const pendingPrompts = new Map<string, PendingPiPrompt>();
@@ -2999,7 +3017,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
        const sessionApprovals = new Set<string>();
        // Answering a dialog and terminalizing a turn both publish lifecycle
        // events. Pi can settle immediately after `extension_ui_response`, so
-@@ -481,6 +496,7 @@ export function makePiAdapterV2(
+@@ -481,6 +494,7 @@ export function makePiAdapterV2(
        let unsolicitedActivityDetected = false;
        let appliedModel: string | null = null;
        let appliedThinking: string | null = null;
@@ -3007,7 +3025,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
        /** Last thread title synced into pi's session name (`/resume` listing). */
        let appliedSessionName: string | null = null;
        /** Extension failures raised during startup are attached to the next turn. */
-@@ -1114,6 +1130,102 @@ export function makePiAdapterV2(
+@@ -1114,6 +1128,101 @@ export function makePiAdapterV2(
          }
        });
  
@@ -3048,7 +3066,6 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
 +          const description =
 +            recordString(snapshot, "command")?.slice(0, 240) ?? "Background command";
 +          task = {
-+            externalId,
 +            nativeItemId: `bruv-shell:${externalId}`,
 +            turn,
 +            description,
@@ -3110,7 +3127,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
        // ── extension UI prompts ──────────────────────────────
  
        const cancelPrompt = (pending: PendingPiPrompt, resolvedAt: DateTime.Utc) =>
-@@ -1547,6 +1659,8 @@ export function makePiAdapterV2(
+@@ -1547,6 +1656,8 @@ export function makePiAdapterV2(
        const handleSessionEvent = Effect.fnUntraced(function* (event: PiRpcRecord) {
          const state = threadState;
          const turn = state?.activeTurn ?? null;
@@ -3119,7 +3136,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
          switch (event["type"]) {
            case "agent_start": {
              if (turn === null) {
-@@ -1888,7 +2002,8 @@ export function makePiAdapterV2(
+@@ -1888,7 +1999,8 @@ export function makePiAdapterV2(
                turn.providerTurn.id !== event["providerTurnId"] ||
                turn.settleProbeGeneration !== event["settleProbeGeneration"] ||
                (!settleAfterAgentActivity && turn.sawAgentActivity) ||
@@ -3129,7 +3146,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
              ) {
                return;
              }
-@@ -2003,6 +2118,7 @@ export function makePiAdapterV2(
+@@ -2003,6 +2115,7 @@ export function makePiAdapterV2(
            threadState = null;
            appliedModel = null;
            appliedThinking = null;
@@ -3137,7 +3154,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
            appliedSessionName = null;
            baselineModel = null;
            baselineThinking = null;
-@@ -2105,6 +2221,13 @@ export function makePiAdapterV2(
+@@ -2105,6 +2218,13 @@ export function makePiAdapterV2(
  
        const applySelection = Effect.fnUntraced(function* (modelSelection: ModelSelection) {
          const thinking = getModelSelectionStringOptionValue(modelSelection, "thinking");
@@ -3151,7 +3168,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
          if (modelSelection.model === PI_INHERIT_MODEL_SLUG) {
            // Returning to "Pi default" after an explicit pick has to replay the
            // captured baseline, otherwise Pi stays on the last model applied.
-@@ -2162,6 +2285,10 @@ export function makePiAdapterV2(
+@@ -2162,6 +2282,10 @@ export function makePiAdapterV2(
            yield* request({ type: "set_thinking_level", level: thinking });
            appliedThinking = thinking;
          }
@@ -3162,7 +3179,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
        });
  
        const resolvePromptPayload = Effect.fnUntraced(function* (
-@@ -2219,6 +2346,15 @@ export function makePiAdapterV2(
+@@ -2219,6 +2343,15 @@ export function makePiAdapterV2(
                : selection.model;
            return slug === undefined ? undefined : modelContextWindows.get(slug);
          },
@@ -3178,7 +3195,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
          ensureThread: (threadInput) =>
            registerThread(threadInput).pipe(
              Effect.mapError(
-@@ -2477,7 +2613,8 @@ export function makePiAdapterV2(
+@@ -2477,7 +2610,8 @@ export function makePiAdapterV2(
                interruptInput.requestRuntimeRestart === true ||
                turn.settleWhenIdle ||
                turn.activeCompaction !== null ||
@@ -3188,7 +3205,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
              ) {
                // Pi's generic abort does not cancel manual compaction. Terminate
                // so Stop covers user /compact as well as detached recovery compact.
-@@ -2684,6 +2821,7 @@ export function makePiAdapterV2(
+@@ -2684,6 +2818,7 @@ export function makePiAdapterV2(
              lastNativeThreadId = forkSessionFile;
              appliedModel = null;
              appliedThinking = null;
@@ -3196,7 +3213,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
              appliedSessionName = null;
              yield* updateProviderThread(state, { nativeThreadRef: providerRef(forkSessionFile) });
              const entriesData = yield* request({ type: "get_entries" }).pipe(
-@@ -2962,7 +3100,10 @@ export const PiAdapterV2Driver: ProviderAdapterDriver<PiSettings, PiAdapterV2Dri
+@@ -2962,7 +3097,10 @@ export const PiAdapterV2Driver: ProviderAdapterDriver<PiSettings, PiAdapterV2Dri
        const serverConfig = yield* ServerConfig.ServerConfig;
        return makePiAdapterV2({
          instanceId: input.instanceId,
@@ -3208,7 +3225,7 @@ index 6f0bcf258acb4ee6c621bdeb78c3546d6cc571a4..07ed0aa49cfd1b481859c9feff9d983b
          environment: mergeProviderInstanceEnvironment(input.environment, hostEnvironment),
          spawner,
          fileSystem,
-@@ -2996,7 +3137,7 @@ const layer: Layer.Layer<ProviderAdapter.ProviderAdapterV2, never, PiAdapterV2Dr
+@@ -2996,7 +3134,7 @@ const layer: Layer.Layer<ProviderAdapter.ProviderAdapterV2, never, PiAdapterV2Dr
        const serverConfig = yield* ServerConfig.ServerConfig;
        return makePiAdapterV2({
          instanceId: PI_DEFAULT_INSTANCE_ID,
@@ -3316,10 +3333,57 @@ index 9de59156047893c6bdc85d36453d22001fd487d5..fd8de484e0663574edfd7f6ee708cae8
    const hasT3Mcp = hasT3Extension && input.mcpSession !== undefined;
    const extensionSafeArgs =
 diff --git a/apps/server/src/orchestration-v2/DelegatedCompletionDelivery.test.ts b/apps/server/src/orchestration-v2/DelegatedCompletionDelivery.test.ts
-index a64dc21cec91e785fde3ff69a4562a735ebaf405..12e221e30966a102284487561be28b1b3c5c20ef 100644
+index a64dc21cec91e785fde3ff69a4562a735ebaf405..f959cad3efc9a12d563441ae7b0916d2d238da9f 100644
 --- a/apps/server/src/orchestration-v2/DelegatedCompletionDelivery.test.ts
 +++ b/apps/server/src/orchestration-v2/DelegatedCompletionDelivery.test.ts
-@@ -621,6 +621,37 @@ it.layer(TestLayer)("delegated completion delivery repairs", (it) => {
+@@ -14,6 +14,7 @@ import {
+   RunId,
+   ThreadId,
+ } from "@t3tools/contracts";
++import * as FileSystem from "effect/FileSystem";
+ import * as DateTime from "effect/DateTime";
+ import * as Effect from "effect/Effect";
+ import * as Layer from "effect/Layer";
+@@ -103,13 +104,11 @@ const TestProviderInstanceRegistry = Layer.succeed(
+   },
+ );
+ 
+-const TestLayer = Layer.mergeAll(OrchestrationV2LayerLive, OrchestrationV2EventSinkLayerLive).pipe(
++const TestLayerBase = Layer.mergeAll(
++  OrchestrationV2LayerLive,
++  OrchestrationV2EventSinkLayerLive,
++).pipe(
+   Layer.provideMerge(ProjectServiceLayerLive),
+-  Layer.provide(
+-    Layer.mock(WorkspacePaths.WorkspacePaths)({
+-      normalizeWorkspaceRoot: (workspaceRoot) => Effect.succeed(workspaceRoot),
+-    }),
+-  ),
+   Layer.provide(worktreeRepairDependenciesTestLayer),
+   Layer.provide(
+     Layer.succeed(ProjectEnrichmentService.ProjectEnrichmentService, {
+@@ -136,8 +135,20 @@ const TestLayer = Layer.mergeAll(OrchestrationV2LayerLive, OrchestrationV2EventS
+   Layer.provide(ServerConfigLayer),
+   Layer.provide(ServerSettings.layerTest()),
+   Layer.provide(TestProviderInstanceRegistry),
++);
++const TestLayer = TestLayerBase.pipe(
++  Layer.provide(
++    Layer.mock(WorkspacePaths.WorkspacePaths)({
++      normalizeWorkspaceRoot: (workspaceRoot) => Effect.succeed(workspaceRoot),
++    }),
++  ),
+   Layer.provide(PlatformTestLayer),
+ );
++// Local notifications use real normalized, scoped temp workspaces and expose FileSystem.
++const LocalJobTestLayer = TestLayerBase.pipe(
++  Layer.provide(WorkspacePaths.layer),
++  Layer.provideMerge(PlatformTestLayer),
++);
+ 
+ const seedParentWithTerminalTask = (input: {
+   readonly threadId: ThreadId;
+@@ -621,6 +632,37 @@ it.layer(TestLayer)("delegated completion delivery repairs", (it) => {
            },
          );
  
@@ -3357,180 +3421,18 @@ index a64dc21cec91e785fde3ff69a4562a735ebaf405..12e221e30966a102284487561be28b1b
          const acknowledgeAfterDispose = yield* orchestrator.dispatch({
            type: "delegated_task.completion-delivery.acknowledge",
            commandId: CommandId.make("command:delegated-delivery-a2:ack-after-dispose"),
-diff --git a/apps/server/src/orchestration-v2/DelegatedCompletionWake.ts b/apps/server/src/orchestration-v2/DelegatedCompletionWake.ts
-new file mode 100644
-index 0000000000000000000000000000000000000000..5975e00385c0bb827c2a173097472a7989239485
---- /dev/null
-+++ b/apps/server/src/orchestration-v2/DelegatedCompletionWake.ts
-@@ -0,0 +1,25 @@
-+import type { OrchestrationV2ThreadProjection } from "@t3tools/contracts";
-+
-+import { profileFromMarkedPrompt } from "../mcp/BruvDelegationPolicy.ts";
-+
-+/** Agent-facing read instruction selected from the durable task's launch kind. */
-+export function delegatedCompletionWakeText(
-+  projection: Pick<OrchestrationV2ThreadProjection, "subagents">,
-+  taskIds: ReadonlyArray<string>,
-+): string {
-+  const taskList = taskIds.join(", ");
-+  const nativeBruvTasks =
-+    taskIds.length > 0 &&
-+    taskIds.every((id) => {
-+      const task = projection.subagents?.find((candidate) => candidate.id === id);
-+      return task?.origin === "app_owned" && profileFromMarkedPrompt(task.prompt) !== undefined;
-+    });
-+  if (nativeBruvTasks) {
-+    return taskIds.length === 1
-+      ? `Delegated task ${taskList} reached a terminal state. Use execute and await jobs.inspect("${taskList}") to read the result (this uses bruv_task_observe).`
-+      : `Delegated tasks ${taskList} reached terminal states. Use execute and await jobs.inspect(id) for each task to read the results (this uses bruv_task_observe).`;
-+  }
-+  return taskIds.length === 1
-+    ? `Delegated task ${taskList} reached a terminal state. Use task_status with taskId ${taskList} to read the result.`
-+    : `Delegated tasks ${taskList} reached terminal states. Use task_status with each taskId to read the results.`;
-+}
-diff --git a/apps/server/src/orchestration-v2/LocalJobNotification.test.ts b/apps/server/src/orchestration-v2/LocalJobNotification.test.ts
-new file mode 100644
-index 0000000000000000000000000000000000000000..77e49dde85d52b1760557029415ce75fb6d20cbf
---- /dev/null
-+++ b/apps/server/src/orchestration-v2/LocalJobNotification.test.ts
-@@ -0,0 +1,409 @@
-+import * as FileSystem from "effect/FileSystem";
-+import * as WorkspacePaths from "../workspace/WorkspacePaths.ts";
-+import { SourceControlProviderRegistry } from "../sourceControl/SourceControlProviderRegistry.ts";
-+import * as NodeServices from "@effect/platform-node/NodeServices";
-+import { assert, it } from "@effect/vitest";
-+import {
-+  CommandId,
-+  EventId,
-+  MessageId,
-+  type ModelSelection,
-+  NodeId,
-+  ProjectId,
-+  ProviderDriverKind,
-+  ProviderInstanceId,
-+  RunId,
-+  ThreadId,
-+} from "@t3tools/contracts";
-+import * as DateTime from "effect/DateTime";
-+import * as Effect from "effect/Effect";
-+import * as Layer from "effect/Layer";
-+import * as Stream from "effect/Stream";
-+
-+import * as CheckpointStore from "../checkpointing/CheckpointStore.ts";
-+import { ServerConfig } from "../config.ts";
-+import { layer as mcpSessionRegistryTestLayer } from "../mcp/McpSessionRegistry.testkit.ts";
-+import { ProjectService } from "../project/ProjectService.ts";
-+import { ProjectServiceLayerLive } from "./runtimeLayer.ts";
-+import { SqlitePersistenceMemory } from "../persistence/Layers/Sqlite.ts";
-+import { ProjectEnrichmentService } from "../project/ProjectEnrichmentService.ts";
-+import type { ProviderInstance } from "../provider/ProviderDriver.ts";
-+import { ProviderInstanceRegistry } from "../provider/Services/ProviderInstanceRegistry.ts";
-+import { ServerSettingsService } from "../serverSettings.ts";
-+import * as VcsDriverRegistry from "../vcs/VcsDriverRegistry.ts";
-+import * as VcsProcess from "../vcs/VcsProcess.ts";
-+import { CodexProviderCapabilitiesV2 } from "./Adapters/CodexAdapterV2.ts";
-+import { EventSinkV2 } from "./EventSink.ts";
-+import { OrchestratorV2 } from "./Orchestrator.ts";
-+import type { ProviderAdapterV2Shape } from "./ProviderAdapter.ts";
-+import { OrchestrationV2EventSinkLayerLive, OrchestrationV2LayerLive } from "./runtimeLayer.ts";
-+import { worktreeRepairDependenciesTestLayer } from "./ProviderTurnStartService.testkit.ts";
-+
-+const PlatformTestLayer = Layer.merge(
-+  NodeServices.layer,
-+  Layer.mock(SourceControlProviderRegistry)({
-+    resolveLink: () => Effect.die("unused title link"),
-+  }),
-+);
-+
-+const ServerConfigLayer = ServerConfig.layerTest(process.cwd(), {
-+  prefix: "t3-orchestration-v2-delegated-completion-",
-+});
-+
-+const modelSelection = {
-+  instanceId: ProviderInstanceId.make("codex"),
-+  model: "gpt-5.4",
-+} satisfies ModelSelection;
-+
-+const VcsDriverRegistryTestLayer = VcsDriverRegistry.layer.pipe(
-+  Layer.provide(VcsProcess.layer),
-+  Layer.provide(ServerConfigLayer),
-+  Layer.provide(PlatformTestLayer),
-+);
-+
-+const CheckpointStoreTestLayer = CheckpointStore.layer.pipe(
-+  Layer.provide(VcsDriverRegistryTestLayer),
-+);
-+
-+const driver = ProviderDriverKind.make("codex");
-+const orchestrationAdapter = {
-+  instanceId: modelSelection.instanceId,
-+  driver,
-+  getCapabilities: () => Effect.succeed(CodexProviderCapabilitiesV2),
-+  planSelectionTransition: () => Effect.succeed({ type: "apply_on_next_turn" }),
-+  openSession: () => Effect.die("sessions are not used by delegated completion tests"),
-+} as ProviderAdapterV2Shape;
-+const providerInstance = {
-+  instanceId: modelSelection.instanceId,
-+  driverKind: driver,
-+  continuationIdentity: {
-+    driverKind: driver,
-+    continuationKey: "codex:test",
-+  },
-+  displayName: "Codex test",
-+  enabled: true,
-+  snapshot: { getSnapshot: Effect.succeed({}) } as unknown as ProviderInstance["snapshot"],
-+  orchestrationAdapter,
-+  textGeneration: {} as ProviderInstance["textGeneration"],
-+} satisfies ProviderInstance;
-+
-+const TestProviderInstanceRegistry = Layer.succeed(ProviderInstanceRegistry, {
-+  getInstance: (instanceId) =>
-+    Effect.succeed(instanceId === providerInstance.instanceId ? providerInstance : undefined),
-+  listInstances: Effect.succeed([providerInstance]),
-+  listUnavailable: Effect.succeed([]),
-+  streamChanges: Stream.empty,
-+  subscribeChanges: Effect.never,
-+});
-+
-+const TestLayer = Layer.mergeAll(OrchestrationV2LayerLive, OrchestrationV2EventSinkLayerLive).pipe(
-+  Layer.provideMerge(ProjectServiceLayerLive),
-+  Layer.provide(worktreeRepairDependenciesTestLayer),
-+  Layer.provide(
-+    Layer.succeed(ProjectEnrichmentService, {
-+      peek: () =>
-+        Effect.succeed({
-+          repositoryIdentity: null,
-+          faviconPath: null,
-+          repositoryIdentityResolved: false,
-+        }),
-+      request: () => Effect.void,
-+      getAvailable: () =>
-+        Effect.succeed({
-+          repositoryIdentity: null,
-+          faviconPath: null,
-+          repositoryIdentityResolved: false,
-+        }),
-+      invalidate: () => Effect.void,
-+      subscribeChanges: Effect.never,
-+    }),
-+  ),
-+  Layer.provide(mcpSessionRegistryTestLayer),
-+  Layer.provide(SqlitePersistenceMemory),
-+  Layer.provide(CheckpointStoreTestLayer),
-+  Layer.provide(ServerConfigLayer),
-+  Layer.provide(ServerSettingsService.layerTest()),
-+  Layer.provide(TestProviderInstanceRegistry),
-+  Layer.provide(WorkspacePaths.layer),
-+  Layer.provideMerge(PlatformTestLayer),
-+);
+@@ -652,3 +694,283 @@ it.layer(TestLayer)("delegated completion delivery repairs", (it) => {
+       }),
+   );
+ });
 +
 +const seedOwnedLocalJob = (name: string) =>
 +  Effect.gen(function* () {
-+    const applicationEngine = yield* ProjectService;
++    const applicationEngine = yield* ProjectService.ProjectService;
 +    const fileSystem = yield* FileSystem.FileSystem;
 +    const workspaceRoot = yield* fileSystem.makeTempDirectoryScoped({ prefix: "bruv-local-job-" });
-+    const orchestrator = yield* OrchestratorV2;
-+    const eventSink = yield* EventSinkV2;
++    const orchestrator = yield* Orchestrator.OrchestratorV2;
++    const eventSink = yield* EventSink.EventSinkV2;
 +    const now = yield* DateTime.now;
 +    const threadId = ThreadId.make(`thread:local-job:${name}`);
 +    const projectId = ProjectId.make(`project:local-job:${name}`);
@@ -3653,7 +3555,7 @@ index 0000000000000000000000000000000000000000..77e49dde85d52b1760557029415ce75f
 +  },
 +});
 +
-+it.layer(TestLayer)("local job notification serialization", (it) => {
++it.layer(LocalJobTestLayer)("local job notification serialization", (it) => {
 +  it.effect("makes Stop an atomic fence and persists a harmless durable receipt", () =>
 +    Effect.gen(function* () {
 +      const seeded = yield* seedOwnedLocalJob("stop-fence");
@@ -3683,7 +3585,7 @@ index 0000000000000000000000000000000000000000..77e49dde85d52b1760557029415ce75f
 +
 +  it.effect("turns every terminal source state into a durable no-wake receipt", () =>
 +    Effect.gen(function* () {
-+      const eventSink = yield* EventSinkV2;
++      const eventSink = yield* EventSink.EventSinkV2;
 +      for (const status of ["cancelled", "failed", "rolled_back"] as const) {
 +        const seeded = yield* seedOwnedLocalJob(`terminal-${status}`);
 +        const before = yield* seeded.orchestrator.getThreadProjection(seeded.threadId);
@@ -3803,12 +3705,43 @@ index 0000000000000000000000000000000000000000..77e49dde85d52b1760557029415ce75f
 +    }).pipe(Effect.scoped),
 +  );
 +});
+diff --git a/apps/server/src/orchestration-v2/DelegatedCompletionWake.ts b/apps/server/src/orchestration-v2/DelegatedCompletionWake.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..5975e00385c0bb827c2a173097472a7989239485
+--- /dev/null
++++ b/apps/server/src/orchestration-v2/DelegatedCompletionWake.ts
+@@ -0,0 +1,25 @@
++import type { OrchestrationV2ThreadProjection } from "@t3tools/contracts";
++
++import { profileFromMarkedPrompt } from "../mcp/BruvDelegationPolicy.ts";
++
++/** Agent-facing read instruction selected from the durable task's launch kind. */
++export function delegatedCompletionWakeText(
++  projection: Pick<OrchestrationV2ThreadProjection, "subagents">,
++  taskIds: ReadonlyArray<string>,
++): string {
++  const taskList = taskIds.join(", ");
++  const nativeBruvTasks =
++    taskIds.length > 0 &&
++    taskIds.every((id) => {
++      const task = projection.subagents?.find((candidate) => candidate.id === id);
++      return task?.origin === "app_owned" && profileFromMarkedPrompt(task.prompt) !== undefined;
++    });
++  if (nativeBruvTasks) {
++    return taskIds.length === 1
++      ? `Delegated task ${taskList} reached a terminal state. Use execute and await jobs.inspect("${taskList}") to read the result (this uses bruv_task_observe).`
++      : `Delegated tasks ${taskList} reached terminal states. Use execute and await jobs.inspect(id) for each task to read the results (this uses bruv_task_observe).`;
++  }
++  return taskIds.length === 1
++    ? `Delegated task ${taskList} reached a terminal state. Use task_status with taskId ${taskList} to read the result.`
++    : `Delegated tasks ${taskList} reached terminal states. Use task_status with each taskId to read the results.`;
++}
 diff --git a/apps/server/src/orchestration-v2/NativeBruvIntegration.production.test.ts b/apps/server/src/orchestration-v2/NativeBruvIntegration.production.test.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..5f5091a8124899c71fc4edf09a4b957b97cac6be
+index 0000000000000000000000000000000000000000..03ea038008c0c183aae9cf2e910a4cce235ea4d0
 --- /dev/null
 +++ b/apps/server/src/orchestration-v2/NativeBruvIntegration.production.test.ts
-@@ -0,0 +1,868 @@
+@@ -0,0 +1,850 @@
 +// @effect-diagnostics preferSchemaOverJson:off globalConsoleInEffect:off missingEffectContext:off missingLayerContext:off anyUnknownInErrorContext:off globalFetchInEffect:off nodeBuiltinImport:off globalTimers:off
 +/** End-to-end contract: real Bruv routes subagent/jobs through bruv_task_launch, bruv_task_observe, bruv_task_list, and bruv_task_cancel. */
 +import * as NodeServices from "@effect/platform-node/NodeServices";
@@ -3830,9 +3763,9 @@ index 0000000000000000000000000000000000000000..5f5091a8124899c71fc4edf09a4b957b
 +import * as Stream from "effect/Stream";
 +import { ChildProcessSpawner } from "effect/unstable/process";
 +import { HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstable/http";
-+import { McpProtocol, McpSchema, McpServer } from "effect/unstable/ai";
++import { McpProtocol, McpServer } from "effect/unstable/ai";
 +import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-+import { copyFile, mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
++import { mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
 +import { resolve } from "node:path";
 +import { tmpdir } from "node:os";
 +import { once } from "node:events";
@@ -3868,7 +3801,17 @@ index 0000000000000000000000000000000000000000..5f5091a8124899c71fc4edf09a4b957b
 +  for await (const chunk of req) text += chunk;
 +  return JSON.parse(text);
 +}
-+function sse(res: ServerResponse, values: unknown[]) {
++function sse(res: ServerResponse, delta: Record<string, unknown>, finish: string) {
++  const base = {
++    id: "integrated-real",
++    object: "chat.completion.chunk",
++    created: 1,
++    model: "integrated-real",
++  };
++  const values = [
++    { ...base, choices: [{ index: 0, delta, finish_reason: null }] },
++    { ...base, choices: [{ index: 0, delta: {}, finish_reason: finish }] },
++  ];
 +  res.writeHead(200, { "content-type": "text/event-stream" });
 +  res.end(values.map((v) => `data: ${JSON.stringify(v)}\n\n`).join("") + "data: [DONE]\n\n");
 +}
@@ -4042,34 +3985,26 @@ index 0000000000000000000000000000000000000000..5f5091a8124899c71fc4edf09a4b957b
 +              userText.includes("INTEGRATED_CANCEL_CHILD") &&
 +              !(payload.messages ?? []).some((m: any) => m.role === "tool")
 +            )
-+              return sse(res, [
++              return sse(
++                res,
 +                {
-+                  ...base,
-+                  choices: [
++                  role: "assistant",
++                  tool_calls: [
 +                    {
 +                      index: 0,
-+                      delta: {
-+                        role: "assistant",
-+                        tool_calls: [
-+                          {
-+                            index: 0,
-+                            id: "cancel-descendant",
-+                            type: "function",
-+                            function: {
-+                              name: "execute",
-+                              arguments: JSON.stringify({
-+                                code: 'const nested=await subagent({type:"normal",prompt:"INTEGRATED_CANCEL_DESCENDANT"}); console.log(JSON.stringify({nested})); await handoff("CANCEL_TREE_ARMED");',
-+                              }),
-+                            },
-+                          },
-+                        ],
++                      id: "cancel-descendant",
++                      type: "function",
++                      function: {
++                        name: "execute",
++                        arguments: JSON.stringify({
++                          code: 'const nested=await subagent({type:"normal",prompt:"INTEGRATED_CANCEL_DESCENDANT"}); console.log(JSON.stringify({nested})); await handoff("CANCEL_TREE_ARMED");',
++                        }),
 +                      },
-+                      finish_reason: null,
 +                    },
 +                  ],
 +                },
-+                { ...base, choices: [{ index: 0, delta: {}, finish_reason: "tool_calls" }] },
-+              ]);
++                "tool_calls",
++              );
 +            if (!isParent && userText.includes("INTEGRATED_CANCEL_CHILD")) {
 +              res.writeHead(200, { "content-type": "text/event-stream" });
 +              hanging.add(res);
@@ -4115,46 +4050,26 @@ index 0000000000000000000000000000000000000000..5f5091a8124899c71fc4edf09a4b957b
 +              parentExecuteResponses += 1;
 +              const code = `const a=await subagent({type:"orchestrator",prompt:"INTEGRATED_SUCCESS_CHILD"}); if(!a.background) throw new Error("NOT_NATIVE_ASYNC"); const first=await jobs.inspect(a.id); const listed=await jobs.list({count:20}); const pending=await subagent({type:"orchestrator",prompt:"INTEGRATED_CANCEL_CHILD"}); const deadline=Date.now()+10000; while(!(await (await fetch("http://127.0.0.1:${(model.address() as { port: number }).port}/cancel-ready")).json()).ready) { if(Date.now()>deadline) throw new Error("CANCEL_CHILD_DID_NOT_REACH_MODEL"); await new Promise(r=>setTimeout(r,20)); } const cancel=await jobs.stop(pending.id); const cancelAgain=await jobs.stop(pending.id); console.log("INTEGRATED_PARENT_CONTINUATION"+JSON.stringify({taskId:a.id,background:a.background,firstStatus:first.status,listHasTask:listed.jobs.some(x=>x.id===a.id),cancelStatus:cancel.status,cancelAgainStatus:cancelAgain.status})); if(first.status!=="completed") { await fetch("http://127.0.0.1:${(model.address() as { port: number }).port}/parent-ready"); await handoff("INTEGRATED_PARENT_HANDOFF"); }`;
 +              parentExecuteCodes.push(code);
-+              return sse(res, [
++              return sse(
++                res,
 +                {
-+                  ...base,
-+                  choices: [
++                  role: "assistant",
++                  tool_calls: [
 +                    {
 +                      index: 0,
-+                      delta: {
-+                        role: "assistant",
-+                        tool_calls: [
-+                          {
-+                            index: 0,
-+                            id: "integrated-execute",
-+                            type: "function",
-+                            function: { name: "execute", arguments: JSON.stringify({ code }) },
-+                          },
-+                        ],
-+                      },
-+                      finish_reason: null,
++                      id: "integrated-execute",
++                      type: "function",
++                      function: { name: "execute", arguments: JSON.stringify({ code }) },
 +                    },
 +                  ],
 +                },
-+                { ...base, choices: [{ index: 0, delta: {}, finish_reason: "tool_calls" }] },
-+              ]);
++                "tool_calls",
++              );
 +            }
 +            markTerminalRequestReached();
 +            await terminalResponseRelease;
 +            parentResponses.push("terminal");
-+            return sse(res, [
-+              {
-+                ...base,
-+                choices: [
-+                  {
-+                    index: 0,
-+                    delta: { role: "assistant", content: "INTEGRATED_PARENT_DONE" },
-+                    finish_reason: null,
-+                  },
-+                ],
-+              },
-+              { ...base, choices: [{ index: 0, delta: {}, finish_reason: "stop" }] },
-+            ]);
++            return sse(res, { role: "assistant", content: "INTEGRATED_PARENT_DONE" }, "stop");
 +          });
 +          const port = await listen(model);
 +          const bruvBinary =
@@ -5631,14 +5546,14 @@ index 63d4c57fb66324d529692eeb6e1d730fac2933d9..74fc1b25e6f14aee3a59d212004b27bd
 +    }).pipe(Effect.scoped),
 +);
 diff --git a/apps/server/src/orchestration-v2/ProviderSessionManager.ts b/apps/server/src/orchestration-v2/ProviderSessionManager.ts
-index 786eb5a6bf0ae71772bc05bea685fe98be3123a5..85dd810c43bdd1975b3b5000738d18540f2de300 100644
+index 786eb5a6bf0ae71772bc05bea685fe98be3123a5..bb61e721d4d55caa0de9fe856df9419c989ca9b9 100644
 --- a/apps/server/src/orchestration-v2/ProviderSessionManager.ts
 +++ b/apps/server/src/orchestration-v2/ProviderSessionManager.ts
 @@ -32,6 +32,8 @@ import * as ProjectService from "../project/ProjectService.ts";
  import * as McpProviderSession from "../mcp/McpProviderSession.ts";
  import * as ServerSettings from "../serverSettings.ts";
  import * as McpSessionRegistry from "../mcp/McpSessionRegistry.ts";
-+import { profileFromMarkedPrompt } from "../mcp/BruvDelegationPolicy.ts";
++import { deriveBruvDelegationPolicy } from "../mcp/BruvDelegationPolicy.ts";
 +import { isTrustedBruvProviderInstance } from "../provider/BruvWebPi.ts";
  import * as EventSink from "./EventSink.ts";
  import * as IdAllocator from "./IdAllocator.ts";
@@ -5655,7 +5570,7 @@ index 786eb5a6bf0ae71772bc05bea685fe98be3123a5..85dd810c43bdd1975b3b5000738d1854
              })
            : mcpPrepareLock.withLock(
                threadId,
-@@ -430,9 +435,71 @@ export const layerWithOptions = (
+@@ -430,9 +435,37 @@ export const layerWithOptions = (
                  // same token or the process's tool calls fail auth.
                  const { browser: browserToolsAvailable, device: deviceToolsAvailable } =
                    yield* agentAccessSettings(threadId);
@@ -5663,45 +5578,11 @@ index 786eb5a6bf0ae71772bc05bea685fe98be3123a5..85dd810c43bdd1975b3b5000738d1854
 +                  String(providerInstanceId),
 +                  process.env,
 +                );
-+                const bruvDelegation = yield* Effect.gen(function* () {
-+                  if (!trustedBruvProvider) return undefined;
-+                  let current = yield* projectionStore.getThreadProjection(threadId);
-+                  if (current.thread.lineage.parentThreadId === null)
-+                    return { profile: "orchestrator" as const, depth: 0 };
-+                  let depth = 0;
-+                  let profile: "fast" | "normal" | "orchestrator" | undefined;
-+                  const seen = new Set<string>();
-+                  while (current.thread.lineage.parentThreadId !== null) {
-+                    if (
-+                      current.thread.lineage.relationshipToParent !== "subagent" ||
-+                      seen.has(current.thread.id)
-+                    )
-+                      return undefined;
-+                    seen.add(current.thread.id);
-+                    const parent = yield* projectionStore.getThreadProjection(
-+                      current.thread.lineage.parentThreadId,
-+                    );
-+                    const edge = parent.subagents.find(
-+                      (candidate) => candidate.childThreadId === current.thread.id,
-+                    );
-+                    const edgeProfile =
-+                      edge === undefined ? undefined : profileFromMarkedPrompt(edge.prompt);
-+                    if (
-+                      edgeProfile === undefined ||
-+                      edge?.origin !== "app_owned" ||
-+                      edge.status === "completed" ||
-+                      edge.status === "failed" ||
-+                      edge.status === "cancelled" ||
-+                      edge.status === "interrupted" ||
-+                      edge.completionDelivery?.state === "disposed"
-+                    )
-+                      return undefined;
-+                    profile ??= edgeProfile;
-+                    depth += 1;
-+                    current = parent;
-+                  }
-+                  return profile === undefined ? undefined : { profile, depth };
-+                }).pipe(
++                const bruvDelegation = yield* deriveBruvDelegationPolicy(
++                  threadId,
++                  trustedBruvProvider,
++                  projectionStore.getThreadProjection,
++                ).pipe(
 +                  Effect.catch((cause) =>
 +                    Effect.logWarning("Could not derive trusted Bruv delegation policy.", {
 +                      threadId,
@@ -5728,7 +5609,7 @@ index 786eb5a6bf0ae71772bc05bea685fe98be3123a5..85dd810c43bdd1975b3b5000738d1854
                  if (browserToolsAvailable) capabilities.add("preview");
                  if (deviceToolsAvailable) capabilities.add("device");
                  const existing = McpProviderSession.readMcpProviderSession(threadId);
-@@ -446,12 +513,19 @@ export const layerWithOptions = (
+@@ -446,12 +479,19 @@ export const layerWithOptions = (
                      resolved !== undefined &&
                      resolved.threadId === threadId &&
                      resolved.providerInstanceId === providerInstanceId &&
@@ -5753,7 +5634,7 @@ index 786eb5a6bf0ae71772bc05bea685fe98be3123a5..85dd810c43bdd1975b3b5000738d1854
                    }
                    dropMcpCredentialReservation(threadId, existing.providerSessionId);
                  }
-@@ -461,10 +535,15 @@ export const layerWithOptions = (
+@@ -461,10 +501,15 @@ export const layerWithOptions = (
                    providerInstanceId,
                    browserToolsAvailable,
                    capabilities,
@@ -6244,10 +6125,10 @@ index b4ce66f876038082279515390ae69be1db85250b..92789075f6a54285394c0cf8a4f9312c
    const advisory =
      resolveProviderCompatibility(policies, snapshot.driver, snapshot.version) ??
 diff --git a/apps/server/src/serverRuntimeStartup.test.ts b/apps/server/src/serverRuntimeStartup.test.ts
-index a89d010fab75702bbc743da33b03d32bc09e9b1d..848a59472c4df71b2f0e861b52dee2ffa2862e4b 100644
+index a89d010fab75702bbc743da33b03d32bc09e9b1d..7dce9af910d95894df595ce6961fbbb9ff487d5d 100644
 --- a/apps/server/src/serverRuntimeStartup.test.ts
 +++ b/apps/server/src/serverRuntimeStartup.test.ts
-@@ -13,9 +13,46 @@ import * as Ref from "effect/Ref";
+@@ -13,9 +13,37 @@ import * as Ref from "effect/Ref";
  
  import * as GitVcsDriver from "./vcs/GitVcsDriver.ts";
  
@@ -6255,41 +6136,32 @@ index a89d010fab75702bbc743da33b03d32bc09e9b1d..848a59472c4df71b2f0e861b52dee2ff
  import * as ServerConfig from "./config.ts";
  import * as ServerRuntimeStartup from "./serverRuntimeStartup.ts";
  
-+it.effect("uses the direct loopback URL for Bruv web no-auth startup", () =>
-+  Effect.gen(function* () {
-+    const target = yield* ServerRuntimeStartup.resolveStartupBrowserTarget.pipe(
-+      Effect.provideService(ServerConfig.ServerConfig, {
-+        mode: "web",
-+        host: "127.0.0.1",
-+        port: 3773,
-+        bruvWebNoAuth: true,
-+        devUrl: undefined,
-+      } as never),
-+      Effect.provideService(EnvironmentAuth.EnvironmentAuth, {
-+        issueStartupPairingUrl: () => Effect.die("No-auth startup must not issue credentials"),
-+      } as never),
-+    );
-+    assert.equal(target, "http://127.0.0.1:3773");
-+  }),
-+);
-+
-+it.effect("uses a pairing URL for ordinary web startup", () =>
-+  Effect.gen(function* () {
-+    const target = yield* ServerRuntimeStartup.resolveStartupBrowserTarget.pipe(
-+      Effect.provideService(ServerConfig.ServerConfig, {
-+        mode: "web",
-+        host: "127.0.0.1",
-+        port: 3773,
-+        bruvWebNoAuth: false,
-+        devUrl: undefined,
-+      } as never),
-+      Effect.provideService(EnvironmentAuth.EnvironmentAuth, {
-+        issueStartupPairingUrl: (baseUrl: string) => Effect.succeed(`paired:${baseUrl}`),
-+      } as never),
-+    );
-+    assert.equal(target, "paired:http://127.0.0.1:3773");
-+  }),
-+);
++for (const noAuth of [true, false]) {
++  it.effect(
++    noAuth
++      ? "uses the direct loopback URL for Bruv web no-auth startup"
++      : "uses a pairing URL for ordinary web startup",
++    () =>
++      Effect.gen(function* () {
++        const target = yield* ServerRuntimeStartup.resolveStartupBrowserTarget.pipe(
++          Effect.provideService(ServerConfig.ServerConfig, {
++            mode: "web",
++            host: "127.0.0.1",
++            port: 3773,
++            bruvWebNoAuth: noAuth,
++            devUrl: undefined,
++          } as never),
++          Effect.provideService(EnvironmentAuth.EnvironmentAuth, {
++            issueStartupPairingUrl: (baseUrl: string) =>
++              noAuth
++                ? Effect.die("No-auth startup must not issue credentials")
++                : Effect.succeed("paired:" + baseUrl),
++          } as never),
++        );
++        assert.equal(target, noAuth ? "http://127.0.0.1:3773" : "paired:http://127.0.0.1:3773");
++      }),
++  );
++}
 +
  it("uses the canonical Codex model for auto-bootstrap", () => {
    assert.deepEqual(ServerRuntimeStartup.getAutoBootstrapThreadModelSelection(), {
@@ -6379,10 +6251,10 @@ index e3f92058e70c004c5bb67d5d8c965167135fb064..98f3325bcf5637dae11eafcecbd00e63
                ).pipe(Effect.annotateLogs({ pairingUrl: startupBrowserTarget }));
 diff --git a/apps/server/src/terminal/BunPtyAdapter.test.ts b/apps/server/src/terminal/BunPtyAdapter.test.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..0c7e34a5f243f0c84129f7e5fa2bb6ef3220052f
+index 0000000000000000000000000000000000000000..c616f7b644d2b278c7272bce8616016a349069b9
 --- /dev/null
 +++ b/apps/server/src/terminal/BunPtyAdapter.test.ts
-@@ -0,0 +1,229 @@
+@@ -0,0 +1,223 @@
 +import * as NodeServices from "@effect/platform-node/NodeServices";
 +import { assert, it } from "@effect/vitest";
 +import * as Effect from "effect/Effect";
@@ -6391,7 +6263,6 @@ index 0000000000000000000000000000000000000000..0c7e34a5f243f0c84129f7e5fa2bb6ef
 +import * as Schema from "effect/Schema";
 +import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
 +import * as BunPtyAdapter from "./BunPtyAdapter.ts";
-+import * as PtyAdapter from "./PtyAdapter.ts";
 +
 +type FakeState = {
 +  command: string[];
@@ -6399,18 +6270,15 @@ index 0000000000000000000000000000000000000000..0c7e34a5f243f0c84129f7e5fa2bb6ef
 +  writes: string[];
 +  resize: [number, number][];
 +  kills: (string | undefined)[];
-+  emitData: (bytes: Uint8Array) => void;
 +};
 +
 +const fakeAdapter = () => {
-+  let emitData = (_bytes: Uint8Array) => {};
 +  const state: FakeState = {
 +    command: [],
 +    options: undefined,
 +    writes: [],
 +    resize: [],
 +    kills: [],
-+    emitData,
 +  };
 +  const terminal = {
 +    write: (data: string) => state.writes.push(data),
@@ -6428,8 +6296,6 @@ index 0000000000000000000000000000000000000000..0c7e34a5f243f0c84129f7e5fa2bb6ef
 +    spawn: (command: string[], options: any) => {
 +      state.command = command;
 +      state.options = options;
-+      emitData = options.terminal.data;
-+      state.emitData = emitData;
 +      return subprocess;
 +    },
 +  };
@@ -6805,7 +6671,7 @@ index 0000000000000000000000000000000000000000..350de371ccb7649a4104f9554e359932
 +    }),
 +  });
 diff --git a/apps/server/src/terminal/NodePtyAdapter.ts b/apps/server/src/terminal/NodePtyAdapter.ts
-index 8ba78ee4d288bb1d51444d60a1cd4981123915a6..9a2b919c3559fb751a5f67661cfb98aa06745e1f 100644
+index 8ba78ee4d288bb1d51444d60a1cd4981123915a6..5e705a8588bc136a2510c869685899197c0ae897 100644
 --- a/apps/server/src/terminal/NodePtyAdapter.ts
 +++ b/apps/server/src/terminal/NodePtyAdapter.ts
 @@ -9,6 +9,7 @@ import * as Path from "effect/Path";
@@ -6826,12 +6692,6 @@ index 8ba78ee4d288bb1d51444d60a1cd4981123915a6..9a2b919c3559fb751a5f67661cfb98aa
    const loadNodePtyModule = yield* NodePtyModuleLoaderRef;
    const fs = yield* FileSystem.FileSystem;
    const path = yield* Path.Path;
-@@ -302,3 +306,5 @@ export const make = Effect.fn("NodePtyAdapter.make")(function* () {
- });
- 
- export const layer = Layer.effect(PtyAdapter.PtyAdapter, make());
-+
-+export { BunTerminalRuntimeRef } from "./BunPtyAdapter.ts";
 diff --git a/apps/server/src/terminal/SubscriberStream.test.ts b/apps/server/src/terminal/SubscriberStream.test.ts
 new file mode 100644
 index 0000000000000000000000000000000000000000..53672885112ae2b0dbda1a98a68d44fb4d73d307
@@ -8185,37 +8045,27 @@ index 764e6d560a73feab3d2aabf915207c516b12dab1..a28de7835ac6da3d4b22d53c82a1175a
      ),
 diff --git a/packages/shared/src/hostProcess.test.ts b/packages/shared/src/hostProcess.test.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..2ba981e59e17b5ad486abf8da77574af17bd394f
+index 0000000000000000000000000000000000000000..8d10338cd3bcd76136fc939d0cf55bb3feec091e
 --- /dev/null
 +++ b/packages/shared/src/hostProcess.test.ts
-@@ -0,0 +1,25 @@
-+import { describe, expect, it } from "@effect/vitest";
+@@ -0,0 +1,15 @@
++import { expect, it } from "@effect/vitest";
++import { HostProcessIsExecutable } from "./hostProcess.ts";
 +
-+import {
-+  isHostProcessExecutable,
-+  withBunSelfExecEnvironment,
-+  withoutBunSelfExecEnvironment,
-+} from "./hostProcess.ts";
-+
-+describe("host process runtime compatibility", () => {
-+  it("only treats Node SEA hosts as the T3 single executable", () => {
-+    expect(isHostProcessExecutable({ isSea: true })).toBe(true);
-+    expect(isHostProcessExecutable({ isSea: false })).toBe(false);
-+  });
-+
-+  it("scopes BUN_BE_BUN to deliberate interpreter children", () => {
-+    const parent = { PATH: "/bin", BUN_BE_BUN: "stale" };
-+    expect(withBunSelfExecEnvironment(parent, true)).toEqual({
-+      PATH: "/bin",
-+      BUN_BE_BUN: "1",
-+    });
-+    expect(withBunSelfExecEnvironment(parent, false)).toEqual({ PATH: "/bin" });
-+    expect(withoutBunSelfExecEnvironment(parent)).toEqual({ PATH: "/bin" });
-+    expect(parent.BUN_BE_BUN).toBe("stale");
-+  });
++it("detects Node SEA through the actual host reference", () => {
++  const original = process.getBuiltinModule;
++  try {
++    for (const sea of [undefined, false, true]) {
++      process.getBuiltinModule = (() =>
++        sea === undefined ? undefined : { isSea: () => sea }) as typeof original;
++      expect(HostProcessIsExecutable.defaultValue()).toBe(sea ?? false);
++    }
++  } finally {
++    process.getBuiltinModule = original;
++  }
 +});
 diff --git a/packages/shared/src/hostProcess.ts b/packages/shared/src/hostProcess.ts
-index 9bd41a825044429820f2c42f9be3a6d66e948b17..ca69bb15d68b087e2a2afaf6e6d8237091b17ae8 100644
+index 9bd41a825044429820f2c42f9be3a6d66e948b17..902752405b8c9985cea77121d13fc6d90e864c25 100644
 --- a/packages/shared/src/hostProcess.ts
 +++ b/packages/shared/src/hostProcess.ts
 @@ -2,7 +2,6 @@ import * as Context from "effect/Context";
@@ -8226,54 +8076,15 @@ index 9bd41a825044429820f2c42f9be3a6d66e948b17..ca69bb15d68b087e2a2afaf6e6d82370
  
  export const HostProcessPlatform = Context.Reference<NodeJS.Platform>(
    "@t3tools/shared/hostProcess/HostProcessPlatform",
-@@ -71,13 +70,46 @@ export const HostProcessInvokedAs = Context.Reference<string>(
-  * one branches on this: an executable hosts such things as hidden
-  * subcommands of itself.
-  */
-+export const HostProcessIsBun = Context.Reference<boolean>(
-+  "@t3tools/shared/hostProcess/HostProcessIsBun",
-+  {
-+    defaultValue: () => typeof process.versions.bun === "string",
-+  },
-+);
-+
-+export const isHostProcessExecutable = (input: { readonly isSea: boolean }): boolean => input.isSea;
-+
+@@ -74,7 +73,7 @@ export const HostProcessInvokedAs = Context.Reference<string>(
  export const HostProcessIsExecutable = Context.Reference<boolean>(
    "@t3tools/shared/hostProcess/HostProcessIsExecutable",
    {
 -    defaultValue: () => NodeSea.isSea(),
-+    defaultValue: () =>
-+      isHostProcessExecutable({
-+        isSea: process.getBuiltinModule("node:sea")?.isSea() ?? false,
-+      }),
++    defaultValue: () => process.getBuiltinModule("node:sea")?.isSea() ?? false,
    },
  );
  
-+/** Mark only a deliberate Bun-as-interpreter child; never inherit the marker accidentally. */
-+export const withBunSelfExecEnvironment = (
-+  environment: NodeJS.ProcessEnv,
-+  isBun: boolean,
-+): NodeJS.ProcessEnv => {
-+  const next = { ...environment };
-+  delete next.BUN_BE_BUN;
-+  if (isBun) next.BUN_BE_BUN = "1";
-+  return next;
-+};
-+
-+/** A normal CLI or RPC child must execute the compiled application, not Bun's interpreter mode. */
-+export const withoutBunSelfExecEnvironment = (
-+  environment: NodeJS.ProcessEnv,
-+): NodeJS.ProcessEnv => {
-+  if (!("BUN_BE_BUN" in environment)) return environment;
-+  const next = { ...environment };
-+  delete next.BUN_BE_BUN;
-+  return next;
-+};
-+
- /**
-  * Every IP address this machine answers to: the interface addresses, plus
-  * whatever the resolver returns for the machine's own hostname. The latter
 diff --git a/packages/shared/src/t3McpToolPresentation.ts b/packages/shared/src/t3McpToolPresentation.ts
 index dd38709bd0e6808f0b8071c6b251663b3a58b423..f5d514f2ea07e1042a04cac69255e1cfb2352a8a 100644
 --- a/packages/shared/src/t3McpToolPresentation.ts

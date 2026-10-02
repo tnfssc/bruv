@@ -1,5 +1,5 @@
 import { afterEach, expect, spyOn, test } from "bun:test";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Duplex } from "node:stream";
@@ -263,8 +263,7 @@ test("launch intent survives ACK while durable pending bookkeeping is released",
   try {
     const first = new T3LaunchIdentityLedger(path);
     const requestId = await first.reserve("same-logical-call");
-    const disk = JSON.parse(await readFile(path, "utf8"));
-    expect(disk.pending).toEqual([{ fingerprint: "same-logical-call", clientRequestId: requestId }]);
+    expect(await Bun.file(path).exists()).toBe(false);
     const recovered = await new T3LaunchIdentityLedger(path).reserve("same-logical-call");
     expect(recovered).toBe(requestId);
     await first.acknowledge(requestId);
@@ -276,41 +275,29 @@ test("launch intent survives ACK while durable pending bookkeeping is released",
   }
 });
 
-test("bounded launch bookkeeping eviction preserves replay identity", async () => {
+test("bounded legacy mappings preserve old replay identity without writes or eviction", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-native-ledger-bound-"));
   const path = join(dir, "launches.json");
   try {
+    const pending = Array.from({ length: 256 }, (_, index) => ({
+      fingerprint: "intent-" + index,
+      clientRequestId: "die-v1:" + T3LaunchIdentityLedger.fingerprint(["intent-" + index]),
+    }));
+    const original = JSON.stringify({ version: 1, pending });
+    await writeFile(path, original);
     const ledger = new T3LaunchIdentityLedger(path);
-    const oldest = await ledger.reserve("intent-0");
-    // Seed the boundary with valid entries instead of doing 255 serial, fsynced
-    // writes. The operations under test (eviction and replay after reopening)
-    // still use the real durable ledger path.
-    const pending = [
-      { fingerprint: "intent-0", clientRequestId: oldest },
-      ...Array.from({ length: 255 }, (_, index) => {
-        const fingerprint = "intent-" + (index + 1);
-        return {
-          fingerprint,
-          clientRequestId: "bruv-v1:" + T3LaunchIdentityLedger.fingerprint([fingerprint]),
-        };
-      }),
-    ];
-    await writeFile(path, JSON.stringify({ version: 1, pending }));
-    const replacement = await new T3LaunchIdentityLedger(path).reserve("intent-256");
-    const evicted = JSON.parse(await readFile(path, "utf8")).pending;
-    expect(evicted).toHaveLength(256);
-    expect(evicted.some((entry: { fingerprint: string }) => entry.fingerprint === "intent-0")).toBe(false);
-    expect(evicted.at(-1)).toEqual({ fingerprint: "intent-256", clientRequestId: replacement });
-    expect(await new T3LaunchIdentityLedger(path).reserve("intent-0")).toBe(oldest);
-    const replayed = JSON.parse(await readFile(path, "utf8")).pending;
-    expect(replayed).toHaveLength(256);
-    expect(replayed.at(-1)).toEqual({ fingerprint: "intent-0", clientRequestId: oldest });
+    const replacement = await ledger.reserve("intent-256");
+    expect(replacement).toBe("bruv-v1:" + T3LaunchIdentityLedger.fingerprint(["intent-256"]));
+    expect(await ledger.reserve("intent-0")).toBe(pending[0]!.clientRequestId);
+    await ledger.acknowledge(pending[0]!.clientRequestId);
+    expect(await new T3LaunchIdentityLedger(path).reserve("intent-0")).toBe(pending[0]!.clientRequestId);
+    expect(await readFile(path, "utf8")).toBe(original);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 });
 
-test("execute response ACK retires durable pending launch bookkeeping", async () => {
+test("execute response ACK needs no launch sidecar", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-native-ack-"));
   const sessionFile = join(dir, "parent.jsonl");
   await writeFile(sessionFile, "");
@@ -364,13 +351,10 @@ test("execute response ACK retires durable pending launch bookkeeping", async ()
       id: "native-task-1",
     });
     const ledgerPath = sessionFile + ".t3-launches-v1.json";
-    expect(JSON.parse(await readFile(ledgerPath, "utf8")).pending).toHaveLength(1);
+    expect(await Bun.file(ledgerPath).exists()).toBe(false);
     stream.push(JSON.stringify({ ack: 1 }) + "\n");
-    for (let i = 0; i < 100; i++) {
-      if (JSON.parse(await readFile(ledgerPath, "utf8")).pending.length === 0) break;
-      await Bun.sleep(1);
-    }
-    expect(JSON.parse(await readFile(ledgerPath, "utf8")).pending).toHaveLength(0);
+    await Bun.sleep(10);
+    expect(await Bun.file(ledgerPath).exists()).toBe(false);
   } finally {
     bridge.close();
     stream.destroy();
@@ -473,7 +457,7 @@ test("identical concurrent native calls get distinct durable intents and replay 
     expect(failed.every((response) => typeof response.error === "string")).toBe(true);
     expect(originalIds).toHaveLength(2);
     expect(new Set(originalIds).size).toBe(2);
-    expect((JSON.parse(await readFile(ledgerPath, "utf8")) as any).pending).toHaveLength(2);
+    expect(await Bun.file(ledgerPath).exists()).toBe(false);
 
     const recovered = await run(true);
     expect(replayedIds).toEqual(originalIds);
@@ -598,7 +582,7 @@ test("stopping an already completed native task does not claim cancellation", as
   await manager.shutdown();
 });
 
-test("launch ledger path serialization is concurrent-safe and releases churned paths", async () => {
+test("launch identities are concurrent-safe and leave no multi-session sidecars", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-ledger-churn-"));
   try {
     const samePath = join(dir, "same.json");
@@ -613,7 +597,7 @@ test("launch ledger path serialization is concurrent-safe and releases churned p
         await ledger.acknowledge(id);
       }),
     );
-    expect(T3LaunchIdentityLedger.activePathCountForTesting()).toBe(0);
+    expect((await readdir(dir)).length).toBe(0);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

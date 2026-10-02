@@ -5,6 +5,8 @@
  * Refuse to run without a named candidate. Make fresh state, start one candidate
  * backend, and drive its browser UI. Never import or edit an existing T3 database.
  */
+import { completionSse, executeDelta } from "./fixtures/openai";
+import { type OwnedProcess, directChildren, processIdentity, processTree, stopDetachedGroup } from "./fixtures/process";
 import { createHash } from "node:crypto";
 import { spawn, type ChildProcess } from "node:child_process";
 import { once } from "node:events";
@@ -18,7 +20,6 @@ import {
   readdir,
   realpath,
   rm,
-  stat,
   symlink,
   writeFile,
 } from "node:fs/promises";
@@ -26,8 +27,6 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import sourcePin from "../upstream/source.json";
-
-type OwnedProcess = { pid: number; startTime: string };
 
 const ROOT = resolve(import.meta.dirname, "../../..");
 const CANDIDATE = resolve(process.env.T3_V2_CANDIDATE ?? join(ROOT, ".cache/bruv-t3code-" + sourcePin.revision));
@@ -112,31 +111,14 @@ async function body(request: IncomingMessage) {
   for await (const chunk of request) text += chunk;
   return JSON.parse(text);
 }
-function sse(response: ServerResponse, delta: Record<string, unknown>, finishReason: string) {
-  const base = {
-    id: "t3-v2-production-browser",
-    object: "chat.completion.chunk",
-    created: 1,
-    model: "t3-v2-deterministic",
-  };
-  const chunks = [
-    { ...base, choices: [{ index: 0, delta, finish_reason: null }] },
-    { ...base, choices: [{ index: 0, delta: {}, finish_reason: finishReason }] },
-  ];
+function sse(response: ServerResponse, delta: Record<string, unknown>, finish: string) {
   response.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-store" });
-  response.end(chunks.map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n").join("") + "data: [DONE]\n\n");
+  response.end(
+    completionSse({ id: "t3-v2-production-browser", model: "t3-v2-deterministic", created: 1 }, delta, finish),
+  );
 }
 function tool(response: ServerResponse, id: string, code: string) {
-  return sse(
-    response,
-    {
-      role: "assistant",
-      tool_calls: [
-        { index: 0, id, type: "function", function: { name: "execute", arguments: JSON.stringify({ code }) } },
-      ],
-    },
-    "tool_calls",
-  );
+  return sse(response, executeDelta(id, code), "tool_calls");
 }
 async function listen(server: ReturnType<typeof createServer>) {
   server.listen(0, "127.0.0.1");
@@ -180,42 +162,6 @@ async function findChromium() {
   }
   fail("Chromium not found; set T3_V2_CHROMIUM (harness will not download it)");
 }
-async function processIdentity(pid: number): Promise<OwnedProcess | undefined> {
-  try {
-    const statLine = await Bun.file(`/proc/${pid}/stat`).text();
-    // comm may contain spaces and parentheses; fields after its final ") " start at field 3.
-    const fields = statLine
-      .slice(statLine.lastIndexOf(") ") + 2)
-      .trim()
-      .split(/\s+/);
-    return { pid, startTime: fields[19] ?? "" };
-  } catch {
-    return undefined;
-  }
-}
-async function directChildren(pid: number): Promise<number[]> {
-  try {
-    const value = await Bun.file(`/proc/${pid}/task/${pid}/children`).text();
-    return value.trim() ? value.trim().split(/\s+/).map(Number).filter(Number.isSafeInteger) : [];
-  } catch {
-    return [];
-  }
-}
-async function processTree(roots: number[]): Promise<OwnedProcess[]> {
-  const pending = [...roots];
-  const seen = new Set<number>();
-  const result: OwnedProcess[] = [];
-  while (pending.length) {
-    const pid = pending.shift()!;
-    if (seen.has(pid)) continue;
-    seen.add(pid);
-    const identity = await processIdentity(pid);
-    if (!identity) continue;
-    result.push(identity);
-    pending.push(...(await directChildren(pid)));
-  }
-  return result;
-}
 async function assertExited(processes: OwnedProcess[]) {
   const live: OwnedProcess[] = [];
   for (const expected of processes) {
@@ -225,23 +171,7 @@ async function assertExited(processes: OwnedProcess[]) {
   check(live.length === 0, `owned processes survived teardown: ${live.map((item) => item.pid).join(", ")}`);
 }
 
-async function killOwned(child: ChildProcess | undefined) {
-  if (!child || child.exitCode !== null) return;
-  try {
-    process.kill(-child.pid!, "SIGTERM");
-  } catch {
-    child.kill("SIGTERM");
-  }
-  await Promise.race([once(child, "exit"), sleep(5_000)]).catch(() => {});
-  if (child.exitCode === null) {
-    try {
-      process.kill(-child.pid!, "SIGKILL");
-    } catch {
-      child.kill("SIGKILL");
-    }
-    await once(child, "exit").catch(() => {});
-  }
-}
+const killOwned = (child: ChildProcess | undefined) => stopDetachedGroup(child, 5_000);
 
 // Fail closed before allocating state or starting any process.
 check(

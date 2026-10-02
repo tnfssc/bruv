@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 /** Black-box preservation gates for an isolated packaged candidate. */
+import { completionSse, executeDelta } from "./fixtures/openai";
 import { Database } from "bun:sqlite";
 import { createHash } from "node:crypto";
 import { spawn, type ChildProcess } from "node:child_process";
@@ -61,26 +62,13 @@ async function requestBody(req: IncomingMessage) {
   return JSON.parse(text);
 }
 function sse(res: ServerResponse, delta: Record<string, unknown>, finish: string) {
-  const b = { id: "preservation", object: "chat.completion.chunk", created: 1, model: "preservation-deterministic" };
-  const chunks = [
-    { ...b, choices: [{ index: 0, delta, finish_reason: null }] },
-    { ...b, choices: [{ index: 0, delta: {}, finish_reason: finish }] },
-  ];
   res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-store" });
-  res.end(chunks.map((x) => "data: " + JSON.stringify(x) + "\n\n").join("") + "data: [DONE]\n\n");
+  res.end(completionSse({ id: "preservation", model: "preservation-deterministic", created: 1 }, delta, finish));
 }
 function tool(res: ServerResponse, id: string, code: string) {
-  sse(
-    res,
-    {
-      role: "assistant",
-      tool_calls: [
-        { index: 0, id, type: "function", function: { name: "execute", arguments: JSON.stringify({ code }) } },
-      ],
-    },
-    "tool_calls",
-  );
+  sse(res, executeDelta(id, code), "tool_calls");
 }
+
 async function playwrightRoot() {
   const p = join(CANDIDATE, "node_modules/.pnpm");
   const e = (await readdir(p))
