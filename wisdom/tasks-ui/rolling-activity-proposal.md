@@ -1,6 +1,8 @@
 # Rolling activity, lasting conversation
 
-**Proposal only.** No runtime change, dependency change, release, or PR creation. The first implementation scope would be the local interactive CLI. This document asks for a design decision before that work starts.
+**Proposal only.** This PR changes docs, not runtime behavior, dependencies or releases. Recommended first scope: the local CLI in alternate-screen mode. Approval of this proposal is a separate step from implementation.
+
+Read the [Pi API research and probe results](rolling-activity-research.md) for the source evidence. The layouts below are sketches, not screenshots of a shipped feature.
 
 ## What the user wants
 
@@ -74,53 +76,53 @@ Repository baseline for this research: the manifest pins the Pi packages to **1.
 
 The inspected presentation shapes expose role/content, tool-call identity, results, stop reasons, streaming state, and custom-message types. **They do not establish a reliable, provider-independent “commentary / final / important note” tag for ordinary assistant text.** A tool-request stop reason is useful evidence, but the mere end of an assistant message is not necessarily the end of the work stretch. Do not claim API transcript channels just because the agent writing this proposal has them.
 
-### Mouse support: evidence, not a promise
+### Mouse support: verified seam, unfinished product
 
-The repository already imports mouse event types and forwards handleMouse on adapted components. The task adapter comments say Pi records child heights for mouse dispatch. That is evidence of mouse-aware rendering in this integration. It is **not yet proof** that a new summary can be clicked in every shipped terminal mode, that alternate-screen scrollback behaves as needed, or that there is a public grouping API.
+Pi 1.0.0 supplies component mouse handling, native tool click-to-expand, selection and an application-owned alternate-screen viewport. A real TuiAltScreen probe with synthetic mouse input expanded native tools and a small group; dragging text still selected it. So the user's idea has a real interaction foundation. Alternate screen alone is not the feature.
 
-A parallel research worker is checking the exact Pi APIs, buffer mode, data, and render owner. Parent must reconcile that report here before an implementation proposal promises click support. Alternate-buffer support alone does not establish clickable transcript rows. Keyboard access is required either way; terminal mouse support is a convenience, not the only path.
+There is no public API that replaces the normal transcript with grouped history. Ctrl+O visits direct expandable children, while the task adapter pairs sibling tool components. Naive reparenting would break those assumptions. A public working-message or widget can show a rolling line but cannot remove the old staircase by itself.
+
+The probe also exposed a concrete problem: opening a group at the bottom let follow-end scroll its header out of view. The proposal must solve that local toggle behavior before claiming usable expansion. These were fake-terminal component probes, not compiled CLI acceptance. Exact files and limits are in the linked research.
 
 ## Main conversation versus activity
 
-Use a small set of content rules. Do not invent a prose classifier, sentiment detector, or a long taxonomy of events.
+The target needs a small explicit distinction between **activity**, **answer**, and **note**. These are presentation intent, not three new message stores or a new agent tool. Keep the original message and text unchanged. Define the smallest typed signal at the existing message boundary in a focused implementation spike; its exact schema is not approved here.
 
 ### User messages
 
-Always keep them as main conversation entries. A user message also provides a natural boundary for the activity immediately before it. Saved question answers keep their existing ownership; do not fabricate a duplicate user chat message if the question system does not store one.
+Always keep them as main conversation entries. A user message provides a boundary for the activity immediately before it. Saved question answers keep their existing ownership; do not fabricate a duplicate user chat message or reveal hidden answer-routing context.
 
 ### Assistant answer
 
-For the first design, an **answer** means assistant text at a yield to the person, not a claim that every job is finished. A handoff such as “I’ve started the review; you can keep talking” is still a lasting answer. A later automatic continuation can yield another answer.
+An **answer** is text offered to the person, not a claim that every job has finished. A handoff such as “The review is running; you can keep talking” stays. A later automatic continuation can yield another lasting answer. An explicit handoff() result already carries presentation meaning and should not vanish when a background event arrives.
 
-While a plain assistant text stream arrives, show it in the rolling area until its intent is known. Let it stream readably as a provisional answer; do not force the person to wait for the last token to read a long response. If it is the last visible assistant text when the agent yields, promote that same content to the main conversation and clear the preview. Do not render it twice. If another tool follows, that text becomes commentary in detail and the tool replaces its body. This can change the area’s height, but does not leave a second conversation entry.
+While intent is unknown, stream the current assistant message readably as a provisional answer. Do not clip a possible long answer to three rows or wait for the final token before showing it. An answer becomes lasting in the same position, without duplication. At a yield, unknown text stays visible too. Message-end alone is not a yield, and agent-end is not proof that all jobs completed.
 
-If the assistant says “I’ll inspect the settings” and then invokes another tool in the same stretch, that text stays in activity. If one provider emits text and calls in one message and another emits separate messages, the visible result should be the same. A message-end event alone must not prematurely freeze the first paragraph as an answer.
-
-An explicit handoff() result already has presentation meaning. Preserve its yielded text instead of letting the next background event erase it. Exact host event sequencing still needs the API report.
-
-If the agent yields with no assistant text, leave the summary and an honest short status if needed: “Stopped before an answer,” “Waiting for review,” or “No answer returned.” Never invent a user-facing answer from a tool’s stdout.
+If the agent yields with no text, leave the summary and an honest state supported by the host, such as “Interrupted before an answer” or “No answer returned.” Never turn stdout into an invented answer or infer “Waiting for review” without an actual running review.
 
 ### Commentary
 
-Commentary is routine assistant prose within ongoing work, later followed by another step before the yield: “I found the old setting,” “Now I’ll run the tests,” or “The first path was wrong.” It takes the rolling slot, and the next foreground activity replaces it. The original text remains in expanded history.
+Explicit **activity** text takes the rolling slot. A later tool or activity message replaces it. Its complete text remains in expanded history. Thinking stays under the existing thinking control, with no new placeholder or lowered reasoning setting.
 
-Do not identify it by length, punctuation, or words like “I’ll.” A long interim analysis may still be activity; a one-line final answer may still be the answer. Thinking remains under the existing thinking control, with no new placeholder or lowered reasoning setting.
+**Safe default: unknown settled assistant text remains lasting.** Do not hide prose merely because a tool followed it, the sentence is short, or it begins with “I’ll.” That could hide a caveat or a question. Until a supported intent path exists, tool grouping can be prototyped separately, but it is not the full rolling-prose experience proposed here.
 
-### Meaningful note
+Pi has no provider-independent commentary/final/note field today. The verified OpenAI Responses converter preserves commentary/final_answer inside textSignature, only at text-end. Other signatures are opaque. A deliberately scoped adapter could normalize that known format; do not treat arbitrary signatures or raw provider events as a portable UI contract. Both live and saved-message paths must use the same interpretation. Important notes still need a distinct intent, not a guess from phase alone.
 
-A meaningful note changes what the person needs to know or do while work continues: a saved question, a permission request, an unrecovered blocker, an uncertain cancellation, or a failure to save output that would otherwise look available. Keep these visible outside the replaceable slot.
+### Meaningful note and question
 
-Existing typed question/task/error/artifact data can supply some of these notes now. Ordinary assistant prose does not have a proven “keep this note” field in the inspected paths. We should not guess that “Warning:” makes a durable note. If product needs the agent to mark a note before the next step, prefer a small explicit presentation intent in the existing message path, **subject to API research and separate approval**, not a new note store or tool invented in this proposal.
+A **note** changes what the person needs to know while work continues: “This migration deletes legacy rows” should stay even when another tool follows. An explicitly marked note remains outside the replaceable slot. Unknown prose is also retained under the safe default, so this caveat is not lost while note intent is unresolved.
 
-Until such intent exists, text at an actual yield stays visible, and unknown custom messages stay visible by default. This is a real limitation for an important ordinary-text caveat followed immediately by a tool. Resolve it before claiming that every important agent note survives automatically. Do not hide generic unrecognized content merely to make the screen clean.
+Pending questions, permission requests, typed blockers, uncertain cancellation and missing-output warnings remain discoverable. Existing typed data can support some of these now. Saved questions currently have a ledger and picker, not an automatic standalone transcript card; a lasting card is proposed new read-only presentation of eligible ledger records. Do not turn a question into a second authority or expose display:false answer context.
 
-A note is not another final answer. Show the important fact once, with a link to its evidence. If a pending question becomes answered, keep its question history but remove the active “needs input” status. Work is not automatically resumed by a display toggle.
+When a question is answered, retain its history but remove active “needs input” only from the authoritative state. Answer saved, queued, delivered and used remain distinct. Expansion must not answer, grant, resume or consume delivery. Unknown custom messages stay visible unless their existing display policy hides them.
+
+Show a typed note once where the same record identity is known. Do not infer from English that an ordinary answer has already explained a blocker and silently drop its card. Avoid clever importance scoring, prose classifiers, a note database, or a new event taxonomy.
 
 ## Counts and group boundaries
 
 **Count actual top-level tool invocations visible in the selected branch.** Use protocol call identity, not labels. A start counts once; a result updates the same call. Streaming arguments, retries of delivery, task completion notices, assistant commentary, questions, and toggle clicks do not add tools.
 
-One execute that starts three shell jobs and two agents is **one tool called**, with five linked jobs in its detail. It is not six tools. Calls made inside a child agent belong to that child’s transcript, not the parent’s tool count. A parent inspect call is another parent tool. A genuine retry with a new call identity counts again, even if the label matches.
+One execute that launches three background shell jobs and two agents is **one tool called**, with five typed launches linked in detail. It is not six tools. This is not a promise of a complete nested-helper trace: helpers with no retained typed metadata cannot be reconstructed from JavaScript or stdout. Calls made inside a child agent belong to that child’s transcript, not the parent’s tool count. A parent inspect call is another parent tool. A genuine retry with a new call identity counts again, even if the label matches.
 
 Count attempted calls, including failures, cancellations, and calls whose result is missing. For a streamed call, count once its tool-call identity and name are known; partial argument chunks do not increment it. History with a result but no recoverable call identity should show “Unpaired tool result” in detail, not invent a call. Legacy incomplete history may need “Tool count unavailable”; do not reconstruct numbers from prose.
 
@@ -147,7 +149,7 @@ The summary stays discoverable while its body changes. The body shows the latest
 - Starting a tool replaces the prior tool or commentary preview with its short label and existing running indicator.
 - Output/result updates change that step’s current detail. They do not append new default transcript rows.
 - A later assistant interim update replaces the tool preview. A later tool replaces that text.
-- When a tool finishes but the model has not answered yet, show its settled preview briefly; retain “working” or “waiting for response” at group level. Tool done is not agent done.
+- When a tool finishes but the model has not answered yet, keep its settled preview until the next event; retain “working” or “waiting for response” at group level. Tool done is not agent done.
 - If two foreground calls start together, show the latest started label with “2 tools running.” Their updates are keyed to their own calls; a late result from the first must not replace the second’s label. All calls are available when expanded.
 - If nothing has a label yet, show the current generic tool name or a neutral working indicator. Never expose half-streamed JS as a fallback label. Use the existing streamed-action policy for code-first input.
 - If there is no output, show the outcome supported by the tool result. “No text output” belongs in detail, not an empty error card or an invented success claim.
@@ -178,7 +180,7 @@ Do not bury pending human decisions. Saved questions remain main conversation it
 
 An active tool failure shows its concise failure state in the preview and failure count in the summary. If the agent can continue and repairs it, the failed attempt remains visible in expanded history and in the summary count; the final answer can explain the recovery. Do not permanently pin every failed probe as a red warning.
 
-When failure blocks progress or the agent yields without explaining it, leave one main note with a short reason and path to details. The answer may itself provide that explanation; avoid a redundant note if the answer clearly carries the same typed blocker. “Couldn’t save full output” remains visible when an artifact is unavailable. “Stop requested; completion not confirmed” stays uncertain until evidence changes.
+When failure blocks progress or the agent yields without explaining it, leave one main note with a short reason and path to details. Suppress a duplicate card only when a typed link proves it is the same note; do not guess equivalence from an answer’s wording. “Couldn’t save full output” remains visible when an artifact is unavailable. “Stop requested; completion not confirmed” stays uncertain until evidence changes.
 
 Actionability is not always a field in ordinary errors. Prefer typed needs-input/question/storage/cancellation evidence. Generic unrecovered error at a yield is visible by default. Do not claim the UI can infer whether every shell error matters to the person.
 
@@ -192,29 +194,31 @@ A user message arriving while work runs stays visible immediately. Freeze the pr
 
 ## Open, close, and read the details
 
-Opening “15 tools called” means opening **all work represented by that count**, not just the latest label. Show chronological calls, complete available assistant commentary, existing source/output/error presentation, and current linked job states. Original captured result and latest observed job state should be distinguishable; do not rewrite old stdout to look like the new state was known then.
+Opening “15 tools called” reveals **all work represented by that count**: the familiar compact per-call rows, complete available commentary, and current linked job states. It does not dump every source block and log at once. Each native tool row keeps its click-to-expand details; Ctrl+O remains the all-details route. Original captured result and latest observed job state should be distinguishable; do not rewrite old stdout to look like the new state was known then.
 
 Reuse native expanded tool/image presentation where possible. Keep original call ordering even if results arrive out of order. Show the result under its call, with an honest pending/missing-result indication where needed. Do not introduce a second copy of the execution source or flatten all tools into one generated paragraph.
 
 ### Pointer
 
-Desired behavior, subject to Pi proof: click the summary row to toggle this group, including a settled group. The click target is the whole visible summary, not a one-cell triangle. Clicking body text does not collapse it. Text selection, copy, scrolling, and artifact/link actions must still work. Clicking an artifact is not a group-toggle gesture.
+Recommended behavior using Pi’s verified mouse seam: click the summary row to toggle this group, including a settled group. The click target is the whole visible summary, not a one-cell triangle. Clicking body text does not collapse it. Text selection, copy, scrolling, and artifact/link actions must still work. Clicking an artifact is not a group-toggle gesture.
 
 A running group can be opened. New events update it, but do not force it closed, jump selection, or constantly scroll the detail view. Clickable support must be verified in the actual compiled CLI and supported terminal modes, not just by calling a handler in a unit test.
 
 ### Keyboard
 
-Keep existing Ctrl+O access to tool detail; do not silently take its binding away or change it into “most recent group only.” Parent must confirm the exact upstream global-expansion behavior before deciding how it maps to grouped details.
+Pi's current Ctrl+O is global: it finds direct expandable children of the transcript. Keep its meaning as **show/hide all tool details**. Opening all details must also expose their containing groups. Bridge that enumeration rather than quietly dropping nested tools or changing Ctrl+O to “latest group only.”
 
-For per-group keyboard access, recommend a small **/activity picker** if Pi does not already offer usable transcript focus/navigation. List groups by user-request excerpt or follow-up label, tool count, and unresolved status. Up/Down selects, Enter opens or closes the selected group’s detail, Escape returns to the editor. Use the existing picker conventions, not an always-visible focus bar or a new panel framework. No copying IDs for a routine toggle.
+No usable native per-group focus navigation was found. Recommend a small **/activity picker** for individual groups. List them by user-request excerpt or follow-up context, tool count and unresolved status; newest first. Up/Down selects, Enter opens/closes that group and returns to its summary, Escape leaves the view unchanged and returns to the editor. Mark open groups. Reuse existing picker controls; no always-visible focus bar or new panel framework.
 
-Prefer existing native transcript focus and Enter/Space if API research proves that flow is usable. Do not ship both navigation systems by default. The precise route is deliberately open, but **keyboard discovery and access to an old settled group are acceptance requirements**, not optional polish. A help hint should say how to open details without claiming a mouse works when it does not.
+This is a proposed new command, not one available today. A help hint should make it discoverable. Mouse-disabled users must be able to open an old group, read/copy evidence, close it, and return without copying IDs. Test how choosing an offscreen group brings its summary into view.
 
-Expansion is a view choice. It does not re-execute tools, inspect a remote machine, resume jobs, or grant permissions. Fetching an artifact may use its existing explicit action. Closing returns to the same summary and keeps conversation position.
+Expansion is a view choice. It does not re-execute tools, inspect a remote machine, resume jobs or grant permissions. Fetching an artifact uses its existing explicit action. Closing returns to the same summary and keeps conversation position.
 
 ## Scrolling, images, and small terminals
 
-When the person is following the bottom, replace the live preview in place without leaving tool ladders in terminal scrollback. When they scroll up to read, do not yank them down on every tool output or background completion. Reuse the terminal’s existing follow/scroll behavior where it exists; exact capabilities need the Pi report.
+When the person is following the bottom, replace the live preview in place without leaving tool ladders in terminal scrollback. When they scroll up to read, do not yank them down on every tool output or background completion. Reuse the terminal’s existing follow/scroll behavior where it exists; the Pi report confirms row-offset scrolling, not semantic item anchoring.
+
+Keep the clicked summary visible when its group opens. The probe showed that current bottom-follow does not do this automatically: the header scrolled away. Recommend suspending follow for the explicit toggle and restoring it when the person returns to the bottom. The spike must verify the required scroll API; a broad scroll-engine rewrite is not authorized.
 
 Anchor to the viewed conversation item when a group above it changes height. Toggling a visible group keeps its summary near the same screen location. Collapse returns to that summary, not the end of the entire session. A resize rerenders at the new width and preserves the chosen group/open state where possible. No smooth-animation or virtual scrolling project is needed.
 
@@ -224,11 +228,11 @@ Tool-produced images and artifacts remain attached to their call in detail. In c
 
 If an image is the requested result, it must remain easy to reach from the final answer or a lasting artifact note. Do not make the only deliverable disappear behind an unlabeled count. The assistant’s final-answer images remain main answer content. Artifact paths retain their real placement and availability; SSH/source files are not assumed to exist on the laptop. No automatic download or new artifact transport is in this scope.
 
-At narrow width, prioritize a disclosure cue, count, and unresolved outcome before a long description. Example: “▸ 15 tools · failed” beats a truncated long task name that hides failure. Wrap main answers/questions normally. The tool preview can clip with a clear affordance; pending assistant text remains readable. At a very short terminal, keep the editor and existing essential controls usable; do not promise a three-row activity body where it cannot fit. The picker/expanded view must have a way back. Sanitize tool control sequences as existing renderers do.
+At narrow width, prioritize a disclosure cue, count, and unresolved outcome before a long description. Example: “▸ 15 tools · 1 failed” beats a truncated long task name that hides failure. Wrap main answers/questions normally. The tool preview can clip with a clear affordance; pending assistant text remains readable. At a very short terminal, keep the editor and existing essential controls usable; do not promise a three-row activity body where it cannot fit. The picker/expanded view must have a way back. Sanitize tool control sequences as existing renderers do.
 
 ## Concrete walkthroughs
 
-Each example describes the default view; expanding always keeps the underlying evidence unless it was never captured or is no longer available.
+These examples show the target with explicit activity/answer/note intent. Without that signal, unknown settled prose stays visible, even if the next step is a tool. Expansion retains the underlying evidence unless it was never captured or is no longer available.
 
 ### 1. Ordinary edit and test
 
@@ -336,7 +340,7 @@ Each example describes the default view; expanding always keeps the underlying e
 
 **During:** assistant says “This migration deletes legacy rows,” then calls a tool. That is a meaningful note in human terms, but ordinary text may have no marker. It must not be described as solved by punctuation heuristics.
 
-**Proposed outcome:** an explicitly marked caveat remains main conversation; routine next-step prose rolls. If no supported marker is approved, the spec must state the limitation and choose a safe interim treatment. Parent should settle this before implementation; user approval of rolling narration is not blanket approval to hide data-loss caveats.
+**Proposed outcome:** an explicitly marked caveat remains main conversation; routine next-step prose rolls. Without a supported intent signal, retain this unknown prose in the main conversation. The next tool does not erase it. User approval of rolling narration is not blanket approval to hide data-loss caveats.
 
 ### 14. Final answer before all work is done
 
@@ -348,23 +352,35 @@ Each example describes the default view; expanding always keeps the underlying e
 
 ## Scope and ownership for later implementation
 
-Initial scope: local interactive CLI conversation projection, disclosure controls, and the minimum lifecycle facts needed to reconstruct it. Keep raw session retention and model context unchanged. Do not change tool schemas, agent models, job scheduling, question dispatch, source snapshots, or release settings as a side effect.
+Recommend the **local CLI alternate-screen view first**. Keep regular/primary-screen mode's current sequential presentation; it cannot erase already-emitted scrollback. Print, JSON, RPC, exported logs and model context keep their current contracts. This proposal does not change the default terminal mode. State the scope in help; do not advertise rolling/click behavior where it does not exist.
 
-The main design seam is the **conversation render owner**, because a group spans assistant, tool, and custom-message components. Existing execute renderers should still own individual detail. Existing task/question systems own evidence and state. Prefer a derived branch-local projection over another persisted event stream. The exact supported owner/hook is pending API research; prototype it before committing to a Container-wide patch.
+Placed-root has a separate flattened-line presenter, bounded remote history, global expansion and no grouped click handler. Leave it unchanged in the first slice; adapting that presenter is a distinct follow-up. Web and Live are outside this proposal. Do not silently expand into remote protocols or claim parity from local screenshots.
 
-Placed-root is a separate presenter with local controls and remote history. Web has its own transcript rendering. Neither receives parity for free. A CLI-only first slice is acceptable if called out plainly; decide whether placed-root is part of that first slice, or a documented follow-up, before implementation. Do not silently change remote protocol, expand into web, or claim cross-surface parity from local screenshots. Preserve all existing privacy filtering on every surface touched.
+The seam is one bruv-owned **conversation presentation projection**. It decides lasting entries, activity groups and the current preview from existing source messages. Individual native components still own tool/image detail; existing task/question systems still own state. Consolidate or evolve the current adapters rather than stack another unrelated global Container hook or create a second transcript/event ledger.
 
-## Decisions still needed
+A public working-message/widget can host a rolling slot but cannot hide existing rows. Preserve pending-tool maps, sibling-based task ownership and native global expansion when wrapping source components. The integration seam needs a bounded spike, since Pi exposes no public replace-normal-transcript API. Any needed host adaptation stays focused and version-checked.
 
-1. **Pi capability and ownership:** exact public hooks, buffer mode, mouse dispatch, group insertion/replacement, and per-group keyboard access. Integrate the parallel worker’s evidence with file/version references. Repository mouse wrappers are a clue, not final acceptance.
-2. **Yield reconstruction:** can the selected branch journal reliably distinguish automatic continuation boundaries and a handoff from ordinary message end? If not, choose the smallest durable marker or honest legacy rule. Do not build a new ledger just for exact historic counts.
-3. **Important ordinary-text notes:** is there a usable presentation intent today? If not, approve a minimal marker or a safe interim policy. Do not ship an unproven semantic classifier.
-4. **Keyboard route:** native transcript focus if proven; otherwise the small /activity picker. Keep Ctrl+O semantics understood and documented.
-5. **Placed-root first slice:** include parity now, or clearly limit the first implementation to local CLI. Web remains a separate choice.
-6. **Preview bound:** three tool-content rows is the recommended starting point; pending assistant text streams readably. Confirm a long final answer does not jump or disappear on promotion, and test narrow/short terminals rather than adding a settings matrix.
-7. **Recovered failures:** recommended summary retains attempted failure counts even after repair; the answer explains success. Check whether this reads as useful evidence or persistent alarm in real use.
+Do not change execution, agent models, task scheduling, permissions, question dispatch, source snapshots or releases to obtain a quiet view. A new optional presentation intent is a separate explicit design change, not permission to rewrite provider payloads.
 
-Do not block the proposal on glyph/color bikeshedding, restart persistence of expansion choices, or every old-history anomaly. Block implementation claims on lost notes, hidden human questions, false task state, and unusable detail access.
+## Recommended decisions and remaining gates
+
+Recommend:
+
+- One rolling foreground preview per work stretch; prior groups remain collapsed and inspectable.
+- Count unique outer tool calls, not helper invocations or task notices.
+- Click opens familiar per-call rows; native per-call detail and global Ctrl+O remain. /activity supplies per-group keyboard access.
+- Local alternate-screen scope first; other surfaces keep their current view.
+- Keep unknown prose visible. The full experience needs explicit activity/answer/note intent at a supported message boundary.
+- At most three rows for tool previews; a possible final answer streams readably. No new settings matrix.
+- Failed attempts remain in the count/history after recovery, but are not branded as an unresolved project failure.
+
+Before implementation, resolve three concrete gates:
+
+1. **Presentation intent:** choose the smallest typed route for activity/answer/note and show it on both live and saved messages. OpenAI-specific phase is useful evidence, not a cross-provider contract. If intent is not ready, do not claim rolling all assistant prose is safe.
+2. **Durable boundaries:** determine which yields and automatic continuations the branch journal can reconstruct. Callbacks alone do not prove saved boundaries. If one fact is missing, use a small marker in the existing journal and an honest legacy rule, not a new ledger. Counts must not change merely because the session reopened.
+3. **Host integration and scroll:** show live replacement, retained task owners, Ctrl+O, the picker and a clicked header staying visible through the real Pi path. Test a resized, scrolled-up session, not only a fresh mock screen.
+
+These are bounded design/spike questions, not implementation authorization. The user can review the target and trade-offs now. Do not block the proposal on glyphs, colors, durable expansion preferences or every old-history anomaly. Do block shipping claims on lost notes, hidden questions, false task state or inaccessible details.
 
 ## Acceptance plan after proposal approval
 
@@ -372,7 +388,7 @@ This document is not implementation proof. A later change should pass these focu
 
 ### Projection checks
 
-- One group for the ordinary edit/test stretch; main conversation keeps user and full yielded answer. Commentary and tool rows are present in detail, absent as separate collapsed entries.
+- One group for the ordinary edit/test stretch; main conversation keeps user and full yielded answer. Explicit activity prose and tool rows are present in detail, absent as separate collapsed entries; unknown prose and marked notes remain visible.
 - Tool identity counts once across streaming/start/result and repeated delivery. One execute/many jobs, child tools, actual retry, missing result, and nested failure use honest counts/status.
 - Concurrent call results do not replace the newer preview. Late completions update their source group; a new user message and automatic continuation get their own boundaries.
 - Saved questions, unknown custom messages, actionable failures, storage warnings, and uncertain stop remain accessible and not replaceable. Explicit note policy is tested at the actual message path if added.
@@ -391,8 +407,14 @@ Use deterministic local inference/fixtures, with no paid provider or real remote
 6. Close/reopen, in-app /resume, /reload, and switch branch. Compare counts, final answers, uncertain work, and detail. No extra calls or sibling content appear.
 7. Capture and reopen an image/artifact; verify the native rendering survives collapse/resize and a missing artifact warns honestly.
 
-Reuse the existing terminal probe infrastructure where it fits. Record unsupported terminal behavior and any legacy-history limitation rather than imply universal click or scroll support. Only run web/placed-root acceptance if those surfaces are explicitly included.
+Reuse the existing terminal probe infrastructure where it fits. Record unsupported terminal behavior and any legacy-history limitation rather than imply universal click or scroll support. Web and placed-root keep their existing behavior in this first slice. Test them when a later change claims parity.
 
-## Handoff
+## Handoff and review
 
-Parent owns reconciliation with the Pi/API research, final recommendation, and any eventual proposal PR. This worker owns only this document. No runtime changes are authorized by it. After those open decisions are answered, return the reconciled proposal to the user for approval before implementation. Keep the concrete awkward examples in that discussion: a clean happy-path mockup alone is not enough.
+This is a docs-only proposal for review, not an approved implementation. No runtime files changed. The [research](rolling-activity-research.md) records exact source paths, Pi 1.0.0 behavior and bounded component probes. Its possible alternatives are research notes; the recommendations above are the reconciled design.
+
+Draft worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4abbe161. Branch: bruv/draft-rolling-activity-transcript-propos-4abbe161. Draft commit: 2cfd3166. Research worktree/branch are in the research receipt; aa639102 was integrated here as 70d2d5ec. Parent owns the final PR against develop. Base: eb07b0d7, after published v0.15.28.
+
+Parent reviewed the source and all examples, reconciled click/keyboard facts, chose a safe default for unknown prose, and kept initial scope local. One real local session checkpoint had 86 outer execute calls, 19 canonical task IDs, 19 custom notices and 8 assistant text messages. Those are different measures, not a reason to present an invented combined “tools” count. This is an illustrative sample, not a benchmark or general usage claim.
+
+Wisdom added: this proposal and its research. Values unchanged after cross-review: existing honest-UI, one-owner, simple-state and real-path proof values cover the lessons. Keep the caveat, late-job and replay examples in the approval discussion; a clean happy-path sketch alone is not enough.

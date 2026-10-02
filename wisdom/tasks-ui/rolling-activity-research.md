@@ -1,5 +1,7 @@
 # Rolling activity research — proposal only
 
+The [reconciled proposal](rolling-activity-proposal.md) owns the recommended design. Choices below are research inputs, not implementation approval.
+
 ## Receipt
 
 - Worktree: `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_c7942be3`
