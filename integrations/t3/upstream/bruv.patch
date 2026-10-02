@@ -6170,6 +6170,79 @@ index edbace8019bdece177ce470cd8e24abd8f6fc90b..b8ad00f650114d33000cdff4c5315f10
            }),
      },
    });
+diff --git a/apps/server/src/provider/providerCompatibility.test.ts b/apps/server/src/provider/providerCompatibility.test.ts
+index 3254949ad3d9f374544a83f55f641a405da5492b..5dbbe388a62ab332bea8da9a08bf2fd7018ced24 100644
+--- a/apps/server/src/provider/providerCompatibility.test.ts
++++ b/apps/server/src/provider/providerCompatibility.test.ts
+@@ -67,6 +67,48 @@ describe("provider compatibility", () => {
+     }
+   });
+ 
++  it("keeps Pi compatibility policy for regular instances, not trusted embedded Bruv", () => {
++    const pi = ProviderDriverKind.make("pi");
++    const piPolicy: ProviderCompatibilityPolicy = {
++      driver: pi,
++      t3CodeRange: policy.t3CodeRange,
++      recommendedVersion: "1.0.0",
++      ranges: [
++        { range: "<1.0.0", status: "unsupported" },
++        { range: ">=1.0.0", status: "supported" },
++      ],
++    };
++    const embeddedBruv: ServerProvider = {
++      ...provider,
++      driver: pi,
++      instanceId: ProviderInstanceId.make("pi"),
++      version: "0.15.24",
++      compatibilityAdvisory: {
++        status: "unsupported",
++        message: "stale Pi advisory",
++        recommendedVersion: "1.0.0",
++        recommendedRange: null,
++      },
++    };
++    const previousBinary = process.env.BRUV_WEB_BRUV_BINARY;
++    process.env.BRUV_WEB_BRUV_BINARY = "/opt/bruv";
++    try {
++      const trusted = applyProviderCompatibility(embeddedBruv, [piPolicy], undefined);
++      assert.isUndefined(trusted.compatibilityAdvisory);
++
++      const ordinaryPi = applyProviderCompatibility(
++        { ...embeddedBruv, instanceId: ProviderInstanceId.make("pi-custom") },
++        [piPolicy],
++        undefined,
++      );
++      assert.strictEqual(ordinaryPi.compatibilityAdvisory?.status, "unsupported");
++      assert.match(ordinaryPi.compatibilityAdvisory?.message ?? "", /Use 1\.0\.0/);
++    } finally {
++      if (previousBinary === undefined) delete process.env.BRUV_WEB_BRUV_BINARY;
++      else process.env.BRUV_WEB_BRUV_BINARY = previousBinary;
++    }
++  });
++
+   it("supports OpenCode 2 and gives OpenCode 1.x limited support", () => {
+     const opencode = ProviderDriverKind.make("opencode");
+     for (const [version, expected] of [
+diff --git a/apps/server/src/provider/providerCompatibility.ts b/apps/server/src/provider/providerCompatibility.ts
+index b4ce66f876038082279515390ae69be1db85250b..92789075f6a54285394c0cf8a4f9312c3bc8bb19 100644
+--- a/apps/server/src/provider/providerCompatibility.ts
++++ b/apps/server/src/provider/providerCompatibility.ts
+@@ -8,6 +8,7 @@ import {
+ import { satisfiesSemverRange } from "@t3tools/shared/semver";
+ import * as Schema from "effect/Schema";
+ import packageJson from "../../package.json" with { type: "json" };
++import { isTrustedBruvProviderInstance } from "./BruvWebPi.ts";
+ 
+ // Deliberately uses the shared CLI gate syntax: comparator groups joined by ||.
+ // Prereleases and unrecognized release tags remain unknown.
+@@ -106,6 +107,7 @@ export function applyProviderCompatibility(
+   fallback: ReadonlyArray<ProviderCompatibilityPolicy> | undefined,
+ ): ServerProvider {
+   const { compatibilityAdvisory: _previous, ...base } = snapshot;
++  if (isTrustedBruvProviderInstance(snapshot.instanceId, process.env)) return base;
+   if (!snapshot.enabled || !snapshot.installed) return base;
+   const advisory =
+     resolveProviderCompatibility(policies, snapshot.driver, snapshot.version) ??
 diff --git a/apps/server/src/serverRuntimeStartup.test.ts b/apps/server/src/serverRuntimeStartup.test.ts
 index a89d010fab75702bbc743da33b03d32bc09e9b1d..848a59472c4df71b2f0e861b52dee2ffa2862e4b 100644
 --- a/apps/server/src/serverRuntimeStartup.test.ts

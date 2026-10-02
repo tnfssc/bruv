@@ -168,3 +168,64 @@ Final fully rebuilt binary passed the committed probe again (all three
 checkpoints): /var/tmp/bruv-route-full-acceptance.log. Restart screenshot reviewed:
 conversation response, changed fixture file, Audit Beta and normal remain visible.
 The unrelated unsupported-Bruv advisory remains visible as expected.
+
+## Combined source and final validation underway
+
+Route commits f49d8f9/aa1a131 integrated as 33c19b2/7f5134d. Source diagnosis:
+a cached/synchronizing shell snapshot cannot establish a missing conversation;
+redirect now waits for live. Worker proved exact route/model/mode/history through
+reload and actual web process stop/restart with loopback model/tool.
+
+Parent applied provider source commit 0492232e770b543cea44df375e0d08ddc579e70f
+to durable route source /home/tnfssc/.bruv/worktrees/t3-route-0dea6e78, now owned
+by parent for combination. Regenerated canonical patch from this actual source.
+Combined provider compatibility tests: 11 passed; route tests: 14 passed. Parent
+preparation/typecheck passed. Formatted retained proof JSON only; assertions and
+recorded values unchanged. Probe now also rejects the false Bruv unsupported
+warning at each checkpoint. Fresh combined guarded build is running; then run
+compiled route/tool/restart acceptance and native child/Stop browser acceptance.
+Build/test evidence home: .cache/upstream-followup-proof in main checkout.
+Local pnpm wrapper there uses cached pnpm with pinned upstream11.10.0; first
+PATH-only attempts found no executable, corrected with a private node wrapper.
+
+## Final combined acceptance
+
+Parent built the combined reduced source plus route/advisory fixes with maintained
+bun run build. Both upstream typechecks, bundles, modern deployment, portable
+assets, source verification and executable compilation passed. Final executable
+SHA256: 2af7c0574ab880462d17d6427eb9f69b12af241e14d111613da38eebf4e770d3.
+Root preparation/typecheck, format and diff checks passed. Provider11 + route14
+focused tests passed; a second full root/history suite was not rerun for these
+small UI/advisory changes. Prior full-suite/migration evidence remains historical.
+
+The combined compiled browser route probe passed all three checkpoints: settled,
+page reload, and actual web-process stop/restart followed by reload. Exact URL,
+Audit Beta model, normal mode, single prompt/response and history retained; actual
+shell tool ran and wrote fixture file. No incorrect Bruv compatibility warning
+at any checkpoint; no browser/model errors. Parent inspected restart screenshot.
+
+Existing native browser gate passed against the same final executable, relocated
+without external JS runtimes on PATH: child opened while running; completion
+woke parent exactly once; second live child stopped in browser; exact child
+route/transcript and interruption survived refresh. Parent inspected screenshot.
+First native-browser attempt failed before browser interaction because Chromium
+socket path exceeded Unix limit; repeat used /var/tmp private probe state, same
+code/assertions. Both attempts remain in .cache/upstream-followup-proof.
+Retained proof and two screenshots: evidence/upstream-browser-followup/.
+
+Final patch is 365822 bytes /78 files, 6105 additions /246 deletions. Production
+patch: 2339 additions /197 deletions; tests:3646/41. Compared with start of this
+follow-up (365318 bytes,74files, production2398/227), production additions fell59
+and actual production code is29 lines smaller. New observed-bug fixes/regressions
+mean TOTAL patch is504 bytes larger, not a further net byte reduction. Compared
+with pre-migration patch1948956bytes/302files it remains about81% smaller. No
+useful tests were removed to make the number look better. Root browser probe
+also adds test code, not product code; do not claim whole-repo size fell again.
+
+No substantial further safe deletion was found at this pin without removing
+Bruv-specific behavior. Existing saved questions have no web projection; scoped
+native named-SSH launch remains rejected. Live paid providers, actual SSH owners,
+non-Linux execution and broad expanded-tool visual permutations remain untested.
+No push/release/install/version bump. Unrelated footer-gap untracked files left
+alone. Values unchanged: existing real-flow proof, ownership and minimal-maintenance
+values explain this work; no new general rule is needed.

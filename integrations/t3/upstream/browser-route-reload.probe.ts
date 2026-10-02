@@ -407,6 +407,7 @@ async function checkpoint(name: string, conversationUrl: string) {
     responseCount: 1,
     text: await current.locator("body").innerText(),
   };
+  assert(!/Bruv \S+ is unsupported/.test(record.text), `${name}: no Pi-version warning for embedded Bruv`);
   proof.checkpoints.push(record);
   await current.screenshot({ path: join(root, `${name}.png`), fullPage: true });
   console.log(`${name}: ${current.url()}`);
