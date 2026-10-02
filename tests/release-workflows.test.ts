@@ -423,10 +423,10 @@ test("full CI and release retain the same web validation union", async () => {
   expect(workflow).toContain("bun run smoke -- --reuse-build");
 });
 
-test("full Linux does not fetch a legacy updater fixture", async () => {
+test("full Linux retains history required by migration acceptance", async () => {
   const workflow = Bun.YAML.parse(await read(".github/workflows/ci.yml")) as any;
   const checkout = (job: any) => job.steps.find((step: any) => step.uses?.startsWith("actions/checkout@"));
-  expect(checkout(workflow.jobs.test).with["fetch-depth"]).toBe(1);
+  expect(checkout(workflow.jobs.test).with["fetch-depth"]).toBe(0);
   expect(
     workflow.jobs.test.steps.some(
       (step: any) => typeof step.run === "string" && /git fetch.*refs\/tags\/v0\.7\.1/.test(step.run),
