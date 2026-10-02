@@ -179,11 +179,15 @@ export async function runWeb(args: string[]): Promise<number> {
     const root = await embeddedWebRoot(cache);
     // Compiled Bun's in-process createRequire resolution does not reliably resolve the
     // extracted native dependency graph. Self-exec as an interpreter; the bootstrap
-    // immediately clears this flag before importing the backend or spawning children.
-    return await runExternal(process.execPath, [join(root, "bootstrap.mjs"), ...launch.args], {
-      ...launch.env,
-      BUN_BE_BUN: "1",
-    });
+    // preload clears this flag before the official CLI entry or any children run.
+    return await runExternal(
+      process.execPath,
+      ["--preload", join(root, "bootstrap.mjs"), join(root, "dist/bin.mjs"), ...launch.args],
+      {
+        ...launch.env,
+        BUN_BE_BUN: "1",
+      },
+    );
   } catch (error) {
     console.error("Cannot start bruv web: " + (error as Error).message);
     return 1;

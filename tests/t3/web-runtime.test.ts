@@ -133,3 +133,45 @@ test("standalone executable opens embedded web CLI without Node, Bun, or sidecar
     await rm(temporary, { recursive: true, force: true });
   }
 }, 65000);
+
+test("embedded bootstrap clears interpreter mode and lets the official CLI own asynchronous teardown", async () => {
+  const temporary = await mkdtemp(join(tmpdir(), "bruv-bootstrap-lifecycle-"));
+  try {
+    await mkdir(join(temporary, "dist"));
+    await copyFile(
+      resolve(import.meta.dir, "../../integrations/t3/upstream/bootstrap.mjs"),
+      join(temporary, "bootstrap.mjs"),
+    );
+    await writeFile(
+      join(temporary, "dist/bin.mjs"),
+      `console.log(JSON.stringify({ args: process.argv.slice(2), interpreter: process.env.BUN_BE_BUN ?? null, main: import.meta.main }));
+      setTimeout(() => console.log("official teardown completed"), 10);`,
+    );
+    const child = Bun.spawn(
+      [
+        process.execPath,
+        "--preload",
+        join(temporary, "bootstrap.mjs"),
+        join(temporary, "dist/bin.mjs"),
+        "--port",
+        "4321",
+      ],
+      {
+        env: { ...process.env, BUN_BE_BUN: "1" },
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    const [code, stdout, stderr] = await Promise.all([
+      child.exited,
+      new Response(child.stdout).text(),
+      new Response(child.stderr).text(),
+    ]);
+    expect(stderr).toBe("");
+    expect(code).toBe(0);
+    expect(JSON.parse(stdout.split("\n")[0]!)).toEqual({ args: ["--port", "4321"], interpreter: null, main: true });
+    expect(stdout).toContain("official teardown completed");
+  } finally {
+    await rm(temporary, { recursive: true, force: true });
+  }
+});

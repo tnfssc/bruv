@@ -83,3 +83,9 @@ validation limits, fewer owned parts, and preserving essential data safety.
 ## Parent fixture reconciliation
 
 The source migration retires custom NativeUsageAccounting and its own/subtree display. The preview fixture now uses the official projection provider-turn usage contract instead of importing the deleted presentation helper. Exact input, cached input, cache creation, output, reasoning, usage scope/completeness, subagent marker and total USD assertions remain unchanged. Restart snapshots now retain each provider turn ID and its complete normalized usage object verbatim. This removes a dependency on intentionally retired aggregation behavior, not a persisted-data assertion. Final actual upgrade/restart proof is still required.
+
+## Exact-dependency gate reconciliation
+
+A fresh frozen pnpm install passed, but pnpm prunes unshipped graph entries from node_modules/.pnpm/lock.yaml while keeping the upstream lock unchanged. The old byte-comparison guard therefore rejected legitimate scoped installs. The gate now compares all metadata/importer bindings exactly, every installed package/snapshot against its pinned entry, and traverses the entire server dependency closure (including workspace links, aliases, dev and optional edges) to reject missing required records. This is a provenance-preserving check, not a copied lockfile or skipped guard. Four regression tests cover source/patch rejection, allowed unrelated pruning, changed integrity/importer pins and missing required graph entries. The gate remains read-only and never installs.
+
+Official SQL rows have null prototypes. The migration ledger now maps explicit numeric id/name fields before strict semantic comparison; exact ledger names/numbers are still asserted.

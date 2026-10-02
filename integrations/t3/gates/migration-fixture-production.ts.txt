@@ -148,6 +148,7 @@ const result = await Effect.runPromise(
             usageScope: "main_agent" as const, usageStatus: "complete" as const, hasSubagents: true,
             inputTokens: 321, cachedInputTokens: 123, cacheCreationTokens: 17,
             outputTokens: 45, reasoningTokens: 9, totalCostUsd: 0.42,
+    inputCostUsd: 0.2, outputCostUsd: 0.1, cachedInputCostUsd: 0.07, cacheCreationCostUsd: 0.05,
           },
         },
       },

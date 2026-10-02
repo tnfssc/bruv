@@ -40,14 +40,19 @@ Bruv keeps its executable/environment boundary, least-privilege native tasks and
 profile/depth policy, durable cancellation/replay, local-shell cards/completion
 notifications, and Bun PTY/lazy native-search packaging. Broad compiler rewrites,
 bespoke Pi usage aggregation and browser codec/syntax adapters are no longer
-maintained here. See [migration evidence](../../wisdom/t3/upstream-first-canonical-source.md).
+maintained here. Five optional per-turn cost fields remain solely to preserve
+already-stored history; async task launches never acknowledge unread results. See [migration evidence](../../wisdom/t3/upstream-first-canonical-source.md).
 
-Workspace selection limits builds to the shipped server/browser/shared packages
-and scripts. The official pnpm lockfile and catalog are unchanged; deploy uses
-pnpm's explicit workspace-copy `--legacy` mode instead of maintaining a second
-injected dependency graph. This is a packaging mode, not a T3 runtime fallback.
+The official workspace/catalog remain intact. Installation selects only the
+shipped server/browser dependency closures and root build tools. Modern pnpm
+injected-workspace deploy requires a small generated lockfile delta; upstream
+package versions, catalogs and patch declarations are not copied into a second
+Bruv dependency definition. Legacy deploy was rejected because it re-resolved
+the dependency graph and failed on unrelated upstream mobile patches.
 The local package self-reference and portable native optional-asset checks remain
-mandatory. Prepared builds honor `BRUV_T3_SOURCE` too.
+mandatory. Prepared builds honor `BRUV_T3_SOURCE` too. The compiled launcher
+uses Bun preload to clear interpreter mode before executing upstream’s ordinary
+CLI entry; argv and shutdown remain upstream-owned.
 
 The original JavaScript warning threshold is unchanged. No artificial vendor/size
 chunk groups are added. Both fresh and reused builds still reject cyclic static

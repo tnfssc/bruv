@@ -165,3 +165,9 @@ last released b488c57 baseline; last-release upgrade still needs its own gate.
 Values unchanged: values 7 (fewer owned parts), 9 (deliberate upstream adoption)
 and 10 (proof with handoff) already cover this decision. Feature-specific build
 recipes and precise incomplete acceptance belong here, not new global values.
+
+## Parent integration corrections (supersedes candidate-only gaps above)
+
+See upstream-first-migration.md for final evidence. Parent prepared exact frozen dependencies successfully; packages were available. The copied diagnostic dependency tree was the source of the worker’s package gap. Actual migration revealed historical cost fields being stripped: five optional finite per-turn cost fields are retained without reviving bespoke accounting. Independent review caught async terminal launch/replay consuming completion: non-acknowledging launch restored and a red/green regression added. Retained cancellation tests now match durable cancellation authority rather than obsolete upstream-only behavior.
+
+The first full build passed server/web typechecks and both bundles/chunk guards but failed at legacy deployment with unused official mobile patches. That approach is rejected, not bypassed with an allow-unused-patches flag. Modern injected deploy is restored with the full official workspace/catalog, filtered installation of shipped closures, and a generated lock delta of about 120 lines (not a duplicate dependency definition). The earlier claim that the final lock stays byte-identical no longer applies. No published dependency versions were intentionally overridden. Parent is completing the final guarded build and packaged/runtime gates.

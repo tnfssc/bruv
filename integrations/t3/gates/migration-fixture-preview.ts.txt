@@ -30,7 +30,8 @@ const observed = await Effect.runPromise(Effect.gen(function* () {
   const sql = yield* SqlClient.SqlClient;
   const projection = yield* projections.getThreadProjection(threadId);
   const migration = Number((yield* sql`SELECT MAX(migration_id) AS id FROM effect_sql_migrations`)[0]?.id);
-  const migrationLedger = yield* sql`SELECT migration_id AS id, name FROM effect_sql_migrations WHERE migration_id >= 53 ORDER BY migration_id`;
+  const migrationLedger = (yield* sql`SELECT migration_id AS id, name FROM effect_sql_migrations WHERE migration_id >= 53 ORDER BY migration_id`)
+    .map((row) => ({ id: Number(row.id), name: row.name }));
   const eventCount = Number((yield* sql`SELECT COUNT(*) AS count FROM orchestration_events WHERE application_event_version = 2`)[0]?.count);
   const threadCount = Number((yield* sql`SELECT COUNT(*) AS count FROM orchestration_v2_projection_threads`)[0]?.count);
   return { projection, migration, migrationLedger, eventCount, threadCount };
@@ -74,6 +75,7 @@ assert.deepEqual(projection.providerTurns[0]?.turnTokenUsage, {
   usageScope: "main_agent", usageStatus: "complete", hasSubagents: true,
   inputTokens: 321, cachedInputTokens: 123, cacheCreationTokens: 17,
   outputTokens: 45, reasoningTokens: 9, totalCostUsd: 0.42,
+    inputCostUsd: 0.2, outputCostUsd: 0.1, cachedInputCostUsd: 0.07, cacheCreationCostUsd: 0.05,
 });
 // The official provider-turn contract owns persisted usage. The retired Bruv
 // own/subtree display helper is not a database migration contract. Assert every

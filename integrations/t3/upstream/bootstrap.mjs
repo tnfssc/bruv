@@ -1,6 +1,3 @@
-// The parent self-execs its embedded Bun runtime only for this script.
+// Loaded with Bun --preload before the unmodified upstream CLI entry.
 // Never let interpreter mode leak into Bruv CLI/RPC or terminal children.
 delete process.env.BUN_BE_BUN;
-
-const { runCli } = await import("./dist/bin.mjs");
-process.exit(await runCli(process.argv.slice(2)));

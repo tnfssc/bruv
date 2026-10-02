@@ -78,7 +78,17 @@ export async function prepareWebSource(
   }
   await verifyWebSource(source, patch);
   await options.verify?.(source, patch);
-  await run(["pnpm", "install", "--frozen-lockfile"]);
+  await run([
+    "pnpm",
+    "--filter",
+    "t3...",
+    "--filter",
+    "@t3tools/web...",
+    "--filter",
+    ".",
+    "install",
+    "--frozen-lockfile",
+  ]);
   return source;
 }
 
@@ -91,7 +101,8 @@ export async function buildWeb(options: { prepared?: boolean } = {}): Promise<vo
   const patch = resolve(root, "integrations/t3/upstream/bruv.patch");
   if (options.prepared) {
     const head = execFileSync("git", ["-C", source, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
-    if (head !== sourcePin.revision) throw new Error("T3 checkout does not match integrations/t3/upstream/source.json; use a fresh checkout.");
+    if (head !== sourcePin.revision)
+      throw new Error("T3 checkout does not match integrations/t3/upstream/source.json; use a fresh checkout.");
     await verifyWebSource(source, patch);
   }
   async function run(args: string[], cwd = source): Promise<void> {
@@ -109,9 +120,7 @@ export async function buildWeb(options: { prepared?: boolean } = {}): Promise<vo
   await run(["pnpm", "--filter", "t3", "build:bundle"]);
   await cp(source + "/apps/web/dist", source + "/apps/server/dist/client", { recursive: true });
   await rm(output, { recursive: true, force: true });
-  // Use pnpm's supported workspace-copy deploy, so the official lockfile stays
-  // unmodified. Do not duplicate its catalog/graph just to inject local packages.
-  await run(["pnpm", "--filter", "t3", "deploy", "--legacy", "--prod", output]);
+  await run(["pnpm", "--filter", "t3", "deploy", "--prod", output]);
   // Keep the packaged self-reference local even if pnpm changes its deploy layout.
   const selfReference = output + "/node_modules/.pnpm/node_modules/t3";
   await rm(selfReference, { force: true });

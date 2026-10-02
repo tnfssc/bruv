@@ -1,10 +1,11 @@
-/** Isolated historical V2 baseline -> canonical source migration and restart acceptance. */
+/** Isolated shipped production -> canonical source migration and restart acceptance. */
 import { execFileSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { copyFile, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import sourcePin from "../upstream/source.json";
+import { assertMigrationDependencies } from "./migration-dependencies";
 import { verifyWebSource } from "../build/verify-source";
 
 const PRODUCTION_REVISION = "b488c57f3f9f1688e31c53daee99e29dd1d0baa2";
@@ -36,11 +37,10 @@ async function assertDependencies(directory: string, label: string): Promise<voi
   if (!(await Bun.file(modules).exists()))
     throw new Error(`${label} dependencies are not prepared (the harness never installs)`);
   const [source, installed] = await Promise.all([
-    Bun.file(join(directory, "pnpm-lock.yaml")).bytes(),
-    Bun.file(installedLock).bytes(),
+    Bun.file(join(directory, "pnpm-lock.yaml")).text(),
+    Bun.file(installedLock).text(),
   ]);
-  if (!Buffer.from(source).equals(Buffer.from(installed)))
-    throw new Error(`${label} installed dependencies do not match pnpm-lock.yaml`);
+  assertMigrationDependencies(source, installed);
 }
 async function assertCanonicalPatchedCheckout(input: {
   directory: string;
@@ -78,7 +78,11 @@ const previewRunner = join(PREVIEW, "apps/server/src", `.bruv-preview-migration-
 const state = join(temporary, "state");
 try {
   // Anchor even an explicitly supplied patch to the actual shipped root commit.
-  const canonicalProductionPatch = git(ROOT, ["show", `${PRODUCTION_PATCH_COMMIT}:${PRODUCTION_PATCH_PATH}`], null) as Buffer;
+  const canonicalProductionPatch = git(
+    ROOT,
+    ["show", `${PRODUCTION_PATCH_COMMIT}:${PRODUCTION_PATCH_PATH}`],
+    null,
+  ) as Buffer;
   if (!suppliedProductionPatch) await writeFile(productionPatch, canonicalProductionPatch);
   if (sha256(await Bun.file(productionPatch).bytes()) !== sha256(canonicalProductionPatch))
     throw new Error("current-production canonical patch hash mismatch");

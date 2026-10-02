@@ -91,11 +91,13 @@ of each script. Native acceptance needs the candidate's
 
 ## Migration acceptance
 
-The migration harness tests the historical pre-adoption production source
-`a9b49a7df0a4261dcc438d4493cc3154a1d9819e`, with the pre-adoption canonical
-patch from `c6fe280`, upgrading in place to the preview revision in
-`integrations/t3/upstream/source.json` plus `integrations/t3/upstream/bruv.patch`. Each checkout needs its own prepared dependency tree. Its installed lockfile must exactly match
-`pnpm-lock.yaml`. The harness never clones or installs and never writes package
+The migration harness tests the shipped production source
+`b488c57f3f9f1688e31c53daee99e29dd1d0baa2`, with the canonical
+patch from root commit `92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be`, upgrading in place to the preview revision in
+`integrations/t3/upstream/source.json` plus `integrations/t3/upstream/bruv.patch`. Each checkout needs its own prepared dependency tree. Its installed lockfile must retain exact pinned metadata, importer bindings,
+package records and snapshots, with the complete server dependency closure.
+pnpm may prune packages outside the shipped workspace from the installed lock;
+that does not require forking the official source lock. The harness never clones or installs and never writes package
 caches. Override checkout or patch paths with
 `T3_V2_MIGRATION_PRODUCTION`, `T3_V2_MIGRATION_PREVIEW`,
 `T3_V2_MIGRATION_PRODUCTION_PATCH`, and
@@ -107,15 +109,15 @@ completed native subagent job, two-message history and turn items, and encoded
 server settings with a provider instance and price override. The preview runner
 opens that same database and settings file, validates them through preview domain
 readers/schemas, then starts a second time and compares a semantic snapshot. This
-is an upgrade/restart compatibility gate. The historical production fixture records schema migration 54. The canonical
+is an upgrade/restart compatibility gate. The shipped production fixture records schema migration 54. The canonical
 66a91077 target must reach migration 56; restart must preserve the semantic snapshot.
 Usage assertions inspect official provider-turn records directly, including token
 counts, confidence/scope and provider-reported cost, rather than the retired Bruv
-subtree report. This historical baseline does not replace a last-release upgrade gate.
+subtree report. The ledger also verifies the official migration renumbering at 53–56.
 
 ```bash
 TMPDIR=/var/tmp \
-T3_V2_MIGRATION_PRODUCTION=/absolute/path/to/patched-a9b49a7 \
+T3_V2_MIGRATION_PRODUCTION=/absolute/path/to/patched-b488c57 \
 T3_V2_MIGRATION_PREVIEW=/absolute/path/to/patched-66a91077 \
 bun integrations/t3/gates/migration-acceptance.ts
 ```
