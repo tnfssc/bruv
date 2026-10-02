@@ -242,3 +242,11 @@ Values unchanged: values 7/9 already require removing unnecessary compatibility
 and not preserving behavior without a request; values 1/2/10 cover built-path
 proof and the handoff. Linux/offline validation does not establish macOS hardware
 or paid/live provider behavior.
+
+## Compact fullscreen footer reservation follow-up (2026-10-02)
+
+The confirmed two-row gap under a short prompt is fixed at the guarded fullscreen
+editor-slot seam, not by removing fullscreen mode or changing the footer. Native
+editor/dialog minimums and transcript scrolling stay intact. See
+[fix, terminal-frame proof and limits](pi-1.0-footer-gap-fix.md). The host patch set
+now includes the viewport adaptation and its runtime preparation gate.

@@ -1,0 +1,40 @@
+01|
+02|
+03|
+04|
+05|
+06|
+07|
+08|
+09|
+10|
+11|
+12|
+13|
+14|
+15|
+16|
+17|
+18|
+19|
+20|
+21| ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+22| >
+23|
+24| → Auto-compact                      true
+25|   Auto-resize images                true
+26|   Block images                      false
+27|   Skill commands                    true
+28|   Show hardware cursor              false
+29|   Editor padding                    0
+30|   Output padding                    1
+31|   Autocomplete max items            5
+32|   Clear on shrink                   false
+33|   Terminal progress                 false
+34|   (1/32)
+35|
+36|   Automatically compact context when it gets too large
+37|
+38|   Type to search · Enter/Space to change · Esc to cancel
+39| ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+40| bruv-editor-spacing-vgbIc2 · $0.000 · ctx 0% · cache est ?                                                        gpt-4o

@@ -68,10 +68,11 @@ test("Pi host adaptation is exact, idempotent, and rejects dependency drift", as
 
 test("runtime host gate rejects pristine and partly prepared dependencies", () => {
   for (const state of [
+    { mainPrepared: true, argsPrepared: true, viewportPrepared: false, builtInNames: ["llama.cpp"] },
     { mainPrepared: false, argsPrepared: false, builtInNames: ["llama.cpp", ...removed] },
-    { mainPrepared: true, argsPrepared: false, builtInNames: ["llama.cpp"] },
-    { mainPrepared: false, argsPrepared: true, builtInNames: ["llama.cpp"] },
-    { mainPrepared: true, argsPrepared: true, builtInNames: ["llama.cpp", "mcp"] },
+    { mainPrepared: true, argsPrepared: false, viewportPrepared: true, builtInNames: ["llama.cpp"] },
+    { mainPrepared: false, argsPrepared: true, viewportPrepared: true, builtInNames: ["llama.cpp"] },
+    { mainPrepared: true, argsPrepared: true, viewportPrepared: true, builtInNames: ["llama.cpp", "mcp"] },
   ])
     expect(() => assertBruvPiHost(state)).toThrow("Pi host is not prepared for bruv");
 });
@@ -84,6 +85,12 @@ test("adaptation validates all files and version before any writes", async () =>
     await writeFile(join(dir, patch.path), patch.content ? originalRegistry : await readFile(join(piRoot, patch.path)));
   }
   await writeFile(join(dir, piHostPatches[2]!.path), "drift");
+  await expect(preparePiHost(dir)).rejects.toThrow("Unsupported Pi host file");
+  expect(await readFile(join(dir, piHostPatches[0]!.path), "utf8")).toBe(originalRegistry);
+  // The newly added viewport adaptation must also validate before the registry write.
+  await writeFile(join(dir, piHostPatches[2]!.path), await readFile(join(piRoot, piHostPatches[2]!.path)));
+  const viewportPatch = piHostPatches.find((patch) => patch.path === "dist/modes/interactive/chat-viewport.js")!;
+  await writeFile(join(dir, viewportPatch.path), "viewport drift");
   await expect(preparePiHost(dir)).rejects.toThrow("Unsupported Pi host file");
   expect(await readFile(join(dir, piHostPatches[0]!.path), "utf8")).toBe(originalRegistry);
   await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.1" }));

@@ -5,6 +5,8 @@ export const IDLE_PROMPT_ICON = ""; // nf-oct-chevron_right, U+F460
 
 /** Borderless presentation; all editing, IME, paste and app shortcuts stay in Pi. */
 export class CompactEditor extends CustomEditor {
+  /** Opt into the guarded host dock reservation; native replacements retain three rows. */
+  readonly bruvCompactEditor = true;
   private bodyRows = 1;
   private gutter = 2;
   private above = 0;
