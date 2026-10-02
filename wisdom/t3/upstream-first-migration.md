@@ -20,3 +20,19 @@ Canonical patch: 1,948,956 bytes; 302 changed files; 15,595 added / 19,582 remov
 ## Required evidence
 
 Canonical regenerate-patch.ts export from actual new-pin source; source verification; patch reduction with retained custom-piece rationale; build actual shipped integration and CLI; real packaged browser startup; provider/native contract and lifecycle flows; history migration safety. No push, release, install, or version bump.
+
+## Root Pi audit
+
+Integrated worker commit 9d68d7cfad8ee7be08200b7d39a47476a3d06dbc as d667a65. No concrete equivalent root upstream replacement found: zero root code reduction, with precise API evidence and 89 focused passing tests in ../dependencies/pi-1.0-root-host-upstream-audit.md. Reused compiled evidence is explicitly not a fresh shipped-build proof.
+
+## Migration gate worker
+
+Task task_7725ecce owns history migration gate/templates only, preparing actual shipped b488c57 baseline to new dynamic pin rather than retaining historical a9b49a7 baseline. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8-5442693331ce-task_7725ecce; branch bruv/update-history-migration-acceptance-for--7725ecce. Does not edit the source migration checkout.
+
+## Parent validation (ongoing)
+
+Root `bun run check` passed on 2026-10-02 in the implementation worktree (asset preparation plus TypeScript). Root test dependencies installed from frozen bun.lock, using installed Bun 1.4.2 by absolute path. The configured mise pnpm installer failed to locate the renamed 11.27.1 archive asset; no product or gate change was made to bypass it. This root-only check does not prove the pending new T3 build.
+
+Root safety regressions passed: 55 tests, 0 failures, 240 assertions across native-routing, production-bridge, web-task-events, questions, remote-capabilities and history-storage. Log: `.cache/upstream-first-proof/root-safety.log`. These are source-level ownership/contract tests, not real new-pin provider or packaged-startup evidence.
+
+Migration gate worker commit 99d8253d integrated as 8b708bd. Actual production fixture passed at migration 54 with 13 events in the worker-owned prepared checkout; parent reran 2 source/patch preflight guard tests (10 assertions), both passed. Final target upgrade/restart awaits canonical source readiness. The preview fixture still imports the custom NativeUsageAccounting helper; if the source migration removes that display helper, update the fixture to assert official persisted normalized usage and restart semantics, not re-add a duplicate helper just for a legacy assertion.

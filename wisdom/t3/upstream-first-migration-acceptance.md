@@ -79,3 +79,7 @@ was still working. These results are not destination acceptance.
 
 Values unchanged: existing values already require canonical inputs, honest
 validation limits, fewer owned parts, and preserving essential data safety.
+
+## Parent fixture reconciliation
+
+The source migration retires custom NativeUsageAccounting and its own/subtree display. The preview fixture now uses the official projection provider-turn usage contract instead of importing the deleted presentation helper. Exact input, cached input, cache creation, output, reasoning, usage scope/completeness, subagent marker and total USD assertions remain unchanged. Restart snapshots now retain each provider turn ID and its complete normalized usage object verbatim. This removes a dependency on intentionally retired aggregation behavior, not a persisted-data assertion. Final actual upgrade/restart proof is still required.
