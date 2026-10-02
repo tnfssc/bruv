@@ -6052,11 +6052,11 @@ index edbace8019bdece177ce470cd8e24abd8f6fc90b..b8ad00f650114d33000cdff4c5315f10
      },
    });
 diff --git a/apps/server/src/provider/providerCompatibility.test.ts b/apps/server/src/provider/providerCompatibility.test.ts
-index 3254949ad3d9f374544a83f55f641a405da5492b..5dbbe388a62ab332bea8da9a08bf2fd7018ced24 100644
+index 2dc30cdef25cc82c363e8bee4de537faa46bab59..0c22e982262d9bc11a7272db32c14222780b6424 100644
 --- a/apps/server/src/provider/providerCompatibility.test.ts
 +++ b/apps/server/src/provider/providerCompatibility.test.ts
-@@ -67,6 +67,48 @@ describe("provider compatibility", () => {
-     }
+@@ -100,6 +100,48 @@ describe("provider compatibility", () => {
+     );
    });
  
 +  it("keeps Pi compatibility policy for regular instances, not trusted embedded Bruv", () => {
@@ -7059,7 +7059,7 @@ index a387dd189b3b95ef651b40327f373587d5d5fda9..0bdc904b03cfe238014261715345f32a
        new WorkspaceSearchIndexCreateFailed({
          cwd,
 diff --git a/apps/server/src/ws.ts b/apps/server/src/ws.ts
-index 58bbcb2dbedefddeb2c5864d51bdeaa79cd29462..dcb0046eb80a83f1070767223857afa83516b2ba 100644
+index 2a0006ddb24b4b1fc96ded5dbf5474113f2e61a6..3f97af3580b7376c96ae2855fc016c0faaf7b0a0 100644
 --- a/apps/server/src/ws.ts
 +++ b/apps/server/src/ws.ts
 @@ -174,6 +174,7 @@ import * as ServerRuntimeStartup from "./serverRuntimeStartup.ts";
@@ -7070,7 +7070,7 @@ index 58bbcb2dbedefddeb2c5864d51bdeaa79cd29462..dcb0046eb80a83f1070767223857afa8
  import * as PreviewAutomationBroker from "./mcp/PreviewAutomationBroker.ts";
  import * as DeviceService from "./device/DeviceService.ts";
  import { remoteSshDeviceHosts } from "./device/localSshDeviceHost.ts";
-@@ -1769,6 +1770,7 @@ const makeWsRpcLayer = (
+@@ -1788,6 +1789,7 @@ const makeWsRpcLayer = (
                        command.type === "delegated_task.wake-policy" ||
                        command.type === "delegated_task.completion-delivery.acknowledge" ||
                        command.type === "delegated_task.completion-delivery.dispose" ||
@@ -7078,7 +7078,7 @@ index 58bbcb2dbedefddeb2c5864d51bdeaa79cd29462..dcb0046eb80a83f1070767223857afa8
                        command.type === "thread.created.record"
                      ? command.parentThreadId
                      : command.threadId,
-@@ -3333,11 +3335,8 @@ const makeWsRpcLayer = (
+@@ -3352,11 +3354,8 @@ const makeWsRpcLayer = (
          [WS_METHODS.terminalAttach]: (input) =>
            observeRpcStream(
              WS_METHODS.terminalAttach,
@@ -7092,7 +7092,7 @@ index 58bbcb2dbedefddeb2c5864d51bdeaa79cd29462..dcb0046eb80a83f1070767223857afa8
              ),
              { "rpc.aggregate": "terminal" },
            ),
-@@ -3364,11 +3363,8 @@ const makeWsRpcLayer = (
+@@ -3383,11 +3382,8 @@ const makeWsRpcLayer = (
          [WS_METHODS.subscribeTerminalEvents]: (_input) =>
            observeRpcStream(
              WS_METHODS.subscribeTerminalEvents,
@@ -7204,10 +7204,10 @@ index 0000000000000000000000000000000000000000..923918bda1ab9a5fec07aa05f95524a9
 +  },
 +);
 diff --git a/apps/web/src/components/ComposerPromptEditorTiptap.tsx b/apps/web/src/components/ComposerPromptEditorTiptap.tsx
-index 4a9b64494ff971f2ba1bf074879482cd0aa632f4..4690ed2a371e5bb628bf983850b1eb99d4d3dfe2 100644
+index 1926e4dd279f29851c9e282a06b35ffc6a16fb8d..d058f84c880a49a5811022c8568ba5298a21c643 100644
 --- a/apps/web/src/components/ComposerPromptEditorTiptap.tsx
 +++ b/apps/web/src/components/ComposerPromptEditorTiptap.tsx
-@@ -1092,7 +1092,10 @@ function ComposerPromptEditorTiptapInner(props: ComposerPromptEditorProps) {
+@@ -1129,7 +1129,10 @@ function ComposerPromptEditorTiptapInner(props: ComposerPromptEditorProps) {
  
    // Controlled value/cursor from the store (history recall, chip insertion…).
    useLayoutEffect(() => {
@@ -8011,10 +8011,10 @@ index 5645d230a47afa7737ee7275a671d6fe541032f9..3f8b3f2ee7a03dd3ba875a5f9446efaa
  };
  export const TurnTokenUsage = Schema.Union([
 diff --git a/packages/contracts/src/settings.ts b/packages/contracts/src/settings.ts
-index 764e6d560a73feab3d2aabf915207c516b12dab1..a28de7835ac6da3d4b22d53c82a1175a4550f242 100644
+index cab95a7d6c47e177f9185d5c927b74876086887c..c9d6943abbde8468703f7a5ae038b15eba7cf022 100644
 --- a/packages/contracts/src/settings.ts
 +++ b/packages/contracts/src/settings.ts
-@@ -829,23 +829,22 @@ export type AntigravitySettings = typeof AntigravitySettings.Type;
+@@ -835,23 +835,22 @@ export type AntigravitySettings = typeof AntigravitySettings.Type;
  
  export const PiSettings = makeProviderSettingsSchema(
    {
@@ -8107,7 +8107,7 @@ index dd38709bd0e6808f0b8071c6b251663b3a58b423..f5d514f2ea07e1042a04cac69255e1cf
      ["Get", "Getting", "Got", "orchestration capabilities"],
      "capabilities",
 diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
-index 82fa1e43cfa7c92fd7733056a26938434a6d648b..2f931a676e6d40208ce7f13d14806bb5c89638a7 100644
+index 092af1eaeeb7c7211cc1140816751ebe1fe4fdf0..df97eba4b647a480acb806bfcfa0f3502441aa18 100644
 --- a/pnpm-lock.yaml
 +++ b/pnpm-lock.yaml
 @@ -3,6 +3,7 @@ lockfileVersion: '9.0'
@@ -8122,8 +8122,8 @@ index 82fa1e43cfa7c92fd7733056a26938434a6d648b..2f931a676e6d40208ce7f13d14806bb5
          version: link:../../packages/contracts
        '@t3tools/mobile-markdown-text':
          specifier: file:./modules/t3-markdown-text
--        version: file:apps/mobile/modules/t3-markdown-text(5c46709ff7a3b3b481fcdaa30ae2beb2)
-+        version: file:apps/mobile/modules/t3-markdown-text(fac9a009c228991de3c3a239deadf276)
+-        version: file:apps/mobile/modules/t3-markdown-text(afae94297d61d3a65abc2214f9b05422)
++        version: file:apps/mobile/modules/t3-markdown-text(bd2c59087f972e3fd153afbd7633cbc9)
        '@t3tools/mobile-review-diff-native':
          specifier: file:./modules/t3-review-diff
          version: file:apps/mobile/modules/t3-review-diff
@@ -8162,7 +8162,7 @@ index 82fa1e43cfa7c92fd7733056a26938434a6d648b..2f931a676e6d40208ce7f13d14806bb5
    '@tabler/icons-react-native@3.44.0':
      resolution: {integrity: sha512-/Ppp68bpl9vQQsI/c+YiDC9dnLq4JUo0YI5qP72OQMC1WmCaRzdYn3CU79q01M2L3MfXO9a8WctWN8ay1Odkow==}
      peerDependencies:
-@@ -12469,6 +12482,12 @@ snapshots:
+@@ -12493,6 +12506,12 @@ snapshots:
        react: 19.2.6
        scheduler: 0.27.0
  
@@ -8175,11 +8175,20 @@ index 82fa1e43cfa7c92fd7733056a26938434a6d648b..2f931a676e6d40208ce7f13d14806bb5
    '@effect/atom-react@4.0.0-rc.115(effect@4.0.0-rc.115(patch_hash=0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5))(react@19.3.0)(scheduler@0.27.0)':
      dependencies:
        effect: 4.0.0-rc.115(patch_hash=0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5)
-@@ -14833,10 +14852,28 @@ snapshots:
+@@ -14773,7 +14792,7 @@ snapshots:
+   '@shikijs/types@4.3.0':
+     dependencies:
+       '@shikijs/vscode-textmate': 10.0.2
+-      '@types/hast': 3.0.4
++      '@types/hast': 3.0.5
+ 
+   '@shikijs/vscode-textmate@10.0.2': {}
+ 
+@@ -14858,10 +14877,28 @@ snapshots:
      dependencies:
        defer-to-connect: 2.0.1
  
--  '@t3tools/mobile-markdown-text@file:apps/mobile/modules/t3-markdown-text(5c46709ff7a3b3b481fcdaa30ae2beb2)':
+-  '@t3tools/mobile-markdown-text@file:apps/mobile/modules/t3-markdown-text(afae94297d61d3a65abc2214f9b05422)':
 +  '@t3tools/client-runtime@file:packages/client-runtime':
 +    dependencies:
 +      '@t3tools/contracts': file:packages/contracts
@@ -8198,16 +8207,16 @@ index 82fa1e43cfa7c92fd7733056a26938434a6d648b..2f931a676e6d40208ce7f13d14806bb5
 +    dependencies:
 +      effect: 4.0.0-rc.115(patch_hash=0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5)
 +
-+  '@t3tools/mobile-markdown-text@file:apps/mobile/modules/t3-markdown-text(fac9a009c228991de3c3a239deadf276)':
++  '@t3tools/mobile-markdown-text@file:apps/mobile/modules/t3-markdown-text(bd2c59087f972e3fd153afbd7633cbc9)':
      dependencies:
 -      '@t3tools/client-runtime': link:packages/client-runtime
 -      '@t3tools/shared': link:packages/shared
 +      '@t3tools/client-runtime': file:packages/client-runtime
 +      '@t3tools/shared': file:packages/shared
-       expo: 58.0.0(3abfa3879936d948a635873738556226)
-       expo-asset: 58.0.9(expo@58.0.0)(react-native@0.88.0-rc.3(@babel/core@7.29.7)(@react-native/metro-config@0.88.0-rc.3(@babel/core@7.29.7)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.3.0)(bufferutil@4.1.0)(react@19.3.0)(utf-8-validate@6.0.6))(react@19.3.0)(typescript@7.0.2)
-       expo-clipboard: 58.0.2(expo@58.0.0)(react-native@0.88.0-rc.3(@babel/core@7.29.7)(@react-native/metro-config@0.88.0-rc.3(@babel/core@7.29.7)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.3.0)(bufferutil@4.1.0)(react@19.3.0)(utf-8-validate@6.0.6))(react@19.3.0)
-@@ -14850,6 +14887,79 @@ snapshots:
+       expo: 58.0.2(56fc8ddb8129740412739f0f0a6ee025)
+       expo-asset: 58.0.10(expo@58.0.2)(react-native@0.88.0-rc.3(@babel/core@7.29.7)(@react-native/metro-config@0.88.0-rc.3(@babel/core@7.29.7)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.3.0)(bufferutil@4.1.0)(react@19.3.0)(utf-8-validate@6.0.6))(react@19.3.0)(typescript@7.0.2)
+       expo-clipboard: 58.0.3(expo@58.0.2)(react-native@0.88.0-rc.3(@babel/core@7.29.7)(@react-native/metro-config@0.88.0-rc.3(@babel/core@7.29.7)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.3.0)(bufferutil@4.1.0)(react@19.3.0)(utf-8-validate@6.0.6))(react@19.3.0)
+@@ -14875,6 +14912,79 @@ snapshots:
  
    '@t3tools/mobile-terminal-native@file:apps/mobile/modules/t3-terminal': {}
  
@@ -8287,8 +8296,30 @@ index 82fa1e43cfa7c92fd7733056a26938434a6d648b..2f931a676e6d40208ce7f13d14806bb5
    '@tabler/icons-react-native@3.44.0(react-native-svg@15.15.5(react-native@0.88.0-rc.3(@babel/core@7.29.7)(@react-native/metro-config@0.88.0-rc.3(@babel/core@7.29.7)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.3.0)(bufferutil@4.1.0)(react@19.3.0)(utf-8-validate@6.0.6))(react@19.3.0))(react@19.3.0)':
      dependencies:
        '@tabler/icons': 3.44.0
+@@ -17688,10 +17798,6 @@ snapshots:
+     dependencies:
+       walk-up-path: 4.0.0
+ 
+-  fdir@6.5.0(picomatch@4.0.4):
+-    optionalDependencies:
+-      picomatch: 4.0.4
+-
+   fdir@6.5.0(picomatch@4.0.7):
+     optionalDependencies:
+       picomatch: 4.0.7
+@@ -20962,8 +21068,8 @@ snapshots:
+ 
+   tinyglobby@0.2.17:
+     dependencies:
+-      fdir: 6.5.0(picomatch@4.0.4)
+-      picomatch: 4.0.4
++      fdir: 6.5.0(picomatch@4.0.7)
++      picomatch: 4.0.7
+ 
+   tinypool@2.1.2: {}
+ 
 diff --git a/pnpm-workspace.yaml b/pnpm-workspace.yaml
-index 014c05e09134706195678be606ab5bad784a76de..58103c1b858b9294d5af2745433dd5a59a5996c8 100644
+index 3c0ef065701e9852daca8e0585ae8fec27c5030d..c01f5a29692f326654ec370ca68146f6b664d480 100644
 --- a/pnpm-workspace.yaml
 +++ b/pnpm-workspace.yaml
 @@ -1,3 +1,5 @@
@@ -8297,7 +8328,7 @@ index 014c05e09134706195678be606ab5bad784a76de..58103c1b858b9294d5af2745433dd5a5
  packages:
    - apps/*
    - infra/*
-@@ -275,6 +277,6 @@ publicHoistPattern:
+@@ -278,6 +280,6 @@ publicHoistPattern:
    - "@cursor/sdk-*"
  
  supportedArchitectures:
