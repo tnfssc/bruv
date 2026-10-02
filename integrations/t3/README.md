@@ -41,7 +41,7 @@ profile/depth policy, durable cancellation/replay, local-shell cards/completion
 notifications, and Bun PTY/lazy native-search packaging. Broad compiler rewrites,
 bespoke Pi usage aggregation and browser codec/syntax adapters are no longer
 maintained here. Five optional per-turn cost fields remain solely to preserve
-already-stored history; async task launches never acknowledge unread results. See [migration evidence](../../wisdom/t3/upstream-first-canonical-source.md).
+already-stored history; async task launches never acknowledge unread results. See [migration evidence](../../wisdom/t3/upstream-first-migration.md).
 
 The official workspace/catalog remain intact. Installation selects only the
 shipped server/browser dependency closures and root build tools. Modern pnpm

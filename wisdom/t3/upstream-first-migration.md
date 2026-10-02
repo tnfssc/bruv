@@ -1,56 +1,165 @@
-# Upstream-first migration (in progress)
+# Official T3 upstream-first migration — reviewed candidate
 
-## Ownership and pins
+## Outcome and ownership
 
-User explicitly authorized the official development branch, not stable. Parent implementation worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8, branch bruv/resume-t3-upstream-adoption-and-patch-re-4eb8a4a8.
+Implementation is complete in the isolated worktree; parent review/integration remains.
+No push, release, product installation or version bump. Version stays 0.15.24.
 
-Official fetch on 2026-10-02 resolved t3code/codex-turn-mapping to 66a91077f9abf6e171aad0ceab2519d7272f3ff3 (Stop always ends the background work a thread shows, #14636). Its parent is de95adc336e68d8ce645fc09bf0f8eeb39444338 (Pi 1.0, #14688). Pi introduction is f2919fd8b (#7211).
+- Bruv worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8
+- Branch: bruv/resume-t3-upstream-adoption-and-patch-re-4eb8a4a8
+- Base: 92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be
+- Actual upstream source: /home/tnfssc/.bruv/worktrees/t3-upstream-first-4eb8a4a8
+- Source branch: bruv-upstream-first; HEAD remains the official pin, with canonical changes in its index/working tree. Do not commit over that HEAD before regenerating the patch.
+- Prepared prior-production fixture checkout: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8-5442693331ce-task_7725ecce/.cache/migration-acceptance/production
 
-Old pin b488c57f3f9f1688e31c53daee99e29dd1d0baa2 is a v2 commit, “fix(v2): remove obsolete composer breakpoint animation”, not a stable-release assumption. The existing source clone is shallow at the old pin, so local merge-base failure alone is not ancestry evidence. Official GitHub compare API returned HTTP 200, status diverged, 1110 commits ahead / 606 behind, merge base 5781b5240bd5d2e21c651f6b228975ac40cbd67b. This is a divergent branch migration, not a linear fast-forward.
+## Exact upstream and ancestry
 
-## Workspaces
+User explicitly chose official development branch t3code/codex-turn-mapping, not stable.
+Fetch on 2026-10-02 resolved **66a91077f9abf6e171aad0ceab2519d7272f3ff3** (#14636).
+Its parent de95adc336e68d8ce645fc09bf0f8eeb39444338 is Pi 1.0 support (#14688);
+Pi introduction is f2919fd8b (#7211).
 
-- T3 migration worker task_dd734f12: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8-5442693331ce-task_dd734f12; branch bruv/adopt-official-t3-pi-and-orchestration-s-dd734f12. Exclusive upstream source: /home/tnfssc/.bruv/worktrees/t3-upstream-first-4eb8a4a8.
-- Root Pi seam worker task_1819db87: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8-5442693331ce-task_1819db87; branch bruv/reduce-root-pi-host-seams-using-official-1819db87.
+Old pin b488c57f3f9f1688e31c53daee99e29dd1d0baa2 is a v2 commit, “fix(v2): remove
+obsolete composer breakpoint animation”, not a stable-release pin. The original clone
+was shallow there: local merge-base failure alone was not evidence. GitHub compare
+returned diverged, 1110 ahead / 606 behind, merge base
+5781b5240bd5d2e21c651f6b228975ac40cbd67b. This is a divergent source migration.
 
-## Baseline
+## Measured maintained patch
 
-Canonical patch: 1,948,956 bytes; 302 changed files; 15,595 added / 19,582 removed lines (git apply --stat). No migration adoption or passing validation is claimed yet.
+| Measure | Before | After |
+| --- | ---: | ---: |
+| Bytes | 1,948,956 | 365,318 |
+| Patched files | 302 | 74 |
+| Added lines | 15,595 | 6,096 |
+| Removed lines | 19,582 | 268 |
+| Added lines excluding lockfile | 10,417 | 5,981 |
 
-## Required evidence
+**81.3% fewer patch bytes, 75.5% fewer files, 42.6% fewer added source/test lines
+excluding lockfiles on both sides.** The final mechanically generated lock delta is
+115 additions / 5 deletions. This is not merely a lockfile reduction.
+Every canonical export used regenerate-patch.ts on actual pinned source; final source
+verification and packaged SOURCE.txt agree. No patch/hash text surgery.
 
-Canonical regenerate-patch.ts export from actual new-pin source; source verification; patch reduction with retained custom-piece rationale; build actual shipped integration and CLI; real packaged browser startup; provider/native contract and lifecycle flows; history migration safety. No push, release, install, or version bump.
+Removed ownership: custom Pi RPC/resource implementation, bespoke own/subtree usage
+accounting and browser cost adapters, broad compiler/schema/provider rewrites,
+HEIC/Shiki asset adapters, duplicate dependency definitions, and the old custom
+bin.ts/binCli.ts invocation/teardown API. Official providers/orchestration/Pi 1.0 now
+own those implementations. Root launches the ordinary upstream CLI through supported
+Bun preload, clearing interpreter mode before main and child execution.
 
-## Root Pi audit
+Retained narrow product/safety boundaries:
+- Bruv executable identity, model mode descriptor, and local-shell lifecycle/pending-work records.
+- BruvTaskService, profile/depth authority, scoped credentials, durable replay/cancellation,
+  non-consuming async launch, parent completion ownership and local notifications.
+- Loopback/same-origin no-auth behavior, setup/draft intent and environment isolation.
+- Bun PTY/subscriber behavior, lazy unsupported-platform native search and portable assets.
+- Five optional finite per-turn cost fields solely to retain already-stored provider cost;
+  no bespoke aggregation or subtree display restored.
+- Modern injected pnpm deploy. Full official workspace/catalog/patch declarations stay
+  upstream-owned; installation selects shipped server/browser closures plus root tools.
 
-Integrated worker commit 9d68d7cfad8ee7be08200b7d39a47476a3d06dbc as d667a65. No concrete equivalent root upstream replacement found: zero root code reduction, with precise API evidence and 89 focused passing tests in ../dependencies/pi-1.0-root-host-upstream-audit.md. Reused compiled evidence is explicitly not a fresh shipped-build proof.
+Root Pi audit found **no equivalent safe upstream replacement**, so root host reduction
+is zero, not counted in the T3 savings. Builtin filtering, fail-closed fast dispatch,
+bounded history/scan cleanup, native compaction checks and first-paint seams remain.
+See ../dependencies/pi-1.0-root-host-upstream-audit.md (89 focused passing tests and
+specific public-API evidence).
 
-## Migration gate worker
+## Final artifact identity
 
-Task task_7725ecce owns history migration gate/templates only, preparing actual shipped b488c57 baseline to new dynamic pin rather than retaining historical a9b49a7 baseline. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8-5442693331ce-task_7725ecce; branch bruv/update-history-migration-acceptance-for--7725ecce. Does not edit the source migration checkout.
+- Patch SHA-256: 7afe02917338fa91040b61943c8fa40d17358636e08b2aee680b5e416366080e
+- Built dist/bruv SHA-256: 4ff0f163ede1ebd006605ce5f541bfa9b2ca44eeede0642361d117f206b6ff83
+- Built web archive SHA-256: 42850cc31c408a962c80103ea7287fecfbc120a9093db7709f81d974a064fa08
+- Runtime/actual startup: Bun 1.4.2, Linux x64. Pinned package manager: pnpm 11.10.0.
 
-## Parent validation (ongoing)
+## Proof
 
-Root `bun run check` passed on 2026-10-02 in the implementation worktree (asset preparation plus TypeScript). Root test dependencies installed from frozen bun.lock, using installed Bun 1.4.2 by absolute path. The configured mise pnpm installer failed to locate the renamed 11.27.1 archive asset; no product or gate change was made to bypass it. This root-only check does not prove the pending new T3 build.
+Evidence files below are under the Bruv worktree’s .cache/upstream-first-proof/.
 
-Root safety regressions passed: 55 tests, 0 failures, 240 assertions across native-routing, production-bridge, web-task-events, questions, remote-capabilities and history-storage. Log: `.cache/upstream-first-proof/root-safety.log`. These are source-level ownership/contract tests, not real new-pin provider or packaged-startup evidence.
+- Guarded final build passed: frozen scoped dependency install, server AND browser
+  typechecks, production bundles, static emitted chunk-cycle gate, modern deployment,
+  portable optional-asset verification, archive/source receipt and compiled executable.
+  Log: build-final.log. Compiler suggestions from unchanged upstream remain visible;
+  no compiler severity or required gate was lowered.
+- Root check passed: root-final-check.log.
+- Full root suite: **1702 pass, 20 explicit opt-in skips, 0 fail**, 231 files, 32,903
+  assertions: root-suite-final.log. This ran before the final provider advisory/text-only
+  correction; root runtime implementation did not change afterward. Final compiled
+  runtime/migration-guard focused rerun: **11 pass**, including standalone help with no
+  Node/Bun/sidecar on PATH and preload argv/main/environment/async teardown.
+- Exact-source safety/provider suites: **164 pass across 16 files** (focused-final.log).
+  Final provider-identity rerun: **5 pass** (provider-final.log).
+- Final compiled native acceptance: native-final/proof.json and native-final.log, bound
+  to the final binary hash above. Actual Bruv/Pi + real scoped HTTP MCP + loopback model:
+  live observe, nested child, single completion, parent handoff, subtree cancellation
+  with sibling unaffected, unique credentials, same-key restart with zero duplicate
+  children, zero foreground result ACKs, four provider processes all reaped.
+- Shipped b488c57 production state -> new source -> restart passed: migration-final.log.
+  All 13 events, migration ledger 53–56, history, graph/job/ACK state, provider identity,
+  settings checksum, token counters and all five cost fields retained. Fresh/upgrade
+  fixtures use private data; no user database was touched. Contract conformance passed:
+  contract-final.log (launch/observe/cancel/list/workspaces/excess-field rejection).
+- Final compiled browser cold navigation AND reload passed: browser-boot.json;
+  zero browser errors, splash removed, real app visible. Screenshot
+  browser-boot.json.png was inspected: correct Bruv no-credentials hint, model/mode
+  controls, no false Pi update offer. Provider credentials were deliberately absent.
+  Trace requests canceled on reload are logged separately, not browser errors.
+- Final canonical verifyWebSource and git diff --check passed.
 
-Migration gate worker commit 99d8253d integrated as 8b708bd. Actual production fixture passed at migration 54 with 13 events in the worker-owned prepared checkout; parent reran 2 source/patch preflight guard tests (10 assertions), both passed. Final target upgrade/restart awaits canonical source readiness. The preview fixture still imports the custom NativeUsageAccounting helper; if the source migration removes that display helper, update the fixture to assert official persisted normalized usage and restart semantics, not re-add a duplicate helper just for a legacy assertion.
+## Concrete failures resolved, not waived
 
-## Candidate integrated; parent owns final validation
+The worker’s copied diagnostic dependencies were insufficient; a real frozen install
+succeeded. Native mock fixture snapshot/layer APIs were updated to official services.
+The history gate caught cost fields silently stripped by the new schema; they are now
+preserved. Independent review reproduced terminal async launch/replay consuming ACKs;
+the restored non-consuming behavior has a red/green test. Legacy deploy failed on
+unused official mobile patches and re-resolution, so it was discarded rather than
+allowing unused patches. Modern injection needs only the small generated lock delta.
 
-Source worker commit 5b0c7f471d227ee10fd61166e7b39df5df250f55 integrated as 15ebf24, reconciling migration fixtures by retaining both ledger and row-count assertions. Candidate pin 66a91077; patch 342,749 bytes, 71 files, 5,840 additions / 245 deletions (82.4% fewer bytes). Its source tests passed but build/startup were NOT proven because it used a copied diagnostic dependency tree. Parent is preparing exact dependencies via frozen-lock install in the owned source checkout; this is build setup, not an installed Bruv product or release.
+Packaged startup caught the removed runCli export assumption; standard Bun preload now
+runs the unmodified upstream entry, rather than restoring a CLI fork. Native acceptance
+caught ProviderReplayHarness ignoring its supplied real MCP registry and issuing mock
+port-80 credentials; registry injection is corrected, timeout/assertions unchanged.
+Visible browser proof caught Pi update advice for the separate Bruv version domain;
+only embedded Bruv suppresses that advice, ordinary Pi checks stay upstream-owned.
 
-Independent safety review task_b52e4a74: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8-5442693331ce-task_b52e4a74; branch bruv/review-upstream-first-migration-safety-b-b52e4a74. Read-only review, no concurrent source writer.
+Gate dependency validation now supports pnpm’s pruned installed graph while requiring
+exact metadata/importer pins, every installed package/snapshot to match source, and a
+complete server closure including workspace links, aliases, dev/optional dependencies.
+It does not install or copy a lockfile to satisfy a guard. Four regression tests cover
+provenance and required-closure failures. See upstream-first-migration-acceptance.md.
 
-Exact dependency preparation succeeded in 58.6 seconds with pnpm 11.10.0 and the unmodified official lock. The worker’s missing-package gap was a diagnostic-copy limitation, not an unavailable upstream package. The first guarded build exposed one owned fixture layer warning; actual native suites exposed the same fixture’s obsolete snapshot API. LocalJobNotification now uses official `snapshot.getSnapshot` and ordered ProjectService provisioning. Source shell-notification tests 5/5 and complete server typecheck pass on exact dependencies; BruvTaskService and delegated-completion tests passed (10 tests) on the prior combined run. Suggestions in unchanged upstream files are reported but do not fail the official compiler; no compiler settings changed.
+Two setup-only failures were corrected without changing assertions: Chromium’s Unix
+socket path exceeded its limit under the long worktree TMPDIR (use private short
+/home/tnfssc/.bruv/t3-probe-4eb8), and an existing root test’s broad cache/ substring
+assertion collided with TMPDIR inside .cache (full-suite TMPDIR was instead
+/home/tnfssc/.bruv/worktrees/t3-upstream-first-test-tmp-4eb8a4a8).
 
-Independent review found async launch/replay acknowledging terminal output before Bruv delivers it. Reproduced in a new actual-source regression (four dispatches instead of two: two unintended ACKs); restored non-acknowledging async return. Existing upstream cancellation tests also need the retained Bruv durable-cancel semantics restored in their fixtures. No other concrete review blocker was reported.
+## Commits and worker handoff
 
-Actual shipped-production upgrade/restart now PASSES on exact dependencies, including migration ledger 53–56, all 13 events, native job completion/ACK state, history, provider IDs, settings checksum and normalized token/cost fields. It first exposed real cost-data loss through the official TurnTokenUsage decoder. Retained only five optional finite cost fields for already-persisted per-turn spend; no bespoke aggregation or display restored. Fixture now seeds/verifies all five fields and exact restart state. Log `.cache/upstream-first-proof/migration.log`.
+Implementation/root commits: 8d69a38 (ownership), d667a65 (root audit), 8b708bd
+(shipped-state gate), ba44dc7 (official usage fixture), 15ebf24 (source adoption),
+30dd3b2 (history/delivery/deploy/bootstrap), 57970d4 (native diagnostic), dae7208
+(final source registry/identity and startup regression). Parent should integrate the
+full branch range from base 92f1f2b, not just the large patch commit.
 
-Full guarded build succeeded with modern injected deployment, portable optional assets, static chunk-cycle checks and compiled `dist/bruv`. Final source-focused rerun on exact dependencies: 164 tests passed across 16 files. Full root suite: 1699 passed, 20 opt-in skips, 2 failures. One failure was the real packaged bootstrap gap (old runCli export no longer upstream); the other was an existing test’s broad `cache/` substring assertion colliding with our TMPDIR under `.cache`—rerun with an isolated durable temp path outside `.cache`, no assertion removed.
+Worker worktrees are beneath /home/tnfssc/.bruv/worktrees/, named
+bruv-5442693331ce-task_4eb8a4a8-5442693331ce-task_<id>:
+- 1819db87: bruv/reduce-root-pi-host-seams-using-official-1819db87
+- dd734f12: bruv/adopt-official-t3-pi-and-orchestration-s-dd734f12
+- 7725ecce: bruv/update-history-migration-acceptance-for--7725ecce
+- b52e4a74: bruv/review-upstream-first-migration-safety-b-b52e4a74 (read-only review)
+- f7bfa7ab: bruv/fix-native-integration-timeout-on-exact--f7bfa7ab
 
-Bootstrap now uses Bun’s supported `--preload` to clear BUN_BE_BUN, then executes unmodified upstream `dist/bin.mjs` as the actual main entry. It does not restore the old bin.ts/binCli.ts runCli wrapper/teardown fork. New boundary test verifies argv, main-entry status, environment clearing and asynchronous teardown. Packaged browser startup must be rerun on rebuilt candidate.
+## Gaps and values
 
-Native compiled acceptance timed out at the older retained fixture. Task task_f7bfa7ab owns only the shared source NativeBruvIntegration.production.test.ts for diagnosis. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8-5442693331ce-task_f7bfa7ab; branch bruv/fix-native-integration-timeout-on-exact--f7bfa7ab. Parent owns other files/export.
+No live paid/external model API, real SSH/Docker owner, hardware/audio, or non-Linux
+startup run was performed. Those explicit opt-in tests remain skipped, not passed.
+Native real-process acceptance uses a deterministic loopback model. Portable assets
+were checked, but that is not cross-platform execution proof. No release/install work
+was requested or performed. The target is still an intentionally chosen development
+branch, not stable; future repins need a new source/gate review.
+
+Wisdom updated with adoption, audit, migration and native-proof notes. Values unchanged:
+existing 1/2 require shipped proof and honest gaps, 3/4/6 preserve ownership/history,
+and 7/9 already call for fewer owned dependency parts without weakened gates.

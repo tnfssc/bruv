@@ -1,5 +1,9 @@
 # Native integration registry injection diagnosis (2026-10-02)
 
+> Historical worker checkpoint. Parent integration resolved the blockers below;
+> see [final migration evidence](upstream-first-migration.md) for shipped-candidate
+> hashes, acceptance results and current gaps.
+
 ## Scope and observation
 
 Owned only shared source apps/server/src/orchestration-v2/NativeBruvIntegration.production.test.ts in /home/tnfssc/.bruv/worktrees/t3-upstream-first-4eb8a4a8. Source HEAD remained 66a91077f9abf6e171aad0ceab2519d7272f3ff3. Actual compiled parent binary /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4eb8a4a8/dist/bruv SHA256 e527452572afd877bed74ae2be780582f9990f72e38fbdf5817ecca0a03095aa.

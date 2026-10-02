@@ -1,5 +1,9 @@
 # Shipped production → official T3 migration acceptance
 
+> Historical worker checkpoint. Parent integration resolved the blockers below;
+> see [final migration evidence](upstream-first-migration.md) for shipped-candidate
+> hashes, acceptance results and current gaps.
+
 Use this note when changing the independent migration gate, not as a substitute
 for source, packaging, browser, or release gates. Read
 [the migration checkpoint](upstream-first-migration-checkpoint.md) for ownership

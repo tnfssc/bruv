@@ -1,5 +1,13 @@
 # Upstream-first migration checkpoint
 
+## Restart outcome (2026-10-02)
+
+Implementation is complete in the new owner’s isolated branch, pending parent review.
+See [final migration evidence](upstream-first-migration.md) for exact commit, source
+paths, 81.3% patch reduction, compiled/native/browser/history proof and remaining
+opt-in gaps. No push, release, product installation or version bump was performed.
+The pause record below is historical, not an instruction to redo finished work.
+
 ## User decision
 
 After bruv v0.15.24 shipped, user asked about official T3 orchestrator v2 and Pi

@@ -1,5 +1,9 @@
 # Official development branch: canonical source migration
 
+> Historical worker checkpoint. Parent integration resolved the blockers below;
+> see [final migration evidence](upstream-first-migration.md) for shipped-candidate
+> hashes, acceptance results and current gaps.
+
 ## Decision and provenance
 
 The user chose official `t3code/codex-turn-mapping` now, not a stable-release
