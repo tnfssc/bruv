@@ -1,6 +1,6 @@
 # Code reduction audit
 
-**Implementation is complete:** [actual changes and validation](implementation.md). The audit below records the original baseline, not current file contents. Feature and archive cuts were not taken.
+**Implementation is complete:** [actual changes and validation](implementation.md). The audit below records the original baseline, not current file contents. No product feature cuts were taken. The user later approved and completed [historical archive retirement](../../../wisdom/quality/t3-archive-retirement.md): 24 files, 35,011 lines.
 
 **User constraint: keep important features. No feature cuts are approved. Preserve current behavior by default; feature-cut tables below are options for discussion only. Start with proved dead code and behavior-preserving simplification.**
 
