@@ -2,7 +2,7 @@
  * BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-controlled.ts --synthetic --disclose-private en:fresh:baseline
  * Historical snapshots require --source FILE --study-2026-09-25 --disclose-private. Keep output private.
  */
-import WebSocket from "ws";
+import { studyTrial } from "./live-study-trial";
 import { createHash } from "node:crypto";
 import { probeArgs, readStudy, study, studyTarget } from "./live-probe-input";
 import { createDefaultLiveCredentialService } from "../src/live/credentials";
@@ -101,18 +101,10 @@ for (const spec of conditions) {
 }
 for (let n = 0; n < conditions.length; n++) {
   const [lang, context, variant, request = "explicit"] = conditions[n].split(":");
-  if (
-    (!(lang in target) && !(lang in original)) ||
-    !["fresh", "prior", "snapshot"].includes(context) ||
-    !["baseline", "guidance", "example", "globals"].includes(variant) ||
-    !["explicit", "plain"].includes(request) ||
-    lang in original !== (context === "snapshot")
-  )
-    throw Error("Invalid condition: " + conditions[n]);
   const instructions =
     root +
     (variant === "baseline" ? "" : guidance + (variant === "example" ? example : variant === "globals" ? globals : ""));
-  const result: any = {
+  const result = {
     trial: n + 1,
     condition: conditions[n],
     model: config.model,
@@ -127,134 +119,56 @@ for (let n = 0; n < conditions.length; n++) {
           : target[lang],
     ),
     snapshotHash: context === "snapshot" ? hash(snapshot(original[lang])) : null,
-    calls: [],
-    speech: "",
-    errors: [],
-    responses: 0,
   };
-  const ws = new WebSocket("wss://api.openai.com/v1/realtime?model=" + encodeURIComponent(config.model), {
-    headers: { Authorization: "Bearer " + key },
-  });
-  const send = (event: any) => ws.send(JSON.stringify(event));
-  let done = false,
-    pending = false;
-  const speech: string[] = [];
-  await new Promise<void>((resolve) => {
-    const end = () => {
-      if (done) return;
-      done = true;
-      clearTimeout(timer);
-      ws.close();
-      resolve();
-    };
-    const timer = setTimeout(() => {
-      result.errors.push("deadline 25s");
-      end();
-    }, 25000);
-    ws.on("open", () =>
-      send({
-        type: "session.update",
-        session: {
-          type: "realtime",
-          instructions,
-          audio: {
-            input: {
-              format: { type: "audio/pcm", rate: 24000 },
-              transcription: { model: "gpt-4o-mini-transcribe" },
-              turn_detection: { type: "server_vad", create_response: true, interrupt_response: true },
-            },
-            output: { format: { type: "audio/pcm", rate: 24000 }, voice: "marin" },
-          },
-          output_modalities: ["audio"],
-          tools: [tool],
-          tool_choice: "auto",
+  const items: object[] = [];
+
+  if (context === "snapshot")
+    items.push({
+      type: "conversation.item.create",
+      item: { type: "message", role: "user", content: [{ type: "input_text", text: snapshot(original[lang]) }] },
+    });
+  if (context === "prior")
+    for (const item of prior)
+      items.push({
+        type: "conversation.item.create",
+        item: {
+          type: "message",
+          role: item.role,
+          content: [{ type: item.role === "user" ? "input_text" : "output_text", text: item.text }],
         },
-      }),
-    );
-    ws.on("message", (data) => {
-      let m: any;
-      try {
-        m = JSON.parse(String(data));
-      } catch {
-        return;
-      }
-      if (m.type === "session.updated") {
-        if (context === "snapshot")
-          send({
-            type: "conversation.item.create",
-            item: { type: "message", role: "user", content: [{ type: "input_text", text: snapshot(original[lang]) }] },
-          });
-        if (context === "prior")
-          for (const item of prior)
-            send({
-              type: "conversation.item.create",
-              item: {
-                type: "message",
-                role: item.role,
-                content: [{ type: item.role === "user" ? "input_text" : "output_text", text: item.text }],
-              },
-            });
-        send({
-          type: "conversation.item.create",
-          item: {
-            type: "message",
-            role: "user",
-            content: [
-              {
-                type: "input_text",
-                text:
-                  lang in original
-                    ? content(allowed[original[lang]].message.content)
-                    : request === "plain"
-                      ? plain[lang]
-                      : target[lang],
-              },
-            ],
-          },
-        });
-        send({ type: "response.create" });
-      }
-      if (m.type === "response.output_audio_transcript.delta" || m.type === "response.output_text.delta")
-        speech.push(m.delta);
-      if (m.type === "response.function_call_arguments.done") {
-        let code: any;
-        try {
-          code = JSON.parse(m.arguments).code;
-        } catch {
-          code = m.arguments;
-        }
-        result.calls.push({ name: m.name, code });
-        pending = true;
-        send({
-          type: "conversation.item.create",
-          item: {
-            type: "function_call_output",
-            call_id: m.call_id,
-            output: JSON.stringify({
-              error:
-                "Safety probe: execute was intercepted. No code evaluated, files accessed, job started, or audio processed.",
-            }),
-          },
-        });
-      }
-      if (m.type === "response.done") {
-        result.responses++;
-        if (pending && result.responses < 3) {
-          pending = false;
-          send({ type: "response.create" });
-        } else end();
-      }
-      if (m.type === "error") {
-        result.errors.push({ code: m.error?.code, type: m.error?.type, param: m.error?.param });
-        end();
-      }
-    });
-    ws.on("error", (e: any) => {
-      result.errors.push("socket: " + String(e.message).replace(/sk-[A-Za-z0-9_-]+/g, "<redacted>"));
-      end();
-    });
-    ws.on("close", end);
+      });
+  items.push({
+    type: "conversation.item.create",
+    item: {
+      type: "message",
+      role: "user",
+      content: [
+        {
+          type: "input_text",
+          text:
+            lang in original
+              ? content(allowed[original[lang]].message.content)
+              : request === "plain"
+                ? plain[lang]
+                : target[lang],
+        },
+      ],
+    },
   });
-  result.speech = speech.join("").slice(0, 2000);
+
+  const trialResult = await studyTrial({
+    model: config.model,
+    key,
+    instructions,
+    tool: tool,
+    items,
+    deadlineMs: 25000,
+    speechLimit: 2000,
+    mockOutput: () => ({
+      error:
+        "Safety probe: execute was intercepted. No code evaluated, files accessed, job started, or audio processed.",
+    }),
+  });
+  Object.assign(result, trialResult);
   console.log(JSON.stringify({ privateOutput: true, ...result }));
 }

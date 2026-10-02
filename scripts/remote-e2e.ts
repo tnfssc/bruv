@@ -1,4 +1,4 @@
-import { placementReply } from "../tests/fixtures/remote-e2e/placement-parent";
+import { loopbackParent, fixtureRpc } from "./loopback-parent-fixture";
 /** Run real dist/bruv --mode rpc against isolated fake model and pinned Docker SSH host.
  * Parent completion wake is deliberately tested separately by remote-jobs-e2e.ts:
  * this proof kills its original parent before the independent owner finishes.
@@ -18,46 +18,7 @@ process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
 let localCalls = 0;
 const rpcChildren: ReturnType<typeof spawn>[] = [];
-const provider = Bun.serve({
-  hostname: "127.0.0.1",
-  port: 0,
-  async fetch(request) {
-    if (request.method !== "POST" || !new URL(request.url).pathname.endsWith("/chat/completions"))
-      return new Response("not found", { status: 404 });
-    const body = (await request.json()) as {
-      messages: Array<{ role: string; tool_call_id?: string; content?: unknown }>;
-    };
-    const response = placementReply(body.messages);
-    localCalls++;
-    const event = (delta: object, finish_reason: string | null) => ({
-      id: "local-fixture",
-      object: "chat.completion.chunk",
-      created: 1,
-      model: "fixture-model",
-      choices: [{ index: 0, delta, finish_reason }],
-    });
-    return new Response(
-      [event(response, null), event({}, "tool_calls" in response ? "tool_calls" : "stop")]
-        .map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n")
-        .join("") + "data: [DONE]\n\n",
-      { headers: { "content-type": "text/event-stream" } },
-    );
-  },
-});
-mkdirSync(agentDir, { recursive: true });
-writeFileSync(
-  join(agentDir, "models.json"),
-  JSON.stringify({
-    providers: {
-      fixture: {
-        baseUrl: "http://127.0.0.1:" + provider.port + "/v1",
-        api: "openai-completions",
-        apiKey: "fixture-only",
-        models: [{ id: "fixture-model", name: "fixture", contextWindow: 32000, maxTokens: 1024 }],
-      },
-    },
-  }),
-);
+const provider = loopbackParent(agentDir, () => localCalls++);
 const state = () =>
   JSON.parse(readFileSync(statePath, "utf8")) as {
     connection?: unknown;
@@ -91,59 +52,21 @@ for (const args of [
   assert.equal(result.status, 0, result.stderr);
 }
 assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
-const launchRpc = (cwd = launchRepo) => {
-  const child = spawn(bruv, ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model"], {
+const launchRpc = (cwd = launchRepo) =>
+  fixtureRpc({
+    bruv,
     cwd,
-    env: { ...process.env, HOME: home, BRUV_CODING_AGENT_DIR: agentDir },
-    stdio: ["pipe", "pipe", "pipe"],
+    home,
+    agentDir,
+    children: rpcChildren,
+    timeoutDetail: (events) =>
+      "; events=" +
+      JSON.stringify(
+        events
+          .filter((e) => e.type === "tool_execution_end" || (e.type === "message_end" && e.message?.role !== "system"))
+          .slice(-6),
+      ),
   });
-  rpcChildren.push(child);
-  const events: any[] = [];
-  let stderr = "",
-    buffer = "";
-  child.stderr.on("data", (chunk: Buffer) => (stderr += String(chunk)));
-  child.stdout.on("data", (chunk: Buffer) => {
-    buffer += String(chunk);
-    for (let pos; (pos = buffer.indexOf("\n")) !== -1; ) {
-      const line = buffer.slice(0, pos);
-      buffer = buffer.slice(pos + 1);
-      if (line) {
-        try {
-          const event = JSON.parse(line);
-          events.push(event);
-          if (event.type === "extension_ui_request" && event.method === "confirm")
-            child.stdin.write(JSON.stringify({ type: "extension_ui_response", id: event.id, confirmed: false }) + "\n");
-        } catch {
-          throw new Error("Invalid RPC JSON: " + line);
-        }
-      }
-    }
-  });
-  const send = (message: string) => child.stdin.write(JSON.stringify({ type: "prompt", message }) + "\n");
-  const wait = async (predicate: () => boolean, label: string, limit = 20_000) => {
-    const start = Date.now();
-    while (!predicate()) {
-      if (child.exitCode !== null) throw new Error("RPC exited while " + label + ": " + stderr);
-      if (Date.now() - start > limit)
-        throw new Error(
-          "RPC timeout " +
-            label +
-            "; stderr=" +
-            stderr +
-            "; events=" +
-            JSON.stringify(
-              events
-                .filter(
-                  (e) => e.type === "tool_execution_end" || (e.type === "message_end" && e.message?.role !== "system"),
-                )
-                .slice(-6),
-            ),
-        );
-      await Bun.sleep(40);
-    }
-  };
-  return { child, events, send, wait, stderr: () => stderr };
-};
 const ssh = (...args: string[]) =>
   spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", ...args], {
     encoding: "utf8",

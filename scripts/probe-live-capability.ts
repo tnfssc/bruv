@@ -3,7 +3,7 @@
  * Run: BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-capability.ts --disclose-root baseline:jobs grounding:jobs
  * Output JSONL includes model-generated code: review before sharing. Never execute it.
  */
-import WebSocket from "ws";
+import { studyTrial } from "./live-study-trial";
 import { createDefaultLiveCredentialService } from "../src/live/credentials";
 import { loadLiveConfig } from "../src/live/config";
 import { createPromptPreview } from "../src/prompt-preview";
@@ -74,144 +74,64 @@ const variants: Record<string, { suffix: string; desc?: string }> = {
   description: { suffix: guidance, desc: description },
 };
 const plan = requested;
-if (plan.length > 24) throw Error("Maximum 24 trials per invocation");
 async function trial(spec: string, index: number) {
   const [v, s] = spec.split(":");
-  if (!variants[v] || !scenarios[s]) throw Error("Unknown variant/scenario: " + spec);
   const instructions = root + variants[v].suffix;
-  const ws = new WebSocket("wss://api.openai.com/v1/realtime?model=" + encodeURIComponent(config.model), {
-    headers: { Authorization: "Bearer " + key },
-  });
-  const result: any = {
+  const result = {
     trial: index,
     variant: v,
     scenario: s,
     promptHash: createHash("sha256").update(instructions).digest("hex"),
     tools: ["execute"],
-    calls: [],
-    speech: [],
-    errors: [],
   };
-  let done = false,
-    responseCount = 0,
-    toolPending = false;
-  const send = (event: any) => ws.send(JSON.stringify(event));
-  await new Promise<void>((resolve) => {
-    const end = () => {
-      if (done) return;
-      done = true;
-      clearTimeout(timer);
-      ws.close();
-      resolve();
-    };
-    const timer = setTimeout(() => {
-      result.errors.push("deadline 20s");
-      end();
-    }, 20000);
-    ws.on("open", () =>
-      send({
-        type: "session.update",
-        session: {
-          type: "realtime",
-          instructions,
-          audio: {
-            input: {
-              format: { type: "audio/pcm", rate: 24000 },
-              transcription: { model: "gpt-4o-mini-transcribe" },
-              turn_detection: { type: "server_vad", create_response: true, interrupt_response: true },
-            },
-            output: { format: { type: "audio/pcm", rate: 24000 }, voice: "marin" },
+  const items: object[] = [];
+
+  if (s === "correction")
+    items.push({
+      type: "conversation.item.create",
+      item: {
+        type: "message",
+        role: "assistant",
+        content: [
+          {
+            type: "output_text",
+            text: "I cannot access the filesystem or shell in voice mode. Please run a command yourself.",
           },
-          output_modalities: ["audio"],
-          tools: [{ ...tool, description: variants[v].desc ?? tool.description }],
-          tool_choice: "auto",
-        },
-      }),
-    );
-    ws.on("message", (data) => {
-      let m: any;
-      try {
-        m = JSON.parse(String(data));
-      } catch {
-        return;
-      }
-      if (m.type === "session.updated") {
-        if (s === "correction")
-          send({
-            type: "conversation.item.create",
-            item: {
-              type: "message",
-              role: "assistant",
-              content: [
-                {
-                  type: "output_text",
-                  text: "I cannot access the filesystem or shell in voice mode. Please run a command yourself.",
-                },
-              ],
-            },
-          });
-        send({
-          type: "conversation.item.create",
-          item: { type: "message", role: "user", content: [{ type: "input_text", text: scenarios[s] }] },
-        });
-        send({ type: "response.create" });
-      }
-      if (m.type === "response.output_audio_transcript.delta" || m.type === "response.output_text.delta")
-        result.speech.push(m.delta);
-      if (m.type === "response.function_call_arguments.done") {
-        const args = String(m.arguments ?? "");
-        result.calls.push({
-          name: m.name,
-          code: (() => {
-            try {
-              return JSON.parse(args).code;
-            } catch {
-              return args;
-            }
-          })(),
-        });
-        toolPending = true;
-        // Synthetic outputs only. No model-supplied code executed or real files touched.
-        const output =
-          s === "jobs" || s === "naturalJobs"
-            ? { jobs: [] }
-            : s === "file" || s === "correction" || s === "naturalFile"
-              ? { output: "synthetic file says: blue lantern", exitCode: 0 }
-              : s === "audio" || s === "naturalAudio"
-                ? String(result.calls.at(-1)?.code).includes("subagent(")
-                  ? {
-                      id: "probe-worker-1",
-                      status: "running",
-                      background: true,
-                      output: "Synthetic delegation accepted; no actual audio processed",
-                    }
-                  : { error: "Probe intercepted direct audio command; no execution or delegation occurred" }
-                : { output: "No weather lookup configured in synthetic probe", exitCode: 1 };
-        send({
-          type: "conversation.item.create",
-          item: { type: "function_call_output", call_id: m.call_id, output: JSON.stringify(output) },
-        });
-      }
-      if (m.type === "response.done") {
-        responseCount++;
-        if (toolPending) {
-          toolPending = false;
-          if (responseCount < 3) send({ type: "response.create" });
-          else end();
-        } else end();
-      }
-      if (m.type === "error") {
-        result.errors.push({ type: m.error?.type, code: m.error?.code, param: m.error?.param });
-        end();
-      }
+        ],
+      },
     });
-    ws.on("error", (e: any) => {
-      result.errors.push("socket: " + String(e.message).replace(/sk-[A-Za-z0-9_-]+/g, "<redacted>"));
-      end();
-    });
-    ws.on("close", () => end());
+  items.push({
+    type: "conversation.item.create",
+    item: { type: "message", role: "user", content: [{ type: "input_text", text: scenarios[s] }] },
   });
-  result.speech = result.speech.join("").slice(0, 1400);
+
+  const trialResult = await studyTrial({
+    model: config.model,
+    key,
+    instructions,
+    tool: { ...tool, description: variants[v].desc ?? tool.description },
+    items,
+    deadlineMs: 20000,
+    speechLimit: 1400,
+    stringArguments: true,
+    mockOutput: (code) =>
+      s === "jobs" || s === "naturalJobs"
+        ? { jobs: [] }
+        : s === "file" || s === "correction" || s === "naturalFile"
+          ? { output: "synthetic file says: blue lantern", exitCode: 0 }
+          : s === "audio" || s === "naturalAudio"
+            ? String(code).includes("subagent(")
+              ? {
+                  id: "probe-worker-1",
+                  status: "running",
+                  background: true,
+                  output: "Synthetic delegation accepted; no actual audio processed",
+                }
+              : { error: "Probe intercepted direct audio command; no execution or delegation occurred" }
+            : { output: "No weather lookup configured in synthetic probe", exitCode: 1 },
+  });
+  const { responses: _responses, ...output } = trialResult;
+  Object.assign(result, output);
   return result;
 }
 for (let i = 0; i < plan.length; i++)

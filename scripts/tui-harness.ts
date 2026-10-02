@@ -87,10 +87,8 @@ switch (command) {
 
   case "start": {
     if (!/^[A-Za-z0-9_-]+$/.test(session)) throw new Error("Session names may contain letters, numbers, _ and - only");
-    await tmux(["has-session", "-t", session], true).then(async () => {
-      const existing = await tmux(["list-sessions", "-F", "#{session_name}"], true);
-      if (existing.split("\n").includes(session)) throw new Error(`Session already exists: ${session}`);
-    });
+    const existing = await tmux(["list-sessions", "-F", "#{session_name}"], true);
+    if (existing.split("\n").includes(session)) throw new Error(`Session already exists: ${session}`);
 
     const stamp = new Date().toISOString().replaceAll(":", "-");
     const artifactDir = join(artifactsDir, `${session}-${stamp}`);

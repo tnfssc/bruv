@@ -87,12 +87,6 @@ function inputKey(value: Awaited<ReturnType<typeof identity>>): string {
   const { workspace: _workspace, source: _source, ...content } = value;
   return hash(JSON.stringify({ version: 1, ...content }));
 }
-/** Exact content key for a future trusted restore owner; no origin authorization. */
-export async function packedWebInputKey(root: string): Promise<string> {
-  const pin = await Bun.file(resolve(root, "integrations/t3/upstream/source.json")).json();
-  const source = resolve(process.env.BRUV_T3_SOURCE ?? root + "/.cache/bruv-t3code-" + pin.revision);
-  return inputKey(await identity(root, source));
-}
 async function archiveIdentity(root: string) {
   const bytes = await Bun.file(resolve(root, "dist/bruv-web.archive.gz")).bytes();
   if (!bytes.length) throw new Error("Packed web archive is empty");

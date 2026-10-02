@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import {
   invalidatePackedWeb,
-  packedWebInputKey,
   prepareWebPayload,
   recordVerifiedPackedWeb,
   verifyPackedWeb,
@@ -208,17 +207,13 @@ test("legacy repack invalidates receipt before it can fail", async () => {
 
 test("pnpm version drift changes the packed input identity", async () => {
   const f = await fixture();
-  const key = await packedWebInputKey(f.root);
   await Bun.write(f.root + "/pnpm-version", "9.15.1\n");
-  expect(await packedWebInputKey(f.root)).not.toBe(key);
   await expect(verifyPackedWeb(f.root)).rejects.toThrow("build inputs changed");
 });
 
-test("CLI-only edits do not change web content key or invalidate reuse", async () => {
+test("CLI-only edits do not invalidate reuse", async () => {
   const f = await fixture();
-  const key = await packedWebInputKey(f.root);
   await Bun.write(f.root + "/src/cli.ts", "changed CLI only");
-  expect(await packedWebInputKey(f.root)).toBe(key);
   expect(await verifyPackedWeb(f.root)).toBeTruthy();
 });
 
@@ -255,10 +250,8 @@ test.each(["GITHUB_PATH", "GITHUB_ARTIFACTS", "GITHUB_ARTIFACTS_LIST"])(
     process.env[variable] = "/home/runner/work/_temp/_runner_file_commands/" + prefix + "_producer";
     try {
       const f = await fixture();
-      const key = await packedWebInputKey(f.root);
       process.env[variable] = "/home/runner/work/_temp/_runner_file_commands/" + prefix + "_release_target";
       expect(await verifyPackedWeb(f.root)).toBeTruthy();
-      expect(await packedWebInputKey(f.root)).toBe(key);
     } finally {
       if (old === undefined) delete process.env[variable];
       else process.env[variable] = old;
@@ -271,9 +264,7 @@ test("GitHub build context is still guarded, not all GITHUB variables are metada
   process.env.GITHUB_REF = "refs/heads/develop";
   try {
     const f = await fixture();
-    const key = await packedWebInputKey(f.root);
     process.env.GITHUB_REF = "refs/tags/v0.15.15";
-    expect(await packedWebInputKey(f.root)).not.toBe(key);
     await expect(verifyPackedWeb(f.root)).rejects.toThrow("build inputs changed");
   } finally {
     if (old === undefined) delete process.env.GITHUB_REF;

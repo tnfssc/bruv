@@ -37,6 +37,10 @@ const digest = (text: string) => createHash("sha256").update(text).digest("hex")
 const originalRegistry =
   'import codemodeExtension from "./codemode/index.js";\nimport llamaExtension from "./llama/index.js";\nimport mcpExtension from "./mcp/index.js";\nimport toolSearchExtension from "./tool-search/index.js";\nexport const builtInExtensions = [\n    { name: "llama.cpp", factory: llamaExtension, builtin: true },\n    // Replaceable: an extension that registers `codemode`, `tool_search`, or `/mcp` (such as a third-party\n    // MCP extension) takes over instead of running alongside the built-in one.\n    { name: "codemode", factory: codemodeExtension, replaceable: true, builtin: true },\n    { name: "tool-search", factory: toolSearchExtension, replaceable: true, builtin: true },\n    { name: "mcp", factory: mcpExtension, replaceable: true, builtin: true },\n];\n//# sourceMappingURL=index.js.map';
 
+test("Pi host adaptations include the required disk-backed history seam", () => {
+  expect(piHostPatches.some((patch) => patch.path === "dist/core/session-manager.js")).toBe(true);
+});
+
 test("Pi host adaptation is exact, idempotent, and rejects dependency drift", async () => {
   for (const patch of piHostPatches) {
     const installed = await readFile(join(piRoot, patch.path), "utf8");

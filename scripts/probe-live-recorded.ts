@@ -2,7 +2,7 @@
  * BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-recorded.ts --source FILE --study-2026-09-25 --disclose-private weather:fresh:baseline
  * Sends private root/transcript to configured provider; output may echo private text. Keep output OUTSIDE repository.
  */
-import WebSocket from "ws";
+import { studyTrial } from "./live-study-trial";
 import { probeArgs, readStudy, study, studyTarget } from "./live-probe-input";
 import { createHash } from "node:crypto";
 import { createDefaultLiveCredentialService } from "../src/live/credentials";
@@ -65,15 +65,9 @@ for (const spec of plan) {
 }
 for (let n = 0; n < plan.length; n++) {
   const [target, context, variant] = plan[n].split(":");
-  if (
-    !(target in targets) ||
-    !["fresh", "snapshot", "replay"].includes(context) ||
-    !["baseline", "grounding"].includes(variant)
-  )
-    throw Error("Invalid trial: " + plan[n]);
   const idx = targets[target as keyof typeof targets];
   const instructions = root + (variant === "grounding" ? grounding : "");
-  const result: any = {
+  const result = {
     trial: n + 1,
     target,
     context,
@@ -83,141 +77,62 @@ for (let n = 0; n < plan.length; n++) {
     instructionHash: createHash("sha256").update(instructions).digest("hex"),
     inputHash: createHash("sha256").update(content(allowed[idx].message.content)).digest("hex"),
     snapshotHash: context === "fresh" ? null : createHash("sha256").update(snapshot(idx)).digest("hex"),
-    calls: [],
-    speech: [],
-    errors: [],
   };
-  const ws = new WebSocket("wss://api.openai.com/v1/realtime?model=" + encodeURIComponent(config.model), {
-    headers: { Authorization: "Bearer " + key },
+  const items: object[] = [];
+
+  if (context !== "fresh")
+    items.push({
+      type: "conversation.item.create",
+      item: { type: "message", role: "user", content: [{ type: "input_text", text: snapshot(idx) }] },
+    });
+  if (context === "replay")
+    for (const x of allowed.slice(4, idx).filter((x) => x.customType === "live-provisional")) {
+      const text = content(x.content).replace(
+        /^(interrupted assistant transcript|unfinished assistant transcript(?: at turn boundary)?): /,
+        "",
+      );
+      if (text)
+        items.push({
+          type: "conversation.item.create",
+          item: { type: "message", role: "assistant", content: [{ type: "output_text", text }] },
+        });
+    }
+  items.push({
+    type: "conversation.item.create",
+    item: {
+      type: "message",
+      role: "user",
+      content: [{ type: "input_text", text: content(allowed[idx].message.content) }],
+    },
   });
-  const send = (event: any) => ws.send(JSON.stringify(event));
-  let done = false,
-    pending = false,
-    responses = 0;
-  await new Promise<void>((resolve) => {
-    const end = () => {
-      if (done) return;
-      done = true;
-      clearTimeout(timer);
-      ws.close();
-      resolve();
-    };
-    const timer = setTimeout(() => {
-      result.errors.push("deadline 25s");
-      end();
-    }, 25000);
-    ws.on("open", () =>
-      send({
-        type: "session.update",
-        session: {
-          type: "realtime",
-          instructions,
-          audio: {
-            input: {
-              format: { type: "audio/pcm", rate: 24000 },
-              transcription: { model: "gpt-4o-mini-transcribe" },
-              turn_detection: { type: "server_vad", create_response: true, interrupt_response: true },
-            },
-            output: { format: { type: "audio/pcm", rate: 24000 }, voice: "marin" },
-          },
-          output_modalities: ["audio"],
-          tools: [tool],
-          tool_choice: "auto",
-        },
-      }),
-    );
-    ws.on("message", (data) => {
-      let m: any;
-      try {
-        m = JSON.parse(String(data));
-      } catch {
-        return;
-      }
-      if (m.type === "session.updated") {
-        if (context !== "fresh")
-          send({
-            type: "conversation.item.create",
-            item: { type: "message", role: "user", content: [{ type: "input_text", text: snapshot(idx) }] },
-          });
-        if (context === "replay")
-          for (const x of allowed.slice(4, idx).filter((x) => x.customType === "live-provisional")) {
-            const text = content(x.content).replace(
-              /^(interrupted assistant transcript|unfinished assistant transcript(?: at turn boundary)?): /,
-              "",
-            );
-            if (text)
-              send({
-                type: "conversation.item.create",
-                item: { type: "message", role: "assistant", content: [{ type: "output_text", text }] },
-              });
+
+  const trialResult = await studyTrial({
+    model: config.model,
+    key,
+    instructions,
+    tool: tool,
+    items,
+    deadlineMs: 25000,
+    speechLimit: 2000,
+    mockOutput: (code) =>
+      String(code).includes("jobs.inspect(")
+        ? {
+            id: "synthetic-worker",
+            status: "completed",
+            output: "Mock worker generated an FFmpeg command template; no audio processed. File location unknown.",
           }
-        send({
-          type: "conversation.item.create",
-          item: {
-            type: "message",
-            role: "user",
-            content: [{ type: "input_text", text: content(allowed[idx].message.content) }],
-          },
-        });
-        send({ type: "response.create" });
-      }
-      if (m.type === "response.output_audio_transcript.delta" || m.type === "response.output_text.delta")
-        result.speech.push(m.delta);
-      if (m.type === "response.function_call_arguments.done") {
-        let code;
-        try {
-          code = JSON.parse(m.arguments).code;
-        } catch {
-          code = m.arguments;
-        }
-        result.calls.push({ name: m.name, code });
-        pending = true;
-        send({
-          type: "conversation.item.create",
-          item: {
-            type: "function_call_output",
-            call_id: m.call_id,
-            output: JSON.stringify(
-              String(code).includes("jobs.inspect(")
-                ? {
-                    id: "synthetic-worker",
-                    status: "completed",
-                    output:
-                      "Mock worker generated an FFmpeg command template; no audio processed. File location unknown.",
-                  }
-                : String(code).includes("subagent(")
-                  ? {
-                      id: "synthetic-worker",
-                      status: "running",
-                      background: true,
-                      output: "Mock delegation receipt only; no actual worker started, no files processed.",
-                    }
-                  : {
-                      error:
-                        "Probe intercepted command. No code evaluated, files inspected or changed, or job started.",
-                    },
-            ),
-          },
-        });
-      }
-      if (m.type === "response.done") {
-        responses++;
-        if (pending && responses < 3) {
-          pending = false;
-          send({ type: "response.create" });
-        } else end();
-      }
-      if (m.type === "error") {
-        result.errors.push({ code: m.error?.code, type: m.error?.type, param: m.error?.param });
-        end();
-      }
-    });
-    ws.on("error", (e: any) => {
-      result.errors.push("socket: " + String(e.message).replace(/sk-[A-Za-z0-9_-]+/g, "<redacted>"));
-      end();
-    });
-    ws.on("close", end);
+        : String(code).includes("subagent(")
+          ? {
+              id: "synthetic-worker",
+              status: "running",
+              background: true,
+              output: "Mock delegation receipt only; no actual worker started, no files processed.",
+            }
+          : {
+              error: "Probe intercepted command. No code evaluated, files inspected or changed, or job started.",
+            },
   });
-  result.speech = result.speech.join("").slice(0, 2000);
+  const { responses: _responses, ...output } = trialResult;
+  Object.assign(result, output);
   console.log(JSON.stringify({ privateOutput: true, ...result }));
 }

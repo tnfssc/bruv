@@ -1,4 +1,4 @@
-import { placementReply } from "../tests/fixtures/remote-e2e/placement-parent";
+import { loopbackParent, fixtureRpc } from "./loopback-parent-fixture";
 /** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -6,55 +6,14 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import { strict as assert } from "node:assert";
 const bruv = process.env.BRUV_BIN!;
-const container = process.env.FIXTURE_CONTAINER!;
 const home = homedir();
 const statePath = join(home, ".bruv/remote/state.json");
 const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
-let localCalls = 0;
 const rpcChildren: ReturnType<typeof spawn>[] = [];
-const provider = Bun.serve({
-  hostname: "127.0.0.1",
-  port: 0,
-  async fetch(request) {
-    if (request.method !== "POST" || !new URL(request.url).pathname.endsWith("/chat/completions"))
-      return new Response("not found", { status: 404 });
-    const body = (await request.json()) as {
-      messages: Array<{ role: string; tool_call_id?: string; content?: unknown }>;
-    };
-    const response = placementReply(body.messages);
-    localCalls++;
-    const event = (delta: object, finish_reason: string | null) => ({
-      id: "local-fixture",
-      object: "chat.completion.chunk",
-      created: 1,
-      model: "fixture-model",
-      choices: [{ index: 0, delta, finish_reason }],
-    });
-    return new Response(
-      [event(response, null), event({}, "tool_calls" in response ? "tool_calls" : "stop")]
-        .map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n")
-        .join("") + "data: [DONE]\n\n",
-      { headers: { "content-type": "text/event-stream" } },
-    );
-  },
-});
-mkdirSync(agentDir, { recursive: true });
-writeFileSync(
-  join(agentDir, "models.json"),
-  JSON.stringify({
-    providers: {
-      fixture: {
-        baseUrl: "http://127.0.0.1:" + provider.port + "/v1",
-        api: "openai-completions",
-        apiKey: "fixture-only",
-        models: [{ id: "fixture-model", name: "fixture", contextWindow: 32000, maxTokens: 1024 }],
-      },
-    },
-  }),
-);
+const provider = loopbackParent(agentDir);
 const state = () =>
   JSON.parse(readFileSync(statePath, "utf8")) as {
     connection?: unknown;
@@ -98,61 +57,22 @@ for (const args of [
   assert.equal(result.status, 0, result.stderr);
 }
 assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
-const launchRpc = (cwd = launchRepo, diagnostic = false) => {
-  const child = spawn(
+const launchRpc = (cwd = launchRepo, diagnostic = false) =>
+  fixtureRpc({
     bruv,
-    ["--mode", "rpc", "--provider", "fixture", "--model", "fixture-model", ...(diagnostic ? ["--no-session"] : [])],
-    {
-      cwd,
-      env: { ...process.env, HOME: home, BRUV_CODING_AGENT_DIR: agentDir },
-      stdio: ["pipe", "pipe", "pipe"],
-    },
-  );
-  rpcChildren.push(child);
-  const events: any[] = [];
-  let stderr = "",
-    buffer = "";
-  child.stderr.on("data", (chunk: Buffer) => (stderr += String(chunk)));
-  child.stdout.on("data", (chunk: Buffer) => {
-    buffer += String(chunk);
-    for (let pos; (pos = buffer.indexOf("\n")) !== -1; ) {
-      const line = buffer.slice(0, pos);
-      buffer = buffer.slice(pos + 1);
-      if (line) {
-        try {
-          const event = JSON.parse(line);
-          events.push(event);
-          if (event.type === "extension_ui_request" && event.method === "confirm")
-            child.stdin.write(JSON.stringify({ type: "extension_ui_response", id: event.id, confirmed: false }) + "\n");
-        } catch {
-          throw new Error("Invalid RPC JSON: " + line);
-        }
-      }
-    }
+    cwd,
+    home,
+    agentDir,
+    children: rpcChildren,
+    noSession: diagnostic,
+    timeoutDetail: (events) =>
+      "; pane=" +
+      spawnSync("tmux", ["-L", "bruv-capability-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
+        encoding: "utf8",
+      }).stdout +
+      "; events=" +
+      JSON.stringify(events.slice(-4)),
   });
-  const send = (message: string) => child.stdin.write(JSON.stringify({ type: "prompt", message }) + "\n");
-  const wait = async (predicate: () => boolean, label: string, limit = 20_000) => {
-    const start = Date.now();
-    while (!predicate()) {
-      if (child.exitCode !== null) throw new Error("RPC exited while " + label + ": " + stderr);
-      if (Date.now() - start > limit)
-        throw new Error(
-          "RPC timeout " +
-            label +
-            "; stderr=" +
-            stderr +
-            "; pane=" +
-            spawnSync("tmux", ["-L", "bruv-capability-pty-" + process.pid, "capture-pane", "-p", "-t", "remote"], {
-              encoding: "utf8",
-            }).stdout +
-            "; events=" +
-            JSON.stringify(events.slice(-4)),
-        );
-      await Bun.sleep(40);
-    }
-  };
-  return { child, events, send, wait, stderr: () => stderr };
-};
 const ssh = (...args: string[]) =>
   spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", ...args], {
     encoding: "utf8",
@@ -167,20 +87,6 @@ const tmux = (...args: string[]) => {
   assert.equal(result.status, 0, result.stderr);
   return result.stdout;
 };
-const ownerQuestion = (taskId: string): { status: string; answer?: string } => {
-  const result = spawnSync(
-    "ssh",
-    [
-      "-F",
-      process.env.FIXTURE_SSH_CONFIG!,
-      "fixture-owner",
-      "cat /root/.bruv/remote-owner/tasks/" + taskId + "/session.jsonl.questions.json",
-    ],
-    { encoding: "utf8", timeout: 6000 },
-  );
-  assert.equal(result.status, 0, result.stderr);
-  return JSON.parse(result.stdout)[0];
-};
 const pane = () => tmux("capture-pane", "-p", "-t", "remote");
 const evidence = (name: string) => {
   const dir = process.env.BRUV_REMOTE_PTY_ARTIFACTS;
@@ -190,29 +96,6 @@ const evidence = (name: string) => {
   }
 };
 const key = (...keys: string[]) => tmux("send-keys", "-t", "remote", ...keys);
-// Capture only terminal text; the owner/RPC JSON remains available separately for machine assertions.
-const historyPane = () => tmux("capture-pane", "-p", "-S", "-", "-t", "remote");
-const noChatJson = (frame: string) =>
-  assert(
-    !/"(?:taskId|eventCount|lastAssistant|transcriptComplete|replyDelivery)"\s*:/.test(frame),
-    "structured remote poll leaked into human chat\n" + frame,
-  );
-const command = async (text: string, expected: string) => {
-  const before = historyPane().split("[bruv-remote]").length;
-  key("C-u");
-  type(text);
-  // Let the real editor consume the pasted command before dispatching Enter.
-  await until(text);
-  await Bun.sleep(150);
-  key("Enter");
-  const deadline = Date.now() + 20000;
-  while (Date.now() < deadline) {
-    const messages = historyPane().split("[bruv-remote]");
-    if (messages.length > before && messages.at(-1)!.replace(/\s+/g, "").includes(expected.replace(/\s+/g, ""))) return;
-    await Bun.sleep(100);
-  }
-  throw new Error("No rendered command result: " + text + "\n" + pane());
-};
 const type = (text: string) => tmux("send-keys", "-t", "remote", "-l", text);
 const until = async (needle: string, timeout = 12000) => {
   const start = Date.now();

@@ -1,5 +1,4 @@
-import { piHostPatches, preparePiHost } from "./pi-host-adaptation";
-import { createHash } from "node:crypto";
+import { preparePiHost } from "./pi-host-adaptation";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,22 +8,6 @@ const piRoot = join(root, "node_modules/@earendil-works/pi-coding-agent");
 const photonRoot = join(root, "node_modules/@silvia-odwyer/photon-node");
 const output = join(root, "runtime-assets");
 const { version } = (await Bun.file(join(root, "package.json")).json()) as { version: string };
-
-// The owned lazy-journal adapter relies on Pi's synchronous private seams.
-// Refuse dependency drift at build/check time; upgrades need explicit review
-// and parity tests, rather than silently falling back to full resident history.
-const piPackage = JSON.parse(await readFile(join(piRoot, "package.json"), "utf8")) as { version: string };
-const sessionManagerHash = createHash("sha256")
-  .update(await readFile(join(piRoot, "dist/core/session-manager.js")))
-  .digest("hex");
-const sessionManagerPatch = piHostPatches.find((patch) => patch.path === "dist/core/session-manager.js");
-if (!sessionManagerPatch) throw new Error("Missing Pi session scan adaptation");
-if (
-  piPackage.version !== "1.0.0" ||
-  ![sessionManagerPatch.originalSha256, sessionManagerPatch.adaptedSha256].includes(sessionManagerHash)
-) {
-  throw new Error("Unsupported Pi SessionManager: review the disk-backed history adapter before updating Pi");
-}
 
 await preparePiHost(piRoot);
 

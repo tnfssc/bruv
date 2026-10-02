@@ -40,3 +40,41 @@ test("bounded JSONL preserves UTF-8 across chunks; cutoff and malformed input", 
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("invalid study plans fail before private source or credential/socket work", async () => {
+  for (const [script, args, message] of [
+    ["probe-live-capability.ts", ["--disclose-root", "unknown:jobs"], "valid variant:scenario"],
+    [
+      "probe-live-recorded.ts",
+      ["--source", "/nonexistent-private-study", "--study-2026-09-25", "--disclose-private", "bad:fresh:baseline"],
+      "Invalid trial",
+    ],
+    [
+      "probe-live-controlled.ts",
+      ["--source", "/nonexistent-private-study", "--study-2026-09-25", "--disclose-private", "bad:snapshot:baseline"],
+      "Invalid condition",
+    ],
+  ] as const) {
+    const proc = Bun.spawn([process.execPath, new URL("../scripts/" + script, import.meta.url).pathname, ...args], {
+      env: {
+        PATH: process.env.PATH,
+        HOME: "/nonexistent-study-home",
+        BRUV_CAPABILITY_PROBE: "1",
+        BRUV_RECORDED_PROBE: "1",
+        BRUV_CONTROLLED_PROBE: "1",
+      },
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    const [code, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
+    expect(code).not.toBe(0);
+    expect(stdout).toBe("");
+    expect(stderr).toContain(message);
+    expect(stderr).not.toContain("ENOENT");
+    expect(stderr).not.toContain("credential");
+  }
+});

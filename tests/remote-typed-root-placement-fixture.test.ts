@@ -220,7 +220,7 @@ describe("typed fixture infrastructure safety", () => {
   const read = (f: string) => readFileSync(new URL("../" + f, import.meta.url), "utf8");
   test("network none, no local inference, explicit binary, normal picker answer", () => {
     const runner = read("scripts/remote-root-placement-e2e.ts");
-    expect(runner).toContain('"--network",\n    "none"');
+    expect(read("scripts/network-none-fixture.ts")).toMatch(/"--network",\s*"none"/);
     expect(runner).toContain("process.env.BRUV_BIN");
     expect(runner).not.toContain("parentProvider");
     expect(runner).not.toContain("Bun.serve");
