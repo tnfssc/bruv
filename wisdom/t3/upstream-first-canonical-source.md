@@ -57,7 +57,7 @@ Retained because they are Bruv product/security boundaries, not provider forks:
 
 - `provider/BruvWebPi.ts` plus narrow provider setup/current-adapter seams: the
   installer-owned executable, validated mode descriptors, shell-only lifecycle
-  records and pending-work ownership. Pi's minimum version remains 1.0.0 for
+  records and pending-work ownership. Pi's upstream minimum compatibility version remains 0.80.5 for
   ordinary Pi executables. Exactly the operator-designated Bruv path is recognized
   as a different version domain (Bruv release version is not Pi package version),
   rather than numerically comparing v0.15.x with Pi 1.0. Generic/mismatched Pi

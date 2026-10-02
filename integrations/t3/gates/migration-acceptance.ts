@@ -108,7 +108,7 @@ try {
   await copyFile(join(import.meta.dir, "migration-fixture-preview.ts.txt"), previewRunner);
   await runBun(PREVIEW, previewRunner, state, "upgrade");
   await runBun(PREVIEW, previewRunner, state, "restart");
-  console.log("migration acceptance: PASS (historical V2 baseline -> canonical source -> restart)");
+  console.log("migration acceptance: PASS (shipped production -> canonical source -> restart)");
 } finally {
   await Promise.all([
     rm(productionRunner, { force: true }),

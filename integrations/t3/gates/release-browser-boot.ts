@@ -131,6 +131,7 @@ try {
       surface = "";
       const text = await page.locator("body").innerText();
       check(!/T3 Code could not load|failed to load|something went wrong/i.test(text), "visible boot failure: " + text);
+      check(!text.includes("Update Available: Pi"), "embedded Bruv must not advertise Pi executable updates");
       check(!(await page.locator("#boot-error").isVisible()), "boot error is visible");
       if (await page.locator("#boot-shell").count()) return false;
       const setup = page.getByRole("dialog").filter({ has: page.getByText("Set up T3 Code", { exact: true }) });
@@ -165,7 +166,7 @@ try {
         .innerText()
         .catch(() => "")
     : "";
-  if (page && failure) await page.screenshot({ path: proofPath + ".png" }).catch(() => {});
+  if (page) await page.screenshot({ path: proofPath + ".png" }).catch(() => {});
   await writeFile(
     proofPath,
     JSON.stringify(
