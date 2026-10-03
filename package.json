@@ -30,7 +30,7 @@
     "@earendil-works/pi-coding-agent": "1.0.0",
     "@earendil-works/pi-server": "1.0.0",
     "@earendil-works/pi-tui": "1.0.0",
-    "@google/genai": "2.26.0",
+    "@google/genai": "2.27.0",
     "es-module-lexer": "^3.0.2",
     "resolve.exports": "2.0.3",
     "ws": "8.22.0",
