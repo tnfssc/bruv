@@ -130,7 +130,8 @@ function identity(parts: readonly unknown[]): UUID {
 
 export function nativeTaskId(link: TaskLink): string {
   return (
-    "bruv:" +
+    // This is also the SDK child-history agentId; keep it a safe path segment.
+    "bruv-" +
     identity(["task", link.root.namespace, link.root.sourceSessionId, link.root.sessionId, link.sourceId, link.jobId])
   );
 }

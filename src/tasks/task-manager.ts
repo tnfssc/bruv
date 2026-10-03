@@ -82,7 +82,17 @@ export type TaskEvent =
   | { type: "stopping"; task: TaskSummary };
 export type TaskEventListener = (event: TaskEvent) => void;
 
+/** Identity supplied by the actual execute bridge, not inferred from timing or titles. */
+export interface LocalTaskLaunchIdentity {
+  sourceSessionId: string;
+  sourceCallId: string;
+  callIndex: number;
+  prompt?: string;
+  profile?: string;
+}
+
 export interface TaskLaunch {
+  launchIdentity?: LocalTaskLaunchIdentity;
   /** Human task name, supplied explicitly by the launcher. */
   title?: string;
   id?: string;
@@ -100,6 +110,7 @@ export interface TaskLaunch {
 }
 
 export interface AgentPreparationLaunch {
+  launchIdentity?: LocalTaskLaunchIdentity;
   title?: string;
   id: string;
   displayCommand: string;
@@ -110,6 +121,7 @@ export interface AgentPreparationLaunch {
 }
 
 export interface TaskSummary {
+  launchIdentity?: LocalTaskLaunchIdentity;
   /** Whether completion belongs to the background delivery path, not an inline wait. */
   background?: boolean;
   title?: string;
@@ -202,6 +214,7 @@ export class TaskManager {
     const preparationController = new AbortController();
     const task: ManagedTask = {
       id: launch.id,
+      ...(launch.launchIdentity ? { launchIdentity: { ...launch.launchIdentity } } : {}),
       ...(launch.title === undefined ? {} : { title: launch.title }),
       workspace: { ...launch.workspace, preparationStatus: "preparing" },
       kind: "agent",
@@ -310,6 +323,7 @@ export class TaskManager {
       });
       task = {
         id,
+        ...(launch.launchIdentity ? { launchIdentity: { ...launch.launchIdentity } } : {}),
         ...(launch.title === undefined ? {} : { title: launch.title }),
         agent: launch.agent ? { ...launch.agent, phase: "starting", events: 0 } : undefined,
         workspace: launch.workspace ? { ...launch.workspace } : undefined,
@@ -454,6 +468,10 @@ export class TaskManager {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let onAbort: (() => void) | undefined;
     try {
+      // Explicit async launch already transferred delivery at spawn. A very fast
+      // exit must not also be reclaimed as an inline/ACK-owned result.
+      if (waitMs === 0 && task.notifyOnComplete)
+        return { ...(task.status === "running" ? this.inspect(id) : await this.wait(id)), background: true };
       if (waitMs > 0 && !signal?.aborted) {
         await Promise.race([
           this.wait(id),
@@ -502,6 +520,7 @@ export class TaskManager {
       }
       if (!task.notifyOnComplete) {
         task.notifyOnComplete = true;
+        this.#emit({ type: "updated", task: this.#summary(task) });
         // A disconnect may race completion, before its result reached the worker.
         if (task.status !== "running" && !this.#shuttingDown) this.#notify(await this.wait(id));
       }
@@ -783,6 +802,7 @@ export class TaskManager {
     return {
       ...summary,
       background: task.notifyOnComplete,
+      ...(summary.launchIdentity ? { launchIdentity: { ...summary.launchIdentity } } : {}),
       ...(summary.agent ? { agent: { ...summary.agent } } : {}),
       ...(summary.workspace ? { workspace: { ...summary.workspace } } : {}),
       ...(summary.termination ? { termination: { ...summary.termination } } : {}),
