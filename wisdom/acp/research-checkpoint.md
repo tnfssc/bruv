@@ -69,3 +69,28 @@ Deep T3 task_56bfaff7 completed: real generic v1 late events absent from owned r
 Filtered full-chain task_177054c8 completed. Synthetic and real engine/shell filtering proved; actual official pi-acp registration and Bruv execute/file diff worked. Automatic late answer generated in Bruv but absent from T3/history; concurrent follow-up marked completed without reaching Bruv or getting reply. Reload retained the missing-result state. Parent inspected final screenshots and summaries. All owned processes cleaned and private auth/runtime state removed. Synthesis: registry-followup-review.md.
 
 No migration/release is authorized or performed; next is discussion and choosing lifecycle/ownership requirements. No unfinished research jobs remain. Product code unchanged in this extended pass.
+
+## User prefers changing pi-acp, not T3
+
+New request: user is willing to change pi-acp and asks whether T3 changes can be avoided. Parent chose a bounded adapter-only feasibility spike, not release/migration. Candidate contract: keep ACP turn open while owned Bruv background work/continuation runs, preserve input ownership, isolate injected credential vars in adapter child launch. T3 and compiled Bruv remain unchanged. This may keep UI Working longer; do not promise native child-thread parity.
+
+- task_0c77b9c0 owns isolated prototype/proof. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0c77b9c0; branch bruv/prove-pi-acp-only-lifecycle-change-with--0c77b9c0. Exact pi-acp published source may change only in its owned cache; save patch/tests/proof alongside wisdom. Prove with actual unmodified T3/browser and compiled Bruv. No product merge/removal or release.
+- task_2ea5dade independently reviews no-T3-change contract, busy composer/steering/cancel and telemetry. Writes pi-acp-only-options.md in shared workspace.
+
+Current thought is likely feasible for kept-open turn, not yet tested. Need distinguish foreground Stop from cancelling all owned jobs; no text inference or fixed grace delay may stand in for typed lifecycle.
+
+User added explicit requirement during adapter-only proof: proper CLI steering must work through T3 UI. See steering-requirement.md. Queue-only input and keep-open lifecycle are NOT enough. Parent must require actual Steer behavior, no dropped input or unintended background-task cancellation, and distinguish it from Stop.
+
+Added independent actual Steer-versus-Stop wire task (see normal job title) because exact generic source says supportsActiveSteering:false and supportsSteeringByInterruptRestart:true. Own .cache/acp-steering-wire and steering-wire-contract.md. Must verify cancellation reason/metadata and subsequent prompt, not infer real CLI steering from the UI label.
+
+Read-only reviewer task_2ea5dade confirms generic ACP cannot invoke native engine steering: static capabilities false/interrupt-restart true, active steer method unsupported, Queue waits behind held run. Wire task_d9027497 still running. Parent found existing upstream PiAdapterV2 active steering true and prompt streamingBehavior:steer, so added native-Pi alternative research (normal job title) to check external T3 + configured Bruv binary, without bundling or T3 changes. This is a separate transport option, not silently changing user ACP architecture.
+
+Steering wire owner: task_d9027497. Native Pi alternative owner: task_9c436381. The existing Pi route is source-supported, not yet runtime-proven with Bruv. Adapter-only keep-open task_0c77b9c0 remains separate and cannot by itself close the new steering acceptance gate.
+
+Adapter-only task_0c77b9c0 finished: experimental pi-acp patch plus173tests/typecheck/build, repeated real unmodified T3/Bruv proof. Typed background launch + lifecycle + task-complete acknowledgement holds run through real automatic answer. UI Steer successfully retains followup and completion in original T3 run, but cancels/restarts provider attempt (not native engine steering). Stop foreground-only leaves managed shell alive; later output after Stop unowned. Evidence/prototype-only commit55f65b9a cherry-picked to parent for retention; no production implementation changed. Strict steering gate remains open pending wire/native-Pi results. Read pi-acp-only-lifecycle.md for exact bounded proof and failed early iterations.
+
+Parent read prototype handoff and inspected actual completed/Stop frames. Both followup and automatic answer are visibly retained, but merged within one T3 run; early text may be withheld until drain, and Stop warning says foreground-only. Read steering-wire-contract.md draft: actual Steer and Stop both emit identical session/cancel with only sessionId; queued UI Steer then gets ordinary replacement prompt. Thus adapter-only progress cannot be advertised as in-place CLI steering. Await wire task final cleanup and native Pi alternative result before final direction answer.
+
+## Steering/no-T3-change pass complete
+
+Wire task_d9027497 confirmed identical cancel envelopes for Steer and Stop, followed by replacement prompt for Steer. Native Pi task_9c436381 proved safe-boundary engine steering in actual UI through an explicit research-only version shim; direct binaryPath fails version gate and native job APIs still require a new compatible ownership strategy. Parent read reports and inspected selected UI/wire proof. No production or T3 changes/release. All jobs finished and owned runtimes cleaned. Synthesis and next user choice: steering-decision.md.

@@ -1,0 +1,157 @@
+orchestration-v2/Adapters/AcpAdapterV2.ts
+548:     canReadThreadSnapshot: false,
+549:     canRollbackThread: true,
+550:     canForkThread: false,
+551:     canForkFromTurn: false,
+552:     canForkFromSubagentThread: false,
+553:     exposesNativeThreadId: true,
+554:   },
+555:   turns: {
+556:     exposesNativeTurnId: false,
+557:     emitsTurnStarted: true,
+558:     emitsTurnCompleted: true,
+559:     supportsInterrupt: true,
+560:     supportsActiveSteering: false,
+561:     supportsSteeringByInterruptRestart: true,
+562:     supportsQueuedMessages: true,
+563:     terminalStatusQuality: "strong",
+
+orchestration-v2/Adapters/AcpAdapterV2.ts
+7290:           steerTurn: (turnInput) =>
+7291:             Effect.fail(
+7292:               new ProviderAdapter.ProviderAdapterSteerRunUnsupportedError({
+7293:                 driver,
+7294:                 providerThreadId: turnInput.providerThread.id,
+7295:               }),
+7296:             ),
+
+orchestration-v2/Adapters/AcpRegistryAdapterV2.ts
+140: function makeAcpRegistryRuntime(options: AcpRegistryAdapterV2Options) {
+141:   return (
+142:     input: AcpAdapterV2RuntimeInput,
+143:   ): Effect.Effect<
+144:     AcpSessionRuntime.AcpSessionRuntime["Service"],
+145:     EffectAcpErrors.AcpError,
+146:     Crypto.Crypto | Scope.Scope
+147:   > =>
+148:     Effect.gen(function* () {
+149:       const { processEnvironment, ...runtimeInput } = input;
+150:       const resolved = yield* options.resolver
+151:         .resolve(options.settings, input.cwd, options.environment)
+152:         .pipe(
+153:           Effect.mapError(
+154:             (cause) =>
+155:               new EffectAcpErrors.AcpSpawnError({
+156:                 command: options.settings.agentId || ACP_REGISTRY_PROVIDER,
+157:                 cause,
+158:               }),
+159:           ),
+160:         );
+161:       const context = yield* Layer.build(
+162:         AcpSessionRuntime.layer({
+163:           ...runtimeInput,
+164:           spawn:
+165:             processEnvironment === undefined
+166:               ? resolved.spawn
+167:               : {
+168:                   ...resolved.spawn,
+169:                   env: { ...resolved.spawn.env, ...processEnvironment },
+170:                 },
+171:           ...(options.settings.authMethodId ? { authMethodId: options.settings.authMethodId } : {}),
+172:         }).pipe(
+173:           Layer.provide(
+174:             Layer.succeed(ChildProcessSpawner.ChildProcessSpawner, options.childProcessSpawner),
+175:           ),
+176:         ),
+177:       );
+178:       return yield* Effect.service(AcpSessionRuntime.AcpSessionRuntime).pipe(
+
+orchestration-v2/Adapters/AcpRegistryAdapterV2.ts
+187:   const flavor: AcpAdapterV2Flavor = {
+188:     driver: ACP_REGISTRY_PROVIDER,
+189:     capabilities: AcpProviderCapabilitiesV2,
+190:     promptFailure: (cause) => acpRegistryPromptFailure(options.settings.agentId, cause),
+191:     // Per-agent exceptions (Mistral Vibe, Devin): see the note above
+192:     // registerMistralVibeAcpExtensions before adding any more.
+193:     ...(options.settings.agentId === "mistral-vibe"
+194:       ? { registerExtensions: registerMistralVibeAcpExtensions }
+195:       : {}),
+196:     ...(isDevin
+197:       ? {
+198:           clientCapabilitiesMeta: {
+199:             "cognition.ai/subagentSupport": true,
+200:             "cognition.ai/messageGrouping": true,
+201:           },
+202:           normalizeSessionUpdate: normalizeDevinSessionUpdate,
+203:           normalizeToolCall: normalizeDevinToolCall,
+204:           extractSubagentUpdate: extractDevinSubagentUpdate,
+205:         }
+206:       : {}),
+207:     makeRuntime: options.makeRuntime ?? makeAcpRegistryRuntime(options),
+208:     ...(runtimeCoordinator === undefined
+209:       ? {}
+210:       : {
+211:           onAvailableCommandsUpdate: (commands) =>
+
+provider/acp/AcpSessionRuntime.ts
+2431:     const cancel = Effect.gen(function* () {
+2432:       const started = yield* getStartedState;
+2433:       const activePrompt = yield* Ref.get(activePromptRef);
+2434:       const cancelPayload = {
+2435:         sessionId: started.sessionId,
+2436:         ...(options.cancelMeta === undefined ? {} : { _meta: options.cancelMeta }),
+2437:       } satisfies EffectAcpSchema.CancelNotification;
+2438:       if (options.cancelBehavior !== "wait-for-prompt") {
+2439:         if (options.interruptPromptOnCancel === false) {
+2440:           return yield* acp.agent.cancel(cancelPayload);
+2441:         }
+2442:         if (Option.isSome(activePrompt)) {
+2443:           yield* Fiber.interrupt(activePrompt.value.fiber).pipe(Effect.ignore);
+2444:         }
+2445:         // Write cancel before a replacement prompt can reach the agent.
+2446:         yield* acp.agent.cancel(cancelPayload).pipe(Effect.ignore);
+2447:         return;
+
+orchestration-v2/ProviderTurnControlService.ts
+172:       interrupt: (input) =>
+173:         Effect.gen(function* () {
+174:           const loaded = yield* load({ ...input, operation: "interrupt" });
+175:           const session = Option.isSome(loaded.session)
+176:             ? loaded.session
+177:             : yield* sessions.get(input.providerSessionId);
+178:           if (Option.isNone(session)) return;
+179:           // A settled turn reaches its adapter too: only the adapter knows
+180:           // whether it still runs work for the thread, and each one either
+181:           // stops it or reports there is nothing left to stop. Background work
+182:           // the projection still shows is settled by the orchestrator after.
+183:           yield* session.value.interruptTurn({
+184:             providerThread: loaded.providerThread,
+185:             providerTurnId: loaded.providerTurn.id,
+186:             requestRuntimeRestart: true,
+187:           });
+
+orchestration-v2/ProviderTurnControlService.ts
+200:       interruptAndAwaitTerminal: (input) =>
+201:         Effect.gen(function* () {
+202:           const loaded = yield* load({ ...input, operation: "restart" });
+203:           if (Option.isNone(loaded.session)) {
+204:             // No live adapter: nothing can emit a terminal provider-turn update
+205:             // from interrupt. Do not poll for projection terminalization or the
+206:             // restart effect stalls; let detach/start proceed.
+207:             if (loaded.providerTurn.status === "running") {
+208:               yield* Effect.logWarning(
+209:                 "Provider restart interrupt skipped; no live session for a still-projected running turn",
+210:                 {
+211:                   threadId: input.threadId,
+212:                   providerSessionId: input.providerSessionId,
+213:                   providerTurnId: input.providerTurnId,
+214:                 },
+215:               );
+216:             }
+217:             return;
+218:           }
+219: 
+220:           yield* loaded.session.value.interruptTurn({
+221:             providerThread: loaded.providerThread,
+222:             providerTurnId: loaded.providerTurn.id,
+223:           });

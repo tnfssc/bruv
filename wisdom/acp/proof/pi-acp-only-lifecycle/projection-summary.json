@@ -164,9 +164,7 @@
               "outcome": "success"
             }
           ],
-          "backgroundJobs": [
-            "task_1d364865"
-          ],
+          "backgroundJobs": ["task_1d364865"],
           "taskRows": [
             {
               "id": "task_1d364865",
@@ -321,9 +319,7 @@
               "outcome": "success"
             }
           ],
-          "backgroundJobs": [
-            "task_e2eccfe2"
-          ],
+          "backgroundJobs": ["task_e2eccfe2"],
           "taskRows": [
             {
               "id": "task_e2eccfe2",
