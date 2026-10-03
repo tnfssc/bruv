@@ -1,0 +1,10 @@
+{
+  "ownedProcesses": [],
+  "ports": [
+    18782,
+    18783,
+    18784
+  ],
+  "retainedPrivateIgnoredCaches": true,
+  "selectedTextCredentialScan": "passed"
+}

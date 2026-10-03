@@ -1,0 +1,398 @@
+{
+  "runs": [
+    {
+      "run_id": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "thread_id": "426fb95d-112a-4918-8c3e-a6d48f93e139",
+      "ordinal": 1,
+      "status": "completed",
+      "requested_at": "2026-10-03T14:18:55.340Z",
+      "completed_at": "2026-10-03T14:19:17.577Z"
+    },
+    {
+      "run_id": "run:thread:d8183074-6386-4ae5-99bf-f56e6db69892:ordinal:1",
+      "thread_id": "d8183074-6386-4ae5-99bf-f56e6db69892",
+      "ordinal": 1,
+      "status": "interrupted",
+      "requested_at": "2026-10-03T14:19:28.187Z",
+      "completed_at": "2026-10-03T14:19:33.031Z"
+    },
+    {
+      "run_id": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:2",
+      "thread_id": "426fb95d-112a-4918-8c3e-a6d48f93e139",
+      "ordinal": 2,
+      "status": "cancelled",
+      "requested_at": "2026-10-03T14:19:01.685Z",
+      "completed_at": "2026-10-03T14:19:02.266Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "bd6fbb21-4f4e-4efa-8f20-7ff225727a8e",
+      "threadId": "426fb95d-112a-4918-8c3e-a6d48f93e139",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "role": "user",
+      "text": "LATE_PROBE: launch the bounded shell job and return early",
+      "streaming": false,
+      "createdAt": "2026-10-03T14:18:55.340Z",
+      "updatedAt": "2026-10-03T14:18:55.340Z"
+    },
+    {
+      "id": "message:provider:acpRegistry:native-item:provider-instance%3Abruv-adapter-only-prototype%3A01a10221-dc5c-7050-af97-521c3a1c1da1%3Aturn%3A1%3Aassistant%3A0",
+      "threadId": "426fb95d-112a-4918-8c3e-a6d48f93e139",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "role": "assistant",
+      "text": "JOB_STARTED_RETURNING_EARLY_FILTEREDPrototype Stop aborts foreground only; managed jobs are not stopped.",
+      "streaming": false,
+      "createdAt": "2026-10-03T14:18:58.331Z",
+      "updatedAt": "2026-10-03T14:19:02.311Z"
+    },
+    {
+      "id": "8b584a36-1675-4baa-ac2e-a311748eb34c",
+      "threadId": "426fb95d-112a-4918-8c3e-a6d48f93e139",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "role": "user",
+      "text": "CONCURRENT_PROBE: follow-up while Bruv shell job is live",
+      "streaming": false,
+      "createdAt": "2026-10-03T14:19:02.269Z",
+      "updatedAt": "2026-10-03T14:19:02.269Z"
+    },
+    {
+      "id": "message:provider:acpRegistry:native-item:provider-instance%3Abruv-adapter-only-prototype%3A01a10221-dc5c-7050-af97-521c3a1c1da1%3Aturn%3A2%3Aassistant%3A0",
+      "threadId": "426fb95d-112a-4918-8c3e-a6d48f93e139",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "role": "assistant",
+      "text": "CONCURRENT_FOLLOWUP_COMPLETE_FILTEREDAUTOMATIC_LATE_COMPLETION_OBSERVED_FILTERED",
+      "streaming": false,
+      "createdAt": "2026-10-03T14:19:04.396Z",
+      "updatedAt": "2026-10-03T14:19:17.468Z"
+    },
+    {
+      "id": "fdca2707-eee0-4661-aa53-f459391553cf",
+      "threadId": "d8183074-6386-4ae5-99bf-f56e6db69892",
+      "runId": "run:thread:d8183074-6386-4ae5-99bf-f56e6db69892:ordinal:1",
+      "role": "user",
+      "text": "STOP_PROBE: bounded foreground-only Stop proof",
+      "streaming": false,
+      "createdAt": "2026-10-03T14:19:28.187Z",
+      "updatedAt": "2026-10-03T14:19:28.187Z"
+    },
+    {
+      "id": "message:provider:acpRegistry:native-item:provider-instance%3Abruv-adapter-only-prototype%3A01a10222-5d4f-763d-ac32-4a34978eacc7%3Aturn%3A1%3Aassistant%3A0",
+      "threadId": "d8183074-6386-4ae5-99bf-f56e6db69892",
+      "runId": "run:thread:d8183074-6386-4ae5-99bf-f56e6db69892:ordinal:1",
+      "role": "assistant",
+      "text": "STOP_JOB_STARTEDPrototype Stop aborts foreground only; managed jobs are not stopped.",
+      "streaming": false,
+      "createdAt": "2026-10-03T14:19:31.375Z",
+      "updatedAt": "2026-10-03T14:19:32.878Z"
+    }
+  ],
+  "turnItems": [
+    {
+      "id": "turn-item:message:bd6fbb21-4f4e-4efa-8f20-7ff225727a8e",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "type": "user_message",
+      "status": "completed",
+      "title": null,
+      "toolName": null,
+      "input": null,
+      "output": null,
+      "text": "LATE_PROBE: launch the bounded shell job and return early",
+      "startedAt": "2026-10-03T14:18:55.340Z",
+      "completedAt": "2026-10-03T14:18:55.340Z"
+    },
+    {
+      "id": "turn-item:provider:acpRegistry:native-item:workspace-preparation%3Arun%3Athread%3A426fb95d-112a-4918-8c3e-a6d48f93e139%3Aordinal%3A1",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "type": "command_execution",
+      "status": "completed",
+      "title": "Workspace ready",
+      "toolName": null,
+      "input": "Preparing workspace",
+      "output": "Workspace preparation completed.",
+      "text": null,
+      "startedAt": "2026-10-03T14:18:55.340Z",
+      "completedAt": "2026-10-03T14:18:55.389Z"
+    },
+    {
+      "id": "turn-item:provider:acpRegistry:native-item:provider-instance%3Abruv-adapter-only-prototype%3A01a10221-dc5c-7050-af97-521c3a1c1da1%3Atool%3Afiltered-late-job%7Cfc_filtered-late-job",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "type": "dynamic_tool",
+      "status": "completed",
+      "title": "Tool",
+      "toolName": "Tool",
+      "input": {
+        "label": "Filtered-launch local research",
+        "code": "console.log(await shell(\"sleep 18; printf 'LATE_SHELL_PROOF_FILTERED\\n'; printf 'LATE_FILE_FILTERED\\n' > late-proof.txt\",{waitSeconds:0}));"
+      },
+      "output": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Execution completed with exit code 0.\n\nstdout:\n{\n  id: \"task_b89e4b2b\",\n  kind: \"command\",\n  command: \"sleep 18; printf 'LATE_SHELL_PROOF_FILTERED\\n'; printf 'LATE_FILE_FILTERED\\n' > late-proof.txt\",\n  cwd: \"/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0c77b9c0/.cache/pi-acp-only-proof.KwX64N/project\",\n  pid: 4101726,\n  status: \"running\",\n  startedAt: \"2026-10-03T14:18:58.291Z\",\n  baseOffset: 0,\n  outputEnd: 0,\n  timedOut: false,\n  lastActivityAt: \"2026-10-03T14:18:58.291Z\",\n  stdinOpen: false,\n  background: true,\n  output: \"\",\n  requestedOffset: 0,\n  nextOffset: 0,\n  outputLost: false,\n  hasMore: false,\n  elapsedMs: 2,\n}\n\n\nBackground jobs: task_b89e4b2b. Results come later."
+          }
+        ],
+        "isError": false,
+        "details": {
+          "exitCode": 0,
+          "stdout": "{\n  id: \"task_b89e4b2b\",\n  kind: \"command\",\n  command: \"sleep 18; printf 'LATE_SHELL_PROOF_FILTERED\\n'; printf 'LATE_FILE_FILTERED\\n' > late-proof.txt\",\n  cwd: \"/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0c77b9c0/.cache/pi-acp-only-proof.KwX64N/project\",\n  pid: 4101726,\n  status: \"running\",\n  startedAt: \"2026-10-03T14:18:58.291Z\",\n  baseOffset: 0,\n  outputEnd: 0,\n  timedOut: false,\n  lastActivityAt: \"2026-10-03T14:18:58.291Z\",\n  stdinOpen: false,\n  background: true,\n  output: \"\",\n  requestedOffset: 0,\n  nextOffset: 0,\n  outputLost: false,\n  hasMore: false,\n  elapsedMs: 2,\n}\n",
+          "stderr": "",
+          "stdoutLost": false,
+          "stderrLost": false,
+          "outputBytes": 590,
+          "capturedOutputBytes": 590,
+          "outputByteLimit": 10485760,
+          "outputTruncated": false,
+          "stdoutBytes": 590,
+          "stderrBytes": 0,
+          "stdoutCapturedBytes": 590,
+          "stderrCapturedBytes": 0,
+          "timedOut": false,
+          "cancelled": false,
+          "imageResizeNotes": [],
+          "diagnostics": [
+            {
+              "version": 1,
+              "generated": "2026-10-03T14:18:58.302Z",
+              "component": "jobs",
+              "code": "process_exit",
+              "outcome": "success"
+            }
+          ],
+          "backgroundJobs": [
+            "task_b89e4b2b"
+          ],
+          "taskRows": [
+            {
+              "id": "task_b89e4b2b",
+              "source": "local",
+              "title": "Filtered-launch local research",
+              "fallbackTitle": "sleep 18; printf 'LATE_SHELL_PROOF_FILTERED '; printf 'LATE_FILE_FILTERED ' > late-proof.txt",
+              "status": "running",
+              "terminal": false,
+              "sourceCallId": "filtered-late-job|fc_filtered-late-job"
+            }
+          ],
+          "images": []
+        }
+      },
+      "text": null,
+      "startedAt": "2026-10-03T14:18:58.112Z",
+      "completedAt": "2026-10-03T14:18:58.305Z"
+    },
+    {
+      "id": "turn-item:message:8b584a36-1675-4baa-ac2e-a311748eb34c",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "type": "user_message",
+      "status": "completed",
+      "title": null,
+      "toolName": null,
+      "input": null,
+      "output": null,
+      "text": "CONCURRENT_PROBE: follow-up while Bruv shell job is live",
+      "startedAt": "2026-10-03T14:19:02.269Z",
+      "completedAt": "2026-10-03T14:19:02.269Z"
+    },
+    {
+      "id": "turn-item:provider:acpRegistry:native-item:provider-instance%3Abruv-adapter-only-prototype%3A01a10221-dc5c-7050-af97-521c3a1c1da1%3Aturn%3A1%3Aassistant%3A0",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "type": "assistant_message",
+      "status": "completed",
+      "title": null,
+      "toolName": null,
+      "input": null,
+      "output": null,
+      "text": "JOB_STARTED_RETURNING_EARLY_FILTEREDPrototype Stop aborts foreground only; managed jobs are not stopped.",
+      "startedAt": "2026-10-03T14:18:58.331Z",
+      "completedAt": "2026-10-03T14:19:02.311Z"
+    },
+    {
+      "id": "turn-item:provider:acpRegistry:native-item:provider-instance%3Abruv-adapter-only-prototype%3A01a10221-dc5c-7050-af97-521c3a1c1da1%3Aturn%3A2%3Aassistant%3A0",
+      "runId": "run:thread:426fb95d-112a-4918-8c3e-a6d48f93e139:ordinal:1",
+      "type": "assistant_message",
+      "status": "completed",
+      "title": null,
+      "toolName": null,
+      "input": null,
+      "output": null,
+      "text": "CONCURRENT_FOLLOWUP_COMPLETE_FILTEREDAUTOMATIC_LATE_COMPLETION_OBSERVED_FILTERED",
+      "startedAt": "2026-10-03T14:19:04.396Z",
+      "completedAt": "2026-10-03T14:19:17.468Z"
+    },
+    {
+      "id": "turn-item:message:fdca2707-eee0-4661-aa53-f459391553cf",
+      "runId": "run:thread:d8183074-6386-4ae5-99bf-f56e6db69892:ordinal:1",
+      "type": "user_message",
+      "status": "completed",
+      "title": null,
+      "toolName": null,
+      "input": null,
+      "output": null,
+      "text": "STOP_PROBE: bounded foreground-only Stop proof",
+      "startedAt": "2026-10-03T14:19:28.187Z",
+      "completedAt": "2026-10-03T14:19:28.187Z"
+    },
+    {
+      "id": "turn-item:provider:acpRegistry:native-item:workspace-preparation%3Arun%3Athread%3Ad8183074-6386-4ae5-99bf-f56e6db69892%3Aordinal%3A1",
+      "runId": "run:thread:d8183074-6386-4ae5-99bf-f56e6db69892:ordinal:1",
+      "type": "command_execution",
+      "status": "completed",
+      "title": "Workspace ready",
+      "toolName": null,
+      "input": "Preparing workspace",
+      "output": "Workspace preparation completed.",
+      "text": null,
+      "startedAt": "2026-10-03T14:19:28.187Z",
+      "completedAt": "2026-10-03T14:19:28.244Z"
+    },
+    {
+      "id": "turn-item:provider:acpRegistry:native-item:provider-instance%3Abruv-adapter-only-prototype%3A01a10222-5d4f-763d-ac32-4a34978eacc7%3Atool%3Astop-job%7Cfc_stop-job",
+      "runId": "run:thread:d8183074-6386-4ae5-99bf-f56e6db69892:ordinal:1",
+      "type": "dynamic_tool",
+      "status": "completed",
+      "title": "Tool",
+      "toolName": "Tool",
+      "input": {
+        "label": "Filtered-launch local research",
+        "code": "console.log(await shell(\"sleep 12; printf 'STOP_BACKGROUND_SURVIVED\\n'; printf 'survived\\n' > stop-survived.txt\",{waitSeconds:0}));"
+      },
+      "output": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Execution completed with exit code 0.\n\nstdout:\n{\n  id: \"task_639c5e62\",\n  kind: \"command\",\n  command: \"sleep 12; printf 'STOP_BACKGROUND_SURVIVED\\n'; printf 'survived\\n' > stop-survived.txt\",\n  cwd: \"/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0c77b9c0/.cache/pi-acp-only-proof.KwX64N/project\",\n  pid: 4106191,\n  status: \"running\",\n  startedAt: \"2026-10-03T14:19:31.330Z\",\n  baseOffset: 0,\n  outputEnd: 0,\n  timedOut: false,\n  lastActivityAt: \"2026-10-03T14:19:31.330Z\",\n  stdinOpen: false,\n  background: true,\n  output: \"\",\n  requestedOffset: 0,\n  nextOffset: 0,\n  outputLost: false,\n  hasMore: false,\n  elapsedMs: 20,\n}\n\n\nBackground jobs: task_639c5e62. Results come later."
+          }
+        ],
+        "isError": false,
+        "details": {
+          "exitCode": 0,
+          "stdout": "{\n  id: \"task_639c5e62\",\n  kind: \"command\",\n  command: \"sleep 12; printf 'STOP_BACKGROUND_SURVIVED\\n'; printf 'survived\\n' > stop-survived.txt\",\n  cwd: \"/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0c77b9c0/.cache/pi-acp-only-proof.KwX64N/project\",\n  pid: 4106191,\n  status: \"running\",\n  startedAt: \"2026-10-03T14:19:31.330Z\",\n  baseOffset: 0,\n  outputEnd: 0,\n  timedOut: false,\n  lastActivityAt: \"2026-10-03T14:19:31.330Z\",\n  stdinOpen: false,\n  background: true,\n  output: \"\",\n  requestedOffset: 0,\n  nextOffset: 0,\n  outputLost: false,\n  hasMore: false,\n  elapsedMs: 20,\n}\n",
+          "stderr": "",
+          "stdoutLost": false,
+          "stderrLost": false,
+          "outputBytes": 583,
+          "capturedOutputBytes": 583,
+          "outputByteLimit": 10485760,
+          "outputTruncated": false,
+          "stdoutBytes": 583,
+          "stderrBytes": 0,
+          "stdoutCapturedBytes": 583,
+          "stderrCapturedBytes": 0,
+          "timedOut": false,
+          "cancelled": false,
+          "imageResizeNotes": [],
+          "diagnostics": [
+            {
+              "version": 1,
+              "generated": "2026-10-03T14:19:31.361Z",
+              "component": "jobs",
+              "code": "process_exit",
+              "outcome": "success"
+            }
+          ],
+          "backgroundJobs": [
+            "task_639c5e62"
+          ],
+          "taskRows": [
+            {
+              "id": "task_639c5e62",
+              "source": "local",
+              "title": "Filtered-launch local research",
+              "fallbackTitle": "sleep 12; printf 'STOP_BACKGROUND_SURVIVED '; printf 'survived ' > stop-survived.txt",
+              "status": "running",
+              "terminal": false,
+              "sourceCallId": "stop-job|fc_stop-job"
+            }
+          ],
+          "images": []
+        }
+      },
+      "text": null,
+      "startedAt": "2026-10-03T14:19:31.069Z",
+      "completedAt": "2026-10-03T14:19:31.364Z"
+    },
+    {
+      "id": "turn-item:provider:acpRegistry:native-item:provider-instance%3Abruv-adapter-only-prototype%3A01a10222-5d4f-763d-ac32-4a34978eacc7%3Aturn%3A1%3Aassistant%3A0",
+      "runId": "run:thread:d8183074-6386-4ae5-99bf-f56e6db69892:ordinal:1",
+      "type": "assistant_message",
+      "status": "completed",
+      "title": null,
+      "toolName": null,
+      "input": null,
+      "output": null,
+      "text": "STOP_JOB_STARTEDPrototype Stop aborts foreground only; managed jobs are not stopped.",
+      "startedAt": "2026-10-03T14:19:31.375Z",
+      "completedAt": "2026-10-03T14:19:32.878Z"
+    }
+  ],
+  "eventCounts": [
+    {
+      "event_type": "checkpoint-scope.created",
+      "count": 4
+    },
+    {
+      "event_type": "checkpoint.captured",
+      "count": 4
+    },
+    {
+      "event_type": "message.updated",
+      "count": 7
+    },
+    {
+      "event_type": "node.updated",
+      "count": 23
+    },
+    {
+      "event_type": "project.created",
+      "count": 1
+    },
+    {
+      "event_type": "provider-session.attached",
+      "count": 2
+    },
+    {
+      "event_type": "provider-session.updated",
+      "count": 5
+    },
+    {
+      "event_type": "provider-thread.updated",
+      "count": 19
+    },
+    {
+      "event_type": "provider-turn.updated",
+      "count": 6
+    },
+    {
+      "event_type": "run-attempt.created",
+      "count": 4
+    },
+    {
+      "event_type": "run-attempt.updated",
+      "count": 7
+    },
+    {
+      "event_type": "run.created",
+      "count": 3
+    },
+    {
+      "event_type": "run.updated",
+      "count": 11
+    },
+    {
+      "event_type": "thread.created",
+      "count": 3
+    },
+    {
+      "event_type": "thread.metadata-updated",
+      "count": 7
+    },
+    {
+      "event_type": "thread.visited",
+      "count": 10
+    },
+    {
+      "event_type": "turn-item.updated",
+      "count": 22
+    }
+  ]
+}

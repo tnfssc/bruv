@@ -1,0 +1,310 @@
+diff --git a/src/acp/bruv-work.ts b/src/acp/bruv-work.ts
+new file mode 100644
+index 0000000..6e08a22
+--- /dev/null
++++ b/src/acp/bruv-work.ts
+@@ -0,0 +1,28 @@
++// Experimental local-Bruv proof only; no native T3 routing or MCP parity.
++export class BruvWork {
++  private jobs = new Map<string, 'running' | 'delivery'>()
++  private unclassified = new Set<string>()
++  version = 0
++  observe(ev: any): void {
++    if (['agent_start', 'agent_end', 'agent_settled', 'bruv_task_event', 'tool_execution_end', 'message_end'].includes(ev.type)) this.version++
++    if (ev.type === 'bruv_task_event' && typeof ev.task?.id === 'string') {
++      if (ev.event === 'started') { this.jobs.set(ev.task.id, 'running'); this.unclassified.add(ev.task.id) }
++      if (ev.event === 'completed') this.jobs.set(ev.task.id, 'delivery')
++    }
++    // execute result details explicitly identify jobs that returned in background.
++    // Synchronous shell commands also emit lifecycle telemetry, but have no late delivery.
++    if (ev.type === 'tool_execution_end' && ev.toolName === 'execute') {
++      const background = new Set(ev.result?.details?.backgroundJobs ?? [])
++      for (const id of this.unclassified) if (!background.has(id)) this.jobs.delete(id)
++      this.unclassified.clear()
++    }
++    // CompletionBatcher emits this typed custom message after its delayed flush.
++    // Lifecycle completion alone is NOT evidence that the continuation ran.
++    if (ev.type === 'message_end' && ev.message?.role === 'custom' && ev.message.customType === 'task-complete') {
++      for (const task of ev.message.details?.tasks ?? []) {
++        if (typeof task.id === 'string' && this.jobs.get(task.id) === 'delivery') this.jobs.delete(task.id)
++      }
++    }
++  }
++  get pending(): number { return this.jobs.size }
++}
+diff --git a/src/acp/session.ts b/src/acp/session.ts
+index 1c97b24..0464eeb 100644
+--- a/src/acp/session.ts
++++ b/src/acp/session.ts
+@@ -1,3 +1,5 @@
++import { appendFileSync } from 'node:fs'
++import { BruvWork } from './bruv-work.js'
+ import type {
+   AgentSideConnection,
+   ContentBlock,
+@@ -291,6 +293,9 @@ export class PiAcpSession {
+   // Used to map abort semantics to ACP stopReason.
+   // Applies to the currently running turn.
+   private cancelRequested = false
++  private readonly bruvWork = process.env.PI_ACP_BRUV_PROTOTYPE === '1' ? new BruvWork() : undefined
++  private joinedTurns: QueuedTurn[] = []
++  private accepting = 0
+ 
+   // Current in-flight turn (if any). Additional prompts are queued.
+   private pendingTurn: PendingTurn | null = null
+@@ -363,6 +368,21 @@ export class PiAcpSession {
+       const queued: QueuedTurn = { message: expandedMessage, images, resolve, reject }
+ 
+       // If a turn is already running, enqueue.
++      if (this.pendingTurn && this.bruvWork && this.cancelRequested) {
++        // T3 v1 steering cancels an attempt then submits the real user prompt.
++        // Never join that new input to the promise currently being cancelled.
++        this.turnQueue.push(queued)
++        return
++      }
++      if (this.pendingTurn && this.bruvWork) {
++        this.joinedTurns.push(queued)
++        this.accepting++
++        void this.proc.prompt(queued.message, queued.images).catch(error => {
++          this.joinedTurns = this.joinedTurns.filter(turn => turn !== queued)
++          queued.reject(error)
++        }).finally(() => { this.accepting-- })
++        return
++      }
+       if (this.pendingTurn) {
+         this.turnQueue.push(queued)
+ 
+@@ -413,6 +433,10 @@ export class PiAcpSession {
+ 
+     // Abort the currently running turn (if any). If nothing is running, this is a no-op.
+     await this.proc.abort()
++    if (this.bruvWork) {
++      this.emit({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Prototype Stop aborts foreground only; managed jobs are not stopped.' } })
++      await this.settleTurn()
++    }
+   }
+ 
+   wasCancelRequested(): boolean {
+@@ -458,12 +482,19 @@ export class PiAcpSession {
+   }
+ 
+   private async settleTurn(): Promise<void> {
++    const owner = this.pendingTurn
++    if (!owner) return
++    const version = this.bruvWork?.version
++    if (this.bruvWork && !this.cancelRequested && (this.bruvWork.pending || this.inAgentLoop || this.accepting)) return
+     // Ensure all updates derived from pi events (plus the final usage update) are
+     // delivered before we resolve the ACP `session/prompt` request.
+     await this.publishContextUsage()
+ 
++    if (this.pendingTurn !== owner) return
++    if (this.bruvWork && !this.cancelRequested && (this.bruvWork.version !== version || this.bruvWork.pending || this.inAgentLoop || this.accepting)) return
+     const reason: StopReason = this.cancelRequested ? 'cancelled' : 'end_turn'
+-    this.pendingTurn?.resolve(reason)
++    for (const turn of this.joinedTurns.splice(0)) turn.resolve(reason)
++    owner.resolve(reason)
+     this.pendingTurn = null
+     this.inAgentLoop = false
+ 
+@@ -552,34 +583,21 @@ export class PiAcpSession {
+     // Kick off pi, but completion is determined by pi events, not the RPC response.
+     // The prompt RPC only acknowledges acceptance; retry, compaction, or queued
+     // continuations may emit multiple `agent_end` events before `agent_settled`.
++    this.accepting++
+     this.proc.prompt(t.message, t.images).catch(err => {
+-      // If the subprocess errors before we get `agent_settled`, treat as error unless cancelled.
+-      // Also ensure we flush any already-enqueued updates first.
+-      void this.flushEmits().finally(() => {
+-        // If this looks like an auth/config issue, surface AUTH_REQUIRED so clients can offer terminal login.
+-        const authErr = maybeAuthRequiredError(err)
+-        if (authErr) {
+-          this.pendingTurn?.reject(authErr)
+-        } else {
+-          const reason: StopReason = this.cancelRequested ? 'cancelled' : 'error'
+-          this.pendingTurn?.resolve(reason)
+-        }
+-
++      void this.flushEmits().then(() => {
++        if (this.pendingTurn?.resolve !== t.resolve) return
++        const error = maybeAuthRequiredError(err) ?? err
++        this.pendingTurn.reject(error)
+         this.pendingTurn = null
++        for (const queued of [...this.turnQueue.splice(0), ...this.joinedTurns.splice(0)]) queued.reject(error)
+         this.inAgentLoop = false
+-
+-        // If the prompt failed, do not automatically proceed—pi may be unhealthy.
+-        // But we still clear the queueDepth metadata.
+-        this.emit({
+-          sessionUpdate: 'session_info_update',
+-          _meta: { piAcp: { queueDepth: this.turnQueue.length, running: false } }
+-        })
+       })
+-      void err
+-    })
++    }).finally(() => { this.accepting-- })
+   }
+ 
+   private handlePiEvent(ev: PiRpcEvent) {
++    this.bruvWork?.observe(ev)
+     const type = String((ev as any).type ?? '')
+ 
+     switch (type) {
+@@ -903,6 +921,7 @@ export class PiAcpSession {
+       }
+ 
+       case 'agent_settled': {
++        if (process.env.PI_ACP_PROOF_TRACE) appendFileSync(process.env.PI_ACP_PROOF_TRACE, JSON.stringify({ time: Date.now(), type: 'adapter-settle-check', jobs: this.bruvWork?.pending, accepting: this.accepting, cancel: this.cancelRequested, owner: Boolean(this.pendingTurn) }) + '\n')
+         void this.settleTurn()
+         break
+       }
+diff --git a/src/pi-rpc/process.ts b/src/pi-rpc/process.ts
+index 160cc90..5275f91 100644
+--- a/src/pi-rpc/process.ts
++++ b/src/pi-rpc/process.ts
+@@ -1,3 +1,4 @@
++import { appendFileSync } from 'node:fs'
+ import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
+ import * as readline from 'node:readline'
+ import crossSpawn from 'cross-spawn'
+@@ -29,7 +30,7 @@ function stripAnsi(s: string): string {
+ }
+ 
+ type PiRpcCommand =
+-  | { type: 'prompt'; id?: string; message: string; images?: unknown[] }
++  | { type: 'prompt'; id?: string; message: string; images?: unknown[]; streamingBehavior?: 'steer' }
+   | { type: 'abort'; id?: string }
+   | { type: 'get_state'; id?: string }
+   // Model
+@@ -136,6 +137,10 @@ export class PiRpcProcess {
+         return
+       }
+ 
++      if (process.env.PI_ACP_PROOF_TRACE) {
++        const m = msg.message
++        appendFileSync(process.env.PI_ACP_PROOF_TRACE, JSON.stringify({ time: Date.now(), type: msg.type, event: msg.event, task: msg.task ? { id: msg.task.id, status: msg.task.status } : undefined, role: m?.role, customType: m?.customType, taskIds: m?.details?.tasks?.map((t: any) => t.id) }) + '\n')
++      }
+       for (const h of this.eventHandlers) h(msg as PiRpcEvent)
+     })
+ 
+@@ -164,10 +169,14 @@ export class PiRpcProcess {
+ 
+     // Windows cmd launchers need shell escaping; direct executables use native argv.
+     const start = shouldUseShellForPiCommand(cmd) ? crossSpawn : spawn
++    if (process.env.PI_ACP_PROOF_TRACE) appendFileSync(process.env.PI_ACP_PROOF_TRACE, JSON.stringify({ time: Date.now(), type: 'child-env-filter', removedNames: Object.keys(process.env).filter(key => key.startsWith('T3_') || key.startsWith('T3CODE_') || ['ELECTRON_RUN_AS_NODE', 'VITE_DEV_SERVER_URL'].includes(key)).sort() }) + '\n')
+     const child = start(cmd, args, {
+       cwd: params.cwd,
+       stdio: 'pipe',
+-      env: process.env
++      env: process.env.PI_ACP_BRUV_PROTOTYPE === '1'
++        ? Object.fromEntries(Object.entries({ ...process.env, BRUV_WEB_TASK_EVENTS: '1' }).filter(([key]) =>
++            !key.startsWith('T3_') && !key.startsWith('T3CODE_') && !['ELECTRON_RUN_AS_NODE', 'VITE_DEV_SERVER_URL'].includes(key)))
++        : process.env
+     }) as ChildProcessWithoutNullStreams
+ 
+     // Ensure spawn failures (e.g. ENOENT when pi isn't installed) are surfaced as a
+@@ -257,7 +266,7 @@ export class PiRpcProcess {
+   }
+ 
+   async prompt(message: string, images: unknown[] = []): Promise<void> {
+-    const res = await this.request({ type: 'prompt', message, images })
++    const res = await this.request({ type: 'prompt', message, images, ...(process.env.PI_ACP_BRUV_PROTOTYPE === '1' ? { streamingBehavior: 'steer' as const } : {}) })
+     if (!res.success) throw new Error(`pi prompt failed: ${res.error ?? JSON.stringify(res.data)}`)
+   }
+ 
+diff --git a/test/unit/bruv-session.test.ts b/test/unit/bruv-session.test.ts
+new file mode 100644
+index 0000000..e640333
+--- /dev/null
++++ b/test/unit/bruv-session.test.ts
+@@ -0,0 +1,58 @@
++import test from 'node:test'
++import assert from 'node:assert/strict'
++import { PiAcpSession } from '../../src/acp/session.js'
++import { FakeAgentSideConnection, FakePiRpcProcess, asAgentConn } from '../helpers/fakes.js'
++const tick = () => new Promise<void>(resolve => setImmediate(resolve))
++function create(proc = new FakePiRpcProcess()) {
++ return {proc, session: new PiAcpSession({sessionId:'proof',cwd:process.cwd(),mcpServers:[],proc:proc as any,conn:asAgentConn(new FakeAgentSideConnection()),fileCommands:[]})}
++}
++test('prompt preflight failure rejects current and all queued callers', async () => {
++ const {proc,session} = create()
++ proc.prompt = async () => { throw new Error('proof preflight failure') }
++ const first = session.prompt('first'), second = session.prompt('second')
++ await Promise.all([assert.rejects(first,/proof preflight failure/),assert.rejects(second,/proof preflight failure/)])
++})
++test('prototype owns root and genuine concurrent input through typed completion delivery', async () => {
++ process.env.PI_ACP_BRUV_PROTOTYPE='1'
++ const {proc,session}=create()
++ delete process.env.PI_ACP_BRUV_PROTOTYPE
++ let settled=false
++ const first=session.prompt('first').then(reason=>{settled=true;return reason})
++ await tick()
++ proc.emit({type:'agent_start'})
++ proc.emit({type:'bruv_task_event',event:'started',task:{id:'job'}} as any)
++ proc.emit({type:'tool_execution_end',toolName:'execute',result:{details:{backgroundJobs:['job']}}} as any)
++ proc.emit({type:'agent_end'})
++ proc.emit({type:'agent_settled'})
++ await tick()
++ assert.equal(settled,false)
++ const second=session.prompt('real followup')
++ await tick()
++ assert.equal(proc.prompts.length,2)
++ proc.emit({type:'bruv_task_event',event:'completed',task:{id:'job'}} as any)
++ proc.emit({type:'agent_settled'})
++ await tick()
++ assert.equal(settled,false)
++ proc.emit({type:'message_end',message:{role:'custom',customType:'task-complete',details:{tasks:[{id:'job'}]}}} as any)
++ proc.emit({type:'agent_settled'})
++ proc.emit({type:'extension_ui_request'} as any)
++ assert.equal(await first,'end_turn')
++ assert.equal(await second,'end_turn')
++})
++test('real prompt arriving during cancellation is not joined to the cancelled owner', async () => {
++ process.env.PI_ACP_BRUV_PROTOTYPE='1'
++ const {proc,session}=create()
++ delete process.env.PI_ACP_BRUV_PROTOTYPE
++ const first=session.prompt('first')
++ await tick()
++ const cancelling=session.cancel()
++ const followup=session.prompt('after cancel')
++ await cancelling
++ assert.equal(await first,'cancelled')
++ await tick()
++ assert.equal(proc.prompts.length,2)
++ proc.emit({type:'agent_start'})
++ proc.emit({type:'agent_end'})
++ proc.emit({type:'agent_settled'})
++ assert.equal(await followup,'end_turn')
++})
+diff --git a/test/unit/bruv-work.test.ts b/test/unit/bruv-work.test.ts
+new file mode 100644
+index 0000000..1353925
+--- /dev/null
++++ b/test/unit/bruv-work.test.ts
+@@ -0,0 +1,27 @@
++import { test } from 'node:test'
++import assert from 'node:assert/strict'
++import { BruvWork } from '../../src/acp/bruv-work.js'
++test('completed lifecycle holds ownership until typed delivery; free text does not release', () => {
++ const work = new BruvWork()
++ work.observe({type:'bruv_task_event',event:'started',task:{id:'job-1'}})
++ assert.equal(work.pending,1)
++ work.observe({type:'bruv_task_event',event:'completed',task:{id:'job-1'}})
++ work.observe({type:'agent_settled'})
++ work.observe({type:'message_end',message:{role:'user',content:'1 asynchronous task completed job-1'}})
++ assert.equal(work.pending,1)
++ work.observe({type:'message_end',message:{role:'custom',customType:'task-complete',details:{tasks:[{id:'job-1'}]}}})
++ assert.equal(work.pending,0)
++})
++test('foreground telemetry is not late-work debt; UI telemetry does not invalidate quiescence', () => {
++ const work = new BruvWork()
++ work.observe({type:'bruv_task_event',event:'started',task:{id:'sync'}})
++ work.observe({type:'bruv_task_event',event:'completed',task:{id:'sync'}})
++ work.observe({type:'tool_execution_end',toolName:'execute',result:{details:{backgroundJobs:[]}}})
++ assert.equal(work.pending,0)
++ const version=work.version
++ work.observe({type:'extension_ui_request'})
++ assert.equal(work.version,version)
++ work.observe({type:'bruv_task_event',event:'started',task:{id:'async'}})
++ work.observe({type:'tool_execution_end',toolName:'execute',result:{details:{backgroundJobs:['async']}}})
++ assert.equal(work.pending,1)
++})
