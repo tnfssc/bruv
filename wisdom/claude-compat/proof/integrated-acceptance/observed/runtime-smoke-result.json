@@ -1,0 +1,13 @@
+{
+  "runtimeFixtureSmoke": true,
+  "notConnectorAcceptance": true,
+  "modelIdentity": "bruv-acceptance/local-deterministic-v1",
+  "passed": true,
+  "modelCalls": 5,
+  "modelErrors": [],
+  "actualExecute": true,
+  "actualManagedTask": true,
+  "completionWake": true,
+  "realCredentialsUsed": false,
+  "temporaryScopedStateRemoved": true
+}
