@@ -1,0 +1,40 @@
+
+ Review the guide and check the setup instructions.
+
+ I am reading the project guide.
+ ✓ Read the project guide
+
+ I am checking the setup command.
+ ✓ Check the setup command
+
+ Important: the example configuration is not a production credential.
+ ✓ Check the example configuration
+
+ The guide needs three steps: install dependencies, run the local app, and open the browser. The example configuration
+ is safe to share.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+project · mode: orchestrator · $0.000 · ctx 0.4% · cache est 60m                                              acceptance
