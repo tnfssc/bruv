@@ -10,7 +10,15 @@ import {
   SessionManager,
   ToolExecutionComponent,
 } from "@earendil-works/pi-coding-agent";
-import { Container, getCapabilities, setCapabilities, stripTerminalSequences, Text } from "@earendil-works/pi-tui";
+import {
+  Container,
+  getCapabilities,
+  setCapabilities,
+  ScrollView,
+  stripTerminalSequences,
+  Text,
+} from "@earendil-works/pi-tui";
+import { renderLayoutFrame } from "@earendil-works/pi-tui/dist/layout.js";
 import { installConversationDensity } from "../src/ui/conversation-density";
 import {
   ACTIVITY_BOUNDARY,
@@ -62,12 +70,7 @@ function setup(entries: any[] = []) {
   disposers.push(installConversationDensity());
   disposers.push(installSdkTaskRows(theme));
   const chat = new Container();
-  const scroll = {
-    scrollTop: 0,
-    scrollTo(top: number) {
-      this.scrollTop = top;
-    },
-  };
+  const scroll = new ScrollView(chat, { scrollbar: "hidden" });
   const host = {
     chatContainer: chat,
     renderer: { mode: "fullscreen" },
@@ -79,7 +82,9 @@ function setup(entries: any[] = []) {
   disposers.push(() => state.dispose());
   const render = () => {
     state.sync();
-    return plain(chat.render(80));
+    const rows = chat.render(80);
+    scroll.updateLayout(rows.length, 1, () => {});
+    return plain(rows);
   };
   return { chat, scroll, state, render };
 }
@@ -211,8 +216,9 @@ test("collapse above a prose reading position preserves its anchor", () => {
   render();
   state.toggle(state.groups[0]!);
   render();
-  scroll.scrollTop = chat.children[0]!.render(80).length;
+  scroll.scrollTo(chat.children[0]!.render(80).length);
   state.toggle(state.groups[0]!);
+  render();
   expect(scroll.scrollTop).toBe(chat.children[0]!.render(80).length);
 });
 
@@ -232,12 +238,7 @@ function nativeHost(mode = "fullscreen") {
     showStatus() {},
     ui: { requestRender() {} },
     sessionManager: { getBranch: () => entries, getSessionFile: () => "/native-session" },
-    transcriptScrollView: {
-      scrollTop: 0,
-      scrollTo(top: number) {
-        this.scrollTop = top;
-      },
-    },
+    transcriptScrollView: new ScrollView(chat, { scrollbar: "hidden" }),
   };
   return host;
 }
@@ -437,4 +438,197 @@ test("group expansion retains actual native image components and original eviden
   } finally {
     setCapabilities(capabilities);
   }
+});
+
+test("session_shutdown reload recreates the controller on the same InteractiveMode host", async () => {
+  disposers.push(installSdkTaskRows(theme));
+  disposers.push(installRollingActivity());
+  const host = nativeHost();
+  host.chatContainer.addChild(tool("a"));
+  nativeExpand(host, false);
+  expect(plain(host.chatContainer.render(80))).toEqual(["1 tool called ▸"]);
+  const handlers: Record<string, any> = {};
+  const commands: Record<string, any> = {};
+  const saved: unknown[] = [];
+  registerRollingActivity({
+    on(name: string, handler: unknown) {
+      handlers[name] = handler;
+    },
+    registerCommand(name: string, command: unknown) {
+      commands[name] = command;
+    },
+    appendEntry(type: string, data: unknown) {
+      saved.push({ type, data });
+    },
+  } as never);
+  const notices: string[] = [];
+  const ctx = {
+    mode: "tui",
+    sessionManager: host.sessionManager,
+    ui: {
+      notify(message: string) {
+        notices.push(message);
+      },
+      async select(_title: string, choices: string[]) {
+        return choices[0];
+      },
+    },
+  };
+  handlers.session_shutdown({ reason: "reload" }, ctx);
+  expect(plain(host.chatContainer.render(80))).toContain("Check a");
+  // Pi /reload rebuilds the transcript on this same host. Use its real replay
+  // method to create the new native tool component, then exercise registration.
+  const definition = (host.chatContainer.children[0] as any).toolDefinition;
+  host.chatContainer.clear();
+  Object.assign(host.sessionManager, { getCwd: () => "/tmp" });
+  Object.assign(host, {
+    pendingTools: new Map(),
+    settingsManager: {
+      getShowCacheMissNotices: () => false,
+      getShowImages: () => false,
+      getImageWidthCells: () => 60,
+    },
+    getRegisteredToolDefinition: () => definition,
+    addMessageToChat: (message: any) => host.chatContainer.addChild(new AssistantMessageComponent(message, false)),
+  });
+  (InteractiveMode.prototype as any).renderSessionItems.call(host, [
+    { role: "assistant", content: [{ type: "toolCall", id: "a", name: "execute", arguments: { label: "Check a" } }] },
+    { role: "toolResult", toolCallId: "a", content: [{ type: "text", text: "Evidence a" }], isError: false },
+  ]);
+  expect(plain(host.chatContainer.render(80))).toEqual(["1 tool called ▸"]);
+  await commands.activity.handler("", ctx);
+  expect(notices).toEqual([]);
+  expect(plain(host.chatContainer.render(80))[0]).toBe("1 tool called ▾");
+  handlers.agent_end({ messages: [{ role: "assistant", content: [{ type: "toolCall", id: "a" }] }] }, ctx);
+  expect(saved).toEqual([{ type: ACTIVITY_BOUNDARY, data: { callIds: ["a"] } }]);
+});
+
+test("new tools inherit individual group expansion without overwriting later native toggles", async () => {
+  disposers.push(installSdkTaskRows(theme));
+  disposers.push(installRollingActivity());
+  const host = nativeHost();
+  const first = tool("a");
+  host.chatContainer.addChild(first);
+  nativeExpand(host, false);
+  host.chatContainer.render(80);
+  first.handleMouse({ type: "click", button: "left", x: 0, y: 0, width: 80, height: 1 } as never);
+  expect(host.toolOutputExpanded).toBe(false);
+  const second = tool("b");
+  host.chatContainer.addChild(second);
+  expect(plain(host.chatContainer.render(80))[0]).toBe("2 tools called ▾");
+  expect((first as any).expanded).toBe(true);
+  expect((second as any).expanded).toBe(true);
+  expect(plain(host.chatContainer.render(80))).toContain("artifact b");
+  // Dispatch through Pi's native detail mouse region, not a group/header action.
+  expect(
+    second.handleMouse({ type: "click", button: "left", x: 0, y: 1, width: 80, height: 3 } as never)?.handled,
+  ).toBe(true);
+  host.chatContainer.render(80);
+  expect((second as any).expanded).toBe(false);
+  expect((first as any).expanded).toBe(true);
+});
+
+test("live header and activity picker normalize raw action labels", async () => {
+  const { chat, state, render } = setup();
+  state.start();
+  const source = tool("a");
+  (source as any).args.label = "Check\nInjected row\r\x1b[2J";
+  chat.addChild(source);
+  expect(render()).toEqual(["1 tool called ▸ · Check Injected row"]);
+  for (const control of ["\n", "\r", "\x1b"]) expect(state.label(state.groups[0]!)).not.toContain(control);
+  // Exercise the registered picker, with the actual Pi agent-start wrapper.
+  disposers.push(installRollingActivity());
+  const host = Object.assign(nativeHost(), {
+    isInitialized: true,
+    footer: { invalidate() {} },
+    pendingTools: new Map(),
+  });
+  await (InteractiveMode.prototype as any).handleEvent.call(host, { type: "agent_start" });
+  const live = tool("live");
+  (live as any).args.label = "Check\nInjected row\r\x1b[2J";
+  host.chatContainer.addChild(live);
+  expect(plain(host.chatContainer.render(80))).toEqual(["1 tool called ▸ · Check Injected row"]);
+  let activity: any;
+  registerRollingActivity({
+    on() {},
+    registerCommand(_name: string, command: unknown) {
+      activity = command;
+    },
+  } as never);
+  await activity.handler("", {
+    mode: "tui",
+    sessionManager: host.sessionManager,
+    ui: {
+      notify(message: string) {
+        throw new Error(message);
+      },
+      async select(_title: string, choices: string[]) {
+        expect(choices).toEqual(["1. 1 tool called ▸ · Check Injected row"]);
+        return undefined;
+      },
+    },
+  });
+});
+
+test("duplicate failed tool components share the same failure identity as the denominator", () => {
+  const { chat, render, state } = setup();
+  chat.addChild(tool("a", {}, true));
+  chat.addChild(tool("a", {}, true));
+  expect(render()[0]).toBe("1 tool called ▸ · 1 failed");
+  expect(state.count(state.groups[0]!)).toBe(1);
+  expect(render().filter((line) => line === "result a")).toHaveLength(2);
+});
+
+test("Ctrl+O preserves READ 29 after native ScrollView lays out newly expanded content", () => {
+  disposers.push(installConversationDensity());
+  disposers.push(installSdkTaskRows(theme));
+  disposers.push(installRollingActivity());
+  const host = nativeHost();
+  const scroll = new ScrollView(host.chatContainer, { follow: "end", scrollbar: "hidden" });
+  Object.assign(host, { transcriptScrollView: scroll });
+  const originalLayout = scroll.updateLayout;
+  const source = new ToolExecutionComponent(
+    "execute",
+    "a",
+    { label: "Check substantial output" },
+    {},
+    {
+      renderShell: "self",
+      renderCall: () => new Text("Check substantial output", 0, 0),
+      renderResult: (_result: unknown, options: { expanded: boolean }) =>
+        new Text(
+          options.expanded ? Array.from({ length: 24 }, (_, i) => "EVIDENCE " + (i + 1)).join("\n") : "result",
+          0,
+          0,
+        ),
+    },
+    { requestRender() {} } as never,
+    "/tmp",
+  );
+  source.updateResult({ content: [{ type: "text", text: "substantial output" }], isError: false });
+  host.chatContainer.addChild(source);
+  host.chatContainer.addChild(assistant(Array.from({ length: 40 }, (_, i) => "READ " + (i + 1)).join("\n")));
+  nativeExpand(host, false);
+  const paint = () => {
+    host.chatContainer.render(80);
+    return renderLayoutFrame(scroll, 80, 10, () => {}).lines.map((line) => stripTerminalSequences(line).trim());
+  };
+  paint();
+  const collapsedRows = host.chatContainer.render(80);
+  const read29 = collapsedRows.findIndex((line) => stripTerminalSequences(line).trim() === "READ 29");
+  expect(read29).toBeGreaterThan(0);
+  scroll.scrollTo(read29, { disableFollow: true });
+  expect(paint()[0]).toBe("READ 29");
+  nativeExpand(host, true);
+  const expandedRead29 = host.chatContainer
+    .render(80)
+    .findIndex((line) => stripTerminalSequences(line).trim() === "READ 29");
+  expect(expandedRead29).toBeGreaterThan(collapsedRows.length - 10); // Old native max must clamp this target.
+  expect(paint()[0]).toBe("READ 29");
+  expect(scroll.scrollTop).toBe(expandedRead29);
+  expect(scroll.isFollowingEnd).toBe(false);
+  nativeExpand(host, false);
+  expect(paint()[0]).toBe("READ 29");
+  expect(scroll.scrollTop).toBe(read29);
+  expect(scroll.updateLayout).toBe(originalLayout); // One-shot owned hook leaves no residue.
 });

@@ -5,8 +5,15 @@ import {
   ToolExecutionComponent,
   UserMessageComponent,
 } from "@earendil-works/pi-coding-agent";
-import { type Component, Container, type TuiMouseEvent, truncateToWidth } from "@earendil-works/pi-tui";
+import {
+  type Component,
+  Container,
+  type ScrollView,
+  type TuiMouseEvent,
+  truncateToWidth,
+} from "@earendil-works/pi-tui";
 import { clearActivityProjection, setActivityProjection } from "./activity-projection";
+import { actionLabel } from "./action-label";
 import { taskRowsFromDetails } from "./task-rows";
 
 export const ACTIVITY_BOUNDARY = "bruv-activity-boundary";
@@ -54,7 +61,7 @@ export function activityMembership(entries: readonly JournalEntry[]): Map<string
 type Host = {
   renderer: { mode: string };
   chatContainer: Container;
-  transcriptScrollView?: { scrollTop: number; scrollTo(top: number, options?: { disableFollow?: boolean }): void };
+  transcriptScrollView?: Pick<ScrollView, "scrollTop" | "scrollTo" | "updateLayout">;
   ui: { requestRender(): void };
   sessionManager: { getBranch(): JournalEntry[]; getSessionFile(): string | undefined };
 };
@@ -69,6 +76,8 @@ export class ActivityController {
   private serial = 0;
   private liveIds = new Set<string>();
   private detachRender?: () => void;
+  private detachLayout?: () => void;
+  private pendingAnchor?: number;
   attach(): void {
     const ownRender = Object.getOwnPropertyDescriptor(this.host.chatContainer, "render");
     const original = ownRender?.value as Container["render"] | undefined;
@@ -118,6 +127,7 @@ export class ActivityController {
       }
       // A duplicate delivery keeps evidence but never increments the count.
       group.tools.push(child);
+      if (!this.adapted.has(child)) child.setExpanded(group.expanded);
       this.adapt(child);
     }
     this.groups = [...groups.values()];
@@ -130,11 +140,13 @@ export class ActivityController {
     return new Set(group.tools.map((tool) => toolState(tool).toolCallId)).size;
   }
   label(group: Group): string {
-    const failed = group.tools.filter((tool) => toolState(tool).result?.isError).length;
+    const failed = new Set(
+      group.tools.filter((tool) => toolState(tool).result?.isError).map((tool) => toolState(tool).toolCallId),
+    ).size;
     const missing = group.tools.some((tool) => !toolState(tool).result || toolState(tool).isPartial);
     const latestTool = group.tools.at(-1);
     const latest = latestTool ? toolState(latestTool) : undefined;
-    const preview = this.liveKey === group.key ? (latest?.args?.label ?? latest?.toolName) : undefined;
+    const preview = this.liveKey === group.key && latest ? actionLabel(latest.args?.label, latest.toolName) : undefined;
     return `${this.count(group)} ${this.count(group) === 1 ? "tool" : "tools"} called ${group.expanded ? "▾" : "▸"}${failed ? ` · ${failed} failed` : ""}${missing && !preview ? " · result incomplete" : ""}${preview ? ` · ${preview}` : ""}`;
   }
   private adapt(tool: ToolExecutionComponent): void {
@@ -189,7 +201,7 @@ export class ActivityController {
   }
   withAnchor(change: () => void, reveal?: Component): void {
     const scroll = this.host.transcriptScrollView;
-    const top = scroll?.scrollTop ?? 0;
+    const top = this.pendingAnchor ?? scroll?.scrollTop ?? 0;
     const header = reveal ? this.offset(reveal) : undefined;
     let anchor: Component | undefined;
     let anchorRow = 0;
@@ -213,10 +225,34 @@ export class ActivityController {
     const vanishedGroup = anchor instanceof ToolExecutionComponent ? this.group(anchor) : undefined;
     const fallbackTool = vanishedGroup?.tools[0];
     const fallback = fallbackTool ? this.offset(fallbackTool) : top;
-    scroll?.scrollTo(header ?? (anchor?.render(this.width).length ? anchorTop : fallback), {
-      disableFollow: true,
-    });
+    this.deferAnchor(header ?? (anchor?.render(this.width).length ? anchorTop : fallback));
     this.host.ui.requestRender();
+  }
+  private deferAnchor(top: number): void {
+    const scroll = this.host.transcriptScrollView;
+    if (!scroll) return;
+    this.pendingAnchor = top;
+    if (this.detachLayout) return;
+    const ownLayout = Object.getOwnPropertyDescriptor(scroll, "updateLayout");
+    const original = scroll.updateLayout;
+    const state = this;
+    const updateLayout: ScrollView["updateLayout"] = function (this: ScrollView, ...args) {
+      original.apply(this, args);
+      const target = state.pendingAnchor;
+      state.pendingAnchor = undefined;
+      state.detachLayout?.();
+      // scrollTo clamps to contentHeight. Apply only after Pi measured the new
+      // content and viewport, before its layout translates/clips the child box.
+      if (target !== undefined) this.scrollTo(target, { disableFollow: true });
+    };
+    scroll.updateLayout = updateLayout;
+    this.detachLayout = () => {
+      if (scroll.updateLayout === updateLayout) {
+        if (ownLayout) Object.defineProperty(scroll, "updateLayout", ownLayout);
+        else delete (scroll as { updateLayout?: ScrollView["updateLayout"] }).updateLayout;
+      }
+      this.detachLayout = undefined;
+    };
   }
   expand(group: Group, expanded: boolean): void {
     group.expanded = expanded;
@@ -230,6 +266,8 @@ export class ActivityController {
   }
   dispose(): void {
     this.detachRender?.();
+    this.detachLayout?.();
+    this.pendingAnchor = undefined;
     for (const tool of this.adapted.keys()) this.restore(tool);
     this.groups = [];
   }
@@ -246,7 +284,8 @@ export function installRollingActivity(): () => void {
   function controller(host: Host): ActivityController | undefined {
     if (host.renderer?.mode !== "fullscreen" || !host.chatContainer) return undefined;
     let state = states.get(host);
-    if (!state) {
+    // Reload reuses InteractiveMode after session_shutdown disposed its controller.
+    if (!state || !controllers.has(state)) {
       state = new ActivityController(host);
       states.set(host, state);
       controllers.add(state);

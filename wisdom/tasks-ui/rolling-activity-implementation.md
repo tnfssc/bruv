@@ -29,3 +29,23 @@ Cherry-pick this commit, then run the combined gate and the independent harness 
 Pi-version seam: src/ui/rolling-activity.ts wraps only handleEvent, renderSessionItems and setToolsExpanded, plus each scoped chat's render and tool mouse methods. It leaves the children array intact. The scoped chat render dynamically resolves Container.prototype.render when inherited, so session_start's later task-owner install still adapts already-built replay components. Freezing the inherited function before that install breaks /resume/reload: keep the rebuild-order test.
 
 Values reviewed and unchanged. Existing one-owner, honest-UI, safe-replay and real-path proof values cover this lesson; it belongs in feature pickup wisdom rather than a new general rule.
+
+## Five review fixes (task_ceb3fd38)
+
+Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_ceb3fd38. Branch: bruv/finish-known-cli-activity-regressions-be-ceb3fd38. This patch finishes the five review blockers listed in ../releases/v0.15.29-nightly-activity.md. It does not implement the external-T3/Claude connector. Those workers own their source; this patch keeps the ordinary CLI path in the combined integration.
+
+I read the stopped task_50787740 draft without changing that worktree, reused its scoped fixes and tests, corrected the layout wrapper's explicit this type, and validated the result here.
+
+- Reload now creates and registers a fresh controller when the WeakMap still holds a disposed one. The test emits session_shutdown, uses Pi's actual renderSessionItems on the same host to rebuild a native tool, then opens /activity and records the next run boundary.
+- Reading anchors wait for the next native ScrollView updateLayout. The owned one-shot wrapper calls Pi's measurement first, applies scrollTo before Pi translates and clips the child, then restores the original method. Disposal also removes the hook. This is an additional instance-local seam, not a global ScrollView change.
+- A newly adapted tool inherits the group's expansion once. Later native per-tool detail clicks are left alone. The test opens one group while global expansion is false, adds a second tool, then clicks its actual native detail region and renders again.
+- Live headers and picker choices share actionLabel normalization. A multiline label with terminal controls stays one plain line.
+- Failure totals use the same unique outer tool-call identity as the denominator. Duplicate failed components still retain their evidence but report one failed call.
+
+Proof: Bun 1.4.2; bun run check passed. Focused Biome format/lint and git diff --check passed. bun test tests/rolling-activity.test.ts tests/task-rows.test.ts tests/conversation-density.test.ts passed: 66 tests, 287 assertions. Dependencies were linked from the existing task_fb08b463 installation (Pi 1.0.0); the temporary link is not part of the patch.
+
+The final regression tests against the original controller produced exactly five failures (15 pass, 5 fail). The anchor failure showed READ 5 instead of READ 29. With the fix, the real ScrollView and renderLayoutFrame keep READ 29 first through expansion and collapse; the expanded target is deliberately beyond the old maximum scroll position. No fake scrollTo stub is used. The test also checks follow-end stays off and the one-shot hook restores the original layout method.
+
+Limits: no full build, web build, CI, compiled-terminal run, paid provider call, push or release here. Lifecycle and mouse tests use actual Pi prototype methods/components with a small host fixture; they are not a full /reload terminal recording. Parent must rerun the compiled-terminal changed paths on the final integrated candidate and run its combined gate. Regular-mode behavior remains tested and unchanged; placed-root, web and noninteractive scope stay unchanged. Assistant prose and commentary intent are unchanged.
+
+Values reviewed and unchanged. These are local lifecycle/layout lessons already covered by real-path proof, honest UI and small scoped changes; no new general rule is needed.
