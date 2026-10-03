@@ -541,6 +541,7 @@ export default function asynchronousTasksExtension(
 
   const questions = registerQuestionRuntime(pi, {
     supported: () => (subagentDepth === 0 || !!process.env.BRUV_REMOTE_RUNTIME_STATE) && !t3NativeSession,
+    nativeSupported: () => subagentDepth === 0,
   });
   registerQuestions(pi, (ctx) => questions.commands(ctx));
 
