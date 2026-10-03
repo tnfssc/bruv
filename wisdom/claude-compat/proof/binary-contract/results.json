@@ -1,0 +1,37 @@
+[
+  {
+    "initialize": {
+      "commands": [],
+      "agents": [],
+      "output_style": "default",
+      "available_output_styles": [
+        "default"
+      ],
+      "models": [],
+      "account": {}
+    }
+  },
+  {
+    "models": []
+  },
+  {
+    "usage": {
+      "rate_limits_available": false,
+      "rate_limits": {}
+    }
+  },
+  {
+    "mcp": []
+  },
+  {
+    "permission": {
+      "name": "Bash",
+      "input": {
+        "command": "printf synthetic"
+      }
+    }
+  },
+  {
+    "expectedError": "Synthetic unsupported request"
+  }
+]

@@ -1,0 +1,63 @@
+# Claude-compatible Bruv integration: implementation checkpoint
+
+## User direction and authority
+
+2026-10-03: user chose investigate a Claude Code-compatible API/executable so unmodified external T3 can use its existing native Claude integration with Bruv underneath. User then authorized extensive experiments and the whole implementation if feasible, preserving CLI feature availability through suitable T3 workflows. Latest instruction: make sane defaults and complete the whole thing; do not keep asking routine architecture questions.
+
+This supersedes treating every design choice as a discussion gate. Do not invent protocol support, false identity/auth/model state, or feature parity. A concrete impossible requirement, unavailable human secret or data-risk remains a real blocker. Preserve the original release hold while building; do not publish a half-integrated candidate. Initial user did request a release, but code must meet the changed requirements first.
+
+## Defaults chosen by parent
+
+- T3 remains separately installed and unmodified. Do not add another bundled upstream patch as the default escape hatch.
+- Normal Bruv CLI behavior stays intact. Add an explicit compatibility entrypoint/launcher, identified as Bruv rather than pretending it is genuine Claude Code or an Anthropic-authenticated account.
+- Bruv remains authoritative for its ordinary jobs, subagent roles/depth, local/SSH placement, workspaces, history and human decisions. T3 owns presentation/root run and any explicitly T3-delegated work. Do not silently reroute ordinary agents or expose interchangeable competing task owners. User's possible T3-orchestrator split is an option to integrate deliberately, not permission to discard CLI role semantics.
+- Reuse existing task/session/question authorities. Protocol projections may translate truthful state, not create a second task ledger or infer outcomes from prose.
+- Root credentials/MCP controls stay host-owned and out of model code/ordinary child environments. Actual client permissions and saved human questions keep their distinct semantics.
+- Preserve true safe-boundary steering, queued followups, foreground interruption versus explicit stop-work, late completion, stable replay and child UI. Passing an initial prompt is not acceptance.
+- Preserve old ~/.bruv web/agent data. No deletion or silent incompatible reuse. Packaging removal and the documentation-based web command happen only after connector acceptance and migration/rollback checks.
+- Map CLI-specific actions to honest native controls, supported commands or integrated-terminal workflows where appropriate. Do not claim browser microphone/device or client-side behavior from a server-side terminal. Concrete unsupported surfaces must be made visible in the plan and resolved, not quietly dropped.
+
+## Running owners
+
+- task_088477ea: native T3 → Claude Agent SDK → executable contract. Shared research, writes binary-contract.md.
+- task_1346335b: native Claude child/monitor/steering/replay event mapping. Shared research, writes task-ui-contract.md.
+- task_0397bf23: independent minimal protocol fixture spike. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0397bf23; branch bruv/probe-custom-binary-through-native-claud-0397bf23. Writes binary-spike.md, independent fixture/proof. No full Bruv connector yet.
+- task_fd8cc7db: complete feature-parity inventory and real acceptance packages. Shared research, writes feature-parity-plan.md.
+- task_fb5d8f77: connector architecture/ownership plan. Shared research, writes implementation-plan.md.
+- Parent: integrate findings, choose defaults, launch independent implementation worktrees and whole-path review/acceptance, then release only after the changed goal is complete.
+
+Workers started before final user instruction may still phrase optional choices as questions. Parent should decide sane reversible choices using these defaults, not reflexively ask user. Real hard requirements remain gates.
+
+## Prior work and provenance
+
+Parent develop starts this direction at fa28b129 (seven-plus local commits ahead of remote after research; no push/release). Earlier nightly and rolling activity code are preserved, but rolling activity has known unmerged fixes and must not accidentally ship as-is. See ../releases/v0.15.29-nightly-activity.md and ../acp/research-checkpoint.md. Native Claude direction is not the generic claude-acp registry adapter. Official T3 source/binary in .cache/acp-t3-upstream-experience are unmodified fed41fa; .cache/bruv-t3code-* is patched and must not be mistaken for official.
+
+Current stage: contract/protocol spike and feature inventory running. Build full connector only after enough concrete boundary evidence; do not wait for every documentation detail to start independent safe work. Values read. No new values change at kickoff; existing ownership, real-path proof and safe migration rules apply.
+
+Added task_ceb3fd38 to finish five known rolling-activity CLI regressions before any future release. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_ceb3fd38; branch bruv/finish-known-cli-activity-regressions-be-ceb3fd38. Owns only activity runtime/tests/wisdom; no connector modules. This closes observed defects already in parent base rather than shipping them accidentally.
+
+Initial native spike RESULT.json proves SDK0.3.276 alternate-executable initialize/prompt stream/end and synthetic task frames at SDK iterator. Native T3 browser attempt hit a selector timeout before setting binary; that is a harness gap, not an established protocol blocker. User has since authorized all needed experiments/implementation; no new approval ceremony is needed for a corrected isolated fixture run. Do not claim actual T3 rendering yet.
+
+Started production transport foundation task_6d11fc27 while contract notes finish. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_6d11fc27; branch bruv/implement-claude-compatible-stdio-transp-6d11fc27. Owns new src/claude-compat transport/wire files, focused tests and wisdom only. Handler-injected protocol transport makes no auth/model claims; parent/engine owner will supply real session semantics. No root CLI/package edits in this task.
+
+CLI regression worker18bb988e integrated as87580708. Parent reviewed patch and reran66 focused tests/287 assertions: pass. Final integrated compiled-terminal acceptance still required; no commentary-scope expansion.
+
+Native protocol spike finished commit0c89514a; not yet cherry-picked because it force-tracks cache files. Parent will retain selected source/proof under feature wisdom/prototypes, avoiding permanent generated-cache placement. Corrected actual native T3 UI proof task_5177645c runs in worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_5177645c, branch bruv/finish-native-claude-compatible-t3-ui-pr-5177645c. Latest user authorization covers this follow-up. It must label local test-engine readiness honestly, not pretend genuine Claude account authentication.
+
+2026-10-03 implementation dispatch after contracts: SDK 0.3.276 accepts alternate executable; native steering is priority now, Stop closes subprocess, native fork is SDK filesystem work. Production engine task_1c3b7533 owns runtime/frontend in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_1c3b7533 (branch bruv/implement-bruv-session-engine-for-claude-1c3b7533). MCP/isolation task_7718ccb2 owns mcp/policy/env in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_7718ccb2 (branch bruv/implement-connector-mcp-and-credential-i-7718ccb2). Both forked parent87580708. Transport task_6d11fc27 and corrected UI spike task_5177645c continue. Parent must bind ports and validate real feature gates, not count module tests as integration. No bundle removal/release yet.
+
+Task/history production task_ece673d7 owns projection.ts/history.ts and minimal lifecycle hooks. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_ece673d7; branch bruv/implement-native-claude-task-projection--ece673d7. Parent still owns parity adapters, all port binding, final packaging and acceptance. Values unchanged: current ownership, honest proof, and handoff rules cover this stage.
+
+Transport task_6d11fc27 completed0faa1a00; integrated as7ab61801. Parent reran15 focused tests/44 assertions: pass. API src/claude-compat/transport.ts exports ClaudeCompatTransport({input,output,onUser,controls}), run/send/request/close. Engine owns user queuing, auth/init metadata, abort and domain results. Exact SDK fixture verified by worker, not yet full T3/Bruv acceptance. Runtime/MCP/projection workers must bind this actual transport rather than add second framing layer.
+
+Ownership correction: task_4f0c9326 was already running task/monitor projection, from /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4f0c9326, branch bruv/implement-truthful-claude-task-and-monit-4f0c9326. Keep it as sole projection owner. Duplicate task_ece673d7 cancelled and exited143; partial files preserved but not integrated. Replacement task_294a9ed0 owns HISTORY ONLY (native SDK transcript/fork storage), /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_294a9ed0, branch bruv/implement-claude-compatible-sdk-history--294a9ed0, based7ab61801. Parent must paginate jobs.list to see active owners: first page contains old completed jobs.
+
+Feature inventory finished: feature-parity-plan.md lists59 mappings and9 acceptance slices; it is a gate inventory, not proof. task_c3d9990b implements native human controls/saved questions and namespaced commands from7ab61801. Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_c3d9990b; branch bruv/implement-connector-human-controls-and-s-c3d9990b. Does not own runtime/frontend or a second session. Native Live audio/device frontend and client identity/update presentation still need concrete product resolution/proof, not waived by successful transport. Parent owns entrypoint/build/binding/resources/final end-to-end acceptance.
+
+Native UI task_5177645c completed17d50951, integrated68e3806d. Parent reran test-fixture.mjs (default refusal/local readiness/no fabricated account: pass) and inspected active/steered screenshots. Synthetic task card visible, true priority-now steering and Stop/reopen verified by worker; NOT actual Bruv lifecycle yet. Real screenshot retains Claude-branded model/update UI and unsupported-version banner. Need configured exact Bruv model and honest setup guidance, cannot assert identity parity. Executable task_06e50aca owns cli.ts/arguments.ts and dedicated build script only, from68e3806d; /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_06e50aca branch bruv/implement-standalone-bruv-claude-compati-06e50aca. Parent retains root package/build/unbundle edits and module binding.
+
+Real native integration acceptance harness task_3d311d69 starts from68e3806d, worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_3d311d69, branch bruv/prepare-end-to-end-real-bruv-connector-a-3d311d69. Owns test fixture/scripts/docs only; uses actual Bruv operations with deterministic local provider and exact custom model identity. Must return reusable preparation if production executable unavailable, not spin or call synthetic task events acceptance. No real device/paid-provider access requested.
+
+Task projection3ec8532e integrated914f4cb9. Parent reran task-projection+agent-progress suites:19 tests/100 assertions pass (tests/tasks.test.ts does not exist, so do not repeat worker46-count as parent proof). API and limitations in task-projection.md. Binding must supply real sourceCallId/child identities, source revisions, actual launch messages, full background roster and ordered persisted checkpoints. No actual native worker UI proof yet. Shell task_progress intentionally excluded; foreground->background worker transition not consumed by pinned upstream, must choose supported real launch semantics and test rather than emit duplicate starts.
+
+MCP/isolationfa7589ee integratedc96df956. Added pinned @modelcontextprotocol/sdk1.27.1; bun install --frozen-lockfile passed. Parent focused credential/MCP/permission suites:17 tests64 assertions pass, artifacts/claude-compat-mcp-tests.log. Shared environment changes cover final TaskManager spawn and remote/repository helpers; ordinary CLI regressions still need final combined CI. Runtime must capture native MCP descriptors privately then scrub root env before Bruv extension load; compose actual tool registration/native permission callback/policy/close. Added SDK dependency means regenerate third-party notices during packaging. No full T3 MCP parity claim yet.
