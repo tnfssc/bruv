@@ -38,28 +38,29 @@ if (cliArgs[0] === "--live-self-test") {
 if (cliArgs[0] === "update") {
   if (cliArgs.length === 2 && ["--help", "-h"].includes(cliArgs[1]!)) {
     console.log(
-      "Usage: bruv update\n\nInstall the latest stable release of this executable after SHA256 verification.\nThis updates only normal bruv. Update/reinstall the matched bruv-claude-compat pair manually.",
+      "Usage: bruv update [--check]\n\nUpdate normal bruv and sibling bruv-claude-compat together after SHA256 and version checks.\nA compatible normal-only install gains the connector. --check reports without downloading or replacing files.\nStop active Bruv/T3 sessions first. Does not install Claude or T3; user data is unchanged.",
     );
     process.exit(0);
   }
-  if (cliArgs.length !== 1) {
-    console.error("Usage: bruv update");
+  if (cliArgs.length !== 1 && !(cliArgs.length === 2 && cliArgs[1] === "--check")) {
+    console.error("Usage: bruv update [--check]");
     process.exit(1);
   }
   try {
-    console.log("Checking for bruv updates...");
+    console.log("Checking for Bruv pair updates...");
     const result = await updateBruv({
       currentVersion: bruvPackage.version,
-      onDownload: (version) => console.log("Downloading bruv " + version + "..."),
+      check: cliArgs[1] === "--check",
+      onDownload: (version) => console.log("Downloading bruv and bruv-claude-compat " + version + "..."),
     });
     console.log(
       result.status === "updated"
-        ? "Updated bruv to " +
-            result.version +
-            ". Restart running bruv sessions. Reinstall the matched bruv-claude-compat pair manually if using external T3."
-        : result.status === "current"
-          ? "bruv is already current (" + result.version + ")"
-          : "bruv is newer than the latest release (" + result.version + ")",
+        ? "Updated bruv and bruv-claude-compat to " + result.version + ". Restart Bruv/T3 sessions."
+        : result.status === "available"
+          ? "Bruv pair update/repair available (" + result.version + "). Run bruv update to install both."
+          : result.status === "current"
+            ? "bruv and bruv-claude-compat are current (" + result.version + ")"
+            : "bruv and bruv-claude-compat are newer than the latest release (" + result.version + ")",
     );
     process.exit(0);
   } catch (error) {
@@ -239,7 +240,7 @@ function filterHelp(text: string): string {
     }
     if (line.includes(" update [source|self|pi]")) {
       filtered.push(
-        "  update                 Update normal bruv (connector pair updates are manual)",
+        "  update [--check]       Update/check bruv and bruv-claude-compat together",
         "  web                    Show external T3 native-connector setup guidance",
       );
       continue;

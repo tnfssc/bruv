@@ -1,6 +1,18 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { chmod, lstat, mkdir, mkdtemp, readdir, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
+import {
+  chmod,
+  lstat,
+  mkdir,
+  mkdtemp,
+  readdir,
+  readFile,
+  rename,
+  rm,
+  stat,
+  symlink,
+  writeFile,
+} from "node:fs/promises";
 import { join } from "node:path";
 import { UPDATE_ASSETS, isCompiledInvocation, updateAssetFor, updateBruv } from "../src/update";
 
@@ -16,6 +28,7 @@ const deps = (fetch: typeof globalThis.fetch, executable: string, extra: Record<
   platform: "linux" as const,
   arch: "x64",
   compiled: true,
+  runBinary: async (path: string) => (path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0"),
   ...extra,
 });
 async function target(kind = "file") {
@@ -30,6 +43,9 @@ async function target(kind = "file") {
 }
 function fixture(tag = "v0.3.0", opts: any = {}) {
   const asset = opts.asset || "bruv-linux-x64";
+  const connectorAsset = asset.replace(/^bruv-/, "bruv-claude-compat-");
+  const connectorBody = new TextEncoder().encode("new compiled connector");
+  const connectorBin = root(tag) + connectorAsset;
   const bin = root(tag) + asset,
     sum = bin + ".sha256",
     calls: string[] = [];
@@ -38,12 +54,33 @@ function fixture(tag = "v0.3.0", opts: any = {}) {
     assets: [
       { name: asset, browser_download_url: bin },
       { name: asset + ".sha256", browser_download_url: sum },
+      ...(!opts.missingConnector
+        ? [
+            { name: connectorAsset, browser_download_url: connectorBin },
+            ...(!opts.missingConnectorChecksum
+              ? [
+                  {
+                    name: connectorAsset + ".sha256",
+                    browser_download_url: opts.connectorChecksumUrl || connectorBin + ".sha256",
+                  },
+                ]
+              : []),
+          ]
+        : []),
     ],
   };
   const fetch = (async (url: RequestInfo | URL) => {
     const u = String(url);
     calls.push(u);
     if (u === releaseUrl) return Response.json(release);
+    if (u === connectorBin) return new Response(connectorBody, { status: opts.connectorStatus || 200 });
+    if (u === connectorBin + ".sha256")
+      return new Response(
+        (opts.connectorChecksum || createHash("sha256").update(connectorBody).digest("hex")) +
+          "  " +
+          (opts.connectorChecksumFile || connectorAsset) +
+          "\n",
+      );
     if (u === bin) return new Response(opts.binaryBody || body, { status: opts.binaryStatus || 200 });
     if (u === sum) {
       if (opts.mutate) await opts.mutate();
@@ -104,7 +141,13 @@ describe("bruv self-update", () => {
       ["0.2.15", "v0.2.14", "newer"],
     ]) {
       const f = fixture(tag);
-      await expect(updateBruv(deps(f.fetch, "/no-target", { currentVersion: current }))).resolves.toMatchObject({
+      const x = await target();
+      await writeFile(join(x.dir, "bruv-claude-compat"), "existing connector");
+      await expect(
+        updateBruv(
+          deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => "bruv-claude-compat " + current }),
+        ),
+      ).resolves.toMatchObject({
         status,
       });
       expect(f.calls).toEqual([releaseUrl]);
@@ -128,6 +171,8 @@ describe("bruv self-update", () => {
       releaseUrl,
       root("v0.3.0") + "bruv-darwin-arm64",
       root("v0.3.0") + "bruv-darwin-arm64.sha256",
+      root("v0.3.0") + "bruv-claude-compat-darwin-arm64",
+      root("v0.3.0") + "bruv-claude-compat-darwin-arm64.sha256",
     ]);
   });
   test("unsupported platform rejects before fetch", async () => {
@@ -219,7 +264,7 @@ describe("bruv self-update", () => {
   test("replacement failure keeps old target and cleans staging", async () => {
     const x = await target("directory");
     const f = fixture();
-    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow(/Could not replace|not a regular file/);
+    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow(/manual action|not a regular file/);
     expect(await Bun.file(join(x.path, "old")).text()).toBe("old");
     expect((await readdir(x.dir)).filter((n) => n.startsWith(".bruv-update-")).length).toBe(0);
   });
@@ -245,42 +290,248 @@ test("metadata network failure preserves executable", async () => {
   expect(await Bun.file(x.path).text()).toBe("old");
 });
 
-test("a real compiled executable safely replaces itself", async () => {
-  const dir = await mkdtemp("/var/tmp/bruv-self-update-fixture-");
-  dirs.add(dir);
-  const current = join(dir, "current");
-  const replacement = join(dir, "replacement");
-  for (const [source, output] of [
-    ["tests/update-self-fixture.ts", current],
-    ["tests/compiled-bun-fixture.ts", replacement],
-  ]) {
-    const build = Bun.spawn([process.execPath, "build", "--compile", source!, "--outfile", output!], {
-      stdout: "ignore",
-      stderr: "pipe",
+describe("paired install update", () => {
+  test.each([
+    ["missing connector asset", { missingConnector: true }],
+    ["missing connector checksum asset", { missingConnectorChecksum: true }],
+    ["foreign connector checksum URL", { connectorChecksumUrl: "https://example.invalid/checksum" }],
+    ["wrong connector checksum filename", { connectorChecksumFile: "bruv-linux-x64" }],
+    ["bad connector checksum", { connectorChecksum: "0".repeat(64) }],
+    ["connector download failure", { connectorStatus: 503 }],
+  ])("%s preserves both installed binaries", async (_label, options) => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    await writeFile(connector, "old connector", { mode: 0o751 });
+    await expect(updateBruv(deps(fixture("v0.3.0", options).fetch, x.path))).rejects.toThrow();
+    expect(await readFile(x.path, "utf8")).toBe("old");
+    expect(await readFile(connector, "utf8")).toBe("old connector");
+    expect((await readdir(x.dir)).filter((n) => n.startsWith(".bruv-update-"))).toEqual([]);
+  });
+  test("normal-only install gains the pair and keeps user data", async () => {
+    const x = await target();
+    await mkdir(join(x.dir, "state"));
+    await writeFile(join(x.dir, "state", "settings.json"), "private existing data");
+    expect(await updateBruv(deps(fixture().fetch, x.path))).toMatchObject({ status: "updated" });
+    expect(await readFile(x.path, "utf8")).toBe("new compiled bruv");
+    expect(await readFile(join(x.dir, "bruv-claude-compat"), "utf8")).toBe("new compiled connector");
+    expect(await readFile(join(x.dir, "state", "settings.json"), "utf8")).toBe("private existing data");
+  });
+  test("existing connector mode is preserved", async () => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    await writeFile(connector, "old connector", { mode: 0o751 });
+    await updateBruv(deps(fixture().fetch, x.path));
+    expect((await stat(connector)).mode & 0o777).toBe(0o751);
+  });
+  test.each(["directory", "symlink", "renamed bruv"])("%s layout requires manual action", async (kind) => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    let path = x.path;
+    if (kind === "directory") await mkdir(connector);
+    if (kind === "symlink") await symlink(x.path, connector);
+    if (kind === "renamed bruv") {
+      path = join(x.dir, "custom-name");
+      await rename(x.path, path);
+    }
+    const f = fixture();
+    await expect(updateBruv(deps(f.fetch, path))).rejects.toThrow("manual action");
+    expect(await readFile(path, "utf8")).toBe("old");
+    expect(f.calls).toEqual([releaseUrl]);
+  });
+  test.each([false, true])("second replacement fails; rolls back (existing connector: %s)", async (existing) => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    if (existing) await writeFile(connector, "old connector", { mode: 0o751 });
+    const move: typeof rename = async (from, to) => {
+      if (to === x.path) throw new Error("injected normal replacement failure");
+      await rename(from, to);
+    };
+    await expect(updateBruv(deps(fixture().fetch, x.path, { rename: move }))).rejects.toThrow(
+      "Previous installation restored",
+    );
+    expect(await readFile(x.path, "utf8")).toBe("old");
+    expect(await Bun.file(connector).exists()).toBe(existing);
+    if (existing) {
+      expect(await readFile(connector, "utf8")).toBe("old connector");
+      expect((await stat(connector)).mode & 0o777).toBe(0o751);
+    }
+    expect((await readdir(x.dir)).filter((n) => n.startsWith(".bruv-update-"))).toEqual([]);
+  });
+  test("first replacement failure leaves both files unchanged", async () => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    await writeFile(connector, "old connector");
+    await expect(
+      updateBruv(
+        deps(fixture().fetch, x.path, {
+          rename: async () => {
+            throw new Error("injected replacement failure");
+          },
+        }),
+      ),
+    ).rejects.toThrow("Installed files unchanged");
+    expect(await readFile(x.path, "utf8")).toBe("old");
+    expect(await readFile(connector, "utf8")).toBe("old connector");
+  });
+  test("rollback failure retains backups and reports recovery path", async () => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    await writeFile(connector, "old connector");
+    let moves = 0;
+    const move: typeof rename = async (from, to) => {
+      if (++moves > 1) throw new Error("injected replacement/rollback failure");
+      await rename(from, to);
+    };
+    let message = "";
+    try {
+      await updateBruv(deps(fixture().fetch, x.path, { rename: move }));
+    } catch (error) {
+      message = (error as Error).message;
+    }
+    const recovery = (await readdir(x.dir)).find((n) => n.startsWith(".bruv-update-"))!;
+    expect(message).toContain("Rollback failed");
+    expect(message).toContain(join(x.dir, recovery));
+    expect(message).toContain("Do not treat this install as updated");
+    expect(await readFile(join(x.dir, recovery, "bruv.previous"), "utf8")).toBe("old");
+    expect(await readFile(join(x.dir, recovery, "bruv-claude-compat.previous"), "utf8")).toBe("old connector");
+    expect(await readFile(x.path, "utf8")).toBe("old");
+  });
+  test("connector created concurrently is not overwritten", async () => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    const f = fixture("v0.3.0", { mutate: () => writeFile(connector, "concurrent connector") });
+    await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow("changed during the update");
+    expect(await readFile(connector, "utf8")).toBe("concurrent connector");
+    expect(await readFile(x.path, "utf8")).toBe("old");
+  });
+  test.each(["bruv-claude-compat 0.2.0", "0.3.0"])(
+    "bad staged connector version %s prevents replacement",
+    async (output) => {
+      const x = await target();
+      await expect(
+        updateBruv(
+          deps(fixture().fetch, x.path, {
+            runBinary: async (path: string) => (path.endsWith("bruv-claude-compat") ? output : "0.3.0"),
+          }),
+        ),
+      ).rejects.toThrow("version mismatch");
+      expect(await readFile(x.path, "utf8")).toBe("old");
+      expect(await Bun.file(join(x.dir, "bruv-claude-compat")).exists()).toBe(false);
+    },
+  );
+  test("macOS staged helper check failure preserves the installation", async () => {
+    const x = await target();
+    const probes: string[] = [];
+    await expect(
+      updateBruv(
+        deps(fixture("v0.3.0", { asset: "bruv-darwin-arm64" }).fetch, x.path, {
+          platform: "darwin",
+          arch: "arm64",
+          runBinary: async (path: string, args: string[]) => {
+            probes.push(args[0]!);
+            if (args[0] === "--live-self-test") throw new Error("helper broken");
+            return path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0";
+          },
+        }),
+      ),
+    ).rejects.toThrow("helper broken");
+    expect(probes).toEqual(["--version", "--version", "--live-self-test"]);
+    expect(await readFile(x.path, "utf8")).toBe("old");
+  });
+  test("--check reports available without download or replacement", async () => {
+    const x = await target();
+    const f = fixture();
+    expect(await updateBruv(deps(f.fetch, x.path, { check: true }))).toEqual({ status: "available", version: "0.3.0" });
+    expect(f.calls).toEqual([releaseUrl]);
+    expect(await readdir(x.dir)).toEqual(["bruv"]);
+  });
+  test.each(["missing", "mismatched", "broken"])("same stable version repairs %s connector", async (kind) => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    if (kind !== "missing") await writeFile(connector, "old connector");
+    const runBinary = async (path: string) => {
+      if (path === connector) {
+        if (kind === "broken") throw new Error("broken installed connector");
+        return "bruv-claude-compat 0.2.0";
+      }
+      return path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0";
+    };
+    const f = fixture();
+    const options = { currentVersion: "0.3.0", runBinary };
+    expect(await updateBruv(deps(f.fetch, x.path, { ...options, check: true }))).toEqual({
+      status: "available",
+      version: "0.3.0",
     });
-    const errors = await new Response(build.stderr).text();
-    expect(await build.exited, errors).toBe(0);
-  }
-  const first = Bun.spawn([current], {
-    env: { ...process.env, BRUV_TEST_UPDATE_PAYLOAD: replacement },
+    expect(f.calls).toEqual([releaseUrl]);
+    expect(await updateBruv(deps(f.fetch, x.path, options))).toMatchObject({ status: "updated" });
+    expect(await readFile(connector, "utf8")).toBe("new compiled connector");
+  });
+  test("newer normal-only install never downgrades to add connector", async () => {
+    const x = await target();
+    await expect(updateBruv(deps(fixture().fetch, x.path, { currentVersion: "0.4.0" }))).rejects.toThrow(
+      "no downgrade performed",
+    );
+    expect(await readFile(x.path, "utf8")).toBe("old");
+  });
+});
+
+test("compiled updater verifies staged distinct versions and updates a non-running temporary pair", async () => {
+  const x = await target();
+  const runner = join(x.dir, "updater-runner");
+  const normalPayload = join(x.dir, "normal-payload");
+  const connectorPayload = join(x.dir, "connector-payload");
+  const normal = "#!/bin/sh\necho 0.3.0\n";
+  const connector = "#!/bin/sh\necho bruv-claude-compat 0.3.0\n";
+  await writeFile(normalPayload, normal);
+  await writeFile(connectorPayload, connector);
+  const build = Bun.spawn(
+    [process.execPath, "build", "--compile", "tests/update-self-fixture.ts", "--outfile", runner],
+    { stdout: "ignore", stderr: "pipe" },
+  );
+  const errors = await new Response(build.stderr).text();
+  expect(await build.exited, errors).toBe(0);
+  const runnerBytes = await readFile(runner);
+  const child = Bun.spawn([runner], {
+    env: {
+      HOME: x.dir,
+      PATH: "/nonexistent",
+      BRUV_TEST_UPDATE_TARGET: x.path,
+      BRUV_TEST_UPDATE_PAYLOAD: normalPayload,
+      BRUV_TEST_UPDATE_CONNECTOR_PAYLOAD: connectorPayload,
+    },
     stdout: "pipe",
     stderr: "pipe",
   });
-  const firstOutput = await new Response(first.stdout).text();
-  expect(await first.exited).toBe(0);
-  expect(JSON.parse(firstOutput)).toMatchObject({ status: "updated", path: current });
-  const second = Bun.spawn([current], { stdout: "pipe", stderr: "pipe" });
-  const secondOutput = await new Response(second.stdout).text();
-  expect(await second.exited).toBe(0);
-  expect(JSON.parse(secondOutput)).toMatchObject({ compiled: true });
-  expect(
-    createHash("sha256")
-      .update(await Bun.file(current).bytes())
-      .digest("hex"),
-  ).toBe(
-    createHash("sha256")
-      .update(await Bun.file(replacement).bytes())
-      .digest("hex"),
-  );
-  expect((await readdir(dir)).filter((name) => name.startsWith(".bruv-update-"))).toEqual([]);
+  const [output, stderr, code] = await Promise.all([
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text(),
+    child.exited,
+  ]);
+  expect(code, stderr).toBe(0);
+  expect(JSON.parse(output)).toEqual({ status: "updated", version: "0.3.0", path: x.path });
+  expect(await readFile(x.path, "utf8")).toBe(normal);
+  expect(await readFile(join(x.dir, "bruv-claude-compat"), "utf8")).toBe(connector);
+  expect(await readFile(runner)).toEqual(runnerBytes);
+  for (const [path, version] of [
+    [x.path, "0.3.0"],
+    [join(x.dir, "bruv-claude-compat"), "bruv-claude-compat 0.3.0"],
+  ]) {
+    const check = Bun.spawn([path!, "--version"], { stdout: "pipe", stderr: "pipe" });
+    expect((await new Response(check.stdout).text()).trim()).toBe(version!);
+    expect(await check.exited).toBe(0);
+  }
+  expect((await readdir(x.dir)).filter((name) => name.startsWith(".bruv-update-"))).toEqual([]);
+});
+
+test("wrong staged normal version prevents paired replacement", async () => {
+  const x = await target();
+  await expect(
+    updateBruv(
+      deps(fixture().fetch, x.path, {
+        runBinary: async () => "0.2.15",
+      }),
+    ),
+  ).rejects.toThrow("version mismatch");
+  expect(await readFile(x.path, "utf8")).toBe("old");
+  expect(await Bun.file(join(x.dir, "bruv-claude-compat")).exists()).toBe(false);
 });

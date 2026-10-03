@@ -99,7 +99,7 @@ configured readiness until provider access is proven. Do not use T3's Claude
 install/login/update prompts for this instance. Rendered identity and health are
 native acceptance gates.
 
-## Build, install and manually update the pair
+## Build, install and update the pair
 
 ~~~sh
 bun install --frozen-lockfile
@@ -117,8 +117,11 @@ input; integrated Mac helper smoke remains a release gate. Linux Live still
 requires its separate helper. Historical patched-web sources/proofs remain for
 provenance, not startup; no T3 runtime/archive is required by final builds.
 
-bruv update continues updating ONLY ordinary Bruv. Reinstall the matched pair
-manually to update the connector; never masquerade as a Claude updater. External
+bruv update now updates ordinary Bruv and its sibling connector together; use
+bruv update --check for a read-only check. A compatible normal-only install gains
+the connector. Split/custom layouts need manual paired reinstall. Stop active
+Bruv/T3 sessions first and restart afterward. See [paired update](paired-update.md)
+for rollback/recovery and same-version repair. Never masquerade as a Claude updater. External
 T3 updates independently using t3 update or its original installer after reviewing
 the version. Newer T3 requires unchanged-host native acceptance again.
 

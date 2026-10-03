@@ -17,7 +17,7 @@ edit src/claude-compat, native task/Live/source hooks or server task ownership.
 - Release manifest: both binaries for linux-x64, linux-arm64, darwin-arm64 and
   android-arm64, each with .sha256. Shared LICENSE, THIRD_PARTY_NOTICES.md,
   generated THIRD_PARTY_LICENSES.txt and SOURCE.txt. Native macOS helper embedding
-  is forwarded to BOTH compilers. Normal updater still owns only normal bruv.
+  is forwarded to BOTH compilers. Normal updater now owns the sibling pair; see [paired update follow-up](paired-update.md).
 - Local install stages and version-checks BOTH binaries before replacing either;
   missing connector, mismatch or failed helper self-test preserves installed files.
   Stop active sessions first; two renames are not a filesystem transaction.
@@ -45,7 +45,7 @@ separate Claude-slot provider instance. Do not change HOME or touch ~/.claude.
 Use an absolute connector path and explicit absolute normal child binary path.
 Select genuine exact provider/id for chat and auxiliary generation. No alias
 remapping, secret copying, Anthropic identity/subscription or verified-access claim.
-See external-t3-setup.md for full commands and manual paired/T3 update policy.
+See external-t3-setup.md for full commands and paired Bruv/independent T3 update policy.
 
 ## Executed checks
 
