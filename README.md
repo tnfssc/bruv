@@ -1,39 +1,61 @@
 # bruv CLI
 
-A coding agent built on [Pi](https://pi.dev). One standalone executable gives you a terminal interface, a bundled web UI, Herdr integration, background jobs, sub-agents, and project wisdom.
+A coding agent built on [Pi](https://pi.dev). The normal CLI gives you a terminal interface, Herdr integration, background jobs, sub-agents, and project wisdom. A separate native connector pairs it with external, unmodified T3 Code.
 
 The product is **bruv CLI**, and the command is `bruv`. The GitHub repository is
 [`tnfssc/bruv`](https://github.com/tnfssc/bruv). Release assets use `bruv-*`.
 
 ## Install
 
-The commands below target bruv release assets. Until the first bruv release is
-published, use [Build from source](#build-from-source); older releases retain their
-original asset names.
+Release assets ship normal bruv and bruv-claude-compat together. Use
+[Build from source](#build-from-source) until the accepted paired release is
+available; older releases may not contain the connector.
 
 Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64:
 
-```sh
-os="$(uname -s | tr A-Z a-z)"; [ "$(uname -o 2>/dev/null)" = Android ] && os=android; asset="bruv-$os-$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/x64/)"; mkdir -p ~/.local/bin && cd "$(mktemp -d)" && curl -fLO "https://github.com/tnfssc/bruv/releases/latest/download/$asset" && curl -fLO "https://github.com/tnfssc/bruv/releases/latest/download/$asset.sha256" && (sha256sum -c "$asset.sha256" 2>/dev/null || shasum -a 256 -c "$asset.sha256") && install -m 755 "$asset" ~/.local/bin/bruv
-```
+Stop active Bruv/connector sessions before replacing executables. Install the
+matched pair from one release, including both checksums and notices:
 
-Put `~/.local/bin` on your `PATH`. Then run:
+~~~sh
+set -eu
+os="$(uname -s | tr A-Z a-z)"
+if [ "$(uname -o 2>/dev/null || true)" = Android ]; then os=android; fi
+arch="$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/x64/)"
+asset="bruv-$os-$arch"
+connector="bruv-claude-compat-$os-$arch"
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+cd "$tmp"
+url="https://github.com/tnfssc/bruv/releases/latest/download"
+for name in "$asset" "$connector"; do
+  curl -fLO "$url/$name"
+  curl -fLO "$url/$name.sha256"
+  (sha256sum -c "$name.sha256" 2>/dev/null || shasum -a 256 -c "$name.sha256")
+  chmod 755 "$name"
+done
+for name in LICENSE THIRD_PARTY_NOTICES.md THIRD_PARTY_LICENSES.txt SOURCE.txt; do
+  curl -fLO "$url/$name"
+done
+# Only these version probes use a temporary home, never the running T3 backend.
+version="$(HOME="$tmp/probe" "./$asset" --version)"
+test "$(HOME="$tmp/probe" "./$connector" --version)" = "bruv-claude-compat $version"
+mkdir -p "$HOME/.local/bin" "$HOME/.local/share/bruv/notices/$version"
+install -m 755 "$asset" "$HOME/.local/bin/bruv"
+install -m 755 "$connector" "$HOME/.local/bin/bruv-claude-compat"
+install -m 644 LICENSE THIRD_PARTY_NOTICES.md THIRD_PARTY_LICENSES.txt SOURCE.txt "$HOME/.local/share/bruv/notices/$version/"
+~~~
 
-```sh
-bruv
-```
-
-To upgrade later:
-
-```sh
-bruv update
-```
+Put ~/.local/bin on PATH, then run bruv. This does **not** install T3.
+bruv update still updates **only the normal CLI**; update/reinstall the matched
+connector pair manually with the above procedure. External T3 updates separately
+with t3 update, subject to renewed native acceptance. See
+[external T3 setup](wisdom/claude-compat/external-t3-setup.md).
 
 ## Common commands
 
 ```sh
 bruv                         # Start the interactive TUI
-bruv web                     # Start the web UI
+bruv web                     # Show external T3 setup
 bruv -p "Describe this tree" # Run one prompt and exit
 bruv -c                      # Continue the latest session
 bruv -r                      # Pick a saved session to resume
@@ -58,14 +80,6 @@ Remote cached state remains readable offline. Answering requires a fresh owner
 and question version. An uncertain reply is not a confirmed answer: reconcile
 the saved reply rather than replacing it with a new one. Explicit commands and
 the noninteractive RPC interface remain available.
-
-## Web UI
-
-Run `bruv web` and open the local URL it prints. The browser interface is built on [T3 Code](https://github.com/pingdotgg/t3code). It comes in the executable, so you need no separate Node or Bun install.
-
-The bundled source is pinned to the official **preview** channel (`v0.0.43-preview.20260921.2045`), not nightly. Exact upstream revision and local integration changes are recorded in `integrations/t3/upstream/source.json` and `integrations/t3/upstream/bruv.patch`. See [T3 integration tooling](integrations/t3/README.md) for the canonical build, gates, and historical research boundary.
-
-Chat with bruv, switch models and agent modes, follow background agents, review changes, and use the integrated terminal. The server binds to `127.0.0.1` by default. Run `bruv web --help` for options.
 
 ## Project wisdom
 
@@ -94,9 +108,19 @@ Run bruv in a Herdr-managed terminal pane and it automatically reports whether i
 
 The integration is built in. It needs no extra extension or setup. Herdr is optional. Bruv also works on its own. See [Herdr integration](./wisdom/integrations/herdr.md) for lifecycle and compatibility details.
 
+## External T3 web frontend
+
+`bruv web` prints setup guidance without downloading T3 or rewriting settings.
+Install unmodified T3 separately. Add a separate Claude protocol instance pointing
+to the absolute `bruv-claude-compat` binary, select exact Bruv provider/model IDs,
+and align parent server SDK `CLAUDE_CONFIG_DIR` with the isolated instance home.
+Claude is a protocol label, not an Anthropic account or verified access.
+See [external T3 setup](wisdom/claude-compat/external-t3-setup.md) for real paths,
+auth/resource sharing and manual updates. Packaging is not native parity proof.
+
 ## Build from source
 
-Install Bun 1.4.1, Node 24, and pnpm 11, then run:
+Install Bun 1.4.2, then run:
 
 ```sh
 bun install --frozen-lockfile
@@ -119,10 +143,10 @@ On GitHub (including mobile): **Actions → Release → Run workflow → develop
 - Released binaries currently support Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64.
 - Credentials and model configuration are supplied at runtime, like Pi.
 - State is stored under `~/.bruv`. This is a fresh namespace: existing `~/.die` data is untouched and is not automatically migrated or read.
-- CLI sessions and configuration use `~/.bruv/agent`; web state uses `~/.bruv/web`.
-  Extracted web payloads use `$XDG_CACHE_HOME/bruv/web-runtime`, or
-  `~/.cache/bruv/web-runtime` when XDG cache home is unset. Project prompt files
-  now live in `.bruv/`; app environment overrides use `BRUV_*`.
+- CLI sessions/configuration stay at `~/.bruv/agent`. External T3 owns
+  `~/.bruv/web/userdata`; SDK transcripts use `~/.bruv/claude-compat-sdk`.
+  No web runtime is bundled or extracted. Project prompt files live in `.bruv/`;
+  app environment overrides use `BRUV_*`.
 - Install bruv separately from die. The old executable is not renamed or removed; old `die update` versions still expect old asset names.
 - See `wisdom/` for durable project context and deeper feature notes.
 

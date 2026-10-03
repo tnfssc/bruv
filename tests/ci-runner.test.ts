@@ -1,8 +1,8 @@
 import { afterEach, expect, test } from "bun:test";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync, copyFileSync, existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { spawnSync } from "node:child_process";
 
 const fixtures: string[] = [];
 afterEach(() => {
@@ -62,64 +62,33 @@ echo "completed $*"
   return { root, result, calls: readFileSync(calls, "utf8").trim().split("\n") };
 }
 
-test("Linux completes all gates with only post-build validation groups unordered", () => {
+test("Linux builds the pair without preparing or validating bundled web", () => {
   const { root, result, calls } = run("linux");
   expect(result.status).toBe(0);
-  const commands = calls.map((line) => line.split("|")[2]!.split(" ").slice(0, 3).join(" "));
-  expect(commands.slice(0, 6)).toEqual([
+  expect(calls.map((line) => line.split("|")[2])).toEqual([
     "install --frozen-lockfile",
     "run format:check",
     "run lint",
     "run check",
     "run build",
     "scripts/offline-openai-default-transport.ts",
+    "test --parallel=3 ./tests",
+    "run smoke -- --reuse-build",
   ]);
-  expect(commands.slice(6, -1).sort()).toEqual(
-    [
-      '-e console.log(require("./integrations/t3/upstream/source.json").revision)',
-      "--noEmit",
-      "test run src/provider/Layers/PiProvider.test.ts",
-      "test run --project",
-      "test run src/browserProfile.test.ts",
-      "test run src/state/orchestrationV2Projection.test.ts",
-      "test run src/lib/syntaxHighlighting.test.ts",
-      "test run src/rpc/client.test.ts",
-      "test --parallel=3 ./tests",
-    ].sort(),
-  );
-  expect(commands.at(-1)).toBe("run smoke --");
-  expect(calls.find((line) => line.includes("PiProvider.test.ts"))).toContain("/web-source/apps/server|");
   expect(readFileSync(join(root, "artifacts/ci/tests.log"), "utf8")).toContain("llm=0");
-  expect(readFileSync(join(root, "artifacts/ci/smoke.log"), "utf8")).toContain("completed");
 });
 
-test("explicit CI cache mode prepares verified web then compiles current CLI without another producer", () => {
+test("legacy web cache environment cannot re-enable bundled web production", () => {
   const { result, calls } = run("linux", "", true);
   expect(result.status).toBe(0);
-  const commands = calls.map((line) => line.split("|")[2]!);
-  expect(commands.indexOf("--no-env-file scripts/ci-web.ts build")).toBe(4);
-  expect(commands.indexOf("scripts/build.ts --reuse-packed-web")).toBe(5);
-  expect(commands).not.toContain("run build");
-  expect(commands).toContain("test --parallel=3 ./tests");
-  expect(commands.at(-1)).toBe("run smoke -- --reuse-build");
+  expect(calls.some((line) => line.includes("ci-web.ts"))).toBe(false);
+  expect(calls.some((line) => line.includes("run build"))).toBe(true);
 });
 
-test("a failed concurrent group still waits for the other and prevents smoke", () => {
-  const { root, result, calls } = run("linux", "test --parallel=3 ./tests");
-  expect(result.status).toBe(1);
-  expect(calls.some((line) => line.includes("src/rpc/client.test.ts"))).toBe(true);
+test("failed root tests prevent smoke", () => {
+  const { result, calls } = run("linux", "test --parallel=3 ./tests");
+  expect(result.status).not.toBe(0);
   expect(calls.some((line) => line.includes("run smoke"))).toBe(false);
-  expect(readFileSync(join(root, "artifacts/ci/tests.log"), "utf8")).toContain("intentional-failure");
-});
-
-test("a failed web group still completes root tests and prevents smoke", () => {
-  const { root, result, calls } = run("linux", "--noEmit");
-  expect(result.status).toBe(1);
-  expect(calls.some((line) => line.includes("test --parallel=3 ./tests"))).toBe(true);
-  expect(calls.some((line) => line.includes("run smoke"))).toBe(false);
-  expect(readFileSync(join(root, "artifacts/ci/terminal-client-typecheck.log"), "utf8")).toContain(
-    "intentional-failure",
-  );
 });
 
 test("a failed gate stops immediately and preserves its output", () => {

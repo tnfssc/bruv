@@ -8,7 +8,7 @@ import { run } from "./helpers";
 
 test("bruv package and update assets use the canonical repository", () => {
   expect(product.name).toBe("bruv");
-  expect(product.bin).toEqual({ bruv: "dist/bruv" });
+  expect(product.bin).toEqual({ bruv: "dist/bruv", "bruv-claude-compat": "dist/bruv-claude-compat" });
   expect(RELEASES_URL).toBe("https://api.github.com/repos/tnfssc/bruv/releases/latest");
   for (const [target, asset] of Object.entries(UPDATE_ASSETS)) {
     expect(String(asset)).toBe(`bruv-${target}`);

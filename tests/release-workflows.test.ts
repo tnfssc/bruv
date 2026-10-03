@@ -3,8 +3,8 @@ import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { generateThirdPartyNotices } from "../scripts/generate-third-party-notices";
-import { validateReleaseTag } from "../scripts/validate-release-tag";
 import { selectReleaseNotes } from "../scripts/select-release-notes";
+import { validateReleaseTag } from "../scripts/validate-release-tag";
 
 const root = resolve(import.meta.dir, "..");
 const read = (path: string) => Bun.file(resolve(root, path)).text();
@@ -100,18 +100,11 @@ describe("release automation", () => {
       expect(await read(`.github/workflows/${path}.yml`)).toContain(
         'echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache"',
       );
-      expect(await read(`.github/workflows/${path}.yml`)).toContain(
-        'echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store"',
-      );
+
       const caches = job.steps.filter((step) => step.uses?.startsWith("actions/cache@"));
-      expect(caches).toHaveLength(2);
+      expect(caches).toHaveLength(1);
       expect(caches[0]?.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
       expect(caches[0]?.with?.key).toContain("hashFiles('bun.lock', 'package.json')");
-      expect(caches[1]?.with?.path).toBe("${{ runner.temp }}/bruv-pnpm-store");
-      expect(caches[1]?.with?.key).toContain("pnpm-11.10.0-");
-      expect(caches[1]?.with?.key).toContain(
-        "hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/bruv.patch')",
-      );
       for (const cache of caches) {
         expect(cache.with?.key).toContain("${{ runner.os }}-${{ runner.arch }}");
         expect(cache.with?.["restore-keys"]).toMatch(
@@ -126,8 +119,7 @@ describe("release automation", () => {
     const workflow = await read(".github/workflows/ci.yml");
     expect(() => Bun.YAML.parse(workflow)).not.toThrow();
     expect(workflow).toContain("bun-version: 1.4.2");
-    expect(workflow).toContain("pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413");
-    expect(workflow).toContain("version: 11.27.1");
+    expect(workflow).not.toContain("pnpm/action-setup");
     expect(workflow).toContain("apt-get install -y tmux");
     expect(workflow).toContain("run: bun run ci");
     const runner = await read("scripts/ci.sh");
@@ -191,30 +183,26 @@ describe("release automation", () => {
     expect(workflow).toContain("--target=bun-android-arm64");
     expect(workflow).toContain('test "$(./dist/release/bruv-linux-x64 --version)" = "$(bun -p');
     expect(workflow).toContain("GH_TOKEN: ${{ github.token }}");
-    expect(workflow).toContain("bruv-linux-x64.sha256");
-    expect(workflow).toContain("bruv-linux-arm64.sha256");
-    expect(workflow).toContain("bruv-darwin-arm64.sha256");
-    expect(workflow).toContain("bruv-android-arm64.sha256");
+    expect(workflow).toContain('sha256sum "$binary" > "$binary.sha256"');
     expect(workflow).toContain("THIRD_PARTY_NOTICES.md");
     expect(workflow).toContain("bun run generate:notices");
     expect(workflow).toContain("THIRD_PARTY_LICENSES.txt");
-    expect(workflow).toContain("EMBEDDED T3 CODE BACKEND LICENSING");
-    expect(workflow).toContain("src/terminal/BunPtyAdapter.test.ts");
-    expect(workflow).toContain("dist/bruv-web/LICENSE-T3CODE");
+    expect(workflow).not.toContain("EMBEDDED T3 CODE BACKEND LICENSING");
+    expect(workflow).not.toContain("src/terminal/BunPtyAdapter.test.ts");
+    expect(workflow).not.toContain("dist/bruv-web/LICENSE-T3CODE");
+    expect(workflow).toContain("bruv-claude-compat");
     expect(workflow).toContain("SOURCE.txt");
-    expect(workflow).toContain("Embedded T3 Code source:");
-    expect(workflow).toContain("Patch-SHA256:");
+    expect(workflow).not.toContain("Embedded T3 Code source:");
+    expect(workflow).not.toContain("Patch-SHA256:");
     expect(workflow).toContain(
-      "bun run build -- --reuse-packed-web --target=bun-linux-x64-baseline --outfile=./dist/release/bruv-linux-x64",
+      "bun run build -- --target=bun-linux-x64-baseline --outfile=./dist/release/bruv-linux-x64",
+    );
+    expect(workflow).toContain("bun run build -- --target=bun-linux-arm64 --outfile=./dist/release/bruv-linux-arm64");
+    expect(workflow).toContain(
+      "bun run build -- --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/bruv-darwin-arm64",
     );
     expect(workflow).toContain(
-      "bun run build -- --reuse-packed-web --target=bun-linux-arm64 --outfile=./dist/release/bruv-linux-arm64",
-    );
-    expect(workflow).toContain(
-      "bun run build -- --reuse-packed-web --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/bruv-darwin-arm64",
-    );
-    expect(workflow).toContain(
-      "bun run build -- --reuse-packed-web --target=bun-android-arm64 --outfile=./dist/release/bruv-android-arm64",
+      "bun run build -- --target=bun-android-arm64 --outfile=./dist/release/bruv-android-arm64",
     );
     expect(workflow).not.toContain("bruv-web-linux-x64.tar.gz");
     expect(workflow).not.toContain("Package web sidecar");
@@ -252,7 +240,9 @@ describe("release automation", () => {
     expect(setup).toContain("playwright-core@1.60.0");
     expect(setup).toContain("install --only-shell chromium");
     expect(setup).toContain("install-deps chromium");
-    expect(browserCommands).toContain("bun integrations/t3/gates/release-browser-boot.ts dist/release/bruv-linux-x64");
+    expect(browserCommands).toContain("bash scripts/setup-native-release-gate.sh");
+    expect(browserCommands).toContain("node scripts/claude-native-acceptance/run.mjs");
+    expect(browserCommands).toContain("dist/release/bruv-claude-compat-linux-x64");
     const macCommands = workflow.jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");
     expect(macCommands).toContain("verify-update.ts");
     expect(macCommands).toContain("--live-self-test");
@@ -396,29 +386,20 @@ test("release cache environment retains source identity variables", async () => 
   expect(job.env?.RELEASE_TAG).toContain("needs.prepare-manual.outputs.tag");
   const source = await read(".github/workflows/release.yml");
   expect(source).toContain('echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache"');
-  expect(source).toContain('echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store"');
+  expect(source).not.toContain("PNPM_CONFIG_STORE_DIR");
   for (const job of Object.values(workflow.jobs)) {
     expect(JSON.stringify(job.env ?? {})).not.toContain("runner.temp");
   }
 });
 
-// Full CI inventories remain required for actual releases, alongside release-only gates.
-test("full CI and release retain the same web validation union", async () => {
+test("CI and release build the pair without a patched web dependency", async () => {
   const runner = await read("scripts/ci.sh");
-  const validation = await read("scripts/ci-web-validation.sh");
-  const producer = await read("integrations/t3/build/build.ts");
-  const ci = runner + "\n" + validation;
-  expect(runner).toContain("bash scripts/ci-web-validation.sh");
   const workflow = await read(".github/workflows/release.yml");
-  for (const path of new Set(ci.match(/src\/[\w/.]+\.test\.ts/g))) expect(workflow).toContain(path);
-  for (const path of new Set(workflow.match(/src\/[\w/.]+\.test\.ts/g))) expect(ci).toContain(path);
-  for (const area of ["apps/server", "apps/web"]) {
-    expect(producer).toContain(`[source + "/node_modules/.bin/tsc", "--noEmit"], source + "/${area}"`);
-  }
-  expect(validation).toContain('"$web_source/packages/client-runtime" ../../node_modules/.bin/tsc --noEmit');
+  expect(runner).not.toContain("ci-web-validation.sh");
+  expect(runner).not.toContain("ci-web.ts");
+  expect(workflow).not.toContain("BRUV_T3_SOURCE");
+  expect(workflow).not.toContain("reuse-packed-web");
   expect(workflow).toContain("bun scripts/offline-openai-default-transport.ts");
-  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
-  expect(workflow).toContain("T3_V2_BRUV_BINARY: ${{ github.workspace }}/dist/bruv");
   expect(workflow).toContain("bun test ./tests");
   expect(workflow).toContain("bun run smoke -- --reuse-build");
 });

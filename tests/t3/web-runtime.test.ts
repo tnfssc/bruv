@@ -7,7 +7,7 @@ import { extractWebArchive, packWebArchive } from "../../src/t3/web/archive";
 test("all web builders copy the maintained bootstrap to the same packaged filename", async () => {
   const root = resolve(import.meta.dir, "../..");
   expect(await Bun.file(join(root, "integrations/t3/upstream/bootstrap.mjs")).exists()).toBe(true);
-  for (const script of ["integrations/t3/build/build.ts", "scripts/build.ts"]) {
+  for (const script of ["integrations/t3/build/build.ts"]) {
     const contents = await Bun.file(join(root, script)).text();
     expect(contents).toContain("integrations/t3/upstream/bootstrap.mjs");
     expect(contents).toContain("bootstrap.mjs");
@@ -94,7 +94,7 @@ test("web extraction refuses a symlinked content-addressed target", async () => 
   }
 });
 
-test("standalone executable opens embedded web CLI without Node, Bun, or sidecar on PATH", async () => {
+test("standalone executable gives external setup without Node, Bun, T3 or sidecar on PATH", async () => {
   const temporary = await mkdtemp(join(tmpdir(), "bruv-web-standalone-"));
   try {
     const sourceBinary = resolve(process.env.BRUV_WEB_BINARY ?? resolve(import.meta.dir, "../../dist/bruv"));
@@ -126,9 +126,8 @@ test("standalone executable opens embedded web CLI without Node, Bun, or sidecar
     }
     if (code! !== 0) throw new Error(`Standalone web help exited ${code!}: ${stderr!}\n${stdout!}`);
     expect(code!).toBe(0);
-    expect(stdout!).toContain("Run the T3 Code server");
-    const markers = await Array.fromAsync(new Bun.Glob("*/.complete").scan(join(temporary, ".cache/bruv/web-runtime")));
-    expect(markers).toHaveLength(1);
+    expect(stdout!).toContain("external, unmodified T3");
+    expect(await Bun.file(join(temporary, ".cache/bruv/web-runtime")).exists()).toBe(false);
   } finally {
     await rm(temporary, { recursive: true, force: true });
   }

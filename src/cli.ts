@@ -38,7 +38,7 @@ if (cliArgs[0] === "--live-self-test") {
 if (cliArgs[0] === "update") {
   if (cliArgs.length === 2 && ["--help", "-h"].includes(cliArgs[1]!)) {
     console.log(
-      "Usage: bruv update\n\nInstall the latest stable release of this executable after SHA256 verification.",
+      "Usage: bruv update\n\nInstall the latest stable release of this executable after SHA256 verification.\nThis updates only normal bruv. Update/reinstall the matched bruv-claude-compat pair manually.",
     );
     process.exit(0);
   }
@@ -56,7 +56,7 @@ if (cliArgs[0] === "update") {
       result.status === "updated"
         ? "Updated bruv to " +
             result.version +
-            ". Restart running bruv sessions and web servers to fully use the update."
+            ". Restart running bruv sessions. Reinstall the matched bruv-claude-compat pair manually if using external T3."
         : result.status === "current"
           ? "bruv is already current (" + result.version + ")"
           : "bruv is newer than the latest release (" + result.version + ")",
@@ -238,7 +238,10 @@ function filterHelp(text: string): string {
       continue;
     }
     if (line.includes(" update [source|self|pi]")) {
-      filtered.push("  update                 Update bruv to the latest stable release");
+      filtered.push(
+        "  update                 Update normal bruv (connector pair updates are manual)",
+        "  web                    Show external T3 native-connector setup guidance",
+      );
       continue;
     }
     if (["--no-tools", "--no-builtin-tools", "--tools,", "--exclude-tools"].some((option) => line.includes(option)))

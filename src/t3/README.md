@@ -1,7 +1,12 @@
-# T3 ownership
+# T3 boundaries
 
-`src/t3/tasks` contains host-side T3 task adapters (MCP transport, native task mapping, launch identity, local notifications, web event formatting). It may depend on the task domain in `src/tasks`; `TaskManager` and `JobService` remain authoritative there. The task domain calls adapters at its integration boundary, not through compatibility re-exports.
+- web/launcher.ts prints external, unmodified T3 setup guidance. It does not start
+  a server, extract an embedded payload, seed settings or use a startup fallback.
+- tasks/ retains the owned native task bridge and server task ownership code.
+  Its name is not evidence that it belongs to the obsolete bundled web build.
+- archive.ts and integrations/t3/build preserve historical patched-web tooling
+  and proof, but are not final build/install/CI dependencies or startup paths.
 
-`src/t3/web` contains the packaged web runtime: archive packing/extraction, embedded asset import and launcher. `src/cli.ts` calls the launcher. The embedded archive is still sourced from `dist/bruv-web.archive.gz`, with the fresh `BRUVWEB1` archive signature; old product payloads are not accepted. The maintained bootstrap stays `bootstrap.mjs`.
-
-Canonical web input and build tooling live outside runtime source under `web/` and `integrations/t3/build/`; tests for these adapters/runtime live in `tests/t3/`.
+See wisdom/claude-compat/external-t3-setup.md for the paired connector, absolute
+paths, shared Bruv auth/resources, isolated SDK home, exact genuine model IDs
+and manual updates. Packaging does not establish native parity.
