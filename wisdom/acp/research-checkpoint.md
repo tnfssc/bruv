@@ -38,3 +38,34 @@ Protocol wording discrepancy to fix during synthesis: orchestration research cal
 Clean follow-up task_4a32354f passed actual upstream browser completion, second prompt, Stop with session/cancel, and reload with retained transcript/interrupted status. Parent inspected two final screenshots and RESULT.json. Fixture only, not Bruv ACP, real-agent registration, child behavior, or backend restart. All research jobs ended and owned runtime processes were cleaned. Research synthesis: direction-review.md.
 
 No migration, bundle removal, registry submission or release was performed. Next step is user discussion of Bruv-owned versus T3-owned children, then a bounded real Bruv ACP prototype if approved. Existing values cover the findings; no new value was added.
+
+## Extended research requested
+
+User asked to finish remaining research and compare official registry agents/other ACP clients that may behave like Bruv. Migration/release still held. Research restarted with four bounded tracks:
+
+- task_69d9d15c: actual published pi-acp 0.0.34, closest shared-engine peer. Owns .cache/acp-pi-peer and pi-acp-peer.md.
+- task_ae11d395: 2–3 maintained multiagent peers (Claude/Codex/OpenCode/Goose as justified), generic registry versus dedicated T3 behavior. Owns .cache/acp-multiagent-peers and multiagent-registry-peers.md.
+- task_56bfaff7: actual unmodified T3 late events, MCP consume/list/call, permissions/elicitation, config and load/resume/backend restart where feasible. Owns .cache/acp-t3-deep-probes and t3-deep-probes.md.
+- task_fea3f191: registry submission/distribution contracts, custom registration and other ACP clients. Owns .cache/acp-registry-clients and registry-and-clients.md.
+
+Fresh public registry snapshot: artifacts/acp/registry-followup.json. Workers may install published research tools only into owned isolated directories, use deterministic local model endpoints where possible, and must not copy real credentials or confuse a fixture with a maintained agent. Product implementation, external registry submissions and releases are not part of this request. Parent owns cross-checks and final synthesis.
+
+Parent found a concrete reuse candidate: published pi-acp0.0.34 supports PI_ACP_PI_COMMAND and invokes compatible Pi RPC CLI arguments. Added task_7eca0da0: actual unmodified pi-acp around existing compiled Bruv using own .cache/acp-bruv-wrapper and bruv-through-pi-acp.md. This could use a legitimate registry adapter instead of unregistered Bruv ACP; actual lifecycle/MCP acceptance remains required.
+
+pi-acp peer task_69d9d15c completed. Published pi-acp0.0.34 with published-matched Pi1.0.0 passed local deterministic model/config/tool/resume/restart/cancel and real optional Pi subagent success/cancel. Injected MCP canary was never launched; config is stored but not consumed. Actual post-prompt output is forwarded, but new client input during the autonomous run is rejected by Pi and converted to end_turn by adapter, dropping the input. Parent inspected RESULT-ext.json and raw Pi RPC race request/rejection. This is a maintained-adapter gap, not a hypothetical ACP limitation; user-facing T3 behavior and actual Bruv wrapper experiment are still pending.
+
+Registry/client task_fea3f191 completed: registry is reviewed distribution/launch manifests, not behavior certification. All41 snapshot entries passed official schema; hypothetical Bruv manifest needed license_url and plain X.Y.Z (nightly root version rejected). Submission requires real artifact/auth flow/icon and maintainer review, not just schema pass. Zed/JetBrains have true custom command/args/env registration. Zed source requests ACPv1 and has external MCP/load/nested-thread infrastructure, but no installed Zed/Bruv or JetBrains acceptance was run. Direct future Bruv listing differs from using existing maintained pi-acp wrapper; wrapper viability pending task_7eca0da0.
+
+Multiagent peer task_ae11d395 completed. Real published Claude ACP0.85.1 + actual SDK0.3.286 with local fake model proved background Agent, negotiated child-session events, HTTP MCP root/child tool exposure and cancel/load. Its root prompt stays open until child drain; live cancelled child replayed completed under synthetic different identity. Codex2.1.1 real initialize works but new session auth-gated; OpenCode1.18.34 artifact timed out after150s (source examined, no runtime claim). Dedicated T3 Grok mapping is not generic registry behavior. Report: multiagent-registry-peers.md.
+
+Direct wrapper task_7eca0da0 completed with twelve real published-adapter/compiled-Bruv steps passing. Native MCP config ignored; execute/job UI unnormalized; late answer forwarded4.417s after root end_turn without running:true. Synthetic-only execute/shell probe confirmed T3_ACP_MCP_* reaches child environment. Full unfiltered T3 trial correctly withheld. Sanitized proof under wisdom/acp/proof/bruv-through-pi-acp.
+
+Parent added task_177054c8 for ONE explicit research-only filtered composition test: unmodified T3 + published pi-acp + compiled Bruv, engine launcher strips injected credential/control vars. Must prove synthetic removal before actual scoped T3 bearer exists. This is a labeled test variant, not a product fix or unchanged production recommendation. Own .cache/acp-t3-bruv-filtered and t3-bruv-filtered-trial.md. It uses real pi-acp registry identity, not a borrowed agent ID.
+
+Deep T3 task_56bfaff7 completed: real generic v1 late events absent from owned runs/history; actual injected MCP initialize/list/read-only call works; permission approve/decline, form answer/cancel, real agent/backend restart+session/load and category:model config plumbing worked. Parent found fixture v2 response {} omits official required messageId. Corrected note to v2-shaped/normalized lifecycle proof, not canonical v2 conformance. It proves same run waits for idle, not spontaneous new work after idle. No product correction required; this is research claim precision.
+
+## Extended pass complete
+
+Filtered full-chain task_177054c8 completed. Synthetic and real engine/shell filtering proved; actual official pi-acp registration and Bruv execute/file diff worked. Automatic late answer generated in Bruv but absent from T3/history; concurrent follow-up marked completed without reaching Bruv or getting reply. Reload retained the missing-result state. Parent inspected final screenshots and summaries. All owned processes cleaned and private auth/runtime state removed. Synthesis: registry-followup-review.md.
+
+No migration/release is authorized or performed; next is discussion and choosing lifecycle/ownership requirements. No unfinished research jobs remain. Product code unchanged in this extended pass.

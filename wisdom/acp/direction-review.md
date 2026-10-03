@@ -2,6 +2,14 @@
 
 Research date: 2026-10-03. User asked for validation and discussion before changing architecture. Release and migration remain held. Prior UI work has known defects; do not publish the held candidate.
 
+## Follow-up changes
+
+User requested deeper registry/peer research after this first review. Published pi-acp0.0.34 successfully wrapped the existing compiled Bruv through its documented PI_ACP_PI_COMMAND override: real tools, early shell return, automatic late output, cancel and root session restart/load. A new ACP implementation is therefore NOT required before transport prototyping. This is honest use of the listed pi-acp adapter, not a separate Bruv listing. See bruv-through-pi-acp.md.
+
+Production gaps remain: injected MCP is ignored, generic execute has no native job mapping, late output has no new running lifecycle, and real Pi adapter tests found dropped input during a late run. Synthetic compiled-Bruv tests also confirmed new T3 ACP credential vars reach shell children. Do not recommend unchanged direct T3 use. The explicitly filtered full T3 trial passed execute but lost the late answer and concurrent follow-up. See registry-followup-review.md and t3-bruv-filtered-trial.md; this was not a production fix.
+
+Zed/JetBrains permit custom command registration without registry admission. Their source/doc support is not installed Bruv UI acceptance. See registry-and-clients.md and multiagent-registry-peers.md. The older direct-agent-listing and own-adapter steps below are options, not mandatory first steps.
+
 ## Recommendation
 
 ACP is a good boundary to explore. Start with Bruv owning its agents, local/SSH jobs, roles and worktrees, and T3 owning the frontend/root ACP session. Do not remove the bundle or promise parity until a small real Bruv ACP experiment passes. A docs-only web command comes after that, not before.
@@ -29,7 +37,7 @@ Unmodified official nightly executable and a clearly labeled synthetic ACP agent
 
 ## Small experiment before removal
 
-After user chooses ownership: implement a minimal compiled bruv acp entry, connect through an honest supported registration path, and run real root plus two children including one nested child. Validate visible output, idle late completion and concurrent user input, foreground/child/whole-work cancellation with actual process exit, reopen/resume with stable identities, injected MCP consumption/credential isolation, and saved human question recovery. Keep known gaps explicit. No full migration or release is part of this research approval.
+After user chooses ownership: choose between improving/mediating the tested maintained pi-acp wrapper and a Bruv-owned compiled ACP entry, connect through an honest supported registration path, and run real root plus two children including one nested child. Validate visible output, idle late completion and concurrent user input, foreground/child/whole-work cancellation with actual process exit, reopen/resume with stable identities, injected MCP consumption/credential isolation, and saved human question recovery. Keep known gaps explicit. No full migration or release is part of this research approval.
 
 External T3 setup needs its own versioned install/connection instructions. Existing ~/.bruv/web data is not assumed compatible with unmodified upstream; preserve it and prove migration separately. See packaging-and-web-command.md.
 
