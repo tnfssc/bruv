@@ -1,3 +1,4 @@
+import { nativeFastEnabled, NATIVE_FAST_CHILD_ENV } from "../agent/native-fast-mode";
 import { launchTaskTitle } from "./task-title";
 import { taskRowsFromSessionEntries } from "../ui/task-rows";
 import { randomUUID } from "node:crypto";
@@ -489,6 +490,7 @@ export class JobService {
                   ...(params.thinking === undefined ? {} : { thinking: params.thinking }),
                   placement: {
                     profile: type,
+                    nativeFast: nativeFastEnabled(ctx),
                     parentDepth: depth,
                     ...(parentType === undefined ? {} : { parentType: parentType as T3TaskProfile }),
                     workspace,
@@ -549,6 +551,7 @@ export class JobService {
             cwd,
             env: {
               ...childAgentEnvironment(process.env),
+              [NATIVE_FAST_CHILD_ENV]: nativeFastEnabled(ctx) ? "1" : "0",
               BRUV_SUBAGENT_DEPTH: String(depth + 1),
               BRUV_SUBAGENT_TYPE: type,
             },

@@ -18,5 +18,6 @@ export function childAgentEnvironment(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv
   delete child.BRUV_REMOTE_RUNTIME_STATE;
   for (const name of Object.keys(child))
     if (name.startsWith("BRUV_REMOTE_ROOT_") || name.startsWith("BRUV_ROOT_")) delete child[name];
+  delete child.BRUV_SUBAGENT_NATIVE_FAST;
   return child;
 }
