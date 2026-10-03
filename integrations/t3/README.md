@@ -31,8 +31,9 @@ release notes retain their role roots (`scripts/`, `native/`, `support/`).
 
 ## Pinned browser/server build
 
-The source is official `main`, pinned at the immutable
-revision in `upstream/source.json` (not a stable-release assumption). Official Pi
+The source is official nightly `v0.0.46-nightly.20261003.2623`, pinned at its immutable
+revision in `upstream/source.json` (not a floating nightly build). The upstream
+orchestrator v2 is the shipped engine ([integration proof](../../wisdom/t3/nightly-v2-integration-2026-10-03.md)). Official Pi
 support (#7211), Pi 1.0 (#14688), provider adapters, orchestration, usage, history
 and browser codecs/syntax assets remain upstream-owned.
 
