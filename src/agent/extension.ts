@@ -1,3 +1,4 @@
+import { registerRollingActivity } from "../ui/rolling-activity";
 import { installSdkTaskRows } from "../ui/sdk-task-rows";
 import {
   taskRowFromLaunch,
@@ -108,6 +109,7 @@ export default function asynchronousTasksExtension(
   } = {},
 ): void {
   registerOperationDiagnostics(pi);
+  registerRollingActivity(pi);
   // Must precede all payload capture/observation hooks so snapshots contain the
   // exact tier that the provider transport will serialize.
   registerNativeFastMode(pi);

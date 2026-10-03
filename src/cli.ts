@@ -224,6 +224,8 @@ const restoreStartupSettings = installQuietStartup();
 const restoreStartupEditor = installStartupEditor();
 const restoreQuietToolUi = installQuietToolUi();
 const restoreConversationDensity = installConversationDensity();
+const { installRollingActivity } = await import("./ui/rolling-activity");
+const restoreRollingActivity = installRollingActivity();
 
 function filterHelp(text: string): string {
   if (!text.includes("Usage:") || !text.includes("Options:")) return text;
@@ -280,6 +282,7 @@ try {
     ],
   });
 } finally {
+  restoreRollingActivity();
   restoreConversationDensity();
   restoreQuietToolUi();
   restoreStartupEditor();
