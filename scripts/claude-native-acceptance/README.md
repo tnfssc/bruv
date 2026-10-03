@@ -73,19 +73,26 @@ inputs, not implementation evidence.
 
 ## Current boundary
 
-The actual new connector was tried with unmodified official T3. Readiness is
-blocked by **--settings is not yet bound in the Bruv connector**. T3's probe
-also supplies --setting-sources and a permission policy. The official rendered
-view truthfully shows Needs attention / Unsupported, not Authenticated; the
-local model received zero requests in this integrated attempt.
+Production composition now binds the actual settings/permission/tools/session/MCP
+launch vocabulary. The launcher configures the same explicit scoped native-history
+CLAUDE_CONFIG_DIR/homePath on the unchanged T3 parent and connector; default real
+Claude history state is refused. Exact customModels provider/id remains unchanged.
 
-After the parent binds the actual probe/runtime/MCP/session semantics, rerun
-the same command. Later task/reload actions are implemented but not observed
-through this connector yet. Normal subagent/profile inheritance is not tested
-(the acceptance uses a managed shell). Permission and saved-question scenario
-requests are present in the test model, but ACCEPT_PERMISSION=1 and
-ACCEPT_SAVED_QUESTION=1 fail explicitly until real parent bindings and rendered
-answer/approval controls are available. Add assertions against actual question
-admission/answer/storage and real can_use_tool responses then; never synthesize
-native events. Full restart, SDK fork, child history and broader product parity
-remain separate parent gates.
+The composed connector actually reached readiness (zero model calls), execute,
+managed shell steering, early return, one completion wake, generation Stop and
+reload/reopen through official unmodified T3. **Integrated acceptance still fails**
+at CANCEL_CONFIRMED_REAL: Stop closes the native query, clean EOF teardown terminates
+its owned shell, and the resumed runtime cannot inspect/cancel that old manager's
+job as a live current job. No native task state was invented. Parent still adds
+its independent real manager lifecycle binder and performs final acceptance.
+
+The compiled real normal-child probe separately launches the paired normal Bruv
+binary with an explicit normal model/thinking profile and executes a genuine child
+tool. This is not native rendered task-lifecycle acceptance. Real Pi permission
+hook/updated-input/denial, saved root ledger human answer/new-turn and injected MCP
+call/teardown tests pass, but rendered approval/question UI remains a separate gate.
+ACCEPT_PERMISSION/ACCEPT_SAVED_QUESTION intentionally remain disabled until actual
+native rendered actions/assertions are implemented; do not enable canned answers.
+
+Proof and exact checks: [production composition](../../wisdom/claude-compat/composition.md),
+[observed FAILED replay](../../wisdom/claude-compat/proof/composition/observed/).

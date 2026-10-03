@@ -4,6 +4,9 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { type AssistantMessage, type Context, createAssistantMessageEventStream } from "@earendil-works/pi-ai/compat";
 import { type ExtensionAPI, ModelRuntime, SessionManager, SettingsManager } from "@earendil-works/pi-coding-agent";
+import { permissionBinding } from "../src/claude-compat/binding";
+import { parseConnectorArguments } from "../src/claude-compat/arguments";
+import { NativeHistory, readNativeHistory } from "../src/claude-compat/history";
 import type { CompatFrame } from "../src/claude-compat/frontend";
 import {
   type ClaudeCompatRuntime,
@@ -84,6 +87,7 @@ async function fixture(options: { auxiliary?: boolean; auth?: boolean; extra?: o
     settingsManager: SettingsManager.inMemory({ cacheWarming: "off" }, { projectTrusted: false }),
     sessionManager: SessionManager.inMemory(dir),
     auxiliary: options.auxiliary,
+    permissionMode: "bypassPermissions",
     executablePath: runner,
     emit: (frame) => {
       frames.push(frame);
@@ -160,7 +164,8 @@ test("unconfigured auth is an initialize error; aliases and unsupported policies
       "not a Claude alias",
     );
     expect(runtime.controls.set_permission_mode).toBeUndefined();
-    await expect(fixture({ extra: { permissionMode: "default" } })).rejects.toThrow("Unsupported permission mode");
+    const gated = await fixture({ extra: { permissionMode: "default" } });
+    expect(gated.runtime.session).toBeDefined();
   } finally {
     if (saved === undefined) delete process.env.ANTHROPIC_API_KEY;
     else process.env.ANTHROPIC_API_KEY = saved;
@@ -496,4 +501,209 @@ test("native identity is retained without renaming the canonical Pi session", as
   await runtime.onUser(user(runtime, "hello", { session_id: nativeSessionId }), signal());
   expect(frames.every((frame) => frame.session_id === nativeSessionId)).toBe(true);
   await expect(runtime.onUser(user(runtime), signal())).rejects.toThrow("session_id does not match");
+});
+
+test("native permission callback gates the actual execute hook, preserves real inputs and accepts updated input", async () => {
+  const requests: Record<string, unknown>[] = [];
+  const args = parseConnectorArguments([
+    "--input-format",
+    "stream-json",
+    "--output-format",
+    "stream-json",
+    "--allowedTools",
+    "Bash(*)",
+  ]);
+  const binding = permissionBinding(args, async (request) => {
+    requests.push(structuredClone(request));
+    return {
+      behavior: "allow",
+      updatedInput: { code: 'console.log("HUMAN_APPROVED_EXECUTION")', label: "Approved by human" },
+    };
+  });
+  const { runtime, frames } = await fixture({ extra: { permissionMode: "default", authorizeTool: binding.authorize } });
+  await init(runtime);
+  let calls = 0;
+  runtime.session.agent.streamFunction = () =>
+    calls++ === 0
+      ? output(
+          assistant("", {
+            stopReason: "toolUse",
+            content: [
+              {
+                type: "toolCall",
+                id: "real-permission-call",
+                name: "execute",
+                arguments: { code: 'throw new Error("ORIGINAL_CODE_MUST_NOT_RUN")', label: "Original" },
+              },
+            ],
+          }),
+        )
+      : output(assistant("permission complete"));
+  await runtime.onUser(user(runtime), signal());
+  expect(requests).toHaveLength(1);
+  expect(requests[0]).toMatchObject({
+    subtype: "can_use_tool",
+    tool_name: "execute",
+    tool_use_id: "real-permission-call",
+    input: { label: "Original" },
+  });
+  const result = frames.find((f) => f.type === "user") as any;
+  expect(result.message.content[0].content[0].text).toContain("HUMAN_APPROVED_EXECUTION");
+  expect(result.message.content[0].is_error).toBe(false);
+});
+
+test("denied and dontAsk execute calls never run arbitrary code, availability does not preapprove", async () => {
+  let asks = 0;
+  const args = parseConnectorArguments(["--input-format", "stream-json", "--output-format", "stream-json"]);
+  const binding = permissionBinding(args, async () => {
+    asks++;
+    return { behavior: "deny", message: "Human refusal" };
+  });
+  const { runtime, frames, dir } = await fixture({
+    extra: { permissionMode: "default", authorizeTool: binding.authorize, changePermissionMode: binding.setMode },
+  });
+  await init(runtime);
+  expect(runtime.session.getActiveToolNames()).toContain("execute");
+  for (const mode of ["default", "dontAsk", "plan"]) {
+    if (mode !== "default")
+      await runtime.controls.set_permission_mode!(control("set_permission_mode", { mode }), signal());
+    let calls = 0;
+    runtime.session.agent.streamFunction = () =>
+      calls++ === 0
+        ? output(
+            assistant("", {
+              stopReason: "toolUse",
+              content: [
+                {
+                  type: "toolCall",
+                  id: "denied-" + mode,
+                  name: "execute",
+                  arguments: {
+                    code: "await Bun.write(" + JSON.stringify(join(dir, "UNAUTHORIZED")) + ', "bad")',
+                    label: "Must deny",
+                  },
+                },
+              ],
+            }),
+          )
+        : output(assistant("denied"));
+    await runtime.onUser(user(runtime), signal());
+    const results = frames.filter((f) => f.type === "result") as any[];
+    expect(results.at(-1).permission_denials).toHaveLength(1);
+  }
+  expect(asks).toBe(1);
+  expect(await Bun.file(join(dir, "UNAUTHORIZED")).exists()).toBe(false);
+  await expect(
+    runtime.controls.set_permission_mode!(control("set_permission_mode", { mode: "bypassPermissions" }), signal()),
+  ).rejects.toThrow("opt-in");
+});
+
+test("native saved question callback uses the real owner ledger and human answer, not worker prose", async () => {
+  const oldDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  process.env.BRUV_SUBAGENT_DEPTH = "0";
+  try {
+    const qdir = await mkdtemp(join(tmpdir(), "bruv-native-question-root-"));
+    dirs.push(qdir);
+    const manager = SessionManager.create(qdir, join(qdir, "sessions"));
+    const requests: Record<string, unknown>[] = [];
+    const { runtime, frames } = await fixture({
+      extra: {
+        sessionManager: manager,
+        request: async (request: Record<string, any>) => {
+          requests.push(request);
+          const text = request.input.questions[0].question;
+          return {
+            behavior: "allow",
+            toolUseID: request.tool_use_id,
+            updatedInput: { answers: { [text]: "Actual human choice" } },
+          };
+        },
+      },
+    });
+    await init(runtime);
+    let calls = 0;
+    runtime.session.agent.streamFunction = () =>
+      calls++ === 0
+        ? output(
+            assistant("", {
+              stopReason: "toolUse",
+              content: [
+                {
+                  type: "toolCall",
+                  id: "question-source-call",
+                  name: "execute",
+                  arguments: {
+                    code: 'const q = await questions.ask({text:"Which branch should I use?", choices:["Actual human choice","Other"]}); console.log(q);',
+                    label: "Save genuine question",
+                  },
+                },
+              ],
+            }),
+          )
+        : output(assistant("question saved"));
+    await runtime.onUser(user(runtime), signal());
+    await until(() => requests.length === 1);
+    expect(requests[0]).toMatchObject({ subtype: "can_use_tool", tool_name: "AskUserQuestion" });
+    await until(() => calls >= 3 && runtime.session.isIdle);
+    // The human command dispatches the real saved question command, with visible native output and no model call.
+    const before = calls;
+    await runtime.onUser(user(runtime, "/bruv questions list"), signal());
+    expect(calls).toBe(before);
+    expect(JSON.stringify(frames.filter((f) => (f.bruv as any)?.human_command)).toLowerCase()).toContain("answered");
+  } finally {
+    if (oldDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = oldDepth;
+  }
+});
+
+test("source-entry history stores ordered real repeated messages/tool results and wire UUIDs, resumes Pi context", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-composition-history-"));
+  dirs.push(dir);
+  const manager = SessionManager.create(dir, join(dir, "pi"));
+  const nativeId = "55963508-6de0-49c9-a81c-dea90f5cf7e4";
+  const history = await NativeHistory.open({
+    cwd: dir,
+    configDir: join(dir, "native"),
+    sessionId: nativeId,
+    sourceSessionId: manager.getSessionId(),
+  });
+  const { runtime, frames } = await fixture({ extra: { sessionManager: manager, nativeSessionId: nativeId, history } });
+  await init(runtime);
+  let calls = 0;
+  runtime.session.agent.streamFunction = () =>
+    calls++ === 0
+      ? output(
+          assistant("", {
+            stopReason: "toolUse",
+            content: [
+              {
+                type: "toolCall",
+                id: "stored-tool",
+                name: "execute",
+                arguments: { code: 'console.log("HISTORY_RESULT")', label: "History real tool" },
+              },
+            ],
+          }),
+        )
+      : output(assistant("same prose"));
+  await runtime.onUser(user(runtime, "same prose", { session_id: nativeId }), signal());
+  await runtime.onUser(user(runtime, "same prose", { session_id: nativeId }), signal());
+  await runtime.close();
+  const entries = await readNativeHistory(history.options);
+  expect(entries.map((e) => e.type)).toEqual(["user", "assistant", "user", "assistant", "user", "assistant"]);
+  expect(new Set(entries.map((e) => e.bruv!.sourceMessageId)).size).toBe(6);
+  const canonical = manager.getEntries().filter((e) => e.type === "message" && e.message.role !== "system");
+  expect(entries.map((e) => e.bruv!.sourceMessageId)).toEqual(canonical.map((e) => e.id));
+  for (let i = 1; i < entries.length; i++) expect(entries[i]!.parentUuid).toBe(entries[i - 1]!.uuid);
+  const visible = frames.filter((f) => f.type === "assistant" || f.type === "user");
+  for (const frame of visible) expect(entries.some((e) => e.uuid === frame.uuid)).toBe(true);
+  expect(JSON.stringify(entries)).toContain("stored-tool");
+  expect(JSON.stringify(entries)).toContain("HISTORY_RESULT");
+  const reopened = SessionManager.open(manager.getSessionFile()!);
+  expect(
+    reopened
+      .getEntries()
+      .filter((e) => e.type === "message" && e.message.role !== "system")
+      .map((e) => e.id),
+  ).toEqual(canonical.map((e) => e.id));
 });

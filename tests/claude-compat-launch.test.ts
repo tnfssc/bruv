@@ -124,29 +124,27 @@ describe("connector launch arguments", () => {
     }
     expect(() => parseConnectorArguments(["-p", "--output-format", "json"])).toThrow("--json-schema");
   });
-  test("behavior flags reject until their owners are bound", () => {
+  test("bound launch vocabulary accepts native health policy, rejects unsupported effects", () => {
     for (const flags of [
-      ["--session-id", "session"],
-      ["--resume", "session"],
-      ["--resume-session-at", "message"],
       ["--permission-prompt-tool", "stdio"],
-      ["--mcp-config", '{"mcpServers":{"host":{"url":"http://localhost"}}}'],
       ["--allowedTools", "execute"],
       ["--disallowedTools", "execute"],
-      ["--settings", '{"disableAllHooks":true}'],
+      ["--settings", '{"disableAllHooks":true,"permissions":{"allow":["Bash(*)"]}}'],
       ["--setting-sources", "user,project,local"],
       ["--add-dir", "/other"],
       ["--effort", "high"],
-      ["--thinking", "adaptive"],
+      ["--tools", "default"],
+    ])
+      expect(() => assertLaunchBindings(parseConnectorArguments([...streamFlags, ...flags]))).not.toThrow();
+    for (const flags of [
+      ["--session-id", "session"],
+      ["--thinking", "unknown"],
       ["--thinking-display", "hide"],
       ["--max-thinking-tokens", "10"],
-      ["--tools", "default"],
-    ]) {
-      expect(() => assertLaunchBindings(parseConnectorArguments([...streamFlags, ...flags]))).toThrow("not yet bound");
-    }
-    expect(() => assertLaunchBindings(parseConnectorArguments(streamFlags.slice(0, 4)))).toThrow(
-      "permission-mode default",
-    );
+      ["--settings", '{"fastMode":true}'],
+    ])
+      expect(() => assertLaunchBindings(parseConnectorArguments([...streamFlags, ...flags]))).toThrow();
+    expect(() => assertLaunchBindings(parseConnectorArguments(streamFlags.slice(0, 4)))).not.toThrow();
     expect(() => assertLaunchBindings(parseConnectorArguments(streamFlags.slice(0, -1)))).toThrow("explicit");
   });
 });
@@ -175,7 +173,7 @@ describe("connector entry glue (injected engine, not integrated product proof)",
     };
     expect(await runConnector([...streamFlags, "--resume=old"], factory, h.io)).toBe(1);
     expect(h.stdout()).toBe("");
-    expect(h.stderr()).toContain("--resume is not yet bound");
+    expect(h.stderr()).toContain("must be a UUID");
     expect(calls).toBe(0);
   });
   test("successful initialization does zero model calls; prompt and controls share one runtime", async () => {
@@ -387,4 +385,61 @@ describe("connector entry glue (injected engine, not integrated product proof)",
     expect(h.stdout()).toBe("");
     expect(closed).toBe(1);
   });
+});
+
+test("root controls are scrubbed before factory startup and resumed human requests wait for the paired transport", async () => {
+  const h = harness();
+  h.io.env = {
+    T3_MCP_URL: "must-not-reach-runtime",
+    T3_ACP_MCP_BEARER: "must-not-reach-runtime",
+    BRUV_ROOT_TEST: "root-only",
+    BRUV_WEB_TASK_EVENTS: "1",
+    OPENAI_API_KEY: "fixture-only-auth",
+    CLAUDE_CONFIG_DIR: "/scoped/sdk-home",
+  };
+  const abort = new AbortController();
+  let callback: Promise<Record<string, unknown>> | undefined;
+  const factory: RuntimeFactory = async (options) => {
+    expect(h.io.env.T3_MCP_URL).toBeUndefined();
+    expect(h.io.env.T3_ACP_MCP_BEARER).toBeUndefined();
+    expect(h.io.env.BRUV_ROOT_TEST).toBeUndefined();
+    expect(h.io.env.BRUV_WEB_TASK_EVENTS).toBeUndefined();
+    expect(h.io.env.OPENAI_API_KEY).toBe("fixture-only-auth");
+    expect(options.configDir).toBe("/scoped/sdk-home");
+    callback = options.request!(
+      {
+        subtype: "can_use_tool",
+        tool_name: "AskUserQuestion",
+        tool_use_id: "real-saved-question",
+        input: { questions: [] },
+      },
+      { signal: abort.signal },
+    );
+    return {
+      controls: { initialize: async () => ({}) },
+      onUser: async () => {},
+      runAuxiliary: async () => ({ type: "result" }),
+      close: async () => {
+        abort.abort();
+      },
+    };
+  };
+  const run = runConnector(streamFlags, factory, h.io);
+  for (let i = 0; i < 50 && !h.frames().some((f) => f.type === "control_request"); i++)
+    await new Promise((r) => setTimeout(r, 1));
+  const request = h.frames().find((f) => f.type === "control_request")!;
+  expect(request.request.tool_use_id).toBe("real-saved-question");
+  h.io.input.push(
+    JSON.stringify({
+      type: "control_response",
+      response: {
+        subtype: "success",
+        request_id: request.request_id,
+        response: { behavior: "allow", updatedInput: { answers: { Question: "Human answer" } } },
+      },
+    }) + "\n",
+  );
+  expect(await callback).toMatchObject({ behavior: "allow" });
+  h.io.input.push(null);
+  expect(await run).toBe(0);
 });

@@ -24,7 +24,7 @@ child.stderr.on("data", (b) => {
     const line = errors.slice(0, p);
     errors = errors.slice(p + 1);
     if (
-      /^\[bruv-claude-compat\] (?:--[A-Za-z-]+ .*not yet bound|Unsupported permission mode:|No configured Bruv model|No configured authentication)/.test(
+      /^\[bruv-claude-compat\] (?:--[A-Za-z-]+ .*not yet bound|Unsupported permission mode:|No configured Bruv model|No configured authentication|Unknown connector option: --[A-Za-z-]+$|Unsupported --settings effect: [A-Za-z]+$|--[A-Za-z-]+ is not supported|Native session\/message ID must be a UUID)/.test(
         line,
       )
     )

@@ -1,3 +1,4 @@
+import { launchPolicy } from "./binding";
 export interface ConnectorArguments {
   action: "help" | "version" | "run";
   mode: "stream" | "auxiliary";
@@ -73,7 +74,7 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
     const split = argument.indexOf("=");
     const flag = split < 0 ? argument : argument.slice(0, split);
     const inline = split < 0 ? undefined : argument.slice(split + 1);
-    if (seen.has(flag) && flag !== "--append-system-prompt" && flag !== "--add-dir")
+    if (seen.has(flag) && flag !== "--append-system-prompt" && flag !== "--add-dir" && flag !== "--thinking-display")
       throw new Error("Duplicate option: " + flag);
     seen.add(flag);
     const value = () => {
@@ -169,7 +170,12 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
         result.thinking = value();
         break;
       case "--thinking-display":
-        result.thinkingDisplay = value();
+        {
+          const display = value();
+          if (result.thinkingDisplay !== undefined && result.thinkingDisplay !== display)
+            throw new Error("Conflicting --thinking-display options");
+          result.thinkingDisplay = display;
+        }
         break;
       case "--max-thinking-tokens": {
         const v = value();
@@ -196,44 +202,19 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
   return result;
 }
 
-/** Remove a rejection only when the parent binds its real implementation. */
+/** Every accepted flag must have a real production effect. */
 export function assertLaunchBindings(args: ConnectorArguments): void {
-  const unbound = (flag: string): never => {
-    throw new Error(flag + " is not yet bound in the Bruv connector");
-  };
-  if (args.sessionId !== undefined) unbound("--session-id");
-  if (args.resume !== undefined) unbound("--resume");
-  if (args.resumeAt !== undefined) unbound("--resume-session-at");
-  if (args.permissionPromptTool !== undefined) unbound("--permission-prompt-tool");
-  if (args.allowedTools !== undefined && args.allowedTools !== "") unbound("--allowedTools");
-  if (args.disallowedTools !== undefined && args.disallowedTools !== "") unbound("--disallowedTools");
-  if (args.mcpConfig && Object.keys(args.mcpConfig).some((k) => k !== "mcpServers"))
-    throw new Error("Unknown --mcp-config property");
-  if (args.mcpConfig) {
-    const servers = args.mcpConfig.mcpServers;
-    if (!servers || typeof servers !== "object" || Array.isArray(servers))
-      throw new Error("--mcp-config requires mcpServers object");
-    if (Object.keys(servers).length) unbound("--mcp-config servers");
-  }
-  if (args.settings && Object.keys(args.settings).length) unbound("--settings");
-  if (args.settingSources !== undefined) unbound("--setting-sources");
-  if (args.addDirs.length) unbound("--add-dir");
-  for (const [flag, value] of [
-    ["--effort", args.effort],
-    ["--thinking", args.thinking],
-    ["--thinking-display", args.thinkingDisplay],
-    ["--max-thinking-tokens", args.maxThinkingTokens],
-  ] as const)
-    if (value !== undefined) unbound(flag);
+  launchPolicy(args);
+  if (args.resumeAt && !args.resume) throw new Error("--resume-session-at requires --resume");
+  if (args.noPersistence && (args.resume || args.resumeAt)) throw new Error("Resume requires persistence");
   if (args.mode === "auxiliary") {
     if (args.tools !== undefined && args.tools !== "") throw new Error('Auxiliary mode is tool-free; use --tools ""');
     if (args.permissionMode !== undefined && args.permissionMode !== "dontAsk")
       throw new Error("Auxiliary mode supports only dontAsk permissions");
     if (args.partialMessages) throw new Error("Auxiliary mode does not emit partial messages");
-  } else {
-    if (args.tools !== undefined) unbound("--tools");
-    if (args.disableSlashCommands) unbound("--disable-slash-commands");
-    if (args.permissionMode !== "bypassPermissions") unbound("--permission-mode " + (args.permissionMode ?? "default"));
-    if (!args.allowBypass) throw new Error("bypassPermissions requires explicit --allow-dangerously-skip-permissions");
+    if (args.mcpConfig && Object.keys((args.mcpConfig.mcpServers as object) ?? {}).length)
+      throw new Error("Auxiliary mode is tool-free; MCP servers are unsupported");
+    if (args.resume || args.sessionId || args.resumeAt)
+      throw new Error("Auxiliary mode uses an isolated in-memory session");
   }
 }

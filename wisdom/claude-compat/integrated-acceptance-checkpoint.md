@@ -50,3 +50,10 @@ parent-owned. No endpoint/RPC pass upgrades this native integration failure.
 
 Values unchanged: this applies existing truthful proof, actual human controls,
 one-owner lifecycle and safe-data principles; no new general rule was needed.
+
+## Composition follow-up
+
+See [production composition](composition.md): the actual --settings/health and main
+launch blockers are now bound. Real execute/steer/completion wake/Stop were reached;
+post-Stop job inspection and the separate lifecycle binder remain a failed gate.
+The original observations above are historical, not the current launch state.

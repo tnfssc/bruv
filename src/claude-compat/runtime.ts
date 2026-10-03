@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import type { Message } from "@earendil-works/pi-ai";
 import { join, resolve } from "node:path";
 import type { Api, ImageContent, Model } from "@earendil-works/pi-ai";
 import {
@@ -17,6 +19,13 @@ import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../delegation-environment";
 import { currentMainOwner } from "../live/main-owner";
 import { assertBruvPiHost } from "../pi-host";
 import { withBruvSystemPrompt } from "../system-prompt";
+import { bindNativeChildExecutable } from "./binding";
+import { createClaudeCompatCommands } from "./commands";
+import { createClaudeCompatHumanControls } from "./human-controls";
+import type { NativeHistory } from "./history";
+import type { InjectedMcpSession } from "./mcp";
+import type { PermissionRequest, PermissionDecision } from "./permissions";
+import type { ClaudeCompatTransport } from "./transport";
 import { type CompatFrame, createClaudeCompatFrontend } from "./frontend";
 
 export interface CompatUserMessage {
@@ -54,7 +63,18 @@ export interface ClaudeCompatRuntimeOptions {
   tools?: string[];
   /** Isolated, in-memory, tool-free session for native -p JSON generation. */
   auxiliary?: boolean;
-  /** Only bypassPermissions is implemented; other policies need a real tool permission gate. */
+  request?: ClaudeCompatTransport["request"];
+  authorizeTool?: (request: PermissionRequest) => Promise<PermissionDecision>;
+  mcp?: InjectedMcpSession;
+  changePermissionMode?: (mode: string) => void;
+  history?: NativeHistory;
+  historyParentUuid?: string;
+  disableHooks?: boolean;
+  disableSlashCommands?: boolean;
+  thinkingLevel?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
+  thinkingDisplay?: string;
+  profilesPath?: string;
+  /** The actual enforced policy, not a readiness label. */
   permissionMode?: string;
   /** Owning Bruv binary used by execute and child launch (defaults to process.execPath). */
   executablePath?: string;
@@ -89,6 +109,24 @@ function parseInput(content: string | unknown[]): { text: string; images: ImageC
   return { text: texts.join("\n"), images };
 }
 
+function nativeContent(content: unknown): unknown[] {
+  if (typeof content === "string") return [{ type: "text", text: content }];
+  if (!Array.isArray(content)) return [];
+  return content.map((p) =>
+    p.type === "toolCall"
+      ? { type: "tool_use", id: p.id, name: p.name, input: p.arguments }
+      : p.type === "image"
+        ? { type: "image", source: { type: "base64", data: p.data, media_type: p.mimeType } }
+        : p.type === "thinking"
+          ? {
+              type: "thinking",
+              thinking: p.thinking,
+              ...(p.thinkingSignature ? { signature: p.thinkingSignature } : {}),
+            }
+          : p,
+  );
+}
+
 /** Creates one actual Pi session. initialize is local readiness, never a provider access probe. */
 export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOptions): Promise<ClaudeCompatRuntime> {
   assertBruvPiHost();
@@ -100,12 +138,6 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     throw new Error(
       "Legacy patched-T3 bridge environment must be removed before creating the Claude-compatible runtime",
     );
-  if (
-    options.permissionMode &&
-    options.permissionMode !== "bypassPermissions" &&
-    !(options.auxiliary && options.permissionMode === "dontAsk")
-  )
-    throw new Error("Unsupported permission mode: " + options.permissionMode);
   const settings =
     options.settingsManager ??
     (options.auxiliary
@@ -137,9 +169,21 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     ? resolveModel(options.model)
     : configured
       ? resolveModel(configured)
-      : models.getAllModels().find((m): m is Model<Api> => m.type === "chat" && models.hasConfiguredAuth(m.provider));
+      : models
+          .getAllModels()
+          .find(
+            (m): m is Model<Api> => (m.type === "chat" || m.type === undefined) && models.hasConfiguredAuth(m.provider),
+          );
   if (!initialModel)
     throw new Error("No configured Bruv model. Configure a provider/model before starting the connector.");
+  if (
+    options.thinkingDisplay === "summarized" &&
+    initialModel.reasoning &&
+    !["anthropic-messages", "openai-responses", "openai-codex-responses", "azure-openai-responses"].includes(
+      initialModel.api,
+    )
+  )
+    throw new Error("Thinking summaries are unsupported for this reasoning API");
   // Missing auth remains an initialize error, not a successful account:{} auth indicator.
   const readiness = () => {
     const selected = session.model;
@@ -171,18 +215,83 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
             "--",
         ),
       ));
+  let releaseChildExecutable: (() => void) | undefined;
+  const messageIds = new WeakMap<object, string>();
+  const messageUuid = (message: object) => {
+    let id = messageIds.get(message);
+    if (!id) {
+      id = randomUUID();
+      messageIds.set(message, id);
+    }
+    return id;
+  };
+  let historyTail: Promise<unknown> = Promise.resolve();
+  let historyError: unknown;
+  let historyParent = options.historyParentUuid;
+  if (options.history) {
+    const append = manager.appendMessage.bind(manager);
+    manager.appendMessage = (message: Message) => {
+      const entryId = append(message);
+      const role = message.role;
+      if (role === "user" || role === "assistant" || role === "toolResult") {
+        const type = role === "assistant" ? "assistant" : "user";
+        const content =
+          role === "toolResult"
+            ? [
+                {
+                  type: "tool_result",
+                  tool_use_id: message.toolCallId,
+                  content: nativeContent(message.content),
+                  is_error: message.isError,
+                },
+              ]
+            : nativeContent(message.content);
+        const native = {
+          role: type,
+          content,
+          ...(role === "assistant" ? { model: message.provider + "/" + message.model } : {}),
+        };
+        const uuid = messageUuid(message);
+        const parentUuid = historyParent;
+        historyParent = uuid;
+        historyTail = historyTail
+          .then(() =>
+            options.history!.append({
+              sourceMessageId: entryId,
+              type,
+              message: native,
+              timestamp: new Date(message.timestamp).toISOString(),
+              uuid,
+              ...(parentUuid === undefined ? {} : { parentUuid }),
+            }),
+          )
+          .catch((error) => {
+            historyError ??= error;
+          });
+      }
+      return entryId;
+    };
+  }
+  const human =
+    options.request && !options.auxiliary && manager.getSessionFile()
+      ? createClaudeCompatHumanControls({ request: options.request, diagnostic: options.diagnostic })
+      : undefined;
+  const lifetime = new AbortController();
+  let toolTurn = new AbortController();
   let session!: AgentSession;
   const frontend = createClaudeCompatFrontend({
     emit: options.emit,
+    messageUuid,
+    omitThinking: options.thinkingDisplay === "omitted",
     auxiliary: options.auxiliary,
     diagnostic: options.diagnostic,
     initialization: () => ({
       cwd: options.cwd,
       tools: session.getActiveToolNames(),
-      mcp_servers: [],
+      mcp_servers: options.mcp?.status() ?? [],
       model: session.model!.provider + "/" + session.model!.id,
-      permissionMode: "bypassPermissions",
-      slash_commands: session.extensionRunner.getRegisteredCommands().map((c) => c.invocationName),
+      permissionMode: options.permissionMode ?? "default",
+      slash_commands: options.disableSlashCommands ? [] : commands.catalog().map((c) => c.name),
       skills: loader.getSkills().skills.map((s) => s.name),
       plugins: [],
       claude_code_version: "bruv/" + bruvPackage.version,
@@ -200,7 +309,11 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       import("../remote/extension"),
     ]);
     factories = [
-      { name: "bruv-tools", factory: (pi) => tasks(pi, { executablePath: options.executablePath }), hidden: true },
+      {
+        name: "bruv-tools",
+        factory: (pi) => tasks(pi, { executablePath: options.executablePath, profilesPath: options.profilesPath }),
+        hidden: true,
+      },
       { name: "bruv-herdr-agent-state", factory: state, hidden: true },
       { name: "bruv-live", factory: live, hidden: true },
       { name: "bruv-remote", factory: remote, hidden: true },
@@ -210,7 +323,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     cwd: options.cwd,
     agentDir: options.agentDir,
     settingsManager: settings,
-    noExtensions: options.auxiliary,
+    noExtensions: options.auxiliary || options.disableHooks,
     noSkills: options.auxiliary,
     noPromptTemplates: options.auxiliary,
     noThemes: true,
@@ -226,6 +339,65 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     extensionFactories: [
       ...factories,
       ...(options.auxiliary ? [] : (options.extensionFactories ?? [])),
+      ...(human ? [{ name: "bruv-native-questions", factory: human.factory, hidden: true }] : []),
+      {
+        name: "bruv-native-permissions",
+        hidden: true,
+        factory: (pi) => {
+          pi.on("agent_start", () => {
+            toolTurn = new AbortController();
+          });
+          pi.on("before_provider_request", (event, ctx) => {
+            if (!options.thinkingDisplay || !ctx.model?.reasoning) return;
+            const payload = event.payload as Record<string, any>;
+            if (
+              ctx.model.api === "anthropic-messages" &&
+              payload.thinking?.type &&
+              payload.thinking.type !== "disabled"
+            )
+              return { ...payload, thinking: { ...payload.thinking, display: options.thinkingDisplay } };
+            if (
+              ["openai-responses", "openai-codex-responses", "azure-openai-responses"].includes(ctx.model.api) &&
+              payload.reasoning
+            )
+              return {
+                ...payload,
+                reasoning: { ...payload.reasoning, summary: options.thinkingDisplay === "summarized" ? "auto" : null },
+              };
+          });
+          pi.on("tool_call", async (event) => {
+            if (options.mcp?.tools().some((t) => t.name === event.toolName)) return;
+            if (!options.authorizeTool) {
+              if (options.permissionMode === "bypassPermissions") return;
+              return { block: true, reason: "No native permission gate is bound" };
+            }
+            const effect =
+              event.toolName === "execute"
+                ? "arbitrary-typescript"
+                : ["read", "grep", "find", "ls"].includes(event.toolName)
+                  ? "read-only"
+                  : ["edit", "write"].includes(event.toolName)
+                    ? "edit"
+                    : "other";
+            const decision = await options.authorizeTool({
+              toolName: event.toolName,
+              input: event.input,
+              toolUseId: event.toolCallId,
+              effect,
+              owner: "bruv",
+              signal: AbortSignal.any([lifetime.signal, toolTurn.signal]),
+            });
+            if (decision.behavior === "deny") {
+              frontend.denied(event.toolName, event.input, event.toolCallId);
+              return { block: true, reason: decision.message };
+            }
+            if (decision.updatedInput) {
+              for (const key of Object.keys(event.input)) delete (event.input as Record<string, unknown>)[key];
+              Object.assign(event.input, decision.updatedInput);
+            }
+          });
+        },
+      },
       { name: "bruv-claude-compat-frontend", factory: frontend.factory, hidden: true },
     ],
   });
@@ -235,11 +407,20 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     agentDir: options.agentDir,
     modelRuntime: models,
     model: initialModel,
+    thinkingLevel: options.thinkingLevel,
     settingsManager: settings,
     sessionManager: manager,
     resourceLoader: loader,
     tools: options.auxiliary ? [] : (options.tools ?? ["execute"]),
   }));
+  const commands = createClaudeCompatCommands({
+    session,
+    humanControls: human,
+    notify: async (text, level) => {
+      frontend.notice(text, level);
+      await frontend.flush();
+    },
+  });
   const unsubscribe = session.subscribe(frontend.onEvent);
   let closed = false,
     closePromise: Promise<void> | undefined,
@@ -252,25 +433,39 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   async function close() {
     if (closePromise) return closePromise;
     closed = true;
+    lifetime.abort(new Error("Connector closed"));
+    toolTurn.abort();
+    human?.dispose();
     closePromise = (async () => {
+      const errors: unknown[] = [];
       frontend.interrupt();
       currentMainOwner(session.sessionManager)?.stopForeground();
-      // A prompt can still be in asynchronous Pi preflight before isStreaming.
-      // Drain admission; the closed check below prevents a late model run.
+      // An admitted Pi preflight must see closed before it can start a provider call.
       await admission;
       session.clearQueue();
-      await session.abort();
+      try {
+        await session.abort();
+      } catch (error) {
+        errors.push(error);
+      }
       try {
         await session.extensionRunner.emit({ type: "session_shutdown", reason: "quit" });
-      } finally {
-        unsubscribe();
-        session.dispose();
+      } catch (error) {
+        errors.push(error);
       }
-      await frontend.flush();
+      unsubscribe();
+      session.dispose();
+      releaseChildExecutable?.();
+      for (const result of await Promise.allSettled([frontend.flush(), historyTail, options.mcp?.close()]))
+        if (result.status === "rejected") errors.push(result.reason);
+      if (historyError) errors.push(historyError);
+      if (errors.length) throw new AggregateError(errors, "Connector teardown failed");
     })();
     return closePromise;
   }
   try {
+    if (options.executablePath && !options.auxiliary)
+      releaseChildExecutable = await bindNativeChildExecutable(manager, options.executablePath);
     await session.bindExtensions({
       // RPC is Pi's persistent non-terminal lifecycle; print/json wait on background work.
       mode: options.auxiliary ? "print" : "rpc",
@@ -292,18 +487,29 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     throw error;
   }
 
+  // Bruv's extension installs its ordinary CLI execute-only default at session_start.
+  // Native selection belongs to this composition, after those defaults have run.
+  const selectedTools = options.auxiliary ? [] : (options.tools ?? ["execute"]);
+  const availableTools = new Set(session.getAllTools().map((t) => t.name));
+  for (const name of selectedTools)
+    if (!availableTools.has(name)) {
+      await close();
+      throw new Error("Unavailable native tool: " + name);
+    }
+  session.setActiveToolsByName(selectedTools);
+
   const controls: Record<string, CompatControlHandler> = {
     initialize: async () => {
       checkOpen();
       const ready = readiness();
       initialized = true;
       return {
-        commands: session.extensionRunner
-          .getRegisteredCommands()
-          .map((c) => ({ name: c.invocationName, description: c.description ?? "", argumentHint: "" })),
+        commands: options.disableSlashCommands ? [] : commands.catalog(),
         models: models
           .getAllModels()
-          .filter((m): m is Model<Api> => m.type === "chat" && models.hasConfiguredAuth(m.provider))
+          .filter(
+            (m): m is Model<Api> => (m.type === "chat" || m.type === undefined) && models.hasConfiguredAuth(m.provider),
+          )
           .map((m) => ({
             value: m.provider + "/" + m.id,
             displayName: m.name + " (" + m.provider + ")",
@@ -321,6 +527,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     interrupt: async () => {
       checkOpen();
       interruptVersion++;
+      toolTurn.abort(new Error("Interrupted"));
       frontend.interrupt();
       await admission;
       session.clearQueue();
@@ -329,6 +536,17 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       await frontend.flush();
       return {};
     },
+    ...(options.changePermissionMode
+      ? {
+          set_permission_mode: async (message: CompatControlRequest) => {
+            checkOpen();
+            if (typeof message.request.mode !== "string") throw new Error("set_permission_mode requires mode");
+            options.changePermissionMode!(message.request.mode);
+            options.permissionMode = message.request.mode;
+            return {};
+          },
+        }
+      : {}),
     set_model: async (message) => {
       checkOpen();
       if (!session.isIdle) throw new Error("Cannot change model during a running turn; interrupt first");
@@ -346,6 +564,17 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     if (message.session_id && message.session_id !== (options.nativeSessionId ?? session.sessionId))
       throw new Error("User session_id does not match the owning Bruv session");
     if (message.parent_tool_use_id != null) throw new Error("Child user input is unsupported on the root connector");
+    if (
+      !options.disableSlashCommands &&
+      /^\/bruv(?=[:\s]|$)/.test(typeof message.message.content === "string" ? message.message.content.trim() : "")
+    ) {
+      if (session.isStreaming) throw new Error("Interrupt the model turn before running a human command");
+      const checkpoint = frontend.checkpoint();
+      await commands.dispatchUserCommand({ ...message, session_id: session.sessionId });
+      frontend.commandHandled(checkpoint);
+      await frontend.flush();
+      return;
+    }
     const { text, images } = parseInput(message.message.content);
     if (signal.aborted) throw signal.reason;
     // Serialize only Pi admission/preflight, never model turns or a second user queue.
@@ -391,6 +620,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       await run;
       if (handled) frontend.commandHandled(checkpoint);
       await frontend.flush();
+      await historyTail;
+      if (historyError) throw historyError;
     } catch (error) {
       frontend.fail(error);
       await frontend.flush();

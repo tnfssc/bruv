@@ -188,10 +188,22 @@ compiledTest(
       eofOwner.child.stdin.end();
       expect(await eofOwner.exit).toBe(0);
       expect(eofOwner.frames().some((f) => f.type === "result" && f.subtype === "success")).toBe(false);
+      const unaligned = launch([
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--model",
+        "fixture/fixture-model",
+      ]);
+      expect(await unaligned.exit).toBe(1);
+      expect(unaligned.stderr()).toContain("explicit aligned CLAUDE_CONFIG_DIR");
+      expect(unaligned.stdout()).toBe("");
+      expect(calls).toBe(3);
       const failure = launch(["--input-format", "stream-json", "--output-format", "stream-json", "--resume=unbound"]);
       expect(await failure.exit).toBe(1);
       expect(failure.stdout()).toBe("");
-      expect(failure.stderr()).toContain("--resume is not yet bound");
+      expect(failure.stderr()).toContain("must be a UUID");
       const unknown = launch(["--unsupported-behavior"]);
       expect(await unknown.exit).toBe(1);
       expect(unknown.stdout()).toBe("");
@@ -204,4 +216,189 @@ compiledTest(
     }
   },
   15000,
+);
+
+compiledTest(
+  "compiled native execute dispatches a real normal child through the paired Bruv binary and explicit profile",
+  async () => {
+    const root = await mkdtemp(join(tmpdir(), "bruv-compat-real-child-"));
+    const state = join(root, "agent"),
+      home = join(root, "home");
+    await mkdir(state, { recursive: true });
+    await mkdir(home);
+    const seen: Array<{ model: string; childTool: boolean }> = [];
+    const provider = Bun.serve({
+      hostname: "127.0.0.1",
+      port: 0,
+      async fetch(request) {
+        const body = (await request.json()) as any;
+        const toolResults = body.messages
+          .filter((m: any) => m.role === "tool")
+          .map((m: any) => JSON.stringify(m.content))
+          .join("\n");
+        const child = body.model === "child-model";
+        seen.push({ model: body.model, childTool: child && toolResults.includes("ACTUAL_CHILD_TOOL_RESULT") });
+        let delta: any;
+        const tool = (id: string, code: string) => ({
+          role: "assistant",
+          tool_calls: [
+            {
+              index: 0,
+              id,
+              type: "function",
+              function: { name: "execute", arguments: JSON.stringify({ label: "Paired binary real execution", code }) },
+            },
+          ],
+        });
+        if (child && !toolResults.includes("ACTUAL_CHILD_TOOL_RESULT"))
+          delta = tool(
+            "child-actual-tool",
+            'console.log(JSON.stringify({proof:"ACTUAL_CHILD_TOOL_RESULT",type:process.env.BRUV_SUBAGENT_TYPE,depth:process.env.BRUV_SUBAGENT_DEPTH,controls:Object.keys(process.env).filter(k=>k.startsWith("T3_")||k.startsWith("BRUV_ROOT_"))}));',
+          );
+        else if (child) delta = { role: "assistant", content: "ACTUAL_NORMAL_CHILD_DONE" };
+        else if (toolResults && !toolResults.includes("ACTUAL_NORMAL_CHILD_DONE"))
+          delta = { role: "assistant", content: "ACTUAL_CHILD_FAILURE: " + toolResults };
+        else if (!toolResults.includes("ACTUAL_NORMAL_CHILD_DONE"))
+          delta = tool(
+            "parent-actual-subagent",
+            'const r=await subagent({type:"normal",prompt:"Run CHILD_RUN_TOOL_PROOF using your actual execute tool",waitSeconds:10}); console.log(JSON.stringify(r));',
+          );
+        else delta = { role: "assistant", content: "ACTUAL_PARENT_CHILD_CONFIRMED" };
+        const event = (d: any, finish: string | null) => ({
+          id: "paired-binary-fixture",
+          object: "chat.completion.chunk",
+          created: 1,
+          model: body.model,
+          choices: [{ index: 0, delta: d, finish_reason: finish }],
+        });
+        return new Response(
+          [event(delta, null), event({}, delta.tool_calls ? "tool_calls" : "stop")]
+            .map((e) => "data: " + JSON.stringify(e) + "\n\n")
+            .join("") + "data: [DONE]\n\n",
+          { headers: { "content-type": "text/event-stream" } },
+        );
+      },
+    });
+    await writeFile(
+      join(state, "models.json"),
+      JSON.stringify({
+        providers: {
+          fixture: {
+            baseUrl: "http://127.0.0.1:" + provider.port + "/v1",
+            api: "openai-completions",
+            apiKey: "local-fixture-only",
+            models: ["fixture-model", "child-model"].map((id) => ({
+              id,
+              name: id,
+              reasoning: false,
+              input: ["text"],
+              contextWindow: 32000,
+              maxTokens: 1024,
+            })),
+          },
+        },
+      }),
+    );
+    await writeFile(join(state, "settings.json"), JSON.stringify({ cacheWarming: "off" }));
+    await writeFile(
+      join(state, "subagents.json"),
+      JSON.stringify({ normal: { model: "fixture/child-model", thinking: "off" } }),
+    );
+    const child = spawn(
+      binary!,
+      [
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--model",
+        "fixture/fixture-model",
+        "--permission-mode",
+        "bypassPermissions",
+        "--allow-dangerously-skip-permissions",
+        "--no-session-persistence",
+      ],
+      {
+        cwd: root,
+        env: {
+          HOME: home,
+          PATH: process.env.PATH,
+          BRUV_CLAUDE_COMPAT_HOME: state,
+          BRUV_CLAUDE_COMPAT_BRUV_PATH: normalBinary!,
+          T3_COMPOSITION_SCOPE: "must-scrub-before-extensions",
+          BRUV_ROOT_COMPOSITION: "must-not-reach-child",
+          SHELL: "/bin/bash",
+        },
+        stdio: ["pipe", "pipe", "pipe"],
+      },
+    );
+    let stdout = "",
+      stderr = "";
+    child.stdout.on("data", (b) => {
+      stdout += b;
+    });
+    child.stderr.on("data", (b) => {
+      stderr += b;
+    });
+    const frames = () =>
+      stdout
+        .split("\n")
+        .filter(Boolean)
+        .map((line) => JSON.parse(line));
+    const until = async (check: () => boolean) => {
+      for (let i = 0; i < 3000; i++) {
+        if (check()) return;
+        if (child.exitCode !== null) throw Error("Connector exited: " + stderr);
+        await Bun.sleep(10);
+      }
+      throw Error("Real child probe timed out: " + stderr);
+    };
+    const exit = new Promise<number | null>((resolve) => child.once("close", resolve));
+    try {
+      child.stdin.write(
+        JSON.stringify({ type: "control_request", request_id: "init", request: { subtype: "initialize" } }) + "\n",
+      );
+      await until(() => frames().some((f) => f.type === "control_response"));
+      expect(seen).toHaveLength(0);
+      child.stdin.write(
+        JSON.stringify({
+          type: "user",
+          parent_tool_use_id: null,
+          message: { role: "user", content: "Run a genuine normal subagent" },
+        }) + "\n",
+      );
+      await until(() => frames().some((f) => f.type === "result"));
+      expect(frames().find((f) => f.type === "result").result).toBe("ACTUAL_PARENT_CHILD_CONFIRMED");
+      expect(seen.some((r) => r.model === "child-model" && r.childTool)).toBe(true);
+      const toolFrame = frames().find(
+        (f) => f.type === "user" && JSON.stringify(f).includes("ACTUAL_NORMAL_CHILD_DONE"),
+      );
+      expect(toolFrame).toBeDefined();
+      const childSessionRoot = join(state, "sessions");
+      const { readdir } = await import("node:fs/promises");
+      const directories = await readdir(childSessionRoot);
+      let childTranscript = "";
+      for (const directory of directories) {
+        const files = await readdir(join(childSessionRoot, directory));
+        for (const file of files.filter((f) => f.endsWith(".jsonl")))
+          childTranscript += await import("node:fs/promises").then((fs) =>
+            fs.readFile(join(childSessionRoot, directory, file), "utf8"),
+          );
+      }
+      expect(childTranscript).toContain("ACTUAL_CHILD_TOOL_RESULT");
+      expect(childTranscript).toContain('\"type\":\"normal\"');
+      expect(childTranscript).toContain('\"depth\":1');
+      expect(childTranscript).toContain('\\\"controls\\\":[]');
+      child.stdin.end();
+      expect(await exit).toBe(0);
+    } finally {
+      if (child.exitCode === null) {
+        child.kill("SIGTERM");
+        await exit;
+      }
+      provider.stop(true);
+      await rm(root, { recursive: true, force: true });
+    }
+  },
+  40000,
 );

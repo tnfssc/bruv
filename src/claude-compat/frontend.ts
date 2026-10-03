@@ -13,6 +13,8 @@ export type CompatFrame = { type: string; [key: string]: unknown };
 export interface ClaudeCompatFrontendOptions {
   emit(frame: CompatFrame): void | Promise<void>;
   sessionId(): string;
+  messageUuid?(message: object): string;
+  omitThinking?: boolean;
   model(): string;
   /** Auxiliary mode collects actual results without publishing streaming frames. */
   auxiliary?: boolean;
@@ -37,6 +39,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
   let cost = 0;
   let cumulativeCost = 0;
+  let denials: Record<string, unknown>[] = [];
   const send = (frame: CompatFrame) => {
     tail = tail
       .then(() => options.emit(frame))
@@ -60,6 +63,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     lastText = "";
     failure = undefined;
     cost = 0;
+    denials = [];
     usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
   };
   const result = (structuredOutput?: unknown) => ({
@@ -73,7 +77,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     result: lastText,
     total_cost_usd: cost,
     usage,
-    permission_denials: [],
+    permission_denials: denials,
     ...(failure ? { errors: [failure] } : {}),
     ...(structuredOutput === undefined ? {} : { structured_output: structuredOutput }),
   });
@@ -125,6 +129,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     }
     if (event.type === "message_update") {
       const e = event.assistantMessageEvent;
+      if (options.omitThinking && e.type.startsWith("thinking_")) return;
       switch (e.type) {
         case "text_start":
           stream({ type: "content_block_start", index: e.contentIndex, content_block: { type: "text", text: "" } });
@@ -200,23 +205,26 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
         send({
           type: "assistant",
           ...base(),
+          uuid: options.messageUuid?.(m) ?? randomUUID(),
           parent_tool_use_id: null,
           message: {
             id: messageId,
             type: "message",
             role: "assistant",
             model: options.model(),
-            content: assistant.content.map((p) =>
-              p.type === "toolCall"
-                ? { type: "tool_use", id: p.id, name: p.name, input: p.arguments }
-                : p.type === "thinking"
-                  ? {
-                      type: "thinking",
-                      thinking: p.thinking,
-                      ...(p.thinkingSignature ? { signature: p.thinkingSignature } : {}),
-                    }
-                  : p,
-            ),
+            content: assistant.content
+              .filter((p) => !options.omitThinking || p.type !== "thinking")
+              .map((p) =>
+                p.type === "toolCall"
+                  ? { type: "tool_use", id: p.id, name: p.name, input: p.arguments }
+                  : p.type === "thinking"
+                    ? {
+                        type: "thinking",
+                        thinking: p.thinking,
+                        ...(p.thinkingSignature ? { signature: p.thinkingSignature } : {}),
+                      }
+                    : p,
+              ),
             stop_reason: stopReason,
             stop_sequence: null,
             usage: nativeUsage,
@@ -226,6 +234,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       send({
         type: "user",
         ...base(),
+        uuid: options.messageUuid?.(m) ?? randomUUID(),
         parent_tool_use_id: null,
         message: {
           role: "user",
@@ -243,6 +252,28 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   }
   return {
     factory,
+    notice(text: string, level: "info" | "warning" | "error" = "info") {
+      begin();
+      lastText = lastText ? lastText + "\n" + text : text;
+      send({
+        type: "assistant",
+        ...base(),
+        parent_tool_use_id: null,
+        message: {
+          id: randomUUID(),
+          type: "message",
+          role: "assistant",
+          model: options.model(),
+          content: [{ type: "text", text }],
+          stop_reason: "end_turn",
+          usage: { input_tokens: 0, output_tokens: 0 },
+        },
+        bruv: { human_command: true, level },
+      });
+    },
+    denied(toolName: string, input: Record<string, unknown>, id: string) {
+      denials.push({ tool_name: toolName, tool_input: input, tool_use_id: id });
+    },
     onEvent,
     sessionHost: () => hostAccess(),
     context: () => context,
@@ -268,13 +299,15 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
         custom: unavailable,
         editor: unavailable,
         notify: (message, type) => {
+          // Human command results are projected by the command admission seam.
           options.diagnostic?.({ type: type ?? "info", message });
         },
       };
     },
     checkpoint: () => results,
     commandHandled(checkpoint: number) {
-      if (!active && results === checkpoint) {
+      if (active) end();
+      else if (results === checkpoint) {
         begin();
         end();
       }

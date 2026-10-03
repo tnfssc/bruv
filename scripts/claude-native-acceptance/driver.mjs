@@ -20,6 +20,7 @@ export async function prepare({ base, fixture, config }) {
             displayName: "Bruv local deterministic acceptance (not Claude)",
             config: {
               binaryPath: fixture,
+              homePath: config.env.CLAUDE_CONFIG_DIR,
               customModels: [
                 {
                   slug: modelSlug,
@@ -194,7 +195,9 @@ export function projectWire(wire) {
       control: m.request?.subtype,
       priority: m.priority,
       status: m.status,
-      toolNames: m.message?.content?.filter((c) => c.type === "tool_use").map((c) => c.name),
+      toolNames: Array.isArray(m.message?.content)
+        ? m.message.content.filter((c) => c.type === "tool_use").map((c) => c.name)
+        : undefined,
     };
   });
 }

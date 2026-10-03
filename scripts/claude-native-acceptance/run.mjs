@@ -65,6 +65,7 @@ try {
       HOME: home,
       BRUV_CODING_AGENT_DIR: agent,
       BRUV_CLAUDE_COMPAT_HOME: agent,
+      CLAUDE_CONFIG_DIR: path.join(agent, "native-history"),
       BRUV_CLAUDE_COMPAT_BRUV_PATH: normalBinary,
       BRUV_ACCEPTANCE_CONFIG: path.join(root, "config.json"),
     },
