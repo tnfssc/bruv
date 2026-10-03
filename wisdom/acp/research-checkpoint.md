@@ -94,3 +94,5 @@ Parent read prototype handoff and inspected actual completed/Stop frames. Both f
 ## Steering/no-T3-change pass complete
 
 Wire task_d9027497 confirmed identical cancel envelopes for Steer and Stop, followed by replacement prompt for Steer. Native Pi task_9c436381 proved safe-boundary engine steering in actual UI through an explicit research-only version shim; direct binaryPath fails version gate and native job APIs still require a new compatible ownership strategy. Parent read reports and inspected selected UI/wire proof. No production or T3 changes/release. All jobs finished and owned runtimes cleaned. Synthesis and next user choice: steering-decision.md.
+
+User clarified deep child/monitor UI and possible split: T3 orchestration for orchestrator work, Bruv ownership for ordinary workers. Parent checked native Pi source: existing provider-native subagent UI hook exists, but execute metadata needs truthful mapping and completed outer tools force finished state. See hybrid-subagent-ui-direction.md. No new runtime proof or migration claim; next discussion is exact ownership/UI contract.
