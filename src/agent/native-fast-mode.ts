@@ -215,8 +215,9 @@ function authSurfaceMatches(ctx: ExtensionContext, surface: "api" | "codex", mod
 export function nativeFastEnabled(ctx: ExtensionContext): boolean {
   if (!ctx.model || !ctx.sessionManager?.getSessionId) return false;
   const active = currentSetting(ctx);
+  if (!active?.enabled || !active.costAcknowledged) return false;
   const support = nativeFastSupport(ctx.model);
-  return !!active?.enabled && active.costAcknowledged && support.supported && authSurfaceMatches(ctx, support.surface);
+  return support.supported && authSurfaceMatches(ctx, support.surface);
 }
 
 function statusText(enabled: boolean, tier?: string): string {

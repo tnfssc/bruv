@@ -106,3 +106,12 @@ Handoff: implementation and tests are committed on this branch; inspect git log 
 User asked to push to default and release. Release worktree: `/home/tnfssc/.bruv/worktrees/bruv-release-fast-v01529`. Branch: `bruv/release-fast-v01529`. Based on origin/develop eb07b0d7, not the busy local develop tip. Only ba52c365 was cherry-picked as 40778e73. The two environment conflicts retain released branch behavior and add only the fast-mode bit. Unrelated local native-connector and task-UI work is not included. Human notes are support/release-v0.15.29.md. Release dispatch and publication checks are pending.
 
 Release candidate proof on the actual default-branch base: frozen install, typecheck, whole-repo format check, diff check, and the same 128 tests / 896 assertions passed.
+
+Release dispatched: https://github.com/tnfssc/bruv/actions/runs/37143993104 from dcb2d747702ee76db75d1e23b21960e8fd8f72e0 on develop. Watch log: /home/tnfssc/.bruv/release-v0.15.29-watch.log. Do not push handoff updates while publication gates require the prepared develop SHA to stay fixed. After success, verify release metadata and assets (no redundant binary download), then commit the final release record.
+
+
+### First release run failed; off-path correction
+
+Run 37143993104 failed at deterministic tests before packaging/publication: 1737 pass, 20 skip, 9 fail. All nine failures were in subagent-placement.test.ts. nativeFastEnabled looked up model endpoint support even with no enabled/acknowledged setting. These normal launch paths carried only provider/model identity, so normalizedUrl read an absent baseUrl. This was our regression, not an unrelated CI failure.
+
+Reproduced locally: placement suite 4 pass / 9 fail. The helper now returns false before looking at routing/auth unless enabled consent exists. Added a regression with throwing routing/auth getters for absent, off, and unacknowledged settings. Placement plus native-fast-mode and job-service: 50 pass, 0 fail, 277 assertions; typecheck passed. No model-schema weakening or new endpoint fallback. The release-prepared version remains 0.15.29 because no tag was published. A new full release run will use the corrected source, not rerun the failed SHA. Values unchanged: keep untouched paths untouched, and use real-path checks.

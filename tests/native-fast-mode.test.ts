@@ -932,3 +932,34 @@ test("an in-flight fast response cannot turn an explicit opt-out back into confi
   expect(body.service_tier).toBe("priority");
   expect(h.statuses.at(-1).value).toBe(" fast off");
 });
+
+test("disabled fast inheritance leaves model routing and auth untouched", () => {
+  const model = {
+    provider: "fixture",
+    id: "parent",
+    get baseUrl() {
+      throw new Error("routing must not be inspected");
+    },
+  };
+  const h = harness(model);
+  h.ctx.modelRegistry.isUsingOAuth = () => {
+    throw new Error("auth must not be inspected");
+  };
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
+  h.entries.push({
+    type: "custom",
+    customType: NATIVE_FAST_ENTRY,
+    data: {
+      version: 1,
+      sessionId: "session-a",
+      provider: model.provider,
+      model: model.id,
+      enabled: false,
+      costAcknowledged: false,
+      timestamp: 1,
+    },
+  });
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
+  h.entries[0].data.enabled = true;
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
+});
