@@ -1,3 +1,4 @@
+import { scrubT3BridgeEnvironment } from "../delegation-environment";
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import {
@@ -283,7 +284,7 @@ export class TaskManager {
     if (!activatingPrepared && this.#tasks.has(id)) throw new Error("Duplicate task ID");
     const child = spawn(launch.command, launch.args ?? [], {
       cwd: launch.cwd,
-      env: launch.env ?? process.env,
+      env: scrubT3BridgeEnvironment(launch.env ?? process.env),
       shell: false,
       detached: process.platform !== "win32",
       stdio: ["pipe", "pipe", "pipe"],

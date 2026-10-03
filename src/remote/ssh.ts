@@ -1,3 +1,4 @@
+import { scrubT3BridgeEnvironment } from "../delegation-environment";
 import { spawn } from "node:child_process";
 import type { Transport } from "./client";
 
@@ -38,7 +39,7 @@ export async function sshControl<T>(
         host,
         quote(bruvPath) + " " + entrypoint,
       ],
-      { stdio: ["pipe", "pipe", "pipe"] },
+      { env: scrubT3BridgeEnvironment(process.env), stdio: ["pipe", "pipe", "pipe"] },
     );
     let out = "",
       err = "",

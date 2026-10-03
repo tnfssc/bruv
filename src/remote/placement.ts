@@ -1,3 +1,4 @@
+import { childAgentEnvironment } from "../delegation-environment";
 import { canDelegate, SUBAGENT_TYPES, type SubagentType } from "../tasks/subagent-profiles";
 export type RemoteWorkspace = { kind: "inherit" } | { kind: "worktree"; baseRef?: string; branch?: string };
 export type RemotePlacement = {
@@ -39,7 +40,7 @@ export function validateWorkspace(workspace: RemoteWorkspace): void {
 export function remoteChildEnvironment(env: NodeJS.ProcessEnv, placement?: RemotePlacement): NodeJS.ProcessEnv {
   if (placement) validatePlacement(placement);
   return {
-    ...env,
+    ...childAgentEnvironment(env),
     BRUV_SUBAGENT_TYPE: placement?.profile ?? "normal",
     BRUV_SUBAGENT_DEPTH: String(placement ? placement.parentDepth + 1 : 1),
   };
