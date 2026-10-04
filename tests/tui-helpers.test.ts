@@ -11,6 +11,18 @@ test("POSIX shell quoting roundtrips empty arguments, spaces, apostrophes and sh
   expect(result).toEqual({ code: 0, stderr: "", stdout: values.join("\0") + "\0" });
 });
 
+test("frameContaining waits for the active monitor, not job names already in the transcript", async () => {
+  const transcript = "↗ ALPHA-live\n↗ BETA-live\nFIXTURE_READY\n /ps";
+  const roster =
+    transcript +
+    "\nRunning jobs\n› task_alpha [command] ALPHA-live\n  task_beta [command] BETA-live\nLive preview\nEnter/i inspect";
+  const ready = ["Running jobs", "Live preview", "Enter/i inspect", "ALPHA", "BETA"];
+  let captures = 0;
+  expect(await frameContaining(async () => (++captures === 1 ? transcript : roster), ready, 2, 0)).toBe(roster);
+  expect(captures).toBe(2);
+  await expect(frameContaining(async () => transcript, ready, 1, 0)).rejects.toThrow("Missing Running jobs");
+});
+
 const hasTmux = (await run(["sh", "-c", "command -v tmux >/dev/null"])).code === 0;
 test.skipIf(!hasTmux)(
   "tmux primitives preserve private config, viewport and full capture history",
