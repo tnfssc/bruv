@@ -239,6 +239,17 @@ test("real local worker subprocess, actual Pi journal/model usage, distinct Agen
     expect(task.agent!.parentSessionFile).toBe(f.root.sourceSessionId);
     const agentId = agentLaunchToolUseId(task);
     expect(agentId).not.toBe("execute-with-many-helpers");
+    const launchAck = f.frames.find(
+      (frame: any) =>
+        frame.type === "user" && frame.parent_tool_use_id === null && frame.message.content[0]?.tool_use_id === agentId,
+    ) as any;
+    // T3 must not terminalize the actual running child when Agent launch returns.
+    expect(launchAck.message.content[0].content).toStartWith("Async agent launched successfully.\n");
+    expect(JSON.parse(launchAck.message.content[0].content.split("\n").slice(1).join("\n"))).toMatchObject({
+      id: task.id,
+      status: "running",
+      background: true,
+    });
     const call = f.frames.find(
       (frame: any) => frame.type === "assistant" && frame.parent_tool_use_id === null,
     ) as AgentCallFrame;

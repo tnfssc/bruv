@@ -338,12 +338,15 @@ export function bindNativeTasks(
             {
               type: "tool_result",
               tool_use_id: cursor.link.launchToolUseId,
-              content: JSON.stringify({
-                id: task.id,
-                status: task.status,
-                background: !!task.background,
-                ...(result ? { output: result.output, exitCode: result.exitCode } : {}),
-              }),
+              // Native text tool results are not parsed as objects by the pinned adapter.
+              content:
+                (task.background && !task.completedAt ? "Async agent launched successfully.\n" : "") +
+                JSON.stringify({
+                  id: task.id,
+                  status: task.status,
+                  background: !!task.background,
+                  ...(result ? { output: result.output, exitCode: result.exitCode } : {}),
+                }),
               is_error: task.status === "failed",
             },
           ],

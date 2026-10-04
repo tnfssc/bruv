@@ -106,3 +106,13 @@ Finished on top of composition `21d9a03a`, using supported Bun **1.4.2**. No run
 - SDK proof required `BRUV_CLAUDE_SDK_PATH=/home/tnfssc/Code/bruv/.cache/claude-compat-boundary/package/sdk.mjs` and `BRUV_REQUIRE_CLAUDE_SDK=1`. Combined log: `/tmp/task-binding-supported-nine.log`; typecheck: `/tmp/task-binding-supported-types.log`.
 - The prior mixed-suite stdin timeout was observed with unsupported Bun 1.3.13. On supported 1.4.2, the same ordinary bridge test passes in the relevant combined suite (including task lifecycle); no test timeout was raised or production behavior bypassed. No env or executable-path leakage was found: worker fetch/model overrides run only in a separate child process, parent spawn spies are restored, parent depth/profile env changes are restored, and `process.execPath` is read, not mutated. The fixture installs the same one-time disk-backed SessionManager facade used by CLI/runtime; owned managers are disposed at teardown. No test-only process-global fetch/model/command override is installed in the parent.
 - Ordinary bridge execution uses the existing compiled TypeScript worker binary, not a rebuilt/released connector. Temporary dependency/assets/binary links point to the parent checkout and are removed before commit; no preserved-tree symlinks were copied. No install, build, publish/release or trust-setting change was made. `SHELL=/bin/bash` keeps unrelated mise startup notices out of shell-result assertions.
+
+## Rendered normal-worker ACK correction — 2026-10-04
+
+The focused actual normal Bruv/T3 replay found that a JSON-text background Agent ACK
+terminalized its running native card. Text results require the pinned adapter's actual
+"Async agent launched successfully." prefix while the real background job is still active.
+Terminal results remain actual terminal results; no second launch/usage/wake is introduced.
+See [focused local subagent acceptance](local-subagent-acceptance.md) for real card,
+SDK/source history, late completion, explicit killed-job wake, and Stop exit proof, plus
+the remaining root navigation/busy UI gap. This is not runnable-child-control parity.
