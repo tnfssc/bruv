@@ -198,6 +198,35 @@ test("profile settings, child identity, and three-tier limits survive helper mig
     await service.handle("subagent", { type: "fast", prompt: "x" }, ctx, signal);
     expect(launches[1]!.title).toBe("x");
     expect(launches[1]!.env?.BRUV_SUBAGENT_DEPTH).toBe("2");
+    policy = { depth: 0 };
+    ctx.model = {
+      provider: "openai-codex",
+      id: "gpt-6.1-sol",
+      api: "openai-codex-responses",
+      baseUrl: "https://chatgpt.com/backend-api",
+    };
+    ctx.modelRegistry = { isUsingOAuth: () => true };
+    const fastSetting = {
+      type: "custom",
+      customType: "bruv-native-fast-mode",
+      data: {
+        version: 1,
+        sessionId: "parent",
+        provider: ctx.model.provider,
+        model: ctx.model.id,
+        enabled: true,
+        costAcknowledged: true,
+        timestamp: 1,
+      },
+    };
+    ctx.sessionManager.getSessionId = () => "parent";
+    ctx.sessionManager.getCwd = () => dir;
+    ctx.sessionManager.getBranch = () => [fastSetting];
+    await service.handle("subagent", { type: "fast", prompt: "inherit premium tier" }, ctx, signal);
+    expect(launches.at(-1)!.env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("1");
+    fastSetting.data.enabled = false;
+    await service.handle("subagent", { type: "fast", prompt: "standard tier" }, ctx, signal);
+    expect(launches.at(-1)!.env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("0");
     policy = { depth: 2, type: "orchestrator" };
     await expect(service.handle("subagent", { prompt: "x" }, ctx, signal)).rejects.toThrow("two levels");
   } finally {

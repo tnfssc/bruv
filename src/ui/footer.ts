@@ -66,7 +66,7 @@ type FooterHistory = {
   write: number;
   cost: number;
   cacheHit: number | undefined;
-  unavailableFastCost: boolean;
+  hasFastCost: boolean;
   unknownVoiceCost: boolean;
 };
 
@@ -115,7 +115,7 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
     write = 0,
     cost = 0;
   let cacheHit: number | undefined;
-  let unavailableFastCost = false;
+  let hasFastCost = false;
   let unknownVoiceCost = false;
   // Include pre-compaction usage, nested tool usage, and summaries, like Pi.
   for (const entry of manager.getEntries()) {
@@ -138,7 +138,7 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
       typeof entry.data === "object" &&
       (entry.data as { enabled?: unknown }).enabled === true
     ) {
-      unavailableFastCost = true;
+      hasFastCost = true;
     }
     if (entry.type === "custom" && entry.customType === VOICE_COST_ENTRY) {
       const data = entry.data as { cost?: number; unknown?: boolean } | undefined;
@@ -153,7 +153,7 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
       cost += usage.cost.total;
     }
   }
-  const value = { input, output, read, write, cost, cacheHit, unavailableFastCost, unknownVoiceCost };
+  const value = { input, output, read, write, cost, cacheHit, hasFastCost, unknownVoiceCost };
   if (cacheable) {
     // This is deliberately a single current-position entry, not a map by leaf. A
     // branch can revisit an old leaf after more entries were appended, so reusing an
@@ -170,9 +170,9 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
   return value;
 }
 
-function hasUnavailableFastCost(history: FooterHistory, statuses: ReadonlyMap<string, string>): boolean {
+function hasFastEstimate(history: FooterHistory, statuses: ReadonlyMap<string, string>): boolean {
   return (
-    statuses.get("bruv-native-fast")?.includes("cost estimate unavailable") === true || history.unavailableFastCost
+    (!!statuses.get("bruv-native-fast") && !statuses.get("bruv-native-fast")?.endsWith("off")) || history.hasFastCost
   );
 }
 
@@ -211,13 +211,13 @@ export function renderDetailedFooter(
   if ((read || write) && cacheHit !== undefined) stats.push(`CH${cacheHit.toFixed(1)}%`);
   const model = ctx.model;
   const statuses = data.getExtensionStatuses();
-  const fastCostUnavailable = hasUnavailableFastCost(history, statuses);
+  const fastEstimate = hasFastEstimate(history, statuses);
   const subscription = model && (model.provider === "kimi-coding" || ctx.modelRegistry.isUsingOAuth(model));
-  if (fastCostUnavailable) stats.push("$? (fast billing)");
-  else if (cost || descendantCost || subscription || history.unknownVoiceCost || statuses.get("bruv-live"))
+  if (cost || descendantCost || subscription || history.unknownVoiceCost || statuses.get("bruv-live") || fastEstimate)
     stats.push(
       "$" +
         (cost + descendantCost).toFixed(3) +
+        (fastEstimate ? "~ (fast estimate)" : "") +
         (history.unknownVoiceCost
           ? "+? (voice usage incomplete)"
           : statuses.get("bruv-live")
@@ -320,14 +320,10 @@ export function renderCompactFooter(
   ).length;
   const extra = otherCount ? `+${otherCount} status` : "";
   const history = readFooterHistory(ctx);
-  const knownCost = "$" + (history.cost + descendantCost).toFixed(3);
-  const cost = hasUnavailableFastCost(history, statuses)
-    ? "$?"
-    : history.unknownVoiceCost
-      ? knownCost + "+?"
-      : statuses.get("bruv-live")
-        ? knownCost + "~"
-        : knownCost;
+  // Pi prices usage using the response tier (or requested tier when omitted).
+  // This is a catalog estimate, not a ChatGPT credit bill.
+  const knownCost = "$" + (history.cost + descendantCost).toFixed(3) + (hasFastEstimate(history, statuses) ? "~" : "");
+  const cost = history.unknownVoiceCost ? knownCost + "+?" : statuses.get("bruv-live") ? knownCost + "~" : knownCost;
   const percent = ctx.getContextUsage()?.percent;
   const percentText = percent == null ? "?" : `${percent.toFixed(1).replace(/\.0$/, "")}%`;
   const context = (label: string) =>

@@ -27,5 +27,6 @@ export function scrubRootEnvironmentInPlace(env: NodeJS.ProcessEnv): void {
 export function childAgentEnvironment(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
   const child = scrubT3BridgeEnvironment(env);
   delete child.BRUV_REMOTE_RUNTIME_STATE;
+  delete child.BRUV_SUBAGENT_NATIVE_FAST;
   return child;
 }

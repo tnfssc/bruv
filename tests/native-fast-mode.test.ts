@@ -23,6 +23,8 @@ import {
   NATIVE_FAST_ENTRY,
   nativeFastSupport,
   registerNativeFastMode,
+  nativeFastEnabled,
+  NATIVE_FAST_CHILD_ENV,
   withStandardProviderTier,
 } from "../src/agent/native-fast-mode";
 
@@ -96,7 +98,7 @@ function harness(
   return { command, ctx, entries, notices, statuses, emit, runtime };
 }
 
-function sse(serviceTier: string) {
+function sse(serviceTier: string | undefined) {
   const response = {
     status: "completed",
     service_tier: serviceTier,
@@ -118,7 +120,7 @@ const CODEX_TOKEN = [
 async function wirePayload(
   h: ReturnType<typeof harness>,
   model = h.ctx.model,
-  options: { onPayload?: (payload: any) => any; sessionId?: string } = {},
+  options: { onPayload?: (payload: any) => any; sessionId?: string; responseTier?: string | null } = {},
 ): Promise<any> {
   let body: any;
   await h.runtime
@@ -135,13 +137,71 @@ async function wirePayload(
           body = JSON.parse(
             init.headers.get("content-encoding") === "zstd" ? zstdDecompressSync(bytes).toString() : bytes.toString(),
           );
-          return sse(model.provider === "openai-codex" ? "priority" : "fast");
+          return sse(
+            options.responseTier === null
+              ? undefined
+              : (options.responseTier ?? (model.provider === "openai-codex" ? "priority" : "fast")),
+          );
         }) as typeof fetch,
       },
     )
     .result();
   return body;
 }
+
+test("Codex fast settings preserve runtime system prompt and tools", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-fast-codex-context-"));
+  try {
+    const model = getModel("openai-codex", "gpt-5.6-luna")!;
+    for (const action of ["status", "on", "off"]) {
+      const runtime = await ModelRuntime.create({
+        authPath: join(dir, "auth.json"),
+        modelsPath: null,
+        refreshOnCreate: false,
+      });
+      runtime.isUsingOAuth = () => true;
+      runtime.getAuth = (async () => ({ auth: { apiKey: CODEX_TOKEN } })) as any;
+      const h = harness(model, { mode: "print", accept: true });
+      h.ctx.modelRegistry.runtime = runtime;
+      await h.command.handler(action, h.ctx);
+      let body: any;
+      const response = await runtime
+        .streamSimple(
+          model,
+          {
+            systemPrompt: "keep-system",
+            messages: [{ role: "user", content: "hi", timestamp: 1 }],
+            tools: [{ name: "lookup", description: "Look up a value", parameters: { type: "object", properties: {} } }],
+          },
+          {
+            transport: "sse",
+            sessionId: "session-a",
+            fetch: (async (_url: any, init: any) => {
+              const bytes = Buffer.from(await new Response(init.body).arrayBuffer());
+              body = JSON.parse(
+                init.headers.get("content-encoding") === "zstd"
+                  ? zstdDecompressSync(bytes).toString()
+                  : bytes.toString(),
+              );
+              return sse(action === "on" ? "priority" : "default");
+            }) as typeof fetch,
+          },
+        )
+        .result();
+      expect(response.stopReason).toBe("stop");
+      expect(body.service_tier).toBe(action === "status" ? undefined : action === "on" ? "priority" : "default");
+      expect(response.usage.cost.total).toBeCloseTo(
+        ((4 * model.cost.input + model.cost.output) / 1_000_000) * (action === "on" ? 2 : 1),
+        12,
+      );
+      expect(body.instructions).toBe("keep-system");
+      expect(body.tools).toMatchObject([{ type: "function", name: "lookup" }]);
+      await h.emit("session_shutdown");
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
 
 for (const provider of ["openai", "openai-codex"] as const) {
   test(`native fast forwards model aliases on the official ${provider} surface`, async () => {
@@ -200,6 +260,10 @@ test("/fast is safe status; on requires consent and state is session/model/branc
 
   const accepted = harness(model, { mode: "print", accept: true });
   await accepted.command.handler("on", accepted.ctx);
+  expect(accepted.notices.at(-1)).toMatchObject({ kind: "info" });
+  expect(accepted.notices.at(-1).message).toContain(
+    "Native fast mode on for this session, model, and new supported subagents",
+  );
   expect(accepted.entries[0].data).toMatchObject({ enabled: true, costAcknowledged: true, model: model.id });
   expect((await wirePayload(accepted)).service_tier).toBe("priority");
 
@@ -405,6 +469,7 @@ test("actual Pi streamSimple Codex WebSocket frame carries priority", async () =
       .result();
     expect(response.stopReason).toBe("stop");
     expect(frame).toMatchObject({ type: "response.create", service_tier: "priority", instructions: "ws-system" });
+    expect(h.statuses.at(-1).value).toBe(" fast confirmed");
   } finally {
     globalThis.WebSocket = original;
   }
@@ -791,4 +856,110 @@ test("leaf restoration preserves absent, empty and branched views without maskin
   } as any;
   expect(() => restoreLeaf(broken, null)).not.toThrow();
   expect(() => restoreLeaf(broken, "prior-leaf")).not.toThrow();
+});
+
+test("fast status uses the returned tier, not the requested tier", async () => {
+  const model = getModel("openai-codex", "gpt-5.6-luna")!;
+  const h = harness(model, { mode: "print", accept: true });
+  await h.command.handler("on", h.ctx);
+  expect(h.statuses.at(-1).value).toBe(" fast on (requested)");
+  await wirePayload(h);
+  expect(h.statuses.at(-1).value).toBe(" fast confirmed");
+  await h.command.handler("status", h.ctx);
+  expect(h.notices.at(-1).message).toContain("fast confirmed");
+  await wirePayload(h, model, { responseTier: "default" });
+  expect(h.statuses.at(-1).value).toBe(" fast downgraded (default)");
+  await wirePayload(h, model, { responseTier: null });
+  expect(h.statuses.at(-1).value).toBe(" fast on (requested)");
+});
+
+test("parent fast consent bootstraps a distinct supported child and its descendants", async () => {
+  const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
+  const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  try {
+    const model = getModel("openai-codex", "gpt-5.6-luna")!;
+    const parent = harness(model, { mode: "print", accept: true });
+    expect(nativeFastEnabled(parent.ctx)).toBe(false);
+    await parent.command.handler("on", parent.ctx);
+    expect(nativeFastEnabled(parent.ctx)).toBe(true);
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "1";
+    const child = harness({ ...model, id: "gpt-6.1-sol" }, { mode: "json", sessionId: "child" });
+    await child.emit("session_start");
+    expect(child.entries[0].data).toMatchObject({
+      sessionId: "child",
+      model: "gpt-6.1-sol",
+      enabled: true,
+      costAcknowledged: true,
+    });
+    expect((await wirePayload(child)).service_tier).toBe("priority");
+    expect(nativeFastEnabled(child.ctx)).toBe(true);
+    expect(process.env[NATIVE_FAST_CHILD_ENV]).toBeUndefined();
+    await child.command.handler("off", child.ctx);
+    await child.emit("session_start");
+    expect(nativeFastEnabled(child.ctx)).toBe(false);
+    expect((await wirePayload(child)).service_tier).toBe("default");
+    await parent.command.handler("off", parent.ctx);
+    expect(nativeFastEnabled(parent.ctx)).toBe(false);
+
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    const unsupported = harness({ ...model, provider: "anthropic" }, { mode: "json", sessionId: "unsupported" });
+    await unsupported.emit("session_start");
+    expect(unsupported.entries).toEqual([]);
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "0";
+    const root = harness(model, { mode: "tui" });
+    await root.emit("session_start");
+    expect(root.entries).toEqual([]);
+  } finally {
+    if (savedFast === undefined) delete process.env[NATIVE_FAST_CHILD_ENV];
+    else process.env[NATIVE_FAST_CHILD_ENV] = savedFast;
+    if (savedDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = savedDepth;
+  }
+});
+
+test("an in-flight fast response cannot turn an explicit opt-out back into confirmed", async () => {
+  const model = getModel("openai-codex", "gpt-5.6-luna")!;
+  const h = harness(model, { mode: "print", accept: true });
+  await h.command.handler("on", h.ctx);
+  const body = await wirePayload(h, model, {
+    onPayload: async (payload) => {
+      await h.command.handler("off", h.ctx);
+      return payload;
+    },
+  });
+  expect(body.service_tier).toBe("priority");
+  expect(h.statuses.at(-1).value).toBe(" fast off");
+});
+
+test("disabled fast inheritance leaves model routing and auth untouched", () => {
+  const model = {
+    provider: "fixture",
+    id: "parent",
+    get baseUrl() {
+      throw new Error("routing must not be inspected");
+    },
+  };
+  const h = harness(model);
+  h.ctx.modelRegistry.isUsingOAuth = () => {
+    throw new Error("auth must not be inspected");
+  };
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
+  h.entries.push({
+    type: "custom",
+    customType: NATIVE_FAST_ENTRY,
+    data: {
+      version: 1,
+      sessionId: "session-a",
+      provider: model.provider,
+      model: model.id,
+      enabled: false,
+      costAcknowledged: false,
+      timestamp: 1,
+    },
+  });
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
+  h.entries[0].data.enabled = true;
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
 });
