@@ -45,7 +45,7 @@ describe("single terminal landing", () => {
       const a = layout(cols, rows, { scroll: 0, focus: -1 });
       const b = layout(cols, rows, { scroll: 1, focus: -1 });
       expect(b.capture.y).toBe(a.capture.y - 1);
-      expect(a.hits.some((h) => h.action === siteContent.install)).toBe(true);
+      expect(a.hits.some((h) => h.action === "install")).toBe(true);
     }
   });
   test("capture is actual glyph/style runs, not a reserved image rectangle", () => {

@@ -182,3 +182,14 @@ figure {
     opacity: 1;
   }
 }
+
+.install-command button {
+  min-height: 44px;
+  padding: 0.5rem 0.8rem;
+  margin: 0 0.75rem 0.75rem 0;
+  background: #ffc799;
+  color: #101010;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}

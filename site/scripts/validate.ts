@@ -6,7 +6,7 @@ import { siteContent } from "../content";
 import { build } from "./build";
 import { preview } from "./preview";
 import { launchBrowser } from "./browser";
-const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/polish");
+const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/install/regression");
 await mkdir(evidence, { recursive: true });
 await build("");
 const server = preview(0),
@@ -60,7 +60,13 @@ try {
       };
     });
     const d = snap.data,
-      state = { scroll: Number(d.scroll), focus: -1, demos: JSON.parse(d.demos!) };
+      state = {
+        scroll: Number(d.scroll),
+        focus: -1,
+        installCommand: d.installCommand,
+        installUrl: d.installUrl,
+        demos: JSON.parse(d.demos!),
+      };
     let f = layout(Number(d.cols), Number(d.rows), state);
     state.focus = f.hits.findIndex((h) => h.label === d.focus);
     f = layout(Number(d.cols), Number(d.rows), state);
@@ -142,10 +148,11 @@ try {
   await page.waitForTimeout(70);
   // Browser links are normal location navigation, exercised without leaving for the network.
   await context.route(siteContent.repository + "**", (route) => route.fulfill({ body: "Repository destination" }));
-  const h = initial.f.hits.find((h) => h.action === siteContent.install)!;
+  const h = initial.f.hits.find((h) => h.action === "install")!;
   const metrics = await page.locator("#terminal").evaluate((el) => ({ ...(el as HTMLElement).dataset }));
   await page.mouse.click((h.x + 2) * Number(metrics.cellWidth), (h.y + 0.5) * Number(metrics.cellHeight));
-  await page.waitForURL(siteContent.install);
+  await page.waitForTimeout(100);
+  assert(Number(await page.locator("#terminal").getAttribute("data-scroll")) > 0);
   results.mouseInstall = true;
   await page.goto(server.url.href);
   await ready();
@@ -157,7 +164,8 @@ try {
   await page.keyboard.press("Tab");
   await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
-  await page.waitForURL(siteContent.install);
+  await page.waitForTimeout(100);
+  assert(Number(await page.locator("#terminal").getAttribute("data-scroll")) > 0);
   results.keyboardInstall = true;
   await page.goto(server.url.href);
   await ready();

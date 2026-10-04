@@ -38,6 +38,6 @@ From site: bun install --frozen-lockfile, bun run build, bun run test. PORT=0 bu
 
 Canvas reading/selecting/find relies on the semantic HTML representation. Physical phones and Safari/Firefox remain untested; automated checks are not a manual screen-reader audit. Values already cover this task; no forced values edit.
 
-## Ongoing install work
+## Installer integration
 
-Installer task task_50347bb3 is in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_50347bb3, branch feat/landing-install-script, based on 48fb5b7d. Its result must be integrated with the later mobile wordmark fix here; do not drop either. No release or deployment authorized.
+[Copyable download installer](install-script.md) was developed in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_50347bb3, branch feat/landing-install-script, commit 90141a5d. It is integrated into the current worktree alongside the later mobile wordmark and opinionated-agent positioning fixes. Preview 45339 is the integrated review target. No release or deployment authorized.

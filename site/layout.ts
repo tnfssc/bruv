@@ -3,7 +3,15 @@ import { headline } from "./type";
 import { demoIds, demoFrame, demoDuration, type DemoId } from "./demos";
 import type { Playback } from "./playback";
 export type Hit = { x: number; y: number; width: number; height: number; label: string; action: string };
-export type State = { scroll: number; focus: number; hover?: DemoId; demos?: Record<DemoId, Playback> };
+export type State = {
+  scroll: number;
+  focus: number;
+  hover?: DemoId;
+  installCommand?: string;
+  installUrl?: string;
+  copyLabel?: string;
+  demos?: Record<DemoId, Playback>;
+};
 // Official Vesper colors. Capture colors are preserved separately, not recolored.
 export const palette = {
   base: "38;2;255;255;255",
@@ -83,7 +91,8 @@ export function layout(cols: number, rows: number, state: State) {
   }
   put(margin, 1, "bruv", palette.accent);
   if (width > 50) put(margin + 7, 1, "an opinionated coding agent", palette.muted);
-  const htmlLabel = "[ HTML ]", htmlX = cols - margin - htmlLabel.length;
+  const htmlLabel = "[ HTML ]",
+    htmlX = cols - margin - htmlLabel.length;
   hits.push({ x: htmlX, y: 1, width: htmlLabel.length, height: 1, label: "HTML", action: "text" });
   put(htmlX, 1, htmlLabel, state.focus === 0 ? palette.selected : palette.accent);
   y += 1;
@@ -94,7 +103,7 @@ export function layout(cols: number, rows: number, state: State) {
   y += 2;
   text(landing.intro, palette.base, margin, Math.min(width, 66));
   y += 2;
-  link("Install Bruv", siteContent.install, margin, true);
+  link("Install Bruv", "install", margin, true);
   if (width < 38) {
     y += 2;
     link("Source ↗", siteContent.repository);
@@ -158,12 +167,18 @@ export function layout(cols: number, rows: number, state: State) {
   y++;
   text(landing.installNote, palette.base, margin, Math.min(width, 66));
   y++;
+  text(state.installCommand || "sh install.sh", palette.accent);
+  y++;
+  link(state.copyLabel || "Copy command", "copy-install", margin, true);
+  y += 2;
+  link("Script ↗", state.installUrl || "./install.sh");
+  y += 2;
+  link("Source guide ↗", siteContent.install);
+  y += 3;
   text(landing.start, palette.accent);
   y++;
   text(landing.requirements, palette.muted, margin, Math.min(width, 66));
-  y += 2;
-  link("Install Bruv", siteContent.install, margin, true);
-  y += 5;
+  y += 7;
   const visible = Math.max(1, bottom - top + 1),
     maxScroll = Math.max(0, y - visible);
   const scroll = Math.min(Math.max(0, state.scroll), maxScroll);

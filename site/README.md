@@ -38,3 +38,11 @@ bun run test covers frame bounds, animated and no-JS HTML, shared loop timing, p
 HTML provides headings, selectable text and ordinary links. The canvas is not itself a semantic document; no manual screen-reader audit is claimed. Physical phones and Safari/Firefox are untested. Scrolling is cell-quantized and direct touch drag, without kinetic fling.
 
 Current handoff: ../wisdom/landing-page/polish-checkpoint.md. Earlier settings/gallery/raster designs and the deliberately stopped product-story WIP are historical.
+
+## Download installer
+
+`install.sh` is copied into `dist/`. The page derives its copyable command from `BASE_URL` (including a path prefix), or the served browser URL for local previews. Without JavaScript, the relative Download script link remains usable: download it and run `sh install.sh`. `bun run test:install` exercises isolated mocked releases and real browser copy controls.
+
+The POSIX installer resolves GitHub latest once, pins all downloads to that tag, verifies both SHA256 manifests before version probes, requires matching Bruv/connector versions, and stages all four notices. It installs in `~/.local/bin` (`BRUV_INSTALL_DIR` overrides the binary directory), with notices in `~/.local/share/bruv/notices/<version>`. No root, sudo, automatic source build, or shell-profile edits. Stop running Bruv/T3 sessions before replacing a pair. Ordinary replacement failures roll back both binaries and notices; failed rollback retains recovery files with an explicit error. Two binary renames are not a crash-atomic transaction.
+
+Live release readiness evidence is in `../wisdom/landing-page/validation/install/live-release.json`. Release notices currently have no checksum assets and are downloaded over HTTPS from the same pinned tag; executables always require checksums. This worktree is a preview, not a production deployment.

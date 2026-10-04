@@ -1,14 +1,18 @@
 import { Ghostty, Terminal } from "ghostty-web";
 import { layout, hitAt, type State } from "./layout";
+import { browserInstallUrl, installCommand, copyCommand, enhanceInstall } from "./install-command";
 import { CellScroll, wheelPixels } from "./scroll";
 import { demoIds, demoDuration, type DemoId } from "./demos";
 import { advance, inView } from "./playback";
+enhanceInstall();
 const host = document.querySelector<HTMLElement>("#terminal")!;
 const fallback = document.querySelector<HTMLElement>("#text-content")!;
 const motion = matchMedia("(prefers-reduced-motion: reduce)");
 const state: State = {
   scroll: 0,
   focus: -1,
+  installUrl: browserInstallUrl(),
+  installCommand: installCommand(browserInstallUrl()),
   demos: Object.fromEntries(
     demoIds.map((id) => [id, { elapsed: motion.matches ? demoDuration(id) : 0, paused: motion.matches }]),
   ) as NonNullable<State["demos"]>,
@@ -97,6 +101,8 @@ async function start() {
     }
     previousRows = frame.ansiRows;
     host.dataset.scroll = String(frame.scroll);
+    host.dataset.installCommand = state.installCommand;
+    host.dataset.installUrl = state.installUrl;
     host.dataset.cols = String(terminal.cols);
     host.dataset.rows = String(terminal.rows);
     host.dataset.focus = frame.hits[state.focus]?.label || "";
@@ -128,9 +134,33 @@ async function start() {
     needsResize = true;
     render();
   }
+  let copyTimer: ReturnType<typeof setTimeout>;
   function activate(action: string) {
     scrollInput.reset();
-    if (action.startsWith("demo:")) {
+    if (action === "install") {
+      state.scroll = frame.maxScroll;
+      state.focus = -1;
+      render();
+    } else if (action === "copy-install") {
+      copyCommand(state.installCommand!)
+        .then(() => {
+          state.copyLabel = "Copied";
+          announcement.textContent = "Install command copied.";
+          render();
+        })
+        .catch(() => {
+          state.copyLabel = "Copy in HTML";
+          announcement.textContent = "Open HTML view to select the command.";
+          render();
+        })
+        .finally(() => {
+          clearTimeout(copyTimer);
+          copyTimer = setTimeout(() => {
+            state.copyLabel = undefined;
+            render();
+          }, 1800);
+        });
+    } else if (action.startsWith("demo:")) {
       const [, id] = action.split(":") as [string, DemoId];
       const playback = state.demos![id];
       if (playback.paused && !playback.started) {
@@ -270,7 +300,11 @@ async function start() {
           state.focus = next;
           render();
         }
-      } else if (e.key === "Enter" || (e.key === " " && frame.hits[state.focus]?.action.startsWith("demo:"))) {
+      } else if (
+        e.key === "Enter" ||
+        (e.key === " " &&
+          (frame.hits[state.focus]?.action.startsWith("demo:") || frame.hits[state.focus]?.action === "copy-install"))
+      ) {
         if (frame.hits[state.focus]) activate(frame.hits[state.focus].action);
       } else if (e.key === "ArrowDown" || e.key === "j") {
         state.scroll++;

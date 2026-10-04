@@ -26,8 +26,7 @@ export const landing = {
     },
   ],
   installTitle: "Start in your repo",
-  installNote:
-    "Build Bruv with Bun 1.4.2 using the source guide. Configure your model provider, then run bruv from your project.",
+  installNote: "Install Bruv, configure your model provider, then run bruv from your project.",
   start: "$ cd your-project\n$ bruv",
   requirements: "Bring your own provider credentials. Linux x64/arm64, macOS Apple Silicon, or Android Termux arm64.",
 };
