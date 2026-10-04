@@ -9,44 +9,30 @@ afterEach(() => {
   for (const fixture of fixtures.splice(0)) rmSync(fixture, { recursive: true, force: true });
 });
 
-function run(lane: "linux" | "macos", fail = "", cache = false) {
+function run(lane: "linux" | "macos", fail = "") {
   const root = mkdtempSync(join(tmpdir(), "bruv-ci-runner-"));
   fixtures.push(root);
   const bin = join(root, "bin");
-  const web = join(root, "web-source");
   const parentTmp = join(root, "temp");
   mkdirSync(parentTmp);
   writeFileSync(join(parentTmp, "user-session"), "leave alone");
   mkdirSync(join(root, "scripts"));
   mkdirSync(bin);
   copyFileSync(resolve(import.meta.dir, "../scripts/ci.sh"), join(root, "scripts/ci.sh"));
-  copyFileSync(resolve(import.meta.dir, "../scripts/ci-web-validation.sh"), join(root, "scripts/ci-web-validation.sh"));
-  for (const subdir of ["apps/server", "apps/web", "packages/contracts", "packages/client-runtime"]) {
-    const dir = join(web, subdir);
-    mkdirSync(join(dir, "../../node_modules/.bin"), { recursive: true });
-    mkdirSync(dir, { recursive: true });
-  }
   const stub = `#!/usr/bin/env bash
 printf '%s|%s|%s\n' "$(basename "$0")" "$PWD" "$*" >> "$CALLS"
 printf '%s\n' "$TMPDIR" >> "$TEMP_CALLS"
-if [[ "$(basename "$0")" == bun && "$1" == -e ]]; then echo pinned-revision; exit 0; fi
 if [[ "$*" == "$FAIL" ]]; then echo intentional-failure; exit 37; fi
 if [[ "$*" == "test --parallel=3 ./tests" ]]; then echo "llm=$BRUV_RUN_LLM_TESTS"; fi
 echo "completed $*"
 `;
   writeFileSync(join(bin, "bun"), stub, { mode: 0o755 });
-  for (const subdir of ["apps/server", "apps/web", "packages/contracts", "packages/client-runtime"]) {
-    writeFileSync(join(web, subdir, "../../node_modules/.bin/vp"), stub, { mode: 0o755 });
-    writeFileSync(join(web, subdir, "../../node_modules/.bin/tsc"), stub, { mode: 0o755 });
-  }
   const calls = join(root, "calls");
   const result = spawnSync("bash", [join(root, "scripts/ci.sh"), lane], {
     cwd: root,
     env: {
       ...process.env,
       PATH: bin + ":" + process.env.PATH,
-      BRUV_T3_SOURCE: web,
-      BRUV_CI_WEB_CACHE: cache ? "1" : "0",
       CALLS: calls,
       FAIL: fail,
       TMPDIR: parentTmp,
@@ -78,13 +64,6 @@ test("Linux builds the pair without preparing or validating bundled web", () => 
   expect(readFileSync(join(root, "artifacts/ci/tests.log"), "utf8")).toContain("llm=0");
 });
 
-test("legacy web cache environment cannot re-enable bundled web production", () => {
-  const { result, calls } = run("linux", "", true);
-  expect(result.status).toBe(0);
-  expect(calls.some((line) => line.includes("ci-web.ts"))).toBe(false);
-  expect(calls.some((line) => line.includes("run build"))).toBe(true);
-});
-
 test("failed root tests prevent smoke", () => {
   const { result, calls } = run("linux", "test --parallel=3 ./tests");
   expect(result.status).not.toBe(0);
@@ -108,4 +87,39 @@ test("macOS lane runs only its device-free source and Live checks", () => {
     "test --parallel=3 tests/live-*.test.ts",
   ]);
   expect(readFileSync(join(root, "artifacts/ci/macos-live-tests.log"), "utf8")).toContain("completed");
+});
+
+test("production CI caches downloads only and delegates paired validation to the shared runner", async () => {
+  const workflow = await Bun.file(resolve(import.meta.dir, "../.github/workflows/ci.yml")).text();
+  expect(workflow).not.toContain("ci-web.ts");
+  expect(workflow).not.toContain("PNPM_CONFIG_STORE_DIR");
+  expect(workflow).not.toContain("pnpm/action-setup");
+  expect(workflow).not.toContain("Compute pinned web producer key");
+  const parsed = Bun.YAML.parse(workflow) as {
+    jobs: Record<string, { steps: { uses?: string; run?: string; with?: Record<string, string> }[] }>;
+  };
+  let downloadCaches = 0;
+  for (const job of Object.values(parsed.jobs)) {
+    for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache"))) {
+      downloadCaches++;
+      expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
+      expect(step.with?.key).toContain("bun-1.4.2-");
+    }
+  }
+  expect(downloadCaches).toBeGreaterThan(0);
+  expect(parsed.jobs.test!.steps.some((step) => step.run === "bun run ci")).toBe(true);
+  const runner = await Bun.file(resolve(import.meta.dir, "../scripts/ci.sh")).text();
+  for (const gate of [
+    "bun install --frozen-lockfile",
+    "bun run format:check",
+    "bun run lint",
+    "bun run check",
+    "bun run build",
+    "bun scripts/offline-openai-default-transport.ts",
+    "bun test --parallel=3 ./tests",
+    "bun run smoke -- --reuse-build",
+  ])
+    expect(runner).toContain(gate);
+  expect(runner).not.toContain("ci-web-validation.sh");
+  expect(runner).not.toContain("--reuse-packed-web");
 });

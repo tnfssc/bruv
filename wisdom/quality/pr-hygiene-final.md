@@ -39,7 +39,7 @@ Leave these out:
 - `scripts/t3-v2-production/export-worktree.ts`
 - `scripts/t3-v2-production/artifacts/**`
 - `artifacts/**`, `.cache/**`, generated binaries, screenshots, browser profiles, raw logs, proof JSON, JSONL, and private runtime data
-- `experiments/**`, `.agents/patches/**`, `.agents/rollback/**`, and bulk research wisdom
+- `wisdom/experiments/**`, `.agents/patches/**`, `.agents/rollback/**`, and bulk research wisdom
 - `wisdom/index.md` unless its whole link expansion is reviewed and staged on purpose
 - this internal report, `wisdom/quality/pr-hygiene-final.md`, unless maintainers want PR-process notes in the product PR
 

@@ -10,9 +10,9 @@ Keep production untouched in this round. No real provider credentials or paid ca
 
 Base commit: a173cd28b80d2ea328d7abc03b5587b86d471e61. Independent durable worktrees:
 
-- task_86a7ae68: end-to-end Docker + Toxiproxy disconnect/catchup UX lab. Path /home/tnfssc/.die/worktrees/die-a86675007a5e-task_86a7ae68, branch die/remote-disconnect-ux-lab-86a7ae68. Owns experiments/remote-network-lab and network-lab.md.
-- task_da069f45: standalone compact event/batching/compression and 1/100/1000 simulated agent benchmark. Path /home/tnfssc/.die/worktrees/die-a86675007a5e-task_da069f45, branch die/compact-agent-wire-experiments-da069f45. Owns experiments/remote-wire-bench and wire-bench.md.
-- task_3f1110f2: real die RPC loop with fake deterministic provider in Docker. Path /home/tnfssc/.die/worktrees/die-a86675007a5e-task_3f1110f2, branch die/real-agent-loop-remote-placement-probe-3f1110f2. Owns experiments/remote-agent-probe and remote-agent-probe.md.
+- task_86a7ae68: end-to-end Docker + Toxiproxy disconnect/catchup UX lab. Path /home/tnfssc/.die/worktrees/die-a86675007a5e-task_86a7ae68, branch die/remote-disconnect-ux-lab-86a7ae68. Owns wisdom/experiments/remote-network-lab and network-lab.md.
+- task_da069f45: standalone compact event/batching/compression and 1/100/1000 simulated agent benchmark. Path /home/tnfssc/.die/worktrees/die-a86675007a5e-task_da069f45, branch die/compact-agent-wire-experiments-da069f45. Owns wisdom/experiments/remote-wire-bench and wire-bench.md.
+- task_3f1110f2: real die RPC loop with fake deterministic provider in Docker. Path /home/tnfssc/.die/worktrees/die-a86675007a5e-task_3f1110f2, branch die/real-agent-loop-remote-placement-probe-3f1110f2. Owns wisdom/experiments/remote-agent-probe and remote-agent-probe.md.
 
 Parent reviews results, runs integrated commands, and joins measured findings. Workers must commit and record limits. No overlapping code files. Current research notes are uncommitted parent files; worker prompts carry latest decisions because fresh worktrees do not contain them.
 
@@ -59,8 +59,8 @@ Full build hit missing pnpm. Existing --reuse-web build path rebuilt current CLI
 
 Base bb3e12ba695de5d789f3e18b091cb3d24d875472. Production still untouched. Two independent worktrees:
 
-- task_86d6e797: actual-die durable task vertical proof, remote version/profile handshake, persisted cursor + local transcript, detached progress and explicit lifecycle gaps. Owns experiments/remote-task-poc and task-poc.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_86d6e797; branch die/remote-task-vertical-proof-86d6e797.
-- task_e7122cd8: polling versus long-poll/stream, byte-capped consumer buffers and gap handling, synthetic 1/100/1000 task network measurements. Owns experiments/remote-stream-probe and stream-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e7122cd8; branch die/stream-and-slow-client-network-probe-e7122cd8.
+- task_86d6e797: actual-die durable task vertical proof, remote version/profile handshake, persisted cursor + local transcript, detached progress and explicit lifecycle gaps. Owns wisdom/experiments/remote-task-poc and task-poc.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_86d6e797; branch die/remote-task-vertical-proof-86d6e797.
+- task_e7122cd8: polling versus long-poll/stream, byte-capped consumer buffers and gap handling, synthetic 1/100/1000 task network measurements. Owns wisdom/experiments/remote-stream-probe and stream-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e7122cd8; branch die/stream-and-slow-client-network-probe-e7122cd8.
 
 Workers have full current wisdom and may reuse the parent freshly built die 0.15.3 binary with recorded hash. Loopback-only Docker, no real credentials or paid models. Parent will review integration, rerun results and keep claims narrow. First priority is connected actual-agent + durable offline transcript experience, not thousands-machine deployment.
 
@@ -91,8 +91,8 @@ Next highest-value work: durable questions/replies and one explicitly allowed Ma
 On 2026-09-26 user asked to do all needed investigation/experiments and keep pushing develop. Parent fetched origin, merged two newer release commits (80872d7, fb4d6fd) without conflicts, reran relevant release and experiment tests (15 Bun + 4 Node), and pushed develop successfully at 6984422. SSH printed an id_rsa libcrypto warning but fetch and push both succeeded; do not report it as an auth blocker. No force push. Package is now0.15.4 from upstream release metadata; the proven staged CLI remains0.15.3 with recorded hash. Do not overwrite artifact while workers stage it.
 
 Round three active from 6984422dfae3bf789a52a3763988dc6c309c67e8:
-- task_66633bbf: questions and explicitly allowed Mac fixture-read capability in actual task POC. Owns experiments/remote-task-poc and task-poc.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_66633bbf, branch die/durable-questions-and-on-demand-mac-fixt-66633bbf.
-- task_792d547d: true reply-loss gate and active-owner kill/restart, independent experiments/remote-failure-probe and failure-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_792d547d, branch die/ambiguous-delivery-and-running-owner-fai-792d547d. Reuses prior actual-task owner read-only; integration must check it still fits questions worker changes.
+- task_66633bbf: questions and explicitly allowed Mac fixture-read capability in actual task POC. Owns wisdom/experiments/remote-task-poc and task-poc.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_66633bbf, branch die/durable-questions-and-on-demand-mac-fixt-66633bbf.
+- task_792d547d: true reply-loss gate and active-owner kill/restart, independent wisdom/experiments/remote-failure-probe and failure-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_792d547d, branch die/ambiguous-delivery-and-running-owner-fai-792d547d. Reuses prior actual-task owner read-only; integration must check it still fits questions worker changes.
 
 Parent owns review/integration/push only after checks. Workers must commit, not push. Keep work bounded to experiments; user did not ask to publish releases, transfer real secrets or contact an unprovided remote machine. Runtime/model setup discovery is in remote-profile-discovery.md. Native questions versus lab-only dependency transport must be labeled accurately; no silent approval bypass.
 
@@ -113,8 +113,8 @@ Next bounded discovery: actual RPC-native /questions answer through an authentic
 Parent pushed validated failure checkpoint4440556, then dependency/terminal fixes e0526ab to origin/develop. No force push. Native local SDK command test passed. Final combined failure runner passed with revised dependency owner; its child task runner covers independent work, modeled question/local fixture grant and denial. User-facing /lab question remains modeled; real question service is next.
 
 Round four base e0526ab4c6ffef5511be79c6d7ced06d7c114b1e:
-- task_e5a84fc3: actual persisted harness questions through packaged RPC plus authenticated narrow controller. Owns experiments/remote-native-question-probe and native-question-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e5a84fc3, branch die/native-persisted-question-over-remote-rp-e5a84fc3.
-- task_6ca79168: real SSH tunnel and disconnect against disposable Docker sshd+existing task owner. Generated fixture client/host keys and private known_hosts only, strict checking, no user SSH keys/config modifications. Owns experiments/remote-ssh-probe and ssh-transport-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_6ca79168, branch die/real-ssh-disconnect-transport-probe-6ca79168.
+- task_e5a84fc3: actual persisted harness questions through packaged RPC plus authenticated narrow controller. Owns wisdom/experiments/remote-native-question-probe and native-question-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_e5a84fc3, branch die/native-persisted-question-over-remote-rp-e5a84fc3.
+- task_6ca79168: real SSH tunnel and disconnect against disposable Docker sshd+existing task owner. Generated fixture client/host keys and private known_hosts only, strict checking, no user SSH keys/config modifications. Owns wisdom/experiments/remote-ssh-probe and ssh-transport-probe.md. Worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_6ca79168, branch die/real-ssh-disconnect-transport-probe-6ca79168.
 
 Parent must review, rerun and push finished pieces. Workers do not push. Both use staged CLI0.15.3 hash already recorded; repo0.15.4 metadata is distinct. No real remote host was supplied, so only disposable local Docker SSH authorized. No real provider credentials or paid requests. Loopback bearer does not isolate same-user agent code from controller secrets; security boundary not claimed.
 
@@ -136,7 +136,7 @@ Discovery synthesis committed at 3218622. Worker task_2711fe5c builds a single e
 
 ## User answers adopted; integrated flow continues
 
-All seven saved replies read, recorded in user-decisions.md, then resolved as used. Base cb80112. Durable sync worker task_373d107c owns integrated CLI/server sync in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_373d107c, branch die/durable-transcript-in-integrated-remote--373d107c. Repo helper worker task_c62d3f48 owns experiments/remote-cli-experience/repo/ in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_c62d3f48, branch die/safe-automatic-repo-result-integration-h-c62d3f48. No overlapping CLI/server edits. Parent must review, integrate helpers into same user path, test combined Docker/native flow and push validated checkpoints. Mac capability and real host/provider validation remain after these slices.
+All seven saved replies read, recorded in user-decisions.md, then resolved as used. Base cb80112. Durable sync worker task_373d107c owns integrated CLI/server sync in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_373d107c, branch die/durable-transcript-in-integrated-remote--373d107c. Repo helper worker task_c62d3f48 owns wisdom/experiments/remote-cli-experience/repo/ in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_c62d3f48, branch die/safe-automatic-repo-result-integration-h-c62d3f48. No overlapping CLI/server edits. Parent must review, integrate helpers into same user path, test combined Docker/native flow and push validated checkpoints. Mac capability and real host/provider validation remain after these slices.
 
 Repo CLI wiring now task_abaac6b3 in /home/tnfssc/.die/worktrees/die-a86675007a5e-task_abaac6b3, branch die/wire-repo-handoff-into-integrated-cli-ex-abaac6b3, base 8f31ef9. Target actual die tool edit in task checkout through same pinned SSH CLI, then return safe patch or retained review artifact. Parent reviews/reruns before integrating. Durable sync/native parent checks passed; actual Mac/provider remains unproven.
 

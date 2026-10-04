@@ -5,7 +5,7 @@
 
 ## Documentation intent
 
-[User guide](../../docs/t3-code/README.md) turns the current connector setup
+[User guide](../docs/t3-code/README.md) turns the current connector setup
 contract into a short install-to-chat flow: paired installer/version checks,
 ordinary Bruv auth, independent normal T3 startup, separate Bruv-named Claude
 protocol instance, absolute binary/isolated SDK home fields, exact configured
@@ -40,7 +40,7 @@ repeated lesson warrants another value.
 
 Integrated in /home/tnfssc/.t3/worktrees/bruv/t3code-2967b1c3 on
 `t3code/document-bruv-t3code-setup-screenshots`. Four PNG captures are in
-`docs/t3-code/images/`. Captured the unchanged official Linux T3
+`wisdom/docs/t3-code/images/`. Captured the unchanged official Linux T3
 `v0.0.46-nightly.20261004.2644` with installed Bruv 0.16.5 in an isolated
 loopback session. 01 shows Claude protocol selection. 02 shows sample Alice
 paths in Config, at a narrow viewport so the full paths stay visible. 03 shows

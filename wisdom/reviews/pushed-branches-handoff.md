@@ -27,7 +27,7 @@ Remote research review still pending.
 
 Remote review55968e4 integrated as note only. Both local offline demos,
 experiment typecheck and build passed. No confirmed defect in research
-scope; safe as experiments/docs, not shipping SSH workspaces. Real SSH,
+scope; safe as wisdom/experiments/docs, not shipping SSH workspaces. Real SSH,
 auth, network/host restart/recovery not tested; prototype deliberately
 local/trusted. Branch merge-tree clean, preserve newer develop. Historical
 PR/handoff metadata needs dated clarification if landing.

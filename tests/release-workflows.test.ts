@@ -405,15 +405,10 @@ test("CI and release build the binary and launcher without a patched web depende
   expect(workflow).toContain("bun run smoke -- --reuse-build");
 });
 
-test("full Linux retains history required by migration acceptance", async () => {
+test("Linux needs no retired migration history; feedback retains its baseline history", async () => {
   const workflow = Bun.YAML.parse(await read(".github/workflows/ci.yml")) as any;
   const checkout = (job: any) => job.steps.find((step: any) => step.uses?.startsWith("actions/checkout@"));
-  expect(checkout(workflow.jobs.test).with["fetch-depth"]).toBe(0);
-  expect(
-    workflow.jobs.test.steps.some(
-      (step: any) => typeof step.run === "string" && /git fetch.*refs\/tags\/v0\.7\.1/.test(step.run),
-    ),
-  ).toBe(false);
+  expect(checkout(workflow.jobs.test).with["fetch-depth"] ?? 1).toBe(1);
   expect(checkout(workflow.jobs.feedback).with["fetch-depth"]).toBe(0);
   expect(workflow.jobs.test.steps.find((step: any) => step.name === "Install required PTY tooling").run).toContain(
     "command -v tmux >/dev/null ||",

@@ -9,7 +9,7 @@
 
 An opinionated coding agent. Built on [Pi](https://pi.dev).
 
-Want a graphical frontend? Follow the [illustrated T3 Code setup guide](docs/t3-code/README.md).
+Want a graphical frontend? Follow the [illustrated T3 Code setup guide](wisdom/docs/t3-code/README.md).
 
 ## Install
 
@@ -124,7 +124,7 @@ Do not change parent/global `CLAUDE_CONFIG_DIR` or use Claude login/updater.
 Official **v0.0.46-nightly.20261004.2644** lacks the provider-scoped SDK history
 fix: basic chat may work, but native fork can fail before Bruv starts.
 After Stop, **Decline** any stale approval card before continuing.
-See the [illustrated setup guide](docs/t3-code/README.md) for steps and limits.
+See the [illustrated setup guide](wisdom/docs/t3-code/README.md) for steps and limits.
 
 ## Build from source
 

@@ -97,7 +97,7 @@ export function externalT3Guide(binary = process.execPath, home = homedir()): st
     "   (T3 may show a generic error).",
     "",
     "Screenshot guide",
-    "   https://github.com/tnfssc/bruv/blob/develop/docs/t3-code/README.md",
+    "   https://github.com/tnfssc/bruv/blob/develop/wisdom/docs/t3-code/README.md",
     "Technical notes (separate auth homes, remote paths and other limits)",
     "   https://github.com/tnfssc/bruv/blob/develop/wisdom/claude-compat/external-t3-setup.md",
     "",

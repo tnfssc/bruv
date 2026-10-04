@@ -32,7 +32,7 @@ test("terminal guide follows install-to-chat steps with absolute isolated paths"
   expect(guide).toContain("Bruv instance AND your exact custom model");
   expect(guide).toContain("does not verify provider access");
   expect(guide).toContain("https://github.com/pingdotgg/t3code/releases");
-  expect(guide).toContain("https://github.com/tnfssc/bruv/blob/develop/docs/t3-code/README.md");
+  expect(guide).toContain("https://github.com/tnfssc/bruv/blob/develop/wisdom/docs/t3-code/README.md");
   expect(guide).toContain("https://github.com/tnfssc/bruv/blob/develop/wisdom/claude-compat/external-t3-setup.md");
   expect(guide).not.toMatch(/\x1b|t3 --|npx t3@latest|CLAUDE_CONFIG_DIR=.*t3/);
 });

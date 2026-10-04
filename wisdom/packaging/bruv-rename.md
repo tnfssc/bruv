@@ -154,7 +154,7 @@ broken tnfssc/bruv URLs, or producer/consumer naming mismatch. Residual die refe
   variables and state directory to prove rejection/nonmigration; source-export fixture
   starts with a DieService.ts to verify real filename changes.
 - Historical release notes, research, archived experiments, evidence paths and prior
-  worktree/branch names. Clear boundaries are in wisdom/README.md, experiments/t3/README.md,
+  worktree/branch names. Clear boundaries are in wisdom/README.md, wisdom/experiments/t3/README.md,
   PRODUCT.md and the root historical task-placement handoffs.
 
 Upstream T3/Pi vendor identities are preserved, including T3 Code splash/title and Pi
