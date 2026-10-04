@@ -35,6 +35,7 @@ export interface EntryMetadata {
   offset: number;
   length: number;
   messageRole?: string;
+  customType?: string;
   messageProvider?: string;
   messageModel?: string;
   firstKeptEntryId?: string;
@@ -211,7 +212,8 @@ function metadata(entry: SessionEntry, offset: number, length: number): EntryMet
     meta.messageRole = value.message?.role;
     meta.messageProvider = value.message?.provider;
     meta.messageModel = value.message?.model;
-  } else if (entry.type === "compaction") meta.firstKeptEntryId = value.firstKeptEntryId;
+  } else if (entry.type === "custom") meta.customType = value.customType;
+  else if (entry.type === "compaction") meta.firstKeptEntryId = value.firstKeptEntryId;
   else if (entry.type === "thinking_level_change") meta.thinkingLevel = value.thinkingLevel;
   else if (entry.type === "model_change") {
     meta.provider = value.provider;

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { MANUAL_SHAKE_ENTRY } from "./shake-record";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, resolve } from "node:path";
@@ -14,6 +15,7 @@ import type {
 import {
   CURRENT_SESSION_VERSION,
   AgentSession,
+  estimateTokens,
   SessionManager,
   sessionEntryToContextMessages,
 } from "@earendil-works/pi-coding-agent";
@@ -51,6 +53,42 @@ interface ManagerState {
 const states = new WeakMap<SessionManager, ManagerState>();
 // SDK teardown may still read a live manager: finalize only unreachable owners.
 const abandonedManagers = new FinalizationRegistry<DiskEntryStore>((store) => store.dispose());
+
+/** Read the existing disk index without materializing message bodies. */
+export function getDiskBackedEntryMetadata(manager: object): readonly EntryMetadata[] | undefined {
+  return states.get(manager as SessionManager)?.store.entries;
+}
+
+function contextLeaf(owned: ManagerState, fromId: string | null, assistantOnly = false): string | null {
+  let id = fromId;
+  const seen = new Set<string>();
+  while (id && !seen.has(id)) {
+    seen.add(id);
+    const entry = owned.store.byId.get(id);
+    if (!entry) break;
+    if (
+      (entry.type === "message" && (!assistantOnly || entry.messageRole === "assistant")) ||
+      (!assistantOnly && entry.type === "custom_message") ||
+      ["compaction", "branch_summary", "context_edit"].includes(entry.type) ||
+      (entry.type === "custom" && entry.customType === MANUAL_SHAKE_ENTRY)
+    )
+      return id;
+    id = entry.parentId;
+  }
+  return null;
+}
+
+/** Position of the active context, ignoring footer/cache bookkeeping entries. */
+export function getDiskBackedContextLeafId(manager: object): string | null | undefined {
+  const owned = states.get(manager as SessionManager);
+  return owned ? contextLeaf(owned, internals(manager as SessionManager).leafId) : undefined;
+}
+
+/** User/tool messages cannot make assistant usage fresh after a shake. */
+export function getDiskBackedShakeLeafId(manager: object): string | null | undefined {
+  const owned = states.get(manager as SessionManager);
+  return owned ? contextLeaf(owned, internals(manager as SessionManager).leafId, true) : undefined;
+}
 
 /** Release an owned temporary manager after its last reader is done. */
 export function disposeDiskBackedSessionManager(manager: SessionManager): void {
@@ -203,14 +241,14 @@ export function installDiskBackedSessionManager(): void {
       sessionId: string;
       leafId: string | null;
       entries: WeakRef<object>;
-      entryCount: number;
       contextWindow: number;
       value: ReturnType<AgentSession["getContextUsage"]>;
     }
   >();
   AgentSession.prototype.getContextUsage = function () {
     const manager = this.sessionManager;
-    if (!state(manager)) return originalContextUsage.call(this);
+    const owned = state(manager);
+    if (!owned) return originalContextUsage.call(this);
     const current = internals(manager);
     const contextWindow =
       (
@@ -218,22 +256,36 @@ export function installDiskBackedSessionManager(): void {
           _limitsModel(): { contextWindow?: number } | undefined;
         }
       )._limitsModel()?.contextWindow ?? 0;
+    const leafId = getDiskBackedContextLeafId(manager) ?? null;
     const cached = contextUsageCache.get(manager);
-    if (
+    const sameContext =
       cached &&
       cached.sessionId === current.sessionId &&
-      cached.leafId === current.leafId &&
       cached.entries.deref() === current.fileEntries &&
-      cached.entryCount === current.fileEntries.length &&
-      cached.contextWindow === contextWindow
-    )
-      return cached.value;
-    const value = originalContextUsage.call(this);
+      cached.contextWindow === contextWindow;
+    if (sameContext && cached.leafId === leafId) return cached.value;
+    const newest = leafId ? owned.store.byId.get(leafId) : undefined;
+    let value: ReturnType<AgentSession["getContextUsage"]>;
+    if (
+      sameContext &&
+      cached.value &&
+      newest?.type === "message" &&
+      newest.messageRole === "user" &&
+      contextLeaf(owned, newest.parentId) === cached.leafId
+    ) {
+      // Pi adds estimateTokens for trailing user messages. Reuse the unchanged
+      // prefix instead of re-reading it just as typing resumes after submission.
+      if (cached.value.tokens === null) value = cached.value;
+      else {
+        const entry = owned.store.materialize(newest) as Extract<SessionEntry, { type: "message" }>;
+        const tokens = cached.value.tokens + estimateTokens(entry.message);
+        value = { tokens, contextWindow, percent: (tokens / contextWindow) * 100 };
+      }
+    } else value = originalContextUsage.call(this);
     contextUsageCache.set(manager, {
       sessionId: current.sessionId,
-      leafId: current.leafId,
+      leafId,
       entries: new WeakRef(current.fileEntries),
-      entryCount: current.fileEntries.length,
       contextWindow,
       value,
     });
