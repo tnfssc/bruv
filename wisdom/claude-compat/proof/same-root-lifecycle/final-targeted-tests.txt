@@ -1,0 +1,19 @@
+bun test v1.4.2 (744846f84)
+
+tests/claude-compat-prompt-ownership.test.ts:
+(pass) autonomous result cannot settle a native human prompt still in Pi preflight [602.52ms]
+(pass) queued now input echoes only after Pi consumption, without aborting [33.06ms]
+(pass) queued next input echoes only after Pi consumption, without aborting [15.68ms]
+(pass) queued now-without-uuid input echoes only after Pi consumption, without aborting [14.79ms]
+(pass) task wake result uses supported SDK origin only after consumption and settlement [0.51ms]
+
+tests/claude-native-subagent-return.test.mjs:
+(pass) return requires one actual next reply and success result in the original native session [3.06ms]
+(pass) after-child marker is a separate real provider reply, not a reused earlier followup [0.26ms]
+(pass) failure evidence retains correlation and committed source/status, excludes auth and prompt text [101.23ms]
+(pass) native ownership gate rejects missing or foreign consumption echoes and human-attributed wakes [0.77ms]
+
+ 9 pass
+ 0 fail
+ 53 expect() calls
+Ran 9 tests across 2 files. [1334.00ms]

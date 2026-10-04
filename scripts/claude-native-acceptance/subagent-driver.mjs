@@ -16,7 +16,9 @@ async function waitFile(file) {
   }
   throw Error("Missing actual child file: " + path.basename(file));
 }
+let observedConfig;
 export async function exercise({ page, url, snapshot, config }) {
+  observedConfig = config;
   await page.goto(url);
   await page.waitForTimeout(750);
   const message = page.getByRole("textbox", { name: "Message", exact: true });
@@ -305,4 +307,9 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
       2,
     ) + "\n",
   );
+}
+
+export async function flushCapture() {
+  const config = observedConfig ?? JSON.parse(await fs.readFile(process.env.BRUV_ACCEPTANCE_CONFIG, "utf8"));
+  await collectReturnEvidence(config, undefined, "final-provider-evidence.json");
 }

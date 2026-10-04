@@ -49,7 +49,26 @@ test("failure evidence retains correlation and committed source/status, excludes
     const agent = path.join(root, "agent"),
       base = path.join(root, "t3-runtime", "t3-base");
     await fs.mkdir(path.join(agent, "native-sessions"), { recursive: true });
-    await fs.mkdir(base, { recursive: true });
+    await fs.mkdir(path.join(base, "userdata", "logs", "provider"), { recursive: true });
+    await fs.writeFile(
+      path.join(base, "userdata", "logs", "provider", "events.thread.log"),
+      "[fixture] NTIVE: " +
+        JSON.stringify({
+          providerSessionId: "provider-session",
+          event: {
+            direction: "incoming",
+            payload: {
+              type: "result",
+              session_id: "same-root",
+              user_message_uuid: "human",
+              origin: { kind: "human" },
+              result: "ROOT_AFTER_CHILD_REAL secret prompt",
+              environment: { secret: "secret-token" },
+            },
+          },
+        }) +
+        "\n",
+    );
     const source = path.join(agent, "source.jsonl"),
       wire = path.join(root, "wire.ndjson");
     await fs.writeFile(
@@ -67,15 +86,25 @@ test("failure evidence retains correlation and committed source/status, excludes
     await fs.writeFile(
       wire,
       [
-        frame({ type: "user", uuid: "human", message: { content: "ACCEPT_LOCAL_AFTER_CHILD secret prompt" } }, "stdin"),
-        frame({
-          type: "result",
-          uuid: "res",
-          session_id: "same-root",
-          user_message_uuid: "human",
-          origin: { kind: "human" },
-          result: "ROOT_AFTER_CHILD_REAL",
-        }),
+        { kind: "lifecycle", owner: 1234, value: { event: "spawn", pid: 1234, flags: ["--input-format"] } },
+        {
+          ...frame(
+            { type: "user", uuid: "human", message: { content: "ACCEPT_LOCAL_AFTER_CHILD secret prompt" } },
+            "stdin",
+          ),
+          owner: 1234,
+        },
+        {
+          ...frame({
+            type: "result",
+            uuid: "res",
+            session_id: "same-root",
+            user_message_uuid: "human",
+            origin: { kind: "human" },
+            result: "ROOT_AFTER_CHILD_REAL",
+          }),
+          owner: 1234,
+        },
       ]
         .map(JSON.stringify)
         .join("\n") + "\n",
@@ -84,7 +113,9 @@ test("failure evidence retains correlation and committed source/status, excludes
     db.exec(
       "CREATE TABLE orchestration_v2_projection_runs (run_id TEXT, status TEXT, payload_json TEXT);" +
         "INSERT INTO orchestration_v2_projection_runs VALUES ('run-1', 'running', 'secret prompt');" +
-        "CREATE TABLE auth (id TEXT, token TEXT); INSERT INTO auth VALUES ('auth-id', 'secret-token');",
+        "CREATE TABLE auth (id TEXT, token TEXT); INSERT INTO auth VALUES ('auth-id', 'secret-token');" +
+        "CREATE TABLE orchestration_events (sequence INTEGER,event_type TEXT,stream_id TEXT,occurred_at TEXT,payload_json TEXT,metadata_json TEXT,application_event_version INTEGER);" +
+        `INSERT INTO orchestration_events VALUES (7,'run.updated','thread','fixture','{"status":"running","secret":"secret prompt"}','{"runId":"run-1"}',2);`,
     );
     db.close();
     const page = {
@@ -98,11 +129,28 @@ test("failure evidence retains correlation and committed source/status, excludes
     const raw = await fs.readFile(path.join(root, "same-root-return-evidence.json"), "utf8"),
       e = JSON.parse(raw);
     assert.equal(e.correlation[1].echoedPrompt, e.correlation[0].uuid);
+    assert.equal(e.correlation[0].sequence, 1);
+    assert.equal(e.correlation[1].sequence, 2);
+    assert.equal(e.lifecycle[0].owner, e.correlation[0].owner);
+    assert.equal(e.correlation[1].owner, e.correlation[0].owner);
     assert.deepEqual(e.journals[0].entries[0].markers, ["ROOT_COMPLETION_ONCE_REAL"]);
     assert.deepEqual(e.persistence[0].rows, [{ run_id: "run-1", status: "running" }]);
+    assert.equal(e.provider[0].echoedPrompt, e.correlation[0].uuid);
+    assert.deepEqual(e.provider[0].markers, ["ROOT_AFTER_CHILD_REAL"]);
+    assert.equal(e.events[0].sequence, 7);
+    assert.equal(e.events[0].status, "running");
     assert.equal(e.stopVisible, true);
     assert.equal(e.submitVisible, false);
     assert.doesNotMatch(raw, /secret prompt|secret-token|auth-id/);
+    await collectReturnEvidence(
+      { wire, state: path.join(root, "state"), proof: root, env: { BRUV_CODING_AGENT_DIR: agent } },
+      undefined,
+      "final-provider-evidence.json",
+    );
+    const final = JSON.parse(await fs.readFile(path.join(root, "final-provider-evidence.json"), "utf8"));
+    assert.equal(final.submitVisible, undefined);
+    assert.equal(final.stopVisible, undefined);
+    assert.equal(final.provider[0].echoedPrompt, final.correlation[0].uuid);
   } finally {
     await fs.rm(root, { recursive: true, force: true });
   }

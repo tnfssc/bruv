@@ -30,7 +30,6 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let outputError: unknown;
   let started = 0;
   let active = false;
-  let sentInit = false;
   let turns = 0;
   let results = 0;
   let lastText = "";
@@ -44,6 +43,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let consumedUserUuids: string[] = [];
   let echoPending = false;
   let consumedHuman = false;
+  let consumedTaskNotification = false;
   const promptEcho = () =>
     consumedUserUuids.length
       ? { user_message_uuid: consumedUserUuids.at(-1), user_message_uuids: [...consumedUserUuids] }
@@ -68,13 +68,16 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   };
   const begin = () => {
     if (active) return;
-    if (!sentInit && !options.auxiliary && options.initialization) {
+    // The pinned adapter uses each root init as the native turn-start boundary,
+    // including an autonomous task wake. Pi alone decides when this run begins.
+    if (!options.auxiliary && options.initialization) {
       send({ type: "system", subtype: "init", ...base(), ...options.initialization() });
-      sentInit = true;
     }
     active = true;
+    if (!options.auxiliary) send({ type: "system", subtype: "session_state_changed", ...base(), state: "running" });
     consumedUserUuids = [];
     consumedHuman = false;
+    consumedTaskNotification = false;
     echoPending = false;
 
     commandUuid = undefined;
@@ -90,7 +93,9 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     type: "result",
     ...base(),
     ...promptEcho(),
-    origin: { kind: consumedHuman ? "human" : "auto-continuation" },
+    // SDK 0.3.276 has no auto-continuation origin. Attribute real task wakes
+    // only when Pi consumes their custom message, never from a job lifecycle frame.
+    origin: { kind: consumedHuman ? "human" : consumedTaskNotification ? "task-notification" : "unclassified" },
     subtype: failure ? "error_during_execution" : "success",
     is_error: Boolean(failure),
     duration_ms: started ? Date.now() - started : 0,
@@ -108,7 +113,12 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     active = false;
     results++;
     cumulativeCost += cost;
-    if (!options.auxiliary) send(result());
+    if (!options.auxiliary) {
+      send(result());
+      // SDK 0.3.276 separates the result from the authoritative turn-over frame.
+      // Only Pi agent_settled (or a handled command) ends the actual root run.
+      send({ type: "system", subtype: "session_state_changed", ...base(), state: "idle" });
+    }
     commandUuid = undefined;
   };
   const factory: ExtensionFactory = (pi) => {
@@ -132,6 +142,14 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     if (event.type === "agent_settled") {
       end();
       return;
+    }
+    if (
+      event.type === "message_start" &&
+      event.message.role === "custom" &&
+      ["task-complete", "task-attention"].includes(event.message.customType)
+    ) {
+      begin();
+      consumedTaskNotification = true;
     }
     if (event.type === "message_start" && event.message.role === "assistant") {
       begin();

@@ -172,3 +172,7 @@ Bun 1.4.2. Model/harness regressions **16/16**, including default's unchanged se
 also pass in Bun. Strict typecheck and whitespace checks pass.
 
 Values unchanged: whole-product proof, honest gaps and one owner already cover this work.
+
+## Post-integration root-return P1 remains open
+
+[Final rebuilt connector proof and exact native/SDK/persisted-event boundary](proof/same-root-lifecycle/README.md). Supported task origin and turn lifecycle were corrected; actual-consumption UUID ownership, true steering and the TaskManager owner are intact. 177 focused tests and typecheck pass. Final real UI still fails Stop-hidden after the next actual same-root reply; no cancellation/Stop roots follow that failed checkpoint. Do not count reply visibility or the earlier intermittent origin-only full pass as final idle acceptance.

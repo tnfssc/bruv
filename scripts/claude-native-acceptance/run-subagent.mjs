@@ -71,6 +71,7 @@ try {
     modelSlug,
     env: {
       HOME: home,
+      ...(process.env.TMPDIR ? { TMPDIR: process.env.TMPDIR } : {}),
       BRUV_CODING_AGENT_DIR: agent,
       BRUV_CLAUDE_COMPAT_HOME: agent,
       CLAUDE_CONFIG_DIR: path.join(agent, "native-history"),
@@ -100,6 +101,7 @@ try {
   const env = {
     PATH: "/usr/bin:/bin",
     HOME: home,
+    ...(process.env.TMPDIR ? { TMPDIR: process.env.TMPDIR } : {}),
     BRUV_ACCEPTANCE_CONFIG: config.env.BRUV_ACCEPTANCE_CONFIG,
     PROOF_OUTPUT: proof,
   };

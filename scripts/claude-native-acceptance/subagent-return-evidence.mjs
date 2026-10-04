@@ -15,18 +15,34 @@ async function files(dir) {
 }
 // Capture BEFORE replay removes its private state, including on the bounded UI failure.
 // Only fixture markers and correlation/status fields: no prompts, pairing tokens or auth rows.
-export async function collectReturnEvidence(config, page) {
+export async function collectReturnEvidence(config, page, filename = "same-root-return-evidence.json") {
   const wire = lines(await fs.readFile(config.wire, "utf8"));
   const ids = new Map();
   const id = (v) => (v ? (ids.has(v) ? ids.get(v) : (ids.set(v, "id-" + (ids.size + 1)), ids.get(v))) : null);
+  const lifecycle = wire.flatMap((e, sequence) =>
+    e.kind === "lifecycle"
+      ? [
+          {
+            sequence,
+            owner: id(e.owner ?? e.value?.pid),
+            event: e.value?.event,
+            ...(e.value?.flags ? { flags: e.value.flags } : {}),
+          },
+        ]
+      : [],
+  );
   const correlation = wire
+    .map((e, sequence) => ({ ...e, sequence }))
     .filter((e) => ["stdin", "stdout"].includes(e.kind))
     .map((e) => {
       const m = e.value;
       return {
+        sequence: e.sequence,
+        owner: id(e.owner),
         direction: e.kind,
         type: m.type,
         subtype: m.subtype,
+        state: m.state,
         uuid: id(m.uuid),
         session: id(m.session_id),
         parentTool: id(m.parent_tool_use_id),
@@ -75,13 +91,68 @@ export async function collectReturnEvidence(config, page) {
     });
   }
   const persistence = [];
+  const events = [];
+  const provider = [];
   const { DatabaseSync } = await import("node:sqlite");
   const base = path.join(path.dirname(config.state), "t3-runtime", "t3-base");
   for (const f of await files(base)) {
+    if (f.includes("/logs/provider/") && f.endsWith(".log")) {
+      for (const [sequence, line] of (await fs.readFile(f, "utf8")).split("\n").entries()) {
+        const start = line.indexOf("{");
+        if (start < 0) continue;
+        let record;
+        try {
+          record = JSON.parse(line.slice(start));
+        } catch {
+          continue;
+        }
+        const payload = record.event?.payload;
+        if (!payload) continue;
+        const m = payload.type === "prompt.offer" ? payload.message : payload;
+        provider.push({
+          sequence,
+          thread: id(path.basename(f)),
+          providerSession: id(record.providerSessionId),
+          direction: record.event.direction,
+          type: payload.type,
+          subtype: m.subtype,
+          state: m.state,
+          uuid: id(m.uuid),
+          session: id(m.session_id),
+          parentTool: id(m.parent_tool_use_id),
+          echoedPrompt: id(m.user_message_uuid),
+          echoedPrompts: (m.user_message_uuids ?? []).map(id),
+          origin: m.origin ? { kind: m.origin.kind } : null,
+          resultTurns: m.num_turns,
+          markers: markers(m),
+        });
+      }
+    }
     if (!/\.(sqlite|sqlite3|db)$/.test(f)) continue;
     const db = new DatabaseSync(f, { readOnly: true });
     try {
       for (const { name } of db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all()) {
+        if (name === "orchestration_events") {
+          for (const row of db
+            .prepare(
+              "SELECT sequence,event_type,stream_id,occurred_at,payload_json,metadata_json FROM orchestration_events WHERE application_event_version=2 ORDER BY sequence",
+            )
+            .all()) {
+            const payload = JSON.parse(row.payload_json);
+            const metadata = JSON.parse(row.metadata_json);
+            events.push({
+              sequence: row.sequence,
+              event_type: row.event_type,
+              thread_id: row.stream_id,
+              occurred_at: row.occurred_at,
+              run_id: metadata.runId,
+              node_id: metadata.nodeId,
+              status:
+                payload.status ?? payload.run?.status ?? payload.providerTurn?.status ?? payload.providerThread?.status,
+              markers: markers(payload),
+            });
+          }
+        }
         if (!/^orchestration_v2_projection_(threads|runs|nodes|provider_turns|subagents)$/.test(name)) continue;
         const cols = db
           .prepare('PRAGMA table_info("' + name + '")')
@@ -99,13 +170,16 @@ export async function collectReturnEvidence(config, page) {
     }
   }
   const report = {
+    lifecycle,
+    provider,
+    events,
     correlation,
     journals,
     persistence,
-    url: page.url(),
+    url: page?.url(),
     sameRootChildReturnReply: config.sameRootChildReturnReply ?? false,
-    submitVisible: await page.getByRole("button", { name: "Submit message", exact: true }).isVisible(),
-    stopVisible: await page.getByRole("button", { name: "Stop generation", exact: true }).isVisible(),
+    submitVisible: await page?.getByRole("button", { name: "Submit message", exact: true }).isVisible(),
+    stopVisible: await page?.getByRole("button", { name: "Stop generation", exact: true }).isVisible(),
   };
-  await fs.writeFile(path.join(config.proof, "same-root-return-evidence.json"), JSON.stringify(report, null, 2) + "\n");
+  await fs.writeFile(path.join(config.proof, filename), JSON.stringify(report, null, 2) + "\n");
 }

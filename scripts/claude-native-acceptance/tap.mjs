@@ -8,7 +8,7 @@ const isWorker = config.delegationCases && process.argv[1] === config.workerTap;
 const instance = isWorker ? "normal" : "root";
 const instanceEnv = isWorker ? { ...process.env, ...config.workerEnv } : process.env;
 const log = (kind, value) =>
-  fs.appendFileSync(config.wire, JSON.stringify({ kind, instance, value }) + "\n", { mode: 0o600 });
+  fs.appendFileSync(config.wire, JSON.stringify({ kind, instance, owner: child.pid, value }) + "\n", { mode: 0o600 });
 const child = spawn(config.connector, [...config.connectorArgs, ...process.argv.slice(2)], {
   env: instanceEnv,
   stdio: ["pipe", "pipe", "pipe"],

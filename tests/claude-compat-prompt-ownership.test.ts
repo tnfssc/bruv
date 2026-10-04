@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { type AssistantMessage, type Context, createAssistantMessageEventStream } from "@earendil-works/pi-ai/compat";
 import { ModelRuntime, SessionManager, SettingsManager } from "@earendil-works/pi-coding-agent";
-import type { CompatFrame } from "../src/claude-compat/frontend";
+import { type CompatFrame, createClaudeCompatFrontend } from "../src/claude-compat/frontend";
 import {
   type ClaudeCompatRuntime,
   type CompatUserMessage,
@@ -183,7 +183,7 @@ test("autonomous result cannot settle a native human prompt still in Pi prefligh
     undefined,
     ["00000000-0000-4000-8000-000000000002"],
   ]);
-  expect(frames.filter((f) => f.type === "result")[1].origin).toEqual({ kind: "auto-continuation" });
+  expect(frames.filter((f) => f.type === "result")[1].origin).toEqual({ kind: "task-notification" });
   // The real adapter learns early echo mode from the first stream frame.
   expect(frames.find((f) => f.type === "stream_event")?.user_message_uuid).toBe("00000000-0000-4000-8000-000000000001");
   // Exact unmodified adapter UUID/origin decision, extracted below.
@@ -210,6 +210,7 @@ test("autonomous result cannot settle a native human prompt still in Pi prefligh
   });
   expect(detected).toBe(true);
   expect(calls).toBe(4);
+  expect(frames.filter((frame) => frame.type === "system" && frame.subtype === "init")).toHaveLength(3);
   expect(frames.filter((f) => f.type === "result").map((f) => f.result)).toEqual([
     "initial done",
     "autonomous done",
@@ -290,3 +291,65 @@ for (const priority of ["now", "next", "now-without-uuid"]) {
     }
   });
 }
+
+// Result provenance follows messages Pi actually consumed in this generation.
+// A lifecycle frame (job finished) alone is not a model wake or an idle boundary.
+test("task wake result uses supported SDK origin only after consumption and settlement", async () => {
+  const frames: CompatFrame[] = [];
+  const frontend = createClaudeCompatFrontend({
+    sessionId: () => "root",
+    model: () => "test/model",
+    initialization: () => ({ model: "test/model", tools: [] }),
+    emit: (frame) => {
+      frames.push(frame);
+    },
+  });
+  const consume = (customType: string) =>
+    frontend.onEvent({
+      type: "message_start",
+      message: { role: "custom", customType, content: "notification", display: true, timestamp: 1 },
+    });
+  consume("task-complete");
+  frontend.onEvent({ type: "message_end", message: assistant("wake reply") });
+  await frontend.flush();
+  expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+  expect(frames.filter((frame) => frame.subtype === "session_state_changed").map((frame) => frame.state)).toEqual([
+    "running",
+  ]);
+  frontend.onEvent({ type: "agent_settled" });
+  await frontend.flush();
+  const wake = frames.find((frame) => frame.type === "result")!;
+  expect(wake.origin).toEqual({ kind: "task-notification" });
+  expect(wake.user_message_uuid).toBeUndefined();
+  expect(wake.result).toBe("wake reply");
+  expect(frames.at(-1)).toMatchObject({ type: "system", subtype: "session_state_changed", state: "idle" });
+
+  consume("task-attention");
+  frontend.consumeUser("next-human");
+  frontend.onEvent({ type: "message_end", message: assistant("human reply") });
+  frontend.onEvent({ type: "agent_settled" });
+  await frontend.flush();
+  expect(frames.filter((frame) => frame.type === "result")[1]).toMatchObject({
+    origin: { kind: "human" },
+    user_message_uuid: "next-human",
+    result: "human reply",
+  });
+
+  frontend.onEvent({ type: "agent_start" });
+  consume("unrelated-extension");
+  frontend.onEvent({ type: "message_end", message: assistant("other reply") });
+  frontend.onEvent({ type: "agent_settled" });
+  await frontend.flush();
+  const unrelated = frames.filter((frame) => frame.type === "result")[2];
+  expect(unrelated.origin).toEqual({ kind: "unclassified" });
+  expect(unrelated.user_message_uuid).toBeUndefined();
+  expect(frames.filter((frame) => frame.subtype === "session_state_changed").map((frame) => frame.state)).toEqual([
+    "running",
+    "idle",
+    "running",
+    "idle",
+    "running",
+    "idle",
+  ]);
+  expect(frames.filter((frame) => frame.type === "system" && frame.subtype === "init")).toHaveLength(3);
+});
