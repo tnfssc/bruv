@@ -21,7 +21,7 @@ async function fixture() {
   );
   await writeFile(
     join(root, "fixture-bruv"),
-    '#!/bin/sh\ncase "$1" in\n  --version) /bin/mkdir -p "$HOME/.bruv"; echo 1.2.3 ;;\n  --help) /bin/mkdir -p "$HOME/.bruv"; echo "bruv - AI coding assistant" ;;\n  web) echo "external, unmodified T3" ;;\n  claude-compat) shift; case "$1" in --bruv-version) echo "bruv-claude-compat 1.2.3" ;; --version) echo "2.1.280 (Bruv compatibility; bruv 1.2.3)" ;; esac ;;\nesac\n',
+    '#!/bin/sh\ncase "$1" in\n  --version) /bin/mkdir -p "$HOME/.bruv"; echo 1.2.3 ;;\n  --help) /bin/mkdir -p "$HOME/.bruv"; echo "bruv - AI coding assistant" ;;\n  web) echo "Setup guide only." ;;\n  claude-compat) shift; case "$1" in --bruv-version) echo "bruv-claude-compat 1.2.3" ;; --version) echo "2.1.280 (Bruv compatibility; bruv 1.2.3)" ;; esac ;;\nesac\n',
     { mode: 0o755 },
   );
   await writeFile(join(root, "fixture-connector"), '#!/bin/sh\ndir=${0%/*}\nexec "$dir/bruv" claude-compat "$@"\n', {
@@ -60,7 +60,7 @@ test("standalone smoke builds by default, while explicit reuse keeps the same CL
   });
   await writeFile(
     join(root, "dist/bruv"),
-    (await readFile(join(root, "fixture-bruv"), "utf8")).replace("external, unmodified T3", "bundled web"),
+    (await readFile(join(root, "fixture-bruv"), "utf8")).replace("Setup guide only.", "bundled web"),
     { mode: 0o755 },
   );
   expect(run(["--reuse-build"]).exitCode).not.toBe(0);
