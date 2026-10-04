@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/brand/bruv-icon.svg" width="96" height="96" alt="bruv CLI logo: a lowercase b with a terminal prompt cutout">
+</p>
+
 # bruv CLI
 
 A coding agent built on [Pi](https://pi.dev). The normal CLI gives you a terminal interface, Herdr integration, background jobs, sub-agents, and project wisdom. The same compiled binary provides the compatibility connector for external, unmodified T3 Code through a tiny `bruv-claude-compat` launcher.

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">bruv CLI logo</title>
+  <desc id="desc">A bold lowercase b with a terminal prompt cutout on a mint rounded square.</desc>
+  <rect width="96" height="96" rx="20" fill="#66e3c4"/>
+  <path fill="#102c31" fill-rule="evenodd" d="M24 18H40V40C45 36 51 34 57 34C74 34 84 44 84 60C84 76 73 86 57 86H24ZM48 44L64 60L48 76L42 70L52 60L42 50Z"/>
+</svg>
