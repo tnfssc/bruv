@@ -8,6 +8,8 @@ import { z } from "zod";
 import { InjectedMcpSession, parseInjectedMcpConfig, type McpSessionPolicy } from "../../src/claude-compat/mcp";
 import { createPermissionPolicy } from "../../src/claude-compat/permissions";
 
+import { httpMcpLifecycleFixture } from "./fixtures/http-mcp-lifecycle";
+
 const cleanup: (() => Promise<unknown>)[] = [];
 afterEach(async () => {
   for (const close of cleanup.splice(0).reverse()) await close();
@@ -404,4 +406,58 @@ test("official T3 returned OrchestratorMcpFailure is an error, never a success-s
   expect(result.isError).toBe(true);
   expect(result.structuredContent?._tag).toBe("OrchestratorMcpFailure");
   expect(result.content).toEqual([{ type: "text", text: "Task does not belong to thread" }]);
+});
+
+test("app HTTP discovery parks an actual session; concurrent resume reuses one lease and park never cancels app tasks", async () => {
+  const peer = await httpMcpLifecycleFixture();
+  cleanup.push(peer.stopHost);
+  const session = track(
+    await InjectedMcpSession.open(peer.config, {
+      cwd: process.cwd(),
+      appOwnedServers: ["t3-code"],
+      policy: { ...allow, beforeAppOwnedCall: async () => {} },
+    }),
+  );
+  expect(peer.activeSessions()).toBe(0);
+  expect(session.tools().map((tool) => tool.remoteName)).toEqual(["echo"]);
+  await Promise.all([session.resumeAppOwned(), session.resumeAppOwned()]);
+  expect(peer.activeSessions()).toBe(1);
+  expect(peer.requests.filter((request) => request.rpc === "initialize")).toHaveLength(2);
+  await session.callTool("mcp__t3-code__echo", { text: "actual" }, { toolUseId: "echo" });
+  await Promise.all([session.parkAppOwned(), session.parkAppOwned()]);
+  expect(peer.activeSessions()).toBe(0);
+  expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(2);
+  expect(peer.requests.filter((request) => request.rpc === "tools/call")).toHaveLength(1);
+  await peer.stopHost();
+  await session.close();
+});
+
+test("app HTTP release failure is still fatal, even though the local SDK client is closed", async () => {
+  const peer = await httpMcpLifecycleFixture();
+  cleanup.push(peer.stopHost);
+  const session = await InjectedMcpSession.open(peer.config, {
+    cwd: process.cwd(),
+    appOwnedServers: ["t3-code"],
+    policy: allow,
+  });
+  await session.resumeAppOwned();
+  peer.rejectDeletion();
+  await expect(session.parkAppOwned()).rejects.toMatchObject({ code: "teardown-failed" });
+  expect(session.status()).toEqual([{ name: "t3-code", status: "close-failed" }]);
+  await expect(session.close()).rejects.toMatchObject({ code: "teardown-failed" });
+});
+
+test("external HTTP MCP keeps its session until process close and does not suppress unavailable-peer teardown", async () => {
+  const peer = await httpMcpLifecycleFixture();
+  cleanup.push(peer.stopHost);
+  const session = await InjectedMcpSession.open(peer.config, {
+    cwd: process.cwd(),
+    appOwnedServers: [],
+    policy: allow,
+  });
+  await session.parkAppOwned();
+  expect(peer.activeSessions()).toBe(1);
+  expect(peer.requests.some((request) => request.method === "DELETE")).toBe(false);
+  await peer.stopHost();
+  await expect(session.close()).rejects.toMatchObject({ code: "teardown-failed" });
 });

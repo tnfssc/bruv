@@ -1,0 +1,69 @@
+Code
+ADMISSION_SIMPLE: reply once.
+PT
+project
+now
+Settle
+ADMISSION_SIMPLE: reply once.
+master
+Settled (0)
+PT
+project
+/
+ADMISSION_SIMPLE: reply once.
+Bruv admission (not Claude) 0.16.1 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+ADMISSION_SIMPLE: reply once.
+
+1:48 PM
+
+Worked for 1.7s
+1:48 PM
+T3 Code
+
+ADMISSION_CONFIRMED_REAL
+
+1:48 PM
+
+You
+
+ADMISSION_SECOND: use actual capabilities then reply.
+
+1:48 PM
+
+Worked for 351ms
+1:48 PM
+T3 Code
+
+ADMISSION_CONFIRMED_REAL
+
+1:48 PM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic admission (not Claude)
+Full access
+project
+Open in editor
+Add project script
+master
+Publish repository
+Changes
++0
+-0
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings
+Nightly needs the beta mobile app
+
+Nightly uses the new orchestrator. The App Store and Google Play versions of T3 Code cannot connect to it.
+
+Dismiss
+Get the beta app

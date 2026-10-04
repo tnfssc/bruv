@@ -286,7 +286,11 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   let session!: AgentSession;
   const frontend = createClaudeCompatFrontend({
     emit: async (frame) => {
-      if (frame.type === "result") await human?.flush();
+      if (frame.type === "result") {
+        // End app HTTP leases before publishing idle/result to the owning host.
+        await options.mcp?.parkAppOwned();
+        await human?.flush();
+      }
       await options.emit(frame);
     },
     messageUuid,
@@ -441,6 +445,12 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
         name: "bruv-native-permissions",
         hidden: true,
         factory: (pi) => {
+          pi.on("before_agent_start", async () => {
+            // A task wake can begin the next Pi run before native writes drain.
+            // Finish the previous result/lease release before acquiring another.
+            if (options.mcp) await frontend.flush();
+            await options.mcp?.resumeAppOwned();
+          });
           pi.on("agent_start", () => {
             toolTurn = new AbortController();
           });

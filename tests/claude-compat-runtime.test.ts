@@ -4,6 +4,9 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { type AssistantMessage, type Context, createAssistantMessageEventStream } from "@earendil-works/pi-ai/compat";
 import { type ExtensionAPI, ModelRuntime, SessionManager, SettingsManager } from "@earendil-works/pi-coding-agent";
+import { InjectedMcpSession } from "../src/claude-compat/mcp";
+import { mcpFactory } from "../src/claude-compat/binding";
+import { httpMcpLifecycleFixture } from "./claude-compat/fixtures/http-mcp-lifecycle";
 import { permissionBinding } from "../src/claude-compat/binding";
 import { parseConnectorArguments } from "../src/claude-compat/arguments";
 import { NativeHistory, readNativeHistory } from "../src/claude-compat/history";
@@ -275,6 +278,98 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     runtime.session.agent.streamFunction = () => output(assistant("reused"));
     await runtime.onUser(user(runtime, "again"), signal());
     expect(frames.filter((f) => f.type === "result")).toHaveLength(2);
+  });
+
+  test("app HTTP leases end before native idle, reacquire for the next Pi run, and close after host shutdown", async () => {
+    const peer = await httpMcpLifecycleFixture();
+    const mcp = await InjectedMcpSession.open(peer.config, {
+      cwd: process.cwd(),
+      appOwnedServers: ["t3-code"],
+      policy: {
+        authorizeServer: async () => true,
+        authorizeTool: async () => ({ behavior: "allow" }),
+        beforeAppOwnedCall: async () => {},
+      },
+    });
+    try {
+      const frames: CompatFrame[] = [];
+      const { runtime } = await fixture({
+        extra: {
+          mcp,
+          extensionFactories: [{ name: "real-mcp", factory: mcpFactory(mcp), hidden: true }],
+          tools: ["mcp__t3-code__echo"],
+          emit: (frame: CompatFrame) => {
+            if (
+              frame.type === "result" ||
+              (frame.type === "system" && frame.subtype === "session_state_changed" && frame.state === "idle")
+            )
+              expect(peer.activeSessions()).toBe(0);
+            frames.push(frame);
+          },
+        },
+      });
+      await init(runtime);
+      expect(peer.activeSessions()).toBe(0);
+      let calls = 0;
+      runtime.session.agent.streamFunction = () => {
+        expect(peer.activeSessions()).toBe(1);
+        calls++;
+        if (calls % 2 === 1)
+          return output(
+            assistant("", {
+              stopReason: "toolUse",
+              content: [
+                { type: "toolCall", id: "echo-" + calls, name: "mcp__t3-code__echo", arguments: { text: "real echo" } },
+              ],
+            }),
+          );
+        return output(assistant("done"));
+      };
+      await runtime.onUser(user(runtime), signal());
+      await runtime.onUser(user(runtime, "again"), signal());
+      expect(calls).toBe(4);
+      expect(frames.filter((frame) => frame.type === "result").every((frame) => frame.is_error === false)).toBe(true);
+      expect(peer.requests.filter((request) => request.rpc === "tools/call")).toHaveLength(2);
+      expect(peer.requests.filter((request) => request.rpc === "initialize")).toHaveLength(3);
+      expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(3);
+      expect(
+        new Set(peer.requests.filter((request) => request.method === "DELETE").map((request) => request.session)).size,
+      ).toBe(3);
+      let started = false,
+        cancelled = false;
+      runtime.session.agent.streamFunction = (_model, _context, options) => {
+        const stream = createAssistantMessageEventStream();
+        started = true;
+        options?.signal?.addEventListener(
+          "abort",
+          () => {
+            cancelled = true;
+            stream.push({ type: "error", reason: "aborted", error: assistant("", { stopReason: "aborted" }) });
+          },
+          { once: true },
+        );
+        return stream;
+      };
+      const interrupted = runtime.onUser(user(runtime, "interrupt this run"), signal());
+      await until(() => started);
+      expect(peer.activeSessions()).toBe(1);
+      await runtime.controls.interrupt!(control("interrupt"), signal());
+      await interrupted;
+      expect(cancelled).toBe(true);
+      expect(peer.activeSessions()).toBe(0);
+      expect(frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({ is_error: true });
+      runtime.session.agent.streamFunction = () => output(assistant("reused after Stop"));
+      await runtime.onUser(user(runtime, "reuse after Stop"), signal());
+      expect(frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({ is_error: false });
+      expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(5);
+      await peer.stopHost(); // reproduces T3 stopping HTTP before the connector
+      await runtime.close();
+      await runtime.close();
+      expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(5);
+    } finally {
+      await mcp.close();
+      await peer.stopHost();
+    }
   });
 
   test("process close shuts down real extensions and is idempotent", async () => {
