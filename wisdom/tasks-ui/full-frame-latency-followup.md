@@ -1,6 +1,10 @@
 # Long-thread full-frame latency follow-up
 
-## Current handoff
+## Shipping decision — 2026-10-04
+
+The user explicitly authorized “merge and release” of the known partial improvement. PR #26 merged as 49f97347; [v0.16.1 was published and verified](../releases/release-v0.16.1.md). This supersedes the historical draft/next-step recommendation below, not the unchanged failing 482 ms measurement or its 100 ms budget. No new latency acceptance is claimed.
+
+## Original pre-release handoff
 
 Draft PR: https://github.com/tnfssc/bruv/pull/26. The later merge of develop at 8b947729 adds only tests/docs; the measured runtime sources remain those of e5fd9a7d.
 

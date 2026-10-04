@@ -1,0 +1,141 @@
+{
+  "url": "https://github.com/tnfssc/bruv/releases/tag/v0.16.1",
+  "tag": "v0.16.1",
+  "tagSha": "cb32e158227dad6272af9ccf6fad2731f46ec62d",
+  "publishedAt": "2026-10-04T09:00:12Z",
+  "draft": false,
+  "prerelease": false,
+  "workflow": {
+    "url": "https://github.com/tnfssc/bruv/actions/runs/37190223990",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "prepare-manual",
+        "conclusion": "success"
+      },
+      {
+        "name": "Native macOS arm64 helper (no devices)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux, macOS, and Android release",
+        "conclusion": "success"
+      },
+      {
+        "name": "Final Linux pair against unchanged official 2644 (bounded gates)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Actual Mac release binary and bruv updater (no devices)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Publish stable release after browser, native and updater gates",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "checksums": "All eight published .sha256 manifests match GitHub asset digests; binaries not downloaded or installed.",
+  "assets": [
+    {
+      "name": "bruv-android-arm64",
+      "size": 99153664,
+      "digest": "sha256:e1c6cdbde5f634e03019da626087c24084c5abef3fec07e170f38ba7a63bde20"
+    },
+    {
+      "name": "bruv-android-arm64.sha256",
+      "size": 85,
+      "digest": "sha256:a890580aea9d17910eeea9d8a8d89b5b2f58b03557abaf94eca114441f4490fb"
+    },
+    {
+      "name": "bruv-claude-compat-android-arm64",
+      "size": 99350272,
+      "digest": "sha256:14aaf256b8cd500993643e9fed15f95e78b8fc403047639b9a05d1b21719847a"
+    },
+    {
+      "name": "bruv-claude-compat-android-arm64.sha256",
+      "size": 99,
+      "digest": "sha256:aa224b6e9c3085329575918e421fcea328794ae2dbbda1082ddda2f0dfe38f83"
+    },
+    {
+      "name": "bruv-claude-compat-darwin-arm64",
+      "size": 73322994,
+      "digest": "sha256:d1de70aa71e3419551810c195fcf492e17baef73752ddadac2b2b6f8a9fb4d2d"
+    },
+    {
+      "name": "bruv-claude-compat-darwin-arm64.sha256",
+      "size": 98,
+      "digest": "sha256:e87bd91f4cb0a1829c90dc70bf70c2179c6ee8acfff5a092f2bc7702080a11d3"
+    },
+    {
+      "name": "bruv-claude-compat-linux-arm64",
+      "size": 92129576,
+      "digest": "sha256:e872e2c498a441f0ebb04be45dcb3cfaad7e020b4cb44824b9c5d078875414ab"
+    },
+    {
+      "name": "bruv-claude-compat-linux-arm64.sha256",
+      "size": 97,
+      "digest": "sha256:d4c77244caf25e7e8e99bd224c8b533e7e6042b76c68609317423dfcfaa7f0c8"
+    },
+    {
+      "name": "bruv-claude-compat-linux-x64",
+      "size": 92186080,
+      "digest": "sha256:49d2d0fbae81ba680e7eec5a062d74b2b410f566569384ccb61d25d6d1f83b3a"
+    },
+    {
+      "name": "bruv-claude-compat-linux-x64.sha256",
+      "size": 95,
+      "digest": "sha256:a0b612af8f724db8541c68eef44baca42401df28b4e88a051b8a0f9c769b682f"
+    },
+    {
+      "name": "bruv-darwin-arm64",
+      "size": 73124850,
+      "digest": "sha256:0c3213016204f2a60319bbe0da7367dc7dd1140c5644cdea6ce900dc5f65db7b"
+    },
+    {
+      "name": "bruv-darwin-arm64.sha256",
+      "size": 84,
+      "digest": "sha256:16ce1505e7670ce04bef2c46e0c8421996400c8d4748af2a11604a25f86a93b1"
+    },
+    {
+      "name": "bruv-linux-arm64",
+      "size": 91932968,
+      "digest": "sha256:b3f3f2cb208a7007ffca7a41a1cb7aa01b68c59627bae8c5fe1cfae92c8a2c15"
+    },
+    {
+      "name": "bruv-linux-arm64.sha256",
+      "size": 83,
+      "digest": "sha256:1f38a85e6948429720d81d49029d7602395dcd0002a8172cdaa8982b266c4baa"
+    },
+    {
+      "name": "bruv-linux-x64",
+      "size": 91989472,
+      "digest": "sha256:0b55e253086e909569d0c9f016f91882628e7636d0d8c4b07155c28c3eb30325"
+    },
+    {
+      "name": "bruv-linux-x64.sha256",
+      "size": 81,
+      "digest": "sha256:b553a778637cf0ba5aa740c7a11d2b94cb8463ce1b6db82aeab4d8573167b251"
+    },
+    {
+      "name": "LICENSE",
+      "size": 1081,
+      "digest": "sha256:efed5aae7bdeb998d5ffcd69133ce61f0cdf9e010cdb84348947cc99ed5787a0"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 595,
+      "digest": "sha256:2271eddf77d4dfacf062bdaaa6b9ddef283f52ffc8224cb52a8625d5b25e1fae"
+    },
+    {
+      "name": "THIRD_PARTY_LICENSES.txt",
+      "size": 657248,
+      "digest": "sha256:c36865f0dc9a80f42c6758bc0f5e3c32477b53f307cfa6bc43138e33aa01e4b1"
+    },
+    {
+      "name": "THIRD_PARTY_NOTICES.md",
+      "size": 1612,
+      "digest": "sha256:6193b6ccc9acd5d408323208702a4b942199783969da2b64cee36f1d0687057e"
+    }
+  ]
+}
