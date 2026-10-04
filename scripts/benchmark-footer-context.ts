@@ -6,6 +6,7 @@ import { join } from "node:path";
 import {
   AgentSession,
   SessionManager,
+  buildSessionProjection,
   type ExtensionContext,
   type Theme,
   type ReadonlyFooterDataProvider,
@@ -60,6 +61,14 @@ for (const turns of [20, 200, 1000]) {
       });
     }
     const host = { sessionManager: manager, _limitsModel: () => model } as unknown as AgentSession;
+    // Keep the reference independent of the adapter’s new projection-seeding hook.
+    const nativeHost = {
+      _limitsModel: () => model,
+      sessionManager: {
+        buildSessionProjection: () => buildSessionProjection(manager.getEntries(), manager.getLeafId()),
+        getBranch: () => manager.getBranch(),
+      },
+    } as unknown as AgentSession;
     for (const mode of ["uncached-sdk", "cached-sdk"] as const) {
       const read = mode === "uncached-sdk" ? nativeContextUsage : AgentSession.prototype.getContextUsage;
       const ctx = {
@@ -67,7 +76,7 @@ for (const turns of [20, 200, 1000]) {
         sessionManager: manager,
         model,
         modelRegistry: { isUsingOAuth: () => false },
-        getContextUsage: () => read.call(host),
+        getContextUsage: () => read.call(mode === "uncached-sdk" ? nativeHost : host),
         ui: { theme },
       } as unknown as ExtensionContext;
       for (const [name, render] of [

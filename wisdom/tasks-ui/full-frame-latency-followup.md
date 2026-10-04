@@ -1,5 +1,15 @@
 # Long-thread latency after PR 25
 
+## Current handoff: compiled 100 passes; 1,000 still fails
+
+Runtime integration is at `775ed3df`. The built candidate passes all unchanged latency gates at 100 turns / 1,201 entries: idle p95 32.2 ms, held-input p95 29.2 ms, 62 observed spinner transitions in five seconds. The installed 0.15.30 baseline has held-input p95 171.4 ms on the same fixture.
+
+At 1,000 turns / 12,001 entries, the candidate still fails: idle median 51.2 ms but first input 1,279 ms; held median 78.6 ms but first input 936 ms, with a few later samples over 100 ms. Spinner cadence passes (55 transitions, gap-p95 110 ms). Do not call the whole long-thread task fixed. Synthetic raw checkpoint data is in [full-frame-latency-checkpoint.json](full-frame-latency-checkpoint.json).
+
+The integrated checks pass: 137 focused tests / 1,162 assertions, TypeScript, build, and five compiled terminal-flow tests / 220 assertions. The full 1,000-turn latency gate fails. Read-only review task_5d5e112f found no concrete integration blocker; it did not establish performance.
+
+Remaining render work: task_fa6de4df, worktree `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_fa6de4df`, branch `fix/long-thread-render-tail`, base `775ed3df`. It is profiling the remaining native render cost and cold first-frame stalls. Parent owns integration, final compiled proof, and the PR. No follow-up PR or release is published.
+
 ## User correction
 
 The user installed 0.15.30 after PR 25 and reported that typing, loading animation and the whole long thread still felt slow. The first acceptance was not enough. It measured task-row ownership and waited for eventual terminal frames. It did not measure input echo delay or spinner cadence. One-line tool fixtures missed ordinary footer work over a large saved history. Do not call this fixed until that actual path improves.
