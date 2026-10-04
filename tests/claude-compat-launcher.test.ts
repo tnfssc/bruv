@@ -121,11 +121,11 @@ test("0.16.3 staged version probe uses truthful legacy product label only until 
   await writeConnectorLauncher(launcher);
   await writeFile(
     normal,
-    '#!/bin/sh\nif [ "$1" = "--version" ]; then echo 0.17.0; elif [ "$2" = "--bruv-version" ]; then echo 0.17.0; else echo "2.1.280 (Bruv compatibility; bruv 0.17.0)"; fi\n',
+    '#!/bin/sh\nif [ "$1" = "--version" ]; then echo 0.17.0; elif [ "$2" = "--bruv-version" ]; then echo "bruv-claude-compat 0.17.0"; else echo "2.1.280 (Bruv compatibility; bruv 0.17.0)"; fi\n',
   );
   await chmod(normal, 0o755);
   expect((await run([launcher, "--version"])).stdout).toBe("bruv-claude-compat 0.17.0\n");
-  expect((await run([launcher, "--bruv-version"])).stdout).toBe("0.17.0\n");
+  expect((await run([launcher, "--bruv-version"])).stdout).toBe("bruv-claude-compat 0.17.0\n");
   // Installation renames both staged files, removing the compatibility context.
   const { rename } = await import("node:fs/promises");
   await rename(normal, join(home, "bruv"));

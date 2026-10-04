@@ -124,6 +124,6 @@ describe("compiled bruv CLI", () => {
     expect(installed.stdout.trim()).toBe(packageVersion);
     const connector = await run([join(installDir, "bruv-claude-compat"), "--bruv-version"], { env: isolatedEnv() });
     expect(connector.code).toBe(0);
-    expect(connector.stdout.trim()).toBe(packageVersion);
+    expect(connector.stdout.trim()).toBe("bruv-claude-compat " + packageVersion);
   });
 });

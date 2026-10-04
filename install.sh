@@ -90,13 +90,13 @@ chmod 644 "$stage/notices/"*
 chmod 755 "$stage/notices"
 # Both downloads are verified before either is executed. Isolate version probes.
 probe() { unset BRUV_CLAUDE_COMPAT_BRUV_PATH; HOME="$stage/probe" XDG_CONFIG_HOME="$stage/probe/config" XDG_CACHE_HOME="$stage/probe/cache" XDG_DATA_HOME="$stage/probe/data" "$@"; }
-[ "$(probe "$stage/bruv-$platform" --bruv-version)" = "$version" ] || fail "Bruv version does not match $tag."
+[ "$(probe "$stage/bruv-$platform" --version)" = "$version" ] || fail "Bruv version does not match $tag."
 [ "$(
   unset BRUV_CLAUDE_COMPAT_BRUV_PATH
   HOME="$stage/probe" XDG_CONFIG_HOME="$stage/probe/config" \
     XDG_CACHE_HOME="$stage/probe/cache" XDG_DATA_HOME="$stage/probe/data" \
     BRUV_CLAUDE_COMPAT_BRUV_PATH="$stage/bruv-$platform" "$stage/bruv-claude-compat-$platform" --bruv-version
-)" = "$version" ] || fail "Connector version does not match $tag."
+)" = "bruv-claude-compat $version" ] || fail "Connector version does not match $tag."
 if [ "$platform" = darwin-arm64 ]; then probe "$stage/bruv-$platform" --live-self-test || fail 'macOS helper self-test failed.'; fi
 # Stop running Bruv/T3 sessions before replacing a pair. Preserve originals for rollback.
 for name in bruv bruv-claude-compat; do

@@ -17,7 +17,7 @@ async function fixture(connectorVersion = "0.17.0", legacy = false) {
   const normalSource = join(root, "normal.ts");
   await writeFile(
     normalSource,
-    `const connector = process.argv[2] === "claude-compat"; const flag = process.argv[connector ? 3 : 2]; console.log(connector && flag === "--version" ? "2.1.280 (Bruv compatibility; bruv ${connectorVersion})" : connector ? "${connectorVersion}" : "0.17.0");`,
+    `const connector = process.argv[2] === "claude-compat"; const flag = process.argv[connector ? 3 : 2]; if ((!connector && flag !== "--version") || (connector && !["--version", "--bruv-version"].includes(flag!))) process.exit(2); console.log(connector && flag === "--version" ? "2.1.280 (Bruv compatibility; bruv ${connectorVersion})" : connector ? "bruv-claude-compat ${connectorVersion}" : "0.17.0");`,
   );
   const build = await Bun.build({ entrypoints: [normalSource], compile: { outfile: join(root, names[0]!) } });
   expect(build.success, build.logs.join("\n")).toBe(true);

@@ -46,7 +46,10 @@ Hashes of the actual files tested:
 - dist/bruv-claude-compat: 3f40ce95b5b23c50e29d2a85d03cf18d91596ac73efac19c13f00006266491f2
 - sdk.mjs: b1607967e0dfb39a0db45f143d3b57c7a85f2f6eaa77d6bee7d8184a9830a9f3
 
-## Found blocker: local installer staging names
+## Found blocker: local installer staging names (resolved in integration)
+
+Parent integrated c7d0034e: canonical staged names plus explicit candidate binding now
+resolve this finding. Full compiled installer verification follows in the combined worktree.
 
 Main scripts/install-local.sh probes .bruv-install-$$ and
 .bruv-claude-compat-install-$$ before rename. The launcher cannot discover that

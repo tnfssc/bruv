@@ -8,7 +8,7 @@ Base: a563272b. No incident note was used as product input.
 
 This branch owns root src/cli.ts, build scripts, packaging/install/update and their tests/docs.
 It does not edit connector cli.ts, launch.ts, runtime, preflight or defaults/version logic.
-The separate parent task must supply connector --bruv-version (bare real product version)
+The separate parent task must supply connector --bruv-version (bruv-claude-compat <product>)
 and --version = 2.1.280 (Bruv compatibility; bruv <product>). Normal --version stays bare product.
 The existing exported runConnector is sufficient; root lazily enters it before normal bootstrap.
 Normal children execute the normal binary, without claude-compat; the wrapper exports the
@@ -65,6 +65,16 @@ unchanged-T3 browser release gate remain platform/integration checks; do not adv
 as performed here. Separate version/default task is not in this branch, so final product-version
 machine checks must be rerun after parent integration. No global install, user binary replacement,
 T3 mutation, release or push performed.
+
+## Integration review
+
+Integrated worker commits: release f69c2caf as 0b6a7d67, updater 893b9f48 as c7d0034e,
+SDK proof b255b26e as 76602f76. The review's staged-installer naming blocker is resolved:
+installer uses canonical names in a private directory and explicitly binds staged normal.
+Integration caught and corrected an overbroad flag migration: normal probes MUST remain
+--version, not --bruv-version. Test normal fixtures now reject that unsupported flag.
+Sibling version commit 3eafc84b returns a labeled product value, not bare semver; all new
+machine checks now expect exactly bruv-claude-compat <product>. No connector edits made.
 
 Values reviewed before/after design: unchanged. Existing simple ownership, honest proof and
 complete-path validation values cover this feature; no new general principle is needed.

@@ -90,11 +90,11 @@ try {
     if (hash(await readFile(installed[i]!)) !== candidates[i]!.expected) throw new Error("Replacement SHA256 mismatch");
     const home = join(directory, "home-" + i);
     await mkdir(home);
-    const actual = spawnSync(installed[i]!, ["--bruv-version"], {
+    const actual = spawnSync(installed[i]!, [i === 0 ? "--version" : "--bruv-version"], {
       encoding: "utf8",
       env: { HOME: home, PATH: "/usr/bin:/bin" },
     });
-    const expected = version;
+    const expected = i === 0 ? version : "bruv-claude-compat " + version;
     if (actual.status !== 0 || actual.stdout.trim() !== expected)
       throw new Error("Replacement version mismatch: " + actual.stdout + actual.stderr);
   }

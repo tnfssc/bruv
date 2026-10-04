@@ -28,7 +28,7 @@ const deps = (fetch: typeof globalThis.fetch, executable: string, extra: Record<
   platform: "linux" as const,
   arch: "x64",
   compiled: true,
-  runBinary: async () => "0.3.0",
+  runBinary: async (path: string) => path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0",
   ...extra,
 });
 async function target(kind = "file") {
@@ -144,7 +144,7 @@ describe("bruv self-update", () => {
       const x = await target();
       await writeFile(join(x.dir, "bruv-claude-compat"), "existing connector");
       await expect(
-        updateBruv(deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => current })),
+        updateBruv(deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => "bruv-claude-compat " + current })),
       ).resolves.toMatchObject({
         status,
       });
@@ -428,12 +428,12 @@ describe("paired install update", () => {
           runBinary: async (path: string, args: string[]) => {
             probes.push(args[0]!);
             if (args[0] === "--live-self-test") throw new Error("helper broken");
-            return "0.3.0";
+            return path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0";
           },
         }),
       ),
     ).rejects.toThrow("helper broken");
-    expect(probes).toEqual(["--bruv-version", "--bruv-version", "--live-self-test"]);
+    expect(probes).toEqual(["--version", "--bruv-version", "--live-self-test"]);
     expect(await readFile(x.path, "utf8")).toBe("old");
   });
   test("--check reports available without download or replacement", async () => {
@@ -452,7 +452,7 @@ describe("paired install update", () => {
         if (kind === "broken") throw new Error("broken installed connector");
         return "bruv-claude-compat 0.2.0";
       }
-      return "0.3.0";
+      return path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0";
     };
     const f = fixture();
     const options = { currentVersion: "0.3.0", runBinary };
@@ -480,7 +480,7 @@ test("compiled updater verifies staged distinct versions and updates a non-runni
   const connectorPayload = join(x.dir, "connector-payload");
   const normal = "#!/bin/sh\necho 0.3.0\n";
   const connector =
-    '#!/bin/sh\nif [ "$1" = --bruv-version ]; then exec "${BRUV_CLAUDE_COMPAT_BRUV_PATH:-$(dirname "$0")/bruv}" --bruv-version; fi\necho "2.1.280 (Bruv compatibility; bruv 0.3.0)"\n';
+    '#!/bin/sh\nif [ "$1" = --bruv-version ]; then product=$("${BRUV_CLAUDE_COMPAT_BRUV_PATH:-$(dirname "$0")/bruv}" --version); printf "bruv-claude-compat %s\\n" "$product"; exit; fi\necho "2.1.280 (Bruv compatibility; bruv 0.3.0)"\n';
   await writeFile(normalPayload, normal);
   await writeFile(connectorPayload, connector);
   const build = Bun.spawn(
@@ -545,11 +545,11 @@ test("staged launcher is explicitly paired with candidate normal, not caller ove
       deps(fixture().fetch, x.path, {
         runBinary: async (path: string, args: string[], env: NodeJS.ProcessEnv) => {
           probes.push({ path, flag: args[0]!, env });
-          return "0.3.0";
+          return path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0";
         },
       }),
     );
-    expect(probes.map((p) => p.flag)).toEqual(["--bruv-version", "--bruv-version"]);
+    expect(probes.map((p) => p.flag)).toEqual(["--version", "--bruv-version"]);
     expect(probes[0]!.env.BRUV_CLAUDE_COMPAT_BRUV_PATH).toBeUndefined();
     expect(probes[1]!.env.BRUV_CLAUDE_COMPAT_BRUV_PATH).toBe(probes[0]!.path);
   } finally {

@@ -56,9 +56,9 @@ install -m 755 ./dist/bruv-claude-compat "$connector_temporary"
 # Verify the staged artifact before replacing a working executable. These probes
 # do not open audio devices or contact a provider, including for trusted prebuilts.
 unset BRUV_CLAUDE_COMPAT_BRUV_PATH
-normal_version=$("$temporary" --bruv-version)
+normal_version=$("$temporary" --version)
 connector_version=$(BRUV_CLAUDE_COMPAT_BRUV_PATH="$temporary" "$connector_temporary" --bruv-version)
-[ "$connector_version" = "$normal_version" ] || { echo "Bruv pair version mismatch" >&2; exit 1; }
+[ "$connector_version" = "bruv-claude-compat $normal_version" ] || { echo "Bruv pair version mismatch" >&2; exit 1; }
 if [ "$mac_arm64" = "1" ]; then
   "$temporary" --live-self-test
 fi

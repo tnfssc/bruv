@@ -47,7 +47,7 @@ for name in LICENSE THIRD_PARTY_NOTICES.md THIRD_PARTY_LICENSES.txt SOURCE.txt; 
 done
 # Only these version probes use a temporary home, never the running T3 backend.
 version="$(HOME="$tmp/probe" "./$asset" --version)"
-test "$(HOME="$tmp/probe" "./$connector" --bruv-version)" = "$version"
+test "$(HOME="$tmp/probe" "./$connector" --bruv-version)" = "bruv-claude-compat $version"
 test "$(HOME="$tmp/probe" "./$connector" --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
 mkdir -p "$HOME/.local/bin" "$HOME/.local/share/bruv/notices/$version"
 install -m 755 "$asset" "$HOME/.local/bin/bruv"

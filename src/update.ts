@@ -132,7 +132,7 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
         }
         // Fallback only for an installed pre-migration connector, never a candidate.
         matched =
-          product === current ||
+          product === "bruv-claude-compat " + current ||
           (!product && (await run(connector, ["--version"])).trim() === "bruv-claude-compat " + current);
       } catch {
         /* A broken connector can be repaired from the same stable release. */
@@ -190,8 +190,8 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
     }
     // Product versions are independent of Claude compatibility --version output.
     if (
-      (await run(join(stage, "bruv"), ["--bruv-version"])).trim() !== latest ||
-      (await run(join(stage, "bruv-claude-compat"), ["--bruv-version"], join(stage, "bruv"))).trim() !== latest
+      (await run(join(stage, "bruv"), ["--version"])).trim() !== latest ||
+      (await run(join(stage, "bruv-claude-compat"), ["--bruv-version"], join(stage, "bruv"))).trim() !== "bruv-claude-compat " + latest
     )
       throw new Error("Staged Bruv pair version mismatch (expected " + latest + ")");
     if (platform === "darwin" && arch === "arm64") await run(join(stage, "bruv"), ["--live-self-test"]);

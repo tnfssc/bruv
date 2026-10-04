@@ -36,7 +36,7 @@ printf '%s\n' "$help" | grep -q '^bruv - AI coding assistant'
 [ ! -e "$tmp_dir/home/.pi" ]
 
 connector_version="$(env -i HOME="$tmp_dir/connector-home" PATH=/nonexistent "$tmp_dir/bruv-claude-compat" --bruv-version)"
-[ "$connector_version" = "$expected_version" ]
+[ "$connector_version" = "bruv-claude-compat $expected_version" ]
 compat_version="$(env -i HOME="$tmp_dir/connector-home" PATH=/nonexistent "$tmp_dir/bruv-claude-compat" --version)"
 [ "$compat_version" = "2.1.280 (Bruv compatibility; bruv $expected_version)" ]
 [ ! -e "$tmp_dir/connector-home/.bruv" ]
