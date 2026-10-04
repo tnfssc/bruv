@@ -48,3 +48,13 @@ Parent owns screenshots, release and broader acceptance. No push or release.
 
 Values unchanged: this is a feature-local application of readable human flows,
 small focused checks, honest proof boundaries and the simplest useful renderer.
+
+## Parent integration
+
+Main branch `t3code/document-bruv-t3code-setup-screenshots` combines the guide
+with the screenshot README. Terminal steps now name the observed Add provider,
+Identity, Config, Add instance and custom-model Add controls. Final local
+frozen install, type check, focused 3-test suite, compiled pair build and
+`dist/bruv web` redirected-output check passed. The parent initially lacked
+node_modules; locked installation fixed the missing asset dependency.
+Publication will use the normal PR and manual Release gates, not local assets.

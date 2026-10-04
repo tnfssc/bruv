@@ -1,6 +1,7 @@
 # Use Bruv with T3 Code
 
 Install Bruv and official T3 separately, then connect them in T3 Settings.
+For these same steps in your terminal, run **`bruv web`**.
 **Claude is the protocol type; Bruv is your instance.** No Claude account is
 required by the connector. Your chosen model provider supplies access.
 
@@ -52,8 +53,10 @@ custom T3 launch arguments for this setup.** Leave ordinary Claude state alone.
 
 ## 4. Add a separate provider instance named Bruv
 
-In **Settings → Providers**, add a **Claude** protocol instance. Name it
-**Bruv**, not Claude. Do not edit your existing Claude instance.
+In **Settings → Providers**, click **+ (Add provider)**. Select **Claude**,
+then **Next**. On **Identity**, name it **Bruv (not Claude)** and choose a
+unique instance ID (for example `bruv`). Click **Next** to open **Config**.
+Do not edit your existing Claude instance.
 
 ![Add a Claude protocol provider instance named Bruv](images/01-add-provider.png)
 
@@ -62,14 +65,14 @@ In the new instance, enter paths for the machine running the connector:
 | Field | Example (replace the username and paths) |
 | --- | --- |
 | Binary path | `/home/alice/.local/bin/bruv-claude-compat` |
-| SDK history home / homePath | `/home/alice/.bruv/claude-compat-sdk` |
+| CLAUDE_CONFIG_DIR path (SDK history home) | `/home/alice/.bruv/claude-compat-sdk` |
 | Launch arguments | Leave empty |
 
 Use **absolute paths**, not literal `~` or `$HOME`. The history home field is
 instance-local SDK configuration; do not point it at `~/.claude` or the Bruv
 auth home. On macOS, for example, use `/Users/alice/...`.
 No environment overrides are needed for a normal same-user paired install.
-Save the instance settings.
+Click **Add instance** to save.
 
 ![Bruv instance binary path and isolated SDK history home settings](images/02-provider-settings.png)
 
@@ -78,7 +81,10 @@ Save the instance settings.
 Add a **custom model** to the Bruv instance using the exact **`provider/model-id`**
 from your configured Bruv registry. For example, `openai/gpt-4.1` is valid
 **only if that exact entry is configured and accessible through your provider**.
-A friendly display name is not the model ID. Save the custom model.
+A friendly display name is not the model ID. Click **Add custom model**,
+enter the exact ID, then **Add**. Use its edit button if you want a display
+name such as `GPT-4.1`. You can hide the built-in Claude models with
+**Disable all** before adding your custom model to avoid picking an alias.
 
 ![Custom model form with a sample exact provider/model ID](images/03-custom-model.png)
 
@@ -100,6 +106,10 @@ response and check that auxiliary title generation also works. A successful
 request demonstrates access for that model at that time; health/readiness
 indicators and these screenshots do not. Screenshots show sample form fields,
 not proof of provider access.
+
+Screenshots show the real T3 Code **v0.0.46-nightly.20261004.2644** UI
+with sample paths and a sample model. Replace them with your own. No real
+provider credentials or inference requests were used for these captures.
 
 ## Known limits and safe updates
 
