@@ -123,3 +123,7 @@ Use unchanged official native-Claude T3 with the compatibility binary, isolated 
 A native projection browser fixture can show richer UI independent of Claude backend, but only steps with real Bruv jobs/steering prove faithful compatible execution. If unchanged T3 cannot expose an intended child control, report that exact gap rather than spoof a controllable thread.
 
 Values unchanged: existing one-owner, honest observed-state, durable identity and rendered-control acceptance rules directly cover this investigation; no new general principle was needed.
+
+## Actual app-owned slice on resume
+
+[Native app-worker evidence](proof/native-app-worker/README.md) records committed native child/task IDs, app_owned origin, independent normal provider selection/high reasoning, rendered child result, real native status ACK, cancellation interrupted/disposed and scope denials, with no Bruv clones. Full replay remains blocked by observed native root Working/continuation settlement; do not substitute a marker or source test for that missing behavior.

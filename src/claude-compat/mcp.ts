@@ -2,7 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import type { CallToolResult, Tool } from "@modelcontextprotocol/sdk/types.js";
+import { CallToolResultSchema, type CallToolResult, type Tool } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { childAgentEnvironment } from "../delegation-environment";
 import { matchesToolRule, type PermissionDecision, type PermissionRequest, type ToolOwner } from "./permissions";
@@ -253,13 +253,29 @@ export class InjectedMcpSession {
     const connection = this.connections.get(tool.serverName);
     if (connection?.status !== "connected") throw new McpOperationError("closed", "MCP connection is not open");
     try {
-      // Exactly one call. No delegate_task retry, local launch, job ACK, or task-ID reinterpretation.
-      const result = await connection.client.callTool({ name: tool.remoteName, arguments: approved.input }, undefined, {
-        signal,
-        timeout: connection.timeout,
+      // SDK 1.27.1 incorrectly validates error structuredContent against the
+      // success schema. Official T3 also returns OrchestratorMcpFailure with
+      // isError:false. Translate that known app-owned failure, preserve its
+      // original content, and skip only the success-only error validation.
+      let errorResult: CallToolResult | undefined;
+      const resultSchema = CallToolResultSchema.transform((result) => {
+        const appFailure = tool.owner === "app_owned" && result.structuredContent?._tag === "OrchestratorMcpFailure";
+        if (!result.isError && !appFailure) return result;
+        errorResult = { ...result, isError: true };
+        const { structuredContent: _error, ...rest } = result;
+        return { ...rest, isError: true };
       });
+      // Exactly one call. No delegate_task retry, local launch, job ACK, or task-ID reinterpretation.
+      const result = await connection.client.callTool(
+        { name: tool.remoteName, arguments: approved.input },
+        resultSchema as unknown as typeof CallToolResultSchema,
+        {
+          signal,
+          timeout: connection.timeout,
+        },
+      );
       signal.throwIfAborted();
-      return result as CallToolResult;
+      return errorResult ?? (result as CallToolResult);
     } catch {
       throw new McpOperationError(
         "call-failed",

@@ -179,3 +179,7 @@ Actual native replay command (PROOF_OUTPUT must be new):
       BRUV_RUNTIME_BINARY=/home/tnfssc/Code/bruv/dist/bruv \
       PROOF_OUTPUT=$PWD/.cache/composition-proof-final FIXTURE_PORT=18797 \
       /usr/bin/node scripts/claude-native-acceptance/run.mjs
+
+## Native app-worker resume — 2026-10-04
+
+[App-worker policy](app-worker.md) now uses ordinary CLI profiles, a distinct native normal instance/role/depth and exact model/reasoning. [Actual focused proof](proof/native-app-worker/README.md) records real native child UI/status/result ACK/cancellation and a still-failing root-settlement/automatic-continuation run. Do not upgrade this to full composed acceptance. Source/compiled regression checks pass; parent TaskBinding/Live/Stop/cancellation fixtures were preserved. No packaging/unbundle/release/T3 edits.

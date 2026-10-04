@@ -242,7 +242,14 @@ export function mcpFactory(mcp: InjectedMcpSession): ExtensionFactory {
         parameters: tool.inputSchema as TSchema,
         async execute(id, input, signal) {
           const result = await mcp.callTool(tool.name, input as Record<string, unknown>, { toolUseId: id, signal });
-          if (result.isError) throw new Error("MCP tool reported an error");
+          if (result.isError)
+            throw new Error(
+              "MCP tool reported an error: " +
+                result.content
+                  .filter((b) => b.type === "text")
+                  .map((b) => b.text)
+                  .join("\n"),
+            );
           return {
             content: result.content.flatMap<
               import("@earendil-works/pi-ai").TextContent | import("@earendil-works/pi-ai").ImageContent

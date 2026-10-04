@@ -7,8 +7,8 @@ import {pathToFileURL,fileURLToPath} from 'node:url';
 import {exercise} from './native-actions.mjs';
 // Optional integration driver substitutes a transparent tap of the REAL connector.
 // The original synthetic fixture remains explicitly separate.
-const integration=process.env.BRUV_ACCEPTANCE_CONFIG ? await import('../../../../scripts/claude-native-acceptance/driver.mjs') : null;
-const config=integration ? JSON.parse(await fs.readFile(process.env.BRUV_ACCEPTANCE_CONFIG,'utf8')) : null;
+const config=process.env.BRUV_ACCEPTANCE_CONFIG ? JSON.parse(await fs.readFile(process.env.BRUV_ACCEPTANCE_CONFIG,'utf8')) : null;
+const integration=config ? await import(config.delegationCases ? '../../../../scripts/claude-native-acceptance/app-delegation-driver.mjs' : '../../../../scripts/claude-native-acceptance/driver.mjs') : null;
 const upstream=path.resolve(process.env.T3_UPSTREAM || '/home/tnfssc/Code/bruv/.cache/acp-t3-upstream-experience');
 const binary=path.join(upstream,'platform/t3');
 const browserPath=process.env.BROWSER_PATH || '/home/tnfssc/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome';

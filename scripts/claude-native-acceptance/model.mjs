@@ -120,14 +120,20 @@ export async function startModel(options) {
       for await (const b of req) input += b;
       const body = JSON.parse(input);
       body.__sequence = ++sequence;
-      const delta = reply(body, options);
-      records.push({ sequence, model: body.model, messages: body.messages, delta });
+      const delta = options.reply ? await options.reply(body, options) : reply(body, options);
+      records.push({
+        sequence,
+        model: body.model,
+        reasoningEffort: body.reasoning_effort,
+        messages: body.messages,
+        delta,
+      });
       res.writeHead(200, { "content-type": "text/event-stream" });
       const chunk = (d, finish) => ({
         id: "local-acceptance-" + sequence,
         object: "chat.completion.chunk",
         created: 1,
-        model: modelId,
+        model: body.model,
         choices: [{ index: 0, delta: d, finish_reason: finish }],
       });
       res.end(

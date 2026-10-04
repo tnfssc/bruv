@@ -300,8 +300,9 @@ compiledTest(
       }),
     );
     await writeFile(join(state, "settings.json"), JSON.stringify({ cacheWarming: "off" }));
+    await mkdir(join(home, ".bruv"), { recursive: true });
     await writeFile(
-      join(state, "subagents.json"),
+      join(home, ".bruv", "subagents.json"),
       JSON.stringify({ normal: { model: "fixture/child-model", thinking: "off" } }),
     );
     const child = spawn(

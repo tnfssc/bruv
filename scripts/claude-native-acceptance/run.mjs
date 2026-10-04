@@ -22,6 +22,7 @@ const state = path.join(root, "state"),
 const worker = path.join(root, "worker.mjs"),
   pinnedConnector = path.join(root, "actual-connector");
 let model,
+  workerModel,
   child,
   passed = false;
 try {
@@ -52,7 +53,9 @@ try {
       2,
     ) + "\n",
   );
-  model = await startModel({ worker, state });
+  const delegation = process.env.ACCEPT_APP_DELEGATION === "1" ? await import("./app-delegation-model.mjs") : undefined;
+  model = await startModel({ worker, state, reply: delegation?.reply });
+  workerModel = delegation ? await delegation.startWorkerModel({ state }) : undefined;
   await fs.writeFile(path.join(agent, "models.json"), JSON.stringify(modelsConfig(model.port)));
   // No real auth file and no parent credentials/environment are inherited by T3.
   const config = {
@@ -62,10 +65,13 @@ try {
     state,
     proof,
     modelSlug,
+    workerModelPort: workerModel?.port,
+    delegationCases: process.env.ACCEPT_APP_DELEGATION === "1",
     questionCases: process.env.ACCEPT_SAVED_QUESTION === "1",
     permissionCases: process.env.ACCEPT_PERMISSION === "1",
     env: {
       HOME: home,
+      TMPDIR: root,
       BRUV_CODING_AGENT_DIR: agent,
       BRUV_CLAUDE_COMPAT_HOME: agent,
       CLAUDE_CONFIG_DIR: path.join(agent, "native-history"),
@@ -83,6 +89,7 @@ try {
   const env = {
     PATH: "/usr/bin:/bin",
     HOME: home,
+    TMPDIR: root,
     BRUV_ACCEPTANCE_CONFIG: config.env.BRUV_ACCEPTANCE_CONFIG,
     PROOF_OUTPUT: proof,
   };
@@ -93,11 +100,20 @@ try {
     child.once("close", resolve);
   });
   if (code !== 0) throw Error("Integrated native replay failed with exit " + code);
-  if (model.records.some((r) => r.error)) throw Error("Local model endpoint rejected a request");
-  if (model.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length !== 1)
+  if ([...model.records, ...(workerModel?.records ?? [])].some((r) => r.error))
+    throw Error("Local model endpoint rejected a request");
+  if (!config.delegationCases && model.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length !== 1)
     throw Error("Expected exactly one actual model completion wake, not duplicate continuations");
-  if (model.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length !== 1)
+  if (
+    !config.delegationCases &&
+    model.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length !== 1
+  )
     throw Error("Expected exactly one actual cancellation completion wake");
+  if (
+    config.delegationCases &&
+    model.records.filter((r) => r.delta?.content === "APP_COMPLETION_ACK_REAL").length !== 1
+  )
+    throw Error("Expected one app-owned completion continuation, not duplicate Bruv wakes");
   passed = true;
 } finally {
   let result = { integratedAcceptance: true };
@@ -112,6 +128,12 @@ try {
         passed,
         cancellationCompletionWakeCount:
           model?.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length ?? 0,
+        ...(process.env.ACCEPT_APP_DELEGATION === "1"
+          ? {
+              appCompletionWakeCount:
+                model?.records.filter((r) => r.delta?.content === "APP_COMPLETION_ACK_REAL").length ?? 0,
+            }
+          : {}),
         modelCompletionWakeCount: model?.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length ?? 0,
       },
       null,
@@ -128,7 +150,9 @@ try {
     } catch {}
   }
   try {
-    const { projectWire } = await import("./driver.mjs");
+    const { projectWire } = await import(
+      process.env.ACCEPT_APP_DELEGATION === "1" ? "./app-delegation-driver.mjs" : "./driver.mjs"
+    );
     const wire = (await fs.readFile(path.join(root, "wire.ndjson"), "utf8"))
       .trim()
       .split("\n")
@@ -141,22 +165,42 @@ try {
         .join("\n") + "\n",
     );
   } catch {}
+  for (const scenario of ["done", "cancel"])
+    await fs.writeFile(path.join(state, scenario + ".release"), "cleanup").catch(() => {});
   if (model) {
     await fs.writeFile(
       path.join(proof, "model-projection.json"),
       JSON.stringify(
-        model.records.map((r) => ({
+        [...model.records, ...(workerModel?.records ?? [])].map((r) => ({
           sequence: r.sequence,
           model: r.model,
           error: r.error,
           tool: r.delta?.tool_calls?.[0]?.function?.name,
           response: r.delta?.content,
+          reasoningEffort: r.reasoningEffort,
+          reasoningSummary: r.reasoningSummary,
         })),
         null,
         2,
       ) + "\n",
     );
     await model.close();
+    await workerModel?.close();
+  }
+  if (process.env.ACCEPT_APP_DELEGATION === "1") {
+    for (const file of [
+      "capabilities.json",
+      "done.task.json",
+      "cancel.task.json",
+      "done.status.json",
+      "cancel.status.json",
+      "done.scope-denial.json",
+      "cancel.scope-denial.json",
+    ]) {
+      try {
+        await fs.copyFile(path.join(state, file), path.join(proof, file));
+      } catch {}
+    }
   }
   await fs.rm(root, { recursive: true, force: true });
   await fs.writeFile(

@@ -66,6 +66,24 @@ async function fixture() {
             };
           },
         );
+        server.registerTool("scope_denied", { inputSchema: {}, outputSchema: { taskId: z.string() } }, async () => ({
+          isError: true,
+          structuredContent: { code: "scope_violation", message: "Task does not belong to thread" },
+          content: [{ type: "text", text: "Task does not belong to thread" }],
+        }));
+        server.registerTool(
+          "scope_returned_failure",
+          { inputSchema: {}, outputSchema: { taskId: z.string() } },
+          async () => ({
+            isError: false,
+            structuredContent: {
+              _tag: "OrchestratorMcpFailure",
+              code: "task_not_found",
+              message: "Task does not belong to thread",
+            },
+            content: [{ type: "text", text: "Task does not belong to thread" }],
+          }),
+        );
         server.registerTool("task_status", { inputSchema: {} }, async () => {
           calls.push("task_status");
           return { content: [{ type: "text", text: "actual fixture status" }] };
@@ -97,6 +115,25 @@ async function fixture() {
         calls.push("delegate_task");
         res.destroy();
         return; // fixture committed before dropping response
+      }
+      if (body?.method === "tools/call" && body.params.name === "scope_returned_failure") {
+        // The unchanged official Effect MCP server returns failures with isError:false.
+        // Bypass this fixture SDK server's own success-schema check to reproduce
+        // exactly the observed response envelope, not a connector/native UI event.
+        const structuredContent = {
+          _tag: "OrchestratorMcpFailure",
+          code: "task_not_found",
+          message: "Task does not belong to thread",
+        };
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(
+          JSON.stringify({
+            jsonrpc: "2.0",
+            id: body.id,
+            result: { isError: false, structuredContent, content: [{ type: "text", text: structuredContent.message }] },
+          }),
+        );
+        return;
       }
       await transport.handleRequest(req, res, body);
     } catch {
@@ -336,4 +373,35 @@ test("close cancels old connection calls; replacement cannot receive an old resu
   );
   const result = await replacement.callTool("mcp__t3-code__echo", { text: "new only" }, { toolUseId: "new-call" });
   expect(result.content).toEqual([{ type: "text", text: "new only" }]);
+});
+
+test("actual SDK preserves structured scoped errors instead of validating a success schema", async () => {
+  const f = await fixture();
+  const session = track(
+    await InjectedMcpSession.open(f.config("Bearer isolated-child"), {
+      cwd: process.cwd(),
+      appOwnedServers: [],
+      policy: allow,
+    }),
+  );
+  const result = await session.callTool("mcp__t3-code__scope_denied", {}, { toolUseId: "denied" });
+  expect(result.isError).toBe(true);
+  expect(result.content).toEqual([{ type: "text", text: "Task does not belong to thread" }]);
+  expect(result.structuredContent).toEqual({ code: "scope_violation", message: "Task does not belong to thread" });
+  expect(f.requests.filter((r) => r.rpc === "tools/call")).toHaveLength(1);
+});
+
+test("official T3 returned OrchestratorMcpFailure is an error, never a success-schema result", async () => {
+  const f = await fixture();
+  const session = track(
+    await InjectedMcpSession.open(f.config("Bearer native-child"), {
+      cwd: process.cwd(),
+      appOwnedServers: ["t3-code"],
+      policy: { ...allow, beforeAppOwnedCall: async () => {} },
+    }),
+  );
+  const result = await session.callTool("mcp__t3-code__scope_returned_failure", {}, { toolUseId: "denied" });
+  expect(result.isError).toBe(true);
+  expect(result.structuredContent?._tag).toBe("OrchestratorMcpFailure");
+  expect(result.content).toEqual([{ type: "text", text: "Task does not belong to thread" }]);
 });

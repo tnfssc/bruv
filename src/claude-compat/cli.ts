@@ -14,7 +14,14 @@ import themeSchema from "../../runtime-assets/theme/theme-schema.json" with { ty
 import { scrubRootEnvironmentInPlace } from "../delegation-environment";
 import { launchPolicy, nativeStorage, permissionBinding, mcpFactory, scopedSettings } from "./binding";
 import { InjectedMcpSession } from "./mcp";
-import { loadProfiles } from "../tasks/subagent-profiles";
+import { profilesPath } from "../tasks/subagent-profiles";
+import {
+  loadAppWorkerPolicy,
+  loadNormalAppWorkerProfile,
+  bindNormalAppWorker,
+  prepareAppWorkerCall,
+  assertAppWorkerCall,
+} from "./app-worker";
 import { parseConnectorArguments, assertLaunchBindings, type ConnectorArguments } from "./arguments";
 import { ClaudeCompatTransport, type TransportOptions, type WireMessage } from "./transport";
 
@@ -124,8 +131,16 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
   const { createClaudeCompatRuntime } = await import("./runtime");
   const { policy, authorize, setMode } = permissionBinding(args, options.request!);
   const settings = await scopedSettings(args, options.cwd, options.agentDir);
-  const profilesPath = join(options.agentDir, "subagents.json");
-  const profiles = await loadProfiles(profilesPath);
+  const profileSource = profilesPath();
+  const appWorker = await loadAppWorkerPolicy(options.agentDir, profileSource);
+  if (appWorker) {
+    process.env.BRUV_SUBAGENT_TYPE = appWorker.role;
+    process.env.BRUV_SUBAGENT_DEPTH = String(appWorker.depth);
+  }
+  const normalWorker =
+    appWorker?.role === "normal"
+      ? bindNormalAppWorker(await loadNormalAppWorkerProfile(profileSource), args)
+      : undefined;
   const storage =
     args.mode === "auxiliary"
       ? undefined
@@ -143,54 +158,7 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
   const appServer = args.mcpConfig?.mcpServers && (args.mcpConfig.mcpServers as Record<string, any>)["t3-code"];
   const appOwnedServers =
     appServer?.type === "http" && /^Bearer \S+$/.test(appServer.headers?.Authorization ?? "") ? ["t3-code"] : [];
-  let appWorker:
-    | {
-        type: "normal";
-        target: { providerInstanceId: string; model: string; options: unknown[] };
-        runtimeMode: string;
-        interactionMode: string;
-      }
-    | undefined;
-  try {
-    const value = JSON.parse(await readFile(join(options.agentDir, "native-app-worker.json"), "utf8"));
-    if (
-      value.type !== "normal" ||
-      !value.target ||
-      typeof value.target.providerInstanceId !== "string" ||
-      !value.target.providerInstanceId ||
-      typeof value.target.model !== "string" ||
-      !Array.isArray(value.target.options) ||
-      !["approval-required", "auto-accept-edits", "auto", "full-access"].includes(value.runtimeMode) ||
-      !["default", "plan"].includes(value.interactionMode)
-    )
-      throw new Error("Invalid explicit native app normal worker profile");
-    appWorker = value;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-  }
-  const prepareAppCall = (call: import("./permissions").PermissionRequest) => {
-    if (call.owner !== "app_owned" || !call.toolName.endsWith("__delegate_task")) return call;
-    if (
-      !appWorker ||
-      !profiles.normal.model ||
-      !profiles.normal.thinking ||
-      appWorker.target.model !== profiles.normal.model
-    )
-      throw new Error(
-        "App delegation requires explicit normal model/thinking and matching native-app-worker.json target/options",
-      );
-    if (call.input.type === "orchestrator" || call.input.profile === "orchestrator")
-      throw new Error("Native app delegation only permits non-orchestrator workers");
-    return {
-      ...call,
-      input: {
-        ...call.input,
-        target: structuredClone(appWorker.target),
-        runtimeMode: appWorker.runtimeMode,
-        interactionMode: appWorker.interactionMode,
-      },
-    };
-  };
+  const prepareAppCall = (call: import("./permissions").PermissionRequest) => prepareAppWorkerCall(appWorker, call);
   const mcp = args.mcpConfig
     ? await InjectedMcpSession.open(args.mcpConfig, {
         cwd: options.cwd,
@@ -209,16 +177,8 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
             if (!runtime || runtime.session.isIdle)
               throw new Error("App-owned MCP requires an active owning model run");
             if (!runtime.session.model) throw new Error("No active provider");
-            if (call.toolName.endsWith("__delegate_task")) {
-              const admitted = prepareAppCall(call);
-              if (
-                JSON.stringify(call.input.target) !== JSON.stringify(admitted.input.target) ||
-                call.input.runtimeMode !== admitted.input.runtimeMode ||
-                call.input.interactionMode !== admitted.input.interactionMode
-              )
-                throw new Error("Human-updated app delegation must retain the configured normal worker profile");
-              // Native server owns admission and returns its real task ID. No Bruv job is minted.
-            }
+            assertAppWorkerCall(appWorker, call);
+            // Native server owns admission and returns its real task ID. No Bruv job is minted.
           },
         },
       })
@@ -226,6 +186,7 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
   try {
     runtime = await createClaudeCompatRuntime({
       ...options,
+      model: normalWorker?.model ?? options.model,
       settingsManager: settings,
       permissionMode: policy.mode,
       authorizeTool: authorize,
@@ -235,12 +196,12 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
       tools: policy.tools ?? ["execute", ...(mcp?.tools().map((t) => t.name) ?? [])],
       disableHooks: policy.disableHooks,
       disableSlashCommands: args.disableSlashCommands,
-      thinkingLevel: policy.thinking as any,
+      thinkingLevel: (normalWorker?.thinking ?? policy.thinking) as any,
       thinkingDisplay: policy.thinkingDisplay,
       ...(process.env.BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST
         ? { localAudio: { host: process.env.BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST } }
         : {}),
-      profilesPath,
+      profilesPath: profileSource,
       ...(storage
         ? {
             sessionManager: storage.manager,
