@@ -1,5 +1,10 @@
 # Landing page — one real terminal page
 
+## Shared installer and README
+
+See [shared GitHub installer and installation-first README](shared-installer-readme.md) for the current canonical scripts/install.sh source, verified develop default branch, and required GitHub publication before the raw URL works. This supersedes /install.sh preview-source instructions in earlier installer notes.
+
+
 ## Product positioning — user correction
 
 Bruv is an opinionated coding agent with added features. Do not advertise it primarily as parallel agents, delegation, or a way to keep coding while agents work. The earlier feature-first pitch was wrong. Hero and metadata now state the product category directly; background jobs, subagents and project wisdom support that pitch. Do not invent what its opinions are without grounding them in actual guidance and user intent. This supersedes earlier product-story advice.

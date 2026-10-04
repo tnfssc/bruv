@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, rm, chmod } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { createHash } from "node:crypto";
-const script = resolve(import.meta.dir, "../install.sh");
+const script = resolve(import.meta.dir, "../../scripts/install.sh");
 async function fixture(env: Record<string, string | undefined> = {}) {
   const root = await mkdtemp(join(tmpdir(), "bruv-install-test-"));
   const mocks = join(root, "mocks"),

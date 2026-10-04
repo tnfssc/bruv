@@ -2,7 +2,7 @@ import { cp, mkdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import { siteContent, landing } from "../content";
 import { demoIds, demoTranscript, demoFrame, demoDuration } from "../demos";
-import { installCommand } from "../install-command";
+import { INSTALL_COMMAND, INSTALL_SOURCE_URL } from "../install-command";
 import { cellRowsHtml } from "../html-cells";
 const escape = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
@@ -25,7 +25,7 @@ export function siteMetadata(raw?: string, page = "") {
     robots: "User-agent: *\nAllow: /\nSitemap: " + new URL("sitemap.xml", url).href + "\n",
   };
 }
-export function textContent(animated = true, installUrl?: string) {
+export function textContent(animated = true) {
   const cta = '<a href="#install">Install Bruv</a>';
   return (
     "<main><h1>" +
@@ -73,8 +73,10 @@ export function textContent(animated = true, installUrl?: string) {
     "</h2><p>" +
     escape(landing.installNote) +
     '</p><div class="install-command"><pre><code data-install-command>' +
-    escape(installUrl ? installCommand(installUrl) : "sh install.sh") +
-    '</code></pre><button type="button" data-copy-install hidden aria-live="polite">Copy command</button><a href="./install.sh" download>Download script</a> · <a href="' +
+    escape(INSTALL_COMMAND) +
+    '</code></pre><button type="button" data-copy-install hidden aria-live="polite">Copy command</button><a href="' +
+    INSTALL_SOURCE_URL +
+    '">Script ↗</a> · <a href="' +
     siteContent.install +
     '">Source guide</a></div><pre>' +
     escape(landing.start) +
@@ -86,7 +88,6 @@ export function textContent(animated = true, installUrl?: string) {
 }
 export async function build(raw = process.env.BASE_URL) {
   const metadata = siteMetadata(raw);
-  const installUrl = raw ? new URL("install.sh", raw.endsWith("/") ? raw : raw + "/").href : undefined;
   const root = resolve(import.meta.dir, ".."),
     out = resolve(root, "dist");
   await rm(out, { recursive: true, force: true });
@@ -94,11 +95,7 @@ export async function build(raw = process.env.BASE_URL) {
   const template = await Bun.file(resolve(root, "index.html")).text();
   for (const plain of [false, true]) {
     const html = template
-      .replace(
-        "<!-- META -->",
-        (plain ? siteMetadata(raw, "text.html").html : metadata.html) +
-          (installUrl ? '<meta name="bruv-install-url" content="' + escape(installUrl) + '">' : ""),
-      )
+      .replace("<!-- META -->", plain ? siteMetadata(raw, "text.html").html : metadata.html)
       .replaceAll("<!-- DESCRIPTION -->", escape(siteContent.description))
       .replace(
         "<!-- BOOTSTRAP -->",
@@ -106,7 +103,7 @@ export async function build(raw = process.env.BASE_URL) {
           ? ""
           : '<style>html{background:#101010}.terminal-pending #text-content{display:none}.terminal-pending{overflow:hidden}</style><script>document.documentElement.classList.add("terminal-pending")</script>',
       )
-      .replace("<!-- CONTENT -->", textContent(plain, installUrl))
+      .replace("<!-- CONTENT -->", textContent(plain))
       .replace(
         "<!-- ACCESSIBLE SWITCH -->",
         plain
@@ -135,7 +132,6 @@ export async function build(raw = process.env.BASE_URL) {
     minify: true,
   });
   if (!result.success) throw new AggregateError(result.logs, "Browser bundle failed");
-  await cp(resolve(root, "install.sh"), resolve(out, "install.sh"));
   await cp(resolve(root, "styles.css"), resolve(out, "styles.css"));
   await mkdir(resolve(out, "assets"), { recursive: true });
   await cp(resolve(root, "assets/favicon.svg"), resolve(out, "assets/favicon.svg"));

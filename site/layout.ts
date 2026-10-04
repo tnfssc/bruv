@@ -1,3 +1,4 @@
+import { INSTALL_COMMAND, INSTALL_SOURCE_URL } from "./install-command";
 import { siteContent, landing } from "./content";
 import { headline } from "./type";
 import { demoIds, demoFrame, demoDuration, type DemoId } from "./demos";
@@ -167,11 +168,11 @@ export function layout(cols: number, rows: number, state: State) {
   y++;
   text(landing.installNote, palette.base, margin, Math.min(width, 66));
   y++;
-  text(state.installCommand || "sh install.sh", palette.accent);
+  text(state.installCommand || INSTALL_COMMAND, palette.accent);
   y++;
   link(state.copyLabel || "Copy command", "copy-install", margin, true);
   y += 2;
-  link("Script ↗", state.installUrl || "./install.sh");
+  link("Script ↗", state.installUrl || INSTALL_SOURCE_URL);
   y += 2;
   link("Source guide ↗", siteContent.install);
   y += 3;

@@ -1,11 +1,7 @@
-/** Shell-quote the real served URL, including deployment subpaths. */
-export const installCommand = (url: string) => "curl -fsSL '" + url.replaceAll("'", "'\"'\"'") + "' | sh";
-export function browserInstallUrl() {
-  return (
-    document.querySelector<HTMLMetaElement>('meta[name="bruv-install-url"]')?.content ||
-    new URL("./install.sh", location.href).href
-  );
-}
+/** One GitHub-hosted installer, independent of the landing page's origin. */
+export const INSTALL_URL = "https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh";
+export const INSTALL_SOURCE_URL = "https://github.com/tnfssc/bruv/blob/develop/scripts/install.sh";
+export const INSTALL_COMMAND = "curl -fsSL '" + INSTALL_URL + "' | sh";
 export async function copyCommand(command: string) {
   try {
     await navigator.clipboard.writeText(command);
@@ -23,10 +19,7 @@ export async function copyCommand(command: string) {
   }
 }
 export function enhanceInstall() {
-  const command = installCommand(browserInstallUrl());
-  document.querySelectorAll<HTMLElement>("[data-install-command]").forEach((el) => {
-    el.textContent = command;
-  });
+  const command = INSTALL_COMMAND;
   document.querySelectorAll<HTMLButtonElement>("[data-copy-install]").forEach((button) => {
     button.hidden = false;
     let timer: ReturnType<typeof setTimeout>;

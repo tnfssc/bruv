@@ -1,6 +1,6 @@
 import { Ghostty, Terminal } from "ghostty-web";
 import { layout, hitAt, type State } from "./layout";
-import { browserInstallUrl, installCommand, copyCommand, enhanceInstall } from "./install-command";
+import { INSTALL_SOURCE_URL, INSTALL_COMMAND, copyCommand, enhanceInstall } from "./install-command";
 import { CellScroll, wheelPixels } from "./scroll";
 import { demoIds, demoDuration, type DemoId } from "./demos";
 import { advance, inView } from "./playback";
@@ -11,8 +11,8 @@ const motion = matchMedia("(prefers-reduced-motion: reduce)");
 const state: State = {
   scroll: 0,
   focus: -1,
-  installUrl: browserInstallUrl(),
-  installCommand: installCommand(browserInstallUrl()),
+  installUrl: INSTALL_SOURCE_URL,
+  installCommand: INSTALL_COMMAND,
   demos: Object.fromEntries(
     demoIds.map((id) => [id, { elapsed: motion.matches ? demoDuration(id) : 0, paused: motion.matches }]),
   ) as NonNullable<State["demos"]>,

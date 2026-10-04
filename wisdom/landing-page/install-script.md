@@ -1,5 +1,8 @@
 # Copyable download installer — 2026-10-04
 
+**Current source:** [shared GitHub installer and README](shared-installer-readme.md) supersedes the local-origin/static-copy paths below. Installer safety logic is unchanged; the new canonical URL needs publication on develop.
+
+
 ## Intent and placement
 
 Add the promised copyable install command to both the actual Ghostty terminal cells and semantic HTML, backed by a downloadable static script. Preserve Vesper, big Bruv title, top HTML action, startup flash fix, looping demos, accessibility and concise accepted copy. Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_50347bb3; branch: feat/landing-install-script. No merge, release publication or deployment. Existing parent preview 45339 remains untouched.
