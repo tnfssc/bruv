@@ -1,4 +1,4 @@
-# Bruv website
+# bruv website
 
 One static landing page, with two views:
 
@@ -21,13 +21,13 @@ bun run preview
 Open http://127.0.0.1:4173/ or http://127.0.0.1:4173/text.html.
 The preview serves built files; it does not watch source changes. Run `bun run build` after edits, then refresh. Use `PORT=0 bun run preview` for a free port, or set a specific port. Stop it with Ctrl-C.
 
-The site has its own package.json and bun.lock. You do not need to build or run the Bruv CLI to work on the page.
+The site has its own package.json and bun.lock. You do not need to build or run the bruv CLI to work on the page.
 
 ## Where to edit
 
 | File | What it owns |
 | --- | --- |
-| `content.ts` | Copy shared by both views. Bruv is an **opinionated coding agent**; the added features support that pitch. |
+| `content.ts` | Copy shared by both views. bruv is an **opinionated coding agent**; the added features support that pitch. |
 | `demos.ts` | Mock conversations, colored UI cells, stages and timing. Each feature has its own demo. |
 | `layout.ts` / `brand.ts` | Terminal layout, hit regions and SVG-derived logo cells. |
 | `assets/brand/` | Shared SVG logo, PNG export and generated terminal cells. Also used by the root README. |

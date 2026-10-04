@@ -43,7 +43,7 @@ async function start() {
   host.setAttribute("role", "region");
   host.setAttribute(
     "aria-label",
-    "Bruv terminal website with scripted animated demos. Press A for HTML and full transcripts. Tab and Enter operate links and demo playback. Arrow keys scroll.",
+    "bruv terminal website with scripted animated demos. Press A for HTML and full transcripts. Tab and Enter operate links and demo playback. Arrow keys scroll.",
   );
   // No PTY, socket, command evaluator or onData transport. Only our static layout is written.
   terminal.textarea?.remove();

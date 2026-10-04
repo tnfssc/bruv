@@ -65,7 +65,7 @@ describe("semantic HTML feature demos", () => {
         expect(await figure.locator("button").isVisible()).toBe(false);
       }
       expect(await page.locator("canvas").count()).toBe(0);
-      expect(await page.getByRole("link", { name: "Install Bruv" }).count()).toBe(1);
+      expect(await page.getByRole("link", { name: "Install bruv" }).count()).toBe(1);
     } finally {
       await context.close();
     }

@@ -20,8 +20,8 @@ Captured 2026-10-04 on Linux, from current source, not an installed historical b
 
 | Asset | Caption | Dimensions | Source |
 | --- | --- | --- | --- |
-| cli-settings.png | **Real CLI: local settings menu, no provider connected (terminal crop).** | 1140 × 370 | cli-settings.txt — unmodified PTY ANSI stream |
-| cli-help.png | **Real CLI: command-line help (top of output).** | 1140 × 652 | cli-help.txt — complete unmodified stdout |
+| cli-settings.png | **Real CLI: local settings menu, no provider connected (terminal crop).** | 1140 × 370 | cli-settings.txt: unmodified PTY ANSI stream |
+| cli-help.png | **Real CLI: command-line help (top of output).** | 1140 × 652 | cli-help.txt: complete unmodified stdout |
 
 ## Version and source
 

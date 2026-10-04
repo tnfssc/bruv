@@ -28,7 +28,7 @@ test("terminal starts without flashing HTML and failures restore it", async () =
       await broken.route("**/" + asset, (route) => route.abort());
       await broken.goto(server.url.href);
       await broken.locator("#text-content").waitFor({ state: "visible" });
-      expect(await broken.locator("h1").textContent()).toBe("Bruv");
+      expect(await broken.locator("h1").textContent()).toBe("bruv");
       await broken.close();
     }
     const noJS = await browser.newContext({ javaScriptEnabled: false });

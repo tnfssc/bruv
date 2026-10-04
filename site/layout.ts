@@ -103,7 +103,7 @@ export function layout(cols: number, rows: number, state: State) {
   y += 2;
   text(landing.intro, palette.base, margin, Math.min(width, 66));
   y += 2;
-  link("Install Bruv", "install", margin, true);
+  link("Install bruv", "install", margin, true);
   if (width < 38) {
     y += 2;
     link("Source ↗", siteContent.repository);

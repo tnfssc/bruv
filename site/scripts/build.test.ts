@@ -9,6 +9,14 @@ import { advance, inView } from "../playback";
 import data from "../assets/settings-cells.json";
 import { createHash } from "node:crypto";
 describe("single terminal landing", () => {
+  test("site copy uses lowercase bruv and no em dashes", async () => {
+    const template = await Bun.file(new URL("../index.html", import.meta.url)).text();
+    expect(template).toContain("<title>bruv: an opinionated coding agent</title>");
+    expect(template).toContain('property="og:title" content="bruv: an opinionated coding agent"');
+    const copy = template + JSON.stringify({ siteContent, landing }) + textContent(true);
+    expect(copy).not.toContain("Bruv");
+    expect(copy).not.toContain("\u2014");
+  });
   test("SVG-derived wordmark fits desktop and mobile terminal cells", () => {
     for (const width of [25, 28, 34, 48, 100]) {
       const rows = wordmark(width);
@@ -150,7 +158,7 @@ describe("single terminal landing", () => {
     expect(html).toContain(landing.requirements);
     expect(html.match(/<img/g)).toHaveLength(1);
     expect(html).toContain('class="brand-wordmark"');
-    expect(html).toContain('<span class="sr-only">Bruv</span>');
+    expect(html).toContain('<span class="sr-only">bruv</span>');
     expect(html).toContain('src="./assets/brand/bruv-wordmark-light.svg"');
     expect(html).not.toContain("#gallery");
     for (const feature of landing.features) expect(html).toContain(feature.text);

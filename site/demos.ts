@@ -250,7 +250,7 @@ export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: 
     if (i && (block.kind === "user" || previous.kind === "user" || block.kind === "prose"))
       transcript.push(line("", styles.text, cols));
     if (block.kind === "tool") {
-      // Fullscreen Bruv groups tools by user turn. The first tool owns the
+      // Fullscreen bruv groups tools by user turn. The first tool owns the
       // count row; active turns append the latest action label. Task details
       // remain visible separately (protected by the real activity projector).
       const boundary = shot.blocks.slice(0, i).findLastIndex((b) => b.kind === "user");
@@ -321,7 +321,7 @@ export function demoTranscript(id: DemoId): string {
   return last.blocks
     .map((block) => {
       if (block.kind === "user") return "You: " + block.text;
-      if (block.kind === "prose") return "Bruv: " + block.text;
+      if (block.kind === "prose") return "bruv: " + block.text;
       return (block.state === "running" ? "↗ " : "✓ ") + block.text;
     })
     .join("\n\n");

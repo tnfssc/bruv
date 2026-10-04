@@ -57,3 +57,9 @@ Canvas reading/selecting/find relies on the semantic HTML representation. Physic
 User approved the site and asked to push, with a separate guide for future site work. site/README.md now covers local build/preview, source files, animated demos, browser tests, BASE_URL, static hosting and optional Vercel project settings. Root README links to it. Removed stale local-installer and visible-disclaimer claims from the old site guide. Relative documentation links and a fresh static build passed; no application code changed in this docs pass.
 
 Push target is origin/feat/landing-copy-loop-polish from this worktree. No develop merge or deployment is part of this action. The GitHub installer URL still needs scripts/install.sh on develop. Vercel was researched through official build-setting docs; it has not been deployed/tested. Values reviewed and unchanged: this is a feature handoff, covered by existing guidance.
+
+## Site name and punctuation
+
+The site name is `bruv`, not `Bruv`. The user asked to remove all em dashes from bruv.sharath.page. The page title and Open Graph title now read `bruv: an opinionated coding agent`. Shared copy, links, accessible names and demo transcripts use lowercase too. Internal font names and captured CLI output are not website copy.
+
+`cd site && bun run test` passed: 32 tests and the browser validation, with no reported errors. The suite rebuilt the site. These changes are local; no deploy was run. Values stayed the same. This is a site copy choice, not a new general rule.

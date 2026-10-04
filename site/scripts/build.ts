@@ -34,7 +34,7 @@ export function siteMetadata(raw?: string, page = "") {
   };
 }
 export function textContent(animated = true) {
-  const cta = '<a href="#install">Install Bruv</a>';
+  const cta = '<a href="#install">Install bruv</a>';
   return (
     '<main><h1 class="brand-wordmark"><span class="sr-only">' +
     escapeHtml(landing.title) +
