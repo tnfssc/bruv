@@ -162,11 +162,13 @@ export class ActivityController {
     let fallback = "legacy";
     let segment = 0;
     let lastIdentity: string | undefined;
+    const segmentCalls = new Set<string>();
     for (const [index, child] of this.host.chatContainer.children.entries()) {
       if (isBoundary(child)) {
         fallback = "boundary-" + index;
         segment++;
         lastIdentity = undefined;
+        segmentCalls.clear();
         continue;
       }
       if (!(child instanceof ToolExecutionComponent) && !isJobNotice(child)) continue;
@@ -174,12 +176,24 @@ export class ActivityController {
       if (state && !state.toolCallId) continue;
       if (state && this.liveKey && !this.adapted.has(child)) this.liveIds.add(state.toolCallId);
       // Preserve timeline boundaries; late notices never become foreground calls.
+      const noticeRows =
+        child instanceof CustomMessageComponent
+          ? taskRowsFromDetails((child as unknown as NoticeShape).message.details)
+          : [];
+      const joinsSource =
+        noticeRows.length > 0 && noticeRows.every((row) => row.sourceCallId && segmentCalls.has(row.sourceCallId));
       const identity = state
         ? this.liveKey && this.liveIds.has(state.toolCallId)
           ? this.liveKey
           : (membership.get(state.toolCallId) ?? fallback)
-        : "notices";
-      if (lastIdentity !== undefined && lastIdentity !== identity) segment++;
+        : joinsSource && lastIdentity
+          ? lastIdentity
+          : "notices";
+      if (lastIdentity !== undefined && lastIdentity !== identity) {
+        segment++;
+        segmentCalls.clear();
+      }
+      if (state) segmentCalls.add(state.toolCallId);
       lastIdentity = identity;
       const key = identity + ":" + segment;
       let group = groups.get(key);
@@ -195,6 +209,7 @@ export class ActivityController {
       if (state?.result?.details?.handoff) {
         segment++;
         lastIdentity = undefined;
+        segmentCalls.clear();
       }
     }
     this.groups = [...groups.values()];

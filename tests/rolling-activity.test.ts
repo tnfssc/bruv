@@ -1012,7 +1012,7 @@ test("regular mode retains standalone callback task ownership when the launch ha
   chat.addChild(callback);
   expect(render()).toEqual(["Check origin", "result origin", "✗ Check origin — exit 9"]);
   state.host.renderer.mode = "fullscreen";
-  expect(render()).toEqual(["1 tool called · 1 job failed", "1 job notification"]);
+  expect(render()).toEqual(["1 tool called · 1 job failed"]);
   state.toggle(state.groups[0]!);
   expect(render().filter((line) => line === "✗ Check origin — exit 9")).toHaveLength(1);
 });
@@ -1120,4 +1120,25 @@ test("save warning survives a busy collapsed header and remains a header click t
   expect(render().join("\n")).toContain("✗ Check a — exit 3");
   state.toggle(state.groups[0]!);
   expect(render()).toHaveLength(2);
+});
+
+test("adjacent callbacks join only their proven source group without adding a tool call", () => {
+  const { chat, state, render } = setup();
+  chat.addChild(tool("origin"));
+  const details = {
+    tasks: [{ id: "job", kind: "command", status: "failed", exitCode: 7, launchIdentity: { sourceCallId: "origin" } }],
+  };
+  chat.addChild(notice("task-complete", "ADJACENT_DETAIL", details));
+  expect(render()).toEqual(["1 tool called · 1 job failed"]);
+  expect(state.groups).toHaveLength(1);
+  state.toggle(state.groups[0]!);
+  expect(render()).toContain("Job update — click for details");
+  expect(render().join("\n")).not.toContain("ADJACENT_DETAIL");
+  chat.addChild(
+    notice("task-complete", "UNRELATED_DETAIL", {
+      tasks: [{ id: "other", kind: "command", status: "completed", launchIdentity: { sourceCallId: "elsewhere" } }],
+    }),
+  );
+  render();
+  expect(state.groups.map((g) => state.count(g))).toEqual([1, 0]);
 });
