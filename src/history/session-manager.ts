@@ -250,6 +250,8 @@ export function installDiskBackedSessionManager(): void {
   // Keep only the numeric SDK estimate. Request preparation already builds the
   // projection; seed this cache there so the following footer frame never has to
   // rebuild it. Routed model limits affect presentation, not estimated tokens.
+  // Install before outer accounting adapters, as CLI startup does. The narrow
+  // projection view below calls the native SDK method, not those wrappers.
   const originalContextUsage = AgentSession.prototype.getContextUsage;
   const contextUsageCache = new WeakMap<
     SessionManager,
