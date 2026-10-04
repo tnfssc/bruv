@@ -1,0 +1,227 @@
+diff --git a/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.test.ts b/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.test.ts
+index b837575c1..d0565e3af 100644
+--- a/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.test.ts
++++ b/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.test.ts
+@@ -1,4 +1,5 @@
+ import * as NodeOS from "node:os";
++import * as NodeCrypto from "node:crypto";
+ 
+ import type {
+   Query as ClaudeQuery,
+@@ -58,6 +59,7 @@ import { WorktreeToolkit } from "../../mcp/toolkits/worktree/tools.ts";
+ import { ThreadToolkit } from "../../mcp/toolkits/thread/tools.ts";
+ import { OrchestratorToolkit } from "../../mcp/toolkits/orchestrator/tools.ts";
+ import { ClaudeExecutableFileCheck } from "../../provider/Drivers/ClaudeExecutable.ts";
++import * as ProviderEventLoggers from "../../provider/Layers/ProviderEventLoggers.ts";
+ import type { EventNdjsonLogger } from "../../provider/Layers/EventNdjsonLogger.ts";
+ import {
+   ProviderAdapterV2RuntimePolicy,
+@@ -1605,6 +1607,67 @@ describe("ClaudeAdapterV2 attachments", () => {
+ });
+ 
+ describe("ClaudeAdapterV2 native fork", () => {
++  it.effect(
++    "forks history from the provider environment without changing the server environment",
++    () =>
++      Effect.gen(function* () {
++        const fileSystem = yield* FileSystem.FileSystem;
++        const path = yield* Path.Path;
++        const runner = yield* ClaudeAdapterV2.ClaudeAgentSdkQueryRunner;
++        const root = yield* fileSystem.makeTempDirectoryScoped({ prefix: "t3-claude-fork-" });
++        const configDir = path.join(root, "provider");
++        const cwd = path.join(root, "project");
++        const projectDir = path.join(configDir, "projects", cwd.replace(/[^a-zA-Z0-9]/g, "-"));
++        yield* fileSystem.makeDirectory(projectDir, { recursive: true });
++        yield* fileSystem.makeDirectory(cwd);
++        const sessionId = NodeCrypto.randomUUID();
++        const cursor = NodeCrypto.randomUUID();
++        const source =
++          [cursor, NodeCrypto.randomUUID()]
++            .map((uuid, index) =>
++              JSON.stringify({
++                uuid,
++                parentUuid: index === 0 ? null : cursor,
++                sessionId,
++                cwd,
++                type: "user",
++                isSidechain: false,
++                timestamp: "2026-01-01T00:00:00.000Z",
++                message: { role: "user", content: index === 0 ? "checkpoint" : "later" },
++              }),
++            )
++            .join("\n") + "\n";
++        const sourcePath = path.join(projectDir, sessionId + ".jsonl");
++        yield* fileSystem.writeFileString(sourcePath, source);
++        const environment = { ...process.env };
++        const fork = yield* runner.forkSession({
++          environment: { ...environment, CLAUDE_CONFIG_DIR: configDir },
++          sessionId,
++          options: { dir: cwd, upToMessageId: cursor },
++          threadId: ThreadId.make("fork-target"),
++          providerSessionId: ProviderSessionId.make("fork-session"),
++        });
++        assert.notEqual(fork.sessionId, sessionId);
++        const forkText = yield* fileSystem.readFileString(
++          path.join(projectDir, fork.sessionId + ".jsonl"),
++        );
++        assert.include(forkText, "checkpoint");
++        assert.notInclude(forkText, "later");
++        assert.equal(yield* fileSystem.readFileString(sourcePath), source);
++        assert.deepEqual(process.env, environment);
++      }).pipe(
++        Effect.provide(ClaudeAdapterV2.claudeAgentSdkQueryRunnerLiveLayer),
++        Effect.provide(
++          Layer.succeed(ProviderEventLoggers.ProviderEventLoggers, {
++            native: undefined,
++            canonical: undefined,
++          }),
++        ),
++        Effect.provide(NodeServices.layer),
++        Effect.scoped,
++      ),
++  );
++
+   it.effect("forks at the source assistant cursor and resumes the forked session", () =>
+     Effect.scoped(
+       Effect.gen(function* () {
+@@ -1615,6 +1678,7 @@ describe("ClaudeAdapterV2 native fork", () => {
+         });
+         const openedQueries: Array<ClaudeAdapterV2.ClaudeAgentSdkQueryOpenInput> = [];
+         const forkCalls: Array<{
++          readonly environment: NodeJS.ProcessEnv;
+           readonly sessionId: string;
+           readonly options: unknown;
+           readonly threadId: ThreadId;
+@@ -1623,7 +1687,7 @@ describe("ClaudeAdapterV2 native fork", () => {
+         const adapter = ClaudeAdapterV2.makeClaudeAdapterV2({
+           instanceId: ClaudeAdapterV2.CLAUDE_DEFAULT_INSTANCE_ID,
+           settings: DEFAULT_CLAUDE_SETTINGS,
+-          environment: {},
++          environment: { CLAUDE_CONFIG_DIR: "/provider-home" },
+           attachmentsDir,
+           fileSystem,
+           path: yield* Path.Path,
+@@ -1706,6 +1770,7 @@ describe("ClaudeAdapterV2 native fork", () => {
+ 
+         assert.deepEqual(forkCalls, [
+           {
++            environment: { CLAUDE_CONFIG_DIR: "/provider-home" },
+             sessionId: "source-native-session",
+             options: {
+               dir: "/workspace",
+diff --git a/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts b/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts
+index 0aca36abe..e48f7065e 100644
+--- a/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts
++++ b/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts
+@@ -1,4 +1,6 @@
+ import * as NodeCrypto from "node:crypto";
++import * as NodeSea from "node:sea";
++import * as NodeURL from "node:url";
+ 
+ import { makeProviderTextDeltaCoalescer } from "./ProviderTextDeltaCoalescer.ts";
+ import {
+@@ -10,7 +12,6 @@ import { isWorkspaceImagePreviewPath } from "@t3tools/shared/filePreview";
+ import { normalizeClaudeTurnTokenUsage } from "../../provider/ClaudeTurnTokenUsage.ts";
+ import {
+   type CanUseTool,
+-  forkSession as forkClaudeSession,
+   type ForkSessionOptions,
+   type ForkSessionResult,
+   getSubagentMessages,
+@@ -85,6 +86,10 @@ import * as Queue from "effect/Queue";
+ import * as Ref from "effect/Ref";
+ import * as Schema from "effect/Schema";
+ import * as Stream from "effect/Stream";
++import * as ChildProcess from "effect/unstable/process/ChildProcess";
++import * as ChildProcessSpawner from "effect/unstable/process/ChildProcessSpawner";
++
++import { collectUint8StreamText } from "../../stream/collectUint8StreamText.ts";
+ 
+ import { resolveAttachmentPath } from "../../attachmentStore.ts";
+ import { resolveClaudeSdkExecutablePath } from "../../provider/Drivers/ClaudeExecutable.ts";
+@@ -378,6 +383,7 @@ export class ClaudeAgentSdkQueryRunner extends Context.Service<
+ >()("t3/orchestration-v2/Adapters/ClaudeAdapterV2/ClaudeAgentSdkQueryRunner") {}
+ 
+ export interface ClaudeAgentSdkSessionForkInput {
++  readonly environment: NodeJS.ProcessEnv;
+   readonly sessionId: string;
+   readonly options: ForkSessionOptions;
+   readonly threadId: ThreadId;
+@@ -591,14 +597,21 @@ export function makeClaudeAgentSdkProtocolLogger(input: {
+   };
+ }
+ 
++const decodeForkSessionResult = Schema.decodeEffect(
++  Schema.fromJsonString(Schema.Struct({ sessionId: Schema.String })),
++);
++
+ export const claudeAgentSdkQueryRunnerLiveLayer: Layer.Layer<
+   ClaudeAgentSdkQueryRunner,
+   never,
+-  Crypto.Crypto | ProviderEventLoggers.ProviderEventLoggers
++  | Crypto.Crypto
++  | ProviderEventLoggers.ProviderEventLoggers
++  | ChildProcessSpawner.ChildProcessSpawner
+ > = Layer.effect(
+   ClaudeAgentSdkQueryRunner,
+   Effect.gen(function* () {
+     const crypto = yield* Crypto.Crypto;
++    const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
+     const { native: nativeEventLogger } = yield* ProviderEventLoggers.ProviderEventLoggers;
+ 
+     return ClaudeAgentSdkQueryRunner.of({
+@@ -744,10 +757,42 @@ export const claudeAgentSdkQueryRunnerLiveLayer: Layer.Layer<
+             options: input.options,
+           },
+         });
+-        const result = yield* Effect.tryPromise({
+-          try: () => forkClaudeSession(input.sessionId, input.options),
+-          catch: (cause) => queryRunnerError(cause, "forkSession"),
+-        });
++        // SDK history helpers read process.env rather than query options.env.
++        const result = yield* Effect.gen(function* () {
++          const args = ["forkSession", input.sessionId, JSON.stringify(input.options)];
++          const workerArgs = NodeSea.isSea()
++            ? ["__claude-history", ...args]
++            : [
++                NodeURL.fileURLToPath(
++                  new URL(
++                    import.meta.url.endsWith(".ts")
++                      ? "../../claude-history-worker.ts"
++                      : "./claude-history-worker.mjs",
++                    import.meta.url,
++                  ),
++                ),
++                ...args,
++              ];
++          const child = yield* spawner.spawn(
++            ChildProcess.make(process.execPath, workerArgs, {
++              env: input.environment,
++              extendEnv: false,
++            }),
++          );
++          const [stdout, stderr, exitCode] = yield* Effect.all(
++            [
++              collectUint8StreamText({ stream: child.stdout, maxBytes: 1024 * 1024 }),
++              collectUint8StreamText({ stream: child.stderr, maxBytes: 1024 * 1024 }),
++              child.exitCode,
++            ],
++            { concurrency: "unbounded" },
++          );
++          if (exitCode !== 0) return yield* Effect.fail(new Error(stderr.text));
++          return yield* decodeForkSessionResult(stdout.text);
++        }).pipe(
++          Effect.scoped,
++          Effect.mapError((cause) => queryRunnerError(cause, "forkSession")),
++        );
+         yield* logProtocolEvent({
+           direction: "incoming",
+           stage: "decoded",
+@@ -7663,6 +7708,7 @@ export function makeClaudeAdapterV2(
+                 ...(upToMessageId === undefined ? {} : { upToMessageId }),
+               };
+               const forked = yield* queryRunner.forkSession({
++                environment: adapterOptions.environment,
+                 sessionId: sourceNativeThreadId,
+                 options: forkOptions,
+                 threadId: forkInput.targetThreadId,

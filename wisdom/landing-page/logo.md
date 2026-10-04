@@ -42,3 +42,19 @@ test captures were restored to avoid rewriting unrelated proof.
 No deployment or Safari/Firefox test.
 
 Values unchanged. Existing single-source and real-path proof guidance applies.
+
+## Final merge requested
+
+User merged logo PR #29, then asked to merge this public-site PR and use the
+logo where needed. Merged origin/develop into the site branch. README was the
+only conflict: retained the shared installer, the site source path, and current
+paired binary/launcher build details. Removed identical root logo copies.
+Added a 1200 × 630 social-preview export from the same SVG paths and BASE_URL
+metadata. No third-party T3/Pi logos or quiet terminal startup were changed.
+Found and fixed the installer's outdated connector --version probe; product
+pair checking now uses --bruv-version. See install-script.md.
+Final combined checks passed: 31 site tests, Chromium validator, static build,
+metadata subpath checks, and installer fixtures with the real version-flag split.
+Social card rendered and reviewed. No live installer execution or deployment.
+User authorized the public-site merge. Values unchanged: existing
+single-source and real-path checks covered these fixes.

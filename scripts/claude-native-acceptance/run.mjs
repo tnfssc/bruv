@@ -4,7 +4,7 @@ import os from "node:os";
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { startModel, modelsConfig, modelSlug } from "./model.mjs";
+import { startModel, modelsConfig, modelSlug, provider, modelId } from "./model.mjs";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const connector = process.env.BRUV_CONNECTOR_EXECUTABLE;
 if (!connector)
@@ -60,6 +60,11 @@ try {
   model = await startModel({ worker, state, reply: delegation?.reply });
   workerModel = delegation ? await delegation.startWorkerModel({ state }) : undefined;
   await fs.writeFile(path.join(agent, "models.json"), JSON.stringify(modelsConfig(model.port)));
+  // Health probes have no --model; configure the fixture default explicitly.
+  await fs.writeFile(
+    path.join(agent, "settings.json"),
+    JSON.stringify({ defaultProvider: provider, defaultModel: modelId }),
+  );
   // No real auth file and no parent credentials/environment are inherited by T3.
   config = {
     connector: pinnedConnector,

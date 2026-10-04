@@ -1,0 +1,18 @@
+{
+  "integratedAcceptance": true,
+  "uiOnlyAcceptance": true,
+  "acceptanceScope": "history",
+  "fullAcceptancePassed": false,
+  "passed": true,
+  "failedStage": null,
+  "t3Version": "t3 v0.0.45",
+  "t3BinarySha256": "2a57c1f86faa71ff2da3c18e555fdc8865879be5ef395890009809f06835b78a",
+  "upstreamUnmodified": false,
+  "diagnosticWrapperUnchanged": true,
+  "sourceBuiltWebEvidenceOnly": true,
+  "syntheticConnectorEvents": false,
+  "realCredentialsUsed": false,
+  "ordinaryClaudeUnchanged": true,
+  "wireCapture": false,
+  "providerConfiguration": "Settings Providers UI only"
+}

@@ -1,20 +1,25 @@
 import {
+  AssistantMessageComponent,
+  CustomMessageComponent,
   type ExtensionAPI,
   type ExtensionContext,
+  getSelectListTheme,
   InteractiveMode,
   ToolExecutionComponent,
-  UserMessageComponent,
 } from "@earendil-works/pi-coding-agent";
 import {
   type Component,
   Container,
   type ScrollView,
+  Spacer,
+  Text,
   type TuiMouseEvent,
   truncateToWidth,
 } from "@earendil-works/pi-tui";
+import { getDiskBackedBranchRevision, selectDiskBackedEntries } from "../history/session-manager";
 import { actionLabel } from "./action-label";
-import { clearActivityProjection, setActivityProjection } from "./activity-projection";
-import { taskRowsFromDetails } from "./task-rows";
+import { clearActivityProjection, getActivityTaskRows, setActivityProjection } from "./activity-projection";
+import { taskRowKey, taskRowsFromDetails, taskStatusSummaryFromDetails } from "./task-rows";
 
 export const ACTIVITY_BOUNDARY = "bruv-activity-boundary";
 type ToolState = {
@@ -39,9 +44,14 @@ type JournalEntry = {
 export function activityMembership(entries: readonly JournalEntry[]): Map<string, string> {
   const result = new Map<string, string>();
   let segment = "legacy";
-  for (const entry of entries) {
+  for (const [index, entry] of entries.entries()) {
+    if (entry.type === "custom_message" && !isJobNoticeType(entry.customType)) segment = `control-${entry.id ?? index}`;
     if (entry.type === "message" && entry.message?.role === "user") segment = entry.id ?? segment;
     if (entry.type === "message" && entry.message?.role === "assistant" && Array.isArray(entry.message.content)) {
+      if (
+        entry.message.content.some((part) => part?.type === "text" && typeof part.text === "string" && part.text.trim())
+      )
+        segment = `prose-${entry.id ?? index}`;
       for (const part of entry.message.content) {
         if (part?.type === "toolCall" && typeof part.id === "string" && !part.parentToolCallId)
           result.set(part.id, segment);
@@ -58,21 +68,50 @@ export function activityMembership(entries: readonly JournalEntry[]): Map<string
   return result;
 }
 
+function membershipEntry(entry: { type: string; messageRole?: string; customType?: string }): boolean {
+  return (
+    (entry.type === "message" && (entry.messageRole === "user" || entry.messageRole === "assistant")) ||
+    entry.type === "custom_message" ||
+    (entry.type === "custom" && entry.customType === ACTIVITY_BOUNDARY)
+  );
+}
+
 type Host = {
   renderer: { mode: string };
+  outputPad?: number;
   chatContainer: Container;
   transcriptScrollView?: Pick<ScrollView, "scrollTop" | "scrollTo" | "updateLayout">;
   ui: { requestRender(): void };
   sessionManager: { getBranch(): JournalEntry[]; getSessionFile(): string | undefined };
 };
-type Group = { key: string; tools: ToolExecutionComponent[]; expanded: boolean };
+type ActivityItem = ToolExecutionComponent | CustomMessageComponent;
+type NoticeShape = { message: { customType: string; details?: unknown }; _expanded: boolean };
+function isJobNoticeType(type: unknown): boolean {
+  return type === "task-complete" || type === "task-attention";
+}
+function isJobNotice(child: Component): child is CustomMessageComponent {
+  return (
+    child instanceof CustomMessageComponent && isJobNoticeType((child as unknown as NoticeShape).message.customType)
+  );
+}
+function isBoundary(child: Component): boolean {
+  if (child instanceof Spacer) return false;
+  if (child instanceof AssistantMessageComponent) {
+    const message = (child as unknown as { lastMessage?: { content?: { type: string; text?: string }[] } }).lastMessage;
+    return message?.content?.some((part) => part.type === "text" && !!part.text?.trim()) ?? false;
+  }
+  return !(child instanceof ToolExecutionComponent) && !isJobNotice(child);
+}
+type Group = { key: string; tools: ToolExecutionComponent[]; items: ActivityItem[]; expanded: boolean };
 const controllers = new Set<ActivityController>();
 
 export class ActivityController {
+  private membership = new Map<string, string>();
+  private membershipRevision?: WeakRef<object>;
   groups: Group[] = [];
-  private groupsByTool = new Map<ToolExecutionComponent, Group>();
+  private groupsByItem = new Map<ActivityItem, Group>();
   private width = 80;
-  private adapted = new Map<ToolExecutionComponent, ToolExecutionComponent["handleMouse"]>();
+  private adapted = new Map<ActivityItem, ToolExecutionComponent["handleMouse"]>();
   private liveKey: string | undefined;
   private serial = 0;
   private liveIds = new Set<string>();
@@ -105,40 +144,80 @@ export class ActivityController {
     this.liveIds.clear();
   }
   sync(): void {
-    const membership = activityMembership(this.host.sessionManager.getBranch());
-    const previous = this.groupsByTool;
+    const manager = this.host.sessionManager;
+    // Cache only IDs derived from immutable disk history. Children, live IDs,
+    // expansion and result/task overlays still rebuild below on every frame.
+    const revision = getDiskBackedBranchRevision(manager, membershipEntry);
+    if (!revision || this.membershipRevision?.deref() !== revision) {
+      this.membership = activityMembership(
+        selectDiskBackedEntries(manager, "branch", membershipEntry) ?? manager.getBranch(),
+      );
+      this.membershipRevision = revision ? new WeakRef(revision) : undefined;
+    }
+    const membership = this.membership;
+    const previous = this.groupsByItem;
     const groups = new Map<string, Group>();
-    const groupsByTool = new Map<ToolExecutionComponent, Group>();
+    const groupsByItem = new Map<ActivityItem, Group>();
     const children = new Set(this.host.chatContainer.children);
     let fallback = "legacy";
+    let segment = 0;
+    let lastIdentity: string | undefined;
+    const segmentCalls = new Set<string>();
     for (const [index, child] of this.host.chatContainer.children.entries()) {
-      if (child instanceof UserMessageComponent) fallback = `user-${index}`;
-      if (!(child instanceof ToolExecutionComponent)) continue;
-      const state = toolState(child);
-      if (!state.toolCallId) continue;
-      if (this.liveKey && !this.adapted.has(child)) this.liveIds.add(state.toolCallId);
-      const key =
-        this.liveKey && this.liveIds.has(state.toolCallId)
+      if (isBoundary(child)) {
+        fallback = "boundary-" + index;
+        segment++;
+        lastIdentity = undefined;
+        segmentCalls.clear();
+        continue;
+      }
+      if (!(child instanceof ToolExecutionComponent) && !isJobNotice(child)) continue;
+      const state = child instanceof ToolExecutionComponent ? toolState(child) : undefined;
+      if (state && !state.toolCallId) continue;
+      if (state && this.liveKey && !this.adapted.has(child)) this.liveIds.add(state.toolCallId);
+      // Preserve timeline boundaries; late notices never become foreground calls.
+      const noticeRows =
+        child instanceof CustomMessageComponent
+          ? taskRowsFromDetails((child as unknown as NoticeShape).message.details)
+          : [];
+      const joinsSource =
+        noticeRows.length > 0 && noticeRows.every((row) => row.sourceCallId && segmentCalls.has(row.sourceCallId));
+      const identity = state
+        ? this.liveKey && this.liveIds.has(state.toolCallId)
           ? this.liveKey
-          : (membership.get(state.toolCallId) ?? fallback);
+          : (membership.get(state.toolCallId) ?? fallback)
+        : joinsSource && lastIdentity
+          ? lastIdentity
+          : "notices";
+      if (lastIdentity !== undefined && lastIdentity !== identity) {
+        segment++;
+        segmentCalls.clear();
+      }
+      if (state) segmentCalls.add(state.toolCallId);
+      lastIdentity = identity;
+      const key = identity + ":" + segment;
       let group = groups.get(key);
       if (!group) {
         const old = previous.get(child);
-        group = { key, tools: [], expanded: old?.expanded ?? state.expanded };
+        group = { key, tools: [], items: [], expanded: old?.expanded ?? state?.expanded ?? false };
         groups.set(key, group);
       }
-      // A duplicate delivery keeps evidence but never increments the count.
-      group.tools.push(child);
-      groupsByTool.set(child, group);
-      if (!this.adapted.has(child)) child.setExpanded(group.expanded);
+      group.items.push(child);
+      if (child instanceof ToolExecutionComponent) group.tools.push(child);
+      groupsByItem.set(child, group);
       this.adapt(child);
+      if (state?.result?.details?.handoff) {
+        segment++;
+        lastIdentity = undefined;
+        segmentCalls.clear();
+      }
     }
     this.groups = [...groups.values()];
-    this.groupsByTool = groupsByTool;
-    for (const tool of this.adapted.keys()) if (!children.has(tool)) this.restore(tool);
+    this.groupsByItem = groupsByItem;
+    for (const item of this.adapted.keys()) if (!children.has(item)) this.restore(item);
   }
-  private group(tool: ToolExecutionComponent): Group | undefined {
-    return this.groupsByTool.get(tool);
+  private group(item: ActivityItem): Group | undefined {
+    return this.groupsByItem.get(item);
   }
   count(group: Group): number {
     return new Set(group.tools.map((tool) => toolState(tool).toolCallId)).size;
@@ -148,48 +227,121 @@ export class ActivityController {
       group.tools.filter((tool) => toolState(tool).result?.isError).map((tool) => toolState(tool).toolCallId),
     ).size;
     const missing = group.tools.some((tool) => !toolState(tool).result || toolState(tool).isPartial);
-    const latestTool = group.tools.at(-1);
-    const latest = latestTool ? toolState(latestTool) : undefined;
-    const preview = this.liveKey === group.key && latest ? actionLabel(latest.args?.label, latest.toolName) : undefined;
-    return `${this.count(group)} ${this.count(group) === 1 ? "tool" : "tools"} called ${group.expanded ? "▾" : "▸"}${failed ? ` · ${failed} failed` : ""}${missing && !preview ? " · result incomplete" : ""}${preview ? ` · ${preview}` : ""}`;
+    const latest = group.tools.at(-1);
+    const state = latest ? toolState(latest) : undefined;
+    const preview =
+      state && this.liveIds.has(state.toolCallId) ? actionLabel(state.args?.label, state.toolName) : undefined;
+    const rows = new Map(
+      group.items.flatMap((item) => {
+        const details =
+          item instanceof ToolExecutionComponent
+            ? toolState(item).result?.details
+            : (item as unknown as NoticeShape).message.details;
+        return (getActivityTaskRows(item) ?? taskRowsFromDetails(details)).map(
+          (row) => [taskRowKey(row), row] as const,
+        );
+      }),
+    );
+    let jobFailed = [...rows.values()].filter((row) => row.status === "failed").length;
+    let cancelled = [...rows.values()].filter((row) => row.status === "cancelled").length;
+    const running = [...rows.values()].filter((row) => row.status === "running").length;
+    let unresolved = [...rows.values()].filter(
+      (row) => row.status === "unknown" || row.status === "needs-input",
+    ).length;
+    let unknownSummary = false;
+    for (const item of group.items) {
+      if (!(item instanceof CustomMessageComponent)) continue;
+      for (const row of taskStatusSummaryFromDetails((item as unknown as NoticeShape).message.details)) {
+        if (row.status === "failed") jobFailed += row.count ?? 0;
+        else if (row.status === "cancelled") cancelled += row.count ?? 0;
+        else if (row.count) unresolved += row.count;
+        else unknownSummary = true;
+      }
+    }
+    const count = this.count(group);
+    const notices = group.items.length - group.tools.length;
+    const title = count
+      ? count + (count === 1 ? " tool called" : " tools called")
+      : notices + (notices === 1 ? " job notification" : " job notifications");
+    return (
+      title +
+      (failed ? " · " + failed + " failed" : "") +
+      (jobFailed ? " · " + jobFailed + (jobFailed === 1 ? " job failed" : " jobs failed") : "") +
+      (cancelled ? " · " + cancelled + " cancelled" : "") +
+      (running ? " · " + running + " running" : "") +
+      (unresolved ? " · " + unresolved + " unresolved" : unknownSummary ? " · status unknown" : "") +
+      (missing && !preview ? " · result incomplete" : "") +
+      (preview ? " · " + preview : "")
+    );
   }
-  private adapt(tool: ToolExecutionComponent): void {
-    if (this.adapted.has(tool)) return;
-    const mouse = tool.handleMouse;
-    this.adapted.set(tool, mouse);
-    setActivityProjection(tool, (width, native, hasOwnedTasks) => {
-      this.width = width;
-      const group = this.group(tool);
-      if (!group || this.host.renderer.mode !== "fullscreen") return native();
-      const first = group.tools[0] === tool;
-      const state = toolState(tool);
-      // Typed tasks, failures, handoff and storage warnings remain visible. Do
-      // not inspect English output for importance or replace native evidence.
-      const details = state.result?.details;
-      const protectedDetail =
-        hasOwnedTasks ||
-        state.result?.isError ||
-        details?.handoff ||
-        details?.outputArtifactErrors ||
-        taskRowsFromDetails(details).length > 0;
-      const content = group.expanded || protectedDetail ? native() : [];
-      return first ? [truncateToWidth(this.label(group), width), ...content] : content;
-    });
-    tool.handleMouse = (event: TuiMouseEvent) => {
-      const group = this.group(tool);
-      if (!group || this.host.renderer.mode !== "fullscreen") return mouse.call(tool, event);
-      const first = group.tools[0] === tool;
-      if (first && event.y === 0) {
+  private padded(text: string, width: number): string[] {
+    const padding = this.host.outputPad ?? 1;
+    const available = Math.max(0, width - padding * 2);
+    return available ? [" ".repeat(padding) + getSelectListTheme().description(truncateToWidth(text, available))] : [];
+  }
+  private header(group: Group, width: number): string[] {
+    const lines = this.padded(this.label(group), width);
+    if (!group.expanded && group.tools.some((tool) => toolState(tool).result?.details?.outputArtifactErrors))
+      lines.push(...this.padded("⚠ couldn’t save full output", width));
+    return lines;
+  }
+  private adapt(item: ActivityItem): void {
+    if (this.adapted.has(item)) return;
+    const mouse = item.handleMouse;
+    this.adapted.set(item, mouse);
+    let projectedTaskRow = false;
+    setActivityProjection(
+      item,
+      (width, native, hasOwnedTasks) => {
+        this.width = width;
+        const group = this.group(item);
+        if (!group || this.host.renderer.mode !== "fullscreen") return native();
+        const state = item instanceof ToolExecutionComponent ? toolState(item) : undefined;
+        projectedTaskRow = hasOwnedTasks && state?.expanded !== true;
+        const details = state?.result?.details;
+        // Collapsing a group hides every child body without changing native detail state.
+        // Only the actual handoff control survives; never render its expanded source/output.
+        let content = group.expanded ? native() : [];
+        if (!group.expanded && typeof details?.handoff === "string")
+          content = new Text(details.handoff, this.host.outputPad ?? 1, 0).render(width);
+        if (item instanceof CustomMessageComponent && group.expanded && !content.length)
+          content = this.padded("Job update — click for details", width);
+        return group.items[0] === item ? [...this.header(group, width), ...content] : content;
+      },
+      () => this.host.renderer.mode === "fullscreen",
+    );
+    item.handleMouse = (event: TuiMouseEvent) => {
+      const group = this.group(item);
+      if (!group || this.host.renderer.mode !== "fullscreen") return mouse.call(item, event);
+      const headerHeight = group.items[0] === item ? this.header(group, event.width).length : 0;
+      if (headerHeight && event.y < headerHeight) {
         if (event.type === "click" && event.button === "left") {
           this.toggle(group);
           return {
             handled: true,
-            target: { component: tool, originX: 0, originY: 0, width: event.width, height: event.height },
+            target: { component: item, originX: 0, originY: 0, width: event.width, height: event.height },
           };
         }
         return undefined;
       }
-      return mouse.call(tool, first ? { ...event, y: event.y - 1, height: event.height - 1 } : event);
+      if (
+        event.type === "click" &&
+        event.button === "left" &&
+        (item instanceof CustomMessageComponent || (projectedTaskRow && event.y === headerHeight))
+      ) {
+        this.toggleDetails(group, item);
+        return {
+          handled: true,
+          target: {
+            component: item,
+            originX: 0,
+            originY: headerHeight,
+            width: event.width,
+            height: event.height - headerHeight,
+          },
+        };
+      }
+      return mouse.call(item, { ...event, y: event.y - headerHeight, height: event.height - headerHeight });
     };
   }
   private offset(tool: Component): number {
@@ -201,7 +353,15 @@ export class ActivityController {
     return rows;
   }
   toggle(group: Group, reveal = false): void {
-    this.withAnchor(() => this.expand(group, !group.expanded), reveal ? group.tools[0] : undefined);
+    this.withAnchor(() => this.expand(group, !group.expanded), reveal ? group.items[0] : undefined);
+  }
+  toggleDetails(group: Group, item: ActivityItem): void {
+    this.withAnchor(() => {
+      group.expanded = true;
+      const expanded =
+        item instanceof ToolExecutionComponent ? toolState(item).expanded : (item as unknown as NoticeShape)._expanded;
+      item.setExpanded(!expanded);
+    }, group.items[0]);
   }
   withAnchor(change: () => void, reveal?: Component): void {
     const scroll = this.host.transcriptScrollView;
@@ -226,8 +386,11 @@ export class ActivityController {
       : top;
     // Hold the header if visible; preserve the reading position if this group
     // lies above it. Picker actions deliberately reveal the chosen header.
-    const vanishedGroup = anchor instanceof ToolExecutionComponent ? this.group(anchor) : undefined;
-    const fallbackTool = vanishedGroup?.tools[0];
+    const vanishedGroup =
+      anchor instanceof ToolExecutionComponent || anchor instanceof CustomMessageComponent
+        ? this.group(anchor)
+        : undefined;
+    const fallbackTool = vanishedGroup?.items[0];
     const fallback = fallbackTool ? this.offset(fallbackTool) : top;
     this.deferAnchor(header ?? (anchor?.render(this.width).length ? anchorTop : fallback));
     this.host.ui.requestRender();
@@ -260,9 +423,9 @@ export class ActivityController {
   }
   expand(group: Group, expanded: boolean): void {
     group.expanded = expanded;
-    for (const tool of group.tools) tool.setExpanded(expanded);
+    // Group visibility does not change native item detail state.
   }
-  private restore(tool: ToolExecutionComponent): void {
+  private restore(tool: ActivityItem): void {
     clearActivityProjection(tool);
     const mouse = this.adapted.get(tool);
     if (mouse) tool.handleMouse = mouse;
@@ -274,7 +437,9 @@ export class ActivityController {
     this.pendingAnchor = undefined;
     for (const tool of this.adapted.keys()) this.restore(tool);
     this.groups = [];
-    this.groupsByTool.clear();
+    this.groupsByItem.clear();
+    this.membership.clear();
+    this.membershipRevision = undefined;
   }
 }
 
@@ -341,7 +506,7 @@ export function registerRollingActivity(pi: ExtensionAPI): void {
     if (callIds.size) pi.appendEntry(ACTIVITY_BOUNDARY, { callIds: [...callIds] });
   });
   pi.registerCommand("activity", {
-    description: "Open or close a tool activity group (Ctrl+O toggles all tool details)",
+    description: "Show activity rows or individual native details (Ctrl+O toggles all details)",
     handler: async (_args, ctx) => {
       const state = findController(ctx);
       if (!state) {
@@ -349,15 +514,29 @@ export function registerRollingActivity(pi: ExtensionAPI): void {
         return;
       }
       state.sync();
-      const choices = state.groups.map((group, index) => `${index + 1}. ${state.label(group)}`);
+      const options = state.groups.flatMap((group, index) => [
+        { label: index + 1 + ". " + state.label(group), group, item: undefined as ActivityItem | undefined },
+        ...group.items.map((item, itemIndex) => {
+          const tool = item instanceof ToolExecutionComponent ? toolState(item) : undefined;
+          const title = tool ? actionLabel(tool.args?.label, tool.toolName) : "Job notification";
+          return { label: "  " + (index + 1) + "." + (itemIndex + 1) + ". Details — " + title, group, item };
+        }),
+      ]);
+      const choices = options.map((option) => option.label);
       if (!choices.length) {
-        ctx.ui.notify("No tool activity in this branch.", "info");
+        ctx.ui.notify("No activity in this branch.", "info");
         return;
       }
-      const selected = await ctx.ui.select("Activity — select to open/close; Esc returns", choices);
+      const selected = await ctx.ui.select("Activity — rows or individual details; Esc returns", choices);
       if (selected !== undefined) {
-        const group = state.groups[choices.indexOf(selected)];
-        if (group) state.toggle(group, true);
+        const option = options[choices.indexOf(selected)];
+        // The transcript can render while the picker is open. Resolve the stable
+        // native item again rather than mutating a discarded per-frame group.
+        const anchor = option?.item ?? option?.group.items[0];
+        state.sync();
+        const group = anchor && state.groups.find((current) => current.items.includes(anchor));
+        if (group && option?.item) state.toggleDetails(group, option.item);
+        else if (group) state.toggle(group, true);
       }
     },
   });

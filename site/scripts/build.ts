@@ -14,8 +14,16 @@ export function siteMetadata(raw?: string, page = "") {
   if (!url.pathname.endsWith("/")) url.pathname += "/";
   const base = escape(url.href);
   const canonical = escape(new URL(page, url).href);
+  const image = escape(new URL("assets/brand/bruv-social.png", url).href);
   return {
-    html: '<link rel="canonical" href="' + canonical + '"><meta property="og:url" content="' + canonical + '">',
+    html:
+      '<link rel="canonical" href="' +
+      canonical +
+      '"><meta property="og:url" content="' +
+      canonical +
+      '"><meta property="og:image" content="' +
+      image +
+      '"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta property="og:image:alt" content="bruv wordmark">',
     sitemap:
       '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>' +
       base +

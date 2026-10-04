@@ -125,3 +125,7 @@ Stop releases every fixture gate, kills only its private tmux server/provider, a
 Baseline **does not implement rolling groups or /activity**. These captures prove the transport/compiled/keyboard/native-detail/question path is runnable; they prove neither collapsed group counts, /activity, group mouse behavior nor scroll anchoring. The implementation owner's dist/bruv was absent during preparation. No actual implementation acceptance, live provider, remote host, image/artifact, clipboard, regular-mode parity, branch navigation, stop/cancellation, failure recovery or web/placed-root parity is claimed. Those are deliberately outside this modest gate unless the owner promises them. A real compiled pass requires inspecting new frames, not treating these fixture tests or baseline hashes as product proof.
 
 Wisdom/values unchanged: existing \u201Cactual visible frames, meaningful human controls, leave proof and limits together\u201D guidance already covers this preparation; no new general lesson.
+
+## Current independent rolling gate
+
+See [rolling runtime acceptance preparation (2026-10-04)](rolling-runtime-acceptance-2026-10-04.md) for the parent-supplied integration binary path, bounded row/detail/notice/question/long-thread runner and explicit pending real-runtime/ANSI review. Baseline preparation above remains transport evidence only.

@@ -3,6 +3,8 @@ import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import type { Readable, Writable } from "node:stream";
 import product from "../../package.json";
+import { CONNECTOR_VERSION, BRUV_CONNECTOR_VERSION, connectorLaunchDefaults } from "./launch";
+export { CONNECTOR_VERSION, BRUV_CONNECTOR_VERSION } from "./launch";
 import image from "../../runtime-assets/assets/clankolas.png" with { type: "file" };
 import template from "../../runtime-assets/export-html/template.html" with { type: "file" };
 import highlight from "../../runtime-assets/export-html/vendor/highlight.min.js" with { type: "file" };
@@ -14,6 +16,7 @@ import themeSchema from "../../runtime-assets/theme/theme-schema.json" with { ty
 import { scrubRootEnvironmentInPlace } from "../delegation-environment";
 import { launchPolicy, nativeStorage, permissionBinding, mcpFactory, scopedSettings } from "./binding";
 import { InjectedMcpSession } from "./mcp";
+import { preflightNativeHome } from "./preflight";
 import { profilesPath } from "../tasks/subagent-profiles";
 import {
   loadAppWorkerPolicy,
@@ -25,7 +28,6 @@ import {
 import { parseConnectorArguments, assertLaunchBindings, type ConnectorArguments } from "./arguments";
 import { ClaudeCompatTransport, type TransportOptions, type WireMessage } from "./transport";
 
-export const CONNECTOR_VERSION = "bruv-claude-compat " + product.version;
 export const CONNECTOR_HELP = [
   "bruv-claude-compat \u2014 Bruv connector, not Anthropic Claude Code",
   "",
@@ -37,14 +39,17 @@ export const CONNECTOR_HELP = [
   "  bruv-claude-compat -p --output-format json --json-schema JSON",
   '    [--model provider/id] [--tools ""] [--permission-mode dontAsk]',
   "    [--disable-slash-commands] [--strict-mcp-config] [PROMPT]",
-  "  bruv-claude-compat --help | --version",
+  "  bruv-claude-compat --help | --version | --bruv-version",
   "",
   "Stream stdin/stdout are NDJSON; auxiliary stdin is plain text and stdout is one",
   "validated structured_output result. Diagnostics go only to stderr.",
-  "BRUV_CLAUDE_COMPAT_HOME selects isolated Bruv connector state (default:",
-  "~/.bruv/claude-compat). No CLI state or real Claude history is migrated.",
+  "BRUV_CLAUDE_COMPAT_HOME selects Bruv auth/settings/resources (default:",
+  "homedir()/.bruv/agent, reusing ordinary CLI configuration without copying).",
   "BRUV_CLAUDE_COMPAT_BRUV_PATH selects the normal Bruv binary for child work",
-  "(default: sibling bruv). Configure credentials/models in connector state.",
+  "(default: normal bruv itself for subcommand packaging, otherwise sibling bruv).",
+  "The two optional BRUV path overrides expand ~ and ~/ only.",
+  "--version reports 2.1.280 Bruv protocol compatibility; --bruv-version reports",
+  "the real Bruv product version. No Anthropic authentication is claimed.",
   "Persistent native sessions require an aligned, connector-owned CLAUDE_CONFIG_DIR",
   "(set the same T3 provider homePath). The real default Claude home is refused.",
   "Initialization checks local readiness, never provider access or subscription.",
@@ -67,6 +72,7 @@ export interface ConnectorRuntimeOptions {
   request?: ClaudeCompatTransport["request"];
   configDir?: string;
   projectKey?: string;
+  onOutputError?(error: unknown): void;
   diagnostic?(error: unknown): void;
 }
 export interface ConnectorRuntime {
@@ -120,15 +126,16 @@ async function bootstrap(agentDir: string) {
 }
 
 const productionRuntime: RuntimeFactory = async (options, args) => {
-  if (args.mode === "stream" && !args.noPersistence && !options.configDir)
+  if (args.mode === "stream") await preflightNativeHome(options.configDir, homedir());
+  try {
+    await access(options.executablePath!);
+  } catch {
     throw new Error(
-      "Persistent native sessions require an explicit aligned CLAUDE_CONFIG_DIR (configure T3 provider homePath)",
+      "Paired Bruv executable is missing or inaccessible; set provider-instance BRUV_CLAUDE_COMPAT_BRUV_PATH to the absolute installed bruv path.",
     );
-  if (args.mode === "stream" && !args.noPersistence && options.configDir === resolve(homedir(), ".claude"))
-    throw new Error("Refusing to write the default Claude home; select a connector-owned native history home");
-  await access(options.executablePath!);
+  }
   await bootstrap(options.agentDir);
-  const { createClaudeCompatRuntime } = await import("./runtime");
+  const { createClaudeCompatRuntime, preflightClaudeCompatModel } = await import("./runtime");
   const { policy, authorize, setMode } = permissionBinding(args, options.request!);
   const settings = await scopedSettings(args, options.cwd, options.agentDir);
   const profileSource = profilesPath();
@@ -141,6 +148,14 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
     appWorker?.role === "normal"
       ? bindNormalAppWorker(await loadNormalAppWorkerProfile(profileSource), args)
       : undefined;
+  // Validate the actual selected model before history allocation or injected tools.
+  const prepared = await preflightClaudeCompatModel({
+    ...options,
+    model: normalWorker?.model ?? options.model,
+    settingsManager: settings,
+    permissionMode: policy.mode,
+  });
+  for (const directory of args.addDirs) await access(resolve(options.cwd, directory));
   const storage =
     args.mode === "auxiliary"
       ? undefined
@@ -150,7 +165,6 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
           configDir: options.configDir ?? join(options.agentDir, "native-history"),
           projectKey: options.projectKey,
         });
-  for (const directory of args.addDirs) await access(resolve(options.cwd, directory));
   let runtime: Awaited<ReturnType<typeof createClaudeCompatRuntime>> | undefined;
   // The app-owned server is identified by the credential-bearing native injection,
   // never by MCP annotations or a model supplied name. The server remains the
@@ -186,7 +200,8 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
   try {
     runtime = await createClaudeCompatRuntime({
       ...options,
-      model: normalWorker?.model ?? options.model,
+      model: prepared.initialModel.provider + "/" + prepared.initialModel.id,
+      modelRuntime: prepared.models,
       settingsManager: settings,
       permissionMode: policy.mode,
       authorizeTool: authorize,
@@ -265,7 +280,14 @@ export async function runConnector(
   try {
     const args = parseConnectorArguments(argv);
     if (args.action !== "run") {
-      await write(io.output, args.action === "version" ? CONNECTOR_VERSION + "\n" : CONNECTOR_HELP);
+      await write(
+        io.output,
+        args.action === "version"
+          ? CONNECTOR_VERSION + "\n"
+          : args.action === "bruv-version"
+            ? BRUV_CONNECTOR_VERSION + "\n"
+            : CONNECTOR_HELP,
+      );
       return 0;
     }
     assertLaunchBindings(args);
@@ -275,8 +297,12 @@ export async function runConnector(
     delete io.env.BRUV_WEB_TASK_EVENTS;
     delete process.env.BRUV_WEB_TASK_EVENTS;
     if (io.env !== process.env) scrubRootEnvironmentInPlace(process.env);
-    const agentDir = resolve(io.env.BRUV_CLAUDE_COMPAT_HOME ?? join(io.home, ".bruv", "claude-compat"));
-    const normalBinary = resolve(io.env.BRUV_CLAUDE_COMPAT_BRUV_PATH ?? join(dirname(process.execPath), "bruv"));
+    const { agentDir, executablePath: normalBinary } = connectorLaunchDefaults(
+      io.env,
+      io.home,
+      process.execPath,
+      io.cwd,
+    );
     io.signals.on("SIGTERM", terminate);
     io.signals.on("SIGINT", interrupt);
     runtime = await factory(
@@ -288,7 +314,7 @@ export async function runConnector(
         auxiliary: args.mode === "auxiliary",
         permissionMode: args.mode === "auxiliary" ? "dontAsk" : args.permissionMode,
         executablePath: normalBinary,
-        configDir: io.env.CLAUDE_CONFIG_DIR ? resolve(io.env.CLAUDE_CONFIG_DIR) : undefined,
+        configDir: io.env.CLAUDE_CONFIG_DIR,
         projectKey: io.env.CLAUDE_CODE_PROJECT_DIR_NAME,
         request: async (request, options) => {
           let abort: (() => void) | undefined;
@@ -314,6 +340,11 @@ export async function runConnector(
           if (frame.type === "stream_event" && !args.partialMessages) return;
           if (!transport) throw new Error("Runtime emitted before transport was bound");
           return transport.send(frame);
+        },
+        onOutputError: (error) => {
+          // Autonomous Pi runs have no onUser/flush caller to report this failure.
+          // Closing the transport wakes its run loop and enters ordinary shutdown.
+          transport?.close(error instanceof Error ? error : new Error(String(error)));
         },
         diagnostic: (error) => {
           io.stderr.write("[bruv-claude-compat] " + detail(error) + "\n");

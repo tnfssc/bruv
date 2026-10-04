@@ -204,5 +204,5 @@ test("fixture preflight rejects tar-shaped payload, even with valid checksum", a
     "incompatible tar shape or version",
   );
   // This shape preflight is synthetic evidence, not platform execution proof.
-  // The updater separately runs staged --version and the existing macOS helper check.
+  // The updater separately runs staged --bruv-version and the existing macOS helper check.
 });

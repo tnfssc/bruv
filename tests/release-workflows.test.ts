@@ -393,7 +393,7 @@ test("release cache environment retains source identity variables", async () => 
   }
 });
 
-test("CI and release build the pair without a patched web dependency", async () => {
+test("CI and release build the binary and launcher without a patched web dependency", async () => {
   const runner = await read("scripts/ci.sh");
   const workflow = await read(".github/workflows/release.yml");
   expect(runner).not.toContain("ci-web-validation.sh");
@@ -418,4 +418,23 @@ test("full Linux retains history required by migration acceptance", async () => 
   expect(workflow.jobs.test.steps.find((step: any) => step.name === "Install required PTY tooling").run).toContain(
     "command -v tmux >/dev/null ||",
   );
+});
+
+test("release verifies thin launcher dispatch and the actual Android interpreter before staging", async () => {
+  const workflow = Bun.YAML.parse(await read(".github/workflows/release.yml")) as any;
+  const steps = workflow.jobs.release.steps;
+  const gate = steps.findIndex(
+    (step: any) => step.name === "Verify release launcher packaging and Android runtime target",
+  );
+  expect(gate).toBeGreaterThan(0);
+  expect(steps[gate].run).toContain("bun scripts/verify-release-launchers.ts dist/release");
+  expect(steps[gate].run).toContain("readelf -l dist/release/bruv-android-arm64");
+  expect(steps[gate].run).toContain("/system/bin/linker64");
+  expect(gate).toBeLessThan(steps.findIndex((step: any) => step.name === "Stage verified release assets"));
+  for (const name of ["linux-browser-boot", "mac-release-smoke"]) {
+    const commands = workflow.jobs[name].steps.map((step: any) => step.run ?? "").join("\n");
+    expect(commands).toContain("--bruv-version");
+    expect(commands).toContain('= "bruv-claude-compat $version"');
+    expect(commands).toContain("2.1.280 (Bruv compatibility; bruv $version)");
+  }
 });

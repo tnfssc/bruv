@@ -5,7 +5,7 @@
   </picture>
 </p>
 
-# Bruv
+# bruv CLI
 
 An opinionated coding agent. Built on [Pi](https://pi.dev).
 
@@ -15,8 +15,13 @@ An opinionated coding agent. Built on [Pi](https://pi.dev).
 curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh
 ```
 
-Supports Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64.
+Supports Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64 (API 28+).
 Requires curl and either sha256sum or shasum.
+
+The pair contains one compiled `bruv` binary and a small POSIX
+`bruv-claude-compat` launcher. Keep them together. The launcher needs `/bin/sh`
+on Linux/macOS or `/system/bin/sh` on Android. The Android binary runs natively
+with `/system/bin/linker64`; no Bun, Node, glibc or proot runtime is needed.
 
 The [installer](https://github.com/tnfssc/bruv/blob/develop/scripts/install.sh)
 downloads Bruv and its matching `bruv-claude-compat` connector from one release,
@@ -131,6 +136,20 @@ cd bruv
 bun install --frozen-lockfile
 bun run check
 bun run build
+```
+
+The build compiles `dist/bruv` once and writes the small executable
+`dist/bruv-claude-compat` launcher beside it. The connector reports
+`2.1.280 (Bruv compatibility; bruv <product>)` for `--version`; use
+`--bruv-version` for the product version and paired packaging/update checks.
+During an older updater’s private `.bruv-update-*` staging probe only, the
+canonical launcher’s exact `--version` call retains the old truthful
+`bruv-claude-compat <product>` response. After installation it uses the SDK-facing
+compatibility identity above; new packaging/update checks use `--bruv-version`.
+
+Install your local build:
+
+```sh
 bun run install:local
 ```
 

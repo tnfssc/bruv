@@ -18,6 +18,7 @@ import {
 import type { TSchema } from "typebox";
 import { Compile } from "typebox/compile";
 import bruvPackage from "../../package.json";
+import { COMPAT_PROTOCOL_VERSION } from "./launch";
 import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../delegation-environment";
 import { currentMainOwner } from "../live/main-owner";
 import { assertBruvPiHost } from "../pi-host";
@@ -83,6 +84,8 @@ export interface ClaudeCompatRuntimeOptions {
   permissionMode?: string;
   /** Owning Bruv binary used by execute and child launch (defaults to process.execPath). */
   executablePath?: string;
+  /** Fatal frontend delivery failure; the owning transport must close. */
+  onOutputError?(error: unknown): void;
   diagnostic?(error: unknown): void;
 }
 export interface ClaudeCompatRuntime {
@@ -132,17 +135,8 @@ function nativeContent(content: unknown): unknown[] {
   );
 }
 
-/** Creates one actual Pi session. initialize is local readiness, never a provider access probe. */
-export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOptions): Promise<ClaudeCompatRuntime> {
-  assertBruvPiHost();
-  if (
-    process.env[T3_MCP_URL_ENV] !== undefined ||
-    process.env[T3_MCP_BEARER_ENV] !== undefined ||
-    process.env.BRUV_WEB_TASK_EVENTS === "1"
-  )
-    throw new Error(
-      "Legacy patched-T3 bridge environment must be removed before creating the Claude-compatible runtime",
-    );
+/** Local-only setup validation. No session, history, task owner, tools or provider request. */
+export async function preflightClaudeCompatModel(options: ClaudeCompatRuntimeOptions) {
   const settings =
     options.settingsManager ??
     (options.auxiliary
@@ -161,26 +155,29 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   await models.getAvailable();
   const resolveModel = (key: string): Model<Api> => {
     const separator = key.indexOf("/");
-    if (separator < 1) throw new Error("Model must be an exact provider/id, not a Claude alias: " + key);
+    if (separator < 1)
+      throw new Error("Select an exact Bruv provider/id in T3; Claude aliases are not supported: " + key);
     const model = models.getModel(key.slice(0, separator), key.slice(separator + 1));
-    if (!model) throw new Error("Unknown configured model: " + key);
+    if (!model)
+      throw new Error("Unknown configured Bruv model; select an exact provider/id from the selected Bruv home: " + key);
     return model;
   };
   const configured =
     settings.getDefaultProvider() && settings.getDefaultModel()
       ? settings.getDefaultProvider() + "/" + settings.getDefaultModel()
       : undefined;
-  const initialModel = options.model
-    ? resolveModel(options.model)
-    : configured
-      ? resolveModel(configured)
-      : models
-          .getAllModels()
-          .find(
-            (m): m is Model<Api> => (m.type === "chat" || m.type === undefined) && models.hasConfiguredAuth(m.provider),
-          );
+  const initialModel =
+    options.model !== undefined ? resolveModel(options.model) : configured ? resolveModel(configured) : undefined;
   if (!initialModel)
-    throw new Error("No configured Bruv model. Configure a provider/model before starting the connector.");
+    throw new Error(
+      "No selected Bruv model. Select an exact provider/id in T3 or configure the default model in the explicitly selected Bruv home.",
+    );
+  if (!models.hasConfiguredAuth(initialModel.provider))
+    throw new Error(
+      "No configured authentication for " +
+        initialModel.provider +
+        ". Configure it with ordinary Bruv in the explicitly selected BRUV_CLAUDE_COMPAT_HOME; do not use T3 Claude login.",
+    );
   if (
     options.thinkingDisplay === "summarized" &&
     initialModel.reasoning &&
@@ -189,7 +186,22 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     )
   )
     throw new Error("Thinking summaries are unsupported for this reasoning API");
-  // Missing auth remains an initialize error, not a successful account:{} auth indicator.
+  return { settings, models, initialModel, resolveModel };
+}
+
+/** Creates one actual Pi session. initialize is local readiness, never a provider access probe. */
+export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOptions): Promise<ClaudeCompatRuntime> {
+  assertBruvPiHost();
+  if (
+    process.env[T3_MCP_URL_ENV] !== undefined ||
+    process.env[T3_MCP_BEARER_ENV] !== undefined ||
+    process.env.BRUV_WEB_TASK_EVENTS === "1"
+  )
+    throw new Error(
+      "Legacy patched-T3 bridge environment must be removed before creating the Claude-compatible runtime",
+    );
+  const { settings, models, initialModel, resolveModel } = await preflightClaudeCompatModel(options);
+  // Recheck local auth at initialize/admission; account:{} is never an auth indicator.
   const readiness = () => {
     const selected = session.model;
     if (!selected || !models.hasConfiguredAuth(selected.provider))
@@ -286,9 +298,14 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   let session!: AgentSession;
   const frontend = createClaudeCompatFrontend({
     emit: async (frame) => {
-      if (frame.type === "result") await human?.flush();
+      if (frame.type === "result") {
+        // End app HTTP leases before publishing idle/result to the owning host.
+        await options.mcp?.parkAppOwned();
+        await human?.flush();
+      }
       await options.emit(frame);
     },
+    onOutputError: options.onOutputError,
     messageUuid,
     omitThinking: options.thinkingDisplay === "omitted",
     auxiliary: options.auxiliary,
@@ -302,8 +319,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       slash_commands: options.disableSlashCommands ? [] : commands.catalog().map((c) => c.name),
       skills: loader.getSkills().skills.map((s) => s.name),
       plugins: [],
-      claude_code_version: "bruv/" + bruvPackage.version,
-      bruv: { engine: "pi", provider_access_verified: false },
+      claude_code_version: COMPAT_PROTOCOL_VERSION,
+      bruv: { engine: "pi", version: bruvPackage.version, provider_access_verified: false },
     }),
     sessionId: () => options.nativeSessionId ?? session.sessionId,
     model: () => (session.model ? session.model.provider + "/" + session.model.id : (options.model ?? "")),
@@ -441,6 +458,12 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
         name: "bruv-native-permissions",
         hidden: true,
         factory: (pi) => {
+          pi.on("before_agent_start", async () => {
+            // A task wake can begin the next Pi run before native writes drain.
+            // Finish the previous result/lease release before acquiring another.
+            if (options.mcp) await frontend.flush();
+            await options.mcp?.resumeAppOwned();
+          });
           pi.on("agent_start", () => {
             toolTurn = new AbortController();
           });
@@ -620,7 +643,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           })),
         // Never report Anthropic subscription/account identity for non-Claude engines.
         account: {},
-        bruv: { engine: "pi", readiness: ready },
+        bruv: { engine: "pi", version: bruvPackage.version, readiness: ready },
       };
     },
     get_usage: async () => {

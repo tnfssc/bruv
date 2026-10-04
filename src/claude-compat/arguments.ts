@@ -1,6 +1,6 @@
 import { launchPolicy } from "./binding";
 export interface ConnectorArguments {
-  action: "help" | "version" | "run";
+  action: "help" | "version" | "bruv-version" | "run";
   mode: "stream" | "auxiliary";
   model?: string;
   prompt?: string;
@@ -56,8 +56,9 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
     strictMcp: false,
     addDirs: [],
   };
-  if (argv.length === 1 && ["--help", "-h", "--version", "-v"].includes(argv[0]!)) {
-    result.action = argv[0] === "--help" || argv[0] === "-h" ? "help" : "version";
+  if (argv.length === 1 && ["--help", "-h", "--version", "-v", "--bruv-version"].includes(argv[0]!)) {
+    result.action =
+      argv[0] === "--bruv-version" ? "bruv-version" : argv[0] === "--help" || argv[0] === "-h" ? "help" : "version";
     return result;
   }
   let print = false,

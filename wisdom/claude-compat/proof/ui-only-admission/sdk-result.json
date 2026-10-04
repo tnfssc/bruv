@@ -1,0 +1,29 @@
+{
+  "sdk": "0.3.276",
+  "node": "v24.21.0",
+  "results": [
+    {
+      "name": "valid",
+      "locallyConfigured": true,
+      "accessVerified": false
+    },
+    {
+      "name": "missing-home",
+      "rejected": true,
+      "diagnostic": "explicit absolute CLAUDE_CONFIG_DIR"
+    },
+    {
+      "name": "missing-model",
+      "rejected": true,
+      "diagnostic": "No selected Bruv model"
+    },
+    {
+      "name": "invalid-model",
+      "rejected": true,
+      "diagnostic": "Unknown configured Bruv model"
+    }
+  ],
+  "providerRequests": 0,
+  "ordinaryClaudeUntouched": true,
+  "nativeHistoryAllocated": false
+}

@@ -1,6 +1,6 @@
-import { resolve, basename } from "node:path";
+import { resolve } from "node:path";
 import { lstat } from "node:fs/promises";
-import { nativeHelperPlugin } from "./live-helper-bundle";
+import { normalOutputForConnector, writeConnectorLauncher } from "./claude-compat-launcher";
 
 const root = resolve(import.meta.dir, "..");
 let output = "dist/bruv-claude-compat";
@@ -15,29 +15,25 @@ for (const argument of process.argv.slice(2)) {
 }
 if (!output || target === "" || helper === "") throw new Error("Connector build options require nonempty values");
 const outfile = resolve(root, output);
-if (["bruv", "bruv.exe"].includes(basename(outfile)))
-  throw new Error("Connector build must not overwrite the normal Bruv executable");
-try {
-  if ((await lstat(outfile)).isSymbolicLink()) throw new Error("Connector output must not be a symlink");
-} catch (error) {
-  if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+const normal = normalOutputForConnector(outfile);
+// Validate both destinations BEFORE compiling; never follow an output link.
+for (const path of [outfile, normal]) {
+  try {
+    const file = await lstat(path);
+    if (file.isSymbolicLink() || !file.isFile() || file.nlink > 1)
+      throw new Error("Build output must be a regular file, not a symlink or hardlink: " + path);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
 }
-// Prepare exactly the normal Pi host and runtime assets; no web build, no root
-// CLI changes, and no parallel engine/resources implementation.
+// The standalone connector build ALSO refreshes its sibling. Never leave a tiny
+// launcher pointing at an absent/stale normal executable or compile a second VM.
 await import("./prepare-assets");
-const plugins = helper
-  ? [await nativeHelperPlugin(helper, target ?? "bun-" + process.platform + "-" + process.arch)]
-  : [];
-const result = await Bun.build({
-  entrypoints: [resolve(root, "src/claude-compat/cli.ts")],
-  compile: { outfile, ...(target ? { target } : {}) } as Exclude<
-    Parameters<typeof Bun.build>[0]["compile"],
-    boolean | string | undefined
-  >,
-  minify: true,
-  plugins,
-});
-if (!result.success) {
-  for (const log of result.logs) console.error(log);
-  process.exitCode = 1;
-} else console.log("Built Bruv connector " + outfile);
+const command = [process.execPath, resolve(root, "scripts/build.ts"), "--outfile=" + normal];
+if (target) command.push("--target=" + target);
+if (helper) command.push("--live-helper=" + helper);
+const child = Bun.spawn(command, { cwd: root, stdio: ["inherit", "inherit", "inherit"] });
+const code = await child.exited;
+if (code !== 0) process.exit(code);
+await writeConnectorLauncher(outfile, target);
+console.log("Built Bruv connector launcher " + outfile);

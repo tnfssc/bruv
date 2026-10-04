@@ -24,7 +24,7 @@ export type UpdateDeps = {
   arch?: string;
   compiled?: boolean;
   check?: boolean;
-  runBinary?: (path: string, args: string[]) => Promise<string>;
+  runBinary?: (path: string, args: string[], env: NodeJS.ProcessEnv) => Promise<string>;
   rename?: typeof rename;
   onDownload?: (version: string) => void;
 };
@@ -114,12 +114,26 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
     );
   }
   const connector = join(dirname(target), "bruv-claude-compat");
-  const run = deps.runBinary ?? runBinary;
+  // Never let a caller's launcher override conceal a mismatched installed pair.
+  const probeEnv = { ...process.env };
+  delete probeEnv.BRUV_CLAUDE_COMPAT_BRUV_PATH;
+  const binaryRunner = deps.runBinary ?? runBinary;
+  const run = (path: string, args: string[], bruvPath?: string) =>
+    binaryRunner(path, args, bruvPath ? { ...probeEnv, BRUV_CLAUDE_COMPAT_BRUV_PATH: bruvPath } : probeEnv);
   if (relation <= 0) {
     let matched = false;
     if (connectorOriginal) {
       try {
-        matched = (await run(connector, ["--version"])).trim() === "bruv-claude-compat " + current;
+        let product: string | undefined;
+        try {
+          product = (await run(connector, ["--bruv-version"])).trim();
+        } catch {
+          /* The old standalone connector does not implement this flag. */
+        }
+        // Fallback only for an installed pre-migration connector, never a candidate.
+        matched =
+          product === "bruv-claude-compat " + current ||
+          (!product && (await run(connector, ["--version"])).trim() === "bruv-claude-compat " + current);
       } catch {
         /* A broken connector can be repaired from the same stable release. */
       }
@@ -174,10 +188,11 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
       await writeFile(staged, bytes, { mode, flag: "wx" });
       await chmod(staged, mode);
     }
-    // Normal Bruv prints bare semver; the connector has its own honest prefix.
+    // Product versions are independent of Claude compatibility --version output.
     if (
       (await run(join(stage, "bruv"), ["--version"])).trim() !== latest ||
-      (await run(join(stage, "bruv-claude-compat"), ["--version"])).trim() !== "bruv-claude-compat " + latest
+      (await run(join(stage, "bruv-claude-compat"), ["--bruv-version"], join(stage, "bruv"))).trim() !==
+        "bruv-claude-compat " + latest
     )
       throw new Error("Staged Bruv pair version mismatch (expected " + latest + ")");
     if (platform === "darwin" && arch === "arm64") await run(join(stage, "bruv"), ["--live-self-test"]);
@@ -239,8 +254,8 @@ function sameFile(a: Awaited<ReturnType<typeof lstat>> | undefined, b: Awaited<R
   if (!a || !b) return a === b;
   return a.dev === b.dev && a.ino === b.ino && a.size === b.size && a.mtimeMs === b.mtimeMs && a.ctimeMs === b.ctimeMs;
 }
-async function runBinary(path: string, args: string[]): Promise<string> {
-  const child = Bun.spawn([path, ...args], { stdout: "pipe", stderr: "pipe", timeout: 30_000 });
+async function runBinary(path: string, args: string[], env: NodeJS.ProcessEnv): Promise<string> {
+  const child = Bun.spawn([path, ...args], { env, stdout: "pipe", stderr: "pipe", timeout: 30_000 });
   const [stdout, stderr, code] = await Promise.all([
     new Response(child.stdout).text(),
     new Response(child.stderr).text(),

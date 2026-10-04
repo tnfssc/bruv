@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { mkdtemp, readdir, rm, stat } from "node:fs/promises";
+import { mkdtemp, readdir, rm, stat, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { run } from "./helpers";
@@ -27,6 +27,24 @@ describe("compiled bruv CLI", () => {
 
     expect(result.code).toBe(0);
     expect(result.stdout.trim()).toBe(packageVersion);
+  });
+
+  test("connector subcommand enters lazily without bootstrapping normal CLI state", async () => {
+    const result = await run([binary, "claude-compat", "--help"], { env: isolatedEnv() });
+    expect(result.code).toBe(0);
+    expect(result.stdout).toStartWith("bruv-claude-compat");
+    expect(await Bun.file(join(home, ".bruv", "runtime", packageVersion, "package.json")).exists()).toBe(false);
+    const wrapper = await run([join(root, "dist/bruv-claude-compat"), "--help"], { env: isolatedEnv() });
+    expect(wrapper.code).toBe(0);
+    expect(wrapper.stdout).toBe(result.stdout);
+  });
+
+  test("a compiled binary symlink alone still starts normal CLI, so launcher must pass subcommand", async () => {
+    const alias = join(home, "bruv-claude-compat");
+    await symlink(binary, alias);
+    const result = await run([alias, "--help"], { env: isolatedEnv() });
+    expect(result.code).toBe(0);
+    expect(result.stdout).toStartWith("bruv - AI coding assistant");
   });
 
   test("exposes branded help and uses ~/.bruv instead of ~/.pi", async () => {
@@ -104,7 +122,7 @@ describe("compiled bruv CLI", () => {
     const installed = await run([join(installDir, "bruv"), "--version"], { env: isolatedEnv() });
     expect(installed.code).toBe(0);
     expect(installed.stdout.trim()).toBe(packageVersion);
-    const connector = await run([join(installDir, "bruv-claude-compat"), "--version"], { env: isolatedEnv() });
+    const connector = await run([join(installDir, "bruv-claude-compat"), "--bruv-version"], { env: isolatedEnv() });
     expect(connector.code).toBe(0);
     expect(connector.stdout.trim()).toBe("bruv-claude-compat " + packageVersion);
   });

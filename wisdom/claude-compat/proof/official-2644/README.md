@@ -27,6 +27,11 @@ The API asset digest and separately downloaded official SHA256SUMS both match th
 
 ## Gates and assessment
 
+This table records the original five-suite historical proof. The current composed
+release gate has six suites, adding default-controls. The later hosted v0.16.3
+final-command failure and bounded harness correction are [documented separately](../../hosted-command-idle-convergence.md); its failed result is preserved in
+[hosted-v0163-command-final](hosted-v0163-command-final/result.json), not relabeled as a pass.
+
 | Gate | Evidence |
 | --- | --- |
 | Two zero-model /bruv status commands, native idle after each | [PASS](command/result.json), empty model-projection, idle screenshots |

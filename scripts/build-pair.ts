@@ -9,16 +9,15 @@ export function pairedBuildCommands(options: string[], root: string, bun: string
     throw new Error("Paired output must name the normal bruv binary (optionally with a target suffix)");
   const connectorOutput = dirname(resolve(root, output));
   const connector = resolve(connectorOutput, name.replace(/^bruv/, "bruv-claude-compat"));
-  const builds: [string, string][] = [
-    ["build.ts", resolve(root, output)],
-    ["build-claude-compat.ts", connector],
+  // The standalone connector build refreshes its normal sibling exactly once.
+  return [
+    [
+      bun,
+      resolve(root, "scripts", "build-claude-compat.ts"),
+      ...options.filter((arg) => !arg.startsWith("--outfile=")),
+      "--outfile=" + connector,
+    ],
   ];
-  return builds.map(([script, outfile]) => [
-    bun,
-    resolve(root, "scripts", script),
-    ...options.filter((arg) => !arg.startsWith("--outfile=")),
-    "--outfile=" + outfile,
-  ]);
 }
 
 if (import.meta.main) {

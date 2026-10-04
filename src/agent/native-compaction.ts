@@ -1,3 +1,4 @@
+import { selectDiskBackedEntries } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { isDeepStrictEqual } from "node:util";
@@ -506,13 +507,21 @@ function nativeAssistant(message: AgentMessage, d: NativeCodexCompactionDetails,
     timestamp: message.timestamp,
   } as AgentMessage;
 }
-function nativeEntriesInContext(ctx: ExtensionContext): CompactionEntry[] {
+function compactionsInContext(ctx: ExtensionContext): CompactionEntry[] {
   // SDK projection emits only the newest checkpoint at index zero. Older
   // compactions in its kept range are archived entries, not replay items.
-  const entry = ctx.sessionManager.buildContextEntries()[0];
-  return entry?.type === "compaction" && isRecord(entry.details) && entry.details.strategy === "codex-native"
-    ? [entry]
-    : [];
+  return (
+    selectDiskBackedEntries(
+      ctx.sessionManager,
+      "context",
+      (meta, index) => index === 0 && meta.type === "compaction",
+    ) ?? ctx.sessionManager.buildContextEntries().slice(0, 1)
+  ).filter((e): e is CompactionEntry => e.type === "compaction");
+}
+function nativeEntriesInContext(ctx: ExtensionContext): CompactionEntry[] {
+  return compactionsInContext(ctx).filter(
+    (entry) => isRecord(entry.details) && entry.details.strategy === "codex-native",
+  );
 }
 function nativeDetailsInContext(ctx: ExtensionContext): NativeCodexCompactionDetails[] {
   return nativeEntriesInContext(ctx).flatMap((e) => (isNativeCodexCompactionDetails(e.details) ? [e.details] : []));
@@ -520,10 +529,13 @@ function nativeDetailsInContext(ctx: ExtensionContext): NativeCodexCompactionDet
 /** Bridge to the pinned pi-ai converter. thinkingSignature carries internal replay
  * data. It does not mean pi-ai officially supports compaction items. */
 export function adaptNativeCompactionMessages(messages: AgentMessage[], ctx: ExtensionContext): AgentMessage[] {
-  const compactions = ctx.sessionManager
-    .buildContextEntries()
-    .slice(0, 1)
-    .filter((e) => e.type === "compaction");
+  return adaptCompactionMessages(messages, ctx, compactionsInContext(ctx));
+}
+function adaptCompactionMessages(
+  messages: AgentMessage[],
+  ctx: ExtensionContext,
+  compactions: CompactionEntry[],
+): AgentMessage[] {
   let index = 0;
   return messages.flatMap((message) => {
     if (message.role !== "compactionSummary") return message;
@@ -629,9 +641,10 @@ export function registerNativeCodexCompaction(
   let blockOrdinaryRequest: string | undefined;
   let generation = 0;
   pi.on("context", (event, ctx) => {
-    const entries = nativeEntriesInContext(ctx);
+    const compactions = compactionsInContext(ctx);
+    const entries = compactions.filter((entry) => isRecord(entry.details) && entry.details.strategy === "codex-native");
     const invalid = entries.some((e) => !isNativeCodexCompactionDetails(e.details));
-    const checkpoints = nativeDetailsInContext(ctx);
+    const checkpoints = entries.flatMap((e) => (isNativeCodexCompactionDetails(e.details) ? [e.details] : []));
     const incompatible = checkpoints.find((d) => !canReplayNativeCheckpoint(d, ctx.model));
     if (invalid || incompatible) {
       bestEffortDiagnostic(ctx, {
@@ -662,7 +675,7 @@ export function registerNativeCodexCompaction(
         messages: structuredClone(event.messages),
       };
     }
-    return { messages: adaptNativeCompactionMessages(event.messages, ctx) };
+    return { messages: adaptCompactionMessages(event.messages, ctx, compactions) };
   });
   pi.on("before_provider_headers", (event) => {
     if (captured) captured.headers = { ...event.headers };

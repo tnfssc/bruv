@@ -50,7 +50,14 @@ async function fixture(env: Record<string, string | undefined> = {}) {
       const name = prefix + "-" + platform;
       const version = prefix === "bruv" ? "0.16.2" : "bruv-claude-compat " + (env.WRONG_VERSION ? "0.16.1" : "0.16.2");
       const bytes =
-        '#!/bin/sh\necho probe >> "$FIXTURE/probes"\n[ "$1" != --live-self-test ] || exit 0\necho "' + version + '"\n';
+        '#!/bin/sh\necho probe >> "$FIXTURE/probes"\n' +
+        (prefix === "bruv"
+          ? '[ "$1" != --live-self-test ] || exit 0\necho "' + version + '"\n'
+          : 'case "$1" in\n--bruv-version) echo "' +
+            version +
+            '";;\n--version) echo "2.1.280 (Bruv compatibility; bruv ' +
+            version.replace("bruv-claude-compat ", "") +
+            ')";;\n*) exit 64;;\nesac\n');
       await Bun.write(join(assets, name), bytes);
       const hash =
         env.BAD_CHECKSUM || (env.BAD_CONNECTOR && prefix === "bruv-claude-compat")

@@ -16,9 +16,19 @@ import themeSchema from "../runtime-assets/theme/theme-schema.json" with { type:
 import { withBruvSystemPrompt } from "./system-prompt";
 import { formatThrownValue } from "./typescript/error-diagnostic";
 import { INTERNAL_TYPESCRIPT_RUNNER_ARG, runTypeScriptFromStdin } from "./typescript/runner";
-import { updateBruv } from "./update";
+import { isCompiledInvocation, updateBruv } from "./update";
 
 const cliArgs = process.argv.slice(2);
+// Enter the connector before normal CLI bootstrap. Child work still starts this
+// executable without the subcommand and uses the ordinary CLI path.
+if (cliArgs[0] === "claude-compat") {
+  // This entry is already the normal binary, even under a release target name.
+  // Preserve explicit overrides; source Bun entrypoints still use connector defaults.
+  if (isCompiledInvocation()) process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH ??= process.execPath;
+  const { runConnector } = await import("./claude-compat/cli");
+  process.exit(await runConnector(cliArgs.slice(1)));
+}
+
 // Hidden offline transport diagnostic. No normal CLI path reaches this branch.
 if (cliArgs[0] === "--offline-openai-transport-probe") {
   if (cliArgs.length !== 1 || process.env.BRUV_OFFLINE_OPENAI_TRANSPORT_PROBE !== "loopback-fake-key") {
@@ -219,11 +229,21 @@ const [
   import("./live/extension"),
   import("./remote/extension"),
 ]);
-const [{ installQuietStartup, installStartupEditor }, { installConversationDensity }, { installQuietToolUi }] =
-  await Promise.all([import("./ui/startup"), import("./ui/conversation-density"), import("./ui/quiet-tool-ui")]);
+const [
+  { installQuietStartup, installStartupEditor },
+  { installConversationDensity },
+  { installQuietToolUi },
+  { installSettledExecuteRendering },
+] = await Promise.all([
+  import("./ui/startup"),
+  import("./ui/conversation-density"),
+  import("./ui/quiet-tool-ui"),
+  import("./ui/settled-execute-render"),
+]);
 const restoreStartupSettings = installQuietStartup();
 const restoreStartupEditor = installStartupEditor();
 const restoreQuietToolUi = installQuietToolUi();
+const restoreSettledExecuteRendering = installSettledExecuteRendering();
 const restoreConversationDensity = installConversationDensity();
 const { installRollingActivity } = await import("./ui/rolling-activity");
 const restoreRollingActivity = installRollingActivity();
@@ -288,6 +308,7 @@ try {
 } finally {
   restoreRollingActivity();
   restoreConversationDensity();
+  restoreSettledExecuteRendering();
   restoreQuietToolUi();
   restoreStartupEditor();
   restoreStartupSettings();

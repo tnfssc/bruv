@@ -102,6 +102,7 @@ describe("manual release preparation", () => {
     }
     expect(release).toContain("--live-helper=./artifacts/release/mac-helper/live-audio");
     expect(release).toContain("bun scripts/verify-update.ts dist/release/bruv-linux-x64");
+    expect(release).toContain("--legacy-updater");
     const native = jobs["linux-browser-boot"]!;
     expect(native.needs).toContain("release");
     expect(native.if).toContain("needs.release.result == 'success'");
@@ -113,12 +114,16 @@ describe("manual release preparation", () => {
     );
     expect(acceptance).toContain('BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64"');
     expect(acceptance).toContain("dist/release/bruv-claude-compat-linux-x64 --version");
-    expect(acceptance).toContain("bruv-claude-compat $version");
+    expect(acceptance).toContain("dist/release/bruv-claude-compat-linux-x64 --bruv-version");
+    expect(acceptance).toContain("2.1.280 (Bruv compatibility; bruv $version)");
     // Setup exports GITHUB_ENV for the next step; it cannot share a run block.
     expect(acceptance).not.toContain("setup-native-release-gate.sh");
     const mac = jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");
     expect(mac).toContain("dist/release/bruv-claude-compat-darwin-arm64 --version");
+    expect(mac).toContain("dist/release/bruv-claude-compat-darwin-arm64 --bruv-version");
+    expect(mac).toContain("2.1.280 (Bruv compatibility; bruv $version)");
     expect(mac).toContain("bun scripts/verify-update.ts dist/release/bruv-darwin-arm64");
+    expect(mac).toContain("--legacy-updater");
     expect(mac).toContain("--live-self-test");
     for (const gate of ["release", "linux-browser-boot", "mac-release-smoke"]) {
       expect(jobs.publish!.needs).toContain(gate);

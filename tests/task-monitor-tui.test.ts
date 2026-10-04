@@ -1,9 +1,9 @@
 import { expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { SessionManager } from "@earendil-works/pi-coding-agent";
-import { prepareAgentSession } from "../src/tasks/agent-session";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { SessionManager } from "@earendil-works/pi-coding-agent";
+import { prepareAgentSession } from "../src/tasks/agent-session";
 import { capturePane, frameContaining, pollFrame, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
 test("real TUI /ps selects live jobs and only stops the confirmed target", async () => {
@@ -149,9 +149,15 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     expect(frame).toContain("FIXTURE_READY");
     await tmux("send-keys", "-t", name, "-l", "/ps");
     await tmux("send-keys", "-t", name, "Enter");
-    frame = await pollFrame(capture, (frame) => frame.includes("ALPHA") && frame.includes("BETA"), 100);
+    // The transcript already names both jobs before /ps opens. Wait for the
+    // focused monitor's own view/controls before sending its inspect key.
+    frame = await frameContaining(capture, ["Running jobs", "Live preview", "Enter/i inspect", "ALPHA", "BETA"]);
     expect(frame).toContain("ALPHA");
     expect(frame).toContain("BETA");
+    const selectedTaskId = frame
+      .slice(frame.lastIndexOf("Running jobs"))
+      .match(/› (task_\w+) \[command\] .*ALPHA-live/)?.[1];
+    expect(selectedTaskId).toBeDefined();
     await tmux("send-keys", "-t", name, "Enter");
     // A spawned job can be listed before its first stdout chunk arrives. Wait for
     // output in the actual inspect view, not a guessed process-startup delay.
@@ -160,6 +166,7 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     expect(frame).toContain("ALPHA");
     const alphaTaskId = frame.match(/Inspect (task_\w+)/)?.[1];
     expect(alphaTaskId).toBeDefined();
+    expect(alphaTaskId).toBe(selectedTaskId);
     await tmux("send-keys", "-t", name, "-l", "i");
     frame = await pollFrame(capture, (frame) => frame.includes("Running jobs") && !frame.includes("Inspect task_"));
     expect(frame).toContain("Running jobs");
@@ -186,14 +193,14 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     frame = await pollFrame(capture, (frame) => {
       const running = frame.slice(frame.lastIndexOf("Running jobs"));
       return (
-        frame.includes("⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled") &&
+        frame.includes("1 cancelled") &&
         running.includes(alphaTaskId!) &&
         running.includes("ALPHA") &&
         !running.includes(stoppedTaskId!) &&
         !running.includes("BETA")
       );
     });
-    expect(frame).toContain("⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled");
+    expect(frame).toContain("1 tool called · 1 cancelled · 1 running");
     const remainingJobs = frame.slice(frame.lastIndexOf("Running jobs"));
     expect(remainingJobs).toContain(alphaTaskId!);
     expect(remainingJobs).toContain("ALPHA");
@@ -203,6 +210,15 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     await tmux("send-keys", "-t", name, "Escape");
     frame = await pollFrame(capture, (frame) => !frame.includes("Running jobs"));
     expect(frame).not.toContain("Running jobs");
+    // The collapsed source group summarizes outcomes. Open its child rows to
+    // retain the exact original cancelled-job proof, without expanding details.
+    await tmux("send-keys", "-t", name, "-l", "/activity");
+    await tmux("send-keys", "-t", name, "Enter");
+    await frameContaining(capture, ["Activity —", "Esc returns"]);
+    await tmux("send-keys", "-t", name, "Enter");
+    frame = await frameContaining(capture, "⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled");
+    expect(frame).not.toContain("⊘ sh -c 'while :; do echo ALPHA-live; sleep 1; done' — cancelled");
+    expect(frame).not.toContain("console.log");
   } finally {
     server.stop(true);
     await tmux("kill-server").catch(() => ({ code: 1, stdout: "", stderr: "" }));

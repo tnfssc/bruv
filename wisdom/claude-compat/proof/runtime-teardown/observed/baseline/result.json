@@ -1,0 +1,17 @@
+{
+  "scenario": "aligned",
+  "t3Sha256": "53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48",
+  "connectorSha256": "2b8b876124554f4d5e5924e5f75e3e0a7df3a2fe562f8e81a07a246c3c48c9c3",
+  "normalSha256": "0b55e253086e909569d0c9f016f91882628e7636d0d8c4b07155c28c3eb30325",
+  "parentEnvironment": [
+    "HOME",
+    "PATH",
+    "TMPDIR"
+  ],
+  "modelCalls": 1,
+  "send": true,
+  "reply": true,
+  "idle": true,
+  "modelErrors": [],
+  "t3Sha256After": "53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48"
+}

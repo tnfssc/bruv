@@ -6,7 +6,8 @@ import { join } from "node:path";
 const installer = join(import.meta.dir, "..", "scripts/install-local.sh");
 const roots: string[] = [];
 const candidate =
-  '#!/bin/sh\necho "$*" >> "$PROBE_LOG"\ncase "$1" in\n--version) case "$0" in *claude-compat*) echo "bruv-claude-compat 1.2.3";; *) echo "1.2.3";; esac; exit "${VERSION_STATUS:-0}";;\n--live-self-test) exit "${SELF_TEST_STATUS:-0}";;\n*) exit 99;;\nesac\n';
+  '#!/bin/sh\necho "$1" >> "$PROBE_LOG"\ncase "$1" in\n--bruv-version) echo "bruv-claude-compat 1.2.3"; exit "${VERSION_STATUS:-0}";;\n--version) echo "1.2.3"; exit "${VERSION_STATUS:-0}";;\n--live-self-test) exit "${SELF_TEST_STATUS:-0}";;\n*) exit 99;;\nesac\n';
+const launcher = '#!/bin/sh\nexec "${BRUV_CLAUDE_COMPAT_BRUV_PATH:-$(dirname "$0")/bruv}" "$@"\n';
 afterEach(async () => {
   await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
@@ -18,7 +19,7 @@ async function sandbox() {
   await cp(installer, join(root, "scripts/install-local.sh"));
   await chmod(join(root, "scripts/install-local.sh"), 0o755);
   await writeFile(join(root, "dist/bruv"), candidate, { mode: 0o755 });
-  await writeFile(join(root, "dist/bruv-claude-compat"), candidate, { mode: 0o755 });
+  await writeFile(join(root, "dist/bruv-claude-compat"), launcher, { mode: 0o755 });
   await writeFile(
     join(root, "tools/uname"),
     '#!/bin/sh\nif [ "$1" = "-s" ]; then echo "$HOST_OS"; else echo "$HOST_ARCH"; fi\n',
@@ -58,7 +59,7 @@ describe("local installer", () => {
     expect(await run(root)).toBe(0);
     expect(await readFile(join(root, "bin/bruv"), "utf8")).toBe(candidate);
     expect((await readdir(join(root, "bin"))).sort()).toEqual(["bruv", "bruv-claude-compat"]);
-    expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--version\n");
+    expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--bruv-version\n");
     expect(await Bun.file(join(root, "builds")).exists()).toBe(false);
   });
 
@@ -83,14 +84,14 @@ describe("local installer", () => {
     const root = await sandbox();
     expect(await run(root, { BRUV_SKIP_BUILD: "0", HOST_OS: "Darwin", HOST_ARCH: "arm64" })).toBe(0);
     expect(await readFile(join(root, "builds"), "utf8")).toBe("helper\nbun run build --live-helper=dist/live-audio\n");
-    expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--version\n--live-self-test\n");
+    expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--bruv-version\n--live-self-test\n");
   });
 
   test("trusted Mac prebuilt skips both builds, not verification", async () => {
     const root = await sandbox();
     expect(await run(root, { HOST_OS: "Darwin", HOST_ARCH: "arm64" })).toBe(0);
     expect(await Bun.file(join(root, "builds")).exists()).toBe(false);
-    expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--version\n--live-self-test\n");
+    expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--bruv-version\n--live-self-test\n");
   });
 
   for (const [os, arch] of [
@@ -101,7 +102,7 @@ describe("local installer", () => {
       const root = await sandbox();
       expect(await run(root, { BRUV_SKIP_BUILD: "0", HOST_OS: os!, HOST_ARCH: arch! })).toBe(0);
       expect(await readFile(join(root, "builds"), "utf8")).toBe("bun run build\n");
-      expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--version\n");
+      expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--bruv-version\n");
     });
 });
 
@@ -118,7 +119,7 @@ test("missing connector preserves the existing pair and removes staging", async 
 
 test("version mismatch preserves both installed binaries", async () => {
   const root = await sandbox();
-  await writeFile(join(root, "dist/bruv-claude-compat"), '#!/bin/sh\necho "bruv-claude-compat 9.9.9"\n', {
+  await writeFile(join(root, "dist/bruv-claude-compat"), '#!/bin/sh\necho "9.9.9"\n', {
     mode: 0o755,
   });
   await writeFile(join(root, "bin/bruv"), "old bruv");
@@ -126,4 +127,32 @@ test("version mismatch preserves both installed binaries", async () => {
   expect(await run(root)).not.toBe(0);
   expect(await readFile(join(root, "bin/bruv"), "utf8")).toBe("old bruv");
   expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe("old connector");
+});
+
+test("inherited launcher override cannot replace staged pair verification", async () => {
+  const root = await sandbox();
+  expect(await run(root, { BRUV_CLAUDE_COMPAT_BRUV_PATH: "/does-not-exist" })).toBe(0);
+  expect(await readFile(join(root, "probes"), "utf8")).toBe("--version\n--bruv-version\n");
+});
+
+for (const existing of [false, true])
+  test("local second rename failure restores old install (connector: " + existing + ")", async () => {
+    const root = await sandbox();
+    await writeFile(join(root, "bin/bruv"), "old bruv", { mode: 0o751 });
+    if (existing) await writeFile(join(root, "bin/bruv-claude-compat"), "old connector", { mode: 0o750 });
+    await writeFile(
+      join(root, "tools/mv"),
+      '#!/bin/sh\ncase "$2" in */.bruv-install-*/bruv) exit 1;; esac\nexec /bin/mv "$@"\n',
+      { mode: 0o755 },
+    );
+    expect(await run(root)).not.toBe(0);
+    expect(await readFile(join(root, "bin/bruv"), "utf8")).toBe("old bruv");
+    if (existing) expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe("old connector");
+    expect((await readdir(join(root, "bin"))).sort()).toEqual(existing ? ["bruv", "bruv-claude-compat"] : ["bruv"]);
+  });
+
+test("relative local install directory still supplies an absolute staged override", async () => {
+  const root = await sandbox();
+  expect(await run(root, { BRUV_INSTALL_DIR: "bin" })).toBe(0);
+  expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe(launcher);
 });

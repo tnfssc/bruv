@@ -15,7 +15,7 @@ fresh RUNNER_TEMP directories. The browser probe pins Playwright-core 1.63.0,
 matching the validated local proof runtime. scripts/run-native-release-gate.mjs composes the
 validated command-idle, same-root actual local-child/reply/idle, human permission
 and saved-question, app delegation, and default steering/Stop/resume suites,
-followed by command-idle again. Every suite uses the actual final paired binaries
+followed by command-idle again. Every suite uses the actual final binary and connector launcher
 and must produce passing unchanged-official evidence. No runtime assets are
 copied into product/build/install; CI downloads are test dependencies only.
 The paired updater, native CLI version checks, Mac helper and licensing gates
@@ -25,7 +25,7 @@ Generated bruv web guidance uses this exact release/source, absolute paired path
 loopback server and isolated SDK history. Auth sharing is explicit and no secrets
 are copied; separate auth is still available. bruv update updates the sibling
 pair; T3 updates independently and different releases need revalidation. Known
-stale approval requires **Decline**; unsupported version/update banners remain;
+stale approval requires **Decline**; host upgrade advice is not a product-update contract;
 Live is same-host opt-in, not browser audio transport. No fake Claude auth/version.
 
 **The dated preparation/testing records below are historical, not the current
@@ -39,17 +39,29 @@ edit src/claude-compat, native task/Live/source hooks or server task ownership.
 ## Artifact/build contract
 
 - package.json exposes normal bruv and bruv-claude-compat. Default build prepares
-  Pi assets then compiles both with scripts/build-pair.ts. The independent connector
-  build remains available; a normal CLI checksum was unchanged by that build.
+  Pi assets then compiles normal Bruv once and writes a tiny POSIX exec connector
+  launcher with scripts/build-pair.ts. The launcher delegates to the sibling
+  `bruv claude-compat`; it contains no second compiled runtime.
 - Final normal build has no buildWeb/prepareWebPayload/archive dependency and
   rejects the obsolete reuse-web/reuse-packed-web flags. Embedded web startup
   extraction/settings-seeding/fallback is removed. Historical integration build
   tools/archive tests/proofs remain unmodified as provenance.
-- Release manifest: both binaries for linux-x64, linux-arm64, darwin-arm64 and
-  android-arm64, each with .sha256. Shared LICENSE, THIRD_PARTY_NOTICES.md,
-  generated THIRD_PARTY_LICENSES.txt and SOURCE.txt. Native macOS helper embedding
-  is forwarded to BOTH compilers. Normal updater now owns the sibling pair; see [paired update follow-up](paired-update.md).
-- Local install stages and version-checks BOTH binaries before replacing either;
+- Release manifest stays at 20 assets: one compiled binary plus its launcher for
+  linux-x64, linux-arm64, darwin-arm64 and android-arm64, each with .sha256. Shared
+  LICENSE, THIRD_PARTY_NOTICES.md, generated THIRD_PARTY_LICENSES.txt and SOURCE.txt.
+  Native macOS helper embedding occurs once in normal Bruv. Normal updater owns
+  the sibling pair; see [paired update follow-up](paired-update.md).
+- Release-suffixed launchers resolve matching suffixed siblings; installed canonical
+  names resolve `bruv`. Linux/macOS require `/bin/sh`; Android requires
+  `/system/bin/sh`. A Bun 1.4.2 cross-compiled Android probe has ELF interpreter
+  `/system/bin/linker64` and Android API 28 metadata: this is native Android, not
+  glibc Linux/proot. The release workflow checks that actual Android interpreter.
+- Connector `--version` reports `2.1.280 (Bruv compatibility; bruv <product>)`.
+  Product packaging/update checks must use connector `--bruv-version`, matching
+  normal `bruv --version`; protocol compatibility is not the product version.
+  Only the older updater’s exact canonical `--version` staging probe in a private
+  `.bruv-update-*` directory retains the truthful legacy product label.
+- Local install stages and product-version-checks the binary and launcher before replacing either;
   missing connector, mismatch or failed helper self-test preserves installed files.
   Stop active sessions first; two renames are not a filesystem transaction.
 - CI no longer prepares patched T3 source/pnpm/web archive/cache. Release native

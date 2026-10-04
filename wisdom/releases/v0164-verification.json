@@ -1,0 +1,142 @@
+{
+  "version": "v0.16.4",
+  "url": "https://github.com/tnfssc/bruv/releases/tag/v0.16.4",
+  "publishedAt": "2026-10-04T13:46:10Z",
+  "source": "dd075b0a9d5d9c37e386ef0a7fd3bad8b2950d48",
+  "run": {
+    "id": 37206254734,
+    "url": "https://github.com/tnfssc/bruv/actions/runs/37206254734",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "prepare-manual",
+        "conclusion": "success"
+      },
+      {
+        "name": "Native macOS arm64 helper (no devices)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Linux, macOS, and Android release",
+        "conclusion": "success"
+      },
+      {
+        "name": "Final Linux pair against unchanged official 2644 (bounded gates)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Actual Mac release binary and bruv updater (no devices)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Publish stable release after browser, native and updater gates",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "draft": false,
+  "prerelease": false,
+  "assets": [
+    {
+      "name": "bruv-android-arm64",
+      "size": 99546880,
+      "digest": "sha256:01d558f3713a00959a06a03c25c70fb0ce68c46790f49845c4408c9a25d3b40e"
+    },
+    {
+      "name": "bruv-android-arm64.sha256",
+      "size": 85,
+      "digest": "sha256:bcf5eb2c5f05d818c72ca9d739318ab6345c7b765d2e47840b0667412b9c8c2a"
+    },
+    {
+      "name": "bruv-claude-compat-android-arm64",
+      "size": 1838,
+      "digest": "sha256:2da038d36ccba403e18e3a5f06ead2fde021a3eebf5ce04baed7a064487d31d2"
+    },
+    {
+      "name": "bruv-claude-compat-android-arm64.sha256",
+      "size": 99,
+      "digest": "sha256:bcdadc0d2c068ba3247fbc02fad1db27eb8baf6bef1c4c72be1cefdbce3ca204"
+    },
+    {
+      "name": "bruv-claude-compat-darwin-arm64",
+      "size": 1831,
+      "digest": "sha256:03cc17e7058b7edaff83567590e51a92740671887703d0ab7aa4db10f86fae3d"
+    },
+    {
+      "name": "bruv-claude-compat-darwin-arm64.sha256",
+      "size": 98,
+      "digest": "sha256:54b7e1a2711461243138c54807ba72ff072c32fe782ba6574953d7c98835166f"
+    },
+    {
+      "name": "bruv-claude-compat-linux-arm64",
+      "size": 1831,
+      "digest": "sha256:03cc17e7058b7edaff83567590e51a92740671887703d0ab7aa4db10f86fae3d"
+    },
+    {
+      "name": "bruv-claude-compat-linux-arm64.sha256",
+      "size": 97,
+      "digest": "sha256:3cac29d8400ef52e7a8da8a5b28b378f67843e7a9d25869090a96997d73dc7d4"
+    },
+    {
+      "name": "bruv-claude-compat-linux-x64",
+      "size": 1831,
+      "digest": "sha256:03cc17e7058b7edaff83567590e51a92740671887703d0ab7aa4db10f86fae3d"
+    },
+    {
+      "name": "bruv-claude-compat-linux-x64.sha256",
+      "size": 95,
+      "digest": "sha256:23a9900cd56a274a5b72869457ab116f1dae25d9ab8f30298750746b10a20bb2"
+    },
+    {
+      "name": "bruv-darwin-arm64",
+      "size": 73488114,
+      "digest": "sha256:4039222b694f72a7cd38a8d42b00af9ae1fcc70bf9e922db5a9907d3f81af2f6"
+    },
+    {
+      "name": "bruv-darwin-arm64.sha256",
+      "size": 84,
+      "digest": "sha256:274e1906db59b0201bba8427747496faccaf075c3811f1cd1cbf732a0bf52b9b"
+    },
+    {
+      "name": "bruv-linux-arm64",
+      "size": 92326184,
+      "digest": "sha256:d3ef7b00742469d6a813c4c8867ba050514bc137424cef59bbbefe5a20a01195"
+    },
+    {
+      "name": "bruv-linux-arm64.sha256",
+      "size": 83,
+      "digest": "sha256:6b0271014b93b978f249c4aaca3f6e4901a96518a259ac26bbad7c275fcf67d5"
+    },
+    {
+      "name": "bruv-linux-x64",
+      "size": 92354016,
+      "digest": "sha256:7c8e963ef2682615340e81bc76ee4a16d79f7ae5b8622117cc74a1d5565ce768"
+    },
+    {
+      "name": "bruv-linux-x64.sha256",
+      "size": 81,
+      "digest": "sha256:68c4035d158c32519b24e0f868c43d47b79ff84b5e70f2e4e8efede223f4586c"
+    },
+    {
+      "name": "LICENSE",
+      "size": 1081,
+      "digest": "sha256:efed5aae7bdeb998d5ffcd69133ce61f0cdf9e010cdb84348947cc99ed5787a0"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 811,
+      "digest": "sha256:2338bbcf1fcc91f76592463156a916a36ff2a4aa45cf940b8555707ea1630270"
+    },
+    {
+      "name": "THIRD_PARTY_LICENSES.txt",
+      "size": 657248,
+      "digest": "sha256:c36865f0dc9a80f42c6758bc0f5e3c32477b53f307cfa6bc43138e33aa01e4b1"
+    },
+    {
+      "name": "THIRD_PARTY_NOTICES.md",
+      "size": 1612,
+      "digest": "sha256:6193b6ccc9acd5d408323208702a4b942199783969da2b64cee36f1d0687057e"
+    }
+  ],
+  "method": "Verified successful gated run, tag commit and published release metadata; no redundant binary downloads."
+}

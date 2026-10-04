@@ -1,6 +1,6 @@
 # Provider-native fast mode
 
-Die's initial native fast mode is an explicit, session-local provider request setting.
+Bruv's native fast mode is an explicit, session-local provider request setting.
 It is separate from `/mode fast` and sub-agent profile `fast`: it doesn't change the model, thinking level, or instructions. New supported CLI/SSH subagents inherit the parent’s active fast setting.
 
 ## Commands and consent
@@ -20,7 +20,7 @@ The separate T3-native task backend does not accept this launch setting yet. Its
 
 Supported surfaces, not model aliases, determine the wire tier:
 
-- OpenAI API, official `openai` Responses endpoint with API-key auth: `service_tier: "fast"`.
+- OpenAI API, official `openai` Responses endpoint with API-key auth: `service_tier: "priority"`, matching Codex Fast on API-key traffic too.
 - Codex, official `openai-codex` endpoint with ChatGPT sign-in: `service_tier: "priority"`, matching the official Codex client's Fast wire mapping.
 
 Die forwards the selected model alias unchanged and lets the provider validate model/tier availability. There is no hardcoded model allowlist or prefix check. The old catalog gate rejected `gpt-6.1-sol` even on the supported Codex surface; adding one alias would only postpone the same failure for the next catalog change. An alias being forwarded does not guarantee premium support: provider errors remain provider errors, with no automatic retry or model swap.
@@ -51,21 +51,18 @@ Only agent requests routed through the bound `ModelRuntime` have this guarantee.
 Calling a low-level provider module's `streamSimple` API directly bypasses die and isn't a supported native-fast integration.
 Registry auth, headers/hooks, context filtering, sampling/reasoning settings, tools, and SSE/WebSocket transport are otherwise unchanged.
 
-The footer bolt is provider status, not a working spinner:
+The footer bolt reports the selected mode, like official Codex, not delivery evidence or a working spinner:
 
-- ` fast on (requested)`: enabled, but no response tier has been seen yet.
-- ` fast confirmed`: this request returned `priority` or `fast`.
-- ` fast downgraded (default)`: the response returned a non-fast tier.
+- ` fast on`: the authorized Fast setting is selected; requests use `priority`.
 - ` fast off`: the user explicitly selected default/standard for this model.
 
-Pi 1.0 exposes raw stream events. The guard watches response.completed through a request-bound onProviderStreamEvent callback and forwards the existing callback. It uses the returned service_tier, never the requested tier, as proof. Missing/unknown tiers stay requested. Opt-out, model/session changes, and shutdown cannot be overwritten by a stale reply. Standard compaction does not change fast status. Response evidence is not persisted; reopening starts at requested until another reply arrives.
-It performs no automatic standard retry, upgrade, or model swap.
+There is no response-tier observer or confirmation/downgrade state. Official Codex does not classify `response.service_tier` for this badge. A returned `default`, missing tier, or unknown tier does not turn the selected mode off. Existing raw provider-event callbacks remain untouched. Resuming reads the selected setting; stale responses cannot change it. No automatic retry, upgrade, or model swap.
 
 ## Cost and compaction policy
 
-Codex documentation describes model-dependent ChatGPT credit multipliers, while API Fast uses separate token pricing.
-Die doesn't invent or display credit estimates.
-Pi 1.0 prices both priority and API fast responses. The footer uses its usage.cost totals without another multiplier. Fast sessions show a dollar catalog estimate with ~, not a permanent $?. This is not a ChatGPT credit estimate or an invoice. If the response omits its tier, Pi prices the requested tier; status still stays requested. Historical fast usage remains marked as an estimate after opt-out.
+Official Codex's optional thread credits and dollar estimates come from account usage data, not a local token multiplier. Bruv has no equivalent account-usage integration. It retains Pi's `usage.cost` catalog totals, without adding a multiplier or inventing ChatGPT credits. Fast sessions show `$…~`; the detailed label is now `(catalog estimate)`, not `(fast estimate)`. Historical estimates keep their marker after opt-out. This is not an invoice or a guarantee of fast delivery.
+
+Pinned Pi 1.0 has model-dependent hardcoded tier multipliers. Its lower-level Codex stream resolver substitutes requested priority for a returned default. But both providers' `streamSimple` wrappers drop the `serviceTier` pricing fallback option in `buildBaseOptions`; our concrete payload guard still writes the correct wire tier. Actual guarded WebSocket default-response tests produce base catalog cost, while priority-response tests produce tier-priced catalog cost. Missing/default response tiers therefore cannot establish a premium price either. Leave those SDK estimates alone; do not mistake them for upstream account prices. A future pricing change needs provider/account evidence, not another guessed factor.
 Provider billing is the source of truth.
 
 Both plaintext and native Codex compaction explicitly send `service_tier: "default"`, even if an ordinary captured request was fast.
@@ -74,7 +71,7 @@ No tier from a captured ordinary request leaks into compaction.
 
 ## Source evidence
 
-Sources for provider mechanics and wire mapping (not a model capability allowlist):
+Historical sources (the current source audit below supersedes earlier response-tier status and API `fast` decisions):
 
 - OpenAI API Fast mode: https://developers.openai.com/api/docs/guides/fast-mode
 - Pinned Codex commit `ad931a45b201e3877d6ba542ba5dbbd85e7e31b4` request mapping (`Fast => "priority"`, while both `fast` and `priority` parse as Fast): https://github.com/openai/codex/blob/ad931a45b201e3877d6ba542ba5dbbd85e7e31b4/codex-rs/protocol/src/config_types.rs#L527-L550
@@ -119,3 +116,38 @@ Reproduced locally: placement suite 4 pass / 9 fail. The helper now returns fals
 Corrected release run: https://github.com/tnfssc/bruv/actions/runs/37144547603 from 0249ae6c on develop. Watch log: /home/tnfssc/.bruv/release-v0.15.29-retry-watch.log. Await all gates, then check publication and assets. Do not push further docs while this run owns the prepared SHA.
 
 Published v0.15.29 at 2026-10-03T18:42:13Z from 0249ae6c1a5314011fc489476a3197f5bea9fb31. Corrected Release run 37144547603 passed all gates. Stable release metadata and all 12 nonempty assets verified. See [final release record](../releases/v01529-fast-mode.md). No install, redundant binary download, or parent-working-tree change.
+
+## Official Codex source alignment (2026-10-04)
+
+Owned worktree: `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_d63be25a`.
+Branch: `bruv/match-native-fast-mode-to-official-codex-d63be25a`.
+Fetched with `git clone --depth=1 https://github.com/openai/codex.git /tmp/bruv-codex-fast-upstream` and pinned HEAD **afb436df8b70bb5bc57b86d9a3e829968988cd21** (commit timestamp 2026-10-04T07:12:06Z). This audit used source, not guessed documentation.
+
+### Exact source references and comparison
+
+All links pin that SHA:
+
+- [protocol/src/config_types.rs L526-L553](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/protocol/src/config_types.rs#L526-L553): Fast serializes to `priority`; fast/priority parse as Fast; default is the explicit standard-selection sentinel. Bruv now sends priority on both official surfaces, rather than API fast / Codex priority.
+- [core/src/client.rs L981-L1015](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/core/src/client.rs#L981-L1015) and [protocol/src/openai_models.rs L984-L1011](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/protocol/src/openai_models.rs#L984-L1011): catalog filters request tiers and omits the default sentinel on the wire. Bruv's model type lacks this live service-tier catalog. Keep provider-owned alias validation; no hardcoded capability guesses. Keep explicit wire default for opt-out and compaction: that existing no-premium boundary is not incompatible with upstream standard selection.
+- [tui/src/service_tier_resolution.rs L7-L74](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/tui/src/service_tier_resolution.rs#L7-L74) and [tui/src/chatwidget/service_tiers.rs L13-L56](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/tui/src/chatwidget/service_tiers.rs#L13-L56): UI uses effective selected tier, not response evidence.
+- [tui/src/chatwidget/status_surfaces.rs L796-L817](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/tui/src/chatwidget/status_surfaces.rs#L796-L817): Fast on/off checks current selected priority. Bruv removes confirmed/downgraded/requested labels, callback wrapping, and response state. Compact width uses bolt-fast/off, without checkmarks or question marks. Other footer fields unchanged.
+- [codex-api/src/sse/responses.rs L106-L144](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/codex-api/src/sse/responses.rs#L106-L144): completed-response type consumes usage/end-turn data, not service-tier classification. A default response is not a Codex badge downgrade.
+- [tui/src/app/background_requests.rs L847-L865](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/tui/src/app/background_requests.rs#L847-L865) and [tui/src/chatwidget/thread_usage.rs L224-L255](https://github.com/openai/codex/blob/afb436df8b70bb5bc57b86d9a3e829968988cd21/codex-rs/tui/src/chatwidget/thread_usage.rs#L224-L255): credits/USD estimates use account usage response fields. No local Fast multiplier was copied from upstream. SDK assumptions are recorded above, not endorsed as upstream prices.
+
+### Checks, boundaries, and handoff
+
+Final: 117 tests / 781 assertions passed across native-fast-mode, footer, native-compaction, job-service, subagent-placement, and remote-descendant-environment. Covers API/Codex priority requests; priority/fast/default/flex/auto/unknown/missing responses with unchanged selection; raw callback forwarding; Codex SSE/WebSocket serialization; real ModelRuntime system/tool normalization and SDK cost behavior; in-flight opt-out; inheritance; standard compaction; full/narrow footer rendering. Typecheck, focused format check, and git diff --check passed. Focused lint: 16 warnings / 4 infos, no errors.
+
+First checks caught a stale API tier expectation, a test generic-model typing error, and an incorrect assumption about SDK default-response cost; corrected using observed behavior. Narrow fixture changed from 80 (still full row) to 60 columns. Dependencies reused through a temporary node_modules symlink to the existing parent install (removed after checks); generated ignored runtime-assets copied locally for typecheck. No dependency install, release/install, trust change, parent-source edit, or billable provider call.
+
+Gaps: no live account credit verification, real provider latency/tier guarantee, live model-catalog port, interactive TUI acceptance, real SSH acceptance, or native task backend inheritance. Consent, session/branch/model scoping, auth/endpoint guards, payload mutation protection, and standard compaction preserved; no permission/scope change needed. Values unchanged: source-path evidence, clear proof scope, simple state, and preserving essential boundaries already cover this lesson. Commit belongs to this branch for parent integration; not merged or installed.
+
+### Parent integration
+
+Worker commit 429a9ffc was reviewed and cherry-picked onto local develop as e93d0953. Parent independently read the pinned upstream selection and request mapping. On the integrated tree, the same six suites passed: 117 tests / 781 assertions; typecheck and diff checks passed. The first test launch hit fish syntax before running tests; reran with explicit bash. No source failure.
+
+This change is in local source only. No push, release, install, or live provider claim. Use the source links and worker worktree above for follow-up. Existing values cover this change; none added.
+
+### Codex alignment published
+
+PR [#27](https://github.com/tnfssc/bruv/pull/27) passed final hosted Linux/macOS/policy checks and merged normally as 914b0a3e. Released [v0.16.2](https://github.com/tnfssc/bruv/releases/tag/v0.16.2) at 49379a1958ef41127799a166de8df8190f26c0f3. [Release run 37191445417](https://github.com/tnfssc/bruv/actions/runs/37191445417) passed all six gates; stable metadata and all 20 expected nonempty assets verified without redundant binary downloads. No local binary installation. See [release record and remaining limits](../releases/codex-fast-alignment-release.md) and [publication evidence](../releases/v0.16.2-publication.json). Parent original commits e93d0953 / 7404ee32 are already included through the reviewed cherry-picks; fetch/integrate develop rather than applying them again. Values reviewed and unchanged.

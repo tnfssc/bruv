@@ -1,0 +1,38 @@
+{
+  "before": {
+    "id": "q_390b6e69-008e-4db3-aa83-731396c9fa70",
+    "owner": {
+      "sessionId": "01a10671-37f9-71c6-a98e-c54862779335",
+      "branchId": "380b1c98"
+    },
+    "text": "Native history root-only saved question (do not answer)",
+    "status": "pending",
+    "version": 1,
+    "createdAt": "2026-10-04T10:24:06.153Z",
+    "updatedAt": "2026-10-04T10:24:06.153Z",
+    "dedupKey": "history-root-authority",
+    "choices": [
+      "Retain unanswered"
+    ],
+    "allowFreeText": false,
+    "requester": "Parent"
+  },
+  "after": {
+    "id": "q_390b6e69-008e-4db3-aa83-731396c9fa70",
+    "owner": {
+      "sessionId": "01a10671-37f9-71c6-a98e-c54862779335",
+      "branchId": "380b1c98"
+    },
+    "text": "Native history root-only saved question (do not answer)",
+    "status": "pending",
+    "version": 1,
+    "createdAt": "2026-10-04T10:24:06.153Z",
+    "updatedAt": "2026-10-04T10:24:06.153Z",
+    "dedupKey": "history-root-authority",
+    "choices": [
+      "Retain unanswered"
+    ],
+    "allowFreeText": false,
+    "requester": "Parent"
+  }
+}

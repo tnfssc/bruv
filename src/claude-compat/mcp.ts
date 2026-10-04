@@ -79,6 +79,7 @@ type Connection = {
   transport: Transport;
   timeout: number;
   status: "connecting" | "connected" | "closed" | "close-failed";
+  closing?: Promise<void>;
 };
 export class McpOperationError extends Error {
   constructor(
@@ -95,8 +96,10 @@ export class InjectedMcpSession {
   private readonly lifetime = new AbortController();
   private readonly connections = new Map<string, Connection>();
   private readonly registry = new Map<string, InjectedMcpTool>();
+  private readonly appHttpServers = new Map<string, InjectedMcpServer>();
   private closed = false;
   private closing?: Promise<void>;
+  private resuming?: Promise<void>;
   private unbindAbort?: () => void;
   private constructor(private readonly options: McpSessionOptions) {}
 
@@ -119,7 +122,11 @@ export class InjectedMcpSession {
       session.unbindAbort = () => options.signal?.removeEventListener("abort", abort);
     }
     try {
-      for (const [name, server] of Object.entries(parsed.mcpServers)) await session.connect(name, server);
+      for (const [name, server] of Object.entries(parsed.mcpServers)) {
+        if ("url" in server && options.appOwnedServers.includes(name)) session.appHttpServers.set(name, server);
+        await session.connect(name, server);
+      }
+      await session.parkAppOwned();
       return session;
     } catch {
       try {
@@ -135,7 +142,7 @@ export class InjectedMcpSession {
     }
   }
 
-  private async connect(name: string, server: InjectedMcpServer): Promise<void> {
+  private async connect(name: string, server: InjectedMcpServer, discover = true): Promise<void> {
     const signal = this.lifetime.signal;
     signal.throwIfAborted();
     if (!(await this.options.policy.authorizeServer(name, structuredClone(server), signal)))
@@ -189,27 +196,28 @@ export class InjectedMcpSession {
     await client.connect(transport, { signal, timeout: requestTimeout });
     signal.throwIfAborted();
     let cursor: string | undefined;
-    do {
-      const listed = await client.listTools(cursor ? { cursor } : {}, { signal, timeout: requestTimeout });
-      for (const tool of listed.tools) {
-        // The removed patched Bruv task bridge is not a native app delegation surface.
-        if (tool.name.startsWith("bruv_task_")) continue;
-        const toolName = `mcp__${name}__${tool.name}`;
-        if (this.options.selectedTools && !this.options.selectedTools.some((rule) => matchesToolRule(toolName, rule)))
-          continue;
-        if (this.registry.has(toolName)) throw new Error("Ambiguous MCP tool name");
-        this.registry.set(toolName, {
-          name: toolName,
-          serverName: name,
-          remoteName: tool.name,
-          owner: this.options.appOwnedServers?.includes(name) ? "app_owned" : "external",
-          description: tool.description,
-          inputSchema: tool.inputSchema,
-          annotations: tool.annotations,
-        });
-      }
-      cursor = listed.nextCursor;
-    } while (cursor !== undefined);
+    if (discover)
+      do {
+        const listed = await client.listTools(cursor ? { cursor } : {}, { signal, timeout: requestTimeout });
+        for (const tool of listed.tools) {
+          // The removed patched Bruv task bridge is not a native app delegation surface.
+          if (tool.name.startsWith("bruv_task_")) continue;
+          const toolName = `mcp__${name}__${tool.name}`;
+          if (this.options.selectedTools && !this.options.selectedTools.some((rule) => matchesToolRule(toolName, rule)))
+            continue;
+          if (this.registry.has(toolName)) throw new Error("Ambiguous MCP tool name");
+          this.registry.set(toolName, {
+            name: toolName,
+            serverName: name,
+            remoteName: tool.name,
+            owner: this.options.appOwnedServers?.includes(name) ? "app_owned" : "external",
+            description: tool.description,
+            inputSchema: tool.inputSchema,
+            annotations: tool.annotations,
+          });
+        }
+        cursor = listed.nextCursor;
+      } while (cursor !== undefined);
     connection.status = "connected";
   }
 
@@ -250,6 +258,7 @@ export class InjectedMcpSession {
       await this.options.policy.beforeAppOwnedCall(approved);
       signal.throwIfAborted();
     }
+    if (tool.owner === "app_owned") await this.resumeAppOwned();
     const connection = this.connections.get(tool.serverName);
     if (connection?.status !== "connected") throw new McpOperationError("closed", "MCP connection is not open");
     try {
@@ -284,6 +293,60 @@ export class InjectedMcpSession {
     }
   }
 
+  /** Release app-owned HTTP leases while the owning run's host is still alive.
+   * External MCP servers keep their ordinary persistent connection lifetime. */
+  async parkAppOwned(): Promise<void> {
+    const results = await Promise.allSettled(
+      [...this.appHttpServers.keys()].map((name) => this.closeConnection(this.connections.get(name)!)),
+    );
+    this.assertClosed(results);
+  }
+
+  /** Pi preflight reacquires each app HTTP lease before the next owning run. */
+  resumeAppOwned(): Promise<void> {
+    return (this.resuming ??= (async () => {
+      if (this.closed) throw new McpOperationError("closed", "MCP session is closed");
+      for (const [name, server] of this.appHttpServers) {
+        const connection = this.connections.get(name)!;
+        if (connection.closing) await connection.closing;
+        if (connection.status === "closed") {
+          try {
+            await this.connect(name, server, false);
+          } catch {
+            await this.closeConnection(this.connections.get(name)!);
+            throw new McpOperationError("connection-failed", "App-owned MCP reconnect failed or was denied");
+          }
+        }
+      }
+    })().finally(() => {
+      this.resuming = undefined;
+    }));
+  }
+
+  private closeConnection(connection: Connection): Promise<void> {
+    return (connection.closing ??= (async () => {
+      let failed = false;
+      try {
+        if (connection.transport instanceof StreamableHTTPClientTransport && connection.transport.sessionId)
+          await connection.transport.terminateSession();
+      } catch {
+        failed = true;
+      }
+      try {
+        await connection.client.close();
+      } catch {
+        failed = true;
+      }
+      connection.status = failed ? "close-failed" : "closed";
+      if (failed) throw new Error("MCP teardown failed");
+    })());
+  }
+
+  private assertClosed(results: PromiseSettledResult<void>[]): void {
+    if (results.some((result) => result.status === "rejected"))
+      throw new McpOperationError("teardown-failed", "MCP connection teardown was not fully confirmed");
+  }
+
   close(): Promise<void> {
     if (this.closing) return this.closing;
     this.closed = true;
@@ -291,26 +354,8 @@ export class InjectedMcpSession {
     this.unbindAbort?.();
     this.registry.clear();
     this.closing = Promise.allSettled(
-      [...this.connections.values()].map(async (connection) => {
-        let failed = false;
-        try {
-          if (connection.transport instanceof StreamableHTTPClientTransport && connection.transport.sessionId)
-            await connection.transport.terminateSession();
-        } catch {
-          failed = true;
-        }
-        try {
-          await connection.client.close();
-        } catch {
-          failed = true;
-        }
-        connection.status = failed ? "close-failed" : "closed";
-        if (failed) throw new Error("MCP teardown failed");
-      }),
-    ).then((results) => {
-      if (results.some((result) => result.status === "rejected"))
-        throw new McpOperationError("teardown-failed", "MCP connection teardown was not fully confirmed");
-    });
+      [...this.connections.values()].map((connection) => this.closeConnection(connection)),
+    ).then((results) => this.assertClosed(results));
     return this.closing;
   }
 }

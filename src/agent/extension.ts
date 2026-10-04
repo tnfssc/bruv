@@ -91,7 +91,18 @@ export function completionDiagnosticDetails(tasks: TaskInspection[], notices: At
       ...summary,
       command: command.slice(0, 400),
     })),
-    attention: notices.slice(0, 50).map(({ task: _task, ...notice }) => notice),
+    attention: notices.slice(0, 50).map(({ task, ...notice }) => ({
+      ...notice,
+      ...(task.launchIdentity
+        ? {
+            launchIdentity: {
+              sourceSessionId: task.launchIdentity.sourceSessionId,
+              sourceCallId: task.launchIdentity.sourceCallId,
+              callIndex: task.launchIdentity.callIndex,
+            },
+          }
+        : {}),
+    })),
     taskStatusCounts,
     taskCount: tasks.length,
     attentionCount: notices.length,

@@ -9,3 +9,5 @@ Effect 4.0.0-rc.115 and its existing patch are unchanged; Claude Agent SDK remai
 Harness-only UI contract changes: a Finished notification card now coexists with the live Completed subagent card; select them by status, not just title. App-owned children use titled completion cards and native Lineage/sidebar parent navigation. Actual local child tool results now render in this replay.
 
 Separate gaps remain: cancelled approval cards persist after Stop (explicit native Decline needed); unsupported connector-version/update banners; Live/devices/paid providers/full tab disconnect not covered. This is not full product acceptance or a new architecture recommendation.
+
+The later v0.16.3 hosted final-command failure is documented separately in [command idle convergence](hosted-command-idle-convergence.md), including unchanged historical failure evidence. It was a transient assertion-to-capture mismatch, not proof of a newly stuck Effect queue. The current composed release gate has six suites (including default-controls); the initial historical proof above has five.

@@ -5,7 +5,6 @@ import { assetNames } from "../scripts/publish-release";
 test("default build ships normal CLI and connector without a T3 dependency", async () => {
   const commands = pairedBuildCommands([], "/repo", "/bin/bun");
   expect(commands).toEqual([
-    ["/bin/bun", "/repo/scripts/build.ts", "--outfile=/repo/dist/bruv"],
     ["/bin/bun", "/repo/scripts/build-claude-compat.ts", "--outfile=/repo/dist/bruv-claude-compat"],
   ]);
   const build = await Bun.file(new URL("../scripts/build.ts", import.meta.url)).text();
@@ -15,25 +14,25 @@ test("default build ships normal CLI and connector without a T3 dependency", asy
   expect(build).toContain("nativeHelperPlugin");
 });
 
-test("release targets preserve matched names, target and native helper in BOTH builds", () => {
+test("release targets compile one normal binary and preserve the target/native helper", () => {
   const commands = pairedBuildCommands(
     ["--", "--target=bun-darwin-arm64", "--live-helper=/helper", "--outfile=dist/release/bruv-darwin-arm64"],
     "/repo",
     "/bin/bun",
   );
   expect(commands.map((command) => command.at(-1))).toEqual([
-    "--outfile=/repo/dist/release/bruv-darwin-arm64",
     "--outfile=/repo/dist/release/bruv-claude-compat-darwin-arm64",
   ]);
   for (const command of commands) {
     expect(command).toContain("--target=bun-darwin-arm64");
     expect(command).toContain("--live-helper=/helper");
   }
+  expect(commands).toHaveLength(1);
   expect(() => pairedBuildCommands(["--outfile=/bruv/bin/other"], "/repo", "/bin/bun")).toThrow();
   expect(() => pairedBuildCommands(["--outfile=dist/bruv-claude-compat"], "/repo", "/bin/bun")).toThrow();
 });
 
-test("every release target ships both binaries, checksums and shared licensing/source notices", () => {
+test("every release target ships binary and launcher, checksums and shared licensing/source notices", () => {
   for (const target of ["linux-x64", "linux-arm64", "darwin-arm64", "android-arm64"]) {
     for (const name of ["bruv", "bruv-claude-compat"]) {
       expect(assetNames as readonly string[]).toContain(name + "-" + target);
@@ -43,6 +42,8 @@ test("every release target ships both binaries, checksums and shared licensing/s
   for (const notice of ["LICENSE", "THIRD_PARTY_NOTICES.md", "THIRD_PARTY_LICENSES.txt", "SOURCE.txt"])
     expect(assetNames as readonly string[]).toContain(notice);
   expect(assetNames.some((asset) => asset.includes("web"))).toBe(false);
+  expect(assetNames).toHaveLength(20);
+  expect(new Set(assetNames).size).toBe(20);
 });
 
 test("external native release gate setup keeps verified upstream layout and env handoff", async () => {

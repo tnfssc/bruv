@@ -3,14 +3,17 @@
  */
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { updateAssetFor } from "../src/update";
+import { describeUpdateProbe } from "./verify-update-probe";
 
-const [input, version] = process.argv.slice(2);
+const [input, version, updaterMode] = process.argv.slice(2);
+if (updaterMode && updaterMode !== "--legacy-updater") throw new Error("Unknown updater mode: " + updaterMode);
+const legacy = updaterMode === "--legacy-updater";
 if (!input || !version || !/^\d+\.\d+\.\d+$/.test(version))
-  throw new Error("Usage: bun scripts/verify-update.ts <staged-raw-asset> <version>");
+  throw new Error("Usage: bun scripts/verify-update.ts <staged-raw-asset> <version> [--legacy-updater]");
 const asset = updateAssetFor(process.platform, process.arch);
 if (!asset || basename(input) !== asset) throw new Error("Use the raw asset for this host: " + asset);
 const connectorAsset = asset.replace(/^bruv-/, "bruv-claude-compat-");
@@ -24,25 +27,35 @@ for (const name of [asset, connectorAsset]) {
 }
 const directory = await mkdtemp(join(tmpdir(), "bruv-update-gate-"));
 try {
-  const install = join(directory, "install");
-  await mkdir(install);
+  await mkdir(join(directory, "install"));
+  // Match the updater's realpath target even when TMPDIR is an alias (macOS /var -> /private/var).
+  const install = await realpath(join(directory, "install"));
   const installed = [join(install, "bruv"), join(install, "bruv-claude-compat")];
   const originals = ["previous normal", "previous connector"];
   for (let i = 0; i < installed.length; i++) await writeFile(installed[i]!, originals[i]!, { mode: 0o755 });
   for (const candidate of candidates) await writeFile(join(directory, candidate.name), candidate.bytes);
   const runner = join(directory, "runner.ts");
+  // Print only the actual error message: Bun source excerpts can contain the
+  // rollback success marker even when the thrown error says files were unchanged.
   await writeFile(
     runner,
     [
-      "import { updateBruv, RELEASES_URL } from " + JSON.stringify(resolve(import.meta.dir, "../src/update.ts")) + ";",
+      "import { updateBruv, RELEASES_URL } from " +
+        JSON.stringify(resolve(import.meta.dir, legacy ? "../tests/update-v0.16.3-fixture.ts" : "../src/update.ts")) +
+        ";",
+      'import { rename } from "node:fs/promises";',
       "const root = " + JSON.stringify("https://github.com/tnfssc/bruv/releases/download/v" + version + "/") + ";",
       "const names = " + JSON.stringify(candidates.map((candidate) => candidate.name)) + ";",
       "const assets = new Map(await Promise.all(names.map(async name => [name, await Bun.file(" +
         JSON.stringify(directory) +
         ' + "/" + name).bytes()])));',
-      "const result = await updateBruv({ executable: " +
+      "try { const result = await updateBruv({ executable: " +
         JSON.stringify(installed[0]) +
-        ', currentVersion: "0.0.0", fetch: async input => {',
+        ', currentVersion: "' +
+        (legacy ? "0.16.3" : "0.0.0") +
+        '", rename: async (from, to) => { if (process.argv.includes("--fail-normal-rename") && to === ' +
+        JSON.stringify(installed[0]) +
+        ') throw new Error("injected normal rename failure"); await rename(from, to); }, fetch: async input => {',
       "const url = String(input);",
       "if (url === RELEASES_URL) return Response.json({tag_name: " +
         JSON.stringify("v" + version) +
@@ -51,43 +64,83 @@ try {
       "if (url === root + name) return new Response(bytes);",
       'if (url === root + name + ".sha256") return new Response((process.argv.includes("--corrupt=" + name) ? "0".repeat(64) : new Bun.CryptoHasher("sha256").update(bytes).digest("hex")) + "  " + name);',
       "}",
-      'throw new Error("Unexpected request: " + url); }}); console.log(JSON.stringify(result));',
+      'throw new Error("Unexpected request: " + url); }}); console.log(JSON.stringify(result)); } catch (error) { console.error(error instanceof Error ? error.message : String(error)); process.exitCode = 1; }',
     ].join("\n"),
   );
   const executable = join(directory, "updater-runner");
   const build = await Bun.build({ entrypoints: [runner], compile: { outfile: executable } });
   if (!build.success) throw new Error("Could not compile current updater: " + build.logs.join("\n"));
   const runnerHash = hash(await readFile(executable));
+  const runnerHome = join(directory, "runner-home");
+  await mkdir(runnerHome);
+  const runnerEnv = {
+    ...process.env,
+    HOME: runnerHome,
+    XDG_CONFIG_HOME: join(runnerHome, "config"),
+    XDG_CACHE_HOME: join(runnerHome, "cache"),
+    XDG_DATA_HOME: join(runnerHome, "data"),
+  };
   for (const candidate of candidates) {
-    const failed = spawnSync(executable, ["--corrupt=" + candidate.name], { encoding: "utf8" });
-    if (failed.status === 0 || !failed.stderr.includes("Checksum verification failed for " + candidate.name))
-      throw new Error("Compiled paired updater failed checksum gate: " + failed.stderr);
+    const failed = spawnSync(executable, ["--corrupt=" + candidate.name], { encoding: "utf8", env: runnerEnv });
+    if (failed.status === 0 || !failed.stderr?.includes("Checksum verification failed for " + candidate.name))
+      throw new Error(
+        "Compiled paired updater failed checksum gate: " +
+          describeUpdateProbe(executable, ["--corrupt=" + candidate.name], failed),
+      );
     for (let i = 0; i < installed.length; i++) {
       if ((await readFile(installed[i]!, "utf8")) !== originals[i])
         throw new Error("Checksum failure changed installed pair");
     }
   }
-  const updated = spawnSync(executable, [], { encoding: "utf8" });
-  if (updated.status !== 0) throw new Error("Compiled paired updater failed replacement: " + updated.stderr);
+  const rollback = spawnSync(executable, ["--fail-normal-rename"], { encoding: "utf8", env: runnerEnv });
+  if (
+    rollback.status === 0 ||
+    !rollback.stderr?.includes("injected normal rename failure") ||
+    !rollback.stderr?.includes("Previous installation restored")
+  )
+    throw new Error(
+      "Compiled updater failed rollback gate: " + describeUpdateProbe(executable, ["--fail-normal-rename"], rollback),
+    );
+  for (let i = 0; i < installed.length; i++) {
+    if ((await readFile(installed[i]!, "utf8")) !== originals[i]) throw new Error("Rollback changed installed pair");
+  }
+  const updated = spawnSync(executable, [], { encoding: "utf8", env: runnerEnv });
+  if (updated.status !== 0)
+    throw new Error("Compiled paired updater failed replacement: " + describeUpdateProbe(executable, [], updated));
   const result = JSON.parse(updated.stdout);
-  if (result.status !== "updated" || result.version !== version) throw new Error("Unexpected paired update result");
+  if (result.status !== "updated" || result.version !== version)
+    throw new Error("Unexpected paired update result: " + describeUpdateProbe(executable, [], updated));
   for (let i = 0; i < installed.length; i++) {
     if (hash(await readFile(installed[i]!)) !== candidates[i]!.expected) throw new Error("Replacement SHA256 mismatch");
     const home = join(directory, "home-" + i);
     await mkdir(home);
-    const actual = spawnSync(installed[i]!, ["--version"], {
+    const actual = spawnSync(installed[i]!, [i === 0 ? "--version" : "--bruv-version"], {
       encoding: "utf8",
       env: { HOME: home, PATH: "/usr/bin:/bin" },
     });
     const expected = i === 0 ? version : "bruv-claude-compat " + version;
     if (actual.status !== 0 || actual.stdout.trim() !== expected)
-      throw new Error("Replacement version mismatch: " + actual.stdout + actual.stderr);
+      throw new Error(
+        "Replacement version mismatch: " +
+          describeUpdateProbe(installed[i]!, [i === 0 ? "--version" : "--bruv-version"], actual),
+      );
   }
+  // Once installed outside the old updater's stage, expose the SDK-facing version.
+  const sdkVersion = spawnSync(installed[1]!, ["--version"], {
+    encoding: "utf8",
+    env: { HOME: join(directory, "home-1"), PATH: "/usr/bin:/bin" },
+  });
+  if (sdkVersion.status !== 0 || sdkVersion.stdout.trim() !== "2.1.280 (Bruv compatibility; bruv " + version + ")")
+    throw new Error(
+      "Installed launcher retained the legacy version label: " +
+        describeUpdateProbe(installed[1]!, ["--version"], sdkVersion),
+    );
   if (hash(await readFile(executable)) !== runnerHash) throw new Error("Gate replaced its running updater");
   if ((await readdir(install)).some((name) => name.startsWith(".bruv-update-")))
     throw new Error("Update staging was not cleaned");
   console.log(
-    "Compiled paired Bruv updater: checksum failures preserved BOTH installed files; replacement SHA256 and matched versions " +
+    (legacy ? "Frozen v0.16.3" : "Compiled paired Bruv") +
+      " updater: checksum failures preserved BOTH installed files; second-rename rollback restored pair; replacement SHA256 and matched versions " +
       version +
       " passed (" +
       asset +

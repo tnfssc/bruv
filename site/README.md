@@ -49,9 +49,11 @@ The UI mockups are scripted. Keep them grounded in source and save provenance in
 The custom bruv wordmark lives in assets/brand/. Keep its dark and light SVG
 paths identical. The standalone b is the favicon. The HTML view uses the light
 SVG; the terminal view uses half-block cells made from the dark SVG. No image
-overlay is placed above the terminal canvas.
+overlay is placed above the terminal canvas. Social link previews use the
+1200 × 630 bruv-social.png export. Its absolute URL is set from BASE_URL.
 
 After a shape change, rerun `bun scripts/generate-wordmark.ts` from site/.
+It also refreshes the social card from those same wordmark paths.
 This one-time tool needs rsvg-convert (librsvg) and magick (ImageMagick).
 Format the generated JSON with the repo formatter before committing.
 Normal builds use the checked-in cells and need neither tool. Refresh the PNG

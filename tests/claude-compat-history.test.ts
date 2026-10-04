@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
@@ -58,6 +58,7 @@ async function sdk(
   configDir: string,
   actions: { method: string; args: unknown[] }[],
   projectKey?: string,
+  parentConfig = true,
 ): Promise<any[]> {
   const metadata = JSON.parse(await readFile(join(dirname(sdkPath), "package.json"), "utf8"));
   if (metadata.name !== "@anthropic-ai/claude-agent-sdk" || metadata.version !== "0.3.276")
@@ -75,7 +76,7 @@ async function sdk(
       env: {
         PATH: process.env.PATH,
         HOME: configDir,
-        CLAUDE_CONFIG_DIR: configDir,
+        ...(parentConfig ? { CLAUDE_CONFIG_DIR: configDir } : {}),
         ...(projectKey ? { CLAUDE_CODE_PROJECT_DIR_NAME: projectKey } : {}),
       },
       stdout: "pipe",
@@ -292,6 +293,52 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
         customOptions.projectKey,
       );
       expect(aligned.map((m: any) => m.uuid)).toEqual([id]);
+    });
+
+    test("without parent config, SDK dir is a project selector, not a provider config home", async () => {
+      const { dir, options, history } = await fixture();
+      const nativeId = await history.append(user("isolated-root"));
+      const child = await history.child({
+        taskId: "isolated-child",
+        sourceSessionId: randomUUID(),
+        sourceCallId: "actual-launch-call",
+      });
+      await child.append(user("isolated-child-user"));
+      // Only a throwaway HOME is used. The real user's Claude directory is never read or written.
+      const home = join(dir, "ordinary-home");
+      const ordinaryClaude = join(home, ".claude");
+      await mkdir(ordinaryClaude, { recursive: true });
+      const sentinel = '{"fixture":"ordinary Claude settings must stay untouched"}\n';
+      await writeFile(join(ordinaryClaude, "settings.json"), sentinel);
+      const transcript = join(options.configDir, "projects", nativeProjectKey(options.cwd));
+      // parentConfig=false constructs an allowlisted environment with NO CLAUDE_CONFIG_DIR,
+      // regardless of any inherited test-runner variable. This matches normal T3's SDK process.
+      const [missing, missingChild, failedFork, configAsDir, projectAsDir] = await sdk(
+        home,
+        [
+          rootRead(options.sessionId, options.cwd),
+          { method: "getSubagentMessages", args: [options.sessionId, "isolated-child", { dir: options.cwd }] },
+          fork(options.sessionId, options.cwd),
+          fork(options.sessionId, options.configDir),
+          fork(options.sessionId, transcript),
+        ],
+        undefined,
+        false,
+      );
+      expect(missing).toEqual([]);
+      expect(missingChild).toEqual([]);
+      for (const failed of [failedFork, configAsDir, projectAsDir]) expect(failed.error).toContain("not found");
+      expect(await readFile(join(ordinaryClaude, "settings.json"), "utf8")).toBe(sentinel);
+      expect(await readdir(ordinaryClaude)).toEqual(["settings.json"]);
+      // Keep a positive control: the same genuine transcript, SDK, and checkpoint work when
+      // explicitly scoped in a separate process. This is not a proposed T3 launch workaround.
+      const [read, forked] = await sdk(options.configDir, [
+        rootRead(options.sessionId, options.cwd),
+        fork(options.sessionId, options.cwd, { upToMessageId: nativeId }),
+      ]);
+      expect(read.map((message: any) => message.uuid)).toEqual([nativeId]);
+      expect(forked.error).toBeUndefined();
+      expect(forked.sessionId).not.toBe(options.sessionId);
     });
 
     test("SDK reads canonical symlink cwd and long encoded paths", async () => {

@@ -523,3 +523,16 @@ test("interleaved notices keep the most recent typed outcome", () => {
   parent.addChild(notice([row("one", "completed")]));
   expect(plain(parent.render(100))).toEqual(["✓ Run tests"]);
 });
+
+test("typed callback launch provenance survives projection and explicit source ownership wins", () => {
+  const launch = {
+    id: "late",
+    kind: "command",
+    status: "completed",
+    output: "not ownership metadata",
+    launchIdentity: { sourceSessionId: "/session", sourceCallId: "original", callIndex: 2 },
+  };
+  expect(taskRowFromLaunch(launch)?.sourceCallId).toBe("original");
+  expect(taskRowsFromDetails({ tasks: [launch] })[0]?.sourceCallId).toBe("original");
+  expect(taskRowFromLaunch(launch, "explicit")?.sourceCallId).toBe("explicit");
+});

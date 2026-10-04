@@ -21,6 +21,12 @@ describe("single terminal landing", () => {
     expect(siteMetadata()).toEqual({ html: "", sitemap: "", robots: "" });
     const m = siteMetadata("https://example.test/bruv");
     expect(m.html).toContain('href="https://example.test/bruv/"');
+    expect(m.html).toContain('property="og:image" content="https://example.test/bruv/assets/brand/bruv-social.png"');
+    expect(m.html).toContain('property="og:image:width" content="1200"');
+    expect(m.html).toContain('property="og:image:height" content="630"');
+    expect(siteMetadata("https://example.test/bruv", "text.html").html).toContain(
+      "https://example.test/bruv/assets/brand/bruv-social.png",
+    );
     expect(m.sitemap).toContain("https://example.test/bruv/text.html");
     expect(m.robots).toContain("https://example.test/bruv/sitemap.xml");
     for (const url of [

@@ -1,0 +1,2 @@
+19326f3fa2d4f92819207e620218dc7f86dbf89a08334a5f30119f8ce742bb8a  dist/bruv
+183c9bdafae7da47702dfaf6d5fca5ff70c3f0a5870834e8816db3f7f688e7a4  dist/bruv-claude-compat

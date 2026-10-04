@@ -103,13 +103,14 @@ test("long saved thread keeps history, editor input, and native tool details usa
     await frame("bottom", "LONG_THREAD_READY");
     await tmux("send-keys", "-t", "long-thread", "C-o");
     // Ctrl+O preserves the reading anchor; it does not jump to the last tool.
-    await frame("expanded-anchor", ["10 tools called ▾", "DETAIL_saved-"]);
+    await frame("expanded-anchor", ["10 tools called", "DETAIL_saved-"]);
     await tmux("send-keys", "-t", "long-thread", "End");
     const expanded = await frame("expanded", ["DETAIL_saved-99-9", "long-thread-draft"]);
     expect(expanded).toMatch(/^\s*DETAIL_saved-99-9\s*[│┃]?\s*$/m);
     await tmux("send-keys", "-t", "long-thread", "C-o");
-    const collapsed = await frame("collapsed", ["10 tools called ▸", "LONG_THREAD_READY"]);
-    expect(collapsed).toContain("10 tools called ▸");
+    const collapsed = await frame("collapsed", ["10 tools called", "LONG_THREAD_READY"]);
+    expect(collapsed).toContain(" 10 tools called");
+    expect(collapsed).not.toMatch(/10 tools called [▸▾]/);
     expect(collapsed).not.toContain("DETAIL_saved-99-9");
     await tmux("resize-window", "-t", "long-thread", "-x", "48", "-y", "30");
     const narrow = await frame("narrow", ["long-thread-draft", "gpt-4o"]);
@@ -120,12 +121,12 @@ test("long saved thread keeps history, editor input, and native tool details usa
     // Respawn the CLI, not the tmux server: killing its last session races
     // tmux exit-empty teardown against creation of the next session.
     expect((await tmux("respawn-pane", "-k", "-t", "long-thread", "-c", home, launch)).code).toBe(0);
-    const reopened = await frame("reopened", ["LONG_THREAD_READY", "10 tools called ▸"]);
+    const reopened = await frame("reopened", ["LONG_THREAD_READY", "10 tools called"]);
     expect(reopened).not.toContain("DETAIL_saved-99-9");
     await tmux("send-keys", "-t", "long-thread", "-l", "reopened-draft");
     await frame("reopened-typed", "reopened-draft");
     await tmux("send-keys", "-t", "long-thread", "C-o");
-    await frame("reopened-expanded-anchor", ["10 tools called ▾", "DETAIL_saved-"]);
+    await frame("reopened-expanded-anchor", ["10 tools called", "DETAIL_saved-"]);
     await tmux("send-keys", "-t", "long-thread", "Home");
     const oldestDetail = await frame("reopened-oldest-detail", ["Saved turn 0", "DETAIL_saved-0-0"]);
     expect(oldestDetail).toMatch(/^\s*DETAIL_saved-0-0\s*[│┃]?\s*$/m);
@@ -133,7 +134,7 @@ test("long saved thread keeps history, editor input, and native tool details usa
     const latestDetail = await frame("reopened-latest-detail", ["DETAIL_saved-99-9", "reopened-draft"]);
     expect(latestDetail).toMatch(/^\s*DETAIL_saved-99-9\s*[│┃]?\s*$/m);
     await tmux("send-keys", "-t", "long-thread", "C-o");
-    expect(await frame("reopened-collapsed", "10 tools called ▸")).not.toContain("DETAIL_saved-99-9");
+    expect(await frame("reopened-collapsed", "10 tools called")).not.toContain("DETAIL_saved-99-9");
 
     // Individual collapsed labels belong to ordinary scrollback mode, not
     // collapsed activity groups. Keep the original native label/detail proof

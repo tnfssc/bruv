@@ -38,3 +38,10 @@ Handoff preview: **http://127.0.0.1:43941/**; script **http://127.0.0.1:43941/in
 Integrated 90141a5d as ce7ba43b in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0f2604c1, branch feat/landing-copy-loop-polish. Kept the full mobile BRUV glyphs and the user-corrected opinionated coding agent pitch. Current combined preview is http://127.0.0.1:45339/ (and text.html); installer is /install.sh. Superseded worker previews were cancelled, not restarted.
 
 18 focused tests passed after integration: page layout, installer fixtures/copy UI and delayed/failed/no-JS startup. Inspected integrated 390px hero and install screenshots. No live binary install executed. Values unchanged; existing installer safety and truthful evidence guidance apply.
+
+## Current connector contract (2026-10-04)
+
+During the final develop merge, found the old --version identity in the site
+installer. Current releases expose the product pair with --bruv-version;
+--version is the SDK compatibility identity. Installer now checks the product
+identity. Fixtures return different answers for those flags so this stays caught.

@@ -36,3 +36,16 @@ await Bun.write(
   resolve(import.meta.dir, "../assets/brand/wordmark-cells.json"),
   JSON.stringify(result, null, 2) + "\n",
 );
+
+// Social cards use the same paths, centered on a dark 1200 × 630 canvas.
+const geometry = (await Bun.file(source).text()).match(/<g[\s\S]*<\/g>/)![0].replace("#171717", "#fafafa");
+const card =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#171717"/><g transform="translate(96.5 136.4) scale(1.9)">' +
+  geometry +
+  "</g></svg>";
+const social = Bun.spawn(["rsvg-convert"], { stdin: "pipe", stdout: "pipe", stderr: "inherit" });
+social.stdin.write(card);
+social.stdin.end();
+const image = await new Response(social.stdout).arrayBuffer();
+if (await social.exited) throw new Error("Social logo render failed");
+await Bun.write(resolve(import.meta.dir, "../assets/brand/bruv-social.png"), image);
