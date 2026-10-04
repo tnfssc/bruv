@@ -86,6 +86,14 @@ test.skipIf(!asset)(
     const result = await run();
     expect(result.code).not.toBe(0);
     expect(result.errors).toContain("Staged Bruv pair version mismatch");
+    const diagnostic = JSON.parse(result.errors.match(/error: Compiled updater failed rollback gate: (.+)/)![1]!);
+    expect(diagnostic.status).toBe(1);
+    expect(diagnostic.signal).toBeNull();
+    expect(diagnostic.error).toBeNull();
+    expect(diagnostic.stdout).toBe("");
+    expect(diagnostic.args).toEqual(["--fail-normal-rename"]);
+    expect(diagnostic.stderr).toContain("Staged Bruv pair version mismatch");
+    expect(diagnostic.stderr).not.toContain("Previous installation restored");
   },
   30_000,
 );
