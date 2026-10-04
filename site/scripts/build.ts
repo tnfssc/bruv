@@ -37,7 +37,7 @@ export async function build(raw = process.env.BASE_URL) {
   await mkdir(out, { recursive: true });
   const html = (await Bun.file(resolve(root, "index.html")).text()).replace("<!-- SITE_META -->", metadata.html);
   await Bun.write(resolve(out, "index.html"), html);
-  for (const file of ["styles.css", "demo.js", "assets"])
+  for (const file of ["styles.css", "site.js", "assets"])
     await cp(resolve(root, file), resolve(out, file), { recursive: true });
   if (metadata.sitemap) {
     await Bun.write(resolve(out, "sitemap.xml"), metadata.sitemap);

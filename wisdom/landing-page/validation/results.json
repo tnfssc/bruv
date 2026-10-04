@@ -1,15 +1,17 @@
 {
   "browser": "153.0.8010.12",
   "checks": [
-    "320px: no horizontal overflow; images loaded; axe A/AA + best-practice clean; reduced motion respected",
-    "390px: no horizontal overflow; images loaded; axe A/AA + best-practice clean; reduced motion respected",
-    "768px: no horizontal overflow; images loaded; axe A/AA + best-practice clean; reduced motion respected",
-    "1440px: no horizontal overflow; images loaded; axe A/AA + best-practice clean; reduced motion respected",
-    "Keyboard: skip link, scene Enter/Space controls and native FAQ disclosure passed",
-    "JavaScript disabled: substantive copy, default scene, links and FAQ remain usable",
-    "Static HTML and local anchors checked; no browser errors, failed assets or third-party requests",
-    "Configured URL build: canonical, absolute social image, sitemap and robots emitted",
-    "Rebuilding without BASE_URL removes prior URL-specific output"
+    "320px: no horizontal clipping; images loaded; axe A/AA + best-practice clean; viewer opens/closes and fits; reduced motion respected",
+    "390px: no horizontal clipping; images loaded; axe A/AA + best-practice clean; viewer opens/closes and fits; reduced motion respected",
+    "768px: no horizontal clipping; images loaded; axe A/AA + best-practice clean; viewer opens/closes and fits; reduced motion respected",
+    "1024px: no horizontal clipping; images loaded; axe A/AA + best-practice clean; viewer opens/closes and fits; reduced motion respected",
+    "1440px: no horizontal clipping; images loaded; axe A/AA + best-practice clean; viewer opens/closes and fits; reduced motion respected",
+    "Browser modifier gesture: image Ctrl/Cmd-click opens original in a new tab, not the viewer",
+    "Keyboard: skip link focuses main; section anchors and browser Back; visible focus; both image links, modal focus containment/return, Escape/Close; native Enter/Space disclosures",
+    "JavaScript disabled: every section link, product copy, install href, disclosures, full-size image navigation and browser Back work",
+    "Static semantic HTML, single h1/main and local anchors checked; no simulator/canvas, browser errors, failed assets or third-party requests",
+    "Configured production URL: canonical, absolute social image, sitemap and robots emitted",
+    "Rebuild without BASE_URL removes prior URL-specific output"
   ],
   "pageErrors": [],
   "failedRequests": []

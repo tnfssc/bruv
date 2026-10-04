@@ -1,6 +1,8 @@
-# Bruv static landing page
+# Bruv terminal-grid website
 
-A standalone, framework-free site. No app build, backend, WASM, analytics, cookies, third-party fonts, or runtime packages. All browser requests stay on the static host until a visitor follows an external link. The terminal and images are **labeled illustrations**, not the current Bruv UI or a running shell.
+A standalone, framework-free marketing website about Bruv. **The whole website is a terminal-looking DOM grid**, not a Bruv app or a landing page with an embedded terminal demo. Navigation, content, illustrations, disclosures and an optional image viewer live inside the pane/chrome visual language. Real links, headings and landmarks remain readable without JavaScript.
+
+No backend, WASM, analytics, cookies, third-party fonts or runtime packages. All page-load requests stay on the static host. The two product visuals are **labeled concept illustrations**, not screenshots of the current Bruv application.
 
 ## Build and preview
 
@@ -39,7 +41,7 @@ bun run test
 
 Tests use the locked Playwright Chromium and axe-core. If using an existing Chromium, set `CHROMIUM_BIN` to its executable. Build/preview themselves need no browser or npm dependencies. The tests write review screenshots/results to `wisdom/landing-page/validation/` and leave a clean URL-less preview build. Use the configured-URL build **after** testing for deployment.
 
-- Edit copy/markup in `index.html`, styles in `styles.css`, optional prewritten scenes in `demo.js`.
+- Edit copy/markup in `index.html`, styles in `styles.css`, the optional native-dialog image viewer in `site.js`.
 - Edit `fixtures/captures.html`, then run `bun run assets` to recreate two 1200×760 PNG illustrations and a 1200×630 social PNG. They are browser captures of designed fixtures, not fabricated product screenshots. They use only synthetic public text, no credentials, real chats or personal paths.
 - Pixel output depends on Chromium and system fonts. Assets checked in here were generated with Chromium 153.0.8010.12 on Linux; use the locked browser and same font environment for pixel equality.
 - Header/favicon marks are local original artwork, not Ghostty branding.

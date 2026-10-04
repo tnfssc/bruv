@@ -1,4 +1,6 @@
-# Static Bruv landing/demo research
+# Static Bruv landing/demo research (historical)
+
+**Superseded recommendation:** the user subsequently clarified that the *whole website* is a terminal-looking grid, not a terminal demo inside a normal landing page. Use the [corrected intent, implementation and focused follow-up research](README.md). The original source investigation below is retained for provenance; its emulator/service comparisons are not an open requirement or blocker.
 
 Researched 2026-10-04 with `~/.local/bin/tvly` search/extract; source inspection only, no site implementation or browser benchmark. Read [values](../values.md) and [README](../../README.md) first. Also read [clean product video](../task-placement/clean-product-video.md), [fixed UI video](../task-placement/fixed-ui-product-video.md), and [post-release correction](../task-placement/post-release-demo-correction.md).
 
