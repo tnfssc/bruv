@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert/strict";
@@ -118,12 +119,21 @@ export async function exercise({ page, url, snapshot, body, config }) {
   // Native Stop closes the connector and its owned tasks. The new owner must
   // launch and cancel its own job, not claim the old process survived.
   await submit("ACCEPT_CANCEL: launch a fresh managed shell, cancel it, and inspect confirmed exit.");
-  await visible("CANCEL_CONFIRMED_REAL");
   await visible("CANCELLATION_COMPLETED_REAL");
+  await snapshot("cancellation-final");
+  // T3 folds intermediate assistant replies when an automatic continuation
+  // supplies the final answer. Prove the original acknowledgement is retained.
+  if (!(await page.getByText("CANCEL_CONFIRMED_REAL").last().isVisible()))
+    await page.getByRole("button", { name: /^Worked for / }).last().click();
+  await snapshot("cancellation-expanded");
+  await visible("CANCEL_CONFIRMED_REAL");
   await snapshot("task-cancelled");
   await page.goto(url + "/settings/providers");
   await page.goto(url);
   await page.locator("[data-thread-item]").filter({ hasText: "ACCEPT_EXECUTE" }).first().click();
+  await visible("CANCELLATION_COMPLETED_REAL");
+  if (!(await page.getByText("CANCEL_CONFIRMED_REAL").last().isVisible()))
+    await page.getByRole("button", { name: /^Worked for / }).last().click();
   await visible("CANCEL_CONFIRMED_REAL");
   await snapshot("reopened");
   await submit("ACCEPT_REOPEN: confirm the real session can continue after reopen.");
@@ -201,6 +211,8 @@ export function projectWire(wire) {
     if (x.kind === "diagnostic") return { direction: x.kind, error: m.error };
     return {
       direction: x.kind,
+      frameIdHash: typeof m.uuid === "string" ? createHash("sha256").update(m.uuid).digest("hex").slice(0, 16) : undefined,
+      fixtureMarkers: ["CANCEL_CONFIRMED_REAL", "CANCELLATION_COMPLETED_REAL"].filter(marker => Array.isArray(m.message?.content) && m.message.content.some(p => p.type === "text" && typeof p.text === "string" && p.text.includes(marker))),
       type: m.type,
       subtype: m.subtype,
       control: m.request?.subtype,
