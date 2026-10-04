@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "profile": "realT3: Bruv 2.1.280 compatibility",
+  "t3Sha256": "53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48",
+  "connectorSha256": "03cc17e7058b7edaff83567590e51a92740671887703d0ab7aa4db10f86fae3d",
+  "remainingNotices": [
+    "latest-Claude update",
+    "built-in Sonnet 5.5 minimum 2.1.284 advisory"
+  ],
+  "connectorVersion": "2.1.280 (Bruv compatibility; bruv 0.16.3)",
+  "bruvVersion": "bruv-claude-compat 0.16.3",
+  "twoBruvOverrides": false,
+  "serverClaudeConfigDir": false,
+  "unsupportedWarningAbsent": true,
+  "customModel": "fixture/fixture-model",
+  "modelRequests": [
+    {
+      "model": "fixture-model"
+    }
+  ],
+  "paidCalls": 0,
+  "authClaim": "local readiness only; empty account checked separately by actual SDK init"
+}
