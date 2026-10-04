@@ -23,3 +23,15 @@ Pushed develop8c7cc0f4 after integrating notes f7fe790b as c5a1b500. Notes workt
 Run37204735419 failed only the actual Mac updater job111444307901. Build/CI/Linux updater and all final Linux2644 native gates passed; publisher correctly skipped. Version preparation committed20528c86 (package0.16.4), now fast-forwarded locally. Error: scripts/verify-update.ts:90 rollback probe did not meet nonzero exit + Previous installation restored stderr assertion; logged stderr was empty. Log artifacts/v0164-mac-failed.log. Signal/status/error were not printed, so do not infer the process cause yet.
 
 Fix owner task_3d873323, branch bruv/fix-observed-mac-updater-rollback-gate-f-3d873323, durable worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_3d873323. It owns narrow updater/probe diagnosis, preserves checksum/rollback assertions and returns a commit; parent owns integration and fresh hosted Mac proof. No blind retry or gate bypass. A new manual run will reuse prepared0.16.4 while latest tag remains0.16.3.
+
+## Probe diagnostics retry
+
+Integrated worker d4eb6e30 as ce26adf2. Production updater unchanged. Probes now report status, signal, spawn error and both streams. Generated runner prints the actual caught error message, preventing a Bun source excerpt from falsely satisfying the rollback marker. Checksum/rollback assertions remain intact. Linux focused55 tests/202 assertions, typecheck and actual rebuilt0.16.4 current/frozen0.16.3 updater checks passed in worker. No authorized Mac target; hosted proof is required. Original empty stderr still does not establish a signal/cache cause. Parent pushes and redispatches same prepared0.16.4; retry URL is saved to artifacts/v0164-retry-url.txt.
+
+Retry run37205537711: https://github.com/tnfssc/bruv/actions/runs/37205537711 . Source ce26adf2, same prepared0.16.4. Watch artifacts/v0164-release-retry-watch.log. Await terminal result before publishing claims; do not overlap dispatches.
+
+## Retry isolated fixture path mismatch
+
+Run37205537711 also held publication. Diagnostic rollback process exited0 with status updated, no signal/error/stderr. Its output path was /private/var/folders/.../install/bruv while generated injection compared to /var/folders/.../install/bruv. Source confirms strict destination comparison in verify-update.ts against a noncanonical tmpdir path while updater canonicalizes the executable. The test never injected its requested rename failure. This is not evidence of a failed real rollback or process crash.
+
+Narrow fixture fix owner task_026e1373, branch bruv/fix-mac-canonical-path-mismatch-in-rollb-026e1373, worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_026e1373. Require actual Linux alias-path reproduction and current/frozen updater gates; parent then gets hosted Mac proof. Production updater and assertions stay intact. Detailed log artifacts/v0164-retry-failed.log.
