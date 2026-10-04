@@ -38,7 +38,7 @@ const launcher=path.join(scratch,'result-boundary-run-'+process.pid+'.mjs');
 await fs.writeFile(launcher,source);
 let code;
 try {
- const child=spawn('/usr/bin/node',[launcher],{env:process.env,stdio:'inherit'});
+ const child=spawn(process.execPath,[launcher],{env:process.env,stdio:'inherit'});
  code=await new Promise((resolve,reject)=>{child.once('error',reject);child.once('close',resolve)});
 } finally {
  await fs.rm(launcher);

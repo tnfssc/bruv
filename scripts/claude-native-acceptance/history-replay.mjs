@@ -30,7 +30,7 @@ await fs.writeFile(
   "# Isolated native connector acceptance project\nActual Bruv runtime with a deterministic loopback test model.\n",
 );
 const env = {
-  PATH: "/usr/bin:/bin",
+  PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
   HOME: home,
   ...config?.env,
 };

@@ -33,7 +33,11 @@ try {
   await fs.writeFile(path.join(agent, "models.json"), JSON.stringify(modelsConfig(model.port)));
   child = spawn(binary, ["--mode", "rpc", "--no-approve", "--provider", provider, "--model", modelId], {
     cwd: root,
-    env: { PATH: "/usr/bin:/bin", HOME: root, BRUV_CODING_AGENT_DIR: agent },
+    env: {
+      PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
+      HOME: root,
+      BRUV_CODING_AGENT_DIR: agent,
+    },
     stdio: ["pipe", "pipe", "pipe"],
   });
   let buffer = "";

@@ -17,10 +17,10 @@ export BRUV_RUNTIME_BINARY="$PWD/dist/release/bruv-linux-x64"
 export T3_UPSTREAM=/absolute/fresh/official-2644-cache
 export BROWSER_PATH=/absolute/chromium-headless-shell
 export PROOF_OUTPUT="$PWD/.cache/native-release-2644-fresh"
-/usr/bin/node scripts/run-native-release-gate.mjs
+node scripts/run-native-release-gate.mjs
 ~~~
 
-Requires Linux x64 and /usr/bin/node with node:sqlite (22.13+; proof used 25.9.0).
+Requires Linux x64 and node on PATH with node:sqlite (22.13+; proof used 25.9.0).
 The runner composes the **existing validated scripts**, sequentially: strict
 command-idle; same-root actual local child + reply/idle; human approvals and
 saved questions; app delegation; default steering/Stop/reopen continuation;
@@ -48,7 +48,7 @@ From the repository root (POSIX shell):
 BRUV_CONNECTOR_EXECUTABLE=/absolute/path/to/dist/bruv-claude-compat \
 BRUV_RUNTIME_BINARY=/absolute/path/to/dist/bruv \
 PROOF_OUTPUT=.cache/claude-integrated-$(date +%s) \
-/usr/bin/node scripts/claude-native-acceptance/run.mjs
+node scripts/claude-native-acceptance/run.mjs
 ```
 
 For this handoff, those binaries are respectively:
@@ -94,10 +94,10 @@ state paths. Failure produces evidence but never a PASS result.
 ## Local model fixture checks (not connector acceptance)
 
 ```sh
-/usr/bin/node --test tests/claude-native-acceptance-model.test.mjs
+node --test tests/claude-native-acceptance-model.test.mjs
 BRUV_RUNTIME_BINARY=/absolute/path/to/dist/bruv \
 PROOF_OUTPUT=.cache/claude-runtime-smoke-$(date +%s) \
-/usr/bin/node scripts/claude-native-acceptance/runtime-smoke.mjs
+node scripts/claude-native-acceptance/runtime-smoke.mjs
 ```
 
 The RPC smoke runs real Bruv execute, managed shell admission and a completion
@@ -207,7 +207,7 @@ ACCEPT_HUMAN_CONTROLS=1 FIXTURE_PORT=19848 \
 BRUV_CONNECTOR_EXECUTABLE="$PWD/dist/bruv-claude-compat" \
 BRUV_RUNTIME_BINARY="$PWD/dist/bruv" \
 PROOF_OUTPUT=.cache/native-human-controls-$(date +%s) \
-/usr/bin/node scripts/claude-native-acceptance/run.mjs
+node scripts/claude-native-acceptance/run.mjs
 ```
 
 This focused branch uses Supervised native execute approval. It checks no side

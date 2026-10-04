@@ -53,7 +53,9 @@ export function reply(body, { worker, state }) {
   const content = (value) => ({ role: "assistant", content: value });
   const shellCode = (scenario, wait) =>
     "const r = await shell(" +
-    JSON.stringify("/usr/bin/node " + JSON.stringify(worker) + " " + JSON.stringify(state) + " " + scenario) +
+    JSON.stringify(
+      JSON.stringify(process.execPath) + " " + JSON.stringify(worker) + " " + JSON.stringify(state) + " " + scenario,
+    ) +
     ", {waitSeconds:" +
     wait +
     "}); console.log(JSON.stringify(r));";
@@ -128,7 +130,9 @@ export function reply(body, { worker, state }) {
     }
     return execute(
       "const job = await shell(" +
-        JSON.stringify("/usr/bin/node " + JSON.stringify(worker) + " " + JSON.stringify(state) + " cancel") +
+        JSON.stringify(
+          JSON.stringify(process.execPath) + " " + JSON.stringify(worker) + " " + JSON.stringify(state) + " cancel",
+        ) +
         ', {waitSeconds:0}); if(!job.background)throw Error("Expected fresh owned background job"); await Bun.write(' +
         JSON.stringify(state + "/cancel.job-id") +
         ',job.id); console.log(JSON.stringify(await jobs.stop(job.id))); const deadline=Date.now()+10000; let inspected; do { inspected=await jobs.inspect(job.id); if(["killed","cancelled","stopped"].includes(inspected.status))break; await new Promise(r=>setTimeout(r,25)); } while(Date.now()<deadline); if(!["killed","cancelled","stopped"].includes(inspected.status))throw Error("Cancellation not confirmed: "+inspected.status); console.log("CANCEL_INSPECT_REAL",JSON.stringify(inspected));',

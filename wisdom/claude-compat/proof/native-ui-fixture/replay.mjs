@@ -23,7 +23,7 @@ await fs.mkdir(home);await fs.mkdir(project);
 const fixture=config?.tap || path.join(root,'research-claude-compatible-fixture');
 if(!integration){await fs.copyFile(fileURLToPath(new URL('./fixture.mjs',import.meta.url)),fixture);await fs.chmod(fixture,0o755);}
 await fs.writeFile(path.join(project,'README.md'),integration?'# Isolated native connector acceptance project\nActual Bruv runtime with a deterministic loopback test model.\n':'# Isolated synthetic fixture project\nNo Bruv execution or provider inference.\n');
-const env={PATH:'/usr/bin:/bin',HOME:home,SPIKE_PROTOCOL_ONLY:'1',SPIKE_LOG:config?.wire || path.join(root,'wire.ndjson'),...config?.env};
+const env={PATH:[path.dirname(process.execPath),'/usr/bin','/bin'].join(path.delimiter),HOME:home,SPIKE_PROTOCOL_ONLY:'1',SPIKE_LOG:config?.wire || path.join(root,'wire.ndjson'),...config?.env};
 if(integration)await integration.prepare({base,fixture,config});
 const git=(args)=>execFileSync('/usr/bin/git',['-C',project,...args],{env,stdio:'pipe'});
 git(['init','-q']);git(['add','README.md']);git(['-c','user.name=Research fixture','-c','user.email=fixture@localhost','commit','-qm','Initialize fixture project']);

@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 // Transparent process tap. All native packets originate in the actual connector.
 import fs from "node:fs";
 import { createHash } from "node:crypto";

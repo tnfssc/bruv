@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 // Research-only Claude-compatible protocol fixture. NOT Claude, NOT authenticated.
 // Independently authored from public SDK types and discovery.ndjson.
 import fs from 'node:fs';

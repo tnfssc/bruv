@@ -82,7 +82,7 @@ try {
   await fs.writeFile(config.env.BRUV_ACCEPTANCE_CONFIG, JSON.stringify(config), { mode: 0o600 });
   const replay = path.resolve(here, "./history-replay.mjs");
   const env = {
-    PATH: "/usr/bin:/bin",
+    PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
     HOME: home,
     TMPDIR: root,
     BRUV_ACCEPTANCE_CONFIG: config.env.BRUV_ACCEPTANCE_CONFIG,
@@ -90,7 +90,7 @@ try {
   };
   for (const key of ["T3_UPSTREAM", "T3_EXPECTED_SHA256", "BROWSER_PATH", "FIXTURE_PORT"])
     if (process.env[key]) env[key] = process.env[key];
-  child = spawn("/usr/bin/node", [replay], { env, stdio: "inherit" });
+  child = spawn(process.execPath, [replay], { env, stdio: "inherit" });
   const code = await new Promise((resolve, reject) => {
     child.once("error", reject);
     child.once("close", resolve);

@@ -99,7 +99,7 @@ try {
     );
   await fs.writeFile(replay, replaySource);
   const env = {
-    PATH: "/usr/bin:/bin",
+    PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
     HOME: home,
     ...(process.env.TMPDIR ? { TMPDIR: process.env.TMPDIR } : {}),
     BRUV_ACCEPTANCE_CONFIG: config.env.BRUV_ACCEPTANCE_CONFIG,
@@ -112,7 +112,7 @@ try {
     await new Promise((resolve) => reservation.close(resolve));
   }
   for (const key of ["T3_UPSTREAM", "BROWSER_PATH", "FIXTURE_PORT"]) if (process.env[key]) env[key] = process.env[key];
-  child = spawn("/usr/bin/node", [replay], { env, stdio: "inherit" });
+  child = spawn(process.execPath, [replay], { env, stdio: "inherit" });
   const code = await new Promise((resolve, reject) => {
     child.once("error", reject);
     child.once("close", resolve);
@@ -244,9 +244,9 @@ async function verifyChildHistory(agent, proof) {
       JSON.stringify(rows[0].cwd) +
       "})));";
     const sdkRows = JSON.parse(
-      execFileSync("/usr/bin/node", ["--input-type=module", "-e", script], {
+      execFileSync(process.execPath, ["--input-type=module", "-e", script], {
         env: {
-          PATH: "/usr/bin:/bin",
+          PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
           HOME: path.join(path.dirname(agent), "home"),
           CLAUDE_CONFIG_DIR: path.join(agent, "native-history"),
         },
