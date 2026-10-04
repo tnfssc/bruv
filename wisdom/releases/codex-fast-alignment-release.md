@@ -8,9 +8,11 @@ PR: https://github.com/tnfssc/bruv/pull/27. Parent proof: 117 tests / 781 assert
 
 ## Actual CI blocker and correction
 
-Previous Release https://github.com/tnfssc/bruv/actions/runs/37188844249 failed deterministic tests (1967 pass, 28 skip, 28 fail) before assets/publication. Initial PR CI https://github.com/tnfssc/bruv/actions/runs/37189627215 also failed Linux validation. The long-thread optimization called a captured AgentSession.getContextUsage from its projection-only estimator facade. If shake accounting installed first, that capture was the accounting wrapper, which needs a complete session manager and threw at manager.getSessionId(). This is an adapter installation-order bug in the default-branch optimization, not fast-mode wire behavior.
+Previous Release https://github.com/tnfssc/bruv/actions/runs/37188844249 failed deterministic tests (1967 pass, 28 skip, 28 fail) before assets/publication. Initial PR CI https://github.com/tnfssc/bruv/actions/runs/37189627215 failed Linux validation separately: OpenAI GA oversized tool output was not ready within a fixed 10 ms fixture sleep (JSON.parse(undefined)). Sharded PR CI did not encounter the adapter-order failure that the unsharded Release suite did. The long-thread optimization called a captured AgentSession.getContextUsage from its projection-only estimator facade. If shake accounting installed first, that capture was the accounting wrapper, which needs a complete session manager and threw at manager.getSessionId(). This is an adapter installation-order bug in the default-branch optimization, not fast-mode wire behavior.
 
 Reproduced locally with the real SDK suites (47 pass / 4 fail) and a new isolated-process regression that installs shake accounting before disk history. The fix captures the pristine SDK estimator at module evaluation and uses it only for the existing narrow projection view; ordinary-session fallback retains the current wrapper. No interface weakening, latency-target change, model fallback or gate bypass. Regression failed before the patch; projection parity plus real shake/native runtime suites now pass: 53 tests / 265 assertions. Typecheck and diff whitespace passed. Full deterministic suite and new hosted checks pending.
+
+The PR timing failure is a test synchronization assumption: oversized tool results write a filesystem artifact before emitting their reply. Changed only that fixture to wait boundedly for the actual reply, assert it exists, and retain truncation/path assertions; no product behavior or gate removed.
 
 ## Publication checkpoint
 
