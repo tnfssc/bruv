@@ -12,7 +12,7 @@ The approved Ghostty/Vesper design remains. One heading per feature and short fa
 
 ## Page copy follow-up
 
-User asked to remove demo caveats from the page. Removed the shared scripted-demo disclaimer and playback-instruction paragraph from both rendered views. Removed the fixed scroll-hint footer too; HTML access now sits in the header. The large heading is now Bruv in both views, with the product pitch below. A head bootstrap hides fallback content before first paint only on the terminal entry. Success reveals the ready terminal; module/WASM failure restores HTML. With no JavaScript, HTML is visible from the start. Controls retain accessible demo labels. Scripted content and source provenance remain in feature wisdom, not marketing copy. Values unchanged: separate user-facing content from acceptance notes.
+User asked to remove demo caveats from the page. Removed the shared scripted-demo disclaimer and playback-instruction paragraph from both rendered views. Removed the fixed scroll-hint footer too; HTML access now sits in the header. The large heading is now Bruv in both views, with the product pitch below. Use the full 5×7 wordmark whenever its 23 cells fit; the former 3×5 mobile B/R looked distorted. A head bootstrap hides fallback content before first paint only on the terminal entry. Success reveals the ready terminal; module/WASM failure restores HTML. With no JavaScript, HTML is visible from the start. Controls retain accessible demo labels. Scripted content and source provenance remain in feature wisdom, not marketing copy. Values unchanged: separate user-facing content from acceptance notes.
 
 ## Keep these fixes
 
@@ -33,3 +33,7 @@ From site: bun install --frozen-lockfile, bun run build, bun run test. PORT=0 bu
 - validation/polish/: current focused screenshots/checks. Other validation folders are historical.
 
 Canvas reading/selecting/find relies on the semantic HTML representation. Physical phones and Safari/Firefox remain untested; automated checks are not a manual screen-reader audit. Values already cover this task; no forced values edit.
+
+## Ongoing install work
+
+Installer task task_50347bb3 is in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_50347bb3, branch feat/landing-install-script, based on 48fb5b7d. Its result must be integrated with the later mobile wordmark fix here; do not drop either. No release or deployment authorized.

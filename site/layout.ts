@@ -87,7 +87,7 @@ export function layout(cols: number, rows: number, state: State) {
   hits.push({ x: htmlX, y: 1, width: htmlLabel.length, height: 1, label: "HTML", action: "text" });
   put(htmlX, 1, htmlLabel, state.focus === 0 ? palette.selected : palette.accent);
   y += 1;
-  for (const line of headline(landing.title, width, width < 80))
+  for (const line of headline(landing.title, width, width < landing.title.length * 6 - 1))
     pieces.push({ x: margin, y: y++, text: line, style: palette.title });
   y++;
   text(landing.titleTail, palette.accent);
