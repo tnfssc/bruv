@@ -39,6 +39,29 @@ def fixture(body, root):
               any(error in str(i.get("output", "")) for error in ["Execution failed", "BuildMessage:", "Persistent questions need"])]
     if failed:
         return [prose("The fixture action failed. Inspect its original error before continuing this acceptance run.", "final_answer")]
+    if "Inspect grouped records" in user_text:
+        for call_id, label in [("record-a", "Read first record"), ("record-b", "Read second record"), ("record-c", "Read third record")]:
+            if call_id not in called:
+                return [tool(call_id, label, 'console.log("' + call_id.upper() + '_DETAIL\\n" + Array.from({length:12}, (_,i)=>"' + call_id.upper() + '_LINE_"+i).join("\\n"));')]
+        if "split-a" not in called:
+            return [prose("Saved note: the next records belong to a separate step.", "commentary"),
+                    tool("split-a", "Read fourth record", 'console.log("SPLIT_A_DETAIL");')]
+        if "split-b" not in called:
+            return [tool("split-b", "Read fifth record", 'console.log("SPLIT_B_DETAIL");')]
+        return [prose("Grouped records are ready. The saved note remains visible.", "final_answer")]
+    if "Run lifecycle checks" in user_text:
+        if "launch-lifecycle" not in called:
+            code = []
+            for name, status in [("complete", 0), ("fail", 7), ("cancel", 0)]:
+                gate = shlex.quote(str(root / "gates" / name))
+                cmd = "sh -c " + shlex.quote("printf '" + name + " check started\n'; while [ ! -e " + gate + " ]; do sleep 0.1; done; printf '" + name + " check settled\n'; exit " + str(status))
+                code.append('const ' + name + ' = await shell(' + json.dumps(cmd) + ', {waitSeconds:0});')
+            code.append('await Bun.write(' + json.dumps(str(root / "lifecycle-jobs.json")) + ', JSON.stringify({complete:complete.id,fail:fail.id,cancel:cancel.id}));')
+            code.append('console.log({complete,fail,cancel}); await jobs.snooze(cancel.id,{minutes:0.02});')
+            return [tool("launch-lifecycle", "Start lifecycle checks", " ".join(code))]
+        if "Cancel fixture check" in user_text and "cancel-lifecycle" not in called:
+            return [tool("cancel-lifecycle", "Cancel the fixture check", 'const ids = await Bun.file(' + json.dumps(str(root / "lifecycle-jobs.json")) + ').json(); console.log(await jobs.stop(ids.cancel));')]
+        return [prose("Lifecycle checks are available for inspection.", "final_answer")]
     if "Keep concise" in user_text:
         if "resolve-question" not in called:
             return [tool("resolve-question", "Use the notes preference",
@@ -155,11 +178,16 @@ def launch(root, reopen=False):
            "SHELL": "/bin/sh", "LANG": "C.UTF-8"}
     args = [state["binary"], "--offline", "--no-approve", "--provider", "activity-fixture", "--model", "acceptance",
             "--tui-mode", "fullscreen", "--session-dir", str(root / "sessions")]
-    if reopen:
+    if state.get("session"):
+        args += ["--session", state["session"]]
+    elif reopen:
         args += ["--continue"]
     command = "env -i " + " ".join(shlex.quote(k + "=" + v) for k, v in env.items())
     command += " " + shlex.join(args)
-    tmux(root, "new-session", "-d", "-s", "activity", "-x", "120", "-y", "40", "-c", str(root / "project"), command)
+    if reopen:
+        tmux(root, "respawn-pane", "-k", "-t", "activity", "-c", str(root / "project"), command)
+    else:
+        tmux(root, "new-session", "-d", "-s", "activity", "-x", "120", "-y", "40", "-c", str(root / "project"), command)
     tmux(root, "pipe-pane", "-o", "-t", "activity", "cat >> " + shlex.quote(str(root / "transcript.ansi")))
 
 
@@ -229,16 +257,15 @@ def main():
         tmux(root, "resize-window", "-t", "activity", "-x", str(width), "-y", str(height))
     elif a.command == "release":
         for name in a.args:
-            if name not in ["fast", "slow", "foreground"]:
-                parser.error("release names: fast slow foreground")
+            if name not in ["fast", "slow", "foreground", "complete", "fail", "cancel"]:
+                parser.error("Unknown fixture gate")
             (root / "gates" / name).touch()
     elif a.command == "reopen":
         capture(root, "before-reopen")
-        tmux(root, "kill-session", "-t", "activity")
         launch(root, reopen=True)
     elif a.command == "stop":
         # Let shell jobs finish before terminating the terminal; evidence is retained.
-        for name in ["fast", "slow", "foreground"]:
+        for name in ["fast", "slow", "foreground", "complete", "fail", "cancel"]:
             (root / "gates" / name).touch()
         tmux(root, "kill-server", check=False)
         state = json.loads((root / "state.json").read_text())

@@ -21,6 +21,49 @@ class FixtureTests(unittest.TestCase):
     def setUp(self):
         self.root = Path(tempfile.gettempdir()) / "activity-fixture-test"
 
+    def test_grouped_records_have_two_prose_separated_groups(self):
+        calls, output = [], []
+        for _ in range(6):
+            output.extend(fixture.fixture(request("Inspect grouped records", calls), self.root))
+            calls = [i["call_id"] for i in output if i["type"] == "function_call"]
+        self.assertEqual(calls, ["record-a", "record-b", "record-c", "split-a", "split-b"])
+        self.assertEqual([i["type"] for i in output], ["function_call"] * 3 + ["message"] + ["function_call"] * 2 + ["message"])
+        code = json.loads(output[0]["arguments"])["code"]
+        self.assertIn(r"\n", code)
+        self.assertNotIn("\n", code)
+        self.assertIn("RECORD-A_DETAIL", code)
+        self.assertIn("length:12", code)
+
+    def test_lifecycle_uses_real_jobs_and_short_review_checkpoint(self):
+        items = fixture.fixture(request("Run lifecycle checks"), self.root)
+        self.assertEqual(len(items), 1)
+        code = json.loads(items[0]["arguments"])["code"]
+        self.assertEqual(code.count("await shell("), 3)
+        self.assertIn("exit 7", code)
+        self.assertIn("jobs.snooze(cancel.id,{minutes:0.02})", code)
+        self.assertIn("lifecycle-jobs.json", code)
+        body = request("Run lifecycle checks", ["launch-lifecycle"])
+        body["input"].append({"role":"user", "content":"Cancel fixture check"})
+        cancel = fixture.fixture(body, self.root)
+        self.assertEqual(cancel[0]["call_id"], "cancel-lifecycle")
+        self.assertIn("jobs.stop(ids.cancel)", json.loads(cancel[0]["arguments"])["code"])
+        body["input"].append({"type":"function_call_output", "call_id":"cancel-lifecycle", "output":"Stopped fixture task"})
+        self.assertFalse(any(i["type"] == "function_call" for i in fixture.fixture(body, self.root)))
+
+    def test_reopen_respawns_private_pane_instead_of_destroying_server(self):
+        from unittest.mock import patch
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "state.json").write_text(json.dumps({"binary":"/owner/dist/bruv", "socket":"private"}))
+            with patch.object(fixture, "tmux") as tmux:
+                fixture.launch(root, reopen=True)
+            args = tmux.call_args_list[0].args
+            self.assertEqual(args[1], "respawn-pane")
+            self.assertIn("--continue", args[-1])
+            self.assertIn("env -i", args[-1])
+            self.assertNotIn("kill-session", args)
+
     def test_guide_count_and_original_evidence(self):
         calls = []
         outputs = []
