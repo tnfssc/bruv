@@ -120,7 +120,12 @@ const CODEX_TOKEN = [
 async function wirePayload(
   h: ReturnType<typeof harness>,
   model = h.ctx.model,
-  options: { onPayload?: (payload: any) => any; sessionId?: string; responseTier?: string | null } = {},
+  options: {
+    onPayload?: (payload: any) => any;
+    onProviderStreamEvent?: (event: any, model: any) => void;
+    sessionId?: string;
+    responseTier?: string | null;
+  } = {},
 ): Promise<any> {
   let body: any;
   await h.runtime
@@ -132,16 +137,13 @@ async function wirePayload(
         transport: "sse",
         sessionId: options.sessionId ?? h.ctx.sessionManager.getSessionId(),
         onPayload: options.onPayload,
+        onProviderStreamEvent: options.onProviderStreamEvent,
         fetch: (async (_url: any, init: any) => {
           const bytes = Buffer.from(await new Response(init.body).arrayBuffer());
           body = JSON.parse(
             init.headers.get("content-encoding") === "zstd" ? zstdDecompressSync(bytes).toString() : bytes.toString(),
           );
-          return sse(
-            options.responseTier === null
-              ? undefined
-              : (options.responseTier ?? (model.provider === "openai-codex" ? "priority" : "fast")),
-          );
+          return sse(options.responseTier === null ? undefined : (options.responseTier ?? "priority"));
         }) as typeof fetch,
       },
     )
@@ -210,7 +212,7 @@ for (const provider of ["openai", "openai-codex"] as const) {
       const model = { ...base, id };
       expect(nativeFastSupport(model)).toEqual({
         supported: true,
-        tier: provider === "openai" ? "fast" : "priority",
+        tier: "priority",
         surface: provider === "openai" ? "api" : "codex",
       });
       const h = harness(model, { mode: "print", accept: true });
@@ -218,7 +220,7 @@ for (const provider of ["openai", "openai-codex"] as const) {
       await h.command.handler("on", h.ctx);
       expect(await wirePayload(h)).toMatchObject({
         model: id,
-        service_tier: provider === "openai" ? "fast" : "priority",
+        service_tier: "priority",
       });
       await h.command.handler("off", h.ctx);
       expect(await wirePayload(h)).toMatchObject({ model: id, service_tier: "default" });
@@ -322,14 +324,14 @@ test("compaction snapshot is request-local and explicit off affects only later r
   const h = harness(model, { mode: "print", accept: true });
   await h.command.handler("on", h.ctx);
   expect((await withStandardProviderTier(() => wirePayload(h))).service_tier).toBe("default");
-  expect((await wirePayload(h)).service_tier).toBe("fast");
+  expect((await wirePayload(h)).service_tier).toBe("priority");
 
   let release!: () => void;
   const scoped = withStandardProviderTier(async () => {
     await new Promise<void>((resolve) => (release = resolve));
     return wirePayload(h);
   });
-  expect((await wirePayload(h)).service_tier).toBe("fast");
+  expect((await wirePayload(h)).service_tier).toBe("priority");
   release();
   expect((await scoped).service_tier).toBe("default");
 
@@ -345,7 +347,7 @@ test("compaction snapshot is request-local and explicit off affects only later r
   ).toBe("project-custom");
 });
 
-test("actual Pi streamSimple OpenAI serialization carries injected fast tier", async () => {
+test("actual Pi streamSimple OpenAI serialization carries Codex-compatible priority tier", async () => {
   const model = getModel("openai", "gpt-5.3-codex")!;
   const h = harness(model, { mode: "print", accept: true });
   await h.command.handler("on", h.ctx);
@@ -366,7 +368,9 @@ test("actual Pi streamSimple OpenAI serialization carries injected fast tier", a
     )
     .result();
   expect(result.stopReason).toBe("stop");
-  expect(body.service_tier).toBe("fast");
+  expect(body.service_tier).toBe("priority");
+  // This is the pinned SDK catalog estimate, not an upstream credit price.
+  expect(result.usage.cost.total).toBeCloseTo(((4 * model.cost.input + model.cost.output) / 1_000_000) * 2, 12);
   expect(body.model).toBe("gpt-5.3-codex");
   expect(body.reasoning.effort).toBe("low");
 });
@@ -432,7 +436,7 @@ test("actual Pi streamSimple Codex WebSocket frame carries priority", async () =
         type: "response.completed",
         response: {
           status: "completed",
-          service_tier: "priority",
+          service_tier: "default",
           output: [],
           usage: { input_tokens: 4, output_tokens: 1, total_tokens: 5, input_tokens_details: { cached_tokens: 0 } },
         },
@@ -469,7 +473,10 @@ test("actual Pi streamSimple Codex WebSocket frame carries priority", async () =
       .result();
     expect(response.stopReason).toBe("stop");
     expect(frame).toMatchObject({ type: "response.create", service_tier: "priority", instructions: "ws-system" });
-    expect(h.statuses.at(-1).value).toBe(" fast confirmed");
+    expect(h.statuses.at(-1).value).toBe(" fast on");
+    // Pi streamSimple drops the pricing fallback option; default yields the
+    // base catalog estimate, not proof of standard delivery or credit pricing.
+    expect(response.usage.cost.total).toBeCloseTo((4 * model.cost.input + model.cost.output) / 1_000_000, 12);
   } finally {
     globalThis.WebSocket = original;
   }
@@ -547,7 +554,7 @@ test("actual ModelRuntime request snapshot ignores model changes during delayed 
       release();
       await pending;
       expect(body.model).toBe(base.id);
-      expect(body.service_tier).toBe(authorizedModel === base ? "fast" : undefined);
+      expect(body.service_tier).toBe(authorizedModel === base ? "priority" : undefined);
       for (const handler of hooks.get("session_shutdown") ?? []) await handler({}, ctx);
     }
   } finally {
@@ -858,19 +865,39 @@ test("leaf restoration preserves absent, empty and branched views without maskin
   expect(() => restoreLeaf(broken, "prior-leaf")).not.toThrow();
 });
 
-test("fast status uses the returned tier, not the requested tier", async () => {
+test("fast status reports selection regardless of returned tier, like official Codex", async () => {
+  for (const provider of ["openai", "openai-codex"] as const) {
+    const model =
+      provider === "openai" ? getModel("openai", "gpt-5.3-codex")! : getModel("openai-codex", "gpt-5.6-luna")!;
+    const h = harness(model, { mode: "print", accept: true });
+    await h.command.handler("on", h.ctx);
+    expect(h.statuses.at(-1).value).toBe(" fast on");
+    for (const responseTier of ["priority", "fast", "default", "flex", "auto", "unknown", null]) {
+      const body = await wirePayload(h, model, { responseTier });
+      expect(body.service_tier).toBe("priority");
+      expect(h.statuses.at(-1).value).toBe(" fast on");
+    }
+    await h.command.handler("status", h.ctx);
+    expect(h.notices.at(-1).message).toContain("fast on");
+    await h.command.handler("off", h.ctx);
+    expect((await wirePayload(h, model)).service_tier).toBe("default");
+    expect(h.statuses.at(-1).value).toBe(" fast off");
+  }
+});
+
+test("fast leaves raw response-tier events available to existing observers", async () => {
   const model = getModel("openai-codex", "gpt-5.6-luna")!;
   const h = harness(model, { mode: "print", accept: true });
   await h.command.handler("on", h.ctx);
-  expect(h.statuses.at(-1).value).toBe(" fast on (requested)");
-  await wirePayload(h);
-  expect(h.statuses.at(-1).value).toBe(" fast confirmed");
-  await h.command.handler("status", h.ctx);
-  expect(h.notices.at(-1).message).toContain("fast confirmed");
-  await wirePayload(h, model, { responseTier: "default" });
-  expect(h.statuses.at(-1).value).toBe(" fast downgraded (default)");
-  await wirePayload(h, model, { responseTier: null });
-  expect(h.statuses.at(-1).value).toBe(" fast on (requested)");
+  const completed: string[] = [];
+  await wirePayload(h, model, {
+    responseTier: "default",
+    onProviderStreamEvent(event) {
+      if (event.type === "response.completed") completed.push(event.response.service_tier);
+    },
+  });
+  expect(completed).toEqual(["default"]);
+  expect(h.statuses.at(-1).value).toBe(" fast on");
 });
 
 test("parent fast consent bootstraps a distinct supported child and its descendants", async () => {
@@ -919,7 +946,7 @@ test("parent fast consent bootstraps a distinct supported child and its descenda
   }
 });
 
-test("an in-flight fast response cannot turn an explicit opt-out back into confirmed", async () => {
+test("an in-flight fast response cannot turn an explicit opt-out back on", async () => {
   const model = getModel("openai-codex", "gpt-5.6-luna")!;
   const h = harness(model, { mode: "print", accept: true });
   await h.command.handler("on", h.ctx);
