@@ -3,6 +3,8 @@ import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import type { Readable, Writable } from "node:stream";
 import product from "../../package.json";
+import { CONNECTOR_VERSION, BRUV_CONNECTOR_VERSION, connectorLaunchDefaults } from "./launch";
+export { CONNECTOR_VERSION, BRUV_CONNECTOR_VERSION } from "./launch";
 import image from "../../runtime-assets/assets/clankolas.png" with { type: "file" };
 import template from "../../runtime-assets/export-html/template.html" with { type: "file" };
 import highlight from "../../runtime-assets/export-html/vendor/highlight.min.js" with { type: "file" };
@@ -26,7 +28,6 @@ import {
 import { parseConnectorArguments, assertLaunchBindings, type ConnectorArguments } from "./arguments";
 import { ClaudeCompatTransport, type TransportOptions, type WireMessage } from "./transport";
 
-export const CONNECTOR_VERSION = "bruv-claude-compat " + product.version;
 export const CONNECTOR_HELP = [
   "bruv-claude-compat \u2014 Bruv connector, not Anthropic Claude Code",
   "",
@@ -38,14 +39,17 @@ export const CONNECTOR_HELP = [
   "  bruv-claude-compat -p --output-format json --json-schema JSON",
   '    [--model provider/id] [--tools ""] [--permission-mode dontAsk]',
   "    [--disable-slash-commands] [--strict-mcp-config] [PROMPT]",
-  "  bruv-claude-compat --help | --version",
+  "  bruv-claude-compat --help | --version | --bruv-version",
   "",
   "Stream stdin/stdout are NDJSON; auxiliary stdin is plain text and stdout is one",
   "validated structured_output result. Diagnostics go only to stderr.",
-  "BRUV_CLAUDE_COMPAT_HOME selects isolated Bruv connector state (default:",
-  "~/.bruv/claude-compat). No CLI state or real Claude history is migrated.",
+  "BRUV_CLAUDE_COMPAT_HOME selects Bruv auth/settings/resources (default:",
+  "homedir()/.bruv/agent, reusing ordinary CLI configuration without copying).",
   "BRUV_CLAUDE_COMPAT_BRUV_PATH selects the normal Bruv binary for child work",
-  "(default: sibling bruv). Configure credentials/models in connector state.",
+  "(default: normal bruv itself for subcommand packaging, otherwise sibling bruv).",
+  "The two optional BRUV path overrides expand ~ and ~/ only.",
+  "--version reports 2.1.280 Bruv protocol compatibility; --bruv-version reports",
+  "the real Bruv product version. No Anthropic authentication is claimed.",
   "Persistent native sessions require an aligned, connector-owned CLAUDE_CONFIG_DIR",
   "(set the same T3 provider homePath). The real default Claude home is refused.",
   "Initialization checks local readiness, never provider access or subscription.",
@@ -276,7 +280,14 @@ export async function runConnector(
   try {
     const args = parseConnectorArguments(argv);
     if (args.action !== "run") {
-      await write(io.output, args.action === "version" ? CONNECTOR_VERSION + "\n" : CONNECTOR_HELP);
+      await write(
+        io.output,
+        args.action === "version"
+          ? CONNECTOR_VERSION + "\n"
+          : args.action === "bruv-version"
+            ? BRUV_CONNECTOR_VERSION + "\n"
+            : CONNECTOR_HELP,
+      );
       return 0;
     }
     assertLaunchBindings(args);
@@ -286,8 +297,12 @@ export async function runConnector(
     delete io.env.BRUV_WEB_TASK_EVENTS;
     delete process.env.BRUV_WEB_TASK_EVENTS;
     if (io.env !== process.env) scrubRootEnvironmentInPlace(process.env);
-    const agentDir = resolve(io.env.BRUV_CLAUDE_COMPAT_HOME ?? join(io.home, ".bruv", "claude-compat"));
-    const normalBinary = resolve(io.env.BRUV_CLAUDE_COMPAT_BRUV_PATH ?? join(dirname(process.execPath), "bruv"));
+    const { agentDir, executablePath: normalBinary } = connectorLaunchDefaults(
+      io.env,
+      io.home,
+      process.execPath,
+      io.cwd,
+    );
     io.signals.on("SIGTERM", terminate);
     io.signals.on("SIGINT", interrupt);
     runtime = await factory(

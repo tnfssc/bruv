@@ -18,6 +18,7 @@ import {
 import type { TSchema } from "typebox";
 import { Compile } from "typebox/compile";
 import bruvPackage from "../../package.json";
+import { COMPAT_PROTOCOL_VERSION } from "./launch";
 import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../delegation-environment";
 import { currentMainOwner } from "../live/main-owner";
 import { assertBruvPiHost } from "../pi-host";
@@ -318,8 +319,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       slash_commands: options.disableSlashCommands ? [] : commands.catalog().map((c) => c.name),
       skills: loader.getSkills().skills.map((s) => s.name),
       plugins: [],
-      claude_code_version: "bruv/" + bruvPackage.version,
-      bruv: { engine: "pi", provider_access_verified: false },
+      claude_code_version: COMPAT_PROTOCOL_VERSION,
+      bruv: { engine: "pi", version: bruvPackage.version, provider_access_verified: false },
     }),
     sessionId: () => options.nativeSessionId ?? session.sessionId,
     model: () => (session.model ? session.model.provider + "/" + session.model.id : (options.model ?? "")),
@@ -642,7 +643,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           })),
         // Never report Anthropic subscription/account identity for non-Claude engines.
         account: {},
-        bruv: { engine: "pi", readiness: ready },
+        bruv: { engine: "pi", version: bruvPackage.version, readiness: ready },
       };
     },
     get_usage: async () => {

@@ -1,0 +1,20 @@
+{
+  "combined": {
+    "pass": 25,
+    "fail": 0,
+    "assertions": 285,
+    "files": 6
+  },
+  "isolatedRuntimeChild": {
+    "pass": 25,
+    "fail": 0
+  },
+  "actualSDK": "0.3.276",
+  "typescript": "passed",
+  "compile": "passed",
+  "normalBruvVersion": "0.16.3",
+  "compatProtocolVersion": "2.1.280",
+  "globalInstall": false,
+  "paidCalls": 0,
+  "legacyUpdater": "not certified; whole-string check incompatible; use --bruv-version tooling or manual paired repair"
+}

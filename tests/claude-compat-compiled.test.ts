@@ -3,6 +3,9 @@ import { spawn } from "node:child_process";
 import { mkdtemp, mkdir, writeFile, rm, access, readFile, readdir, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
+import product from "../package.json";
+import { CONNECTOR_VERSION, BRUV_CONNECTOR_VERSION, COMPAT_PROTOCOL_VERSION } from "../src/claude-compat/launch";
 
 const binary = process.env.BRUV_CLAUDE_COMPAT_TEST_BINARY;
 const normalBinary = process.env.BRUV_CLAUDE_COMPAT_TEST_BRUV;
@@ -13,7 +16,7 @@ compiledTest(
   async () => {
     const root = await mkdtemp(join(tmpdir(), "bruv-compat-compiled-"));
     const home = join(root, "home"),
-      state = join(home, ".bruv", "claude-compat");
+      state = join(home, ".bruv", "agent");
     await mkdir(state, { recursive: true });
     let calls = 0;
     const provider = Bun.serve({
@@ -50,7 +53,6 @@ compiledTest(
       HOME: home,
       CLAUDE_CONFIG_DIR: join(root, "sdk-home"),
       PATH: process.env.PATH,
-      BRUV_CLAUDE_COMPAT_HOME: state,
       BRUV_CLAUDE_COMPAT_BRUV_PATH: normalBinary!,
       GIT_CONFIG_GLOBAL: "/dev/null",
     };
@@ -68,6 +70,7 @@ compiledTest(
       }),
     );
     await writeFile(join(state, "settings.json"), JSON.stringify({ cacheWarming: "off" }));
+    await writeFile(join(state, "auth.json"), "{}\n");
     const launch = (args: string[], env = environment) => {
       const child = spawn(binary!, args, { cwd: root, env, stdio: ["pipe", "pipe", "pipe"] });
       children.push(child);
@@ -104,9 +107,55 @@ compiledTest(
       throw new Error("Compiled probe timed out: " + diagnostic());
     };
     try {
+      const normalVersion = Bun.spawn([normalBinary!, "--version"], {
+        cwd: root,
+        env: environment,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+      expect(await normalVersion.exited).toBe(0);
+      expect(await new Response(normalVersion.stdout).text()).toBe(product.version + "\n");
+      expect(await new Response(normalVersion.stderr).text()).toBe("");
       const version = launch(["--version"]);
       expect(await version.exit).toBe(0);
-      expect(version.stdout()).toMatch(/^bruv-claude-compat \d+\.\d+\.\d+\n$/);
+      expect(version.stdout()).toBe(CONNECTOR_VERSION + "\n");
+      for (const [flag, identity] of [
+        ["--version", CONNECTOR_VERSION],
+        ["--bruv-version", BRUV_CONNECTOR_VERSION],
+      ]) {
+        const version = launch([flag!]);
+        expect(await version.exit).toBe(0);
+        expect(version.stdout()).toBe(identity + "\n");
+        expect(version.stderr()).toBe("");
+      }
+      // Optional actual installed SDK, initialized without any inference request.
+      const sdkPath = process.env.BRUV_CLAUDE_COMPAT_TEST_SDK;
+      if (sdkPath) {
+        const sdk = await import(pathToFileURL(sdkPath).href);
+        const q = sdk.query({
+          prompt: (async function* () {
+            await new Promise(() => {});
+          })(),
+          options: {
+            pathToClaudeCodeExecutable: binary!,
+            cwd: root,
+            env: environment,
+            model: "fixture/fixture-model",
+            permissionMode: "dontAsk",
+            persistSession: false,
+          },
+        });
+        try {
+          const init = await q.initializationResult();
+          expect(init.account).toEqual({});
+          expect(init.bruv.version).toBe(product.version);
+          expect(init.bruv.readiness.access_verified).toBe(false);
+          expect(await q.supportedModels()).toContainEqual(expect.objectContaining({ value: "fixture/fixture-model" }));
+          expect(calls).toBe(0);
+        } finally {
+          q.close();
+        }
+      }
       const stream = launch([
         "--input-format",
         "stream-json",
@@ -126,6 +175,7 @@ compiledTest(
       const initialized = stream.frames().find((f) => f.type === "control_response");
       expect(initialized.response.subtype).toBe("success");
       expect(initialized.response.response.account).toEqual({});
+      expect(initialized.response.response.bruv.version).toBe(product.version);
       expect(initialized.response.response.bruv.readiness).toMatchObject({
         provider: "fixture",
         model: "fixture-model",
@@ -143,6 +193,10 @@ compiledTest(
       });
       expect(stream.frames().some((f) => f.type === "stream_event")).toBe(true);
       expect(stream.frames().find((f) => f.type === "assistant").message.model).toBe("fixture/fixture-model");
+      expect(stream.frames().find((f) => f.type === "system" && f.subtype === "init")).toMatchObject({
+        claude_code_version: COMPAT_PROTOCOL_VERSION,
+        bruv: { version: product.version, provider_access_verified: false },
+      });
       expect(calls).toBe(1);
       stream.child.kill("SIGTERM");
       expect(await stream.exit).toBe(143);
@@ -216,7 +270,9 @@ compiledTest(
       expect(await unknown.exit).toBe(1);
       expect(unknown.stdout()).toBe("");
       await expect(access(join(home, ".claude"))).rejects.toThrow();
-      await expect(access(join(home, ".bruv", "agent"))).rejects.toThrow();
+      // Default auth/config is reused in place, not copied into Claude state.
+      expect(await readFile(join(state, "settings.json"), "utf8")).toContain("cacheWarming");
+      expect(JSON.parse(await readFile(join(state, "auth.json"), "utf8"))).toEqual({});
     } finally {
       for (const child of children) if (child.exitCode === null) child.kill("SIGKILL");
       provider.stop(true);

@@ -16,7 +16,10 @@ test("external setup uses absolute paired paths and aligned isolated SDK state",
   expect(guide).toContain("does not include it");
   expect(guide).toContain("before Bruv starts");
   expect(guide).toContain("cannot catch");
-  expect(guide).toContain("separate unresolved T3 compatibility issue");
+  expect(guide).toContain("2.1.280 Bruv compatibility profile");
+  expect(guide).toContain("Optional environment overrides");
+  expect(guide).toContain("updater must not overwrite");
+  expect(guide).not.toContain("needs its own Bruv auth/settings setup");
   expect(guide).toContain("No sonnet/opus aliases");
   expect(guide).toContain("NOT Claude Code");
   expect(guide).toContain("https://github.com/pingdotgg/t3code/releases");

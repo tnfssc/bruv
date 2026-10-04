@@ -31,11 +31,22 @@ failure or guarantee graceful upstream handling; T3 may show only a generic
 turn failure. Do not change T3's parent environment, global environment, HOME,
 or ordinary Claude state to work around it. No silent fallback or synthetic fork.
 
-The **unsupported connector-version/update warning is a separate unresolved
-upstream compatibility issue**, not repaired by the history fix. Bruv reports
-its real identity/version and local configuration only; never spoof Claude
-versions/account identity, run Claude login/update, or treat a green probe as
-proof of model access, persistence, fork or complete host compatibility.
+The connector now advertises an explicit supported protocol profile:
+`--version` returns `2.1.280 (Bruv compatibility; bruv <product version>)`;
+`--bruv-version` returns exact `bruv-claude-compat <product version>`.
+SDK init's `claude_code_version` is the protocol version; `bruv.version` is
+Bruv's real version. Normal `bruv --version` is unchanged. This supersedes the
+past decision not to advertise a compatibility version. It is not an Anthropic
+auth/account/model claim. Never use T3's Claude updater: it must not overwrite
+the Bruv wrapper. A latest-version update notice is separate from the unsupported
+range warning; local readiness still does not prove provider access or full parity.
+
+Observed on unchanged official 2644: the **Unsupported version** warning is
+absent and chat with an exact custom model succeeds. T3 still shows a latest
+Claude update notification and a built-in Sonnet 5.5 minimum-version advisory
+(2.1.284). These are not Bruv custom-model/auth requirements; do not run the
+Claude updater or claim all host banners are gone. See
+[bounded version/defaults proof](proof/version-defaults/README.md).
 
 ## Add a separate instance; leave real Claude untouched
 
@@ -46,11 +57,18 @@ In Settings > Providers add a **Claude** instance named
 | --- | --- |
 | Binary path | /home/alice/.local/bin/bruv-claude-compat |
 | History homePath / CLAUDE_CONFIG_DIR path | /home/alice/.bruv/claude-compat-sdk |
-| Environment: BRUV_CLAUDE_COMPAT_HOME | /home/alice/.bruv/agent |
-| Environment: BRUV_CLAUDE_COMPAT_BRUV_PATH | /home/alice/.local/bin/bruv |
+| Optional override: BRUV_CLAUDE_COMPAT_HOME | /home/alice/.bruv/agent |
+| Optional override: BRUV_CLAUDE_COMPAT_BRUV_PATH | /home/alice/.local/bin/bruv |
+
+Minimal setup is **binary path + SDK history home + exact custom model**. The two
+BRUV environment values default to the ordinary user's Bruv auth home and normal
+installed executable (or its sibling); no username is hardcoded. Keep provider
+homePath explicit: upstream parent-side history/fork calls need it too.
 
 Leave launch arguments empty; T3 owns native launch/probe flags. Environment
-assignments are NOT launch arguments. Do not put ~ or literal $HOME in UI paths.
+assignments are NOT launch arguments. Use absolute binary/history UI paths, not ~ or literal $HOME. The connector
+expands only ~ and ~/ in the two optional BRUV overrides (including paths with
+spaces), not shell variables or ~otheruser.
 bruv web prints paths from the current executable/home; remote instances require
 paths on the remote machine.
 
@@ -85,7 +103,7 @@ render only a generic failure rather than relay that diagnostic.
 
 ## State and credential choice
 
-Recommended for existing Bruv users: explicitly reuse ~/.bruv/agent with
+Default for existing Bruv users: reuse homedir()/.bruv/agent without setting
 BRUV_CLAUDE_COMPAT_HOME. This uses existing auth.json, models.json, settings.json
 and agent resources rather than creating another secret store. Ordinary Bruv
 continues owning provider authentication/settings. No secrets are copied into T3
@@ -99,8 +117,9 @@ Subagent profiles are separately shared at ~/.bruv/subagents.json regardless of
 the connector auth home. Host-managed remote/Live/task ownership is unchanged;
 a separate agent directory does not promise isolation of every host resource.
 
-For separate auth/settings/agent resources, omit BRUV_CLAUDE_COMPAT_HOME: the connector's
-current default is ~/.bruv/claude-compat. Configure it with normal Bruv controls:
+For separate auth/settings/agent resources, explicitly override
+BRUV_CLAUDE_COMPAT_HOME=/home/alice/.bruv/claude-compat. Configure that directory
+with normal Bruv controls:
 
 ~~~sh
 BRUV_CODING_AGENT_DIR=/home/alice/.bruv/claude-compat bruv
@@ -108,7 +127,7 @@ BRUV_CODING_AGENT_DIR=/home/alice/.bruv/claude-compat bruv
 
 This intentionally requires separate authentication, without automatic secret
 copying. SDK home stays ~/.bruv/claude-compat-sdk in either mode. Children use the
-explicit normal Bruv executable, not another engine. Profile/resource inheritance
+normal Bruv executable (optional BRUV_CLAUDE_COMPAT_BRUV_PATH override), not another engine. Profile/resource inheritance
 remains a native acceptance gate, not a packaging assertion.
 
 ## Genuine models and honest labels
@@ -136,6 +155,12 @@ bun run build                 # BOTH dist/bruv and dist/bruv-claude-compat; no T
 bun run install:local         # explicit opt-in; default ~/.local/bin; does not install T3
 bun run smoke -- --reuse-build # packaging smoke, not parity proof
 ~~~
+
+**Migration seam:** old 0.16.3 updaters compare the entire connector `--version`
+with `bruv-claude-compat <version>` and therefore reject this compatibility
+identity. New package tooling must use `--bruv-version`. Until using that tooling,
+use a matched manual paired reinstall/repair; no claim that the legacy updater
+can install this connector. Do not vary identity by staging path/environment.
 
 Local install stages/verifies both versions before replacement. Stop active
 sessions first: replacing two executables is not a filesystem transaction.
@@ -167,8 +192,9 @@ This change does not publish, upgrade T3, or promise a fixed upstream release.
 - Stop prevents a pending execute approval's side effect, but upstream leaves its
   cancelled card visible, even after reload. **Explicitly Decline the stale card**
   before continuing; do not approve it or claim automatic cleanup.
-- T3 may show unsupported connector-version/update banners. The connector reports
-  its real Bruv identity/version; never spoof Claude auth/version to hide warnings.
+- The explicit 2.1.280 compatibility profile addresses the supported-range check.
+  T3 may still offer a latest-Claude update: never run it on the Bruv wrapper.
+  Real Bruv version remains separately inspectable; no Anthropic auth claim.
   Local readiness is not verified provider access.
 - Live is **off by default**. Optional same-host audio requires the provider
   instance environment `BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST=<exact connector hostname>`

@@ -5,6 +5,7 @@ import { parseConnectorArguments, assertLaunchBindings } from "../src/claude-com
 import {
   runConnector,
   CONNECTOR_VERSION,
+  BRUV_CONNECTOR_VERSION,
   type ConnectorIO,
   type RuntimeFactory,
   type ConnectorRuntimeOptions,
@@ -159,10 +160,34 @@ describe("connector entry glue (injected engine, not integrated product proof)",
     const h = harness();
     expect(await runConnector(["--version"], factory, h.io)).toBe(0);
     expect(h.stdout()).toBe(CONNECTOR_VERSION + "\n");
-    expect(CONNECTOR_VERSION.startsWith("bruv-claude-compat ")).toBe(true);
+    expect(CONNECTOR_VERSION).toMatch(/^2\.1\.280 \(Bruv compatibility; bruv /);
+    const real = harness();
+    expect(await runConnector(["--bruv-version"], factory, real.io)).toBe(0);
+    expect(real.stdout()).toBe(BRUV_CONNECTOR_VERSION + "\n");
+    expect(BRUV_CONNECTOR_VERSION.startsWith("bruv-claude-compat ")).toBe(true);
     expect(await runConnector(["--help"], factory, h.io)).toBe(0);
     expect(h.stdout()).toContain("not Anthropic Claude Code");
     expect(calls).toBe(0);
+  });
+  test("connector uses explicit home-prefixed overrides including spaces", async () => {
+    const h = harness();
+    h.io.env.BRUV_CLAUDE_COMPAT_HOME = "~/.bruv/custom auth";
+    h.io.env.BRUV_CLAUDE_COMPAT_BRUV_PATH = "~/custom bin/bruv";
+    let options: ConnectorRuntimeOptions | undefined;
+    const factory: RuntimeFactory = async (o) => {
+      options = o;
+      return {
+        controls: {},
+        onUser: async () => {},
+        close: async () => {},
+        runAuxiliary: async () => ({ type: "result", structured_output: { title: "fixture" } }),
+      };
+    };
+    expect(await runConnector([...auxiliaryFlags, "prompt"], factory, h.io)).toBe(0);
+    expect(options).toMatchObject({
+      agentDir: "/home/test/.bruv/custom auth",
+      executablePath: "/home/test/custom bin/bruv",
+    });
   });
   test("launch errors are nonzero stderr only, before runtime or state access", async () => {
     const h = harness();
@@ -237,7 +262,7 @@ describe("connector entry glue (injected engine, not integrated product proof)",
     expect(closed).toBe(1);
     expect(h.stderr()).toBe("");
     expect(options).toMatchObject({
-      agentDir: "/home/test/.bruv/claude-compat",
+      agentDir: "/home/test/.bruv/agent",
       auxiliary: false,
       appendSystemPrompt: ["workspace"],
       model: "openai/gpt-4.1",
