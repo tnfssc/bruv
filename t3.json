@@ -9,7 +9,7 @@
     },
     {
       "name": "CI Checks",
-      "command": "bun run ci",
+      "command": "env SHELL=/bin/sh bun run ci",
       "icon": "test"
     },
     {

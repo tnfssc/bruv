@@ -117,3 +117,35 @@ Installed pair verified: the installed normal binary hash matches the build.
 The delayed-host probe against /home/tnfssc/.local/bin/bruv passes with success
 result, one idle, zero remote sessions, one DELETE, exit 0, and empty stderr.
 Source edits and this note remain uncommitted on t3code/provider-turn-error.
+
+## PR and release request
+
+User asked for PR, merge, release, and T3 worktree setup. PR #30:
+https://github.com/tnfssc/bruv/pull/30. Feature commit ed6d6d99 on
+t3code/provider-turn-error. Registered with this T3 thread.
+
+Added t3.json using named actions from the local Zevium example, with Bruv
+commands and no env copying. Public t3.codes schema validates. Actual fresh
+worktree /home/tnfssc/.bruv/worktrees/bruv-setup-check-ed6d6d99 is detached at
+ed6d6d99. Its configured setup, focused tests, and typecheck pass. Log:
+.cache/fresh-worktree-setup.log in the parent worktree. Worktree retained so
+this proof is easy to inspect; it contains no independent code changes.
+
+Support notes for v0.16.5 are committed. The manual Release workflow on develop
+will prepare the next patch version, then wait for all native/platform gates
+before publication. Do not publish a tag/release by hand or bypass those gates.
+
+At this checkpoint PR CI run 37209782231 is still running. Check watcher job
+task_b236bf37 delivers its result. Local full Linux gate job task_c62d4821
+is running; detailed log is .cache/provider-turn-release-ci.log. After both
+pass, merge PR #30, dispatch release.yml on develop, save the returned run ID,
+and await its publication result. No merge or release yet at this checkpoint.
+
+Values unchanged: this work applies the existing real-path release proof and
+resource ownership values. Setup details live in wisdom/t3/bruv-worktree-setup.md.
+
+Local full-gate follow-up: install/format/lint/typecheck/build/offline transport
+passed. Root tests first had 12 shell-output failures from inherited fish mise
+startup warnings (1998 pass, 30 skip). Test/smoke rerun uses SHELL=/bin/sh, job
+task_a5d609af. The T3 CI action gets that same explicit shell; no global shell
+or trust change. This is an observed new-worktree setup issue, not a model bug.
