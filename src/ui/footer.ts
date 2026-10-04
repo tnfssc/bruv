@@ -217,7 +217,7 @@ export function renderDetailedFooter(
     stats.push(
       "$" +
         (cost + descendantCost).toFixed(3) +
-        (fastEstimate ? "~ (fast estimate)" : "") +
+        (fastEstimate ? "~ (catalog estimate)" : "") +
         (history.unknownVoiceCost
           ? "+? (voice usage incomplete)"
           : statuses.get("bruv-live")
@@ -295,17 +295,9 @@ export function renderCompactFooter(
   const questions = questionLabel(false);
   const shortQuestions = questionLabel(true);
   const mode = singleLine(statuses.get("bruv-mode") ?? "");
-  // Native fast mode owns the bolt badge; it is provider status, never an editor spinner.
+  // The bolt reports the selected mode, like Codex; it is not delivery confirmation.
   const nativeFast = singleLine(statuses.get("bruv-native-fast") ?? "");
-  const shortNativeFast = nativeFast.includes("confirmed")
-    ? "fast✓"
-    : nativeFast.includes("downgraded")
-      ? "std"
-      : nativeFast.endsWith("off")
-        ? "off"
-        : nativeFast
-          ? "fast?"
-          : "";
+  const shortNativeFast = nativeFast ? (nativeFast.endsWith("off") ? "off" : "fast") : "";
   const live = singleLine(statuses.get("bruv-live") ?? "");
   const remote = singleLine(statuses.get("bruv-remote") ?? "");
   const otherCount = [...statuses.keys()].filter(
@@ -320,8 +312,8 @@ export function renderCompactFooter(
   ).length;
   const extra = otherCount ? `+${otherCount} status` : "";
   const history = readFooterHistory(ctx);
-  // Pi prices usage using the response tier (or requested tier when omitted).
-  // This is a catalog estimate, not a ChatGPT credit bill.
+  // Pi supplies a token-price catalog estimate, not account usage.
+  // Neither response tiers nor SDK pricing prove delivery or ChatGPT credits.
   const knownCost = "$" + (history.cost + descendantCost).toFixed(3) + (hasFastEstimate(history, statuses) ? "~" : "");
   const cost = history.unknownVoiceCost ? knownCost + "+?" : statuses.get("bruv-live") ? knownCost + "~" : knownCost;
   const percent = ctx.getContextUsage()?.percent;
