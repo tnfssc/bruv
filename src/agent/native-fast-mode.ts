@@ -181,7 +181,7 @@ function currentSetting(ctx: ExtensionContext, model = ctx.model): Setting | und
 
 export function nativeFastSupport(
   model: Pick<Model<any>, "provider" | "id" | "api" | "baseUrl">,
-): { supported: true; tier: "fast" | "priority"; surface: "api" | "codex" } | { supported: false; reason: string } {
+): { supported: true; tier: "priority"; surface: "api" | "codex" } | { supported: false; reason: string } {
   const baseUrl = normalizedUrl(model.baseUrl);
   if (model.provider === "openai") {
     if (model.api !== "openai-responses" || baseUrl !== OPENAI_BASE_URL)
@@ -189,7 +189,7 @@ export function nativeFastSupport(
         supported: false,
         reason: "OpenAI native fast mode requires the official openai Responses endpoint and auth surface.",
       };
-    return { supported: true, tier: "fast", surface: "api" };
+    return { supported: true, tier: "priority", surface: "api" };
   }
   if (model.provider === "openai-codex") {
     if (model.api !== "openai-codex-responses" || baseUrl !== CODEX_BASE_URL)
@@ -197,8 +197,7 @@ export function nativeFastSupport(
         supported: false,
         reason: "Codex native fast mode requires ChatGPT sign-in on the official Codex endpoint.",
       };
-    // The official Codex client maps its user-facing Fast tier to this legacy
-    // wire value. OpenAI documents priority and fast as equivalent.
+    // Match the official Codex ServiceTier::Fast request value.
     return { supported: true, tier: "priority", surface: "codex" };
   }
   if (model.provider === "anthropic")
@@ -226,15 +225,12 @@ export function nativeFastEnabled(ctx: ExtensionContext): boolean {
   return support.supported && authSurfaceMatches(ctx, support.surface);
 }
 
-function statusText(enabled: boolean, tier?: string): string {
-  if (!enabled) return " fast off";
-  if (tier === "priority" || tier === "fast") return " fast confirmed";
-  if (tier) return " fast downgraded (" + tier + ")";
-  return " fast on (requested)";
+// Like Codex, this badge reports the selected mode, not response-tier evidence.
+function statusText(enabled: boolean): string {
+  return enabled ? " fast on" : " fast off";
 }
 
 type RequestAuthorization = {
-  onTier?: (tier: string | undefined) => void;
   provider: string;
   model: string;
   oauth: boolean;
@@ -304,21 +300,9 @@ function attachConcreteRequestGuard(runtime: unknown, controller: FastController
     // take transcript messages, not separate systemPrompt and tools fields.
     const transcript = normalizeContext(context);
     const priorPayload = options?.onPayload;
-    const priorStreamEvent = options?.onProviderStreamEvent;
     const guardedOptions = {
       ...options,
       ...(authorization.tier === undefined ? {} : { serviceTier: authorization.tier }),
-      onProviderStreamEvent: async (data: unknown, responseModel: Model<any>) => {
-        if (record(data) && data.type === "response.completed" && record(data.response)) {
-          const tier = data.response.service_tier;
-          authorization.onTier?.(
-            typeof tier === "string" && ["priority", "fast", "default", "flex", "auto"].includes(tier)
-              ? tier
-              : undefined,
-          );
-        }
-        await priorStreamEvent?.(data, responseModel);
-      },
       onPayload: async (payload: unknown, payloadModel: Model<any>) => {
         if (authorization.blocked) {
           fastDiagnostic(authorization.manager, FAST_GUARD_BLOCKED_AUTHORIZATION, "blocked", authorization.operationId);
@@ -413,9 +397,6 @@ function detachConcreteRequestGuard(runtime: object, controller: FastController)
 
 export function registerNativeFastMode(pi: ExtensionAPI) {
   let ui: ExtensionContext["ui"] | undefined;
-  let responseTier:
-    | { sessionId: string; provider: string; model: string; timestamp: number; tier?: string }
-    | undefined;
   let inheritFast = process.env[NATIVE_FAST_CHILD_ENV] === "1" && Number(process.env.BRUV_SUBAGENT_DEPTH) > 0;
   delete process.env[NATIVE_FAST_CHILD_ENV];
   const controller: FastController = {
@@ -476,26 +457,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         ...(blocked ? {} : { tier: support.supported ? support.tier : undefined }),
         oauth: ctx.modelRegistry.isUsingOAuth(model),
         ...(blocked ? { blocked } : {}),
-        onTier(tier) {
-          const current = controller.context;
-          if (
-            !current ||
-            current.sessionManager.getSessionId() !== requestedSessionId ||
-            current.model?.provider !== model.provider ||
-            current.model?.id !== model.id ||
-            !currentSetting(current, model)?.enabled ||
-            currentSetting(current, model)?.timestamp !== active.timestamp
-          )
-            return;
-          responseTier = {
-            sessionId: requestedSessionId,
-            provider: model.provider,
-            model: model.id,
-            timestamp: active.timestamp,
-            tier,
-          };
-          refreshStatus(current);
-        },
       };
     },
   };
@@ -512,20 +473,11 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     description: "Acknowledge premium provider billing when enabling /fast outside the TUI",
     default: false,
   });
-  const tierFor = (active: Setting | undefined) =>
-    active &&
-    responseTier &&
-    active.sessionId === responseTier.sessionId &&
-    active.provider === responseTier.provider &&
-    active.model === responseTier.model &&
-    active.timestamp === responseTier.timestamp
-      ? responseTier.tier
-      : undefined;
   const refreshStatus = (ctx: ExtensionContext) => {
     bindContext(ctx);
     ui = ctx.ui;
     const active = currentSetting(ctx);
-    ui?.setStatus("bruv-native-fast", active ? statusText(active.enabled, tierFor(active)) : undefined);
+    ui?.setStatus("bruv-native-fast", active ? statusText(active.enabled) : undefined);
   };
 
   pi.registerCommand("fast", {
@@ -543,7 +495,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         const description = !active
           ? "off (no model-bound setting in this session)"
           : active.enabled
-            ? statusText(true, tierFor(active)).replace(/^ /, "")
+            ? statusText(true).replace(/^ /, "")
             : "off (explicit default/standard tier)";
         ctx.ui.notify(`Native fast mode: ${description}. Model and thinking are unchanged.`, "info");
         refreshStatus(ctx);
@@ -662,11 +614,10 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       volatileOptOuts
         .get(ctx.sessionManager as object)
         ?.delete(settingScope(consentScope.sessionId, model.provider, model.id));
-      responseTier = undefined;
       refreshStatus(ctx);
       ctx.ui.notify(
         action === "on"
-          ? "Native fast mode on for this session, model, and new supported subagents. Fast tier requested; waiting for response confirmation."
+          ? "Native fast mode on for this session, model, and new supported subagents. Requests use the priority service tier."
           : "Native fast mode off for this session and model; requests explicitly use the default/standard tier.",
         "info",
       );
