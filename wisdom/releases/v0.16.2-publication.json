@@ -199,5 +199,15 @@
     "fail": 0,
     "outerAssertions": 35368,
     "isolatedConnectorChildAssertionsPreserved": true
+  },
+  "postMergeCi": {
+    "id": 37191433942,
+    "url": "https://github.com/tnfssc/bruv/actions/runs/37191433942",
+    "headSha": "914b0a3e891991f34ca0a6a17f3b601754b49cce",
+    "conclusion": "failure",
+    "failedTest": "patched SDK startup: empty",
+    "observedFailure": "100 setImmediate polling turns exhausted before grammars:ready; grammars:start was observed",
+    "releaseEquivalentScenario": "passed in full serial gated Release",
+    "remainingWork": "Stabilize fixture grammar-completion synchronization; preserve readiness and latency assertions"
   }
 }
