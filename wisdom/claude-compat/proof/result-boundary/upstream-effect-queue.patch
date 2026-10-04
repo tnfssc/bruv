@@ -1,0 +1,13 @@
+diff --git a/dist/Queue.js b/dist/Queue.js
+--- a/dist/Queue.js
++++ b/dist/Queue.js
+@@ -1672,6 +1672,9 @@ const awaitTake = self => internalEffect.callback(resume => {
+     return resume(self.state.exit);
+   }
+   self.state.takers.add(resume);
++  if (self.messages.length > 0 || self.state.offers.size > 0) {
++    scheduleReleaseTaker(self);
++  }
+   return internalEffect.sync(() => {
+     if (self.state._tag !== "Done") {
+       self.state.takers.delete(resume);

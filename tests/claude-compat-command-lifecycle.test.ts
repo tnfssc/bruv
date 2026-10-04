@@ -32,12 +32,12 @@ test("command completion is exactly once, after real session settlement when a c
     { command_uuid: "resume-command", state: "started" },
     { command_uuid: "resume-command", state: "completed" },
   ]);
-  // A later autonomous epoch has no command admission metadata.
+  // A later epoch with no consumed input has neither command metadata nor a claimed wake origin.
   frontend.onEvent({ type: "agent_start" });
   frontend.onEvent({ type: "agent_settled" });
   await frontend.flush();
   expect(frames.filter((f) => f.type === "command_lifecycle")).toHaveLength(2);
-  expect(frames.filter((f) => f.type === "result").at(-1)).toMatchObject({ origin: { kind: "auto-continuation" } });
+  expect(frames.filter((f) => f.type === "result").at(-1)).toMatchObject({ origin: { kind: "unclassified" } });
 });
 
 test("a stopped dispatched human command has cancelled fate without inventing model work", async () => {

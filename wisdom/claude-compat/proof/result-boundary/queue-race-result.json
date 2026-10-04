@@ -1,0 +1,18 @@
+{
+  "effectVersion": "4.0.0-rc.115",
+  "isolatedDependencyRegression": true,
+  "original": {
+    "injected": true,
+    "delivered": false,
+    "messages": 1,
+    "takers": 1,
+    "scheduled": false
+  },
+  "fixed": {
+    "injected": true,
+    "delivered": true,
+    "messages": 0,
+    "takers": 0,
+    "scheduled": false
+  }
+}

@@ -1,5 +1,7 @@
 # Native same-root lifecycle — post-integration P1 remains OPEN
 
+> Follow-up (2026-10-04): the exact blocker is now proved as an upstream Effect Queue empty-check/waiter-registration lost wakeup, not SDK result metadata. See [focused diagnosis and minimal upstream patch](../result-boundary/README.md). Corrective throwaway T3 passes the strict root and command idle gates; the last unchanged official T3 still fails. This historical FAIL remains valid; do not claim product fixed.
+
 2026-10-04. Focused protocol correction and diagnostic handoff, **not an accepted idle fix**.
 
 ## Actual pinned contracts

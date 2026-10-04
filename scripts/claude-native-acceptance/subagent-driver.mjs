@@ -19,16 +19,19 @@ async function waitFile(file) {
 let observedConfig;
 export async function exercise({ page, url, snapshot, config }) {
   observedConfig = config;
-  await page.goto(url);
-  await page.waitForTimeout(750);
+  // The shared replay already completed the real native ready/new-thread flow.
   const message = page.getByRole("textbox", { name: "Message", exact: true });
   const newThread = async () => {
     await page.getByRole("button", { name: "New thread", exact: true }).click();
+    // Current upstream opens its native project picker before creating the draft.
+    await page.locator('[data-slot="command-item"]').filter({ has: page.getByText("project", { exact: true }) }).first().click();
     await message.waitFor();
     await page.locator('[data-chat-provider-model-picker="true"]').first().click();
     await page.getByText("Local deterministic acceptance (not Claude)", { exact: true }).last().click();
   };
-  await newThread();
+  await message.waitFor();
+  await page.locator('[data-chat-provider-model-picker="true"]').first().click();
+  await page.getByText("Local deterministic acceptance (not Claude)", { exact: true }).last().click();
   await snapshot("model-identity");
   const submit = async (text) => {
     await message.fill(text);

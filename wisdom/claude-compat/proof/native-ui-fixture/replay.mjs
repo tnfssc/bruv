@@ -51,15 +51,20 @@ try {
  // Every replay uses fresh state. Wait for hydration instead of skipping
  // onboarding when its first frame arrives after an arbitrary sleep.
  {
-  await page.getByText('Connect your computers',{exact:true}).waitFor();
+  const connect=page.getByText('Connect your computers',{exact:true});
+  const ready=page.getByRole('button',{name:'Start without a project',exact:true}).or(page.getByRole('button',{name:'New thread',exact:true}).and(page.locator(':enabled')));
+  await connect.or(ready).first().waitFor({timeout:30000});
+  if(await page.getByText('Set up T3 Code',{exact:true}).isVisible() || await connect.isVisible()) {
+  await connect.waitFor({timeout:30000});
   await page.getByRole('button',{name:'Continue',exact:true}).click();
   await page.getByText('Connect your agents',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Continue',exact:true}).click();
   await page.getByRole('button',{name:'Do not import projects',exact:true}).click();
   await page.getByText('Set up T3 Code',{exact:true}).waitFor({state:'hidden'});
+  }
  }
  await page.goto(url+'/settings/providers');
- await page.getByRole('button',{name:integration?'Select Bruv local deterministic acceptance (not Claude)':'Select Claude',exact:true}).click();
+ await page.getByRole('button',{name:integration?'Select Bruv local deterministic acceptance (not Claude)':'Select Claude',exact:true}).click({timeout:30000});
  const name=page.locator('#provider-instance-claudeAgent-display-name');await name.fill(integration?'Bruv local deterministic acceptance (not Claude)':'Bruv Claude-protocol research fixture');await name.blur();await page.waitForTimeout(1500);
  const executable=page.locator('#provider-instance-claudeAgent-binaryPath');await executable.fill(fixture);await executable.blur();
  if(integration)await integration.captureIdentity({page,proof});
@@ -113,8 +118,9 @@ try {
  }
  throw error;
 } finally {
- await integration?.flushCapture?.({proof});
+ try {await integration?.flushCapture?.({proof});} finally {
  if(browser)await browser.close();
  if(server.exitCode===null){server.kill('SIGTERM');await Promise.race([new Promise(r=>server.once('exit',r)),new Promise(r=>setTimeout(r,3000))]);if(server.exitCode===null)server.kill('SIGKILL');}
  await log.close();await fs.rm(root,{recursive:true,force:true});
+ }
 }

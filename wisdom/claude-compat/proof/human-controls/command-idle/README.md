@@ -1,5 +1,7 @@
 # Command admission metadata does not close native idle settlement
 
+> Follow-up (2026-10-04): the exact blocker is now proved as an upstream Effect Queue empty-check/waiter-registration lost wakeup, not SDK result metadata. See [focused diagnosis and minimal upstream patch](../../result-boundary/README.md). Corrective throwaway T3 passes the strict root and command idle gates; the last unchanged official T3 still fails. This historical FAIL remains valid; do not claim product fixed.
+
 **Blocked, not PASS.** Parent baseline d13ac61d. No runtime/model/autonomous
 settlement changes; task_8c7b2393 owns that seam. No T3 source edits, release,
 packaging, providers, credentials or devices. Bun 1.4.2 and TMPDIR=/var/tmp.
