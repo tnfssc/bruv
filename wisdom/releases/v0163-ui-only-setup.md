@@ -1,4 +1,14 @@
-# v0.16.3: UI-only setup and MCP shutdown
+# v0.16.3 — UI-only setup and MCP shutdown
+
+## Published
+
+v0.16.3 published at 2026-10-04T11:42:32Z, from 406ce73ba31a94bea097f83e982781687621d3c8. [Release](https://github.com/tnfssc/bruv/releases/tag/v0.16.3); [successful workflow](https://github.com/tnfssc/bruv/actions/runs/37199145709). All jobs passed: deterministic tests, paired builds/checksums, Linux updater, Mac helper/actual binary/updater and six final-Linux-pair native suites. Verified stable/non-draft and all 20 expected assets; no binary downloads merely to rehash. Metadata: [verification](v0163-verification.json).
+
+The first release attempt 37198016485 published nothing. Its last native command assertion sampled transient Working between UI projections; wire and DB were completed and the subsequent screenshot showed Done. A bounded shared30s convergence wait now retains every idle condition and both same-query commands. Real Chromium rejects persistent Working; all six suites passed afterward. No product fix was hidden in that gate correction.
+
+Remaining limits: upstream T3 PR15598 is not shipped by Bruv. Unpatched T3 can fail UI-only forks before our process starts; the Claude-version advisory remains. No full desktop/paid-provider/device parity claim. Values stayed unchanged: real-path proof, truthful status, scoped cleanup and explicit ownership already cover these lessons.
+
+## Preparation history
 
 Draft release guidance only. Current package/latest release remain 0.16.2; parent verifies gates and release/version before any claim.
 
