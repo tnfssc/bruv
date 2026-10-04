@@ -126,33 +126,3 @@ describe("Pi 1.0.0 disk-backed session projection compatibility", () => {
     expect(JSON.stringify(adapted.repeatedCompaction.messages)).not.toContain("first checkpoint");
   }, 30_000);
 });
-
-test("disk projection estimation uses the SDK estimator when shake accounting installed first", async () => {
-  const root = await mkdtemp(join(tmpdir(), "bruv-projection-accounting-order-"));
-  roots.push(root);
-  const { stdout, stderr, code } = await runProcess(
-    [
-      process.execPath,
-      "-e",
-      String.raw`
-        import { SessionManager } from "@earendil-works/pi-coding-agent";
-        import { installShakeAccountingAdapter } from "./src/agent/manual-shake.ts";
-        import { installDiskBackedSessionManager } from "./src/history/session-manager.ts";
-        import { strict as assert } from "node:assert";
-        installShakeAccountingAdapter();
-        installDiskBackedSessionManager();
-        const manager = SessionManager.create(process.env.SCENARIO_ROOT, process.env.SCENARIO_ROOT);
-        manager.appendMessage({ role: "user", content: "projection accounting order", timestamp: 1 });
-        const projection = manager.buildSessionProjection();
-        assert.equal(projection.messages[0].content, "projection accounting order");
-        const reopened = SessionManager.open(manager.getSessionFile());
-        assert.deepEqual(reopened.buildSessionProjection().messages, projection.messages);
-        console.log("accounting order ok");
-      `,
-    ],
-    { env: { ...process.env, SCENARIO_ROOT: root } },
-  );
-  expect(stderr).toBe("");
-  expect(code).toBe(0);
-  expect(stdout.trim()).toBe("accounting order ok");
-});

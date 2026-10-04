@@ -1,11 +1,5 @@
 # v0.16.1
 
-## Codex-aligned fast mode
-
-- Fast mode forwards the selected model unchanged on official OpenAI and Codex endpoints, removing the stale model-name allowlist that blocked aliases such as `gpt-6.1-sol`.
-- Both supported surfaces now request `service_tier: "priority"`, matching official Codex semantics. Provider support errors remain visible; no model swap or retry is hidden.
-- Premium-cost consent and exact session/model authorization remain required. `/fast off` explicitly requests the default tier; untouched models are not overridden. The footer shows active fast mode without a misleading unsupported-model label.
-
 ## Long-thread responsiveness
 
 - Improved typing responsiveness and loading animation in long saved conversations, with less repeated history loading and rendering work.

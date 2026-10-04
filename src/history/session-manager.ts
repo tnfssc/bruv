@@ -50,10 +50,6 @@ interface ManagerState {
   store: DiskEntryStore;
   skeletonEntries?: Array<SessionHeader | SessionEntry>;
 }
-// Projection-only estimation must use the SDK method, not an accounting wrapper
-// that requires a full session manager. Capture before either adapter installs.
-const sdkContextUsage = AgentSession.prototype.getContextUsage;
-
 const states = new WeakMap<SessionManager, ManagerState>();
 // SDK teardown may still read a live manager: finalize only unreachable owners.
 const abandonedManagers = new FinalizationRegistry<DiskEntryStore>((store) => store.dispose());
@@ -278,8 +274,8 @@ export function installDiskBackedSessionManager(): void {
   // Keep only the numeric SDK estimate. Request preparation already builds the
   // projection; seed this cache there so the following footer frame never has to
   // rebuild it. Routed model limits affect presentation, not estimated tokens.
-  // Preserve installed accounting for ordinary sessions. The narrow projection
-  // view below uses the separately captured SDK estimator, regardless of order.
+  // Install before outer accounting adapters, as CLI startup does. The narrow
+  // projection view below calls the native SDK method, not those wrappers.
   const originalContextUsage = AgentSession.prototype.getContextUsage;
   const contextUsageCache = new WeakMap<
     SessionManager,
@@ -494,7 +490,7 @@ export function installDiskBackedSessionManager(): void {
     // usage positions). Give it the projection we already built plus temporary
     // metadata skeletons, never a second materialized branch. A positive dummy
     // window obtains tokens even before the routed model is available.
-    const usage = sdkContextUsage.call({
+    const usage = originalContextUsage.call({
       _limitsModel: () => ({ contextWindow: 1 }),
       sessionManager: {
         buildSessionProjection: () => projection,

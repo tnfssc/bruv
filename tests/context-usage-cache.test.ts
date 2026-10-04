@@ -8,15 +8,14 @@ import { run } from "./helpers";
 const scenario = String.raw`
 import { AgentSession, SessionManager, buildSessionProjection } from "@earendil-works/pi-coding-agent";
 import { DiskEntryStore } from "./src/history/disk-entry-store.ts";
+import { installDiskBackedSessionManager, disposeDiskBackedSessionManager } from "./src/history/session-manager.ts";
+import { renderCompactFooter, renderDetailedFooter } from "./src/ui/footer.ts";
+import { installShakeAccountingAdapter } from "./src/agent/manual-shake.ts";
 import { MANUAL_SHAKE_ENTRY, InvalidShakeRecordError } from "./src/history/shake-record.ts";
 import assert from "node:assert/strict";
 const originalUsage = AgentSession.prototype.getContextUsage;
 let computations = 0;
 AgentSession.prototype.getContextUsage = function() { computations++; return originalUsage.call(this); };
-// Install the estimator spy before loading adapters, which capture the SDK seam.
-const { installDiskBackedSessionManager, disposeDiskBackedSessionManager } = await import("./src/history/session-manager.ts");
-const { renderCompactFooter, renderDetailedFooter } = await import("./src/ui/footer.ts");
-const { installShakeAccountingAdapter } = await import("./src/agent/manual-shake.ts");
 installDiskBackedSessionManager();
 const diskUsage = AgentSession.prototype.getContextUsage;
 // Match CLI order: the shake accounting wrapper is installed after disk history.
