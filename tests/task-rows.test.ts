@@ -488,3 +488,38 @@ test("ownership detail reads scale once per parent render, not once per child", 
   expect(plain(parent.render(100))).toHaveLength(count);
   expect(detailReads).toBe(count * 2);
 });
+
+test("nested native containers do not rescan the live snapshot", () => {
+  let snapshots = 0;
+  restores.push(
+    installSdkTaskRows(theme, () => {
+      snapshots++;
+      return [row()];
+    }),
+  );
+  const parent = new Container();
+  for (let i = 0; i < 80; i++) {
+    const component = tool([]);
+    component.setExpanded(true);
+    parent.addChild(component);
+  }
+  parent.render(100);
+  expect(snapshots).toBe(0);
+  parent.addChild(tool([row()]));
+  parent.render(100);
+  expect(snapshots).toBe(1);
+  const unrelated = new Container();
+  unrelated.addChild(new Text("Not a task", 0, 0));
+  unrelated.render(100);
+  expect(snapshots).toBe(1);
+});
+
+test("interleaved notices keep the most recent typed outcome", () => {
+  restores.push(installSdkTaskRows(theme));
+  const parent = new Container();
+  parent.addChild(notice([row("one", "completed")]));
+  parent.addChild(tool([row("one", "failed", { exitCode: 2 })]));
+  expect(plain(parent.render(100))).toEqual(["✗ Run tests — exit 2"]);
+  parent.addChild(notice([row("one", "completed")]));
+  expect(plain(parent.render(100))).toEqual(["✓ Run tests"]);
+});

@@ -111,27 +111,40 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
     // Pi renders children directly (and records their heights for mouse dispatch), so
     // wrap existing children before delegating to its normal render implementation.
     if (active) {
-      for (const child of this.children) adapt(this, child);
+      let hasTaskChildren = false;
+      for (const child of this.children) {
+        adapt(this, child);
+        if (
+          (child instanceof ToolExecutionComponent &&
+            (child as unknown as ToolShape).toolName === "execute" &&
+            !(child as unknown as ToolShape).expanded) ||
+          (child instanceof CustomMessageComponent &&
+            !(child as unknown as CustomShape)._expanded &&
+            ["task-complete", "task-attention"].includes((child as unknown as CustomShape).message.customType))
+        )
+          hasTaskChildren = true;
+      }
+      // Native tool bodies are containers too. They must not each merge the entire live task list.
+      if (!hasTaskChildren) return originalRender.call(this, width);
       const rows = new Map<string, TaskRow>();
       const owners = new Map<string, Component>();
       const sources = new Map<string, ToolExecutionComponent>();
       for (const sibling of this.children) {
-        if (!(sibling instanceof ToolExecutionComponent)) continue;
-        const item = sibling as unknown as ToolShape;
-        if (item.toolName !== "execute") continue;
-        sources.set(item.toolCallId, sibling);
-        for (const row of taskRowsFromDetails(item.result?.details)) {
-          upsertTaskRow(rows, { ...row, sourceCallId: item.toolCallId });
-          owners.set(taskRowKey(row), sibling);
-        }
-      }
-      for (const sibling of this.children) {
-        if (!(sibling instanceof CustomMessageComponent)) continue;
-        const item = sibling as unknown as CustomShape;
-        if (!["task-complete", "task-attention"].includes(item.message.customType)) continue;
-        for (const row of taskRowsFromDetails(item.message.details)) {
-          upsertTaskRow(rows, row);
-          if (!owners.has(taskRowKey(row))) owners.set(taskRowKey(row), sibling);
+        if (sibling instanceof ToolExecutionComponent) {
+          const item = sibling as unknown as ToolShape;
+          if (item.toolName !== "execute") continue;
+          sources.set(item.toolCallId, sibling);
+          for (const row of taskRowsFromDetails(item.result?.details)) {
+            upsertTaskRow(rows, { ...row, sourceCallId: item.toolCallId });
+            owners.set(taskRowKey(row), sibling);
+          }
+        } else if (sibling instanceof CustomMessageComponent) {
+          const item = sibling as unknown as CustomShape;
+          if (!["task-complete", "task-attention"].includes(item.message.customType)) continue;
+          for (const row of taskRowsFromDetails(item.message.details)) {
+            upsertTaskRow(rows, row);
+            if (!owners.has(taskRowKey(row))) owners.set(taskRowKey(row), sibling);
+          }
         }
       }
       for (const row of snapshot()) {
