@@ -1,0 +1,82 @@
+Code
+HISTORY_CHILD_CONTINUE: recall original checkpoint...
+PT
+project
+now
+Settle
+HISTORY_CHILD_CONTINUE: recall original checkpoint...
+Regenerating title
+master
+BU
+HISTORY_SEED: remember orchid-73; complete one rea...
+PT
+project
+now
+Settle
+HISTORY_SEED: remember orchid-73; complete one rea...
+master
+BU
+New thread
+LH
+launch
+now
+Settle
+New thread
+Settled (0)
+PT
+project
+/
+HISTORY_SEED: remember orchid-73; complete one rea...
+Bruv UI-only acceptance (not Claude) 0.16.2 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+HISTORY_SEED: remember orchid-73; complete one real tool exchange.
+
+2:47 PM
+
+Worked for 1.8s
+2:47 PM
+T3 Code
+
+HISTORY_CHECKPOINT: original secret is orchid-73; completed tool recorded.
+
+2:47 PM
+
+You
+
+HISTORY_ROOT_FUTURE: only original branch sees this.
+
+2:47 PM
+
+T3 Code
+
+HISTORY_ROOT_FUTURE_RESPONSE: original branch only.
+
+2:47 PM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+BU
+Local deterministic acceptance (not Claude)
+Full access
+project
+Open in editor
+Add project script
+master
+Publish repository
+Changes
++0
+-0
+Lineage
+HISTORY_CHILD_CONTINUE: recall original checkpoint...
+Done
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Install the update now or review provider settings.
+
+Settings
+Update
