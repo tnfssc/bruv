@@ -12,7 +12,7 @@ case "${1-}" in
   *) echo "usage: scripts/smoke.sh [--reuse-build]" >&2; exit 2 ;;
 esac
 
-# The build and reuse paths must both supply the complete runnable pair.
+# The build and reuse paths must both supply the binary and exec launcher.
 for binary in ./dist/bruv ./dist/bruv-claude-compat; do
   if [ ! -f "$binary" ] || [ ! -x "$binary" ]; then
     echo "smoke: requires executable $binary" >&2
@@ -35,8 +35,10 @@ printf '%s\n' "$help" | grep -q '^bruv - AI coding assistant'
 [ -d "$tmp_dir/home/.bruv" ]
 [ ! -e "$tmp_dir/home/.pi" ]
 
-connector_version="$(env -i HOME="$tmp_dir/connector-home" PATH=/nonexistent "$tmp_dir/bruv-claude-compat" --version)"
-[ "$connector_version" = "bruv-claude-compat $expected_version" ]
+connector_version="$(env -i HOME="$tmp_dir/connector-home" PATH=/nonexistent "$tmp_dir/bruv-claude-compat" --bruv-version)"
+[ "$connector_version" = "$expected_version" ]
+compat_version="$(env -i HOME="$tmp_dir/connector-home" PATH=/nonexistent "$tmp_dir/bruv-claude-compat" --version)"
+[ "$compat_version" = "2.1.280 (Bruv compatibility; bruv $expected_version)" ]
 [ ! -e "$tmp_dir/connector-home/.bruv" ]
 [ ! -e "$tmp_dir/connector-home/.claude" ]
 web="$(env -i HOME="$tmp_dir/web-home" PATH=/nonexistent "$tmp_dir/bruv" web)"

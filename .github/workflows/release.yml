@@ -163,7 +163,7 @@ jobs:
         run: |
           test -s artifacts/release/mac-helper/live-audio
           file artifacts/release/mac-helper/live-audio | grep -E 'Mach-O 64-bit (executable arm64|arm64 executable)'
-      - name: Build paired release binaries without bundled T3
+      - name: Build one binary and thin connector launcher per target without bundled T3
         shell: bash
         run: |
           bun run build -- --target=bun-linux-x64-baseline --outfile=./dist/release/bruv-linux-x64 2>&1 | tee artifacts/release/build-linux-x64.log
@@ -188,10 +188,15 @@ jobs:
             sha256sum "$binary" > "$binary.sha256"
           done
           cp ../../LICENSE ../../THIRD_PARTY_NOTICES.md .
-          printf 'Source: https://github.com/%s/tree/%s\nCommit: %s\nTag: %s\nPaired targets: bun-linux-x64-baseline, bun-linux-arm64, bun-darwin-arm64, bun-android-arm64.\nEach target ships normal bruv and bruv-claude-compat with checksums.\nT3 Code is external, unmodified, manually installed and not included in these assets.\n' \
+          printf 'Source: https://github.com/%s/tree/%s\nCommit: %s\nTag: %s\nPaired targets: bun-linux-x64-baseline, bun-linux-arm64, bun-darwin-arm64, bun-android-arm64.\nEach target ships one compiled bruv binary and a tiny POSIX exec launcher bruv-claude-compat with checksums. The launcher execs its matching sibling bruv claude-compat. Linux/macOS require /bin/sh; Android requires /system/bin/sh and Android API 28+ (/system/bin/linker64), not glibc.\nT3 Code is external, unmodified, manually installed and not included in these assets.\n' \
             "$GITHUB_REPOSITORY" "$RELEASE_SHA" "$RELEASE_SHA" "$RELEASE_TAG" > SOURCE.txt
           printf '\nEmbedded macOS arm64 native helper (Apple frameworks; experimental voice-only /live):\n' >> SOURCE.txt
           sha256sum ../../artifacts/release/mac-helper/live-audio >> SOURCE.txt
+      - name: Verify release launcher packaging and Android runtime target
+        shell: bash
+        run: |
+          bun scripts/verify-release-launchers.ts dist/release
+          readelf -l dist/release/bruv-android-arm64 | grep -F '/system/bin/linker64'
       - name: Verify bruv updater with actual Linux release binary
         run: bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')"
       - name: Stage verified release assets
@@ -250,7 +255,8 @@ jobs:
           trap 'rm -rf "$home"' EXIT
           version=$(HOME="$home" dist/release/bruv-linux-x64 --version)
           test "$version" = "$(bun -p 'require("./package.json").version')"
-          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --version)" = "bruv-claude-compat $version"
+          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --bruv-version)" = "$version"
+          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
           BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64" \
           BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64" \
           PROOF_OUTPUT="$GITHUB_WORKSPACE/artifacts/release/native-acceptance" \
@@ -286,7 +292,10 @@ jobs:
         shell: bash
         run: |
           chmod 0755 dist/release/bruv-darwin-arm64 dist/release/bruv-claude-compat-darwin-arm64
-          test "$(dist/release/bruv-claude-compat-darwin-arm64 --version)" = "bruv-claude-compat $(dist/release/bruv-darwin-arm64 --version)"
+          version="$(dist/release/bruv-darwin-arm64 --version)"
+          test "$version" = "$(bun -p 'require("./package.json").version')"
+          test "$(dist/release/bruv-claude-compat-darwin-arm64 --bruv-version)" = "$version"
+          test "$(dist/release/bruv-claude-compat-darwin-arm64 --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
           bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')"
           home=$(mktemp -d)
           trap 'rm -rf "$home"' EXIT

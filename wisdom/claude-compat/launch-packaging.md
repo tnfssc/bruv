@@ -1,3 +1,12 @@
+> **Current packaging (2026-10-04):** one compiled `bruv` binary and a tiny POSIX
+> `bruv-claude-compat` exec launcher for sibling `bruv claude-compat`. Linux/macOS
+> use `/bin/sh`; Android uses `/system/bin/sh` (native API 28+ target,
+> `/system/bin/linker64`). Connector `--version` is
+> `2.1.280 (Bruv compatibility; bruv <product>)`; product checks use
+> `--bruv-version`. The separately compiled connector and old version format in
+> the dated implementation record below are superseded. See
+> [active packaging contract](production-packaging.md#artifactbuild-contract).
+
 # Bruv connector entrypoint and launch packaging
 
 Current production target: unchanged official **v0.0.46-nightly.20261004.2644**,

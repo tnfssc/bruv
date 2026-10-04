@@ -1,6 +1,6 @@
 # bruv CLI
 
-A coding agent built on [Pi](https://pi.dev). The normal CLI gives you a terminal interface, Herdr integration, background jobs, sub-agents, and project wisdom. A separate native connector pairs it with external, unmodified T3 Code.
+A coding agent built on [Pi](https://pi.dev). The normal CLI gives you a terminal interface, Herdr integration, background jobs, sub-agents, and project wisdom. The same compiled binary provides the compatibility connector for external, unmodified T3 Code through a tiny `bruv-claude-compat` launcher.
 
 The product is **bruv CLI**, and the command is `bruv`. The GitHub repository is
 [`tnfssc/bruv`](https://github.com/tnfssc/bruv). Release assets use `bruv-*`.
@@ -11,7 +11,16 @@ Release assets ship normal bruv and bruv-claude-compat together. Use
 [Build from source](#build-from-source) until the accepted paired release is
 available; older releases may not contain the connector.
 
-Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64:
+Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64 (Android API 28+):
+
+Each target ships **one compiled `bruv` binary and a tiny POSIX exec launcher**
+`bruv-claude-compat`, not a second compiled binary. The launcher runs its sibling
+`bruv claude-compat`, preserving arguments, exit status and process signals. Keep
+both files together: suffixed release names resolve the matching suffixed binary;
+installed canonical names resolve `bruv`. Linux/macOS require `/bin/sh`; Android
+requires `/system/bin/sh`. The Android binary uses `/system/bin/linker64` (Android
+API 28+), not a glibc Linux/proot runtime. No Bun/Node installation is needed to
+run these assets.
 
 Stop active Bruv/connector sessions before replacing executables. Install the
 matched pair from one release, including both checksums and notices:
@@ -38,7 +47,8 @@ for name in LICENSE THIRD_PARTY_NOTICES.md THIRD_PARTY_LICENSES.txt SOURCE.txt; 
 done
 # Only these version probes use a temporary home, never the running T3 backend.
 version="$(HOME="$tmp/probe" "./$asset" --version)"
-test "$(HOME="$tmp/probe" "./$connector" --version)" = "bruv-claude-compat $version"
+test "$(HOME="$tmp/probe" "./$connector" --bruv-version)" = "$version"
+test "$(HOME="$tmp/probe" "./$connector" --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
 mkdir -p "$HOME/.local/bin" "$HOME/.local/share/bruv/notices/$version"
 install -m 755 "$asset" "$HOME/.local/bin/bruv"
 install -m 755 "$connector" "$HOME/.local/bin/bruv-claude-compat"
@@ -114,7 +124,7 @@ The integration is built in. It needs no extra extension or setup. Herdr is opti
 `bruv web` prints setup guidance without downloading T3 or rewriting settings.
 Install official T3 desktop/web separately and start it normally: no custom T3
 arguments or parent startup environment. Add a separate Claude protocol instance
-with the absolute `bruv-claude-compat` binary, connector-owned history homePath,
+with the absolute `bruv-claude-compat` launcher path, connector-owned history homePath,
 and provider-instance Bruv home/binary environment. Select an exact Bruv
 provider/model. **Full UI-only native history requires the upstream provider-scoped
 SDK history fix; confirm availability in your T3 build. Official 2644 lacks it.**
@@ -139,6 +149,15 @@ bun run check
 bun run build
 ```
 
+The build compiles `dist/bruv` once and writes the small executable
+`dist/bruv-claude-compat` launcher beside it. The connector reports
+`2.1.280 (Bruv compatibility; bruv <product>)` for `--version`; use
+`--bruv-version` for the product version and paired packaging/update checks.
+During an older updater’s private `.bruv-update-*` staging probe only, the
+canonical launcher’s exact `--version` call retains the old truthful
+`bruv-claude-compat <product>` response. After installation it uses the SDK-facing
+compatibility identity above; new packaging/update checks use `--bruv-version`.
+
 Install your local build:
 
 ```sh
@@ -151,7 +170,7 @@ On GitHub (including mobile): **Actions → Release → Run workflow → develop
 
 ## Project wisdom
 
-- Released binaries currently support Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64.
+- Release assets support Linux x64/arm64, macOS Apple Silicon, and Android Termux arm64 (API 28+); the launchers require the platform shell paths above.
 - Credentials and model configuration are supplied at runtime, like Pi.
 - State is stored under `~/.bruv`. This is a fresh namespace: existing `~/.die` data is untouched and is not automatically migrated or read.
 - CLI sessions/configuration stay at `~/.bruv/agent`. External T3 owns

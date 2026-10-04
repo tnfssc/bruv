@@ -239,3 +239,25 @@ instead of racing native bootstrap hydration.
 ### Explicit native history reader
 
 Set `BRUV_CLAUDE_SDK_PATH` to the checksum-verified SDK 0.3.276 `sdk.mjs`. The release setup downloads that test-only archive and exports its path. The composed gate checks the input before launching any suites; no developer-home cache is used. `T3_UPSTREAM`, `BROWSER_PATH`, and paired binary paths are explicit too. The SDK is not added to product dependencies.
+
+## Thin-launcher release packaging
+
+The product compiles one `bruv` executable per target. `bruv-claude-compat` is a
+tiny POSIX exec launcher for its sibling `bruv claude-compat`, not a separate
+compiled connector. Native proof must pass both actual paths; do not replace
+the launcher with a developer Bun command. Release-suffixed names and installed
+canonical names must both resolve their matching sibling. Linux/macOS launchers
+use `/bin/sh`; Android uses `/system/bin/sh` and the Android API 28+ executable
+uses `/system/bin/linker64`, not glibc.
+
+Packaging compares connector `--bruv-version` to normal `bruv --version`.
+Connector `--version` is the protocol compatibility identity:
+`2.1.280 (Bruv compatibility; bruv <product>)`. Only the older updater’s exact
+canonical `--version` probe in its private `.bruv-update-*` staging directory
+retains the truthful legacy product label; installed native SDK probes use the
+compatibility identity. The release launcher gate checks
+shipped script checksums, shebangs, sibling resolution, exec process identity and argument/exit-status
+forwarding using a temporary sibling and the host POSIX shell. It does not claim
+native Android/macOS execution or native T3 acceptance. The existing composed
+strict suites, Linux actual-pair checks, Mac actual-pair/updater/helper checks,
+and all publication dependencies remain required.

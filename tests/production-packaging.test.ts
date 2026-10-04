@@ -32,7 +32,7 @@ test("release targets compile one normal binary and preserve the target/native h
   expect(() => pairedBuildCommands(["--outfile=dist/bruv-claude-compat"], "/repo", "/bin/bun")).toThrow();
 });
 
-test("every release target ships both binaries, checksums and shared licensing/source notices", () => {
+test("every release target ships binary and launcher, checksums and shared licensing/source notices", () => {
   for (const target of ["linux-x64", "linux-arm64", "darwin-arm64", "android-arm64"]) {
     for (const name of ["bruv", "bruv-claude-compat"]) {
       expect(assetNames as readonly string[]).toContain(name + "-" + target);
@@ -42,6 +42,8 @@ test("every release target ships both binaries, checksums and shared licensing/s
   for (const notice of ["LICENSE", "THIRD_PARTY_NOTICES.md", "THIRD_PARTY_LICENSES.txt", "SOURCE.txt"])
     expect(assetNames as readonly string[]).toContain(notice);
   expect(assetNames.some((asset) => asset.includes("web"))).toBe(false);
+  expect(assetNames).toHaveLength(20);
+  expect(new Set(assetNames).size).toBe(20);
 });
 
 test("external native release gate setup keeps verified upstream layout and env handoff", async () => {
