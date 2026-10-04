@@ -28,7 +28,7 @@ const deps = (fetch: typeof globalThis.fetch, executable: string, extra: Record<
   platform: "linux" as const,
   arch: "x64",
   compiled: true,
-  runBinary: async (path: string) => (path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0"),
+  runBinary: async () => "0.3.0",
   ...extra,
 });
 async function target(kind = "file") {
@@ -144,9 +144,7 @@ describe("bruv self-update", () => {
       const x = await target();
       await writeFile(join(x.dir, "bruv-claude-compat"), "existing connector");
       await expect(
-        updateBruv(
-          deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => "bruv-claude-compat " + current }),
-        ),
+        updateBruv(deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => current })),
       ).resolves.toMatchObject({
         status,
       });
@@ -404,7 +402,7 @@ describe("paired install update", () => {
     expect(await readFile(connector, "utf8")).toBe("concurrent connector");
     expect(await readFile(x.path, "utf8")).toBe("old");
   });
-  test.each(["bruv-claude-compat 0.2.0", "0.3.0"])(
+  test.each(["0.2.0", "2.1.280 (Bruv compatibility; bruv 0.3.0)"])(
     "bad staged connector version %s prevents replacement",
     async (output) => {
       const x = await target();
@@ -430,12 +428,12 @@ describe("paired install update", () => {
           runBinary: async (path: string, args: string[]) => {
             probes.push(args[0]!);
             if (args[0] === "--live-self-test") throw new Error("helper broken");
-            return path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0";
+            return "0.3.0";
           },
         }),
       ),
     ).rejects.toThrow("helper broken");
-    expect(probes).toEqual(["--version", "--version", "--live-self-test"]);
+    expect(probes).toEqual(["--bruv-version", "--bruv-version", "--live-self-test"]);
     expect(await readFile(x.path, "utf8")).toBe("old");
   });
   test("--check reports available without download or replacement", async () => {
@@ -454,7 +452,7 @@ describe("paired install update", () => {
         if (kind === "broken") throw new Error("broken installed connector");
         return "bruv-claude-compat 0.2.0";
       }
-      return path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0";
+      return "0.3.0";
     };
     const f = fixture();
     const options = { currentVersion: "0.3.0", runBinary };
@@ -481,7 +479,8 @@ test("compiled updater verifies staged distinct versions and updates a non-runni
   const normalPayload = join(x.dir, "normal-payload");
   const connectorPayload = join(x.dir, "connector-payload");
   const normal = "#!/bin/sh\necho 0.3.0\n";
-  const connector = "#!/bin/sh\necho bruv-claude-compat 0.3.0\n";
+  const connector =
+    '#!/bin/sh\nif [ "$1" = --bruv-version ]; then exec "${BRUV_CLAUDE_COMPAT_BRUV_PATH:-$(dirname "$0")/bruv}" --bruv-version; fi\necho "2.1.280 (Bruv compatibility; bruv 0.3.0)"\n';
   await writeFile(normalPayload, normal);
   await writeFile(connectorPayload, connector);
   const build = Bun.spawn(
@@ -514,7 +513,7 @@ test("compiled updater verifies staged distinct versions and updates a non-runni
   expect(await readFile(runner)).toEqual(runnerBytes);
   for (const [path, version] of [
     [x.path, "0.3.0"],
-    [join(x.dir, "bruv-claude-compat"), "bruv-claude-compat 0.3.0"],
+    [join(x.dir, "bruv-claude-compat"), "2.1.280 (Bruv compatibility; bruv 0.3.0)"],
   ]) {
     const check = Bun.spawn([path!, "--version"], { stdout: "pipe", stderr: "pipe" });
     expect((await new Response(check.stdout).text()).trim()).toBe(version!);
@@ -534,4 +533,77 @@ test("wrong staged normal version prevents paired replacement", async () => {
   ).rejects.toThrow("version mismatch");
   expect(await readFile(x.path, "utf8")).toBe("old");
   expect(await Bun.file(join(x.dir, "bruv-claude-compat")).exists()).toBe(false);
+});
+
+test("staged launcher is explicitly paired with candidate normal, not caller override", async () => {
+  const x = await target();
+  const probes: { path: string; flag: string; env: NodeJS.ProcessEnv }[] = [];
+  const inherited = process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH;
+  process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH = "/wrong-installed-bruv";
+  try {
+    await updateBruv(
+      deps(fixture().fetch, x.path, {
+        runBinary: async (path: string, args: string[], env: NodeJS.ProcessEnv) => {
+          probes.push({ path, flag: args[0]!, env });
+          return "0.3.0";
+        },
+      }),
+    );
+    expect(probes.map((p) => p.flag)).toEqual(["--bruv-version", "--bruv-version"]);
+    expect(probes[0]!.env.BRUV_CLAUDE_COMPAT_BRUV_PATH).toBeUndefined();
+    expect(probes[1]!.env.BRUV_CLAUDE_COMPAT_BRUV_PATH).toBe(probes[0]!.path);
+  } finally {
+    if (inherited === undefined) delete process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH;
+    else process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH = inherited;
+  }
+});
+
+test("installed old connector fallback is limited to unsupported product flag", async () => {
+  const x = await target();
+  const connector = join(x.dir, "bruv-claude-compat");
+  await writeFile(
+    connector,
+    '#!/bin/sh\ncase "$1" in --version) echo "bruv-claude-compat 0.3.0";; *) exit 1;; esac\n',
+    { mode: 0o755 },
+  );
+  const { runBinary: _mock, ...options } = deps(fixture().fetch, x.path, { currentVersion: "0.3.0" });
+  expect(await updateBruv(options)).toEqual({ status: "current", version: "0.3.0" });
+  const probes: string[] = [];
+  expect(
+    await updateBruv(
+      deps(fixture().fetch, x.path, {
+        currentVersion: "0.3.0",
+        check: true,
+        runBinary: async (_path: string, args: string[], env: NodeJS.ProcessEnv) => {
+          expect(env.BRUV_CLAUDE_COMPAT_BRUV_PATH).toBeUndefined();
+          probes.push(args[0]!);
+          return args[0] === "--bruv-version" ? "0.2.0" : "bruv-claude-compat 0.3.0";
+        },
+      }),
+    ),
+  ).toEqual({ status: "available", version: "0.3.0" });
+  expect(probes).toEqual(["--bruv-version"]);
+});
+
+test("installed launcher override cannot hide a mismatched sibling product", async () => {
+  const x = await target();
+  await writeFile(x.path, '#!/bin/sh\nif [ "$1" = claude-compat ]; then echo 0.2.0; else echo 0.3.0; fi\n', {
+    mode: 0o755,
+  });
+  const launcher = await readFile(
+    process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? new URL("../scripts/bruv-claude-compat.sh", import.meta.url),
+    "utf8",
+  );
+  await writeFile(join(x.dir, "bruv-claude-compat"), launcher, { mode: 0o755 });
+  const healthy = join(x.dir, "unrelated-bruv");
+  await writeFile(healthy, "#!/bin/sh\necho 0.3.0\n", { mode: 0o755 });
+  const inherited = process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH;
+  process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH = healthy;
+  try {
+    const { runBinary: _mock, ...options } = deps(fixture().fetch, x.path, { currentVersion: "0.3.0", check: true });
+    expect(await updateBruv(options)).toEqual({ status: "available", version: "0.3.0" });
+  } finally {
+    if (inherited === undefined) delete process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH;
+    else process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH = inherited;
+  }
 });

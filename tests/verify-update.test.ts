@@ -10,16 +10,23 @@ const roots: string[] = [];
 afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
-async function fixture(connectorVersion = "0.3.0") {
+async function fixture(connectorVersion = "0.17.0", legacy = false) {
   const root = await mkdtemp(join(tmpdir(), "bruv-paired-update-gate-test-"));
   roots.push(root);
   const names = [asset!, asset!.replace(/^bruv-/, "bruv-claude-compat-")];
-  for (const [i, name] of names.entries()) {
-    const source = join(root, name + ".ts");
-    const version = i === 0 ? "0.3.0" : "bruv-claude-compat " + connectorVersion;
-    await writeFile(source, "console.log(" + JSON.stringify(version) + ");\n");
-    const build = await Bun.build({ entrypoints: [source], compile: { outfile: join(root, name) } });
-    expect(build.success, build.logs.join("\n")).toBe(true);
+  const normalSource = join(root, "normal.ts");
+  await writeFile(
+    normalSource,
+    `const connector = process.argv[2] === "claude-compat"; const flag = process.argv[connector ? 3 : 2]; console.log(connector && flag === "--version" ? "2.1.280 (Bruv compatibility; bruv ${connectorVersion})" : connector ? "${connectorVersion}" : "0.17.0");`,
+  );
+  const build = await Bun.build({ entrypoints: [normalSource], compile: { outfile: join(root, names[0]!) } });
+  expect(build.success, build.logs.join("\n")).toBe(true);
+  const launcher = await readFile(
+    process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? resolve(import.meta.dir, "../scripts/bruv-claude-compat.sh"),
+    "utf8",
+  );
+  await writeFile(join(root, names[1]!), launcher);
+  for (const name of names) {
     const digest = createHash("sha256")
       .update(await readFile(join(root, name)))
       .digest("hex");
@@ -27,7 +34,13 @@ async function fixture(connectorVersion = "0.3.0") {
   }
   const run = async () => {
     const child = Bun.spawn(
-      [process.execPath, resolve(import.meta.dir, "../scripts/verify-update.ts"), join(root, names[0]!), "0.3.0"],
+      [
+        process.execPath,
+        resolve(import.meta.dir, "../scripts/verify-update.ts"),
+        join(root, names[0]!),
+        "0.17.0",
+        ...(legacy ? ["--legacy-updater"] : []),
+      ],
       {
         stdout: "pipe",
         stderr: "pipe",
@@ -50,7 +63,7 @@ test.skipIf(!asset)(
     const passed = await run();
     expect(passed.code, passed.errors).toBe(0);
     expect(passed.output).toContain("checksum failures preserved BOTH installed files");
-    expect(passed.output).toContain("matched versions 0.3.0 passed");
+    expect(passed.output).toContain("matched versions 0.17.0 passed");
     for (const name of names) {
       const checksum = join(root, name + ".sha256");
       const original = await readFile(checksum);
@@ -73,6 +86,21 @@ test.skipIf(!asset)(
     const result = await run();
     expect(result.code).not.toBe(0);
     expect(result.errors).toContain("Staged Bruv pair version mismatch");
+  },
+  30_000,
+);
+
+test.skipIf(!asset)(
+  "frozen 0.16.3 compiled updater migrates to a thin wrapper",
+  async () => {
+    const frozen = await readFile(resolve(import.meta.dir, "update-v0.16.3-fixture.ts"));
+    expect(createHash("sha256").update(frozen).digest("hex")).toBe(
+      "cab60e412c13277cf8a415d0c09fb0dbdfd69c9d000c42d21b2695f5b03230aa",
+    );
+    const { run } = await fixture("0.17.0", true);
+    const result = await run();
+    expect(result.code, result.errors).toBe(0);
+    expect(result.output).toContain("Frozen v0.16.3 updater");
   },
   30_000,
 );

@@ -8,9 +8,11 @@ import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { updateAssetFor } from "../src/update";
 
-const [input, version] = process.argv.slice(2);
+const [input, version, updaterMode] = process.argv.slice(2);
+if (updaterMode && updaterMode !== "--legacy-updater") throw new Error("Unknown updater mode: " + updaterMode);
+const legacy = updaterMode === "--legacy-updater";
 if (!input || !version || !/^\d+\.\d+\.\d+$/.test(version))
-  throw new Error("Usage: bun scripts/verify-update.ts <staged-raw-asset> <version>");
+  throw new Error("Usage: bun scripts/verify-update.ts <staged-raw-asset> <version> [--legacy-updater]");
 const asset = updateAssetFor(process.platform, process.arch);
 if (!asset || basename(input) !== asset) throw new Error("Use the raw asset for this host: " + asset);
 const connectorAsset = asset.replace(/^bruv-/, "bruv-claude-compat-");
@@ -34,7 +36,10 @@ try {
   await writeFile(
     runner,
     [
-      "import { updateBruv, RELEASES_URL } from " + JSON.stringify(resolve(import.meta.dir, "../src/update.ts")) + ";",
+      "import { updateBruv, RELEASES_URL } from " +
+        JSON.stringify(resolve(import.meta.dir, legacy ? "../tests/update-v0.16.3-fixture.ts" : "../src/update.ts")) +
+        ";",
+      'import { rename } from "node:fs/promises";',
       "const root = " + JSON.stringify("https://github.com/tnfssc/bruv/releases/download/v" + version + "/") + ";",
       "const names = " + JSON.stringify(candidates.map((candidate) => candidate.name)) + ";",
       "const assets = new Map(await Promise.all(names.map(async name => [name, await Bun.file(" +
@@ -42,7 +47,11 @@ try {
         ' + "/" + name).bytes()])));',
       "const result = await updateBruv({ executable: " +
         JSON.stringify(installed[0]) +
-        ', currentVersion: "0.0.0", fetch: async input => {',
+        ', currentVersion: "' +
+        (legacy ? "0.16.3" : "0.0.0") +
+        '", rename: async (from, to) => { if (process.argv.includes("--fail-normal-rename") && to === ' +
+        JSON.stringify(installed[0]) +
+        ') throw new Error("injected normal rename failure"); await rename(from, to); }, fetch: async input => {',
       "const url = String(input);",
       "if (url === RELEASES_URL) return Response.json({tag_name: " +
         JSON.stringify("v" + version) +
@@ -67,6 +76,12 @@ try {
         throw new Error("Checksum failure changed installed pair");
     }
   }
+  const rollback = spawnSync(executable, ["--fail-normal-rename"], { encoding: "utf8" });
+  if (rollback.status === 0 || !rollback.stderr.includes("Previous installation restored"))
+    throw new Error("Compiled updater failed rollback gate: " + rollback.stderr);
+  for (let i = 0; i < installed.length; i++) {
+    if ((await readFile(installed[i]!, "utf8")) !== originals[i]) throw new Error("Rollback changed installed pair");
+  }
   const updated = spawnSync(executable, [], { encoding: "utf8" });
   if (updated.status !== 0) throw new Error("Compiled paired updater failed replacement: " + updated.stderr);
   const result = JSON.parse(updated.stdout);
@@ -75,19 +90,27 @@ try {
     if (hash(await readFile(installed[i]!)) !== candidates[i]!.expected) throw new Error("Replacement SHA256 mismatch");
     const home = join(directory, "home-" + i);
     await mkdir(home);
-    const actual = spawnSync(installed[i]!, ["--version"], {
+    const actual = spawnSync(installed[i]!, ["--bruv-version"], {
       encoding: "utf8",
       env: { HOME: home, PATH: "/usr/bin:/bin" },
     });
-    const expected = i === 0 ? version : "bruv-claude-compat " + version;
+    const expected = version;
     if (actual.status !== 0 || actual.stdout.trim() !== expected)
       throw new Error("Replacement version mismatch: " + actual.stdout + actual.stderr);
   }
+  // Once installed outside the old updater's stage, expose the SDK-facing version.
+  const sdkVersion = spawnSync(installed[1]!, ["--version"], {
+    encoding: "utf8",
+    env: { HOME: join(directory, "home-1"), PATH: "/usr/bin:/bin" },
+  });
+  if (sdkVersion.status !== 0 || sdkVersion.stdout.trim() !== "2.1.280 (Bruv compatibility; bruv " + version + ")")
+    throw new Error("Installed launcher retained the legacy version label: " + sdkVersion.stdout + sdkVersion.stderr);
   if (hash(await readFile(executable)) !== runnerHash) throw new Error("Gate replaced its running updater");
   if ((await readdir(install)).some((name) => name.startsWith(".bruv-update-")))
     throw new Error("Update staging was not cleaned");
   console.log(
-    "Compiled paired Bruv updater: checksum failures preserved BOTH installed files; replacement SHA256 and matched versions " +
+    (legacy ? "Frozen v0.16.3" : "Compiled paired Bruv") +
+      " updater: checksum failures preserved BOTH installed files; second-rename rollback restored pair; replacement SHA256 and matched versions " +
       version +
       " passed (" +
       asset +
