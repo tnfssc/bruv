@@ -434,6 +434,7 @@ test("release verifies thin launcher dispatch and the actual Android interpreter
   for (const name of ["linux-browser-boot", "mac-release-smoke"]) {
     const commands = workflow.jobs[name].steps.map((step: any) => step.run ?? "").join("\n");
     expect(commands).toContain("--bruv-version");
+    expect(commands).toContain('= "bruv-claude-compat $version"');
     expect(commands).toContain("2.1.280 (Bruv compatibility; bruv $version)");
   }
 });

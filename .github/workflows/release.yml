@@ -198,7 +198,9 @@ jobs:
           bun scripts/verify-release-launchers.ts dist/release
           readelf -l dist/release/bruv-android-arm64 | grep -F '/system/bin/linker64'
       - name: Verify bruv updater with actual Linux release binary
-        run: bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')"
+        run: |
+          bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')"
+          bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')" --legacy-updater
       - name: Stage verified release assets
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -255,7 +257,7 @@ jobs:
           trap 'rm -rf "$home"' EXIT
           version=$(HOME="$home" dist/release/bruv-linux-x64 --version)
           test "$version" = "$(bun -p 'require("./package.json").version')"
-          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --bruv-version)" = "$version"
+          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --bruv-version)" = "bruv-claude-compat $version"
           test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
           BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64" \
           BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64" \
@@ -294,9 +296,10 @@ jobs:
           chmod 0755 dist/release/bruv-darwin-arm64 dist/release/bruv-claude-compat-darwin-arm64
           version="$(dist/release/bruv-darwin-arm64 --version)"
           test "$version" = "$(bun -p 'require("./package.json").version')"
-          test "$(dist/release/bruv-claude-compat-darwin-arm64 --bruv-version)" = "$version"
+          test "$(dist/release/bruv-claude-compat-darwin-arm64 --bruv-version)" = "bruv-claude-compat $version"
           test "$(dist/release/bruv-claude-compat-darwin-arm64 --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
           bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')"
+          bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')" --legacy-updater
           home=$(mktemp -d)
           trap 'rm -rf "$home"' EXIT
           cd "$home"

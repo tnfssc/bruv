@@ -28,7 +28,7 @@ const deps = (fetch: typeof globalThis.fetch, executable: string, extra: Record<
   platform: "linux" as const,
   arch: "x64",
   compiled: true,
-  runBinary: async (path: string) => path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0",
+  runBinary: async (path: string) => (path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.3.0" : "0.3.0"),
   ...extra,
 });
 async function target(kind = "file") {
@@ -144,7 +144,9 @@ describe("bruv self-update", () => {
       const x = await target();
       await writeFile(join(x.dir, "bruv-claude-compat"), "existing connector");
       await expect(
-        updateBruv(deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => "bruv-claude-compat " + current })),
+        updateBruv(
+          deps(f.fetch, x.path, { currentVersion: current, runBinary: async () => "bruv-claude-compat " + current }),
+        ),
       ).resolves.toMatchObject({
         status,
       });

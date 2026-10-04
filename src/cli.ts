@@ -16,12 +16,15 @@ import themeSchema from "../runtime-assets/theme/theme-schema.json" with { type:
 import { withBruvSystemPrompt } from "./system-prompt";
 import { formatThrownValue } from "./typescript/error-diagnostic";
 import { INTERNAL_TYPESCRIPT_RUNNER_ARG, runTypeScriptFromStdin } from "./typescript/runner";
-import { updateBruv } from "./update";
+import { isCompiledInvocation, updateBruv } from "./update";
 
 const cliArgs = process.argv.slice(2);
 // Enter the connector before normal CLI bootstrap. Child work still starts this
 // executable without the subcommand and uses the ordinary CLI path.
 if (cliArgs[0] === "claude-compat") {
+  // This entry is already the normal binary, even under a release target name.
+  // Preserve explicit overrides; source Bun entrypoints still use connector defaults.
+  if (isCompiledInvocation()) process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH ??= process.execPath;
   const { runConnector } = await import("./claude-compat/cli");
   process.exit(await runConnector(cliArgs.slice(1)));
 }

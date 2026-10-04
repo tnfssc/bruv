@@ -67,8 +67,17 @@ try {
   const build = await Bun.build({ entrypoints: [runner], compile: { outfile: executable } });
   if (!build.success) throw new Error("Could not compile current updater: " + build.logs.join("\n"));
   const runnerHash = hash(await readFile(executable));
+  const runnerHome = join(directory, "runner-home");
+  await mkdir(runnerHome);
+  const runnerEnv = {
+    ...process.env,
+    HOME: runnerHome,
+    XDG_CONFIG_HOME: join(runnerHome, "config"),
+    XDG_CACHE_HOME: join(runnerHome, "cache"),
+    XDG_DATA_HOME: join(runnerHome, "data"),
+  };
   for (const candidate of candidates) {
-    const failed = spawnSync(executable, ["--corrupt=" + candidate.name], { encoding: "utf8" });
+    const failed = spawnSync(executable, ["--corrupt=" + candidate.name], { encoding: "utf8", env: runnerEnv });
     if (failed.status === 0 || !failed.stderr.includes("Checksum verification failed for " + candidate.name))
       throw new Error("Compiled paired updater failed checksum gate: " + failed.stderr);
     for (let i = 0; i < installed.length; i++) {
@@ -76,13 +85,13 @@ try {
         throw new Error("Checksum failure changed installed pair");
     }
   }
-  const rollback = spawnSync(executable, ["--fail-normal-rename"], { encoding: "utf8" });
+  const rollback = spawnSync(executable, ["--fail-normal-rename"], { encoding: "utf8", env: runnerEnv });
   if (rollback.status === 0 || !rollback.stderr.includes("Previous installation restored"))
     throw new Error("Compiled updater failed rollback gate: " + rollback.stderr);
   for (let i = 0; i < installed.length; i++) {
     if ((await readFile(installed[i]!, "utf8")) !== originals[i]) throw new Error("Rollback changed installed pair");
   }
-  const updated = spawnSync(executable, [], { encoding: "utf8" });
+  const updated = spawnSync(executable, [], { encoding: "utf8", env: runnerEnv });
   if (updated.status !== 0) throw new Error("Compiled paired updater failed replacement: " + updated.stderr);
   const result = JSON.parse(updated.stdout);
   if (result.status !== "updated" || result.version !== version) throw new Error("Unexpected paired update result");

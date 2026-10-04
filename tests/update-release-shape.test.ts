@@ -16,7 +16,7 @@ const targets: [NodeJS.Platform, string, string][] = [
   ["android", "arm64", names[3]],
 ];
 const pairNames = [...names, ...names.map((name) => name.replace(/^bruv-/, "bruv-claude-compat-"))];
-const runBinary = async () => "0.8.0";
+const runBinary = async (path: string) => (path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.8.0" : "0.8.0");
 const api = "https://api.github.com/repos/tnfssc/bruv/releases/latest";
 const root = "https://github.com/tnfssc/bruv/releases/download/v0.8.0/";
 const digest = (data: Uint8Array) => createHash("sha256").update(data).digest("hex");

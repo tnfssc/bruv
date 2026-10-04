@@ -191,7 +191,8 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
     // Product versions are independent of Claude compatibility --version output.
     if (
       (await run(join(stage, "bruv"), ["--version"])).trim() !== latest ||
-      (await run(join(stage, "bruv-claude-compat"), ["--bruv-version"], join(stage, "bruv"))).trim() !== "bruv-claude-compat " + latest
+      (await run(join(stage, "bruv-claude-compat"), ["--bruv-version"], join(stage, "bruv"))).trim() !==
+        "bruv-claude-compat " + latest
     )
       throw new Error("Staged Bruv pair version mismatch (expected " + latest + ")");
     if (platform === "darwin" && arch === "arm64") await run(join(stage, "bruv"), ["--live-self-test"]);
