@@ -141,3 +141,9 @@ Final: 117 tests / 781 assertions passed across native-fast-mode, footer, native
 First checks caught a stale API tier expectation, a test generic-model typing error, and an incorrect assumption about SDK default-response cost; corrected using observed behavior. Narrow fixture changed from 80 (still full row) to 60 columns. Dependencies reused through a temporary node_modules symlink to the existing parent install (removed after checks); generated ignored runtime-assets copied locally for typecheck. No dependency install, release/install, trust change, parent-source edit, or billable provider call.
 
 Gaps: no live account credit verification, real provider latency/tier guarantee, live model-catalog port, interactive TUI acceptance, real SSH acceptance, or native task backend inheritance. Consent, session/branch/model scoping, auth/endpoint guards, payload mutation protection, and standard compaction preserved; no permission/scope change needed. Values unchanged: source-path evidence, clear proof scope, simple state, and preserving essential boundaries already cover this lesson. Commit belongs to this branch for parent integration; not merged or installed.
+
+### Parent integration
+
+Worker commit 429a9ffc was reviewed and cherry-picked onto local develop as e93d0953. Parent independently read the pinned upstream selection and request mapping. On the integrated tree, the same six suites passed: 117 tests / 781 assertions; typecheck and diff checks passed. The first test launch hit fish syntax before running tests; reran with explicit bash. No source failure.
+
+This change is in local source only. No push, release, install, or live provider claim. Use the source links and worker worktree above for follow-up. Existing values cover this change; none added.
