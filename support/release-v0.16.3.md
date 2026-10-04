@@ -1,25 +1,21 @@
-# v0.16.3 — UI-only T3 setup and clean MCP shutdown
+# v0.16.3
 
-Draft only: package/latest release are still 0.16.2. Parent must verify gates and authorize any release claim.
+## T3 setup and connector shutdown
 
-## UI-only setup
+- `bruv web` now describes provider-UI setup. Start T3 normally; no custom T3 arguments or server environment are required by the intended setup.
+- Connector startup checks the isolated SDK home, paired Bruv binary, selected model and local auth configuration before allocating native history or MCP resources. Failures give actionable diagnostics; local readiness is not verified provider access.
+- T3-owned HTTP MCP sessions are released before the connector reports completion and reopened for the next turn. This fixes the observed shutdown error after a completed reply, without ignoring cleanup failures.
 
-Run `bruv web` for instructions; it does not download, configure, or start T3. Install official T3 separately and start it normally, with no custom startup arguments or parent environment. In **Settings > Providers**, add a separate **Claude** provider named **Bruv** (do not change your real Claude provider):
+## Setup and update
 
-- Binary: sibling `bruv-claude-compat` executable.
-- Home: `~/.bruv/claude-compat-sdk` (T3 homePath / `CLAUDE_CONFIG_DIR`).
-- Launch arguments: empty.
-- Provider-only environment: `BRUV_CLAUDE_COMPAT_HOME=~/.bruv/agent` and `BRUV_CLAUDE_COMPAT_BRUV_PATH=<sibling bruv executable>`.
+Stop active Bruv/T3 sessions, then run `bruv update` to update the CLI and connector together. Run `bruv web` for paths specific to your installation.
 
-The setup reuses Bruv authentication, models, settings and resources; it does not copy secrets. Keep using normal `bruv` CLI. Add/select models by the exact provider/model IDs in Bruv's model registry; set a default in the selected Bruv home if needed. Do not use T3's Claude login/install/update actions or point T3 at `~/.claude`. For an isolated Bruv home, follow `bruv web`'s displayed paths and configure its auth/models separately.
+In T3 Settings > Providers, add a separate Claude instance for Bruv. Use the absolute `bruv-claude-compat` binary path and an isolated SDK home such as `/home/alice/.bruv/claude-compat-sdk`. Leave launch arguments empty. Set provider-only `BRUV_CLAUDE_COMPAT_HOME` to your Bruv agent directory and `BRUV_CLAUDE_COMPAT_BRUV_PATH` to the normal Bruv binary. Use absolute paths, not literal `~` or `$HOME`. Select exact Bruv provider/model IDs; configure a default in the selected Bruv home for health checks.
 
-## Fixes
+Existing auth is reused only through the chosen Bruv home. No secrets or Claude history are copied. Keep your real Claude provider and `~/.claude` untouched. Do not use T3's Claude updater for Bruv.
 
-- Local home, model and auth checks, plus paired-binary validation, run before native history or MCP resources are allocated.
-- App-owned HTTP MCP leases are released before native idle and reacquired on the next turn; shutdown drains owned work before closing cleanly.
+## Important limits
 
-## Limits and update
+Full UI-only fork/history support requires the upstream fix in [T3 PR #15598](https://github.com/pingdotgg/t3code/pull/15598). The tested official nightly 2644 does not contain it. On older T3, fork can fail before Bruv starts; this release cannot catch that upstream failure. Basic chat can still work with correct provider settings.
 
-The provider-scoped SDK history fix from upstream PR #15598 is not yet in an official T3 build. Older T3 forks may fail native fork before Bruv starts; Bruv cannot guarantee a graceful upstream response. The separate Claude product-version warning remains unresolved. This is not native desktop parity, a paid-model guarantee, or full T3/Claude UI parity.
-
-Update the Bruv CLI and `bruv-claude-compat` pair to the same version; stop active Bruv/T3 sessions first. Existing user data is preserved; normal Bruv CLI use remains available. Do not claim a new release until the parent verifies the release gates and publishes.
+The Claude product-version warning remains unresolved. This release does not claim full desktop parity, physical-device or paid-provider validation. The normal Bruv CLI remains available.
