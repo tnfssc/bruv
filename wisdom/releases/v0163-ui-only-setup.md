@@ -24,3 +24,9 @@ Hosted CI 37197181001 passed at 506979a7. Local full CI had one unchanged saved-
 The native fixtures previously depended on first-authenticated-model fallback. Both run.mjs and run-subagent.mjs now write their exact deterministic model as the default in the private Bruv settings. Health probes have no --model. No real provider credentials or product fallback were added. All six unchanged-official2644 native suites passed with these settings; proof is artifacts/v0163-native-gates-fixture-defaults/. This run predates the review fix below and is not final publication proof.
 
 Independent review reproduced false idle after failed app HTTP MCP release (result withheld, two idle frames, one remote session). Release is held for task_5f976f03 in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_5f976f03. Rebuild and rerun gates after integrating its fix. No release dispatched yet.
+
+## Final candidate
+
+Integrated the reviewed failure fix as 641d8492. Fatal output failure stops subsequent result/idle/command-completed delivery and closes the transport, including autonomous runs. Real-peer regression covers model, no-model command and autonomous paths; failure is not relabeled clean shutdown.
+
+Focused parent tests, typecheck, paired build and all six unchanged-official2644 native suites passed on the final candidate. Local logs: artifacts/v0163-error-path-tests.log, v0163-final-check.log, v0163-final-build.log, v0163-native-final.log. Retained summaries: proof/v0163-native/. These gates still use their documented integration environment, not proof that unpatched official T3 has UI-only fork support. Upstream PR15598 remains separate. Parent next: push candidate and dispatch gated release, then verify run/release metadata and 20 assets without needless binary downloads.
