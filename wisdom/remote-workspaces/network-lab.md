@@ -1,12 +1,12 @@
 # Network lab: Docker owner and impaired host client
 
-Code and commands: [README](../../experiments/remote-network-lab/README.md). Original worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_86a7ae68, branch die/remote-disconnect-ux-lab-86a7ae68, commit 1dfb5e1. Integrated into parent as d6c87e9, then reviewed and rerun. Production unchanged.
+Code and commands: [README](../experiments/remote-network-lab/README.md). Original worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_86a7ae68, branch die/remote-disconnect-ux-lab-86a7ae68, commit 1dfb5e1. Integrated into parent as d6c87e9, then reviewed and rerun. Production unchanged.
 
 ## Parent-verified results (2026-09-26)
 
 Host Linux, Bun 1.4.2. Owner Docker Bun 1.2.23, Toxiproxy 2.9.0, images pinned by digest. Host is a Mac stand-in, not macOS. Unique Compose project, loopback ports, no credentials or home/socket mounts. Container CPU/memory/PID caps bound this fixture, not a production agent fleet.
 
-Three sequential scripted tasks per condition. Median host-observed milliseconds from launch; task itself takes about 460ms. Application bytes include JSON bodies and URL paths, not HTTP/TCP overhead. Raw samples are in experiments/remote-network-lab/results.json.
+Three sequential scripted tasks per condition. Median host-observed milliseconds from launch; task itself takes about 460ms. Application bytes include JSON bodies and URL paths, not HTTP/TCP overhead. Raw samples are in wisdom/experiments/remote-network-lab/results.json.
 
 | condition | accepted | first visible progress | visible done | requests | request bytes | response bytes |
 |---|---:|---:|---:|---:|---:|---:|

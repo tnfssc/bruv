@@ -323,7 +323,8 @@ describe("local worktree workspace", () => {
         id: result.id,
         cwd: current.workspace!.path,
         closeStdin: true,
-        notifyOnComplete: false,
+        // waitSeconds:0 transfers actual background ownership at reservation/spawn.
+        notifyOnComplete: true,
         env: { BRUV_SUBAGENT_DEPTH: "1", BRUV_SUBAGENT_TYPE: "normal" },
       });
       // The reserved task owns the deadline from preparation onward.

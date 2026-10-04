@@ -11,7 +11,7 @@ not current checkout instructions or a prerequisite for landing research.
 
 - Worktree: /Users/sharath/.die/worktrees/die-f528e86af6b5-task_3515c928
 - Branch: die/prototype-persistent-remote-workspace-3515c928
-- Code/commands: [experiments/remote-workspaces](../../experiments/remote-workspaces/README.md).
+- Code/commands: [wisdom/experiments/remote-workspaces](../experiments/remote-workspaces/README.md).
 - Prior research copied from the parent into [ssh-research.md](ssh-research.md). Read values before work and checked them again before handoff.
 - Discovery worker: /Users/sharath/.die/worktrees/die-f528e86af6b5-task_3515c928-f528e86af6b5-task_3ded1446,
   branch die/discover-remote-session-reuse-3ded1446 (research only, no edits).
@@ -54,7 +54,7 @@ host test. No dependency manifests/locks or global services changed.
 
 ## Verified A/B placement experiment
 
-Run: bun run prepare:assets; bun experiments/remote-workspaces/demo.ts
+Run: bun run prepare:assets; bun wisdom/experiments/remote-workspaces/demo.ts
 
 On macOS, local marker LOCAL-CLIENT had inode 381695662. A target marker TARGET-A had
 inode 381695664; B TARGET-B had inode 381700091 (run-specific). Ordinary async stat,
@@ -90,7 +90,7 @@ then reviewed/adapted it: atomic status writes, bounded stderr, strict types, as
 leaves before the first execute ends, reconnect while the agent process is still alive,
 and cleanup disposable fixtures. No changes to the production agent loop.
 
-Commands: bun run build; bun experiments/remote-workspaces/rpc-agent-demo.ts
+Commands: bun run build; bun wisdom/experiments/remote-workspaces/rpc-agent-demo.ts
 
 Observed PASS: detachedAt=20, agentEvents=62, modelTurns=3. First real execute stat/Bun.file
 returned DIE_OPTION_A_TARGET_MARKER and target cwd; real shell returned
@@ -156,5 +156,5 @@ simplest existing boundary already cover these lessons. Added feature-specific w
 - Final worktree: `/Users/sharath/.die/worktrees/die-f528e86af6b5-task_7a2ffa64`; branch: `die/pr-remote-workspace-research-and-prototy-7a2ffa64`; base: `origin/develop` at `eb56ca2`. Historical prototype worktree above retained for provenance.
 - Cherry-picked only the two prototype commits; copied the relevant parent `ssh-research.md` into this feature wisdom. No production code or voice fix changed. The research remains advisory; this PR implements neither SSH transport nor a remote service.
 - Reviewed disposable fixture cleanup, private local sockets, fake loopback model credentials, bounded event handling and no external listeners. Changed the actual-agent fixture to use system temp directory; kept short `/tmp` path for the Unix-socket A/B demo on macOS. Removed parent-machine research path from runnable context.
-- On this macOS worktree: `bun install --frozen-lockfile`, `bun run build`, both commands in the experiment README passed. A/B probe reported local target fs/shell, detached owner continuation and explicit B suspension; actual-agent probe reported PASS with three fake model turns and two execute tools. These are local process observations, **not real SSH/provider proof**. Direct strict experiment `tsc --ignoreConfig --noEmit --strict --skipLibCheck --target ES2022 --module Preserve --moduleResolution Bundler --types bun experiments/remote-workspaces/*.ts src/assets.d.ts` passed. Markdown links and `git diff --check` passed. Biome check does not process `experiments/**` by repository configuration (zero files, exit 1), not a code-lint result. No production test suite or real remote host tested.
+- On this macOS worktree: `bun install --frozen-lockfile`, `bun run build`, both commands in the experiment README passed. A/B probe reported local target fs/shell, detached owner continuation and explicit B suspension; actual-agent probe reported PASS with three fake model turns and two execute tools. These are local process observations, **not real SSH/provider proof**. Direct strict experiment `tsc --ignoreConfig --noEmit --strict --skipLibCheck --target ES2022 --module Preserve --moduleResolution Bundler --types bun wisdom/experiments/remote-workspaces/*.ts src/assets.d.ts` passed. Markdown links and `git diff --check` passed. Biome check does not process `wisdom/experiments/**` by repository configuration (zero files, exit 1), not a code-lint result. No production test suite or real remote host tested.
 - Published branch with commits `dbf48af`, `655566f`, `13914cf`. PR creation blocked: `gh pr create --base develop` returned `GraphQL: must be a collaborator (createPullRequest)` for authenticated account `sharath-w`; `gh pr list` showed no existing PR for the branch. PR URL: none. Create one when collaborator access is available: https://github.com/tnfssc/die/pull/new/die/pr-remote-workspace-research-and-prototy-7a2ffa64 (suggestion, not an opened PR). Values unchanged: placement, truthful evidence and handoff lessons are already covered.

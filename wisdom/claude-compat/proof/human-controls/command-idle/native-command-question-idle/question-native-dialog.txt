@@ -1,0 +1,89 @@
+Code
+HUMAN_PERMISSION_allow: request actual execute sid...
+PT
+project
+Input
+Settle
+HUMAN_PERMISSION_allow: request actual execute sid...
+Settled (0)
+PT
+project
+/
+HUMAN_PERMISSION_allow: request actual execute sid...
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+HUMAN_PERMISSION_allow: request actual execute side effect.
+
+7:41 AM
+
+Worked for 2.0s
+7:41 AM
+T3 Code
+
+HUMAN_PERMISSION_allow_RESULT_REAL
+
+7:41 AM
+
+You
+
+HUMAN_PERMISSION_deny: request actual execute side effect.
+
+7:41 AM
+
+Worked for 526ms
+7:41 AM
+T3 Code
+
+HUMAN_PERMISSION_deny_RESULT_REAL
+
+7:41 AM
+
+You
+
+HUMAN_PERMISSION_stop: request actual execute side effect.
+
+7:41 AM
+
+Used 2 tools
+7:41 AM
+Run interrupted
+· Run interrupted by user
+You
+
+HUMAN_QUESTION_ASK: save the actual human question.
+
+7:41 AM
+
+Working for 2s
+Input requested
+T3 Code
+
+HUMAN_QUESTION_SAVED_REAL
+
+Bruv
+
+Acceptance saved human question
+
+Use local fixture
+1
+Cancel
+2
+Keep pending (do not answer)
+Leave the saved question pending and reopen it later.
+3
+
+
+
+
+Type your own answer, or leave this blank to use the selected option
+Local deterministic acceptance (not Claude)
+Supervised
+Submit
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

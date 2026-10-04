@@ -1,0 +1,179 @@
+[
+  {
+    "process": "process-1",
+    "main": false,
+    "kind": "spawn",
+    "injectedMcp": false
+  },
+  {
+    "process": "process-1",
+    "main": false,
+    "kind": "exit",
+    "value": 0
+  },
+  {
+    "process": "process-2",
+    "main": false,
+    "kind": "spawn",
+    "injectedMcp": false
+  },
+  {
+    "process": "process-2",
+    "main": false,
+    "kind": "stdout",
+    "type": "control_response"
+  },
+  {
+    "process": "process-2",
+    "main": false,
+    "kind": "stdout",
+    "type": "control_response"
+  },
+  {
+    "process": "process-2",
+    "main": false,
+    "kind": "exit",
+    "value": 0
+  },
+  {
+    "process": "process-3",
+    "main": false,
+    "kind": "spawn",
+    "injectedMcp": false
+  },
+  {
+    "process": "process-3",
+    "main": false,
+    "kind": "exit",
+    "value": 0
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "spawn",
+    "injectedMcp": true
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "control_response"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "init",
+    "version": "bruv/0.16.1",
+    "mcp": [
+      {
+        "name": "t3-code",
+        "status": "connected"
+      }
+    ]
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "session_state_changed",
+    "state": "running"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "assistant"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "result",
+    "subtype": "success",
+    "is_error": false,
+    "result": "ADMISSION_CONFIRMED_REAL"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "session_state_changed",
+    "state": "idle"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stderr",
+    "value": "TypeError: Unable to connect. Is the computer able to access the url?"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stderr",
+    "value": "  code: \"ConnectionRefused\""
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stderr",
+    "value": "      at async terminateSession (/$bunfs/root/diagnostic-mcp:76:7900)"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stderr",
+    "value": "[bruv-claude-compat] Connector teardown failed: McpOperationError: MCP connection teardown was not fully confirmed"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stderr",
+    "value": "[bruv-claude-compat] shutdown failed: Connector teardown failed: McpOperationError: MCP connection teardown was not fully confirmed"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "exit",
+    "value": 1
+  }
+]

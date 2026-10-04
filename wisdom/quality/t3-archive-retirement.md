@@ -1,6 +1,6 @@
 # Frozen T3 archive retirement — 2026-10-02
 
-User explicitly approved retiring only the frozen historical T3 code/config archive from the [code-reduction audit](../../audits/code-reduction/2026-10-02/README.md). That approval supersedes the audit's original no-archive-cuts status; the audit and its reports remain historical evidence.
+User explicitly approved retiring only the frozen historical T3 code/config archive from the [code-reduction audit](../audits/code-reduction/2026-10-02/README.md). That approval supersedes the audit's original no-archive-cuts status; the audit and its reports remain historical evidence.
 
 - Branch: `bruv/remove-retired-historical-t3-archive-68bc9a0c`.
 - Worktree: `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_68bc9a0c`.
@@ -9,7 +9,7 @@ User explicitly approved retiring only the frozen historical T3 code/config arch
 
 ## Scope and recovery
 
-All paths below are relative to `experiments/t3/production-v2/archive/`:
+All paths below are relative to `wisdom/experiments/t3/production-v2/archive/`:
 
 | Removed file | Lines |
 | --- | ---: |

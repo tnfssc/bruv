@@ -1,0 +1,25 @@
+{
+  "sourceBase": "v0.16.1",
+  "sourceBaseCommit": "cb32e158227dad6272af9ccf6fad2731f46ec62d",
+  "originalParentBase": "7404ee328ce401b2724ae69568f5a141cce43166",
+  "compiler": "Bun 1.4.2 (744846f84)",
+  "sourceHashes": {
+    "src/claude-compat/runtime.ts": "1640a8369e41e00cff71407bf9f453cd19fb61a1a830c5fc4373f5aaa7752e5a",
+    "src/claude-compat/mcp.ts": "11123a9fc318cabdd129824a7683f921be15e87e843084bab96f6424060a7e55",
+    "scripts/build-claude-compat.ts": "d523e121be5eb64fee53347eb77846d0c02102be5b61f8c3676da4240d6d45ef",
+    "scripts/pi-host-adaptation.ts": "3b5ce6030393b23af72bda39f57f5730fe966d5104043b689cc6ca52a62f6fff",
+    "package.json": "fc7cf535b5bfc53dea832e7c3135e564ded884d3f836cd80370e04b9b841a073",
+    "bun.lock": "b8ea43d57b5e6c7fa7ae117e8a1f26eeec3497b96b8869ab84cdc67b4381ccae",
+    "patches/@earendil-works%2Fpi-coding-agent@1.0.0.patch": "8b899200d9df4cbc0b9e819f238ceffe96d6e4330e7d6e5466f6d6d818904bc5"
+  },
+  "installedRelease": {
+    "connectorSha256": "49d2d0fbae81ba680e7eec5a062d74b2b410f566569384ccb61d25d6d1f83b3a",
+    "normalSha256": "0b55e253086e909569d0c9f016f91882628e7636d0d8c4b07155c28c3eb30325",
+    "release": "https://github.com/tnfssc/bruv/releases/tag/v0.16.1",
+    "publicationRecordOwner": "task_aaa0030d"
+  },
+  "fixedBinarySha256": "1c003a4728414effbc2035529478bcbfadb5b3d11043875518c4518062fc29ae",
+  "fixedBinaryBuildCommand": "bun scripts/build-claude-compat.ts --outfile=.cache/teardown/verified-connector",
+  "t3Sha256": "53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48",
+  "t3Version": "0.0.46-nightly.20261004.2644"
+}

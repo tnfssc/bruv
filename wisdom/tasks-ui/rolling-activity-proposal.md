@@ -1,5 +1,7 @@
 # Rolling activity, lasting conversation
 
+Historical design/research snapshot. Approved runtime slice and current proof/limits: [implementation pickup](rolling-activity-implementation.md).
+
 **Proposal only.** This PR changes docs, not runtime behavior, dependencies or releases. Recommended first scope: the local CLI in alternate-screen mode. Approval of this proposal is a separate step from implementation.
 
 Read the [Pi API research and probe results](rolling-activity-research.md) for the source evidence. The layouts below are sketches, not screenshots of a shipped feature.

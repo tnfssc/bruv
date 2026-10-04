@@ -1,0 +1,239 @@
+{
+  "note": "Intermediate compiled checkpoint. The 1000-turn latency gate fails. Not final acceptance.",
+  "runtimeCommit": "775ed3dfdda357b295a99b9ae36429382ebe51fc",
+  "runs": {
+    "release-100": {
+      "binary": "/home/tnfssc/.local/bin/bruv",
+      "binaryVersion": "0.15.30",
+      "binarySha256": "d9295dd89f4db490893aa82370e8c1f3738b139fa896212f5003ccc038ad959f",
+      "host": {
+        "platform": "linux",
+        "cpuCount": 16,
+        "loadAtStart": [11.49, 10.15, 15.51],
+        "loadAtEnd": [12.34, 10.42, 15.48]
+      },
+      "artifacts": "/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_43fd9f57/artifacts/latency/bruv-latency-1967425-1791094032472",
+      "samples": 12,
+      "controlledProviderRequests": 2,
+      "controlledProviderPaths": ["/v1/chat/completions", "/v1/chat/completions"],
+      "providerHold": "until measurements finish",
+      "budgets": {},
+      "results": [
+        {
+          "size": "short",
+          "turns": 2,
+          "seedEntries": 9,
+          "seedBytes": 11254,
+          "elapsedStartupMs": 939,
+          "requestSetupMs": 65.66643600000043,
+          "echoMs": [
+            28.027998000000025, 31.35698900000034, 27.820696000000225, 4.873650999999882, 5.610149999999976,
+            5.340061999999762, 30.30274499999996, 8.609934000000067, 6.604323999999906, 5.40519200000017,
+            6.129477000000406, 8.729866000000584
+          ],
+          "echoP50Ms": 6.604323999999906,
+          "echoP95Ms": 31.35698900000034,
+          "echoDuringHeldMs": [
+            6.297808999999688, 8.283732999999302, 6.203975999999784, 6.578125999999429, 6.09230000000025,
+            6.069456999999602, 6.194128000000092, 6.83361799999966, 7.003991999999926, 7.849691000000348,
+            31.93177999999989, 6.709428000000116
+          ],
+          "heldEchoP50Ms": 6.578125999999429,
+          "heldEchoP95Ms": 31.93177999999989,
+          "capturePollMs": 50,
+          "observationMs": 5000,
+          "spinnerTransitions": 62,
+          "spinnerCadenceP50Ms": 56.012948000001415,
+          "spinnerCadenceP95Ms": 108.3418989999991,
+          "echoPollSleepMs": 20
+        },
+        {
+          "size": "long",
+          "turns": 100,
+          "seedEntries": 1201,
+          "seedBytes": 1537491,
+          "elapsedStartupMs": 1253,
+          "requestSetupMs": 353.4142579999989,
+          "echoMs": [
+            74.59903699999995, 78.35742199999913, 105.58662700000059, 80.73008899999877, 76.18938199999866,
+            85.4951600000004, 75.07008700000006, 52.1682239999991, 52.68411600000036, 75.05632200000036,
+            79.01611699999921, 77.94047299999875
+          ],
+          "echoP50Ms": 76.18938199999866,
+          "echoP95Ms": 105.58662700000059,
+          "echoDuringHeldMs": [
+            171.363440000001, 152.45810100000017, 147.66553999999996, 150.70553899999868, 124.5167419999998,
+            151.93203100000028, 128.37784699999975, 126.9432799999995, 123.49000899999737, 100.96827800000028,
+            100.13315800000055, 124.06391799999983
+          ],
+          "heldEchoP50Ms": 126.9432799999995,
+          "heldEchoP95Ms": 171.363440000001,
+          "capturePollMs": 50,
+          "observationMs": 5000,
+          "spinnerTransitions": 61,
+          "spinnerCadenceP50Ms": 104.5324240000009,
+          "spinnerCadenceP95Ms": 109.06566699999894,
+          "echoPollSleepMs": 20
+        }
+      ]
+    },
+    "candidate-100": {
+      "binary": "/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_43fd9f57/dist/bruv",
+      "binaryVersion": "0.15.30",
+      "binarySha256": "8edbe1ec1afd026c4812dda81bb377f25b7a6e00b81ea79e35448e902e9f95d2",
+      "host": {
+        "platform": "linux",
+        "cpuCount": 16,
+        "loadAtStart": [12.34, 10.42, 15.48],
+        "loadAtEnd": [15.34, 11.15, 15.61]
+      },
+      "artifacts": "/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_43fd9f57/artifacts/latency/bruv-latency-1970951-1791094056013",
+      "samples": 12,
+      "controlledProviderRequests": 2,
+      "controlledProviderPaths": ["/v1/chat/completions", "/v1/chat/completions"],
+      "providerHold": "until measurements finish",
+      "budgets": {
+        "echoP95Ms": 100,
+        "spinnerGapP95Ms": 140,
+        "spinnerTransitions": 45
+      },
+      "results": [
+        {
+          "size": "short",
+          "turns": 2,
+          "seedEntries": 9,
+          "seedBytes": 11254,
+          "elapsedStartupMs": 869,
+          "requestSetupMs": 44.81660499999998,
+          "echoMs": [
+            30.553460000000086, 6.307788000000073, 4.941315999999915, 5.616773000000194, 4.9715720000003785,
+            9.33638400000018, 5.2172850000001745, 5.770536999999877, 28.55117599999994, 4.388124999999945,
+            4.089905999999246, 5.670982999999978
+          ],
+          "echoP50Ms": 5.616773000000194,
+          "echoP95Ms": 30.553460000000086,
+          "echoDuringHeldMs": [
+            5.336565999999948, 4.159964999999829, 3.901528000000326, 4.694962000000487, 4.1356299999997646,
+            3.9091019999996206, 4.053868999999395, 3.7477939999998853, 3.085762999999133, 4.271020000000135,
+            4.564440999999533, 4.276979999999639
+          ],
+          "heldEchoP50Ms": 4.1356299999997646,
+          "heldEchoP95Ms": 5.336565999999948,
+          "capturePollMs": 50,
+          "observationMs": 5000,
+          "spinnerTransitions": 62,
+          "spinnerCadenceP50Ms": 55.91424000000006,
+          "spinnerCadenceP95Ms": 107.5346470000004,
+          "echoPollSleepMs": 20
+        },
+        {
+          "size": "long",
+          "turns": 100,
+          "seedEntries": 1201,
+          "seedBytes": 1537491,
+          "elapsedStartupMs": 1139,
+          "requestSetupMs": 227.6716290000004,
+          "echoMs": [
+            32.18283599999995, 28.93778999999995, 30.93498499999987, 28.5616859999991, 27.106941000000006,
+            29.5654770000001, 27.137197000000015, 28.324157999999443, 31.65838900000017, 31.206054000000222,
+            29.618446000000404, 29.875809999999547
+          ],
+          "echoP50Ms": 29.5654770000001,
+          "echoP95Ms": 32.18283599999995,
+          "echoDuringHeldMs": [
+            28.183639000000767, 27.2644820000005, 28.655108000000837, 28.57171500000004, 27.69173099999898,
+            27.130706000001737, 27.595783999999185, 26.752157000000807, 26.73992399999952, 29.177851999998893,
+            29.006717000000208, 26.86181899999974
+          ],
+          "heldEchoP50Ms": 27.595783999999185,
+          "heldEchoP95Ms": 29.177851999998893,
+          "capturePollMs": 50,
+          "observationMs": 5000,
+          "spinnerTransitions": 62,
+          "spinnerCadenceP50Ms": 56.30734599999778,
+          "spinnerCadenceP95Ms": 109.33451100000093,
+          "echoPollSleepMs": 20
+        }
+      ]
+    },
+    "candidate-1000": {
+      "binary": "/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_43fd9f57/dist/bruv",
+      "binaryVersion": "0.15.30",
+      "binarySha256": "8edbe1ec1afd026c4812dda81bb377f25b7a6e00b81ea79e35448e902e9f95d2",
+      "host": {
+        "platform": "linux",
+        "cpuCount": 16,
+        "loadAtStart": [15.34, 11.15, 15.61],
+        "loadAtEnd": [13.93, 11.19, 15.48]
+      },
+      "artifacts": "/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_43fd9f57/artifacts/latency/bruv-latency-1973852-1791094075346",
+      "samples": 12,
+      "controlledProviderRequests": 2,
+      "controlledProviderPaths": ["/v1/chat/completions", "/v1/chat/completions"],
+      "providerHold": "until measurements finish",
+      "budgets": {
+        "echoP95Ms": 100,
+        "spinnerGapP95Ms": 140,
+        "spinnerTransitions": 45
+      },
+      "results": [
+        {
+          "size": "short",
+          "turns": 2,
+          "seedEntries": 9,
+          "seedBytes": 11254,
+          "elapsedStartupMs": 917,
+          "requestSetupMs": 46.995396999999684,
+          "echoMs": [
+            29.5972069999998, 28.09637799999973, 32.39129099999991, 5.4310999999997875, 7.144682000000103,
+            28.5233760000001, 5.957131000000118, 5.144952000000103, 5.9272759999998925, 4.491747000000032,
+            5.0449280000002545, 4.95803800000067
+          ],
+          "echoP50Ms": 5.9272759999998925,
+          "echoP95Ms": 32.39129099999991,
+          "echoDuringHeldMs": [
+            27.612065000000257, 5.382200000000012, 6.711952999999994, 5.6819329999998445, 6.01345499999934,
+            5.518251000000419, 9.222455000000082, 5.641689000000042, 5.921163999999408, 7.061448999999811,
+            7.095862000000125, 5.653290000000197
+          ],
+          "heldEchoP50Ms": 5.921163999999408,
+          "heldEchoP95Ms": 27.612065000000257,
+          "capturePollMs": 50,
+          "observationMs": 5000,
+          "spinnerTransitions": 62,
+          "spinnerCadenceP50Ms": 55.224639999999454,
+          "spinnerCadenceP95Ms": 108.09197300000051,
+          "echoPollSleepMs": 20
+        },
+        {
+          "size": "long",
+          "turns": 1000,
+          "seedEntries": 12001,
+          "seedBytes": 15428991,
+          "elapsedStartupMs": 5651,
+          "requestSetupMs": 3115.2972580000023,
+          "echoMs": [
+            1278.9822820000009, 54.30560600000172, 76.76358299999993, 51.15572500000053, 661.3685089999999,
+            49.97737100000086, 51.83969700000307, 50.300436999998055, 51.16607400000066, 49.713934999999765,
+            49.51054999999906, 51.533031999999366
+          ],
+          "echoP50Ms": 51.16607400000066,
+          "echoP95Ms": 1278.9822820000009,
+          "echoDuringHeldMs": [
+            936.1978589999999, 72.75656100000197, 96.37772300000142, 73.53339400000186, 52.54325600000084,
+            107.86958700000105, 126.53919399999722, 76.43552900000213, 78.64169000000038, 101.87267300000167,
+            123.82881300000008, 75.21466700000019
+          ],
+          "heldEchoP50Ms": 78.64169000000038,
+          "heldEchoP95Ms": 936.1978589999999,
+          "capturePollMs": 50,
+          "observationMs": 5000,
+          "spinnerTransitions": 55,
+          "spinnerCadenceP50Ms": 105.96639700000014,
+          "spinnerCadenceP95Ms": 110.05983999999808,
+          "echoPollSleepMs": 20
+        }
+      ]
+    }
+  }
+}

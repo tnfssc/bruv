@@ -1,0 +1,42 @@
+Code
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+PT
+project
+now
+Settle
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+Regenerating title
+Settled (0)
+PT
+project
+/
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+
+9:25 PM
+
+T3 Code
+
+EXECUTE_CONFIRMED_REAL
+
+9:25 PM
+
+Worked for 1.4s
+9:25 PM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic acceptance (not Claude)
+Full access
+Toggle Sidebar
+Update Available: Claude v2.1.288
+
+Claude can be updated from provider settings.
+
+Settings

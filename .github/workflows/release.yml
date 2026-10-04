@@ -104,35 +104,21 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.21.0
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
-        with:
-          version: 11.27.1
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.2
-      # Only download stores: never restore node_modules, patched source, dist, or credentials.
-      # Partial-key download hits are safe: frozen installs and source verification still run.
+      # Download cache only: never restore node_modules, dist or credentials.
+      # Partial-key download hits are safe: frozen installs still run.
       - name: Configure package download stores
         shell: bash
         run: |
           echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache" >> "$GITHUB_ENV"
-          echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store" >> "$GITHUB_ENV"
       - name: Cache Bun package downloads
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/bruv-bun-cache
           key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
           restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
-      - name: Cache pinned T3 pnpm package store
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ${{ runner.temp }}/bruv-pnpm-store
-          # The source pin includes its upstream lockfile; the patch can change its dependencies.
-          key: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/bruv.patch') }}
-          restore-keys: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-
-      - name: Resolve pinned T3 source checkout
-        shell: bash
-        run: echo "BRUV_T3_SOURCE=$GITHUB_WORKSPACE/.cache/bruv-t3code-$(bun -e 'console.log(require("./integrations/t3/upstream/source.json").revision)')" >> "$GITHUB_ENV"
       - name: Install required PTY tooling
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y tmux
@@ -177,86 +163,44 @@ jobs:
         run: |
           test -s artifacts/release/mac-helper/live-audio
           file artifacts/release/mac-helper/live-audio | grep -E 'Mach-O 64-bit (executable arm64|arm64 executable)'
-      # The initial fresh build owns web preparation; target builds only verify and embed its archive.
-      - name: Build release binaries with embedded web application
+      - name: Build one binary and thin connector launcher per target without bundled T3
         shell: bash
         run: |
-          bun run build -- --reuse-packed-web --target=bun-linux-x64-baseline --outfile=./dist/release/bruv-linux-x64 2>&1 | tee artifacts/release/build-linux-x64.log
+          bun run build -- --target=bun-linux-x64-baseline --outfile=./dist/release/bruv-linux-x64 2>&1 | tee artifacts/release/build-linux-x64.log
           test "$(./dist/release/bruv-linux-x64 --version)" = "$(bun -p 'require("./package.json").version')"
-          bun run build -- --reuse-packed-web --target=bun-linux-arm64 --outfile=./dist/release/bruv-linux-arm64 2>&1 | tee artifacts/release/build-linux-arm64.log
-          bun run build -- --reuse-packed-web --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/bruv-darwin-arm64 2>&1 | tee artifacts/release/build-darwin-arm64.log
-          bun run build -- --reuse-packed-web --target=bun-android-arm64 --outfile=./dist/release/bruv-android-arm64 2>&1 | tee artifacts/release/build-android-arm64.log
+          bun run build -- --target=bun-linux-arm64 --outfile=./dist/release/bruv-linux-arm64 2>&1 | tee artifacts/release/build-linux-arm64.log
+          bun run build -- --live-helper=./artifacts/release/mac-helper/live-audio --target=bun-darwin-arm64 --outfile=./dist/release/bruv-darwin-arm64 2>&1 | tee artifacts/release/build-darwin-arm64.log
+          bun run build -- --target=bun-android-arm64 --outfile=./dist/release/bruv-android-arm64 2>&1 | tee artifacts/release/build-android-arm64.log
           chmod 0755 ./dist/release/bruv-linux-x64 ./dist/release/bruv-linux-arm64 ./dist/release/bruv-darwin-arm64 ./dist/release/bruv-android-arm64
       - name: Generate production dependency notices
         shell: bash
         run: bun run generate:notices 2>&1 | tee artifacts/release/notices.log
-      - name: Add embedded backend dependency licenses
-        shell: bash
-        run: |
-          {
-            printf '\n\nEMBEDDED T3 CODE BACKEND LICENSING\n==================================\n'
-            printf '\n--- dist/bruv-web/LICENSE-T3CODE ---\n'
-            cat dist/bruv-web/LICENSE-T3CODE
-            while IFS= read -r -d '' license; do
-              printf '\n--- %s ---\n' "$license"
-              cat "$license"
-            done < <(find dist/bruv-web/node_modules/.pnpm -type f \
-              \( -iname 'LICENSE*' -o -iname 'COPYING*' -o -iname 'NOTICE*' \) -print0 | sort -z)
-          } >> dist/release/THIRD_PARTY_LICENSES.txt
       - name: Document native audio licensing
         shell: bash
         run: |
           printf '\n\nNATIVE LIVE AUDIO HELPER\n============================\n' >> dist/release/THIRD_PARTY_LICENSES.txt
           printf 'The native helper is project source under the repository MIT LICENSE; it links Apple system AVFoundation/CoreFoundation frameworks, not bundled third-party native libraries.\n' >> dist/release/THIRD_PARTY_LICENSES.txt
-      # Test the freshly built binary, including native orchestration integration.
-      - name: Validate web backend
-        env:
-          T3_V2_BRUV_BINARY: ${{ github.workspace }}/dist/bruv
-        shell: bash
-        run: |
-          cd "$BRUV_T3_SOURCE/apps/server"
-          ../../node_modules/.bin/tsc --noEmit 2>&1 | tee "$GITHUB_WORKSPACE/artifacts/release/web-typecheck.log"
-          ../../node_modules/.bin/vp test run src/provider/Layers/PiProvider.test.ts src/auth/EnvironmentAuth.test.ts src/serverRuntimeStartup.test.ts src/terminal/NodePtyAdapter.test.ts src/terminal/BunPtyAdapter.test.ts src/device/AgentDeviceTarget.test.ts src/provider/Layers/EventNdjsonLogger.test.ts src/terminal/SubscriberStream.test.ts src/terminal/Manager.test.ts src/mcp/BruvTaskService.test.ts src/mcp/OrchestratorMcpService.test.ts src/orchestration-v2/NativeBruvIntegration.production.test.ts src/orchestration-v2/ProjectionStore.test.ts src/orchestration-v2/ProviderContinuationService.test.ts src/orchestration-v2/DelegatedCompletionDelivery.test.ts src/orchestration-v2/NativeUsageAccounting.test.ts src/orchestration-v2/Adapters/PiAdapterV2.test.ts src/resourceTelemetry/ResourceTelemetry.test.ts 2>&1 | tee "$GITHUB_WORKSPACE/artifacts/release/web-tests.log"
-      - name: Validate web model behavior
-        shell: bash
-        run: |
-          cd "$BRUV_T3_SOURCE/apps/web"
-          ../../node_modules/.bin/vp test run --project unit src/composerDraftStore.test.ts src/lib/chatThreadActions.test.ts 2>&1 | tee "$GITHUB_WORKSPACE/artifacts/release/web-model-tests.log"
-      - name: Validate web contracts
-        shell: bash
-        run: |
-          cd "$BRUV_T3_SOURCE/packages/contracts"
-          ../../node_modules/.bin/vp test run src/browserProfile.test.ts src/orchestratorMcp.test.ts src/providerRuntime.test.ts 2>&1 | tee "$GITHUB_WORKSPACE/artifacts/release/web-contract-tests.log"
-      - name: Validate web cache regressions
-        shell: bash
-        run: |
-          cd "$BRUV_T3_SOURCE/apps/web"
-          ../../node_modules/.bin/tsc --noEmit 2>&1 | tee "$GITHUB_WORKSPACE/artifacts/release/web-client-typecheck.log"
-          ../../node_modules/.bin/vp test run src/lib/syntaxHighlighting.test.ts src/components/pullRequest/pullRequestDetail.logic.test.ts src/components/chat/nativeUsageCost.logic.test.ts 2>&1 | tee "$GITHUB_WORKSPACE/artifacts/release/web-cache-tests.log"
-      - name: Validate terminal client recovery
-        shell: bash
-        run: |
-          cd "$BRUV_T3_SOURCE/packages/client-runtime"
-          ../../node_modules/.bin/tsc --noEmit 2>&1 | tee "$GITHUB_WORKSPACE/artifacts/release/terminal-client-typecheck.log"
-          ../../node_modules/.bin/vp test run src/rpc/client.test.ts src/state/terminalSession.test.ts src/state/orchestrationV2Projection.test.ts 2>&1 | tee "$GITHUB_WORKSPACE/artifacts/release/terminal-client-tests.log"
       - name: Create checksums and source information
         shell: bash
         run: |
           cd dist/release
-          sha256sum bruv-linux-x64 > bruv-linux-x64.sha256
-          sha256sum bruv-linux-arm64 > bruv-linux-arm64.sha256
-          sha256sum bruv-darwin-arm64 > bruv-darwin-arm64.sha256
-          sha256sum bruv-android-arm64 > bruv-android-arm64.sha256
+          for binary in bruv-{linux-x64,linux-arm64,darwin-arm64,android-arm64} bruv-claude-compat-{linux-x64,linux-arm64,darwin-arm64,android-arm64}; do
+            sha256sum "$binary" > "$binary.sha256"
+          done
           cp ../../LICENSE ../../THIRD_PARTY_NOTICES.md .
-          t3_revision=$(bun -e 'console.log(require("../../integrations/t3/upstream/source.json").revision)')
-          patch_sha256=$(sha256sum ../../integrations/t3/upstream/bruv.patch | awk '{print $1}')
-          printf 'Source: https://github.com/%s/tree/%s\nCommit: %s\nTag: %s\nTargets:\n- bun-linux-x64-baseline -> bruv-linux-x64\n- bun-linux-arm64 -> bruv-linux-arm64\n- bun-darwin-arm64 -> bruv-darwin-arm64\n- bun-android-arm64 -> bruv-android-arm64\n\nEmbedded T3 Code source: https://github.com/pingdotgg/t3code/tree/%s\nRevision: %s\nPatch: integrations/t3/upstream/bruv.patch\nPatch-SHA256: %s\n' \
-            "$GITHUB_REPOSITORY" "$RELEASE_SHA" "$RELEASE_SHA" "$RELEASE_TAG" \
-            "$t3_revision" "$t3_revision" "$patch_sha256" > SOURCE.txt
+          printf 'Source: https://github.com/%s/tree/%s\nCommit: %s\nTag: %s\nPaired targets: bun-linux-x64-baseline, bun-linux-arm64, bun-darwin-arm64, bun-android-arm64.\nEach target ships one compiled bruv binary and a tiny POSIX exec launcher bruv-claude-compat with checksums. The launcher execs its matching sibling bruv claude-compat. Linux/macOS require /bin/sh; Android requires /system/bin/sh and Android API 28+ (/system/bin/linker64), not glibc.\nT3 Code is external, unmodified, manually installed and not included in these assets.\n' \
+            "$GITHUB_REPOSITORY" "$RELEASE_SHA" "$RELEASE_SHA" "$RELEASE_TAG" > SOURCE.txt
           printf '\nEmbedded macOS arm64 native helper (Apple frameworks; experimental voice-only /live):\n' >> SOURCE.txt
           sha256sum ../../artifacts/release/mac-helper/live-audio >> SOURCE.txt
+      - name: Verify release launcher packaging and Android runtime target
+        shell: bash
+        run: |
+          bun scripts/verify-release-launchers.ts dist/release
+          readelf -l dist/release/bruv-android-arm64 | grep -F '/system/bin/linker64'
       - name: Verify bruv updater with actual Linux release binary
-        run: bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')"
+        run: |
+          bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')"
+          bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')" --legacy-updater
       - name: Stage verified release assets
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -274,15 +218,18 @@ jobs:
           retention-days: 14
 
   linux-browser-boot:
-    name: Final Linux release browser boot and reload
+    name: Final Linux pair against unchanged official 2644 (bounded gates)
     needs: [release, prepare-manual]
     if: ${{ always() && needs.release.result == 'success' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.prepare-manual.outputs.sha || github.sha }}
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.21.0
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.2
@@ -294,21 +241,34 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/release-browser/chromium
-          key: playwright-1.60.0-ubuntu24.04-headless-${{ runner.os }}-${{ runner.arch }}
+          key: playwright-1.63.0-ubuntu24.04-headless-${{ runner.os }}-${{ runner.arch }}
       - name: Install isolated browser harness
         shell: bash
         run: bash scripts/setup-release-browser.sh
-      - name: Require real UI from final Linux binary, then reload
+      - name: Download pinned official T3 for native gate (test dependency only)
+        shell: bash
+        run: bash scripts/setup-native-release-gate.sh
+      - name: Require external unmodified T3 native acceptance from final Linux pair
         shell: bash
         run: |
           chmod 0755 dist/release/bruv-linux-x64
-          bun integrations/t3/gates/release-browser-boot.ts dist/release/bruv-linux-x64
-      - name: Upload browser boot proof (including failures)
+          chmod 0755 dist/release/bruv-claude-compat-linux-x64
+          home=$(mktemp -d)
+          trap 'rm -rf "$home"' EXIT
+          version=$(HOME="$home" dist/release/bruv-linux-x64 --version)
+          test "$version" = "$(bun -p 'require("./package.json").version')"
+          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --bruv-version)" = "bruv-claude-compat $version"
+          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
+          BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64" \
+          BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64" \
+          PROOF_OUTPUT="$GITHUB_WORKSPACE/artifacts/release/native-acceptance" \
+          node scripts/run-native-release-gate.mjs
+      - name: Upload external native proof (including failures)
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-linux-browser-boot-proof
-          path: artifacts/release/browser-boot*
+          path: artifacts/release/native-acceptance/
           if-no-files-found: warn
           retention-days: 7
 
@@ -330,11 +290,16 @@ jobs:
         with:
           name: stable-release-assets
           path: dist/release
-      - name: Exercise bruv updater and embedded helper
+      - name: Exercise paired versions, bruv updater and embedded helper
         shell: bash
         run: |
-          chmod 0755 dist/release/bruv-darwin-arm64
+          chmod 0755 dist/release/bruv-darwin-arm64 dist/release/bruv-claude-compat-darwin-arm64
+          version="$(dist/release/bruv-darwin-arm64 --version)"
+          test "$version" = "$(bun -p 'require("./package.json").version')"
+          test "$(dist/release/bruv-claude-compat-darwin-arm64 --bruv-version)" = "bruv-claude-compat $version"
+          test "$(dist/release/bruv-claude-compat-darwin-arm64 --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
           bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')"
+          bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')" --legacy-updater
           home=$(mktemp -d)
           trap 'rm -rf "$home"' EXIT
           cd "$home"

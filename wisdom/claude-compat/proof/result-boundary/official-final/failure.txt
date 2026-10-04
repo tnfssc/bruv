@@ -1,0 +1,41 @@
+Code
+/bruv status
+PT
+project
+Working
+34s
+Settle
+/bruv status
+Settled (0)
+PT
+project
+/
+/bruv status
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+/bruv status
+
+9:00 AM
+
+Working for 33s
+T3 Code
+
+{ "sessionId": "01a10549-5c33-744a-9673-34806ca85f41", "running": false, "model": "bruv-acceptance/local-deterministic-v1", "stats": { "sessionFile": "<FIXTURE>/agent/native-sessions/2026-10-04T05-00-56-245Z_01a10549-5c33-744a-9673-34806ca85f41.jsonl", "sessionId": "01a10549-5c33-744a-9673-34806ca85f41", "userMessages": 0, "assistantMessages": 0, "toolCalls": 0, "toolResults": 0, "totalMessages": 0, "tokens": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "total": 0 }, "cost": 0, "contextUsage": { "tokens": 0, "contextWindow": 32000, "percent": 0 } } }
+
+Thinking
+Thinking
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic acceptance (not Claude)
+Full access
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

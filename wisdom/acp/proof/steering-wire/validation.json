@@ -1,0 +1,14 @@
+{
+  "exactCancelMessagesMatch": true,
+  "cancelCount": 2,
+  "cancelHasOnlySessionId": true,
+  "steerReplacementTextPresent": true,
+  "queueInputNotSentToAgent": true,
+  "sameNativeSessionAndPid": true,
+  "browserDistinctSteerAndStop": true,
+  "retainedQueuedRun": true,
+  "steerSameRunTwoAttempts": true,
+  "nativeToolsNotAborted": true,
+  "nativeSteerBeforeFollowUp": true,
+  "backgroundChildrenActuallyTested": false
+}

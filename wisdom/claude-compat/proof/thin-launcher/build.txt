@@ -1,0 +1,4 @@
+$ bun run prepare:assets && bun ./scripts/build-pair.ts
+$ bun ./scripts/prepare-assets.ts
+Built /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_32125da3/dist/bruv
+Built Bruv connector launcher /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_32125da3/dist/bruv-claude-compat

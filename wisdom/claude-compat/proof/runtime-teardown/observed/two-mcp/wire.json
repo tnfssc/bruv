@@ -1,0 +1,354 @@
+[
+  {
+    "process": "process-1",
+    "main": false,
+    "kind": "spawn",
+    "injectedMcp": false
+  },
+  {
+    "process": "process-1",
+    "main": false,
+    "kind": "exit",
+    "value": 0
+  },
+  {
+    "process": "process-2",
+    "main": false,
+    "kind": "spawn",
+    "injectedMcp": false
+  },
+  {
+    "process": "process-2",
+    "main": false,
+    "kind": "stdout",
+    "type": "control_response"
+  },
+  {
+    "process": "process-2",
+    "main": false,
+    "kind": "stdout",
+    "type": "control_response"
+  },
+  {
+    "process": "process-2",
+    "main": false,
+    "kind": "exit",
+    "value": 0
+  },
+  {
+    "process": "process-3",
+    "main": false,
+    "kind": "spawn",
+    "injectedMcp": false
+  },
+  {
+    "process": "process-3",
+    "main": false,
+    "kind": "exit",
+    "value": 0
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "spawn",
+    "injectedMcp": true
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "control_response"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "init",
+    "version": "bruv/0.16.1",
+    "mcp": [
+      {
+        "name": "t3-code",
+        "status": "connected"
+      }
+    ]
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "session_state_changed",
+    "state": "running"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "assistant",
+    "tools": [
+      {
+        "type": "tool_use",
+        "name": "mcp__t3-code__orchestrator_capabilities",
+        "id": "teardown_capabilities_1"
+      }
+    ]
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "user",
+    "tools": [
+      {
+        "type": "tool_result",
+        "tool_use_id": "teardown_capabilities_1",
+        "is_error": false
+      }
+    ]
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "assistant"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "result",
+    "subtype": "success",
+    "is_error": false,
+    "result": "ADMISSION_CONFIRMED_REAL"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "session_state_changed",
+    "state": "idle"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "init",
+    "version": "bruv/0.16.1",
+    "mcp": [
+      {
+        "name": "t3-code",
+        "status": "connected"
+      }
+    ]
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "session_state_changed",
+    "state": "running"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "assistant",
+    "tools": [
+      {
+        "type": "tool_use",
+        "name": "mcp__t3-code__orchestrator_capabilities",
+        "id": "teardown_capabilities_3"
+      }
+    ]
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "user",
+    "tools": [
+      {
+        "type": "tool_result",
+        "tool_use_id": "teardown_capabilities_3",
+        "is_error": false
+      }
+    ]
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "stream_event"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "assistant"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "result",
+    "subtype": "success",
+    "is_error": false,
+    "result": "ADMISSION_CONFIRMED_REAL"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "stdout",
+    "type": "system",
+    "subtype": "session_state_changed",
+    "state": "idle"
+  },
+  {
+    "process": "process-4",
+    "main": true,
+    "kind": "exit",
+    "value": 0
+  }
+]

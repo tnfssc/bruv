@@ -169,8 +169,13 @@ describe("OpenAI GA offline protocol", () => {
       call_id: "c1",
       arguments: '{"code":"1"}',
     });
-    await Bun.sleep(10);
-    const output = JSON.parse(f.socket.events.find((e) => e.item?.call_id === "c1")?.item.output);
+    // Oversized output is written to an artifact before the tool reply. Wait
+    // for that observable reply, not an assumed 10 ms filesystem deadline.
+    for (let attempt = 0; attempt < 100 && !f.socket.events.some((e) => e.item?.call_id === "c1"); attempt++)
+      await Bun.sleep(10);
+    const reply = f.socket.events.find((e) => e.item?.call_id === "c1");
+    expect(reply).toBeDefined();
+    const output = JSON.parse(reply.item.output);
     expect(output.truncated).toBe(true);
     expect(output.artifactPath).toContain("bruv-live-tool-");
     f.session.close();

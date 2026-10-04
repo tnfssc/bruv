@@ -1,0 +1,28 @@
+Code
+No threads yet
+PT
+project
+/
+New thread
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+What should we build in
+project
+?
+
+or start without a project
+
+
+
+
+Ask for changes, send follow-ups, or attach images
+Local deterministic acceptance (not Claude)
+Supervised
+Current checkout
+master
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

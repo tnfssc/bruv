@@ -1,0 +1,165 @@
+[
+  {
+    "time": "2026-10-03T14:09:10.056Z",
+    "message": {
+      "_tag": "Request",
+      "id": 19,
+      "tag": "orchestration.launchThread",
+      "payload": {
+        "commandId": "ec814929-3c91-4ab8-8932-ae307cf93416",
+        "creationSource": "web",
+        "threadId": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+        "projectId": "7e60835a-f644-4fe9-8b3a-3ab625fb324e",
+        "title": "WIRE_LONG_STEER_1 research only; wait for cancella...",
+        "generateTitle": true,
+        "modelSelection": {
+          "instanceId": "steering-wire-fixture",
+          "model": "default"
+        },
+        "runtimeMode": "full-access",
+        "interactionMode": "default",
+        "workspaceStrategy": {
+          "type": "root"
+        },
+        "initialMessage": {
+          "messageId": "0c59b966-5d96-4a99-92c6-775ebbefdd9e",
+          "text": "WIRE_LONG_STEER_1 research only; wait for cancellation.",
+          "attachments": []
+        }
+      },
+      "traceId": "eaee0832086b7b542645003dc0b563f0",
+      "spanId": "8b467219f3b2a2ed",
+      "sampled": true,
+      "headers": []
+    }
+  },
+  {
+    "time": "2026-10-03T14:09:55.531Z",
+    "message": {
+      "_tag": "Request",
+      "id": 29,
+      "tag": "orchestration.dispatchCommand",
+      "payload": {
+        "type": "message.dispatch",
+        "createdBy": "user",
+        "creationSource": "web",
+        "commandId": "1ac1cf69-c63a-4471-8afa-3bcd4de9799e",
+        "threadId": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+        "messageId": "ab90fd0a-bf25-4055-afb7-254cc31d2e98",
+        "text": "WIRE_CORRECTION_STEER_1 change direction now.",
+        "attachments": [],
+        "titleSeed": "WIRE_CORRECTION_STEER_1 change direction now.",
+        "modelSelection": {
+          "instanceId": "steering-wire-fixture",
+          "model": "default"
+        },
+        "dispatchMode": {
+          "type": "queue_after_active"
+        }
+      },
+      "traceId": "7a40f3a33a7f367d71a222d7f80fcf38",
+      "spanId": "03a7d76372d809b3",
+      "sampled": true,
+      "headers": []
+    }
+  },
+  {
+    "time": "2026-10-03T14:10:14.444Z",
+    "message": {
+      "_tag": "Request",
+      "id": 33,
+      "tag": "orchestration.dispatchCommand",
+      "payload": {
+        "type": "queued-message.promote-to-steer",
+        "commandId": "95017f85-1964-4a01-b928-897c112b6de5",
+        "threadId": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+        "queuedRunId": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:2",
+        "targetRunId": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:1"
+      },
+      "traceId": "0e5b3c10ff5a1b0de89836fd72f8b037",
+      "spanId": "703ea3ffd3a172d2",
+      "sampled": true,
+      "headers": []
+    }
+  },
+  {
+    "time": "2026-10-03T14:10:57.605Z",
+    "message": {
+      "_tag": "Request",
+      "id": 41,
+      "tag": "orchestration.dispatchCommand",
+      "payload": {
+        "type": "message.dispatch",
+        "createdBy": "user",
+        "creationSource": "web",
+        "commandId": "faf13da9-83c9-4eda-84c3-e3ff261ce414",
+        "threadId": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+        "messageId": "e83eff79-8060-4579-9fd7-f1824d9b2ace",
+        "text": "WIRE_LONG_STOP_1 research only; compare Stop.",
+        "attachments": [],
+        "titleSeed": "WIRE_LONG_STOP_1 research only; compare Stop.",
+        "modelSelection": {
+          "instanceId": "steering-wire-fixture",
+          "model": "default"
+        },
+        "deliveryIntent": "auto",
+        "dispatchMode": {
+          "type": "start_immediately"
+        }
+      },
+      "traceId": "cf5095c1170af88866ec75119b597144",
+      "spanId": "5cda0624edcb4a10",
+      "sampled": true,
+      "headers": []
+    }
+  },
+  {
+    "time": "2026-10-03T14:11:35.331Z",
+    "message": {
+      "_tag": "Request",
+      "id": 47,
+      "tag": "orchestration.dispatchCommand",
+      "payload": {
+        "type": "message.dispatch",
+        "createdBy": "user",
+        "creationSource": "web",
+        "commandId": "8fa927b2-0556-4a9a-8cb4-34181812827f",
+        "threadId": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+        "messageId": "893a0ba4-7047-406e-9dd0-cdbfd03c2e28",
+        "text": "WIRE_QUEUE_RETAIN_1 should remain queued separately.",
+        "attachments": [],
+        "titleSeed": "WIRE_QUEUE_RETAIN_1 should remain queued separatel...",
+        "modelSelection": {
+          "instanceId": "steering-wire-fixture",
+          "model": "default"
+        },
+        "dispatchMode": {
+          "type": "queue_after_active"
+        }
+      },
+      "traceId": "632704a38f2bb150b9a842af01f2207d",
+      "spanId": "8952c9afb8ad6897",
+      "sampled": true,
+      "headers": []
+    }
+  },
+  {
+    "time": "2026-10-03T14:11:39.521Z",
+    "message": {
+      "_tag": "Request",
+      "id": 50,
+      "tag": "orchestration.dispatchCommand",
+      "payload": {
+        "type": "run.interrupt",
+        "commandId": "ab942b41-6a46-4a4b-88a1-a373585c2775",
+        "threadId": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+        "runId": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:3",
+        "holdQueue": true
+      },
+      "traceId": "d7a7053e00fdf039880c47de69f81865",
+      "spanId": "0277afb569a64c5d",
+      "sampled": true,
+      "headers": []
+    }
+  }
+]

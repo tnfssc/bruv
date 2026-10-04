@@ -67,6 +67,15 @@ test("Pi host adaptation is exact, idempotent, and rejects dependency drift", as
     expect(() => adaptPiHostFile(patch, original + "\n// drift")).toThrow("Unsupported Pi host file");
   }
   assertBruvPiHost();
+  const ready = {
+    mainPrepared: true,
+    argsPrepared: true,
+    viewportPrepared: true,
+    builtInNames: ["llama.cpp"],
+    inputIdentityPrepared: true,
+  };
+  expect(() => assertBruvPiHost(ready)).not.toThrow();
+  expect(() => assertBruvPiHost({ ...ready, inputIdentityPrepared: false })).toThrow("Pi host is not prepared");
   expect(builtInExtensions.map((extension) => extension.name)).toEqual(["llama.cpp"]);
 });
 
@@ -78,7 +87,9 @@ test("runtime host gate rejects pristine and partly prepared dependencies", () =
     { mainPrepared: false, argsPrepared: true, viewportPrepared: true, builtInNames: ["llama.cpp"] },
     { mainPrepared: true, argsPrepared: true, viewportPrepared: true, builtInNames: ["llama.cpp", "mcp"] },
   ])
-    expect(() => assertBruvPiHost(state)).toThrow("Pi host is not prepared for bruv");
+    expect(() => assertBruvPiHost({ ...state, inputIdentityPrepared: true })).toThrow(
+      "Pi host is not prepared for bruv",
+    );
 });
 
 test("adaptation validates all files and version before any writes", async () => {

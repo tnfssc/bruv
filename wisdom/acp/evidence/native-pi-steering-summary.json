@@ -1,0 +1,27 @@
+{
+  "binarySha256": "5da33808892cf3c28ea9816a2e2271c183ddbcd792f7a2893483a40fcde13965",
+  "t3Sha256": "2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795",
+  "directBinaryPath": {
+    "version": "0.15.28",
+    "actualUi": "Unavailable · Unsupported",
+    "upstreamMinimum": "0.80.5",
+    "passed": false
+  },
+  "researchOnly": {
+    "versionOverride": "1.0.0",
+    "otherRuntimeArgsEnvProtocol": "unchanged",
+    "injectedExtensionRemoved": false,
+    "injectedCredentialsFiltered": false,
+    "noChildShellRun": true,
+    "tool": "execute + 14 second await + file writes",
+    "realUiSteer": true,
+    "actualWireSteeringBehavior": "steer",
+    "idleContinuation": true,
+    "toolCompletion": true
+  },
+  "wireCounts": {
+    "abort": 0,
+    "steerPrompt": 1
+  },
+  "boundary": "Steering feasibility only under explicit research version shim. NOT direct-binary acceptance or ACP migration."
+}

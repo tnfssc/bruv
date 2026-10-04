@@ -1,0 +1,11 @@
+{"time":1791034079010,"kind":"request","data":{"marker":"EXECUTE_PROBE","toolOutputIds":[]}}
+{"time":1791034079012,"kind":"response","data":{"items":[{"type":"function_call","name":"execute"}]}}
+{"time":1791034079596,"kind":"request","data":{"marker":"EXECUTE_PROBE","toolOutputIds":["filtered-execute"]}}
+{"time":1791034079596,"kind":"response","data":{"items":[{"type":"message","text":"EXECUTE_FINISHED_FILTERED"}]}}
+{"time":1791034125999,"kind":"request","data":{"marker":"LATE_PROBE","toolOutputIds":["filtered-execute"]}}
+{"time":1791034126000,"kind":"response","data":{"items":[{"type":"function_call","name":"execute"}]}}
+{"time":1791034126523,"kind":"request","data":{"marker":"LATE_PROBE","toolOutputIds":["filtered-execute","filtered-late-job"]}}
+{"time":1791034126523,"kind":"response","data":{"items":[{"type":"message","text":"JOB_STARTED_RETURNING_EARLY_FILTERED"}]}}
+{"time":1791034144906,"kind":"request","data":{"marker":"asynchronous task completed","toolOutputIds":["filtered-execute","filtered-late-job"]}}
+{"time":1791034144906,"kind":"response","data":{"items":[{"type":"message","text":"AUTOMATIC_LATE_COMPLETION_OBSERVED_FILTERED"}]}}
+{"time":1791034402659,"kind":"t3-exit","data":{"code":130,"signal":null}}

@@ -6,8 +6,8 @@ does not replace them.
 
 Every release includes THIRD_PARTY_LICENSES.txt, a bounded, generated attribution
 bundle containing the complete LICENSE, COPYING, and NOTICE files found in the
-installed production dependency graph. It also reproduces the pinned Pi 0.85.1
-license and Bun 1.4.1's upstream runtime and linked-library licensing notice.
+installed production dependency graph. It also reproduces the pinned Pi 0.87.1
+license and Bun 1.4.2's upstream runtime and linked-library licensing notice.
 The generator fails on an unrecognized package with no notice file so omissions
 must be reviewed rather than silently reduced to package names or links.
 
@@ -21,3 +21,7 @@ JavaScriptCore/WebKit under LGPL-2 as described in Bun's reproduced LICENSE.md.
 The upstream notice identifies source and relinking information. This material is
 provided for attribution and transparency, not as legal advice or a guarantee of
 license compliance. Review applicable obligations before redistribution.
+
+Both paired executables carry the same runtime/dependency attribution. T3 Code is
+an independently installed, unmodified external application, not a bundled Bruv
+release component. Its own distribution supplies its licenses.

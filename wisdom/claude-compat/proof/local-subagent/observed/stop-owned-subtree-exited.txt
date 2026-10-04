@@ -1,0 +1,57 @@
+Code
+ACCEPT_LOCAL_STOP: launch another actual normal wo...
+PT
+project
+Done
+Settle
+ACCEPT_LOCAL_STOP: launch another actual normal wo...
+Regenerating title
+ACCEPT_LOCAL_CANCEL: launch and explicitly stop an...
+PT
+project
+now
+Settle
+ACCEPT_LOCAL_CANCEL: launch and explicitly stop an...
+ACCEPT_LOCAL_SUBAGENT: launch the actual normal Br...
+PT
+project
+Working
+16s
+Settle
+ACCEPT_LOCAL_SUBAGENT: launch the actual normal Br...
+Settled (0)
+PT
+project
+/
+ACCEPT_LOCAL_STOP: launch another actual normal wo...
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+ACCEPT_LOCAL_STOP: launch another actual normal worker and hold root generation.
+
+6:57 AM
+
+Run interrupted
+· Run interrupted by user
+Actual local Stop-owned normal worker
+Stopped
+preparing tool execution
+1s
+
+Execute
+
+6:57 AM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic acceptance (not Claude)
+Full access
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

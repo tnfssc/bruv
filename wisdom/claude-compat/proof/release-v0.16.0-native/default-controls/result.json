@@ -1,0 +1,34 @@
+{
+  "integratedAcceptance": true,
+  "syntheticConnectorEvents": false,
+  "modelIdentity": "bruv-acceptance/local-deterministic-v1",
+  "testModelNotClaude": true,
+  "realCredentialsUsed": false,
+  "t3Version": "t3 v0.0.46-nightly.20261004.2644",
+  "t3BinarySha256": "53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48",
+  "upstreamUnmodified": true,
+  "actualChecks": [
+    "execute",
+    "managed shell",
+    "steer during tool",
+    "early-return",
+    "completion wake",
+    "generation Stop",
+    "explicit job cancellation",
+    "reload",
+    "reopen",
+    "continued session"
+  ],
+  "taskStarts": 4,
+  "taskEnds": 3,
+  "executeCalls": 5,
+  "gaps": [
+    "normal subagent profile inheritance not tested",
+    "permission binding not present in this slice",
+    "saved-question binding not present in this slice",
+    "restart/fork/storage parity belongs to parent acceptance"
+  ],
+  "passed": true,
+  "cancellationCompletionWakeCount": 1,
+  "modelCompletionWakeCount": 1
+}

@@ -1,7 +1,9 @@
+import { childAgentEnvironment } from "../delegation-environment";
 import { canDelegate, SUBAGENT_TYPES, type SubagentType } from "../tasks/subagent-profiles";
 export type RemoteWorkspace = { kind: "inherit" } | { kind: "worktree"; baseRef?: string; branch?: string };
 export type RemotePlacement = {
   profile: SubagentType;
+  nativeFast?: boolean;
   parentDepth: number;
   parentType?: SubagentType;
   workspace: RemoteWorkspace;
@@ -11,6 +13,7 @@ export function validatePlacement(placement: RemotePlacement): void {
   if (
     !placement ||
     !SUBAGENT_TYPES.includes(placement.profile) ||
+    (placement.nativeFast !== undefined && typeof placement.nativeFast !== "boolean") ||
     !Number.isSafeInteger(placement.parentDepth) ||
     placement.parentDepth < 0 ||
     (placement.parentType !== undefined && !SUBAGENT_TYPES.includes(placement.parentType))
@@ -39,7 +42,8 @@ export function validateWorkspace(workspace: RemoteWorkspace): void {
 export function remoteChildEnvironment(env: NodeJS.ProcessEnv, placement?: RemotePlacement): NodeJS.ProcessEnv {
   if (placement) validatePlacement(placement);
   return {
-    ...env,
+    ...childAgentEnvironment(env),
+    BRUV_SUBAGENT_NATIVE_FAST: placement?.nativeFast ? "1" : "0",
     BRUV_SUBAGENT_TYPE: placement?.profile ?? "normal",
     BRUV_SUBAGENT_DEPTH: String(placement ? placement.parentDepth + 1 : 1),
   };

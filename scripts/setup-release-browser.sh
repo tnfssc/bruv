@@ -6,7 +6,8 @@ echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
 echo "RELEASE_BOOT_PLAYWRIGHT=$RUNNER_TEMP/release-browser/node_modules/playwright-core/index.mjs" >> "$GITHUB_ENV"
 mkdir -p "$RUNNER_TEMP/release-browser"
 printf '{"private":true}\n' > "$RUNNER_TEMP/release-browser/package.json"
-bun add --cwd "$RUNNER_TEMP/release-browser" playwright-core@1.60.0
+# Same Playwright runtime as the official-2644 bounded proof.
+bun add --cwd "$RUNNER_TEMP/release-browser" playwright-core@1.63.0
 cli="$RUNNER_TEMP/release-browser/node_modules/playwright-core/cli.js"
 # The gate launches Chromium headless without a channel: Playwright uses this shell.
 bun "$cli" install --only-shell chromium

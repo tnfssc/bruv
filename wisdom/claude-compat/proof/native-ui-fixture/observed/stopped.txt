@@ -1,0 +1,75 @@
+Code
+Native fixture full proof
+PT
+project
+now
+Settle
+Native fixture full proof
+Settled (0)
+PT
+project
+/
+Native fixture full proof
+Bruv Claude-protocol research fixture 0.0.1 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+Native fixture full proof
+
+7:40 PM
+
+Worked for 478ms
+7:40 PM
+T3 Code
+
+Bruv Claude-protocol research fixture: "Native fixture full proof" (synthetic; no Bruv execution or provider call).
+
+7:40 PM
+
+You
+
+Fixture controlled active operation for steer
+
+7:40 PM
+
+Worked for 1.5s
+7:40 PM
+Steer
+You
+
+Steering proof: change the synthetic response
+
+7:40 PM
+
+T3 Code
+
+Bruv Claude-protocol research fixture: "Steering proof: change the synthetic response" (synthetic; no Bruv execution or provider call).
+
+7:40 PM
+
+You
+
+Fixture controlled active operation for real Stop
+
+7:40 PM
+
+Synthetic monitor/subagent interoperability task (not Bruv execution)
+Stopped
+Synthetic fixture task stopped; no provider call
+0s
+Run interrupted
+· Run interrupted by user
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Claude Fable 5.1
+Medium · 1M
+Full access
+Toggle Sidebar
+Update Available: Claude v2.1.288
+
+Claude can be updated from provider settings.
+
+Settings

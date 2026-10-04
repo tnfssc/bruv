@@ -1,0 +1,19 @@
+{
+  "researchOnly": true,
+  "fixtureMode": true,
+  "anthropicAccount": false,
+  "fixtureProviderCalls": 0,
+  "syntheticEventsNotBruvExecution": true,
+  "t3Version": "t3 v0.0.46-nightly.20261003.2623",
+  "t3BinarySha256": "2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795",
+  "upstreamUnmodified": true,
+  "defaultRefusal": "tested by test-fixture.mjs",
+  "nativePrompt": "PASS",
+  "nativeSteering": "PASS (queue then Steer; priority=now)",
+  "syntheticTaskDisplay": "PASS (Running/progress/Stopped)",
+  "nativeStop": "PASS (interrupt request and Run interrupted by user)",
+  "reload": "PASS (reopen thread after real reload)",
+  "nativeAuthEnum": "authenticated is T3 local executable readiness; no account fields emitted",
+  "versionWarning": "0.0.1 unsupported warning deliberately retained; nonblocking",
+  "privateRuntimeRemoved": true
+}

@@ -23,10 +23,7 @@ async function runtimeEdges() {
 }
 
 test("runtime never imports build tools or archived research", async () => {
-  const bad = (await runtimeEdges()).filter(
-    ({ target }) =>
-      /^(?:scripts|experiments|\.agents)\//.test(target) || /^integrations\/t3\/(?:build|gates)\//.test(target),
-  );
+  const bad = (await runtimeEdges()).filter(({ target }) => /^(?:scripts|experiments|wisdom|\.agents)\//.test(target));
   expect(bad).toEqual([]);
 });
 
@@ -48,19 +45,15 @@ test("T3 adapters cannot become another task execution owner", async () => {
   expect(bad).toEqual([]);
 });
 
-test("active T3 inputs and agent composition have one maintained home", async () => {
+test("active T3 adapters and agent composition have one maintained home", async () => {
   for (const path of [
     "src/agent/extension.ts",
     "src/history/shake-record.ts",
     "src/t3/tasks/mcp-client.ts",
     "src/t3/tasks/native-task.ts",
-    "src/t3/web/embedded.ts",
-    "integrations/t3/upstream/source.json",
-    "integrations/t3/upstream/bruv.patch",
-    "integrations/t3/upstream/bootstrap.mjs",
-    "integrations/t3/build/build.ts",
-    "integrations/t3/build/verify-source.ts",
-    "integrations/t3/fixtures/native-task-contract.json",
+    "src/t3/web/launcher.ts",
+    "src/claude-compat/cli.ts",
+    "scripts/build-pair.ts",
   ])
     expect({ path, exists: await Bun.file(resolve(root, path)).exists() }).toEqual({ path, exists: true });
   for (const path of [
@@ -72,6 +65,7 @@ test("active T3 inputs and agent composition have one maintained home", async ()
     "web/t3-source.json",
     "web/t3.patch",
     "web/bruv-web-bootstrap.mjs",
+    "src/t3/web/embedded.ts",
     "scripts/build-web.ts",
     "scripts/web-source.ts",
   ])

@@ -1,0 +1,31 @@
+bun test v1.4.2 (744846f84)
+
+tests/claude-compat-history.test.ts:
+(pass) native SDK 0.3.276 filesystem history > root and supplied child bindings survive reopen; SDK reads exact IDs/causal chains [261.95ms]
+(pass) native SDK 0.3.276 filesystem history > SDK checkpoint fork retains provenance, imports completed tools into fresh durable Pi, resumes without authority [816.99ms]
+(pass) native SDK 0.3.276 filesystem history > SDK fork at a pending tool checkpoint fails safe before creating Pi storage [220.98ms]
+(pass) native SDK 0.3.276 filesystem history > parent SDK config-home mismatch really misses files; explicit aligned override works [559.08ms]
+(pass) native SDK 0.3.276 filesystem history > SDK reads canonical symlink cwd and long encoded paths [278.04ms]
+(pass) native SDK 0.3.276 filesystem history > real parent chains select a branch, not matching prose [244.86ms]
+(pass) history boundaries > source replay, duplicate UUID, parent and child causality conflicts are rejected [1.54ms]
+(pass) history boundaries > unknown transcript context, dangling links and unknown tool results cannot be imported [0.93ms]
+(pass) history boundaries > stored images/thinking/error results preserve content, and altered imports fail reopen [1.86ms]
+
+tests/claude-native-history-model.test.mjs:
+(pass) seed requests an actual tool, not canned native frames [18.77ms]
+(pass) child rejects missing original checkpoint context [3.66ms]
+(pass) child rejects later root context even with complete checkpoint [2.54ms]
+(pass) rollback rejects discarded child context [2.41ms]
+(pass) wrong model identity fails instead of paid fallback [2.90ms]
+(pass) background summary is answered without executing tools or continuing history [2.22ms]
+(pass) ordinary unexpected prompts still fail rather than being summarized [2.37ms]
+(pass) post-replay verifier rejects marker-only claims without real tool calls [0.82ms]
+(pass) later child turn rejects an unhydrated new thread [2.24ms]
+(pass) verifier requires paired root and inspection outputs, not only markers [0.72ms]
+(pass) verifier refuses inherited child ownership despite success marker [1.44ms]
+(pass) imported pair is verified before legitimate later context compaction [0.25ms]
+
+ 21 pass
+ 0 fail
+ 60 expect() calls
+Ran 21 tests across 2 files. [2.92s]

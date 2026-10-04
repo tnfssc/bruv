@@ -15,6 +15,8 @@ const targets: [NodeJS.Platform, string, string][] = [
   ["darwin", "arm64", names[2]],
   ["android", "arm64", names[3]],
 ];
+const pairNames = [...names, ...names.map((name) => name.replace(/^bruv-/, "bruv-claude-compat-"))];
+const runBinary = async (path: string) => (path.endsWith("bruv-claude-compat") ? "bruv-claude-compat 0.8.0" : "0.8.0");
 const api = "https://api.github.com/repos/tnfssc/bruv/releases/latest";
 const root = "https://github.com/tnfssc/bruv/releases/download/v0.8.0/";
 const digest = (data: Uint8Array) => createHash("sha256").update(data).digest("hex");
@@ -23,11 +25,11 @@ let temp: string;
 // Synthetic, non-runnable raw executable-shaped fixtures. Embedded version is deliberate;
 // these do NOT prove a real 0.8.0 compiled binary boots on any target OS.
 function fixture(name: string): Uint8Array {
-  const header = name === "bruv-darwin-arm64" ? [0xcf, 0xfa, 0xed, 0xfe] : [0x7f, 0x45, 0x4c, 0x46];
+  const header = name.endsWith("darwin-arm64") ? [0xcf, 0xfa, 0xed, 0xfe] : [0x7f, 0x45, 0x4c, 0x46];
   return new Uint8Array([...header, ...new TextEncoder().encode("bruv fixture 0.8.0 " + name)]);
 }
 function assertRawFixture(name: string, bytes: Uint8Array) {
-  const magic = name === "bruv-darwin-arm64" ? [0xcf, 0xfa, 0xed, 0xfe] : [0x7f, 0x45, 0x4c, 0x46];
+  const magic = name.endsWith("darwin-arm64") ? [0xcf, 0xfa, 0xed, 0xfe] : [0x7f, 0x45, 0x4c, 0x46];
   if (
     !magic.every((byte, index) => bytes[index] === byte) ||
     !new TextDecoder().decode(bytes).includes("bruv fixture 0.8.0 " + name)
@@ -36,7 +38,7 @@ function assertRawFixture(name: string, bytes: Uint8Array) {
 }
 async function stageAssets(dir: string) {
   await mkdir(dir);
-  for (const name of names) {
+  for (const name of pairNames) {
     const bytes = fixture(name);
     assertRawFixture(name, bytes);
     await writeFile(join(dir, name), bytes);
@@ -71,11 +73,11 @@ function localFetch(dir: string, options: Override = {}) {
         tag_name: options.tag ?? "v0.8.0",
         prerelease: options.prerelease ?? false,
         draft: options.draft ?? false,
-        assets: names
+        assets: pairNames
           .flatMap((name) => [options.missingRaw && name === names[0] ? name + ".tar.gz" : name, name + ".sha256"])
           .map((name) => ({ name, browser_download_url: root + name })),
       });
-    if (!url.startsWith(root) || !names.some((name) => url === root + name || url === root + name + ".sha256"))
+    if (!url.startsWith(root) || !pairNames.some((name) => url === root + name || url === root + name + ".sha256"))
       throw new Error("unexpected non-official URL: " + url);
     const name = url.slice(root.length);
     return new Response(
@@ -109,6 +111,7 @@ for (const [platform, arch, name] of targets) {
     const target = await targetFor(name);
     const requests: string[] = [];
     const result = await updateBruv({
+      runBinary,
       compiled: true,
       currentVersion: "0.7.1",
       platform,
@@ -121,7 +124,15 @@ for (const [platform, arch, name] of targets) {
       }),
     });
     expect(result).toEqual({ status: "updated", version: "0.8.0", path: target.path });
-    expect(requests).toEqual([api, root + name, root + name + ".sha256"]);
+    const connector = name.replace(/^bruv-/, "bruv-claude-compat-");
+    expect(requests).toEqual([
+      api,
+      root + name,
+      root + name + ".sha256",
+      root + connector,
+      root + connector + ".sha256",
+    ]);
+    expect(await readFile(join(target.dir, "bruv-claude-compat"))).toEqual(Buffer.from(fixture(connector)));
     expect(await readFile(target.path)).toEqual(Buffer.from(fixture(name)));
     expect((await stat(target.path)).mode & 0o111).not.toBe(0);
     await noStage(target.dir);
@@ -142,6 +153,7 @@ for (const [label, override] of [
     const target = await targetFor(names[0]);
     await expect(
       updateBruv({
+        runBinary,
         compiled: true,
         currentVersion: "0.7.1",
         platform: "linux",
@@ -160,6 +172,7 @@ test("concurrent replacement after download is not overwritten", async () => {
   let changed = false;
   await expect(
     updateBruv({
+      runBinary,
       compiled: true,
       currentVersion: "0.7.1",
       platform: "linux",
@@ -190,6 +203,6 @@ test("fixture preflight rejects tar-shaped payload, even with valid checksum", a
   expect(() => assertRawFixture(names[0], new TextEncoder().encode("bruv fixture 0.7.1 " + names[0]))).toThrow(
     "incompatible tar shape or version",
   );
-  // The old updater checks only SHA256; it does NOT inspect executable format.
-  // Do not treat this preflight as an updater-level tar defense.
+  // This shape preflight is synthetic evidence, not platform execution proof.
+  // The updater separately runs staged --bruv-version and the existing macOS helper check.
 });

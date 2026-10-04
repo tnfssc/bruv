@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-03T13:34:47.735Z",
+  "ownedProcessesRemaining": [],
+  "portListenerPresent": false,
+  "deletedAuthRuntimePaths": [
+    "home",
+    "agent",
+    "bruv-home",
+    "t3-base",
+    "server-private.log",
+    "server-private-error.log",
+    "synthetic/home",
+    "synthetic/agent",
+    "synthetic/bruv-home"
+  ],
+  "browserJob": "task_b2e8e0b9 completed exit 0",
+  "runnerJob": "task_8493b6c1 completed exit 0",
+  "t3ExitCode": 130,
+  "setupScreenshotsRemoved": true,
+  "browserCookiesNotSaved": true,
+  "peerCachesOrProcessesModified": false
+}

@@ -8,10 +8,10 @@ Complete at baseline d80d7058a2f5481f067586fd7042fe2746cff4ae: **689 tracked cod
 
 ## Pick up here
 
-- Main report: [audit summary](../../audits/code-reduction/2026-10-02/README.md).
-- [Per-file coverage](../../audits/code-reduction/2026-10-02/coverage.json) records file hashes, inclusive ranges, report links and verdicts. All current code bytes matched the reviewed inventory at final check.
-- [Detailed reports](../../audits/code-reduction/2026-10-02/reports/README.md) retain first-pass partial reports plus completed follow-ups. Use the joined ledger for final coverage.
-- [Parent checks](../../audits/code-reduction/2026-10-02/parent-checks.md) record independent reference/diff checks and compiler limits.
+- Main report: [audit summary](../audits/code-reduction/2026-10-02/README.md).
+- [Per-file coverage](../audits/code-reduction/2026-10-02/coverage.json) records file hashes, inclusive ranges, report links and verdicts. All current code bytes matched the reviewed inventory at final check.
+- [Detailed reports](../audits/code-reduction/2026-10-02/reports/README.md) retain first-pass partial reports plus completed follow-ups. Use the joined ledger for final coverage.
+- [Parent checks](../audits/code-reduction/2026-10-02/parent-checks.md) record independent reference/diff checks and compiler limits.
 - Raw manifests, original ledgers and exact job IDs remain in ignored artifacts/code-reduction-audit/. The durable report does not need that folder.
 
 Next: implement the narrow no-feature-loss batch in a worktree; estimated 491–562 net lines, including specified test edits. Recheck references and run focused tests after edits. Estimates are not measured diffs. Do not sum overlapping report totals. Feature cuts still need a product choice. The frozen T3 archive is 35,011 physical code/config lines, not active runtime code. Preserve the baseline revision if retiring historical replay files. Never confuse it with integrations/t3/upstream/bruv.patch.

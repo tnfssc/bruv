@@ -1,16 +1,17 @@
 {
   "name": "bruv",
-  "version": "0.15.28",
+  "version": "0.16.7",
   "private": true,
   "type": "module",
   "bin": {
-    "bruv": "dist/bruv"
+    "bruv": "dist/bruv",
+    "bruv-claude-compat": "dist/bruv-claude-compat"
   },
   "scripts": {
     "ci": "bash ./scripts/ci.sh linux",
     "ci:macos": "bash ./scripts/ci.sh macos",
     "prepare:assets": "bun ./scripts/prepare-assets.ts",
-    "build": "bun run prepare:assets && bun ./scripts/build.ts",
+    "build": "bun ./scripts/build-pair.ts",
     "check": "bun run prepare:assets && tsc --noEmit",
     "test": "bun run build && bun test ./tests",
     "test:llm": "bun run build && BRUV_RUN_LLM_TESTS=1 bun test ./tests/llm.test.ts",
@@ -22,8 +23,8 @@
     "lint": "biome lint .",
     "generate:notices": "bun ./scripts/generate-third-party-notices.ts",
     "prompt:preview": "bun ./scripts/prompt-preview.ts",
-    "build:web": "bun ./integrations/t3/build/build.ts",
-    "smoke:live-onboarding": "bun ./scripts/live-onboarding-smoke.ts"
+    "smoke:live-onboarding": "bun ./scripts/live-onboarding-smoke.ts",
+    "build:claude-compat": "bun ./scripts/build-claude-compat.ts"
   },
   "dependencies": {
     "@earendil-works/pi-ai": "1.0.0",
@@ -31,6 +32,7 @@
     "@earendil-works/pi-server": "1.0.0",
     "@earendil-works/pi-tui": "1.0.0",
     "@google/genai": "2.26.0",
+    "@modelcontextprotocol/sdk": "1.27.1",
     "es-module-lexer": "^3.0.2",
     "resolve.exports": "2.0.3",
     "ws": "8.22.0",
@@ -45,5 +47,8 @@
   "engines": {
     "bun": ">=1.4.1"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "patchedDependencies": {
+    "@earendil-works/pi-coding-agent@1.0.0": "patches/@earendil-works%2Fpi-coding-agent@1.0.0.patch"
+  }
 }

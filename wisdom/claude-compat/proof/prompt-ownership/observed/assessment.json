@@ -1,0 +1,13 @@
+{
+  "integratedAcceptance": true,
+  "acceptedUiProof": false,
+  "sourceHarnessPassed": true,
+  "reason": "Unstrengthened harness checked visibility only. Rendered CANCELLATION_COMPLETED_REAL precedes ACCEPT_CANCEL and CANCEL_CONFIRMED_REAL. Chronology assertion is now retained in the driver.",
+  "t3Version": "t3 v0.0.46-nightly.20261003.2623",
+  "t3BinarySha256": "2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795",
+  "upstreamUnmodified": true,
+  "syntheticConnectorEvents": false,
+  "realCredentialsUsed": false,
+  "modelCompletionWakeCount": 1,
+  "cancellationCompletionWakeCount": 1
+}

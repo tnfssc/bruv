@@ -1,195 +1,117 @@
-import { spawn } from "node:child_process";
-import { accessSync, constants } from "node:fs";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import { homedir, constants as osConstants } from "node:os";
+import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
-function expandHome(value: string): string {
-  if (value === "~") return homedir();
-  return value.startsWith("~/") ? join(homedir(), value.slice(2)) : value;
+export function externalT3Guide(binary = process.execPath, home = homedir()): string {
+  const connector = resolve(dirname(binary), "bruv-claude-compat");
+  const agent = join(home, ".bruv", "agent");
+  const sdk = join(home, ".bruv", "claude-compat-sdk");
+  return [
+    "Bruv + T3 Code",
+    "==============",
+    "Setup guide only. This command does not install, launch or configure anything.",
+    "",
+    "1. Install the matched Bruv pair",
+    "   Stop active sessions before installing or replacing binaries.",
+    "",
+    "   curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh",
+    "",
+    "   The installer verifies bruv + bruv-claude-compat in ~/.local/bin.",
+    "   Keep them together and put ~/.local/bin on PATH. Check:",
+    "",
+    "     command -v bruv",
+    "     command -v bruv-claude-compat",
+    "     bruv --version",
+    "     bruv-claude-compat --bruv-version",
+    "     bruv-claude-compat --version",
+    "",
+    "   Bruv and --bruv-version must match. The connector's --version reports the",
+    "   2.1.280 Bruv compatibility profile, not an installed Claude Code version.",
+    "",
+    "2. Configure your provider in ordinary Bruv",
+    "   Run bruv in your project. Use /login, then /model; try a small prompt.",
+    "   Same OS user: CLI and connector share auth, models, settings and resources:",
+    "",
+    "     " + agent,
+    "",
+    "   No extra login or credential copying. Shared settings affect both.",
+    "   SDK history below is separate: native transcripts, not credentials or",
+    "   ordinary CLI history. Keep provider keys out of T3 messages and fields.",
+    "",
+    "3. Install official T3 and launch normally",
+    "   Get T3 separately and verify its published checksums:",
+    "     https://github.com/pingdotgg/t3code/releases",
+    "   Open the desktop app normally, or run:",
+    "     t3",
+    "   No custom launch arguments or parent/server/global CLAUDE_CONFIG_DIR.",
+    "   Do not change HOME or ordinary Claude state to work around setup.",
+    "",
+    "4. Add a separate provider instance named Bruv",
+    "   Settings > Providers > + (Add provider): select Claude, then Next.",
+    "   On Identity, name it Bruv (not Claude); use a unique ID, e.g. bruv.",
+    "   Click Next for Config, enter the paths below, then Add instance.",
+    "   Claude is the protocol slot, NOT Claude Code or an Anthropic login.",
+    "   Leave your existing Claude instance untouched. Set and save:",
+    "",
+    "     Binary path:",
+    "       " + connector,
+    "     SDK history home (homePath / CLAUDE_CONFIG_DIR path):",
+    "       " + sdk,
+    "     Launch arguments: leave empty",
+    "",
+    "   Use absolute paths on the connector machine, not literal ~ or $HOME.",
+    "   History home is instance-local; never use ~/.claude or the auth home.",
+    "   No environment overrides needed for a normal same-user paired install.",
+    "",
+    "5. Add the exact custom model and set auxiliary models",
+    "   Use the exact provider/model-id from your configured Bruv registry.",
+    "   Click Add custom model, enter the ID, then Add. A display name is not an ID.",
+    "   Hide built-in aliases with Disable all before adding your model if helpful.",
+    "   Select the same ID for auxiliary title, branch and text generation.",
+    "   No sonnet/opus aliases. If T3 omits a model, Bruv needs an explicit",
+    "   default in shared settings; set it with /model in ordinary Bruv.",
+    "",
+    "6. Select Bruv and smoke-test a chat",
+    "   In a new chat, select the Bruv instance AND your exact custom model.",
+    "   Send: Reply with one short greeting. Do not use tools.",
+    "   Check the response and auxiliary title generation. Health/readiness alone",
+    "   does not verify provider access; a real successful request does.",
+    "",
+    "Known limits and safe updates",
+    "----------------------------",
+    "   T3 v0.0.46-nightly.20261004.2644 lacks the provider-scoped SDK history fix.",
+    "   Basic chat may work, but native fork can fail in T3 before Bruv starts.",
+    "   Full UI-only history/fork needs a T3 build with that fix; no fixed release",
+    "   is promised. Do not work around it with the parent environment.",
+    "",
+    "   After Stop, explicitly Decline any stale approval card; do not approve it.",
+    "",
+    "   Never use T3's Claude login, install or updater for Bruv. Latest-Claude",
+    "   notices and built-in Sonnet advisories are not custom-model requirements.",
+    "   Stop active Bruv/T3 sessions, update the matched pair, then restart:",
+    "     bruv update --check    (read-only check)",
+    "     bruv update            (CLI + connector together)",
+    "   Split/custom installs need a manual paired reinstall. Update T3 separately",
+    "   and recheck history-fix availability.",
+    "",
+    "   Startup failed? Check paths, model, ordinary Bruv auth and connector stderr",
+    "   (T3 may show a generic error).",
+    "",
+    "Screenshot guide",
+    "   https://github.com/tnfssc/bruv/blob/develop/wisdom/docs/t3-code/README.md",
+    "Technical notes (separate auth homes, remote paths and other limits)",
+    "   https://github.com/tnfssc/bruv/blob/develop/wisdom/claude-compat/external-t3-setup.md",
+    "",
+  ].join("\n");
 }
 
-function findBaseDir(args: string[], env: NodeJS.ProcessEnv): string {
-  let value: string | undefined;
-  for (let index = 0; index < args.length; index += 1) {
-    const argument = args[index];
-    if (argument.startsWith("--base-dir=")) throw new Error("use --base-dir PATH (two arguments), not --base-dir=PATH");
-    if (argument !== "--base-dir") continue;
-    if (value !== undefined) throw new Error("--base-dir may only be specified once");
-    value = args[index + 1];
-    if (!value || value.startsWith("--")) throw new Error("--base-dir requires a path");
-    index += 1;
-  }
-  value ??= env.T3CODE_HOME;
-  if (!value) throw new Error("--base-dir PATH or T3CODE_HOME is required");
-  return resolve(expandHome(value));
-}
-
-function objectSetting(value: unknown, label: string, settingsPath: string): Record<string, unknown> {
-  if (value === undefined) return {};
-  if (value === null || Array.isArray(value) || typeof value !== "object")
-    throw new Error(`Refusing to replace non-object T3 ${label} at ${settingsPath}`);
-  return value as Record<string, unknown>;
-}
-
-const WEB_PROVIDER_DEFAULTS = {
-  codex: false,
-  claudeAgent: false,
-  cursor: false,
-  grok: false,
-  pi: true,
-  opencode: false,
-  antigravity: false,
-} as const;
-
-export async function seedWebSettings(baseDir: string, bruvBinary: string): Promise<void> {
-  const settingsPath = join(baseDir, "userdata", "settings.json");
-  let settings: unknown = {};
-  let firstRun = false;
-  try {
-    settings = JSON.parse(await readFile(settingsPath, "utf8"));
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "ENOENT")
-      throw new Error(`Refusing to replace unreadable T3 settings at ${settingsPath}: ${(error as Error).message}`);
-    firstRun = true;
-  }
-  const root = objectSetting(settings, "settings", settingsPath);
-  const providers = objectSetting(root.providers, "providers", settingsPath);
-  const providerInstances = objectSetting(root.providerInstances, "providerInstances", settingsPath);
-  const pi = objectSetting(providerInstances.pi, "providerInstances.pi", settingsPath);
-  const config = objectSetting(pi.config, "providerInstances.pi.config", settingsPath);
-  const firstRunProviders = Object.fromEntries(
-    Object.entries(WEB_PROVIDER_DEFAULTS).map(([driver, enabled]) => [driver, { enabled }]),
-  );
-  const firstRunProviderInstances = Object.fromEntries(
-    Object.entries(WEB_PROVIDER_DEFAULTS).map(([driver, enabled]) => [driver, { driver, enabled }]),
-  );
-  const next = {
-    ...root,
-    ...(firstRun ? { providers: { ...providers, ...firstRunProviders } } : {}),
-    providerInstances: {
-      ...(firstRun ? firstRunProviderInstances : providerInstances),
-      pi: { ...pi, driver: "pi", enabled: true, config: { ...config, binaryPath: resolve(expandHome(bruvBinary)) } },
-    },
-  };
-  await mkdir(dirname(settingsPath), { recursive: true });
-  const temporary = settingsPath + ".tmp-" + process.pid + "-" + crypto.randomUUID();
-  await writeFile(temporary, JSON.stringify(next, null, 2) + "\n", { mode: 0o600 });
-  await rename(temporary, settingsPath);
-}
-
-export function webLaunch(args: string[], env: NodeJS.ProcessEnv = process.env, executable = process.execPath) {
-  const server = env.BRUV_WEB_SERVER;
-  const hasOption = (name: string) => args.some((arg) => arg === name || arg.startsWith(name + "="));
-  return {
-    server,
-    args: [
-      ...(hasOption("--host") ? [] : ["--host", "127.0.0.1"]),
-      ...(hasOption("--base-dir") ? [] : ["--base-dir", join(env.HOME ?? homedir(), ".bruv", "web")]),
-      ...args,
-    ],
-    env: {
-      ...env,
-      BRUV_WEB_BRUV_BINARY: env.BRUV_WEB_BRUV_BINARY ?? executable,
-      BRUV_WEB_TASK_EVENTS: "1",
-    } as NodeJS.ProcessEnv,
-  };
-}
-
-const WEB_TERMINATION_GRACE_MS = 5_000;
-
-function signalExitCode(signal: NodeJS.Signals): number {
-  return 128 + (osConstants.signals[signal] ?? 0);
-}
-
-async function runExternal(server: string, args: string[], env: NodeJS.ProcessEnv): Promise<number> {
-  try {
-    accessSync(server, constants.X_OK);
-  } catch {
-    console.error("bruv web backend is not built. Remove BRUV_WEB_SERVER to use the embedded backend.");
-    return 1;
-  }
-  return new Promise<number>((done) => {
-    const ownsProcessGroup = process.platform !== "win32";
-    const child = spawn(server, args, { env, stdio: "inherit", detached: ownsProcessGroup });
-    // detached makes the POSIX child the leader of a new process group. Capture
-    // that ID once: never infer or signal the launcher's (possibly live bruv
-    // session) process group.
-    const ownedGroup = ownsProcessGroup && child.pid && child.pid !== process.pid ? child.pid : undefined;
-    let requestedSignal: "SIGINT" | "SIGTERM" | undefined;
-    let killTimer: ReturnType<typeof setTimeout> | undefined;
-    let finished = false;
-
-    const signalOwnedBackend = (signal: NodeJS.Signals) => {
-      try {
-        if (ownedGroup !== undefined) process.kill(-ownedGroup, signal);
-        else if (!ownsProcessGroup) child.kill(signal);
-      } catch {
-        // The owned process or group may already have exited.
-      }
-    };
-    const finish = (code: number) => {
-      if (finished) return;
-      finished = true;
-      process.off("SIGINT", interrupt);
-      process.off("SIGTERM", terminate);
-      if (killTimer) clearTimeout(killTimer);
-      done(code);
-    };
-    const forward = (signal: "SIGINT" | "SIGTERM") => {
-      requestedSignal ??= signal;
-      signalOwnedBackend(signal);
-      if (ownsProcessGroup && !killTimer) {
-        killTimer = setTimeout(() => signalOwnedBackend("SIGKILL"), WEB_TERMINATION_GRACE_MS);
-        killTimer.unref?.();
-      }
-    };
-    const interrupt = () => forward("SIGINT");
-    const terminate = () => forward("SIGTERM");
-
-    process.on("SIGINT", interrupt);
-    process.on("SIGTERM", terminate);
-    child.once("error", (error) => {
-      console.error("Cannot start bruv web: " + error.message);
-      finish(1);
-    });
-    child.once("exit", (code, signal) => {
-      // A backend leader can exit while descendants continue. Since this is our
-      // dedicated POSIX group, synchronously terminate those remaining members
-      // before allowing the launcher to complete.
-      if (ownsProcessGroup) signalOwnedBackend("SIGKILL");
-      finish(requestedSignal ? signalExitCode(requestedSignal) : (code ?? (signal ? signalExitCode(signal) : 1)));
-    });
-  });
-}
-
-/** Launch the embedded Bun backend, or an explicit development override. */
+/** Setup guidance only: no bundled UI, subprocess, settings seeding or fallback. */
 export async function runWeb(args: string[]): Promise<number> {
-  const launch = webLaunch(args);
-  if (launch.server) return runExternal(launch.server, launch.args, launch.env);
-  try {
-    const baseDir = findBaseDir(launch.args, launch.env);
-    const bruvBinary = launch.env.BRUV_WEB_BRUV_BINARY;
-    if (!bruvBinary) throw new Error("BRUV_WEB_BRUV_BINARY is required");
-    await seedWebSettings(baseDir, bruvBinary);
-    const cache = launch.env.XDG_CACHE_HOME
-      ? join(launch.env.XDG_CACHE_HOME, "bruv")
-      : join(launch.env.HOME ?? homedir(), ".cache", "bruv");
-    const { embeddedWebRoot } = await import("./embedded");
-    const root = await embeddedWebRoot(cache);
-    // Compiled Bun's in-process createRequire resolution does not reliably resolve the
-    // extracted native dependency graph. Self-exec as an interpreter; the bootstrap
-    // preload clears this flag before the official CLI entry or any children run.
-    return await runExternal(
-      process.execPath,
-      ["--preload", join(root, "bootstrap.mjs"), join(root, "dist/bin.mjs"), ...launch.args],
-      {
-        ...launch.env,
-        BUN_BE_BUN: "1",
-      },
+  if (args.some((arg) => !["--help", "-h", "--setup"].includes(arg))) {
+    console.error(
+      "bruv web no longer launches a bundled server. Run bruv web for provider Settings setup, then start official T3 normally.",
     );
-  } catch (error) {
-    console.error("Cannot start bruv web: " + (error as Error).message);
-    return 1;
+    return 2;
   }
+  console.log(externalT3Guide());
+  return 0;
 }

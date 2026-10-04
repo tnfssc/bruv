@@ -1,0 +1,293 @@
+{
+  "sameRootChildReturnReply": false,
+  "lifecycle": [
+    {
+      "sequence": 0,
+      "owner": "id-1",
+      "event": "spawn",
+      "flags": [
+        "--version"
+      ]
+    },
+    {
+      "sequence": 2,
+      "owner": "id-1",
+      "event": "exit"
+    },
+    {
+      "sequence": 3,
+      "owner": "id-2",
+      "event": "spawn",
+      "flags": [
+        "--output-format",
+        "--verbose",
+        "--input-format",
+        "--setting-sources",
+        "--strict-mcp-config",
+        "--permission-mode",
+        "--no-session-persistence",
+        "--settings"
+      ]
+    },
+    {
+      "sequence": 8,
+      "owner": "id-2",
+      "event": "exit"
+    },
+    {
+      "sequence": 9,
+      "owner": "id-3",
+      "event": "spawn",
+      "flags": [
+        "--version"
+      ]
+    },
+    {
+      "sequence": 11,
+      "owner": "id-3",
+      "event": "exit"
+    },
+    {
+      "sequence": 12,
+      "owner": "id-4",
+      "event": "spawn",
+      "flags": [
+        "--output-format",
+        "--verbose",
+        "--input-format",
+        "--thinking",
+        "--thinking-display",
+        "--model",
+        "--permission-prompt-tool",
+        "--allowedTools",
+        "--tools",
+        "--mcp-config",
+        "--permission-mode",
+        "--allow-dangerously-skip-permissions",
+        "--include-partial-messages",
+        "--add-dir",
+        "--add-dir",
+        "--session-id",
+        "--thinking-display",
+        "--settings"
+      ]
+    }
+  ],
+  "provider": [
+    {
+      "sequence": 2,
+      "thread": "id-22",
+      "providerSession": "id-23",
+      "direction": "incoming",
+      "type": "system",
+      "subtype": "init",
+      "uuid": "id-6",
+      "session": "id-7",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": []
+    },
+    {
+      "sequence": 3,
+      "thread": "id-22",
+      "providerSession": "id-23",
+      "direction": "incoming",
+      "type": "system",
+      "subtype": "session_state_changed",
+      "state": "running",
+      "uuid": "id-8",
+      "session": "id-7",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": []
+    },
+    {
+      "sequence": 7,
+      "thread": "id-22",
+      "providerSession": "id-23",
+      "direction": "incoming",
+      "type": "result",
+      "subtype": "success",
+      "uuid": "id-11",
+      "session": "id-7",
+      "parentTool": null,
+      "echoedPrompt": "id-5",
+      "echoedPrompts": [
+        "id-5"
+      ],
+      "origin": {
+        "kind": "human"
+      },
+      "resultTurns": 0,
+      "markers": []
+    },
+    {
+      "sequence": 9,
+      "thread": "id-22",
+      "providerSession": "id-23",
+      "direction": "incoming",
+      "type": "system",
+      "subtype": "session_state_changed",
+      "state": "idle",
+      "uuid": "id-13",
+      "session": "id-7",
+      "parentTool": null,
+      "echoedPrompt": "id-5",
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": []
+    },
+    {
+      "sequence": 11,
+      "thread": "id-22",
+      "providerSession": "id-23",
+      "direction": "incoming",
+      "type": "system",
+      "subtype": "init",
+      "uuid": "id-15",
+      "session": "id-7",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": []
+    },
+    {
+      "sequence": 12,
+      "thread": "id-22",
+      "providerSession": "id-23",
+      "direction": "incoming",
+      "type": "system",
+      "subtype": "session_state_changed",
+      "state": "running",
+      "uuid": "id-16",
+      "session": "id-7",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": []
+    },
+    {
+      "sequence": 16,
+      "thread": "id-22",
+      "providerSession": "id-23",
+      "direction": "incoming",
+      "type": "result",
+      "subtype": "success",
+      "uuid": "id-19",
+      "session": "id-7",
+      "parentTool": null,
+      "echoedPrompt": "id-14",
+      "echoedPrompts": [
+        "id-14"
+      ],
+      "origin": {
+        "kind": "human"
+      },
+      "resultTurns": 0,
+      "markers": []
+    },
+    {
+      "sequence": 18,
+      "thread": "id-22",
+      "providerSession": "id-23",
+      "direction": "incoming",
+      "type": "system",
+      "subtype": "session_state_changed",
+      "state": "idle",
+      "uuid": "id-21",
+      "session": "id-7",
+      "parentTool": null,
+      "echoedPrompt": "id-14",
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": []
+    }
+  ],
+  "persistence": [
+    {
+      "table": "orchestration_v2_projection_threads",
+      "rows": [
+        {
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050"
+        }
+      ]
+    },
+    {
+      "table": "orchestration_v2_projection_runs",
+      "rows": [
+        {
+          "run_id": "run:thread:84f8d483-d07a-4390-9ee4-b838efadb050:ordinal:1",
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050",
+          "status": "completed",
+          "completed_at": "2026-10-04T05:10:54.485Z"
+        },
+        {
+          "run_id": "run:thread:84f8d483-d07a-4390-9ee4-b838efadb050:ordinal:2",
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050",
+          "status": "completed",
+          "completed_at": "2026-10-04T05:10:55.856Z"
+        }
+      ]
+    },
+    {
+      "table": "orchestration_v2_projection_nodes",
+      "rows": [
+        {
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050",
+          "run_id": "run:thread:84f8d483-d07a-4390-9ee4-b838efadb050:ordinal:1",
+          "status": "completed",
+          "provider_turn_id": null,
+          "completed_at": "2026-10-04T05:10:54.485Z"
+        },
+        {
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050",
+          "run_id": "run:thread:84f8d483-d07a-4390-9ee4-b838efadb050:ordinal:1",
+          "status": "completed",
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253A84f8d483-d07a-4390-9ee4-b838efadb050%253Aordinal%253A1%3Aattempt%3A1",
+          "completed_at": "2026-10-04T05:10:54.406Z"
+        },
+        {
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050",
+          "run_id": "run:thread:84f8d483-d07a-4390-9ee4-b838efadb050:ordinal:2",
+          "status": "completed",
+          "provider_turn_id": null,
+          "completed_at": "2026-10-04T05:10:55.856Z"
+        },
+        {
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050",
+          "run_id": "run:thread:84f8d483-d07a-4390-9ee4-b838efadb050:ordinal:2",
+          "status": "completed",
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253A84f8d483-d07a-4390-9ee4-b838efadb050%253Aordinal%253A2%3Aattempt%3A1",
+          "completed_at": "2026-10-04T05:10:55.777Z"
+        }
+      ]
+    },
+    {
+      "table": "orchestration_v2_projection_provider_turns",
+      "rows": [
+        {
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253A84f8d483-d07a-4390-9ee4-b838efadb050%253Aordinal%253A1%3Aattempt%3A1",
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050",
+          "status": "completed",
+          "completed_at": "2026-10-04T05:10:54.408Z"
+        },
+        {
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253A84f8d483-d07a-4390-9ee4-b838efadb050%253Aordinal%253A2%3Aattempt%3A1",
+          "thread_id": "84f8d483-d07a-4390-9ee4-b838efadb050",
+          "status": "completed",
+          "completed_at": "2026-10-04T05:10:55.778Z"
+        }
+      ]
+    },
+    {
+      "table": "orchestration_v2_projection_subagents",
+      "rows": []
+    }
+  ]
+}

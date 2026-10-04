@@ -1,0 +1,67 @@
+apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts:1022-1032
+1022: function assistantTextFromSdkMessage(
+1023:   message: SDKMessage,
+1024: ): { readonly nativeItemId: string; readonly text: string } | null {
+1025:   if (message.type !== "assistant") {
+1026:     return null;
+1027:   }
+1028:   return {
+1029:     nativeItemId: message.uuid,
+1030:     text: textFromClaudeContent(message.message.content),
+1031:   };
+1032: }
+
+apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts:4972-5013
+4972:         const emitAssistantTextArtifacts = Effect.fnUntraced(function* (input: {
+4973:           readonly context: ActiveClaudeTurnContext;
+4974:           readonly nativeItemId: string;
+4975:           readonly text: string;
+4976:         }) {
+4977:           if (input.context.assistant.emittedNativeItemIds.has(input.nativeItemId)) {
+4978:             return;
+4979:           }
+4980:           input.context.assistant.emittedNativeItemIds.add(input.nativeItemId);
+4981:           const now = yield* DateTime.now;
+4982:           const ordinal = yield* resolveItemOrdinal(input.context, input.nativeItemId);
+4983:           const artifacts = buildAssistantArtifacts({
+4984:             idAllocator,
+4985:             turnInput: input.context.input,
+4986:             providerTurnId: input.context.providerTurnId,
+4987:             nativeItemId: input.nativeItemId,
+4988:             text: input.text,
+4989:             ordinal,
+4990:             startedAt: now,
+4991:             completedAt: now,
+4992:           });
+4993:           yield* Effect.all(
+4994:             [
+4995:               emitProviderEvent({
+4996:                 type: "node.updated",
+4997:                 driver: CLAUDE_PROVIDER,
+4998:                 node: artifacts.node,
+4999:               }),
+5000:               emitProviderEvent({
+5001:                 type: "message.updated",
+5002:                 driver: CLAUDE_PROVIDER,
+5003:                 message: artifacts.message,
+5004:               }),
+5005:               emitProviderEvent({
+5006:                 type: "turn_item.updated",
+5007:                 driver: CLAUDE_PROVIDER,
+5008:                 turnItem: artifacts.turnItem,
+5009:               }),
+5010:             ],
+5011:             { concurrency: 1 },
+5012:           );
+5013:         });
+
+apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts:6190-6198
+6190:           if (assistantText !== null && assistantText.text.length > 0) {
+6191:             yield* emitAssistantTextArtifacts({
+6192:               context,
+6193:               nativeItemId: assistantText.nativeItemId,
+6194:               text: assistantText.text,
+6195:             });
+6196:             return;
+6197:           }
+6198: 

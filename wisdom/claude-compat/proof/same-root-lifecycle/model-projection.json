@@ -1,0 +1,37 @@
+[
+  {
+    "sequence": 1,
+    "model": "local-deterministic-v1",
+    "tool": "execute"
+  },
+  {
+    "sequence": 2,
+    "model": "local-deterministic-v1",
+    "response": "ROOT_BACKGROUND_RETURN_REAL"
+  },
+  {
+    "sequence": 3,
+    "model": "local-deterministic-v1",
+    "tool": "execute"
+  },
+  {
+    "sequence": 4,
+    "model": "local-deterministic-v1",
+    "response": "ROOT_FOLLOWUP_REAL"
+  },
+  {
+    "sequence": 5,
+    "model": "local-deterministic-v1",
+    "response": "CHILD_ANSWER_REAL"
+  },
+  {
+    "sequence": 6,
+    "model": "local-deterministic-v1",
+    "response": "ROOT_COMPLETION_ONCE_REAL"
+  },
+  {
+    "sequence": 7,
+    "model": "local-deterministic-v1",
+    "response": "ROOT_AFTER_CHILD_REAL"
+  }
+]

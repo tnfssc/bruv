@@ -1,7 +1,13 @@
 # Final root + child placement video (2026-10-01)
 
+> Historical replay. The user retired `scripts/task-placement-final-video.py`
+> on 2026-10-04. Videos, captures and receipts were not deleted. The old
+> commands below are provenance, not current run instructions. The renderer
+> remains in Git at d898214f71b4131c1bca807824f4fe69420b6992.
+
+
 Read values.md, remote-workspaces/remote-as-task-placement.md and the frozen
-PARENT_TASK_PLACEMENT_HANDOFF.md before recording. Parent owns publication.
+[historical placement handoff](../remote-workspaces/task-placement-implementation.md#retired-root-handoffs-2026-10-04) before recording. Parent owns publication.
 No push, upload, PR, tag, merge, release or product edits in this recording task.
 
 ## Parent checkpoint / export hold
@@ -14,7 +20,7 @@ Parent must either authorize using this honestly labeled original-byte replay
 or provide the new frozen binary and matching captures. Do not relabel old
 captures with a new source/binary hash. No new compile or production edits here.
 
-## Reproduce
+## Historical replay instructions (retired)
 
 From this worktree, with Python 3 + Pillow, ffmpeg/libx264, and Noto Sans Mono:
 

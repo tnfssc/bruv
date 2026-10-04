@@ -1,8 +1,8 @@
 # Standalone remote wire experiment — 2026-09-26
 
-Review worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7bef381e; branch: die/wire-benchmark-review-fixes-7bef381e. Parent reviewed a02f3e7; this review touches only experiments/remote-wire-bench and this note. Docker lab and real-agent probes run independently. Experiment README describes fixtures, axes and caveats.
+Review worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_7bef381e; branch: die/wire-benchmark-review-fixes-7bef381e. Parent reviewed a02f3e7; this review touches only wisdom/experiments/remote-wire-bench and this note. Docker lab and real-agent probes run independently. Experiment README describes fixtures, axes and caveats.
 
-Commands from root: /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun test experiments/remote-wire-bench ; /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun experiments/remote-wire-bench/bench.ts 42. Linux x86_64, Bun 1.4.2, seed 42, 32 events per task over 640 ms. JSON UTF-8 payload bytes only, no network or paid calls.
+Commands from root: /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun test wisdom/experiments/remote-wire-bench ; /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun wisdom/experiments/remote-wire-bench/bench.ts 42. Linux x86_64, Bun 1.4.2, seed 42, 32 events per task over 640 ms. JSON UTF-8 payload bytes only, no network or paid calls.
 
 | active / total | history replay | full event deltas (outputs included) | lazy event deltas | full batch | lazy batch | lazy batch gzip | all-status polls | all-status snapshot + active deltas |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |

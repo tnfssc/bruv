@@ -1,0 +1,33 @@
+[
+  {
+    "sourceHash": "8894311cf6f06896",
+    "echoedTerminalResults": []
+  },
+  {
+    "sourceHash": "8704edba6147b63a",
+    "echoedTerminalResults": [
+      {
+        "subtype": "success",
+        "numTurns": 0
+      }
+    ]
+  },
+  {
+    "sourceHash": "ba060921b0f06d09",
+    "echoedTerminalResults": [
+      {
+        "subtype": "success",
+        "numTurns": 2
+      }
+    ]
+  },
+  {
+    "sourceHash": "78840990ec57fdc3",
+    "echoedTerminalResults": [
+      {
+        "subtype": "success",
+        "numTurns": 0
+      }
+    ]
+  }
+]

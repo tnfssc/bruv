@@ -1,0 +1,8 @@
+{
+  "connector": "bruv-claude-compat",
+  "connectorSha256": "533f4dc8b5e9a08e4f93c0a2337dbaece3760c8955198e1ebad178d48d419f01",
+  "normalRuntime": "bruv",
+  "normalRuntimeSha256": "301b80aa0962b28e0204c1ba38245d3e675dce529c2361bcfc0947563e14434e",
+  "testModel": "bruv-acceptance/local-deterministic-v1",
+  "credentialEnvironment": "explicit allowlist; no parent environment"
+}

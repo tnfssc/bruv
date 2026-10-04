@@ -1,0 +1,23 @@
+{
+  "revision": "fed41fa88bb27cb4325cb208d571393850bc63c2",
+  "classification": {
+    "local_bash": true,
+    "local_agent": false,
+    "mcp_task": false,
+    "local_workflow": false,
+    "unknown": false
+  },
+  "rosters": [
+    {
+      "taskId": "shell-1",
+      "kind": "command",
+      "description": "real shell"
+    },
+    {
+      "taskId": "shell-1",
+      "kind": "monitor",
+      "description": "real watcher"
+    },
+    null
+  ]
+}

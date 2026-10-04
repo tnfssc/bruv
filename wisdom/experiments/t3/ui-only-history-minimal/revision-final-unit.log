@@ -1,0 +1,14 @@
+note: You are running `vp test` as a Vite+ built-in command. If you meant to run the test npm script, use `vpr test` instead.
+
+ RUN  v5.0.1 /home/tnfssc/.bruv/upstream-preparation/t3-ui-history-2644
+
+
+ Test Files  2 passed (2)
+      Tests  135 passed (135)
+   Start at  14:21:40
+   Duration  10.72s (transform 60%, import 27%, tests 11%, setup 2%)
+
+  Transform  transforming modules took 6.68s · 60% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

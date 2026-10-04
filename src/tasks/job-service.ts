@@ -1,3 +1,4 @@
+import { nativeFastEnabled, NATIVE_FAST_CHILD_ENV } from "../agent/native-fast-mode";
 import { launchTaskTitle } from "./task-title";
 import { taskRowsFromSessionEntries } from "../ui/task-rows";
 import { randomUUID } from "node:crypto";
@@ -319,6 +320,20 @@ export class JobService {
     if (!found) throw new Error("Unknown job in this session");
   }
 
+  #launchIdentity(ctx: ExtensionContext, signal: AbortSignal, prompt?: string, profile?: string) {
+    const request = getJobRequestIdentity(signal);
+    if (!request) return undefined;
+    const sourceSessionId = ctx.sessionManager?.getSessionFile() ?? ctx.sessionManager?.getSessionId();
+    if (!request || !sourceSessionId) return undefined;
+    return {
+      sourceSessionId,
+      sourceCallId: request.executeInvocationId,
+      callIndex: request.callIndex,
+      ...(prompt === undefined ? {} : { prompt }),
+      ...(profile === undefined ? {} : { profile }),
+    };
+  }
+
   async #handle(method: string, value: unknown, ctx: ExtensionContext, signal: AbortSignal): Promise<unknown> {
     signal.throwIfAborted();
     const input = flatten(value ?? {});
@@ -328,6 +343,7 @@ export class JobService {
         if (!params.command.trim()) throw new Error("shell requires a nonempty command");
         this.beforeLocalShellLaunch?.();
         const task = this.manager.spawn({
+          launchIdentity: this.#launchIdentity(ctx, signal),
           kind: "command",
           ...setupShell(params.command),
           displayCommand: params.command,
@@ -489,6 +505,7 @@ export class JobService {
                   ...(params.thinking === undefined ? {} : { thinking: params.thinking }),
                   placement: {
                     profile: type,
+                    nativeFast: nativeFastEnabled(ctx),
                     parentDepth: depth,
                     ...(parentType === undefined ? {} : { parentType: parentType as T3TaskProfile }),
                     workspace,
@@ -530,6 +547,7 @@ export class JobService {
           );
           return {
             ...prepared,
+            launchIdentity: this.#launchIdentity(ctx, signal, prompt, type),
             command: process.execPath,
             args: [
               ...continuityArgs,
@@ -549,11 +567,12 @@ export class JobService {
             cwd,
             env: {
               ...childAgentEnvironment(process.env),
+              [NATIVE_FAST_CHILD_ENV]: nativeFastEnabled(ctx) ? "1" : "0",
               BRUV_SUBAGENT_DEPTH: String(depth + 1),
               BRUV_SUBAGENT_TYPE: type,
             },
             closeStdin: true,
-            notifyOnComplete: false,
+            notifyOnComplete: params.waitSeconds === 0,
           };
         };
         // Inherited launches retain their established spawn/wait/failure ownership.
@@ -609,12 +628,13 @@ export class JobService {
           const id = "task_" + randomUUID().slice(0, 8);
           return this.manager.prepareAgent({
             id,
+            launchIdentity: this.#launchIdentity(ctx, signal, prompt, type),
             displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
             title: launchTaskTitle(params.title, prompt) || "Agent task",
             cwd: ctx.cwd,
             workspace: { kind: "worktree", path: ctx.cwd, baseRef: workspace.baseRef ?? "HEAD" },
             timeoutMs: params.timeoutSeconds ? params.timeoutSeconds * 1000 : undefined,
-            notifyOnComplete: false,
+            notifyOnComplete: params.waitSeconds === 0,
           });
         });
         this.#refresh();
@@ -664,6 +684,7 @@ export class JobService {
             if (worktreeSource.setup) {
               const setupCommand = setupShell(worktreeSource.setup.command);
               const setupTask = this.manager.spawn({
+                launchIdentity: this.#launchIdentity(ctx, signal),
                 kind: "command",
                 command: setupCommand.command,
                 args: setupCommand.args,

@@ -1,0 +1,107 @@
+Code
+HUMAN_PERMISSION_allow: request actual execute sid...
+PT
+project
+Working
+36s
+Settle
+HUMAN_PERMISSION_allow: request actual execute sid...
+Settled (0)
+PT
+project
+/
+HUMAN_PERMISSION_allow: request actual execute sid...
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+HUMAN_PERMISSION_allow: request actual execute side effect.
+
+8:48 AM
+
+Worked for 8.8s
+8:48 AM
+T3 Code
+
+HUMAN_PERMISSION_allow_RESULT_REAL
+
+8:49 AM
+
+You
+
+HUMAN_PERMISSION_deny: request actual execute side effect.
+
+8:49 AM
+
+Worked for 1.7s
+8:49 AM
+T3 Code
+
+HUMAN_PERMISSION_deny_RESULT_REAL
+
+8:49 AM
+
+You
+
+HUMAN_PERMISSION_stop: request actual execute side effect.
+
+8:49 AM
+
+Used 2 tools
+8:49 AM
+Run interrupted
+· Run interrupted by user
+You
+
+HUMAN_QUESTION_ASK: save the actual human question.
+
+8:49 AM
+
+Worked for 4.1s
+8:49 AM
+AskUserQuestion
+T3 Code
+
+HUMAN_QUESTION_SAVED_REAL
+
+8:49 AM
+
+You
+
+/bruv questions open q_7ed30bd4-5d7c-4eb3-a7a9-068281e37cac
+
+8:49 AM
+
+Input requested
+
+8:49 AM
+Run interrupted
+· Run interrupted by user
+You
+
+/bruv questions open q_7ed30bd4-5d7c-4eb3-a7a9-068281e37cac
+
+8:49 AM
+
+Working for 36s
+
+Acceptance saved human question
+Use local fixture
+
+8:49 AM
+T3 Code
+
+q_7ed30bd4-5d7c-4eb3-a7a9-068281e37cac [answered] Acceptance saved human question
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic acceptance (not Claude)
+Supervised
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

@@ -1,0 +1,13 @@
+{
+  "integratedAcceptance": true,
+  "passed": false,
+  "error": "locator.press: Timeout 10000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Open parent', exact: true })\n",
+  "t3Version": "t3 v0.0.46-nightly.20261004.2644",
+  "t3BinarySha256": "53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48",
+  "upstreamUnmodified": true,
+  "syntheticConnectorEvents": false,
+  "realCredentialsUsed": false,
+  "cancellationCompletionWakeCount": 0,
+  "appCompletionWakeCount": 1,
+  "modelCompletionWakeCount": 0
+}

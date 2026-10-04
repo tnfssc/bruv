@@ -1,0 +1,83 @@
+{
+  "agentCoreVersion": "1.0.0",
+  "mockOnly": true,
+  "evidence": [
+    {
+      "event": "model_request",
+      "n": 1,
+      "texts": ["NATIVE_ORIGINAL"],
+      "signalAborted": false
+    },
+    {
+      "event": "tool_start",
+      "id": "t1"
+    },
+    {
+      "event": "steer_queued_while_tool_running"
+    },
+    {
+      "event": "tool_start",
+      "id": "t2"
+    },
+    {
+      "event": "tool_end",
+      "id": "t2",
+      "signalAborted": false
+    },
+    {
+      "event": "tool_end",
+      "id": "t1",
+      "signalAborted": false
+    },
+    {
+      "event": "model_request",
+      "n": 2,
+      "texts": ["NATIVE_ORIGINAL", "NATIVE_STEER_CORRECTION"],
+      "signalAborted": false
+    },
+    {
+      "event": "model_request",
+      "n": 3,
+      "texts": ["NATIVE_ORIGINAL", "NATIVE_STEER_CORRECTION", "NATIVE_FOLLOWUP_RETAINED"],
+      "signalAborted": false
+    }
+  ],
+  "remainingMessages": [
+    {
+      "role": "system",
+      "text": ""
+    },
+    {
+      "role": "user",
+      "text": ["NATIVE_ORIGINAL"]
+    },
+    {
+      "role": "assistant",
+      "text": []
+    },
+    {
+      "role": "toolResult",
+      "text": ["mock completed"]
+    },
+    {
+      "role": "toolResult",
+      "text": ["second mock completed"]
+    },
+    {
+      "role": "user",
+      "text": ["NATIVE_STEER_CORRECTION"]
+    },
+    {
+      "role": "assistant",
+      "text": ["research complete 2"]
+    },
+    {
+      "role": "user",
+      "text": ["NATIVE_FOLLOWUP_RETAINED"]
+    },
+    {
+      "role": "assistant",
+      "text": ["research complete 3"]
+    }
+  ]
+}

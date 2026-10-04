@@ -1,0 +1,23 @@
+{
+  "tiny": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  "burst": {
+    "writes": 1,
+    "scroll": 5
+  },
+  "desktopCaptureCells": 2040,
+  "mouseInstall": true,
+  "keyboardInstall": true,
+  "escape": true,
+  "mobile390": {
+    "cols": 37,
+    "cells": 1369
+  },
+  "mobile320": {
+    "cols": 29,
+    "cells": 1044
+  },
+  "touchScroll": 10,
+  "touchSource": true,
+  "noJS": true,
+  "errors": []
+}

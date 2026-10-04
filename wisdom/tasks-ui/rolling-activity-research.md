@@ -1,5 +1,7 @@
 # Rolling activity research — proposal only
 
+Historical design/research snapshot. Approved runtime slice and current proof/limits: [implementation pickup](rolling-activity-implementation.md).
+
 The [reconciled proposal](rolling-activity-proposal.md) owns the recommended design. Choices below are research inputs, not implementation approval.
 
 ## Receipt

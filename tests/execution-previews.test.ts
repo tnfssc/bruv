@@ -566,3 +566,65 @@ test("capped diagnostic aggregates classify actual timeout separately from cance
   expect(rendered).toContain("✗ 1 more tasks failed");
   expect(rendered).not.toContain("more tasks cancelled");
 });
+
+test("settled execute rows reuse one width and rerender after native invalidation", () => {
+  let colorCalls = 0;
+  let prefix = "old:";
+  const renderTheme = {
+    fg: (_color: string, text: string) => {
+      colorCalls++;
+      return prefix + text;
+    },
+  } as any;
+  for (const expanded of [false, true]) {
+    const preview = executeOutputPreview(success, expanded, false, renderTheme, code, undefined, 2, "Read module");
+    const rows = preview.render(80);
+    const warmCalls = colorCalls;
+    for (let frame = 0; frame < 100; frame++) expect(preview.render(80)).toEqual(rows);
+    expect(colorCalls).toBe(warmCalls);
+    preview.render(40);
+    expect(colorCalls).toBeGreaterThan(warmCalls);
+    const resizedCalls = colorCalls;
+    preview.render(80);
+    expect(colorCalls).toBeGreaterThan(resizedCalls);
+    prefix = "new:";
+    preview.invalidate();
+    expect(preview.render(80).join("\n")).toContain("new:");
+    prefix = "old:";
+  }
+});
+
+test("partial execute results keep observing spinner state at the same width", () => {
+  const state: ExecutePreviewState = { spinnerFrame: 0 };
+  const preview = executeOutputPreview(success, false, false, theme, code, state, 2, "Read module", true);
+  expect(preview.render(80)[0]).toContain("⠋ Read module");
+  state.spinnerFrame = 1;
+  expect(preview.render(80)[0]).toContain("⠙ Read module");
+});
+
+test("attention callbacks keep real launch provenance without copying output or changing notification delivery facts", () => {
+  const launchIdentity = { sourceSessionId: "/owner", sourceCallId: "original", callIndex: 3 };
+  const details = completionDiagnosticDetails(
+    [],
+    [
+      {
+        id: "job",
+        reasons: ["quiet"],
+        observedAt: "now",
+        elapsedMs: 12,
+        quietForMs: 10,
+        outputBytes: 20,
+        stdinOpen: false,
+        task: {
+          launchIdentity: { ...launchIdentity, prompt: "not provenance", profile: "normal" },
+          output: "private output",
+        },
+      } as any,
+    ],
+  );
+  expect(details.attention[0]?.launchIdentity).toEqual(launchIdentity);
+  expect(details.attention[0]?.id).toBe("job");
+  expect(details.attentionCount).toBe(1);
+  expect(JSON.stringify(details.attention)).not.toContain("private output");
+  expect(JSON.stringify(details.attention)).not.toContain("not provenance");
+});
