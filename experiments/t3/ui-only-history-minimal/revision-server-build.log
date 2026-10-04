@@ -1,0 +1,25 @@
+[14:23:12.058] INFO (#1): [cli] Running tsdown...
+ℹ entry: src/bin.ts, src/claude-history-worker.ts
+ℹ target: node22.16.0
+ℹ tsconfig: tsconfig.json
+ℹ Build start
+ℹ Cleaning 4464 files
+ℹ Granting execute permission to dist/bin.mjs
+ℹ Granting execute permission to dist/claude-history-worker.mjs
+ℹ dist/bin.mjs                                 1.85 kB │ gzip:   0.94 kB
+ℹ dist/claude-history-worker.mjs               0.34 kB │ gzip:   0.23 kB
+ℹ dist/binCli-DZ5IwGw5.mjs.map                24.92 MB
+ℹ dist/binCli-DZ5IwGw5.mjs                    11.24 MB
+ℹ dist/claudeHistoryWorker-DAUbt0yx.mjs.map    4.11 MB
+ℹ dist/claudeHistoryWorker-DAUbt0yx.mjs        2.13 MB
+ℹ dist/Effect-BelAtJ7q.mjs.map                 1.42 MB
+ℹ dist/AcpMcpStdioBridge-Dx8oN32e.mjs.map    756.03 kB │ gzip: 139.05 kB
+ℹ dist/Effect-BelAtJ7q.mjs                   646.46 kB │ gzip: 139.48 kB
+ℹ dist/AcpMcpStdioBridge-Dx8oN32e.mjs        282.49 kB │ gzip:  59.25 kB
+ℹ dist/bin.mjs.map                             3.13 kB │ gzip:   1.42 kB
+ℹ dist/claude-history-worker.mjs.map           0.63 kB │ gzip:   0.38 kB
+ℹ dist/AcpMcpStdioBridge-j13y3PsZ.mjs          0.13 kB │ gzip:   0.12 kB
+ℹ 13 files, total: 45.51 MB
+✔ Build complete in 3528ms
+[14:23:16.904] INFO (#1): [cli] Applied development icon overrides to dist/client
+[14:23:16.904] INFO (#1): [cli] Bundled web app into dist/client
