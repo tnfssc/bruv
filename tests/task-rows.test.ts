@@ -465,3 +465,26 @@ test("SDK label recovery without persisted labels keeps distinct IDs and explici
   (component as any).result.isError = true;
   expect(plain(parent.render(100))).toContain("LAUNCH OUTPUT");
 });
+
+test("ownership detail reads scale once per parent render, not once per child", () => {
+  restores.push(installSdkTaskRows(theme));
+  const parent = new Container();
+  const count = 80;
+  let detailReads = 0;
+  for (let i = 0; i < count; i++) {
+    const component = tool([row(String(i))]);
+    const result = (component as any).result;
+    const details = result.details;
+    const taskRows = details.taskRows;
+    Object.defineProperty(details, "taskRows", {
+      configurable: true,
+      get() {
+        detailReads++;
+        return taskRows;
+      },
+    });
+    parent.addChild(component);
+  }
+  expect(plain(parent.render(100))).toHaveLength(count);
+  expect(detailReads).toBe(count * 2);
+});
