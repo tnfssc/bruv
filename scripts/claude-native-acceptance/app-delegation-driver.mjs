@@ -113,9 +113,7 @@ async function waitFile(file) {
   throw Error("Actual child did not reach " + path.basename(file));
 }
 export async function exercise({ page, url, snapshot, body, config }) {
-  await page.goto(url);
-  await page.waitForTimeout(750);
-  await page.getByRole("button", { name: "New thread", exact: true }).click();
+  // Shared replay already selected the native project and prepared this draft.
   const message = page.getByRole("textbox", { name: "Message", exact: true });
   await message.waitFor();
   await page.locator('[data-chat-provider-model-picker="true"]').first().click();
@@ -136,15 +134,20 @@ export async function exercise({ page, url, snapshot, body, config }) {
   await fs.writeFile(path.join(config.state, "done.release"), "actual browser-driven release");
   await visible("APP_COMPLETION_ACK_REAL");
   await snapshot("native-child-completed-ack");
-  await page.getByRole("button", { name: "Open subagent thread", exact: true }).click();
+  const parentUrl = page.url();
+  // 2644 exposes completion as a titled Finished subagent card.
+  await page.locator('[data-v2-item-type="subagent"][aria-description="Finished"]').filter({ hasText: "Native normal done" }).click();
   await visible("APP_CHILD_RESULT_REAL_done");
   await snapshot("native-child-thread-completed");
   assert.ok(
     (await body()).includes("Local normal worker (not Claude)"),
     "Actual child UI selects distinct worker model",
   );
-  await page.getByRole("button", { name: "Open parent thread", exact: true }).press("Enter");
+  // App-owned children now expose the parent through Lineage/the native sidebar,
+  // not the provider-only child view's generic Open parent control.
+  await page.locator("[data-thread-item]").filter({ hasText: "APP_DELEGATE_DONE" }).first().click();
   await message.waitFor();
+  assert.equal(page.url(), parentUrl, "Native child returns to the same parent root");
   await submit("APP_DELEGATE_CANCEL: create a real normal native child to cancel.");
   await visible("APP_TASK_PENDING_REAL_cancel");
   await waitFile(path.join(config.state, "cancel.started"));

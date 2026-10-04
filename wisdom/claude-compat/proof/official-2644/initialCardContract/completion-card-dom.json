@@ -1,0 +1,34 @@
+[
+  {
+    "tag": "BUTTON",
+    "type": "subagent",
+    "description": "Finished",
+    "label": "Open Actual local normal acceptance worker",
+    "text": "Actual local normal acceptance workerFinishedCHILD_ANSWER_REAL9:13 AM",
+    "visible": true
+  },
+  {
+    "tag": "DIV",
+    "type": "dynamic_tool",
+    "description": null,
+    "label": "Execute",
+    "text": "Execute9:13 AM",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "type": "subagent",
+    "description": "Completed",
+    "label": "Open Actual local normal acceptance worker",
+    "text": "Actual local normal acceptance workerCHILD_ANSWER_REAL1s",
+    "visible": true
+  },
+  {
+    "tag": "BUTTON",
+    "type": null,
+    "description": null,
+    "label": "Open in editor",
+    "text": "Open in editor",
+    "visible": true
+  }
+]

@@ -55,16 +55,16 @@ export async function exercise({ page, url, snapshot, config }) {
   await snapshot("followup-before-completion");
   await fs.writeFile(path.join(config.state, "child.release"), "release");
   await visible("ROOT_COMPLETION_ONCE_REAL");
-  await page
-    .getByText(/^Worked for /)
-    .first()
-    .click();
-  await visible(title);
-  assert.equal(await nativeCard.getAttribute("aria-description"), "Completed");
+  // 2644 also renders a Finished event card. Select the original live card by
+  // its Completed status instead of treating both same-title cards as one.
+  const completedCard = page.locator('[data-v2-item-type="subagent"][aria-description="Completed"]').filter({ hasText: title });
+  if (!(await completedCard.isVisible())) await page.getByText(/^Worked for /).first().click();
+  await completedCard.waitFor({ timeout: 30000 });
+  assert.equal(await completedCard.getAttribute("aria-description"), "Completed");
   await snapshot("agent-completed");
   const completedRootUrl = page.url();
-  // Inspect the real card, not an inferred runnable child control.
-  await page.getByRole("button", { name: "Open " + title, exact: true }).click();
+  // Inspect the real completed live card, not the new historical notification.
+  await completedCard.click();
   await page.waitForTimeout(750);
   await snapshot("child-transcript-attempt");
   await visible("CHILD_ANSWER_REAL");
