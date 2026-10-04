@@ -283,6 +283,52 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     expect(frames.filter((f) => f.type === "result")).toHaveLength(2);
   });
 
+  test("app HTTP cleanup can take longer than five seconds within its configured timeout", async () => {
+    const peer = await httpMcpLifecycleFixture({ timeout: 15_000 });
+    const mcp = await InjectedMcpSession.open(peer.config, {
+      cwd: process.cwd(),
+      appOwnedServers: ["t3-code"],
+      policy: {
+        authorizeServer: async () => true,
+        authorizeTool: async () => ({ behavior: "allow" }),
+        beforeAppOwnedCall: async () => {},
+      },
+    });
+    let runtime: ClaudeCompatRuntime | undefined;
+    const deliveryErrors: unknown[] = [];
+    try {
+      const f = await fixture({ extra: { mcp, onOutputError: (error: unknown) => deliveryErrors.push(error) } });
+      runtime = f.runtime;
+      await init(runtime);
+      peer.delayDeletion(6000);
+      runtime.session.agent.streamFunction = () => output(assistant("finished provider run"));
+      const run = runtime.onUser(user(runtime), signal());
+      // Discovery already released one lease. The second DELETE closes this run.
+      await until(() => peer.requests.filter((request) => request.method === "DELETE").length === 2);
+      expect(peer.activeSessions()).toBe(1);
+      expect(f.frames.some((frame) => frame.type === "result")).toBe(false);
+      await run;
+      expect(peer.activeSessions()).toBe(0);
+      expect(deliveryErrors).toHaveLength(0);
+      expect(f.frames.filter((frame) => frame.type === "result")).toEqual([
+        expect.objectContaining({ subtype: "success", result: "finished provider run" }),
+      ]);
+      expect(
+        f.frames.filter(
+          (frame) => frame.type === "system" && frame.subtype === "session_state_changed" && frame.state === "idle",
+        ),
+      ).toHaveLength(1);
+      await runtime.close();
+    } finally {
+      if (runtime) {
+        runtimes.splice(runtimes.indexOf(runtime), 1);
+        await runtime.close().catch(() => {});
+      }
+      await mcp.close().catch(() => {});
+      await peer.stopHost();
+    }
+  }, 20_000);
+
   test("failed app HTTP release must not publish native idle", async () => {
     const peer = await httpMcpLifecycleFixture();
     const mcp = await InjectedMcpSession.open(peer.config, {
