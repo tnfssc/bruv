@@ -353,3 +353,70 @@ test("task wake result uses supported SDK origin only after consumption and sett
   ]);
   expect(frames.filter((frame) => frame.type === "system" && frame.subtype === "init")).toHaveLength(3);
 });
+
+// Both real Pi replies can precede the same agent_settled. The human UUID is
+// turn attribution, not the identity of either reply or its stream.
+test("same settlement epoch retains distinct replies and matching stream identities", async () => {
+  const frames: CompatFrame[] = [];
+  const sourceIds = new WeakMap<object, string>();
+  const frontend = createClaudeCompatFrontend({
+    sessionId: () => "root",
+    model: () => "test/model",
+    initialization: () => ({ model: "test/model", tools: [] }),
+    messageUuid: (message) => {
+      let id = sourceIds.get(message);
+      if (!id) {
+        id = crypto.randomUUID();
+        sourceIds.set(message, id);
+      }
+      return id;
+    },
+    emit: (frame) => {
+      frames.push(frame);
+    },
+  });
+  frontend.consumeUser("consumed-human");
+  const acknowledgement = assistant("acknowledgement");
+  frontend.onEvent({ type: "message_start", message: acknowledgement });
+  frontend.onEvent({ type: "message_end", message: acknowledgement });
+  frontend.onEvent({
+    type: "message_start",
+    message: {
+      role: "custom",
+      customType: "task-complete",
+      content: "terminal notification",
+      display: true,
+      timestamp: 1,
+    },
+  });
+  const completion = assistant("completion reply");
+  frontend.onEvent({ type: "message_start", message: completion });
+  frontend.onEvent({ type: "message_end", message: completion });
+  await frontend.flush();
+  expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
+  frontend.onEvent({ type: "agent_settled" });
+  await frontend.flush();
+  const replies = frames.filter((frame) => frame.type === "assistant");
+  expect(replies.map((frame) => (frame.message as any).content[0].text)).toEqual([
+    "acknowledgement",
+    "completion reply",
+  ]);
+  expect(new Set(replies.map((frame) => frame.uuid)).size).toBe(2);
+  expect(replies.map((frame) => frame.uuid)).toEqual([sourceIds.get(acknowledgement), sourceIds.get(completion)]);
+  expect(replies.map((frame) => frame.user_message_uuid)).toEqual(["consumed-human", "consumed-human"]);
+  const starts = frames.filter(
+    (frame) => frame.type === "stream_event" && (frame.event as any).type === "message_start",
+  );
+  expect(replies.map((frame) => (frame.message as any).id)).toEqual(
+    starts.map((frame) => (frame.event as any).message.id),
+  );
+  expect(new Set(replies.map((frame) => (frame.message as any).id)).size).toBe(2);
+  expect(frames.filter((frame) => frame.type === "result")).toHaveLength(1);
+  expect(frames.find((frame) => frame.type === "result")).toMatchObject({
+    result: "completion reply",
+    origin: { kind: "human" },
+    user_message_uuid: "consumed-human",
+    num_turns: 2,
+  });
+  expect(frames.filter((frame) => frame.type === "system" && frame.subtype === "init")).toHaveLength(1);
+});

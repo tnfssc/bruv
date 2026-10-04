@@ -1,0 +1,71 @@
+[
+  {
+    "idHash": "0b8ea02a857dfa60",
+    "top": 760,
+    "markers": [
+      "CANCELLATION_COMPLETED_REAL"
+    ]
+  },
+  {
+    "idHash": "70f0804a5594c68d",
+    "top": 725,
+    "markers": [
+      "CANCEL_CONFIRMED_REAL"
+    ]
+  },
+  {
+    "idHash": "8e1f05bd5bf5041f",
+    "top": -247,
+    "markers": []
+  },
+  {
+    "idHash": "750437c4bf094f97",
+    "top": -114,
+    "markers": []
+  },
+  {
+    "idHash": "9f7d48f7a6fe8e1e",
+    "top": -7,
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ]
+  },
+  {
+    "idHash": "2eba45fe5e91b182",
+    "top": 66,
+    "markers": []
+  },
+  {
+    "idHash": "261220d22d932fcb",
+    "top": 199,
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ]
+  },
+  {
+    "idHash": "bec2d8127a3ae01b",
+    "top": 308,
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ]
+  },
+  {
+    "idHash": "75d4f7924608e575",
+    "top": 381,
+    "markers": []
+  },
+  {
+    "idHash": "9df54bb230398e1a",
+    "top": 556,
+    "markers": [
+      "ACCEPT_CANCEL"
+    ]
+  },
+  {
+    "idHash": "a8a8644e1ae55c13",
+    "top": -320,
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ]
+  }
+]

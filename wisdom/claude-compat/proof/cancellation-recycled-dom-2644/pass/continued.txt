@@ -1,0 +1,133 @@
+Code
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+PT
+project
+Working
+0s
+Settle
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+master
+Settled (0)
+PT
+project
+/
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+Bruv local deterministic acceptance (not Claude) 0.16.0 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+ACCEPT_STEER: start a real managed shell and wait for it.
+
+10:01 AM
+
+Worked for 1.6s
+10:01 AM
+Steer
+You
+
+ACCEPT_STEER_NOW: acknowledge this admitted steer.
+
+10:01 AM
+
+T3 Code
+
+STEER_ADMITTED_REAL
+
+10:01 AM
+
+You
+
+ACCEPT_EARLY_RETURN: start a managed shell with waitSeconds zero.
+
+10:01 AM
+
+Worked for 554ms
+10:01 AM
+T3 Code
+
+EARLY_RETURN_REAL
+
+10:01 AM
+
+Command "/usr/bin/node "/var/tmp/bruv-native-acceptance-lLgzwp/worker.mjs" "/var/tmp/bru…" finished
+
+10:01 AM
+T3 Code
+
+TASK_COMPLETED_REAL
+
+10:01 AM
+
+You
+
+ACCEPT_STOP: wait on another actual managed shell.
+
+10:01 AM
+
+Execute
+
+10:01 AM
+Run interrupted
+· Run interrupted by user
+You
+
+ACCEPT_REOPEN: confirm the real session can continue after reopen.
+
+10:01 AM
+
+Thinking
+Thinking
+T3 Code
+
+REOPEN_CONFIRMED_REAL
+
+You
+
+ACCEPT_CANCEL: launch a fresh managed shell, cancel it, and inspect confirmed exit.
+
+10:01 AM
+
+Worked for 1.3s
+10:01 AM
+You
+
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+
+10:01 AM
+
+Worked for 1.7s
+10:01 AM
+T3 Code
+
+CANCELLATION_COMPLETED_REAL
+
+10:01 AM
+
+Working for 0s
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic acceptance (not Claude)
+Full access
+project
+Open in editor
+Add project script
+master
+Publish repository
+Changes
++0
+-0
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings
+Nightly needs the beta mobile app
+
+Nightly uses the new orchestrator. The App Store and Google Play versions of T3 Code cannot connect to it.
+
+Dismiss
+Get the beta app

@@ -128,26 +128,24 @@ export async function exercise({ page, url, snapshot, body, config }) {
   // T3 folds intermediate assistant replies when an automatic continuation
   // supplies the final answer. Prove the original acknowledgement is retained.
   if (!(await page.getByText("CANCEL_CONFIRMED_REAL").last().isVisible()))
-    await page
-      .getByRole("button", { name: /^Worked for / })
-      .last()
-      .click();
+    await expandRunDisclosure(page, cancellationRunId);
   await snapshot("cancellation-expanded");
   await visible("CANCEL_CONFIRMED_REAL");
   await snapshot("task-cancelled");
-  assertCancellationChronology(await body());
+  assertCancellationChronology(
+    await renderedTimelineText(page, path.join(config.proof, "cancellation-visual-chronology.json")),
+  );
   await page.goto(url + "/settings/providers");
   await page.goto(url);
   await page.locator("[data-thread-item]").filter({ hasText: "ACCEPT_EXECUTE" }).first().click();
   await visible("CANCELLATION_COMPLETED_REAL");
   if (!(await page.getByText("CANCEL_CONFIRMED_REAL").last().isVisible()))
-    await page
-      .getByRole("button", { name: /^Worked for / })
-      .last()
-      .click();
+    await expandRunDisclosure(page, cancellationRunId);
   await visible("CANCEL_CONFIRMED_REAL");
   await snapshot("reopened");
-  assertCancellationChronology(await body());
+  assertCancellationChronology(
+    await renderedTimelineText(page, path.join(config.proof, "reopened-visual-chronology.json")),
+  );
   await submit("ACCEPT_REOPEN: confirm the real session can continue after reopen.");
   await visible("REOPEN_CONFIRMED_REAL");
   await snapshot("continued");
@@ -329,6 +327,7 @@ export async function waitForProcessExit(pidFile, timeoutMs = 15000) {
 
 // Passive inspection of actual T3 projections, not synthetic connector output.
 const t3Items = [];
+let cancellationRunId;
 const fixtureMarkers = [
   "EXECUTE_CONFIRMED_REAL",
   "STEER_ADMITTED_REAL",
@@ -342,6 +341,7 @@ const fixtureMarkers = [
 ];
 const idHash = (value) => createHash("sha256").update(String(value)).digest("hex").slice(0, 16);
 export function capture({ page }) {
+  cancellationRunId = undefined;
   let sequence = 0;
   page.on("websocket", (socket) =>
     socket.on("framereceived", ({ payload }) => {
@@ -351,12 +351,13 @@ export function capture({ page }) {
       } catch {
         return;
       }
-      const walk = (value, owner = {}) => {
+      const walk = (value, owner = {}, location = "root") => {
         if (!value || typeof value !== "object") return;
         if (Array.isArray(value)) {
-          for (const entry of value) walk(entry, owner);
+          for (const [index, entry] of value.entries()) walk(entry, owner, location + "[" + index + "]");
           return;
         }
+        if (value.type === "user_message" && value.text?.startsWith("ACCEPT_CANCEL:")) cancellationRunId = value.runId;
         const context = { ...owner };
         for (const key of [
           "id",
@@ -379,6 +380,7 @@ export function capture({ page }) {
         if (markers.length) {
           t3Items.push({
             sequence: sequence++,
+            location,
             ...context,
             markers,
             createdAt: value.createdAt,
@@ -390,13 +392,37 @@ export function capture({ page }) {
             status: typeof value.status === "string" ? value.status : undefined,
           });
         }
-        for (const child of Object.values(value)) if (typeof child === "object") walk(child, context);
+        for (const [key, child] of Object.entries(value))
+          if (typeof child === "object") walk(child, context, location + "." + key);
       };
       walk(decoded);
     }),
   );
 }
-export async function flushCapture({ proof }) {
+export async function flushCapture({ proof, root }) {
+  if (root) {
+    const { DatabaseSync } = await import("node:sqlite");
+    const database = new DatabaseSync(path.join(root, "t3-base/userdata/statev2.sqlite"), { readOnly: true });
+    try {
+      const rows = database
+        .prepare("SELECT ordinal,type,payload_json FROM orchestration_v2_projection_turn_items ORDER BY ordinal")
+        .all();
+      const projection = rows.map((row) => {
+        const item = JSON.parse(row.payload_json);
+        return {
+          ordinal: row.ordinal,
+          type: row.type,
+          idHash: idHash(item.id),
+          messageIdHash: item.messageId ? idHash(item.messageId) : undefined,
+          runIdHash: idHash(item.runId),
+          markers: fixtureMarkers.filter((marker) => item.text?.includes(marker)),
+        };
+      });
+      await fs.writeFile(path.join(proof, "t3-persisted-item-projection.json"), JSON.stringify(projection, null, 2));
+    } finally {
+      database.close();
+    }
+  }
   await fs.writeFile(path.join(proof, "t3-item-projection.json"), JSON.stringify(t3Items, null, 2) + "\n");
 }
 
@@ -406,4 +432,101 @@ export function assertCancellationChronology(body) {
   const completion = body.indexOf("CANCELLATION_COMPLETED_REAL");
   assert.ok(request >= 0 && acknowledgement > request, "Cancellation acknowledgement follows its human request");
   assert.ok(completion > acknowledgement, "Killed-job completion follows the retained cancellation acknowledgement");
+}
+
+export async function captureFailure({ page, proof, root }) {
+  const collect = async () => {
+    const rows = await page.getByRole("button", { name: /^Worked for / }).evaluateAll((elements) =>
+      elements.map((element, index) => ({
+        index,
+        text: element.textContent,
+        expanded: element.getAttribute("aria-expanded"),
+        top: element.getBoundingClientRect().top,
+        rowId: element.closest("[data-timeline-row-id]")?.getAttribute("data-timeline-row-id"),
+      })),
+    );
+    return rows.map(({ rowId, ...row }) => ({
+      ...row,
+      runIdHash: rowId?.startsWith("turn-fold:") ? idHash(rowId.slice("turn-fold:".length)) : undefined,
+    }));
+  };
+  await fs.writeFile(path.join(proof, "diagnostic-disclosures.json"), JSON.stringify(await collect(), null, 2));
+  const { DatabaseSync } = await import("node:sqlite");
+  const database = new DatabaseSync(path.join(root, "t3-base/userdata/statev2.sqlite"), { readOnly: true });
+  let request;
+  try {
+    request = database
+      .prepare(
+        "SELECT payload_json FROM orchestration_v2_projection_turn_items WHERE type='user_message' AND payload_json LIKE '%ACCEPT_CANCEL:%'",
+      )
+      .all()
+      .map((row) => JSON.parse(row.payload_json))[0];
+  } finally {
+    database.close();
+  }
+  if (!request) return;
+  const disclosure = () =>
+    page
+      .locator('[data-timeline-row-id="turn-fold:' + request.runId + '"]')
+      .getByRole("button", { name: /^Worked for / });
+  const retain = async (name) => {
+    const button = disclosure();
+    if ((await button.getAttribute("aria-expanded")) === "false") await button.click();
+    await page.getByText("CANCEL_CONFIRMED_REAL").last().waitFor();
+    await fs.writeFile(
+      path.join(proof, name + ".txt"),
+      (await page.locator("body").innerText()).replace(
+        new RegExp("/var/tmp/bruv-native-acceptance-[^/]+", "g"),
+        "<FIXTURE>",
+      ),
+    );
+    await page.screenshot({ path: path.join(proof, name + ".png") });
+  };
+  await retain("diagnostic-correct-disclosure");
+  await fs.writeFile(path.join(proof, "diagnostic-correct-disclosures.json"), JSON.stringify(await collect(), null, 2));
+  await page.reload();
+  await page.getByRole("textbox", { name: "Message", exact: true }).waitFor();
+  await page.locator("[data-thread-item]").filter({ hasText: "ACCEPT_EXECUTE" }).first().click();
+  await page.getByText("CANCELLATION_COMPLETED_REAL").last().waitFor();
+  await retain("diagnostic-reloaded-correct-disclosure");
+}
+
+// LegendList recycles DOM slots. DOM .last() and body.innerText order are not
+// chronological; use the actual T3 run identity and the rendered row positions.
+export async function expandRunDisclosure(page, runId) {
+  assert.ok(runId, "Actual cancellation run identity must be observed");
+  const button = page
+    .locator('[data-timeline-row-id="turn-fold:' + runId + '"]')
+    .getByRole("button", { name: /^Worked for / });
+  if ((await button.getAttribute("aria-expanded")) === "false") await button.click();
+  assert.equal(await button.getAttribute("aria-expanded"), "true", "The cancellation run disclosure is expanded");
+}
+export function timelineTextInVisualOrder(rows) {
+  return [...rows]
+    .sort((a, b) => a.top - b.top)
+    .map((row) => row.text)
+    .join("\n");
+}
+export async function renderedTimelineText(page, outputPath) {
+  const rows = await page.locator('[data-timeline-row-kind="message"]').evaluateAll((elements) =>
+    elements.map((element) => ({
+      id: element.getAttribute("data-timeline-row-id"),
+      top: element.getBoundingClientRect().top,
+      text: element.innerText,
+    })),
+  );
+  if (outputPath)
+    await fs.writeFile(
+      outputPath,
+      JSON.stringify(
+        rows.map((row) => ({
+          idHash: idHash(row.id),
+          top: row.top,
+          markers: fixtureMarkers.filter((marker) => row.text.includes(marker)),
+        })),
+        null,
+        2,
+      ),
+    );
+  return timelineTextInVisualOrder(rows);
 }

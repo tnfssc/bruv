@@ -116,9 +116,10 @@ try {
   if(page)try{await page.screenshot({path:path.join(proof,'failure.png')});await fs.writeFile(path.join(proof,'failure.txt'),(await page.locator('body').innerText()).replaceAll(root,'<RUNTIME>').replaceAll(path.dirname(config.state),'<FIXTURE>'));}catch{}
   await fs.writeFile(path.join(proof,'result.json'),JSON.stringify({integratedAcceptance:true,passed:false,error:error.message,t3Version:version,t3BinarySha256:before,upstreamUnmodified:createHash('sha256').update(await fs.readFile(binary)).digest('hex')===before,syntheticConnectorEvents:false,realCredentialsUsed:false},null,2)+'\n');
  }
+ try { await integration?.captureFailure?.({page,proof,root}); } catch {}
  throw error;
 } finally {
- try {await integration?.flushCapture?.({proof});} finally {
+ try {await integration?.flushCapture?.({proof,root});} finally {
  if(browser)await browser.close();
  if(server.exitCode===null){server.kill('SIGTERM');await Promise.race([new Promise(r=>server.once('exit',r)),new Promise(r=>setTimeout(r,3000))]);if(server.exitCode===null)server.kill('SIGKILL');}
  await log.close();await fs.rm(root,{recursive:true,force:true});
