@@ -35,7 +35,9 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let turns = 0;
   let results = 0;
   let lastText = "";
-  let failure: string | undefined;
+  let providerFailure: string | undefined;
+  let terminalFailure: string | undefined;
+  const effectiveFailure = () => terminalFailure ?? providerFailure;
   let messageId = "";
   let commandUuid: string | undefined;
   let usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
@@ -90,30 +92,34 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     started = Date.now();
     turns = 0;
     lastText = "";
-    failure = undefined;
+    providerFailure = undefined;
+    terminalFailure = undefined;
     cost = 0;
     denials = [];
     usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
   };
-  const result = (structuredOutput?: unknown) => ({
-    type: "result",
-    ...base(),
-    ...promptEcho(),
-    // SDK 0.3.276 has no auto-continuation origin. Attribute real task wakes
-    // only when Pi consumes their custom message, never from a job lifecycle frame.
-    origin: { kind: consumedHuman ? "human" : consumedTaskNotification ? "task-notification" : "unclassified" },
-    subtype: failure ? "error_during_execution" : "success",
-    is_error: Boolean(failure),
-    duration_ms: started ? Date.now() - started : 0,
-    // Provider API latency is not measured separately; do not invent duration_api_ms.
-    num_turns: turns,
-    result: lastText,
-    total_cost_usd: cost,
-    usage,
-    permission_denials: denials,
-    ...(failure ? { errors: [failure] } : {}),
-    ...(structuredOutput === undefined ? {} : { structured_output: structuredOutput }),
-  });
+  const result = (structuredOutput?: unknown) => {
+    const failure = effectiveFailure();
+    return {
+      type: "result",
+      ...base(),
+      ...promptEcho(),
+      // SDK 0.3.276 has no auto-continuation origin. Attribute real task wakes
+      // only when Pi consumes their custom message, never from a job lifecycle frame.
+      origin: { kind: consumedHuman ? "human" : consumedTaskNotification ? "task-notification" : "unclassified" },
+      subtype: failure ? "error_during_execution" : "success",
+      is_error: Boolean(failure),
+      duration_ms: started ? Date.now() - started : 0,
+      // Provider API latency is not measured separately; do not invent duration_api_ms.
+      num_turns: turns,
+      result: lastText,
+      total_cost_usd: cost,
+      usage,
+      permission_denials: denials,
+      ...(failure ? { errors: [failure] } : {}),
+      ...(structuredOutput === undefined ? {} : { structured_output: structuredOutput }),
+    };
+  };
   const end = () => {
     if (!active) return;
     active = false;
@@ -126,7 +132,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
           type: "command_lifecycle",
           ...base(),
           command_uuid: commandUuid,
-          state: failure === "Interrupted" ? "cancelled" : "completed",
+          state: effectiveFailure() === "Interrupted" ? "cancelled" : "completed",
         });
       // SDK 0.3.276 separates the result from the authoritative turn-over frame.
       // Only Pi agent_settled (or a handled command) ends the actual root run.
@@ -148,6 +154,12 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let hostAccess: () => SessionHost | undefined = () => undefined;
 
   function onEvent(event: AgentSessionEvent) {
+    if (event.type === "auto_retry_end") {
+      // Pi owns recovery. Its success also includes aborted responses, so only
+      // the provider error is recoverable; terminal failures stay latched.
+      if (event.success) providerFailure = undefined;
+      return;
+    }
     if (event.type === "agent_start") {
       begin();
       return;
@@ -243,8 +255,8 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       usage.cache_read_input_tokens += assistant.usage.cacheRead;
       usage.cache_creation_input_tokens += assistant.usage.cacheWrite;
       cost += assistant.usage.cost.total;
-      if (assistant.stopReason === "error" || assistant.stopReason === "aborted")
-        failure = assistant.errorMessage ?? assistant.stopReason;
+      if (assistant.stopReason === "error") providerFailure = assistant.errorMessage ?? assistant.stopReason;
+      if (assistant.stopReason === "aborted") terminalFailure ??= assistant.errorMessage ?? assistant.stopReason;
       const stopReason =
         assistant.stopReason === "toolUse" ? "tool_use" : assistant.stopReason === "length" ? "max_tokens" : "end_turn";
       const nativeUsage = {
@@ -349,7 +361,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       if (outputError) return;
       const running = active;
       begin();
-      failure = error instanceof Error ? error.message : String(error);
+      terminalFailure = error instanceof Error ? error.message : String(error);
       if (!running) end();
     },
     headlessUI(base: ExtensionUIContext): ExtensionUIContext {
@@ -397,11 +409,11 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     },
     result,
     text: () => lastText,
-    error: () => failure,
+    error: effectiveFailure,
     usage: () => ({ ...usage }),
     cost: () => cumulativeCost,
     interrupt() {
-      if (active) failure = "Interrupted";
+      if (active) terminalFailure = "Interrupted";
     },
   };
 }
