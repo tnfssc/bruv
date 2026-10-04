@@ -37,27 +37,7 @@ fi
 run_step 'Format check' format.log "$root" bun run format:check
 run_step 'Lint' lint.log "$root" bun run lint
 run_step 'Typecheck' typecheck.log "$root" bun run check
-if [[ "${BRUV_CI_WEB_CACHE:-0}" == 1 ]]; then
-  run_step 'Prepare verified pinned web payload' web-producer.log "$root" bun --no-env-file scripts/ci-web.ts build
-  # Typecheck already prepared root assets. Keep the same invocation environment
-  # as the receipt owner (npm scripts inject an additional NODE variable).
-  run_step 'Build current CLI' build.log "$root" bun scripts/build.ts --reuse-packed-web
-else
-  run_step 'Build' build.log "$root" bun run build
-fi
+run_step 'Build paired Bruv binaries (no bundled T3)' build.log "$root" bun run build
 run_step 'Offline default OpenAI transport' openai-transport.log "$root" bun scripts/offline-openai-default-transport.ts
-# The pinned source may live outside this checkout. Test the binary built above,
-# not a dist path inferred from the upstream source location.
-export T3_V2_BRUV_BINARY="${T3_V2_BRUV_BINARY:-$root/dist/bruv}"
-# Build/prerequisites are complete. Both groups only read the compiled payload
-# and pinned source; tests own temporary homes/ports and have separate log files.
-# Four hosted CPU slots: three root workers plus one web worker, not six competitors.
-run_step 'Current-CLI web validation' web-validation.log "$root" bash scripts/ci-web-validation.sh &
-web_pid=$!
-run_step 'Complete root tests (three bounded workers)' tests.log "$root" env BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests &
-root_pid=$!
-status=0
-wait "$web_pid" || status=1
-wait "$root_pid" || status=1
-[[ "$status" == 0 ]] || exit "$status"
-run_step 'Standalone smoke test' smoke.log "$root" bun run smoke -- --reuse-build
+run_step 'Complete root tests (three bounded workers)' tests.log "$root" env BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests
+run_step 'Standalone paired smoke test' smoke.log "$root" bun run smoke -- --reuse-build

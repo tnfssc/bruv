@@ -1,0 +1,10 @@
+// Synthetic fixture events only; these are real unmodified T3 UI interactions.
+export async function exercise({page,url,snapshot,body,assert}) {
+await page.goto(url);await page.waitForTimeout(750);await page.getByRole('button',{name:'New thread',exact:true}).click();await page.waitForTimeout(750);
+const message=page.getByRole('textbox',{name:'Message',exact:true});
+await message.fill('Native fixture full proof');await page.getByRole('button',{name:'Submit message',exact:true}).click();await page.waitForTimeout(1500);await snapshot('prompt');assert.match(await body(),/research fixture:.*Native fixture full proof/);
+await message.fill('Fixture controlled active operation for steer');await page.getByRole('button',{name:'Submit message',exact:true}).click();await page.getByRole('button',{name:'Stop generation',exact:true}).waitFor();await page.waitForTimeout(750);await snapshot('active');assert.match(await body(),/Synthetic monitor progress/);
+await message.fill('Steering proof: change the synthetic response');await page.getByRole('button',{name:'Queue message',exact:true}).click();await page.getByRole('button',{name:'Steer',exact:true}).click();await page.waitForTimeout(2000);await snapshot('steered');assert.match(await body(),/research fixture:.*Steering proof: change the synthetic response/);
+await message.fill('Fixture controlled active operation for real Stop');await page.getByRole('button',{name:'Submit message',exact:true}).click();await page.getByRole('button',{name:'Stop generation',exact:true}).waitFor();await page.waitForTimeout(750);await page.getByRole('button',{name:'Stop generation',exact:true}).click();await page.waitForTimeout(1500);await snapshot('stopped');assert.match(await body(),/Run interrupted by user/);assert.doesNotMatch(await body(),/Waiting on subagent/);
+await page.reload();await page.waitForTimeout(1500);await page.locator('[data-thread-item]').filter({hasText:'Native fixture full proof'}).first().click();await page.waitForTimeout(750);await snapshot('reloaded');assert.match(await body(),/Run interrupted by user/);assert.match(await body(),/Steering proof: change the synthetic response/);
+}

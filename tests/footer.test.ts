@@ -127,12 +127,12 @@ describe("compact extension footer", () => {
     statuses.set("bruv-mode", "mode: fast");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("mode: fast");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).not.toContain("+1 status");
-    statuses.set("bruv-native-fast", " fast requested (tier/cost estimate unavailable)");
+    statuses.set("bruv-native-fast", " fast on");
     const fastFooter = plain(renderSingleRowFooter(ctx, data, theme, 120))[0]!;
-    expect(fastFooter).toContain(" fast requested (tier/cost estimate unavailable)");
-    expect(fastFooter).toContain("$?");
-    expect(fastFooter).not.toContain("$0.002");
-    expect(plain(renderDetailedFooter(ctx, data, theme, 150))[1]).toContain("$? (fast billing)");
+    expect(fastFooter).toContain(" fast on");
+    expect(fastFooter).toContain("$0.002~");
+    expect(fastFooter).not.toContain("$?");
+    expect(plain(renderDetailedFooter(ctx, data, theme, 150))[1]).toContain("$0.002~ (catalog estimate)");
     expect(fastFooter).not.toContain("+1 status");
     statuses.set("review", "review in progress");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("+1 status");
@@ -142,12 +142,28 @@ describe("compact extension footer", () => {
       expect(visibleWidth(rendered[0]!)).toBeLessThanOrEqual(width);
     }
     const narrow = plain(renderSingleRowFooter(ctx, data, theme, 44))[0]!;
-    for (const value of ["30t", "$?", "C1%", "gpt-5.6-luna"]) expect(narrow).toContain(value);
+    for (const value of ["30t", "$0.002~", "C1%", "gpt-5.6-luna"]) expect(narrow).toContain(value);
     statuses.delete("bruv-tasks");
     expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).not.toContain("tasks");
   });
 
-  test("keeps historical fast-session dollar cost unavailable after explicit off", () => {
+  test("fast badge renders selection at full and compact widths without delivery claims", () => {
+    const { ctx, data, statuses } = fixture();
+    for (const enabled of [true, false]) {
+      statuses.set("bruv-native-fast", enabled ? " fast on" : " fast off");
+      const full = plain(renderSingleRowFooter(ctx, data, theme, 120))[0]!;
+      expect(full).toContain(enabled ? " fast on" : " fast off");
+      const compact = plain(renderSingleRowFooter(ctx, data, theme, 60))[0]!;
+      expect(compact).toContain(enabled ? "fast" : "off");
+      expect(compact).toContain("gpt-5.6-luna");
+      expect(compact).toContain("$0.002");
+      for (const text of [full, compact]) {
+        expect(text).not.toMatch(/confirmed|downgraded|requested|fast✓|fast\?/);
+      }
+    }
+  });
+
+  test("keeps historical catalog estimates after explicit off", () => {
     const { ctx, data, statuses } = fixture();
     const entries = ctx.sessionManager.getEntries();
     ctx.sessionManager.getEntries = () =>
@@ -157,8 +173,8 @@ describe("compact extension footer", () => {
         { type: "custom", customType: "bruv-native-fast-mode", data: { enabled: false } },
       ] as ReturnType<ExtensionContext["sessionManager"]["getEntries"]>;
     statuses.set("bruv-native-fast", " fast off");
-    expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$?");
-    expect(plain(renderDetailedFooter(ctx, data, theme, 150))[1]).toContain("$? (fast billing)");
+    expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$0.002~");
+    expect(plain(renderDetailedFooter(ctx, data, theme, 150))[1]).toContain("$0.002~ (catalog estimate)");
   });
 
   test("persisted voice increments survive resume and incomplete billing is explicit", () => {
@@ -197,8 +213,8 @@ describe("compact extension footer", () => {
     expect(calls).toBe(1);
 
     // A live provider status remains live and does not force history materialization.
-    statuses.set("bruv-native-fast", "fast requested (tier/cost estimate unavailable)");
-    expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$?");
+    statuses.set("bruv-native-fast", "fast on");
+    expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$0.002~");
     expect(calls).toBe(1);
     statuses.delete("bruv-native-fast");
 
@@ -223,7 +239,7 @@ describe("compact extension footer", () => {
       data: { enabled: true },
     } as (typeof entries)[number]);
     leaf = "entry-3";
-    expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$?");
+    expect(plain(renderSingleRowFooter(ctx, data, theme, 120))[0]).toContain("$0.005~");
     expect(calls).toBe(5);
   });
 

@@ -31,7 +31,7 @@ Sidebar/repeatedparentfollowupsync/PRautomation later.
 Existing native production adopted a9b49a7d + web/t3.patch a98ba104..., root721pass/14skip; exactbinary8932d0e dist/die-t3-v2-production previously passed native/browser/preservation/package/migration.
 Freshcanonical .cache/die-t3code-a9b49a7d... exact patch.
 Previous .cache/die-t3code-v2-production potentially stale.
-Source workspace module must not depend on experiments/research/cache.
+Source workspace module must not depend on wisdom/experiments/research/cache.
 No live user processes/credentials/state touched; TMPDIR=/var/tmp (full /tmp).
 
 PR hygiene: CONTRIBUTING excludes dist/runtime-assets/raw artifacts/credentials/local configs. .agents/research-t3-v2*/ locally excluded via .git/info/exclude.

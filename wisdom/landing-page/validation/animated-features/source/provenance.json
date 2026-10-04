@@ -1,0 +1,7 @@
+{
+  "script": "site/scripts/capture-demo-source.ts",
+  "binarySha256": "a6a7a8f744eab36f7c62f66791bf357b829da8bd6ed22665989ffc237d27bb1a",
+  "kind": "Offline scripted session replay in the real compiled TUI",
+  "network": "unshare network namespace; --offline; empty environment and isolated HOME",
+  "commandsExecuted": false
+}

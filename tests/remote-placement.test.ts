@@ -9,6 +9,7 @@ test("remote placement validates the same delegation boundary and never inherits
       expect(() => remoteChildEnvironment({}, nested)).toThrow("fast/normal");
     } else {
       expect(remoteChildEnvironment({ BRUV_SUBAGENT_TYPE: "fast", BRUV_SUBAGENT_DEPTH: "99" }, nested)).toEqual({
+        BRUV_SUBAGENT_NATIVE_FAST: "0",
         BRUV_SUBAGENT_TYPE: profile,
         BRUV_SUBAGENT_DEPTH: "2",
       });
@@ -20,7 +21,12 @@ test("remote placement validates the same delegation boundary and never inherits
   }
   expect(
     remoteChildEnvironment({ BRUV_SUBAGENT_TYPE: "orchestrator", BRUV_SUBAGENT_DEPTH: "1", HOME: "/server" }),
-  ).toEqual({ BRUV_SUBAGENT_TYPE: "normal", BRUV_SUBAGENT_DEPTH: "1", HOME: "/server" });
+  ).toEqual({
+    BRUV_SUBAGENT_NATIVE_FAST: "0",
+    BRUV_SUBAGENT_TYPE: "normal",
+    BRUV_SUBAGENT_DEPTH: "1",
+    HOME: "/server",
+  });
   for (const workspace of [
     { kind: "other" },
     { kind: "inherit", branch: "x" },
@@ -28,4 +34,16 @@ test("remote placement validates the same delegation boundary and never inherits
     { kind: "worktree", branch: "bad branch" },
   ])
     expect(() => validatePlacement({ profile: "normal", parentDepth: 0, workspace } as any)).toThrow();
+});
+
+test("remote fast inheritance is explicit, not inherited from the owner environment", () => {
+  const placement: RemotePlacement = {
+    profile: "normal",
+    parentDepth: 0,
+    workspace: { kind: "inherit" },
+    nativeFast: true,
+  };
+  expect(remoteChildEnvironment({}, placement).BRUV_SUBAGENT_NATIVE_FAST).toBe("1");
+  expect(remoteChildEnvironment({ BRUV_SUBAGENT_NATIVE_FAST: "1" }).BRUV_SUBAGENT_NATIVE_FAST).toBe("0");
+  expect(() => validatePlacement({ ...placement, nativeFast: "yes" } as any)).toThrow();
 });

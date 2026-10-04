@@ -77,6 +77,83 @@ export const piHostPatches: readonly Patch[] = [
       ],
     ],
   },
+  // Native input identity travels with Pi's actual user object through its own queues.
+  {
+    path: "dist/core/agent-session.js",
+    originalSha256: "476722dd363a0347049d450b5a0c67386cf156ecae2b039676962aa00a857161",
+    adaptedSha256: "d6aea3b5b5cca74d6a02bd187e3ea6c4a3866bd294b7c61143a9b8703d1550d0",
+    replacements: [
+      [
+        "await this._queueFollowUp(expandedText, currentImages);",
+        "await this._queueFollowUp(expandedText, currentImages, options?.onUserMessageCreated);",
+      ],
+      [
+        "await this._queueSteer(expandedText, currentImages);",
+        "await this._queueSteer(expandedText, currentImages, options?.onUserMessageCreated);",
+      ],
+      [
+        '        // Inject any pending "nextTurn" messages as context alongside the user message',
+        '        options?.onUserMessageCreated?.(messages[0]);\n        // Inject any pending "nextTurn" messages as context alongside the user message',
+      ],
+      [
+        "async _queueUserInput(text, images, behavior, source)",
+        "async _queueUserInput(text, images, behavior, source, onUserMessageCreated)",
+      ],
+      [
+        "await this._queueSteer(expandedText, processedInput.images);",
+        "await this._queueSteer(expandedText, processedInput.images, onUserMessageCreated);",
+      ],
+      [
+        "await this._queueFollowUp(expandedText, processedInput.images);",
+        "await this._queueFollowUp(expandedText, processedInput.images, onUserMessageCreated);",
+      ],
+      [
+        'this._queueUserInput(text, images, "steer", options?.source ?? "interactive")',
+        'this._queueUserInput(text, images, "steer", options?.source ?? "interactive", options?.onUserMessageCreated)',
+      ],
+      [
+        'this._queueUserInput(text, images, "followUp", options?.source ?? "interactive")',
+        'this._queueUserInput(text, images, "followUp", options?.source ?? "interactive", options?.onUserMessageCreated)',
+      ],
+      ["async _queueSteer(text, images)", "async _queueSteer(text, images, onUserMessageCreated)"],
+      [
+        '        this.agent.steer({\n            role: "user",\n            content,\n            timestamp: Date.now(),\n        });',
+        '        const message = { role: "user", content, timestamp: Date.now() };\n        onUserMessageCreated?.(message);\n        this.agent.steer(message);',
+      ],
+      ["async _queueFollowUp(text, images)", "async _queueFollowUp(text, images, onUserMessageCreated)"],
+      [
+        '        this.agent.followUp({ role: "user", content, timestamp: Date.now() });',
+        '        const message = { role: "user", content, timestamp: Date.now() };\n        onUserMessageCreated?.(message);\n        this.agent.followUp(message);',
+      ],
+      [
+        "//# sourceMappingURL=agent-session.js.map",
+        "export const bruvInputIdentityAdapted = true;\n//# sourceMappingURL=agent-session.js.map",
+      ],
+    ],
+  },
+  {
+    path: "dist/core/agent-session.d.ts",
+    originalSha256: "2e50b35a37f9c7149c6297ae554b2d965bd74dbfcb8ccd7be44f13226ce497e7",
+    adaptedSha256: "c50ee6235e917833ac40629f34dc0974e309786dbbe123e2b73929a554d40e73",
+    replacements: [
+      [
+        "    preflightResult?: (disposition: PromptDisposition) => void;",
+        "    preflightResult?: (disposition: PromptDisposition) => void;\n    /** Bruv host seam: captures the constructed user object, NOT admission or consumption. */\n    onUserMessageCreated?: (message: AgentMessage) => void;",
+      ],
+      [
+        "        source?: InputSource;\n    }): Promise<QueuedInputDisposition>;\n    /**\n     * Queue a follow-up",
+        "        source?: InputSource;\n        /** Bruv host seam: captures the constructed user object, NOT admission or consumption. */\n        onUserMessageCreated?: (message: AgentMessage) => void;\n    }): Promise<QueuedInputDisposition>;\n    /**\n     * Queue a follow-up",
+      ],
+      [
+        "        source?: InputSource;\n    }): Promise<QueuedInputDisposition>;\n    /**\n     * Internal: Queue a steering",
+        "        source?: InputSource;\n        /** Bruv host seam: captures the constructed user object, NOT admission or consumption. */\n        onUserMessageCreated?: (message: AgentMessage) => void;\n    }): Promise<QueuedInputDisposition>;\n    /**\n     * Internal: Queue a steering",
+      ],
+      [
+        "//# sourceMappingURL=agent-session.d.ts.map",
+        "export declare const bruvInputIdentityAdapted = true;\n//# sourceMappingURL=agent-session.d.ts.map",
+      ],
+    ],
+  },
 ];
 
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");

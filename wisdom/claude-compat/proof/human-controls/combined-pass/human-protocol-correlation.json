@@ -1,0 +1,106 @@
+[
+  {
+    "requestHash": "1b08c5d150accebd",
+    "toolUseHash": "d00d8a2d976f997a",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  },
+  {
+    "requestHash": "792062cc8d82e0ad",
+    "toolUseHash": "0cd7e2ead2725bcd",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "deny"
+      }
+    ]
+  },
+  {
+    "requestHash": "82fd81bcd9b8ae2b",
+    "toolUseHash": "3de1c145690f7b27",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": true,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "deny"
+      }
+    ]
+  },
+  {
+    "requestHash": "e40da83ac3b2c602",
+    "toolUseHash": "f55dd83eb5782ea3",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  },
+  {
+    "requestHash": "68339bf446b217b4",
+    "toolUseHash": "22a8b7b32bf93223",
+    "tool": "AskUserQuestion",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  },
+  {
+    "requestHash": "7ceb013b6cbcc0c8",
+    "toolUseHash": "22a8b7b32bf93223",
+    "tool": "AskUserQuestion",
+    "control": "can_use_tool",
+    "cancelled": true,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "deny"
+      }
+    ]
+  },
+  {
+    "requestHash": "2010ae0bfa3039d9",
+    "toolUseHash": "22a8b7b32bf93223",
+    "tool": "AskUserQuestion",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  },
+  {
+    "requestHash": "f47d9bdd54f99f79",
+    "toolUseHash": "536783c27fefba82",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  }
+]

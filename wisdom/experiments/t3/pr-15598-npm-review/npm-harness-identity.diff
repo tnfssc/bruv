@@ -1,0 +1,21 @@
+--- /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_1cbcc09f-5442693331ce-task_8884d842/experiments/t3/ui-only-history-minimal/harness/ui-only-run.mjs	2026-10-04 14:17:27.955472800 +0400
++++ /var/tmp/t3-pr-15598-npm/harness/ui-only-run.mjs	2026-10-04 14:40:31.834195907 +0400
+@@ -75,7 +75,7 @@
+     .digest("hex");
+ const sha = await digest(binary);
+ const provenance = JSON.parse(await fs.readFile(path.join(path.dirname(binary), "../provenance.json"), "utf8"));
+-assert.equal(sha, provenance.wrapperSha256, "pinned private source-built diagnostic wrapper");
++assert.equal(sha, provenance.wrapperSha256, "pinned supervised installed npm launcher");
+ const { treeSnapshot } = await import("./ui-only-support.mjs");
+ assert.deepEqual(await treeSnapshot(path.join(path.dirname(binary), "../dist")), provenance.distTree, "all staged build and asset bytes match pinned provenance");
+ assert.equal(await digest(connector), provenance.connectorSha256, "pinned parent-built connector");
+@@ -369,7 +369,8 @@
+     t3BinarySha256: sha,
+     upstreamUnmodified: false,
+     diagnosticWrapperUnchanged: (await digest(binary)) === sha,
+-    sourceBuiltWebEvidenceOnly: true,
++    sourceBuiltWebEvidenceOnly: false,
++    installedNpmArtifact: true,
+     syntheticConnectorEvents: false,
+     realCredentialsUsed: false,
+     ordinaryClaudeUnchanged: isolationPassed,

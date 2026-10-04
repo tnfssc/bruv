@@ -1,0 +1,157 @@
+{
+  "runs": [
+    {
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:1",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "status": "completed",
+      "completed_at": "2026-10-03T14:10:28.790Z"
+    },
+    {
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:2",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "status": "cancelled",
+      "completed_at": "2026-10-03T14:10:14.457Z"
+    },
+    {
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:3",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "status": "interrupted",
+      "completed_at": "2026-10-03T14:11:54.810Z"
+    },
+    {
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:4",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "status": "queued",
+      "completed_at": null
+    }
+  ],
+  "run_attempts": [
+    {
+      "attempt_id": "run-attempt:run:run%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1:attempt:1",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:1",
+      "attempt_ordinal": 1,
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "provider_turn_id": null,
+      "status": "superseded"
+    },
+    {
+      "attempt_id": "run-attempt:run:run%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A2:attempt:1",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:2",
+      "attempt_ordinal": 1,
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "provider_turn_id": null,
+      "status": "cancelled"
+    },
+    {
+      "attempt_id": "run-attempt:run:run%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1:attempt:2",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:1",
+      "attempt_ordinal": 2,
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "provider_turn_id": null,
+      "status": "completed"
+    },
+    {
+      "attempt_id": "run-attempt:run:run%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A3:attempt:1",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:3",
+      "attempt_ordinal": 1,
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "provider_turn_id": null,
+      "status": "interrupted"
+    },
+    {
+      "attempt_id": "run-attempt:run:run%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A4:attempt:1",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:4",
+      "attempt_ordinal": 1,
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "provider_turn_id": null,
+      "status": "pending"
+    }
+  ],
+  "provider_sessions": [
+    {
+      "provider_session_id": "provider-session:provider-instance:steering-wire-fixture:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:a2468444-9393-4840-8618-fe9dc27a7c49",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "status": "ready"
+    }
+  ],
+  "provider_threads": [
+    {
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "provider_session_id": "provider-session:provider-instance:steering-wire-fixture:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:a2468444-9393-4840-8618-fe9dc27a7c49",
+      "status": "idle"
+    }
+  ],
+  "provider_turns": [
+    {
+      "provider_turn_id": "provider-turn:provider:acpRegistry:native-turn:provider-instance%3Asteering-wire-fixture%3Af49a623d-59bd-4d5d-a380-f02cf5f132e0%3Aturn%3A1",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "status": "interrupted",
+      "started_at": "2026-10-03T14:09:18.327Z",
+      "completed_at": "2026-10-03T14:10:28.364Z"
+    },
+    {
+      "provider_turn_id": "provider-turn:provider:acpRegistry:native-turn:provider-instance%3Asteering-wire-fixture%3Af49a623d-59bd-4d5d-a380-f02cf5f132e0%3Aturn%3A2",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "status": "completed",
+      "started_at": "2026-10-03T14:10:28.704Z",
+      "completed_at": "2026-10-03T14:10:28.733Z"
+    },
+    {
+      "provider_turn_id": "provider-turn:provider:acpRegistry:native-turn:provider-instance%3Asteering-wire-fixture%3Af49a623d-59bd-4d5d-a380-f02cf5f132e0%3Aturn%3A3",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "provider_thread_id": "provider-thread:provider:acpRegistry:native-thread:pending%3Arun%3Athread%3A142afc2d-8a7c-4757-89d9-f2e721ae2ac1%3Aordinal%3A1",
+      "status": "interrupted",
+      "started_at": "2026-10-03T14:10:58.953Z",
+      "completed_at": "2026-10-03T14:11:54.763Z"
+    }
+  ],
+  "messages": [
+    {
+      "message_id": "0c59b966-5d96-4a99-92c6-775ebbefdd9e",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:1"
+    },
+    {
+      "message_id": "message:provider:acpRegistry:native-item:provider-instance%3Asteering-wire-fixture%3Af49a623d-59bd-4d5d-a380-f02cf5f132e0%3Aturn%3A1%3Aassistant%3A0",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:1"
+    },
+    {
+      "message_id": "ab90fd0a-bf25-4055-afb7-254cc31d2e98",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:1"
+    },
+    {
+      "message_id": "message:provider:acpRegistry:native-item:provider-instance%3Asteering-wire-fixture%3Af49a623d-59bd-4d5d-a380-f02cf5f132e0%3Aturn%3A2%3Aassistant%3A0",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:1"
+    },
+    {
+      "message_id": "e83eff79-8060-4579-9fd7-f1824d9b2ace",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:3"
+    },
+    {
+      "message_id": "message:provider:acpRegistry:native-item:provider-instance%3Asteering-wire-fixture%3Af49a623d-59bd-4d5d-a380-f02cf5f132e0%3Aturn%3A3%3Aassistant%3A0",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:3"
+    },
+    {
+      "message_id": "893a0ba4-7047-406e-9dd0-cdbfd03c2e28",
+      "thread_id": "142afc2d-8a7c-4757-89d9-f2e721ae2ac1",
+      "run_id": "run:thread:142afc2d-8a7c-4757-89d9-f2e721ae2ac1:ordinal:4"
+    }
+  ]
+}

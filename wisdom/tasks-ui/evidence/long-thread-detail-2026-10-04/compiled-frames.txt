@@ -1,0 +1,418 @@
+Actual compiled dist/bruv replay (100x30 except narrow 48x30).
+Source: artifacts/tui/bruv-long-thread-1783518-1791092692526
+
+=== loaded ===
+10 tools called ▸
+
+ Saved turn 94
+
+10 tools called ▸
+
+ Saved turn 95
+
+10 tools called ▸
+
+ Saved turn 96
+
+10 tools called ▸
+
+ Saved turn 97
+
+10 tools called ▸
+
+ Saved turn 98
+
+10 tools called ▸
+
+ Saved turn 99
+
+10 tools called ▸
+
+ LONG_THREAD_READY
+
+
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== oldest ===
+                                                                                                   ┃
+ Saved turn 0                                                                                      ┃
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 1                                                                                      │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 2                                                                                      │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 3                                                                                      │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 4                                                                                      │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 5                                                                                      │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 6                                                                                      │
+                                   ↓ Jump to latest message · End                                  │
+
+ long-thread-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== expanded-anchor ===
+10 tools called ▾                                                                                  │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-93-0")                                                                  │
+                                                                                                   │
+ DETAIL_saved-93-0                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-93-1")                                                                  │
+                                                                                                   │
+ DETAIL_saved-93-1                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-93-2")                                                                  │
+                                                                                                   │
+ DETAIL_saved-93-2                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-93-3")                                                                  │
+                                                                                                   │
+ DETAIL_saved-93-3                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-93-4")                                                                  │
+                                                                                                   │
+ DETAIL_saved-93-4                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-93-5")                                                                  │
+                                                                                                   ┃
+ DETAIL_saved-93-5                                                                                 ┃
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-93-6")  ↓ Jump to latest message · End                                  │
+
+ long-thread-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== expanded ===
+ console.log("DETAIL_saved-99-4")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-4                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-5")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-5                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-6")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-6                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-7")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-7                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-8")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-8                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-9")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-9                                                                                 │
+                                                                                                   │
+ LONG_THREAD_READY                                                                                 │
+                                                                                                   ┃
+ Tool output: expanded                                                                             ┃
+
+ long-thread-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== collapsed ===
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 94                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 95                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 96                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 97                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 98                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 99                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   ┃
+ LONG_THREAD_READY                 ↓ Jump to latest message · End                                  ┃
+
+ long-thread-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== narrow ===
+10 tools called ▸
+
+ Saved turn 94
+
+10 tools called ▸
+
+ Saved turn 95
+
+10 tools called ▸
+
+ Saved turn 96
+
+10 tools called ▸
+
+ Saved turn 97
+
+10 tools called ▸
+
+ Saved turn 98
+
+10 tools called ▸
+
+ Saved turn 99
+
+10 tools called ▸
+
+ LONG_TH ↓ Jump to latest message · End
+
+ long-thread-draft
+/questions unavailable $0.000 C22% cache… gpt-4o
+
+=== reopened ===
+10 tools called ▸
+
+ Saved turn 94
+
+10 tools called ▸
+
+ Saved turn 95
+
+10 tools called ▸
+
+ Saved turn 96
+
+10 tools called ▸
+
+ Saved turn 97
+
+10 tools called ▸
+
+ Saved turn 98
+
+10 tools called ▸
+
+ Saved turn 99
+
+10 tools called ▸
+
+ LONG_THREAD_READY
+
+
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== reopened-oldest-detail ===
+                                                                                                   ┃
+ Saved turn 0                                                                                      ┃
+                                                                                                   │
+10 tools called ▾                                                                                  │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-0-0")                                                                   │
+                                                                                                   │
+ DETAIL_saved-0-0                                                                                  │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-0-1")                                                                   │
+                                                                                                   │
+ DETAIL_saved-0-1                                                                                  │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-0-2")                                                                   │
+                                                                                                   │
+ DETAIL_saved-0-2                                                                                  │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-0-3")                                                                   │
+                                                                                                   │
+ DETAIL_saved-0-3                                                                                  │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-0-4")                                                                   │
+                                                                                                   │
+ DETAIL_saved-0-4                                                                                  │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-0-5")                                                                   │
+                                   ↓ Jump to latest message · End                                  │
+
+ reopened-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== reopened-latest-detail ===
+ console.log("DETAIL_saved-99-4")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-4                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-5")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-5                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-6")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-6                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-7")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-7                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-8")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-8                                                                                 │
+ Execute · TypeScript                                                                              │
+ console.log("DETAIL_saved-99-9")                                                                  │
+                                                                                                   │
+ DETAIL_saved-99-9                                                                                 │
+                                                                                                   │
+ LONG_THREAD_READY                                                                                 │
+                                                                                                   ┃
+ Tool output: expanded                                                                             ┃
+
+ reopened-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== reopened-collapsed ===
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 94                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 95                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 96                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 97                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 98                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   │
+ Saved turn 99                                                                                     │
+                                                                                                   │
+10 tools called ▸                                                                                  │
+                                                                                                   ┃
+ LONG_THREAD_READY                 ↓ Jump to latest message · End                                  ┃
+
+ reopened-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== regular-collapsed ===
+ Saved turn 98
+
+ ✓ Read saved file saved-98-0
+ ✓ Read saved file saved-98-1
+ ✓ Read saved file saved-98-2
+ ✓ Read saved file saved-98-3
+ ✓ Read saved file saved-98-4
+ ✓ Read saved file saved-98-5
+ ✓ Read saved file saved-98-6
+ ✓ Read saved file saved-98-7
+ ✓ Read saved file saved-98-8
+ ✓ Read saved file saved-98-9
+
+ Saved turn 99
+
+ ✓ Read saved file saved-99-0
+ ✓ Read saved file saved-99-1
+ ✓ Read saved file saved-99-2
+ ✓ Read saved file saved-99-3
+ ✓ Read saved file saved-99-4
+ ✓ Read saved file saved-99-5
+ ✓ Read saved file saved-99-6
+ ✓ Read saved file saved-99-7
+ ✓ Read saved file saved-99-8
+ ✓ Read saved file saved-99-9
+
+ LONG_THREAD_READY
+
+
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== regular-expanded ===
+ console.log("DETAIL_saved-99-4")
+
+ DETAIL_saved-99-4
+ Execute · TypeScript
+ console.log("DETAIL_saved-99-5")
+
+ DETAIL_saved-99-5
+ Execute · TypeScript
+ console.log("DETAIL_saved-99-6")
+
+ DETAIL_saved-99-6
+ Execute · TypeScript
+ console.log("DETAIL_saved-99-7")
+
+ DETAIL_saved-99-7
+ Execute · TypeScript
+ console.log("DETAIL_saved-99-8")
+
+ DETAIL_saved-99-8
+ Execute · TypeScript
+ console.log("DETAIL_saved-99-9")
+
+ DETAIL_saved-99-9
+
+ LONG_THREAD_READY
+
+ Tool output: expanded
+
+ regular-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+=== regular-recollapsed ===
+ Saved turn 98
+
+ ✓ Read saved file saved-98-0
+ ✓ Read saved file saved-98-1
+ ✓ Read saved file saved-98-2
+ ✓ Read saved file saved-98-3
+ ✓ Read saved file saved-98-4
+ ✓ Read saved file saved-98-5
+ ✓ Read saved file saved-98-6
+ ✓ Read saved file saved-98-7
+ ✓ Read saved file saved-98-8
+ ✓ Read saved file saved-98-9
+
+ Saved turn 99
+
+ ✓ Read saved file saved-99-0
+ ✓ Read saved file saved-99-1
+ ✓ Read saved file saved-99-2
+ ✓ Read saved file saved-99-3
+ ✓ Read saved file saved-99-4
+ ✓ Read saved file saved-99-5
+ ✓ Read saved file saved-99-6
+ ✓ Read saved file saved-99-7
+ ✓ Read saved file saved-99-8
+ ✓ Read saved file saved-99-9
+
+ LONG_THREAD_READY
+
+ regular-draft
+bruv-long-thread-08gnr9 · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o

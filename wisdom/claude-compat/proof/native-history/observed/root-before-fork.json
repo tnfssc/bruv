@@ -1,0 +1,517 @@
+{
+  "stage": "root-before-fork",
+  "indexes": [
+    {
+      "nativeSessionId": "c350dda4-9824-4c30-aae2-6907f93e5567",
+      "canonicalSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+      "canonicalParentSession": null,
+      "canonicalSha256": "e62d6e64cf2c407b699c75dd7dcf88e0a8237a9061fed82a03a4ad35fb82bd22",
+      "authorityOutputs": [
+        "[{\"type\":\"text\",\"text\":\"Execution completed with exit code 0.\\n\\nstdout:\\nHISTORY_ROOT_AUTHORITY {\\\"question\\\":{\\\"id\\\":\\\"q_cb46406e-a7b9-4807-92a0-d20b1c2cf815\\\",\\\"owner\\\":{\\\"sessionId\\\":\\\"01a104d2-d4f8-74fd-86dc-14ac6737737a\\\",\\\"branchId\\\":\\\"cd2a95b5\\\"},\\\"text\\\":\\\"Native history root-only saved question (do not answer)\\\",\\\"status\\\":\\\"pending\\\",\\\"version\\\":1,\\\"createdAt\\\":\\\"2026-10-04T02:51:29.203Z\\\",\\\"updatedAt\\\":\\\"2026-10-04T02:51:29.203Z\\\",\\\"dedupKey\\\":\\\"history-root-authority\\\",\\\"choices\\\":[\\\"Retain unanswered\\\"],\\\"allowFreeText\\\":false,\\\"requester\\\":\\\"Parent\\\"},\\\"job\\\":{\\\"id\\\":\\\"task_89f74e57\\\",\\\"launchIdentity\\\":{\\\"sourceSessionId\\\":\\\"<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl\\\",\\\"sourceCallId\\\":\\\"history_1\\\",\\\"callIndex\\\":2},\\\"kind\\\":\\\"command\\\",\\\"command\\\":\\\"/usr/bin/printf HISTORY_ROOT_JOB_COMPLETED\\\",\\\"cwd\\\":\\\"<SCOPED>/t3-runtime/project\\\",\\\"pid\\\":459954,\\\"status\\\":\\\"completed\\\",\\\"startedAt\\\":\\\"2026-10-04T02:51:29.214Z\\\",\\\"baseOffset\\\":0,\\\"outputEnd\\\":26,\\\"timedOut\\\":false,\\\"lastActivityAt\\\":\\\"2026-10-04T02:51:29.258Z\\\",\\\"stdinOpen\\\":false,\\\"exitCode\\\":0,\\\"completedAt\\\":\\\"2026-10-04T02:51:29.259Z\\\",\\\"background\\\":false,\\\"output\\\":\\\"HISTORY_ROOT_JOB_COMPLETED\\\",\\\"requestedOffset\\\":0,\\\"nextOffset\\\":26,\\\"outputLost\\\":false,\\\"hasMore\\\":false,\\\"elapsedMs\\\":45}}\\nHISTORY_TOOL_COMPLETED orchid-73\\n\"}]"
+      ],
+      "canonicalEntries": [
+        {
+          "type": "session",
+          "id": "01a104d2-d4f8-74fd-86dc-14ac6737737a"
+        },
+        {
+          "type": "model_change",
+          "id": "4f9e51b6",
+          "parentId": null
+        },
+        {
+          "type": "thinking_level_change",
+          "id": "8c1233bb",
+          "parentId": "4f9e51b6"
+        },
+        {
+          "type": "message",
+          "id": "8ba7c3a6",
+          "parentId": "8c1233bb",
+          "role": "system",
+          "contentMarkers": null
+        },
+        {
+          "type": "message",
+          "id": "daa545c1",
+          "parentId": "8ba7c3a6",
+          "role": "user",
+          "contentMarkers": [
+            "HISTORY_SEED",
+            "orchid-73"
+          ],
+          "toolCalls": []
+        },
+        {
+          "type": "custom",
+          "id": "5acca31f",
+          "parentId": "daa545c1",
+          "customType": "bruv-cache-call"
+        },
+        {
+          "type": "custom",
+          "id": "f7c5fd26",
+          "parentId": "5acca31f",
+          "customType": "bruv-diagnostic"
+        },
+        {
+          "type": "message",
+          "id": "cd2a95b5",
+          "parentId": "5acca31f",
+          "role": "assistant",
+          "contentMarkers": [
+            "HISTORY_ROOT_JOB_COMPLETED",
+            "HISTORY_ROOT_AUTHORITY",
+            "HISTORY_TOOL_COMPLETED",
+            "orchid-73"
+          ],
+          "toolCalls": [
+            {
+              "id": "history_1",
+              "name": "execute"
+            }
+          ]
+        },
+        {
+          "type": "custom",
+          "id": "35525596",
+          "parentId": "cd2a95b5",
+          "customType": "bruv-diagnostic"
+        },
+        {
+          "type": "custom",
+          "id": "de996c33",
+          "parentId": "cd2a95b5",
+          "customType": "bruv-diagnostic"
+        },
+        {
+          "type": "custom",
+          "id": "283e46fb",
+          "parentId": "cd2a95b5",
+          "customType": "bruv-native-task-projection",
+          "data": {
+            "root": {
+              "namespace": "bruv:<SCOPED>/agent",
+              "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+              "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567"
+            },
+            "cursor": {
+              "link": {
+                "origin": "bruv",
+                "root": {
+                  "namespace": "bruv:<SCOPED>/agent",
+                  "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                  "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567"
+                },
+                "jobId": "task_89f74e57",
+                "sourceId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                "parent": {
+                  "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                  "launchToolUseId": null
+                },
+                "kind": "shell",
+                "launchToolUseId": "history_1"
+              },
+              "launch": {
+                "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                "sourceCallId": "history_1",
+                "callIndex": 2
+              },
+              "revision": 1,
+              "agentCall": false,
+              "agentResult": false,
+              "childEntries": [],
+              "tokens": 0,
+              "toolUses": 0,
+              "measuredUsage": false,
+              "checkpoint": {
+                "taskId": "bruv-804d04c2-9548-8f15-b71b-9c5a53e8bab6",
+                "linkIdentity": "9362b617-9eb9-8883-9dee-6af3e67b513a",
+                "revision": 1,
+                "phase": "active",
+                "runToolUseId": "history_1",
+                "isBackgrounded": false,
+                "description": "/usr/bin/printf HISTORY_ROOT_JOB_COMPLETED"
+              }
+            }
+          }
+        },
+        {
+          "type": "custom",
+          "id": "245138ff",
+          "parentId": "283e46fb",
+          "customType": "bruv-native-task-projection",
+          "data": {
+            "root": {
+              "namespace": "bruv:<SCOPED>/agent",
+              "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+              "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567"
+            },
+            "cursor": {
+              "link": {
+                "origin": "bruv",
+                "root": {
+                  "namespace": "bruv:<SCOPED>/agent",
+                  "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                  "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567"
+                },
+                "jobId": "task_89f74e57",
+                "sourceId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                "parent": {
+                  "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                  "launchToolUseId": null
+                },
+                "kind": "shell",
+                "launchToolUseId": "history_1"
+              },
+              "launch": {
+                "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                "sourceCallId": "history_1",
+                "callIndex": 2
+              },
+              "revision": 2,
+              "agentCall": false,
+              "agentResult": false,
+              "childEntries": [],
+              "tokens": 0,
+              "toolUses": 0,
+              "measuredUsage": false,
+              "checkpoint": {
+                "taskId": "bruv-804d04c2-9548-8f15-b71b-9c5a53e8bab6",
+                "linkIdentity": "9362b617-9eb9-8883-9dee-6af3e67b513a",
+                "revision": 2,
+                "phase": "active",
+                "runToolUseId": "history_1",
+                "isBackgrounded": false,
+                "description": "/usr/bin/printf HISTORY_ROOT_JOB_COMPLETED"
+              }
+            }
+          }
+        },
+        {
+          "type": "custom",
+          "id": "c76350a3",
+          "parentId": "245138ff",
+          "customType": "bruv-diagnostic"
+        },
+        {
+          "type": "custom",
+          "id": "fcfc080e",
+          "parentId": "245138ff",
+          "customType": "bruv-diagnostic"
+        },
+        {
+          "type": "custom",
+          "id": "c7302f99",
+          "parentId": "245138ff",
+          "customType": "bruv-native-task-projection",
+          "data": {
+            "root": {
+              "namespace": "bruv:<SCOPED>/agent",
+              "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+              "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567"
+            },
+            "cursor": {
+              "link": {
+                "origin": "bruv",
+                "root": {
+                  "namespace": "bruv:<SCOPED>/agent",
+                  "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                  "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567"
+                },
+                "jobId": "task_89f74e57",
+                "sourceId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                "parent": {
+                  "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                  "launchToolUseId": null
+                },
+                "kind": "shell",
+                "launchToolUseId": "history_1"
+              },
+              "launch": {
+                "sourceSessionId": "<SCOPED>/agent/native-sessions/2026-10-04T02-51-28-377Z_01a104d2-d4f8-74fd-86dc-14ac6737737a.jsonl",
+                "sourceCallId": "history_1",
+                "callIndex": 2
+              },
+              "revision": 3,
+              "agentCall": false,
+              "agentResult": false,
+              "childEntries": [],
+              "tokens": 0,
+              "toolUses": 0,
+              "measuredUsage": false,
+              "checkpoint": {
+                "taskId": "bruv-804d04c2-9548-8f15-b71b-9c5a53e8bab6",
+                "linkIdentity": "9362b617-9eb9-8883-9dee-6af3e67b513a",
+                "revision": 3,
+                "phase": "terminal",
+                "runToolUseId": "history_1",
+                "isBackgrounded": false,
+                "description": "/usr/bin/printf HISTORY_ROOT_JOB_COMPLETED"
+              }
+            }
+          }
+        },
+        {
+          "type": "custom",
+          "id": "2441b7d9",
+          "parentId": "c7302f99",
+          "customType": "bruv-diagnostic"
+        },
+        {
+          "type": "message",
+          "id": "506c4287",
+          "parentId": "c7302f99",
+          "role": "toolResult",
+          "toolCallId": "history_1",
+          "contentMarkers": [
+            "HISTORY_ROOT_AUTHORITY",
+            "HISTORY_ROOT_JOB_COMPLETED",
+            "HISTORY_ROOT_JOB_COMPLETED",
+            "HISTORY_TOOL_COMPLETED",
+            "orchid-73"
+          ],
+          "toolCalls": []
+        },
+        {
+          "type": "custom",
+          "id": "4b1b9084",
+          "parentId": "506c4287",
+          "customType": "bruv-cache-call"
+        },
+        {
+          "type": "custom",
+          "id": "f1ad5d3e",
+          "parentId": "4b1b9084",
+          "customType": "bruv-diagnostic"
+        },
+        {
+          "type": "message",
+          "id": "c5db197a",
+          "parentId": "4b1b9084",
+          "role": "assistant",
+          "contentMarkers": [
+            "HISTORY_CHECKPOINT",
+            "orchid-73"
+          ],
+          "toolCalls": []
+        },
+        {
+          "type": "message",
+          "id": "0ec30ac5",
+          "parentId": "c5db197a",
+          "role": "user",
+          "contentMarkers": [
+            "HISTORY_ROOT_FUTURE"
+          ],
+          "toolCalls": []
+        },
+        {
+          "type": "custom",
+          "id": "010b88b2",
+          "parentId": "0ec30ac5",
+          "customType": "bruv-cache-call"
+        },
+        {
+          "type": "custom",
+          "id": "0ea1edb1",
+          "parentId": "010b88b2",
+          "customType": "bruv-diagnostic"
+        },
+        {
+          "type": "message",
+          "id": "cc449f3d",
+          "parentId": "010b88b2",
+          "role": "assistant",
+          "contentMarkers": [
+            "HISTORY_ROOT_FUTURE_RESPONSE"
+          ],
+          "toolCalls": []
+        }
+      ],
+      "mappings": [
+        {
+          "nativeUuid": "4e793041-db7a-4070-9f36-bbe0dfe7099a",
+          "parentUuid": null,
+          "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+          "sourceEntryId": "daa545c1",
+          "originalNativeSource": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "daa545c1"
+          },
+          "mappingKind": "direct-source-entry",
+          "sourceExists": true,
+          "sourceRole": "user",
+          "nativeType": "user",
+          "observedWireUuid": false
+        },
+        {
+          "nativeUuid": "0f99315e-a749-4220-9f96-057fc68cc479",
+          "parentUuid": "4e793041-db7a-4070-9f36-bbe0dfe7099a",
+          "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+          "sourceEntryId": "cd2a95b5",
+          "originalNativeSource": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "cd2a95b5"
+          },
+          "mappingKind": "direct-source-entry",
+          "sourceExists": true,
+          "sourceRole": "assistant",
+          "nativeType": "assistant",
+          "observedWireUuid": true
+        },
+        {
+          "nativeUuid": "9b75a136-a791-4903-a076-1eeda14a670f",
+          "parentUuid": "0f99315e-a749-4220-9f96-057fc68cc479",
+          "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+          "sourceEntryId": "506c4287",
+          "originalNativeSource": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "506c4287"
+          },
+          "mappingKind": "direct-source-entry",
+          "sourceExists": true,
+          "sourceRole": "toolResult",
+          "nativeType": "user",
+          "observedWireUuid": true
+        },
+        {
+          "nativeUuid": "8c6bfd48-8ea9-43cf-b127-bef01736721b",
+          "parentUuid": "9b75a136-a791-4903-a076-1eeda14a670f",
+          "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+          "sourceEntryId": "c5db197a",
+          "originalNativeSource": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "c5db197a"
+          },
+          "mappingKind": "direct-source-entry",
+          "sourceExists": true,
+          "sourceRole": "assistant",
+          "nativeType": "assistant",
+          "observedWireUuid": true
+        },
+        {
+          "nativeUuid": "87c96d71-1f29-4684-b7ef-6d0831d33d0c",
+          "parentUuid": "8c6bfd48-8ea9-43cf-b127-bef01736721b",
+          "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+          "sourceEntryId": "0ec30ac5",
+          "originalNativeSource": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "0ec30ac5"
+          },
+          "mappingKind": "direct-source-entry",
+          "sourceExists": true,
+          "sourceRole": "user",
+          "nativeType": "user",
+          "observedWireUuid": false
+        },
+        {
+          "nativeUuid": "0f8d51aa-304f-487a-8a8e-37d8d77332a1",
+          "parentUuid": "87c96d71-1f29-4684-b7ef-6d0831d33d0c",
+          "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+          "sourceEntryId": "cc449f3d",
+          "originalNativeSource": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "cc449f3d"
+          },
+          "mappingKind": "direct-source-entry",
+          "sourceExists": true,
+          "sourceRole": "assistant",
+          "nativeType": "assistant",
+          "observedWireUuid": true
+        }
+      ],
+      "nativeEntries": [
+        {
+          "type": "user",
+          "uuid": "4e793041-db7a-4070-9f36-bbe0dfe7099a",
+          "parentUuid": null,
+          "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567",
+          "bruv": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "daa545c1"
+          },
+          "markers": [
+            "HISTORY_SEED",
+            "orchid-73"
+          ]
+        },
+        {
+          "type": "assistant",
+          "uuid": "0f99315e-a749-4220-9f96-057fc68cc479",
+          "parentUuid": "4e793041-db7a-4070-9f36-bbe0dfe7099a",
+          "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567",
+          "bruv": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "cd2a95b5"
+          },
+          "markers": [
+            "HISTORY_ROOT_JOB_COMPLETED",
+            "HISTORY_ROOT_AUTHORITY",
+            "HISTORY_TOOL_COMPLETED",
+            "orchid-73"
+          ]
+        },
+        {
+          "type": "user",
+          "uuid": "9b75a136-a791-4903-a076-1eeda14a670f",
+          "parentUuid": "0f99315e-a749-4220-9f96-057fc68cc479",
+          "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567",
+          "bruv": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "506c4287"
+          },
+          "markers": [
+            "HISTORY_ROOT_AUTHORITY",
+            "HISTORY_ROOT_JOB_COMPLETED",
+            "HISTORY_ROOT_JOB_COMPLETED",
+            "HISTORY_TOOL_COMPLETED",
+            "orchid-73"
+          ]
+        },
+        {
+          "type": "assistant",
+          "uuid": "8c6bfd48-8ea9-43cf-b127-bef01736721b",
+          "parentUuid": "9b75a136-a791-4903-a076-1eeda14a670f",
+          "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567",
+          "bruv": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "c5db197a"
+          },
+          "markers": [
+            "HISTORY_CHECKPOINT",
+            "orchid-73"
+          ]
+        },
+        {
+          "type": "user",
+          "uuid": "87c96d71-1f29-4684-b7ef-6d0831d33d0c",
+          "parentUuid": "8c6bfd48-8ea9-43cf-b127-bef01736721b",
+          "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567",
+          "bruv": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "0ec30ac5"
+          },
+          "markers": [
+            "HISTORY_ROOT_FUTURE"
+          ]
+        },
+        {
+          "type": "assistant",
+          "uuid": "0f8d51aa-304f-487a-8a8e-37d8d77332a1",
+          "parentUuid": "87c96d71-1f29-4684-b7ef-6d0831d33d0c",
+          "sessionId": "c350dda4-9824-4c30-aae2-6907f93e5567",
+          "bruv": {
+            "sourceSessionId": "01a104d2-d4f8-74fd-86dc-14ac6737737a",
+            "sourceMessageId": "cc449f3d"
+          },
+          "markers": [
+            "HISTORY_ROOT_FUTURE_RESPONSE"
+          ]
+        }
+      ]
+    }
+  ],
+  "completedRootToolExecutionCount": 1,
+  "actualToolUseCount": 1
+}

@@ -1,0 +1,83 @@
+bun test v1.4.2 (744846f84)
+
+tests/task-monitor-tui.test.ts:
+PRE-INSPECT READINESS FRAME:
+
+ Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys
+ on` to ~/.tmux.conf and restart tmux.
+
+ BRUV_TEST_READY
+
+ start
+
+1 tool called ▸
+ ↗ sh -c 'while :; do echo ALPHA-live; sleep 1; done'
+ ↗ sh -c 'while :; do echo BETA-live; sleep 1; done'
+
+ FIXTURE_READY
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /ps
+  → ps             [t] Monitor and stop active session jobs
+    scoped-models  Enable/disable models for Ctrl+P cycling
+bruv-ps-tui-pnYRTV · 2 tasks · $0.000 · ctx 12.3% · cache est 60m                      fixture-model
+
+35 |   interval = 50,
+36 | ): Promise<string> {
+37 |   const texts = Array.isArray(expected) ? expected : [expected];
+38 |   const matches = (frame: string) => texts.every((text) => frame.includes(text));
+39 |   const frame = await pollFrame(capture, matches, attempts, interval);
+40 |   if (!matches(frame)) throw new Error("Missing " + texts.join(", ") + " in frame:\n" + frame);
+                                      ^
+error: Missing Inspect task_, ALPHA-live in frame:
+ on` to ~/.tmux.conf and restart tmux.
+
+ BRUV_TEST_READY
+
+ start
+
+1 tool called ▸
+ ↗ sh -c 'while :; do echo ALPHA-live; sleep 1; done'
+ ↗ sh -c 'while :; do echo BETA-live; sleep 1; done'
+
+ FIXTURE_READY
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Running jobs
+SSH jobs unavailable without a durable session.
+
+› task_7248be78 [command] sh -c 'while :; do echo ALPHA-live; sleep 1; done'  5s
+  task_a077491c [command] sh -c 'while :; do echo BETA-live; sleep 1; done'  5s
+
+Live preview · last 2400 bytes / 12 lines
+  ALPHA-live
+  ALPHA-live
+  ALPHA-live
+  ALPHA-live
+  ALPHA-live
+  ALPHA-live
+
+↑↓/j/k select · Enter/i inspect · s/x stop · Esc close
+────────────────────────────────────────────────────────────────────────────────────────────────────
+bruv-ps-tui-pnYRTV · 2 tasks · $0.000 · ctx 12.3% · cache est 60m                      fixture-model
+
+      at frameContaining (/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_25c7f69c/tests/tui-helpers.ts:40:34)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_25c7f69c/tests/task-monitor-tui.test.ts:163:19)
+(fail) real TUI /ps selects live jobs and only stops the confirmed target [12090.70ms]
+
+ 0 pass
+ 1 filtered out
+ 1 fail
+ 9 expect() calls
+Ran 1 test across 1 file. [12.39s]

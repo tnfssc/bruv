@@ -59,6 +59,7 @@ export type SshLaunchRequest = {
   thinking?: string;
   placement: {
     profile: "fast" | "normal" | "orchestrator";
+    nativeFast?: boolean;
     parentDepth: number;
     parentType?: "fast" | "normal" | "orchestrator";
     workspace: WorkspaceRequest;

@@ -1,0 +1,44 @@
+mise ERROR error parsing config file: ~/.bruv/worktrees/bruv-5442693331ce-task_78e74597/mise.toml
+mise ERROR Config files in ~/.bruv/worktrees/bruv-5442693331ce-task_78e74597/mise.toml are not trusted.
+Trust them with `mise trust`. See https://mise.jdx.dev/cli/trust.html for more information.
+mise ERROR Run with --verbose or MISE_VERBOSE=1 for more information
+bun test v1.4.2 (744846f84)
+
+tests/claude-compat-task-binding.test.ts:
+(pass) actual JobService shell causal launch, background handoff, complete roster and confirmed late exit [829.16ms]
+(pass) actual shell failures and stop requests project ONLY confirmed process close [351.54ms]
+(pass) real local worker subprocess, actual Pi journal/model usage, distinct Agent identity and exact history source [2250.47ms]
+(pass) reattach cursors do not resurrect jobs or emit fake starts; owner mismatch rejected [86.02ms]
+510 |         prompt: "SDK-launched work",
+511 |         profile: "fast",
+512 |       },
+513 |     ]);
+514 |     expect(subtype(observed, "task_started")).toHaveLength(3);
+515 |     expect(subtype(observed, "task_notification").map((frame) => frame.summary)).toEqual([
+                                                                                       ^
+error: expect(received).toEqual(expected)
+
+  [
+    "first",
+    "second",
+-   "actual worker answer: SDK-launched work",
++   
++ "[2026-10-04T03:07:50.023Z] agent_start
++ [2026-10-04T03:07:50.024Z] turn_start
++ "
++ ,
+  ]
+
+- Expected  - 1
++ Received  + 5
+
+      at <anonymous> (<WORKTREE>/tests/claude-compat-task-binding.test.ts:515:82)
+(fail) actual SDK execute bridge binds two shells and a real Pi worker without label inference [1682.56ms]
+(pass) full opaque shell roster retains the other running job after one real exit [589.36ms]
+(pass) failed OS spawn never creates a fictitious live native task [10.95ms]
+(pass) already-exited async launch never also becomes an inline ACK-owned result [7.00ms]
+
+ 7 pass
+ 1 fail
+ 67 expect() calls
+Ran 8 tests across 1 file. [7.64s]

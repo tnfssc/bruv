@@ -1,9 +1,11 @@
+import { selectDiskBackedEntries } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { AsyncLocalStorage } from "node:async_hooks";
-import { lazyStream, type Model } from "@earendil-works/pi-ai";
+import { lazyStream, normalizeContext, type Context, type Model } from "@earendil-works/pi-ai";
 import { recordDiagnostic } from "../diagnostics.js";
 
+export const NATIVE_FAST_CHILD_ENV = "BRUV_SUBAGENT_NATIVE_FAST";
 export const NATIVE_FAST_ENTRY = "bruv-native-fast-mode";
 const ENTRY_VERSION = 1;
 const OPENAI_BASE_URL = "https://api.openai.com/v1";
@@ -150,7 +152,12 @@ function resolveSetting(
       },
     };
   }
-  const entries = branch(ctx);
+  const entries =
+    selectDiskBackedEntries(
+      ctx.sessionManager,
+      "branch",
+      (meta) => meta.type === "custom" && meta.customType === NATIVE_FAST_ENTRY,
+    ) ?? branch(ctx);
   for (let index = entries.length - 1; index >= 0; index--) {
     const entry = entries[index];
     if (entry?.type !== "custom" || entry.customType !== NATIVE_FAST_ENTRY) continue;
@@ -174,7 +181,7 @@ function currentSetting(ctx: ExtensionContext, model = ctx.model): Setting | und
 
 export function nativeFastSupport(
   model: Pick<Model<any>, "provider" | "id" | "api" | "baseUrl">,
-): { supported: true; tier: "fast" | "priority"; surface: "api" | "codex" } | { supported: false; reason: string } {
+): { supported: true; tier: "priority"; surface: "api" | "codex" } | { supported: false; reason: string } {
   const baseUrl = normalizedUrl(model.baseUrl);
   if (model.provider === "openai") {
     if (model.api !== "openai-responses" || baseUrl !== OPENAI_BASE_URL)
@@ -182,7 +189,7 @@ export function nativeFastSupport(
         supported: false,
         reason: "OpenAI native fast mode requires the official openai Responses endpoint and auth surface.",
       };
-    return { supported: true, tier: "fast", surface: "api" };
+    return { supported: true, tier: "priority", surface: "api" };
   }
   if (model.provider === "openai-codex") {
     if (model.api !== "openai-codex-responses" || baseUrl !== CODEX_BASE_URL)
@@ -190,8 +197,7 @@ export function nativeFastSupport(
         supported: false,
         reason: "Codex native fast mode requires ChatGPT sign-in on the official Codex endpoint.",
       };
-    // The official Codex client maps its user-facing Fast tier to this legacy
-    // wire value. OpenAI documents priority and fast as equivalent.
+    // Match the official Codex ServiceTier::Fast request value.
     return { supported: true, tier: "priority", surface: "codex" };
   }
   if (model.provider === "anthropic")
@@ -211,8 +217,17 @@ function authSurfaceMatches(ctx: ExtensionContext, surface: "api" | "codex", mod
   return surface === "codex" ? oauth : !oauth;
 }
 
+export function nativeFastEnabled(ctx: ExtensionContext): boolean {
+  if (!ctx.model || !ctx.sessionManager?.getSessionId) return false;
+  const active = currentSetting(ctx);
+  if (!active?.enabled || !active.costAcknowledged) return false;
+  const support = nativeFastSupport(ctx.model);
+  return support.supported && authSurfaceMatches(ctx, support.surface);
+}
+
+// Like Codex, this badge reports the selected mode, not response-tier evidence.
 function statusText(enabled: boolean): string {
-  return enabled ? " fast requested (tier/cost estimate unavailable)" : " fast off";
+  return enabled ? " fast on" : " fast off";
 }
 
 type RequestAuthorization = {
@@ -229,7 +244,7 @@ type FastController = {
   capture(model: Model<any>, sessionId: unknown): RequestAuthorization | undefined;
 };
 type RuntimeSeam = {
-  streamSimple: (model: Model<any>, context: unknown, options?: Record<string, any>) => unknown;
+  streamSimple: (model: Model<any>, context: Context, options?: Record<string, any>) => unknown;
   prepareRequest: (model: Model<any>, options?: Record<string, any>) => Promise<any>;
   isUsingOAuth: (provider: string) => boolean;
 };
@@ -281,6 +296,9 @@ function attachConcreteRequestGuard(runtime: unknown, controller: FastController
         fastDiagnostic(authorization.manager, FAST_GUARD_AMBIGUOUS_AUTHORIZATION, "blocked", authorization.operationId);
         throw new Error("Native fast mode found ambiguous request authorization before dispatch.");
       });
+    // Match ModelRuntime before bypassing its streamSimple dispatch: providers
+    // take transcript messages, not separate systemPrompt and tools fields.
+    const transcript = normalizeContext(context);
     const priorPayload = options?.onPayload;
     const guardedOptions = {
       ...options,
@@ -345,7 +363,7 @@ function attachConcreteRequestGuard(runtime: unknown, controller: FastController
           throw new Error("Native fast mode actual provider endpoint is not authorized for this request.");
         }
       }
-      return prepared.provider.streamSimple(prepared.model, context, prepared.options);
+      return prepared.provider.streamSimple(prepared.model, transcript, prepared.options);
     });
   };
   patch.wrapper = wrapper;
@@ -379,6 +397,8 @@ function detachConcreteRequestGuard(runtime: object, controller: FastController)
 
 export function registerNativeFastMode(pi: ExtensionAPI) {
   let ui: ExtensionContext["ui"] | undefined;
+  let inheritFast = process.env[NATIVE_FAST_CHILD_ENV] === "1" && Number(process.env.BRUV_SUBAGENT_DEPTH) > 0;
+  delete process.env[NATIVE_FAST_CHILD_ENV];
   const controller: FastController = {
     capture(model, requestedSessionId) {
       const ctx = controller.context;
@@ -475,8 +495,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         const description = !active
           ? "off (no model-bound setting in this session)"
           : active.enabled
-            ? statusText(true).replace(/^ /, "") +
-              "; response-tier evidence is unavailable until the runtime exposes it"
+            ? statusText(true).replace(/^ /, "")
             : "off (explicit default/standard tier)";
         ctx.ui.notify(`Native fast mode: ${description}. Model and thinking are unchanged.`, "info");
         refreshStatus(ctx);
@@ -534,8 +553,8 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
           accepted = await ctx.ui.confirm(
             "Enable premium fast mode?",
             support.supported && support.surface === "codex"
-              ? "Fast mode consumes more ChatGPT credits (model-dependent, currently 2x or 2.5x). Provider billing is authoritative."
-              : "Fast mode uses premium API token pricing. Provider billing is authoritative.",
+              ? "Fast mode also applies to new supported subagents. It consumes more ChatGPT credits (model-dependent, currently 2x or 2.5x). Provider billing is authoritative."
+              : "Fast mode also applies to new supported subagents. It uses premium API token pricing. Provider billing is authoritative.",
           );
         if (!accepted) {
           commandDiagnostic(ctx, FAST_CANCELLED_COST, "cancelled", operationId, "caller");
@@ -598,7 +617,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       refreshStatus(ctx);
       ctx.ui.notify(
         action === "on"
-          ? "Native fast mode requested for this session and model. Actual response tier is not exposed by this runtime."
+          ? "Native fast mode on for this session, model, and new supported subagents. Requests use the priority service tier."
           : "Native fast mode off for this session and model; requests explicitly use the default/standard tier.",
         "info",
       );
@@ -607,6 +626,28 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
 
   pi.on("session_start", (_event, ctx) => {
     const compatibilityError = bindContext(ctx);
+    if (inheritFast) {
+      inheritFast = false;
+      const model = ctx.model;
+      const support = model && nativeFastSupport(model);
+      if (
+        !compatibilityError &&
+        model &&
+        support?.supported &&
+        authSurfaceMatches(ctx, support.surface) &&
+        resolveSetting(ctx).kind === "absent"
+      ) {
+        pi.appendEntry(NATIVE_FAST_ENTRY, {
+          version: ENTRY_VERSION,
+          sessionId: ctx.sessionManager.getSessionId(),
+          provider: model.provider,
+          model: model.id,
+          enabled: true,
+          costAcknowledged: true,
+          timestamp: Date.now(),
+        } satisfies Setting);
+      }
+    }
     refreshStatus(ctx);
     if (currentSetting(ctx)?.enabled && compatibilityError) {
       commandDiagnostic(ctx, FAST_REFUSED_COMPATIBILITY, "blocked", crypto.randomUUID());

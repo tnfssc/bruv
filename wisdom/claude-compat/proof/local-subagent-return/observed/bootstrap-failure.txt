@@ -1,0 +1,36 @@
+Code
+/
+General
+Appearance
+Keybindings
+SnapShots
+Providers
+Integrations
+Scheduled Tasks
+Source Control
+Storage
+Connections
+Archive
+Back
+Settings
+/
+Connections
+This machine
+Administrative access
+
+Pairing links and client-session management require the access:write scope for this backend.
+
+Publish agent activity
+
+Send activity to mobile notifications and Live Activities without T3 Connect.
+
+Environments
+Add environment
+No saved remote environments
+Click “Add environment” to pair another environment, or connect one from T3 Connect.
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

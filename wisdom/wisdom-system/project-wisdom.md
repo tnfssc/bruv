@@ -68,3 +68,60 @@ provider request (offline capture, no model call). `bun run check`, focused Biom
 release. Files are not migrated; teams must place wisdom where they configured
 it. Values stay unchanged: this is a local configuration choice, not a new lesson
 that applies across systems.
+
+## Reference folders moved into wisdom (2026-10-04)
+
+The user asked to move audits, docs and experiments here. Their new homes are
+`wisdom/audits/`, `wisdom/docs/` and `wisdom/experiments/`. Keep the existing
+Go experiment note in the last folder. No source or evidence was dropped.
+
+Repo links, setup-guide URLs, probe commands, shell root paths and the few probe
+imports from product source now use the new layout. Biome still excludes the
+experiments. Captured logs, JSON receipts and patches keep their original bytes
+and old paths as evidence; they are not current run instructions. The illustrated
+[setup guide](../docs/t3-code/README.md) still includes its images.
+
+Keep `integrations/t3/` for now. It holds inputs for optional T3 web builds,
+source verification, packed-web receipts and acceptance gates. Current tests read
+its source pin, patch, bootstrap and shared contract fixture. The default paired
+CLI/connector build does not use this old web build. Removal needs a separate
+choice to retire those consumers together. The integration README still names a
+`build:web` package script that no longer exists; use the actual optional tooling
+in `scripts/ci-web.ts` when reviewing that boundary. Nothing under integrations
+was moved or removed in this change.
+
+Checks: all 425 moved tracked files are present. All 1,078 previously resolving
+local Markdown links still resolve. All 22 moved shell scripts pass `bash -n`.
+The setup-guide tests and selected relocated CLI, native-question and transcript
+probe tests pass: 20 tests, 207 assertions. No Docker, provider, browser or full
+archived-probe run. No release. Values stay the same: this applies the existing
+shared-memory and ownership lessons, not a new project-wide rule.
+
+Workspace: `/home/tnfssc/.t3/worktrees/bruv/t3code-34db5acd`.
+Branch: `t3code/move-audits-docs-expts`.
+
+### Follow-up: remove the old integration
+
+The user then approved removing the optional tooling and its tests too. This
+supersedes the keep-for-now choice above. Task `task_a4993fe0` owns the code
+cleanup in `/home/tnfssc/.bruv/worktrees/t3code-34db5acd-5442693331ce-task_a4993fe0`,
+branch `bruv/retire-old-bundled-t3-integration-toolin-a4993fe0`. The parent owns
+these already-moved reference folders and their docs. Preserve the current paired
+CLI/connector build and external T3 setup flow. Remove the old integration and
+its orphan executable consumers, not the historical evidence. Integrate the
+worker commit and check the combined work before calling removal done.
+
+Move follow-up checks: keep Git recovery commands on their original archive
+paths; old commits do not contain the new wisdom paths. Keep upstream `docs/...`
+references and arbitrary `wisdomDir` test examples unchanged too. The real SDK
+(8 tests) and wisdom extension (10 tests) pass in separate processes after locked
+dependency installation and asset preparation. Running those two files in one
+Bun process loses Git from PATH in the delegated-worktree test after the SDK
+tests; that order-dependent suite issue is outside this folder move. No test was
+weakened. Integration retirement is now applied from the worktree named above.
+
+Final follow-up: the integration retirement and combined reference move now
+pass full Linux CI. Read-only reference review found no issues. The installer
+fixture's inherited CLI override was isolated without changing product behavior.
+See [the removal and full-gate record](../quality/obsolete-integrations-removal.md).
+The parent changes are uncommitted; no release was made. Values remain unchanged.

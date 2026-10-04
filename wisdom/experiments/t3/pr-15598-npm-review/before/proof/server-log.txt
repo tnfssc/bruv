@@ -1,0 +1,289 @@
+[14:40:36.870] WARN (#11): Failed to decode claude telemetry identity at '<RUNTIME>/home/.claude.json'.
+  errorTag: TelemetryIdentityDecodeError
+  source: claude
+  filePath: <RUNTIME>/home/.claude.json
+  causeKind: schema
+  errorStack: TelemetryIdentityDecodeError: Failed to decode claude telemetry identity at '<RUNTIME>/home/.claude.json'.
+      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:94716:88
+      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91
+      at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11)
+      at PrimitiveImpl.~effect/Effect/args (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4329:47)
+      at ~effect/Effect/evaluate (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4303:21)
+      at FiberImpl.runLoop (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4133:92)
+      at FiberImpl.evaluate (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4093:22)
+      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4376:25
+      at ReadFileContext.callback (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:16456:10)
+      at ReadFileJob.readFileAfterOneShot [as ondone] (node:fs:517:11)
+[14:40:36.969] INFO (#11): Migrations ran successfully
+  migrations: [
+    '1_OrchestrationEvents',
+    '2_OrchestrationCommandReceipts',
+    '3_CheckpointDiffBlobs',
+    '4_ProviderSessionRuntime',
+    '5_Projections',
+    '6_ProjectionThreadSessionRuntimeModeColumns',
+    '7_ProjectionThreadMessageAttachments',
+    '8_ProjectionThreadActivitySequence',
+    '9_ProviderSessionRuntimeMode',
+    '10_ProjectionThreadsRuntimeMode',
+    '11_OrchestrationThreadCreatedRuntimeMode',
+    '12_ProjectionThreadsInteractionMode',
+    '13_ProjectionThreadProposedPlans',
+    '14_ProjectionThreadProposedPlanImplementation',
+    '15_ProjectionTurnsSourceProposedPlan',
+    '16_CanonicalizeModelSelections',
+    '17_ProjectionThreadsArchivedAt',
+    '18_ProjectionThreadsArchivedAtIndex',
+    '19_ProjectionSnapshotLookupIndexes',
+    '20_AuthAccessManagement',
+    '21_AuthSessionClientMetadata',
+    '22_AuthSessionLastConnectedAt',
+    '23_ProjectionThreadShellSummary',
+    '24_BackfillProjectionThreadShellSummary',
+    '25_CleanupInvalidProjectionPendingApprovals',
+    '26_CanonicalizeModelSelectionOptions',
+    '27_ProviderSessionRuntimeInstanceId',
+    '28_ProjectionThreadSessionInstanceId',
+    '29_ProjectionThreadDetailOrderingIndexes',
+    '30_ProjectionThreadShellArchiveIndexes',
+    '31_AuthAuthorizationScopes',
+    '32_AuthPairingProofKeyThumbprint',
+    '33_ProjectionThreadsSettled',
+    '34_ProjectionThreadsSnoozed',
+    '35_ProjectionThreadTitleRegeneration',
+    '36_ProjectionThreadsPinned',
+    '37_ProjectionTurnsKeysetIndex',
+    '38_ProjectionThreadsPinOrderKey',
+    '39_ProjectionProjectsDefaultThreadEnvMode',
+    '40_ProjectionProjectFaviconPath',
+    '41_AuthSessionClientConnection',
+    '42_ProjectionThreadLinkedPullRequest',
+    '43_ProjectionThreadsUnsettledAt',
+    '44_ClearAutomaticProjectModelDefaults',
+    '45_ProjectionProjectsAutoPull',
+    '46_RepairAutomaticSettlementTimestamps',
+    '47_ProjectionProjectIcon',
+    '48_ProjectionThreadBranchPullRequest',
+    '49_ProjectionThreadsActiveOrderKey',
+    '50_ProjectionThreadPullRequests',
+    '51_ProjectionThreadMessageContext',
+    '52_ProjectionThreadTitleState',
+    '53_PullRequestFilesViewed',
+    '54_ProjectionThreadsAutoSettleDisabledAt',
+    '55_OrchestrationV2',
+    '56_RemoveRedundantProjectionIndexes'
+  ]
+[14:40:37.052] WARN (#392): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:37.326] INFO (#3671): Listening on http://127.0.0.1:39095
+[14:40:37.345] INFO (#3670): agent activity publishing standby; waiting for T3 Connect link reconciliation
+[14:40:37.400] INFO (#3670): V2 orchestration recovery completed
+  {
+    terminalizedRuns: 0,
+    stoppedSessions: 0,
+    closedRequests: 0,
+    retiredEffects: 0,
+    requeuedEffects: 0
+  }
+[14:40:37.427] INFO (#3966): Authentication required. Open T3 Code using the pairing URL.
+  pairingUrl: http://localhost:39095/pair#token=<REDACTED>
+[14:40:42.253] WARN (#5009): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:43.247] WARN (#5083): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:43.552] WARN (#5131): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:44.002] WARN (#5172): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:44.421] WARN (#5215): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:44.943] WARN (#5258): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:45.322] WARN (#5299): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:46.403] WARN (#5381): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:49.381] ERROR (#5671): provider registry refresh failed; preserving cached providers
+  {
+    cause: "ProviderDriverError: Provider driver 'codex' failed to create instance 'codex': Failed to probe Codex skills for '<RUNTIME>/launch'\n" +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:244566:31\n' +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '    at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11)\n' +
+      '    at refreshWorkspaceSnapshot (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327210:41)\n' +
+      '    at refreshWorkspaceSnapshot (definition) (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327177:36)\n' +
+      '    at ws.rpc.server.refreshProviders (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:306052:99) {\n' +
+      '  [cause]: CodexAppServerSpawnError: Failed to spawn Codex App Server process for command: codex app-server\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:234960:34\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '      at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11) {\n' +
+      '    [cause]: PlatformError: NotFound: ChildProcess.spawn (codex app-server)\n' +
+      '        at systemError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:11526:29)\n' +
+      '        at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15431:10\n' +
+      '        at toPlatformError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15650:54)\n' +
+      '        at ChildProcess.<anonymous> (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15823:19)\n' +
+      '        at ChildProcess.emit (node:events:514:20)\n' +
+      '        at ChildProcess._handle.onexit (node:internal/child_process:292:12)\n' +
+      '        at onErrorNT (node:internal/child_process:524:16)\n' +
+      '        at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {\n' +
+      '      [cause]: Error: spawn codex ENOENT\n' +
+      '          at ChildProcess._handle.onexit (node:internal/child_process:286:19)\n' +
+      '          at onErrorNT (node:internal/child_process:524:16)\n' +
+      '          at process.processTicksAndRejections (node:internal/process/task_queues:90:21)\n' +
+      '    }\n' +
+      '  }\n' +
+      '}'
+  }
+[14:40:50.360] ERROR (#5832): provider registry refresh failed; preserving cached providers
+  {
+    cause: "ProviderDriverError: Provider driver 'codex' failed to create instance 'codex': Failed to probe Codex skills for '<RUNTIME>/project'\n" +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:244566:31\n' +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '    at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11)\n' +
+      '    at refreshWorkspaceSnapshot (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327210:41)\n' +
+      '    at refreshWorkspaceSnapshot (definition) (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327177:36)\n' +
+      '    at ws.rpc.server.refreshProviders (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:306052:99) {\n' +
+      '  [cause]: CodexAppServerSpawnError: Failed to spawn Codex App Server process for command: codex app-server\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:234960:34\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '      at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11) {\n' +
+      '    [cause]: PlatformError: NotFound: ChildProcess.spawn (codex app-server)\n' +
+      '        at systemError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:11526:29)\n' +
+      '        at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15431:10\n' +
+      '        at toPlatformError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15650:54)\n' +
+      '        at ChildProcess.<anonymous> (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15823:19)\n' +
+      '        at ChildProcess.emit (node:events:514:20)\n' +
+      '        at ChildProcess._handle.onexit (node:internal/child_process:292:12)\n' +
+      '        at onErrorNT (node:internal/child_process:524:16)\n' +
+      '        at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {\n' +
+      '      [cause]: Error: spawn codex ENOENT\n' +
+      '          at ChildProcess._handle.onexit (node:internal/child_process:286:19)\n' +
+      '          at onErrorNT (node:internal/child_process:524:16)\n' +
+      '          at process.processTicksAndRejections (node:internal/process/task_queues:90:21)\n' +
+      '    }\n' +
+      '  }\n' +
+      '}'
+  }
+[14:40:53.969] WARN (#6261): Claude Agent CLI health check failed.
+  { errorTag: 'PlatformError' }
+[14:40:56.418] ERROR (#6484): provider registry refresh failed; preserving cached providers
+  {
+    cause: "ProviderDriverError: Provider driver 'codex' failed to create instance 'codex': Failed to probe Codex skills for '<RUNTIME>/launch'\n" +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:244566:31\n' +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '    at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11)\n' +
+      '    at refreshWorkspaceSnapshot (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327210:41)\n' +
+      '    at refreshWorkspaceSnapshot (definition) (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327177:36)\n' +
+      '    at ws.rpc.server.refreshProviders (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:306052:99) {\n' +
+      '  [cause]: CodexAppServerSpawnError: Failed to spawn Codex App Server process for command: codex app-server\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:234960:34\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '      at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11) {\n' +
+      '    [cause]: PlatformError: NotFound: ChildProcess.spawn (codex app-server)\n' +
+      '        at systemError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:11526:29)\n' +
+      '        at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15431:10\n' +
+      '        at toPlatformError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15650:54)\n' +
+      '        at ChildProcess.<anonymous> (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15823:19)\n' +
+      '        at ChildProcess.emit (node:events:514:20)\n' +
+      '        at ChildProcess._handle.onexit (node:internal/child_process:292:12)\n' +
+      '        at onErrorNT (node:internal/child_process:524:16)\n' +
+      '        at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {\n' +
+      '      [cause]: Error: spawn codex ENOENT\n' +
+      '          at ChildProcess._handle.onexit (node:internal/child_process:286:19)\n' +
+      '          at onErrorNT (node:internal/child_process:524:16)\n' +
+      '          at process.processTicksAndRejections (node:internal/process/task_queues:90:21)\n' +
+      '    }\n' +
+      '  }\n' +
+      '}'
+  }
+[14:40:57.042] ERROR (#6553): provider registry refresh failed; preserving cached providers
+  {
+    cause: "ProviderDriverError: Provider driver 'codex' failed to create instance 'codex': Failed to probe Codex skills for '<RUNTIME>/project'\n" +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:244566:31\n' +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '    at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11)\n' +
+      '    at refreshWorkspaceSnapshot (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327210:41)\n' +
+      '    at refreshWorkspaceSnapshot (definition) (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327177:36)\n' +
+      '    at ws.rpc.server.refreshProviders (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:306052:99) {\n' +
+      '  [cause]: CodexAppServerSpawnError: Failed to spawn Codex App Server process for command: codex app-server\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:234960:34\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '      at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11) {\n' +
+      '    [cause]: PlatformError: NotFound: ChildProcess.spawn (codex app-server)\n' +
+      '        at systemError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:11526:29)\n' +
+      '        at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15431:10\n' +
+      '        at toPlatformError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15650:54)\n' +
+      '        at ChildProcess.<anonymous> (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15823:19)\n' +
+      '        at ChildProcess.emit (node:events:514:20)\n' +
+      '        at ChildProcess._handle.onexit (node:internal/child_process:292:12)\n' +
+      '        at onErrorNT (node:internal/child_process:524:16)\n' +
+      '        at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {\n' +
+      '      [cause]: Error: spawn codex ENOENT\n' +
+      '          at ChildProcess._handle.onexit (node:internal/child_process:286:19)\n' +
+      '          at onErrorNT (node:internal/child_process:524:16)\n' +
+      '          at process.processTicksAndRejections (node:internal/process/task_queues:90:21)\n' +
+      '    }\n' +
+      '  }\n' +
+      '}'
+  }
+[14:40:57.488] WARN (#6573): PR lookup failed; keeping last known PR state.
+  operation: lookupStatusPr
+  branch: master
+  errorTag: SourceControlProviderError
+  provider: unknown
+  providerOperation: listChangeRequests
+  providerCommand: unknown
+  errorDetail: No unknown source control provider is registered.
+(node:3917974) [CLAUDE_SDK_CAN_USE_TOOL_SHADOWED] Warning: canUseTool will not be invoked: permissionMode 'bypassPermissions' auto-approves every tool call (except explicit deny rules) before the callback is consulted. To gate every tool call, use a PreToolUse hook instead.
+(Use `t3 --trace-warnings ...` to show where the warning was created)
+[14:41:05.515] WARN (#6783): Thread title generation failed
+  {
+    threadId: '2ed545f2-bcd2-40b8-9ebf-85eb60d247b3',
+    requestId: '9438a0de-9f23-48e1-9953-766ccf94547a:initial-message',
+    cause: { _id: 'Cause', failures: [ [Object] ] }
+  }
+[14:41:07.136] ERROR (#7728): provider registry refresh failed; preserving cached providers
+  {
+    cause: "ProviderDriverError: Provider driver 'codex' failed to create instance 'codex': Failed to probe Codex skills for '<RUNTIME>/launch'\n" +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:244566:31\n' +
+      '    at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '    at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11)\n' +
+      '    at refreshWorkspaceSnapshot (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327210:41)\n' +
+      '    at refreshWorkspaceSnapshot (definition) (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:327177:36)\n' +
+      '    at ws.rpc.server.refreshProviders (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:306052:99) {\n' +
+      '  [cause]: CodexAppServerSpawnError: Failed to spawn Codex App Server process for command: codex app-server\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:234960:34\n' +
+      '      at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:4795:91\n' +
+      '      at ~effect/Utils/internal (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:1538:11) {\n' +
+      '    [cause]: PlatformError: NotFound: ChildProcess.spawn (codex app-server)\n' +
+      '        at systemError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:11526:29)\n' +
+      '        at file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15431:10\n' +
+      '        at toPlatformError (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15650:54)\n' +
+      '        at ChildProcess.<anonymous> (file:///var/tmp/t3-pr-15598-npm/stage/dist/node_modules/@t3code/t3-linux-x64/t3:15823:19)\n' +
+      '        at ChildProcess.emit (node:events:514:20)\n' +
+      '        at ChildProcess._handle.onexit (node:internal/child_process:292:12)\n' +
+      '        at onErrorNT (node:internal/child_process:524:16)\n' +
+      '        at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {\n' +
+      '      [cause]: Error: spawn codex ENOENT\n' +
+      '          at ChildProcess._handle.onexit (node:internal/child_process:286:19)\n' +
+      '          at onErrorNT (node:internal/child_process:524:16)\n' +
+      '          at process.processTicksAndRejections (node:internal/process/task_queues:90:21)\n' +
+      '    }\n' +
+      '  }\n' +
+      '}'
+  }
+(node:3917974) [CLAUDE_SDK_CAN_USE_TOOL_SHADOWED] Warning: canUseTool will not be invoked: permissionMode 'bypassPermissions' auto-approves every tool call (except explicit deny rules) before the callback is consulted. To gate every tool call, use a PreToolUse hook instead.
+[14:41:15.343] WARN (#7923): Thread title generation failed
+  {
+    threadId: '2497f118-966f-4884-8877-707976f2fd9c',
+    requestId: '8bb8aa27-bd16-4164-bf3d-d9e17c949aac',
+    cause: { _id: 'Cause', failures: [ [Object] ] }
+  }
+(node:3917974) [CLAUDE_SDK_CAN_USE_TOOL_SHADOWED] Warning: canUseTool will not be invoked: permissionMode 'bypassPermissions' auto-approves every tool call (except explicit deny rules) before the callback is consulted. To gate every tool call, use a PreToolUse hook instead.
+[14:41:24.286] INFO (#11): V2 orchestration shutdown reconciliation completed
+  {
+    terminalizedRuns: 0,
+    stoppedSessions: 0,
+    closedRequests: 0,
+    retiredEffects: 0,
+    requeuedEffects: 0
+  }

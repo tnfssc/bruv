@@ -3,11 +3,23 @@ import { currentMainToolOwner } from "../live/main-owner";
 import { QuestionService, type Question } from "./service";
 import { RemoteQuestionBridge, observeRemoteQuestions, type RemoteQuestionClient } from "../remote/question-bridge";
 import type { RemoteState } from "../remote/client";
+import type { QuestionCommands } from "./extension";
+
+/** Explicit native frontend lease; never exposed as an agent tool. */
+export const NATIVE_QUESTION_ACCESS = "bruv:questions:native-access";
+export interface NativeQuestionAccess {
+  context: ExtensionContext;
+  accept(commands: QuestionCommands, release: () => void): void;
+}
 
 /** A reply starts a new parent turn. It never holds or revives an execute stack. */
 export function registerQuestionRuntime(
   pi: ExtensionAPI,
-  options: { supported: () => boolean; hasMainToolOwner?: (manager: object) => boolean },
+  options: {
+    supported: () => boolean;
+    nativeSupported?: () => boolean;
+    hasMainToolOwner?: (manager: object) => boolean;
+  },
 ) {
   const service = new QuestionService();
   let remoteBridge: RemoteQuestionBridge | undefined;
@@ -17,6 +29,9 @@ export function registerQuestionRuntime(
   let closed = false;
   let continuationPending = false;
   const hasMainToolOwner = options.hasMainToolOwner ?? ((manager: object) => !!currentMainToolOwner(manager));
+  let nativeManager: object | undefined;
+  const supported = () =>
+    options.supported() || (nativeManager !== undefined && nativeManager === context?.sessionManager);
   const maxQueued = 20; // The ledger admits at most twenty pending questions.
   const queued = new Map<string, { question: Question; manager: object; leaf: string | null; epoch: number }>();
   const delivered = new Set<string>();
@@ -53,8 +68,7 @@ export function registerQuestionRuntime(
   let flushing = false;
   const flush = async () => {
     const ctx = context;
-    if (flushing || !ctx || stopped || !options.supported() || !ctx.isIdle() || hasMainToolOwner(ctx.sessionManager))
-      return;
+    if (flushing || !ctx || stopped || !supported() || !ctx.isIdle() || hasMainToolOwner(ctx.sessionManager)) return;
     flushing = true;
     try {
       for (const [key, item] of queued) {
@@ -113,7 +127,7 @@ export function registerQuestionRuntime(
     const ctx = raw as ExtensionContext;
     if (question.remote) {
       try {
-        if (!remoteBridge || !options.supported() || context?.sessionManager !== ctx.sessionManager)
+        if (!remoteBridge || !supported() || context?.sessionManager !== ctx.sessionManager)
           throw new Error("Remote reply saved; parent remote bridge is not active");
         await remoteBridge.dispatch(ctx, question.id);
       } finally {
@@ -125,7 +139,7 @@ export function registerQuestionRuntime(
     if (
       !stopped &&
       createdHere.has(question.id) &&
-      options.supported() &&
+      supported() &&
       context?.sessionManager === ctx.sessionManager &&
       !delivered.has(key)
     ) {
@@ -165,7 +179,7 @@ export function registerQuestionRuntime(
     }
     context = ctx;
     observeRemoteQuestions(ctx.sessionManager, async (state) => {
-      if (closed || context?.sessionManager !== ctx.sessionManager || !options.supported()) return;
+      if (closed || context?.sessionManager !== ctx.sessionManager || !supported()) return;
       try {
         await remoteBridge?.sync(ctx, state);
       } finally {
@@ -176,7 +190,7 @@ export function registerQuestionRuntime(
   };
   pi.on("session_start", async (_event, ctx) => {
     attach(ctx, true);
-    if (options.supported()) {
+    if (supported()) {
       try {
         await remoteBridge?.sync(ctx);
       } catch {
@@ -203,6 +217,7 @@ export function registerQuestionRuntime(
     if (attach(ctx)) flush();
   });
   pi.on("session_shutdown", () => {
+    nativeManager = undefined;
     pause();
     closed = true;
     if (context) observeRemoteQuestions(context.sessionManager);
@@ -211,20 +226,20 @@ export function registerQuestionRuntime(
     createdHere.clear();
     listeners.clear();
   });
-  return {
+  const runtime = {
     service,
     /** Wire the SAME client used by the normal SSH jobs adapter; no host selection here. */
     configureRemote(client: RemoteQuestionClient) {
       remoteBridge = new RemoteQuestionBridge(service, client);
     },
     async syncRemote(ctx: ExtensionContext, state?: RemoteState) {
-      if (!attach(ctx) || !options.supported()) return;
+      if (!attach(ctx) || !supported()) return;
       await remoteBridge?.sync(ctx, state);
       changed();
     },
     pause,
     hasBlockingQuestions() {
-      if (!context || !options.supported()) return false;
+      if (!context || !supported()) return false;
       if (continuationPending || queued.size) return true;
       try {
         return service
@@ -239,7 +254,7 @@ export function registerQuestionRuntime(
     },
     async handle(ctx: ExtensionContext, method: string, params: unknown) {
       if (!attach(ctx)) throw new Error("Question session is no longer active.");
-      if (!options.supported())
+      if (!supported())
         throw new Error(
           "Persistent questions need the parent CLI session. Web projection and child in-place replies are not supported; ask the parent to record the question.",
         );
@@ -263,7 +278,7 @@ export function registerQuestionRuntime(
         },
         async handle(method: string, params: Record<string, unknown> = {}) {
           if (context?.sessionManager !== ctx.sessionManager) throw new Error("Question session is no longer active.");
-          if (!options.supported()) throw new Error("Questions are supported in the parent CLI session only.");
+          if (!supported()) throw new Error("Questions are supported in the parent CLI session only.");
           await remoteBridge?.sync(ctx);
           if (method === "questions.answer" || method === "questions.cancel" || method === "questions.resume") {
             const q = service.get(ctx, String(params.id));
@@ -328,4 +343,20 @@ export function registerQuestionRuntime(
       };
     },
   };
+  pi.events?.on(NATIVE_QUESTION_ACCESS, (value: unknown) => {
+    const request = value as NativeQuestionAccess;
+    if (!options.nativeSupported?.() || !request?.context || typeof request.accept !== "function") return;
+    if (!attach(request.context) || nativeManager) return;
+    const manager = request.context.sessionManager;
+    nativeManager = manager;
+    try {
+      request.accept(runtime.commands(request.context), () => {
+        if (nativeManager === manager) nativeManager = undefined;
+      });
+    } catch (error) {
+      nativeManager = undefined;
+      throw error;
+    }
+  });
+  return runtime;
 }

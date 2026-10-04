@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-03",
+  "scope": "history only; fixture source/child bindings, real SDK filesystem operations and real Pi persistence",
+  "sdk": {
+    "package": "@anthropic-ai/claude-agent-sdk",
+    "version": "0.3.276",
+    "tarballSha256": "f65a23c8272467ec37da496c5a349b10b3b4d04f052209f239f028c5aabdc3ca",
+    "node": "v25.9.0"
+  },
+  "runner": "Bun 1.4.2",
+  "command": "BRUV_REQUIRE_CLAUDE_SDK=1 bun test tests/claude-compat-history.test.ts tests/claude-compat-transport.test.ts",
+  "result": {
+    "pass": 24,
+    "fail": 0,
+    "assertions": 104,
+    "historyTests": 9,
+    "historyAssertions": 60
+  },
+  "typecheck": "tsc --noEmit passed after generated runtime-assets preparation",
+  "proven": [
+    "root/child/nested getSessionMessages/getSubagentMessages/listSubagents",
+    "checkpoint slicing and remapped fork UUID chains",
+    "retained forkedFrom and bruv source-entry metadata",
+    "SDK-created fork import into new durable Pi session without parentSession/job restore",
+    "imported writer reopen using verified Pi entry map; subsequent new native history",
+    "fork-of-fork import",
+    "parent config-home mismatch failure; aligned explicit project key success",
+    "symlink/long-path SDK lookup",
+    "incomplete tools rejected before Pi creation"
+  ],
+  "notProven": [
+    "unchanged T3 parent home alignment",
+    "runtime model-loop bootstrap or paid model request",
+    "real manager-event binding/task projection/browser UI",
+    "unsupported selected compaction/system/attachment/progress or other content blocks"
+  ],
+  "ownership": "imported-history-only; no inherited task/question authority"
+}

@@ -4,7 +4,7 @@
 
 After the full audit, user approved implementing the full feature-preserving cleanup rather than another small plan. Keep all current product features and developer workflows. No archive, diagnostic, provider, UI feature, goal, Herdr, image resize or acceptance cuts. Dead implementation and simpler shared mechanics are in scope. Do not reduce meaningful assertions just to lower the count.
 
-Base: d80d7058a2f5481f067586fd7042fe2746cff4ae. Parent had only audit documents and the value-7 lesson uncommitted; source/tests/config were unchanged. Audit: audits/code-reduction/2026-10-02/.
+Base: d80d7058a2f5481f067586fd7042fe2746cff4ae. Parent had only audit documents and the value-7 lesson uncommitted; source/tests/config were unchanged. Audit: wisdom/audits/code-reduction/2026-10-02/.
 
 ## Workers and ownership
 
@@ -80,10 +80,10 @@ User then requested /tmp cleanup and asked whether to increase it. Removed inact
 
 Final acceptance: both corrected-PATH rebuilt-CLI SSH fixtures exited 0. Child and root receipts are in the paths above; root covers detach/reopen, ordinary pickers, lost-reply reconciliation and running shell cancellation. It does not prove owner-crash recovery or abort of an actively streaming root turn. All validation jobs are finished.
 
-Final complete-file Git counts correct the earlier truncated-output count: 143 code/config/test files, +3,295/-5,258, net **1,963 fewer lines**. Tests grow by 279 lines. Final report and scope limits: audits/code-reduction/2026-10-02/implementation.md. No feature/archive cuts, push or release. Existing values cover the lessons; no further value change was needed.
+Final complete-file Git counts correct the earlier truncated-output count: 143 code/config/test files, +3,295/-5,258, net **1,963 fewer lines**. Tests grow by 279 lines. Final report and scope limits: wisdom/audits/code-reduction/2026-10-02/implementation.md. No feature/archive cuts, push or release. Existing values cover the lessons; no further value change was needed.
 
 ## Approved archive retirement follow-up
 
 User approved removing the frozen 35,011-line T3 archive after feature-preserving cleanup. Current integrations/t3 and other experiments stay. Worker task_68bc9a0c owns removal and focused checks in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_68bc9a0c, branch bruv/remove-retired-historical-t3-archive-68bc9a0c, baseline 65e3242de4206cd8b123ffbc35c1f233bd7ce536. Parent will review scope and integrate the returned commit. Final handoff will be wisdom/quality/t3-archive-retirement.md.
 
-Archive follow-up complete: integrated worker commit 9dd2017 as 6961bef. Verified all 24 deleted paths lie under experiments/t3/production-v2/archive; 35,011 historical code/config lines removed. Worker root typecheck and 10 focused architecture/source/branding/voice-boundary tests passed. No active source changed; no full build repeated. Recovery baseline and checks are in t3-archive-retirement.md. Values unchanged: existing historical-retirement and proof guidance applies.
+Archive follow-up complete: integrated worker commit 9dd2017 as 6961bef. Verified all 24 deleted paths lie under wisdom/experiments/t3/production-v2/archive; 35,011 historical code/config lines removed. Worker root typecheck and 10 focused architecture/source/branding/voice-boundary tests passed. No active source changed; no full build repeated. Recovery baseline and checks are in t3-archive-retirement.md. Values unchanged: existing historical-retirement and proof guidance applies.

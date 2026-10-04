@@ -1,0 +1,20 @@
+✔ test model is explicitly custom provider/id, never a Claude alias (1.235691ms)
+✔ deterministic model requests actual execute and managed shell, not native packets (0.449093ms)
+✔ no completion or early-return is generated without runtime result evidence (0.234926ms)
+✔ loopback endpoint has exact API path and truthful SSE model identity (39.197594ms)
+✔ integrated protocol validator rejects absent actual implementation evidence (2.17832ms)
+✔ post-Stop cancellation launches a fresh owned job and requires confirmed exit (0.387028ms)
+✔ actual killed-job completion has its own response without a fake new prompt (0.184092ms)
+✔ exact local identity and actual normal background helper, no fabricated native frames (1.707036ms)
+✔ root background ACK requires real result; child answer requires its actual tool result (0.482535ms)
+✔ actual completion and killed-job notifications get distinct continuations (0.263569ms)
+✔ cancellation requires confirmed inspection and Stop leaves teardown with the owner (0.352243ms)
+✔ loopback SSE uses real provider tool delta and bounded explicit token accounting (34.586642ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 194.239777

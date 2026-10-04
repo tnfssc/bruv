@@ -9,7 +9,7 @@
   tests/fixtures/remote-typed-root-placement/* and this wisdom file.
 - No production files or existing child runners changed. Do not reuse canceled
   raw SSH/tmux-root design or call finite-child proof root acceptance.
-- Contract read: lead ROOT_TYPED_CONTRACT.md, src/remote/root-contract.ts,
+- Contract read: lead [historical typed-root contract](../remote-workspaces/task-placement-implementation.md#retired-root-handoffs-2026-10-04), src/remote/root-contract.ts,
   ROOT_CLIENT_INTEGRATION.md, PARENT_ROOT_ACCEPTANCE_NOTES.md.
 
 ## What has actually run
@@ -58,7 +58,7 @@ recovery proof. See fixture README for exact commands and expected artifacts.
 
 Branch remote/task-placement-root-proof-gaps extends only the existing fixture,
 runner, focused tests and wisdom. Read lead ROOT_OWNER_INTEGRATION.md and
-ROOT_TYPED_CONTRACT.md from the parent tree (owner still integrating). No production
+[historical typed-root contract](../remote-workspaces/task-placement-implementation.md#retired-root-handoffs-2026-10-04) from the parent tree (owner still integrating). No production
 changes or full acceptance run. Direct Bun 1.4.2 focused fixture tests now pass 22/22,
 including a real subprocess exercise of the discard/status-gate relay mechanics.
 

@@ -1,3 +1,4 @@
+import { scrubT3BridgeEnvironment } from "../delegation-environment";
 import { sensitiveRepoPath } from "./security";
 /** Git repository handoff. The caller owns task IDs, transport, artifact retention and serialization. */
 import { createHash } from "node:crypto";
@@ -29,7 +30,7 @@ function git(cwd: string, args: string[], input?: Buffer, allowedFailure = false
     maxBuffer: MAX,
     timeout: 60_000,
     env: {
-      ...process.env,
+      ...scrubT3BridgeEnvironment(process.env),
       GIT_NO_REPLACE_OBJECTS: "1",
       GIT_OPTIONAL_LOCKS: "0",
       GIT_TERMINAL_PROMPT: "0",
@@ -300,7 +301,7 @@ export function collectRepositoryResult(checkout: string, snapshot: string, patc
         stderr: "pipe",
         maxBuffer: MAX,
         timeout: 60_000,
-        env: { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null" },
+        env: { ...scrubT3BridgeEnvironment(process.env), GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null" },
       },
     );
     if (diff.exitCode !== 0 && diff.exitCode !== 1) throw Error("Cannot preserve remote untracked review patch");
@@ -363,7 +364,7 @@ export function integrateRepositoryResult(
     stdin: patch,
     stdout: "pipe",
     stderr: "pipe",
-    env: { ...process.env, GIT_OPTIONAL_LOCKS: "0", GIT_NO_REPLACE_OBJECTS: "1" },
+    env: { ...scrubT3BridgeEnvironment(process.env), GIT_OPTIONAL_LOCKS: "0", GIT_NO_REPLACE_OBJECTS: "1" },
   });
   if (check.exitCode !== 0) return review("patch conflict or invalid patch");
   mkdirSync(receipts, { recursive: true, mode: 0o700 });

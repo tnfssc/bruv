@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-03",
+  "registryEntry": {
+    "id": "pi-acp",
+    "name": "pi ACP",
+    "version": "0.0.34",
+    "description": "ACP adapter for pi coding agent",
+    "repository": "https://github.com/svkozak/pi-acp",
+    "authors": ["Sergii Kozak <svkozak@gmail.com>"],
+    "license": "MIT",
+    "license_url": "https://github.com/svkozak/pi-acp/blob/main/LICENSE",
+    "distribution": {
+      "npx": {
+        "package": "pi-acp@0.0.34"
+      }
+    },
+    "icon": "https://cdn.agentclientprotocol.com/registry/v1/latest/pi-acp.svg"
+  },
+  "npmTarball": "https://registry.npmjs.org/pi-acp/-/pi-acp-0.0.34.tgz",
+  "tarballSha256": "4b3bf6bc71bed2b7f43dd7fcfa1906e464828e471740da593107e4f1608f2650",
+  "tarballSha1": "9121224fe418d8b9d5975798df21bd14bb84d466",
+  "publishedBundleSha256": "324aeb8bba1228937e16b1326fb3e014e2a625b2dea549dbcd49b006cd5df6a2",
+  "compiledBruvSha256": "5da33808892cf3c28ea9816a2e2271c183ddbcd792f7a2893483a40fcde13965",
+  "node": "v25.9.0 (/usr/bin/node, actual driver and adapter runtime)",
+  "dependencies": {
+    "@agentclientprotocol/sdk": "0.26.0",
+    "cross-spawn": "7.0.6",
+    "zod": "3.25.76"
+  },
+  "dependencySetup": "Copied installed dependency tree from peer cache into owned extracted npm package; no peer files modified.",
+  "productChanges": [],
+  "proofSanitization": "Only repo absolute path replaced with <repo>; complete ACP tx/rx preserved. Provider inputs omit system instructions. All credentials are explicit synthetic fixture strings."
+}

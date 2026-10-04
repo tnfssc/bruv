@@ -1,0 +1,90 @@
+Code
+HISTORY_CHILD_CONTINUE: recall original checkpoint...
+PT
+project
+now
+Settle
+HISTORY_CHILD_CONTINUE: recall original checkpoint...
+master
+BU
+HISTORY_SEED: remember orchid-73; complete one rea...
+PT
+project
+now
+Settle
+HISTORY_SEED: remember orchid-73; complete one rea...
+master
+BU
+New thread
+LH
+launch
+now
+Settle
+New thread
+Settled (0)
+PT
+project
+/
+HISTORY_CHILD_CONTINUE: recall original checkpoint...
+Bruv UI-only acceptance (not Claude) 0.16.2 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+HISTORY_SEED: remember orchid-73; complete one real tool exchange.
+
+2:24 PM
+
+Worked for 1.3s
+2:24 PM
+T3 Code
+
+HISTORY_CHECKPOINT: original secret is orchid-73; completed tool recorded.
+
+2:24 PM
+
+Forked from conversation
+You
+
+HISTORY_CHILD_CONTINUE: recall original checkpoint; inspect current jobs/questions without creating either.
+
+2:24 PM
+
+Worked for 1.5s
+2:24 PM
+T3 Code
+
+HISTORY_CHILD_CONTEXT_OK orchid-73
+
+2:24 PM
+
+You
+
+HISTORY_AFTER_ROLLBACK: use retained child checkpoint only.
+
+2:24 PM
+
+T3 Code
+
+HISTORY_ROLLBACK_CONTEXT_OK orchid-73
+
+2:24 PM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+BU
+Local deterministic acceptance (not Claude)
+Full access
+project
+Open in editor
+Add project script
+master
+Publish repository
+Changes
++0
+-0
+Lineage
+HISTORY_SEED: remember orchid-73; complete one rea...
+Done
+Toggle Sidebar

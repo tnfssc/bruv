@@ -1,0 +1,13 @@
+{
+  "base": "b1649b54",
+  "officialT3Version": "0.0.46-nightly.20261003.2623",
+  "officialT3Sha256": "2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795",
+  "connectorSha256": "fa50fecf8f9cf24c939206c269cb56c918d1c1b51f82b65f8f611846888dbdf6",
+  "normalWorkerSha256": "5da33808892cf3c28ea9816a2e2271c183ddbcd792f7a2893483a40fcde13965",
+  "effectVersion": "4.0.0-rc.115",
+  "effectTarballUrl": "https://registry.npmjs.org/effect/-/effect-4.0.0-rc.115.tgz",
+  "effectTarballSha256": "96ddab67e773a3a3153a08a6eec0c8f6b6927e15db29f3752f5f503c9158fc78",
+  "t3EffectExistingPatchHash": "0dfc4bb8ebd80fb3e06b91ef61346f5259517ab0f2437644fe95ae531084b1f5",
+  "diagnosticRecheckSha256": "7dc2db5a13d734c70685e3591999e378e3be09d97a25c286efb6e99ecb4e0d24",
+  "nativeAcceptanceFixed": false
+}

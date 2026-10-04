@@ -1,0 +1,96 @@
+{
+  "binary": "/home/tnfssc/Code/bruv/dist/bruv",
+  "sha256": "3a4fe4647c7413cca22ba5e77fa19feac472b63601dc980a2e6e0e531cd6748c",
+  "cases": {
+    "rows": {
+      "status": "passed",
+      "timings": {
+        "startup-ready": 0.514,
+        "settled": 1.13,
+        "group-open-rows": 0.002,
+        "first-detail": 0.002,
+        "two-independent-details": 0.002,
+        "first-closed-second-open": 0.002,
+        "group-closed": 0.003,
+        "group-reopened-independent": 0.002,
+        "activity-picker": 0.002,
+        "activity-cancelled": 0.002,
+        "ctrl-o-expanded-ready": 0.002,
+        "ctrl-o-all": 0.002,
+        "ctrl-o-collapsed": 0.002,
+        "after-reload": 0.105,
+        "reloaded-picker": 0.003,
+        "reopened": 0.515,
+        "reopened-picker": 0.002,
+        "activity-select-ready": 0.002,
+        "activity-selected": 0.002
+      }
+    },
+    "lifecycle": {
+      "status": "passed",
+      "timings": {
+        "startup-ready": 0.514,
+        "lifecycle-running": 0.31,
+        "attention-wake": 1.409,
+        "late-complete": 0.003,
+        "late-fail": 0.002,
+        "late-cancel": 0.003,
+        "lifecycle-summary": 0.002,
+        "lifecycle-child-rows": 0.002,
+        "task-detail": 0.002,
+        "task-detail-hidden": 0.003,
+        "task-detail-restored": 0.002,
+        "lifecycle-expanded-ready": 0.002,
+        "lifecycle-details": 0.002
+      }
+    },
+    "question": {
+      "status": "passed",
+      "timings": {
+        "startup-ready": 0.514,
+        "pending-question": 0.311,
+        "pending-reopened": 0.514,
+        "question-picker": 0.105,
+        "answer-picker": 0.002,
+        "answer-saved-after-reopen": 0.002,
+        "resume-command-ready": 0.002,
+        "answer-used": 0.309,
+        "answered-reopened": 0.513
+      }
+    },
+    "long_thread": {
+      "status": "passed",
+      "timings": {
+        "startup-ready": 0.514,
+        "long-loaded": 0.72,
+        "long-startup": 0.8,
+        "long-draft": 0.104,
+        "oldest": 0.002,
+        "oldest-rows": 0.106,
+        "oldest-detail": 0.105,
+        "long-bottom": 0.002,
+        "long-expanded-anchor": 0.105,
+        "long-last-detail": 0.002,
+        "long-recollapsed": 0.105,
+        "long-narrow": 0.002,
+        "long-reopened": 0.719,
+        "long-reopened-expanded-ready": 0.105,
+        "long-reopened-detail": 0.003
+      }
+    }
+  },
+  "visual_review": "Parent inspected final-build row-only disclosure, independent second detail, grouped lifecycle outcomes and visible pending question frames; header ANSI uses padded dim theme text with no chevron.",
+  "limits": [
+    "Loopback provider/Linux tmux only",
+    "ANSI files require visual theme review",
+    "No typed progress event, paid provider, remote, clipboard or web proof",
+    "Long-thread timings are observations, not a benchmark"
+  ],
+  "reviewed_frames": [
+    "rows/frames/group-open-rows.txt",
+    "rows/frames/first-closed-second-open.txt",
+    "lifecycle/frames/lifecycle-summary.txt",
+    "question/frames/pending-reopened.txt",
+    "rows/frames/settled.ansi"
+  ]
+}

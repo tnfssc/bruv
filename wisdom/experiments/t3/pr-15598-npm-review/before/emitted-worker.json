@@ -1,0 +1,10 @@
+[
+  {
+    "file": "binCli-DZ5IwGw5.mjs",
+    "line": 141338,
+    "excerpt": "put.sessionId,\n\t\t\t\t\tJSON.stringify(input.options)\n\t\t\t\t];\n\t\t\t\tconst workerArgs = NodeSea.isSea() ? [\"__claude-history\", ...args] : [NodeUrl.fileURLToPath(new URL(import.meta.url.endsWith(\".ts\") ? \"../../claude-history-worker.ts\" : \"./claude-history-worker.mjs\", import.meta.url)), ...args];\n\t\t\t\tconst child = yield* spawner.spawn(make$205(process.execPath, workerArgs, {\n\t\t\t\t\tenv: input.environment,\n\t\t\t\t\textendEnv: false\n\t\t\t\t}));\n\t\t\t\tconst [stdout, stderr, exitCode] = yield* all$1([\n\t\t\t\t\tc",
+    "workerUrl": "file:///home/tnfssc/.bruv/upstream-preparation/t3-pr-15598-npm-review/apps/server/dist/claude-history-worker.mjs",
+    "workerExists": true,
+    "sha256": "b655830085e1ee1a81bb4950c9d6b26bf00e0163ba9c181aca52041d601a39ac"
+  }
+]

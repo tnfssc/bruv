@@ -1,0 +1,112 @@
+{
+  "starts": [
+    {
+      "type": "system",
+      "session_id": "23653860-a5db-41ec-b551-afe5a8690c20",
+      "uuid": "71d2ebf7-62b3-8ba8-be46-b6aaf5b225dc",
+      "task_id": "bruv-0a6c065b-b883-807d-ae70-d26e6a37cc86",
+      "tool_use_id": "agent_086d5532e15371ae801d91ddff61fa72",
+      "subtype": "task_started",
+      "task_type": "local_agent",
+      "description": "Actual local normal acceptance worker",
+      "is_backgrounded": true,
+      "prompt": "CHILD_LOCAL_REAL: execute the local acceptance tool and return its actual result.",
+      "subagent_type": "normal",
+      "spawn_depth": 1
+    },
+    {
+      "type": "system",
+      "session_id": "1d56dffd-360d-4794-a918-04659b827e5a",
+      "uuid": "ac4efcfe-9d47-80a7-a684-a89b1592611d",
+      "task_id": "bruv-e898b8fc-f246-888f-92f3-136e450de800",
+      "tool_use_id": "agent_67769abfad3d686ca7914ed967c0b5ed",
+      "subtype": "task_started",
+      "task_type": "local_agent",
+      "description": "Actual local cancelled normal worker",
+      "is_backgrounded": true,
+      "prompt": "CHILD_CANCEL_REAL: run the actual waiting child tool.",
+      "subagent_type": "normal",
+      "spawn_depth": 1
+    },
+    {
+      "type": "system",
+      "session_id": "5af6d08d-bb25-4375-8fa6-43443d66fe06",
+      "uuid": "45c6a5ac-8288-8ee6-b560-ab7c96573530",
+      "task_id": "bruv-38c57971-d3d0-8f87-bf02-14ae4851753d",
+      "tool_use_id": "agent_918b3abe0fe210aaef7a033cd60e98f4",
+      "subtype": "task_started",
+      "task_type": "local_agent",
+      "description": "Actual local Stop-owned normal worker",
+      "is_backgrounded": true,
+      "prompt": "CHILD_STOP_REAL: run the actual waiting child tool.",
+      "subagent_type": "normal",
+      "spawn_depth": 1
+    }
+  ],
+  "ends": [
+    {
+      "type": "system",
+      "session_id": "23653860-a5db-41ec-b551-afe5a8690c20",
+      "uuid": "4be4f207-db32-8ae3-9c55-c8fb01e2b757",
+      "task_id": "bruv-0a6c065b-b883-807d-ae70-d26e6a37cc86",
+      "tool_use_id": "agent_086d5532e15371ae801d91ddff61fa72",
+      "subtype": "task_notification",
+      "status": "completed",
+      "summary": "CHILD_ANSWER_REAL",
+      "output_file": "",
+      "usage": {
+        "total_tokens": 36,
+        "tool_uses": 1,
+        "duration_ms": 3212
+      }
+    },
+    {
+      "type": "system",
+      "session_id": "1d56dffd-360d-4794-a918-04659b827e5a",
+      "uuid": "87a94f5b-7d16-8f79-aea1-c0f315ff04e1",
+      "task_id": "bruv-e898b8fc-f246-888f-92f3-136e450de800",
+      "tool_use_id": "agent_67769abfad3d686ca7914ed967c0b5ed",
+      "subtype": "task_notification",
+      "status": "stopped",
+      "summary": "[2026-10-04T02:57:35.333Z] Session started\n[2026-10-04T02:57:35.348Z] agent_start\n[2026-10-04T02:57:35.348Z] turn_start\n[2026-10-04T02:57:35.391Z] Tool started: execute\n[2026-10-04T02:57:35.391Z] code: const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"/tmp/bruv-native-acceptance-beEUOU/state/cancel.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"/tmp/bruv-native-acceptance-beEUOU/state/cancel.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");\n",
+      "output_file": "",
+      "usage": {
+        "total_tokens": 18,
+        "tool_uses": 1,
+        "duration_ms": 1486
+      }
+    }
+  ],
+  "agents": [
+    {
+      "type": "tool_use",
+      "id": "agent_086d5532e15371ae801d91ddff61fa72",
+      "name": "Agent",
+      "input": {
+        "prompt": "CHILD_LOCAL_REAL: execute the local acceptance tool and return its actual result.",
+        "subagent_type": "normal",
+        "description": "Actual local normal acceptance worker"
+      }
+    },
+    {
+      "type": "tool_use",
+      "id": "agent_67769abfad3d686ca7914ed967c0b5ed",
+      "name": "Agent",
+      "input": {
+        "prompt": "CHILD_CANCEL_REAL: run the actual waiting child tool.",
+        "subagent_type": "normal",
+        "description": "Actual local cancelled normal worker"
+      }
+    },
+    {
+      "type": "tool_use",
+      "id": "agent_918b3abe0fe210aaef7a033cd60e98f4",
+      "name": "Agent",
+      "input": {
+        "prompt": "CHILD_STOP_REAL: run the actual waiting child tool.",
+        "subagent_type": "normal",
+        "description": "Actual local Stop-owned normal worker"
+      }
+    }
+  ]
+}

@@ -22,8 +22,21 @@ function oneLine(text: string): string {
 function wrappedRows(text: string, width: number): string[] {
   return width < 1 || !text ? [] : wrapTextWithAnsi(plain(text), width);
 }
-function component(render: (width: number) => string[]): Component {
-  return { render, invalidate() {} };
+function component(render: (width: number) => string[], settled = false): Component {
+  if (!settled) return { render, invalidate() {} };
+  // A completed result is immutable until Pi replaces its component. Keep only
+  // the last width; resize and native invalidation (including theme changes)
+  // rerender it. Spinner/call previews must still observe their mutable state.
+  let cached: { width: number; lines: string[] } | undefined;
+  return {
+    render(width) {
+      if (!cached || cached.width !== width) cached = { width, lines: render(width) };
+      return cached.lines;
+    },
+    invalidate() {
+      cached = undefined;
+    },
+  };
 }
 function padded(component: Component, padding: number): Component {
   if (padding <= 0) return component;
@@ -186,7 +199,7 @@ export function executeOutputPreview(
       const warning = details?.outputArtifactErrors ? "⚠ couldn’t save full output" : "";
       const suffix = [reason, warning].filter(Boolean).join(" — ");
       return [truncateToWidth(row + (suffix ? " — " + theme.fg(failed ? "error" : "warning", suffix) : ""), width)];
-    }),
+    }, !isPartial),
     padding,
   );
 }

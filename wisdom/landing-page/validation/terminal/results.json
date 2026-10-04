@@ -1,0 +1,14 @@
+{
+  "browser": "153.0.8010.12",
+  "checks": [
+    "Actual Ghostty WASM fetched locally; one canvas; semantic content not visible in JS mode; no third-party requests or socket.",
+    "Mouse cell hit changes page; Escape/browser history and Tab/Enter, numbered and help navigation.",
+    "320/390/768/1440 viewport reflow, no cropped canvas or horizontal page; mouse routes after resize; End/Home/wheel content scrolling.",
+    "Both terminal gallery links open decoded real PNG viewer pages and browser Back returns; Chromium touch swipe scrolls and cell tap navigates at DPR 2.",
+    "Real install/source destination navigation (intercepted by test); keyboard A opens plain HTML and browser Back returns.",
+    "No-JS semantic content equals shared terminal data, real links, heading navigation; automated axe text-view check (not a screen-reader audit).",
+    "Self-contained JS and WASM also load under a static deployment subpath.",
+    "Configurable canonical and sitemap; unset URL does not invent production domain; no browser exceptions."
+  ],
+  "errors": []
+}

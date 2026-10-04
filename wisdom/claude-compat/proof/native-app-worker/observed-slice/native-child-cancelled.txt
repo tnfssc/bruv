@@ -1,0 +1,83 @@
+Code
+APP_DELEGATE_DONE: delegate to the explicitly conf...
+PT
+project
+Done
+Settle
+APP_DELEGATE_DONE: delegate to the explicitly conf...
+BL
+Settled (0)
+PT
+project
+/
+APP_DELEGATE_DONE: delegate to the explicitly conf...
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+APP_DELEGATE_DONE: delegate to the explicitly configured normal native provider.
+
+6:59 AM
+
+Worked for 1.6s
+6:59 AM
+T3 Code
+
+APP_TASK_PENDING_REAL_done
+
+6:59 AM
+
+Delegated task "Native normal done" finished
+
+Open subagent
+6:59 AM
+Worked for 198ms
+6:59 AM
+T3 Code
+
+APP_COMPLETION_ACK_REAL
+
+6:59 AM
+
+You
+
+APP_DELEGATE_CANCEL: create a real normal native child to cancel.
+
+6:59 AM
+
+Worked for 345ms
+6:59 AM
+T3 Code
+
+APP_TASK_PENDING_REAL_cancel
+
+6:59 AM
+
+You
+
+APP_CANCEL: cancel and inspect the real app-owned task.
+
+6:59 AM
+
+T3 Code
+
+APP_CANCEL_CONFIRMED_REAL
+
+6:59 AM
+
+Worked for 706ms
+6:59 AM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+BL
+Local deterministic acceptance (not Claude)
+Full access
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

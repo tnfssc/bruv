@@ -1,0 +1,127 @@
+--- .cache/t3-official-2644/source/previous/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts	2026-10-04 09:10:27.429359424 +0400
++++ .cache/t3-official-2644/source/current/apps/server/src/orchestration-v2/Adapters/ClaudeAdapterV2.ts	2026-10-04 09:10:27.404359857 +0400
+@@ -329,0 +330,3 @@
++  readonly setPermissionMode: (
++    mode: PermissionMode,
++  ) => Effect.Effect<void, ClaudeAgentSdkQueryRunnerError>;
+@@ -472,0 +476,8 @@
++        readonly type: "query.set_permission_mode";
++        readonly mode: PermissionMode;
++      };
++    }
++  | {
++      readonly direction: "outgoing";
++      readonly stage: "decoded";
++      readonly payload: {
+@@ -672,0 +684,16 @@
++          setPermissionMode: (mode) =>
++            Effect.tryPromise({
++              try: () => queryRuntime.setPermissionMode(mode),
++              catch: (cause) => queryRunnerError(cause, "setPermissionMode"),
++            }).pipe(
++              Effect.tap(() =>
++                logProtocolEvent({
++                  direction: "outgoing",
++                  stage: "decoded",
++                  payload: {
++                    type: "query.set_permission_mode",
++                    mode,
++                  },
++                }),
++              ),
++            ),
+@@ -2690,0 +2718,5 @@
++  // The mode this process was opened in, and the mode the CLI last reported
++  // (init and status frames). Claude changes the latter itself through
++  // EnterPlanMode.
++  readonly openedPermissionMode: PermissionMode;
++  permissionMode: PermissionMode;
+@@ -3676 +3708 @@
+-            "running" | "completed" | "failed"
++            "running" | "completed" | "failed" | "interrupted" | "cancelled"
+@@ -4743 +4775,3 @@
+-              status: "failed",
++              // A stopped turn cuts its open tools short; only a turn that
++              // ended on its own leaves them failed.
++              status: input.status === "completed" ? "failed" : input.status,
+@@ -6844,3 +6878,9 @@
+-            (isClaudeProviderContinuationTurn(turnInput) ||
+-              (existing.queryPolicyKey === queryPolicyKey &&
+-                existing.selectionKey === compiledSelection.queryIdentity))
++            isClaudeProviderContinuationTurn(turnInput)
++          ) {
++            return existing;
++          }
++          if (
++            existing !== null &&
++            existing.nativeThreadId === nativeThreadId &&
++            existing.queryPolicyKey === queryPolicyKey &&
++            existing.selectionKey === compiledSelection.queryIdentity
+@@ -6847,0 +6888,7 @@
++            // Claude can switch its own mode mid-session (EnterPlanMode), and
++            // a denied ExitPlanMode leaves it there. Put the live process back
++            // in the thread's mode before the next prompt.
++            if (existing.permissionMode !== existing.openedPermissionMode) {
++              yield* existing.query.setPermissionMode(existing.openedPermissionMode);
++              existing.permissionMode = existing.openedPermissionMode;
++            }
+@@ -6889,0 +6937,21 @@
++          const queryOptions = makeClaudeQueryOptions({
++            modelSelection: turnInput.modelSelection,
++            nativeThreadId,
++            resume: shouldResume,
++            ...(resumeSessionAt === undefined ? {} : { resumeSessionAt }),
++            cwd: turnInput.runtimePolicy.cwd,
++            attachmentsDir,
++            settings: adapterOptions.settings,
++            environment: adapterOptions.environment,
++            tools: queryPolicy.tools ?? CLAUDE_CODE_PRESET_TOOLS,
++            ...mcpOverrides,
++            permissionMode: queryPolicy.permissionMode,
++            ...(queryPolicy.allowDangerouslySkipPermissions === undefined
++              ? {}
++              : {
++                  allowDangerouslySkipPermissions: queryPolicy.allowDangerouslySkipPermissions,
++                }),
++            canUseTool,
++            onUserDialog,
++            supportedDialogKinds: ["resume_return"],
++          });
+@@ -6894,21 +6962 @@
+-              options: makeClaudeQueryOptions({
+-                modelSelection: turnInput.modelSelection,
+-                nativeThreadId,
+-                resume: shouldResume,
+-                ...(resumeSessionAt === undefined ? {} : { resumeSessionAt }),
+-                cwd: turnInput.runtimePolicy.cwd,
+-                attachmentsDir,
+-                settings: adapterOptions.settings,
+-                environment: adapterOptions.environment,
+-                tools: queryPolicy.tools ?? CLAUDE_CODE_PRESET_TOOLS,
+-                ...mcpOverrides,
+-                permissionMode: queryPolicy.permissionMode,
+-                ...(queryPolicy.allowDangerouslySkipPermissions === undefined
+-                  ? {}
+-                  : {
+-                      allowDangerouslySkipPermissions: queryPolicy.allowDangerouslySkipPermissions,
+-                    }),
+-                canUseTool,
+-                onUserDialog,
+-                supportedDialogKinds: ["resume_return"],
+-              }),
++              options: queryOptions,
+@@ -6960,0 +7009,2 @@
++            openedPermissionMode: queryOptions.permissionMode,
++            permissionMode: queryOptions.permissionMode,
+@@ -6970 +7020,10 @@
+-            Stream.runForEach((message) => handleSdkMessage({ query: querySession, message })),
++            Stream.runForEach((message) => {
++              if (
++                message.type === "system" &&
++                (message.subtype === "init" || message.subtype === "status") &&
++                message.permissionMode !== undefined
++              ) {
++                context.permissionMode = message.permissionMode;
++              }
++              return handleSdkMessage({ query: querySession, message });
++            }),

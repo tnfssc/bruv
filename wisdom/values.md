@@ -4,6 +4,8 @@ Use these to choose what to do. Not rules set in stone. User's words come first.
 
 ## 1. Finish what user needs
 
+Treat the requested medium and interaction as part of the contract. A visual imitation is not the requested mechanism. Prove that mechanism early; do not replace it with an easier one and rename the result. The purpose matters too: the right renderer with the wrong content still misses the request. Check what a new user can understand and do, not only what the screen draws. See [terminal website correction](landing-page/README.md) and [product-story correction](landing-page/product-story.md).
+
 One piece works? Whole thing may still fail. Check what user does and gets back. Check how work recovers and passes to next person. Package or parts working together is the risk? Test built thing. Code copied or adapted into a shipped layer? Run its key checks there too. Passing tests on the source copy do not prove the shipped copy. Build-size and file checks do not prove startup. Run the entry point in its shipped form. Small edit? No need costly live test without reason. For voice or other device work, test the user’s platform and the real interaction. A protocol test or a quiet CI runner does not prove the experience. Automation meant to produce a PR or other output? Run it on the real platform and review that output. A green no-change run proves only that path. Use a labeled fixture if no real change exists; do not call it product proof.
 
 From: [hosted PR acceptance](dependencies/hosted-pr-acceptance.md), [packaging](packaging/single-binary-packaging.md), [live acceptance](releases/final-live-validation.md), [lifecycle acceptance](t3/t3-v2-production-lifecycle-final.md), [Live redesign](live/redesign-research.md), [web live shipped-copy review](web/live-voice-port.md), [released browser startup](t3/v01512-browser-startup.md).
@@ -11,6 +13,8 @@ From: [hosted PR acceptance](dependencies/hosted-pr-acceptance.md), [packaging](
 ## 2. Say what proof shows
 
 Say what we saw, what we guess, what we skipped, and what still fails. Many tests pass but needed path fails? Still not done. Find out if fault is in code, test, or setup. Run checks that answer real question. Tests of our own guard do not prove an upstream limit. Check the upstream path before adding a restriction. A speed goal is not permission to lower the expected confidence or measure only an easy case. Skip work only when it is irrelevant or validly reused; moving needed checks elsewhere is a changed contract, not a speedup. Compare real user work, coverage, and total time. No repeat work just to look careful.
+
+For UI latency, measure input echo and animation cadence in the built app on a realistically sized saved session. A fast child renderer or an eventual frame does not prove responsiveness. This matters for speed claims, not every small UI edit. See [long-thread acceptance correction](tasks-ui/full-frame-latency-followup.md).
 
 From: [resource judgment](resources/memory-resource-judgment.md), [harness correction](packaging/packaged-probe-final-fix.md), [release verification preference](releases/release-verification-preference.md), [CI intent correction](ci/full-path-simplification.md), [checkpoint model switch](native/checkpoint-model-switch-incident.md).
 

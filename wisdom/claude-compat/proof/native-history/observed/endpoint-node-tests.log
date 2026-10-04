@@ -1,0 +1,20 @@
+✔ seed requests an actual tool, not canned native frames (48.001371ms)
+✔ child rejects missing original checkpoint context (13.646096ms)
+✔ child rejects later root context even with complete checkpoint (6.731118ms)
+✔ rollback rejects discarded child context (6.995467ms)
+✔ wrong model identity fails instead of paid fallback (6.117791ms)
+✔ background summary is answered without executing tools or continuing history (5.213164ms)
+✔ ordinary unexpected prompts still fail rather than being summarized (4.972107ms)
+✔ post-replay verifier rejects marker-only claims without real tool calls (1.383855ms)
+✔ later child turn rejects an unhydrated new thread (5.21152ms)
+✔ verifier requires paired root and inspection outputs, not only markers (1.804736ms)
+✔ verifier refuses inherited child ownership despite success marker (1.080864ms)
+✔ imported pair is verified before legitimate later context compaction (0.440948ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 251.896212

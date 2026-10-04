@@ -129,3 +129,11 @@ They make no model-quality claim. Real-model goal smoke fixture needs
 `DIE_RUN_LLM_TESTS=1`. It makes paid requests only when directly enabled. It records
 limited run artifact. Pass means one configured model completed one harmless temporary-
 file case. It does not show any goal will finish right.
+
+## Historical transport capture
+
+The original offline SDK 0.87.1 provider capture is in
+[goal-transport-marker-audit.txt](goal-transport-marker-audit.txt). It records
+the old marker leak, the clean dispatch after the fix and literal-lookalike
+preservation. Moved from the root evidence/ folder on 2026-10-04 without
+changing its bytes. It is historical proof, not a current provider run.

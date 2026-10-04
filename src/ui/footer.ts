@@ -1,3 +1,4 @@
+import { getDiskBackedEntryMetadata } from "../history/session-manager";
 import { VOICE_COST_ENTRY } from "../live/cost";
 import { SessionCostTracker } from "../tasks/session-costs";
 import { sessionIdentity } from "../session/identity";
@@ -66,7 +67,7 @@ type FooterHistory = {
   write: number;
   cost: number;
   cacheHit: number | undefined;
-  unavailableFastCost: boolean;
+  hasFastCost: boolean;
   unknownVoiceCost: boolean;
 };
 
@@ -89,15 +90,33 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
     getLeafId?: () => string | null;
   };
   // The pinned SDK (and our disk-backed adapter) keeps an append-only metadata
-  // array. Its identity/count catches appends followed by a branch back to the
-  // same leaf between renders. Unknown manager implementations stay uncached.
+  // array. Its identity catches reloads. Disk-backed totals use the last usage
+  // entry index; native arrays keep the full count/leaf key. Unknown managers stay uncached.
   const fileEntries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
   const cacheable =
     Array.isArray(fileEntries) &&
     typeof identity.getSessionId === "function" &&
     typeof identity.getLeafId === "function";
   const sessionId = cacheable ? identity.getSessionId() : undefined;
-  const leafId = cacheable ? identity.getLeafId() : undefined;
+  const metadata = getDiskBackedEntryMetadata(manager as object);
+  // Totals cover all branches. Cache observations and session labels add no usage.
+  const leafId = metadata ? null : cacheable ? identity.getLeafId() : undefined;
+  let entryCount = Array.isArray(fileEntries) ? fileEntries.length : 0;
+  if (metadata) {
+    entryCount = metadata.length;
+    while (entryCount > 0) {
+      const entry = metadata[entryCount - 1]!;
+      if (
+        (entry.type === "message" && ["assistant", "toolResult"].includes(entry.messageRole ?? "")) ||
+        entry.type === "compaction" ||
+        entry.type === "branch_summary" ||
+        (entry.type === "custom" &&
+          ["bruv-compaction-attempt", "bruv-native-fast-mode", VOICE_COST_ENTRY].includes(entry.customType ?? ""))
+      )
+        break;
+      entryCount--;
+    }
+  }
   const cached = cacheable ? footerHistoryCache.get(manager as object) : undefined;
   if (
     cacheable &&
@@ -105,7 +124,7 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
     cached.sessionId === sessionId &&
     cached.leafId === leafId &&
     cached.entries.deref() === fileEntries &&
-    cached.entryCount === fileEntries.length
+    cached.entryCount === entryCount
   )
     return cached.value;
 
@@ -115,7 +134,7 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
     write = 0,
     cost = 0;
   let cacheHit: number | undefined;
-  let unavailableFastCost = false;
+  let hasFastCost = false;
   let unknownVoiceCost = false;
   // Include pre-compaction usage, nested tool usage, and summaries, like Pi.
   for (const entry of manager.getEntries()) {
@@ -138,7 +157,7 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
       typeof entry.data === "object" &&
       (entry.data as { enabled?: unknown }).enabled === true
     ) {
-      unavailableFastCost = true;
+      hasFastCost = true;
     }
     if (entry.type === "custom" && entry.customType === VOICE_COST_ENTRY) {
       const data = entry.data as { cost?: number; unknown?: boolean } | undefined;
@@ -153,7 +172,7 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
       cost += usage.cost.total;
     }
   }
-  const value = { input, output, read, write, cost, cacheHit, unavailableFastCost, unknownVoiceCost };
+  const value = { input, output, read, write, cost, cacheHit, hasFastCost, unknownVoiceCost };
   if (cacheable) {
     // This is deliberately a single current-position entry, not a map by leaf. A
     // branch can revisit an old leaf after more entries were appended, so reusing an
@@ -163,16 +182,16 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
       leafId: leafId!,
       // Never keep an obsolete native in-memory entries array alive after reset.
       entries: new WeakRef(fileEntries),
-      entryCount: fileEntries.length,
+      entryCount,
       value,
     });
   }
   return value;
 }
 
-function hasUnavailableFastCost(history: FooterHistory, statuses: ReadonlyMap<string, string>): boolean {
+function hasFastEstimate(history: FooterHistory, statuses: ReadonlyMap<string, string>): boolean {
   return (
-    statuses.get("bruv-native-fast")?.includes("cost estimate unavailable") === true || history.unavailableFastCost
+    (!!statuses.get("bruv-native-fast") && !statuses.get("bruv-native-fast")?.endsWith("off")) || history.hasFastCost
   );
 }
 
@@ -211,13 +230,13 @@ export function renderDetailedFooter(
   if ((read || write) && cacheHit !== undefined) stats.push(`CH${cacheHit.toFixed(1)}%`);
   const model = ctx.model;
   const statuses = data.getExtensionStatuses();
-  const fastCostUnavailable = hasUnavailableFastCost(history, statuses);
+  const fastEstimate = hasFastEstimate(history, statuses);
   const subscription = model && (model.provider === "kimi-coding" || ctx.modelRegistry.isUsingOAuth(model));
-  if (fastCostUnavailable) stats.push("$? (fast billing)");
-  else if (cost || descendantCost || subscription || history.unknownVoiceCost || statuses.get("bruv-live"))
+  if (cost || descendantCost || subscription || history.unknownVoiceCost || statuses.get("bruv-live") || fastEstimate)
     stats.push(
       "$" +
         (cost + descendantCost).toFixed(3) +
+        (fastEstimate ? "~ (catalog estimate)" : "") +
         (history.unknownVoiceCost
           ? "+? (voice usage incomplete)"
           : statuses.get("bruv-live")
@@ -295,17 +314,9 @@ export function renderCompactFooter(
   const questions = questionLabel(false);
   const shortQuestions = questionLabel(true);
   const mode = singleLine(statuses.get("bruv-mode") ?? "");
-  // Native fast mode owns the bolt badge; it is provider status, never an editor spinner.
+  // The bolt reports the selected mode, like Codex; it is not delivery confirmation.
   const nativeFast = singleLine(statuses.get("bruv-native-fast") ?? "");
-  const shortNativeFast = nativeFast.includes("confirmed")
-    ? "fast✓"
-    : nativeFast.includes("downgraded")
-      ? "std"
-      : nativeFast.endsWith("off")
-        ? "off"
-        : nativeFast
-          ? "fast?"
-          : "";
+  const shortNativeFast = nativeFast ? (nativeFast.endsWith("off") ? "off" : "fast") : "";
   const live = singleLine(statuses.get("bruv-live") ?? "");
   const remote = singleLine(statuses.get("bruv-remote") ?? "");
   const otherCount = [...statuses.keys()].filter(
@@ -320,14 +331,10 @@ export function renderCompactFooter(
   ).length;
   const extra = otherCount ? `+${otherCount} status` : "";
   const history = readFooterHistory(ctx);
-  const knownCost = "$" + (history.cost + descendantCost).toFixed(3);
-  const cost = hasUnavailableFastCost(history, statuses)
-    ? "$?"
-    : history.unknownVoiceCost
-      ? knownCost + "+?"
-      : statuses.get("bruv-live")
-        ? knownCost + "~"
-        : knownCost;
+  // Pi supplies a token-price catalog estimate, not account usage.
+  // Neither response tiers nor SDK pricing prove delivery or ChatGPT credits.
+  const knownCost = "$" + (history.cost + descendantCost).toFixed(3) + (hasFastEstimate(history, statuses) ? "~" : "");
+  const cost = history.unknownVoiceCost ? knownCost + "+?" : statuses.get("bruv-live") ? knownCost + "~" : knownCost;
   const percent = ctx.getContextUsage()?.percent;
   const percentText = percent == null ? "?" : `${percent.toFixed(1).replace(/\.0$/, "")}%`;
   const context = (label: string) =>

@@ -16,9 +16,19 @@ import themeSchema from "../runtime-assets/theme/theme-schema.json" with { type:
 import { withBruvSystemPrompt } from "./system-prompt";
 import { formatThrownValue } from "./typescript/error-diagnostic";
 import { INTERNAL_TYPESCRIPT_RUNNER_ARG, runTypeScriptFromStdin } from "./typescript/runner";
-import { updateBruv } from "./update";
+import { isCompiledInvocation, updateBruv } from "./update";
 
 const cliArgs = process.argv.slice(2);
+// Enter the connector before normal CLI bootstrap. Child work still starts this
+// executable without the subcommand and uses the ordinary CLI path.
+if (cliArgs[0] === "claude-compat") {
+  // This entry is already the normal binary, even under a release target name.
+  // Preserve explicit overrides; source Bun entrypoints still use connector defaults.
+  if (isCompiledInvocation()) process.env.BRUV_CLAUDE_COMPAT_BRUV_PATH ??= process.execPath;
+  const { runConnector } = await import("./claude-compat/cli");
+  process.exit(await runConnector(cliArgs.slice(1)));
+}
+
 // Hidden offline transport diagnostic. No normal CLI path reaches this branch.
 if (cliArgs[0] === "--offline-openai-transport-probe") {
   if (cliArgs.length !== 1 || process.env.BRUV_OFFLINE_OPENAI_TRANSPORT_PROBE !== "loopback-fake-key") {
@@ -38,28 +48,29 @@ if (cliArgs[0] === "--live-self-test") {
 if (cliArgs[0] === "update") {
   if (cliArgs.length === 2 && ["--help", "-h"].includes(cliArgs[1]!)) {
     console.log(
-      "Usage: bruv update\n\nInstall the latest stable release of this executable after SHA256 verification.",
+      "Usage: bruv update [--check]\n\nUpdate normal bruv and sibling bruv-claude-compat together after SHA256 and version checks.\nA compatible normal-only install gains the connector. --check reports without downloading or replacing files.\nStop active Bruv/T3 sessions first. Does not install Claude or T3; user data is unchanged.",
     );
     process.exit(0);
   }
-  if (cliArgs.length !== 1) {
-    console.error("Usage: bruv update");
+  if (cliArgs.length !== 1 && !(cliArgs.length === 2 && cliArgs[1] === "--check")) {
+    console.error("Usage: bruv update [--check]");
     process.exit(1);
   }
   try {
-    console.log("Checking for bruv updates...");
+    console.log("Checking for Bruv pair updates...");
     const result = await updateBruv({
       currentVersion: bruvPackage.version,
-      onDownload: (version) => console.log("Downloading bruv " + version + "..."),
+      check: cliArgs[1] === "--check",
+      onDownload: (version) => console.log("Downloading bruv and bruv-claude-compat " + version + "..."),
     });
     console.log(
       result.status === "updated"
-        ? "Updated bruv to " +
-            result.version +
-            ". Restart running bruv sessions and web servers to fully use the update."
-        : result.status === "current"
-          ? "bruv is already current (" + result.version + ")"
-          : "bruv is newer than the latest release (" + result.version + ")",
+        ? "Updated bruv and bruv-claude-compat to " + result.version + ". Restart Bruv/T3 sessions."
+        : result.status === "available"
+          ? "Bruv pair update/repair available (" + result.version + "). Run bruv update to install both."
+          : result.status === "current"
+            ? "bruv and bruv-claude-compat are current (" + result.version + ")"
+            : "bruv and bruv-claude-compat are newer than the latest release (" + result.version + ")",
     );
     process.exit(0);
   } catch (error) {
@@ -218,12 +229,24 @@ const [
   import("./live/extension"),
   import("./remote/extension"),
 ]);
-const [{ installQuietStartup, installStartupEditor }, { installConversationDensity }, { installQuietToolUi }] =
-  await Promise.all([import("./ui/startup"), import("./ui/conversation-density"), import("./ui/quiet-tool-ui")]);
+const [
+  { installQuietStartup, installStartupEditor },
+  { installConversationDensity },
+  { installQuietToolUi },
+  { installSettledExecuteRendering },
+] = await Promise.all([
+  import("./ui/startup"),
+  import("./ui/conversation-density"),
+  import("./ui/quiet-tool-ui"),
+  import("./ui/settled-execute-render"),
+]);
 const restoreStartupSettings = installQuietStartup();
 const restoreStartupEditor = installStartupEditor();
 const restoreQuietToolUi = installQuietToolUi();
+const restoreSettledExecuteRendering = installSettledExecuteRendering();
 const restoreConversationDensity = installConversationDensity();
+const { installRollingActivity } = await import("./ui/rolling-activity");
+const restoreRollingActivity = installRollingActivity();
 
 function filterHelp(text: string): string {
   if (!text.includes("Usage:") || !text.includes("Options:")) return text;
@@ -236,7 +259,10 @@ function filterHelp(text: string): string {
       continue;
     }
     if (line.includes(" update [source|self|pi]")) {
-      filtered.push("  update                 Update bruv to the latest stable release");
+      filtered.push(
+        "  update [--check]       Update/check bruv and bruv-claude-compat together",
+        "  web                    Show external T3 native-connector setup guidance",
+      );
       continue;
     }
     if (["--no-tools", "--no-builtin-tools", "--tools,", "--exclude-tools"].some((option) => line.includes(option)))
@@ -280,7 +306,9 @@ try {
     ],
   });
 } finally {
+  restoreRollingActivity();
   restoreConversationDensity();
+  restoreSettledExecuteRendering();
   restoreQuietToolUi();
   restoreStartupEditor();
   restoreStartupSettings();

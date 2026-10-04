@@ -1,0 +1,40 @@
+   },                                                                                                                  │
+   kind: "command",                                                                                                    │
+   command: "sh -c 'printf '\"'\"'cancel check started\n'\"'\"'; while [ ! -e /var/tmp…[64 characters omitted]…do sleep│
+ 0.1; done; printf '\"'\"'cancel check settled\n'\"'\"'; exit 0'",                                                     │
+   cwd: "/var/tmp/bruv-activity-final-default-993dc486/lifecycle/project",                                             │
+   pid: 742549,                                                                                                        │
+   status: "running",                                                                                                  │
+   startedAt: "2026-10-04T12:53:36.470Z",                                                                              │
+   baseOffset: 0,                                                                                                      │
+   outputEnd: 21,                                                                                                      │
+   timedOut: false,                                                                                                    │
+   lastActivityAt: "2026-10-04T12:53:36.495Z",                                                                         │
+   stdinOpen: false,                                                                                                   │
+   termination: {                                                                                                      │
+     cause: "user-stop",                                                                                               │
+     requestedAt: "2026-10-04T12:53:39.111Z",                                                                          │
+   },                                                                                                                  │
+   background: true,                                                                                                   │
+   elapsedMs: 2643,                                                                                                    │
+ }                                                                                                                     │
+                                                                                                                       │
+                                                                                                                       │
+ Lifecycle checks are available for inspection.                                                                        │
+ 1 job notification                                                                                                    │
+ 1 asynchronous task completed.                                                                                        │
+                                                                                                                       │
+ task_17e369aa killed                                                                                                  │
+ Command: sh -c 'printf '"'"'cancel check started                                                                      │
+ '"'"'; while [ ! -e /var/tmp…[64 characters omitted]…do sleep 0.1; done; printf '"'"'cancel check settled             │
+ '"'"'; exit 0'                                                                                                        │
+ Signal: SIGTERM                                                                                                       ┃
+ Final output preview:                                                                                                 ┃
+ cancel check started                                                                                                  ┃
+                                                                                                                       ┃
+ Lifecycle checks are available for inspection.                                                                        ┃
+                                                                                                                       ┃
+ Tool output: expanded                                                                                                 ┃
+
+
+project · mode: orchestrator · $0.000 · ctx 0.4% · cache est 60m                                              acceptance

@@ -8,7 +8,7 @@ Scope: read-only review of the experiment bridge, launcher/activation, setup/run
 
 ### P0 — execute bridge omits a header required by the real upstream MCP server
 
-**Sources:** `experiments/t3-v2/bridge-client.ts:52-69`, especially headers at 56-60. The same omission exists in `bridge-extension.ts:27-44`. Upstream's generated client explicitly sends `mcp-protocol-version: 2025-06-18` and says Effect HTTP MCP rejects post-initialize requests without it: `experiments/t3-v2/.runtime/upstream/apps/server/src/orchestration-v2/Adapters/piT3McpExtensionSource.ts:136-140`. Upstream's real-server client/tests also send it (for example `apps/server/src/mcp/toolkits/worktree/registration.test.ts:106-117`).
+**Sources:** `wisdom/experiments/t3-v2/bridge-client.ts:52-69`, especially headers at 56-60. The same omission exists in `bridge-extension.ts:27-44`. Upstream's generated client explicitly sends `mcp-protocol-version: 2025-06-18` and says Effect HTTP MCP rejects post-initialize requests without it: `wisdom/experiments/t3-v2/.runtime/upstream/apps/server/src/orchestration-v2/Adapters/piT3McpExtensionSource.ts:136-140`. Upstream's real-server client/tests also send it (for example `apps/server/src/mcp/toolkits/worktree/registration.test.ts:106-117`).
 
 The bridge can initialize, record the returned session ID, and then receive HTTP 400 on `tools/call`. Thus the central execute-to-real-T3 route is now incompatible with the pinned real server even though the mock tests pass. `bridge-client.test.ts:8-14` and the mock MCP in `bridge.test.ts` accept post-initialize calls without validating the protocol header. So they cannot detect this.
 
@@ -56,11 +56,11 @@ A clean checkout cannot run setup as documented, and two runs at the same upstre
 
 ### P1 — large research checkouts are unignored and are already visible to Git
 
-**Sources:** root `.gitignore` does not ignore `.agents/research-*`. Current `git status --short --untracked-files=all` reports `.agents/research-t3-v2/`, `-pr2829/`, and `-pr4779/`. Measured sizes are about 474 MB, 310 MB, and 237 MB. The experiment runtime is correctly ignored by `experiments/t3-v2/.gitignore:1`. But the source research trees are not.
+**Sources:** root `.gitignore` does not ignore `.agents/research-*`. Current `git status --short --untracked-files=all` reports `.agents/research-t3-v2/`, `-pr2829/`, and `-pr4779/`. Measured sizes are about 474 MB, 310 MB, and 237 MB. The experiment runtime is correctly ignored by `wisdom/experiments/t3-v2/.gitignore:1`. But the source research trees are not.
 
 A routine `git add .` can stage about 1 GB of nested checkout/object data. The reports' “no commit/push” wording does not prevent this ownership/repository hygiene failure.
 
-**Minimal fix:** ignore the exact research checkout paths (or move them outside the repository) and document staging the reviewed `experiments/t3-v2` and note files by explicit pathspec only.
+**Minimal fix:** ignore the exact research checkout paths (or move them outside the repository) and document staging the reviewed `wisdom/experiments/t3-v2` and note files by explicit pathspec only.
 
 **Minimal test:** materialize the documented research/setup layout, then assert `git status --short --untracked-files=all` contains no research checkout content and `git add --dry-run .` lists only intended experiment artifacts.
 

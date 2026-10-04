@@ -1,0 +1,10 @@
+{"direction":"lifecycle","event":"spawn","flags":["--version"]}
+{"direction":"stdout"}
+{"direction":"lifecycle","event":"exit","code":0,"signal":null}
+{"direction":"lifecycle","event":"spawn","flags":["--output-format","--verbose","--input-format","--setting-sources","--strict-mcp-config","--permission-mode","--no-session-persistence","--settings"]}
+{"direction":"stdin","type":"control_request","control":"initialize"}
+{"direction":"diagnostic","error":"[bruv-claude-compat] --settings is not yet bound in the Bruv connector"}
+{"direction":"lifecycle","event":"exit","code":1,"signal":null}
+{"direction":"lifecycle","event":"spawn","flags":["--version"]}
+{"direction":"stdout"}
+{"direction":"lifecycle","event":"exit","code":0,"signal":null}

@@ -1,0 +1,40 @@
+
+ Run lifecycle checks.
+
+ 1 tool called · 1 job failed · 1 cancelled
+
+ Lifecycle checks are available for inspection.
+ 1 job notification
+
+ Lifecycle checks are available for inspection.
+ 1 job notification
+
+ Lifecycle checks are available for inspection.
+ 1 job notification
+
+ Lifecycle checks are available for inspection.
+
+ Cancel fixture check.
+
+ 1 tool called
+
+ Lifecycle checks are available for inspection.
+ 1 job notification
+
+ Lifecycle checks are available for inspection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+project · mode: orchestrator · $0.000 · ctx 0.4% · cache est 60m                                              acceptance

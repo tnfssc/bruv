@@ -1,0 +1,56 @@
+{
+  "sourceHead": "aeee9df0337bcfa35230e8cd69816815a54e648f",
+  "artifactHashes": {
+    "packages/t3.tgz": "eae443d191ff2bb513f7cf85dcc779afd4058d8a0a8be603cf635428d351349e",
+    "packages/@t3code/t3-linux-x64.tgz": "a3edbbccb33fa76eddb49ffb58c443dbce7f45e5357cc812deec6c2ef2437bda",
+    "archives/t3-0.0.45-linux-x64.tar.gz": "07c1680465066e6da9d0a26287b98746bec15195e8971e403f5812aeb8183cc1",
+    "stage/dist/node_modules/t3/bin/t3.js": "03d99d44e68683721b0187a26c74b44164772604ff19cddaf0428289d5abfaf5",
+    "stage/dist/node_modules/@t3code/t3-linux-x64/t3": "2cdff07c233f7ff8603517b84328bc45c944d7ff8538e99b3a86a9275fd2b786"
+  },
+  "emittedWorker": [
+    {
+      "file": "binCli-DA2Z_iqt.mjs",
+      "line": 141338,
+      "excerpt": "put.sessionId,\n\t\t\t\t\tJSON.stringify(input.options)\n\t\t\t\t];\n\t\t\t\tconst workerArgs = NodeSea.isSea() ? [\"__claude-history\", ...args] : [NodeUrl.fileURLToPath(new URL(import.meta.url.endsWith(\".ts\") ? \"../../claude-history-worker.ts\" : \"./claude-history-worker.mjs\", import.meta.url)), ...args];\n\t\t\t\tconst child = yield* spawner.spawn(make$205(process.execPath, workerArgs, {\n\t\t\t\t\tenv: input.environment,\n\t\t\t\t\textendEnv: false\n\t\t\t\t}));\n\t\t\t\tconst [stdout, stderr, exitCode] = yield* all$1([\n\t\t\t\t\tcollectUint8StreamTex",
+      "workerUrl": "file:///home/tnfssc/.bruv/upstream-preparation/t3-pr-15598-npm-review/apps/server/dist/claude-history-worker.mjs",
+      "workerExists": true,
+      "sha256": "576aff437a71345afb051a943e5aeb90a2d86dc8f02d45ef2ac9a300d8921f57",
+      "adapterSourceMapMatches": true
+    }
+  ],
+  "worker": [
+    "3964133 execve(\"/var/tmp/t3-pr-15598-npm-after/stage/dist/node_modules/@t3code/t3-linux-x64/t3\", [\"/var/tmp/t3-pr-15598-npm-after/stage/dist/node_modules/@t3code/t3-linux-x64/t3\", \"__claude-history\", \"forkSession\", \"e13759a9-ac55-4724-8aa2-dfad052ea041\", \"{\\\"dir\\\":\\\"/var/tmp/bruv-ui-only-BO35lB/project\\\",\\\"upToMessageId\\\":\\\"142f9ef8-14d6-4815-a38e-75350bd55fad\\\"}\"], 0x27584d00 /* 11 vars */) = 0",
+    "3964133 write(1, \"{\\\"sessionId\\\":\\\"0330c349-2058-4f78-b71b-ba157af0b163\\\"}\", 52) = 52",
+    "3964133 +++ exited with 0 +++"
+  ],
+  "processes": [
+    {
+      "pid": 3960825,
+      "exec": "3960825 execve(\"/home/tnfssc/.local/share/mise/installs/node/24.21.0/bin/node\", [\"/home/tnfssc/.local/share/mise/installs/node/24.21.0/bin/node\", \"/var/tmp/t3-pr-15598-npm-after/stage/dist/node_modules/t3/bin/t3.js\"], 0x7ffcd555bc60 /* 5 vars */) = 0",
+      "stillPresent": false
+    },
+    {
+      "pid": 3960835,
+      "exec": "3960835 execve(\"/var/tmp/t3-pr-15598-npm-after/stage/dist/node_modules/@t3code/t3-linux-x64/t3\", [\"/var/tmp/t3-pr-15598-npm-after/stage/dist/node_modules/@t3code/t3-linux-x64/t3\"], 0x3df98770 /* 5 vars */) = 0",
+      "stillPresent": false
+    },
+    {
+      "pid": 3964133,
+      "exec": "3964133 execve(\"/var/tmp/t3-pr-15598-npm-after/stage/dist/node_modules/@t3code/t3-linux-x64/t3\", [\"/var/tmp/t3-pr-15598-npm-after/stage/dist/node_modules/@t3code/t3-linux-x64/t3\", \"__claude-history\", \"forkSession\", \"e13759a9-ac55-4724-8aa2-dfad052ea041\", \"{\\\"dir\\\":\\\"/var/tmp/bruv-ui-only-BO35lB/project\\\",\\\"upToMessageId\\\":\\\"142f9ef8-14d6-4815-a38e-75350bd55fad\\\"}\"], 0x27584d00 /* 11 vars */) = 0",
+      "stillPresent": false
+    }
+  ],
+  "installedSymlinks": [
+    {
+      "path": "node_modules/.bin/t3",
+      "type": "symlink",
+      "target": "../t3/bin/t3.js"
+    },
+    {
+      "path": "node_modules/@t3code/t3-linux-x64/node_modules/.bin/rg",
+      "type": "symlink",
+      "target": "../@cursor/sdk-linux-x64/bin/rg"
+    }
+  ],
+  "scope": "Linux x64 locally built exact PR-head npm SEA platform package; official prebuilt client/resource monitor reused unchanged"
+}

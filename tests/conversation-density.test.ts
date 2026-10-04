@@ -750,3 +750,56 @@ describe("native conversation density adapter", () => {
     }
   });
 });
+
+test("native settled execute previews reuse rows and refresh on SDK lifecycle changes", () => {
+  let colorCalls = 0;
+  const tool = new ToolExecutionComponent(
+    "execute",
+    "cached-result",
+    { code: 'console.log("source")', label: "Inspect module" },
+    { showImages: false },
+    {
+      renderShell: "self",
+      renderCall: (args: any, theme: any, context: any) =>
+        executeInputPreview(args.code, context.expanded, theme, context.state, 0, args.label),
+      renderResult: (result: any, options: any, theme: any, context: any) =>
+        executeOutputPreview(
+          result,
+          options.expanded,
+          context.isError,
+          {
+            fg: (color: any, text: string) => {
+              colorCalls++;
+              return theme.fg(color, text);
+            },
+          } as any,
+          context.args.code,
+          context.state,
+          0,
+          context.args.label,
+          options.isPartial,
+        ),
+    },
+    { requestRender() {} } as never,
+    "/tmp",
+  );
+  tool.markExecutionStarted();
+  const result = { content: [{ type: "text", text: "saved output" }], details: { exitCode: 0 }, isError: false };
+  tool.updateResult(result as never);
+  const settled = tool.render(80);
+  const warmCalls = colorCalls;
+  for (let frame = 0; frame < 100; frame++) expect(tool.render(80)).toEqual(settled);
+  expect(colorCalls).toBe(warmCalls);
+  tool.setExpanded(true);
+  expect(plain(tool.render(80)).join("\n")).toContain("saved output");
+  tool.setExpanded(false);
+  expect(plain(tool.render(80)).join("\n")).not.toContain("saved output");
+  tool.invalidate();
+  const beforeInvalidatedRender = colorCalls;
+  tool.render(80);
+  expect(colorCalls).toBeGreaterThan(beforeInvalidatedRender);
+  tool.updateResult({ ...result, details: { exitCode: 7 }, isError: true } as never);
+  expect(plain(tool.render(80)).join("\n")).toContain("✗ Inspect module");
+  tool.render(20);
+  expect(plain(tool.render(80)).join("\n")).toContain("✗ Inspect module");
+});

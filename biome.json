@@ -13,7 +13,7 @@
       "!!dist",
       "!!.bruv-harness",
       "!!artifacts",
-      "!!experiments"
+      "!!wisdom/experiments"
     ]
   },
   "formatter": {
@@ -21,7 +21,7 @@
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 120,
-    "includes": ["**", "!!**/*.md"]
+    "includes": ["**", "!!**/*.md", "!!wisdom/claude-compat/proof/**"]
   },
   "linter": {
     "enabled": true,

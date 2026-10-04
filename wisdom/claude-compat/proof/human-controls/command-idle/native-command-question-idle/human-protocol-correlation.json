@@ -1,0 +1,93 @@
+[
+  {
+    "requestHash": "ce2f3b6573ccec9f",
+    "toolUseHash": "d00d8a2d976f997a",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  },
+  {
+    "requestHash": "84da46e949cc27a0",
+    "toolUseHash": "0cd7e2ead2725bcd",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "deny"
+      }
+    ]
+  },
+  {
+    "requestHash": "5ba3adb1a98d0ff4",
+    "toolUseHash": "3de1c145690f7b27",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": true,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "deny"
+      }
+    ]
+  },
+  {
+    "requestHash": "4ba29b4836b3bd5b",
+    "toolUseHash": "f55dd83eb5782ea3",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  },
+  {
+    "requestHash": "dc7c55180a9cbb68",
+    "toolUseHash": "bb6423439d6f25f9",
+    "tool": "AskUserQuestion",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  },
+  {
+    "requestHash": "2562ae4de00a7f8d",
+    "toolUseHash": "bb6423439d6f25f9",
+    "tool": "AskUserQuestion",
+    "control": "can_use_tool",
+    "cancelled": true,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "deny"
+      }
+    ]
+  },
+  {
+    "requestHash": "0880858b2ef88fa7",
+    "toolUseHash": "bb6423439d6f25f9",
+    "tool": "AskUserQuestion",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  }
+]

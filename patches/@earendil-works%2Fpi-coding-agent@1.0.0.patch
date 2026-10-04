@@ -1,0 +1,50 @@
+diff --git a/dist/modes/interactive/interactive-mode.js b/dist/modes/interactive/interactive-mode.js
+index 3a9ad2517397f38048fcebbea0ecb8c830c9ef02..2b3902dc897c337937651ff18fafc16fefe252ea 100644
+--- a/dist/modes/interactive/interactive-mode.js
++++ b/dist/modes/interactive/interactive-mode.js
+@@ -699,6 +699,9 @@ export class InteractiveMode {
+         // Start the UI before initializing extensions so session_start handlers can use interactive dialogs
+         this.ui.start();
+         this.isInitialized = true;
++        // Saved transcripts must get their first paint with all grammars ready. Start
++        // after mounting the editor, overlapping terminal colors, tools, and extensions.
++        const highlightLanguagesReady = this.session.state.messages.length > 0 ? loadAllHighlightLanguages() : undefined;
+         this.themeController.applyFromSettings();
+         // The header and startup notices bake theme colors into their text, so build them once the terminal
+         // reported its colors. This ends at the terminal's DA1 reply, or after 100 ms if it answers nothing.
+@@ -777,7 +780,9 @@ export class InteractiveMode {
+         this.ui.requestRender();
+         // Initialize extensions first so resources are shown before messages
+         await this.rebindCurrentSession();
+-        // Render initial messages AFTER showing loaded resources
++        // Render initial messages AFTER showing loaded resources and grammar readiness.
++        if (highlightLanguagesReady)
++            await highlightLanguagesReady;
+         this.renderInitialMessages();
+         // Set up theme file watcher
+         onThemeChange(() => {
+@@ -791,14 +796,17 @@ export class InteractiveMode {
+         });
+         // Initialize available provider count for footer display
+         await this.updateAvailableProviderCount();
+-        // Flush the completed startup state before loading the remaining syntax grammars.
++        // Empty sessions keep lazy grammar loading. Saved transcripts were already
++        // rendered with ready grammars and need no completion-time global rebuild.
+         this.ui.renderNow();
+-        void loadAllHighlightLanguages().then(() => {
+-            if (!this.isInitialized)
+-                return;
+-            this.ui.invalidate();
+-            this.ui.requestRender();
+-        });
++        if (!highlightLanguagesReady) {
++            void loadAllHighlightLanguages().then(() => {
++                if (!this.isInitialized)
++                    return;
++                this.ui.invalidate();
++                this.ui.requestRender();
++            });
++        }
+     }
+     /**
+      * Update terminal title with session name and cwd.

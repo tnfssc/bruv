@@ -1,0 +1,57 @@
+apps/web/src/components/chat/MessagesTimeline.tsx:1336-1351
+1336:           <LegendList<MessagesTimelineRow>
+1337:             ref={setTimelineList}
+1338:             data={rows}
+1339:             extraData={`${listIdentityKey}:${rows.length}`}
+1340:             keyExtractor={keyExtractor}
+1341:             getItemType={getItemType}
+1342:             renderItem={renderItem}
+1343:             estimatedItemSize={90}
+1344:             initialScrollAtEnd={citationRequest === null && rememberedPosition?.atEnd !== false}
+1345:             // Legend needs a data refresh to mount new pins without a scroll event.
+1346:             dataVersion={readyCitationRequest?.key ?? listIdentityKey}
+1347:             {...(alwaysRender ? { alwaysRender } : {})}
+1348:             onLoad={onCitationListLoad}
+1349:             {...(anchoredEndSpace ? { anchoredEndSpace } : {})}
+1350:             contentInsetEndAdjustment={anchoredEndSpace ? contentInsetEndAdjustment : 0}
+1351:             maintainScrollAtEnd={
+
+apps/web/src/components/chat/MessagesTimeline.tsx:1427-1433
+1427: function keyExtractor(item: MessagesTimelineRow) {
+1428:   return item.id;
+1429: }
+1430: 
+1431: function getItemType(item: MessagesTimelineRow) {
+1432:   return item.kind === "message" ? `message:${item.message.role}` : item.kind;
+1433: }
+
+apps/web/src/components/chat/MessagesTimeline.tsx:1786-1793
+1786:       data-timeline-row-id={row.id}
+1787:       data-timeline-row-kind={row.kind}
+1788:       data-message-id={
+1789:         row.kind === "message" || row.kind === "assistant-meta" ? row.message.id : undefined
+1790:       }
+1791:       data-message-role={row.kind === "message" ? row.message.role : undefined}
+1792:     >
+1793:       {isWorkLogRow ? (
+
+apps/web/src/components/chat/MessagesTimeline.tsx:2444-2462
+2444: function TurnFoldTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "turn-fold" }> }) {
+2445:   const ctx = use(TimelineRowCtx);
+2446: 
+2447:   return (
+2448:     <div className="group/timeline-row relative flex items-center gap-1 border-b border-border/60 pb-2 pe-0.5 pt-1">
+2449:       <button
+2450:         type="button"
+2451:         aria-expanded={row.expanded}
+2452:         data-scroll-anchor-ignore
+2453:         onClick={() => ctx.onToggleTurnFold(row.runId)}
+2454:         className="flex cursor-pointer select-none items-center gap-1 rounded-md px-1 text-sm leading-relaxed text-muted-foreground tabular-nums transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/70"
+2455:       >
+2456:         <span>{row.label}</span>
+2457:         <MorphIcon className="size-3.5" icon={row.expanded ? ChevronDown : ChevronRight} />
+2458:       </button>
+2459:       <TimelineRowTimestamp
+2460:         createdAt={row.createdAt}
+2461:         timestampFormat={ctx.timestampFormat}
+2462:         className="ms-auto"

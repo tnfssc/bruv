@@ -1,169 +1,80 @@
-import { expect, test } from "bun:test";
-import { chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
-import { run } from "../helpers";
-import { seedWebSettings, webLaunch } from "../../src/t3/web/launcher";
+import { expect, spyOn, test } from "bun:test";
+import { externalT3Guide, runWeb } from "../../src/t3/web/launcher";
 
-test("web does not adopt legacy product environment or state", () => {
-  const launch = webLaunch(
-    [],
-    { HOME: "/fixture/home", DIE_WEB_SERVER: "/legacy/server", DIE_WEB_DIE_BINARY: "/legacy/die" },
-    "/fixture/bruv",
+test("terminal guide follows install-to-chat steps with absolute isolated paths", () => {
+  const guide = externalT3Guide("/opt/bruv/bin/bruv", "/home/alice");
+  const headings = guide.match(/^\d\. .+$/gm);
+  expect(headings).toEqual([
+    "1. Install the matched Bruv pair",
+    "2. Configure your provider in ordinary Bruv",
+    "3. Install official T3 and launch normally",
+    "4. Add a separate provider instance named Bruv",
+    "5. Add the exact custom model and set auxiliary models",
+    "6. Select Bruv and smoke-test a chat",
+  ]);
+  expect(guide).toContain("curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh");
+  expect(guide).toContain("bruv-claude-compat --bruv-version");
+  expect(guide).toContain("Use /login, then /model");
+  expect(guide).toContain("share auth, models, settings and resources:\n\n     /home/alice/.bruv/agent");
+  expect(guide).toContain("native transcripts, not credentials");
+  expect(guide).toContain("Binary path:\n       /opt/bruv/bin/bruv-claude-compat");
+  expect(guide).toContain(
+    "SDK history home (homePath / CLAUDE_CONFIG_DIR path):\n       /home/alice/.bruv/claude-compat-sdk",
   );
-  expect(launch.server).toBeUndefined();
-  expect(launch.env.BRUV_WEB_BRUV_BINARY).toBe("/fixture/bruv");
-  expect(launch.args).toContain("/fixture/home/.bruv/web");
+  expect(guide).toContain("Launch arguments: leave empty");
+  expect(guide).toContain("No environment overrides needed");
+  expect(guide).toContain("NOT Claude Code or an Anthropic login");
+  expect(guide).toContain("Leave your existing Claude instance untouched");
+  expect(guide).toContain("exact provider/model-id");
+  expect(guide).toContain("ID for auxiliary title, branch and text generation");
+  expect(guide).toContain("No sonnet/opus aliases");
+  expect(guide).toContain("Bruv needs an explicit\n   default");
+  expect(guide).toContain("Bruv instance AND your exact custom model");
+  expect(guide).toContain("does not verify provider access");
+  expect(guide).toContain("https://github.com/pingdotgg/t3code/releases");
+  expect(guide).toContain("https://github.com/tnfssc/bruv/blob/develop/wisdom/docs/t3-code/README.md");
+  expect(guide).toContain("https://github.com/tnfssc/bruv/blob/develop/wisdom/claude-compat/external-t3-setup.md");
+  expect(guide).not.toMatch(/\x1b|t3 --|npx t3@latest|CLAUDE_CONFIG_DIR=.*t3/);
 });
 
-test("web configures the embedded backend on loopback with separate T3 state", () => {
-  const launch = webLaunch([], { HOME: "/fixture", PATH: "/bin" }, "/tools/bruv");
-  expect(launch.server).toBeUndefined();
-  expect(launch.args).toEqual(["--host", "127.0.0.1", "--base-dir", "/fixture/.bruv/web"]);
-  expect(launch.env.BRUV_WEB_BRUV_BINARY).toBe("/tools/bruv");
-  expect(launch.env.PATH).toBe("/bin");
+test("guide retains history limitations and safe paired updates without parent workaround", () => {
+  const guide = externalT3Guide();
+  expect(guide).toContain("No custom launch arguments or parent/server/global CLAUDE_CONFIG_DIR");
+  expect(guide).toContain("Do not change HOME or ordinary Claude state");
+  expect(guide).toContain("never use ~/.claude or the auth home");
+  expect(guide).toContain("2.1.280 Bruv compatibility profile");
+  expect(guide).toContain("2644 lacks the provider-scoped SDK history fix");
+  expect(guide).toContain("before Bruv starts");
+  expect(guide).toContain("no fixed release");
+  expect(guide).toContain("Do not work around it with the parent environment");
+  expect(guide).toContain("explicitly Decline any stale approval card; do not approve it");
+  expect(guide).toContain("Never use T3's Claude login, install or updater for Bruv");
+  expect(guide).toContain("Stop active Bruv/T3 sessions");
+  expect(guide).toContain("bruv update --check    (read-only check)");
+  expect(guide).toContain("bruv update            (CLI + connector together)");
+  expect(guide).toContain("manual paired reinstall");
+  expect(guide).toContain("Update T3 separately");
 });
 
-test("web forwards T3 options and explicit development executable overrides", () => {
-  const env = { HOME: "/fixture", BRUV_WEB_SERVER: "/build/t3", BRUV_WEB_BRUV_BINARY: "/build/bruv" };
-  const launch = webLaunch(["--port", "4444", "--no-browser"], env, "/tools/bruv");
-  expect(launch.server).toBe("/build/t3");
-  expect(launch.args.slice(-3)).toEqual(["--port", "4444", "--no-browser"]);
-  expect(launch.env.BRUV_WEB_BRUV_BINARY).toBe("/build/bruv");
-  expect(env).toEqual({ HOME: "/fixture", BRUV_WEB_SERVER: "/build/t3", BRUV_WEB_BRUV_BINARY: "/build/bruv" });
-});
-
-test("compiled bruv web dispatches directly to the backend and preserves its exit status", async () => {
-  const home = await mkdtemp(join(tmpdir(), "bruv-web-launch-"));
+test("web only prints setup for accepted flags and explicitly rejects former server flags", async () => {
+  const log = spyOn(console, "log").mockImplementation(() => {});
+  const error = spyOn(console, "error").mockImplementation(() => {});
   try {
-    const server = join(home, "backend");
-    await writeFile(
-      server,
-      "#!/usr/bin/env node\nconsole.log(JSON.stringify({args:process.argv.slice(2),cwd:process.cwd(),binary:process.env.BRUV_WEB_BRUV_BINARY})); process.exit(7);\n",
-    );
-    await chmod(server, 0o755);
-    const binary = resolve(process.env.BRUV_WEB_BINARY ?? resolve(import.meta.dir, "../../dist/bruv"));
-    const result = await run([binary, "web", "--no-browser"], {
-      cwd: home,
-      env: { HOME: home, PATH: process.env.PATH, BRUV_WEB_SERVER: server },
-    });
-    expect(result.code).toBe(7);
-    expect(result.stderr).toBe("");
-    expect(JSON.parse(result.stdout)).toEqual({
-      args: ["--host", "127.0.0.1", "--base-dir", join(home, ".bruv", "web"), "--no-browser"],
-      cwd: home,
-      binary,
-    });
-  } finally {
-    await rm(home, { recursive: true, force: true });
-  }
-});
-
-test("compiled bruv web reports a missing backend without entering the agent", async () => {
-  const result = await run(
-    [resolve(process.env.BRUV_WEB_BINARY ?? resolve(import.meta.dir, "../../dist/bruv")), "web"],
-    {
-      env: { PATH: process.env.PATH, BRUV_WEB_SERVER: "/nonexistent/bruv-web-fixture" },
-    },
-  );
-  expect(result.code).toBe(1);
-  expect(result.stdout).toBe("");
-  expect(result.stderr).toContain("bruv web backend is not built");
-});
-
-test.each([
-  { args: ["--base-dir", "/custom"], expected: ["--host", "127.0.0.1", "--base-dir", "/custom"] },
-  { args: ["--base-dir=/custom"], expected: ["--host", "127.0.0.1", "--base-dir=/custom"] },
-  { args: ["--host=127.0.0.2"], expected: ["--base-dir", "/fixture/.bruv/web", "--host=127.0.0.2"] },
-])("web respects explicit defaults: $args", ({ args, expected }) => {
-  expect(webLaunch([...args], { HOME: "/fixture" }, "/tools/bruv").args).toEqual([...expected]);
-});
-
-test("embedded web settings enable only Bruv on first run", async () => {
-  const home = await mkdtemp(join(tmpdir(), "bruv-web-settings-first-run-"));
-  try {
-    const settings = join(home, "userdata", "settings.json");
-    await seedWebSettings(home, "/fixture/bruv");
-    expect(JSON.parse(await Bun.file(settings).text())).toEqual({
-      providers: {
-        codex: { enabled: false },
-        claudeAgent: { enabled: false },
-        cursor: { enabled: false },
-        grok: { enabled: false },
-        pi: { enabled: true },
-        opencode: { enabled: false },
-        antigravity: { enabled: false },
-      },
-      providerInstances: {
-        codex: { driver: "codex", enabled: false },
-        claudeAgent: { driver: "claudeAgent", enabled: false },
-        cursor: { driver: "cursor", enabled: false },
-        grok: { driver: "grok", enabled: false },
-        pi: { driver: "pi", enabled: true, config: { binaryPath: "/fixture/bruv" } },
-        opencode: { driver: "opencode", enabled: false },
-        antigravity: { driver: "antigravity", enabled: false },
-      },
-    });
-  } finally {
-    await rm(home, { recursive: true, force: true });
-  }
-});
-
-test("embedded web settings preserve unrelated configuration", async () => {
-  const home = await mkdtemp(join(tmpdir(), "bruv-web-settings-"));
-  try {
-    const settings = join(home, "userdata", "settings.json");
-    await Bun.write(
-      settings,
-      JSON.stringify({
-        theme: "dark",
-        providers: { codex: { enabled: true }, claudeAgent: { enabled: true } },
-        providerInstances: {
-          pi: { config: { custom: true } },
-          codex: { driver: "codex", enabled: true },
-          other: { enabled: true },
-        },
-      }),
-    );
-    await seedWebSettings(home, "/fixture/bruv");
-    expect(JSON.parse(await Bun.file(settings).text())).toEqual({
-      theme: "dark",
-      providers: { codex: { enabled: true }, claudeAgent: { enabled: true } },
-      providerInstances: {
-        pi: { driver: "pi", enabled: true, config: { custom: true, binaryPath: "/fixture/bruv" } },
-        codex: { driver: "codex", enabled: true },
-        other: { enabled: true },
-      },
-    });
-  } finally {
-    await rm(home, { recursive: true, force: true });
-  }
-});
-
-test("embedded web settings refuse malformed existing files", async () => {
-  const home = await mkdtemp(join(tmpdir(), "bruv-web-settings-bad-"));
-  try {
-    const settings = join(home, "userdata", "settings.json");
-    await Bun.write(settings, "{bad");
-    await expect(seedWebSettings(home, "/fixture/bruv")).rejects.toThrow("Refusing to replace unreadable T3 settings");
-    expect(await Bun.file(settings).text()).toBe("{bad");
-  } finally {
-    await rm(home, { recursive: true, force: true });
-  }
-});
-
-test.each([null, [], { providers: [] }, { providerInstances: { pi: { config: "bad" } } }].map((value) => ({ value })))(
-  "embedded web settings refuse malformed structures: %j",
-  async ({ value }) => {
-    const home = await mkdtemp(join(tmpdir(), "bruv-web-settings-shape-"));
-    try {
-      const settings = join(home, "userdata", "settings.json");
-      const original = JSON.stringify(value);
-      await Bun.write(settings, original);
-      await expect(seedWebSettings(home, "/fixture/bruv")).rejects.toThrow("Refusing to replace non-object T3");
-      expect(await Bun.file(settings).text()).toBe(original);
-    } finally {
-      await rm(home, { recursive: true, force: true });
+    for (const args of [[], ["--help"], ["-h"], ["--setup"]]) {
+      log.mockClear();
+      expect(await runWeb(args)).toBe(0);
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log).toHaveBeenCalledWith(externalT3Guide());
     }
-  },
-);
+    expect(error).not.toHaveBeenCalled();
+    log.mockClear();
+    expect(await runWeb(["--port", "3773"])).toBe(2);
+    expect(log).not.toHaveBeenCalled();
+    expect(error).toHaveBeenCalledWith(
+      "bruv web no longer launches a bundled server. Run bruv web for provider Settings setup, then start official T3 normally.",
+    );
+  } finally {
+    log.mockRestore();
+    error.mockRestore();
+  }
+});

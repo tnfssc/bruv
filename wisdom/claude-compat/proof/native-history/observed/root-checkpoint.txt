@@ -1,0 +1,42 @@
+Code
+HISTORY_SEED: remember orchid-73; complete one rea...
+PT
+project
+now
+Settle
+HISTORY_SEED: remember orchid-73; complete one rea...
+Regenerating title
+Settled (0)
+PT
+project
+/
+HISTORY_SEED: remember orchid-73; complete one rea...
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+HISTORY_SEED: remember orchid-73; complete one real tool exchange.
+
+6:51 AM
+
+T3 Code
+
+HISTORY_CHECKPOINT: original secret is orchid-73; completed tool recorded.
+
+6:51 AM
+
+Worked for 2.0s
+6:51 AM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic acceptance (not Claude)
+Full access
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

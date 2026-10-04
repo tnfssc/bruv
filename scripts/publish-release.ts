@@ -1,7 +1,7 @@
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { execFileSync } from "node:child_process";
 
 export const assetNames = [
   "bruv-linux-x64",
@@ -12,6 +12,14 @@ export const assetNames = [
   "bruv-darwin-arm64.sha256",
   "bruv-android-arm64",
   "bruv-android-arm64.sha256",
+  "bruv-claude-compat-linux-x64",
+  "bruv-claude-compat-linux-x64.sha256",
+  "bruv-claude-compat-linux-arm64",
+  "bruv-claude-compat-linux-arm64.sha256",
+  "bruv-claude-compat-darwin-arm64",
+  "bruv-claude-compat-darwin-arm64.sha256",
+  "bruv-claude-compat-android-arm64",
+  "bruv-claude-compat-android-arm64.sha256",
   "LICENSE",
   "THIRD_PARTY_NOTICES.md",
   "THIRD_PARTY_LICENSES.txt",
