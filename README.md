@@ -9,6 +9,8 @@
 
 An opinionated coding agent. Built on [Pi](https://pi.dev).
 
+Want a graphical frontend? Follow the [illustrated T3 Code setup guide](docs/t3-code/README.md).
+
 ## Install
 
 ```sh
@@ -112,19 +114,17 @@ without opening devices. See [Live onboarding](wisdom/live/cli-live-onboarding.m
 
 ## External T3 frontend
 
-Bruv does not bundle a web runtime. Install unmodified T3 separately;
-`bruv web` prints setup guidance without downloading it or rewriting settings.
-The tested official version is **v0.0.46-nightly.20261004.2644**.
+Install official T3 separately and launch it normally. Add a separate **Claude
+protocol** instance named **Bruv**, with the absolute connector binary path,
+an isolated SDK history home field and exact custom Bruv model IDs. Auth defaults
+to `~/.bruv/agent`, shared with ordinary Bruv; SDK history is distinct.
+Do not change parent/global `CLAUDE_CONFIG_DIR` or use Claude login/updater.
+`bruv web` only prints guidance, without installing T3 or rewriting settings.
 
-Add a separate Claude protocol instance pointing to the absolute
-`bruv-claude-compat` binary, select exact Bruv provider/model IDs, and align
-the parent server SDK's `CLAUDE_CONFIG_DIR` with the isolated instance home.
-Claude here is a protocol label, not an Anthropic account or verified access.
-
-2644 passes bounded native gates, not full parity. Its upstream Effect race
-remains unfixed; Stop leaves a stale approval card requiring **Decline**.
-Version/update banners remain warnings. See [external T3 setup](wisdom/claude-compat/external-t3-setup.md)
-for paths, auth/resource sharing, limitations, and paired updates.
+Official **v0.0.46-nightly.20261004.2644** lacks the provider-scoped SDK history
+fix: basic chat may work, but native fork can fail before Bruv starts.
+After Stop, **Decline** any stale approval card before continuing.
+See the [illustrated setup guide](docs/t3-code/README.md) for steps and limits.
 
 ## Build from source
 

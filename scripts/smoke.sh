@@ -42,7 +42,7 @@ compat_version="$(env -i HOME="$tmp_dir/connector-home" PATH=/nonexistent "$tmp_
 [ ! -e "$tmp_dir/connector-home/.bruv" ]
 [ ! -e "$tmp_dir/connector-home/.claude" ]
 web="$(env -i HOME="$tmp_dir/web-home" PATH=/nonexistent "$tmp_dir/bruv" web)"
-printf '%s\n' "$web" | grep -q 'external, unmodified T3'
+printf '%s\n' "$web" | grep -q 'Setup guide only.'
 [ ! -e "$tmp_dir/web-home/.bruv" ]
 [ ! -e "$tmp_dir/web-home/.claude" ]
 echo "bruv paired standalone smoke test passed (not native parity acceptance)"
