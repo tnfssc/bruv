@@ -28,3 +28,7 @@ Run37182001166 stopped in native setup: hosted actions/setup-node has no /usr/bi
 Retry running: https://github.com/tnfssc/bruv/actions/runs/37182435634 at80a0ab895ae5d1e67889c3c1ea5cbe9d32831460. Watch task_be476721; log artifacts/v0160-release-retry-watch.log. Do not push develop until it finishes.
 
 Retry37182435634 failed before native suites: workflow entrypoint still hard-coded /usr/bin/node. Build/deterministic tests/cross-builds/checksums/Linux updater and actual Mac updater/helper passed; publication skipped. Parent missed the YAML callsite in first portability fix. Native job now explicitly uses pinned actions/setup-node24.21.0 and invokes node from PATH. Added regression for job prerequisite ordering and no hard-coded system Node. No gate weakened.
+
+Third attempt: https://github.com/tnfssc/bruv/actions/runs/37182775259 at9622662a5db503297839132409a453fecd054396. Workflow/setup regression28tests and typecheck passed before dispatch. Both absolute-path callsites corrected and native job explicitly installs24.21.0. Watch artifacts/v0160-release-third-watch.log; no publication confirmed yet.
+
+Attempt37182775259:1977 deterministic tests passed; one packaging source assertion still expected old absolute Node path. Corrected that assertion; gate order/checksum/version/native checks retained. Repository-wide active path scan now finds no absolute Node execution in scripts/workflows; remaining test prose paths are labelled old fixture messages.
