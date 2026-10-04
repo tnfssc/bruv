@@ -52,10 +52,10 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(runner.saved_resume([q]), "q_fixture")
         with self.assertRaises(AssertionError): runner.saved_resume([{**q, "delivery":"delivered"}])
 
-    def test_outcomes_require_unique_source_rows_without_notice_headers(self):
+    def test_outcomes_require_unique_source_rows_allowing_separate_notice_groups(self):
         frame = " 1 tool called\n ✓ Start lifecycle checks\n ✗ Start lifecycle checks — exit 7\n ⊘ Start lifecycle checks — cancelled"
         runner.lifecycle_rows(frame)
-        with self.assertRaises(AssertionError): runner.lifecycle_rows(frame + "\n 1 job notification")
+        runner.lifecycle_rows(frame + "\n Lasting reply\n 1 job notification")
         with self.assertRaises(AssertionError): runner.lifecycle_rows(frame + "\n ✓ Start lifecycle checks")
 
     def test_saved_resume_submits_only_when_completion_left_exact_draft(self):

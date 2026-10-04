@@ -530,8 +530,13 @@ export function registerRollingActivity(pi: ExtensionAPI): void {
       const selected = await ctx.ui.select("Activity — rows or individual details; Esc returns", choices);
       if (selected !== undefined) {
         const option = options[choices.indexOf(selected)];
-        if (option?.item) state.toggleDetails(option.group, option.item);
-        else if (option) state.toggle(option.group, true);
+        // The transcript can render while the picker is open. Resolve the stable
+        // native item again rather than mutating a discarded per-frame group.
+        const anchor = option?.item ?? option?.group.items[0];
+        state.sync();
+        const group = anchor && state.groups.find((current) => current.items.includes(anchor));
+        if (group && option?.item) state.toggleDetails(group, option.item);
+        else if (group) state.toggle(group, true);
       }
     },
   });

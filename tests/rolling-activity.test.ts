@@ -980,6 +980,7 @@ test("activity picker can open and close one native item without expanding its s
     ui: {
       notify() {},
       async select(_title: string, choices: string[]) {
+        host.chatContainer.render(80); // real picker paints rebuild the activity groups
         return choices.find((label) => label.endsWith("Details — Check b"));
       },
     },
@@ -1141,4 +1142,35 @@ test("adjacent callbacks join only their proven source group without adding a to
   );
   render();
   expect(state.groups.map((g) => state.count(g))).toEqual([1, 0]);
+});
+
+test("activity picker resolves group visibility after intervening transcript paints", async () => {
+  disposers.push(installSdkTaskRows(theme));
+  disposers.push(installRollingActivity());
+  const host = nativeHost();
+  host.chatContainer.addChild(tool("a"));
+  nativeExpand(host, false);
+  let activity: any;
+  registerRollingActivity({
+    on() {},
+    registerCommand(_name: string, command: any) {
+      activity = command;
+    },
+  } as never);
+  const ctx = {
+    sessionManager: host.sessionManager,
+    ui: {
+      notify() {},
+      async select(_title: string, choices: string[]) {
+        host.chatContainer.render(80);
+        host.chatContainer.render(80);
+        return choices[0];
+      },
+    },
+  };
+  await activity.handler("", ctx);
+  expect(plain(host.chatContainer.render(80))).toContain("Check a");
+  expect(plain(host.chatContainer.render(80))).not.toContain("SOURCE a");
+  await activity.handler("", ctx);
+  expect(plain(host.chatContainer.render(80))).toEqual(["1 tool called"]);
 });

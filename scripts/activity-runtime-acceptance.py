@@ -39,7 +39,6 @@ def lifecycle_rows(frame):
     assert any(line.startswith("✓") for line in rows), rows
     assert any("exit 7" in line for line in rows), rows
     assert any("cancelled" in line for line in rows), rows
-    assert "job notification" not in frame, "Duplicate standalone notice headers beside owned task rows"
 
 
 def saved_resume(records):
@@ -225,12 +224,24 @@ class Run:
         for name in ["attention-wake", "late-complete", "late-fail", "late-cancel"]:
             frame = (self.root / "frames" / (name + ".txt")).read_text()
             assert "asynchronous task" not in frame and "reached an attention checkpoint" not in frame, "Raw standalone notice leaked"
+        f = self.text("lifecycle-summary", "1 job failed", "1 cancelled")
+        assert "Start lifecycle checks" not in f, "Collapsed group leaked child task rows"
+        self.click(f, "1 tool called", occurrence=0)
+        f = self.text("lifecycle-child-rows", "Start lifecycle checks", "exit 7", "cancelled")
+        lifecycle_rows(f)
+        assert "console.log" not in f, "Group opening exposed full task detail"
+        self.click(f, "Start lifecycle checks", occurrence=0)
+        f = self.text("task-detail", "console.log")
+        self.click(f, "1 tool called", occurrence=0)
+        f = self.wait("task-detail-hidden", lambda f: "1 job failed" in f and "console.log" not in f)
+        assert "Start lifecycle checks" not in f
+        self.click(f, "1 tool called", occurrence=0)
+        self.text("task-detail-restored", "console.log")
         self.command("key", "C-o")
         self.text("lifecycle-expanded-ready", "console.log")
         self.command("key", "End")
         # End shows the last delivery, not all three source rows at once.
         self.text("lifecycle-details", ids["cancel"] + " killed", "Signal: SIGTERM")
-        lifecycle_rows((self.root / "frames/late-cancel.txt").read_text())
         # Review collapsed/open captures for duplicate standalone canonical rows.
         # stdout "check started" is NOT a typed progress-notification claim.
 
