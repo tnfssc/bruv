@@ -99,3 +99,73 @@ test("actual killed-job completion has its own response without a fake new promp
   assert.equal(reply(request(notification), options).content, "CANCELLATION_COMPLETED_REAL");
   assert.throws(() => reply(request("1 asynchronous task completed. unrelated"), options), /Unrecognized/);
 });
+
+test("human permission scenarios request actual side effects, never native packets", () => {
+  for (const scenario of ["allow", "deny", "stop"]) {
+    const call = reply(request("HUMAN_PERMISSION_" + scenario), options).tool_calls[0];
+    assert.equal(call.function.name, "execute");
+    const code = JSON.parse(call.function.arguments).code;
+    assert.match(code, /await Bun.write/);
+    assert.ok(code.includes("/isolated/state/permission-"));
+    assert.ok(code.includes(JSON.stringify(scenario)));
+    assert.doesNotMatch(code, /control_request|control_response|task_started/);
+  }
+  assert.throws(() => reply(request("HUMAN_PERMISSION_unknown"), options), /Unknown permission/);
+});
+
+test("saved human question uses durable ask/block and explicit answer resolve", () => {
+  const ask = JSON.parse(reply(request("HUMAN_QUESTION_ASK"), options).tool_calls[0].function.arguments).code;
+  assert.match(ask, /questions.ask/);
+  assert.match(ask, /questions.block/);
+  assert.match(ask, /owner:q.owner,version:q.version/);
+  assert.doesNotMatch(ask, /questions.answer/);
+  const use = JSON.parse(reply(request("Saved answer for question"), options).tool_calls[0].function.arguments).code;
+  assert.match(use, /questions.list/);
+  assert.match(use, /q.status!=="answered"/);
+  assert.match(use, /questions.resolve/);
+  assert.equal(
+    reply(request("Saved answer for question", [{ role: "tool", content: "QUESTION_RESOLVED_ACTUAL" }]), options)
+      .content,
+    "HUMAN_ANSWER_DELIVERED_ONCE_REAL",
+  );
+});
+
+test("human protocol acceptance rejects absent native consent evidence", async () => {
+  const { checkHumanWire } = await import("../scripts/claude-native-acceptance/human-driver.mjs");
+  assert.throws(() => checkHumanWire([]), /actual execute consent/);
+});
+
+test("actual shortened cancellation notice must match the prior confirmed job ID", () => {
+  const notice = "1 asynchronous task completed.\n\ntask_deadbeef killed\nCommand: /usr/bin/node ...[truncated]...";
+  const body = request(notice);
+  body.messages.unshift({ role: "tool", content: 'CANCEL_INSPECT_REAL {"id":"task_deadbeef","status":"killed"}' });
+  assert.equal(reply(body, options).content, "CANCELLATION_COMPLETED_REAL");
+  const other = request(notice);
+  other.messages.unshift({ role: "tool", content: 'CANCEL_INSPECT_REAL {"id":"task_12345678","status":"killed"}' });
+  assert.throws(() => reply(other, options), /Unrecognized acceptance request/);
+});
+
+test("truncated actual cancellation notice uses the ID written by its real execute launch", async () => {
+  const fs = await import("node:fs/promises");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const state = await fs.mkdtemp(path.join(os.tmpdir(), "native-model-cancel-id-"));
+  try {
+    await fs.writeFile(path.join(state, "cancel.job-id"), "task_deadbeef");
+    const notice = "1 asynchronous task completed.\n\ntask_deadbeef killed\nCommand: /usr/bin/node ...[shortened]...";
+    assert.equal(reply(request(notice), { ...options, state }).content, "CANCELLATION_COMPLETED_REAL");
+    assert.equal(
+      reply(request([{ type: "text", text: notice }]), { ...options, state }).content,
+      "CANCELLATION_COMPLETED_REAL",
+    );
+    const code = JSON.parse(
+      reply(request("ACCEPT_CANCEL"), { ...options, state }).tool_calls[0].function.arguments,
+    ).code;
+    assert.ok(code.includes(JSON.stringify(path.join(state, "cancel.job-id"))));
+    assert.ok(code.includes("job.id); console.log(JSON.stringify(await jobs.stop"));
+    await fs.writeFile(path.join(state, "cancel.job-id"), "task_12345678");
+    assert.throws(() => reply(request(notice), { ...options, state }), /Unrecognized acceptance request/);
+  } finally {
+    await fs.rm(state, { recursive: true, force: true });
+  }
+});

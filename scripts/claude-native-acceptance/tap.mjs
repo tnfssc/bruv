@@ -50,7 +50,7 @@ child.stderr.on("data", (b) => {
     errors = errors.slice(p + 1);
     if (
       config.delegationCases ||
-      /^\[bruv-claude-compat\] (?:--[A-Za-z-]+ .*not yet bound|Unsupported permission mode:|No configured Bruv model|No configured authentication|Unknown connector option: --[A-Za-z-]+$|Unsupported --settings effect: [A-Za-z]+$|--[A-Za-z-]+ is not supported|Native session\/message ID must be a UUID)/.test(
+      /^\[bruv-claude-compat\] (?:--[A-Za-z-]+ .*not yet bound|Unsupported permission mode:|No configured Bruv model|No configured authentication|Unknown connector option: --[A-Za-z-]+$|Question belongs to another branch; history only$|Native question frontend is not bound to a parent session$|Unsupported --settings effect: [A-Za-z]+$|--[A-Za-z-]+ is not supported|Native session\/message ID must be a UUID)/.test(
         line,
       )
     )

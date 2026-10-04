@@ -715,3 +715,25 @@ test("source-entry history stores ordered real repeated messages/tool results an
       .map((e) => e.id),
   ).toEqual(canonical.map((e) => e.id));
 });
+
+test("received namespaced human command has a correlated native echo, not a model prompt", async () => {
+  const { runtime, frames } = await fixture();
+  await init(runtime);
+  const before = runtime.session.messages.length;
+  runtime.session.agent.streamFunction = () => {
+    throw new Error("Human command reached model");
+  };
+  await runtime.onUser(user(runtime, "/bruv status", { uuid: "source-human-command" }), signal());
+  expect(frames.find((f) => f.type === "user")).toMatchObject({
+    uuid: "source-human-command",
+    session_id: runtime.session.sessionId,
+    message: { role: "user", content: "/bruv status" },
+    parent_tool_use_id: null,
+  });
+  expect(frames.filter((f) => f.type === "result")).toHaveLength(1);
+  expect(frames.find((f) => f.type === "result")).toMatchObject({ user_message_uuid: "source-human-command" });
+  expect(runtime.session.messages).toHaveLength(before);
+  runtime.session.agent.streamFunction = () => output(assistant("ordinary follow-up"));
+  await runtime.onUser(user(runtime, "continue"), signal());
+  expect(frames.filter(f => f.type === "result").at(-1)).not.toHaveProperty("user_message_uuid");
+});

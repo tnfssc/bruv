@@ -68,6 +68,14 @@ try {
  const snapshot=async(name)=>{await fs.writeFile(path.join(proof,name+'.txt'),(await body()).replaceAll(root,'<RUNTIME>'));await page.screenshot({path:path.join(proof,name+'.png')});};
  await snapshot('readiness');
  await page.goto(url);await page.waitForTimeout(1500);
+ // Official T3 can leave the auto-bootstrap empty when source control is
+ // unavailable. Use its real scoped empty-state action, not Add project (which
+ // redirects to Connections in this state). No provider event is synthesized.
+ if(integration){
+  const empty=page.getByRole('button',{name:'Start without a project',exact:true});
+  if(await empty.isVisible())await empty.click();
+  else await page.getByRole('button',{name:'New thread',exact:true}).click({timeout:30000});
+ }
  if(!(await page.getByRole('textbox',{name:'Message',exact:true}).isVisible())) {
  await page.getByRole('button',{name:'Add project',exact:true}).first().click();await page.waitForTimeout(500);
  await page.getByRole('option',{name:/Local folder/}).click();

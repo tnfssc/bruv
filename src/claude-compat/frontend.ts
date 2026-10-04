@@ -36,6 +36,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let lastText = "";
   let failure: string | undefined;
   let messageId = "";
+  let commandUuid: string | undefined;
   let usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
   let cost = 0;
   let cumulativeCost = 0;
@@ -54,7 +55,11 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
         outputError ??= error;
       });
   };
-  const base = () => ({ uuid: randomUUID(), session_id: options.sessionId() });
+  const base = () => ({
+    uuid: randomUUID(),
+    session_id: options.sessionId(),
+    ...(commandUuid ? { user_message_uuid: commandUuid } : {}),
+  });
   const stream = (event: Record<string, unknown>) => {
     if (!options.auxiliary) {
       send({ type: "stream_event", ...base(), ...(echoPending ? promptEcho() : {}), parent_tool_use_id: null, event });
@@ -71,6 +76,8 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     consumedUserUuids = [];
     consumedHuman = false;
     echoPending = false;
+
+    commandUuid = undefined;
     started = Date.now();
     turns = 0;
     lastText = "";
@@ -102,6 +109,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     results++;
     cumulativeCost += cost;
     if (!options.auxiliary) send(result());
+    commandUuid = undefined;
   };
   const factory: ExtensionFactory = (pi) => {
     pi.on("session_start", (_event, ctx) => {
@@ -327,6 +335,20 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
           options.diagnostic?.({ type: type ?? "info", message });
         },
       };
+    },
+    startCommand(message: { uuid?: string; message: unknown }) {
+      begin();
+      commandUuid = message.uuid;
+      consumedHuman = true;
+      consumedUserUuids = message.uuid ? [message.uuid] : [];
+      echoPending = Boolean(message.uuid);
+      send({
+        type: "user",
+        ...base(),
+        uuid: message.uuid ?? randomUUID(),
+        parent_tool_use_id: null,
+        message: message.message,
+      });
     },
     checkpoint: () => results,
     commandHandled(checkpoint: number) {

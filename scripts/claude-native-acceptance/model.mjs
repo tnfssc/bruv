@@ -1,5 +1,6 @@
 // This is a deterministic test model, NOT Claude or a connector implementation.
 import http from "node:http";
+import { readFileSync } from "node:fs";
 export const provider = "bruv-acceptance";
 export const modelId = "local-deterministic-v1";
 export const modelSlug = provider + "/" + modelId;
@@ -57,13 +58,55 @@ export function reply(body, { worker, state }) {
     wait +
     "}); console.log(JSON.stringify(r));";
   // This is an actual Bruv completion notification, not another user scenario.
+  // Long worktree paths are shortened in the actual human job notice. The full
+  // command cannot identify those notices; correlate to the prior real terminal
+  // inspection instead. Keep the complete-command route for isolated unit input.
+  const killedId = user.match(/(task_[a-z0-9]+) killed\b/)?.[1];
+  let actualCancelledId;
+  try {
+    actualCancelledId = readFileSync(state + "/cancel.job-id", "utf8").trim();
+  } catch {}
+  const confirmedKilledId =
+    killedId &&
+    messages.some(
+      (m) =>
+        m.role === "tool" &&
+        text(m).includes("CANCEL_INSPECT_REAL") &&
+        new RegExp("\\b" + killedId + "\\b").test(text(m)),
+    );
   if (
     user.includes("asynchronous task completed.") &&
     user.includes(" killed") &&
-    user.includes(worker) &&
-    user.includes(" cancel")
+    ((user.includes(worker) && user.includes(" cancel")) ||
+      (killedId && killedId === actualCancelledId) ||
+      confirmedKilledId)
   )
     return content("CANCELLATION_COMPLETED_REAL");
+  if (user.includes("Saved answer for ")) {
+    if (results.includes("QUESTION_RESOLVED_ACTUAL")) return content("HUMAN_ANSWER_DELIVERED_ONCE_REAL");
+    return execute(
+      'const qs=await questions.list();const q=qs.find(q=>q.dedupKey==="human-controls-acceptance");if(!q||q.answer!=="Use local fixture"||q.status!=="answered")throw Error("No saved human answer");console.log("QUESTION_RESOLVED_ACTUAL",JSON.stringify(await questions.resolve({id:q.id,owner:q.owner,version:q.version,reason:"Acceptance used explicit saved human answer"})));',
+    );
+  }
+  if (user.includes("HUMAN_PERMISSION_")) {
+    const scenario = user.match(/HUMAN_PERMISSION_(allow|deny|stop)/)?.[1];
+    if (!scenario) throw Error("Unknown permission scenario");
+    if (results) return content("HUMAN_PERMISSION_" + scenario + "_RESULT_REAL");
+    return execute(
+      "await Bun.write(" +
+        JSON.stringify(state + "/permission-") +
+        "+" +
+        JSON.stringify(scenario) +
+        '+".effect", "actual side effect after consent");console.log("PERMISSION_SIDE_EFFECT_REAL");',
+    );
+  }
+  if (user.includes("HUMAN_QUESTION_ASK"))
+    return results
+      ? content("HUMAN_QUESTION_SAVED_REAL")
+      : execute(
+          'const q=await questions.ask({text:"Acceptance saved human question",dedupKey:"human-controls-acceptance",choices:["Use local fixture","Cancel"],allowFreeText:false});await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Use the saved human answer",foreground:false});console.log("QUESTION_SAVED_ACTUAL",JSON.stringify(q));',
+        );
+  if (user.includes("HUMAN_CONTINUE")) return content("HUMAN_CONTINUED_REAL");
   if (user.includes("ACCEPT_STEER_NOW")) return content("STEER_ADMITTED_REAL");
   if (user.includes("ACCEPT_EXECUTE"))
     return results.includes("BRUV_EXECUTE_REAL")
@@ -86,7 +129,9 @@ export function reply(body, { worker, state }) {
     return execute(
       "const job = await shell(" +
         JSON.stringify("/usr/bin/node " + JSON.stringify(worker) + " " + JSON.stringify(state) + " cancel") +
-        ', {waitSeconds:0}); if(!job.background)throw Error("Expected fresh owned background job"); console.log(JSON.stringify(await jobs.stop(job.id))); const deadline=Date.now()+10000; let inspected; do { inspected=await jobs.inspect(job.id); if(["killed","cancelled","stopped"].includes(inspected.status))break; await new Promise(r=>setTimeout(r,25)); } while(Date.now()<deadline); if(!["killed","cancelled","stopped"].includes(inspected.status))throw Error("Cancellation not confirmed: "+inspected.status); console.log("CANCEL_INSPECT_REAL",JSON.stringify(inspected));',
+        ', {waitSeconds:0}); if(!job.background)throw Error("Expected fresh owned background job"); await Bun.write(' +
+        JSON.stringify(state + "/cancel.job-id") +
+        ',job.id); console.log(JSON.stringify(await jobs.stop(job.id))); const deadline=Date.now()+10000; let inspected; do { inspected=await jobs.inspect(job.id); if(["killed","cancelled","stopped"].includes(inspected.status))break; await new Promise(r=>setTimeout(r,25)); } while(Date.now()<deadline); if(!["killed","cancelled","stopped"].includes(inspected.status))throw Error("Cancellation not confirmed: "+inspected.status); console.log("CANCEL_INSPECT_REAL",JSON.stringify(inspected));',
     );
   }
   if (user.includes("ACCEPT_STOP"))

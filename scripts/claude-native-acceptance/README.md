@@ -162,3 +162,38 @@ status; no auth/payload rows or pairing tokens. New tests: `claude-native-subage
 Pre-patch two same-root UI runs succeeded but the stricter ownership gate failed. Intermittent
 busy UI is not claimed reproduced or fixed. Parent must rerun after task_0720fd7d without a
 new-root/reload/Stop workaround.
+
+## Focused rendered human controls
+
+Use the same actual binaries and unchanged pinned official T3, with a unique port
+and proof directory:
+
+```sh
+ACCEPT_HUMAN_CONTROLS=1 FIXTURE_PORT=19848 \
+BRUV_CONNECTOR_EXECUTABLE="$PWD/dist/bruv-claude-compat" \
+BRUV_RUNTIME_BINARY="$PWD/dist/bruv" \
+PROOF_OUTPUT=.cache/native-human-controls-$(date +%s) \
+/usr/bin/node scripts/claude-native-acceptance/run.mjs
+```
+
+This focused branch uses Supervised native execute approval. It checks no side
+effect before consent, actual allow/deny, Stop of pending consent, and the durable
+saved-question ledger. Official T3 live questions do not have a dismiss button;
+Selecting "Keep pending (do not answer)" is an explicit connector human action
+and never becomes a saved answer. Official T3 auto-submits single-choice options. Stop/reload/reopen preserves owner, ID
+and version. After answering a recovered question the driver explicitly invokes
+/bruv questions resume, approves its real execute to resolve the saved answer,
+and checks exactly one continuation even after another reopen.
+
+Known official T3 defect: a cancelled execute approval card persists after Stop,
+even on reload. The proof retains that visible frame; the driver explicitly
+Declines the stale card to proceed and checks no stopped side effect. This is not
+an assertion that T3 automatically clears it. No T3 source/artifact is changed.
+Task/Live/delegation/history acceptance remains the separate default/composed gate.
+
+A zero-model human command can also remain Working after its actual success
+result. The focused proof uses real Stop/reopen when needed, preserving the
+saved reply. It does not invent a model turn to make that view settle. The shared
+harness uses official Start without a project if auto-bootstrap has left the
+isolated environment empty, and drivers reuse the ready composer instead of
+resetting that native draft with another navigation.

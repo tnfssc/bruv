@@ -23,6 +23,8 @@ const worker = path.join(root, "worker.mjs"),
   pinnedConnector = path.join(root, "actual-connector");
 let model,
   workerModel,
+
+  config,
   child,
   passed = false;
 try {
@@ -58,7 +60,7 @@ try {
   workerModel = delegation ? await delegation.startWorkerModel({ state }) : undefined;
   await fs.writeFile(path.join(agent, "models.json"), JSON.stringify(modelsConfig(model.port)));
   // No real auth file and no parent credentials/environment are inherited by T3.
-  const config = {
+  config = {
     connector: pinnedConnector,
     connectorArgs: JSON.parse(process.env.BRUV_CONNECTOR_ARGS_JSON ?? "[]"),
     wire: path.join(root, "wire.ndjson"),
@@ -67,6 +69,8 @@ try {
     modelSlug,
     workerModelPort: workerModel?.port,
     delegationCases: process.env.ACCEPT_APP_DELEGATION === "1",
+
+    humanControls: process.env.ACCEPT_HUMAN_CONTROLS === "1",
     questionCases: process.env.ACCEPT_SAVED_QUESTION === "1",
     permissionCases: process.env.ACCEPT_PERMISSION === "1",
     env: {
@@ -102,10 +106,10 @@ try {
   if (code !== 0) throw Error("Integrated native replay failed with exit " + code);
   if ([...model.records, ...(workerModel?.records ?? [])].some((r) => r.error))
     throw Error("Local model endpoint rejected a request");
-  if (!config.delegationCases && model.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length !== 1)
+  if (!config.delegationCases && !config.humanControls && model.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length !== 1)
     throw Error("Expected exactly one actual model completion wake, not duplicate continuations");
   if (
-    !config.delegationCases &&
+    !config.delegationCases && !config.humanControls &&
     model.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length !== 1
   )
     throw Error("Expected exactly one actual cancellation completion wake");
@@ -114,6 +118,20 @@ try {
     model.records.filter((r) => r.delta?.content === "APP_COMPLETION_ACK_REAL").length !== 1
   )
     throw Error("Expected one app-owned completion continuation, not duplicate Bruv wakes");
+  if (config.humanControls) {
+    if (
+      model.records.some((r) =>
+        r.messages?.some(
+          (m) =>
+            m.role === "user" &&
+            (typeof m.content === "string" ? m.content : JSON.stringify(m.content)).includes("/bruv"),
+        ),
+      )
+    )
+      throw Error("Native human command reached model");
+    if (model.records.filter((r) => r.delta?.content === "HUMAN_ANSWER_DELIVERED_ONCE_REAL").length !== 1)
+      throw Error("Expected one saved answer continuation");
+  }
   passed = true;
 } finally {
   let result = { integratedAcceptance: true };
@@ -126,6 +144,12 @@ try {
       {
         ...result,
         passed,
+        ...(config?.humanControls
+          ? {
+              savedAnswerContinuationCount:
+                model?.records.filter((r) => r.delta?.content === "HUMAN_ANSWER_DELIVERED_ONCE_REAL").length ?? 0,
+            }
+          : {}),
         cancellationCompletionWakeCount:
           model?.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length ?? 0,
         ...(process.env.ACCEPT_APP_DELEGATION === "1"
@@ -158,6 +182,7 @@ try {
       .split("\n")
       .filter(Boolean)
       .map(JSON.parse);
+    if (config?.humanControls) await (await import("./human-driver.mjs")).capture({ records: wire, config, proof });
     await fs.writeFile(
       path.join(proof, "wire-projection.ndjson"),
       projectWire(wire)

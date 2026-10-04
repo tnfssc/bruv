@@ -4,12 +4,17 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { modelSlug } from "./model.mjs";
 export async function prepare({ base, fixture, config }) {
-  if (config.questionCases || config.permissionCases)
+  if ((config.questionCases || config.permissionCases) && !config.humanControls)
     throw Error(
       "Human bindings are not available in this slice. Do not fabricate permission/question native events; extend driver when parent binds them.",
     );
   const dir = path.join(base, "userdata");
   await fs.mkdir(dir, { recursive: true });
+  if (config.humanControls)
+    await fs.writeFile(
+      path.join(dir, "keybindings.json"),
+      JSON.stringify([{ key: "ctrl+escape", command: "thread.stop" }]),
+    );
   await fs.writeFile(
     path.join(dir, "settings.json"),
     JSON.stringify(
@@ -55,10 +60,9 @@ export async function captureIdentity({ page, proof }) {
   await page.screenshot({ path: path.join(proof, "custom-model-identity.png") });
 }
 export async function exercise({ page, url, snapshot, body, config }) {
+  if (config.humanControls) return (await import("./human-driver.mjs")).exercise({ page, url, snapshot, body, config });
   const state = config.state;
-  await page.goto(url);
-  await page.waitForTimeout(750);
-  await page.getByRole("button", { name: "New thread", exact: true }).click();
+  // Reuse the real native composer prepared by the shared harness.
   const message = page.getByRole("textbox", { name: "Message", exact: true });
   await message.waitFor();
   // Use T3's own customModels selector. Never submit under an Opus/Sonnet alias.
@@ -260,6 +264,8 @@ export function projectWire(wire) {
   });
 }
 export async function verify({ wire, config, proof, t3Version, t3BinarySha256 }) {
+  if (config.humanControls)
+    return (await import("./human-driver.mjs")).verify({ wire, config, proof, t3Version, t3BinarySha256 });
   const lifecycle = checkWire(wire);
   const projection = projectWire(wire);
   await fs.writeFile(

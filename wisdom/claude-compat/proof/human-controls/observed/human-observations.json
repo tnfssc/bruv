@@ -1,0 +1,158 @@
+{
+  "checks": [
+    "execute allow real side effect=true",
+    "execute deny real side effect=false",
+    "execute stop real side effect=false",
+    "saved question real native dialog",
+    "decline remains pending",
+    "Stop remains pending",
+    "same owner/id/version reopen; saved answer requires explicit resume",
+    "one human answer delivered and resolved",
+    "native commands are not model prompts"
+  ],
+  "ledger": [
+    {
+      "step": "permission-allow-result",
+      "questions": []
+    },
+    {
+      "step": "permission-deny-result",
+      "questions": []
+    },
+    {
+      "step": "permission-stop-result",
+      "questions": []
+    },
+    {
+      "step": "question-native-dialog",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 1,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "step": "question-declined-pending",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 1,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "step": "question-explicit-reopen",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 1,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "step": "question-stop-pending",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 1,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "step": "question-resume-same-identity",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 1,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "step": "question-answer-saved-resume-needed",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 2,
+          "status": "answered",
+          "answer": "Use local fixture",
+          "delivery": "resume-needed",
+          "replyVersion": 1
+        }
+      ]
+    },
+    {
+      "step": "question-answer-reopened-before-resume",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 2,
+          "status": "answered",
+          "answer": "Use local fixture",
+          "delivery": "resume-needed",
+          "replyVersion": 1
+        }
+      ]
+    },
+    {
+      "step": "question-answer-used-once",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 6,
+          "status": "resolved",
+          "answer": "Use local fixture",
+          "delivery": "delivered",
+          "replyVersion": 1
+        }
+      ]
+    },
+    {
+      "step": "question-no-duplicate-after-reopen",
+      "questions": [
+        {
+          "idHash": "8617cff49b8e59ce",
+          "ownerHash": "a1124b3d401d9b07",
+          "version": 6,
+          "status": "resolved",
+          "answer": "Use local fixture",
+          "delivery": "delivered",
+          "replyVersion": 1
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "scenario": "allow",
+      "beforeConsent": false,
+      "afterConsent": true,
+      "content": "actual side effect after consent"
+    },
+    {
+      "scenario": "deny",
+      "beforeConsent": false,
+      "afterConsent": false
+    },
+    {
+      "scenario": "stop",
+      "beforeConsent": false,
+      "afterConsent": false
+    }
+  ],
+  "stopControl": "official thread.stop bound to Ctrl+Escape in scoped keybindings.json; approval composer hides Stop button",
+  "staleApprovalAfterStop": true
+}

@@ -47,14 +47,19 @@ function fixture(file?: string, request?: HumanControlOptions["request"], askUse
     },
   };
   const runtime = registerQuestionRuntime(pi, { supported: () => false, nativeSupported: () => true });
-  const calls: Array<{ request: any; resolve: (value: any) => void; reject: (error: Error) => void }> = [];
+  const calls: Array<{
+    request: any;
+    signal?: AbortSignal;
+    resolve: (value: any) => void;
+    reject: (error: Error) => void;
+  }> = [];
   const controls = createClaudeCompatHumanControls({
     askUserQuestion,
     request:
       request ??
       ((request, options) => {
         return new Promise((resolve, reject) => {
-          calls.push({ request, resolve, reject });
+          calls.push({ request, signal: options?.signal, resolve, reject });
           options?.signal?.addEventListener(
             "abort",
             () => reject(options?.signal?.reason ?? new Error("Disconnected")),
@@ -379,6 +384,85 @@ test("explicit human cancel uses the owning ledger and withdraws the live projec
     await expect(pending).rejects.toThrow("no longer pending");
     expect(h.runtime.service.get(h.ctx, q.id).status).toBe("cancelled");
     expect(h.sent).toHaveLength(0);
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("native terminal consent drain waits for the real callback; interrupt preserves question and binding", async () => {
+  const h = fixture();
+  try {
+    await h.emit("session_start");
+    const q: any = await h.runtime.handle(h.ctx, "questions.ask", {
+      text: "Pending native consent",
+      choices: ["A", "B"],
+    });
+    await tick();
+    let drained = false;
+    const wait = h.controls.flush().then(() => {
+      drained = true;
+    });
+    await tick();
+    expect(drained).toBe(false);
+    h.controls.interrupt();
+    await wait;
+    expect(drained).toBe(true);
+    expect(h.calls[0]!.signal?.aborted).toBe(true);
+    expect(h.controls.capabilities.savedQuestions).toBe(true);
+    const pending = h.runtime.service.get(h.ctx, q.id);
+    expect(pending.status).toBe("pending");
+    expect(pending.version).toBe(q.version);
+    expect(pending.owner).toEqual(q.owner);
+    const reopened = h.controls.openQuestion(q.id);
+    await tick();
+    expect(h.calls).toHaveLength(2);
+    expect(h.calls[1]!.request.tool_use_id).toBe(h.calls[0]!.request.tool_use_id);
+    h.calls[1]!.resolve({ behavior: "deny" });
+    await reopened;
+    await h.controls.flush();
+    expect(h.runtime.service.get(h.ctx, q.id).answer).toBeUndefined();
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("official live native question offers explicit defer without minting an answer", async () => {
+  const h = fixture();
+  try {
+    await h.emit("session_start");
+    const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "Choose later?", choices: ["A", "B"] });
+    await tick();
+    expect(h.calls[0]!.request.input.questions[0].options.at(-1).label).toBe("Keep pending (do not answer)");
+    h.allow(0, "Keep pending (do not answer)");
+    await h.controls.flush();
+    const same = h.runtime.service.get(h.ctx, q.id);
+    expect(same.status).toBe("pending");
+    expect(same.version).toBe(q.version);
+    expect(same.owner).toEqual(q.owner);
+    expect(same.answer).toBeUndefined();
+    expect(h.sent).toHaveLength(0);
+    const reopen = h.controls.openQuestion(q.id);
+    await tick();
+    expect(h.calls[1]!.request.tool_use_id).toBe(h.calls[0]!.request.tool_use_id);
+    h.allow(1, "A");
+    await reopen;
+    expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("A");
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("native defer label cannot consume a real ledger choice of the same name", async () => {
+  const h = fixture();
+  try {
+    await h.emit("session_start");
+    const label = "Keep pending (do not answer)";
+    const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "Real named option", choices: [label, "B"] });
+    await tick();
+    expect(h.calls[0]!.request.input.questions[0].options.at(-1).label).not.toBe(label);
+    h.allow(0, label);
+    await h.controls.flush();
+    expect(h.runtime.service.get(h.ctx, q.id).answer).toBe(label);
   } finally {
     h.cleanup();
   }

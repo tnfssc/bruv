@@ -285,7 +285,10 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   let toolTurn = new AbortController();
   let session!: AgentSession;
   const frontend = createClaudeCompatFrontend({
-    emit: options.emit,
+    emit: async (frame) => {
+      if (frame.type === "result") await human?.flush();
+      await options.emit(frame);
+    },
     messageUuid,
     omitThinking: options.thinkingDisplay === "omitted",
     auxiliary: options.auxiliary,
@@ -628,6 +631,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       checkOpen();
       interruptVersion++;
       toolTurn.abort(new Error("Interrupted"));
+      human?.interrupt();
       frontend.interrupt();
       await admission;
       session.clearQueue();
@@ -669,9 +673,15 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       /^\/bruv(?=[:\s]|$)/.test(typeof message.message.content === "string" ? message.message.content.trim() : "")
     ) {
       if (session.isStreaming) throw new Error("Interrupt the model turn before running a human command");
+      // T3 correlates root output to the actual submitted user frame. Human
+      // commands bypass Pi prompt admission, so echo that received command here
+      // without adding it to model history or inventing a model turn.
+      frontend.startCommand(message);
       const checkpoint = frontend.checkpoint();
       await commands.dispatchUserCommand({ ...message, session_id: session.sessionId });
-      frontend.commandHandled(checkpoint);
+      // A resume command can start a genuine Pi follow-up. Its actual settle
+      // event, not the command handler returning, owns that terminal result.
+      if (session.isIdle) frontend.commandHandled(checkpoint);
       await frontend.flush();
       return;
     }

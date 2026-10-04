@@ -37,3 +37,54 @@ Two additional existing questions-bridge tests could not execute because this wo
 Fixtures prove adapter/ledger/transport behavior only. Parent must bind its native runtime and run unchanged official T3 rendered acceptance: discover /bruv, receive a pending question, deny without losing it, reopen and answer once, stop/reconnect and explicitly resume recovered work. No browser/provider/backend proof claimed. No upstream, packaging or release files changed.
 
 Values unchanged. Existing one-owner, durable identity, honest UI and rendered-control acceptance values cover this adapter; no new general rule needed.
+
+
+## Completed rendered human consent gate — 2026-10-04
+
+Resumed task384d478d's existing focused driver selectively on parent156e2450.
+No old Stop/task/Live implementation was restored. The default fixture still
+requires Stop to close owned work, then launches a fresh owned cancellation job
+and requires exactly one late cancellation completion. Long worktree command
+previews are shortened, so the fixture additionally correlates that notice to
+the actual launch ID written by the real execute (not a manufactured event).
+
+[Rendered proof and exact gates](proof/human-controls/README.md): compiled actual
+Bruv/connector with supported Bun1.4.2, unchanged official pinned T3, and the local
+non-Claude test model. Focused rendered replay passed: 5 actual execute consent
+requests, 3 native question requests, one actual answer callback, one saved-answer
+continuation, and no model leakage of native human commands. Allow/deny precede
+side effects; Stop leaves the effect absent. Native defer leaves the same saved
+question pending. Stop/reload/reopen preserves ID/owner/version; a recovered
+answer is resume-needed until explicit /bruv questions resume. Its actual execute
+permission resolves the ledger once. Another reopen/continue does not replay it.
+
+Real runtime fixes: keep terminal native result behind existing pending question
+callbacks (questions.ask itself remains nonblocking), abort projections on native
+interrupt without changing the ledger, and source-correlate received human
+commands without storing them as model prompts. A resume command can start real
+Pi work; the actual Pi settle event owns its terminal result. Official live SDK
+questions have no dismiss button. The adapter offers **Keep pending (do not
+answer)**, with a noncolliding label, as an explicit no-answer action. Official
+single-choice UI auto-advances/submits; do not send a second Submit.
+
+Honest gaps: official T3 retains cancelled execute approval cards; explicit native
+Decline is needed to clear that card. Zero-model native commands can remain
+Working after a genuine success result; the focused proof uses actual Stop/reopen
+where needed, never a fake model-turn count. Rendered failure frames and final
+recovery are documented; no T3 source/artifact edits. The shared harness preserves
+the real ready composer and supports T3's Start without a project empty-state
+control when source-control auto-bootstrap leaves no project. Playwright's cached
+Chromium intermittently crashed; the complete gate used fresh-profile local
+Google Chrome150.0.7871.128, not a real user profile.
+
+No provider/devices/real credentials, packaging integration, push or release.
+Task/Live/app policy/fork/history remain separate composed gates. Values unchanged:
+existing one-owner, durable identity, truthful rendered proof and safe handoff
+rules already cover these fixes.
+
+
+Preserved default regression is **still failed**, separately from the completed
+focused human gate. The real local model now produces both foreground cancellation
+confirmation and late completion exactly once, but official T3 only renders the
+late completion marker. See proof/human-controls/default-regression. Do not label
+this full connector acceptance or weaken the parent's exact rendered assertions.

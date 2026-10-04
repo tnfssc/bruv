@@ -25,15 +25,24 @@ export function createClaudeCompatHumanControls(options: HumanControlOptions) {
   const enabled = options.askUserQuestion !== false;
   const diagnostic = options.diagnostic ?? (() => {});
 
+  function interrupt(reason = new Error("Native human projection interrupted; question remains saved")) {
+    for (const item of active.values()) item.controller.abort(reason);
+    active.clear();
+  }
+
+  async function flush() {
+    // questions.ask stays nonblocking; only the native terminal result waits for
+    // its actual human callback so T3 cannot finalize the dialog's owning turn.
+    while (active.size) await Promise.allSettled([...active.values()].map((item) => item.promise));
+  }
+
   function dispose() {
     unsubscribe?.();
     unsubscribe = undefined;
     release?.();
     release = undefined;
     commands = undefined;
-    for (const item of active.values())
-      item.controller.abort(new Error("Native human frontend closed; question remains saved"));
-    active.clear();
+    interrupt(new Error("Native human frontend closed; question remains saved"));
     seen.clear();
   }
 
@@ -43,6 +52,10 @@ export function createClaudeCompatHumanControls(options: HumanControlOptions) {
     if (question.status !== "pending") return question;
     if (!enabled) return question; // Ledger/CLI commands still work without a native dialog.
     const toolUseId = "bruv-question:" + question.id + ":" + question.version;
+    // Official T3 live SDK questions have no dismiss control. Offer a truthful
+    // human defer action; this native selection is never saved as an answer.
+    let deferLabel = "Keep pending (do not answer)";
+    while (question.choices?.includes(deferLabel)) deferLabel += " — Bruv";
     const response = await options.request(
       {
         subtype: "can_use_tool",
@@ -54,7 +67,10 @@ export function createClaudeCompatHumanControls(options: HumanControlOptions) {
               question: question.text,
               header: "Bruv",
               multiSelect: false,
-              options: (question.choices ?? []).map((label) => ({ label, description: label })),
+              options: [
+                ...(question.choices ?? []).map((label) => ({ label, description: label })),
+                { label: deferLabel, description: "Leave the saved question pending and reopen it later." },
+              ],
             },
           ],
         },
@@ -69,6 +85,7 @@ export function createClaudeCompatHumanControls(options: HumanControlOptions) {
       throw new Error("Native question correlation mismatch");
     const input = response.updatedInput as { answers?: Record<string, unknown> } | undefined;
     const answer = input?.answers?.[question.text];
+    if (answer === deferLabel) return (await port.handle("questions.get", { id })) as Question;
     if (typeof answer !== "string" || !answer.trim()) throw new Error("No explicit human answer in native callback");
     return (await port.handle("questions.answer", {
       id: question.id,
@@ -141,6 +158,8 @@ export function createClaudeCompatHumanControls(options: HumanControlOptions) {
   return {
     factory,
     openQuestion,
+    interrupt,
+    flush,
     dispose,
     capabilities: {
       get savedQuestions() {
