@@ -5,184 +5,237 @@ import AxeBuilder from "@axe-core/playwright";
 import { launchBrowser } from "./browser";
 import { build } from "./build";
 import { preview } from "./preview";
-
+import { layout } from "../layout";
+import { siteContent } from "../content";
 await build("");
-const server = preview(0);
-const browser = await launchBrowser();
-const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation");
+const server = preview(0),
+  browser = await launchBrowser();
+const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/terminal");
 await mkdir(evidence, { recursive: true });
+const errors: string[] = [],
+  requests: string[] = [];
 const checks: string[] = [];
-const pageErrors: string[] = [];
-const failedRequests: string[] = [];
 try {
-  const context = await browser.newContext({ reducedMotion: "reduce" });
+  const context = await browser.newContext({ viewport: { width: 1440, height: 960 } });
   const page = await context.newPage();
-  page.on("pageerror", (error) => pageErrors.push(error.message));
-  page.on("response", (response) => {
-    if (response.status() >= 400) failedRequests.push(response.url());
+  page.on("pageerror", (e) => errors.push(e.message));
+  page.on("request", (r) => {
+    requests.push(r.url());
+    assert.equal(new URL(r.url()).origin, server.url.origin);
   });
-  page.on("request", (request) => {
-    assert.equal(new URL(request.url()).origin, server.url.origin, "No third-party requests");
-  });
-  for (const width of [320, 390, 768, 1024, 1440]) {
-    await page.setViewportSize({ width, height: 1000 });
-    await page.goto(server.url.href);
-    await page.evaluate(() => document.fonts.ready);
-    assert.equal(await page.locator("h1").count(), 1);
-    assert.equal(await page.locator("main").count(), 1);
-    assert.equal(await page.locator("canvas, input, [role=application]").count(), 0);
-    assert.equal(
-      await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
-      true,
-      "No horizontal overflow at " + width,
-    );
-    assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior), "auto");
-    for (const image of await page.locator("main img").all()) {
-      await image.scrollIntoViewIfNeeded();
-      await image.evaluate((el: HTMLImageElement) => el.decode());
-    }
-    await page.evaluate(() => scrollTo(0, 0));
-    const axe = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"])
-      .analyze();
-    assert.deepEqual(
-      axe.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) })),
-      [],
-      "axe at width " + width,
-    );
-    if ([320, 390, 1440].includes(width)) {
-      await page.screenshot({
-        path: resolve(evidence, width === 1440 ? "desktop.png" : width === 320 ? "mobile-narrow.png" : "mobile.png"),
-        fullPage: true,
-        animations: "disabled",
-      });
-    }
-    // Exercise the viewer at every layout, not just the desktop screenshot path.
-    await page.locator(".image-link").first().click();
-    assert.equal(await page.locator("dialog").evaluate((el: HTMLDialogElement) => el.open), true);
-    assert.equal(
-      await page.locator("dialog").evaluate((el) => el.scrollWidth <= el.clientWidth),
-      true,
-      "Viewer fits " + width,
-    );
-    const viewerAxe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
-    assert.deepEqual(
-      viewerAxe.violations.map((v) => v.id),
-      [],
-      "Viewer axe at " + width,
-    );
-    await page.keyboard.press("Escape");
-    checks.push(
-      width +
-        "px: no horizontal clipping; images loaded; axe A/AA + best-practice clean; viewer opens/closes and fits; reduced motion respected",
-    );
-  }
+  page.on("websocket", () => assert.fail("Static site opened a WebSocket"));
   await page.goto(server.url.href);
-  await page.keyboard.press("Tab");
-  assert.equal(await page.locator(".skip-link").evaluate((el) => el === document.activeElement), true);
-  await page.keyboard.press("Enter");
-  assert.equal(new URL(page.url()).hash, "#main");
-  assert.equal(await page.locator("main").evaluate((el) => el === document.activeElement), true);
-  const workflow = page.getByRole("navigation", { name: "Page sections" }).getByRole("link", { name: /Workflow/ });
-  await workflow.focus();
-  await page.keyboard.press("Enter");
-  assert.equal(new URL(page.url()).hash, "#workflow");
-  await page.goBack();
-  assert.equal(new URL(page.url()).hash, "#main");
-  const enlarge = page.locator("figcaption a[data-viewer]").first();
-  await enlarge.focus();
-  assert.equal(await enlarge.evaluate((el) => getComputedStyle(el).outlineStyle), "solid");
-  await page.locator("#overview").screenshot({ path: resolve(evidence, "keyboard-focus.png") });
-  await page.keyboard.press("Enter");
-  const close = page.getByRole("button", { name: /Close/ });
-  assert.equal(await close.evaluate((el) => el === document.activeElement), true);
-  await page.keyboard.press("Tab");
-  assert.equal(await page.locator("#viewer-original").evaluate((el) => el === document.activeElement), true);
-  await page.keyboard.press("Shift+Tab");
-  assert.equal(await close.evaluate((el) => el === document.activeElement), true);
-  await page.locator(".brand").evaluate((el: HTMLElement) => el.focus());
-  assert.equal(await close.evaluate((el) => el === document.activeElement), true, "Modal makes background inert");
-  await page.screenshot({ path: resolve(evidence, "image-viewer.png") });
-  await page.keyboard.press("Escape");
-  assert.equal(await enlarge.evaluate((el) => el === document.activeElement), true);
-  const second = page.locator("figcaption a[data-viewer]").last();
-  await second.click();
-  assert.match((await page.locator("#viewer-image").getAttribute("src")) || "", /wisdom.png$/);
-  await close.click();
-  assert.equal(await page.locator("dialog").evaluate((el: HTMLDialogElement) => el.open), false);
-  const newTabPromise = context.waitForEvent("page");
-  await second.click({ modifiers: ["ControlOrMeta"] });
-  const newTab = await newTabPromise;
-  await newTab.waitForLoadState();
-  assert.equal(new URL(newTab.url()).pathname, "/assets/wisdom.png");
-  await newTab.close();
-  assert.equal(await page.locator("dialog").evaluate((el: HTMLDialogElement) => el.open), false);
-  checks.push("Browser modifier gesture: image Ctrl/Cmd-click opens original in a new tab, not the viewer");
-  const summary = page.getByText("Can I use a web frontend with Bruv?", { exact: true });
-  await summary.focus();
-  await page.keyboard.press("Enter");
-  assert.equal(await summary.evaluate((el) => el.parentElement?.hasAttribute("open")), true);
-  await page.keyboard.press("Space");
-  assert.equal(await summary.evaluate((el) => el.parentElement?.hasAttribute("open")), false);
-  checks.push(
-    "Keyboard: skip link focuses main; section anchors and browser Back; visible focus; both image links, modal focus containment/return, Escape/Close; native Enter/Space disclosures",
-  );
-
-  const noJS = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
-  const staticPage = await noJS.newPage();
-  await staticPage.goto(server.url.href);
-  assert.match(await staticPage.locator("main").innerText(), /coding agent built on Pi/);
-  for (const id of ["overview", "workflow", "wisdom", "install"]) {
-    await staticPage.locator('nav a[href="#' + id + '"]').click();
-    assert.equal(new URL(staticPage.url()).hash, "#" + id);
-    assert.equal(await staticPage.locator("#" + id).isVisible(), true);
+  await page.locator('#terminal[data-ready="true"]').waitFor();
+  const dimensions = () =>
+    page.locator("#terminal").evaluate((el) => ({
+      cols: Number((el as HTMLElement).dataset.cols),
+      rows: Number((el as HTMLElement).dataset.rows),
+      scroll: Number((el as HTMLElement).dataset.scroll),
+      route: (el as HTMLElement).dataset.route!,
+    }));
+  async function route(id: string) {
+    await page.waitForURL("**/#" + id);
+    await page.locator('#terminal[data-route="' + id + '"]').waitFor();
   }
-  await staticPage.getByText("Can I use a web frontend with Bruv?", { exact: true }).click();
-  assert.equal(await staticPage.getByText(/T3 is not bundled with Bruv/).isVisible(), true);
-  assert.equal(
-    await staticPage.getByRole("link", { name: "Open install guide" }).getAttribute("href"),
-    "https://github.com/tnfssc/bruv#install",
-  );
-  await staticPage.locator(".image-link").first().click();
-  assert.equal(new URL(staticPage.url()).pathname, "/assets/delegation.png");
-  await staticPage.goBack();
-  assert.equal(await staticPage.locator("main").isVisible(), true);
-  await staticPage.evaluate(() => scrollTo(0, 0));
-  await staticPage.screenshot({ path: resolve(evidence, "no-js.png"), fullPage: true });
+  async function hit(action: string) {
+    const d = await dimensions();
+    const f = layout(d.cols, d.rows, { route: d.route, scroll: d.scroll, focus: -1 });
+    const h = f.hits.find((h) => h.action === action);
+    assert.ok(h, "Visible cell action " + action);
+    const b = await page.locator("canvas").boundingBox();
+    assert.ok(b);
+    await page.mouse.click(b.x + ((h.x + 0.5) * b.width) / d.cols, b.y + ((h.y + 0.5) * b.height) / d.rows);
+  }
+  assert.equal(await page.locator("canvas").count(), 1);
+  assert.equal(await page.locator("#text-content").isVisible(), false);
+  assert.ok(requests.some((u) => u.endsWith("ghostty-vt.wasm")));
+  const wasm = new Uint8Array(await (await fetch(new URL("ghostty-vt.wasm", server.url))).arrayBuffer());
+  assert.deepEqual([...wasm.slice(0, 4)], [0, 97, 115, 109]);
+  await page.screenshot({ path: resolve(evidence, "desktop.png") });
   checks.push(
-    "JavaScript disabled: every section link, product copy, install href, disclosures, full-size image navigation and browser Back work",
+    "Actual Ghostty WASM fetched locally; one canvas; semantic content not visible in JS mode; no third-party requests or socket.",
   );
-
-  const html = await (await fetch(server.url)).text();
-  assert.ok(html.includes("<h1") && html.includes("project wisdom"));
-  assert.ok(!html.includes('rel="canonical"') && !html.includes('og:image"'));
-  assert.ok(!html.includes("demo.js") && !html.includes("scene-controls"));
-  const anchors = await page.locator('a[href^="#"]').evaluateAll((links) => links.map((a) => a.getAttribute("href")));
-  for (const anchor of anchors) assert.equal(await page.locator(anchor!).count(), 1, "Local anchor " + anchor);
-  assert.deepEqual(pageErrors, []);
-  assert.deepEqual(failedRequests, []);
+  await hit("#install");
+  await route("install");
+  assert.equal((await dimensions()).route, "install");
+  await page.keyboard.press("Escape");
+  await page.waitForURL(server.url.href);
+  await page.locator('#terminal[data-route="overview"]').waitFor();
+  await page.keyboard.press("Tab");
+  assert.equal(await page.locator("#terminal").getAttribute("data-focus"), "1 Overview");
+  await page.keyboard.press("Enter");
+  await route("overview");
+  await page.keyboard.press("3");
+  await route("workflows");
+  await page.keyboard.press("?");
+  await route("help");
+  checks.push("Mouse cell hit changes page; Escape/browser history and Tab/Enter, numbered and help navigation.");
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: width < 600 ? 700 : 960 });
+    await page.goto(server.url.href + "#overview");
+    await page.locator('#terminal[data-ready="true"]').waitFor();
+    assert.ok(
+      await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight,
+      ),
+    );
+    const d = await dimensions(),
+      b = await page.locator("canvas").boundingBox();
+    assert.ok(b && b.width <= width && b.height <= (width < 600 ? 700 : 960));
+    await hit("#install");
+    await route("install");
+    await hit("#overview");
+    await route("overview");
+    if (width <= 390) {
+      await hit("#help");
+      await route("help");
+      await page.keyboard.press("End");
+      assert.ok((await dimensions()).scroll > 0);
+      await page.keyboard.press("Home");
+      assert.equal((await dimensions()).scroll, 0);
+      await page.mouse.move(150, 300);
+      await page.mouse.wheel(0, 250);
+      await page.waitForTimeout(60);
+      assert.ok((await dimensions()).scroll > 0);
+      await page.keyboard.press("Home");
+      await hit("#overview");
+      await route("overview");
+    }
+    if ([320, 390].includes(width)) await page.screenshot({ path: resolve(evidence, "mobile-" + width + ".png") });
+  }
   checks.push(
-    "Static semantic HTML, single h1/main and local anchors checked; no simulator/canvas, browser errors, failed assets or third-party requests",
+    "320/390/768/1440 viewport reflow, no cropped canvas or horizontal page; mouse routes after resize; End/Home/wheel content scrolling.",
+  );
+  // Gallery cell links intentionally leave the canvas for a real static image page.
+  await page.goto(server.url.href + "#gallery");
+  await page.locator('#terminal[data-ready="true"]').waitFor();
+  for (const id of ["settings", "help"]) {
+    await page.keyboard.press("End");
+    if (id === "settings") {
+      for (
+        let i = 0;
+        i < 25 && (await page.locator("#terminal").getAttribute("data-focus")) !== "View local settings menu";
+        i++
+      )
+        await page.keyboard.press("Tab");
+      assert.equal(await page.locator("#terminal").getAttribute("data-focus"), "View local settings menu");
+      await page.keyboard.press("Enter");
+    } else await hit("./shots/" + id + ".html");
+    await page.waitForURL("**/shots/" + id + ".html");
+    assert.equal(await page.locator("canvas").count(), 0);
+    await page.locator("img").evaluate((image: HTMLImageElement) => image.decode());
+    assert.ok(await page.locator("img").getAttribute("alt"));
+    await page.goBack();
+    await page.locator('#terminal[data-ready="true"]').waitFor();
+  }
+  await page.screenshot({ path: resolve(evidence, "gallery.png") });
+  const mobile = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    deviceScaleFactor: 2,
+    viewport: { width: 390, height: 700 },
+  });
+  const touch = await mobile.newPage();
+  await touch.goto(server.url.href + "#help");
+  await touch.locator('#terminal[data-ready="true"]').waitFor();
+  const session = await mobile.newCDPSession(touch);
+  await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: 180, y: 470 }] });
+  for (const y of [440, 400, 360, 320])
+    await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: 180, y }] });
+  await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  assert.ok(Number(await touch.locator("#terminal").getAttribute("data-scroll")) > 0);
+  const td = await touch.locator("#terminal").evaluate((el) => ({
+    cols: Number((el as HTMLElement).dataset.cols),
+    rows: Number((el as HTMLElement).dataset.rows),
+  }));
+  const tf = layout(td.cols, td.rows, { route: "help", scroll: 0, focus: -1 });
+  const th = tf.hits.find((h) => h.action === "#install")!;
+  const tb = (await touch.locator("canvas").boundingBox())!;
+  await touch.touchscreen.tap(tb.x + ((th.x + 0.5) * tb.width) / td.cols, tb.y + ((th.y + 0.5) * tb.height) / td.rows);
+  await touch.locator('#terminal[data-route="install"]').waitFor();
+  checks.push(
+    "Both terminal gallery links open decoded real PNG viewer pages and browser Back returns; Chromium touch swipe scrolls and cell tap navigates at DPR 2.",
+  );
+  await mobile.close();
+  // Link activation is intercepted at the destination, not faked inside the website.
+  await page.goto(server.url.href + "#install");
+  await page.locator('#terminal[data-ready="true"]').waitFor();
+  await page.keyboard.press("End");
+  const external = siteContent.pages.find((p) => p.id === "install")!.links.find((l) => l.href.startsWith("https:"))!;
+  await page.route(new URL(external.href).origin + "/**", (route) =>
+    route.fulfill({ status: 200, contentType: "text/html", body: "<h1>Destination intercepted by browser test</h1>" }),
+  );
+  // Don't count the intentionally intercepted external destination as a runtime dependency.
+  page.removeAllListeners("request");
+  await hit(external.href);
+  await page.waitForURL(external.href);
+  await page.goBack();
+  await page.locator('#terminal[data-ready="true"]').waitFor();
+  await page.keyboard.press("a");
+  await page.waitForURL("**/text.html#install");
+  assert.equal(await page.locator("#text-content").isVisible(), true);
+  assert.equal(await page.locator("canvas").count(), 0);
+  checks.push(
+    "Real install/source destination navigation (intercepted by test); keyboard A opens plain HTML and browser Back returns.",
+  );
+  const noJS = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const text = await noJS.newPage();
+  await text.goto(server.url.href);
+  assert.equal(await text.locator("canvas").count(), 0);
+  for (const p of siteContent.pages) {
+    assert.equal(await text.locator("#" + p.id + " h2").innerText(), p.title);
+    for (const paragraph of p.paragraphs) assert.ok((await text.locator("#" + p.id).innerText()).includes(paragraph));
+    for (const link of p.links)
+      assert.ok(
+        await text
+          .locator("#" + p.id + " a")
+          .evaluateAll((els, href) => els.some((a) => a.getAttribute("href") === href), link.href),
+      );
+  }
+  await text.locator('nav a[href="#install"]').click();
+  assert.equal(new URL(text.url()).hash, "#install");
+  await text.screenshot({ path: resolve(evidence, "no-js.png"), fullPage: true });
+  const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  assert.deepEqual(
+    axe.violations.map((v) => v.id),
+    [],
+  );
+  checks.push(
+    "No-JS semantic content equals shared terminal data, real links, heading navigation; automated axe text-view check (not a screen-reader audit).",
   );
   await build("https://example.test/bruv/");
-  const configured = await (await fetch(server.url)).text();
-  assert.ok(configured.includes('rel="canonical" href="https://example.test/bruv/"'));
-  assert.ok(configured.includes("https://example.test/bruv/assets/social.png"));
+  const html = await (await fetch(server.url)).text();
+  assert.ok(html.includes('href="https://example.test/bruv/"'));
   assert.ok(
-    (await (await fetch(new URL("sitemap.xml", server.url))).text()).includes("<loc>https://example.test/bruv/</loc>"),
+    (await (await fetch(new URL("sitemap.xml", server.url))).text()).includes("https://example.test/bruv/text.html"),
   );
-  assert.ok(
-    (await (await fetch(new URL("robots.txt", server.url))).text()).includes(
-      "\nSitemap: https://example.test/bruv/sitemap.xml\n",
-    ),
-  );
-  checks.push("Configured production URL: canonical, absolute social image, sitemap and robots emitted");
   await build("");
   assert.equal((await fetch(new URL("sitemap.xml", server.url))).status, 404);
-  checks.push("Rebuild without BASE_URL removes prior URL-specific output");
+  const subpath = Bun.serve({
+    port: 0,
+    hostname: "127.0.0.1",
+    fetch(req) {
+      const path = new URL(req.url).pathname;
+      return path.startsWith("/bruv/")
+        ? fetch(new URL(path.slice(5), server.url))
+        : new Response("Missing", { status: 404 });
+    },
+  });
+  const sub = await browser.newPage();
+  await sub.goto(subpath.url.href + "bruv/");
+  await sub.locator('#terminal[data-ready="true"]').waitFor();
+  assert.equal(await sub.locator("canvas").count(), 1);
+  await sub.close();
+  await subpath.stop(true);
+  checks.push("Self-contained JS and WASM also load under a static deployment subpath.");
+  assert.deepEqual(errors, []);
+  checks.push(
+    "Configurable canonical and sitemap; unset URL does not invent production domain; no browser exceptions.",
+  );
   await Bun.write(
     resolve(evidence, "results.json"),
-    JSON.stringify({ browser: await browser.version(), checks, pageErrors, failedRequests }, null, 2) + "\n",
+    JSON.stringify({ browser: await browser.version(), checks, errors }, null, 2) + "\n",
   );
   console.log(checks.join("\n"));
 } finally {

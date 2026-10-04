@@ -84,3 +84,7 @@ GitHub tree/main verified actual lib/ paths. Full raw source files and the WASM 
 ## Scope and remaining checks
 
 This task adds shared copy and research only. Renderer owner must check built WASM loading, terminal navigation, wrapping, resize redraw, mouse/touch, keyboard escape/Tab, equivalent HTML content and labeled gallery links. No browser runtime, deployed URL, screenshots, package or renderer changes were made here. Existing README/values and historical landing notes are unchanged; values 2 and 8 already cover honest source claims and human-facing acceptance.
+
+## Integration follow-up
+
+The parent implemented and browser-verified Ghostty Web 0.4.0 with explicit local Ghostty.load, copied WASM and real measured canvas hit testing (not onData mouse reporting). The separate capture worker obtained safe local settings/help captures from current source with an isolated HOME and network namespace; its recorded procedure supersedes the content worker's limited capture-tool lookup above. Real PNG/transcript provenance is in site/assets/cli-captures.md. The parent removed the old illustration assets and updated README/values; current runtime evidence is validation/terminal/.

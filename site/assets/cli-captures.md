@@ -60,3 +60,7 @@ Rendering serves only installed emulator files on loopback; browser requests to 
 
 - cli-help.txt: ab8373fc52319b56d8a7102d34eee1cc89a03f008047875eb2e1709c341105c5
 - cli-settings.txt: c0ffce1b2681a451bf29f071fe01fc1ea8a35d6c776256276b266c61f641301a
+
+## Website integration
+
+The completed site now uses its own pinned ghostty-web and playwright-core packages; capture-real.ts defaults to these scoped installations. PNGs, transcripts and this provenance file are copied into the static site assets. The separate website build also bundles its Ghostty runtime/WASM and licenses. The rejected concept illustrations have been removed.

@@ -19,3 +19,9 @@ Remembered line: “Use bruv -c to continue the latest session or bruv -r to pic
 Scope: source and shape checks only; browser wrapping, navigation and text-view equivalence belong to the renderer's acceptance. Values and existing landing README/notes remain unchanged: their honest-proof and human-surface guidance already applies.
 
 Checks: shared module imports in Bun 1.4.2; five required page IDs, 19 nonempty/control-free paragraphs, 13 labeled HTTPS links, and a 202-character maximum paragraph verified. Strict standalone TypeScript check and Biome check passed. The source-build command matches README order. No root application gate was needed for this content-only change.
+
+## Integrated website review
+
+Removed “Big ideas. Small prompt”, “Keep the thread” and “A trail to follow” with the rejected DOM page. The replacement names Pi, background jobs, worktree sharing, wisdom/ and specific CLI commands. No slogan-only synonym swap. Added the exact source-build command block to both views, terminal controls with the real keyboard/touch behavior, and a gallery whose captions state source version, replay/crop and no-provider limits. Commands retain hard line breaks.
+
+Verdict: keep. Specificity and evidence fit come from README and the recorded captures. Accessibility language admits missing canvas semantics and points to the equivalent HTML view. Rewrite check: passes self-detectors; no invented metrics, prestige claims or decorative contrast closer. “No shell” and capture disclaimers name actual technical boundaries, not marketing antithesis. No broad skill install or unrelated repository change.

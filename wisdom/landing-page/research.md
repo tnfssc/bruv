@@ -1,3 +1,5 @@
+> SUPERSEDED DESIGN: the user rejected the DOM/grid implementation described here. Read README.md and terminal-research.md for the actual-terminal requirement and current implementation. These earlier sources remain historical research only.
+
 # Static Bruv landing/demo research (historical)
 
 **Superseded recommendation:** the user subsequently clarified that the *whole website* is a terminal-looking grid, not a terminal demo inside a normal landing page. Use the [corrected intent, implementation and focused follow-up research](README.md). The original source investigation below is retained for provenance; its emulator/service comparisons are not an open requirement or blocker.
