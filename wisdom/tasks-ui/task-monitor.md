@@ -35,3 +35,8 @@ Phase 1 is observation and stop only. Sending stdin or other interaction is
 deferred. Nested worker identity is shown only when the launching job gives
 agent metadata; grandchildren running in another process aren't merged into
 the parent's session registry.
+
+## Terminal test readiness
+
+Wait for the monitor view and controls, not job names already in the transcript,
+before sending inspect/stop keys. See [CI readiness proof](ps-ci-readiness-2026-10-04.md).
