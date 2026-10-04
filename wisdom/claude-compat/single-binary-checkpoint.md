@@ -13,3 +13,13 @@ Owners:
 Important migration constraint:0.16.3 updater compares the complete connector --version string to bruv-claude-compat plus release version. A compatibility-first version cannot satisfy that exact old check. Do not add hidden staging-path-dependent identity. Need explicit verified upgrade path or documented safe manual paired installation. No current user's binaries/settings have been changed.
 
 Parent must integrate, check real T3 profile selection/chat without warning and BRUV provider env overrides, test normal CLI plus real child launches and paired update behavior, then report size and remaining limits. No new release promised yet. Values unchanged: existing-home reuse, clear identity and actual installed-path proof already cover this work.
+
+## Integrated implementation
+
+Version/defaults commit3eafc84b integrated as24a108d7. Thin packaging a563272b..f4c11b20 integrated throughbb0dba74. Actual parent build: normal92349920 bytes; launcher1831 bytes after aligning optional tilde override expansion. Previous normal91989472 bytes: +360448 bytes (352KiB). Empty Bun1.4.2 compiled program81315296 bytes confirms the duplicate runtime was the dominant size.
+
+The initial no-staged-identity plan is superseded by a documented, narrowly scoped legacy updater probe bridge after actual frozen0.16.3 migration/checksum/rollback tests. It returns the real staged product version only to old updater staging --version; ordinary connector identity stays protocol-first, new tooling uses --bruv-version. See thin-launcher.md. This avoids forcing users through manual binary replacement without weakening checksum checks.
+
+Parent additionally found the wrapper rejected tilde overrides before connector expansion; aligned it with HOME-prefix-only expansion and a metacharacter/spaces regression. No arbitrary shell evaluation. README/setup now describe optional overrides and separate upstream update/model notices. Final combined CI/SDK/UI tests next. No new release or installed-user-binary replacement yet.
+
+Combined parent CI passed:1992 tests,23 skips,0 failures, then standalone smoke. Log artifacts/compact-combined-ci.log. Running actual SDK thin-launcher smoke, no-BRUV-override T3 chat/version proof and six native suites next. CLI grouping follow-up has its separate owner in wisdom/tasks-ui/rolling-activity-next-pass.md.

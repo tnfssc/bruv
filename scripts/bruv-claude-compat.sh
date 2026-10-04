@@ -18,6 +18,10 @@ done
 name=${self##*/}
 suffix=${name#bruv-claude-compat}
 bruv=${BRUV_CLAUDE_COMPAT_BRUV_PATH:-$directory/bruv$suffix}
+case "$bruv" in
+  "~") bruv=${HOME:?HOME is required for a tilde override} ;;
+  "~/"*) bruv=${HOME:?HOME is required for a tilde override}/${bruv#\~/} ;;
+esac
 case "$bruv" in /*) ;; *) fail "BRUV_CLAUDE_COMPAT_BRUV_PATH must be an absolute normal bruv path" ;; esac
 [ -x "$bruv" ] && [ ! -d "$bruv" ] || fail "normal Bruv executable not found: $bruv; install the matching pair"
 [ ! "$bruv" -ef "$self" ] || fail "normal Bruv path must not point to the connector launcher"

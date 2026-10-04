@@ -75,6 +75,18 @@ test("explicit absolute normal binary override is forwarded without evaluation",
   );
 });
 
+test("optional tilde override uses HOME without shell evaluation", async () => {
+  const { launcher, normal } = await fixture();
+  await symlink(normal, join(home, "normal ; $ executable"));
+  const result = await run([launcher, "ok"], {
+    HOME: home,
+    BRUV_CLAUDE_COMPAT_BRUV_PATH: "~/normal ; $ executable",
+  });
+  expect(result.code).toBe(17);
+  expect(result.stdout).toStartWith("<claude-compat>\n<ok>\n");
+  expect((await run([launcher], { HOME: home, BRUV_CLAUDE_COMPAT_BRUV_PATH: "~other/bruv" })).code).not.toBe(17);
+});
+
 test("exec preserves PID and SIGTERM reaches normal binary without a forwarding process", async () => {
   const { launcher, normal } = await fixture();
   await writeFile(normal, '#!/bin/sh\ntrap \'exit 143\' TERM\nprintf "%s\\n" "$$"\nwhile :; do :; done\n');

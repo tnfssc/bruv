@@ -156,11 +156,13 @@ bun run install:local         # explicit opt-in; default ~/.local/bin; does not 
 bun run smoke -- --reuse-build # packaging smoke, not parity proof
 ~~~
 
-**Migration seam:** old 0.16.3 updaters compare the entire connector `--version`
-with `bruv-claude-compat <version>` and therefore reject this compatibility
-identity. New package tooling must use `--bruv-version`. Until using that tooling,
-use a matched manual paired reinstall/repair; no claim that the legacy updater
-can install this connector. Do not vary identity by staging path/environment.
+**Migration:** new install/update checks use `--bruv-version`. The thin launcher
+includes a narrow bridge for the old 0.16.3 updater: only its staged canonical
+`--version` probe inside `.bruv-update-*` returns the old product label derived
+from the staged normal binary. After installation, `--version` advertises protocol
+compatibility. Frozen 0.16.3 migration, checksum and rollback tests passed. Do not
+configure T3 to run from an updater staging directory. This replaces the earlier
+manual-reinstall-only plan; no checksum or replacement checks are bypassed.
 
 Local install stages/verifies both versions before replacement. Stop active
 sessions first: replacing two executables is not a filesystem transaction.
