@@ -1,15 +1,27 @@
-# End-to-end long-thread PTY latency harness
+# End-to-end long-thread PTY latency
 
-## Installed 0.15.30 baseline / candidate comparison
+## Run the actual interaction
 
-Run from the repository root with the project's pinned Bun and dependencies installed (frozen lockfile):
+Use the pinned Bun in an installed checkout. The default binary is this checkout’s dist/bruv; set BRUV_BIN to test an installed release. Both runs use a private HOME, synthetic saved sessions, tmux at 100 by 32, and a fixture provider bound only to loopback. The harness proves that both requests reach that provider. No real credentials or message contents are needed.
 
-`BRUV_BIN=/home/tnfssc/.local/bin/bruv /absolute/path/to/bun test tests/long-thread-pty-latency.test.ts`
+The provider holds each response until measurement ends, not for a fixed time. That keeps a slow run in the same loading state. The test measures idle and held-response input echo separately, then observes only braille-spinner glyph changes for a full five seconds. Each input token must appear, and Ctrl+U must clear it before the next sample. Default sample count is 12; change BRUV_LATENCY_SAMPLES for a longer run. The two-turn and 100-turn fixtures include assistant markdown, nonzero usage, and execute outputs. BRUV_LATENCY_LONG_TURNS changes the long fixture size.
 
-Repeat with `BRUV_BIN=/path/to/candidate/bruv` for the candidate binary. The harness launches each CLI binary in its own isolated temporary HOME and session store, drives an actual tmux terminal, and talks to a controlled local OpenAI-compatible SSE endpoint. The endpoint holds the reply open for 12 seconds. During the hold it polls captured terminal frames every 25 ms; it reports observed full-frame changes and inter-observation gaps, plus 5 measured typing echoes per short/long history. Warmup is 800 ms. Echo latency is bounded by asynchronous capture polling and is an upper-bound observation, not a key event timestamp. Spinner cadence is full captured-frame cadence, not inferred from render calls. Compare the reported poll interval and don't interpret a gap below its granularity.
+Input capture retries sleep 20 ms; spinner capture retries sleep 50 ms. Each also includes tmux process overhead. The measured times are upper-bound observations, not instrumented key timestamps or exact render FPS. Run baseline and candidate in sequence, without a build or another benchmark running. Do not compare only eventual test success.
 
-The long fixture is 100 turns, each with repeated markdown/prose, five execute call/result pairs, and multi-line source-like tool output; the short fixture is two turns with one pair each. This intentionally stresses the same mix as an actual coding session instead of one-line synthetic messages. Test output prints sizes' response measures for each case. Failures to connect to the local OpenAI-compatible endpoint indicate a provider configuration incompatibility; no external network or real credentials are needed.
+Diagnostic run:
 
-Private source-shape cross-check (stats only, no text copied): current parent session measured 517 JSONL records, 989,789 bytes, 225,126 content text chars, 99 tool calls; roles included 105 assistant, 99 toolResult, 285 custom, and 22 custom_message. Fixture scale targets the same multi-hundred-turn/tool rich density but is not a private-session clone. The test generates fresh data and never opens or changes the real session.
+```sh
+BRUV_BIN=/path/to/installed/bruv BRUV_LATENCY_OUTPUT=/tmp/baseline.json bun test tests/long-thread-pty-latency.test.ts
+```
 
-Limitations: tmux's capture-pane polling adds its own overhead and can miss transitions faster than the sampling interval; terminal capture content is used as the evidence. Results depend on machine load, terminal size, and build. Run baseline and candidate under comparable conditions, retain full JSON output, and do not treat one run as a stable benchmark.
+Acceptance run on this machine (explicit budgets, rather than load-sensitive default CI assertions):
+
+```sh
+BRUV_BIN="$PWD/dist/bruv" BRUV_LATENCY_MAX_ECHO_P95_MS=100 BRUV_LATENCY_MAX_SPINNER_GAP_P95_MS=140 BRUV_LATENCY_MIN_SPINNER_TRANSITIONS=45 BRUV_LATENCY_OUTPUT=/tmp/candidate.json bun test tests/long-thread-pty-latency.test.ts
+```
+
+Each run saves measurements and actual held-input/spinner terminal frames under artifacts/latency/. Those survive cleanup of the temporary session and provider. Inspect the frames. A diagnostic run without budgets records numbers but does not certify responsiveness. The count-based context-cache test supplies the stable CI regression check.
+
+## Handoff
+
+Integration worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_43fd9f57, branch fix/long-thread-full-frame-latency. See [the follow-up](full-frame-latency-followup.md) for the missed footer path and final results. Earlier draft evidence used a timer-held response, fewer samples and weaker assertions; it is superseded, not acceptance for this fix.

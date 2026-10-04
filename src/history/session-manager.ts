@@ -13,6 +13,7 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import {
   CURRENT_SESSION_VERSION,
+  AgentSession,
   SessionManager,
   sessionEntryToContextMessages,
 } from "@earendil-works/pi-coding-agent";
@@ -191,6 +192,53 @@ function openStore(path: string): DiskEntryStore {
 export function installDiskBackedSessionManager(): void {
   if (installed) return;
   installed = true;
+
+  // Both footer modes ask the SDK for context usage on every input/spinner frame.
+  // Its implementation materializes the branch twice. Cache only the reduced result,
+  // at the SDK owner where the actual routed model limits are available.
+  const originalContextUsage = AgentSession.prototype.getContextUsage;
+  const contextUsageCache = new WeakMap<
+    SessionManager,
+    {
+      sessionId: string;
+      leafId: string | null;
+      entries: WeakRef<object>;
+      entryCount: number;
+      contextWindow: number;
+      value: ReturnType<AgentSession["getContextUsage"]>;
+    }
+  >();
+  AgentSession.prototype.getContextUsage = function () {
+    const manager = this.sessionManager;
+    if (!state(manager)) return originalContextUsage.call(this);
+    const current = internals(manager);
+    const contextWindow =
+      (
+        this as unknown as {
+          _limitsModel(): { contextWindow?: number } | undefined;
+        }
+      )._limitsModel()?.contextWindow ?? 0;
+    const cached = contextUsageCache.get(manager);
+    if (
+      cached &&
+      cached.sessionId === current.sessionId &&
+      cached.leafId === current.leafId &&
+      cached.entries.deref() === current.fileEntries &&
+      cached.entryCount === current.fileEntries.length &&
+      cached.contextWindow === contextWindow
+    )
+      return cached.value;
+    const value = originalContextUsage.call(this);
+    contextUsageCache.set(manager, {
+      sessionId: current.sessionId,
+      leafId: current.leafId,
+      entries: new WeakRef(current.fileEntries),
+      entryCount: current.fileEntries.length,
+      contextWindow,
+      value,
+    });
+    return value;
+  };
 
   const klass: any = SessionManager;
   const prototype: any = SessionManager.prototype;
