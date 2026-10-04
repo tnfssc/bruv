@@ -19,6 +19,13 @@ import { INTERNAL_TYPESCRIPT_RUNNER_ARG, runTypeScriptFromStdin } from "./typesc
 import { updateBruv } from "./update";
 
 const cliArgs = process.argv.slice(2);
+// Enter the connector before normal CLI bootstrap. Child work still starts this
+// executable without the subcommand and uses the ordinary CLI path.
+if (cliArgs[0] === "claude-compat") {
+  const { runConnector } = await import("./claude-compat/cli");
+  process.exit(await runConnector(cliArgs.slice(1)));
+}
+
 // Hidden offline transport diagnostic. No normal CLI path reaches this branch.
 if (cliArgs[0] === "--offline-openai-transport-probe") {
   if (cliArgs.length !== 1 || process.env.BRUV_OFFLINE_OPENAI_TRANSPORT_PROBE !== "loopback-fake-key") {

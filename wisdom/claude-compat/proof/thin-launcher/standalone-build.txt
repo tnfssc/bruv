@@ -1,0 +1,8 @@
+$ bun ./scripts/build-claude-compat.ts "--outfile=dist/standalone space/bruv-claude-compat"
+Built /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_32125da3/dist/standalone space/bruv
+Built Bruv connector launcher /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_32125da3/dist/standalone space/bruv-claude-compat
+0.16.3
+bruv-claude-compat 0.16.3
+92349920 dist/standalone space/bruv
+    1672 dist/standalone space/bruv-claude-compat
+92351592 total

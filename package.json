@@ -11,7 +11,7 @@
     "ci": "bash ./scripts/ci.sh linux",
     "ci:macos": "bash ./scripts/ci.sh macos",
     "prepare:assets": "bun ./scripts/prepare-assets.ts",
-    "build": "bun run prepare:assets && bun ./scripts/build-pair.ts",
+    "build": "bun ./scripts/build-pair.ts",
     "check": "bun run prepare:assets && tsc --noEmit",
     "test": "bun run build && bun test ./tests",
     "test:llm": "bun run build && BRUV_RUN_LLM_TESTS=1 bun test ./tests/llm.test.ts",
