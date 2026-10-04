@@ -14,8 +14,11 @@ import { DiskEntryStore } from "../src/history/disk-entry-store";
 import { installDiskBackedSessionManager, disposeDiskBackedSessionManager } from "../src/history/session-manager";
 import { renderCompactFooter, renderDetailedFooter } from "../src/ui/footer";
 
+import { installShakeAccountingAdapter } from "../src/agent/manual-shake";
+
 const nativeContextUsage = AgentSession.prototype.getContextUsage;
 installDiskBackedSessionManager();
+installShakeAccountingAdapter();
 const usage = {
   input: 8192,
   output: 512,
