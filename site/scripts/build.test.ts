@@ -57,6 +57,8 @@ describe("single terminal landing", () => {
       for (const row of c.rows) expect(row.reduce((n, r) => n + [...r.text].length, 0)).toBe(c.cols);
       const f = layout(width + 6, 100, { scroll: 0, focus: -1 });
       expect(f.lines.join(" ")).not.toContain("Scripted demos");
+      expect(f.hits.find((h) => h.action === "text")?.y).toBe(1);
+      expect(f.ansi).not.toContain("scroll / swipe");
       expect(f.captures).toHaveLength(3);
     }
   });

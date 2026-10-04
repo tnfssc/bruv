@@ -50,7 +50,7 @@ export function layout(cols: number, rows: number, state: State) {
   const margin = cols < 60 ? 2 : Math.max(4, Math.floor((cols - 112) / 2));
   const width = cols - 2 * margin,
     top = 3,
-    bottom = rows - 3;
+    bottom = rows - 1;
   const pieces: {
     x: number;
     y: number;
@@ -82,7 +82,10 @@ export function layout(cols: number, rows: number, state: State) {
     });
   }
   put(margin, 1, "bruv", palette.accent);
-  if (width > 45) put(margin + 7, 1, "a coding agent for your terminal", palette.muted);
+  if (width > 50) put(margin + 7, 1, "a coding agent for your terminal", palette.muted);
+  const htmlLabel = "[ HTML ]", htmlX = cols - margin - htmlLabel.length;
+  hits.push({ x: htmlX, y: 1, width: htmlLabel.length, height: 1, label: "HTML", action: "text" });
+  put(htmlX, 1, htmlLabel, state.focus === 0 ? palette.selected : palette.accent);
   y += 1;
   for (const line of headline(landing.title, width, width < 80))
     pieces.push({ x: margin, y: y++, text: line, style: palette.title });
@@ -195,12 +198,6 @@ export function layout(cols: number, rows: number, state: State) {
     } else if (row >= top) put(p.x, row, p.text, p.style);
   }
   for (const c of controls) put(c.x, c.y, c.text, c.style);
-  put(margin, rows - 2, width < 55 ? "scroll / swipe" : "scroll", palette.muted);
-  const label = "[ HTML ]",
-    x = cols - margin - label.length;
-  const focused = state.focus === hits.length;
-  hits.push({ x, y: rows - 2, width: label.length, height: 1, label: "HTML", action: "text" });
-  put(x, rows - 2, label, focused ? palette.selected : palette.accent);
   const ansiRows = grid.map((row, i) => {
     let ansi = "\x1b[" + (i + 1) + ";1H",
       prev = "";

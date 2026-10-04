@@ -28,8 +28,10 @@ export function textContent(animated = true) {
   const cta = '<a href="' + siteContent.install + '">Install Bruv</a>';
   return (
     "<main><h1>" +
-    escape(landing.title + " " + landing.titleTail) +
+    escape(landing.title) +
     "</h1><p>" +
+    escape(landing.titleTail) +
+    "</p><p>" +
     escape(landing.intro) +
     "</p><p>" +
     cta +
@@ -90,6 +92,7 @@ export async function build(raw = process.env.BASE_URL) {
     const html = template
       .replace("<!-- META -->", plain ? siteMetadata(raw, "text.html").html : metadata.html)
       .replaceAll("<!-- DESCRIPTION -->", escape(siteContent.description))
+      .replace("<!-- BOOTSTRAP -->", plain ? "" : '<style>html{background:#101010}.terminal-pending #text-content{display:none}.terminal-pending{overflow:hidden}</style><script>document.documentElement.classList.add("terminal-pending")</script>')
       .replace("<!-- CONTENT -->", textContent(plain))
       .replace(
         "<!-- ACCESSIBLE SWITCH -->",
@@ -101,7 +104,7 @@ export async function build(raw = process.env.BASE_URL) {
         "<!-- RUNTIME -->",
         plain
           ? '<script type="module" src="./html-animation.js"></script>'
-          : '<script type="module" src="./terminal.js"></script>',
+          : '<script type="module">import("./terminal.js").catch(() => document.documentElement.classList.remove("terminal-pending"))</script>',
       )
       .replace(
         "<!-- SWITCH -->",

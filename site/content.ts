@@ -7,8 +7,8 @@ export const siteContent = {
   install: "https://github.com/tnfssc/bruv#build-from-source",
 };
 export const landing = {
-  title: "Keep coding",
-  titleTail: "while your agents work.",
+  title: "Bruv",
+  titleTail: "Keep coding while your agents work.",
   intro:
     "Bruv is a coding agent built on Pi. Send a fix to a subagent in its own Git worktree while you work on the next change.",
   features: [

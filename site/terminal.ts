@@ -307,11 +307,12 @@ async function start() {
   paint();
   host.focus({ preventScroll: true });
   host.dataset.ready = "true";
+  document.documentElement.classList.remove("terminal-pending");
 }
 start().catch((error) => {
   host.hidden = true;
   fallback.hidden = false;
-  document.documentElement.classList.remove("terminal-mode");
+  document.documentElement.classList.remove("terminal-mode", "terminal-pending");
   const notice = document.createElement("p");
   notice.textContent = "The terminal could not load. This HTML view has the same content and links.";
   fallback.prepend(notice);

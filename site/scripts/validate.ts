@@ -151,6 +151,12 @@ try {
   await ready();
   await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
+  await page.waitForURL("**/text.html");
+  await page.goto(server.url.href);
+  await ready();
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
   await page.waitForURL(siteContent.install);
   results.keyboardInstall = true;
   await page.goto(server.url.href);
