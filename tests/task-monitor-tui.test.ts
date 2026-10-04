@@ -193,14 +193,14 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     frame = await pollFrame(capture, (frame) => {
       const running = frame.slice(frame.lastIndexOf("Running jobs"));
       return (
-        frame.includes("⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled") &&
+        frame.includes("1 cancelled") &&
         running.includes(alphaTaskId!) &&
         running.includes("ALPHA") &&
         !running.includes(stoppedTaskId!) &&
         !running.includes("BETA")
       );
     });
-    expect(frame).toContain("⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled");
+    expect(frame).toContain("1 tool called · 1 cancelled · 1 running");
     const remainingJobs = frame.slice(frame.lastIndexOf("Running jobs"));
     expect(remainingJobs).toContain(alphaTaskId!);
     expect(remainingJobs).toContain("ALPHA");
@@ -210,6 +210,15 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     await tmux("send-keys", "-t", name, "Escape");
     frame = await pollFrame(capture, (frame) => !frame.includes("Running jobs"));
     expect(frame).not.toContain("Running jobs");
+    // The collapsed source group summarizes outcomes. Open its child rows to
+    // retain the exact original cancelled-job proof, without expanding details.
+    await tmux("send-keys", "-t", name, "-l", "/activity");
+    await tmux("send-keys", "-t", name, "Enter");
+    await frameContaining(capture, ["Activity —", "Esc returns"]);
+    await tmux("send-keys", "-t", name, "Enter");
+    frame = await frameContaining(capture, "⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled");
+    expect(frame).not.toContain("⊘ sh -c 'while :; do echo ALPHA-live; sleep 1; done' — cancelled");
+    expect(frame).not.toContain("console.log");
   } finally {
     server.stop(true);
     await tmux("kill-server").catch(() => ({ code: 1, stdout: "", stderr: "" }));
