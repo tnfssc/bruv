@@ -160,6 +160,22 @@ def tmux(root, *args, check=True):
                           check=check, capture_output=True, text=True).stdout
 
 
+def draft_ready(frame, text):
+    return any(line.lstrip().startswith(" " + text) for line in frame.splitlines())
+
+
+def send(root, text):
+    tmux(root, "send-keys", "-t", "activity", "-l", text)
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline:
+        if draft_ready(tmux(root, "capture-pane", "-p", "-t", "activity"), text):
+            tmux(root, "send-keys", "-t", "activity", "Enter")
+            return
+        time.sleep(.05)
+    capture(root, "submit-draft-TIMEOUT", display=False)
+    raise AssertionError("Editor did not display the intended draft before Enter")
+
+
 def capture(root, name, display=True):
     out = root / "frames"
     out.mkdir(exist_ok=True)
@@ -231,8 +247,7 @@ def main():
         print("Attach: tmux -L", state["socket"], "attach -t activity")
         return
     if a.command == "send":
-        tmux(root, "send-keys", "-t", "activity", "-l", " ".join(a.args))
-        tmux(root, "send-keys", "-t", "activity", "Enter")
+        send(root, " ".join(a.args))
     elif a.command == "key":
         tmux(root, "send-keys", "-t", "activity", *a.args)
     elif a.command == "click":

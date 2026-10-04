@@ -24,6 +24,49 @@ def result_row(frame, token):
     return bool(re.search(r"^\s*" + re.escape(token) + r"\s*[│┃]?\s*$", frame, re.M))
 
 
+def notice_record(entry, kind, task_id=None, status=None):
+    # Pi persists custom messages at the entry root, not inside message.
+    if entry.get("type") != "custom_message" or entry.get("customType") != kind:
+        return None
+    if task_id is not None and not any(t.get("id") == task_id and t.get("status") == status for t in entry.get("details", {}).get("tasks", [])):
+        return None
+    return entry
+
+
+def lifecycle_rows(frame):
+    rows = [line.strip() for line in frame.splitlines() if "Start lifecycle checks" in line]
+    assert len(rows) == 3, rows
+    assert any(line.startswith("✓") for line in rows), rows
+    assert any("exit 7" in line for line in rows), rows
+    assert any("cancelled" in line for line in rows), rows
+    assert "job notification" not in frame, "Duplicate standalone notice headers beside owned task rows"
+
+
+def saved_resume(records):
+    q, = [q for q in records if q.get("text") == "How detailed should the notes be?"]
+    assert q["status"] == "answered" and q["answer"] == "Keep concise", q
+    assert q["delivery"] == "resume-needed", q
+    return q["id"]
+
+
+def startup_ready(frame):
+    return "mode: orchestrator" in frame and "acceptance" in frame and "" in frame
+
+
+def header_contract(frame, prose_tokens):
+    """Headers share surrounding output's LEFT inset, not blank vertical rows."""
+    lines = frame.splitlines()
+    headers = [line for line in lines if re.search(r"[23] tools called", line)]
+    assert len(headers) == 2, headers
+    prose = [line for line in lines if any(token in line for token in prose_tokens)]
+    assert prose, "Surrounding prose missing"
+    insets = {len(line) - len(line.lstrip()) for line in prose}
+    assert len(insets) == 1, ("Inconsistent surrounding output inset", prose)
+    for line in headers:
+        assert not any(arrow in line for arrow in "▸▾▶▼"), line
+        assert len(line) - len(line.lstrip()) == next(iter(insets)), ("Header left alignment", line, prose)
+
+
 class Run:
     def __init__(self, root, binary):
         self.root, self.binary = root, binary
@@ -69,13 +112,7 @@ class Run:
         self.command("send", "Inspect grouped records.")
         f = self.text("settled", "Grouped records are ready.", "3 tools called", "2 tools called", "Saved note:")
         self.no_details(f)
-        headers = [i for i, line in enumerate(f.splitlines()) if re.search(r"[23] tools called", line)]
-        assert len(headers) == 2
-        for i in headers:
-            line = f.splitlines()[i]
-            assert not any(arrow in line for arrow in "▸▾▶▼"), line
-            assert not f.splitlines()[i-1].strip(), "Missing header top padding"
-            assert not f.splitlines()[i+1].strip(), "Missing header bottom padding"
+        header_contract(f, ["Saved note:", "Grouped records are ready."])
         ansi = (self.root / "frames/settled.ansi").read_text()
         assert "\x1b[" in ansi, "ANSI theme evidence missing"
         before = len((self.root / "requests.jsonl").read_text().splitlines())
@@ -87,7 +124,9 @@ class Run:
         assert not result_row(f, "RECORD-B_DETAIL") and not result_row(f, "RECORD-C_DETAIL")
         self.click(f, "Read second record")
         f = self.wait("two-independent-details", lambda f: result_row(f, "RECORD-A_DETAIL") and result_row(f, "RECORD-B_DETAIL"))
-        self.click(f, "Read first record")
+        # Native expanded execute rows use their original type heading, not the
+        # collapsed action label. Click only the first expanded native row.
+        self.click(f, "Execute · TypeScript", occurrence=0)
         f = self.wait("first-closed-second-open", lambda f: not result_row(f, "RECORD-A_DETAIL") and result_row(f, "RECORD-B_DETAIL"))
         self.click(f, "3 tools called")
         f = self.wait("group-closed", lambda f: "3 tools called" in f and "Read second record" not in f)
@@ -105,10 +144,6 @@ class Run:
         self.command("key", "C-o")
         f = self.wait("ctrl-o-collapsed", lambda f: "2 tools called" in f and not result_row(f, "SPLIT_B_DETAIL"))
         assert len((self.root / "requests.jsonl").read_text().splitlines()) == before, "Expansion called provider"
-        self.command("send", "/activity")
-        self.text("activity-select-ready", "Activity", "Esc returns")
-        self.command("key", "Enter")
-        self.wait("activity-selected", lambda f: "Esc returns" not in f and any(t in f for t in ["Read first record", "Read fourth record"]))
         self.command("send", "/reload")
         self.text("after-reload", "Reloaded keybindings", "2 tools called")
         self.command("send", "/activity")
@@ -121,6 +156,11 @@ class Run:
         self.text("reopened-picker", "Activity", "Esc returns")
         self.command("key", "Escape")
 
+        self.command("send", "/activity")
+        self.text("activity-select-ready", "Activity", "Esc returns")
+        self.command("key", "Enter")
+        self.wait("activity-selected", lambda f: "Esc returns" not in f and any(t in f for t in ["Read first record", "Read fourth record"]))
+
     def question(self):
         self.command("send", "Ask about notes.")
         self.text("pending-question", "How detailed should the notes be?")
@@ -131,11 +171,26 @@ class Run:
         self.command("key", "Enter")
         self.text("answer-picker", "How detailed should the notes be?", "Keep concise", "Include examples")
         self.command("key", "Enter")
+        self.text("answer-saved-after-reopen", "No unanswered questions", "1 saved")
+        ledger, = (self.root / "sessions").glob("*.questions.json")
+        records = json.loads(ledger.read_text())
+        (self.root / "answer-saved.json").write_text(json.dumps(records, indent=2))
+        # A fresh process deliberately requires explicit resume of a saved reply.
+        resume = "/questions resume " + saved_resume(records)
+        self.submit_saved_resume(resume)
         self.text("answer-used", "I will keep the notes concise.")
         before = len((self.root / "requests.jsonl").read_text().splitlines())
         self.command("reopen")
         self.text("answered-reopened", "I will keep the notes concise.")
         assert len((self.root / "requests.jsonl").read_text().splitlines()) == before
+
+    def submit_saved_resume(self, resume):
+        self.command("send", resume)
+        f = self.wait("resume-command-ready", lambda f: h.draft_ready(f, resume) or "Saved answer queued" in f or "I will keep the notes concise." in f)
+        # Native argument completion consumes the first Enter. Submit once more
+        # only when the exact command is still visibly the editor draft.
+        if h.draft_ready(f, resume):
+            self.command("key", "Enter")
 
     def notice(self, name, kind, task_id=None, status=None):
         start = time.monotonic()
@@ -144,9 +199,8 @@ class Run:
                 for line in path.read_text().splitlines():
                     try: entry = json.loads(line)
                     except json.JSONDecodeError: continue
-                    message = entry.get("message", {})
-                    if message.get("customType") != kind: continue
-                    if task_id is not None and not any(t.get("id") == task_id and t.get("status") == status for t in message.get("details", {}).get("tasks", [])): continue
+                    message = notice_record(entry, kind, task_id, status)
+                    if message is None: continue
                     (self.root / (name + "-notice.json")).write_text(json.dumps(message, indent=2))
                     self.timings[name] = round(time.monotonic()-start, 3)
                     return
@@ -174,7 +228,9 @@ class Run:
         self.command("key", "C-o")
         self.text("lifecycle-expanded-ready", "console.log")
         self.command("key", "End")
-        self.wait("lifecycle-details", lambda f: "cancelled" in f.lower() and "exit 7" in f.lower())
+        # End shows the last delivery, not all three source rows at once.
+        self.text("lifecycle-details", ids["cancel"] + " killed", "Signal: SIGTERM")
+        lifecycle_rows((self.root / "frames/late-cancel.txt").read_text())
         # Review collapsed/open captures for duplicate standalone canonical rows.
         # stdout "check started" is NOT a typed progress-notification claim.
 
@@ -257,6 +313,7 @@ def main():
             run = Run(root / case, binary)
             try:
                 run.command("start", binary)
+                run.wait("startup-ready", startup_ready)
                 getattr(run, case)()
                 report["cases"][case] = {"status":"passed", "timings":run.timings}
             except Exception as e:

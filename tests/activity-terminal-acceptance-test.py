@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 spec = importlib.util.spec_from_file_location("activity_fixture", Path(__file__).resolve().parents[1] / "scripts/activity-terminal-acceptance.py")
@@ -20,6 +21,17 @@ def request(text, calls=()):
 class FixtureTests(unittest.TestCase):
     def setUp(self):
         self.root = Path(tempfile.gettempdir()) / "activity-fixture-test"
+
+    def test_submission_requires_actual_editor_draft_not_transcript_token(self):
+        self.assertFalse(fixture.draft_ready(" Ask about notes.\n", "Ask about notes."))
+        self.assertTrue(fixture.draft_ready(" Ask about notes.\nproject · mode: orchestrator", "Ask about notes."))
+        self.assertTrue(fixture.draft_ready("   /questions resume q_fixture", "/questions resume q_fixture"))
+
+    def test_send_waits_for_visible_draft_before_enter(self):
+        with patch.object(fixture, "tmux", side_effect=["", "", " /questions resume q_fixture", ""]) as tmux, patch.object(fixture.time, "sleep"):
+            fixture.send(self.root, "/questions resume q_fixture")
+        self.assertEqual(tmux.call_args_list[-1].args, (self.root, "send-keys", "-t", "activity", "Enter"))
+        self.assertEqual([call.args[1] for call in tmux.call_args_list], ["send-keys", "capture-pane", "capture-pane", "send-keys"])
 
     def test_grouped_records_have_two_prose_separated_groups(self):
         calls, output = [], []
