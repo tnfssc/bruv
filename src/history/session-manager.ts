@@ -205,6 +205,22 @@ function contextMetadata(path: EntryMetadata[]): EntryMetadata[] {
   return selected;
 }
 
+/** Select indexed candidates from the same branch/context as the public APIs.
+ * Undefined means an unowned manager: callers must keep their native fallback.
+ * Context indices matter: only index zero can be a replayed checkpoint.
+ */
+export function selectDiskBackedEntries(
+  manager: object,
+  scope: "branch" | "context",
+  select: (metadata: EntryMetadata, index: number) => boolean,
+): SessionEntry[] | undefined {
+  const owned = states.get(manager as SessionManager);
+  if (!owned) return undefined;
+  const path = pathMetadata(owned.store, internals(manager as SessionManager).leafId);
+  const entries = scope === "context" ? contextMetadata(path) : path;
+  return entries.filter(select).map((metadata) => owned.store.materialize(metadata));
+}
+
 function contextSettings(path: EntryMetadata[]): Pick<SessionContext, "thinkingLevel" | "model"> {
   let thinkingLevel = "off";
   let model: { provider: string; modelId: string } | null = null;
