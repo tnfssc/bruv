@@ -1,5 +1,13 @@
 # v0.16.4: compact connector and CLI activity groups
 
+## Published
+
+Published stable v0.16.4: https://github.com/tnfssc/bruv/releases/tag/v0.16.4 . Release run37206254734 passed all six jobs, including actual Mac current/frozen updater checks, rollback injection/restoration, device-free helper and final Linux2644 native gates. Source/tag dd075b0a9d5d9c37e386ef0a7fd3bad8b2950d48. Latest release, not draft or prerelease. Verified all20 expected assets with nonempty size and SHA256 metadata; no redundant large binary downloads. Proof: v0164-verification.json. Linux x64 executable92354016 bytes; launcher1831 bytes.
+
+The held runs below are history, not open blockers. Fix was canonical fixture paths plus honest process diagnostics; production updater unchanged. Actual hosted Mac proof now passed. Close active sessions before bruv update; no user installation or settings were changed by this release work.
+
+Values review after release: no new value needed. Existing shipped-path proof, honest evidence and clear ownership already cover the failure. Keep the path-alias and source-excerpt lessons here with the updater gate.
+
 User authorized release after final integrated checks. Last published release is v0.16.3. Local develop has21 unreleased commits and was0 behind origin/develop after fetch. No user settings or installed binaries were changed.
 
 ## Candidate proof
@@ -45,3 +53,7 @@ Fix: create the fixture install directory, then realpath it before defining inst
 Linux regression uses an actual compiled candidate pair and compiled updater gate with TMPDIR pointing through an explicit directory symlink. It runs both current and frozen0.16.3 updaters. Before the fix both tests reproduced the hosted symptom exactly: status0, signalnull, empty stderr and successful update stdout at the real directory instead of the alias. This is executable proof, not source-text parsing. Hosted Mac proof remains pending; parent owns the standard release rerun. No push, dispatch, release or version bump performed by this fix owner.
 
 Focused proof (Linux x64, Bun1.4.2): bun test tests/verify-update.test.ts tests/verify-update-probe.test.ts tests/update.test.ts —57 pass,0 fail,214 assertions, including both aliased-TMPDIR compiled gates. bun run check (prepare:assets + tsc --noEmit) passed. Biome formatting of both changed TypeScript files passed unchanged. Logs retained in this fix worktree at artifacts/v0164-path-alias-before.log, artifacts/v0164-path-alias-after.log and artifacts/v0164-path-alias-typecheck.log. Dependencies used the parent checkout's node_modules; no dependency changes or full CI rerun.
+
+## Canonical-path candidate
+
+Integrated4764a4f9 as dd075b0a; merged parent retry history with worker proof without dropping either. Pushed and dispatched run37206254734 at source dd075b0a: https://github.com/tnfssc/bruv/actions/runs/37206254734 . Watch artifacts/v0164-final-release-watch.log. Version remains prepared0.16.4. Await actual Mac/current/frozen updater and final Linux native gates; no publication claim yet.

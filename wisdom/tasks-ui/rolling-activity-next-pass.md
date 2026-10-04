@@ -17,3 +17,5 @@ The T3 comparison and reviewed feature frames are in rolling-activity-disclosure
 Values unchanged: existing ownership, true UI proof and grouping without hiding lasting text cover the work. Parent next action if requested: prepare next version, push, and run gated release on final assets.
 
 Parent directly reviewed final-build plain/ANSI frames after the runner: padded dim header, row-only opening, only selected second item detail, grouped lifecycle notices and visible pending human question. Durable final-build digest/case results: evidence/rolling-disclosures-2026-10-04/parent-reviewed-report.json. Generated Python cache removed; tracked working tree clean after this record.
+
+Shipped in stable v0.16.4. All final release gates passed, including Mac rollback/migration and Linux native T3. See ../releases/v0164-compact-activity.md and v0164-verification.json for source,20 assets and the resolved fixture-path failure.

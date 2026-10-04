@@ -25,3 +25,5 @@ Parent additionally found the wrapper rejected tilde overrides before connector 
 Combined parent CI passed:1992 tests,23 skips,0 failures, then standalone smoke. Log artifacts/compact-combined-ci.log. Running actual SDK thin-launcher smoke, no-BRUV-override T3 chat/version proof and six native suites next. CLI grouping follow-up has its separate owner in wisdom/tasks-ui/rolling-activity-next-pass.md.
 
 Final compact parent SDK/UI command passed: actual wrapper SDK shell/Stop/EOF, real unchanged2644 chat with no two BRUV env overrides and no Unsupported version warning, then all six native suites. Log artifacts/compact-final-sdk-ui.log; summaries proof/compact-integrated/. Build sizes remain92349920+1831 bytes. These are local Linux checks, not a new release/global install or desktop/Android native execution claim. CLI group UI work remains with task_993dc486 before final combined review.
+
+Shipped in stable v0.16.4. All final release gates passed, including Mac rollback/migration and Linux native T3. See ../releases/v0164-compact-activity.md and v0164-verification.json for source,20 assets and the resolved fixture-path failure.
