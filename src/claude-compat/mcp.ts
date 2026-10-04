@@ -159,7 +159,9 @@ export class InjectedMcpSession {
             redirect: "error",
             signal: AbortSignal.any([
               ...(init?.signal ? [init.signal] : []),
-              AbortSignal.timeout(init?.method === "DELETE" ? Math.min(5_000, requestTimeout) : requestTimeout),
+              // Cleanup is part of the owning run. A busy host gets the same
+              // configured deadline as its other requests, not a hidden five-second cap.
+              AbortSignal.timeout(requestTimeout),
             ]),
           }),
         reconnectionOptions: {
