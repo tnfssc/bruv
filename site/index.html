@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bruv — A coding agent for your terminal</title>
+    <meta
+      name="description"
+      content="Bruv is a terminal coding agent built on Pi. Work with sub-agents, background jobs, isolated worktrees and project wisdom. Explore the CLI and its workflow."
+    />
+    <meta name="theme-color" content="#f5f4ed" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="Bruv" />
+    <meta
+      property="og:title"
+      content="Bruv — A coding agent for your terminal"
+    />
+    <meta
+      property="og:description"
+      content="A terminal coding agent built on Pi. Delegate work, keep jobs moving and leave project wisdom for the next session."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Bruv — A coding agent for your terminal"
+    />
+    <meta
+      name="twitter:description"
+      content="Delegate work. Keep context. Build from your terminal."
+    />
+    <!-- SITE_META -->
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="demo.js" defer></script>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="brand" href="#top" aria-label="Bruv home"
+        ><span class="brand-mark" aria-hidden="true">b<span>_</span></span
+        >bruv<span class="brand-dot">.</span></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="#workflow">Workflow</a>
+        <a href="#questions">Questions</a>
+        <a class="nav-source" href="https://github.com/tnfssc/bruv"
+          >GitHub <span aria-hidden="true">↗</span></a
+        >
+      </nav>
+    </header>
+    <main id="main">
+      <section class="hero wrap" aria-labelledby="hero-title">
+        <div class="eyebrow">
+          <span class="status-dot" aria-hidden="true"></span> THE TERMINAL IS
+          JUST THE BEGINNING
+        </div>
+        <div class="hero-grid">
+          <h1 id="hero-title">
+            Big ideas.<br />Small
+            <span class="terminal-word"
+              >prompt<span class="cursor" aria-hidden="true">_</span></span
+            >
+          </h1>
+          <div class="hero-copy">
+            <p>
+              Meet Bruv. A coding agent built on
+              <a href="https://pi.dev">Pi</a>, at home in your terminal. Bring
+              the idea. Work with sub-agents. Keep the context that matters.
+            </p>
+            <div class="actions">
+              <a
+                class="button primary"
+                href="https://github.com/tnfssc/bruv#install"
+                >Get Bruv <span aria-hidden="true">↗</span></a
+              ><a class="text-link" href="#demo"
+                >Explore the workflow <span aria-hidden="true">↓</span></a
+              >
+            </div>
+            <p class="platforms">
+              Linux · macOS Apple Silicon · Android Termux<br /><span
+                >See the install guide for supported architectures.</span
+              >
+            </p>
+          </div>
+        </div>
+        <figure class="demo-figure" id="demo">
+          <div class="demo-topline">
+            <span
+              ><span class="tiny-cross" aria-hidden="true">✳</span> A LITTLE
+              LOOK INSIDE</span
+            ><span>ILLUSTRATIVE DEMO / NOT A LIVE SESSION</span>
+          </div>
+          <div class="demo-layout">
+            <div class="terminal">
+              <div class="terminal-bar">
+                <span class="window-dots" aria-hidden="true"
+                  ><i></i><i></i><i></i></span
+                ><span
+                  >bruv <span class="terminal-dim">/</span> sample-project</span
+                ><span class="terminal-tag">scripted</span>
+              </div>
+              <div class="terminal-body">
+                <div class="terminal-intro">
+                  <span class="terminal-logo">b_</span>
+                  <div>
+                    <strong>bruv</strong
+                    ><span>Good work starts with a conversation.</span>
+                  </div>
+                </div>
+                <div class="prompt-line">
+                  <span class="prompt-chevron" aria-hidden="true">❯</span>
+                  <p>Help me build a thoughtful little website.</p>
+                </div>
+                <div
+                  class="demo-scene"
+                  id="scene"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  <p class="speaker">bruv</p>
+                  <p>First, let’s understand what’s here.</p>
+                  <div class="task-list">
+                    <div>
+                      <span class="task-icon">✓</span
+                      ><span>Read the project notes</span
+                      ><span class="task-state">context</span>
+                    </div>
+                    <div>
+                      <span class="task-icon">✓</span
+                      ><span>Look through the code</span
+                      ><span class="task-state">explore</span>
+                    </div>
+                    <div>
+                      <span class="task-icon">→</span
+                      ><span>Choose a focused next step</span
+                      ><span class="task-state">plan</span>
+                    </div>
+                  </div>
+                  <p class="terminal-note">
+                    A little shared context. A clearer place to start.
+                  </p>
+                </div>
+                <div class="terminal-input" aria-hidden="true">
+                  <span>❯</span> Your next idea<span
+                    class="input-cursor"
+                  ></span>
+                </div>
+              </div>
+              <div class="terminal-footer">
+                <span
+                  ><span class="status-dot" aria-hidden="true"></span>
+                  terminal-first</span
+                ><span>you + bruv</span>
+              </div>
+            </div>
+            <div class="demo-sidebar">
+              <p class="eyebrow">FROM IDEA TO NEXT STEP</p>
+              <h2>
+                Less juggling.<br />
+                More making.
+              </h2>
+              <p>
+                One conversation can make room for focused work, useful context
+                and a clear handoff.
+              </p>
+              <div
+                class="scene-controls"
+                hidden
+              >
+                <button
+                  type="button"
+                  data-scene="context"
+                  aria-pressed="true"
+                  aria-controls="scene"
+                >
+                  <span>01</span> Get the context
+                  <span aria-hidden="true">↗</span>
+                </button>
+                <button
+                  type="button"
+                  data-scene="delegate"
+                  aria-pressed="false"
+                  aria-controls="scene"
+                >
+                  <span>02</span> Share the work
+                  <span aria-hidden="true">↗</span>
+                </button>
+                <button
+                  type="button"
+                  data-scene="wisdom"
+                  aria-pressed="false"
+                  aria-controls="scene"
+                >
+                  <span>03</span> Leave good notes
+                  <span aria-hidden="true">↗</span>
+                </button>
+              </div>
+              <noscript
+                ><p class="no-script">
+                  You’re viewing the context scene. The workflow below works
+                  without JavaScript.
+                </p></noscript
+              >
+              <p class="demo-disclaimer">
+                A scripted HTML illustration, not the exact Bruv UI. No commands
+                run and no model connects.
+              </p>
+            </div>
+          </div>
+          <figcaption>
+            A terminal-inspired preview of the workflow. Your real work happens
+            in the Bruv CLI.
+          </figcaption>
+        </figure>
+      </section>
+      <section
+        class="workflow wrap section"
+        id="workflow"
+        aria-labelledby="workflow-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUR WORK, WITH ROOM TO THINK</p>
+            <h2 id="workflow-title">
+              A prompt is a starting point.<br />Not the whole workflow.
+            </h2>
+          </div>
+          <p>
+            Bruv brings delegation, background work and project knowledge into
+            your terminal session.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article>
+            <span class="feature-number">01 / DELEGATE</span>
+            <h3>Give the work some space.</h3>
+            <p>
+              Use sub-agents for focused tasks. Share a checkout when it makes
+              sense, or give independent changes an isolated Git worktree.
+            </p>
+            <a
+              href="https://github.com/tnfssc/bruv/blob/develop/wisdom/worktrees/subagent-workspaces.md"
+              >About worktrees <span aria-hidden="true">↗</span></a
+            >
+          </article>
+          <article>
+            <span class="feature-number">02 / KEEP MOVING</span>
+            <h3>Don’t wait on every job.</h3>
+            <p>
+              Shell commands and sub-agents can run in the background. Keep the
+              conversation going while longer work continues.
+            </p>
+            <a href="https://github.com/tnfssc/bruv#bruv-cli"
+              >Explore the CLI <span aria-hidden="true">↗</span></a
+            >
+          </article>
+          <article>
+            <span class="feature-number">03 / REMEMBER</span>
+            <h3>Leave the next session a map.</h3>
+            <p>
+              Keep decisions, lessons and next steps in project wisdom: ordinary
+              files in your repository, ready for you and your agents to read.
+            </p>
+            <a href="https://github.com/tnfssc/bruv#project-wisdom"
+              >About project wisdom <span aria-hidden="true">↗</span></a
+            >
+          </article>
+        </div>
+      </section>
+      <section class="detail-section" aria-labelledby="details-title">
+        <div class="wrap section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">GOOD TOOLS. QUIET INTERFACE.</p>
+              <h2 id="details-title">Keep the thread.</h2>
+            </div>
+            <p>
+              Make space for parallel work without losing the decisions that
+              brought you here.
+            </p>
+          </div>
+          <div class="capture-grid">
+            <figure>
+              <div class="capture-frame">
+                <img
+                  src="assets/delegation.png"
+                  alt="Illustrative task board: one agent researches, another builds in an isolated worktree, and a review is queued."
+                  width="1200"
+                  height="760"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <figcaption>
+                <span class="capture-label">ILLUSTRATIVE DEMO CAPTURE</span>
+                <h3>A little help, a clear handoff.</h3>
+                <p>
+                  Give each sub-agent a focused task. Bring the findings back to
+                  the main conversation.
+                </p>
+                <a class="capture-link" href="assets/delegation.png"
+                  >View full-size delegation illustration
+                  <span aria-hidden="true">↗</span></a
+                >
+              </figcaption>
+            </figure>
+            <figure>
+              <div class="capture-frame">
+                <img
+                  src="assets/wisdom.png"
+                  alt="Illustrative project notes with a decision, a reason and a next step in a wisdom folder."
+                  width="1200"
+                  height="760"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <figcaption>
+                <span class="capture-label">ILLUSTRATIVE DEMO CAPTURE</span>
+                <h3>Context you can open in an editor.</h3>
+                <p>
+                  Project wisdom lives beside your code, not just in a
+                  conversation you have to find again.
+                </p>
+                <a class="capture-link" href="assets/wisdom.png"
+                  >View full-size wisdom illustration
+                  <span aria-hidden="true">↗</span></a
+                >
+              </figcaption>
+            </figure>
+          </div>
+          <p class="capture-footnote">
+            These are designed illustrations of Bruv concepts, not screenshots
+            of the current application.
+          </p>
+        </div>
+      </section>
+      <section
+        class="questions wrap section"
+        id="questions"
+        aria-labelledby="questions-title"
+      >
+        <div>
+          <p class="eyebrow">A FEW THINGS TO KNOW</p>
+          <h2 id="questions-title">
+            Before you<br />
+            open a terminal.
+          </h2>
+        </div>
+        <div class="faq-list">
+          <details open>
+            <summary>What is Bruv?</summary>
+            <p>
+              Bruv is a terminal coding agent built on Pi. The CLI includes
+              background jobs, sub-agents, project wisdom and optional Herdr
+              integration. You configure credentials and models at runtime.
+            </p>
+          </details>
+          <details>
+            <summary>Is this running Bruv in my browser?</summary>
+            <p>
+              No. This page is a static site. Its demo switches between
+              prewritten scenes; it does not run a shell, access your files or
+              connect to an AI provider. The terminal styling is inspired by
+              native terminal apps, including Ghostty. This page does not embed
+              Ghostty or ghostty-web.
+            </p>
+          </details>
+          <details>
+            <summary>What about a web interface?</summary>
+            <p>
+              Bruv has a native connector for a separately installed, unmodified
+              T3 Code frontend. T3 is not bundled with Bruv, and
+              <code>bruv web</code> shows setup guidance rather than starting a
+              web app. Compatibility is version-specific; read the
+              <a
+                href="https://github.com/tnfssc/bruv/blob/develop/wisdom/claude-compat/external-t3-setup.md"
+                >external T3 setup and known limitations</a
+              >.
+            </p>
+          </details>
+          <details>
+            <summary>Where do I start?</summary>
+            <p>
+              Follow the
+              <a href="https://github.com/tnfssc/bruv#install"
+                >repository’s install guide</a
+              >
+              for supported systems and the current paired-release status, or
+              build from source. Bruv’s code is MIT-licensed. Model providers
+              have their own access requirements and may charge for usage.
+            </p>
+          </details>
+        </div>
+      </section>
+      <section class="closing wrap" aria-labelledby="closing-title">
+        <div>
+          <p class="eyebrow">MAKE SOMETHING WORTH MAKING</p>
+          <h2 id="closing-title">
+            See you at the prompt<span aria-hidden="true">_</span>
+          </h2>
+        </div>
+        <a class="button primary" href="https://github.com/tnfssc/bruv#install"
+          >Get started with Bruv <span aria-hidden="true">↗</span></a
+        >
+      </section>
+    </main>
+    <footer class="site-footer wrap">
+      <a class="brand" href="#top" aria-label="Bruv home"
+        >bruv<span class="brand-dot">.</span></a
+      >
+      <p>A coding agent. A terminal. Your next idea.</p>
+      <div>
+        <a href="https://github.com/tnfssc/bruv">Source</a
+        ><a href="https://github.com/tnfssc/bruv/blob/develop/LICENSE"
+          >MIT license</a
+        ><a href="https://pi.dev"
+          >Built on Pi <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </footer>
+  </body>
+</html>

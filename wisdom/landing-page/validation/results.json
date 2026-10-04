@@ -1,0 +1,16 @@
+{
+  "browser": "153.0.8010.12",
+  "checks": [
+    "320px: no horizontal overflow; images loaded; axe A/AA + best-practice clean; reduced motion respected",
+    "390px: no horizontal overflow; images loaded; axe A/AA + best-practice clean; reduced motion respected",
+    "768px: no horizontal overflow; images loaded; axe A/AA + best-practice clean; reduced motion respected",
+    "1440px: no horizontal overflow; images loaded; axe A/AA + best-practice clean; reduced motion respected",
+    "Keyboard: skip link, scene Enter/Space controls and native FAQ disclosure passed",
+    "JavaScript disabled: substantive copy, default scene, links and FAQ remain usable",
+    "Static HTML and local anchors checked; no browser errors, failed assets or third-party requests",
+    "Configured URL build: canonical, absolute social image, sitemap and robots emitted",
+    "Rebuilding without BASE_URL removes prior URL-specific output"
+  ],
+  "pageErrors": [],
+  "failedRequests": []
+}

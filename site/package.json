@@ -1,0 +1,15 @@
+{
+  "name": "bruv-landing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun scripts/build.ts",
+    "preview": "bun scripts/preview.ts",
+    "assets": "bun scripts/capture.ts",
+    "test": "bun test scripts/build.test.ts && bun scripts/validate.ts"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.1",
+    "playwright-core": "1.63.0"
+  }
+}
