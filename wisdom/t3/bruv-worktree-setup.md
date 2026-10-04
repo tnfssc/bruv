@@ -28,3 +28,7 @@ startup printed mise trust warnings into job output. No product assertion was
 relaxed. The T3 CI action now runs env SHELL=/bin/sh bun run ci so its test jobs
 use a clean non-interactive shell. This does not change the human login shell or
 trust any checkout. The root CI entrypoint itself is unchanged.
+
+Shipped in PR #30 and v0.16.5. Setup and the clean-shell CI action are present
+in the released source be86f2257a9033a35366d7914bdb0c431f364036. Release gates
+and published Linux pair checksums/versions pass; see the linked feature note.
