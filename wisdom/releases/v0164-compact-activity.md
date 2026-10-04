@@ -13,3 +13,13 @@ Normal executable is92354016 bytes locally, shell launcher1831 bytes. Two versio
 Parent owns push, manual Release workflow dispatch on develop and metadata verification. Workflow prepares next stable version, runs CI/build/Linux native and Mac updater gates, then creates tag and publishes. Do not make an early tag or bypass failed gates. Notes owner task_f5731691 uses an isolated worktree; integrate its notes commit before push. Next: push integrated candidate, dispatch release.yml --ref develop, retain run ID, await run with gh run watch --exit-status. Verify published tag/source and20 named assets from metadata; do not download large binaries merely to rehash after successful CI.
 
 No new release claimed yet. Upstream T3 history PR15598 is separate; do not imply official UI-only history support or full parity. Values unchanged: shipped-path proof, honest limits and one clear release owner cover this work. Finish with run/source/metadata record.
+
+## Dispatched
+
+Pushed develop8c7cc0f4 after integrating notes f7fe790b as c5a1b500. Notes worktree task_f5731691 can remain for provenance. Manual Release run37204735419 dispatched: https://github.com/tnfssc/bruv/actions/runs/37204735419 . Parent watch log artifacts/v0164-release-watch.log. Workflow will bump to0.16.4 and publish only after its gates. Do not dispatch a duplicate while this run is active.
+
+## First run held
+
+Run37204735419 failed only the actual Mac updater job111444307901. Build/CI/Linux updater and all final Linux2644 native gates passed; publisher correctly skipped. Version preparation committed20528c86 (package0.16.4), now fast-forwarded locally. Error: scripts/verify-update.ts:90 rollback probe did not meet nonzero exit + Previous installation restored stderr assertion; logged stderr was empty. Log artifacts/v0164-mac-failed.log. Signal/status/error were not printed, so do not infer the process cause yet.
+
+Fix owner task_3d873323, branch bruv/fix-observed-mac-updater-rollback-gate-f-3d873323, durable worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_3d873323. It owns narrow updater/probe diagnosis, preserves checksum/rollback assertions and returns a commit; parent owns integration and fresh hosted Mac proof. No blind retry or gate bypass. A new manual run will reuse prepared0.16.4 while latest tag remains0.16.3.
