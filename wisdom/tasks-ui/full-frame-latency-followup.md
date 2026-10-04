@@ -2,7 +2,7 @@
 
 ## Current handoff: compiled 100 passes; 1,000 still fails
 
-Runtime integration is at `775ed3df`. The built candidate passes all unchanged latency gates at 100 turns / 1,201 entries: idle p95 32.2 ms, held-input p95 29.2 ms, 62 observed spinner transitions in five seconds. The installed 0.15.30 baseline has held-input p95 171.4 ms on the same fixture.
+Latest runtime integration is `9f797667`; the compiled measurements below are from `775ed3df`, before the native settled-shell cache. The built candidate passes all unchanged latency gates at 100 turns / 1,201 entries: idle p95 32.2 ms, held-input p95 29.2 ms, 62 observed spinner transitions in five seconds. The installed 0.15.30 baseline has held-input p95 171.4 ms on the same fixture.
 
 At 1,000 turns / 12,001 entries, the candidate still fails: idle median 51.2 ms but first input 1,279 ms; held median 78.6 ms but first input 936 ms, with a few later samples over 100 ms. Spinner cadence passes (55 transitions, gap-p95 110 ms). Do not call the whole long-thread task fixed. Synthetic raw checkpoint data is in [full-frame-latency-checkpoint.json](full-frame-latency-checkpoint.json).
 
@@ -115,3 +115,14 @@ Scoped next steps, not implemented speculatively:
 - For submission setup, investigate metadata-scoped reads at the compaction/fast-mode owners; keep the required full request projection and fail-closed marker validation. This is separate from the bounded render fix and needs parent agreement before changing history interactions.
 
 Values unchanged: bounded owner state and honest real-pipeline acceptance already cover this lesson.
+
+## Remaining owners after the native-shell fix
+
+`eea8523f` was reviewed and integrated as `c64e6166`. It caches native completed execute shells below density/task overlays, clears at Pi updateDisplay, and leaves partial tools and protocol images native. Its source profile still was not acceptance.
+
+- Request hook scans: task_c92d3d57, `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_c92d3d57`, branch `fix/request-hook-history-scans`, base `0fa32939`. Scope: metadata-scoped compaction and fast-setting reads. Opaque checkpoint validation and cost acknowledgment must remain fail-closed.
+- Saved-transcript grammar readiness: task_078fc82d, `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_078fc82d`, branch `fix/saved-thread-grammar-readiness`, base `c64e6166`. Scope: avoid the proven post-paint global invalidation from asynchronous grammar loading without freezing real theme/resize changes or delaying terminal/editor mounting. A tracked dependency patch may need fresh installation before building.
+
+Wait for both pieces, review and integrate, then run the official build and unchanged 100/1,000-turn compiled gates. Do not skip the first samples. The compiled 936 ms first-held sample is still not conclusively attributed; the grammar trace proves the cold idle path, not that separate sample.
+
+Request-hook work was reviewed and integrated: `75e0b159` → `9f797667`. [Metadata selection notes](request-setup-metadata-selection.md) record the exact branch/context rules. Ordinary histories now cause zero body reads in those hooks; matching native checkpoints are read once and reused. Invalid and incompatible replay and fast cost/identity checks stay in place. Worker checks: 77 tests / 406 assertions plus two history parity tests / 27 assertions and TypeScript. No new compiled gate yet. Grammar-readiness task_078fc82d is the remaining code owner; install any tracked dependency patch before the final build.
