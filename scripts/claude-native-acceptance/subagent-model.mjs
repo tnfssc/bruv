@@ -1,8 +1,8 @@
 // Deterministic loopback model. Both root connector and real normal Bruv use this exact identity.
 import http from "node:http";
 import path from "node:path";
-import { modelId, modelSlug, modelsConfig } from "./model.mjs";
-export { modelId, modelSlug, modelsConfig };
+import { provider, modelId, modelSlug, modelsConfig } from "./model.mjs";
+export { provider, modelId, modelSlug, modelsConfig };
 export const cancelTitle = "Actual local cancelled normal worker";
 export const stopTitle = "Actual local Stop-owned normal worker";
 export const title = "Actual local normal acceptance worker";
