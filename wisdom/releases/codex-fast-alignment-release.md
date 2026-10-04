@@ -14,6 +14,8 @@ Reproduced locally with the real SDK suites (47 pass / 4 fail) and a new isolate
 
 The PR timing failure is a test synchronization assumption: oversized tool results write a filesystem artifact before emitting their reply. Changed only that fixture to wait boundedly for the actual reply, assert it exists, and retain truncation/path assertions; no product behavior or gate removed.
 
+Current-head CI https://github.com/tnfssc/bruv/actions/runs/37189939505 exposed the cache-count fixture spying after module load; its counter no longer observed the now load-time-captured SDK seam. Moved the same estimator spy before dynamic adapter imports, keeping every recomputation, materialization and SDK-equivalence assertion. The cache test now passes. Local unsharded suite with a built pair: 1993 pass, 28 skip, 5 fail (this instrumentation issue plus four startup fixture module mocks through the reused symlink dependency path). The earlier incomplete local run was stopped because compiled subprocess binaries were missing; it is not acceptance proof. Hosted installs and Release use real dependency paths.
+
 ## Publication checkpoint
 
 Do not merge with failing checks. After green normal merge, recheck active Release runs, dispatch existing Release on develop, and hold develop steady until publication gates finish. Workflow owns version and notes preparation. Verify stable metadata, tag SHA and every expected nonempty asset; no redundant binary download. Commit final evidence only after the fixed-SHA release window ends.
