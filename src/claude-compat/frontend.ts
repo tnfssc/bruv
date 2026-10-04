@@ -12,6 +12,8 @@ import { getSessionHost } from "../session/host-access";
 export type CompatFrame = { type: string; [key: string]: unknown };
 export interface ClaudeCompatFrontendOptions {
   emit(frame: CompatFrame): void | Promise<void>;
+  /** Fatal delivery failure, including autonomous runs without a flush waiter. */
+  onOutputError?(error: unknown): void;
   sessionId(): string;
   messageUuid?(message: object): string;
   omitThinking?: boolean;
@@ -50,9 +52,13 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       : {};
   const send = (frame: CompatFrame) => {
     tail = tail
-      .then(() => options.emit(frame))
+      .then(() => {
+        // Once delivery fails, later result/lifecycle frames cannot claim success.
+        if (!outputError) return options.emit(frame);
+      })
       .catch((error) => {
         outputError ??= error;
+        options.onOutputError?.(error);
       });
   };
   const base = () => ({
@@ -339,6 +345,8 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       if (outputError) throw outputError;
     },
     fail(error: unknown) {
+      // A delivery failure is terminal, not a second synthetic model result.
+      if (outputError) return;
       const running = active;
       begin();
       failure = error instanceof Error ? error.message : String(error);

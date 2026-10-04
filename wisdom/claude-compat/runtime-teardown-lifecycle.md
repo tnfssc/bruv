@@ -33,3 +33,13 @@ This does **not** skip DELETE, treat ConnectionRefused/HTTP failure as success, 
 An offline frozen-lockfile dependency restore reused the existing global Bun package cache. Cache root and .tmp directory mtimes changed at 09:34:28.990Z; no new package-cache entry was observed. This was a deviation from the requested no-global-writes bound; cache directory metadata was touched. No installed binary, global config or credentials were changed. No shared cache cleanup was attempted. Future setup must pin BUN_INSTALL_CACHE_DIR inside the worktree before package-manager commands.
 
 Wisdom updated with this incident and reproducible bounded proof. Values unchanged: honest shipped-path proof, clear resource ownership and leaving shared/user state safe already cover the lesson.
+
+## Failed release is a transport failure, not idle (v0.16.3 blocker)
+
+Independent review reproduced rejected SDK peer DELETE: zero results, two idle frames, one retained remote session. Remembering an emit error is not enough: stop later output, retain the first failure for flush, and do not manufacture a second model result for a delivery failure.
+
+Autonomous task wakes have no native onUser waiter. The fatal frontend-output callback closes the owning transport; its run loop reports failure and takes ordinary shutdown. No idle, retry DELETE, swallowed shutdown error, or timer. Pi still owns scheduling, steering, Stop and history. Raw Pi custom-message triggers bypass prompt preflight, so the autonomous regression acquires its lease through a real MCP tool call.
+
+Reused reviewer regression now observes zero result/idle frames and one unconfirmed remote session. Real peer/transport regressions cover model input, no-model command, and active autonomous task wake: connector exits 1 with input still open, reports shutdown failure, and failed close is idempotent. Successful park/reacquire and Stop assertions remain. Bun 1.4.2: 56 focused outer passes, seven opt-in SDK-history skips; 25 direct runtime passes; typecheck/format pass, lint exits 0 with warnings/info. Offline fixture auth only; no packaged-provider/UI acceptance or release claim.
+
+Values unchanged: honest lifecycle state, one owner, simplest observed fix.

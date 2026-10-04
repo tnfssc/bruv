@@ -68,6 +68,7 @@ export interface ConnectorRuntimeOptions {
   request?: ClaudeCompatTransport["request"];
   configDir?: string;
   projectKey?: string;
+  onOutputError?(error: unknown): void;
   diagnostic?(error: unknown): void;
 }
 export interface ConnectorRuntime {
@@ -324,6 +325,11 @@ export async function runConnector(
           if (frame.type === "stream_event" && !args.partialMessages) return;
           if (!transport) throw new Error("Runtime emitted before transport was bound");
           return transport.send(frame);
+        },
+        onOutputError: (error) => {
+          // Autonomous Pi runs have no onUser/flush caller to report this failure.
+          // Closing the transport wakes its run loop and enters ordinary shutdown.
+          transport?.close(error instanceof Error ? error : new Error(String(error)));
         },
         diagnostic: (error) => {
           io.stderr.write("[bruv-claude-compat] " + detail(error) + "\n");

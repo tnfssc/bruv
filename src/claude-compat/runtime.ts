@@ -83,6 +83,8 @@ export interface ClaudeCompatRuntimeOptions {
   permissionMode?: string;
   /** Owning Bruv binary used by execute and child launch (defaults to process.execPath). */
   executablePath?: string;
+  /** Fatal frontend delivery failure; the owning transport must close. */
+  onOutputError?(error: unknown): void;
   diagnostic?(error: unknown): void;
 }
 export interface ClaudeCompatRuntime {
@@ -302,6 +304,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       }
       await options.emit(frame);
     },
+    onOutputError: options.onOutputError,
     messageUuid,
     omitThinking: options.thinkingDisplay === "omitted",
     auxiliary: options.auxiliary,

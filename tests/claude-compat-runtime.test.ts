@@ -1,5 +1,8 @@
 import { afterEach, expect, spyOn, test } from "bun:test";
 import { chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { EventEmitter } from "node:events";
+import { PassThrough, Writable } from "node:stream";
+import { runConnector } from "../src/claude-compat/cli";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { type AssistantMessage, type Context, createAssistantMessageEventStream } from "@earendil-works/pi-ai/compat";
@@ -279,6 +282,195 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     await runtime.onUser(user(runtime, "again"), signal());
     expect(frames.filter((f) => f.type === "result")).toHaveLength(2);
   });
+
+  test("failed app HTTP release must not publish native idle", async () => {
+    const peer = await httpMcpLifecycleFixture();
+    const mcp = await InjectedMcpSession.open(peer.config, {
+      cwd: process.cwd(),
+      appOwnedServers: ["t3-code"],
+      policy: {
+        authorizeServer: async () => true,
+        authorizeTool: async () => ({ behavior: "allow" }),
+        beforeAppOwnedCall: async () => {},
+      },
+    });
+    let runtime: ClaudeCompatRuntime | undefined;
+    const deliveryErrors: unknown[] = [];
+    try {
+      const f = await fixture({ extra: { mcp, onOutputError: (error: unknown) => deliveryErrors.push(error) } });
+      runtime = f.runtime;
+      await init(runtime);
+      peer.rejectDeletion();
+      runtime.session.agent.streamFunction = () => output(assistant("finished provider run"));
+      await expect(runtime.onUser(user(runtime), signal())).rejects.toThrow("teardown");
+      const results = f.frames.filter((frame) => frame.type === "result");
+      const idle = f.frames.filter(
+        (frame) => frame.type === "system" && frame.subtype === "session_state_changed" && frame.state === "idle",
+      );
+      console.log(
+        "RELEASE_FAILURE_REPRO",
+        JSON.stringify({
+          resultFrames: results.length,
+          idleFrames: idle.length,
+          remoteSessions: peer.activeSessions(),
+        }),
+      );
+      expect(results).toHaveLength(0);
+      expect(idle).toHaveLength(0);
+      expect(deliveryErrors).toHaveLength(1);
+      expect(String(deliveryErrors[0])).toContain("teardown");
+      expect(peer.activeSessions()).toBe(1);
+    } finally {
+      if (runtime) {
+        runtimes.splice(runtimes.indexOf(runtime), 1);
+        await expect(runtime.close()).rejects.toThrow("Connector teardown failed");
+      } else await mcp.close().catch(() => {});
+      await peer.stopHost();
+    }
+  });
+
+  test.each(["human model turn", "human command", "autonomous task wake"])(
+    "failed app HTTP release closes native transport and reports shutdown failure: %s",
+    async (path) => {
+      const peer = await httpMcpLifecycleFixture();
+      const mcp = await InjectedMcpSession.open(peer.config, {
+        cwd: process.cwd(),
+        appOwnedServers: ["t3-code"],
+        policy: {
+          authorizeServer: async () => true,
+          authorizeTool: async () => ({ behavior: "allow" }),
+          beforeAppOwnedCall: async () => {},
+        },
+      });
+      const input = new PassThrough();
+      let stdout = "",
+        stderr = "";
+      const frames = () =>
+        stdout
+          .trim()
+          .split("\n")
+          .filter(Boolean)
+          .map((line) => JSON.parse(line));
+      let runtime: ClaudeCompatRuntime | undefined;
+      let calls = 0;
+      const providerStarted = Promise.withResolvers<void>();
+      const finishProvider = Promise.withResolvers<void>();
+      let wake: Promise<void> | undefined;
+      try {
+        const running = runConnector(
+          [
+            "--input-format",
+            "stream-json",
+            "--output-format",
+            "stream-json",
+            "--permission-mode",
+            "bypassPermissions",
+            "--allow-dangerously-skip-permissions",
+          ],
+          async (options) => {
+            ({ runtime } = await fixture({
+              extra: {
+                mcp,
+                emit: options.emit,
+                onOutputError: options.onOutputError,
+                extensionFactories: [{ name: "real-mcp", factory: mcpFactory(mcp), hidden: true }],
+                tools: ["mcp__t3-code__echo"],
+              },
+            }));
+            runtime.session.agent.streamFunction = () => {
+              calls++;
+              if (path === "autonomous task wake" && calls === 1)
+                return output(
+                  assistant("", {
+                    stopReason: "toolUse",
+                    content: [
+                      {
+                        type: "toolCall",
+                        id: "autonomous-echo",
+                        name: "mcp__t3-code__echo",
+                        arguments: { text: "real autonomous echo" },
+                      },
+                    ],
+                  }),
+                );
+              expect(peer.activeSessions()).toBe(1);
+              providerStarted.resolve();
+              const stream = createAssistantMessageEventStream();
+              void finishProvider.promise.then(() =>
+                stream.push({ type: "done", reason: "stop", message: assistant("finished owning run") }),
+              );
+              return stream;
+            };
+            return runtime;
+          },
+          {
+            input,
+            output: new Writable({
+              write(chunk, _encoding, next) {
+                stdout += chunk;
+                next();
+              },
+            }),
+            stderr: new Writable({
+              write(chunk, _encoding, next) {
+                stderr += chunk;
+                next();
+              },
+            }),
+            cwd: process.cwd(),
+            home: "/offline-fixture",
+            env: {},
+            signals: new EventEmitter(),
+          },
+        );
+        input.write(JSON.stringify(control("initialize")) + "\n");
+        await until(() => frames().some((frame) => frame.type === "control_response"));
+        expect(runtime).toBeDefined();
+        const owner = runtime!;
+        if (path === "human command") {
+          // A no-model command must still release an existing app lease before idle.
+          await mcp.resumeAppOwned();
+          peer.rejectDeletion();
+          input.write(JSON.stringify(user(owner, "/bruv status")) + "\n");
+        } else {
+          if (path === "autonomous task wake") {
+            // Real Pi custom-message trigger, deliberately no native onUser/flush waiter.
+            wake = owner.session.sendCustomMessage(
+              { customType: "task-complete", content: "offline task completed", display: false },
+              { triggerTurn: true },
+            );
+          } else input.write(JSON.stringify(user(owner)) + "\n");
+          await providerStarted.promise;
+          expect(owner.session.isStreaming).toBe(true);
+          peer.rejectDeletion();
+          finishProvider.resolve();
+        }
+        // Input remains open: the fatal notification, not EOF or a timer, must end the transport.
+        expect(await running).toBe(1);
+        await wake;
+        expect(calls).toBe(path === "human command" ? 0 : path === "autonomous task wake" ? 2 : 1);
+        expect(frames().filter((frame) => frame.type === "result")).toHaveLength(0);
+        expect(
+          frames().filter(
+            (frame) => frame.type === "system" && frame.subtype === "session_state_changed" && frame.state === "idle",
+          ),
+        ).toHaveLength(0);
+        expect(
+          frames().filter((frame) => frame.type === "command_lifecycle" && frame.state === "completed"),
+        ).toHaveLength(0);
+        expect(stderr).toContain("MCP connection teardown was not fully confirmed");
+        expect(stderr).toContain("shutdown failed");
+        expect(peer.activeSessions()).toBe(1);
+        expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(2);
+        await expect(owner.close()).rejects.toThrow("Connector teardown failed");
+        expect(peer.requests.filter((request) => request.method === "DELETE")).toHaveLength(2);
+      } finally {
+        input.destroy();
+        if (runtime) runtimes.splice(runtimes.indexOf(runtime), 1);
+        await peer.stopHost();
+      }
+    },
+  );
 
   test("app HTTP leases end before native idle, reacquire for the next Pi run, and close after host shutdown", async () => {
     const peer = await httpMcpLifecycleFixture();
