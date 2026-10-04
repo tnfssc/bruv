@@ -71,3 +71,31 @@ test("integrated protocol validator rejects absent actual implementation evidenc
   const { checkWire } = await import("../scripts/claude-native-acceptance/driver.mjs");
   assert.throws(() => checkWire([]), /steering admission/);
 });
+
+test("post-Stop cancellation launches a fresh owned job and requires confirmed exit", () => {
+  const call = reply(request("ACCEPT_CANCEL"), options).tool_calls[0];
+  const code = JSON.parse(call.function.arguments).code;
+  assert.match(code, /const job = await shell/);
+  assert.match(code, /jobs.stop\(job.id\)/);
+  assert.match(code, /jobs.inspect\(job.id\)/);
+  assert.doesNotMatch(code, /jobs.list|survived generation Stop/);
+  assert.throws(
+    () => reply(request("ACCEPT_CANCEL", [{ role: "tool", content: "no evidence" }]), options),
+    /terminal inspection/,
+  );
+  assert.equal(
+    reply(request("ACCEPT_CANCEL", [{ role: "tool", content: "CANCEL_INSPECT_REAL" }]), options).content,
+    "CANCEL_CONFIRMED_REAL",
+  );
+});
+
+test("actual killed-job completion has its own response without a fake new prompt", () => {
+  const notification =
+    "1 asynchronous task completed.\n\ntask_fixture killed\nCommand: /usr/bin/node " +
+    options.worker +
+    " " +
+    options.state +
+    " cancel";
+  assert.equal(reply(request(notification), options).content, "CANCELLATION_COMPLETED_REAL");
+  assert.throws(() => reply(request("1 asynchronous task completed. unrelated"), options), /Unrecognized/);
+});

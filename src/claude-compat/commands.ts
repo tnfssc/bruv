@@ -11,7 +11,7 @@ export interface ClaudeCompatCommandOptions {
   notify(text: string, level: "info" | "warning" | "error"): void | Promise<void>;
   humanControls?: Pick<ReturnType<typeof createClaudeCompatHumanControls>, "openQuestion">;
 }
-const extensionNames = ["goal", "questions", "mode"] as const;
+const extensionNames = ["goal", "questions", "mode", "live"] as const;
 
 /** Call dispatchUserCommand ONLY at the validated native user-frame admission seam.
  * Do not register this as a model tool or reinterpret assistant/worker text as commands.

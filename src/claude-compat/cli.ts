@@ -237,6 +237,9 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
       disableSlashCommands: args.disableSlashCommands,
       thinkingLevel: policy.thinking as any,
       thinkingDisplay: policy.thinkingDisplay,
+      ...(process.env.BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST
+        ? { localAudio: { host: process.env.BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST } }
+        : {}),
       profilesPath,
       ...(storage
         ? {

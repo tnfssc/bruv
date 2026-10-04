@@ -1,3 +1,6 @@
+import { createClaudeCompatLiveFrontend } from "./live-frontend";
+import { bindNativeTasks } from "./task-binding";
+import { nativeTaskId } from "./task-projection";
 import { randomUUID } from "node:crypto";
 import type { Message } from "@earendil-works/pi-ai";
 import { join, resolve } from "node:path";
@@ -64,6 +67,8 @@ export interface ClaudeCompatRuntimeOptions {
   /** Isolated, in-memory, tool-free session for native -p JSON generation. */
   auxiliary?: boolean;
   request?: ClaudeCompatTransport["request"];
+  /** Explicit operator grant for this host; a separate human consent is still required. */
+  localAudio?: { host: string };
   authorizeTool?: (request: PermissionRequest) => Promise<PermissionDecision>;
   mcp?: InjectedMcpSession;
   changePermissionMode?: (mode: string) => void;
@@ -302,20 +307,109 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
   });
   let factories: { name: string; factory: ExtensionFactory; hidden: boolean }[] = [];
   if (!options.auxiliary) {
-    const [{ default: tasks }, { default: state }, { default: live }, { default: remote }] = await Promise.all([
+    const [{ default: tasks }, { default: state }, { default: remote }] = await Promise.all([
       import("../agent/extension"),
       import("../herdr-agent-state"),
-      import("../live/extension"),
       import("../remote/extension"),
     ]);
     factories = [
       {
         name: "bruv-tools",
-        factory: (pi) => tasks(pi, { executablePath: options.executablePath, profilesPath: options.profilesPath }),
+        factory: (pi) =>
+          tasks(pi, {
+            executablePath: options.executablePath,
+            profilesPath: options.profilesPath,
+            onTaskOwner: (owner) =>
+              bindNativeTasks(owner, {
+                root: {
+                  namespace: "bruv:" + resolve(options.agentDir),
+                  sourceSessionId: owner.sourceSessionId,
+                  sessionId: options.nativeSessionId ?? manager.getSessionId(),
+                },
+                emit: (frame) => options.emit({ ...frame }),
+                translateChildEntry: ({ entry }) => {
+                  const message = entry.message;
+                  if (message.role === "user")
+                    return [{ type: "user", message: { role: "user", content: nativeContent(message.content) } }];
+                  if (message.role === "toolResult")
+                    return [
+                      {
+                        type: "user",
+                        message: {
+                          role: "user",
+                          content: [
+                            {
+                              type: "tool_result",
+                              tool_use_id: message.toolCallId,
+                              content: nativeContent(message.content),
+                              is_error: message.isError,
+                            },
+                          ],
+                        },
+                      },
+                    ];
+                  if (message.role !== "assistant") return [];
+                  const content =
+                    options.thinkingDisplay === "omitted"
+                      ? message.content.filter((part) => part.type !== "thinking")
+                      : message.content;
+                  return [
+                    {
+                      type: "assistant",
+                      message: {
+                        id: entry.id,
+                        type: "message",
+                        role: "assistant",
+                        model: message.provider + "/" + message.model,
+                        content: nativeContent(content),
+                        stop_reason:
+                          message.stopReason === "toolUse"
+                            ? "tool_use"
+                            : message.stopReason === "length"
+                              ? "max_tokens"
+                              : "end_turn",
+                        stop_sequence: null,
+                        usage: {
+                          input_tokens: message.usage.input,
+                          output_tokens: message.usage.output,
+                          cache_read_input_tokens: message.usage.cacheRead,
+                          cache_creation_input_tokens: message.usage.cacheWrite,
+                        },
+                      },
+                    },
+                  ];
+                },
+                writeChildFrame: async ({ link, entry }, frame) => {
+                  if (!options.history || frame.type === "stream_event") return;
+                  const child = await options.history.child({
+                    taskId: nativeTaskId(link),
+                    sourceSessionId: link.child.sourceSessionId,
+                    sourceCallId: link.launchToolUseId,
+                  });
+                  await child.append({
+                    sourceMessageId: entry.id,
+                    type: frame.type,
+                    message: frame.message,
+                    timestamp: entry.timestamp,
+                    uuid: frame.uuid,
+                  });
+                },
+                diagnostic: (message) => options.diagnostic?.(new Error(message)),
+              }),
+          }),
         hidden: true,
       },
       { name: "bruv-herdr-agent-state", factory: state, hidden: true },
-      { name: "bruv-live", factory: live, hidden: true },
+      {
+        name: "bruv-live",
+        factory: createClaudeCompatLiveFrontend({
+          localAudio: options.localAudio,
+          humanChoices: !!options.request,
+          request: options.request,
+          notify: (text, level) => frontend.notice(text, level),
+        }).factory,
+        hidden: true,
+      },
       { name: "bruv-remote", factory: remote, hidden: true },
     ];
   }

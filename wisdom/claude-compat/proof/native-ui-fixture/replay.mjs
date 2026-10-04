@@ -47,7 +47,10 @@ try {
  const token=paired.match(/token=([A-Za-z0-9_-]+)/)?.[1];assert.ok(token,'local pairing token (never exported)');
  await page.goto(url+'/pair#token='+token);await page.waitForTimeout(1500);
  // Normal native first-run flow, without external sign-in, installation, or license bypass.
- if(await page.getByText('Connect your computers',{exact:true}).isVisible()){
+ // Every replay uses fresh state. Wait for hydration instead of skipping
+ // onboarding when its first frame arrives after an arbitrary sleep.
+ {
+  await page.getByText('Connect your computers',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Continue',exact:true}).click();
   await page.getByText('Connect your agents',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Continue',exact:true}).click();

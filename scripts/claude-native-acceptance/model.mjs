@@ -56,6 +56,14 @@ export function reply(body, { worker, state }) {
     ", {waitSeconds:" +
     wait +
     "}); console.log(JSON.stringify(r));";
+  // This is an actual Bruv completion notification, not another user scenario.
+  if (
+    user.includes("asynchronous task completed.") &&
+    user.includes(" killed") &&
+    user.includes(worker) &&
+    user.includes(" cancel")
+  )
+    return content("CANCELLATION_COMPLETED_REAL");
   if (user.includes("ACCEPT_STEER_NOW")) return content("STEER_ADMITTED_REAL");
   if (user.includes("ACCEPT_EXECUTE"))
     return results.includes("BRUV_EXECUTE_REAL")
@@ -76,7 +84,9 @@ export function reply(body, { worker, state }) {
       return content("CANCEL_CONFIRMED_REAL");
     }
     return execute(
-      'const page=await jobs.list({count:100}); let count=0; for(const job of page.jobs){if(job.status==="running"){count++;console.log(JSON.stringify(await jobs.stop(job.id)));const inspected=await jobs.inspect(job.id); if(!["killed","cancelled","stopped"].includes(inspected.status))throw Error("Cancellation is not terminal: "+inspected.status);console.log("CANCEL_INSPECT_REAL",JSON.stringify(inspected));}}if(!count)throw Error("No owned running job survived generation Stop");',
+      "const job = await shell(" +
+        JSON.stringify("/usr/bin/node " + JSON.stringify(worker) + " " + JSON.stringify(state) + " cancel") +
+        ', {waitSeconds:0}); if(!job.background)throw Error("Expected fresh owned background job"); console.log(JSON.stringify(await jobs.stop(job.id))); const deadline=Date.now()+10000; let inspected; do { inspected=await jobs.inspect(job.id); if(["killed","cancelled","stopped"].includes(inspected.status))break; await new Promise(r=>setTimeout(r,25)); } while(Date.now()<deadline); if(!["killed","cancelled","stopped"].includes(inspected.status))throw Error("Cancellation not confirmed: "+inspected.status); console.log("CANCEL_INSPECT_REAL",JSON.stringify(inspected));',
     );
   }
   if (user.includes("ACCEPT_STOP"))

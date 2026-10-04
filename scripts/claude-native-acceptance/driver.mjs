@@ -100,15 +100,26 @@ export async function exercise({ page, url, snapshot, body, config }) {
   await snapshot("before-stop");
   await page.getByRole("button", { name: "Stop generation", exact: true }).click();
   await visible("Run interrupted by user");
+  await waitForProcessExit(path.join(state, "stop.started"));
+  assert.equal(
+    await fs.access(path.join(state, "stop.finished")).then(
+      () => true,
+      () => false,
+    ),
+    false,
+    "Stop killed the gated shell before normal completion",
+  );
   await snapshot("stopped");
   await page.reload();
   await page.getByRole("textbox", { name: "Message", exact: true }).waitFor();
   await page.locator("[data-thread-item]").filter({ hasText: "ACCEPT_EXECUTE" }).first().click();
   await visible("Run interrupted by user");
   await snapshot("reloaded");
-  // Generation Stop is not task cancellation. Stop the surviving owned shell explicitly.
-  await submit("ACCEPT_CANCEL: cancel and inspect the actual remaining owned job.");
+  // Native Stop closes the connector and its owned tasks. The new owner must
+  // launch and cancel its own job, not claim the old process survived.
+  await submit("ACCEPT_CANCEL: launch a fresh managed shell, cancel it, and inspect confirmed exit.");
   await visible("CANCEL_CONFIRMED_REAL");
+  await visible("CANCELLATION_COMPLETED_REAL");
   await snapshot("task-cancelled");
   await page.goto(url + "/settings/providers");
   await page.goto(url);
@@ -148,7 +159,7 @@ export function checkWire(wire) {
           .map((c) => c.text)
           .join("")
       : "";
-  for (const marker of ["EARLY_RETURN_REAL", "TASK_COMPLETED_REAL"])
+  for (const marker of ["EARLY_RETURN_REAL", "TASK_COMPLETED_REAL", "CANCELLATION_COMPLETED_REAL"])
     assert.ok(
       out.some((m) => assistantText(m).includes(marker)),
       "Actual assistant output " + marker,
@@ -244,4 +255,21 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
       2,
     ) + "\n",
   );
+}
+
+/** Native Stop owns the connector subtree; transcript text alone is not exit proof. */
+export async function waitForProcessExit(pidFile, timeoutMs = 15000) {
+  const pid = Number((await fs.readFile(pidFile, "utf8")).trim());
+  assert.ok(Number.isInteger(pid) && pid > 1, "Actual fixture process identity");
+  const deadline = Date.now() + timeoutMs;
+  while (true) {
+    try {
+      process.kill(pid, 0);
+    } catch (error) {
+      if (error.code === "ESRCH") return;
+      throw error;
+    }
+    if (Date.now() >= deadline) throw Error("Native Stop left fixture process alive: " + pid);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
 }

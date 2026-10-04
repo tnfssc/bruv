@@ -93,6 +93,8 @@ try {
   if (model.records.some((r) => r.error)) throw Error("Local model endpoint rejected a request");
   if (model.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length !== 1)
     throw Error("Expected exactly one actual model completion wake, not duplicate continuations");
+  if (model.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length !== 1)
+    throw Error("Expected exactly one actual cancellation completion wake");
   passed = true;
 } finally {
   let result = { integratedAcceptance: true };
@@ -105,6 +107,8 @@ try {
       {
         ...result,
         passed,
+        cancellationCompletionWakeCount:
+          model?.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length ?? 0,
         modelCompletionWakeCount: model?.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length ?? 0,
       },
       null,
@@ -113,7 +117,7 @@ try {
   );
   if (child && child.exitCode === null) child.kill("SIGTERM");
   // Scoped worker cleanup; verify command line and state before touching any PID.
-  for (const scenario of ["steer", "early", "stop"]) {
+  for (const scenario of ["steer", "early", "stop", "cancel"]) {
     try {
       const pid = Number(await fs.readFile(path.join(state, scenario + ".started"), "utf8"));
       const cmd = await fs.readFile("/proc/" + pid + "/cmdline", "utf8");
