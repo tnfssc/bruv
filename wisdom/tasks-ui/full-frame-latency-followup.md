@@ -47,11 +47,19 @@ No history is truncated. Caches retain numbers, string IDs or one-width rows, no
 
 Pi stays pinned at 1.0.0. Its native estimator uses branch type/id for compaction and usage positions, so it gets the required projection plus temporary metadata skeletons. Tokens are independent of model window in this version. Upgrades must revisit both facts.
 
-Disk history installs before the outer shake adapter in CLI and connector startup. Tests that mutate these global prototypes run in child processes. Inheriting another test's prior wrapper is not the production order. The native shell cache relies on ToolExecutionComponent.updateDisplay and sits below density/task/rolling overlays.
+Disk history installs before the outer shake adapter in CLI and connector startup. Tests that install disk history must run in child processes. Inheriting another test's prior wrapper is not the production order. The native shell cache relies on ToolExecutionComponent.updateDisplay and sits below density/task/rolling overlays.
 
 The grammar patch assumes saved messages are in session.state.messages at UI mount. Tests execute the actual patched SDK init and real grammar loader, including Elixir highlighting, typing during startup, empty sessions and startup errors. The managed-tool seam must target Pi 1.0.0's `dist/utils/tools-manager.js`, not the old `ensure-tool.js` path. The wrong mock target lets real tool discovery/downloads run and fails before extension rebind in a clean CI environment. All five startup scenarios now assert that both `fd` and `rg` used the fixture seam. Existing invalidation tests cover theme/content/resize.
 
 After checkout or cherry-pick, run bun install --frozen-lockfile to apply the tracked patch, then bun run build. The official build now makes a pair; the old web-payload reuse path no longer applies. Local Bun: /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun.
+
+## v0.16.1 release test-order blocker
+
+Release 37188844249 runs serial `bun test ./tests`; CI 37188645978 used `--parallel=3`. Its log places native-shake-sdk before claude-compat-runtime. Connector tests installed disk history after shake, so disk captured the shake wrapper as its native estimator and called it with its projection-only manager: manual-shake.ts:592 → session-manager.ts:493, getSessionId TypeError. Partitioned CI does not prove serial-order independence.
+
+Isolate all five disk-owning connector suites (runtime, composition, prompt-ownership, live-frontend, task-binding), following native-request-history. The first full run caught task-binding.fixture too; isolating only runtime callers was insufficient. Original bodies transpile identically; no production fallback, version bump, assertion removal, or benchmark limit change.
+
+Post-build pre-fix reproduction (manual-shake + compat-runtime): 45 pass / 2 fail with the exact release stack. Same paths after isolation: 28 outer tests pass, including all 20 connector cases in its child. Logs: /tmp/bruv-release-fix-order-{before,after}.log. Frozen install with tracked Pi patch, official paired build, focused SDK checks, format/lint/typecheck, offline transport and paired smoke passed. Exact serial full suite with `SHELL=/bin/bash` and absolute Bun 1.4.2 on PATH: 1,944 pass, 28 expected skips, 0 fail across 274 files (215.76 s; /tmp/bruv-release-fix-tests-bash.log). Outer counts exclude assertions in the isolated suites. The completed fish-environment run had zero wrapper errors but ten shell-output failures from mise trust diagnostics; all three affected files pass under Bash without code changes. No new PTY timing acceptance; previously documented latency limits remain.
 
 ## Durable worktrees
 
