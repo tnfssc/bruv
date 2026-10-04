@@ -123,6 +123,8 @@ try {
   if (launch.length !== 3) throw Error("Duplicate root subagent tool launch");
   if (model.records.filter((r) => r.delta?.content === "ROOT_KILLED_COMPLETION_REAL").length !== 1)
     throw Error("Expected exactly one real killed-job completion wake");
+  if (model.records.filter((r) => r.delta?.content === "ROOT_AFTER_CHILD_REAL").length !== 1)
+    throw Error("Expected exactly one actual same-root reply after child view return");
   await verifyChildHistory(agent, proof);
   passed = true;
 } finally {

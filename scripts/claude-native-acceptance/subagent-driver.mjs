@@ -3,6 +3,7 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { prepare, captureIdentity, projectWire, waitForProcessExit } from "./driver.mjs";
 import { modelSlug, title, cancelTitle, stopTitle } from "./subagent-model.mjs";
+import { collectReturnEvidence } from "./subagent-return-evidence.mjs";
 export { prepare, captureIdentity };
 async function waitFile(file) {
   const deadline = Date.now() + 30000;
@@ -56,6 +57,7 @@ export async function exercise({ page, url, snapshot, config }) {
   await visible(title);
   assert.equal(await nativeCard.getAttribute("aria-description"), "Completed");
   await snapshot("agent-completed");
+  const completedRootUrl = page.url();
   // Inspect the real card, not an inferred runnable child control.
   await page.getByRole("button", { name: "Open " + title, exact: true }).click();
   await page.waitForTimeout(750);
@@ -91,7 +93,24 @@ export async function exercise({ page, url, snapshot, config }) {
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "Open parent", exact: true }).click();
   await message.waitFor();
-  // Independent root scenarios avoid conflating child-view navigation with generation admission.
+  assert.equal(page.url(), completedRootUrl, "Child view returns to the same completed root");
+  await snapshot("same-root-return-before-input");
+  try {
+    await message.fill("ACCEPT_LOCAL_AFTER_CHILD: reply in this same root after child transcript return.");
+    // A success result is not enough: the real native composer must admit the next prompt.
+    await page.getByRole("button", { name: "Submit message", exact: true }).click({ timeout: 10000 });
+    await visible("ROOT_AFTER_CHILD_REAL");
+    await page
+      .getByRole("button", { name: "Stop generation", exact: true })
+      .waitFor({ state: "hidden", timeout: 10000 });
+    await page.getByRole("button", { name: "Submit message", exact: true }).waitFor();
+    assert.equal(page.url(), completedRootUrl, "Next actual model reply stays in the same root");
+    config.sameRootChildReturnReply = true;
+    await snapshot("same-root-next-reply");
+  } finally {
+    await collectReturnEvidence(config, page);
+  }
+  // Cancellation/Stop use independent roots only AFTER same-root continuation passes.
   await newThread();
   await submit("ACCEPT_LOCAL_CANCEL: launch and explicitly stop another actual normal worker.");
   await visible("ROOT_KILLED_COMPLETION_REAL");
@@ -113,7 +132,63 @@ export async function exercise({ page, url, snapshot, config }) {
   await visible("ROOT_FOLLOWUP_REAL");
   await snapshot("continued-after-stop");
 }
+export function checkSameRootReply(wire) {
+  const out = wire.filter((x) => x.kind === "stdout").map((x) => x.value);
+  const answer = (marker) =>
+    out.filter(
+      (m) =>
+        m.type === "assistant" &&
+        !m.parent_tool_use_id &&
+        m.message?.content?.some((c) => c.type === "text" && c.text === marker),
+    );
+  const initial = answer("ROOT_BACKGROUND_RETURN_REAL");
+  const next = answer("ROOT_AFTER_CHILD_REAL");
+  assert.equal(initial.length, 1, "Exactly one initial root reply");
+  assert.equal(next.length, 1, "Exactly one actual same-root next reply");
+  assert.ok(initial[0].session_id, "Actual native root session identity");
+  assert.equal(next[0].session_id, initial[0].session_id, "Next model reply belongs to original root session");
+  const result = out.filter((m) => m.type === "result" && m.result === "ROOT_AFTER_CHILD_REAL");
+  assert.equal(result.length, 1, "Next reply has its own actual success result");
+  assert.equal(result[0].session_id, initial[0].session_id);
+  assert.equal(result[0].is_error, false);
+  return { sameRootSessionReply: true };
+}
+export function checkConsumedPromptOwnership(wire) {
+  const echoed = (m) => m.user_message_uuids ?? (m.user_message_uuid ? [m.user_message_uuid] : []);
+  for (const [prompt, answer] of [
+    ["ACCEPT_LOCAL_SUBAGENT", "ROOT_BACKGROUND_RETURN_REAL"],
+    ["ACCEPT_LOCAL_FOLLOWUP", "ROOT_FOLLOWUP_REAL"],
+    ["ACCEPT_LOCAL_AFTER_CHILD", "ROOT_AFTER_CHILD_REAL"],
+  ]) {
+    const input = wire.find(
+      (e) => e.kind === "stdin" && e.value.type === "user" && JSON.stringify(e.value.message?.content).includes(prompt),
+    );
+    assert.ok(input?.value.uuid, "Actual offered prompt UUID: " + prompt);
+    const result = wire.find(
+      (e) => e.kind === "stdout" && e.value.type === "result" && e.value.result === answer,
+    )?.value;
+    assert.ok(result, "Actual prompt result: " + answer);
+    assert.ok(echoed(result).includes(input.value.uuid), "Consumed prompt UUID missing/wrong: " + prompt);
+  }
+  const wake = wire.find(
+    (e) => e.kind === "stdout" && e.value.type === "result" && e.value.result === "ROOT_COMPLETION_ONCE_REAL",
+  )?.value;
+  assert.equal(
+    wake?.origin?.kind,
+    "task-notification",
+    "Actual autonomous result has non-human task-notification origin",
+  );
+  assert.equal(echoed(wake).length, 0, "Autonomous result must not recharge a consumed human prompt UUID");
+  return { consumedPromptOwnership: true };
+}
 export async function verify({ wire, config, proof, t3Version, t3BinarySha256 }) {
+  assert.equal(
+    config.sameRootChildReturnReply,
+    true,
+    "Actual same-root browser return, admission and next reply required",
+  );
+  checkSameRootReply(wire);
+  checkConsumedPromptOwnership(wire);
   const out = wire.filter((x) => x.kind === "stdout").map((x) => x.value);
   const starts = out.filter((m) => m.type === "system" && m.subtype === "task_started");
   const ends = out.filter((m) => m.type === "system" && m.subtype === "task_notification");
@@ -150,8 +225,8 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
     (n, m) => n + m.message.usage.input_tokens + m.message.usage.output_tokens,
     0,
   );
-  assert.equal(rootModelMessages.length, 9, "Actual root model turns, no duplicated child turns");
-  assert.equal(rootTokens, 162, "Actual root usage only, child tokens not added");
+  assert.equal(rootModelMessages.length, 10, "Actual root model turns, no duplicated child turns");
+  assert.equal(rootTokens, 180, "Actual root usage only, child tokens not added");
   assert.equal(ends[0].usage.total_tokens, 36, "Actual child usage exactly two model calls");
   const rootResultTokens = out
     .filter((m) => m.type === "result" && m.usage)
@@ -220,6 +295,8 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
         rootModelMessages: rootModelMessages.length,
         rootTokens,
         childTokens: ends[0].usage.total_tokens,
+        consumedPromptOwnership: true,
+        sameRootChildReturnReply: config.sameRootChildReturnReply ?? false,
         renderedChildTranscript: config.renderedChildTranscript ?? false,
         renderedChildToolResult: config.renderedChildToolResult ?? false,
         runnableChildControlsClaimed: false,

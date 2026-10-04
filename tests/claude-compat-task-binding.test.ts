@@ -493,6 +493,9 @@ test("actual SDK execute bridge binds two shells and a real Pi worker without la
     }));
     await session.bindExtensions({ mode: "rpc" });
     await session.prompt("run the actual shells");
+    // waitSeconds is an early-return budget, not completion. Do not let test teardown
+    // cancel a real worker still starting on a loaded machine. Require its actual exit.
+    await Promise.all(tasks!.list().map((task) => tasks!.wait(task.id)));
     await session.extensionRunner.emit({ type: "session_shutdown", reason: "quit" });
     if (tasks!.list().length !== 3)
       console.log(

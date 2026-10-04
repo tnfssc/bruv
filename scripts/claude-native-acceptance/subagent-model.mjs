@@ -93,6 +93,7 @@ export function reply(body, { state }) {
         ',prompt:"CHILD_LOCAL_REAL: execute the local acceptance tool and return its actual result.",waitSeconds:0}); console.log(JSON.stringify(r));',
     );
   }
+  if (user.includes("ACCEPT_LOCAL_AFTER_CHILD")) return answer("ROOT_AFTER_CHILD_REAL");
   if (user.includes("ACCEPT_LOCAL_FOLLOWUP")) return answer("ROOT_FOLLOWUP_REAL");
   if (!body.tools?.length) return answer("Local normal worker acceptance");
   throw Error("Unknown local-subagent request: " + user.slice(0, 200));

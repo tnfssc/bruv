@@ -145,3 +145,20 @@ Evidence includes real wire/data/model projections, action statuses, paired tool
 IDs and authority outputs, scoped-path-redacted screenshots/text, invocation
 checksums, model checks and cleanup. Marker text alone is not sufficient to pass.
 Endpoint/verifier unit inputs are explicitly not native acceptance evidence.
+
+## Same-root return after actual local child
+
+`run-subagent.mjs` now requires normal input and a distinct actual next model reply
+after Open parent from the real child transcript, in the same root URL/native session.
+It waits for an idle composer; only then may independent cancellation/Stop roots start.
+It also requires real consumed-prompt UUID results and autonomous task-notification origin.
+Do not skip those gates while waiting for the runtime correlation patch.
+
+Use the exact invocation/checkpoint in
+[local acceptance wisdom](../../wisdom/claude-compat/local-subagent-acceptance.md#same-root-child-return-follow-up--2026-10-04).
+Node 25.9.0 was used for read-only node:sqlite diagnostics. Evidence before cleanup includes
+marker-only wire correlation, committed source messages and relevant T3 persisted run/child
+status; no auth/payload rows or pairing tokens. New tests: `claude-native-subagent-return.test.mjs`.
+Pre-patch two same-root UI runs succeeded but the stricter ownership gate failed. Intermittent
+busy UI is not claimed reproduced or fixed. Parent must rerun after task_0720fd7d without a
+new-root/reload/Stop workaround.

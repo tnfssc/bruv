@@ -99,3 +99,76 @@ tests pass / **71** assertions on Bun1.4.2 with required real pinned SDK, strict
 Logs and exact invocation hashes accompany the rendered proof. No release, installation, credential,
 T3 patch, or shared default harness mutation. Parent must retain the noted root busy/navigation gap
 as a separate full-product acceptance item.
+
+## Same-root child return follow-up — 2026-10-04
+
+Concrete gate added, **not marked fixed**. Three bounded actual pinned-T3 attempts:
+
+1. Child transcript → Open parent → normal Submit → **ROOT_AFTER_CHILD_REAL** in the
+   original root URL/native session passed. Prior cancellation/Stop checks also passed.
+2. Fresh fixture failed before model work while selecting Local folder. Captured page:
+   Settings/Connections. Bootstrap failure, not busy-root evidence.
+3. Child return, next real reply and idle composer passed again, as did cancellation and
+   default Stop/continue. The **new wire ownership gate fails**:
+   `Consumed prompt UUID missing/wrong: ACCEPT_LOCAL_SUBAGENT`.
+
+We did **not** reproduce the intermittent post-return busy/Thinking UI in these attempts.
+Two successful navigations are not a fix. Actual root wire in attempt 3 still has zero
+prompt-consumption echoes and no origin on initial human, follow-up, task completion or
+after-child results. Canonical journal contains the task-complete custom message followed
+by ROOT_COMPLETION_ONCE_REAL, then the distinct next user/assistant exchange. Native root
+runs 1–4, provider turns and child projection are completed, not orphan-running, at capture.
+Attempt 1's persisted binder cursor is terminal, Agent result emitted, five child entries,
+36 tokens and one child tool. No separate production binder defect was proven. This matches
+the missing fields in the [focused prompt-correlation finding](focused-integrated-review.md),
+but these successful UI timings do not prove it caused the earlier hang.
+**task_0720fd7d owns runtime.ts/frontend.ts consumption/origin**; neither file nor T3 changed.
+
+The harness unconditionally requires the same persisted root URL, one actual distinct next
+model reply and success result in the same native session, and an idle composer before it
+may create the independent cancellation/Stop roots. No root replacement, reload, Stop,
+Queue or Steer gets past return admission. It also requires consumed human UUIDs on results
+and supported `task-notification` origin on actual completion, with no reused human UUID.
+Failure evidence is captured before state removal: marker-only correlation, committed source
+messages, relevant T3 SQLite statuses; no auth/payload rows or prompt text exported.
+Full expectations increase only for the extra reply: 10 root responses / 180 root tokens,
+still three actual root execute launches, child 36 tokens, one successful completion wake
+and one killed-job wake. A pre-patch no-echo run must not turn green.
+
+[Evidence](proof/local-subagent-return/observed/) includes attempt 3's deliberate FAIL,
+return/next-reply frames, real wire/source/status projections, model sequence, artifact hashes
+and cleanup. Attempt 1's earlier PASS predates the strict ownership gate; not current acceptance.
+Unchanged T3: `2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795`.
+Real compiled Bruv + loopback-only model; no real credentials/paid calls, T3 patch, release,
+bundle removal or push. Every owned runtime/browser state directory was removed.
+
+### Parent checkpoint after task_0720fd7d
+
+Apply that patch; rebuild from the integrated checkout, then run there:
+
+```sh
+BUN=/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun
+"$BUN" scripts/build-claude-compat.ts --outfile=.cache/local-return-connector
+TMPDIR=/var/tmp BRUV_CONNECTOR_EXECUTABLE="$PWD/.cache/local-return-connector" BRUV_RUNTIME_BINARY=/home/tnfssc/Code/bruv/dist/bruv PROOF_OUTPUT="$PWD/.cache/local-return-proof-$(date +%s)" /usr/bin/node scripts/claude-native-acceptance/run-subagent.mjs
+/usr/bin/node --test tests/claude-native-acceptance-model.test.mjs tests/claude-native-subagent-model.test.mjs tests/claude-native-subagent-return.test.mjs
+```
+
+Node 25.9.0 was used (read-only node:sqlite evidence). The launcher reserves a private port
+when FIXTURE_PORT is unset. Use a new proof directory, not an earlier PASS. Do not skip the
+UUID/origin gate or replace the root if blocked. Require same-root browser reply **and** wire
+ownership to pass. Inspect same-root-return-evidence.json for completion origin, next prompt
+echo, committed source exchange and no lingering root run. Classify bootstrap failures
+separately; a fresh retry is not a fix. After-patch race acceptance remains the parent's next
+step. Earlier rendered child-tool-result and runnable-child-control limits are unchanged.
+
+### Separate proven fixture correction
+
+The binder SDK test used waitSeconds:1 then immediately shut the session down. Under load,
+the budget returned during real worker startup; shutdown cancelled it and expected answer
+became only agent_start/turn_start output. Test now awaits actual TaskManager exits before
+shutdown. No larger waitSeconds, weaker result/source assertions or production binder edit.
+Before: 7/8 pass (67 assertions). After: **8/8, 71 assertions**, required pinned SDK 0.3.276,
+Bun 1.4.2. Model/harness regressions **16/16**, including default's unchanged seven; new four
+also pass in Bun. Strict typecheck and whitespace checks pass.
+
+Values unchanged: whole-product proof, honest gaps and one owner already cover this work.

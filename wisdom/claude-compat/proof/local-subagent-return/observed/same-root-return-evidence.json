@@ -1,0 +1,686 @@
+{
+  "ui": {
+    "submitVisible": true,
+    "stopVisible": false,
+    "url": "http://127.0.0.1:44429/5baabc22-1643-43ba-8fd0-78a26b65fdff/e4568e3b-3420-43e6-9fa7-7fb4dd2c2474"
+  },
+  "correlation": [
+    {
+      "direction": "stdin",
+      "type": "user",
+      "uuid": "id-1",
+      "session": null,
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "ACCEPT_LOCAL_SUBAGENT"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "assistant",
+      "uuid": "id-10",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "CHILD_LOCAL_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "assistant",
+      "uuid": "id-12",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "CHILD_LOCAL_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "system",
+      "subtype": "task_started",
+      "uuid": "id-13",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "CHILD_LOCAL_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "assistant",
+      "uuid": "id-22",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "ROOT_BACKGROUND_RETURN_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "result",
+      "subtype": "success",
+      "uuid": "id-23",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "resultTurns": 2,
+      "markers": [
+        "ROOT_BACKGROUND_RETURN_REAL"
+      ]
+    },
+    {
+      "direction": "stdin",
+      "type": "user",
+      "uuid": "id-31",
+      "session": null,
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "ACCEPT_LOCAL_FOLLOWUP"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "assistant",
+      "uuid": "id-38",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "ROOT_FOLLOWUP_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "result",
+      "subtype": "success",
+      "uuid": "id-39",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "resultTurns": 1,
+      "markers": [
+        "ROOT_FOLLOWUP_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "system",
+      "subtype": "task_notification",
+      "uuid": "id-54",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "status": "completed",
+      "markers": [
+        "CHILD_ANSWER_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "assistant",
+      "uuid": "id-61",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "ROOT_COMPLETION_ONCE_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "result",
+      "subtype": "success",
+      "uuid": "id-62",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "resultTurns": 1,
+      "markers": [
+        "ROOT_COMPLETION_ONCE_REAL"
+      ]
+    },
+    {
+      "direction": "stdin",
+      "type": "user",
+      "uuid": "id-63",
+      "session": null,
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "ACCEPT_LOCAL_AFTER_CHILD"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "assistant",
+      "uuid": "id-70",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": [
+        "ROOT_AFTER_CHILD_REAL"
+      ]
+    },
+    {
+      "direction": "stdout",
+      "type": "result",
+      "subtype": "success",
+      "uuid": "id-71",
+      "session": "id-3",
+      "parentTool": null,
+      "echoedPrompt": null,
+      "echoedPrompts": [],
+      "origin": null,
+      "resultTurns": 1,
+      "markers": [
+        "ROOT_AFTER_CHILD_REAL"
+      ]
+    }
+  ],
+  "journals": [
+    {
+      "session": "id-3",
+      "entries": [
+        {
+          "id": "id-75",
+          "parent": "id-74",
+          "type": "message",
+          "role": "system",
+          "markers": []
+        },
+        {
+          "id": "id-76",
+          "parent": "id-75",
+          "type": "message",
+          "role": "user",
+          "markers": [
+            "ACCEPT_LOCAL_SUBAGENT"
+          ]
+        },
+        {
+          "id": "id-79",
+          "parent": "id-77",
+          "type": "message",
+          "role": "assistant",
+          "markers": [
+            "CHILD_LOCAL_REAL"
+          ]
+        },
+        {
+          "id": "id-87",
+          "parent": "id-85",
+          "type": "message",
+          "role": "toolResult",
+          "markers": [
+            "CHILD_LOCAL_REAL"
+          ]
+        },
+        {
+          "id": "id-90",
+          "parent": "id-88",
+          "type": "message",
+          "role": "assistant",
+          "markers": [
+            "ROOT_BACKGROUND_RETURN_REAL"
+          ]
+        },
+        {
+          "id": "id-102",
+          "parent": "id-101",
+          "type": "message",
+          "role": "user",
+          "markers": [
+            "ACCEPT_LOCAL_FOLLOWUP"
+          ]
+        },
+        {
+          "id": "id-105",
+          "parent": "id-103",
+          "type": "message",
+          "role": "assistant",
+          "markers": [
+            "ROOT_FOLLOWUP_REAL"
+          ]
+        },
+        {
+          "id": "id-121",
+          "parent": "id-120",
+          "type": "custom_message",
+          "customType": "task-complete",
+          "markers": [
+            "CHILD_ANSWER_REAL",
+            "CHILD_LOCAL_REAL"
+          ]
+        },
+        {
+          "id": "id-124",
+          "parent": "id-122",
+          "type": "message",
+          "role": "assistant",
+          "markers": [
+            "ROOT_COMPLETION_ONCE_REAL"
+          ]
+        },
+        {
+          "id": "id-125",
+          "parent": "id-124",
+          "type": "message",
+          "role": "user",
+          "markers": [
+            "ACCEPT_LOCAL_AFTER_CHILD"
+          ]
+        },
+        {
+          "id": "id-128",
+          "parent": "id-126",
+          "type": "message",
+          "role": "assistant",
+          "markers": [
+            "ROOT_AFTER_CHILD_REAL"
+          ]
+        }
+      ]
+    }
+  ],
+  "persistence": [
+    {
+      "table": "orchestration_v2_projection_threads",
+      "columns": [
+        "thread_id",
+        "project_id",
+        "title",
+        "default_provider",
+        "runtime_mode",
+        "interaction_mode",
+        "active_provider_thread_id",
+        "created_at",
+        "updated_at",
+        "archived_at",
+        "deleted_at",
+        "payload_json",
+        "provider_instance_id"
+      ],
+      "rows": [
+        {
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "project_id": "85a286e2-7e44-4fe1-84a6-fef2852d0fcd",
+          "active_provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "updated_at": "2026-10-04T03:07:32.757Z",
+          "provider_instance_id": "claudeAgent"
+        },
+        {
+          "thread_id": "thread:provider:claudeAgent:native-thread:provider-thread%3Aprovider%3AclaudeAgent%3Anative-thread%3Apending%253Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A1%3Abruv-2119d873-e2f4-80be-a406-34b69456856e",
+          "project_id": "85a286e2-7e44-4fe1-84a6-fef2852d0fcd",
+          "active_provider_thread_id": null,
+          "updated_at": "2026-10-04T03:07:28.443Z",
+          "provider_instance_id": "claudeAgent"
+        }
+      ]
+    },
+    {
+      "table": "orchestration_v2_projection_runs",
+      "columns": [
+        "run_id",
+        "thread_id",
+        "ordinal",
+        "provider",
+        "provider_thread_id",
+        "status",
+        "requested_at",
+        "completed_at",
+        "payload_json",
+        "provider_instance_id"
+      ],
+      "rows": [
+        {
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:1",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "status": "completed",
+          "completed_at": "2026-10-04T03:07:26.064Z",
+          "provider_instance_id": "claudeAgent"
+        },
+        {
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:2",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "status": "completed",
+          "completed_at": "2026-10-04T03:07:27.759Z",
+          "provider_instance_id": "claudeAgent"
+        },
+        {
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:3",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "status": "completed",
+          "completed_at": "2026-10-04T03:07:28.515Z",
+          "provider_instance_id": "claudeAgent"
+        },
+        {
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:4",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "status": "completed",
+          "completed_at": "2026-10-04T03:07:32.757Z",
+          "provider_instance_id": "claudeAgent"
+        }
+      ]
+    },
+    {
+      "table": "orchestration_v2_projection_nodes",
+      "columns": [
+        "node_id",
+        "thread_id",
+        "run_id",
+        "parent_node_id",
+        "root_node_id",
+        "kind",
+        "status",
+        "provider_thread_id",
+        "provider_turn_id",
+        "runtime_request_id",
+        "checkpoint_scope_id",
+        "started_at",
+        "completed_at",
+        "payload_json"
+      ],
+      "rows": [
+        {
+          "node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:1",
+          "parent_node_id": null,
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": null,
+          "runtime_request_id": null,
+          "checkpoint_scope_id": "checkpoint-scope:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:name:root",
+          "started_at": "2026-10-04T03:07:21.540Z",
+          "completed_at": "2026-10-04T03:07:26.064Z"
+        },
+        {
+          "node_id": "node:provider:claudeAgent:native-item:actual_subagent_1",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:1",
+          "parent_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A1%3Aattempt%3A1",
+          "runtime_request_id": null,
+          "checkpoint_scope_id": null,
+          "started_at": "2026-10-04T03:07:25.498Z",
+          "completed_at": "2026-10-04T03:07:25.919Z"
+        },
+        {
+          "node_id": "node:provider:claudeAgent:native-item:task%3Abruv-2119d873-e2f4-80be-a406-34b69456856e",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:1",
+          "parent_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A3%3Aattempt%3A1",
+          "runtime_request_id": null,
+          "checkpoint_scope_id": null,
+          "started_at": "2026-10-04T03:07:25.875Z",
+          "completed_at": "2026-10-04T03:07:28.315Z"
+        },
+        {
+          "node_id": "node:provider:claudeAgent:native-item:task%3Abruv-2119d873-e2f4-80be-a406-34b69456856e%3Athread-root",
+          "thread_id": "thread:provider:claudeAgent:native-thread:provider-thread%3Aprovider%3AclaudeAgent%3Anative-thread%3Apending%253Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A1%3Abruv-2119d873-e2f4-80be-a406-34b69456856e",
+          "run_id": null,
+          "parent_node_id": null,
+          "root_node_id": "node:provider:claudeAgent:native-item:task%3Abruv-2119d873-e2f4-80be-a406-34b69456856e%3Athread-root",
+          "status": "completed",
+          "provider_thread_id": null,
+          "provider_turn_id": null,
+          "runtime_request_id": null,
+          "checkpoint_scope_id": null,
+          "started_at": "2026-10-04T03:07:25.875Z",
+          "completed_at": "2026-10-04T03:07:28.315Z"
+        },
+        {
+          "node_id": "node:provider:claudeAgent:native-item:c04ae2b0-3b0b-4c18-a0b8-376820aa4204",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:1",
+          "parent_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A1%3Aattempt%3A1",
+          "runtime_request_id": null,
+          "checkpoint_scope_id": null,
+          "started_at": "2026-10-04T03:07:25.921Z",
+          "completed_at": "2026-10-04T03:07:25.921Z"
+        },
+        {
+          "node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A2:root",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:2",
+          "parent_node_id": null,
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A2:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": null,
+          "runtime_request_id": null,
+          "checkpoint_scope_id": "checkpoint-scope:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:name:root",
+          "started_at": "2026-10-04T03:07:27.567Z",
+          "completed_at": "2026-10-04T03:07:27.759Z"
+        },
+        {
+          "node_id": "node:provider:claudeAgent:native-item:cb5c54a9-dac0-44f2-bc96-e4e5c5d16a0f",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:2",
+          "parent_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A2:root",
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A2:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A2%3Aattempt%3A1",
+          "runtime_request_id": null,
+          "checkpoint_scope_id": null,
+          "started_at": "2026-10-04T03:07:27.664Z",
+          "completed_at": "2026-10-04T03:07:27.664Z"
+        },
+        {
+          "node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A3:root",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:3",
+          "parent_node_id": null,
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A3:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": null,
+          "runtime_request_id": null,
+          "checkpoint_scope_id": "checkpoint-scope:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:name:root",
+          "started_at": "2026-10-04T03:07:28.205Z",
+          "completed_at": "2026-10-04T03:07:28.515Z"
+        },
+        {
+          "node_id": "node:provider:claudeAgent:native-item:actual_subagent_3",
+          "thread_id": "thread:provider:claudeAgent:native-thread:provider-thread%3Aprovider%3AclaudeAgent%3Anative-thread%3Apending%253Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A1%3Abruv-2119d873-e2f4-80be-a406-34b69456856e",
+          "run_id": null,
+          "parent_node_id": "node:provider:claudeAgent:native-item:task%3Abruv-2119d873-e2f4-80be-a406-34b69456856e%3Athread-root",
+          "root_node_id": "node:provider:claudeAgent:native-item:task%3Abruv-2119d873-e2f4-80be-a406-34b69456856e%3Athread-root",
+          "status": "completed",
+          "provider_thread_id": null,
+          "provider_turn_id": null,
+          "runtime_request_id": null,
+          "checkpoint_scope_id": null,
+          "started_at": "2026-10-04T03:07:28.314Z",
+          "completed_at": "2026-10-04T03:07:28.315Z"
+        },
+        {
+          "node_id": "node:provider:claudeAgent:native-item:2b5ea0dd-a3ed-47ab-a9db-3bedc2a00695",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:3",
+          "parent_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A3:root",
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A3:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A3%3Aattempt%3A1",
+          "runtime_request_id": null,
+          "checkpoint_scope_id": null,
+          "started_at": "2026-10-04T03:07:28.452Z",
+          "completed_at": "2026-10-04T03:07:28.452Z"
+        },
+        {
+          "node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A4:root",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:4",
+          "parent_node_id": null,
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A4:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": null,
+          "runtime_request_id": null,
+          "checkpoint_scope_id": "checkpoint-scope:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:name:root",
+          "started_at": "2026-10-04T03:07:32.517Z",
+          "completed_at": "2026-10-04T03:07:32.757Z"
+        },
+        {
+          "node_id": "node:provider:claudeAgent:native-item:a0d02f31-8def-4276-916b-daf3044696bb",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:4",
+          "parent_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A4:root",
+          "root_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A4:root",
+          "status": "completed",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A4%3Aattempt%3A1",
+          "runtime_request_id": null,
+          "checkpoint_scope_id": null,
+          "started_at": "2026-10-04T03:07:32.695Z",
+          "completed_at": "2026-10-04T03:07:32.695Z"
+        }
+      ]
+    },
+    {
+      "table": "orchestration_v2_projection_provider_turns",
+      "columns": [
+        "provider_turn_id",
+        "thread_id",
+        "provider_thread_id",
+        "node_id",
+        "run_attempt_id",
+        "ordinal",
+        "status",
+        "started_at",
+        "completed_at",
+        "payload_json"
+      ],
+      "rows": [
+        {
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A1%3Aattempt%3A1",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "run_attempt_id": "run-attempt:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:attempt:1",
+          "status": "completed",
+          "started_at": "2026-10-04T03:07:22.980Z",
+          "completed_at": "2026-10-04T03:07:25.948Z"
+        },
+        {
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A2%3Aattempt%3A1",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A2:root",
+          "run_attempt_id": "run-attempt:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A2:attempt:1",
+          "status": "completed",
+          "started_at": "2026-10-04T03:07:27.617Z",
+          "completed_at": "2026-10-04T03:07:27.664Z"
+        },
+        {
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A3%3Aattempt%3A1",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A3:root",
+          "run_attempt_id": "run-attempt:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A3:attempt:1",
+          "status": "completed",
+          "started_at": "2026-10-04T03:07:28.313Z",
+          "completed_at": "2026-10-04T03:07:28.452Z"
+        },
+        {
+          "provider_turn_id": "provider-turn:provider:claudeAgent:native-turn:turn%3Arun-attempt%3Arun%3Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A4%3Aattempt%3A1",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "provider_thread_id": "provider-thread:provider:claudeAgent:native-thread:pending%3Arun%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1",
+          "node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A4:root",
+          "run_attempt_id": "run-attempt:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A4:attempt:1",
+          "status": "completed",
+          "started_at": "2026-10-04T03:07:32.641Z",
+          "completed_at": "2026-10-04T03:07:32.695Z"
+        }
+      ]
+    },
+    {
+      "table": "orchestration_v2_projection_subagents",
+      "columns": [
+        "subagent_id",
+        "thread_id",
+        "run_id",
+        "parent_node_id",
+        "provider",
+        "provider_thread_id",
+        "child_thread_id",
+        "origin",
+        "status",
+        "started_at",
+        "completed_at",
+        "updated_at",
+        "payload_json",
+        "driver",
+        "provider_instance_id"
+      ],
+      "rows": [
+        {
+          "subagent_id": "node:provider:claudeAgent:native-item:task%3Abruv-2119d873-e2f4-80be-a406-34b69456856e",
+          "thread_id": "e4568e3b-3420-43e6-9fa7-7fb4dd2c2474",
+          "run_id": "run:thread:e4568e3b-3420-43e6-9fa7-7fb4dd2c2474:ordinal:1",
+          "parent_node_id": "node:run:run%3Athread%3Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%3Aordinal%3A1:root",
+          "provider_thread_id": null,
+          "child_thread_id": "thread:provider:claudeAgent:native-thread:provider-thread%3Aprovider%3AclaudeAgent%3Anative-thread%3Apending%253Arun%253Athread%253Ae4568e3b-3420-43e6-9fa7-7fb4dd2c2474%253Aordinal%253A1%3Abruv-2119d873-e2f4-80be-a406-34b69456856e",
+          "status": "completed",
+          "started_at": "2026-10-04T03:07:25.875Z",
+          "completed_at": "2026-10-04T03:07:28.315Z",
+          "updated_at": "2026-10-04T03:07:28.315Z",
+          "provider_instance_id": "claudeAgent"
+        }
+      ]
+    }
+  ]
+}
