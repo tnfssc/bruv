@@ -23,7 +23,6 @@ const worker = path.join(root, "worker.mjs"),
   pinnedConnector = path.join(root, "actual-connector");
 let model,
   workerModel,
-
   config,
   child,
   passed = false;
@@ -106,10 +105,15 @@ try {
   if (code !== 0) throw Error("Integrated native replay failed with exit " + code);
   if ([...model.records, ...(workerModel?.records ?? [])].some((r) => r.error))
     throw Error("Local model endpoint rejected a request");
-  if (!config.delegationCases && !config.humanControls && model.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length !== 1)
+  if (
+    !config.delegationCases &&
+    !config.humanControls &&
+    model.records.filter((r) => r.delta?.content === "TASK_COMPLETED_REAL").length !== 1
+  )
     throw Error("Expected exactly one actual model completion wake, not duplicate continuations");
   if (
-    !config.delegationCases && !config.humanControls &&
+    !config.delegationCases &&
+    !config.humanControls &&
     model.records.filter((r) => r.delta?.content === "CANCELLATION_COMPLETED_REAL").length !== 1
   )
     throw Error("Expected exactly one actual cancellation completion wake");

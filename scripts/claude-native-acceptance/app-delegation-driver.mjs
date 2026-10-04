@@ -136,7 +136,10 @@ export async function exercise({ page, url, snapshot, body, config }) {
   await snapshot("native-child-completed-ack");
   const parentUrl = page.url();
   // 2644 exposes completion as a titled Finished subagent card.
-  await page.locator('[data-v2-item-type="subagent"][aria-description="Finished"]').filter({ hasText: "Native normal done" }).click();
+  await page
+    .locator('[data-v2-item-type="subagent"][aria-description="Finished"]')
+    .filter({ hasText: "Native normal done" })
+    .click();
   await visible("APP_CHILD_RESULT_REAL_done");
   await snapshot("native-child-thread-completed");
   assert.ok(

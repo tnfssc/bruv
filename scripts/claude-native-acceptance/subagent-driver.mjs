@@ -24,7 +24,11 @@ export async function exercise({ page, url, snapshot, config }) {
   const newThread = async () => {
     await page.getByRole("button", { name: "New thread", exact: true }).click();
     // Current upstream opens its native project picker before creating the draft.
-    await page.locator('[data-slot="command-item"]').filter({ has: page.getByText("project", { exact: true }) }).first().click();
+    await page
+      .locator('[data-slot="command-item"]')
+      .filter({ has: page.getByText("project", { exact: true }) })
+      .first()
+      .click();
     await message.waitFor();
     await page.locator('[data-chat-provider-model-picker="true"]').first().click();
     await page.getByText("Local deterministic acceptance (not Claude)", { exact: true }).last().click();
@@ -57,8 +61,14 @@ export async function exercise({ page, url, snapshot, config }) {
   await visible("ROOT_COMPLETION_ONCE_REAL");
   // 2644 also renders a Finished event card. Select the original live card by
   // its Completed status instead of treating both same-title cards as one.
-  const completedCard = page.locator('[data-v2-item-type="subagent"][aria-description="Completed"]').filter({ hasText: title });
-  if (!(await completedCard.isVisible())) await page.getByText(/^Worked for /).first().click();
+  const completedCard = page
+    .locator('[data-v2-item-type="subagent"][aria-description="Completed"]')
+    .filter({ hasText: title });
+  if (!(await completedCard.isVisible()))
+    await page
+      .getByText(/^Worked for /)
+      .first()
+      .click();
   await completedCard.waitFor({ timeout: 30000 });
   assert.equal(await completedCard.getAttribute("aria-description"), "Completed");
   await snapshot("agent-completed");
