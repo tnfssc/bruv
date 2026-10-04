@@ -13,8 +13,8 @@ import {
 import {
   Container,
   getCapabilities,
-  setCapabilities,
   ScrollView,
+  setCapabilities,
   stripTerminalSequences,
   Text,
 } from "@earendil-works/pi-tui";
@@ -631,4 +631,34 @@ test("Ctrl+O preserves READ 29 after native ScrollView lays out newly expanded c
   expect(paint()[0]).toBe("READ 29");
   expect(scroll.scrollTop).toBe(read29);
   expect(scroll.updateLayout).toBe(originalLayout); // One-shot owned hook leaves no residue.
+});
+
+test("long grouped transcripts index membership instead of rescanning tools and children", () => {
+  const { chat, state } = setup();
+  const count = 1000;
+  for (let i = 0; i < count; i++) chat.addChild(tool(String(i)));
+  state.sync();
+  let childReads = 0;
+  chat.children = new Proxy(chat.children, {
+    get(target, key, receiver) {
+      if (typeof key === "string" && /^\d+$/.test(key)) childReads++;
+      return Reflect.get(target, key, receiver);
+    },
+  });
+  state.sync();
+  // One traversal builds the next membership index; removal checks must not
+  // scan this same transcript separately for each historical tool.
+  expect(childReads).toBeLessThanOrEqual(count * 2);
+  let memberReads = 0;
+  const group = state.groups[0]!;
+  group.tools = new Proxy(group.tools, {
+    get(target, key, receiver) {
+      if (typeof key === "string" && /^\d+$/.test(key)) memberReads++;
+      return Reflect.get(target, key, receiver);
+    },
+  });
+  expect(plain(chat.render(80))).toEqual(["1000 tools called ▸"]);
+  // Counting/labeling visits members a bounded number of times; finding each
+  // child's group must not repeatedly search that group's tool array.
+  expect(memberReads).toBeLessThanOrEqual(count * 8);
 });

@@ -1,0 +1,23 @@
+bun test v1.4.2 (744846f84)
+
+tests/rolling-activity.test.ts:
+647 |     },
+648 |   });
+649 |   state.sync();
+650 |   // One traversal builds the next membership index; removal checks must not
+651 |   // scan this same transcript separately for each historical tool.
+652 |   expect(childReads).toBeLessThanOrEqual(count * 2);
+                           ^
+error: expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 2000
+Received: 501500
+
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_edb4c254/tests/rolling-activity.test.ts:652:22)
+(fail) long grouped transcripts index membership instead of rescanning tools and children [120.47ms]
+
+ 0 pass
+ 20 filtered out
+ 1 fail
+ 1 expect() calls
+Ran 1 test across 1 file. [647.00ms]

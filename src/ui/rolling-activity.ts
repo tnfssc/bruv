@@ -12,8 +12,8 @@ import {
   type TuiMouseEvent,
   truncateToWidth,
 } from "@earendil-works/pi-tui";
-import { clearActivityProjection, setActivityProjection } from "./activity-projection";
 import { actionLabel } from "./action-label";
+import { clearActivityProjection, setActivityProjection } from "./activity-projection";
 import { taskRowsFromDetails } from "./task-rows";
 
 export const ACTIVITY_BOUNDARY = "bruv-activity-boundary";
@@ -70,6 +70,7 @@ const controllers = new Set<ActivityController>();
 
 export class ActivityController {
   groups: Group[] = [];
+  private groupsByTool = new Map<ToolExecutionComponent, Group>();
   private width = 80;
   private adapted = new Map<ToolExecutionComponent, ToolExecutionComponent["handleMouse"]>();
   private liveKey: string | undefined;
@@ -105,11 +106,13 @@ export class ActivityController {
   }
   sync(): void {
     const membership = activityMembership(this.host.sessionManager.getBranch());
-    const previous = new Map(this.groups.map((group) => [group.key, group]));
+    const previous = this.groupsByTool;
     const groups = new Map<string, Group>();
+    const groupsByTool = new Map<ToolExecutionComponent, Group>();
+    const children = new Set(this.host.chatContainer.children);
     let fallback = "legacy";
-    for (const child of this.host.chatContainer.children) {
-      if (child instanceof UserMessageComponent) fallback = `user-${this.host.chatContainer.children.indexOf(child)}`;
+    for (const [index, child] of this.host.chatContainer.children.entries()) {
+      if (child instanceof UserMessageComponent) fallback = `user-${index}`;
       if (!(child instanceof ToolExecutionComponent)) continue;
       const state = toolState(child);
       if (!state.toolCallId) continue;
@@ -120,21 +123,22 @@ export class ActivityController {
           : (membership.get(state.toolCallId) ?? fallback);
       let group = groups.get(key);
       if (!group) {
-        const same = previous.get(key);
-        const old = same?.tools.includes(child) ? same : this.groups.find((item) => item.tools.includes(child));
+        const old = previous.get(child);
         group = { key, tools: [], expanded: old?.expanded ?? state.expanded };
         groups.set(key, group);
       }
       // A duplicate delivery keeps evidence but never increments the count.
       group.tools.push(child);
+      groupsByTool.set(child, group);
       if (!this.adapted.has(child)) child.setExpanded(group.expanded);
       this.adapt(child);
     }
     this.groups = [...groups.values()];
-    for (const tool of this.adapted.keys()) if (!this.host.chatContainer.children.includes(tool)) this.restore(tool);
+    this.groupsByTool = groupsByTool;
+    for (const tool of this.adapted.keys()) if (!children.has(tool)) this.restore(tool);
   }
   private group(tool: ToolExecutionComponent): Group | undefined {
-    return this.groups.find((group) => group.tools.includes(tool));
+    return this.groupsByTool.get(tool);
   }
   count(group: Group): number {
     return new Set(group.tools.map((tool) => toolState(tool).toolCallId)).size;
@@ -270,6 +274,7 @@ export class ActivityController {
     this.pendingAnchor = undefined;
     for (const tool of this.adapted.keys()) this.restore(tool);
     this.groups = [];
+    this.groupsByTool.clear();
   }
 }
 
