@@ -327,6 +327,7 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
 async function runRealPrintCompletionCycles(recordMilestones: boolean) {
   const dir = await mkdtemp(join(tmpdir(), "bruv-goal-print-sdk-"));
   let session: any;
+  const releaseJobs: string[] = [];
   try {
     const model = getModel("anthropic", "claude-sonnet-4-5")!;
     const runtime = await ModelRuntime.create({
@@ -348,6 +349,8 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
       const shouldCycle = !paused && !completed && (!recordMilestones || calls <= cycleLimit);
       let content: any[];
       if (shouldCycle) {
+        const releaseJob = join(dir, "release-print-" + calls);
+        releaseJobs.push(releaseJob);
         const setup =
           calls === 1
             ? 'await goal.set({objective:"Bound real print completion cycles",criteria:["stop or complete"],constraints:["offline"]});'
@@ -364,7 +367,11 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
               code:
                 setup +
                 progress +
-                'const job=await shell("sleep 0.03; exit 7",{waitSeconds:0}); console.log(job); await handoff("waiting for failing print job ' +
+                "const job=await shell(" +
+                JSON.stringify(
+                  `sh -c 'while [ ! -f "$1" ]; do sleep 0.01; done; exit 7' sh ${JSON.stringify(releaseJob)}`,
+                ) +
+                ',{waitSeconds:0}); console.log(job); await handoff("waiting for failing print job ' +
                 calls +
                 '");',
             },
@@ -417,6 +424,11 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
           factory: (pi) => {
             pi.on("agent_end", () => {
               ended++;
+              // Goal accounting runs in this event; the native print handler
+              // then waits for jobs. Release on the next loop turn, not before
+              // accounting or after the blocking native handler.
+              const release = releaseJobs[calls - 1];
+              if (release) setImmediate(() => void Bun.write(release, "release"));
             });
             pi.on("agent_settled", () => {
               settled++;
@@ -444,6 +456,8 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
     await session.prompt("Start real print completion cycle");
     return { calls, ended, settled, entries: manager.getEntries() };
   } finally {
+    // Never strand gated jobs if setup or an assertion fails.
+    await Promise.all(releaseJobs.map((path) => Bun.write(path, "release")));
     session?.dispose();
     await rm(dir, { recursive: true, force: true });
   }

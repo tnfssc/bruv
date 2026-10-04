@@ -147,3 +147,7 @@ Gaps: no live account credit verification, real provider latency/tier guarantee,
 Worker commit 429a9ffc was reviewed and cherry-picked onto local develop as e93d0953. Parent independently read the pinned upstream selection and request mapping. On the integrated tree, the same six suites passed: 117 tests / 781 assertions; typecheck and diff checks passed. The first test launch hit fish syntax before running tests; reran with explicit bash. No source failure.
 
 This change is in local source only. No push, release, install, or live provider claim. Use the source links and worker worktree above for follow-up. Existing values cover this change; none added.
+
+### Codex alignment published
+
+PR [#27](https://github.com/tnfssc/bruv/pull/27) passed final hosted Linux/macOS/policy checks and merged normally as 914b0a3e. Released [v0.16.2](https://github.com/tnfssc/bruv/releases/tag/v0.16.2) at 49379a1958ef41127799a166de8df8190f26c0f3. [Release run 37191445417](https://github.com/tnfssc/bruv/actions/runs/37191445417) passed all six gates; stable metadata and all 20 expected nonempty assets verified without redundant binary downloads. No local binary installation. See [release record and remaining limits](../releases/codex-fast-alignment-release.md) and [publication evidence](../releases/v0.16.2-publication.json). Parent original commits e93d0953 / 7404ee32 are already included through the reviewed cherry-picks; fetch/integrate develop rather than applying them again. Values reviewed and unchanged.

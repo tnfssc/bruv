@@ -1,3 +1,4 @@
+import { selectDiskBackedEntries } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -151,7 +152,12 @@ function resolveSetting(
       },
     };
   }
-  const entries = branch(ctx);
+  const entries =
+    selectDiskBackedEntries(
+      ctx.sessionManager,
+      "branch",
+      (meta) => meta.type === "custom" && meta.customType === NATIVE_FAST_ENTRY,
+    ) ?? branch(ctx);
   for (let index = entries.length - 1; index >= 0; index--) {
     const entry = entries[index];
     if (entry?.type !== "custom" || entry.customType !== NATIVE_FAST_ENTRY) continue;
