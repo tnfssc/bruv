@@ -116,3 +116,6 @@ model-projection,final-disk}.json plus reviewed screenshots/actions/wire logs.
 21 supported-Bun focused tests pass; no-emit check passes. See native-history.md
 for the fixed summary/draft-navigation/toast/temp-storage fixture issues and
 remaining scope. No concrete history runtime blocker; no release/T3 edits.
+
+## Real local worker gate integrated — 2026-10-04
+Cherry-picked fddd81a2: truthful async Agent launch ACK fixes the premature Completed card. Parent binder tests and typecheck passed (task_d30e8f21). Focused rendered worker, child history, exactly-once wakes and confirmed Stop subtree exits passed; full native parity is not claimed. Root admission after child-view navigation remains open. Task task_78e74597 owns a focused replay/fix, excluding runtime/frontend files owned by task_0720fd7d. Workspace: {"kind":"worktree","path":"/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_78e74597","worktreePath":"/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_78e74597","sourcePath":"/home/tnfssc/Code/bruv","baseRef":"HEAD","baseOid":"c6b705393c5869e1e83902ff9e59eb7626b43de5","branch":"bruv/fix-real-root-admission-after-native-chi-78e74597","preparationStatus":"ready"}. No bundle removal or publication. Values unchanged: existing truthful-state and real-UI acceptance rules cover this finding.
