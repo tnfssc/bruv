@@ -8,7 +8,8 @@ make it, not delegate again. Parent drew this replacement directly.
 Custom lowercase wordmark. Heavy strokes, cut corners, forward lean. Black and
 white. No terminal symbol, stock font, colored tile, or external resource.
 The separate b icon uses the same geometry as the wordmark.
-This is a new proposal, not a user-approved design.
+User approved this replacement ("sexy") and asked to combine it with the
+public-site PR #28.
 
 - assets/brand/bruv-wordmark.svg: dark ink on transparent background.
 - assets/brand/bruv-wordmark-light.svg: identical paths in white for dark pages.
@@ -36,3 +37,15 @@ No runtime code changed. No full build needed. Browser preview is off for this
 thread, so no claim of browser or GitHub rendering acceptance.
 
 Values unchanged. This is specific design feedback, not a new general rule.
+
+## Public-site integration
+
+Work moved to /home/tnfssc/.bruv/worktrees/bruv-public-site-logo, branch
+t3code/public-site-logo. Target is origin/feat/landing-copy-loop-polish (PR #28).
+Combined version owns the assets in site/assets/brand/ for self-contained site
+builds. See wisdom/landing-page/logo.md on that branch for implementation/checks.
+
+Confirmed pushed commit 7c01eae4251bf59660f3be0733d3fdee09d05779 to the site
+PR branch. PR #28 now contains the accepted logo in terminal, HTML/no-JS,
+favicon, and README. All 31 site tests and Chromium validator passed.
+PR body updated. No new PR, merge, deployment, or CI success claimed.
