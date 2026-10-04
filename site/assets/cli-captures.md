@@ -1,8 +1,22 @@
+# Current landing capture: terminal cells
+
+The single-page landing uses **settings-cells.json**, not the PNGs below. Regenerate from this directory's existing safe ANSI source with cd site && bun run assets (no CLI/model/network call). The extractor's browser permits only its loopback server.
+
+scripts/extract-cells.ts replays the complete, unmodified cli-settings.txt bytes through pinned Ghostty Web 0.4.0/WASM at the original 110×36 dimensions. Cursor movement, erase and SGR are interpreted by the emulator, not stripped with a regex. It reads visible buffer cells via getLine/getCell and exports each glyph, resolved RGB foreground/background and supported style flags as grouped runs. The replay uses the original #141820/#d5dce5 capture theme; displayed capture colors are not recolored to Vesper.
+
+The JSON records the raw source SHA256, source dimensions and exact zero-based crop: x=0, y=19, width=56, height=15. It contains the ten visible menu options with their unchanged values, menu position (1/32), selected-option description and keyboard hint. Startup warnings, prompt/status bars and unused right-hand columns are excluded. This is a labelled **menu excerpt**, not a connected model session or a fabricated conversation.
+
+For narrower widths, capture.ts removes only menu padding, keeps each original value paired with its label, and word-wraps the original description/hint. Every non-space glyph keeps its original order and style; a unit test checks that invariant at 29/32/37/48/56 cells. The visible caption calls the narrow version reflowed. At 320px the current renderer gives a 29-column capture; at 390px it gives 37. It never shrinks wide capture text into an image.
+
+Build bundles this cell data into the terminal JS. layout.ts composes it into the same ANSI grid as the headline, links and prose. There is no raster compositor or shipped PNG. Original PNGs and the older capture-real.ts script below remain historical source evidence only.
+
+---
+
 # Real Bruv CLI captures
 
-Captured 2026-10-04 on Linux, from current source, not an installed historical binary. These are browser screenshots of the actual Ghostty terminal emulator replaying CLI output. No application UI or model response was invented. Existing delegation/wisdom/social assets remain separate labeled illustrations (site/scripts/capture.ts, site/fixtures/captures.html, wisdom/landing-page/README.md); they were not replaced.
+Captured 2026-10-04 on Linux, from current source, not an installed historical binary. These are browser screenshots of the actual Ghostty terminal emulator replaying CLI output. No application UI or model response was invented. Those older synthetic illustrations and their generator were removed by the subsequent landing-page work; none ship in the current page.
 
-## Gallery captions
+## Historical PNG captions
 
 | Asset | Caption | Dimensions | Source |
 | --- | --- | --- | --- |

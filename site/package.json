@@ -5,9 +5,9 @@
   "scripts": {
     "build": "bun scripts/build.ts",
     "preview": "bun scripts/preview.ts",
-    "assets": "bun scripts/capture-real.ts",
+    "assets": "bun scripts/extract-cells.ts",
     "test": "bun test scripts/build.test.ts scripts/scroll.test.ts && bun scripts/validate.ts",
-    "test:scroll": "bun test scripts/scroll.test.ts && bun scripts/probe-scroll.ts"
+    "test:scroll": "bun test scripts/scroll.test.ts && bun scripts/validate.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.11.1",
