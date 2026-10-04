@@ -1,10 +1,31 @@
 # Rolling activity research — proposal only
 
-Historical design/research snapshot. Approved runtime slice and current proof/limits: [implementation pickup](rolling-activity-implementation.md).
+Historical research snapshot with a source-only refresh on 2026-10-04. The original Pi probes below are not compiled acceptance. Approved tool-only runtime evolution and separately recorded proof/limits: [implementation pickup](rolling-activity-implementation.md) and [disclosure follow-up](rolling-activity-disclosures-2026-10-04.md).
 
 The [reconciled proposal](rolling-activity-proposal.md) owns the recommended design. Choices below are research inputs, not implementation approval.
 
-## Receipt
+## Source refresh: develop ac720844 (2026-10-04)
+
+Pinned source: `ac720844bac745e6cef45b1478703517e99b890b`. PR #23 head was `6ab524c610bccd973f0c981b96f0c902605c405f`. Its two docs are already on develop, with historical-status headers. Local merge conflicts were add/add in those files only; preserve develop's headers rather than erase the later implementation record.
+
+| Inspected source | Concrete fact / design limit |
+| --- | --- |
+| [rolling-activity.ts](../../src/ui/rolling-activity.ts), `activityMembership`, `ActivityController.sync` | Selected-branch outer call IDs own membership. User/prose/non-job-control boundaries split groups. Typed notices adjacent to their source can join; later notices form notification-only groups. Group count, run count and task count are not interchangeable. |
+| Same file, `registerRollingActivity` | Fullscreen TUI `agent_end` writes `bruv-activity-boundary` via `appendEntry` when assistant tool calls exist. Data is only `callIds`: no end reason, successful-final intent, continuation parent or job-settlement proof. No-call runs write no marker; missing end events cannot manufacture one. |
+| Same file, `installRollingActivity`, `withAnchor`, `deferAnchor` | Wraps actual InteractiveMode methods, preserves native siblings and restores wrappers. Explicit toggles anchor after layout and disable follow. This is not generic semantic anchoring or primary-buffer scrollback rewriting. |
+| [activity-projection.ts](../../src/ui/activity-projection.ts), [sdk-task-rows.ts](../../src/ui/sdk-task-rows.ts) | WeakMap presentation state applies after canonical task-row facts. Native tool/detail/image components stay direct siblings. No new transcript ledger or task authority. |
+| [cli.ts](../../src/cli.ts), [pi-host-adaptation.ts](../../scripts/pi-host-adaptation.ts) | CLI installs the adapter; host preparation rejects unsupported Pi versions. Public widget APIs alone still cannot replace transcript rows. |
+| [typescript/extension.ts](../../src/typescript/extension.ts) | Successful handoff returns `terminate: true` and `details.handoff`. This is a tool control/result path, not an assistant activity/answer/note route. |
+| [questions/runtime.ts](../../src/questions/runtime.ts), [agent/extension.ts](../../src/agent/extension.ts) | Saved answer claims/delivery and task completion continuation keep their own owners. Hidden `question-answer` context triggers a follow-up turn, not an old-stack resume. UI markers do not acknowledge it. |
+| [rolling-activity.test.ts](../../tests/rolling-activity.test.ts) | Existing tests cover journal continuation, steering users, live/saved prose/control boundaries and late callback provenance. Read as source evidence here; they were not rerun for this docs update. |
+
+The existing runtime intentionally retains **all assistant prose**. No inspected bruv adapter normalizes provider signatures to activity/answer/note. The original Responses fixture's signature timing is useful evidence for one candidate route, not a selected contract or live-provider test. Live text-block vs message granularity, mixed text/tools, emitter ownership and saved intent remain open.
+
+The original suggestion that a lasting note need not split a group was an alternative for a work-total summary. Current groups preserve chronology by splitting at lasting text/control boundaries. The proposal now distinguishes these units rather than promising one count across an entire run. The original scroll probe's disappearing header was fixed by later focused anchoring work according to source/receipts; it should not be repeated as an observed current defect.
+
+[Disclosure follow-up](rolling-activity-disclosures-2026-10-04.md) and [runtime acceptance receipt](rolling-runtime-acceptance-2026-10-04.md) record later compiled checks for the tool-only slice. This review only read them. It did not build the CLI, run those harnesses, install dependencies, use a live provider or remote server, or claim acceptance of prose rolling. See [PR review handoff](rolling-activity-pr23-review-2026-10-04.md) for docs checks and unanswered decisions.
+
+## Original receipt (2026-10-02)
 
 - Worktree: `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_c7942be3`
 - Branch: `bruv/research-pi-rolling-transcript-feasibili-c7942be3`
@@ -14,7 +35,7 @@ The [reconciled proposal](rolling-activity-proposal.md) owns the recommended des
 
 **Finding:** rolling presentation and clickable grouped history are feasible. Alternate screen alone does not provide this product behavior; Pi already supplies component activation. Transcript ownership and semantic classification are the gaps. Keep stored history and task/question delivery untouched.
 
-## Current facts (not proposed capabilities)
+## Facts at the original eb07b0d7 baseline
 
 ### Exact Pi APIs and interaction
 
@@ -54,7 +75,7 @@ Tool runtime: Bun **1.4.2**, absolute Pi imports above; fake terminal, real TuiA
 2. Minimal local group rendered `2 tools called ▸`; click revealed two retained native tools. At 60×8, collapsed frame was user/group/final. Expanding while following end moved scrollTop to **3**, hiding the header. Scroll-to-top exposed it; click collapsed again. Dragging final prose kept the group collapsed; hasActiveSelection was true; clipboard callback received `Final an`. No product focus/resize/replay proof.
 3. Actual processResponsesStream with synthetic commentary/final_answer items: text_start/delta signatures null, text_end signatures carried phases; raw callback saw output_item.added. Initial fixture omitted response.completed and was correctly rejected; adding that terminal event passed. This proves converter timing, not universal semantics.
 
-## Proposed choices / minimal seams (not implemented)
+## Original research alternatives (not approval; some seams now implemented)
 
 - Retain full session history. One bruv-owned **presentation projection** should own lasting rows, tool groups and current activity. Evolve/consolidate existing adapters; do not add another task/event subsystem or unrelated global hook. Public working-message/widget APIs can host activity; suppression/grouping still requires native live-and-replay integration.
 - Suggested unit: a user work segment ending at a lasting final/question/note boundary. `15 tools called` counts outer unique toolCallIds. One execute launching three helpers counts **one**, with three typed task rows retained. Decide pending-count wording. Reuse original components/details, including images, errors, save warnings and handoff text; do not regenerate evidence from summaries.

@@ -1,10 +1,49 @@
 # Rolling activity, lasting conversation
 
-Historical design/research snapshot. Approved runtime slice and current proof/limits: [implementation pickup](rolling-activity-implementation.md).
+Historical design snapshot, reconciled against `origin/develop` at `ac720844bac745e6cef45b1478703517e99b890b` on 2026-10-04. The tool-only slice already exists there; [implementation pickup](rolling-activity-implementation.md) and [disclosure follow-up](rolling-activity-disclosures-2026-10-04.md) record its evolution and proof limits.
 
-**Proposal only.** This PR changes docs, not runtime behavior, dependencies or releases. Recommended first scope: the local CLI in alternate-screen mode. Approval of this proposal is a separate step from implementation.
+**Proposal-only PR update.** This work changes docs, not runtime behavior, dependencies or releases. The original sketches below describe a broader target, not current product behavior or approval of rolling assistant prose. The reconciliation and remaining gates take precedence over the original future tense.
 
 Read the [Pi API research and probe results](rolling-activity-research.md) for the source evidence. The layouts below are sketches, not screenshots of a shipped feature.
+
+## Reconciliation with current develop
+
+PR #23 is still open at head `6ab524c6`. Its proposal/research were copied into develop by `1875ae90`; later runtime work does not make this open docs PR an unimplemented feature branch. On 2026-10-04, GitHub returned no submitted reviews or inline review comments; its sole issue comment was CodeRabbit's skipped-review notice, not design approval. See the [review handoff](rolling-activity-pr23-review-2026-10-04.md).
+
+Current source separates three facts that the original sketches sometimes conflated:
+
+- **Visible segment is not a whole agent run.** [rolling-activity.ts](../../src/ui/rolling-activity.ts) keeps native assistant prose visible. Prose, users and non-job controls split activity into several groups within one run. Adjacent typed task notices can join their source group; notices after a lasting answer form a notification-only group. Canonical task ownership still points to the source call. Neither notice delivery nor group expansion adds a tool call.
+- **Run end is not final-answer intent or task settlement.** Fullscreen TUI `agent_end` appends `bruv-activity-boundary` with call IDs to the existing journal when calls exist. The marker has no end reason, note intent, task status or continuation parent ID. It separates runs for replay; it cannot prove a successful answer, an explicit handoff, or background work being done.
+- **Tool rolling is not prose rolling.** The current adapter has no activity/answer/note route for assistant text. All such prose remains lasting. A short update replacing a tool label in these sketches is still a proposed extension, not implemented behavior. Standalone saved-question cards also remain proposed; existing /questions controls and hidden answer routing stay authoritative.
+
+Current headers intentionally have no group chevron. Opening a group reveals compact tool rows; each item's detail is separate. /activity and Ctrl+O exist in develop. The disclosure glyphs below are historical sketches, not requests to undo this later UX choice.
+
+### Unanswered message-intent route
+
+Do not route ordinary assistant text through execute's `label`, tool-result `details.handoff`, worker progress, or `display:false` question-answer context. Those are different boundaries with different owners. A tool handoff can terminate a run without any final assistant message.
+
+Two routes remain candidates, not selected product decisions:
+
+1. **Provider-specific projection.** The original Responses probe observed a phase encoded in `TextContent.textSignature` at text end, not at text start/delta. A supported phase could classify that text block after settlement, while unknown blocks remain lasting. It supplies no general important-note intent. Provider-specific support and user-visible streaming behavior need explicit approval; do not parse opaque signatures from other providers or claim cross-provider coverage.
+2. **Typed intent at the actual assistant-text boundary.** A future normalized or bruv-owned signal must reach both live text rendering and the saved selected-branch message. Specify who emits it, whether it labels a text block or a whole message, how mixed text/tool messages work, and what reload/export sees. An in-memory callback or an English convention alone cannot meet that contract. No schema, emitter or persistence change is approved here.
+
+Choose whether the next scope remains tool-only, adds the narrow provider-specific route, or defines a broader typed route. Until then keep unknown streaming and settled prose on the native readable path. Even a known commentary tag is not permission to hide an actionable question/warning without an agreed note policy.
+
+### Durable yield and continuation boundary
+
+The existing marker stores membership facts, not a second transcript or job ledger. Reconstruction uses selected-branch user/prose/control boundaries plus outer call IDs; a steering user within one run stays distinct. A run with no calls writes no marker. A crash before `agent_end` leaves no durable end marker, so legacy/incomplete stretches cannot recover an exact yield reason from current data.
+
+[questions/runtime.ts](../../src/questions/runtime.ts) claims saved-answer delivery durably, then schedules hidden follow-up context into a new parent turn. [agent/extension.ts](../../src/agent/extension.ts) owns completion delivery and separate print/JSON/RPC continuation behavior. A presentation group must not acknowledge delivery, resume old execute code, or fabricate a link between two runs because they share a title.
+
+Open design question: is call membership plus existing delivery authority enough for the desired UI, or must a future view distinguish normal yield, explicit handoff, abort/error and continuation cause after reopen? Only the latter needs additional durable facts. Define their owner and minimal existing-journal shape before changing anything; do not retrofit guessed reasons into old sessions.
+
+### Host and scroll integration already present
+
+[activity-projection.ts](../../src/ui/activity-projection.ts) and [sdk-task-rows.ts](../../src/ui/sdk-task-rows.ts) project retained direct siblings after canonical task ownership is computed. [rolling-activity.ts](../../src/ui/rolling-activity.ts) adapts fullscreen InteractiveMode's live events, rebuild and global expansion; the seam checks required method presence. Host preparation separately checks Pi 1.0.0. Do not propose reparenting or another global transcript hook as if this seam were absent.
+
+Explicit toggles use `withAnchor` and a one-shot `ScrollView.updateLayout` wrapper. They apply `scrollTo(..., { disableFollow: true })` after measurement, retaining a visible header/reading component or revealing a picker selection. This is focused row/component anchoring, not universal semantic anchoring for every background height change or terminal mode. The old fake-terminal failure is motivation; it is not proof that today's implementation still has that defect.
+
+Reuse this integration for any approved prose extension, then prove its new streaming/height effects in the compiled CLI. Regular mode, placed-root, web and noninteractive presenters remain outside this proposal's scope. The [later disclosure receipt](rolling-activity-disclosures-2026-10-04.md) records compiled tool-only checks; this review did not rerun them and does not transfer their acceptance to hypothetical prose behavior.
 
 ## What the user wants
 
@@ -46,7 +85,7 @@ Keep one area per active stretch, not one area per tool and not one global mutab
 
 ## Why this fits bruv
 
-The current compact UI already solves a smaller problem: one short labeled row per call, canonical task rows, and fewer routine notices. It does not solve the long staircase left by many calls and assistant updates. Earlier work explicitly deferred grouping. This proposal makes that next decision; it does not reinterpret those earlier releases as broken.
+At the original eb07b0d7 baseline, the compact UI solved a smaller problem: one short labeled row per call, canonical task rows, and fewer routine notices. It did not solve the long staircase left by many calls and assistant updates. Earlier work explicitly deferred grouping. The original proposal addressed that gap; current develop now groups tools but still retains all prose. This does not reinterpret earlier releases as broken.
 
 Read with:
 
@@ -61,9 +100,9 @@ Read with:
 
 No values change is needed. This applies existing values to a new display choice.
 
-## What the code gives us, and what it does not
+## Original baseline: what the code gave us
 
-Repository baseline for this research: the manifest pins the Pi packages to **1.0.0**. Older wisdom references to Pi 0.99.1 are historical, not current API proof.
+Original repository baseline for this research: `eb07b0d7`, with Pi packages pinned to **1.0.0**. This table predates the adapter now on develop; use the reconciliation above for current integration facts. Older Pi 0.99.1 wisdom is not evidence for these APIs.
 
 | Observed in repository source | Design consequence |
 | --- | --- |
@@ -138,7 +177,7 @@ Suggested settled labels:
 
 Failure counts in the summary refer to tool calls unless labeled as jobs. An execute may return normally while a nested job fails. Use “1 job failed,” not “1 tool failed,” for that case. Do not infer task totals from a capped preview. When evidence is incomplete, expose uncertainty instead of a precise-looking count.
 
-A group starts with the first activity after a user message or an automatic continuation. It ends at a yield, an interrupt/stop boundary, a new user message, or a branch/session change. A lasting note or question can sit inside that stretch without splitting it into a new count. The summary occupies the activity’s original position in the conversation; the answer follows it. Keep the note at its actual conversation position, even if tools continue afterward. Expanded activity can refer to that note for chronology, but should not duplicate its full card.
+A group starts with the first activity after a user message or an automatic continuation. It ends at a yield, an interrupt/stop boundary, a new user message, or a branch/session change. For the broader target, a lasting note or question could sit inside that stretch without resetting a work-total count. Current visible groups instead split at lasting prose/control boundaries; do not conflate their per-segment counts with a whole-run total. The summary occupies the activity’s original position in the conversation; the answer follows it. Keep the note at its actual conversation position, even if tools continue afterward. Expanded activity can refer to that note for chronology, but should not duplicate its full card.
 
 Do not merge everything between two user messages forever. Background continuations can happen without another user message. Each yielded answer ends its own stretch. A continuation that does new tools gets a new group and, if useful, a small “Review follow-up” context label. A notice that only updates a known task does not create a new group.
 
@@ -178,7 +217,7 @@ A disconnect or restart does not prove remote work stopped. Use current typed ta
 
 ### What must stay visible
 
-Do not bury pending human decisions. Saved questions remain main conversation items and accessible through /questions. Display the actual question, choices when available, and which work waits. A question from a tool result is not merely the latest rolling stdout.
+Do not bury pending human decisions. Existing /questions access remains. A future standalone question projection should retain the actual question, choices when available, and which work waits as a lasting main item. This card is not already supplied by the current runtime. A question from a tool result must not become merely the latest rolling stdout.
 
 An active tool failure shows its concise failure state in the preview and failure count in the summary. If the agent can continue and repairs it, the failed attempt remains visible in expanded history and in the summary count; the final answer can explain the recovery. Do not permanently pin every failed probe as a red warning.
 
@@ -238,7 +277,7 @@ These examples show the target with explicit activity/answer/note intent. Withou
 
 ### 1. Ordinary edit and test
 
-**Before, today:** user request → “Read the file” row → “I found the issue” paragraph → “Patch the file” row → “Run tests” row → final answer.
+**Before, original baseline:** user request → “Read the file” row → “I found the issue” paragraph → “Patch the file” row → “Run tests” row → final answer.
 
 **During:** one group grows from 1 to 3 tools. Its body alternates between the current label and the interim sentence. A passing test output does not add a row to the main conversation.
 
@@ -376,11 +415,11 @@ Recommend:
 - At most three rows for tool previews; a possible final answer streams readably. No new settings matrix.
 - Failed attempts remain in the count/history after recovery, but are not branded as an unresolved project failure.
 
-Before implementation, resolve three concrete gates:
+Before extending beyond the existing tool-only slice, resolve these gates:
 
 1. **Presentation intent:** choose the smallest typed route for activity/answer/note and show it on both live and saved messages. OpenAI-specific phase is useful evidence, not a cross-provider contract. If intent is not ready, do not claim rolling all assistant prose is safe.
-2. **Durable boundaries:** determine which yields and automatic continuations the branch journal can reconstruct. Callbacks alone do not prove saved boundaries. If one fact is missing, use a small marker in the existing journal and an honest legacy rule, not a new ledger. Counts must not change merely because the session reopened.
-3. **Host integration and scroll:** show live replacement, retained task owners, Ctrl+O, the picker and a clicked header staying visible through the real Pi path. Test a resized, scrolled-up session, not only a fresh mock screen.
+2. **Durable boundaries:** retain the existing call-ID marker and selected-branch segmentation. Decide whether exact yield reason/continuation cause is needed; neither is encoded by that marker today. If needed, specify the minimal missing journal fact and an honest legacy rule, not a new ledger. Counts must not change merely because the session reopened.
+3. **Host integration and scroll:** reuse the direct-sibling projection and explicit-toggle anchoring already in develop. Verify any new prose replacement/height behavior with retained task owners, Ctrl+O and /activity in a resized, scrolled-up compiled CLI, not only a fresh mock screen.
 
 These are bounded design/spike questions, not implementation authorization. The user can review the target and trade-offs now. Do not block the proposal on glyphs, colors, durable expansion preferences or every old-history anomaly. Do block shipping claims on lost notes, hidden questions, false task state or inaccessible details.
 
@@ -411,12 +450,12 @@ Use deterministic local inference/fixtures, with no paid provider or real remote
 
 Reuse the existing terminal probe infrastructure where it fits. Record unsupported terminal behavior and any legacy-history limitation rather than imply universal click or scroll support. Web and placed-root keep their existing behavior in this first slice. Test them when a later change claims parity.
 
-## Handoff and review
+## Original handoff and review (2026-10-02)
 
 This is a docs-only proposal for review, not an approved implementation. No runtime files changed. The [research](rolling-activity-research.md) records exact source paths, Pi 1.0.0 behavior and bounded component probes. Its possible alternatives are research notes; the recommendations above are the reconciled design.
 
 Draft worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_4abbe161. Branch: bruv/draft-rolling-activity-transcript-propos-4abbe161. Draft commit: 2cfd3166. Research worktree/branch are in the research receipt; aa639102 was integrated here as 70d2d5ec. Proposal PR: https://github.com/tnfssc/bruv/pull/23 against develop. It is open for design review; do not merge or implement without the user’s next decision. Base: eb07b0d7, after published v0.15.28.
 
-Parent reviewed the source and all examples, reconciled click/keyboard facts, chose a safe default for unknown prose, and kept initial scope local. One real local session checkpoint had 86 outer execute calls, 19 canonical task IDs, 19 custom notices and 8 assistant text messages. Those are different measures, not a reason to present an invented combined “tools” count. This is an illustrative sample, not a benchmark or general usage claim.
+The original parent reviewed the source and examples, reconciled click/keyboard facts, recommended a safe default for unknown prose, and kept initial scope local. One real local session checkpoint had 86 outer execute calls, 19 canonical task IDs, 19 custom notices and 8 assistant text messages. Those are different measures, not a reason to present an invented combined “tools” count. This is an illustrative sample, not a benchmark or general usage claim.
 
 Wisdom added: this proposal and its research. Values unchanged after cross-review: existing honest-UI, one-owner, simple-state and real-path proof values cover the lessons. Keep the caveat, late-job and replay examples in the approval discussion; a clean happy-path sketch alone is not enough.
