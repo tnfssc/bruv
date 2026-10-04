@@ -150,8 +150,8 @@ test("latest live tool label replaces preview and settlement removes it", () => 
   expect(render()[0]).toBe("2 tools called");
 });
 
-test("typed tasks, failures, handoff, unknown custom messages stay outside collapse", () => {
-  const { chat, render } = setup();
+test("collapse keeps task outcomes in headers and human handoff controls visible", () => {
+  const { chat, state, render } = setup();
   const row = taskRowFromLaunch({ id: "job", kind: "command", status: "running", title: "Job" }, "one")!;
   chat.addChild(tool("one", { taskRows: [row] }));
   chat.addChild(tool("failure", {}, true));
@@ -166,10 +166,14 @@ test("typed tasks, failures, handoff, unknown custom messages stay outside colla
   );
   const lines = render();
   expect(lines[0]).toContain("1 failed");
-  expect(lines).toContain("↗ Job");
-  expect(lines).toContain("result failure");
+  expect(lines[0]).toContain("1 running");
+  expect(lines).not.toContain("↗ Job");
+  expect(lines).not.toContain("result failure");
   expect(lines.join("\n")).toContain("Need your answer");
   expect(lines.join("\n")).toContain("Question remains");
+  state.toggle(state.groups[0]!);
+  expect(render()).toContain("↗ Job");
+  expect(render()).toContain("result failure");
 });
 
 test("journal reconstructs automatic continuation, new user, and incomplete stretch", () => {
@@ -364,7 +368,8 @@ test("collapsed group retains live task snapshot and late canonical completion w
   const state = new ActivityController(host);
   disposers.push(() => state.dispose());
   state.sync();
-  expect(plain(host.chatContainer.render(80))).toContain("↗ Check job");
+  expect(plain(host.chatContainer.render(80))[0]).toContain("1 running");
+  expect(plain(host.chatContainer.render(80))).not.toContain("↗ Check job");
   expect(state.count(state.groups[0]!)).toBe(1);
   rows = [taskRowFromLaunch({ id: "job", kind: "command", status: "completed", title: "Check job" }, "launch")!];
   host.chatContainer.addChild(
@@ -376,6 +381,9 @@ test("collapsed group retains live task snapshot and late canonical completion w
       details: { taskRows: rows },
     } as never),
   );
+  expect(plain(host.chatContainer.render(80))[0]).not.toContain("running");
+  expect(plain(host.chatContainer.render(80)).filter((line) => line === "✓ Check job")).toHaveLength(0);
+  state.toggle(state.groups[0]!);
   expect(plain(host.chatContainer.render(80)).filter((line) => line === "✓ Check job")).toHaveLength(1);
   expect(state.count(state.groups[0]!)).toBe(1);
 });
@@ -590,6 +598,8 @@ test("duplicate failed tool components share the same failure identity as the de
   chat.addChild(tool("a", {}, true));
   expect(render()[0]).toBe("1 tool called · 1 failed");
   expect(state.count(state.groups[0]!)).toBe(1);
+  expect(render().filter((line) => line === "result a")).toHaveLength(0);
+  state.toggle(state.groups[0]!);
   expect(render().filter((line) => line === "result a")).toHaveLength(2);
 });
 
@@ -760,9 +770,12 @@ test("late callback provenance updates its original call without duplicate cards
   chat.addChild(callback);
   const collapsed = render();
   expect(state.groups.map((group) => state.count(group))).toEqual([1, 1, 0]);
-  expect(collapsed.filter((line) => line === "✗ Check original — exit 7")).toHaveLength(1);
+  expect(collapsed.filter((line) => line === "✗ Check original — exit 7")).toHaveLength(0);
+  expect(collapsed).toContain("1 tool called · 1 job failed");
+  state.toggle(state.groups[0]!);
+  expect(render().filter((line) => line === "✗ Check original — exit 7")).toHaveLength(1);
   expect(collapsed.join("\n")).not.toContain("ORIGINAL_CALLBACK_OUTPUT");
-  expect(collapsed).toContain("1 job notification · 1 job failed");
+  expect(collapsed).toContain("1 job notification");
   expect((original as any).expanded).toBe(false);
   state.toggle(state.groups[2]!);
   expect(render()).toContain("Job update — click for details");
@@ -798,9 +811,11 @@ test("notification-only batches keep failed and cancelled outcomes visible while
   expect(rows[0]).toBe("3 job notifications · 1 job failed · 1 cancelled");
   expect(rows.join("\n")).not.toContain("CALLBACK_OUTPUT");
   expect(rows.join("\n")).not.toContain("tools called");
-  expect(rows).toContain("✗ bad — exit 3");
-  expect(rows).toContain("⊘ stop — cancelled");
+  expect(rows).not.toContain("✗ bad — exit 3");
+  expect(rows).not.toContain("⊘ stop — cancelled");
   state.toggle(state.groups[0]!);
+  expect(render()).toContain("✗ bad — exit 3");
+  expect(render()).toContain("⊘ stop — cancelled");
   expect(render().filter((line) => line === "Job update — click for details")).toHaveLength(2);
 });
 
@@ -905,9 +920,9 @@ test("native journal reopen and branch replay reconstruct notice groups and late
       return plain(host.chatContainer.render(80));
     };
     const rows = replay();
-    expect(rows).toContain("1 tool called");
-    expect(rows).toContain("1 job notification · 1 cancelled");
-    expect(rows.filter((line) => line === "⊘ Check origin — cancelled")).toHaveLength(1);
+    expect(rows).toContain("1 tool called · 1 cancelled");
+    expect(rows).toContain("1 job notification");
+    expect(rows.filter((line) => line === "⊘ Check origin — cancelled")).toHaveLength(0);
     expect(rows).toContain("Saved answer");
     expect(rows.join("\n")).not.toContain("SAVED_CALLBACK_EVIDENCE");
     nativeExpand(host, true);
@@ -917,7 +932,7 @@ test("native journal reopen and branch replay reconstruct notice groups and late
     expect(replay().join("\n")).not.toContain("job notification");
     reopened.branch(after);
     nativeExpand(host, false);
-    expect(replay()).toContain("1 job notification · 1 cancelled");
+    expect(replay()).toContain("1 tool called · 1 cancelled");
     expect(reopened.getBranch().filter((entry) => entry.type === "custom_message")).toHaveLength(1);
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -932,6 +947,8 @@ test("canonical task-card clicks open only their native tool details", () => {
   const other = tool("b");
   chat.addChild(source);
   chat.addChild(other);
+  expect(render()).toEqual(["2 tools called · 1 running"]);
+  state.toggle(state.groups[0]!);
   expect(render()).toContain("↗ Job");
   source.handleMouse({ type: "click", button: "left", x: 0, y: 1, width: 80, height: 2 } as never);
   expect(render()).toContain("artifact a");
@@ -995,8 +1012,9 @@ test("regular mode retains standalone callback task ownership when the launch ha
   chat.addChild(callback);
   expect(render()).toEqual(["Check origin", "result origin", "✗ Check origin — exit 9"]);
   state.host.renderer.mode = "fullscreen";
+  expect(render()).toEqual(["1 tool called · 1 job failed", "1 job notification"]);
+  state.toggle(state.groups[0]!);
   expect(render().filter((line) => line === "✗ Check origin — exit 9")).toHaveLength(1);
-  expect(render()).toEqual(["1 tool called", "✗ Check origin — exit 9", "1 job notification · 1 job failed"]);
 });
 
 test("collapsed notice groups retain producer-reported adverse outcomes beyond capped child rows", () => {
@@ -1009,8 +1027,97 @@ test("collapsed notice groups retain producer-reported adverse outcomes beyond c
     }),
   );
   const rows = render();
-  expect(rows[0]).toBe("1 job notification");
+  expect(rows).toEqual(["1 job notification · 1 job failed · 1 cancelled"]);
   expect(rows.join("\n")).toContain("failed");
   expect(rows.join("\n")).toContain("cancelled");
   expect(rows.join("\n")).not.toContain("BATCH_OUTPUT");
+});
+
+for (const kind of ["task", "error", "notice"] as const) {
+  test(kind + " native details stay expanded but hidden through group collapse", () => {
+    const { chat, state, render } = setup();
+    const details = {
+      taskRows: [taskRowFromLaunch({ id: "job", kind: "command", status: "failed", exitCode: 4 }, "a")],
+    };
+    const item =
+      kind === "notice"
+        ? notice("task-complete", "NOTICE_NATIVE_EVIDENCE", details)
+        : tool("a", kind === "task" ? details : {}, kind === "error");
+    chat.addChild(item);
+    chat.addChild(kind === "notice" ? notice("task-attention", "SIBLING_NOTICE_EVIDENCE", {}) : tool("b"));
+    render();
+    const group = state.groups[0]!;
+    state.toggleDetails(group, item);
+    const expanded = render();
+    const evidence = kind === "notice" ? "NOTICE_NATIVE_EVIDENCE" : "EVIDENCE a";
+    expect(expanded.join("\n")).toContain(evidence);
+    if (kind !== "notice") expect(expanded).toContain("SOURCE a");
+    state.toggle(state.groups[0]!);
+    const collapsed = render();
+    expect(collapsed).toHaveLength(1);
+    expect(collapsed[0]).toContain("failed");
+    expect(collapsed.join("\n")).not.toContain("SOURCE");
+    expect(collapsed.join("\n")).not.toContain("EVIDENCE");
+    expect(collapsed.join("\n")).not.toContain("artifact");
+    expect(kind === "notice" ? (item as any)._expanded : (item as any).expanded).toBe(true);
+    state.toggle(state.groups[0]!);
+    expect(render()).toEqual(expanded);
+    expect(state.count(group)).toBe(kind === "notice" ? 0 : 2);
+    expect(chat.children).toHaveLength(2);
+  });
+}
+
+test("collapsed expanded handoff retains only the human control and output-save warning", () => {
+  const { chat, state, render } = setup();
+  const item = tool("handoff", { handoff: "Need your answer", outputArtifactErrors: ["save failed"] });
+  chat.addChild(item);
+  render();
+  state.toggleDetails(state.groups[0]!, item);
+  expect(render()).toContain("SOURCE handoff");
+  state.toggle(state.groups[0]!);
+  const collapsed = render().join("\n");
+  expect(collapsed).toContain("Need your answer");
+  expect(collapsed).toContain("couldn’t save full output");
+  expect(collapsed).not.toContain("SOURCE");
+  expect(collapsed).not.toContain("EVIDENCE");
+  expect((item as any).expanded).toBe(true);
+});
+
+test("notice-only capped adverse counts include represented and omitted outcomes in one header", () => {
+  const { chat, state, render } = setup();
+  const item = notice("task-complete", "CAPPED_NATIVE_EVIDENCE", {
+    tasks: [{ id: "bad", kind: "command", status: "failed", exitCode: 2 }],
+    taskStatusCounts: { completed: 0, failed: 3, killed: 2, running: 4, unknown: 1 },
+    omittedTasks: 9,
+  });
+  chat.addChild(item);
+  expect(render()).toEqual(["1 job notification · 3 jobs failed · 2 cancelled · 5 unresolved"]);
+  state.toggleDetails(state.groups[0]!, item);
+  expect(render().join("\n")).toContain("CAPPED_NATIVE_EVIDENCE");
+  state.toggle(state.groups[0]!);
+  expect(render()).toEqual(["1 job notification · 3 jobs failed · 2 cancelled · 5 unresolved"]);
+});
+
+test("save warning survives a busy collapsed header and remains a header click target", () => {
+  const { chat, state, render } = setup();
+  const details = {
+    outputArtifactErrors: ["save failed"],
+    taskRows: [
+      taskRowFromLaunch({ id: "bad", kind: "command", status: "failed", exitCode: 3 }, "a"),
+      taskRowFromLaunch({ id: "stop", kind: "command", status: "cancelled" }, "a"),
+      taskRowFromLaunch({ id: "live", kind: "command", status: "running" }, "a"),
+    ],
+  };
+  const item = tool("a", details, true);
+  chat.addChild(item);
+  expect(render()).toEqual([
+    "1 tool called · 1 failed · 1 job failed · 1 cancelled · 1 running",
+    "⚠ couldn’t save full output",
+  ]);
+  item.handleMouse({ type: "click", button: "left", x: 0, y: 1, width: 80, height: 2 } as never);
+  expect(state.groups[0]!.expanded).toBe(true);
+  expect((item as any).expanded).toBe(false);
+  expect(render().join("\n")).toContain("✗ Check a — exit 3");
+  state.toggle(state.groups[0]!);
+  expect(render()).toHaveLength(2);
 });

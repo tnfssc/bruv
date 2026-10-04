@@ -158,12 +158,21 @@ export function formatTaskRow(row: TaskRow): string {
 }
 
 export type TaskSummaryRow = { color: "error" | "warning"; text: string };
+type TaskStatusSummary = TaskSummaryRow & {
+  status: "failed" | "cancelled" | "unresolved";
+  count?: number;
+};
 /** Counts are supplied by the producer, never inferred from text or guessed children. */
 export function taskSummaryRowsFromDetails(value: unknown): TaskSummaryRow[] {
+  return taskStatusSummaryFromDetails(value).map(({ color, text }) => ({ color, text }));
+}
+
+/** Typed omitted outcomes for activity headers, without parsing summary text. */
+export function taskStatusSummaryFromDetails(value: unknown): TaskStatusSummary[] {
   const details = record(value);
   const aggregate = record(details?.taskStatusCounts);
   if (!aggregate && typeof details?.omittedTasks === "number" && details.omittedTasks > 0)
-    return [{ color: "warning", text: "? Task update — status unknown" }];
+    return [{ color: "warning", text: "? Task update — status unknown", status: "unresolved" }];
   if (
     !aggregate ||
     !["completed", "failed", "killed", "running", "unknown"].every(
@@ -182,9 +191,9 @@ export function taskSummaryRowsFromDetails(value: unknown): TaskSummaryRow[] {
       else if (status === "running") counts.running++;
       else counts.unknown++;
     }
-  const rows: TaskSummaryRow[] = [];
-  const add = (count: number, color: TaskSummaryRow["color"], mark: string, suffix: string) => {
-    if (count > 0) rows.push({ color, text: mark + " " + count + " more tasks " + suffix });
+  const rows: TaskStatusSummary[] = [];
+  const add = (count: number, color: TaskSummaryRow["color"], mark: string, suffix: TaskStatusSummary["status"]) => {
+    if (count > 0) rows.push({ color, text: mark + " " + count + " more tasks " + suffix, status: suffix, count });
   };
   add((aggregate.failed as number) - counts.failed, "error", "✗", "failed");
   add((aggregate.killed as number) - counts.killed, "error", "⊘", "cancelled");

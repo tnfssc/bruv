@@ -1,4 +1,17 @@
 import type { Component } from "@earendil-works/pi-tui";
+import type { TaskRow } from "./task-rows";
+
+// Canonical per-frame ownership facts from the SDK task-row projection, not native detail state.
+const ownedTaskRows = new WeakMap<Component, TaskRow[]>();
+export function setActivityTaskRows(component: Component, rows: TaskRow[]): void {
+  ownedTaskRows.set(component, rows);
+}
+export function getActivityTaskRows(component: Component): TaskRow[] | undefined {
+  return ownedTaskRows.get(component);
+}
+export function clearActivityTaskRows(component: Component): void {
+  ownedTaskRows.delete(component);
+}
 
 // Presentation only. Native components remain direct siblings for task ownership,
 // pending result updates, images, and Pi's global tool expansion.

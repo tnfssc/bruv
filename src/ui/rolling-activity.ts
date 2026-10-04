@@ -12,13 +12,14 @@ import {
   Container,
   type ScrollView,
   Spacer,
+  Text,
   type TuiMouseEvent,
   truncateToWidth,
 } from "@earendil-works/pi-tui";
 import { getDiskBackedBranchRevision, selectDiskBackedEntries } from "../history/session-manager";
 import { actionLabel } from "./action-label";
-import { clearActivityProjection, setActivityProjection } from "./activity-projection";
-import { taskRowKey, taskRowsFromDetails, taskSummaryRowsFromDetails } from "./task-rows";
+import { clearActivityProjection, getActivityTaskRows, setActivityProjection } from "./activity-projection";
+import { taskRowKey, taskRowsFromDetails, taskStatusSummaryFromDetails } from "./task-rows";
 
 export const ACTIVITY_BOUNDARY = "bruv-activity-boundary";
 type ToolState = {
@@ -216,16 +217,32 @@ export class ActivityController {
     const preview =
       state && this.liveIds.has(state.toolCallId) ? actionLabel(state.args?.label, state.toolName) : undefined;
     const rows = new Map(
-      group.items.flatMap((item) =>
-        item instanceof CustomMessageComponent
-          ? taskRowsFromDetails((item as unknown as NoticeShape).message.details).map(
-              (row) => [taskRowKey(row), row] as const,
-            )
-          : [],
-      ),
+      group.items.flatMap((item) => {
+        const details =
+          item instanceof ToolExecutionComponent
+            ? toolState(item).result?.details
+            : (item as unknown as NoticeShape).message.details;
+        return (getActivityTaskRows(item) ?? taskRowsFromDetails(details)).map(
+          (row) => [taskRowKey(row), row] as const,
+        );
+      }),
     );
-    const jobFailed = [...rows.values()].filter((row) => row.status === "failed").length;
-    const cancelled = [...rows.values()].filter((row) => row.status === "cancelled").length;
+    let jobFailed = [...rows.values()].filter((row) => row.status === "failed").length;
+    let cancelled = [...rows.values()].filter((row) => row.status === "cancelled").length;
+    const running = [...rows.values()].filter((row) => row.status === "running").length;
+    let unresolved = [...rows.values()].filter(
+      (row) => row.status === "unknown" || row.status === "needs-input",
+    ).length;
+    let unknownSummary = false;
+    for (const item of group.items) {
+      if (!(item instanceof CustomMessageComponent)) continue;
+      for (const row of taskStatusSummaryFromDetails((item as unknown as NoticeShape).message.details)) {
+        if (row.status === "failed") jobFailed += row.count ?? 0;
+        else if (row.status === "cancelled") cancelled += row.count ?? 0;
+        else if (row.count) unresolved += row.count;
+        else unknownSummary = true;
+      }
+    }
     const count = this.count(group);
     const notices = group.items.length - group.tools.length;
     const title = count
@@ -236,6 +253,8 @@ export class ActivityController {
       (failed ? " · " + failed + " failed" : "") +
       (jobFailed ? " · " + jobFailed + (jobFailed === 1 ? " job failed" : " jobs failed") : "") +
       (cancelled ? " · " + cancelled + " cancelled" : "") +
+      (running ? " · " + running + " running" : "") +
+      (unresolved ? " · " + unresolved + " unresolved" : unknownSummary ? " · status unknown" : "") +
       (missing && !preview ? " · result incomplete" : "") +
       (preview ? " · " + preview : "")
     );
@@ -244,6 +263,12 @@ export class ActivityController {
     const padding = this.host.outputPad ?? 1;
     const available = Math.max(0, width - padding * 2);
     return available ? [" ".repeat(padding) + getSelectListTheme().description(truncateToWidth(text, available))] : [];
+  }
+  private header(group: Group, width: number): string[] {
+    const lines = this.padded(this.label(group), width);
+    if (!group.expanded && group.tools.some((tool) => toolState(tool).result?.details?.outputArtifactErrors))
+      lines.push(...this.padded("⚠ couldn’t save full output", width));
+    return lines;
   }
   private adapt(item: ActivityItem): void {
     if (this.adapted.has(item)) return;
@@ -259,27 +284,22 @@ export class ActivityController {
         const state = item instanceof ToolExecutionComponent ? toolState(item) : undefined;
         projectedTaskRow = hasOwnedTasks && state?.expanded !== true;
         const details = state?.result?.details;
-        const noticeDetails =
-          item instanceof CustomMessageComponent ? (item as unknown as NoticeShape).message.details : undefined;
-        const protectedDetail =
-          hasOwnedTasks ||
-          taskSummaryRowsFromDetails(noticeDetails).length > 0 ||
-          state?.result?.isError ||
-          details?.handoff ||
-          details?.outputArtifactErrors ||
-          taskRowsFromDetails(details).length > 0;
-        let content = group.expanded || protectedDetail ? native() : [];
+        // Collapsing a group hides every child body without changing native detail state.
+        // Only the actual handoff control survives; never render its expanded source/output.
+        let content = group.expanded ? native() : [];
+        if (!group.expanded && typeof details?.handoff === "string")
+          content = new Text(details.handoff, this.host.outputPad ?? 1, 0).render(width);
         if (item instanceof CustomMessageComponent && group.expanded && !content.length)
           content = this.padded("Job update — click for details", width);
-        return group.items[0] === item ? [...this.padded(this.label(group), width), ...content] : content;
+        return group.items[0] === item ? [...this.header(group, width), ...content] : content;
       },
       () => this.host.renderer.mode === "fullscreen",
     );
     item.handleMouse = (event: TuiMouseEvent) => {
       const group = this.group(item);
       if (!group || this.host.renderer.mode !== "fullscreen") return mouse.call(item, event);
-      const headerHeight = group.items[0] === item ? this.padded(this.label(group), event.width).length : 0;
-      if (headerHeight && event.y === 0) {
+      const headerHeight = group.items[0] === item ? this.header(group, event.width).length : 0;
+      if (headerHeight && event.y < headerHeight) {
         if (event.type === "click" && event.button === "left") {
           this.toggle(group);
           return {

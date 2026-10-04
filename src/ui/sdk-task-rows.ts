@@ -1,4 +1,9 @@
-import { hasActiveActivityProjection, projectActivity } from "./activity-projection";
+import {
+  clearActivityTaskRows,
+  hasActiveActivityProjection,
+  projectActivity,
+  setActivityTaskRows,
+} from "./activity-projection";
 import { CustomMessageComponent, ToolExecutionComponent, type Theme } from "@earendil-works/pi-coding-agent";
 import { Container, truncateToWidth, type Component } from "@earendil-works/pi-tui";
 import { executeOutputPreview } from "./execution-previews";
@@ -61,12 +66,12 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
       if (!active) return original.call(this, width);
       const tool = child instanceof ToolExecutionComponent ? (child as unknown as ToolShape) : undefined;
       const custom = child instanceof CustomMessageComponent ? (child as unknown as CustomShape) : undefined;
+      const owned = renderRows.get(parent)?.get(child) ?? [];
+      if (owned.length) onOwnedTasks();
       if (tool?.expanded || custom?._expanded) return original.call(this, width);
       if (tool && tool.toolName !== "execute") return original.call(this, width);
       if (custom && !["task-complete", "task-attention"].includes(custom.message.customType))
         return original.call(this, width);
-      const owned = renderRows.get(parent)?.get(child) ?? [];
-      if (owned.length) onOwnedTasks();
       if (tool && !owned.length) return original.call(this, width);
       const padding = custom?.outputPad ?? 1;
       const available = Math.max(0, width - padding * 2);
@@ -126,9 +131,9 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
         if (
           (child instanceof ToolExecutionComponent &&
             (child as unknown as ToolShape).toolName === "execute" &&
-            !(child as unknown as ToolShape).expanded) ||
+            (!(child as unknown as ToolShape).expanded || hasActiveActivityProjection(child))) ||
           (child instanceof CustomMessageComponent &&
-            !(child as unknown as CustomShape)._expanded &&
+            (!(child as unknown as CustomShape)._expanded || hasActiveActivityProjection(child)) &&
             ["task-complete", "task-attention"].includes((child as unknown as CustomShape).message.customType))
         )
           hasTaskChildren = true;
@@ -178,6 +183,9 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
           byChild.set(owner, owned);
         }
       }
+      for (const child of this.children)
+        if (child instanceof ToolExecutionComponent || child instanceof CustomMessageComponent)
+          setActivityTaskRows(child, byChild.get(child) ?? []);
       renderRows.set(this, byChild);
       try {
         return originalRender.call(this, width);
@@ -196,6 +204,7 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
     for (const reference of references) {
       const child = reference.deref();
       const record = child && restored.get(child);
+      if (child) clearActivityTaskRows(child);
       if (child && record && child.render === record.wrapper) child.render = record.original;
     }
     references.clear();
