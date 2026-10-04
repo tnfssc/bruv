@@ -13,9 +13,95 @@ import { TaskManager } from "../../src/tasks/task-manager";
 import { serveJobBridge } from "../../src/typescript/job-bridge";
 import { getJobRequestIdentity, withJobRequestIdentity } from "../../src/job-delivery";
 
-const fixture = JSON.parse(
-  await readFile(new URL("../../integrations/t3/fixtures/native-task-contract.json", import.meta.url), "utf8"),
-);
+const fixture: any = {
+  launch: {
+    tool: "bruv_task_launch",
+    arguments: {
+      clientRequestId: "11111111-1111-4111-8111-111111111111",
+      prompt: "Implement the worker",
+      profile: "fast",
+    },
+    result: {
+      version: 1,
+      taskId: "native-task-1",
+      childThreadId: "thread-1",
+      childRunId: "run-1",
+      childNodeId: "node-1",
+      status: "running",
+      profile: "fast",
+      depth: 1,
+      workspace: {
+        kind: "inherit",
+        preparationStatus: "ready",
+      },
+    },
+  },
+  observe: {
+    tool: "bruv_task_observe",
+    arguments: {
+      taskId: "native-task-1",
+    },
+    result: {
+      version: 1,
+      taskId: "native-task-1",
+      childThreadId: "thread-1",
+      childRunId: "run-1",
+      childNodeId: "node-1",
+      status: "completed",
+      profile: "fast",
+      depth: 1,
+      output: "done",
+      transferId: "transfer-1",
+      workspace: {
+        kind: "inherit",
+        preparationStatus: "ready",
+      },
+    },
+  },
+  cancel: {
+    tool: "bruv_task_cancel",
+    arguments: {
+      taskId: "native-task-1",
+    },
+    result: {
+      version: 1,
+      taskId: "native-task-1",
+      childThreadId: "thread-1",
+      childRunId: "run-1",
+      childNodeId: "node-1",
+      status: "cancelled",
+      profile: "fast",
+      depth: 1,
+      workspace: {
+        kind: "inherit",
+        preparationStatus: "ready",
+      },
+    },
+  },
+  list: {
+    tool: "bruv_task_list",
+    arguments: {},
+    result: {
+      tasks: [
+        {
+          version: 1,
+          taskId: "native-task-1",
+          childThreadId: "thread-1",
+          childRunId: "run-1",
+          childNodeId: "node-1",
+          status: "running",
+          profile: "fast",
+          depth: 1,
+          workspace: {
+            kind: "inherit",
+            preparationStatus: "ready",
+          },
+        },
+      ],
+      total: 1,
+    },
+  },
+};
 const servers: Bun.Server<unknown>[] = [];
 afterEach(() => {
   for (const server of servers.splice(0)) server.stop(true);

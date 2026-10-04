@@ -3,7 +3,7 @@
 Baseline: `d80d7058a2f5481f067586fd7042fe2746cff4ae`. Implementation: `b95ad0e8bb66125ed1199124aef612b0926ad0cb`.
 Worktree: `/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_dc1457d6`.
 Branch: `bruv/cleanup-core-dead-paths-and-duplicate-st-dc1457d6`.
-Audit proposals read from the parent’s absolute `audits/code-reduction/2026-10-02/reports/core-report.md`; verified against this baseline.
+Audit proposals read from the parent’s absolute `wisdom/audits/code-reduction/2026-10-02/reports/core-report.md`; verified against this baseline.
 
 ## Done
 

@@ -4,7 +4,7 @@
 
 **The isolated prototype is done. The full integration goal is NOT yet proven. Do not adopt it yet.** Root product code, the shipped pin and patch, binaries, and installed state did not change. There was no release, commit, or push. Tests used isolated state and projects, and did not touch current sessions. The main coordinator must review it.
 
-Deliverables include `experiments/t3-v2/README.md` for launch and reproduction, `RESULTS.md` for the result matrix, setup/run/combined-probe scripts, the execute bridge client/extension/launcher, focused tests, `upstream.patch`, four worker reports, the protected baseline/audit, and local regression proof. The patch records research-only edits. It adds reconnect and idempotence assertions to the real v2 integration test. Combined-probe.sh tracks and stages the kept diagnostic instead of leaving an untracked upstream-only artifact.
+Deliverables include `wisdom/experiments/t3-v2/README.md` for launch and reproduction, `RESULTS.md` for the result matrix, setup/run/combined-probe scripts, the execute bridge client/extension/launcher, focused tests, `upstream.patch`, four worker reports, the protected baseline/audit, and local regression proof. The patch records research-only edits. It adds reconnect and idempotence assertions to the real v2 integration test. Combined-probe.sh tracks and stages the kept diagnostic instead of leaving an untracked upstream-only artifact.
 
 ## Results
 
@@ -24,7 +24,7 @@ No root change was necessary to expose delegation FROM execute. The experiment l
 
 ## Reproduce / next work
 
-See experiments/t3-v2/README.md. Core commands: setup.sh. run.sh test-harness. run.sh test-ui. Bun test the three bridge/client/isolation suites. Audit-isolation.ts. run.sh dev uses isolated HOME/XDG/T3 state and separate loopback ports with standard pairing. Combined-probe.sh is deliberately expected-failing and bounded.
+See wisdom/experiments/t3-v2/README.md. Core commands: setup.sh. run.sh test-harness. run.sh test-ui. Bun test the three bridge/client/isolation suites. Audit-isolation.ts. run.sh dev uses isolated HOME/XDG/T3 state and separate loopback ports with standard pairing. Combined-probe.sh is deliberately expected-failing and bounded.
 
 Resolve adapter subprocess/scope teardown and connect the real MCP session credential + generated extension + execute bridge to real Orchestrator-v2 lifecycle in one test. Then verify UI Open subagent thread and actual transcript/result, cancellation and network reconnect using a functioning browser. A real bounded model smoke can follow. Scope reconstructed-session replay is not full server restart recovery. Finally assess broad shipped v0.0.42 patch rebase/migration, Pi tool permission semantics, provider model catalog, and robust protocol/session error behavior before adoption.
 
@@ -32,7 +32,7 @@ Resolve adapter subprocess/scope teardown and connect the real MCP session crede
 
 ## Progress log
 
-2026-09-20: Started isolated experiment under experiments/t3-v2/. Read synthesis and linked reports. Baseline unchanged. No adoption/release. Delegated bridge, real-upstream deterministic lifecycle harness, and setup/UI work to separate workers. Deliverables must be tracked, not research-checkout-only. Main coordinator will review any proposed product changes before adoption.
+2026-09-20: Started isolated experiment under wisdom/experiments/t3-v2/. Read synthesis and linked reports. Baseline unchanged. No adoption/release. Delegated bridge, real-upstream deterministic lifecycle harness, and setup/UI work to separate workers. Deliverables must be tracked, not research-checkout-only. Main coordinator will review any proposed product changes before adoption.
 
 Pending: executable integration evidence, exact matrix, launch instructions. Mock provider proof is not real model proof.
 
@@ -48,7 +48,7 @@ Pending: executable integration evidence, exact matrix, launch instructions. Moc
 Independent review complete: READ wisdom/t3/t3-v2-experiment-code-review.md before claiming combined real-server pass. Bridge-client.ts AND bridge-extension.ts omit mcp-protocol-version header required post-init by real upstream Effect MCP (upstream piT3McpExtensionSource.ts:136-140). Mock accepts it incorrectly. Fix with protocol validation test / real server. Local subagent is still callable: no duplicate local launch is only scripted guidance, not enforced. Keep results honest or gate local delegation in explicit experiment mode. One-shot helper sessions need cleanup. Clean setup/binary selection reproducibility findings too. Main not editing your owned implementation, please incorporate review fixes.
 
 ## Followthrough reviewed by lead — 18:05 UTC
-See experiments/t3-v2/followthrough-progress.md, RESULTS.md, integrated-real-report.md. task_dfa3e5c8 completed. Lead independently reran integrated-process-proof.sh + 13 bridge-client/launch/isolation tests (38 assertions) + protected artifact audit, job task_d14d6aff exit 0. Real engine/auth MCP/PiAdapterV2/Die deterministic model proof: success child once, cancellation child interrupted/disposed, parent completed naturally, one result transfer acknowledged, 3 provider RPC+2 execute workers, zero local subagents in script, all provider PIDs reaped. Current proof IDs use scope 6be5ccee-7bfb-4def-857f-81387fb1a1a2.
+See wisdom/experiments/t3-v2/followthrough-progress.md, RESULTS.md, integrated-real-report.md. task_dfa3e5c8 completed. Lead independently reran integrated-process-proof.sh + 13 bridge-client/launch/isolation tests (38 assertions) + protected artifact audit, job task_d14d6aff exit 0. Real engine/auth MCP/PiAdapterV2/Die deterministic model proof: success child once, cancellation child interrupted/disposed, parent completed naturally, one result transfer acknowledged, 3 provider RPC+2 execute workers, zero local subagents in script, all provider PIDs reaped. Current proof IDs use scope 6be5ccee-7bfb-4def-857f-81387fb1a1a2.
 UI worker previously showed Chromium parent->actual child+refresh using COPY of closed real-engine DB, NOT live same-server execution. Because lead rerun changes DB/IDs, task_1fcd49c1 now independently refreshing browser proof to match NEW current engine run, keeping old experiment-only state/profile. No implementation edits delegated.
 Remaining gaps: simultaneous live browser+provider flow, fault-injected ACK/disconnect/server restart, real nested closure, enforced single delegation routing, clean no-binary build provenance. This is successful feasibility proof, NOT shipped/adopted. Root product source/pin/patch/dist unchanged.
 

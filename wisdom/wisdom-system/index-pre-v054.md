@@ -1,6 +1,6 @@
 # Project notes
 
-- **Editing prompts? Start with [the prompt editing guide](../../docs/prompts.md).** It explains how to review the whole input, keep decision reasons, and inspect assembly. [Model input source map](../../docs/system-instructions.md) lists sources and inclusion conditions.
+- **Editing prompts? Start with [the prompt editing guide](../docs/prompts.md).** It explains how to review the whole input, keep decision reasons, and inspect assembly. [Model input source map](../docs/system-instructions.md) lists sources and inclusion conditions.
 - [Prompt review and shell stdin](prompt-review-2026-09-12.md): user-approved values, review position, stdin decision, and verified checks.
 - [Durable prompt iteration](prompt-iteration-2026-09-13.md): review applied. Luna/medium live failures, Astra handoff and Sol memory success. Keep design. Future checks target Sol/Astra. Process-scope incident recorded. Shipped in v0.2.6.
 
@@ -70,7 +70,7 @@
 
 - [Active T3-v2 prototype](.pending/t3-v2-experiment-active.md): user approved isolated experiment. Implementation and independent acceptance workers running.
 
-- [T3-v2 experiment results](t3-v2-experiment.md): real engine/MCP/Die delegation and Chromium persisted child transcript verified. Prototype in `experiments/t3-v2/`, not adopted. Live streaming/recovery/routing enforcement remain.
+- [T3-v2 experiment results](t3-v2-experiment.md): real engine/MCP/Die delegation and Chromium persisted child transcript verified. Prototype in `wisdom/experiments/t3-v2/`, not adopted. Live streaming/recovery/routing enforcement remain.
 
 - [Production T3-v2 work active](.pending/t3-v2-production-active.md): user authorized production implementation and resource/regression hardening. Implementation and independent requirement/resource audits running. No release/install authorized.
 

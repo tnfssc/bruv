@@ -13,7 +13,7 @@
       "!!dist",
       "!!.bruv-harness",
       "!!artifacts",
-      "!!experiments"
+      "!!wisdom/experiments"
     ]
   },
   "formatter": {

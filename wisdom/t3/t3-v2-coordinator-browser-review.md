@@ -10,11 +10,11 @@ This pass only refreshed the independent UI evidence. I did **not** rerun `integ
 
 1. Confirmed no pre-existing experiment browser-live listener/process was active.
 2. Preserved the preceding browser state/profile by moving experiment-owned runtime directories to:
-   - `experiments/t3-v2/.runtime/browser-live-final-state.previous-20260920T180553Z/`
-   - `experiments/t3-v2/.runtime/browser-live-profile-final.previous-20260920T180553Z/`
+   - `wisdom/experiments/t3-v2/.runtime/browser-live-final-state.previous-20260920T180553Z/`
+   - `wisdom/experiments/t3-v2/.runtime/browser-live-profile-final.previous-20260920T180553Z/`
 3. Preserved the preceding JSON proof as:
-   - `experiments/t3-v2/browser-live-proof.previous-20260920T180553Z.json`
-4. Ran `experiments/t3-v2/browser-live-prepare.sh`.
+   - `wisdom/experiments/t3-v2/browser-live-proof.previous-20260920T180553Z.json`
+4. Ran `wisdom/experiments/t3-v2/browser-live-prepare.sh`.
 5. Started `browser-live-run.sh` on its owned ports (UI 30733, backend 38773), then ran `browser-live-followthrough.mjs` with the experiment-local Chromium cache/profile.
 6. The capture exited 0. I stopped the owned server with SIGTERM and verified no listeners remained on 30733/38773 and no owned Chromium/browser-live processes remained.
 
@@ -35,11 +35,11 @@ The browser proof child ID exactly equals `integrated-process-proof.json.engine.
 
 ## Current evidence
 
-- Machine-readable proof: `experiments/t3-v2/browser-live-proof.json`
-- Parent screenshot: `experiments/t3-v2/browser-live-parent.png`
-- Exact child navigation/refresh screenshot: `experiments/t3-v2/browser-live-child-navigation.png`
-- Capture log: `experiments/t3-v2/.runtime/browser-live-followthrough.log`
-- Dev server log: `experiments/t3-v2/.runtime/browser-live-dev.log`
+- Machine-readable proof: `wisdom/experiments/t3-v2/browser-live-proof.json`
+- Parent screenshot: `wisdom/experiments/t3-v2/browser-live-parent.png`
+- Exact child navigation/refresh screenshot: `wisdom/experiments/t3-v2/browser-live-child-navigation.png`
+- Capture log: `wisdom/experiments/t3-v2/.runtime/browser-live-followthrough.log`
+- Dev server log: `wisdom/experiments/t3-v2/.runtime/browser-live-dev.log`
 
 Source hashes recorded by the refreshed proof and independently rechecked after cleanup:
 

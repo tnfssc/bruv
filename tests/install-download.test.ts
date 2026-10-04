@@ -69,7 +69,12 @@ test("download installer pairs raw-named wrapper with staged normal, ignoring in
   expect(result.code, result.errors).toBe(0);
   expect((await readdir(join(root, "bin"))).sort()).toEqual(["bruv", "bruv-claude-compat"]);
   expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe(launcher);
-  const version = Bun.spawn([join(root, "bin/bruv-claude-compat"), "--version"], { stdout: "pipe", stderr: "pipe" });
+  const version = Bun.spawn([join(root, "bin/bruv-claude-compat"), "--version"], {
+    // Check the fixture sibling, not the CLI selected by the parent agent session.
+    env: { ...process.env, BRUV_CLAUDE_COMPAT_BRUV_PATH: "" },
+    stdout: "pipe",
+    stderr: "pipe",
+  });
   expect((await new Response(version.stdout).text()).trim()).toBe("2.1.280 (Bruv compatibility; bruv 0.17.0)");
   expect(await version.exited).toBe(0);
 });

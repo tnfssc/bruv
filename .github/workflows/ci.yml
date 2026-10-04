@@ -94,9 +94,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          # Migration acceptance compares against a shipped historical patch via git show.
-          # Match the release checkout so the historical blob exists in this gate too.
-          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.21.0

@@ -82,7 +82,7 @@ Current safe-stage root plus current canonical compiled web: 683 pass, 14 paid/l
 ## 05:12Z web candidate disposition
 Web worker finished 30-path migration;218 selected tests+5 terminal/ws pass, frontend/backend bundles pass, full server typecheck non-clean. It wrote canonical pin/patch although root unavailable and preserved-UX/ownership gates unresolved. Coordinator exported exact bytes/hash to .agents/patches/t3-v2-production-{candidate.patch,source.json}, then restored canonical web files to original HEAD719a76ca. No migration work lost; candidate is NON-ADOPTED. See appended web-note disposition for remaining actual preservation gaps.
 
-Final scope formatting: all 200 src/scripts/tests files pass. Full repo format fails exclusively on21 preserved historical experiments/t3-v2 files; detailed list in /var/tmp/die-t3-v2-production-final-format-full.log. Full root lint and typecheck pass. Candidate source exact HEAD+exported patch verification independently passed after export.
+Final scope formatting: all 200 src/scripts/tests files pass. Full repo format fails exclusively on21 preserved historical wisdom/experiments/t3-v2 files; detailed list in /var/tmp/die-t3-v2-production-final-format-full.log. Full root lint and typecheck pass. Candidate source exact HEAD+exported patch verification independently passed after export.
 
 Final candidate typecheck recheck: full workspace pnpm typecheck now PASS (all15 packages, 0 cache hits); direct server check also PASS. Log /var/tmp/die-t3-v2-candidate-workspace-typecheck.log. This supersedes the earlier unexplained failed run as the latest check result, but does not resolve missing delegation/security/UX/resource acceptance. Canonical is unchanged.
 
@@ -103,7 +103,7 @@ All implementation workers finished. Native T3 delegation remains intentionally 
 ### Final evidence
 - Root full build from fresh revision-keyed canonical checkout: PASS. Backend validation, frontend/backend build and standalone Bun compile executed. No reuse-web shortcut. Final logs /var/tmp/die-t3-v2-production-final-build.log.
 - Root full tests after final build: **692 pass /14 paid-live skip /0 fail**,4500 assertions,97 files (85.64s), /var/tmp/die-t3-v2-production-final-tests.log.
-- Root check + full lint: PASS. Scope format src/scripts/tests: PASS (200 files). Full format: **FAIL21 historical experiments/t3-v2 files only**, preserved byte content; see final-format-full.log. No historical assertions repurposed.
+- Root check + full lint: PASS. Scope format src/scripts/tests: PASS (200 files). Full format: **FAIL21 historical wisdom/experiments/t3-v2 files only**, preserved byte content; see final-format-full.log. No historical assertions repurposed.
 - Final copied binary empty environment/private HOME/PATH=/nonexistent: version0.4.0, CLI help, web help PASS. SHA2562b93aa5a0282d69b980e4e3c6b2a936b4032293d44b86d6533cb7e7603ddd65f. This embeds CURRENT719 web, not v2.
 - V2 candidate selected checks: worker218 provider/resource/frontend tests +5 terminal/ws tests PASS; web/backend bundles PASS; coordinator exact patch verification PASS. Final full upstream workspace typecheck rerun: all15 packages PASS (0 cache hits), superseding initial unexplained failure. Log /var/tmp/die-t3-v2-candidate-workspace-typecheck.log.
 - V2 runtime/browser/restart/nested closure/resource soak/packaged native delegation: **NOT RUN / NOT PROVEN**, no production-ready claim.

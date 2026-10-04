@@ -1,8 +1,14 @@
 # Final integrated task-placement video replay
 
+> Historical replay. The user retired `scripts/task-placement-final-video.py`
+> on 2026-10-04. Videos, captures and receipts were not deleted. The old
+> commands below are provenance, not current run instructions. The renderer
+> remains in Git at d898214f71b4131c1bca807824f4fe69420b6992.
+
+
 The 100-second deliverable is a renderer replay of genuine terminal capture files from the frozen compiled child and root proof runs—not a live recording or synthetic terminal session. Captures remain unchanged source inputs; the renderer crops scrollback to the recorded terminal viewport and discloses the disposable fixture HOME-prefix redaction in its receipt. The timeline preserves the established child-then-root story and actual menus/results. Fixture networking is Docker network:none; inference is fake. The root scenario has no local provider credentials.
 
-Run with explicit input paths:
+Historical recording command (renderer retired):
 
     python3 scripts/task-placement-final-video.py \
       --freeze /path/to/task-placement-integrated-freeze.json \

@@ -6,7 +6,7 @@
 Worktree: `/home/tnfssc/.bruv/worktrees/t3code-2967b1c3-5442693331ce-task_e3953110`.
 
 Reworked `src/t3/web/launcher.ts` to follow the six install-to-chat steps in
-[the illustrated README](../../docs/t3-code/README.md). The
+[the illustrated README](../docs/t3-code/README.md). The
 [external T3 setup notes](external-t3-setup.md) remain the detailed contract.
 
 ## Choices

@@ -1,6 +1,6 @@
 # T3 #15598: verify packaging before following path feedback
 
-Evidence: [review trial](../../experiments/t3/pr-15598-npm-review/README.md).
+Evidence: [review trial](../experiments/t3/pr-15598-npm-review/README.md).
 
 At c1310b242, the nested TypeScript adapter becomes dist/binCli-DZ5IwGw5.mjs in the default bundle. import.meta.url is the emitted chunk URL: ./claude-history-worker.mjs is its correct sibling. A synthetic relocated-source path probe would falsely suggest ascending directories. Verify the emitted source map matches the exact tracked head before reasoning about its runtime URL.
 

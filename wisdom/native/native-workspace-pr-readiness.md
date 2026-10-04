@@ -27,7 +27,7 @@ Read-only audit except this wisdom file; implementation is still changing the wo
 
 ## Hygiene and validation observations
 
-- `bun run format:check` now fails only on 21 files under `experiments/t3-v2/`; all other scanned files formatted.
+- `bun run format:check` now fails only on 21 files under `wisdom/experiments/t3-v2/`; all other scanned files formatted.
   Do not change project `.gitignore`/Biome merely to conceal these.
   Keep experiments outside the PR and run explicit production-path formatting while the local research tree is still, then verify root formatting in a clean checkout. `bun run lint` exits 0 but reports warnings, including new production files; review new-file warnings instead of treating exit 0 as clean.
 - Canonical pin is `web/t3-source.json` at revision `a9b49a7d…`.
@@ -49,7 +49,7 @@ Stage production source and deterministic tests as one coherent set:
 - only acceptance scripts/fixtures that have canonical, portable defaults and documented prerequisites; likely exclude `build-candidate.ts` and `export-candidate.ts` entirely;
 - this concise readiness note (and a corrected self-contained user-facing status doc only if desired).
 
-Explicitly exclude `experiments/`, `.agents/patches/`, `.agents/rollback/`, bulk research wisdom, ignored `wisdom/`, `artifacts/`, `.cache/`, runtime/browser profiles, screenshots, raw proof/log/JSONL files, generated binaries, and duplicate candidate patches.
+Explicitly exclude `wisdom/experiments/`, `.agents/patches/`, `.agents/rollback/`, bulk research wisdom, ignored `wisdom/`, `artifacts/`, `.cache/`, runtime/browser profiles, screenshots, raw proof/log/JSONL files, generated binaries, and duplicate candidate patches.
 Do not stage `wisdom/index.md` unless every newly linked note is intentionally reviewed and staged; otherwise revert that index delta for this PR.
 
 ## Final validation commands
