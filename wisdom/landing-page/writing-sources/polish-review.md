@@ -30,3 +30,7 @@ Additional visible copy cuts: “scroll to explore” → “scroll”; the alte
 ## Evidence boundary
 
 All dialogue, requests, outcomes and time intervals are authored examples, not real model-run evidence. Existing source captures and UI references are reused; no provider calls or regenerated CLI evidence. See demos.ts source header and animated-features.md. UI glyphs/layout follow editor.ts, footer.ts, execution-previews.ts, task-rows.ts, rolling-activity.ts and conversation-density.ts. Wisdom is explicit file reuse, not hidden memory restoration.
+
+## Product correction
+
+User: "its an opinionated coding agent with some added features". Removed "Keep coding while your agents work" and the delegation-led hero. Bruv is the product; those tools are additions. Updated visible hero, header and search/social metadata. No new capability claim.

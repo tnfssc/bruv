@@ -1,5 +1,9 @@
 # Landing page — one real terminal page
 
+## Product positioning — user correction
+
+Bruv is an opinionated coding agent with added features. Do not advertise it primarily as parallel agents, delegation, or a way to keep coding while agents work. The earlier feature-first pitch was wrong. Hero and metadata now state the product category directly; background jobs, subagents and project wisdom support that pitch. Do not invent what its opinions are without grounding them in actual guidance and user intent. This supersedes earlier product-story advice.
+
 ## Current contract
 
 The visible main site is an actual Ghostty Web/WASM terminal, not terminal-themed HTML. The latest request is **one scrolling page**, with captures' **actual text and colors composed as terminal cells**. No multi-route app, section menu, gallery or raster screenshot plane.

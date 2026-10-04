@@ -82,7 +82,7 @@ export function layout(cols: number, rows: number, state: State) {
     });
   }
   put(margin, 1, "bruv", palette.accent);
-  if (width > 50) put(margin + 7, 1, "a coding agent for your terminal", palette.muted);
+  if (width > 50) put(margin + 7, 1, "an opinionated coding agent", palette.muted);
   const htmlLabel = "[ HTML ]", htmlX = cols - margin - htmlLabel.length;
   hits.push({ x: htmlX, y: 1, width: htmlLabel.length, height: 1, label: "HTML", action: "text" });
   put(htmlX, 1, htmlLabel, state.focus === 0 ? palette.selected : palette.accent);

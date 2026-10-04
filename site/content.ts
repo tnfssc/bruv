@@ -2,15 +2,15 @@
 export const siteContent = {
   name: "Bruv",
   description:
-    "Bruv is a terminal coding agent built on Pi. Delegate changes in isolated Git worktrees and keep working while background tasks run.",
+    "Bruv is an opinionated coding agent built on Pi, with background jobs, subagents and project wisdom.",
   repository: "https://github.com/tnfssc/bruv",
   install: "https://github.com/tnfssc/bruv#build-from-source",
 };
 export const landing = {
   title: "Bruv",
-  titleTail: "Keep coding while your agents work.",
+  titleTail: "An opinionated coding agent.",
   intro:
-    "Bruv is a coding agent built on Pi. Send a fix to a subagent in its own Git worktree while you work on the next change.",
+    "Built on Pi, with background jobs, subagents and project wisdom.",
   features: [
     {
       title: "Give the fix its own branch",
