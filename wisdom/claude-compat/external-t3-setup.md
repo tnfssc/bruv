@@ -5,46 +5,37 @@ unmodified T3. Ordinary bruv remains the terminal agent and delegated-child
 runtime. No T3 runtime/assets are fetched, bundled or installed by Bruv.
 Packaging alone is not native parity acceptance.
 
-## Install and start the tested T3 yourself
+## Start official T3 normally; check history-fix availability
 
-The supported tested target is **v0.0.46-nightly.20261004.2644**, official source
-**737993303d36e10674c54b95e5bd3826682c99c7**. See the pinned official
-[README](https://github.com/pingdotgg/t3code/blob/737993303d36e10674c54b95e5bd3826682c99c7/README.md),
-[Claude provider setup](https://github.com/pingdotgg/t3code/blob/737993303d36e10674c54b95e5bd3826682c99c7/docs/user/providers-claude.md)
-and [release](https://github.com/pingdotgg/t3code/releases/tag/v0.0.46-nightly.20261004.2644).
-**Old 2623 is not an acceptable pinned target**: it reproduced an upstream Effect
-queue race. 2644 passes bounded unchanged-host gates, but that dependency race
-remains unfixed. No mandatory local T3 patch is recommended.
+Install official T3 desktop or web separately from
+[upstream releases](https://github.com/pingdotgg/t3code/releases); verify the
+published checksums. Open the desktop application normally, or run `t3`
+for web. **No custom T3 command arguments or parent startup environment are
+part of Bruv setup.** `bruv web` only prints this guidance: no downloads,
+subprocess, settings writes or migration.
 
-Download the official archive for your host and verify its published SHA256SUMS.
-The unchanged **Linux x64** artifact used in acceptance is:
+Full UI-only native history assumes the **upstream provider-scoped SDK history
+fix**: T3 must run its filesystem history/fork and child-history lookup with the
+selected provider's homePath/environment. Confirm that fix is actually available
+in your installed T3 build; no release containing it is established here.
+Official **v0.0.46-nightly.20261004.2644** (source
+`737993303d36e10674c54b95e5bd3826682c99c7`) does not include it.
+[Earlier 2644 proof](proof/official-2644/README.md) used parent-home alignment and
+is **not full UI-only proof**. Old 2623 also reproduced an upstream Effect race.
+Different/newer hosts still require native acceptance; version alone is not a
+capability check and Bruv does not block basic chat by a guessed T3 version.
 
-| Pin | Value |
-| --- | --- |
-| Archive | t3-0.0.46-nightly.20261004.2644-linux-x64.tar.gz |
-| Archive SHA-256 | 5f9e29cf2712c87736556c99ea580606b399897cb846c2401a434a0d05c4eeca |
-| Extracted t3 SHA-256 | 53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48 |
+On pre-fix hosts, basic chat/UI history may work. Native fork can fail in T3's
+SDK filesystem call **before the connector starts**. Bruv cannot catch that
+failure or guarantee graceful upstream handling; T3 may show only a generic
+turn failure. Do not change T3's parent environment, global environment, HOME,
+or ordinary Claude state to work around it. No silent fallback or synthetic fork.
 
-[Exact source/archive/executable proof](proof/official-2644/README.md) is the
-provenance record; other platforms' native parity is not established by the Linux
-proof. Keep the extracted directory intact (CLI, client and native dependencies).
-Use the absolute path to its real t3 binary, or put that directory on PATH.
-Run t3 --version (expected t3 v0.0.46-nightly.20261004.2644) and t3 --help.
-Do not launch a research tap, synthetic fixture, Bruv as the T3 server, or an
-unpinned npx t3@latest. Newer versions require unchanged-host acceptance again.
-bruv web prints guidance only: no downloads, subprocess, settings writes or migration.
-
-Example for alice on Linux/macOS; replace ALL paths with actual absolute paths:
-
-~~~sh
-CLAUDE_CONFIG_DIR=/home/alice/.bruv/claude-compat-sdk \
-  t3 --host 127.0.0.1 --base-dir /home/alice/.bruv/web
-~~~
-
-t3 starts the server and opens the browser. --no-browser disables opening;
-t3 serve is the documented headless pairing command. Bind loopback by default.
-Services/desktop backends must receive this environment too; a shell export
-cannot alter an already running server.
+The **unsupported connector-version/update warning is a separate unresolved
+upstream compatibility issue**, not repaired by the history fix. Bruv reports
+its real identity/version and local configuration only; never spoof Claude
+versions/account identity, run Claude login/update, or treat a green probe as
+proof of model access, persistence, fork or complete host compatibility.
 
 ## Add a separate instance; leave real Claude untouched
 
@@ -54,7 +45,7 @@ In Settings > Providers add a **Claude** instance named
 | Setting | Example absolute value |
 | --- | --- |
 | Binary path | /home/alice/.local/bin/bruv-claude-compat |
-| CLAUDE_CONFIG_DIR path | /home/alice/.bruv/claude-compat-sdk |
+| History homePath / CLAUDE_CONFIG_DIR path | /home/alice/.bruv/claude-compat-sdk |
 | Environment: BRUV_CLAUDE_COMPAT_HOME | /home/alice/.bruv/agent |
 | Environment: BRUV_CLAUDE_COMPAT_BRUV_PATH | /home/alice/.local/bin/bruv |
 
@@ -63,12 +54,34 @@ assignments are NOT launch arguments. Do not put ~ or literal $HOME in UI paths.
 bruv web prints paths from the current executable/home; remote instances require
 paths on the remote machine.
 
-**SDK alignment:** parent SDK list/resume/fork consults the SERVER process
-environment. A provider-child CLAUDE_CONFIG_DIR alone is insufficient. Set BOTH
-the server variable and instance directory to the same absolute isolated path
-before creating threads. Launch desktop/service backends with that variable too.
-Do not change HOME or point connector SDK storage at ~/.claude. Do not run Claude
-login/logout, import/migrate histories, delete state or edit the real Claude instance.
+**Corrected upstream contract:** provider homePath scopes the connector child and
+T3-owned SDK history operations; the provider environment is instance-local.
+Do not set a server-level CLAUDE_CONFIG_DIR, change HOME, or point this history
+home at ~/.claude. No Claude login/logout, histories import/migration, deletion,
+secret copying or global settings changes are part of setup.
+
+## Connector-owned local admission and failures
+
+Native stream mode (including T3's no-persistence health probe) requires the
+explicit absolute history homePath above. The connector verifies an existing
+writable directory/ancestor without creating history, refuses ordinary ~/.claude
+and symlinks into it, and returns an actionable setup error for missing/invalid
+home. This reduces false local readiness; it cannot verify T3 parent scope or
+whether upstream history code is fixed. Stateless auxiliary JSON mode does not
+require a native home.
+
+Choose an exact provider/id in T3 for **both chat and auxiliary/title generation**.
+When the host omits the model (including an empty model that the SDK does not
+forward), only an explicitly configured default in the selected Bruv home's
+settings is accepted. The connector no longer picks the first authenticated
+model. Unknown/alias/empty explicit model, missing selected/default model, and
+missing local auth fail before native-history/session allocation or injected MCP
+connection, model requests and tool execution. Configure auth using ordinary Bruv
+in the explicitly selected home, never T3 Claude login. Provider access remains
+unverified until a real request succeeds; available models/readiness are local
+facts only. Startup failures exit nonzero with actionable stderr diagnostics;
+protocol control errors remain errors, not fabricated successful results. T3 may
+render only a generic failure rather than relay that diagnostic.
 
 ## State and credential choice
 
@@ -141,15 +154,13 @@ for rollback/recovery and same-version repair. Never masquerade as a Claude upda
 T3 updates independently using t3 update or its original installer after reviewing
 the version. Newer T3 requires unchanged-host native acceptance again.
 
-Release CI explicitly downloads the pinned, checksum-verified official Linux T3
-CLI for its external native gate; this test dependency is never a shipped asset.
-The release gate composes the existing validated 2644 scripts, sequentially:
-strict zero-model human command + idle; actual local child + same-root reply/idle;
-permissions and saved questions (used-once resume); app-owned delegation completion
-and cancellation; default steering/Stop/resume controls; then command/idle again.
-Every suite must report passing unchanged-official evidence from the final paired
-release binaries. The executable is rehashed between suites. Missing bindings or
-failed gates fail publication; packaging smoke cannot substitute for them.
+Existing release CI uses a checksum-verified official 2644 Linux CLI and earlier
+bounded native scripts. Those historical gates used parent-home alignment and
+**do not certify this UI-only contract**, including native fork. A final release
+requires the parent to verify a T3 build containing the provider-scoped history
+fix and test normal-launch provider-instance setup with the final paired binaries.
+Packaging smoke and older bounded gates cannot substitute for that acceptance.
+This change does not publish, upgrade T3, or promise a fixed upstream release.
 
 ## Known limitations and safe defaults
 

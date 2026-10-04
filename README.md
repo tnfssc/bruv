@@ -112,13 +112,19 @@ The integration is built in. It needs no extra extension or setup. Herdr is opti
 ## External T3 web frontend
 
 `bruv web` prints setup guidance without downloading T3 or rewriting settings.
-Install unmodified T3 separately. Pin the tested official
-**v0.0.46-nightly.20261004.2644**; old 2623 is not an acceptable target. Add a separate
-Claude protocol instance pointing to the absolute `bruv-claude-compat` binary, select exact Bruv provider/model IDs,
-and align parent server SDK `CLAUDE_CONFIG_DIR` with the isolated instance home.
+Install official T3 desktop/web separately and start it normally: no custom T3
+arguments or parent startup environment. Add a separate Claude protocol instance
+with the absolute `bruv-claude-compat` binary, connector-owned history homePath,
+and provider-instance Bruv home/binary environment. Select an exact Bruv
+provider/model. **Full UI-only native history requires the upstream provider-scoped
+SDK history fix; confirm availability in your T3 build. Official 2644 lacks it.**
+Pre-fix basic chat may work, but fork can fail before Bruv starts; Bruv cannot
+guarantee graceful upstream handling. Do not change real Claude state or the T3
+parent environment as a workaround. Unsupported-version warnings are a separate
+unresolved issue, not repaired by that history fix.
 Claude is a protocol label, not an Anthropic account or verified access.
 See [external T3 setup](wisdom/claude-compat/external-t3-setup.md) for real paths,
-auth/resource sharing and paired updates. 2644 passes bounded native gates, not
+auth/resource sharing and paired updates. Earlier 2644 gates used parent-home alignment, not UI-only proof or
 full parity; its upstream Effect race remains unfixed. Stop leaves a stale approval
 card requiring explicit **Decline**. Version/update banners remain honest warnings.
 Live is same-host opt-in audio, **not browser microphone transport**.

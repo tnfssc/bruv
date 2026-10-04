@@ -1,0 +1,154 @@
+bun test v1.4.2 (744846f84)
+
+tests/claude-compat-app-worker.test.ts:
+(pass) one actual CLI profile source, not connector-local subagents.json [2.59ms]
+(pass) root replaces model input with explicit normal instance/model/thinking [0.22ms]
+(pass) ordinary MCP is not an app task; missing policy and normal workers cannot launch [0.12ms]
+(pass) malformed role/depth and mismatched thinking options fail before admission [1.11ms]
+(pass) normal native launch pins the CLI model/thinking without inheriting root settings [0.45ms]
+
+tests/claude-compat-command-lifecycle.test.ts:
+(pass) command completion is exactly once, after real session settlement when a command resumes Pi [1.21ms]
+(pass) a stopped dispatched human command has cancelled fate without inventing model work [0.22ms]
+
+tests/claude-compat-commands.test.ts:
+(pass) namespaced commands call real goal, mode and question handlers with no phantom UI [5.94ms]
+(pass) status and resources use actual owning session data; no native TUI status no-op [0.31ms]
+(pass) ordinary CLI text is untouched; unknown namespaced input cannot become a model prompt [0.37ms]
+
+tests/claude-compat-compiled.test.ts:
+(pass) compiled connector: local readiness, stream, schema auxiliary, truthful flag failures [1927.91ms]
+(pass) compiled native execute dispatches a real normal child through the paired Bruv binary and explicit profile [1148.44ms]
+(pass) compiled native preflight refuses invalid setup without history, MCP, tools or ordinary Claude writes [2213.81ms]
+
+tests/claude-compat-composition.test.ts:
+(pass) connector regressions in an isolated SDK process [692.37ms]
+
+tests/claude-compat-human-controls.test.ts:
+(pass) native saved answer delivers once and can be marked used only once [6.57ms]
+(pass) denial leaves pending; repeat and explicit reopen use the same ledger question [4.27ms]
+(pass) reject stale native dialog version and stale owning branch [3.22ms]
+(pass) process loss preserves the pending record; a fresh frontend reopens the same question [6.33ms]
+(pass) saved question projection accepts a correlated allow through the actual NDJSON transport [4.90ms]
+(pass) a host without native question UI keeps the saved CLI workflow, not phantom hasUI [1.69ms]
+(pass) session shutdown and start on the owning runtime recover the same pending question [2.85ms]
+(pass) ask then block refreshes the native dialog to the current saved version [3.75ms]
+(pass) permission allow alone is not a saved human answer [1.40ms]
+(pass) explicit human cancel uses the owning ledger and withdraws the live projection [1.69ms]
+(pass) native terminal consent drain waits for the real callback; interrupt preserves question and binding [3.97ms]
+(pass) official live native question offers explicit defer without minting an answer [3.04ms]
+(pass) native defer label cannot consume a real ledger choice of the same name [1.67ms]
+
+tests/claude-compat-launch.test.ts:
+(pass) connector launch arguments > parses exact provider IDs, equals values, appended context and transient stream [0.70ms]
+(pass) connector launch arguments > parses the native plain text auxiliary launch and empty MCP [2.17ms]
+(pass) connector launch arguments > unknown, ambiguous and malformed launches fail [0.22ms]
+(pass) connector launch arguments > bound launch vocabulary accepts native health policy, rejects unsupported effects [0.68ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > own help and version perform no engine initialization [1.47ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > launch errors are nonzero stderr only, before runtime or state access [0.59ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > successful initialization does zero model calls; prompt and controls share one runtime [5.40ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > partial-message flag changes emitted output and unsupported controls error [2.79ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > plain stdin schema request produces one JSON result and isolates runtime [1.98ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > auxiliary engine/schema failure is nonzero and emits no successful JSON [0.26ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > EOF cancels current owner and awaits exactly one teardown [7.61ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > SIGTERM cancels current owner and awaits exactly one teardown [7.50ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > SIGTERM during startup still closes the eventual runtime [0.43ms]
+(pass) connector entry glue (injected engine, not integrated product proof) > SIGTERM cancels auxiliary generation without publishing output [2.46ms]
+(pass) root controls are scrubbed before factory startup and resumed human requests wait for the paired transport [1.87ms]
+
+tests/claude-compat-live-frontend.test.ts:
+(pass) connector regressions in an isolated SDK process [424.00ms]
+
+tests/claude-compat-prompt-ownership.test.ts:
+(pass) connector regressions in an isolated SDK process [913.62ms]
+
+tests/claude-compat-runtime.test.ts:
+(pass) connector regressions in an isolated SDK process [1539.74ms]
+
+tests/claude-compat-task-binding.test.ts:
+(pass) connector regressions in an isolated SDK process [2172.09ms]
+
+tests/claude-compat-task-projection.test.ts:
+(pass) native Claude SDK 0.3.276 task projection > exact started envelope comes from a linked real worker [0.68ms]
+(pass) native Claude SDK 0.3.276 task projection > progress uses actual measured usage, phase and tools [0.30ms]
+(pass) native Claude SDK 0.3.276 task projection > terminal exact shape, monotonicity, actual killed vs requested stop [0.28ms]
+(pass) native Claude SDK 0.3.276 task projection > only explicit authoritative resume reopens and keeps task identity [0.17ms]
+(pass) native Claude SDK 0.3.276 task projection > preparing, unknown and orphan terminals never invent a running child [0.25ms]
+(pass) native Claude SDK 0.3.276 task projection > shells and genuine monitors are opaque; roster REPLACE is full and accurate [0.59ms]
+(pass) native Claude SDK 0.3.276 task projection > IDs stable across reload, distinct across actual job/root/source namespaces [0.18ms]
+(pass) native Claude SDK 0.3.276 task projection > nested real parent link and child output have explicit causal attribution [0.21ms]
+(pass) native Claude SDK 0.3.276 task projection > T3 app-owned delegation never has a duplicate provider-native projection [0.04ms]
+(pass) native Claude SDK 0.3.276 task projection > injected handler receives frames and cursor, no internal job registry [0.24ms]
+(pass) real local TaskSummary shape suppresses preparing/stop request and confirms actual close [0.27ms]
+(pass) real local shell events project success, failure and confirmed cancellation [5.37ms]
+(pass) confirmed exit with evicted output clears roster without inventing a result [0.15ms]
+
+tests/claude-compat-transport.test.ts:
+(pass) Claude-compatible NDJSON transport > fragmented UTF-8, CRLF and final non-newline user frames preserve source IDs [2.63ms]
+(pass) Claude-compatible NDJSON transport > SDK initialize, interrupt and config route explicitly; unsupported/malformed controls get real errors [1.18ms]
+(pass) Claude-compatible NDJSON transport > permission response and interrupt continue flowing while the prompt handler awaits the peer [0.61ms]
+(pass) Claude-compatible NDJSON transport > callback abort emits cancellation and late responses do not revive it [0.33ms]
+(pass) Claude-compatible NDJSON transport > incoming cancellation aborts the injected handler and returns a correlated error [0.28ms]
+(pass) Claude-compatible NDJSON transport > EOF rejects pending callbacks, drains accepted output, and rejects new callbacks [0.36ms]
+(pass) Claude-compatible NDJSON transport > explicit close aborts handlers and rejects callbacks/writes without waiting forever [0.34ms]
+(pass) Claude-compatible NDJSON transport > writes are ordered and wait for real stream backpressure [0.39ms]
+(pass) Claude-compatible NDJSON transport > malformed frames use stderr, never fabricated stdout envelopes [0.38ms]
+(pass) Claude-compatible NDJSON transport > malformed or error peer responses reject the matching callback [0.34ms]
+(pass) Claude-compatible NDJSON transport > frame, pending callback and write-queue budgets bound retained work [0.28ms]
+(pass) Claude-compatible NDJSON transport > output failure tears down pending requests and blocked drain [0.38ms]
+(pass) Claude-compatible NDJSON transport > multiple outbound callbacks correlate out of order and absent acknowledgement bodies are empty objects [0.27ms]
+(pass) Claude-compatible NDJSON transport > active handler budget returns a correlated error without accepting extra work [0.34ms]
+(pass) Claude-compatible NDJSON transport > queued-write byte budget rejects extra output during backpressure [0.28ms]
+
+tests/claude-compat-history.test.ts:
+(pass) native SDK 0.3.276 filesystem history > root and supplied child bindings survive reopen; SDK reads exact IDs/causal chains [167.53ms]
+(pass) native SDK 0.3.276 filesystem history > SDK checkpoint fork retains provenance, imports completed tools into fresh durable Pi, resumes without authority [532.89ms]
+(pass) native SDK 0.3.276 filesystem history > SDK fork at a pending tool checkpoint fails safe before creating Pi storage [159.84ms]
+(pass) native SDK 0.3.276 filesystem history > parent SDK config-home mismatch really misses files; explicit aligned override works [320.21ms]
+(pass) native SDK 0.3.276 filesystem history > without parent config, SDK dir is a project selector, not a provider config home [299.91ms]
+(pass) native SDK 0.3.276 filesystem history > SDK reads canonical symlink cwd and long encoded paths [160.03ms]
+(pass) native SDK 0.3.276 filesystem history > real parent chains select a branch, not matching prose [162.71ms]
+(pass) history boundaries > source replay, duplicate UUID, parent and child causality conflicts are rejected [1.15ms]
+(pass) history boundaries > unknown transcript context, dangling links and unknown tool results cannot be imported [0.72ms]
+(pass) history boundaries > stored images/thinking/error results preserve content, and altered imports fail reopen [1.34ms]
+
+tests/claude-compat-preflight.test.ts:
+(pass) local preflight accepts only an explicit selection/default, never the first authenticated model [14.70ms]
+
+tests/claude-compat/credential-isolation.test.ts:
+(pass) one factory strips old/new root controls, not configured providers or CLI workspace state [0.12ms]
+(pass) actual shell/local task subprocess cannot inherit root controls even via explicit env [7.50ms]
+(pass) actual arbitrary TypeScript child is scrubbed and keeps configured provider auth [17.80ms]
+(pass) SSH bootstrap subprocess and destination child environment never get root controls [6.68ms]
+
+tests/claude-compat/mcp.test.ts:
+(pass) actual SDK initializes/lists/calls per-session HTTP scopes and deletes on teardown [57.30ms]
+(pass) selection is separate from permission; readOnlyHint cannot grant plan authority [12.27ms]
+(pass) app delegation is one upstream call with trusted active-run guard, not a Bruv launch/ACK/cancel [20.26ms]
+(pass) app-owned tools fail closed without binding guard [10.60ms]
+(pass) cancellation/close cannot adopt a late result or retry an ambiguous call [195.92ms]
+(pass) denied discovery makes no network request; failures redact config [4.68ms]
+(pass) actual stdio server gets only its configured auth, no root/global server credentials, and exits on close [100.20ms]
+(pass) committed app launch with lost response is unknown, not retried or acknowledged as a Bruv job [11.73ms]
+(pass) close cancels old connection calls; replacement cannot receive an old result [21.90ms]
+(pass) actual SDK preserves structured scoped errors instead of validating a success schema [11.08ms]
+(pass) official T3 returned OrchestratorMcpFailure is an error, never a success-schema result [12.31ms]
+(pass) app HTTP discovery parks an actual session; concurrent resume reuses one lease and park never cancels app tasks [11.70ms]
+(pass) app HTTP release failure is still fatal, even though the local SDK client is closed [9.41ms]
+(pass) external HTTP MCP keeps its session until process close and does not suppress unavailable-peer teardown [6.61ms]
+
+tests/claude-compat/permissions.test.ts:
+(pass) Bash allow rules never grant execute permission; callback receives actual TypeScript [0.17ms]
+(pass) plan rejects arbitrary execute even with explicit allow or human callback [0.11ms]
+(pass) dontAsk rejects unapproved calls; disallow wins; dangerous mode needs opt-in [0.14ms]
+(pass) permission cancellation never accepts a stale allow [0.11ms]
+
+tests/t3/web-launcher.test.ts:
+(pass) external setup uses absolute paired paths and aligned isolated SDK state [0.21ms]
+bruv web no longer launches a bundled server. Run bruv web for provider Settings setup, then start official T3 normally.
+(pass) former web flags fail explicitly instead of launching a fallback [0.09ms]
+
+ 109 pass
+ 0 fail
+ 666 expect() calls
+Ran 109 tests across 19 files. [13.92s]

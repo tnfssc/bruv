@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { spawn } from "node:child_process";
-import { mkdtemp, mkdir, writeFile, rm, access } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, rm, access, readFile, readdir, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -48,6 +48,7 @@ compiledTest(
     const children: ReturnType<typeof spawn>[] = [];
     const environment = {
       HOME: home,
+      CLAUDE_CONFIG_DIR: join(root, "sdk-home"),
       PATH: process.env.PATH,
       BRUV_CLAUDE_COMPAT_HOME: state,
       BRUV_CLAUDE_COMPAT_BRUV_PATH: normalBinary!,
@@ -67,8 +68,8 @@ compiledTest(
       }),
     );
     await writeFile(join(state, "settings.json"), JSON.stringify({ cacheWarming: "off" }));
-    const launch = (args: string[]) => {
-      const child = spawn(binary!, args, { cwd: root, env: environment, stdio: ["pipe", "pipe", "pipe"] });
+    const launch = (args: string[], env = environment) => {
+      const child = spawn(binary!, args, { cwd: root, env, stdio: ["pipe", "pipe", "pipe"] });
       children.push(child);
       let stdout = "",
         stderr = "";
@@ -145,21 +146,24 @@ compiledTest(
       expect(calls).toBe(1);
       stream.child.kill("SIGTERM");
       expect(await stream.exit).toBe(143);
-      const auxiliary = launch([
-        "-p",
-        "--output-format",
-        "json",
-        "--json-schema",
-        '{"type":"object","required":["title"],"properties":{"title":{"type":"string"}},"additionalProperties":false}',
-        "--model",
-        "fixture/fixture-model",
-        "--tools",
-        "",
-        "--disable-slash-commands",
-        "--strict-mcp-config",
-        "--permission-mode",
-        "dontAsk",
-      ]);
+      const auxiliary = launch(
+        [
+          "-p",
+          "--output-format",
+          "json",
+          "--json-schema",
+          '{"type":"object","required":["title"],"properties":{"title":{"type":"string"}},"additionalProperties":false}',
+          "--model",
+          "fixture/fixture-model",
+          "--tools",
+          "",
+          "--disable-slash-commands",
+          "--strict-mcp-config",
+          "--permission-mode",
+          "dontAsk",
+        ],
+        { ...environment, CLAUDE_CONFIG_DIR: undefined as any },
+      );
       auxiliary.child.stdin.end("Write a title");
       expect(await auxiliary.exit).toBe(0);
       expect(auxiliary.frames()).toHaveLength(1);
@@ -188,19 +192,23 @@ compiledTest(
       eofOwner.child.stdin.end();
       expect(await eofOwner.exit).toBe(0);
       expect(eofOwner.frames().some((f) => f.type === "result" && f.subtype === "success")).toBe(false);
-      const unaligned = launch([
+      const unaligned = launch(
+        ["--input-format", "stream-json", "--output-format", "stream-json", "--model", "fixture/fixture-model"],
+        { ...environment, CLAUDE_CONFIG_DIR: undefined as any },
+      );
+      expect(await unaligned.exit).toBe(1);
+      expect(unaligned.stderr()).toContain("explicit absolute CLAUDE_CONFIG_DIR");
+      expect(unaligned.stdout()).toBe("");
+      expect(calls).toBe(3);
+      const failure = launch([
         "--input-format",
         "stream-json",
         "--output-format",
         "stream-json",
+        "--resume=unbound",
         "--model",
         "fixture/fixture-model",
       ]);
-      expect(await unaligned.exit).toBe(1);
-      expect(unaligned.stderr()).toContain("explicit aligned CLAUDE_CONFIG_DIR");
-      expect(unaligned.stdout()).toBe("");
-      expect(calls).toBe(3);
-      const failure = launch(["--input-format", "stream-json", "--output-format", "stream-json", "--resume=unbound"]);
       expect(await failure.exit).toBe(1);
       expect(failure.stdout()).toBe("");
       expect(failure.stderr()).toContain("must be a UUID");
@@ -323,6 +331,7 @@ compiledTest(
         cwd: root,
         env: {
           HOME: home,
+          CLAUDE_CONFIG_DIR: join(root, "sdk-home"),
           PATH: process.env.PATH,
           BRUV_CLAUDE_COMPAT_HOME: state,
           BRUV_CLAUDE_COMPAT_BRUV_PATH: normalBinary!,
@@ -402,4 +411,116 @@ compiledTest(
     }
   },
   40000,
+);
+
+compiledTest(
+  "compiled native preflight refuses invalid setup without history, MCP, tools or ordinary Claude writes",
+  async () => {
+    const root = await mkdtemp(join(tmpdir(), "bruv-compat-preflight-"));
+    const home = join(root, "home"),
+      state = join(root, "selected-bruv-home"),
+      sdkHome = join(root, "native-home");
+    const ordinary = join(home, ".claude");
+    await mkdir(ordinary, { recursive: true });
+    await mkdir(state);
+    const sentinel = '{"ordinary":"untouched"}\n';
+    await writeFile(join(ordinary, "settings.json"), sentinel);
+    await writeFile(join(root, "not-a-directory"), "file");
+    await symlink(ordinary, join(root, "claude-link"));
+    let requests = 0;
+    const server = Bun.serve({
+      hostname: "127.0.0.1",
+      port: 0,
+      fetch() {
+        requests++;
+        return new Response("must not be used", { status: 500 });
+      },
+    });
+    await writeFile(
+      join(state, "models.json"),
+      JSON.stringify({
+        providers: {
+          fixture: {
+            baseUrl: "http://127.0.0.1:" + server.port + "/v1",
+            api: "openai-completions",
+            apiKey: "fixture-not-a-secret",
+            models: [{ id: "exact-model", name: "Fixture", contextWindow: 32000, maxTokens: 1024 }],
+          },
+        },
+      }),
+    );
+    const env = {
+      HOME: home,
+      PATH: process.env.PATH,
+      BRUV_CLAUDE_COMPAT_HOME: state,
+      BRUV_CLAUDE_COMPAT_BRUV_PATH: normalBinary!,
+      CLAUDE_CONFIG_DIR: sdkHome,
+      GIT_CONFIG_GLOBAL: "/dev/null",
+    };
+    const flags = [
+      "--input-format",
+      "stream-json",
+      "--output-format",
+      "stream-json",
+      "--mcp-config",
+      JSON.stringify({
+        mcpServers: {
+          fixture: { type: "http", url: "http://127.0.0.1:" + server.port + "/mcp" },
+        },
+      }),
+    ];
+    try {
+      const cases = [
+        {
+          home: undefined,
+          model: "fixture/exact-model",
+          extra: ["--no-session-persistence"],
+          error: "explicit absolute CLAUDE_CONFIG_DIR",
+        },
+        { home: "relative-home", model: "fixture/exact-model", error: "explicit absolute CLAUDE_CONFIG_DIR" },
+        { home: join(root, "not-a-directory"), model: "fixture/exact-model", error: "not a directory" },
+        { home: ordinary, model: "fixture/exact-model", error: "default Claude home" },
+        { home: join(root, "claude-link", "nested"), model: "fixture/exact-model", error: "default Claude home" },
+        { home: sdkHome, model: undefined, error: "No selected Bruv model" },
+        { home: sdkHome, model: "fixture/missing-model", error: "Unknown configured Bruv model" },
+        { home: sdkHome, model: "", error: "exact provider/id" },
+        { home: sdkHome, model: "anthropic/claude-sonnet-4-5", error: "No configured authentication" },
+      ];
+      for (const item of cases) {
+        const child = Bun.spawn(
+          [binary!, ...flags, ...(item.model === undefined ? [] : ["--model", item.model]), ...(item.extra ?? [])],
+          {
+            cwd: root,
+            env: { ...env, CLAUDE_CONFIG_DIR: item.home },
+            stdout: "pipe",
+            stderr: "pipe",
+            stdin: new Blob(['{"type":"control_request","request_id":"init","request":{"subtype":"initialize"}}\n']),
+          },
+        );
+        const [out, err, code] = await Promise.all([
+          new Response(child.stdout).text(),
+          new Response(child.stderr).text(),
+          child.exited,
+        ]);
+        expect(code, err).toBe(1);
+        expect(err).toContain(item.error);
+        expect(out).toBe("");
+        expect(requests).toBe(0);
+        for (const path of [
+          sdkHome,
+          join(state, "native-sessions"),
+          join(state, "sessions"),
+          join(state, "native-history"),
+          join(home, ".bruv", "agent"),
+        ])
+          await expect(access(path)).rejects.toThrow();
+        expect(await readFile(join(ordinary, "settings.json"), "utf8")).toBe(sentinel);
+        expect(await readdir(ordinary)).toEqual(["settings.json"]);
+      }
+    } finally {
+      server.stop(true);
+      await rm(root, { recursive: true, force: true });
+    }
+  },
+  15000,
 );

@@ -14,6 +14,7 @@ import themeSchema from "../../runtime-assets/theme/theme-schema.json" with { ty
 import { scrubRootEnvironmentInPlace } from "../delegation-environment";
 import { launchPolicy, nativeStorage, permissionBinding, mcpFactory, scopedSettings } from "./binding";
 import { InjectedMcpSession } from "./mcp";
+import { preflightNativeHome } from "./preflight";
 import { profilesPath } from "../tasks/subagent-profiles";
 import {
   loadAppWorkerPolicy,
@@ -120,15 +121,16 @@ async function bootstrap(agentDir: string) {
 }
 
 const productionRuntime: RuntimeFactory = async (options, args) => {
-  if (args.mode === "stream" && !args.noPersistence && !options.configDir)
+  if (args.mode === "stream") await preflightNativeHome(options.configDir, homedir());
+  try {
+    await access(options.executablePath!);
+  } catch {
     throw new Error(
-      "Persistent native sessions require an explicit aligned CLAUDE_CONFIG_DIR (configure T3 provider homePath)",
+      "Paired Bruv executable is missing or inaccessible; set provider-instance BRUV_CLAUDE_COMPAT_BRUV_PATH to the absolute installed bruv path.",
     );
-  if (args.mode === "stream" && !args.noPersistence && options.configDir === resolve(homedir(), ".claude"))
-    throw new Error("Refusing to write the default Claude home; select a connector-owned native history home");
-  await access(options.executablePath!);
+  }
   await bootstrap(options.agentDir);
-  const { createClaudeCompatRuntime } = await import("./runtime");
+  const { createClaudeCompatRuntime, preflightClaudeCompatModel } = await import("./runtime");
   const { policy, authorize, setMode } = permissionBinding(args, options.request!);
   const settings = await scopedSettings(args, options.cwd, options.agentDir);
   const profileSource = profilesPath();
@@ -141,6 +143,14 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
     appWorker?.role === "normal"
       ? bindNormalAppWorker(await loadNormalAppWorkerProfile(profileSource), args)
       : undefined;
+  // Validate the actual selected model before history allocation or injected tools.
+  const prepared = await preflightClaudeCompatModel({
+    ...options,
+    model: normalWorker?.model ?? options.model,
+    settingsManager: settings,
+    permissionMode: policy.mode,
+  });
+  for (const directory of args.addDirs) await access(resolve(options.cwd, directory));
   const storage =
     args.mode === "auxiliary"
       ? undefined
@@ -150,7 +160,6 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
           configDir: options.configDir ?? join(options.agentDir, "native-history"),
           projectKey: options.projectKey,
         });
-  for (const directory of args.addDirs) await access(resolve(options.cwd, directory));
   let runtime: Awaited<ReturnType<typeof createClaudeCompatRuntime>> | undefined;
   // The app-owned server is identified by the credential-bearing native injection,
   // never by MCP annotations or a model supplied name. The server remains the
@@ -186,7 +195,8 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
   try {
     runtime = await createClaudeCompatRuntime({
       ...options,
-      model: normalWorker?.model ?? options.model,
+      model: prepared.initialModel.provider + "/" + prepared.initialModel.id,
+      modelRuntime: prepared.models,
       settingsManager: settings,
       permissionMode: policy.mode,
       authorizeTool: authorize,
@@ -288,7 +298,7 @@ export async function runConnector(
         auxiliary: args.mode === "auxiliary",
         permissionMode: args.mode === "auxiliary" ? "dontAsk" : args.permissionMode,
         executablePath: normalBinary,
-        configDir: io.env.CLAUDE_CONFIG_DIR ? resolve(io.env.CLAUDE_CONFIG_DIR) : undefined,
+        configDir: io.env.CLAUDE_CONFIG_DIR,
         projectKey: io.env.CLAUDE_CODE_PROJECT_DIR_NAME,
         request: async (request, options) => {
           let abort: (() => void) | undefined;

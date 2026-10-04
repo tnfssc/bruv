@@ -174,14 +174,14 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     }
   });
 
-  test("unconfigured auth is an initialize error; aliases and unsupported policies are explicit failures", async () => {
+  test("unconfigured auth is a preflight error; aliases and unsupported policies are explicit failures", async () => {
     const saved = process.env.ANTHROPIC_API_KEY;
     delete process.env.ANTHROPIC_API_KEY;
     try {
-      const { runtime } = await fixture({ auth: false });
-      await expect(init(runtime)).rejects.toThrow("No configured authentication");
+      await expect(fixture({ auth: false })).rejects.toThrow("No configured authentication");
+      const { runtime } = await fixture();
       await expect(runtime.controls.set_model!(control("set_model", { model: "sonnet" }), signal())).rejects.toThrow(
-        "not a Claude alias",
+        "Claude aliases are not supported",
       );
       expect(runtime.controls.set_permission_mode).toBeUndefined();
       const gated = await fixture({ extra: { permissionMode: "default" } });

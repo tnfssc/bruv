@@ -64,10 +64,20 @@ extension, or task-binding module was changed.
   legacy omitted type metadata must count as chat; excluding them reproduced a
   genuine configured-but-unavailable local provider during the T3 health probe.
 
-Persistent production native launches require an explicit aligned CLAUDE_CONFIG_DIR
-(T3 provider homePath); the default Claude home is refused. The acceptance launcher
-sets the SAME scoped history home in the unchanged T3 parent and connector. A child-
-only env rewrite would not align parent SDK filesystem calls and is not used.
+Native stream startup, including no-persistence health, validates an explicit
+absolute CLAUDE_CONFIG_DIR (T3 provider homePath), existing writable ancestor,
+and refusal of ordinary Claude state (including symlinks) without writing history.
+Auxiliary JSON mode remains stateless and does not require that home. Local exact
+model/default selection and auth are checked before nativeStorage or MCP connects;
+there is no first-authenticated-model fallback. initialize/admission recheck auth.
+These checks prove local configuration only, never upstream scope or model access.
+
+UI-only setup now assumes T3's corrected provider-scoped SDK history contract;
+[setup](external-t3-setup.md) explicitly requires its availability. The older
+unchanged 2644 acceptance launcher aligned the parent environment and is not
+UI-only proof. On pre-fix T3, SDK fork can fail before Bruv starts; the connector
+cannot catch it or guarantee upstream error presentation. No parent-env workaround
+is recommended. Unsupported-version warnings remain a separate unresolved issue.
 
 ## Actual paired normal child dispatch
 
