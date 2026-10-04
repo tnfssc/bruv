@@ -1,8 +1,26 @@
 // Focused real-connector proof: two human zero-model commands on one native query.
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import assert from 'node:assert/strict';
 export {prepare,captureIdentity} from '../../../../scripts/claude-native-acceptance/driver.mjs';
+// Composer and sidebar consume separate upstream projections. One shared budget,
+// not a sleep or a fresh timeout per indicator; require all original idle states.
+export async function waitForCommandIdle(page, timeout=30000) {
+ const deadline=performance.now()+timeout;
+ const states=[
+  [page.getByRole('button',{name:'Stop generation',exact:true}),'hidden'],
+  [page.getByRole('button',{name:'Submit message',exact:true}),'visible'],
+  [page.getByText('Working',{exact:true}),'hidden'],
+ ];
+ for(;;) {
+  for(const [locator,state] of states) {
+   const remaining=deadline-performance.now();
+   if(remaining<=0)throw Error('Command UI did not converge to idle within '+timeout+'ms');
+   await locator.waitFor({state,timeout:remaining});
+  }
+  const visible=await Promise.all(states.map(([locator])=>locator.isVisible()));
+  if(visible.every((value,i)=>value===(states[i][1]==='visible')))return;
+ }
+}
 export async function exercise({page,snapshot,config}) {
  const message=page.getByRole('textbox',{name:'Message',exact:true});
  await message.waitFor();
@@ -19,9 +37,7 @@ export async function exercise({page,snapshot,config}) {
    if(i===299)throw Error('No actual correlated command result');
    await new Promise(r=>setTimeout(r,100));
   }
-  await page.getByRole('button',{name:'Stop generation',exact:true}).waitFor({state:'hidden',timeout:30000});
-  await page.getByRole('button',{name:'Submit message',exact:true}).waitFor();
-  assert.equal(await page.getByText('Working',{exact:true}).isVisible(),false);
+  await waitForCommandIdle(page);
   await snapshot('command-'+n+'-idle');
  }
 }
