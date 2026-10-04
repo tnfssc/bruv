@@ -10,6 +10,7 @@ This branch owns root src/cli.ts, build scripts, packaging/install/update and th
 It does not edit connector cli.ts, launch.ts, runtime, preflight or defaults/version logic.
 The separate parent task must supply connector --bruv-version (bruv-claude-compat <product>)
 and --version = 2.1.280 (Bruv compatibility; bruv <product>). Normal --version stays bare product.
+Machine equality is connector --bruv-version == "bruv-claude-compat " + normal --version.
 The existing exported runConnector is sufficient; root lazily enters it before normal bootstrap.
 Normal children execute the normal binary, without claude-compat; the wrapper exports the
 absolute normal executable through the existing BRUV_CLAUDE_COMPAT_BRUV_PATH binding.
@@ -48,7 +49,7 @@ the connector's SDK-facing version. New machine checks use --bruv-version. Norma
 other arguments and explicit --bruv-version never take this bridge. No updater permission or
 checksum gate is bypassed. A user should not configure an SDK install inside .bruv-update-*.
 
-## Evidence in progress
+## Evidence
 
 [Proof directory](proof/thin-launcher) contains default build and standalone-in-spaced-path logs,
 and successful cross-builds for bun-linux-x64-baseline, bun-linux-arm64, bun-darwin-arm64,
@@ -62,8 +63,8 @@ ordinary help/version/bootstrap and lazy connector help with no normal runtime s
 Cross-build is not native macOS/Android execution. This Linux host has /bin/sh -> bash; shell
 syntax checks cannot prove device runtime behavior. Native macOS audio helper and full
 unchanged-T3 browser release gate remain platform/integration checks; do not advertise those
-as performed here. Separate version/default task is not in this branch, so final product-version
-machine checks must be rerun after parent integration. No global install, user binary replacement,
+as performed here. Separate version/default task is not included in this solution branch. It was combined
+in the isolated integration worktree below for end-to-end proof. No global install, user binary replacement,
 T3 mutation, release or push performed.
 
 ## Integration review
@@ -75,6 +76,49 @@ Integration caught and corrected an overbroad flag migration: normal probes MUST
 --version, not --bruv-version. Test normal fixtures now reject that unsupported flag.
 Sibling version commit 3eafc84b returns a labeled product value, not bare semver; all new
 machine checks now expect exactly bruv-claude-compat <product>. No connector edits made.
+
+## Direct compiled subcommand binding
+
+The root dispatcher knows it is already the normal executable. For compiled calls only
+it fills an absent BRUV_CLAUDE_COMPAT_BRUV_PATH with process.execPath before entering
+runConnector; explicit overrides and source-mode connector defaults are untouched.
+This matters for bruv-linux-x64 claude-compat without a canonical sibling. An actual
+SDK reproduction failed with the old root (missing sibling bruv), then passed execute/
+shell, Stop and EOF after this binding. The SDK test shim only prepended the subcommand;
+it did not set the normal-binary environment binding. Final rebuilt combined binary
+passes all 12 CLI/compiled connector tests (193 assertions), standalone smoke and
+typecheck; log: proof/thin-launcher/direct-subcommand.txt. No connector source edit
+was needed, including for this release-name case.
+
+## Combined end-to-end proof
+
+Integration worktree: /home/tnfssc/.bruv/worktrees/bruv-thin-integration-32125da3
+Branch: bruv/thin-launcher-integration-32125da3. Contains this branch plus sibling
+3eafc84b (cherry-picked as 687d8b75); later root/gate fix 3c6294fd applied as 7c098075.
+Do not cherry-pick that combined branch into parent: integrate the two owning branches.
+This keeps the connector-owned files out of this solution's commits.
+
+- Combined compiled CLI/connector/default/launcher/install/updater tests: 113 pass,
+  613 assertions. Includes actual temp local install and real normal-child execution.
+- Final packaging/release/update/rollback/launcher suite: 138 pass, 906 assertions, and tsc --noEmit passes.
+- Combined standalone smoke passes with no Bun/Node on child PATH.
+- Unmodified SDK 0.3.276 default spawn: actual execute/shell returns through fake
+  loopback provider; Stop emits error_during_execution and exits 0; active EOF exits
+  0 without signal, 13–14ms in this run. No real credential/provider request.
+- All four combined cross-builds at 687d8b75 succeed (before the platform-independent
+  final root binding); final Linux binary was rebuilt and retested at 7c098075. Android ELF requests /system/bin/linker64,
+  Android API 28. All four actual launcher checksums/shebangs/sibling exec probes pass.
+- Current and byte-frozen 0.16.3 compiled updaters both run against the actual combined
+  Linux release binary and shell launcher in disposable installation directories.
+  Both reject corrupted checksums without replacing either file, roll back a forced
+  second rename failure, and install byte-identical candidates. Installed connector
+  returns SDK compatibility identity; product checks use the labeled --bruv-version.
+  The harness injects a lower currentVersion and local official-shaped fetch so it
+  forces replacement without real GitHub access or replacing its running executable.
+
+See proof/thin-launcher/combined-runtime.txt, combined-migration.txt and packaging-gates.txt.
+Native Android/macOS runtime and macOS embedded helper execution are not claimed. Existing
+full native T3 gates are retained, not replaced by these packaging/SDK checks.
 
 Values reviewed before/after design: unchanged. Existing simple ownership, honest proof and
 complete-path validation values cover this feature; no new general principle is needed.
