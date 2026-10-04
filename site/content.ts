@@ -1,16 +1,14 @@
 /** Copy shared by the terminal page and its semantic HTML representation. */
 export const siteContent = {
   name: "Bruv",
-  description:
-    "Bruv is an opinionated coding agent built on Pi, with background jobs, subagents and project wisdom.",
+  description: "Bruv is an opinionated coding agent built on Pi, with background jobs, subagents and project wisdom.",
   repository: "https://github.com/tnfssc/bruv",
   install: "https://github.com/tnfssc/bruv#build-from-source",
 };
 export const landing = {
   title: "Bruv",
   titleTail: "An opinionated coding agent.",
-  intro:
-    "Built on Pi, with background jobs, subagents and project wisdom.",
+  intro: "Built on Pi, with background jobs, subagents and project wisdom.",
   features: [
     {
       title: "Give the fix its own branch",

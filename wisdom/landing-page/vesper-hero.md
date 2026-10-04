@@ -36,7 +36,7 @@ https://github.com/raunofreiberg/vesper/blob/9043f3849b776949445f0cd4990365959cc
 
 Used exact source colors: background #101010, foreground/headline #FFFFFF, peach links/CTA #FFC799, muted text #A0A0A0, border/line-number tone #505050, CTA text #000000. The source also defines peppermint #99FFE4, errors #FF8080 and hover #FFCFA8; we did not add neon accents just to use every color. Role mapping is our website adaptation: the source does not define a complete terminal ANSI palette or cursor scheme.
 
-MIT, Copyright (c) 2023 Rauno Freiberg. Full notice is site/licenses/vesper.txt and is copied into dist. The semantic footer credits Vesper. A copy of the consulted theme source is in writing-sources/vesper-theme.json. Existing Ghostty/Web and Bruv notices are retained.
+MIT, Copyright (c) 2023 Rauno Freiberg. Full notice is site/licenses/vesper.txt and is copied into dist. The semantic footer credits Vesper. A copy of the consulted theme source is in writing-sources/vesper-theme.jsonc. Existing Ghostty/Web and Bruv notices are retained.
 
 Research used tvly search and extract, then exact raw source inspection rather than search-snippet inference. Commands include:
 

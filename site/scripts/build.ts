@@ -4,7 +4,7 @@ import { siteContent, landing } from "../content";
 import { demoIds, demoTranscript, demoFrame, demoDuration } from "../demos";
 import { INSTALL_COMMAND, INSTALL_SOURCE_URL } from "../install-command";
 import { cellRowsHtml } from "../html-cells";
-const escape = (text: string) =>
+const escapeHtml = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 export function siteMetadata(raw?: string, page = "") {
   if (!raw) return { html: "", sitemap: "", robots: "" };
@@ -12,9 +12,9 @@ export function siteMetadata(raw?: string, page = "") {
   if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || url.search || url.hash)
     throw new Error("BASE_URL must be an HTTP(S) site URL, without credentials, query or fragment.");
   if (!url.pathname.endsWith("/")) url.pathname += "/";
-  const base = escape(url.href);
-  const canonical = escape(new URL(page, url).href);
-  const image = escape(new URL("assets/brand/bruv-social.png", url).href);
+  const base = escapeHtml(url.href);
+  const canonical = escapeHtml(new URL(page, url).href);
+  const image = escapeHtml(new URL("assets/brand/bruv-social.png", url).href);
   return {
     html:
       '<link rel="canonical" href="' +
@@ -28,7 +28,7 @@ export function siteMetadata(raw?: string, page = "") {
       '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>' +
       base +
       "</loc></url><url><loc>" +
-      escape(new URL("text.html", url).href) +
+      escapeHtml(new URL("text.html", url).href) +
       "</loc></url></urlset>\n",
     robots: "User-agent: *\nAllow: /\nSitemap: " + new URL("sitemap.xml", url).href + "\n",
   };
@@ -37,11 +37,11 @@ export function textContent(animated = true) {
   const cta = '<a href="#install">Install Bruv</a>';
   return (
     '<main><h1 class="brand-wordmark"><span class="sr-only">' +
-    escape(landing.title) +
+    escapeHtml(landing.title) +
     '</span><img src="./assets/brand/bruv-wordmark-light.svg" width="530" height="188" alt="" aria-hidden="true"></h1><p>' +
-    escape(landing.titleTail) +
+    escapeHtml(landing.titleTail) +
     "</p><p>" +
-    escape(landing.intro) +
+    escapeHtml(landing.intro) +
     "</p><p>" +
     cta +
     ' · <a href="' +
@@ -50,7 +50,7 @@ export function textContent(animated = true) {
     landing.features
       .map((f, i) => {
         const id = demoIds[i];
-        const transcript = '<pre class="demo-transcript">' + escape(demoTranscript(id)) + "</pre>";
+        const transcript = '<pre class="demo-transcript">' + escapeHtml(demoTranscript(id)) + "</pre>";
         const visual = animated
           ? '<pre class="demo-screen" aria-hidden="true" hidden>' +
             cellRowsHtml(demoFrame(id, 68, demoDuration(id)).rows) +
@@ -60,15 +60,15 @@ export function textContent(animated = true) {
           : "";
         return (
           "<section><h2>" +
-          escape(f.title) +
+          escapeHtml(f.title) +
           "</h2><p>" +
-          escape(f.text) +
+          escapeHtml(f.text) +
           '</p><figure class="feature-demo" data-demo="' +
           id +
           '" data-label="' +
           id +
           '" aria-label="' +
-          escape(f.title) +
+          escapeHtml(f.title) +
           ' demo">' +
           transcript +
           visual +
@@ -77,19 +77,19 @@ export function textContent(animated = true) {
       })
       .join("") +
     '<section id="install"><h2>' +
-    escape(landing.installTitle) +
+    escapeHtml(landing.installTitle) +
     "</h2><p>" +
-    escape(landing.installNote) +
+    escapeHtml(landing.installNote) +
     '</p><div class="install-command"><pre><code data-install-command>' +
-    escape(INSTALL_COMMAND) +
+    escapeHtml(INSTALL_COMMAND) +
     '</code></pre><button type="button" data-copy-install hidden aria-live="polite">Copy command</button><a href="' +
     INSTALL_SOURCE_URL +
     '">Script ↗</a> · <a href="' +
     siteContent.install +
     '">Source guide</a></div><pre>' +
-    escape(landing.start) +
+    escapeHtml(landing.start) +
     "</pre><p>" +
-    escape(landing.requirements) +
+    escapeHtml(landing.requirements) +
     "</p></section></main>" +
     '<footer><a href="./">Terminal view</a> · <a href="./licenses/ghostty-web.txt">Renderer license</a> · <a href="./licenses/vesper.txt">Vesper theme</a></footer>'
   );
@@ -104,7 +104,7 @@ export async function build(raw = process.env.BASE_URL) {
   for (const plain of [false, true]) {
     const html = template
       .replace("<!-- META -->", plain ? siteMetadata(raw, "text.html").html : metadata.html)
-      .replaceAll("<!-- DESCRIPTION -->", escape(siteContent.description))
+      .replaceAll("<!-- DESCRIPTION -->", escapeHtml(siteContent.description))
       .replace(
         "<!-- BOOTSTRAP -->",
         plain

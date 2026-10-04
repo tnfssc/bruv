@@ -109,7 +109,10 @@ try {
     await Bun.sleep(300);
     const raw = run(["capture-pane", "-t", "demo", "-p", "-e"]);
     if (!raw.includes("1 tool called")) throw new Error("Expected reference UI did not load: " + raw);
-    await Bun.write(join(out, "offline-" + cols + ".ansi"), raw.replaceAll(home, "/demo-project").replaceAll(home.split("/").at(-1)!, "csv-app"));
+    await Bun.write(
+      join(out, "offline-" + cols + ".ansi"),
+      raw.replaceAll(home, "/demo-project").replaceAll(home.split("/").at(-1)!, "csv-app"),
+    );
   }
   await Bun.write(
     join(out, "provenance.json"),
