@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { updateAssetFor } from "../src/update";
@@ -32,7 +32,7 @@ async function fixture(connectorVersion = "0.17.0", legacy = false) {
       .digest("hex");
     await writeFile(join(root, name + ".sha256"), digest + "  " + name + "\n");
   }
-  const run = async () => {
+  const run = async (env: NodeJS.ProcessEnv = process.env) => {
     const child = Bun.spawn(
       [
         process.execPath,
@@ -44,6 +44,7 @@ async function fixture(connectorVersion = "0.17.0", legacy = false) {
       {
         stdout: "pipe",
         stderr: "pipe",
+        env,
       },
     );
     const [output, errors, code] = await Promise.all([
@@ -112,3 +113,23 @@ test.skipIf(!asset)(
   },
   30_000,
 );
+
+for (const legacy of [false, true]) {
+  test.skipIf(!asset)(
+    `compiled ${legacy ? "frozen 0.16.3" : "current"} updater gate injects rollback through an aliased TMPDIR`,
+    async () => {
+      const { root, run } = await fixture("0.17.0", legacy);
+      const temporary = join(root, "real-tmp");
+      const alias = join(root, "alias-tmp");
+      await mkdir(temporary);
+      await symlink(temporary, alias, "dir");
+      expect(await realpath(alias)).not.toBe(alias);
+      const result = await run({ ...process.env, TMPDIR: alias });
+      expect(result.code, result.errors).toBe(0);
+      expect(result.output).toContain("checksum failures preserved BOTH installed files");
+      expect(result.output).toContain("second-rename rollback restored pair");
+      expect(result.output).toContain("matched versions 0.17.0 passed");
+    },
+    30_000,
+  );
+}

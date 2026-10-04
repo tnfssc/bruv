@@ -3,7 +3,7 @@
  */
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { updateAssetFor } from "../src/update";
@@ -27,8 +27,9 @@ for (const name of [asset, connectorAsset]) {
 }
 const directory = await mkdtemp(join(tmpdir(), "bruv-update-gate-"));
 try {
-  const install = join(directory, "install");
-  await mkdir(install);
+  await mkdir(join(directory, "install"));
+  // Match the updater's realpath target even when TMPDIR is an alias (macOS /var -> /private/var).
+  const install = await realpath(join(directory, "install"));
   const installed = [join(install, "bruv"), join(install, "bruv-claude-compat")];
   const originals = ["previous normal", "previous connector"];
   for (let i = 0; i < installed.length; i++) await writeFile(installed[i]!, originals[i]!, { mode: 0o755 });
@@ -92,7 +93,11 @@ try {
     }
   }
   const rollback = spawnSync(executable, ["--fail-normal-rename"], { encoding: "utf8", env: runnerEnv });
-  if (rollback.status === 0 || !rollback.stderr?.includes("Previous installation restored"))
+  if (
+    rollback.status === 0 ||
+    !rollback.stderr?.includes("injected normal rename failure") ||
+    !rollback.stderr?.includes("Previous installation restored")
+  )
     throw new Error(
       "Compiled updater failed rollback gate: " + describeUpdateProbe(executable, ["--fail-normal-rename"], rollback),
     );
