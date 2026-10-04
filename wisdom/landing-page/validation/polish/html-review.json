@@ -1,0 +1,83 @@
+[
+  {
+    "width": 1440,
+    "overflow": false,
+    "violations": [],
+    "assets": [
+      {
+        "url": "http://127.0.0.1:45339/styles.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/licenses/ghostty-web.txt",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/licenses/vesper.txt",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/html-animation.js",
+        "status": 200
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "overflow": false,
+    "violations": [],
+    "assets": [
+      {
+        "url": "http://127.0.0.1:45339/styles.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/licenses/ghostty-web.txt",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/licenses/vesper.txt",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/html-animation.js",
+        "status": 200
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "overflow": false,
+    "violations": [],
+    "assets": [
+      {
+        "url": "http://127.0.0.1:45339/styles.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/licenses/ghostty-web.txt",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/licenses/vesper.txt",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:45339/html-animation.js",
+        "status": 200
+      }
+    ]
+  }
+]

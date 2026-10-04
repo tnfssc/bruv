@@ -11,10 +11,10 @@ The separate b icon uses the same geometry as the wordmark.
 User approved this replacement ("sexy") and asked to combine it with the
 public-site PR #28.
 
-- assets/brand/bruv-wordmark.svg: dark ink on transparent background.
-- assets/brand/bruv-wordmark-light.svg: identical paths in white for dark pages.
-- assets/brand/bruv-icon.svg: standalone b; changes ink with color scheme.
-- assets/brand/bruv-wordmark.png: 1060 × 376 white-background sharing export.
+- site/assets/brand/bruv-wordmark.svg: dark ink on transparent background.
+- site/assets/brand/bruv-wordmark-light.svg: identical paths in white for dark pages.
+- site/assets/brand/bruv-icon.svg: standalone b; changes ink with color scheme.
+- site/assets/brand/bruv-wordmark.png: 1060 × 376 white-background sharing export.
 - README.md: 318 × 113 wordmark, picture source picks the dark-page variant.
   Product heading and prose stay intact.
 
@@ -49,3 +49,11 @@ Confirmed pushed commit 7c01eae4251bf59660f3be0733d3fdee09d05779 to the site
 PR branch. PR #28 now contains the accepted logo in terminal, HTML/no-JS,
 favicon, and README. All 31 site tests and Chromium validator passed.
 PR body updated. No new PR, merge, deployment, or CI success claimed.
+
+## After logo PR merge
+
+Logo PR #29 merged first. Public-site PR #28 then needed a develop merge.
+Kept one canonical copy in site/assets/brand/ and removed the identical root
+assets/brand/ copy. Root README uses the site source. Preserved the shared
+installer and current paired binary/launcher build notes when resolving README.
+Use the landing-page logo note for the current worktree and site checks.

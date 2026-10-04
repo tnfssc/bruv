@@ -1,0 +1,26 @@
+{
+  "query": "browser wasm",
+  "follow_up_questions": null,
+  "answer": null,
+  "images": [],
+  "results": [
+    {
+      "url": "https://github.com/anomalyco/opentui/blob/main/bun.lock",
+      "title": "bun.lock - anomalyco/opentui",
+      "content": "OpenTUI is a library to build terminal user interfaces (TUI) baseline-browser-mapping\": xxhash-wasm\": [\"xxhash-wasm@1.1.0\",",
+      "score": 0.43108177,
+      "raw_content": null,
+      "id": "56e03b-00"
+    },
+    {
+      "url": "https://github.com/anomalyco/opentui",
+      "title": "OpenTUI is a library to build terminal user interfaces (TUI)",
+      "content": "OpenTUI is a library to build terminal user interfaces. It is written in Zig. You write TypeScript directly or through React and Solid.",
+      "score": 0.015449815,
+      "raw_content": null,
+      "id": "e0fc85-01"
+    }
+  ],
+  "response_time": 2.17,
+  "request_id": "ad8af58e-12c8-4fb8-acdc-32ec91662530"
+}

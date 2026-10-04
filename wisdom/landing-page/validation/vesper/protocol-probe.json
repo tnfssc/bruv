@@ -1,0 +1,16 @@
+{
+  "package": "ghostty-web@0.4.0",
+  "note": "Basic direct-display probes, not a protocol conformance suite.",
+  "kitty": {
+    "unchanged": true,
+    "sequenceBytes": 167,
+    "width": 600,
+    "height": 360
+  },
+  "sixel": {
+    "unchanged": true,
+    "sequenceBytes": 33,
+    "width": 600,
+    "height": 360
+  }
+}
