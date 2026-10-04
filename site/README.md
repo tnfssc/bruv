@@ -94,6 +94,27 @@ Replace the example with the actual public URL. `BASE_URL` is optional locally. 
 
 Publish **the contents of `site/dist/`**, including `ghostty-vt.wasm`, fonts, scripts and licenses. Do not run the preview server in production. No SPA catch-all rewrite is needed: `text.html` and assets must resolve as files. Serve WASM as `application/wasm`. Avoid long immutable cache rules for these unhashed filenames.
 
+## Cloudflare Workers Builds
+
+Import this repository and configure:
+
+| Setting | Value |
+| --- | --- |
+| Root directory | `site` |
+| Build command | `bun run build` |
+| Deploy command | `npx wrangler deploy` |
+| Build environment variable | `BUN_VERSION=1.4.2` |
+
+The checked-in [wrangler.jsonc](wrangler.jsonc) sets the Worker name to
+`bruv`, the compatibility date, and the assets directory to `./dist`.
+Do not upload `site/` itself: it includes source files and `node_modules`.
+If your Cloudflare Worker has another name, change `name` in that file.
+
+Set `BASE_URL` to your real public URL for production metadata. After deploying,
+check `/`, `/text.html` and `/ghostty-vt.wasm`. The config is for a static
+Worker, not Cloudflare Pages or a Bun server. The first Cloudflare deployment
+was confirmed working on 2026-10-04.
+
 ## Vercel, if that is the host
 
 Import this repository and configure:
