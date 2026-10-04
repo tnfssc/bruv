@@ -24,7 +24,7 @@ test("compiled web guidance does not launch overrides or modify existing CLI/Cla
     ]);
     expect(code).toBe(0);
     expect(errors).toBe("");
-    expect(output).toContain("external, unmodified T3");
+    expect(output).toContain("Setup guide only.");
     expect(await Bun.file(join(home, "launched")).exists()).toBe(false);
     expect(await Bun.file(join(home, ".cache")).exists()).toBe(false);
     for (const directory of [".claude", ".bruv/agent", ".bruv/web"]) {

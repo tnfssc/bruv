@@ -58,3 +58,9 @@ frozen install, type check, focused 3-test suite, compiled pair build and
 `dist/bruv web` redirected-output check passed. The parent initially lacked
 node_modules; locked installation fixed the missing asset dependency.
 Publication will use the normal PR and manual Release gates, not local assets.
+
+PR #31 first full CI failed two compiled-output tests that still expected the old
+opening phrase. The packaging smoke script also matched it. Updated those
+assertions and their smoke fixture to the new "Setup guide only." marker.
+Kept all standalone runtime and unchanged CLI/Claude/T3 state checks intact.
+This is wording alignment, not a relaxed execution or release gate.

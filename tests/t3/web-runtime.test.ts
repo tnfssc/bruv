@@ -126,7 +126,7 @@ test("standalone executable gives external setup without Node, Bun, T3 or sideca
     }
     if (code! !== 0) throw new Error(`Standalone web help exited ${code!}: ${stderr!}\n${stdout!}`);
     expect(code!).toBe(0);
-    expect(stdout!).toContain("external, unmodified T3");
+    expect(stdout!).toContain("Setup guide only.");
     expect(await Bun.file(join(temporary, ".cache/bruv/web-runtime")).exists()).toBe(false);
   } finally {
     await rm(temporary, { recursive: true, force: true });
