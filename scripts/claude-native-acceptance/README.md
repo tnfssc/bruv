@@ -96,3 +96,52 @@ native rendered actions/assertions are implemented; do not enable canned answers
 
 Proof and exact checks: [production composition](../../wisdom/claude-compat/composition.md),
 [observed FAILED replay](../../wisdom/claude-compat/proof/composition/observed/).
+
+## Actual T3 history acceptance
+
+With pinned official T3 (default SHA-256
+`2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795`),
+local Playwright, the actual compiled connector, and paired normal Bruv,
+run (use supported Bun 1.4.2, not a global install):
+
+```sh
+/path/to/bun-1.4.2 scripts/build-claude-compat.ts --outfile=.cache/history-connector
+TMPDIR=/var/tmp \
+BRUV_CONNECTOR_EXECUTABLE="$PWD/.cache/history-connector" \
+BRUV_RUNTIME_BINARY=/absolute/path/to/paired/bruv \
+T3_UPSTREAM=/absolute/path/to/pinned-t3-layout \
+BROWSER_PATH=/absolute/path/to/local/chromium \
+FIXTURE_PORT=18943 PROOF_OUTPUT="$PWD/.cache/history-proof-unique" \
+node scripts/claude-native-acceptance/history-run.mjs
+node --test tests/claude-native-history-model.test.mjs
+```
+
+The upstream layout is the existing official artifact at `platform/t3`
+and local Playwright at `runtime/node_modules/playwright`. Optional
+`T3_EXPECTED_SHA256` changes the explicit pin for a separately verified artifact;
+the run always compares its checksum before and after UI exercise. Use a unique
+port/proof directory. A short, disk-backed TMPDIR avoids the observed Chromium
+ENOSPC crash on a crowded /tmp and Unix socket path limits on long worktree paths.
+All per-run runtime/browser state is scoped below a fresh directory and removed.
+
+This is not the synthetic native UI fixture. T3, its own SDK fork/rollback APIs,
+the compiled connector, actual execute/shell/questions APIs, and model loop all
+run unchanged. A local OpenAI-compatible fake model is the only inference source;
+no credentials, devices, provider account, upstream patch or global install.
+Parent and connector share the same isolated CLAUDE_CONFIG_DIR/SDK home.
+
+Assertions cover a completed ID-paired tool exchange, native UI fork through a
+completed assistant checkpoint, no stored-tool execution during fork, a fresh
+canonical owner, actual empty child jobs/questions inspection, byte-identical
+original branch, parent-linked rollback/reopen context and durable source mapping.
+The fork draft URL is not the persisted child URL; the harness records the latter
+by selecting the persisted sidebar thread after the first child response, and
+waits for history hydration before continuing.
+Native update toasts are dismissed via their UI close button before rollback.
+Background summary requests are answered separately, never mistaken for another
+user action or synthetic native event.
+
+Evidence includes real wire/data/model projections, action statuses, paired tool
+IDs and authority outputs, scoped-path-redacted screenshots/text, invocation
+checksums, model checks and cleanup. Marker text alone is not sufficient to pass.
+Endpoint/verifier unit inputs are explicitly not native acceptance evidence.

@@ -103,3 +103,16 @@ Resumed default native replay still fails: .cache/claude-native-resumed-ownershi
 Third default probe .cache/claude-native-resumed-cancel-identities confirms distinct native assistant frame hashes for CANCEL_CONFIRMED_REAL and CANCELLATION_COMPLETED_REAL; earlier acknowledgement still absent even after work fold expanded. cancellation-expanded.txt shows final completion oddly near beginning of timeline. Model responses alone were not treated as proof; now actual native wire has both. Runtime message IDs all unique except one repeated system roster ID. Need inspect upstream persisted projection/turn ownership before cleanup; do not suppress cancellation notification or loosen assertion. Native prompt echo fields are user_message_uuid(s), optional command_lifecycle(command_uuid); current connector emits neither, upstream has old-mode fallback. That is a clue, NOT yet a proven cause.
 
 Independent review6aa5c83f integrated8c4f7c59: proven P1 autonomous result can settle a pending human input held in Pi preflight because runtime/frontend omit consumed prompt UUID and origin. Repro preserved artifacts/claude-compat-review/prompt-ownership-repro.test.ts. Fix taskff8dceb5 was stopped after36s (no product loss) and replaced with tightly scoped task_0720fd7d using exact reproduction. Workspace {"kind":"worktree","path":"/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0720fd7d","worktreePath":"/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0720fd7d","sourcePath":"/home/tnfssc/Code/bruv","baseRef":"HEAD","baseOid":"8c4f7c5907df2339b0c3bbdbdd2e23943c81b809","branch":"bruv/fix-native-consumed-prompt-identity-and--0720fd7d","preparationStatus":"ready"}. Other review seams had no new findings/64 checks passed; not a broad sign-off. Held packaging/updater branch full unit probe task_4373421b writes artifacts/claude-compat-held-packaging-unit.log; no packaging has been integrated into parent.
+
+
+## Resumed native history gate — 2026-10-04
+History worker recovered only paused dd42c4c4's intended harness/test files atop
+156e2450; no history.ts/runtime/task/Live/Stop code changes. Actual unchanged
+pinned T3 + current compiled connector + loopback model now **PASS** completed
+exchange, UI checkpoint fork (zero stored-call execution), fresh owner/empty real
+child jobs+questions, byte-identical original, native rollback and reload/reopen
+context. Sanitized evidence: proof/native-history/observed/{result,model-checks,
+model-projection,final-disk}.json plus reviewed screenshots/actions/wire logs.
+21 supported-Bun focused tests pass; no-emit check passes. See native-history.md
+for the fixed summary/draft-navigation/toast/temp-storage fixture issues and
+remaining scope. No concrete history runtime blocker; no release/T3 edits.

@@ -39,3 +39,64 @@ Focused history + existing transport: **24 pass, 0 fail, 104 assertions**; histo
 - No CLI/wire/runtime/MCP/projection edits, release/push/upstream source changes.
 
 Values unchanged: existing one-owner, honest proof, safe migration and durable-ID rules already cover this boundary. The feature recipe and observed hard gate belong here, not in another general value.
+
+## Actual unchanged T3 history acceptance — 2026-10-04
+
+Recovered only paused task_dd42c4c4's four history harness modules and endpoint
+test from its preserved worktree; inspected its last proof rather than restarting
+research. That earlier run rendered all three context markers and empty authority,
+but **failed overall** because the local fake model rejected genuine background
+summary requests. No history.ts bug was observed or changed.
+
+Current parent baseline **156e2450** (task/Live wiring and fixed Stop/cancellation)
+was preserved. Compiled its actual connector with supported **Bun 1.4.2**, then
+ran official unchanged **t3 v0.0.46-nightly.20261003.2623** with SHA-256
+2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795,
+a transparent connector tap, a real Pi model loop and local fake model. The
+unchanged T3 parent and connector used the same explicitly aligned isolated
+CLAUDE_CONFIG_DIR; no real credentials/provider calls/devices/global installation.
+
+**PASS**, including parent post-run verifier and cleanup: committed sanitized
+[observed proof](proof/native-history/observed/) (result.json, model-checks.json,
+model/wire/disk projections, action statuses and reviewed chat screenshots).
+Nine actual model requests, no rejected requests; one root execution and one
+fresh child inspection. Actual completed shell result, paired model/tool IDs and
+pending root question owner are retained as historical content, not authority.
+
+Verified:
+- Real UI Fork from this response at the completed root checkpoint; no execute
+  call during the fork action, root counter remains exactly one.
+- SDK-created fork imports four completed conversation entries into a distinct
+  fresh canonical owner, with fresh native UUIDs, retained SDK provenance and
+  valid durable native-to-source-entry mappings.
+- Actual child jobs.list/questions.list output is empty (jobs total=0, questions=[]),
+  canonical parentSession is absent and no root task-projection records were
+  imported. The child does not execute the stored root call.
+- Reopened original branch remains byte-identical through the final run (raw
+  canonical SHA-256 e62d6e64cf2c407b699c75dd7dcf88e0a8237a9061fed82a03a4ad35fb82bd22),
+  still shows later root-only context and no child response.
+- Native Edit from here + Revert and keep changes selects the retained child
+  checkpoint. Abandoned turns remain on disk, but the parent-linked active branch
+  and actual rollback/reopen model requests exclude them. Reload and continuation
+  retain the same child branch and original orchid-73 context.
+
+Harness fixes, not runtime workarounds: answer the real summary request without
+calling tools; verify the imported paired exchange on the first child request
+before legitimate subsequent compaction; select the real persisted sidebar item
+instead of a transitioning fork draft URL; wait for rendered history after
+navigation; dismiss an obstructing native update toast with its close button.
+Observed Chromium ENOSPC on crowded /tmp and socket-path overflow under a long
+worktree temp path were eliminated using short disk-backed TMPDIR=/var/tmp.
+No T3 source/artifact modification or fake native events.
+
+Reusable command/options: scripts/claude-native-acceptance/README.md.
+Supported focused checks: **21 passed, zero failed/skipped** across existing actual
+SDK 0.3.276 history tests and new endpoint/evidence-verifier tests; no-emit typecheck
+passes. Node endpoint tests are separate from native proof.
+
+The old parent-home-alignment and actual T3 fork/rollback gates above are now
+satisfied for this completed-tool context. Pending-tool/unknown transcript block
+limits remain explicit boundary-test limits, not additional native UI claims.
+No remaining concrete history runtime blocker. Human controls, app-owned
+worker policy, packaging, release and the full combined acceptance remain owned
+by the parent/other workers. Values unchanged.
