@@ -107,11 +107,13 @@ describe("manual release preparation", () => {
     expect(native.if).toContain("needs.release.result == 'success'");
     const nativeRuns = native.steps.map((step) => step.run ?? "");
     expect(nativeRuns).toContain("bash scripts/setup-native-release-gate.sh");
-    const acceptance = nativeRuns.find((run) => run.includes("node scripts/claude-native-acceptance/run.mjs"))!;
+    const acceptance = nativeRuns.find((run) => run.includes("/usr/bin/node scripts/run-native-release-gate.mjs"))!;
     expect(acceptance).toContain(
       'BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64"',
     );
     expect(acceptance).toContain('BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64"');
+    expect(acceptance).toContain("dist/release/bruv-claude-compat-linux-x64 --version");
+    expect(acceptance).toContain("bruv-claude-compat $version");
     // Setup exports GITHUB_ENV for the next step; it cannot share a run block.
     expect(acceptance).not.toContain("setup-native-release-gate.sh");
     const mac = jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");

@@ -1,5 +1,11 @@
 # Bruv through native Claude: task/UI contract
 
+Current production target: unchanged official **v0.0.46-nightly.20261004.2644**,
+not older 2623. See [active external setup](external-t3-setup.md) and
+[official 2644 proof](proof/official-2644/README.md). The dated research/provenance
+below is retained, not an active pin recommendation; the upstream Effect race
+remains unfixed despite 2644 passing bounded gates.
+
 2026-10-03. Research only: no product/T3 patch, release, provider credentials or model request. This owns native Claude message-to-T3 projection; transport/auth/CLI startup proof is separate. Read [values](../values.md), [hybrid direction](../acp/hybrid-subagent-ui-direction.md), [wire distinction](../acp/steering-wire-contract.md), [lifecycle prototype](../acp/pi-acp-only-lifecycle.md), [native Pi alternative](../acp/native-pi-steering-alternative.md), [MCP ownership](../acp/orchestration-mcp-boundary.md), and [registry follow-up](../acp/registry-followup-review.md).
 
 ## Answer

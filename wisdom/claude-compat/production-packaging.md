@@ -1,5 +1,36 @@
 # Production packaging preparation — 2026-10-03
 
+## Current recommendation — official 2644 (2026-10-04)
+
+Active setup and release CI now pin unchanged **v0.0.46-nightly.20261004.2644**,
+source **737993303d36e10674c54b95e5bd3826682c99c7**. Use
+[external setup](external-t3-setup.md) and the
+[immutable official proof](proof/official-2644/README.md) for exact archive and
+executable hashes. Old 2623 is not a supported pinned target; its upstream Effect
+queue failure is historical evidence, not permission to patch T3. 2644 passes
+bounded gates while the dependency race remains unfixed.
+
+Release setup reuses the proof's checksum/source-metadata verified downloader in
+fresh RUNNER_TEMP directories. The browser probe pins Playwright-core 1.63.0,
+matching the validated local proof runtime. scripts/run-native-release-gate.mjs composes the
+validated command-idle, same-root actual local-child/reply/idle, human permission
+and saved-question, app delegation, and default steering/Stop/resume suites,
+followed by command-idle again. Every suite uses the actual final paired binaries
+and must produce passing unchanged-official evidence. No runtime assets are
+copied into product/build/install; CI downloads are test dependencies only.
+The paired updater, native CLI version checks, Mac helper and licensing gates
+remain required. Parent owns final build and full hosted CI.
+
+Generated bruv web guidance uses this exact release/source, absolute paired paths,
+loopback server and isolated SDK history. Auth sharing is explicit and no secrets
+are copied; separate auth is still available. bruv update updates the sibling
+pair; T3 updates independently and different releases need revalidation. Known
+stale approval requires **Decline**; unsupported version/update banners remain;
+Live is same-host opt-in, not browser audio transport. No fake Claude auth/version.
+
+**The dated preparation/testing records below are historical, not the current
+upstream recommendation or a new full-parity claim.**
+
 Parent integration is conditional on full unchanged-T3 native parity acceptance.
 No publication, push, global install, parent unbundle or upstream mutation was
 performed. This branch edits packaging/setup/CLI documentation only; it does not
@@ -173,3 +204,45 @@ held-packaging-focused.log, held-packaging-clean-smoke.log,
 held-packaging-reuse-smoke.log, held-packaging-cross-builds.log and
 held-packaging-unit-final.log retain the executed evidence. These checks do not
 replace parent full native acceptance or hosted final-artifact/macOS-helper gates.
+
+
+## Cohesive official-2644 setup/CI follow-up — 2026-10-04
+
+This follow-up keeps the historical proof bytes unchanged and makes the active
+recommendation/CI use them. No version bump, push, release or global installation.
+No connector runtime, T3 source/executable, task ownership or device behavior edits.
+
+Validation in this isolated worktree:
+
+- Frozen Bun 1.4.2 dependencies, prepared Pi assets and a temporary normal CLI
+  build under .cache/web-guide (not a final release build). Actual clean-home,
+  no-inherited-environment --version returned 0.15.28. Actual bruv web output
+  contained the 2644 release/source links, absolute sibling connector, aligned
+  isolated SDK/server home, paired updater, and no unpinned latest recommendation.
+  No T3 subprocess or real Claude state was created by bruv web.
+- scripts/setup-native-release-gate.sh ran in a fresh private RUNNER_TEMP with
+  a read-only existing Playwright-core 1.63.0 runtime/Chromium 1243. Official release
+  metadata/source, published archive digest and extracted executable digest all
+  passed the immutable fetch contract. The actual CLI returned
+  t3 v0.0.46-nightly.20261004.2644; actual --help and Node browser-alias import passed.
+  The first probe's extra import command had a shell-quoting error after setup
+  already passed; corrected direct /usr/bin/node import passed. No global install.
+- Focused setup/workflow/install/smoke/native-command/human/Live/local-return suite:
+  **96 pass, 0 fail, 792 assertions** (12 files).
+- Separate paired updater/release-shape/actual compiled updater fixtures:
+  **64 pass, 0 fail, 272 assertions** (3 files).
+- Browser dependency-setup/workflow suite after pinning Playwright-core 1.63.0:
+  **21 pass, 0 fail, 322 assertions** (2 files; overlaps workflow checks above).
+- Initial combined run hit host-load timeouts (157 pass, 3 timeouts; observed load
+  average 47). Reruns above passed. New orchestration fixtures now have a bounded
+  30-second test deadline; no production gate assertion or updater test was weakened.
+- Typecheck, focused formatting/lint, Bash syntax and preserved official proof
+  verification pass. Existing advisory lint warnings/infos are retained.
+
+The orchestration fixtures test suite order, exact paired path forwarding,
+branch-flag isolation, fail-closed results, new proof roots and prelaunch pin
+rejection; they are **not native acceptance evidence**. The validated native
+scripts remain the actual execution contract. Parent owns final paired build,
+full hosted CI, all composed native runs on final assets, Mac helper and remaining
+full parity/device/provider acceptance. No fresh full six-suite native pass is
+claimed by this setup-only follow-up.

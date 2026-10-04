@@ -211,11 +211,11 @@ jobs:
           retention-days: 14
 
   linux-browser-boot:
-    name: Final Linux pair against external native T3 (subset gate)
+    name: Final Linux pair against unchanged official 2644 (bounded gates)
     needs: [release, prepare-manual]
     if: ${{ always() && needs.release.result == 'success' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -231,7 +231,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/release-browser/chromium
-          key: playwright-1.60.0-ubuntu24.04-headless-${{ runner.os }}-${{ runner.arch }}
+          key: playwright-1.63.0-ubuntu24.04-headless-${{ runner.os }}-${{ runner.arch }}
       - name: Install isolated browser harness
         shell: bash
         run: bash scripts/setup-release-browser.sh
@@ -243,10 +243,15 @@ jobs:
         run: |
           chmod 0755 dist/release/bruv-linux-x64
           chmod 0755 dist/release/bruv-claude-compat-linux-x64
+          home=$(mktemp -d)
+          trap 'rm -rf "$home"' EXIT
+          version=$(HOME="$home" dist/release/bruv-linux-x64 --version)
+          test "$version" = "$(bun -p 'require("./package.json").version')"
+          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --version)" = "bruv-claude-compat $version"
           BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64" \
           BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64" \
           PROOF_OUTPUT="$GITHUB_WORKSPACE/artifacts/release/native-acceptance" \
-          node scripts/claude-native-acceptance/run.mjs
+          /usr/bin/node scripts/run-native-release-gate.mjs
       - name: Upload external native proof (including failures)
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

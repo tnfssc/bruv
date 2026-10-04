@@ -49,8 +49,15 @@ test("external native release gate setup keeps verified upstream layout and env 
   const script = await Bun.file(new URL("../scripts/setup-native-release-gate.sh", import.meta.url)).text();
   expect(script).not.toMatch(/[\u0000-\u0008]/);
   expect(script).toContain('root="$RUNNER_TEMP/native-t3"');
-  expect(script).toContain("--strip-components=1");
-  expect(script).toContain("sha256sum -c -");
+  expect(script).toContain("official-2644/fetch-official.mjs");
+  expect(script).not.toContain("20261003.2623");
+  const fetch = await Bun.file(
+    new URL("../wisdom/claude-compat/proof/official-2644/fetch-official.mjs", import.meta.url),
+  ).text();
+  expect(fetch).toContain("--strip-components=1");
+  expect(fetch).toContain("5f9e29cf2712c87736556c99ea580606b399897cb846c2401a434a0d05c4eeca");
+  expect(fetch).toContain("53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48");
+  expect(fetch).toContain("737993303d36e10674c54b95e5bd3826682c99c7");
   expect(script).toContain("playwright-core");
   const workflow = Bun.YAML.parse(
     await Bun.file(new URL("../.github/workflows/release.yml", import.meta.url)).text(),
@@ -58,5 +65,5 @@ test("external native release gate setup keeps verified upstream layout and env 
   const steps = workflow.jobs["linux-browser-boot"].steps;
   const setup = steps.findIndex((step: any) => step.run === "bash scripts/setup-native-release-gate.sh");
   expect(setup).toBeGreaterThan(0);
-  expect(steps[setup + 1].run).toContain("node scripts/claude-native-acceptance/run.mjs");
+  expect(steps[setup + 1].run).toContain("/usr/bin/node scripts/run-native-release-gate.mjs");
 });

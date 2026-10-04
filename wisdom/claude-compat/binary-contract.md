@@ -1,5 +1,11 @@
 # Native T3 → Claude Agent SDK → independent executable
 
+Current production target: unchanged official **v0.0.46-nightly.20261004.2644**,
+not older 2623. See [active external setup](external-t3-setup.md) and
+[official 2644 proof](proof/official-2644/README.md). The dated research/provenance
+below is retained, not an active pin recommendation; the upstream Effect race
+remains unfixed despite 2644 passing bounded gates.
+
 Research only, 2026-10-03. Owns the **native executable boundary**, not claude-acp, rich child/monitor mapping, or the other worker's actual Bruv binary proof. No product/T3 changes, credentials, sign-in, release, or copied SDK implementation in production.
 
 ## Decision in brief

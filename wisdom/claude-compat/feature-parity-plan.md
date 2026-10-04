@@ -1,5 +1,11 @@
 # Bruv through native Claude T3: feature parity and acceptance
 
+Current production target: unchanged official **v0.0.46-nightly.20261004.2644**,
+not older 2623. See [active external setup](external-t3-setup.md) and
+[official 2644 proof](proof/official-2644/README.md). The dated research/provenance
+below is retained, not an active pin recommendation; the upstream Effect race
+remains unfixed despite 2644 passing bounded gates.
+
 2026-10-03. Owner task_fd8cc7db. Research/plan only, no product edits or release. Latest authority: [implementation checkpoint](implementation-checkpoint.md). User permits full integration if feasible, wants all CLI capabilities available through T3 (names/widgets may differ), and prefers separately installed unmodified T3. Parent chooses sane reversible defaults; real impossible/security/data-loss gaps must be exposed, not silently dropped.
 
 ## Decisive gates first

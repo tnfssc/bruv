@@ -1,23 +1,38 @@
 # External T3 setup (paired Bruv connector)
 
-This is packaging preparation, **not native parity acceptance**. Integrate this
-branch only after unchanged-upstream acceptance. Composition may currently reject
-settings/control flags; never strip T3 flags or patch T3 to force readiness.
-Ordinary bruv remains the terminal agent and child runtime. bruv-claude-compat is
-only the native Claude-compatible stdio entry.
+Use the actual native bruv-claude-compat executable with separately installed,
+unmodified T3. Ordinary bruv remains the terminal agent and delegated-child
+runtime. No T3 runtime/assets are fetched, bundled or installed by Bruv.
+Packaging alone is not native parity acceptance.
 
-## Install and start T3 yourself
+## Install and start the tested T3 yourself
 
-Reviewed official [README](https://github.com/pingdotgg/t3code/blob/fed41fa88bb27cb4325cb208d571393850bc63c2/README.md)
-and [Claude provider setup](https://github.com/pingdotgg/t3code/blob/fed41fa88bb27cb4325cb208d571393850bc63c2/docs/user/providers-claude.md):
-revision fed41fa88bb27cb4325cb208d571393850bc63c2, release
-v0.0.46-nightly.20261003.2623. Actual official t3 --help was inspected.
-bruv web prints guidance only: no download, subprocess, settings writes or migration.
+The supported tested target is **v0.0.46-nightly.20261004.2644**, official source
+**737993303d36e10674c54b95e5bd3826682c99c7**. See the pinned official
+[README](https://github.com/pingdotgg/t3code/blob/737993303d36e10674c54b95e5bd3826682c99c7/README.md),
+[Claude provider setup](https://github.com/pingdotgg/t3code/blob/737993303d36e10674c54b95e5bd3826682c99c7/docs/user/providers-claude.md)
+and [release](https://github.com/pingdotgg/t3code/releases/tag/v0.0.46-nightly.20261004.2644).
+**Old 2623 is not an acceptable pinned target**: it reproduced an upstream Effect
+queue race. 2644 passes bounded unchanged-host gates, but that dependency race
+remains unfixed. No mandatory local T3 patch is recommended.
 
-The official README offers https://t3.codes/install.sh and one-off npx t3@latest;
-review and run these yourself, never a guessed package such as t3code. For the
-reviewed version, obtain its CLI archive from [official releases](https://github.com/pingdotgg/t3code/releases/tag/v0.0.46-nightly.20261003.2623)
-and verify SHA256SUMS. Run t3 --version and t3 --help on the environment machine.
+Download the official archive for your host and verify its published SHA256SUMS.
+The unchanged **Linux x64** artifact used in acceptance is:
+
+| Pin | Value |
+| --- | --- |
+| Archive | t3-0.0.46-nightly.20261004.2644-linux-x64.tar.gz |
+| Archive SHA-256 | 5f9e29cf2712c87736556c99ea580606b399897cb846c2401a434a0d05c4eeca |
+| Extracted t3 SHA-256 | 53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48 |
+
+[Exact source/archive/executable proof](proof/official-2644/README.md) is the
+provenance record; other platforms' native parity is not established by the Linux
+proof. Keep the extracted directory intact (CLI, client and native dependencies).
+Use the absolute path to its real t3 binary, or put that directory on PATH.
+Run t3 --version (expected t3 v0.0.46-nightly.20261004.2644) and t3 --help.
+Do not launch a research tap, synthetic fixture, Bruv as the T3 server, or an
+unpinned npx t3@latest. Newer versions require unchanged-host acceptance again.
+bruv web prints guidance only: no downloads, subprocess, settings writes or migration.
 
 Example for alice on Linux/macOS; replace ALL paths with actual absolute paths:
 
@@ -91,7 +106,8 @@ same genuine ID for chat AND auxiliary/title/branch/text generation settings.
 Never leave built-in sonnet/opus aliases selected or silently remap them. Display
 names are not model IDs. Verify native initialization and real provider usage.
 Custom models may have fewer controls; unsupported settings/effort/permissions
-must fail explicitly, never pretend success.
+must fail explicitly, never pretend success. Do not strip T3 flags or patch the
+host to force readiness.
 
 **Claude** is T3's SDK/protocol slot, NOT Claude Code, an Anthropic account or
 subscription, or verified authentication. Health can indicate at most locally
@@ -127,7 +143,30 @@ the version. Newer T3 requires unchanged-host native acceptance again.
 
 Release CI explicitly downloads the pinned, checksum-verified official Linux T3
 CLI for its external native gate; this test dependency is never a shipped asset.
-The native acceptance runner covers only a subset of full product parity and
-fails when bindings are missing. Parent acceptance still owns full SDK restart,
-resume/fork, MCP permissions/questions, subagent/monitor identity, Stop/steering,
-idle completion and Live/control rendering. Do not publish based on packaging smoke.
+The release gate composes the existing validated 2644 scripts, sequentially:
+strict zero-model human command + idle; actual local child + same-root reply/idle;
+permissions and saved questions (used-once resume); app-owned delegation completion
+and cancellation; default steering/Stop/resume controls; then command/idle again.
+Every suite must report passing unchanged-official evidence from the final paired
+release binaries. The executable is rehashed between suites. Missing bindings or
+failed gates fail publication; packaging smoke cannot substitute for them.
+
+## Known limitations and safe defaults
+
+- Stop prevents a pending execute approval's side effect, but upstream leaves its
+  cancelled card visible, even after reload. **Explicitly Decline the stale card**
+  before continuing; do not approve it or claim automatic cleanup.
+- T3 may show unsupported connector-version/update banners. The connector reports
+  its real Bruv identity/version; never spoof Claude auth/version to hide warnings.
+  Local readiness is not verified provider access.
+- Live is **off by default**. Optional same-host audio requires the provider
+  instance environment `BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST=<exact connector hostname>`
+  (get it on that host with `hostname`), plus explicit human consent per device
+  action. It opens devices on the connector machine, **not the browser**. Never
+  enable it on a remote/headless host expecting browser microphone transport.
+  Linux needs its separate audio helper; macOS paired releases include the helper.
+  Configure provider secrets securely in ordinary Bruv, never in a T3 message.
+- Bounded deterministic gates do not prove devices/Live, paid providers, full tab
+  disconnect or full cross-platform parity. The upstream Effect race remains
+  unfixed despite the observed 2644 passes. Parent owns final build/full CI and
+  remaining full-parity acceptance.

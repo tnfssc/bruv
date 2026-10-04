@@ -46,9 +46,10 @@ install -m 644 LICENSE THIRD_PARTY_NOTICES.md THIRD_PARTY_LICENSES.txt SOURCE.tx
 ~~~
 
 Put ~/.local/bin on PATH, then run bruv. This does **not** install T3.
-bruv update still updates **only the normal CLI**; update/reinstall the matched
-connector pair manually with the above procedure. External T3 updates separately
-with t3 update, subject to renewed native acceptance. See
+`bruv update --check` is read-only; `bruv update` updates the sibling CLI and
+connector together. Split/custom layouts need manual paired reinstall. Stop
+active Bruv/T3 sessions first and restart afterward. External T3 updates
+separately with `t3 update`, subject to renewed native acceptance. See
 [external T3 setup](wisdom/claude-compat/external-t3-setup.md).
 
 ## Common commands
@@ -111,12 +112,16 @@ The integration is built in. It needs no extra extension or setup. Herdr is opti
 ## External T3 web frontend
 
 `bruv web` prints setup guidance without downloading T3 or rewriting settings.
-Install unmodified T3 separately. Add a separate Claude protocol instance pointing
-to the absolute `bruv-claude-compat` binary, select exact Bruv provider/model IDs,
+Install unmodified T3 separately. Pin the tested official
+**v0.0.46-nightly.20261004.2644**; old 2623 is not an acceptable target. Add a separate
+Claude protocol instance pointing to the absolute `bruv-claude-compat` binary, select exact Bruv provider/model IDs,
 and align parent server SDK `CLAUDE_CONFIG_DIR` with the isolated instance home.
 Claude is a protocol label, not an Anthropic account or verified access.
 See [external T3 setup](wisdom/claude-compat/external-t3-setup.md) for real paths,
-auth/resource sharing and manual updates. Packaging is not native parity proof.
+auth/resource sharing and paired updates. 2644 passes bounded native gates, not
+full parity; its upstream Effect race remains unfixed. Stop leaves a stale approval
+card requiring explicit **Decline**. Version/update banners remain honest warnings.
+Live is same-host opt-in audio, **not browser microphone transport**.
 
 ## Build from source
 

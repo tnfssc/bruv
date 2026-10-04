@@ -1,5 +1,39 @@
 # Native connector acceptance
 
+## Current release contract: unchanged official 2644
+
+The active target is **v0.0.46-nightly.20261004.2644**, not older 2623.
+Use the [official-2644 proof](../../wisdom/claude-compat/proof/official-2644/README.md)
+for immutable source/archive/executable pins and validated strict replay contract.
+The historical failures below do not override its bounded passing gates; the
+upstream Effect queue race itself remains unfixed. No local T3 patch is required.
+
+Release CI downloads only this verified test dependency, then runs:
+
+~~~sh
+# Absolute paths to the ACTUAL final matched pair; no tap/synthetic substitute.
+export BRUV_CONNECTOR_EXECUTABLE="$PWD/dist/release/bruv-claude-compat-linux-x64"
+export BRUV_RUNTIME_BINARY="$PWD/dist/release/bruv-linux-x64"
+export T3_UPSTREAM=/absolute/fresh/official-2644-cache
+export BROWSER_PATH=/absolute/chromium-headless-shell
+export PROOF_OUTPUT="$PWD/.cache/native-release-2644-fresh"
+/usr/bin/node scripts/run-native-release-gate.mjs
+~~~
+
+Requires Linux x64 and /usr/bin/node with node:sqlite (22.13+; proof used 25.9.0).
+The runner composes the **existing validated scripts**, sequentially: strict
+command-idle; same-root actual local child + reply/idle; human approvals and
+saved questions; app delegation; default steering/Stop/reopen continuation;
+command-idle again. It rejects unpinned binaries before launch, rehashes between
+suites, clears branch-selection flags and requires every passing result. Proof
+roots must be new; failed-suite screenshots/results remain available to CI.
+The default suite alone is not this release contract. Packaging and these bounded
+gates do not replace full parity/device/provider/cross-platform acceptance.
+
+Known upstream stale approvals still require explicit **Decline** after Stop;
+unsupported version/update banners stay truthful. Live is same-host opt-in audio,
+not browser microphone transport. No real auth/version is invented.
+
 This is a test harness, not a Claude implementation. It reuses the committed
 `wisdom/claude-compat/proof/native-ui-fixture/replay.mjs` bootstrap, pairing,
 first-run flow, official artifact path and browser. Integration mode substitutes

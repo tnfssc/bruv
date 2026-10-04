@@ -1,5 +1,11 @@
 # Bruv connector entrypoint and launch packaging
 
+Current production target: unchanged official **v0.0.46-nightly.20261004.2644**,
+not older 2623. See [active external setup](external-t3-setup.md) and
+[official 2644 proof](proof/official-2644/README.md). The dated research/provenance
+below is retained, not an active pin recommendation; the upstream Effect race
+remains unfixed despite 2644 passing bounded gates.
+
 2026-10-03; task_06e50aca. Implements a separately compiled, honestly branded
 entrypoint. This is not final native T3 acceptance or permission to release/unbundle.
 Read with [binary contract](binary-contract.md), [implementation plan](implementation-plan.md),
