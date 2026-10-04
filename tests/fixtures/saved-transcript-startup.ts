@@ -33,7 +33,7 @@ mock.module(syntaxPath, () => ({
       });
   },
 }));
-mock.module(resolve(sdk, "dist/utils/ensure-tool.js"), () => ({
+mock.module(resolve(sdk, "dist/utils/tools-manager.js"), () => ({
   ensureTool: async (name: string) => {
     events.push("tool:" + name);
     return "/fixture/" + name;
@@ -169,6 +169,7 @@ assert.equal(events.includes("grammars:start"), saved);
 assert(!events.includes("messages:render"));
 colors.resolve();
 await until("rebind:start");
+assert(events.includes("tool:fd") && events.includes("tool:rg"), "managed tools must use the fixture seam");
 assert(events.includes("keys:ready") && events.includes("submit:ready"));
 assert(!events.includes("messages:render"));
 if (scenario === "saved-ready") {

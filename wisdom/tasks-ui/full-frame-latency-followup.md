@@ -49,7 +49,7 @@ Pi stays pinned at 1.0.0. Its native estimator uses branch type/id for compactio
 
 Disk history installs before the outer shake adapter in CLI and connector startup. Tests that mutate these global prototypes run in child processes. Inheriting another test's prior wrapper is not the production order. The native shell cache relies on ToolExecutionComponent.updateDisplay and sits below density/task/rolling overlays.
 
-The grammar patch assumes saved messages are in session.state.messages at UI mount. Tests execute the actual patched SDK init and real grammar loader, including Elixir highlighting, typing during startup, empty sessions and startup errors. Existing invalidation tests cover theme/content/resize.
+The grammar patch assumes saved messages are in session.state.messages at UI mount. Tests execute the actual patched SDK init and real grammar loader, including Elixir highlighting, typing during startup, empty sessions and startup errors. The managed-tool seam must target Pi 1.0.0's `dist/utils/tools-manager.js`, not the old `ensure-tool.js` path. The wrong mock target lets real tool discovery/downloads run and fails before extension rebind in a clean CI environment. All five startup scenarios now assert that both `fd` and `rg` used the fixture seam. Existing invalidation tests cover theme/content/resize.
 
 After checkout or cherry-pick, run bun install --frozen-lockfile to apply the tracked patch, then bun run build. The official build now makes a pair; the old web-payload reuse path no longer applies. Local Bun: /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun.
 
