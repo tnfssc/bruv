@@ -2,6 +2,8 @@
 
 ## Current handoff
 
+Draft PR: https://github.com/tnfssc/bruv/pull/26. The later merge of develop at 8b947729 adds only tests/docs; the measured runtime sources remain those of e5fd9a7d.
+
 This is a draft, not a finished latency fix. Runtime commit e5fd9a7d builds both v0.16.0 binaries. The 100-turn gate passes. At 1,000 turns, idle typing and animation pass, but the first held-response input takes 482 ms and fails the 100 ms gate. Do not remove that sample or call the gate green.
 
 Integration: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_43fd9f57, branch fix/long-thread-full-frame-latency. Develop advanced during the work; public v0.16.0 at 3eec281b was merged as 271e27a4. No unpublished rolling feature commit was imported. All implementation workers finished. No release or installation was performed.
