@@ -125,7 +125,7 @@ describe("single terminal landing", () => {
     expect(html).toContain(landing.title);
     expect(html).toContain(landing.titleTail);
     expect(html).toContain(landing.intro);
-    expect(html).toContain("Animated demo");
+    expect(html).toContain(landing.demosNote);
     for (const id of demoIds) expect(html).toContain(demoTranscript(id).split("\n")[0]);
     expect(html).not.toContain("Auto-compact");
     expect(html).toContain(siteContent.install);

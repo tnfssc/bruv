@@ -1,7 +1,8 @@
 import { cp, mkdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import { siteContent, landing } from "../content";
-import { demoIds, demoTranscript } from "../demos";
+import { demoIds, demoTranscript, demoFrame, demoDuration } from "../demos";
+import { cellRowsHtml } from "../html-cells";
 const escape = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 export function siteMetadata(raw?: string, page = "") {
@@ -23,12 +24,10 @@ export function siteMetadata(raw?: string, page = "") {
     robots: "User-agent: *\nAllow: /\nSitemap: " + new URL("sitemap.xml", url).href + "\n",
   };
 }
-export function textContent() {
+export function textContent(animated = true) {
   const cta = '<a href="' + siteContent.install + '">Install Bruv</a>';
   return (
-    "<main><p>" +
-    escape(landing.eyebrow) +
-    "</p><h1>" +
+    "<main><h1>" +
     escape(landing.title + " " + landing.titleTail) +
     "</h1><p>" +
     escape(landing.intro) +
@@ -36,20 +35,35 @@ export function textContent() {
     cta +
     ' · <a href="' +
     siteContent.repository +
-    '">Source</a></p>' +
+    '">Source</a></p><p class="demo-note">' +
+    escape(landing.demosNote) +
+    "</p>" +
     landing.features
       .map((f, i) => {
-        const pre = escape(demoTranscript(demoIds[i]));
+        const id = demoIds[i];
+        const transcript = '<pre class="demo-transcript">' + escape(demoTranscript(id)) + "</pre>";
+        const visual = animated
+          ? '<pre class="demo-screen" aria-hidden="true" hidden>' +
+            cellRowsHtml(demoFrame(id, 68, demoDuration(id)).rows) +
+            '</pre><button class="demo-toggle" type="button" aria-label="Pause ' +
+            escape(f.title) +
+            ' demo" hidden>Ⅱ</button>'
+          : "";
         return (
           "<section><h2>" +
           escape(f.title) +
           "</h2><p>" +
           escape(f.text) +
-          "</p><figure><figcaption>" +
-          "Animated demo · scripted. Static transcript; outcomes and timing are illustrative." +
-          "</figcaption><pre>" +
-          pre +
-          "</pre></figure></section>"
+          '</p><figure class="feature-demo" data-demo="' +
+          id +
+          '" data-label="' +
+          escape(f.title) +
+          '" aria-label="' +
+          escape(f.title) +
+          ' scripted demo">' +
+          transcript +
+          visual +
+          "</figure></section>"
         );
       })
       .join("") +
@@ -78,8 +92,13 @@ export async function build(raw = process.env.BASE_URL) {
     const html = template
       .replace("<!-- META -->", plain ? siteMetadata(raw, "text.html").html : metadata.html)
       .replaceAll("<!-- DESCRIPTION -->", escape(siteContent.description))
-      .replace("<!-- CONTENT -->", textContent())
-      .replace("<!-- RUNTIME -->", plain ? "" : '<script type="module" src="./terminal.js"></script>')
+      .replace("<!-- CONTENT -->", textContent(plain))
+      .replace(
+        "<!-- RUNTIME -->",
+        plain
+          ? '<script type="module" src="./html-animation.js"></script>'
+          : '<script type="module" src="./terminal.js"></script>',
+      )
       .replace(
         "<!-- SWITCH -->",
         plain
@@ -89,7 +108,7 @@ export async function build(raw = process.env.BASE_URL) {
     await Bun.write(resolve(out, plain ? "text.html" : "index.html"), html);
   }
   const result = await Bun.build({
-    entrypoints: [resolve(root, "terminal.ts")],
+    entrypoints: [resolve(root, "terminal.ts"), resolve(root, "html-animation.ts")],
     outdir: out,
     target: "browser",
     format: "esm",

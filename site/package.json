@@ -8,7 +8,8 @@
     "assets": "bun scripts/extract-cells.ts",
     "test": "bun test scripts/build.test.ts scripts/scroll.test.ts demos.test.ts && bun scripts/validate.ts",
     "test:scroll": "bun test scripts/scroll.test.ts && bun scripts/validate.ts",
-    "test:animation": "bun scripts/animation.ts"
+    "test:animation": "bun scripts/animation.ts",
+    "test:html": "bun test scripts/html-animation.test.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.11.1",
