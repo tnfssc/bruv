@@ -56,7 +56,7 @@ describe("single terminal landing", () => {
       expect(c.rows.flat().every((r) => r.style.includes("38;2;"))).toBe(true);
       for (const row of c.rows) expect(row.reduce((n, r) => n + [...r.text].length, 0)).toBe(c.cols);
       const f = layout(width + 6, 100, { scroll: 0, focus: -1 });
-      expect(f.lines.join(" ")).toContain("Scripted demos");
+      expect(f.lines.join(" ")).not.toContain("Scripted demos");
       expect(f.captures).toHaveLength(3);
     }
   });
@@ -125,7 +125,7 @@ describe("single terminal landing", () => {
     expect(html).toContain(landing.title);
     expect(html).toContain(landing.titleTail);
     expect(html).toContain(landing.intro);
-    expect(html).toContain(landing.demosNote);
+    expect(html).not.toContain("not recorded model runs");
     for (const id of demoIds) expect(html).toContain(demoTranscript(id).split("\n")[0]);
     expect(html).not.toContain("Auto-compact");
     expect(html).toContain(siteContent.install);

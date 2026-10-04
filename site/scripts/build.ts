@@ -35,9 +35,7 @@ export function textContent(animated = true) {
     cta +
     ' · <a href="' +
     siteContent.repository +
-    '">Source</a></p><p class="demo-note">' +
-    escape(landing.demosNote) +
-    "</p>" +
+    '">Source</a></p>' +
     landing.features
       .map((f, i) => {
         const id = demoIds[i];
@@ -60,7 +58,7 @@ export function textContent(animated = true) {
           id +
           '" aria-label="' +
           escape(f.title) +
-          ' scripted demo">' +
+          ' demo">' +
           transcript +
           visual +
           "</figure></section>"

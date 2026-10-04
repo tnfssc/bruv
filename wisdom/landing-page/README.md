@@ -10,6 +10,10 @@ The approved Ghostty/Vesper design remains. One heading per feature and short fa
 
 [Single-page cell captures](single-page-cells.md) documents the retained renderer/capture machinery, not the current product copy. Its old preview is superseded; do not restart it.
 
+## Page copy follow-up
+
+User asked to remove demo caveats from the page. Removed the shared scripted-demo disclaimer and playback-instruction paragraph from both rendered views. Controls retain accessible demo labels. Scripted content and source provenance remain in feature wisdom, not marketing copy. Values unchanged: separate user-facing content from acceptance notes.
+
 ## Keep these fixes
 
 The baseline commit 29266c49 fixed [scroll responsiveness](scroll-responsiveness.md): measured wheel distance/remainders, one wheel owner, coalesced RAF, row-diff ANSI updates and same-frame full canvas paint. Keep these. With capture glyphs now in the grid, the raster synchronization/caching half of that note is obsolete.

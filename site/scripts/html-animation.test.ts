@@ -40,7 +40,7 @@ describe("semantic HTML feature demos", () => {
     for (const id of demoIds)
       expect(html).toContain('<pre class="demo-transcript">' + escapeText(demoTranscript(id)) + "</pre>");
     expect(html.match(/class="demo-toggle"/g)).toHaveLength(3);
-    expect(html.split(escapeText(landing.demosNote))).toHaveLength(2);
+    expect(html).not.toContain("not recorded model runs");
     expect(html).not.toContain("<canvas");
     expect(html).not.toContain("Replay");
     expect(cellStyle("38;2;222;224;225;48;2;20;24;32")).toBe("color:rgb(222,224,225);background-color:rgb(20,24,32)");

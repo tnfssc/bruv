@@ -11,8 +11,6 @@ export const landing = {
   titleTail: "while your agents work.",
   intro:
     "Bruv is a coding agent built on Pi. Send a fix to a subagent in its own Git worktree while you work on the next change.",
-  demosNote: "Scripted demos, not recorded model runs.",
-  playbackHelp: "Hover or tap a demo for playback. Tab + Space pauses it.",
   features: [
     {
       title: "Give the fix its own branch",

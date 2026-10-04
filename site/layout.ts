@@ -96,10 +96,7 @@ export function layout(cols: number, rows: number, state: State) {
     y += 2;
     link("Source ↗", siteContent.repository);
   } else link("Source ↗", siteContent.repository, margin + 20);
-  y += 3;
-  text(landing.demosNote, palette.muted);
-  text(landing.playbackHelp, palette.muted);
-  y += 3;
+  y += 4;
   const captures: {
     id: DemoId;
     x: number;
