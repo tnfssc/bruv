@@ -67,3 +67,11 @@ underlying disconnect cause remains unknown; this fix corrects recovered-error
 classification only. Product implementation is done locally. Ship separately
 if requested. Values unchanged: existing ownership and real-path proof rules
 cover the fix; the runner detail stays with this feature.
+
+## Publication requested
+
+User asked for PR, merge, release. Latest remote stable is v0.16.6. Merge
+current origin/develop before opening the PR; keep the setup guide from PR #31.
+Next release notes: support/release-v0.16.7.md. Use the normal Release manual
+workflow on develop after green PR gates and merge. It owns version and tag
+preparation. Do not install over active sessions.
