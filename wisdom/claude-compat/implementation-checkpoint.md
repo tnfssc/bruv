@@ -177,3 +177,6 @@ Hosted CI37181188815 on isolated candidate35a7aa17 SUCCESS. Verified actual Full
 
 ## Final composed native gate PASS — 2026-10-04
 Integrated9caf51d2: no cancellation reply lost; recycled LegendList DOM made .last() expand another run. Exact run-identity disclosure and visual chronology retain all strict assertions. Parent six-suite taskcba02367 PASS on final current v0.16.0 pair with unchanged2644: command,local-child,human,app-delegation,default-controls,command-final. Bounded results+artifact hashes saved proof/release-v0.16.0-native; all frames in .cache/v0160-native-gates-final. Final fetch shows no origin/develop commits missing; v0.16.0 release not yet exists. Preparing gated release now. Known upstream queue repro and stale approval/version warnings remain documented; no claim full CLI UI/audio/platform parity. Values unchanged: real visible evidence and one owner cover lessons.
+
+## Released
+Stablev0.16.0 PUBLISHED and verified: workflow37183737744 all jobs success,20 assets, source/tag3eec281bb270f1cafa61a0de243bbd0c45e00b4f. See ../releases/v0160-external-connector.md and v0160-verification.json for final authority; earlier in-progress/blocked entries above are historical. No active release jobs remain. Proposal23 still open/partial; known frontend/Live/platform limits are explicit. Values unchanged for reasons in release note.
