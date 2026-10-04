@@ -12,6 +12,7 @@ import {
   type TuiMouseEvent,
   truncateToWidth,
 } from "@earendil-works/pi-tui";
+import { getDiskBackedBranchRevision, selectDiskBackedEntries } from "../history/session-manager";
 import { actionLabel } from "./action-label";
 import { clearActivityProjection, setActivityProjection } from "./activity-projection";
 import { taskRowsFromDetails } from "./task-rows";
@@ -58,6 +59,13 @@ export function activityMembership(entries: readonly JournalEntry[]): Map<string
   return result;
 }
 
+function membershipEntry(entry: { type: string; messageRole?: string; customType?: string }): boolean {
+  return (
+    (entry.type === "message" && (entry.messageRole === "user" || entry.messageRole === "assistant")) ||
+    (entry.type === "custom" && entry.customType === ACTIVITY_BOUNDARY)
+  );
+}
+
 type Host = {
   renderer: { mode: string };
   chatContainer: Container;
@@ -69,6 +77,8 @@ type Group = { key: string; tools: ToolExecutionComponent[]; expanded: boolean }
 const controllers = new Set<ActivityController>();
 
 export class ActivityController {
+  private membership = new Map<string, string>();
+  private membershipRevision?: WeakRef<object>;
   groups: Group[] = [];
   private groupsByTool = new Map<ToolExecutionComponent, Group>();
   private width = 80;
@@ -105,7 +115,17 @@ export class ActivityController {
     this.liveIds.clear();
   }
   sync(): void {
-    const membership = activityMembership(this.host.sessionManager.getBranch());
+    const manager = this.host.sessionManager;
+    // Cache only IDs derived from immutable disk history. Children, live IDs,
+    // expansion and result/task overlays still rebuild below on every frame.
+    const revision = getDiskBackedBranchRevision(manager, membershipEntry);
+    if (!revision || this.membershipRevision?.deref() !== revision) {
+      this.membership = activityMembership(
+        selectDiskBackedEntries(manager, "branch", membershipEntry) ?? manager.getBranch(),
+      );
+      this.membershipRevision = revision ? new WeakRef(revision) : undefined;
+    }
+    const membership = this.membership;
     const previous = this.groupsByTool;
     const groups = new Map<string, Group>();
     const groupsByTool = new Map<ToolExecutionComponent, Group>();
@@ -275,6 +295,8 @@ export class ActivityController {
     for (const tool of this.adapted.keys()) this.restore(tool);
     this.groups = [];
     this.groupsByTool.clear();
+    this.membership.clear();
+    this.membershipRevision = undefined;
   }
 }
 

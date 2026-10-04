@@ -1,3 +1,4 @@
+import { getDiskBackedShakeLeafId } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
 import type { ToolResultMessage } from "@earendil-works/pi-ai";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
@@ -558,7 +559,12 @@ export function installShakeAccountingAdapter(): void {
       toolResults?: ToolResultMessage[],
     ) => Promise<boolean>;
     getContextUsage?: () => { tokens: number | null; contextWindow: number; percent: number | null } | undefined;
-    sessionManager?: { buildContextEntries(): SessionEntry[]; getBranch(): SessionEntry[]; getSessionId(): string };
+    sessionManager?: {
+      buildContextEntries(): SessionEntry[];
+      getBranch(): SessionEntry[];
+      getSessionId(): string;
+      getLeafId?(): string | null;
+    };
   };
   const originalCheck = prototype._checkCompaction;
   const originalUsage = prototype.getContextUsage;
@@ -566,9 +572,37 @@ export function installShakeAccountingAdapter(): void {
     throw new Error(
       "bruv manual shake is unsupported by this Pi runtime: required AgentSession accounting seams are unavailable",
     );
+  // This predicate also runs from every footer context-usage read. Keep only its
+  // boolean result, not the fully materialized history or a periodically expiring cache.
+  const freshnessCache = new WeakMap<
+    object,
+    {
+      sessionId: string;
+      leafId: string | null | undefined;
+      entries: WeakRef<object>;
+      entryCount: number | undefined;
+      value: boolean;
+    }
+  >();
   const lacksFreshUsage = (owner: typeof prototype): boolean => {
     const manager = owner.sessionManager;
     if (!manager) return false;
+    const entries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
+    const cacheable = Array.isArray(entries) && typeof manager.getLeafId === "function";
+    const sessionId = manager.getSessionId();
+    const contextLeaf = getDiskBackedShakeLeafId(manager);
+    const leafId = contextLeaf === undefined ? manager.getLeafId?.() : contextLeaf;
+    const entryCount = cacheable && contextLeaf === undefined ? entries.length : undefined;
+    const cached = cacheable ? freshnessCache.get(manager) : undefined;
+    if (
+      cacheable &&
+      cached &&
+      cached.sessionId === sessionId &&
+      cached.leafId === leafId &&
+      cached.entries.deref() === entries &&
+      cached.entryCount === entryCount
+    )
+      return cached.value;
     const branch = manager.buildContextEntries();
     let marker = -1;
     for (let index = branch.length - 1; index >= 0; index--) {
@@ -578,17 +612,27 @@ export function installShakeAccountingAdapter(): void {
       marker = index;
       break;
     }
-    if (marker < 0) return false;
-    return !branch
-      .slice(marker + 1)
-      .some(
-        (entry) =>
-          entry.type === "message" &&
-          entry.message.role === "assistant" &&
-          entry.message.stopReason !== "error" &&
-          entry.message.stopReason !== "aborted" &&
-          entry.message.usage.input + entry.message.usage.cacheRead + entry.message.usage.cacheWrite > 0,
-      );
+    const value =
+      marker >= 0 &&
+      !branch
+        .slice(marker + 1)
+        .some(
+          (entry) =>
+            entry.type === "message" &&
+            entry.message.role === "assistant" &&
+            entry.message.stopReason !== "error" &&
+            entry.message.stopReason !== "aborted" &&
+            entry.message.usage.input + entry.message.usage.cacheRead + entry.message.usage.cacheWrite > 0,
+        );
+    if (cacheable)
+      freshnessCache.set(manager, {
+        sessionId,
+        leafId,
+        entries: new WeakRef(entries),
+        entryCount,
+        value,
+      });
+    return value;
   };
   accountingAdapterInstalled = true;
   prototype._checkCompaction = async function (message, skipAbortedCheck, toolResults) {
