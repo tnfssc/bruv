@@ -41,3 +41,10 @@ system Python/librsvg/ImageMagick/Pandoc and Git checks still ran successfully.
 
 Values unchanged: existing small-scope and rendered-proof guidance covers this
 work; no new repeated lesson.
+
+## Parent integration
+
+Parent reviewed the SVG and rendered light/dark size sheet, then cherry-picked
+the asset, README, and this note into t3code/add-logo. git diff --check passed
+and the tree was clean. Browser preview was attempted but this thread has no
+browser preview capability. The short-lived asset server was stopped.
