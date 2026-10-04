@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
 import { mkdtemp, mkdir, rm, writeFile, stat } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { tmpdir, availableParallelism, loadavg } from "node:os";
 import { join, resolve } from "node:path";
 import { createServer } from "node:http";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
@@ -29,6 +29,7 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
   const hasher = new Bun.CryptoHasher("sha256");
   for await (const chunk of Bun.file(binary).stream()) hasher.update(chunk);
   const binarySha256 = hasher.digest("hex");
+  const hostLoadAtStart = loadavg();
   let requestCount = 0;
   let heldRequestCount = 0;
   const responses = new Set<import("node:http").ServerResponse>();
@@ -209,6 +210,7 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
       // Submit a request and sample actual tmux terminal frames during the held provider response.
       // Measure echo while generation is held, not just on an idle editor.
       const priorRequests = requestCount;
+      const submittedAt = performance.now();
       await tmux("send-keys", "-t", "measure", "-l", "latency probe");
       await tmux("send-keys", "-t", "measure", "Enter");
       // Request preparation is not the input-echo budget. Large fixtures need time to serialize.
@@ -216,6 +218,7 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
       while (heldRequestCount === priorRequests && Date.now() < requestDeadline) await Bun.sleep(20);
       expect(requestCount).toBe(priorRequests + 1);
       expect(heldRequestCount).toBe(priorRequests + 1);
+      const requestSetupMs = performance.now() - submittedAt;
       const echoDuring: number[] = [];
       for (let k = 0; k < samples; k++) {
         const token = `HELD_${size}_${k}`;
@@ -267,6 +270,7 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
         seedEntries,
         seedBytes,
         elapsedStartupMs: startupMs,
+        requestSetupMs,
         echoMs: echo,
         echoP50Ms: quantile(echo, 0.5),
         echoP95Ms: quantile(echo, 0.95),
@@ -304,6 +308,12 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
       binary,
       binaryVersion: binaryVersion.stdout.trim(),
       binarySha256,
+      host: {
+        platform: process.platform,
+        cpuCount: availableParallelism(),
+        loadAtStart: hostLoadAtStart,
+        loadAtEnd: loadavg(),
+      },
       artifacts,
       samples,
       controlledProviderRequests: requestCount,
@@ -335,7 +345,10 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
   } catch (error) {
     const failureFrame = await capturePane(tmux, "measure");
     await writeFile(join(artifacts, "failure-frame.txt"), failureFrame.stdout);
-    await writeFile(join(artifacts, "failure.json"), JSON.stringify({error:String(error), requestCount, heldRequestCount, results:runs}, null, 2));
+    await writeFile(
+      join(artifacts, "failure.json"),
+      JSON.stringify({ error: String(error), requestCount, heldRequestCount, results: runs }, null, 2),
+    );
     console.error("Latency failure artifacts:", artifacts);
     throw error;
   } finally {
