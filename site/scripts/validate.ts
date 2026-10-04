@@ -6,7 +6,7 @@ import { siteContent } from "../content";
 import { build } from "./build";
 import { preview } from "./preview";
 import { launchBrowser } from "./browser";
-const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/single-page");
+const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/product-story");
 await mkdir(evidence, { recursive: true });
 await build("");
 const server = preview(0),
@@ -69,22 +69,24 @@ try {
       f.ansiRows.map((row) => row.replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "").trimEnd()),
     );
     let verified = 0;
-    f.capture.rows.forEach((row, y) => {
-      const ty = f.capture.y + y;
-      if (ty < f.clip.top || ty >= f.clip.bottom) return;
-      let x = f.capture.x;
-      row.forEach((run) => {
-        const fg = run.style.match(/38;2;(\d+);(\d+);(\d+)/)!,
-          bg = run.style.match(/48;2;(\d+);(\d+);(\d+)/)!;
-        for (const glyph of run.text) {
-          const c = snap.cells[ty][x++];
-          assert.equal(c.glyph || " ", glyph);
-          assert.equal(c.fg, (+fg[1] << 16) | (+fg[2] << 8) | +fg[3]);
-          assert.equal(c.bg, (+bg[1] << 16) | (+bg[2] << 8) | +bg[3]);
-          verified++;
-        }
-      });
-    });
+    f.captures.forEach((capture) =>
+      capture.rows.forEach((row, y) => {
+        const ty = capture.y + y;
+        if (ty < f.clip.top || ty >= f.clip.bottom) return;
+        let x = capture.x;
+        row.forEach((run) => {
+          const fg = run.style.match(/38;2;(\d+);(\d+);(\d+)/)!,
+            bg = run.style.match(/48;2;(\d+);(\d+);(\d+)/)!;
+          for (const glyph of run.text) {
+            const c = snap.cells[ty][x++];
+            assert.equal(c.glyph || " ", glyph);
+            assert.equal(c.fg, (+fg[1] << 16) | (+fg[2] << 8) | +fg[3]);
+            assert.equal(c.bg, (+bg[1] << 16) | (+bg[2] << 8) | +bg[3]);
+            verified++;
+          }
+        });
+      }),
+    );
     return { f, verified };
   }
   let initial = await checkCells();
@@ -129,6 +131,12 @@ try {
     await page.waitForTimeout(50);
     await checkCells();
   }
+  await page.keyboard.press("End");
+  await page.waitForTimeout(70);
+  await checkCells();
+  await page.screenshot({ path: resolve(evidence, "desktop-end.png") });
+  await page.keyboard.press("Home");
+  await page.waitForTimeout(70);
   // Browser links are normal location navigation, exercised without leaving for the network.
   await context.route(siteContent.repository + "**", (route) => route.fulfill({ body: "Repository destination" }));
   const h = initial.f.hits.find((h) => h.action === siteContent.install)!;
@@ -201,7 +209,7 @@ try {
   const nojs = await browser.newPage({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   await nojs.goto(server.url.href);
   assert(await nojs.locator("h1").isVisible());
-  assert((await nojs.locator("pre").innerText()).includes("Auto-compact"));
+  assert((await nojs.locator("pre").first().innerText()).includes("CSV importer"));
   assert.equal(await nojs.locator("img").count(), 0);
   results.noJS = true;
   await nojs.close();

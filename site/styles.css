@@ -102,3 +102,7 @@ pre {
   padding: 1rem;
   border: 1px solid #505050;
 }
+
+figure {
+  margin: 1.5rem 0;
+}

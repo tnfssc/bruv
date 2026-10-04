@@ -1,3 +1,7 @@
+# Current review
+
+The page below was superseded. See [product-story correction](../product-story.md#writing-review) for the current applied skill review, concrete examples and factual boundaries.
+
 # Copy review
 
 Reviewed the full skill, doctrine and rewrite patterns against the README-backed copy in site/content.ts.

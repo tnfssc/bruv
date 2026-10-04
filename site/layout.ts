@@ -1,6 +1,6 @@
 import { siteContent, landing } from "./content";
 import { headline } from "./type";
-import { settingsCapture } from "./capture";
+import { workflowCells } from "./workflow";
 export type Hit = { x: number; y: number; width: number; height: number; label: string; action: string };
 export type State = { scroll: number; focus: number };
 // Official Vesper colors. Capture colors are preserved separately, not recolored.
@@ -77,6 +77,8 @@ export function layout(cols: number, rows: number, state: State) {
   y += 2;
   for (const line of headline(landing.title, width, width < 80))
     pieces.push({ x: margin, y: y++, text: line, style: palette.title });
+  y++;
+  text(landing.titleTail, palette.accent);
   y += 2;
   text(landing.intro, palette.base, margin, Math.min(width, 66));
   y += 2;
@@ -85,42 +87,46 @@ export function layout(cols: number, rows: number, state: State) {
     y += 2;
     link("Source ↗", siteContent.repository);
   } else link("Source ↗", siteContent.repository, margin + 20);
-  y += width < 60 ? 4 : 5;
-  text(landing.captureTitle, palette.accent);
-  y++;
-  const capture = settingsCapture(width - 2);
-  const captureStart = y + 1;
-  const captureX = margin + 1;
-  pieces.push({ x: margin, y: y++, text: "╭" + "─".repeat(capture.cols) + "╮", style: palette.border });
-  for (const row of capture.rows) {
-    pieces.push({ x: margin, y, text: "│", style: palette.border });
-    let x = captureX;
-    for (const run of row) {
-      pieces.push({ x, y, text: run.text, style: run.style });
-      x += [...run.text].length;
-    }
-    pieces.push({ x: captureX + capture.cols, y: y++, text: "│", style: palette.border });
-  }
-  pieces.push({ x: margin, y: y++, text: "╰" + "─".repeat(capture.cols) + "╯", style: palette.border });
-  y++;
-  text(capture.caption, palette.muted);
   y += 4;
-  const beside = width >= 100;
-  const belowCapture = y;
-  if (beside) y = captureStart;
-  landing.features.forEach((feature) => {
-    const x = beside ? margin + capture.cols + 8 : margin;
-    const w = beside ? width - capture.cols - 8 : width;
-    text(feature.title, palette.accent, x, w);
+  const captures: (ReturnType<typeof workflowCells> & { x: number; y: number })[] = [];
+  landing.features.forEach((feature, i) => {
+    const beside = width >= 96;
+    const sectionTop = y;
+    const captionWidth = beside ? width - 64 : width;
+    text("0" + (i + 1), palette.muted);
     y++;
-    text(feature.text, palette.base, x, w);
-    y += 3;
+    text(feature.title, palette.accent, margin, captionWidth);
+    y++;
+    text(feature.text, palette.base, margin, captionWidth);
+    const copyEnd = y;
+    y = beside ? sectionTop : y + 2;
+    const capture = workflowCells(i, beside ? 56 : width - 2);
+    const frameX = beside ? margin + width - capture.cols - 2 : margin;
+    text(capture.caption, palette.muted, frameX, capture.cols);
+    y++;
+    pieces.push({ x: frameX, y: y++, text: "╭" + "─".repeat(capture.cols) + "╮", style: palette.border });
+    captures.push({ x: frameX + 1, y, ...capture });
+    for (const row of capture.rows) {
+      pieces.push({ x: frameX, y, text: "│", style: palette.border });
+      let x = frameX + 1;
+      for (const run of row) {
+        pieces.push({ x, y, text: run.text, style: run.style });
+        x += [...run.text].length;
+      }
+      pieces.push({ x: frameX + 1 + capture.cols, y: y++, text: "│", style: palette.border });
+    }
+    pieces.push({ x: frameX, y: y++, text: "╰" + "─".repeat(capture.cols) + "╯", style: palette.border });
+    y = Math.max(copyEnd, y) + 4;
   });
-  const end = Math.max(belowCapture, y);
-  y = end + 1;
   text("─".repeat(width), palette.border);
   y += 2;
-  text(landing.installNote, palette.muted, margin, Math.min(width, 66));
+  text(landing.installTitle, palette.accent);
+  y++;
+  text(landing.installNote, palette.base, margin, Math.min(width, 66));
+  y++;
+  text(landing.start, palette.accent);
+  y++;
+  text(landing.requirements, palette.muted, margin, Math.min(width, 66));
   y += 2;
   link("Install Bruv", siteContent.install, margin, true);
   y += 5;
@@ -162,7 +168,8 @@ export function layout(cols: number, rows: number, state: State) {
     maxScroll,
     visible,
     clip: { top, bottom: bottom + 1 },
-    capture: { x: captureX, y: top + captureStart - scroll, ...capture },
+    capture: { ...captures[0], y: top + captures[0].y - scroll },
+    captures: captures.map((c) => ({ ...c, y: top + c.y - scroll })),
     lines: pieces.map((p) => p.text),
   };
 }

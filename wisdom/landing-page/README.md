@@ -4,9 +4,11 @@
 
 The visible main site is an actual Ghostty Web/WASM terminal, not terminal-themed HTML. The latest request is **one scrolling page**, with captures' **actual text and colors composed as terminal cells**. No multi-route app, section menu, gallery or raster screenshot plane.
 
-Current work: [single-page cell captures](single-page-cells.md). Integration worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_323db3cf; branch feat/single-page-terminal-site. Preview: http://127.0.0.1:33779/. Follow that note for exact capture mechanism, checks and remaining limits. Parent must inspect the rendered desktop/mobile result; no merge/deployment is authorized here.
+Current work: [product-story correction](product-story.md). Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_ca1b8f57; branch fix/landing-product-story. New preview: http://127.0.0.1:39289/. Parent must inspect content and renders; no merge/deployment is authorized.
 
-The hero keeps the Vesper palette and cell headline, with short factual copy, install/source links and a real local settings capture. Narrow screens use readable cells and a narrow source view, not a shrunken PNG. Controls, capture, text, hit testing and scroll use one grid. Semantic/no-JS HTML stays equivalent and accessible without adding visible app complexity.
+The page now explains Bruv through worktree delegation, foreground conversation during background jobs, and a concrete next-session handoff. “Keep coding / while your agents work” leads to Install and Source. Three clearly labeled illustrative workflows replace the settings capture. They are actual terminal text/colors, not fabricated completed app runs or raster images. Install links use README's source-build guide. Semantic/no-JS HTML shares the same content.
+
+[Single-page cell captures](single-page-cells.md) documents the retained renderer/capture machinery, not the current product copy. Its old preview is superseded; do not restart it.
 
 ## Keep these fixes
 
@@ -24,6 +26,6 @@ From site: bun install --frozen-lockfile, bun run build, bun run test. PORT=0 bu
 - [image-theme-research.md](image-theme-research.md): upstream Ghostty image limitations and official Vesper source. We now render capture cells, not image protocols.
 - [terminal-research.md](terminal-research.md): original actual-terminal requirement and renderer selection.
 - writing-sources/: saved user-requested anti-slop skill and source material. Keep prose specific and short.
-- validation/single-page/: active focused screenshots/checks. Other validation folders are historical, not current acceptance screenshots.
+- validation/product-story/: current focused screenshots/checks. Other validation folders are historical.
 
 Canvas reading/selecting/find relies on the semantic HTML representation. Physical phones and Safari/Firefox remain untested; automated checks are not a manual screen-reader audit. Values already cover this task; no forced values edit.

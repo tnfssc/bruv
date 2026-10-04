@@ -3,6 +3,7 @@ import { siteMetadata, textContent } from "./build";
 import { layout, hitAt, wrap } from "../layout";
 import { siteContent, landing } from "../content";
 import { settingsCapture, type Run } from "../capture";
+import { workflowCells } from "../workflow";
 import data from "../assets/settings-cells.json";
 import { createHash } from "node:crypto";
 describe("single terminal landing", () => {
@@ -54,7 +55,23 @@ describe("single terminal landing", () => {
       expect(c.rows.flat().every((r) => r.style.includes("38;2;"))).toBe(true);
       for (const row of c.rows) expect(row.reduce((n, r) => n + [...r.text].length, 0)).toBe(c.cols);
       const f = layout(width + 6, 100, { scroll: 0, focus: -1 });
-      expect(f.ansi).toContain("Auto-compact");
+      expect(f.ansi).toContain("YOU ASK");
+      expect(f.captures).toHaveLength(3);
+    }
+  });
+  test("illustrations reflow prompts without losing text or colors", () => {
+    for (const width of [27, 29, 37, 56]) {
+      for (let i = 0; i < landing.features.length; i++) {
+        const c = workflowCells(i, width);
+        for (const row of c.rows) expect(row.reduce((n, r) => n + [...r.text].length, 0)).toBe(c.cols);
+        const visible = c.rows
+          .flat()
+          .map((r) => r.text)
+          .join(" ")
+          .replace(/\s+/g, " ");
+        for (const line of landing.features[i].example) expect(visible).toContain(line.text.replace(/\s+/g, " "));
+        expect(c.rows.flat().every((r) => r.style.includes("48;2;24;24;24"))).toBe(true);
+      }
     }
   });
   test("narrow reflow retains every source glyph and its style", async () => {
@@ -68,8 +85,13 @@ describe("single terminal landing", () => {
   test("semantic HTML is the same concise page, without gallery or route app", () => {
     const html = textContent();
     expect(html).toContain(landing.title);
+    expect(html).toContain(landing.titleTail);
     expect(html).toContain(landing.intro);
-    expect(html).toContain("Auto-compact");
+    expect(html).toContain("Example workflow");
+    expect(html).not.toContain("Auto-compact");
+    expect(html).toContain(siteContent.install);
+    expect(html).toContain(landing.installNote);
+    expect(html).toContain(landing.requirements);
     expect(html).not.toContain("<img");
     expect(html).not.toContain("#gallery");
     for (const feature of landing.features) expect(html).toContain(feature.text);

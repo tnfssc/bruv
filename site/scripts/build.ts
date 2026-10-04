@@ -1,7 +1,7 @@
 import { cp, mkdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import { siteContent, landing } from "../content";
-import { settingsCapture } from "../capture";
+import { workflowCells } from "../workflow";
 const escape = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 export function siteMetadata(raw?: string, page = "") {
@@ -24,43 +24,55 @@ export function siteMetadata(raw?: string, page = "") {
   };
 }
 export function textContent() {
-  const capture = settingsCapture(110);
-  const pre = capture.rows
-    .map((row) =>
-      row
-        .map((run) => escape(run.text))
-        .join("")
-        .trimEnd(),
-    )
-    .join("\n");
+  const cta = '<a href="' + siteContent.install + '">Install Bruv</a>';
   return (
     "<main><p>" +
     escape(landing.eyebrow) +
     "</p><h1>" +
-    escape(landing.title) +
+    escape(landing.title + " " + landing.titleTail) +
     "</h1><p>" +
     escape(landing.intro) +
-    '</p><p><a href="' +
-    siteContent.install +
-    '">Install Bruv</a> · <a href="' +
+    "</p><p>" +
+    cta +
+    ' · <a href="' +
     siteContent.repository +
     '">Source</a></p>' +
-    "<section><h2>" +
-    escape(landing.captureTitle) +
-    '</h2><pre aria-label="Bruv local settings capture">' +
-    pre +
-    "</pre><p>" +
-    escape(capture.caption) +
-    "</p></section>" +
     landing.features
-      .map((f) => "<section><h2>" + escape(f.title) + "</h2><p>" + escape(f.text) + "</p></section>")
+      .map((f, i) => {
+        const capture = workflowCells(i, 56);
+        const pre = capture.rows
+          .map((row) =>
+            row
+              .map((run) => escape(run.text))
+              .join("")
+              .trimEnd(),
+          )
+          .join("\n");
+        return (
+          "<section><h2>" +
+          escape(f.title) +
+          "</h2><p>" +
+          escape(f.text) +
+          "</p><figure><figcaption>" +
+          capture.caption +
+          "</figcaption><pre>" +
+          pre +
+          "</pre></figure></section>"
+        );
+      })
       .join("") +
-    "<section><p>" +
+    "<section><h2>" +
+    escape(landing.installTitle) +
+    "</h2><p>" +
     escape(landing.installNote) +
-    '</p><a href="' +
-    siteContent.install +
-    '">Install Bruv</a></section></main>' +
-    '<footer>Static website. <a href="./">Terminal view</a> · <a href="./licenses/ghostty-web.txt">Renderer license</a> · <a href="./licenses/vesper.txt">Vesper theme</a></footer>'
+    "</p><pre>" +
+    escape(landing.start) +
+    "</pre><p>" +
+    escape(landing.requirements) +
+    "</p>" +
+    cta +
+    "</section></main>" +
+    '<footer><a href="./">Terminal view</a> · <a href="./licenses/ghostty-web.txt">Renderer license</a> · <a href="./licenses/vesper.txt">Vesper theme</a></footer>'
   );
 }
 export async function build(raw = process.env.BASE_URL) {
