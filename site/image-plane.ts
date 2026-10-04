@@ -7,6 +7,7 @@ import type { layout } from "./layout";
 export class CellImagePlane {
   readonly canvas = document.createElement("canvas");
   private images = new Map<string, HTMLImageElement>();
+  private lastPaint = "";
   constructor(
     private host: HTMLElement,
     private terminalCanvas: HTMLCanvasElement,
@@ -30,14 +31,30 @@ export class CellImagePlane {
     const rect = this.terminalCanvas.getBoundingClientRect(),
       hostRect = this.host.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
+    const paintKey = JSON.stringify([
+      frame.images,
+      frame.clip,
+      cw,
+      ch,
+      rect.width,
+      rect.height,
+      dpr,
+      rect.left - hostRect.left,
+      rect.top - hostRect.top,
+    ]);
+    if (paintKey === this.lastPaint) return;
+    this.lastPaint = paintKey;
     this.canvas.style.left = rect.left - hostRect.left + "px";
     this.canvas.style.top = rect.top - hostRect.top + "px";
     this.canvas.style.width = rect.width + "px";
     this.canvas.style.height = rect.height + "px";
-    this.canvas.width = Math.round(rect.width * dpr);
-    this.canvas.height = Math.round(rect.height * dpr);
+    const width = Math.round(rect.width * dpr),
+      height = Math.round(rect.height * dpr);
+    if (this.canvas.width !== width) this.canvas.width = width;
+    if (this.canvas.height !== height) this.canvas.height = height;
     const ctx = this.canvas.getContext("2d")!;
-    ctx.scale(dpr, dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, rect.width, rect.height);
     ctx.save();
     ctx.beginPath();
     ctx.rect(0, frame.clip.top * ch, rect.width, (frame.clip.bottom - frame.clip.top) * ch);

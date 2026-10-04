@@ -10,6 +10,8 @@ This is a static landing website, not a running Bruv session or shell. Self-cont
 
 ## Active work and handoff
 
+Latest: [OpenTUI research and scroll responsiveness fix](scroll-responsiveness.md). Worktree /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_6d7369a4, branch fix/terminal-site-scroll, preview http://127.0.0.1:45001/. Focused before/after proof: validation/scroll/. The Vesper hero work below remains the design baseline.
+
 - Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_ea236d26
 - Branch: feat/terminal-vesper-hero
 - Preview: http://127.0.0.1:4187/

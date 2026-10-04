@@ -2,6 +2,7 @@ import { Ghostty, Terminal } from "ghostty-web";
 import { layout, hitAt, type State } from "./layout";
 import { siteContent } from "./content";
 import { CellImagePlane } from "./image-plane";
+import { CellScroll, wheelPixels } from "./scroll";
 const host = document.querySelector<HTMLElement>("#terminal")!;
 const fallback = document.querySelector<HTMLElement>("#text-content")!;
 const state: State = { route: location.hash.slice(1) || "overview", scroll: 0, focus: -1 };
@@ -20,7 +21,7 @@ async function start() {
   host.hidden = false;
   terminal.open(host);
   terminal.write("\x1b[?1049h"); // A TUI viewport, not terminal scrollback.
-  terminal.attachCustomWheelEventHandler(() => false);
+  terminal.attachCustomWheelEventHandler(() => true);
   terminal.attachCustomKeyEventHandler(() => false);
   const canvas = terminal.renderer!.getCanvas();
   canvas.classList.add("ghostty-cells");
@@ -37,10 +38,40 @@ async function start() {
   // No PTY, socket, command evaluator or onData transport. Only our static layout is written.
   terminal.textarea?.remove();
   let frame: ReturnType<typeof layout>;
+  const scrollInput = new CellScroll();
+  let pendingFrame = 0;
+  let needsResize = false;
+  let previousRows: string[] = [];
   function render() {
+    if (!pendingFrame) pendingFrame = requestAnimationFrame(paint);
+  }
+  function paint() {
+    pendingFrame = 0;
+    if (needsResize) {
+      needsResize = false;
+      terminal.options.fontSize = innerWidth < 600 ? 14 : 16;
+      const r = terminal.renderer!;
+      terminal.resize(
+        Math.max(24, Math.floor(host.clientWidth / r.charWidth)),
+        Math.max(12, Math.floor(host.clientHeight / r.charHeight)),
+      );
+      previousRows = [];
+      scrollInput.reset();
+      state.focus = -1;
+    }
     frame = layout(terminal.cols, terminal.rows, state, terminal.renderer!.charWidth / terminal.renderer!.charHeight);
     state.scroll = frame.scroll;
-    terminal.write(frame.ansi);
+    const changedRows = frame.ansiRows.filter((row, i) => row !== previousRows[i]);
+    if (changedRows.length) {
+      terminal.write("\x1b[?25l\x1b[?7l" + changedRows.join("") + "\x1b[0m");
+      // Ghostty 0.4 writes WASM synchronously, but its normal canvas paint is a
+      // separate RAF. Paint its public renderer here so cells and images reach
+      // the same browser frame. Its own loop then sees clean rows.
+      // A full canvas pass avoids Ghostty dirty-row box-glyph join gaps. ANSI
+      // parsing stays row-diffed; there is still only one paint per changed frame.
+      terminal.renderer!.render(terminal.wasmTerm!, true);
+    }
+    previousRows = frame.ansiRows;
     imagePlane.render(frame, terminal.renderer!.charWidth, terminal.renderer!.charHeight);
     host.dataset.route = frame.route;
     document.querySelector<HTMLAnchorElement>(".plain-switch")!.href = "./text.html#" + frame.route;
@@ -52,21 +83,18 @@ async function start() {
     host.dataset.cellHeight = String(terminal.renderer!.charHeight);
   }
   function resize() {
-    terminal.options.fontSize = innerWidth < 600 ? 14 : 16;
-    const r = terminal.renderer!;
-    const cols = Math.max(24, Math.floor(host.clientWidth / r.charWidth));
-    const rows = Math.max(12, Math.floor(host.clientHeight / r.charHeight));
-    terminal.resize(cols, rows);
-    state.focus = -1;
+    needsResize = true;
     render();
   }
   function navigate(route: string) {
+    scrollInput.reset();
     if (location.hash === "#" + route) {
       state.scroll = 0;
       render();
     } else location.hash = route;
   }
   function activate(action: string) {
+    scrollInput.reset();
     if (action.startsWith("#")) navigate(action.slice(1));
     else if (action === "back") {
       if (history.length > 1) history.back();
@@ -89,10 +117,20 @@ async function start() {
     };
   }
   let touchY: number | null = null,
+    touchDistance = 0,
     moved = false;
+  function scrollPixels(pixels: number) {
+    const next = scrollInput.move(state.scroll, pixels, terminal.renderer!.charHeight, frame.maxScroll);
+    if (next !== state.scroll) {
+      state.scroll = next;
+      render();
+    }
+  }
   canvas.addEventListener("pointerdown", (e) => {
     if (e.pointerType === "touch") {
       touchY = e.clientY;
+      touchDistance = 0;
+      scrollInput.reset();
       moved = false;
       canvas.setPointerCapture(e.pointerId);
     }
@@ -100,12 +138,10 @@ async function start() {
   canvas.addEventListener("pointermove", (e) => {
     if (e.pointerType === "touch" && touchY !== null) {
       const delta = touchY - e.clientY;
-      if (Math.abs(delta) > terminal.renderer!.charHeight) {
-        state.scroll += Math.trunc(delta / terminal.renderer!.charHeight);
-        touchY = e.clientY;
-        moved = true;
-        render();
-      }
+      touchY = e.clientY;
+      touchDistance += Math.abs(delta);
+      if (touchDistance > 4) moved = true;
+      scrollPixels(delta);
       return;
     }
     const { x, y } = cell(e);
@@ -155,13 +191,20 @@ async function start() {
     },
     true,
   );
-  host.addEventListener(
+  // Ghostty also listens in capture on the host. Own input one level earlier
+  // so it cannot generate terminal scroll events or cancel browser pinch zoom.
+  document.addEventListener(
     "wheel",
     (e) => {
+      if (!host.contains(e.target as Node)) return;
+      if (e.ctrlKey) {
+        // Skip Ghostty's own cancelling wheel listener, but keep browser zoom.
+        e.stopImmediatePropagation();
+        return;
+      }
       e.preventDefault();
       e.stopImmediatePropagation();
-      state.scroll += Math.sign(e.deltaY) * 3;
-      render();
+      scrollPixels(wheelPixels(e.deltaY, e.deltaMode, terminal.renderer!.charHeight, frame.visible));
     },
     { passive: false, capture: true },
   );
@@ -170,6 +213,7 @@ async function start() {
     (e) => {
       if (e.target !== host && e.target !== document.body && !host.contains(e.target as Node)) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      scrollInput.reset();
       let handled = true;
       if (e.key === "Tab") {
         const next = state.focus + (e.shiftKey ? -1 : 1);
@@ -215,6 +259,7 @@ async function start() {
     true,
   );
   addEventListener("hashchange", () => {
+    scrollInput.reset();
     state.route = location.hash.slice(1);
     state.scroll = 0;
     state.focus = -1;
@@ -225,6 +270,8 @@ async function start() {
   fallback.hidden = true;
   document.documentElement.classList.add("terminal-mode");
   resize();
+  cancelAnimationFrame(pendingFrame);
+  paint();
   host.focus({ preventScroll: true });
   host.dataset.ready = "true";
 }

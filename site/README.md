@@ -46,3 +46,5 @@ See assets/cli-captures.md. Settings and --help captures come from the source-bu
 Vesper colors come from Rauno Freiberg’s official theme (MIT); source, role mapping and notice are recorded in licenses/ and ../wisdom/landing-page/image-theme-research.md. Real capture pixels keep their original CLI colors.
 
 Full implementation/probe details, writing-skill pass and current visual evidence: ../wisdom/landing-page/vesper-hero.md and validation/vesper/. Run `bun scripts/probe-images.ts` for the bounded upstream-protocol browser probe.
+
+Scroll/render regression: `bun run test:scroll` builds the static site and runs real Chromium wheel/touch, dirty-row/image parity, resize and input checks on a temporary loopback server. Evidence and the OpenTUI native/browser decision are in ../wisdom/landing-page/scroll-responsiveness.md.

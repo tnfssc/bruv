@@ -269,9 +269,10 @@ export function layout(cols: number, rows: number, state: State, cellRatio = 0.5
   if (cols - margin - fx > 25) put(fx + 2, rows - 2, "wheel / swipe to explore", palette.muted);
   if (cols - margin - fx > 40)
     put(cols - margin - 12, rows - 2, Math.round((scroll / Math.max(1, maxScroll)) * 100) + "%", palette.muted);
-  let ansi = "\x1b[?25l\x1b[?7l\x1b[H";
+  const ansiRows: string[] = [];
+  let ansi = "";
   for (let row = 0; row < rows; row++) {
-    ansi += "\x1b[" + (row + 1) + ";1H";
+    ansi = "\x1b[" + (row + 1) + ";1H";
     let prev = "";
     for (const cell of grid[row]) {
       if (cell.style !== prev) {
@@ -280,10 +281,12 @@ export function layout(cols: number, rows: number, state: State, cellRatio = 0.5
       }
       ansi += cell.c;
     }
+    ansiRows.push(ansi);
   }
-  ansi += "\x1b[0m";
+  ansi = "\x1b[?25l\x1b[?7l\x1b[H" + ansiRows.join("") + "\x1b[0m";
   return {
     ansi,
+    ansiRows,
     hits,
     images,
     clip: { top, bottom: bottom + 1 },
