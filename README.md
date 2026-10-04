@@ -1,3 +1,10 @@
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/brand/bruv-wordmark-light.svg">
+    <img src="site/assets/brand/bruv-wordmark.svg" width="318" height="113" alt="bruv — custom cut-corner wordmark">
+  </picture>
+</p>
+
 # Bruv
 
 An opinionated coding agent. Built on [Pi](https://pi.dev).

@@ -1,6 +1,6 @@
 import { INSTALL_COMMAND, INSTALL_SOURCE_URL } from "./install-command";
 import { siteContent, landing } from "./content";
-import { headline } from "./type";
+import { wordmark } from "./brand";
 import { demoIds, demoFrame, demoDuration, type DemoId } from "./demos";
 import type { Playback } from "./playback";
 export type Hit = { x: number; y: number; width: number; height: number; label: string; action: string };
@@ -97,8 +97,7 @@ export function layout(cols: number, rows: number, state: State) {
   hits.push({ x: htmlX, y: 1, width: htmlLabel.length, height: 1, label: "HTML", action: "text" });
   put(htmlX, 1, htmlLabel, state.focus === 0 ? palette.selected : palette.accent);
   y += 1;
-  for (const line of headline(landing.title, width, width < landing.title.length * 6 - 1))
-    pieces.push({ x: margin, y: y++, text: line, style: palette.title });
+  for (const line of wordmark(width)) pieces.push({ x: margin, y: y++, text: line, style: palette.title });
   y++;
   text(landing.titleTail, palette.accent);
   y += 2;

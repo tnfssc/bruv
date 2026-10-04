@@ -1,5 +1,10 @@
 # Landing page — one real terminal page
 
+## Approved logo
+
+See [logo integration](logo.md) for the approved custom wordmark, shared SVG
+source, terminal-cell generation, favicon, and PR #28 integration.
+
 ## Shared installer and README
 
 See [shared GitHub installer and installation-first README](shared-installer-readme.md) for the current canonical scripts/install.sh source, verified develop default branch, and required GitHub publication before the raw URL works. This supersedes /install.sh preview-source instructions in earlier installer notes.

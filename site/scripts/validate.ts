@@ -227,7 +227,9 @@ try {
   await nojs.goto(server.url.href);
   assert(await nojs.locator("h1").isVisible());
   assert((await nojs.locator("pre").first().innerText()).includes("worktree"));
-  assert.equal(await nojs.locator("img").count(), 0);
+  assert.equal(await nojs.locator("img").count(), 1);
+  assert.equal(await nojs.locator("h1 img").getAttribute("src"), "./assets/brand/bruv-wordmark-light.svg");
+  assert.equal(await nojs.locator("h1").textContent(), "Bruv");
   results.noJS = true;
   await nojs.close();
   const blocked = await browser.newPage();

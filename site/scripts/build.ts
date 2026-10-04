@@ -28,9 +28,9 @@ export function siteMetadata(raw?: string, page = "") {
 export function textContent(animated = true) {
   const cta = '<a href="#install">Install Bruv</a>';
   return (
-    "<main><h1>" +
+    '<main><h1 class="brand-wordmark"><span class="sr-only">' +
     escape(landing.title) +
-    "</h1><p>" +
+    '</span><img src="./assets/brand/bruv-wordmark-light.svg" width="530" height="188" alt="" aria-hidden="true"></h1><p>' +
     escape(landing.titleTail) +
     "</p><p>" +
     escape(landing.intro) +
@@ -134,7 +134,7 @@ export async function build(raw = process.env.BASE_URL) {
   if (!result.success) throw new AggregateError(result.logs, "Browser bundle failed");
   await cp(resolve(root, "styles.css"), resolve(out, "styles.css"));
   await mkdir(resolve(out, "assets"), { recursive: true });
-  await cp(resolve(root, "assets/favicon.svg"), resolve(out, "assets/favicon.svg"));
+  await cp(resolve(root, "assets/brand"), resolve(out, "assets/brand"), { recursive: true });
   await cp(resolve(root, "assets/bruv-prompt.woff2"), resolve(out, "assets/bruv-prompt.woff2"));
   await cp(resolve(root, "node_modules/ghostty-web/ghostty-vt.wasm"), resolve(out, "ghostty-vt.wasm"));
   await cp(resolve(root, "licenses"), resolve(out, "licenses"), { recursive: true });

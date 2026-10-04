@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { siteMetadata, textContent } from "./build";
 import { layout, hitAt, wrap } from "../layout";
+import { wordmark } from "../brand";
 import { siteContent, landing } from "../content";
 import { settingsCapture, type Run } from "../capture";
 import { demoIds, demoFrame, demoDuration, demoTranscript } from "../demos";
@@ -8,6 +9,14 @@ import { advance, inView } from "../playback";
 import data from "../assets/settings-cells.json";
 import { createHash } from "node:crypto";
 describe("single terminal landing", () => {
+  test("SVG-derived wordmark fits desktop and mobile terminal cells", () => {
+    for (const width of [25, 28, 34, 48, 100]) {
+      const rows = wordmark(width);
+      expect(rows.length).toBeGreaterThan(0);
+      expect(rows.join("")).toMatch(/[█▀▄]/);
+      for (const row of rows) expect([...row].length).toBeLessThanOrEqual(width);
+    }
+  });
   test("metadata requires a configured origin", () => {
     expect(siteMetadata()).toEqual({ html: "", sitemap: "", robots: "" });
     const m = siteMetadata("https://example.test/bruv");
@@ -133,7 +142,10 @@ describe("single terminal landing", () => {
     expect(html).toContain(siteContent.install);
     expect(html).toContain(landing.installNote);
     expect(html).toContain(landing.requirements);
-    expect(html).not.toContain("<img");
+    expect(html.match(/<img/g)).toHaveLength(1);
+    expect(html).toContain('class="brand-wordmark"');
+    expect(html).toContain('<span class="sr-only">Bruv</span>');
+    expect(html).toContain('src="./assets/brand/bruv-wordmark-light.svg"');
     expect(html).not.toContain("#gallery");
     for (const feature of landing.features) expect(html).toContain(feature.text);
     expect(wrap("a".repeat(40), 12).every((s) => s.length <= 12)).toBe(true);

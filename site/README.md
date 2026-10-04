@@ -29,7 +29,8 @@ The site has its own package.json and bun.lock. You do not need to build or run 
 | --- | --- |
 | `content.ts` | Copy shared by both views. Bruv is an **opinionated coding agent**; the added features support that pitch. |
 | `demos.ts` | Mock conversations, colored UI cells, stages and timing. Each feature has its own demo. |
-| `layout.ts` / `type.ts` | Terminal layout, hit regions and large BRUV lettering. |
+| `layout.ts` / `brand.ts` | Terminal layout, hit regions and SVG-derived logo cells. |
+| `assets/brand/` | Shared SVG logo, PNG export and generated terminal cells. Also used by the root README. |
 | `terminal.ts` / `scroll.ts` | Mouse, keyboard, touch, scrolling and coordinated rendering. |
 | `playback.ts` | Shared timing, final hold, looping and pause rules. |
 | `html-animation.ts` / `html-cells.ts` | HTML animation and colored text. |
@@ -42,6 +43,19 @@ Edit shared content or demo data first, not generated HTML or `dist/`. Reflow na
 Demos loop after a final hold. Controls appear on hover/focus; tapping a terminal panel toggles playback. Offscreen panels and hidden tabs stop advancing. Reduced motion starts on a still final frame, with explicit playback available. Preserve those rules and the coalesced scroll/render path.
 
 The UI mockups are scripted. Keep them grounded in source and save provenance in [feature notes](../wisdom/landing-page/animated-features.md), rather than adding disclaimers or diagnostics to the landing page.
+
+## Logo
+
+The custom bruv wordmark lives in assets/brand/. Keep its dark and light SVG
+paths identical. The standalone b is the favicon. The HTML view uses the light
+SVG; the terminal view uses half-block cells made from the dark SVG. No image
+overlay is placed above the terminal canvas.
+
+After a shape change, rerun `bun scripts/generate-wordmark.ts` from site/.
+This one-time tool needs rsvg-convert (librsvg) and magick (ImageMagick).
+Format the generated JSON with the repo formatter before committing.
+Normal builds use the checked-in cells and need neither tool. Refresh the PNG
+sharing export too; it is not another source of geometry.
 
 ## Check changes
 

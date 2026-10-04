@@ -76,6 +76,12 @@ h2 {
   line-height: 1.2;
   color: #ffffff;
 }
+.brand-wordmark img {
+  display: block;
+  width: 318px;
+  max-width: 100%;
+  height: auto;
+}
 p {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
