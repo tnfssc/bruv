@@ -731,9 +731,17 @@ test("received namespaced human command has a correlated native echo, not a mode
     parent_tool_use_id: null,
   });
   expect(frames.filter((f) => f.type === "result")).toHaveLength(1);
-  expect(frames.find((f) => f.type === "result")).toMatchObject({ user_message_uuid: "source-human-command" });
+  expect(frames.find((f) => f.type === "result")).toMatchObject({
+    user_message_uuid: "source-human-command",
+    user_message_uuids: ["source-human-command"],
+    origin: { kind: "human" },
+  });
   expect(runtime.session.messages).toHaveLength(before);
   runtime.session.agent.streamFunction = () => output(assistant("ordinary follow-up"));
-  await runtime.onUser(user(runtime, "continue"), signal());
-  expect(frames.filter(f => f.type === "result").at(-1)).not.toHaveProperty("user_message_uuid");
+  await runtime.onUser(user(runtime, "continue", { uuid: "next-human-prompt" }), signal());
+  expect(frames.filter((f) => f.type === "result").at(-1)).toMatchObject({
+    user_message_uuid: "next-human-prompt",
+    user_message_uuids: ["next-human-prompt"],
+    origin: { kind: "human" },
+  });
 });
