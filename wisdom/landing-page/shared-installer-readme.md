@@ -90,3 +90,7 @@ preview 45339 was not stopped or restarted.
 Values reviewed: current values already cover clear product purpose, a simple
 single source, essential safety, truthful proof and complete handoff. No new
 repeat lesson warrants a values.md edit.
+
+## Parent integration
+
+Integrated as 077a3c4f into /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0f2604c1, branch feat/landing-copy-loop-polish. Preview remains http://127.0.0.1:45339/. Canonical raw URL was rechecked after integration: HTTP 404. It must be published on develop before this install command is released to users. No push, merge to the main checkout, or deployment was done.
