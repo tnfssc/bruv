@@ -1,0 +1,48 @@
+bun test v1.4.2 (744846f84)
+
+tests/long-thread-tui.test.ts:
+35 |   interval = 50,
+36 | ): Promise<string> {
+37 |   const texts = Array.isArray(expected) ? expected : [expected];
+38 |   const matches = (frame: string) => texts.every((text) => frame.includes(text));
+39 |   const frame = await pollFrame(capture, matches, attempts, interval);
+40 |   if (!matches(frame)) throw new Error("Missing " + texts.join(", ") + " in frame:\n" + frame);
+                                      ^
+error: Missing DETAIL_saved-99-9 in frame:
+10 tools called ▾
+ Execute · TypeScript
+ console.log("DETAIL_saved-93-0")
+
+ DETAIL_saved-93-0
+ Execute · TypeScript
+ console.log("DETAIL_saved-93-1")
+
+ DETAIL_saved-93-1
+ Execute · TypeScript
+ console.log("DETAIL_saved-93-2")
+
+ DETAIL_saved-93-2
+ Execute · TypeScript
+ console.log("DETAIL_saved-93-3")
+
+ DETAIL_saved-93-3
+ Execute · TypeScript
+ console.log("DETAIL_saved-93-4")
+
+ DETAIL_saved-93-4
+ Execute · TypeScript
+ console.log("DETAIL_saved-93-5")
+
+ DETAIL_saved-93-5
+ Execute · TypeScript
+ console.log("DETAIL_saved-93-6")  ↓ Jump to latest message · End
+
+ long-thread-draft
+bruv-long-thread-RojKcT · /questions unavailable · $0.000 · ctx 22% · cache est ?             gpt-4o
+
+      at frameContaining (/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_edb4c254/tests/tui-helpers.ts:40:34)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_edb4c254/tests/long-thread-tui.test.ts:24:24)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_edb4c254/tests/long-thread-tui.test.ts:105:11)
+(fail) long saved thread keeps history, editor input, and native tool details usable [12899.98ms]
+
+tests/rolling-activity.test.ts:

@@ -1,0 +1,6 @@
+{"taskId":"node:delegated-task:command%3Amcp%3Af241256d-c685-4d2b-8392-688a0469a88e%3Adelegate-task%3Aactual-native-cancel","status":"cancel_requested"}
+{"taskId":"node:delegated-task:command%3Amcp%3Af241256d-c685-4d2b-8392-688a0469a88e%3Adelegate-task%3Aactual-native-cancel","childThreadId":"thread:delegated-task:command%3Amcp%3Af241256d-c685-4d2b-8392-688a0469a88e%3Adelegate-task%3Aactual-native-cancel","childRunId":"run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253Af241256d-c685-4d2b-8392-688a0469a88e%253Adelegate-task%253Aactual-native-cancel:ordinal:1","childNodeId":"node:delegated-task:command%3Amcp%3Af241256d-c685-4d2b-8392-688a0469a88e%3Adelegate-task%3Aactual-native-cancel","status":"running","workState":"working","hasPendingChildRuns":false,"latestTerminalRunId":null,"latestTerminalStatus":null,"latestTerminalSummary":null,"latestTerminalResultContextTransferId":null,"providerInstanceId":"bruv-native-normal","model":"bruv-worker-acceptance/local-normal-v1","summary":null,"resultContextTransferId":null,"waitTimedOut":false}
+Execution completed with exit code 0.
+
+stdout:
+ROOT_JOBS_REAL []

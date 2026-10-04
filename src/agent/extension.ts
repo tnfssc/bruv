@@ -1,3 +1,5 @@
+import type { TaskOwnerBinding, TaskOwnerObserver } from "../tasks/task-owner";
+import { registerRollingActivity } from "../ui/rolling-activity";
 import { installSdkTaskRows } from "../ui/sdk-task-rows";
 import {
   taskRowFromLaunch,
@@ -105,9 +107,12 @@ export default function asynchronousTasksExtension(
     cacheSettingsPath?: string;
     attention?: AttentionOptions;
     executablePath?: string;
+    /** Observe the existing manager; shutdown drains it before closing this binding. */
+    onTaskOwner?: TaskOwnerObserver;
   } = {},
 ): void {
   registerOperationDiagnostics(pi);
+  registerRollingActivity(pi);
   // Must precede all payload capture/observation hooks so snapshots contain the
   // exact tier that the provider transport will serialize.
   registerNativeFastMode(pi);
@@ -220,6 +225,7 @@ export default function asynchronousTasksExtension(
     }
   };
   let manager: TaskManager | undefined;
+  let taskOwnerBinding: TaskOwnerBinding | undefined;
   let detachLocalTermination: (() => void) | undefined;
   let owningContext: ExtensionContext | undefined;
   const transcriptRows = new Map<string, TaskRow>();
@@ -493,6 +499,18 @@ export default function asynchronousTasksExtension(
         },
       );
       const ownedManager = manager;
+      if (options.onTaskOwner && !ctx) throw new Error("Native task owner requires a session context");
+      taskOwnerBinding =
+        ctx &&
+        options.onTaskOwner?.({
+          manager,
+          context: ctx,
+          sourceSessionId: owner?.getSessionFile?.() ?? sessionId!,
+          appendEntry: (type, data) => {
+            if (owner === owningContext?.sessionManager && owner?.getSessionId?.() === sessionId)
+              pi.appendEntry(type, data);
+          },
+        });
       // Only the local CLI subagent receives a parent SIGTERM. Its own async
       // children live in detached groups, outside the parent group signal.
       if (subagentDepth > 0 && environmentDepth > 0 && !t3NativeSession) {
@@ -539,6 +557,7 @@ export default function asynchronousTasksExtension(
 
   const questions = registerQuestionRuntime(pi, {
     supported: () => (subagentDepth === 0 || !!process.env.BRUV_REMOTE_RUNTIME_STATE) && !t3NativeSession,
+    nativeSupported: () => subagentDepth === 0,
   });
   registerQuestions(pi, (ctx) => questions.commands(ctx));
 
@@ -963,6 +982,8 @@ export default function asynchronousTasksExtension(
     disposeRemote();
     attention?.dispose();
     await manager?.shutdown();
+    await taskOwnerBinding?.close();
+    taskOwnerBinding = undefined;
     detachLocalTermination?.();
     detachLocalTermination = undefined;
     detachManagerDiagnostics?.();

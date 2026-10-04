@@ -1,0 +1,1376 @@
+[
+  {
+    "sequence": 0,
+    "location": "root.exit.value.projection.thread",
+    "threadIdHash": "e728e50025b61ea0",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:11.352Z"
+  },
+  {
+    "sequence": 1,
+    "location": "root.exit.value.projection.messages[0]",
+    "threadIdHash": "e728e50025b61ea0",
+    "idHash": "28310b679502fd5b",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.352Z",
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "role": "user"
+  },
+  {
+    "sequence": 2,
+    "location": "root.exit.value.projection.turnItems[0]",
+    "threadIdHash": "e728e50025b61ea0",
+    "idHash": "27f68dfd27cc7e41",
+    "messageIdHash": "28310b679502fd5b",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "ordinal": 1000001,
+    "type": "user_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 3,
+    "location": "root.exit.value.projection.visibleTurnItems[0].item",
+    "threadIdHash": "e728e50025b61ea0",
+    "idHash": "27f68dfd27cc7e41",
+    "messageIdHash": "28310b679502fd5b",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "ordinal": 1000001,
+    "type": "user_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 4,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "status": "preparing"
+  },
+  {
+    "sequence": 5,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:11.425Z",
+    "status": "starting"
+  },
+  {
+    "sequence": 6,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:11.470Z",
+    "status": "running"
+  },
+  {
+    "sequence": 7,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:11.470Z",
+    "status": "running"
+  },
+  {
+    "sequence": 8,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:11.750Z",
+    "status": "running"
+  },
+  {
+    "sequence": 9,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:12.881Z",
+    "status": "running"
+  },
+  {
+    "sequence": 10,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:13.235Z",
+    "status": "running"
+  },
+  {
+    "sequence": 11,
+    "location": "root.values[2].event.payload",
+    "idHash": "ce1cda4687d81ddd",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "cc64f161e990fd27",
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:13.251Z",
+    "updatedAt": "2026-10-04T05:59:13.251Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 12,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:13.283Z",
+    "status": "waiting"
+  },
+  {
+    "sequence": 13,
+    "location": "root.values[0].event.payload",
+    "idHash": "04ab5b65fd27c3d8",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "cc64f161e990fd27",
+    "providerTurnIdHash": "bf464b76392c96c0",
+    "messageIdHash": "ce1cda4687d81ddd",
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:13.251Z",
+    "ordinal": 1000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 14,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:13.299Z",
+    "status": "completed"
+  },
+  {
+    "sequence": 15,
+    "location": "root.values[0].event.payload",
+    "idHash": "e728e50025b61ea0",
+    "threadIdHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:13.299Z"
+  },
+  {
+    "sequence": 16,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:13.299Z",
+    "status": "completed"
+  },
+  {
+    "sequence": 17,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:14.088Z",
+    "status": "running"
+  },
+  {
+    "sequence": 18,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:14.156Z",
+    "status": "running"
+  },
+  {
+    "sequence": 19,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:14.192Z",
+    "status": "running"
+  },
+  {
+    "sequence": 20,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:14.472Z",
+    "status": "running"
+  },
+  {
+    "sequence": 21,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:15.062Z",
+    "status": "queued"
+  },
+  {
+    "sequence": 22,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:15.192Z",
+    "status": "cancelled"
+  },
+  {
+    "sequence": 23,
+    "location": "root.values[0].event.payload",
+    "idHash": "e728e50025b61ea0",
+    "threadIdHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:15.192Z"
+  },
+  {
+    "sequence": 24,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:15.192Z",
+    "status": "cancelled"
+  },
+  {
+    "sequence": 25,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:15.552Z",
+    "status": "cancelled"
+  },
+  {
+    "sequence": 26,
+    "location": "root.values[2].event.payload",
+    "idHash": "6ecbdd55156934ce",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "faf6f4fa8c2f32a7",
+    "nodeIdHash": "360aaaa0188865a6",
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:15.507Z",
+    "updatedAt": "2026-10-04T05:59:15.507Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 27,
+    "location": "root.values[3].event.payload",
+    "idHash": "f3179fe6a7796ea5",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "faf6f4fa8c2f32a7",
+    "nodeIdHash": "360aaaa0188865a6",
+    "providerTurnIdHash": "d63d8965fc99dd6f",
+    "messageIdHash": "6ecbdd55156934ce",
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:15.507Z",
+    "ordinal": 2000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 28,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:15.575Z",
+    "status": "cancelled"
+  },
+  {
+    "sequence": 29,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:15.590Z",
+    "status": "cancelled"
+  },
+  {
+    "sequence": 30,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:16.022Z",
+    "status": "running"
+  },
+  {
+    "sequence": 31,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:16.188Z",
+    "status": "running"
+  },
+  {
+    "sequence": 32,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:16.188Z",
+    "status": "running"
+  },
+  {
+    "sequence": 33,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:16.469Z",
+    "status": "waiting"
+  },
+  {
+    "sequence": 34,
+    "location": "root.values[4].event.payload",
+    "idHash": "c2d328ebd998c493",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "653e9ce13df76403",
+    "nodeIdHash": "1b6911e13657cea1",
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:16.406Z",
+    "updatedAt": "2026-10-04T05:59:16.406Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 35,
+    "location": "root.values[5].event.payload",
+    "idHash": "932bfa4f1e97eb68",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "653e9ce13df76403",
+    "nodeIdHash": "1b6911e13657cea1",
+    "providerTurnIdHash": "fdf9c73c0d2c798b",
+    "messageIdHash": "c2d328ebd998c493",
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:16.406Z",
+    "ordinal": 4000003,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 36,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:16.469Z",
+    "status": "waiting"
+  },
+  {
+    "sequence": 37,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.122Z",
+    "status": "waiting"
+  },
+  {
+    "sequence": 38,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:16.502Z",
+    "status": "completed"
+  },
+  {
+    "sequence": 39,
+    "location": "root.values[0].event.payload",
+    "idHash": "e728e50025b61ea0",
+    "threadIdHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:16.502Z"
+  },
+  {
+    "sequence": 40,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:16.502Z",
+    "status": "completed"
+  },
+  {
+    "sequence": 41,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.425Z",
+    "status": "running"
+  },
+  {
+    "sequence": 42,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.496Z",
+    "status": "waiting"
+  },
+  {
+    "sequence": 43,
+    "location": "root.values[3].event.payload",
+    "idHash": "2bd6c14b8fc77555",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "2800945bf889901a",
+    "nodeIdHash": "3782712236614e36",
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:17.460Z",
+    "updatedAt": "2026-10-04T05:59:17.460Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 44,
+    "location": "root.values[4].event.payload",
+    "idHash": "bab90068f8419901",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "2800945bf889901a",
+    "nodeIdHash": "3782712236614e36",
+    "providerTurnIdHash": "21e33bb66d2cfcfe",
+    "messageIdHash": "2bd6c14b8fc77555",
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:17.460Z",
+    "ordinal": 5000002,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 45,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.496Z",
+    "status": "waiting"
+  },
+  {
+    "sequence": 46,
+    "location": "root.values[0].event.payload",
+    "idHash": "e728e50025b61ea0",
+    "threadIdHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.631Z"
+  },
+  {
+    "sequence": 47,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.631Z",
+    "status": "waiting"
+  },
+  {
+    "sequence": 48,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.510Z",
+    "status": "completed"
+  },
+  {
+    "sequence": 49,
+    "location": "root.values[0].event.payload",
+    "idHash": "e728e50025b61ea0",
+    "threadIdHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.510Z"
+  },
+  {
+    "sequence": 50,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:17.510Z",
+    "status": "completed"
+  },
+  {
+    "sequence": 51,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:18.439Z",
+    "status": "running"
+  },
+  {
+    "sequence": 52,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:18.482Z",
+    "status": "running"
+  },
+  {
+    "sequence": 53,
+    "location": "root.exit.value.thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:18.482Z"
+  },
+  {
+    "sequence": 54,
+    "location": "root.exit.value.messages[0]",
+    "idHash": "28310b679502fd5b",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.352Z",
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "role": "user"
+  },
+  {
+    "sequence": 55,
+    "location": "root.exit.value.messages[1]",
+    "idHash": "ce1cda4687d81ddd",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "cc64f161e990fd27",
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:13.251Z",
+    "updatedAt": "2026-10-04T05:59:13.251Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 56,
+    "location": "root.exit.value.messages[4]",
+    "idHash": "6ecbdd55156934ce",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "faf6f4fa8c2f32a7",
+    "nodeIdHash": "360aaaa0188865a6",
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:15.507Z",
+    "updatedAt": "2026-10-04T05:59:15.507Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 57,
+    "location": "root.exit.value.messages[6]",
+    "idHash": "c2d328ebd998c493",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "653e9ce13df76403",
+    "nodeIdHash": "1b6911e13657cea1",
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:16.406Z",
+    "updatedAt": "2026-10-04T05:59:16.406Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 58,
+    "location": "root.exit.value.messages[7]",
+    "idHash": "2bd6c14b8fc77555",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "2800945bf889901a",
+    "nodeIdHash": "3782712236614e36",
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:17.460Z",
+    "updatedAt": "2026-10-04T05:59:17.460Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 59,
+    "location": "root.exit.value.turnItems[0]",
+    "idHash": "27f68dfd27cc7e41",
+    "threadIdHash": "e728e50025b61ea0",
+    "messageIdHash": "28310b679502fd5b",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "ordinal": 1000001,
+    "type": "user_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 60,
+    "location": "root.exit.value.turnItems[3]",
+    "idHash": "04ab5b65fd27c3d8",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "bf464b76392c96c0",
+    "messageIdHash": "ce1cda4687d81ddd",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "cc64f161e990fd27",
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:13.251Z",
+    "ordinal": 1000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 61,
+    "location": "root.exit.value.turnItems[8]",
+    "idHash": "f3179fe6a7796ea5",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "d63d8965fc99dd6f",
+    "messageIdHash": "6ecbdd55156934ce",
+    "runIdHash": "faf6f4fa8c2f32a7",
+    "nodeIdHash": "360aaaa0188865a6",
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:15.507Z",
+    "ordinal": 2000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 62,
+    "location": "root.exit.value.turnItems[12]",
+    "idHash": "932bfa4f1e97eb68",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "fdf9c73c0d2c798b",
+    "messageIdHash": "c2d328ebd998c493",
+    "runIdHash": "653e9ce13df76403",
+    "nodeIdHash": "1b6911e13657cea1",
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:16.406Z",
+    "ordinal": 4000003,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 63,
+    "location": "root.exit.value.turnItems[15]",
+    "idHash": "bab90068f8419901",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "21e33bb66d2cfcfe",
+    "messageIdHash": "2bd6c14b8fc77555",
+    "runIdHash": "2800945bf889901a",
+    "nodeIdHash": "3782712236614e36",
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:17.460Z",
+    "ordinal": 5000002,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 64,
+    "location": "root.exit.value.visibleTurnItems[0].item",
+    "idHash": "27f68dfd27cc7e41",
+    "threadIdHash": "e728e50025b61ea0",
+    "messageIdHash": "28310b679502fd5b",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "ordinal": 1000001,
+    "type": "user_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 65,
+    "location": "root.exit.value.visibleTurnItems[3].item",
+    "idHash": "04ab5b65fd27c3d8",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "bf464b76392c96c0",
+    "messageIdHash": "ce1cda4687d81ddd",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "cc64f161e990fd27",
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:13.251Z",
+    "ordinal": 1000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 66,
+    "location": "root.exit.value.visibleTurnItems[8].item",
+    "idHash": "f3179fe6a7796ea5",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "d63d8965fc99dd6f",
+    "messageIdHash": "6ecbdd55156934ce",
+    "runIdHash": "faf6f4fa8c2f32a7",
+    "nodeIdHash": "360aaaa0188865a6",
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:15.507Z",
+    "ordinal": 2000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 67,
+    "location": "root.exit.value.visibleTurnItems[12].item",
+    "idHash": "932bfa4f1e97eb68",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "fdf9c73c0d2c798b",
+    "messageIdHash": "c2d328ebd998c493",
+    "runIdHash": "653e9ce13df76403",
+    "nodeIdHash": "1b6911e13657cea1",
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:16.406Z",
+    "ordinal": 4000003,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 68,
+    "location": "root.exit.value.visibleTurnItems[15].item",
+    "idHash": "bab90068f8419901",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "21e33bb66d2cfcfe",
+    "messageIdHash": "2bd6c14b8fc77555",
+    "runIdHash": "2800945bf889901a",
+    "nodeIdHash": "3782712236614e36",
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:17.460Z",
+    "ordinal": 5000002,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 69,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:19.263Z",
+    "status": "interrupted"
+  },
+  {
+    "sequence": 70,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:19.263Z",
+    "status": "interrupted"
+  },
+  {
+    "sequence": 71,
+    "location": "root.values[0].event.payload",
+    "idHash": "e728e50025b61ea0",
+    "threadIdHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:19.263Z"
+  },
+  {
+    "sequence": 72,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:19.263Z",
+    "status": "interrupted"
+  },
+  {
+    "sequence": 73,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:19.330Z",
+    "status": "interrupted"
+  },
+  {
+    "sequence": 74,
+    "location": "root.values[0].projection.thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:19.330Z"
+  },
+  {
+    "sequence": 75,
+    "location": "root.values[0].projection.messages[0]",
+    "idHash": "28310b679502fd5b",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.352Z",
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "role": "user"
+  },
+  {
+    "sequence": 76,
+    "location": "root.values[0].projection.messages[1]",
+    "idHash": "ce1cda4687d81ddd",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "cc64f161e990fd27",
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:13.251Z",
+    "updatedAt": "2026-10-04T05:59:13.251Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 77,
+    "location": "root.values[0].projection.messages[4]",
+    "idHash": "6ecbdd55156934ce",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "faf6f4fa8c2f32a7",
+    "nodeIdHash": "360aaaa0188865a6",
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:15.507Z",
+    "updatedAt": "2026-10-04T05:59:15.507Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 78,
+    "location": "root.values[0].projection.messages[6]",
+    "idHash": "c2d328ebd998c493",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "653e9ce13df76403",
+    "nodeIdHash": "1b6911e13657cea1",
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:16.406Z",
+    "updatedAt": "2026-10-04T05:59:16.406Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 79,
+    "location": "root.values[0].projection.messages[7]",
+    "idHash": "2bd6c14b8fc77555",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "2800945bf889901a",
+    "nodeIdHash": "3782712236614e36",
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:17.460Z",
+    "updatedAt": "2026-10-04T05:59:17.460Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 80,
+    "location": "root.values[0].projection.turnItems[0]",
+    "idHash": "27f68dfd27cc7e41",
+    "threadIdHash": "e728e50025b61ea0",
+    "messageIdHash": "28310b679502fd5b",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "ordinal": 1000001,
+    "type": "user_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 81,
+    "location": "root.values[0].projection.turnItems[3]",
+    "idHash": "04ab5b65fd27c3d8",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "bf464b76392c96c0",
+    "messageIdHash": "ce1cda4687d81ddd",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "cc64f161e990fd27",
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:13.251Z",
+    "ordinal": 1000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 82,
+    "location": "root.values[0].projection.turnItems[8]",
+    "idHash": "f3179fe6a7796ea5",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "d63d8965fc99dd6f",
+    "messageIdHash": "6ecbdd55156934ce",
+    "runIdHash": "faf6f4fa8c2f32a7",
+    "nodeIdHash": "360aaaa0188865a6",
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:15.507Z",
+    "ordinal": 2000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 83,
+    "location": "root.values[0].projection.turnItems[12]",
+    "idHash": "932bfa4f1e97eb68",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "fdf9c73c0d2c798b",
+    "messageIdHash": "c2d328ebd998c493",
+    "runIdHash": "653e9ce13df76403",
+    "nodeIdHash": "1b6911e13657cea1",
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:16.406Z",
+    "ordinal": 4000003,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 84,
+    "location": "root.values[0].projection.turnItems[15]",
+    "idHash": "bab90068f8419901",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "21e33bb66d2cfcfe",
+    "messageIdHash": "2bd6c14b8fc77555",
+    "runIdHash": "2800945bf889901a",
+    "nodeIdHash": "3782712236614e36",
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:17.460Z",
+    "ordinal": 5000002,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 85,
+    "location": "root.values[0].projection.visibleTurnItems[0].item",
+    "idHash": "27f68dfd27cc7e41",
+    "threadIdHash": "e728e50025b61ea0",
+    "messageIdHash": "28310b679502fd5b",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "0f52d832b711cbab",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "updatedAt": "2026-10-04T05:59:11.352Z",
+    "ordinal": 1000001,
+    "type": "user_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 86,
+    "location": "root.values[0].projection.visibleTurnItems[3].item",
+    "idHash": "04ab5b65fd27c3d8",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "bf464b76392c96c0",
+    "messageIdHash": "ce1cda4687d81ddd",
+    "runIdHash": "059e8d3a5e115bd0",
+    "nodeIdHash": "cc64f161e990fd27",
+    "markers": [
+      "EXECUTE_CONFIRMED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:13.251Z",
+    "ordinal": 1000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 87,
+    "location": "root.values[0].projection.visibleTurnItems[8].item",
+    "idHash": "f3179fe6a7796ea5",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "d63d8965fc99dd6f",
+    "messageIdHash": "6ecbdd55156934ce",
+    "runIdHash": "faf6f4fa8c2f32a7",
+    "nodeIdHash": "360aaaa0188865a6",
+    "markers": [
+      "STEER_ADMITTED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:15.507Z",
+    "ordinal": 2000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 88,
+    "location": "root.values[0].projection.visibleTurnItems[12].item",
+    "idHash": "932bfa4f1e97eb68",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "fdf9c73c0d2c798b",
+    "messageIdHash": "c2d328ebd998c493",
+    "runIdHash": "653e9ce13df76403",
+    "nodeIdHash": "1b6911e13657cea1",
+    "markers": [
+      "EARLY_RETURN_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:16.406Z",
+    "ordinal": 4000003,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 89,
+    "location": "root.values[0].projection.visibleTurnItems[15].item",
+    "idHash": "bab90068f8419901",
+    "threadIdHash": "e728e50025b61ea0",
+    "providerTurnIdHash": "21e33bb66d2cfcfe",
+    "messageIdHash": "2bd6c14b8fc77555",
+    "runIdHash": "2800945bf889901a",
+    "nodeIdHash": "3782712236614e36",
+    "markers": [
+      "TASK_COMPLETED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:17.460Z",
+    "ordinal": 5000002,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 90,
+    "location": "root.values[5].event.payload",
+    "idHash": "2dcb110f43d3f999",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "9d306d3a9887de74",
+    "nodeIdHash": "14c22b47256c7a5f",
+    "markers": [
+      "ACCEPT_CANCEL"
+    ],
+    "createdAt": "2026-10-04T05:59:21.408Z",
+    "updatedAt": "2026-10-04T05:59:21.408Z",
+    "role": "user"
+  },
+  {
+    "sequence": 91,
+    "location": "root.values[6].event.payload",
+    "idHash": "6cf12eab9949e8aa",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "9d306d3a9887de74",
+    "nodeIdHash": "14c22b47256c7a5f",
+    "messageIdHash": "2dcb110f43d3f999",
+    "markers": [
+      "ACCEPT_CANCEL"
+    ],
+    "updatedAt": "2026-10-04T05:59:21.408Z",
+    "ordinal": 7000001,
+    "type": "user_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 92,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:21.451Z",
+    "status": "running"
+  },
+  {
+    "sequence": 93,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:21.539Z",
+    "status": "running"
+  },
+  {
+    "sequence": 94,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:22.405Z",
+    "status": "running"
+  },
+  {
+    "sequence": 95,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:22.665Z",
+    "status": "running"
+  },
+  {
+    "sequence": 96,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:22.718Z",
+    "status": "running"
+  },
+  {
+    "sequence": 97,
+    "location": "root.values[2].event.payload",
+    "idHash": "6939f05364384909",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "9d306d3a9887de74",
+    "nodeIdHash": "5936c7390b2521d7",
+    "markers": [
+      "CANCEL_CONFIRMED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:22.702Z",
+    "updatedAt": "2026-10-04T05:59:22.702Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 98,
+    "location": "root.values[3].event.payload",
+    "idHash": "d9b2bcda4db6e0d2",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "9d306d3a9887de74",
+    "nodeIdHash": "5936c7390b2521d7",
+    "providerTurnIdHash": "83330a73ae38fabd",
+    "messageIdHash": "6939f05364384909",
+    "markers": [
+      "CANCEL_CONFIRMED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:22.702Z",
+    "ordinal": 7000003,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 99,
+    "location": "root.values[6].event.payload",
+    "idHash": "f458427a45372164",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "9d306d3a9887de74",
+    "nodeIdHash": "4c38dd6a76108d93",
+    "markers": [
+      "CANCELLATION_COMPLETED_REAL"
+    ],
+    "createdAt": "2026-10-04T05:59:22.728Z",
+    "updatedAt": "2026-10-04T05:59:22.728Z",
+    "role": "assistant"
+  },
+  {
+    "sequence": 100,
+    "location": "root.values[7].event.payload",
+    "idHash": "8e47126ea682b3ee",
+    "threadIdHash": "e728e50025b61ea0",
+    "runIdHash": "9d306d3a9887de74",
+    "nodeIdHash": "4c38dd6a76108d93",
+    "providerTurnIdHash": "83330a73ae38fabd",
+    "messageIdHash": "f458427a45372164",
+    "markers": [
+      "CANCELLATION_COMPLETED_REAL"
+    ],
+    "updatedAt": "2026-10-04T05:59:22.728Z",
+    "ordinal": 7000004,
+    "type": "assistant_message",
+    "status": "completed"
+  },
+  {
+    "sequence": 101,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:22.759Z",
+    "status": "waiting"
+  },
+  {
+    "sequence": 102,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:22.772Z",
+    "status": "completed"
+  },
+  {
+    "sequence": 103,
+    "location": "root.values[0].event.payload",
+    "idHash": "e728e50025b61ea0",
+    "threadIdHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:22.772Z"
+  },
+  {
+    "sequence": 104,
+    "location": "root.values[0].thread",
+    "idHash": "e728e50025b61ea0",
+    "markers": [
+      "ACCEPT_EXECUTE"
+    ],
+    "createdAt": "2026-10-04T05:59:11.325Z",
+    "updatedAt": "2026-10-04T05:59:22.772Z",
+    "status": "completed"
+  }
+]

@@ -1,0 +1,2 @@
+{"event":"spawned","at":"2026-10-03T13:06:47.933Z","taskId":"task_c43fa0b8","kind":"command","status":"running","startedAt":"2026-10-03T13:06:47.932Z"}
+{"event":"completed","at":"2026-10-03T13:06:51.986Z","taskId":"task_c43fa0b8","kind":"command","status":"completed","startedAt":"2026-10-03T13:06:47.932Z","completedAt":"2026-10-03T13:06:51.982Z","exitCode":0}

@@ -1,0 +1,24 @@
+{
+  "version": "0.3.276",
+  "dist": {
+    "shasum": "d1429c4b93054cb672047495d1ecad9de2771bbc",
+    "tarball": "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk/-/claude-agent-sdk-0.3.276.tgz",
+    "fileCount": 15,
+    "integrity": "sha512-Dic43v4uuGLhibPAArWy3RSfq3zHdn+4Oh2AI2/18a5tlbNKkvChEpazyp8c+grUJvzxkzt0jETCa1wrADbkyw==",
+    "signatures": [
+      {
+        "sig": "MEUCIQCmQn5Z2qdpnjrA4bgX5jgj+rqf9XSoVsVAmoB2/Af/KwIgEdSwFfDt5FWcy+A2ALulR0Wyexu57N6WbLb0wfB9+ZQ=",
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+      },
+      {
+        "sig": "MEUCID+GhSSW8p6N/9aGhSK9KYLetjjrIb045fzh5+EDdOvVAiEAl/OFCiIEfkbWOURvTBGR0LoCcHy2GCR0OCtwIQB5+0w=",
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+      }
+    ],
+    "unpackedSize": 5190293
+  },
+  "officialSourceRevision": "fed41fa88bb27cb4325cb208d571393850bc63c2",
+  "bruvRevision": "fa28b12952ab52df17fbce931cb4519e3bc2952e",
+  "adapterSha256": "566d806fa89ef3c4afda420659db542ff5bf7d2e3e8f018259b5b8c91655cbb2",
+  "sdkIntegrityVerified": true
+}

@@ -62,7 +62,7 @@ fi
 test("ready hosted libraries avoid apt; harness stays pinned and isolated", () => {
   const { root, result, calls } = setup("ready");
   expect(result.status).toBe(0);
-  expect(calls).toContain("playwright-core@1.60.0");
+  expect(calls).toContain("playwright-core@1.63.0");
   expect(calls).toContain("install --only-shell chromium");
   expect(calls).not.toContain("install-deps");
   expect(readFileSync(join(root, "env"), "utf8")).toContain(

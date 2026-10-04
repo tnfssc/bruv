@@ -1,0 +1,13 @@
+{
+  "instance": {
+    "driver": "acpRegistry",
+    "displayName": "Bruv filtered engine — RESEARCH MODIFIED LAUNCH",
+    "enabled": true,
+    "config": {
+      "agentId": "pi-acp",
+      "commandPath": "/home/tnfssc/Code/bruv/.cache/acp-t3-bruv-filtered/package/dist/index.js"
+    }
+  },
+  "PI_ACP_PI_COMMAND": "inherited isolated server env -> /home/tnfssc/Code/bruv/.cache/acp-t3-bruv-filtered/RESEARCH-ONLY-filtered-engine.mjs",
+  "modifiedLaunch": true
+}

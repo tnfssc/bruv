@@ -1,0 +1,749 @@
+[
+  {
+    "native": [
+      {
+        "type": "user",
+        "uuid": "8577c44e-d353-8fae-8266-53e62a56d9b6",
+        "parentUuid": null,
+        "sessionId": "5af6d08d-bb25-4375-8fa6-43443d66fe06",
+        "timestamp": "2026-10-04T02:57:39.969Z",
+        "isSidechain": true,
+        "cwd": "<FIXTURE>/t3-runtime/project",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_STOP_REAL: run the actual waiting child tool."
+            }
+          ]
+        },
+        "bruv": {
+          "sourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-39-227Z_01a104d8-7d9b-776d-8a42-b8da652cd97a.jsonl",
+          "sourceMessageId": "645d88bc"
+        }
+      },
+      {
+        "type": "assistant",
+        "uuid": "1c7d1a3f-4aad-80ac-ae8a-00469a972b26",
+        "parentUuid": "8577c44e-d353-8fae-8266-53e62a56d9b6",
+        "sessionId": "5af6d08d-bb25-4375-8fa6-43443d66fe06",
+        "timestamp": "2026-10-04T02:57:40.008Z",
+        "isSidechain": true,
+        "cwd": "<FIXTURE>/t3-runtime/project",
+        "message": {
+          "id": "ae0408a3",
+          "type": "message",
+          "role": "assistant",
+          "model": "bruv-acceptance/local-deterministic-v1",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "actual_subagent_12",
+              "name": "execute",
+              "input": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/stop.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/stop.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "stop_reason": "tool_use",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 11,
+            "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "bruv": {
+          "sourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-39-227Z_01a104d8-7d9b-776d-8a42-b8da652cd97a.jsonl",
+          "sourceMessageId": "ae0408a3"
+        }
+      }
+    ],
+    "sdk": [
+      {
+        "type": "user",
+        "uuid": "8577c44e-d353-8fae-8266-53e62a56d9b6",
+        "session_id": "5af6d08d-bb25-4375-8fa6-43443d66fe06",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_STOP_REAL: run the actual waiting child tool."
+            }
+          ]
+        },
+        "parent_tool_use_id": "agent_918b3abe0fe210aaef7a033cd60e98f4",
+        "parent_agent_id": null,
+        "timestamp": "2026-10-04T02:57:39.969Z"
+      },
+      {
+        "type": "assistant",
+        "uuid": "1c7d1a3f-4aad-80ac-ae8a-00469a972b26",
+        "session_id": "5af6d08d-bb25-4375-8fa6-43443d66fe06",
+        "message": {
+          "id": "ae0408a3",
+          "type": "message",
+          "role": "assistant",
+          "model": "bruv-acceptance/local-deterministic-v1",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "actual_subagent_12",
+              "name": "execute",
+              "input": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/stop.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/stop.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "stop_reason": "tool_use",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 11,
+            "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "parent_tool_use_id": "agent_918b3abe0fe210aaef7a033cd60e98f4",
+        "parent_agent_id": null,
+        "timestamp": "2026-10-04T02:57:40.008Z"
+      }
+    ],
+    "source": [
+      {
+        "type": "message",
+        "id": "645d88bc",
+        "parentId": "514f396a",
+        "timestamp": "2026-10-04T02:57:39.969Z",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_STOP_REAL: run the actual waiting child tool."
+            }
+          ],
+          "timestamp": 1791082659965
+        }
+      },
+      {
+        "type": "message",
+        "id": "ae0408a3",
+        "parentId": "fa0a31ba",
+        "timestamp": "2026-10-04T02:57:40.008Z",
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "actual_subagent_12",
+              "name": "execute",
+              "arguments": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/stop.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/stop.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "bruv-acceptance",
+          "model": "local-deterministic-v1",
+          "usage": {
+            "input": 11,
+            "output": 7,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "reasoning": 0,
+            "totalTokens": 18,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1791082659990,
+          "responseId": "actual-local-12",
+          "rawStopReason": "tool_calls",
+          "thinkingLevel": "off"
+        }
+      }
+    ],
+    "metadata": {
+      "toolUseId": "agent_918b3abe0fe210aaef7a033cd60e98f4",
+      "parentAgentId": null,
+      "bruvSourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-39-227Z_01a104d8-7d9b-776d-8a42-b8da652cd97a.jsonl"
+    }
+  },
+  {
+    "native": [
+      {
+        "type": "user",
+        "uuid": "7136164c-1966-8589-8751-c9bff083580a",
+        "parentUuid": null,
+        "sessionId": "23653860-a5db-41ec-b551-afe5a8690c20",
+        "timestamp": "2026-10-04T02:57:23.130Z",
+        "isSidechain": true,
+        "cwd": "<FIXTURE>/t3-runtime/project",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_LOCAL_REAL: execute the local acceptance tool and return its actual result."
+            }
+          ]
+        },
+        "bruv": {
+          "sourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-22-313Z_01a104d8-3b89-723e-a92b-b1985811d5b6.jsonl",
+          "sourceMessageId": "488b75a2"
+        }
+      },
+      {
+        "type": "assistant",
+        "uuid": "7afc9fa9-c2bc-8952-876d-6d1b422983d0",
+        "parentUuid": "7136164c-1966-8589-8751-c9bff083580a",
+        "sessionId": "23653860-a5db-41ec-b551-afe5a8690c20",
+        "timestamp": "2026-10-04T02:57:23.183Z",
+        "isSidechain": true,
+        "cwd": "<FIXTURE>/t3-runtime/project",
+        "message": {
+          "id": "c8a9aef5",
+          "type": "message",
+          "role": "assistant",
+          "model": "bruv-acceptance/local-deterministic-v1",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "actual_subagent_3",
+              "name": "execute",
+              "input": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/child.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/child.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "stop_reason": "tool_use",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 11,
+            "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "bruv": {
+          "sourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-22-313Z_01a104d8-3b89-723e-a92b-b1985811d5b6.jsonl",
+          "sourceMessageId": "c8a9aef5"
+        }
+      },
+      {
+        "type": "user",
+        "uuid": "ad0c7b45-2eb5-89e6-87d1-9214a353f6f2",
+        "parentUuid": "7afc9fa9-c2bc-8952-876d-6d1b422983d0",
+        "sessionId": "23653860-a5db-41ec-b551-afe5a8690c20",
+        "timestamp": "2026-10-04T02:57:25.473Z",
+        "isSidechain": true,
+        "cwd": "<FIXTURE>/t3-runtime/project",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "actual_subagent_3",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Execution completed with exit code 0.\n\nstdout:\nCHILD_TOOL_RESULT_REAL\n"
+                }
+              ],
+              "is_error": false
+            }
+          ]
+        },
+        "bruv": {
+          "sourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-22-313Z_01a104d8-3b89-723e-a92b-b1985811d5b6.jsonl",
+          "sourceMessageId": "d0c9f253"
+        }
+      },
+      {
+        "type": "assistant",
+        "uuid": "83999d71-536a-8c0f-8c92-1a72a366dda3",
+        "parentUuid": "ad0c7b45-2eb5-89e6-87d1-9214a353f6f2",
+        "sessionId": "23653860-a5db-41ec-b551-afe5a8690c20",
+        "timestamp": "2026-10-04T02:57:25.494Z",
+        "isSidechain": true,
+        "cwd": "<FIXTURE>/t3-runtime/project",
+        "message": {
+          "id": "87eb3def",
+          "type": "message",
+          "role": "assistant",
+          "model": "bruv-acceptance/local-deterministic-v1",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_ANSWER_REAL"
+            }
+          ],
+          "stop_reason": "end_turn",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 11,
+            "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "bruv": {
+          "sourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-22-313Z_01a104d8-3b89-723e-a92b-b1985811d5b6.jsonl",
+          "sourceMessageId": "87eb3def"
+        }
+      }
+    ],
+    "sdk": [
+      {
+        "type": "user",
+        "uuid": "7136164c-1966-8589-8751-c9bff083580a",
+        "session_id": "23653860-a5db-41ec-b551-afe5a8690c20",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_LOCAL_REAL: execute the local acceptance tool and return its actual result."
+            }
+          ]
+        },
+        "parent_tool_use_id": "agent_086d5532e15371ae801d91ddff61fa72",
+        "parent_agent_id": null,
+        "timestamp": "2026-10-04T02:57:23.130Z"
+      },
+      {
+        "type": "assistant",
+        "uuid": "7afc9fa9-c2bc-8952-876d-6d1b422983d0",
+        "session_id": "23653860-a5db-41ec-b551-afe5a8690c20",
+        "message": {
+          "id": "c8a9aef5",
+          "type": "message",
+          "role": "assistant",
+          "model": "bruv-acceptance/local-deterministic-v1",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "actual_subagent_3",
+              "name": "execute",
+              "input": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/child.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/child.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "stop_reason": "tool_use",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 11,
+            "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "parent_tool_use_id": "agent_086d5532e15371ae801d91ddff61fa72",
+        "parent_agent_id": null,
+        "timestamp": "2026-10-04T02:57:23.183Z"
+      },
+      {
+        "type": "user",
+        "uuid": "ad0c7b45-2eb5-89e6-87d1-9214a353f6f2",
+        "session_id": "23653860-a5db-41ec-b551-afe5a8690c20",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "actual_subagent_3",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Execution completed with exit code 0.\n\nstdout:\nCHILD_TOOL_RESULT_REAL\n"
+                }
+              ],
+              "is_error": false
+            }
+          ]
+        },
+        "parent_tool_use_id": "agent_086d5532e15371ae801d91ddff61fa72",
+        "parent_agent_id": null,
+        "timestamp": "2026-10-04T02:57:25.473Z"
+      },
+      {
+        "type": "assistant",
+        "uuid": "83999d71-536a-8c0f-8c92-1a72a366dda3",
+        "session_id": "23653860-a5db-41ec-b551-afe5a8690c20",
+        "message": {
+          "id": "87eb3def",
+          "type": "message",
+          "role": "assistant",
+          "model": "bruv-acceptance/local-deterministic-v1",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_ANSWER_REAL"
+            }
+          ],
+          "stop_reason": "end_turn",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 11,
+            "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "parent_tool_use_id": "agent_086d5532e15371ae801d91ddff61fa72",
+        "parent_agent_id": null,
+        "timestamp": "2026-10-04T02:57:25.494Z"
+      }
+    ],
+    "source": [
+      {
+        "type": "message",
+        "id": "488b75a2",
+        "parentId": "a8522269",
+        "timestamp": "2026-10-04T02:57:23.130Z",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_LOCAL_REAL: execute the local acceptance tool and return its actual result."
+            }
+          ],
+          "timestamp": 1791082643126
+        }
+      },
+      {
+        "type": "message",
+        "id": "c8a9aef5",
+        "parentId": "84657d91",
+        "timestamp": "2026-10-04T02:57:23.183Z",
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "actual_subagent_3",
+              "name": "execute",
+              "arguments": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/child.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/child.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "bruv-acceptance",
+          "model": "local-deterministic-v1",
+          "usage": {
+            "input": 11,
+            "output": 7,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "reasoning": 0,
+            "totalTokens": 18,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1791082643155,
+          "responseId": "actual-local-3",
+          "rawStopReason": "tool_calls",
+          "thinkingLevel": "off"
+        }
+      },
+      {
+        "type": "message",
+        "id": "d0c9f253",
+        "parentId": "c8a9aef5",
+        "timestamp": "2026-10-04T02:57:25.473Z",
+        "message": {
+          "role": "toolResult",
+          "toolCallId": "actual_subagent_3",
+          "toolName": "execute",
+          "content": [
+            {
+              "type": "text",
+              "text": "Execution completed with exit code 0.\n\nstdout:\nCHILD_TOOL_RESULT_REAL\n"
+            }
+          ],
+          "details": {
+            "exitCode": 0,
+            "stdout": "CHILD_TOOL_RESULT_REAL\n",
+            "stderr": "",
+            "stdoutLost": false,
+            "stderrLost": false,
+            "outputBytes": 23,
+            "capturedOutputBytes": 23,
+            "outputByteLimit": 10485760,
+            "outputTruncated": false,
+            "stdoutBytes": 23,
+            "stderrBytes": 0,
+            "stdoutCapturedBytes": 23,
+            "stderrCapturedBytes": 0,
+            "timedOut": false,
+            "cancelled": false,
+            "imageResizeNotes": [],
+            "diagnostics": [
+              {
+                "version": 1,
+                "generated": "2026-10-04T02:57:25.471Z",
+                "component": "jobs",
+                "code": "process_exit",
+                "outcome": "success"
+              }
+            ],
+            "backgroundJobs": [],
+            "taskRows": [],
+            "images": []
+          },
+          "isError": false,
+          "timestamp": 1791082645473
+        }
+      },
+      {
+        "type": "message",
+        "id": "87eb3def",
+        "parentId": "b17bb5f1",
+        "timestamp": "2026-10-04T02:57:25.494Z",
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_ANSWER_REAL"
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "bruv-acceptance",
+          "model": "local-deterministic-v1",
+          "usage": {
+            "input": 11,
+            "output": 7,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "reasoning": 0,
+            "totalTokens": 18,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "stop",
+          "timestamp": 1791082645486,
+          "responseId": "actual-local-5",
+          "rawStopReason": "stop",
+          "thinkingLevel": "off"
+        }
+      }
+    ],
+    "metadata": {
+      "toolUseId": "agent_086d5532e15371ae801d91ddff61fa72",
+      "parentAgentId": null,
+      "bruvSourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-22-313Z_01a104d8-3b89-723e-a92b-b1985811d5b6.jsonl"
+    }
+  },
+  {
+    "native": [
+      {
+        "type": "user",
+        "uuid": "c5c674d1-c513-8438-a35d-58f0a22b8171",
+        "parentUuid": null,
+        "sessionId": "1d56dffd-360d-4794-a918-04659b827e5a",
+        "timestamp": "2026-10-04T02:57:35.349Z",
+        "isSidechain": true,
+        "cwd": "<FIXTURE>/t3-runtime/project",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_CANCEL_REAL: run the actual waiting child tool."
+            }
+          ]
+        },
+        "bruv": {
+          "sourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-34-334Z_01a104d8-6a7e-76fb-b56e-128d2aaaa4ae.jsonl",
+          "sourceMessageId": "123ce4a7"
+        }
+      },
+      {
+        "type": "assistant",
+        "uuid": "5ad65b06-6b20-8163-9231-adf1eba67e95",
+        "parentUuid": "c5c674d1-c513-8438-a35d-58f0a22b8171",
+        "sessionId": "1d56dffd-360d-4794-a918-04659b827e5a",
+        "timestamp": "2026-10-04T02:57:35.391Z",
+        "isSidechain": true,
+        "cwd": "<FIXTURE>/t3-runtime/project",
+        "message": {
+          "id": "fd610a8d",
+          "type": "message",
+          "role": "assistant",
+          "model": "bruv-acceptance/local-deterministic-v1",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "actual_subagent_8",
+              "name": "execute",
+              "input": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/cancel.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/cancel.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "stop_reason": "tool_use",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 11,
+            "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "bruv": {
+          "sourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-34-334Z_01a104d8-6a7e-76fb-b56e-128d2aaaa4ae.jsonl",
+          "sourceMessageId": "fd610a8d"
+        }
+      }
+    ],
+    "sdk": [
+      {
+        "type": "user",
+        "uuid": "c5c674d1-c513-8438-a35d-58f0a22b8171",
+        "session_id": "1d56dffd-360d-4794-a918-04659b827e5a",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_CANCEL_REAL: run the actual waiting child tool."
+            }
+          ]
+        },
+        "parent_tool_use_id": "agent_67769abfad3d686ca7914ed967c0b5ed",
+        "parent_agent_id": null,
+        "timestamp": "2026-10-04T02:57:35.349Z"
+      },
+      {
+        "type": "assistant",
+        "uuid": "5ad65b06-6b20-8163-9231-adf1eba67e95",
+        "session_id": "1d56dffd-360d-4794-a918-04659b827e5a",
+        "message": {
+          "id": "fd610a8d",
+          "type": "message",
+          "role": "assistant",
+          "model": "bruv-acceptance/local-deterministic-v1",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "actual_subagent_8",
+              "name": "execute",
+              "input": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/cancel.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/cancel.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "stop_reason": "tool_use",
+          "stop_sequence": null,
+          "usage": {
+            "input_tokens": 11,
+            "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "parent_tool_use_id": "agent_67769abfad3d686ca7914ed967c0b5ed",
+        "parent_agent_id": null,
+        "timestamp": "2026-10-04T02:57:35.391Z"
+      }
+    ],
+    "source": [
+      {
+        "type": "message",
+        "id": "123ce4a7",
+        "parentId": "982ecd13",
+        "timestamp": "2026-10-04T02:57:35.349Z",
+        "message": {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "CHILD_CANCEL_REAL: run the actual waiting child tool."
+            }
+          ],
+          "timestamp": 1791082655344
+        }
+      },
+      {
+        "type": "message",
+        "id": "fd610a8d",
+        "parentId": "0c5cb342",
+        "timestamp": "2026-10-04T02:57:35.391Z",
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "toolCall",
+              "id": "actual_subagent_8",
+              "name": "execute",
+              "arguments": {
+                "label": "Actual local subagent acceptance",
+                "code": "const fs=await import(\"node:fs/promises\"); await fs.writeFile(\"<FIXTURE>/state/cancel.ready\",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(\"<FIXTURE>/state/cancel.release\");break}catch{} if(Date.now()>until)throw Error(\"Child release timeout\"); await new Promise(r=>setTimeout(r,50));} console.log(\"CHILD_TOOL_RESULT_REAL\");"
+              }
+            }
+          ],
+          "api": "openai-completions",
+          "provider": "bruv-acceptance",
+          "model": "local-deterministic-v1",
+          "usage": {
+            "input": 11,
+            "output": 7,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "reasoning": 0,
+            "totalTokens": 18,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          },
+          "stopReason": "toolUse",
+          "timestamp": 1791082655371,
+          "responseId": "actual-local-8",
+          "rawStopReason": "tool_calls",
+          "thinkingLevel": "off"
+        }
+      }
+    ],
+    "metadata": {
+      "toolUseId": "agent_67769abfad3d686ca7914ed967c0b5ed",
+      "parentAgentId": null,
+      "bruvSourceSessionId": "<FIXTURE>/agent/native-sessions/2026-10-04T02-57-34-334Z_01a104d8-6a7e-76fb-b56e-128d2aaaa4ae.jsonl"
+    }
+  }
+]

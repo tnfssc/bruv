@@ -1,0 +1,12 @@
+App delegation requires an explicit root orchestrator; normal workers cannot delegate
+Execution completed with exit code 0.
+
+stdout:
+LOCAL_WORKER_DENIAL_REAL Only orchestrator agents can delegate
+
+Execution completed with exit code 0.
+
+stdout:
+CHILD_SCOPE_REAL {"rootControls":[],"jobs":0}
+
+MCP tool reported an error: {"_tag":"OrchestratorMcpFailure","code":"task_not_found","message":"Delegated task node:delegated-task:command%3Amcp%3Af241256d-c685-4d2b-8392-688a0469a88e%3Adelegate-task%3Aactual-native-done does not belong to thread thread:delegated-task:command%3Amcp%3Af241256d-c685-4d2b-8392-688a0469a88e%3Adelegate-task%3Aactual-native-done."}

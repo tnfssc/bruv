@@ -1,3 +1,4 @@
+import { projectActivity } from "./activity-projection";
 import { CustomMessageComponent, ToolExecutionComponent, type Theme } from "@earendil-works/pi-coding-agent";
 import { Container, truncateToWidth, type Component } from "@earendil-works/pi-tui";
 import { executeOutputPreview } from "./execution-previews";
@@ -50,6 +51,13 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
     references.add(reference);
     finalized.register(child, reference);
     const wrapper = function (this: Component, width: number): string[] {
+      let hasOwnedTasks = false;
+      const lines = renderNative.call(this, width, () => {
+        hasOwnedTasks = true;
+      });
+      return projectActivity(child, width, () => lines, hasOwnedTasks);
+    };
+    const renderNative = function (this: Component, width: number, onOwnedTasks: () => void): string[] {
       if (!active) return original.call(this, width);
       const tool = child instanceof ToolExecutionComponent ? (child as unknown as ToolShape) : undefined;
       const custom = child instanceof CustomMessageComponent ? (child as unknown as CustomShape) : undefined;
@@ -58,6 +66,7 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
       if (custom && !["task-complete", "task-attention"].includes(custom.message.customType))
         return original.call(this, width);
       const owned = renderRows.get(parent)?.get(child) ?? [];
+      if (owned.length) onOwnedTasks();
       if (tool && !owned.length) return original.call(this, width);
       const padding = custom?.outputPad ?? 1;
       const available = Math.max(0, width - padding * 2);

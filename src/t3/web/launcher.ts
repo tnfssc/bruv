@@ -1,195 +1,61 @@
-import { spawn } from "node:child_process";
-import { accessSync, constants } from "node:fs";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import { homedir, constants as osConstants } from "node:os";
+import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
-function expandHome(value: string): string {
-  if (value === "~") return homedir();
-  return value.startsWith("~/") ? join(homedir(), value.slice(2)) : value;
+export function externalT3Guide(binary = process.execPath, home = homedir()): string {
+  const connector = resolve(dirname(binary), "bruv-claude-compat");
+  const normal = resolve(dirname(binary), "bruv");
+  const agent = join(home, ".bruv", "agent");
+  const sdk = join(home, ".bruv", "claude-compat-sdk");
+  const web = join(home, ".bruv", "web");
+  return [
+    "Bruv web uses external, unmodified T3 Code. Nothing is downloaded or configured by this command.",
+    "Install the official T3 CLI manually from https://github.com/pingdotgg/t3code/releases/tag/v0.0.46-nightly.20261004.2644 and verify its SHA256SUMS; launch command: t3.",
+    "Tested unchanged upstream: 737993303d36e10674c54b95e5bd3826682c99c7 (v0.0.46-nightly.20261004.2644). Older 2623 is not an acceptable target; any different version needs native acceptance again.",
+    "Keep the ordinary bruv CLI for authentication, profiles, resources, and delegated children.",
+    "Launch the T3 SERVER with the same isolated SDK home used by its Claude provider instance:",
+    "  CLAUDE_CONFIG_DIR=" + JSON.stringify(sdk) + " t3 --host 127.0.0.1 --base-dir " + JSON.stringify(web),
+    "Check t3 --help on your installed version. --no-browser disables automatic browser opening.",
+    "In Settings > Providers add a separate Claude instance named Bruv (do not edit your real Claude instance):",
+    "  Binary path: " + connector,
+    "  CLAUDE_CONFIG_DIR path: " + sdk,
+    "  Environment variables (not launch arguments):",
+    "    BRUV_CLAUDE_COMPAT_HOME=" + agent,
+    "    BRUV_CLAUDE_COMPAT_BRUV_PATH=" + normal,
+    "This explicitly reuses existing Bruv auth/models/settings/resources at " +
+      agent +
+      "; no secrets are copied into T3.",
+    "Subagent profiles remain shared at " +
+      join(home, ".bruv", "subagents.json") +
+      "; a separate auth home does not isolate all Bruv host resources.",
+    "Without that HOME override, the connector uses " +
+      join(home, ".bruv", "claude-compat") +
+      " and needs its own Bruv auth/settings setup.",
+    "SDK-native transcripts belong only in " +
+      sdk +
+      "/projects; parent SDK list/resume/fork requires server-level CLAUDE_CONFIG_DIR, not merely a child env setting.",
+    "Do not point this directory at ~/.claude, migrate/delete Claude state, or change HOME.",
+    "Add custom models using exact Bruv provider/id from your configured model registry, then select that same ID in chat and auxiliary/title generation.",
+    "No sonnet/opus aliases or guessed provider mappings. Verify the selected provider/id in native initialization and real provider usage.",
+    "Claude is T3's protocol-slot label, NOT Claude Code, an Anthropic login/subscription, or verified provider access. Health can indicate local readiness only.",
+    "Never use T3's Claude install/login/update actions for this connector. Unsupported version/update banners are known warnings; do not spoof Claude identity or version to suppress them.",
+    "bruv update --check is read-only; bruv update updates the sibling CLI and connector together. Split/custom layouts require manual paired reinstall. Stop active Bruv/T3 sessions first, then restart.",
+    "T3 updates independently (t3 update); do not move off the tested release without rerunning unchanged-host native acceptance.",
+    "Known upstream gap: Stop prevents a pending approval side effect but leaves its stale card visible; explicitly Decline that card before continuing.",
+    "Live is off by default: same-host audio requires BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST=<exact connector hostname> plus per-action human consent. It is NOT browser microphone transport; never paste provider keys into T3.",
+    "2644 passes bounded deterministic gates, not full parity. The upstream Effect queue race remains unfixed; Live/devices/paid providers and full tab disconnect are not covered.",
+    "Full setup and isolation options: https://github.com/tnfssc/bruv/blob/develop/wisdom/claude-compat/external-t3-setup.md",
+    "",
+  ].join("\n");
 }
 
-function findBaseDir(args: string[], env: NodeJS.ProcessEnv): string {
-  let value: string | undefined;
-  for (let index = 0; index < args.length; index += 1) {
-    const argument = args[index];
-    if (argument.startsWith("--base-dir=")) throw new Error("use --base-dir PATH (two arguments), not --base-dir=PATH");
-    if (argument !== "--base-dir") continue;
-    if (value !== undefined) throw new Error("--base-dir may only be specified once");
-    value = args[index + 1];
-    if (!value || value.startsWith("--")) throw new Error("--base-dir requires a path");
-    index += 1;
-  }
-  value ??= env.T3CODE_HOME;
-  if (!value) throw new Error("--base-dir PATH or T3CODE_HOME is required");
-  return resolve(expandHome(value));
-}
-
-function objectSetting(value: unknown, label: string, settingsPath: string): Record<string, unknown> {
-  if (value === undefined) return {};
-  if (value === null || Array.isArray(value) || typeof value !== "object")
-    throw new Error(`Refusing to replace non-object T3 ${label} at ${settingsPath}`);
-  return value as Record<string, unknown>;
-}
-
-const WEB_PROVIDER_DEFAULTS = {
-  codex: false,
-  claudeAgent: false,
-  cursor: false,
-  grok: false,
-  pi: true,
-  opencode: false,
-  antigravity: false,
-} as const;
-
-export async function seedWebSettings(baseDir: string, bruvBinary: string): Promise<void> {
-  const settingsPath = join(baseDir, "userdata", "settings.json");
-  let settings: unknown = {};
-  let firstRun = false;
-  try {
-    settings = JSON.parse(await readFile(settingsPath, "utf8"));
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "ENOENT")
-      throw new Error(`Refusing to replace unreadable T3 settings at ${settingsPath}: ${(error as Error).message}`);
-    firstRun = true;
-  }
-  const root = objectSetting(settings, "settings", settingsPath);
-  const providers = objectSetting(root.providers, "providers", settingsPath);
-  const providerInstances = objectSetting(root.providerInstances, "providerInstances", settingsPath);
-  const pi = objectSetting(providerInstances.pi, "providerInstances.pi", settingsPath);
-  const config = objectSetting(pi.config, "providerInstances.pi.config", settingsPath);
-  const firstRunProviders = Object.fromEntries(
-    Object.entries(WEB_PROVIDER_DEFAULTS).map(([driver, enabled]) => [driver, { enabled }]),
-  );
-  const firstRunProviderInstances = Object.fromEntries(
-    Object.entries(WEB_PROVIDER_DEFAULTS).map(([driver, enabled]) => [driver, { driver, enabled }]),
-  );
-  const next = {
-    ...root,
-    ...(firstRun ? { providers: { ...providers, ...firstRunProviders } } : {}),
-    providerInstances: {
-      ...(firstRun ? firstRunProviderInstances : providerInstances),
-      pi: { ...pi, driver: "pi", enabled: true, config: { ...config, binaryPath: resolve(expandHome(bruvBinary)) } },
-    },
-  };
-  await mkdir(dirname(settingsPath), { recursive: true });
-  const temporary = settingsPath + ".tmp-" + process.pid + "-" + crypto.randomUUID();
-  await writeFile(temporary, JSON.stringify(next, null, 2) + "\n", { mode: 0o600 });
-  await rename(temporary, settingsPath);
-}
-
-export function webLaunch(args: string[], env: NodeJS.ProcessEnv = process.env, executable = process.execPath) {
-  const server = env.BRUV_WEB_SERVER;
-  const hasOption = (name: string) => args.some((arg) => arg === name || arg.startsWith(name + "="));
-  return {
-    server,
-    args: [
-      ...(hasOption("--host") ? [] : ["--host", "127.0.0.1"]),
-      ...(hasOption("--base-dir") ? [] : ["--base-dir", join(env.HOME ?? homedir(), ".bruv", "web")]),
-      ...args,
-    ],
-    env: {
-      ...env,
-      BRUV_WEB_BRUV_BINARY: env.BRUV_WEB_BRUV_BINARY ?? executable,
-      BRUV_WEB_TASK_EVENTS: "1",
-    } as NodeJS.ProcessEnv,
-  };
-}
-
-const WEB_TERMINATION_GRACE_MS = 5_000;
-
-function signalExitCode(signal: NodeJS.Signals): number {
-  return 128 + (osConstants.signals[signal] ?? 0);
-}
-
-async function runExternal(server: string, args: string[], env: NodeJS.ProcessEnv): Promise<number> {
-  try {
-    accessSync(server, constants.X_OK);
-  } catch {
-    console.error("bruv web backend is not built. Remove BRUV_WEB_SERVER to use the embedded backend.");
-    return 1;
-  }
-  return new Promise<number>((done) => {
-    const ownsProcessGroup = process.platform !== "win32";
-    const child = spawn(server, args, { env, stdio: "inherit", detached: ownsProcessGroup });
-    // detached makes the POSIX child the leader of a new process group. Capture
-    // that ID once: never infer or signal the launcher's (possibly live bruv
-    // session) process group.
-    const ownedGroup = ownsProcessGroup && child.pid && child.pid !== process.pid ? child.pid : undefined;
-    let requestedSignal: "SIGINT" | "SIGTERM" | undefined;
-    let killTimer: ReturnType<typeof setTimeout> | undefined;
-    let finished = false;
-
-    const signalOwnedBackend = (signal: NodeJS.Signals) => {
-      try {
-        if (ownedGroup !== undefined) process.kill(-ownedGroup, signal);
-        else if (!ownsProcessGroup) child.kill(signal);
-      } catch {
-        // The owned process or group may already have exited.
-      }
-    };
-    const finish = (code: number) => {
-      if (finished) return;
-      finished = true;
-      process.off("SIGINT", interrupt);
-      process.off("SIGTERM", terminate);
-      if (killTimer) clearTimeout(killTimer);
-      done(code);
-    };
-    const forward = (signal: "SIGINT" | "SIGTERM") => {
-      requestedSignal ??= signal;
-      signalOwnedBackend(signal);
-      if (ownsProcessGroup && !killTimer) {
-        killTimer = setTimeout(() => signalOwnedBackend("SIGKILL"), WEB_TERMINATION_GRACE_MS);
-        killTimer.unref?.();
-      }
-    };
-    const interrupt = () => forward("SIGINT");
-    const terminate = () => forward("SIGTERM");
-
-    process.on("SIGINT", interrupt);
-    process.on("SIGTERM", terminate);
-    child.once("error", (error) => {
-      console.error("Cannot start bruv web: " + error.message);
-      finish(1);
-    });
-    child.once("exit", (code, signal) => {
-      // A backend leader can exit while descendants continue. Since this is our
-      // dedicated POSIX group, synchronously terminate those remaining members
-      // before allowing the launcher to complete.
-      if (ownsProcessGroup) signalOwnedBackend("SIGKILL");
-      finish(requestedSignal ? signalExitCode(requestedSignal) : (code ?? (signal ? signalExitCode(signal) : 1)));
-    });
-  });
-}
-
-/** Launch the embedded Bun backend, or an explicit development override. */
+/** Setup guidance only: no bundled UI, subprocess, settings seeding or fallback. */
 export async function runWeb(args: string[]): Promise<number> {
-  const launch = webLaunch(args);
-  if (launch.server) return runExternal(launch.server, launch.args, launch.env);
-  try {
-    const baseDir = findBaseDir(launch.args, launch.env);
-    const bruvBinary = launch.env.BRUV_WEB_BRUV_BINARY;
-    if (!bruvBinary) throw new Error("BRUV_WEB_BRUV_BINARY is required");
-    await seedWebSettings(baseDir, bruvBinary);
-    const cache = launch.env.XDG_CACHE_HOME
-      ? join(launch.env.XDG_CACHE_HOME, "bruv")
-      : join(launch.env.HOME ?? homedir(), ".cache", "bruv");
-    const { embeddedWebRoot } = await import("./embedded");
-    const root = await embeddedWebRoot(cache);
-    // Compiled Bun's in-process createRequire resolution does not reliably resolve the
-    // extracted native dependency graph. Self-exec as an interpreter; the bootstrap
-    // preload clears this flag before the official CLI entry or any children run.
-    return await runExternal(
-      process.execPath,
-      ["--preload", join(root, "bootstrap.mjs"), join(root, "dist/bin.mjs"), ...launch.args],
-      {
-        ...launch.env,
-        BUN_BE_BUN: "1",
-      },
+  if (args.some((arg) => !["--help", "-h", "--setup"].includes(arg))) {
+    console.error(
+      "bruv web no longer launches a bundled server. Run bruv web for external T3 setup; pass server flags to t3 itself.",
     );
-  } catch (error) {
-    console.error("Cannot start bruv web: " + (error as Error).message);
-    return 1;
+    return 2;
   }
+  console.log(externalT3Guide());
+  return 0;
 }

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "node:delegated-task:command%3Amcp%3Ac7af04c8-c0af-4818-97dc-bebd10e6dfa3%3Adelegate-task%3Aactual-native-done",
+    "threadId": "bbf8f1a4-5d21-4a02-98ca-61877b3e68b1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3Ac7af04c8-c0af-4818-97dc-bebd10e6dfa3%3Adelegate-task%3Aactual-native-done",
+    "origin": "app_owned",
+    "status": "completed",
+    "completionDelivery": {
+      "state": "acknowledged",
+      "observedByRunId": "run:thread:bbf8f1a4-5d21-4a02-98ca-61877b3e68b1:ordinal:2"
+    },
+    "modelSelection": {
+      "instanceId": "bruv-native-normal",
+      "model": "bruv-worker-acceptance/local-normal-v1",
+      "options": [
+        {
+          "id": "effort",
+          "value": "high"
+        }
+      ]
+    },
+    "lineage": {
+      "parentThreadId": "bbf8f1a4-5d21-4a02-98ca-61877b3e68b1",
+      "relationshipToParent": "subagent",
+      "rootThreadId": "bbf8f1a4-5d21-4a02-98ca-61877b3e68b1"
+    }
+  },
+  {
+    "id": "node:delegated-task:command%3Amcp%3Ac7af04c8-c0af-4818-97dc-bebd10e6dfa3%3Adelegate-task%3Aactual-native-cancel",
+    "threadId": "bbf8f1a4-5d21-4a02-98ca-61877b3e68b1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3Ac7af04c8-c0af-4818-97dc-bebd10e6dfa3%3Adelegate-task%3Aactual-native-cancel",
+    "origin": "app_owned",
+    "status": "interrupted",
+    "completionDelivery": {
+      "state": "disposed",
+      "observedByRunId": null
+    },
+    "modelSelection": {
+      "instanceId": "bruv-native-normal",
+      "model": "bruv-worker-acceptance/local-normal-v1",
+      "options": [
+        {
+          "id": "effort",
+          "value": "high"
+        }
+      ]
+    },
+    "lineage": {
+      "parentThreadId": "bbf8f1a4-5d21-4a02-98ca-61877b3e68b1",
+      "relationshipToParent": "subagent",
+      "rootThreadId": "bbf8f1a4-5d21-4a02-98ca-61877b3e68b1"
+    }
+  }
+]

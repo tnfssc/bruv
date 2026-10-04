@@ -1,5 +1,6 @@
 // Private Pi seam, pinned and hash-checked by prepare:assets. A source CLI
 // started after a fresh dependency checkout must prepare assets/adaptation first.
+import * as piAgentSession from "../node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js";
 import * as piMain from "../node_modules/@earendil-works/pi-coding-agent/dist/main.js";
 import * as piArgs from "../node_modules/@earendil-works/pi-coding-agent/dist/cli/args.js";
 import * as piChatViewport from "../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/chat-viewport.js";
@@ -7,11 +8,14 @@ import { builtInExtensions } from "../node_modules/@earendil-works/pi-coding-age
 
 export function assertBruvPiHost(
   state: {
+    inputIdentityPrepared?: boolean;
     mainPrepared?: boolean;
     argsPrepared?: boolean;
     viewportPrepared?: boolean;
     builtInNames: (string | undefined)[];
   } = {
+    inputIdentityPrepared: (piAgentSession as typeof piAgentSession & { bruvInputIdentityAdapted?: boolean })
+      .bruvInputIdentityAdapted,
     mainPrepared: (piMain as typeof piMain & { bruvHostAdapted?: boolean }).bruvHostAdapted,
     argsPrepared: (piArgs as typeof piArgs & { bruvHostAdapted?: boolean }).bruvHostAdapted,
     viewportPrepared: (piChatViewport as typeof piChatViewport & { bruvHostAdapted?: boolean }).bruvHostAdapted,
@@ -21,6 +25,7 @@ export function assertBruvPiHost(
   // Reject a partially prepared dependency (e.g. interrupted writes) as well
   // as a pristine dependency checkout. No factories run before this gate.
   if (
+    !state.inputIdentityPrepared ||
     !state.mainPrepared ||
     !state.argsPrepared ||
     !state.viewportPrepared ||

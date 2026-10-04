@@ -1,0 +1,81 @@
+Code
+ACCEPT_LOCAL_SUBAGENT: launch the actual normal Br...
+PT
+project
+now
+Settle
+ACCEPT_LOCAL_SUBAGENT: launch the actual normal Br...
+Settled (0)
+PT
+project
+/
+ACCEPT_LOCAL_SUBAGENT: launch the actual normal Br...
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+ACCEPT_LOCAL_SUBAGENT: launch the actual normal Bruv worker locally with waitSeconds zero.
+
+8:59 AM
+
+Worked for 4.8s
+8:59 AM
+
+Execute
+
+8:59 AM
+Actual local normal acceptance worker
+CHILD_ANSWER_REAL
+8s
+T3 Code
+
+ROOT_BACKGROUND_RETURN_REAL
+
+8:59 AM
+
+You
+
+ACCEPT_LOCAL_FOLLOWUP: acknowledge this followup while the normal child is still running.
+
+8:59 AM
+
+T3 Code
+
+ROOT_FOLLOWUP_REAL
+
+8:59 AM
+
+Subagent "Actual local normal acceptance worker" finished
+
+Open subagent
+8:59 AM
+T3 Code
+
+ROOT_COMPLETION_ONCE_REAL
+
+8:59 AM
+
+You
+
+ACCEPT_LOCAL_AFTER_CHILD: reply in this same root after child transcript return.
+
+8:59 AM
+
+T3 Code
+
+ROOT_AFTER_CHILD_REAL
+
+8:59 AM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic acceptance (not Claude)
+Full access
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings

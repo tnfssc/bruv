@@ -100,65 +100,30 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.21.0
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
-        with:
-          version: 11.27.1
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.2
       # Download-store caches below never restore node_modules, source, dist, or credentials.
-      # Partial-key download hits are safe: frozen installs and source verification still run.
+      # Partial-key download hits are safe: frozen installs still run.
       - name: Configure package download stores
         shell: bash
         run: |
           echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache" >> "$GITHUB_ENV"
-          echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store" >> "$GITHUB_ENV"
       - name: Cache Bun package downloads
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/bruv-bun-cache
           key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
           restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
-      - name: Cache pinned T3 pnpm package store
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ${{ runner.temp }}/bruv-pnpm-store
-          # The source pin includes its upstream lockfile; the patch can change its dependencies.
-          key: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('integrations/t3/upstream/source.json', 'integrations/t3/upstream/bruv.patch') }}
-          restore-keys: pnpm-11.10.0-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
         shell: bash
         run: |
           command -v tmux >/dev/null || { sudo apt-get update && sudo apt-get install -y tmux; }
           tmux -V
           echo "CPU slots: $(getconf _NPROCESSORS_ONLN)"
-      # Exact web payload only: no partial-key fallback, source/deps still prepared.
-      - name: Compute pinned web producer key
-        id: web-key
+      - name: Shared Linux CI gate (paired binaries, external T3)
         shell: bash
-        run: |
-          set -euo pipefail
-          key=$(bun --no-env-file scripts/ci-web.ts key)
-          echo "key=$key" >> "$GITHUB_OUTPUT"
-      - name: Restore exact pinned web payload (read-only)
-        id: web-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .cache/ci-packed-web
-          key: ${{ steps.web-key.outputs.key }}
-          enableCrossOsArchive: false
-      - name: Shared Linux CI gate
-        shell: bash
-        env:
-          BRUV_CI_WEB_CACHE: "1"
         run: bun run ci
-      # PRs (including same-repo PRs) never save/promote executable cache entries.
-      - name: Save verified pinned web payload (trusted default branch only)
-        if: ${{ success() && github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && steps.web-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .cache/ci-packed-web
-          key: ${{ steps.web-key.outputs.key }}
       - name: Upload failure logs
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -185,7 +150,6 @@ jobs:
         shell: bash
         run: |
           echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache" >> "$GITHUB_ENV"
-          echo "PNPM_CONFIG_STORE_DIR=$RUNNER_TEMP/bruv-pnpm-store" >> "$GITHUB_ENV"
       - name: Cache Bun package downloads
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:

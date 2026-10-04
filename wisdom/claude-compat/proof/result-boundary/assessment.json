@@ -1,0 +1,183 @@
+{
+  "exactCause": "Effect 4.0.0-rc.115 Queue.awaitTake does not reconcile offers made after the empty take check but before waiter registration",
+  "normalConnectorChanged": false,
+  "upstreamProductionChanged": false,
+  "officialAcceptanceFixed": false,
+  "subscriber": 5,
+  "terminalProviderTurnHash": "5b4fd5a46e44ac01",
+  "tailOffers": [
+    {
+      "stage": "subscriber.publish",
+      "context": null,
+      "frame": null,
+      "subscribers": [
+        5
+      ],
+      "phase": [
+        {
+          "id": 5,
+          "state": "Open",
+          "messages": 2,
+          "takers": 0,
+          "scheduled": false,
+          "pending": [],
+          "running": false
+        }
+      ],
+      "eventType": "provider_turn.updated",
+      "eventStatus": "completed",
+      "eventTurn": "5b4fd5a46e44ac01",
+      "sequence": 1097
+    },
+    {
+      "stage": "subscriber.publish",
+      "context": null,
+      "frame": null,
+      "subscribers": [
+        5
+      ],
+      "phase": [
+        {
+          "id": 5,
+          "state": "Open",
+          "messages": 3,
+          "takers": 0,
+          "scheduled": false,
+          "pending": [],
+          "running": false
+        }
+      ],
+      "eventType": "provider_thread.updated",
+      "eventTurn": null,
+      "sequence": 1102
+    },
+    {
+      "stage": "subscriber.publish",
+      "context": null,
+      "frame": null,
+      "subscribers": [
+        5
+      ],
+      "phase": [
+        {
+          "id": 5,
+          "state": "Open",
+          "messages": 4,
+          "takers": 0,
+          "scheduled": false,
+          "pending": [],
+          "running": false
+        }
+      ],
+      "eventType": "turn.terminal",
+      "eventStatus": "completed",
+      "eventTurn": "5b4fd5a46e44ac01",
+      "sequence": 1107
+    }
+  ],
+  "lastConsumer": [
+    {
+      "stage": "run.ingest.after",
+      "context": null,
+      "frame": null,
+      "eventType": "turn_item.updated",
+      "eventTurn": null,
+      "sequence": 1081
+    },
+    {
+      "stage": "run.tracked",
+      "context": null,
+      "frame": null,
+      "eventType": "turn_item.updated",
+      "eventTurn": null,
+      "sequence": 1082
+    },
+    {
+      "stage": "run.stop.result",
+      "context": null,
+      "frame": null,
+      "phase": false,
+      "eventTurn": null,
+      "sequence": 1083
+    }
+  ],
+  "subscriberClosedBeforeTerminal": false,
+  "decodedCommandResult": {
+    "sequence": 86,
+    "thread": "id-122",
+    "providerSession": "id-123",
+    "direction": "incoming",
+    "type": "result",
+    "subtype": "success",
+    "uuid": "id-94",
+    "session": "id-9",
+    "parentTool": null,
+    "echoedPrompt": "id-89",
+    "echoedPrompts": [
+      "id-89"
+    ],
+    "origin": {
+      "kind": "human"
+    },
+    "resultTurns": 0,
+    "markers": []
+  },
+  "decodedTail": [
+    {
+      "sequence": 86,
+      "thread": "id-122",
+      "providerSession": "id-123",
+      "direction": "incoming",
+      "type": "result",
+      "subtype": "success",
+      "uuid": "id-94",
+      "session": "id-9",
+      "parentTool": null,
+      "echoedPrompt": "id-89",
+      "echoedPrompts": [
+        "id-89"
+      ],
+      "origin": {
+        "kind": "human"
+      },
+      "resultTurns": 0,
+      "markers": []
+    },
+    {
+      "sequence": 87,
+      "thread": "id-122",
+      "providerSession": "id-123",
+      "direction": "incoming",
+      "type": "command_lifecycle",
+      "state": "completed",
+      "uuid": "id-95",
+      "session": "id-9",
+      "parentTool": null,
+      "echoedPrompt": "id-89",
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": []
+    },
+    {
+      "sequence": 88,
+      "thread": "id-122",
+      "providerSession": "id-123",
+      "direction": "incoming",
+      "type": "system",
+      "subtype": "session_state_changed",
+      "state": "idle",
+      "uuid": "id-96",
+      "session": "id-9",
+      "parentTool": null,
+      "echoedPrompt": "id-89",
+      "echoedPrompts": [],
+      "origin": null,
+      "markers": []
+    }
+  ],
+  "isolatedDependencyRegression": "PASS (original queue stalls, waiter-recheck consumes the exact offered signal)",
+  "diagnosticHumanCommands": "PASS, modified artifact only",
+  "diagnosticStrictSameRootReplyAndIdle": "PASS, modified artifact only",
+  "finalOfficial": "FAIL, actual zero-model status reply persisted but Stop remains visible",
+  "finalOfficialSha256": "2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795"
+}

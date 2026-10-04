@@ -8,20 +8,24 @@ fi
 
 case "${1-}" in
   "") bun run build ;;
-  --reuse-build)
-    if [ ! -f ./dist/bruv ] || [ ! -x ./dist/bruv ]; then
-      echo "smoke: --reuse-build requires executable dist/bruv" >&2
-      exit 1
-    fi
-    ;;
+  --reuse-build) ;;
   *) echo "usage: scripts/smoke.sh [--reuse-build]" >&2; exit 2 ;;
 esac
+
+# The build and reuse paths must both supply the complete runnable pair.
+for binary in ./dist/bruv ./dist/bruv-claude-compat; do
+  if [ ! -f "$binary" ] || [ ! -x "$binary" ]; then
+    echo "smoke: requires executable $binary" >&2
+    exit 1
+  fi
+done
 
 expected_version="$(bun -e 'console.log(require("./package.json").version)')"
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT INT TERM
 cp ./dist/bruv "$tmp_dir/bruv"
+cp ./dist/bruv-claude-compat "$tmp_dir/bruv-claude-compat"
 
 version="$(env -i HOME="$tmp_dir/home" PATH=/nonexistent "$tmp_dir/bruv" --version)"
 help="$(env -i HOME="$tmp_dir/home" PATH=/nonexistent "$tmp_dir/bruv" --help)"
@@ -31,4 +35,12 @@ printf '%s\n' "$help" | grep -q '^bruv - AI coding assistant'
 [ -d "$tmp_dir/home/.bruv" ]
 [ ! -e "$tmp_dir/home/.pi" ]
 
-echo "bruv standalone smoke test passed"
+connector_version="$(env -i HOME="$tmp_dir/connector-home" PATH=/nonexistent "$tmp_dir/bruv-claude-compat" --version)"
+[ "$connector_version" = "bruv-claude-compat $expected_version" ]
+[ ! -e "$tmp_dir/connector-home/.bruv" ]
+[ ! -e "$tmp_dir/connector-home/.claude" ]
+web="$(env -i HOME="$tmp_dir/web-home" PATH=/nonexistent "$tmp_dir/bruv" web)"
+printf '%s\n' "$web" | grep -q 'external, unmodified T3'
+[ ! -e "$tmp_dir/web-home/.bruv" ]
+[ ! -e "$tmp_dir/web-home/.claude" ]
+echo "bruv paired standalone smoke test passed (not native parity acceptance)"

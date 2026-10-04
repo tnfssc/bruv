@@ -1,0 +1,104 @@
+Code
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+PT
+project
+now
+Settle
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+Settled (0)
+PT
+project
+/
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+Bruv local deterministic acceptance (not Claude) 0.15.28 is unsupported
+This provider version is outside the supported range for this T3 Code release. Use >=2.1.280.
+You
+
+ACCEPT_EXECUTE: run the actual Bruv execute tool.
+
+9:25 PM
+
+Worked for 1.5s
+9:25 PM
+T3 Code
+
+EXECUTE_CONFIRMED_REAL
+
+9:25 PM
+
+You
+
+ACCEPT_STEER: start a real managed shell and wait for it.
+
+9:25 PM
+
+Worked for 1.1s
+9:25 PM
+Steer
+You
+
+ACCEPT_STEER_NOW: acknowledge this admitted steer.
+
+9:25 PM
+
+T3 Code
+
+STEER_ADMITTED_REAL
+
+9:25 PM
+
+You
+
+ACCEPT_EARLY_RETURN: start a managed shell with waitSeconds zero.
+
+9:25 PM
+
+Worked for 357ms
+9:25 PM
+T3 Code
+
+EARLY_RETURN_REAL
+
+9:25 PM
+
+Background activity updated
+
+9:25 PM
+T3 Code
+
+TASK_COMPLETED_REAL
+
+9:25 PM
+
+You
+
+ACCEPT_STOP: wait on another actual managed shell.
+
+9:25 PM
+
+Execute
+
+9:25 PM
+Run interrupted
+· Run interrupted by user
+You
+
+ACCEPT_CANCEL: cancel and inspect the actual remaining owned job.
+
+9:25 PM
+
+Worked for 1.0s
+9:25 PM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Local deterministic acceptance (not Claude)
+Full access
+Toggle Sidebar
+Update Available: Claude v2.1.288
+
+Claude can be updated from provider settings.
+
+Settings

@@ -78,13 +78,16 @@ describe("compiled bruv CLI", () => {
   test("self-update help and argument errors never invoke the SDK updater", async () => {
     const help = await run([binary, "update", "--help"], { env: isolatedEnv() });
     expect(help.code).toBe(0);
-    expect(help.stdout).toContain("Usage: bruv update");
+    expect(help.stdout).toContain("Usage: bruv update [--check]");
+    expect(help.stdout).toContain("bruv-claude-compat together");
+    expect(help.stdout).toContain("Does not install Claude or T3");
+    expect(help.stdout).not.toContain("manually");
     const invalid = await run([binary, "update", "self"], { env: isolatedEnv() });
     expect(invalid.code).toBe(1);
     expect(invalid.stderr).toContain("Usage: bruv update");
   });
 
-  test("installs atomically into the requested local bin directory", async () => {
+  test("installs the verified pair into the requested local bin directory", async () => {
     const installDir = join(home, ".local", "bin");
     const result = await run([join(root, "scripts/install-local.sh")], {
       cwd: root,
@@ -101,5 +104,8 @@ describe("compiled bruv CLI", () => {
     const installed = await run([join(installDir, "bruv"), "--version"], { env: isolatedEnv() });
     expect(installed.code).toBe(0);
     expect(installed.stdout.trim()).toBe(packageVersion);
+    const connector = await run([join(installDir, "bruv-claude-compat"), "--version"], { env: isolatedEnv() });
+    expect(connector.code).toBe(0);
+    expect(connector.stdout.trim()).toBe("bruv-claude-compat " + packageVersion);
   });
 });

@@ -54,7 +54,6 @@ test("active T3 inputs and agent composition have one maintained home", async ()
     "src/history/shake-record.ts",
     "src/t3/tasks/mcp-client.ts",
     "src/t3/tasks/native-task.ts",
-    "src/t3/web/embedded.ts",
     "integrations/t3/upstream/source.json",
     "integrations/t3/upstream/bruv.patch",
     "integrations/t3/upstream/bootstrap.mjs",
@@ -72,6 +71,7 @@ test("active T3 inputs and agent composition have one maintained home", async ()
     "web/t3-source.json",
     "web/t3.patch",
     "web/bruv-web-bootstrap.mjs",
+    "src/t3/web/embedded.ts",
     "scripts/build-web.ts",
     "scripts/web-source.ts",
   ])

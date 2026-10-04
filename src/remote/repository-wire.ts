@@ -1,3 +1,4 @@
+import { scrubT3BridgeEnvironment } from "../delegation-environment";
 import { downloadRepositoryResult, type RepositoryResultPage } from "./repository-download";
 import { durableJsonReplace } from "./durable-json";
 import { validatePlacement, validateWorkspace, type RemotePlacement, type RemoteWorkspace } from "./placement";
@@ -120,7 +121,12 @@ export function repositoryRequest(dir: string, req: RepositoryRequest, state?: s
     const checkout = join(dir, "checkout");
     // A crash during clone can only leave this unaccepted, task-owned directory.
     rmSync(checkout, { recursive: true, force: true });
-    const env = { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null", GIT_TERMINAL_PROMPT: "0" };
+    const env = {
+      ...scrubT3BridgeEnvironment(process.env),
+      GIT_CONFIG_NOSYSTEM: "1",
+      GIT_CONFIG_GLOBAL: "/dev/null",
+      GIT_TERMINAL_PROMPT: "0",
+    };
     const clone = Bun.spawnSync(
       ["git", "-c", "core.hooksPath=/dev/null", "clone", "--no-checkout", "-q", bundle, checkout],
       {

@@ -1,0 +1,45 @@
+[
+  {
+    "sequence": 1,
+    "model": "local-deterministic-v1",
+    "tool": "mcp__t3-code__orchestrator_capabilities"
+  },
+  {
+    "sequence": 2,
+    "model": "local-deterministic-v1",
+    "tool": "mcp__t3-code__delegate_task"
+  },
+  {
+    "sequence": 3,
+    "model": "local-deterministic-v1",
+    "response": "APP_TASK_PENDING_REAL_done"
+  },
+  {
+    "sequence": 1001,
+    "model": "local-normal-v1",
+    "tool": "mcp__t3-code__delegate_task",
+    "reasoningEffort": "high",
+    "reasoningSummary": "auto"
+  },
+  {
+    "sequence": 1002,
+    "model": "local-normal-v1",
+    "tool": "execute",
+    "reasoningEffort": "high",
+    "reasoningSummary": "auto"
+  },
+  {
+    "sequence": 1003,
+    "model": "local-normal-v1",
+    "tool": "execute",
+    "reasoningEffort": "high",
+    "reasoningSummary": "auto"
+  },
+  {
+    "sequence": 1004,
+    "model": "local-normal-v1",
+    "tool": "mcp__t3-code__task_status",
+    "reasoningEffort": "high",
+    "reasoningSummary": "auto"
+  }
+]

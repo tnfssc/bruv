@@ -1,45 +1,22 @@
-import { prepareWebPayload } from "./packed-web";
-import { nativeHelperPlugin } from "./live-helper-bundle";
-import { access, cp } from "node:fs/promises";
 import { resolve } from "node:path";
-import { packWebArchive } from "../src/t3/web/archive";
-import { buildWeb, verifyWebChunks } from "../integrations/t3/build/build";
+import { nativeHelperPlugin } from "./live-helper-bundle";
 
 const root = resolve(import.meta.dir, "..");
-let reuseWeb = false;
-let reusePackedWeb = false;
 let output = "dist/bruv";
 let target: string | undefined;
 let helper: string | undefined;
 for (const argument of process.argv.slice(2)) {
   if (argument === "--") continue;
-  if (argument === "--reuse-web") reuseWeb = true;
-  else if (argument === "--reuse-packed-web") reusePackedWeb = true;
-  else if (argument.startsWith("--outfile=")) output = argument.slice("--outfile=".length);
+  if (argument.startsWith("--outfile=")) output = argument.slice("--outfile=".length);
   else if (argument.startsWith("--live-helper=")) helper = argument.slice("--live-helper=".length);
   else if (argument.startsWith("--target=")) target = argument.slice("--target=".length);
   else throw new Error("Unknown build option: " + argument);
 }
-if (reuseWeb && reusePackedWeb) throw new Error("--reuse-web and --reuse-packed-web are mutually exclusive");
 if (!output) throw new Error("--outfile requires a path");
 if (target === "") throw new Error("--target requires a value");
 if (helper === "") throw new Error("--live-helper requires a path");
 const plugins = helper ? [await nativeHelperPlugin(helper, target ?? `bun-${process.platform}-${process.arch}`)] : [];
 const outfile = resolve(root, output);
-const webDirectory = resolve(root, "dist/bruv-web");
-const archive = resolve(root, "dist/bruv-web.archive.gz");
-
-await prepareWebPayload(root, reusePackedWeb ? "packed" : reuseWeb ? "repack" : "fresh", {
-  fresh: buildWeb,
-  repack: async () => {
-    await access(webDirectory);
-    verifyWebChunks(resolve(webDirectory, "dist/client"));
-    await cp(resolve(root, "integrations/t3/upstream/bootstrap.mjs"), resolve(webDirectory, "bootstrap.mjs"));
-    const hash = await packWebArchive(webDirectory, archive, { exclude: ["launcher.mjs", "t3"] });
-    console.log("Packed existing web runtime (sha256 " + hash + ")");
-  },
-});
-
 // This file is not executed or probed for permissions during the build.
 const compile = { outfile, ...(target ? { target } : {}) };
 const result = await Bun.build({

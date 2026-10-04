@@ -39,7 +39,7 @@ export function producerEnvironment(directory: string): Record<string, string> {
   const tools = [
     process.execPath,
     ...["node", "pnpm"].map((tool) => {
-      const path = Bun.which(tool);
+      const path = Bun.which(tool, { PATH: process.env.PATH });
       if (!path) throw new Error("Missing producer tool: " + tool);
       return path;
     }),
