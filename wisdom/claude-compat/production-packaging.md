@@ -107,3 +107,69 @@ MCP permissions and saved questions, true subagent/monitor ownership and steerin
 Stop/idle completion/Live controls, actual Mac helper pairing/self-test and
 Mac/Linux arm64/Android native execution. Do not publish or integrate this branch
 merely because packaging/cross builds pass.
+
+## Held-branch completion — 2026-10-04
+
+Base remains packaging 2abc96c3 plus paired updater 34b9ff52. Parent integration
+and external-T3 full native parity acceptance remain separate prerequisites.
+No parent unbundle/cherry-pick, T3 source edit, global installation, publication,
+release mutation or push was performed.
+
+The prepared full-unit log (1865 pass / 27 skip / 6 fail) exposed obsolete
+bundled-web workflow/checksum assertions and a single-binary smoke fixture.
+Current tests instead require download-only Bun caches, locked root validation,
+paired build/smoke reuse, both targets' checksums, all cross-build targets,
+prepared-commit pinning, actual final-pair native acceptance, and publication
+waiting for native/macOS/updater gates. Historical opt-in patched-web cache tests
+remain as provenance, with executable tool fixtures rather than a production
+pnpm installation requirement. Missing pnpm still fails the actual producer;
+there is no toolchain fallback. Producer lookup now explicitly uses the current
+PATH (Bun 1.4.2's default Bun.which lookup retains its startup PATH).
+
+Standalone smoke requires BOTH executable binaries on clean-build and reuse
+paths. Its fixture checks both version forms and external-web guidance, including
+negative cases for incomplete/nonexecutable pairs, wrong connector version and
+wrong web guidance. CI/release still reuse the build preceding their full tests;
+smoke is not native parity acceptance.
+
+Inspection also found a real release blocker missed by the earlier focused
+checks: scripts/verify-update.ts still advertised only normal Bruv. Running that
+old gate against the actual built pair failed its checksum-preservation check
+before replacement. The gate now requires both canonical host assets/checksums,
+compiles the current updater, advertises all four fake official assets, and updates
+only a separate private temporary installation. Corrupting either download must
+preserve BOTH installed files; successful update must match both candidate hashes
+and distinct version forms, leave the running gate unchanged, and clean staging.
+The real updater's macOS staged helper self-test remains in the path. Executable
+regressions also reject a missing connector, either bad candidate checksum and a
+checksummed connector version mismatch. No network update or real installation
+replacement is performed by this gate.
+
+Local checks use Bun 1.4.2 from the explicit mise installation bin directory,
+SHELL=/bin/bash and a frozen worktree dependency install. The first parallel unit
+attempt inherited SHELL=/bin/fish: untrusted mise startup text contaminated shell
+job assertions, and one probe timed out under that run's load. No trust/global
+shell configuration or unrelated product code was changed. Those affected files
+pass with explicit bash; final full-root evidence is recorded below. A concurrent
+extra focused run hit ENOSPC in the shared 16 GiB /tmp tmpfs, not the repository
+filesystem. Its rerun used an owned short disk-backed TMPDIR under ~/.cache and
+passed; only owned local candidate outputs were removed. No unrelated temp files
+or product gates were altered to conceal that environment failure.
+
+- Focused changed/affected files: 56 pass / 0 fail across 7 files. Final changed
+  files rerun: 16 pass / 0 fail across 4 files (held-packaging-focused-final.log).
+- Clean default paired build/smoke and explicit preceding-build reuse smoke pass.
+- All four paired cross-builds pass; actual Linux x64 baseline candidates pass
+  the repaired compiled updater gate. Cross macOS builds did not embed a Mac
+  native-helper artifact and are not native macOS/arm64/Android execution proof.
+- Repository format, lint (existing advisory warnings/infos, no errors), typecheck,
+  shell syntax and diff whitespace checks pass.
+- Final full-root suite: 1874 pass / 27 skip / 0 fail; 1901 tests across
+  254 files (236.78s). Skips remain explicit native/live/external gates, not removed
+  packaging checks. This supersedes the earlier focused-only evidence status.
+
+Logs stay in this worktree's ignored artifacts/held-packaging-*.log. In particular
+held-packaging-focused.log, held-packaging-clean-smoke.log,
+held-packaging-reuse-smoke.log, held-packaging-cross-builds.log and
+held-packaging-unit-final.log retain the executed evidence. These checks do not
+replace parent full native acceptance or hosted final-artifact/macOS-helper gates.

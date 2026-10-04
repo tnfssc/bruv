@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from "bun:test";
 import { execFileSync } from "node:child_process";
-import { chmod, mkdtemp, rm } from "node:fs/promises";
+import { chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import {
@@ -23,58 +23,85 @@ async function fixture() {
   for (const file of webInputs) await Bun.write(resolve(root, file), file);
   return root;
 }
-const tools = { bun: "pinned", node: "pinned", pnpm: "pinned", compiler: "pinned", os: "pinned", libc: "pinned" };
-test("CI web key is workspace/run independent, CLI source independent, and owns every producer input", async () => {
-  // Release runners legitimately set this for their own T3 build. Exercise that
-  // inherited state, retain the custom-source guard, then use a clean fixture env.
-  const previousSource = process.env.BRUV_T3_SOURCE;
-  try {
-    process.env.BRUV_T3_SOURCE = "/release/runner/custom-t3-source";
-    await expect(ciWebInputKey(await fixture(), tools)).rejects.toThrow("owns BRUV_T3_SOURCE");
-    delete process.env.BRUV_T3_SOURCE;
-
-    const a = await fixture(),
-      b = await fixture();
-    const key = await ciWebInputKey(a, tools);
-    expect(await ciWebInputKey(b, tools)).toBe(key);
-    await Bun.write(a + "/src/cli.ts", "current CLI behavioral changes");
-    expect(await ciWebInputKey(a, tools)).toBe(key);
-    for (const file of webInputs) {
-      await Bun.write(resolve(a, file), file + " changed");
-      expect(await ciWebInputKey(a, tools)).not.toBe(key);
-      await Bun.write(resolve(a, file), file);
-    }
-    await chmod(a + "/integrations/t3/upstream/bootstrap.mjs", 0o755);
-    expect(await ciWebInputKey(a, tools)).not.toBe(key);
-    expect(await ciWebInputKey(b, { ...tools, node: "other" })).not.toBe(key);
-  } finally {
-    if (previousSource === undefined) delete process.env.BRUV_T3_SOURCE;
-    else process.env.BRUV_T3_SOURCE = previousSource;
+// These historical producer unit tests do not install the retired CI toolchain.
+// Resolve fixture executables, never substitute a tool in the real producer.
+async function withProducerTools<T>(root: string, run: () => Promise<T>): Promise<T> {
+  for (const tool of ["node", "pnpm"]) {
+    await writeFile(resolve(root, tool), "#!/bin/sh\nexit 99\n", { mode: 0o755 });
   }
+  const previous = process.env.PATH;
+  process.env.PATH = root;
+  try {
+    return await run();
+  } finally {
+    if (previous === undefined) delete process.env.PATH;
+    else process.env.PATH = previous;
+  }
+}
+const tools = { bun: "pinned", node: "pinned", pnpm: "pinned", compiler: "pinned", os: "pinned", libc: "pinned" };
+test("historical web key is workspace/run independent, CLI source independent, and owns every producer input", async () => {
+  await withProducerTools(await fixture(), async () => {
+    // Release runners legitimately set this for their own T3 build. Exercise that
+    // inherited state, retain the custom-source guard, then use a clean fixture env.
+    const previousSource = process.env.BRUV_T3_SOURCE;
+    try {
+      process.env.BRUV_T3_SOURCE = "/release/runner/custom-t3-source";
+      await expect(ciWebInputKey(await fixture(), tools)).rejects.toThrow("owns BRUV_T3_SOURCE");
+      delete process.env.BRUV_T3_SOURCE;
+
+      const a = await fixture(),
+        b = await fixture();
+      const key = await ciWebInputKey(a, tools);
+      expect(await ciWebInputKey(b, tools)).toBe(key);
+      await Bun.write(a + "/src/cli.ts", "current CLI behavioral changes");
+      expect(await ciWebInputKey(a, tools)).toBe(key);
+      for (const file of webInputs) {
+        await Bun.write(resolve(a, file), file + " changed");
+        expect(await ciWebInputKey(a, tools)).not.toBe(key);
+        await Bun.write(resolve(a, file), file);
+      }
+      await chmod(a + "/integrations/t3/upstream/bootstrap.mjs", 0o755);
+      expect(await ciWebInputKey(a, tools)).not.toBe(key);
+      expect(await ciWebInputKey(b, { ...tools, node: "other" })).not.toBe(key);
+    } finally {
+      if (previousSource === undefined) delete process.env.BRUV_T3_SOURCE;
+      else process.env.BRUV_T3_SOURCE = previousSource;
+    }
+  });
 });
 test("producer environment does not inherit credentials, workflow identity or Vite configuration", async () => {
   const root = await fixture();
-  const env = producerEnvironment(root);
-  expect(Object.keys(env).sort()).toEqual(
-    [
-      "CI",
-      "HOME",
-      "LANG",
-      "LC_ALL",
-      "PATH",
-      "PNPM_CONFIG_STORE_DIR",
-      "SOURCE_DATE_EPOCH",
-      "TMPDIR",
-      "TZ",
-      "npm_config_userconfig",
-      "npm_config_globalconfig",
-      "npm_config_registry",
-    ].sort(),
-  );
-  expect(env.CI).toBe("true");
-  expect(env.HOME).toBe(resolve(root, ".cache/ci-web-home"));
-  await Bun.write(root + "/.env.production", "SECRET=not-cacheable");
-  await expect(rejectRootConfiguration(root)).rejects.toThrow("outside its contract");
+  await withProducerTools(root, async () => {
+    const env = producerEnvironment(root);
+    expect(Object.keys(env).sort()).toEqual(
+      [
+        "CI",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "PATH",
+        "PNPM_CONFIG_STORE_DIR",
+        "SOURCE_DATE_EPOCH",
+        "TMPDIR",
+        "TZ",
+        "npm_config_userconfig",
+        "npm_config_globalconfig",
+        "npm_config_registry",
+      ].sort(),
+    );
+    expect(env.CI).toBe("true");
+    expect(env.HOME).toBe(resolve(root, ".cache/ci-web-home"));
+    await Bun.write(root + "/.env.production", "SECRET=not-cacheable");
+    await expect(rejectRootConfiguration(root)).rejects.toThrow("outside its contract");
+  });
+});
+test("historical producer still fails closed when pnpm is missing", async () => {
+  const root = await fixture();
+  await withProducerTools(root, async () => {
+    await rm(resolve(root, "pnpm"));
+    expect(() => producerEnvironment(root)).toThrow("Missing producer tool: pnpm");
+    await expect(ciWebInputKey(root)).rejects.toThrow("Missing producer tool: pnpm");
+  });
 });
 test("exact receipt and digest required; every cache failure is a miss", async () => {
   const root = await fixture(),
@@ -107,24 +134,37 @@ test("pinned source validation rejects ignored build configuration before instal
   await Bun.write(root + "/.env.local", "VITE_SECRET=outside contract");
   await expect(verifyProducerSource(root, patch)).rejects.toThrow("ignored input");
 });
-test("workflow uses exact read-only restore, trusted default-branch save and preserves both test groups", async () => {
+test("production CI caches downloads only and delegates paired validation to the shared runner", async () => {
   const workflow = await Bun.file(resolve(import.meta.dir, "../.github/workflows/ci.yml")).text();
-  const section = workflow
-    .split("      - name: Compute pinned web producer key")[1]!
-    .split("      - name: Upload failure logs")[0]!;
-  expect(section).toContain("actions/cache/restore@");
-  expect(section).not.toContain("restore-keys:");
-  expect(section).toContain("actions/cache/save@");
-  expect(section).toContain("github.event_name != 'pull_request'");
-  expect(section).toContain("github.event.repository.default_branch");
+  expect(workflow).not.toContain("ci-web.ts");
+  expect(workflow).not.toContain("PNPM_CONFIG_STORE_DIR");
+  expect(workflow).not.toContain("pnpm/action-setup");
+  expect(workflow).not.toContain("Compute pinned web producer key");
+  const parsed = Bun.YAML.parse(workflow) as {
+    jobs: Record<string, { steps: { uses?: string; run?: string; with?: Record<string, string> }[] }>;
+  };
+  let downloadCaches = 0;
+  for (const job of Object.values(parsed.jobs)) {
+    for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache"))) {
+      downloadCaches++;
+      expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
+      expect(step.with?.key).toContain("bun-1.4.2-");
+    }
+  }
+  expect(downloadCaches).toBeGreaterThan(0);
+  expect(parsed.jobs.test!.steps.some((step) => step.run === "bun run ci")).toBe(true);
   const runner = await Bun.file(resolve(import.meta.dir, "../scripts/ci.sh")).text();
-  expect(runner).toContain('wait "$web_pid" || status=1');
-  expect(runner).toContain('wait "$root_pid" || status=1');
-  expect(runner).toContain("bun test --parallel=3 ./tests");
-  expect(runner).toContain("--reuse-packed-web");
-  const validation = await Bun.file(resolve(import.meta.dir, "../scripts/ci-web-validation.sh")).text();
-  expect(validation).not.toContain("Typecheck web backend");
-  expect(validation).not.toContain("Typecheck web client");
-  expect(validation).toContain("Typecheck terminal client");
-  expect(validation).toContain("NativeBruvIntegration.production.test.ts");
+  for (const gate of [
+    "bun install --frozen-lockfile",
+    "bun run format:check",
+    "bun run lint",
+    "bun run check",
+    "bun run build",
+    "bun scripts/offline-openai-default-transport.ts",
+    "bun test --parallel=3 ./tests",
+    "bun run smoke -- --reuse-build",
+  ])
+    expect(runner).toContain(gate);
+  expect(runner).not.toContain("ci-web-validation.sh");
+  expect(runner).not.toContain("--reuse-packed-web");
 });

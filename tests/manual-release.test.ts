@@ -85,7 +85,7 @@ describe("manual release preparation", () => {
     expect(workflow.on.workflow_dispatch).toBeNull();
     const jobs = workflow.jobs;
     expect(jobs["prepare-manual"]?.if).toContain("github.ref == 'refs/heads/develop'");
-    for (const name of ["mac-helper", "release", "mac-release-smoke", "publish"]) {
+    for (const name of ["mac-helper", "release", "linux-browser-boot", "mac-release-smoke", "publish"]) {
       expect(jobs[name]?.needs).toContain("prepare-manual");
       expect(
         jobs[name]?.steps.some((step) => step.with?.ref === "${{ needs.prepare-manual.outputs.sha || github.sha }}"),
@@ -94,7 +94,34 @@ describe("manual release preparation", () => {
     const release = jobs.release!.steps.map((step) => step.run ?? "").join("\n");
     expect(release).toContain('"$RELEASE_SHA"');
     expect(release).toContain('"$RELEASE_TAG"');
-    expect(release).toContain("sha256sum bruv-linux-x64");
+    expect(release).toContain('sha256sum "$binary" > "$binary.sha256"');
+    expect(release).toContain("bruv-{linux-x64,linux-arm64,darwin-arm64,android-arm64}");
+    expect(release).toContain("bruv-claude-compat-{linux-x64,linux-arm64,darwin-arm64,android-arm64}");
+    for (const target of ["bun-linux-x64-baseline", "bun-linux-arm64", "bun-darwin-arm64", "bun-android-arm64"]) {
+      expect(release).toContain("--target=" + target);
+    }
+    expect(release).toContain("--live-helper=./artifacts/release/mac-helper/live-audio");
+    expect(release).toContain("bun scripts/verify-update.ts dist/release/bruv-linux-x64");
+    const native = jobs["linux-browser-boot"]!;
+    expect(native.needs).toContain("release");
+    expect(native.if).toContain("needs.release.result == 'success'");
+    const nativeRuns = native.steps.map((step) => step.run ?? "");
+    expect(nativeRuns).toContain("bash scripts/setup-native-release-gate.sh");
+    const acceptance = nativeRuns.find((run) => run.includes("node scripts/claude-native-acceptance/run.mjs"))!;
+    expect(acceptance).toContain(
+      'BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64"',
+    );
+    expect(acceptance).toContain('BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64"');
+    // Setup exports GITHUB_ENV for the next step; it cannot share a run block.
+    expect(acceptance).not.toContain("setup-native-release-gate.sh");
+    const mac = jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");
+    expect(mac).toContain("dist/release/bruv-claude-compat-darwin-arm64 --version");
+    expect(mac).toContain("bun scripts/verify-update.ts dist/release/bruv-darwin-arm64");
+    expect(mac).toContain("--live-self-test");
+    for (const gate of ["release", "linux-browser-boot", "mac-release-smoke"]) {
+      expect(jobs.publish!.needs).toContain(gate);
+      expect(jobs.publish!.if).toContain("needs." + gate + ".result == 'success'");
+    }
     const publish = jobs.publish!.steps.map((step) => step.run ?? "").join("\n");
     expect(publish).toContain("bun scripts/publish-release.ts");
     const implementation = await Bun.file("scripts/publish-release.ts").text();

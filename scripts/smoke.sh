@@ -8,14 +8,17 @@ fi
 
 case "${1-}" in
   "") bun run build ;;
-  --reuse-build)
-    if [ ! -f ./dist/bruv ] || [ ! -x ./dist/bruv ]; then
-      echo "smoke: --reuse-build requires executable dist/bruv" >&2
-      exit 1
-    fi
-    ;;
+  --reuse-build) ;;
   *) echo "usage: scripts/smoke.sh [--reuse-build]" >&2; exit 2 ;;
 esac
+
+# The build and reuse paths must both supply the complete runnable pair.
+for binary in ./dist/bruv ./dist/bruv-claude-compat; do
+  if [ ! -f "$binary" ] || [ ! -x "$binary" ]; then
+    echo "smoke: requires executable $binary" >&2
+    exit 1
+  fi
+done
 
 expected_version="$(bun -e 'console.log(require("./package.json").version)')"
 
