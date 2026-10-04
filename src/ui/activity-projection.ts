@@ -4,13 +4,17 @@ import type { Component } from "@earendil-works/pi-tui";
 // pending result updates, images, and Pi's global tool expansion.
 const projections = new WeakMap<
   Component,
-  (width: number, native: () => string[], hasOwnedTasks: boolean) => string[]
+  { render: (width: number, native: () => string[], hasOwnedTasks: boolean) => string[]; active: () => boolean }
 >();
 export function setActivityProjection(
   component: Component,
   project: (width: number, native: () => string[], hasOwnedTasks: boolean) => string[],
+  active: () => boolean,
 ): void {
-  projections.set(component, project);
+  projections.set(component, { render: project, active });
+}
+export function hasActiveActivityProjection(component: Component): boolean {
+  return projections.get(component)?.active() ?? false;
 }
 export function clearActivityProjection(component: Component): void {
   projections.delete(component);
@@ -21,5 +25,6 @@ export function projectActivity(
   native: () => string[],
   hasOwnedTasks = false,
 ): string[] {
-  return projections.get(component)?.(width, native, hasOwnedTasks) ?? native();
+  const projection = projections.get(component);
+  return projection?.active() ? projection.render(width, native, hasOwnedTasks) : native();
 }

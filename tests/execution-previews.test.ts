@@ -601,3 +601,30 @@ test("partial execute results keep observing spinner state at the same width", (
   state.spinnerFrame = 1;
   expect(preview.render(80)[0]).toContain("⠙ Read module");
 });
+
+test("attention callbacks keep real launch provenance without copying output or changing notification delivery facts", () => {
+  const launchIdentity = { sourceSessionId: "/owner", sourceCallId: "original", callIndex: 3 };
+  const details = completionDiagnosticDetails(
+    [],
+    [
+      {
+        id: "job",
+        reasons: ["quiet"],
+        observedAt: "now",
+        elapsedMs: 12,
+        quietForMs: 10,
+        outputBytes: 20,
+        stdinOpen: false,
+        task: {
+          launchIdentity: { ...launchIdentity, prompt: "not provenance", profile: "normal" },
+          output: "private output",
+        },
+      } as any,
+    ],
+  );
+  expect(details.attention[0]?.launchIdentity).toEqual(launchIdentity);
+  expect(details.attention[0]?.id).toBe("job");
+  expect(details.attentionCount).toBe(1);
+  expect(JSON.stringify(details.attention)).not.toContain("private output");
+  expect(JSON.stringify(details.attention)).not.toContain("not provenance");
+});

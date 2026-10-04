@@ -38,6 +38,8 @@ export function taskRowFromLaunch(value: unknown, sourceCallId?: string, launchT
         : "native";
   const title = clean(task.title) || clean(launchTitle);
   const fallbackTitle = launchTaskTitle(undefined, task.command ?? task.prompt);
+  const launchIdentity = record(task.launchIdentity);
+  sourceCallId ??= typeof launchIdentity?.sourceCallId === "string" ? launchIdentity.sourceCallId : undefined;
   const status = task.status;
   const exitCode = typeof task.exitCode === "number" && Number.isInteger(task.exitCode) ? task.exitCode : undefined;
   const timedOut = task.timedOut === true;

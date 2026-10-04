@@ -60,7 +60,7 @@ DiskEntryStore.prototype.materialize = function(...args) {
   return originalMaterialize.apply(this, args);
 };
 const render = () => chat.render(80).map(stripTerminalSequences).join("\n");
-const keys = () => state.groups.map(group => group.key);
+const keys = () => state.groups.map(group => group.key.replace(/:\d+$/, ""));
 const cold = (label, expectedReads) => {
   reads.length = 0;
   render();
@@ -111,7 +111,7 @@ assert.ok(live.key.startsWith("live-"));
 assert.equal(state.count(live), 2);
 const click = { type: "click", button: "left", x: 0, y: 0, width: 80, height: 1 };
 assert.equal(e.handleMouse(click)?.handled, true);
-assert.ok(render().includes("SOURCE e"));
+assert.ok(render().includes("Check e"));
 assert.equal(state.groups.at(-1).expanded, true);
 e.updateResult({ content: [{ type: "text", text: "failed now" }], isError: true });
 assert.ok(render().includes("1 failed"));
@@ -121,10 +121,10 @@ assert.equal(state.count(state.groups.at(-1)), 1);
 assert.equal(reads.length, 0, "removing a live child still reads zero bodies");
 assistant("e", "f"); state.settle();
 cold("settled live assistant", 6);
-assert.equal(state.groups.at(-1).key, nextUser);
+assert.equal(state.groups.at(-1).key.replace(/:\d+$/, ""), nextUser);
 assert.ok(state.groups.at(-1).tools.includes(e));
 assert.equal(c.handleMouse(click)?.handled, true);
-assert.ok(render().includes("SOURCE e"));
+assert.ok(render().includes("Check e"));
 assert.equal(state.groups.at(-1).expanded, true);
 warm("settled live warm");
 

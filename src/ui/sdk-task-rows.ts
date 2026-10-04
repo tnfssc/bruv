@@ -1,4 +1,4 @@
-import { projectActivity } from "./activity-projection";
+import { hasActiveActivityProjection, projectActivity } from "./activity-projection";
 import { CustomMessageComponent, ToolExecutionComponent, type Theme } from "@earendil-works/pi-coding-agent";
 import { Container, truncateToWidth, type Component } from "@earendil-works/pi-tui";
 import { executeOutputPreview } from "./execution-previews";
@@ -165,7 +165,13 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
       for (const [key, row] of rows) {
         const source = row.sourceCallId ? sources.get(row.sourceCallId) : undefined;
         const labeled = source ? taskRowWithExecuteLabel(row, (source as unknown as ToolShape).args?.label) : row;
-        const owner = owners.get(key);
+        // Replay may contain a callback before the launching execute recorded a
+        // task row. Its real call provenance still identifies the canonical owner.
+        const recordedOwner = owners.get(key);
+        const owner =
+          source && hasActiveActivityProjection(source) && recordedOwner instanceof CustomMessageComponent
+            ? source
+            : recordedOwner;
         if (owner) {
           const owned = byChild.get(owner) ?? [];
           owned.push(labeled);
