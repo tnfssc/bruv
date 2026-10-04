@@ -1,50 +1,38 @@
-# bruv CLI logo (2026-10-04)
+# bruv logo (2026-10-04)
 
-- Asset: [assets/brand/bruv-icon.svg](../../assets/brand/bruv-icon.svg).
-- Integration: root README displays the icon at 96 px above the unchanged
-  **bruv CLI** heading. Existing product prose stays intact.
-- Worktree: /home/tnfssc/.bruv/worktrees/t3code-49177b47-5442693331ce-task_41b7b567
-- Branch: bruv/add-bruv-logo-41b7b567. Parent owns review and integration.
+## Current design
 
-## Design and scope
+User rejected the first mint tile and terminal-prompt b. Asked the parent to
+make it, not delegate again. Parent drew this replacement directly.
 
-Original geometric lowercase **b** with a terminal **>** cut into its counter.
-A thick stem and generous chevron stay legible small. Mint (#66e3c4) and ink
-(#102c31) are fixed on a rounded tile, so the same self-contained SVG works on
-light and dark backgrounds. No fonts, scripts, linked resources, dependencies,
-or theme-specific duplicates. Accessible title/description and README alt text
-name the mark. No extra wordmark: the existing heading already names the product.
+Custom lowercase wordmark. Heavy strokes, cut corners, forward lean. Black and
+white. No terminal symbol, stock font, colored tile, or external resource.
+The separate b icon uses the same geometry as the wordmark.
+This is a new proposal, not a user-approved design.
 
-Read values and the nearby name/rename wisdom. Inspected CLI startup
-(src/ui/startup.ts), Pi asset preparation (scripts/prepare-assets.ts), and T3
-integration ownership (integrations/t3/README.md). Quiet terminal startup stays
-quiet; upstream Pi assets and T3 branding stay unchanged. This is documentation
-branding, not a bundled application icon or broad rebrand.
+- assets/brand/bruv-wordmark.svg: dark ink on transparent background.
+- assets/brand/bruv-wordmark-light.svg: identical paths in white for dark pages.
+- assets/brand/bruv-icon.svg: standalone b; changes ink with color scheme.
+- assets/brand/bruv-wordmark.png: 1060 × 376 white-background sharing export.
+- README.md: 318 × 113 wordmark, picture source picks the dark-page variant.
+  Product heading and prose stay intact.
 
-## Checks
+SVG paths are the source. PNG is a render, not another design.
+To refresh it: render the dark wordmark at width 1060 with rsvg-convert,
+then flatten transparency on white with ImageMagick.
 
-- Python XML/HTML checks passed: SVG namespace/viewBox/accessibility IDs,
-  self-contained geometry, README relative image path/dimensions/alt text,
-  and unchanged heading/body.
-- librsvg rendered at 16, 24, 32, 96 and 192 px. Visually inspected an ImageMagick
-  contact sheet on white and #111827 backgrounds; the b and prompt remain clear.
-- Pandoc GFM rendering preserved the image before the bruv CLI h1.
-- git diff --check passed. No runtime code changed; no full build/test run needed.
+## Work and proof
 
-Local, ignored evidence: artifacts/bruv-logo/{preview.png,check.py,render.sh,
-readme.html}. Rerun with python3 artifacts/bruv-logo/check.py,
-bash artifacts/bruv-logo/render.sh, and
-pandoc --from=gfm --to=html README.md. Renderer scripts use /tmp for scratch output. GitHub-hosted/browser
-README rendering was not tested. Initial shell-loop attempts failed under Fish;
-the saved Bash render script passed. Mise reports this worktree config untrusted;
-system Python/librsvg/ImageMagick/Pandoc and Git checks still ran successfully.
+Current work: /home/tnfssc/.t3/worktrees/bruv/t3code-49177b47,
+branch t3code/add-logo. No child used for this replacement.
+First attempt remains on bruv/add-bruv-logo-41b7b567 in
+/home/tnfssc/.bruv/worktrees/t3code-49177b47-5442693331ce-task_41b7b567.
+That design is superseded. Do not restore it as the accepted logo.
 
-Values unchanged: existing small-scope and rendered-proof guidance covers this
-work; no new repeated lesson.
+Parent rendered and inspected both wordmark variants and the icon at 32 px.
+Python XML checks passed for titles, descriptions, paths, matching variant
+geometry, and README references. git diff --check passed.
+No runtime code changed. No full build needed. Browser preview is off for this
+thread, so no claim of browser or GitHub rendering acceptance.
 
-## Parent integration
-
-Parent reviewed the SVG and rendered light/dark size sheet, then cherry-picked
-the asset, README, and this note into t3code/add-logo. git diff --check passed
-and the tree was clean. Browser preview was attempted but this thread has no
-browser preview capability. The short-lived asset server was stopped.
+Values unchanged. This is specific design feedback, not a new general rule.

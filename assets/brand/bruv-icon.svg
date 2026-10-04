@@ -1,6 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
-  <title id="title">bruv CLI logo</title>
-  <desc id="desc">A bold lowercase b with a terminal prompt cutout on a mint rounded square.</desc>
-  <rect width="96" height="96" rx="20" fill="#66e3c4"/>
-  <path fill="#102c31" fill-rule="evenodd" d="M24 18H40V40C45 36 51 34 57 34C74 34 84 44 84 60C84 76 73 86 57 86H24ZM48 44L64 60L48 76L42 70L52 60L42 50Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="180" viewBox="0 0 160 180" role="img" aria-labelledby="title desc">
+  <title id="title">bruv icon</title>
+  <desc id="desc">Forward-leaning lowercase b with cut corners.</desc>
+  <style>path { fill: #171717; } @media (prefers-color-scheme: dark) { path { fill: #fafafa; } }</style>
+  <g transform="matrix(1 0 -.15 1 27 -2)">
+    <path d="M20 20H52V68H106L134 94V138L106 164H20Z M52 96V136H92L102 126V106L92 96Z" fill-rule="evenodd"/>
+  </g>
 </svg>

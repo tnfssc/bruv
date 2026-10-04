@@ -1,5 +1,8 @@
-<p align="center">
-  <img src="assets/brand/bruv-icon.svg" width="96" height="96" alt="bruv CLI logo: a lowercase b with a terminal prompt cutout">
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/bruv-wordmark-light.svg">
+    <img src="assets/brand/bruv-wordmark.svg" width="318" height="113" alt="bruv — custom cut-corner wordmark">
+  </picture>
 </p>
 
 # bruv CLI
