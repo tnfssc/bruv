@@ -231,9 +231,9 @@ export function installDiskBackedSessionManager(): void {
   if (installed) return;
   installed = true;
 
-  // Both footer modes ask the SDK for context usage on every input/spinner frame.
-  // Its implementation materializes the branch twice. Cache only the reduced result,
-  // at the SDK owner where the actual routed model limits are available.
+  // Keep only the numeric SDK estimate. Request preparation already builds the
+  // projection; seed this cache there so the following footer frame never has to
+  // rebuild it. Routed model limits affect presentation, not estimated tokens.
   const originalContextUsage = AgentSession.prototype.getContextUsage;
   const contextUsageCache = new WeakMap<
     SessionManager,
@@ -241,55 +241,58 @@ export function installDiskBackedSessionManager(): void {
       sessionId: string;
       leafId: string | null;
       entries: WeakRef<object>;
-      contextWindow: number;
-      value: ReturnType<AgentSession["getContextUsage"]>;
+      tokens: number | null;
     }
   >();
+  const cacheContextTokens = (manager: SessionManager, tokens: number | null) => {
+    const current = internals(manager);
+    contextUsageCache.set(manager, {
+      sessionId: current.sessionId,
+      leafId: getDiskBackedContextLeafId(manager) ?? null,
+      entries: new WeakRef(current.fileEntries),
+      tokens,
+    });
+  };
   AgentSession.prototype.getContextUsage = function () {
     const manager = this.sessionManager;
     const owned = state(manager);
     if (!owned) return originalContextUsage.call(this);
-    const current = internals(manager);
     const contextWindow =
       (
         this as unknown as {
           _limitsModel(): { contextWindow?: number } | undefined;
         }
       )._limitsModel()?.contextWindow ?? 0;
+    if (contextWindow <= 0) return undefined;
+    const current = internals(manager);
     const leafId = getDiskBackedContextLeafId(manager) ?? null;
     const cached = contextUsageCache.get(manager);
     const sameContext =
-      cached &&
-      cached.sessionId === current.sessionId &&
-      cached.entries.deref() === current.fileEntries &&
-      cached.contextWindow === contextWindow;
-    if (sameContext && cached.leafId === leafId) return cached.value;
-    const newest = leafId ? owned.store.byId.get(leafId) : undefined;
-    let value: ReturnType<AgentSession["getContextUsage"]>;
-    if (
-      sameContext &&
-      cached.value &&
-      newest?.type === "message" &&
-      newest.messageRole === "user" &&
-      contextLeaf(owned, newest.parentId) === cached.leafId
-    ) {
-      // Pi adds estimateTokens for trailing user messages. Reuse the unchanged
-      // prefix instead of re-reading it just as typing resumes after submission.
-      if (cached.value.tokens === null) value = cached.value;
-      else {
-        const entry = owned.store.materialize(newest) as Extract<SessionEntry, { type: "message" }>;
-        const tokens = cached.value.tokens + estimateTokens(entry.message);
-        value = { tokens, contextWindow, percent: (tokens / contextWindow) * 100 };
+      cached && cached.sessionId === current.sessionId && cached.entries.deref() === current.fileEntries;
+    let tokens: number | null;
+    if (sameContext && cached.leafId === leafId) tokens = cached.tokens;
+    else {
+      const newest = leafId ? owned.store.byId.get(leafId) : undefined;
+      if (
+        sameContext &&
+        newest?.type === "message" &&
+        newest.messageRole === "user" &&
+        contextLeaf(owned, newest.parentId) === cached.leafId
+      ) {
+        // Pi adds estimateTokens for a trailing user. Keep this one-message
+        // shortcut for reads that happen before request preparation.
+        tokens = cached.tokens;
+        if (tokens !== null) {
+          const entry = owned.store.materialize(newest) as Extract<SessionEntry, { type: "message" }>;
+          tokens += estimateTokens(entry.message);
+        }
+        cacheContextTokens(manager, tokens);
+      } else {
+        manager.buildSessionProjection();
+        tokens = contextUsageCache.get(manager)!.tokens;
       }
-    } else value = originalContextUsage.call(this);
-    contextUsageCache.set(manager, {
-      sessionId: current.sessionId,
-      leafId,
-      entries: new WeakRef(current.fileEntries),
-      contextWindow,
-      value,
-    });
-    return value;
+    }
+    return { tokens, contextWindow, percent: tokens === null ? null : (tokens / contextWindow) * 100 };
   };
 
   const klass: any = SessionManager;
@@ -436,11 +439,24 @@ export function installDiskBackedSessionManager(): void {
       }
       return { sourceEntry, messages };
     });
-    return {
+    const projection: SessionProjection = {
       entries,
       messages: entries.flatMap((entry) => entry.messages),
       ...contextSettings(path),
     };
+    // The pinned SDK estimator inspects branch type/id only (compaction and
+    // usage positions). Give it the projection we already built plus temporary
+    // metadata skeletons, never a second materialized branch. A positive dummy
+    // window obtains tokens even before the routed model is available.
+    const usage = originalContextUsage.call({
+      _limitsModel: () => ({ contextWindow: 1 }),
+      sessionManager: {
+        buildSessionProjection: () => projection,
+        getBranch: () => path.map(metadataSkeleton),
+      },
+    } as unknown as AgentSession)!;
+    cacheContextTokens(this, usage.tokens);
+    return projection;
   };
   prototype.buildSessionContext = function (this: SessionManager): SessionContext {
     const owned = state(this);
