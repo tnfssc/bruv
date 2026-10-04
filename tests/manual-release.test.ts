@@ -107,7 +107,7 @@ describe("manual release preparation", () => {
     expect(native.if).toContain("needs.release.result == 'success'");
     const nativeRuns = native.steps.map((step) => step.run ?? "");
     expect(nativeRuns).toContain("bash scripts/setup-native-release-gate.sh");
-    const acceptance = nativeRuns.find((run) => run.includes("/usr/bin/node scripts/run-native-release-gate.mjs"))!;
+    const acceptance = nativeRuns.find((run) => run.includes("node scripts/run-native-release-gate.mjs"))!;
     expect(acceptance).toContain(
       'BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64"',
     );

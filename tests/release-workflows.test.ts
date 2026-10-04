@@ -242,7 +242,7 @@ describe("release automation", () => {
     expect(setup).toContain("install --only-shell chromium");
     expect(setup).toContain("install-deps chromium");
     expect(browserCommands).toContain("bash scripts/setup-native-release-gate.sh");
-    expect(browserCommands).toContain("/usr/bin/node scripts/run-native-release-gate.mjs");
+    expect(browserCommands).toContain("node scripts/run-native-release-gate.mjs");
     expect(browserCommands).toContain("dist/release/bruv-claude-compat-linux-x64");
     const macCommands = workflow.jobs["mac-release-smoke"]!.steps.map((step) => step.run ?? "").join("\n");
     expect(macCommands).toContain("verify-update.ts");

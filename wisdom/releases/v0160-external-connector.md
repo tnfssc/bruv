@@ -24,3 +24,7 @@ Wisdom holds real gates, the upstream queue diagnosis and official2644 counterex
 ## First attempt and correction
 
 Run37182001166 stopped in native setup: hosted actions/setup-node has no /usr/bin/node. Validation/build gates were not bypassed. Maintained fixture launchers now use process.execPath, preserve only that executable directory plus system bins in their clean PATH, and the transparent tap uses env node. Shell fixture commands quote the actual executable. Setup uses configured node. Regression copies real Node outside /usr/bin and checks the tap and model shell command;27 focused tests pass. Typecheck/model tests pass, and unchanged2644 real command/idle replay with relocated Node passes (.cache/v0160-relocated-node-command). No production connector/T3 behavior changed.
+
+Retry running: https://github.com/tnfssc/bruv/actions/runs/37182435634 at80a0ab895ae5d1e67889c3c1ea5cbe9d32831460. Watch task_be476721; log artifacts/v0160-release-retry-watch.log. Do not push develop until it finishes.
+
+Retry37182435634 failed before native suites: workflow entrypoint still hard-coded /usr/bin/node. Build/deterministic tests/cross-builds/checksums/Linux updater and actual Mac updater/helper passed; publication skipped. Parent missed the YAML callsite in first portability fix. Native job now explicitly uses pinned actions/setup-node24.21.0 and invokes node from PATH. Added regression for job prerequisite ordering and no hard-coded system Node. No gate weakened.
