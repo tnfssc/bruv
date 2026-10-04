@@ -50,12 +50,12 @@ const du = user(delegatePrompt);
 const dp = prose("I'll give the CSV fix its own Git worktree.");
 const backgroundPrompt = "Run the import tests in the background.";
 const bu = user(backgroundPrompt);
-const br = prose("Tests are running. We can keep talking.");
+const br = prose("Import tests are running.");
 const cachePrompt = "While they run, explain the cache.";
-const ca = prose("Invalidate the preview cache when an import changes its rows. Export can stay independent.");
+const ca = prose("Clear the preview cache when an import changes its rows.");
 const wisdomPrompt = "Read wisdom/csv.md and finish the import.";
 const wu = user(wisdomPrompt);
-const wc = prose("The notes say: stream CSV rows to keep memory bounded. Quoted newlines still need a test.");
+const wc = prose("The notes say to stream rows to limit memory use. The quoted-newline test is still missing.");
 
 const scripts: Record<DemoId, Shot[]> = {
   delegate: [
@@ -66,12 +66,7 @@ const scripts: Record<DemoId, Shot[]> = {
     {
       at: 6200,
       stage: "Helper works; your checkout stays free",
-      blocks: [
-        du,
-        dp,
-        task("Fix CSV import"),
-        prose("The helper has a separate checkout and branch. Your export work stays here."),
-      ],
+      blocks: [du, dp, task("Fix CSV import"), prose("The CSV helper is working in its own checkout.")],
       jobs: 1,
     },
     { at: 11900, stage: "Receive the helper result", blocks: [du, dp, task("Fix CSV import", "done")], busy: true },
@@ -95,9 +90,7 @@ const scripts: Record<DemoId, Shot[]> = {
         dp,
         task("Fix CSV import", "done"),
         tool("Review helper diff"),
-        prose(
-          "CSV import now streams rows. Regression tests pass. The fix is on its own branch; review the diff before merging.",
-        ),
+        prose("The fix streams CSV rows and passes the import tests. Review its branch before merging."),
       ],
     },
   ],
@@ -208,9 +201,7 @@ const scripts: Record<DemoId, Shot[]> = {
         tool("Add quoted-newline test"),
         tool("Run import tests"),
         tool("Update wisdom/csv.md"),
-        prose(
-          "Quoted newlines now pass. Kept streaming; updated wisdom/csv.md with the test and next step: cache invalidation.",
-        ),
+        prose("Added the quoted-newline test and saved cache invalidation as the next step in wisdom/csv.md."),
       ],
     },
   ],
@@ -245,7 +236,10 @@ function wrap(text: string, width: number): string[] {
 export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: Cell[][]; stage: string } {
   cols = Math.max(0, Math.floor(cols));
   const height = demoHeight(cols);
-  const elapsed = Math.max(0, Number.isFinite(elapsedMs) ? elapsedMs : elapsedMs === Infinity ? demoDuration(id) : 0);
+  const elapsed = Math.min(
+    demoDuration(id),
+    Math.max(0, Number.isFinite(elapsedMs) ? elapsedMs : elapsedMs === Infinity ? demoDuration(id) : 0),
+  );
   const shot = [...scripts[id]].reverse().find((s) => s.at <= elapsed) ?? scripts[id][0];
   const spin = spinner[Math.floor(elapsed / 80) % spinner.length];
   const rows = Array.from({ length: height }, () => line("", styles.text, cols));

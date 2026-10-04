@@ -4,9 +4,9 @@
 
 The visible main site is an actual Ghostty Web/WASM terminal, not terminal-themed HTML. The latest request is **one scrolling page**, with captures' **actual text and colors composed as terminal cells**. No multi-route app, section menu, gallery or raster screenshot plane.
 
-Current work: [product-story correction](product-story.md). Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_ca1b8f57; branch fix/landing-product-story. New preview: http://127.0.0.1:39289/. Parent must inspect content and renders; no merge/deployment is authorized.
+Current work: [approved-layout copy and playback polish](polish-checkpoint.md), starting from accepted checkpoint 9d2a44b4. Worktree: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0f2604c1; branch feat/landing-copy-loop-polish. New preview: http://127.0.0.1:45339/ and http://127.0.0.1:45339/text.html. No merge/deployment is authorized; prior preview URLs below are historical.
 
-The page now explains Bruv through worktree delegation, foreground conversation during background jobs, and a concrete next-session handoff. “Keep coding / while your agents work” leads to Install and Source. Three clearly labeled illustrative workflows replace the settings capture. They are actual terminal text/colors, not fabricated completed app runs or raster images. Install links use README's source-build guide. Semantic/no-JS HTML shares the same content.
+The approved Ghostty/Vesper design remains. One heading per feature and short factual copy replace repeated category/eyebrow/stage stacks. Three source-backed scripted demos loop with hover/focus/touch playback and reduced-motion opt-in. The explicit HTML view animates the same cell frames in semantic pre/spans and preserves complete no-JS transcripts. [Animated feature notes](animated-features.md) and [writing review](writing-sources/polish-review.md) document decisions and provenance.
 
 [Single-page cell captures](single-page-cells.md) documents the retained renderer/capture machinery, not the current product copy. Its old preview is superseded; do not restart it.
 
@@ -26,6 +26,6 @@ From site: bun install --frozen-lockfile, bun run build, bun run test. PORT=0 bu
 - [image-theme-research.md](image-theme-research.md): upstream Ghostty image limitations and official Vesper source. We now render capture cells, not image protocols.
 - [terminal-research.md](terminal-research.md): original actual-terminal requirement and renderer selection.
 - writing-sources/: saved user-requested anti-slop skill and source material. Keep prose specific and short.
-- validation/product-story/: current focused screenshots/checks. Other validation folders are historical.
+- validation/polish/: current focused screenshots/checks. Other validation folders are historical.
 
 Canvas reading/selecting/find relies on the semantic HTML representation. Physical phones and Safari/Firefox remain untested; automated checks are not a manual screen-reader audit. Values already cover this task; no forced values edit.

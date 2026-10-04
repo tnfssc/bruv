@@ -6,7 +6,7 @@ import { siteContent } from "../content";
 import { build } from "./build";
 import { preview } from "./preview";
 import { launchBrowser } from "./browser";
-const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/animated-features");
+const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/polish");
 await mkdir(evidence, { recursive: true });
 await build("");
 const server = preview(0),
@@ -37,6 +37,9 @@ try {
   await page.goto(server.url.href);
   await ready();
   async function checkCells() {
+    // Source-cell comparison excludes the intentional hover overlay.
+    await page.mouse.move(3, 3);
+    await page.waitForTimeout(40);
     const snap = await page.evaluate(() => {
       const t = (window as any).__terminal,
         h = document.querySelector<HTMLElement>("#terminal")!;

@@ -157,6 +157,20 @@ describe("semantic HTML feature demos", () => {
       expect(await button.getAttribute("aria-label")).toStartWith("Animate");
       expect(await button.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
       expect((await button.boundingBox())!.width).toBeGreaterThanOrEqual(44);
+      const geometry = await first.evaluate((el) => {
+        const screen = el.querySelector<HTMLElement>(".demo-screen")!;
+        const row = el.querySelector<HTMLElement>(".demo-row")!;
+        const button = el.querySelector("button")!;
+        const style = getComputedStyle(screen);
+        return {
+          available: screen.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
+          row: row.getBoundingClientRect().width,
+          rowTop: row.getBoundingClientRect().top,
+          buttonBottom: button.getBoundingClientRect().bottom,
+        };
+      });
+      expect(geometry.available - geometry.row).toBeLessThan(10);
+      expect(geometry.rowTop).toBeGreaterThan(geometry.buttonBottom);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await button.focus();
       await page.keyboard.press("Enter");

@@ -137,14 +137,14 @@ figure {
 .demo-screen {
   margin: 0;
   width: 100%;
-  padding: 0.9rem;
+  padding: 1.5rem 0.9rem 0.9rem;
   white-space: pre;
   overflow-wrap: normal;
   overflow: hidden;
   background: #141820;
   border-color: #343941;
   font-family: "Bruv Prompt", ui-monospace, "DejaVu Sans Mono", monospace;
-  font-size: clamp(11px, 1.8vw, 14px);
+  font-size: 14px;
   line-height: 1.3;
   font-variant-ligatures: none;
 }
@@ -160,7 +160,7 @@ figure {
 }
 .demo-toggle {
   position: absolute;
-  top: 0.3rem;
+  top: -22px;
   right: 0.3rem;
   width: 44px;
   height: 44px;

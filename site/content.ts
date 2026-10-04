@@ -7,26 +7,24 @@ export const siteContent = {
   install: "https://github.com/tnfssc/bruv#build-from-source",
 };
 export const landing = {
-  eyebrow: "BRUV / TERMINAL CODING AGENT",
   title: "Keep coding",
   titleTail: "while your agents work.",
   intro:
     "Bruv is a coding agent built on Pi. Send a fix to a subagent in its own Git worktree while you work on the next change.",
+  demosNote: "Scripted demos, not recorded model runs.",
+  playbackHelp: "Hover or tap a demo for playback. Tab + Space pauses it.",
   features: [
     {
-      tag: "DELEGATE",
       title: "Give the fix its own branch",
-      text: "Delegate an independent change without mixing it into your checkout. Ask Bruv for a worktree, then review the diff before bringing it back.",
+      text: "Ask Bruv to put an independent change in a Git worktree. Review its diff before merging into your branch.",
     },
     {
-      tag: "BACKGROUND JOBS",
       title: "Use the time tests take",
-      text: "Run a long test suite in the background and keep the conversation going. Bruv brings the result back when the job finishes.",
+      text: "Keep talking to Bruv while a test suite runs. The result returns to the conversation when the job finishes.",
     },
     {
-      tag: "PROJECT WISDOM",
       title: "Pick up where you left off",
-      text: "Ask Bruv to save decisions and unfinished work in your project's wisdom files. The next session can read those notes before changing the code.",
+      text: "Save decisions and unfinished work in your project's wisdom files so the next session can read them before editing.",
     },
   ],
   installTitle: "Start in your repo",

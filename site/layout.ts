@@ -3,7 +3,7 @@ import { headline } from "./type";
 import { demoIds, demoFrame, demoDuration, type DemoId } from "./demos";
 import type { Playback } from "./playback";
 export type Hit = { x: number; y: number; width: number; height: number; label: string; action: string };
-export type State = { scroll: number; focus: number; demos?: Record<DemoId, Playback> };
+export type State = { scroll: number; focus: number; hover?: DemoId; demos?: Record<DemoId, Playback> };
 // Official Vesper colors. Capture colors are preserved separately, not recolored.
 export const palette = {
   base: "38;2;255;255;255",
@@ -51,7 +51,16 @@ export function layout(cols: number, rows: number, state: State) {
   const width = cols - 2 * margin,
     top = 3,
     bottom = rows - 3;
-  const pieces: { x: number; y: number; text: string; style: string; action?: string; primary?: boolean }[] = [];
+  const pieces: {
+    x: number;
+    y: number;
+    text: string;
+    style: string;
+    action?: string;
+    primary?: boolean;
+    height?: number;
+    demo?: DemoId;
+  }[] = [];
   let y = width < 60 ? 1 : 2;
   function put(x: number, row: number, value: string, style: string = palette.base) {
     if (row < 0 || row >= rows) return;
@@ -74,8 +83,7 @@ export function layout(cols: number, rows: number, state: State) {
   }
   put(margin, 1, "bruv", palette.accent);
   if (width > 45) put(margin + 7, 1, "a coding agent for your terminal", palette.muted);
-  text(landing.eyebrow, palette.muted);
-  y += 2;
+  y += 1;
   for (const line of headline(landing.title, width, width < 80))
     pieces.push({ x: margin, y: y++, text: line, style: palette.title });
   y++;
@@ -88,7 +96,10 @@ export function layout(cols: number, rows: number, state: State) {
     y += 2;
     link("Source ↗", siteContent.repository);
   } else link("Source ↗", siteContent.repository, margin + 20);
-  y += 4;
+  y += 3;
+  text(landing.demosNote, palette.muted);
+  text(landing.playbackHelp, palette.muted);
+  y += 3;
   const captures: {
     id: DemoId;
     x: number;
@@ -103,8 +114,6 @@ export function layout(cols: number, rows: number, state: State) {
     const demoCols = beside ? 68 : width - 2;
     const sectionTop = y;
     const captionWidth = beside ? width - demoCols - 6 : width;
-    text("0" + (i + 1) + " / " + feature.tag, palette.muted, margin, captionWidth);
-    y++;
     text(feature.title, palette.accent, margin, captionWidth);
     y++;
     text(feature.text, palette.base, margin, captionWidth);
@@ -113,8 +122,15 @@ export function layout(cols: number, rows: number, state: State) {
     const playback = state.demos?.[id];
     const demo = demoFrame(id, demoCols, playback?.elapsed ?? demoDuration(id));
     const frameX = beside ? margin + width - demoCols - 2 : margin;
-    text("Animated demo · scripted", palette.muted, frameX, demoCols);
-    pieces.push({ x: frameX, y: y++, text: "╭" + "─".repeat(demoCols) + "╮", style: palette.border });
+    pieces.push({
+      x: frameX,
+      y: y++,
+      text: "╭" + "─".repeat(demoCols) + "╮",
+      style: palette.border,
+      action: "demo:" + id + ":toggle",
+      height: demo.rows.length + 2,
+      demo: id,
+    });
     const capture = {
       id,
       x: frameX + 1,
@@ -134,14 +150,7 @@ export function layout(cols: number, rows: number, state: State) {
       pieces.push({ x: frameX + 1 + demoCols, y: y++, text: "│", style: palette.border });
     }
     pieces.push({ x: frameX, y: y++, text: "╰" + "─".repeat(demoCols) + "╯", style: palette.border });
-    const ended = !playback || playback.elapsed >= demoDuration(id);
-    const label = ended ? "Play" : playback.paused ? "Play" : "Pause";
-    link(label, "demo:" + id + ":toggle", frameX);
-    link("Replay", "demo:" + id + ":replay", frameX + 12);
-    y++;
-    const stageTop = y;
-    text(demo.stage, palette.muted, frameX, demoCols);
-    y = Math.max(copyEnd, stageTop + (demoCols < 60 ? 3 : 1)) + 4;
+    y = Math.max(copyEnd, y) + 4;
   });
   text("─".repeat(width), palette.border);
   y += 2;
@@ -158,25 +167,38 @@ export function layout(cols: number, rows: number, state: State) {
   const visible = Math.max(1, bottom - top + 1),
     maxScroll = Math.max(0, y - visible);
   const scroll = Math.min(Math.max(0, state.scroll), maxScroll);
+  const controls: { x: number; y: number; text: string; style: string }[] = [];
   for (const p of pieces) {
     const row = top + p.y - scroll;
-    if (row < top || row > bottom) continue;
+    if (row + (p.height ?? 1) <= top || row > bottom) continue;
     if (p.action) {
       const index = hits.length;
       hits.push({
         x: p.x,
-        y: row,
+        y: Math.max(top, row),
         width: [...p.text].length,
-        height: 1,
+        height: Math.min(row + (p.height ?? 1), bottom + 1) - Math.max(top, row),
         label: p.action.startsWith("demo:")
-          ? p.text.replace(/[\[\]]/g, "").trim() + " " + p.action.split(":")[1] + " demo"
+          ? (state.demos?.[p.demo!]?.paused ? "Play " : "Pause ") + p.demo + " demo"
           : p.text.trim(),
         action: p.action,
       });
-      put(p.x, row, p.text, state.focus === index || p.primary ? palette.selected : p.style);
-    } else put(p.x, row, p.text, p.style);
+      if (row >= top)
+        put(p.x, row, p.text, !p.demo && (state.focus === index || p.primary) ? palette.selected : p.style);
+      if (p.demo && (state.focus === index || state.hover === p.demo)) {
+        const label = "[ " + (state.demos?.[p.demo]?.paused ? "Play" : "Pause") + " ]";
+        // Use the border (or the first visible row), never add a layout row.
+        controls.push({
+          x: p.x + p.text.length - label.length - 1,
+          y: Math.max(top, row),
+          text: label,
+          style: state.focus === index ? palette.selected : palette.accent,
+        });
+      }
+    } else if (row >= top) put(p.x, row, p.text, p.style);
   }
-  put(margin, rows - 2, width < 55 ? "scroll / swipe" : "scroll to explore", palette.muted);
+  for (const c of controls) put(c.x, c.y, c.text, c.style);
+  put(margin, rows - 2, width < 55 ? "scroll / swipe" : "scroll", palette.muted);
   const label = "[ HTML ]",
     x = cols - margin - label.length;
   const focused = state.focus === hits.length;

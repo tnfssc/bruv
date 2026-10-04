@@ -56,7 +56,7 @@ describe("single terminal landing", () => {
       expect(c.rows.flat().every((r) => r.style.includes("38;2;"))).toBe(true);
       for (const row of c.rows) expect(row.reduce((n, r) => n + [...r.text].length, 0)).toBe(c.cols);
       const f = layout(width + 6, 100, { scroll: 0, focus: -1 });
-      expect(f.ansi).toContain("Animated demo");
+      expect(f.lines.join(" ")).toContain("Scripted demos");
       expect(f.captures).toHaveLength(3);
     }
   });
@@ -96,7 +96,7 @@ describe("single terminal landing", () => {
       for (let ms = 500; ms <= 21000; ms += 500) expect(positions(ms)).toEqual(first);
     }
   });
-  test("playback freezes outside viewport, when paused, and at the end", () => {
+  test("playback freezes outside viewport and when paused, then holds before looping", () => {
     const p = { elapsed: 0, paused: false };
     advance(p, 100, 1000, false);
     expect(p.elapsed).toBe(0);
@@ -107,7 +107,7 @@ describe("single terminal landing", () => {
     expect(p.elapsed).toBe(100);
     p.paused = false;
     advance(p, 2000, 1000, true);
-    expect(p.elapsed).toBe(1000);
+    expect(p.elapsed).toBe(2100);
     expect(inView(30, 23, 3, 32)).toBe(false);
     expect(inView(20, 23, 3, 32)).toBe(false);
     expect(inView(6, 23, 3, 32)).toBe(true);

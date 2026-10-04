@@ -51,7 +51,11 @@ export function mountHtmlDemos(root: Document = document) {
     const probe = root.createElement("span");
     probe.textContent = "M";
     probe.style.cssText = "position:absolute;visibility:hidden;white-space:pre";
-    probe.style.font = style.font;
+    // The computed font shorthand may be empty when ligatures are disabled.
+    probe.style.fontFamily = style.fontFamily;
+    probe.style.fontSize = style.fontSize;
+    probe.style.fontWeight = style.fontWeight;
+    probe.style.letterSpacing = style.letterSpacing;
     panel.element.append(probe);
     const cellWidth = probe.getBoundingClientRect().width;
     probe.remove();

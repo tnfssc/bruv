@@ -46,7 +46,7 @@ export function textContent(animated = true) {
           ? '<pre class="demo-screen" aria-hidden="true" hidden>' +
             cellRowsHtml(demoFrame(id, 68, demoDuration(id)).rows) +
             '</pre><button class="demo-toggle" type="button" aria-label="Pause ' +
-            escape(f.title) +
+            id +
             ' demo" hidden>Ⅱ</button>'
           : "";
         return (
@@ -57,7 +57,7 @@ export function textContent(animated = true) {
           '</p><figure class="feature-demo" data-demo="' +
           id +
           '" data-label="' +
-          escape(f.title) +
+          id +
           '" aria-label="' +
           escape(f.title) +
           ' scripted demo">' +
@@ -94,6 +94,12 @@ export async function build(raw = process.env.BASE_URL) {
       .replaceAll("<!-- DESCRIPTION -->", escape(siteContent.description))
       .replace("<!-- CONTENT -->", textContent(plain))
       .replace(
+        "<!-- ACCESSIBLE SWITCH -->",
+        plain
+          ? ""
+          : '<nav aria-label="Accessible view"><a class="plain-switch" href="./text.html">Accessible HTML / text view</a></nav>',
+      )
+      .replace(
         "<!-- RUNTIME -->",
         plain
           ? '<script type="module" src="./html-animation.js"></script>'
@@ -102,8 +108,8 @@ export async function build(raw = process.env.BASE_URL) {
       .replace(
         "<!-- SWITCH -->",
         plain
-          ? '<p><a href="./">Open terminal view</a>. This text view contains the same website content.</p>'
-          : '<p><a href="./text.html">Accessible HTML view</a>. The same content is available below while the terminal loads or if JavaScript is off.</p>',
+          ? '<nav aria-label="View"><p><a href="./">Terminal view</a></p></nav>'
+          : '<nav aria-label="View"><p><a href="./text.html">HTML view</a></p></nav>',
       );
     await Bun.write(resolve(out, plain ? "text.html" : "index.html"), html);
   }

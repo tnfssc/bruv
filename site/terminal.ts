@@ -39,7 +39,7 @@ async function start() {
   host.setAttribute("role", "region");
   host.setAttribute(
     "aria-label",
-    "Bruv terminal website with scripted animated demos. Press A for static transcripts in HTML. Tab and Enter operate links and demo playback. Arrow keys scroll.",
+    "Bruv terminal website with scripted animated demos. Press A for HTML and full transcripts. Tab and Enter operate links and demo playback. Arrow keys scroll.",
   );
   // No PTY, socket, command evaluator or onData transport. Only our static layout is written.
   terminal.textarea?.remove();
@@ -107,12 +107,7 @@ async function start() {
       lastFocus = host.dataset.focus || "";
       announcement.textContent = lastFocus ? lastFocus + ". Press Enter to activate." : "";
     }
-    if (
-      !document.hidden &&
-      frame.captures.some(
-        (c) => visibleDemo(c) && !state.demos![c.id].paused && state.demos![c.id].elapsed < demoDuration(c.id),
-      )
-    )
+    if (!document.hidden && frame.captures.some((c) => visibleDemo(c) && !state.demos![c.id].paused))
       animationTimer = setTimeout(render, 80);
   }
   document.addEventListener("visibilitychange", () => {
@@ -121,7 +116,12 @@ async function start() {
     if (!document.hidden) render();
   });
   motion.addEventListener("change", () => {
-    if (motion.matches) for (const id of demoIds) state.demos![id].paused = true;
+    if (motion.matches)
+      for (const id of demoIds) {
+        state.demos![id].paused = true;
+        state.demos![id].elapsed = demoDuration(id);
+        state.demos![id].started = false;
+      }
     render();
   });
   function resize() {
@@ -131,13 +131,13 @@ async function start() {
   function activate(action: string) {
     scrollInput.reset();
     if (action.startsWith("demo:")) {
-      const [, id, command] = action.split(":") as [string, DemoId, string];
+      const [, id] = action.split(":") as [string, DemoId];
       const playback = state.demos![id];
-      playback.started = true;
-      if (command === "replay" || playback.elapsed >= demoDuration(id)) {
+      if (playback.paused && !playback.started) {
         playback.elapsed = 0;
         playback.paused = false;
       } else playback.paused = !playback.paused;
+      playback.started = true;
       clock = performance.now();
       announcement.textContent = id + " demo " + (playback.paused ? "paused" : "playing") + ".";
       render();
@@ -183,10 +183,16 @@ async function start() {
     const { x, y } = cell(e);
     const i = hitAt(frame.hits, x, y);
     canvas.style.cursor = i >= 0 ? "pointer" : "default";
-    if (state.focus !== i) {
-      state.focus = i;
+    const hover =
+      i >= 0 && frame.hits[i].action.startsWith("demo:") ? (frame.hits[i].action.split(":")[1] as DemoId) : undefined;
+    if (state.hover !== hover) {
+      state.hover = hover;
       render();
     }
+  });
+  canvas.addEventListener("pointerleave", () => {
+    state.hover = undefined;
+    render();
   });
   canvas.addEventListener("pointerup", (e) => {
     touchY = null;
@@ -197,6 +203,9 @@ async function start() {
         const i = hitAt(frame.hits, x, y);
         if (i >= 0) {
           state.focus = i;
+          state.hover = frame.hits[i].action.startsWith("demo:")
+            ? (frame.hits[i].action.split(":")[1] as DemoId)
+            : undefined;
           activate(frame.hits[i].action);
         }
       }
