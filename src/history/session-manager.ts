@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { MANUAL_SHAKE_ENTRY } from "./shake-record";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, resolve } from "node:path";
@@ -13,8 +12,8 @@ import type {
   SessionTreeNode,
 } from "@earendil-works/pi-coding-agent";
 import {
-  CURRENT_SESSION_VERSION,
   AgentSession,
+  CURRENT_SESSION_VERSION,
   estimateTokens,
   SessionManager,
   sessionEntryToContextMessages,
@@ -29,6 +28,7 @@ import {
   scanJsonl,
   sessionFileVersion,
 } from "./disk-entry-store";
+import { MANUAL_SHAKE_ENTRY } from "./shake-record";
 
 interface ManagerInternals {
   cwd: string;
@@ -57,6 +57,30 @@ const abandonedManagers = new FinalizationRegistry<DiskEntryStore>((store) => st
 /** Read the existing disk index without materializing message bodies. */
 export function getDiskBackedEntryMetadata(manager: object): readonly EntryMetadata[] | undefined {
   return states.get(manager as SessionManager)?.store.entries;
+}
+
+/** Identity of the latest relevant active-branch metadata, or the empty index.
+ * Appends leave metadata identities intact; reread/rewrite/reset replace them.
+ * Walk only the ignored suffix through the owner's index, without bodies or a
+ * second index. Undefined keeps unknown/native managers on their public path.
+ */
+export function getDiskBackedBranchRevision(
+  manager: object,
+  relevant: (metadata: EntryMetadata) => boolean,
+): object | undefined {
+  const owned = states.get(manager as SessionManager);
+  if (!owned) return undefined;
+  let id = internals(manager as SessionManager).leafId;
+  const seen = new Set<string>();
+  while (id) {
+    if (seen.has(id)) return undefined;
+    seen.add(id);
+    const meta = owned.store.byId.get(id);
+    if (!meta) return undefined;
+    if (relevant(meta)) return meta;
+    id = meta.parentId;
+  }
+  return owned.store.entries;
 }
 
 function contextLeaf(owned: ManagerState, fromId: string | null, assistantOnly = false): string | null {
