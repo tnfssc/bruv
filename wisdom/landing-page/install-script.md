@@ -29,3 +29,9 @@ Values reviewed: existing values for honest surfaces/proof, essential data-loss 
 Final checks: full site test command passed **30 tests**, plus real-browser cell/scroll/navigation validation (desktop 1,972 checked capture cells; mobile 390px 1,369; mobile 320px 1,044; touch/source/no-JS/startup pass; zero page errors). Final installer recheck passed after Android-x64 rejection was tightened. Focused TypeScript check uses ES2023 (existing demos use findLastIndex). sh -n, formatting and git diff --check pass.
 
 Handoff preview: **http://127.0.0.1:43941/**; script **http://127.0.0.1:43941/install.sh** returned 200 and byte-matched the worktree source. Preview job task_3477fc23 remains running. Parent preview 45339 was not stopped/restarted. Preview is not a production deployment.
+
+## Parent integration
+
+Integrated 90141a5d as ce7ba43b in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_0f2604c1, branch feat/landing-copy-loop-polish. Kept the full mobile BRUV glyphs and the user-corrected opinionated coding agent pitch. Current combined preview is http://127.0.0.1:45339/ (and text.html); installer is /install.sh. Superseded worker previews were cancelled, not restarted.
+
+18 focused tests passed after integration: page layout, installer fixtures/copy UI and delayed/failed/no-JS startup. Inspected integrated 390px hero and install screenshots. No live binary install executed. Values unchanged; existing installer safety and truthful evidence guidance apply.
