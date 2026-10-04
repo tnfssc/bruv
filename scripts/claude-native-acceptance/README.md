@@ -191,9 +191,13 @@ Declines the stale card to proceed and checks no stopped side effect. This is no
 an assertion that T3 automatically clears it. No T3 source/artifact is changed.
 Task/Live/delegation/history acceptance remains the separate default/composed gate.
 
-A zero-model human command can also remain Working after its actual success
-result. The focused proof uses real Stop/reopen when needed, preserving the
-saved reply. It does not invent a model turn to make that view settle. The shared
-harness uses official Start without a project if auto-bootstrap has left the
-isolated environment empty, and drivers reuse the ready composer instead of
-resetting that native draft with another navigation.
+The human driver now requires a UUID-correlated command result and a genuinely
+idle native composer before reloading or resuming a saved answer. It also checks
+/bruv status and resolved-question open without Stop/reopen recovery. Deliberate
+Stop of pending consent/questions and real reload recovery remain separate tests.
+A command lifecycle completion is not sufficient: official T3 treats these
+frames as admission acknowledgements, not terminal turns. The strict gate still
+fails on zero-model human command settlement; see the retained command-idle proof.
+No model counts/provider calls are invented to make the view settle. The shared
+harness waits for an enabled New thread or actual Start without a project control
+instead of racing native bootstrap hydration.

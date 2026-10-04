@@ -1,0 +1,28 @@
+[
+  {
+    "requestHash": "082d10e578f93467",
+    "toolUseHash": "d00d8a2d976f997a",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "allow"
+      }
+    ]
+  },
+  {
+    "requestHash": "43801332daf21ae7",
+    "toolUseHash": "0cd7e2ead2725bcd",
+    "tool": "execute",
+    "control": "can_use_tool",
+    "cancelled": false,
+    "responses": [
+      {
+        "subtype": "success",
+        "behavior": "deny"
+      }
+    ]
+  }
+]

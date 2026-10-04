@@ -73,8 +73,10 @@ try {
  // redirects to Connections in this state). No provider event is synthesized.
  if(integration){
   const empty=page.getByRole('button',{name:'Start without a project',exact:true});
+  const readyNew=page.getByRole('button',{name:'New thread',exact:true}).and(page.locator(':enabled'));
+  await empty.or(readyNew).first().waitFor({timeout:30000});
   if(await empty.isVisible())await empty.click();
-  else await page.getByRole('button',{name:'New thread',exact:true}).click({timeout:30000});
+  else await readyNew.click({timeout:30000});
  }
  if(!(await page.getByRole('textbox',{name:'Message',exact:true}).isVisible())) {
  await page.getByRole('button',{name:'Add project',exact:true}).first().click();await page.waitForTimeout(500);

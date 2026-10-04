@@ -72,6 +72,32 @@ export async function exercise({ page, url, snapshot: nativeSnapshot, config }) 
     await message.fill(text);
     await page.getByRole("button", { name: "Submit message", exact: true }).click({ timeout: 30000 });
   };
+  const idle = async (label) => {
+    await poll(
+      () => wire(config),
+      (rows) => {
+        const command = rows
+          .filter(
+            (x) => x.kind === "stdin" && x.value.type === "user" && x.value.message?.content?.startsWith?.("/bruv"),
+          )
+          .at(-1)?.value;
+        return (
+          command?.uuid &&
+          rows.some(
+            (x) => x.kind === "stdout" && x.value.type === "result" && x.value.user_message_uuid === command.uuid,
+          )
+        );
+      },
+      label + " correlated command terminal",
+    );
+    try {
+      await page.getByRole("button", { name: "Submit message", exact: true }).waitFor({ timeout: 30000 });
+    } finally {
+      await capture({ records: await wire(config), config, proof: config.proof });
+    }
+    assert.equal(await page.getByText("Working", { exact: true }).isVisible(), false, label);
+    await snapshot(label);
+  };
   const visible = async (text) => {
     await page.getByText(text, { exact: false }).last().waitFor({ timeout: 30000 });
     await page.waitForTimeout(600);
@@ -192,13 +218,7 @@ export async function exercise({ page, url, snapshot: nativeSnapshot, config }) 
   q = (await record("question-answer-saved-resume-needed")).find((q) => q.id === identity);
   assert.equal(q.answer, "Use local fixture");
   assert.equal(q.delivery, "resume-needed", "recovered questions require explicit human resume");
-  // Official T3 can keep a zero-model command Working despite its real success
-  // result. Close that native owner through the actual Stop control; the saved
-  // answered reply remains resume-needed and is resumed on a fresh owner.
-  if (!(await page.getByRole("button", { name: "Submit message", exact: true }).isVisible())) {
-    await page.keyboard.press("Control+Escape");
-    evidence.zeroModelCommandStopRecovery = true;
-  }
+  await idle("question-open-answer-idle");
   await page.reload();
   await page
     .locator("[data-thread-item]")
@@ -215,6 +235,7 @@ export async function exercise({ page, url, snapshot: nativeSnapshot, config }) 
   await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
   await page.getByRole("button", { name: "Approve", exact: true }).click();
   await visible("HUMAN_ANSWER_DELIVERED_ONCE_REAL");
+  await idle("question-resume-idle");
   q = (await record("question-answer-used-once")).find((q) => q.id === identity);
   assert.equal(q.status, "resolved");
   assert.equal(q.answer, "Use local fixture");
@@ -228,7 +249,7 @@ export async function exercise({ page, url, snapshot: nativeSnapshot, config }) 
   await message.waitFor({ timeout: 30000 });
   await submit("/bruv questions open " + identity);
   await visible("[resolved]");
-  await page.keyboard.press("Control+Escape");
+  await idle("question-open-resolved-idle");
   await page.reload();
   await page
     .locator("[data-thread-item]")
@@ -239,6 +260,8 @@ export async function exercise({ page, url, snapshot: nativeSnapshot, config }) 
   await submit("HUMAN_CONTINUE: continue without replaying saved answer.");
   await visible("HUMAN_CONTINUED_REAL");
   await record("question-no-duplicate-after-reopen");
+  await submit("/bruv status");
+  await idle("native-status-idle");
   evidence.checks.push(
     "saved question real native dialog",
     "decline remains pending",
@@ -327,7 +350,6 @@ export async function verify({ wire: records, config, proof, t3Version, t3Binary
           "Official T3 persists cancelled approval card; explicit human Decline required to continue",
           "task/Live/delegation/history gates belong to separate composed acceptance",
           "full browser tab disconnect not separately tested",
-          "Official T3 zero-model human command can stay Working after success; actual Stop/reopen used for recovery",
         ],
       },
       null,
@@ -337,6 +359,54 @@ export async function verify({ wire: records, config, proof, t3Version, t3Binary
 }
 
 export async function capture({ records, config, proof }) {
+  // Only state/status and hashed identities leave the scoped official T3 DB.
+  try {
+    const { DatabaseSync } = await import("node:sqlite");
+    const db = new DatabaseSync(path.join(path.dirname(config.state), "t3-runtime/t3-base/userdata/statev2.sqlite"), {
+      readOnly: true,
+    });
+    try {
+      const state = {};
+      for (const [kind, table] of Object.entries({
+        runs: "orchestration_v2_projection_runs",
+        providerTurns: "orchestration_v2_projection_provider_turns",
+      })) {
+        state[kind] = db
+          .prepare("SELECT payload_json FROM " + table)
+          .all()
+          .map((row) => {
+            const value = JSON.parse(row.payload_json);
+            const promptHex =
+              typeof value.runAttemptId === "string"
+                ? createHash("sha256")
+                    .update("t3-claude-prompt:" + value.runAttemptId)
+                    .digest("hex")
+                : undefined;
+            const promptUuid = promptHex
+              ? `${promptHex.slice(0, 8)}-${promptHex.slice(8, 12)}-4${promptHex.slice(13, 16)}-${((parseInt(promptHex[16], 16) & 3) | 8).toString(16)}${promptHex.slice(17, 20)}-${promptHex.slice(20, 32)}`
+              : undefined;
+            return {
+              idHash: hash(value.id),
+              status: value.status,
+              expectedPromptHash: promptUuid ? hash(promptUuid) : undefined,
+            };
+          });
+      }
+      await fs.writeFile(path.join(proof, "native-command-run-state.json"), JSON.stringify(state, null, 2) + "\n");
+    } finally {
+      db.close();
+    }
+  } catch (error) {
+    try {
+      await fs.access(path.join(proof, "native-command-run-state.json"));
+    } catch {
+      await fs.writeFile(
+        path.join(proof, "native-command-run-state.json"),
+        JSON.stringify({ captureError: error.message }) + "\n",
+      );
+    }
+  }
+
   const requests = records.filter((x) => x.kind === "stdout" && x.value.type === "control_request").map((x) => x.value);
   const responses = records
     .filter((x) => x.kind === "stdin" && x.value.type === "control_response")
@@ -353,6 +423,11 @@ export async function capture({ records, config, proof }) {
     JSON.stringify(
       commands.map((x) => ({
         sourceHash: typeof x.value.uuid === "string" ? hash(x.value.uuid) : null,
+        lifecycle: records
+          .filter(
+            (r) => r.kind === "stdout" && r.value.type === "command_lifecycle" && r.value.command_uuid === x.value.uuid,
+          )
+          .map((r) => r.value.state),
         echoedTerminalResults:
           typeof x.value.uuid === "string"
             ? records

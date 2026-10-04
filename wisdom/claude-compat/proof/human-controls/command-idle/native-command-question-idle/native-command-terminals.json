@@ -1,0 +1,22 @@
+[
+  {
+    "sourceHash": "3ec0ee6a3bd45aa1",
+    "lifecycle": [
+      "started"
+    ],
+    "echoedTerminalResults": []
+  },
+  {
+    "sourceHash": "813aa9fed1f296a3",
+    "lifecycle": [
+      "started",
+      "completed"
+    ],
+    "echoedTerminalResults": [
+      {
+        "subtype": "success",
+        "numTurns": 0
+      }
+    ]
+  }
+]

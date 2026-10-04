@@ -115,6 +115,13 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     cumulativeCost += cost;
     if (!options.auxiliary) {
       send(result());
+      if (commandUuid)
+        send({
+          type: "command_lifecycle",
+          ...base(),
+          command_uuid: commandUuid,
+          state: failure === "Interrupted" ? "cancelled" : "completed",
+        });
       // SDK 0.3.276 separates the result from the authoritative turn-over frame.
       // Only Pi agent_settled (or a handled command) ends the actual root run.
       send({ type: "system", subtype: "session_state_changed", ...base(), state: "idle" });
@@ -360,6 +367,10 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       consumedHuman = true;
       consumedUserUuids = message.uuid ? [message.uuid] : [];
       echoPending = Boolean(message.uuid);
+      // This received command is admitted here, not a queued model prompt.
+      // Native lifecycle states describe its dispatch/fate, never model work.
+      if (commandUuid && !options.auxiliary)
+        send({ type: "command_lifecycle", ...base(), command_uuid: commandUuid, state: "started" });
       send({
         type: "user",
         ...base(),

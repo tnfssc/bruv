@@ -735,10 +735,22 @@ test("received namespaced human command has a correlated native echo, not a mode
     user_message_uuid: "source-human-command",
     user_message_uuids: ["source-human-command"],
     origin: { kind: "human" },
+    num_turns: 0,
+    total_cost_usd: 0,
+    usage: { input_tokens: 0, output_tokens: 0 },
   });
+  expect(frames.filter((f) => f.type === "command_lifecycle")).toMatchObject([
+    { command_uuid: "source-human-command", state: "started" },
+    { command_uuid: "source-human-command", state: "completed" },
+  ]);
+  expect(frames.findIndex((f) => f.type === "command_lifecycle")).toBeLessThan(
+    frames.findIndex((f) => f.type === "user"),
+  );
+  expect(frames.findIndex((f) => f.type === "result")).toBeLessThan(frames.findIndex((f) => f.state === "completed"));
   expect(runtime.session.messages).toHaveLength(before);
   runtime.session.agent.streamFunction = () => output(assistant("ordinary follow-up"));
   await runtime.onUser(user(runtime, "continue", { uuid: "next-human-prompt" }), signal());
+  expect(frames.filter((f) => f.type === "command_lifecycle")).toHaveLength(2);
   expect(frames.filter((f) => f.type === "result").at(-1)).toMatchObject({
     user_message_uuid: "next-human-prompt",
     user_message_uuids: ["next-human-prompt"],

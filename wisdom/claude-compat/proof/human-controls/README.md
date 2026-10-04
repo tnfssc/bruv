@@ -42,3 +42,10 @@ result, not the command handler returning. No fabricated task/lifecycle events,
 second question service, scheduler, or question continuation loop is added.
 
 Final gate/results are recorded in observed/result.json and gates.md.
+
+## Strict command-idle follow-up
+
+[command-idle/README.md](command-idle/README.md) retains the failed no-recovery
+follow-up. Truthful native started/completed command metadata alone does not
+settle zero-model commands in unchanged T3. The current driver refuses the old
+Stop/reopen completion workaround; shared result settlement remains blocked.

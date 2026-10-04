@@ -1,0 +1,13 @@
+{
+  "integratedAcceptance": true,
+  "passed": false,
+  "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Submit message', exact: true })\n",
+  "t3Version": "t3 v0.0.46-nightly.20261003.2623",
+  "t3BinarySha256": "2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795",
+  "upstreamUnmodified": true,
+  "syntheticConnectorEvents": false,
+  "realCredentialsUsed": false,
+  "savedAnswerContinuationCount": 0,
+  "cancellationCompletionWakeCount": 0,
+  "modelCompletionWakeCount": 0
+}

@@ -1,0 +1,13 @@
+Code
+No projects yet
+Add project
+What should we work on?
+Add a project, or start without one.
+Add project
+Start without a project
+Toggle Sidebar
+Update Available: Claude v2.1.289
+
+Claude can be updated from provider settings.
+
+Settings
