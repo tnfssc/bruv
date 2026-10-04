@@ -686,11 +686,19 @@ test("source-entry history stores ordered real repeated messages/tool results an
           }),
         )
       : output(assistant("same prose"));
-  await runtime.onUser(user(runtime, "same prose", { session_id: nativeId }), signal());
-  await runtime.onUser(user(runtime, "same prose", { session_id: nativeId }), signal());
+  await runtime.onUser(
+    user(runtime, "same prose", { session_id: nativeId, uuid: "00000000-0000-4000-8000-000000000021" }),
+    signal(),
+  );
+  await runtime.onUser(
+    user(runtime, "same prose", { session_id: nativeId, uuid: "00000000-0000-4000-8000-000000000022" }),
+    signal(),
+  );
   await runtime.close();
   const entries = await readNativeHistory(history.options);
   expect(entries.map((e) => e.type)).toEqual(["user", "assistant", "user", "assistant", "user", "assistant"]);
+  expect(entries[0]?.uuid).toBe("00000000-0000-4000-8000-000000000021");
+  expect(entries[4]?.uuid).toBe("00000000-0000-4000-8000-000000000022");
   expect(new Set(entries.map((e) => e.bruv!.sourceMessageId)).size).toBe(6);
   const canonical = manager.getEntries().filter((e) => e.type === "message" && e.message.role !== "system");
   expect(entries.map((e) => e.bruv!.sourceMessageId)).toEqual(canonical.map((e) => e.id));

@@ -43,6 +43,7 @@ try {
  const {chromium}=await import(pathToFileURL(path.join(upstream,'runtime/node_modules/playwright/index.mjs')).href);
  browser=await chromium.launch({headless:true,executablePath:browserPath,args:['--no-sandbox']});
  const context=await browser.newContext({viewport:{width:1400,height:950}});page=await context.newPage();page.setDefaultTimeout(10000);
+ await integration?.capture?.({page,proof});
  const paired=execFileSync(binary,['pair','--base-dir',base],{env,encoding:'utf8'});
  const token=paired.match(/token=([A-Za-z0-9_-]+)/)?.[1];assert.ok(token,'local pairing token (never exported)');
  await page.goto(url+'/pair#token='+token);await page.waitForTimeout(1500);
@@ -102,6 +103,7 @@ try {
  }
  throw error;
 } finally {
+ await integration?.flushCapture?.({proof});
  if(browser)await browser.close();
  if(server.exitCode===null){server.kill('SIGTERM');await Promise.race([new Promise(r=>server.once('exit',r)),new Promise(r=>setTimeout(r,3000))]);if(server.exitCode===null)server.kill('SIGKILL');}
  await log.close();await fs.rm(root,{recursive:true,force:true});

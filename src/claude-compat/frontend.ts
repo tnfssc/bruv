@@ -40,6 +40,13 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let cost = 0;
   let cumulativeCost = 0;
   let denials: Record<string, unknown>[] = [];
+  let consumedUserUuids: string[] = [];
+  let echoPending = false;
+  let consumedHuman = false;
+  const promptEcho = () =>
+    consumedUserUuids.length
+      ? { user_message_uuid: consumedUserUuids.at(-1), user_message_uuids: [...consumedUserUuids] }
+      : {};
   const send = (frame: CompatFrame) => {
     tail = tail
       .then(() => options.emit(frame))
@@ -49,7 +56,10 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   };
   const base = () => ({ uuid: randomUUID(), session_id: options.sessionId() });
   const stream = (event: Record<string, unknown>) => {
-    if (!options.auxiliary) send({ type: "stream_event", ...base(), parent_tool_use_id: null, event });
+    if (!options.auxiliary) {
+      send({ type: "stream_event", ...base(), ...(echoPending ? promptEcho() : {}), parent_tool_use_id: null, event });
+      echoPending = false;
+    }
   };
   const begin = () => {
     if (active) return;
@@ -58,6 +68,9 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       sentInit = true;
     }
     active = true;
+    consumedUserUuids = [];
+    consumedHuman = false;
+    echoPending = false;
     started = Date.now();
     turns = 0;
     lastText = "";
@@ -69,6 +82,8 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   const result = (structuredOutput?: unknown) => ({
     type: "result",
     ...base(),
+    ...promptEcho(),
+    origin: { kind: consumedHuman ? "human" : "auto-continuation" },
     subtype: failure ? "error_during_execution" : "success",
     is_error: Boolean(failure),
     duration_ms: started ? Date.now() - started : 0,
@@ -205,6 +220,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
         send({
           type: "assistant",
           ...base(),
+          ...promptEcho(),
           uuid: options.messageUuid?.(m) ?? randomUUID(),
           parent_tool_use_id: null,
           message: {
@@ -252,6 +268,14 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   }
   return {
     factory,
+    consumeUser(uuid?: string) {
+      begin();
+      consumedHuman = true;
+      if (uuid) {
+        if (!consumedUserUuids.includes(uuid)) consumedUserUuids.push(uuid);
+        echoPending = true;
+      }
+    },
     notice(text: string, level: "info" | "warning" | "error" = "info") {
       begin();
       lastText = lastText ? lastText + "\n" + text : text;

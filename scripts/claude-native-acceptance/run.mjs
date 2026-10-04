@@ -19,13 +19,16 @@ const root = await fs.mkdtemp(path.join(os.tmpdir(), "bruv-native-acceptance-"))
 const state = path.join(root, "state"),
   agent = path.join(root, "agent"),
   home = path.join(root, "home");
-const worker = path.join(here, "worker.mjs"),
+const worker = path.join(root, "worker.mjs"),
   pinnedConnector = path.join(root, "actual-connector");
 let model,
   child,
   passed = false;
 try {
   await fs.chmod(root, 0o700);
+  // Pin the real gated worker at a short scoped path; worktree paths can otherwise
+  // exceed Bruv's bounded notification command preview before the scenario arg.
+  await fs.copyFile(path.join(here, "worker.mjs"), worker);
   for (const dir of [state, agent, home]) await fs.mkdir(dir);
   // Pin the actual artifact, not a synthetic executable, while sibling builds continue.
   await fs.copyFile(connector, pinnedConnector);

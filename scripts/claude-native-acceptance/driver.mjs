@@ -124,18 +124,26 @@ export async function exercise({ page, url, snapshot, body, config }) {
   // T3 folds intermediate assistant replies when an automatic continuation
   // supplies the final answer. Prove the original acknowledgement is retained.
   if (!(await page.getByText("CANCEL_CONFIRMED_REAL").last().isVisible()))
-    await page.getByRole("button", { name: /^Worked for / }).last().click();
+    await page
+      .getByRole("button", { name: /^Worked for / })
+      .last()
+      .click();
   await snapshot("cancellation-expanded");
   await visible("CANCEL_CONFIRMED_REAL");
   await snapshot("task-cancelled");
+  assertCancellationChronology(await body());
   await page.goto(url + "/settings/providers");
   await page.goto(url);
   await page.locator("[data-thread-item]").filter({ hasText: "ACCEPT_EXECUTE" }).first().click();
   await visible("CANCELLATION_COMPLETED_REAL");
   if (!(await page.getByText("CANCEL_CONFIRMED_REAL").last().isVisible()))
-    await page.getByRole("button", { name: /^Worked for / }).last().click();
+    await page
+      .getByRole("button", { name: /^Worked for / })
+      .last()
+      .click();
   await visible("CANCEL_CONFIRMED_REAL");
   await snapshot("reopened");
+  assertCancellationChronology(await body());
   await submit("ACCEPT_REOPEN: confirm the real session can continue after reopen.");
   await visible("REOPEN_CONFIRMED_REAL");
   await snapshot("continued");
@@ -211,8 +219,35 @@ export function projectWire(wire) {
     if (x.kind === "diagnostic") return { direction: x.kind, error: m.error };
     return {
       direction: x.kind,
-      frameIdHash: typeof m.uuid === "string" ? createHash("sha256").update(m.uuid).digest("hex").slice(0, 16) : undefined,
-      fixtureMarkers: ["CANCEL_CONFIRMED_REAL", "CANCELLATION_COMPLETED_REAL"].filter(marker => Array.isArray(m.message?.content) && m.message.content.some(p => p.type === "text" && typeof p.text === "string" && p.text.includes(marker))),
+      frameIdHash:
+        typeof m.uuid === "string" ? createHash("sha256").update(m.uuid).digest("hex").slice(0, 16) : undefined,
+      userMessageUuidHash:
+        typeof m.user_message_uuid === "string"
+          ? createHash("sha256").update(m.user_message_uuid).digest("hex").slice(0, 16)
+          : undefined,
+      userMessageUuidHashes: Array.isArray(m.user_message_uuids)
+        ? m.user_message_uuids.map((id) => createHash("sha256").update(id).digest("hex").slice(0, 16))
+        : undefined,
+      messageIdHash:
+        typeof m.message?.id === "string"
+          ? createHash("sha256").update(m.message.id).digest("hex").slice(0, 16)
+          : undefined,
+      streamMessageIdHash:
+        typeof m.event?.message?.id === "string"
+          ? createHash("sha256").update(m.event.message.id).digest("hex").slice(0, 16)
+          : undefined,
+      eventType: m.event?.type,
+      originKind: m.origin?.kind,
+      fixtureMarkers: [
+        "EXECUTE_CONFIRMED_REAL",
+        "STEER_ADMITTED_REAL",
+        "CANCEL_CONFIRMED_REAL",
+        "CANCELLATION_COMPLETED_REAL",
+      ].filter(
+        (marker) =>
+          Array.isArray(m.message?.content) &&
+          m.message.content.some((p) => p.type === "text" && typeof p.text === "string" && p.text.includes(marker)),
+      ),
       type: m.type,
       subtype: m.subtype,
       control: m.request?.subtype,
@@ -284,4 +319,85 @@ export async function waitForProcessExit(pidFile, timeoutMs = 15000) {
     if (Date.now() >= deadline) throw Error("Native Stop left fixture process alive: " + pid);
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
+}
+
+// Passive inspection of actual T3 projections, not synthetic connector output.
+const t3Items = [];
+const fixtureMarkers = [
+  "EXECUTE_CONFIRMED_REAL",
+  "STEER_ADMITTED_REAL",
+  "EARLY_RETURN_REAL",
+  "TASK_COMPLETED_REAL",
+  "CANCEL_CONFIRMED_REAL",
+  "CANCELLATION_COMPLETED_REAL",
+  "REOPEN_CONFIRMED_REAL",
+  "ACCEPT_EXECUTE",
+  "ACCEPT_CANCEL",
+];
+const idHash = (value) => createHash("sha256").update(String(value)).digest("hex").slice(0, 16);
+export function capture({ page }) {
+  let sequence = 0;
+  page.on("websocket", (socket) =>
+    socket.on("framereceived", ({ payload }) => {
+      let decoded;
+      try {
+        decoded = JSON.parse(typeof payload === "string" ? payload : Buffer.from(payload).toString("utf8"));
+      } catch {
+        return;
+      }
+      const walk = (value, owner = {}) => {
+        if (!value || typeof value !== "object") return;
+        if (Array.isArray(value)) {
+          for (const entry of value) walk(entry, owner);
+          return;
+        }
+        const context = { ...owner };
+        for (const key of [
+          "id",
+          "itemId",
+          "turnId",
+          "threadId",
+          "nativeItemId",
+          "providerTurnId",
+          "messageId",
+          "runId",
+          "nodeId",
+          "rootNodeId",
+          "parentNodeId",
+          "nativeId",
+        ])
+          if (typeof value[key] === "string") context[key + "Hash"] = idHash(value[key]);
+        const markers = fixtureMarkers.filter((marker) =>
+          Object.values(value).some((text) => typeof text === "string" && text.includes(marker)),
+        );
+        if (markers.length) {
+          t3Items.push({
+            sequence: sequence++,
+            ...context,
+            markers,
+            createdAt: value.createdAt,
+            updatedAt: value.updatedAt,
+            ordinal: value.ordinal,
+            role: value.role,
+            type: typeof value.type === "string" ? value.type : undefined,
+            kind: typeof value.kind === "string" ? value.kind : undefined,
+            status: typeof value.status === "string" ? value.status : undefined,
+          });
+        }
+        for (const child of Object.values(value)) if (typeof child === "object") walk(child, context);
+      };
+      walk(decoded);
+    }),
+  );
+}
+export async function flushCapture({ proof }) {
+  await fs.writeFile(path.join(proof, "t3-item-projection.json"), JSON.stringify(t3Items, null, 2) + "\n");
+}
+
+export function assertCancellationChronology(body) {
+  const request = body.indexOf("ACCEPT_CANCEL:");
+  const acknowledgement = body.indexOf("CANCEL_CONFIRMED_REAL");
+  const completion = body.indexOf("CANCELLATION_COMPLETED_REAL");
+  assert.ok(request >= 0 && acknowledgement > request, "Cancellation acknowledgement follows its human request");
+  assert.ok(completion > acknowledgement, "Killed-job completion follows the retained cancellation acknowledgement");
 }

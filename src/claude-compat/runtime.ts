@@ -515,7 +515,13 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       await frontend.flush();
     },
   });
-  const unsubscribe = session.subscribe(frontend.onEvent);
+  const inboundUserUuids = new WeakMap<object, string | undefined>();
+  const unsubscribe = session.subscribe((event) => {
+    if (event.type === "message_start" && event.message.role === "user") {
+      if (inboundUserUuids.has(event.message)) frontend.consumeUser(inboundUserUuids.get(event.message));
+    }
+    frontend.onEvent(event);
+  });
   let closed = false,
     closePromise: Promise<void> | undefined,
     initialized = false;
@@ -682,6 +688,11 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     let run: Promise<unknown>;
     let handled = false;
     const checkpoint = frontend.checkpoint();
+    // Capture object identity only; the subscriber attributes it when Pi consumes it.
+    const onUserMessageCreated = (created: object) => {
+      inboundUserUuids.set(created, message.uuid);
+      if (message.uuid) messageIds.set(created, message.uuid);
+    };
     const cancel = () => {
       frontend.interrupt();
       currentMainOwner(session.sessionManager)?.stopForeground();
@@ -694,13 +705,14 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       if (signal.aborted) throw signal.reason;
       if (message.priority === "now" && session.isStreaming) {
         // Genuine Pi steering (not cancel + fresh prompt, not a second scheduling authority).
-        run = session.steer(text, images);
+        run = session.steer(text, images, { source: "rpc", onUserMessageCreated });
         void run.then(accepted, accepted);
       } else {
         run = session.prompt(text, {
           images,
           source: "rpc",
           streamingBehavior: "followUp",
+          onUserMessageCreated,
           preflightResult: (disposition) => {
             handled = disposition === "handled";
             accepted();
