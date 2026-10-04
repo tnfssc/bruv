@@ -1,3 +1,10 @@
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/bruv-wordmark-light.svg">
+    <img src="assets/brand/bruv-wordmark.svg" width="318" height="113" alt="bruv — custom cut-corner wordmark">
+  </picture>
+</p>
+
 # bruv CLI
 
 A coding agent built on [Pi](https://pi.dev). The normal CLI gives you a terminal interface, Herdr integration, background jobs, sub-agents, and project wisdom. The same compiled binary provides the compatibility connector for external, unmodified T3 Code through a tiny `bruv-claude-compat` launcher.
