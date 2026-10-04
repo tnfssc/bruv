@@ -14,38 +14,19 @@ export const landing = {
     "Bruv is a coding agent built on Pi. Send a fix to a subagent in its own Git worktree while you work on the next change.",
   features: [
     {
+      tag: "DELEGATE",
       title: "Give the fix its own branch",
       text: "Delegate an independent change without mixing it into your checkout. Ask Bruv for a worktree, then review the diff before bringing it back.",
-      example: [
-        { kind: "label", text: "YOU ASK" },
-        { kind: "prompt", text: "Fix the CSV importer in a separate worktree. Add a test for empty rows." },
-        { kind: "gap", text: "" },
-        { kind: "label", text: "WORK SPLIT" },
-        { kind: "detail", text: "Your checkout  /  export UI" },
-        { kind: "detail", text: "Agent worktree /  CSV fix + test" },
-      ],
     },
     {
+      tag: "BACKGROUND JOBS",
       title: "Use the time tests take",
       text: "Run a long test suite in the background and keep the conversation going. Bruv brings the result back when the job finishes.",
-      example: [
-        { kind: "label", text: "START A BACKGROUND JOB" },
-        { kind: "prompt", text: "Run the tests in the background." },
-        { kind: "gap", text: "" },
-        { kind: "label", text: "KEEP WORKING" },
-        { kind: "prompt", text: "While they run, explain how the cache gets invalidated." },
-      ],
     },
     {
+      tag: "PROJECT WISDOM",
       title: "Pick up where you left off",
       text: "Ask Bruv to save decisions and unfinished work in your project's wisdom files. The next session can read those notes before changing the code.",
-      example: [
-        { kind: "label", text: "BEFORE YOU LEAVE" },
-        { kind: "prompt", text: "Save why imports stream rows and what still needs testing." },
-        { kind: "gap", text: "" },
-        { kind: "label", text: "NEXT SESSION" },
-        { kind: "prompt", text: "Read the project wisdom, then add coverage for large CSV files." },
-      ],
     },
   ],
   installTitle: "Start in your repo",

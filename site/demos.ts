@@ -5,13 +5,13 @@ import type { Cell } from "./type";
  * Sources: wisdom/landing-page/product-story.md (the three product stories);
  * wisdom/task-placement/clean-product-video.md and scripts/fixtures/task-placement-clean/
  * scenario.ts + models.json (real worktree helpers, natural labels, fixture model studio);
- * src/ui/execution-previews.ts + task-rows.ts (collapsed spinner/structured task outcomes);
+ * src/ui/execution-previews.ts + task-rows.ts + rolling-activity.ts (tool groups/task outcomes);
  * src/ui/editor.ts + footer.ts + conversation-density.ts (borderless gutter, compact footer);
  * src/wisdom/extension.ts + location.ts and src/prompts/wisdom.md (explicit file reuse).
  * /wisdom only reports a directory; it does NOT restore hidden conversational memory.
  * RGB values resolve Pi 1.0.0's bundled dark.json. Background comes from the existing
  * settings-cells.json capture. Product themes are configurable. The Nerd Font idle
- * icon U+F460 uses portable single-cell chevron › here. Code previews and other chrome
+ * icon U+F460 is bundled as a tiny webfont subset. Code previews and other chrome
  * are honestly condensed. No tools, network, paid calls, private paths or timers run.
  */
 export const demoIds = ["delegate", "background", "wisdom"] as const;
@@ -89,7 +89,7 @@ const scripts: Record<DemoId, Shot[]> = {
     },
     {
       at: 18000,
-      stage: "A reviewable fix, not a surprise merge",
+      stage: "Review the branch before merging",
       blocks: [
         du,
         dp,
@@ -159,7 +159,7 @@ const scripts: Record<DemoId, Shot[]> = {
   ],
   wisdom: [
     { at: 0, stage: "Ask to reuse saved project context", blocks: [], input: wisdomPrompt, typeFor: 2600 },
-    { at: 2900, stage: "Resume from a file, not hidden memory", blocks: [wu], busy: true },
+    { at: 2900, stage: "Read the saved project context", blocks: [wu], busy: true },
     {
       at: 3900,
       stage: "Read the saved decision and remaining work",
@@ -220,7 +220,7 @@ export function demoDuration(id: DemoId): number {
   return id === "background" ? 21000 : 20000;
 }
 
-// Scripted glyphs are all single-width: ASCII, braille, chevron, ✓ and ↗.
+// Scripted glyphs are all single-width: ASCII, braille, prompt icon, ✓, ↗ and ▸.
 // No emoji, combining marks, tabs, escape sequences or double-width glyphs.
 function line(text: string, style: string, cols: number): Cell[] {
   const glyphs = [...text];
@@ -255,13 +255,28 @@ export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: 
     const previous = shot.blocks[i - 1];
     if (i && (block.kind === "user" || previous.kind === "user" || block.kind === "prose"))
       transcript.push(line("", styles.text, cols));
-    if (block.kind === "tool" || block.kind === "task") {
+    if (block.kind === "tool") {
+      // Fullscreen Bruv groups tools by user turn. The first tool owns the
+      // count row; active turns append the latest action label. Task details
+      // remain visible separately (protected by the real activity projector).
+      const boundary = shot.blocks.slice(0, i).findLastIndex((b) => b.kind === "user");
+      if (shot.blocks.slice(boundary + 1, i).some((b) => b.kind === "tool")) continue;
+      const nextUser = shot.blocks.findIndex((b, index) => index > i && b.kind === "user");
+      const tools = shot.blocks.slice(i, nextUser < 0 ? undefined : nextUser).filter((b) => b.kind === "tool");
+      const latest = tools.at(-1)!;
+      const label =
+        tools.length +
+        (tools.length === 1 ? " tool called ▸" : " tools called ▸") +
+        (shot.busy ? " · " + latest.text : "");
+      const clipped =
+        label.length > cols ? label.slice(0, Math.max(0, cols - 3)) + ".".repeat(Math.min(3, cols)) : label;
+      transcript.push(line(clipped, styles.text, cols));
+    } else if (block.kind === "task") {
+      if (block.state === "running") transcript.push(line("1 tool called ▸", styles.text, cols));
       const mark = block.state === "working" ? spin : block.state === "running" ? "↗" : "✓";
       const color = block.state === "done" ? styles.success : styles.accent;
       // Actual collapsed tool/task rows truncate instead of wrapping into cards.
       const cells = line(" " + mark + " " + block.text, color, cols);
-      if (block.kind === "tool" && block.state === "working")
-        for (let x = 3; x < cols; x++) cells[x].style = styles.text;
       transcript.push(cells);
     } else {
       for (const text of wrap(block.text, Math.max(1, cols - 2)))
@@ -280,7 +295,7 @@ export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: 
   inputLines.forEach((text, i) => {
     const y = editorTop + i;
     if (y < 0) return;
-    rows[y] = line((i === 0 ? (shot.busy ? spin : "›") : " ") + " " + text, styles.text, cols);
+    rows[y] = line((i === 0 ? (shot.busy ? spin : "") : " ") + " " + text, styles.text, cols);
     if (cols) rows[y][0].style = shot.busy ? styles.accent : styles.prompt;
   });
   if (!shot.busy && cols > 2) {

@@ -26,7 +26,7 @@ test("all three scripts keep their cell bounds and fixed viewport throughout", (
           for (const cell of row) {
             expect([...cell.text].length).toBe(1);
             // Closed repertoire: no surrogate pairs, combining or double-width glyphs.
-            expect(cell.text).toMatch(/^[ -~⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏›✓↗·]$/u);
+            expect(cell.text).toMatch(/^[ -~⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏✓↗·▸]$/u);
             expect(cell.style).toContain("38;2;");
             expect(cell.style).toContain("48;2;");
           }
@@ -39,9 +39,9 @@ test("all three scripts keep their cell bounds and fixed viewport throughout", (
 
 test("typing leads to source-shaped tool activity and useful final results", () => {
   expect(text("delegate", 80, 1800).length).toBeGreaterThan(text("delegate", 80, 800).length);
-  expect(text("delegate", 80, 5000)).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] Delegate CSV fix/);
+  expect(text("delegate", 80, 5000)).toContain("1 tool called ▸ · Delegate CSV fix");
   expect(text("delegate", 30, 8000)).toContain("↗ Fix CSV import");
-  expect(text("delegate", 30, 20000)).toContain("✓ Review helper diff");
+  expect(text("delegate", 30, 20000)).toContain("1 tool called ▸");
   expect(demoTranscript("delegate")).toContain("review the diff before merging");
   const talking = text("background", 30, 9000);
   expect(talking).toContain("↗ Run import tests");
@@ -49,8 +49,8 @@ test("typing leads to source-shaped tool activity and useful final results", () 
   expect(talking).toContain("1t");
   expect(text("background", 30, 21000)).toContain("✓ Run import tests");
   expect(demoTranscript("background")).toContain("Import tests passed");
-  expect(text("wisdom", 30, 20000)).toContain("✓ Read wisdom/csv.md");
-  expect(text("wisdom", 30, 20000)).toContain("✓ Update wisdom/csv.md");
+  expect(text("wisdom", 30, 20000)).toContain("4 tools called ▸");
+  expect(text("wisdom", 80, 15000)).toContain("Update wisdom/csv.md");
   expect(demoTranscript("wisdom")).toContain("keep memory bounded");
   expect(demoTranscript("wisdom")).toContain("Quoted newlines now pass");
 });

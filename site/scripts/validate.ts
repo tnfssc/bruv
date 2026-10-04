@@ -6,14 +6,14 @@ import { siteContent } from "../content";
 import { build } from "./build";
 import { preview } from "./preview";
 import { launchBrowser } from "./browser";
-const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/product-story");
+const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/animated-features");
 await mkdir(evidence, { recursive: true });
 await build("");
 const server = preview(0),
   browser = await launchBrowser();
 const results: Record<string, unknown> = {};
 try {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 960 } });
+  const context = await browser.newContext({ viewport: { width: 1440, height: 960 }, reducedMotion: "reduce" });
   const errors: string[] = [];
   await context.route("**/terminal.js", async (route) => {
     const response = await route.fetch(),
@@ -57,7 +57,7 @@ try {
       };
     });
     const d = snap.data,
-      state = { scroll: Number(d.scroll), focus: -1 };
+      state = { scroll: Number(d.scroll), focus: -1, demos: JSON.parse(d.demos!) };
     let f = layout(Number(d.cols), Number(d.rows), state);
     state.focus = f.hits.findIndex((h) => h.label === d.focus);
     f = layout(Number(d.cols), Number(d.rows), state);
@@ -209,7 +209,7 @@ try {
   const nojs = await browser.newPage({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   await nojs.goto(server.url.href);
   assert(await nojs.locator("h1").isVisible());
-  assert((await nojs.locator("pre").first().innerText()).includes("CSV importer"));
+  assert((await nojs.locator("pre").first().innerText()).includes("worktree"));
   assert.equal(await nojs.locator("img").count(), 0);
   results.noJS = true;
   await nojs.close();

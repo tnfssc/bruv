@@ -64,3 +64,6 @@ export function headline(value: string, width: number, compact: boolean) {
     return i < lines.length - 1 ? [...result, ""] : result;
   });
 }
+
+/** One single-width glyph and its terminal SGR style. */
+export type Cell = { text: string; style: string };

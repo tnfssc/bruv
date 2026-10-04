@@ -1,8 +1,9 @@
 import { siteContent, landing } from "./content";
 import { headline } from "./type";
-import { workflowCells } from "./workflow";
+import { demoIds, demoFrame, demoDuration, type DemoId } from "./demos";
+import type { Playback } from "./playback";
 export type Hit = { x: number; y: number; width: number; height: number; label: string; action: string };
-export type State = { scroll: number; focus: number };
+export type State = { scroll: number; focus: number; demos?: Record<DemoId, Playback> };
 // Official Vesper colors. Capture colors are preserved separately, not recolored.
 export const palette = {
   base: "38;2;255;255;255",
@@ -88,24 +89,41 @@ export function layout(cols: number, rows: number, state: State) {
     link("Source ↗", siteContent.repository);
   } else link("Source ↗", siteContent.repository, margin + 20);
   y += 4;
-  const captures: (ReturnType<typeof workflowCells> & { x: number; y: number })[] = [];
+  const captures: {
+    id: DemoId;
+    x: number;
+    y: number;
+    cols: number;
+    rows: { text: string; style: string }[][];
+    stage: string;
+  }[] = [];
   landing.features.forEach((feature, i) => {
-    const beside = width >= 96;
+    const id = demoIds[i];
+    const beside = width >= 100;
+    const demoCols = beside ? 68 : width - 2;
     const sectionTop = y;
-    const captionWidth = beside ? width - 64 : width;
-    text("0" + (i + 1), palette.muted);
+    const captionWidth = beside ? width - demoCols - 6 : width;
+    text("0" + (i + 1) + " / " + feature.tag, palette.muted, margin, captionWidth);
     y++;
     text(feature.title, palette.accent, margin, captionWidth);
     y++;
     text(feature.text, palette.base, margin, captionWidth);
     const copyEnd = y;
     y = beside ? sectionTop : y + 2;
-    const capture = workflowCells(i, beside ? 56 : width - 2);
-    const frameX = beside ? margin + width - capture.cols - 2 : margin;
-    text(capture.caption, palette.muted, frameX, capture.cols);
-    y++;
-    pieces.push({ x: frameX, y: y++, text: "╭" + "─".repeat(capture.cols) + "╮", style: palette.border });
-    captures.push({ x: frameX + 1, y, ...capture });
+    const playback = state.demos?.[id];
+    const demo = demoFrame(id, demoCols, playback?.elapsed ?? demoDuration(id));
+    const frameX = beside ? margin + width - demoCols - 2 : margin;
+    text("Animated demo · scripted", palette.muted, frameX, demoCols);
+    pieces.push({ x: frameX, y: y++, text: "╭" + "─".repeat(demoCols) + "╮", style: palette.border });
+    const capture = {
+      id,
+      x: frameX + 1,
+      y,
+      cols: demoCols,
+      rows: demo.rows.map((row) => row.map((cell) => ({ text: cell.text, style: cell.style }))),
+      stage: demo.stage,
+    };
+    captures.push(capture);
     for (const row of capture.rows) {
       pieces.push({ x: frameX, y, text: "│", style: palette.border });
       let x = frameX + 1;
@@ -113,10 +131,17 @@ export function layout(cols: number, rows: number, state: State) {
         pieces.push({ x, y, text: run.text, style: run.style });
         x += [...run.text].length;
       }
-      pieces.push({ x: frameX + 1 + capture.cols, y: y++, text: "│", style: palette.border });
+      pieces.push({ x: frameX + 1 + demoCols, y: y++, text: "│", style: palette.border });
     }
-    pieces.push({ x: frameX, y: y++, text: "╰" + "─".repeat(capture.cols) + "╯", style: palette.border });
-    y = Math.max(copyEnd, y) + 4;
+    pieces.push({ x: frameX, y: y++, text: "╰" + "─".repeat(demoCols) + "╯", style: palette.border });
+    const ended = !playback || playback.elapsed >= demoDuration(id);
+    const label = ended ? "Play" : playback.paused ? "Play" : "Pause";
+    link(label, "demo:" + id + ":toggle", frameX);
+    link("Replay", "demo:" + id + ":replay", frameX + 12);
+    y++;
+    const stageTop = y;
+    text(demo.stage, palette.muted, frameX, demoCols);
+    y = Math.max(copyEnd, stageTop + (demoCols < 60 ? 3 : 1)) + 4;
   });
   text("─".repeat(width), palette.border);
   y += 2;
@@ -138,7 +163,16 @@ export function layout(cols: number, rows: number, state: State) {
     if (row < top || row > bottom) continue;
     if (p.action) {
       const index = hits.length;
-      hits.push({ x: p.x, y: row, width: [...p.text].length, height: 1, label: p.text.trim(), action: p.action });
+      hits.push({
+        x: p.x,
+        y: row,
+        width: [...p.text].length,
+        height: 1,
+        label: p.action.startsWith("demo:")
+          ? p.text.replace(/[\[\]]/g, "").trim() + " " + p.action.split(":")[1] + " demo"
+          : p.text.trim(),
+        action: p.action,
+      });
       put(p.x, row, p.text, state.focus === index || p.primary ? palette.selected : p.style);
     } else put(p.x, row, p.text, p.style);
   }

@@ -1,17 +1,27 @@
 import { Ghostty, Terminal } from "ghostty-web";
 import { layout, hitAt, type State } from "./layout";
 import { CellScroll, wheelPixels } from "./scroll";
+import { demoIds, demoDuration, type DemoId } from "./demos";
+import { advance, inView } from "./playback";
 const host = document.querySelector<HTMLElement>("#terminal")!;
 const fallback = document.querySelector<HTMLElement>("#text-content")!;
-const state: State = { scroll: 0, focus: -1 };
+const motion = matchMedia("(prefers-reduced-motion: reduce)");
+const state: State = {
+  scroll: 0,
+  focus: -1,
+  demos: Object.fromEntries(
+    demoIds.map((id) => [id, { elapsed: motion.matches ? demoDuration(id) : 0, paused: motion.matches }]),
+  ) as NonNullable<State["demos"]>,
+};
 async function start() {
+  await document.fonts.load('16px "Bruv Prompt"', "\uf460");
   const ghostty = await Ghostty.load(new URL("./ghostty-vt.wasm", import.meta.url).href);
   const terminal = new Terminal({
     ghostty,
     cols: 80,
     rows: 24,
     fontSize: innerWidth < 600 ? 14 : 16,
-    fontFamily: '"DejaVu Sans Mono", "Liberation Mono", monospace',
+    fontFamily: '"Bruv Prompt", "DejaVu Sans Mono", "Liberation Mono", monospace',
     scrollback: 0,
     disableStdin: true,
     theme: { background: "#101010", foreground: "#ffffff", cursor: "#ffc799" },
@@ -29,7 +39,7 @@ async function start() {
   host.setAttribute("role", "region");
   host.setAttribute(
     "aria-label",
-    "Bruv terminal website. Press A for the accessible HTML view. Tab and Enter navigate; arrow keys scroll.",
+    "Bruv terminal website with scripted animated demos. Press A for static transcripts in HTML. Tab and Enter operate links and demo playback. Arrow keys scroll.",
   );
   // No PTY, socket, command evaluator or onData transport. Only our static layout is written.
   terminal.textarea?.remove();
@@ -38,11 +48,29 @@ async function start() {
   let pendingFrame = 0;
   let needsResize = false;
   let previousRows: string[] = [];
+  let clock = performance.now();
+  let animationTimer: ReturnType<typeof setTimeout> | undefined;
+  const announcement = document.createElement("span");
+  announcement.className = "sr-only";
+  announcement.setAttribute("aria-live", "polite");
+  host.after(announcement);
+  let lastFocus = "";
+  const visibleDemo = (capture: ReturnType<typeof layout>["captures"][number]) =>
+    state.demos![capture.id].started
+      ? capture.y < frame.clip.bottom && capture.y + capture.rows.length > frame.clip.top
+      : inView(capture.y, capture.rows.length, frame.clip.top, frame.clip.bottom);
   function render() {
     if (!pendingFrame) pendingFrame = requestAnimationFrame(paint);
   }
   function paint() {
     pendingFrame = 0;
+    clearTimeout(animationTimer);
+    const now = performance.now();
+    if (frame && !document.hidden) {
+      for (const capture of frame.captures)
+        advance(state.demos![capture.id], now - clock, demoDuration(capture.id), visibleDemo(capture));
+    }
+    clock = now;
     if (needsResize) {
       needsResize = false;
       terminal.options.fontSize = innerWidth < 600 ? 14 : 16;
@@ -74,14 +102,46 @@ async function start() {
     host.dataset.focus = frame.hits[state.focus]?.label || "";
     host.dataset.cellWidth = String(terminal.renderer!.charWidth);
     host.dataset.cellHeight = String(terminal.renderer!.charHeight);
+    host.dataset.demos = JSON.stringify(state.demos);
+    if (host.dataset.focus !== lastFocus) {
+      lastFocus = host.dataset.focus || "";
+      announcement.textContent = lastFocus ? lastFocus + ". Press Enter to activate." : "";
+    }
+    if (
+      !document.hidden &&
+      frame.captures.some(
+        (c) => visibleDemo(c) && !state.demos![c.id].paused && state.demos![c.id].elapsed < demoDuration(c.id),
+      )
+    )
+      animationTimer = setTimeout(render, 80);
   }
+  document.addEventListener("visibilitychange", () => {
+    clearTimeout(animationTimer);
+    clock = performance.now();
+    if (!document.hidden) render();
+  });
+  motion.addEventListener("change", () => {
+    if (motion.matches) for (const id of demoIds) state.demos![id].paused = true;
+    render();
+  });
   function resize() {
     needsResize = true;
     render();
   }
   function activate(action: string) {
     scrollInput.reset();
-    if (action === "text") location.assign("./text.html");
+    if (action.startsWith("demo:")) {
+      const [, id, command] = action.split(":") as [string, DemoId, string];
+      const playback = state.demos![id];
+      playback.started = true;
+      if (command === "replay" || playback.elapsed >= demoDuration(id)) {
+        playback.elapsed = 0;
+        playback.paused = false;
+      } else playback.paused = !playback.paused;
+      clock = performance.now();
+      announcement.textContent = id + " demo " + (playback.paused ? "paused" : "playing") + ".";
+      render();
+    } else if (action === "text") location.assign("./text.html");
     else location.assign(action);
   }
   function cell(e: { clientX: number; clientY: number }) {
@@ -201,7 +261,7 @@ async function start() {
           state.focus = next;
           render();
         }
-      } else if (e.key === "Enter") {
+      } else if (e.key === "Enter" || (e.key === " " && frame.hits[state.focus]?.action.startsWith("demo:"))) {
         if (frame.hits[state.focus]) activate(frame.hits[state.focus].action);
       } else if (e.key === "ArrowDown" || e.key === "j") {
         state.scroll++;

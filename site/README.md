@@ -1,11 +1,10 @@
 # Bruv landing page
 
-One scrolling page, rendered by the actual Ghostty Web/WASM terminal. The Vesper headline, links and real CLI capture glyphs all live in the same character grid. No PNG/canvas image overlay, route menu, agent backend or CDN.
+One scrolling page rendered inside the actual Ghostty Web/WASM terminal, using Vesper for the site. Headings, links, three animated Bruv UI mockups and their controls are all character cells. No PNG/video/CSS overlay, agent backend or CDN.
 
 ## Run
 
-
-environment: Bun 1.4.2
+Bun 1.4.2:
 
 ~~~sh
 cd site
@@ -13,26 +12,28 @@ bun install --frozen-lockfile
 bun run build
 PORT=0 bun run preview
 bun run test
+bun scripts/animation.ts
 ~~~
 
-The preview binds only to loopback. Set BASE_URL to the real deployment URL (including any path prefix) for canonical URLs, sitemap and robots. With no BASE_URL, no production domain is invented. Deploy the self-contained dist/ directory.
+Preview binds to loopback. BASE_URL configures the real deployment URL and path prefix for canonical/sitemap metadata; unset means no invented domain. Deploy the self-contained dist/ directory.
 
-## Layout and controls
+## Content and rendering
 
-- content.ts: concise copy and repository/install links shared with HTML.
-- layout.ts / type.ts: responsive cell composition, headline, real capture runs and hit regions.
-- capture.ts / assets/: source-derived terminal glyph/style data and responsive selection.
-- terminal.ts / scroll.ts: Ghostty, measured hit testing, accumulated wheel distance and one coalesced row-diff paint.
-- scripts/build.ts: static bundle, WASM and equivalent semantic/no-JS HTML.
+- content.ts: shared product story and install/source links.
+- demos.ts: three source-backed scripted conversations, fixed-height glyph/color timelines and static transcripts. Delegation, background tests plus continued conversation, and wisdom-file reuse each get their own sequence. Outcomes/timing are illustrative, not connected runs.
+- layout.ts / type.ts: responsive terminal-cell composition, headline and hit regions.
+- playback.ts / terminal.ts: one visible-panel clock feeding the coalesced RAF/dirty-row renderer. Panels pause offscreen or hidden, play once, and hold the final state. Reduced motion starts at the final state.
+- scroll.ts: retained measured wheel accumulation; one wheel owner.
+- scripts/build.ts: same-story semantic HTML, bundle, WASM and tiny source-backed prompt-icon font.
 
-Click or tap links, or use Tab and Enter. Wheel/swipe, arrow keys, Page Up/Down and Home/End scroll the same page. Escape or A opens the HTML version. Tab beyond terminal controls reaches the ordinary HTML link outside the canvas. There is no terminal keyboard trap and no shell connection.
+Click/tap Play/Pause or Replay. Tab then Enter/Space also operates playback. Wheel/swipe, arrow keys, Page Up/Down and Home/End scroll. Escape or A opens static HTML transcripts; Tab beyond terminal controls reaches the ordinary HTML link. No shell connection or keyboard trap.
 
-Narrow screens use readable 14px terminal text and a narrow capture, not a scaled-down wide image. Desktop uses 16px cells. The capture is a static view of local settings, not a connected agent chat. Source bytes and regeneration/provenance live under assets/.
+Mobile uses 14px cells, reflowed transcripts and condensed footer candidates, not a scaled-down desktop screen. Desktop uses 16px cells. The demo UI preserves Bruv/Pi source colors, within Vesper page chrome. Editor/footer/code previews are condensed to teach the interaction; the labels disclose scripted demos.
 
-## Validation and limits
+## Checks and limits
 
-bun run test runs focused unit and real Chromium checks, including terminal-buffer glyph/color comparison, full-paint parity, tiny wheel deltas, coalesced bursts, desktop/mobile layout, links, resize and no-JS/WASM fallback. Evidence: ../wisdom/landing-page/validation/single-page/.
+bun run test covers frame bounds, static HTML, playback state, cell colors, full-paint parity, tiny wheels/coalescing, desktop/mobile, keyboard/pointer links, touch scrolling, resize and no-JS/WASM fallback. scripts/animation.ts separately samples real-time playback, records review video and exercises mouse/keyboard/touch playback, reduced motion, offscreen pause and the visibility signal. Evidence: ../wisdom/landing-page/validation/animated-features/.
 
-The accessible HTML page provides headings, selectable text and normal browser links. Canvas text is not a semantic document; no claim of a manual screen-reader audit. Physical phones and Safari/Firefox remain untested. Scrolling stays cell-quantized, with direct touch drag rather than kinetic fling.
+HTML provides headings, selectable text and ordinary links. The canvas is not itself a semantic document; no manual screen-reader audit is claimed. Physical phones and Safari/Firefox are untested. Scrolling is cell-quantized and direct touch drag, without kinetic fling.
 
-Current decisions and handoff: ../wisdom/landing-page/single-page-cells.md. Earlier gallery/raster design notes are historical, not instructions to restore that UI.
+Current handoff: ../wisdom/landing-page/animated-features.md. Earlier settings/gallery/raster designs and the deliberately stopped product-story WIP are historical.

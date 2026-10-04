@@ -1,7 +1,7 @@
 import { cp, mkdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import { siteContent, landing } from "../content";
-import { workflowCells } from "../workflow";
+import { demoIds, demoTranscript } from "../demos";
 const escape = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 export function siteMetadata(raw?: string, page = "") {
@@ -39,22 +39,14 @@ export function textContent() {
     '">Source</a></p>' +
     landing.features
       .map((f, i) => {
-        const capture = workflowCells(i, 56);
-        const pre = capture.rows
-          .map((row) =>
-            row
-              .map((run) => escape(run.text))
-              .join("")
-              .trimEnd(),
-          )
-          .join("\n");
+        const pre = escape(demoTranscript(demoIds[i]));
         return (
           "<section><h2>" +
           escape(f.title) +
           "</h2><p>" +
           escape(f.text) +
           "</p><figure><figcaption>" +
-          capture.caption +
+          "Animated demo · scripted. Static transcript; outcomes and timing are illustrative." +
           "</figcaption><pre>" +
           pre +
           "</pre></figure></section>"
@@ -107,6 +99,7 @@ export async function build(raw = process.env.BASE_URL) {
   await cp(resolve(root, "styles.css"), resolve(out, "styles.css"));
   await mkdir(resolve(out, "assets"), { recursive: true });
   await cp(resolve(root, "assets/favicon.svg"), resolve(out, "assets/favicon.svg"));
+  await cp(resolve(root, "assets/bruv-prompt.woff2"), resolve(out, "assets/bruv-prompt.woff2"));
   await cp(resolve(root, "node_modules/ghostty-web/ghostty-vt.wasm"), resolve(out, "ghostty-vt.wasm"));
   await cp(resolve(root, "licenses"), resolve(out, "licenses"), { recursive: true });
   if (metadata.sitemap) {

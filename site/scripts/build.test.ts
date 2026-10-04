@@ -3,7 +3,8 @@ import { siteMetadata, textContent } from "./build";
 import { layout, hitAt, wrap } from "../layout";
 import { siteContent, landing } from "../content";
 import { settingsCapture, type Run } from "../capture";
-import { workflowCells } from "../workflow";
+import { demoIds, demoFrame, demoDuration, demoTranscript } from "../demos";
+import { advance, inView } from "../playback";
 import data from "../assets/settings-cells.json";
 import { createHash } from "node:crypto";
 describe("single terminal landing", () => {
@@ -55,24 +56,61 @@ describe("single terminal landing", () => {
       expect(c.rows.flat().every((r) => r.style.includes("38;2;"))).toBe(true);
       for (const row of c.rows) expect(row.reduce((n, r) => n + [...r.text].length, 0)).toBe(c.cols);
       const f = layout(width + 6, 100, { scroll: 0, focus: -1 });
-      expect(f.ansi).toContain("YOU ASK");
+      expect(f.ansi).toContain("Animated demo");
       expect(f.captures).toHaveLength(3);
     }
   });
-  test("illustrations reflow prompts without losing text or colors", () => {
-    for (const width of [27, 29, 37, 56]) {
-      for (let i = 0; i < landing.features.length; i++) {
-        const c = workflowCells(i, width);
-        for (const row of c.rows) expect(row.reduce((n, r) => n + [...r.text].length, 0)).toBe(c.cols);
-        const visible = c.rows
-          .flat()
-          .map((r) => r.text)
-          .join(" ")
-          .replace(/\s+/g, " ");
-        for (const line of landing.features[i].example) expect(visible).toContain(line.text.replace(/\s+/g, " "));
-        expect(c.rows.flat().every((r) => r.style.includes("48;2;24;24;24"))).toBe(true);
+  test("each demo has distinct, bounded, stable cell frames", () => {
+    for (const width of [27, 29, 37, 56, 68])
+      for (const id of demoIds) {
+        const first = demoFrame(id, width, 0);
+        const texts = new Set<string>();
+        for (let elapsed = 0; elapsed <= demoDuration(id); elapsed += 200) {
+          const frame = demoFrame(id, width, elapsed);
+          expect(frame.rows.length).toBe(first.rows.length);
+          for (const row of frame.rows) {
+            expect(row.length).toBe(width);
+            expect(row.every((c) => [...c.text].length === 1 && !/[\x00-\x1f]/.test(c.text))).toBe(true);
+            expect(row.every((c) => c.style.includes("38;2;") && c.style.includes("48;2;"))).toBe(true);
+          }
+          texts.add(
+            frame.rows
+              .flat()
+              .map((c) => c.text)
+              .join(""),
+          );
+        }
+        expect(texts.size).toBeGreaterThan(5);
+        expect(demoTranscript(id).length).toBeGreaterThan(100);
       }
+  });
+  test("playback never shifts subsequent sections", () => {
+    for (const cols of [35, 44, 100, 149]) {
+      const positions = (ms: number) =>
+        layout(cols, 50, {
+          scroll: 0,
+          focus: -1,
+          demos: Object.fromEntries(demoIds.map((id) => [id, { elapsed: ms, paused: false }])) as any,
+        }).captures.map((c) => c.y);
+      const first = positions(0);
+      for (let ms = 500; ms <= 21000; ms += 500) expect(positions(ms)).toEqual(first);
     }
+  });
+  test("playback freezes outside viewport, when paused, and at the end", () => {
+    const p = { elapsed: 0, paused: false };
+    advance(p, 100, 1000, false);
+    expect(p.elapsed).toBe(0);
+    advance(p, 100, 1000, true);
+    expect(p.elapsed).toBe(100);
+    p.paused = true;
+    advance(p, 100, 1000, true);
+    expect(p.elapsed).toBe(100);
+    p.paused = false;
+    advance(p, 2000, 1000, true);
+    expect(p.elapsed).toBe(1000);
+    expect(inView(30, 23, 3, 32)).toBe(false);
+    expect(inView(20, 23, 3, 32)).toBe(false);
+    expect(inView(6, 23, 3, 32)).toBe(true);
   });
   test("narrow reflow retains every source glyph and its style", async () => {
     const visible = (rows: Run[][]) =>
@@ -87,7 +125,8 @@ describe("single terminal landing", () => {
     expect(html).toContain(landing.title);
     expect(html).toContain(landing.titleTail);
     expect(html).toContain(landing.intro);
-    expect(html).toContain("Example workflow");
+    expect(html).toContain("Animated demo");
+    for (const id of demoIds) expect(html).toContain(demoTranscript(id).split("\n")[0]);
     expect(html).not.toContain("Auto-compact");
     expect(html).toContain(siteContent.install);
     expect(html).toContain(landing.installNote);
