@@ -127,6 +127,11 @@ bun run build
 bun run install:local
 ```
 
+## Website
+
+The static landing page lives in `site/`. See [the site README](site/README.md)
+for local preview, content and demo edits, tests, and static hosting/Vercel setup.
+
 ## State and technical docs
 
 State lives under `~/.bruv`. CLI sessions/configuration use `~/.bruv/agent`;

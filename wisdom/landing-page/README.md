@@ -46,3 +46,9 @@ Canvas reading/selecting/find relies on the semantic HTML representation. Physic
 ## Installer integration
 
 [Copyable download installer](install-script.md) was developed in /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_50347bb3, branch feat/landing-install-script, commit 90141a5d. It is integrated into the current worktree alongside the later mobile wordmark and opinionated-agent positioning fixes. Preview 45339 is the integrated review target. No release or deployment authorized.
+
+## Approved handoff and push
+
+User approved the site and asked to push, with a separate guide for future site work. site/README.md now covers local build/preview, source files, animated demos, browser tests, BASE_URL, static hosting and optional Vercel project settings. Root README links to it. Removed stale local-installer and visible-disclaimer claims from the old site guide. Relative documentation links and a fresh static build passed; no application code changed in this docs pass.
+
+Push target is origin/feat/landing-copy-loop-polish from this worktree. No develop merge or deployment is part of this action. The GitHub installer URL still needs scripts/install.sh on develop. Vercel was researched through official build-setting docs; it has not been deployed/tested. Values reviewed and unchanged: this is a feature handoff, covered by existing guidance.
