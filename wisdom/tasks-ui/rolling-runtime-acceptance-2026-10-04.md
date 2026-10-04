@@ -30,3 +30,7 @@ After the parent delivers the build, run the command above and inspect actual pl
 Typed **progress** notices have not been exercised. Shell stdout is not such a notice; normal workers cannot delegate to generate an agent-progress source. Complete/fail/cancel/attention wake are real shell/job paths, not a substitute for that coverage. No paid providers, remote host, clipboard selection, Mac/Ghostty, web, regular-mode parity, branch navigation or broad benchmark claim. Parent owns integration/build/full CI. A runtime failure should produce its visible failure frame, not longer sleeps or a fixture that hides the issue.
 
 Read values, compiled-terminal acceptance, rolling implementation, saved-detail replay and ps readiness. Values unchanged: existing real-path proof, honest limits, semantic readiness and leave-pickup guidance cover this work; no new general rule is needed.
+
+## Final integration outcome
+
+The prepared gate was run, its concrete readiness/left-padding/native-heading assumptions corrected, and the actual stale /activity picker selection defect fixed. The final default compiled binary passes all four cases. See [final implementation, placement decision, exact proof and limits](rolling-activity-disclosures-2026-10-04.md) and its retained plain/ANSI evidence; the preparation-only status above is historical. Notification-only segments across lasting prose are intentional, while canonical task cards remain unique.

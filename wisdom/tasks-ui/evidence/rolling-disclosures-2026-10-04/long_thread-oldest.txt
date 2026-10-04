@@ -1,0 +1,30 @@
+                                                                                                   ┃
+ Saved turn 0                                                                                      ┃
+                                                                                                   │
+ 10 tools called                                                                                   │
+                                                                                                   │
+ Saved turn 1                                                                                      │
+                                                                                                   │
+ 10 tools called                                                                                   │
+                                                                                                   │
+ Saved turn 2                                                                                      │
+                                                                                                   │
+ 10 tools called                                                                                   │
+                                                                                                   │
+ Saved turn 3                                                                                      │
+                                                                                                   │
+ 10 tools called                                                                                   │
+                                                                                                   │
+ Saved turn 4                                                                                      │
+                                                                                                   │
+ 10 tools called                                                                                   │
+                                                                                                   │
+ Saved turn 5                                                                                      │
+                                                                                                   │
+ 10 tools called                                                                                   │
+                                                                                                   │
+ Saved turn 6                                                                                      │
+                                   ↓ Jump to latest message · End                                  │
+
+ long-thread-draft
+project · mode: orchestrator · $0.000 · ctx 88.1% · cache est ?                           acceptance
