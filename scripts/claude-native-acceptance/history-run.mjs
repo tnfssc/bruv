@@ -12,7 +12,9 @@ const connector = process.env.BRUV_CONNECTOR_EXECUTABLE;
 if (!connector)
   throw Error("Set BRUV_CONNECTOR_EXECUTABLE to the actual built connector. Synthetic fixture is prohibited.");
 await fs.access(connector, fs.constants.X_OK);
-const normalBinary = path.resolve(process.env.BRUV_RUNTIME_BINARY ?? "/home/tnfssc/Code/bruv/dist/bruv");
+const normalBinary = path.resolve(
+  process.env.BRUV_RUNTIME_BINARY ?? fileURLToPath(new URL("../../dist/bruv", import.meta.url)),
+);
 await fs.access(normalBinary, fs.constants.X_OK);
 const proof = path.resolve(process.env.PROOF_OUTPUT ?? ".cache/claude-history-proof-" + Date.now());
 await fs.mkdir(path.dirname(proof), { recursive: true });

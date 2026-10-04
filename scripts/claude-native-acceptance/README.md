@@ -235,3 +235,7 @@ fails on zero-model human command settlement; see the retained command-idle proo
 No model counts/provider calls are invented to make the view settle. The shared
 harness waits for an enabled New thread or actual Start without a project control
 instead of racing native bootstrap hydration.
+
+### Explicit native history reader
+
+Set `BRUV_CLAUDE_SDK_PATH` to the checksum-verified SDK 0.3.276 `sdk.mjs`. The release setup downloads that test-only archive and exports its path. The composed gate checks the input before launching any suites; no developer-home cache is used. `T3_UPSTREAM`, `BROWSER_PATH`, and paired binary paths are explicit too. The SDK is not added to product dependencies.

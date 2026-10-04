@@ -11,7 +11,9 @@ const connector = process.env.BRUV_CONNECTOR_EXECUTABLE;
 if (!connector)
   throw Error("Set BRUV_CONNECTOR_EXECUTABLE to the actual built connector. Synthetic fixture is prohibited.");
 await fs.access(connector, fs.constants.X_OK);
-const normalBinary = path.resolve(process.env.BRUV_RUNTIME_BINARY ?? "/home/tnfssc/Code/bruv/dist/bruv");
+const normalBinary = path.resolve(
+  process.env.BRUV_RUNTIME_BINARY ?? fileURLToPath(new URL("../../dist/bruv", import.meta.url)),
+);
 await fs.access(normalBinary, fs.constants.X_OK);
 const proof = path.resolve(process.env.PROOF_OUTPUT ?? ".cache/claude-local-subagent-proof-" + Date.now());
 await fs.mkdir(path.dirname(proof), { recursive: true });
@@ -227,9 +229,8 @@ async function verifyChildHistory(agent, proof) {
     if (new Set(rows.map((r) => r.uuid)).size !== rows.length) throw Error("Duplicate child native history");
     const serialized = JSON.stringify(rows);
     if (!serialized.includes('"tool_use"')) throw Error("Native child history missing actual child tool");
-    const sdkPath = path.resolve(
-      process.env.BRUV_CLAUDE_SDK_PATH ?? "/home/tnfssc/Code/bruv/.cache/claude-compat-boundary/package/sdk.mjs",
-    );
+    if (!process.env.BRUV_CLAUDE_SDK_PATH) throw Error("Set BRUV_CLAUDE_SDK_PATH to pinned SDK 0.3.276 sdk.mjs");
+    const sdkPath = path.resolve(process.env.BRUV_CLAUDE_SDK_PATH);
     if (JSON.parse(await fs.readFile(path.join(path.dirname(sdkPath), "package.json"), "utf8")).version !== "0.3.276")
       throw Error("Wrong pinned SDK");
     const taskId = path.basename(file).slice(6, -6);

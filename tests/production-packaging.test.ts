@@ -59,6 +59,9 @@ test("external native release gate setup keeps verified upstream layout and env 
   expect(fetch).toContain("53fbd1c78ab3a01ea91913f65dc17b9d7824f00a81564e06992a73e183054e48");
   expect(fetch).toContain("737993303d36e10674c54b95e5bd3826682c99c7");
   expect(script).toContain("playwright-core");
+  expect(script).toContain("claude-agent-sdk-0.3.276.tgz");
+  expect(script).toContain("f65a23c8272467ec37da496c5a349b10b3b4d04f052209f239f028c5aabdc3ca");
+  expect(script).toContain("BRUV_CLAUDE_SDK_PATH=$sdk/package/sdk.mjs");
   const workflow = Bun.YAML.parse(
     await Bun.file(new URL("../.github/workflows/release.yml", import.meta.url)).text(),
   ) as any;

@@ -9,8 +9,21 @@ void DatabaseSync;
 const root = fileURLToPath(new URL("../", import.meta.url));
 const proofRoot = path.join(root, "wisdom/claude-compat/proof/official-2644");
 const pin = JSON.parse(await fs.readFile(path.join(proofRoot, "provenance.json"), "utf8"));
-for (const key of ["T3_UPSTREAM", "BRUV_CONNECTOR_EXECUTABLE", "BRUV_RUNTIME_BINARY", "BROWSER_PATH", "PROOF_OUTPUT"])
+for (const key of [
+  "T3_UPSTREAM",
+  "BRUV_CONNECTOR_EXECUTABLE",
+  "BRUV_RUNTIME_BINARY",
+  "BROWSER_PATH",
+  "PROOF_OUTPUT",
+  "BRUV_CLAUDE_SDK_PATH",
+])
   if (!process.env[key]) throw Error(`Set ${key} for the final paired-binary native gate`);
+await fs.access(process.env.BRUV_CLAUDE_SDK_PATH);
+const sdkPackage = JSON.parse(
+  await fs.readFile(path.join(path.dirname(process.env.BRUV_CLAUDE_SDK_PATH), "package.json"), "utf8"),
+);
+if (sdkPackage.name !== "@anthropic-ai/claude-agent-sdk" || sdkPackage.version !== "0.3.276")
+  throw Error("Native history gate requires SDK 0.3.276");
 const binary = path.resolve(process.env.T3_UPSTREAM, "platform/t3");
 async function checkBinary() {
   const hash = createHash("sha256")

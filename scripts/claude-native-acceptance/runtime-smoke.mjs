@@ -12,7 +12,7 @@ const agent = path.join(root, "agent"),
   state = path.join(root, "state");
 for (const p of [agent, state]) await fs.mkdir(p);
 const worker = fileURLToPath(new URL("./worker.mjs", import.meta.url));
-const binary = process.env.BRUV_RUNTIME_BINARY ?? "/home/tnfssc/Code/bruv/dist/bruv";
+const binary = process.env.BRUV_RUNTIME_BINARY ?? fileURLToPath(new URL("../../dist/bruv", import.meta.url));
 const model = await startModel({ state, worker });
 let child;
 let stderr = "";

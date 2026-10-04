@@ -10,6 +10,13 @@ async function fixture(failSuite?: string) {
   await mkdir(path.join(root, "scripts/claude-native-acceptance"), { recursive: true });
   const proof = path.join(root, "wisdom/claude-compat/proof/official-2644");
   await mkdir(proof, { recursive: true });
+  const sdk = path.join(root, "sdk");
+  await mkdir(sdk);
+  await writeFile(path.join(sdk, "sdk.mjs"), "// unit fixture, not SDK runtime proof");
+  await writeFile(
+    path.join(sdk, "package.json"),
+    JSON.stringify({ name: "@anthropic-ai/claude-agent-sdk", version: "0.3.276" }),
+  );
   const upstream = path.join(root, "upstream");
   await mkdir(path.join(upstream, "platform"), { recursive: true });
   const bytes = "unit-test-only executable";
@@ -49,6 +56,7 @@ async function fixture(failSuite?: string) {
   const output = path.join(root, "output");
   return {
     root,
+    sdk,
     upstream,
     output,
     run: async () => {
@@ -58,6 +66,7 @@ async function fixture(failSuite?: string) {
         env: {
           PATH: "/usr/bin:/bin",
           T3_UPSTREAM: upstream,
+          BRUV_CLAUDE_SDK_PATH: path.join(sdk, "sdk.mjs"),
           PROOF_OUTPUT: output,
           BRUV_CONNECTOR_EXECUTABLE: "/actual/paired/connector",
           BRUV_RUNTIME_BINARY: "/actual/paired/bruv",
@@ -140,6 +149,22 @@ test("an unpinned upstream executable is rejected before a server or proof start
     const result = await f.run();
     expect(result.exitCode).not.toBe(0);
     expect(result.stderr).toContain("Not unchanged official");
+    expect(await Bun.file(path.join(f.output, "calls.ndjson")).exists()).toBe(false);
+  } finally {
+    await rm(f.root, { recursive: true, force: true });
+  }
+}, 30_000);
+
+test("wrong history SDK fails before any native suite starts", async () => {
+  const f = await fixture();
+  try {
+    await writeFile(
+      path.join(f.sdk, "package.json"),
+      JSON.stringify({ name: "@anthropic-ai/claude-agent-sdk", version: "0.0.0" }),
+    );
+    const result = await f.run();
+    expect(result.exitCode).not.toBe(0);
+    expect(result.stderr).toContain("Native history gate requires SDK 0.3.276");
     expect(await Bun.file(path.join(f.output, "calls.ndjson")).exists()).toBe(false);
   } finally {
     await rm(f.root, { recursive: true, force: true });
