@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "scope",
+    "instance": "root",
+    "value": {
+      "instance": "root",
+      "hasCredential": true,
+      "credentialDigest": "a937fed2b268450b6abe174e3df2c3269980b9c82fea4ce2d5350b608bdb1ab0",
+      "thinking": "adaptive",
+      "model": "bruv-acceptance/local-deterministic-v1"
+    }
+  },
+  {
+    "kind": "scope",
+    "instance": "normal",
+    "value": {
+      "instance": "normal",
+      "hasCredential": true,
+      "credentialDigest": "bc7006d3a6eae59a5fb4a0083e33e8c6f83697bf56673f841d504f8075ec1e8c",
+      "thinking": "adaptive",
+      "model": "bruv-worker-acceptance/local-normal-v1",
+      "role": "normal",
+      "depth": "1"
+    }
+  },
+  {
+    "kind": "scope",
+    "instance": "normal",
+    "value": {
+      "instance": "normal",
+      "hasCredential": true,
+      "credentialDigest": "a9c022f8d3fec317f7214131b587d3828e50a9cfebdd6db85a414ae1e342eeaa",
+      "thinking": "adaptive",
+      "model": "bruv-worker-acceptance/local-normal-v1",
+      "role": "normal",
+      "depth": "1"
+    }
+  }
+]
