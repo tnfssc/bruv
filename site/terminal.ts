@@ -1,6 +1,7 @@
 import { Ghostty, Terminal } from "ghostty-web";
 import { layout, hitAt, type State } from "./layout";
 import { siteContent } from "./content";
+import { CellImagePlane } from "./image-plane";
 const host = document.querySelector<HTMLElement>("#terminal")!;
 const fallback = document.querySelector<HTMLElement>("#text-content")!;
 const state: State = { route: location.hash.slice(1) || "overview", scroll: 0, focus: -1 };
@@ -10,11 +11,11 @@ async function start() {
     ghostty,
     cols: 80,
     rows: 24,
-    fontSize: innerWidth < 600 ? 13 : 16,
+    fontSize: innerWidth < 600 ? 14 : 16,
     fontFamily: '"DejaVu Sans Mono", "Liberation Mono", monospace',
     scrollback: 0,
     disableStdin: true,
-    theme: { background: "#101a16", foreground: "#d3ddd7", cursor: "#c2f278" },
+    theme: { background: "#101010", foreground: "#ffffff", cursor: "#ffc799" },
   });
   host.hidden = false;
   terminal.open(host);
@@ -22,7 +23,10 @@ async function start() {
   terminal.attachCustomWheelEventHandler(() => false);
   terminal.attachCustomKeyEventHandler(() => false);
   const canvas = terminal.renderer!.getCanvas();
+  canvas.classList.add("ghostty-cells");
   canvas.setAttribute("aria-hidden", "true");
+  const imagePlane = new CellImagePlane(host, canvas);
+  await imagePlane.load();
   host.tabIndex = 0;
   host.contentEditable = "false";
   host.setAttribute("role", "region");
@@ -34,17 +38,21 @@ async function start() {
   terminal.textarea?.remove();
   let frame: ReturnType<typeof layout>;
   function render() {
-    frame = layout(terminal.cols, terminal.rows, state);
+    frame = layout(terminal.cols, terminal.rows, state, terminal.renderer!.charWidth / terminal.renderer!.charHeight);
     state.scroll = frame.scroll;
     terminal.write(frame.ansi);
+    imagePlane.render(frame, terminal.renderer!.charWidth, terminal.renderer!.charHeight);
     host.dataset.route = frame.route;
+    document.querySelector<HTMLAnchorElement>(".plain-switch")!.href = "./text.html#" + frame.route;
     host.dataset.scroll = String(frame.scroll);
     host.dataset.cols = String(terminal.cols);
     host.dataset.rows = String(terminal.rows);
     host.dataset.focus = frame.hits[state.focus]?.label || "";
+    host.dataset.cellWidth = String(terminal.renderer!.charWidth);
+    host.dataset.cellHeight = String(terminal.renderer!.charHeight);
   }
   function resize() {
-    terminal.options.fontSize = innerWidth < 600 ? 13 : 16;
+    terminal.options.fontSize = innerWidth < 600 ? 14 : 16;
     const r = terminal.renderer!;
     const cols = Math.max(24, Math.floor(host.clientWidth / r.charWidth));
     const rows = Math.max(12, Math.floor(host.clientHeight / r.charHeight));

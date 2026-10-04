@@ -1,7 +1,7 @@
 :root {
   color-scheme: dark;
-  background: #101a16;
-  color: #d3ddd7;
+  background: #101010;
+  color: #ffffff;
   font:
     17px / 1.65 ui-monospace,
     "DejaVu Sans Mono",
@@ -14,12 +14,12 @@ body {
   margin: 0;
 }
 a {
-  color: #c2f278;
+  color: #ffc799;
   text-underline-offset: 0.22em;
 }
 a:focus-visible,
 button:focus-visible {
-  outline: 3px solid #c2f278;
+  outline: 3px solid #ffc799;
   outline-offset: 4px;
 }
 [hidden] {
@@ -32,6 +32,7 @@ button:focus-visible {
   height: 100%;
 }
 #terminal {
+  position: relative;
   width: 100%;
   height: 100dvh;
   overflow: hidden;
@@ -50,7 +51,7 @@ button:focus-visible {
   left: 1rem;
   top: -10rem;
   z-index: 2;
-  background: #101a16;
+  background: #101010;
   padding: 1rem;
 }
 .plain-switch:focus {
@@ -73,7 +74,7 @@ button:focus-visible {
 h1,
 h2 {
   line-height: 1.2;
-  color: #edf4e5;
+  color: #ffffff;
 }
 p {
   white-space: pre-wrap;
@@ -90,7 +91,7 @@ code {
   overflow-wrap: anywhere;
 }
 footer {
-  border-top: 1px solid #42584c;
+  border-top: 1px solid #505050;
   margin-top: 3rem;
   padding-top: 1rem;
 }
@@ -99,5 +100,10 @@ pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   padding: 1rem;
-  border: 1px solid #42584c;
+  border: 1px solid #505050;
+}
+
+#terminal .terminal-image-plane {
+  position: absolute;
+  pointer-events: none;
 }

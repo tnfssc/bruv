@@ -20,6 +20,13 @@ export type SiteContent = {
 const installCommand = "bun install --frozen-lockfile\nbun run check\nbun run build\nbun run install:local";
 const repository = "https://github.com/tnfssc/bruv";
 
+export const landing = {
+  eyebrow: "BRUV / BUILT ON PI",
+  captureLabel: "INSIDE BRUV  /  the local settings menu",
+  featureTitles: ["Give a task its own worktree", "Leave notes the next session can use"],
+  installNote: "Build from source with Bun. Add your provider credentials when you run Bruv.",
+};
+
 export const siteContent: SiteContent = {
   name: "bruv CLI",
   description: "A Pi-based coding agent for the terminal, with background jobs, subagents, and project wisdom.",
@@ -30,13 +37,15 @@ export const siteContent: SiteContent = {
       id: "overview",
       title: "Code in your terminal",
       paragraphs: [
-        "Bruv is a coding agent built on Pi. Run bruv in your project to work through a terminal interface.",
-        "Background jobs and subagents can keep working after the foreground turn ends. Subagents share your checkout by default; use a Git worktree when work needs its own branch.",
-        "Project wisdom lives in wisdom/ by default. Agents use it for project guidance and notes they can pick up later.",
+        "Run a Pi-based coding agent in your project. Delegate a change in its own Git worktree while you keep working in your terminal.",
+        "Delegate an independent change to a subagent in a Git worktree. It gets its own checkout and branch; background work can continue after your foreground turn ends. Subagents share the current checkout unless you ask for a worktree.",
+        "Bruv keeps project guidance and handoff notes in wisdom/. Ask the agent to record the decision and the checks it ran, so a later session has something concrete to pick up.",
       ],
       links: [
-        { label: "Read the README", href: `${repository}#readme` },
-        { label: "Pi", href: "https://pi.dev" },
+        { label: "Install Bruv", href: "#install" },
+        { label: "View source", href: repository },
+        { label: "How delegation works", href: `${repository}/blob/develop/wisdom/worktrees/subagent-workspaces.md` },
+        { label: "Read about wisdom", href: `${repository}/blob/develop/wisdom/wisdom-system/project-wisdom.md` },
       ],
     },
     {
@@ -87,8 +96,7 @@ export const siteContent: SiteContent = {
       title: "Real CLI screenshots",
       paragraphs: [
         "These captures use Bruv 0.16.0 built from the current source, with an empty home and workspace, no credentials, and network access disabled. Actual terminal output was replayed through Ghostty for the images.",
-        "Open a capture to view the full-size image in a static HTML page. Browser Back returns here. The browser terminal renderer does not display these images inline.",
-        ...captures.map((c) => c.title + ": " + c.caption),
+        "Captures appear inside the terminal viewport. Select an image to open the full-size capture and transcript. These show local settings and help, not a connected coding session.",
       ],
       links: [
         ...captures.map((c) => ({ label: "View " + c.title.toLowerCase(), href: "./shots/" + c.id + ".html" })),
@@ -99,8 +107,8 @@ export const siteContent: SiteContent = {
       id: "help",
       title: "Website controls and CLI help",
       paragraphs: [
-        "This is a static website rendered in character cells. No shell, agent session, microphone or provider connection runs here. Click the green links, or use Tab and Enter. Number keys select pages; ? opens this help.",
-        "Scroll with arrow keys, Page Up/Down, the mouse wheel or a touch swipe. Home/End jump within a page. Esc and the Back control use browser history. Use the arrow controls on a touch screen.",
+        "This is a static website rendered in character cells. No shell, agent session, microphone or provider connection runs here. Click the peach links, or use Tab and Enter. Number keys select pages; ? opens this help.",
+        "Scroll with arrow keys, Page Up/Down, the mouse wheel or a touch swipe. Home/End jump within a page. Esc uses browser history. Use the arrow controls on a touch screen.",
         "Canvas text does not provide normal document semantics to screen readers. Press A or choose HTML for the equivalent text view, with headings, selectable text and ordinary links. This option is available to everyone and is the default without JavaScript. Tab past the last terminal control to leave the terminal.",
         "Inside bruv, type / to see available commands. Question menus support typing to search, arrow keys and Enter to select, and Escape to go back without submitting.",
         "bruv update --check checks for updates without changing files. bruv update updates the sibling CLI and connector together. Stop active Bruv/T3 sessions first and restart afterward.",

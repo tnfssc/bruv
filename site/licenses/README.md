@@ -9,3 +9,5 @@ The build copies this directory into dist/licenses.
 Bundled ghostty-vt.wasm SHA256: d6f0326f1874ad2ce9f289e3a4a0c5f3507d4cb38d8747e4b287def470a0c60a.
 
 No fonts are redistributed; rendering uses installed system monospace fonts. Writing guidance sources have their own MIT provenance in wisdom/landing-page/writing-sources and are not copied to the static deployment.
+
+Vesper theme colors: © 2023 Rauno Freiberg, MIT. `vesper.txt` contains the upstream notice. Source: https://github.com/raunofreiberg/vesper/blob/9043f3849b776949445f0cd4990365959cca35a3/themes/Vesper-dark-color-theme.json . Mapping colors to website roles is our adaptation, not an official ANSI palette.

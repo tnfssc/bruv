@@ -37,6 +37,24 @@ describe("static terminal website", () => {
         }
       }
   });
+  test("hero images occupy reserved cells and scroll with clipped hits", () => {
+    for (const cols of [35, 43, 80, 144]) {
+      const initial = layout(cols, 54, { route: "overview", scroll: 0, focus: -1 }, 0.56);
+      expect(initial.images[0]?.id).toBe("settings");
+      const img = initial.images[0];
+      expect(img.x + img.width).toBeLessThan(cols);
+      const next = layout(cols, 54, { route: "overview", scroll: 1, focus: -1 }, 0.56);
+      expect(next.images[0].y).toBe(img.y - 1);
+      const clipped = layout(cols, 54, { route: "overview", scroll: img.y, focus: -1 }, 0.56);
+      const hit = clipped.hits.find((h) => h.label === "Open settings capture");
+      if (hit) {
+        expect(hit.y).toBeGreaterThanOrEqual(clipped.clip.top);
+        expect(hit.y + hit.height).toBeLessThanOrEqual(clipped.clip.bottom);
+      }
+      expect(initial.hits.some((h) => h.action === "#install")).toBe(true);
+      expect(initial.hits.some((h) => h.action === siteContent.repository)).toBe(true);
+    }
+  });
   test("long URLs wrap, and unknown hash returns overview", () => {
     expect(wrap("a".repeat(40), 12).every((s) => s.length <= 12)).toBe(true);
     expect(layout(80, 30, { route: "invalid", scroll: 0, focus: -1 }).route).toBe("overview");

@@ -1,6 +1,6 @@
 import { cp, mkdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
-import { siteContent } from "../content";
+import { siteContent, landing } from "../content";
 import { captures } from "../gallery";
 const escape = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
@@ -23,6 +23,24 @@ export function siteMetadata(raw?: string, page = "") {
     robots: "User-agent: *\nAllow: /\nSitemap: " + new URL("sitemap.xml", url).href + "\n",
   };
 }
+function captureHTML(id: string) {
+  const c = captures.find((c) => c.id === id)!;
+  return (
+    '<figure><a href="./shots/' +
+    c.id +
+    '.html"><img loading="lazy" src="./assets/' +
+    c.file +
+    '" width="' +
+    c.width +
+    '" height="' +
+    c.height +
+    '" alt="' +
+    escape(c.caption) +
+    '"></a><figcaption>' +
+    escape(c.caption) +
+    "</figcaption></figure>"
+  );
+}
 function textContent() {
   return (
     "<header><h1>" +
@@ -30,29 +48,47 @@ function textContent() {
     "</h1><p>" +
     escape(siteContent.description) +
     '</p><nav aria-label="Pages">' +
-    siteContent.pages.map((p) => '<a href="#' + escape(p.id) + '">' + escape(p.title) + "</a>").join(" ") +
+    siteContent.pages.map((p) => '<a href="#' + p.id + '">' + escape(p.title) + "</a>").join(" ") +
     "</nav></header><main>" +
     siteContent.pages
-      .map(
-        (p) =>
-          '<section id="' +
-          escape(p.id) +
-          '"><h2>' +
-          escape(p.title) +
-          "</h2>" +
-          p.paragraphs
+      .map((p) => {
+        let body = '<section id="' + p.id + '"><h2>' + escape(p.title) + "</h2>";
+        if (p.id === "overview") {
+          body +=
+            "<p>" +
+            escape(landing.eyebrow) +
+            "</p><p>" +
+            escape(p.paragraphs[0]) +
+            '</p><p><a href="#install">Install Bruv</a> · <a href="' +
+            siteContent.repository +
+            '">View source</a></p><p>' +
+            escape(landing.captureLabel) +
+            "</p>" +
+            captureHTML("settings");
+          landing.featureTitles.forEach((title, i) => {
+            body += "<h3>" + escape(title) + "</h3><p>" + escape(p.paragraphs[i + 1]) + "</p>";
+          });
+          body += "<h3>Start in your project.</h3><p>" + escape(landing.installNote) + "</p>";
+        } else {
+          body += p.paragraphs
             .map((t) =>
               t === siteContent.installCommand
                 ? "<pre><code>" + escape(t) + "</code></pre>"
                 : "<p>" + escape(t) + "</p>",
             )
-            .join("") +
+            .join("");
+          if (p.id === "gallery")
+            body += captures.map((c) => "<h3>" + escape(c.title) + "</h3>" + captureHTML(c.id)).join("");
+        }
+        return (
+          body +
           "<ul>" +
           p.links.map((l) => '<li><a href="' + escape(l.href) + '">' + escape(l.label) + "</a></li>").join("") +
-          "</ul></section>",
-      )
+          "</ul></section>"
+        );
+      })
       .join("") +
-    '</main><footer>Static website. No shell commands run here. <a href="./">Open terminal view</a> · <a href="./licenses/ghostty-web.txt">Renderer license</a></footer>'
+    '</main><footer>Static website. No shell commands run here. <a href="./">Open terminal view</a> · <a href="./licenses/ghostty-web.txt">Renderer license</a> · <a href="./licenses/vesper.txt">Vesper theme by Rauno Freiberg</a> · <a href="./assets/cli-captures.md">Capture notes</a></footer>'
   );
 }
 export async function build(raw = process.env.BASE_URL) {
