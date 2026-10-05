@@ -64,6 +64,10 @@ jobs:
         run: |
           xcrun clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-core.c -o /tmp/live-core-test
           /tmp/live-core-test
+          xcrun clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-capture-gate.c -o /tmp/live-capture-gate-test
+          /tmp/live-capture-gate-test
+          xcrun clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined native/live-linux/tests/capture-gate.cpp -o /tmp/live-linux-capture-gate-test
+          /tmp/live-linux-capture-gate-test
       - name: Compile helper and check device-free protocol
         shell: bash
         run: |
@@ -75,7 +79,7 @@ jobs:
           p = subprocess.Popen(['dist/live-audio'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
           try:
               assert select.select([p.stdout], [], [], 5)[0], 'helper hello timed out'
-              assert json.loads(p.stdout.readline()) == {'type': 'hello', 'protocol': 1}
+              assert json.loads(p.stdout.readline()) == {'type': 'hello', 'protocol': 1, 'captureGate': True}
           finally:
               p.terminate()
               p.wait(timeout=5)
@@ -128,6 +132,13 @@ jobs:
         shell: bash
         run: |
           bun scripts/validate-release-tag.ts "$RELEASE_TAG" 2>&1 | tee artifacts/release/version.log
+      - name: Sanitized, device-free capture-origin tests
+        shell: bash
+        run: |
+          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-capture-gate.c -o /tmp/live-capture-gate-test
+          /tmp/live-capture-gate-test
+          clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined native/live-linux/tests/capture-gate.cpp -o /tmp/live-linux-capture-gate-test
+          /tmp/live-linux-capture-gate-test
       - name: Shared ordinary Linux gate
         shell: bash
         env:
