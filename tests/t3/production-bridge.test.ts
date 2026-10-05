@@ -376,15 +376,21 @@ test("close aborts initialize, waits for settlement, then deletes an acquired se
       },
     });
   }) as typeof fetch);
+  const client = new T3McpClient(endpoint, "token");
+  const pending = client.initialize().catch((error) => error);
   try {
-    const client = new T3McpClient(endpoint, "token");
-    const pending = client.initialize().catch((error) => error);
     await acquiredSessionHeader;
     await client.close();
     expect(await pending).toBeInstanceOf(Error);
     expect(order).toEqual(["initialize-body", "settled", "delete"]);
   } finally {
-    fetchSpy.mockRestore();
+    // Keep the fetch fixture installed until owned cleanup finishes, even after an assertion fails.
+    try {
+      await client.close();
+      await pending;
+    } finally {
+      fetchSpy.mockRestore();
+    }
   }
 });
 
@@ -436,9 +442,9 @@ test("close drains client response reader cleanup before DELETE", async () => {
     }) as typeof body.getReader;
     return response;
   }) as typeof fetch);
+  const client = new T3McpClient("http://127.0.0.1/mcp", "token");
+  const pending = client.initialize().catch((error) => error);
   try {
-    const client = new T3McpClient("http://127.0.0.1/mcp", "token");
-    const pending = client.initialize().catch((error) => error);
     await acquiredBodyReader;
     const closing = client.close();
     await cleaningUp;
@@ -449,7 +455,13 @@ test("close drains client response reader cleanup before DELETE", async () => {
     expect(order).toEqual(["abort", "draining", "settled", "delete"]);
   } finally {
     finishCleanup();
-    fetchSpy.mockRestore();
+    // Keep the fetch fixture installed until owned cleanup finishes, even after an assertion fails.
+    try {
+      await client.close();
+      await pending;
+    } finally {
+      fetchSpy.mockRestore();
+    }
   }
 });
 

@@ -171,6 +171,7 @@ test("revocation during a read-only Git tool suppresses its late result", async 
     process.env.PATH = f.root + ":" + path;
     const grant = await f.client.grant("task1", f.repo, ["tool:git-status"]);
     work = f.client.serve({ id: "late_read", grantId: grant.id, taskId: "task1", kind: "tool:git-status", input: "" });
+    void work.catch(() => {});
     for (let n = 0; n < 100 && !existsSync(started); n++) await Bun.sleep(10);
     expect(existsSync(started)).toBe(true);
     await f.client.revoke(grant.id);
@@ -179,10 +180,14 @@ test("revocation during a read-only Git tool suppresses its late result", async 
     expect(reply.error).toBe("Grant revoked");
     expect(reply.value).toBeUndefined();
   } finally {
-    process.env.PATH = path;
-    await writeFile(release, "continue");
-    await work;
-    await f.clean();
+    // A serve still reading its grant may not have spawned Git yet. Drain it before restoring PATH.
+    try {
+      await writeFile(release, "continue");
+      await work;
+    } finally {
+      process.env.PATH = path;
+      await f.clean();
+    }
   }
 });
 

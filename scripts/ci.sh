@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared local / GitHub Actions validation. CI owns tool setup and log upload only.
+# Shared local / CI / Release validation. Workflows own tools and log upload only.
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -15,8 +15,9 @@ run_tmp="$(mktemp -d "${TMPDIR:-/tmp}/bruv-ci.XXXXXX")"
 export TMPDIR="$run_tmp"
 trap 'rm -rf "$run_tmp"' EXIT
 
-mkdir -p artifacts/ci
-log_dir="$root/artifacts/ci"
+# Release redirects the same gate logs into its uploaded artifact tree.
+log_dir="${CI_LOG_DIR:-$root/artifacts/ci}"
+mkdir -p "$log_dir"
 run_step() {
   local label="$1" log="$2" directory="$3"
   shift 3

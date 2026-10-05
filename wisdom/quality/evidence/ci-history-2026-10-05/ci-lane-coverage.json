@@ -1,0 +1,64 @@
+{
+  "stats": {
+    "fullLinuxSuccess": 249,
+    "noFullLinuxLane": 5,
+    "missing": []
+  },
+  "greenRunsWithoutFullLinuxLane": [
+    {
+      "id": 37030836722,
+      "date": "2026-10-02T15:59:33Z",
+      "title": "Record successful full CI after history fix",
+      "jobs": [
+        ["Docs-only feedback (not executable validation)", "success"],
+        ["CI policy", "success"],
+        ["Full validation / macOS Live (no devices or API)", "skipped"],
+        ["Full validation / Linux x64", "skipped"]
+      ]
+    },
+    {
+      "id": 36784555395,
+      "date": "2026-09-30T22:16:00Z",
+      "title": "Record green hosted cold and warm full CI results",
+      "jobs": [
+        ["Docs-only feedback (not executable validation)", "success"],
+        ["CI policy", "success"],
+        ["Full validation / Linux x64", "skipped"],
+        ["Full validation / macOS Live (no devices or API)", "skipped"]
+      ]
+    },
+    {
+      "id": 36770502052,
+      "date": "2026-09-30T20:08:14Z",
+      "title": "CI timing probe: parallel remote-source checks",
+      "jobs": [
+        ["Selected feedback (not full validation)", "success"],
+        ["CI policy", "success"],
+        ["Full validation / Linux x64", "skipped"],
+        ["Full validation / macOS Live (no devices or API)", "skipped"]
+      ]
+    },
+    {
+      "id": 36763069298,
+      "date": "2026-09-30T19:04:13Z",
+      "title": "CI timing probe: hosted remote-source and docs fast paths",
+      "jobs": [
+        ["Selected feedback (not full validation)", "success"],
+        ["CI policy", "success"],
+        ["Full validation / macOS Live (no devices or API)", "skipped"],
+        ["Full validation / Linux x64", "skipped"]
+      ]
+    },
+    {
+      "id": 36762861032,
+      "date": "2026-09-30T19:02:28Z",
+      "title": "CI timing probe: hosted remote-source and docs fast paths",
+      "jobs": [
+        ["Selected feedback (not full validation)", "success"],
+        ["CI policy", "success"],
+        ["Full validation / macOS Live (no devices or API)", "skipped"],
+        ["Full validation / Linux x64", "skipped"]
+      ]
+    }
+  ]
+}
