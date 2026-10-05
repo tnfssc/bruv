@@ -5,6 +5,42 @@ import { join, resolve } from "node:path";
 import { IDLE_PROMPT_ICON } from "../src/ui/editor";
 import { capturePane, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 
+const promptRow = (lines: string[]) => lines.findIndex((line) => line.startsWith(IDLE_PROMPT_ICON));
+const footerRow = (lines: string[]) => lines.findIndex((line) => line.includes("gpt-4o") && line.includes("$0.000"));
+
+function hasCompleteDraft(lines: string[], draft: string): boolean {
+  const prompt = promptRow(lines),
+    footer = footerRow(lines);
+  if (prompt < 0 || footer <= prompt) return false;
+  // These fixtures have no trailing spaces. Remove only the prompt gutter and
+  // concatenate visible content: wrapping/newline placement is asserted later.
+  const content = lines
+    .slice(prompt, footer)
+    .map((line) => line.slice(2))
+    .join("");
+  return content === draft.replaceAll("\n", "");
+}
+
+const fixtureFooter = "gpt-4o $0.000";
+test("draft readiness rejects partial wrapped and multiline input", () => {
+  const draft = "x".repeat(150);
+  expect(hasCompleteDraft([IDLE_PROMPT_ICON + " " + draft.slice(0, 30), fixtureFooter], draft)).toBe(false);
+  expect(
+    hasCompleteDraft([IDLE_PROMPT_ICON + " " + draft.slice(0, 118), "  " + draft.slice(118), fixtureFooter], draft),
+  ).toBe(true);
+  expect(hasCompleteDraft([IDLE_PROMPT_ICON + " first", fixtureFooter], "first\nsecond\nthird")).toBe(false);
+  expect(
+    hasCompleteDraft([IDLE_PROMPT_ICON + " first", "  second", "  third", fixtureFooter], "first\nsecond\nthird"),
+  ).toBe(true);
+});
+
+test("draft readiness accepts complete content even with incorrect layout", () => {
+  // Readiness must not wait away a row-count, blank-row or multiline regression.
+  expect(hasCompleteDraft([IDLE_PROMPT_ICON + " " + "x".repeat(150), fixtureFooter], "x".repeat(150))).toBe(true);
+  expect(hasCompleteDraft([IDLE_PROMPT_ICON + " spacing-draft", "", fixtureFooter], "spacing-draft")).toBe(true);
+  expect(hasCompleteDraft([IDLE_PROMPT_ICON + " firstsecondthird", fixtureFooter], "first\nsecond\nthird")).toBe(true);
+});
+
 for (const mode of ["fullscreen", "regular"] as const) {
   test("real terminal prompt/footer adjacency: " + mode, async () => {
     const home = await mkdtemp(join(tmpdir(), "bruv-editor-spacing-"));
@@ -27,9 +63,13 @@ for (const mode of ["fullscreen", "regular"] as const) {
       }
       throw new Error("Expected terminal frame not reached:\n" + lines.join("\n"));
     }
-    const promptRow = (lines: string[]) => lines.findIndex((line) => line.startsWith(IDLE_PROMPT_ICON));
-    const footerRow = (lines: string[]) =>
-      lines.findIndex((line) => line.includes("gpt-4o") && line.includes("$0.000"));
+
+    async function pasteDraft(draft: string) {
+      const paste = join(home, "draft.txt");
+      await writeFile(paste, draft);
+      expect((await tmux("load-buffer", paste)).code).toBe(0);
+      expect((await tmux("paste-buffer", "-p", "-r", "-t", "spacing")).code).toBe(0);
+    }
     try {
       await writeFile(join(home, "tmux.conf"), "set -g extended-keys on\nset -g extended-keys-format csi-u\n");
       const launch = [
@@ -66,13 +106,19 @@ for (const mode of ["fullscreen", "regular"] as const) {
         ["wrapped-three", "x".repeat(270), 3],
         ["multiline", "first\nsecond\nthird", 3],
       ] as const) {
-        const paste = join(home, "draft.txt");
-        await writeFile(paste, draft);
-        expect((await tmux("load-buffer", paste)).code).toBe(0);
-        expect((await tmux("paste-buffer", "-p", "-r", "-t", "spacing")).code).toBe(0);
-        const frame = await frameWhen(
-          (lines) => lines[promptRow(lines)]?.includes(draft.split("\n")[0]!.slice(0, 30)) === true,
-        );
+        if (name === "wrapped-two") {
+          // Hold the rest of this paste until the old prefix-only wait matches.
+          // That frame has one row, but does not yet contain the whole draft.
+          await pasteDraft(draft.slice(0, 30));
+          const partial = await frameWhen((lines) => lines[promptRow(lines)]?.includes(draft.slice(0, 30)) === true);
+          frames[name + "-partial"] = partial.join("\n");
+          expect(footerRow(partial) - promptRow(partial)).toBe(1);
+          expect(hasCompleteDraft(partial, draft)).toBe(false);
+          await pasteDraft(draft.slice(30));
+        } else {
+          await pasteDraft(draft);
+        }
+        const frame = await frameWhen((lines) => hasCompleteDraft(lines, draft));
         frames[name] = frame.join("\n");
         const prompt = promptRow(frame),
           footer = footerRow(frame);
