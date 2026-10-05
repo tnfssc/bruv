@@ -138,3 +138,17 @@ Parent brought back worker commit 57749fe228aa160f1ed459c497c9e55aba1eebe5.
 Follow-up job was task_f9d283db. No extra paid retries.
 Values unchanged: the lookup correction and failed acceptance fit existing go-look
 and truthful-proof values. Production startup remains untouched.
+
+## Investigate and fix
+
+User asked about investigating and fixing the failure. Parent took the work;
+user does not need to debug it. Job task_1fdf16c3 compares normal post-ready
+paced streaming with buffered replay before changing the production path.
+Worktree: /home/tnfssc/.bruv/worktrees/t3code-bc92964a-5442693331ce-task_1fdf16c3
+Branch: bruv/fix-buffered-live-speech-acceptance-1fdf16c3
+Base: da984b505d6406cf9cf7199754b9fd9de31fd5e8
+Bound: six additional Google sessions, <=35 seconds each. Existing key via
+loadLiveKey only. No credential writes, mic/speaker use, or broad retries.
+Check the probe, actual model, VAD and sendAudio; fix only an observed cause.
+Startup buffering stays out of production until evidence supports it.
+Await result, check code/evidence and bring useful changes back.
