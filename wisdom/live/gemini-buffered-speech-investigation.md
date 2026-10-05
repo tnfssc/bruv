@@ -104,3 +104,16 @@ Values unchanged: existing honest-proof and test-the-real-boundary values cover 
 Remaining: automatic-VAD speech acceptance (including natural/device audio), its
 underlying failure cause, and production startup buffering are **not proven/fixed**.
 Do not ship buffering or switch production to manual activity from this evidence.
+
+## Parent check and next test
+
+Worker commit 5f6c34ff90d704408009bc9c842f875686b07dcd brought back as b5c48315.
+Integrated focused suite: 37 passed, 0 failed. diff check passed.
+Natural-speech follow-up job: task_28db202e.
+Worktree: /home/tnfssc/.bruv/worktrees/t3code-bc92964a-5442693331ce-task_28db202e
+Branch: bruv/check-live-replay-with-natural-speech-28db202e
+Use a known natural-sounding fixture in memory, generated from text if needed.
+Budget is four sessions total, including generation; <=35 seconds each, no retries.
+Compare automatic-VAD normal control, queued paced, queued burst on same fixture.
+No mic/speaker, credential writes or production buffering yet.
+Await evidence and bring useful test-only changes back.
