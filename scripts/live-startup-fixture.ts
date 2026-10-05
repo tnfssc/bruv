@@ -5,20 +5,33 @@ export const startupPhrase = "Please repeat these words: amber river seven light
 const words = ["amber", "river", "seven", "lighthouse"];
 export const trailingSilenceMs = 1200;
 
-/** Exact tokens in order; never return or log the provider's transcript. */
-export function startupWordCounts(transcript: string) {
-  const tokens = transcript
-    .toLowerCase()
-    .replace(/[^a-z0-9 ]/g, " ")
-    .split(/\s+/);
+/** Greedy independent token checks: a missing word does not hide later flags. */
+function orderedTokenFlags(tokens: string[], expected: string[]) {
   let position = 0;
-  const retainedWords = words.every((word) => {
+  return expected.map((word) => {
     const at = tokens.indexOf(word, position);
     if (at < 0) return false;
     position = at + 1;
     return true;
   });
-  return { retainedWords, matchedWordCount: words.filter((word) => tokens.includes(word)).length };
+}
+
+/** Fixed flags/counts only; never return or log the provider's transcript. */
+export function startupWordCounts(transcript: string) {
+  const tokens = transcript
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, " ")
+    .split(/\s+/);
+  const expectedTokenFlags = words.map((word) => tokens.includes(word));
+  const expectedTokenOrder = orderedTokenFlags(tokens, words);
+  return {
+    retainedWords: expectedTokenOrder.every(Boolean),
+    matchedWordCount: expectedTokenFlags.filter(Boolean).length,
+    expectedTokenFlags,
+    expectedTokenOrder,
+    numeric7: tokens.includes("7"),
+    numeric7Order: orderedTokenFlags(tokens, ["amber", "river", "7", "lighthouse"]).every(Boolean),
+  };
 }
 
 export async function fixtureCommand(args: string[], input?: Uint8Array): Promise<Buffer> {

@@ -25,12 +25,54 @@ test("natural fixture is supplied-key Google only, automatic VAD, at most four s
   expect(startupSpeechFixturePlan([])).toEqual({ fixture: "espeak", modes: ["control", "paced"] });
 });
 
-test("retention requires exact four words in order, returns only counts", () => {
-  expect(startupWordCounts(startupPhrase)).toEqual({ retainedWords: true, matchedWordCount: 4 });
-  expect(startupWordCounts("Amber, river, SEVEN, lighthouse!")).toEqual({ retainedWords: true, matchedWordCount: 4 });
-  expect(startupWordCounts("ambergris river seven lighthouse")).toEqual({ retainedWords: false, matchedWordCount: 3 });
-  expect(startupWordCounts("river amber seven lighthouse")).toEqual({ retainedWords: false, matchedWordCount: 4 });
-  expect(startupWordCounts("")).toEqual({ retainedWords: false, matchedWordCount: 0 });
+test("retention keeps exact ordered checks and diagnoses only the known numeric spelling", () => {
+  for (const text of [startupPhrase, "Amber, river, SEVEN, lighthouse!"]) {
+    expect(startupWordCounts(text)).toMatchObject({
+      retainedWords: true,
+      matchedWordCount: 4,
+      expectedTokenFlags: [true, true, true, true],
+      expectedTokenOrder: [true, true, true, true],
+      numeric7: false,
+      numeric7Order: false,
+    });
+  }
+  expect(startupWordCounts("amber river 7 lighthouse")).toMatchObject({
+    retainedWords: false,
+    matchedWordCount: 3,
+    expectedTokenFlags: [true, true, false, true],
+    expectedTokenOrder: [true, true, false, true],
+    numeric7: true,
+    numeric7Order: true,
+  });
+});
+
+test("numeric diagnosis does not accept missing, reordered or arbitrary recognition", () => {
+  for (const text of [
+    "amber river 7 lighthouse",
+    "ambergris river seven lighthouse",
+    "river amber seven lighthouse",
+    "",
+    "amber river 17 lighthouse",
+    "amber river seventh lighthouse",
+    "amber river 7 light house",
+    "7 amber river lighthouse",
+    "amber 7 river lighthouse",
+  ])
+    expect(startupWordCounts(text).retainedWords).toBe(false);
+  expect(startupWordCounts("river amber seven lighthouse")).toMatchObject({
+    matchedWordCount: 4,
+    retainedWords: false,
+    expectedTokenFlags: [true, true, true, true],
+    expectedTokenOrder: [true, false, true, true],
+  });
+  expect(startupWordCounts("7 amber river lighthouse")).toMatchObject({ numeric7: true, numeric7Order: false });
+  // Only fixed booleans/counts leave this boundary, never transcript tokens.
+  for (const value of Object.values(startupWordCounts("private words amber river 7 lighthouse"))) {
+    expect(
+      ["boolean", "number"].includes(typeof value) ||
+        (Array.isArray(value) && value.every((v) => typeof v === "boolean")),
+    ).toBe(true);
+  }
 });
 
 test("PCM24 to PCM16 conversion preserves duration and adds an exact silence tail in memory", async () => {

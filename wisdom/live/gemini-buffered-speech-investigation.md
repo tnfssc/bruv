@@ -186,3 +186,95 @@ TypeScript check caught the SDK LiveServerMessage mock type; fixed with the SDK
 message class. Existing untrusted mise.toml warnings did not prevent Bun; no trust
 or credential configuration changes. Values unchanged: existing honest-proof and
 real-boundary testing values cover the distinction between VAD and retention.
+
+
+## Narrow fixed-flag follow-up: exact acceptance passes (2026-10-05)
+
+Branch: `bruv/resolve-live-replay-word-check-318aef23`
+Worktree: `/home/tnfssc/.bruv/worktrees/t3code-bc92964a-5442693331ce-task_318aef23`
+Paid command job: `task_8c555372`; exit **0**, 28764 ms wall time.
+The user authorized this bounded diagnostic directly; no new authorization,
+credential setup, or research was needed. This closes the prior "next test" for
+this task, not a production release gate.
+
+Test-first regression initially failed: 4 pass, 2 fail, missing diagnostic fields.
+Implemented only fixed count/boolean diagnostics. Flags have the fixed order
+[amber, river, seven, lighthouse]. Presence and greedy ordered checks run for
+**each** word even if an earlier word is missing. numeric7 is complete-token
+presence; numeric7Order requires amber, river, numeric 7, lighthouse in order.
+No provider words, tokens, transcripts, audio or secrets were logged/persisted.
+The existing ~/.bruv/live.env was read by loadLiveKey only; no import, copy,
+credential storage writes, microphone or speaker use.
+
+Exactly one invocation, **four additional Google sessions**, no retries. One
+bounded text-triggered generation followed by control, queued paced, queued burst
+on the **same in-memory PCM**. Generation closes at 34 seconds; trials have a
+35-second close deadline / 34-second observation window; outer bound 150 seconds.
+All used gemini-3.8-live. Production VoiceSession startup and automatic VAD unchanged.
+
+Exact paid command:
+```sh
+BRUV_RUN_LIVE_STARTUP_SPEECH=1 bun scripts/probe-live-startup-audio.ts --gemini-live-env --fixture=gemini-natural
+```
+
+| Session | Exact count/order | Expected presence/order flags | numeric7/order | Automatic turn | Setup/replay/elapsed ms | Output audio bytes |
+|---|---|---|---|---|---|---|
+| Generation | 4/4, true | TTTT / TTTT | false / false | **not applicable: text-triggered** | — / — / 5209 | 153600 (fixture PCM24) |
+| Post-ready control | 4/4, true | TTTT / TTTT | false / false | true | 623 / 4530 / 8594 | 177120 |
+| Queued paced | 4/4, true | TTTT / TTTT | false / false | true | 681 / 4552 / 8673 | 178562 |
+| Queued burst | 4/4, true | TTTT / TTTT | false / false | true | 723 / 3 / 5692 | 158880 |
+
+Generation source: PCM24 mono, 153600 bytes, 76800 samples, peak 19894,
+nonzero 73470, clipped 0. Pipe-only ffmpeg resampling produced PCM16 mono:
+140800 bytes, 70400 samples, peak 19907, nonzero 49219, clipped 0. Exactly
+4400 ms including a zero 1200 ms tail. Every trial sent all 140800 bytes.
+Control/paced/burst raw messages: 37/37/33; input messages: 1/1/1;
+audio messages: 14/14/12; voiceActivity messages: 2/2/2. All trials had
+input transcript=true, input finished=true, output transcript=true,
+turnComplete=true, automaticVad=true, automaticTurnAccepted=true,
+silenceOnlyVadAccepted=true, ok=true, errors=[]. No activity markers or
+stream-end/flush occurred during measurement. Turns/input/audio preceded
+cleanup endAudio. Manual/flushed acceptance fields remained false.
+
+**Result:** the same four expected tokens and order survived all three input
+modes, with strict matching. Numeral rendering was **not observed** in any session;
+the earlier 3/4 result did not recur. It cannot be attributed retroactively to
+numeric rendering, recognition loss, or a particular missing word. Stop here;
+no guess and no further paid sessions. An offline-only candidate that mapped the
+complete token 7 to seven was exercised as a diagnostic during this command;
+its counts/order equaled the strict results in every session. It was **never**
+the acceptance criterion and was removed after the negative numeral observation.
+The final matcher does not normalize seven or relax arbitrary recognition.
+The existing strict count remains matchedWordCount; no normalization fix is
+justified by this evidence. Post-run edits only remove unused candidate fields;
+strict acceptance and automatic-turn logic are unchanged. No fifth paid run.
+
+The test-probe fix separates automaticTurnAccepted from exact word representation.
+It requires automatic mode, no manual markers/flush, input/output transcription,
+output audio, turn completion and no errors. Full silenceOnlyVadAccepted also
+requires complete delivery and exact ordered words. Generation is explicitly
+textTriggeredGeneration=true, automaticTurnAccepted=false; manual framing is
+never reported as automatic acceptance.
+
+The prior synthetic espeak fixture's automatic no-response is a detector/fixture
+acceptance boundary, not proof of lost startup PCM or a need for manual production
+framing. Natural speech now has strict control/paced/burst acceptance proof. The
+underlying reason automatic VAD did not accept espeak is still unknown, and the
+previous natural fixture's 3/4 matcher cause is **unverified**. Production startup
+buffering is still test-only; shipping it, device/microphone/macOS acceptance,
+real-user voice quality and broader provider coverage remain outside this task.
+No production startup or VAD change was made.
+
+Final local commands:
+```sh
+bun test tests/live-startup-natural-fixture.test.ts tests/live-startup-speech-probe.test.ts tests/live-startup-audio-queue.test.ts tests/live-session.test.ts tests/live-credentials.test.ts
+bun node_modules/typescript/bin/tsc --noEmit
+bun node_modules/@biomejs/biome/bin/biome check --write scripts/live-startup-fixture.ts scripts/probe-live-startup-audio.ts tests/live-startup-natural-fixture.test.ts
+bun node_modules/@biomejs/biome/bin/biome check scripts/live-startup-fixture.ts scripts/probe-live-startup-audio.ts tests/live-startup-natural-fixture.test.ts
+git diff --check
+```
+Final suite: **43 pass, 0 fail, 234 assertions**. TypeScript, selected-file Biome
+and diff checks pass. Existing untrusted mise.toml warnings did not prevent Bun;
+no trust/config changes. Only scripts, tests and this wisdom note changed.
+Values unchanged: honest evidence, real-boundary tests and bounded work already
+cover this distinction; no new general rule is needed.

@@ -281,7 +281,18 @@ async function trial(
     errors.push("probe_setup_or_replay_failed");
   } finally {
     clearTimeout(timer);
-    const { retainedWords, matchedWordCount } = startupWordCounts(input);
+    const wordCounts = startupWordCounts(input);
+    const { retainedWords } = wordCounts;
+    // A provider turn is independent of how it spells a recognized number.
+    const automaticTurnAccepted =
+      !manualActivity &&
+      !flushAfterPause &&
+      !streamEndSent &&
+      !!input &&
+      !!output &&
+      turns > 0 &&
+      outputAudioBytes > 0 &&
+      !errors.length;
     const ok =
       (mode === "control" ? !bufferedDuringConnect : bufferedDuringConnect) &&
       sentBytes === pcm.length &&
@@ -297,14 +308,14 @@ async function trial(
         model: provider === "google" ? (session as VoiceSession).model : OPENAI_VOICE_MODEL,
         ok,
         // Full speech/retention acceptance, not merely an observed automatic turn end.
-        silenceOnlyVadAccepted: ok && !manualActivity && !flushAfterPause,
+        silenceOnlyVadAccepted: ok && automaticTurnAccepted,
+        automaticTurnAccepted,
         manuallyFramedSpeechAccepted: ok && manualActivity,
         flushedSpeechAccepted: ok && flushAfterPause,
         bufferedDuringConnect,
         inputTranscript: !!input,
         inputFinished,
-        retainedWords,
-        matchedWordCount,
+        ...wordCounts,
         turnEndBeforeStreamEnd: streamEndSent ? turnEndBeforeStreamEnd : turns > 0,
         turnComplete: turns > 0,
         streamEndSent,
@@ -401,6 +412,7 @@ async function main() {
           return; // no retry, no unusable fixture sent to paid controls
         }
         pcm = await naturalFixturePcm(generated.pcm24);
+        const { pcm24: _pcm24, model: _model, elapsedMs: _elapsedMs, ...wordCounts } = generated;
         console.log(
           JSON.stringify({
             fixture,
@@ -408,8 +420,9 @@ async function main() {
             ok: true,
             model: generated.model,
             elapsedMs: generated.elapsedMs,
-            retainedWords: generated.retainedWords,
-            matchedWordCount: generated.matchedWordCount,
+            ...wordCounts,
+            textTriggeredGeneration: true,
+            automaticTurnAccepted: false,
             source: pcmCounts(generated.pcm24, 24000),
             input: pcmCounts(pcm, 16000),
             trailingSilenceMs,
