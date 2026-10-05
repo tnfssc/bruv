@@ -5,8 +5,7 @@ export const startupPhrase = "Please repeat these words: amber river seven light
 const words = ["amber", "river", "seven", "lighthouse"];
 export const trailingSilenceMs = 1200;
 
-/** Greedy independent token checks: a missing word does not hide later flags. */
-/** Mark expected words found in order, allowing unrelated words between them. */
+/** Mark words in order, allowing gaps; a missing word does not hide later flags. */
 function orderedTokenFlags(tokens: string[], expected: string[]) {
   let position = 0;
   return expected.map((word) => {
@@ -17,8 +16,7 @@ function orderedTokenFlags(tokens: string[], expected: string[]) {
   });
 }
 
-/** Fixed flags/counts only; never return or log the provider's transcript. */
-/** Count expected phrase words retained in transcript order, case-insensitively. */
+/** Check fixed words in order, case-insensitively; never return or log the transcript. */
 export function startupWordCounts(transcript: string) {
   const tokens = transcript
     .toLowerCase()

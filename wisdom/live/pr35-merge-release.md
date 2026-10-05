@@ -50,3 +50,37 @@ User also asked to update PR metadata. Title and body now describe real speech
 proof, CI/release prerequisites and test-only scope; no shipped buffering claim.
 Remaining: push these fixes, wait for CodeRabbit/latest CI, handle findings, merge
 the exact passing head and dispatch the existing release workflow on develop.
+
+## Passing checks are not latest review proof
+
+All five GitHub checks passed on 8ca9efa3. Parent confirmed same SHA and mergeable.
+No inline review comments or submitted reviews exist. CodeRabbit summary reviewed
+156877a1 with no blocking issue, but later automatic review was skipped because
+the repo has fewer than ten stars. Success is not review of the current changes.
+Manual full review requested: issuecomment-6000688805. PR watch remains on.
+Original review docstring warning (41.18%, target80%) is being addressed with
+useful short docs on named helpers only. Job: task_a089d9b1.
+Worktree: /home/tnfssc/.bruv/worktrees/t3code-bc92964a-5442693331ce-task_a089d9b1
+Branch: bruv/address-coderabbit-probe-docstrings-a089d9b1
+No merge/release yet. Check latest CodeRabbit findings, integrate docs, push,
+wait for exact latest SHA CI/review, then merge and release as authorized.
+
+## CodeRabbit quota
+
+Manual review request was rate limited: issuecomment-6000690591. Included
+review available in40 minutes. Do not enable usage-based billing.
+One-shot retry is scheduled for 2026-10-05T19:15:32.594Z (40-minute interval
+with self-delete on first run). Title: PR35 CodeRabbit quota retry — one shot.
+ID: scheduled-task:command:mcp:4da20770-16d9-4d9d-b424-6179b5a19939:schedule-task:pr35-coderabbit-quota-retry-20261005-1835
+Delete that schedule at first execution, or if review becomes available sooner.
+Post one manual full review if still needed, then wait on PR watcher.
+No merge/release yet. Docstring worker task_a089d9b1 still running.
+
+## Docstring warning addressed
+
+Doc worker commit3ceea323 brought back as81209b1a. Short docs now explain named
+probe, fixture and queue helper bounds/readiness. Parent joined duplicate comments
+and kept this local lesson here instead of adding a one-off rule to values.md.
+Values unchanged: existing readable-handoff guidance covers it. Worker13 tests
+passed; parent will rerun the focused suite before pushing. Retry schedule remains
+2026-10-05T19:15:32.594Z. Merge/release still waits for actual CodeRabbit review.

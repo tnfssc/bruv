@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { VoiceSession } from "../src/live/session";
-import { OpenAIRealtimeSession, type RealtimeSocket } from "../src/live/openai-session";
 import { GPTLiveSession, type LiveSocket } from "../src/live/gpt-live-session";
 import { InputResampler } from "../src/live/openai-resample";
+import { OpenAIRealtimeSession, type RealtimeSocket } from "../src/live/openai-session";
+import { VoiceSession } from "../src/live/session";
 import type { LiveAdapter, LiveConnection } from "../src/live/types";
 import { StartupAudioQueue } from "./helpers/live-startup-audio-queue";
 
