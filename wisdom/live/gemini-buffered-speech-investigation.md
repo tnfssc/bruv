@@ -117,3 +117,72 @@ Budget is four sessions total, including generation; <=35 seconds each, no retri
 Compare automatic-VAD normal control, queued paced, queued burst on same fixture.
 No mic/speaker, credential writes or production buffering yet.
 Await evidence and bring useful test-only changes back.
+
+## Natural voice follow-up: automatic turns, exact retention still fails
+
+Branch: bruv/check-live-replay-with-natural-speech-28db202e
+Worktree: /home/tnfssc/.bruv/worktrees/t3code-bc92964a-5442693331ce-task_28db202e
+Paid job: task_6ca45b2c. One invocation, exactly four additional Google sessions,
+no retries; each below 35 seconds. Outer command bound: 150 seconds.
+
+No existing repo wav/pcm/mp3/flac/ogg fixture was found (node_modules excluded).
+Added test-only `--fixture=gemini-natural`: one Gemini spoken response to the
+known phrase, captured only in process memory. Same supplied key via loadLiveKey
+only; no key/audio files, exports, transcript logs, microphone or speaker.
+Production startup/VAD are unchanged. All sessions used gemini-3.8-live.
+Generation uses text-triggered completion, **not** automatic input-VAD proof.
+Trials retain production session setup/transcription/automatic VAD and existing
+probe instructions. Same PCM object reused for control, queued paced, queued burst.
+
+Exact paid command:
+```sh
+BRUV_RUN_LIVE_STARTUP_SPEECH=1 bun scripts/probe-live-startup-audio.ts --gemini-live-env --fixture=gemini-natural
+```
+
+Generation: pass, 5045 ms, exact known-word count 4/4 in output transcription.
+PCM24 mono: 170402 bytes, 85201 samples, peak 21698, nonzero 82125, clipped 0.
+ffmpeg band-limited pipe-only resampling to PCM16 mono: final 152002 bytes,
+76001 samples, peak 21730, nonzero 55069, clipped 0; total 4750.0625 ms,
+including an exactly zero 1200 ms appended tail. Duration/alignment bounded.
+
+| Trial | Full acceptance | Exact word count | Setup/replay/elapsed ms | Output audio bytes | Raw/input/audio messages |
+|---|---|---|---|---|---|
+| post-ready control (paced) | fail | 3/4 | 766 / 4931 / 9550 | 202082 | 41 / 1 / 16 |
+| queued paced | fail | 3/4 | 1215 / 4917 / 9785 | 188160 | 37 / 1 / 14 |
+| queued burst | fail | 3/4 | 637 / 2 / 6359 | 192002 | 43 / 1 / 17 |
+
+All three sent every byte; input transcript=true, input finished=true, output
+transcript=true, turnComplete=true, automaticVad=true, voiceActivity count=2,
+retainedWords=false, errors=[]. No activity markers or stream-end/flush during
+measurement; provider turns occurred before cleanup endAudio. Command exit 1
+is failed **exact four-word retention**, not transport/setup/VAD silence.
+The JSON silenceOnlyVadAccepted field denotes full acceptance, so remains false
+although automatic turns were observed. No manual/flushed acceptance claimed.
+
+Natural speech removes the prior no-response symptom across all three modes.
+It does not prove robotic speech caused that symptom or prove exact four-word
+retention. Count 3 alone does not identify a missing word, alternative spelling,
+numeric rendering or acoustic loss. No transcript was logged to resolve that.
+Do not relax exact matching, flip production to manual framing, or ship buffering.
+Next: parent decide whether to authorize a bounded count-only recognition diagnostic
+(e.g. numeric rendering versus truly missing speech) before the product decision.
+No further paid sessions in this task; the four-session budget is exhausted.
+
+Only test tooling changed: fixture selection rejects wrong credential source,
+manual/flush mixing and fixture-only paid generation; generation is bounded and
+closes on failure; memory-only conversion; rate/channel/amplitude counts; exact
+ordered token matching replaces substring matching. Default espeak remains a
+legacy diagnostic, not representative automatic acceptance evidence.
+
+Local commands:
+```sh
+bun test tests/live-startup-natural-fixture.test.ts tests/live-startup-speech-probe.test.ts tests/live-startup-audio-queue.test.ts tests/live-session.test.ts tests/live-credentials.test.ts
+bun node_modules/typescript/bin/tsc --noEmit
+bun node_modules/@biomejs/biome/bin/biome check scripts/probe-live-startup-audio.ts scripts/live-startup-fixture.ts tests/live-startup-natural-fixture.test.ts
+git diff --check
+```
+42 pass, 0 fail, 219 assertions; TypeScript/Biome/diff checks pass. Initial local
+TypeScript check caught the SDK LiveServerMessage mock type; fixed with the SDK
+message class. Existing untrusted mise.toml warnings did not prevent Bun; no trust
+or credential configuration changes. Values unchanged: existing honest-proof and
+real-boundary testing values cover the distinction between VAD and retention.

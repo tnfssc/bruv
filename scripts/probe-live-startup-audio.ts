@@ -3,11 +3,21 @@ import { GoogleGenAI } from "@google/genai";
 // --mode=control|paced|burst selects one trial per provider. No retries/devices.
 // --manual-activity frames Gemini retention with automatic VAD disabled.
 // --flush-after-pause tests cached-audio flushing separately; neither proves silence-only VAD.
+// --gemini-live-env --fixture=gemini-natural: one memory-only generation + control/paced/burst (max four sessions).
 import { createDefaultLiveCredentialService, loadLiveKey } from "../src/live/credentials";
 import { OPENAI_VOICE_MODEL, OpenAIRealtimeSession } from "../src/live/openai-session";
 import { VoiceSession } from "../src/live/session";
 import type { LiveAdapter, LiveConnection, VoiceCallbacks, VoiceOrchestration } from "../src/live/types";
 import { StartupAudioQueue } from "../tests/helpers/live-startup-audio-queue";
+import {
+  fixtureCommand as command,
+  generateNaturalFixture,
+  naturalFixturePcm,
+  pcmCounts,
+  startupPhrase as phrase,
+  startupWordCounts,
+  trailingSilenceMs,
+} from "./live-startup-fixture";
 
 export function startupSpeechCredentialPlan(args: readonly string[]): {
   provider: "google" | "openai";
@@ -91,23 +101,6 @@ export async function finishStartupSpeech(session: { endAudio(): void }, flushAf
   return true;
 }
 
-const phrase = "Please repeat these words: amber river seven lighthouse.";
-const words = ["amber", "river", "seven", "lighthouse"];
-const trailingSilenceMs = 1200;
-async function command(args: string[], input?: Uint8Array): Promise<Buffer> {
-  const child = Bun.spawn(args, { stdin: "pipe", stdout: "pipe", stderr: "ignore" });
-  if (input) child.stdin.write(input);
-  child.stdin.end();
-  const timeout = setTimeout(() => child.kill(), 4000);
-  try {
-    const [output, code] = await Promise.all([new Response(child.stdout).arrayBuffer(), child.exited]);
-    if (code !== 0) throw new Error("Synthetic speech command failed");
-    return Buffer.from(output);
-  } finally {
-    clearTimeout(timeout);
-    child.kill();
-  }
-}
 async function synthesize() {
   const wav = await command(["espeak-ng", "--stdout", "-s", "165", phrase]);
   const speech = await command(
@@ -288,14 +281,7 @@ async function trial(
     errors.push("probe_setup_or_replay_failed");
   } finally {
     clearTimeout(timer);
-    const normalized = input.toLowerCase().replace(/[^a-z0-9 ]/g, " ");
-    let position = 0;
-    const retainedWords = words.every((word) => {
-      const at = normalized.indexOf(word, position);
-      if (at < 0) return false;
-      position = at + word.length;
-      return true;
-    });
+    const { retainedWords, matchedWordCount } = startupWordCounts(input);
     const ok =
       (mode === "control" ? !bufferedDuringConnect : bufferedDuringConnect) &&
       sentBytes === pcm.length &&
@@ -310,6 +296,7 @@ async function trial(
         mode,
         model: provider === "google" ? (session as VoiceSession).model : OPENAI_VOICE_MODEL,
         ok,
+        // Full speech/retention acceptance, not merely an observed automatic turn end.
         silenceOnlyVadAccepted: ok && !manualActivity && !flushAfterPause,
         manuallyFramedSpeechAccepted: ok && manualActivity,
         flushedSpeechAccepted: ok && flushAfterPause,
@@ -317,7 +304,7 @@ async function trial(
         inputTranscript: !!input,
         inputFinished,
         retainedWords,
-        matchedWordCount: words.filter((word) => normalized.split(/\s+/).includes(word)).length,
+        matchedWordCount,
         turnEndBeforeStreamEnd: streamEndSent ? turnEndBeforeStreamEnd : turns > 0,
         turnComplete: turns > 0,
         streamEndSent,
@@ -346,7 +333,29 @@ async function trial(
     session.close();
   }
 }
+export function startupSpeechFixturePlan(args: readonly string[]) {
+  const fixture = args.find((arg) => arg.startsWith("--fixture="))?.slice(10) ?? "espeak";
+  if (!["espeak", "gemini-natural"].includes(fixture)) throw new Error("Invalid fixture");
+  const selected = args.find((arg) => arg.startsWith("--mode="))?.slice(7);
+  if (selected && !["control", "burst", "paced"].includes(selected)) throw new Error("Invalid mode");
+  if (
+    fixture === "gemini-natural" &&
+    (!args.includes("--gemini-live-env") ||
+      args.includes("--manual-activity") ||
+      args.includes("--flush-after-pause") ||
+      args.includes("--fixture-only"))
+  )
+    throw new Error("Natural fixture requires supplied Google key and automatic silence-only trials");
+  const modes: SpeechMode[] = selected
+    ? [selected as SpeechMode]
+    : fixture === "gemini-natural"
+      ? ["control", "paced", "burst"]
+      : ["control", "paced"];
+  return { fixture, modes };
+}
+
 async function main() {
+  const { fixture, modes } = startupSpeechFixturePlan(process.argv);
   if (process.argv.includes("--fixture-only")) {
     const pcm = await synthesize();
     console.log(
@@ -379,10 +388,36 @@ async function main() {
       process.exitCode = 1;
       continue;
     }
-    pcm ??= await synthesize();
-    const selected = process.argv.find((arg) => arg.startsWith("--mode="))?.slice(7);
-    if (selected && !["control", "burst", "paced"].includes(selected)) throw new Error("Invalid mode");
-    const modes: SpeechMode[] = selected ? [selected as SpeechMode] : ["control", "paced"];
+    if (!pcm) {
+      if (fixture === "gemini-natural") {
+        let generated: Awaited<ReturnType<typeof generateNaturalFixture>>;
+        try {
+          generated = await generateNaturalFixture(key);
+        } catch (error) {
+          const code =
+            error instanceof Error && /^[a-z_]+$/.test(error.message) ? error.message : "fixture_generation_failed";
+          console.log(JSON.stringify({ fixture, stage: "generation", ok: false, error: code }));
+          process.exitCode = 1;
+          return; // no retry, no unusable fixture sent to paid controls
+        }
+        pcm = await naturalFixturePcm(generated.pcm24);
+        console.log(
+          JSON.stringify({
+            fixture,
+            stage: "generation",
+            ok: true,
+            model: generated.model,
+            elapsedMs: generated.elapsedMs,
+            retainedWords: generated.retainedWords,
+            matchedWordCount: generated.matchedWordCount,
+            source: pcmCounts(generated.pcm24, 24000),
+            input: pcmCounts(pcm, 16000),
+            trailingSilenceMs,
+            silenceTail: pcm.subarray(-32 * trailingSilenceMs).every((v) => v === 0),
+          }),
+        );
+      } else pcm = await synthesize();
+    }
     const manualActivity = process.argv.includes("--manual-activity");
     const flushAfterPause = process.argv.includes("--flush-after-pause");
     if (manualActivity && (provider !== "google" || flushAfterPause)) throw new Error("Invalid activity policy");
