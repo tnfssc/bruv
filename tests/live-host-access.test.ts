@@ -99,7 +99,10 @@ test("shared task host remains separate; Live refuses a missing main owner inste
   // fail closed, not resurrect the six-tool configured-agent bridge.
   let providers = 0;
   liveExtension(voicePi, {
-    config: { load: async () => ({ provider: "google", model: "gemini-3.8-live" }), save: async () => {} },
+    config: {
+      load: async () => ({ inputMode: "continuous", provider: "google", model: "gemini-3.8-live" }),
+      save: async () => {},
+    },
     local: () => true,
     key: async () => "fake-no-network",
     voice: () => {

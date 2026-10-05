@@ -4,19 +4,23 @@ import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { isLiveModel, type LiveModelId, type LiveProviderId, defaultLiveConfig } from "./providers";
 
+export type LiveInputMode = "continuous" | "push-to-talk";
+
 export interface LiveConfig {
   provider: LiveProviderId;
   model: LiveModelId;
+  inputMode?: LiveInputMode;
 }
 export function liveConfigPath(): string {
   return join(homedir(), ".bruv", "live-settings.json");
 }
 export function parseLiveConfig(value: unknown): LiveConfig {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid Live settings");
-  const { provider, model } = value as Record<string, unknown>;
+  const { provider, model, inputMode = "push-to-talk" } = value as Record<string, unknown>;
   if ((provider !== "google" && provider !== "openai") || !isLiveModel(provider, model))
     throw new Error("Invalid Live provider/model selection");
-  return { provider, model };
+  if (inputMode !== "continuous" && inputMode !== "push-to-talk") throw new Error("Invalid Live input mode");
+  return { provider, model, inputMode };
 }
 export async function loadLiveConfig(path = liveConfigPath()): Promise<LiveConfig> {
   try {

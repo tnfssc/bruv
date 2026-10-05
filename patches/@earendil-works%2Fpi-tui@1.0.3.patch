@@ -1,0 +1,19 @@
+diff --git a/dist/tui-alt-screen.js b/dist/tui-alt-screen.js
+index d9b7a622524a1416a67d70a047bbcda7a01c3785..ec0f5ed09c34051f299192e3d4f01679a1fd2002 100644
+--- a/dist/tui-alt-screen.js
++++ b/dist/tui-alt-screen.js
+@@ -490,10 +490,12 @@ export class TuiAltScreen extends TuiBase {
+                     this.requestRender();
+             }
+             this.lastClick = undefined;
+-            return { consume: true };
++            // Forward focus reports after selection cleanup so application input
++            // listeners can close microphone send gates on terminal focus loss.
++            return;
+         }
+         if (data === FOCUS_IN)
+-            return { consume: true };
++            return;
+         const wheelEvent = this.parseWheelEvent(data);
+         if (wheelEvent) {
+             const lines = this.wheelScroll.next(wheelEvent.direction, performance.now());

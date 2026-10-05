@@ -46,7 +46,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     const notices: string[] = [];
     const requests: any[] = [];
     let command: any;
-    let config = defaultLiveConfig();
+    let config = { ...defaultLiveConfig(), inputMode: "continuous" as "continuous" | "push-to-talk" };
     let audioCallbacks: any;
     let voiceCallbacks: any;
     let releaseAudio: (() => void) | undefined;
@@ -214,6 +214,20 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   }
 
   describe("native connector-host Live", () => {
+    test("push-to-talk is refused before device consent; continuous must be chosen explicitly", async () => {
+      const h = harness();
+      await h.run("input push-to-talk");
+      h.calls.length = 0;
+      await h.run("start");
+      expect(h.calls).not.toContain("human");
+      expect(h.calls).not.toContain("audio");
+      expect(h.notices.at(-1)).toContain("no hold/release controls");
+      expect(h.frontend.capabilities().pushToTalk).toBe(false);
+      await h.run("input continuous");
+      await h.run("start");
+      expect(h.calls).toContain("audio.start");
+      await h.run("stop");
+    });
     test("default is truthful status with no audio or provider acquisition", async () => {
       const h = harness({ localAudio: undefined });
       await h.run("");

@@ -12,7 +12,10 @@ export default function (pi: any) {
   });
   liveExtension(fakePi, {
     local: () => true,
-    config: { load: async () => ({ provider: "openai", model: "gpt-live-1" }), save: async () => {} },
+    config: {
+      load: async () => ({ provider: "openai", model: "gpt-live-1", inputMode: "continuous" }),
+      save: async () => {},
+    },
     key: async () => "offline-fixture",
     audio: async () => ({
       diagnostics: { queuedMs: 0, captureFrames: 0, capturedBytes: 0 },

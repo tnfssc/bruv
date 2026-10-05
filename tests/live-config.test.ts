@@ -10,10 +10,11 @@ describe("Live voice settings (offline)", () => {
     const path = join(dir, "live-settings.json");
     try {
       const initial = await loadLiveConfig(path);
-      expect(initial).toEqual({ provider: "google", model: "gemini-3.8-live" });
+      expect(initial).toEqual({ provider: "google", model: "gemini-3.8-live", inputMode: "push-to-talk" });
       const chosen = {
         provider: "openai" as const,
         model: "gpt-realtime-2.1-mini" as const,
+        inputMode: "push-to-talk" as const,
       };
       await saveLiveConfig(chosen, path);
       expect(await loadLiveConfig(path)).toEqual(chosen);
@@ -21,6 +22,7 @@ describe("Live voice settings (offline)", () => {
       const thinking = {
         provider: "google" as const,
         model: "gemini-3.8-live-extended-thinking" as const,
+        inputMode: "continuous" as const,
       };
       await saveLiveConfig(thinking, path);
       expect(await loadLiveConfig(path)).toEqual(thinking);
@@ -31,7 +33,7 @@ describe("Live voice settings (offline)", () => {
   test("GPT-Live selection persists", async () => {
     const dir = await mkdtemp(join(tmpdir(), "bruv-gpt-live-config-"));
     const path = join(dir, "live-settings.json");
-    const chosen = { provider: "openai" as const, model: "gpt-live-1" as const };
+    const chosen = { provider: "openai" as const, model: "gpt-live-1" as const, inputMode: "continuous" as const };
     try {
       await saveLiveConfig(chosen, path);
       expect(await loadLiveConfig(path)).toEqual(chosen);
@@ -47,7 +49,13 @@ describe("Live voice settings (offline)", () => {
         openaiModel: "invented",
         googleModel: "invented",
       }),
-    ).toEqual({ provider: "google", model: "gemini-3.8-live" });
+    ).toEqual({ provider: "google", model: "gemini-3.8-live", inputMode: "push-to-talk" });
+  });
+  test("missing mode is muted by default; invalid modes never fall back", () => {
+    expect(parseLiveConfig({ provider: "google", model: "gemini-3.8-live" }).inputMode).toBe("push-to-talk");
+    expect(() => parseLiveConfig({ provider: "google", model: "gemini-3.8-live", inputMode: "automatic" })).toThrow(
+      "input mode",
+    );
   });
   test("rejects mismatched and invented models instead of fallback", () => {
     for (const config of [
@@ -60,6 +68,7 @@ describe("Live voice settings (offline)", () => {
     expect(parseLiveConfig({ provider: "openai", model: "gpt-realtime-2.1-mini" })).toEqual({
       provider: "openai",
       model: "gpt-realtime-2.1-mini",
+      inputMode: "push-to-talk",
     });
   });
 });

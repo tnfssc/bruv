@@ -17,6 +17,6 @@ export const LIVE_PROVIDERS = {
 export function isLiveModel(provider: LiveProviderId, model: unknown): model is LiveModelId {
   return typeof model === "string" && (LIVE_PROVIDERS[provider].models as readonly string[]).includes(model);
 }
-export function defaultLiveConfig(): { provider: LiveProviderId; model: LiveModelId } {
-  return { provider: "google", model: VOICE_MODEL };
+export function defaultLiveConfig(): { provider: LiveProviderId; model: LiveModelId; inputMode: "push-to-talk" } {
+  return { provider: "google", model: VOICE_MODEL, inputMode: "push-to-talk" };
 }

@@ -28,6 +28,11 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
     starts = 0,
     closes = 0,
     sends = 0;
+  let endedAudio = 0;
+  const captureGates: Array<number | null> = [];
+  let terminalInput: ((data: string) => { consume?: boolean } | undefined) | undefined;
+  let panel: any;
+  const terminalWrites: string[] = [];
   const played: { length: number; generation: number }[] = [];
   const flushes: number[] = [];
   const status: (string | undefined)[] = [];
@@ -39,6 +44,9 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
   let resolveConnect!: () => void;
   let resolveLaunch!: (value: any) => void;
   const audio = {
+    setCaptureGate: async (epoch: number | null) => {
+      captureGates.push(epoch);
+    },
     diagnostics: { queuedMs: 0, captureFrames: 0, capturedBytes: 0 },
     start: async () => {
       starts++;
@@ -113,6 +121,9 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
           contexts.push(text);
         },
         generation: 0,
+        endAudio: () => {
+          endedAudio++;
+        },
         sendAudio: (_: string) => {
           sends++;
         },
@@ -137,6 +148,9 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
     },
     ...overrides,
   };
+  // Existing conversation tests use continuous mic. PTT tests set their mode explicitly.
+  const fixtureLoad = deps.config.load;
+  deps.config = { ...deps.config, load: async () => ({ inputMode: "continuous", ...(await fixtureLoad()) }) };
   const transcriptEntries: { type: string; data: any }[] = [];
   const listeners = new Map<string, (value: unknown) => void>();
   const events = {
@@ -172,6 +186,29 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
     },
     mode: "tui",
     ui: {
+      onTerminalInput: (handler: typeof terminalInput) => {
+        terminalInput = handler;
+        return () => {
+          terminalInput = undefined;
+        };
+      },
+      custom: (factory: any) =>
+        new Promise<void>((resolve) => {
+          panel = factory(
+            {
+              terminal: { kittyProtocolActive: true, write: (text: string) => terminalWrites.push(text) },
+              requestRender: () => {},
+            },
+            {},
+            {},
+            () => {
+              panel?.dispose?.();
+              panel = undefined;
+              resolve();
+            },
+          );
+          panel.focused = true;
+        }),
       confirm: async () => consent,
       select: async (_title?: string, _options?: string[]): Promise<string | undefined> => "Done",
       notify: (value: string) => {
@@ -193,6 +230,18 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
     run: (arg: string) => handler(arg, ctx),
     complete: (prefix: string) => complete(prefix),
     contexts,
+    input: (data: string) => terminalInput?.(data),
+    focusPanel: (focused: boolean) => {
+      if (panel) panel.focused = focused;
+    },
+    get panelLines() {
+      return panel?.render(100) ?? [];
+    },
+    get endedAudio() {
+      return endedAudio;
+    },
+    captureGates,
+    terminalWrites,
     ownerEvents,
     get ownerAcquires() {
       return ownerAcquires;
@@ -477,6 +526,8 @@ describe("Live voice", () => {
       "status",
       "provider",
       "model",
+      "input",
+      "talk",
       "mic-check",
       "speaker-check",
     ]);
@@ -555,7 +606,7 @@ describe("Live voice", () => {
     const t = setup();
     await t.run("status");
     expect([t.launches, t.keyCalls, t.starts]).toEqual([0, 0, 0]);
-    expect(t.notices).toEqual(["Live off · Google Gemini voice model gemini-3.8-live."]);
+    expect(t.notices).toEqual(["Live off · Google Gemini voice model gemini-3.8-live · continuous."]);
   });
   test("status reports the direct main owner and only execute", async () => {
     const t = setup();
@@ -1054,16 +1105,16 @@ test("Live waveform goes through setStatus, follows PCM, native drain, interrupt
   t.capture.capture?.(loud);
   await new Promise((resolve) => setTimeout(resolve, 110));
   const listen = t.status.at(-1)!;
-  expect(listen).toContain("Live listening  ");
+  expect(listen).toContain("Live listening · continuous mic  ");
   expect(listen).not.toContain("⠐".repeat(10));
   t.voice.onAudio?.(loud.toString("base64"), 0);
   t.capture.played?.(100);
   await new Promise((resolve) => setTimeout(resolve, 110));
-  expect(t.status.at(-1)).toContain("Live speaking  ");
+  expect(t.status.at(-1)).toContain("Live speaking · continuous mic  ");
   t.voice.onTurnComplete?.(0);
   expect(t.status.at(-1)).toContain("Live speaking"); // native still has buffered sound
   t.voice.onInterrupted?.(1);
-  expect(t.status.at(-1)).toContain("Live listening  " + "⠐".repeat(10));
+  expect(t.status.at(-1)).toContain("Live listening · continuous mic  " + "⠐".repeat(10));
   const count = t.status.length;
   await t.run("stop");
   await new Promise((resolve) => setTimeout(resolve, 190));
@@ -1075,7 +1126,7 @@ test("rejected Live startup leaves no animation updates", async () => {
   const t = setup();
   t.reject();
   await t.run("start");
-  expect(t.status.some((value) => value?.startsWith("Live connecting  ·"))).toBe(true);
+  expect(t.status.some((value) => value?.startsWith("Live connecting · continuous mic  ·"))).toBe(true);
   expect(t.status.at(-1)).toBeUndefined();
   const count = t.status.length;
   await new Promise((resolve) => setTimeout(resolve, 180));
@@ -1607,4 +1658,139 @@ test("GPT-Live replays connecting replies as commentary without speaking ordinar
     { text: "Quoted session observation:\nReady background context", speak: false },
   ]);
   await f.run("stop");
+});
+
+describe("Live push-to-talk send gate", () => {
+  const mode: Partial<LiveDependencies> = {
+    config: {
+      load: async () => ({ provider: "google", model: "gemini-3.8-live", inputMode: "push-to-talk" }),
+      save: async () => {},
+    },
+  };
+  const pcm = Buffer.alloc(640, 12);
+  test("muted until a real release check; hold epochs discard stale and untagged capture", async () => {
+    const t = setup(mode);
+    const started = t.run("start");
+    await tick();
+    expect(t.starts).toBe(1);
+    expect(t.captureGates).toEqual([null]);
+    expect(t.panelLines.join(" ")).toContain("MUTED");
+    t.capture.capture!(pcm);
+    t.input(" ");
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(0);
+    // First release verifies support. The check itself sends no audio.
+    t.input("\x1b[32;1:3u");
+    t.input("\x1b[32;1:1u");
+    expect(t.panelLines.join(" ")).toContain("TALKING");
+    expect(t.captureGates).toEqual([null, 1]);
+    t.capture.capture!(pcm);
+    t.capture.capture!(pcm, 0);
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(1);
+    t.input("\x1b[32;1:2u");
+    expect(t.captureGates).toEqual([null, 1]);
+    t.input("\x1b[32;1:3u");
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(1);
+    expect(t.endedAudio).toBe(1);
+    expect(t.closes).toBe(0);
+    t.input("\x1b[32;1:1u");
+    t.capture.capture!(pcm, 1);
+    t.capture.capture!(pcm, 2);
+    expect(t.sends).toBe(2);
+    t.input("\x1b");
+    await started;
+    expect(t.endedAudio).toBe(2);
+    expect(t.captureGates).toEqual([null, 1, null, 2, null]);
+    t.capture.capture!(pcm, 2);
+    expect(t.sends).toBe(2);
+    expect(t.terminalWrites).toEqual(["\x1b[>15u", "\x1b[?1004h", "\x1b[?1004l", "\x1b[<u"]);
+    await t.run("stop");
+  });
+  test("explicit controls work without Space releases; focus loss mutes", async () => {
+    const t = setup(mode);
+    const started = t.run("start");
+    await tick();
+    t.input(" ");
+    t.input(" ");
+    expect(t.captureGates).toEqual([null]);
+    t.input("\r");
+    t.input("\r");
+    expect(t.captureGates).toEqual([null, 1]);
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(1);
+    t.input("\x1b[O");
+    expect(t.endedAudio).toBe(1);
+    t.input("\x1b[32;1:2u");
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(1);
+    t.input("\r");
+    t.input("\x7f");
+    expect(t.captureGates).toEqual([null, 1, null, 2, null]);
+    t.input("\x1b");
+    await started;
+    await t.run("stop");
+  });
+  test("another dialog taking focus mutes and gets its own keys", async () => {
+    const t = setup(mode);
+    const started = t.run("start");
+    await tick();
+    t.input("\r");
+    t.focusPanel(false);
+    expect(t.captureGates).toEqual([null, 1, null]);
+    expect(t.input("\r")).toBeUndefined();
+    expect(t.endedAudio).toBe(1);
+    t.focusPanel(true);
+    expect(t.panelLines.join(" ")).toContain("MUTED");
+    t.input("\x1b");
+    await started;
+    await t.run("stop");
+  });
+  test("stop during hold closes panel and discards late capture without committing", async () => {
+    const t = setup(mode);
+    const started = t.run("start");
+    await tick();
+    t.input("\r");
+    await t.run("stop");
+    await started;
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(0);
+    expect(t.endedAudio).toBe(0);
+    expect(t.panelLines).toEqual([]);
+    expect(t.terminalWrites.at(-1)).toBe("\x1b[<u");
+  });
+  test("GPT-Live push-to-talk does not launch devices or silently send continuous audio", async () => {
+    const t = setup({
+      config: {
+        load: async () => ({ provider: "openai", model: "gpt-live-1", inputMode: "push-to-talk" }),
+        save: async () => {},
+      },
+    });
+    await t.run("start");
+    expect(t.launches).toBe(0);
+    expect(t.notices.at(-1)).toContain("no manual input-turn control");
+  });
+  test("mic mode is selectable, persisted, and cannot change during Live", async () => {
+    let saved: any;
+    const t = setup({
+      config: {
+        load: async () => ({ provider: "google", model: "gemini-3.8-live", inputMode: "continuous" }),
+        save: async (next) => {
+          saved = next;
+        },
+      },
+    });
+    t.ctx.ui.select = async () => "Push-to-talk — hold Space; audio discarded while muted";
+    await t.run("input");
+    expect(saved.inputMode).toBe("push-to-talk");
+    const started = t.run("start");
+    await tick();
+    await t.run("input continuous");
+    expect(saved.inputMode).toBe("push-to-talk");
+    expect(t.notices.at(-1)).toContain("Stop Live");
+    t.input("\x1b");
+    await started;
+    await t.run("stop");
+  });
 });
