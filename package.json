@@ -49,6 +49,7 @@
   },
   "license": "MIT",
   "patchedDependencies": {
-    "@earendil-works/pi-coding-agent@1.0.3": "patches/@earendil-works%2Fpi-coding-agent@1.0.3.patch"
+    "@earendil-works/pi-coding-agent@1.0.3": "patches/@earendil-works%2Fpi-coding-agent@1.0.3.patch",
+    "@earendil-works/pi-tui@1.0.3": "patches/@earendil-works%2Fpi-tui@1.0.3.patch"
   }
 }

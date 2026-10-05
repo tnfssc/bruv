@@ -65,6 +65,8 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
       humanChoices,
       localHostAudio: !closed && operatorEnabled && humanChoices && supportedPlatform,
       browserAudio: false,
+      pushToTalk: false,
+      inputModes: ["continuous"],
       remoteDeviceAudio: false,
       models: Object.values(LIVE_PROVIDERS).flatMap((provider) => [...provider.models]),
       reason: closed
@@ -183,10 +185,12 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
       return;
     }
     if (
-      !/^(start|setup|status|provider(?: (?:google|openai))?|model(?: [^\s]+)?|mic-check|speaker-check)$/.test(action)
+      !/^(start|setup|status|provider(?: (?:google|openai))?|model(?: [^\s]+)?|input(?: (?:continuous|push-to-talk))?|mic-check|speaker-check)$/.test(
+        action,
+      )
     ) {
       options.notify(
-        "Native Live supports connector-host devices only. Browser/remote microphone transport is not supplied by Claude protocol. Use live start|stop|status|capabilities|model|provider|setup|mic-check|speaker-check.",
+        "Native Live supports connector-host devices only. Browser/remote microphone transport is not supplied by Claude protocol. Use live start|stop|status|capabilities|model|provider|input|setup|mic-check|speaker-check.",
         "warning",
       );
       return;
@@ -220,6 +224,13 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
       if (needsDevice) {
         const paid = action === "start" || action === "setup";
         const selection = paid ? await config.load() : undefined;
+        if (selection && (selection.inputMode ?? "push-to-talk") === "push-to-talk") {
+          options.notify(
+            "Push-to-talk needs the local terminal talk panel. Connector-host Live has no hold/release controls. Use the terminal, or explicitly choose Live input continuous.",
+            "warning",
+          );
+          return;
+        }
         const question =
           "Allow Bruv Live " +
           action +
@@ -279,7 +290,7 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
           api.registerCommand(name, {
             ...command,
             description:
-              "Connector-host Live (paid; opt-in): status, capabilities, stop, model, provider, start, setup, mic-check, speaker-check. No browser/remote devices.",
+              "Connector-host Live (paid; opt-in): status, capabilities, stop, model, provider, start, setup, input, mic-check, speaker-check. Continuous mic only; choose input continuous explicitly. No browser/remote devices.",
             handler: dispatch,
           });
         },

@@ -813,7 +813,10 @@ test("GPT Live spoken delegation reaches Pi as one clean provisional request", a
   } as any;
   liveExtension(localPi, {
     local: () => true,
-    config: { load: async () => ({ provider: "openai", model: "gpt-live-1" }), save: async () => {} },
+    config: {
+      load: async () => ({ inputMode: "continuous", provider: "openai", model: "gpt-live-1" }),
+      save: async () => {},
+    },
     credentials: async () => ({
       status: async () => ({ state: "stored_api_key", canImport: false }),
       loadKey: async () => "offline",

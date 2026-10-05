@@ -2,7 +2,8 @@ import { stripVTControlCharacters } from "node:util";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { createDefaultLiveCredentialService, type LiveCredentialService, type LiveProviderId } from "./credentials";
 import { LIVE_PROVIDERS, OPENAI_REALTIME_MODELS, OPENAI_LIVE_MODEL, type LiveModelId } from "./providers";
-import { loadLiveConfig, saveLiveConfig, type LiveConfig } from "./config";
+import { loadLiveConfig, saveLiveConfig, type LiveConfig, type LiveInputMode } from "./config";
+import { openPushToTalk } from "./push-to-talk";
 import { VoiceCostTracker, VOICE_COST_ENTRY } from "./cost";
 import { GPTLiveSession, type GPTLiveCallbacks } from "./gpt-live-session";
 import { gptLiveContext } from "./gpt-live-context";
@@ -43,8 +44,9 @@ export interface LiveDependencies {
     orchestration?: VoiceOrchestration,
     provider?: LiveProviderId,
     model?: LiveModelId,
+    inputMode?: LiveInputMode,
   ): Pick<VoiceProvider, "connect" | "sendAudio" | "close" | "state" | "generation"> &
-    Partial<Pick<VoiceProvider, "sendContext">> & {
+    Partial<Pick<VoiceProvider, "sendContext" | "endAudio">> & {
       diagnostics?: { serverInterruptions: number; turnCompletions: number; lastInterruptedAtMs?: number };
     };
   owner: typeof acquireMainOwner;
@@ -52,7 +54,10 @@ export interface LiveDependencies {
   audio(
     callbacks: AudioCallbacks,
     signal: AbortSignal,
-  ): Promise<Pick<LiveAudio, "start" | "play" | "flush" | "stop" | "close" | "diagnostics">>;
+  ): Promise<
+    Pick<LiveAudio, "start" | "play" | "flush" | "stop" | "close" | "diagnostics"> &
+      Partial<Pick<LiveAudio, "setCaptureGate">>
+  >;
 }
 const defaults: LiveDependencies = {
   speakerCheck: async (args) => {
@@ -67,15 +72,27 @@ const defaults: LiveDependencies = {
   key: async (signal, provider = "google") =>
     (await createDefaultLiveCredentialService(signal, provider)).loadKey(signal),
   config: { load: loadLiveConfig, save: saveLiveConfig },
-  voice: (callbacks, orchestration, provider = "google", model = OPENAI_REALTIME_MODELS[0]) => {
+  voice: (
+    callbacks,
+    orchestration,
+    provider = "google",
+    model = OPENAI_REALTIME_MODELS[0],
+    inputMode = "continuous",
+  ) => {
     if (!orchestration?.instructions)
       throw new Error(
         "Main Live requires the current ordinary root owner and execute runtime; no companion fallback is available",
       );
 
     return provider === "openai"
-      ? new OpenAIRealtimeSession(callbacks, undefined, orchestration, model as (typeof OPENAI_REALTIME_MODELS)[number])
-      : new VoiceSession(callbacks, undefined, orchestration, model);
+      ? new OpenAIRealtimeSession(
+          callbacks,
+          undefined,
+          orchestration,
+          model as (typeof OPENAI_REALTIME_MODELS)[number],
+          { inputMode },
+        )
+      : new VoiceSession(callbacks, undefined, orchestration, model, { inputMode });
   },
   owner: acquireMainOwner,
   audio: (callbacks, signal) => LiveAudio.launch({ callbacks, signal }),
@@ -104,6 +121,10 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     readonly id = ++sequence;
     readonly provider = selected.provider;
     readonly model = selected.model;
+    readonly inputMode = selected.inputMode ?? "push-to-talk";
+    private holdSequence = 0;
+    private heldEpoch: number | null = null;
+    private talkPanelOpen = false;
     readonly controller = new AbortController();
     readonly cost = new VoiceCostTracker(this.provider, this.model, (entry) => {
       // A late close must never write the old provider bill into a resumed/new session.
@@ -177,6 +198,32 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         this.sessionId === this.ctx.sessionManager?.getSessionId?.()
       );
     }
+    get inputState() {
+      return this.inputMode === "continuous" ? "continuous mic" : this.heldEpoch === null ? "muted" : "talking";
+    }
+    private setTalking(talking: boolean) {
+      if (!this.alive || this.state !== "running" || this.inputMode !== "push-to-talk") return;
+      if (talking === (this.heldEpoch !== null)) return;
+      // Close the host send gate first, before any asynchronous helper command.
+      this.heldEpoch = talking ? ++this.holdSequence : null;
+      if (!talking) this.voice?.endAudio?.();
+      void this.audio?.setCaptureGate?.(this.heldEpoch).catch(() => {
+        if (this.alive) this.fail("Could not change mic send gate; Live stopped.");
+      });
+      this.render(true);
+    }
+    async talk() {
+      if (!this.alive || this.state !== "running" || this.talkPanelOpen) return;
+      this.talkPanelOpen = true;
+      this.render(true);
+      try {
+        await openPushToTalk(this.ctx.ui, this.controller.signal, (talking) => this.setTalking(talking));
+      } finally {
+        this.setTalking(false);
+        this.talkPanelOpen = false;
+        this.render(true);
+      }
+    }
     render(immediate = false) {
       if (!this.alive) return;
       if (!immediate && Date.now() - this.lastRender < 100) {
@@ -206,6 +253,9 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       const status =
         "Live " +
         presentation +
+        " · " +
+        this.inputState +
+        (this.inputMode === "push-to-talk" && !this.talkPanelOpen ? " · /live talk" : "") +
         "  " +
         (this.state === "running" ? this.waveform.tick(this.speaking, performance.now()) : "··········");
       if (status !== this.lastStatus) {
@@ -281,6 +331,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       this.inputUtterance = this.outputUtterance = "";
       this.initialContext = [];
       this.initialContextBytes = 0;
+      this.heldEpoch = null;
       this.controller.abort();
       this.state = "off";
       this.playback.close();
@@ -381,8 +432,12 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         this.audioLaunchPending = true;
         this.audio = await deps.audio(
           {
-            capture: (pcm) => {
-              if (this.alive && this.state === "running") {
+            capture: (pcm, epoch) => {
+              if (
+                this.alive &&
+                this.state === "running" &&
+                (this.inputMode === "continuous" || (this.heldEpoch !== null && epoch === this.heldEpoch))
+              ) {
                 this.inputFrames++;
                 this.waveform.capture(pcm);
                 if (this.gpt) {
@@ -590,9 +645,12 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
             this.orchestration,
             this.provider,
             this.model,
+            this.inputMode,
           );
         }
         const provider = this.gpt ?? this.voice!;
+        if (this.inputMode === "push-to-talk" && (!this.audio.setCaptureGate || !this.voice?.endAudio))
+          throw new Error("Push-to-talk controls unavailable");
         stage = "provider-connect";
         await provider.connect(key);
         if (!this.alive) return;
@@ -613,6 +671,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         if (!this.alive) return;
         this.state = "running"; // capture may arrive synchronously inside audio.start()
         stage = "audio-start";
+        if (this.inputMode === "push-to-talk") await this.audio.setCaptureGate!(null);
         await this.audio.start();
         if (!this.alive) return;
         if (this.gpt) this.gptPlayback?.start();
@@ -648,11 +707,20 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     return run.stopObserved();
   });
   pi.registerCommand("live", {
-    description: "Voice (paid): start, stop, status, model, provider, setup, mic-check, speaker-check.",
+    description: "Voice (paid): start, stop, status, model, provider, setup, input, talk, mic-check, speaker-check.",
     getArgumentCompletions: (prefix) => {
-      const matches = ["start", "stop", "setup", "status", "provider", "model", "mic-check", "speaker-check"].filter(
-        (value) => value.startsWith(prefix),
-      );
+      const matches = [
+        "start",
+        "stop",
+        "setup",
+        "status",
+        "provider",
+        "model",
+        "input",
+        "talk",
+        "mic-check",
+        "speaker-check",
+      ].filter((value) => value.startsWith(prefix));
       return matches.length ? matches.map((value) => ({ value, label: value })) : null;
     },
     handler: async (args, ctx) => {
@@ -684,6 +752,8 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                 LIVE_PROVIDERS[current.provider].label +
                 " voice model " +
                 current.model +
+                " · " +
+                current.inputState +
                 " · input " +
                 current.inputFrames +
                 " frames · output " +
@@ -713,9 +783,58 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                 ? "Local mic check running; provider not connected."
                 : entry
                   ? "Live setup."
-                  : "Live off · " + LIVE_PROVIDERS[selected.provider].label + " voice model " + selected.model + ".",
+                  : "Live off · " +
+                    LIVE_PROVIDERS[selected.provider].label +
+                    " voice model " +
+                    selected.model +
+                    " · " +
+                    (selected.inputMode ?? "push-to-talk") +
+                    ".",
           "info",
         );
+      } else if (action === "talk") {
+        if (!current || current.inputMode !== "push-to-talk") {
+          ctx.ui.notify("Choose /live input → Push-to-talk, then start Live.", "info");
+          return;
+        }
+        await current.talk();
+      } else if (action === "input" || action.startsWith("input ")) {
+        if (active) {
+          ctx.ui.notify("Stop Live before changing mic mode.", "info");
+          return;
+        }
+        const owner = ++sequence;
+        const requested = action.slice("input".length).trim();
+        if (requested && requested !== "push-to-talk" && requested !== "continuous") {
+          ctx.ui.notify("Usage: /live input [push-to-talk|continuous]", "info");
+          return;
+        }
+        const picked =
+          requested ||
+          (await ctx.ui.select("Live mic mode", [
+            "Push-to-talk — hold Space; audio discarded while muted",
+            "Continuous — always send mic audio while Live is on",
+          ]));
+        const mode =
+          picked?.startsWith("Push-to-talk") || picked === "push-to-talk"
+            ? "push-to-talk"
+            : picked?.startsWith("Continuous") || picked === "continuous"
+              ? "continuous"
+              : undefined;
+        if (!mode || owner !== sequence || current || stoppingRun || entry || saving) return;
+        const next = { ...selected, inputMode: mode } as LiveConfig;
+        saving = true;
+        try {
+          await deps.config.save(next);
+        } catch {
+          ctx.ui.notify("Could not save mic mode; previous choice kept.", "error");
+          return;
+        } finally {
+          saving = false;
+        }
+        if (owner !== sequence) return;
+        selected = next;
+        ctx.ui.notify("Live mic: " + mode + ".", "info");
       } else if (action === "provider" || action.startsWith("provider ")) {
         if (active) {
           ctx.ui.notify("Live is busy; stop it before configuring voice providers.", "info");
@@ -956,6 +1075,20 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           ctx.ui.notify("Live is already active. Use /live stop first.", "info");
           return;
         }
+        if ((selected.inputMode ?? "push-to-talk") === "push-to-talk" && ctx.mode !== "tui") {
+          ctx.ui.notify(
+            "Push-to-talk needs a local terminal talk panel. This frontend has no hold/release controls. Use the terminal, or explicitly choose /live input continuous.",
+            "warning",
+          );
+          return;
+        }
+        if ((selected.inputMode ?? "push-to-talk") === "push-to-talk" && selected.model === OPENAI_LIVE_MODEL) {
+          ctx.ui.notify(
+            "GPT-Live has no manual input-turn control. Choose a Gemini or Realtime model for push-to-talk, or explicitly choose /live input continuous.",
+            "warning",
+          );
+          return;
+        }
         const controller = new AbortController();
         entry = controller;
         const owner = ++sequence;
@@ -993,6 +1126,9 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           current = run;
           run.render(true);
           await run.start(key);
+          if (run.alive && run.inputMode === "push-to-talk") await run.talk();
+          else if (run.alive)
+            ctx.ui.notify("Live continuous mic: all captured audio is sent. /live stop to end.", "info");
         } catch {
           if (alive())
             ctx.ui.notify(
@@ -1003,7 +1139,10 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           if (entry === controller) entry = undefined;
         }
       } else if (action)
-        ctx.ui.notify("Usage: /live [start|setup|stop|status|provider|model|mic-check|speaker-check]", "info");
+        ctx.ui.notify(
+          "Usage: /live [start|setup|stop|status|provider|model|input|talk|mic-check|speaker-check]",
+          "info",
+        );
     },
   });
   // Navigation must wait for cancellation/results before Pi moves the branch.

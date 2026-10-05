@@ -1,3 +1,4 @@
+#include "CaptureGate.h"
 #include <pulse/pulseaudio.h>
 #include <webrtc-audio-processing-1/modules/audio_processing/include/audio_processing.h>
 #include <glib.h>
@@ -67,6 +68,11 @@ struct Live {
   thread worker;
   atomic<bool> running{false}, ready{false};
   mutex queue;
+  mutex captureCommands;
+  int desiredCaptureEpoch = -2, lastCaptureEpoch = -1;
+  uint64_t captureRevision = 0, appliedCaptureRevision = 0;
+  CaptureGate captureGate;
+  pa_operation* gateTiming = nullptr;
   array<int16_t, 24000> ring{}; // One second max; never allocate on playback path.
   size_t head = 0, size = 0;
   int generation = 0;
@@ -85,7 +91,9 @@ struct Live {
     while (pa_stream_readable_size(stream) > 0) {
       const void* data = nullptr; size_t n = 0;
       if (pa_stream_peek(stream, &data, &n) < 0) { self.fail("audio_input"); return; }
-      if (!self.ready) { pa_stream_drop(stream); if (!n) break; continue; }
+      const pa_timing_info* timing = pa_stream_get_timing_info(stream);
+      if (!self.ready || !self.captureGate.accepts(timing ? timing->read_index : 0,
+            timing && !timing->read_index_corrupt)) { pa_stream_drop(stream); if (!n) break; continue; }
       if (data) {
         const auto* bytes = static_cast<const uint8_t*>(data);
         if (self.capture.size() - self.captureHead + n > 6400) {
@@ -103,6 +111,7 @@ struct Live {
     if (running.exchange(false)) error(code, "Audio device unavailable");
   }
   void closePulse() {
+    if (gateTiming) { pa_operation_cancel(gateTiming); pa_operation_unref(gateTiming); gateTiming = nullptr; }
     if (input) { pa_stream_disconnect(input); pa_stream_unref(input); input = nullptr; }
     if (outputStream) { pa_stream_disconnect(outputStream); pa_stream_unref(outputStream); outputStream = nullptr; }
     if (context) { pa_context_disconnect(context); pa_context_unref(context); context = nullptr; }
@@ -133,6 +142,7 @@ struct Live {
     if (!context || pa_context_connect(context, nullptr, PA_CONTEXT_NOFLAGS, nullptr) < 0) {
       error("audio_start", "Could not connect to audio server"); stop(); return;
     }
+    { lock_guard<mutex> lock(captureCommands); ++captureRevision; }
     capture.clear(); captureHead = 0; packetHalf = 0; lastQueued = -1; audioUntil = {};
     startTime = chrono::steady_clock::now();
     running = true;
@@ -233,7 +243,8 @@ struct Live {
       for (int i = 0; i < 160; ++i) store(packet.data() + packetHalf * 320 + 2*i, frame[i]);
       if (++packetHalf == 2) {
         gchar* encoded = g_base64_encode(packet.data(), packet.size());
-        event(string("{\"type\":\"capture\",\"data\":\"") + encoded + "\"}");
+        event(string("{\"type\":\"capture\",\"data\":\"") + encoded + "\"" +
+            (captureGate.epoch >= 0 ? ",\"epoch\":" + to_string(captureGate.epoch) : "") + "}");
         g_free(encoded);
         packetHalf = 0;
       }
@@ -245,9 +256,41 @@ struct Live {
   }
   array<uint8_t, 640> packet{};
   int packetHalf = 0;
+  static void gateTimed(pa_stream* stream, int success, void* userdata) {
+    auto& self = *static_cast<Live*>(userdata);
+    const pa_timing_info* timing = pa_stream_get_timing_info(stream);
+    if (!success || !timing || timing->read_index_corrupt || timing->write_index_corrupt ||
+        timing->write_index < 0 || timing->source_usec > 10000000) {
+      self.fail("capture_gate"); return;
+    }
+    self.captureGate.arm(timing->write_index, timing->source_usec);
+    pa_operation_unref(self.gateTiming); self.gateTiming = nullptr;
+  }
+  void applyCaptureGate() {
+    int epoch;
+    {
+      lock_guard<mutex> lock(captureCommands);
+      if (captureRevision == appliedCaptureRevision) return;
+      appliedCaptureRevision = captureRevision;
+      epoch = desiredCaptureEpoch;
+    }
+    if (gateTiming) { pa_operation_cancel(gateTiming); pa_operation_unref(gateTiming); gateTiming = nullptr; }
+    captureGate.set(epoch);
+    capture.clear(); captureHead = 0; packetHalf = 0; packet.fill(0);
+    // WebRTC keeps microphone filter/analysis history. Never carry it into a hold.
+    if (apm->Initialize() != 0) { fail("audio_processing"); return; }
+  }
+  void armCaptureGate() {
+    if (ready && captureGate.epoch >= 0 && !captureGate.armed && !gateTiming) {
+      gateTiming = pa_stream_update_timing_info(input, gateTimed, this);
+      if (!gateTiming) fail("capture_gate");
+    }
+  }
   void pump() {
     bool opening = false;
     while (running) {
+      applyCaptureGate();
+      if (!running) break;
       int result = 0;
       if (pa_mainloop_iterate(loop, 0, &result) < 0) { fail("audio_device"); break; }
       auto state = pa_context_get_state(context);
@@ -280,6 +323,7 @@ struct Live {
           pa_operation_unref(inOp); pa_operation_unref(outOp);
         }
       }
+      armCaptureGate();
       if (chrono::steady_clock::now() - startTime > chrono::seconds(5) && !ready) {
         fail("audio_start"); break;
       }
@@ -311,6 +355,24 @@ struct Live {
     json_object* t;
     if (!get(obj, "type", json_type_string, &t)) { error("protocol", "Missing type"); return; }
     const char* action = json_object_get_string(t);
+    if (!strcmp(action, "capture_gate")) {
+      json_object* value;
+      if (!json_object_object_get_ex(obj, "epoch", &value)) { error("capture_gate", "Missing hold epoch"); return; }
+      int epoch = -1;
+      if (value && json_object_get_type(value) != json_type_null) {
+        if (json_object_get_type(value) != json_type_int) { error("capture_gate", "Invalid hold epoch"); return; }
+        int64_t n = json_object_get_int64(value);
+        if (n < 0 || n > INT32_MAX) { error("capture_gate", "Invalid hold epoch"); return; }
+        epoch = int(n);
+      }
+      lock_guard<mutex> lock(captureCommands);
+      if (epoch >= 0) {
+        if (epoch <= lastCaptureEpoch) { error("capture_gate", "Hold epoch must increase"); return; }
+        lastCaptureEpoch = epoch;
+      }
+      desiredCaptureEpoch = epoch; ++captureRevision;
+      return;
+    }
     if (!strcmp(action, "start")) { start(); return; }
     if (!strcmp(action, "stop")) { stop(); event("{\"type\":\"stopped\"}"); return; }
     if (!strcmp(action, "flush") || !strcmp(action, "play")) {
@@ -367,7 +429,7 @@ int main(int argc, char** argv) {
   int flags = fcntl(STDOUT_FILENO, F_GETFL);
   if (flags >= 0) fcntl(STDOUT_FILENO, F_SETFL, flags | O_NONBLOCK);
   Live live(source, sink);
-  event("{\"type\":\"hello\",\"protocol\":1}");
+  event("{\"type\":\"hello\",\"protocol\":1,\"captureGate\":true}");
   char line[100002];
   while (fgets(line, sizeof(line), stdin)) {
     size_t n = strlen(line);

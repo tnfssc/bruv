@@ -10,6 +10,7 @@ on:
     branches: [develop]
     paths:
       - "native/live/**"
+      - "native/live-linux/**"
       - "scripts/build-live-helper.sh"
       - ".github/workflows/live.yml"
 permissions:
@@ -26,11 +27,25 @@ jobs:
         run: |
           clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-core.c -o /tmp/live-core-test
           /tmp/live-core-test
+          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-capture-gate.c -o /tmp/live-capture-gate-test
+          /tmp/live-capture-gate-test
+          clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined native/live-linux/tests/capture-gate.cpp -o /tmp/live-linux-capture-gate-test
+          /tmp/live-linux-capture-gate-test
       - name: Compile Apple voice-processing helper and self-test
         run: sh scripts/build-live-helper.sh
       - name: Device-free protocol smoke
         run: |
           dist/live-audio --help
+          python3 - <<'PY'
+          import json, select, subprocess
+          p = subprocess.Popen(['dist/live-audio'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+          try:
+              assert select.select([p.stdout], [], [], 5)[0], 'helper hello timed out'
+              assert json.loads(p.stdout.readline()) == {'type': 'hello', 'protocol': 1, 'captureGate': True}
+          finally:
+              p.terminate()
+              p.wait(timeout=5)
+          PY
           printf '{"type":"stop"}\n' | dist/live-audio
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

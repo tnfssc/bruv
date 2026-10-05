@@ -21,10 +21,10 @@ class Fake extends EventEmitter {
   }
 }
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
-async function open(options: Record<string, unknown> = {}) {
+async function open(options: Record<string, unknown> = {}, captureGate = false) {
   const worker = new Fake();
   const promise = LiveAudio.launch({ worker: worker as never, ...options });
-  worker.emitMessage({ type: "hello", protocol: 1 });
+  worker.emitMessage({ type: "hello", protocol: 1, ...(captureGate ? { captureGate: true } : {}) });
   return { audio: await promise, worker };
 }
 async function running(options: Record<string, unknown> = {}) {
@@ -230,5 +230,51 @@ test("ready channel metadata is optional and independently sanitized", async () 
       ...expected,
     });
     audio.close();
+  }
+});
+
+test("capture-origin gate is opt-in before start; epochs are preserved, never relabeled", async () => {
+  const epochs: (number | undefined)[] = [];
+  const { audio, worker } = await open(
+    { callbacks: { capture: (_: Buffer, epoch?: number) => epochs.push(epoch) } },
+    true,
+  );
+  await audio.setCaptureGate(null);
+  const start = audio.start();
+  worker.emitMessage({ type: "ready" });
+  await start;
+  await audio.setCaptureGate(0);
+  worker.emitMessage({ type: "capture", data: Buffer.alloc(640).toString("base64"), epoch: 0 });
+  await audio.setCaptureGate(null);
+  await audio.setCaptureGate(1);
+  // Parent must discard stale epochs; pipe buffering must NOT turn epoch 0 into 1.
+  worker.emitMessage({ type: "capture", data: Buffer.alloc(640).toString("base64"), epoch: 0 });
+  worker.emitMessage({ type: "capture", data: Buffer.alloc(640).toString("base64"), epoch: 1 });
+  expect(epochs).toEqual([0, 0, 1]);
+  expect(worker.writes.map((x) => JSON.parse(x))).toEqual([
+    { type: "capture_gate", epoch: null },
+    { type: "start" },
+    { type: "capture_gate", epoch: 0 },
+    { type: "capture_gate", epoch: null },
+    { type: "capture_gate", epoch: 1 },
+  ]);
+  await expect(audio.setCaptureGate(1)).rejects.toThrow("must increase");
+  audio.close();
+});
+test("gating rejects incompatible helpers instead of silently becoming receive-time gating", async () => {
+  const { audio, worker } = await open();
+  await expect(audio.setCaptureGate(null)).rejects.toThrow("does not support");
+  expect(worker.writes).toEqual([]);
+  audio.close();
+});
+test("gated capture must carry a valid epoch even when locally muted", async () => {
+  for (const epoch of [undefined, null, -1, 1.5, 2147483648, "1"]) {
+    const { audio, worker } = await open({}, true);
+    await audio.setCaptureGate(null);
+    const start = audio.start();
+    worker.emitMessage({ type: "ready" });
+    await start;
+    worker.emitMessage({ type: "capture", data: Buffer.alloc(640).toString("base64"), epoch });
+    expect(worker.killed).toBe(true);
   }
 });

@@ -1,5 +1,10 @@
 import type { FunctionDeclaration, GoogleGenAI } from "@google/genai";
 
+/** Capture gating belongs to the owner; providers delimit only the audio they receive. */
+export interface VoiceSessionOptions {
+  inputMode?: "continuous" | "push-to-talk";
+}
+
 export type VoiceState = "idle" | "connecting" | "ready" | "closed";
 export type VoiceError = {
   code:
@@ -66,6 +71,7 @@ export interface VoiceProvider {
   readonly turn: number;
   connect(apiKey: string): Promise<void>;
   sendAudio(base64: string): void;
+  /** Flush input; in push-to-talk mode, close the held turn without closing the session. */
   endAudio(): void;
   sendContext(text: string, options?: { triggerResponse?: boolean }): void;
   close(): void;

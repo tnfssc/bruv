@@ -123,6 +123,62 @@ jobs:
         run: |
           command -v ffmpeg >/dev/null || { sudo apt-get update && sudo apt-get install -y ffmpeg; }
           ffmpeg -version
+      - name: Sanitized, device-free capture-origin tests
+        shell: bash
+        run: |
+          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-capture-gate.c -o /tmp/live-capture-gate-test
+          /tmp/live-capture-gate-test
+          clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined native/live-linux/tests/capture-gate.cpp -o /tmp/live-linux-capture-gate-test
+          /tmp/live-linux-capture-gate-test
+      - name: Install isolated native audio fixture tooling
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang pkg-config meson ninja-build libabsl-dev libpulse-dev libjson-c-dev libglib2.0-dev pulseaudio pulseaudio-utils
+      - name: Capture-origin protocol in private Pulse fixture (no hardware)
+        shell: bash
+        timeout-minutes: 8
+        run: |
+          set -euo pipefail
+          fixture=$(mktemp -d)
+          pulse_pid=""
+          cleanup() {
+            status=$?
+            if [[ $status != 0 && -f "$fixture/pulse.log" ]]; then cat "$fixture/pulse.log"; fi
+            if [[ -n "$pulse_pid" ]]; then kill "$pulse_pid" 2>/dev/null || true; wait "$pulse_pid" 2>/dev/null || true; fi
+            rm -rf "$fixture"
+          }
+          trap cleanup EXIT
+          # Noble ships WebRTC 0.3, but the real helper requires the 1.x API.
+          curl --fail --location https://freedesktop.org/software/pulseaudio/webrtc-audio-processing/webrtc-audio-processing-1.3.tar.gz -o "$fixture/apm.tar.gz"
+          echo "95552fc17faa0202133707bbb3727e8c2cf64d4266fe31bfdb2298d769c1db75  $fixture/apm.tar.gz" | sha256sum --check
+          tar -xzf "$fixture/apm.tar.gz" -C "$fixture"
+          meson setup "$fixture/build" "$fixture/webrtc-audio-processing-1.3" --prefix="$fixture/apm" --libdir=lib --buildtype=release --wrap-mode=nofallback
+          meson compile -C "$fixture/build" -j 2
+          meson install -C "$fixture/build"
+          export PKG_CONFIG_PATH="$fixture/apm/lib/pkgconfig"
+          export LD_LIBRARY_PATH="$fixture/apm/lib"
+          export CPLUS_INCLUDE_PATH="$fixture/apm/include"
+          bash scripts/build-live-linux-helper.sh "$fixture/live-audio-linux"
+          mkdir -m 700 "$fixture/home" "$fixture/runtime"
+          head -c 256 /dev/urandom > "$fixture/cookie"
+          export PULSE_SERVER="unix:$fixture/native" PULSE_COOKIE="$fixture/cookie"
+          # -n disables the default startup script: no hardware discovery or default routes.
+          cat > "$fixture/pulse.pa" <<EOF
+          load-module module-native-protocol-unix socket=$fixture/native auth-cookie=$fixture/cookie
+          load-module module-null-sink sink_name=bruv_ci_mic rate=16000 channels=1
+          load-module module-null-sink sink_name=bruv_ci_out rate=48000 channels=1
+          EOF
+          HOME="$fixture/home" XDG_RUNTIME_DIR="$fixture/runtime" pulseaudio -nF "$fixture/pulse.pa" --daemonize=no --exit-idle-time=-1 --use-pid-file=no --log-target="file:$fixture/pulse.log" &
+          pulse_pid=$!
+          for i in {1..50}; do
+            if timeout 2 pactl info >/dev/null 2>&1; then break; fi
+            kill -0 "$pulse_pid"
+            sleep .1
+          done
+          timeout 2 pactl info >/dev/null
+          pactl -f json list sources | python3 -c 'import json,sys; assert {s["name"] for s in json.load(sys.stdin)} == {"bruv_ci_mic.monitor", "bruv_ci_out.monitor"}'
+          python3 native/live-linux/tests/capture-protocol.py "$fixture/live-audio-linux" bruv_ci_mic.monitor bruv_ci_out
       - name: Shared Linux CI gate (paired binaries, external T3)
         shell: bash
         run: bun run ci
@@ -167,6 +223,27 @@ jobs:
         run: |
           command -v ffmpeg >/dev/null || brew install ffmpeg
           ffmpeg -version
+      - name: Sanitized, device-free capture-origin tests
+        shell: bash
+        run: |
+          xcrun clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-capture-gate.c -o /tmp/live-capture-gate-test
+          /tmp/live-capture-gate-test
+          xcrun clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined native/live-linux/tests/capture-gate.cpp -o /tmp/live-linux-capture-gate-test
+          /tmp/live-linux-capture-gate-test
+      - name: Compile native helper and check exact capability (no devices)
+        shell: bash
+        run: |
+          sh scripts/build-live-helper.sh
+          python3 - <<'PY'
+          import json, select, subprocess
+          p = subprocess.Popen(['dist/live-audio'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+          try:
+              assert select.select([p.stdout], [], [], 5)[0], 'helper hello timed out'
+              assert json.loads(p.stdout.readline()) == {'type': 'hello', 'protocol': 1, 'captureGate': True}
+          finally:
+              p.terminate()
+              p.wait(timeout=5)
+          PY
       # Source-only probe and fake Live tests; does not replace Linux build checks.
       - name: Shared macOS Live gate
         shell: bash

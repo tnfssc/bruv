@@ -3,16 +3,22 @@
 #include <stdlib.h>
 #include <string.h>
 typedef struct { int generation, count; int16_t data[LL_PLAY_SAMPLES]; } PlayBlock;
-typedef struct { int count; float data[LL_CAPTURE_SAMPLES]; } CaptureBlock;
+typedef struct { int count, epoch; float data[LL_CAPTURE_SAMPLES]; } CaptureBlock;
 struct LLCore {
     _Atomic unsigned playWrite, playRead, capWrite, capRead;
     _Atomic uint64_t pending; // upper 32 bits: generation; lower 32: captured playback frames
     _Atomic unsigned captureDropped;
+    _Atomic int captureEpoch;
+    _Atomic uint64_t captureCutoff;
     PlayBlock play[LL_PLAY_BLOCKS]; CaptureBlock capture[LL_CAPTURE_BLOCKS];
     int offset, current, a, b, primed, tail;
     double phase;
 };
-LLCore *ll_create(void) { return calloc(1, sizeof(LLCore)); }
+LLCore *ll_create(void) {
+    LLCore *c = calloc(1, sizeof(LLCore));
+    if (c) atomic_store(&c->captureEpoch, -2);
+    return c;
+}
 void ll_destroy(LLCore *c) { free(c); }
 int ll_generation(LLCore *c) { return (int)(atomic_load(&c->pending) >> 32); }
 void ll_flush(LLCore *c, int gen) {
@@ -88,19 +94,39 @@ void ll_render(LLCore *c, float *out, int count, double rate) {
         }
     }
 }
+void ll_capture_gate(LLCore *c, int epoch, uint64_t cutoff) {
+    atomic_store(&c->captureEpoch, -1);
+    atomic_store(&c->captureCutoff, cutoff);
+    atomic_store(&c->captureEpoch, epoch);
+}
+int ll_capture_current_epoch(LLCore *c) { return atomic_load(&c->captureEpoch); }
+int ll_capture_epoch(LLCore *c, uint64_t origin) {
+    int epoch = ll_capture_current_epoch(c);
+    if (epoch >= 0 && (origin == 0 || origin < atomic_load(&c->captureCutoff))) return -1;
+    return epoch == ll_capture_current_epoch(c) ? epoch : -1;
+}
 int ll_capture_push(LLCore *c, const float *data, int count) {
+    return ll_capture_push_epoch(c, data, count, ll_capture_epoch(c, 0));
+}
+int ll_capture_push_epoch(LLCore *c, const float *data, int count, int epoch) {
+    if (epoch == -1 || epoch != ll_capture_current_epoch(c)) return 0;
     if (count<1 || count>LL_CAPTURE_SAMPLES) { atomic_fetch_add(&c->captureDropped, (unsigned)(count > 0 ? count : 1)); return 0; }
     unsigned w=atomic_load(&c->capWrite), r=atomic_load(&c->capRead);
     if (w-r>=LL_CAPTURE_BLOCKS) { atomic_fetch_add(&c->captureDropped, (unsigned)count); return 0; }
     CaptureBlock *b=&c->capture[w % LL_CAPTURE_BLOCKS];
-    b->count=count; memcpy(b->data,data,(size_t)count*sizeof(float));
+    b->epoch=epoch; b->count=count; memcpy(b->data,data,(size_t)count*sizeof(float));
     atomic_store(&c->capWrite,w+1); return 1;
 }
 unsigned ll_capture_dropped(LLCore *c) { return atomic_exchange(&c->captureDropped, 0); }
 int ll_capture_pop(LLCore *c, float *out) {
+    int epoch;
+    return ll_capture_pop_epoch(c, out, &epoch);
+}
+int ll_capture_pop_epoch(LLCore *c, float *out, int *epoch) {
     unsigned r=atomic_load(&c->capRead);
     if (r==atomic_load(&c->capWrite)) return 0;
     CaptureBlock *b=&c->capture[r % LL_CAPTURE_BLOCKS];
+    *epoch=b->epoch;
     int n=b->count; memcpy(out,b->data,(size_t)n*sizeof(float));
     atomic_store(&c->capRead,r+1); return n;
 }
