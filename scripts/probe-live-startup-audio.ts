@@ -1,8 +1,12 @@
-// Test-only. At most four paid sessions; --gemini-live-env limits to two Google sessions. No retries/devices.
+import { GoogleGenAI } from "@google/genai";
+// Test-only: default control + paced (max four sessions, two with --gemini-live-env).
+// --mode=control|paced|burst selects one trial per provider. No retries/devices.
+// --manual-activity frames Gemini retention with automatic VAD disabled.
+// --flush-after-pause tests cached-audio flushing separately; neither proves silence-only VAD.
 import { createDefaultLiveCredentialService, loadLiveKey } from "../src/live/credentials";
-import { OpenAIRealtimeSession } from "../src/live/openai-session";
+import { OPENAI_VOICE_MODEL, OpenAIRealtimeSession } from "../src/live/openai-session";
 import { VoiceSession } from "../src/live/session";
-import type { VoiceCallbacks, VoiceOrchestration } from "../src/live/types";
+import type { LiveAdapter, LiveConnection, VoiceCallbacks, VoiceOrchestration } from "../src/live/types";
 import { StartupAudioQueue } from "../tests/helpers/live-startup-audio-queue";
 
 export function startupSpeechCredentialPlan(args: readonly string[]): {
@@ -15,6 +19,76 @@ export function startupSpeechCredentialPlan(args: readonly string[]): {
         { provider: "google", source: "canonical" },
         { provider: "openai", source: "canonical" },
       ];
+}
+
+type SpeechMode = "control" | "burst" | "paced";
+
+/** Same production session/fixture; control bypasses the experimental queue entirely. */
+export async function deliverStartupSpeech(
+  session: { readonly state: string; connect(key: string): Promise<void>; sendAudio(base64: string): void },
+  key: string,
+  pcm: Buffer,
+  mode: SpeechMode,
+  onSend: (bytes: number) => void,
+  onQueue: (queue: StartupAudioQueue) => void = () => {},
+  activity?: { start(): void; end(): void },
+) {
+  const start = Date.now();
+  const send = (chunk: Buffer) => {
+    session.sendAudio(chunk.toString("base64"));
+    onSend(chunk.length);
+  };
+  const connecting = session.connect(key);
+  let queue: StartupAudioQueue | undefined;
+  if (mode !== "control") {
+    queue = new StartupAudioQueue(send, () => session.state === "ready");
+    onQueue(queue);
+    for (let i = 0; i < pcm.length; i += 640) queue.push(pcm.subarray(i, i + 640));
+  }
+  const bufferedDuringConnect = !!queue && session.state === "connecting";
+  await connecting;
+  if (session.state !== "ready") throw new Error("Provider setup did not become ready");
+  const setupMs = Date.now() - start;
+  const replayAt = Date.now();
+  activity?.start();
+  if (queue) await queue.ready(mode === "paced" ? 20 : 0);
+  else {
+    for (let i = 0; i < pcm.length; i += 640) {
+      if (session.state !== "ready") throw new Error("Provider closed during control");
+      send(pcm.subarray(i, i + 640));
+      await Bun.sleep(20);
+    }
+  }
+  activity?.end();
+  return { bufferedDuringConnect, setupMs, replayMs: Date.now() - replayAt };
+}
+
+/** Test-only override: production retains automatic VAD. Never mix both policies. */
+export function startupSpeechGoogleAdapter(adapter: LiveAdapter, manualActivity: boolean): LiveAdapter {
+  return (apiKey) => {
+    const ai = adapter(apiKey);
+    return {
+      live: {
+        connect: (params) =>
+          ai.live.connect({
+            ...params,
+            ...(manualActivity
+              ? {
+                  config: { ...params.config, realtimeInputConfig: { automaticActivityDetection: { disabled: true } } },
+                }
+              : {}),
+          }),
+      },
+    };
+  };
+}
+
+/** File playback pauses capture; automatic VAD docs require flushing cached audio. */
+export async function finishStartupSpeech(session: { endAudio(): void }, flushAfterPause: boolean) {
+  if (!flushAfterPause) return false;
+  await Bun.sleep(1500);
+  session.endAudio();
+  return true;
 }
 
 const phrase = "Please repeat these words: amber river seven lighthouse.";
@@ -58,8 +132,15 @@ async function synthesize() {
   if (!speech.length || pcm.length > 320_000 || pcm.length % 2) throw new Error("Invalid synthetic PCM duration");
   return pcm;
 }
-async function trial(provider: "google" | "openai", mode: "burst" | "paced", key: string, pcm: Buffer) {
-  let queue!: StartupAudioQueue;
+async function trial(
+  provider: "google" | "openai",
+  mode: SpeechMode,
+  key: string,
+  pcm: Buffer,
+  flushAfterPause: boolean,
+  manualActivity: boolean,
+) {
+  let queue: StartupAudioQueue | undefined;
   let input = "",
     output = "",
     inputFinished = false,
@@ -93,39 +174,114 @@ async function trial(provider: "google" | "openai", mode: "burst" | "paced", key
     tools: [],
     execute: async () => ({ status: "denied" }),
   };
+  const providerMessages = {
+    total: 0,
+    setup: 0,
+    sessionResumption: 0,
+    usage: 0,
+    goAway: 0,
+    voiceActivity: 0,
+    serverContent: 0,
+    inputTranscript: 0,
+    audio: 0,
+  };
+  let googleConnection: LiveConnection | undefined;
+  let manualStartSent = false;
+  let manualEndSent = false;
   const session =
     provider === "google"
-      ? new VoiceSession(callbacks, undefined, orchestration)
+      ? new VoiceSession(
+          callbacks,
+          startupSpeechGoogleAdapter((apiKey) => {
+            const ai = new GoogleGenAI({ apiKey });
+            return {
+              live: {
+                connect: async (params) => {
+                  googleConnection = await ai.live.connect({
+                    ...params,
+                    callbacks: {
+                      ...params.callbacks,
+                      onmessage: (message) => {
+                        providerMessages.total++;
+                        if (message.setupComplete) providerMessages.setup++;
+                        if (message.sessionResumptionUpdate) providerMessages.sessionResumption++;
+                        if (message.usageMetadata) providerMessages.usage++;
+                        if (message.goAway) providerMessages.goAway++;
+                        if (message.voiceActivity) providerMessages.voiceActivity++;
+                        if (message.serverContent) providerMessages.serverContent++;
+                        if (message.serverContent?.inputTranscription) providerMessages.inputTranscript++;
+                        if (message.serverContent?.modelTurn?.parts?.some((part) => part.inlineData))
+                          providerMessages.audio++;
+                        params.callbacks?.onmessage?.(message);
+                      },
+                    },
+                  });
+                  return googleConnection;
+                },
+              },
+            };
+          }, manualActivity),
+          orchestration,
+        )
       : new OpenAIRealtimeSession(callbacks, undefined, orchestration);
   let sentBytes = 0;
-  queue = new StartupAudioQueue(
-    (b) => {
-      sentBytes += b.length;
-      session.sendAudio(b.toString("base64"));
-    },
-    () => session.state === "ready",
-  );
   let bufferedDuringConnect = false;
   let replayMs: number | null = null;
   let setupMs: number | null = null;
+  let streamEndSent = false;
+  let turnEndBeforeStreamEnd = false;
+  let inputBeforeStreamEnd = false;
+  let audioBytesBeforeStreamEnd = 0;
+  let streamEndMs: number | null = null;
   const start = Date.now();
   const timer = setTimeout(() => {
     errors.push("probe_deadline");
-    queue.stop();
+    queue?.stop();
     session.close();
   }, 35_000);
   try {
-    const connecting = session.connect(key);
-    // All speech is buffered while the actual provider setup is pending. No mic or disk audio.
-    for (let i = 0; i < pcm.length; i += 640) queue.push(pcm.subarray(i, i + 640));
-    bufferedDuringConnect = session.state === "connecting";
-    await connecting;
-    if (session.state !== "ready") throw new Error("Provider setup did not become ready");
-    setupMs = Date.now() - start;
-    const replayAt = Date.now();
-    await queue.ready(mode === "paced" ? 20 : 0);
-    replayMs = Date.now() - replayAt;
-    // No forced commit/response or audioStreamEnd: trailing silence must cause remote turn-end.
+    ({ bufferedDuringConnect, setupMs, replayMs } = await deliverStartupSpeech(
+      session,
+      key,
+      pcm,
+      mode,
+      (bytes) => {
+        sentBytes += bytes;
+      },
+      (value) => {
+        queue = value;
+      },
+      manualActivity
+        ? {
+            start: () => {
+              if (!googleConnection) throw new Error("Manual activity requires a ready Google connection");
+              googleConnection.sendRealtimeInput({ activityStart: {} });
+              manualStartSent = true;
+            },
+            end: () => {
+              if (!googleConnection) throw new Error("Manual activity requires a ready Google connection");
+              googleConnection.sendRealtimeInput({ activityEnd: {} });
+              manualEndSent = true;
+            },
+          }
+        : undefined,
+    ));
+    if (flushAfterPause) {
+      // Snapshot immediately before the end marker, after the documented >1 second pause.
+      streamEndSent = await finishStartupSpeech(
+        {
+          endAudio: () => {
+            turnEndBeforeStreamEnd = turns > 0;
+            inputBeforeStreamEnd = !!input;
+            audioBytesBeforeStreamEnd = outputAudioBytes;
+            streamEndMs = Date.now() - start;
+            session.endAudio();
+          },
+        },
+        true,
+      );
+    }
+    // Silence-only and flushed speech acceptance are intentionally distinct.
     while (Date.now() - start < 34_000 && !errors.length && !(turns && input && output && outputAudioBytes))
       await Bun.sleep(50);
   } catch {
@@ -141,7 +297,7 @@ async function trial(provider: "google" | "openai", mode: "burst" | "paced", key
       return true;
     });
     const ok =
-      bufferedDuringConnect &&
+      (mode === "control" ? !bufferedDuringConnect : bufferedDuringConnect) &&
       sentBytes === pcm.length &&
       retainedWords &&
       turns > 0 &&
@@ -152,13 +308,27 @@ async function trial(provider: "google" | "openai", mode: "burst" | "paced", key
       JSON.stringify({
         provider,
         mode,
+        model: provider === "google" ? (session as VoiceSession).model : OPENAI_VOICE_MODEL,
         ok,
+        silenceOnlyVadAccepted: ok && !manualActivity && !flushAfterPause,
+        manuallyFramedSpeechAccepted: ok && manualActivity,
+        flushedSpeechAccepted: ok && flushAfterPause,
         bufferedDuringConnect,
         inputTranscript: !!input,
         inputFinished,
         retainedWords,
-        matchedWords: words.filter((word) => normalized.split(/\s+/).includes(word)),
-        turnEndBeforeStreamEnd: turns > 0,
+        matchedWordCount: words.filter((word) => normalized.split(/\s+/).includes(word)).length,
+        turnEndBeforeStreamEnd: streamEndSent ? turnEndBeforeStreamEnd : turns > 0,
+        turnComplete: turns > 0,
+        streamEndSent,
+        inputBeforeStreamEnd: streamEndSent ? inputBeforeStreamEnd : !!input,
+        audioBytesBeforeStreamEnd: streamEndSent ? audioBytesBeforeStreamEnd : outputAudioBytes,
+        streamEndMs,
+        automaticVad: !manualActivity,
+        manualActivityMarkers: manualActivity,
+        manualStartSent,
+        manualEndSent,
+        providerMessages,
         outputTranscript: !!output,
         outputAudioBytes,
         pcmMs: pcm.length / 32,
@@ -171,8 +341,8 @@ async function trial(provider: "google" | "openai", mode: "burst" | "paced", key
       }),
     );
     if (!ok) process.exitCode = 1;
-    queue.stop();
-    session.endAudio(); // cleanup only, not counted as VAD success
+    queue?.stop();
+    if (!manualActivity) session.endAudio(); // cleanup only, not counted as VAD success
     session.close();
   }
 }
@@ -210,7 +380,13 @@ async function main() {
       continue;
     }
     pcm ??= await synthesize();
-    for (const mode of ["burst", "paced"] as const) await trial(provider, mode, key, pcm);
+    const selected = process.argv.find((arg) => arg.startsWith("--mode="))?.slice(7);
+    if (selected && !["control", "burst", "paced"].includes(selected)) throw new Error("Invalid mode");
+    const modes: SpeechMode[] = selected ? [selected as SpeechMode] : ["control", "paced"];
+    const manualActivity = process.argv.includes("--manual-activity");
+    const flushAfterPause = process.argv.includes("--flush-after-pause");
+    if (manualActivity && (provider !== "google" || flushAfterPause)) throw new Error("Invalid activity policy");
+    for (const mode of modes) await trial(provider, mode, key, pcm, flushAfterPause, manualActivity);
   }
 }
 if (import.meta.main) {

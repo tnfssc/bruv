@@ -152,3 +152,6 @@ loadLiveKey only. No credential writes, mic/speaker use, or broad retries.
 Check the probe, actual model, VAD and sendAudio; fix only an observed cause.
 Startup buffering stays out of production until evidence supports it.
 Await result, check code/evidence and bring useful changes back.
+Follow-up: [Gemini control and framed retention investigation](gemini-buffered-speech-investigation.md).
+Normal automatic-VAD control also failed; manual-framed control/paced/burst recognized
+the fixture. This isolates retention from detector acceptance, not a production VAD fix.
