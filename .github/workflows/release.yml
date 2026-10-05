@@ -128,32 +128,11 @@ jobs:
         shell: bash
         run: |
           bun scripts/validate-release-tag.ts "$RELEASE_TAG" 2>&1 | tee artifacts/release/version.log
-      - name: Install locked dependencies
-        shell: bash
-        run: bun install --frozen-lockfile 2>&1 | tee artifacts/release/install.log
-      - name: Format check
-        shell: bash
-        run: bun run format:check 2>&1 | tee artifacts/release/format.log
-      - name: Lint
-        shell: bash
-        run: bun run lint 2>&1 | tee artifacts/release/lint.log
-      - name: Typecheck
-        shell: bash
-        run: bun run check 2>&1 | tee artifacts/release/typecheck.log
-      - name: Build compiled test binary
-        shell: bash
-        run: bun run build 2>&1 | tee artifacts/release/test-build.log
-      - name: Offline default OpenAI transport
-        shell: bash
-        run: bun scripts/offline-openai-default-transport.ts 2>&1 | tee artifacts/release/openai-transport.log
-      - name: Deterministic tests
+      - name: Shared ordinary Linux gate
         shell: bash
         env:
-          BRUV_RUN_LLM_TESTS: "0"
-        run: bun test ./tests 2>&1 | tee artifacts/release/tests.log
-      - name: Standalone smoke test
-        shell: bash
-        run: bun run smoke -- --reuse-build 2>&1 | tee artifacts/release/smoke.log
+          CI_LOG_DIR: artifacts/release/ci
+        run: bun run ci
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: release-mac-arm64-helper

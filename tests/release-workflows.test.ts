@@ -175,8 +175,8 @@ describe("release automation", () => {
     expect(workflow).toContain("contents: write");
     expect(workflow).toContain('validate-release-tag.ts "$RELEASE_TAG"');
     expect(workflow).toContain("apt-get install -y tmux");
-    expect(workflow).toContain("bun run lint");
-    expect(workflow.indexOf("bun run build")).toBeLessThan(workflow.indexOf("bun test ./tests"));
+    expect(workflow).toContain("run: bun run ci");
+    expect(workflow.indexOf("run: bun run ci")).toBeLessThan(workflow.indexOf("bun run build -- --target="));
     expect(workflow).toContain("--target=bun-linux-x64-baseline");
     expect(workflow).toContain("--target=bun-linux-arm64");
     expect(workflow).toContain("--target=bun-darwin-arm64");
@@ -400,9 +400,10 @@ test("CI and release build the binary and launcher without a patched web depende
   expect(runner).not.toContain("ci-web.ts");
   expect(workflow).not.toContain("BRUV_T3_SOURCE");
   expect(workflow).not.toContain("reuse-packed-web");
-  expect(workflow).toContain("bun scripts/offline-openai-default-transport.ts");
-  expect(workflow).toContain("bun test ./tests");
-  expect(workflow).toContain("bun run smoke -- --reuse-build");
+  expect(workflow).toContain("run: bun run ci");
+  expect(runner).toContain("bun scripts/offline-openai-default-transport.ts");
+  expect(runner).toContain("env BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests");
+  expect(runner).toContain("bun run smoke -- --reuse-build");
 });
 
 test("Linux needs no retired migration history; feedback retains its baseline history", async () => {
@@ -432,4 +433,28 @@ test("release verifies thin launcher dispatch and the actual Android interpreter
     expect(commands).toContain('= "bruv-claude-compat $version"');
     expect(commands).toContain("2.1.280 (Bruv compatibility; bruv $version)");
   }
+});
+
+test("CI and Release share one ordinary Linux gate before final release packaging", async () => {
+  const ci = Bun.YAML.parse(await read(".github/workflows/ci.yml")) as any;
+  const release = Bun.YAML.parse(await read(".github/workflows/release.yml")) as any;
+  const steps = release.jobs.release.steps;
+  const gate = steps.findIndex((step: any) => step.name === "Shared ordinary Linux gate");
+  expect(gate).toBeGreaterThan(0);
+  expect(steps[gate].run).toBe("bun run ci");
+  expect(ci.jobs.test.steps.filter((step: any) => step.run === steps[gate].run)).toHaveLength(1);
+  expect(steps.filter((step: any) => step.run === steps[gate].run)).toHaveLength(1);
+  expect(steps[gate].env).toEqual({ CI_LOG_DIR: "artifacts/release/ci" });
+  expect(gate).toBeGreaterThan(steps.findIndex((step: any) => step.name === "Validate tag matches package version"));
+  expect(gate).toBeLessThan(steps.findIndex((step: any) => step.name === "Verify native helper from Mac runner"));
+  const commands = steps.map((step: any) => step.run ?? "").join("\n");
+  expect(commands).not.toMatch(
+    /bun (install|test)\b|bun run (format:check|lint|check|smoke)\b|offline-openai-default-transport/,
+  );
+  const upload = steps.find((step: any) => step.name === "Upload failure logs");
+  expect(upload.if).toBe("failure()");
+  expect(upload.with.path).toBe("artifacts/release/");
+  expect(steps[gate].env.CI_LOG_DIR).toStartWith(upload.with.path);
+  expect(commands).toContain("NATIVE LIVE AUDIO HELPER");
+  expect(commands).toContain("repository MIT LICENSE");
 });
