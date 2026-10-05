@@ -118,6 +118,11 @@ jobs:
           command -v tmux >/dev/null || { sudo apt-get update && sudo apt-get install -y tmux; }
           tmux -V
           echo "CPU slots: $(getconf _NPROCESSORS_ONLN)"
+      - name: Install required audio fixture tooling
+        shell: bash
+        run: |
+          command -v ffmpeg >/dev/null || { sudo apt-get update && sudo apt-get install -y ffmpeg; }
+          ffmpeg -version
       - name: Shared Linux CI gate (paired binaries, external T3)
         shell: bash
         run: bun run ci
@@ -157,6 +162,11 @@ jobs:
         run: |
           command -v tmux >/dev/null || brew install tmux
           tmux -V
+      - name: Install required audio fixture tooling
+        shell: bash
+        run: |
+          command -v ffmpeg >/dev/null || brew install ffmpeg
+          ffmpeg -version
       # Source-only probe and fake Live tests; does not replace Linux build checks.
       - name: Shared macOS Live gate
         shell: bash
