@@ -7,6 +7,7 @@ import type { LiveAdapter, LiveConnection } from "../src/live/types";
 import { StartupAudioQueue } from "./helpers/live-startup-audio-queue";
 
 // Real session classes; fake SDK connection/socket. NOT remote VAD/timing evidence.
+/** Minimal event socket shared by provider session test fixtures. */
 class Socket implements RealtimeSocket, LiveSocket {
   readyState = 1;
   bufferedAmount = 0;
@@ -32,6 +33,7 @@ class Socket implements RealtimeSocket, LiveSocket {
   }
 }
 type Kind = "gemini" | "openai-realtime" | "gpt-live";
+/** Assemble a real session with fake transport and a readiness-gated startup queue. */
 function fixture(kind: Kind) {
   const socket = new Socket();
   let queue!: StartupAudioQueue;
@@ -110,11 +112,13 @@ function fixture(kind: Kind) {
     },
   };
 }
+/** Create one deterministic 20 ms mono PCM16 test frame. */
 function chunk(value: number) {
   const out = Buffer.alloc(640);
   for (let i = 0; i < out.length; i += 2) out.writeInt16LE(value, i);
   return out;
 }
+/** Compute provider wire PCM, including the production 16-to-24 kHz resampler. */
 function expected(kind: Kind, chunks: Buffer[]) {
   const input = Buffer.concat(chunks);
   if (kind === "gemini") return input;

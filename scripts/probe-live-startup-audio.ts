@@ -19,6 +19,7 @@ import {
   trailingSilenceMs,
 } from "./live-startup-fixture";
 
+/** Select credential sources; --gemini-live-env restricts the probe to its explicit source. */
 export function startupSpeechCredentialPlan(args: readonly string[]): {
   provider: "google" | "openai";
   source: "canonical" | "live.env";
@@ -101,6 +102,7 @@ export async function finishStartupSpeech(session: { endAudio(): void }, flushAf
   return true;
 }
 
+/** Synthesize the fixed phrase as bounded 16 kHz mono PCM for the local probe. */
 async function synthesize() {
   const wav = await command(["espeak-ng", "--stdout", "-s", "165", phrase]);
   const speech = await command(
@@ -125,6 +127,7 @@ async function synthesize() {
   if (!speech.length || pcm.length > 320_000 || pcm.length % 2) throw new Error("Invalid synthetic PCM duration");
   return pcm;
 }
+/** Run one provider/mode observation and collect timings, transcript retention, and PCM diagnostics. */
 async function trial(
   provider: "google" | "openai",
   mode: SpeechMode,
@@ -344,6 +347,7 @@ async function trial(
     session.close();
   }
 }
+/** Parse fixture selection without connecting and report its session budget. */
 export function startupSpeechFixturePlan(args: readonly string[]) {
   const fixture = args.find((arg) => arg.startsWith("--fixture="))?.slice(10) ?? "espeak";
   if (!["espeak", "gemini-natural"].includes(fixture)) throw new Error("Invalid fixture");
@@ -365,6 +369,7 @@ export function startupSpeechFixturePlan(args: readonly string[]) {
   return { fixture, modes };
 }
 
+/** Dispatch the CLI-selected fixture or provider trials and print their diagnostics. */
 async function main() {
   const { fixture, modes } = startupSpeechFixturePlan(process.argv);
   if (process.argv.includes("--fixture-only")) {

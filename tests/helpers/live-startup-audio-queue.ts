@@ -5,14 +5,17 @@ export class StartupAudioQueue {
   private active = false;
   private draining = false;
   private bytes = 0;
+  /** Bound retained startup audio with maxBytes; send only after the readiness predicate passes. */
   constructor(
     private readonly send: (pcm: Buffer) => void,
     private readonly isReady: () => boolean,
     private readonly maxBytes = 320_000, // ten seconds, fail instead of silently losing words
   ) {}
+  /** Bytes retained for replay; drained or stopped audio is excluded. */
   get queuedBytes() {
     return this.bytes;
   }
+  /** Copy captured PCM into FIFO, or send directly once replay is complete. */
   push(pcm: Uint8Array): void {
     if (this.stopped) return;
     if (this.active && !this.draining) {
@@ -27,6 +30,7 @@ export class StartupAudioQueue {
     this.chunks.push(Buffer.from(pcm)); // capture buffers may be reused
     this.bytes += pcm.length;
   }
+  /** Drain FIFO in order only while ready; optional pacing separates sends. */
   async ready(paceMs = 0): Promise<void> {
     if (this.stopped || this.active || !this.isReady()) return;
     this.active = true;
@@ -46,6 +50,7 @@ export class StartupAudioQueue {
       this.draining = false;
     }
   }
+  /** Discard pending startup PCM and ignore subsequent pushes. */
   stop(): void {
     this.stopped = true;
     this.chunks = [];

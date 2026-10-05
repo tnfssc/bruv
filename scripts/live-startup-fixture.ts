@@ -6,6 +6,7 @@ const words = ["amber", "river", "seven", "lighthouse"];
 export const trailingSilenceMs = 1200;
 
 /** Greedy independent token checks: a missing word does not hide later flags. */
+/** Mark expected words found in order, allowing unrelated words between them. */
 function orderedTokenFlags(tokens: string[], expected: string[]) {
   let position = 0;
   return expected.map((word) => {
@@ -17,6 +18,7 @@ function orderedTokenFlags(tokens: string[], expected: string[]) {
 }
 
 /** Fixed flags/counts only; never return or log the provider's transcript. */
+/** Count expected phrase words retained in transcript order, case-insensitively. */
 export function startupWordCounts(transcript: string) {
   const tokens = transcript
     .toLowerCase()
@@ -34,6 +36,7 @@ export function startupWordCounts(transcript: string) {
   };
 }
 
+/** Run a local fixture tool with piped output and a fixed deadline; reject nonzero exits. */
 export async function fixtureCommand(args: string[], input?: Uint8Array): Promise<Buffer> {
   const child = Bun.spawn(args, { stdin: "pipe", stdout: "pipe", stderr: "ignore" });
   if (input) child.stdin.write(input);
@@ -49,6 +52,7 @@ export async function fixtureCommand(args: string[], input?: Uint8Array): Promis
   }
 }
 
+/** Summarize mono PCM16LE levels and sample counts; reject empty or odd-byte input. */
 export function pcmCounts(pcm: Buffer, rate: number) {
   if (!pcm.length || pcm.length % 2) throw new Error("fixture_invalid_pcm");
   let peak = 0,

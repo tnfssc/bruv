@@ -72,6 +72,8 @@ Leave code, proof, reasons, and next steps together. Give agents clear jobs. Sta
 
 From: [shared-memory value](prompts/shared-memory-value.md), [project wisdom](wisdom-system/project-wisdom.md), [PR hygiene](quality/pr-hygiene-final.md), [fast delivery](quality/fast-delivery.md).
 
+Named probe, fixture, and test helpers deserve short JSDoc when their purpose, bounds, or readiness assumptions are not obvious; do not pad anonymous callbacks with boilerplate.
+
 ## Keep learning
 
 - Before big work, read values and wisdom for that work.
