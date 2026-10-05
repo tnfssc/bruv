@@ -26,7 +26,7 @@ export type AudioDiagnostics = {
 /** Error is terminal (static code/message), closed fires exactly once on either failure or normal shutdown.
  * Observers must not throw; observer exceptions are isolated. */
 export type AudioCallbacks = {
-  capture?: (pcm16: Buffer) => void;
+  capture?: (pcm16: Buffer, epoch?: number) => void;
   played?: (queuedMs: number) => void;
   error?: (code: string, message: string, setup?: AudioSetupError) => void;
   closed?: () => void;
@@ -122,6 +122,9 @@ export class LiveAudio {
       }
     | undefined;
   private currentGeneration = 0;
+  private captureGateSupported = false;
+  private captureGated = false;
+  private lastCaptureEpoch = -1;
   readonly diagnostics: AudioDiagnostics = { queuedMs: 0, captureFrames: 0, capturedBytes: 0 };
   private readonly onData = (chunk: Buffer) => this.read(chunk);
   // Drain stderr without retaining or forwarding native diagnostics.
@@ -255,6 +258,7 @@ export class LiveAudio {
     const m = msg as Record<string, unknown>;
     if (this.state === "hello") {
       if (m.type !== "hello" || m.protocol !== 1) throw new Error("Incompatible helper");
+      this.captureGateSupported = m.captureGate === true;
       this.state = "idle";
       this.signal("hello");
       return;
@@ -324,9 +328,12 @@ export class LiveAudio {
     if (m.type === "capture") {
       const pcm = decode(m.data, MAX_CAPTURE);
       if (pcm.length !== MAX_CAPTURE) throw new Error("Invalid capture duration");
+      if (this.captureGated || m.epoch !== undefined) {
+        generation(m.epoch as number);
+      }
       this.diagnostics.captureFrames++;
       this.diagnostics.capturedBytes += pcm.length;
-      this.options.callbacks?.capture?.(pcm);
+      this.options.callbacks?.capture?.(pcm, m.epoch as number | undefined);
       return;
     }
     if (
@@ -341,6 +348,29 @@ export class LiveAudio {
       return;
     }
     throw new Error("Unexpected audio helper event");
+  }
+  /** Opt into capture-origin gating before start with null (muted). Thereafter each
+   * hold uses a strictly increasing nonnegative int32 epoch; null closes the gate.
+   * Capture in gated mode always carries its acquisition epoch, including stale
+   * frames already in the output pipe. The sender MUST compare it to its active
+   * hold and close locally on release. Resolves on stdin acceptance, not gate-open
+   * acknowledgement: native acquisition may deliberately discard the hold's start.
+   * Gated mode cannot be switched back to continuous on this helper instance. */
+  setCaptureGate(epoch: number | null): Promise<void> {
+    if (!["idle", "starting", "running"].includes(this.state))
+      return Promise.reject(new Error("Audio helper not available"));
+    if (!this.captureGateSupported)
+      return Promise.reject(new Error("Audio helper does not support capture-origin gating"));
+    if (epoch !== null) {
+      generation(epoch);
+      if (epoch <= this.lastCaptureEpoch) return Promise.reject(new Error("Capture hold epoch must increase"));
+      this.lastCaptureEpoch = epoch;
+    }
+    this.captureGated = true;
+    return this.send({ type: "capture_gate", epoch }).catch((error) => {
+      this.fail(new Error("Audio helper capture gate failed"));
+      throw error;
+    });
   }
   /** Opens the default audio device only after explicit start; resolves on ready. */
   async start(): Promise<void> {

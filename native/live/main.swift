@@ -69,7 +69,7 @@ import CoreFoundation
 if CommandLine.arguments.count > 1 {
     switch CommandLine.arguments[1] {
     case "--help":
-        print("live-audio: JSON lines on stdin/stdout. Commands: start, play(data, generation), flush(generation), stop. Run --self-test without devices.")
+        print("live-audio: JSON lines on stdin/stdout. Commands: start, play(data, generation), flush(generation), capture_gate(epoch|null), stop. Run --self-test without devices.")
         exit(0)
     case "--self-test":
         let resampler = CaptureResampler()
@@ -102,6 +102,7 @@ final class Live {
     var notification: NSObjectProtocol?
     var starting = false
     var captureRate: Double = 0
+    var lastCaptureEpoch = -1
     var reportedQueuedMs = 0 // output queue only
     var running = false // output queue only
     var zeroSince: DispatchTime? // output queue only
@@ -194,13 +195,15 @@ final class Live {
             phase = "source_connect"
             audio.connect(source, to: audio.mainMixerNode, format: sourceFormat)
             phase = "tap_install"
-            audio.inputNode.installTap(onBus: 0, bufferSize: 1024, format: inputFormat) { [core] buffer, _ in
+            audio.inputNode.installTap(onBus: 0, bufferSize: 1024, format: inputFormat) { [core] buffer, time in
+                let epoch = ll_capture_epoch(core, time.isHostTimeValid ? time.hostTime : 0)
+                guard epoch != -1 else { return }
                 guard let channel = buffer.floatChannelData?[0] else { return }
                 var offset = 0
                 let length = Int(buffer.frameLength)
                 while offset < length {
                     let n = min(Int(LL_CAPTURE_SAMPLES), length - offset)
-                    _ = ll_capture_push(core, channel + offset, Int32(n))
+                    _ = ll_capture_push_epoch(core, channel + offset, Int32(n), epoch)
                     offset += n
                 }
             }
@@ -253,10 +256,14 @@ final class Live {
         var samples = [Float](repeating: 0, count: 1024)
         samples.withUnsafeMutableBufferPointer { ptr in
             while true {
-                let n = Int(ll_capture_pop(core, ptr.baseAddress!))
+                var epoch: Int32 = -1
+                let n = Int(ll_capture_pop_epoch(core, ptr.baseAddress!, &epoch))
                 if n <= 0 { break }
+                guard epoch == ll_capture_current_epoch(core), epoch != -1 else { continue }
                 resampler.feed(UnsafeBufferPointer(start: ptr.baseAddress!, count: n), rate: captureRate) { data in
-                    self.writeEvent(["type":"capture", "data":data.base64EncodedString()])
+                    var message: [String: Any] = ["type":"capture", "data":data.base64EncodedString()]
+                    if epoch >= 0 { message["epoch"] = Int(epoch) }
+                    self.writeEvent(message)
                 }
             }
         }
@@ -285,6 +292,22 @@ final class Live {
     func command(_ c: [String: Any]) {
         guard let type = c["type"] as? String else { error("protocol", "Missing type"); return }
         switch type {
+        case "capture_gate":
+            let epoch: Int
+            if c["epoch"] is NSNull { epoch = -1 }
+            else if let value = integer(c["epoch"]), value >= 0, value > lastCaptureEpoch {
+                epoch = value; lastCaptureEpoch = value
+            } else { error("capture_gate", "Invalid or reused hold epoch"); return }
+            let cutoff = mach_absolute_time()
+            output.sync {
+                ll_capture_gate(self.core, Int32(epoch), cutoff)
+                // Discard packet fragments and AVAudioConverter lookbehind/tails.
+                self.resampler.reset()
+                var discarded = [Float](repeating: 0, count: Int(LL_CAPTURE_SAMPLES))
+                discarded.withUnsafeMutableBufferPointer { ptr in
+                    while ll_capture_pop(self.core, ptr.baseAddress!) > 0 {}
+                }
+            }
         case "start": start()
         case "stop": stop()
         case "flush":
@@ -314,7 +337,7 @@ final class Live {
 let flags = fcntl(STDOUT_FILENO, F_GETFL)
 if flags < 0 || fcntl(STDOUT_FILENO, F_SETFL, flags | O_NONBLOCK) < 0 { _exit(74) }
 let live = Live()
-live.event(["type":"hello", "protocol":1])
+live.event(["type":"hello", "protocol":1, "captureGate":true])
 DispatchQueue.global(qos: .userInitiated).async {
     while let line = readLine() {
         live.inputSlots.wait()
