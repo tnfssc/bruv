@@ -18,3 +18,9 @@ Proof in worktree bruv/review-and-upgrade-pi-1.0.3-host-seams-51316c7a:
 - Focused integration tests: 85 passed, 0 failed, 616 assertions across tests/pi-host.test.ts, tests/conversation-density.test.ts, tests/foreground-execution-sdk.test.ts, and tests/rolling-activity.test.ts. Coverage includes fail-closed drift/version checks, idempotence, all-files-before-write, built-in removal, source/compiled CLI checks, and Pi UI integration.
 
 Gaps: full Linux CI/full suite, live provider behavior, rendered terminal acceptance, and release validation were not run. Parent should run full Linux CI after integration.
+
+## Parent integration follow-up
+
+Combined gate at 0a029606 exposed stale pins beyond the focused checks: notice fallback still accepted only 1.0.0, its source link still said v0.87.1, and the saved-startup fixture asserted 1.0.0. Updated these to 1.0.3 and the release notice assertion too. Upstream v1.0.3 LICENSE was fetched from GitHub and matched third_party/pi/LICENSE byte for byte. Generator now passes: 211 production packages, 657,017 bytes. The generated bundle stays in ignored dist/release, as before. Saved-startup checks passed all five scenarios; release-workflows passed all 19 checks.
+
+First full Linux gate: 1,952 passes, 30 skips, seven failures. Six failures were those stale pins. The seventh is a reproducible Home-key navigation failure in long-thread-tui.test.ts on local tmux 3.6a. It still fails alone. task_570aade5 owns diagnosis in /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_570aade5, branch bruv/diagnose-pi-1.0.3-long-thread-home-navig-570aade5. Parent will rerun the combined gate after that result. No green full-gate claim yet.
