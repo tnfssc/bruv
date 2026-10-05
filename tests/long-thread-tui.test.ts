@@ -97,14 +97,14 @@ test("long saved thread keeps history, editor input, and native tool details usa
     await Bun.sleep(500);
     await tmux("send-keys", "-t", "long-thread", "-l", "long-thread-draft");
     await frame("typed", "long-thread-draft");
-    await tmux("send-keys", "-t", "long-thread", "Home");
+    await tmux("send-keys", "-t", "long-thread", "C-Home");
     await frame("oldest", "Saved turn 0");
-    await tmux("send-keys", "-t", "long-thread", "End");
+    await tmux("send-keys", "-t", "long-thread", "C-End");
     await frame("bottom", "LONG_THREAD_READY");
     await tmux("send-keys", "-t", "long-thread", "C-o");
     // Ctrl+O preserves the reading anchor; it does not jump to the last tool.
     await frame("expanded-anchor", ["10 tools called", "DETAIL_saved-"]);
-    await tmux("send-keys", "-t", "long-thread", "End");
+    await tmux("send-keys", "-t", "long-thread", "C-End");
     const expanded = await frame("expanded", ["DETAIL_saved-99-9", "long-thread-draft"]);
     expect(expanded).toMatch(/^\s*DETAIL_saved-99-9\s*[│┃]?\s*$/m);
     await tmux("send-keys", "-t", "long-thread", "C-o");
@@ -127,10 +127,10 @@ test("long saved thread keeps history, editor input, and native tool details usa
     await frame("reopened-typed", "reopened-draft");
     await tmux("send-keys", "-t", "long-thread", "C-o");
     await frame("reopened-expanded-anchor", ["10 tools called", "DETAIL_saved-"]);
-    await tmux("send-keys", "-t", "long-thread", "Home");
+    await tmux("send-keys", "-t", "long-thread", "C-Home");
     const oldestDetail = await frame("reopened-oldest-detail", ["Saved turn 0", "DETAIL_saved-0-0"]);
     expect(oldestDetail).toMatch(/^\s*DETAIL_saved-0-0\s*[│┃]?\s*$/m);
-    await tmux("send-keys", "-t", "long-thread", "End");
+    await tmux("send-keys", "-t", "long-thread", "C-End");
     const latestDetail = await frame("reopened-latest-detail", ["DETAIL_saved-99-9", "reopened-draft"]);
     expect(latestDetail).toMatch(/^\s*DETAIL_saved-99-9\s*[│┃]?\s*$/m);
     await tmux("send-keys", "-t", "long-thread", "C-o");
