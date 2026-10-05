@@ -57,3 +57,18 @@ The remote probe compares a fixed utterance; it does not prove continuous captur
 Integrated FIFO rerun: 13 passed, 0 failed. First run lacked @google/genai;
 `bun install --frozen-lockfile` fixed the local dependency gap. Lockfile unchanged.
 `git diff --check` passed.
+
+## Key lookup correction
+
+User said they had supplied a key. Parent checked only metadata and found
+`~/.bruv/live.env` exists with GEMINI_API_KEY. The initial canonical-only probe
+missed this supported import source. Do not say all credentials are absent.
+Canonical storage and ambient env lack Google/OpenAI API keys, but the supplied
+Gemini file is present. No key was printed, copied, or imported.
+
+Follow-up task: task_f9d283db. Use loadLiveKey for an explicit Google-only test.
+Worktree: /home/tnfssc/.bruv/worktrees/t3code-bc92964a-5442693331ce-task_f9d283db
+Branch: bruv/run-gemini-buffered-speech-proof-f9d283db
+At most two paid sessions; production and canonical auth stay unchanged.
+Await result, check it, and bring test-only changes back.
+Values unchanged: this corrects a missed lookup, covered by go-look and truthful-proof.
