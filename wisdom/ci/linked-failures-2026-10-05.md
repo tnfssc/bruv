@@ -1,26 +1,33 @@
 # Linked CI failures, 2026-10-05
 
-## Work in progress
+## Finished
 
-User sent two failing runs. Parent checkout starts at df6471cc (develop's merged dependency PR).
+User sent daily dependency run 37321109544 (job 111800116876) and develop CI run 37297354419. Parent started at df6471cc. Fixes are committed locally on t3code/inspect-github-actions-run. Nothing was pushed; no hosted rerun, PR, macOS lane or release acceptance is claimed.
 
-- Daily dependency run 37321109544, job 111800116876: candidate Pi 1.0.3 fails scripts/pi-host-adaptation.ts's exact 1.0.0 version check before typecheck. Review upstream and adapt; do not bypass the guard.
-- CI run 37297354419: Linux fails only real TUI keeps questions near composer after progress, cancellation and reload (subprocess exit 1, expected 0). macOS passed. Need actual child error before calling it a flake.
+- e23e363d: question TUI fixture keeps its private tmux server alive across CLI reload. The failed child was the second tmux new-session, not Bruv. Killing the last session races automatic server shutdown. All UI assertions and budgets remain. Historical CI discarded tmux stderr; the lifecycle race reproduced locally on 3.6a, not locally built 3.4. See ../questions/linux-tmux-reload-ci.md.
+- 0a029606: reviewed Pi 1.0.3 and rebased the coding-agent patch and exact host hashes. Keep fail-closed source, result and version checks. See ../dependencies/pi-1.0.3-root-host-audit.md.
+- a89075aa: notice generation and saved-startup tests had stale Pi pins. Updated them to 1.0.3. Fetched upstream v1.0.3 LICENSE; it matched third_party/pi/LICENSE byte for byte. The generated bundle stays in ignored dist/release.
+- 648403b3: long-thread fixture uses Ctrl+Home/Ctrl+End for transcript scrolling. Bare Home/End move the editor cursor with extended keys. All history and detail assertions remain. See ../tasks-ui/long-thread-detail-replay-2026-10-04.md.
+- e767f8e3: ran the ordinary updater and included the remaining actual daily candidate. MCP SDK is 1.32.1; es-module-lexer is 3.0.3. Lockfile also updates @hono/node-server to 2.1.3 and hono to 4.13.13. See ../dependencies/daily-dependency-prs.md.
 
-## Owners and pickup
+## Proof and limits
 
-- Pi repair: task_51316c7a. Worktree /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_51316c7a. Branch bruv/review-and-upgrade-pi-1.0.3-host-seams-51316c7a. Earlier task_68f015e9 made no changes and was stopped after 18 minutes without tools following a parse error. Its clean worktree remains at /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_68f015e9.
-- TUI repair: task_571cd247. Worktree /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_571cd247. Branch bruv/fix-linux-real-tui-questions-test-failur-571cd247. Worker will commit code and feature wisdom.
-- Parent reviews and integrates both commits, then checks the combined result.
+First combined gate exposed six stale-pin failures and the key mismatch: 1,952 passed, 30 skipped, seven failed. These failures were fixed, not hidden.
 
-Both worktree setup commands passed frozen install and asset preparation. Local tool versions: Bun 1.4.2. pnpm not on parent PATH yet. CI uses shared scripts/ci.sh and requires tmux. TUI repair is reviewed and integrated as e23e363d (worker d0af3dd0). Failure was the second tmux new-session, not the CLI exit. The fixture now keeps its private server alive across CLI reload and retains stderr in assertions. Original assertions and budgets remain. Worker shared Linux gate passed 1,959 tests, 30 skips, zero failures, plus paired smoke on Bash, tmux 3.4 and four CPUs. See ../questions/linux-tmux-reload-ci.md for reproduced lifecycle race and limits. Pi repair is still running. Combined validation comes after it.
+Combined repairs at 648403b3 passed shared Linux CI: 1,959 tests, 30 opt-in skips, zero failures, 35,555 assertions across 272 files. Frozen install, format, lint, typecheck, paired build, offline transport and paired standalone smoke passed. Log: /home/tnfssc/.bruv/ci-linked-failures-2026-10-05-final.log. Earlier failing log: /home/tnfssc/.bruv/ci-linked-failures-2026-10-05.log.
 
-Values unchanged so far. Existing proof and confidence rules already cover this work.
+Actual remaining daily candidate a0a0e547 passed the same full gate in its worker checkout: 1,959 passed, 30 skipped, zero failed, plus paired smoke and notice generation. Parent integrated it as e767f8e3. Compared all source, tests, scripts, patches, package.json and bun.lock against the tested worker commit: identical. Reused that proof instead of repeating the full suite. Parent frozen install, preparation and notice generation passed after integration (211 packages; 657,015-byte notice bundle).
 
-Pi repair integrated as 0a029606 (worker b7ba1c88). Parent fixed attribution and saved-startup pins found by full CI. See ../dependencies/pi-1.0.3-root-host-audit.md. Current blocker: long-thread Home navigation; worker task_570aade5 owns diagnosis. Shared CI log: /home/tnfssc/.bruv/ci-linked-failures-2026-10-05.log. First gate passed 1,952 tests, skipped 30, failed seven; six stale-pin failures are fixed and focused checks pass. The Home failure still reproduces.
+Still needs care: push/review and hosted CI on this branch. Paid providers, devices, macOS and release behavior were not checked. This proves the local actual dependency-update validation path, not hosted PR creation.
 
-Navigation diagnosis: Pi 1.0.3 uses Ctrl+Home/Ctrl+End for transcript scrolling. Bare Home/End move the editor cursor with tmux extended keys. Worker 16887eec corrected the fixture keys; all history/detail assertions remain. Integrated as 648403b3. Focused check: one test, 1,049 assertions passed. Worker path /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_570aade5 is clean. Final combined Linux gate is task_ca703c2e; log /home/tnfssc/.bruv/ci-linked-failures-2026-10-05-final.log. Wait for completion, then record results.
+## Worker pickup
 
-Final combined Linux gate at 648403b3 passed: 1,959 tests, 30 opt-in skips, zero failures, 35,555 assertions across 272 files (73.56s root suite). Frozen install, format, lint, typecheck, paired build, offline transport and paired standalone smoke all passed. No hosted, macOS, paid-provider, device or release acceptance claimed.
+All worker paths remain under /home/tnfssc/.bruv/worktrees/:
 
-The daily run also had MCP SDK 1.32.1 and es-module-lexer 3.0.3 changes. They are not in the Pi-only fix yet. Worker task_a6dbea72 now runs the real update script and validates that remaining candidate in /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_a6dbea72, branch bruv/validate-remaining-daily-dependency-cand-a6dbea72. Parent integrates only after proof.
+- t3code-fcaffdf2-5442693331ce-task_571cd247, branch bruv/fix-linux-real-tui-questions-test-failur-571cd247, worker d0af3dd0.
+- t3code-fcaffdf2-5442693331ce-task_51316c7a, branch bruv/review-and-upgrade-pi-1.0.3-host-seams-51316c7a, worker b7ba1c88.
+- t3code-fcaffdf2-5442693331ce-task_570aade5, branch bruv/diagnose-pi-1.0.3-long-thread-home-navig-570aade5, worker 16887eec.
+- t3code-fcaffdf2-5442693331ce-task_a6dbea72, branch bruv/validate-remaining-daily-dependency-cand-a6dbea72, worker a0a0e547. Full gate logs are in its artifacts/ci.
+- Earlier task_68f015e9 made no changes and was stopped after a tool-call parse error and no further tool progress. Its clean worktree remains at t3code-fcaffdf2-5442693331ce-task_68f015e9.
+
+Values unchanged. Existing checked dependency behavior, shipped-path proof and honest scope rules cover these findings. No new general rule was needed.
