@@ -306,7 +306,7 @@ describe("release automation", () => {
       expect(result.exitCode, result.stderr.toString()).toBe(0);
       const notices = await Bun.file(output).text();
       for (const name of ["pi-coding-agent", "pi-codemode", "pi-mcp"]) {
-        expect(notices).toContain(`@earendil-works/${name}@1.0.0`);
+        expect(notices).toContain(`@earendil-works/${name}@1.0.3`);
       }
       expect(notices).toContain("proxy-agent-negotiate@1.1.0");
       expect(notices).toContain("Nathan Rajlich");

@@ -167,3 +167,10 @@ run, or this unpushed local template, as proof of hosted PR creation.
 
 Values reviewed again: existing honest proof, checked dependency behavior, and
 durable handoff guidance applies. No new general value was needed.
+
+
+## Actual remaining daily-update candidate (2026-10-05)
+
+From worktree `/home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_a6dbea72`, starting at parent commit `648403b3`, ran the ordinary `bun scripts/update-dependencies.ts` (no fixture flag or exclusion bypass). It updated root `@modelcontextprotocol/sdk` 1.27.1 → 1.32.1 and `es-module-lexer` ^3.0.2 → ^3.0.3. Lockfile transitives: `@hono/node-server` 1.19.17 → 2.1.3 and `hono` 4.13.12 → 4.13.13. The generated `artifacts/dependency-update/versions.md` records both root and transitive changes; `bun run generate:notices` completed for 211 production packages.
+
+`SHELL=/bin/bash bun run ci` passed on this candidate: 1,959 passed, 30 skipped, 0 failed (1,989 tests / 272 files), plus standalone paired smoke passed. Existing lint/config notices remain informational. Candidate is local/unpushed; no hosted PR, macOS lane, or release validation was done. Pi exclusions and source guard were unchanged. Values unchanged: checked dependency behavior and honest proof apply; this result validates this actual update path, not hosted PR creation.

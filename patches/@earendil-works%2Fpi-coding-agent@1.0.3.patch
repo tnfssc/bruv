@@ -1,18 +1,18 @@
 diff --git a/dist/modes/interactive/interactive-mode.js b/dist/modes/interactive/interactive-mode.js
-index 3a9ad2517397f38048fcebbea0ecb8c830c9ef02..2b3902dc897c337937651ff18fafc16fefe252ea 100644
+index 7827bcea23a7be294f118735077c4eb7cf5370ec..68bdd115955aa7cb527e1badcfbaecff345d8bf3 100644
 --- a/dist/modes/interactive/interactive-mode.js
 +++ b/dist/modes/interactive/interactive-mode.js
-@@ -699,6 +699,9 @@ export class InteractiveMode {
+@@ -702,6 +702,9 @@
          // Start the UI before initializing extensions so session_start handlers can use interactive dialogs
          this.ui.start();
          this.isInitialized = true;
 +        // Saved transcripts must get their first paint with all grammars ready. Start
 +        // after mounting the editor, overlapping terminal colors, tools, and extensions.
 +        const highlightLanguagesReady = this.session.state.messages.length > 0 ? loadAllHighlightLanguages() : undefined;
+         this.ensurePngTranscoder();
          this.themeController.applyFromSettings();
          // The header and startup notices bake theme colors into their text, so build them once the terminal
-         // reported its colors. This ends at the terminal's DA1 reply, or after 100 ms if it answers nothing.
-@@ -777,7 +780,9 @@ export class InteractiveMode {
+@@ -781,7 +784,9 @@
          this.ui.requestRender();
          // Initialize extensions first so resources are shown before messages
          await this.rebindCurrentSession();
@@ -23,7 +23,7 @@ index 3a9ad2517397f38048fcebbea0ecb8c830c9ef02..2b3902dc897c337937651ff18fafc16f
          this.renderInitialMessages();
          // Set up theme file watcher
          onThemeChange(() => {
-@@ -791,14 +796,17 @@ export class InteractiveMode {
+@@ -795,14 +800,17 @@
          });
          // Initialize available provider count for footer display
          await this.updateAvailableProviderCount();

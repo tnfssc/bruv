@@ -69,8 +69,14 @@ function handoffTool(message: string): ToolExecutionComponent {
     { showImages: false },
     {
       renderShell: "self",
-      renderCall: (args: { code?: unknown }, theme: any, context: any) =>
-        executeInputPreview(args.code, context.expanded, theme, context.state, context.executionStarted),
+      renderCall: (args: unknown, theme: any, context: any) =>
+        executeInputPreview(
+          (args as { code?: unknown }).code,
+          context.expanded,
+          theme,
+          context.state,
+          context.executionStarted,
+        ),
       renderResult: (result: any, options: { expanded: boolean }, theme: any, context: any) =>
         executeOutputPreview(result, options.expanded, context.isError, theme, undefined, context.state),
     },
