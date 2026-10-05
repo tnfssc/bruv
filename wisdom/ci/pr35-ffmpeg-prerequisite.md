@@ -23,3 +23,10 @@ CI now conditionally installs ffmpeg (apt/brew) and prints its version before ea
 - `bun test tests/claude-compat-runtime.test.ts`: isolated connector wrapper passed (1 test, 1 assertion; child suite exited 0), /tmp/pr35-connector-focus.log. The full-suite shutdown failure did not reproduce alone; its cause remains unproven.
 
 No paid providers, devices, credential edits, push, merge or release. Parent owns CodeRabbit/integration/merge/release. Hosted CI must prove native macOS/Homebrew and full green status; local full gate is not claimed green.
+
+## Release workflow follow-up
+
+The release job also runs bun test ./tests, including the default natural-fixture conversion test. Its existing single prerequisite apt install previously installed only tmux. Added ffmpeg to that same install command (no additional setup job); a regression test asserts the prerequisite step precedes the Deterministic tests step. Production code is unchanged.
+
+
+Validation for this follow-up: bun test tests/release-workflows.test.ts passed (20 tests, 323 assertions); bun run format:check passed (747 files). bun run lint exited 0, reporting existing diagnostics across the repository; changed-file Biome check also exited 0 with four pre-existing workflow-placeholder warnings.

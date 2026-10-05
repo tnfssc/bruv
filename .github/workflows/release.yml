@@ -121,7 +121,7 @@ jobs:
           restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
         shell: bash
-        run: sudo apt-get update && sudo apt-get install -y tmux
+        run: sudo apt-get update && sudo apt-get install -y tmux ffmpeg
       - name: Prepare logs
         run: mkdir -p artifacts/release dist/release
       - name: Validate tag matches package version

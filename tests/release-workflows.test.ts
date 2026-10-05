@@ -155,6 +155,17 @@ describe("release automation", () => {
     expect(commands).not.toMatch(/API_KEY|live.env|SoxAudioAdapter|\b(rec|play) /);
   });
 
+  test("release installs ffmpeg before deterministic tests", async () => {
+    const workflow = Bun.YAML.parse(await read(".github/workflows/release.yml")) as {
+      jobs: Record<string, { steps: { name?: string; run?: string }[] }>;
+    };
+    const steps = workflow.jobs.release!.steps;
+    const prerequisites = steps.findIndex((step) => step.run?.includes("apt-get install -y tmux ffmpeg"));
+    const deterministicTests = steps.findIndex((step) => step.name === "Deterministic tests");
+    expect(prerequisites).toBeGreaterThanOrEqual(0);
+    expect(deterministicTests).toBeGreaterThan(prerequisites);
+  });
+
   test("tag release is version-gated and builds Linux x64/arm64, macOS arm64, and Android binaries", async () => {
     const workflow = await read(".github/workflows/release.yml");
     expect(() => Bun.YAML.parse(workflow)).not.toThrow();
