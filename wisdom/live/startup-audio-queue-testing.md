@@ -155,3 +155,16 @@ Await result, check code/evidence and bring useful changes back.
 Follow-up: [Gemini control and framed retention investigation](gemini-buffered-speech-investigation.md).
 Normal automatic-VAD control also failed; manual-framed control/paced/burst recognized
 the fixture. This isolates retention from detector acceptance, not a production VAD fix.
+
+## Natural speech check and remaining matcher gap
+
+Natural-speech test commit 3532a250 brought back as bef1fa78.
+Integrated focused suite: 42 passed, 0 failed. Natural control, paced and burst
+all produced automatic turns and replies. Exact word matcher reported 3/4 in
+all modes. No evidence yet whether it is numeric rendering or missing speech.
+Final diagnostic job: task_318aef23.
+Worktree: /home/tnfssc/.bruv/worktrees/t3code-bc92964a-5442693331ce-task_318aef23
+Branch: bruv/resolve-live-replay-word-check-318aef23
+At most four additional sessions: generation plus control/paced/burst.
+Check fixed token flags and seven/7 without logging transcripts. Do not loosen
+arbitrary matching or change production. Await result and bring useful fix back.
