@@ -1,0 +1,396 @@
+{
+  "total_runs": 587,
+  "date_min": "2026-09-05T23:12:12Z",
+  "date_max": "2026-10-05T18:13:26Z",
+  "outcomes": {
+    "all": {
+      "failure": 133,
+      "success": 419,
+      "cancelled": 33,
+      "action_required": 1,
+      "skipped": 1
+    }
+  },
+  "by_workflow": {
+    "CI": {
+      "failure": 81,
+      "success": 254,
+      "cancelled": 29,
+      "action_required": 1
+    },
+    "Release": {
+      "success": 148,
+      "failure": 42,
+      "cancelled": 4,
+      "skipped": 1
+    },
+    "Daily dependency PR": {
+      "failure": 4,
+      "success": 4
+    },
+    "Native Live": {
+      "success": 6
+    },
+    "bun in /. - Update #1599485157": {
+      "success": 1
+    },
+    "bun in /. - Update #1599326797": {
+      "success": 1
+    },
+    ".github/workflows/release.yml": {
+      "failure": 1
+    },
+    ".github/workflows/ci.yml": {
+      "failure": 1
+    },
+    "Native Live Lab": {
+      "success": 5,
+      "failure": 4
+    }
+  },
+  "by_event": {
+    "CI / pull_request": {
+      "failure": 28,
+      "success": 39,
+      "cancelled": 9,
+      "action_required": 1
+    },
+    "Release / workflow_dispatch": {
+      "success": 35,
+      "failure": 17
+    },
+    "CI / push": {
+      "success": 211,
+      "cancelled": 20,
+      "failure": 50
+    },
+    "Daily dependency PR / schedule": {
+      "failure": 3,
+      "success": 2
+    },
+    "CI / schedule": {
+      "failure": 3,
+      "success": 2
+    },
+    "CI / workflow_dispatch": {
+      "success": 2
+    },
+    "Native Live / push": {
+      "success": 5
+    },
+    "Release / push": {
+      "success": 113,
+      "failure": 25,
+      "cancelled": 4,
+      "skipped": 1
+    },
+    "Daily dependency PR / workflow_dispatch": {
+      "success": 2,
+      "failure": 1
+    },
+    "bun in /. - Update #1599485157 / dynamic": {
+      "success": 1
+    },
+    "bun in /. - Update #1599326797 / dynamic": {
+      "success": 1
+    },
+    ".github/workflows/release.yml / push": {
+      "failure": 1
+    },
+    ".github/workflows/ci.yml / push": {
+      "failure": 1
+    },
+    "Native Live / workflow_dispatch": {
+      "success": 1
+    },
+    "Native Live Lab / push": {
+      "success": 4,
+      "failure": 2
+    },
+    "Native Live Lab / workflow_dispatch": {
+      "success": 1,
+      "failure": 2
+    }
+  },
+  "reruns": [
+    {
+      "id": 37219760308,
+      "name": "Release",
+      "attempt": 2,
+      "conclusion": "success",
+      "sha": "36d7c5922ed9848435748effc06e0cff175ade35"
+    },
+    {
+      "id": 36684947568,
+      "name": "CI",
+      "attempt": 2,
+      "conclusion": "success",
+      "sha": "cc5e36a768e371fb3cbdc4f9a4086fa553b527cb"
+    },
+    {
+      "id": 36309940829,
+      "name": "CI",
+      "attempt": 2,
+      "conclusion": "success",
+      "sha": "e7e92b47f8ddde026527ba2a58b83faf8990eff0"
+    },
+    {
+      "id": 35007325992,
+      "name": "Release",
+      "attempt": 2,
+      "conclusion": "success",
+      "sha": "385808e458c9e01bf573921c1f14bc298eb13a2c"
+    }
+  ],
+  "failed_steps": [
+    {
+      "workflow": "CI",
+      "step": "Require the planned validation outcomes",
+      "count": 42,
+      "runs": [
+        37354320182, 37333558132, 37297354419, 37222631866, 37219289504, 37210353063, 37193550461, 37191433942,
+        37190862525, 37189939505, 37189627215, 37188229505, 37186756720, 37186688466, 37184257701, 37182775319,
+        37144539047, 37143983695, 37066171522, 37016177565, 37014485451, 37010450058, 36930539074, 36915876034,
+        36913111305, 36904440793, 36899822725, 36889019440, 36874686991, 36872054281, 36868326217, 36867656383,
+        36862326414, 36859208698, 36847796148, 36840532890, 36840408373, 36828791812, 36818360286, 36780027410,
+        36775922476, 36774743001
+      ]
+    },
+    {
+      "workflow": "CI",
+      "step": "Shared Linux CI gate",
+      "count": 37,
+      "runs": [
+        37144539047, 37143983695, 37066171522, 37016177565, 37014485451, 37010450058, 36930539074, 36915876034,
+        36913111305, 36904440793, 36899822725, 36889019440, 36872054281, 36868326217, 36867656383, 36862326414,
+        36859208698, 36847796148, 36840532890, 36840408373, 36828791812, 36818360286, 36780027410, 36775922476,
+        36774743001, 36702382092, 36684110489, 36301504562, 36300634714, 36299914699, 36299415065, 36249818642,
+        36249807680, 36248996775, 36248821923, 36246843468, 36234271598
+      ]
+    },
+    {
+      "workflow": "CI",
+      "step": "Shared Linux CI gate (paired binaries, external T3)",
+      "count": 16,
+      "runs": [
+        37354320182, 37333558132, 37297354419, 37222631866, 37219289504, 37210353063, 37193550461, 37191433942,
+        37190862525, 37189939505, 37189627215, 37188229505, 37186756720, 37186688466, 37184257701, 37182775319
+      ]
+    },
+    {
+      "workflow": "Release",
+      "step": "Deterministic tests",
+      "count": 16,
+      "runs": [
+        37188844249, 37182775259, 37143993104, 37064291977, 36813685812, 36249829897, 36249818536, 36249014288,
+        36248996799, 36234271607, 36162937959, 36110554528, 35006663137, 34858461029, 34776153408, 34070587555
+      ]
+    },
+    {
+      "workflow": "CI",
+      "step": "Deterministic tests",
+      "count": 13,
+      "runs": [
+        36106720762, 35834340691, 35616678896, 35006663124, 35006659223, 34858462658, 34858460981, 34821145938,
+        34070608639, 34070587967, 34070587557, 34061397044, 34019032172
+      ]
+    },
+    {
+      "workflow": "Release",
+      "step": "Format check",
+      "count": 7,
+      "runs": [36702551217, 36702382027, 36301504573, 36300634707, 36299914691, 36299415034, 35988433701]
+    },
+    {
+      "workflow": "CI",
+      "step": "Shared macOS Live gate",
+      "count": 6,
+      "runs": [37354320182, 36913111305, 36874686991, 36238139467, 36234271598, 36162060645]
+    },
+    {
+      "workflow": "CI",
+      "step": "Format check",
+      "count": 5,
+      "runs": [35988433617, 35905027869, 35902056499, 35701200827, 34119189282]
+    },
+    {
+      "workflow": "Daily dependency PR",
+      "step": "Validate actual candidate with shared Linux CI",
+      "count": 4,
+      "runs": [37321109544, 37200481788, 36863592468, 36684110833]
+    },
+    {
+      "workflow": "Release",
+      "step": "Require external unmodified T3 native acceptance from final Linux pair",
+      "count": 3,
+      "runs": [37198016485, 37183052832, 37182435634]
+    },
+    {
+      "workflow": "Release",
+      "step": "Require real UI from final Linux binary, then reload",
+      "count": 3,
+      "runs": [36766448293, 36762688740, 36761523355]
+    },
+    {
+      "workflow": "CI",
+      "step": "Deterministic Live tests (fake audio and provider)",
+      "count": 3,
+      "runs": [36097573940, 36016568821, 36008226396]
+    },
+    {
+      "workflow": "Native Live Lab",
+      "step": "Compile Apple voice-processing helper and self-test",
+      "count": 3,
+      "runs": [35903548678, 35903523994, 35902056407]
+    },
+    {
+      "workflow": "CI",
+      "step": "Validate web backend",
+      "count": 3,
+      "runs": [35688934797, 35614002299, 35613927360]
+    },
+    {
+      "workflow": "Release",
+      "step": "Exercise paired versions, bruv updater and embedded helper",
+      "count": 2,
+      "runs": [37205537711, 37204735419]
+    },
+    {
+      "workflow": "Release",
+      "step": "Build release binaries with embedded web application",
+      "count": 2,
+      "runs": [37010449307, 36818925498]
+    },
+    {
+      "workflow": "Release",
+      "step": "Publish GitHub release",
+      "count": 2,
+      "runs": [36252109334, 36250918655]
+    },
+    {
+      "workflow": "Release",
+      "step": "Download pinned official T3 for native gate (test dependency only)",
+      "count": 1,
+      "runs": [37182001166]
+    },
+    {
+      "workflow": "Release",
+      "step": "Typecheck",
+      "count": 1,
+      "runs": [36684110746]
+    },
+    {
+      "workflow": "Release",
+      "step": "Lint",
+      "count": 1,
+      "runs": [35998994804]
+    },
+    {
+      "workflow": "Release",
+      "step": "Verify native helper from Mac runner",
+      "count": 1,
+      "runs": [35909683064]
+    },
+    {
+      "workflow": "Native Live Lab",
+      "step": "Build opt-in CLI candidate (no devices or API)",
+      "count": 1,
+      "runs": [35903739250]
+    },
+    {
+      "workflow": "Release",
+      "step": "Validate tag matches package version",
+      "count": 1,
+      "runs": [35834533252]
+    },
+    {
+      "workflow": "Release",
+      "step": "Validate web backend",
+      "count": 1,
+      "runs": [34873549248]
+    },
+    {
+      "workflow": "Release",
+      "step": "Build web sidecar",
+      "count": 1,
+      "runs": [34849330586]
+    }
+  ],
+  "failed_jobs": [
+    {
+      "workflow": "CI",
+      "job": "CI policy",
+      "count": 42
+    },
+    {
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "count": 41
+    },
+    {
+      "workflow": "Release",
+      "job": "Linux, macOS, and Android release",
+      "count": 25
+    },
+    {
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "count": 19
+    },
+    {
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "count": 14
+    },
+    {
+      "workflow": "CI",
+      "job": "Local Live / macOS (no audio devices or API)",
+      "count": 6
+    },
+    {
+      "workflow": "Release",
+      "job": "Linux x64 release",
+      "count": 5
+    },
+    {
+      "workflow": "Daily dependency PR",
+      "job": "validate",
+      "count": 4
+    },
+    {
+      "workflow": "Release",
+      "job": "Final Linux pair against unchanged official 2644 (bounded gates)",
+      "count": 4
+    },
+    {
+      "workflow": "Native Live Lab",
+      "job": "macOS native helper (no devices)",
+      "count": 4
+    },
+    {
+      "workflow": "CI",
+      "job": "Full validation / macOS Live (no devices or API)",
+      "count": 3
+    },
+    {
+      "workflow": "Release",
+      "job": "Final Linux release browser boot and reload",
+      "count": 3
+    },
+    {
+      "workflow": "Release",
+      "job": "Actual Mac release binary and bruv updater (no devices)",
+      "count": 2
+    },
+    {
+      "workflow": "Release",
+      "job": "Publish stable release after native and updater gates",
+      "count": 2
+    },
+    {
+      "workflow": "Release",
+      "job": "Linux and macOS release",
+      "count": 1
+    }
+  ]
+}

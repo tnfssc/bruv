@@ -1,0 +1,20 @@
+Local Linux gate, 2026-10-05
+Integrated code/test HEAD: a15352ad (plus audit/hand-off documentation)
+Command: env SHELL=/bin/bash CI_LOG_DIR=artifacts/release/ci bun run ci
+Job: task_e5a3ad2a
+Exit: 0
+
+Passed stages: frozen install, format, lint (existing warnings), typecheck,
+paired build, offline default OpenAI transport, full root suite, paired smoke.
+
+1962 pass
+30 skip (opt-in acceptance/provider suites)
+0 fail
+35598 expect() calls
+1992 tests across 272 files, 74.00s
+Standalone paired smoke passed; not native parity acceptance.
+
+Full driver log: artifacts/ci-followup/full-linux.log
+Stage logs: artifacts/release/ci/*.log
+No hosted CI/Release, real Mac, external native final-artifact, or device/provider run.
+No prepush/actionlint/hook implementation, ffmpeg fix, push, PR or release.

@@ -1,0 +1,3813 @@
+{
+  "scope": ["CI", "Daily dependency PR", "Native Live Lab"],
+  "cutoff": "2026-10-05T18:30Z",
+  "counts": {
+    "inspected_failure_logs": 93,
+    "distinct_failure_runs": 90,
+    "by_workflow": {
+      "CI": 85,
+      "Native Live Lab": 4,
+      "Daily dependency PR": 4
+    },
+    "categories_unique_jobs_nonexclusive": {
+      "assertion": 14,
+      "assertion-fixture": 1,
+      "assertion-order": 6,
+      "assertion-protocol": 1,
+      "assertion-ui": 7,
+      "assertion-unresolved": 1,
+      "build": 1,
+      "build-dependency": 1,
+      "command-unresolved": 1,
+      "compile-type": 3,
+      "dependency-assertion": 1,
+      "dependency-compatibility": 3,
+      "environment": 3,
+      "environment-build": 4,
+      "environment-fixture": 7,
+      "environment-process-unresolved": 2,
+      "format": 16,
+      "intermittent-assertion": 3,
+      "mixed": 1,
+      "performance-assertion": 2,
+      "timeout-unresolved": 3,
+      "timing-sensitive": 7,
+      "timing-sensitive-unconfirmed": 1,
+      "transport-unresolved": 1,
+      "type": 3
+    }
+  },
+  "count_unit": "unique inspected gzip failed-job logs; multi-signature job is not multiple failed jobs; CI policy excluded; Release excluded",
+  "signature_groups": [
+    {
+      "key": "execute-launch-budget",
+      "category": "timing-sensitive",
+      "signature": "200ms outer execute expires before a job exists; TypeError reading task.status",
+      "jobs": [
+        {
+          "run_id": 34019032172,
+          "job_id": 101448072475
+        }
+      ],
+      "assessment": "Same SHA bacac34b has successful Linux run 34019032179. Missing task at a hard 200ms launch boundary supports a timing-sensitive fixture; not a shell-job cancellation regression proved by this log."
+    },
+    {
+      "key": "handoff-cleanup-message",
+      "category": "assertion",
+      "signature": "Expected cleanup failed; received Error stack without message",
+      "jobs": [
+        {
+          "run_id": 34061397044,
+          "job_id": 101562451562
+        }
+      ],
+      "assessment": "Error evidence/assertion mismatch, not a timeout."
+    },
+    {
+      "key": "subagent-model-fixture",
+      "category": "assertion",
+      "signature": "Expected second spawn failed; received No model is available for the sub-agent",
+      "jobs": [
+        {
+          "run_id": 34070587557,
+          "job_id": 101587069000
+        },
+        {
+          "run_id": 34070587967,
+          "job_id": 101587070213
+        },
+        {
+          "run_id": 34070608639,
+          "job_id": 101587127164
+        }
+      ],
+      "assessment": "Repeated fixture/model-selection failure on September 7, including identical-SHA duplicate runs. No provider outage is established."
+    },
+    {
+      "key": "format-and-json-parse",
+      "category": "format",
+      "signature": "Biome formatter diffs / JSON parse errors; format:check exits 1",
+      "jobs": [
+        {
+          "run_id": 34119189282,
+          "job_id": 101733021188
+        },
+        {
+          "run_id": 35701200827,
+          "job_id": 106659699257
+        },
+        {
+          "run_id": 35902056499,
+          "job_id": 107320448033
+        },
+        {
+          "run_id": 35905027869,
+          "job_id": 107330445083
+        },
+        {
+          "run_id": 35988433617,
+          "job_id": 107596494317
+        },
+        {
+          "run_id": 36246843468,
+          "job_id": 108417501380
+        },
+        {
+          "run_id": 36299415065,
+          "job_id": 108564171346
+        },
+        {
+          "run_id": 36299914699,
+          "job_id": 108565541093
+        },
+        {
+          "run_id": 36300634714,
+          "job_id": 108567498640
+        },
+        {
+          "run_id": 36301504562,
+          "job_id": 108569868230
+        },
+        {
+          "run_id": 36702382092,
+          "job_id": 109844592627
+        },
+        {
+          "run_id": 36702551277,
+          "job_id": 109845129624
+        },
+        {
+          "run_id": 36867656383,
+          "job_id": 110387198138
+        },
+        {
+          "run_id": 37186688466,
+          "job_id": 111390017769
+        },
+        {
+          "run_id": 37186756720,
+          "job_id": 111390227928
+        },
+        {
+          "run_id": 37210353063,
+          "job_id": 111460138621
+        }
+      ],
+      "assessment": "Deterministic style/syntax gate failures, including research artifacts. The October 4 vesper-theme.json run reports 301 diagnostics; this is one failed job, not 301 causes."
+    },
+    {
+      "key": "tui-startup-readiness",
+      "category": "timing-sensitive",
+      "signature": "FIXTURE_READY absent; actual terminal is downloading fd/ripgrep and says Startup is still in progress",
+      "jobs": [
+        {
+          "run_id": 34821145938,
+          "job_id": 103902773389
+        },
+        {
+          "run_id": 34858460981,
+          "job_id": 104024073899
+        }
+      ],
+      "assessment": "September 14 same SHA 11d77d4b has a successful Linux execution 34821145635. Real startup dependency/readiness timing is observed, not an arbitrary generic timeout."
+    },
+    {
+      "key": "sdk-extra-continuation",
+      "category": "intermittent-assertion",
+      "signature": "Expected at most 4 model calls; received 5",
+      "jobs": [
+        {
+          "run_id": 34858462658,
+          "job_id": 104024080797
+        },
+        {
+          "run_id": 36862326414,
+          "job_id": 110369386497
+        },
+        {
+          "run_id": 37190862525,
+          "job_id": 111402568119
+        }
+      ],
+      "assessment": "Exact same test passes in job 104024073899 and fails in job 104024080797, both SHA 9b7fd68aa7. Intermittent assertion, with recurrence September 14, October 1 and October 4; not simply a test timeout. Continuation accounting/order needs investigation."
+    },
+    {
+      "key": "release-workflow-fixture",
+      "category": "assertion",
+      "signature": "Expected literal Linux baseline build command; workflow now Linux and macOS release",
+      "jobs": [
+        {
+          "run_id": 35006659223,
+          "job_id": 104508002950
+        },
+        {
+          "run_id": 35006663124,
+          "job_id": 104508012521
+        }
+      ],
+      "assessment": "CI test of Release configuration, not a failing Release workflow; same-SHA duplicate failures."
+    },
+    {
+      "key": "web-projection-timeout",
+      "category": "timeout-unresolved",
+      "signature": "projection timeout: thread:integrated-real-parent",
+      "jobs": [
+        {
+          "run_id": 35613927360,
+          "job_id": 106379696616
+        },
+        {
+          "run_id": 35614002299,
+          "job_id": 106379948074
+        }
+      ],
+      "assessment": "Same SHA 9abdc41015 fails both push and PR. Do not classify a repeated missing projection as a timing flake without a demonstrated successful equivalent execution."
+    },
+    {
+      "key": "task-monitor-20s-timeout",
+      "category": "timeout-unresolved",
+      "signature": "real TUI /ps test reaches its 20000ms test deadline",
+      "jobs": [
+        {
+          "run_id": 35616678896,
+          "job_id": 106389037925
+        }
+      ],
+      "assessment": "Same head SHA d5ddd78f57 push succeeds while PR fails; event/merge checkout differences prevent this alone proving a flake. Log does not establish the stalled operation."
+    },
+    {
+      "key": "web-child-credential",
+      "category": "assertion",
+      "signature": "Expected Boolean(childCredential) true; received false",
+      "jobs": [
+        {
+          "run_id": 35688934797,
+          "job_id": 106621603556
+        }
+      ],
+      "assessment": "Production integration assertion at NativeDieIntegration.production.test.ts:602, not a timing classification."
+    },
+    {
+      "key": "scheduler-heap-threshold",
+      "category": "performance-assertion",
+      "signature": "Heap growth exceeds 20971520 bytes: 28992151 and 34446931",
+      "jobs": [
+        {
+          "run_id": 35834340691,
+          "job_id": 107094157783
+        },
+        {
+          "run_id": 36106720762,
+          "job_id": 107980811601
+        }
+      ],
+      "assessment": "Repeated September 23/25 exact memory bound failure. Runtime/GC variation is possible, but neither a leak nor a harmless flake is proven."
+    },
+    {
+      "key": "swift-int32",
+      "category": "compile-type",
+      "signature": "main.swift:143 cannot convert Int to expected Int32",
+      "jobs": [
+        {
+          "run_id": 35902056407,
+          "job_id": 107320447934
+        }
+      ],
+      "assessment": "Compilation fails before helper self-test; no test failure name exists."
+    },
+    {
+      "key": "swift-dispatchtime",
+      "category": "compile-type",
+      "signature": "main.swift:200 DispatchTime inference / uptimeNanoseconds UInt64 mismatch",
+      "jobs": [
+        {
+          "run_id": 35903523994,
+          "job_id": 107325339909
+        },
+        {
+          "run_id": 35903548678,
+          "job_id": 107325431385
+        }
+      ],
+      "assessment": "Same SHA dae69061ae push and dispatch both fail compilation. Deterministic Swift typing failure, not audio hardware or scheduling."
+    },
+    {
+      "key": "native-license-notice",
+      "category": "build-dependency",
+      "signature": "@esbuild/darwin-arm64@0.28.2 has no packaged or curated LICENSE, COPYING, or NOTICE file",
+      "jobs": [
+        {
+          "run_id": 35903739250,
+          "job_id": 107326078271
+        }
+      ],
+      "assessment": "Opt-in build candidate fails generateThirdPartyNotices. Same-SHA push succeeds because candidate-build step was skipped: not a flake."
+    },
+    {
+      "key": "macos-missing-execute-binary",
+      "category": "environment-build",
+      "signature": "ENOENT posix_spawn dist/die in actual execute runner",
+      "jobs": [
+        {
+          "run_id": 36008226396,
+          "job_id": 107661852791
+        },
+        {
+          "run_id": 36016568821,
+          "job_id": 107690513979
+        },
+        {
+          "run_id": 36097573940,
+          "job_id": 107952969451
+        },
+        {
+          "run_id": 36162060645,
+          "job_id": 108160768696
+        }
+      ],
+      "assessment": "September 24/25 macOS source-only lane lacks compiled execute child. Many downstream Live assertions share this prerequisite cause."
+    },
+    {
+      "key": "macos-lane-config-tests",
+      "category": "assertion",
+      "signature": "Tests expect prepare:assets/source-only lane; gate now builds compiled Live binary",
+      "jobs": [
+        {
+          "run_id": 36162937859,
+          "job_id": 108163679806
+        }
+      ],
+      "assessment": "Three CI/config fixture assertions disagree with a changed runner; not three runtime Live failures."
+    },
+    {
+      "key": "live-trust-prompt-fixture",
+      "category": "assertion-unresolved",
+      "signature": "Missing/No Trust project folder?; fixture loaded but expected trust prompt absent",
+      "jobs": [
+        {
+          "run_id": 36234271598,
+          "job_id": 108383093339
+        }
+      ],
+      "assessment": "Three Linux terminal checks fail on expected surface after bounded polling; do not infer a timing flake from elapsed ~8.4s."
+    },
+    {
+      "key": "macos-missing-tmux",
+      "category": "environment",
+      "signature": "Executable not found in PATH: tmux",
+      "jobs": [
+        {
+          "run_id": 36234271598,
+          "job_id": 108383093462
+        }
+      ],
+      "assessment": "Three tests share missing terminal harness dependency; no model API or Live provider failure."
+    },
+    {
+      "key": "picker-width-clipping",
+      "category": "assertion-ui",
+      "signature": "Expected gpt-live-1 · OpenAI · key configured; captured row ends at key",
+      "jobs": [
+        {
+          "run_id": 36238139467,
+          "job_id": 108393585984
+        }
+      ],
+      "assessment": "80-column clipped label observed; 120-column sibling passes. Rendering/fixture width mismatch, not key configuration outage."
+    },
+    {
+      "key": "git-fixture-identity",
+      "category": "environment-fixture",
+      "signature": "Committer identity unknown; git exits 128 instead of 0",
+      "jobs": [
+        {
+          "run_id": 36248821923,
+          "job_id": 108423114588
+        },
+        {
+          "run_id": 36248996775,
+          "job_id": 108423379855
+        },
+        {
+          "run_id": 36249807680,
+          "job_id": 108425596703
+        },
+        {
+          "run_id": 36249818642,
+          "job_id": 108425627410
+        }
+      ],
+      "assessment": "Four CI fixture failures on September 26. Not actual publication or remote Release failures."
+    },
+    {
+      "key": "dependency-script-unknown-type",
+      "category": "type",
+      "signature": "update-dependencies.ts:80/81 TS2571 Object is of type unknown",
+      "jobs": [
+        {
+          "run_id": 36684110489,
+          "job_id": 109785894380
+        },
+        {
+          "run_id": 36684110833,
+          "job_id": 109785906333
+        }
+      ],
+      "assessment": "CI and Daily dependency PR hit identical source type errors on the same SHA. Not dependency network availability."
+    },
+    {
+      "key": "ci-runner-fixture-127",
+      "category": "command-unresolved",
+      "signature": "Linux runner fixture returns 127 instead of 0",
+      "jobs": [
+        {
+          "run_id": 36774743001,
+          "job_id": 110089820239
+        }
+      ],
+      "assessment": "Command/prerequisite failure signature; the suppressed child output does not identify which command. No timing evidence."
+    },
+    {
+      "key": "web-tree-directory-read",
+      "category": "build",
+      "signature": "Directories cannot be read like files: .cache/.../.claude/skills",
+      "jobs": [
+        {
+          "run_id": 36775922476,
+          "job_id": 110093752046
+        }
+      ],
+      "assessment": "Web source/archive hashing reads a directory as a file; not test timing."
+    },
+    {
+      "key": "parallel-gate-mixed",
+      "category": "mixed",
+      "signature": "Bun 5s deadlines; pnpm --version reuse error; attention/completion dedup assertions; web duplicate child assertion",
+      "jobs": [
+        {
+          "run_id": 36780027410,
+          "job_id": 110107723258
+        }
+      ],
+      "assessment": "Separate observed failures in one job: four 5000ms tests, two wakeup assertions, and Vitest child-count assertion. Do not reduce the whole job to a flake or pnpm cause."
+    },
+    {
+      "key": "http-close-order",
+      "category": "assertion-order",
+      "signature": "delete absent (-1), or delete before settled (1 versus 2)",
+      "jobs": [
+        {
+          "run_id": 36818360286,
+          "job_id": 110228351010
+        },
+        {
+          "run_id": 36828791812,
+          "job_id": 110260473338
+        },
+        {
+          "run_id": 36872054281,
+          "job_id": 110402136874
+        },
+        {
+          "run_id": 36904440793,
+          "job_id": 110511978820
+        },
+        {
+          "run_id": 36930539074,
+          "job_id": 110598775365
+        }
+      ],
+      "assessment": "Exact close/initialize test recurs October 1/2 across five jobs. Lifecycle/order assertion regression/race is observed; not a timeout and no equivalent passing rerun demonstrated."
+    },
+    {
+      "key": "task-row-ui-mismatch",
+      "category": "assertion-ui",
+      "signature": "Expected failed/cancelled task row missing from captured terminal",
+      "jobs": [
+        {
+          "run_id": 36840532890,
+          "job_id": 110298418473
+        },
+        {
+          "run_id": 36840408373,
+          "job_id": 110298480692
+        },
+        {
+          "run_id": 36847796148,
+          "job_id": 110322070188
+        },
+        {
+          "run_id": 36859208698,
+          "job_id": 110359593555
+        }
+      ],
+      "assessment": "October 1 repeats collapsed/detail and /ps surface assertions across four jobs; same SHA a349a8ad4f fails push and schedule. Do not count the repeated suite summary twice."
+    },
+    {
+      "key": "pi-sessionmanager-guard",
+      "category": "dependency-compatibility",
+      "signature": "Unsupported Pi SessionManager: review disk-backed history adapter before updating Pi",
+      "jobs": [
+        {
+          "run_id": 36863592468,
+          "job_id": 110373513410
+        }
+      ],
+      "assessment": "Compatibility guard rejects actual package layout; not a flaky SDK test."
+    },
+    {
+      "key": "pi-stale-context",
+      "category": "dependency-assertion",
+      "signature": "This extension ctx is stale after session replacement or reload",
+      "jobs": [
+        {
+          "run_id": 36868326217,
+          "job_id": 110389979820
+        }
+      ],
+      "assessment": "17 Bun tests fail against pinned SDK context lifetime rules. One compatibility/fixture signature across many test names, not 17 unrelated timing flakes."
+    },
+    {
+      "key": "scoped-completion-update",
+      "category": "assertion-order",
+      "signature": "Expected completed task update; received []",
+      "jobs": [
+        {
+          "run_id": 36874686991,
+          "job_id": 110411039650
+        }
+      ],
+      "assessment": "Owner dispatch completion-notification assertion; race is possible, not established harmless flakiness."
+    },
+    {
+      "key": "herdr-epipe",
+      "category": "transport-unresolved",
+      "signature": "write EPIPE in stalled socket/final working-state test",
+      "jobs": [
+        {
+          "run_id": 36889019440,
+          "job_id": 110459719040
+        }
+      ],
+      "assessment": "Broken-pipe transport failure; source-level cause not established by log."
+    },
+    {
+      "key": "model-literal-type",
+      "category": "type",
+      "signature": "native-fast-mode.test.ts:147 TS2345 gpt-5.3-codex absent from accepted model union",
+      "jobs": [
+        {
+          "run_id": 36899822725,
+          "job_id": 110496023137
+        }
+      ],
+      "assessment": "Compile-time model catalog/fixture mismatch."
+    },
+    {
+      "key": "live-rendering-and-cancel",
+      "category": "assertion",
+      "signature": "stopWork promise resolves instead of rejecting; ToolExecutionComponent renders spinner instead of tool content",
+      "jobs": [
+        {
+          "run_id": 36913111305,
+          "job_id": 110540505892
+        },
+        {
+          "run_id": 36913111305,
+          "job_id": 110540505933
+        }
+      ],
+      "assessment": "Identical three Live assertions on Linux and macOS same SHA; Linux also has ctx.sessionManager.getBranch missing, EPIPE, and task-row mismatch. Not platform-only timing."
+    },
+    {
+      "key": "typed-error-evidence",
+      "category": "assertion",
+      "signature": "Typed background launch throws Execution failed; exitCode details expected 7 but undefined",
+      "jobs": [
+        {
+          "run_id": 36915876034,
+          "job_id": 110549689518
+        }
+      ],
+      "assessment": "Typed execute result/error evidence regression signature, not a timeout."
+    },
+    {
+      "key": "historical-git-fixture",
+      "category": "environment-fixture",
+      "signature": "git show 92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be:integrations/t3/upstream/bruv.patch fails",
+      "jobs": [
+        {
+          "run_id": 37010450058,
+          "job_id": 110848723178
+        },
+        {
+          "run_id": 37014485451,
+          "job_id": 110861979912
+        },
+        {
+          "run_id": 37016177565,
+          "job_id": 110867588620
+        }
+      ],
+      "assessment": "Git stderr explicitly says the path exists on disk but not in the historical commit. This is an obsolete historical path assumption, not evidence of a shallow-checkout missing object."
+    },
+    {
+      "key": "tmux-restart",
+      "category": "environment-process-unresolved",
+      "signature": "tmux new-session immediately after kill-session exits 1",
+      "jobs": [
+        {
+          "run_id": 37066171522,
+          "job_id": 111034835697
+        },
+        {
+          "run_id": 37297354419,
+          "job_id": 111721689684
+        }
+      ],
+      "assessment": "Different cost-footer/question TUI tests hit the same restart operation. Teardown/start race is plausible but tmux stderr is not recorded here; do not claim confirmed timing flake."
+    },
+    {
+      "key": "ssh-fixture-and-footer",
+      "category": "assertion-fixture",
+      "signature": "TypeError evaluating value.replace (undefined) in SSH fixture; terminal footer row distance 1 instead of 2",
+      "jobs": [
+        {
+          "run_id": 37143983695,
+          "job_id": 111264087870
+        }
+      ],
+      "assessment": "Nine SSH placement tests share one missing fixture value; one independent footer geometry assertion. No SSH destination/provider outage is established."
+    },
+    {
+      "key": "task-inspect-surface",
+      "category": "assertion-ui",
+      "signature": "Missing Inspect task_, ALPHA-live in frame",
+      "jobs": [
+        {
+          "run_id": 37144539047,
+          "job_id": 111265693594
+        },
+        {
+          "run_id": 37184257701,
+          "job_id": 111382856441
+        }
+      ],
+      "assessment": "Repeated /ps actual surface failure October 3/4, distinct from initial startup readiness and failed-row signatures."
+    },
+    {
+      "key": "native-gate-step-position",
+      "category": "assertion",
+      "signature": "Expected next workflow step run-native-release-gate.mjs; received binary smoke commands",
+      "jobs": [
+        {
+          "run_id": 37182775319,
+          "job_id": 111378542156
+        }
+      ],
+      "assessment": "Brittle ordered workflow assertion in CI, not failed native Release gate execution."
+    },
+    {
+      "key": "startup-rebind-budget",
+      "category": "timing-sensitive-unconfirmed",
+      "signature": "All five patched SDK startup variants miss rebind:start",
+      "jobs": [
+        {
+          "run_id": 37188229505,
+          "job_id": 111394741289
+        }
+      ],
+      "assessment": "Fixture until() polls only 100 setImmediate turns. Logs stop after colors:wait/render:request, with no managed-tool events. Scheduling/tool readiness is the boundary; no successful same-SHA run captured for this instance."
+    },
+    {
+      "key": "openai-execute-json",
+      "category": "assertion-protocol",
+      "signature": "JSON Parse error: Unexpected identifier undefined",
+      "jobs": [
+        {
+          "run_id": 37189627215,
+          "job_id": 111398951448
+        }
+      ],
+      "assessment": "Offline main execute test parses undefined after waiting for a result. No live provider/API call; underlying missing-result cause remains unresolved."
+    },
+    {
+      "key": "footer-append-invalidation",
+      "category": "assertion",
+      "signature": "append invalidates: 0 !== 1",
+      "jobs": [
+        {
+          "run_id": 37189939505,
+          "job_id": 111400056774
+        }
+      ],
+      "assessment": "Request projection cache invalidation assertion, not timeout."
+    },
+    {
+      "key": "startup-grammar-budget",
+      "category": "timing-sensitive",
+      "signature": "Patched SDK startup missing grammars:ready after grammars:start; child exits 1",
+      "jobs": [
+        {
+          "run_id": 37191433942,
+          "job_id": 111404311330
+        },
+        {
+          "run_id": 37193550461,
+          "job_id": 111410618172
+        },
+        {
+          "run_id": 37222631866,
+          "job_id": 111495938169
+        },
+        {
+          "run_id": 37333558132,
+          "job_id": 111842631686
+        }
+      ],
+      "assessment": "100 setImmediate poll bound can finish before grammar async readiness. SHA 0345b41570 has successful full Linux run 37192354896 and failing schedule 37193550461. Other variants recur October 4/5; no same-SHA pass captured for every occurrence."
+    },
+    {
+      "key": "daily-pi-host-version",
+      "category": "dependency-compatibility",
+      "signature": "Unsupported Pi host version 1.0.2 / 1.0.3; adapter requires 1.0.0",
+      "jobs": [
+        {
+          "run_id": 37200481788,
+          "job_id": 111430970692
+        },
+        {
+          "run_id": 37321109544,
+          "job_id": 111800116876
+        }
+      ],
+      "assessment": "Daily candidate package compatibility failure during prepare:assets, before tests."
+    },
+    {
+      "key": "ffmpeg-fixture-prerequisite",
+      "category": "environment",
+      "signature": "Executable not found in PATH: ffmpeg in fixtureCommand -> naturalFixturePcm",
+      "jobs": [
+        {
+          "run_id": 37354320182,
+          "job_id": 111912851945
+        },
+        {
+          "run_id": 37354320182,
+          "job_id": 111912852160
+        }
+      ],
+      "assessment": "Same natural-audio test fails Linux and macOS at the first subprocess launch. Reinstalling test timers or rerunning does not supply ffmpeg."
+    },
+    {
+      "key": "web-guidance-copy",
+      "category": "assertion",
+      "signature": "Expected external, unmodified T3; received Bruv + T3 Code setup guide with different wording",
+      "jobs": [
+        {
+          "run_id": 37219289504,
+          "job_id": 111486188196
+        }
+      ],
+      "assessment": "Two standalone help/guidance assertions fail on exact text; both executables return successfully. Not external T3 environment failure."
+    }
+  ],
+  "jobs": [
+    {
+      "run_id": 34019032172,
+      "job_id": 101448072475,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-06T07:23:54Z",
+      "sha": "bacac34b2edeca343e72e0df7b37f01536fb7080",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["execute-launch-budget"],
+      "tests": ["canceling execute transfers notification ownership without killing its job"],
+      "log": "logs/101448072475.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 691,
+          "text": "TypeError: undefined is not an object (evaluating 'task.status')"
+        },
+        {
+          "line": 696,
+          "text": "(fail) canceling execute transfers notification ownership without killing its job [206.60ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 34061397044,
+      "job_id": 101562451562,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-06T21:32:46Z",
+      "sha": "f0c253c641a025d2ed426dc84255143754d8eebf",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["handoff-cleanup-message"],
+      "tests": ["handoff unwinds cleanup but does not swallow cleanup errors"],
+      "log": "logs/101562451562.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1213,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 1216,
+          "text": "Received: \"Error\\n    at <execute-module>:5:9\\n    at processTicksAndRejections (unknown:7:39)\\n\""
+        },
+        {
+          "line": 1224,
+          "text": "(fail) handoff unwinds cleanup but does not swallow cleanup errors [185.89ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 34070587557,
+      "job_id": 101587069000,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-07T00:41:10Z",
+      "sha": "a93f175f986f38f12fbd2d6270e952e8d5225ceb",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["subagent-model-fixture"],
+      "tests": ["partial subagent spawn failure stops and notifies already-launched workers"],
+      "log": "logs/101587069000.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1029,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 1031,
+          "text": "Expected: 141 | "
+        },
+        {
+          "line": 1038,
+          "text": "error: second spawn failed"
+        },
+        {
+          "line": 1041,
+          "text": "Received: 62 |   type: SubagentType,"
+        },
+        {
+          "line": 1048,
+          "text": "error: No model is available for the sub-agent"
+        },
+        {
+          "line": 1080,
+          "text": "(fail) partial subagent spawn failure stops and notifies already-launched workers [0.95ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 34070587967,
+      "job_id": 101587070213,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-07T00:41:12Z",
+      "sha": "a93f175f986f38f12fbd2d6270e952e8d5225ceb",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["subagent-model-fixture"],
+      "tests": ["partial subagent spawn failure stops and notifies already-launched workers"],
+      "log": "logs/101587070213.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1014,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 1016,
+          "text": "Expected: 141 | "
+        },
+        {
+          "line": 1023,
+          "text": "error: second spawn failed"
+        },
+        {
+          "line": 1026,
+          "text": "Received: 62 |   type: SubagentType,"
+        },
+        {
+          "line": 1033,
+          "text": "error: No model is available for the sub-agent"
+        },
+        {
+          "line": 1065,
+          "text": "(fail) partial subagent spawn failure stops and notifies already-launched workers [0.91ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 34070608639,
+      "job_id": 101587127164,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-07T00:41:36Z",
+      "sha": "991494ec2cf136d6a9c763138f088a6ff845ad32",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["subagent-model-fixture"],
+      "tests": ["partial subagent spawn failure stops and notifies already-launched workers"],
+      "log": "logs/101587127164.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1013,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 1015,
+          "text": "Expected: 141 | "
+        },
+        {
+          "line": 1022,
+          "text": "error: second spawn failed"
+        },
+        {
+          "line": 1025,
+          "text": "Received: 62 |   type: SubagentType,"
+        },
+        {
+          "line": 1032,
+          "text": "error: No model is available for the sub-agent"
+        },
+        {
+          "line": 1064,
+          "text": "(fail) partial subagent spawn failure stops and notifies already-launched workers [0.70ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 34119189282,
+      "job_id": 101733021188,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-07T11:56:24Z",
+      "sha": "612c21c434bef902e87e8bf23a1d951080819337",
+      "attempt": 1,
+      "failed_steps": ["Format check"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "src/prompts.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/provider-prompt.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/101733021188.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 34821145938,
+      "job_id": 103902773389,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-14T08:08:03Z",
+      "sha": "11d77d4bfec3a0ceb5ff188ec38af6d67904fe80",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["tui-startup-readiness"],
+      "tests": ["real TUI /ps selects live jobs and only stops the confirmed target"],
+      "log": "logs/103902773389.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 957,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 960,
+          "text": "Received: \"\\n fd not found. Downloading...\\n ripgrep not found. Downloading...\\n\\n Startup is still in progress\\n ripgrep installed to /tmp/die-ps-tui-uADmGH/.die/agent/bin/rg\\n fd installed to /tmp/die-ps-tui-uADmGH/.die/agent/bin/fd\\n\\n Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys\\n on` to ~/.tmux.conf and restart tmux.\\n\\n start\\ndie-ps-tui-uADmGH · mode: orchestrator · $0.000 · ctx 0% · cach"
+        },
+        {
+          "line": 968,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [7866.64ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 34858460981,
+      "job_id": 104024073899,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-14T14:52:36Z",
+      "sha": "9b7fd68aa74a09a92cc7d809eb60d36a9abaa267",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["tui-startup-readiness"],
+      "tests": ["real TUI /ps selects live jobs and only stops the confirmed target"],
+      "log": "logs/104024073899.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1073,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 1076,
+          "text": "Received: \"\\n fd not found. Downloading...\\n ripgrep not found. Downloading...\\n\\n Startup is still in progress\\n\\n────────────────────────────────────────────────────────────────────────────────────────────────────\\nstart\\n────────────────────────────────────────────────────────────────────────────────────────────────────\\n~\\n0.0%/32k (auto)                                                                        fixture-model\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\"
+        },
+        {
+          "line": 1084,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [7777.08ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 34858462658,
+      "job_id": 104024080797,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-14T14:52:37Z",
+      "sha": "9b7fd68aa74a09a92cc7d809eb60d36a9abaa267",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["sdk-extra-continuation"],
+      "tests": ["real SDK print completion cycles pause within bounded agent runs"],
+      "log": "logs/104024080797.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1454,
+          "text": "error: expect(received).toBeLessThanOrEqual(expected)"
+        },
+        {
+          "line": 1456,
+          "text": "Expected: <= 4"
+        },
+        {
+          "line": 1457,
+          "text": "Received: 5"
+        },
+        {
+          "line": 1465,
+          "text": "(fail) real SDK print completion cycles pause within bounded agent runs [1421.79ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 35006659223,
+      "job_id": 104508002950,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-15T18:18:37Z",
+      "sha": "2a4c70b631ab2fbb094ba0780f1461ed4e430904",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["release-workflow-fixture"],
+      "tests": ["release automation > tag release is version-gated and limited to Linux x64"],
+      "log": "logs/104508002950.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3940,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 3943,
+          "text": "Received: \"name: Release\\n\\non:\\n  push:\\n    tags:\\n      - \\\"v*\\\"\\n\\npermissions:\\n  contents: read\\n\\njobs:\\n  release:\\n    name: Linux and macOS release\\n    runs-on: ubuntu-24.04\\n    timeout-minutes: 40\\n    permissions:\\n      contents: write\\n    steps:\\n      - uses: actions/checkout@v4\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v4\\n        with:\\n          node-version: 24.13.1\\n      - uses: pnpm/action"
+        },
+        {
+          "line": 3948,
+          "text": "Received: \"name: Release\\n\\non:\\n  push:\\n    tags:\\n      - \\\"v*\\\"\\n\\npermissions:\\n  contents: read\\n\\njobs:\\n  release:\\n    name: Linux and macOS release\\n    runs-on: ubuntu-24.04\\n    timeout-minutes: 40\\n    permissions:\\n      contents: write\\n    steps:\\n      - uses: actions/checkout@v4\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v4\\n        with:\\n          node-version: 24.13.1\\n      - uses: pnpm/action"
+        },
+        {
+          "line": 3949,
+          "text": "(fail) release automation > tag release is version-gated and limited to Linux x64 [0.66ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 35006663124,
+      "job_id": 104508012521,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-15T18:18:38Z",
+      "sha": "2a4c70b631ab2fbb094ba0780f1461ed4e430904",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["release-workflow-fixture"],
+      "tests": ["release automation > tag release is version-gated and limited to Linux x64"],
+      "log": "logs/104508012521.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3951,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 3954,
+          "text": "Received: \"name: Release\\n\\non:\\n  push:\\n    tags:\\n      - \\\"v*\\\"\\n\\npermissions:\\n  contents: read\\n\\njobs:\\n  release:\\n    name: Linux and macOS release\\n    runs-on: ubuntu-24.04\\n    timeout-minutes: 40\\n    permissions:\\n      contents: write\\n    steps:\\n      - uses: actions/checkout@v4\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v4\\n        with:\\n          node-version: 24.13.1\\n      - uses: pnpm/action"
+        },
+        {
+          "line": 3959,
+          "text": "Received: \"name: Release\\n\\non:\\n  push:\\n    tags:\\n      - \\\"v*\\\"\\n\\npermissions:\\n  contents: read\\n\\njobs:\\n  release:\\n    name: Linux and macOS release\\n    runs-on: ubuntu-24.04\\n    timeout-minutes: 40\\n    permissions:\\n      contents: write\\n    steps:\\n      - uses: actions/checkout@v4\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v4\\n        with:\\n          node-version: 24.13.1\\n      - uses: pnpm/action"
+        },
+        {
+          "line": 3960,
+          "text": "(fail) release automation > tag release is version-gated and limited to Linux x64 [0.50ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 35613927360,
+      "job_id": 106379696616,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-21T14:42:14Z",
+      "sha": "9abdc4101585fcbf342674476564789ef10c6f5a",
+      "attempt": 1,
+      "failed_steps": ["Validate web backend"],
+      "classifications": ["web-projection-timeout"],
+      "tests": [
+        " src/orchestration-v2/NativeDieIntegration.production.test.ts > integrated real upstream orchestration > uses scoped HTTP MCP through PiAdapterV2 and actual Die with idempotent child spawn and cancel"
+      ],
+      "log": "logs/106379696616.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3733,
+          "text": "FAIL  src/orchestration-v2/NativeDieIntegration.production.test.ts > integrated real upstream orchestration > uses scoped HTTP MCP through PiAdapterV2 and actual Die with idempotent child spawn and cancel"
+        }
+      ]
+    },
+    {
+      "run_id": 35614002299,
+      "job_id": 106379948074,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-21T14:42:54Z",
+      "sha": "9abdc4101585fcbf342674476564789ef10c6f5a",
+      "attempt": 1,
+      "failed_steps": ["Validate web backend"],
+      "classifications": ["web-projection-timeout"],
+      "tests": [
+        " src/orchestration-v2/NativeDieIntegration.production.test.ts > integrated real upstream orchestration > uses scoped HTTP MCP through PiAdapterV2 and actual Die with idempotent child spawn and cancel"
+      ],
+      "log": "logs/106379948074.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3759,
+          "text": "FAIL  src/orchestration-v2/NativeDieIntegration.production.test.ts > integrated real upstream orchestration > uses scoped HTTP MCP through PiAdapterV2 and actual Die with idempotent child spawn and cancel"
+        }
+      ]
+    },
+    {
+      "run_id": 35616678896,
+      "job_id": 106389037925,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-21T15:06:32Z",
+      "sha": "d5ddd78f57d3bfc0735276361e35c2d9659d94ff",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["task-monitor-20s-timeout"],
+      "tests": ["real TUI /ps selects live jobs and only stops the confirmed target"],
+      "log": "logs/106389037925.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 4265,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [20000.07ms]"
+        },
+        {
+          "line": 4266,
+          "text": "^ this test timed out after 20000ms."
+        }
+      ]
+    },
+    {
+      "run_id": 35688934797,
+      "job_id": 106621603556,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-22T04:59:13Z",
+      "sha": "64e6d6e1942bede5a680334320499e0c7fd6c4d0",
+      "attempt": 1,
+      "failed_steps": ["Validate web backend"],
+      "classifications": ["web-child-credential"],
+      "tests": [
+        " src/orchestration-v2/NativeDieIntegration.production.test.ts > integrated real upstream orchestration > uses scoped HTTP MCP through PiAdapterV2 and actual Die with idempotent child spawn and cancel"
+      ],
+      "log": "logs/106621603556.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3778,
+          "text": "FAIL  src/orchestration-v2/NativeDieIntegration.production.test.ts > integrated real upstream orchestration > uses scoped HTTP MCP through PiAdapterV2 and actual Die with idempotent child spawn and cancel"
+        },
+        {
+          "line": 3779,
+          "text": "AssertionError: expected false to be true // Object.is equality"
+        },
+        {
+          "line": 3810,
+          "text": "##[error]AssertionError: expected false to be true // Object.is equality"
+        }
+      ]
+    },
+    {
+      "run_id": 35701200827,
+      "job_id": 106659699257,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-22T07:46:28Z",
+      "sha": "c6fe2801a4438a9884f62b7fb8e43419ab56fcdb",
+      "attempt": 1,
+      "failed_steps": ["Format check"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "log": "logs/106659699257.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 35834340691,
+      "job_id": 107094157783,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-23T07:56:43Z",
+      "sha": "10d31610d6e5c1ac7d4005ee7798cff15379e9de",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["scheduler-heap-threshold"],
+      "tests": ["noisy activity is O(events), not O(jobs times events), in scheduler CPU and memory state"],
+      "log": "logs/107094157783.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 4773,
+          "text": "error: expect(received).toBeLessThan(expected)"
+        },
+        {
+          "line": 4775,
+          "text": "Expected: < 20971520"
+        },
+        {
+          "line": 4776,
+          "text": "Received: 28992151"
+        },
+        {
+          "line": 4784,
+          "text": "(fail) noisy activity is O(events), not O(jobs times events), in scheduler CPU and memory state [137.07ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 35902056499,
+      "job_id": 107320448033,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-23T18:22:58Z",
+      "sha": "7c9de398dde96fb0368b95c448394a0f29ec0912",
+      "attempt": 1,
+      "failed_steps": ["Format check"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "src/cli.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/107320448033.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 35902056407,
+      "job_id": 107320447934,
+      "workflow": "Native Live Lab",
+      "job": "macOS native helper (no devices)",
+      "date": "2026-09-23T18:23:03Z",
+      "sha": "7c9de398dde96fb0368b95c448394a0f29ec0912",
+      "attempt": 1,
+      "failed_steps": ["Compile Apple voice-processing helper and self-test"],
+      "classifications": ["swift-int32"],
+      "tests": [],
+      "log": "logs/107320447934.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 117,
+          "text": "native/live-lab/main.swift:143:77: error: cannot convert value of type 'Int' to expected argument type 'Int32'"
+        }
+      ]
+    },
+    {
+      "run_id": 35903523994,
+      "job_id": 107325339909,
+      "workflow": "Native Live Lab",
+      "job": "macOS native helper (no devices)",
+      "date": "2026-09-23T18:35:36Z",
+      "sha": "dae69061ae60dc07442ca8a57d229bd58ba3f42a",
+      "attempt": 1,
+      "failed_steps": ["Compile Apple voice-processing helper and self-test"],
+      "classifications": ["swift-dispatchtime"],
+      "tests": [],
+      "log": "logs/107325339909.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 120,
+          "text": "native/live-lab/main.swift:200:71: error: binary operator '-' cannot be applied to operands of type 'DispatchTime' and 'UInt64'"
+        },
+        {
+          "line": 129,
+          "text": "native/live-lab/main.swift:200:114: error: referencing operator function '<' on 'BinaryInteger' requires that 'DispatchTime' conform to 'BinaryInteger'"
+        },
+        {
+          "line": 143,
+          "text": "native/live-lab/main.swift:200:53: error: member 'uptimeNanoseconds' in 'DispatchTime' produces result of type 'UInt64', but context expects 'DispatchTime'"
+        }
+      ]
+    },
+    {
+      "run_id": 35903548678,
+      "job_id": 107325431385,
+      "workflow": "Native Live Lab",
+      "job": "macOS native helper (no devices)",
+      "date": "2026-09-23T18:35:47Z",
+      "sha": "dae69061ae60dc07442ca8a57d229bd58ba3f42a",
+      "attempt": 1,
+      "failed_steps": ["Compile Apple voice-processing helper and self-test"],
+      "classifications": ["swift-dispatchtime"],
+      "tests": [],
+      "log": "logs/107325431385.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 120,
+          "text": "native/live-lab/main.swift:200:71: error: binary operator '-' cannot be applied to operands of type 'DispatchTime' and 'UInt64'"
+        },
+        {
+          "line": 129,
+          "text": "native/live-lab/main.swift:200:114: error: referencing operator function '<' on 'BinaryInteger' requires that 'DispatchTime' conform to 'BinaryInteger'"
+        },
+        {
+          "line": 143,
+          "text": "native/live-lab/main.swift:200:53: error: member 'uptimeNanoseconds' in 'DispatchTime' produces result of type 'UInt64', but context expects 'DispatchTime'"
+        }
+      ]
+    },
+    {
+      "run_id": 35903739250,
+      "job_id": 107326078271,
+      "workflow": "Native Live Lab",
+      "job": "macOS native helper (no devices)",
+      "date": "2026-09-23T18:37:29Z",
+      "sha": "9e84c9ecaf70147103966dd2f00c7a7b5192e387",
+      "attempt": 1,
+      "failed_steps": ["Build opt-in CLI candidate (no devices or API)"],
+      "classifications": ["native-license-notice"],
+      "tests": [],
+      "log": "logs/107326078271.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3115,
+          "text": "error: @esbuild/darwin-arm64@0.28.2 has no packaged or curated LICENSE, COPYING, or NOTICE file"
+        }
+      ]
+    },
+    {
+      "run_id": 35905027869,
+      "job_id": 107330445083,
+      "workflow": "CI",
+      "job": "Bun 1.4.1 / Linux x64",
+      "date": "2026-09-23T18:48:39Z",
+      "sha": "e6f0597570881f186d625f8fcd6549e0894d7353",
+      "attempt": 1,
+      "failed_steps": ["Format check"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "scripts/live-lab-acceptance.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/107330445083.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 35988433617,
+      "job_id": 107596494317,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-24T10:38:53Z",
+      "sha": "e86c52a840c069fca434d1a9f88a0c6da2bfeec4",
+      "attempt": 1,
+      "failed_steps": ["Format check"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "tests/live-host-access.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/live/voice-prompt-behavior-probe.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/107596494317.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36008226396,
+      "job_id": 107661852791,
+      "workflow": "CI",
+      "job": "Local Live / macOS (no audio devices or API)",
+      "date": "2026-09-24T13:48:40Z",
+      "sha": "cc2bde196c4f5dbe3d4daf6323876032c4dc62fd",
+      "attempt": 1,
+      "failed_steps": ["Deterministic Live tests (fake audio and provider)"],
+      "classifications": ["macos-missing-execute-binary"],
+      "tests": [
+        "execute live.stop uses the actual scoped host route, and does not route to jobs",
+        "stopWork helper response is acknowledged before scoped foreground cancellation"
+      ],
+      "log": "logs/107661852791.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 293,
+          "text": "(fail) execute live.stop uses the actual scoped host route, and does not route to jobs [11.59ms]"
+        },
+        {
+          "line": 301,
+          "text": "error: expect(received).toThrow(expected)"
+        },
+        {
+          "line": 303,
+          "text": "Expected substring: \"Execution cancelled\""
+        },
+        {
+          "line": 304,
+          "text": "Received message: \"ENOENT: no such file or directory, posix_spawn '/Users/runner/work/die/die/dist/die'\""
+        },
+        {
+          "line": 312,
+          "text": "(fail) stopWork helper response is acknowledged before scoped foreground cancellation [3.82ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36016568821,
+      "job_id": 107690513979,
+      "workflow": "CI",
+      "job": "Local Live / macOS (no audio devices or API)",
+      "date": "2026-09-24T14:57:27Z",
+      "sha": "e9b79cf8ffc66098006ee3d030343c772b6447cd",
+      "attempt": 1,
+      "failed_steps": ["Deterministic Live tests (fake audio and provider)"],
+      "classifications": ["macos-missing-execute-binary"],
+      "tests": [
+        "execute live.stop uses the actual scoped host route, and does not route to jobs",
+        "stopWork helper response is acknowledged before scoped foreground cancellation"
+      ],
+      "log": "logs/107690513979.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 293,
+          "text": "(fail) execute live.stop uses the actual scoped host route, and does not route to jobs [92.98ms]"
+        },
+        {
+          "line": 301,
+          "text": "error: expect(received).toThrow(expected)"
+        },
+        {
+          "line": 303,
+          "text": "Expected substring: \"Execution cancelled\""
+        },
+        {
+          "line": 304,
+          "text": "Received message: \"ENOENT: no such file or directory, posix_spawn '/Users/runner/work/die/die/dist/die'\""
+        },
+        {
+          "line": 312,
+          "text": "(fail) stopWork helper response is acknowledged before scoped foreground cancellation [8.61ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36097573940,
+      "job_id": 107952969451,
+      "workflow": "CI",
+      "job": "Local Live / macOS (no audio devices or API)",
+      "date": "2026-09-25T05:12:25Z",
+      "sha": "bcf3b280bc4b2ffa0303c63c0189cc113aa9024b",
+      "attempt": 1,
+      "failed_steps": ["Deterministic Live tests (fake audio and provider)"],
+      "classifications": ["macos-missing-execute-binary"],
+      "tests": [
+        "execute live.stop uses the actual scoped host route, and does not route to jobs",
+        "stopWork helper response is acknowledged before scoped foreground cancellation"
+      ],
+      "log": "logs/107952969451.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 293,
+          "text": "(fail) execute live.stop uses the actual scoped host route, and does not route to jobs [8.86ms]"
+        },
+        {
+          "line": 301,
+          "text": "error: expect(received).toThrow(expected)"
+        },
+        {
+          "line": 303,
+          "text": "Expected substring: \"Execution cancelled\""
+        },
+        {
+          "line": 304,
+          "text": "Received message: \"ENOENT: no such file or directory, posix_spawn '/Users/runner/work/die/die/dist/die'\""
+        },
+        {
+          "line": 312,
+          "text": "(fail) stopWork helper response is acknowledged before scoped foreground cancellation [1.35ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36106720762,
+      "job_id": 107980811601,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-25T07:15:25Z",
+      "sha": "71a9dbf59f073ca394695ed9401aece00ed7e3e3",
+      "attempt": 1,
+      "failed_steps": ["Deterministic tests"],
+      "classifications": ["scheduler-heap-threshold"],
+      "tests": ["noisy activity is O(events), not O(jobs times events), in scheduler CPU and memory state"],
+      "log": "logs/107980811601.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5281,
+          "text": "error: expect(received).toBeLessThan(expected)"
+        },
+        {
+          "line": 5283,
+          "text": "Expected: < 20971520"
+        },
+        {
+          "line": 5284,
+          "text": "Received: 34446931"
+        },
+        {
+          "line": 5292,
+          "text": "(fail) noisy activity is O(events), not O(jobs times events), in scheduler CPU and memory state [123.70ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36162060645,
+      "job_id": 108160768696,
+      "workflow": "CI",
+      "job": "Local Live / macOS (no audio devices or API)",
+      "date": "2026-09-25T16:38:48Z",
+      "sha": "7dc618cf97df615e26aa40f76328d3a12b67d368",
+      "attempt": 1,
+      "failed_steps": ["Shared macOS Live gate"],
+      "classifications": ["macos-missing-execute-binary"],
+      "tests": [
+        "main Live owns first-turn instructions, actual execute and background completion without spawning text model",
+        "Live first turn applies production context and before/after tool hooks; typed route cannot steal owner",
+        "Live close releases exclusive owner; interruption does not cancel an asynchronous job",
+        "explicit jobs.stopWork cancels only isolated fixture work and does not run the text model",
+        "real live.stop helper returns after teardown without self-cancelling execute or background jobs",
+        "unfinished ASR is revoked at turn boundary, interruption and close; a new final utterance admits tools",
+        "ordinary branch appends keep Live authority, duplicate tool calls do not replay side effects",
+        "Gemini adapter direct function call executes real shell and receives async completion on its voice wire",
+        "stop voice then stop work in one real execute still cancels the draining voice foreground after its report"
+      ],
+      "log": "logs/108160768696.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 490,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 493,
+          "text": "Received: \"{\\\"content\\\":[{\\\"type\\\":\\\"text\\\",\\\"text\\\":\\\"ENOENT: no such file or directory, posix_spawn '/Users/runner/work/die/die/dist/die'\\\"}],\\\"isError\\\":true}\""
+        },
+        {
+          "line": 501,
+          "text": "(fail) main Live owns first-turn instructions, actual execute and background completion without spawning text model [87.24ms]"
+        },
+        {
+          "line": 512,
+          "text": "Received: \"{\\\"content\\\":[{\\\"type\\\":\\\"text\\\",\\\"text\\\":\\\"ENOENT: no such file or directory, posix_spawn '/Users/runner/work/die/die/dist/die'\\\"},{\\\"type\\\":\\\"text\\\",\\\"text\\\":\\\"VERTICAL_RESULT_HOOK\\\"}],\\\"isError\\\":true}\""
+        },
+        {
+          "line": 520,
+          "text": "(fail) Live first turn applies production context and before/after tool hooks; typed route cannot steal owner [61.87ms]"
+        },
+        {
+          "line": 539,
+          "text": "(fail) Live close releases exclusive owner; interruption does not cancel an asynchronous job [5.06ms]"
+        },
+        {
+          "line": 559,
+          "text": "(fail) explicit jobs.stopWork cancels only isolated fixture work and does not run the text model [6.08ms]"
+        },
+        {
+          "line": 579,
+          "text": "(fail) real live.stop helper returns after teardown without self-cancelling execute or background jobs [4.95ms]"
+        },
+        {
+          "line": 599,
+          "text": "(fail) unfinished ASR is revoked at turn boundary, interruption and close; a new final utterance admits tools [6.78ms]"
+        },
+        {
+          "line": 617,
+          "text": "(fail) ordinary branch appends keep Live authority, duplicate tool calls do not replay side effects [5.13ms]"
+        },
+        {
+          "line": 619,
+          "text": "(fail) Gemini adapter direct function call executes real shell and receives async completion on its voice wire [5003.09ms]"
+        },
+        {
+          "line": 620,
+          "text": "^ this test timed out after 5000ms."
+        },
+        {
+          "line": 639,
+          "text": "(fail) stop voice then stop work in one real execute still cancels the draining voice foreground after its report [21.26ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36162937859,
+      "job_id": 108163679806,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-25T16:47:00Z",
+      "sha": "e8396419427ebcae193192f876931a7dfc27bb36",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["macos-lane-config-tests"],
+      "tests": [
+        "macOS Live CI prepares source CLI assets without building the web runtime",
+        "macOS lane runs only its device-free source and Live checks",
+        "release automation > macOS Live CI checks native runtime without opening devices or using credentials"
+      ],
+      "log": "logs/108163679806.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3821,
+          "text": "error: expect(received).not.toContain(expected)"
+        },
+        {
+          "line": 3824,
+          "text": "Received: \"\\n  # This is the separate device-free macOS lane, not the Linux gate.\\n  # Main-Live integration runs the real execute child; build the production CLI\\n  # instead of skipping those tests or substituting a fixture binary.\\n  run_step 'Build compiled Live test binary' macos-build.log \\\"$root\\\" bun run build\\n  run_step 'Offline OpenAI source probe' macos-openai-transport.log \\\"$root\\\" bun scripts/offline-openai-default-transport.ts --s"
+        },
+        {
+          "line": 3832,
+          "text": "(fail) macOS Live CI prepares source CLI assets without building the web runtime [0.68ms]"
+        },
+        {
+          "line": 4184,
+          "text": "error: expect(received).toEqual(expected)"
+        },
+        {
+          "line": 4211,
+          "text": "(fail) macOS lane runs only its device-free source and Live checks [29.35ms]"
+        },
+        {
+          "line": 4551,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 4562,
+          "text": "(fail) release automation > macOS Live CI checks native runtime without opening devices or using credentials [0.48ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36234271598,
+      "job_id": 108383093339,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-26T09:56:28Z",
+      "sha": "8247e4b32c039e22868a5be43580d5f83712a005",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["live-trust-prompt-fixture"],
+      "tests": [
+        "Live picker real terminal 80 columns",
+        "Live picker real terminal 120 columns",
+        "GPT streaming keeps passive JSON in history but renders only the bounded Live transcript widget"
+      ],
+      "log": "logs/108383093339.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 4590,
+          "text": "error: Missing Trust project folder? in actual terminal:"
+        },
+        {
+          "line": 4677,
+          "text": "(fail) Live picker real terminal 80 columns [8473.38ms]"
+        },
+        {
+          "line": 4772,
+          "text": "(fail) Live picker real terminal 120 columns [8468.89ms]"
+        },
+        {
+          "line": 4954,
+          "text": "error: No Trust project folder? in actual terminal:"
+        },
+        {
+          "line": 5041,
+          "text": "(fail) GPT streaming keeps passive JSON in history but renders only the bounded Live transcript widget [8393.05ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36234271598,
+      "job_id": 108383093462,
+      "workflow": "CI",
+      "job": "Local Live / macOS (no audio devices or API)",
+      "date": "2026-09-26T09:56:33Z",
+      "sha": "8247e4b32c039e22868a5be43580d5f83712a005",
+      "attempt": 1,
+      "failed_steps": ["Shared macOS Live gate"],
+      "classifications": ["macos-missing-tmux"],
+      "tests": [
+        "GPT streaming keeps passive JSON in history but renders only the bounded Live transcript widget",
+        "Live picker real terminal 80 columns",
+        "Live picker real terminal 120 columns"
+      ],
+      "log": "logs/108383093462.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 529,
+          "text": "error: Executable not found in $PATH: \"tmux\""
+        },
+        {
+          "line": 540,
+          "text": "(fail) GPT streaming keeps passive JSON in history but renders only the bounded Live transcript widget [1.66ms]"
+        },
+        {
+          "line": 564,
+          "text": "(fail) Live picker real terminal 80 columns [2.47ms]"
+        },
+        {
+          "line": 584,
+          "text": "(fail) Live picker real terminal 120 columns [1.38ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36238139467,
+      "job_id": 108393585984,
+      "workflow": "CI",
+      "job": "Local Live / macOS (no audio devices or API)",
+      "date": "2026-09-26T11:13:20Z",
+      "sha": "919fb9a86183dcd37b8e6319040687acc6202e9b",
+      "attempt": 1,
+      "failed_steps": ["Shared macOS Live gate"],
+      "classifications": ["picker-width-clipping"],
+      "tests": ["Live picker real terminal 80 columns"],
+      "log": "logs/108393585984.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 593,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 596,
+          "text": "Received: \"\\n Warning: fd not found. Offline mode enabled, skipping download.\\n Warning: ripgrep not found. Offline mode enabled, skipping download.\\n\\n PICKER FIXTURE LOADED\\n\\n────────────────────────────────────────────────────────────────────────────────\\n\\n Live voice model\\n\\n → gemini-3.8-live · Google Gemini · API key needed (OAuth) (selected)\\n   gemini-3.8-live-extended-thinking · Google Gemini · API key needed (OAuth)\\n   gpt-realtime-"
+        },
+        {
+          "line": 604,
+          "text": "(fail) Live picker real terminal 80 columns [1093.96ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36246843468,
+      "job_id": 108417501380,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-26T13:57:00Z",
+      "sha": "de0897b7f66ea9e44640965b5b28f95ff7a0e6b7",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "tests/live-main-owner.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/108417501380.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36248821923,
+      "job_id": 108423114588,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-26T14:33:20Z",
+      "sha": "40def9ea6d0f9c5f26b4ec3b310bc59d95c7197f",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["git-fixture-identity"],
+      "tests": [
+        "manual release preparation > prepares version and notes in an isolated local git fixture without publishing"
+      ],
+      "log": "logs/108423114588.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5800,
+          "text": "error: Committer identity unknown"
+        },
+        {
+          "line": 5812,
+          "text": "fatal: empty ident name (for <runner@runnervmtr4k5.q2ow0dwzugnerpntadthl4mxrb.bx.internal.cloudapp.net>) not allowed"
+        },
+        {
+          "line": 5815,
+          "text": "Expected: 0"
+        },
+        {
+          "line": 5816,
+          "text": "Received: 128"
+        },
+        {
+          "line": 5839,
+          "text": "(fail) manual release preparation > prepares version and notes in an isolated local git fixture without publishing [10.55ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36248996775,
+      "job_id": 108423379855,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-26T14:35:04Z",
+      "sha": "0a73179a45b12082d5ddf69977eab4a0d5ad9caf",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["git-fixture-identity"],
+      "tests": [
+        "manual release preparation > prepares version and notes in an isolated local git fixture without publishing"
+      ],
+      "log": "logs/108423379855.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5785,
+          "text": "error: Committer identity unknown"
+        },
+        {
+          "line": 5797,
+          "text": "fatal: empty ident name (for <runner@runnervmtr4k5.rbsguloswegutosmy3ail22bod.phxx.internal.cloudapp.net>) not allowed"
+        },
+        {
+          "line": 5800,
+          "text": "Expected: 0"
+        },
+        {
+          "line": 5801,
+          "text": "Received: 128"
+        },
+        {
+          "line": 5824,
+          "text": "(fail) manual release preparation > prepares version and notes in an isolated local git fixture without publishing [9.17ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36249807680,
+      "job_id": 108425596703,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-26T14:49:22Z",
+      "sha": "c0257c58e6058873c92004ea673c29c7b6ff9209",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["git-fixture-identity"],
+      "tests": [
+        "manual release preparation > prepares version and notes in an isolated local git fixture without publishing"
+      ],
+      "log": "logs/108425596703.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5795,
+          "text": "error: Committer identity unknown"
+        },
+        {
+          "line": 5807,
+          "text": "fatal: empty ident name (for <runner@runnervmtr4k5.3me1xs0speoubgnjrwbsmyl0pf.dx.internal.cloudapp.net>) not allowed"
+        },
+        {
+          "line": 5810,
+          "text": "Expected: 0"
+        },
+        {
+          "line": 5811,
+          "text": "Received: 128"
+        },
+        {
+          "line": 5834,
+          "text": "(fail) manual release preparation > prepares version and notes in an isolated local git fixture without publishing [12.74ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36249818642,
+      "job_id": 108425627410,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-26T14:49:34Z",
+      "sha": "bb8c1a20f8fa940a42a907cd2f84c8229deb2643",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["git-fixture-identity"],
+      "tests": [
+        "manual release preparation > prepares version and notes in an isolated local git fixture without publishing"
+      ],
+      "log": "logs/108425627410.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5779,
+          "text": "error: Committer identity unknown"
+        },
+        {
+          "line": 5791,
+          "text": "fatal: empty ident name (for <runner@runnervmtr4k5.xzi531oxwoauxd4ge3usvb0tpb.bx.internal.cloudapp.net>) not allowed"
+        },
+        {
+          "line": 5794,
+          "text": "Expected: 0"
+        },
+        {
+          "line": 5795,
+          "text": "Received: 128"
+        },
+        {
+          "line": 5818,
+          "text": "(fail) manual release preparation > prepares version and notes in an isolated local git fixture without publishing [11.93ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36299415065,
+      "job_id": 108564171346,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-27T06:12:34Z",
+      "sha": "4a4fda1936497d16f0e1fa830d223b17c6c8ae63",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "src/questions/extension.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/questions-extension.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/questions-tui.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/108564171346.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36299914699,
+      "job_id": 108565541093,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-27T06:22:46Z",
+      "sha": "212e0af438b1d058abcf06318da9a388ed05deaa",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "src/questions/extension.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/questions-extension.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/questions-tui.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/108565541093.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36300634714,
+      "job_id": 108567498640,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-27T06:37:21Z",
+      "sha": "dd01f00689b702ed0ce6c5a83cb4bcac2cd8b806",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "src/questions/extension.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/questions-extension.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/questions-tui.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/108567498640.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36301504562,
+      "job_id": 108569868230,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-27T06:55:02Z",
+      "sha": "8e03773ab5c9143b1338a737c3b7c6e4c8232895",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "src/questions/extension.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/questions-extension.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/questions-tui.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/108569868230.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36684110489,
+      "job_id": 109785894380,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-30T07:30:47Z",
+      "sha": "5ccc8fafe61dd3d586a8dfffa8de1c7dca100c4a",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["dependency-script-unknown-type"],
+      "tests": [],
+      "log": "logs/109785894380.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 807,
+          "text": "##[error]scripts/update-dependencies.ts(80,18): error TS2571: Object is of type 'unknown'."
+        },
+        {
+          "line": 808,
+          "text": "##[error]scripts/update-dependencies.ts(81,17): error TS2571: Object is of type 'unknown'."
+        }
+      ]
+    },
+    {
+      "run_id": 36684110833,
+      "job_id": 109785906333,
+      "workflow": "Daily dependency PR",
+      "job": "validate",
+      "date": "2026-09-30T07:30:49Z",
+      "sha": "5ccc8fafe61dd3d586a8dfffa8de1c7dca100c4a",
+      "attempt": 1,
+      "failed_steps": ["Validate actual candidate with shared Linux CI"],
+      "classifications": ["dependency-script-unknown-type"],
+      "tests": [],
+      "log": "logs/109785906333.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 817,
+          "text": "##[error]scripts/update-dependencies.ts(80,18): error TS2571: Object is of type 'unknown'."
+        },
+        {
+          "line": 818,
+          "text": "##[error]scripts/update-dependencies.ts(81,17): error TS2571: Object is of type 'unknown'."
+        }
+      ]
+    },
+    {
+      "run_id": 36702382092,
+      "job_id": 109844592627,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-30T10:26:02Z",
+      "sha": "3e9ca2643982e479a0f04435181ed1a5328c0b9a",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "integrations/t3/gates/release-browser-boot.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/109844592627.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36702551277,
+      "job_id": 109845129624,
+      "workflow": "CI",
+      "job": "Bun 1.4.2 / Linux x64",
+      "date": "2026-09-30T10:27:40Z",
+      "sha": "b5a6cf997818e663862e3b256000c8d5f4585e20",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "integrations/t3/gates/release-browser-boot.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/109845129624.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36774743001,
+      "job_id": 110089820239,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-09-30T20:44:53Z",
+      "sha": "b8f8decc5529da0c8e7edcab3c657592a1d60cee",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["ci-runner-fixture-127"],
+      "tests": ["Linux runs all ordered gates in the pinned web checkout with deterministic tests"],
+      "log": "logs/110089820239.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 4358,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 4360,
+          "text": "Expected: 0"
+        },
+        {
+          "line": 4361,
+          "text": "Received: 127"
+        },
+        {
+          "line": 4369,
+          "text": "(fail) Linux runs all ordered gates in the pinned web checkout with deterministic tests [51.61ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36775922476,
+      "job_id": 110093752046,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-09-30T20:55:09Z",
+      "sha": "8ce5eaf2ce738a78c694d4306225ae7a0ac7ade3",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["web-tree-directory-read"],
+      "tests": [],
+      "log": "logs/110093752046.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3539,
+          "text": "error: Directories cannot be read like files"
+        }
+      ]
+    },
+    {
+      "run_id": 36780027410,
+      "job_id": 110107723258,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-09-30T21:32:09Z",
+      "sha": "1ed13712f3ecce07b5a65d46029ff619998d6d83",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["parallel-gate-mixed"],
+      "tests": [
+        "native pagination preserves every phase with empty native and SSH sources",
+        "one verified packing supports four compile targets without touching archive or mutable dist",
+        "attention and a racing completion produce one deduplicated parent wakeup",
+        "mixed completion and attention reserve bounded evidence for both",
+        "shell defaults to a three-second foreground budget; zero wait and timeout stay independent",
+        "CLI-only edits do not change web content key or invalidate reuse",
+        " src/orchestration-v2/NativeDieIntegration.production.test.ts > integrated real upstream orchestration > uses scoped HTTP MCP through PiAdapterV2 and actual Die with idempotent child spawn and cancel"
+      ],
+      "log": "logs/110107723258.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3792,
+          "text": "(fail) native pagination preserves every phase with empty native and SSH sources [5003.52ms]"
+        },
+        {
+          "line": 3793,
+          "text": "^ this test timed out after 5000ms."
+        },
+        {
+          "line": 4546,
+          "text": "error: Cannot reuse packed web; run a fresh build:web producer: Error: Command failed: pnpm --version"
+        },
+        {
+          "line": 4555,
+          "text": "(fail) one verified packing supports four compile targets without touching archive or mutable dist [5014.84ms]"
+        },
+        {
+          "line": 4624,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 4626,
+          "text": "Expected: \"task-complete\""
+        },
+        {
+          "line": 4627,
+          "text": "Received: \"task-attention\""
+        },
+        {
+          "line": 4635,
+          "text": "(fail) attention and a racing completion produce one deduplicated parent wakeup [226.30ms]"
+        },
+        {
+          "line": 4648,
+          "text": "error: expect(received).toHaveLength(expected)"
+        },
+        {
+          "line": 4659,
+          "text": "(fail) mixed completion and attention reserve bounded evidence for both [356.40ms]"
+        },
+        {
+          "line": 4695,
+          "text": "(fail) shell defaults to a three-second foreground budget; zero wait and timeout stay independent [5000.42ms]"
+        },
+        {
+          "line": 4739,
+          "text": "Expected: 0"
+        },
+        {
+          "line": 4740,
+          "text": "Received: undefined"
+        },
+        {
+          "line": 6105,
+          "text": "(fail) CLI-only edits do not change web content key or invalidate reuse [5028.79ms]"
+        },
+        {
+          "line": 7589,
+          "text": "FAIL  src/orchestration-v2/NativeDieIntegration.production.test.ts > integrated real upstream orchestration > uses scoped HTTP MCP through PiAdapterV2 and actual Die with idempotent child spawn and cancel"
+        },
+        {
+          "line": 7590,
+          "text": "AssertionError: expected [ …(2) ] to have a length of 1 but got 2"
+        },
+        {
+          "line": 7620,
+          "text": "##[error]AssertionError: expected [ …(2) ] to have a length of 1 but got 2"
+        }
+      ]
+    },
+    {
+      "run_id": 36818360286,
+      "job_id": 110228351010,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T05:08:43Z",
+      "sha": "f45bd2cbd64fb8393847eaa804ca4f6bef96be72",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["http-close-order"],
+      "tests": ["close aborts initialize, waits for settlement, then deletes an acquired session"],
+      "log": "logs/110228351010.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 2813,
+          "text": "error: expect(received).toBeGreaterThan(expected)"
+        },
+        {
+          "line": 2815,
+          "text": "Expected: > -1"
+        },
+        {
+          "line": 2816,
+          "text": "Received: -1"
+        },
+        {
+          "line": 2824,
+          "text": "(fail) close aborts initialize, waits for settlement, then deletes an acquired session [11.80ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36828791812,
+      "job_id": 110260473338,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T07:10:36Z",
+      "sha": "9a6ec0100b0bd961333bada479935d11b06ae143",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["http-close-order"],
+      "tests": ["close aborts initialize, waits for settlement, then deletes an acquired session"],
+      "log": "logs/110260473338.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5646,
+          "text": "error: expect(received).toBeGreaterThan(expected)"
+        },
+        {
+          "line": 5648,
+          "text": "Expected: > -1"
+        },
+        {
+          "line": 5649,
+          "text": "Received: -1"
+        },
+        {
+          "line": 5657,
+          "text": "(fail) close aborts initialize, waits for settlement, then deletes an acquired session [4.92ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36840532890,
+      "job_id": 110298418473,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T09:06:27Z",
+      "sha": "a349a8ad4f698a43024589581845adafcb2fb1f2",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["task-row-ui-mismatch"],
+      "tests": [
+        "real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure",
+        "real TUI /ps selects live jobs and only stops the confirmed target"
+      ],
+      "log": "logs/110298418473.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5689,
+          "text": "error: Missing task_fixture executed in frame:"
+        },
+        {
+          "line": 5776,
+          "text": "(fail) real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure [4493.63ms]"
+        },
+        {
+          "line": 6665,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 6668,
+          "text": "Received: \"\\n DIE_TEST_READY\\n fd installed to /tmp/die-ci.RiLp0y/die-ps-tui-t6fzKW/.die/agent/bin/fd\\n\\n DIE_TEST_READY\\n\\n Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys\\n on` to ~/.tmux.conf and restart tmux.\\n\\n start\\n\\n ✓ executed · 2 background · const a=await shell(\\\"sh -c 'while :; do echo ALPHA-live; sleep 1; d...\\n\\n FIXTURE_READY\\n ✗ task_0173f936 cancelled\\n\\n FIXTURE_READY\\n\\n────────"
+        },
+        {
+          "line": 6676,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [9100.91ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36840408373,
+      "job_id": 110298480692,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T09:06:36Z",
+      "sha": "98fc74d0943ce834554c8bcc6d2e56603c7786f5",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["task-row-ui-mismatch"],
+      "tests": [
+        "real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure",
+        "real TUI /ps selects live jobs and only stops the confirmed target"
+      ],
+      "log": "logs/110298480692.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5718,
+          "text": "error: Missing task_fixture executed in frame:"
+        },
+        {
+          "line": 5805,
+          "text": "(fail) real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure [4516.74ms]"
+        },
+        {
+          "line": 6729,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 6732,
+          "text": "Received: \"\\n DIE_TEST_READY\\n fd installed to /tmp/die-ci.fnYfhT/die-ps-tui-QsB2ME/.die/agent/bin/fd\\n\\n DIE_TEST_READY\\n\\n Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys\\n on` to ~/.tmux.conf and restart tmux.\\n\\n start\\n\\n ✓ executed · 2 background · const a=await shell(\\\"sh -c 'while :; do echo ALPHA-live; sleep 1; d...\\n\\n FIXTURE_READY\\n ✗ task_a08b641f cancelled\\n\\n FIXTURE_READY\\n\\n────────"
+        },
+        {
+          "line": 6740,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [9135.59ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36847796148,
+      "job_id": 110322070188,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T10:13:58Z",
+      "sha": "a349a8ad4f698a43024589581845adafcb2fb1f2",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["task-row-ui-mismatch"],
+      "tests": [
+        "real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure",
+        "real TUI /ps selects live jobs and only stops the confirmed target"
+      ],
+      "log": "logs/110322070188.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5652,
+          "text": "error: Missing task_fixture executed in frame:"
+        },
+        {
+          "line": 5739,
+          "text": "(fail) real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure [4512.36ms]"
+        },
+        {
+          "line": 6655,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 6658,
+          "text": "Received: \"\\n DIE_TEST_READY\\n ripgrep installed to /tmp/die-ci.xpzFHA/die-ps-tui-oU2xNd/.die/agent/bin/rg\\n\\n DIE_TEST_READY\\n\\n Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys\\n on` to ~/.tmux.conf and restart tmux.\\n\\n start\\n\\n ✓ executed · 2 background · const a=await shell(\\\"sh -c 'while :; do echo ALPHA-live; sleep 1; d...\\n\\n FIXTURE_READY\\n ✗ task_80c2f897 cancelled\\n\\n FIXTURE_READY\\n\\n───"
+        },
+        {
+          "line": 6666,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [9276.73ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36859208698,
+      "job_id": 110359593555,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T12:04:44Z",
+      "sha": "4694ed8b65d92da538efed7411899838f0997ff4",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["task-row-ui-mismatch"],
+      "tests": [
+        "real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure",
+        "real TUI /ps selects live jobs and only stops the confirmed target"
+      ],
+      "log": "logs/110359593555.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5705,
+          "text": "error: Missing task_fixture executed in frame:"
+        },
+        {
+          "line": 5792,
+          "text": "(fail) real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure [4579.16ms]"
+        },
+        {
+          "line": 6772,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 6775,
+          "text": "Received: \"\\n DIE_TEST_READY\\n fd installed to /tmp/die-ci.0pJLJl/die-ps-tui-RGICRG/.die/agent/bin/fd\\n\\n DIE_TEST_READY\\n\\n Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys\\n on` to ~/.tmux.conf and restart tmux.\\n\\n start\\n\\n ✓ executed · 2 background · const a=await shell(\\\"sh -c 'while :; do echo ALPHA-live; sleep 1; d...\\n\\n FIXTURE_READY\\n ✗ task_a4b98ab2 cancelled\\n\\n FIXTURE_READY\\n\\n────────"
+        },
+        {
+          "line": 6783,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [9267.19ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36862326414,
+      "job_id": 110369386497,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T12:31:47Z",
+      "sha": "615ec1a7e57ddeb6c670ada2993b777ae81f46eb",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["sdk-extra-continuation"],
+      "tests": ["real SDK print completion cycles pause within bounded agent runs"],
+      "log": "logs/110369386497.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5794,
+          "text": "error: expect(received).toBeLessThanOrEqual(expected)"
+        },
+        {
+          "line": 5796,
+          "text": "Expected: <= 4"
+        },
+        {
+          "line": 5797,
+          "text": "Received: 5"
+        },
+        {
+          "line": 5805,
+          "text": "(fail) real SDK print completion cycles pause within bounded agent runs [1931.13ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36863592468,
+      "job_id": 110373513410,
+      "workflow": "Daily dependency PR",
+      "job": "validate",
+      "date": "2026-10-01T12:42:46Z",
+      "sha": "02edcf63b93fff44c97096accda9b7f577711baa",
+      "attempt": 1,
+      "failed_steps": ["Validate actual candidate with shared Linux CI"],
+      "classifications": ["pi-sessionmanager-guard"],
+      "tests": [],
+      "log": "logs/110373513410.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 823,
+          "text": "error: Unsupported Pi SessionManager: review the disk-backed history adapter before updating Pi"
+        }
+      ]
+    },
+    {
+      "run_id": 36867656383,
+      "job_id": 110387198138,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T13:18:11Z",
+      "sha": "b111d992840062f3165f494a690dd7b600d83811",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "src/remote/operations.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/fixtures/remote-typed-root-placement/reply-loss.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/fixtures/remote-typed-root-placement/scenario.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/remote-descendant-environment.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/remote-extension.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "tests/remote-placement-legacy-launch.test.ts format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/110387198138.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 36868326217,
+      "job_id": 110389979820,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T13:25:08Z",
+      "sha": "963401c5a4c07813376d6596e23ee8571d3f5464",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["pi-stale-context"],
+      "tests": [
+        "SDK provider pipeline records only the calling agent and survives disk resume",
+        "payload rejection before fetch does not reset the estimate",
+        "successful terminal observation covers transports without an HTTP hook",
+        "actual SDK HTTP hook does not record rejected responses",
+        "fresh compacts current transformed conversation without a warm capture",
+        "uncaptured-tool-results compacts current transformed conversation without a warm capture",
+        "changed-prefix compacts current transformed conversation without a warm capture",
+        "automatic compacts current transformed conversation without a warm capture",
+        "empty-context compacts current transformed conversation without a warm capture",
+        "real offline assembly changes only messages across goal set, update, and clear",
+        "real SDK reconciles helper waiting through task-complete and completes",
+        "real SDK print completion cycles pause within bounded agent runs",
+        "real SDK print completion cycles accept distinct explicit milestones",
+        "fresh compaction prepares the frame and redacted context for a later custom multi-tool turn",
+        "real SDK /shake preserves native checkpoint exactly once, kept tail, post-checkpoint prose and disk reopen",
+        "SDK active-boundary semantics omit older retained checkpoints without losing their journal bytes",
+        "native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume, and provider guard"
+      ],
+      "log": "logs/110389979820.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3841,
+          "text": "error: This extension ctx is stale after session replacement or reload. Do not use a captured pi or command ctx after ctx.newSession(), ctx.fork(), ctx.switchSession(), or ctx.reload(). For newSession, fork, and switchSession, move post-replacement work into withSession and use the ctx passed to withSession. For reload, do not use the old ctx after await ctx.reload()."
+        },
+        {
+          "line": 3850,
+          "text": "(fail) SDK provider pipeline records only the calling agent and survives disk resume [34.20ms]"
+        },
+        {
+          "line": 3867,
+          "text": "(fail) payload rejection before fetch does not reset the estimate [28.85ms]"
+        },
+        {
+          "line": 3884,
+          "text": "(fail) successful terminal observation covers transports without an HTTP hook [18.10ms]"
+        },
+        {
+          "line": 3943,
+          "text": "(fail) actual SDK HTTP hook does not record rejected responses [56.94ms]"
+        },
+        {
+          "line": 5525,
+          "text": "(fail) fresh compacts current transformed conversation without a warm capture [47.46ms]"
+        },
+        {
+          "line": 5551,
+          "text": "(fail) uncaptured-tool-results compacts current transformed conversation without a warm capture [19.67ms]"
+        },
+        {
+          "line": 5568,
+          "text": "(fail) changed-prefix compacts current transformed conversation without a warm capture [15.93ms]"
+        },
+        {
+          "line": 5594,
+          "text": "(fail) automatic compacts current transformed conversation without a warm capture [16.28ms]"
+        },
+        {
+          "line": 5612,
+          "text": "(fail) empty-context compacts current transformed conversation without a warm capture [1.60ms]"
+        },
+        {
+          "line": 6007,
+          "text": "(fail) real offline assembly changes only messages across goal set, update, and clear [909.64ms]"
+        },
+        {
+          "line": 6044,
+          "text": "(fail) real SDK reconciles helper waiting through task-complete and completes [703.99ms]"
+        },
+        {
+          "line": 6116,
+          "text": "(fail) real SDK print completion cycles pause within bounded agent runs [1937.18ms]"
+        },
+        {
+          "line": 6133,
+          "text": "(fail) real SDK print completion cycles accept distinct explicit milestones [2388.34ms]"
+        },
+        {
+          "line": 6459,
+          "text": "(fail) fresh compaction prepares the frame and redacted context for a later custom multi-tool turn [47.24ms]"
+        },
+        {
+          "line": 6886,
+          "text": "(fail) real SDK /shake preserves native checkpoint exactly once, kept tail, post-checkpoint prose and disk reopen [38.62ms]"
+        },
+        {
+          "line": 6907,
+          "text": "(fail) SDK active-boundary semantics omit older retained checkpoints without losing their journal bytes [13.42ms]"
+        },
+        {
+          "line": 7129,
+          "text": "(fail) native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume, and provider guard [76.26ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36872054281,
+      "job_id": 110402136874,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T13:53:39Z",
+      "sha": "b0dc1a1be94b385c31ca8644e0f6335cd7567d86",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["http-close-order"],
+      "tests": ["close aborts initialize, waits for settlement, then deletes an acquired session"],
+      "log": "logs/110402136874.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5750,
+          "text": "error: expect(received).toBeGreaterThan(expected)"
+        },
+        {
+          "line": 5752,
+          "text": "Expected: > 1"
+        },
+        {
+          "line": 5753,
+          "text": "Received: -1"
+        },
+        {
+          "line": 5761,
+          "text": "(fail) close aborts initialize, waits for settlement, then deletes an acquired session [4.68ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36874686991,
+      "job_id": 110411039650,
+      "workflow": "CI",
+      "job": "Full validation / macOS Live (no devices or API)",
+      "date": "2026-10-01T14:14:00Z",
+      "sha": "a5d1b0b211b5afbf3e4999e0b3bcafe1206b762f",
+      "attempt": 1,
+      "failed_steps": ["Shared macOS Live gate"],
+      "classifications": ["scoped-completion-update"],
+      "tests": ["actual TaskManager + JobService dispatch stays within owner"],
+      "log": "logs/110411039650.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 389,
+          "text": "error: expect(received).toContainEqual(expected)"
+        },
+        {
+          "line": 396,
+          "text": "Received: []"
+        },
+        {
+          "line": 408,
+          "text": "(fail) actual TaskManager + JobService dispatch stays within owner [64.65ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36889019440,
+      "job_id": 110459719040,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T16:03:20Z",
+      "sha": "b42d912ea75b72d6f121d40b38eb03f3ace49c72",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["herdr-epipe"],
+      "tests": ["built-in Herdr agent state > stalled sends preserve wire sequence order and the final working state"],
+      "log": "logs/110459719040.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3310,
+          "text": "error: write EPIPE"
+        },
+        {
+          "line": 3321,
+          "text": "(fail) built-in Herdr agent state > stalled sends preserve wire sequence order and the final working state [259.58ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36899822725,
+      "job_id": 110496023137,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T17:30:22Z",
+      "sha": "d316bd5de37ff32076ff07e8f7cefb5acc93a839",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["model-literal-type"],
+      "tests": [],
+      "log": "logs/110496023137.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 771,
+          "text": "##[error]tests/native-fast-mode.test.ts(147,37): error TS2345: Argument of type '\"gpt-5.3-codex\" | \"gpt-5.5\"' is not assignable to parameter of type '\"gpt-5.3-codex-spark\" | \"gpt-5.5\" | \"gpt-5.6-luna\" | \"gpt-5.6-sol\" | \"gpt-5.6-terra\" | \"gpt-6-astra\" | \"gpt-6-luna\" | \"gpt-6-sol\" | \"gpt-6.1-sol\"'."
+        }
+      ]
+    },
+    {
+      "run_id": 36904440793,
+      "job_id": 110511978820,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T18:08:48Z",
+      "sha": "8741a5c4b6ac2b5cc91d2a58c4e8aa963a86af12",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["http-close-order"],
+      "tests": ["close aborts initialize, waits for settlement, then deletes an acquired session"],
+      "log": "logs/110511978820.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5709,
+          "text": "error: expect(received).toBeGreaterThan(expected)"
+        },
+        {
+          "line": 5711,
+          "text": "Expected: > 2"
+        },
+        {
+          "line": 5712,
+          "text": "Received: 1"
+        },
+        {
+          "line": 5720,
+          "text": "(fail) close aborts initialize, waits for settlement, then deletes an acquired session [2.65ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36913111305,
+      "job_id": 110540505892,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T19:17:11Z",
+      "sha": "055d596707d557d9d18bc0bf889361ad1afaf367",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["live-rendering-and-cancel"],
+      "tests": [
+        "stopWork helper response is acknowledged before scoped foreground cancellation",
+        "direct Live main owner > owns actual Pi registered execute and final root/project/hook instructions without streaming text",
+        "direct Live main owner > production Live events render through pinned ToolExecutionComponent and execute renderers",
+        "execute handoff notice: error",
+        "built-in Herdr agent state > real background jobs keep Herdr working across foreground and staggered completion",
+        "built-in Herdr agent state > replacement owns reporting and stale runtime quit cannot release it",
+        "built-in Herdr agent state > quit drops queued working before release when a socket is stalled",
+        "real TUI /ps selects live jobs and only stops the confirmed target"
+      ],
+      "log": "logs/110540505892.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 907,
+          "text": "error: expect(received).rejects.toThrow(expected)"
+        },
+        {
+          "line": 918,
+          "text": "(fail) stopWork helper response is acknowledged before scoped foreground cancellation [139.75ms]"
+        },
+        {
+          "line": 1691,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 1694,
+          "text": "Received: \"\\n⠋\""
+        },
+        {
+          "line": 1702,
+          "text": "(fail) direct Live main owner > owns actual Pi registered execute and final root/project/hook instructions without streaming text [21.69ms]"
+        },
+        {
+          "line": 1724,
+          "text": "(fail) direct Live main owner > production Live events render through pinned ToolExecutionComponent and execute renderers [1.35ms]"
+        },
+        {
+          "line": 2909,
+          "text": "(fail) execute handoff notice: error [1.11ms]"
+        },
+        {
+          "line": 3389,
+          "text": "TypeError: ctx.sessionManager.getBranch is not a function. (In 'ctx.sessionManager.getBranch()', 'ctx.sessionManager.getBranch' is undefined)"
+        },
+        {
+          "line": 3398,
+          "text": "(fail) built-in Herdr agent state > real background jobs keep Herdr working across foreground and staggered completion [3.32ms]"
+        },
+        {
+          "line": 3399,
+          "text": "error: write EPIPE"
+        },
+        {
+          "line": 3410,
+          "text": "(fail) built-in Herdr agent state > replacement owns reporting and stale runtime quit cannot release it [1.71ms]"
+        },
+        {
+          "line": 3422,
+          "text": "(fail) built-in Herdr agent state > quit drops queued working before release when a socket is stalled [1.18ms]"
+        },
+        {
+          "line": 4307,
+          "text": "Received: \" BRUV_TEST_READY\\n fd installed to /tmp/bruv-ci.hM9rSY/bruv-ps-tui-BqwqFD/.bruv/agent/bin/fd\\n\\n BRUV_TEST_READY\\n\\n Warning: tmux extended-keys is off. Modified Enter keys may not work. Add `set -g extended-keys\\n on` to ~/.tmux.conf and restart tmux.\\n\\n start\\n\\n ↗ task_89e3634d\\n ⊘ task_00f808fa — cancelled\\n\\n FIXTURE_READY\\n\\n FIXTURE_READY\\n\\n───────────────────────────────────────────────────────────────────────────────────────"
+        },
+        {
+          "line": 4315,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [9120.24ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36913111305,
+      "job_id": 110540505933,
+      "workflow": "CI",
+      "job": "Full validation / macOS Live (no devices or API)",
+      "date": "2026-10-01T19:17:16Z",
+      "sha": "055d596707d557d9d18bc0bf889361ad1afaf367",
+      "attempt": 1,
+      "failed_steps": ["Shared macOS Live gate"],
+      "classifications": ["live-rendering-and-cancel"],
+      "tests": [
+        "stopWork helper response is acknowledged before scoped foreground cancellation",
+        "direct Live main owner > owns actual Pi registered execute and final root/project/hook instructions without streaming text",
+        "direct Live main owner > production Live events render through pinned ToolExecutionComponent and execute renderers"
+      ],
+      "log": "logs/110540505933.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 490,
+          "text": "error: expect(received).rejects.toThrow(expected)"
+        },
+        {
+          "line": 501,
+          "text": "(fail) stopWork helper response is acknowledged before scoped foreground cancellation [75.60ms]"
+        },
+        {
+          "line": 671,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 674,
+          "text": "Received: \"\\n⠋\""
+        },
+        {
+          "line": 682,
+          "text": "(fail) direct Live main owner > owns actual Pi registered execute and final root/project/hook instructions without streaming text [33.92ms]"
+        },
+        {
+          "line": 704,
+          "text": "(fail) direct Live main owner > production Live events render through pinned ToolExecutionComponent and execute renderers [0.90ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36915876034,
+      "job_id": 110549689518,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T19:39:37Z",
+      "sha": "e8dcc21218c39c334cd84217df15089223cf7ae6",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["typed-error-evidence"],
+      "tests": [
+        "typed background launches survive outer execute error with durable call ownership and real terminal updates",
+        "real SDK tool execution preserves structured failure evidence instead of dropping details in a throw"
+      ],
+      "log": "logs/110549689518.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 2648,
+          "text": "error: Execution failed with exit code 1."
+        },
+        {
+          "line": 2663,
+          "text": "(fail) typed background launches survive outer execute error with durable call ownership and real terminal updates [7.88ms]"
+        },
+        {
+          "line": 3168,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 3170,
+          "text": "Expected: 7"
+        },
+        {
+          "line": 3171,
+          "text": "Received: undefined"
+        },
+        {
+          "line": 3179,
+          "text": "(fail) real SDK tool execution preserves structured failure evidence instead of dropping details in a throw [64.46ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 36930539074,
+      "job_id": 110598775365,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-01T21:44:28Z",
+      "sha": "339926394e0fa3073dd8ef578143dab293a725e4",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["http-close-order"],
+      "tests": ["close aborts initialize, waits for settlement, then deletes an acquired session"],
+      "log": "logs/110598775365.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5846,
+          "text": "error: expect(received).toBeGreaterThan(expected)"
+        },
+        {
+          "line": 5848,
+          "text": "Expected: > 2"
+        },
+        {
+          "line": 5849,
+          "text": "Received: 1"
+        },
+        {
+          "line": 5857,
+          "text": "(fail) close aborts initialize, waits for settlement, then deletes an acquired session [2.80ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37010450058,
+      "job_id": 110848723178,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-02T13:03:22Z",
+      "sha": "be437d2e4772014a006e8e6ec33ee79713c907d1",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["historical-git-fixture"],
+      "tests": [
+        "migration gate rejects an override differing from the shipped patch before copying fixtures",
+        "migration gate accepts the historical patch checksum but rejects an unrelated production HEAD before copying fixtures"
+      ],
+      "log": "logs/110848723178.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5495,
+          "text": "fatal: path 'integrations/t3/upstream/bruv.patch' exists on disk, but not in '92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be'"
+        },
+        {
+          "line": 5503,
+          "text": "error: Command failed: git show 92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be:integrations/t3/upstream/bruv.patch"
+        },
+        {
+          "line": 5523,
+          "text": "(fail) migration gate rejects an override differing from the shipped patch before copying fixtures [9.91ms]"
+        },
+        {
+          "line": 5552,
+          "text": "(fail) migration gate accepts the historical patch checksum but rejects an unrelated production HEAD before copying fixtures [2.81ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37014485451,
+      "job_id": 110861979912,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-02T13:40:10Z",
+      "sha": "a46709606ca536da4fbe3571069dde50bd2ad81d",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["historical-git-fixture"],
+      "tests": [
+        "migration gate rejects an override differing from the shipped patch before copying fixtures",
+        "migration gate accepts the historical patch checksum but rejects an unrelated production HEAD before copying fixtures"
+      ],
+      "log": "logs/110861979912.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5357,
+          "text": "fatal: path 'integrations/t3/upstream/bruv.patch' exists on disk, but not in '92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be'"
+        },
+        {
+          "line": 5365,
+          "text": "error: Command failed: git show 92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be:integrations/t3/upstream/bruv.patch"
+        },
+        {
+          "line": 5385,
+          "text": "(fail) migration gate rejects an override differing from the shipped patch before copying fixtures [17.96ms]"
+        },
+        {
+          "line": 5414,
+          "text": "(fail) migration gate accepts the historical patch checksum but rejects an unrelated production HEAD before copying fixtures [4.53ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37016177565,
+      "job_id": 110867588620,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-02T13:55:00Z",
+      "sha": "cfb95bfe5ba9e699585ac7c183274fe92c0d3a16",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["historical-git-fixture"],
+      "tests": [
+        "migration gate rejects an override differing from the shipped patch before copying fixtures",
+        "migration gate accepts the historical patch checksum but rejects an unrelated production HEAD before copying fixtures"
+      ],
+      "log": "logs/110867588620.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 5435,
+          "text": "fatal: path 'integrations/t3/upstream/bruv.patch' exists on disk, but not in '92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be'"
+        },
+        {
+          "line": 5443,
+          "text": "error: Command failed: git show 92f1f2bc543ef148a5d254c20c95e6ba8b9aa4be:integrations/t3/upstream/bruv.patch"
+        },
+        {
+          "line": 5463,
+          "text": "(fail) migration gate rejects an override differing from the shipped patch before copying fixtures [11.50ms]"
+        },
+        {
+          "line": 5492,
+          "text": "(fail) migration gate accepts the historical patch checksum but rejects an unrelated production HEAD before copying fixtures [3.28ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37066171522,
+      "job_id": 111034835697,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-02T21:21:13Z",
+      "sha": "447bdb0b6419608d0d5197ca55011a0c2830f83c",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["tmux-restart"],
+      "tests": ["real footer includes nested costs, updates while idle, and restores on resume"],
+      "log": "logs/111034835697.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 4292,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 4294,
+          "text": "Expected: 0"
+        },
+        {
+          "line": 4295,
+          "text": "Received: 1"
+        },
+        {
+          "line": 4303,
+          "text": "(fail) real footer includes nested costs, updates while idle, and restores on resume [2838.37ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37143983695,
+      "job_id": 111264087870,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-03T18:23:25Z",
+      "sha": "dcb2d747702ee76db75d1e23b21960e8fd8f72e0",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["ssh-fixture-and-footer"],
+      "tests": [
+        "SSH uses normal async launch with destination profile and honest snapshot workspace, no laptop model",
+        "role/depth is validated before placement and SSH never permits child orchestrator escalation",
+        "unknown launches retain a durable task ID; retries and batches never duplicate; other sessions cannot steal",
+        "changed retry intent is rejected even while the earlier outcome is unknown",
+        "reserved SSH host local has one authorized alias; literal local never selects SSH",
+        "omitted and explicit local target preserve local launch/wait/model, even with a pinned SSH host",
+        "unconfirmed repository preparation exposes the same reserved identity on retry",
+        "explicit destination model/thinking overrides reach named placement and never silently affect local launches",
+        "normal task titles survive placement in cached progress",
+        "real terminal prompt/footer adjacency: regular"
+      ],
+      "log": "logs/111264087870.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 2684,
+          "text": "TypeError: undefined is not an object (evaluating 'value.replace')"
+        },
+        {
+          "line": 2699,
+          "text": "(fail) SSH uses normal async launch with destination profile and honest snapshot workspace, no laptop model [38.03ms]"
+        },
+        {
+          "line": 2737,
+          "text": "(fail) role/depth is validated before placement and SSH never permits child orchestrator escalation [64.63ms]"
+        },
+        {
+          "line": 2774,
+          "text": "(fail) unknown launches retain a durable task ID; retries and batches never duplicate; other sessions cannot steal [34.09ms]"
+        },
+        {
+          "line": 2797,
+          "text": "(fail) changed retry intent is rejected even while the earlier outcome is unknown [10.04ms]"
+        },
+        {
+          "line": 2836,
+          "text": "(fail) reserved SSH host local has one authorized alias; literal local never selects SSH [48.78ms]"
+        },
+        {
+          "line": 2895,
+          "text": "(fail) omitted and explicit local target preserve local launch/wait/model, even with a pinned SSH host [6.60ms]"
+        },
+        {
+          "line": 2917,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 2920,
+          "text": "Received: \"TypeError: undefined is not an object (evaluating 'value.replace')\""
+        },
+        {
+          "line": 2928,
+          "text": "(fail) unconfirmed repository preparation exposes the same reserved identity on retry [4.59ms]"
+        },
+        {
+          "line": 2951,
+          "text": "(fail) explicit destination model/thinking overrides reach named placement and never silently affect local launches [8.43ms]"
+        },
+        {
+          "line": 2975,
+          "text": "(fail) normal task titles survive placement in cached progress [3.85ms]"
+        },
+        {
+          "line": 3328,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 3330,
+          "text": "Expected: 2"
+        },
+        {
+          "line": 3331,
+          "text": "Received: 1"
+        },
+        {
+          "line": 3339,
+          "text": "(fail) real terminal prompt/footer adjacency: regular [1974.57ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37144539047,
+      "job_id": 111265693594,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-03T18:32:04Z",
+      "sha": "0249ae6c1a5314011fc489476a3197f5bea9fb31",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate"],
+      "classifications": ["task-inspect-surface"],
+      "tests": ["real TUI /ps selects live jobs and only stops the confirmed target"],
+      "log": "logs/111265693594.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 6483,
+          "text": "error: Missing Inspect task_, ALPHA-live in frame:"
+        },
+        {
+          "line": 6550,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [13157.27ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37182775319,
+      "job_id": 111378542156,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T06:26:06Z",
+      "sha": "9622662a5db503297839132409a453fecd054396",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["native-gate-step-position"],
+      "tests": ["external native release gate setup keeps verified upstream layout and env handoff"],
+      "log": "logs/111378542156.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 4579,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 4582,
+          "text": "Received: \"chmod 0755 dist/release/bruv-linux-x64\\nchmod 0755 dist/release/bruv-claude-compat-linux-x64\\nhome=$(mktemp -d)\\ntrap 'rm -rf \\\"$home\\\"' EXIT\\nversion=$(HOME=\\\"$home\\\" dist/release/bruv-linux-x64 --version)\\ntest \\\"$version\\\" = \\\"$(bun -p 'require(\\\"./package.json\\\").version')\\\"\\ntest \\\"$(HOME=\\\"$home\\\" dist/release/bruv-claude-compat-linux-x64 --version)\\\" = \\\"bruv-claude-compat $version\\\"\\nBRUV_CONNECTOR_EXECUTABLE=\\\"$GITHUB_WORKSPAC"
+        },
+        {
+          "line": 4590,
+          "text": "(fail) external native release gate setup keeps verified upstream layout and env handoff [5.85ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37184257701,
+      "job_id": 111382856441,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T06:56:22Z",
+      "sha": "a9c38d283a4ec7e138afccbb15f342b963a4ff95",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["task-inspect-surface"],
+      "tests": ["real TUI /ps selects live jobs and only stops the confirmed target"],
+      "log": "logs/111382856441.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3725,
+          "text": "error: Missing Inspect task_, ALPHA-live in frame:"
+        },
+        {
+          "line": 3792,
+          "text": "(fail) real TUI /ps selects live jobs and only stops the confirmed target [12501.32ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37186688466,
+      "job_id": 111390017769,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T07:44:19Z",
+      "sha": "7dc6a967f918ce3c96fe7ba36bf2e4d12c98c6f1",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "wisdom/tasks-ui/full-frame-latency-checkpoint.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/tasks-ui/full-frame-latency-results.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/111390017769.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 37186756720,
+      "job_id": 111390227928,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T07:45:44Z",
+      "sha": "4f22d4884ba2151c01a0b1a0d04dca00d16f9e49",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "wisdom/tasks-ui/full-frame-latency-checkpoint.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/tasks-ui/full-frame-latency-results.json format ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/111390227928.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 37188229505,
+      "job_id": 111394741289,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T08:13:54Z",
+      "sha": "c2be90ef558021490ac898a1bf04b30fb5799baf",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["startup-rebind-budget"],
+      "tests": [
+        "patched SDK startup: saved",
+        "patched SDK startup: saved-ready",
+        "patched SDK startup: empty",
+        "patched SDK startup: empty-stopped",
+        "patched SDK startup: rebind-error"
+      ],
+      "log": "logs/111394741289.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1957,
+          "text": "error: expect(received).toEqual(expected)"
+        },
+        {
+          "line": 1971,
+          "text": "+ AssertionError: missing event rebind:start: mount,focus,ui:start,grammars:start,theme:apply,colors:wait,render:request,render:request,render:request"
+        },
+        {
+          "line": 1981,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event rebind%3Astart%3A mount%2Cfocus%2Cui%3Astart%2Cgrammars%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Crender%3Arequest%2Crender%3Arequest::%0A      at /home/runner/work/bruv/bruv/tests/fixtures/saved-transcript-startup.ts:156:3"
+        },
+        {
+          "line": 2015,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event rebind%3Astart%3A mount%2Cfocus%2Cui%3Astart%2Cgrammars%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Crender%3Arequest%2Crender%3Arequest::"
+        },
+        {
+          "line": 2027,
+          "text": "(fail) patched SDK startup: saved [254.05ms]"
+        },
+        {
+          "line": 2128,
+          "text": "(fail) patched SDK startup: saved-ready [242.48ms]"
+        },
+        {
+          "line": 2190,
+          "text": "+ AssertionError: missing event rebind:start: mount,focus,ui:start,theme:apply,colors:wait,render:request,render:request,render:request"
+        },
+        {
+          "line": 2200,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event rebind%3Astart%3A mount%2Cfocus%2Cui%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Crender%3Arequest%2Crender%3Arequest::%0A      at /home/runner/work/bruv/bruv/tests/fixtures/saved-transcript-startup.ts:156:3"
+        },
+        {
+          "line": 2234,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event rebind%3Astart%3A mount%2Cfocus%2Cui%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Crender%3Arequest%2Crender%3Arequest::"
+        },
+        {
+          "line": 2246,
+          "text": "(fail) patched SDK startup: empty [319.97ms]"
+        },
+        {
+          "line": 2356,
+          "text": "(fail) patched SDK startup: empty-stopped [265.56ms]"
+        },
+        {
+          "line": 2443,
+          "text": "(fail) patched SDK startup: rebind-error [290.36ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37189627215,
+      "job_id": 111398951448,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T08:39:41Z",
+      "sha": "c33e55ed4868f09496243bfb3beea74c6d01081f",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["openai-execute-json"],
+      "tests": ["OpenAI GA offline protocol > direct main execute receives external root prompt and bounded result"],
+      "log": "logs/111398951448.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 4854,
+          "text": "SyntaxError: JSON Parse error: Unexpected identifier \"undefined\""
+        },
+        {
+          "line": 4859,
+          "text": "(fail) OpenAI GA offline protocol > direct main execute receives external root prompt and bounded result [11.36ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37189939505,
+      "job_id": 111400056774,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T08:46:40Z",
+      "sha": "2dab2515d48bc9a4c09721e0bee425d5be10f0d3",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["footer-append-invalidation"],
+      "tests": ["request projection seeds numeric usage for the whole footer independent of routed limits"],
+      "log": "logs/111400056774.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 2755,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 2765,
+          "text": "+ AssertionError: append invalidates"
+        },
+        {
+          "line": 2778,
+          "text": "+ ::error file=[eval],line=48,col=92,title=AssertionError: append invalidates::0 !== 1%0A%0A      at check (/home/runner/work/bruv/bruv/[eval]:48:92)"
+        },
+        {
+          "line": 2809,
+          "text": "+ ::error file=[eval],line=48,col=92,title=AssertionError: append invalidates::0 !== 1"
+        },
+        {
+          "line": 2820,
+          "text": "(fail) request projection seeds numeric usage for the whole footer independent of routed limits [526.60ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37190862525,
+      "job_id": 111402568119,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T09:02:40Z",
+      "sha": "577a7d9258eae5c89a88e700d8a591b083243661",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["sdk-extra-continuation"],
+      "tests": ["real SDK print completion cycles pause within bounded agent runs"],
+      "log": "logs/111402568119.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3627,
+          "text": "error: expect(received).toBeLessThanOrEqual(expected)"
+        },
+        {
+          "line": 3629,
+          "text": "Expected: <= 4"
+        },
+        {
+          "line": 3630,
+          "text": "Received: 5"
+        },
+        {
+          "line": 3638,
+          "text": "(fail) real SDK print completion cycles pause within bounded agent runs [1783.67ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37191433942,
+      "job_id": 111404311330,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T09:13:22Z",
+      "sha": "914b0a3e891991f34ca0a6a17f3b601754b49cce",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["startup-grammar-budget"],
+      "tests": ["patched SDK startup: empty"],
+      "log": "logs/111404311330.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1818,
+          "text": "error: expect(received).toEqual(expected)"
+        },
+        {
+          "line": 1832,
+          "text": "+ AssertionError: missing event grammars:ready: mount,focus,ui:start,theme:apply,colors:wait,render:request,tool:fd,tool:rg,keys:ready,submit:ready,render:request,rebind:start,rebind:ready,messages:render,providers:ready,paint:transcript,grammars:start"
+        },
+        {
+          "line": 1842,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event grammars%3Aready%3A mount%2Cfocus%2Cui%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Ctool%3Afd%2Ctool%3Arg%2Ckeys%3Aready%2Csubmit%3Aready%2Crender%3Arequest%2Crebind%3Astart%2Crebind%3Aready%2Cmessages%3Arender%2Cproviders%3Aready%2Cpaint%3Atranscript%2Cgrammars%3Astart::%0A      at /home/runner/work/bruv/bruv/tests/fixture"
+        },
+        {
+          "line": 1876,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event grammars%3Aready%3A mount%2Cfocus%2Cui%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Ctool%3Afd%2Ctool%3Arg%2Ckeys%3Aready%2Csubmit%3Aready%2Crender%3Arequest%2Crebind%3Astart%2Crebind%3Aready%2Cmessages%3Arender%2Cproviders%3Aready%2Cpaint%3Atranscript%2Cgrammars%3Astart::"
+        },
+        {
+          "line": 1888,
+          "text": "(fail) patched SDK startup: empty [389.33ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37193550461,
+      "job_id": 111410618172,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T09:52:54Z",
+      "sha": "0345b41570e303240eee58a736eb649e6b28de51",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["startup-grammar-budget"],
+      "tests": ["patched SDK startup: saved-ready"],
+      "log": "logs/111410618172.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 2003,
+          "text": "error: expect(received).toEqual(expected)"
+        },
+        {
+          "line": 2017,
+          "text": "+ AssertionError: missing event grammars:ready: mount,focus,ui:start,grammars:start,theme:apply,colors:wait,render:request,tool:fd,tool:rg,keys:ready,submit:ready,render:request,rebind:start"
+        },
+        {
+          "line": 2027,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event grammars%3Aready%3A mount%2Cfocus%2Cui%3Astart%2Cgrammars%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Ctool%3Afd%2Ctool%3Arg%2Ckeys%3Aready%2Csubmit%3Aready%2Crender%3Arequest%2Crebind%3Astart::%0A      at /home/runner/work/bruv/bruv/tests/fixtures/saved-transcript-startup.ts:156:3"
+        },
+        {
+          "line": 2061,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event grammars%3Aready%3A mount%2Cfocus%2Cui%3Astart%2Cgrammars%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Ctool%3Afd%2Ctool%3Arg%2Ckeys%3Aready%2Csubmit%3Aready%2Crender%3Arequest%2Crebind%3Astart::"
+        },
+        {
+          "line": 2073,
+          "text": "(fail) patched SDK startup: saved-ready [338.47ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37200481788,
+      "job_id": 111430970692,
+      "workflow": "Daily dependency PR",
+      "job": "validate",
+      "date": "2026-10-04T11:57:49Z",
+      "sha": "a563272b40ae446a9def14d9c8843eb8b12bb4f3",
+      "attempt": 1,
+      "failed_steps": ["Validate actual candidate with shared Linux CI"],
+      "classifications": ["daily-pi-host-version"],
+      "tests": [],
+      "log": "logs/111430970692.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 829,
+          "text": "error: Unsupported Pi host version: 1.0.2"
+        }
+      ]
+    },
+    {
+      "run_id": 37210353063,
+      "job_id": 111460138621,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T14:44:20Z",
+      "sha": "42f19ca760ad170d4e1748499cf26f2421b5f34d",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["format-and-json-parse"],
+      "tests": [],
+      "formatter_diagnostics": [
+        "wisdom/landing-page/writing-sources/vesper-theme.json:4:5 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:5:5 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:5:24 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:5:26 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:5:35 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:6:5 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:6:24 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:6:26 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:6:32 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:7:5 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:7:33 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:7:35 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:7:46 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:8:5 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:8:42 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:8:44 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:8:55 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:9:5 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:9:34 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "wisdom/landing-page/writing-sources/vesper-theme.json:9:36 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      ],
+      "log": "logs/111460138621.log.gz",
+      "evidence_snippets": []
+    },
+    {
+      "run_id": 37219289504,
+      "job_id": 111486188196,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T17:07:16Z",
+      "sha": "f9ff01e419a95508e677c7cb632d71e4cccd73c8",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["web-guidance-copy"],
+      "tests": [
+        "compiled web guidance does not launch overrides or modify existing CLI/Claude/T3 state",
+        "standalone executable gives external setup without Node, Bun, T3 or sidecar on PATH"
+      ],
+      "log": "logs/111486188196.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3312,
+          "text": "error: expect(received).toContain(expected)"
+        },
+        {
+          "line": 3315,
+          "text": "Received: \"Bruv + T3 Code\\n==============\\nSetup guide only. This command does not install, launch or configure anything.\\n\\n1. Install the matched Bruv pair\\n   Stop active sessions before installing or replacing binaries.\\n\\n   curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh\\n\\n   The installer verifies bruv + bruv-claude-compat in ~/.local/bin.\\n   Keep them together and put ~/.local/bin on PATH. Chec"
+        },
+        {
+          "line": 3320,
+          "text": "Received: \"Bruv + T3 Code\\n==============\\nSetup guide only. This command does not install, launch or configure anything.\\n\\n1. Install the matched Bruv pair\\n   Stop active sessions before installing or replacing binaries.\\n\\n   curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh\\n\\n   The installer verifies bruv + bruv-claude-compat in ~/.local/bin.\\n   Keep them together and put ~/.local/bin on PATH. Chec"
+        },
+        {
+          "line": 3321,
+          "text": "(fail) compiled web guidance does not launch overrides or modify existing CLI/Claude/T3 state [183.86ms]"
+        },
+        {
+          "line": 3348,
+          "text": "Received: \"Bruv + T3 Code\\n==============\\nSetup guide only. This command does not install, launch or configure anything.\\n\\n1. Install the matched Bruv pair\\n   Stop active sessions before installing or replacing binaries.\\n\\n   curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh\\n\\n   The installer verifies bruv + bruv-claude-compat in ~/.local/bin.\\n   Keep them together and put ~/.local/bin on PATH. Chec"
+        },
+        {
+          "line": 3353,
+          "text": "Received: \"Bruv + T3 Code\\n==============\\nSetup guide only. This command does not install, launch or configure anything.\\n\\n1. Install the matched Bruv pair\\n   Stop active sessions before installing or replacing binaries.\\n\\n   curl -fsSL 'https://raw.githubusercontent.com/tnfssc/bruv/develop/scripts/install.sh' | sh\\n\\n   The installer verifies bruv + bruv-claude-compat in ~/.local/bin.\\n   Keep them together and put ~/.local/bin on PATH. Chec"
+        },
+        {
+          "line": 3354,
+          "text": "(fail) standalone executable gives external setup without Node, Bun, T3 or sidecar on PATH [310.18ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37222631866,
+      "job_id": 111495938169,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-04T18:00:01Z",
+      "sha": "ae792142081a9fcb3cfa0f5f4702304bef996050",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["startup-grammar-budget"],
+      "tests": ["patched SDK startup: empty-stopped"],
+      "log": "logs/111495938169.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1968,
+          "text": "error: expect(received).toEqual(expected)"
+        },
+        {
+          "line": 1982,
+          "text": "+ AssertionError: missing event grammars:ready: mount,focus,ui:start,theme:apply,colors:wait,render:request,tool:fd,tool:rg,keys:ready,submit:ready,render:request,rebind:start,rebind:ready,messages:render,providers:ready,paint:transcript,grammars:start"
+        },
+        {
+          "line": 1992,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event grammars%3Aready%3A mount%2Cfocus%2Cui%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Ctool%3Afd%2Ctool%3Arg%2Ckeys%3Aready%2Csubmit%3Aready%2Crender%3Arequest%2Crebind%3Astart%2Crebind%3Aready%2Cmessages%3Arender%2Cproviders%3Aready%2Cpaint%3Atranscript%2Cgrammars%3Astart::%0A      at /home/runner/work/bruv/bruv/tests/fixture"
+        },
+        {
+          "line": 2026,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event grammars%3Aready%3A mount%2Cfocus%2Cui%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Ctool%3Afd%2Ctool%3Arg%2Ckeys%3Aready%2Csubmit%3Aready%2Crender%3Arequest%2Crebind%3Astart%2Crebind%3Aready%2Cmessages%3Arender%2Cproviders%3Aready%2Cpaint%3Atranscript%2Cgrammars%3Astart::"
+        },
+        {
+          "line": 2038,
+          "text": "(fail) patched SDK startup: empty-stopped [363.19ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37297354419,
+      "job_id": 111721689684,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-05T10:33:52Z",
+      "sha": "df6471ccce72e84807f12fb2fbbd9f74de666bce",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["tmux-restart"],
+      "tests": ["real TUI keeps questions near composer after progress, cancellation and reload"],
+      "log": "logs/111721689684.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 4800,
+          "text": "error: expect(received).toBe(expected)"
+        },
+        {
+          "line": 4802,
+          "text": "Expected: 0"
+        },
+        {
+          "line": 4803,
+          "text": "Received: 1"
+        },
+        {
+          "line": 4811,
+          "text": "(fail) real TUI keeps questions near composer after progress, cancellation and reload [1508.46ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37321109544,
+      "job_id": 111800116876,
+      "workflow": "Daily dependency PR",
+      "job": "validate",
+      "date": "2026-10-05T13:59:39Z",
+      "sha": "df6471ccce72e84807f12fb2fbbd9f74de666bce",
+      "attempt": 1,
+      "failed_steps": ["Validate actual candidate with shared Linux CI"],
+      "classifications": ["daily-pi-host-version"],
+      "tests": [],
+      "log": "logs/111800116876.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 813,
+          "text": "error: Unsupported Pi host version: 1.0.3"
+        }
+      ]
+    },
+    {
+      "run_id": 37333558132,
+      "job_id": 111842631686,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-05T15:32:08Z",
+      "sha": "88c879d4082c696352a8b7fec5217ef2a8de36b8",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["startup-grammar-budget"],
+      "tests": ["patched SDK startup: empty-stopped"],
+      "log": "logs/111842631686.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 1969,
+          "text": "error: expect(received).toEqual(expected)"
+        },
+        {
+          "line": 1983,
+          "text": "+ AssertionError: missing event grammars:ready: mount,focus,ui:start,theme:apply,colors:wait,render:request,tool:fd,tool:rg,keys:ready,submit:ready,render:request,rebind:start,rebind:ready,messages:render,providers:ready,paint:transcript,grammars:start"
+        },
+        {
+          "line": 1993,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event grammars%3Aready%3A mount%2Cfocus%2Cui%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Ctool%3Afd%2Ctool%3Arg%2Ckeys%3Aready%2Csubmit%3Aready%2Crender%3Arequest%2Crebind%3Astart%2Crebind%3Aready%2Cmessages%3Arender%2Cproviders%3Aready%2Cpaint%3Atranscript%2Cgrammars%3Astart::%0A      at /home/runner/work/bruv/bruv/tests/fixture"
+        },
+        {
+          "line": 2027,
+          "text": "+ ::error file=tests/fixtures/saved-transcript-startup.ts,line=156,col=3,title=AssertionError: missing event grammars%3Aready%3A mount%2Cfocus%2Cui%3Astart%2Ctheme%3Aapply%2Ccolors%3Await%2Crender%3Arequest%2Ctool%3Afd%2Ctool%3Arg%2Ckeys%3Aready%2Csubmit%3Aready%2Crender%3Arequest%2Crebind%3Astart%2Crebind%3Aready%2Cmessages%3Arender%2Cproviders%3Aready%2Cpaint%3Atranscript%2Cgrammars%3Astart::"
+        },
+        {
+          "line": 2039,
+          "text": "(fail) patched SDK startup: empty-stopped [408.17ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37354320182,
+      "job_id": 111912851945,
+      "workflow": "CI",
+      "job": "Full validation / Linux x64",
+      "date": "2026-10-05T18:13:44Z",
+      "sha": "156877a185bfda41f72885ed37059a539cbb16c3",
+      "attempt": 1,
+      "failed_steps": ["Shared Linux CI gate (paired binaries, external T3)"],
+      "classifications": ["ffmpeg-fixture-prerequisite"],
+      "tests": ["PCM24 to PCM16 conversion preserves duration and adds an exact silence tail in memory"],
+      "log": "logs/111912851945.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 3908,
+          "text": "error: Executable not found in $PATH: \"ffmpeg\""
+        },
+        {
+          "line": 3921,
+          "text": "(fail) PCM24 to PCM16 conversion preserves duration and adds an exact silence tail in memory [7.61ms]"
+        }
+      ]
+    },
+    {
+      "run_id": 37354320182,
+      "job_id": 111912852160,
+      "workflow": "CI",
+      "job": "Full validation / macOS Live (no devices or API)",
+      "date": "2026-10-05T18:13:49Z",
+      "sha": "156877a185bfda41f72885ed37059a539cbb16c3",
+      "attempt": 1,
+      "failed_steps": ["Shared macOS Live gate"],
+      "classifications": ["ffmpeg-fixture-prerequisite"],
+      "tests": ["PCM24 to PCM16 conversion preserves duration and adds an exact silence tail in memory"],
+      "log": "logs/111912852160.log.gz",
+      "evidence_snippets": [
+        {
+          "line": 733,
+          "text": "error: Executable not found in $PATH: \"ffmpeg\""
+        },
+        {
+          "line": 746,
+          "text": "(fail) PCM24 to PCM16 conversion preserves duration and adds an exact silence tail in memory [23.31ms]"
+        }
+      ]
+    }
+  ],
+  "same_sha_test_evidence": [
+    {
+      "sha": "9b7fd68aa7",
+      "test": "real SDK print completion cycles pause within bounded agent runs",
+      "pass": {
+        "run_id": 34858460981,
+        "job_id": 104024073899,
+        "line": 1481,
+        "text": "(pass) real SDK print completion cycles pause within bounded agent runs [845.34ms]"
+      },
+      "fail": {
+        "run_id": 34858462658,
+        "job_id": 104024080797,
+        "line": 1465,
+        "text": "(fail) real SDK print completion cycles pause within bounded agent runs [1421.79ms]"
+      },
+      "assessment": "Exact test passes and fails under same recorded head SHA; both runs failed overall for different tests. Intermittent assertion, not timeout."
+    }
+  ],
+  "formal_rerun_metadata": [
+    {
+      "run_id": 36309940829,
+      "latest_attempt": 2,
+      "latest_conclusion": "success",
+      "attempt_1_jobs": [
+        {
+          "job_id": 108593843016,
+          "conclusion": "success"
+        },
+        {
+          "job_id": 108593843072,
+          "conclusion": "success"
+        }
+      ],
+      "assessment": "No failed-first/passed-rerun evidence."
+    },
+    {
+      "run_id": 36684947568,
+      "latest_attempt": 2,
+      "latest_conclusion": "success",
+      "attempt_1_jobs": [],
+      "assessment": "Earlier attempt has no returned jobs; cause unknown."
+    }
+  ]
+}

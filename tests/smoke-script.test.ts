@@ -97,9 +97,7 @@ test("CI and release smoke reuse their preceding build", async () => {
   expect(runner.indexOf("bun run smoke -- --reuse-build")).toBeGreaterThan(build);
   expect(runner).toContain("'Standalone paired smoke test' smoke.log");
   const release = await Bun.file(join(import.meta.dir, "..", ".github/workflows/release.yml")).text();
-  const releaseBuild = release.indexOf("run: bun run build 2>&1");
-  const smoke = release.indexOf("run: bun run smoke -- --reuse-build 2>&1");
-  expect(releaseBuild).toBeGreaterThan(-1);
-  expect(smoke).toBeGreaterThan(releaseBuild);
-  expect(release.slice(smoke, release.indexOf("\n", smoke))).toContain("artifacts/release/smoke.log");
+  expect(release).toContain("run: bun run ci");
+  expect(release).toContain("CI_LOG_DIR: artifacts/release/ci");
+  expect(release).not.toContain("run: bun run smoke");
 });

@@ -1,0 +1,23 @@
+bun test v1.4.2 (744846f84)
+
+tests/goal-cycle-early-completion.audit.test.ts:
+465 |
+466 | test("real SDK print completion cycles pause within bounded agent runs", async () => {
+467 |   const result = await runRealPrintCompletionCycles(false);
+468 |   expect(result.settled).toBe(1);
+469 |   expect(result.ended).toBe(result.calls);
+470 |   expect(result.calls).toBeLessThanOrEqual(MAX_NO_PROGRESS_CONTINUATIONS + 1);
+                             ^
+error: expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 4
+Received: 5
+
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3code-2c8ee52c-5442693331ce-task_d5a11f5b/tests/goal-cycle-early-completion.audit.test.ts:470:24)
+(fail) real SDK print completion cycles pause within bounded agent runs [1263.91ms]
+
+ 0 pass
+ 5 filtered out
+ 1 fail
+ 3 expect() calls
+Ran 1 test across 1 file. [1.55s]
