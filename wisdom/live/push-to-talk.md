@@ -97,8 +97,12 @@ Do not create the tag or GitHub release early.
 Hosted native gate worker: task_8c63f36f
 Worktree: /home/tnfssc/.bruv/worktrees/t3code-2140c5c0-5442693331ce-task_8c63f36f
 Branch: bruv/push-to-talk-hosted-native-gates-8c63f36f .
-It updates strict helper hello expectations for captureGate:true and adds
-capture-origin tests to hosted lanes. Integrate its commit before merge.
+Commit ef9b9fe2 is integrated as 3d9dd28c. Exact helper hello now includes
+captureGate:true. Hosted lanes run portable sanitizers; Linux builds the real
+1.x WebRTC helper and uses private Pulse null sinks for protocol tests. macOS
+compiles Swift and checks hello without opening devices. Worker Ubuntu 24.04
+fixture passed. Conflict resolution kept PR 36 shared ordinary release gate,
+not the older duplicated test steps. Integrated workflow tests: 44 passed.
 Then inspect CI readiness on the exact PR head, merge, dispatch release, and
 verify publication/assets/updater proof. Physical mic and paid-provider
 acceptance remain separate; none was started.
