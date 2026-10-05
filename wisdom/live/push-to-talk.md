@@ -107,9 +107,39 @@ Then inspect CI readiness on the exact PR head, merge, dispatch release, and
 verify publication/assets/updater proof. Physical mic and paid-provider
 acceptance remain separate; none was started.
 Physical macOS mic/terminal and live provider acceptance are not yet tested.
-Swift compilation is also unverified on this Linux host; portable C and source
-checks do not replace the macOS lane.
+Hosted attempt 3 compiled Swift and passed exact helper capability and macOS
+Live checks. Portable C/source checks alone did not supply that proof.
 
 Values unchanged. Existing explicit intent, lifecycle ownership and honest proof
 cover this. Capture epochs and Kitty calibration are feature details, not new
 project values.
+
+## Hosted CI and release checkpoint
+
+Actions runner acquisition failed before steps on attempts 1 and 2 of run
+37365814682, final source deae5d33. GitHub confirmed an Actions outage. No source
+changes or weakened gates were used to address it. The 30-minute recovery
+schedule was disabled once Actions became operational. Keep it disabled.
+Schedule ID: scheduled-task:command:mcp:493f2234-4c45-4e2d-9095-5a64cec945e6:schedule-task:live-ptt-pr37-actions-recovery-20261005
+
+Attempt 3 ran. macOS helper compilation, exact hello and Live tests passed.
+Linux native capture sanitizers and private Pulse protocol passed. Linux full
+suite failed only regular prompt/footer wrapped-two: expected 2 rows, saw 1.
+Hosted frames were not uploaded; logs are in artifacts/ptt-hosted-attempt3.
+
+Fixture worker: /home/tnfssc/.bruv/worktrees/t3code-2140c5c0-5442693331ce-task_45ece0de
+Branch: bruv/fix-hosted-prompt-adjacency-fixture-45ece0de.
+Commit 781671f4 waits for complete draft content before layout assertions.
+It reproduced the old failure with a staged 30/150-character paste in 1636 ms,
+then passed both regular/fullscreen frames. Row count, nonempty lines, multiline
+shape and footer assertions remain. Bad complete layouts still reach assertions.
+No added sleeps or production edit. Worker checks: 7 tests, Biome, typecheck,
+paired standalone build passed. Evidence is in that worktree's artifacts/ci and
+artifacts/tui. Setup's strict Pi digest refusal was resolved locally; subsequent
+build/check passed without weakening the hash check.
+
+PR 37 remains unmerged. No release dispatched. After the fixture commit and this
+proof note are pushed, wait for actual CI on that exact head. Then merge and
+use release.yml on develop. Release notes for v0.16.9 are already prepared.
+No real mic or paid-provider acceptance was started. Values unchanged: the
+existing async-fixture ownership/readiness value covers this repeat lesson.
