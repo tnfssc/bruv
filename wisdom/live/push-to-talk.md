@@ -86,9 +86,22 @@ typecheck, paired build, offline OpenAI transport, 2016 tests passed / 30 skippe
 The focused review-fix run also passed 76 tests across controls, extension and
 real terminal flow. No remaining observed defect from either review.
 
-Implementation is complete on this branch. No PR, release, real mic session or
-paid provider acceptance was started. Next validation that still helps: compile
-on macOS, then consented physical mic and real-terminal hold/release checks.
+Implementation is complete. User then asked: make PR, make CI pass, merge,
+release. PR 37 is open and watched: https://github.com/tnfssc/bruv/pull/37 .
+Latest develop (a3bf4774, PR 36 CI repairs) was merged into this branch.
+Release notes support/release-v0.16.9.md are prepared; package is still 0.16.8.
+Use the normal workflow_dispatch of release.yml on develop after merge. That
+workflow prepares the next version and publishes only after its full gates.
+Do not create the tag or GitHub release early.
+
+Hosted native gate worker: task_8c63f36f
+Worktree: /home/tnfssc/.bruv/worktrees/t3code-2140c5c0-5442693331ce-task_8c63f36f
+Branch: bruv/push-to-talk-hosted-native-gates-8c63f36f .
+It updates strict helper hello expectations for captureGate:true and adds
+capture-origin tests to hosted lanes. Integrate its commit before merge.
+Then inspect CI readiness on the exact PR head, merge, dispatch release, and
+verify publication/assets/updater proof. Physical mic and paid-provider
+acceptance remain separate; none was started.
 Physical macOS mic/terminal and live provider acceptance are not yet tested.
 Swift compilation is also unverified on this Linux host; portable C and source
 checks do not replace the macOS lane.
