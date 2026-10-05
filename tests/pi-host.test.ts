@@ -94,7 +94,7 @@ test("runtime host gate rejects pristine and partly prepared dependencies", () =
 
 test("adaptation validates all files and version before any writes", async () => {
   const dir = await temp();
-  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.0" }));
+  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.3" }));
   for (const patch of piHostPatches) {
     await mkdir(dirname(join(dir, patch.path)), { recursive: true });
     await writeFile(join(dir, patch.path), patch.content ? originalRegistry : await readFile(join(piRoot, patch.path)));
@@ -108,7 +108,7 @@ test("adaptation validates all files and version before any writes", async () =>
   await writeFile(join(dir, viewportPatch.path), "viewport drift");
   await expect(preparePiHost(dir)).rejects.toThrow("Unsupported Pi host file");
   expect(await readFile(join(dir, piHostPatches[0]!.path), "utf8")).toBe(originalRegistry);
-  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.1" }));
+  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.2" }));
   await expect(preparePiHost(dir)).rejects.toThrow("Unsupported Pi host version");
 });
 

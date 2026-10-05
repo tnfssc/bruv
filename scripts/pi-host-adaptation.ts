@@ -35,8 +35,8 @@ export const piHostPatches: readonly Patch[] = [
   },
   {
     path: "dist/cli/args.js",
-    originalSha256: "2fcce7d42c5c3766c2c5a69ec582ec0f477977a527b3d01c8933bdaa537162ad",
-    adaptedSha256: "714c54b8e45f2a8c606716cccab90da407e47f84f1e742dd420dc7d5606b613e",
+    originalSha256: "f48f91efc303fc7b826f0ce02ba6eb70fcc271d31671f0f68f562fdd8c6885e6",
+    adaptedSha256: "4a3d92e391f2205174c71cfd30a8aed771ad9f560b80c0c6e662322f8e846e83",
     replacements: [
       [`  \${APP_NAME} mcp <command>             Check MCP servers, sign in to or out of OAuth servers\n`, ""],
       ["install/remove/uninstall/update/list/config/auth/mcp", "install/remove/uninstall/update/list/config/auth"],
@@ -80,8 +80,8 @@ export const piHostPatches: readonly Patch[] = [
   // Native input identity travels with Pi's actual user object through its own queues.
   {
     path: "dist/core/agent-session.js",
-    originalSha256: "476722dd363a0347049d450b5a0c67386cf156ecae2b039676962aa00a857161",
-    adaptedSha256: "d6aea3b5b5cca74d6a02bd187e3ea6c4a3866bd294b7c61143a9b8703d1550d0",
+    originalSha256: "35ca1dabd54d98c236c9601b569c2856b726ade392d06b2eaaf50158f48913ab",
+    adaptedSha256: "b6675dce26fc39803b1fe1f9deb1261cb1efc701b585cecd0ac280085dbd8eb6",
     replacements: [
       [
         "await this._queueFollowUp(expandedText, currentImages);",
@@ -174,7 +174,7 @@ export function adaptPiHostFile(patch: Patch, text: string): string {
 
 export async function preparePiHost(piRoot: string): Promise<void> {
   const metadata = JSON.parse(await readFile(join(piRoot, "package.json"), "utf8")) as { version: string };
-  if (metadata.version !== "1.0.0") throw new Error(`Unsupported Pi host version: ${metadata.version}`);
+  if (metadata.version !== "1.0.3") throw new Error(`Unsupported Pi host version: ${metadata.version}`);
   // Validate every file before changing any. A dependency upgrade fails closed.
   const prepared = await Promise.all(
     piHostPatches.map(async (patch) => {
