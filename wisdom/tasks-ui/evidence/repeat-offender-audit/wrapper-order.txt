@@ -1,0 +1,26 @@
+bun test v1.4.2 (744846f84)
+
+tests/goal-sdk-wrapper-order.audit.test.ts:
+(pass) real SDK /shake preserves native checkpoint exactly once, kept tail, post-checkpoint prose and disk reopen [63.46ms]
+(pass) native shim is never selected or counted as ordinary thinking, including transformed synthetic checkpoints [0.62ms]
+(pass) valid checkpoint without new trace is an honest no-op; automatic shake remains deferred [0.79ms]
+(pass) opaque invalid schema, incompatible provider/API, unresolved retained batch and stale hooks fail safe [2.40ms]
+(pass) hook-excluded active IDs never accumulate in a durable shake, hidden duplicate IDs never poison the boundary [0.65ms]
+(pass) SDK active-boundary semantics omit older retained checkpoints without losing their journal bytes [25.53ms]
+(pass) shake previews honor SDK context edits rather than restoring raw kept-history messages [1.71ms]
+(pass) connector regressions in an isolated SDK process [651.16ms]
+(pass) connector regressions in an isolated SDK process [419.49ms]
+(pass) connector regressions in an isolated SDK process [935.72ms]
+(pass) connector regressions in an isolated SDK process [2517.94ms]
+(pass) real offline assembly changes only messages across goal set, update, and clear [847.10ms]
+(pass) real SDK reconciles helper waiting through task-complete and completes [473.91ms]
+(pass) real SDK print completion cycles pause within bounded agent runs [792.39ms]
+(pass) real SDK print completion cycles accept distinct explicit milestones [1493.16ms]
+(pass) real SDK reports auth preparation failure before provider dispatch [2.89ms]
+(pass) live goal fixture reaches an intercepted real-runtime provider offline [14.75ms]
+(pass) connector regressions in an isolated SDK process [7829.12ms]
+
+ 18 pass
+ 0 fail
+ 185 expect() calls
+Ran 18 tests across 1 file. [16.54s]

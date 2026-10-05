@@ -40,3 +40,6 @@ the parent's session registry.
 
 Wait for the monitor view and controls, not job names already in the transcript,
 before sending inspect/stop keys. See [CI readiness proof](ps-ci-readiness-2026-10-04.md).
+
+[Bounded repeat-offender audit](repeat-offender-audit-2026-10-05.md): current
+readiness, cancellation and goal-cycle fixes pass; no further test rewrite.
