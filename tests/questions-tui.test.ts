@@ -20,7 +20,7 @@ test.skipIf(!hasTmux)(
     const service = new QuestionService();
     const ctx = { sessionManager: seed };
 
-    const tmux = tmuxRunner(socket);
+    const tmux = tmuxRunner(socket, "/dev/null");
     const frame = async () => (await capturePane(tmux, name)).stdout;
     const send = async (text: string) => {
       expect((await tmux("send-keys", "-t", name, "-l", text)).code).toBe(0);
@@ -77,7 +77,15 @@ test.skipIf(!hasTmux)(
       ]
         .map(quote)
         .join(" ");
-      expect((await tmux("new-session", "-d", "-s", name, "-x", "120", "-y", "35", "-c", home, launch)).code).toBe(0);
+      const start = async () => {
+        const result = await tmux("new-session", "-d", "-s", name, "-x", "120", "-y", "35", "-c", home, launch);
+        expect(result.code, result.stderr).toBe(0);
+      };
+      await start();
+      // Keep this test-owned server alive between CLI instances. Killing its last
+      // session otherwise races tmux's automatic shutdown against new-session.
+      const keepServer = await tmux("set-option", "-g", "exit-empty", "off");
+      expect(keepServer.code, keepServer.stderr).toBe(0);
       await until("2 /questions");
       await send("/qprogress");
       expect(await until("Independent work complete")).toContain("2 /questions");
@@ -89,8 +97,9 @@ test.skipIf(!hasTmux)(
       if (process.env.BRUV_QUESTIONS_FRAME) await writeFile(process.env.BRUV_QUESTIONS_FRAME, detailFrame);
       await send("/questions cancel " + second.id);
       await until("1 /questions");
-      await tmux("kill-session", "-t", name);
-      expect((await tmux("new-session", "-d", "-s", name, "-x", "120", "-y", "35", "-c", home, launch)).code).toBe(0);
+      const killed = await tmux("kill-session", "-t", name);
+      expect(killed.code, killed.stderr).toBe(0);
+      await start();
       expect(await until("1 /questions")).toContain("waiting");
       await send("/questions detail " + q.id.slice(0, 10));
       const resumedDetail = await until("Audio diagnosis");
