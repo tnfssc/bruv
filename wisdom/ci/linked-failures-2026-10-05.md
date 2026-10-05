@@ -31,3 +31,7 @@ All worker paths remain under /home/tnfssc/.bruv/worktrees/:
 - Earlier task_68f015e9 made no changes and was stopped after a tool-call parse error and no further tool progress. Its clean worktree remains at t3code-fcaffdf2-5442693331ce-task_68f015e9.
 
 Values unchanged. Existing checked dependency behavior, shipped-path proof and honest scope rules cover these findings. No new general rule was needed.
+
+## Push, merge and release request
+
+User then asked: push, make PR, merge, release. Branch pushed and PR https://github.com/tnfssc/bruv/pull/34 opened against develop and linked to this thread. T3 watches it. CodeRabbit posted only an opt-in notice, no findings. Hosted CI 37333558132: macOS passed; Linux failed only saved-startup empty-stopped at fixture until(grammars:ready). The fixture uses 100 setImmediate turns; imports did not finish before that count. Worker task_189c5d2c owns a completion-based wait fix in /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_189c5d2c, branch bruv/fix-hosted-saved-startup-fixture-complet-189c5d2c. Parent must integrate/push its commit, await hosted checks, inspect readiness, merge, then dispatch release.yml on develop. Manual workflow prepares the next patch release itself (current latest v0.16.7), and publishes only after release gates. Do not download binaries just to recheck CI hashes; check publication and asset presence per ../releases/release-verification-preference.md. Nothing merged or released yet.
