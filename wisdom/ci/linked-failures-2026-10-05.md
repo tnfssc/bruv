@@ -18,3 +18,9 @@ Both worktree setup commands passed frozen install and asset preparation. Local 
 Values unchanged so far. Existing proof and confidence rules already cover this work.
 
 Pi repair integrated as 0a029606 (worker b7ba1c88). Parent fixed attribution and saved-startup pins found by full CI. See ../dependencies/pi-1.0.3-root-host-audit.md. Current blocker: long-thread Home navigation; worker task_570aade5 owns diagnosis. Shared CI log: /home/tnfssc/.bruv/ci-linked-failures-2026-10-05.log. First gate passed 1,952 tests, skipped 30, failed seven; six stale-pin failures are fixed and focused checks pass. The Home failure still reproduces.
+
+Navigation diagnosis: Pi 1.0.3 uses Ctrl+Home/Ctrl+End for transcript scrolling. Bare Home/End move the editor cursor with tmux extended keys. Worker 16887eec corrected the fixture keys; all history/detail assertions remain. Integrated as 648403b3. Focused check: one test, 1,049 assertions passed. Worker path /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_570aade5 is clean. Final combined Linux gate is task_ca703c2e; log /home/tnfssc/.bruv/ci-linked-failures-2026-10-05-final.log. Wait for completion, then record results.
+
+Final combined Linux gate at 648403b3 passed: 1,959 tests, 30 opt-in skips, zero failures, 35,555 assertions across 272 files (73.56s root suite). Frozen install, format, lint, typecheck, paired build, offline transport and paired standalone smoke all passed. No hosted, macOS, paid-provider, device or release acceptance claimed.
+
+The daily run also had MCP SDK 1.32.1 and es-module-lexer 3.0.3 changes. They are not in the Pi-only fix yet. Worker task_a6dbea72 now runs the real update script and validates that remaining candidate in /home/tnfssc/.bruv/worktrees/t3code-fcaffdf2-5442693331ce-task_a6dbea72, branch bruv/validate-remaining-daily-dependency-cand-a6dbea72. Parent integrates only after proof.
