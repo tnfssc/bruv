@@ -168,3 +168,19 @@ Branch: bruv/resolve-live-replay-word-check-318aef23
 At most four additional sessions: generation plus control/paced/burst.
 Check fixed token flags and seven/7 without logging transcripts. Do not loosen
 arbitrary matching or change production. Await result and bring useful fix back.
+
+## Final result
+
+Diagnostic task_318aef23 finished. Worker commit 41eb1394 brought back as 83045606.
+Natural speech control, paced replay and burst replay all passed: four exact
+tokens in order, automatic transcript, output audio and turn completion.
+Numeric 7 flags were false; no normalization added. Earlier 3/4 result did not
+recur, so its cause is unknown. Synthetic espeak automatic-VAD failure is also
+not fully explained. Neither finding establishes a production buffering defect.
+
+Integrated focused suite: 43 passed, 0 failed; diff check passed.
+Detailed provider evidence: gemini-buffered-speech-investigation.md.
+No jobs remain for this test. Production startup still waits for connection.
+Next product step is to wire mic capture and bounded startup FIFO into the real
+Live lifecycle, then test actual devices. OpenAI remote replay is not verified.
+Values unchanged: existing real-boundary and honest-proof guidance covers this.
