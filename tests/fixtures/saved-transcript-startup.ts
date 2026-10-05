@@ -19,6 +19,7 @@ function deferred() {
 const colors = deferred();
 const rebind = deferred();
 const grammars = deferred();
+const grammarReady = deferred();
 const syntaxPath = resolve(sdk, "dist/utils/syntax-highlight.js");
 const syntax = { ...(await import(syntaxPath)) };
 assert.equal(syntax.supportsLanguage("elixir"), false, "fixture language must not be eagerly loaded");
@@ -30,6 +31,7 @@ mock.module(syntaxPath, () => ({
       .then(() => syntax.loadAllHighlightLanguages())
       .then(() => {
         events.push("grammars:ready");
+        grammarReady.resolve();
       });
   },
 }));
@@ -174,7 +176,8 @@ assert(events.includes("keys:ready") && events.includes("submit:ready"));
 assert(!events.includes("messages:render"));
 if (scenario === "saved-ready") {
   grammars.resolve();
-  await until("grammars:ready");
+  await grammarReady.promise;
+  assert(events.includes("grammars:ready"));
   assert(!events.includes("messages:render"), "early grammar readiness cannot bypass extension setup");
 }
 rebind.resolve();
@@ -213,7 +216,8 @@ if (scenario === "rebind-error") {
     assert.equal(invalidations, 0);
     if (scenario === "empty-stopped") mode.isInitialized = false;
     grammars.resolve();
-    await until("grammars:ready");
+    await grammarReady.promise;
+    assert(events.includes("grammars:ready"));
     await tick();
     assert.equal(invalidations, scenario === "empty-stopped" ? 0 : 1);
   }
