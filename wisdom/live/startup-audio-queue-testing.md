@@ -58,17 +58,83 @@ Integrated FIFO rerun: 13 passed, 0 failed. First run lacked @google/genai;
 `bun install --frozen-lockfile` fixed the local dependency gap. Lockfile unchanged.
 `git diff --check` passed.
 
-## Key lookup correction
+## Explicit supplied-key Google replay (2026-10-05)
 
-User said they had supplied a key. Parent checked only metadata and found
-`~/.bruv/live.env` exists with GEMINI_API_KEY. The initial canonical-only probe
-missed this supported import source. Do not say all credentials are absent.
-Canonical storage and ambient env lack Google/OpenAI API keys, but the supplied
-Gemini file is present. No key was printed, copied, or imported.
-
-Follow-up task: task_f9d283db. Use loadLiveKey for an explicit Google-only test.
 Worktree: /home/tnfssc/.bruv/worktrees/t3code-bc92964a-5442693331ce-task_f9d283db
 Branch: bruv/run-gemini-buffered-speech-proof-f9d283db
-At most two paid sessions; production and canonical auth stay unchanged.
-Await result, check it, and bring test-only changes back.
-Values unchanged: this corrects a missed lookup, covered by go-look and truthful-proof.
+
+Correction: the earlier canonical-only lookup did not establish that the supplied
+Google key was absent. The parent found the EXISTING GEMINI_API_KEY assignment in
+/home/tnfssc/.bruv/live.env; canonical auth.json only has openai-codex OAuth.
+The previous worker missed the legacy supplied source. Canonical status/loadKey
+intentionally do not consult live.env, so those missing states were true only for
+the selected canonical lookup, not all user-supplied credentials.
+
+The test-only probe now accepts --gemini-live-env: Google only, read directly with
+src/live/credentials.ts loadLiveKey() and its existing private-file checks. No
+importLiveEnv call, key copy, credential-file output, or canonical login mutation.
+Default canonical Google/OpenAI selection is unchanged. OpenAI is skipped in this
+explicit run; its API key remains unavailable. No production files changed.
+Only four synthetic expected words can appear in diagnostics, not transcripts or
+credential material. Failure output now includes retention/turn/timing fields too;
+null setup/replay timing means provider setup/replay did not complete.
+
+Testing first: the two new selection tests initially failed because the export did
+not exist; after the script edit, focused tests passed: **18 pass, 0 fail, 73
+assertions, 3 files** (final rerun 360 ms). Files: live-startup-speech-probe.test.ts,
+live-credentials.test.ts, live-startup-audio-queue.test.ts.
+
+- bun node_modules/typescript/bin/tsc --noEmit: passed.
+- Selected-file Biome check: passed after sorting imports; git diff --check passed.
+- Fixture-only: 152146 PCM bytes, 4754.5625 ms, trailingSilenceMs=1200,
+  silenceTail=true (synthetic espeak-ng speech/ffmpeg PCM, memory only).
+- Without BRUV_RUN_LIVE_STARTUP_SPEECH, --gemini-live-env exits 1 before key
+  lookup/session launch (generic suppressed-detail error); opt-in remains required.
+- Shell emits the existing untrusted mise.toml warning; Bun runs successfully.
+  No trust/config change.
+
+Paid command (one invocation, no retries; two Google attempts, 35-second per-trial
+bound, outer shell timeout 80 seconds):
+
+```sh
+BRUV_RUN_LIVE_STARTUP_SPEECH=1 bun scripts/probe-live-startup-audio.ts --gemini-live-env
+```
+
+Credential diagnostic:
+
+```json
+{"provider":"google","credentialSource":"live.env","credentialState":"supplied_api_key"}
+```
+
+Burst result (exact probe JSON):
+
+```json
+{"provider":"google","mode":"burst","ok":false,"bufferedDuringConnect":true,"inputTranscript":false,"inputFinished":false,"retainedWords":false,"matchedWords":[],"turnEndBeforeStreamEnd":false,"outputTranscript":false,"outputAudioBytes":0,"pcmMs":4754.5625,"trailingSilenceMs":1200,"sentBytes":152146,"setupMs":800,"replayMs":4,"elapsedMs":34010,"errors":[]}
+```
+
+Paced result (exact probe JSON, 20 ms chunk spacing):
+
+```json
+{"provider":"google","mode":"paced","ok":false,"bufferedDuringConnect":true,"inputTranscript":false,"inputFinished":false,"retainedWords":false,"matchedWords":[],"turnEndBeforeStreamEnd":false,"outputTranscript":false,"outputAudioBytes":0,"pcmMs":4754.5625,"trailingSilenceMs":1200,"sentBytes":152146,"setupMs":673,"replayMs":4911,"elapsedMs":34020,"errors":[]}
+```
+
+Command completed **exit 1**, not outer-timeout; exactly two session attempts and
+no retries. Each trial closed after its approximately 34-second observation
+window, inside the 35-second cap. No OpenAI session launched.
+
+Both modes reached ready and replayed every local PCM byte; neither produced any
+input transcript, recognized expected word, output transcript/audio, or remote
+turn-end before cleanup stream-end. Burst setup/replay: 800/4 ms; paced:
+673/4911 ms. Both provider-error arrays were empty. This is a failed speech/VAD
+acceptance result despite successful credential loading/setup/client sending;
+it is NOT proof that no words reached the provider, and it does not establish a
+cause for the missing response. Matched words are empty because no input
+transcript was observed, not because a different transcript was inspected.
+No further investigation, retries, model changes, forced commit/stream-end before
+measurement, or production buffering change was made. The supplied-key lookup
+mistake is corrected; remote buffered-speech retention/VAD remains unproven.
+
+Parent brought back worker commit 57749fe228aa160f1ed459c497c9e55aba1eebe5.
+Follow-up job was task_f9d283db. No extra paid retries.
+Values unchanged: the lookup correction and failed acceptance fit existing go-look
+and truthful-proof values. Production startup remains untouched.

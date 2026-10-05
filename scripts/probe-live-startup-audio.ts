@@ -1,9 +1,21 @@
-// Test-only. At most four paid sessions (two providers x burst/paced), no retries/devices.
-import { createDefaultLiveCredentialService } from "../src/live/credentials";
-import { VoiceSession } from "../src/live/session";
+// Test-only. At most four paid sessions; --gemini-live-env limits to two Google sessions. No retries/devices.
+import { createDefaultLiveCredentialService, loadLiveKey } from "../src/live/credentials";
 import { OpenAIRealtimeSession } from "../src/live/openai-session";
+import { VoiceSession } from "../src/live/session";
 import type { VoiceCallbacks, VoiceOrchestration } from "../src/live/types";
 import { StartupAudioQueue } from "../tests/helpers/live-startup-audio-queue";
+
+export function startupSpeechCredentialPlan(args: readonly string[]): {
+  provider: "google" | "openai";
+  source: "canonical" | "live.env";
+}[] {
+  return args.includes("--gemini-live-env")
+    ? [{ provider: "google", source: "live.env" }]
+    : [
+        { provider: "google", source: "canonical" },
+        { provider: "openai", source: "canonical" },
+      ];
+}
 
 const phrase = "Please repeat these words: amber river seven lighthouse.";
 const words = ["amber", "river", "seven", "lighthouse"];
@@ -93,6 +105,9 @@ async function trial(provider: "google" | "openai", mode: "burst" | "paced", key
     },
     () => session.state === "ready",
   );
+  let bufferedDuringConnect = false;
+  let replayMs: number | null = null;
+  let setupMs: number | null = null;
   const start = Date.now();
   const timer = setTimeout(() => {
     errors.push("probe_deadline");
@@ -103,15 +118,20 @@ async function trial(provider: "google" | "openai", mode: "burst" | "paced", key
     const connecting = session.connect(key);
     // All speech is buffered while the actual provider setup is pending. No mic or disk audio.
     for (let i = 0; i < pcm.length; i += 640) queue.push(pcm.subarray(i, i + 640));
-    const bufferedDuringConnect = session.state === "connecting";
+    bufferedDuringConnect = session.state === "connecting";
     await connecting;
     if (session.state !== "ready") throw new Error("Provider setup did not become ready");
+    setupMs = Date.now() - start;
     const replayAt = Date.now();
     await queue.ready(mode === "paced" ? 20 : 0);
-    const replayMs = Date.now() - replayAt;
+    replayMs = Date.now() - replayAt;
     // No forced commit/response or audioStreamEnd: trailing silence must cause remote turn-end.
     while (Date.now() - start < 34_000 && !errors.length && !(turns && input && output && outputAudioBytes))
       await Bun.sleep(50);
+  } catch {
+    errors.push("probe_setup_or_replay_failed");
+  } finally {
+    clearTimeout(timer);
     const normalized = input.toLowerCase().replace(/[^a-z0-9 ]/g, " ");
     let position = 0;
     const retainedWords = words.every((word) => {
@@ -137,23 +157,20 @@ async function trial(provider: "google" | "openai", mode: "burst" | "paced", key
         inputTranscript: !!input,
         inputFinished,
         retainedWords,
+        matchedWords: words.filter((word) => normalized.split(/\s+/).includes(word)),
         turnEndBeforeStreamEnd: turns > 0,
         outputTranscript: !!output,
         outputAudioBytes,
         pcmMs: pcm.length / 32,
         trailingSilenceMs,
         sentBytes,
+        setupMs,
         replayMs,
         elapsedMs: Date.now() - start,
         errors,
       }),
     );
     if (!ok) process.exitCode = 1;
-  } catch {
-    console.log(JSON.stringify({ provider, mode, ok: false, phase: "setup-or-replay", errors }));
-    process.exitCode = 1;
-  } finally {
-    clearTimeout(timer);
     queue.stop();
     session.endAudio(); // cleanup only, not counted as VAD success
     session.close();
@@ -175,15 +192,20 @@ async function main() {
   }
   if (process.env.BRUV_RUN_LIVE_STARTUP_SPEECH !== "1") throw new Error("Explicit paid opt-in required");
   let pcm: Buffer | undefined;
-  for (const provider of ["google", "openai"] as const) {
+  for (const { provider, source } of startupSpeechCredentialPlan(process.argv)) {
     let key: string;
     try {
-      const credentials = await createDefaultLiveCredentialService(undefined, provider);
-      const status = await credentials.status();
-      console.log(JSON.stringify({ provider, credentialState: status.state }));
-      key = await credentials.loadKey(); // canonical existing credentials ONLY; never import
+      if (source === "live.env" && provider === "google") {
+        key = await loadLiveKey(); // explicit test-only read; never import or store
+        console.log(JSON.stringify({ provider, credentialSource: source, credentialState: "supplied_api_key" }));
+      } else {
+        const credentials = await createDefaultLiveCredentialService(undefined, provider);
+        const status = await credentials.status();
+        console.log(JSON.stringify({ provider, credentialState: status.state }));
+        key = await credentials.loadKey(); // default canonical behavior unchanged; never import
+      }
     } catch {
-      console.log(JSON.stringify({ provider, blocked: "existing canonical API key unavailable", paidSessions: 0 }));
+      console.log(JSON.stringify({ provider, blocked: `existing ${source} API key unavailable`, paidSessions: 0 }));
       process.exitCode = 1;
       continue;
     }
@@ -191,7 +213,9 @@ async function main() {
     for (const mode of ["burst", "paced"] as const) await trial(provider, mode, key, pcm);
   }
 }
-main().catch(() => {
-  console.error("Startup speech probe failed; details suppressed");
-  process.exitCode = 1;
-});
+if (import.meta.main) {
+  main().catch(() => {
+    console.error("Startup speech probe failed; details suppressed");
+    process.exitCode = 1;
+  });
+}
