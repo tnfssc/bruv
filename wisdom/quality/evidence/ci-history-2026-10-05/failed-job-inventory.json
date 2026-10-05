@@ -1,0 +1,3300 @@
+[
+  {
+    "id": 111912851945,
+    "run_id": 37354320182,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-05T18:13:44Z",
+    "completed_at": "2026-10-05T18:15:47Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37354320182/job/111912851945",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111912852160,
+    "run_id": 37354320182,
+    "run_attempt": 1,
+    "name": "Full validation / macOS Live (no devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-10-05T18:13:49Z",
+    "completed_at": "2026-10-05T18:14:37Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37354320182/job/111912852160",
+    "steps": [
+      {
+        "name": "Shared macOS Live gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111913752851,
+    "run_id": 37354320182,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-05T18:15:50Z",
+    "completed_at": "2026-10-05T18:15:54Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37354320182/job/111913752851",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111800116876,
+    "run_id": 37321109544,
+    "run_attempt": 1,
+    "name": "validate",
+    "conclusion": "failure",
+    "started_at": "2026-10-05T13:59:39Z",
+    "completed_at": "2026-10-05T14:00:08Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37321109544/job/111800116876",
+    "steps": [
+      {
+        "name": "Validate actual candidate with shared Linux CI",
+        "number": 9,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111842631686,
+    "run_id": 37333558132,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-05T15:32:08Z",
+    "completed_at": "2026-10-05T15:34:11Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37333558132/job/111842631686",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111843601502,
+    "run_id": 37333558132,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-05T15:34:14Z",
+    "completed_at": "2026-10-05T15:34:17Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37333558132/job/111843601502",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111495938169,
+    "run_id": 37222631866,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T18:00:01Z",
+    "completed_at": "2026-10-04T18:02:04Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37222631866/job/111495938169",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111496364053,
+    "run_id": 37222631866,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T18:02:07Z",
+    "completed_at": "2026-10-04T18:02:11Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37222631866/job/111496364053",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111721689684,
+    "run_id": 37297354419,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-05T10:33:52Z",
+    "completed_at": "2026-10-05T10:35:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37297354419/job/111721689684",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111722355211,
+    "run_id": 37297354419,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-05T10:35:48Z",
+    "completed_at": "2026-10-05T10:35:50Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37297354419/job/111722355211",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111486188196,
+    "run_id": 37219289504,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T17:07:16Z",
+    "completed_at": "2026-10-04T17:09:07Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37219289504/job/111486188196",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111486522516,
+    "run_id": 37219289504,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T17:09:09Z",
+    "completed_at": "2026-10-04T17:09:11Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37219289504/job/111486522516",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111430970692,
+    "run_id": 37200481788,
+    "run_attempt": 1,
+    "name": "validate",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T11:57:49Z",
+    "completed_at": "2026-10-04T11:58:17Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37200481788/job/111430970692",
+    "steps": [
+      {
+        "name": "Validate actual candidate with shared Linux CI",
+        "number": 9,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111460138621,
+    "run_id": 37210353063,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T14:44:20Z",
+    "completed_at": "2026-10-04T14:44:35Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37210353063/job/111460138621",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111460309059,
+    "run_id": 37210353063,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T14:45:18Z",
+    "completed_at": "2026-10-04T14:45:20Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37210353063/job/111460309059",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111446727871,
+    "run_id": 37205537711,
+    "run_attempt": 1,
+    "name": "Actual Mac release binary and bruv updater (no devices)",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T13:30:18Z",
+    "completed_at": "2026-10-04T13:30:46Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37205537711/job/111446727871",
+    "steps": [
+      {
+        "name": "Exercise paired versions, bruv updater and embedded helper",
+        "number": 5,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111444307901,
+    "run_id": 37204735419,
+    "run_attempt": 1,
+    "name": "Actual Mac release binary and bruv updater (no devices)",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T13:16:30Z",
+    "completed_at": "2026-10-04T13:17:02Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37204735419/job/111444307901",
+    "steps": [
+      {
+        "name": "Exercise paired versions, bruv updater and embedded helper",
+        "number": 5,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111410618172,
+    "run_id": 37193550461,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T09:52:54Z",
+    "completed_at": "2026-10-04T09:54:31Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37193550461/job/111410618172",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111410882678,
+    "run_id": 37193550461,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T09:54:34Z",
+    "completed_at": "2026-10-04T09:54:36Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37193550461/job/111410882678",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111424657948,
+    "run_id": 37198016485,
+    "run_attempt": 1,
+    "name": "Final Linux pair against unchanged official 2644 (bounded gates)",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T11:19:05Z",
+    "completed_at": "2026-10-04T11:22:40Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37198016485/job/111424657948",
+    "steps": [
+      {
+        "name": "Require external unmodified T3 native acceptance from final Linux pair",
+        "number": 9,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111404311330,
+    "run_id": 37191433942,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T09:13:22Z",
+    "completed_at": "2026-10-04T09:15:25Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37191433942/job/111404311330",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111404651853,
+    "run_id": 37191433942,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T09:15:27Z",
+    "completed_at": "2026-10-04T09:15:29Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37191433942/job/111404651853",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111402568119,
+    "run_id": 37190862525,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T09:02:40Z",
+    "completed_at": "2026-10-04T09:04:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37190862525/job/111402568119",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111402903134,
+    "run_id": 37190862525,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T09:04:42Z",
+    "completed_at": "2026-10-04T09:04:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37190862525/job/111402903134",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111400056774,
+    "run_id": 37189939505,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:46:40Z",
+    "completed_at": "2026-10-04T08:48:35Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37189939505/job/111400056774",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111400354296,
+    "run_id": 37189939505,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:48:38Z",
+    "completed_at": "2026-10-04T08:48:40Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37189939505/job/111400354296",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111398951448,
+    "run_id": 37189627215,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:39:41Z",
+    "completed_at": "2026-10-04T08:41:37Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37189627215/job/111398951448",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111399262497,
+    "run_id": 37189627215,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:41:39Z",
+    "completed_at": "2026-10-04T08:41:43Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37189627215/job/111399262497",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111396671454,
+    "run_id": 37188844249,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:25:45Z",
+    "completed_at": "2026-10-04T08:29:41Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37188844249/job/111396671454",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 16,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111390227928,
+    "run_id": 37186756720,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T07:45:44Z",
+    "completed_at": "2026-10-04T07:46:04Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37186756720/job/111390227928",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111390352632,
+    "run_id": 37186756720,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T07:46:28Z",
+    "completed_at": "2026-10-04T07:46:30Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37186756720/job/111390352632",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111394741289,
+    "run_id": 37188229505,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:13:54Z",
+    "completed_at": "2026-10-04T08:15:26Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37188229505/job/111394741289",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111395001141,
+    "run_id": 37188229505,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:15:29Z",
+    "completed_at": "2026-10-04T08:15:31Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37188229505/job/111395001141",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111390017769,
+    "run_id": 37186688466,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T07:44:19Z",
+    "completed_at": "2026-10-04T07:44:37Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37186688466/job/111390017769",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111390174537,
+    "run_id": 37186688466,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T07:45:21Z",
+    "completed_at": "2026-10-04T07:45:25Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37186688466/job/111390174537",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111382856441,
+    "run_id": 37184257701,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T06:56:22Z",
+    "completed_at": "2026-10-04T06:58:19Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37184257701/job/111382856441",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111383142210,
+    "run_id": 37184257701,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T06:58:57Z",
+    "completed_at": "2026-10-04T06:59:00Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37184257701/job/111383142210",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111380084912,
+    "run_id": 37183052832,
+    "run_attempt": 1,
+    "name": "Final Linux pair against unchanged official 2644 (bounded gates)",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T06:37:03Z",
+    "completed_at": "2026-10-04T06:38:25Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37183052832/job/111380084912",
+    "steps": [
+      {
+        "name": "Require external unmodified T3 native acceptance from final Linux pair",
+        "number": 9,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111378542156,
+    "run_id": 37182775319,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T06:26:06Z",
+    "completed_at": "2026-10-04T06:27:47Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37182775319/job/111378542156",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate (paired binaries, external T3)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111378777030,
+    "run_id": 37182775319,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T06:27:50Z",
+    "completed_at": "2026-10-04T06:27:52Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37182775319/job/111378777030",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111378634581,
+    "run_id": 37182775259,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T06:26:46Z",
+    "completed_at": "2026-10-04T06:30:33Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37182775259/job/111378634581",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 16,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111378208255,
+    "run_id": 37182435634,
+    "run_attempt": 1,
+    "name": "Final Linux pair against unchanged official 2644 (bounded gates)",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T06:23:39Z",
+    "completed_at": "2026-10-04T06:24:01Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37182435634/job/111378208255",
+    "steps": [
+      {
+        "name": "Require external unmodified T3 native acceptance from final Linux pair",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111264177997,
+    "run_id": 37143993104,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-10-03T18:23:54Z",
+    "completed_at": "2026-10-03T18:30:04Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37143993104/job/111264177997",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 19,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111376859060,
+    "run_id": 37182001166,
+    "run_attempt": 1,
+    "name": "Final Linux pair against unchanged official 2644 (bounded gates)",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T06:14:03Z",
+    "completed_at": "2026-10-04T06:14:23Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37182001166/job/111376859060",
+    "steps": [
+      {
+        "name": "Download pinned official T3 for native gate (test dependency only)",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111265693594,
+    "run_id": 37144539047,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-03T18:32:04Z",
+    "completed_at": "2026-10-03T18:38:03Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37144539047/job/111265693594",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111266799516,
+    "run_id": 37144539047,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-03T18:38:41Z",
+    "completed_at": "2026-10-03T18:38:44Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37144539047/job/111266799516",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111264087870,
+    "run_id": 37143983695,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-03T18:23:25Z",
+    "completed_at": "2026-10-03T18:26:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37143983695/job/111264087870",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111264720818,
+    "run_id": 37143983695,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-03T18:26:48Z",
+    "completed_at": "2026-10-03T18:26:51Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37143983695/job/111264720818",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111028407991,
+    "run_id": 37064291977,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T21:02:20Z",
+    "completed_at": "2026-10-02T21:09:07Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37064291977/job/111028407991",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 19,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111034835697,
+    "run_id": 37066171522,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T21:21:13Z",
+    "completed_at": "2026-10-02T21:27:20Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37066171522/job/111034835697",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111037011615,
+    "run_id": 37066171522,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T21:27:22Z",
+    "completed_at": "2026-10-02T21:27:24Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37066171522/job/111037011615",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110867588620,
+    "run_id": 37016177565,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T13:55:00Z",
+    "completed_at": "2026-10-02T14:01:18Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37016177565/job/110867588620",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110870056503,
+    "run_id": 37016177565,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T14:01:22Z",
+    "completed_at": "2026-10-02T14:01:25Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37016177565/job/110870056503",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110861979912,
+    "run_id": 37014485451,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T13:40:10Z",
+    "completed_at": "2026-10-02T13:46:15Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37014485451/job/110861979912",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110864281891,
+    "run_id": 37014485451,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T13:46:18Z",
+    "completed_at": "2026-10-02T13:46:22Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37014485451/job/110864281891",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110848723178,
+    "run_id": 37010450058,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T13:03:22Z",
+    "completed_at": "2026-10-02T13:08:41Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37010450058/job/110848723178",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110850601387,
+    "run_id": 37010450058,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T13:08:44Z",
+    "completed_at": "2026-10-02T13:08:48Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37010450058/job/110850601387",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110848917926,
+    "run_id": 37010449307,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T13:03:57Z",
+    "completed_at": "2026-10-02T13:10:49Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37010449307/job/110848917926",
+    "steps": [
+      {
+        "name": "Build release binaries with embedded web application",
+        "number": 23,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110549689518,
+    "run_id": 36915876034,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T19:39:37Z",
+    "completed_at": "2026-10-01T19:42:35Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36915876034/job/110549689518",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110550905568,
+    "run_id": 36915876034,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T19:42:39Z",
+    "completed_at": "2026-10-01T19:42:42Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36915876034/job/110550905568",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110598775365,
+    "run_id": 36930539074,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T21:44:28Z",
+    "completed_at": "2026-10-01T21:49:25Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36930539074/job/110598775365",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110600555057,
+    "run_id": 36930539074,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T21:49:28Z",
+    "completed_at": "2026-10-01T21:49:31Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36930539074/job/110600555057",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110540505892,
+    "run_id": 36913111305,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T19:17:11Z",
+    "completed_at": "2026-10-01T19:20:11Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36913111305/job/110540505892",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110540505933,
+    "run_id": 36913111305,
+    "run_attempt": 1,
+    "name": "Full validation / macOS Live (no devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T19:17:16Z",
+    "completed_at": "2026-10-01T19:18:03Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36913111305/job/110540505933",
+    "steps": [
+      {
+        "name": "Shared macOS Live gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110541773925,
+    "run_id": 36913111305,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T19:20:14Z",
+    "completed_at": "2026-10-01T19:20:16Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36913111305/job/110541773925",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110511978820,
+    "run_id": 36904440793,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T18:08:48Z",
+    "completed_at": "2026-10-01T18:14:36Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36904440793/job/110511978820",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110514454015,
+    "run_id": 36904440793,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T18:14:42Z",
+    "completed_at": "2026-10-01T18:14:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36904440793/job/110514454015",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110496023137,
+    "run_id": 36899822725,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T17:30:22Z",
+    "completed_at": "2026-10-01T17:31:13Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36899822725/job/110496023137",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110496600858,
+    "run_id": 36899822725,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T17:31:46Z",
+    "completed_at": "2026-10-01T17:31:58Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36899822725/job/110496600858",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110411039650,
+    "run_id": 36874686991,
+    "run_attempt": 1,
+    "name": "Full validation / macOS Live (no devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T14:14:00Z",
+    "completed_at": "2026-10-01T14:14:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36874686991/job/110411039650",
+    "steps": [
+      {
+        "name": "Shared macOS Live gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110413598867,
+    "run_id": 36874686991,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T14:19:42Z",
+    "completed_at": "2026-10-01T14:19:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36874686991/job/110413598867",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110459719040,
+    "run_id": 36889019440,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T16:03:20Z",
+    "completed_at": "2026-10-01T16:06:26Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36889019440/job/110459719040",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110461085431,
+    "run_id": 36889019440,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T16:06:32Z",
+    "completed_at": "2026-10-01T16:06:36Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36889019440/job/110461085431",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110402136874,
+    "run_id": 36872054281,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T13:53:39Z",
+    "completed_at": "2026-10-01T13:59:18Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36872054281/job/110402136874",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110404612608,
+    "run_id": 36872054281,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T13:59:21Z",
+    "completed_at": "2026-10-01T13:59:25Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36872054281/job/110404612608",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110389979820,
+    "run_id": 36868326217,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T13:25:08Z",
+    "completed_at": "2026-10-01T13:30:43Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36868326217/job/110389979820",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110392298790,
+    "run_id": 36868326217,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T13:30:46Z",
+    "completed_at": "2026-10-01T13:30:50Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36868326217/job/110392298790",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110373513410,
+    "run_id": 36863592468,
+    "run_attempt": 1,
+    "name": "validate",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T12:42:46Z",
+    "completed_at": "2026-10-01T12:43:11Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36863592468/job/110373513410",
+    "steps": [
+      {
+        "name": "Validate actual candidate with shared Linux CI",
+        "number": 9,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110387198138,
+    "run_id": 36867656383,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T13:18:11Z",
+    "completed_at": "2026-10-01T13:18:54Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36867656383/job/110387198138",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110387565272,
+    "run_id": 36867656383,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T13:19:05Z",
+    "completed_at": "2026-10-01T13:19:09Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36867656383/job/110387565272",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110369386497,
+    "run_id": 36862326414,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T12:31:47Z",
+    "completed_at": "2026-10-01T12:36:25Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36862326414/job/110369386497",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110371152776,
+    "run_id": 36862326414,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T12:36:28Z",
+    "completed_at": "2026-10-01T12:36:34Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36862326414/job/110371152776",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110359593555,
+    "run_id": 36859208698,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T12:04:44Z",
+    "completed_at": "2026-10-01T12:10:20Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36859208698/job/110359593555",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110361579566,
+    "run_id": 36859208698,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T12:10:23Z",
+    "completed_at": "2026-10-01T12:10:26Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36859208698/job/110361579566",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110322070188,
+    "run_id": 36847796148,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T10:13:58Z",
+    "completed_at": "2026-10-01T10:19:40Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36847796148/job/110322070188",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110324087580,
+    "run_id": 36847796148,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T10:19:43Z",
+    "completed_at": "2026-10-01T10:19:46Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36847796148/job/110324087580",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110298418473,
+    "run_id": 36840532890,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T09:06:27Z",
+    "completed_at": "2026-10-01T09:12:23Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36840532890/job/110298418473",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110300452727,
+    "run_id": 36840532890,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T09:12:25Z",
+    "completed_at": "2026-10-01T09:12:29Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36840532890/job/110300452727",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110260473338,
+    "run_id": 36828791812,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T07:10:36Z",
+    "completed_at": "2026-10-01T07:16:12Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36828791812/job/110260473338",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110262152902,
+    "run_id": 36828791812,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T07:16:15Z",
+    "completed_at": "2026-10-01T07:16:17Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36828791812/job/110262152902",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110298480692,
+    "run_id": 36840408373,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T09:06:36Z",
+    "completed_at": "2026-10-01T09:12:03Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36840408373/job/110298480692",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110300342581,
+    "run_id": 36840408373,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T09:12:06Z",
+    "completed_at": "2026-10-01T09:12:10Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36840408373/job/110300342581",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110230238098,
+    "run_id": 36818925498,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T05:16:38Z",
+    "completed_at": "2026-10-01T05:23:03Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36818925498/job/110230238098",
+    "steps": [
+      {
+        "name": "Build release binaries with embedded web application",
+        "number": 23,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110228351010,
+    "run_id": 36818360286,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T05:08:43Z",
+    "completed_at": "2026-10-01T05:11:57Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36818360286/job/110228351010",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 13,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110229127712,
+    "run_id": 36818360286,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T05:12:00Z",
+    "completed_at": "2026-10-01T05:12:04Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36818360286/job/110229127712",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110214202400,
+    "run_id": 36813685812,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T04:08:49Z",
+    "completed_at": "2026-10-01T04:14:33Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36813685812/job/110214202400",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 19,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110107723258,
+    "run_id": 36780027410,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T21:32:09Z",
+    "completed_at": "2026-09-30T21:38:18Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36780027410/job/110107723258",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110109931940,
+    "run_id": 36780027410,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T21:38:21Z",
+    "completed_at": "2026-09-30T21:38:24Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36780027410/job/110109931940",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110093752046,
+    "run_id": 36775922476,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T20:55:09Z",
+    "completed_at": "2026-09-30T20:58:31Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36775922476/job/110093752046",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110095064722,
+    "run_id": 36775922476,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T20:58:34Z",
+    "completed_at": "2026-09-30T20:58:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36775922476/job/110095064722",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110089820239,
+    "run_id": 36774743001,
+    "run_attempt": 1,
+    "name": "Full validation / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T20:44:53Z",
+    "completed_at": "2026-09-30T20:52:40Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36774743001/job/110089820239",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110092857473,
+    "run_id": 36774743001,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T20:52:44Z",
+    "completed_at": "2026-09-30T20:52:48Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36774743001/job/110092857473",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 109845332301,
+    "run_id": 36702551217,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T10:28:17Z",
+    "completed_at": "2026-09-30T10:28:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36702551217/job/109845332301",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 109844592627,
+    "run_id": 36702382092,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T10:26:02Z",
+    "completed_at": "2026-09-30T10:26:28Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36702382092/job/109844592627",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110048362625,
+    "run_id": 36761523355,
+    "run_attempt": 1,
+    "name": "Final Linux release browser boot and reload",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T19:00:14Z",
+    "completed_at": "2026-09-30T19:01:01Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36761523355/job/110048362625",
+    "steps": [
+      {
+        "name": "Require real UI from final Linux binary, then reload",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110065550804,
+    "run_id": 36766448293,
+    "run_attempt": 1,
+    "name": "Final Linux release browser boot and reload",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T19:43:03Z",
+    "completed_at": "2026-09-30T19:43:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36766448293/job/110065550804",
+    "steps": [
+      {
+        "name": "Require real UI from final Linux binary, then reload",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 109844795014,
+    "run_id": 36702382027,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T10:26:38Z",
+    "completed_at": "2026-09-30T10:27:05Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36702382027/job/109844795014",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 109785906333,
+    "run_id": 36684110833,
+    "run_attempt": 1,
+    "name": "validate",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T07:30:49Z",
+    "completed_at": "2026-09-30T07:31:15Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36684110833/job/109785906333",
+    "steps": [
+      {
+        "name": "Validate actual candidate with shared Linux CI",
+        "number": 9,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 109786077015,
+    "run_id": 36684110746,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T07:31:23Z",
+    "completed_at": "2026-09-30T07:32:04Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36684110746/job/109786077015",
+    "steps": [
+      {
+        "name": "Typecheck",
+        "number": 16,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110053095183,
+    "run_id": 36762688740,
+    "run_attempt": 1,
+    "name": "Final Linux release browser boot and reload",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T19:11:21Z",
+    "completed_at": "2026-09-30T19:12:02Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36762688740/job/110053095183",
+    "steps": [
+      {
+        "name": "Require real UI from final Linux binary, then reload",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 109785894380,
+    "run_id": 36684110489,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T07:30:47Z",
+    "completed_at": "2026-09-30T07:31:37Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36684110489/job/109785894380",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108569929438,
+    "run_id": 36301504573,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-27T06:55:28Z",
+    "completed_at": "2026-09-27T06:55:50Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36301504573/job/108569929438",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108569868230,
+    "run_id": 36301504562,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-27T06:55:02Z",
+    "completed_at": "2026-09-27T06:55:21Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36301504562/job/108569868230",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108567571109,
+    "run_id": 36300634707,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-27T06:37:54Z",
+    "completed_at": "2026-09-27T06:38:12Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36300634707/job/108567571109",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108565541093,
+    "run_id": 36299914699,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-27T06:22:46Z",
+    "completed_at": "2026-09-27T06:23:12Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36299914699/job/108565541093",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108567498640,
+    "run_id": 36300634714,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-27T06:37:21Z",
+    "completed_at": "2026-09-27T06:37:47Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36300634714/job/108567498640",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108565606334,
+    "run_id": 36299914691,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-27T06:23:16Z",
+    "completed_at": "2026-09-27T06:23:44Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36299914691/job/108565606334",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108564171346,
+    "run_id": 36299415065,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-27T06:12:34Z",
+    "completed_at": "2026-09-27T06:12:57Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36299415065/job/108564171346",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108564252756,
+    "run_id": 36299415034,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-27T06:13:12Z",
+    "completed_at": "2026-09-27T06:13:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36299415034/job/108564252756",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108430213743,
+    "run_id": 36250918655,
+    "run_attempt": 1,
+    "name": "Publish stable release after native and updater gates",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T15:18:36Z",
+    "completed_at": "2026-09-26T15:18:52Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36250918655/job/108430213743",
+    "steps": [
+      {
+        "name": "Publish GitHub release",
+        "number": 5,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108425774686,
+    "run_id": 36249829897,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T14:50:30Z",
+    "completed_at": "2026-09-26T14:56:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36249829897/job/108425774686",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 15,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108425627410,
+    "run_id": 36249818642,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T14:49:34Z",
+    "completed_at": "2026-09-26T14:56:24Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36249818642/job/108425627410",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108425740186,
+    "run_id": 36249818536,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T14:50:16Z",
+    "completed_at": "2026-09-26T14:56:27Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36249818536/job/108425740186",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 15,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108433717423,
+    "run_id": 36252109334,
+    "run_attempt": 1,
+    "name": "Publish stable release after native and updater gates",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T15:40:21Z",
+    "completed_at": "2026-09-26T15:40:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36252109334/job/108433717423",
+    "steps": [
+      {
+        "name": "Publish GitHub release",
+        "number": 5,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108425596703,
+    "run_id": 36249807680,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T14:49:22Z",
+    "completed_at": "2026-09-26T14:56:25Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36249807680/job/108425596703",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108423529215,
+    "run_id": 36249014288,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T14:36:01Z",
+    "completed_at": "2026-09-26T14:42:07Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36249014288/job/108423529215",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 15,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108423465632,
+    "run_id": 36248996799,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T14:35:36Z",
+    "completed_at": "2026-09-26T14:42:05Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36248996799/job/108423465632",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 15,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108423114588,
+    "run_id": 36248821923,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T14:33:20Z",
+    "completed_at": "2026-09-26T14:39:40Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36248821923/job/108423114588",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108423379855,
+    "run_id": 36248996775,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T14:35:04Z",
+    "completed_at": "2026-09-26T14:41:31Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36248996775/job/108423379855",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108417501380,
+    "run_id": 36246843468,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T13:57:00Z",
+    "completed_at": "2026-09-26T13:57:24Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36246843468/job/108417501380",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108383173789,
+    "run_id": 36234271607,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T09:57:06Z",
+    "completed_at": "2026-09-26T10:03:28Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36234271607/job/108383173789",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 15,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108393585984,
+    "run_id": 36238139467,
+    "run_attempt": 1,
+    "name": "Local Live / macOS (no audio devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T11:13:20Z",
+    "completed_at": "2026-09-26T11:14:13Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36238139467/job/108393585984",
+    "steps": [
+      {
+        "name": "Shared macOS Live gate",
+        "number": 5,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108383093339,
+    "run_id": 36234271598,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T09:56:28Z",
+    "completed_at": "2026-09-26T10:03:38Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36234271598/job/108383093339",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108383093462,
+    "run_id": 36234271598,
+    "run_attempt": 1,
+    "name": "Local Live / macOS (no audio devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-09-26T09:56:33Z",
+    "completed_at": "2026-09-26T09:57:16Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36234271598/job/108383093462",
+    "steps": [
+      {
+        "name": "Shared macOS Live gate",
+        "number": 4,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108163915482,
+    "run_id": 36162937959,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-25T16:47:40Z",
+    "completed_at": "2026-09-25T16:53:27Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36162937959/job/108163915482",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 15,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108160768696,
+    "run_id": 36162060645,
+    "run_attempt": 1,
+    "name": "Local Live / macOS (no audio devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-09-25T16:38:48Z",
+    "completed_at": "2026-09-25T16:39:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36162060645/job/108160768696",
+    "steps": [
+      {
+        "name": "Shared macOS Live gate",
+        "number": 4,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107993026857,
+    "run_id": 36110554528,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-25T08:00:59Z",
+    "completed_at": "2026-09-25T08:07:21Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36110554528/job/107993026857",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 15,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107980811601,
+    "run_id": 36106720762,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-25T07:15:25Z",
+    "completed_at": "2026-09-25T07:21:28Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36106720762/job/107980811601",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 18,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107952969451,
+    "run_id": 36097573940,
+    "run_attempt": 1,
+    "name": "Local Live / macOS (no audio devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-09-25T05:12:25Z",
+    "completed_at": "2026-09-25T05:13:03Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36097573940/job/107952969451",
+    "steps": [
+      {
+        "name": "Deterministic Live tests (fake audio and provider)",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107690513979,
+    "run_id": 36016568821,
+    "run_attempt": 1,
+    "name": "Local Live / macOS (no audio devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-09-24T14:57:27Z",
+    "completed_at": "2026-09-24T14:58:03Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36016568821/job/107690513979",
+    "steps": [
+      {
+        "name": "Deterministic Live tests (fake audio and provider)",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107661852791,
+    "run_id": 36008226396,
+    "run_attempt": 1,
+    "name": "Local Live / macOS (no audio devices or API)",
+    "conclusion": "failure",
+    "started_at": "2026-09-24T13:48:40Z",
+    "completed_at": "2026-09-24T13:49:18Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36008226396/job/107661852791",
+    "steps": [
+      {
+        "name": "Deterministic Live tests (fake audio and provider)",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107630962602,
+    "run_id": 35998994804,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-24T12:26:34Z",
+    "completed_at": "2026-09-24T12:27:06Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35998994804/job/107630962602",
+    "steps": [
+      {
+        "name": "Lint",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107596636082,
+    "run_id": 35988433701,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-24T10:39:21Z",
+    "completed_at": "2026-09-24T10:39:42Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35988433701/job/107596636082",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107596494317,
+    "run_id": 35988433617,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-24T10:38:53Z",
+    "completed_at": "2026-09-24T10:39:27Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35988433617/job/107596494317",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107346371671,
+    "run_id": 35909683064,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T19:30:29Z",
+    "completed_at": "2026-09-23T19:38:02Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35909683064/job/107346371671",
+    "steps": [
+      {
+        "name": "Verify native helper from Mac runner",
+        "number": 18,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107330445083,
+    "run_id": 35905027869,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T18:48:39Z",
+    "completed_at": "2026-09-23T18:49:03Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35905027869/job/107330445083",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107326078271,
+    "run_id": 35903739250,
+    "run_attempt": 1,
+    "name": "macOS native helper (no devices)",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T18:37:29Z",
+    "completed_at": "2026-09-23T18:47:11Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35903739250/job/107326078271",
+    "steps": [
+      {
+        "name": "Build opt-in CLI candidate (no devices or API)",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107325431385,
+    "run_id": 35903548678,
+    "run_attempt": 1,
+    "name": "macOS native helper (no devices)",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T18:35:47Z",
+    "completed_at": "2026-09-23T18:36:07Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35903548678/job/107325431385",
+    "steps": [
+      {
+        "name": "Compile Apple voice-processing helper and self-test",
+        "number": 4,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107325339909,
+    "run_id": 35903523994,
+    "run_attempt": 1,
+    "name": "macOS native helper (no devices)",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T18:35:36Z",
+    "completed_at": "2026-09-23T18:36:02Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35903523994/job/107325339909",
+    "steps": [
+      {
+        "name": "Compile Apple voice-processing helper and self-test",
+        "number": 4,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107320448033,
+    "run_id": 35902056499,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T18:22:58Z",
+    "completed_at": "2026-09-23T18:23:19Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35902056499/job/107320448033",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107320447934,
+    "run_id": 35902056407,
+    "run_attempt": 1,
+    "name": "macOS native helper (no devices)",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T18:23:03Z",
+    "completed_at": "2026-09-23T18:23:28Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35902056407/job/107320447934",
+    "steps": [
+      {
+        "name": "Compile Apple voice-processing helper and self-test",
+        "number": 4,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107094719927,
+    "run_id": 35834533252,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T07:58:37Z",
+    "completed_at": "2026-09-23T07:59:04Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35834533252/job/107094719927",
+    "steps": [
+      {
+        "name": "Validate tag matches package version",
+        "number": 9,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 106659699257,
+    "run_id": 35701200827,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-22T07:46:28Z",
+    "completed_at": "2026-09-22T07:46:46Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35701200827/job/106659699257",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 107094157783,
+    "run_id": 35834340691,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-23T07:56:43Z",
+    "completed_at": "2026-09-23T08:02:30Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35834340691/job/107094157783",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 17,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 106621603556,
+    "run_id": 35688934797,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-22T04:59:13Z",
+    "completed_at": "2026-09-22T05:03:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35688934797/job/106621603556",
+    "steps": [
+      {
+        "name": "Validate web backend",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 106389037925,
+    "run_id": 35616678896,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-21T15:06:32Z",
+    "completed_at": "2026-09-21T15:12:15Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35616678896/job/106389037925",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 17,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 106379948074,
+    "run_id": 35614002299,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-21T14:42:54Z",
+    "completed_at": "2026-09-21T14:47:31Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35614002299/job/106379948074",
+    "steps": [
+      {
+        "name": "Validate web backend",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 106379696616,
+    "run_id": 35613927360,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-21T14:42:14Z",
+    "completed_at": "2026-09-21T14:46:24Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35613927360/job/106379696616",
+    "steps": [
+      {
+        "name": "Validate web backend",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 104508012431,
+    "run_id": 35006663137,
+    "run_attempt": 1,
+    "name": "Linux and macOS release",
+    "conclusion": "failure",
+    "started_at": "2026-09-15T18:18:38Z",
+    "completed_at": "2026-09-15T18:23:15Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35006663137/job/104508012431",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 104508012521,
+    "run_id": 35006663124,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-15T18:18:38Z",
+    "completed_at": "2026-09-15T18:23:10Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35006663124/job/104508012521",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 104508002950,
+    "run_id": 35006659223,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-15T18:18:37Z",
+    "completed_at": "2026-09-15T18:24:10Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35006659223/job/104508002950",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 104075070995,
+    "run_id": 34873549248,
+    "run_attempt": 1,
+    "name": "Linux x64 release",
+    "conclusion": "failure",
+    "started_at": "2026-09-14T17:14:40Z",
+    "completed_at": "2026-09-14T17:22:11Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34873549248/job/104075070995",
+    "steps": [
+      {
+        "name": "Validate web backend",
+        "number": 19,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 104024074030,
+    "run_id": 34858461029,
+    "run_attempt": 1,
+    "name": "Linux x64 release",
+    "conclusion": "failure",
+    "started_at": "2026-09-14T14:52:36Z",
+    "completed_at": "2026-09-14T14:54:08Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34858461029/job/104024074030",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 104024073899,
+    "run_id": 34858460981,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-14T14:52:36Z",
+    "completed_at": "2026-09-14T14:54:00Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34858460981/job/104024073899",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 103902773389,
+    "run_id": 34821145938,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-14T08:08:03Z",
+    "completed_at": "2026-09-14T08:09:36Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34821145938/job/103902773389",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 103774523347,
+    "run_id": 34776153408,
+    "run_attempt": 1,
+    "name": "Linux x64 release",
+    "conclusion": "failure",
+    "started_at": "2026-09-13T18:56:26Z",
+    "completed_at": "2026-09-13T18:57:45Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34776153408/job/103774523347",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 103992975506,
+    "run_id": 34849330586,
+    "run_attempt": 1,
+    "name": "Linux x64 release",
+    "conclusion": "failure",
+    "started_at": "2026-09-14T13:27:15Z",
+    "completed_at": "2026-09-14T13:29:40Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34849330586/job/103992975506",
+    "steps": [
+      {
+        "name": "Build web sidecar",
+        "number": 18,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 104024080797,
+    "run_id": 34858462658,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-14T14:52:37Z",
+    "completed_at": "2026-09-14T14:54:05Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34858462658/job/104024080797",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 101733021188,
+    "run_id": 34119189282,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-07T11:56:24Z",
+    "completed_at": "2026-09-07T11:56:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34119189282/job/101733021188",
+    "steps": [
+      {
+        "name": "Format check",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 101587127164,
+    "run_id": 34070608639,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-07T00:41:36Z",
+    "completed_at": "2026-09-07T00:42:40Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34070608639/job/101587127164",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 101587070213,
+    "run_id": 34070587967,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-07T00:41:12Z",
+    "completed_at": "2026-09-07T00:42:24Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34070587967/job/101587070213",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 101587069000,
+    "run_id": 34070587557,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-07T00:41:10Z",
+    "completed_at": "2026-09-07T00:42:20Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34070587557/job/101587069000",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 101587068993,
+    "run_id": 34070587555,
+    "run_attempt": 1,
+    "name": "Linux x64 release",
+    "conclusion": "failure",
+    "started_at": "2026-09-07T00:41:11Z",
+    "completed_at": "2026-09-07T00:42:27Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34070587555/job/101587068993",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 12,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 101562451562,
+    "run_id": 34061397044,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-06T21:32:46Z",
+    "completed_at": "2026-09-06T21:33:51Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34061397044/job/101562451562",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 101448072475,
+    "run_id": 34019032172,
+    "run_attempt": 1,
+    "name": "Bun 1.4.1 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-06T07:23:54Z",
+    "completed_at": "2026-09-06T07:25:00Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/34019032172/job/101448072475",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 11,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 104510266316,
+    "run_id": 35007325992,
+    "run_attempt": 1,
+    "name": "Linux and macOS release",
+    "conclusion": "failure",
+    "started_at": "2026-09-15T18:25:00Z",
+    "completed_at": "2026-09-15T18:28:58Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/35007325992/job/104510266316",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 14,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111488523704,
+    "run_id": 37219760308,
+    "run_attempt": 1,
+    "name": "Final Linux pair against unchanged official 2644 (bounded gates)",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T17:20:01Z",
+    "completed_at": "2026-10-04T17:20:27Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37219760308/job/111488523704",
+    "steps": [
+      {
+        "name": "Download pinned official T3 for native gate (test dependency only)",
+        "number": 8,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111512785529,
+    "run_id": 37228396736,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T19:28:46Z",
+    "completed_at": "2026-10-04T19:28:51Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37228396736/job/111512785529",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111407068690,
+    "run_id": 37192241813,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T09:30:24Z",
+    "completed_at": "2026-10-04T09:30:26Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37192241813/job/111407068690",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111400016872,
+    "run_id": 37189898928,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:46:25Z",
+    "completed_at": "2026-10-04T08:46:27Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37189898928/job/111400016872",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111396594576,
+    "run_id": 37188816542,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-04T08:25:21Z",
+    "completed_at": "2026-10-04T08:25:23Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37188816542/job/111396594576",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111076661637,
+    "run_id": 37079354861,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T23:51:10Z",
+    "completed_at": "2026-10-02T23:51:13Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37079354861/job/111076661637",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 111034734078,
+    "run_id": 37064292582,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-02T21:20:55Z",
+    "completed_at": "2026-10-02T21:20:58Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/37064292582/job/111034734078",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110607489088,
+    "run_id": 36933082959,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T22:09:08Z",
+    "completed_at": "2026-10-01T22:09:10Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36933082959/job/110607489088",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110598679138,
+    "run_id": 36930020524,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T21:44:11Z",
+    "completed_at": "2026-10-01T21:44:15Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36930020524/job/110598679138",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110511853907,
+    "run_id": 36904371776,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T18:08:29Z",
+    "completed_at": "2026-10-01T18:08:31Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36904371776/job/110511853907",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110359500686,
+    "run_id": 36859001741,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T12:04:28Z",
+    "completed_at": "2026-10-01T12:04:32Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36859001741/job/110359500686",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110513827061,
+    "run_id": 36901350618,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T18:13:09Z",
+    "completed_at": "2026-10-01T18:13:12Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36901350618/job/110513827061",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110358807948,
+    "run_id": 36858964095,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T12:02:29Z",
+    "completed_at": "2026-10-01T12:02:33Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36858964095/job/110358807948",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110298355608,
+    "run_id": 36840223180,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T09:06:15Z",
+    "completed_at": "2026-10-01T09:06:19Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36840223180/job/110298355608",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 110244406555,
+    "run_id": 36823450753,
+    "run_attempt": 1,
+    "name": "CI policy",
+    "conclusion": "failure",
+    "started_at": "2026-10-01T06:13:35Z",
+    "completed_at": "2026-10-01T06:13:39Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36823450753/job/110244406555",
+    "steps": [
+      {
+        "name": "Require the planned validation outcomes",
+        "number": 2,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 109845129624,
+    "run_id": 36702551277,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T10:27:40Z",
+    "completed_at": "2026-09-30T10:28:04Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36702551277/job/109845129624",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 10,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 109845626272,
+    "run_id": 36702650196,
+    "run_attempt": 1,
+    "name": "Linux, macOS, and Android release",
+    "conclusion": "failure",
+    "started_at": "2026-09-30T10:29:12Z",
+    "completed_at": "2026-09-30T10:34:47Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36702650196/job/109845626272",
+    "steps": [
+      {
+        "name": "Deterministic tests",
+        "number": 18,
+        "conclusion": "failure"
+      }
+    ]
+  },
+  {
+    "id": 108163679806,
+    "run_id": 36162937859,
+    "run_attempt": 1,
+    "name": "Bun 1.4.2 / Linux x64",
+    "conclusion": "failure",
+    "started_at": "2026-09-25T16:47:00Z",
+    "completed_at": "2026-09-25T16:53:42Z",
+    "html_url": "https://github.com/tnfssc/bruv/actions/runs/36162937859/job/108163679806",
+    "steps": [
+      {
+        "name": "Shared Linux CI gate",
+        "number": 7,
+        "conclusion": "failure"
+      }
+    ]
+  }
+]
