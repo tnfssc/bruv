@@ -153,3 +153,21 @@ test("production CI caches downloads only and delegates paired validation to the
   expect(runner).not.toContain("ci-web-validation.sh");
   expect(runner).not.toContain("--reuse-packed-web");
 });
+
+test("both CI lanes install ffmpeg before running PCM conversion tests", async () => {
+  const workflow = await Bun.file(resolve(import.meta.dir, "../.github/workflows/ci.yml")).text();
+  const parsed = Bun.YAML.parse(workflow) as {
+    jobs: Record<string, { steps: { run?: string }[] }>;
+  };
+  for (const [job, install, gate] of [
+    ["test", "sudo apt-get update && sudo apt-get install -y ffmpeg", "bun run ci"],
+    ["live-macos", "brew install ffmpeg", "bun run ci:macos"],
+  ] as const) {
+    const steps = parsed.jobs[job]!.steps;
+    const setup = steps.findIndex((step) => step.run?.includes(install));
+    expect(setup).toBeGreaterThanOrEqual(0);
+    expect(steps[setup]!.run).toContain("command -v ffmpeg >/dev/null ||");
+    expect(steps[setup]!.run).toContain("ffmpeg -version");
+    expect(steps.findIndex((step) => step.run === gate)).toBeGreaterThan(setup);
+  }
+});
