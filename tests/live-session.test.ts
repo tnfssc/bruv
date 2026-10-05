@@ -431,3 +431,55 @@ test("main Gemini context retains large history and completion explicitly trigge
   expect(h.sends).toHaveLength(2);
   s.close();
 });
+
+describe("Google push-to-talk turns", () => {
+  test("manual activity encloses only accepted audio and repeated releases do nothing", async () => {
+    const h = harness();
+    const s = new VoiceSession({}, h.adapter, undefined, undefined, { inputMode: "push-to-talk" });
+    const pending = s.connect("key");
+    expect(h.params.config?.realtimeInputConfig?.automaticActivityDetection).toEqual({ disabled: true });
+    h.ready();
+    await pending;
+    s.endAudio();
+    s.sendAudio("not base64");
+    expect(h.sends).toEqual([]);
+    s.sendAudio("AAAAAA==");
+    s.sendAudio("AAAAAA==");
+    s.endAudio();
+    s.endAudio();
+    expect(h.sends).toEqual([
+      { activityStart: {} },
+      { audio: { data: "AAAAAA==", mimeType: "audio/pcm;rate=16000" } },
+      { audio: { data: "AAAAAA==", mimeType: "audio/pcm;rate=16000" } },
+      { activityEnd: {} },
+    ]);
+    expect(s.state).toBe("ready");
+    s.sendAudio("AAAAAA==");
+    s.endAudio();
+    expect(h.sends.slice(4)).toEqual([
+      { activityStart: {} },
+      { audio: { data: "AAAAAA==", mimeType: "audio/pcm;rate=16000" } },
+      { activityEnd: {} },
+    ]);
+    s.close();
+    s.sendAudio("AAAAAA==");
+    s.endAudio();
+    expect(h.sends).toHaveLength(7);
+  });
+
+  test("explicit continuous mode keeps automatic detection and stream-end wire", async () => {
+    const h = harness();
+    const s = new VoiceSession({}, h.adapter, undefined, undefined, { inputMode: "continuous" });
+    const pending = s.connect("key");
+    expect(h.params.config?.realtimeInputConfig?.automaticActivityDetection).toEqual({ disabled: false });
+    h.ready();
+    await pending;
+    s.sendAudio("AAAAAA==");
+    s.endAudio();
+    expect(h.sends).toEqual([
+      { audio: { data: "AAAAAA==", mimeType: "audio/pcm;rate=16000" } },
+      { audioStreamEnd: true },
+    ]);
+    s.close();
+  });
+});

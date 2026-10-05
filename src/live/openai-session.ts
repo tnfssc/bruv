@@ -5,7 +5,14 @@ import { providerFailure } from "./openai-errors";
 import { bruvSystemPrompt } from "../prompts";
 import { OPENAI_REALTIME_MODELS } from "./providers";
 import { InputResampler } from "./openai-resample";
-import type { VoiceCallbacks, VoiceError, VoiceOrchestration, VoiceProvider, VoiceState } from "./types";
+import type {
+  VoiceCallbacks,
+  VoiceError,
+  VoiceOrchestration,
+  VoiceProvider,
+  VoiceSessionOptions,
+  VoiceState,
+} from "./types";
 
 /** Official WebSocket guide: https://developers.openai.com/api/docs/guides/realtime-websocket
  * GA Realtime events: https://developers.openai.com/api/docs/guides/realtime-conversations
@@ -166,6 +173,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
   private pendingTools = 0;
   private readonly calls = new Map<string, Call>();
   private readonly resampler = new InputResampler();
+  private manualAudioBytes = 0;
   private cancelConnect?: () => void;
   private queuedEndMs = 0;
   private readonly audioItems = new Map<string, AudioItem>();
@@ -186,6 +194,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
     private readonly factory: RealtimeSocketFactory = defaultSocket,
     private readonly orchestration?: VoiceOrchestration,
     private readonly model: (typeof OPENAI_REALTIME_MODELS)[number] = OPENAI_VOICE_MODEL,
+    private readonly options: VoiceSessionOptions = {},
   ) {}
   get state(): VoiceState {
     return this.stateValue;
@@ -284,7 +293,10 @@ export class OpenAIRealtimeSession implements VoiceProvider {
                     input: {
                       format: { type: "audio/pcm", rate: 24000 },
                       transcription: { model: "gpt-4o-mini-transcribe" },
-                      turn_detection: { type: "server_vad", create_response: true, interrupt_response: true },
+                      turn_detection:
+                        this.options.inputMode === "push-to-talk"
+                          ? null
+                          : { type: "server_vad", create_response: true, interrupt_response: true },
                     },
                     output: { format: { type: "audio/pcm", rate: 24000 }, voice: "marin" },
                   },
@@ -368,17 +380,39 @@ export class OpenAIRealtimeSession implements VoiceProvider {
       return;
     }
     try {
+      if (this.options.inputMode === "push-to-talk" && !this.manualAudioBytes) {
+        this.inputActivity(true);
+        if (this.stateValue !== "ready") return;
+      }
       const pcm = this.resampler.push(Buffer.from(base64, "base64"));
-      if (pcm.length) this.send({ type: "input_audio_buffer.append", audio: Buffer.from(pcm).toString("base64") });
+      if (pcm.length) {
+        this.send({ type: "input_audio_buffer.append", audio: Buffer.from(pcm).toString("base64") });
+        if (this.options.inputMode === "push-to-talk" && this.stateValue === "ready")
+          this.manualAudioBytes += pcm.length;
+      }
     } catch {
       this.fail("invalid_audio", "Could not resample input audio");
     }
   }
-  /** Server VAD commits speech; microphone stream end does not force a synthetic user turn. */
+  /** Manual release commits a held turn; continuous mode leaves commits to server VAD. */
   endAudio(): void {
     if (this.stateValue === "ready") {
       const final = this.resampler.flush();
       if (final.length) this.send({ type: "input_audio_buffer.append", audio: Buffer.from(final).toString("base64") });
+      if (this.options.inputMode === "push-to-talk") {
+        const bytes = this.manualAudioBytes + final.length;
+        this.manualAudioBytes = 0;
+        if (this.stateValue !== "ready" || !bytes) return;
+        // Realtime requires at least 100 ms: PCM16 mono 24 kHz = 4,800 bytes.
+        // Discard short holds rather than leaking them into the next turn or padding silence.
+        if (bytes < 4800) {
+          this.send({ type: "input_audio_buffer.clear" });
+          return;
+        }
+        this.send({ type: "input_audio_buffer.commit" });
+        this.mainResponsePending = true;
+        this.flushMainResponse();
+      }
     } else this.resampler.reset();
   }
   sendContext(text: string, options?: { triggerResponse?: boolean }): void {
@@ -414,6 +448,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
     ++this.serial;
     this.cancelConnect?.();
     this.resampler.reset();
+    this.manualAudioBytes = 0;
     this.calls.clear();
     this.responses.clear();
     this.transcripts.clear();
@@ -428,11 +463,13 @@ export class OpenAIRealtimeSession implements VoiceProvider {
       this.closeError = "Provider connection close failed";
     }
   }
-  private interrupt(): void {
+  private interrupt(server = true): void {
     this.committedItem = undefined;
     ++this.inputRevision;
-    ++this.diagnostics.serverInterruptions;
-    this.diagnostics.lastInterruptedAtMs = performance.now();
+    if (server) {
+      ++this.diagnostics.serverInterruptions;
+      this.diagnostics.lastInterruptedAtMs = performance.now();
+    }
     const played = this.callbacks.getPlayedAudioMs?.() ?? 0;
     for (const [id, item] of this.audioItems) {
       if (Number.isFinite(played) && played >= 0 && played < item.start + item.duration)
@@ -536,26 +573,27 @@ export class OpenAIRealtimeSession implements VoiceProvider {
     // Registered execute owns timeout and cancellation, never the transport.
   }
 
+  private inputActivity(manual = false): void {
+    const active = this.activeResponse && this.responses.get(this.activeResponse);
+    // With VAD disabled the server will not cancel the older response for us.
+    if (manual && active && !active.done && !active.cancelled)
+      this.send({ type: "response.cancel", response_id: this.activeResponse });
+    this.suppressAudio = true;
+    if (active) active.cancelled = true;
+    this.committedItem = undefined;
+    for (const response of this.responses.values()) response.continued = true;
+    ++this.inputRevision;
+    this.emit(() => this.callbacks.onInputActivity?.());
+    if (this.audioItems.size) this.interrupt(!manual);
+  }
+
   private receive(m: any): void {
     switch (m.type) {
       case "input_audio_buffer.committed":
         if (typeof m.item_id === "string" && m.item_id.length <= 256) this.committedItem = m.item_id;
         break;
       case "input_audio_buffer.speech_started":
-        this.suppressAudio = true;
-        if (this.activeResponse) {
-          const active = this.responses.get(this.activeResponse);
-          if (active) active.cancelled = true;
-        }
-        this.committedItem = undefined;
-        for (const response of this.responses.values()) response.continued = true;
-        ++this.inputRevision;
-        this.emit(() => this.callbacks.onInputActivity?.());
-        // Stop audible output on VAD now; server cancellation may arrive later.
-        if (this.audioItems.size) {
-          this.suppressAudio = true;
-          this.interrupt();
-        }
+        this.inputActivity();
         break;
       case "conversation.item.input_audio_transcription.completed": {
         if (typeof m.item_id === "string" && this.transcripts.has(m.item_id)) return;

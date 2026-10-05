@@ -7,6 +7,7 @@ import {
   type LiveConnection,
   type LiveParams,
   type VoiceCallbacks,
+  type VoiceSessionOptions,
   type VoiceOrchestration,
   type VoiceError,
   type VoiceState,
@@ -38,6 +39,7 @@ export class VoiceSession {
   private inputChars = 0;
   private outputChars = 0;
   private ended = false;
+  private activityStarted = false;
   private cancelConnect?: () => void;
   private readonly seenCalls = new Map<
     string,
@@ -49,6 +51,7 @@ export class VoiceSession {
     private readonly adapter: LiveAdapter = (apiKey) => new GoogleGenAI({ apiKey }),
     private readonly orchestration?: VoiceOrchestration,
     readonly model: string = VOICE_MODEL,
+    private readonly options: VoiceSessionOptions = {},
   ) {}
   get state(): VoiceState {
     return this.stateValue;
@@ -137,7 +140,7 @@ export class VoiceSession {
             : {}),
           inputAudioTranscription: {},
           outputAudioTranscription: {},
-          realtimeInputConfig: { automaticActivityDetection: { disabled: false } },
+          realtimeInputConfig: { automaticActivityDetection: { disabled: this.options.inputMode === "push-to-talk" } },
         },
         callbacks: {
           onmessage: (message) => {
@@ -190,18 +193,27 @@ export class VoiceSession {
       return;
     }
     try {
+      if (this.options.inputMode === "push-to-talk" && !this.activityStarted) {
+        this.activityStarted = true;
+        this.connection.sendRealtimeInput({ activityStart: {} });
+        if (this.stateValue !== "ready") return;
+      }
       this.connection.sendRealtimeInput({ audio: { data: base64, mimeType: "audio/pcm;rate=16000" } });
       if (this.stateValue === "ready") this.ended = false;
     } catch {
       this.fail("transport_error", "Could not send audio");
     }
   }
-  /** Signals microphone stream end, not a local VAD or end-of-turn decision. */
+  /** Manual mode ends the held activity; continuous mode leaves turn detection to the provider. */
   endAudio(): void {
     if (this.stateValue !== "ready" || !this.connection || this.ended) return;
+    if (this.options.inputMode === "push-to-talk" && !this.activityStarted) return;
     this.ended = true;
+    this.activityStarted = false;
     try {
-      this.connection.sendRealtimeInput({ audioStreamEnd: true });
+      this.connection.sendRealtimeInput(
+        this.options.inputMode === "push-to-talk" ? { activityEnd: {} } : { audioStreamEnd: true },
+      );
     } catch {
       this.fail("transport_error", "Could not end audio stream");
     }

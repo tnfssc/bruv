@@ -8,7 +8,7 @@ import {
   type RealtimeSocket,
 } from "../src/live/openai-session";
 import { InputResampler } from "../src/live/openai-resample";
-import type { VoiceCallbacks, VoiceOrchestration } from "../src/live/types";
+import type { VoiceCallbacks, VoiceOrchestration, VoiceSessionOptions } from "../src/live/types";
 
 class FakeSocket implements RealtimeSocket {
   readyState = 1;
@@ -36,7 +36,7 @@ class FakeSocket implements RealtimeSocket {
     this.message({ type: "session.updated" });
   }
 }
-function fixture(callbacks: VoiceCallbacks = {}, orchestration?: VoiceOrchestration) {
+function fixture(callbacks: VoiceCallbacks = {}, orchestration?: VoiceOrchestration, options?: VoiceSessionOptions) {
   const socket = new FakeSocket();
   let url = "",
     headers: Record<string, string> = {};
@@ -48,6 +48,8 @@ function fixture(callbacks: VoiceCallbacks = {}, orchestration?: VoiceOrchestrat
       return socket;
     },
     orchestration,
+    undefined,
+    options,
   );
   return {
     socket,
@@ -942,4 +944,126 @@ test("main context is preserved and wakes only one Realtime response without rep
   expect(f.session.state).toBe("closed");
   expect(f.socket.events).toHaveLength(sent);
   f.session.close();
+});
+
+describe("OpenAI push-to-talk turns", () => {
+  test("release flushes, commits >=100 ms, then requests a response without ending the session", async () => {
+    let activities = 0;
+    const f = fixture({ onInputActivity: () => activities++ }, undefined, { inputMode: "push-to-talk" });
+    await f.connect();
+    expect(f.socket.events[0].session.audio.input.turn_detection).toBeNull();
+    f.session.sendAudio(Buffer.alloc(1600).toString("base64"));
+    f.session.sendAudio(Buffer.alloc(1600).toString("base64"));
+    expect(activities).toBe(1);
+    expect(f.socket.events.slice(1).every((e) => e.type === "input_audio_buffer.append")).toBe(true);
+    f.session.endAudio();
+    expect(f.socket.events.slice(-3).map((e) => e.type)).toEqual([
+      "input_audio_buffer.append",
+      "input_audio_buffer.commit",
+      "response.create",
+    ]);
+    expect(
+      f.socket.events
+        .filter((e) => e.type === "input_audio_buffer.append")
+        .reduce((sum, e) => sum + Buffer.from(e.audio, "base64").length, 0),
+    ).toBe(4800);
+    const count = f.socket.events.length;
+    f.session.endAudio();
+    expect(f.socket.events).toHaveLength(count);
+    expect(f.session.state).toBe("ready");
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "u1" });
+    f.socket.message({ type: "response.created", response: { id: "r1" } });
+    f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
+    f.session.sendAudio(Buffer.alloc(3200).toString("base64"));
+    f.session.endAudio();
+    expect(activities).toBe(2);
+    expect(f.socket.events.filter((e) => e.type === "input_audio_buffer.commit")).toHaveLength(2);
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(2);
+    f.session.close();
+  });
+
+  test("empty/invalid holds do not commit; short holds are cleared, not carried into the next turn", async () => {
+    const f = fixture({}, undefined, { inputMode: "push-to-talk" });
+    await f.connect();
+    f.session.endAudio();
+    f.session.sendAudio("not base64");
+    f.session.endAudio();
+    expect(f.socket.events).toHaveLength(1);
+    f.session.sendAudio(Buffer.alloc(3168).toString("base64")); // 99 ms
+    f.session.endAudio();
+    expect(f.socket.events.at(-1)).toEqual({ type: "input_audio_buffer.clear" });
+    const count = f.socket.events.length;
+    f.session.endAudio();
+    expect(f.socket.events).toHaveLength(count);
+    f.session.sendAudio(Buffer.alloc(32).toString("base64")); // 1 ms must not combine with the discarded 99 ms
+    f.session.endAudio();
+    expect(f.socket.events.filter((e) => e.type === "input_audio_buffer.clear")).toHaveLength(2);
+    expect(f.socket.events.some((e) => e.type === "input_audio_buffer.commit" || e.type === "response.create")).toBe(
+      false,
+    );
+    f.session.close();
+    f.session.sendAudio(Buffer.alloc(3200).toString("base64"));
+    f.session.endAudio();
+    expect(f.socket.events.at(-1)).toEqual({ type: "input_audio_buffer.clear" });
+  });
+
+  test("manual response requests wait for an existing response to finish", async () => {
+    const f = fixture({}, undefined, { inputMode: "push-to-talk" });
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "old" } });
+    f.session.sendAudio(Buffer.alloc(3200).toString("base64"));
+    f.session.endAudio();
+    expect(f.socket.events.at(-1)).toEqual({ type: "input_audio_buffer.commit" });
+    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
+    expect(f.socket.events.at(-1)).toEqual({ type: "response.create" });
+    f.session.close();
+  });
+
+  test("first held audio cancels stale output without counting a server interruption", async () => {
+    const interrupted: number[] = [];
+    const audio: string[] = [];
+    const f = fixture(
+      { onInterrupted: (epoch) => interrupted.push(epoch), onAudio: (pcm) => audio.push(pcm) },
+      undefined,
+      { inputMode: "push-to-talk" },
+    );
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "old" } });
+    f.socket.message({ type: "response.output_item.added", response_id: "old", item: { type: "message", id: "a1" } });
+    f.socket.message({ type: "response.output_audio.delta", response_id: "old", item_id: "a1", delta: "AAAAAA==" });
+    f.session.sendAudio(Buffer.alloc(3200).toString("base64"));
+    expect(f.socket.events).toContainEqual({ type: "response.cancel", response_id: "old" });
+    expect(f.socket.events).toContainEqual({
+      type: "conversation.item.truncate",
+      item_id: "a1",
+      content_index: 0,
+      audio_end_ms: 0,
+    });
+    expect(interrupted).toHaveLength(1);
+    expect(f.session.diagnostics.serverInterruptions).toBe(0);
+    f.socket.message({ type: "response.output_audio.delta", response_id: "old", item_id: "a1", delta: "AAAAAA==" });
+    expect(audio).toHaveLength(1);
+    f.session.endAudio();
+    f.socket.message({ type: "response.done", response: { id: "old", status: "cancelled" } });
+    expect(interrupted).toHaveLength(1);
+    expect(f.socket.events.at(-1)).toEqual({ type: "response.create" });
+    f.session.close();
+  });
+
+  test("explicit continuous mode retains server VAD and never forces commit or response on stream end", async () => {
+    const f = fixture({}, undefined, { inputMode: "continuous" });
+    await f.connect();
+    expect(f.socket.events[0].session.audio.input.turn_detection).toEqual({
+      type: "server_vad",
+      create_response: true,
+      interrupt_response: true,
+    });
+    f.session.sendAudio(Buffer.alloc(3200).toString("base64"));
+    f.session.endAudio();
+    expect(f.socket.events.slice(1).map((e) => e.type)).toEqual([
+      "input_audio_buffer.append",
+      "input_audio_buffer.append",
+    ]);
+    f.session.close();
+  });
 });
