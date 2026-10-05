@@ -44,3 +44,16 @@ Local retention/order is demonstrated in the test-only adapter experiment. Mocks
 are NOT proof that remote VAD recognizes all buffered words or handles burst replay.
 Need existing credentials in the executing runtime and the bounded opt-in speech
 run. No production buffering or physical capture-start/latency claim is warranted.
+
+## Parent check
+
+User asked for testing before more investigation. Worker task_280b61da finished.
+Worker commit: 074428027f8b313abcf88c2c9f1cb14d137bd4ad. Brought back as 4e09a680.
+Parent read the queue and speech probe and reran the 13 FIFO tests in the worker tree.
+Production is unchanged. Next step is the credentialed speech probe, not more mock claims.
+Paced replay alone does not catch up if fresh audio arrives at the same rate.
+The remote probe compares a fixed utterance; it does not prove continuous capture catch-up.
+
+Integrated FIFO rerun: 13 passed, 0 failed. First run lacked @google/genai;
+`bun install --frozen-lockfile` fixed the local dependency gap. Lockfile unchanged.
+`git diff --check` passed.
