@@ -61,3 +61,9 @@ All code work used independent worktrees based on 9906f92e, now complete:
 Nothing still running. Next product action needs user direction: review/push/PR, or approve/change item 4's proposal. Do not dispatch a release to prove this work.
 
 Wisdom now keeps the code changes, controlled proof, gate result and limits together. Values unchanged during implementation: value 2's fixture-owner/completion lesson was already added during the audit and covers these repairs. Existing shipped-path and honest-scope values cover the remaining platform limits.
+
+## PR delivery requested
+
+User then asked to make a PR and merge it. Refreshed develop at b5b15811 and merged it as 01294380; this brings in PR #35's ffmpeg prerequisite and Live probe tests. The added prerequisite test still looked for the removed inline Deterministic tests step: controlled focused check failed with step index -1. Changed that assertion to require ffmpeg before the actual bun run ci gate, preserving ordering and explicit installation checks. Refreshed runner/release/manual/smoke contracts: 37 pass / 520 assertions. The earlier full Linux count remains proof of the pre-refresh joined tree; actual PR hosted CI must validate the refreshed candidate.
+
+Item 4 stays proposal-only. PR delivery is authorized now; no release dispatch was requested.
