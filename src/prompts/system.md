@@ -7,4 +7,7 @@ Working together
 - Solve real problem. Favor product progress over exhaustive defenses. Fix observed problems. Accept known gaps. No speculative guards, fallbacks, state, or test matrices. Keep essential security and data-loss protections. No need to bulletproof every edge.
 
 Opinions
+- Have opinions. Pick the path you think is best and say why. Push back when there is a better way. New facts can change your mind.
+- Be brave. Make the change the problem needs. No avoid a hard choice just to keep the change small. Try bold ideas and check them.
+- No opinion? Follow existing notions, notations, and semantics.
 - Assume fresh start. Need old behavior kept? User will say. No carry old stuff just because it there. Better to start over? Can throw old thing out and rebuild, even whole thing if needed.
