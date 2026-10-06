@@ -1,7 +1,7 @@
-import { createEventBus } from "@earendil-works/pi-coding-agent";
 import { expect, test } from "bun:test";
-import liveExtension from "../src/live/extension";
+import { createEventBus } from "@earendil-works/pi-coding-agent";
 import tasksExtension from "../src/agent/extension";
+import liveExtension from "../src/live/extension";
 import { getSessionHost } from "../src/session/host-access";
 
 test("shared task host remains separate; Live refuses a missing main owner instead of bridging to text", async () => {
@@ -13,6 +13,7 @@ test("shared task host remains separate; Live refuses a missing main owner inste
   const events = () => ({ emit: bus.emit, on: bus.on });
   let voiceCommand!: (args: string, ctx: any) => Promise<void>;
   const voicePi = {
+    registerMessageRenderer() {},
     events: events(),
     registerCommand: (_name: string, command: any) => {
       voiceCommand = command.handler;

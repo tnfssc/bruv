@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { hostname, tmpdir } from "node:os";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { hostname, tmpdir } from "node:os";
 import { join } from "node:path";
 import { PassThrough } from "node:stream";
-import { ModelRuntime, SessionManager, SettingsManager } from "@earendil-works/pi-coding-agent";
-import { ClaudeCompatTransport } from "../src/claude-compat/transport";
-import { createClaudeCompatRuntime } from "../src/claude-compat/runtime";
-import { currentMainOwner } from "../src/live/main-owner";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { createClaudeCompatLiveFrontend, type ClaudeCompatLiveOptions } from "../src/claude-compat/live-frontend";
+import { ModelRuntime, SessionManager, SettingsManager } from "@earendil-works/pi-coding-agent";
+import { type ClaudeCompatLiveOptions, createClaudeCompatLiveFrontend } from "../src/claude-compat/live-frontend";
+import { createClaudeCompatRuntime } from "../src/claude-compat/runtime";
+import { ClaudeCompatTransport } from "../src/claude-compat/transport";
 import liveExtension from "../src/live/extension";
+import { currentMainOwner } from "../src/live/main-owner";
 import { defaultLiveConfig } from "../src/live/providers";
 import { liveLocalOnly } from "../src/live/status";
 
@@ -79,6 +79,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
         },
         emit: (name: string, value: unknown) => events.get(name)?.(value),
       },
+      registerMessageRenderer() {},
       registerCommand: (_name: string, value: any) => {
         command = value;
       },
