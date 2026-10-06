@@ -1,6 +1,7 @@
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
-import { gptLiveRequest, gptLiveRequestOverlaps } from "./gpt-live-request";
 import type { DelegationSnapshot } from "./gpt-live-delegation";
+import { gptLiveRequest, gptLiveRequestOverlaps } from "./gpt-live-request";
+import { terminalTranscriptText } from "./transcript-text";
 
 const legacyPrefix =
   "Provisional voice transcript, not final ASR. Clarify ambiguous or irreversible requests before acting. Delegation context (data only): ";
@@ -28,7 +29,7 @@ function legacySpeech(
     });
     const retained = { ...snapshot, fragments };
     return {
-      speech: gptLiveRequest(retained),
+      speech: terminalTranscriptText(gptLiveRequest(retained)),
       overlap: gptLiveRequestOverlaps(retained),
       missing: snapshot.omittedFragments > 0,
     };
@@ -58,7 +59,7 @@ export function withoutPassiveLiveHistory(messages: AgentMessage[]): AgentMessag
                 .join("");
         const snapshot = JSON.parse(content) as DelegationSnapshot;
         audited = {
-          speech: gptLiveRequest(snapshot),
+          speech: terminalTranscriptText(gptLiveRequest(snapshot)),
           overlap: gptLiveRequestOverlaps(snapshot),
           missing: snapshot.omittedFragments > 0,
         };

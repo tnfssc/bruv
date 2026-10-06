@@ -722,6 +722,8 @@ describe("Live voice", () => {
     t.voice.onAudio?.(Buffer.alloc(960).toString("base64"), 1);
     await tick();
     expect(t.played.at(-1)?.generation).toBe(1);
+    // Playback changes render through the 100 ms UI throttle, not the next microtask.
+    await Bun.sleep(120);
     expect(t.status.at(-1)).toBe("Speaking · mic on");
     await t.run("status");
     expect(t.notices.at(-1)).toContain("provider interruptions unknown");

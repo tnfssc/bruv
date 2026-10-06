@@ -48,3 +48,8 @@ device calls were made; assistant streams are local offline fixtures.
 Command (prefix all invocations with the explicit PATH/SHELL above):
 
 `/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun test tests/live-main-integration.test.ts tests/gpt-live-delegation.test.ts tests/gpt-live-request.test.ts tests/live-passive-history.test.ts`
+
+
+## Parent integration
+
+Integrated as 1c8b834c. Parent sanitized both current snapshot reconstruction and legacy speech recovery in passive-history.ts. Raw audit remains unchanged; the canonical request, selected-model context and replay stay safe. The worker regression now passes with the model-context assertion intact. The focused 124-test suite passed, and a separate legacy projection regression was added before the full gate rerun.

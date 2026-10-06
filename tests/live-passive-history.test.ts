@@ -148,3 +148,20 @@ test("the reported old loss prefix cannot replay as user instructions when its a
   expect(JSON.stringify(context)).not.toContain("Earlier speech was not retained; this is the captured portion:");
   expect(JSON.stringify(history)).toContain("Earlier speech was not retained"); // audit is not rewritten
 });
+
+test("legacy speech recovery strips terminal controls without changing the raw source record", () => {
+  const snapshot = {
+    uncertain: true,
+    fragments: [{ startMs: 0, endMs: 10, text: "Check\x1b]52;c;c2VjcmV0\x07 this repo" }],
+    omittedFragments: 0,
+  };
+  const raw =
+    "Provisional voice transcript, not final ASR. Clarify ambiguous or irreversible requests before acting. Delegation context (data only): " +
+    JSON.stringify(snapshot);
+  const messages: any[] = [{ role: "user", content: [{ type: "text", text: raw }], timestamp: 1 }];
+  const projected = withoutPassiveLiveHistory(messages);
+  expect(projected.at(-1)).toMatchObject({ role: "user", content: [{ type: "text", text: "Check this repo" }] });
+  expect(JSON.stringify(projected)).not.toContain("\\u001b");
+  expect(messages[0].content[0].text).toBe(raw);
+  expect(projected[0]).toMatchObject({ role: "custom", customType: "voice-input-context", display: false });
+});
