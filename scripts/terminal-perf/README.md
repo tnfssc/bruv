@@ -110,3 +110,7 @@ Screen/content/output SHA256s, output byte/write counts, changed rows/visible ac
 
 
 Tool-event cases use a fresh isolated worker and the real SDK dispatch/render fixture. Their controlled direct `handleEvent` burst is a measured contiguous same-turn slice; subscribed Enter input and scheduled frames are separate observations. The overall action spans multiple turns and unobserved async continuations, so it is not a complete-action timing claim. Setup/init/grammar warmup are not sampled. Input lateness and heartbeat timing are diagnostics, not CPU, and raw event/file evidence is retained unchanged.
+
+## T3 actions
+
+Import the repository `t3.json` scripts in T3 Code to get **Terminal Frame Lab** and **Terminal Interaction Lab** actions. Both run on demand, in the background. They do not run during worktree setup. Commands print the saved dashboard path; open `index.html` for the report. These are informational runs, not strict budget gates.

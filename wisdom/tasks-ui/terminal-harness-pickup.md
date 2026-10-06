@@ -43,3 +43,7 @@ Subsequent ordinary frozen install/preparation/check passed. Shell emits a mise 
 Inspect this commit against the pinned base; parent publishes after review. No push or PR made. For matched timings, commit first, keep a quiet machine and identical fixture/config/content, then run serial selected cases. Strict budget mode is only an opt-in observed-scope gate. Read [usage](../../scripts/terminal-perf/README.md), [coverage/gaps](terminal-interaction-lab.md), [report accounting](terminal-interaction-runner.md), and [fixture lifecycle](terminal-perf-fixture-lifecycle.md).
 
 Wisdom describes harness-only methodology/usage/extraction instead of combined results. Value 2 adds whole-action, missing-timing and like-boundary measurement principles, with existing links and no shipped-fix claim. Base async-fixture ownership value preserved.
+
+## T3 actions added after PR publication
+
+User asked to add `t3.json` too. Two manual debug actions call the package harness commands. Both are async; neither runs during worktree setup. Existing setup, CI and build actions stay unchanged. The guide explains explicit T3 import and opening the generated offline report. A config test checks command links and manual execution. Parent must refresh the optimization stack after pushing this harness commit. Values unchanged; this is a launch convenience, not a measurement change.
