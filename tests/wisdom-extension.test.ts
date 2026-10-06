@@ -50,26 +50,23 @@ describe("project wisdom extension", () => {
     expect(result.systemPrompt).not.toContain("index.md");
   });
 
-  test("root closeout keeps knowledge inside the task delivery boundary", () => {
+  test("wisdom goes with the code before saying done", () => {
     const f = fixture(true);
     const { systemPrompt } = f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx);
-    expect(systemPrompt).toContain("Capture wisdom and values during implementation and review.");
-    expect(systemPrompt).toContain("Finish before the final task commit, PR, or delivery.");
-    expect(systemPrompt).toContain("Include them in the same task changes as the code.");
+    expect(systemPrompt).toContain("Write wisdom while doing the work.");
+    expect(systemPrompt).toContain("Finish it before the last commit, PR, or handoff.");
+    expect(systemPrompt).toContain("Put it with the code. No wait until the job is done.");
+    expect(systemPrompt).toContain("Any edits not committed? Any commits not shared yet?");
+    expect(systemPrompt).toContain("Send code and wisdom where the user asked. Not there yet? Say what is left.");
+    expect(systemPrompt).toContain("Task done or PR merged? No more edits in that worktree.");
     expect(systemPrompt).toContain(
-      "check for uncommitted task changes and task commits not yet at the user's requested delivery point",
-    );
-    expect(systemPrompt).toContain("A local commit is not shared delivery.");
-    expect(systemPrompt).toContain("Deliver both code and knowledge there, or say what still needs delivery.");
-    expect(systemPrompt).toContain("After delivery or merge, that task's worktree is closed. No more writes there.");
-    expect(systemPrompt).toContain(
-      "Post-release factual receipts belong in a durable task or release record, not post-job repo edits.",
+      "Record release facts with the release or task, not in the old worktree. No new repo notes after shipping.",
     );
     expect(systemPrompt).toContain(
-      "New repository lessons need an explicit new follow-up task/PR, not quiet edits on the old branch.",
+      "Need another repo change? Start a new task and PR. No quiet edits on the old branch.",
     );
     expect(systemPrompt).not.toContain("After release or broad review, look across the work too.");
-    // Guidance must not become a post-turn writer or a guessed Git-delivery gate.
+    // Do not add a writer or a Git check after the turn has ended.
     expect([...f.handlers.keys()]).toEqual(["before_agent_start"]);
   });
 

@@ -77,11 +77,11 @@ From: [shared-memory value](prompts/shared-memory-value.md), [project wisdom](wi
 ## Keep learning
 
 - Before big work, read values and wisdom for that work.
-- Capture wisdom and values during implementation and review. Finish before the final task commit, PR, or delivery. Include them in the same task changes.
+- Write wisdom and values while doing the work. Put them with the code. Finish before the last commit, PR, or handoff. No wait until the job is done.
 - Write wisdom? Check if lesson belongs in values too. Before big work ends or changes hands, check again.
-- Before delivery, look across the work. Which lessons repeat? Which old lessons no longer hold?
-- At closeout, check uncommitted task changes and task commits not at the requested delivery point. A local commit is not shared delivery.
-- After delivery or merge, stop writing in that closed worktree. Post-release facts go in a durable task or release record. New repo lessons need an explicit new follow-up task/PR.
+- Before saying done, look across the work. Which lessons repeat? Which old lessons no longer hold?
+- Before saying done, check our files and commits. Edits not committed? Commits not shared yet? Send the work where the user asked, or say what is left.
+- Task done or PR merged? No more edits in that worktree. Record release facts with the release or task, not in the old worktree. Need another repo change? Start a new task and PR. No quiet edits on the old branch.
 - Link where lesson came from. Say when it helps and when it does not. Local recipe stays with feature.
 - Fix or join old values before adding more. Keep set small. New proof says value is wrong? Change it.
 - At end, say what wisdom changed and what values changed. Values stayed same? Say why. No new lesson means no forced edit.

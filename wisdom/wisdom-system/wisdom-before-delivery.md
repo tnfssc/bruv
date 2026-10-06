@@ -1,13 +1,18 @@
-# Wisdom before delivery
+# Wisdom goes with the code
 
-Notes written after a job is done can die in a stale worktree. A clean tree can still hold task commits nobody else has. Capture wisdom and values during implementation and review. Ship them with the code, before the final task commit, PR, or delivery.
+Job done. Then notes get written. Those notes stay in an old worktree and die there. Even a commit can get stuck there. A clean tree does not mean the work was shared.
 
-At closeout, check both uncommitted task changes and task commits not at the user's requested delivery point. A local commit is not shared delivery. After delivery or merge, stop writes in that closed worktree. Post-release factual receipts belong in a durable task or release record. New repo lessons need an explicit new follow-up task/PR, not quiet old-branch edits.
+Write what we learn while doing the work. Put it with the code. Finish before the last commit, PR, or handoff. Before saying done, check for edits not committed and commits not shared yet. Send both where the user asked. Not there yet? Say what is left.
 
-This is guidance, not an auto-commit or rescuebot. No automatic Git writes, workspace lock, or runtime closeout hook is added here. The actual delivery gate belongs in T3’s pre-PR/thread closeout. It knows the task owner and accepted delivery artifact. Bruv’s child-process completion and `agent_end` are not that boundary: a returned patch can still await parent integration, and a conversational stop is not delivery. A root Git scan would also include unrelated work. Do not turn those events into a guessed delivery gate.
+Task done or PR merged? Stop editing that worktree. Record release facts with the release or task, not in the old worktree. Need a new repo change? Start a new task and PR. No quiet edits on the old branch.
 
-Source: [standing prompt](../../src/prompts/wisdom.md). [Values](../values.md) now use the same boundary; the existing shared-memory value still fits.
+No auto-commit, rescue bot, or worktree lock. T3 owns PRs and when a thread is done. It can check where the work went. A child process stopping does not mean its work is shared. Its parent may still need to pick up the patch. No guess at delivery from that event. No Git scan that mixes our work with somebody else’s.
 
-Implementation workspace: `/home/tnfssc/.bruv/worktrees/wisdom-lifecycle-before-delivery`, branch `wisdom-lifecycle-before-delivery`. This is a new follow-up from released `develop`, not more edits in the closed voice worktree. Source, regression tests and this wisdom travel together.
+The rule lives in [the prompt](../../src/prompts/wisdom.md). [Values](../values.md) say the same thing. The tests check the wording and make sure no hook writes notes after the turn ends.
 
-Parent integration workspace: `/home/tnfssc/.bruv/worktrees/t3-7231ab8c-5442693331ce-task_45b6ba83`, branch `bruv/wisdom-before-delivery`. The worker patch was integrated here before creating the shared PR. The implementation workspace above is retained as source provenance, not a second pending delivery.
+Worker: `/home/tnfssc/.bruv/worktrees/wisdom-lifecycle-before-delivery`, branch `wisdom-lifecycle-before-delivery`.
+Parent: `/home/tnfssc/.bruv/worktrees/t3-7231ab8c-5442693331ce-task_45b6ba83`, branch `bruv/wisdom-before-delivery`.
+
+The parent has the worker’s changes. Code, tests, and these notes are in the same PR. Nothing waits in the worker tree for somebody to find later.
+
+User caught formal words in this change too. Rewrote the prompt, README, tests, and notes in the same plain voice. Values say the same rule; no new value needed.

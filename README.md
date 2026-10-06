@@ -62,9 +62,9 @@ fallbacks, while keeping security and data-loss protections. Old behavior is
 kept when you ask for it, rather than carried forward by default.
 
 Project wisdom keeps decisions with the code. Agents read `wisdom/values.md`
-before large changes and capture reasons, checks, and next steps during the work.
-Wisdom goes in the same task changes before the final commit, PR, or delivery.
-After delivery, stop writes in that closed worktree; new repo lessons need a new task/PR.
+before large changes. They write reasons, checks, and next steps while doing the work.
+Wisdom goes with the code, before the last commit or PR—not after the job is done.
+Once the task is done or its PR is merged, stop editing that worktree. New work needs a new task and PR.
 Set `wisdomDir` in `.bruv/settings.json` to use another directory; `/wisdom`
 shows the resolved path. See [project wisdom](wisdom/wisdom-system/project-wisdom.md).
 
