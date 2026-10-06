@@ -188,7 +188,11 @@ export function executeOutputPreview(
           ...wrappedRows(full, width),
         ];
         if (details?.outputArtifactErrors) lines.push(theme.fg("warning", "… execute could not save all output"));
-        return lines.map((line) => truncateToWidth(line, width));
+        // Wrapping already fits almost every row. Native truncation still builds a
+        // grapheme-by-grapheme prefix even when it ultimately returns the input.
+        // Measure first: preserve native clipping for oversized graphemes at
+        // narrow widths, titles and warnings, without rebuilding fitting rows.
+        return lines.map((line) => (visibleWidth(line) <= width ? line : truncateToWidth(line, width)));
       }
       const failed = status.color === "error";
       const reason = failed ? actionError(details, full) : status.text;

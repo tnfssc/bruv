@@ -90,6 +90,23 @@ describe("borderless editor", () => {
     expect(input.getText()).toBe("previous prompt");
   });
 
+  test("paste cleanup preserves accepted controls, line endings and Unicode", () => {
+    const input = editor();
+    input.handleInput("\x1b[200~A\x00\x01\x1f\x7f\r\nB\tC \u{1f600}\x1b[106;5uD\x1b[201~");
+    expect(input.getText()).toBe("A\x7f\nB    C \u{1f600}\nD");
+  });
+
+  test("large paste keeps exact content behind its marker and remains undoable", () => {
+    const input = editor();
+    const content = "\u{1f600}abc".repeat(250) + "\n" + "row\n".repeat(12);
+    input.handleInput("\x1b[200~" + content + "\x1b[201~");
+    expect(input.getText()).toBe("[paste #1 +14 lines]");
+    expect(input.getExpandedText()).toBe(content);
+    (input as unknown as { undo: () => void }).undo();
+    expect(input.getText()).toBe("");
+    expect(input.getExpandedText()).toBe("");
+  });
+
   test("spinner replaces the chevron without moving input or adding rows", () => {
     const input = editor();
     input.setWorkingStatusIndicator({ renderSpinnerInBorder: () => "*" } as unknown as Parameters<

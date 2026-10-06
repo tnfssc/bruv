@@ -45,8 +45,8 @@ export const piHostPatches: readonly Patch[] = [
   },
   {
     path: "dist/core/session-manager.js",
-    originalSha256: "046b6a1109ac3f0ed893bb85bf0648709362fa926a5da75761216cf2fcf9d926",
-    adaptedSha256: "ffabf4778848434c1d3df2314b44250cfce78f1d708b0881d78727c1a3d73b42",
+    originalSha256: "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a",
+    adaptedSha256: "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202",
     replacements: [
       [
         '        const rl = createInterface({\n            input: createReadStream(filePath, { encoding: "utf8", signal }),',

@@ -1,0 +1,56 @@
+bun test v1.4.2 (744846f84)
+
+tests/history-disk-retrieval.test.ts:
+(pass) disk history retrieval traverses metadata, preserving originals, branches, refs and live exclusions [238.48ms]
+
+tests/history-projection-parity.test.ts:
+(pass) Pi 1.0.0 disk-backed session projection compatibility > matches the real SDK for context edits and compaction system checkpoints [247.07ms]
+
+tests/history-publication-collision.test.ts:
+(pass) a publication collision leaves SessionManager unchanged and permits recovery [238.55ms]
+
+tests/history-sdk-099.test.ts:
+(pass) Pi 1.0.0: first-user publication, direct session name and O(1) entry count match native SDK [257.02ms]
+
+tests/history-storage-cleanup.test.ts:
+(pass) temporary preparation and failed factories leave no live-process pending journals [239.10ms]
+
+tests/history-storage-io.test.ts:
+(pass) disk entry store I/O correctness > scanJsonl propagates visitor exceptions rather than treating them as malformed JSON [0.74ms]
+(pass) disk entry store I/O correctness > scans Unicode, CRLF, records larger than the scan buffer, and repairs a valid unterminated tail before append [3.38ms]
+(pass) disk entry store I/O correctness > retries short writes and rolls back failed partial appends in an isolated subprocess [15.52ms]
+(pass) disk entry store I/O correctness > failed first-user publication rolls back the pending append and can be retried [1.24ms]
+(pass) disk entry store I/O correctness > a failed spool unlink does not undo successful publication [15.09ms]
+(pass) disk entry store I/O correctness > failed atomic replacement leaves a pending journal usable and publishable [1.08ms]
+(pass) disk entry store I/O correctness > duplicate IDs retain distinct physical records while ID lookup resolves to the last record [0.36ms]
+(pass) disk entry store I/O correctness > cache retains exact bounded serialized buffers rather than parsed graphs [0.90ms]
+
+tests/history-storage-lifecycle.test.ts:
+(pass) owned SDK lifecycle keeps rewrite bodies, sorted trees, migrations, paths and discovery isolation [238.52ms]
+
+tests/history-storage.test.ts:
+(pass) disk-backed SessionManager SDK compatibility > matches an unpatched subprocess for flush, reopen, branch, reset, fork, and newSession [283.94ms]
+(pass) disk-backed SessionManager SDK compatibility > keeps compacted originals and stable references across reopen while context stays compact [262.97ms]
+
+tests/session-costs-tui.test.ts:
+(pass) real footer includes nested costs, updates while idle, and restores on resume [3203.33ms]
+
+tests/session-costs.test.ts:
+(pass) SessionCostTracker > recursively sums each bruv-agent descendant once and excludes unrelated sessions, branches, and cycles [3.73ms]
+(pass) SessionCostTracker > resumes existing JSONL and incrementally includes appended partial usage from failed or killed children [1.43ms]
+(pass) SessionCostTracker > discovers later nested sessions, honors header fallback only for bruv agents, and ignores root cost [1.14ms]
+(pass) SessionCostTracker > rejects an ordinary fork that copied bruv-agent metadata [0.71ms]
+(pass) SessionCostTracker > sanitizes negative costs and deduplicates repeated entry ids per session [0.58ms]
+(pass) SessionCostTracker > resets costs after truncation and atomic replacement [1.69ms]
+(pass) SessionCostTracker > coalesces concurrent refreshes and supports a synthetic missing root [0.76ms]
+(pass) counts failed compaction usage once without treating arbitrary custom entries as costs [0.68ms]
+
+tests/history-disk-footer.test.ts:
+(pass) index scan preserves offsets, full Unicode records, malformed lines and unterminated tail [56.24ms]
+(pass) real huge saved history reopens, resumes, branches and forks without truncation or cache aliasing [602.64ms]
+(pass) huge usage scan waits for newline and preserves malformed, duplicate and incremental costs [108.84ms]
+
+ 28 pass
+ 0 fail
+ 127 expect() calls
+Ran 28 tests across 11 files. [6.26s]

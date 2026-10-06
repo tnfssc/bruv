@@ -1,0 +1,3 @@
+$ bun ./scripts/build-pair.ts
+Built /home/tnfssc/.bruv/worktrees/t3code-bbf9268f-5442693331ce-task_eb5bf53c/dist/bruv
+Built Bruv connector launcher /home/tnfssc/.bruv/worktrees/t3code-bbf9268f-5442693331ce-task_eb5bf53c/dist/bruv-claude-compat

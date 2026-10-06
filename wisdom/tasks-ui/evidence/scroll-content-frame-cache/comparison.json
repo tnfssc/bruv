@@ -1,0 +1,220 @@
+{
+  "beforeEnvironment": {
+    "revision": "f7a46bba55e0a81d258d854c50199133e66bab88",
+    "dirty": false,
+    "bun": "1.4.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD Ryzen 9 7940HS w/ Radeon 780M Graphics",
+    "dependencies": {
+      "pi-tui": "1.0.3",
+      "pi-coding-agent": "1.0.3"
+    }
+  },
+  "afterEnvironment": {
+    "revision": "f7a46bba55e0a81d258d854c50199133e66bab88",
+    "dirty": true,
+    "bun": "1.4.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD Ryzen 9 7940HS w/ Radeon 780M Graphics",
+    "dependencies": {
+      "pi-tui": "1.0.3",
+      "pi-coding-agent": "1.0.3"
+    }
+  },
+  "config": {
+    "samples": 40,
+    "warmup": 5,
+    "width": 120,
+    "height": 40,
+    "scales": [
+      100,
+      500,
+      1000
+    ]
+  },
+  "configIdentical": true,
+  "cases": [
+    {
+      "id": "long-thread/input/100",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 0
+    },
+    {
+      "id": "long-thread/animation/100",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 0,
+      "afterSteadyMisses": 0
+    },
+    {
+      "id": "long-thread/streaming/100",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 0,
+      "afterSteadyMisses": 0
+    },
+    {
+      "id": "long-thread/resize/100",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 0,
+      "afterSteadyMisses": 0
+    },
+    {
+      "id": "long-thread/scrollback/100",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 0,
+      "afterSteadyMisses": 0
+    },
+    {
+      "id": "long-thread/task-update/100",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 0,
+      "afterSteadyMisses": 0
+    },
+    {
+      "id": "long-thread/input/500",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 1
+    },
+    {
+      "id": "long-thread/animation/500",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 1
+    },
+    {
+      "id": "long-thread/streaming/500",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 0
+    },
+    {
+      "id": "long-thread/resize/500",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 7
+    },
+    {
+      "id": "long-thread/scrollback/500",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 1
+    },
+    {
+      "id": "long-thread/task-update/500",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 2
+    },
+    {
+      "id": "long-thread/input/1000",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 27
+    },
+    {
+      "id": "long-thread/animation/1000",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 35
+    },
+    {
+      "id": "long-thread/streaming/1000",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 37
+    },
+    {
+      "id": "long-thread/resize/1000",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 40
+    },
+    {
+      "id": "long-thread/scrollback/1000",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 37
+    },
+    {
+      "id": "long-thread/task-update/1000",
+      "coldPairs": 1,
+      "steadyPairs": 40,
+      "fingerprintMismatches": 0,
+      "afterColdMisses": 1,
+      "afterSteadyMisses": 35
+    }
+  ],
+  "fingerprints": {
+    "beforeSha256": "53cece43e984644d84a738d150c17d4f56e898d2ae9b468985c353249087e73b",
+    "afterSha256": "53cece43e984644d84a738d150c17d4f56e898d2ae9b468985c353249087e73b",
+    "totalPairs": 738,
+    "mismatches": 0
+  },
+  "input1000Work": {
+    "before": {
+      "frames": 1,
+      "documentRenders": 2,
+      "documentLines": 5012,
+      "componentRenders": 3504,
+      "componentLines": 5012,
+      "branchCalls": 2,
+      "branchEntries": 4504,
+      "snapshotCalls": 2,
+      "snapshotRows": 2000,
+      "renderRequests": 0,
+      "changedRows": 1,
+      "mutations": 2
+    },
+    "after": {
+      "frames": 1,
+      "documentRenders": 1,
+      "documentLines": 2506,
+      "componentRenders": 1752,
+      "componentLines": 2506,
+      "branchCalls": 1,
+      "branchEntries": 2252,
+      "snapshotCalls": 1,
+      "snapshotRows": 1000,
+      "renderRequests": 0,
+      "changedRows": 1,
+      "mutations": 2
+    }
+  }
+}

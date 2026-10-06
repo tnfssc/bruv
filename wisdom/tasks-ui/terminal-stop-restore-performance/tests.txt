@@ -1,0 +1,13 @@
+bun test v1.4.2 (744846f84)
+
+tests/tui-stop-restoration.test.ts:
+(pass) stop writes all repeated rows, but transforms each consecutive run once [34.45ms]
+(pass) stop preserves colors, links, images, cursor stripping, normalization and clipping [10.00ms]
+(pass) stop cache does not survive a later restore or width/content change [0.15ms]
+(pass) preserveScreen and inactive stops do not render or restore transcript [0.05ms]
+(pass) public stop restores terminal state before transcript and restores saved capabilities [0.79ms]
+
+ 5 pass
+ 0 fail
+ 22 expect() calls
+Ran 5 tests across 1 file. [95.00ms]

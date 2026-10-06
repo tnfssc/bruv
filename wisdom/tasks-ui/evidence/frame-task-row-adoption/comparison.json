@@ -1,0 +1,997 @@
+{
+  "beforePath": "artifacts/terminal-perf/task-projection-before/run.json",
+  "afterPath": "artifacts/terminal-perf/task-projection-after-isolated/run.json",
+  "environmentBefore": {
+    "revision": "3379c5984e5721370dbc19c76af75e0b0152db67",
+    "dirty": false,
+    "bun": "1.4.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD Ryzen 9 7940HS w/ Radeon 780M Graphics",
+    "dependencies": {
+      "pi-tui": "1.0.3",
+      "pi-coding-agent": "1.0.3"
+    }
+  },
+  "environmentAfter": {
+    "revision": "3379c5984e5721370dbc19c76af75e0b0152db67",
+    "dirty": true,
+    "bun": "1.4.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD Ryzen 9 7940HS w/ Radeon 780M Graphics",
+    "dependencies": {
+      "pi-tui": "1.0.3",
+      "pi-coding-agent": "1.0.3"
+    }
+  },
+  "config": {
+    "samples": 40,
+    "warmup": 5,
+    "width": 120,
+    "height": 40,
+    "scales": [
+      100,
+      500,
+      1000
+    ]
+  },
+  "fingerprintPairs": 738,
+  "mismatches": [],
+  "cases": [
+    {
+      "id": "long-thread/input/100",
+      "parameters": {
+        "mode": "input",
+        "size": 100,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 16.75960900000001,
+        "p50": 1.1789730000000418,
+        "p95": 2.166480999999976,
+        "max": 5.982849999999985,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 23.287873999999988,
+        "p50": 0.9687920000000076,
+        "p95": 1.664467000000002,
+        "max": 4.892251999999985,
+        "misses": 0,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 256,
+        "componentRenders": 177,
+        "componentLines": 256,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 2
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 256,
+        "componentRenders": 177,
+        "componentLines": 256,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 2
+      }
+    },
+    {
+      "id": "long-thread/animation/100",
+      "parameters": {
+        "mode": "animation",
+        "size": 100,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 5.319947000000013,
+        "p50": 0.8174309999999991,
+        "p95": 1.353557999999964,
+        "max": 3.412449000000038,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 4.441662999999949,
+        "p50": 0.835394000000008,
+        "p95": 1.4077290000000175,
+        "max": 3.278269000000023,
+        "misses": 0,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 253,
+        "componentRenders": 177,
+        "componentLines": 255,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 253,
+        "componentRenders": 177,
+        "componentLines": 255,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/streaming/100",
+      "parameters": {
+        "mode": "streaming",
+        "size": 100,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 3.3901370000000384,
+        "p50": 0.7640410000000202,
+        "p95": 1.0335129999999708,
+        "max": 2.2473209999999995,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 3.6151859999999942,
+        "p50": 0.9543559999999616,
+        "p95": 1.7274139999999534,
+        "max": 2.887702000000047,
+        "misses": 0,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 264,
+        "componentRenders": 177,
+        "componentLines": 264,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 0,
+        "changedRows": 8,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 264,
+        "componentRenders": 177,
+        "componentLines": 264,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 0,
+        "changedRows": 8,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/resize/100",
+      "parameters": {
+        "mode": "resize",
+        "size": 100,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 2.81885299999999,
+        "p50": 1.3076330000000098,
+        "p95": 2.3957169999999905,
+        "max": 3.435280999999918,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 3.434720000000084,
+        "p50": 1.165096999999946,
+        "p95": 2.332217999999898,
+        "max": 3.7229360000000042,
+        "misses": 0,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 256,
+        "componentRenders": 177,
+        "componentLines": 256,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 1,
+        "changedRows": 40,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 256,
+        "componentRenders": 177,
+        "componentLines": 256,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 1,
+        "changedRows": 40,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/scrollback/100",
+      "parameters": {
+        "mode": "scrollback",
+        "size": 100,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 2.5757520000000795,
+        "p50": 0.6544169999999667,
+        "p95": 1.072544999999991,
+        "max": 2.5555249999999887,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 2.1755379999999604,
+        "p50": 0.6065490000000864,
+        "p95": 1.2787190000000237,
+        "max": 2.9560900000000174,
+        "misses": 0,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 256,
+        "componentRenders": 177,
+        "componentLines": 256,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 1,
+        "changedRows": 39,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 256,
+        "componentRenders": 177,
+        "componentLines": 256,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 100,
+        "renderRequests": 1,
+        "changedRows": 39,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/task-update/100",
+      "parameters": {
+        "mode": "task-update",
+        "size": 100,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 3.4637629999999717,
+        "p50": 0.7192679999999427,
+        "p95": 1.0163710000000492,
+        "max": 3.2751929999999447,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 2.9786119999999983,
+        "p50": 0.6818989999999303,
+        "p95": 1.2373119999999744,
+        "max": 3.126788000000033,
+        "misses": 0,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 254,
+        "componentRenders": 177,
+        "componentLines": 254,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 101,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 254,
+        "componentRenders": 177,
+        "componentLines": 254,
+        "branchCalls": 1,
+        "branchEntries": 227,
+        "snapshotCalls": 1,
+        "snapshotRows": 101,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/input/500",
+      "parameters": {
+        "mode": "input",
+        "size": 500,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 11.388417000000004,
+        "p50": 4.529585999999995,
+        "p95": 6.962692999999945,
+        "max": 9.047330999999986,
+        "misses": 1,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 16.88827900000001,
+        "p50": 3.743123999999966,
+        "p95": 5.944018000000028,
+        "max": 8.216446000000019,
+        "misses": 1,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1256,
+        "componentRenders": 877,
+        "componentLines": 1256,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 2
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1256,
+        "componentRenders": 877,
+        "componentLines": 1256,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 2
+      }
+    },
+    {
+      "id": "long-thread/animation/500",
+      "parameters": {
+        "mode": "animation",
+        "size": 500,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 11.067991000000006,
+        "p50": 3.6661209999999755,
+        "p95": 6.01866700000005,
+        "max": 11.175420000000031,
+        "misses": 1,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 10.595101,
+        "p50": 2.921915999999783,
+        "p95": 4.3222209999998995,
+        "max": 12.786638000000039,
+        "misses": 1,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1253,
+        "componentRenders": 877,
+        "componentLines": 1255,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1253,
+        "componentRenders": 877,
+        "componentLines": 1255,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/streaming/500",
+      "parameters": {
+        "mode": "streaming",
+        "size": 500,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 10.396281000000045,
+        "p50": 3.3025239999999485,
+        "p95": 6.025771000000077,
+        "max": 6.931115000000091,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 11.27492600000005,
+        "p50": 2.8216289999998025,
+        "p95": 5.472962000000052,
+        "max": 6.606179999999995,
+        "misses": 0,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1264,
+        "componentRenders": 877,
+        "componentLines": 1264,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 0,
+        "changedRows": 8,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1264,
+        "componentRenders": 877,
+        "componentLines": 1264,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 0,
+        "changedRows": 8,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/resize/500",
+      "parameters": {
+        "mode": "resize",
+        "size": 500,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 11.312595999999985,
+        "p50": 5.953385000000026,
+        "p95": 8.345194999999876,
+        "max": 12.994224000000031,
+        "misses": 6,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 9.047571999999946,
+        "p50": 5.189845000000105,
+        "p95": 8.267620999999963,
+        "max": 11.03106200000002,
+        "misses": 3,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1256,
+        "componentRenders": 877,
+        "componentLines": 1256,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 1,
+        "changedRows": 40,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1256,
+        "componentRenders": 877,
+        "componentLines": 1256,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 1,
+        "changedRows": 40,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/scrollback/500",
+      "parameters": {
+        "mode": "scrollback",
+        "size": 500,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 10.067019000000073,
+        "p50": 3.77571399999988,
+        "p95": 6.457964999999831,
+        "max": 7.419692999999825,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 11.506777000000056,
+        "p50": 2.6235410000001593,
+        "p95": 4.820517999999993,
+        "max": 11.673005999999987,
+        "misses": 1,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1256,
+        "componentRenders": 877,
+        "componentLines": 1256,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 1,
+        "changedRows": 39,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1256,
+        "componentRenders": 877,
+        "componentLines": 1256,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 500,
+        "renderRequests": 1,
+        "changedRows": 39,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/task-update/500",
+      "parameters": {
+        "mode": "task-update",
+        "size": 500,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 11.55071799999996,
+        "p50": 3.8310169999999744,
+        "p95": 6.043081999999913,
+        "max": 7.892832999999882,
+        "misses": 0,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 10.115759000000025,
+        "p50": 2.938807999999881,
+        "p95": 5.191718999999921,
+        "max": 6.785883999999896,
+        "misses": 0,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1254,
+        "componentRenders": 877,
+        "componentLines": 1254,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 501,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 1254,
+        "componentRenders": 877,
+        "componentLines": 1254,
+        "branchCalls": 1,
+        "branchEntries": 1127,
+        "snapshotCalls": 1,
+        "snapshotRows": 501,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/input/1000",
+      "parameters": {
+        "mode": "input",
+        "size": 1000,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 27.037198999999873,
+        "p50": 9.082456000000093,
+        "p95": 12.63893300000018,
+        "max": 14.95176599999968,
+        "misses": 30,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 22.652221999999938,
+        "p50": 7.55928300000005,
+        "p95": 15.520313999999871,
+        "max": 17.522919999999885,
+        "misses": 17,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2506,
+        "componentRenders": 1752,
+        "componentLines": 2506,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 2
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2506,
+        "componentRenders": 1752,
+        "componentLines": 2506,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 2
+      }
+    },
+    {
+      "id": "long-thread/animation/1000",
+      "parameters": {
+        "mode": "animation",
+        "size": 1000,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 21.085305999999946,
+        "p50": 8.625577000000249,
+        "p95": 13.264818000000105,
+        "max": 19.503753999999844,
+        "misses": 30,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 19.324000999999953,
+        "p50": 7.326179000000138,
+        "p95": 12.753345999999965,
+        "max": 17.009353999999803,
+        "misses": 10,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2503,
+        "componentRenders": 1752,
+        "componentLines": 2505,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2503,
+        "componentRenders": 1752,
+        "componentLines": 2505,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/streaming/1000",
+      "parameters": {
+        "mode": "streaming",
+        "size": 1000,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 23.601998999999978,
+        "p50": 8.527733999999782,
+        "p95": 11.955171000000064,
+        "max": 15.404998999999862,
+        "misses": 27,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 22.080359000000044,
+        "p50": 7.04978600000004,
+        "p95": 12.821521999999732,
+        "max": 14.21297100000038,
+        "misses": 10,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2514,
+        "componentRenders": 1752,
+        "componentLines": 2514,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 0,
+        "changedRows": 8,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2514,
+        "componentRenders": 1752,
+        "componentLines": 2514,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 0,
+        "changedRows": 8,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/resize/1000",
+      "parameters": {
+        "mode": "resize",
+        "size": 1000,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 19.413986999999906,
+        "p50": 13.293049999999766,
+        "p95": 19.503483999999844,
+        "max": 20.70907699999998,
+        "misses": 40,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 18.285849000000326,
+        "p50": 12.175220999999965,
+        "p95": 17.460123000000294,
+        "max": 19.50621900000033,
+        "misses": 40,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2506,
+        "componentRenders": 1752,
+        "componentLines": 2506,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 1,
+        "changedRows": 40,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2506,
+        "componentRenders": 1752,
+        "componentLines": 2506,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 1,
+        "changedRows": 40,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/scrollback/1000",
+      "parameters": {
+        "mode": "scrollback",
+        "size": 1000,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 19.824620999999752,
+        "p50": 9.648589000000356,
+        "p95": 12.763405000000603,
+        "max": 13.874482000000171,
+        "misses": 37,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 21.928897000000234,
+        "p50": 6.727696000000378,
+        "p95": 11.518769000000248,
+        "max": 12.931397999999717,
+        "misses": 8,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2506,
+        "componentRenders": 1752,
+        "componentLines": 2506,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 1,
+        "changedRows": 39,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2506,
+        "componentRenders": 1752,
+        "componentLines": 2506,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1000,
+        "renderRequests": 1,
+        "changedRows": 39,
+        "mutations": 1
+      }
+    },
+    {
+      "id": "long-thread/task-update/1000",
+      "parameters": {
+        "mode": "task-update",
+        "size": 1000,
+        "fixtureVersion": 1,
+        "renderer": "fullscreen"
+      },
+      "before": {
+        "coldMax": 19.719294999999875,
+        "p50": 9.65087499999936,
+        "p95": 12.335829000000558,
+        "max": 13.458418000000165,
+        "misses": 39,
+        "changed": 40
+      },
+      "after": {
+        "coldMax": 17.21643899999981,
+        "p50": 6.35532400000011,
+        "p95": 9.00624500000049,
+        "max": 12.814691000000494,
+        "misses": 4,
+        "changed": 40
+      },
+      "workBefore": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2504,
+        "componentRenders": 1752,
+        "componentLines": 2504,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1001,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      },
+      "workAfter": {
+        "frames": 1,
+        "documentRenders": 1,
+        "documentLines": 2504,
+        "componentRenders": 1752,
+        "componentLines": 2504,
+        "branchCalls": 1,
+        "branchEntries": 2252,
+        "snapshotCalls": 1,
+        "snapshotRows": 1001,
+        "renderRequests": 0,
+        "changedRows": 1,
+        "mutations": 1
+      }
+    }
+  ]
+}

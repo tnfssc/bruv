@@ -1,0 +1,252 @@
+{
+  "runtime": "1.4.2",
+  "boundary": "serial extracted sync phases; no await in phases; cache timers on misses add instrumentation overhead; counting write has no PTY/backpressure",
+  "samples": [
+    {
+      "fixture": "audit-repeated",
+      "variant": "before",
+      "iteration": 0,
+      "inputBytes": 2097152,
+      "inputHash": "6cdb1e9ac9a39c8429501d0c51da2ef2e6f9effaf5440737a8b5402d338fd844",
+      "documentLines": 33295,
+      "distinctRawLines": 6,
+      "transformedRows": 33295,
+      "outputBytes": 4561398,
+      "outputHash": "0d87948942b02a9b69677f5a23bb9bbbb7f2dfd9b5917242a3313f1681335920",
+      "phases": {
+        "renderMs": 1.228116,
+        "stripMs": 3.5578820000000064,
+        "normalizeMs": 5.635507999999959,
+        "imageWidthClipMs": 18.633106999999995,
+        "assembleMs": 1.1103259999999864,
+        "countingWriteMs": 0.020729000000017095
+      }
+    },
+    {
+      "fixture": "audit-repeated",
+      "variant": "consecutive",
+      "iteration": 0,
+      "inputBytes": 2097152,
+      "inputHash": "6cdb1e9ac9a39c8429501d0c51da2ef2e6f9effaf5440737a8b5402d338fd844",
+      "documentLines": 33295,
+      "distinctRawLines": 6,
+      "transformedRows": 8,
+      "outputBytes": 4561398,
+      "outputHash": "0d87948942b02a9b69677f5a23bb9bbbb7f2dfd9b5917242a3313f1681335920",
+      "phases": {
+        "renderMs": 1.4329369999999813,
+        "normalizeMs": 0.015938000000119246,
+        "imageWidthClipMs": 0.008526000000017575,
+        "transformInclusiveMs": 1.4380260000000362,
+        "stripCacheAndLoopResidualMs": 1.4135619999998994,
+        "assembleMs": 0.9620709999999804,
+        "countingWriteMs": 0.0038879999999608117
+      }
+    },
+    {
+      "fixture": "audit-repeated",
+      "variant": "before",
+      "iteration": 1,
+      "inputBytes": 2097152,
+      "inputHash": "6cdb1e9ac9a39c8429501d0c51da2ef2e6f9effaf5440737a8b5402d338fd844",
+      "documentLines": 33295,
+      "distinctRawLines": 6,
+      "transformedRows": 33295,
+      "outputBytes": 4561398,
+      "outputHash": "0d87948942b02a9b69677f5a23bb9bbbb7f2dfd9b5917242a3313f1681335920",
+      "phases": {
+        "renderMs": 0.7595640000000117,
+        "stripMs": 2.1620940000000246,
+        "normalizeMs": 4.434622999999988,
+        "imageWidthClipMs": 13.919083999999998,
+        "assembleMs": 1.0810819999999808,
+        "countingWriteMs": 0.004539000000022497
+      }
+    },
+    {
+      "fixture": "audit-repeated",
+      "variant": "consecutive",
+      "iteration": 1,
+      "inputBytes": 2097152,
+      "inputHash": "6cdb1e9ac9a39c8429501d0c51da2ef2e6f9effaf5440737a8b5402d338fd844",
+      "documentLines": 33295,
+      "distinctRawLines": 6,
+      "transformedRows": 8,
+      "outputBytes": 4561398,
+      "outputHash": "0d87948942b02a9b69677f5a23bb9bbbb7f2dfd9b5917242a3313f1681335920",
+      "phases": {
+        "renderMs": 1.6485580000000368,
+        "normalizeMs": 0.006720999999913602,
+        "imageWidthClipMs": 0.007272000000000389,
+        "transformInclusiveMs": 1.139319999999998,
+        "stripCacheAndLoopResidualMs": 1.125327000000084,
+        "assembleMs": 0.5122430000000122,
+        "countingWriteMs": 0.00243399999999383
+      }
+    },
+    {
+      "fixture": "audit-repeated",
+      "variant": "before",
+      "iteration": 2,
+      "inputBytes": 2097152,
+      "inputHash": "6cdb1e9ac9a39c8429501d0c51da2ef2e6f9effaf5440737a8b5402d338fd844",
+      "documentLines": 33295,
+      "distinctRawLines": 6,
+      "transformedRows": 33295,
+      "outputBytes": 4561398,
+      "outputHash": "0d87948942b02a9b69677f5a23bb9bbbb7f2dfd9b5917242a3313f1681335920",
+      "phases": {
+        "renderMs": 0.7654540000000338,
+        "stripMs": 1.945259999999962,
+        "normalizeMs": 5.292359000000033,
+        "imageWidthClipMs": 11.585141000000021,
+        "assembleMs": 0.7064149999999927,
+        "countingWriteMs": 0.003306000000009135
+      }
+    },
+    {
+      "fixture": "audit-repeated",
+      "variant": "consecutive",
+      "iteration": 2,
+      "inputBytes": 2097152,
+      "inputHash": "6cdb1e9ac9a39c8429501d0c51da2ef2e6f9effaf5440737a8b5402d338fd844",
+      "documentLines": 33295,
+      "distinctRawLines": 6,
+      "transformedRows": 8,
+      "outputBytes": 4561398,
+      "outputHash": "0d87948942b02a9b69677f5a23bb9bbbb7f2dfd9b5917242a3313f1681335920",
+      "phases": {
+        "renderMs": 1.226222000000007,
+        "normalizeMs": 0.008436000000131116,
+        "imageWidthClipMs": 0.011471999999855598,
+        "transformInclusiveMs": 1.7382160000000226,
+        "stripCacheAndLoopResidualMs": 1.718308000000036,
+        "assembleMs": 0.6802859999999669,
+        "countingWriteMs": 0.00243399999999383
+      }
+    },
+    {
+      "fixture": "unique-row-counter",
+      "variant": "before",
+      "iteration": 0,
+      "inputBytes": 2097152,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "documentLines": 36164,
+      "distinctRawLines": 36162,
+      "transformedRows": 36164,
+      "outputBytes": 4954451,
+      "outputHash": "befbe57a6baa186b0e4dab15a12c46cfe0aa8c8b5bfc8ddc7f38955a9e654278",
+      "phases": {
+        "renderMs": 1.1492590000000291,
+        "stripMs": 1.8786759999999276,
+        "normalizeMs": 4.541972000000101,
+        "imageWidthClipMs": 13.136897999999974,
+        "assembleMs": 0.7298979999999347,
+        "countingWriteMs": 0.004968999999960033
+      }
+    },
+    {
+      "fixture": "unique-row-counter",
+      "variant": "consecutive",
+      "iteration": 0,
+      "inputBytes": 2097152,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "documentLines": 36164,
+      "distinctRawLines": 36162,
+      "transformedRows": 36164,
+      "outputBytes": 4954451,
+      "outputHash": "befbe57a6baa186b0e4dab15a12c46cfe0aa8c8b5bfc8ddc7f38955a9e654278",
+      "phases": {
+        "renderMs": 6.653403000000026,
+        "normalizeMs": 7.252305999994178,
+        "imageWidthClipMs": 16.2467049999982,
+        "transformInclusiveMs": 29.309165000000007,
+        "stripCacheAndLoopResidualMs": 5.810154000007628,
+        "assembleMs": 0.657703999999967,
+        "countingWriteMs": 0.0049999999999954525
+      }
+    },
+    {
+      "fixture": "unique-row-counter",
+      "variant": "before",
+      "iteration": 1,
+      "inputBytes": 2097152,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "documentLines": 36164,
+      "distinctRawLines": 36162,
+      "transformedRows": 36164,
+      "outputBytes": 4954451,
+      "outputHash": "befbe57a6baa186b0e4dab15a12c46cfe0aa8c8b5bfc8ddc7f38955a9e654278",
+      "phases": {
+        "renderMs": 0.9172569999999496,
+        "stripMs": 2.096822999999972,
+        "normalizeMs": 5.098288000000025,
+        "imageWidthClipMs": 15.819029999999998,
+        "assembleMs": 0.993178999999941,
+        "countingWriteMs": 0.005400000000008731
+      }
+    },
+    {
+      "fixture": "unique-row-counter",
+      "variant": "consecutive",
+      "iteration": 1,
+      "inputBytes": 2097152,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "documentLines": 36164,
+      "distinctRawLines": 36162,
+      "transformedRows": 36164,
+      "outputBytes": 4954451,
+      "outputHash": "befbe57a6baa186b0e4dab15a12c46cfe0aa8c8b5bfc8ddc7f38955a9e654278",
+      "phases": {
+        "renderMs": 1.0226229999999532,
+        "normalizeMs": 5.794410999995648,
+        "imageWidthClipMs": 13.467808999995668,
+        "transformInclusiveMs": 23.72258899999997,
+        "stripCacheAndLoopResidualMs": 4.460369000008654,
+        "assembleMs": 0.6028219999999465,
+        "countingWriteMs": 0.003265999999939595
+      }
+    },
+    {
+      "fixture": "unique-row-counter",
+      "variant": "before",
+      "iteration": 2,
+      "inputBytes": 2097152,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "documentLines": 36164,
+      "distinctRawLines": 36162,
+      "transformedRows": 36164,
+      "outputBytes": 4954451,
+      "outputHash": "befbe57a6baa186b0e4dab15a12c46cfe0aa8c8b5bfc8ddc7f38955a9e654278",
+      "phases": {
+        "renderMs": 0.9182190000000219,
+        "stripMs": 1.7398180000000139,
+        "normalizeMs": 4.341429000000062,
+        "imageWidthClipMs": 12.190678000000048,
+        "assembleMs": 0.7238770000000159,
+        "countingWriteMs": 0.0030259999999771026
+      }
+    },
+    {
+      "fixture": "unique-row-counter",
+      "variant": "consecutive",
+      "iteration": 2,
+      "inputBytes": 2097152,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "documentLines": 36164,
+      "distinctRawLines": 36162,
+      "transformedRows": 36164,
+      "outputBytes": 4954451,
+      "outputHash": "befbe57a6baa186b0e4dab15a12c46cfe0aa8c8b5bfc8ddc7f38955a9e654278",
+      "phases": {
+        "renderMs": 1.1225799999999708,
+        "normalizeMs": 5.366488999989542,
+        "imageWidthClipMs": 12.526140999995505,
+        "transformInclusiveMs": 22.30104300000005,
+        "stripCacheAndLoopResidualMs": 4.408413000015003,
+        "assembleMs": 0.555603999999903,
+        "countingWriteMs": 0.003467000000000553
+      }
+    }
+  ]
+}

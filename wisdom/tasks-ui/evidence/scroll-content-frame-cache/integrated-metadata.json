@@ -1,0 +1,89 @@
+{
+  "startedAt": "2026-10-05T19:51:11.744Z",
+  "environment": {
+    "revision": "3379c5984e5721370dbc19c76af75e0b0152db67",
+    "dirty": false,
+    "bun": "1.4.2",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD Ryzen 9 7940HS w/ Radeon 780M Graphics",
+    "dependencies": {
+      "pi-tui": "1.0.3",
+      "pi-coding-agent": "1.0.3"
+    }
+  },
+  "config": {
+    "samples": 40,
+    "warmup": 5,
+    "width": 120,
+    "height": 40,
+    "scales": [
+      100,
+      500,
+      1000
+    ]
+  },
+  "priorInput1000": {
+    "count": 40,
+    "min": 16.19005599999946,
+    "p50": 20.148924999999508,
+    "p95": 25.122730999999476,
+    "p99": 27.629471000000194,
+    "max": 27.629471000000194,
+    "mean": 20.680768950000026,
+    "overBudget": 40
+  },
+  "afterInput1000": {
+    "count": 40,
+    "min": 7.224498999999923,
+    "p50": 9.022594000000026,
+    "p95": 14.976358999999775,
+    "p99": 16.842281000000185,
+    "max": 16.842281000000185,
+    "mean": 9.726781274999961,
+    "overBudget": 32
+  },
+  "matchingFingerprints": 738,
+  "totalFrames": 738,
+  "inputFrame": {
+    "index": 0,
+    "action": "input",
+    "durationMs": 10.120446000000356,
+    "startedAtMs": 2126.569576,
+    "phases": {
+      "history.document.render": 10.009630000000016,
+      "refreshSearch": 0.0021740000001955195,
+      "applySearchHighlights": 0.000901999999769032,
+      "compositeScrollToEndIndicator": 0.0006320000002233428,
+      "compositeOverlays": 0.001273000000310276,
+      "applySelection": 0.0016829999999572465,
+      "compositeFlashes": 0.0027549999999791908,
+      "extractCursorPosition": 0.0011920000001737208,
+      "applyLineResets": 0.007243999999900552,
+      "terminal.write": 0.0007609999997839623,
+      "inlineLayoutDiffAndOther": 0.09220000000004802
+    },
+    "bytes": 179,
+    "writes": 1,
+    "changed": true,
+    "screenHash": "f361ee55",
+    "outputHash": "98a05979",
+    "requestDelayMs": 0.03625800000008894,
+    "inputDelayMs": 0.11091699999997218,
+    "work": {
+      "frames": 1,
+      "documentRenders": 1,
+      "documentLines": 2506,
+      "componentRenders": 1752,
+      "componentLines": 2506,
+      "branchCalls": 1,
+      "branchEntries": 2252,
+      "snapshotCalls": 1,
+      "snapshotRows": 1000,
+      "renderRequests": 0,
+      "changedRows": 1,
+      "mutations": 2
+    }
+  },
+  "rawRunPath": "artifacts/terminal-perf/scroll-cache-integrated/run.json"
+}
