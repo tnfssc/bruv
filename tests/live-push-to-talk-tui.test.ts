@@ -4,7 +4,13 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { waitForLiveTuiStartup } from "./live-tui-startup";
-import { capturePane, shellQuote as quote, tmuxRunner, frameContaining as waitForText } from "./tui-helpers";
+import {
+  capturePane,
+  pasteAndSubmit,
+  shellQuote as quote,
+  tmuxRunner,
+  frameContaining as waitForText,
+} from "./tui-helpers";
 
 // Actual source CLI/Pi renderer and canonical owner, synthetic mic/provider only.
 for (const width of [80, 120])
@@ -19,14 +25,7 @@ for (const width of [80, 120])
       await tmux("send-keys", "-t", "ptt", "-l", text);
     };
     const command = async (text: string, expected: string) => {
-      await literal(text);
-      // Dismiss argument suggestions: their first Enter accepts a choice, not submit.
-      if (text.endsWith(" stop")) {
-        await Bun.sleep(100);
-        await tmux("send-keys", "-t", "ptt", "Escape");
-        await Bun.sleep(100);
-      }
-      await tmux("send-keys", "-t", "ptt", "Enter");
+      await pasteAndSubmit(tmux, "ptt", text);
       return until(expected);
     };
     let proofs = 0;

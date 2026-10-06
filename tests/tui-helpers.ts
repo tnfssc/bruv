@@ -8,6 +8,13 @@ export function tmuxRunner(socket: string, config?: string, binary = "tmux") {
 
 type Tmux = ReturnType<typeof tmuxRunner>;
 
+// A complete command is pasted, not typed through argument suggestions.
+// In Pi, Enter on an argument suggestion accepts it without submitting.
+export async function pasteAndSubmit(tmux: Tmux, target: string, text: string) {
+  await tmux("send-keys", "-t", target, "-l", "\x1b[200~" + text + "\x1b[201~");
+  await tmux("send-keys", "-t", target, "Enter");
+}
+
 export function capturePane(tmux: Tmux, target: string, history = false) {
   return tmux("capture-pane", "-p", "-t", target, ...(history ? ["-S", "-"] : []));
 }
