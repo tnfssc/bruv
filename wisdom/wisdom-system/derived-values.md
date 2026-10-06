@@ -41,7 +41,7 @@ Research jobs: resources task_af112ee3, T3 task_4615ef2d, web/UI/native task_a11
 
 ## Standing instructions and upkeep
 
-The source of truth is src/prompts/wisdom.md. It tells root agents to read values before big work. At a big finish or handoff, revisit lessons. After a release or wide review, look across affected systems. Merge or revise before adding. Keep links and tradeoffs. Mark conflicts and newer facts. No new evidence? Leave values alone. Missing value? Derive it from project evidence. Do not make up history.
+The source of truth is src/prompts/wisdom.md. It tells root agents to read values before big work. Write lessons while doing the work. Put wisdom and values with the code before the last commit, PR, or handoff. No wait until the job is done. See [wisdom before delivery](wisdom-before-delivery.md). Merge or revise before adding. Keep links and tradeoffs. Mark conflicts and newer facts. No new evidence? Leave values alone. Missing value? Derive it from project evidence. Do not make up history.
 
 The wisdom extension adds those instructions. It still sends them only to root agents. The lead agent must join the pieces and can give useful values to workers. This is an instruction to agents. It is not a scheduled process that runs by itself. The ten project values are not put in every project's global prompt.
 

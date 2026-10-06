@@ -2,9 +2,9 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { projectWisdomDir } from "../src/wisdom/location";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { registerProjectWisdom } from "../src/wisdom/extension";
+import { projectWisdomDir } from "../src/wisdom/location";
 
 function fixture(root = true, cwd = "/repo", trusted = true) {
   const commands = new Map<
@@ -48,6 +48,26 @@ describe("project wisdom extension", () => {
     expect(result.systemPrompt).not.toContain(".agents/notes");
     expect(result.systemPrompt).not.toContain("pending");
     expect(result.systemPrompt).not.toContain("index.md");
+  });
+
+  test("wisdom goes with the code before saying done", () => {
+    const f = fixture(true);
+    const { systemPrompt } = f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx);
+    expect(systemPrompt).toContain("Write wisdom while doing the work.");
+    expect(systemPrompt).toContain("Finish it before the last commit, PR, or handoff.");
+    expect(systemPrompt).toContain("Put it with the code. No wait until the job is done.");
+    expect(systemPrompt).toContain("Any edits not committed? Any commits not shared yet?");
+    expect(systemPrompt).toContain("Send code and wisdom where the user asked. Not there yet? Say what is left.");
+    expect(systemPrompt).toContain("Task done or PR merged? No more edits in that worktree.");
+    expect(systemPrompt).toContain(
+      "Record release facts with the release or task, not in the old worktree. No new repo notes after shipping.",
+    );
+    expect(systemPrompt).toContain(
+      "Need another repo change? Start a new task and PR. No quiet edits on the old branch.",
+    );
+    expect(systemPrompt).not.toContain("After release or broad review, look across the work too.");
+    // Do not add a writer or a Git check after the turn has ended.
+    expect([...f.handlers.keys()]).toEqual(["before_agent_start"]);
   });
 
   test("does not inject wisdom guidance into child agents", () => {
