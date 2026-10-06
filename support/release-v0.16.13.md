@@ -1,5 +1,6 @@
 # v0.16.13
 
-- Merge pull request #42 from tnfssc/bruv/wisdom-before-delivery
-- Use plain words for wisdom and task completion
-- Capture wisdom before task delivery and close old worktrees
+- Write wisdom during the work and share it with the code, not after the task is done.
+- Check for uncommitted edits and unshared commits before saying done.
+- Use plain words in the prompt, values, and notes.
+- Fix terminal test commands getting stuck in suggestion menus. Keep typing and voice checks unchanged.

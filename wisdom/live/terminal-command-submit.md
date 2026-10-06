@@ -12,3 +12,5 @@ Startup was checked too. Pi installs the submit handler before rebinding the ses
 Proof: the real Pi editor test opens both start and stop argument menus and shows that Enter accepts without submitting. The same editor submits the pasted command once. The real PTY test passes at 80 and 120 columns with all speech, draft, stale-frame and replay checks kept. The related harness and Live terminal checks pass: 17 tests, 162 assertions. Locked install, assets, paired build, typecheck and touched-file Biome checks pass.
 
 No device or provider was called. No hosted rerun, full Linux gate or actual macOS run was done here. Parent owns PR, merge and release. Values stay the same: the existing fixture, real-flow and honest-proof lessons cover this fix.
+
+Worktree: `/home/tnfssc/.bruv/worktrees/t3-7231ab8c-5442693331ce-task_aab931fc`. Branch: `bruv/fix-terminal-test-command-submission-aab931fc`. This follow-up is separate from merged PR #42. Tests, these notes, and the release notes go in the same PR.
