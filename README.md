@@ -185,6 +185,12 @@ the old executable; old `die update` versions still expect old asset names.
   [worktree setup](wisdom/worktrees/subagent-workspaces.md), and
   [feature notes](wisdom/).
 
+### Terminal measurement harness
+
+Run `bun run perf:terminal` for frame measurements or `bun run perf:interactions`
+for isolated provider-free action cases. See the [harness guide](scripts/terminal-perf/README.md)
+for usage, report dashboards and measurement limits. No performance fixes are included.
+
 ### Maintainer releases
 
 On GitHub: **Actions → Release → Run workflow → develop → Run workflow**.
