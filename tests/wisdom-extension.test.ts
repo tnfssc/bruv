@@ -2,9 +2,9 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { projectWisdomDir } from "../src/wisdom/location";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { registerProjectWisdom } from "../src/wisdom/extension";
+import { projectWisdomDir } from "../src/wisdom/location";
 
 function fixture(root = true, cwd = "/repo", trusted = true) {
   const commands = new Map<
@@ -48,6 +48,29 @@ describe("project wisdom extension", () => {
     expect(result.systemPrompt).not.toContain(".agents/notes");
     expect(result.systemPrompt).not.toContain("pending");
     expect(result.systemPrompt).not.toContain("index.md");
+  });
+
+  test("root closeout keeps knowledge inside the task delivery boundary", () => {
+    const f = fixture(true);
+    const { systemPrompt } = f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx);
+    expect(systemPrompt).toContain("Capture wisdom and values during implementation and review.");
+    expect(systemPrompt).toContain("Finish before the final task commit, PR, or delivery.");
+    expect(systemPrompt).toContain("Include them in the same task changes as the code.");
+    expect(systemPrompt).toContain(
+      "check for uncommitted task changes and task commits not yet at the user's requested delivery point",
+    );
+    expect(systemPrompt).toContain("A local commit is not shared delivery.");
+    expect(systemPrompt).toContain("Deliver both code and knowledge there, or say what still needs delivery.");
+    expect(systemPrompt).toContain("After delivery or merge, that task's worktree is closed. No more writes there.");
+    expect(systemPrompt).toContain(
+      "Post-release factual receipts belong in a durable task or release record, not post-job repo edits.",
+    );
+    expect(systemPrompt).toContain(
+      "New repository lessons need an explicit new follow-up task/PR, not quiet edits on the old branch.",
+    );
+    expect(systemPrompt).not.toContain("After release or broad review, look across the work too.");
+    // Guidance must not become a post-turn writer or a guessed Git-delivery gate.
+    expect([...f.handlers.keys()]).toEqual(["before_agent_start"]);
   });
 
   test("does not inject wisdom guidance into child agents", () => {

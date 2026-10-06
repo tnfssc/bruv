@@ -72,13 +72,16 @@ From: [Pi upgrade](dependencies/pi-0.87-upgrade.md), [production preservation](t
 
 Leave code, proof, reasons, and next steps together. Give agents clear jobs. Start independent edits, review, and test setup together. Check their pieces fit. Use focused checks for small changes and the full gate where it matters; do not repeat whole suites or add review rounds without a reason. Cut waiting and duplicate work, not assertions or honest failure reports. Work running in background? Do other useful work or give user turn. No keep checking just to stay busy. Keep ongoing work where it will last. Say how to resume. Same lesson keeps coming back? Put it in values. No copy whole talk or pile up status notes forever.
 
-From: [shared-memory value](prompts/shared-memory-value.md), [project wisdom](wisdom-system/project-wisdom.md), [PR hygiene](quality/pr-hygiene-final.md), [fast delivery](quality/fast-delivery.md).
+From: [shared-memory value](prompts/shared-memory-value.md), [project wisdom](wisdom-system/project-wisdom.md), [PR hygiene](quality/pr-hygiene-final.md), [fast delivery](quality/fast-delivery.md), [wisdom before delivery](wisdom-system/wisdom-before-delivery.md).
 
 ## Keep learning
 
 - Before big work, read values and wisdom for that work.
+- Capture wisdom and values during implementation and review. Finish before the final task commit, PR, or delivery. Include them in the same task changes.
 - Write wisdom? Check if lesson belongs in values too. Before big work ends or changes hands, check again.
-- After release or broad review, look across the work. Which lessons repeat? Which old lessons no longer hold?
+- Before delivery, look across the work. Which lessons repeat? Which old lessons no longer hold?
+- At closeout, check uncommitted task changes and task commits not at the requested delivery point. A local commit is not shared delivery.
+- After delivery or merge, stop writing in that closed worktree. Post-release facts go in a durable task or release record. New repo lessons need an explicit new follow-up task/PR.
 - Link where lesson came from. Say when it helps and when it does not. Local recipe stays with feature.
 - Fix or join old values before adding more. Keep set small. New proof says value is wrong? Change it.
 - At end, say what wisdom changed and what values changed. Values stayed same? Say why. No new lesson means no forced edit.
