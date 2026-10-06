@@ -38,3 +38,9 @@ No timing matrix was run during sibling worker tests. Remaining costs include fu
 After task_cd4f43cf finishes PR 1, create the PR 2 branch **from perf/terminal-measurement-harness** and cherry-pick this branch's single optimization delta commit. Inspect ownership (especially selector tests), resolve only genuine overlap, then rerun clean frozen install → prepare:assets → check, combined focused tests/build/compiled acceptance. Run any joined timing comparison serially after other tests stop; retain the source boundaries and raw evidence. Parent owns final inspection, push, second PR and the first-PR base relationship. This worker does not push/open a PR.
 
 Values unchanged: existing measured-path, honest-boundary, behavior-preservation and durable-handoff guidance covers the work. Only focused feature/pickup wisdom was added.
+
+## Joined branch
+
+Parent rebased the single optimization delta onto harness commit `53fb4d97` (PR #38). Package commands and harness source stay owned by layer 1. The first joined suite found the expected 13 exact render-count failures: base does two full document renders, and reveal adds a third. Layer 2 changes those deterministic assertions to one/one, with all visibility, output and lifecycle assertions kept. This test change belongs in the optimization PR, not the harness PR. Final joined checks are pending.
+
+Joined parent verification passed: `bun run check`, 123 harness/selector tests / 5,204 assertions, build, four compiled terminal tests / 1,114 assertions. No timing matrix was rerun for the split. The optimization branch is based on harness commit `53fb4d97`; layer 1 runtime remains unchanged. Performance limitations above remain open. Values unchanged; layer 1 owns the measurement-principle update.

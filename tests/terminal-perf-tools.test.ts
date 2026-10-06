@@ -74,10 +74,9 @@ describe("SDK tool mutation + complete-frame fixtures", () => {
       expect(reveal.changedRows).toBeGreaterThan(0);
       expect(reveal.screenHash).not.toBe(complete.screenHash);
       expect(reveal.renderedDocumentLines).toBeGreaterThan(complete.renderedDocumentLines);
-      // Unchanged develop renders history twice per frame. Reveal also renders
-      // the document once to preserve its anchor; keep that work observable.
-      expect(complete.work.documentRenders).toBe(2);
-      expect(reveal.work.documentRenders).toBe(3);
+      // Revealing measures only the changed group; the scheduled frame renders history once.
+      expect(complete.work.documentRenders).toBe(1);
+      expect(reveal.work.documentRenders).toBe(1);
       expect(reveal.segments.map((segment) => segment.name)).toContain("ActivityController.toggleDetails/withAnchor");
       expect(reveal.work.expansions).toBe(1);
       if (shape !== "sdk-json-args") expect(collapse.changedRows).toBeGreaterThan(0);
