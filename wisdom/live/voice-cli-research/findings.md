@@ -49,3 +49,6 @@ These are current documentation and source inspections on 2026-10-06. No local r
 ## Wisdom and values
 
 Research notes, primary excerpts, and delegated results added here. ui-rethink-handoff.md marks the browser control scheme rejected. Values #8 refined: use the product's real input model in mockups and research shipped controls; similar UI is not runtime proof. Repeated user corrections exposed the same lesson, so it belongs in the existing human-UI value, not a new value.
+
+
+Release scope: raw web extracts, copied upstream code, worker transcripts and rejected mock artifacts stay outside the product PR. They are kept at /home/tnfssc/.bruv/research/voice-cli-t3-7231ab8c. This note keeps the decisions and primary source links. The implemented result is in [shared editor voice](../shared-editor-implementation.md).
