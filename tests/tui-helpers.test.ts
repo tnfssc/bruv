@@ -2,8 +2,9 @@ import { expect, test } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { CombinedAutocompleteProvider, Editor, ProcessTerminal, TuiMainScreen } from "@earendil-works/pi-tui";
 import { run } from "./helpers";
-import { capturePane, frameContaining, pollFrame, shellQuote, tmuxRunner } from "./tui-helpers";
+import { capturePane, frameContaining, pasteAndSubmit, pollFrame, shellQuote, tmuxRunner } from "./tui-helpers";
 
 test("POSIX shell quoting roundtrips empty arguments, spaces, apostrophes and shell syntax", async () => {
   const values = ["", "ordinary/path", "space path", "owner's path", "'; $HOME $(echo not-executed)\nnext"];
@@ -70,3 +71,67 @@ test.skipIf(!hasTmux)(
   },
   10_000,
 );
+
+for (const argument of ["start", "stop"])
+  test("complete command paste submits once instead of accepting " + argument + " suggestion", async () => {
+    // Use Pi's actual editor/provider, but do not start a terminal or call Live.
+    const tui = new TuiMainScreen(new ProcessTerminal());
+    let rendered: (() => void) | undefined;
+    tui.requestRender = () => rendered?.();
+    const plain = (text: string) => text;
+    const editor = new Editor(tui, {
+      borderColor: plain,
+      selectList: {
+        selectedPrefix: plain,
+        selectedText: plain,
+        description: plain,
+        scrollInfo: plain,
+        noMatch: plain,
+      },
+    });
+    editor.setAutocompleteProvider(
+      new CombinedAutocompleteProvider(
+        [
+          {
+            name: "liveptt",
+            description: "Synthetic Live command",
+            getArgumentCompletions: (prefix) =>
+              ["start", "stop"].filter((value) => value.startsWith(prefix)).map((value) => ({ value, label: value })),
+          },
+        ],
+        import.meta.dir,
+      ),
+    );
+    const submitted: string[] = [];
+    editor.onSubmit = (text) => submitted.push(text);
+    const command = "/liveptt " + argument;
+    editor.setText(command.slice(0, -1));
+    // Type the last letter and wait for the argument menu to render.
+    const ready = new Promise<void>((resolve) => {
+      rendered = resolve;
+    });
+    editor.handleInput(argument.at(-1)!);
+    await ready;
+    expect(editor.isShowingAutocomplete()).toBe(true);
+    editor.handleInput("\r");
+    expect(submitted).toEqual([]);
+    expect(editor.getText()).toBe(command);
+    editor.setText("");
+
+    const inputs: string[][] = [];
+    await pasteAndSubmit(
+      async (...args) => {
+        inputs.push(args);
+        editor.handleInput(args.at(-1) === "Enter" ? "\r" : args.at(-1)!);
+        return { code: 0, stdout: "", stderr: "" };
+      },
+      "ptt",
+      command,
+    );
+    expect(inputs).toEqual([
+      ["send-keys", "-t", "ptt", "-l", "\x1b[200~" + command + "\x1b[201~"],
+      ["send-keys", "-t", "ptt", "Enter"],
+    ]);
+    expect(submitted).toEqual([command]);
+    expect(editor.getText()).toBe("");
+  });
