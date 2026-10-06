@@ -1,0 +1,40 @@
+{
+  "binary": "/tmp/stop-restore-final",
+  "readerDelayRequestedMs": 0,
+  "readerHoldElapsedMs": 0.06757600203854963,
+  "shellElapsedMs": 735.9654760002741,
+  "stop": {
+    "runtime": "1.4.2",
+    "columns": 100,
+    "rows": 32,
+    "settleAwaitedMs": 200.21004999999997,
+    "stopSyncMs": 50.26291200000003,
+    "frames": 0,
+    "renders": 1,
+    "documentLines": 33294,
+    "inputHash": "6cdb1e9ac9a39c8429501d0c51da2ef2e6f9effaf5440737a8b5402d338fd844",
+    "stopWrites": [
+      {
+        "syncMs": 0.04199800000003506,
+        "bytes": 61,
+        "hash": "fcc37ca846e903d860f5281582a9bd01fe8a713902967c592eaddceee84c9e5f"
+      },
+      {
+        "syncMs": 41.89694199999997,
+        "bytes": 4927618,
+        "hash": "f16e8e80ec13a456100da6fcb86ef9292cee181d2634a692c32abba076ccb45b"
+      }
+    ],
+    "restoreBytes": 4927618,
+    "restoreHash": "f16e8e80ec13a456100da6fcb86ef9292cee181d2634a692c32abba076ccb45b",
+    "rawAfterStop": false,
+    "boundary": "each sync stop/write is entry-to-return; settleAwaitedMs is NOT synchronous work"
+  },
+  "termiosBefore": "500:5:f00bf:8a3b:3:1c:7f:15:4:0:1:0:11:13:1a:0:12:f:17:16:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0",
+  "termiosAfter": "500:5:f00bf:8a3b:3:1c:7f:15:4:0:1:0:11:13:1a:0:12:f:17:16:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0",
+  "capturedRestoreBytes": 4960913,
+  "capturedRestoreHash": "e2b0f55944508bf19566b6560b7d53d3e6cc291efb45cdd8a12e523512d42ffb",
+  "restoreComplete": true,
+  "followupShellInput": true,
+  "checks": "exact complete restore bytes (with optional kernel ONLCR); termios parity; main screen + autowrap + cursor restore; no frame"
+}

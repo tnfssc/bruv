@@ -117,7 +117,7 @@ export class ActivityController {
   private liveIds = new Set<string>();
   private detachRender?: () => void;
   private detachLayout?: () => void;
-  private pendingAnchor?: number;
+  private pendingAnchor?: { top: number; reveal?: Component };
   attach(): void {
     const ownRender = Object.getOwnPropertyDescriptor(this.host.chatContainer, "render");
     const original = ownRender?.value as Container["render"] | undefined;
@@ -344,13 +344,23 @@ export class ActivityController {
       return mouse.call(item, { ...event, y: event.y - headerHeight, height: event.height - headerHeight });
     };
   }
-  private offset(tool: Component): number {
-    let rows = 0;
-    for (const child of this.host.chatContainer.children) {
-      if (child === tool) break;
-      rows += child.render(this.width).length;
-    }
-    return rows;
+  private measuredChildren(): { component: Component; height: number }[] {
+    // Pi's Container keeps the geometry used for mouse routing. Capture the
+    // painted reading position, not a speculative render of updated content.
+    const chat = this.host.chatContainer;
+    const layout = (
+      chat as unknown as {
+        mouseLayout?: { width: number; children: { component: Component; height: number }[] };
+      }
+    ).mouseLayout;
+    if (
+      layout?.width === this.width &&
+      layout.children.length === chat.children.length &&
+      layout.children.every((row, index) => row.component === chat.children[index])
+    )
+      return layout.children;
+    // Before first paint or after replacing children there is no usable layout.
+    return chat.children.map((component) => ({ component, height: component.render(this.width).length }));
   }
   toggle(group: Group, reveal = false): void {
     this.withAnchor(() => this.expand(group, !group.expanded), reveal ? group.items[0] : undefined);
@@ -365,40 +375,62 @@ export class ActivityController {
   }
   withAnchor(change: () => void, reveal?: Component): void {
     const scroll = this.host.transcriptScrollView;
-    const top = this.pendingAnchor ?? scroll?.scrollTop ?? 0;
-    const header = reveal ? this.offset(reveal) : undefined;
+    const top = this.pendingAnchor?.top ?? scroll?.scrollTop ?? 0;
+    const before = this.measuredChildren();
+    const offset = (rows: typeof before, component: Component): number => {
+      let position = 0;
+      for (const row of rows) {
+        if (row.component === component) break;
+        position += row.height;
+      }
+      return position;
+    };
+    const header = reveal ? offset(before, reveal) : undefined;
     let anchor: Component | undefined;
     let anchorRow = 0;
     let position = 0;
-    for (const child of this.host.chatContainer.children) {
-      const height = child.render(this.width).length;
-      if (position + height > top) {
-        anchor = child;
-        anchorRow = top - position;
-        break;
+    if (!reveal)
+      for (const row of before) {
+        if (position + row.height > top) {
+          anchor = row.component;
+          anchorRow = top - position;
+          break;
+        }
+        position += row.height;
       }
-      position += height;
-    }
     change();
+    if (reveal) {
+      // Revealing a header does not depend on post-change heights. Render the
+      // changed group's native bodies now (including wrapping), but do not
+      // measure the entire unrelated transcript solely to discard its anchor.
+      const group =
+        reveal instanceof ToolExecutionComponent || reveal instanceof CustomMessageComponent
+          ? this.group(reveal)
+          : undefined;
+      for (const item of group?.items ?? [reveal]) item.render(this.width);
+      this.deferAnchor(header!, reveal);
+      this.host.ui.requestRender();
+      return;
+    }
+    // Keep the real body/layout work synchronous. Reuse its measured geometry
+    // instead of re-rendering prefixes and the anchor several more times.
     this.host.chatContainer.render(this.width);
-    const anchorTop = anchor
-      ? this.offset(anchor) + Math.min(anchorRow, Math.max(0, anchor.render(this.width).length - 1))
-      : top;
-    // Hold the header if visible; preserve the reading position if this group
-    // lies above it. Picker actions deliberately reveal the chosen header.
+    const after = this.measuredChildren();
+    const height = after.find((row) => row.component === anchor)?.height ?? 0;
+    const anchorTop = anchor ? offset(after, anchor) + Math.min(anchorRow, Math.max(0, height - 1)) : top;
     const vanishedGroup =
       anchor instanceof ToolExecutionComponent || anchor instanceof CustomMessageComponent
         ? this.group(anchor)
         : undefined;
     const fallbackTool = vanishedGroup?.items[0];
-    const fallback = fallbackTool ? this.offset(fallbackTool) : top;
-    this.deferAnchor(header ?? (anchor?.render(this.width).length ? anchorTop : fallback));
+    const fallback = fallbackTool ? offset(after, fallbackTool) : top;
+    this.deferAnchor(header ?? (height ? anchorTop : fallback));
     this.host.ui.requestRender();
   }
-  private deferAnchor(top: number): void {
+  private deferAnchor(top: number, reveal?: Component): void {
     const scroll = this.host.transcriptScrollView;
     if (!scroll) return;
-    this.pendingAnchor = top;
+    this.pendingAnchor = { top, reveal };
     if (this.detachLayout) return;
     const ownLayout = Object.getOwnPropertyDescriptor(scroll, "updateLayout");
     const original = scroll.updateLayout;
@@ -410,7 +442,20 @@ export class ActivityController {
       state.detachLayout?.();
       // scrollTo clamps to contentHeight. Apply only after Pi measured the new
       // content and viewport, before its layout translates/clips the child box.
-      if (target !== undefined) this.scrollTo(target, { disableFollow: true });
+      if (target) {
+        let top = target.top;
+        if (target.reveal) {
+          let position = 0;
+          for (const row of state.measuredChildren()) {
+            if (row.component === target.reveal) {
+              top = position;
+              break;
+            }
+            position += row.height;
+          }
+        }
+        this.scrollTo(top, { disableFollow: true });
+      }
     };
     scroll.updateLayout = updateLayout;
     this.detachLayout = () => {

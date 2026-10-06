@@ -216,6 +216,8 @@ const { main } = await import("@earendil-works/pi-coding-agent");
 // Install the owned synchronous journal adapter before any SDK session is created.
 const { installDiskBackedSessionManager } = await import("./history/session-manager");
 installDiskBackedSessionManager();
+const { installSelectorLifecycle } = await import("./history/selector-lifecycle");
+installSelectorLifecycle();
 // The UI extension imports Pi's CustomEditor, so it must also load only after
 // bruv's runtime paths and product metadata are configured.
 const [

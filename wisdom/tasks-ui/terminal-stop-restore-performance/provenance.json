@@ -1,0 +1,31 @@
+{
+  "baseCommit": "9814f356345c450188306de2a7d5b20582c57be0",
+  "worktree": "/home/tnfssc/.bruv/worktrees/t3code-bbf9268f-5442693331ce-task_4f353097",
+  "runtime": "1.4.2",
+  "sourceHashes": {
+    "scripts/terminal-perf/audit-probes/journal-stop.ts": "ba9217076cd4eb3f7726cac6bfe48ae8dbb200679e0d421111c02ee374e423e4",
+    "scripts/terminal-perf/audit-probes/profile-stacks.txt": "711708a68662681d4d29a9566b7986f9e50e7b1980f60d392d8bf561a54b5e10",
+    "node_modules/@earendil-works/pi-tui/dist/tui-alt-screen.js": "fa532faef9e0910c319160f83996ac646f2876fa5eab5435a915d01ba1b058d3",
+    "node_modules/@earendil-works/pi-tui/dist/tui.js": "5f569985aed576a024555df085396d8c5e4cf3501c3047e56bfc6f1727e43b3a",
+    "node_modules/@earendil-works/pi-tui/dist/utils.js": "6c187576b9a2f29b156a0f6cf140fdf6617a5606203db2769760a32a01f3d595",
+    "patches/@earendil-works%2Fpi-tui@1.0.3.patch": "e8fba4cc7a796d8db299c40dbb9e48a57086901d5d2e3fe59e1352aaf9f17531",
+    "wisdom/tasks-ui/terminal-stop-restore-performance/pty-stop.ts": "774cb132034e65013f76650eca400f24d6946d5bbef8c392f4899b6229bbf4b9",
+    "wisdom/tasks-ui/terminal-stop-restore-performance/pty-check.py": "e23bfac9569d67dc9433cfad61fff8c22416ccc22205cca0e1a44330fefdd0cb",
+    "wisdom/tasks-ui/terminal-stop-restore-performance/restore-stages.ts": "40cd1ce494128d837d333159db5df163af3c426afae0d3cfbe8af8afbfea2a0c",
+    "wisdom/tasks-ui/terminal-stop-restore-performance/stop-unique.ts": "aa74f0546f0ceb53832a2622e54eb27673a80483435e2182abd19ef32158858f",
+    "tests/tui-stop-restoration.test.ts": "dacb995c25cbda3dc20ad119994ce5110f09467717421c3d06749bff91613cba"
+  },
+  "binaryHashes": {
+    "/tmp/stop-restore-before": "8303f3bff9ff176de11fe95212a1187de0a1cd581423e7eb38353b01889e0c98",
+    "/tmp/stop-restore-final": "01c8081eb9470f7d2a3821c5da5633b859b72d019e79820bee64835762c4edd6"
+  },
+  "baselineAltScreenHash": "fbb884590131d89bf3faa0bb52f4669473b72f274f15a01be15ef896760027c8",
+  "validation": {
+    "reinstallExitCode": 0,
+    "prepareAssetsExitCode": 0,
+    "focusedTestsExitCode": 0,
+    "typescriptExitCode": 0,
+    "archivedPtyHashesVerified": 4,
+    "reversePatchReproducesBaseline": true
+  }
+}

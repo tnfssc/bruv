@@ -1,0 +1,2 @@
+344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202  node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js
+69340ff4258cf31f149247d8ab0aca3f26149f2e203629f14eeb1df37b4c75e3  node_modules/@earendil-works/pi-tui/dist/tui-alt-screen.js

@@ -1174,3 +1174,211 @@ test("activity picker resolves group visibility after intervening transcript pai
   await activity.handler("", ctx);
   expect(plain(host.chatContainer.render(80))).toEqual(["1 tool called"]);
 });
+
+test("collapsed long history performs no native body renders and reveals current lifecycle state", () => {
+  const { chat, state } = setup();
+  let nativeRenders = 0;
+  const tools = Array.from({ length: 1000 }, (_, index) => {
+    const item = new ToolExecutionComponent(
+      "execute",
+      "work-" + index,
+      { label: "Initial label" },
+      {},
+      {
+        renderShell: "self",
+        renderCall: (args: any) => new Text(args.label, 0, 0),
+        renderResult: (result: any, options: { expanded: boolean }) =>
+          new Text(options.expanded ? result.content[0].text : "Saved result", 0, 0),
+      },
+      { requestRender() {} } as never,
+      "/tmp",
+    );
+    item.updateResult({ content: [{ type: "text", text: "Initial output" }], isError: false } as never);
+    const original = item.render;
+    item.render = (width) => {
+      nativeRenders++;
+      return original.call(item, width);
+    };
+    chat.addChild(item);
+    return item;
+  });
+  state.sync();
+  expect(plain(chat.render(80))).toEqual(["1000 tools called"]);
+  chat.render(30);
+  chat.render(80);
+  expect(nativeRenders).toBe(0);
+
+  // Updates and invalidation while hidden must become visible on reveal, not
+  // preserve a stale native/task preview from the last visible width.
+  const first = tools[0]!;
+  first.updateArgs({ label: "Replacement label" });
+  first.updateResult({ content: [{ type: "text", text: "Replacement output" }], isError: true } as never);
+  first.invalidate();
+  first.setExpanded(true);
+  expect(plain(chat.render(80))).toEqual(["1000 tools called · 1 failed"]);
+  expect(nativeRenders).toBe(0);
+  state.expand(state.groups[0]!, true);
+  const revealed = plain(chat.render(80));
+  expect(revealed).toContain("Replacement label");
+  expect(revealed).toContain("Replacement output");
+  expect(revealed).not.toContain("Initial output");
+  expect(nativeRenders).toBe(1000);
+  state.expand(state.groups[0]!, false);
+  chat.render(30);
+  expect(nativeRenders).toBe(1000);
+  state.dispose();
+  chat.render(80);
+  expect(nativeRenders).toBe(2000); // disposal restores standalone SDK bodies
+});
+
+test("collapsed ownership skips task formatting but tracks live status before reveal", () => {
+  let formatted = 0;
+  let nativeRenders = 0;
+  let rows = [taskRowFromLaunch({ id: "job", kind: "command", status: "running", title: "Check job" }, "launch")!];
+  disposers.push(
+    installSdkTaskRows(
+      {
+        fg: (_color: string, text: string) => {
+          formatted++;
+          return text;
+        },
+      } as any,
+      () => rows,
+    ),
+  );
+  const chat = new Container();
+  const host = {
+    chatContainer: chat,
+    renderer: { mode: "fullscreen" },
+    ui: { requestRender() {} },
+    sessionManager: { getBranch: () => [], getSessionFile: () => "/session" },
+  };
+  const source = tool("launch");
+  const original = source.render;
+  source.render = (width) => {
+    nativeRenders++;
+    return original.call(source, width);
+  };
+  chat.addChild(source);
+  const state = new ActivityController(host);
+  disposers.push(() => state.dispose());
+  state.sync();
+  expect(plain(chat.render(80))[0]).toContain("1 running");
+  expect(formatted).toBe(0);
+  expect(nativeRenders).toBe(0);
+  rows = [
+    taskRowFromLaunch({ id: "job", kind: "command", status: "failed", title: "New title", exitCode: 7 }, "launch")!,
+  ];
+  expect(plain(chat.render(80))[0]).toContain("1 job failed");
+  expect(formatted).toBe(0);
+  state.expand(state.groups[0]!, true);
+  expect(plain(chat.render(80)).some((line) => line.includes("New title"))).toBe(true);
+  expect(formatted).toBe(1);
+  expect(nativeRenders).toBe(0); // the canonical task card replaces the native body
+  state.expand(state.groups[0]!, false);
+  host.renderer.mode = "regular";
+  expect(plain(chat.render(30)).some((line) => line.includes("New title"))).toBe(true);
+  expect(formatted).toBe(2);
+  source.setExpanded(true);
+  expect(plain(chat.render(80))).toContain("EVIDENCE launch");
+  expect(nativeRenders).toBe(1);
+});
+
+test("detail reveal measures only its changed group before the real frame", () => {
+  const { chat, state, render } = setup();
+  state.attach();
+  let historyRenders = 0;
+  chat.addChild({
+    invalidate() {},
+    render: () => {
+      historyRenders++;
+      return ["HISTORY", "READ"];
+    },
+  });
+  const first = tool("first");
+  const second = tool("second");
+  chat.addChild(first);
+  chat.addChild(second);
+  render();
+  const counts = [0, 0];
+  for (const [index, item] of [first, second].entries()) {
+    const original = item.render;
+    item.render = function (width) {
+      counts[index]++;
+      return original.call(this, width);
+    };
+  }
+  historyRenders = 0;
+  state.toggleDetails(state.groups[0]!, first);
+  // Native bodies are rendered synchronously, not shifted into the frame.
+  expect(counts).toEqual([1, 1]);
+  expect(historyRenders).toBe(0);
+  expect((first as unknown as { expanded: boolean }).expanded).toBe(true);
+  expect((second as unknown as { expanded: boolean }).expanded).toBe(false);
+  const visible = render();
+  expect(counts).toEqual([2, 2]);
+  expect(historyRenders).toBe(1);
+  expect(visible).toContain("EVIDENCE first");
+  expect(visible).toContain("result second");
+});
+
+test("reading-anchor capture uses painted heights while fresh preceding content grows", () => {
+  const { chat, state, scroll, render } = setup();
+  state.attach();
+  let prefixHeight = 1;
+  let prefixRenders = 0;
+  chat.addChild({
+    invalidate() {},
+    render: () => {
+      prefixRenders++;
+      return Array(prefixHeight).fill("PREFIX");
+    },
+  });
+  const item = tool("a");
+  chat.addChild(item);
+  chat.addChild(assistant("READ THIS"));
+  render();
+  state.toggle(state.groups[0]!);
+  render();
+  scroll.scrollTo(1 + item.render(80).length);
+  prefixHeight = 20; // A real update arrived but has not been painted yet.
+  prefixRenders = 0;
+  state.toggle(state.groups[0]!);
+  expect(prefixRenders).toBe(1); // The fresh document measurement only.
+  render();
+  expect(scroll.scrollTop).toBe(20 + item.render(80).length);
+  expect(prefixRenders).toBe(2);
+});
+
+test("anchor geometry is measured anew after replacing transcript children", () => {
+  const { chat, state, scroll, render } = setup();
+  state.attach();
+  chat.addChild(tool("old"));
+  render();
+  chat.clear();
+  chat.addChild(assistant("NEW BRANCH"));
+  const item = tool("new");
+  chat.addChild(item);
+  state.sync();
+  state.toggleDetails(state.groups[0]!, item);
+  render();
+  expect(scroll.scrollTop).toBe(chat.children[0]!.render(80).length);
+  expect(plain(chat.render(80))).toContain("EVIDENCE new");
+});
+
+test("picker reveal resolves its header after fresh prefix content and resize are laid out", () => {
+  const { chat, state, scroll } = setup();
+  state.attach();
+  let prefixHeight = 1;
+  chat.addChild({ invalidate() {}, render: () => Array(prefixHeight).fill("PREFIX") });
+  const item = tool("selected");
+  chat.addChild(item);
+  chat.render(80);
+  scroll.updateLayout(2, 1, () => {});
+  state.toggleDetails(state.groups[0]!, item);
+  prefixHeight = 20;
+  const rows = chat.render(40);
+  scroll.updateLayout(rows.length, 1, () => {});
+  expect(scroll.scrollTop).toBe(20);
+  expect(plain(rows)[scroll.scrollTop]).toBe("1 tool called");
+});

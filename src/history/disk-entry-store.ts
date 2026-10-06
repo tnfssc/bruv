@@ -59,10 +59,12 @@ export function scanJsonl(path: string, visit: (record: LocatedEntry, validIndex
   let piecesLength = 0;
   let validIndex = 0;
   const consume = (line: Buffer, offset: number) => {
-    if (line.length === 0 || line.toString("utf8").trim().length === 0) return;
+    if (line.length === 0) return;
+    const text = line.toString("utf8");
+    if (text.trim().length === 0) return;
     let entry: FileEntry;
     try {
-      entry = JSON.parse(line.toString("utf8")) as FileEntry;
+      entry = JSON.parse(text) as FileEntry;
     } catch {
       // Match the SDK: malformed lines are ignored.
       return;
@@ -76,9 +78,13 @@ export function scanJsonl(path: string, visit: (record: LocatedEntry, validIndex
       const count = readSync(fd, buffer, 0, buffer.length, fileOffset);
       if (count === 0) break;
       let start = 0;
-      for (let i = 0; i < count; i++) {
-        if (buffer[i] !== 10) continue;
-        const fragment = Buffer.from(buffer.subarray(start, i));
+      // Search in native code rather than visiting every content byte in JS.
+      for (;;) {
+        const i = buffer.indexOf(10, start);
+        if (i < 0 || i >= count) break;
+        // This fragment is consumed before the read buffer is reused. Only
+        // unfinished tails below need an owned copy.
+        const fragment = buffer.subarray(start, i);
         if (pieces.length === 0) consume(fragment, lineOffset);
         else {
           pieces.push(fragment);

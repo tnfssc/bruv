@@ -1,10 +1,12 @@
 import { makePng } from "./image-fixture";
-import { afterEach, beforeAll, expect, test } from "bun:test";
+import { afterEach, beforeAll, expect, spyOn, test } from "bun:test";
 import { CustomMessageComponent, ToolExecutionComponent, initTheme } from "@earendil-works/pi-coding-agent";
 import { Container, Text, stripTerminalSequences, getCapabilities, setCapabilities } from "@earendil-works/pi-tui";
 import { TaskManager } from "../src/tasks/task-manager";
 import { completionPreview } from "../src/ui/execution-previews";
 import { installSdkTaskRows } from "../src/ui/sdk-task-rows";
+import { getActivityTaskRows } from "../src/ui/activity-projection";
+import * as taskRows from "../src/ui/task-rows";
 import {
   formatTaskRow,
   taskRowFromLaunch,
@@ -535,4 +537,59 @@ test("typed callback launch provenance survives projection and explicit source o
   expect(taskRowFromLaunch(launch)?.sourceCallId).toBe("original");
   expect(taskRowsFromDetails({ tasks: [launch] })[0]?.sourceCallId).toBe("original");
   expect(taskRowFromLaunch(launch, "explicit")?.sourceCallId).toBe("explicit");
+});
+
+test("ownership adopts fresh normalized detail rows without recleaning explicit titles", () => {
+  restores.push(installSdkTaskRows(theme));
+  const details = spyOn(taskRows, "taskRowsFromDetails");
+  const labels = spyOn(taskRows, "taskRowWithExecuteLabel");
+  restores.push(
+    () => details.mockRestore(),
+    () => labels.mockRestore(),
+  );
+  const parent = new Container();
+  const raw = Array.from({ length: 80 }, (_, i) => ({ ...row(String(i)), sourceCallId: "producer" }));
+  const children = raw.map((row) => tool([row]));
+  for (const child of children) parent.addChild(child);
+  expect(plain(parent.render(100))).toHaveLength(80);
+  expect(details).toHaveBeenCalledTimes(80);
+  expect(labels).toHaveBeenCalledTimes(0);
+  for (let i = 0; i < children.length; i++) {
+    const projected = getActivityTaskRows(children[i]!)![0]!;
+    // A single fresh row from normalization is enough for ownership and rendering.
+    expect(projected).toBe((details.mock.results[i]!.value as TaskRow[])[0]);
+    expect(projected).not.toBe(raw[i]);
+    expect(projected.sourceCallId).toBe("call");
+    expect(raw[i]!.sourceCallId).toBe("producer");
+  }
+});
+
+test("adopted rows stay frame-local while raw task metadata and labels change", () => {
+  let snapshot: TaskRow[] = [];
+  restores.push(installSdkTaskRows(theme, () => snapshot));
+  const parent = new Container();
+  const raw = { ...row(), title: "  Explicit\nname  ", sourceCallId: "producer" };
+  const child = tool([raw]);
+  (child as any).args.label = "First label";
+  parent.addChild(child);
+  expect(plain(parent.render(100))).toEqual(["↗ Explicit name"]);
+  const first = getActivityTaskRows(child)![0]!;
+  expect(raw.title).toBe("  Explicit\nname  ");
+  expect(raw.sourceCallId).toBe("producer");
+  raw.title = "";
+  (child as any).args.label = "Changed label";
+  raw.status = "needs-input";
+  expect(plain(parent.render(100))).toEqual(["? Changed label — needs your input"]);
+  expect(first.title).toBe("Explicit name");
+  expect(first.status).toBe("running");
+  snapshot = [{ ...raw, title: "Snapshot title", status: "failed", terminal: true, exitCode: 7, sourceCallId: "call" }];
+  expect(plain(parent.render(100))).toEqual(["✗ Snapshot title — exit 7"]);
+  // Fresh callback details and source ownership still merge with terminal truth.
+  parent.addChild(notice([{ ...raw, title: "Notice title", status: "succeeded", terminal: true }]));
+  snapshot = [];
+  expect(plain(parent.render(100))).toEqual(["✓ Notice title"]);
+  child.setExpanded(true);
+  expect(plain(parent.render(100))).toContain("LAUNCH OUTPUT");
+  child.setExpanded(false);
+  expect(plain(parent.render(20))).toEqual(["✓ Notice title"]);
 });

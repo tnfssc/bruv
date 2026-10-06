@@ -1,0 +1,76 @@
+{
+  "runtime": "1.4.2",
+  "sourceHash": "fa532faef9e0910c319160f83996ac646f2876fa5eab5435a915d01ba1b058d3",
+  "boundary": "sync entry-to-return; no awaited elapsed",
+  "samples": [
+    {
+      "name": "sdk.UserMessageComponent.construct",
+      "syncMs": 0.02558700000000158,
+      "payloadBytes": 2097152,
+      "iteration": 0,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "fixture": "two-native-unique-user-messages-100x32-v1",
+      "componentsCreated": 1
+    },
+    {
+      "name": "terminal.stop.restore",
+      "syncMs": 23.596153000000015,
+      "payloadBytes": 2097152,
+      "iteration": 0,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "fixture": "two-native-unique-user-messages-100x32-v1",
+      "frames": 0,
+      "documentRenders": 1,
+      "documentLines": 36163,
+      "outputWrites": 3,
+      "outputBytes": 4954478,
+      "outputHash": "ffb1e09bea30db1d9d55f11ef94753e06cc1ad3940212fdb41dc307d9f2369e3"
+    },
+    {
+      "name": "sdk.UserMessageComponent.construct",
+      "syncMs": 0.006982000000050448,
+      "payloadBytes": 2097152,
+      "iteration": 1,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "fixture": "two-native-unique-user-messages-100x32-v1",
+      "componentsCreated": 1
+    },
+    {
+      "name": "terminal.stop.restore",
+      "syncMs": 19.74639000000002,
+      "payloadBytes": 2097152,
+      "iteration": 1,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "fixture": "two-native-unique-user-messages-100x32-v1",
+      "frames": 0,
+      "documentRenders": 1,
+      "documentLines": 36163,
+      "outputWrites": 3,
+      "outputBytes": 4954478,
+      "outputHash": "ffb1e09bea30db1d9d55f11ef94753e06cc1ad3940212fdb41dc307d9f2369e3"
+    },
+    {
+      "name": "sdk.UserMessageComponent.construct",
+      "syncMs": 0.005359999999996035,
+      "payloadBytes": 2097152,
+      "iteration": 2,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "fixture": "two-native-unique-user-messages-100x32-v1",
+      "componentsCreated": 1
+    },
+    {
+      "name": "terminal.stop.restore",
+      "syncMs": 19.842488000000003,
+      "payloadBytes": 2097152,
+      "iteration": 2,
+      "inputHash": "cc28e64b2926382e818643d7b266dfa41ce5f9f2e9f7378e45d8d7330c1a5ae5",
+      "fixture": "two-native-unique-user-messages-100x32-v1",
+      "frames": 0,
+      "documentRenders": 1,
+      "documentLines": 36163,
+      "outputWrites": 3,
+      "outputBytes": 4954478,
+      "outputHash": "ffb1e09bea30db1d9d55f11ef94753e06cc1ad3940212fdb41dc307d9f2369e3"
+    }
+  ]
+}

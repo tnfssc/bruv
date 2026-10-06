@@ -1,0 +1,74 @@
+{
+  "source": "134f7bcd",
+  "base": "2683847dec4344a458ae8d39146cd6b48f55959d",
+  "branch": "perf/terminal-render-optimizations",
+  "worktree": "/home/tnfssc/.bruv/worktrees/t3code-bbf9268f-5442693331ce-task_eb5bf53c",
+  "environment": {
+    "bun": "1.4.2",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "checks": {
+    "frozenInstall": "pass",
+    "isolatedCacheFrozenInstall": "pass",
+    "prepareAssets": "pass",
+    "check": "pass",
+    "focusedTests": {
+      "pass": 152,
+      "fail": 0,
+      "assertions": 72050,
+      "files": 15
+    },
+    "hostHistoryAfterBuild": {
+      "pass": 33,
+      "fail": 0,
+      "assertions": 182,
+      "files": 5
+    },
+    "build": "pass",
+    "compiledTerminal": {
+      "pass": 4,
+      "fail": 0,
+      "assertions": 1114,
+      "files": 4
+    }
+  },
+  "limits": [
+    "No timing matrix rerun: historical source evidence retained; concurrent worker tests must not be treated as timing evidence.",
+    "Initial host tests: 31 pass, 2 ENOENT failures because dist/bruv had not yet been built; both pass after build.",
+    "Bun default hardlink reinstall gave adapted bytes; isolated-cache copyfile reinstall gave original digest.",
+    "Shell emits unrelated mise trust warning; all recorded Bun commands ran."
+  ],
+  "sessionManagerDigests": {
+    "isolatedFresh": "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a",
+    "prepared": "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202"
+  },
+  "productionTestFilesUnderHarnessDirectory": [
+    "scripts/terminal-perf/selector-lifecycle.test.ts",
+    "scripts/terminal-perf/selector-lifecycle-behavior.ts"
+  ],
+  "omittedMeasurementProbe": "scripts/terminal-perf/selector-lifecycle-probe.ts",
+  "sdkDigests": {
+    "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js": "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202",
+    "node_modules/@earendil-works/pi-tui/dist/tui-alt-screen.js": "69340ff4258cf31f149247d8ab0aca3f26149f2e203629f14eeb1df37b4c75e3",
+    "node_modules/@earendil-works/pi-tui/dist/utils.js": "6c239049e5b851f9e951a82abd1d5888228325d5907a0e11e8b0dea174ecb9b1"
+  },
+  "commands": {
+    "initialFresh": ["rm -rf node_modules", "bun install --frozen-lockfile", "bun run prepare:assets", "bun run check"],
+    "isolatedFresh": [
+      "rm -rf node_modules",
+      "bun install --frozen-lockfile --backend=copyfile --cache-dir=artifacts/terminal-optimization-extraction/dependency-cache",
+      "bun run prepare:assets",
+      "bun run check"
+    ],
+    "focused": "bun test tests/editor.test.ts tests/rolling-activity.test.ts tests/task-rows.test.ts tests/execute-row-render-performance.test.ts tests/execution-previews.test.ts tests/settled-execute-render.test.ts tests/scroll-layout-render.test.ts tests/sdk-markdown-blocks.test.ts tests/sdk-text-wrap-performance.test.ts tests/tui-stop-restoration.test.ts tests/history-disk-footer.test.ts tests/history-projection-parity.test.ts tests/history-storage-lifecycle.test.ts tests/history-sdk-099.test.ts tests/pi-host-adaptation.test.ts scripts/terminal-perf/selector-lifecycle.test.ts",
+    "build": "bun run build",
+    "hostHistory": "bun test tests/pi-host.test.ts tests/resume-stream-cancellation.test.ts tests/history-storage-io.test.ts tests/history-disk-retrieval.test.ts tests/session-costs.test.ts",
+    "compiledTerminal": "bun test tests/execution-previews-tui.test.ts tests/long-thread-tui.test.ts tests/sdk-large-text-tui.test.ts tests/session-costs-tui.test.ts",
+    "whitespace": "git diff --cached --check"
+  },
+  "notes": [
+    "The focused command contained a nonexistent tests/pi-host-adaptation.test.ts argument; 15 real files ran. The actual pi-host.test.ts suite ran separately after build.",
+    "The checked-in pre-build failure log only has diagnostic trailing spaces normalized; original bytes remain under artifacts/terminal-optimization-extraction."
+  ]
+}

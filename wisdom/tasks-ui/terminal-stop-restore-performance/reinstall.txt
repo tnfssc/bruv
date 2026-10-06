@@ -1,0 +1,7 @@
+bun install v1.4.2 (744846f84)
+Resolving dependencies
+Resolved, downloaded and extracted [2]
+
++ @earendil-works/pi-tui@1.0.3
+
+1 package installed [60.00ms]

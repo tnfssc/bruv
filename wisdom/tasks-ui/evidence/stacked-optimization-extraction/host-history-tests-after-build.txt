@@ -1,0 +1,49 @@
+bun test v1.4.2 (744846f84)
+
+tests/history-disk-retrieval.test.ts:
+(pass) disk history retrieval traverses metadata, preserving originals, branches, refs and live exclusions [336.94ms]
+
+tests/history-storage-io.test.ts:
+(pass) disk entry store I/O correctness > scanJsonl propagates visitor exceptions rather than treating them as malformed JSON [0.85ms]
+(pass) disk entry store I/O correctness > scans Unicode, CRLF, records larger than the scan buffer, and repairs a valid unterminated tail before append [2.75ms]
+(pass) disk entry store I/O correctness > retries short writes and rolls back failed partial appends in an isolated subprocess [19.06ms]
+(pass) disk entry store I/O correctness > failed first-user publication rolls back the pending append and can be retried [1.03ms]
+(pass) disk entry store I/O correctness > a failed spool unlink does not undo successful publication [17.45ms]
+(pass) disk entry store I/O correctness > failed atomic replacement leaves a pending journal usable and publishable [0.93ms]
+(pass) disk entry store I/O correctness > duplicate IDs retain distinct physical records while ID lookup resolves to the last record [0.41ms]
+(pass) disk entry store I/O correctness > cache retains exact bounded serialized buffers rather than parsed graphs [1.26ms]
+
+tests/pi-host.test.ts:
+(pass) Pi host adaptations include the required disk-backed history seam [0.16ms]
+(pass) Pi host adaptation is exact, idempotent, and rejects dependency drift [6.72ms]
+(pass) runtime host gate rejects pristine and partly prepared dependencies [0.08ms]
+(pass) adaptation validates all files and version before any writes [2.84ms]
+(pass) trusted project overrides and explicit built-in selectors cannot restore removed factories; config retains llama [33.47ms]
+(pass) source CLI removes MCP command/help and rejects all explicit removed built-ins [3252.65ms]
+(pass) source CLI starts no configured MCP server and preserves user extension registration [709.80ms]
+(pass) compiled CLI removes MCP command/help and rejects all explicit removed built-ins [3366.10ms]
+(pass) compiled CLI starts no configured MCP server and preserves user extension registration [701.15ms]
+(pass) bruv execute stays active and user-authored codemode tools are not banned [27.36ms]
+(pass) upstream defaults to fullscreen and honors explicit regular mode [0.22ms]
+
+tests/resume-stream-cancellation.test.ts:
+(pass) resume scan handles late cancellation after an invalid header: current folder [247.26ms]
+(pass) resume scan still rejects active cancellation: current folder [247.76ms]
+(pass) resume scan handles late cancellation after an invalid header: all folders [245.79ms]
+(pass) resume scan still rejects active cancellation: all folders [260.16ms]
+(pass) resume scan skips invalid headers without losing valid sessions [250.47ms]
+
+tests/session-costs.test.ts:
+(pass) SessionCostTracker > recursively sums each bruv-agent descendant once and excludes unrelated sessions, branches, and cycles [5.85ms]
+(pass) SessionCostTracker > resumes existing JSONL and incrementally includes appended partial usage from failed or killed children [1.69ms]
+(pass) SessionCostTracker > discovers later nested sessions, honors header fallback only for bruv agents, and ignores root cost [1.39ms]
+(pass) SessionCostTracker > rejects an ordinary fork that copied bruv-agent metadata [0.85ms]
+(pass) SessionCostTracker > sanitizes negative costs and deduplicates repeated entry ids per session [0.92ms]
+(pass) SessionCostTracker > resets costs after truncation and atomic replacement [2.02ms]
+(pass) SessionCostTracker > coalesces concurrent refreshes and supports a synthetic missing root [1.02ms]
+(pass) counts failed compaction usage once without treating arbitrary custom entries as costs [1.00ms]
+
+ 33 pass
+ 0 fail
+ 182 expect() calls
+Ran 33 tests across 5 files. [10.14s]

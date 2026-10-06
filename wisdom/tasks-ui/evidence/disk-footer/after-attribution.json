@@ -1,0 +1,2617 @@
+{
+  "runtime": "1.4.2",
+  "cpu": "AMD Ryzen 9 7940HS w/ Radeon 780M Graphics",
+  "sources": {
+    "src/history/disk-entry-store.ts": "b5aa0a223139de404035a159aae7cc9db300352f623b9214bc038b9828823d2b",
+    "src/history/session-manager.ts": "29151153b837041a4559beb3c28829452e382e1e7ba31f8250ca626fe52d2baa",
+    "src/tasks/session-costs.ts": "00441465351642eeff3a76045664c6a900fad5dcb8589b21931db05ec3e162b8",
+    "tests/history-disk-footer.probe.ts": "d6740ca41c5523736246563c6b7c44de121caf646d4a45a50adde723e0a50c92"
+  },
+  "boundary": "instrumented synchronous entry-to-return including wrapper overhead; parse/decode/materialize spans are nested, NOT additive; awaitedElapsedMs is whole async wall time, NOT CPU",
+  "samples": [
+    {
+      "name": "getBranch.0",
+      "payloadBytes": 2097152,
+      "syncMs": 1.8729759999999942,
+      "parses": [
+        {
+          "chars": 259,
+          "syncMs": 0.011410999999981186
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.004768000000012762
+        },
+        {
+          "chars": 2097389,
+          "syncMs": 0.8719030000000032
+        },
+        {
+          "chars": 153,
+          "syncMs": 0.003246000000018512
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 259,
+          "chars": 259,
+          "syncMs": 0.005661000000003469
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.0011120000000062191
+        },
+        {
+          "bytes": 2097389,
+          "chars": 2097389,
+          "syncMs": 0.7568990000000042
+        },
+        {
+          "bytes": 153,
+          "chars": 153,
+          "syncMs": 0.0023950000000070304
+        }
+      ],
+      "materializations": [
+        {
+          "id": "1546a9ed",
+          "bytes": 258,
+          "cacheHit": true,
+          "syncMs": 0.1053760000000068
+        },
+        {
+          "id": "c53cd881",
+          "bytes": 151,
+          "cacheHit": true,
+          "syncMs": 0.011171000000018694
+        },
+        {
+          "id": "a5bbb8e5",
+          "bytes": 2097388,
+          "cacheHit": true,
+          "syncMs": 1.6317070000000058
+        },
+        {
+          "id": "fb59d593",
+          "bytes": 152,
+          "cacheHit": true,
+          "syncMs": 0.00905700000001275
+        }
+      ],
+      "contentBytes": 2097152,
+      "contentHash": "9e5c630590af086d064e518b3c1d1cf98e9f4bc9df4fa7cfa32879079a250f62"
+    },
+    {
+      "name": "getBranch.1",
+      "payloadBytes": 2097152,
+      "syncMs": 3.187272000000007,
+      "parses": [
+        {
+          "chars": 259,
+          "syncMs": 0.005209000000007791
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.0019929999999988013
+        },
+        {
+          "chars": 2097389,
+          "syncMs": 2.322593000000012
+        },
+        {
+          "chars": 153,
+          "syncMs": 0.007423999999986108
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 259,
+          "chars": 259,
+          "syncMs": 0.0062910000000044874
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.0005309999999951742
+        },
+        {
+          "bytes": 2097389,
+          "chars": 2097389,
+          "syncMs": 0.7381540000000086
+        },
+        {
+          "bytes": 153,
+          "chars": 153,
+          "syncMs": 0.04657699999998499
+        }
+      ],
+      "materializations": [
+        {
+          "id": "1546a9ed",
+          "bytes": 258,
+          "cacheHit": true,
+          "syncMs": 0.016730999999992946
+        },
+        {
+          "id": "c53cd881",
+          "bytes": 151,
+          "cacheHit": true,
+          "syncMs": 0.003827000000001135
+        },
+        {
+          "id": "a5bbb8e5",
+          "bytes": 2097388,
+          "cacheHit": true,
+          "syncMs": 3.0661669999999788
+        },
+        {
+          "id": "fb59d593",
+          "bytes": 152,
+          "cacheHit": true,
+          "syncMs": 0.06139399999997863
+        }
+      ],
+      "contentBytes": 2097152,
+      "contentHash": "9e5c630590af086d064e518b3c1d1cf98e9f4bc9df4fa7cfa32879079a250f62"
+    },
+    {
+      "name": "open",
+      "payloadBytes": 2097152,
+      "syncMs": 4.020583999999985,
+      "parses": [
+        {
+          "chars": 289,
+          "syncMs": 0.004568000000006123
+        },
+        {
+          "chars": 289,
+          "syncMs": 0.0019139999999993051
+        },
+        {
+          "chars": 258,
+          "syncMs": 0.0019240000000024793
+        },
+        {
+          "chars": 151,
+          "syncMs": 0.0018239999999991596
+        },
+        {
+          "chars": 2097388,
+          "syncMs": 0.7184570000000008
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.002093999999999596
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 289,
+          "chars": 289,
+          "syncMs": 0.0022339999999871907
+        },
+        {
+          "bytes": 289,
+          "chars": 289,
+          "syncMs": 0.0014219999999909305
+        },
+        {
+          "bytes": 258,
+          "chars": 258,
+          "syncMs": 0.0006419999999991433
+        },
+        {
+          "bytes": 151,
+          "chars": 151,
+          "syncMs": 0.0004710000000045511
+        },
+        {
+          "bytes": 2097388,
+          "chars": 2097388,
+          "syncMs": 0.6796050000000093
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.0014930000000106247
+        }
+      ],
+      "materializations": []
+    },
+    {
+      "name": "reopened.getBranch.0",
+      "payloadBytes": 2097152,
+      "syncMs": 2.204763000000014,
+      "parses": [
+        {
+          "chars": 258,
+          "syncMs": 0.003115999999977248
+        },
+        {
+          "chars": 151,
+          "syncMs": 0.001282000000003336
+        },
+        {
+          "chars": 2097388,
+          "syncMs": 0.8150469999999927
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.0020439999999837255
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 258,
+          "chars": 258,
+          "syncMs": 0.0013730000000009568
+        },
+        {
+          "bytes": 151,
+          "chars": 151,
+          "syncMs": 0.0005619999999737502
+        },
+        {
+          "bytes": 2097388,
+          "chars": 2097388,
+          "syncMs": 0.6943219999999997
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.0016329999999982192
+        }
+      ],
+      "materializations": [
+        {
+          "id": "1546a9ed",
+          "bytes": 258,
+          "cacheHit": false,
+          "syncMs": 0.022883000000007314
+        },
+        {
+          "id": "c53cd881",
+          "bytes": 151,
+          "cacheHit": false,
+          "syncMs": 0.01134100000001581
+        },
+        {
+          "id": "a5bbb8e5",
+          "bytes": 2097388,
+          "cacheHit": false,
+          "syncMs": 2.1305560000000128
+        },
+        {
+          "id": "fb59d593",
+          "bytes": 152,
+          "cacheHit": false,
+          "syncMs": 0.018204000000025644
+        }
+      ],
+      "contentBytes": 2097152,
+      "contentHash": "9e5c630590af086d064e518b3c1d1cf98e9f4bc9df4fa7cfa32879079a250f62"
+    },
+    {
+      "name": "reopened.getBranch.1",
+      "payloadBytes": 2097152,
+      "syncMs": 4.664421000000004,
+      "parses": [
+        {
+          "chars": 258,
+          "syncMs": 0.0025839999999845986
+        },
+        {
+          "chars": 151,
+          "syncMs": 0.0012520000000222353
+        },
+        {
+          "chars": 2097388,
+          "syncMs": 3.0303300000000206
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.007944000000009055
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 258,
+          "chars": 258,
+          "syncMs": 0.0012420000000190612
+        },
+        {
+          "bytes": 151,
+          "chars": 151,
+          "syncMs": 0.0004910000000108994
+        },
+        {
+          "bytes": 2097388,
+          "chars": 2097388,
+          "syncMs": 1.547239999999988
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.017142000000006874
+        }
+      ],
+      "materializations": [
+        {
+          "id": "1546a9ed",
+          "bytes": 258,
+          "cacheHit": true,
+          "syncMs": 0.009017000000000053
+        },
+        {
+          "id": "c53cd881",
+          "bytes": 151,
+          "cacheHit": true,
+          "syncMs": 0.004177999999996018
+        },
+        {
+          "id": "a5bbb8e5",
+          "bytes": 2097388,
+          "cacheHit": true,
+          "syncMs": 4.583461
+        },
+        {
+          "id": "fb59d593",
+          "bytes": 152,
+          "cacheHit": true,
+          "syncMs": 0.030636999999984482
+        }
+      ],
+      "contentBytes": 2097152,
+      "contentHash": "9e5c630590af086d064e518b3c1d1cf98e9f4bc9df4fa7cfa32879079a250f62"
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.11398199999999292,
+      "parses": [
+        {
+          "chars": 289,
+          "syncMs": 0.0026249999999947704
+        },
+        {
+          "chars": 258,
+          "syncMs": 0.001151999999990494
+        },
+        {
+          "chars": 151,
+          "syncMs": 0.0011430000000132168
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 289,
+          "chars": 289,
+          "syncMs": 0.002014000000002625
+        },
+        {
+          "bytes": 258,
+          "chars": 258,
+          "syncMs": 0.0005909999999857973
+        },
+        {
+          "bytes": 151,
+          "chars": 151,
+          "syncMs": 0.0004910000000108994
+        }
+      ],
+      "materializations": [],
+      "pendingBytesBefore": 0,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 64835
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.012051999999982854,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 64835,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 130371
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.006441999999992731,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 130371,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 195907
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.008315000000010286,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 195907,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 261443
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005871000000013282,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 261443,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 326979
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.006021000000004051,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 326979,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 392515
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.009197000000000344,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 392515,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 458051
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.006251000000020213,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 458051,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 523587
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005639999999999645,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 523587,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 589123
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005389999999977135,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 589123,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 654659
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.004878999999988309,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 654659,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 720195
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005400000000008731,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 720195,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 785731
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005771000000009963,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 785731,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 851267
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005450000000024602,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 851267,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 916803
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005471000000000004,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 916803,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 982339
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.006091999999995323,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 982339,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1047875
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.02426500000001397,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1047875,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1113411
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.024304999999998245,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1113411,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1178947
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.023634000000015476,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1178947,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1244483
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.0065919999999835,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1244483,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1310019
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.0054300000000182536,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1310019,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1375555
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005591000000009672,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1375555,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1441091
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005430999999987307,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1441091,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1506627
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.006252000000017688,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1506627,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1572163
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.0056409999999971205,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1572163,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1637699
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.0053000000000054115,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1637699,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1703235
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005369999999999209,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1703235,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1768771
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.006411999999983209,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1768771,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1834307
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.005490000000008877,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1834307,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1899843
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.015318999999976768,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1899843,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1965379
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.0131539999999859,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1965379,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2030915
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 0.010980999999986807,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2030915,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2096451
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 2097152,
+      "syncMs": 2.1838439999999935,
+      "parses": [
+        {
+          "chars": 2097388,
+          "syncMs": 0.7223549999999932
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.0022739999999998872
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 2097388,
+          "chars": 2097388,
+          "syncMs": 0.7176760000000115
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.001102000000003045
+        }
+      ],
+      "materializations": [],
+      "pendingBytesBefore": 2096451,
+      "chunkBytes": 1091,
+      "pendingBytesAfter": 0
+    },
+    {
+      "name": "cost.refresh",
+      "payloadBytes": 2097152,
+      "awaitedElapsedMs": 5.705890000000011,
+      "total": 0
+    },
+    {
+      "name": "getBranch.0",
+      "payloadBytes": 8388608,
+      "syncMs": 4.624217000000016,
+      "parses": [
+        {
+          "chars": 259,
+          "syncMs": 0.005781000000013137
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.00220400000000609
+        },
+        {
+          "chars": 8388844,
+          "syncMs": 3.270616999999959
+        },
+        {
+          "chars": 153,
+          "syncMs": 0.004217000000039661
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 259,
+          "chars": 259,
+          "syncMs": 0.0032159999999805677
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.0005610000000046966
+        },
+        {
+          "bytes": 8388844,
+          "chars": 8388844,
+          "syncMs": 0.4879889999999989
+        },
+        {
+          "bytes": 153,
+          "chars": 153,
+          "syncMs": 0.001282000000003336
+        }
+      ],
+      "materializations": [
+        {
+          "id": "72e106bb",
+          "bytes": 258,
+          "cacheHit": true,
+          "syncMs": 0.012684000000007245
+        },
+        {
+          "id": "8f92eee6",
+          "bytes": 151,
+          "cacheHit": true,
+          "syncMs": 0.004137999999983322
+        },
+        {
+          "id": "34b31294",
+          "bytes": 8388844,
+          "cacheHit": false,
+          "syncMs": 4.582659000000007
+        },
+        {
+          "id": "a6327911",
+          "bytes": 152,
+          "cacheHit": true,
+          "syncMs": 0.008876999999984037
+        }
+      ],
+      "contentBytes": 8388608,
+      "contentHash": "9343ca2c14fa88c511cc084fd569d5d444cdaae082bee8d0ed8efaf3a372b7b3"
+    },
+    {
+      "name": "getBranch.1",
+      "payloadBytes": 8388608,
+      "syncMs": 8.05914899999999,
+      "parses": [
+        {
+          "chars": 259,
+          "syncMs": 0.00649199999998018
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.003175999999996293
+        },
+        {
+          "chars": 8388844,
+          "syncMs": 1.2713060000000382
+        },
+        {
+          "chars": 153,
+          "syncMs": 0.007283999999970092
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 259,
+          "chars": 259,
+          "syncMs": 0.006843000000003485
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.0010320000000092477
+        },
+        {
+          "bytes": 8388844,
+          "chars": 8388844,
+          "syncMs": 3.828866000000005
+        },
+        {
+          "bytes": 153,
+          "chars": 153,
+          "syncMs": 0.008896999999990385
+        }
+      ],
+      "materializations": [
+        {
+          "id": "72e106bb",
+          "bytes": 258,
+          "cacheHit": true,
+          "syncMs": 0.02736099999998487
+        },
+        {
+          "id": "8f92eee6",
+          "bytes": 151,
+          "cacheHit": true,
+          "syncMs": 0.0065230000000156
+        },
+        {
+          "id": "34b31294",
+          "bytes": 8388844,
+          "cacheHit": false,
+          "syncMs": 7.962980999999957
+        },
+        {
+          "id": "a6327911",
+          "bytes": 152,
+          "cacheHit": true,
+          "syncMs": 0.02764099999996006
+        }
+      ],
+      "contentBytes": 8388608,
+      "contentHash": "9343ca2c14fa88c511cc084fd569d5d444cdaae082bee8d0ed8efaf3a372b7b3"
+    },
+    {
+      "name": "open",
+      "payloadBytes": 8388608,
+      "syncMs": 12.356087000000002,
+      "parses": [
+        {
+          "chars": 289,
+          "syncMs": 0.013616000000013173
+        },
+        {
+          "chars": 289,
+          "syncMs": 0.0018039999999928114
+        },
+        {
+          "chars": 258,
+          "syncMs": 0.0031859999999710453
+        },
+        {
+          "chars": 151,
+          "syncMs": 0.0029749999999921783
+        },
+        {
+          "chars": 8388844,
+          "syncMs": 3.613004999999987
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.005921000000000731
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 289,
+          "chars": 289,
+          "syncMs": 0.042417999999997846
+        },
+        {
+          "bytes": 289,
+          "chars": 289,
+          "syncMs": 0.0020539999999868996
+        },
+        {
+          "bytes": 258,
+          "chars": 258,
+          "syncMs": 0.000941000000011627
+        },
+        {
+          "bytes": 151,
+          "chars": 151,
+          "syncMs": 0.0006109999999921456
+        },
+        {
+          "bytes": 8388844,
+          "chars": 8388844,
+          "syncMs": 2.9809379999999805
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.0038969999999949323
+        }
+      ],
+      "materializations": []
+    },
+    {
+      "name": "reopened.getBranch.0",
+      "payloadBytes": 8388608,
+      "syncMs": 9.008587000000034,
+      "parses": [
+        {
+          "chars": 258,
+          "syncMs": 0.003958000000011452
+        },
+        {
+          "chars": 151,
+          "syncMs": 0.0018029999999953361
+        },
+        {
+          "chars": 8388844,
+          "syncMs": 1.2834789999999998
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.008776999999952295
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 258,
+          "chars": 258,
+          "syncMs": 0.0018330000000332802
+        },
+        {
+          "bytes": 151,
+          "chars": 151,
+          "syncMs": 0.000592000000040116
+        },
+        {
+          "bytes": 8388844,
+          "chars": 8388844,
+          "syncMs": 4.968047000000013
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.004898999999966236
+        }
+      ],
+      "materializations": [
+        {
+          "id": "72e106bb",
+          "bytes": 258,
+          "cacheHit": false,
+          "syncMs": 0.03434399999997595
+        },
+        {
+          "id": "8f92eee6",
+          "bytes": 151,
+          "cacheHit": false,
+          "syncMs": 0.023082999999985532
+        },
+        {
+          "id": "34b31294",
+          "bytes": 8388844,
+          "cacheHit": false,
+          "syncMs": 8.867623999999978
+        },
+        {
+          "id": "a6327911",
+          "bytes": 152,
+          "cacheHit": false,
+          "syncMs": 0.05977100000001201
+        }
+      ],
+      "contentBytes": 8388608,
+      "contentHash": "9343ca2c14fa88c511cc084fd569d5d444cdaae082bee8d0ed8efaf3a372b7b3"
+    },
+    {
+      "name": "reopened.getBranch.1",
+      "payloadBytes": 8388608,
+      "syncMs": 8.289198000000056,
+      "parses": [
+        {
+          "chars": 258,
+          "syncMs": 0.00994900000000598
+        },
+        {
+          "chars": 151,
+          "syncMs": 0.0032160000000089894
+        },
+        {
+          "chars": 8388844,
+          "syncMs": 3.0030189999999948
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.004868999999985135
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 258,
+          "chars": 258,
+          "syncMs": 0.004768000000012762
+        },
+        {
+          "bytes": 151,
+          "chars": 151,
+          "syncMs": 0.0004910000000108994
+        },
+        {
+          "bytes": 8388844,
+          "chars": 8388844,
+          "syncMs": 2.7892819999999574
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.0019230000000334257
+        }
+      ],
+      "materializations": [
+        {
+          "id": "72e106bb",
+          "bytes": 258,
+          "cacheHit": true,
+          "syncMs": 0.021529999999984284
+        },
+        {
+          "id": "8f92eee6",
+          "bytes": 151,
+          "cacheHit": true,
+          "syncMs": 0.005219999999951597
+        },
+        {
+          "id": "34b31294",
+          "bytes": 8388844,
+          "cacheHit": false,
+          "syncMs": 8.22004899999996
+        },
+        {
+          "id": "a6327911",
+          "bytes": 152,
+          "cacheHit": true,
+          "syncMs": 0.012102999999967778
+        }
+      ],
+      "contentBytes": 8388608,
+      "contentHash": "9343ca2c14fa88c511cc084fd569d5d444cdaae082bee8d0ed8efaf3a372b7b3"
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.04958300000004101,
+      "parses": [
+        {
+          "chars": 289,
+          "syncMs": 0.002315000000010059
+        },
+        {
+          "chars": 258,
+          "syncMs": 0.0008909999999673346
+        },
+        {
+          "chars": 151,
+          "syncMs": 0.0009919999999965512
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 289,
+          "chars": 289,
+          "syncMs": 0.0015029999999569554
+        },
+        {
+          "bytes": 258,
+          "chars": 258,
+          "syncMs": 0.0004299999999943793
+        },
+        {
+          "bytes": 151,
+          "chars": 151,
+          "syncMs": 0.00022000000001298758
+        }
+      ],
+      "materializations": [],
+      "pendingBytesBefore": 0,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 64835
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.020959000000004835,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 64835,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 130371
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.006963000000041575,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 130371,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 195907
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.026108999999962634,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 195907,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 261443
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021939999999972315,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 261443,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 326979
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022442000000012285,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 326979,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 392515
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.025115999999968608,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 392515,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 458051
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02367399999997133,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 458051,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 523587
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021479999999996835,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 523587,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 589123
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024805999999955475,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 589123,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 654659
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.027692000000001826,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 654659,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 720195
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022863000000029388,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 720195,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 785731
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022642000000018925,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 785731,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 851267
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021680000000003474,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 851267,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 916803
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02656000000001768,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 916803,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 982339
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02793199999996432,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 982339,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1047875
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.025987999999983913,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1047875,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1113411
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.025286999999991622,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1113411,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1178947
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024516000000005533,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1178947,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1244483
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02453600000001188,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1244483,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1310019
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022992999999985386,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1310019,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1375555
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.025246999999978925,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1375555,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1441091
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024755999999968026,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1441091,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1506627
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.025576999999998407,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1506627,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1572163
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.031108000000017455,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1572163,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1637699
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024024999999994634,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1637699,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1703235
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02699000000001206,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1703235,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1768771
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021871000000032836,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1768771,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1834307
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022783000000003995,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1834307,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1899843
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02668999999997368,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1899843,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 1965379
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.0312279999999987,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 1965379,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2030915
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024675999999999476,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2030915,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2096451
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02359400000000278,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2096451,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2161987
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023233000000004722,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2161987,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2227523
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023424000000034084,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2227523,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2293059
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022651999999993677,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2293059,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2358595
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02092899999996689,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2358595,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2424131
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.020618999999953758,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2424131,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2489667
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024596000000030926,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2489667,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2555203
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021489999999971587,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2555203,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2620739
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022341999999980544,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2620739,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2686275
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021058999999979733,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2686275,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2751811
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.025086999999984982,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2751811,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2817347
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023753999999996722,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2817347,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2882883
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021259999999983847,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2882883,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 2948419
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.025176999999985128,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 2948419,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3013955
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02507700000001023,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3013955,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3079491
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022701999999981126,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3079491,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3145027
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02252200000003768,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3145027,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3210563
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02101900000002388,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3210563,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3276099
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024634999999989304,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3276099,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3341635
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022141999999973905,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3341635,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3407171
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.019976999999983036,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3407171,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3472707
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022912999999959993,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3472707,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3538243
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.025968000000034408,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3538243,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3603779
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021129000000030373,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3603779,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3669315
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02188100000000759,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3669315,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3734851
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02278200000000652,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3734851,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3800387
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021489999999971587,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3800387,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3865923
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022892999999953645,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3865923,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3931459
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022100999999963733,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3931459,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 3996995
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02368399999994608,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 3996995,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4062531
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023082999999985532,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4062531,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4128067
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023313000000030115,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4128067,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4193603
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022242000000005646,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4193603,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4259139
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02191099999998869,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4259139,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4324675
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022832999999991443,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4324675,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4390211
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022020999999995183,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4390211,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4455747
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022551999999961936,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4455747,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4521283
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.020337999999981093,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4521283,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4586819
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02866399999999203,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4586819,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4652355
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.01997700000003988,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4652355,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4717891
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.019665999999972428,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4717891,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4783427
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02829300000001922,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4783427,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4848963
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.027391000000022814,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4848963,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4914499
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022542000000044027,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4914499,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 4980035
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02106999999995196,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 4980035,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5045571
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.019866999999976542,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5045571,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5111107
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02209099999998898,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5111107,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5176643
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.020367000000021562,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5176643,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5242179
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.020537999999987733,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5242179,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5307715
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02203100000002678,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5307715,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5373251
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02367399999997133,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5373251,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5438787
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.020808000000045013,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5438787,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5504323
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022482000000024982,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5504323,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5569859
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.03968299999996816,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5569859,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5635395
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021991000000014083,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5635395,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5700931
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022521999999980835,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5700931,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5766467
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021759999999972024,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5766467,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5832003
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02533699999997907,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5832003,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5897539
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.027131000000053973,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5897539,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 5963075
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02221100000002707,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 5963075,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6028611
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023483999999996286,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6028611,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6094147
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02424500000000762,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6094147,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6159683
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022771999999974923,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6159683,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6225219
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02374400000002197,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6225219,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6290755
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02406500000000733,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6290755,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6356291
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02181100000001379,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6356291,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6421827
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.027962000000002263,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6421827,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6487363
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022300999999970372,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6487363,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6552899
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023474000000021533,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6552899,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6618435
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02276200000000017,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6618435,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6683971
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024255000000039217,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6683971,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6749507
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023133000000029824,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6749507,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6815043
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.028533999999979187,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6815043,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6880579
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023663999999996577,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6880579,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 6946115
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02330299999999852,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 6946115,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7011651
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023212999999998374,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7011651,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7077187
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02172000000001617,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7077187,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7142723
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023684000000002925,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7142723,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7208259
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.04558500000001686,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7208259,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7273795
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.036999000000037086,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7273795,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7339331
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.03801099999998314,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7339331,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7404867
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.03596700000002784,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7404867,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7470403
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.04023499999999558,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7470403,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7535939
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.06755599999996775,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7535939,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7601475
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02210200000001805,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7601475,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7667011
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022572000000025128,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7667011,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7732547
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.026129000000025826,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7732547,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7798083
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.024856999999997242,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7798083,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7863619
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.023654000000021824,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7863619,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7929155
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.026648999999963507,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7929155,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 7994691
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.021901000000013937,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 7994691,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 8060227
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02054800000001933,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 8060227,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 8125763
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022511000000008607,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 8125763,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 8191299
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02784100000002354,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 8191299,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 8256835
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.02214099999997643,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 8256835,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 8322371
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 0.022300999999970372,
+      "parses": [],
+      "decodes": [],
+      "materializations": [],
+      "pendingBytesBefore": 8322371,
+      "chunkBytes": 65536,
+      "pendingBytesAfter": 8387907
+    },
+    {
+      "name": "cost.consume",
+      "payloadBytes": 8388608,
+      "syncMs": 5.187694999999962,
+      "parses": [
+        {
+          "chars": 8388844,
+          "syncMs": 0.7635310000000004
+        },
+        {
+          "chars": 152,
+          "syncMs": 0.0037869999999884385
+        }
+      ],
+      "decodes": [
+        {
+          "bytes": 8388844,
+          "chars": 8388844,
+          "syncMs": 3.6324699999999552
+        },
+        {
+          "bytes": 152,
+          "chars": 152,
+          "syncMs": 0.004217999999980293
+        }
+      ],
+      "materializations": [],
+      "pendingBytesBefore": 8387907,
+      "chunkBytes": 1091,
+      "pendingBytesAfter": 0
+    },
+    {
+      "name": "cost.refresh",
+      "payloadBytes": 8388608,
+      "awaitedElapsedMs": 15.526658000000054,
+      "total": 0
+    }
+  ]
+}

@@ -56,18 +56,16 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
     references.add(reference);
     finalized.register(child, reference);
     const wrapper = function (this: Component, width: number): string[] {
-      let hasOwnedTasks = false;
-      const lines = renderNative.call(this, width, () => {
-        hasOwnedTasks = true;
-      });
-      return projectActivity(child, width, () => lines, hasOwnedTasks);
+      // Ownership is known before rendering. Collapsed rolling groups must be
+      // able to omit the body without formatting task rows or native previews.
+      const hasOwnedTasks = (renderRows.get(parent)?.get(child)?.length ?? 0) > 0;
+      return projectActivity(child, width, () => renderNative.call(this, width), hasOwnedTasks);
     };
-    const renderNative = function (this: Component, width: number, onOwnedTasks: () => void): string[] {
+    const renderNative = function (this: Component, width: number): string[] {
       if (!active) return original.call(this, width);
       const tool = child instanceof ToolExecutionComponent ? (child as unknown as ToolShape) : undefined;
       const custom = child instanceof CustomMessageComponent ? (child as unknown as CustomShape) : undefined;
       const owned = renderRows.get(parent)?.get(child) ?? [];
-      if (owned.length) onOwnedTasks();
       if (tool?.expanded || custom?._expanded) return original.call(this, width);
       if (tool && tool.toolName !== "execute") return original.call(this, width);
       if (custom && !["task-complete", "task-attention"].includes(custom.message.customType))
@@ -149,15 +147,22 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
           if (item.toolName !== "execute") continue;
           sources.set(item.toolCallId, sibling);
           for (const row of taskRowsFromDetails(item.result?.details)) {
-            upsertTaskRow(rows, { ...row, sourceCallId: item.toolCallId });
-            owners.set(taskRowKey(row), sibling);
+            // Details produced fresh, sanitized rows. Adopt the first occurrence
+            // directly; only collisions need another merge. Never mutate raw details.
+            row.sourceCallId = item.toolCallId;
+            const key = taskRowKey(row);
+            if (rows.has(key)) upsertTaskRow(rows, row);
+            else rows.set(key, row);
+            owners.set(key, sibling);
           }
         } else if (sibling instanceof CustomMessageComponent) {
           const item = sibling as unknown as CustomShape;
           if (!["task-complete", "task-attention"].includes(item.message.customType)) continue;
           for (const row of taskRowsFromDetails(item.message.details)) {
-            upsertTaskRow(rows, row);
-            if (!owners.has(taskRowKey(row))) owners.set(taskRowKey(row), sibling);
+            const key = taskRowKey(row);
+            if (rows.has(key)) upsertTaskRow(rows, row);
+            else rows.set(key, row);
+            if (!owners.has(key)) owners.set(key, sibling);
           }
         }
       }
@@ -169,7 +174,10 @@ export function installSdkTaskRows(theme: Theme, snapshot: () => TaskRow[] = () 
       const byChild = new Map<Component, TaskRow[]>();
       for (const [key, row] of rows) {
         const source = row.sourceCallId ? sources.get(row.sourceCallId) : undefined;
-        const labeled = source ? taskRowWithExecuteLabel(row, (source as unknown as ToolShape).args?.label) : row;
+        // Every row in this frame's map is sanitized. An explicit title already
+        // wins over the execute label, so it needs neither cleaning nor copying.
+        const labeled =
+          source && !row.title ? taskRowWithExecuteLabel(row, (source as unknown as ToolShape).args?.label) : row;
         // Replay may contain a callback before the launching execute recorded a
         // task row. Its real call provenance still identifies the canonical owner.
         const recordedOwner = owners.get(key);

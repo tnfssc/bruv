@@ -1,0 +1,3219 @@
+{
+  "version": 1,
+  "lifecycleWork": {
+    "recordsWritten": 20,
+    "outputBytes": 3000,
+    "outputHash": "cd27e509d4f6125e74d75c8a073ead9e4baf8f2aeb33f3c1a376c31684bd28f2"
+  },
+  "sourceCommit": "9814f356345c450188306de2a7d5b20582c57be0",
+  "runtime": "1.4.2",
+  "platform": "linux",
+  "cpu": "AMD Ryzen 9 7940HS w/ Radeon 780M Graphics",
+  "sourceHashes": {
+    "scripts/terminal-perf/audit-probes/disk-callbacks.ts": "80cf69a1588ddda829235055a4343bd8c34f080da10cdea48c267e7383f3a997",
+    "src/tasks/session-costs.ts": "00441465351642eeff3a76045664c6a900fad5dcb8589b21931db05ec3e162b8",
+    "src/tasks/task-lifecycle.ts": "62822d00c83e055eefc868f6b28f612799113ccf2ecffc20ec042cacbd2afd77"
+  },
+  "samples": [
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 4096,
+      "inputHash": "929b11f47a02202e710632002203f7ea8dd3c1bc51ef818e59b6a3cd1dc2d5dc",
+      "iteration": 0,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 2.1367270000000076,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.16574800000000778,
+          "chunkBytes": 5037,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 5037,
+      "descendantCost": 0
+    },
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 4096,
+      "inputHash": "929b11f47a02202e710632002203f7ea8dd3c1bc51ef818e59b6a3cd1dc2d5dc",
+      "iteration": 1,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 0.26711700000001315,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.012213000000002694,
+          "chunkBytes": 5037,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 5037,
+      "descendantCost": 0
+    },
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 4096,
+      "inputHash": "929b11f47a02202e710632002203f7ea8dd3c1bc51ef818e59b6a3cd1dc2d5dc",
+      "iteration": 2,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 0.1683930000000089,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.009637999999995372,
+          "chunkBytes": 5037,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 5037,
+      "descendantCost": 0
+    },
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 2097152,
+      "inputHash": "9e5c630590af086d064e518b3c1d1cf98e9f4bc9df4fa7cfa32879079a250f62",
+      "iteration": 0,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 6.749333000000007,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.027420999999975493,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 64827
+        },
+        {
+          "syncMs": 0.0131449999999802,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 64827,
+          "pendingBytesAfter": 130363
+        },
+        {
+          "syncMs": 0.0068119999999964875,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 130363,
+          "pendingBytesAfter": 195899
+        },
+        {
+          "syncMs": 0.0072729999999978645,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 195899,
+          "pendingBytesAfter": 261435
+        },
+        {
+          "syncMs": 0.006382000000002108,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 261435,
+          "pendingBytesAfter": 326971
+        },
+        {
+          "syncMs": 0.00675300000000334,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 326971,
+          "pendingBytesAfter": 392507
+        },
+        {
+          "syncMs": 0.006351999999992586,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 392507,
+          "pendingBytesAfter": 458043
+        },
+        {
+          "syncMs": 0.043491000000017266,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 458043,
+          "pendingBytesAfter": 523579
+        },
+        {
+          "syncMs": 0.03850199999999404,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 523579,
+          "pendingBytesAfter": 589115
+        },
+        {
+          "syncMs": 0.03855200000000991,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 589115,
+          "pendingBytesAfter": 654651
+        },
+        {
+          "syncMs": 0.035215999999991254,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 654651,
+          "pendingBytesAfter": 720187
+        },
+        {
+          "syncMs": 0.0418679999999938,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 720187,
+          "pendingBytesAfter": 785723
+        },
+        {
+          "syncMs": 0.06983999999999924,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 785723,
+          "pendingBytesAfter": 851259
+        },
+        {
+          "syncMs": 0.052857999999986305,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 851259,
+          "pendingBytesAfter": 916795
+        },
+        {
+          "syncMs": 0.05285800000001473,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 916795,
+          "pendingBytesAfter": 982331
+        },
+        {
+          "syncMs": 0.06697400000001608,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 982331,
+          "pendingBytesAfter": 1047867
+        },
+        {
+          "syncMs": 0.049832999999978256,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1047867,
+          "pendingBytesAfter": 1113403
+        },
+        {
+          "syncMs": 0.03642800000000079,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1113403,
+          "pendingBytesAfter": 1178939
+        },
+        {
+          "syncMs": 0.03498500000000604,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1178939,
+          "pendingBytesAfter": 1244475
+        },
+        {
+          "syncMs": 0.03987399999999752,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1244475,
+          "pendingBytesAfter": 1310011
+        },
+        {
+          "syncMs": 0.03457399999999211,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1310011,
+          "pendingBytesAfter": 1375547
+        },
+        {
+          "syncMs": 0.04366100000001438,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1375547,
+          "pendingBytesAfter": 1441083
+        },
+        {
+          "syncMs": 0.035125000000022055,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1441083,
+          "pendingBytesAfter": 1506619
+        },
+        {
+          "syncMs": 0.039844999999985475,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1506619,
+          "pendingBytesAfter": 1572155
+        },
+        {
+          "syncMs": 0.034483999999991966,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1572155,
+          "pendingBytesAfter": 1637691
+        },
+        {
+          "syncMs": 0.03803100000001791,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1637691,
+          "pendingBytesAfter": 1703227
+        },
+        {
+          "syncMs": 0.06747500000000173,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1703227,
+          "pendingBytesAfter": 1768763
+        },
+        {
+          "syncMs": 0.030917999999985568,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1768763,
+          "pendingBytesAfter": 1834299
+        },
+        {
+          "syncMs": 0.02889400000000819,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1834299,
+          "pendingBytesAfter": 1899835
+        },
+        {
+          "syncMs": 0.02544799999998304,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1899835,
+          "pendingBytesAfter": 1965371
+        },
+        {
+          "syncMs": 0.030496999999996888,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1965371,
+          "pendingBytesAfter": 2030907
+        },
+        {
+          "syncMs": 0.024565999999992982,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2030907,
+          "pendingBytesAfter": 2096443
+        },
+        {
+          "syncMs": 3.746533999999997,
+          "chunkBytes": 947,
+          "pendingBytesBefore": 2096443,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 2098099,
+      "descendantCost": 0
+    },
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 2097152,
+      "inputHash": "9e5c630590af086d064e518b3c1d1cf98e9f4bc9df4fa7cfa32879079a250f62",
+      "iteration": 1,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 3.3962709999999845,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.033621999999979835,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 64827
+        },
+        {
+          "syncMs": 0.00506999999998925,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 64827,
+          "pendingBytesAfter": 130363
+        },
+        {
+          "syncMs": 0.0042479999999898155,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 130363,
+          "pendingBytesAfter": 195899
+        },
+        {
+          "syncMs": 0.00454899999999725,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 195899,
+          "pendingBytesAfter": 261435
+        },
+        {
+          "syncMs": 0.003976999999991904,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 261435,
+          "pendingBytesAfter": 326971
+        },
+        {
+          "syncMs": 0.005499999999983629,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 326971,
+          "pendingBytesAfter": 392507
+        },
+        {
+          "syncMs": 0.005239999999986367,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 392507,
+          "pendingBytesAfter": 458043
+        },
+        {
+          "syncMs": 0.0044980000000123255,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 458043,
+          "pendingBytesAfter": 523579
+        },
+        {
+          "syncMs": 0.00430800000000886,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 523579,
+          "pendingBytesAfter": 589115
+        },
+        {
+          "syncMs": 0.0046079999999903976,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 589115,
+          "pendingBytesAfter": 654651
+        },
+        {
+          "syncMs": 0.005189999999998918,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 654651,
+          "pendingBytesAfter": 720187
+        },
+        {
+          "syncMs": 0.00509000000002402,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 720187,
+          "pendingBytesAfter": 785723
+        },
+        {
+          "syncMs": 0.0049590000000137024,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 785723,
+          "pendingBytesAfter": 851259
+        },
+        {
+          "syncMs": 0.004127000000011094,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 851259,
+          "pendingBytesAfter": 916795
+        },
+        {
+          "syncMs": 0.004969000000016877,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 916795,
+          "pendingBytesAfter": 982331
+        },
+        {
+          "syncMs": 0.005239000000017313,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 982331,
+          "pendingBytesAfter": 1047867
+        },
+        {
+          "syncMs": 0.004959999999982756,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1047867,
+          "pendingBytesAfter": 1113403
+        },
+        {
+          "syncMs": 0.004108000000002221,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1113403,
+          "pendingBytesAfter": 1178939
+        },
+        {
+          "syncMs": 0.005259999999992715,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1178939,
+          "pendingBytesAfter": 1244475
+        },
+        {
+          "syncMs": 0.006472000000002254,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1244475,
+          "pendingBytesAfter": 1310011
+        },
+        {
+          "syncMs": 0.004898999999994658,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1310011,
+          "pendingBytesAfter": 1375547
+        },
+        {
+          "syncMs": 0.004758000000009588,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1375547,
+          "pendingBytesAfter": 1441083
+        },
+        {
+          "syncMs": 0.004849000000007209,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1441083,
+          "pendingBytesAfter": 1506619
+        },
+        {
+          "syncMs": 0.005039000000010674,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1506619,
+          "pendingBytesAfter": 1572155
+        },
+        {
+          "syncMs": 0.0049590000000137024,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1572155,
+          "pendingBytesAfter": 1637691
+        },
+        {
+          "syncMs": 0.004167999999992844,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1637691,
+          "pendingBytesAfter": 1703227
+        },
+        {
+          "syncMs": 0.00477899999998499,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1703227,
+          "pendingBytesAfter": 1768763
+        },
+        {
+          "syncMs": 0.005240000000014788,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1768763,
+          "pendingBytesAfter": 1834299
+        },
+        {
+          "syncMs": 0.004979999999989104,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1834299,
+          "pendingBytesAfter": 1899835
+        },
+        {
+          "syncMs": 0.004147000000017442,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1899835,
+          "pendingBytesAfter": 1965371
+        },
+        {
+          "syncMs": 0.004808999999994512,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1965371,
+          "pendingBytesAfter": 2030907
+        },
+        {
+          "syncMs": 0.027750999999994974,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2030907,
+          "pendingBytesAfter": 2096443
+        },
+        {
+          "syncMs": 2.294489999999996,
+          "chunkBytes": 947,
+          "pendingBytesBefore": 2096443,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 2098099,
+      "descendantCost": 0
+    },
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 2097152,
+      "inputHash": "9e5c630590af086d064e518b3c1d1cf98e9f4bc9df4fa7cfa32879079a250f62",
+      "iteration": 2,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 6.074637000000024,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.03511499999999046,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 64827
+        },
+        {
+          "syncMs": 0.041336999999998625,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 64827,
+          "pendingBytesAfter": 130363
+        },
+        {
+          "syncMs": 0.03659799999999791,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 130363,
+          "pendingBytesAfter": 195899
+        },
+        {
+          "syncMs": 0.023223999999999023,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 195899,
+          "pendingBytesAfter": 261435
+        },
+        {
+          "syncMs": 0.02174999999999727,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 261435,
+          "pendingBytesAfter": 326971
+        },
+        {
+          "syncMs": 0.024255000000010796,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 326971,
+          "pendingBytesAfter": 392507
+        },
+        {
+          "syncMs": 0.023043000000001257,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 392507,
+          "pendingBytesAfter": 458043
+        },
+        {
+          "syncMs": 0.05800800000000095,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 458043,
+          "pendingBytesAfter": 523579
+        },
+        {
+          "syncMs": 0.03385299999999347,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 523579,
+          "pendingBytesAfter": 589115
+        },
+        {
+          "syncMs": 0.036928999999986445,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 589115,
+          "pendingBytesAfter": 654651
+        },
+        {
+          "syncMs": 0.034825000000012096,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 654651,
+          "pendingBytesAfter": 720187
+        },
+        {
+          "syncMs": 0.04114700000002358,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 720187,
+          "pendingBytesAfter": 785723
+        },
+        {
+          "syncMs": 0.0338130000000092,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 785723,
+          "pendingBytesAfter": 851259
+        },
+        {
+          "syncMs": 0.03682800000001407,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 851259,
+          "pendingBytesAfter": 916795
+        },
+        {
+          "syncMs": 0.03748000000001639,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 916795,
+          "pendingBytesAfter": 982331
+        },
+        {
+          "syncMs": 0.03401399999998489,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 982331,
+          "pendingBytesAfter": 1047867
+        },
+        {
+          "syncMs": 0.0332220000000234,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1047867,
+          "pendingBytesAfter": 1113403
+        },
+        {
+          "syncMs": 0.03607699999997749,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1113403,
+          "pendingBytesAfter": 1178939
+        },
+        {
+          "syncMs": 0.03688900000000217,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1178939,
+          "pendingBytesAfter": 1244475
+        },
+        {
+          "syncMs": 0.039003000000008115,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1244475,
+          "pendingBytesAfter": 1310011
+        },
+        {
+          "syncMs": 0.02511599999999703,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1310011,
+          "pendingBytesAfter": 1375547
+        },
+        {
+          "syncMs": 0.021410000000003038,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1375547,
+          "pendingBytesAfter": 1441083
+        },
+        {
+          "syncMs": 0.031058000000001584,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1441083,
+          "pendingBytesAfter": 1506619
+        },
+        {
+          "syncMs": 0.02468600000000265,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1506619,
+          "pendingBytesAfter": 1572155
+        },
+        {
+          "syncMs": 0.036878999999998996,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1572155,
+          "pendingBytesAfter": 1637691
+        },
+        {
+          "syncMs": 0.028874000000001843,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1637691,
+          "pendingBytesAfter": 1703227
+        },
+        {
+          "syncMs": 0.03351299999999924,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1703227,
+          "pendingBytesAfter": 1768763
+        },
+        {
+          "syncMs": 0.04328100000000745,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1768763,
+          "pendingBytesAfter": 1834299
+        },
+        {
+          "syncMs": 1.5660759999999811,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1834299,
+          "pendingBytesAfter": 1899835
+        },
+        {
+          "syncMs": 0.024495999999999185,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1899835,
+          "pendingBytesAfter": 1965371
+        },
+        {
+          "syncMs": 0.0050589999999886,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1965371,
+          "pendingBytesAfter": 2030907
+        },
+        {
+          "syncMs": 0.0055499999999995,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2030907,
+          "pendingBytesAfter": 2096443
+        },
+        {
+          "syncMs": 0.5172629999999856,
+          "chunkBytes": 947,
+          "pendingBytesBefore": 2096443,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 2098099,
+      "descendantCost": 0
+    },
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 8388608,
+      "inputHash": "9343ca2c14fa88c511cc084fd569d5d444cdaae082bee8d0ed8efaf3a372b7b3",
+      "iteration": 0,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 11.449621000000036,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.01760300000000825,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 64827
+        },
+        {
+          "syncMs": 0.006322000000011485,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 64827,
+          "pendingBytesAfter": 130363
+        },
+        {
+          "syncMs": 0.0052500000000179625,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 130363,
+          "pendingBytesAfter": 195899
+        },
+        {
+          "syncMs": 0.005168999999995094,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 195899,
+          "pendingBytesAfter": 261435
+        },
+        {
+          "syncMs": 0.005009000000001151,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 261435,
+          "pendingBytesAfter": 326971
+        },
+        {
+          "syncMs": 0.0061210000000073705,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 326971,
+          "pendingBytesAfter": 392507
+        },
+        {
+          "syncMs": 0.01305399999998258,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 392507,
+          "pendingBytesAfter": 458043
+        },
+        {
+          "syncMs": 0.008416000000011081,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 458043,
+          "pendingBytesAfter": 523579
+        },
+        {
+          "syncMs": 0.007763999999980342,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 523579,
+          "pendingBytesAfter": 589115
+        },
+        {
+          "syncMs": 0.011049999999983129,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 589115,
+          "pendingBytesAfter": 654651
+        },
+        {
+          "syncMs": 0.007713999999992893,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 654651,
+          "pendingBytesAfter": 720187
+        },
+        {
+          "syncMs": 0.007373000000001184,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 720187,
+          "pendingBytesAfter": 785723
+        },
+        {
+          "syncMs": 0.007774000000011938,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 785723,
+          "pendingBytesAfter": 851259
+        },
+        {
+          "syncMs": 0.008064999999987776,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 851259,
+          "pendingBytesAfter": 916795
+        },
+        {
+          "syncMs": 0.007683999999983371,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 916795,
+          "pendingBytesAfter": 982331
+        },
+        {
+          "syncMs": 0.007853999999980488,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 982331,
+          "pendingBytesAfter": 1047867
+        },
+        {
+          "syncMs": 0.007484000000005153,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1047867,
+          "pendingBytesAfter": 1113403
+        },
+        {
+          "syncMs": 0.00769499999998402,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1113403,
+          "pendingBytesAfter": 1178939
+        },
+        {
+          "syncMs": 0.007633999999995922,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1178939,
+          "pendingBytesAfter": 1244475
+        },
+        {
+          "syncMs": 0.009176999999993996,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1244475,
+          "pendingBytesAfter": 1310011
+        },
+        {
+          "syncMs": 0.005138999999985572,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1310011,
+          "pendingBytesAfter": 1375547
+        },
+        {
+          "syncMs": 0.006081999999992149,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1375547,
+          "pendingBytesAfter": 1441083
+        },
+        {
+          "syncMs": 0.014005999999994856,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1441083,
+          "pendingBytesAfter": 1506619
+        },
+        {
+          "syncMs": 0.007493999999979906,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1506619,
+          "pendingBytesAfter": 1572155
+        },
+        {
+          "syncMs": 0.006431999999989557,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1572155,
+          "pendingBytesAfter": 1637691
+        },
+        {
+          "syncMs": 0.006321999999983063,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1637691,
+          "pendingBytesAfter": 1703227
+        },
+        {
+          "syncMs": 0.006721999999996342,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1703227,
+          "pendingBytesAfter": 1768763
+        },
+        {
+          "syncMs": 0.006822999999997137,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1768763,
+          "pendingBytesAfter": 1834299
+        },
+        {
+          "syncMs": 0.0066819999999836455,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1834299,
+          "pendingBytesAfter": 1899835
+        },
+        {
+          "syncMs": 0.006943000000006805,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1899835,
+          "pendingBytesAfter": 1965371
+        },
+        {
+          "syncMs": 0.00646199999999908,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1965371,
+          "pendingBytesAfter": 2030907
+        },
+        {
+          "syncMs": 0.008596000000011372,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2030907,
+          "pendingBytesAfter": 2096443
+        },
+        {
+          "syncMs": 0.0067620000000090386,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2096443,
+          "pendingBytesAfter": 2161979
+        },
+        {
+          "syncMs": 0.0077749999999809916,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2161979,
+          "pendingBytesAfter": 2227515
+        },
+        {
+          "syncMs": 0.010068999999987227,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2227515,
+          "pendingBytesAfter": 2293051
+        },
+        {
+          "syncMs": 0.007534000000021024,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2293051,
+          "pendingBytesAfter": 2358587
+        },
+        {
+          "syncMs": 0.006763000000006514,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2358587,
+          "pendingBytesAfter": 2424123
+        },
+        {
+          "syncMs": 0.0077149999999903685,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2424123,
+          "pendingBytesAfter": 2489659
+        },
+        {
+          "syncMs": 0.006892000000021881,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2489659,
+          "pendingBytesAfter": 2555195
+        },
+        {
+          "syncMs": 0.00779499999998734,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2555195,
+          "pendingBytesAfter": 2620731
+        },
+        {
+          "syncMs": 0.006632999999993672,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2620731,
+          "pendingBytesAfter": 2686267
+        },
+        {
+          "syncMs": 0.00789499999999066,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2686267,
+          "pendingBytesAfter": 2751803
+        },
+        {
+          "syncMs": 0.0071540000000140935,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2751803,
+          "pendingBytesAfter": 2817339
+        },
+        {
+          "syncMs": 0.006621999999993022,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2817339,
+          "pendingBytesAfter": 2882875
+        },
+        {
+          "syncMs": 0.006762999999978092,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2882875,
+          "pendingBytesAfter": 2948411
+        },
+        {
+          "syncMs": 0.007002999999997428,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2948411,
+          "pendingBytesAfter": 3013947
+        },
+        {
+          "syncMs": 0.00646199999999908,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3013947,
+          "pendingBytesAfter": 3079483
+        },
+        {
+          "syncMs": 0.006642999999996846,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3079483,
+          "pendingBytesAfter": 3145019
+        },
+        {
+          "syncMs": 0.00818599999999492,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3145019,
+          "pendingBytesAfter": 3210555
+        },
+        {
+          "syncMs": 0.006191000000001168,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3210555,
+          "pendingBytesAfter": 3276091
+        },
+        {
+          "syncMs": 0.006371999999998934,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3276091,
+          "pendingBytesAfter": 3341627
+        },
+        {
+          "syncMs": 0.006652000000002545,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3341627,
+          "pendingBytesAfter": 3407163
+        },
+        {
+          "syncMs": 0.005931000000003905,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3407163,
+          "pendingBytesAfter": 3472699
+        },
+        {
+          "syncMs": 0.007534000000021024,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3472699,
+          "pendingBytesAfter": 3538235
+        },
+        {
+          "syncMs": 0.010079000000018823,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3538235,
+          "pendingBytesAfter": 3603771
+        },
+        {
+          "syncMs": 0.005610999999987598,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3603771,
+          "pendingBytesAfter": 3669307
+        },
+        {
+          "syncMs": 0.0053999999999803094,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3669307,
+          "pendingBytesAfter": 3734843
+        },
+        {
+          "syncMs": 0.0053000000000054115,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3734843,
+          "pendingBytesAfter": 3800379
+        },
+        {
+          "syncMs": 0.008025000000003502,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3800379,
+          "pendingBytesAfter": 3865915
+        },
+        {
+          "syncMs": 0.005971000000016602,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3865915,
+          "pendingBytesAfter": 3931451
+        },
+        {
+          "syncMs": 0.00574100000000044,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3931451,
+          "pendingBytesAfter": 3996987
+        },
+        {
+          "syncMs": 0.005178999999998268,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3996987,
+          "pendingBytesAfter": 4062523
+        },
+        {
+          "syncMs": 0.005800999999991063,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4062523,
+          "pendingBytesAfter": 4128059
+        },
+        {
+          "syncMs": 0.005249999999989541,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4128059,
+          "pendingBytesAfter": 4193595
+        },
+        {
+          "syncMs": 0.005310000000008586,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4193595,
+          "pendingBytesAfter": 4259131
+        },
+        {
+          "syncMs": 0.0055299999999931515,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4259131,
+          "pendingBytesAfter": 4324667
+        },
+        {
+          "syncMs": 0.024776000000002796,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4324667,
+          "pendingBytesAfter": 4390203
+        },
+        {
+          "syncMs": 0.027881000000007816,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4390203,
+          "pendingBytesAfter": 4455739
+        },
+        {
+          "syncMs": 0.023143000000004577,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4455739,
+          "pendingBytesAfter": 4521275
+        },
+        {
+          "syncMs": 0.04265999999998371,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4521275,
+          "pendingBytesAfter": 4586811
+        },
+        {
+          "syncMs": 0.021511000000003833,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4586811,
+          "pendingBytesAfter": 4652347
+        },
+        {
+          "syncMs": 0.022831999999993968,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4652347,
+          "pendingBytesAfter": 4717883
+        },
+        {
+          "syncMs": 0.023313000000001693,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4717883,
+          "pendingBytesAfter": 4783419
+        },
+        {
+          "syncMs": 0.023815000000013242,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4783419,
+          "pendingBytesAfter": 4848955
+        },
+        {
+          "syncMs": 0.004968999999988455,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4848955,
+          "pendingBytesAfter": 4914491
+        },
+        {
+          "syncMs": 0.005910999999997557,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4914491,
+          "pendingBytesAfter": 4980027
+        },
+        {
+          "syncMs": 0.005751000000003614,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4980027,
+          "pendingBytesAfter": 5045563
+        },
+        {
+          "syncMs": 0.03002499999999486,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5045563,
+          "pendingBytesAfter": 5111099
+        },
+        {
+          "syncMs": 0.005279999999999063,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5111099,
+          "pendingBytesAfter": 5176635
+        },
+        {
+          "syncMs": 0.005149999999986221,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5176635,
+          "pendingBytesAfter": 5242171
+        },
+        {
+          "syncMs": 0.005581000000006497,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5242171,
+          "pendingBytesAfter": 5307707
+        },
+        {
+          "syncMs": 0.006722999999993817,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5307707,
+          "pendingBytesAfter": 5373243
+        },
+        {
+          "syncMs": 0.004878999999988309,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5373243,
+          "pendingBytesAfter": 5438779
+        },
+        {
+          "syncMs": 0.0067020000000184154,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5438779,
+          "pendingBytesAfter": 5504315
+        },
+        {
+          "syncMs": 0.006763000000006514,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5504315,
+          "pendingBytesAfter": 5569851
+        },
+        {
+          "syncMs": 0.005210000000005266,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5569851,
+          "pendingBytesAfter": 5635387
+        },
+        {
+          "syncMs": 0.00469900000001644,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5635387,
+          "pendingBytesAfter": 5700923
+        },
+        {
+          "syncMs": 0.004648000000003094,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5700923,
+          "pendingBytesAfter": 5766459
+        },
+        {
+          "syncMs": 0.005020000000001801,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5766459,
+          "pendingBytesAfter": 5831995
+        },
+        {
+          "syncMs": 0.004779000000013411,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5831995,
+          "pendingBytesAfter": 5897531
+        },
+        {
+          "syncMs": 0.005110000000001946,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5897531,
+          "pendingBytesAfter": 5963067
+        },
+        {
+          "syncMs": 0.0047089999999911925,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5963067,
+          "pendingBytesAfter": 6028603
+        },
+        {
+          "syncMs": 0.00448799999998073,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6028603,
+          "pendingBytesAfter": 6094139
+        },
+        {
+          "syncMs": 0.004808999999994512,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6094139,
+          "pendingBytesAfter": 6159675
+        },
+        {
+          "syncMs": 0.0050190000000043256,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6159675,
+          "pendingBytesAfter": 6225211
+        },
+        {
+          "syncMs": 0.004809000000022934,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6225211,
+          "pendingBytesAfter": 6290747
+        },
+        {
+          "syncMs": 0.0046590000000037435,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6290747,
+          "pendingBytesAfter": 6356283
+        },
+        {
+          "syncMs": 0.004848999999978787,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6356283,
+          "pendingBytesAfter": 6421819
+        },
+        {
+          "syncMs": 0.006741999999974269,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6421819,
+          "pendingBytesAfter": 6487355
+        },
+        {
+          "syncMs": 0.004998999999997977,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6487355,
+          "pendingBytesAfter": 6552891
+        },
+        {
+          "syncMs": 0.004718999999994367,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6552891,
+          "pendingBytesAfter": 6618427
+        },
+        {
+          "syncMs": 0.007234000000011065,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6618427,
+          "pendingBytesAfter": 6683963
+        },
+        {
+          "syncMs": 0.004908999999997832,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6683963,
+          "pendingBytesAfter": 6749499
+        },
+        {
+          "syncMs": 0.00459900000001312,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6749499,
+          "pendingBytesAfter": 6815035
+        },
+        {
+          "syncMs": 0.004798999999991338,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6815035,
+          "pendingBytesAfter": 6880571
+        },
+        {
+          "syncMs": 0.0050589999999886,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6880571,
+          "pendingBytesAfter": 6946107
+        },
+        {
+          "syncMs": 0.004617999999993572,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6946107,
+          "pendingBytesAfter": 7011643
+        },
+        {
+          "syncMs": 0.004958999999985281,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7011643,
+          "pendingBytesAfter": 7077179
+        },
+        {
+          "syncMs": 0.0045379999999966,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7077179,
+          "pendingBytesAfter": 7142715
+        },
+        {
+          "syncMs": 0.007643999999999096,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7142715,
+          "pendingBytesAfter": 7208251
+        },
+        {
+          "syncMs": 0.005400000000008731,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7208251,
+          "pendingBytesAfter": 7273787
+        },
+        {
+          "syncMs": 0.004648000000003094,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7273787,
+          "pendingBytesAfter": 7339323
+        },
+        {
+          "syncMs": 0.022772000000003345,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7339323,
+          "pendingBytesAfter": 7404859
+        },
+        {
+          "syncMs": 0.024756999999993923,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7404859,
+          "pendingBytesAfter": 7470395
+        },
+        {
+          "syncMs": 0.02151999999998111,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7470395,
+          "pendingBytesAfter": 7535931
+        },
+        {
+          "syncMs": 0.006231000000013864,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7535931,
+          "pendingBytesAfter": 7601467
+        },
+        {
+          "syncMs": 0.0045080000000155,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7601467,
+          "pendingBytesAfter": 7667003
+        },
+        {
+          "syncMs": 0.0043180000000120344,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7667003,
+          "pendingBytesAfter": 7732539
+        },
+        {
+          "syncMs": 0.004798999999991338,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7732539,
+          "pendingBytesAfter": 7798075
+        },
+        {
+          "syncMs": 0.00440800000001218,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7798075,
+          "pendingBytesAfter": 7863611
+        },
+        {
+          "syncMs": 0.0061210000000073705,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7863611,
+          "pendingBytesAfter": 7929147
+        },
+        {
+          "syncMs": 0.004858999999981961,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7929147,
+          "pendingBytesAfter": 7994683
+        },
+        {
+          "syncMs": 0.004788999999988164,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7994683,
+          "pendingBytesAfter": 8060219
+        },
+        {
+          "syncMs": 0.004478000000005977,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8060219,
+          "pendingBytesAfter": 8125755
+        },
+        {
+          "syncMs": 0.004769000000010237,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8125755,
+          "pendingBytesAfter": 8191291
+        },
+        {
+          "syncMs": 0.004858999999981961,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8191291,
+          "pendingBytesAfter": 8256827
+        },
+        {
+          "syncMs": 0.004779000000013411,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8256827,
+          "pendingBytesAfter": 8322363
+        },
+        {
+          "syncMs": 0.004848999999978787,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8322363,
+          "pendingBytesAfter": 8387899
+        },
+        {
+          "syncMs": 6.925710999999978,
+          "chunkBytes": 947,
+          "pendingBytesBefore": 8387899,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 8389555,
+      "descendantCost": 0
+    },
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 8388608,
+      "inputHash": "9343ca2c14fa88c511cc084fd569d5d444cdaae082bee8d0ed8efaf3a372b7b3",
+      "iteration": 1,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 13.426661000000024,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.038612000000000535,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 64827
+        },
+        {
+          "syncMs": 0.007744000000002416,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 64827,
+          "pendingBytesAfter": 130363
+        },
+        {
+          "syncMs": 0.006892999999990934,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 130363,
+          "pendingBytesAfter": 195899
+        },
+        {
+          "syncMs": 0.007023000000003776,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 195899,
+          "pendingBytesAfter": 261435
+        },
+        {
+          "syncMs": 0.006872999999984586,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 261435,
+          "pendingBytesAfter": 326971
+        },
+        {
+          "syncMs": 0.009668000000033317,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 326971,
+          "pendingBytesAfter": 392507
+        },
+        {
+          "syncMs": 0.00690300000002253,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 392507,
+          "pendingBytesAfter": 458043
+        },
+        {
+          "syncMs": 0.006712000000050011,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 458043,
+          "pendingBytesAfter": 523579
+        },
+        {
+          "syncMs": 0.006883000000016182,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 523579,
+          "pendingBytesAfter": 589115
+        },
+        {
+          "syncMs": 0.008355999999992036,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 589115,
+          "pendingBytesAfter": 654651
+        },
+        {
+          "syncMs": 0.0070430000000101245,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 654651,
+          "pendingBytesAfter": 720187
+        },
+        {
+          "syncMs": 0.006711999999993168,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 720187,
+          "pendingBytesAfter": 785723
+        },
+        {
+          "syncMs": 0.006892999999990934,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 785723,
+          "pendingBytesAfter": 851259
+        },
+        {
+          "syncMs": 0.006752000000005864,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 851259,
+          "pendingBytesAfter": 916795
+        },
+        {
+          "syncMs": 0.006933000000003631,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 916795,
+          "pendingBytesAfter": 982331
+        },
+        {
+          "syncMs": 0.006892999999990934,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 982331,
+          "pendingBytesAfter": 1047867
+        },
+        {
+          "syncMs": 0.006601999999986674,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1047867,
+          "pendingBytesAfter": 1113403
+        },
+        {
+          "syncMs": 0.006551999999999225,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1113403,
+          "pendingBytesAfter": 1178939
+        },
+        {
+          "syncMs": 0.006933000000003631,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1178939,
+          "pendingBytesAfter": 1244475
+        },
+        {
+          "syncMs": 0.00858600000003662,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1244475,
+          "pendingBytesAfter": 1310011
+        },
+        {
+          "syncMs": 0.006933000000003631,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1310011,
+          "pendingBytesAfter": 1375547
+        },
+        {
+          "syncMs": 0.004108000000030643,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1375547,
+          "pendingBytesAfter": 1441083
+        },
+        {
+          "syncMs": 0.004136999999957425,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1441083,
+          "pendingBytesAfter": 1506619
+        },
+        {
+          "syncMs": 0.004427999999961685,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1506619,
+          "pendingBytesAfter": 1572155
+        },
+        {
+          "syncMs": 0.004859000000010383,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1572155,
+          "pendingBytesAfter": 1637691
+        },
+        {
+          "syncMs": 0.004047000000014123,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1637691,
+          "pendingBytesAfter": 1703227
+        },
+        {
+          "syncMs": 0.004177000000026965,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1703227,
+          "pendingBytesAfter": 1768763
+        },
+        {
+          "syncMs": 0.004769000000010237,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1768763,
+          "pendingBytesAfter": 1834299
+        },
+        {
+          "syncMs": 0.004598999999984699,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1834299,
+          "pendingBytesAfter": 1899835
+        },
+        {
+          "syncMs": 0.004267999999967742,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1899835,
+          "pendingBytesAfter": 1965371
+        },
+        {
+          "syncMs": 0.004417999999986932,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1965371,
+          "pendingBytesAfter": 2030907
+        },
+        {
+          "syncMs": 0.011180999999965024,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2030907,
+          "pendingBytesAfter": 2096443
+        },
+        {
+          "syncMs": 0.004898999999966236,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2096443,
+          "pendingBytesAfter": 2161979
+        },
+        {
+          "syncMs": 0.004277999999999338,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2161979,
+          "pendingBytesAfter": 2227515
+        },
+        {
+          "syncMs": 0.004629000000022643,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2227515,
+          "pendingBytesAfter": 2293051
+        },
+        {
+          "syncMs": 0.00402800000000525,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2293051,
+          "pendingBytesAfter": 2358587
+        },
+        {
+          "syncMs": 0.004688999999984844,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2358587,
+          "pendingBytesAfter": 2424123
+        },
+        {
+          "syncMs": 0.004428000000018528,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2424123,
+          "pendingBytesAfter": 2489659
+        },
+        {
+          "syncMs": 0.0041779999999675965,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2489659,
+          "pendingBytesAfter": 2555195
+        },
+        {
+          "syncMs": 0.004868999999985135,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2555195,
+          "pendingBytesAfter": 2620731
+        },
+        {
+          "syncMs": 0.005110000000001946,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2620731,
+          "pendingBytesAfter": 2686267
+        },
+        {
+          "syncMs": 0.004667999999981021,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2686267,
+          "pendingBytesAfter": 2751803
+        },
+        {
+          "syncMs": 0.0073039999999764404,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2751803,
+          "pendingBytesAfter": 2817339
+        },
+        {
+          "syncMs": 0.010239000000012766,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2817339,
+          "pendingBytesAfter": 2882875
+        },
+        {
+          "syncMs": 0.006371999999998934,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2882875,
+          "pendingBytesAfter": 2948411
+        },
+        {
+          "syncMs": 0.00567999999998392,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2948411,
+          "pendingBytesAfter": 3013947
+        },
+        {
+          "syncMs": 0.005730999999968844,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3013947,
+          "pendingBytesAfter": 3079483
+        },
+        {
+          "syncMs": 0.0062819999999987886,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3079483,
+          "pendingBytesAfter": 3145019
+        },
+        {
+          "syncMs": 0.004437999999993281,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3145019,
+          "pendingBytesAfter": 3210555
+        },
+        {
+          "syncMs": 0.004367999999999483,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3210555,
+          "pendingBytesAfter": 3276091
+        },
+        {
+          "syncMs": 0.004797999999993863,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3276091,
+          "pendingBytesAfter": 3341627
+        },
+        {
+          "syncMs": 0.005910999999969135,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3341627,
+          "pendingBytesAfter": 3407163
+        },
+        {
+          "syncMs": 0.005460000000027776,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3407163,
+          "pendingBytesAfter": 3472699
+        },
+        {
+          "syncMs": 0.0069930000000226755,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3472699,
+          "pendingBytesAfter": 3538235
+        },
+        {
+          "syncMs": 0.007904999999993834,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3538235,
+          "pendingBytesAfter": 3603771
+        },
+        {
+          "syncMs": 0.005178999999998268,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3603771,
+          "pendingBytesAfter": 3669307
+        },
+        {
+          "syncMs": 0.005239000000017313,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3669307,
+          "pendingBytesAfter": 3734843
+        },
+        {
+          "syncMs": 0.004998999999997977,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3734843,
+          "pendingBytesAfter": 3800379
+        },
+        {
+          "syncMs": 0.004037999999980002,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3800379,
+          "pendingBytesAfter": 3865915
+        },
+        {
+          "syncMs": 0.005039000000010674,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3865915,
+          "pendingBytesAfter": 3931451
+        },
+        {
+          "syncMs": 0.004597999999987223,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3931451,
+          "pendingBytesAfter": 3996987
+        },
+        {
+          "syncMs": 0.005750999999975193,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3996987,
+          "pendingBytesAfter": 4062523
+        },
+        {
+          "syncMs": 0.006853000000035081,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4062523,
+          "pendingBytesAfter": 4128059
+        },
+        {
+          "syncMs": 0.0043180000000120344,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4128059,
+          "pendingBytesAfter": 4193595
+        },
+        {
+          "syncMs": 0.004638999999997395,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4193595,
+          "pendingBytesAfter": 4259131
+        },
+        {
+          "syncMs": 0.00440800000001218,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4259131,
+          "pendingBytesAfter": 4324667
+        },
+        {
+          "syncMs": 0.004829000000029282,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4324667,
+          "pendingBytesAfter": 4390203
+        },
+        {
+          "syncMs": 0.004337999999961539,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4390203,
+          "pendingBytesAfter": 4455739
+        },
+        {
+          "syncMs": 0.004418999999984408,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4455739,
+          "pendingBytesAfter": 4521275
+        },
+        {
+          "syncMs": 0.0043180000000120344,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4521275,
+          "pendingBytesAfter": 4586811
+        },
+        {
+          "syncMs": 0.004749000000003889,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4586811,
+          "pendingBytesAfter": 4652347
+        },
+        {
+          "syncMs": 0.004889999999988959,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4652347,
+          "pendingBytesAfter": 4717883
+        },
+        {
+          "syncMs": 0.005119999999976699,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4717883,
+          "pendingBytesAfter": 4783419
+        },
+        {
+          "syncMs": 0.004649000000028991,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4783419,
+          "pendingBytesAfter": 4848955
+        },
+        {
+          "syncMs": 0.004798999999991338,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4848955,
+          "pendingBytesAfter": 4914491
+        },
+        {
+          "syncMs": 0.004769000000010237,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4914491,
+          "pendingBytesAfter": 4980027
+        },
+        {
+          "syncMs": 0.004679000000010092,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4980027,
+          "pendingBytesAfter": 5045563
+        },
+        {
+          "syncMs": 0.00455800000003137,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5045563,
+          "pendingBytesAfter": 5111099
+        },
+        {
+          "syncMs": 0.005080000000020846,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5111099,
+          "pendingBytesAfter": 5176635
+        },
+        {
+          "syncMs": 0.0046090000000162945,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5176635,
+          "pendingBytesAfter": 5242171
+        },
+        {
+          "syncMs": 0.0046780000000126165,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5242171,
+          "pendingBytesAfter": 5307707
+        },
+        {
+          "syncMs": 0.005199000000004617,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5307707,
+          "pendingBytesAfter": 5373243
+        },
+        {
+          "syncMs": 0.005629999999996471,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5373243,
+          "pendingBytesAfter": 5438779
+        },
+        {
+          "syncMs": 0.0049900000000207,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5438779,
+          "pendingBytesAfter": 5504315
+        },
+        {
+          "syncMs": 0.02461599999998043,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5504315,
+          "pendingBytesAfter": 5569851
+        },
+        {
+          "syncMs": 0.6120290000000068,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5569851,
+          "pendingBytesAfter": 5635387
+        },
+        {
+          "syncMs": 0.025426999999979216,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5635387,
+          "pendingBytesAfter": 5700923
+        },
+        {
+          "syncMs": 0.0037670000000389336,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5700923,
+          "pendingBytesAfter": 5766459
+        },
+        {
+          "syncMs": 0.003497000000038497,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5766459,
+          "pendingBytesAfter": 5831995
+        },
+        {
+          "syncMs": 0.0036069999999881475,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5831995,
+          "pendingBytesAfter": 5897531
+        },
+        {
+          "syncMs": 0.0028950000000236287,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5897531,
+          "pendingBytesAfter": 5963067
+        },
+        {
+          "syncMs": 0.008565999999973428,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5963067,
+          "pendingBytesAfter": 6028603
+        },
+        {
+          "syncMs": 0.005200000000002092,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6028603,
+          "pendingBytesAfter": 6094139
+        },
+        {
+          "syncMs": 0.004679000000010092,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6094139,
+          "pendingBytesAfter": 6159675
+        },
+        {
+          "syncMs": 0.004458999999997104,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6159675,
+          "pendingBytesAfter": 6225211
+        },
+        {
+          "syncMs": 0.00451799999996183,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6225211,
+          "pendingBytesAfter": 6290747
+        },
+        {
+          "syncMs": 0.00448799999998073,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6290747,
+          "pendingBytesAfter": 6356283
+        },
+        {
+          "syncMs": 0.00457899999997835,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6356283,
+          "pendingBytesAfter": 6421819
+        },
+        {
+          "syncMs": 0.004448999999965508,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6421819,
+          "pendingBytesAfter": 6487355
+        },
+        {
+          "syncMs": 0.0043180000000120344,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6487355,
+          "pendingBytesAfter": 6552891
+        },
+        {
+          "syncMs": 0.004167999999992844,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6552891,
+          "pendingBytesAfter": 6618427
+        },
+        {
+          "syncMs": 0.003376000000002932,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6618427,
+          "pendingBytesAfter": 6683963
+        },
+        {
+          "syncMs": 0.0028060000000209584,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6683963,
+          "pendingBytesAfter": 6749499
+        },
+        {
+          "syncMs": 0.003405999999984033,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6749499,
+          "pendingBytesAfter": 6815035
+        },
+        {
+          "syncMs": 0.003165999999964697,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6815035,
+          "pendingBytesAfter": 6880571
+        },
+        {
+          "syncMs": 0.0024439999999685824,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6880571,
+          "pendingBytesAfter": 6946107
+        },
+        {
+          "syncMs": 0.00480899999996609,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6946107,
+          "pendingBytesAfter": 7011643
+        },
+        {
+          "syncMs": 0.003165999999964697,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7011643,
+          "pendingBytesAfter": 7077179
+        },
+        {
+          "syncMs": 0.002924999999947886,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7077179,
+          "pendingBytesAfter": 7142715
+        },
+        {
+          "syncMs": 0.004208000000005541,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7142715,
+          "pendingBytesAfter": 7208251
+        },
+        {
+          "syncMs": 0.0031359999999835964,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7208251,
+          "pendingBytesAfter": 7273787
+        },
+        {
+          "syncMs": 0.0027650000000107866,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7273787,
+          "pendingBytesAfter": 7339323
+        },
+        {
+          "syncMs": 0.002774999999985539,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7339323,
+          "pendingBytesAfter": 7404859
+        },
+        {
+          "syncMs": 0.0030859999999961474,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7404859,
+          "pendingBytesAfter": 7470395
+        },
+        {
+          "syncMs": 0.003165999999964697,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7470395,
+          "pendingBytesAfter": 7535931
+        },
+        {
+          "syncMs": 0.004247999999961394,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7535931,
+          "pendingBytesAfter": 7601467
+        },
+        {
+          "syncMs": 0.0031860000000278887,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7601467,
+          "pendingBytesAfter": 7667003
+        },
+        {
+          "syncMs": 0.0029059999999958563,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7667003,
+          "pendingBytesAfter": 7732539
+        },
+        {
+          "syncMs": 0.0029860000000212494,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7732539,
+          "pendingBytesAfter": 7798075
+        },
+        {
+          "syncMs": 0.004409000000009655,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7798075,
+          "pendingBytesAfter": 7863611
+        },
+        {
+          "syncMs": 0.0028049999999666397,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7863611,
+          "pendingBytesAfter": 7929147
+        },
+        {
+          "syncMs": 0.004107999999973799,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7929147,
+          "pendingBytesAfter": 7994683
+        },
+        {
+          "syncMs": 0.0027349999999728425,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7994683,
+          "pendingBytesAfter": 8060219
+        },
+        {
+          "syncMs": 0.002835000000004584,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8060219,
+          "pendingBytesAfter": 8125755
+        },
+        {
+          "syncMs": 0.0026649999999790452,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8125755,
+          "pendingBytesAfter": 8191291
+        },
+        {
+          "syncMs": 0.0026650000000358887,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8191291,
+          "pendingBytesAfter": 8256827
+        },
+        {
+          "syncMs": 0.0027450000000044383,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8256827,
+          "pendingBytesAfter": 8322363
+        },
+        {
+          "syncMs": 0.0029449999999542342,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8322363,
+          "pendingBytesAfter": 8387899
+        },
+        {
+          "syncMs": 9.13813799999997,
+          "chunkBytes": 947,
+          "pendingBytesBefore": 8387899,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 8389555,
+      "descendantCost": 0
+    },
+    {
+      "name": "footer.SessionCostTracker.refresh",
+      "payloadBytes": 8388608,
+      "inputHash": "9343ca2c14fa88c511cc084fd569d5d444cdaae082bee8d0ed8efaf3a372b7b3",
+      "iteration": 2,
+      "fixture": "one-parent-one-child-one-large-tool-result-v1",
+      "refreshElapsedMs": 17.717728000000022,
+      "elapsedScope": "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+      "callbackScope": "synchronous consume entry-to-return after each awaited file read",
+      "callbackSamples": [
+        {
+          "syncMs": 0.02913499999999658,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 0,
+          "pendingBytesAfter": 64827
+        },
+        {
+          "syncMs": 0.005130000000008295,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 64827,
+          "pendingBytesAfter": 130363
+        },
+        {
+          "syncMs": 0.004588999999953103,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 130363,
+          "pendingBytesAfter": 195899
+        },
+        {
+          "syncMs": 0.014216000000033091,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 195899,
+          "pendingBytesAfter": 261435
+        },
+        {
+          "syncMs": 0.004818999999997686,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 261435,
+          "pendingBytesAfter": 326971
+        },
+        {
+          "syncMs": 0.006641999999999371,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 326971,
+          "pendingBytesAfter": 392507
+        },
+        {
+          "syncMs": 0.004638999999997395,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 392507,
+          "pendingBytesAfter": 458043
+        },
+        {
+          "syncMs": 0.004828999999972439,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 458043,
+          "pendingBytesAfter": 523579
+        },
+        {
+          "syncMs": 0.009196999999971922,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 523579,
+          "pendingBytesAfter": 589115
+        },
+        {
+          "syncMs": 0.0056209999999623506,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 589115,
+          "pendingBytesAfter": 654651
+        },
+        {
+          "syncMs": 0.004939000000035776,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 654651,
+          "pendingBytesAfter": 720187
+        },
+        {
+          "syncMs": 0.0050999999999703505,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 720187,
+          "pendingBytesAfter": 785723
+        },
+        {
+          "syncMs": 0.004899000000023079,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 785723,
+          "pendingBytesAfter": 851259
+        },
+        {
+          "syncMs": 0.00480899999996609,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 851259,
+          "pendingBytesAfter": 916795
+        },
+        {
+          "syncMs": 0.004507999999987078,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 916795,
+          "pendingBytesAfter": 982331
+        },
+        {
+          "syncMs": 0.004448999999965508,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 982331,
+          "pendingBytesAfter": 1047867
+        },
+        {
+          "syncMs": 0.05357000000003609,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1047867,
+          "pendingBytesAfter": 1113403
+        },
+        {
+          "syncMs": 0.0498230000000035,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1113403,
+          "pendingBytesAfter": 1178939
+        },
+        {
+          "syncMs": 0.04634700000002567,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1178939,
+          "pendingBytesAfter": 1244475
+        },
+        {
+          "syncMs": 0.05294800000001487,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1244475,
+          "pendingBytesAfter": 1310011
+        },
+        {
+          "syncMs": 0.04447299999998222,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1310011,
+          "pendingBytesAfter": 1375547
+        },
+        {
+          "syncMs": 0.05917099999999209,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1375547,
+          "pendingBytesAfter": 1441083
+        },
+        {
+          "syncMs": 0.02806199999997716,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1441083,
+          "pendingBytesAfter": 1506619
+        },
+        {
+          "syncMs": 0.024184999999988577,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1506619,
+          "pendingBytesAfter": 1572155
+        },
+        {
+          "syncMs": 0.026318999999944026,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1572155,
+          "pendingBytesAfter": 1637691
+        },
+        {
+          "syncMs": 0.02359400000000278,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1637691,
+          "pendingBytesAfter": 1703227
+        },
+        {
+          "syncMs": 0.028192999999987478,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1703227,
+          "pendingBytesAfter": 1768763
+        },
+        {
+          "syncMs": 0.022020999999995183,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1768763,
+          "pendingBytesAfter": 1834299
+        },
+        {
+          "syncMs": 0.022471999999993386,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1834299,
+          "pendingBytesAfter": 1899835
+        },
+        {
+          "syncMs": 0.020697999999981676,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1899835,
+          "pendingBytesAfter": 1965371
+        },
+        {
+          "syncMs": 0.02226100000001452,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 1965371,
+          "pendingBytesAfter": 2030907
+        },
+        {
+          "syncMs": 0.021620000000041273,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2030907,
+          "pendingBytesAfter": 2096443
+        },
+        {
+          "syncMs": 0.019375999999965643,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2096443,
+          "pendingBytesAfter": 2161979
+        },
+        {
+          "syncMs": 0.021791000000007443,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2161979,
+          "pendingBytesAfter": 2227515
+        },
+        {
+          "syncMs": 0.022010999999963587,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2227515,
+          "pendingBytesAfter": 2293051
+        },
+        {
+          "syncMs": 0.02426500000001397,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2293051,
+          "pendingBytesAfter": 2358587
+        },
+        {
+          "syncMs": 0.021729999999990923,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2358587,
+          "pendingBytesAfter": 2424123
+        },
+        {
+          "syncMs": 0.020538999999985208,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2424123,
+          "pendingBytesAfter": 2489659
+        },
+        {
+          "syncMs": 0.02204100000000153,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2489659,
+          "pendingBytesAfter": 2555195
+        },
+        {
+          "syncMs": 0.02025700000001507,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2555195,
+          "pendingBytesAfter": 2620731
+        },
+        {
+          "syncMs": 0.02201100000002043,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2620731,
+          "pendingBytesAfter": 2686267
+        },
+        {
+          "syncMs": 0.02051899999997886,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2686267,
+          "pendingBytesAfter": 2751803
+        },
+        {
+          "syncMs": 0.021810999999956948,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2751803,
+          "pendingBytesAfter": 2817339
+        },
+        {
+          "syncMs": 0.020467999999993935,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2817339,
+          "pendingBytesAfter": 2882875
+        },
+        {
+          "syncMs": 0.020287999999993644,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2882875,
+          "pendingBytesAfter": 2948411
+        },
+        {
+          "syncMs": 0.022882999999978892,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 2948411,
+          "pendingBytesAfter": 3013947
+        },
+        {
+          "syncMs": 0.020909000000017386,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3013947,
+          "pendingBytesAfter": 3079483
+        },
+        {
+          "syncMs": 0.022672000000000025,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3079483,
+          "pendingBytesAfter": 3145019
+        },
+        {
+          "syncMs": 0.021409000000005562,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3145019,
+          "pendingBytesAfter": 3210555
+        },
+        {
+          "syncMs": 0.020668000000000575,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3210555,
+          "pendingBytesAfter": 3276091
+        },
+        {
+          "syncMs": 0.02312299999999823,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3276091,
+          "pendingBytesAfter": 3341627
+        },
+        {
+          "syncMs": 0.020709000000010747,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3341627,
+          "pendingBytesAfter": 3407163
+        },
+        {
+          "syncMs": 0.022921999999994114,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3407163,
+          "pendingBytesAfter": 3472699
+        },
+        {
+          "syncMs": 0.022252000000037242,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3472699,
+          "pendingBytesAfter": 3538235
+        },
+        {
+          "syncMs": 0.020447999999987587,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3538235,
+          "pendingBytesAfter": 3603771
+        },
+        {
+          "syncMs": 0.023042999999972835,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3603771,
+          "pendingBytesAfter": 3669307
+        },
+        {
+          "syncMs": 0.020538999999985208,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3669307,
+          "pendingBytesAfter": 3734843
+        },
+        {
+          "syncMs": 0.022070999999982632,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3734843,
+          "pendingBytesAfter": 3800379
+        },
+        {
+          "syncMs": 0.02014699999995173,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3800379,
+          "pendingBytesAfter": 3865915
+        },
+        {
+          "syncMs": 0.022642000000018925,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3865915,
+          "pendingBytesAfter": 3931451
+        },
+        {
+          "syncMs": 0.02238199999999324,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3931451,
+          "pendingBytesAfter": 3996987
+        },
+        {
+          "syncMs": 0.02324399999997695,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 3996987,
+          "pendingBytesAfter": 4062523
+        },
+        {
+          "syncMs": 0.02109899999999243,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4062523,
+          "pendingBytesAfter": 4128059
+        },
+        {
+          "syncMs": 0.02261199999998098,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4128059,
+          "pendingBytesAfter": 4193595
+        },
+        {
+          "syncMs": 0.02263199999998733,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4193595,
+          "pendingBytesAfter": 4259131
+        },
+        {
+          "syncMs": 0.024696000000005824,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4259131,
+          "pendingBytesAfter": 4324667
+        },
+        {
+          "syncMs": 0.021169999999983702,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4324667,
+          "pendingBytesAfter": 4390203
+        },
+        {
+          "syncMs": 0.022351999999955297,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4390203,
+          "pendingBytesAfter": 4455739
+        },
+        {
+          "syncMs": 0.020938999999998487,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4455739,
+          "pendingBytesAfter": 4521275
+        },
+        {
+          "syncMs": 0.023353999999983444,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4521275,
+          "pendingBytesAfter": 4586811
+        },
+        {
+          "syncMs": 0.02201100000002043,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4586811,
+          "pendingBytesAfter": 4652347
+        },
+        {
+          "syncMs": 0.02284300000002304,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4652347,
+          "pendingBytesAfter": 4717883
+        },
+        {
+          "syncMs": 0.02101900000002388,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4717883,
+          "pendingBytesAfter": 4783419
+        },
+        {
+          "syncMs": 0.023222999999973126,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4783419,
+          "pendingBytesAfter": 4848955
+        },
+        {
+          "syncMs": 0.022992999999985386,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4848955,
+          "pendingBytesAfter": 4914491
+        },
+        {
+          "syncMs": 0.021440000000040982,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4914491,
+          "pendingBytesAfter": 4980027
+        },
+        {
+          "syncMs": 0.023534000000040578,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 4980027,
+          "pendingBytesAfter": 5045563
+        },
+        {
+          "syncMs": 0.021349999999983993,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5045563,
+          "pendingBytesAfter": 5111099
+        },
+        {
+          "syncMs": 0.023783999999977823,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5111099,
+          "pendingBytesAfter": 5176635
+        },
+        {
+          "syncMs": 0.021299999999996544,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5176635,
+          "pendingBytesAfter": 5242171
+        },
+        {
+          "syncMs": 0.021329999999977645,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5242171,
+          "pendingBytesAfter": 5307707
+        },
+        {
+          "syncMs": 0.02252099999998336,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5307707,
+          "pendingBytesAfter": 5373243
+        },
+        {
+          "syncMs": 0.021470000000022083,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5373243,
+          "pendingBytesAfter": 5438779
+        },
+        {
+          "syncMs": 0.02238199999999324,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5438779,
+          "pendingBytesAfter": 5504315
+        },
+        {
+          "syncMs": 0.021560000000022228,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5504315,
+          "pendingBytesAfter": 5569851
+        },
+        {
+          "syncMs": 0.020828999999991993,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5569851,
+          "pendingBytesAfter": 5635387
+        },
+        {
+          "syncMs": 0.02272299999998495,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5635387,
+          "pendingBytesAfter": 5700923
+        },
+        {
+          "syncMs": 0.020878999999979442,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5700923,
+          "pendingBytesAfter": 5766459
+        },
+        {
+          "syncMs": 0.023654000000021824,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5766459,
+          "pendingBytesAfter": 5831995
+        },
+        {
+          "syncMs": 0.020707999999956428,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5831995,
+          "pendingBytesAfter": 5897531
+        },
+        {
+          "syncMs": 0.022723000000041793,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5897531,
+          "pendingBytesAfter": 5963067
+        },
+        {
+          "syncMs": 0.02124900000001162,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 5963067,
+          "pendingBytesAfter": 6028603
+        },
+        {
+          "syncMs": 0.023003000000016982,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6028603,
+          "pendingBytesAfter": 6094139
+        },
+        {
+          "syncMs": 0.021300000000053387,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6094139,
+          "pendingBytesAfter": 6159675
+        },
+        {
+          "syncMs": 0.02343300000001136,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6159675,
+          "pendingBytesAfter": 6225211
+        },
+        {
+          "syncMs": 0.02317300000004252,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6225211,
+          "pendingBytesAfter": 6290747
+        },
+        {
+          "syncMs": 0.021549999999990632,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6290747,
+          "pendingBytesAfter": 6356283
+        },
+        {
+          "syncMs": 0.020048000000031152,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6356283,
+          "pendingBytesAfter": 6421819
+        },
+        {
+          "syncMs": 0.02252200000003768,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6421819,
+          "pendingBytesAfter": 6487355
+        },
+        {
+          "syncMs": 0.019867000000033386,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6487355,
+          "pendingBytesAfter": 6552891
+        },
+        {
+          "syncMs": 0.022401000000002114,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6552891,
+          "pendingBytesAfter": 6618427
+        },
+        {
+          "syncMs": 0.020477999999968688,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6618427,
+          "pendingBytesAfter": 6683963
+        },
+        {
+          "syncMs": 0.022091000000045824,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6683963,
+          "pendingBytesAfter": 6749499
+        },
+        {
+          "syncMs": 0.020537999999987733,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6749499,
+          "pendingBytesAfter": 6815035
+        },
+        {
+          "syncMs": 0.027610999999978958,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6815035,
+          "pendingBytesAfter": 6880571
+        },
+        {
+          "syncMs": 0.021919999999965967,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6880571,
+          "pendingBytesAfter": 6946107
+        },
+        {
+          "syncMs": 0.020648999999991702,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 6946107,
+          "pendingBytesAfter": 7011643
+        },
+        {
+          "syncMs": 0.022081000000014228,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7011643,
+          "pendingBytesAfter": 7077179
+        },
+        {
+          "syncMs": 0.019976999999983036,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7077179,
+          "pendingBytesAfter": 7142715
+        },
+        {
+          "syncMs": 0.02336400000001504,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7142715,
+          "pendingBytesAfter": 7208251
+        },
+        {
+          "syncMs": 0.020737999999994372,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7208251,
+          "pendingBytesAfter": 7273787
+        },
+        {
+          "syncMs": 0.02269300000000385,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7273787,
+          "pendingBytesAfter": 7339323
+        },
+        {
+          "syncMs": 0.02203100000002678,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7339323,
+          "pendingBytesAfter": 7404859
+        },
+        {
+          "syncMs": 0.020258000000012544,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7404859,
+          "pendingBytesAfter": 7470395
+        },
+        {
+          "syncMs": 0.022121999999967557,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7470395,
+          "pendingBytesAfter": 7535931
+        },
+        {
+          "syncMs": 0.02214099999997643,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7535931,
+          "pendingBytesAfter": 7601467
+        },
+        {
+          "syncMs": 0.021038999999973385,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7601467,
+          "pendingBytesAfter": 7667003
+        },
+        {
+          "syncMs": 0.022491999999999734,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7667003,
+          "pendingBytesAfter": 7732539
+        },
+        {
+          "syncMs": 0.020968999999979587,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7732539,
+          "pendingBytesAfter": 7798075
+        },
+        {
+          "syncMs": 0.02275200000002542,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7798075,
+          "pendingBytesAfter": 7863611
+        },
+        {
+          "syncMs": 0.02161999999998443,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7863611,
+          "pendingBytesAfter": 7929147
+        },
+        {
+          "syncMs": 0.02731099999999742,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7929147,
+          "pendingBytesAfter": 7994683
+        },
+        {
+          "syncMs": 0.02171000000004142,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 7994683,
+          "pendingBytesAfter": 8060219
+        },
+        {
+          "syncMs": 0.023003000000016982,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8060219,
+          "pendingBytesAfter": 8125755
+        },
+        {
+          "syncMs": 0.021791000000007443,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8125755,
+          "pendingBytesAfter": 8191291
+        },
+        {
+          "syncMs": 0.021941000000026634,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8191291,
+          "pendingBytesAfter": 8256827
+        },
+        {
+          "syncMs": 0.02313299999997298,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8256827,
+          "pendingBytesAfter": 8322363
+        },
+        {
+          "syncMs": 0.022672000000000025,
+          "chunkBytes": 65536,
+          "pendingBytesBefore": 8322363,
+          "pendingBytesAfter": 8387899
+        },
+        {
+          "syncMs": 9.32177999999999,
+          "chunkBytes": 947,
+          "pendingBytesBefore": 8387899,
+          "pendingBytesAfter": 0
+        }
+      ],
+      "scannedBytes": 8389555,
+      "descendantCost": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 0,
+      "syncMs": 0.360841999999991,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 1,
+      "syncMs": 0.01837399999999434,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 2,
+      "syncMs": 0.01071999999999207,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 3,
+      "syncMs": 0.009968000000014854,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 4,
+      "syncMs": 0.009517999999957283,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 5,
+      "syncMs": 0.009237000000041462,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 6,
+      "syncMs": 0.008956000000011954,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 7,
+      "syncMs": 0.015588999999977204,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 8,
+      "syncMs": 0.008976999999958934,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 9,
+      "syncMs": 0.009898000000021057,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 10,
+      "syncMs": 0.008826999999996588,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 11,
+      "syncMs": 0.00881600000002436,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 12,
+      "syncMs": 0.008995999999967808,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 13,
+      "syncMs": 0.008726000000024214,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 14,
+      "syncMs": 0.008697000000040589,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 15,
+      "syncMs": 0.013805000000047585,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 16,
+      "syncMs": 0.008945999999980359,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 17,
+      "syncMs": 0.00874599999997372,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 18,
+      "syncMs": 0.009187999999994645,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    },
+    {
+      "name": "task.lifecycle.record",
+      "iteration": 19,
+      "syncMs": 0.00898699999999053,
+      "recordHash": "4f0d03fa0505e9ffd8fd752eff50493f4d30b0ed94dc7bb7392139fdcee6790c",
+      "failures": 0
+    }
+  ]
+}

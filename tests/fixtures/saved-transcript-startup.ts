@@ -118,7 +118,14 @@ const seams = {
     if (scenario === "rebind-error") throw new Error("fixture extension startup failed");
     events.push("rebind:ready");
   },
-  sessionManager: { buildContextEntries: () => (saved ? [message] : []), getEntries: () => [] },
+  sessionManager: {
+    buildContextEntries: () => (saved ? [message] : []),
+    getEntries: () => [],
+    getEntryCountByType(type: string) {
+      assert.equal(type, "compaction");
+      return 0;
+    },
+  },
   renderSessionEntries(entries: unknown[]) {
     events.push("messages:render");
     if (entries.length) {

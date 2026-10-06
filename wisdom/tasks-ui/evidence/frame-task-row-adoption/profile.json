@@ -1,0 +1,80 @@
+{
+  "before": {
+    "rawProfile": "artifacts/terminal-perf/task-projection-profile-before/CPU.20261005.235703.699311.0.001.cpuprofile",
+    "renderSamplesMs": 1042.056,
+    "functions": {
+      "activityMembership": {
+        "selfMs": 53.879,
+        "inclusiveMs": 58.751
+      },
+      "upsertTaskRow": {
+        "selfMs": 75.954,
+        "inclusiveMs": 244.018
+      },
+      "taskRowsFromDetails": {
+        "selfMs": 19.228,
+        "inclusiveMs": 151.58
+      },
+      "taskTitle": {
+        "selfMs": 89.716,
+        "inclusiveMs": 122.135
+      },
+      "cloneObject": {
+        "selfMs": 24.598,
+        "inclusiveMs": 24.598
+      },
+      "taskRowWithExecuteLabel": {
+        "selfMs": 3.595,
+        "inclusiveMs": 24.187
+      }
+    },
+    "inclusiveCallerSamplesMs": {
+      "upsertTaskRow <- render@ui/sdk-task-rows.ts:121": 136.608,
+      "taskRowsFromDetails <- render@ui/sdk-task-rows.ts:121": 116.253,
+      "taskTitle <- upsertTaskRow@ui/task-rows.ts:77": 107.505,
+      "upsertTaskRow <- taskRowsFromDetails@ui/task-rows.ts:100": 107.41,
+      "activityMembership <- sync@ui/rolling-activity.ts:146": 58.751,
+      "taskRowsFromDetails <- sync@ui/rolling-activity.ts:146": 35.327,
+      "taskRowWithExecuteLabel <- render@ui/sdk-task-rows.ts:121": 24.187,
+      "cloneObject <- upsertTaskRow@ui/task-rows.ts:77": 16.438,
+      "taskTitle <- taskRowWithExecuteLabel@ui/task-rows.ts:17": 14.63,
+      "cloneObject <- taskRowWithExecuteLabel@ui/task-rows.ts:17": 5.962,
+      "cloneObject <- render@ui/sdk-task-rows.ts:121": 2.198
+    }
+  },
+  "after": {
+    "rawProfile": "artifacts/terminal-perf/task-projection-profile-after/CPU.20261006.000058.704173.0.001.cpuprofile",
+    "renderSamplesMs": 814.033,
+    "functions": {
+      "activityMembership": {
+        "selfMs": 32.523,
+        "inclusiveMs": 36.782
+      },
+      "upsertTaskRow": {
+        "selfMs": 40.545,
+        "inclusiveMs": 155.889
+      },
+      "taskRowsFromDetails": {
+        "selfMs": 29.76,
+        "inclusiveMs": 146.922
+      },
+      "taskTitle": {
+        "selfMs": 50.11,
+        "inclusiveMs": 65.376
+      },
+      "cloneObject": {
+        "selfMs": 6.613,
+        "inclusiveMs": 6.613
+      }
+    },
+    "inclusiveCallerSamplesMs": {
+      "taskRowsFromDetails <- render@ui/sdk-task-rows.ts:121": 114.139,
+      "upsertTaskRow <- taskRowsFromDetails@ui/task-rows.ts:100": 96.507,
+      "taskTitle <- upsertTaskRow@ui/task-rows.ts:77": 65.376,
+      "upsertTaskRow <- render@ui/sdk-task-rows.ts:121": 59.382,
+      "activityMembership <- sync@ui/rolling-activity.ts:146": 36.782,
+      "taskRowsFromDetails <- sync@ui/rolling-activity.ts:146": 32.783,
+      "cloneObject <- upsertTaskRow@ui/task-rows.ts:77": 6.613
+    }
+  }
+}

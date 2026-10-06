@@ -97,6 +97,7 @@ export function upsertTaskRow(rows: Map<string, TaskRow>, next: TaskRow): TaskRo
   rows.set(key, row);
   return row;
 }
+/** Fresh rows with normalized title metadata; render-local provenance edits never touch producer details. */
 export function taskRowsFromDetails(value: unknown): TaskRow[] {
   const details = record(value);
   if (!details) return [];
