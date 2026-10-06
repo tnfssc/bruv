@@ -872,86 +872,37 @@
           "name": "toString",
           "url": "",
           "samples": 9,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "map",
-            "materialize",
-            "toString"
-          ]
+          "stack": ["(root)", "(module)", "segment", "map", "materialize", "toString"]
         },
         {
           "name": "scanJsonl",
           "url": "file:///home/tnfssc/.bruv/worktrees/t3code-bbf9268f-5442693331ce-task_47626147/src/history/disk-entry-store.ts",
           "samples": 14,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "open",
-            "rescan",
-            "scanJsonl"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "open", "rescan", "scanJsonl"]
         },
         {
           "name": "parse",
           "url": "",
           "samples": 11,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "open",
-            "rescan",
-            "scanJsonl",
-            "consume",
-            "parse"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "open", "rescan", "scanJsonl", "consume", "parse"]
         },
         {
           "name": "parse",
           "url": "",
           "samples": 62,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "map",
-            "materialize",
-            "parse"
-          ]
+          "stack": ["(root)", "(module)", "segment", "map", "materialize", "parse"]
         },
         {
           "name": "toString",
           "url": "",
           "samples": 5,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "map",
-            "materialize",
-            "toString"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "map", "materialize", "toString"]
         },
         {
           "name": "concat",
           "url": "",
           "samples": 2,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "open",
-            "rescan",
-            "scanJsonl",
-            "concat"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "open", "rescan", "scanJsonl", "concat"]
         },
         {
           "name": "toString",
@@ -973,56 +924,25 @@
           "name": "readSync",
           "url": "",
           "samples": 4,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "map",
-            "materialize",
-            "readSync"
-          ]
+          "stack": ["(root)", "(module)", "segment", "map", "materialize", "readSync"]
         },
         {
           "name": "readSync",
           "url": "",
           "samples": 5,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "map",
-            "materialize",
-            "readSync"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "map", "materialize", "readSync"]
         },
         {
           "name": "parse",
           "url": "",
           "samples": 57,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "map",
-            "materialize",
-            "parse"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "map", "materialize", "parse"]
         },
         {
           "name": "allocUnsafe",
           "url": "",
           "samples": 1,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "map",
-            "materialize",
-            "allocUnsafe"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "map", "materialize", "allocUnsafe"]
         }
       ]
     },
@@ -1034,71 +954,31 @@
           "name": "toString",
           "url": "",
           "samples": 11,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "map",
-            "materialize",
-            "toString"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "map", "materialize", "toString"]
         },
         {
           "name": "",
           "url": "",
           "samples": 1,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "open",
-            "rescan",
-            "scanJsonl",
-            "(anonymous)"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "open", "rescan", "scanJsonl", "(anonymous)"]
         },
         {
           "name": "remember",
           "url": "file:///home/tnfssc/.bruv/worktrees/t3code-bbf9268f-5442693331ce-task_47626147/src/history/disk-entry-store.ts",
           "samples": 1,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "map",
-            "materialize",
-            "remember"
-          ]
+          "stack": ["(root)", "(module)", "segment", "map", "materialize", "remember"]
         },
         {
           "name": "toString",
           "url": "",
           "samples": 11,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "map",
-            "materialize",
-            "toString"
-          ]
+          "stack": ["(root)", "(module)", "segment", "map", "materialize", "toString"]
         },
         {
           "name": "concat",
           "url": "",
           "samples": 4,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "open",
-            "rescan",
-            "scanJsonl",
-            "concat"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "open", "rescan", "scanJsonl", "concat"]
         },
         {
           "name": "toString",
@@ -1120,98 +1000,43 @@
           "name": "parse",
           "url": "",
           "samples": 12,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "open",
-            "rescan",
-            "scanJsonl",
-            "consume",
-            "parse"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "open", "rescan", "scanJsonl", "consume", "parse"]
         },
         {
           "name": "parse",
           "url": "",
           "samples": 63,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "map",
-            "materialize",
-            "parse"
-          ]
+          "stack": ["(root)", "(module)", "segment", "map", "materialize", "parse"]
         },
         {
           "name": "readSync",
           "url": "",
           "samples": 5,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "map",
-            "materialize",
-            "readSync"
-          ]
+          "stack": ["(root)", "(module)", "segment", "map", "materialize", "readSync"]
         },
         {
           "name": "readSync",
           "url": "",
           "samples": 4,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "map",
-            "materialize",
-            "readSync"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "map", "materialize", "readSync"]
         },
         {
           "name": "parse",
           "url": "",
           "samples": 55,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "map",
-            "materialize",
-            "parse"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "map", "materialize", "parse"]
         },
         {
           "name": "get",
           "url": "",
           "samples": 1,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "map",
-            "materialize",
-            "get"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "map", "materialize", "get"]
         },
         {
           "name": "allocUnsafe",
           "url": "",
           "samples": 2,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "map",
-            "materialize",
-            "allocUnsafe"
-          ]
+          "stack": ["(root)", "(module)", "segment", "map", "materialize", "allocUnsafe"]
         },
         {
           "name": "Buffer",
@@ -1233,16 +1058,7 @@
           "name": "readSync",
           "url": "",
           "samples": 1,
-          "stack": [
-            "(root)",
-            "(module)",
-            "segment",
-            "(anonymous)",
-            "open",
-            "rescan",
-            "scanJsonl",
-            "readSync"
-          ]
+          "stack": ["(root)", "(module)", "segment", "(anonymous)", "open", "rescan", "scanJsonl", "readSync"]
         }
       ]
     }

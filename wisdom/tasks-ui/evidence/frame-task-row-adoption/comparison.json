@@ -30,11 +30,7 @@
     "warmup": 5,
     "width": 120,
     "height": 40,
-    "scales": [
-      100,
-      500,
-      1000
-    ]
+    "scales": [100, 500, 1000]
   },
   "fingerprintPairs": 738,
   "mismatches": [],

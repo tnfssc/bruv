@@ -17,11 +17,7 @@
     "warmup": 5,
     "width": 120,
     "height": 40,
-    "scales": [
-      100,
-      500,
-      1000
-    ]
+    "scales": [100, 500, 1000]
   },
   "priorInput1000": {
     "count": 40,

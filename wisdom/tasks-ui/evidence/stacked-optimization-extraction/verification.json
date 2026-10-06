@@ -54,12 +54,7 @@
     "node_modules/@earendil-works/pi-tui/dist/utils.js": "6c239049e5b851f9e951a82abd1d5888228325d5907a0e11e8b0dea174ecb9b1"
   },
   "commands": {
-    "initialFresh": [
-      "rm -rf node_modules",
-      "bun install --frozen-lockfile",
-      "bun run prepare:assets",
-      "bun run check"
-    ],
+    "initialFresh": ["rm -rf node_modules", "bun install --frozen-lockfile", "bun run prepare:assets", "bun run check"],
     "isolatedFresh": [
       "rm -rf node_modules",
       "bun install --frozen-lockfile --backend=copyfile --cache-dir=artifacts/terminal-optimization-extraction/dependency-cache",
