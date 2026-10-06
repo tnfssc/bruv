@@ -47,3 +47,5 @@ Wisdom describes harness-only methodology/usage/extraction instead of combined r
 ## T3 actions added after PR publication
 
 User asked to add `t3.json` too. Two manual debug actions call the package harness commands. Both are async; neither runs during worktree setup. Existing setup, CI and build actions stay unchanged. The guide explains explicit T3 import and opening the generated offline report. A config test checks command links and manual execution. Parent must refresh the optimization stack after pushing this harness commit. Values unchanged; this is a launch convenience, not a measurement change.
+
+Hosted CI exposed three unformatted probe/report files that focused checks did not cover. Parent ran the repository formatter, format:check and lint. Formatting and lint pass (existing warnings remain). Probe behavior and report data did not change. Hosted full validation must still pass before merge; local typecheck alone is not CI completion.

@@ -127,8 +127,7 @@ export function compareRuns(current: PerfRun, baseline: PerfRun) {
     const sameColdContext =
       JSON.stringify(current.config) === JSON.stringify(baseline.config) &&
       JSON.stringify(prefix(current, result.id)) === JSON.stringify(prefix(baseline, result.id));
-    if (!sameColdContext)
-      warnings.push(`Different process-warming context for ${result.id}; cold delta suppressed`);
+    if (!sameColdContext) warnings.push(`Different process-warming context for ${result.id}; cold delta suppressed`);
     const coldContentDifferences = result.cold.filter(
       (frame, index) =>
         frame.screenHash && old.cold[index]?.screenHash && frame.screenHash !== old.cold[index].screenHash,
