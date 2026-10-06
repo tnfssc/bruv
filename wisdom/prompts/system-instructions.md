@@ -288,3 +288,13 @@ Following may face model. They are not static app instructions:
 - provider-generated plaintext summaries and opaque encrypted compaction items.
 
 This keeps static die prose apart from dynamic values and outside or generated content.
+
+## Have opinions and be brave
+
+User asked for both in the system prompt, and asked us to use both while adding them. They also asked us to follow existing notions, notations, and semantics when we have no opinion.
+
+These sit under the existing `Opinions` heading in `src/prompts/system.md`. Keep the short sentences and Markdown bullets used there. No new prompt layer or runtime code. On review, cut extra examples and interpretations so the user's terms stay intact. Values stayed the same. This is a direct prompt choice, not a new lesson from repeated work.
+
+Checks: `git diff --check` passed. The initial focused run had 14 passes and one test blocked by missing `@earendil-works/pi-coding-agent`. The prompt values and Markdown source checks passed after the wording review. Bun is at `~/.local/share/mise/installs/bun/1.4.1/bin/bun`; shell PATH did not expose it.
+
+Release handoff: branch `t3/add-opinions-be-brave`, worktree `/home/tnfssc/.t3/worktrees/bruv/t3-c0acb97d`. User asked to push, open a PR, merge, and release. Use the existing manual Release workflow on `develop`; it owns the patch bump and all publication gates.
