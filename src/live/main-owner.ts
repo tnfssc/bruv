@@ -492,6 +492,9 @@ async function acquire(
           ? prior.operation
           : Promise.reject(new Error("Delegation ID reused with different context"));
       if (delegated.size >= 256) return Promise.reject(new Error("Live delegation capacity reached"));
+      // Spoken requests have a source snapshot; typed requests use this queue without one.
+      // Keep raw speech in that existing hidden audit, not in another transcript record.
+      const requestText = provenance === undefined ? text : terminalTranscriptText(text);
       inFlight++;
       const admittedEpoch = backendEpoch;
       const operation = queueBackendTurn(
@@ -504,12 +507,12 @@ async function acquire(
               "gpt-live-delegation-snapshot",
               [{ type: "text", text: JSON.stringify(provenance) }],
               false,
-              { requestText: text },
+              { requestText },
             );
           }
           return true;
         },
-        () => session.prompt(text, { expandPromptTemplates: false, source: "extension" }),
+        () => session.prompt(requestText, { expandPromptTemplates: false, source: "extension" }),
       );
       delegated.set(id, { text, operation });
       delegatedTail = operation;

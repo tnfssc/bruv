@@ -21,6 +21,7 @@ import {
 import asynchronousTasksExtension from "../src/agent/extension";
 import { installCurrentConversationAdapter } from "../src/agent/instruction-continuity";
 import liveExtension from "../src/live/extension";
+import { withoutPassiveLiveHistory } from "../src/live/passive-history";
 import { registerLiveStop } from "../src/live/lifecycle-access";
 import { acquireMainOwner, type MainOwner } from "../src/live/main-owner";
 import { VoiceSession } from "../src/live/session";
@@ -671,6 +672,88 @@ test("paired backend survives production input routing: voice and typed turns ea
   const history = JSON.stringify(f.manager.buildSessionContext());
   expect(history).toContain("Provisional spoken request with provenance");
   expect(history).toContain("Typed request through production input handler");
+}, 5000);
+
+test("delegated OSC52 speech keeps hidden raw audit and safe canonical prompt/display/replay", async () => {
+  const f = await fixture();
+  f.owner.delegatedVoice = true;
+  f.observed.prompts.length = 0;
+  f.pi.on("context", (event) => ({ messages: withoutPassiveLiveHistory(event.messages) }));
+  const safe = "Check this repo status, then explain changes before editing files.";
+  const raw = "Check this repo status, \x1b]52;c;Y2xpcGJvYXJk\x07then explain changes before editing files.";
+  const snapshot = {
+    delegationId: "spoken-osc52",
+    offsetMs: 100,
+    revision: 0,
+    fragments: [{ startMs: 0, endMs: 100, text: raw }],
+    omittedFragments: 0,
+    uncertain: true,
+    hostContext: "{}",
+    hostContextOffsetMs: 0,
+    contextClock: "local-capture-approximate",
+  };
+  const observed: any[] = [];
+  f.session.agent.streamFunction = ((model: any, context: any) => {
+    observed.push(structuredClone(context.messages));
+    const stream = createAssistantMessageEventStream();
+    stream.push({
+      type: "done",
+      reason: "stop",
+      message: {
+        role: "assistant",
+        api: model.api,
+        provider: model.provider,
+        model: model.id,
+        timestamp: Date.now(),
+        stopReason: "stop",
+        usage: {
+          input: 0,
+          output: 0,
+          cacheRead: 0,
+          cacheWrite: 0,
+          totalTokens: 0,
+          cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+        },
+        content: [{ type: "text", text: "Offline answer" }],
+      } as any,
+    });
+    return stream;
+  }) as any;
+  await f.owner.delegate!(snapshot.delegationId, raw, snapshot);
+  // Retrying the same raw source must not append a second audit or canonical request.
+  await f.owner.delegate!(snapshot.delegationId, raw, snapshot);
+  expect(observed).toHaveLength(1);
+  expect(f.observed.prompts).toEqual([safe]);
+  const replay = SessionManager.open(f.manager.getSessionFile()!).buildSessionContext().messages;
+  const audits = replay.filter((m: any) => m.customType === "gpt-live-delegation-snapshot") as any[];
+  expect(audits).toHaveLength(1);
+  expect(audits[0].display).toBe(false);
+  expect(JSON.parse(audits[0].content[0].text)).toEqual(snapshot);
+  expect(audits[0].details).toEqual({ requestText: safe });
+  // Do not create another raw transcript copy just to sanitize the prompt.
+  expect(replay.filter((m: any) => m.customType === "live-transcript")).toHaveLength(0);
+  const users = replay.filter((m) => m.role === "user");
+  expect(users).toHaveLength(1);
+  expect(users[0].content).toEqual([{ type: "text", text: safe }]);
+  // Typed user text, including the same bytes, is not provider speech.
+  await f.owner.typedInput(raw);
+  await f.session.prompt(raw);
+  expect(f.observed.prompts.slice(1)).toEqual([raw, raw]);
+  const typedReplay = f.manager.buildSessionContext().messages.filter((m: any) => m.role === "user");
+  expect(typedReplay.slice(1).map((m: any) => m.content)).toEqual([
+    [{ type: "text", text: raw }],
+    [{ type: "text", text: raw }],
+  ]);
+  expect(
+    f.manager.buildSessionContext().messages.filter((m: any) => m.customType === "gpt-live-delegation-snapshot"),
+  ).toHaveLength(1);
+
+  expect(observed[0].filter((m: any) => m.role === "user").at(-1).content).toEqual([{ type: "text", text: safe }]);
+  const canonical = withoutPassiveLiveHistory(replay);
+  expect(canonical.filter((m) => m.role === "user")[0].content).toEqual([{ type: "text", text: safe }]);
+  expect(JSON.stringify(canonical)).not.toContain("\\u001b");
+  expect(JSON.stringify(canonical)).toContain("Provisional voice transcription");
+  expect(JSON.stringify(canonical)).not.toContain("final ASR");
 }, 5000);
 
 test("paired backend resumes from production async task notification without inventing a user turn", async () => {
