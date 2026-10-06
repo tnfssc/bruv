@@ -1,3 +1,5 @@
+> The focused talk panel below is historical. The shared editor replaced it. See [current implementation](shared-editor-implementation.md) and [editor input](editor-space-input.md).
+
 # Live push-to-talk
 
 User wants hold Space to speak. Release must stop sending audio and end the

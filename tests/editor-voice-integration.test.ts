@@ -1,0 +1,281 @@
+import { afterEach, describe, expect, spyOn, test } from "bun:test";
+import type { KeybindingsManager } from "@earendil-works/pi-coding-agent";
+import {
+  type EditorTheme,
+  type Terminal,
+  TuiAltScreen,
+  type TuiInputListener,
+  TuiMainScreen,
+} from "@earendil-works/pi-tui";
+import { CompactEditor } from "../src/ui/editor";
+
+const press = "\x1b[32;1:1u";
+const repeat = "\x1b[32;1:2u";
+const release = "\x1b[32;1:3u";
+const identity = (text: string) => text;
+const theme: EditorTheme = {
+  borderColor: identity,
+  selectList: {
+    selectedPrefix: identity,
+    selectedText: identity,
+    description: identity,
+    scrollInfo: identity,
+    noMatch: identity,
+  },
+};
+const cleanups: (() => void)[] = [];
+afterEach(() => {
+  for (const cleanup of cleanups.splice(0)) cleanup();
+});
+
+function fixture(kitty = true, fullscreen = false) {
+  let now = 1000;
+  const clock = spyOn(Date, "now").mockImplementation(() => now);
+  const writes: string[] = [];
+  const terminal = {
+    rows: 24,
+    columns: 80,
+    kittyProtocolActive: kitty,
+    write: (data: string) => writes.push(data),
+  } as unknown as Terminal;
+  const tui = fullscreen ? new TuiAltScreen(terminal) : new TuiMainScreen(terminal);
+  // Exercise the SDK's real raw-listener -> focus -> release-filter -> editor
+  // routing. Only drawing is disabled: no actual device or provider calls.
+  const raw = tui as unknown as { handleTerminalInput(data: string): void; requestImmediateRender(): void };
+  raw.requestImmediateRender = () => {};
+  tui.requestRender = () => {};
+  const input = new CompactEditor(
+    tui,
+    theme,
+    {
+      matches: (data: string, action: string) => action === "app.interrupt" && data === "\x1b",
+    } as KeybindingsManager,
+    { paddingX: 0 },
+  );
+  tui.addChild(input);
+  tui.setFocus(input);
+  const abort = new AbortController();
+  const changes: boolean[] = [];
+  const hints: (string | undefined)[] = [];
+  let listeners = 0;
+  const ui = {
+    onTerminalInput(handler: TuiInputListener) {
+      listeners++;
+      const remove = tui.addInputListener(handler);
+      return () => {
+        listeners--;
+        remove();
+      };
+    },
+  };
+  const options = {
+    signal: abort.signal,
+    onTalking: (value: boolean) => changes.push(value),
+    onHint: (value: string | undefined) => hints.push(value),
+  };
+  const detach = input.attachPushToTalk(ui, options);
+  const send = (data: string, advance = 0) => {
+    now += advance;
+    raw.handleTerminalInput(data);
+  };
+  cleanups.push(() => {
+    detach();
+    abort.abort();
+    clock.mockRestore();
+  });
+  return { input, tui, ui, options, send, abort, changes, hints, writes, detach, listeners: () => listeners };
+}
+
+function hold(f: ReturnType<typeof fixture>) {
+  f.send(press);
+  f.send(repeat, 500);
+}
+
+describe("voice in real CompactEditor input routing", () => {
+  test("tap Space types; ordinary Enter and Backspace are still editor actions", () => {
+    const f = fixture();
+    f.send("draft");
+    f.send(press);
+    f.send(release);
+    expect(f.input.getText()).toBe("draft ");
+    f.send("\x7f");
+    expect(f.input.getText()).toBe("draft");
+    let submitted = "";
+    f.input.onSubmit = (value) => {
+      submitted = value;
+    };
+    f.send("\r");
+    expect(submitted).toBe("draft");
+    expect(f.changes).toEqual([false]);
+  });
+
+  test("hold restores only warmup Spaces and the exact middle-of-draft cursor", () => {
+    const f = fixture();
+    f.input.setText("first  😀 line\nsecond");
+    f.send("\x1b[H");
+    f.send("\x1b[D");
+    const before = f.input.getText();
+    const cursor = f.input.getCursor();
+    hold(f);
+    expect(f.input.getText()).toBe(before);
+    expect(f.input.getCursor()).toEqual(cursor);
+    expect(f.changes).toEqual([false, true]);
+    f.send("\x1b[32;6:3u");
+    expect(f.changes).toEqual([false, true, false]);
+    f.send("X");
+    expect(f.input.getText()).toBe("first  😀 lineX\nsecond");
+  });
+
+  test("legacy packets warm up in editor then restore draft at repeat activation", () => {
+    const f = fixture(false);
+    f.send("draft  ");
+    f.send(" ");
+    f.send(" ", 500);
+    expect(f.input.getText()).toBe("draft    ");
+    f.send(" ", 30);
+    expect(f.input.getText()).toBe("draft  ");
+    expect(f.changes).toEqual([false, true]);
+    f.send("\x1b[D");
+    expect(f.changes.at(-1)).toBe(false);
+  });
+
+  test("paste marker registry and undo history survive a hold", () => {
+    const f = fixture();
+    const content = "abc😀".repeat(250) + "\n" + "row\n".repeat(12);
+    f.send("\x1b[200~" + content + "\x1b[201~");
+    const marker = f.input.getText();
+    const cursor = f.input.getCursor();
+    hold(f);
+    f.send(release);
+    expect(f.input.getText()).toBe(marker);
+    expect(f.input.getExpandedText()).toBe(content);
+    expect(f.input.getCursor()).toEqual(cursor);
+    (f.input as unknown as { undo(): void }).undo();
+    expect(f.input.getText()).toBe("");
+    expect(f.input.getExpandedText()).toBe("");
+  });
+
+  test("editor navigation, cancel, paste, mouse, and programmatic edits mute", () => {
+    const f = fixture();
+    for (const data of ["\x1b[D", "\x1b", "\x7f", "\r", "\x1b[200~ pasted \x1b[201~"]) {
+      hold(f);
+      expect(f.changes.at(-1)).toBe(true);
+      f.send(data);
+      expect(f.changes.at(-1)).toBe(false);
+      f.send(release);
+    }
+    hold(f);
+    f.input.render(80);
+    f.input.handleMouse({
+      type: "click",
+      button: "left",
+      x: 3,
+      y: 0,
+      width: 80,
+      height: 1,
+      screenX: 3,
+      screenY: 0,
+      shift: false,
+      alt: false,
+      ctrl: false,
+    });
+    expect(f.changes.at(-1)).toBe(false);
+    f.send(release);
+    hold(f);
+    f.input.insertTextAtCursor("insert");
+    expect(f.changes.at(-1)).toBe(false);
+    f.send(release);
+    hold(f);
+    f.input.setText("replacement");
+    expect(f.changes.at(-1)).toBe(false);
+    expect(f.input.getText()).toBe("replacement");
+  });
+
+  test("losing editor focus mutes synchronously; Space in other UI stays ordinary input", () => {
+    const f = fixture();
+    hold(f);
+    const received: string[] = [];
+    const dialog = {
+      focused: false,
+      handleInput: (data: string) => received.push(data),
+      render: () => [],
+      invalidate() {},
+    };
+    f.tui.addChild(dialog);
+    f.tui.setFocus(dialog);
+    expect(f.changes.at(-1)).toBe(false);
+    f.send(" ");
+    expect(received).toEqual([" "]);
+    f.tui.setFocus(f.input);
+    f.send(repeat);
+    expect(f.changes).toEqual([false, true, false]);
+  });
+
+  test("raw safety observer closes before a shortcut consumes the editor key", () => {
+    const f = fixture();
+    const remove = f.tui.addInputListener((data) => (data === "\x03" ? { consume: true } : undefined));
+    hold(f);
+    f.send("\x03");
+    expect(f.changes.at(-1)).toBe(false);
+    remove();
+  });
+
+  test("terminal focus loss and changed-modifier release close capture at the raw seam", () => {
+    const f = fixture();
+    hold(f);
+    f.send("\x1b[O");
+    expect(f.changes.at(-1)).toBe(false);
+    f.send("\x1b[I");
+    hold(f);
+    f.send("\x1b[32;5:3u");
+    expect(f.changes.at(-1)).toBe(false);
+  });
+
+  test("fullscreen viewport cannot hide focus-in or navigation from the safety observer", () => {
+    const f = fixture(true, true);
+    hold(f);
+    f.send("\x1b[O");
+    expect(f.changes.at(-1)).toBe(false);
+    f.send("\x1b[I");
+    hold(f);
+    expect(f.changes.at(-1)).toBe(true);
+    // Viewport mouse input is consumed before normal extension listeners.
+    // A wheel packet is sufficient: no layout/render fixture is needed.
+    f.send("\x1b[<64;1;1M");
+    expect(f.changes.at(-1)).toBe(false);
+    expect(f.writes).toEqual(["\x1b[>15u"]); // fullscreen already owns focus reporting
+  });
+
+  test("abort preserves a pending typed Space, detaches listeners and restores terminal flags", () => {
+    const f = fixture();
+    f.send("draft");
+    f.send(press);
+    const cursor = f.input.getCursor();
+    f.abort.abort();
+    f.detach();
+    expect(f.input.getText()).toBe("draft ");
+    expect(f.input.getCursor()).toEqual(cursor);
+    expect(f.input.wantsKeyRelease).toBe(false);
+    expect(f.listeners()).toBe(0);
+    expect(f.hints.at(-1)).toBeUndefined();
+    expect(f.writes).toEqual(["\x1b[>15u", "\x1b[?1004h", "\x1b[?1004l", "\x1b[<u"]);
+    f.send(" ");
+    expect(f.input.getText()).toBe("draft  ");
+  });
+
+  test("abort during capture mutes and reattachment has only one listener", () => {
+    const f = fixture();
+    hold(f);
+    f.abort.abort();
+    expect(f.changes).toEqual([false, true, false]);
+    const next = new AbortController();
+    const detach = f.input.attachPushToTalk(f.ui, { ...f.options, signal: next.signal });
+    expect(f.listeners()).toBe(1);
+    const detachAgain = f.input.attachPushToTalk(f.ui, { ...f.options, signal: next.signal });
+    expect(f.listeners()).toBe(1);
+    detach();
+    expect(f.listeners()).toBe(1); // old detach can't remove a new session
+    detachAgain();
+    expect(f.listeners()).toBe(0);
+  });
+});

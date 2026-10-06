@@ -1,16 +1,16 @@
 import { expect, test } from "bun:test";
-import { mkdir, mkdtemp, rm, symlink } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "./tui-helpers";
 import { waitForLiveTuiStartup } from "./live-tui-startup";
+import { capturePane, shellQuote as quote, tmuxRunner, frameContaining as waitForText } from "./tui-helpers";
 
 // Actual Pi interactive renderer in a tmux PTY, with a fake GPT stream and fake audio.
-test("GPT streaming keeps passive JSON in history but renders only the bounded Live transcript widget", async () => {
+test("GPT streaming presents full speech in the shared conversation without raw passive JSON", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-gpt-tui-"));
   const socket = "bruv-gpt-tui-" + process.pid + "-" + Date.now();
   const root = resolve(import.meta.dir, "..");
-  const tmux = tmuxRunner(socket, join(root, "scripts/tmux.conf"));
+  const tmux = tmuxRunner(socket, join(dir, "tmux.conf"));
 
   const frame = async () => (await capturePane(tmux, "gpt", true)).stdout;
   const until = (text: string[]) => waitForText(frame, text, 80, 100);
@@ -27,6 +27,7 @@ test("GPT streaming keeps passive JSON in history but renders only the bounded L
       "PI_OFFLINE=1",
       "BRUV_SUBAGENT_DEPTH=0",
       "OPENAI_API_KEY=offline-placeholder",
+      "SHELL=/bin/sh",
       process.execPath,
       join(root, "src/cli.ts"),
       "--offline",
@@ -41,6 +42,10 @@ test("GPT streaming keeps passive JSON in history but renders only the bounded L
     ]
       .map(quote)
       .join(" ");
+    await writeFile(
+      join(dir, "tmux.conf"),
+      (await readFile(join(root, "scripts/tmux.conf"), "utf8")) + "\nset -g default-shell /bin/sh\n",
+    );
     expect((await tmux("new-session", "-d", "-s", "gpt", "-x", "120", "-y", "40", "-c", root, launch)).code).toBe(0);
     await waitForLiveTuiStartup(frame, (key) => tmux("send-keys", "-t", "gpt", key), "GPT FIXTURE LOADED");
     await tmux("send-keys", "-t", "gpt", "-l", "/gptflood start");
@@ -48,10 +53,17 @@ test("GPT streaming keeps passive JSON in history but renders only the bounded L
     await tmux("send-keys", "-t", "gpt", "Enter"); // completion may consume the first Enter
     await Bun.sleep(150);
     await tmux("send-keys", "-t", "gpt", "Enter");
-    const rendered = await until(["delta23", "You: delta0 delta1", "Voice: provisional voice reply", "Live listening"]);
-    expect(rendered).toContain("You: delta0 delta1");
-    expect(rendered).toContain("Voice: provisional voice reply");
-    expect(rendered).toContain("Live listening");
+    const rendered = await until([
+      "delta23",
+      "delta0 delta1",
+      "provisional voice reply",
+      "Voice · mic on",
+      "Partial transcript",
+    ]);
+    expect(rendered.match(/\bdelta0\b/g)).toHaveLength(1);
+    expect(rendered.match(/provisional voice reply/g)).toHaveLength(1);
+    expect(rendered).not.toContain("You:");
+    expect(rendered).not.toContain("Voice:");
     expect(rendered).not.toContain("[live-transcript]");
     expect(rendered).not.toContain('"gpt_live_provisional"');
   } finally {

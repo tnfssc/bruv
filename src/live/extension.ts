@@ -1,28 +1,34 @@
 import { stripVTControlCharacters } from "node:util";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { TranscriptLog } from "../session/transcript";
+import type { CompactEditor } from "../ui/editor";
+import { getActiveCompactEditor } from "../ui/startup";
+import { type AudioCallbacks, type AudioSetupError, LiveAudio } from "./audio";
+import { type LiveConfig, type LiveInputMode, loadLiveConfig, saveLiveConfig } from "./config";
+import {
+  markPassiveConversationTranscript,
+  presentCanonicalVoiceMessage,
+  registerConversationRenderers,
+  savePassiveConversationTranscript,
+} from "./conversation";
+import { VOICE_COST_ENTRY, VoiceCostTracker } from "./cost";
 import { createDefaultLiveCredentialService, type LiveCredentialService, type LiveProviderId } from "./credentials";
-import { LIVE_PROVIDERS, OPENAI_REALTIME_MODELS, OPENAI_LIVE_MODEL, type LiveModelId } from "./providers";
-import { loadLiveConfig, saveLiveConfig, type LiveConfig, type LiveInputMode } from "./config";
-import { openPushToTalk } from "./push-to-talk";
-import { VoiceCostTracker, VOICE_COST_ENTRY } from "./cost";
-import { GPTLiveSession, type GPTLiveCallbacks } from "./gpt-live-session";
+import { audioDiagnostic, audioLaunchDiagnostic } from "./diagnostics";
 import { gptLiveContext } from "./gpt-live-context";
-import { gptLiveRequest } from "./gpt-live-request";
-import { withoutPassiveLiveHistory } from "./passive-history";
 import { GptLiveDelegationBridge } from "./gpt-live-delegation";
 import { GptLivePlaybackRecovery } from "./gpt-live-playback";
-import { OpenAIRealtimeSession } from "./openai-session";
-import { liveLocalOnly } from "./status";
-import { runLiveSetup } from "./setup";
-import { LiveAudio, type AudioCallbacks, type AudioSetupError } from "./audio";
+import { gptLiveRequest } from "./gpt-live-request";
+import { type GPTLiveCallbacks, GPTLiveSession } from "./gpt-live-session";
+import { type LiveStopResult, registerLiveStop } from "./lifecycle-access";
 import { acquireMainOwner, type MainOwner } from "./main-owner";
-import { registerLiveStop, type LiveStopResult } from "./lifecycle-access";
-import { VoiceSession } from "./session";
-import { audioDiagnostic, audioLaunchDiagnostic } from "./diagnostics";
+import { OpenAIRealtimeSession } from "./openai-session";
+import { withoutPassiveLiveHistory } from "./passive-history";
 import { PlaybackScheduler } from "./playback";
-import { LiveWaveform } from "./waveform";
-import { TranscriptLog } from "../session/transcript";
-import { type VoiceCallbacks, type VoiceOrchestration, type VoiceProvider } from "./types";
+import { LIVE_PROVIDERS, type LiveModelId, OPENAI_LIVE_MODEL, OPENAI_REALTIME_MODELS } from "./providers";
+import { VoiceSession } from "./session";
+import { runLiveSetup } from "./setup";
+import { liveLocalOnly } from "./status";
+import type { VoiceCallbacks, VoiceOrchestration, VoiceProvider } from "./types";
 
 const ID = "bruv-live";
 const MAX_VISIBLE = 8;
@@ -31,6 +37,15 @@ const clean = (value: string) =>
     .replace(/\x1b(?:\[[0-?]*[ -/]*[@-~]|\][^\x07]*(?:\x07|\x1b\\))?/g, "")
     .replace(/[\x00-\x1f\x7f-\x9f\u202a-\u202e\u2066-\u2069]/g, " ")
     .replace(/\s+/g, " ");
+
+function stopWarning(errors: readonly string[]): string {
+  const audio = errors.some((error) => /audio/i.test(error));
+  const connection = errors.some((error) => !/audio/i.test(error));
+  if (audio && connection)
+    return "Voice cleanup wasn't confirmed. Check your system mic indicator; the voice connection may also still be open.";
+  if (audio) return "Couldn't confirm microphone shutdown. Check your system mic indicator.";
+  return "Couldn't confirm the voice connection closed.";
+}
 
 export interface LiveDependencies {
   local(mode: string): boolean;
@@ -103,6 +118,11 @@ type NativeVoice = ReturnType<LiveDependencies["voice"]>;
 
 /** Live owns the ordinary main-agent session; audio interruption never cancels jobs. */
 export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDependencies> = {}): void {
+  let conversationCtx: ExtensionContext | undefined;
+  registerConversationRenderers(
+    pi,
+    () => conversationCtx?.sessionManager.getBranch().filter((entry) => entry.type === "custom_message") ?? [],
+  );
   // Session history survives voice shutdown and reload; this boundary must not.
   pi.on("context", (event) => ({ messages: withoutPassiveLiveHistory(event.messages) }));
   const deps = { ...defaults, ...injected };
@@ -124,7 +144,8 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     readonly inputMode = selected.inputMode ?? "push-to-talk";
     private holdSequence = 0;
     private heldEpoch: number | null = null;
-    private talkPanelOpen = false;
+    private talkEditor?: CompactEditor;
+    private detachTalkInput?: () => void;
     readonly controller = new AbortController();
     readonly cost = new VoiceCostTracker(this.provider, this.model, (entry) => {
       // A late close must never write the old provider bill into a resumed/new session.
@@ -159,9 +180,21 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     private lastRender = 0;
     private lastStatus?: string;
     private lastWidget?: string;
-    private readonly waveform = new LiveWaveform();
-    private waveTimer?: ReturnType<typeof setInterval>;
-    readonly transcriptLog = new TranscriptLog(() => {}); // View only: MainOwner owns ordinary branch history.
+    private editorTimer?: ReturnType<typeof setInterval>;
+    private gptTranscriptIdle?: ReturnType<typeof setTimeout>;
+    private gptAdmittedUserText?: string;
+    readonly transcriptLog = new TranscriptLog(
+      (entry) => {
+        const owner = this.owner;
+        if (!owner) return;
+        if (owner.delegatedVoice) {
+          const represented = entry.speaker === "You" && this.gptAdmittedUserText?.endsWith(entry.text.trim()) === true;
+          markPassiveConversationTranscript(owner, entry, !represented);
+          if (entry.speaker === "You") this.gptAdmittedUserText = undefined;
+        } else if (entry.superseded) savePassiveConversationTranscript(owner, entry, false);
+      },
+      { groupTurns: true },
+    );
     pendingBytes = 0;
     inFlight = false;
     readonly playback: PlaybackScheduler;
@@ -176,7 +209,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       const playbackOptions: ConstructorParameters<typeof PlaybackScheduler>[0] = {
         send: (frame, epoch) => {
           if (!this.audio) return Promise.reject(new Error("Audio not ready"));
-          this.waveform.scheduled(frame, performance.now(), this.playback.state.nativeQueuedMs);
           return this.audio.play(frame, epoch);
         },
         flush: (epoch) => (this.audio ? this.audio.flush(epoch) : Promise.reject(new Error("Audio not ready"))),
@@ -212,20 +244,35 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       });
       this.render(true);
     }
-    async talk() {
-      if (!this.alive || this.state !== "running" || this.talkPanelOpen) return;
-      this.talkPanelOpen = true;
-      this.render(true);
-      try {
-        await openPushToTalk(this.ctx.ui, this.controller.signal, (talking) => this.setTalking(talking));
-      } finally {
-        this.setTalking(false);
-        this.talkPanelOpen = false;
+    private noteGptTranscriptActivity() {
+      if (this.gptTranscriptIdle) clearTimeout(this.gptTranscriptIdle);
+      this.gptTranscriptIdle = setTimeout(() => {
+        this.gptTranscriptIdle = undefined;
+        if (!this.alive) return;
+        // Received text paused; not provider finality or proof of audible playback.
+        this.transcriptLog.finish("Voice", "turn-boundary");
         this.render(true);
-      }
+      }, 800);
+      this.gptTranscriptIdle.unref?.();
+    }
+    private syncTalkInput() {
+      if (!this.alive || this.state !== "running" || this.inputMode !== "push-to-talk") return;
+      const editor = getActiveCompactEditor();
+      if (editor === this.talkEditor) return;
+      const detach = this.detachTalkInput;
+      this.detachTalkInput = undefined;
+      this.talkEditor = editor;
+      detach?.();
+      if (!editor) return;
+      this.detachTalkInput = editor.attachPushToTalk(this.ctx.ui, {
+        signal: this.controller.signal,
+        onTalking: (talking) => this.setTalking(talking),
+        onHint: () => this.render(true),
+      });
     }
     render(immediate = false) {
       if (!this.alive) return;
+      this.syncTalkInput();
       if (!immediate && Date.now() - this.lastRender < 100) {
         if (!this.renderTimer)
           this.renderTimer = setTimeout(
@@ -242,27 +289,27 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         this.renderTimer = undefined;
       }
       this.lastRender = Date.now();
-      const presentation =
-        this.state === "running"
-          ? this.speaking
-            ? "speaking"
-            : this.thinking
-              ? "thinking"
-              : "listening"
-          : "connecting";
       const status =
-        "Live " +
-        presentation +
-        " · " +
-        this.inputState +
-        (this.inputMode === "push-to-talk" && !this.talkPanelOpen ? " · /live talk" : "") +
-        "  " +
-        (this.state === "running" ? this.waveform.tick(this.speaking, performance.now()) : "··········");
+        this.state !== "running"
+          ? "Voice · connecting"
+          : this.inputMode === "continuous"
+            ? this.speaking
+              ? "Speaking · mic on"
+              : "Voice · mic on"
+            : this.heldEpoch !== null
+              ? "Listening · release Space to finish"
+              : !this.talkEditor
+                ? "Voice · input unavailable"
+                : this.speaking
+                  ? "Speaking · hold Space to reply"
+                  : this.thinking
+                    ? "Thinking · hold Space to speak"
+                    : "Voice · hold Space to speak";
       if (status !== this.lastStatus) {
         this.ctx.ui.setStatus(ID, status);
         this.lastStatus = status;
       }
-      const visible = this.transcriptLog.view(clean).slice(-MAX_VISIBLE);
+      const visible = this.transcriptLog.draftView(clean).slice(-MAX_VISIBLE);
       const widget = JSON.stringify(visible);
       if (widget !== this.lastWidget) {
         this.ctx.ui.setWidget(ID, visible.length ? visible : undefined);
@@ -306,7 +353,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       this.speaking = false;
       this.generationFinished = false;
       this.heardQueue = false;
-      this.waveform.resetOutput();
       this.playback.interrupt(epoch);
       this.render(true);
     }
@@ -336,10 +382,11 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       this.state = "off";
       this.playback.close();
       this.gptBridge?.close();
+      if (this.gptTranscriptIdle) clearTimeout(this.gptTranscriptIdle);
+      this.gptTranscriptIdle = undefined;
       this.gptPlayback?.close();
-      if (this.waveTimer) clearInterval(this.waveTimer);
-      this.waveTimer = undefined;
-      this.waveform.resetOutput();
+      if (this.editorTimer) clearInterval(this.editorTimer);
+      this.editorTimer = undefined;
       this.pendingBytes = 0;
       this.transcriptLog.reset();
       if (this.renderTimer) clearTimeout(this.renderTimer);
@@ -418,6 +465,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         this.owner = await deps.owner(pi, this.ctx, {
           onContext: deliver,
           onInput: deliver,
+          onMessage: (message) => presentCanonicalVoiceMessage(this.ctx.sessionManager, message),
           onError: (message) => this.fail(message),
           signal: this.controller.signal,
         });
@@ -439,7 +487,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                 (this.inputMode === "continuous" || (this.heldEpoch !== null && epoch === this.heldEpoch))
               ) {
                 this.inputFrames++;
-                this.waveform.capture(pcm);
                 if (this.gpt) {
                   const transition = this.gptPlayback?.capture(pcm);
                   if (transition === "started") {
@@ -459,7 +506,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                 this.queuedMs = ms;
                 if (ms > 0) this.heardQueue = true;
                 this.playback.nativeQueued(ms);
-                this.waveform.queued(performance.now(), ms);
                 this.drain();
                 this.render();
               }
@@ -500,6 +546,8 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
               let admitted = false;
               const operation = this.owner.delegate(id, speech, snapshot, () => {
                 admitted = true;
+                this.gptAdmittedUserText = speech;
+                this.transcriptLog.finish("You", "turn-boundary");
               });
               if (!admitted) {
                 void operation.catch(() => {});
@@ -526,10 +574,17 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
               this.audio ? this.audio.play(frame, epoch) : Promise.reject(new Error("Audio unavailable")),
             flush: (epoch) => (this.audio ? this.audio.flush(epoch) : Promise.reject(new Error("Audio unavailable"))),
             onError: () => this.fail("GPT-Live playback failed"),
+            onState: (state) => {
+              if (!this.alive) return;
+              this.speaking = state.pendingBytes > 0 || state.inFlight || state.nativeQueuedMs > 0;
+              this.render();
+            },
           });
           this.gpt = (deps.gptSession ?? ((callbacks) => new GPTLiveSession(callbacks)))({
             onInputTranscript: (fragment) => {
               if (!this.alive) return;
+              if (this.gptTranscriptIdle) clearTimeout(this.gptTranscriptIdle);
+              this.gptTranscriptIdle = undefined;
               this.gptBridge?.addFragment({ ...fragment, text: fragment.delta });
               this.owner?.sendContext(
                 JSON.stringify({
@@ -556,6 +611,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                 { customType: "live-transcript" },
               );
               this.transcriptLog.receive("Voice", { text: fragment.delta, finished: false });
+              this.noteGptTranscriptActivity();
               this.render();
             },
             onDelegation: (event) => {
@@ -567,7 +623,10 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
               });
             },
             onAudio: (pcm) => {
-              if (this.alive) this.gptPlayback?.output(Buffer.from(pcm));
+              if (this.alive) {
+                this.gptPlayback?.output(Buffer.from(pcm));
+                this.noteGptTranscriptActivity();
+              }
             },
             onUsage: (usage) => this.cost.usage(usage),
             onError: (message) => this.fail(message),
@@ -623,19 +682,28 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                   this.completedInputTranscripts++;
                   this.inputUtterance = "";
                 }
-                this.transcriptLog.receive("You", { ...t, replace: t.finalitySource === "model_contract" });
+                this.transcriptLog.receive("You", {
+                  ...t,
+                  replace: t.replace || t.finalitySource === "model_contract",
+                });
                 this.render();
               },
               onOutputTranscript: (t) => {
                 if (!this.alive) return;
-                this.outputUtterance = t.finalitySource === "model_contract" ? t.text : this.outputUtterance + t.text;
+                this.outputUtterance =
+                  t.replace || t.finalitySource === "model_contract" ? t.text : this.outputUtterance + t.text;
                 this.owner?.outputTranscript(this.outputUtterance, t.finished === true && !t.interrupted);
                 if (t.finished && !t.interrupted) this.outputUtterance = "";
                 if (t.interrupted) {
                   this.owner?.interrupt();
                   this.outputUtterance = "";
                 }
-                this.transcriptLog.receive("Voice", t.interrupted ? { ...t, finished: false } : t);
+                this.transcriptLog.receive(
+                  "Voice",
+                  t.interrupted
+                    ? { ...t, finished: false }
+                    : { ...t, replace: t.replace || t.finalitySource === "model_contract" },
+                );
                 if (t.interrupted) this.transcriptLog.finish("Voice", "interrupted");
                 this.render();
               },
@@ -677,8 +745,8 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         if (this.gpt) this.gptPlayback?.start();
         else this.playback.start();
         if (!this.alive) return;
-        this.waveTimer = setInterval(() => this.render(true), 80);
-        this.waveTimer.unref?.();
+        this.editorTimer = setInterval(() => this.render(true), 80);
+        this.editorTimer.unref?.();
         this.render(true);
       } catch {
         this.audioLaunchPending = false;
@@ -707,7 +775,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     return run.stopObserved();
   });
   pi.registerCommand("live", {
-    description: "Voice (paid): start, stop, status, model, provider, setup, input, talk, mic-check, speaker-check.",
+    description: "Voice (paid): start, stop, status, model, provider, setup, input, mic-check, speaker-check.",
     getArgumentCompletions: (prefix) => {
       const matches = [
         "start",
@@ -717,7 +785,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         "provider",
         "model",
         "input",
-        "talk",
         "mic-check",
         "speaker-check",
       ].filter((value) => value.startsWith(prefix));
@@ -792,12 +859,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                     ".",
           "info",
         );
-      } else if (action === "talk") {
-        if (!current || current.inputMode !== "push-to-talk") {
-          ctx.ui.notify("Choose /live input → Push-to-talk, then start Live.", "info");
-          return;
-        }
-        await current.talk();
       } else if (action === "input" || action.startsWith("input ")) {
         if (active) {
           ctx.ui.notify("Stop Live before changing mic mode.", "info");
@@ -1063,7 +1124,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         const result = await (current ?? stoppingRun)?.stopObserved();
         if (stopSessionId !== ctx.sessionManager?.getSessionId?.()) return;
         ctx.ui.notify(
-          result && !result.stopped ? "Live stop incomplete: " + result.errors.join("; ") : "Live off.",
+          result && !result.stopped ? stopWarning(result.errors) : "Live off.",
           result && !result.stopped ? "warning" : "info",
         );
       } else if (action === "start" || action === "setup") {
@@ -1077,7 +1138,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         }
         if ((selected.inputMode ?? "push-to-talk") === "push-to-talk" && ctx.mode !== "tui") {
           ctx.ui.notify(
-            "Push-to-talk needs a local terminal talk panel. This frontend has no hold/release controls. Use the terminal, or explicitly choose /live input continuous.",
+            "Hold Space needs the local terminal editor. This frontend has no hold controls. Use the terminal, or explicitly choose /live input continuous.",
             "warning",
           );
           return;
@@ -1126,8 +1187,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           current = run;
           run.render(true);
           await run.start(key);
-          if (run.alive && run.inputMode === "push-to-talk") await run.talk();
-          else if (run.alive)
+          if (run.alive && run.inputMode === "continuous")
             ctx.ui.notify("Live continuous mic: all captured audio is sent. /live stop to end.", "info");
         } catch {
           if (alive())
@@ -1139,10 +1199,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           if (entry === controller) entry = undefined;
         }
       } else if (action)
-        ctx.ui.notify(
-          "Usage: /live [start|setup|stop|status|provider|model|input|talk|mic-check|speaker-check]",
-          "info",
-        );
+        ctx.ui.notify("Usage: /live [start|setup|stop|status|provider|model|input|mic-check|speaker-check]", "info");
     },
   });
   // Navigation must wait for cancellation/results before Pi moves the branch.
@@ -1165,7 +1222,8 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     speakerProbe?.abort();
     await stopForNavigation();
   });
-  pi.on("session_start", () => {
+  pi.on("session_start", (_event, ctx) => {
+    conversationCtx = ctx;
     sequence++;
     entry?.abort();
     entry = undefined;

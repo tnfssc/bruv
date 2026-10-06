@@ -1,15 +1,48 @@
-import { initTheme, InteractiveMode } from "@earendil-works/pi-coding-agent";
-import { Container, stripTerminalSequences } from "@earendil-works/pi-tui";
+import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
+import type { KeybindingsManager } from "@earendil-works/pi-coding-agent";
+import { InteractiveMode, initTheme } from "@earendil-works/pi-coding-agent";
+import {
+  Container,
+  type EditorTheme,
+  stripTerminalSequences,
+  type Terminal,
+  type TuiInputListener,
+  TuiMainScreen,
+} from "@earendil-works/pi-tui";
+import type { AudioCallbacks } from "../src/live/audio";
+import type { LiveDependencies } from "../src/live/extension";
+import liveExtension from "../src/live/extension";
 import { stopCurrentLive } from "../src/live/lifecycle-access";
 import { defaultSocket, OpenAIRealtimeSession, type RealtimeSocket } from "../src/live/openai-session";
-import { describe, expect, test } from "bun:test";
-import liveExtension from "../src/live/extension";
-import type { LiveDependencies } from "../src/live/extension";
 import type { VoiceCallbacks, VoiceOrchestration } from "../src/live/types";
-import type { AudioCallbacks } from "../src/live/audio";
+import { CompactEditor } from "../src/ui/editor";
+import * as startup from "../src/ui/startup";
+
+let activeEditor: CompactEditor | undefined;
+let editorGetter: ReturnType<typeof spyOn>;
+const cleanups: (() => void | Promise<void>)[] = [];
+beforeEach(() => {
+  editorGetter = spyOn(startup, "getActiveCompactEditor").mockImplementation(() => activeEditor);
+});
+afterEach(async () => {
+  for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
+  activeEditor = undefined;
+  editorGetter.mockRestore();
+});
+const identity = (text: string) => text;
+const editorTheme: EditorTheme = {
+  borderColor: identity,
+  selectList: {
+    selectedPrefix: identity,
+    selectedText: identity,
+    description: identity,
+    scrollInfo: identity,
+    noMatch: identity,
+  },
+};
 
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
-function setup(overrides: Partial<LiveDependencies> = {}) {
+function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = true) {
   let handler!: (args: string, ctx: any) => Promise<void>;
   let complete!: (prefix: string) => { value: string; label: string }[] | null;
   let shutdown!: () => void;
@@ -30,9 +63,40 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
     sends = 0;
   let endedAudio = 0;
   const captureGates: Array<number | null> = [];
-  let terminalInput: ((data: string) => { consume?: boolean } | undefined) | undefined;
-  let panel: any;
   const terminalWrites: string[] = [];
+  const terminal = {
+    rows: 24,
+    columns: 100,
+    kittyProtocolActive: true,
+    write: (data: string) => terminalWrites.push(data),
+  } as unknown as Terminal;
+  const tui = new TuiMainScreen(terminal);
+  // Real SDK raw-listener -> focus -> release filtering -> CompactEditor routing.
+  // Drawing, devices, and provider calls are the only simulated boundaries.
+  const raw = tui as unknown as { handleTerminalInput(data: string): void; requestImmediateRender(): void };
+  raw.requestImmediateRender = () => {};
+  tui.requestRender = () => {};
+  const editor = new CompactEditor(
+    tui,
+    editorTheme,
+    {
+      matches: (data: string, action: string) => action === "app.interrupt" && data === "\x1b",
+    } as KeybindingsManager,
+    { paddingX: 0 },
+  );
+  tui.addChild(editor);
+  tui.setFocus(editor);
+  activeEditor = editor;
+  const dialogKeys: string[] = [];
+  const dialog = {
+    render: () => [],
+    invalidate: () => {},
+    handleInput: (data: string) => {
+      dialogKeys.push(data);
+    },
+    focused: false,
+  };
+  let customCalls = 0;
   const played: { length: number; generation: number }[] = [];
   const flushes: number[] = [];
   const status: (string | undefined)[] = [];
@@ -150,7 +214,8 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
   };
   // Existing conversation tests use continuous mic. PTT tests set their mode explicitly.
   const fixtureLoad = deps.config.load;
-  deps.config = { ...deps.config, load: async () => ({ inputMode: "continuous", ...(await fixtureLoad()) }) };
+  if (continuousFixture)
+    deps.config = { ...deps.config, load: async () => ({ inputMode: "continuous", ...(await fixtureLoad()) }) };
   const transcriptEntries: { type: string; data: any }[] = [];
   const listeners = new Map<string, (value: unknown) => void>();
   const events = {
@@ -165,6 +230,7 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
     {
       events,
       appendEntry: (type: string, data: any) => transcriptEntries.push({ type, data }),
+      registerMessageRenderer: () => {},
       registerCommand: (name: string, cmd: any) => {
         expect(name).toBe("live");
         handler = cmd.handler;
@@ -186,29 +252,11 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
     },
     mode: "tui",
     ui: {
-      onTerminalInput: (handler: typeof terminalInput) => {
-        terminalInput = handler;
-        return () => {
-          terminalInput = undefined;
-        };
+      onTerminalInput: (handler: TuiInputListener) => tui.addInputListener(handler),
+      custom: async () => {
+        customCalls++;
+        throw new Error("Live must use the shared editor, not a talk panel");
       },
-      custom: (factory: any) =>
-        new Promise<void>((resolve) => {
-          panel = factory(
-            {
-              terminal: { kittyProtocolActive: true, write: (text: string) => terminalWrites.push(text) },
-              requestRender: () => {},
-            },
-            {},
-            {},
-            () => {
-              panel?.dispose?.();
-              panel = undefined;
-              resolve();
-            },
-          );
-          panel.focused = true;
-        }),
       confirm: async () => consent,
       select: async (_title?: string, _options?: string[]): Promise<string | undefined> => "Done",
       notify: (value: string) => {
@@ -223,6 +271,7 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
       },
     },
   };
+  cleanups.push(() => handler("stop", ctx));
   return {
     deliverContext: (text: string) => ownerCallbacks?.onContext?.(text),
     navigate: () => beforeTree(),
@@ -230,12 +279,13 @@ function setup(overrides: Partial<LiveDependencies> = {}) {
     run: (arg: string) => handler(arg, ctx),
     complete: (prefix: string) => complete(prefix),
     contexts,
-    input: (data: string) => terminalInput?.(data),
-    focusPanel: (focused: boolean) => {
-      if (panel) panel.focused = focused;
-    },
-    get panelLines() {
-      return panel?.render(100) ?? [];
+    input: (data: string) => raw.handleTerminalInput(data),
+    editor,
+    focusDialog: () => tui.setFocus(dialog),
+    focusEditor: () => tui.setFocus(editor),
+    dialogKeys,
+    get customCalls() {
+      return customCalls;
     },
     get endedAudio() {
       return endedAudio;
@@ -527,7 +577,6 @@ describe("Live voice", () => {
       "provider",
       "model",
       "input",
-      "talk",
       "mic-check",
       "speaker-check",
     ]);
@@ -599,7 +648,7 @@ describe("Live voice", () => {
     };
     await t.run("");
     expect([t.launches, t.keyCalls, t.starts]).toEqual([1, 1, 1]);
-    expect(t.status.at(-1)).toStartWith("Live listening");
+    expect(t.status.at(-1)).toBe("Voice · mic on");
     await t.run("stop");
   });
   test("status does not inspect auth or open audio", async () => {
@@ -652,9 +701,12 @@ describe("Live voice", () => {
     await t.run("start");
     expect([t.launches, t.keyCalls, t.starts]).toEqual([1, 1, 1]);
     t.voice.onInputTranscript?.({ text: "hello\x1b[2J\nworld" });
+    await new Promise((resolve) => setTimeout(resolve, 120));
+    expect(t.widgets.at(-1)).toEqual(["hello world"]); // Active user draft, no duplicate chat label.
+    expect(t.ownerEvents).toContainEqual(["input", "hello\x1b[2J\nworld", false]);
     t.voice.onOutputTranscript?.({ text: "reply\u202eok" }, 0);
     await new Promise((resolve) => setTimeout(resolve, 120));
-    expect(t.widgets.at(-1)?.join(" ")).toContain("You: hello world");
+    expect(t.widgets.at(-1)).toEqual(["Assistant: reply ok"]); // Received replies stay drafts until completed.
     expect(t.widgets.at(-1)?.join(" ")).not.toContain("\x1b");
     t.voice.onAudio?.(Buffer.alloc(2000).toString("base64"), 0);
     t.voice.onTurnComplete?.(0);
@@ -670,7 +722,9 @@ describe("Live voice", () => {
     t.voice.onAudio?.(Buffer.alloc(960).toString("base64"), 1);
     await tick();
     expect(t.played.at(-1)?.generation).toBe(1);
-    expect(t.status.at(-1)).toContain("Live");
+    // Playback changes render through the 100 ms UI throttle, not the next microtask.
+    await Bun.sleep(120);
+    expect(t.status.at(-1)).toBe("Speaking · mic on");
     await t.run("status");
     expect(t.notices.at(-1)).toContain("provider interruptions unknown");
     expect(t.notices.at(-1)).toContain("native VP unknown");
@@ -784,12 +838,13 @@ describe("Live voice", () => {
     t.capture.played?.(40);
     for (let i = 0; i < 20; i++) t.capture.capture?.(Buffer.alloc(640));
     await new Promise((resolve) => setTimeout(resolve, 120));
-    expect(t.widgets.at(-1)?.join(" ")).toContain("You: Hello world");
+    expect(t.ownerEvents).toContainEqual(["input", "Hello world", true]);
+    expect(t.widgets.at(-1)).toBeUndefined(); // Completed input belongs in shared history, not a duplicate widget.
     expect(t.sends).toBe(20);
-    expect(t.status.at(-1)).toContain("speaking");
+    expect(t.status.at(-1)).toBe("Speaking · mic on");
     t.voice.onTurnComplete?.(0);
     t.capture.played?.(0);
-    expect(t.status.at(-1)).toContain("listening");
+    expect(t.status.at(-1)).toBe("Voice · mic on");
     await t.run("stop");
   });
   test("stop invalidates pending auth and concurrent starts have one owner", async () => {
@@ -914,6 +969,7 @@ test("real local speaker runner uses only injected native audio, never auth/prov
   const notices: string[] = [];
   liveExtension(
     {
+      registerMessageRenderer: () => {},
       registerCommand: (_: string, command: any) => {
         handler = command.handler;
       },
@@ -1097,36 +1153,44 @@ test("missing auth can be configured then explicitly started from setup", async 
   await t.run("stop");
 });
 
-test("Live waveform goes through setStatus, follows PCM, native drain, interruption and stop", async () => {
+test("compact Voice status follows native playback drain and interruption without waveform churn", async () => {
   const t = setup();
   await t.run("start");
-  expect(t.status.at(-1)).toContain("Live listening");
+  expect(t.status.at(-1)).toBe("Voice · mic on");
   const loud = Buffer.alloc(960, 0x7f);
+  const idleUpdates = t.status.length;
   t.capture.capture?.(loud);
   await new Promise((resolve) => setTimeout(resolve, 110));
-  const listen = t.status.at(-1)!;
-  expect(listen).toContain("Live listening · continuous mic  ");
-  expect(listen).not.toContain("⠐".repeat(10));
+  expect(t.sends).toBe(1);
+  expect(t.status.at(-1)).toBe("Voice · mic on");
+  expect(t.status.length).toBe(idleUpdates); // PCM does not paint a waveform into compact status.
   t.voice.onAudio?.(loud.toString("base64"), 0);
   t.capture.played?.(100);
   await new Promise((resolve) => setTimeout(resolve, 110));
-  expect(t.status.at(-1)).toContain("Live speaking · continuous mic  ");
+  expect(t.status.at(-1)).toBe("Speaking · mic on");
   t.voice.onTurnComplete?.(0);
-  expect(t.status.at(-1)).toContain("Live speaking"); // native still has buffered sound
+  expect(t.status.at(-1)).toBe("Speaking · mic on"); // Native still has buffered sound.
+  t.capture.played?.(0);
+  expect(t.status.at(-1)).toBe("Voice · mic on");
+  t.voice.onAudio?.(loud.toString("base64"), 0);
+  t.capture.played?.(100);
+  await new Promise((resolve) => setTimeout(resolve, 110)); // Status renders are throttled to 100ms.
+  expect(t.status.at(-1)).toBe("Speaking · mic on");
   t.voice.onInterrupted?.(1);
-  expect(t.status.at(-1)).toContain("Live listening · continuous mic  " + "⠐".repeat(10));
+  expect(t.status.at(-1)).toBe("Voice · mic on");
+  expect(t.flushes).toEqual([1]);
   const count = t.status.length;
   await t.run("stop");
   await new Promise((resolve) => setTimeout(resolve, 190));
-  expect(t.status.length).toBe(count + 1); // no leftover animation timer
+  expect(t.status.length).toBe(count + 1); // No leftover animation timer.
   expect(t.status.at(-1)).toBeUndefined();
 });
 
-test("rejected Live startup leaves no animation updates", async () => {
+test("rejected Voice startup clears connecting status and leaves no animation updates", async () => {
   const t = setup();
   t.reject();
   await t.run("start");
-  expect(t.status.some((value) => value?.startsWith("Live connecting · continuous mic  ·"))).toBe(true);
+  expect(t.status).toContain("Voice · connecting");
   expect(t.status.at(-1)).toBeUndefined();
   const count = t.status.length;
   await new Promise((resolve) => setTimeout(resolve, 180));
@@ -1668,97 +1732,211 @@ describe("Live push-to-talk send gate", () => {
     },
   };
   const pcm = Buffer.alloc(640, 12);
-  test("muted until a real release check; hold epochs discard stale and untagged capture", async () => {
-    const t = setup(mode);
-    const started = t.run("start");
-    await tick();
-    expect(t.starts).toBe(1);
+  const press = "\x1b[32;1:1u";
+  const repeat = "\x1b[32;1:2u";
+  const release = "\x1b[32;1:3u";
+  function hold(t: ReturnType<typeof setup>) {
+    t.input(press);
+    t.input(repeat);
+  }
+  test("omitted input mode defaults to muted shared-editor push-to-talk", async () => {
+    const t = setup({}, false); // Use product defaults, not the continuous conversation fixture.
+    await t.run("start");
     expect(t.captureGates).toEqual([null]);
-    expect(t.panelLines.join(" ")).toContain("MUTED");
+    expect(t.editor.wantsKeyRelease).toBe(true);
+    expect(t.status.at(-1)).toBe("Voice · hold Space to speak");
     t.capture.capture!(pcm);
-    t.input(" ");
     t.capture.capture!(pcm, 1);
     expect(t.sends).toBe(0);
-    // First release verifies support. The check itself sends no audio.
-    t.input("\x1b[32;1:3u");
-    t.input("\x1b[32;1:1u");
-    expect(t.panelLines.join(" ")).toContain("TALKING");
+    hold(t);
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(1);
+    t.input(release);
+    await t.run("stop");
+  });
+  test("starts muted in the shared editor; real holds send only the current capture epoch", async () => {
+    const t = setup(mode);
+    t.editor.setText("draft");
+    const cursor = t.editor.getCursor();
+    await t.run("start"); // Startup resolves without opening or awaiting a panel.
+    expect(t.customCalls).toBe(0);
+    expect(t.editor.focused).toBe(true);
+    expect(t.editor.wantsKeyRelease).toBe(true);
+    expect(t.captureGates).toEqual([null]);
+    expect(t.status.at(-1)).toBe("Voice · hold Space to speak");
+    t.capture.capture!(pcm);
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(0);
+    t.input(press); // A press alone is a typed Space, not permission to send.
+    expect(t.editor.getText()).toBe("draft ");
+    expect(t.captureGates).toEqual([null]);
+    t.input(repeat);
+    expect(t.editor.getText()).toBe("draft");
+    expect(t.editor.getCursor()).toEqual(cursor); // Remove only the unchanged hold warmup Space.
+    expect(t.status.at(-1)).toBe("Listening · release Space to finish");
     expect(t.captureGates).toEqual([null, 1]);
     t.capture.capture!(pcm);
     t.capture.capture!(pcm, 0);
     t.capture.capture!(pcm, 1);
     expect(t.sends).toBe(1);
-    t.input("\x1b[32;1:2u");
-    expect(t.captureGates).toEqual([null, 1]);
-    t.input("\x1b[32;1:3u");
+    t.input(repeat);
+    expect(t.captureGates).toEqual([null, 1]); // Repeats extend one hold, not new epochs.
+    t.input(release);
+    expect(t.status.at(-1)).toBe("Voice · hold Space to speak");
     t.capture.capture!(pcm, 1);
     expect(t.sends).toBe(1);
     expect(t.endedAudio).toBe(1);
     expect(t.closes).toBe(0);
-    t.input("\x1b[32;1:1u");
+    hold(t);
     t.capture.capture!(pcm, 1);
     t.capture.capture!(pcm, 2);
     expect(t.sends).toBe(2);
-    t.input("\x1b");
-    await started;
+    t.input("\x1b[32;5:3u"); // Release with changed modifiers still mutes synchronously.
     expect(t.endedAudio).toBe(2);
     expect(t.captureGates).toEqual([null, 1, null, 2, null]);
     t.capture.capture!(pcm, 2);
     expect(t.sends).toBe(2);
+    await t.run("stop");
+    expect(t.editor.wantsKeyRelease).toBe(false);
     expect(t.terminalWrites).toEqual(["\x1b[>15u", "\x1b[?1004h", "\x1b[?1004l", "\x1b[<u"]);
+  });
+  test("a tap or a press timer never opens capture; Enter and Backspace remain editor actions", async () => {
+    const t = setup(mode);
+    t.editor.setText("draft");
+    await t.run("start");
+    t.input(press);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(0);
+    expect(t.captureGates).toEqual([null]);
+    t.input(release);
+    expect(t.editor.getText()).toBe("draft ");
+    t.input("\x7f");
+    expect(t.editor.getText()).toBe("draft");
+    let submitted = "";
+    t.editor.onSubmit = (text) => {
+      submitted = text;
+    };
+    t.input("\r");
+    expect(submitted).toBe("draft");
+    expect(t.captureGates).toEqual([null]);
+    expect(t.endedAudio).toBe(0);
     await t.run("stop");
   });
-  test("explicit controls work without Space releases; focus loss mutes", async () => {
+  test("ordinary input cancels a hold and repeat packets cannot reopen it", async () => {
     const t = setup(mode);
-    const started = t.run("start");
-    await tick();
+    t.editor.setText("draft");
+    await t.run("start");
+    hold(t);
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(1);
+    t.input("x");
+    expect(t.editor.getText()).toBe("draftx");
+    expect(t.captureGates).toEqual([null, 1, null]);
+    expect(t.endedAudio).toBe(1);
+    t.input(repeat);
+    t.capture.capture!(pcm, 1);
+    expect(t.captureGates).toEqual([null, 1, null]);
+    expect(t.editor.getText()).toBe("draftx");
+    expect(t.sends).toBe(1);
+    t.input(release);
+    hold(t);
+    expect(t.captureGates).toEqual([null, 1, null, 2]);
+    t.capture.capture!(pcm, 1);
+    t.capture.capture!(pcm, 2);
+    expect(t.sends).toBe(2);
+    t.input(release);
+    await t.run("stop");
+  });
+  test("legacy repeated Space routes a hold and repeat inactivity bounds capture without key-up", async () => {
+    const t = setup(mode);
+    t.editor.setText("draft");
+    await t.run("start");
+    let now = 1000;
+    const clock = spyOn(Date, "now").mockImplementation(() => now);
+    cleanups.push(() => clock.mockRestore());
     t.input(" ");
+    now += 400;
     t.input(" ");
+    expect(t.editor.getText()).toBe("draft  ");
     expect(t.captureGates).toEqual([null]);
-    t.input("\r");
-    t.input("\r");
+    now += 30;
+    t.input(" ");
+    expect(t.editor.getText()).toBe("draft");
     expect(t.captureGates).toEqual([null, 1]);
     t.capture.capture!(pcm, 1);
     expect(t.sends).toBe(1);
-    t.input("\x1b[O");
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(t.captureGates).toEqual([null, 1, null]);
     expect(t.endedAudio).toBe(1);
-    t.input("\x1b[32;1:2u");
+    expect(t.status.at(-1)).toBe("Voice · hold Space to speak");
     t.capture.capture!(pcm, 1);
     expect(t.sends).toBe(1);
-    t.input("\r");
-    t.input("\x7f");
-    expect(t.captureGates).toEqual([null, 1, null, 2, null]);
-    t.input("\x1b");
-    await started;
     await t.run("stop");
   });
-  test("another dialog taking focus mutes and gets its own keys", async () => {
+  test("another dialog taking focus mutes immediately and retains its own Space keys", async () => {
     const t = setup(mode);
-    const started = t.run("start");
-    await tick();
-    t.input("\r");
-    t.focusPanel(false);
-    expect(t.captureGates).toEqual([null, 1, null]);
-    expect(t.input("\r")).toBeUndefined();
-    expect(t.endedAudio).toBe(1);
-    t.focusPanel(true);
-    expect(t.panelLines.join(" ")).toContain("MUTED");
-    t.input("\x1b");
-    await started;
-    await t.run("stop");
-  });
-  test("stop during hold closes panel and discards late capture without committing", async () => {
-    const t = setup(mode);
-    const started = t.run("start");
-    await tick();
-    t.input("\r");
-    await t.run("stop");
-    await started;
+    await t.run("start");
+    hold(t);
     t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(1);
+    t.focusDialog();
+    expect(t.captureGates).toEqual([null, 1, null]);
+    expect(t.endedAudio).toBe(1);
+    t.input(" ");
+    t.input("\r");
+    expect(t.dialogKeys).toEqual([" ", "\r"]);
+    t.capture.capture!(pcm, 1);
+    expect(t.sends).toBe(1);
+    t.focusEditor();
+    t.input(repeat); // Returning during an existing hold cannot acquire capture.
+    expect(t.captureGates).toEqual([null, 1, null]);
+    expect(t.editor.getText()).toBe("");
+    expect(t.status.at(-1)).toBe("Voice · hold Space to speak");
+    t.input(release);
+    hold(t);
+    expect(t.captureGates).toEqual([null, 1, null, 2]);
+    t.input(release);
+    await t.run("stop");
+  });
+  test("terminal focus loss cancels capture before an editor can consume the packet", async () => {
+    const t = setup(mode);
+    await t.run("start");
+    hold(t);
+    t.input("\x1b[O");
+    expect(t.captureGates).toEqual([null, 1, null]);
+    expect(t.endedAudio).toBe(1);
+    t.capture.capture!(pcm, 1);
+    t.input(press);
+    t.input(repeat);
+    expect(t.sends).toBe(0);
+    expect(t.captureGates).toEqual([null, 1, null]);
+    t.input("\x1b[I");
+    t.input(release);
+    hold(t);
+    expect(t.captureGates).toEqual([null, 1, null, 2]);
+    t.input(release);
+    await t.run("stop");
+  });
+  test("stop during hold detaches shared input and discards late capture without committing", async () => {
+    const t = setup(mode);
+    t.editor.setText("draft");
+    await t.run("start");
+    hold(t);
+    expect(t.captureGates).toEqual([null, 1]);
+    await t.run("stop");
+    t.capture.capture!(pcm, 1);
+    t.capture.capture!(pcm);
     expect(t.sends).toBe(0);
     expect(t.endedAudio).toBe(0);
-    expect(t.panelLines).toEqual([]);
+    expect(t.editor.wantsKeyRelease).toBe(false);
+    expect(t.editor.getText()).toBe("draft");
+    expect(t.editor.focused).toBe(true);
+    expect(t.customCalls).toBe(0);
+    expect(t.status.at(-1)).toBeUndefined();
     expect(t.terminalWrites.at(-1)).toBe("\x1b[<u");
+    t.input(" ");
+    expect(t.editor.getText()).toBe("draft "); // Normal typing survives detach.
   });
   test("GPT-Live push-to-talk does not launch devices or silently send continuous audio", async () => {
     const t = setup({
@@ -1784,13 +1962,73 @@ describe("Live push-to-talk send gate", () => {
     t.ctx.ui.select = async () => "Push-to-talk — hold Space; audio discarded while muted";
     await t.run("input");
     expect(saved.inputMode).toBe("push-to-talk");
-    const started = t.run("start");
-    await tick();
+    await t.run("start");
     await t.run("input continuous");
     expect(saved.inputMode).toBe("push-to-talk");
     expect(t.notices.at(-1)).toContain("Stop Live");
-    t.input("\x1b");
-    await started;
     await t.run("stop");
   });
+});
+
+test("GPT speech stays visible unless the same pending utterance is admitted as a canonical user turn", async () => {
+  let callbacks: any;
+  const saved: Array<{ text: string; details: any; display: boolean }> = [];
+  const owner: any = {
+    delegatedVoice: true,
+    orchestration: { instructions: "", tools: [] },
+    delegate: (_id: string, _text: string, _snapshot: unknown, admitted: () => void) => {
+      admitted();
+      return Promise.resolve();
+    },
+    saveTranscript: (text: string, details: any, display: boolean) => saved.push({ text, details, display }),
+    sendContext() {},
+    close() {},
+    stopForeground() {},
+    released: Promise.resolve(),
+  };
+  const f = setup({
+    config: { load: async () => ({ provider: "openai", model: "gpt-live-1" }), save: async () => {} },
+    owner: async () => owner,
+    gptSession: (cb: any) => {
+      callbacks = cb;
+      return {
+        state: "ready",
+        connect: async () => {},
+        appendMicrophone: () => true,
+        observation: () => true,
+        commentary: () => true,
+        close: async () => {},
+      } as any;
+    },
+  });
+  await f.run("start");
+  callbacks.onInputTranscript({ delta: "Hi", startMs: 100, endMs: 200 });
+  callbacks.onOutputTranscript({ delta: "Hello", startMs: 250, endMs: 300 });
+  expect(saved.filter((entry) => entry.details.speaker === "You").map((entry) => entry.display)).toEqual([true]);
+  callbacks.onInputTranscript({ delta: "Check the repo", startMs: 400, endMs: 500 });
+  callbacks.onDelegation({ id: "speech", target: "client", offsetMs: 550 });
+  await tick();
+  // All speech remains in its original passive source. Only the represented boundary is hidden.
+  expect(saved.filter((entry) => entry.details.speaker === "You").map((entry) => entry.display)).toEqual([true, false]);
+  callbacks.onInputTranscript({ delta: "Thanks", startMs: 600, endMs: 650 });
+  callbacks.onOutputTranscript({ delta: "You are welcome", startMs: 660, endMs: 700 });
+  expect(saved.filter((entry) => entry.details.speaker === "You").map((entry) => entry.display)).toEqual([
+    true,
+    false,
+    true,
+  ]);
+  await f.run("stop");
+});
+
+test("unconfirmed audio shutdown gives a plain warning, not a false off state or unsupported retry", async () => {
+  const f = setup();
+  await f.run("start");
+  f.audio.stop = async () => {
+    throw new Error("test cleanup failure");
+  };
+  await f.run("stop");
+  expect(f.notices.at(-1)).toContain("Couldn't confirm microphone shutdown");
+  expect(f.notices.at(-1)).toContain("system mic indicator");
+  expect(f.notices.at(-1)).not.toContain("Live off");
+  expect(f.notices.at(-1)).not.toContain("Try");
 });
