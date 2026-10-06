@@ -1,16 +1,17 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { randomUUID } from "node:crypto";
+import { mkdir, rename, rm, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import { validateToolArguments } from "@earendil-works/pi-ai";
-import { mkdir, writeFile, rename, rm } from "node:fs/promises";
-import { dirname } from "node:path";
-import { randomUUID } from "node:crypto";
-import type { VoiceOrchestration } from "./types";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import {
+  type ClassicSession,
   getInstructionContinuitySession,
   setCurrentInstructionFrame,
-  type ClassicSession,
 } from "../agent/instruction-continuity";
+import { terminalTranscriptText } from "./transcript-text";
+import type { VoiceOrchestration } from "./types";
 
 /** This Pi release has no public external-agent tool seam. Own the same pinned
  * ClassicSession that ordinary turns use, Direct providers own tool turns; paired GPT-Live admits ordinary session.prompt turns. */
@@ -285,6 +286,19 @@ async function acquire(
   };
   const appendText = (role: "user" | "assistant", text: string) => {
     if (!valid() || !text.trim()) return;
+    const safe = terminalTranscriptText(text);
+    if (safe !== text) {
+      // Retain the exact source as hidden audit, never as terminal control bytes.
+      ownerRecord({
+        role: "custom",
+        customType: "live-transcript",
+        content: [{ type: "text", text }],
+        display: false,
+        details: { speaker: role === "user" ? "You" : "Voice", status: "final", sanitizedPresentation: true },
+        timestamp: Date.now(),
+      });
+      text = safe;
+    }
     if (role === "user") ownerRecord({ role, content: [{ type: "text", text }], timestamp: Date.now() });
     else
       ownerRecord({

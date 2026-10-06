@@ -106,10 +106,11 @@ credential readiness, not verified access. OpenAI Live needs an OpenAI API key;
 Codex OAuth alone is not sufficient. Keep keys out of chat.
 
 Live starts in push-to-talk mode. The mic stays open locally, but muted audio is
-discarded, not saved or sent. In the talk panel, press and release Space once to
-check key-release support, then hold Space to speak and release to end the turn.
-Enter starts speaking and Backspace mutes on terminals without release events.
-Esc returns to text with the mic muted; `/live talk` reopens the panel.
+discarded, not saved or sent. Tap Space to type a space; hold Space in the normal
+editor to speak. Release ends the spoken turn. Typing or leaving the editor
+mutes the mic. Spoken turns stay in the same conversation as typed turns.
+Terminals with key-release events mute immediately. Other terminals infer release
+after 250 ms without repeats; this is not a hardware key-up guarantee.
 Use `/live input` to choose push-to-talk or continuous mic before starting.
 Continuous mode sends all captured mic audio while Live is on. GPT-Live primary
 has no manual input-turn control; use Gemini or OpenAI Realtime for push-to-talk.

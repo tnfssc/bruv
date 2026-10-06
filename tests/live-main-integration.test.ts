@@ -1,30 +1,30 @@
 /** Real offline Pi -> Live owner -> registered execute -> production task manager integration. */
 import { afterEach, expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
 import { existsSync, writeFileSync } from "node:fs";
-import liveExtension from "../src/live/extension";
-import { join, resolve } from "node:path";
+import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import {
+  type AssistantMessage,
+  createAssistantMessageEventStream,
+  getCurrentSystemPrompt,
+} from "@earendil-works/pi-ai";
 import { getModel } from "@earendil-works/pi-ai/compat";
 import {
   createAgentSession,
   DefaultResourceLoader,
-  ModelRuntime,
-  SessionManager,
   type ExtensionAPI,
   type ExtensionContext,
+  ModelRuntime,
+  SessionManager,
 } from "@earendil-works/pi-coding-agent";
 import asynchronousTasksExtension from "../src/agent/extension";
 import { installCurrentConversationAdapter } from "../src/agent/instruction-continuity";
-import { acquireMainOwner, type MainOwner } from "../src/live/main-owner";
-import { bruvSystemPrompt } from "../src/prompts";
-import {
-  createAssistantMessageEventStream,
-  getCurrentSystemPrompt,
-  type AssistantMessage,
-} from "@earendil-works/pi-ai";
-import { VoiceSession } from "../src/live/session";
+import liveExtension from "../src/live/extension";
 import { registerLiveStop } from "../src/live/lifecycle-access";
+import { acquireMainOwner, type MainOwner } from "../src/live/main-owner";
+import { VoiceSession } from "../src/live/session";
+import { bruvSystemPrompt } from "../src/prompts";
 
 // Release/Linux gates build dist/bruv first. The source-only macOS lane uses
 // the existing real CLI wrapper, never a mock runtime or a skipped test.
@@ -801,9 +801,10 @@ test("GPT Live spoken delegation reaches Pi as one clean provisional request", a
   f.owner.delegatedVoice = true;
   let command: any;
   let provider: any;
-  let observed: any[] = [];
+  const observed: any[] = [];
   const feedback: string[] = [];
   const localPi = {
+    registerMessageRenderer: () => {},
     registerCommand: (_name: string, registration: any) => {
       command = registration.handler;
     },

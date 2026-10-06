@@ -2,30 +2,30 @@ import { beforeAll, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { getModel } from "@earendil-works/pi-ai/compat";
 import {
   AssistantMessageComponent,
   CustomMessageComponent,
-  UserMessageComponent,
-  SessionManager,
-  initTheme,
   createAgentSession,
   DefaultResourceLoader,
+  initTheme,
   ModelRuntime,
+  SessionManager,
+  UserMessageComponent,
 } from "@earendil-works/pi-coding-agent";
-import { getModel } from "@earendil-works/pi-ai/compat";
 import { stripTerminalSequences } from "@earendil-works/pi-tui";
-import { TranscriptLog, type TranscriptEntry } from "../src/session/transcript";
+import { bindInstructionContinuitySession } from "../src/agent/instruction-continuity";
 import {
+  conversationTranscriptRenderer,
+  markPassiveConversationTranscript,
   presentCanonicalVoiceMessage,
   registerConversationRenderers,
   renderConversationTranscript,
   savePassiveConversationTranscript,
-  markPassiveConversationTranscript,
-  conversationTranscriptRenderer,
 } from "../src/live/conversation";
 import { acquireMainOwner } from "../src/live/main-owner";
-import { bindInstructionContinuitySession } from "../src/agent/instruction-continuity";
 import { withoutPassiveLiveHistory } from "../src/live/passive-history";
+import { type TranscriptEntry, TranscriptLog } from "../src/session/transcript";
 
 beforeAll(() => {
   const packageDir = process.env.PI_PACKAGE_DIR;
@@ -61,7 +61,7 @@ test("grouped source saves one full turn, while only active drafts occupy the vi
   log.finish("Voice", "turn-boundary");
   expect(saved).toHaveLength(1);
   expect(plain(rendered(custom(saved[0])))).toContain("Interrupted");
-  expect(plain(rendered(custom(saved[0])))).toContain("Audio playback unverified");
+  expect(plain(rendered(custom(saved[0])))).not.toContain("Audio playback unverified");
 });
 
 test("replacement keeps uncertain source but renders only the complete replacement", () => {
@@ -218,7 +218,7 @@ test("grouped paired source retains full text and uncertainty on replay without 
     expect((reply as any).content).toBe("full received ".repeat(700));
     expect(rendered(reply)).toEqual(rendered(saved[1]));
     expect(plain(rendered(reply))).toContain("Partial transcript");
-    expect(plain(rendered(reply))).toContain("Audio playback unverified");
+    expect(plain(rendered(reply))).not.toContain("Audio playback unverified");
     expect(withoutPassiveLiveHistory(replay).map((message) => message.role)).toEqual(["user"]);
     expect(replay.filter((message) => message.role === "user")).toHaveLength(1);
     expect((saved[0] as any).display).toBe(false);
@@ -454,6 +454,46 @@ test("deferred voice display follows the existing canonical tool pair rather tha
     expect((source[call + 2] as any).content[0].text).toBe("reply received during execution");
   } finally {
     release();
+    owner.close();
+    await owner.released;
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("provider transcript control bytes cannot reach the terminal renderer", () => {
+  const text = "Before\x1b]52;c;c2VjcmV0\x07after\x1b[2J\x00\u202e\nSecond line";
+  for (const speaker of ["You", "Voice"] as const) {
+    const output = rendered(custom({ speaker, text, status: "final" })).join("\n");
+    expect(output).not.toContain("\x1b]52");
+    expect(output).not.toContain("\x1b[2J");
+    expect(output).not.toContain("\x00");
+    expect(output).not.toContain("\u202e");
+    expect(plain(output.split("\n"))).toContain("Beforeafter");
+    expect(plain(output.split("\n"))).toContain("Second line");
+  }
+});
+
+test("canonical voice replay keeps safe prose and retains unsafe source only as hidden audit", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-voice-safe-replay-"));
+  const manager = SessionManager.create(dir, join(dir, "sessions"));
+  const { events, ctx } = ownerFixture(manager);
+  const owner = await acquireMainOwner({} as any, ctx, {
+    onMessage: (message) => presentCanonicalVoiceMessage(manager as any, message),
+  });
+  const source = "Before\x1b]52;c;c2VjcmV0\x07after\x1b[2J\nSecond line";
+  try {
+    owner.inputTranscript(source, true);
+    owner.outputTranscript(source, true);
+    const replay = SessionManager.open(manager.getSessionFile()!).buildSessionContext().messages;
+    const visible = replay.filter((message) => message.role === "user" || message.role === "assistant");
+    expect(visible).toHaveLength(2);
+    expect(JSON.stringify(visible)).not.toContain("\\u001b");
+    expect(JSON.stringify(visible)).toContain("Beforeafter");
+    const audit = replay.filter((message: any) => message.role === "custom" && !message.display);
+    expect(audit).toHaveLength(2);
+    expect(JSON.stringify(audit)).toContain("\\u001b");
+    expect(events.filter((event) => event.type === "message_start")).toHaveLength(2);
+  } finally {
     owner.close();
     await owner.released;
     await rm(dir, { recursive: true, force: true });

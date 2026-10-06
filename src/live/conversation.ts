@@ -3,16 +3,17 @@ import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
 import {
   AssistantMessageComponent,
-  UserMessageComponent,
-  getMarkdownTheme,
   type ExtensionAPI,
   type ExtensionContext,
+  getMarkdownTheme,
   type MessageRenderer,
+  UserMessageComponent,
 } from "@earendil-works/pi-coding-agent";
 import { Container, Text } from "@earendil-works/pi-tui";
 import { getInstructionContinuitySession } from "../agent/instruction-continuity";
-import { VOICE_ENTRY, type TranscriptEntry } from "../session/transcript";
+import { type TranscriptEntry, VOICE_ENTRY } from "../session/transcript";
 import type { MainOwner } from "./main-owner";
+import { terminalTranscriptText } from "./transcript-text";
 
 function textContent(message: { content: unknown }): string {
   if (typeof message.content === "string") return message.content;
@@ -117,16 +118,16 @@ export function conversationTranscriptRenderer(
     // Never fall through to Pi's raw JSON/custom-label renderer for audit-only data.
     if (!entry || entry.superseded) return result;
     const markdownTheme = getMarkdownTheme();
+    const text = terminalTranscriptText(entry.text);
     result.addChild(
       entry.speaker === "You"
-        ? new UserMessageComponent(entry.text, markdownTheme, options.outputPad)
-        : new AssistantMessageComponent(assistant(entry.text), false, markdownTheme, undefined, options.outputPad),
+        ? new UserMessageComponent(text, markdownTheme, options.outputPad)
+        : new AssistantMessageComponent(assistant(text), false, markdownTheme, undefined, options.outputPad),
     );
     const facts: string[] = [];
     if (entry.status === "interrupted") facts.push("Interrupted");
     else if (entry.status === "suppressed") facts.push("Not played");
     else if (entry.status !== "final") facts.push("Partial transcript");
-    if (entry.speaker === "Voice" && entry.status !== "suppressed") facts.push("Audio playback unverified");
     if (facts.length) result.addChild(new Text(theme.fg("muted", facts.join(" · ")), options.outputPad, 0));
     return result;
   };
@@ -159,8 +160,20 @@ export function presentCanonicalVoiceMessage(manager: ExtensionContext["sessionM
   )
     return;
   const session = getInstructionContinuitySession(manager) as { _emit?: (event: unknown) => void } | undefined;
-  session?._emit?.({ type: "message_start", message });
-  session?._emit?.({ type: "message_end", message });
+  const shown =
+    message.role === "custom"
+      ? message
+      : {
+          ...message,
+          content:
+            typeof message.content === "string"
+              ? terminalTranscriptText(message.content)
+              : message.content.map((part) =>
+                  part.type === "text" ? { ...part, text: terminalTranscriptText(part.text) } : part,
+                ),
+        };
+  session?._emit?.({ type: "message_start", message: shown });
+  session?._emit?.({ type: "message_end", message: shown });
 }
 
 /** Save a full passive source entry, e.g. a superseded direct draft.
@@ -168,7 +181,7 @@ export function presentCanonicalVoiceMessage(manager: ExtensionContext["sessionM
  * live-transcript remains excluded from model context by the existing passive-history projection.
  */
 export function savePassiveConversationTranscript(owner: MainOwner, entry: TranscriptEntry, display: boolean): void {
-  owner.saveTranscript!(
+  owner.saveTranscript?.(
     entry.text,
     {
       speaker: entry.speaker,
@@ -187,7 +200,7 @@ export function savePassiveConversationTranscript(owner: MainOwner, entry: Trans
  * Source fragment appends must precede this boundary (sendCustomMessage preserves queue order).
  */
 export function markPassiveConversationTranscript(owner: MainOwner, entry: TranscriptEntry, display: boolean): void {
-  owner.saveTranscript!(
+  owner.saveTranscript?.(
     "",
     {
       groupId: randomUUID(),

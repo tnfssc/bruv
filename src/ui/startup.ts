@@ -1,8 +1,8 @@
 import {
-  InteractiveMode,
-  SettingsManager,
   type CustomEditor,
+  InteractiveMode,
   type KeybindingsManager,
+  SettingsManager,
 } from "@earendil-works/pi-coding-agent";
 import type { Container, EditorTheme, TUI } from "@earendil-works/pi-tui";
 import { CompactEditor } from "./editor";
@@ -23,6 +23,14 @@ export function installQuietStartup(): () => void {
       SettingsManager.prototype.getQuietStartup = original;
     }
   };
+}
+
+let activeInteractive: { editor: CustomEditor } | undefined;
+
+/** Read the current editor through the existing InteractiveMode owner, without replacing it. */
+export function getActiveCompactEditor(): CompactEditor | undefined {
+  const editor = activeInteractive?.editor as CompactEditor | undefined;
+  return editor?.bruvCompactEditor && typeof editor.attachPushToTalk === "function" ? editor : undefined;
 }
 
 /**
@@ -46,6 +54,7 @@ export function installStartupEditor(): () => void {
   };
   function compactInit(this: InteractiveMode): ReturnType<typeof nativeInit> {
     const mode = this as unknown as StartupSeam;
+    activeInteractive = mode;
     if (!mode.isInitialized && mode.editor === mode.defaultEditor) {
       const previous = mode.defaultEditor;
       const autocompleteMaxVisible = previous.getAutocompleteMaxVisible();
@@ -71,6 +80,7 @@ export function installStartupEditor(): () => void {
   }
   interactive.init = compactInit;
   return () => {
+    activeInteractive = undefined;
     if (interactive.init === compactInit) interactive.init = nativeInit;
   };
 }

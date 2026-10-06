@@ -1,0 +1,4 @@
+https://raw.githubusercontent.com/openai/codex/rust-v0.160.1/codex-rs/tui/src/keymap.rs
+HTTP 200
+                toggle_voice: default_bindings![plain(KeyCode::F(8))],
+                toggle_voice_mute: default_bindings![ctrl(KeyCode::Char('x'))],
