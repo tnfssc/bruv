@@ -37,6 +37,8 @@ export type MainOwner = {
   delegatedVoice?: boolean;
   outputTranscript(text: string, final?: boolean): void;
   sendContext(text: string, metadata?: { customType: string; details?: unknown }): void;
+  /** Passive presentation/audit only: never inject context or authorize a response. */
+  saveTranscript?(text: string, details: unknown, display: boolean): void;
   interrupt(): void;
   turnComplete(): void;
   /** Immediately stops admitting calls; does not wait for a calling execute to finish. */
@@ -116,7 +118,7 @@ export async function withOrdinaryMainTurn<T>(manager: object, run: () => Promis
     textTurns.delete(manager);
   }
 }
-function record(session: OwnerSession, message: AgentMessage): void {
+function record(session: OwnerSession, message: AgentMessage, onMessage?: (message: AgentMessage) => void): void {
   if (message.role === "custom")
     session.sessionManager.appendCustomMessageEntry(
       message.customType,
@@ -128,6 +130,12 @@ function record(session: OwnerSession, message: AgentMessage): void {
   session.agent.state.messages.push(message);
   const owner = owners.get(session.sessionManager);
   if (owner) owner.identity = identity(session.sessionManager);
+  // Presentation follows the durable commit, never authorizes a model run.
+  try {
+    onMessage?.(message);
+  } catch {
+    // A synchronous terminal failure must not roll back or re-admit a committed turn.
+  }
 }
 /** Pi's external Live owner appends history directly, so its ordinary agent event
  * stream never fires. Feed only the terminal subscriber path (not extension hooks
@@ -146,6 +154,8 @@ async function acquire(
   callbacks: {
     onContext?: (text: string, options?: { triggerResponse?: boolean }) => void;
     onInput?: (text: string) => void;
+    /** Already-persisted canonical records, including records deferred behind a tool pair. */
+    onMessage?: (message: AgentMessage) => void;
     signal?: AbortSignal;
     onError?: (message: string) => void;
   } = {},
@@ -224,7 +234,7 @@ async function acquire(
   const deferredRecords: AgentMessage[] = [];
   const ownerRecord = (message: AgentMessage) => {
     if (pairActive) deferredRecords.push(message);
-    else record(session, message);
+    else record(session, message, callbacks.onMessage);
   };
   const pairSlot = (): (() => void) | Promise<() => void> => {
     const previous = pairTail;
@@ -235,7 +245,8 @@ async function acquire(
     });
     const release = () => {
       pairActive = false;
-      for (const message of deferredRecords.splice(0)) if (sameBranch(owner, manager)) record(session, message);
+      for (const message of deferredRecords.splice(0))
+        if (sameBranch(owner, manager)) record(session, message, callbacks.onMessage);
       reservedPairs--;
       unlock();
     };
@@ -536,7 +547,7 @@ async function acquire(
               customType,
               content: [{ type: "text", text }],
               // Provisional GPT fragments are canonical passive history, not one TUI bubble per delta.
-              // The Live transcript widget supplies the bounded visible view instead.
+              // saveTranscript persists a separate presentation boundary for those same source fragments.
               display: customType !== "live-transcript",
               details: metadata?.details,
             },
@@ -556,6 +567,27 @@ async function acquire(
       });
       owner.identity = identity(manager);
       callbacks.onContext?.(text);
+    },
+    saveTranscript(text, details, display) {
+      if (!valid()) return;
+      if (owner.delegatedVoice) {
+        // Use Pi's passive queue so a group never splits the active coding tool pair.
+        void session
+          .sendCustomMessage(
+            { customType: "live-transcript", content: [{ type: "text", text }], details, display },
+            { triggerTurn: false },
+          )
+          .catch(() => callbacks.onError?.("Could not persist paired Live transcript"));
+      } else {
+        ownerRecord({
+          role: "custom",
+          customType: "live-transcript",
+          content: [{ type: "text", text }],
+          details,
+          display,
+          timestamp: Date.now(),
+        });
+      }
     },
     interrupt() {
       settleTranscript(false);

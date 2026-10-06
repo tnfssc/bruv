@@ -4,17 +4,29 @@ export type TranscriptEntry = {
   speaker: "You" | "Voice";
   text: string;
   status: "final" | "turn-boundary" | "interrupted" | "partial" | "suppressed";
+  /** A replacement transcript superseded this draft; retain the source, not a second visible turn. */
+  superseded?: true;
 };
 /** Received text is not audio or evidence that generated speech was heard. */
 export class TranscriptLog {
   private pending: Record<"You" | "Voice", string> = { You: "", Voice: "" };
   private recent: TranscriptEntry[] = [];
-  constructor(private readonly save: (entry: TranscriptEntry) => void) {}
+  constructor(
+    private readonly save: (entry: TranscriptEntry) => void,
+    private readonly options: { groupTurns?: boolean } = {},
+  ) {}
   receive(speaker: "You" | "Voice", part: { text: string; finished?: boolean; replace?: boolean }): void {
-    if (speaker === "You" && part.replace) this.finish("You", "partial");
+    if (part.replace && (speaker === "You" || this.options.groupTurns))
+      this.flush(speaker, "partial", this.options.groupTurns ? true : undefined);
     // Preserve received order when speakers interleave. A partial segment is
     // display/history data only; flushing it never authorizes a handoff.
     if (part.text) this.finish(speaker === "You" ? "Voice" : "You", "partial");
+    // The conversation sink saves one full turn. Legacy audit sinks retain bounded chunks.
+    if (this.options.groupTurns) {
+      this.pending[speaker] += part.text;
+      if (part.finished) this.finish(speaker, "final");
+      return;
+    }
     // Persist bounded chunks rather than trimming or holding an endless utterance.
     let offset = 0;
     while (offset < part.text.length) {
@@ -27,10 +39,13 @@ export class TranscriptLog {
     if (part.finished) this.finish(speaker, "final");
   }
   finish(speaker: "You" | "Voice", status: TranscriptEntry["status"]): void {
+    this.flush(speaker, status);
+  }
+  private flush(speaker: "You" | "Voice", status: TranscriptEntry["status"], superseded?: true): void {
     const text = this.pending[speaker];
     this.pending[speaker] = "";
     if (!text) return;
-    const entry = { speaker, text, status };
+    const entry: TranscriptEntry = { speaker, text, status, ...(superseded ? { superseded } : {}) };
     this.save(entry);
     this.recent.push(entry);
     while (this.recent.length > 24 || this.recent.reduce((n, e) => n + e.text.length, 0) > 32768) {
@@ -40,6 +55,15 @@ export class TranscriptLog {
   reset(): void {
     this.pending = { You: "", Voice: "" };
     this.recent = [];
+  }
+  /** Active drafts only: completed turns belong in the ordinary conversation, not a widget. */
+  draftView(clean: (text: string) => string): string[] {
+    return (["You", "Voice"] as const)
+      .filter((speaker) => this.pending[speaker])
+      .map((speaker) => {
+        const text = clean(this.pending[speaker].slice(-2400));
+        return (speaker === "You" ? "" : "Assistant: ") + text;
+      });
   }
   /** Widget is a bounded viewport; full entries remain in session history. */
   view(clean: (text: string) => string): string[] {
