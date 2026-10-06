@@ -1,0 +1,9 @@
+# Terminal performance fixture lifecycle
+
+Combined fixture suites share SDK process globals even when each fixture is deterministic on its own. In particular, the SDK exported `theme` is a live Proxy that reads the current concrete theme from `globalThis[Symbol.for("@earendil-works/pi-coding-agent:theme")]`; it is not a snapshot suitable for restoration with `setThemeInstance`. Navigation fixtures must capture and restore the concrete global theme value (or restore the prior absence), otherwise later theme access recurses through the proxy.
+
+Fixture setup owns its process-global changes until dispose; check both fixture orders and setup/dispose composition when fixtures patch shared adapters. Preserve unrelated adapter state through the existing cleanup handles. The regression in `tests/terminal-perf-navigation.test.ts` composes tool then navigation fixture lifecycles and invokes theme rendering after teardown. This is a test-fixture lifecycle concern, not production theme/performance behavior.
+
+Source: observed combined `tests/terminal-perf-*.test.ts` failure where navigation theme restoration installed the live proxy as the concrete global theme; individual navigation tests had passed.
+
+Joined host tests revealed another real test-order collision: pi-host tests install manual-shake SessionManager hooks before the later disk adapter captures original methods; its projection facade lacks getSessionId. CLI installs the disk adapter before those hooks. The bare offline SDK lifecycle test now uses a fresh child process and installs the disk adapter first, just like the runner/product. It still checks scoped SessionManager.open restoration inside the child and unchanged parent method. Do not add facade guards to production merely to mask this test order. This SDK lifecycle probe, like initialized InteractiveMode, belongs in an isolated process when used with other irreversible installers.

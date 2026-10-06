@@ -16,6 +16,18 @@
       "name": "Build",
       "command": "bun run build",
       "icon": "build"
+    },
+    {
+      "name": "Terminal Frame Lab",
+      "command": "bun run perf:terminal",
+      "icon": "debug",
+      "async": true
+    },
+    {
+      "name": "Terminal Interaction Lab",
+      "command": "bun run perf:interactions",
+      "icon": "debug",
+      "async": true
     }
   ]
 }
