@@ -54,3 +54,5 @@ CI workflow: explicit feedback success then two accepted full/docs lane tuples; 
 Dependency workflow: verify downloaded identity/files before explicit credential exposure; publish step owns auth/freshness/leased push. Judge task_69a61924 ACCEPT8d6139c plus related tests;13 independent tests/nine shell syntax blocks. This scopes credentials within existing write job, not new security boundary; no hosted/auth/API proof.
 
 Release workflow: one read-only admission/SHA-tag job; downstream explicit success gates and immutable-source wiring replace scattered policy. Judge task_265f1748 ACCEPT72a12eb plus both tests;56 independent tests. Extra Ubuntu queue/start/failure boundary explicit. Boolean fixture is not hosted scheduling; no platform/build proof. Both related test primaries pending.
+
+Asset-test primary: owned copied dependencies/input checkout, explicit generation→inventory→old timestamps→idempotence→cleanup. Judge task_a43b5841 ACCEPT6c6ae2c; three mutations independently caught. No shared dependency writes, no full byte fidelity/stale-output cleanup/compiled proof.

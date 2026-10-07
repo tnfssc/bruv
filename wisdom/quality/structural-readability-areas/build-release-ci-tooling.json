@@ -1002,7 +1002,7 @@
     {
       "focus": "tests/prepare-assets.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_eee3ca81",
@@ -1018,13 +1018,21 @@
           "id": "task_a43b5841",
           "base": "49dc4c3b460884b93f04eb5d2b4739a6fdcf0345",
           "candidate": "dfcb3f2587a3d0980b52f07f5e1552067ff23398",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Own copied-input temporary checkout makes generation/idempotence setup and cleanup explicit; copy Pi because adaptation may write. Fixed old timestamps remove sleep/clock dependence; existing inventory preserved.",
+          "checks": "Independentfocus test,strict tsc/format/lint/diff pass;unconditional rewrite/unexpected output/no-op mutations each fail. Installed dependencies required; no byte-fidelity/stale-output-removal/compiled release claim.",
+          "acceptedBlobs": {
+            "tests/prepare-assets.test.ts": "6c6ae2ca09e7f769d3f2ec4dde252ed58d792170"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6c6ae2ca09e7f769d3f2ec4dde252ed58d792170",
       "readingResult": "Owned temporary checkout and explicit preparation replace implicit prebuild/shared mutation; deterministic timestamp comparison and guaranteed cleanup.",
-      "checks": "Focus testpass;3 preparation mutations correctly fail;Biome/focused tsc/diff pass;installed deps required, no full build."
+      "checks": "Focus testpass;3 preparation mutations correctly fail;Biome/focused tsc/diff pass;installed deps required, no full build.",
+      "integrationState": "Full focus patch integrated, production/assets dependencies unchanged; note excluded."
     },
     {
       "focus": "tests/product-identity.test.ts",
