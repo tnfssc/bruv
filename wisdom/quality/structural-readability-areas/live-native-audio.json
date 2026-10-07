@@ -1066,12 +1066,15 @@
         "launchBase": "2c5d7aa9ae377dfda5fc059faea391444860c1fa",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_07981349",
         "branch": "bruv/primary-src-live-gpt-live-context.ts-07981349",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "a4836828bfb3336229bd70430539e5fb7fecbc77"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged tail2400codepoints/disclosedomissions thenquoted480byteUTF8chunks withoutsplitting codepoints;caller observations no inventedcorrelation,provisionaltimestamps/approxcontext/sessionselection separate.",
+      "checks": "98tests555assertions context/delegation/request/extension,diffclean;no provider/device/macOS."
     },
     {
       "focus": "src/live/gpt-live-delegation.ts",
@@ -1096,10 +1099,17 @@
     {
       "focus": "src/live/gpt-live-playback.ts",
       "initialBlob": "fcbf4975f3b457e798e7d959aee9943f62b7f698",
-      "primary": null,
+      "primary": {
+        "id": "task_65c3efca",
+        "launchBase": "e11164e48eedeedc5f1c95f0598c178c3a58e6b2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_65c3efca",
+        "branch": "bruv/primary-src-live-gpt-live-playback.ts-65c3efca",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/gpt-live-request.ts",
