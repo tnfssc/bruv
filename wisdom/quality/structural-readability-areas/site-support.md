@@ -83,3 +83,5 @@ site/scripts/install.test.ts: Host mocks/release publication/fixture ownership s
 site/scroll.ts: One remainder has gesture-local purpose; reversal/bounds/reset explicit and caller owns resets on navigation/input lifecycle. Judge traced sole shipped terminal caller and3 tests/16 assertions;browser inspected not rerun.
 
 site/scripts/startup.test.ts: Explicit local gate/pending/release/ready sequence,asset-failure loop and separate no-JS context keep short lifetimes visible. Judge read actual build/runtime/template and tests;candidate import missing playwright+ghostty prevented runtime,no assertions claimed. Separate area final browser gate passed.
+
+site/styles.css: CSS directly states terminal mode/viewport effects and HTML no-JS default;enhanced demo clipping preserves accessibility while screen/control keyboard-hover-touch rules stay adjacent. Distinct roles should not be coupled by cosmetic dedupe. Judge complete stylesheet/callers/tests and10 tests/123298 assertions;not browser/accessibility rendering proof.
