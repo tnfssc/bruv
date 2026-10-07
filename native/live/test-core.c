@@ -35,7 +35,34 @@ static void test_packet_tail_rates(void) {
     }
 }
 
+// Flush must discard both a partially consumed pair and a fractional last sample.
+// The fresh packet sits behind old ring data in the pair case.
+static void assert_flush_discards_window(int queuedSamples, int renderedFrames) {
+    LLCore *core = ll_create();
+    assert(core);
+    int16_t old[480];
+    for (int i = 0; i < 480; ++i) old[i] = 24000;
+    float output[8];
+    assert(ll_play_push_batch(core, old, queuedSamples, 0));
+    ll_render(core, output, renderedFrames, 48000);
+    assert(output[renderedFrames - 1] == 24000.f / 32768.f);
+
+    ll_flush(core, 1);
+    assert(ll_queued_ms(core) == 0);
+    assert(!ll_play_push_batch(core, old, queuedSamples, 0));
+    int16_t fresh[] = {-8000, -16000, -24000};
+    assert(ll_play_push_batch(core, fresh, 3, 1));
+    ll_render(core, output, 8, 48000);
+    const int16_t expected[] = {-8000, -12000, -16000, -20000, -24000, -24000, 0, 0};
+    for (int i = 0; i < 8; ++i) assert(output[i] == expected[i] / 32768.f);
+    assert(ll_queued_ms(core) == 0);
+    ll_destroy(core);
+}
+
 int main(void) {
+    assert_flush_discards_window(480, 1); // partial old block, interpolation pair
+    assert_flush_discards_window(2, 3); // exhausted ring, last sample at phase 0.5
+
     test_packet_tail_rates();
     assert(ll_self_test());
     LLCore *core = ll_create();

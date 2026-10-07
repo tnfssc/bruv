@@ -4,15 +4,36 @@
 #include <string.h>
 typedef struct { int generation, count; int16_t data[LL_PLAY_SAMPLES]; } PlayBlock;
 typedef struct { int count, epoch; float data[LL_CAPTURE_SAMPLES]; } CaptureBlock;
+
+typedef enum {
+    RENDER_EMPTY,
+    RENDER_LAST_SAMPLE,
+    RENDER_SAMPLE_PAIR
+} RenderWindow;
+
+// Only the render callback owns this cursor. Flush changes the shared generation,
+// not callback memory; the callback discards its interpolation window on observing it.
+typedef struct {
+    int generation;
+    int blockOffset;
+    int sample, lookahead;
+    RenderWindow window;
+    double phase;
+} PlaybackCursor;
+
 struct LLCore {
-    _Atomic unsigned playWrite, playRead, capWrite, capRead;
-    _Atomic uint64_t pending; // upper 32 bits: generation; lower 32: captured playback frames
+    // Command thread produces blocks; render callback consumes them.
+    _Atomic unsigned playWrite, playRead;
+    _Atomic uint64_t pending; // upper 32 bits: generation; lower 32: queued playback frames
+    PlayBlock play[LL_PLAY_BLOCKS];
+    PlaybackCursor renderer;
+
+    // Capture callback produces tagged blocks; output queue drains them.
+    _Atomic unsigned capWrite, capRead;
     _Atomic unsigned captureDropped;
     _Atomic int captureEpoch;
     _Atomic uint64_t captureCutoff;
-    PlayBlock play[LL_PLAY_BLOCKS]; CaptureBlock capture[LL_CAPTURE_BLOCKS];
-    int offset, current, a, b, primed, tail;
-    double phase;
+    CaptureBlock capture[LL_CAPTURE_BLOCKS];
 };
 LLCore *ll_create(void) {
     LLCore *c = calloc(1, sizeof(LLCore));
@@ -55,42 +76,75 @@ static void consumed(LLCore *c, int gen) {
     while ((int)(old >> 32) == gen && (unsigned)old != 0 &&
            !atomic_compare_exchange_weak(&c->pending, &old, old - 1)) { }
 }
-static int pull(LLCore *c, int gen, int *sample) {
+static int pull_playback_sample(LLCore *c, int *sample) {
+    PlaybackCursor *cursor = &c->renderer;
     while (atomic_load(&c->playRead) != atomic_load(&c->playWrite)) {
-        unsigned r=atomic_load(&c->playRead);
-        PlayBlock *b=&c->play[r % LL_PLAY_BLOCKS];
-        if (b->generation != gen || c->offset >= b->count) {
-            c->offset=0; atomic_store(&c->playRead,r+1); continue;
+        unsigned read = atomic_load(&c->playRead);
+        PlayBlock *block = &c->play[read % LL_PLAY_BLOCKS];
+        if (block->generation != cursor->generation || cursor->blockOffset >= block->count) {
+            cursor->blockOffset = 0;
+            atomic_store(&c->playRead, read + 1);
+            continue;
         }
-        *sample=b->data[c->offset++]; consumed(c,gen); return 1;
+        *sample = block->data[cursor->blockOffset++];
+        consumed(c, cursor->generation);
+        return 1;
     }
     return 0;
 }
+
+static void reset_interpolation(PlaybackCursor *cursor, int generation) {
+    cursor->generation = generation;
+    cursor->window = RENDER_EMPTY;
+    cursor->phase = 0;
+    // Keep blockOffset until pull discards the old block and advances playRead.
+}
+
+static void load_lookahead(LLCore *c) {
+    PlaybackCursor *cursor = &c->renderer;
+    if (pull_playback_sample(c, &cursor->lookahead)) {
+        cursor->window = RENDER_SAMPLE_PAIR;
+    } else {
+        cursor->lookahead = cursor->sample;
+        cursor->window = RENDER_LAST_SAMPLE;
+    }
+}
+
 void ll_render(LLCore *c, float *out, int count, double rate) {
-    int gen=ll_generation(c);
-    if (c->current != gen) { c->current=gen; c->primed=0; c->tail=0; c->phase=0; }
-    if (rate <= 0) { memset(out,0,(size_t)count*sizeof(float)); return; }
-    double step=24000.0/rate;
-    for (int i=0;i<count;i++) {
-        if (ll_generation(c) != gen) { gen=ll_generation(c); c->current=gen; c->primed=0; c->phase=0; }
-        if (!c->primed) {
-            if (!pull(c,gen,&c->a)) { out[i]=0; continue; }
-            c->tail=0;
-            if (!pull(c,gen,&c->b)) { c->b=c->a; c->tail=1; }
-            c->primed=1; c->phase=0;
+    PlaybackCursor *cursor = &c->renderer;
+    int generation = ll_generation(c);
+    if (cursor->generation != generation) reset_interpolation(cursor, generation);
+    if (rate <= 0) {
+        memset(out, 0, (size_t)count * sizeof(float));
+        return;
+    }
+    double step = 24000.0 / rate;
+    for (int i = 0; i < count; i++) {
+        if (ll_generation(c) != generation) {
+            generation = ll_generation(c);
+            reset_interpolation(cursor, generation);
         }
-        // Running out of lookahead is not an end-of-stream marker. A newly
-        // published packet may arrive before the held sample is rendered (or
-        // during its fractional output at higher device rates). Resume the
-        // same interpolation phase rather than inserting a repeated sample.
-        if (c->tail && pull(c, gen, &c->b)) c->tail=0;
-        out[i]=(float)(c->a+(c->b-c->a)*c->phase)/32768.0f;
-        c->phase+=step;
-        while(c->phase>=1.0) {
-            c->phase-=1.0;
-            if (c->tail) { c->primed=0; break; }
-            c->a=c->b;
-            if (!pull(c,gen,&c->b)) { c->b=c->a; c->tail=1; }
+        if (cursor->window == RENDER_EMPTY) {
+            if (!pull_playback_sample(c, &cursor->sample)) {
+                out[i] = 0;
+                continue;
+            }
+            cursor->phase = 0;
+            load_lookahead(c);
+        }
+        // Missing lookahead is not end-of-stream. A packet arriving while the
+        // last sample is held can resume interpolation at the same phase.
+        if (cursor->window == RENDER_LAST_SAMPLE) load_lookahead(c);
+        out[i] = (float)(cursor->sample + (cursor->lookahead - cursor->sample) * cursor->phase) / 32768.0f;
+        cursor->phase += step;
+        while (cursor->phase >= 1.0) {
+            cursor->phase -= 1.0;
+            if (cursor->window == RENDER_LAST_SAMPLE) {
+                cursor->window = RENDER_EMPTY;
+                break;
+            }
+            cursor->sample = cursor->lookahead;
+            load_lookahead(c);
         }
     }
 }

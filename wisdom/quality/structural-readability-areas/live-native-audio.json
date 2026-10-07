@@ -17,9 +17,16 @@
         "status": "candidate ready",
         "commit": "333c662fc7ac2b3ffa9a8ca238ba0fe9c6bce8f5"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c5d328c7",
+          "status": "running",
+          "candidate": "333c662fc7ac2b3ffa9a8ca238ba0fe9c6bce8f5",
+          "base": "80720079160a7bbc23be750dcffaefb6fc7458f2"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged candidate: opposite job conditions distinguish helper protocol smoke/artifact delivery from source+compiled loopback probe; extraction would add navigation.",
       "checks": "9 workflow tests/100 assertions, three portable sanitizer binaries, YAML routing/permissions/pins/artifacts and diff checks. No hosted/macOS/device/provider or compiled transport execution."
@@ -122,13 +129,21 @@
       "judgeRounds": [
         {
           "id": "task_365b0c49",
-          "status": "running",
+          "status": "complete",
           "candidate": "693ef0906777ccc267265d5b16e25a5df5ff1b66",
-          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a"
+          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Callback-owned cursor separates shared rings; explicit pair/last/empty window removes primed/tail reconstruction; lookahead and reset own coherent operations. Block offset retained across generation reset; framing/atomic safety unchanged.",
+          "checks": "Independent strict ASan/UBSan core/capture/waveform; 16 Bun pass/72 assertions; 30,000-operation exact differential; baseline-compatible tests; no device/concurrency proof.",
+          "acceptedBlobs": {
+            "native/live/AudioCore.c": "a4c9b7c4ec975fdcfe46cf875c7f5faf5bc2dcc6",
+            "native/live/test-core.c": "c976ac82d9a89a8241d65311bc798bb214150a89"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "a4c9b7c4ec975fdcfe46cf875c7f5faf5bc2dcc6",
+      "integration": "integrated accepted exact candidate",
       "relatedPaths": [
         "native/live/test-core.c"
       ],
@@ -180,7 +195,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_365b0c49",
+        "verdict": "ACCEPT",
+        "blob": "c976ac82d9a89a8241d65311bc798bb214150a89"
+      }
     },
     {
       "focus": "native/live/test-waveform.c",
