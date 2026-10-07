@@ -273,8 +273,15 @@
     {
       "focus": "src/agent/native-fast-mode.ts",
       "initialBlob": "a89e3e2bac3e22cbf9b209a8694b8c871070ee21",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_fd75f63a",
+          "launchBase": "7f874cac04cf0fc8820152abfd7a07547ddb19da",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_fd75f63a",
+          "branch": "bruv/primary-native-fast-mode-fd75f63a"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -282,16 +289,29 @@
     {
       "focus": "src/agent/provider-attempts.ts",
       "initialBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_1b7e035c",
           "launchBase": "4ac050c611fe27f7ac757429cdd11d4ddb1842c6",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_1b7e035c",
-          "branch": "bruv/primary-provider-attempt-evidence-1b7e035c"
+          "branch": "bruv/primary-provider-attempt-evidence-1b7e035c",
+          "commit": "5e95045dec145d784639b23f578741539586a603",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: native compaction owns request/session/generation validity; boundary records evidence and isolates listener failures; cache observer accepts response only, not dispatch.",
+          "checks": "54 tests/255 assertions; focused format/diff pass; lint 5 baseline warnings; no compile/build/live provider."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_075c1281",
+          "candidate": "5e95045dec145d784639b23f578741539586a603",
+          "base": "4ac050c611fe27f7ac757429cdd11d4ddb1842c6",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
