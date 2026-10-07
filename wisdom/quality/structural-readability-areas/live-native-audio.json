@@ -121,13 +121,20 @@
       "judgeRounds": [
         {
           "id": "task_c68d41f2",
-          "status": "running",
+          "status": "complete",
           "candidate": "4ba1f1c1b0757f60bedd75076bd461397f6a112c",
-          "base": "1ece2913a7f8e25b5ccf2c6e4e8cf50a258ab9a9"
+          "base": "1ece2913a7f8e25b5ccf2c6e4e8cf50a258ab9a9",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Preloaded input removes daemonproducer/sharedexception/blockedstdin lifetime;stdout remains real unread pipe. Independent3 instrumented runs exit74 with65269/65536bytes pending beforeEOF;deadline/diagnostic intact. Reproduced3 leaked baseline handles, candidate cleanup/reap explicit.",
+          "checks": "Independent nativebuild/backpressure/no-device protocol;silentdrop rejected,blocking killed/reaped5.001sec;diffpass. Standalone fixture no maintained caller found;no exhaustive framing/device proof.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/backpressure.py": "df54145e5bb23b98a0ba70decb49efa6f767a01c"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "df54145e5bb23b98a0ba70decb49efa6f767a01c",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [],
       "readingResult": "Preloaded command replay file removes producer thread; unread stdout launch/exit74 deadline/diagnostic and failure kill/reap/close visible. Explicit baseline openpipe leak fixed by owned handle cleanup.",
       "checks": "Native build/backpressure/no-device protocol pass;10 instrumented realhelper runs;silentdrop/wrongstatus/missingdiagnostic/blocking mutations rejected,blocking killed/reaped5.001sec. No device/provider/macOS/fullgate."

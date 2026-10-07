@@ -40,3 +40,5 @@ Branch: `bruv/whole-repo-structural-readability-live-n-662639e6`. Initial base `
 - Parent owns one PR #45 and whole Linux gate. No push or area PR. Area commits are safe partial batches only; final result requires full genuine coverage.
 
 Latest accepted batch: isolated graph wrapper (`task_1b8756f7` / `task_1a73a583`) exposes graph-start/verify and one ordered cleanup snapshot;24 regressions+2 independent private graph smokes pass. New test_isolated_audio.py now integrated but own primary pending. Editor voice assigned primary (`task_90932544` / `task_5f1948bf`) accepts final89f3ee58 fixture lifetime improvements;39 independent editor tests pass, UI/parent final-hash reconciliation recorded.
+
+Backpressure primary `task_b65be047` / judge `task_c68d41f2`: removes producer-thread lifetime, keeps actual unread pipe saturation (independent3 runs65269/65536bytes before exit74). Deadline/diagnostic proof retained; reproduced baseline3 open handles now closed. Blocking mutation killed/reaped after5.001sec. Standalone fixture, no maintained caller found; CI integration remains parent-owned.
