@@ -375,7 +375,12 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       await f.binding.flush();
       await f.binding.close();
       const count = subtype(f.frames, "task_notification").length;
+      // Restoring projection state must never materialize unrelated root messages.
+      const fullBranch = spyOn(f.session, "getBranch").mockImplementation(() => {
+        throw new Error("Full root history was materialized during cursor restore");
+      });
       const next = bindNativeTasks(f.owner, f.options);
+      fullBranch.mockRestore();
       await next.flush();
       expect(subtype(f.frames, "task_notification")).toHaveLength(count);
       expect(subtype(f.frames, "task_started")).toHaveLength(1);

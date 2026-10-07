@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
+import { appendFile, mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -121,7 +121,8 @@ test("real task history is measured; fresh-process resume preserves originals an
       expect(snapshots.at(-1).data.cursor.revision).toBeGreaterThanOrEqual(1);
       const child = jsonl(await readFile(task.agent.sessionFile));
       expect(child).toHaveLength(2 + counts.updates * counts.childEntries);
-      expect(snapshots.at(-1).data.cursor.childEntries).toEqual(child.slice(1).map((entry) => entry.id));
+      expect(snapshots.at(-1).data.cursor.childEntries).toBeUndefined();
+      expect(snapshots.at(-1).data.cursor.childOffset).toBe((await readFile(task.agent.sessionFile)).length);
     }
     // Resource ceilings live in the supervisor. Do not require quadratic snapshots to survive a fix.
     const nativePaths = (await files(join(dir, "native"))).filter((path) => path.endsWith(".jsonl"));
@@ -169,7 +170,8 @@ test("metrics are batched and report the actual persistent ledger", async () => 
     expect(rows.at(-1)?.journalEntries).toBeLessThanOrEqual(2 + counts.tasks * (counts.updates + 1));
     const fixture = JSON.parse(await readFile(join(dir, "fixture.json"), "utf8"));
     const snapshots = jsonl(await readFile(fixture.root.sourceSessionId)).slice(2);
-    expect(snapshots.every((entry) => entry.data.cursor.childEntries.length === 1)).toBe(true);
+    expect(snapshots.every((entry) => entry.data.cursor.childEntries === undefined)).toBe(true);
+    expect(snapshots.every((entry) => entry.data.cursor.childOffset > 0)).toBe(true);
     expect(rows.at(-1)?.journalEntries).toBe(jsonl(await readFile(fixture.root.sourceSessionId)).length);
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -201,6 +203,41 @@ test("zero updates is resumable; reuse, wrong counts and invalid arguments do no
     expect(unknown.code).not.toBe(0);
     expect(unknown.stdout).toBe("");
     for (const { path, digest } of before) expect(hash(await readFile(path))).toBe(digest);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}, 30_000);
+
+test("legacy child ID snapshots migrate once without replay or rewriting originals", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-resource-legacy-"));
+  const counts = { tasks: 1, updates: 3, childEntries: 1 };
+  try {
+    await run(dir, "write", counts);
+    const fixture = JSON.parse(await readFile(join(dir, "fixture.json"), "utf8"));
+    const path = fixture.root.sourceSessionId;
+    const ledger = jsonl(await readFile(path));
+    const latest = structuredClone(ledger.at(-1));
+    const childPath = fixture.tasks[0].agent.sessionFile;
+    const child = await readFile(childPath);
+    latest.id = "legacy-cursor-fixture";
+    latest.parentId = ledger.at(-1).id;
+    latest.data.cursor.childEntries = jsonl(child)
+      .slice(1)
+      .map((entry) => entry.id);
+    delete latest.data.cursor.childOffset;
+    await appendFile(path, JSON.stringify(latest) + "\n");
+    const before = await readFile(path);
+    const nativePaths = (await files(join(dir, "native"))).filter((path) => path.endsWith(".jsonl"));
+    const digests = await Promise.all(nativePaths.map(async (path) => hash(await readFile(path))));
+    await run(dir, "resume", counts);
+    const after = await readFile(path);
+    expect(after.subarray(0, before.length).equals(before)).toBe(true);
+    expect(await readFile(childPath)).toEqual(child);
+    const migrated = jsonl(after).at(-1).data.cursor;
+    expect(migrated.childEntries).toBeUndefined();
+    expect(migrated.legacyCursorId).toBeUndefined();
+    expect(migrated.childOffset).toBe(child.length);
+    for (const [index, path] of nativePaths.entries()) expect(hash(await readFile(path))).toBe(digests[index]);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

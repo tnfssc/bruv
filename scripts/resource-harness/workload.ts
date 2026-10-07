@@ -246,13 +246,14 @@ async function main(options: Options) {
           sourceSessionId: link.child.sourceSessionId,
           sourceCallId: link.launchToolUseId,
         });
-        await writer.append({
+        const written = await writer.appendWithResult({
           sourceMessageId: entry.id,
           type: frame.type,
           message: frame.message,
           timestamp: entry.timestamp,
           uuid: frame.uuid,
         });
+        return written.appended;
       },
       diagnostic: (message) => {
         throw new Error(message);
