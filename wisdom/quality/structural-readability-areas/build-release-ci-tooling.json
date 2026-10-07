@@ -210,7 +210,7 @@
     {
       "focus": "scripts/install-local.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_56171a8b",
@@ -226,15 +226,24 @@
           "id": "task_fa23cd76",
           "base": "3f7811fb2f9c5675ccc877f839d01adfdb0430ca",
           "candidate": "8e688196c804aac23216d4a6bc1498aa3574fb0a",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Single successful-rename journal replaces flags/aliases; reverse cleanup and clearing-to-commit visible. Connector-first, preserved modes, unsafe target refusal, signals/recovery retention preserved. Explicit backup rename has no tracked consumers.",
+          "checks": "Independent17 pass61 assertions; sh/bash syntax/diff; SIGTERM second rename exit143 restores pair/modes and removes stage. Existing signal/rename window and nonatomic pair retained; no full build/device.",
+          "acceptedBlobs": {
+            "scripts/install-local.sh": "ef8220b9c0b3bf364d5c4515f8fa7764f9ee13ff",
+            "tests/install-local.test.ts": "501a2d5272f9a22acfbc295e0a0222cb48d423e0"
+          }
         }
       ],
       "relatedPaths": [
         "tests/install-local.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "ef8220b9c0b3bf364d5c4515f8fa7764f9ee13ff",
       "readingResult": "Candidate unifies separate replacement flags/commit state/path aliases into successful-rename journal; clearing journal commits pair. Explicit recovery backup rename compat.previous → bruv-claude-compat.previous.",
-      "checks": "17 pass/61 assertions; bash syntax/strict tsc/format/diff pass; two unchanged lint warnings. No build/smoke/mac/device. Existing rename/signal window retained. Worker note untracked in retained candidate checkout."
+      "checks": "17 pass/61 assertions; bash syntax/strict tsc/format/diff pass; two unchanged lint warnings. No build/smoke/mac/device. Existing rename/signal window retained. Worker note untracked in retained candidate checkout.",
+      "integrationState": "Full two-file patch integrated without overlap; untracked local worker note excluded."
     },
     {
       "focus": "scripts/install.sh",
@@ -544,17 +553,25 @@
     {
       "focus": "tests/ci-selective.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_bf42118e",
           "launchBase": "4e9d756b6119aafc0db6a906bfe9b223d3fe1180",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_bf42118e",
           "branch": "bruv/primary-tests-ci-selective.test.ts-bf42118e",
+          "state": "completed",
+          "commit": "5d2bcd155b9409ce803456161d9ce2442d3c1d8f"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_10e3096b",
+          "base": "4e9d756b6119aafc0db6a906bfe9b223d3fe1180",
+          "candidate": "5d2bcd155b9409ce803456161d9ce2442d3c1d8f",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -562,7 +579,9 @@
         "verdict": "ACCEPT",
         "blob": "e5c8c68e33035aa58de5bb6da9c3b1366d989baa",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Separate scoped Git/CLI fixture lifetimes replace shared scenario mutations/markers/reset bookkeeping; keeps two-tree executable/prior-artifact replacement coverage.",
+      "checks": "12 tests52 assertions focused; related24/231; focused tsc/format/lint/diff pass. No full build/hosted."
     },
     {
       "focus": "tests/compiled-bun-fixture.ts",
@@ -643,7 +662,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_fa23cd76",
+        "verdict": "ACCEPT",
+        "blob": "501a2d5272f9a22acfbc295e0a0222cb48d423e0",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/manual-release.test.ts",
@@ -807,8 +832,16 @@
     {
       "focus": "tests/update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_27b632e4",
+          "launchBase": "4171e52297cccc7e93ad15ab209d12f39bc6fd36",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_27b632e4",
+          "branch": "bruv/primary-tests-update.test.ts-27b632e4",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,

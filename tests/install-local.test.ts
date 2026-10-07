@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { chmod, cp, mkdir, mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, cp, mkdir, mkdtemp, readdir, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -147,7 +147,11 @@ for (const existing of [false, true])
     );
     expect(await run(root)).not.toBe(0);
     expect(await readFile(join(root, "bin/bruv"), "utf8")).toBe("old bruv");
-    if (existing) expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe("old connector");
+    expect((await stat(join(root, "bin/bruv"))).mode & 0o777).toBe(0o751);
+    if (existing) {
+      expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe("old connector");
+      expect((await stat(join(root, "bin/bruv-claude-compat"))).mode & 0o777).toBe(0o750);
+    }
     expect((await readdir(join(root, "bin"))).sort()).toEqual(existing ? ["bruv", "bruv-claude-compat"] : ["bruv"]);
   });
 
@@ -155,4 +159,45 @@ test("relative local install directory still supplies an absolute staged overrid
   const root = await sandbox();
   expect(await run(root, { BRUV_INSTALL_DIR: "bin" })).toBe(0);
   expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe(launcher);
+});
+
+test("first rename failure leaves both installed executables unchanged", async () => {
+  const root = await sandbox();
+  await writeFile(join(root, "bin/bruv"), "old bruv");
+  await writeFile(join(root, "bin/bruv-claude-compat"), "old connector");
+  await writeFile(join(root, "tools/mv"), "#!/bin/sh\nexit 1\n", { mode: 0o755 });
+  expect(await run(root)).not.toBe(0);
+  expect(await readFile(join(root, "bin/bruv"), "utf8")).toBe("old bruv");
+  expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe("old connector");
+  expect((await readdir(join(root, "bin"))).sort()).toEqual(["bruv", "bruv-claude-compat"]);
+});
+
+test("failed rollback retains the original pair for recovery", async () => {
+  const root = await sandbox();
+  await writeFile(join(root, "bin/bruv"), "old bruv");
+  await writeFile(join(root, "bin/bruv-claude-compat"), "old connector");
+  await writeFile(
+    join(root, "tools/mv"),
+    '#!/bin/sh\ncase "$2" in */.bruv-install-*/bruv|*.previous) exit 1;; esac\nexec /bin/mv "$@"\n',
+    { mode: 0o755 },
+  );
+  expect(await run(root)).not.toBe(0);
+  expect(await readFile(join(root, "bin/bruv"), "utf8")).toBe("old bruv");
+  expect(await readFile(join(root, "bin/bruv-claude-compat"), "utf8")).toBe(launcher);
+  const stages = (await readdir(join(root, "bin"))).filter((name) => name.startsWith(".bruv-install-"));
+  expect(stages).toHaveLength(1);
+  const stage = join(root, "bin", stages[0]!);
+  expect(await readFile(join(stage, "bruv.previous"), "utf8")).toBe("old bruv");
+  expect(await readFile(join(stage, "bruv-claude-compat.previous"), "utf8")).toBe("old connector");
+});
+
+test("an unsafe connector target is rejected before either installed path changes", async () => {
+  const root = await sandbox();
+  await writeFile(join(root, "bin/bruv"), "old bruv");
+  await writeFile(join(root, "external-connector"), "external connector");
+  await symlink(join(root, "external-connector"), join(root, "bin/bruv-claude-compat"));
+  expect(await run(root)).not.toBe(0);
+  expect(await readFile(join(root, "bin/bruv"), "utf8")).toBe("old bruv");
+  expect(await readFile(join(root, "external-connector"), "utf8")).toBe("external connector");
+  expect((await readdir(join(root, "bin"))).sort()).toEqual(["bruv", "bruv-claude-compat"]);
 });
