@@ -11,7 +11,7 @@ Worker owns the real persistent task-binding workload. Parent owns the superviso
 
 Use the real task binding and disk-backed session code. Fake model/job activity, not history storage. Measure a long write and a fresh-process resume separately. A green short run does not prove long fanout is safe.
 
-The supervisor samples Linux child RSS and fixture bytes every 100 ms. It also reads workload heap, journal bytes/count, and elapsed time. It kills only its owned workload process on a budget violation or timeout. Child metrics, stderr, and parent samples are bounded. No models, credentials, or real home journals are touched.
+The supervisor samples Linux child RSS and fixture bytes every 100 ms. It also reads workload heap, journal bytes/count, and elapsed time. It kills only its owned workload process on a budget violation or timeout. Child metrics, stderr, and parent samples are bounded. No models or credentials are used. Portable workloads use only their own fixtures. Captured mode reads the chosen original to clone it, then opens only the private copy.
 
 Reports and fixtures stay under a unique artifacts/resource-harness run directory. We do not destroy failing evidence. The sampling watchdog is not a kernel memory quota. It can overshoot between samples. The workload must remain model-free and single-process. Non-Linux hosts currently get child-reported RSS but no external RSS watchdog; record this limit in reports.
 
@@ -33,6 +33,8 @@ Values stay the same for now. The existing measured-resource and safe-recovery v
 
 ## Review checkpoint
 
-Code is committed locally through 21ff174a. Safety review task: task_5786fbb0. Worktree: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_5786fbb0. Branch: bruv/resource-harness-safety-review-5786fbb0. Review is read-only. Its findings still need parent triage.
+Code is committed locally through 21ff174a. Safety review task: task_5786fbb0. Worktree: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_5786fbb0. Branch: bruv/resource-harness-safety-review-5786fbb0. Review was read-only and is complete. No must-fix findings. Parent added the missing Node runtime version to captured reports and clarified that a stopped source writer is a precondition; size/mtime alone cannot guarantee live-write consistency.
 
-Validation so far: 18 harness tests pass, TypeScript passes, focused Biome passes, bash syntax and git diff checks pass. Shared full CI is not green: the newly measured stress gate exposes the current product bug. Full build/root suite were not repeated for this script-only harness. Existing connector regressions are being checked separately. No PR or push yet.
+Validation so far: 18 harness tests pass, TypeScript passes, focused Biome passes, bash syntax and git diff checks pass. Shared full CI is not green: the newly measured stress gate exposes the current product bug. Full build/root suite were not repeated for this script-only harness. Existing connector regressions also pass in their isolated SDK process. No PR or push yet.
+
+Final review checks: all 18 harness tests and TypeScript pass after the provenance/doc changes. Shell tool resolution changed during validation: mise exec tried to bootstrap pnpm with an unavailable asset name. Final checks used the already-installed Bun 1.4.2 and Node 24.21.0 binaries under ~/.local/share/mise/installs. No tool versions were changed. Code remains committed locally, not pushed. The harness is complete; repairing the production growth/resume bug is the next task.

@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { type Budgets, supervise } from "./supervisor";
 
-/** Clone existing history, not a live task. Require CoW so a giant incident does not get copied byte by byte. */
+/** Requires a stopped writer. Clone existing history with CoW, not a live task or a byte-by-byte giant copy. */
 export async function snapshotSession(source: string, destination: string) {
   const before = await stat(source);
   if (!before.isFile()) throw new Error("Session source must be a regular file");
@@ -54,6 +54,7 @@ export async function runCapturedSession(options: { source: string; out: string;
     externalRssSampling: process.platform === "linux",
     platform: process.platform,
     bunVersion: Bun.version,
+    runtime: process.version,
     passed: phase.passed,
     phases: [phase],
   };

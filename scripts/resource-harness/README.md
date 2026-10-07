@@ -12,6 +12,8 @@ Both commands fail with exit code 1 if a budget is exceeded, a child crashes, it
 
 ## Reuse an incident instead of waiting hours
 
+Stop the source writer before capture. The size/mtime check detects common changes; it cannot prove a live writer is quiesced.
+
 --session takes a private copy-on-write snapshot of an existing native Pi journal and runs the real session reopen and task-binding restore in a guarded child. It never sends a prompt or starts a model. The copy preserves the original root IDs and cursor data. Reflink is required; unsupported filesystems fail rather than silently copying gigabytes. The snapshot and report stay in a mode-0700 run directory. Do not upload real history without reviewing its private content.
 
 The existing journal is input, so its bytes are recorded but not charged as new disk growth. New writes are still capped at 64 MiB. Captured replay keeps the 512 MiB RSS and 90 s limits, but does not kill merely for an existing entry count. The JSON report states that distinction. If indexing trips the limit, later restore stages are not claimed as tested.
