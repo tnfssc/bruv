@@ -216,8 +216,15 @@
     {
       "focus": "src/agent/instruction-continuity.ts",
       "initialBlob": "51020264675b38641611920f0adb4e4c4c03664a",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_9489bfd1",
+          "launchBase": "d2d42103b7bc010e242453cbe36d9d65ba8d2962",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9489bfd1",
+          "branch": "bruv/primary-instruction-continuity-9489bfd1"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -292,16 +299,31 @@
     {
       "focus": "src/agent/native-fast-mode.ts",
       "initialBlob": "a89e3e2bac3e22cbf9b209a8694b8c871070ee21",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_fd75f63a",
           "launchBase": "7f874cac04cf0fc8820152abfd7a07547ddb19da",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_fd75f63a",
-          "branch": "bruv/primary-native-fast-mode-fd75f63a"
+          "branch": "bruv/primary-native-fast-mode-fd75f63a",
+          "commit": "e4a406a62b1e3715cc8f50b3e5bb5661644c8bb1",
+          "changedPaths": [
+            "src/agent/native-fast-mode.ts",
+            "tests/native-fast-mode.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Explicit runtime ownership per settings wrapper; policy creates one authorization snapshot; guarded request preparation/payload/dispatch separate. Persistence owns rollback/suppression; remove unused patch state/controller dispatch indirection.",
+          "checks": "66 tests/437 assertions; baseline shared-runtime lifetime test pass; tsc/format/lint pass after shared assets; 16 inherited warnings; stronger Biome check still unchanged import ordering; no build/live provider."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_167d27b3",
+          "candidate": "e4a406a62b1e3715cc8f50b3e5bb5661644c8bb1",
+          "base": "7f874cac04cf0fc8820152abfd7a07547ddb19da",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
