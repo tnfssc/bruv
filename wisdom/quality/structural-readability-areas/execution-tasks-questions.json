@@ -481,18 +481,29 @@
     {
       "focus": "src/tasks/job-attention.ts",
       "initialBlob": "ca8cfabde5250344a14d03571eae1c868733a4c3",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_0a24c1f9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_0a24c1f9",
         "branch": "bruv/primary-src-tasks-job-attention.ts-0a24c1f9",
         "base": "8b0b918042918037a96f996bd29f91e2624a166a",
-        "commit": null
+        "commit": "0fb97677f66f54b55ee5902568f77d805139915a"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a"
+      "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a",
+      "changedRelatedPaths": [
+        "src/tasks/job-attention.ts",
+        "tests/job-attention.test.ts"
+      ],
+      "readingResult": "Timer consumes checkpoints→inspects pending tasks→publishes evidence→reschedules; failure episodes owned by job lifetime rather than separate ID set; shared quiet eligibility.",
+      "checks": [
+        "strengthened baseline11/70",
+        "candidate scheduler+SDK12/77",
+        "format/diff pass inherited lint warnings",
+        "no build/typecheck; SDK area dist"
+      ]
     },
     {
       "focus": "src/tasks/job-service.ts",
@@ -531,27 +542,41 @@
     {
       "focus": "src/tasks/local-agent-termination.ts",
       "initialBlob": "f82ba2130660c667cbe8b66ab9b4921ffcee5cb4",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_2553ce4b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_2553ce4b",
         "branch": "bruv/primary-src-tasks-local-agent-terminatio-2553ce4b",
         "base": "ed0131d292f50902ecb57f62817b07040463557c",
+        "commit": "5636d39579a15719f30f68d06df283042dd3570b"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "ed0131d292f50902ecb57f62817b07040463557c",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: local launch installs handler; repeated SIGTERM drains captured manager once then exit143; session shutdown drains before detaching.",
+      "checks": [
+        "bridge2 pass",
+        "manager shutdown/process-group5 pass",
+        "no build/compiledCLI"
+      ]
+    },
+    {
+      "focus": "src/tasks/resume-safeguards.ts",
+      "initialBlob": "6fee2681d6bd92c55b5abf7319451090fb352ca4",
+      "status": "primary-running",
+      "primary": {
+        "id": "task_ac6cadbe",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_ac6cadbe",
+        "branch": "bruv/primary-src-tasks-resume-safeguards.ts-ac6cadbe",
+        "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "ed0131d292f50902ecb57f62817b07040463557c"
-    },
-    {
-      "focus": "src/tasks/resume-safeguards.ts",
-      "initialBlob": "6fee2681d6bd92c55b5abf7319451090fb352ca4",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "launchBase": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd"
     },
     {
       "focus": "src/tasks/session-costs.ts",
@@ -1232,8 +1257,14 @@
     {
       "focus": "tests/task-manager.test.ts",
       "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_d2a99d2b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_d2a99d2b",
+        "branch": "bruv/primary-tests-task-manager.test.ts-d2a99d2b",
+        "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -1243,7 +1274,8 @@
         "blob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
         "verdict": "ACCEPT",
         "primaryStillRequired": true
-      }
+      },
+      "launchBase": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd"
     },
     {
       "focus": "tests/task-monitor-source.test.ts",
