@@ -358,6 +358,26 @@
           "acceptedRelatedBlobs": {
             "tests/goals.test.ts": "caae760463f13ac5f391b5f5e438af90f7893a61"
           }
+        },
+        {
+          "id": "task_d72cbe58",
+          "candidate": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
+          "base": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
+          "status": "complete",
+          "priorVerdicts": [
+            "task_229853f3 ACCEPT exact types candidate",
+            "task_46beb0fa ACCEPT replay candidate"
+          ],
+          "writerResponse": "Combine discriminated durable GoalEntry with accepted replay without touching store: old assertion site already removed; restored-entry view deliberately validates unknown payload apart from durable envelope.",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Durable journal variants match writes; validated replay result deliberately omits envelope. Removed assertion site genuinely disappeared in accepted replay; combined authority/diagnostics/waiting/write ordering contracts remain explicit.",
+          "checks": "Focused types and diff checks pass; runtime suite Pi dependency-blocked.",
+          "acceptedRelatedBlobs": {
+            "src/goals/store.ts": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
+            "tests/goals.test.ts": "caae760463f13ac5f391b5f5e438af90f7893a61"
+          },
+          "role": "combined-goal-contract"
         }
       ],
       "acceptedBlob": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
@@ -366,7 +386,7 @@
     {
       "focus": "src/goals/types.ts",
       "initialBlob": "c032871506f64451dd458946bc06f5493b788e73",
-      "status": "judging-combined",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_b5e31e7f",
@@ -414,16 +434,24 @@
           "id": "task_d72cbe58",
           "candidate": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
           "base": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
-          "status": "running",
+          "status": "complete",
           "priorVerdicts": [
             "task_229853f3 ACCEPT exact types candidate",
             "task_46beb0fa ACCEPT replay candidate"
           ],
-          "writerResponse": "Combine discriminated durable GoalEntry with accepted replay without touching store: old assertion site already removed; restored-entry view deliberately validates unknown payload apart from durable envelope."
+          "writerResponse": "Combine discriminated durable GoalEntry with accepted replay without touching store: old assertion site already removed; restored-entry view deliberately validates unknown payload apart from durable envelope.",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Durable journal variants match writes; validated replay result deliberately omits envelope. Removed assertion site genuinely disappeared in accepted replay; combined authority/diagnostics/waiting/write ordering contracts remain explicit.",
+          "checks": "Focused types and diff checks pass; runtime suite Pi dependency-blocked.",
+          "acceptedRelatedBlobs": {
+            "src/goals/store.ts": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
+            "tests/goals.test.ts": "caae760463f13ac5f391b5f5e438af90f7893a61"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "8ccbe88cc95296fc9fa4c224c72c7cf2c447c5bd",
+      "integration": "integrated-reconciled-candidate"
     },
     {
       "focus": "src/herdr-agent-state.ts",
@@ -1499,7 +1527,7 @@
       "focus": "tests/fixtures/history-io-short-writes.ts",
       "initialBlob": null,
       "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_d44d38b0",
@@ -1515,7 +1543,14 @@
           "checks": "Focused combined Biome/tsc pass; fixture 1 pass/6 assertions; parent/history 24 pass/91 assertions; compatibility 12 pass/58 assertions; diff clean; no physical disk-exhaustion proof."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_cc13d7e2",
+          "candidate": "0100f6e726bea78b391b356fe9c9e8846e133719",
+          "base": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
       "relatedPatchReview": {
