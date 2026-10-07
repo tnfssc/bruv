@@ -55,3 +55,7 @@ Primary task_123df133; judge task_50dcf5f6 ACCEPT candidate 54ebccd6eeedc055d683
 ## Accepted execution preview lifetimes
 
 Primary task_52ca0e94; judge task_9a76656a ACCEPT candidate 828e13116b668825a7d24cf4247e2b56e3ed49b9. Construction separates partial/live spinner from settled cached views; Pi reconstruction on updates/expansion preserves dynamic behavior. Warning reads/cache/animation ownership remain intact. Independent 130 tests/13,465 assertions, format/diff pass; no compiled TUI/device/provider proof.
+
+## Startup no-change acceptance
+
+Primary task_b0e54e09; judge task_f31c7dbc NO CHANGE NEEDED at 3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49. Override/replacement/factory/native-init ordering and conditional restoration already local. Independent 125 tests/859 assertions and pinned Biome check pass; simulated initialization/mocked Live getter, no compiled PTY/provider/device proof.

@@ -804,7 +804,7 @@
     {
       "focus": "src/ui/startup.ts",
       "initialBlob": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_b0e54e09",
@@ -819,11 +819,24 @@
           "id": "task_f31c7dbc",
           "base": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6",
           "candidate": "8d0911b585c89320ccee5d5b3c3981beb357e4a0",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/startup.ts": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49"
+          },
+          "evidence": "Quiet startup override and editor replacement have separate scoped lifetimes; replacement visibly preserves native settings/draft ownership, registers factory, then calls native init. Getter/conditional restoration explicit.",
+          "checks": [
+            "Independent 125 tests /859 assertions",
+            "Pinned Biome check and diff check"
+          ],
+          "limits": [
+            "Startup simulates native initialization; Live mocks getter",
+            "No build/typecheck/compiled PTY/provider/device/SSH"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49",
+      "integrationState": "unchanged focus accepted at area tip",
       "launchBase": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6",
       "changedRelatedPaths": [],
       "result": "No-change candidate: editor replacement groups guard, settings/draft preservation, ownership updates, factory registration and native init.",
