@@ -102,12 +102,15 @@
     {
       "focus": "src/remote/capabilities.ts",
       "initialBlob": "c5669679c832b8fb3896ca6e9e33d5099f0842b2",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_3469e5e5",
-          "status": "running",
-          "candidate": "28fd359f161e2c5b5773ed16102fa55e8664b4a5"
+          "status": "completed",
+          "candidate": "28fd359f161e2c5b5773ed16102fa55e8664b4a5",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Single bounded-read operation: filesystem confinement separated from caller permission, descriptor immediately try/finally owned, reply persistence/replay/cancellation separated.",
+          "checks": "Judge 1 pass/6 expectations; runtime suite dependency blocked; no full/SSH/adversarial ancestor-replacement claim."
         }
       ],
       "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
@@ -119,7 +122,9 @@
       },
       "result": "Unchanged: caller grant/path policy; reader confinement/symlinks/descriptor/bounded UTF-8/finally-close; caller cancellation/revocation and correlated reply.",
       "checks": "8 pass, 63 assertions; blob unchanged; whitespace clean.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "c5669679c832b8fb3896ca6e9e33d5099f0842b2",
+      "integrationState": "unchanged area blob"
     },
     {
       "focus": "src/remote/capability-runtime.ts",
@@ -184,12 +189,15 @@
     {
       "focus": "src/remote/jobs.ts",
       "initialBlob": "e34856a1f1b8aae577fff635b0328f720f092a12",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_35f0c540",
-          "status": "running",
-          "candidate": "b13219c979026976ae9acf72a3248c8ad18a0138"
+          "status": "completed",
+          "candidate": "b13219c979026976ae9acf72a3248c8ad18a0138",
+          "verdict": "ACCEPT",
+          "reason": "Explicit resolved launch request removes mutable parameter/closure ownership reconstruction. Approval gate, allowlisted trusted snapshot, retained unknown dispatch and raced cancellation remain visible.",
+          "checks": "Full candidate/source/callers/tests inspected; execution blocked zod/mini. Diff clean."
         }
       ],
       "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
@@ -203,7 +211,9 @@
       "checks": "46 pass, 270 assertions; focused TS/Biome pass, 9 existing lint warnings; no full build/SSH/provider/CLI parity.",
       "changedRelatedPaths": [
         "tests/remote-source-approval.test.ts"
-      ]
+      ],
+      "acceptedBlob": "44ce0a37abc61ef5d63f0e4a3f00b59915b74da0",
+      "integrationState": "candidate patch applied with related test; exact index hashes verified"
     },
     {
       "focus": "src/remote/menu.ts",
@@ -394,12 +404,15 @@
     {
       "focus": "src/remote/security.ts",
       "initialBlob": "81dff39ca5ffff8d61eaffceb6535a946361e3e1",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_cf362947",
-          "status": "running",
-          "candidate": "9635328b201c2f02a4d7b206a06eb3c74d677f86"
+          "status": "completed",
+          "candidate": "9635328b201c2f02a4d7b206a06eb3c74d677f86",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Pure per-component sensitive path policy is explicit; capture/export and capability callers own refusal and independent grant/traversal checks.",
+          "checks": "Actual callers/tests/full diff inspected; no independent rerun. Whitespace/worktree clean."
         }
       ],
       "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
@@ -411,7 +424,9 @@
       },
       "result": "Unchanged pure component-wise sensitive-path predicate; capture/export refusal and capability grant/traversal/symlink policies traced.",
       "checks": "27 pass, 166 assertions; no build/authenticated SSH.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "81dff39ca5ffff8d61eaffceb6535a946361e3e1",
+      "integrationState": "unchanged area blob"
     },
     {
       "focus": "src/remote/services.ts",
@@ -801,7 +816,12 @@
       "focus": "tests/remote-source-approval.test.ts",
       "initialBlob": "c86156cc15c6d0c8130cf3d8aa9e0c47795f7b9d",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedAcceptance": {
+        "judge": "task_35f0c540",
+        "blob": "64b8f55a26bea35bf0998216250a9837d2246741",
+        "needs": "fresh primary focus and own independent judgment still required"
+      }
     },
     {
       "focus": "tests/remote-ssh.test.ts",
@@ -830,5 +850,14 @@
   ],
   "extras": [],
   "primaryBrief": "Fresh PRIMARY file worker, single focus below. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. User rejected shallow rename/comment sweep: maximize actual understanding, not names/diff count/short files/boilerplate. Identify concrete mental bookkeeping by tracing real callers/shipped paths. Simplify tangled responsibilities/branching/hidden state/lifetimes/needless indirection/dead machinery into coherent domain operations with visible effects. Not arbitrary splitting/context bags/registries/frameworks. Genuinely readable may remain unchanged. Related coherent edits allowed; record all paths, flag overlaps with active area workers from remote.json. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts. No speculative defenses/deps/feature cuts/test weakening. Incidental fixes explicit/reproduced/tested. Before commit SHORT wisdom/quality/structural-readability-worker.md (focus/problem/why/exact proof/limits/path/branch). Return exact base/candidate commit, all changed paths, concrete before/after walkthrough. Independent judge decides acceptance. No push/PR. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun via /bin/bash PATH inside quoted script; shared read-only deps /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Focused existing tests per edit, no per-file full builds.",
-  "judgeBrief": "Fresh INDEPENDENT READ-ONLY actual-code judge. Original user brief: maximize actual ease of understanding, not diff count/names/shorter files/boilerplate. Identify mental reconstruction across authorities/responsibilities/lifetimes; coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/frameworks. Clear code may remain unchanged. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions or forced churn. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Inspect ACTUAL source, callers/tests and FULL candidate diff, not summaries or green tests. Judge intrinsic current code separately from improvement. Return ACCEPT / REJECT / NO CHANGE NEEDED with concrete reader journeys, exact inspected blob hashes, safety/check limits. REJECT: concrete unmet targets and smallest coherent rework. No edits/commits. Each round is fresh; consider all prior objections supplied below."
+  "judgeBrief": "Fresh INDEPENDENT READ-ONLY actual-code judge. Original user brief: maximize actual ease of understanding, not diff count/names/shorter files/boilerplate. Identify mental reconstruction across authorities/responsibilities/lifetimes; coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/frameworks. Clear code may remain unchanged. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions or forced churn. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Inspect ACTUAL source, callers/tests and FULL candidate diff, not summaries or green tests. Judge intrinsic current code separately from improvement. Return ACCEPT / REJECT / NO CHANGE NEEDED with concrete reader journeys, exact inspected blob hashes, safety/check limits. REJECT: concrete unmet targets and smallest coherent rework. No edits/commits. Each round is fresh; consider all prior objections supplied below. Dependency note: area checkout now has ignored node_modules symlink to shared dependency tree; use area tests if candidate source identity matches. NODE_PATH alone did not resolve Bun packages in previous judge attempts.",
+  "batchChecks": [
+    {
+      "commit": "4b0fa831",
+      "command": "bun test tests/remote-repository.test.ts tests/remote-repository-wire.test.ts tests/root-owner.test.ts",
+      "result": "19 pass, 0 fail, 112 assertions",
+      "job": "task_66ad8475",
+      "limits": "Source/fake fixture evidence, not authenticated SSH/provider/compiled CLI."
+    }
+  ]
 }

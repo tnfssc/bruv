@@ -319,6 +319,24 @@ test("offline restart reuses exact pinned task ID and intent; uncertain accepted
   expect(f.counts().launches).toBe(1);
   expect(Object.keys((await f.client.read()).tasks)).toEqual([f.request.taskId]);
 });
+test("adapter retries preserve an already-pinned source intent and its original question owner", async () => {
+  const f = await adapterFixture();
+  const pinned = await f.service.prepare(f.intent, f.ctx);
+  await approve(f, SOURCE_CHOICES[0]);
+  f.continueParent();
+  const result = await f.adapter.launch(
+    {
+      ...f.request,
+      jobQuestionOwner: { sessionId: "parent", branchId: "followup" },
+      source: { includeUntracked: ["new.txt"], retryTaskId: f.request.taskId },
+    },
+    f.ctx,
+  );
+  expect(result.id).toBe(sshJobId(pinned.intent.taskId));
+  expect(JSON.stringify(f.service.get(f.file, f.request.taskId)!.intent)).toBe(JSON.stringify(pinned.intent));
+  expect((await f.client.read()).tasks[f.request.taskId]?.jobQuestionOwner).toEqual(pinned.questionOwner);
+  expect(f.counts().launches).toBe(1);
+});
 test("stopWork cancels all pending source questions locally even offline", async () => {
   const f = await adapterFixture();
   await f.adapter.launch(f.request, f.ctx);

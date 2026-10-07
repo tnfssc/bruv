@@ -15,3 +15,5 @@ Jobs candidate also changes tests/remote-source-approval.test.ts; full candidate
 
 ## Limits / pickup
 Automatic fish setup cannot find Bun; explicit Bun 1.4.2 path/shared dependencies in worker briefs. No authenticated SSH/provider/macOS/compiled CLI parity claim; no combined full gate yet. Parent owns PR #45 and final integration. Preserve all worker worktrees.
+
+Second source batch: jobs.ts candidate b13219c9 accepted by task_35f0c540. Explicit prepared request removes closure dependence on mutable request; uncertainty and raced cancellation stay at orchestration. Includes approved source-intent regression in tests/remote-source-approval.test.ts, whose own primary is still due. Security and capabilities unchanged blobs independently NO CHANGE NEEDED; exact rows in ledger. Area repository combined checks: 19 pass/112 assertions via real shared dependency symlink.
