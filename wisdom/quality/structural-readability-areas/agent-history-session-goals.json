@@ -167,16 +167,29 @@
     {
       "focus": "src/goals/controller.ts",
       "initialBlob": "b46d074e022db912d2ea6565730a27879f83a361",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_b7e1aa63",
           "launchBase": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_b7e1aa63",
-          "branch": "bruv/primary-src-goals-controller.ts-b7e1aa63"
+          "branch": "bruv/primary-src-goals-controller.ts-b7e1aa63",
+          "commit": "ffdfb910",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No source change: tracking localizes helper-first-turn exemption, waiting handoff accounting, explicit progress and strikes across reminders.",
+          "checks": "28 goal tests, 133 assertions; focused Biome passed; no build/SDK/live checks."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_61e44d61",
+          "candidate": "ffdfb910",
+          "base": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -494,8 +507,15 @@
     {
       "focus": "src/session/input.ts",
       "initialBlob": "3701ffae31a2ce480eff48ef5595ec5957fdeed6",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_aeae3a68",
+          "launchBase": "ac2953661414342bf5314e92d9de0fe2d73e75e5",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_aeae3a68",
+          "branch": "bruv/primary-src-session-input.ts-aeae3a68"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
