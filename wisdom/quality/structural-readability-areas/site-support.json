@@ -758,7 +758,7 @@
     {
       "focus": "site/scripts/capture-real-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_46c581d4",
@@ -773,10 +773,16 @@
         {
           "id": "task_59d37faf",
           "candidate": "39e433dd12fa47efd56007077764c72bdfdebe37",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Direct namespace/PTY lifetime and timed IO->persist->terminate/wait/kill/close sequence. Judge Python syntax/help and1 hash/reflow test/7 assertions;synthetic probe read not rerun. Existing chunk-local cursor-query/pre-try cleanup gaps unchanged. Coordinator correction: verdict says shipped landing consumes captured cells, but layout uses scripted demoFrame; this historical tool acceptance does not establish shipped integration.",
+          "objections": []
         }
       ],
-      "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16"
+      "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16",
+      "acceptedBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/capture-real.ts",
@@ -930,7 +936,7 @@
     {
       "focus": "site/scripts/install.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_d558bcd2",
@@ -941,7 +947,13 @@
           "result": "Host mocks/release publication coherent owners; fixture owns setup/execution/assertions/cleanup; platform expectations explicit scenario data not repeated selection logic.7 tests/97 assertions retained;TS/Biome;120 mock/asset byte comparisons baseline match. Cleanup now covers setup errors, explicit behavior delta requiring scrutiny; production unchanged."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_5840db21",
+          "candidate": "14fb20cae47d4ff2cfa33c2a89a65d756f251cb6",
+          "state": "running"
+        }
+      ],
       "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f"
     },
     {
