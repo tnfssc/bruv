@@ -41,3 +41,29 @@ The first fixed-code stress run stopped at the unchanged whole-fixture disk cap:
 At 100,000 stress messages, the existing exact Pi and native JSONL rows alone exceed the 64 MiB whole-fixture cap even with fixed-size sparse root cursors. Final unchanged-format stress (stress-FrYG2a/report.json) likewise stopped disk-only at 64.02 MiB, 290.5 MiB RSS, 902 root rows, 62.7 s. At that checkpoint, parent integration still needed to settle the workload/accounting mismatch without raising caps and rerun mandatory stress. The worker did not report stress green, relax caps or reduce payload/workload, or open/copy the private 11.9 GB captured fixture. See the integrated acceptance note above for subsequent guarded replay and stress results.
 
 Values stay unchanged: the existing measured-resource and safe-recovery values already require these checks and honest limits. No new cross-cutting rule is needed.
+
+## PR48 recovery review
+
+CodeRabbit found a real gap: malformed complete rows are skipped, so their
+successors can point at a missing parent. New metadata readers must keep the
+usable suffix instead of failing startup or request preparation. All disk walks
+now stop at a gap or before repeating a cyclic node. The normal backward-offset
+path needs no cycle preflight. A forward/self link uses a constant-space cycle
+count. Selected-entry limits still throw. Originals are never repaired in place.
+
+Worker task_752c9b01 committed the fix and notes as e529e1b9 in
+/home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_752c9b01.
+Parent integrated it in /home/tnfssc/.bruv/worktrees/bruv-task-history-cache-recovery.
+Its guarded source replay stopped during startup at 516.5 MiB, above the same
+512 MiB cap. Report stays private in that worker's artifacts/resource-harness/
+captured-wrEsWu. Parent replaced the shared generator with a callback walk to
+avoid per-row iterator result allocations. Callback acceptance task_66eba52e passed: actual source replay peaked at
+481.8 MiB and finished in 41.2 seconds. CI profile write/resume peaked at
+111.4/97.7 MiB. Stress profile peaked at 159.6/110.3 MiB and used 11.10/11.22 MiB
+of disk. The 512 MiB and disk caps were unchanged. Corrupt-row startup, cycle,
+100,000-checkpoint context tests and typecheck passed. Private report:
+artifacts/resource-harness/captured-uPsgQ5 in the parent checkout. Wider history
+and harness checks passed before the PR update. Logs: /tmp/bruv-pr48-recovery-wide-tests.log.
+Both review findings are fixed; hosted CI must rerun on the pushed head.
+
+Values stay unchanged: bounded resources and safe recovery already cover this.

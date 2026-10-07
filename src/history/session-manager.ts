@@ -70,13 +70,17 @@ export function getLatestDiskBackedCustomEntry(
 ): Extract<SessionEntry, { type: "custom" }> | null | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
-  for (const meta of walkMetadata(owned.store, internals(manager as SessionManager).leafId)) {
+  let result: Extract<SessionEntry, { type: "custom" }> | null = null;
+  walkMetadata(owned.store, internals(manager as SessionManager).leafId, (meta) => {
     if (meta.type === "custom" && meta.customType === customType) {
       const entry = owned.store.materialize(meta);
-      if (entry.type === "custom" && accept(entry)) return entry;
+      if (entry.type === "custom" && accept(entry)) {
+        result = entry;
+        return false;
+      }
     }
-  }
-  return null;
+  });
+  return result;
 }
 
 /** Identity of the latest relevant active-branch metadata, or the empty index.
@@ -90,23 +94,30 @@ export function getDiskBackedBranchRevision(
 ): object | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
-  for (const meta of walkMetadata(owned.store, internals(manager as SessionManager).leafId)) {
-    if (relevant(meta)) return meta;
-  }
-  return owned.store.entries;
+  let revision: object = owned.store.entries;
+  walkMetadata(owned.store, internals(manager as SessionManager).leafId, (meta) => {
+    if (relevant(meta)) {
+      revision = meta;
+      return false;
+    }
+  });
+  return revision;
 }
 
 function contextLeaf(owned: ManagerState, fromId: string | null, assistantOnly = false): string | null {
-  for (const entry of walkMetadata(owned.store, fromId)) {
+  let leaf: string | null = null;
+  walkMetadata(owned.store, fromId, (entry) => {
     if (
       (entry.type === "message" && (!assistantOnly || entry.messageRole === "assistant")) ||
       (!assistantOnly && entry.type === "custom_message") ||
       ["compaction", "branch_summary", "context_edit"].includes(entry.type) ||
       (entry.type === "custom" && entry.customType === MANUAL_SHAKE_ENTRY)
-    )
-      return entry.id;
-  }
-  return null;
+    ) {
+      leaf = entry.id;
+      return false;
+    }
+  });
+  return leaf;
 }
 
 /** Position of the active context, ignoring footer/cache bookkeeping entries. */
@@ -239,13 +250,17 @@ function uniquePathLength(store: DiskEntryStore, leaf: EntryMetadata): number {
  * Strictly decreasing byte offsets cannot cycle. On the first forward/self link,
  * compute the unique path length before delivering any duplicate metadata.
  */
-function* walkMetadata(store: DiskEntryStore, leafId: string | null | undefined): Generator<EntryMetadata> {
+function walkMetadata(
+  store: DiskEntryStore,
+  leafId: string | null | undefined,
+  visit: (metadata: EntryMetadata) => void | boolean,
+): void {
   const leaf = leafId ? store.byId.get(leafId) : undefined;
   let current = leaf;
   let limit = store.entries.length;
   let checked = false;
   for (let steps = 0; current && steps < limit; steps++) {
-    yield current;
+    if (visit(current) === false) break;
     const parent = current.parentId ? store.byId.get(current.parentId) : undefined;
     if (parent && parent.offset >= current.offset && !checked) {
       limit = uniquePathLength(store, leaf!);
@@ -256,7 +271,11 @@ function* walkMetadata(store: DiskEntryStore, leafId: string | null | undefined)
 }
 
 function pathMetadata(store: DiskEntryStore, leafId: string | null | undefined): EntryMetadata[] {
-  return Array.from(walkMetadata(store, leafId)).reverse();
+  const path: EntryMetadata[] = [];
+  walkMetadata(store, leafId, (meta) => {
+    path.push(meta);
+  });
+  return path.reverse();
 }
 
 /** Visit active-branch metadata newest first without copying the branch.
@@ -269,9 +288,7 @@ export function visitDiskBackedBranch(
 ): true | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
-  for (const meta of walkMetadata(owned.store, internals(manager as SessionManager).leafId)) {
-    if (visit(meta) === false) break;
-  }
+  walkMetadata(owned.store, internals(manager as SessionManager).leafId, visit);
   return true;
 }
 
@@ -998,12 +1015,12 @@ export function getDiskBackedBranch(
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
   const entries: SessionEntry[] = [];
-  for (const meta of walkMetadata(owned.store, fromId ?? internals(manager as SessionManager).leafId)) {
+  walkMetadata(owned.store, fromId ?? internals(manager as SessionManager).leafId, (meta) => {
     if (select(meta)) {
       if (entries.length >= maxEntries)
         throw new Error("Active history branch exceeds the " + maxEntries + "-entry limit");
       entries.push(metadataSkeleton(meta));
     }
-  }
+  });
   return entries.reverse();
 }
