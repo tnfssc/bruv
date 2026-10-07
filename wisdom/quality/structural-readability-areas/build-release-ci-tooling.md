@@ -142,3 +142,7 @@ Selfupdater fixture task_81083bad ACCEPTa6959fca plus relatednewtest18ec63dc:clo
 Joined-checkpoint build/typecheck task_2901b129 passed at6004e052(parentdb885fce),realpair regenerated with ownedPi;exactbinary hashes recorded. Candidate launchprovenance audit found every recorded launchbase ancestor of its candidate. Final test batch remains after last accepted integrations.
 
 Connectorupdate tests task_4a768c2f ACCEPT049c8cd3:namedentry/install journeys,exactfetch/pairprobes/connectorbytes and rejection preservation.66/316+12/191;tsc/Biome. Judgeactualpair cb7aec7d differs writer4049e1a6 because documentedparentrebuild—not exactwriterartifact reproduction. Existingrollback not newcoverage.
+
+Probe tests task_17380c61 NO CHANGE NEEDEDf8e9a967;2/12plusfocusedtsc/Biome. Diagnostic not validation/redaction;optionalerrorfields/nonASCII preservation incomplete. Extra selfupdatertest now ownfinalblob judge.
+
+Releaseshape task_811b18de ACCEPT2803b32f + relateddocb117a5a3:explicitmetadata/payloads,actualemittedlauncher/stagedidentity,bothsiblings/cleanup/tarreachesupdater.34focus92combined/tsc/Biome;currentrealpaircb7aec7d defaultprobe temporaryinstallpassed(no releaseprovenance). Companiondoc freshprimary stillneeded.

@@ -1,14 +1,23 @@
 # Raw paired release updater fixture
 
-Run: `bun test tests/update-release-shape.test.ts` (Bun >= 1.4.1). This tests
-current Bruv paired update with synthetic raw binary/checksum assets at canonical
-URLs, fake fetch and temporary install targets. No network, provider, mic,
-global installation or publication is required. Targets are never the executing
-process. The version/helper runner is injected for synthetic cross-platform bytes.
+Run: `bun test tests/update-release-shape.test.ts` (Bun >= 1.4.1). Updates
+use temporary sibling installations and fake canonical GitHub responses, never
+installed executables or the network.
 
-Fixture preflight checks format magic and an embedded 0.8.0 label. The updater
-checks both hashes, asset names and staged version responses; its default runner
-executes both --version probes and the existing macOS helper self-test. These raw
-fixtures do not prove actual release binaries boot on any platform. Actual staged
-probe execution is covered separately in update.test.ts by a compiled updater
-runner and local shell payloads, not by published release assets.
+The release contains synthetic ELF/Mach-O-shaped normal Bruv bytes and the actual
+shell connector emitted by `connectorLauncher`, including Android's interpreter.
+The injected probe reads staged bytes: normal Bruv supplies its embedded product
+version; the connector must match the emitted launcher and derives its version
+from the explicitly selected staged normal sibling. These probes do **not** prove
+published binaries boot on any target OS or execute the launcher on those targets.
+
+The tests exercise the current updater's four-asset metadata authority before
+download, both named checksums, staged product/version probes, macOS helper probe
+selection, and ownership of both installed siblings. Metadata, transport,
+checksum and payload-shape failures leave both originals unchanged; concurrent-owner
+failures preserve the new owner's bytes and the untouched sibling. All remove staging files. Checksum-valid tar-shaped downloads reach the updater's
+staged probes rather than failing only a test-owned fixture preflight.
+
+Actual staged execution is covered separately by `update.test.ts` (compiled updater
+and local shell payloads) and `connector-update.test.ts` (compiled connector route),
+not by published release assets.
