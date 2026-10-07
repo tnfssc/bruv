@@ -135,6 +135,8 @@ describe("connector launch arguments", () => {
       ["--add-dir", "/other"],
       ["--effort", "high"],
       ["--tools", "default"],
+      ["--settings", '{"fastMode":true}'],
+      ["--settings", '{"fastMode":false}'],
     ])
       expect(() => assertLaunchBindings(parseConnectorArguments([...streamFlags, ...flags]))).not.toThrow();
     for (const flags of [
@@ -142,7 +144,7 @@ describe("connector launch arguments", () => {
       ["--thinking", "unknown"],
       ["--thinking-display", "hide"],
       ["--max-thinking-tokens", "10"],
-      ["--settings", '{"fastMode":true}'],
+      ["--settings", '{"fastMode":"true"}'],
     ])
       expect(() => assertLaunchBindings(parseConnectorArguments([...streamFlags, ...flags]))).toThrow();
     expect(() => assertLaunchBindings(parseConnectorArguments(streamFlags.slice(0, 4)))).not.toThrow();

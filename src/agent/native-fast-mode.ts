@@ -506,6 +506,57 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     ui?.setStatus("bruv-native-fast", active ? statusText(active.enabled) : undefined);
   };
 
+  const persistSelection = (ctx: ExtensionContext, enabled: boolean) => {
+    const model = ctx.model!;
+    const sessionId = ctx.sessionManager.getSessionId();
+    const priorLeaf = (ctx.sessionManager as { getLeafId?: () => string | null }).getLeafId?.();
+    try {
+      pi.appendEntry(NATIVE_FAST_ENTRY, {
+        version: ENTRY_VERSION,
+        oauth: ctx.modelRegistry.isUsingOAuth(model),
+        sessionId,
+        provider: model.provider,
+        model: model.id,
+        enabled,
+        costAcknowledged: enabled,
+        timestamp: Date.now(),
+      } satisfies Setting);
+    } catch {
+      restoreLeaf(ctx.sessionManager, priorLeaf);
+      if (!enabled) {
+        let scopes = volatileOptOuts.get(ctx.sessionManager as object);
+        if (!scopes) {
+          scopes = new Set();
+          volatileOptOuts.set(ctx.sessionManager as object, scopes);
+        }
+        scopes.add(settingScope(sessionId, model.provider, model.id));
+      }
+      throw new Error("Could not persist native fast mode; the requested setting was not activated.");
+    }
+    volatileOptOuts.get(ctx.sessionManager as object)?.delete(settingScope(sessionId, model.provider, model.id));
+  };
+
+  // Only explicit host user selection may call this: true is premium billing
+  // consent, not a hint inferred from effort, an unsupported flag, or a badge.
+  const setWithCostConsent = (enabled: boolean) => {
+    const ctx = controller.context;
+    if (!ctx?.model) throw new Error("Select a model before changing native fast mode");
+    const compatibilityError = bindContext(ctx);
+    const support = nativeFastSupport(ctx.model, ctx.modelRegistry.isUsingOAuth(ctx.model));
+    if (enabled) {
+      if (compatibilityError) throw new Error(compatibilityError);
+      if (!support.supported) throw new Error(support.reason);
+      if (!authSurfaceMatches(ctx, support.surface))
+        throw new Error("Native fast mode authentication surface mismatch");
+    } else if (!officialSurface(ctx.model)) {
+      // Hosts also send false for models without a native Fast implementation.
+      // No authorization is created on those surfaces.
+      return;
+    }
+    persistSelection(ctx, enabled);
+    refreshStatus(ctx);
+  };
+
   pi.registerCommand("fast", {
     description: "Show or set opt-in provider-native fast mode (on, off, status)",
     getArgumentCompletions: (prefix) => {
@@ -611,36 +662,13 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         );
         return;
       }
-      const entry: Setting = {
-        version: ENTRY_VERSION,
-        oauth: ctx.modelRegistry.isUsingOAuth(currentModel),
-        sessionId: consentScope.sessionId,
-        provider: model.provider,
-        model: model.id,
-        enabled: action === "on",
-        costAcknowledged: action === "on",
-        timestamp: Date.now(),
-      };
-      const priorLeaf = (ctx.sessionManager as { getLeafId?: () => string | null }).getLeafId?.();
       try {
-        pi.appendEntry(NATIVE_FAST_ENTRY, entry);
+        persistSelection(ctx, action === "on");
       } catch {
-        restoreLeaf(ctx.sessionManager, priorLeaf);
-        if (action === "off") {
-          let scopes = volatileOptOuts.get(ctx.sessionManager as object);
-          if (!scopes) {
-            scopes = new Set();
-            volatileOptOuts.set(ctx.sessionManager as object, scopes);
-          }
-          scopes.add(settingScope(consentScope.sessionId, model.provider, model.id));
-        }
         commandDiagnostic(ctx, FAST_CHECKPOINT_PERSIST_FAILED, "failed", operationId);
         ctx.ui.notify("Could not persist native fast mode; the requested setting was not activated.", "error");
         return;
       }
-      volatileOptOuts
-        .get(ctx.sessionManager as object)
-        ?.delete(settingScope(consentScope.sessionId, model.provider, model.id));
       refreshStatus(ctx);
       ctx.ui.notify(
         action === "on"
@@ -692,5 +720,5 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     controller.context = undefined;
     ui = undefined;
   });
-  return { refreshStatus, currentSetting };
+  return { refreshStatus, currentSetting, setWithCostConsent };
 }

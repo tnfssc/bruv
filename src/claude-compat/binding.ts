@@ -37,7 +37,14 @@ export function launchPolicy(args: ConnectorArguments) {
   if (args.sessionId && args.resume) throw new Error("Use --resume or --session-id, not both");
   if (args.mcpConfig) parseInjectedMcpConfig(args.mcpConfig);
   const settings = args.settings ?? {};
-  const supported = ["disableAllHooks", "permissions", "env", "alwaysThinkingEnabled", "showThinkingSummaries"];
+  const supported = [
+    "disableAllHooks",
+    "permissions",
+    "env",
+    "alwaysThinkingEnabled",
+    "showThinkingSummaries",
+    "fastMode",
+  ];
   for (const key of Object.keys(settings))
     if (!supported.includes(key)) throw new Error("Unsupported --settings effect: " + key);
   if (settings.disableAllHooks !== undefined && settings.disableAllHooks !== true)
@@ -46,6 +53,8 @@ export function launchPolicy(args: ConnectorArguments) {
     throw new Error("alwaysThinkingEnabled must be boolean");
   if (settings.showThinkingSummaries !== undefined && typeof settings.showThinkingSummaries !== "boolean")
     throw new Error("showThinkingSummaries must be boolean");
+  if (settings.fastMode !== undefined && typeof settings.fastMode !== "boolean")
+    throw new Error("fastMode must be boolean");
   const permissions = settings.permissions as Record<string, unknown> | undefined;
   if (permissions && (typeof permissions !== "object" || Array.isArray(permissions)))
     throw new Error("Invalid settings permissions");
@@ -107,6 +116,7 @@ export function launchPolicy(args: ConnectorArguments) {
     disallowedTools: [...rules("deny"), ...toolRules(args.disallowedTools)],
     thinking,
     thinkingDisplay,
+    fastMode: settings.fastMode as boolean | undefined,
     disableHooks: settings.disableAllHooks === true,
     tools: args.tools === undefined || args.tools === "default" ? undefined : toolRules(args.tools),
   };

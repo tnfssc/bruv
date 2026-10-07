@@ -120,13 +120,16 @@ export default function asynchronousTasksExtension(
     executablePath?: string;
     /** Observe the existing manager; shutdown drains it before closing this binding. */
     onTaskOwner?: TaskOwnerObserver;
+    /** Host adapter binding; only explicit user Fast selection acknowledges billing. */
+    onNativeFastMode?: (control: ReturnType<typeof registerNativeFastMode>) => void;
   } = {},
 ): void {
   registerOperationDiagnostics(pi);
   registerRollingActivity(pi);
   // Must precede all payload capture/observation hooks so snapshots contain the
   // exact tier that the provider transport will serialize.
-  registerNativeFastMode(pi);
+  const nativeFast = registerNativeFastMode(pi);
+  options.onNativeFastMode?.(nativeFast);
   const cacheCountdown = new CacheCountdown();
   registerCacheCountdown(pi, cacheCountdown, options.cacheSettingsPath);
   const installUI = createCompactUI(pi, cacheCountdown);

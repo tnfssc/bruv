@@ -108,7 +108,8 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     expect(launchPolicy(parse(["--settings", '{"alwaysThinkingEnabled":true}']))).toMatchObject({ thinking: "high" });
     expect(launchPolicy(parse(["--thinking", "adaptive", "--effort", "low"]))).toMatchObject({ thinking: "low" });
     expect(() => parse(["--thinking-display", "summarized", "--thinking-display", "omitted"])).toThrow("Conflicting");
-    for (const settings of ['{"fastMode":true}', '{"hooks":{}}', '{"env":{"OPENAI_API_KEY":"not-a-real-key"}}'])
+    expect(launchPolicy(parse(["--settings", '{"fastMode":true}']))).toMatchObject({ fastMode: true });
+    for (const settings of ['{"hooks":{}}', '{"env":{"OPENAI_API_KEY":"not-a-real-key"}}'])
       expect(() => launchPolicy(parse(["--settings", settings]))).toThrow("Unsupported");
   });
 
