@@ -447,7 +447,7 @@
     {
       "focus": "scripts/terminal-perf/options.ts",
       "initialBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_61e4e31c",
@@ -457,7 +457,14 @@
           "commit": "b17800456f856f9314ab01b6387210c2f3376592"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_be297c64",
+          "base": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
+          "candidate": "b17800456f856f9314ab01b6387210c2f3376592",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
       "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
@@ -470,7 +477,7 @@
     {
       "focus": "scripts/terminal-perf/profiler.ts",
       "initialBlob": "3298aad91f561f6cee5e08f4efd3a840ac8bbb44",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_98eabc08",
@@ -485,11 +492,26 @@
           "id": "task_5e042418",
           "base": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890",
           "candidate": "ec5417038093c7fe3cd22fc353ba27ef8cda3dbe",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/profiler.ts": "067127cee9b9abfbb30d5fac247b1c6edafa70a5",
+            "tests/terminal-perf-profiler.test.ts": "708996371dabfb105ba97e010979b60c3af5b271"
+          },
+          "evidence": "Bounded PendingRenderRequests owns dispatch scope, scalar coalesced batch and consume/discard; wrappers stop manipulating scattered fields. Clear/dispose retain active dispatch; clock order/return/throw/native guards unchanged.",
+          "checks": [
+            "Independent 95 tests /5044 assertions",
+            "17 candidate tests against base /102 assertions",
+            "Equivalence clock/guard/reentrancy/clear/dispose/identity probe 1/55",
+            "Pinned format/lint/diff"
+          ],
+          "limits": [
+            "No build/typecheck/latency/performance/provider/device/packaged CLI"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "067127cee9b9abfbb30d5fac247b1c6edafa70a5",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890",
       "changedRelatedPaths": [
         "tests/terminal-perf-profiler.test.ts"
@@ -2130,7 +2152,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_5e042418",
+          "candidate": "ec5417038093c7fe3cd22fc353ba27ef8cda3dbe",
+          "verdict": "ACCEPT",
+          "blob": "708996371dabfb105ba97e010979b60c3af5b271"
+        }
+      ]
     },
     {
       "focus": "tests/terminal-perf-report.test.ts",
