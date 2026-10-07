@@ -67,3 +67,7 @@ CLI test primary task_f5df93a3 + fresh judge task_a07a60a3 independently accept 
 ## Accepted task-row authority merge
 
 Primary task_3856c420; judge task_24064ab2 ACCEPT candidate eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1. Lifecycle authority selection, independent metadata refresh and publication are no longer duplicated across branches. Regressions preserve stale/partial/terminal-unknown evidence and input immutability. Independent 106 tests/965 assertions, exact-base characterization 30 tests/446 assertions; format/lint/diff pass. Task-row test primary still pending.
+
+## Accepted settings navigation ownership
+
+Primary task_3ec62165; judge task_2c6056ba ACCEPT candidate f14b45ab14702f6e697aca70b3d929d7a55c6dac. Picker owns return location; open/filter/return visibly choose active selection, replacing hidden rebuild restoration. Independent 16 UI/profile tests/105 assertions, strict focused source typecheck and format/diff pass. Cross-area tests/subagent-settings-ui.test.ts at 2657c431fc90d593d5064b33b4a4dfd82d261370 needs execution/tasks/questions primary owner reconciliation.

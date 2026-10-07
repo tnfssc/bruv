@@ -21,7 +21,8 @@
       "file": "tests/subagent-settings-ui.test.ts",
       "owner": "execution-tasks-questions",
       "candidate": "f14b45ab14702f6e697aca70b3d929d7a55c6dac",
-      "state": "pending candidate judgment; assigned primary owner must reconcile final blob"
+      "state": "accepted related patch integrated; assigned primary owner must inspect final blob",
+      "blob": "2657c431fc90d593d5064b33b4a4dfd82d261370"
     }
   ],
   "files": [
@@ -865,7 +866,7 @@
     {
       "focus": "src/ui/subagent-settings.ts",
       "initialBlob": "db6c10db1b02db15c995c20c2029ea6f9cb180c1",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_3ec62165",
@@ -880,11 +881,25 @@
           "id": "task_2c6056ba",
           "base": "808375961557a918570c0a7d0ed7bf966fb1f487",
           "candidate": "f14b45ab14702f6e697aca70b3d929d7a55c6dac",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/subagent-settings.ts": "e8e8acee76a03e64ed27a50ce9bc886f1e8d05fd",
+            "tests/subagent-settings-ui.test.ts": "2657c431fc90d593d5064b33b4a4dfd82d261370"
+          },
+          "evidence": "Picker state keeps return location with screen-specific selection. Open/filter/return choose active row explicitly rather than rebuild secretly restoring it. Save/Cancel and search/page clamping preserved.",
+          "checks": [
+            "Independent 16 UI/profile tests /105 assertions",
+            "Strict focused source typecheck",
+            "Biome format/diff"
+          ],
+          "limits": [
+            "No full build/compiled PTY/authenticated provider"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "e8e8acee76a03e64ed27a50ce9bc886f1e8d05fd",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487",
       "changedRelatedPaths": [
         "tests/subagent-settings-ui.test.ts"
@@ -1530,6 +1545,23 @@
         }
       ],
       "acceptedBlob": "95453da9cb3f0827a96b955c60f854e905939dac",
+      "integrationState": "integrated; parent must reconcile assigned primary owner"
+    },
+    {
+      "focus": "tests/subagent-settings-ui.test.ts",
+      "kind": "cross-area-related",
+      "assignedOwner": "execution-tasks-questions",
+      "initialBlob": "eacdda0427dd8083b5ddc0491ec2fa26a852d435",
+      "status": "related-patch-accepted-primary-pending",
+      "primary": [],
+      "judgeRounds": [
+        {
+          "id": "task_2c6056ba",
+          "verdict": "ACCEPT",
+          "candidate": "f14b45ab14702f6e697aca70b3d929d7a55c6dac"
+        }
+      ],
+      "acceptedBlob": "2657c431fc90d593d5064b33b4a4dfd82d261370",
       "integrationState": "integrated; parent must reconcile assigned primary owner"
     }
   ],

@@ -23,13 +23,11 @@ export interface ProfileModel {
   name?: string;
 }
 const INHERIT = "inherit";
-type Screen = "profiles" | "model" | "thinking";
+type Screen = { kind: "profiles" } | { kind: "model" | "thinking"; type: SubagentType; returnRow: number };
 
 /** One panel keeps the selected settings row while entering/leaving a picker. */
 export class SubagentSettingsPanel implements Component, Focusable {
-  private screen: Screen = "profiles";
-  private row = 0;
-  private type: SubagentType = "fast";
+  private screen: Screen = { kind: "profiles" };
   private input = new Input({ placeholder: "Search models or providers…" });
   private list!: SelectList;
   private items: SelectItem[] = [];
@@ -43,7 +41,7 @@ export class SubagentSettingsPanel implements Component, Focusable {
   }
   set focused(value: boolean) {
     this.hasFocus = value;
-    this.input.focused = value && this.screen === "model";
+    this.input.focused = value && this.screen.kind === "model";
   }
 
   constructor(
@@ -60,63 +58,65 @@ export class SubagentSettingsPanel implements Component, Focusable {
     this.models = [...new Map(models.map((model) => [model.provider + "/" + model.id, model])).values()].sort((a, b) =>
       (a.provider + "/" + a.id).localeCompare(b.provider + "/" + b.id),
     );
-    this.rebuild();
+    this.showProfiles(0);
   }
-  private rebuild() {
-    if (this.screen === "profiles") {
-      this.items = SUBAGENT_TYPES.flatMap((type) => [
-        {
-          value: type + ":model",
-          label: type + " model",
-          description: this.draft[type].model ?? "Inherit from parent",
-        },
-        {
-          value: type + ":thinking",
-          label: type + " thinking",
-          description: this.draft[type].thinking ?? "Inherit from parent",
-        },
-      ]).concat([
-        { value: "save", label: "Save", description: "Apply to future sub-agents" },
-        { value: "cancel", label: "Cancel", description: "Discard changes" },
-      ]);
-      this.selected = this.row;
-    } else if (this.screen === "thinking") {
-      this.items = [
-        {
-          value: INHERIT,
-          label: "Inherit from parent",
-          description: this.parentThinking ?? "Calling agent's thinking level",
-        },
-        ...THINKING_LEVELS.map((value) => ({ value, label: value, description: "" })),
-      ];
-    } else {
-      const current = this.draft[this.type].model;
-      const models: SelectItem[] = this.models.map((model) => ({
-        value: model.provider + "/" + model.id,
-        label: model.id,
-        description: model.provider + (model.name && model.name !== model.id ? " · " + model.name : ""),
-      }));
-      if (current && !models.some((model) => model.value === current))
-        models.unshift({
-          value: current,
-          label: current,
-          description: "Current setting · unavailable in this catalog",
-        });
-      const all = [
-        { value: INHERIT, label: "Inherit from parent", description: this.parentModel ?? "Calling agent's model" },
-        ...models,
-      ];
-      // Provider-first search avoids matching a model suffix against a later provider name.
-      const query = this.input.getValue();
-      this.items = fuzzyFilter(all, query, (item) => item.value + " " + item.description + " " + item.label);
-      const exact = query.trim().toLowerCase().replace(/\s+/g, "/");
-      this.items.sort(
-        (a, b) =>
-          Number(b.value.toLowerCase() === exact || b.label.toLowerCase() === exact) -
-          Number(a.value.toLowerCase() === exact || a.label.toLowerCase() === exact),
-      );
-    }
-    this.selected = Math.max(0, Math.min(this.selected, this.items.length - 1));
+  private profileItems(): SelectItem[] {
+    return SUBAGENT_TYPES.flatMap((type) => [
+      {
+        value: type + ":model",
+        label: type + " model",
+        description: this.draft[type].model ?? "Inherit from parent",
+      },
+      {
+        value: type + ":thinking",
+        label: type + " thinking",
+        description: this.draft[type].thinking ?? "Inherit from parent",
+      },
+    ]).concat([
+      { value: "save", label: "Save", description: "Apply to future sub-agents" },
+      { value: "cancel", label: "Cancel", description: "Discard changes" },
+    ]);
+  }
+  private thinkingItems(): SelectItem[] {
+    return [
+      {
+        value: INHERIT,
+        label: "Inherit from parent",
+        description: this.parentThinking ?? "Calling agent's thinking level",
+      },
+      ...THINKING_LEVELS.map((value) => ({ value, label: value, description: "" })),
+    ];
+  }
+  private modelItems(type: SubagentType): SelectItem[] {
+    const current = this.draft[type].model;
+    const models: SelectItem[] = this.models.map((model) => ({
+      value: model.provider + "/" + model.id,
+      label: model.id,
+      description: model.provider + (model.name && model.name !== model.id ? " · " + model.name : ""),
+    }));
+    if (current && !models.some((model) => model.value === current))
+      models.unshift({
+        value: current,
+        label: current,
+        description: "Current setting · unavailable in this catalog",
+      });
+    const all = [
+      { value: INHERIT, label: "Inherit from parent", description: this.parentModel ?? "Calling agent's model" },
+      ...models,
+    ];
+    // Provider-first search avoids matching a model suffix against a later provider name.
+    const query = this.input.getValue();
+    const items = fuzzyFilter(all, query, (item) => item.value + " " + item.description + " " + item.label);
+    const exact = query.trim().toLowerCase().replace(/\s+/g, "/");
+    items.sort(
+      (a, b) =>
+        Number(b.value.toLowerCase() === exact || b.label.toLowerCase() === exact) -
+        Number(a.value.toLowerCase() === exact || a.label.toLowerCase() === exact),
+    );
+    return items;
+  }
+  private showItems(items: SelectItem[], selected: number) {
+    this.items = items;
     this.list = new SelectList(this.items, this.visible, {
       selectedPrefix: (t) => this.theme.fg("accent", t),
       selectedText: (t) => this.theme.fg("accent", t),
@@ -124,18 +124,32 @@ export class SubagentSettingsPanel implements Component, Focusable {
       scrollInfo: (t) => this.theme.fg("dim", t),
       noMatch: (t) => this.theme.fg("warning", t),
     });
-    this.list.setSelectedIndex(this.selected);
-    this.input.focused = this.hasFocus && this.screen === "model";
+    this.selectIndex(selected);
+    this.input.focused = this.hasFocus && this.screen.kind === "model";
   }
-  private back() {
-    this.screen = "profiles";
+  private selectIndex(index: number) {
+    this.selected = Math.max(0, Math.min(index, this.items.length - 1));
+    this.list.setSelectedIndex(this.selected);
+  }
+  private showProfiles(row: number) {
+    this.screen = { kind: "profiles" };
     this.input.setValue("");
-    this.rebuild();
+    this.showItems(this.profileItems(), row);
+  }
+  private openPicker(type: SubagentType, kind: "model" | "thinking") {
+    this.screen = { kind, type, returnRow: this.selected };
+    const items = kind === "model" ? this.modelItems(type) : this.thinkingItems();
+    const current = this.draft[type][kind] ?? INHERIT;
+    this.showItems(
+      items,
+      items.findIndex((item) => item.value === current),
+    );
   }
   private choose() {
     const item = this.items[this.selected];
     if (!item) return;
-    if (this.screen === "profiles") {
+    const screen = this.screen;
+    if (screen.kind === "profiles") {
       if (item.value === "save") {
         this.done(this.draft);
         return;
@@ -144,33 +158,24 @@ export class SubagentSettingsPanel implements Component, Focusable {
         this.done();
         return;
       }
-      this.row = this.selected;
       const [type, field] = item.value.split(":");
-      this.type = type as SubagentType;
-      this.screen = field as "model" | "thinking";
-      this.selected = 0;
-      this.rebuild();
-      const value = this.draft[this.type][this.screen] ?? INHERIT;
-      this.selected = Math.max(
-        0,
-        this.items.findIndex((item) => item.value === value),
-      );
-      this.list.setSelectedIndex(this.selected);
+      this.openPicker(type as SubagentType, field as "model" | "thinking");
     } else {
-      if (this.screen === "model") {
-        if (item.value === INHERIT) delete this.draft[this.type].model;
-        else this.draft[this.type].model = item.value;
+      const profile = this.draft[screen.type];
+      if (screen.kind === "model") {
+        if (item.value === INHERIT) delete profile.model;
+        else profile.model = item.value;
       } else {
-        if (item.value === INHERIT) delete this.draft[this.type].thinking;
-        else this.draft[this.type].thinking = item.value as ThinkingLevel;
+        if (item.value === INHERIT) delete profile.thinking;
+        else profile.thinking = item.value as ThinkingLevel;
       }
-      this.back();
+      this.showProfiles(screen.returnRow);
     }
   }
   handleInput(data: string) {
     if (this.keys.matches(data, "tui.select.cancel")) {
-      if (this.screen === "profiles") this.done();
-      else this.back();
+      if (this.screen.kind === "profiles") this.done();
+      else this.showProfiles(this.screen.returnRow);
     } else if (this.keys.matches(data, "tui.select.confirm")) this.choose();
     else {
       let move = 0;
@@ -179,15 +184,12 @@ export class SubagentSettingsPanel implements Component, Focusable {
       else if (this.keys.matches(data, "tui.select.pageUp")) move = -this.visible;
       else if (this.keys.matches(data, "tui.select.pageDown")) move = this.visible;
       if (move) {
-        this.selected = Math.max(0, Math.min(this.items.length - 1, this.selected + move));
-        if (this.screen === "profiles") this.row = this.selected;
-        this.list.setSelectedIndex(this.selected);
-      } else if (this.screen === "model") {
+        this.selectIndex(this.selected + move);
+      } else if (this.screen.kind === "model") {
         const before = this.input.getValue();
         this.input.handleInput(data);
         if (before !== this.input.getValue()) {
-          this.selected = 0;
-          this.rebuild();
+          this.showItems(this.modelItems(this.screen.type), 0);
         }
       }
     }
@@ -195,23 +197,23 @@ export class SubagentSettingsPanel implements Component, Focusable {
   }
   render(width: number): string[] {
     if (width < 1) return [];
-    const title = this.screen === "profiles" ? "Sub-agent profiles" : this.type + " · " + this.screen;
+    const title = this.screen.kind === "profiles" ? "Sub-agent profiles" : this.screen.type + " · " + this.screen.kind;
     const selected = this.items[this.selected];
     const help =
-      this.screen === "profiles"
+      this.screen.kind === "profiles"
         ? "↑↓ navigate · Enter edit/select · Esc discard"
         : "↑↓ navigate · Enter select · Esc back";
     return [
       this.theme.fg("accent", "─".repeat(width)),
       this.theme.fg("accent", title),
       "",
-      ...(this.screen === "model" ? [...this.input.render(width), ""] : []),
+      ...(this.screen.kind === "model" ? [...this.input.render(width), ""] : []),
       ...this.list.render(width),
       "",
-      ...(this.screen === "model" && !this.models.length
+      ...(this.screen.kind === "model" && !this.models.length
         ? ["No configured models. Use /login or configure providers."]
         : []),
-      ...(selected && this.screen === "model"
+      ...(selected && this.screen.kind === "model"
         ? [selected.value === INHERIT ? "Inherit from parent" : selected.value]
         : []),
       this.theme.fg("dim", help),
