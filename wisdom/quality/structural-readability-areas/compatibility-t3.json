@@ -108,10 +108,17 @@
     {
       "file": "scripts/claude-native-acceptance/driver.mjs",
       "initialBlob": "882479646781146d901ab1b87e5d3a99865d8509",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_ffc92537",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ffc92537",
+        "branch": "bruv/primary-native-acceptance-driver-ffc92537",
+        "launchBase": "994058813ce5c18a460d304418610b4a0995fb06",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "994058813ce5c18a460d304418610b4a0995fb06"
     },
     {
       "file": "scripts/claude-native-acceptance/history-driver.mjs",
@@ -124,10 +131,17 @@
     {
       "file": "scripts/claude-native-acceptance/history-model.mjs",
       "initialBlob": "9446986b74d6df6bf6b4bdaddd5e3de7aa8740a6",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_0af35abe",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_0af35abe",
+        "branch": "bruv/primary-native-history-model-0af35abe",
+        "launchBase": "994058813ce5c18a460d304418610b4a0995fb06",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "994058813ce5c18a460d304418610b4a0995fb06"
     },
     {
       "file": "scripts/claude-native-acceptance/history-replay.mjs",
@@ -1623,7 +1637,7 @@
     {
       "file": "tests/t3/local-notifications.test.ts",
       "initialBlob": "a3076eba307fac9850dad74c870d4673dfc2db78",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_514938ef",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_514938ef",
@@ -1634,11 +1648,16 @@
       "judges": [
         {
           "id": "task_cd9bfa00",
-          "status": "running",
-          "candidate": "d5648579f7360c7578a084cbfaa9c0c34e3d88a5"
+          "status": "completed",
+          "candidate": "d5648579f7360c7578a084cbfaa9c0c34e3d88a5",
+          "verdict": "ACCEPT",
+          "blob": "d646cd04f78933f4a57f0b3b6a91f7654a2bd459",
+          "objections": [],
+          "evidence": "Coherent mailbox/delivery groups, minimal typed client adapter leaves effects inline, paired promises/finallyStop localize lifetime;call history authoritative. Stable identity/ACK filtering+client close before retirement/supersession/fairness/durable stop retained.Independent13 tests45 assertions+strict typecheck/Biome.",
+          "limits": "Existing Stop delay observation timing-based;no live MCP/SSH/full gate."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "d646cd04f78933f4a57f0b3b6a91f7654a2bd459",
       "relatedPatchJudgments": [
         {
           "id": "task_c76f8b07",
@@ -1650,7 +1669,8 @@
       "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
       "changedRelatedPaths": [],
       "readingResult": "Mailbox vs delivery contract groups; one typed mock adapter replaces repeated casts while scenario effects inline; native promise/resolver pairs;finally Stop cleanup;call history replaces redundant replay counter.",
-      "checks": "13 tests45 assertions;36 assertion statements preserved modulo whitespace;strict focused typecheck/Biome/diff pass;no production edits."
+      "checks": "13 tests45 assertions;36 assertion statements preserved modulo whitespace;strict focused typecheck/Biome/diff pass;no production edits.",
+      "integrationState": "Exact whole-file primary/judge patch joined, replaces earlier source-patch test hash"
     },
     {
       "file": "tests/t3/native-routing.test.ts",
@@ -1717,15 +1737,21 @@
     {
       "file": "tests/t3/web-task-events.test.ts",
       "initialBlob": "f09ea82bc1e8c407aabc7e377f1dbd02e4debbd6",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_258e5ffd",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_258e5ffd",
         "branch": "bruv/primary-web-task-event-tests-258e5ffd",
         "launchBase": "b2174daa061d8bd1cb02510edcca91b98b092a7f",
-        "commit": null
+        "commit": "6f0e9102146e372a551c32e8a3f3cb808fca61f6"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_390134c3",
+          "status": "running",
+          "candidate": "6f0e9102146e372a551c32e8a3f3cb808fca61f6"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1735,7 +1761,10 @@
           "candidate": "0f1dfe3930622aac30b0a05120bb07bab7f4fe0c"
         }
       ],
-      "launchBase": "b2174daa061d8bd1cb02510edcca91b98b092a7f"
+      "launchBase": "b2174daa061d8bd1cb02510edcca91b98b092a7f",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged five local visible input/effect contracts; shared machinery would add navigation. Captured traffic correction and all assertions preserved.",
+      "checks": "5 pass16 assertions;no build/full suite."
     }
   ],
   "extraFiles": [
@@ -2009,6 +2038,20 @@
       "status": "passed",
       "scope": "Final projection/binding/event24 outer tests104 assertions;typecheck",
       "limits": "Actual area combined passes;older projection candidate binding fixture failed and remains recorded;no live/full gate."
+    },
+    {
+      "id": "task_d7fe4e85",
+      "commit": "994058813ce5c18a460d304418610b4a0995fb06",
+      "status": "passed",
+      "scope": "Real full repository tsc --noEmit after parent accepted common merge",
+      "limits": "Not build/full CI."
+    },
+    {
+      "id": "task_5815dc6f",
+      "commit": "994058813ce5c18a460d304418610b4a0995fb06",
+      "status": "passed",
+      "scope": "Post-parent-merge17-file compatibility/T3 regression164 pass766 assertions7 SDK skips",
+      "limits": "Focused source fixtures/isolated children;no full gate/live/device/compiled proof."
     }
   ],
   "combinedReviews": [
@@ -2061,7 +2104,9 @@
       "mergeBase": "7b5c7d69",
       "reason": "Parent has accepted common caller/build/live/task and completed site code; merging at batch boundary to give later file workers current accepted context.",
       "diskFreeGiB": 130,
-      "status": "merge-attempt"
+      "status": "merged-clean",
+      "commit": "994058813ce5c18a460d304418610b4a0995fb06",
+      "acceptedAreaBlobMismatches": []
     }
   ]
 }
