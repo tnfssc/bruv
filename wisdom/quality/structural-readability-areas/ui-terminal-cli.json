@@ -2577,6 +2577,13 @@
       "setup": "Initial inline quoting failed under fish before execution; corrected to local ignored Bash script. Generated assets prepared locally; no shared dependency preparation/mutation.",
       "proof": "178 pass, 0 fail, 1654 assertions across nine suites; fresh compiled CLI and connector built",
       "blocker": "tests/task-rows.test.ts:249 TS2741 missing invalidate in Component fixture introduced by SDK candidate"
+    },
+    {
+      "job": "task_6ebc5247",
+      "commit": "77126246",
+      "scope": "Full tsc --noEmit after task-row fixture repair and parent accepted common merge",
+      "status": "pass exit0",
+      "log": "runtime-assets/readability-parent-merged-typecheck.log"
     }
   ],
   "parentBoundary": {

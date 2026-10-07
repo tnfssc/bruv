@@ -12,7 +12,7 @@ Adjacent JSON is authoritative: one row per baseline/extra file, durable worker 
 
 ### Active next steps
 
-- Full typecheck exposed TS2741 in the SDK-added throwing Component fixture at tests/task-rows.test.ts:249. Fresh primary task_e44a3fd7 reproduced it and proposed only invalidate() {} at 1b66a8d1dc898e2953e963da9f4af5b663bafd86; judge task_c584a1d4 is reviewing the entire primary file plus repair. Not yet integrated. Runtime assertions unchanged; worker reports full tsc passes.
+- Observed TS2741 in tests/task-rows.test.ts repaired by fresh primary task_e44a3fd7 and independently accepted task_c584a1d4; only required no-op invalidate added, all assertions unchanged. Integrated at 77126246. Full merged-area tsc task_6ebc5247 now passes exit 0, including parent common code.
 - Active writers/judges and queued candidates are statuses in JSON; fill slots on substantive completion, do not poll. Future workers start at current committed integrated state.
 - New tests/ansi-video-renderer.test.py is candidate-related only: once parent renderer patch accepted, launch its own fresh primary then independent judge.
 - Cross-area tests/editor-voice-integration.test.ts blob 95453da9cb3f0827a96b955c60f854e905939dac needs Live/native-audio primary reconciliation. tests/subagent-settings-ui.test.ts blob 2657c431fc90d593d5064b33b4a4dfd82d261370 needs execution/tasks/questions primary reconciliation. Both related patches independently accepted; do not infer their required primary coverage.
@@ -32,7 +32,7 @@ Adjacent JSON is authoritative: one row per baseline/extra file, durable worker 
 - Batch 1 at fa5689ff: 71 tests/473 assertions; full tsc and six-path format/lint passed after own generated assets prepared. Initial missing assets and broader Biome import-order assist failure retained in ledger.
 - Batch 2 at 10508c78: 161 tests/2,032 assertions; full tsc and eight-path format/lint passed, existing 6 warnings/18 infos.
 - Judge task_060d7edf accepted exact SDK/density/projection/quiet/settled/rolling/preview join: ten exact source/test blobs in joinProof. Independent 159 tests/13,717 assertions, 2 app-stack failure/shutdown/reinstall probes/32 assertions, base lifetime characterization 1/6. Preserves publication before paint, lazy body suppression, mouse geometry, live overlay over cache, existing children/foreign wrapper/reinstall semantics. Later changes invalidate affected hashes.
-- Batch 3 at e4cf5e40: fresh normal CLI + connector launcher built; all 178 tests/1,654 assertions across nine suites passed, including previously unrun compiled CLI cases. Full tsc failed only the fixture contract above. Initial fish inline-quote launch failed before execution; local ignored Bash script corrected it. No passing static claim until repaired final integration rerun.
+- Batch 3 at e4cf5e40: fresh normal CLI + connector launcher built; all 178 tests/1,654 assertions across nine suites passed, including previously unrun compiled CLI cases. Full tsc failed only the fixture contract above. Initial fish inline-quote launch failed before execution; local ignored Bash script corrected it. Repaired final integration full tsc passed at 77126246 (task_6ebc5247).
 - Parent accepted common checkpoint 695ade32dc055e22dd56a7bf06c01764973715d2 merged cleanly at bc8f6e5ffb75aa2b27fd939ce60888063e756383. No accepted UI blob changes (audit: zero mismatches). Other-area new/deleted files remain parent/sibling primary ownership, not falsely counted in UI scope. Later combined API gaps remain honest.
 
 ## Toolchain and limits
