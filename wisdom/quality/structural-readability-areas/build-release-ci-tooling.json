@@ -137,7 +137,7 @@
     {
       "focus": "scripts/ci-selective.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_e1108b07",
@@ -153,15 +153,24 @@
           "id": "task_36d1647b",
           "base": "147c9738bf53e2a693a3f44330320a4e3042522f",
           "candidate": "db26abf8e5f61aac850acc930a17aa92ba5c1852",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Eligibility no longer constructs report; two-tree blocker lifetime local; plan→publish→execute visible. Preserves both-tree scan/Git fallback, fail-closed freshness and status3 refusal.",
+          "checks": "Independent 16 pass/231 assertions; no hosted/full gate or fresh judge lint/typecheck.",
+          "acceptedBlobs": {
+            "scripts/ci-selective.ts": "1995804abd171d6f2d73d107b79ba5aee0b57120",
+            "tests/ci-selective.test.ts": "e5c8c68e33035aa58de5bb6da9c3b1366d989baa"
+          }
         }
       ],
       "relatedPaths": [
         "tests/ci-selective.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "1995804abd171d6f2d73d107b79ba5aee0b57120",
       "readingResult": "Reference-diff eligibility predicate replaces building report to decide metadata inspection; two-tree operation owns blockers; CLI plan→publish→execute with shared freshness rule.",
-      "checks": "Base/candidate 16 pass/231 assertions; format/isolated strict tsc/diff pass, baseline lint warnings unchanged; no hosted/full gate."
+      "checks": "Base/candidate 16 pass/231 assertions; format/isolated strict tsc/diff pass, baseline lint warnings unchanged; no hosted/full gate.",
+      "integrationState": "Full coherent two-source-path patch applied from launch base; no overlap; worker note excluded."
     },
     {
       "focus": "scripts/ci.sh",
@@ -245,19 +254,31 @@
     {
       "focus": "scripts/publish-release.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_36e9172d",
           "launchBase": "59475aee72cbbc2511cd5f6bc77b4669363bcc9a",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_36e9172d",
           "branch": "bruv/primary-scripts-publish-release.ts-36e9172d",
+          "state": "completed",
+          "commit": "f605df32710abd34efb7bf2da09676460d05a173"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_517172cd",
+          "base": "59475aee72cbbc2511cd5f6bc77b4669363bcc9a",
+          "candidate": "f605df32710abd34efb7bf2da09676460d05a173",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/publish-release.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "verifyRemoteTag owns stale-develop/push/reuse policy; readExpectedAssets hashes bytes; ensureCompleteRelease repairs permissible drafts and returns verified immutable snapshot; main publishes then independently verifies public state.",
+      "checks": "37 pass/391 assertions; 16 CLI baseline characterization pass/54 assertions incl ten new cases; strict tsc/format/lint/diff pass, no authenticated publication/full build."
     },
     {
       "focus": "scripts/run-native-release-gate.mjs",
@@ -271,8 +292,16 @@
     {
       "focus": "scripts/select-release-notes.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_5013c91b",
+          "launchBase": "cedf50c46bf53456e5b1ab3509a3d9f2e70a7c46",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_5013c91b",
+          "branch": "bruv/primary-scripts-select-release-notes.ts-5013c91b",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -448,7 +477,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_36d1647b",
+        "verdict": "ACCEPT",
+        "blob": "e5c8c68e33035aa58de5bb6da9c3b1366d989baa",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/compiled-bun-fixture.ts",
