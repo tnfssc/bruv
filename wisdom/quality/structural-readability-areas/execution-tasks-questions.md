@@ -47,3 +47,5 @@ Execute invocation owner accepted task_cee52f91: reply handoff/wait metadata/lau
 ## Fresh compiled third-batch proof
 
 Own paired build/full typecheck task_78bc3ded passed at241e60a4. ORIGINAL21 suites task_e6a5072d:182 pass/0fail/1199 assertions, including original runner/bridge and joined execution/handoff/capture/images/foreground-stop/resume/question-TUI/attention. Required compiled runner/bridge proof is now satisfied; source-adapted extra-HOME failure did not reproduce. Pending images candidate is NOT part of this binary. No live-provider/authenticatedSSH/device parity claim.
+
+Protocol-test primary accepted task_b123eb27, blob4c2ec710464729b919dec726c538d391fda19336: one client fixture restores all9 descriptors/absence and socket; server finally cleanup. Judge independently reproduced old remote/live/questions leak and fixed success/failure restoration;16/379+tsc/Biome/diff. Explicit test contamination fix, production unchanged; full test diff integrated.

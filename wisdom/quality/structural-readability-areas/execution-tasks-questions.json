@@ -105,7 +105,7 @@
     {
       "focus": "src/delegation-environment.ts",
       "initialBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_238b6364",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_238b6364",
@@ -113,7 +113,14 @@
         "base": "739da40a80981fc3f47aff84b0958f94448c4ccb",
         "commit": "90791397e19f73ad7616526b96671befb4579dfa"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_36f1a10b",
+          "status": "running",
+          "candidate": "90791397e19f73ad7616526b96671befb4579dfa",
+          "base": "739da40a80981fc3f47aff84b0958f94448c4ccb"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "739da40a80981fc3f47aff84b0958f94448c4ccb",
@@ -1697,7 +1704,7 @@
     {
       "focus": "tests/job-bridge-protocol.test.ts",
       "initialBlob": "7f4c7f7cbfe6f214e5ca5ca4ac0721364d3f77a6",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_6e7d0428",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_6e7d0428",
@@ -1708,14 +1715,22 @@
       "judgeRounds": [
         {
           "id": "task_b123eb27",
-          "status": "running",
+          "status": "complete",
           "candidate": "c9bbbce5a4f1f00a261e93e922e6341e056f0f56",
           "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
-          "priorRelatedJudge": "task_849e9ce1"
+          "priorRelatedJudge": "task_849e9ce1",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fixture owns globals snapshot/install/scenario/socketdestroy/exactdescriptor restore, not protocol operations. Judge reproduced original remote/live/questions leaks and candidate success/failure restoration incl absent/nonenumerable; all12 scenarios and assertions retained.",
+          "checks": [
+            "independent16/379",
+            "strict tsc/Biome/diff pass",
+            "sourceprotocol not fullbinary/provider"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "4c2ec710464729b919dec726c538d391fda19336",
+      "integration": "full primary test diff integrated; supplemental blob superseded",
       "relatedAcceptance": {
         "judge": "task_849e9ce1",
         "candidate": "9d80aab5646300b24ae57999007d62463e6bb6b5",
