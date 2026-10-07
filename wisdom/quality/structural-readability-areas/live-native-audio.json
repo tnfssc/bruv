@@ -185,13 +185,31 @@
       "judgeRounds": [
         {
           "id": "task_c412b125",
-          "status": "running",
+          "status": "terminated incomplete exit143",
           "candidate": "3c71d4a280d89be9b6597d09af48a40a376451f8",
-          "base": "6f82665bbbe90a15958576f541f5be68217232bf"
+          "base": "6f82665bbbe90a15958576f541f5be68217232bf",
+          "verdict": null,
+          "objections": [],
+          "reason": "30-minute attempt with no new captured source/tool output since13:29:53;still receiving model response, no verdict delivered. Coordinator cancelled incomplete round to permit fresh actual-code review; no acceptance inferred."
+        },
+        {
+          "id": "task_0f8a556e",
+          "status": "complete",
+          "candidate": "3c71d4a280d89be9b6597d09af48a40a376451f8",
+          "base": "6f82665bbbe90a15958576f541f5be68217232bf",
+          "round": "fresh replacement after incomplete terminated review",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Scoped CaptureProtocol replacesdaemoncollector/queue/twoconsumers withone validatedevent path;closedepoch explicitsettling;scope resumes suspendedhelper beforeEOF/waitkill/close. Scenario startup/hold/backlog/freshhold/stop visible.",
+          "checks": "Independent27Python+4Bun24assertions/helperbuild;exactbaseline/candidate passprivatePipeWirePulse;entrysynthetic probes preservevalidoldepoch and reject newepoch/malformedPCM baselineaccepted. No CI Pulseparity/acousticorigin/physical/provider/Mac.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/capture-protocol.py": "6918a3b62e8bcaf6687e73874bd5ae31ce3a46f3",
+            "native/live-linux/tests/test_capture_protocol.py": "589184ed6845c98d21a05cc338101e89708c3c6f"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "6918a3b62e8bcaf6687e73874bd5ae31ce3a46f3",
+      "integration": "integrated accepted fresh replacement judgment;incomplete attempt retained",
       "relatedPaths": [
         "native/live-linux/tests/test_capture_protocol.py"
       ],
@@ -882,22 +900,66 @@
     {
       "focus": "src/live/conversation.ts",
       "initialBlob": "7f9a86a60e3eb296e41459e09e7ccbbec1470d49",
-      "primary": null,
-      "judgeRounds": [],
+      "primary": {
+        "id": "task_7d020b63",
+        "launchBase": "d50c5dcdcac64eebb0e8d9fb98f5f4e394159a34",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7d020b63",
+        "branch": "bruv/primary-src-live-conversation.ts-7d020b63",
+        "status": "candidate ready",
+        "commit": "79325faf09732f06bd890dbad180957b0a323def"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_365a3eee",
+          "status": "running",
+          "candidate": "79325faf09732f06bd890dbad180957b0a323def",
+          "base": "d50c5dcdcac64eebb0e8d9fb98f5f4e394159a34"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "judge running",
+      "relatedPaths": [],
+      "readingResult": "Unchanged conversation adapter keeps transcript record/correction and matching currentbranch reconstruction together;admission/context exclusion/playbackinterrupt/explicitworkcancel remain distinctauthorities;extra splitting addsnavigation.",
+      "checks": "43tests245assertions conversation/owner/passivehistory/transcript;initialWASM setupresolvedexistingasset,no behaviorfix/provider/device/Mac."
     },
     {
       "focus": "src/live/cost.ts",
       "initialBlob": "14d4bead2ec2e832da60d5816e9cee0b3e40069c",
       "primary": {
         "id": "task_2995e9e9",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_2995e9e9",
+        "branch": "bruv/primary-src-live-cost.ts-2995e9e9",
+        "launchBase": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "primary running"
+      "judgeRounds": [
+        {
+          "id": "task_4b5c5997",
+          "status": "complete",
+          "candidate": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+          "base": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Usage ingress owns provider-specific watermark/dedup/pricing/incremental persistence;caller no longer picks accounting semantics. GPTsession cumulative/Geminiturn cumulative/Realtime independent IDs explicit. Terminalbilling preserved after activityrevocation,sessionIDguard+unknown sticky.",
+          "checks": "Independent97candidate tests851assertions;126combinedGPT/accounting/footer1157assertions;two exactbaseline realtransportcontrolledsocket regressions fail thenpass;finalGPT92d985f0 API/closeorder/faileduncertainty/switchedsession checked. No authenticated/device/macOS.",
+          "acceptedBlobs": {
+            "src/live/cost.ts": "1a6087ab8fb201b5c7d2aa771ab26aec7c899b04",
+            "src/live/extension.ts": "9bb119ffec8a22b85ffa06c6ae9b624bed838c0d",
+            "tests/live-cost.test.ts": "345f8739c2c77b33db539d11aabd2c4bb142a75e",
+            "tests/live-extension.test.ts": "da0317117b6400fdba6b333935d8bb0b2d951e31"
+          }
+        }
+      ],
+      "acceptedBlob": "1a6087ab8fb201b5c7d2aa771ab26aec7c899b04",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [
+        "src/live/extension.ts",
+        "tests/live-cost.test.ts",
+        "tests/live-extension.test.ts"
+      ],
+      "readingResult": "Provider-specific accounting: GPT cumulative snapshots vsGemini perturn vsRealtime independent responses;pricing operations replace mixedcachevalidation/positionalrates. Explicit GPTsnapshot overcount+ignoredterminalduration fixes.",
+      "checks": "122tests1142assertions;two regressions fail exactlaunch/passcandidate;changedTS/format/diffpass,lintzero warnings;roottypes missingassetimports. SessionID persistence and unknownbackend/ASR retained."
     },
     {
       "focus": "src/live/credentials.ts",
@@ -913,13 +975,20 @@
       "judgeRounds": [
         {
           "id": "task_c817da47",
-          "status": "running",
+          "status": "complete",
           "candidate": "357b3a75677e60ce60bdf341e4988242f2d762fe",
-          "base": "25f29f5e951dcbef28df99a15eac7cf41debaed0"
+          "base": "25f29f5e951dcbef28df99a15eac7cf41debaed0",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Readinessmetadata separated from runtimeresolution;OpenAIcanonical-only explicit;import guard/read/recheck/lockedoverwrite sequence clear;fd security/boundedliteralparse/opaqueerrors one lifetime;legacy diagnosticreader notproductfallback.",
+          "checks": "Independent107tests580assertions across5 areas,diffclean;no provider/device/macOS/fullbuild/compiledCLI.",
+          "acceptedBlobs": {
+            "src/live/credentials.ts": "ddff52c311a81faef6290ed979f50a04fd5182cb"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged discovery separate from runtime resolution;import guards descriptor access/rechecks config/locked callback decideswrite;one trycatchfinally owns file descriptor. Extraction addsindirection.",
       "checks": "107tests580assertions acrosscredential/lifecycle/setup/extension/startupprobe;no provider/device/macOS/fullbuild."
@@ -932,12 +1001,29 @@
         "launchBase": "3faae10fe2fb393f921117b47ebc565299db873e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_84881347",
         "branch": "bruv/primary-src-live-diagnostics.ts-84881347",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "ad1dfa9d42fc87c397fe92e691127958201e0f1a"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "primary running"
+      "judgeRounds": [
+        {
+          "id": "task_3ac00f12",
+          "status": "complete",
+          "candidate": "ad1dfa9d42fc87c397fe92e691127958201e0f1a",
+          "base": "3faae10fe2fb393f921117b47ebc565299db873e",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Fixedguidance rendering of sanitized nativephase/detail,not rawhelpertext;unknown remainsfailure. Direct switch has no hiddenstate/lifetimes warrantingregistry/extraction;actual bridge/extension/nativecallers traced.",
+          "checks": "Independent21tests139assertions,diffclean;injectedprocess/audio+native source only,no macOS/device/provider/compiledCLI.",
+          "acceptedBlobs": {
+            "src/live/diagnostics.ts": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b"
+          }
+        }
+      ],
+      "acceptedBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged nativephase/detail->bridge sanitize->extension ignores helpertext->fixedguidance switch;unknowncodes remainfailures;no hiddenstate/lifetimes tosplit.",
+      "checks": "21tests139assertions/diffclean;mockedaudioUI/native source only,no macOS/device/provider/compiledCLI."
     },
     {
       "focus": "src/live/editor-push-to-talk.ts",
@@ -947,20 +1033,50 @@
         "launchBase": "16182b5898049994a37630cbfbf761eb6b7b982b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7bb5cb79",
         "branch": "bruv/primary-src-live-editor-push-to-talk.ts-7bb5cb79",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "7f72408d2e97646332d752d423d96ccbf56d310c"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "primary running"
+      "judgeRounds": [
+        {
+          "id": "task_51a3b4e4",
+          "status": "complete",
+          "candidate": "7f72408d2e97646332d752d423d96ccbf56d310c",
+          "base": "16182b5898049994a37630cbfbf761eb6b7b982b",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Timestamp+undo evidence together removesparallelfirstSpace state;cancelledrepeat admission contiguous;startTalking owns guardednewestfirstundo/promotion/acquisition/inactivity. Rawcancel beforeSDKfilter/focus and nativeepochs remain purposeful.",
+          "checks": "Independent112tests572assertions,diffpass;5newtests characterizebaseline;no offlineTUI/device/provider/macOS/fullgate rerun.",
+          "acceptedBlobs": {
+            "src/live/editor-push-to-talk.ts": "3fac9c057f3f767a9af84ce9bcbcb3341a952e5b",
+            "tests/editor-push-to-talk.test.ts": "8602a3f58450df60fd489a9d7ce290a78daa968d"
+          }
+        }
+      ],
+      "acceptedBlob": "3fac9c057f3f767a9af84ce9bcbcb3341a952e5b",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [
+        "tests/editor-push-to-talk.test.ts"
+      ],
+      "readingResult": "Explicit pendingSpaceBatch owns held-space/edit evidence;recognition chooses ordinaryinsert vs guardedpromotion;startTalking consumesundo newestfirst andopenscapture onlyafterguards. Rawrelease/focus/paste/navigation,epochs/Abortattachment intact.",
+      "checks": "114tests634assertions discriminator/realeditor/extension/offlineCLI;14discriminatorcases baseline-pass;strictTS/Biome/diff;assetsresolved initialCLIerrors then80/120columns pass. No behaviorfix/provider/device/macOS."
     },
     {
       "focus": "src/live/embedded.ts",
       "initialBlob": "bda048c5bdf546d7dd7297e130b17920ce1c3f14",
-      "primary": null,
+      "primary": {
+        "id": "task_e346a38c",
+        "launchBase": "a0bf3b5740f229cea155e0c664b16ce91dc4e618",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_e346a38c",
+        "branch": "bruv/primary-src-live-embedded.ts-e346a38c",
+        "status": "candidate ready",
+        "commit": "8a92d8f20f136df4561706ec9c6493f25c709946"
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged sourcenull/releaseplugin assetpathdigest/resolver verifyprivateextract/audio cleanup owners distinctvisible;extraabstraction addsbookkeeping.",
+      "checks": "4embeddedtests20assertions inclcompiledextract afteroriginalpayloaddeletion;unbundleddefault/diffpass,nodevice/Mac/provider/fullgate."
     },
     {
       "focus": "src/live/extension.ts",
@@ -987,10 +1103,24 @@
             "src/live/extension.ts": "cd43d45e34ddc90153c765193c21ce7b9052d5de",
             "tests/live-extension.test.ts": "ea3dffdf18791aac1b2e150b505d6bdb11ba6764"
           }
+        },
+        {
+          "id": "task_4b5c5997",
+          "status": "complete",
+          "candidate": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+          "base": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Usage ingress owns provider-specific watermark/dedup/pricing/incremental persistence;caller no longer picks accounting semantics. GPTsession cumulative/Geminiturn cumulative/Realtime independent IDs explicit. Terminalbilling preserved after activityrevocation,sessionIDguard+unknown sticky.",
+          "checks": "Independent97candidate tests851assertions;126combinedGPT/accounting/footer1157assertions;two exactbaseline realtransportcontrolledsocket regressions fail thenpass;finalGPT92d985f0 API/closeorder/faileduncertainty/switchedsession checked. No authenticated/device/macOS.",
+          "acceptedBlobs": {
+            "src/live/extension.ts": "9bb119ffec8a22b85ffa06c6ae9b624bed838c0d"
+          },
+          "round": "fresh combined cost accounting revision"
         }
       ],
-      "acceptedBlob": "cd43d45e34ddc90153c765193c21ce7b9052d5de",
-      "integration": "integrated accepted exact primary candidate",
+      "acceptedBlob": "9bb119ffec8a22b85ffa06c6ae9b624bed838c0d",
+      "integration": "integrated related revision freshly judged at final blob",
       "relatedPaths": [
         "tests/live-extension.test.ts"
       ],
@@ -1000,34 +1130,136 @@
     {
       "focus": "src/live/gpt-live-context.ts",
       "initialBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_07981349",
+        "launchBase": "2c5d7aa9ae377dfda5fc059faea391444860c1fa",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_07981349",
+        "branch": "bruv/primary-src-live-gpt-live-context.ts-07981349",
+        "status": "candidate ready",
+        "commit": "a4836828bfb3336229bd70430539e5fb7fecbc77"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_4151cb4a",
+          "status": "complete",
+          "candidate": "a4836828bfb3336229bd70430539e5fb7fecbc77",
+          "base": "2c5d7aa9ae377dfda5fc059faea391444860c1fa",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Purelocal tail2400codepoints/omissiondisclosure/UTF8chunk480 journey coherent;caller ownscorrelation/speechtrigger/failure/sessionlifetime;nullcorrelation observations notdelegationfinality.",
+          "checks": "Independent111tests938assertions/diffclean;no provider/device/Mac/authremote/fullbuild.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-context.ts": "ca67afe7f0da5fa93829785661d93b002a2d2302"
+          }
+        }
+      ],
+      "acceptedBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged tail2400codepoints/disclosedomissions thenquoted480byteUTF8chunks withoutsplitting codepoints;caller observations no inventedcorrelation,provisionaltimestamps/approxcontext/sessionselection separate.",
+      "checks": "98tests555assertions context/delegation/request/extension,diffclean;no provider/device/macOS."
     },
     {
       "focus": "src/live/gpt-live-delegation.ts",
       "initialBlob": "0096dd7f6d3ef5601f2605a8cf2f8117b648b2b7",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_05694cc7",
+        "launchBase": "bb9c21526dfa7e1aca0c27cf97d5fe0c108ee081",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_05694cc7",
+        "branch": "bruv/primary-src-live-gpt-live-delegation.ts-05694cc7",
+        "status": "candidate ready",
+        "commit": "a5f932b5712711f4de4767f2fed28986dec14052"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_3583b317",
+          "status": "complete",
+          "candidate": "a5f932b5712711f4de4767f2fed28986dec14052",
+          "base": "bb9c21526dfa7e1aca0c27cf97d5fe0c108ee081",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "ProvisionalSpeech ownsretention/reservation/lossretirement/settlement;bridge ownsreplay/history/spokenfreshness,mainowner codingadmission. Entryuse/retention replaces3identityjoins;pendingeviction and acceptance/rejection explicit,stalespeech still settles actualadmission. IDsnonevicting/timestampswatermark notfinality.",
+          "checks": "Independent44delegation/request/session/history+32playback pass;ownersuite missingWASMblocked;joinedGPT92d985f0/playbackce0fd68d seamchecked;diffpass,no productfix/device/provider/macOS.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-delegation.ts": "160003768942615890ecba4835805cd3954be71a",
+            "tests/gpt-live-delegation.test.ts": "fad7de7b0b4d4ece4f11e17fd29c27ff313bb2d3"
+          }
+        }
+      ],
+      "acceptedBlob": "160003768942615890ecba4835805cd3954be71a",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [
+        "tests/gpt-live-delegation.test.ts"
+      ],
+      "readingResult": "ProvisionalSpeech ownsretention/loss/reservation/settlement withentry state ratherthan3set joins/cumulativeomissioncounters;bridge exposesreplay/savedcontext/preparedadmission/hostsubmission/spokenfreshness/unconditionalsettlement;authority unchanged.",
+      "checks": "65tests718assertions;20delegationtests baselinepass incl2new;strictTS/format/lintpass4existingwarnings;no productfix/provider/device/macOS/fullgate."
     },
     {
       "focus": "src/live/gpt-live-playback.ts",
       "initialBlob": "fcbf4975f3b457e798e7d959aee9943f62b7f698",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_65c3efca",
+        "launchBase": "e11164e48eedeedc5f1c95f0598c178c3a58e6b2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_65c3efca",
+        "branch": "bruv/primary-src-live-gpt-live-playback.ts-65c3efca",
+        "status": "candidate ready",
+        "commit": "84ddffa8b4c5559f35dbcea6eb134af33e115900"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_af9fc144",
+          "status": "complete",
+          "candidate": "84ddffa8b4c5559f35dbcea6eb134af33e115900",
+          "base": "e11164e48eedeedc5f1c95f0598c178c3a58e6b2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Optionalcountdown represents temporarysuppression instead redundantmutedflag;onsetexplicitly invalidatesqueuedoutput,terminalfailure independent withoutduplicateflush;closure separate. Micforwarding/jobs notcancelled byspeechinterrupt.",
+          "checks": "Independent88pass1paidskip20903assertions/diff;baseline+candidate actualterminalblankpane remainsunresolved,notparity orrenderedproof.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-playback.ts": "0ae9b29f607c565fbfe00896627956c5bac3ce18",
+            "tests/gpt-live-playback.test.ts": "5c90d594ce35955b26e9962bd0bb677d38a07011"
+          }
+        }
+      ],
+      "acceptedBlob": "0ae9b29f607c565fbfe00896627956c5bac3ce18",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [
+        "tests/gpt-live-playback.test.ts"
+      ],
+      "readingResult": "OutputRecovery owns speechguard/terminalfailure suppression and capturedquiet resumes;interruption explicitqueueinvalidate;terminalfailure no duplicate speechflush;closure independent. Micforwarding/thresholds/pacing/flushgating/epochs/shortdrain unchanged.",
+      "checks": "88offlinepass1paidskip20903assertions;3newregressions baselinepass;strictTS/Biomepass1existingwarn;actualterminal blankpane startup fails baseline/candidate rootcauseunproven,no device/provider/macOS."
     },
     {
       "focus": "src/live/gpt-live-request.ts",
       "initialBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_8bc8ea03",
+        "launchBase": "168832841052c286d6f7fc0ed3bebdcda3e16167",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_8bc8ea03",
+        "branch": "bruv/primary-src-live-gpt-live-request.ts-8bc8ea03",
+        "status": "candidate ready",
+        "commit": "ee1694e6abc99958cdd3600cb6fa3b29954a71c6"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_bf610eb5",
+          "status": "complete",
+          "candidate": "ee1694e6abc99958cdd3600cb6fa3b29954a71c6",
+          "base": "168832841052c286d6f7fc0ed3bebdcda3e16167",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Pure omission refusal and arrivalorder overlapscan/maxend/priorwatermark/jointrim direct;bridge ownsreserve/loss/watermark/admission,owner rawaudit/sanitizedprompt,passivehistory provisionalmetadata. Helpernoinventedfinality or userprose.",
+          "checks": "Independent63tests705assertions plusarrivalorder/watermark/equality/omission/trim probes,diffclean;no build/provider/device/Mac.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-request.ts": "ff55e2444000fa15232dabf6d697c63037a7b0ae"
+          }
+        }
+      ],
+      "acceptedBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged rejectomittedspeech/scanarrivalorder timingvsadmission/jointext newlineoverlap/trim;rawaudit/provisionalreplay/admission stay withowners,no inventedfinality.",
+      "checks": "63tests705assertions;missingWASM fixedexistingfixtures;no runtime/sourcechange/provider/device/Mac/build."
     },
     {
       "focus": "src/live/gpt-live-session.ts",
@@ -1067,18 +1299,37 @@
     {
       "focus": "src/live/helper.ts",
       "initialBlob": "7cd173370b3ab5bf89e08ea287cbbe8e9e70b8a8",
-      "primary": null,
+      "primary": {
+        "id": "task_34c585ed",
+        "launchBase": "f67636586cd6bf6649ab5fce055cfec0819784f8",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_34c585ed",
+        "branch": "bruv/primary-src-live-helper.ts-34c585ed",
+        "status": "candidate ready",
+        "commit": "2f13e6964b36f305a16084fd3d6c7e417e2361a7"
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [
+        "tests/live-embedded-helper.test.ts"
+      ],
+      "readingResult": "Helperunchanged validate/privateextract/sync-reverify/grantexecute/transfercleanup journey;nestedfd/directory scopes purposeful. Relatedcompiledprobe discardedTMPDIR;fixture nowpassesTMPDIR/assertsownedlocation+cleanup.",
+      "checks": "21tests112assertions/format/diffpass;no Mac/device/provider/fullgate. Explicit fixture fix only,noruntime contractchange."
     },
     {
       "focus": "src/live/lifecycle-access.ts",
       "initialBlob": "907131d869263fb00bd1a84a042a244cf108c1dc",
-      "primary": null,
+      "primary": {
+        "id": "task_426bbfc3",
+        "launchBase": "ec8ca2ecbe0fe49172c4abb8c25c12c00ee11a92",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_426bbfc3",
+        "branch": "bruv/primary-src-live-lifecycle-access.ts-426bbfc3",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/main-owner.ts",
@@ -1346,7 +1597,10 @@
       "primary": {
         "id": "task_d79e8579",
         "status": "candidate ready",
-        "commit": "2932f52f154c8d697234bb620b66b927ba2afd44"
+        "commit": "2932f52f154c8d697234bb620b66b927ba2afd44",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_d79e8579",
+        "branch": "bruv/primary-src-live-types.ts-d79e8579",
+        "launchBase": "9b2a7153f08d1f3604ddfbb5921c5e12f8259f8c"
       },
       "judgeRounds": [
         {
@@ -1359,7 +1613,8 @@
           "checks": "Independent80pass726 assertions+3 import errors;writer190pass not reproduced. No build/typecheck/provider/device proof.",
           "acceptedBlobs": {
             "src/live/types.ts": "982613947af84d36edeb598916e7826fc3f43190"
-          }
+          },
+          "base": "9b2a7153f08d1f3604ddfbb5921c5e12f8259f8c"
         }
       ],
       "acceptedBlob": "982613947af84d36edeb598916e7826fc3f43190",
@@ -1390,7 +1645,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_51a3b4e4",
+        "verdict": "ACCEPT",
+        "blob": "8602a3f58450df60fd489a9d7ce290a78daa968d"
+      }
     },
     {
       "focus": "tests/editor-voice-integration.test.ts",
@@ -1490,18 +1750,45 @@
     {
       "focus": "tests/gpt-live-delegation.test.ts",
       "initialBlob": "1a6bb3e927e44740fd7d513e2d250be178b9c43e",
-      "primary": null,
+      "primary": {
+        "id": "task_79a24111",
+        "launchBase": "b418d87d4ba3cd6651d70ff65a31242a2e9cc7d6",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_79a24111",
+        "branch": "bruv/primary-tests-gpt-live-delegation.test.t-79a24111",
+        "status": "candidate ready",
+        "commit": "bea2d9d57a4d1fa9a2279f5ec9d67a5b39e1d9db"
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "awaiting judge slot",
+      "relatedPatchJudgment": {
+        "judgeId": "task_3583b317",
+        "verdict": "ACCEPT",
+        "blob": "fad7de7b0b4d4ece4f11e17fd29c27ff313bb2d3"
+      },
+      "relatedPaths": [],
+      "readingResult": "Fixture alwaysobservessubmissions;testowned admissionpromises replacecallback-initializedmutable resolvers;acceptfirst/rejectsecond evictedadmission explicit. Four contractgroups eventtime/authorityspeechfreshness/replay/losssettlement;stalespeechvsrealsettlement watermark asserted.",
+      "checks": "26focusedtests91assertions;strictTS/format/diffpass3baseline lintwarnings;no runtimefix/provider/device/Mac/wholegate."
     },
     {
       "focus": "tests/gpt-live-playback.test.ts",
       "initialBlob": "f2532f05c7ea303b44d5ad520a32cad0e413bf63",
-      "primary": null,
+      "primary": {
+        "id": "task_3186f4b0",
+        "launchBase": "1a327b0c55fbdada30c1a84d0ad3fe33f1918667",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_3186f4b0",
+        "branch": "bruv/primary-tests-gpt-live-playback.test.ts-3186f4b0",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running",
+      "relatedPatchJudgment": {
+        "judgeId": "task_af9fc144",
+        "verdict": "ACCEPT",
+        "blob": "5c90d594ce35955b26e9962bd0bb677d38a07011"
+      }
     },
     {
       "focus": "tests/gpt-live-request.test.ts",
@@ -1514,15 +1801,39 @@
     {
       "focus": "tests/gpt-live-session.test.ts",
       "initialBlob": "8cb2e77fbaf1c0853b0f458b445b10a08a1b92d1",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "primary": {
+        "id": "task_1a45d152",
+        "launchBase": "01f5af72fa90b817e0242978b5d99b37bc8199e2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1a45d152",
+        "branch": "bruv/primary-tests-gpt-live-session.test.ts-1a45d152",
+        "status": "candidate ready",
+        "commit": "42b90f334af4af21e039fd199ff3b2b402c0b55c"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_792067e5",
+          "status": "complete",
+          "candidate": "42b90f334af4af21e039fd199ff3b2b402c0b55c",
+          "base": "01f5af72fa90b817e0242978b5d99b37bc8199e2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Each overflow/malformed/disconnect/rejection/finalization ownsfixture evidence,notsharedarrays/positionallifetimes;routineconnectedfixture hidesonlyadmission,protocolunder-test remainsvisible;ordered provisional/correlation/concurrentclose journeys retained.",
+          "checks": "Independent54tests656assertions across6GPTfiles/Biome/diffpass;no build/typecheck/provider/device/macOS.",
+          "acceptedBlobs": {
+            "tests/gpt-live-session.test.ts": "21832ae3a8c518914e1e99e849a3f21340bcf303"
+          }
+        }
+      ],
+      "acceptedBlob": "21832ae3a8c518914e1e99e849a3f21340bcf303",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_86206c2a",
         "verdict": "ACCEPT",
         "blob": "c62f5f2fedaa619f3ccbdf492641105f7dc383b8"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Overflow/malformedaudio/disconnect ownfixture evidence instead3sessions sharedarrays;earlyreject/successbilling lifetimes separate;routineadmission centralized but handshakes/terminal/interleaving/replay/concurrentclose explicit.",
+      "checks": "20sessiontests unchanged383assertions;6GPTfiles54pass656assertions;Biome/diffpass;no runtimefix/typecheck/build/provider/device/macOS."
     },
     {
       "focus": "tests/gpt-live-waveform.test.ts",
@@ -1543,28 +1854,69 @@
     {
       "focus": "tests/live-audio-lifecycle.test.ts",
       "initialBlob": "e210a7e633afecac8ef19c67837a9024fc462e13",
-      "primary": null,
-      "judgeRounds": [],
+      "primary": {
+        "id": "task_61f07074",
+        "launchBase": "cf84f410a59cd511f13346aca89a6b195a86ad7b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_61f07074",
+        "branch": "bruv/primary-tests-live-audio-lifecycle.test.-61f07074",
+        "status": "candidate ready",
+        "commit": "df2795d38c86d819801a98dd480c217834d2a98c"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_3e2610a0",
+          "status": "running",
+          "candidate": "df2795d38c86d819801a98dd480c217834d2a98c",
+          "base": "cf84f410a59cd511f13346aca89a6b195a86ad7b"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_aeb6dd8f",
         "verdict": "ACCEPT",
         "blob": "8a7be3d0c6cd48fd16c6a3bcbc9157dba226ab44"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Independently controlled callback/drain straightlineorders replace extractedcallbacks/doublebranch;callbackfailure vs nextwritethrow ownssettlement;commandsequences showFIFO and cancellationlifetimes separate.",
+      "checks": "27focusedneighbor tests131assertions;focusedTS/Biome/diffpass;timing/interruption/reaping evidence retained,no productfix/provider/device/macOS/fullgate."
     },
     {
       "focus": "tests/live-audio.test.ts",
       "initialBlob": "960e983066ac7261639690915733dd8e8c8cb3d7",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "primary": {
+        "id": "task_af04f669",
+        "launchBase": "92dfbbbd944f133de6c4b94cd1ffdb73489ad085",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_af04f669",
+        "branch": "bruv/primary-tests-live-audio.test.ts-af04f669",
+        "status": "candidate ready",
+        "commit": "ed86cb9cd103d92c431cef5e03fe55184fa6f59f"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_849c1ccb",
+          "status": "complete",
+          "candidate": "ed86cb9cd103d92c431cef5e03fe55184fa6f59f",
+          "base": "92dfbbbd944f133de6c4b94cd1ffdb73489ad085",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent helperphases separate stop/parser/metadata lifetimes;causal native stop/full-duplex journeys retained;EOF/queue-only neverack;parser/epochs/reaping and honesttesttitles direct.",
+          "checks": "Independent66tests20339assertions,focusedTS/Biome/diffpass;no runtimefix/device/Mac.",
+          "acceptedBlobs": {
+            "tests/live-audio.test.ts": "a6f73800667e3a3cafc70357e0b2840d366d1290"
+          }
+        }
+      ],
+      "acceptedBlob": "a6f73800667e3a3cafc70357e0b2840d366d1290",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_610f6154",
         "verdict": "ACCEPT",
         "blob": "703bdeb68fe253c7c6765f6dbd3dd539f05c6ff8"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Independent contract tests remove unrelated helperlifetimes insidecompoundcases;grouped byauthority withinline effects;native batchedplayed->stopped/queueonlytimeout/parser/gate/reaping preserved,newpendingready+EOFnotack;honesttitles.",
+      "checks": "66focusedtests20339assertions;focusedTS/Biome/diffpass;roottypes absentassetJSON, no runtimefix/provider/device/macOS."
     },
     {
       "focus": "tests/live-auth-lifecycle.test.ts",
@@ -1606,10 +1958,32 @@
     {
       "focus": "tests/live-cost.test.ts",
       "initialBlob": "b48ba6cc2be94aa95e9846ad76b9f08bcdcd291d",
-      "primary": null,
-      "judgeRounds": [],
+      "primary": {
+        "id": "task_0ed9f187",
+        "launchBase": "7d8902e0818915cbc1cc56d8996f91f1b327e083",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_0ed9f187",
+        "branch": "bruv/primary-tests-live-cost.test.ts-0ed9f187",
+        "status": "candidate ready",
+        "commit": "186f1a59ded8eae2d42c6c1a5e33d93ad5817612"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_c4ba592a",
+          "status": "running",
+          "candidate": "186f1a59ded8eae2d42c6c1a5e33d93ad5817612",
+          "base": "7d8902e0818915cbc1cc56d8996f91f1b327e083"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "judge running",
+      "relatedPatchJudgment": {
+        "judgeId": "task_4b5c5997",
+        "verdict": "ACCEPT",
+        "blob": "345f8739c2c77b33db539d11aabd2c4bb142a75e"
+      },
+      "relatedPaths": [],
+      "readingResult": "Pricingeligibility separate from persistence/close;one tracker peraccountingtest instead3lifetimes zerousage;eventsequences/charges visible,alloriginalcases plus sessionvsturn watermark/distinctresponseIDs.",
+      "checks": "109tests558assertions cost/session/extension;Biome/diffpass,no productfix/dedicated switchedsession guardproof/device/provider/macOS."
     },
     {
       "focus": "tests/live-credentials.test.ts",
@@ -1675,10 +2049,24 @@
           "acceptedBlobs": {
             "tests/live-extension.test.ts": "605f1dc19bcd6c8ada6584d03410a3d671eac9ef"
           }
+        },
+        {
+          "id": "task_4b5c5997",
+          "status": "complete",
+          "candidate": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+          "base": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Usage ingress owns provider-specific watermark/dedup/pricing/incremental persistence;caller no longer picks accounting semantics. GPTsession cumulative/Geminiturn cumulative/Realtime independent IDs explicit. Terminalbilling preserved after activityrevocation,sessionIDguard+unknown sticky.",
+          "checks": "Independent97candidate tests851assertions;126combinedGPT/accounting/footer1157assertions;two exactbaseline realtransportcontrolledsocket regressions fail thenpass;finalGPT92d985f0 API/closeorder/faileduncertainty/switchedsession checked. No authenticated/device/macOS.",
+          "acceptedBlobs": {
+            "tests/live-extension.test.ts": "da0317117b6400fdba6b333935d8bb0b2d951e31"
+          },
+          "round": "fresh combined cost accounting revision"
         }
       ],
-      "acceptedBlob": "605f1dc19bcd6c8ada6584d03410a3d671eac9ef",
-      "integration": "integrated accepted exact primary candidate",
+      "acceptedBlob": "da0317117b6400fdba6b333935d8bb0b2d951e31",
+      "integration": "integrated related revision freshly judged at final blob",
       "relatedPatchJudgment": {
         "judgeId": "task_65eb4c80",
         "verdict": "ACCEPT",
@@ -1715,10 +2103,21 @@
     {
       "focus": "tests/live-host-bridge.test.ts",
       "initialBlob": "eaa1c68643eef793430b8e52c2db86ab543dd26c",
-      "primary": null,
+      "primary": {
+        "id": "task_98219b99",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running",
+      "relatedPatchJudgment": {
+        "judgeId": "task_9ae7f05e",
+        "verdict": "ACCEPT",
+        "candidate": "7f466cef21871ee373a158c35f58f85e19861166",
+        "blob": "7232dfaac76b2bdf548b5bcca45932ba3cf98431",
+        "reason": "Native observations retainactiveIDs notprogressstate and lastlistener lifetime;scopedsnapshot retention moved torealowner. Parent assigned primary needed."
+      }
     },
     {
       "focus": "tests/live-long-audio.test.ts",
@@ -1848,15 +2247,39 @@
     {
       "focus": "tests/live-playback.test.ts",
       "initialBlob": "55e410b4de84f8f0a83fc8e1e540d68085254e34",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "primary": {
+        "id": "task_29a09f86",
+        "launchBase": "000950277a6a27f3488b994db6cbf0186ba1cd98",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_29a09f86",
+        "branch": "bruv/primary-tests-live-playback.test.ts-29a09f86",
+        "status": "candidate ready",
+        "commit": "d6a78704028e99ec22bc7d7e00cf9c83851754b6"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_8ab8f308",
+          "status": "complete",
+          "candidate": "d6a78704028e99ec22bc7d7e00cf9c83851754b6",
+          "base": "000950277a6a27f3488b994db6cbf0186ba1cd98",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "HeldPipe perwritehandles replace mutablecallback;independent NativeRing ownsnativequeue notschedulerestimates,render/JS/feedback/settle explicit;distinctfailure/close lifetimes preserve flush/slot/credit races.",
+          "checks": "Independent80tests20487assertions,strictTS/Biome/diff;20139orderedobservations matchedbaseline verifiedsupport notquality.",
+          "acceptedBlobs": {
+            "tests/live-playback.test.ts": "af8b12dd1bf13514c5313825d06d9a018d380fcc"
+          }
+        }
+      ],
+      "acceptedBlob": "af8b12dd1bf13514c5313825d06d9a018d380fcc",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_542a0b36",
         "verdict": "ACCEPT",
         "blob": "b4320ddedc2b1667c167b3bca5d7366a03f5039d"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "RealNativeRing testowner groups consumption/delayedfeedback/timers;tests show render/JSadvance/feedback/settling;interruption keepsdistinct oldwrite+flush;failure/close-beforestart lifetimes split.",
+      "checks": "80focusedtests20487assertions;20139orderedplayback assertionobservations matchbaseline byteforbyte inclBufferhashes;strictTS/Biome/diffpass;no runtimefix/device/provider/macOS/build."
     },
     {
       "focus": "tests/live-probe-input.test.ts",
@@ -2258,13 +2681,34 @@
       "judgeRounds": [
         {
           "id": "task_dd7fe5dc",
-          "status": "running",
+          "status": "complete",
           "candidate": "a4bdb033fc65291cdc41a36b3a0365b806aa7942",
-          "base": "ba1575ae4a9300c6729f8988f79029f59699318a"
+          "base": "ba1575ae4a9300c6729f8988f79029f59699318a",
+          "verdict": "REJECT",
+          "objections": [
+            "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain."
+          ],
+          "reason": "Lifetime improvement and hang fix genuine, but newtimeout regression leaves wrapper-owned graph root unowned/unremoved.",
+          "checks": "Independent25 Python pass;baseline/restoredorder hang reproduced;leaked probe root removed byjudge. Fakeaudio only.",
+          "fullVerdict": "**REJECT — narrowly incomplete fixture ownership; substantial readability improvement otherwise.**\n\nReviewed the clean candidate worktree at `a4bdb033fc65291cdc41a36b3a0365b806aa7942` against `ba1575ae4a9300c6729f8988f79029f59699318a`, including the full two-path diff.\n\nExact changed blobs:\n- `native/live-linux/tests/test_isolated_audio.py`: `7b75ec3b9042defbb65eb848807a7822bc51bdd0` (baseline `d4faa77a5ddf45b9757af01c9abd91adb076cd6f`).\n- `wisdom/quality/structural-readability-worker.md`: `0ae55e637b503a18df254a1f8f935a47e50317f0`.\n\nContext traced through the real Bash wrapper (`056491cb8f7267f2cb0821fb5ccdc7911e0a1822`), virtual fixture (`86e0f56798547d704db912eab2534a2161c93d0e`) and caller-test handoff.\n\n**Intrinsic readability / improvement**\n- `WrapperInvocation` coherently owns one process and its evidence. Contamination subtests no longer erase prior records or overwrite a shared process slot.\n- Launch-policy checks and release checks are now distinct, visible expectations.\n- SIGTERM escalation remains tested before harness cleanup; environment, default dispatch, status and direct-child reaping assertions were retained.\n- The unchanged fake-tool dispatch was already straightforward.\n\n**Blocking finding**\n`stop()` kills Bash, bypassing its EXIT cleanup. The new timeout regression therefore leaves Bash’s private audio directory outside the test-owned temporary tree.\n\nIndependent probe: `/tmp/tmp.oV28zbZUWL` still existed after both `run.stop()` and `doCleanups()`, containing runtime/config directories and service logs. I removed that probe-owned directory afterward. This is an observed unfinished lifetime, not speculative hardening.\n\n**Smallest coherent rework**\nConfine wrapper-created temporary state to the harness-owned temporary tree—for example through a controlled `TMPDIR`—and verify timeout teardown ultimately removes it. Preserve per-invocation records and kill-before-drain ordering. No production-wrapper rewrite or new framework needed.\n\n**Proof**\n- Independently ran all native Python tests: **25 passed**, 5.532s; diff check clean.\n- Baseline and restored-order probes both blocked beyond two seconds, then completed once inherited-pipe holders were externally killed. The reported hang fix is real.\n- No source edits or commits. Fake audio tools only; no device/provider/macOS/full-build acceptance claim."
+        },
+        {
+          "id": "task_2b5beb9d",
+          "status": "complete",
+          "candidate": "009b872830322e84e4a6a1f181029f10831a1769",
+          "base": "e0d16fcab040e73015809ed99f6e3ef7c1d192a9",
+          "round": "fresh rework after rejected escaped graph ownership",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Prior escapedgraph objection resolved bycontrolledTMPDIR under testowner;WrapperInvocation ownsprocess/evidence,retains separate records;kill-before-drain and productionrelease-beforeharnesscleanup preserved. Fullcandidate+priorrejectedcompared.",
+          "checks": "Independent32Pythonpass;removeonlyTMPDIR causes containmentfailure/escapedgraph aftercleanup;candidatekill-before-drain.001sec vs restoredorderblocked until.602secrescue;probe remnants removed. FakeLinux tools,no deviceproviderMacbuild.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/test_isolated_audio.py": "c489af81e01cc3c290892e3cdf6b80b5676c52fc"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "c489af81e01cc3c290892e3cdf6b80b5676c52fc",
+      "integration": "integrated accepted rework;original REJECT retained",
       "relatedPatchJudgment": {
         "judgeId": "task_1a73a583",
         "verdict": "ACCEPT",
@@ -2272,7 +2716,21 @@
       },
       "relatedPaths": [],
       "readingResult": "WrapperInvocation owns Bash/records/result/teardown instead of escaped tempdir/decodedtuple+manual cleanup;environmentpolicy vsrelease assertions distinct. Explicit stubbornfixture timeout cleanuphang fixed:kill recorded fakes beforedrain/reap.",
-      "checks": "Baseline7/candidate8 isolatedtests,final25nativePython pass;boundedbaselinehang probe and restoredordering mutant fail;diffclean. FakeLinuxaudio tools,no production/device/provider/macOS/fullbuild."
+      "checks": "Baseline7/candidate8 isolatedtests,final25nativePython pass;boundedbaselinehang probe and restoredordering mutant fail;diffclean. FakeLinuxaudio tools,no production/device/provider/macOS/fullbuild.",
+      "reworks": [
+        {
+          "id": "task_c11abfe2",
+          "launchBase": "e0d16fcab040e73015809ed99f6e3ef7c1d192a9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c11abfe2",
+          "branch": "bruv/rework-isolated-fixture-temporary-owners-c11abfe2",
+          "status": "accepted integrated",
+          "commit": "009b872830322e84e4a6a1f181029f10831a1769",
+          "reason": "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain.",
+          "relatedPaths": [],
+          "readingResult": "Prior WrapperInvocation ownership retained;controlled TMPDIR confines Bashgraph under harness tree;timeoutregression asserts containment,stoppedprocesses,eventual graph removal. Perinvocationrecords and kill-before-drain preserved,productionwrapper unchanged.",
+          "checks": "Reproduced escapedgraph survivesstop/testcleanup;32Python+8focused pass;removeonlyTMPDIR regressionfails;probe leaks removed;diffclean. Fake-tool proofonly."
+        }
+      ]
     },
     {
       "focus": "native/live-linux/tests/test_source_removal.py",
@@ -2286,9 +2744,23 @@
         "status": "candidate ready",
         "commit": "2e62282fd6ca936b142a6f16a60ad69e96770804"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "judgeRounds": [
+        {
+          "id": "task_3b13ed9b",
+          "status": "complete",
+          "candidate": "2e62282fd6ca936b142a6f16a60ad69e96770804",
+          "base": "186634bd6a0ef9906a3ccc8cedba4bdc47f4dd33",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Exact framingbytes/readassertions adjacent;unplug scenario requires checkedunload thenstop/stopped,negative EOF/error/silence evidence direct;contextcleanup and protocolack distinct;no tangledfixture.",
+          "checks": "Independent7source-removal+5virtual tests pass,diffclean;no helper/physicalunplug/provider/macOS proof.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/test_source_removal.py": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32"
+          }
+        }
+      ],
+      "acceptedBlob": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32",
+      "integration": "accepted unchanged own-primary final blob",
       "relatedPatchJudgment": {
         "judgeId": "task_46031fcf",
         "verdict": "ACCEPT",
@@ -2302,10 +2774,25 @@
       "focus": "native/live-linux/tests/test_capture_protocol.py",
       "introducedBy": "3c71d4a280d89be9b6597d09af48a40a376451f8",
       "initialBlob": null,
-      "primary": null,
+      "primary": {
+        "id": "task_0dad3ccb",
+        "launchBase": "47f771f49027fec0791ef455be4f548dbc77aaee",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_0dad3ccb",
+        "branch": "bruv/primary-native-live-linux-tests-test_cap-0dad3ccb",
+        "status": "candidate ready",
+        "commit": "08ec6a90ee3f57e3e43ea8e97292afaae80dc1a6"
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate addition;own primary pending"
+      "integration": "awaiting judge slot",
+      "relatedPatchJudgment": {
+        "judgeId": "task_0f8a556e",
+        "verdict": "ACCEPT",
+        "blob": "589184ed6845c98d21a05cc338101e89708c3c6f"
+      },
+      "relatedPaths": [],
+      "readingResult": "Unchanged single fixture ownstemphelper/realpipes;closedepochsettling vsnew/malformed rejection direct;framing andsuspendedfailure teardown evidence intact.",
+      "checks": "10testspass/diffclean;no nativebuild/fullgate/device/provider/Mac."
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
@@ -2337,6 +2824,16 @@
       "typecheck": "root check exit0 after parent shared checkpoint and own asset preparation",
       "format": "40 files pass",
       "limits": "not full Linux gate; no device/provider/macOS execution"
+    },
+    {
+      "tip": "1a327b0c",
+      "jobId": "task_b3b5ed42",
+      "tests": "380pass/0fail/22390assertions across18TSfiles;42Pythonregressions",
+      "typecheck": "root check exit0 after secondparent checkpoint",
+      "format": "44files pass",
+      "native": "one Linuxhelperbuild;devicefreeprotocol/backpressure/privategraphprotocol+source-removal/privategraphcapturegate allpass;3strictClangASanUBSanCregressions,zero waveformmismatch",
+      "limits": "uniqueTMPDIR;PipeWirePulse notCI PulseAudio/physical;source-removal mayreroute;notprovider/macOS/fullLinuxgate",
+      "launchIssue": "Earlier task_d6aacb40 fish rejected doublequoted $? before checks; corrected literal Bashscript task_b3b5ed42 is proof"
     }
   ],
   "followups": [
@@ -2347,17 +2844,29 @@
       "id": "task_7ae21cac",
       "resolvedCandidate": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
       "judgeId": "task_610f6154"
+    },
+    {
+      "focus": "native/live-linux/tests/test_isolated_audio.py",
+      "status": "resolved by fresh rework judgment",
+      "reason": "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain.",
+      "rejectedCandidate": "a4bdb033fc65291cdc41a36b3a0365b806aa7942",
+      "judgeId": "task_2b5beb9d",
+      "workerId": "task_c11abfe2",
+      "candidate": "009b872830322e84e4a6a1f181029f10831a1769",
+      "acceptedCandidate": "009b872830322e84e4a6a1f181029f10831a1769"
     }
   ],
   "audit": {
-    "tip": "bd5084664d34bc0a4b9a6f37592a4452b323335e",
+    "tip": "cfe6345552c521a8fd10e77e8bfcbda5626654e0",
     "baselineFiles": 140,
-    "extraFiles": 3,
-    "baselinePrimaryStarted": 28,
-    "baselineAccepted": 22,
-    "extraAccepted": 2,
+    "extraFiles": 6,
+    "baselinePrimaryStarted": 52,
+    "baselineAccepted": 43,
+    "extraAccepted": 5,
     "acceptedBlobMismatches": [],
-    "status": "partial; not completion"
+    "uniquePrimaryIDs": 58,
+    "primaryIDs": 58,
+    "status": "partial;not completion"
   },
   "crossAreaNeeds": [
     {
@@ -2372,8 +2881,20 @@
     }
   ],
   "parentCheckpoint": {
-    "target": "95d2e164",
-    "status": "clean shared accepted checkpoint joined; one area related test imported from UI accepted patch",
-    "limits": "combined checks pending; other-area notes imported unchanged"
-  }
+    "target": "db885fce",
+    "status": "clean shared accepted checkpoint joined;one assigned host-bridge test related patch imported",
+    "limits": "combined checks pending;other-area notes imported unchanged"
+  },
+  "parentCheckpoints": [
+    {
+      "target": "95d2e164",
+      "status": "clean shared accepted checkpoint joined; one area related test imported from UI accepted patch",
+      "limits": "combined checks pending; other-area notes imported unchanged"
+    },
+    {
+      "target": "db885fce",
+      "status": "clean shared accepted checkpoint joined;one assigned host-bridge test related patch imported",
+      "limits": "combined checks pending;other-area notes imported unchanged"
+    }
+  ]
 }

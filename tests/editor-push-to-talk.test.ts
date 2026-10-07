@@ -99,6 +99,73 @@ describe("editor Space discriminator", () => {
     expect(f.text()).toBe("draft   ");
   });
 
+  test("fresh explicit presses keep earlier unreleased taps as draft", () => {
+    const f = fixture();
+    f.input(press);
+    f.input(press, 200);
+    f.input(press, 200);
+    f.input(repeat, 500);
+    expect(f.text()).toBe("draft  ");
+    expect(f.changes).toEqual([false, true]);
+  });
+
+  test("a new legacy warmup after a long gap does not borrow the old hold's age", () => {
+    const f = fixture();
+    f.input(" ");
+    f.input(" ", 1500);
+    f.input(" ", 30);
+    f.input(" ", 30);
+    expect(f.text()).toBe("draft    ");
+    expect(f.changes).toEqual([false]);
+    f.input(" ", 400);
+    f.input(" ", 30);
+    expect(f.text()).toBe("draft   ");
+    expect(f.changes).toEqual([false, true]);
+  });
+
+  test("failed guarded rollback yields input and blocks repeats until a fresh press", () => {
+    const f = fixture();
+    f.input(press);
+    f.edit("replacement");
+    expect(f.input(repeat, 500)).toBe(false);
+    expect(f.input(repeat, 30)).toBe(true);
+    expect(f.text()).toBe("replacement");
+    expect(f.changes).toEqual([false]);
+    f.input(press, 30);
+    f.input(repeat, 500);
+    expect(f.text()).toBe("replacement");
+    expect(f.changes).toEqual([false, true]);
+  });
+
+  test("cancelled legacy repeats stay text; a quiet gap allows a new warmup", () => {
+    const f = fixture();
+    f.input(" ");
+    f.input(" ", 500);
+    f.input(" ", 30);
+    f.control.cancel();
+    f.input(" ", 30);
+    f.input(" ", 30);
+    expect(f.text()).toBe("draft  ");
+    expect(f.changes).toEqual([false, true, false]);
+    f.input(" ", REPEAT_IDLE_MS + 1);
+    f.input(" ", 500);
+    f.input(" ", 30);
+    expect(f.text()).toBe("draft  ");
+    expect(f.changes).toEqual([false, true, false, true]);
+  });
+
+  test("an insertion without an undo cannot become capture warmup", () => {
+    const f = fixture();
+    expect(f.control.input(press, () => undefined)).toBe(true);
+    expect(f.input(repeat, 500)).toBe(true);
+    expect(f.text()).toBe("draft");
+    expect(f.changes).toEqual([false]);
+    f.input(press);
+    f.input(repeat, 500);
+    expect(f.text()).toBe("draft");
+    expect(f.changes).toEqual([false, true]);
+  });
+
   test("legacy inactivity is a bounded inference, not an observed release", async () => {
     const f = fixture();
     f.input(" ");

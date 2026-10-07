@@ -1,4 +1,4 @@
-import { PlaybackScheduler, type PlaybackClock, type PlaybackState } from "./playback";
+import { type PlaybackClock, PlaybackScheduler, type PlaybackState } from "./playback";
 
 /** GPT-Live-only provisional acoustic activity detector. NOT voice classification or echo cancellation.
  * Processed capture from the native helper: 16 kHz mono signed little-endian PCM, 20 ms/frame.
@@ -48,9 +48,9 @@ export class GptLiveSpeechDetector {
 export class GptLivePlaybackRecovery {
   readonly detector = new GptLiveSpeechDetector();
   readonly scheduler: PlaybackScheduler;
-  private muted = false;
   private faulted = false;
-  private quietGuardFrames = 0;
+  // Defined only while speech/settling suppresses output. Each count is 20ms of capture, not wall time.
+  private quietGuardFrames: number | undefined;
   private closed = false;
   private generation = 0;
   private readonly onError: (error: Error) => void;
@@ -73,13 +73,13 @@ export class GptLivePlaybackRecovery {
     return this.generation;
   }
   get suppressed(): boolean {
-    return this.muted;
+    return this.closed || this.faulted || this.quietGuardFrames !== undefined;
   }
   get speaking(): boolean {
     return this.detector.speaking;
   }
   get suppressionReason(): "speech" | "settling" | "error" | undefined {
-    return this.faulted ? "error" : this.speaking ? "speech" : this.muted ? "settling" : undefined;
+    return this.faulted ? "error" : this.speaking ? "speech" : this.suppressed ? "settling" : undefined;
   }
   start(): void {
     this.scheduler.start();
@@ -89,20 +89,24 @@ export class GptLivePlaybackRecovery {
     const transition = this.detector.observe(pcm);
     if (transition === "started") {
       this.quietGuardFrames = 10;
-      this.suppress(true);
-    } else if (transition === "ended") {
+      // Every new speech onset invalidates queued output, even during settling or a fault.
+      this.discardQueuedOutput();
+      return transition;
+    }
+    if (this.faulted || this.quietGuardFrames === undefined) return transition;
+    if (transition === "ended") {
       this.quietGuardFrames = 10; // after the detector's 300ms qualified quiet
-    } else if (this.muted && !this.faulted && !this.speaking) {
-      // The native helper continuously emits 20ms processed frames. Do not recover
-      // from a stopped capture stream or from a short noisy gap inside speech.
+    } else if (!this.speaking) {
+      // Only continued quiet capture releases suppression. A stopped microphone,
+      // elapsed playback time, or a noisy gap cannot count toward recovery.
       this.quietGuardFrames = this.detector.quiet ? this.quietGuardFrames - 1 : 10;
-      if (this.quietGuardFrames <= 0) this.muted = false;
+      if (this.quietGuardFrames <= 0) this.quietGuardFrames = undefined;
     }
     return transition;
   }
   /** PCM16 mono24k. Suppressed chunks are discarded, never queued for replay. */
   output(pcm: Buffer): boolean {
-    if (this.closed || this.muted || this.speaking || this.faulted) return false;
+    if (this.suppressed || this.speaking) return false;
     if (!Buffer.isBuffer(pcm) || !pcm.length || pcm.length % 2) {
       this.fail(new Error("Invalid GPT-Live PCM16 output"));
       return false;
@@ -118,18 +122,16 @@ export class GptLivePlaybackRecovery {
   private fail(error: Error): void {
     if (this.closed || this.faulted) return;
     this.faulted = true;
-    this.suppress();
+    // Speech already discarded the queue; a fault latches suppression without another flush.
+    if (this.quietGuardFrames === undefined) this.discardQueuedOutput();
     this.onError(error);
   }
-  private suppress(force = false): void {
-    if (this.closed || (this.muted && !force)) return;
-    this.muted = true;
+  private discardQueuedOutput(): void {
     this.generation++;
     this.scheduler.interrupt(this.generation);
   }
   close(): void {
     this.closed = true;
-    this.muted = true;
     this.scheduler.close();
   }
 }

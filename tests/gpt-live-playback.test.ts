@@ -213,3 +213,93 @@ test("hard output errors do not silently recover when capture becomes quiet", ()
   expect(errors).toEqual(["Invalid GPT-Live PCM16 output"]);
   p.close();
 });
+
+test("playback clock time cannot replace captured quiet in the recovery guard", async () => {
+  let now = 0;
+  const p = new GptLivePlaybackRecovery({
+    clock: { now: () => now, setTimeout, clearTimeout },
+    send: async () => {},
+    flush: async () => {},
+    onError: () => {
+      throw Error("unexpected");
+    },
+  });
+  p.start();
+  for (let i = 0; i < 4; i++) p.capture(loud);
+  for (let i = 0; i < 15; i++) p.capture(quiet);
+  expect(p.suppressionReason).toBe("settling");
+  now = 60_000; // Capture stopped; the output pacing clock kept running.
+  await tick();
+  expect(p.output(output())).toBe(false);
+  for (let i = 0; i < 9; i++) p.capture(quiet);
+  expect(p.suppressed).toBe(true);
+  p.capture(quiet);
+  expect(p.suppressed).toBe(false);
+  expect(p.epoch).toBe(1);
+  p.close();
+});
+
+test("recovered short output waits for the speech flush and never replays suppressed chunks", async () => {
+  let releaseFlush!: () => void;
+  const sent: Array<{ pcm: Buffer; epoch: number }> = [];
+  const p = new GptLivePlaybackRecovery({
+    send: async (pcm, epoch) => {
+      sent.push({ pcm, epoch });
+    },
+    flush: () =>
+      new Promise<void>((resolve) => {
+        releaseFlush = resolve;
+      }),
+    onError: () => {
+      throw Error("unexpected");
+    },
+  });
+  p.start();
+  for (let i = 0; i < 4; i++) p.capture(loud);
+  expect(p.output(Buffer.alloc(960, 1))).toBe(false);
+  for (let i = 0; i < 25; i++) p.capture(quiet);
+  const tail = Buffer.from([2, 0]);
+  expect(p.output(tail)).toBe(true);
+  await tick();
+  expect(sent).toEqual([]);
+  expect(p.scheduler.state.pendingBytes).toBe(2);
+  expect(p.scheduler.playedMs).toBe(0);
+  releaseFlush();
+  await tick();
+  expect(sent).toEqual([{ pcm: tail, epoch: 1 }]);
+  expect(p.scheduler.state.pendingBytes).toBe(0);
+  p.close();
+});
+
+test("flush failure during speech stays terminal while renewed speech still invalidates the queue", async () => {
+  const flushes: number[] = [];
+  const errors: string[] = [];
+  const p = new GptLivePlaybackRecovery({
+    send: async () => {},
+    flush: async (epoch) => {
+      flushes.push(epoch);
+      throw Error("pipe failed");
+    },
+    onError: (error) => {
+      errors.push(error.message);
+    },
+  });
+  p.start();
+  for (let i = 0; i < 4; i++) p.capture(loud);
+  await tick();
+  expect(flushes).toEqual([1]); // The failure must not recursively flush the already discarded queue.
+  expect(errors).toEqual(["Playback flush failed"]);
+  for (let i = 0; i < 25; i++) p.capture(quiet);
+  expect(p.suppressionReason).toBe("error");
+  expect(p.output(output())).toBe(false);
+  for (let i = 0; i < 3; i++) expect(p.capture(loud)).toBeUndefined();
+  expect(p.capture(loud)).toBe("started");
+  await tick();
+  expect(flushes).toEqual([1, 2]);
+  expect(p.epoch).toBe(2);
+  expect(errors).toEqual(["Playback flush failed"]);
+  p.close();
+  expect(p.capture(loud)).toBeUndefined();
+  expect(p.output(output())).toBe(false);
+  expect(p.epoch).toBe(2);
+});
