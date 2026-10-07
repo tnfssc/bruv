@@ -15,7 +15,8 @@
       "file": "tests/editor-voice-integration.test.ts",
       "owner": "live-native-audio",
       "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
-      "state": "candidate pending judge; parent must coordinate final primary owner"
+      "blob": "95453da9cb3f0827a96b955c60f854e905939dac",
+      "state": "accepted patch integrated; assigned primary owner must inspect final blob"
     }
   ],
   "files": [
@@ -383,19 +384,39 @@
     {
       "focus": "src/cli.ts",
       "initialBlob": "cbad51b1148eb0e4401b95d3e20bb3574f293c53",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_75c8d308",
           "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_75c8d308",
-          "branch": "bruv/primary-readability-src-cli.ts-75c8d308"
+          "branch": "bruv/primary-readability-src-cli.ts-75c8d308",
+          "commit": "f27f3d73c76d754b0c19bdc0d561657fc5f66b0b"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_db22e114",
+          "base": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+          "candidate": "f27f3d73c76d754b0c19bdc0d561657fc5f66b0b",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf"
+      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+      "changedRelatedPaths": [
+        "tests/cli.test.ts"
+      ],
+      "result": "Candidate separates runtime configuration, remote entry dispatch, local conversation lifetime and help transformation.",
+      "checks": [
+        "6 source boundary checks pass base/candidate",
+        "87 adapter/prompt/placement checks",
+        "Biome/diff checks"
+      ],
+      "limits": [
+        "No full build/typecheck, compiled CLI, live/provider, authenticated SSH or interactive TTY checks."
+      ]
     },
     {
       "focus": "src/diagnostics-extension.ts",
@@ -453,7 +474,7 @@
     {
       "focus": "src/ui/editor.ts",
       "initialBlob": "6f91ff6f6b3fe970e4fc9b821a687f6a0ba2f666",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_ff96b465",
@@ -468,16 +489,25 @@
           "id": "task_14234cb0",
           "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
           "base": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/editor.ts": "fba6c9f74fc9af07f8a11368455e63cf46f5e4eb",
+            "tests/editor-voice-integration.test.ts": "95453da9cb3f0827a96b955c60f854e905939dac"
+          },
+          "evidence": "Attachment visibly owns controller/hook/reporting lifetime; watcher pairs input/focus cancellation with restoration; reporting helper pairs Kitty and fullscreen-owned modes. No observable cleanup reorder effect in inspected SDK.",
+          "limits": [
+            "Judge rerun failed module resolution using NODE_PATH; no independent test-pass claim."
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "fba6c9f74fc9af07f8a11368455e63cf46f5e4eb",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
       "changedRelatedPaths": [
         "tests/editor-voice-integration.test.ts"
       ],
-      "result": "Candidate pairs focus/listener cancellation hooks and terminal-mode acquisition with their teardown; pending independent judgment.",
+      "result": "Accepted coherent lifetime boundaries, not arbitrary extraction: controller disposal remains first, reporting restoration last; listener ordering and abort/idempotence preserved.",
       "checks": [
         "40 editor/startup/controller tests",
         "10 live push-to-talk caller checks",
@@ -500,11 +530,19 @@
     {
       "focus": "src/ui/footer.ts",
       "initialBlob": "fb774576e55d56e380988652dafc11d3bc6c6653",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_b0090f89",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_b0090f89",
+          "branch": "bruv/primary-readability-src-ui-footer.ts-b0090f89",
+          "launchBase": "85d3d852913bc59905b9c81e21d2fbe28d4332c1"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "85d3d852913bc59905b9c81e21d2fbe28d4332c1"
     },
     {
       "focus": "src/ui/quiet-tool-ui.ts",
@@ -1010,5 +1048,23 @@
       "integrationState": "pending"
     }
   ],
-  "extraFiles": []
+  "extraFiles": [
+    {
+      "focus": "tests/editor-voice-integration.test.ts",
+      "kind": "cross-area-related",
+      "assignedOwner": "live-native-audio",
+      "initialBlob": "a54b95973f39569c32af94c7043aa7665a8da4ca",
+      "status": "related-patch-accepted-primary-pending",
+      "primary": [],
+      "judgeRounds": [
+        {
+          "id": "task_14234cb0",
+          "verdict": "ACCEPT",
+          "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7"
+        }
+      ],
+      "acceptedBlob": "95453da9cb3f0827a96b955c60f854e905939dac",
+      "integrationState": "integrated; parent must reconcile assigned primary owner"
+    }
+  ]
 }

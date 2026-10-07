@@ -15,3 +15,9 @@ First independent focus domains: CLI entry, editor lifecycle, terminal action pr
 ## Proof and limits
 
 No source acceptance or runtime proof yet. Shared read-only dependencies and explicit Bun PATH are required. Focused checks per actual edit; combined gates at batch boundaries. Live/provider/device/SSH limits remain explicit.
+
+## Accepted editor lifetime patch
+
+Primary task_ff96b465; judge task_14234cb0 ACCEPT candidate 58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7. Hook teardown and protocol restoration now sit with their setup; attachment shows one idempotent session lifetime. Exact accepted blobs and proof are in JSON. Writer: 40 editor/startup/controller + 10 live caller checks; baseline characterization 15 passes, focused Biome/diff clean. Judge rerun hit dependency resolution (no independent test-pass claim). No full build/typecheck/device/provider proof.
+
+Cross-area: tests/editor-voice-integration.test.ts accepted as related patch at 95453da9cb3f0827a96b955c60f854e905939dac; Live/native-audio primary must reconcile final blob. Worker-local notes excluded.
