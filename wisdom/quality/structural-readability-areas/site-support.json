@@ -208,23 +208,31 @@
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_4f28d450",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_4f28d450",
           "commit": "18fb3b71fee4cb3734eef1c27a93e03a3a73646c",
-          "result": "Unchanged terminal->layout->wordmark(width)->48/28/24 rows; explicit selection,no hidden state.1 test/43 assertions;no build/browser/generator."
+          "result": "Unchanged terminal->layout->wordmark(width)->48/28/24 rows; explicit selection,no hidden state.1 test/43 assertions;no build/browser/generator.",
+          "base": "72f671abdad36dd1d34df99112715484a50e2aa6",
+          "branch": "bruv/primary-site-brand.ts-4f28d450"
         }
       ],
       "judges": [
         {
           "id": "task_b82db0dc",
           "candidate": "18fb3b71fee4cb3734eef1c27a93e03a3a73646c",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "One explicit width selector returns48/28/24-cell rows; layout/presentation separate,extra helper adds navigation. Judge1 test/43 assertions;sampled bounds,not visual/freshness proof;no browser/build/generator. Judge used candidate git blobs despite shared checkout advancement.",
+          "objections": []
         }
       ],
-      "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4"
+      "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
+      "acceptedBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/capture.ts",
@@ -252,7 +260,7 @@
     {
       "focus": "site/content.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_6b21fc71",
@@ -263,7 +271,13 @@
           "result": "Unchanged two direct shared-copy objects; literals->named properties->terminal/HTML sections/links. No branching/effects/lifetimes.2 tests/24 assertions;no browser/build."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_2ebc2a13",
+          "candidate": "9f9958395ce3c0b60c7350e6fbd97688d64171d1",
+          "state": "running"
+        }
+      ],
       "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8"
     },
     {
