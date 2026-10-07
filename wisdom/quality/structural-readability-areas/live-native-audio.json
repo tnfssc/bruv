@@ -2800,6 +2800,16 @@
       "typecheck": "root check exit0 after parent shared checkpoint and own asset preparation",
       "format": "40 files pass",
       "limits": "not full Linux gate; no device/provider/macOS execution"
+    },
+    {
+      "tip": "1a327b0c",
+      "jobId": "task_b3b5ed42",
+      "tests": "380pass/0fail/22390assertions across18TSfiles;42Pythonregressions",
+      "typecheck": "root check exit0 after secondparent checkpoint",
+      "format": "44files pass",
+      "native": "one Linuxhelperbuild;devicefreeprotocol/backpressure/privategraphprotocol+source-removal/privategraphcapturegate allpass;3strictClangASanUBSanCregressions,zero waveformmismatch",
+      "limits": "uniqueTMPDIR;PipeWirePulse notCI PulseAudio/physical;source-removal mayreroute;notprovider/macOS/fullLinuxgate",
+      "launchIssue": "Earlier task_d6aacb40 fish rejected doublequoted $? before checks; corrected literal Bashscript task_b3b5ed42 is proof"
     }
   ],
   "followups": [
@@ -2823,14 +2833,16 @@
     }
   ],
   "audit": {
-    "tip": "bd5084664d34bc0a4b9a6f37592a4452b323335e",
+    "tip": "cfe6345552c521a8fd10e77e8bfcbda5626654e0",
     "baselineFiles": 140,
-    "extraFiles": 3,
-    "baselinePrimaryStarted": 28,
-    "baselineAccepted": 22,
-    "extraAccepted": 2,
+    "extraFiles": 6,
+    "baselinePrimaryStarted": 52,
+    "baselineAccepted": 43,
+    "extraAccepted": 5,
     "acceptedBlobMismatches": [],
-    "status": "partial; not completion"
+    "uniquePrimaryIDs": 58,
+    "primaryIDs": 58,
+    "status": "partial;not completion"
   },
   "crossAreaNeeds": [
     {
