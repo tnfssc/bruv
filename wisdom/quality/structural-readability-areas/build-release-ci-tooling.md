@@ -84,3 +84,5 @@ Test preload NO CHANGE NEEDED task_6d717faf atd3c71348. Qualification: Bun.spawn
 Dependency-test primary: independent cases grouped by6contracts;judge task_f509c814 ACCEPTda5d3d5,all prior46assertions retained and4constructor regressions mutation-verified. Source own-entry fix unchanged;no registry/hosted proof.
 
 Native runner:check→spawn→close→recheckbinary→success→admit evidence lifecycle;named suites/final proof boundary. Judge task_83089869 ACCEPT1037e580 plus tests;40tests/Node24.21syntax. Child signal only—not parent teardown/actual upstream run. Setup candidate separately reviewed;combined proof pending.
+
+Native setup:all verification before env handoff;task_1e479592 ACCEPT9d6cfd86/newtest8191a1d5. Explicit reproduced SDK-failure partial export fix (base1pass2fail/new3pass);65checks. Final runner handoff compatible;not atomicfs or actual native run. EXTRA test primary pending. Diagnostic probe task_e49b32f4 NO CHANGE NEEDEDd33b6f17;normalization not redaction,7/47tests.

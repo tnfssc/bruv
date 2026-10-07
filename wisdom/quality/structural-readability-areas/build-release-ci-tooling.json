@@ -821,7 +821,7 @@
     {
       "focus": "scripts/setup-native-release-gate.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_2837e782",
@@ -837,20 +837,29 @@
           "id": "task_1e479592",
           "base": "7211ff984b6c23c684ff364356f43401bd7a17ea",
           "candidate": "3cefc2172c5b14d87fce683266e80ce6d8cf6cbd",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Verify all SDK/upstream/browser prerequisites before single env handoff. Reproduced missingAPI exit1 at both,base partially appends2vars while candidate unchanged env. Pins/hash/API/layout/alias/freshdir/mode successful valuesorder unchanged;runner candidate handoff compatible.",
+          "checks": "Independent65tests,newbase1pass2fail vsfinal3pass;tsc/Biome/bashsyntax/diffpass;no realdownloads/build/native. Delayed handoff not atomicfs.",
+          "acceptedBlobs": {
+            "scripts/setup-native-release-gate.sh": "9d6cfd866efee6fbc40ae2947f9a733216568f59",
+            "tests/setup-native-release-gate.test.ts": "8191a1d59ef6a19e416364ad52993fb4d483516d"
+          }
         }
       ],
       "relatedPaths": [
         "tests/setup-native-release-gate.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "9d6cfd866efee6fbc40ae2947f9a733216568f59",
       "readingResult": "Preparation/SDK checks lead to one final environment handoff rather than exports interleaved before verification;explicit reproduced fix SDK failure no partial gate configuration export.",
-      "checks": "65testspass;newregressionsfailbaseline;tsc/Biome/bashsyntax/diffpass;no downloads/build/realbinarygates."
+      "checks": "65testspass;newregressionsfailbaseline;tsc/Biome/bashsyntax/diffpass;no downloads/build/realbinarygates.",
+      "integrationState": "Full script/newtest patch integrated;runner1037e580 input handoff reviewed compatible by setup judge;noteexcluded."
     },
     {
       "focus": "scripts/setup-release-browser.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_6d47ada5",
@@ -866,13 +875,18 @@
           "id": "task_2a8f8b95",
           "base": "d17eea9c8b661b3b851ed5089b5023f5d4838f27",
           "candidate": "f10f9f9d30ddf031112069670afb037f9888d2aa",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Pinned isolated harness,single shell,library inspection,conditional install,final check form direct local flow;caller traced. Additional wrappers add reading distance.",
+          "checks": "Independentbash-n,26tests366expectations;stub bun/ldd not realdownload/browser;duplicateshell untested,regularfile notexecutable test,RELEASE_BOOT_PLAYWRIGHT no production consumer(native usesBROWSER_PATH).Existing boundedlimits."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "59ab77ba5d9eda96013afb287181eadaa16332b9",
       "readingResult": "Unchanged pinned isolated harness→singleton shell→library inspection→conditional dependencies→final check;short coherent local flow.",
-      "checks": "26browser/workflowtestspass;syntaxpass;no downloads/install/build/browser/native."
+      "checks": "26browser/workflowtestspass;syntaxpass;no downloads/install/build/browser/native.",
+      "integrationState": "Unchanged script equals tip;noteexcluded."
     },
     {
       "focus": "scripts/smoke.sh",
@@ -1009,24 +1023,34 @@
     {
       "focus": "scripts/verify-release-launchers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_644a204a",
           "launchBase": "fb12edc6d79b0f2ee5612171a6d6d4eaffa652f2",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_644a204a",
           "branch": "bruv/primary-scripts-verify-release-launchers-644a204a",
+          "state": "completed",
+          "commit": "f6481df2ddbb7103e8e26f67a97fc7ccb0b36b66"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_dc2eea02",
+          "base": "fb12edc6d79b0f2ee5612171a6d6d4eaffa652f2",
+          "candidate": "f6481df2ddbb7103e8e26f67a97fc7ccb0b36b66",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Explicit packaging→release dispatch→installed dispatch;each probe owns temporary sibling pair rather than interleaved two-layout cleanup.",
+      "checks": "35tests395assertions;generatedtemplates alltargets/bothlayouts+oversize refusal;tsc/format/lint/diffpass;no build/network/nativeAndroid."
     },
     {
       "focus": "scripts/verify-update-probe.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_4cc3ea11",
@@ -1042,30 +1066,47 @@
           "id": "task_e49b32f4",
           "base": "10b718a8211635494d5a1c8fbac3db1d44100111",
           "candidate": "4b6a61dbb7dc45de54acc4153e431f3aba400a38",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Diagnostic serialization separate from execution/parsing/exit/network authority;normalization not redaction/validation;runner abstraction would mix concerns.",
+          "checks": "Independent7tests47assertions;Biomepass;no fullbuild/typecheck/realrelease/macOS/network."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d33b6f17e311bd423ffbbc42ab5707a9259da29f",
       "readingResult": "Unchanged diagnostic serialization separated from caller execution/parsing/exit/network authority.",
-      "checks": "7tests47assertions;Biomeformat/lintpass;no fullbuild/tsc."
+      "checks": "7tests47assertions;Biomeformat/lintpass;no fullbuild/tsc.",
+      "integrationState": "Unchanged focus matches area,caller refactor separately judged;noteexcluded."
     },
     {
       "focus": "scripts/verify-update.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_47004efe",
           "launchBase": "10b718a8211635494d5a1c8fbac3db1d44100111",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_47004efe",
           "branch": "bruv/primary-scripts-verify-update.ts-47004efe",
+          "state": "completed",
+          "commit": "905225fc8f8b667d0483a0eff3384e4c52ab9e93"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_073fd75a",
+          "base": "10b718a8211635494d5a1c8fbac3db1d44100111",
+          "candidate": "905225fc8f8b667d0483a0eff3384e4c52ab9e93",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/verify-update.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Explicit installed-pair contracts replace positional arrays;readable generated compiled-runner source replaces compressed fragments;compile/frozenfixture/checksum/rollback/diagnostic/cleanup retained.",
+      "checks": "109combinedtests,7finalverifier/probetests;tsc/format/lint/diffpass;fulltsc missinggeneratedassets;fixturesnotproduction/no live."
     },
     {
       "focus": "src/assets.d.ts",
@@ -1498,8 +1539,16 @@
     {
       "focus": "tests/native-release-gate.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_d230f8cd",
+          "launchBase": "6bbab92af36001555036325216dea9270bb32964",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d230f8cd",
+          "branch": "bruv/primary-tests-native-release-gate.test.t-d230f8cd",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
@@ -1908,7 +1957,7 @@
     {
       "focus": "tests/setup-native-release-gate.test.ts",
       "initialBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
-      "state": "candidate-new",
+      "state": "pending",
       "primary": [],
       "judges": [],
       "relatedPaths": [],
@@ -1916,6 +1965,12 @@
       "origin": {
         "primary": "task_2837e782",
         "candidate": "3cefc2172c5b14d87fce683266e80ce6d8cf6cbd"
+      },
+      "relatedPatchJudgment": {
+        "id": "task_1e479592",
+        "verdict": "ACCEPT",
+        "blob": "8191a1d59ef6a19e416364ad52993fb4d483516d",
+        "primaryStillRequired": true
       }
     }
   ],
