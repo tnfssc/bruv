@@ -918,27 +918,47 @@
     {
       "focus": "src/tasks/task-monitor-source.ts",
       "initialBlob": "00775b8a24575435eb6b98c7d88929b58cfec333",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_622c59be",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_622c59be",
         "branch": "bruv/primary-src-tasks-task-monitor-source.ts-622c59be",
         "base": "a5af6dc16d2128b4493a26341b5e319496076574",
+        "commit": "12b464febcc8110d66f5f3bd291279be3d659ce0"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_35e693c9",
+          "status": "running",
+          "candidate": "12b464febcc8110d66f5f3bd291279be3d659ce0",
+          "base": "a5af6dc16d2128b4493a26341b5e319496076574"
+        }
+      ],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "a5af6dc16d2128b4493a26341b5e319496076574",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: panel owns merged source; refresh observations/ownership eviction, inspect bounded cached output, stop revalidation/cancellation evidence; inflight sets vs persistent uncertainty notes distinct.",
+      "checks": [
+        "20 pass184 assertions three monitor suites",
+        "TUI missing binary resolved area binary; no fresh build/authSSH"
+      ]
+    },
+    {
+      "focus": "src/tasks/task-monitor.ts",
+      "initialBlob": "27acfb4e8b82ff387afbd53c59cfa399481632df",
+      "status": "primary-running",
+      "primary": {
+        "id": "task_276c367a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_276c367a",
+        "branch": "bruv/primary-src-tasks-task-monitor.ts-276c367a",
+        "base": "eb0e877718005a15d0e7604f3538098627c65730",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "a5af6dc16d2128b4493a26341b5e319496076574"
-    },
-    {
-      "focus": "src/tasks/task-monitor.ts",
-      "initialBlob": "27acfb4e8b82ff387afbd53c59cfa399481632df",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "launchBase": "eb0e877718005a15d0e7604f3538098627c65730"
     },
     {
       "focus": "src/tasks/task-owner.ts",
@@ -1279,7 +1299,7 @@
     {
       "focus": "tests/job-attention.test.ts",
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_49f70753",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_49f70753",
@@ -1290,14 +1310,22 @@
       "judgeRounds": [
         {
           "id": "task_d655e78f",
-          "status": "running",
+          "status": "complete",
           "candidate": "58aead918c9cd290b432e1c08d9b697b57d740e4",
           "base": "4c0e427a70cc663ed51f3863131f713eaf5f00c8",
-          "priorRelatedJudge": "task_846bbe75"
+          "priorRelatedJudge": "task_846bbe75",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Complete deadline/activity/watch/snooze/failure/recovery/pending-retirement journeys keep meaningful setup order and observation ownership visible; finally restores injected methods and manager alone stops jobs.",
+          "checks": [
+            "full test/scheduler/SDK/caller review and diff pass",
+            "independent unresolved zod/mini prevented tests; writer11/70+1/7 reported",
+            "no compiled-attention/fullgate"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
+      "integration": "unchanged primary blob matches integrated related patch",
       "relatedAcceptance": {
         "judge": "task_846bbe75",
         "candidate": "0fb97677f66f54b55ee5902568f77d805139915a",
