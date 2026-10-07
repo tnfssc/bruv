@@ -473,7 +473,7 @@
     {
       "focus": "src/diagnostics-extension.ts",
       "initialBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_ce10c8d9",
@@ -483,7 +483,14 @@
           "commit": "c7ce40535fb494bdadac75ae970755e48a379e39"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_bb4b2bf5",
+          "base": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
+          "candidate": "c7ce40535fb494bdadac75ae970755e48a379e39",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
       "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
@@ -979,7 +986,7 @@
     {
       "focus": "src/ui/settled-execute-render.ts",
       "initialBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_cde04507",
@@ -994,11 +1001,25 @@
           "id": "task_ac462b2f",
           "base": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
           "candidate": "655dd9f6908f34b82927f97a04b468c4e5051d53",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/settled-execute-render.ts": "d8134b728f86ecd669820d7922f459350e78adc8"
+          },
+          "evidence": "Eligibility and one-width weak cache are explicit, SDK setters invalidate, and owned prototypes restore while captured wrappers are disabled. Cache remains below live activity/task projection.",
+          "checks": [
+            "Independent 58 tests /791 assertions",
+            "SDK setter/foreign ownership/captured wrapper/reinstall probe",
+            "Pinned format/lint/diff"
+          ],
+          "limits": [
+            "SDK/density combined review required",
+            "No build/provider/physical-terminal/image-conversion runtime"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
+      "integrationState": "unchanged accepted; final SDK/density joins required",
       "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
       "changedRelatedPaths": [],
       "result": "No-change: eligibility, single-width cache, SDK lifecycle eviction and owned-method restoration are explicit in one closure.",
@@ -1842,5 +1863,8 @@
     "checkedTip": "6a285569",
     "result": "Only documentation progress commits beyond initial area base; no common source changes to import."
   },
-  "diskBoundary": "157G available after first three accepted patches"
+  "diskBoundary": "157G available after first three accepted patches",
+  "joinRequirements": [
+    "Final SDK/density/activity-projection/quiet-tool/settled-render composition: ownership before paint; live projection above settled cache; task overlay removal/native fallback; cached arrays and mouse translation on resize/expansion; shutdown/reinstall/already-built children; error/handoff/native images; source preservation and owned-wrapper teardown."
+  ]
 }
