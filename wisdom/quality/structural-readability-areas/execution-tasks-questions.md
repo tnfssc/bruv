@@ -1,57 +1,25 @@
-# Execution / tasks / questions
+# Execution / tasks / questions — ongoing
 
-Ongoing: 98 baseline files; no inherited readability acceptance. At most three primary/rework workers and three independent actual-code judges. All source edits remain in durable worker worktrees.
+98 assigned baseline files; 25 fresh primaries launched; 15 final focus blobs accepted so far. These counts are progress, not completion. JSON is the per-file authority: initial/launch hashes, retained worker paths/branches/candidates, all judge rounds, exact accepted blobs, checks, extra paths and pending coverage. At most three code workers and three independent read-only judges. Coordinators have not edited source. Parent owns PR #45.
 
-Pickup: this area worktree and branch; JSON records exact candidate, worker, judge and blob evidence. Accepted source batches exclude worker-local pickup notes. Parent owns PR #45 and final integration.
+## Accepted structural work
 
-Proof/limits: initial inventory loaded from assignments and coverage. No runtime or quality claims yet. Bun PATH must be set inside bash; dependencies are reused read-only from the parent dependency tree. Live/provider/device/SSH parity is not inferred from tests.
+- Execution: one first-wins termination record and owned cancellation subscription/timers; ACK commitment still visible before teardown. Executor judge task_b4813ac3. Full test primary separately accepted by task_d1f6dac2: named real lifecycle callbacks instead of registration-order/map reconstruction.
+- Question service: explicit remote creation vs reconciliation, frozen human intent and receipt precedence; notification follows persistence. Judge task_e49ceb90. Runtime: coherent local saved-reply continuation owner with visible claim→eligibility recheck→send→ACK; remote/native authority stays outside. Judge task_d8a065ce also inspected/tested combined service. Runtime-test primary independently accepted task_438a45c6: per-registration full outboxes vs shared durable session; no-send assertion strengthens swallowed throw.
+- Task manager: fresh admission vs reservation activation vs process observation. Original judge task_08e2c508 REJECTED inherited private preparationController escape through summary rest-spread. Fresh worker task_e5da5ab0 reproduced baseline/candidate, projected every public metadata field with nested copies, and added authority/cancellation regression. Fresh judge task_a01fd3d7 independently reproduced and ACCEPTED. This is an explicit inherited-defect behavior correction, not neutral cleanup. Original branch/rejection retained; rejected source never integrated.
+- JobService: reserve→shared source pin→prepare/setup/activate→bounded handoff, cancellation listener cleanup and setup observation/gating grouped coherently. Judge task_6181fd8e checked combined manager contracts. Attention: checkpoint consumption→pending observation→notice→reschedule; failure episode belongs job lifetime, not parallel ID set. Judge task_846bbe75 tested combined manager/service overlay.
 
-## First batch in judgment
+Accepted unchanged files have concrete independent journeys in JSON: bounded-byte FIFO/cursors, session publication/cleanup, batching deadlines, notification budgets, delivery ACK/replay seam, question picker ownership, and agent progress framing/projection. No no-change verdict inferred from size or inherited hashes. Related changed tests still require their own fresh primaries where JSON says pending; supplemental acceptance is not primary coverage.
 
-Question service separates remote creation from reconciliation; task manager separates reservation lifetime from process admission; execution unifies first-wins cancellation state and resource ownership. These remain candidates, not accepted code. Exact worker branches, commits, judge IDs and proof limits are in JSON. Three further primaries run on output-buffer, agent-session and questions runtime.
+## Proof / limits
 
-Cross-area coordination: question-service candidate also changes `tests/remote-question-bridge.test.ts` (remote area), adding pending refresh, frozen intent and receipt/closure journeys. Keep the coherent test patch if accepted; remote primary owner must cover its final blob. No sibling notes changed.
+- First own paired build/full typecheck task_2ab7a960 passed. Nine executor/question/remote-approval/bridge/TUI suites task_d4e7f94e: 120 pass/630 assertions. Focused format/lint/diff passed, inherited warnings retained.
+- Second own paired build/full typecheck task_321e5898 passed at 1526684d, before attention integration. Combined23 suites task_bb0e210e:249 pass/1806 assertions using current source and that binary. Attention SDK imports source; fresh compiled attention parity not yet claimed. Current full typecheck/changed-file format/lint task_ed210885 running.
+- Several read-only judges could not link worker dependencies; their limited reruns are explicitly separate from writer claims. Combined area tests resolve tested integration gaps, not live-provider/authenticated SSH/macOS/device parity.
+- Dependencies reused read-only; area owns runtime-assets/dist. Automatic fish setup cannot find Bun, but workers receive explicit bash PATH. No source workaround for setup errors.
 
-## Accepted execution patch
+## Cross-area / pickup
 
-Judge `task_b4813ac3` accepted executor `9ed85835`: one first-wins record replaces synchronized termination flags; cancellation owns subscription/timers while ACK commitment remains visible before teardown. Exact executor and test blobs recorded in JSON. Applied full source/test diff, excluding worker note. Test file still needs its own fresh primary. Writer: 72 focused passes; judge independently ran 13 output-capture checks but other suites lacked dependency/WASM setup. Combined batch gate remains pending.
+Question service coherent patch includes remote-owned tests/remote-question-bridge.test.ts blob069ad73fe9042f5b166b40c4ed9167ef8b2bcee2, accepted by task_e49ceb90. Parent must retain it and coordinate remote primary focus/final blob coverage; remote notes untouched. No extra helper files or source deletions so far.
 
-## Accepted question-service patch
-
-Judge `task_e49ceb90` accepted `775567e6`: explicit creation vs existing reconciliation removes nullable-record/captured-flag tracking; notification follows locked persistence. Human intent, receipt precedence, branch authority and uncertain dispatch remain preserved. Full source and remote regression test diff imported, no worker note. Remote-area primary coverage remains required for test blob `069ad73fe9042f5b166b40c4ed9167ef8b2bcee2`. Independent judge ran 11 tests and inline authority/projection journeys; full suites had module setup blockers.
-
-## Rework required: task manager
-
-Judge `task_08e2c508` rejects intrinsic candidate, while endorsing admission refactor: `#summary` rest-spread exposes private preparation AbortController. Judge exercised snapshot abort changing manager signal without termination/status settlement. Inherited defect, not patch regression. Candidate NOT imported. Next fresh worker must preserve admission improvement, explicitly project public metadata/nested snapshots, add focused authority-isolation and manager cancellation regression, label behavior correction, then fresh judge with original and prior findings.
-
-## Integrated batch proof
-
-`task_2ab7a960`: own paired build and complete TypeScript check passed. `task_d4e7f94e`: nine executor/question/remote-approval/bridge/TUI suites passed against own paired binary, plus changed-file format/lint/diff checks exit 0 (7 inherited lint warnings, 20 infos). This resolves first-batch missing-dependency/WASM/compiled-CLI check gaps, not live-provider/device/authenticated-SSH parity. Shared read-only dependencies, private runtime assets/dist. Parent branch inspected at `6a285569`: documentation only, no accepted common source to import. Disk 157GB free.
-
-## Accepted unchanged files
-
-Independent judges found no concrete tangle in output-buffer (logical cursors and physical retention form one lifetime), completion-batcher (two deadlines and detached delivery/discard are explicit), and agent-session (exclusive header publication, append, return and cleanup ordering). Exact unchanged blobs and independent checks/limits are in JSON; none was accepted by size or inherited hash alone.
-
-## Accepted runtime owner
-
-Judge `task_d8a065ce` accepts `62e05bf7`: local saved replies becoming parent turns form one genuine lifetime; queue selection and durable claim/recheck/send/acknowledge are clear, native/remote permission boundaries remain outside. Judge inspected and tested combined accepted service: 57 tests/291 assertions plus 45 root-runtime/UI/goals checks/194 assertions; candidate 55/269, new contracts pass baseline. Source and related runtime test fully imported, worker note excluded. Runtime test still needs independent primary focus.
-
-## Execution test primary accepted
-
-Fresh primary `task_b5390314` and judge `task_d1f6dac2` accept test blob `95801cca1074a934009985ab6f1c24e903b961f5`, replacing prior supplemental acceptance. Narrow actual-registration adapter removes event registration-order/map reconstruction without hiding scenario execution or assertions; all 116 expectation sites retained. Writer 25 tests/119 assertions; judge formatting/diff passed but dependency setup prevented rerun. Integrated only judged test diff.
-
-## Task-manager rejection resolved
-
-Fresh rework `task_e5da5ab0` / `5eb5ac44` retains admission refactor and projects every public summary field with nested copies. Fresh judge `task_a01fd3d7` independently reproduced controller leak on base/original and verified no escape plus manager-owned stop/settlement/single delivery. ACCEPT, 37 independent tests/275 assertions; broader six-suite retry blocked dependency resolution. Explicit inherited-defect behavior correction, not neutral cleanup. Full judged manager/test patch integrated; original rejection retained. Manager test still needs primary focus.
-
-## Runtime test primary accepted
-
-Fresh primary `task_6e3500b8` / judge `task_438a45c6` accept `b169fd351936889ff19f0ccb42955130b5122c30`: each attachment owns callbacks/full outbox; shared session remains durable. Restart/concurrent claim evidence visible; zero-send assertion replaces swallowed throwing stub. All 13 scenarios retained, 57→60 assertions. Full test diff imported, runtime untouched; focused combined rerun pending next batch.
-
-## Accepted JobService journey
-
-Judge `task_6181fd8e` accepts `62b8e794`, including combined manager compatibility: reserve→pin→prepare/setup/activate→bounded foreground handoff is explicit; shared Git cancellation listener cleanup and setup gating/observation are coherent operations. Native/SSH/replay/delivery authorities preserved. Independent combined service/worktree checks 24/117, writer broad114/930+tsc. Full source and related worktree test imported; test still needs primary focus.
-
-## Attention scheduler accepted
-
-Judge `task_846bbe75` accepts `0fb97677`: due checkpoint consumption, pending inspection, evidence publication and reschedule are coherent operations; failure episode belongs job state rather than parallel cleanup set. No changed cancellation/delivery authority. Candidate and combined manager/JobService overlay 12 tests/77 assertions; strengthened baseline 11/70. Full source/test diff integrated after paired build/typecheck `task_321e5898` passed on pre-attention tip `1526684d`. Attention test primary still required; attention compile coverage remains next batch.
+Current area path /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d; branch bruv/whole-repo-structural-readability-execut-69c1198d. All worker paths/branches remain in JSON. Candidate source/test diffs applied whole from launch bases; worker pickup notes excluded. Parent integration inspected at second batch boundary:6a285569 still documentation only, no useful common source merge; no siblings merged. Disk145GB free. Keep filling three primary/rework and three judge slots; process queued judgments and accepted integrations before declaring any coverage complete. Values unchanged: existing judge/ownership guidance covers observed lessons.

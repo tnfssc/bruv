@@ -637,18 +637,24 @@
     {
       "focus": "src/tasks/session-costs.ts",
       "initialBlob": "70f770b65f897dc4980fef34ba2092a0c2b2430b",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_bc2d06ee",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bc2d06ee",
         "branch": "bruv/primary-src-tasks-session-costs.ts-bc2d06ee",
         "base": "7d2ade817ce1887dea78ec597722a1dbf99b155e",
-        "commit": null
+        "commit": "e8dcbeb63e0f1d23cf9707d20e0fc8461f71065b"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "7d2ade817ce1887dea78ec597722a1dbf99b155e"
+      "launchBase": "7d2ade817ce1887dea78ec597722a1dbf99b155e",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: bounded lineage discovery→descendant closure→incremental deduplicated usage→total; footer owns polling/disposal, readers own handles/partial bytes.",
+      "checks": [
+        "33 tests302 assertions costs/history-disk-footer/footer",
+        "no compiledCLI/build"
+      ]
     },
     {
       "focus": "src/tasks/subagent-profiles.ts",
@@ -1073,8 +1079,14 @@
     {
       "focus": "tests/job-attention.test.ts",
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_49f70753",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_49f70753",
+        "branch": "bruv/primary-tests-job-attention.test.ts-49f70753",
+        "base": "4c0e427a70cc663ed51f3863131f713eaf5f00c8",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -1084,7 +1096,8 @@
         "blob": "dc777477cb0379b14073fba859471e30406134d8",
         "verdict": "ACCEPT",
         "primaryStillRequired": true
-      }
+      },
+      "launchBase": "4c0e427a70cc663ed51f3863131f713eaf5f00c8"
     },
     {
       "focus": "tests/job-bridge-protocol.test.ts",
@@ -1612,11 +1625,25 @@
       "scope": "paired build and full typecheck",
       "tip": "1526684d",
       "limits": "attention candidate not yet integrated; build snapshot precedes attention"
+    },
+    {
+      "job": "task_bb0e210e",
+      "state": "passed",
+      "scope": "23 combined task/question/execute suites",
+      "tip": "4c0e427a70cc663ed51f3863131f713eaf5f00c8",
+      "limits": "own binary built before attention source integration; SDK imports source scheduler",
+      "proof": "249 pass,0 fail,1806 assertions across23 files; own pre-attention binary + current source imports."
+    },
+    {
+      "job": "task_ed210885",
+      "state": "running",
+      "scope": "full typecheck plus9 changed-file format/lint and diff",
+      "tip": "4c0e427a"
     }
   ],
   "parentIntegrationInspection": {
     "tip": "6a285569",
-    "result": "Only documentation common changes, no useful accepted-source merge yet; no siblings merged.",
-    "freeDisk": "157GB at first source batch boundary"
+    "result": "Documentation only; no accepted common source to import at second batch boundary. No sibling merge.",
+    "freeDisk": "145GB"
   }
 }
