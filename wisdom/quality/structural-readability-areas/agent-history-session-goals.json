@@ -1413,7 +1413,7 @@
           "verdict": "ACCEPT",
           "objections": [],
           "reason": "Explicit undefined matches required RPC method/params contract without weakening genuine before-start assertion; all final fixture/controller/store/transport journeys remain clear, no production/API change.",
-          "checks": "Fresh actual full final test/source/prior findings inspected; correction compile proof checked, see judge report; formatting/diff pass."
+          "checks": "Independent full tsc exit0 and 35 goal tests/173 assertions; baseline TS2554 reproduced; format/diff pass. Area full tsc also passed task_2ef0f9a9."
         }
       ],
       "acceptedBlob": "fa176b1df06db3887321f0c3452a18cd92d4b9e1",
@@ -2254,6 +2254,11 @@
       "commit": "cdc57364",
       "job": "task_df42d0f6",
       "result": "Same freshly built 21-suite regression set passes in unique owned TMPDIR: 234 pass, 0 fail, 1468 assertions. Confirms prior host failures were shared-retention budget interference. Goal-test compile error remains unresolved, no overall gate pass."
+    },
+    {
+      "commit": "0f8c0cdb",
+      "job": "task_2ef0f9a9",
+      "result": "Full tsc --noEmit passes after judged goal RPC argument fix. Focused Biome format and lint pass on 22 source/test files; lint reports 50 warnings/28 infos. No claim of warning-free check; native-fast import assists still queued in fresh primary."
     }
   ]
 }
