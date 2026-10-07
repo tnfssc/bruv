@@ -321,12 +321,15 @@
     {
       "focus": "src/remote/human-rendering.ts",
       "initialBlob": "bb92205c07e0a331b531da9ff41fb71273fd31eb",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_1cfa60a3",
-          "status": "running",
-          "candidate": "f8ea2a7905704611e8be3a049299c28e652fdbcc"
+          "status": "completed",
+          "candidate": "f8ea2a7905704611e8be3a049299c28e652fdbcc",
+          "verdict": "ACCEPT",
+          "reason": "Tool kind selects args/result/partial once; result content+metadata coherent, lifecycle envelopes render messages directly rather than fabricating recursive events; exact fallback/row/raw behavior preserved.",
+          "checks": "Independent51 pass/1162 renderer+extension; format/diff pass, no full/live terminal claim."
         }
       ],
       "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
@@ -336,7 +339,12 @@
         "branch": "bruv/remote-primary-human-rendering-3a4c1736",
         "commit": "f8ea2a7905704611e8be3a049299c28e652fdbcc"
       },
-      "workerResponse": "Committed candidate for independent judgment.\n\n- **Base:** `a7830f7d2541164f5170e2323a3e621e5de1f35d`\n- **Candidate:** `f8ea2a7905704611e8be3a049299c28e652fdbcc`\n- **Branch:** `bruv/remote-primary-human-rendering-3a4c1736`\n\n**Changed paths**\n- `src/remote/human-rendering.ts`\n- `tests/remote-human-rendering.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Concrete before → after**\n- Tool events repeatedly interpreted their kind to select labels, payloads, body formatting and metadata. Dispatch now visibly selects arguments/result/partialResult once; `toolResultRow` owns result-content and metadata rendering.\n- Lifecycle envelopes fabricated `message_end` events and recursively entered event dispatch. They now render messages directly through `messageRow`, retaining row identity and unfamiliar-envelope fallback.\n\nTraced the shipped extension → cached transcript page → renderer path. Permission receipts, answer/grant ownership, cancellation/delivery semantics, raw rendering and attention replay remain unchanged.\n\n**Proof:** Existing baseline: 49 tests passed. New exact-output checks passed before refactoring. Candidate: **51 passed, 0 failed, 1,162 assertions**. Formatting and diff checks passed; lint exited 0 with 20 warnings/70 infos.\n\n**Overlap:** Related renderer test is pending in `remote.json`, without active task IDs; coordinator reconciliation needed. No extension/menu edits.\n\nClean working tree; no push/PR. No full-build, live SSH or PTY claim. Values unchanged; focused worker note recorded."
+      "workerResponse": "Committed candidate for independent judgment.\n\n- **Base:** `a7830f7d2541164f5170e2323a3e621e5de1f35d`\n- **Candidate:** `f8ea2a7905704611e8be3a049299c28e652fdbcc`\n- **Branch:** `bruv/remote-primary-human-rendering-3a4c1736`\n\n**Changed paths**\n- `src/remote/human-rendering.ts`\n- `tests/remote-human-rendering.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Concrete before → after**\n- Tool events repeatedly interpreted their kind to select labels, payloads, body formatting and metadata. Dispatch now visibly selects arguments/result/partialResult once; `toolResultRow` owns result-content and metadata rendering.\n- Lifecycle envelopes fabricated `message_end` events and recursively entered event dispatch. They now render messages directly through `messageRow`, retaining row identity and unfamiliar-envelope fallback.\n\nTraced the shipped extension → cached transcript page → renderer path. Permission receipts, answer/grant ownership, cancellation/delivery semantics, raw rendering and attention replay remain unchanged.\n\n**Proof:** Existing baseline: 49 tests passed. New exact-output checks passed before refactoring. Candidate: **51 passed, 0 failed, 1,162 assertions**. Formatting and diff checks passed; lint exited 0 with 20 warnings/70 infos.\n\n**Overlap:** Related renderer test is pending in `remote.json`, without active task IDs; coordinator reconciliation needed. No extension/menu edits.\n\nClean working tree; no push/PR. No full-build, live SSH or PTY claim. Values unchanged; focused worker note recorded.",
+      "acceptedBlob": "8b014ef87a77115e1f8b665372741c6ccda116e0",
+      "integrationState": "exact full source/related-test patch applied",
+      "changedRelatedPaths": [
+        "tests/remote-human-rendering.test.ts"
+      ]
     },
     {
       "focus": "src/remote/job-artifacts.ts",
@@ -477,20 +485,28 @@
     {
       "focus": "src/remote/menu.ts",
       "initialBlob": "12313ca2b05f88f0fa2837706d3f219882e007a3",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge",
       "judgeRounds": [],
       "launchBase": "d37b6be992205ef995555d9156f1cadf0899cda7",
       "primary": {
         "id": "task_9d2cb15e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_9d2cb15e",
-        "branch": "bruv/remote-primary-menu-9d2cb15e"
-      }
+        "branch": "bruv/remote-primary-menu-9d2cb15e",
+        "commit": "6057b48d0c40d0db58af7f067e01b9f6a31bfbec"
+      },
+      "workerResponse": "Candidate committed; ready for independent judgment.\n\n- **Base:** `d37b6be992205ef995555d9156f1cadf0899cda7`\n- **Candidate:** `6057b48d0c40d0db58af7f067e01b9f6a31bfbec`\n- **Branch:** `bruv/remote-primary-menu-9d2cb15e`\n\n**Changed paths**\n- `src/remote/menu.ts`\n- `tests/remote-menu.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after walkthrough**\n\nPreviously, nested array spreads mixed offline access, local revocation, uncertain-delivery reconciliation, and fresh-task cancellation. The caller’s `online` argument actually represented a pinned host/owner/epoch match.\n\nNow the action sequence visibly:\n1. Offers cached views and local capability revocation.\n2. Returns when the pinned owner is unavailable.\n3. Offers sync and saved-identity reconciliation—even after failed sync.\n4. Offers cancellation only for an error-free active task.\n\nThus a stale uncertain reply remains reconcilable without becoming a new question; a foreign owner connection permits only cached access and local revocation. Question routing and its unavailable description now share one decision.\n\nDispatch authority, session-generation guards, picker snapshots, replay identities, cancellation and delivery contracts remain unchanged. No incidental behavior fix.\n\n**Proof:** 71 tests passed, 0 failed, 1,232 assertions across menu, extension and client suites. Added checks also passed before source editing. Changed-file Biome checks and `git diff --check` pass; lint warnings remain.\n\nNo active operations/untracked-preview/human-rendering overlap; no extension edits. Clean worktree. No full build/live SSH claim, push or PR."
     },
     {
       "focus": "src/remote/operations.ts",
       "initialBlob": "67cf54865eeee7c16e178470b9fcd076d0d41747",
-      "status": "candidate-awaiting-judge",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_2b542a5b",
+          "status": "running",
+          "candidate": "fb80b584e985cb6112a203ac0cee7b928a6d0c33"
+        }
+      ],
       "launchBase": "d37b6be992205ef995555d9156f1cadf0899cda7",
       "primary": {
         "id": "task_7fa15931",
@@ -548,7 +564,7 @@
     {
       "focus": "src/remote/owner-rpc.ts",
       "initialBlob": "982d5b8fce885d5bd81d2aa76e753caa1e3be5c2",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_ac4bfb3b",
@@ -559,8 +575,11 @@
         },
         {
           "id": "task_69fda549",
-          "status": "running",
-          "candidate": "3e1f4edbefd216d5b5a5d701d162610a9a3c1568"
+          "status": "completed",
+          "candidate": "3e1f4edbefd216d5b5a5d701d162610a9a3c1568",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Framer owns suffix/byte limit/newline lazy yield; child reader owns decoding/drain/finish and owner journal/publication remains separate. Inherited pilot not used as acceptance.",
+          "checks": "Fresh judge11 pass/106 plus20 inline UTF8/lazy prefix/early break/actual-owner exit truncation assertions; initial probe syntax failures corrected; no full/live."
         }
       ],
       "launchBase": "926c1c58318b0202744be8636eef7064981f2514",
@@ -572,7 +591,9 @@
       },
       "result": "Unchanged suffix/frame byte validation and lazy newline yield; owner handles journal/routing/framing failure and post-exit truncation.",
       "checks": "11 pass/106 plus14 probe assertions; no live/compiled.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "982d5b8fce885d5bd81d2aa76e753caa1e3be5c2",
+      "integrationState": "unchanged exact area blob; stalled prior judge no verdict retained"
     },
     {
       "focus": "src/remote/owner.ts",
@@ -1266,8 +1287,14 @@
     {
       "focus": "src/remote/untracked-preview.ts",
       "initialBlob": "f38709acfcbd963f923a5966b59f8bae238a34a7",
-      "status": "candidate-awaiting-judge",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_8878385c",
+          "status": "running",
+          "candidate": "0f7f128e0b6e7f61f50ef39c1fcebb87e5800b42"
+        }
+      ],
       "launchBase": "d37b6be992205ef995555d9156f1cadf0899cda7",
       "primary": {
         "id": "task_5b649c22",
@@ -1625,18 +1652,30 @@
       "focus": "tests/remote-human-rendering.test.ts",
       "initialBlob": "c25823030618fc37e2db14cef8d9ae429055a6f6",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedIntegration": {
+        "candidate": "f8ea2a7905704611e8be3a049299c28e652fdbcc",
+        "judge": "task_1cfa60a3",
+        "blob": "cadcbe6c1f12f39d19a466775a6427b4a0884388",
+        "ownPrimaryStillRequired": true
+      }
     },
     {
       "focus": "tests/remote-job-artifacts.test.ts",
       "initialBlob": "7e7abc717c0eabb5ab835490816b9065460655b1",
-      "status": "pending",
+      "status": "primary-running",
       "judgeRounds": [],
       "relatedIntegration": {
         "candidate": "66543af9dba1d12000377998018ee52126cc02ae",
         "judge": "task_1352e407",
         "blob": "927e703847bb6825fa26ec8357786640b3f83066",
         "ownPrimaryStillRequired": true
+      },
+      "launchBase": "f05ff07fca68029011198242e28d96ac4fad1049",
+      "primary": {
+        "id": "task_481ce7c4",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_481ce7c4",
+        "branch": "bruv/remote-primary-artifact-capture-tests-481ce7c4"
       }
     },
     {
@@ -2318,6 +2357,14 @@
       "scope": "Configured assets+tsc and bridge/questions/client/extension/root-options/policy/root-client/observations/delivery/menu combined checks",
       "exitCode": 0,
       "result": "Configured prepare:assets + tsc passed; combined10 suites131 pass/1535 assertions."
+    },
+    {
+      "base": "f05ff07fca68029011198242e28d96ac4fad1049",
+      "job": "task_19bc2a59",
+      "status": "completed",
+      "scope": "Configured check plus capture/runtime/cancellation/artifact/bridge/question-runtime/extension/parser/observation integration",
+      "exitCode": 0,
+      "result": "Configured prepare:assets+tsc passed;117 tests/3624 assertions across9 integration suites."
     }
   ],
   "crossAreaNeeds": [
