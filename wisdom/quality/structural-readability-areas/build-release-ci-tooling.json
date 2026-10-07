@@ -326,7 +326,7 @@
     {
       "focus": "package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_140be4ea",
@@ -342,13 +342,18 @@
           "id": "task_7aa03035",
           "base": "b1892d9c6c972a84d58689d0ef99226ed1091043",
           "candidate": "6ff0cb52b1afe5e70c6a6d7402fa8e38040e9982",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Direct preparation/build/test scripts delegate orchestration; dependency/dev/patch declarations match lock root and real runtime/benchmark/transitive consumers. No dead dependency inferred solely from absent direct imports.",
+          "checks": "Independent33tests443assertions exactsnapshot shareddeps;format/lintpass;mutablePi copied fixtures. No fullbuild/tsc/live."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "555c3c153c503ba09efe2ebaaef2c5afdeca4da4",
       "readingResult": "Unchanged script preparation/build sequencing explicit, orchestration delegated to dedicated entrypoints; aliases/dependency churn no benefit.",
-      "checks": "33tests443assertions;format/lintpass;script/patchpaths checked;no build."
+      "checks": "33tests443assertions;format/lintpass;script/patchpaths checked;no build.",
+      "integrationState": "Unchanged manifest matches tip; surrounding source not blanket accepted by this judgment;localnoteexcluded."
     },
     {
       "focus": "scripts/build-pair.ts",
