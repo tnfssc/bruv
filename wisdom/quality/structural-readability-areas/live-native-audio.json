@@ -631,13 +631,21 @@
       "judgeRounds": [
         {
           "id": "task_bb0fe7ca",
-          "status": "running",
+          "status": "complete",
           "candidate": "b6c6eb450541225a1590a010824b50a896f145cc",
-          "base": "08dc3dd7c0e48cbb811c003b70592b7e51628b55"
+          "base": "08dc3dd7c0e48cbb811c003b70592b7e51628b55",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Canonical history pairing, registered-tool protocol, and owner admission/controller/draining have distinct authority. LiveHistory owns pair buffering; execute lifetime/finally visible. Current Gemini/OpenAI seams inspected, no conflict.",
+          "checks": "Independent diff clean; tests dependency-blocked @earendil-works/pi-ai/compat; worker 132 pass not independently reproduced.",
+          "acceptedBlobs": {
+            "src/live/main-owner.ts": "bb80a4fd5997a18d93cfce3fd34fc8e4b022c7aa",
+            "tests/live-main-owner.test.ts": "34a16d03a46801d8b70d8b4999a5c0a808668bf5"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "bb80a4fd5997a18d93cfce3fd34fc8e4b022c7aa",
+      "integration": "integrated accepted exact candidate",
       "relatedPaths": [
         "tests/live-main-owner.test.ts"
       ],
@@ -1170,7 +1178,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_bb0fe7ca",
+        "verdict": "ACCEPT",
+        "blob": "34a16d03a46801d8b70d8b4999a5c0a808668bf5"
+      }
     },
     {
       "focus": "tests/live-native-workflows.test.ts",

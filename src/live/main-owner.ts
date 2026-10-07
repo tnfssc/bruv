@@ -149,6 +149,179 @@ function showLiveTool(session: OwnerSession, event: unknown): void {
     // Only synchronous dispatch failures are isolated; _emit does not await listeners.
   }
 }
+/** Canonical history cannot interleave an observation between a tool call and its
+ * result. Reservations serialize pairs; observations flush at each pair boundary. */
+class LiveHistory {
+  private tail: Promise<void> = Promise.resolve();
+  private active = false;
+  private reservations = 0;
+  private deferred: AgentMessage[] = [];
+
+  constructor(
+    private session: OwnerSession,
+    private onMessage: ((message: AgentMessage) => void) | undefined,
+    private onBranch: () => boolean,
+  ) {}
+
+  get settled(): Promise<void> {
+    return this.tail;
+  }
+
+  append(message: AgentMessage): void {
+    if (this.active) this.deferred.push(message);
+    else record(this.session, message, this.onMessage);
+  }
+
+  reserveToolPair(): (() => void) | Promise<() => void> {
+    const previous = this.tail;
+    const immediate = this.reservations++ === 0;
+    let unlock!: () => void;
+    this.tail = new Promise<void>((resolve) => {
+      unlock = resolve;
+    });
+    const release = () => {
+      this.active = false;
+      for (const message of this.deferred.splice(0)) if (this.onBranch()) record(this.session, message, this.onMessage);
+      this.reservations--;
+      unlock();
+    };
+    if (immediate) {
+      this.active = true;
+      return release;
+    }
+    return previous.then(() => {
+      this.active = true;
+      return release;
+    });
+  }
+}
+
+/** The pinned Pi external-tool seam: canonical call, permission hook, registered
+ * execution, host cancellation evidence, result hook, canonical result, UI events.
+ * Admission and lifetime are owned by the caller, not by this protocol operation. */
+async function executeRegisteredLiveTool(
+  session: OwnerSession,
+  tool: any,
+  call: Parameters<VoiceOrchestration["execute"]>[0] & { id: string },
+  controller: AbortController,
+  valid: () => boolean,
+  canCommit: () => boolean,
+  getStopWorkReport: () => unknown,
+): Promise<{ result: any; isError: boolean }> {
+  const id = call.id;
+  const toolCall = { type: "toolCall" as const, id, name: "execute", arguments: (call.args ?? {}) as any };
+  let args: any = call.args ?? {};
+  let result: any;
+  let isError = false;
+  let acceptingUpdates = true;
+  try {
+    if (!valid() || call.name !== "execute") throw new Error("Unavailable Live tool");
+    const assistantMessage = {
+      role: "assistant",
+      content: [toolCall],
+      api: "live",
+      provider: "live",
+      model: "live",
+      usage: {
+        input: 0,
+        output: 0,
+        cacheRead: 0,
+        cacheWrite: 0,
+        totalTokens: 0,
+        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+      },
+      stopReason: "toolUse",
+      timestamp: Date.now(),
+    } as Extract<AgentMessage, { role: "assistant" }>;
+    record(session, assistantMessage);
+    showLiveTool(session, {
+      type: "tool_execution_start",
+      toolCallId: id,
+      toolName: "execute",
+      args: toolCall.arguments,
+    });
+    args = validateToolArguments(tool, toolCall);
+    const decision = await session.agent.beforeToolCall?.({
+      assistantMessage,
+      toolCall,
+      args,
+      context: session.agent.state,
+    });
+    if (!valid()) throw new Error("Live owner closed before tool admission");
+    if (decision?.block) throw new Error(decision.reason ?? "Tool call blocked");
+    const actualCall = { ...toolCall, arguments: args };
+    // Wrapper supplies the extension runner's real context; no separate evaluator.
+    result = await tool.execute(actualCall.id, args, controller.signal, (update: unknown) => {
+      if (!acceptingUpdates) return;
+      showLiveTool(session, {
+        type: "tool_execution_update",
+        toolCallId: id,
+        toolName: "execute",
+        args: toolCall.arguments,
+        partialResult: update,
+      });
+    });
+  } catch (error) {
+    isError = true;
+    result = { content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }] };
+  }
+  acceptingUpdates = false;
+  const stopReport = getStopWorkReport();
+  if (stopReport !== undefined)
+    result = {
+      ...result,
+      content: [
+        ...(result.content ?? []),
+        {
+          type: "text",
+          text: "jobs.stopWork host report (captured before foreground cancellation):\n" + JSON.stringify(stopReport),
+        },
+      ],
+    };
+  const assistantMessage = [...session.agent.state.messages]
+    .reverse()
+    .find((m) => m.role === "assistant" && m.content.some((c) => c.type === "toolCall" && c.id === toolCall.id)) as
+    | Extract<AgentMessage, { role: "assistant" }>
+    | undefined;
+  try {
+    const after = assistantMessage
+      ? await session.agent.afterToolCall?.({
+          assistantMessage,
+          toolCall,
+          args,
+          result,
+          isError,
+          context: session.agent.state,
+        })
+      : undefined;
+    if (after) {
+      result = { ...result, ...after };
+      isError = after.isError ?? isError;
+    }
+  } catch (error) {
+    isError = true;
+    result = { content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }] };
+  }
+  if (canCommit())
+    record(session, {
+      role: "toolResult",
+      toolCallId: toolCall.id,
+      toolName: "execute",
+      content: result.content,
+      details: result.details,
+      isError,
+      timestamp: Date.now(),
+    } as AgentMessage);
+  showLiveTool(session, {
+    type: "tool_execution_end",
+    toolCallId: id,
+    toolName: "execute",
+    result,
+    isError,
+  });
+  return { result, isError };
+}
+
 async function acquire(
   _pi: ExtensionAPI,
   ctx: ExtensionContext,
@@ -227,39 +400,7 @@ async function acquire(
     pendingTranscript?.settle(final);
     pendingTranscript = undefined;
   };
-  // One canonical tool pair at a time. Other owner records are buffered until its
-  // result is written, keeping both the session file and agent messages identical.
-  let pairTail: Promise<void> = Promise.resolve();
-  let pairActive = false;
-  let reservedPairs = 0;
-  const deferredRecords: AgentMessage[] = [];
-  const ownerRecord = (message: AgentMessage) => {
-    if (pairActive) deferredRecords.push(message);
-    else record(session, message, callbacks.onMessage);
-  };
-  const pairSlot = (): (() => void) | Promise<() => void> => {
-    const previous = pairTail;
-    const immediate = reservedPairs++ === 0;
-    let unlock!: () => void;
-    pairTail = new Promise<void>((resolve) => {
-      unlock = resolve;
-    });
-    const release = () => {
-      pairActive = false;
-      for (const message of deferredRecords.splice(0))
-        if (sameBranch(owner, manager)) record(session, message, callbacks.onMessage);
-      reservedPairs--;
-      unlock();
-    };
-    if (immediate) {
-      pairActive = true;
-      return release;
-    }
-    return previous.then(() => {
-      pairActive = true;
-      return release;
-    });
-  };
+  const history = new LiveHistory(session, callbacks.onMessage, () => sameBranch(owner, manager));
   const calls = new Map<string, { signature: string; result: Promise<unknown> }>();
   const controllers = new Set<AbortController>();
   const stopWorkReports = new Map<AbortController, unknown>();
@@ -274,7 +415,7 @@ async function acquire(
   };
   const provisional = (kind: string, text: string) => {
     if (!text.trim() || !sameBranch(owner, manager)) return;
-    ownerRecord({
+    history.append({
       role: "custom",
       customType: "live-provisional",
       content: [{ type: "text", text: kind + ": " + text }],
@@ -289,7 +430,7 @@ async function acquire(
     const safe = terminalTranscriptText(text);
     if (safe !== text) {
       // Retain the exact source as hidden audit, never as terminal control bytes.
-      ownerRecord({
+      history.append({
         role: "custom",
         customType: "live-transcript",
         content: [{ type: "text", text }],
@@ -299,9 +440,9 @@ async function acquire(
       });
       text = safe;
     }
-    if (role === "user") ownerRecord({ role, content: [{ type: "text", text }], timestamp: Date.now() });
+    if (role === "user") history.append({ role, content: [{ type: "text", text }], timestamp: Date.now() });
     else
-      ownerRecord({
+      history.append({
         role,
         content: [{ type: "text", text }],
         api: "live",
@@ -356,7 +497,7 @@ async function acquire(
     turnPreparation = turnPreparation
       .then(async () => {
         // Final speech recorded during a tool pair is committed before context hooks inspect it.
-        await pairTail;
+        await history.settled;
         if (!valid()) throw new Error("Live owner closed before user turn preparation");
         const selectedBefore = [...session._baseSystemPromptOptions.selectedTools];
         const next = await runner.emitBeforeAgentStart(text, undefined, session._baseSystemPromptOptions);
@@ -374,9 +515,9 @@ async function acquire(
           throw new Error(
             "Per-turn instructions changed. Continue in text: Live cannot safely update this session's instructions while audio is active.",
           );
-        if (update) ownerRecord(update);
+        if (update) history.append(update);
         for (const message of next.messages)
-          ownerRecord({
+          history.append({
             role: "custom",
             customType: message.customType,
             content: message.content as any,
@@ -574,7 +715,7 @@ async function acquire(
         if (customType !== "live-transcript") callbacks.onContext?.(text);
         return;
       }
-      ownerRecord({
+      history.append({
         role: "custom",
         customType,
         details: metadata?.details,
@@ -596,7 +737,7 @@ async function acquire(
           )
           .catch(() => callbacks.onError?.("Could not persist paired Live transcript"));
       } else {
-        ownerRecord({
+        history.append({
           role: "custom",
           customType: "live-transcript",
           content: [{ type: "text", text }],
@@ -661,7 +802,7 @@ async function acquire(
         if (calls.size >= 256 || inFlight >= 16) throw new Error("Live tool capacity reached; stop and resume in text");
         const operation = (async () => {
           inFlight++;
-          const slot = pairSlot();
+          const slot = history.reserveToolPair();
           const releasePair = typeof slot === "function" ? slot : await slot;
           if (!valid()) {
             releasePair();
@@ -671,120 +812,16 @@ async function acquire(
           }
           const controller = new AbortController();
           controllers.add(controller);
-          const id = callId;
-          const toolCall = { type: "toolCall" as const, id, name: "execute", arguments: (call.args ?? {}) as any };
-          let args: any = call.args ?? {};
-          let result: any;
-          let isError = false;
-          let acceptingUpdates = true;
           try {
-            if (!valid() || call.name !== "execute") throw new Error("Unavailable Live tool");
-            const assistantMessage = {
-              role: "assistant",
-              content: [toolCall],
-              api: "live",
-              provider: "live",
-              model: "live",
-              usage: {
-                input: 0,
-                output: 0,
-                cacheRead: 0,
-                cacheWrite: 0,
-                totalTokens: 0,
-                cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-              },
-              stopReason: "toolUse",
-              timestamp: Date.now(),
-            } as Extract<AgentMessage, { role: "assistant" }>;
-            record(session, assistantMessage);
-            showLiveTool(session, {
-              type: "tool_execution_start",
-              toolCallId: id,
-              toolName: "execute",
-              args: toolCall.arguments,
-            });
-            args = validateToolArguments(tool, toolCall);
-            const decision = await session.agent.beforeToolCall?.({
-              assistantMessage,
-              toolCall,
-              args,
-              context: session.agent.state,
-            });
-            if (!valid()) throw new Error("Live owner closed before tool admission");
-            if (decision?.block) throw new Error(decision.reason ?? "Tool call blocked");
-            const actualCall = { ...toolCall, arguments: args };
-            // Wrapper supplies the extension runner's real context; no separate evaluator.
-            result = await tool.execute(actualCall.id, args, controller.signal, (update: unknown) => {
-              if (!acceptingUpdates) return;
-              showLiveTool(session, {
-                type: "tool_execution_update",
-                toolCallId: id,
-                toolName: "execute",
-                args: toolCall.arguments,
-                partialResult: update,
-              });
-            });
-          } catch (error) {
-            isError = true;
-            result = { content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }] };
-          }
-          acceptingUpdates = false;
-          try {
-            const stopReport = stopWorkReports.get(controller);
-            if (stopReport !== undefined)
-              result = {
-                ...result,
-                content: [
-                  ...(result.content ?? []),
-                  {
-                    type: "text",
-                    text:
-                      "jobs.stopWork host report (captured before foreground cancellation):\n" +
-                      JSON.stringify(stopReport),
-                  },
-                ],
-              };
-            const assistantMessage = [...session.agent.state.messages]
-              .reverse()
-              .find(
-                (m) => m.role === "assistant" && m.content.some((c) => c.type === "toolCall" && c.id === toolCall.id),
-              ) as Extract<AgentMessage, { role: "assistant" }> | undefined;
-            try {
-              const after = assistantMessage
-                ? await session.agent.afterToolCall?.({
-                    assistantMessage,
-                    toolCall,
-                    args,
-                    result,
-                    isError,
-                    context: session.agent.state,
-                  })
-                : undefined;
-              if (after) {
-                result = { ...result, ...after };
-                isError = after.isError ?? isError;
-              }
-            } catch (error) {
-              isError = true;
-              result = { content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }] };
-            }
-            if (sameBranch(owner, manager))
-              record(session, {
-                role: "toolResult",
-                toolCallId: toolCall.id,
-                toolName: "execute",
-                content: result.content,
-                details: result.details,
-                isError,
-                timestamp: Date.now(),
-              } as AgentMessage);
-            showLiveTool(session, {
-              type: "tool_execution_end",
-              toolCallId: id,
-              toolName: "execute",
-              result,
-              isError,
-            });
+            const { result, isError } = await executeRegisteredLiveTool(
+              session,
+              tool,
+              { ...call, id: callId },
+              controller,
+              valid,
+              () => sameBranch(owner, manager),
+              () => stopWorkReports.get(controller),
+            );
             retainedToolBytes += Buffer.byteLength(JSON.stringify(result));
             if (retainedToolBytes > 32 * 1024 * 1024) {
               owner.close();
@@ -808,9 +845,9 @@ async function acquire(
   };
   owners.set(manager, owner);
   session._runSystemPromptOptions = prepared.systemPromptOptions;
-  if (patch) ownerRecord(patch);
+  if (patch) history.append(patch);
   for (const message of prepared.messages)
-    ownerRecord({
+    history.append({
       role: "custom",
       customType: message.customType,
       content: message.content as any,
