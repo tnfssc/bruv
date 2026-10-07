@@ -335,7 +335,7 @@
     {
       "focus": "src/agent/native-fast-mode.ts",
       "initialBlob": "a89e3e2bac3e22cbf9b209a8694b8c871070ee21",
-      "status": "judging",
+      "status": "accepted-check-rework-pending",
       "primary": [
         {
           "id": "task_fd75f63a",
@@ -357,11 +357,21 @@
           "id": "task_167d27b3",
           "candidate": "e4a406a62b1e3715cc8f50b3e5bb5661644c8bb1",
           "base": "7f874cac04cf0fc8820152abfd7a07547ddb19da",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Policy selection, immutable authorization snapshot, guarded preparation/payload/dispatch and persistence rollback lifetimes distinct. Shared runtime owner arbitration/restoration explicit; malformed records/auth consent/swallowed hooks/tier mutation guards preserved.",
+          "checks": "Independent 54 tests/330 assertions; tsc/format/lint pass with 16 warnings; Biome check two unchanged import-order errors; diff pass.",
+          "acceptedRelatedBlobs": {
+            "tests/native-fast-mode.test.ts": "ccde20788d3485bb3a2eeb8b73137d321a402ce3"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "309b5621faefc75b19774691e226d2f390d3aacd",
+      "integration": "integrated-exact-candidate",
+      "checkNeeds": [
+        "Native fast source/test import organization errors need file-worker correction and final hash rejudge."
+      ]
     },
     {
       "focus": "src/agent/provider-attempts.ts",
@@ -1629,7 +1639,17 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "e4a406a62b1e3715cc8f50b3e5bb5661644c8bb1",
+        "judge": "task_167d27b3",
+        "verdict": "ACCEPT",
+        "blob": "ccde20788d3485bb3a2eeb8b73137d321a402ce3",
+        "primaryFocusStillRequired": true
+      },
+      "checkNeeds": [
+        "Native fast source/test import organization errors need file-worker correction and final hash rejudge."
+      ]
     },
     {
       "focus": "tests/native-request-history.test.ts",
