@@ -433,7 +433,7 @@
     {
       "focus": "site/index.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_1510f666",
@@ -448,10 +448,16 @@
         {
           "id": "task_076ad4af",
           "candidate": "26c935af68ca49c3f004c75d3ab1078c7ca9930d",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Literal head/body/runtime slots expose terminal-hidden/HTML-visible fallback; build/runtime own selection/startup lifetime rather than template machinery. Judge10 tests;browser/build/validation read not rerun.",
+          "objections": []
         }
       ],
-      "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3"
+      "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3",
+      "acceptedBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/install-command.ts",
@@ -485,7 +491,7 @@
     {
       "focus": "site/install-html.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_8dfc6d3c",
@@ -496,7 +502,13 @@
           "result": "Unchanged import+one enhanceInstall invocation; separately bundled HTML entry avoids terminal/WASM startup coupling; copy/timer effects owned by shared operation. Traced build/callers/browser assertions;no test rerun."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_fbbc0bfe",
+          "candidate": "1cc107a22f17ff8f2f7b6ffc5539d87be54fc59c",
+          "state": "running"
+        }
+      ],
       "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db"
     },
     {

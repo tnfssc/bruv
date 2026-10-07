@@ -59,3 +59,5 @@ site/brand.ts: One explicit width selector returns48/28/24-cell rows; layout/pre
 site/content.ts: Two literal copy objects expose metadata/landing content without effects or hidden lifetimes; named-property flow to layout/build direct. Judge2 tests/24 assertions;no browser/build/factual-copy audit.
 
 site/capture.ts: Menu alignment/fallback and styled wrapping have coherent operations; settingsCapture dispatches rather than interleaving fit/continue. Judge10 tests/123298 assertions,complete widths1-110 baseline parity,native identity and input immutability. Test-only capture path,not shipped-demo improvement.
+
+site/index.html: Literal head/body/runtime slots expose terminal-hidden/HTML-visible fallback; build/runtime own selection/startup lifetime rather than template machinery. Judge10 tests;browser/build/validation read not rerun.
