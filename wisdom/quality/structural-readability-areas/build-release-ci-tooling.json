@@ -256,7 +256,7 @@
     {
       "focus": "scripts/prepare-assets.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_5746779b",
@@ -272,13 +272,18 @@
           "id": "task_e71379a8",
           "base": "3f7811fb2f9c5675ccc877f839d01adfdb0430ca",
           "candidate": "07ca2de961c8ce72d973913cf6b826ebc9c18419",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Validate Pi before filesystem output; explicit copy manifest→versioned metadata. Authority and effects sequential, no hidden state.",
+          "checks": "Independent owned-fixture regression1/3 twice plus supplemental3/18 exact bytes/stale refresh/hash-version refusal. No build/typecheck/device; no purge unrelated outputs or atomic batch replacement (existing)."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6cb6ac67d3e10c91a47b412769efdbf67245d57d",
       "readingResult": "Unchanged: direct validate Pi → copy explicit assets → write versioned metadata; further extraction adds indirection.",
-      "checks": "Existing 1 pass/3 assertions; owned-fixture supplemental 3 pass/17 assertions. No shared dependency writes or full build."
+      "checks": "Existing 1 pass/3 assertions; owned-fixture supplemental 3 pass/17 assertions. No shared dependency writes or full build.",
+      "integrationState": "Unchanged focus matches area tip; worker-local note excluded."
     },
     {
       "focus": "scripts/prepare-manual-release.ts",
@@ -339,7 +344,7 @@
     {
       "focus": "scripts/select-release-notes.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "awaiting-judge",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_5013c91b",
@@ -350,7 +355,14 @@
           "commit": "0068c32fbdbf56cf53d73a79c84cd294afff4569"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_6cb6e619",
+          "base": "cedf50c46bf53456e5b1ab3509a3d9f2e70a7c46",
+          "candidate": "0068c32fbdbf56cf53d73a79c84cd294afff4569",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [],
       "acceptedBlob": null,
       "readingResult": "Unchanged: validate tag/version → exact notes path → require nonempty regular file → return. CLI/publisher contract direct.",
@@ -440,7 +452,7 @@
     {
       "focus": "src/update.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_d0b99b87",
@@ -456,15 +468,24 @@
           "id": "task_170d10bf",
           "base": "147c9738bf53e2a693a3f44330320a4e3042522f",
           "candidate": "4e125c6598492681a849cdd0b57cd8136ebe3657",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Policy visible at entrypoint, named artifact pair replaces index reversal, installReleasePair owns stage/publication/reverse rollback/recovery. Exact assets, legacy fallback limits, strict staged probes, environment isolation, permissions/race checks preserved.",
+          "checks": "Independent73 pass/367 assertions; baseline characterization1/10; strict tsc/format/lint/diff pass (2 warnings23 infos). No full build/live/macOS/Android. Prepublication race/crash-atomicity limits retained.",
+          "acceptedBlobs": {
+            "src/update.ts": "18439821dc68983f7f315f3c6b31fa5f7b320a3b",
+            "tests/update.test.ts": "16166886024d4d339cf8ab535dc1f4275feae2db"
+          }
         }
       ],
       "relatedPaths": [
         "tests/update.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "18439821dc68983f7f315f3c6b31fa5f7b320a3b",
       "readingResult": "Candidate separates release validation/installed-pair repair policy from staging and rollback; named bruv/connector pair replaces positional arrays; connector-first publication explicit.",
-      "checks": "73 focused pass/367 assertions incl compiled updater/routing; new phase-order case baseline pass 1/10; focused typecheck/format/lint pass with existing warnings; no full build/live/native macOS."
+      "checks": "73 focused pass/367 assertions incl compiled updater/routing; new phase-order case baseline pass 1/10; focused typecheck/format/lint pass with existing warnings; no full build/live/native macOS.",
+      "integrationState": "Full source/test patch applied from launch base without overlap; note excluded."
     },
     {
       "focus": "t3.json",
@@ -790,7 +811,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_170d10bf",
+        "verdict": "ACCEPT",
+        "blob": "16166886024d4d339cf8ab535dc1f4275feae2db",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/verify-update-probe.test.ts",

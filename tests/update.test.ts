@@ -13,7 +13,7 @@ import {
   symlink,
   writeFile,
 } from "node:fs/promises";
-import { join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { UPDATE_ASSETS, isCompiledInvocation, updateAssetFor, updateBruv } from "../src/update";
 
 const body = new TextEncoder().encode("new compiled bruv");
@@ -357,6 +357,49 @@ describe("paired install update", () => {
     }
     expect((await readdir(x.dir)).filter((n) => n.startsWith(".bruv-update-"))).toEqual([]);
   });
+  test("verified pair and both backups precede connector-first publication", async () => {
+    const x = await target();
+    const connector = join(x.dir, "bruv-claude-compat");
+    await writeFile(connector, "old connector");
+    const f = fixture();
+    const events: string[] = [];
+    const fetch = (async (url: RequestInfo | URL, init?: RequestInit) => {
+      events.push("fetch:" + String(url).split("/").at(-1));
+      return f.fetch(url, init);
+    }) as typeof globalThis.fetch;
+    await updateBruv(
+      deps(fetch, x.path, {
+        onDownload: (version: string) => events.push("download:" + version),
+        runBinary: async (path: string, args: string[]) => {
+          events.push("probe:" + basename(path) + ":" + args.join(" "));
+          expect(await readFile(x.path, "utf8")).toBe("old");
+          expect(await readFile(connector, "utf8")).toBe("old connector");
+          return basename(path) === "bruv" ? "0.3.0" : "bruv-claude-compat 0.3.0";
+        },
+        rename: async (from: string, to: string) => {
+          events.push("replace:" + basename(to));
+          const stage = dirname(from);
+          expect(await readFile(join(stage, "bruv.previous"), "utf8")).toBe("old");
+          expect(await readFile(join(stage, "bruv-claude-compat.previous"), "utf8")).toBe("old connector");
+          await rename(from, to);
+        },
+      }),
+    );
+    expect(events).toEqual([
+      "fetch:latest",
+      "download:0.3.0",
+      "fetch:bruv-linux-x64",
+      "fetch:bruv-linux-x64.sha256",
+      "fetch:bruv-claude-compat-linux-x64",
+      "fetch:bruv-claude-compat-linux-x64.sha256",
+      "probe:bruv:--version",
+      "probe:bruv-claude-compat:--bruv-version",
+      "replace:bruv-claude-compat",
+      "replace:bruv",
+    ]);
+    expect((await readdir(x.dir)).sort()).toEqual(["bruv", "bruv-claude-compat"]);
+  });
+
   test("first replacement failure leaves both files unchanged", async () => {
     const x = await target();
     const connector = join(x.dir, "bruv-claude-compat");
