@@ -160,8 +160,15 @@
     {
       "focus": "src/agent/cache-affine-compaction.ts",
       "initialBlob": "6a0fba6331dc4d46404ff9e81356202574390438",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_f6a2cf6a",
+          "launchBase": "52f67ec6edd404e9865237f6607bd95e3f69b4f7",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f6a2cf6a",
+          "branch": "bruv/primary-cache-affine-compaction-f6a2cf6a"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -2105,13 +2112,20 @@
       "focus": "tests/fixtures/transcript-snapshots.ts",
       "initialBlob": null,
       "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_e8c1f4a2",
           "launchBase": "69fa3b70dfa8987a2bf8784a73c66d650fe43f48",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_e8c1f4a2",
-          "branch": "bruv/primary-snapshot-filesystem-contracts-fi-e8c1f4a2"
+          "branch": "bruv/primary-snapshot-filesystem-contracts-fi-e8c1f4a2",
+          "commit": "b8e3ca50e2975b03255962af351f20c1dad57f16",
+          "changedPaths": [
+            "tests/fixtures/transcript-snapshots.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Fault mocks end beside tested operations; real fs assertions run after restoration; held-lock failure cleanup releases/drains in-flight request; independent scenarios get independent setup. Observed teardown pending-work defect fixed in fixture only.",
+          "checks": "Isolated fixture 15/55; wrapper 1 pass; strict focused type/format/lint/diff pass; injected assertion baseline pending vs candidate settled; marker refusal preserves sentinel; no full compile/platform claim."
         }
       ],
       "judgeRounds": [],
