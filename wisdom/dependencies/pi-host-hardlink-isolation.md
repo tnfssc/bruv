@@ -57,3 +57,9 @@ mise exec -- bun run prepare:assets
 If there is no existing node_modules, skip the mv. Retain the scoped cache path and pass it (or a newly created fresh cache) plus `--backend copy` on later reinstalls in this worktree while the default cache remains contaminated. Do not delete/edit the shared global cache, copy a drifted file into it, or repair other worktrees. Delete the local backup only when satisfied with the clean installation. Nothing in this task performs recovery in the user's affected checkout.
 
 Values unchanged: existing isolated-proof, exact-evidence, and small-focused-check values already cover this lesson; this dependency-specific recovery belongs here.
+
+## PR #49 CI format follow-up
+
+Linux run 37683113121 stopped at format:check, before executing the full Linux tests. fixed-real-bun-install.json used a multiline preparationExitCodes array; Biome wants [0, 0]. The prior focused Biome check covered the two TypeScript files but missed committed evidence JSON. The policy failure followed Linux's failure; macOS Live passed.
+
+Follow-up worktree: /home/tnfssc/.bruv/worktrees/bruv-pr49-ci-format. Branch: fix/pi-host-hardlink-ci-format. Formatted only that evidence file. The repository-wide Biome format check now passes all 848 files; git diff --check passes. No production code or test behavior changed. Check the whole committed evidence set, not only code files. Values stay unchanged; the existing exact-proof rule applies.

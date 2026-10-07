@@ -3,10 +3,7 @@
   "cache": "/home/tnfssc/.bruv/worktrees/t3-3152ea81-5442693331ce-task_e32185ee/dist/pi-host-cache.tEH3NH",
   "backend": "hardlink",
   "sibling": "/home/tnfssc/.bruv/worktrees/t3-3152ea81-5442693331ce-task_e32185ee/dist/pi-host-sibling.GqL4jF",
-  "preparationExitCodes": [
-    0,
-    0
-  ],
+  "preparationExitCodes": [0, 0],
   "allFilesDetached": true,
   "secondPreparationPreservedLocalInodesAndMtimes": true,
   "files": [
