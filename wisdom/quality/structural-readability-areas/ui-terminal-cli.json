@@ -668,7 +668,7 @@
     {
       "focus": "src/ui/rolling-activity.ts",
       "initialBlob": "10c2ad0a2b8161b8b5b325707e32d25bd4cb5ed4",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f8eb0cae",
@@ -683,11 +683,26 @@
           "id": "task_a6caab27",
           "base": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
           "candidate": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/rolling-activity.ts": "66cf00a2db4b52746cc4595c4eab964acd863e42",
+            "tests/rolling-activity.test.ts": "dcd301abaa75cadf31522a28357a2fa68f08f820",
+            "tests/rolling-activity-disk.test.ts": "343ee9ee808ac7cbca4d822e520476ef92ba7ee8"
+          },
+          "evidence": "Ordered contiguous groups replace synthetic map key/counter/last-identity reconstruction; boundaries explicitly clear current run. Expansion and component identity remain owned by stable components, callback provenance and native boundaries unchanged.",
+          "checks": [
+            "Disk test independently passes",
+            "Diff whitespace passes"
+          ],
+          "limits": [
+            "Four independent Bun suites blocked during imports; 119 writer passes not independently confirmed",
+            "No full build/typecheck/CLI/live/provider/device/SSH/latency"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "66cf00a2db4b52746cc4595c4eab964acd863e42",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
       "changedRelatedPaths": [
         "tests/rolling-activity.test.ts",
@@ -959,7 +974,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary focus pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_a6caab27",
+          "verdict": "ACCEPT",
+          "candidate": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
+          "blob": "343ee9ee808ac7cbca4d822e520476ef92ba7ee8"
+        }
+      ]
     },
     {
       "focus": "tests/rolling-activity.test.ts",
@@ -968,7 +991,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary focus pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_a6caab27",
+          "verdict": "ACCEPT",
+          "candidate": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
+          "blob": "dcd301abaa75cadf31522a28357a2fa68f08f820"
+        }
+      ]
     },
     {
       "focus": "tests/scroll-layout-render.test.ts",

@@ -39,3 +39,7 @@ First-batch validation result: 71 tests passed, 473 assertions. Initial typechec
 ## Action-label no-change acceptance
 
 Primary task_7482f459; fresh judge task_8d1d090b NO CHANGE NEEDED at 290d620d94ba2c45b195cc5c220ae0894bf95056. Pure fallback/precedence decisions already local, with status/animation/clipping owned by callers. Judge 12 direct assertions and pinned format/diff passed; independent suite reruns dependency-blocked, not claimed green.
+
+## Accepted contiguous activity groups
+
+Primary task_f8eb0cae; judge task_a6caab27 ACCEPT candidate 8aaffbf961e73dbedafd111ad18a21faf3a1bfdb. Explicit ordered runs replace synthetic map-key/counter reconstruction, while stable component expansion, callback provenance and handoff/native visibility boundaries remain intact. Writer 119 focused passes; independent disk test passed, four import-blocked suites not confirmed. Both changed rolling tests still need primary focus.
