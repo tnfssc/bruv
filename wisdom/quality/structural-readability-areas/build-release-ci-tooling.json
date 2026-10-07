@@ -137,19 +137,31 @@
     {
       "focus": "scripts/ci-selective.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_e1108b07",
           "launchBase": "147c9738bf53e2a693a3f44330320a4e3042522f",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_e1108b07",
           "branch": "bruv/primary-scripts-ci-selective.ts-e1108b07",
+          "state": "completed",
+          "commit": "db26abf8e5f61aac850acc930a17aa92ba5c1852"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_36d1647b",
+          "base": "147c9738bf53e2a693a3f44330320a4e3042522f",
+          "candidate": "db26abf8e5f61aac850acc930a17aa92ba5c1852",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/ci-selective.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Reference-diff eligibility predicate replaces building report to decide metadata inspection; two-tree operation owns blockers; CLI plan→publish→execute with shared freshness rule.",
+      "checks": "Base/candidate 16 pass/231 assertions; format/isolated strict tsc/diff pass, baseline lint warnings unchanged; no hosted/full gate."
     },
     {
       "focus": "scripts/ci.sh",
@@ -181,8 +193,16 @@
     {
       "focus": "scripts/install-local.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_56171a8b",
+          "launchBase": "3f7811fb2f9c5675ccc877f839d01adfdb0430ca",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_56171a8b",
+          "branch": "bruv/primary-scripts-install-local.sh-56171a8b",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -199,8 +219,16 @@
     {
       "focus": "scripts/prepare-assets.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_5746779b",
+          "launchBase": "3f7811fb2f9c5675ccc877f839d01adfdb0430ca",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_5746779b",
+          "branch": "bruv/primary-scripts-prepare-assets.ts-5746779b",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -333,19 +361,31 @@
     {
       "focus": "src/update.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_d0b99b87",
           "launchBase": "147c9738bf53e2a693a3f44330320a4e3042522f",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d0b99b87",
           "branch": "bruv/primary-src-update.ts-d0b99b87",
+          "state": "completed",
+          "commit": "4e125c6598492681a849cdd0b57cd8136ebe3657"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_170d10bf",
+          "base": "147c9738bf53e2a693a3f44330320a4e3042522f",
+          "candidate": "4e125c6598492681a849cdd0b57cd8136ebe3657",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/update.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Candidate separates release validation/installed-pair repair policy from staging and rollback; named bruv/connector pair replaces positional arrays; connector-first publication explicit.",
+      "checks": "73 focused pass/367 assertions incl compiled updater/routing; new phase-order case baseline pass 1/10; focused typecheck/format/lint pass with existing warnings; no full build/live/native macOS."
     },
     {
       "focus": "t3.json",
