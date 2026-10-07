@@ -105,19 +105,29 @@
     {
       "focus": "scripts/build.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_df95845d",
           "launchBase": "147c9738bf53e2a693a3f44330320a4e3042522f",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_df95845d",
           "branch": "bruv/primary-scripts-build.ts-df95845d",
+          "state": "completed",
+          "commit": "10577e2662f01feab4ce021cbc30b9465872ca5a"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_ee123d58",
+          "base": "147c9738bf53e2a693a3f44330320a4e3042522f",
+          "candidate": "10577e2662f01feab4ce021cbc30b9465872ca5a",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Writer found parse/validate → optional helper preparation → compile → report already coherent; unchanged source.",
+      "checks": "34 focused tests/476 assertions; 8 stubbed entrypoint probes/27 assertions; no real full compile."
     },
     {
       "focus": "scripts/ci-selective.ts",
@@ -202,8 +212,16 @@
     {
       "focus": "scripts/publish-release.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_36e9172d",
+          "launchBase": "59475aee72cbbc2511cd5f6bc77b4669363bcc9a",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_36e9172d",
+          "branch": "bruv/primary-scripts-publish-release.ts-36e9172d",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
