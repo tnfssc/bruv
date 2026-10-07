@@ -1252,7 +1252,7 @@
     {
       "focus": "src/typescript/extension.ts",
       "initialBlob": "3bf31c850c9c529d1692e59b56b4667bb0af0599",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_032f5c01",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_032f5c01",
@@ -1263,13 +1263,21 @@
       "judgeRounds": [
         {
           "id": "task_cee52f91",
-          "status": "running",
+          "status": "complete",
           "candidate": "081b8862213c79f947489cd5becb63d1ff680f5a",
-          "base": "b457ae3d2e0b852a62258799beb66a10f73a1171"
+          "base": "b457ae3d2e0b852a62258799beb66a10f73a1171",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "ExecuteDelivery owns one invocation reply evidence/decisions not shared session authority; handoff cancels waits not managed jobs, recordLaunches publishes before failure, finish governs failure/termination consistently. Session shutdown/cancel/live stop remain registration-owned; combined bridge/capture/runner compatible.",
+          "checks": [
+            "independent12/49 handoff/live",
+            "independent109/736 eight suites",
+            "diff clean; fresh joined binary mandatory"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "3542bf968fc6fdf8c06c82d149a15f3e9e95eac7",
+      "integration": "full source/handoff-test candidate diff integrated",
       "launchBase": "b457ae3d2e0b852a62258799beb66a10f73a1171",
       "changedRelatedPaths": [
         "src/typescript/extension.ts",
@@ -1287,7 +1295,7 @@
     {
       "focus": "src/typescript/images.ts",
       "initialBlob": "aa4d74eebcab9dc89cfbcbd11829ba68b5335286",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_5f2762ae",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_5f2762ae",
@@ -1295,7 +1303,14 @@
         "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
         "commit": "066f319f7741234a589fbc9d89d46a2be1a076d2"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_2d0765d2",
+          "status": "running",
+          "candidate": "066f319f7741234a589fbc9d89d46a2be1a076d2",
+          "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
@@ -1517,7 +1532,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_cee52f91",
+        "candidate": "081b8862213c79f947489cd5becb63d1ff680f5a",
+        "blob": "c4e1069d2c37f98b1eebe81ed0ea7e8500afd9a5",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/execute-output-capture.test.ts",
