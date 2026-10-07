@@ -226,7 +226,7 @@
     {
       "file": "scripts/claude-native-acceptance/history-model.mjs",
       "initialBlob": "9446986b74d6df6bf6b4bdaddd5e3de7aa8740a6",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_0af35abe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_0af35abe",
@@ -245,18 +245,27 @@
         },
         {
           "id": "task_0a188823",
-          "status": "running",
+          "status": "completed",
           "candidate": "462f150fbce933d55a1e9b6261af5891f391b9d1",
-          "replacesAttempt": "task_6eb06db6"
+          "replacesAttempt": "task_6eb06db6",
+          "verdict": "ACCEPT",
+          "blob": "beca9ab506641797c648aab54dc51908108b54e1",
+          "relatedBlobs": {
+            "tests/claude-native-history-model.test.mjs": "215c5dac84ed7e661bf8ab5ff80fe0f416136e01"
+          },
+          "objections": [],
+          "evidence": "historyReply direct scenario decisions separate HTTP-owned IDs/records/SSE;generated root append→question→shell authority and child list→reject inherited→success explicit. Runner/replay/driver seed/fork/continue/rollback/reopen traced,precedence/verifier byte-identical.Independent30 focused pass;15 expanded tests baseline pass.",
+          "limits": "Endpoint/mock program proof not native replay/live UI/full gate."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "beca9ab506641797c648aab54dc51908108b54e1",
       "launchBase": "994058813ce5c18a460d304418610b4a0995fb06",
       "changedRelatedPaths": [
         "tests/claude-native-history-model.test.mjs"
       ],
       "readingResult": "Conversation-driven historyReply returns decisions directly;HTTP owner explicitly IDs/records/SSE, generated authority programs readable statements. Verifier unchanged preserves paired exchange/ownership/precompaction replay.",
-      "checks": "30 focused pass;expanded history suite passes baseline;Biome/diff;mocked generated APIs not native replay,no full gate."
+      "checks": "30 focused pass;expanded history suite passes baseline;Biome/diff;mocked generated APIs not native replay,no full gate.",
+      "integrationState": "Exact source+related test accepted by fresh replacement judge joined;whole history-model test primary pending"
     },
     {
       "file": "scripts/claude-native-acceptance/history-replay.mjs",
@@ -1833,7 +1842,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_0a188823",
+          "verdict": "ACCEPT",
+          "blob": "215c5dac84ed7e661bf8ab5ff80fe0f416136e01",
+          "candidate": "462f150fbce933d55a1e9b6261af5891f391b9d1"
+        }
+      ]
     },
     {
       "file": "tests/claude-native-subagent-model.test.mjs",
@@ -2476,6 +2493,13 @@
       "status": "passed",
       "scope": "One actual paired build:dist/bruv +dist/bruv-claude-compat,for subsequent compiled coverage",
       "limits": "Not full CI or live/device/provider."
+    },
+    {
+      "id": "task_f01dea3a",
+      "commit": "d63dba5b",
+      "status": "passed",
+      "scope": "Final app-model test7 each Node/Bun",
+      "limits": "Offline,not native/browser."
     }
   ],
   "combinedReviews": [

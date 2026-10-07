@@ -1,16 +1,24 @@
 // Endpoint unit tests only. These inputs are NOT native connector acceptance evidence.
-import { test } from "node:test";
 import assert from "node:assert/strict";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { test } from "node:test";
+
 import { startHistoryModel, verifyHistoryModelRecords } from "../scripts/claude-native-acceptance/history-model.mjs";
 import { modelId } from "../scripts/claude-native-acceptance/model.mjs";
+
+async function post(server, messages, options = {}) {
+  const response = await fetch("http://127.0.0.1:" + server.port + "/v1/chat/completions", {
+    method: "POST",
+    body: JSON.stringify({ model: modelId, tools: [{ type: "function" }], messages, ...options }),
+  });
+  return { status: response.status, text: await response.text(), records: server.records };
+}
 async function request(messages, options = {}) {
   const server = await startHistoryModel({ counter: "/tmp/unit-only-not-executed" });
   try {
-    const response = await fetch("http://127.0.0.1:" + server.port + "/v1/chat/completions", {
-      method: "POST",
-      body: JSON.stringify({ model: modelId, tools: [{ type: "function" }], messages, ...options }),
-    });
-    return { status: response.status, text: await response.text(), records: server.records };
+    return await post(server, messages, options);
   } finally {
     await server.close();
   }
@@ -145,4 +153,128 @@ test("imported pair is verified before legitimate later context compaction", () 
   assert.equal(verifyHistoryModelRecords(records).completedPairedRootExchange, true);
   records[2].messages = [];
   assert.throws(() => verifyHistoryModelRecords(records), /actual tool result contains HISTORY_ROOT_AUTHORITY/);
+});
+
+// These execute generated code against unit-owned files and mock APIs only.
+// They do not produce native replay or ownership evidence.
+const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
+
+test("generated root operation records the append and returned authority in order", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-history-model-unit-"));
+  const counter = join(dir, "root-tool-count");
+  const server = await startHistoryModel({ counter });
+  try {
+    const response = await post(server, [{ role: "user", content: "HISTORY_SEED" }]);
+    assert.equal(response.status, 200);
+    const code = JSON.parse(server.records[0].delta.tool_calls[0].function.arguments).code;
+    const calls = [];
+    const question = { id: "unit-question", status: "pending" };
+    const job = { id: "unit-job", status: "completed" };
+    const output = [];
+    await new AsyncFunction("questions", "shell", "console", code)(
+      {
+        ask: async (options) => {
+          assert.equal(await readFile(counter, "utf8"), "root-tool\n");
+          calls.push("ask");
+          assert.deepEqual(options, {
+            text: "Native history root-only saved question (do not answer)",
+            dedupKey: "history-root-authority",
+            choices: ["Retain unanswered"],
+            allowFreeText: false,
+          });
+          return question;
+        },
+      },
+      async (command, options) => {
+        calls.push("shell");
+        assert.equal(command, "/usr/bin/printf HISTORY_ROOT_JOB_COMPLETED");
+        assert.deepEqual(options, { waitSeconds: 3 });
+        return job;
+      },
+      { log: (...args) => output.push(args) },
+    );
+    assert.deepEqual(calls, ["ask", "shell"]);
+    assert.deepEqual(output, [
+      ["HISTORY_ROOT_AUTHORITY", JSON.stringify({ question, job })],
+      ["HISTORY_TOOL_COMPLETED orchid-73"],
+    ]);
+  } finally {
+    await server.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("generated child operation inspects authority and refuses inherited questions", async () => {
+  const response = await request([
+    { role: "assistant", content: "orchid-73 HISTORY_TOOL_COMPLETED HISTORY_CHECKPOINT" },
+    { role: "user", content: "HISTORY_CHILD_CONTINUE" },
+  ]);
+  assert.equal(response.status, 200);
+  const code = JSON.parse(response.records[0].delta.tool_calls[0].function.arguments).code;
+  const inspect = new AsyncFunction("jobs", "questions", "console", code);
+  const jobs = { jobs: [], total: 0 };
+  const output = [];
+  await inspect(
+    {
+      list: async (options) => {
+        assert.deepEqual(options, { count: 100 });
+        return jobs;
+      },
+    },
+    { list: async () => [] },
+    { log: (...args) => output.push(args) },
+  );
+  assert.deepEqual(output, [
+    ["HISTORY_AUTHORITY_INSPECTION", JSON.stringify({ jobs, questions: [] })],
+    ["HISTORY_AUTHORITY_EMPTY"],
+  ]);
+  output.length = 0;
+  await assert.rejects(
+    inspect(
+      { list: async () => jobs },
+      { list: async () => ({ questions: [{ id: "unit-root-question" }] }) },
+      { log: (...args) => output.push(args) },
+    ),
+    /Inherited authority/,
+  );
+  assert.equal(output.length, 1, "failure emits inspection but never the empty-authority marker");
+});
+
+test("server sequences tool IDs independently of summaries, errors and evidence records", async () => {
+  const server = await startHistoryModel({ counter: "/tmp/unit-only-not-executed" });
+  try {
+    await post(server, [{ role: "user", content: "Unknown unit prompt" }]);
+    const root = await post(server, [{ role: "user", content: "HISTORY_SEED" }]);
+    assert.equal(root.status, 200);
+    assert.equal(server.records[1].delta.tool_calls[0].id, "history_1");
+    const frames = root.text.split("\n\n").filter(Boolean);
+    assert.equal(frames.at(-1), "data: [DONE]");
+    const chunks = frames.slice(0, -1).map((frame) => JSON.parse(frame.slice(6)));
+    assert.deepEqual(
+      chunks.map((c) => c.id),
+      ["history-local-2", "history-local-2"],
+    );
+    assert.deepEqual(
+      chunks.map((c) => c.choices[0].finish_reason),
+      [null, "tool_calls"],
+    );
+    await post(server, [
+      {
+        role: "user",
+        content: "Write what next agent needs to continue the work. Summarize the whole conversation above.",
+      },
+    ]);
+    const child = await post(server, [
+      { role: "assistant", content: "orchid-73 HISTORY_TOOL_COMPLETED HISTORY_CHECKPOINT" },
+      { role: "user", content: "HISTORY_CHILD_CONTINUE" },
+    ]);
+    assert.equal(child.status, 200);
+    assert.equal(server.records[3].delta.tool_calls[0].id, "history_2");
+    assert.deepEqual(
+      server.records.map((r) => r.sequence),
+      [1, 2, 3, 4],
+    );
+  } finally {
+    await server.close();
+  }
 });
