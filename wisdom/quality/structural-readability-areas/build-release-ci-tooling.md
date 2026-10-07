@@ -82,3 +82,5 @@ Mise config: obsolete T3 authority comment removed,flat pins unchanged;judge tas
 Test preload NO CHANGE NEEDED task_6d717faf atd3c71348. Qualification: Bun.spawnSync without explicitenv retained startup identity in judge probe;explicit spreadprocess.env sanitizes. Preload is not universal subprocess isolation;TUI helper separately sanitizes.2/8boundary checks,ordinary identity retained,no live proof.
 
 Dependency-test primary: independent cases grouped by6contracts;judge task_f509c814 ACCEPTda5d3d5,all prior46assertions retained and4constructor regressions mutation-verified. Source own-entry fix unchanged;no registry/hosted proof.
+
+Native runner:check→spawn→close→recheckbinary→success→admit evidence lifecycle;named suites/final proof boundary. Judge task_83089869 ACCEPT1037e580 plus tests;40tests/Node24.21syntax. Child signal only—not parent teardown/actual upstream run. Setup candidate separately reviewed;combined proof pending.

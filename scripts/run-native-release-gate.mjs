@@ -31,19 +31,16 @@ async function checkBinary() {
     .digest("hex");
   if (hash !== pin.t3BinarySha256AfterAllGates) throw Error(`Not unchanged official ${pin.officialRelease}`);
 }
-await checkBinary(); // Reject older/patched artifacts before any server launch.
 const output = path.resolve(process.env.PROOF_OUTPUT);
-await fs.mkdir(path.dirname(output), { recursive: true });
-await fs.mkdir(output); // Never replace previous proof.
 const trace = path.join(proofRoot, "run-trace.mjs");
 const native = path.join(root, "scripts/claude-native-acceptance/run.mjs");
 const suites = [
-  ["command", trace, { TRACE_SUITE: "command" }],
-  ["local-child", trace, { TRACE_SUITE: "subagent" }],
-  ["human", trace, { TRACE_SUITE: "human", ACCEPT_HUMAN_CONTROLS: "1" }],
-  ["app-delegation", native, { ACCEPT_APP_DELEGATION: "1" }],
-  ["default-controls", native, {}],
-  ["command-final", trace, { TRACE_SUITE: "command" }],
+  { name: "command", script: trace, flags: { TRACE_SUITE: "command" } },
+  { name: "local-child", script: trace, flags: { TRACE_SUITE: "subagent" } },
+  { name: "human", script: trace, flags: { TRACE_SUITE: "human", ACCEPT_HUMAN_CONTROLS: "1" } },
+  { name: "app-delegation", script: native, flags: { ACCEPT_APP_DELEGATION: "1" } },
+  { name: "default-controls", script: native, flags: {} },
+  { name: "command-final", script: trace, flags: { TRACE_SUITE: "command" } },
 ];
 const env = { ...process.env };
 // Each branch must actually run, regardless of caller's last manual invocation.
@@ -55,7 +52,8 @@ for (const key of [
   "ACCEPT_PERMISSION",
 ])
   delete env[key];
-for (const [name, script, flags] of suites) {
+// A suite counts only after its process closes, the binary is rechecked, and its evidence agrees.
+async function runVerifiedSuite({ name, script, flags }) {
   await checkBinary();
   const proof = path.join(output, name);
   console.log(`Native release gate: ${name}`);
@@ -74,6 +72,11 @@ for (const [name, script, flags] of suites) {
   if (!result.passed || !result.upstreamUnmodified || result.t3BinarySha256 !== pin.t3BinarySha256AfterAllGates)
     throw Error(`${name} did not produce passing unchanged-official evidence`);
 }
+
+await checkBinary(); // Reject older/patched artifacts before any server launch or proof directory.
+await fs.mkdir(path.dirname(output), { recursive: true });
+await fs.mkdir(output); // Never replace previous proof.
+for (const suite of suites) await runVerifiedSuite(suite);
 await fs.writeFile(
   path.join(output, "gate.json"),
   `${JSON.stringify(
@@ -83,7 +86,7 @@ await fs.writeFile(
       officialSource: pin.officialSource,
       archiveSha256: pin.archiveSha256,
       executableSha256: pin.t3BinarySha256AfterAllGates,
-      suites: suites.map(([name]) => name),
+      suites: suites.map(({ name }) => name),
       dependencyQueueRaceFixed: false,
     },
     null,
