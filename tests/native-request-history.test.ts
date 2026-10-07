@@ -284,7 +284,8 @@ if (process.env.BRUV_TEST_NATIVE_REQUEST_HISTORY_CHILD !== "1") {
   }
   function fastSetting(manager: SessionManager) {
     return {
-      version: 1,
+      version: 2,
+      oauth: true,
       sessionId: manager.getSessionId(),
       provider: model.provider,
       model: model.id,

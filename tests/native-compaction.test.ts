@@ -396,6 +396,26 @@ describe("fail-closed checkpoint lifecycle", () => {
       },
     };
   }
+  test("canonical ChatGPT sign-in stays on ordinary Responses compaction, not opaque legacy Codex", async () => {
+    const manager = SessionManager.inMemory();
+    manager.appendMessage({ role: "user", content: "ordinary", timestamp: 1 });
+    const canonical = { ...model, provider: "openai", api: "openai-responses", baseUrl: "https://api.openai.com/v1" };
+    const h = harness(manager, canonical);
+    h.ctx.modelRegistry.isUsingOAuth = () => true;
+    h.ctx.modelRegistry.getApiKeyAndHeaders = () => {
+      throw new Error("must not request legacy Codex auth");
+    };
+    const messages = manager.buildSessionContext().messages;
+    expect(h.handlers.get("context")!({ messages }, h.ctx).messages).toEqual(messages);
+    h.handlers.get("before_provider_headers")!({ headers: { Authorization: "Bearer oauth-token" } }, h.ctx);
+    h.handlers.get("before_provider_request")!({ payload: { model: canonical.id, input: [] } }, h.ctx);
+    expect(h.capture.hasFreshCapture()).toBe(false);
+    expect(
+      await h.handlers.get("session_before_compact")!({ signal: new AbortController().signal }, h.ctx),
+    ).toBeUndefined();
+    expect(h.aborted).toBe(0);
+    expect(h.entries).toEqual([]);
+  });
   function checkpointManager() {
     const manager = SessionManager.inMemory();
     const first = manager.appendMessage({ role: "user", content: [{ type: "text", text: "old" }], timestamp: 1 });
