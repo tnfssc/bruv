@@ -384,7 +384,7 @@
     {
       "file": "src/claude-compat/history.ts",
       "initialBlob": "a89c8a44b0fb136a21e4f11fd6213f07a8cf60a7",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_3a86626e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3a86626e",
@@ -395,17 +395,26 @@
       "judges": [
         {
           "id": "task_9b56d280",
-          "status": "running",
-          "candidate": "71aaf5c4bb89e1004f1650b150b7afcde8afe235"
+          "status": "completed",
+          "candidate": "71aaf5c4bb89e1004f1650b150b7afcde8afe235",
+          "verdict": "ACCEPT",
+          "blob": "ed43998ab87580bf595ee2b78f4bb929de62ee09",
+          "relatedBlobs": {
+            "tests/claude-compat-history.test.ts": "4e8dde83542f073ccea50ac78414d4247204813f"
+          },
+          "objections": [],
+          "evidence": "Branch selection before translation; per-message source UUID pair removes lockstep mutable arrays while public contract retained. Actual graph/import/replay property order and mirroring/canonical source/wire identity/first-error drain traced; SDK causality/fork/config/path tests unchanged.",
+          "limits": "Independent reruns blocked before execution by Pi module resolution; no live/build/parity."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "ed43998ab87580bf595ee2b78f4bb929de62ee09",
       "launchBase": "6eda4dac92470f5180fdde2c7c56518480ac5212",
       "changedRelatedPaths": [
         "tests/claude-compat-history.test.ts"
       ],
       "readingResult": "Branch selection completes before content translation; internal translated messages paired with source UUID remove lockstep arrays. Writer says property order/source IDs/parenting/import authority/mirroring unchanged.",
-      "checks": "15 focused pass including SDK0.3.276 filesystem+isolated runtime; typecheck/format/lint/diff pass, warnings retained; no live/build/parity."
+      "checks": "15 focused pass including SDK0.3.276 filesystem+isolated runtime; typecheck/format/lint/diff pass, warnings retained; no live/build/parity.",
+      "integrationState": "Exact reviewed history source+test joined; history test primary pending"
     },
     {
       "file": "src/claude-compat/human-controls.ts",
@@ -559,7 +568,7 @@
     {
       "file": "src/claude-compat/transport.ts",
       "initialBlob": "2955f0309942c4d94a591065f9d315cc4592c02a",
-      "status": "judge-queued",
+      "status": "judging",
       "primary": {
         "id": "task_6958d30f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_6958d30f",
@@ -567,7 +576,13 @@
         "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
         "commit": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_70aa7bb7",
+          "status": "running",
+          "candidate": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8"
+        }
+      ],
       "acceptedBlob": null,
       "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
       "changedRelatedPaths": [
@@ -778,7 +793,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_9b56d280",
+          "verdict": "ACCEPT",
+          "blob": "4e8dde83542f073ccea50ac78414d4247204813f",
+          "candidate": "71aaf5c4bb89e1004f1650b150b7afcde8afe235"
+        }
+      ]
     },
     {
       "file": "tests/claude-compat-human-controls.test.ts",
@@ -981,7 +1004,7 @@
     {
       "file": "tests/claude-native-acceptance-model.test.mjs",
       "initialBlob": "0b993a6daeef0eb081aca96e1d202ff802e8e151",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_bb4a09fd",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_bb4a09fd",
@@ -992,11 +1015,16 @@
       "judges": [
         {
           "id": "task_abb511f6",
-          "status": "running",
-          "candidate": "e64138c06a0b4bbcd0b5dc56089cae40851e9259"
+          "status": "completed",
+          "candidate": "e64138c06a0b4bbcd0b5dc56089cae40851e9259",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "341241ef6dc769bc102678cea91c9f3e4ec19b16",
+          "objections": [],
+          "evidence": "Separate cancellation ownership/terminal vs delivery checks; question authority returned then explicit fixture answer before resolve; slow/failing/fast requests explicit gates and originating sequence; local server/temp cleanup. No framework warranted. Independent15 Bun pass.",
+          "limits": "Deterministic fixture/program proof not human/live/compiled/full gate."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "341241ef6dc769bc102678cea91c9f3e4ec19b16",
       "relatedPatchJudgments": [
         {
           "id": "task_84bcbfb5",
@@ -1008,7 +1036,8 @@
       "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
       "changedRelatedPaths": [],
       "readingResult": "Fresh whole337-line review unchanged: separate cancellation ownership/terminal inspection/delivery evidence; question returned authority+explicit answers; request-local concurrency evidence; each fixture owns server/temp lifetime.",
-      "checks": "15 focused Bun tests pass; no real connector/full gate."
+      "checks": "15 focused Bun tests pass; no real connector/full gate.",
+      "integrationState": "Fresh whole-file primary/judge covers integrated test unchanged"
     },
     {
       "file": "tests/claude-native-app-delegation-model.test.mjs",

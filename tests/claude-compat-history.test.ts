@@ -382,6 +382,65 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
 );
 
 describe("history boundaries", () => {
+  test("active parent chain expands user/results with durable native provenance", async () => {
+    const { dir, options, history } = await fixture();
+    const root = await history.append(user("root"));
+    // The abandoned branch is incomplete, but must not contribute context or pending tools.
+    await history.append(assistant("abandoned", [{ type: "tool_use", id: "abandoned-call", name: "bash", input: {} }]));
+    const active = await history.append(
+      assistant("active", [{ type: "tool_use", id: "active-call", name: "bash", input: {} }], { parentUuid: root }),
+    );
+    const mixed = await history.append(
+      user("mixed", [
+        { type: "text", text: "before" },
+        { type: "tool_result", tool_use_id: "active-call", content: "recorded output" },
+        { type: "text", text: "after" },
+      ]),
+    );
+    const empty = await history.append(user("empty", []));
+    const transcript = await readNativeHistory(options);
+    const converted = nativeHistoryToPi(transcript, options.sessionId);
+    expect(converted.messages.map((message) => message.role)).toEqual([
+      "user",
+      "assistant",
+      "user",
+      "toolResult",
+      "user",
+      "user",
+    ]);
+    expect(converted.nativeUuids).toEqual([root, active, mixed, mixed, mixed, empty]);
+    expect(converted.messages[2]!.content).toEqual([{ type: "text", text: "before" }]);
+    expect(converted.messages[3]).toMatchObject({
+      role: "toolResult",
+      toolCallId: "active-call",
+      toolName: "bash",
+      content: [{ type: "text", text: "recorded output" }],
+    });
+    expect(converted.messages[4]!.content).toEqual([{ type: "text", text: "after" }]);
+    expect(converted.messages[5]!.content).toEqual([]);
+
+    const imported = await importNativeHistory({ ...options, sessionDir: join(dir, "pi") });
+    expect(imported.entries.map((entry) => entry.nativeUuid)).toEqual(converted.nativeUuids);
+    expect(new Set(imported.entries.map((entry) => entry.piEntryId)).size).toBe(6);
+    await NativeHistory.resumeImported(
+      { ...options, sourceSessionId: imported.sourceSessionId },
+      imported.sessionManager,
+    );
+  });
+
+  test("source replay compares stored JSON property order", async () => {
+    const { history } = await fixture();
+    const original = user("u", [{ type: "text", text: "hello" }]);
+    const id = await history.append(original);
+    expect(await history.append(original)).toBe(id);
+    await expect(
+      history.append({
+        ...original,
+        message: { content: original.message.content, role: "user" },
+      }),
+    ).rejects.toThrow("Conflicting replay");
+  });
+
   test("source replay, duplicate UUID, parent and child causality conflicts are rejected", async () => {
     const { options, history } = await fixture();
     const id = await history.append(user("actual-source"));
