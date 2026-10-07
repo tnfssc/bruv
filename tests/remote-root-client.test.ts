@@ -177,3 +177,132 @@ test("tracked source upload is independent, selected untracked exact bytes; sour
   expect(readFileSync(join(f.cwd, "file.txt"), "utf8")).toBe("local drift\n");
   expect(readFileSync(outcome!.artifact).equals(patch)).toBe(true);
 });
+
+test("startup admission is durable before dispatch and another client cannot overwrite its receipt", async () => {
+  const f = setup();
+  const entered = Promise.withResolvers<void>();
+  const release = Promise.withResolvers<void>();
+  const options = {
+    ...f.options,
+    transport: async (host: string, path: string, req: RootRequest) => {
+      if (req.op === "command" && req.command.kind === "prompt") {
+        entered.resolve();
+        await release.promise;
+      }
+      return f.options.transport!(host, path, req);
+    },
+  };
+  const first = await RootClient.open(options);
+  await first.ensureCreated();
+  const second = await RootClient.open(options);
+  const prompt = first.initialPrompt("hello");
+  await entered.promise;
+  let abort: Promise<unknown> | undefined;
+  try {
+    const saved = second.read();
+    const id = saved.initialPrompt!.commandId;
+    expect(saved.commands[id]).toEqual({
+      command: { kind: "prompt", text: "hello" },
+      receipt: { commandId: id, state: "unknown" },
+    });
+    abort = second.command({ kind: "abort" }, "other-client");
+  } finally {
+    release.resolve();
+    await Promise.all([prompt, ...(abort ? [abort] : [])]);
+  }
+  const saved = first.read();
+  expect(Object.keys(saved.commands)).toHaveLength(2);
+  expect(saved.commands[saved.initialPrompt!.commandId]!.receipt.state).toBe("completed");
+  expect(saved.commands["other-client"]!.receipt.state).toBe("completed");
+  await expect(second.initialPrompt("different")).rejects.toThrow("different startup prompt");
+  expect(f.calls.filter((r) => r.op === "command")).toHaveLength(2);
+});
+
+test("lost create reply resumes the committed source checkout without transferring a new snapshot", async () => {
+  const f = setup();
+  git(f.cwd, "init", "-q");
+  git(f.cwd, "config", "user.name", "fixture");
+  git(f.cwd, "config", "user.email", "fixture@example.invalid");
+  writeFileSync(join(f.cwd, "file.txt"), "before\n");
+  git(f.cwd, "add", "file.txt");
+  git(f.cwd, "commit", "-qm", "base");
+  let lose = true;
+  const options = {
+    ...f.options,
+    remoteRepo: undefined,
+    transport: async (host: string, path: string, req: RootRequest) => {
+      if (req.op === "create") {
+        expect(client.read().intent.repoPath).toBe(req.intent.repoPath);
+        expect(client.read().created).toBe(false);
+      }
+      const response = await f.options.transport!(host, path, req);
+      if (req.op === "create" && lose) {
+        lose = false;
+        throw Error("lost create reply");
+      }
+      return response;
+    },
+  };
+  const client = await RootClient.open(options);
+  await expect(client.ensureCreated()).rejects.toThrow("lost create reply");
+  const saved = client.read();
+  expect(saved.intent.repoPath).toBe("/independent/root/source");
+  const uploads = f.calls.filter((r) => r.op === "repository-upload").length;
+  expect(uploads).toBeGreaterThan(0);
+  const reopened = await RootClient.open(options);
+  await reopened.ensureCreated();
+  expect(f.calls.filter((r) => r.op === "repository-upload")).toHaveLength(uploads);
+  const creates = f.calls.filter((r) => r.op === "create");
+  expect(creates).toHaveLength(2);
+  expect(creates[1]).toEqual(creates[0]);
+  expect(reopened.read().source).toEqual(saved.source);
+});
+
+test("startup reservation yields admission to an already queued command", async () => {
+  const f = setup();
+  const client = await RootClient.open(f.options);
+  await client.ensureCreated();
+  await Promise.all([client.initialPrompt("hello"), client.command({ kind: "abort" }, "abort")]);
+  const dispatched = f.calls.filter((r) => r.op === "command");
+  expect(dispatched.map((r) => r.command.kind)).toEqual(["abort", "prompt"]);
+  expect(dispatched[1]!.commandId).toBe(client.read().initialPrompt!.commandId);
+});
+
+test("startup checkpoints distinguish reserved identity from admitted uncertain command", async () => {
+  const f = setup();
+  const options = {
+    ...f.options,
+    transport: async (host: string, path: string, req: RootRequest) => {
+      if (req.op === "command-status" && !f.receipts.has(req.commandId)) {
+        f.calls.push(req);
+        throw Error("Unknown root command");
+      }
+      return f.options.transport!(host, path, req);
+    },
+  };
+  const client = await RootClient.open(options);
+  await client.ensureCreated();
+  const reserved = client.read();
+  reserved.initialPrompt = { text: "reserved only", commandId: "reserved" };
+  writeFileSync(client.path, JSON.stringify(reserved));
+  const reopened = await RootClient.open(options);
+  await reopened.initialPrompt("reserved only");
+  expect(f.calls.filter((r) => r.op === "command")).toHaveLength(1);
+  expect(reopened.read().commands.reserved!.receipt.state).toBe("completed");
+
+  const admitted = reopened.read();
+  admitted.initialPrompt = { text: "unknown before wire", commandId: "uncertain" };
+  admitted.commands.uncertain = {
+    command: { kind: "prompt", text: "unknown before wire" },
+    receipt: { commandId: "uncertain", state: "unknown" },
+  };
+  writeFileSync(client.path, JSON.stringify(admitted));
+  f.calls.length = 0;
+  const resumed = await RootClient.open(options);
+  await expect(resumed.initialPrompt("unknown before wire")).rejects.toThrow("Unknown root command");
+  expect(f.calls.filter((r) => r.op === "command")).toHaveLength(0);
+  expect(f.calls.filter((r) => r.op === "command-status")).toHaveLength(1);
+  expect(resumed.read().commands.uncertain!.receipt.state).toBe("unknown");
+  await resumed.command({ kind: "abort" }, "after-status-error");
+  expect(resumed.read().commands["after-status-error"]!.receipt.state).toBe("completed");
+});

@@ -66,3 +66,7 @@ Capability-runtime combined candidate 33088eba ACCEPT task_f6ad3799: intent/mark
 Parent accepted shared checkpoint 695ade32 merged cleanly in staging: questions runtime/service and job-service common updates, plus sibling accepted areas only via parent. No accepted remote blob changes. Incoming tests/remote-question-bridge.test.ts remains pending own remote primary/final judge. Real combined typecheck and authority/bridge/owner suites running before merge checkpoint commit.
 
 Parent join proof: assets + whole-project tsc pass; seven cross-authority/bridge/owner/capability suites 92 pass/581 assertions. Existing remote accepted hashes unchanged; incoming related test remains pending primary.
+
+Root-client final 613bf20c accepted fresh task_b04a86e2 at 7670632c after coordinator-required scheduling preservation. Original f1ecb410 candidate changed startup/abort ordering and was never integrated; baseline/rework abort→prompt, original prompt→abort independently reproduced. Final tests f19df6e9 retain prior bodies and add reliable regression; own test primary due.
+
+Candidate-identity audit found loose summary regex matched introductory “candidate” followed by Base in 12 records. Corrected from retained committed worktree HEAD; each affected accepted judge explicitly reported actual candidate/hash in terminal report, source hashes matched independently. Original supplied labels/corrections preserved in ledger. Future candidates use Git identity, not summary regex. No source acceptance inferred from corrected metadata.
