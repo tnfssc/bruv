@@ -110,11 +110,19 @@
     {
       "focus": "scripts/terminal-perf.ts",
       "initialBlob": "696dd170594931b9907916079576e46666367030",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_6c37950b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_6c37950b",
+          "branch": "bruv/primary-readability-scripts-terminal-per-6c37950b",
+          "launchBase": "595c5739a106609b3588835fdc8146724941c6e2"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "595c5739a106609b3588835fdc8146724941c6e2"
     },
     {
       "focus": "scripts/terminal-perf/action-profiler.ts",
@@ -887,36 +895,66 @@
     {
       "focus": "src/ui/sdk-task-rows.ts",
       "initialBlob": "f76d7f295123b136a1e2082c1d384f5fc5b1e9c9",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_5d9a622d",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5d9a622d",
           "branch": "bruv/primary-readability-src-ui-sdk-task-rows-5d9a622d",
-          "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30"
+          "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
+          "commit": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30"
+      "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
+      "changedRelatedPaths": [
+        "tests/task-rows.test.ts"
+      ],
+      "result": "Candidate separates typed sibling/live/replay frame ownership, collapsed native body presentation, and adapter publication/restoration lifetime.",
+      "checks": [
+        "123 tests /13429 assertions across six suites",
+        "New lifetime test passes exact base",
+        "format/lint/diff"
+      ],
+      "limits": [
+        "No full build/typecheck/CLI/live/SSH/device"
+      ]
     },
     {
       "focus": "src/ui/settled-execute-render.ts",
       "initialBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_cde04507",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_cde04507",
           "branch": "bruv/primary-readability-src-ui-settled-execu-cde04507",
-          "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde"
+          "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
+          "commit": "655dd9f6908f34b82927f97a04b468c4e5051d53"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_ac462b2f",
+          "base": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
+          "candidate": "655dd9f6908f34b82927f97a04b468c4e5051d53",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde"
+      "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
+      "changedRelatedPaths": [],
+      "result": "No-change: eligibility, single-width cache, SDK lifecycle eviction and owned-method restoration are explicit in one closure.",
+      "checks": [
+        "58 tests /791 assertions",
+        "format/lint/diff"
+      ],
+      "limits": [
+        "No full build; pending SDK/density joins need final combined review"
+      ]
     },
     {
       "focus": "src/ui/startup.ts",
@@ -1019,11 +1057,19 @@
     {
       "focus": "src/ui/task-monitor.ts",
       "initialBlob": "9670404b405f1ce9149fa5c882956f92a0cd9889",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_8f7cb2e9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_8f7cb2e9",
+          "branch": "bruv/primary-readability-src-ui-task-monitor.-8f7cb2e9",
+          "launchBase": "595c5739a106609b3588835fdc8146724941c6e2"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "595c5739a106609b3588835fdc8146724941c6e2"
     },
     {
       "focus": "src/ui/task-rows.ts",
