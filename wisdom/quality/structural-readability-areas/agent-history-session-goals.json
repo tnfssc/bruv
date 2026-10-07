@@ -121,7 +121,11 @@
         }
       ],
       "acceptedBlob": "463258e1632b8aca69b566ffe8a60fdb76790cb4",
-      "integration": "integrated-exact-rework"
+      "integration": "integrated-exact-rework",
+      "pendingRelatedNeed": {
+        "candidate": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
+        "reason": "If composition candidate accepted, delivery reading map names completions/attentions/notificationBatch removed/reowned by createJobNotifications. Fresh file worker must reconcile README to final source and fresh judge; same doc blob alone is insufficient semantic evidence."
+      }
     },
     {
       "focus": "src/agent/cache-affine-compaction.ts",
