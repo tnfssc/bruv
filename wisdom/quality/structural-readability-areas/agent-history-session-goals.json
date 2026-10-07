@@ -61,16 +61,30 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f5ba33fd",
           "launchBase": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f5ba33fd",
-          "branch": "bruv/primary-src-agent-readme.md-f5ba33fd"
+          "branch": "bruv/primary-src-agent-readme.md-f5ba33fd",
+          "commit": "cc7e03d0427c25a75f14d535a6a168a6ffc0c33d",
+          "changedPaths": [
+            "src/agent/README.md",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Separate entrypoints, attachment/dispatch/delivery/detach, and context policy; link actual operation owners.",
+          "checks": "8 focused tests/49 assertions; 21 links resolve; diff/control checks; no Markdown lint supported."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0cfbdfd3",
+          "candidate": "cc7e03d0427c25a75f14d535a6a168a6ffc0c33d",
+          "base": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -113,8 +127,15 @@
     {
       "focus": "src/agent/instruction-mode.ts",
       "initialBlob": "e5eef9b0983997dc00c999de6bca4a1843e659f9",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_146763c6",
+          "launchBase": "c5c77b5ea66f848f3a35c46ab32cfddb4a20bd72",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_146763c6",
+          "branch": "bruv/primary-src-agent-instruction-mode.ts-146763c6"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
