@@ -289,7 +289,7 @@
     {
       "focus": "src/agent/provider-attempts.ts",
       "initialBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_1b7e035c",
@@ -309,11 +309,15 @@
           "id": "task_075c1281",
           "candidate": "5e95045dec145d784639b23f578741539586a603",
           "base": "4ac050c611fe27f7ac757429cdd11d4ddb1842c6",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Owner-keyed subscription/evidence broker is coherent; native producer owns generation/scope/validated-output authority and cache consumer ignores dispatch. Listener failure isolation and cleanup explicit, no need to merge lifetimes.",
+          "checks": "Independent 12 cache tests pass; native tests missing Pi AI dependency; complete source and native/cache test journeys read; diff pass."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/goals/controller.ts",
