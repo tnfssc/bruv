@@ -19,3 +19,7 @@ Judge `task_b4813ac3` accepted executor `9ed85835`: one first-wins record replac
 ## Accepted question-service patch
 
 Judge `task_e49ceb90` accepted `775567e6`: explicit creation vs existing reconciliation removes nullable-record/captured-flag tracking; notification follows locked persistence. Human intent, receipt precedence, branch authority and uncertain dispatch remain preserved. Full source and remote regression test diff imported, no worker note. Remote-area primary coverage remains required for test blob `069ad73fe9042f5b166b40c4ed9167ef8b2bcee2`. Independent judge ran 11 tests and inline authority/projection journeys; full suites had module setup blockers.
+
+## Rework required: task manager
+
+Judge `task_08e2c508` rejects intrinsic candidate, while endorsing admission refactor: `#summary` rest-spread exposes private preparation AbortController. Judge exercised snapshot abort changing manager signal without termination/status settlement. Inherited defect, not patch regression. Candidate NOT imported. Next fresh worker must preserve admission improvement, explicitly project public metadata/nested snapshots, add focused authority-isolation and manager cancellation regression, label behavior correction, then fresh judge with original and prior findings.

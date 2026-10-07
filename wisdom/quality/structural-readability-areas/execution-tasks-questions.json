@@ -274,7 +274,7 @@
     {
       "focus": "src/tasks/completion-batcher.ts",
       "initialBlob": "3a08f369781a076686869017cda722559704d55c",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_48abdba4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_48abdba4",
@@ -282,7 +282,14 @@
         "base": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7",
         "commit": "48d5d9aee20b0298f5d392bdfab95e70e6904546"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_37002b64",
+          "status": "running",
+          "candidate": "48d5d9aee20b0298f5d392bdfab95e70e6904546",
+          "base": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7",
@@ -386,7 +393,7 @@
     {
       "focus": "src/tasks/task-manager.ts",
       "initialBlob": "3f614d8920d22f8ae86d2adb8a7f40957af7b0e2",
-      "status": "judge-running",
+      "status": "rework-needed",
       "primary": {
         "id": "task_53df8c4c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53df8c4c",
@@ -397,13 +404,19 @@
       "judgeRounds": [
         {
           "id": "task_08e2c508",
-          "status": "running",
+          "status": "complete",
           "candidate": "0a7873bdf4c9652b95049d5f968a890840cc96dd",
-          "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
+          "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+          "verdict": "REJECT",
+          "reason": "Admission/process refactor genuinely improves ownership, but intrinsic #summary rest-spread leaks private preparationController cancellation authority.",
+          "objections": [
+            "Judge reproduced snapshot.preparationController.abort affecting internal preparationSignal while task stayed running, without termination record. Inherited defect, not introduced by candidate.",
+            "Keep admission refactor; explicitly project public snapshot metadata and nested copies. Add focused snapshot isolation plus manager-owned cancellation regression; report exercised inherited defect correction."
+          ]
         }
       ],
       "acceptedBlob": null,
-      "integration": "pending",
+      "integration": "not imported: candidate rejected",
       "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
       "changedRelatedPaths": [
         "src/tasks/task-manager.ts",
@@ -1090,5 +1103,19 @@
       "blob": "069ad73fe9042f5b166b40c4ed9167ef8b2bcee2",
       "judge": "task_e49ceb90"
     }
-  ]
+  ],
+  "batchChecks": [
+    {
+      "job": "task_2ab7a960",
+      "state": "running",
+      "command": "bun run build && bun run check",
+      "tip": "2e78913f",
+      "setup": "shared read-only node_modules symlink; private runtime-assets copy; own dist build"
+    }
+  ],
+  "parentIntegrationInspection": {
+    "tip": "6a285569",
+    "result": "Only documentation common changes, no useful accepted-source merge yet; no siblings merged.",
+    "freeDisk": "157GB at first source batch boundary"
+  }
 }
