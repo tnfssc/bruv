@@ -806,13 +806,20 @@
     {
       "focus": "src/history/session-manager.ts",
       "initialBlob": "ed6dfb651192791de44bf933592e3061c2d32633",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_f9b9fc58",
           "launchBase": "5bd90dce070d7d1656f78d6e441dc1dd579919da",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f9b9fc58",
-          "branch": "bruv/primary-disk-backed-session-manager-f9b9fc58"
+          "branch": "bruv/primary-disk-backed-session-manager-f9b9fc58",
+          "commit": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
+          "changedPaths": [
+            "src/history/session-manager.ts",
+            "tests/history-storage-lifecycle.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "checks": "14 tests across11 focused files; label index assertions baseline pass; full tsc pass after assets; focused format/lint13warnings2infos baseline retained; diff pass; no full gate/live/SSH."
         }
       ],
       "judgeRounds": [],
@@ -1207,8 +1214,15 @@
     {
       "focus": "src/session/restore-leaf.ts",
       "initialBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_6d6e2568",
+          "launchBase": "b8a7d4debe5e37f75a0e0b7f7bf18208e8fde820",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_6d6e2568",
+          "branch": "bruv/primary-session-leaf-restoration-6d6e2568"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
