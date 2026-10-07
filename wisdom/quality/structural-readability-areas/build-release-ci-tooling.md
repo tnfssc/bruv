@@ -128,3 +128,7 @@ Connectorupdate fixture:single release-filemap eliminates duplicated metadata/bo
 Baseline tests task_aa63512d ACCEPTa96d35ae: named trust-boundaries retain realGit/selector,endpointauth and commit-vs-blob;35/93focus47/145combined. RealAbortSignal timeout/decreasingbudget/expiredpreproof rejection closes narrowHTTPdeadlinegap,not forcedGit hang or hostedtiming.
 
 Product identity tests task_b7a011bf ACCEPTb9e4e9ae: independent freshhomes/namedrouteflags,completeassetmap retain sentinel/namespace/no-semver contracts.10/19Linuxcompiledsmoke,tsc/Biome;reused binariesSHA matcharea,not freshbuild or cross-targetproof.
+
+Frozenfixture task_4e5800d8 NO CHANGE NEEDED a97a2d22,exacthistoricSHA preserved.5/38+frozencompiled updater on copiedrealpair checksum/secondrename rollback/hashes/version/cleanup. Retained-recovery failure inspected,not injected. Isolation rework d75ad9eb now freshjudge with full rejection context.
+
+Toolingfixture tests task_900a3c32 ACCEPT0e9728fc:readableprograms/controlledpartialline/protocolfields,retained trust/prompt/malformed/cleanup.8/101plus4targetedmutationsfail;tsc/Biomepass. Unseededsecret/RPCargv-env-nosession/earlyexit gaps retained;loopback not shippedbinary/live.

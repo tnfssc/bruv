@@ -1543,8 +1543,16 @@
     {
       "focus": "tests/connector-update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_23398c8b",
+          "launchBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_23398c8b",
+          "branch": "bruv/primary-tests-connector-update.test.ts-23398c8b",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1937,7 +1945,7 @@
     {
       "focus": "tests/offline-process-isolation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "rework-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_61decf20",
@@ -1952,9 +1960,11 @@
           "launchBase": "58b93d9ce43fda8565720baeef40e98d25c85043",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_21c70b4e",
           "branch": "bruv/rework-process-isolation-tui-root-fixtur-21c70b4e",
-          "state": "running",
+          "state": "completed",
           "role": "rework",
-          "priorCandidate": "933de4fb5119a222d5843361016443eb012c20d3"
+          "priorCandidate": "933de4fb5119a222d5843361016443eb012c20d3",
+          "commit": "d75ad9eb6eae5973e53b8134092e9bb04e9158e0",
+          "writerResponse": "**Rework ready—not accepted. Fresh independent judgment required.**\n\n- **Base:** `58b93d9ce43fda8565720baeef40e98d25c85043`\n- **Candidate:** `d75ad9eb6eae5973e53b8134092e9bb04e9158e0`\n- **Focus blob:** `2ff5cc4eda8213e4b91e5a632132c490d73ce04a`\n- **Branch:** `bruv/rework-process-isolation-tui-root-fixtur-21c70b4e`\n\n### Rejection response\n1. Imported the rejected candidate’s full source patch only; retained explicit environments, direct-child assertions, shared helpers, and cleanup-scoped listener setup.\n2. Added only `BRUV_SUBAGENT_TYPE=` beside `BRUV_SUBAGENT_DEPTH=0`. Sanitizer scope unchanged.\n3. Reproduced the blocker under parent `BRUV_SUBAGENT_TYPE=normal`: old fixture still passes with sanitizer bypass.\n4. Repaired **TUI-only** bypass fails, recording `pane.report_agent_session`, `pane.report_agent`, and `pane.release_agent`. Direct-child bypass also fails.\n5. Restored sanitization: **7 tests pass, 36 expectations**. Focus Biome format/lint, `tsc --noEmit`, and diff check pass.\n\nReused area binary with SHA256 `4049e1a6691a74aece96ac664d3e02d5078cb659255df889f2c4f4826f62ef24`; no rebuild/source fallback.\n\nChanged paths:\n- `tests/offline-process-isolation.test.ts`\n- Fresh local `wisdom/quality/structural-readability-worker.md`, preserving rejection context and proof.\n\nNo credential, network, timeout, process-tree, live/provider/device/SSH proof claimed. No integration, push, or PR."
         }
       ],
       "judges": [
@@ -1969,6 +1979,14 @@
             "Inherited BRUV_SUBAGENT_TYPE=normal masks TUI startup Herdr check;empty-request assertion passes for unrelated reason. Root depth alone insufficient."
           ],
           "requiredRework": "Explicit rootchild BRUV_SUBAGENT_TYPE= with DEPTH=0;preserve sanitizer scope;verify pass and TUI-specific bypassfailure under normal parenttype."
+        },
+        {
+          "id": "task_cfbac1d2",
+          "base": "58b93d9ce43fda8565720baeef40e98d25c85043",
+          "candidate": "d75ad9eb6eae5973e53b8134092e9bb04e9158e0",
+          "state": "running",
+          "round": 2,
+          "priorJudge": "task_685f1bda"
         }
       ],
       "relatedPaths": [],
@@ -2300,7 +2318,7 @@
     {
       "focus": "tests/tooling-fixtures.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_8c70c1f6",
@@ -2316,19 +2334,35 @@
           "id": "task_900a3c32",
           "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "candidate": "45d98000efd2a22cc368b0f54880072781015065",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Readable embeddedprograms,controlled partialline delivery and protocolfield matching remove escaping/timing/positional bookkeeping. Trustdenial/prompt/malformedJSON/cleanup/external evidence retained;SSE/timeoutdiagnostics stronger.",
+          "checks": "Independent8tests101assertions;tsc/Biome/diffpass;disposablebaseline5/54;partialbuffer/trustapproval/timeoutstderr/toolfinish mutations eachfail relevanttest. Unseededsecret/RPCargv-env-nosession/earlyexit gaps remain;Bunloopback not shippedbinary/Docker/SSH/PTY/provider.",
+          "acceptedBlobs": {
+            "tests/tooling-fixtures.test.ts": "0e9728fccb32c1657f09e6d305ac14a10d1621ba"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
       "readingResult": "Readable embedded childprograms/controlled partial-line delivery/protocol-field assertions replace escaped assembly/timingfragmentation/positional expectations.",
-      "checks": "8tests101assertions;tsc/Biome/diff;trustdenial/prompt/malformedJSON/cleanup retained;timeout/text/toolSSE strengthened. Gaps unseededsecret/RPCargv-env-earlyexit unasserted."
+      "checks": "8tests101assertions;tsc/Biome/diff;trustdenial/prompt/malformedJSON/cleanup retained;timeout/text/toolSSE strengthened. Gaps unseededsecret/RPCargv-env-earlyexit unasserted.",
+      "integrationState": "Fullfocuspatch integrated;sharedhelpers unchanged;noteexcluded."
     },
     {
       "focus": "tests/update-release-shape.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_dc6a6799",
+          "launchBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_dc6a6799",
+          "branch": "bruv/primary-tests-update-release-shape.test.-dc6a6799",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -2353,7 +2387,7 @@
     {
       "focus": "tests/update-v0.16.3-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_bf44caf8",
@@ -2369,13 +2403,21 @@
           "id": "task_4e5800d8",
           "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "candidate": "b8add67b80728e1c662a702d276020a375570072",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Byteidentical historical v0.16.3 updater/migrationparent;single stagedpair filesystem recovery lifetime visible together. Pairedarray bookkeeping retained intentionally;no concrete readability defect warrants changing historical authority.",
+          "checks": "Independent5tests38assertions;frozencompiledverifier against actualareapair0.16.14 checksum/secondrename rollback/restoration/hashes/version/cleanup pass. SHA256cab60e412c13277cf8a415d0c09fb0dbdfd69c9d000c42d21b2695f5b03230aa. Retainedrecoveryfailure inspected not injected;LinuxmockHTTPonly.",
+          "acceptedBlobs": {
+            "tests/update-v0.16.3-fixture.ts": "a97a2d229678e12335a802823dbca5a8c78c0285"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a97a2d229678e12335a802823dbca5a8c78c0285",
       "readingResult": "Unchanged intentional historical authority;validate/stagechecksumprobe/backuprecheck/connectorfirstreplace/reverserollback-or-recovery is one lifetime.",
-      "checks": "v0.16.3:src/update.ts and migrationparent byteidentical;5tests38assertions plus frozencompiledverifier area pair0.16.14 checksum/secondrename rollback."
+      "checks": "v0.16.3:src/update.ts and migrationparent byteidentical;5tests38assertions plus frozencompiledverifier area pair0.16.14 checksum/secondrename rollback.",
+      "integrationState": "Frozenbytes unchanged at tip;candidate noteexcluded."
     },
     {
       "focus": "tests/update.test.ts",
