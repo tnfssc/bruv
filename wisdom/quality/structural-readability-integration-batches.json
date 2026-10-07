@@ -191,5 +191,128 @@
         "tests/setup-native-release-gate.test.ts"
       ]
     }
+  ],
+  "round3": [
+    {
+      "area": "remote",
+      "tip": "808e55e398c9bc3a1f18af65f4fe5163eee16e1f",
+      "sourcePaths": [
+        "src/remote/human-rendering.ts",
+        "src/remote/job-artifacts.ts",
+        "src/remote/job-observations.ts",
+        "src/remote/question-bridge.ts",
+        "src/remote/root-options.ts",
+        "tests/remote-human-rendering.test.ts",
+        "tests/remote-job-artifacts.test.ts",
+        "tests/remote-job-observations.test.ts",
+        "tests/remote-question-bridge.test.ts",
+        "tests/root-placement-options.test.ts"
+      ]
+    },
+    {
+      "area": "live-native-audio",
+      "tip": "56c8d28557cb951c2b2caaae5b10298e460bf6b4",
+      "sourcePaths": [
+        "native/live-linux/tests/capture-protocol.py",
+        "native/live-linux/tests/test_capture_protocol.py",
+        "native/live-linux/tests/test_isolated_audio.py",
+        "src/live/cost.ts",
+        "src/live/editor-push-to-talk.ts",
+        "src/live/extension.ts",
+        "src/live/gpt-live-delegation.ts",
+        "src/live/gpt-live-playback.ts",
+        "tests/editor-push-to-talk.test.ts",
+        "tests/gpt-live-delegation.test.ts",
+        "tests/gpt-live-playback.test.ts",
+        "tests/gpt-live-session.test.ts",
+        "tests/live-audio.test.ts",
+        "tests/live-cost.test.ts",
+        "tests/live-extension.test.ts",
+        "tests/live-playback.test.ts"
+      ]
+    },
+    {
+      "area": "compatibility-t3",
+      "tip": "845599c7920d384cddb2d8581cc7d9bb72bc94fd",
+      "sourcePaths": [
+        "scripts/claude-native-acceptance/app-delegation-model.mjs",
+        "scripts/claude-native-acceptance/driver.mjs",
+        "scripts/claude-native-acceptance/history-model.mjs",
+        "scripts/claude-native-acceptance/run.mjs",
+        "scripts/claude-native-acceptance/subagent-model.mjs",
+        "tests/claude-compat-human-controls.test.ts",
+        "tests/claude-native-acceptance-capture.test.mjs",
+        "tests/claude-native-acceptance-replay-finalization.test.mjs",
+        "tests/claude-native-acceptance-runner.test.mjs",
+        "tests/claude-native-app-delegation-model.test.mjs",
+        "tests/claude-native-history-model.test.mjs",
+        "tests/claude-native-subagent-model.test.mjs",
+        "tests/t3/local-notifications.test.ts"
+      ]
+    },
+    {
+      "area": "agent-history-session-goals",
+      "tip": "ee080550d69dd470a20713aca43195960fb9523b",
+      "sourcePaths": [
+        "src/agent/cache-affine-compaction.ts",
+        "src/agent/native-compaction.ts",
+        "src/agent/native-fast-mode.ts",
+        "src/history/session-manager.ts",
+        "tests/cache-affine-compaction.test.ts",
+        "tests/fixtures/transcript-snapshots.ts",
+        "tests/history-storage-lifecycle.test.ts",
+        "tests/native-compaction.test.ts",
+        "tests/native-fast-mode.test.ts"
+      ]
+    },
+    {
+      "area": "execution-tasks-questions",
+      "tip": "95ed08535cb29627f887833a6a9ff2f779e5f50e",
+      "sourcePaths": [
+        "scripts/leak-audit/execution-runtime.ts",
+        "src/typescript/extension.ts",
+        "src/typescript/images.ts",
+        "src/typescript/runner.ts",
+        "tests/execute-handoff.test.ts",
+        "tests/job-bridge-protocol.test.ts",
+        "tests/questions.test.ts",
+        "tests/typescript-images.test.ts"
+      ]
+    },
+    {
+      "area": "ui-terminal-cli",
+      "tip": "67feaba0e1a7edd75a071cead170fbc860542a1e",
+      "sourcePaths": [
+        "scripts/ansi_video_renderer.py",
+        "scripts/benchmark-footer-context.ts",
+        "scripts/tasks-ui-proof-build.ts",
+        "scripts/terminal-perf/interaction-normalize.ts",
+        "scripts/terminal-perf/interaction-tool-events.test.ts",
+        "scripts/ui-cleanup-probe.py",
+        "tests/ansi-video-renderer.test.py",
+        "tests/tasks-ui-proof-build.test.ts",
+        "tests/terminal-interactions-cli.test.ts",
+        "tests/terminal-interactions-normalize.test.ts",
+        "tests/terminal-perf-action-profiler.test.ts",
+        "tests/ui-cleanup-probe.test.py"
+      ]
+    },
+    {
+      "area": "build-release-ci-tooling",
+      "tip": "58b93d9ce43fda8565720baeef40e98d25c85043",
+      "sourcePaths": [
+        "scripts/verify-update.ts",
+        "tests/ci-remote-cli-source.test.ts",
+        "tests/ci-remote-offline-source-pty.py",
+        "tests/ci-runner.test.ts",
+        "tests/ci-selective-workflow.test.ts",
+        "tests/connector-update-fixture.ts",
+        "tests/native-release-gate.test.ts",
+        "tests/release-browser-setup.test.ts",
+        "tests/release-launcher-gate.test.ts",
+        "tests/setup-native-release-gate.test.ts",
+        "tests/verify-update.test.ts"
+      ]
+    }
   ]
 }

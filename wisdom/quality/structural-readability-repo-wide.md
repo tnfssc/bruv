@@ -68,3 +68,7 @@ Joined final site-support 2da1ed1b: exact 41-file primary coverage, final per-fi
 ## Shared integration checkpoint 2
 
 Joined the next committed accepted-code batches from the seven running areas. Every new source blob/removal has matching actual-code judgment, including related-path verdicts; global per-file primary completion still remains. No new source overlap at this snapshot. Exact tips and paths are in integration-batches.json. This keeps callers/interfaces shared while remaining file work continues. Combined typecheck follows; no whole-task completion claim.
+
+## Shared integration checkpoint 3
+
+Second combined typecheck passed at db885fce (task_9cb7440e). Joined next seven committed actual-code-accepted batches; exact blobs/removals and related-path judgments checked, with no changed-source overlap. Final global primary/quality coverage remains incomplete. Native protocol regressions also need automatic root coverage: parent primary task_78b8dfee created a narrow wrapper at fc0565f9; independent judge task_4391eb2e is reviewing it before integration. This closes a real manual-only coverage gap, not a new test matrix. Final root gate remains pending.
