@@ -2659,10 +2659,17 @@
       "focus": "native/live-linux/tests/test_capture_protocol.py",
       "introducedBy": "3c71d4a280d89be9b6597d09af48a40a376451f8",
       "initialBlob": null,
-      "primary": null,
+      "primary": {
+        "id": "task_0dad3ccb",
+        "launchBase": "47f771f49027fec0791ef455be4f548dbc77aaee",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_0dad3ccb",
+        "branch": "bruv/primary-native-live-linux-tests-test_cap-0dad3ccb",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_0f8a556e",
         "verdict": "ACCEPT",
