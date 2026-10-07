@@ -1225,7 +1225,7 @@
     {
       "focus": "src/typescript/job-bridge.ts",
       "initialBlob": "71303007f9886b7b34c7df16c958f4a050ffd41c",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_10057488",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_10057488",
@@ -1236,13 +1236,21 @@
       "judgeRounds": [
         {
           "id": "task_849e9ce1",
-          "status": "running",
+          "status": "complete",
           "candidate": "9d80aab5646300b24ae57999007d62463e6bb6b5",
-          "base": "7a99d536c8be21afa20521148843a2d85f3c96b3"
+          "base": "7a99d536c8be21afa20521148843a2d85f3c96b3",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Purposeful delivery obligations replace invalid flag combinations; ordinary ACK immediately releases, foreground ACK provisional until successful exit. Failed fallback tokens no authority, abort before error frame; framing separate from validated replay-aware dispatch.",
+          "checks": [
+            "independent protocol+foreground14/358",
+            "error/oversize/circular abort-before-errorframe/no ownership ACK and cancelled-late-handler probes pass",
+            "no fresh compiled worker or broad integration rerun"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "d40b9d66d1c674f46e1a2ad28c390e2e39377a8f",
+      "integration": "full source/protocol test diff integrated",
       "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3",
       "changedRelatedPaths": [
         "src/typescript/job-bridge.ts",
@@ -1302,7 +1310,7 @@
     {
       "focus": "src/typescript/runner.ts",
       "initialBlob": "0405699abd4d594fb5dbebe432169885984a338d",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_e65a5513",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e65a5513",
@@ -1310,7 +1318,14 @@
         "base": "d5623c8e9d529384108765b2ae2604f493c0c60d",
         "commit": "7758b00c032100018a3548e9e7a6dfa3beaab6e8"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_5c8f3c0f",
+          "status": "running",
+          "candidate": "7758b00c032100018a3548e9e7a6dfa3beaab6e8",
+          "base": "d5623c8e9d529384108765b2ae2604f493c0c60d"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
@@ -1509,7 +1524,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_849e9ce1",
+        "candidate": "9d80aab5646300b24ae57999007d62463e6bb6b5",
+        "blob": "a4577cd8ce21d1176c5b1c3215a32eeb36f0ec25",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/job-bridge.test.ts",
