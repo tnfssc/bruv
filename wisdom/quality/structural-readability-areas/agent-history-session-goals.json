@@ -1629,6 +1629,11 @@
       "commit": "4287844f",
       "job": "task_07ae383c",
       "result": "tsc --noEmit passed; git diff --check passed. Biome check FAILED: organizeImports errors in src/agent/extension.ts, tests/history-storage-io.test.ts, tests/instruction-mode.test.ts; 12 warnings/12 infos. Formatting/lint-only worker proof is distinct from check assists. File owners to address when focused, then rejudge final hashes."
+    },
+    {
+      "commit": "f3f039a6",
+      "job": "task_8495a524",
+      "result": "118 tests pass, 0 fail, 898 assertions across 13 history/instruction/goals/cache/footer suites; tsc --noEmit passes. No build/provider/device/SSH proof. 13 accepted initial blobs match area HEAD; 98 initial primaries still unstarted, 3 running; 2 extra primary results under judgment."
     }
   ]
 }
