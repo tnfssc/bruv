@@ -115,17 +115,29 @@
         "launchBase": "fb00db79c282b970b827370a88e45146dd85fcef",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_113b4141",
         "branch": "bruv/primary-native-live-linux-tests-protocol-113b4141",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "fb78a73f068ff690931fc08f829c33b19dfbbee6"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_5ff86413",
+          "status": "running",
+          "candidate": "fb78a73f068ff690931fc08f829c33b19dfbbee6",
+          "base": "fb00db79c282b970b827370a88e45146dd85fcef"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_13282f24",
         "verdict": "ACCEPT",
         "blob": "8956a9fdb069683d9e5b364801019c1972a89aff"
-      }
+      },
+      "relatedPaths": [
+        "native/live-linux/tests/test_protocol.py"
+      ],
+      "readingResult": "Protocol owns framing/process exit; ordered checks retain journey; synthetic_microphone owns Pulse stream/worker cleanup/join/failure delivery. Explicit fixes reported for buffered select responses, unterminated-line deadline, feeder failure cleanup.",
+      "checks": "Nine regressions/helper build/real no-device smoke/diff pass. Baseline and candidate virtual smoke fail first played audio_device; drain/capture/restart/source-removal unproven."
     },
     {
       "focus": "native/live-linux/tests/source-removal.py",
@@ -445,10 +457,17 @@
             "src/live/audio.ts": "9c7db008d0f1f1284fda01c2e564157c7171d231",
             "tests/live-audio-lifecycle.test.ts": "8a7be3d0c6cd48fd16c6a3bcbc9157dba226ab44"
           }
+        },
+        {
+          "id": "task_610f6154",
+          "status": "running",
+          "candidate": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
+          "base": "4861031d34e3f3939ae6aade2863cd51c4150e6b",
+          "round": "observed native-stop fix and combined contract"
         }
       ],
       "acceptedBlob": "9c7db008d0f1f1284fda01c2e564157c7171d231",
-      "integration": "integrated accepted exact candidate",
+      "integration": "accepted earlier blob; rework under judge",
       "relatedPaths": [
         "tests/live-audio-lifecycle.test.ts"
       ],
@@ -460,9 +479,14 @@
           "launchBase": "4861031d34e3f3939ae6aade2863cd51c4150e6b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7ae21cac",
           "branch": "bruv/rework-native-stop-acknowledgement-7ae21cac",
-          "status": "running",
-          "commit": null,
-          "reason": "Swift judge task_660502a4 reproduced inherited native stop sequence played(queuedMs:0) before stopped; LiveAudio rejects played while stopping, reports helper_failure/stopError. Baseline also affected. Fresh worker must reproduce against actual native sequence, preserve ack/reaping safety, explicitly test incidental fix; fresh judge then combined native/bridge review."
+          "status": "candidate ready",
+          "commit": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
+          "reason": "Swift judge task_660502a4 reproduced inherited native stop sequence played(queuedMs:0) before stopped; LiveAudio rejects played while stopping, reports helper_failure/stopError. Baseline also affected. Fresh worker must reproduce against actual native sequence, preserve ack/reaping safety, explicitly test incidental fix; fresh judge then combined native/bridge review.",
+          "relatedPaths": [
+            "tests/live-audio.test.ts"
+          ],
+          "readingResult": "Validated played reports belong to running/stopping, update diagnostic/callbacks; only stopped acknowledges stop. FIFO/cancellation/timeout/reaping unchanged.",
+          "checks": "Native stop sequence regression failed launch baseline exact stopError then passed; 117 tests/711 assertions; focused typecheck/format/lint/diff pass. Biome combined check inherited import organization errors. Native source traced, not device-executed."
         }
       ]
     },
@@ -525,10 +549,17 @@
     {
       "focus": "src/live/extension.ts",
       "initialBlob": "84274f466746fb1665d4d9cb5c71ed3869d036c9",
-      "primary": null,
+      "primary": {
+        "id": "task_b67e363a",
+        "launchBase": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_b67e363a",
+        "branch": "bruv/primary-src-live-extension.ts-b67e363a",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/gpt-live-context.ts",
@@ -1341,10 +1372,17 @@
     {
       "focus": "tests/live-tools.test.ts",
       "initialBlob": "70033025563f0f8fb1789048e97ef02222bb8efc",
-      "primary": null,
+      "primary": {
+        "id": "task_217fe0fb",
+        "launchBase": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_217fe0fb",
+        "branch": "bruv/primary-tests-live-tools.test.ts-217fe0fb",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_aba16011",
         "verdict": "ACCEPT",
@@ -1458,6 +1496,15 @@
       "relatedPaths": [],
       "readingResult": "Six independent contract scenarios replace one shared buffer history; purposeful ring fill/rejection/wrap/drain/reuse and generation/flush-priority journeys remain together; assertion helper verifies each frame flags/ramp.",
       "checks": "Baseline and candidate strict ASan/UBSan standalone harness pass; diff check pass. No device/provider/macOS/concurrency/root suite proof."
+    },
+    {
+      "focus": "native/live-linux/tests/test_protocol.py",
+      "introducedBy": "fb78a73f068ff690931fc08f829c33b19dfbbee6",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate related addition; needs own primary focus"
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
@@ -1481,5 +1528,14 @@
       "reason": "Swift judge task_660502a4 reproduced inherited native stop sequence played(queuedMs:0) before stopped; LiveAudio rejects played while stopping, reports helper_failure/stopError. Baseline also affected. Fresh worker must reproduce against actual native sequence, preserve ack/reaping safety, explicitly test incidental fix; fresh judge then combined native/bridge review.",
       "id": "task_7ae21cac"
     }
-  ]
+  ],
+  "audit": {
+    "tip": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
+    "baselineFiles": 140,
+    "extraFiles": 2,
+    "baselineAccepted": 8,
+    "extraAccepted": 1,
+    "acceptedBlobMismatches": [],
+    "status": "partial; not completion"
+  }
 }
