@@ -483,7 +483,7 @@
     {
       "file": "src/claude-compat/launch.ts",
       "initialBlob": "ec7515100c4560c03f473214973d9705380f927a",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_58f5a56b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_58f5a56b",
@@ -494,15 +494,21 @@
       "judges": [
         {
           "id": "task_f677e563",
-          "status": "running",
-          "candidate": "15eb6b922c9d3a188066b71673e3762a8853b6f8"
+          "status": "completed",
+          "candidate": "15eb6b922c9d3a188066b71673e3762a8853b6f8",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "ec7515100c4560c03f473214973d9705380f927a",
+          "objections": [],
+          "evidence": "Pure defaults precedence and normal binary basename selection coherent; CLI display/package/protocol identities distinct callers. Judge reproduced synthetic ./~/bruv normalize-vs-expand ordering; removal not neutral. Independent2 defaults tests7 assertions.",
+          "limits": "Launch missing zod/mini,not independent23-pass proof;synthetic path ordering not production bug."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "ec7515100c4560c03f473214973d9705380f927a",
       "launchBase": "7e19e0f72539d75c097a2e6bb4bdf7c764ba207f",
       "changedRelatedPaths": [],
       "readingResult": "Unchanged pure defaults and distinct identities coherent. Trial branch removal altered path-normalization/home-expansion ordering and was reverted rather than unrelated behavior change.",
-      "checks": "23 defaults+launch pass115 assertions;clean;no full gate/product claim."
+      "checks": "23 defaults+launch pass115 assertions;clean;no full gate/product claim.",
+      "integrationState": "Matches area tip unchanged"
     },
     {
       "file": "src/claude-compat/live-frontend.ts",
@@ -679,7 +685,7 @@
     {
       "file": "src/claude-compat/task-projection.ts",
       "initialBlob": "6c04a462ddfc040f2aaaee6c263d829fbf62499f",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_195ae5e6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_195ae5e6",
@@ -690,17 +696,26 @@
       "judges": [
         {
           "id": "task_157d0ec7",
-          "status": "running",
-          "candidate": "7e679084be24d21c23492a319f7bf2657abd7630"
+          "status": "completed",
+          "candidate": "7e679084be24d21c23492a319f7bf2657abd7630",
+          "verdict": "ACCEPT",
+          "blob": "8dcf972b448b2da8c19abe4d70c2530e117c7ba0",
+          "relatedBlobs": {
+            "tests/claude-compat-task-projection.test.ts": "8d511b8d880d5562f295406b3aad31d687cc8088"
+          },
+          "objections": [],
+          "evidence": "Pure frame shapes separate lifecycle checkpoint choices; retained/terminal/active returns explicit without incremental mutation. Revision/resume suppression, start-before-progress, terminal guard, attribution/null artifact/usage preserved. Actual runtime→binding→projection traced;independent15 tests87 assertions.",
+          "limits": "Combined binding deps unavailable,not independently reproduced writer combined result."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "8dcf972b448b2da8c19abe4d70c2530e117c7ba0",
       "launchBase": "7e19e0f72539d75c097a2e6bb4bdf7c764ba207f",
       "changedRelatedPaths": [
         "tests/claude-compat-task-projection.test.ts"
       ],
       "readingResult": "Pure frame builders remove wire assembly from lifecycle choices; path returns explicit retained/terminal/active checkpoint rather than incremental mutation. Revision/resume guards and start-before-progress remain.",
-      "checks": "16 focused88 assertions;typecheck/scoped format/lint/diff pass;2 new contract tests baseline pass;no behavior change. Pending task-binding candidate untouched."
+      "checks": "16 focused88 assertions;typecheck/scoped format/lint/diff pass;2 new contract tests baseline pass;no behavior change. Pending task-binding candidate untouched.",
+      "integrationState": "Exact accepted projection source+test joined; combined binding/projection review pending; projection test primary pending"
     },
     {
       "file": "src/claude-compat/transport.ts",
@@ -1120,8 +1135,14 @@
     {
       "file": "tests/claude-compat-task-binding.test.ts",
       "initialBlob": "88bae66b92d33c773eb63314188b667b96b66447",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_0e6166c9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_0e6166c9",
+        "branch": "bruv/primary-task-binding-tests-0e6166c9",
+        "launchBase": "bf075025b80c839bee132274a7aa9d6f7c3de06e",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1131,7 +1152,8 @@
           "blob": "567ac25e5767e742252d917371c4dfd50c6dabdc",
           "candidate": "d6dae4e14c8e0a75fc6ffd173754a9aa42825dc7"
         }
-      ]
+      ],
+      "launchBase": "bf075025b80c839bee132274a7aa9d6f7c3de06e"
     },
     {
       "file": "tests/claude-compat-task-projection.test.ts",
@@ -1139,7 +1161,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_157d0ec7",
+          "verdict": "ACCEPT",
+          "blob": "8d511b8d880d5562f295406b3aad31d687cc8088",
+          "candidate": "7e679084be24d21c23492a319f7bf2657abd7630"
+        }
+      ]
     },
     {
       "file": "tests/claude-compat-transport.test.ts",
@@ -1509,16 +1539,22 @@
       "file": "tests/claude-compat-binding.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "primary-running",
+      "status": "judging",
       "introducedBy": "3743b41972dd27bbeb33d459f2a6f5ced7413c33",
       "primary": {
         "id": "task_f673edab",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_f673edab",
         "branch": "bruv/primary-new-binding-tests-f673edab",
         "launchBase": "cbae72747a50b54edc7e4d30347f2c67b680dc5e",
-        "commit": null
+        "commit": "98212400adf815257b45fdd5359f6a1b9d412d76"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_1c7cf1d4",
+          "status": "running",
+          "candidate": "98212400adf815257b45fdd5359f6a1b9d412d76"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1528,7 +1564,10 @@
           "candidate": "3743b41972dd27bbeb33d459f2a6f5ced7413c33"
         }
       ],
-      "launchBase": "cbae72747a50b54edc7e4d30347f2c67b680dc5e"
+      "launchBase": "cbae72747a50b54edc7e4d30347f2c67b680dc5e",
+      "changedRelatedPaths": [],
+      "readingResult": "Fresh new-file primary unchanged: direct fresh identity/import-reopen-rejection journeys; shared import lifetime avoids duplicate fixtures. Rejection proves persisted state, not absence attempted memory branch; source validation order/earlier reopening may reject.",
+      "checks": "2 pass15 assertions;target format/lint pass."
     }
   ],
   "crossAreaNeeds": [],
@@ -1631,6 +1670,13 @@
       "status": "passed",
       "scope": "Final transport/launch tests38 pass161 assertions;typecheck",
       "limits": "No live/full gate."
+    },
+    {
+      "id": "task_9d3aca9d",
+      "commit": "bf075025",
+      "status": "passed",
+      "scope": "Integrated task-binding/projection/runtime15 outer tests80 assertions;typecheck;format",
+      "limits": "Isolated child tests included;no live/SDK/SSH/full gate."
     }
   ],
   "combinedReviews": [

@@ -84,6 +84,52 @@ describe("native Claude SDK 0.3.276 task projection", () => {
     expect(result.checkpoint?.phase).toBe("active");
     expect(projectTask(worker, observation(1), result.checkpoint).skipped).toBe("stale");
   });
+  test("a run starts before its first progress and leaves the previous cursor untouched", () => {
+    const reserved = projectTask(worker, observation(1, { status: "preparing" })).checkpoint!;
+    const original = { ...reserved };
+    const active = projectTask(
+      worker,
+      observation(2, {
+        description: "Now running",
+        isBackgrounded: false,
+        progress: { description: "First tool", usage },
+      }),
+      reserved,
+    );
+    expect(active.frames).toHaveLength(2);
+    expect(active.frames).toMatchObject([{ subtype: "task_started" }, { subtype: "task_progress" }]);
+    expect(active.checkpoint).toEqual({
+      ...reserved,
+      revision: 2,
+      phase: "active",
+      description: "Now running",
+      isBackgrounded: false,
+    });
+    expect(reserved).toEqual(original);
+  });
+  test("fresh ignored observations advance only the revision; duplicates keep the cursor", () => {
+    const active = start().checkpoint!;
+    const unknown = projectTask(
+      worker,
+      observation(2, { status: "unknown", description: "Uncertain", isBackgrounded: false }),
+      active,
+    );
+    expect(unknown).toEqual({ frames: [], skipped: "not-started", checkpoint: { ...active, revision: 2 } });
+    const unconfirmed = projectTask(
+      worker,
+      observation(3, { status: "killed", description: "Stop requested", isBackgrounded: false }),
+      unknown.checkpoint,
+    );
+    expect(unconfirmed).toEqual({ frames: [], skipped: "unconfirmed", checkpoint: { ...active, revision: 3 } });
+    const reconnect = projectTask(
+      { ...worker, runToolUseId: "unproven-resume" },
+      observation(4),
+      unconfirmed.checkpoint,
+    );
+    expect(reconnect).toEqual({ frames: [], skipped: "stale", checkpoint: { ...active, revision: 4 } });
+    expect(projectTask(worker, observation(4), reconnect.checkpoint).checkpoint).toBe(reconnect.checkpoint);
+    expect(active.revision).toBe(1);
+  });
   test("progress uses actual measured usage, phase and tools", () => {
     expect(
       projectTask(
