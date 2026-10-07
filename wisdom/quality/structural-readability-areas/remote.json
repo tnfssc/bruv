@@ -1384,6 +1384,13 @@
       "command": "bun run check; bun test remote-cancellation,remote-source-approval,remote-artifacts,root-store tests",
       "result": "Full configured typecheck passes; 41 pass/244 assertions across 4 files",
       "limits": "No full binary build, authenticated SSH/provider/compiled parity"
+    },
+    {
+      "commit": "7aa4b4a1",
+      "job": "task_93fcabee",
+      "command": "bun test remote-capability-runtime,remote-capabilities,remote-client,remote-extension,remote-repository-wire,remote-artifacts tests",
+      "result": "84 pass, 0 fail, 1355 assertions across 6 files",
+      "limits": "No authenticated SSH/provider/compiled parity"
     }
   ],
   "crossAreaNeeds": [
@@ -1396,5 +1403,14 @@
       "blob": "0990a29347df87831dd11c544bdcac94e85ee798",
       "judge": "task_e77399ef"
     }
-  ]
+  ],
+  "partialAudit": {
+    "at": "7aa4b4a1",
+    "baselineCount": 119,
+    "acceptedCount": 20,
+    "hashMismatches": [],
+    "uniquePrimaryIds": 25,
+    "launchedPrimaryCount": 25,
+    "notFinal": true
+  }
 }
