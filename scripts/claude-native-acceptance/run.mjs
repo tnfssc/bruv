@@ -89,7 +89,6 @@ try {
       BRUV_ACCEPTANCE_CONFIG: path.join(root, "config.json"),
     },
   };
-  await fs.writeFile(config.env.BRUV_ACCEPTANCE_CONFIG, JSON.stringify(config), { mode: 0o600 });
   const tap = path.join(root, "connector-tap");
   await fs.copyFile(path.join(here, "tap.mjs"), tap);
   await fs.chmod(tap, 0o755);
@@ -110,6 +109,30 @@ try {
     child.once("close", resolve);
   });
   if (code !== 0) throw Error("Integrated native replay failed with exit " + code);
+  verifyModelOutcome(model, workerModel, config);
+  passed = true;
+} finally {
+  // Proof may fail to write; it must never retain the owned runtime.
+  try {
+    await writeAcceptanceResult(proof, passed, config, model);
+  } finally {
+    try {
+      await signalReplayAndWorkers(child, worker, state);
+      await captureReplayEvidence(proof, config, model, workerModel);
+    } finally {
+      await releaseRuntime(root, state, model, workerModel);
+    }
+  }
+  await fs.writeFile(
+    path.join(proof, "cleanup.json"),
+    JSON.stringify({ temporaryScopedStateRemoved: true, realCredentialsUsed: false, integratedReplayPassed: passed }) +
+      "\n",
+  );
+}
+
+console.log("Integrated native acceptance proof: " + proof);
+
+function verifyModelOutcome(model, workerModel, config) {
   if ([...model.records, ...(workerModel?.records ?? [])].some((r) => r.error))
     throw Error("Local model endpoint rejected a request");
   if (
@@ -143,8 +166,9 @@ try {
     if (model.records.filter((r) => r.delta?.content === "HUMAN_ANSWER_DELIVERED_ONCE_REAL").length !== 1)
       throw Error("Expected one saved answer continuation");
   }
-  passed = true;
-} finally {
+}
+
+async function writeAcceptanceResult(proof, passed, config, model) {
   let result = { integratedAcceptance: true };
   try {
     result = JSON.parse(await fs.readFile(path.join(proof, "result.json"), "utf8"));
@@ -175,6 +199,9 @@ try {
       2,
     ) + "\n",
   );
+}
+
+async function signalReplayAndWorkers(child, worker, state) {
   if (child && child.exitCode === null) child.kill("SIGTERM");
   // Scoped worker cleanup; verify command line and state before touching any PID.
   for (const scenario of ["steer", "early", "stop", "cancel"]) {
@@ -184,25 +211,23 @@ try {
       if (cmd.includes(worker) && cmd.includes(state)) process.kill(pid, "SIGTERM");
     } catch {}
   }
-  try {
-    const { projectWire } = await import(
-      process.env.ACCEPT_APP_DELEGATION === "1" ? "./app-delegation-driver.mjs" : "./driver.mjs"
-    );
-    const wire = (await fs.readFile(path.join(root, "wire.ndjson"), "utf8"))
-      .trim()
-      .split("\n")
-      .filter(Boolean)
-      .map(JSON.parse);
-    if (config?.humanControls) await (await import("./human-driver.mjs")).capture({ records: wire, config, proof });
-    await fs.writeFile(
-      path.join(proof, "wire-projection.ndjson"),
-      projectWire(wire)
-        .map((x) => JSON.stringify(x))
-        .join("\n") + "\n",
-    );
-  } catch {}
-  for (const scenario of ["done", "cancel"])
-    await fs.writeFile(path.join(state, scenario + ".release"), "cleanup").catch(() => {});
+}
+
+async function captureReplayEvidence(proof, config, model, workerModel) {
+  // No replay can have run until its config exists. Models may already be open.
+  if (config) {
+    try {
+      const { projectWire } = await import(config.delegationCases ? "./app-delegation-driver.mjs" : "./driver.mjs");
+      const wire = (await fs.readFile(config.wire, "utf8")).trim().split("\n").filter(Boolean).map(JSON.parse);
+      if (config?.humanControls) await (await import("./human-driver.mjs")).capture({ records: wire, config, proof });
+      await fs.writeFile(
+        path.join(proof, "wire-projection.ndjson"),
+        projectWire(wire)
+          .map((x) => JSON.stringify(x))
+          .join("\n") + "\n",
+      );
+    } catch {}
+  }
   if (model) {
     await fs.writeFile(
       path.join(proof, "model-projection.json"),
@@ -220,10 +245,8 @@ try {
         2,
       ) + "\n",
     );
-    await model.close();
-    await workerModel?.close();
   }
-  if (process.env.ACCEPT_APP_DELEGATION === "1") {
+  if (config?.delegationCases) {
     for (const file of [
       "capabilities.json",
       "done.task.json",
@@ -234,15 +257,22 @@ try {
       "cancel.scope-denial.json",
     ]) {
       try {
-        await fs.copyFile(path.join(state, file), path.join(proof, file));
+        await fs.copyFile(path.join(config.state, file), path.join(proof, file));
       } catch {}
     }
   }
-  await fs.rm(root, { recursive: true, force: true });
-  await fs.writeFile(
-    path.join(proof, "cleanup.json"),
-    JSON.stringify({ temporaryScopedStateRemoved: true, realCredentialsUsed: false, integratedReplayPassed: passed }) +
-      "\n",
-  );
 }
-console.log("Integrated native acceptance proof: " + proof);
+
+async function releaseRuntime(root, state, model, workerModel) {
+  for (const scenario of ["done", "cancel"])
+    await fs.writeFile(path.join(state, scenario + ".release"), "cleanup").catch(() => {});
+  try {
+    await model?.close();
+  } finally {
+    try {
+      await workerModel?.close();
+    } finally {
+      await fs.rm(root, { recursive: true, force: true });
+    }
+  }
+}

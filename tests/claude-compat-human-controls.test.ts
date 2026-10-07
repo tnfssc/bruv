@@ -10,17 +10,54 @@ import { ClaudeCompatTransport } from "../src/claude-compat/transport";
 import type { HumanControlOptions } from "../src/claude-compat/human-controls";
 
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
-function fixture(file?: string, request?: HumanControlOptions["request"], askUserQuestion = true) {
-  const dir = file ? undefined : mkdtempSync(join(tmpdir(), "bruv-native-questions-"));
+function nativeDialogs({ honorAbort = true } = {}) {
+  const calls: Array<{
+    request: any;
+    signal?: AbortSignal;
+    resolve: (response: Record<string, unknown>) => void;
+    allow: (answer: string) => void;
+  }> = [];
+  const request: HumanControlOptions["request"] = (request, options) =>
+    new Promise((resolve, reject) => {
+      calls.push({
+        request,
+        signal: options?.signal,
+        resolve,
+        allow(answer) {
+          resolve({
+            behavior: "allow",
+            toolUseID: request.tool_use_id,
+            updatedInput: { answers: { [(request.input as any).questions[0].question]: answer } },
+          });
+        },
+      });
+      if (honorAbort) {
+        options?.signal?.addEventListener("abort", () => reject(options.signal?.reason ?? new Error("Disconnected")), {
+          once: true,
+        });
+      }
+    });
+  return { calls, request };
+}
+
+function fixture({
+  sessionFile,
+  request,
+  askUserQuestion = true,
+}: {
+  sessionFile?: string;
+  request?: HumanControlOptions["request"];
+  askUserQuestion?: boolean;
+} = {}) {
+  const dir = sessionFile ? undefined : mkdtempSync(join(tmpdir(), "bruv-native-questions-"));
   const handlers = new Map<string, Array<(event: any, ctx: any) => unknown>>();
   const bus = new Map<string, Set<(value: unknown) => void>>();
-  const sent: any[] = [],
-    errors: unknown[] = [];
+  const sent: any[] = [];
   let idle = false,
     leaf = "root";
   const ctx: any = {
     sessionManager: {
-      getSessionFile: () => file ?? join(dir!, "session.jsonl"),
+      getSessionFile: () => sessionFile ?? join(dir!, "session.jsonl"),
       getSessionId: () => "session",
       getLeafId: () => leaf,
       getBranch: () => [{ id: leaf }],
@@ -47,50 +84,21 @@ function fixture(file?: string, request?: HumanControlOptions["request"], askUse
     },
   };
   const runtime = registerQuestionRuntime(pi, { supported: () => false, nativeSupported: () => true });
-  const calls: Array<{
-    request: any;
-    signal?: AbortSignal;
-    resolve: (value: any) => void;
-    reject: (error: Error) => void;
-  }> = [];
+  const dialogs = nativeDialogs();
   const controls = createClaudeCompatHumanControls({
     askUserQuestion,
-    request:
-      request ??
-      ((request, options) => {
-        return new Promise((resolve, reject) => {
-          calls.push({ request, signal: options?.signal, resolve, reject });
-          options?.signal?.addEventListener(
-            "abort",
-            () => reject(options?.signal?.reason ?? new Error("Disconnected")),
-            { once: true },
-          );
-        });
-      }),
-    diagnostic(error) {
-      errors.push(error);
-    },
+    request: request ?? dialogs.request,
   });
   controls.factory(pi);
   const emit = async (name: string, event: any = {}) => {
     for (const fn of handlers.get(name) ?? []) await fn(event, ctx);
   };
-  const allow = (at: number, answer: string) => {
-    const call = calls[at]!;
-    call.resolve({
-      behavior: "allow",
-      toolUseID: call.request.tool_use_id,
-      updatedInput: { answers: { [call.request.input.questions[0].question]: answer } },
-    });
-  };
   return {
     ctx,
     runtime,
     controls,
-    calls,
-    errors,
+    calls: dialogs.calls,
     sent,
-    allow,
     emit,
     idle: () => {
       idle = true;
@@ -118,7 +126,7 @@ test("native saved answer delivers once and can be marked used only once", async
     await tick();
     expect(h.calls).toHaveLength(1);
     expect(h.calls[0]!.request.tool_name).toBe("AskUserQuestion");
-    h.allow(0, "A");
+    h.calls[0]!.allow("A");
     await tick();
     expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("A");
     expect(h.sent).toHaveLength(0); // no old execute stack or in-place child resumed
@@ -167,7 +175,7 @@ test("denial leaves pending; repeat and explicit reopen use the same ledger ques
     const reopen = h.controls.openQuestion(q.id);
     await tick();
     expect(h.calls[1]!.request.tool_use_id).toBe(h.calls[0]!.request.tool_use_id);
-    h.allow(1, "Yes");
+    h.calls[1]!.allow("Yes");
     await reopen;
     expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("Yes");
   } finally {
@@ -189,13 +197,13 @@ test("reject stale native dialog version and stale owning branch", async () => {
       foreground: true,
       checkpoint: "Next step",
     });
-    h.allow(0, "Stale answer");
+    h.calls[0]!.allow("Stale answer");
     await expect(pending).rejects.toThrow("Question changed");
     expect(h.runtime.service.get(h.ctx, q.id).status).toBe("pending");
     const reopened = h.controls.openQuestion(q.id);
     await tick();
     h.branch("sibling");
-    h.allow(1, "Wrong owner");
+    h.calls[1]!.allow("Wrong owner");
     await expect(reopened).rejects.toThrow();
     h.branch("root");
     expect(h.runtime.service.get(h.ctx, q.id).status).toBe("pending");
@@ -224,14 +232,14 @@ test("process loss preserves the pending record; a fresh frontend reopens the sa
     await h.emit("session_shutdown");
     await expect(pending).rejects.toThrow("frontend closed");
     expect(new QuestionService().get(h.ctx, q.id).status).toBe("pending");
-    next = fixture(h.ctx.sessionManager.getSessionFile());
+    next = fixture({ sessionFile: h.ctx.sessionManager.getSessionFile() });
     await next.emit("session_start");
     await tick();
     expect(next.calls).toHaveLength(1);
     const same = next.runtime.service.get(next.ctx, q.id);
     expect(same.owner).toEqual(q.owner);
     expect(same.version).toBe(q.version);
-    next.allow(0, "Recovered");
+    next.calls[0]!.allow("Recovered");
     await tick();
     expect(next.runtime.service.get(next.ctx, q.id).delivery).toBe("resume-needed");
     next.idle();
@@ -275,7 +283,7 @@ test("saved question projection accepts a correlated allow through the actual ND
     }
   });
   const run = transport.run();
-  const h = fixture(undefined, transport.request.bind(transport));
+  const h = fixture({ request: transport.request.bind(transport) });
   try {
     await h.emit("session_start");
     const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "Wire question?" });
@@ -292,7 +300,7 @@ test("saved question projection accepts a correlated allow through the actual ND
 });
 
 test("a host without native question UI keeps the saved CLI workflow, not phantom hasUI", async () => {
-  const h = fixture(undefined, undefined, false);
+  const h = fixture({ askUserQuestion: false });
   try {
     await h.emit("session_start");
     const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "CLI only?" });
@@ -324,7 +332,7 @@ test("session shutdown and start on the owning runtime recover the same pending 
     expect(h.controls.capabilities.savedQuestions).toBe(true);
     expect(h.calls).toHaveLength(2);
     const second = h.controls.openQuestion(q.id);
-    h.allow(1, "Still same owner");
+    h.calls[1]!.allow("Still same owner");
     await second;
     expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("Still same owner");
   } finally {
@@ -348,7 +356,7 @@ test("ask then block refreshes the native dialog to the current saved version", 
     await tick();
     expect(h.calls).toHaveLength(2);
     expect(h.calls[1]!.request.tool_use_id).toBe("bruv-question:" + q.id + ":" + blocked.version);
-    h.allow(1, "Current reply");
+    h.calls[1]!.allow("Current reply");
     await tick();
     expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("Current reply");
     expect(h.runtime.service.get(h.ctx, q.id).blocked?.checkpoint).toBe("Next operation needs this answer");
@@ -433,7 +441,7 @@ test("official live native question offers explicit defer without minting an ans
     const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "Choose later?", choices: ["A", "B"] });
     await tick();
     expect(h.calls[0]!.request.input.questions[0].options.at(-1).label).toBe("Keep pending (do not answer)");
-    h.allow(0, "Keep pending (do not answer)");
+    h.calls[0]!.allow("Keep pending (do not answer)");
     await h.controls.flush();
     const same = h.runtime.service.get(h.ctx, q.id);
     expect(same.status).toBe("pending");
@@ -444,7 +452,7 @@ test("official live native question offers explicit defer without minting an ans
     const reopen = h.controls.openQuestion(q.id);
     await tick();
     expect(h.calls[1]!.request.tool_use_id).toBe(h.calls[0]!.request.tool_use_id);
-    h.allow(1, "A");
+    h.calls[1]!.allow("A");
     await reopen;
     expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("A");
   } finally {
@@ -460,7 +468,7 @@ test("native defer label cannot consume a real ledger choice of the same name", 
     const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "Real named option", choices: [label, "B"] });
     await tick();
     expect(h.calls[0]!.request.input.questions[0].options.at(-1).label).not.toBe(label);
-    h.allow(0, label);
+    h.calls[0]!.allow(label);
     await h.controls.flush();
     expect(h.runtime.service.get(h.ctx, q.id).answer).toBe(label);
   } finally {
@@ -469,26 +477,8 @@ test("native defer label cannot consume a real ledger choice of the same name", 
 });
 
 test("replaced frontend rejects late allow even when transport ignores abort", async () => {
-  const callbacks: Array<{
-    request: any;
-    signal?: AbortSignal;
-    resolve: (response: any) => void;
-  }> = [];
-  const h = fixture(
-    undefined,
-    (request, options) =>
-      new Promise((resolve) => {
-        callbacks.push({ request, signal: options?.signal, resolve });
-      }),
-  );
-  const allow = (index: number, answer: string) => {
-    const callback = callbacks[index]!;
-    callback.resolve({
-      behavior: "allow",
-      toolUseID: callback.request.tool_use_id,
-      updatedInput: { answers: { [callback.request.input.questions[0].question]: answer } },
-    });
-  };
+  const dialogs = nativeDialogs({ honorAbort: false });
+  const h = fixture({ request: dialogs.request });
   try {
     await h.emit("session_start");
     const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "Still owned?" });
@@ -496,14 +486,14 @@ test("replaced frontend rejects late allow even when transport ignores abort", a
     const old = h.controls.openQuestion(q.id);
     await h.emit("session_tree");
     await tick();
-    expect(callbacks).toHaveLength(2);
-    expect(callbacks[0]!.signal?.aborted).toBe(true);
+    expect(dialogs.calls).toHaveLength(2);
+    expect(dialogs.calls[0]!.signal?.aborted).toBe(true);
     const current = h.controls.openQuestion(q.id);
-    allow(0, "Stale human answer");
+    dialogs.calls[0]!.allow("Stale human answer");
     await expect(old).rejects.toThrow("frontend changed");
     expect(h.runtime.service.get(h.ctx, q.id).status).toBe("pending");
     expect(h.controls.openQuestion(q.id)).toBe(current);
-    allow(1, "Current human answer");
+    dialogs.calls[1]!.allow("Current human answer");
     await current;
     expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("Current human answer");
   } finally {
@@ -526,7 +516,7 @@ test("terminal consent drain follows dialogs opened by session replacement", asy
     expect(h.calls).toHaveLength(2);
     expect(h.calls[0]!.signal?.aborted).toBe(true);
     expect(drained).toBe(false);
-    h.allow(1, "Answered after replacement");
+    h.calls[1]!.allow("Answered after replacement");
     await drain;
     expect(drained).toBe(true);
     expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("Answered after replacement");

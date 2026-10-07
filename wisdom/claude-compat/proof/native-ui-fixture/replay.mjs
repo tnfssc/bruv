@@ -32,7 +32,7 @@ const before=createHash('sha256').update(await fs.readFile(binary)).digest('hex'
 const version=execFileSync(binary,['--version'],{env,encoding:'utf8'}).trim();
 const log=await fs.open(path.join(root,'private-server.log'),'w',0o600);
 const server=spawn(binary,['serve','--host','127.0.0.1','--port',String(port),'--base-dir',base,'--auto-bootstrap-project-from-cwd',project],{env,stdio:['ignore',log.fd,log.fd]});
-let browser,page;
+let browser,page,observation;
 try {
  let ready=false;
  for(let i=0;i<200;i++){
@@ -44,7 +44,7 @@ try {
  const {chromium}=await import(pathToFileURL(path.join(upstream,'runtime/node_modules/playwright/index.mjs')).href);
  browser=await chromium.launch({headless:true,executablePath:browserPath,args:['--no-sandbox']});
  const context=await browser.newContext({viewport:{width:1400,height:950}});page=await context.newPage();page.setDefaultTimeout(10000);
- await integration?.capture?.({page,proof});
+ observation = await integration?.capture?.({page,proof});
  const paired=execFileSync(binary,['pair','--base-dir',base],{env,encoding:'utf8'});
  const token=paired.match(/token=([A-Za-z0-9_-]+)/)?.[1];assert.ok(token,'local pairing token (never exported)');
  await page.goto(url+'/pair#token='+token);await page.waitForTimeout(1500);
@@ -90,7 +90,7 @@ try {
  const folder=page.getByPlaceholder('Enter path (e.g. ~/projects/my-app)',{exact:true});await folder.fill(project);await folder.press('Enter');
  }
  await page.getByRole('textbox',{name:'Message',exact:true}).waitFor();
- await (integration?.exercise || exercise)({page,url,snapshot,body,assert,config});
+ await (integration?.exercise || exercise)({page,url,snapshot,body,assert,config,observation});
  const wire=(await fs.readFile(env.SPIKE_LOG,'utf8')).trim().split('\n').map(JSON.parse);
  if(integration){
  const after=createHash('sha256').update(await fs.readFile(binary)).digest('hex');assert.equal(after,before);
@@ -120,7 +120,7 @@ try {
  try { await integration?.captureFailure?.({page,proof,root}); } catch {}
  throw error;
 } finally {
- try {await integration?.flushCapture?.({proof,root});} finally {
+ try {await integration?.flushCapture?.({proof,root,observation});} finally {
  if(browser)await browser.close();
  if(server.exitCode===null){server.kill('SIGTERM');await Promise.race([new Promise(r=>server.once('exit',r)),new Promise(r=>setTimeout(r,3000))]);if(server.exitCode===null)server.kill('SIGKILL');}
  await log.close();await fs.rm(root,{recursive:true,force:true});
