@@ -262,30 +262,36 @@ test("overlapping execute invocations keep handoff and launch evidence with thei
       } as unknown as ExtensionToolContext);
     const one = run("one");
     const two = run("two");
-    finishes.get("two")!();
-    const resultTwo = await two;
-    finishes.get("one")!();
-    const resultOne = await one;
-    expect(waitSignals.get("one")!.aborted).toBe(true);
-    expect(waitSignals.get("two")!.aborted).toBe(false);
-    expect(resultTwo).not.toHaveProperty("terminate");
-    expect(resultTwo.details).not.toHaveProperty("handoff");
-    expect(resultTwo.details).toMatchObject({
-      backgroundJobs: ["two"],
-      taskRows: [{ id: "two", sourceCallId: "two", title: "Launch two" }],
-    });
-    expect(resultOne).toHaveProperty("terminate", true);
-    expect(resultOne.details).toMatchObject({
-      handoff: "One is waiting",
-      backgroundJobs: ["one"],
-      taskRows: [{ id: "one", sourceCallId: "one", title: "Launch one" }],
-    });
-    expect(launches).toMatchObject([
-      { sessionId: "session-one", row: { id: "one", sourceCallId: "one" } },
-      { sessionId: "session-two", row: { id: "two", sourceCallId: "two" } },
-    ]);
+    try {
+      finishes.get("two")!();
+      const resultTwo = await two;
+      finishes.get("one")!();
+      const resultOne = await one;
+      expect(waitSignals.get("one")!.aborted).toBe(true);
+      expect(waitSignals.get("two")!.aborted).toBe(false);
+      expect(resultTwo).not.toHaveProperty("terminate");
+      expect(resultTwo.details).not.toHaveProperty("handoff");
+      expect(resultTwo.details).toMatchObject({
+        backgroundJobs: ["two"],
+        taskRows: [{ id: "two", sourceCallId: "two", title: "Launch two" }],
+      });
+      expect(resultOne).toHaveProperty("terminate", true);
+      expect(resultOne.details).toMatchObject({
+        handoff: "One is waiting",
+        backgroundJobs: ["one"],
+        taskRows: [{ id: "one", sourceCallId: "one", title: "Launch one" }],
+      });
+      expect(launches).toMatchObject([
+        { sessionId: "session-one", row: { id: "one", sourceCallId: "one" } },
+        { sessionId: "session-two", row: { id: "two", sourceCallId: "two" } },
+      ]);
+    } finally {
+      // Release and drain both owners before restoring the shared execution spy,
+      // including when one call fails while the other is still waiting.
+      for (const finish of finishes.values()) finish();
+      await Promise.allSettled([one, two]);
+    }
   } finally {
-    for (const finish of finishes.values()) finish();
     mock.mockRestore();
   }
 });

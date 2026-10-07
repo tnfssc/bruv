@@ -1653,7 +1653,7 @@
     {
       "focus": "tests/execute-handoff.test.ts",
       "initialBlob": "a3e11225c49f9a1af729bd4f1052286524d985d0",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_c5b89dde",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c5b89dde",
@@ -1664,14 +1664,22 @@
       "judgeRounds": [
         {
           "id": "task_8ed2ab8e",
-          "status": "running",
+          "status": "complete",
           "candidate": "0f04b677427acd928f44731e043264ff19293b18",
           "base": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
-          "priorRelatedJudge": "task_cee52f91"
+          "priorRelatedJudge": "task_cee52f91",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Concurrent invocation promises scoped inside spy lifetime; release+drain before restore without swallowing normal awaits/original rejection. Whole-file independent session/wait/handoff/launch/notification assertions preserved.",
+          "checks": [
+            "independent injected rejection baseowner1unsettled vs candidate settled, samefailure/backgroundtwo",
+            "all10 actual bodies sequential read-only harness pass",
+            "format/lint/diff pass; normal4suite WASM blocker,12protocol passed,writer33 not independently claimed"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "4c64cdd32dcefa46258e47612c2fa2ab02c72122",
+      "integration": "full primary test diff integrated; related blob superseded",
       "relatedAcceptance": {
         "judge": "task_cee52f91",
         "candidate": "081b8862213c79f947489cd5becb63d1ff680f5a",
@@ -2397,7 +2405,7 @@
     {
       "focus": "tests/typescript-images.test.ts",
       "initialBlob": "94a00fb9bbe92edc63a9192476d6562be57ff4ce",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_cf585928",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cf585928",
@@ -2405,7 +2413,15 @@
         "base": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
         "commit": "4e012a7723635492f49eb27bfd292f3b052dda53"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c0294795",
+          "status": "running",
+          "candidate": "4e012a7723635492f49eb27bfd292f3b052dda53",
+          "base": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
+          "priorRelatedJudge": "task_2d0765d2"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
