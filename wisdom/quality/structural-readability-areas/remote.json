@@ -163,8 +163,14 @@
     {
       "focus": "src/remote/capability-runtime.ts",
       "initialBlob": "3e7b26feb5787add6c809baf9a3c92ba02e88a91",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
+      "primary": {
+        "id": "task_efc7153f",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_efc7153f",
+        "branch": "bruv/remote-primary-capability-runtime-efc7153f"
+      }
     },
     {
       "focus": "src/remote/client.ts",
@@ -308,14 +314,24 @@
     {
       "focus": "src/remote/owner-child.ts",
       "initialBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_3fe528f2",
+          "status": "running",
+          "candidate": "d9b1b50ea6e9eec12a9f7bfa43fd3ab70d5e239f"
+        }
+      ],
       "launchBase": "c9a84cf7c9eb36006c149e4f28f291486808a725",
       "primary": {
         "id": "task_4e578c3e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_4e578c3e",
-        "branch": "bruv/remote-primary-owner-child-4e578c3e"
-      }
+        "branch": "bruv/remote-primary-owner-child-4e578c3e",
+        "commit": "d9b1b50ea6e9eec12a9f7bfa43fd3ab70d5e239f"
+      },
+      "result": "Unchanged OwnerChild owns observed close and TERM/KILL escalation. Error retained while cleanup continues; waitForExit reports after close, release completes cleanup. Owner drains/publishes afterward.",
+      "checks": "11 pass/106 assertions local Linux source fixtures; no live/compiled.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/owner-rpc.ts",
@@ -605,12 +621,15 @@
     {
       "focus": "src/remote/services.ts",
       "initialBlob": "5668a5df605155d82fa48f3c34c720e6fccd36b3",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_662f378f",
-          "status": "running",
-          "candidate": "d9db2f5f806ab216b77820ec25aa5cff4d7c2c26"
+          "status": "completed",
+          "candidate": "d9db2f5f806ab216b77820ec25aa5cff4d7c2c26",
+          "verdict": "ACCEPT",
+          "reason": "Capability identity/revocation/frozen reply/persistence/delivery is cohesive transaction before independent result collection; child entry exposes need creation, authority wait, need removal and mailbox execution.",
+          "checks": "Judge full source/tests/callers/diff; 6 pass, three suite import failures; no independent 79-pass claim. Coordinator verified reused ClientCapabilityStore has no cached grant state."
         }
       ],
       "primary": {
@@ -624,7 +643,9 @@
       "checks": "79 candidate tests pass; lifecycle tests pass baseline; format/lint/diff pass; no full/live.",
       "changedRelatedPaths": [
         "tests/remote-capability-runtime.test.ts"
-      ]
+      ],
+      "acceptedBlob": "ac156252a9d73d6deb4963c78c7d14fe903ca8ca",
+      "integrationState": "accepted source+related tests applied without overlap; active capability-runtime worker informed in launch brief"
     },
     {
       "focus": "src/remote/source-approval.ts",
@@ -658,12 +679,15 @@
     {
       "focus": "src/remote/ssh.ts",
       "initialBlob": "1bff87d9d5b0de383721212b9dd03f5c4a6723d5",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_bddb2d5c",
-          "status": "running",
-          "candidate": "43b4fcab51d1d04941d2549d3a466ae52f90c567"
+          "status": "completed",
+          "candidate": "43b4fcab51d1d04941d2549d3a466ae52f90c567",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Single transaction shows hardened target/argv/environment, request framing, bounded output and limit-triggered TERM/KILL before close; callers retain identity/replay authority. Error handler rejects immediately, not universal close settlement.",
+          "checks": "Judge matching-source 7 pass/45 assertions; no live/deadline-path/post-spawn-error teardown/compiled/full proof."
         }
       ],
       "primary": {
@@ -675,7 +699,9 @@
       "launchBase": "aeb0a983c7448750a0e74c0d883b25bb14baad44",
       "result": "Unchanged hardened SSH transaction validate/spawn/scrub/bounded collection/single JSON/settle-close; limit reason retained through TERM/KILL escalation; callers own identity/replay.",
       "checks": "7 pass/45 assertions; missing generated WASM resolved by asset preparation; no live SSH.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "1bff87d9d5b0de383721212b9dd03f5c4a6723d5",
+      "integrationState": "unchanged exact area blob"
     },
     {
       "focus": "src/remote/untracked-preview.ts",
@@ -887,13 +913,24 @@
       "focus": "tests/remote-capability-runtime.test.ts",
       "initialBlob": "d4d2ffbe0c7946380ad09921b34deb66d3defcb3",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedAcceptance": {
+        "judge": "task_662f378f",
+        "blob": "bbe2ee62a33c10eaac3d8d881f33c53dafcde5eb",
+        "needs": "fresh primary focus and final independent judge; concurrent capability-runtime candidate may require overlap resolution"
+      }
     },
     {
       "focus": "tests/remote-client.test.ts",
       "initialBlob": "b7f7ba5ecb51b1dec96fe07d6cc5be4ddee790bc",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_43df06c7",
+          "status": "running",
+          "candidate": "d4e376614fb4d3ea13231e304bbe565e597056ea"
+        }
+      ],
       "relatedAcceptance": {
         "judge": "task_f7fa308f",
         "blob": "ba03c0e13e904025fb121462b26971e0dd986d0b",
@@ -903,8 +940,12 @@
       "primary": {
         "id": "task_e6c82233",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_e6c82233",
-        "branch": "bruv/remote-primary-client-tests-e6c82233"
-      }
+        "branch": "bruv/remote-primary-client-tests-e6c82233",
+        "commit": "d4e376614fb4d3ea13231e304bbe565e597056ea"
+      },
+      "result": "Pre-POST persistence evidence captured at transport boundary rather than inferred post-failure; mutation versus sync records separate; lock probe lifetime callback-owned; child scripts show acquire/crash phases.",
+      "checks": "23 pass/126 assertions; old tests survived omitting pre-POST saves while new fail at explicit evidence; production restored; format/lint/diff pass.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-descendant-environment.test.ts",
@@ -987,12 +1028,18 @@
     {
       "focus": "tests/remote-owner-lifecycle.test.ts",
       "initialBlob": "1bb5b51b9e308c53cebf8d2b62f70372c1b2d613",
-      "status": "pending",
+      "status": "primary-running",
       "judgeRounds": [],
       "relatedAcceptance": {
         "judge": "task_b276db50",
         "blob": "c56dff8b6c27b39df0b6ad545f763be2820a6fc4",
         "needs": "fresh primary focus and own independent judge"
+      },
+      "launchBase": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
+      "primary": {
+        "id": "task_053c976a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_053c976a",
+        "branch": "bruv/remote-primary-owner-lifecycle-tests-053c976a"
       }
     },
     {
@@ -1330,6 +1377,13 @@
       "command": "bun test root-owner,root-store,root-runtime,remote-root-client,remote-root-presenter,remote-root-transport tests",
       "result": "58 pass, 0 fail, 347 assertions across 6 files",
       "limits": "Source/fake port proof, not authenticated SSH/provider/compiled parity"
+    },
+    {
+      "commit": "f5df927f",
+      "job": "task_7ed9fd72",
+      "command": "bun run check; bun test remote-cancellation,remote-source-approval,remote-artifacts,root-store tests",
+      "result": "Full configured typecheck passes; 41 pass/244 assertions across 4 files",
+      "limits": "No full binary build, authenticated SSH/provider/compiled parity"
     }
   ],
   "crossAreaNeeds": [

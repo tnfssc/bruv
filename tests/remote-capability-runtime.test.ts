@@ -1,8 +1,14 @@
-import { grantCapabilities, revokeCapability } from "../src/remote/services";
+import {
+  capabilityNeeds,
+  grantCapabilities,
+  requestLocalCapability,
+  revokeCapability,
+  serviceRemoteTask,
+} from "../src/remote/services";
 import { test, expect, spyOn } from "bun:test";
 import * as fsPromises from "node:fs/promises";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
@@ -235,6 +241,116 @@ test("an explicit regrant after revocation gets a new durable authority without 
     const retry = await grantCapabilities(client as any, "task1", f.repo, ["repo.read"]);
     expect(retry.grant.id).toBe(second.grant.id);
   } finally {
+    await f.clean();
+  }
+});
+
+test("task servicing persists capability replies before delivery and retries frozen bytes", async () => {
+  const f = await fixture();
+  try {
+    await writeFile(join(f.repo, "README.md"), "first read");
+    const store = new ClientCapabilityStore(join(f.root, "remote", "capability-grants"));
+    const grant = await store.grant("task1", f.repo, ["repo.read"]);
+    await f.owner.acceptGrant(grant);
+    const request = await f.owner.request(grant.id, "repo.read", "README.md", "read1");
+    const replies: unknown[] = [];
+    let offline = true;
+    const client = {
+      path: join(f.root, "remote", "state.json"),
+      control: async (command: any) => {
+        const saved = JSON.parse(
+          readFileSync(join(f.root, "remote", "capability-replies", "task1", "read1.json"), "utf8"),
+        );
+        expect(saved).toEqual({ request, reply: command.reply });
+        replies.push(command.reply);
+        if (offline) throw Error("lost capability reply");
+        await f.owner.reply(command.reply);
+      },
+    };
+    const task = { taskId: "task1", task: { state: "running", capabilities: [request] } };
+    await expect(serviceRemoteTask(client as any, task as any)).rejects.toThrow("lost capability reply");
+    await writeFile(join(f.repo, "README.md"), "changed after first read");
+    offline = false;
+    await serviceRemoteTask(client as any, task as any);
+    expect(replies).toEqual([replies[0], replies[0]]);
+    expect(await f.owner.awaitReply(request)).toBe("first read");
+
+    await expect(
+      serviceRemoteTask(
+        client as any,
+        {
+          ...task,
+          task: { ...task.task, capabilities: [{ ...request, input: "different.md" }] },
+        } as any,
+      ),
+    ).rejects.toThrow("Capability retry intent conflict");
+    await store.revoke(grant.id);
+    await serviceRemoteTask(client as any, task as any);
+    expect(replies).toHaveLength(2);
+  } finally {
+    await f.clean();
+  }
+});
+
+test("capability servicing is live-only and failure stops result collection", async () => {
+  const f = await fixture();
+  try {
+    const client = { path: join(f.root, "remote", "state.json") };
+    const task = {
+      taskId: "task1",
+      task: {
+        state: "done",
+        capabilities: [{ taskId: "wrong-task" }],
+        artifactError: "artifact failure",
+      },
+    };
+    await expect(serviceRemoteTask(client as any, task as any)).rejects.toThrow(
+      "Offline text artifacts: Error: artifact failure",
+    );
+    await expect(
+      serviceRemoteTask(
+        client as any,
+        {
+          ...task,
+          task: { ...task.task, state: "running" },
+        } as any,
+      ),
+    ).rejects.toThrow("Capability identity mismatch");
+  } finally {
+    await f.clean();
+  }
+});
+
+test("child capability need survives cancellation and becomes a mailbox request after a grant", async () => {
+  const f = await fixture();
+  const previousRuntime = process.env.BRUV_REMOTE_RUNTIME_STATE;
+  process.env.BRUV_REMOTE_RUNTIME_STATE = join(f.owner.taskDir, "runtime.json");
+  try {
+    const args = { kind: "repo.read" as const, input: "README.md", requestId: "child-read" };
+    await expect(requestLocalCapability(args, AbortSignal.abort())).rejects.toThrow("Capability request cancelled");
+    expect(capabilityNeeds(f.owner.taskDir)).toEqual([
+      { id: "child-read", taskId: "task1", kind: "repo.read", input: "README.md" },
+    ]);
+    await expect(requestLocalCapability({ ...args, input: "different.md" })).rejects.toThrow(
+      "Capability intent conflict",
+    );
+    expect(await f.owner.pending()).toEqual([]);
+
+    const grant = await f.client.grant("task1", f.repo, ["repo.read"]);
+    await f.owner.acceptGrant(grant);
+    const executing = requestLocalCapability(args);
+    let pending = await f.owner.pending();
+    while (!pending.length) {
+      await Bun.sleep(10);
+      pending = await f.owner.pending();
+    }
+    expect(capabilityNeeds(f.owner.taskDir)).toEqual([]);
+    expect(pending[0]).toMatchObject({ id: "child-read", grantId: grant.id, kind: "repo.read", input: "README.md" });
+    await f.owner.reply({ requestId: "child-read", grantId: grant.id, taskId: "task1", value: "owner reply" });
+    expect(await executing).toBe("owner reply");
+  } finally {
+    if (previousRuntime === undefined) delete process.env.BRUV_REMOTE_RUNTIME_STATE;
+    else process.env.BRUV_REMOTE_RUNTIME_STATE = previousRuntime;
     await f.clean();
   }
 });
