@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "rework-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -82,7 +82,14 @@
           "launchBase": "439a4b07750ec7dc3e98d6a56b5e371de3047be9",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_92562cf3",
           "branch": "bruv/rework-agent-readme-ownership-map-92562cf3",
-          "priorCandidate": "cc7e03d0427c25a75f14d535a6a168a6ffc0c33d"
+          "priorCandidate": "cc7e03d0427c25a75f14d535a6a168a6ffc0c33d",
+          "commit": "22538fc2778f389d8331126ccc19fbe1ba57f7fe",
+          "changedPaths": [
+            "src/agent/README.md",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Clarifies local task formatters versus extension mixed assembly/budgets/destinations and remote completion summary owner; resolves first judge objection.",
+          "checks": "22 relative links; no NUL; diff check; docs-only no runtime gate."
         }
       ],
       "judgeRounds": [
@@ -276,8 +283,15 @@
     {
       "focus": "src/goals/types.ts",
       "initialBlob": "c032871506f64451dd458946bc06f5493b788e73",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_b5e31e7f",
+          "launchBase": "7c82b6171079e23e80badc6b521c2765fc8c2f9d",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_b5e31e7f",
+          "branch": "bruv/primary-goal-types-b5e31e7f"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
