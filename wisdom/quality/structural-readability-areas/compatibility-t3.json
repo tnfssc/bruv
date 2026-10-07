@@ -343,7 +343,7 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-model.mjs",
       "initialBlob": "26c60744b7399e669da090a7c33e8a767d0bd61d",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_5996dfa6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_5996dfa6",
@@ -354,17 +354,26 @@
       "judges": [
         {
           "id": "task_f65d18f3",
-          "status": "running",
-          "candidate": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d"
+          "status": "completed",
+          "candidate": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d",
+          "verdict": "ACCEPT",
+          "blob": "89591d8f077afa20b6e507cf03189b63539ddad2",
+          "relatedBlobs": {
+            "tests/claude-native-subagent-model.test.mjs": "893576c1f15e397763fea21915accb8619e49442"
+          },
+          "objections": [],
+          "evidence": "Generated launch/PID/readiness then explicit cancel+terminal observation vs bounded root hold for native Stop visible as programs,not mutable concatenation. Scenario/notification precedence,quoting,shared deadline/markers/SSE retained. IndependentNode+Bun15 each;assertions only whitespace tolerance.",
+          "limits": "Explicit API/timer stubs+temp files,not native ownership/real process cancel/browser/compiled parity."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "89591d8f077afa20b6e507cf03189b63539ddad2",
       "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a",
       "changedRelatedPaths": [
         "tests/claude-native-subagent-model.test.mjs"
       ],
       "readingResult": "Dense generated concatenation/mutable tails become readable launch→PID→readiness→explicit cancel/terminal inspect or root hold for native-owned Stop programs.",
-      "checks": "15 focused Bun+Node pass;expanded tests base pass;format/lint/diff pass;optional Biome check import assists;no driver/runner/native claim."
+      "checks": "15 focused Bun+Node pass;expanded tests base pass;format/lint/diff pass;optional Biome check import assists;no driver/runner/native claim.",
+      "integrationState": "Exact accepted model+related test joined;whole subagent-model test primary pending"
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
@@ -1745,7 +1754,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_f65d18f3",
+          "verdict": "ACCEPT",
+          "blob": "893576c1f15e397763fea21915accb8619e49442",
+          "candidate": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d"
+        }
+      ]
     },
     {
       "file": "tests/claude-native-subagent-return.test.mjs",

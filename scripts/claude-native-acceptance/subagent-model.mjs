@@ -43,15 +43,20 @@ export function reply(body, { state }) {
         : "child";
     if (results.includes("CHILD_TOOL_RESULT_REAL")) return answer("CHILD_ANSWER_REAL");
     if (results) throw Error("Child tool failed: " + results.slice(0, 300));
-    const ready = JSON.stringify(path.join(state, scenario + ".ready")),
-      release = JSON.stringify(path.join(state, scenario + ".release"));
-    return execute(
-      'const fs=await import("node:fs/promises"); await fs.writeFile(' +
-        ready +
-        ",String(process.pid)); const until=Date.now()+30000; while(true){try{await fs.access(" +
-        release +
-        ');break}catch{} if(Date.now()>until)throw Error("Child release timeout"); await new Promise(r=>setTimeout(r,50));} console.log("CHILD_TOOL_RESULT_REAL");',
-    );
+    return execute(`
+      const fs = await import("node:fs/promises");
+      await fs.writeFile(${JSON.stringify(path.join(state, scenario + ".ready"))}, String(process.pid));
+      const until = Date.now() + 30000;
+      while (true) {
+        try {
+          await fs.access(${JSON.stringify(path.join(state, scenario + ".release"))});
+          break;
+        } catch {}
+        if (Date.now() > until) throw Error("Child release timeout");
+        await new Promise(r => setTimeout(r, 50));
+      }
+      console.log("CHILD_TOOL_RESULT_REAL");
+    `);
   }
   if (user.includes("ACCEPT_LOCAL_CANCEL") || user.includes("ACCEPT_LOCAL_STOP")) {
     const stop = user.includes("ACCEPT_LOCAL_STOP"),
@@ -60,26 +65,51 @@ export function reply(body, { state }) {
       if (!stop && !results.includes("CANCEL_INSPECT_REAL")) throw Error("Actual cancellation not confirmed");
       return answer(stop ? "UNEXPECTED_STOP_RETURN" : "ROOT_CANCEL_CONFIRMED_REAL");
     }
-    let code =
-      'const fs=await import("node:fs/promises"); const r=await subagent({type:"normal",title:' +
-      JSON.stringify(stop ? stopTitle : cancelTitle) +
-      ",prompt:" +
-      JSON.stringify(
-        stop
-          ? "CHILD_STOP_REAL: run the actual waiting child tool."
-          : "CHILD_CANCEL_REAL: run the actual waiting child tool.",
-      ) +
-      ',waitSeconds:0}); if(!r.background)throw Error("Not backgrounded"); const task=await jobs.inspect(r.id); await fs.writeFile(' +
-      JSON.stringify(path.join(state, scenario + ".worker.pid")) +
-      ",String(task.pid)); const until=Date.now()+30000; while(true){try{await fs.access(" +
-      JSON.stringify(path.join(state, scenario + ".ready")) +
-      ');break}catch{} if(Date.now()>until)throw Error("Worker did not execute"); await new Promise(r=>setTimeout(r,50));}';
-    if (stop)
-      code += "await fs.writeFile(" + JSON.stringify(path.join(state, "stop.root-tool.pid")) + ",String(process.pid));";
-    code += stop
-      ? "await new Promise(r=>setTimeout(r,30000));"
-      : 'console.log(JSON.stringify(await jobs.stop(r.id))); let final; do { final=await jobs.inspect(r.id); if(final.status==="killed")break; await new Promise(r=>setTimeout(r,25)); }while(Date.now()<until); if(final.status!=="killed")throw Error("Cancel not terminal: "+final.status); console.log("CANCEL_INSPECT_REAL",JSON.stringify(final));';
-    return execute(code);
+    // Both roots wait for the real child's tool to start before exercising cancellation.
+    const launchAndWait = `
+      const fs = await import("node:fs/promises");
+      const r = await subagent({
+        type: "normal",
+        title: ${JSON.stringify(stop ? stopTitle : cancelTitle)},
+        prompt: ${JSON.stringify(
+          stop
+            ? "CHILD_STOP_REAL: run the actual waiting child tool."
+            : "CHILD_CANCEL_REAL: run the actual waiting child tool.",
+        )},
+        waitSeconds: 0,
+      });
+      if (!r.background) throw Error("Not backgrounded");
+      const task = await jobs.inspect(r.id);
+      await fs.writeFile(${JSON.stringify(path.join(state, scenario + ".worker.pid"))}, String(task.pid));
+      const until = Date.now() + 30000;
+      while (true) {
+        try {
+          await fs.access(${JSON.stringify(path.join(state, scenario + ".ready"))});
+          break;
+        } catch {}
+        if (Date.now() > until) throw Error("Worker did not execute");
+        await new Promise(r => setTimeout(r, 50));
+      }
+    `;
+    if (stop) {
+      // Keep the root tool alive: native Stop, not this tool, must close the owned subtree.
+      return execute(`${launchAndWait}
+        await fs.writeFile(${JSON.stringify(path.join(state, "stop.root-tool.pid"))}, String(process.pid));
+        await new Promise(r => setTimeout(r, 30000));
+      `);
+    }
+    // An explicit cancellation report is not enough; observe the terminal job as well.
+    return execute(`${launchAndWait}
+      console.log(JSON.stringify(await jobs.stop(r.id)));
+      let final;
+      do {
+        final = await jobs.inspect(r.id);
+        if (final.status === "killed") break;
+        await new Promise(r => setTimeout(r, 25));
+      } while (Date.now() < until);
+      if (final.status !== "killed") throw Error("Cancel not terminal: " + final.status);
+      console.log("CANCEL_INSPECT_REAL", JSON.stringify(final));
+    `);
   }
   if (user.includes("ACCEPT_LOCAL_SUBAGENT")) {
     if (results) {
@@ -87,11 +117,15 @@ export function reply(body, { state }) {
         throw Error("Not an actual background launch: " + results);
       return answer("ROOT_BACKGROUND_RETURN_REAL");
     }
-    return execute(
-      'const r=await subagent({type:"normal",title:' +
-        JSON.stringify(title) +
-        ',prompt:"CHILD_LOCAL_REAL: execute the local acceptance tool and return its actual result.",waitSeconds:0}); console.log(JSON.stringify(r));',
-    );
+    return execute(`
+      const r = await subagent({
+        type: "normal",
+        title: ${JSON.stringify(title)},
+        prompt: "CHILD_LOCAL_REAL: execute the local acceptance tool and return its actual result.",
+        waitSeconds: 0,
+      });
+      console.log(JSON.stringify(r));
+    `);
   }
   if (user.includes("ACCEPT_LOCAL_AFTER_CHILD")) return answer("ROOT_AFTER_CHILD_REAL");
   if (user.includes("ACCEPT_LOCAL_FOLLOWUP")) return answer("ROOT_FOLLOWUP_REAL");
