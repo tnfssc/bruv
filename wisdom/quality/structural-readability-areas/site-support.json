@@ -85,13 +85,15 @@
     {
       "focus": "site/demos.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_008ddeae",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_008ddeae",
           "branch": "bruv/primary-site-demos.test.ts-008ddeae",
-          "base": "a7c9017050d478c22ce5a9b9c6f5c102ffd40011"
+          "base": "a7c9017050d478c22ce5a9b9c6f5c102ffd40011",
+          "commit": "5517249dd1180a80bec468b8aebb58bc4cb2458b",
+          "result": "Each story owns assertions; hold/wrap,pause,offscreen,visibility have independent setups instead of shared wrapped zero clock. Nonzero freeze tests catch reset mutation baseline missed. 11 tests/5582285 assertions,format/diff pass; existing lint warning. No production edits."
         }
       ],
       "judges": [],
@@ -168,7 +170,7 @@
     {
       "focus": "site/html-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_0fff100d",
@@ -179,7 +181,13 @@
           "result": "No source change. Adjacent equal-style cells copied into runs, escaped, RGB serialized, rows wrapped. State local, Cell type producer ownership. 6 demos tests and 5 serialization assertions pass. No browser/build."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_7c587dbb",
+          "candidate": "6aef65244d48cb0fac62d8ee80886177d3e9a654",
+          "state": "running"
+        }
+      ],
       "initialBlob": "7c70d1bdd3c530eddb002adeffd1d1f7be2f5dc1",
       "relatedPatchJudgment": {
         "primaryFocus": "site/demos.ts",
@@ -304,7 +312,7 @@
     {
       "focus": "site/scripts/animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_5d88706f",
@@ -319,10 +327,16 @@
         {
           "id": "task_d3cccc82",
           "candidate": "375ad0209a72f263e6c2e0e0c07e4dd321ca490d",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Typed shared terminal observation and control/cell coordinate operations remove repeated protocol decoding. Independent immutable checkpoints clarify desktop and touch progression. Judge 7 playback/layout/scroll tests; browser harness writer-only proof. Desktop-only error collector unchanged; combined type fix outside candidate.",
+          "objections": []
         }
       ],
-      "initialBlob": "74f85bf8a7d44a454349084978f1dc4858ed9063"
+      "initialBlob": "74f85bf8a7d44a454349084978f1dc4858ed9063",
+      "acceptedBlob": "4bea05dabee326db5d3cc42783a45b9f73e66750",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/browser.ts",
@@ -532,8 +546,15 @@
     {
       "focus": "site/scripts/install.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_d558bcd2",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_d558bcd2",
+          "branch": "bruv/primary-site-scripts-install.test.ts-d558bcd2",
+          "base": "d60a32ac5d87d5865097b99f40ddb1f6cabdb768"
+        }
+      ],
       "judges": [],
       "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f"
     },

@@ -27,3 +27,5 @@ site/install-command.ts: Clipboard permission attempt/fallback and temporary tex
 site/scripts/extract-cells.ts: Geometry is single authority and browser returns cropped grouped rows; Bun owns hash/publication. Judge 10 tests and independent baseline/candidate browser replay byte parity with tracked JSON SHA256 ab9210c0002890a088636581f3beeccbc558a096e8cadace3e5fba782484f76c. Maintained assets command, not current shipped scripted demos. Existing cleanup gaps unchanged.
 
 support/gpt-live-explained.html: Static task/handoff/authority/control narrative is structurally clear. Judge traced actual live authority/cancellation callers/tests. NO current-content endorsement: lines 19/21 incorrectly describe GPT-Live as unshipped; separate content refresh needed. No tests/browser/provider/build rerun.
+
+site/scripts/animation.ts: Typed shared terminal observation and control/cell coordinate operations remove repeated protocol decoding. Independent immutable checkpoints clarify desktop and touch progression. Judge 7 playback/layout/scroll tests; browser harness writer-only proof. Desktop-only error collector unchanged; combined type fix outside candidate.
