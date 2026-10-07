@@ -56,3 +56,7 @@ Initialization proof: 766 baseline blob matches and pending rows; 766 assignment
 Use Bun 1.4.2 at `/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin`, with PATH set inside a quoted `/bin/bash` script; automatic fish setup may fail while a worker still starts. Full gate: `SHELL=/bin/sh bun run ci`.
 
 Next: parent launches area orchestrators from this initialization commit, runs the per-file pipeline and integrates durable worker commits here, reconciling hashes/ledgers. Refresh final inventory for additions/deletions explicitly. Done only when **every final first-party code file** has primary coverage and independent actual-code acceptance at its final hash, groups fit, full gates pass and integrated PR #45 is updated.
+
+## Shared integration checkpoint
+
+Joined committed, independently judged partial batches from all eight areas. Exact tips: [integration batches](structural-readability-integration-batches.json). No changed source overlap at this checkpoint. Related files are accepted as parts of coherent patches; their dedicated primary focus coverage still remains where area ledgers say pending. Two unused session-input files have judged removals, not missing hashes. This is common code for the remaining workers, not whole-repo acceptance or delivery. Parent integration typecheck is next; final quality audit and full gates remain.
