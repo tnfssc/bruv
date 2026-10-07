@@ -1056,10 +1056,17 @@
     {
       "focus": "src/live/embedded.ts",
       "initialBlob": "bda048c5bdf546d7dd7297e130b17920ce1c3f14",
-      "primary": null,
+      "primary": {
+        "id": "task_e346a38c",
+        "launchBase": "a0bf3b5740f229cea155e0c664b16ce91dc4e618",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_e346a38c",
+        "branch": "bruv/primary-src-live-embedded.ts-e346a38c",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/extension.ts",
@@ -1280,12 +1287,17 @@
         "launchBase": "f67636586cd6bf6649ab5fce055cfec0819784f8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_34c585ed",
         "branch": "bruv/primary-src-live-helper.ts-34c585ed",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "2f13e6964b36f305a16084fd3d6c7e417e2361a7"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [
+        "tests/live-embedded-helper.test.ts"
+      ],
+      "readingResult": "Helperunchanged validate/privateextract/sync-reverify/grantexecute/transfercleanup journey;nestedfd/directory scopes purposeful. Relatedcompiledprobe discardedTMPDIR;fixture nowpassesTMPDIR/assertsownedlocation+cleanup.",
+      "checks": "21tests112assertions/format/diffpass;no Mac/device/provider/fullgate. Explicit fixture fix only,noruntime contractchange."
     },
     {
       "focus": "src/live/lifecycle-access.ts",
