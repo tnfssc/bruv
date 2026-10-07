@@ -47,3 +47,7 @@ Primary task_f8eb0cae; judge task_a6caab27 ACCEPT candidate 8aaffbf961e73dbedafd
 ## Accepted footer observer lifetimes
 
 Primary task_b0090f89; judge task_05ce27ca ACCEPT candidate 23d4c95aa626e1ef2e84308c792bffc4b1b130e6. Cost polling and cache countdown now own independent clocks; shared cache redraw/rescheduling and component gate remain explicit. Gate suppresses late redraw, does not cancel filesystem I/O. Independent 43 tests/365 assertions and format/lint pass (unchanged advisories). Footer tests still require primary coverage.
+
+## Accepted diagnostics acceptance boundaries
+
+Primary task_123df133; judge task_50dcf5f6 ACCEPT candidate 54ebccd6eeedc055d6832461c3fe4e4e9bae859b. Live observation and durable acceptance are visible separate operations; snapshot shape has one constructor. Privacy, bounded replay/write reservation, reentrancy and generation protections retained. Writer 58 passes; judge 15 independent assertions, full focused suites dependency-blocked. Diagnostics test primary still pending.

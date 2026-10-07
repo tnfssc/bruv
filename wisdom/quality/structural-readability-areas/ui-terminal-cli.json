@@ -459,7 +459,7 @@
     {
       "focus": "src/diagnostics.ts",
       "initialBlob": "6fbe60bb93e4ee1cc78243ee5f28e585294dd5ca",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_123df133",
@@ -474,11 +474,25 @@
           "id": "task_50dcf5f6",
           "base": "d7358730889bcc702110e71fae0e18c4bea3a840",
           "candidate": "54ebccd6eeedc055d6832461c3fe4e4e9bae859b",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/diagnostics.ts": "208b251b5b7130114fbd4813aa83259798119f83",
+            "tests/diagnostics.test.ts": "48a273afdc220bd4984fbc18739015dc4a86c88a"
+          },
+          "evidence": "Live bounded observation precedes durable acceptance visibly; dedup/budget/reentry reservation and sink finally form one operation. Snapshot shape no longer maintained across three paths. Privacy allowlist, ring/write/replay bounds and generation guards preserved.",
+          "checks": [
+            "15 independent assertions privacy/budget/reentry/reset/stale handles/replay",
+            "diff check"
+          ],
+          "limits": [
+            "Four-suite independent run failed dependency loading, 0 pass/4 import errors",
+            "No full gate/typecheck/packaged CLI/provider/SSH/device"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "208b251b5b7130114fbd4813aa83259798119f83",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "d7358730889bcc702110e71fae0e18c4bea3a840",
       "changedRelatedPaths": [
         "tests/diagnostics.test.ts"
@@ -892,7 +906,7 @@
     {
       "focus": "tests/cli.test.ts",
       "initialBlob": "70002a8662ff8db59fa74014040bb2544af9f464",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f5df93a3",
@@ -902,7 +916,15 @@
           "commit": "3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_a07a60a3",
+          "base": "868ad04a4bc7bf245bb63eeb87767e7d55769691",
+          "candidate": "3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_db22e114"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "CLI-related patch integrated; primary focus still pending",
       "relatedPatchJudgments": [
@@ -949,7 +971,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_50dcf5f6",
+          "candidate": "54ebccd6eeedc055d6832461c3fe4e4e9bae859b",
+          "verdict": "ACCEPT",
+          "blob": "48a273afdc220bd4984fbc18739015dc4a86c88a"
+        }
+      ]
     },
     {
       "focus": "tests/editor.test.ts",
@@ -999,8 +1029,15 @@
     {
       "focus": "tests/footer.test.ts",
       "initialBlob": "44e272d01ed9552d2083fc4951cfc58700cb8bc2",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_f4f7731b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_f4f7731b",
+          "branch": "bruv/primary-readability-tests-footer.test.ts-f4f7731b",
+          "launchBase": "b2297dabbf2f776682e0b88090c3039ef2b20893"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "footer-related patch integrated; primary pending",
@@ -1011,7 +1048,8 @@
           "verdict": "ACCEPT",
           "blob": "056832cfee4ac38b504ba64803de17fc6ccd1ddd"
         }
-      ]
+      ],
+      "launchBase": "b2297dabbf2f776682e0b88090c3039ef2b20893"
     },
     {
       "focus": "tests/fullscreen-editor-tui.test.ts",
