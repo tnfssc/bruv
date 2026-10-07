@@ -534,13 +534,20 @@
       "judgeRounds": [
         {
           "id": "task_1f20ecb1",
-          "status": "running",
+          "status": "complete",
           "candidate": "a840d0db75cf09eeb7b3a0556de30c53e04a5e5d",
-          "base": "ccefb31e5026c37a0995e588fc5c2e1d7c3466cf"
+          "base": "ccefb31e5026c37a0995e588fc5c2e1d7c3466cf",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Direct repo cwd/Linux/output/compiler operation coherent; CI owns temp graph/protocol cleanup, runtime owns launch, Darwin embedding separate. Linux self-test only buildOK, not device proof.",
+          "checks": "Independent syntax and11 focused tests108 assertions; native build not rerun by judge.",
+          "acceptedBlobs": {
+            "scripts/build-live-linux-helper.sh": "81989563bcacb3c947843520081648afa4e4b521"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "81989563bcacb3c947843520081648afa4e4b521",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged direct dependency flags/output/compiler path; Linux build self-test only reports buildOK, no need to import macOS publication orchestration.",
       "checks": "Shell syntax/real native build including spaced nested output/self-test/no-device hello-stop pass;11 workflow/platform tests108 assertions. No privatePulse/device/provider/macOS/full gate."
@@ -1141,9 +1148,15 @@
         "status": "candidate ready",
         "commit": "2932f52f154c8d697234bb620b66b927ba2afd44"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_2bb07f5d",
+          "status": "running",
+          "candidate": "2932f52f154c8d697234bb620b66b927ba2afd44"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged shared provider contracts keep input/output/turn epochs and admission separate;GPT provisional delegation protocol not fabricated shared completion.",
       "checks": "190 tests1350 assertions across7;standard assets resolved initial missing WASM;no typecheck/build/provider/device proof."
