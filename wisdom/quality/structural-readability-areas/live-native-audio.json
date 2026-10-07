@@ -1592,6 +1592,15 @@
       "format": "2 changed TypeScript files pass",
       "lint": "exit 0; 8 warnings/7 infos unchanged from worker baseline",
       "limits": "no whole gate/provider/device/macOS/runtime parity claim"
+    },
+    {
+      "tip": "2465efcb",
+      "jobId": "task_26d1258a",
+      "tests": "252 pass / 0 fail / 21582 assertions across 13 files; 9 Python protocol regressions pass",
+      "typecheck": "bun run check exit 0 including own prepare assets",
+      "format": "11 changed TypeScript files pass exit 0",
+      "lint": "exit 0; 25 warnings/20 infos, no fixes",
+      "limits": "native source sequences not physical device/macOS/provider execution; not full Linux gate"
     }
   ],
   "followups": [
