@@ -622,7 +622,7 @@
     {
       "focus": "scripts/update-dependencies.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "awaiting-judge",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_b3760f86",
@@ -633,7 +633,14 @@
           "commit": "a7218e7ff7a5a20a884f8afe816838c66ba9876a"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_98fc9caa",
+          "base": "911a433455175b5af5db6bc909c220f2693ffd24",
+          "candidate": "a7218e7ff7a5a20a884f8afe816838c66ba9876a",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [
         "tests/dependency-updates.test.ts"
       ],
@@ -1026,7 +1033,7 @@
     {
       "focus": "tests/manual-release.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_cceff3bf",
@@ -1042,19 +1049,29 @@
           "id": "task_69fdb98c",
           "base": "3471000073611ed798a890b9ca70905cf5d1df1a",
           "candidate": "10555f146dd356bc1437da6270183a0cd52726ed",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Own repo lifetime and isolated state scenarios remove inherited mutation reconstruction; responsibility-grouped workflow cases retain full prior gating/permissions/identity inventory. Added byte retry idempotence, unchanged HEAD/tags, notes preservation and no-mutation refusals.",
+          "checks": "Independent28/166focus52focus+publish;strict tsc/Biome/diff pass;threefile71pass2fail missing local deps. JS evaluator/textual packaging not hosted proof.",
+          "acceptedBlobs": {
+            "tests/manual-release.test.ts": "9fdf9ef3fc1b9cb88a95e49ca012d78b86561024"
+          },
+          "followUp": "Rejudge fixture compatibility when pending scripts/prepare-manual-release.ts changes."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9fdf9ef3fc1b9cb88a95e49ca012d78b86561024",
       "relatedPatchJudgment": {
         "id": "task_265f1748",
         "verdict": "ACCEPT",
         "blob": "5f8bd56781ff6e2f44148f74008b99e5b77fa97e",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Isolated release-state scenarios with owned cleanup replace mutable prep journey; grouped workflow responsibilities and named admission/identity cases; retry/refusal effects strengthened.",
-      "checks": "Combined50pass;tsc/focus format/lint pass;no build/hosted/native/publication."
+      "checks": "Combined50pass;tsc/focus format/lint pass;no build/hosted/native/publication.",
+      "integrationState": "Full focus patch integrated; no script overlap. Pending prepare-manual source changes require compatibility/fixture rejudgment explicitly requested by judge."
     },
     {
       "focus": "tests/native-node-path.test.ts",

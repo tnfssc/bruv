@@ -58,3 +58,5 @@ Release workflow: one read-only admission/SHA-tag job; downstream explicit succe
 Asset-test primary: owned copied dependencies/input checkout, explicit generation→inventory→old timestamps→idempotence→cleanup. Judge task_a43b5841 ACCEPT6c6ae2c; three mutations independently caught. No shared dependency writes, no full byte fidelity/stale-output cleanup/compiled proof.
 
 Dependency-workflow-test primary: step-local contracts, isolated real bundle scenarios. Judge task_35b870b5 ACCEPT5d0f15a;11focus39combined575assertions. Existing identity mutation-proof gap explicit; no hosted/authenticated push.
+
+Manual-test primary: isolated release states and owned repository lifetime, named admission/identity cases, byte retry/no-mutation refusals. Judge task_69fdb98c ACCEPT9fdf9ef;28/166focus52withpublisher. Explicit follow-up: rejudge fixture compatibility if pending preparer script changes; no hosted evaluator claim.
