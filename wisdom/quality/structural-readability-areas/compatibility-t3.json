@@ -237,8 +237,17 @@
       "judges": [
         {
           "id": "task_6eb06db6",
+          "status": "cancelled-no-verdict",
+          "candidate": "462f150fbce933d55a1e9b6261af5891f391b9d1",
+          "verdict": null,
+          "objections": [],
+          "limits": "Killed143 after cancellation request;no final verdict or actual-code findings delivered. Retained attempt,not acceptance/rejection;fresh judge task_0a188823 running."
+        },
+        {
+          "id": "task_0a188823",
           "status": "running",
-          "candidate": "462f150fbce933d55a1e9b6261af5891f391b9d1"
+          "candidate": "462f150fbce933d55a1e9b6261af5891f391b9d1",
+          "replacesAttempt": "task_6eb06db6"
         }
       ],
       "acceptedBlob": null,
@@ -424,15 +433,27 @@
       "initialBlob": "5f8db4ace61b0211f53f5959653a2bf6f0dc2f26",
       "status": "primary-running",
       "primary": {
-        "id": "task_ce9e9c06",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ce9e9c06",
-        "branch": "bruv/primary-native-acceptance-tap-ce9e9c06",
-        "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a",
+        "id": "task_88689870",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_88689870",
+        "branch": "bruv/primary-tap-fresh-replacement-88689870",
+        "launchBase": "67ca6129aa546c8d43e84afa4b6e6799dac3f6a3",
         "commit": null
       },
       "judges": [],
       "acceptedBlob": null,
-      "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a"
+      "launchBase": "67ca6129aa546c8d43e84afa4b6e6799dac3f6a3",
+      "primaryAttempts": [
+        {
+          "id": "task_ce9e9c06",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ce9e9c06",
+          "branch": "bruv/primary-native-acceptance-tap-ce9e9c06",
+          "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a",
+          "commit": null,
+          "limits": "No candidate delivered after30min;last visible tool progress13:50:18,stop requested14:20:30. Worktree retained. Do not count slot free until terminal acknowledgment.",
+          "status": "cancelled-no-candidate",
+          "exitCode": 143
+        }
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/worker.mjs",
@@ -1763,7 +1784,7 @@
     {
       "file": "tests/claude-native-app-delegation-model.test.mjs",
       "initialBlob": "1cf00502ad018790f014c2cb3740e3fb38366ec6",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_e6d0f185",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_e6d0f185",
@@ -1774,11 +1795,16 @@
       "judges": [
         {
           "id": "task_d7f96210",
-          "status": "running",
-          "candidate": "c87751547054ba01def731c868035c2fc53d4029"
+          "status": "completed",
+          "candidate": "c87751547054ba01def731c868035c2fc53d4029",
+          "verdict": "ACCEPT",
+          "blob": "6ede1b80de7086f185214a1add3684ed43746d01",
+          "objections": [],
+          "evidence": "Copied rejection transcript probes no push/pop restoration bookkeeping;successful histories explicit. Scope/launch/child evidence before ACK/cancel_requested vs interrupted/root registry authority retained. IndependentNode+Bun7 each,40 instrumented reply histories identical,original3 bodies byte-identical.",
+          "limits": "Transcript copy does not isolate filesystem effects;those remain actual+tested.Offline not native/browser."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "6ede1b80de7086f185214a1add3684ed43746d01",
       "relatedPatchJudgments": [
         {
           "id": "task_97f013af",
@@ -1790,7 +1816,8 @@
       "launchBase": "4c9fd54804dbe22cf9fbc854199d879d8fcd2c74",
       "changedRelatedPaths": [],
       "readingResult": "Copy transcript branches replace append/reject/pop bookkeeping;successful journey advances explicitly,rejection probe cannot mutate it.Original3 bodies and generated model programs unchanged.",
-      "checks": "7 each Bun/Node;instrumented baseline/candidate40 reply request transcripts identical;format/diff;no source/live."
+      "checks": "7 each Bun/Node;instrumented baseline/candidate40 reply request transcripts identical;format/diff;no source/live.",
+      "integrationState": "Exact whole-file primary/judge patch joined,replaces old model-patch test hash"
     },
     {
       "file": "tests/claude-native-command-idle.test.mjs",
@@ -1811,15 +1838,21 @@
     {
       "file": "tests/claude-native-subagent-model.test.mjs",
       "initialBlob": "7312e31703cb656c2ba1d743b815887c2e018c82",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_988c56c9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_988c56c9",
         "branch": "bruv/primary-subagent-model-tests-988c56c9",
         "launchBase": "cfc4a4035e4b35f09269664a4799931e1ddcf4ac",
-        "commit": null
+        "commit": "5576525d700d07b112136b84e8655c9c534e55a1"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_001ef7c1",
+          "status": "running",
+          "candidate": "5576525d700d07b112136b84e8655c9c534e55a1"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1829,7 +1862,10 @@
           "candidate": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d"
         }
       ],
-      "launchBase": "cfc4a4035e4b35f09269664a4799931e1ddcf4ac"
+      "launchBase": "cfc4a4035e4b35f09269664a4799931e1ddcf4ac",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged explicit stubs/event traces expose readiness,terminal cancellation observation and native Stop root hold;shared harness would obscure distinct authority.",
+      "checks": "11 focused Bun pass;no native ownership/live provider."
     },
     {
       "file": "tests/claude-native-subagent-return.test.mjs",
@@ -2151,9 +2187,15 @@
       "file": "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
       "kind": "related-existing",
       "initialBlob": "74e8a8040d7b70b0851550921bd988d377464e8e",
-      "status": "pending-primary",
+      "status": "primary-running",
       "introducedBy": "06f56bdd95bb033cd44026c458d3cb69d4e37a0c",
-      "primary": null,
+      "primary": {
+        "id": "task_1514b0b6",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1514b0b6",
+        "branch": "bruv/primary-actual-native-replay-source-1514b0b6",
+        "launchBase": "67ca6129aa546c8d43e84afa4b6e6799dac3f6a3",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -2163,7 +2205,8 @@
           "blob": "6661503a7f97ab89141988bbced7aef0ed37f935",
           "candidate": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc"
         }
-      ]
+      ],
+      "launchBase": "67ca6129aa546c8d43e84afa4b6e6799dac3f6a3"
     },
     {
       "file": "tests/claude-native-acceptance-capture.test.mjs",
@@ -2419,6 +2462,20 @@
       "status": "passed",
       "scope": "Final runner test7 each Node/Bun",
       "limits": "Offline orchestration;no live/native."
+    },
+    {
+      "id": "task_3df0ab5f",
+      "commit": "67ca6129",
+      "status": "passed",
+      "scope": "Capture+generated finalization4 Node tests;capture/finalization/runner/subagent-return15 Bun tests;replay syntax",
+      "limits": "Generated replay setup-failure offline path,not successful native/browser acceptance."
+    },
+    {
+      "id": "task_a4378da6",
+      "commit": "67ca6129",
+      "status": "passed",
+      "scope": "One actual paired build:dist/bruv +dist/bruv-claude-compat,for subsequent compiled coverage",
+      "limits": "Not full CI or live/device/provider."
     }
   ],
   "combinedReviews": [
