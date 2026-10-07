@@ -63,8 +63,8 @@ test("all updater entries share compiled help without fetching or bootstrap", as
       expect(result.code).toBe(0);
       expect(result.stdout).toContain("Usage: bruv update [--check]");
       expect(result.stdout).toContain("SHA256 and version checks");
-      expect(result.stdout).toContain("T3 may still report unchanged/outdated");
-      expect(result.stdout).toContain("not the Bruv product version");
+      expect(result.stdout).toContain("connector CLI identity is unknown to Claude version checks");
+      expect(result.stdout).toContain("separate built-in Claude model too-old advisory can remain");
     }
   }
   expect(await Bun.file(log).exists()).toBe(false);

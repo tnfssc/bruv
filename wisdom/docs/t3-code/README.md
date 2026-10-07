@@ -27,8 +27,16 @@ bruv-claude-compat --version
 
 The first two commands locate the installed pair. Bruv and the connector’s
 `--bruv-version` must report the same product version. The connector’s
-`--version` instead reports `2.1.280 (Bruv compatibility; bruv <product version>)`:
-a protocol compatibility version, not an installed Claude Code version.
+`--version` reports only `Bruv connector`, with no dotted semver in stdout or
+stderr. SDK init still uses protocol compatibility `2.1.280` in
+`claude_code_version`, with the real product in `bruv.version`.
+
+In unmodified T3 `v0.0.46-nightly.20261005.2702`, that CLI version is unknown:
+latest-Claude lookup is skipped and update popup/settings candidates exclude it.
+Tradeoff: version-gated built-in Claude models are filtered, and a separate
+“installed version is too old” model advisory can remain. Custom Bruv
+`provider/id` models stay available. No T3 changes/settings edits are needed;
+this is not a promise about future hosts. See [identity proof and limits](../../claude-compat/label-only-cli-identity.md).
 
 ## 2. Configure your provider in ordinary Bruv
 
@@ -120,11 +128,14 @@ provider credentials or inference requests were used for these captures.
   parent environment or ordinary Claude home.
 - After stopping a turn with a pending approval, T3 can leave its cancelled
   card visible. **Decline the stale approval before continuing; do not approve it.**
-- Never use T3’s **Claude login, install or updater** for Bruv. A latest-Claude
-  update notice or built-in Sonnet advisory is not a requirement for your
-  custom model. Update Bruv’s pair with `bruv update` (check with
-  `bruv update --check`); stop active sessions first and restart afterward.
-  Update T3 independently and recheck history-fix availability.
+- Never use T3’s **Claude login or install** for Bruv. A built-in Claude model
+  advisory is not a requirement for your custom model. If a host offers an
+  update button that invokes the configured connector’s `update` command, it
+  runs the same paired Bruv updater, not Claude. Package-manager-managed paths
+  may choose an external updater instead; use the matched standalone pair.
+  Update with `bruv update` or `bruv-claude-compat update` (check with `--check`);
+  stop active sessions first and restart afterward. Update T3 independently
+  and recheck history-fix availability.
 - If startup fails, recheck the absolute paths, exact model and ordinary Bruv
   auth. T3 may show only a generic error; connector stderr can explain it.
 

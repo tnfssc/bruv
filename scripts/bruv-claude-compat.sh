@@ -26,9 +26,9 @@ case "$bruv" in /*) ;; *) fail "BRUV_CLAUDE_COMPAT_BRUV_PATH must be an absolute
 [ -x "$bruv" ] && [ ! -d "$bruv" ] || fail "normal Bruv executable not found: $bruv; install the matching pair"
 [ ! "$bruv" -ef "$self" ] || fail "normal Bruv path must not point to the connector launcher"
 # 0.16.3 probes a downloaded pair inside its private .bruv-update-* directory
-# and requires this exact legacy product label. It cannot understand the SDK
-# compatibility version. Only this staged --version probe uses the old label;
-# after rename the same launcher exposes the connector's SDK-facing version.
+# and requires this exact legacy product label, not the label-only CLI identity.
+# Only this staged --version probe uses the old label;
+# after rename the same launcher exposes the label-only Bruv connector identity.
 case "${directory##*/}/$name" in
   .bruv-update-*/bruv-claude-compat)
     if [ "$#" -eq 1 ] && [ "$1" = "--version" ]; then

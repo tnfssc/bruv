@@ -133,7 +133,7 @@ test("0.16.3 staged version probe uses truthful legacy product label only until 
   await writeConnectorLauncher(launcher);
   await writeFile(
     normal,
-    '#!/bin/sh\nif [ "$1" = "--version" ]; then echo 0.17.0; elif [ "$2" = "--bruv-version" ]; then echo "bruv-claude-compat 0.17.0"; else echo "2.1.280 (Bruv compatibility; bruv 0.17.0)"; fi\n',
+    '#!/bin/sh\nif [ "$1" = "--version" ]; then echo 0.17.0; elif [ "$2" = "--bruv-version" ]; then echo "bruv-claude-compat 0.17.0"; else echo "Bruv connector"; fi\n',
   );
   await chmod(normal, 0o755);
   expect((await run([launcher, "--version"])).stdout).toBe("bruv-claude-compat 0.17.0\n");
@@ -142,7 +142,5 @@ test("0.16.3 staged version probe uses truthful legacy product label only until 
   const { rename } = await import("node:fs/promises");
   await rename(normal, join(home, "bruv"));
   await rename(launcher, join(home, "bruv-claude-compat"));
-  expect((await run([join(home, "bruv-claude-compat"), "--version"])).stdout).toBe(
-    "2.1.280 (Bruv compatibility; bruv 0.17.0)\n",
-  );
+  expect((await run([join(home, "bruv-claude-compat"), "--version"])).stdout).toBe("Bruv connector\n");
 });

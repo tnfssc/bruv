@@ -51,7 +51,7 @@ if (cliArgs[0] === "--live-self-test") {
 if (cliArgs[0] === "update") {
   if (cliArgs.length === 2 && ["--help", "-h"].includes(cliArgs[1]!)) {
     console.log(
-      "Usage: bruv update [--check]\n\nUpdate normal bruv and sibling bruv-claude-compat together after SHA256 and version checks.\nA compatible normal-only install gains the connector. --check reports without downloading or replacing files.\nStop active Bruv/T3 sessions first. Does not install Claude or T3; user data is unchanged.\nAliases: bruv-claude-compat update, bruv claude-compat update (same arguments).\nT3 may still report unchanged/outdated after a real Bruv update: it compares our protocol compatibility version against latest Claude, not the Bruv product version. Restart T3 after updating.",
+      "Usage: bruv update [--check]\n\nUpdate normal bruv and sibling bruv-claude-compat together after SHA256 and version checks.\nA compatible normal-only install gains the connector. --check reports without downloading or replacing files.\nStop active Bruv/T3 sessions first. Does not install Claude or T3; user data is unchanged.\nAliases: bruv-claude-compat update, bruv claude-compat update (same arguments).\nRestart T3 after updating. The connector CLI identity is unknown to Claude version checks; a separate built-in Claude model too-old advisory can remain.",
     );
     process.exit(0);
   }

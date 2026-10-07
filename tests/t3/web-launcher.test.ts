@@ -42,7 +42,11 @@ test("guide retains history limitations and safe paired updates without parent w
   expect(guide).toContain("No custom launch arguments or parent/server/global CLAUDE_CONFIG_DIR");
   expect(guide).toContain("Do not change HOME or ordinary Claude state");
   expect(guide).toContain("never use ~/.claude or the auth home");
-  expect(guide).toContain("2.1.280 Bruv compatibility profile");
+  expect(guide).toContain("Connector --version is only Bruv connector");
+  expect(guide).toContain("SDK init stays 2.1.280");
+  expect(guide).toContain("CLI version as unknown");
+  expect(guide).toContain("too-old model");
+  expect(guide).toContain("custom Bruv provider/id models stay available");
   expect(guide).toContain("2644 lacks the provider-scoped SDK history fix");
   expect(guide).toContain("before Bruv starts");
   expect(guide).toContain("no fixed release");
@@ -50,7 +54,7 @@ test("guide retains history limitations and safe paired updates without parent w
   expect(guide).toContain("explicitly Decline any stale approval card; do not approve it");
   expect(guide).toContain("Never use T3's Claude login or install for Bruv");
   expect(guide).toContain("the connector's paired Bruv updater (not Claude)");
-  expect(guide).toContain("unchanged/outdated after updating");
+  expect(guide).toContain("Label-only CLI identity avoids latest-Claude update candidates");
   expect(guide).toContain("Restart T3 after updating");
   expect(guide).toContain("Stop active Bruv/T3 sessions");
   expect(guide).toContain("bruv update --check    (read-only check)");

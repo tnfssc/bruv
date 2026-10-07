@@ -49,10 +49,10 @@ bruv update                  # Update the sibling CLI and connector together
 ```
 
 The connector commands `bruv-claude-compat update` and `bruv claude-compat update`
-use this same paired updater, including `--check` and `--help`/`-h`. T3's update
-button is supported for a configured Bruv connector, but it may still report
-unchanged/outdated after a successful update: it compares our protocol version
-against latest Claude, not the Bruv product version. No Claude/T3 is updated.
+use this same paired updater, including `--check` and `--help`/`-h`. If T3 invokes
+the connector's update command, it updates Bruv, not Claude/T3. Label-only CLI
+identity avoids latest-Claude update candidates in the researched T3 tag; a
+separate built-in Claude model advisory can remain (see version details below).
 
 Stop active sessions first and restart T3 afterward. Split/custom binary layouts
 need a manual paired reinstall. External T3 updates separately with `t3 update`;
@@ -157,13 +157,23 @@ bun run build
 ```
 
 The build compiles `dist/bruv` once and writes the small executable
-`dist/bruv-claude-compat` launcher beside it. The connector reports
-`2.1.280 (Bruv compatibility; bruv <product>)` for `--version`; use
-`--bruv-version` for the product version and paired packaging/update checks.
+`dist/bruv-claude-compat` launcher beside it. Connector `--version` reports only
+`Bruv connector`, with no dotted semver in stdout or stderr. Normal
+`bruv --version` remains the real product version; connector `--bruv-version`
+remains exact `bruv-claude-compat <product>` for paired packaging/update checks.
+SDK init still reports protocol compatibility `2.1.280` in `claude_code_version`
+and the real product version in `bruv.version`. This is not a Claude install.
+
+In unmodified T3 `v0.0.46-nightly.20261005.2702`, label-only CLI output means
+unknown version: latest-Claude lookup is skipped and no latest-update popup or
+settings update candidate is produced. Tradeoff: version-gated built-in Claude
+models are filtered, and a separate “installed version is too old” model advisory
+can remain. Custom Bruv `provider/id` models stay available. This is not a
+claim about future T3 releases; no T3 settings change is needed.
 During an older updater’s private `.bruv-update-*` staging probe only, the
 canonical launcher’s exact `--version` call retains the old truthful
-`bruv-claude-compat <product>` response. After installation it uses the SDK-facing
-compatibility identity above; new packaging/update checks use `--bruv-version`.
+`bruv-claude-compat <product>` response. After installation it uses the label-only
+identity above; new packaging/update checks use `--bruv-version`.
 
 Install your local build:
 

@@ -248,7 +248,7 @@ jobs:
           version=$(HOME="$home" dist/release/bruv-linux-x64 --version)
           test "$version" = "$(bun -p 'require("./package.json").version')"
           test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --bruv-version)" = "bruv-claude-compat $version"
-          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
+          test "$(HOME="$home" dist/release/bruv-claude-compat-linux-x64 --version)" = "Bruv connector"
           BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64" \
           BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64" \
           PROOF_OUTPUT="$GITHUB_WORKSPACE/artifacts/release/native-acceptance" \
@@ -287,7 +287,7 @@ jobs:
           version="$(dist/release/bruv-darwin-arm64 --version)"
           test "$version" = "$(bun -p 'require("./package.json").version')"
           test "$(dist/release/bruv-claude-compat-darwin-arm64 --bruv-version)" = "bruv-claude-compat $version"
-          test "$(dist/release/bruv-claude-compat-darwin-arm64 --version)" = "2.1.280 (Bruv compatibility; bruv $version)"
+          test "$(dist/release/bruv-claude-compat-darwin-arm64 --version)" = "Bruv connector"
           bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')"
           bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')" --legacy-updater
           home=$(mktemp -d)

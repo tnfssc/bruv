@@ -3,8 +3,8 @@ import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import type { Readable, Writable } from "node:stream";
 import product from "../../package.json";
-import { CONNECTOR_VERSION, BRUV_CONNECTOR_VERSION, connectorLaunchDefaults } from "./launch";
-export { CONNECTOR_VERSION, BRUV_CONNECTOR_VERSION } from "./launch";
+import { CONNECTOR_DISPLAY_IDENTITY, BRUV_CONNECTOR_VERSION, connectorLaunchDefaults } from "./launch";
+export { CONNECTOR_DISPLAY_IDENTITY, BRUV_CONNECTOR_VERSION } from "./launch";
 import image from "../../runtime-assets/assets/clankolas.png" with { type: "file" };
 import template from "../../runtime-assets/export-html/template.html" with { type: "file" };
 import highlight from "../../runtime-assets/export-html/vendor/highlight.min.js" with { type: "file" };
@@ -42,8 +42,8 @@ export const CONNECTOR_HELP = [
   "  bruv-claude-compat --help | --version | --bruv-version",
   "  bruv-claude-compat update [--check] (or --help/-h)",
   "    Same paired updater as bruv update; also: bruv claude-compat update.",
-  "    T3 may still report unchanged/outdated: it compares protocol compatibility",
-  "    against latest Claude, not the Bruv product version. Restart T3 after updating.",
+  "    Restart T3 after updating. CLI identity is unknown to Claude version checks;",
+  "    a separate built-in Claude model too-old advisory can remain.",
   "",
   "Stream stdin/stdout are NDJSON; auxiliary stdin is plain text and stdout is one",
   "validated structured_output result. Diagnostics go only to stderr.",
@@ -52,8 +52,9 @@ export const CONNECTOR_HELP = [
   "BRUV_CLAUDE_COMPAT_BRUV_PATH selects the normal Bruv binary for child work",
   "(default: normal bruv itself for subcommand packaging, otherwise sibling bruv).",
   "The two optional BRUV path overrides expand ~ and ~/ only.",
-  "--version reports 2.1.280 Bruv protocol compatibility; --bruv-version reports",
-  "the real Bruv product version. No Anthropic authentication is claimed.",
+  "--version reports only Bruv connector (no semver); --bruv-version reports",
+  "the real Bruv product version. SDK init compatibility stays 2.1.280.",
+  "No Anthropic authentication is claimed.",
   "Persistent native sessions require an aligned, connector-owned CLAUDE_CONFIG_DIR",
   "(set the same T3 provider homePath). The real default Claude home is refused.",
   "Initialization checks local readiness, never provider access or subscription.",
@@ -287,7 +288,7 @@ export async function runConnector(
       await write(
         io.output,
         args.action === "version"
-          ? CONNECTOR_VERSION + "\n"
+          ? CONNECTOR_DISPLAY_IDENTITY + "\n"
           : args.action === "bruv-version"
             ? BRUV_CONNECTOR_VERSION + "\n"
             : CONNECTOR_HELP,

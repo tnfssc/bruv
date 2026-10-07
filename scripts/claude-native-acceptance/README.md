@@ -251,11 +251,14 @@ use `/bin/sh`; Android uses `/system/bin/sh` and the Android API 28+ executable
 uses `/system/bin/linker64`, not glibc.
 
 Packaging compares connector `--bruv-version` to normal `bruv --version`.
-Connector `--version` is the protocol compatibility identity:
-`2.1.280 (Bruv compatibility; bruv <product>)`. Only the older updater’s exact
+Connector `--version` reports only `Bruv connector` (no dotted semver), so T3
+treats the CLI version as unknown rather than a latest-Claude update candidate.
+SDK init keeps `claude_code_version: 2.1.280` and real product `bruv.version`.
+Version-gated built-in Claude models are filtered and a separate too-old model
+advisory can remain; custom Bruv models stay available. Only the older updater’s exact
 canonical `--version` probe in its private `.bruv-update-*` staging directory
-retains the truthful legacy product label; installed native SDK probes use the
-compatibility identity. The release launcher gate checks
+retains the truthful legacy product label; installed CLI probes use the
+label-only display identity. The release launcher gate checks
 shipped script checksums, shebangs, sibling resolution, exec process identity and argument/exit-status
 forwarding using a temporary sibling and the host POSIX shell. It does not claim
 native Android/macOS execution or native T3 acceptance. The existing composed
