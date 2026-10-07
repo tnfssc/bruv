@@ -1951,7 +1951,7 @@
       "focus": "src/session/transcript-snapshots.ts",
       "initialBlob": null,
       "originCandidate": "7f466cef21871ee373a158c35f58f85e19861166",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_3b6b9b8d",
@@ -1974,11 +1974,19 @@
           "id": "task_35e27b6b",
           "candidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
           "base": "aa29a96f021b586c95a74c56452dcabe6be8490a",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Locked transaction stages now reclaim/account, verify/renew existing before admission, then exclusive write/rollback; helper lifetimes/domain meaning reduce reconstruction without changing retention safety. Fixture/wrapper lifetimes and fault contracts coherent.",
+          "checks": "Independent isolated wrapper passed; host suite zod resolution blocked; actual code/tests inspected. New tests still need fresh primary coverage.",
+          "acceptedRelatedBlobs": {
+            "tests/fixtures/transcript-snapshots.ts": "7aec56ef946ff9464c59338786b818c42c81e0c5",
+            "tests/transcript-snapshots.test.ts": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "integrated-related-primary-pending",
+      "acceptedBlob": "be5d94bde803903b1cc6d25132f17a9d63a6cb09",
+      "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "7f466cef21871ee373a158c35f58f85e19861166",
         "judge": "task_9ae7f05e",
@@ -1995,7 +2003,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate-new"
+      "integration": "integrated-related-primary-pending",
+      "relatedPatchReview": {
+        "candidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
+        "judge": "task_35e27b6b",
+        "verdict": "ACCEPT",
+        "blob": "7aec56ef946ff9464c59338786b818c42c81e0c5",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/transcript-snapshots.test.ts",
@@ -2005,7 +2020,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate-new"
+      "integration": "integrated-related-primary-pending",
+      "relatedPatchReview": {
+        "candidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
+        "judge": "task_35e27b6b",
+        "verdict": "ACCEPT",
+        "blob": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2",
+        "primaryFocusStillRequired": true
+      }
     }
   ],
   "crossAreaNeeds": [
