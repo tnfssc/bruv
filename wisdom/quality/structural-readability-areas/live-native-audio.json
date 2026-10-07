@@ -14,12 +14,15 @@
         "launchBase": "80720079160a7bbc23be750dcffaefb6fc7458f2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_8194489e",
         "branch": "bruv/primary-.github-workflows-live.yml-8194489e",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "333c662fc7ac2b3ffa9a8ca238ba0fe9c6bce8f5"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged candidate: opposite job conditions distinguish helper protocol smoke/artifact delivery from source+compiled loopback probe; extraction would add navigation.",
+      "checks": "9 workflow tests/100 assertions, three portable sanitizer binaries, YAML routing/permissions/pins/artifacts and diff checks. No hosted/macOS/device/provider or compiled transport execution."
     },
     {
       "focus": "native/live-linux/CaptureGate.h",
@@ -34,13 +37,28 @@
       "initialBlob": "76741dde51fe38d1f42496c66309cb700e266987",
       "primary": {
         "id": "task_71e74f3b",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6",
-        "status": "running",
-        "commit": null
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_71e74f3b",
+        "status": "candidate ready",
+        "commit": "751c9ba0be74eb6939791c49c06d84de8882e669",
+        "branch": "bruv/primary-native-live-linux-main.cpp-71e74f3b",
+        "launchBase": "4aeb4eb94c369d8a0338c849a0d18914e009d78a"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_13282f24",
+          "status": "running",
+          "candidate": "751c9ba0be74eb6939791c49c06d84de8882e669",
+          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "judge running",
+      "relatedPaths": [
+        "native/live-linux/tests/playback-buffer.cpp",
+        "native/live-linux/tests/protocol.py"
+      ],
+      "readingResult": "PlaybackBuffer owns ring/generation/flush synchronization; explicit enqueue outcomes; updateStreams owns opening/readiness/verification; render path frame/echo/AEC/Pulse write visible.",
+      "checks": "Native build/self-test, ASan/UBSan buffer harness, protocol rejection/backpressure; 25 Bun tests/172 assertions. Virtual protocol/capture fail audio_device on candidate and baseline; no runtime parity."
     },
     {
       "focus": "native/live-linux/tests/backpressure.py",
@@ -136,10 +154,17 @@
     {
       "focus": "native/live/main.swift",
       "initialBlob": "4a29411a451125a88c2572107856a35bc97ea137",
-      "primary": null,
+      "primary": {
+        "id": "task_255d99a6",
+        "launchBase": "b769d70b9f292a9f01ec52a4ad27cc5aa4ede138",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_255d99a6",
+        "branch": "bruv/primary-native-live-main.swift-255d99a6",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live/test-capture-gate.c",
@@ -304,10 +329,17 @@
     {
       "focus": "src/live/audio.ts",
       "initialBlob": "f2549d1391e3184fe6463503542169e6c6c6b3f7",
-      "primary": null,
+      "primary": {
+        "id": "task_f8a6b192",
+        "launchBase": "b769d70b9f292a9f01ec52a4ad27cc5aa4ede138",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_f8a6b192",
+        "branch": "bruv/primary-src-live-audio.ts-f8a6b192",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/config.ts",
@@ -1184,7 +1216,17 @@
       "integration": "pending"
     }
   ],
-  "extraFiles": [],
+  "extraFiles": [
+    {
+      "focus": "native/live-linux/tests/playback-buffer.cpp",
+      "introducedBy": "751c9ba0be74eb6939791c49c06d84de8882e669",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate related addition; needs own primary focus after accepted integration"
+    }
+  ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
   "primaryBrief": "Fresh PRIMARY FILE worker, one focus file. Work in your durable worktree. Before commit write SHORT local pickup note wisdom/quality/structural-readability-worker.md: actual problem, why better, exact proof, limits/path/branch. Commit candidate; return exact launch base/commit/changed paths and concrete before/after reader walkthrough. Worker completion means candidate only; fresh independent actual-code judge decides acceptance. Do not edit area ledger. Start from your launch committed state; do not import other candidates.",
   "judgeBrief": "Fresh READ-ONLY independent actual-code judge, separate from writer. Inspect ACTUAL source, callers, tests and FULL candidate diff at exact candidate path/commit/base, not just summaries or green tests. Judge intrinsic current code and improvement separately; cite important reader journeys and why mental reconstruction decreased. Return ACCEPT / REJECT / NO CHANGE NEEDED with exact inspected file blobs and concrete reasons. Already readable code may pass unchanged. For REJECT give concrete unmet targets and smallest coherent rework. Review ALL related/new/deleted paths. No edits/commits. Context includes any prior findings, writer responses and unresolved objections; do not launder earlier acceptance."
