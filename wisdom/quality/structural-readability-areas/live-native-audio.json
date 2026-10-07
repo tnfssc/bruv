@@ -2007,6 +2007,14 @@
       "format": "11 changed TypeScript files pass exit 0",
       "lint": "exit 0; 25 warnings/20 infos, no fixes",
       "limits": "native source sequences not physical device/macOS/provider execution; not full Linux gate"
+    },
+    {
+      "tip": "f6e7b649",
+      "jobId": "task_8c734875",
+      "tests": "277 pass/0 fail/21718 assertions across14 files;17 Python regressions pass",
+      "typecheck": "root check exit0 after parent shared checkpoint and own asset preparation",
+      "format": "40 files pass",
+      "limits": "not full Linux gate; no device/provider/macOS execution"
     }
   ],
   "followups": [
@@ -2020,11 +2028,12 @@
     }
   ],
   "audit": {
-    "tip": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
+    "tip": "bd5084664d34bc0a4b9a6f37592a4452b323335e",
     "baselineFiles": 140,
-    "extraFiles": 2,
-    "baselineAccepted": 8,
-    "extraAccepted": 1,
+    "extraFiles": 3,
+    "baselinePrimaryStarted": 28,
+    "baselineAccepted": 22,
+    "extraAccepted": 2,
     "acceptedBlobMismatches": [],
     "status": "partial; not completion"
   },
