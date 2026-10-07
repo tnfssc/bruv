@@ -468,17 +468,28 @@
     {
       "file": "src/claude-compat/human-controls.ts",
       "initialBlob": "dceabf00172ab6f8c57fcb462315e48bf6427256",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_449c2e3a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_449c2e3a",
         "branch": "bruv/primary-human-controls-449c2e3a",
         "launchBase": "3c404c225d458d07d85de3008eea309663cf4163",
-        "commit": null
+        "commit": "d09a46d856445ce51003ad5e1b1aa0080986454c"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_262e4f9b",
+          "status": "running",
+          "candidate": "d09a46d856445ce51003ad5e1b1aa0080986454c"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "3c404c225d458d07d85de3008eea309663cf4163"
+      "launchBase": "3c404c225d458d07d85de3008eea309663cf4163",
+      "changedRelatedPaths": [
+        "tests/claude-compat-human-controls.test.ts"
+      ],
+      "readingResult": "One bound frontend owns subscription/dispose callbacks, remembered versions, active dialogs; refresh/save use captured command port. Replacement closes/invalidate late callbacks/abort dialogs, interrupt retains binding, terminal drain follows replacement. Explicit answer/correlation/owner/version/defer/delivery authority retained.",
+      "checks": "60 focused295 assertions+runtime wrapper;typecheck/format/lint/diff pass,one info;new lifetime tests pass base,no behavior fix."
     },
     {
       "file": "src/claude-compat/launch.ts",
@@ -513,10 +524,17 @@
     {
       "file": "src/claude-compat/live-frontend.ts",
       "initialBlob": "e1e8e088837528826765e9f5e101fc577aa99c81",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_1868ec30",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1868ec30",
+        "branch": "bruv/primary-live-frontend-1868ec30",
+        "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9"
     },
     {
       "file": "src/claude-compat/mcp.ts",
@@ -801,17 +819,37 @@
     {
       "file": "src/t3/tasks/local-notifications.ts",
       "initialBlob": "76e02ef84211c59caf17457745a5fc5ed11dbf03",
-      "status": "primary-running",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_5f59191c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_5f59191c",
         "branch": "bruv/primary-local-task-notifications-5f59191c",
         "launchBase": "3c404c225d458d07d85de3008eea309663cf4163",
-        "commit": null
+        "commit": "5fe1a9886250d111282c347f3350e60cbd3e0c4e"
       },
-      "judges": [],
-      "acceptedBlob": null,
-      "launchBase": "3c404c225d458d07d85de3008eea309663cf4163"
+      "judges": [
+        {
+          "id": "task_c76f8b07",
+          "status": "completed",
+          "candidate": "5fe1a9886250d111282c347f3350e60cbd3e0c4e",
+          "verdict": "ACCEPT",
+          "blob": "4fb034c350ee11e5c65bd48541b4498478d823f6",
+          "relatedBlobs": {
+            "tests/t3/local-notifications.test.ts": "39074cbdb7213812a4200dbc8b307a698901d560"
+          },
+          "objections": [],
+          "evidence": "Disk remains authoritative without redundant cache; pass priority/fairness distinct per-row retries/ACK validation/client close. Durable-before-send, stable identity, matching committed/disposed removal, supersession, stop preserving ambiguous rows retained. Independent13 tests45 assertions.",
+          "limits": "Combined bridge zod/mini blocked;not independent35-pass claim;no live/full build."
+        }
+      ],
+      "acceptedBlob": "4fb034c350ee11e5c65bd48541b4498478d823f6",
+      "launchBase": "3c404c225d458d07d85de3008eea309663cf4163",
+      "changedRelatedPaths": [
+        "tests/t3/local-notifications.test.ts"
+      ],
+      "readingResult": "Redundant mailbox cache removed with disk authority retained; pass-level completion priority/fairness separate per-notification retry/ACK/client cleanup. Durable before send, stable identity, matching committed/disposed ACK/supersession/capacity/cancel retained.",
+      "checks": "35 tests116 assertions;focused TypeScript/Biome;no intended behavior fix/live/full build.",
+      "integrationState": "Exact reviewed source+related test joined; local-notification test primary pending"
     },
     {
       "file": "src/t3/tasks/mcp-client.ts",
@@ -887,10 +925,17 @@
     {
       "file": "src/t3/web/launcher.ts",
       "initialBlob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_9cfebe77",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_9cfebe77",
+        "branch": "bruv/primary-t3-web-launcher-9cfebe77",
+        "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9"
     },
     {
       "file": "tests/claude-compat-app-worker.test.ts",
@@ -1135,15 +1180,21 @@
     {
       "file": "tests/claude-compat-task-binding.test.ts",
       "initialBlob": "88bae66b92d33c773eb63314188b667b96b66447",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_0e6166c9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_0e6166c9",
         "branch": "bruv/primary-task-binding-tests-0e6166c9",
         "launchBase": "bf075025b80c839bee132274a7aa9d6f7c3de06e",
-        "commit": null
+        "commit": "89ecd547979c0022ff93e98776a421cd683b5ba7"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_dada1e0a",
+          "status": "running",
+          "candidate": "89ecd547979c0022ff93e98776a421cd683b5ba7"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1153,13 +1204,22 @@
           "candidate": "d6dae4e14c8e0a75fc6ffd173754a9aa42825dc7"
         }
       ],
-      "launchBase": "bf075025b80c839bee132274a7aa9d6f7c3de06e"
+      "launchBase": "bf075025b80c839bee132274a7aa9d6f7c3de06e",
+      "changedRelatedPaths": [],
+      "readingResult": "SDK execute journey creates session resources without unused manager/binding; extension owns sole task authority. Direct tests add own owner explicitly; both worker journeys share agent-only executable replacement.",
+      "checks": "8 binding+13 projection tests+isolation wrapper;Biome/diff pass;assertions retained;missing assets both baseline/candidate resolved locally;optional pinned SDK unavailable;UUID assertion narrow."
     },
     {
       "file": "tests/claude-compat-task-projection.test.ts",
       "initialBlob": "da89cdcea508117e2cbefe3d91d35670c3a71d9d",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_532af0c5",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_532af0c5",
+        "branch": "bruv/primary-task-projection-tests-532af0c5",
+        "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1169,7 +1229,8 @@
           "blob": "8d511b8d880d5562f295406b3aad31d687cc8088",
           "candidate": "7e679084be24d21c23492a319f7bf2657abd7630"
         }
-      ]
+      ],
+      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9"
     },
     {
       "file": "tests/claude-compat-transport.test.ts",
@@ -1387,7 +1448,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_c76f8b07",
+          "verdict": "ACCEPT",
+          "blob": "39074cbdb7213812a4200dbc8b307a698901d560",
+          "candidate": "5fe1a9886250d111282c347f3350e60cbd3e0c4e"
+        }
+      ]
     },
     {
       "file": "tests/t3/native-routing.test.ts",
@@ -1696,6 +1765,13 @@
       "status": "passed",
       "scope": "Combined final projection/task-binding/runtime17 outer tests89 assertions;typecheck;format",
       "limits": "No SDK/live/compiled/full gate."
+    },
+    {
+      "id": "task_e5573ea0",
+      "commit": "14101d86",
+      "status": "passed",
+      "scope": "Final MCP/appworker19 tests91 assertions;typecheck",
+      "limits": "No live/full gate."
     }
   ],
   "combinedReviews": [
@@ -1722,14 +1798,24 @@
     },
     {
       "id": "task_9f597255",
-      "status": "running",
+      "status": "completed",
       "candidate": "a27ea7341b8a2a89ba556134b8d36b20bcd96275",
       "files": [
         "src/claude-compat/task-binding.ts",
         "src/claude-compat/task-projection.ts",
         "tests/claude-compat-task-binding.test.ts",
         "tests/claude-compat-task-projection.test.ts"
-      ]
+      ],
+      "verdict": "ACCEPT",
+      "objections": [],
+      "blobs": {
+        "src/claude-compat/task-binding.ts": "f89738896eb0371d634a4cac21b6108cc6c5e48b",
+        "src/claude-compat/task-projection.ts": "8dcf972b448b2da8c19abe4d70c2530e117c7ba0",
+        "tests/claude-compat-task-binding.test.ts": "567ac25e5767e742252d917371c4dfd50c6dabdc",
+        "tests/claude-compat-task-projection.test.ts": "8d511b8d880d5562f295406b3aad31d687cc8088"
+      },
+      "evidence": "Actual combined causal/history-before-exposure/checkpoint/revision/resume/reattachment semantics traced. Binding/projection16 outer pass;runtime/history/transport23 pass7 SDK skips;diff clean.",
+      "limits": "No pinned SDK/full gate/live/compiled;not primary test substitution."
     }
   ]
 }
