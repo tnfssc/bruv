@@ -564,19 +564,36 @@
     {
       "focus": "scripts/terminal-perf/artifacts.ts",
       "initialBlob": "eeac78ef15a882ca01423dfaf4c1ada83c10f861",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_47a4d9cd",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_47a4d9cd",
           "branch": "bruv/primary-readability-scripts-terminal-per-47a4d9cd",
-          "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017"
+          "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
+          "commit": "a70327eb16d622fbed9460d467ac2fb08f692150"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_83710623",
+          "base": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
+          "candidate": "a70327eb16d622fbed9460d467ac2fb08f692150",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017"
+      "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
+      "changedRelatedPaths": [],
+      "result": "No-change: import owns parse/duplicate/summary-validation; export mkdir/four writes direct, staging would change failure ordering.",
+      "checks": [
+        "7tests/50assertions",
+        "2isolated probes/14assertions"
+      ],
+      "limits": [
+        "Nontransactional partial writes/overwrites unchanged; no build"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
@@ -599,11 +616,19 @@
     {
       "focus": "scripts/terminal-perf/dashboard.ts",
       "initialBlob": "5da2c4acd3cdbf1ebbe47c5e32e4086843c9517e",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_64e62042",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_64e62042",
+          "branch": "bruv/primary-readability-scripts-terminal-per-64e62042",
+          "launchBase": "a58d7f02d1b2bca9a291c5c370d69c92e9f429f1"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "a58d7f02d1b2bca9a291c5c370d69c92e9f429f1"
     },
     {
       "focus": "scripts/terminal-perf/interaction-catalog.ts",
