@@ -20,8 +20,15 @@
     {
       "focus": "site/assets/brand/bruv-icon.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_74788f3b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_74788f3b",
+          "branch": "bruv/primary-site-assets-brand-bruv-icon.svg-74788f3b",
+          "base": "3647146013dbb2bd05ae7ee977fa476cd5d4686e"
+        }
+      ],
       "judges": [],
       "initialBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646"
     },
@@ -92,7 +99,7 @@
     {
       "focus": "site/demos.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_008ddeae",
@@ -103,7 +110,13 @@
           "result": "Each story owns assertions; hold/wrap,pause,offscreen,visibility have independent setups instead of shared wrapped zero clock. Nonzero freeze tests catch reset mutation baseline missed. 11 tests/5582285 assertions,format/diff pass; existing lint warning. No production edits."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_fae7ccc8",
+          "candidate": "5517249dd1180a80bec468b8aebb58bc4cb2458b",
+          "state": "running"
+        }
+      ],
       "initialBlob": "8ca404103fe2971f2c54b810f45d0e527d5e40fd",
       "relatedPatchJudgment": {
         "primaryFocus": "site/demos.ts",
@@ -362,7 +375,7 @@
     {
       "focus": "site/scripts/build.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_3a3293a9",
@@ -377,10 +390,16 @@
         {
           "id": "task_53cb3831",
           "candidate": "d27476d3d0d4fe4702ede2e20c535ccff6093c48",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "URL authority cases direct, layout matrices keep inputs beside assertions, frame/playback setups local. Judge read full test and real build/layout/demo/capture/runtime dependencies; independently 16 focus+demo tests. No browser/build/full gate.",
+          "objections": []
         }
       ],
-      "initialBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799"
+      "initialBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799",
+      "acceptedBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/build.ts",
@@ -535,13 +554,15 @@
     {
       "focus": "site/scripts/html-animation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_9f36ba3a",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_9f36ba3a",
           "branch": "bruv/primary-site-scripts-html-animation.test-9f36ba3a",
-          "base": "25a89310c4b2c6e98d321674fc7b75bcf02e69f0"
+          "base": "25a89310c4b2c6e98d321674fc7b75bcf02e69f0",
+          "commit": "dcafa0e98cd6cc5216e326efc4634a327a8129c0",
+          "result": "withDemoPage owns setup/awaited assertions/context teardown, tests get Page; final hold names manualClock installed before navigation. Assertions/timings/routing unchanged. 5 Chromium tests/48 expectations,TS/format pass. Behavior delta: setup exceptions now close context; not injected. Judge whether justified lifetime coherence vs speculative defense."
         }
       ],
       "judges": [],

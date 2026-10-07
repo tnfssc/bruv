@@ -31,3 +31,5 @@ support/gpt-live-explained.html: Static task/handoff/authority/control narrative
 site/scripts/animation.ts: Typed shared terminal observation and control/cell coordinate operations remove repeated protocol decoding. Independent immutable checkpoints clarify desktop and touch progression. Judge 7 playback/layout/scroll tests; browser harness writer-only proof. Desktop-only error collector unchanged; combined type fix outside candidate.
 
 site/html-cells.ts: Local copied style-run grouping -> escaping/RGB spans -> row wrapper directly readable; producer-owned type-only Cell import clear. Judge independently 6 demos tests and 7 serializer assertions including frozen-input preservation. Browser inspected not rerun.
+
+site/scripts/build.test.ts: URL authority cases direct, layout matrices keep inputs beside assertions, frame/playback setups local. Judge read full test and real build/layout/demo/capture/runtime dependencies; independently 16 focus+demo tests. No browser/build/full gate.
