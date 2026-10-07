@@ -1447,6 +1447,15 @@
       "scope": "full tsc, six changed-path format/lint",
       "status": "pass after local assets populated without modifying shared deps; lint 3 existing warnings/5 infos",
       "tests": "71 pass 0 fail"
+    },
+    {
+      "job": "task_a480f513",
+      "commit": "10508c78",
+      "scope": "rolling/footer/diagnostics/previews/task-row combined tests, full tsc, eight changed-path format/lint",
+      "status": "pass",
+      "log": "runtime-assets/readability-batch2.log",
+      "proof": "161 pass\n 0 fail\n 2032 expect() calls\nRan 161 tests across 8 files. [2.12s]",
+      "static": "Full tsc and eight-file format/lint pass; lint 6 warnings/18 infos"
     }
   ],
   "parentBoundary": {
