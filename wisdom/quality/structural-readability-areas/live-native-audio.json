@@ -1061,12 +1061,15 @@
         "launchBase": "a0bf3b5740f229cea155e0c664b16ce91dc4e618",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_e346a38c",
         "branch": "bruv/primary-src-live-embedded.ts-e346a38c",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "8a92d8f20f136df4561706ec9c6493f25c709946"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged sourcenull/releaseplugin assetpathdigest/resolver verifyprivateextract/audio cleanup owners distinctvisible;extraabstraction addsbookkeeping.",
+      "checks": "4embeddedtests20assertions inclcompiledextract afteroriginalpayloaddeletion;unbundleddefault/diffpass,nodevice/Mac/provider/fullgate."
     },
     {
       "focus": "src/live/extension.ts",
@@ -1302,10 +1305,17 @@
     {
       "focus": "src/live/lifecycle-access.ts",
       "initialBlob": "907131d869263fb00bd1a84a042a244cf108c1dc",
-      "primary": null,
+      "primary": {
+        "id": "task_426bbfc3",
+        "launchBase": "ec8ca2ecbe0fe49172c4abb8c25c12c00ee11a92",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_426bbfc3",
+        "branch": "bruv/primary-src-live-lifecycle-access.ts-426bbfc3",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/main-owner.ts",
