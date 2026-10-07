@@ -1,0 +1,295 @@
+{
+  "area": "site-support",
+  "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+  "baseline": [
+    {
+      "focus": "site/.gitignore",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/assets/brand/bruv-icon.svg",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/assets/brand/bruv-wordmark-light.svg",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/assets/brand/bruv-wordmark.svg",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/assets/brand/wordmark-cells.json",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/assets/cli-settings.txt",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/assets/settings-cells.json",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/brand.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/capture.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/content.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/demos.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/demos.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/html-animation.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/html-cells.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/index.html",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/install-command.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/install-html.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/layout.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/package.json",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/playback.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/animation.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/browser.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/build.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/build.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/capture-demo-source.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/capture-real-pty.py",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/capture-real.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/extract-cells.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/generate-wordmark.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/html-animation.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/install-ui.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/install.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/preview.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/scroll.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/startup.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scripts/validate.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/scroll.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/styles.css",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/terminal.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "site/wrangler.jsonc",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    },
+    {
+      "focus": "support/gpt-live-explained.html",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": []
+    }
+  ],
+  "extra": [],
+  "crossArea": []
+}
