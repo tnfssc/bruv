@@ -52,3 +52,5 @@ Paired build: singleton matrix/loop removed in favor of direct commandâ†’spawnâ†
 CI workflow: explicit feedback success then two accepted full/docs lane tuples; judge task_884543de ACCEPT8f17983.21/276 tests,17 bash syntax blocks,1500 behavior comparisons plus45 malformed values, exactly same two allowed outcomes. Permissions/wiring unchanged; no actionlint/hosted proof.
 
 Dependency workflow: verify downloaded identity/files before explicit credential exposure; publish step owns auth/freshness/leased push. Judge task_69a61924 ACCEPT8d6139c plus related tests;13 independent tests/nine shell syntax blocks. This scopes credentials within existing write job, not new security boundary; no hosted/auth/API proof.
+
+Release workflow: one read-only admission/SHA-tag job; downstream explicit success gates and immutable-source wiring replace scattered policy. Judge task_265f1748 ACCEPT72a12eb plus both tests;56 independent tests. Extra Ubuntu queue/start/failure boundary explicit. Boolean fixture is not hosted scheduling; no platform/build proof. Both related test primaries pending.

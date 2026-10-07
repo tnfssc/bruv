@@ -88,7 +88,7 @@
     {
       "focus": ".github/workflows/release.yml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_bc9b05c3",
@@ -104,16 +104,26 @@
           "id": "task_265f1748",
           "base": "e28d9d7faa7efb20abf8cdc7573623146061443c",
           "candidate": "8fa4466c2d0941f6f70ce17c590b1b2008f1fc17",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Single read-only release-source admission/SHA-tag authority replaces repeated predicates/fallbacks; always explicitly handles skipped manual prep for tag triggers; downstream success gates/permissions/payload retained. Added runner queue/failure boundary explicit.",
+          "checks": "Independent56 tests across manual/release/publish/packaging; format/diff pass,5 existing lint warnings. Limited boolean expression fixture not actual GitHub scheduler; no hosted/build/platform/independent tsc.",
+          "acceptedBlobs": {
+            ".github/workflows/release.yml": "72a12eb6a00a934c436ce9ff6982123c10320564",
+            "tests/manual-release.test.ts": "5f8bd56781ff6e2f44148f74008b99e5b77fa97e",
+            "tests/release-workflows.test.ts": "38423dc785ee300c75dc1ec6a868e3eef9a4a05e"
+          }
         }
       ],
       "relatedPaths": [
         "tests/manual-release.test.ts",
         "tests/release-workflows.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "72a12eb6a00a934c436ce9ff6982123c10320564",
       "readingResult": "One read-only release-source job replaces repeated admission predicates and SHA/tag reconstruction; preserves manual prep/publication authority and payload/gates. Explicit cost: additional Ubuntu runner startup.",
-      "checks": "66 focused tests; tsc/format/diff pass,5 existing Actions-literal lint warnings; no hosted/platform/build."
+      "checks": "66 focused tests; tsc/format/diff pass,5 existing Actions-literal lint warnings; no hosted/platform/build.",
+      "integrationState": "Complete workflow/two-test patch integrated without overlap; untracked note excluded."
     },
     {
       "focus": ".gitignore",
@@ -932,7 +942,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_265f1748",
+        "verdict": "ACCEPT",
+        "blob": "5f8bd56781ff6e2f44148f74008b99e5b77fa97e",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/native-node-path.test.ts",
@@ -1077,7 +1093,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_265f1748",
+        "verdict": "ACCEPT",
+        "blob": "38423dc785ee300c75dc1ec6a868e3eef9a4a05e",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/setup.ts",

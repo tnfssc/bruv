@@ -80,16 +80,18 @@ describe("manual release preparation", () => {
   test("dispatch pins gates and publication to prepared commit without dropping native and updater gates", async () => {
     const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/release.yml").text()) as {
       on: Record<string, unknown>;
-      jobs: Record<string, { needs?: string[]; if?: string; steps: { with?: { ref?: string }; run?: string }[] }>;
+      jobs: Record<
+        string,
+        { needs?: string | string[]; if?: string; steps: { with?: { ref?: string }; run?: string }[] }
+      >;
     };
     expect(workflow.on.workflow_dispatch).toBeNull();
     const jobs = workflow.jobs;
     expect(jobs["prepare-manual"]?.if).toContain("github.ref == 'refs/heads/develop'");
+    expect(jobs["release-source"]?.needs).toEqual("prepare-manual");
     for (const name of ["mac-helper", "release", "linux-browser-boot", "mac-release-smoke", "publish"]) {
-      expect(jobs[name]?.needs).toContain("prepare-manual");
-      expect(
-        jobs[name]?.steps.some((step) => step.with?.ref === "${{ needs.prepare-manual.outputs.sha || github.sha }}"),
-      ).toBe(true);
+      expect(jobs[name]?.needs).toContain("release-source");
+      expect(jobs[name]?.steps.some((step) => step.with?.ref === "${{ needs.release-source.outputs.sha }}")).toBe(true);
     }
     const release = jobs.release!.steps.map((step) => step.run ?? "").join("\n");
     expect(release).toContain('"$RELEASE_SHA"');
@@ -137,4 +139,99 @@ describe("manual release preparation", () => {
     expect(implementation).toContain("bruv-android-arm64.sha256");
     expect(implementation).toContain("THIRD_PARTY_LICENSES.txt");
   });
+});
+
+// These workflow predicates use the shared JS/Actions boolean subset, not a full Actions emulator.
+function releaseExpression(expression: string, github: object, needs: object): unknown {
+  const body = expression.slice(3, -2).replace(/needs\.([a-z-]+)/g, 'needs["$1"]');
+  return new Function("github", "needs", "always", "startsWith", "contains", "return " + body)(
+    github,
+    needs,
+    () => true,
+    (value: string, prefix: string) => value.startsWith(prefix),
+    (value: string, part: string) => value.includes(part),
+  );
+}
+
+test("one read-only admission stage accepts prepared dispatches and stable tag pushes only", async () => {
+  const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/release.yml").text()) as {
+    permissions: Record<string, string>;
+    jobs: Record<string, { if: string; needs?: string | string[]; permissions?: Record<string, string> }>;
+  };
+  const { jobs } = workflow;
+  expect(workflow.permissions).toEqual({ contents: "read" });
+  expect(Object.keys(jobs).filter((name) => jobs[name]!.permissions?.contents === "write")).toEqual([
+    "prepare-manual",
+    "publish",
+  ]);
+  expect(jobs["mac-helper"]!.needs).toBe("release-source");
+  expect(jobs.release!.needs).toEqual(["release-source", "mac-helper"]);
+  for (const [event, ref, preparation, admitted] of [
+    ["workflow_dispatch", "refs/heads/develop", "success", true],
+    ["workflow_dispatch", "refs/heads/develop", "failure", false],
+    ["workflow_dispatch", "refs/heads/develop", "cancelled", false],
+    ["workflow_dispatch", "refs/heads/main", "skipped", false],
+    ["push", "refs/tags/v1.2.3", "skipped", true],
+    ["push", "refs/tags/v1.2.3-beta.1", "skipped", false],
+    ["push", "refs/heads/develop", "skipped", false],
+  ] as const) {
+    const github = { event_name: event, ref, ref_name: ref.split("/").at(-1) };
+    expect(releaseExpression(jobs["release-source"]!.if, github, { "prepare-manual": { result: preparation } })).toBe(
+      admitted,
+    );
+  }
+  const successful = Object.fromEntries(Object.keys(jobs).map((name) => [name, { result: "success" }]));
+  for (const [name, required] of [
+    ["mac-helper", ["release-source"]],
+    ["release", ["release-source", "mac-helper"]],
+    ["linux-browser-boot", ["release"]],
+    ["mac-release-smoke", ["release"]],
+    ["publish", ["release-source", "release", "linux-browser-boot", "mac-release-smoke"]],
+  ] as const) {
+    const job = jobs[name]!;
+    expect(releaseExpression(job.if, {}, successful)).toBe(true);
+    // Every prerequisite that can block this job must stay blocking even with always().
+    for (const prerequisite of required) {
+      for (const result of ["failure", "cancelled", "skipped"]) {
+        expect(releaseExpression(job.if, {}, { ...successful, [prerequisite]: { result } })).toBe(false);
+      }
+    }
+  }
+});
+
+test("release source emits the chosen prepared or pushed identity unchanged", async () => {
+  const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/release.yml").text()) as {
+    jobs: Record<
+      string,
+      { outputs: Record<string, string>; steps: { id: string; env: Record<string, string>; run: string }[] }
+    >;
+  };
+  const source = workflow.jobs["release-source"]!;
+  const step = source.steps[0]!;
+  expect(source.outputs).toEqual({ sha: `\${{ steps.source.outputs.sha }}`, tag: `\${{ steps.source.outputs.tag }}` });
+  expect(step.id).toBe("source");
+  const directory = await mkdtemp(join(tmpdir(), "bruv-release-source-"));
+  try {
+    for (const prepared of [true, false]) {
+      const github = { sha: "pushed-sha", ref_name: "v1.2.3" };
+      const needs = { "prepare-manual": { outputs: prepared ? { sha: "prepared-sha", tag: "v1.2.4" } : {} } };
+      const output = join(directory, prepared ? "manual" : "tag");
+      const env = Object.fromEntries(
+        Object.entries(step.env).map(([name, expression]) => [
+          name,
+          String(releaseExpression(expression, github, needs)),
+        ]),
+      );
+      const result = spawnSync("bash", ["-e", "-c", step.run], {
+        env: { ...process.env, ...env, GITHUB_OUTPUT: output },
+        encoding: "utf8",
+      });
+      expect(result.status).toBe(0);
+      expect(await readFile(output, "utf8")).toBe(
+        prepared ? "sha=prepared-sha\ntag=v1.2.4\n" : "sha=pushed-sha\ntag=v1.2.3\n",
+      );
+    }
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
