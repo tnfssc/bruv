@@ -439,7 +439,7 @@
     {
       "file": "src/t3/tasks/mcp-client.ts",
       "initialBlob": "b00156caaeb4ba5fe15e0f3c7fb8eff472d282ce",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_ea47c14e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ea47c14e",
@@ -450,17 +450,29 @@
       "judges": [
         {
           "id": "task_645854a5",
-          "status": "running",
-          "candidate": "17c4c9e34d15866ec8188865fb8ec57f9c5a3bcc"
+          "status": "completed",
+          "candidate": "17c4c9e34d15866ec8188865fb8ec57f9c5a3bcc",
+          "verdict": "ACCEPT",
+          "blob": "08a53a63713839260f730a6da8ff4775a72bce99",
+          "relatedBlobs": {
+            "tests/t3/production-bridge.test.ts": "cc7ae68a148fa2687a1b23e043d95696ffb9dbe5"
+          },
+          "objections": [],
+          "evidence": "Single POST exchange owner and single shared handshake reduce reconstruction; caller wait cancellation does not own handshake; tracked response cleanup precedes session deletion. Actual callers/tests traced. 10 notification tests + 11 direct probe assertions independently passed.",
+          "limits": "Full suite rerun blocked by zod/mini dependency resolution. No live/full gate.",
+          "qualifications": [
+            "Launch keys derived deterministically; legacy mappings read. Worker note persisted-key phrase not imported."
+          ]
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "08a53a63713839260f730a6da8ff4775a72bce99",
       "launchBase": "e72704350b15832a736ed3bce0b080b8d5d3ab9b",
       "changedRelatedPaths": [
         "tests/t3/production-bridge.test.ts"
       ],
       "readingResult": "send owns complete POST exchange, deadline and body cleanup; post owns request IDs. One shared handshake replaces reconnect promise around initialization, separating caller wait from owned handshake.",
-      "checks": "47 tests/180 assertions across production-bridge/native-routing/local-notifications; format/typecheck/diff pass; lint exit 0 with retained warnings. No full gate/live."
+      "checks": "47 tests/180 assertions across production-bridge/native-routing/local-notifications; format/typecheck/diff pass; lint exit 0 with retained warnings. No full gate/live.",
+      "integrationState": "Exact accepted patch joined; production-bridge test still needs primary focus."
     },
     {
       "file": "src/t3/tasks/native-task.ts",
@@ -796,7 +808,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_645854a5",
+          "verdict": "ACCEPT",
+          "blob": "cc7ae68a148fa2687a1b23e043d95696ffb9dbe5",
+          "candidate": "17c4c9e34d15866ec8188865fb8ec57f9c5a3bcc"
+        }
+      ]
     },
     {
       "file": "tests/t3/web-launcher-process.test.ts",
@@ -824,5 +844,15 @@
     }
   ],
   "extraFiles": [],
-  "crossAreaNeeds": []
+  "crossAreaNeeds": [],
+  "batchChecks": [
+    {
+      "id": "task_554a7ded",
+      "commit": "67a28f5f",
+      "status": "passed",
+      "scope": "area-owned prepare:assets; runtime/history/task-binding/prompt-ownership tests; tsc --noEmit; focused Biome format/lint",
+      "limits": "Lint exit zero with 4 warnings/14 infos; no compiled/live/full gate.",
+      "tests": "6 outer tests pass, 7 opt-in SDK skips, 0 fail, 19 outer assertions; isolated subprocess suites included."
+    }
+  ]
 }

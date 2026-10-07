@@ -528,6 +528,47 @@ test("concurrent expired requests share one reconnect and preserve each request"
   await client.close();
 });
 
+test("a late expired-session response reuses the completed replacement handshake", async () => {
+  let initializes = 0;
+  let oldCalls = 0;
+  let bothOldArrived!: () => void;
+  const oldArrived = new Promise<void>((resolve) => (bothOldArrived = resolve));
+  let releaseLate!: () => void;
+  const lateResponse = new Promise<void>((resolve) => (releaseLate = resolve));
+  const deleted: string[] = [];
+  const endpoint = listen(async (request) => {
+    if (request.method === "DELETE") {
+      deleted.push(request.headers.get("mcp-session-id")!);
+      return new Response(null, { status: 204 });
+    }
+    const body = await rpc(request);
+    if (body.method === "initialize") return json(body.id, {}, { "mcp-session-id": "late-" + ++initializes });
+    if (body.method === "notifications/initialized") return new Response(null, { status: 202 });
+    if (request.headers.get("mcp-session-id") === "late-1") {
+      if (++oldCalls === 2) bothOldArrived();
+      await oldArrived;
+      if (body.params.arguments.taskId === "late") await lateResponse;
+      return new Response(null, { status: 404 });
+    }
+    return json(body.id, { structuredContent: { taskId: body.params.arguments.taskId } });
+  });
+  const client = new T3McpClient(endpoint, "token");
+  try {
+    await client.initialize();
+    const first = client.callTool("bruv_task_observe", { taskId: "first" });
+    const late = client.callTool("bruv_task_observe", { taskId: "late" });
+    expect((await first).structuredContent).toEqual({ taskId: "first" });
+    expect(initializes).toBe(2);
+    releaseLate();
+    expect((await late).structuredContent).toEqual({ taskId: "late" });
+    expect(initializes).toBe(2);
+  } finally {
+    releaseLate();
+    await client.close();
+  }
+  expect(deleted).toEqual(["late-2"]);
+});
+
 test("SSE multiline JSON survives CRLF split across chunks without waiting for EOF", async () => {
   let cancelled = 0;
   const mockFetch = Object.assign(
