@@ -78,12 +78,15 @@
     {
       "focus": "src/remote/artifacts.ts",
       "initialBlob": "0e9ff60dbda7ab6ef98b296024ad3af18947c9d8",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_4b41ba14",
-          "status": "running",
-          "candidate": "12a09d8f8c05398cbbbe80b10ae8e2f82837e914"
+          "status": "completed",
+          "candidate": "12a09d8f8c05398cbbbe80b10ae8e2f82837e914",
+          "verdict": "ACCEPT",
+          "reason": "File cache verification/download/atomic replacement now separate from incomplete manifest/progress/completion orchestration; all protocol and identity checks retained.",
+          "checks": "Judge candidate 7 pass/64 assertions, exact hashes and full diff checked; no baseline independent execution/live/crash proof."
         }
       ],
       "primary": {
@@ -97,7 +100,9 @@
       "changedRelatedPaths": [
         "tests/remote-artifacts.test.ts"
       ],
-      "checks": "Baseline/candidate extended suite 7 pass/64 assertions; format/diff pass, lint unchanged diagnostics."
+      "checks": "Baseline/candidate extended suite 7 pass/64 assertions; format/diff pass, lint unchanged diagnostics.",
+      "acceptedBlob": "9423a07b44ad7df48ce6d3b29fc2b228c8cddaad",
+      "integrationState": "accepted patch including related test, no overlap"
     },
     {
       "focus": "src/remote/cancellation.ts",
@@ -272,8 +277,14 @@
     {
       "focus": "src/remote/owner.ts",
       "initialBlob": "8d8f54a85fea43f1852497abc842100157aaac93",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "79b37fbc28399fb32eced5774c7c62edd44d438d",
+      "primary": {
+        "id": "task_d98e8afe",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_d98e8afe",
+        "branch": "bruv/remote-primary-owner-d98e8afe"
+      }
     },
     {
       "focus": "src/remote/placement.ts",
@@ -353,14 +364,24 @@
     {
       "focus": "src/remote/root-contract.ts",
       "initialBlob": "e9aceffe5f97333dfc828000fd59b40bab8fadee",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_473ab1c5",
+          "status": "running",
+          "candidate": "c969abd66d3d13f2fb98415f3cd87d81470d6ad6"
+        }
+      ],
       "launchBase": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
       "primary": {
         "id": "task_d0eb6d5d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_d0eb6d5d",
-        "branch": "bruv/remote-primary-root-contract.ts-d0eb6d5d"
-      }
+        "branch": "bruv/remote-primary-root-contract.ts-d0eb6d5d",
+        "commit": "c969abd66d3d13f2fb98415f3cd87d81470d6ad6"
+      },
+      "result": "Unchanged type contract exposes pinned intent, persisted command identity, uncertainty without replay, authoritative records/sequenced events; receipts distinct from settlement, detach from abort/close.",
+      "checks": "48 pass/265 assertions across five tests; no build/live SSH.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/root-entry.ts",
@@ -672,7 +693,12 @@
       "focus": "tests/remote-artifacts.test.ts",
       "initialBlob": "157e69ad514d0d88bdf13daa2075a1321b5bfdcc",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedAcceptance": {
+        "judge": "task_4b41ba14",
+        "blob": "3982bb54af4a6a0b1eb2e97cf0622d5188969019",
+        "needs": "fresh primary focus and own independent judgment"
+      }
     },
     {
       "focus": "tests/remote-capabilities.test.ts",
