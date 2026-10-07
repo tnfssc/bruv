@@ -184,7 +184,7 @@
     {
       "focus": "site/layout.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_c8710829",
@@ -199,10 +199,16 @@
         {
           "id": "task_b7d332ee",
           "candidate": "c2a5542a924202243771bc68252cb61c0113cfc6",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "composeLanding owns document flow; panel returns content/end rather than rewinding shared cursor; max(copyEnd,panel.end) states section advance. layout owns clipping/hits/overlays/ANSI. Judge independently 17 tests and 64 complete output comparisons; no browser/typecheck/full build.",
+          "objections": []
         }
       ],
-      "initialBlob": "0ec60a65bd36d939f302323b7a5fd63ab170046b"
+      "initialBlob": "0ec60a65bd36d939f302323b7a5fd63ab170046b",
+      "acceptedBlob": "128855476c64c4b43bd0258b9064f2b44831878c",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/package.json",
@@ -374,23 +380,38 @@
     {
       "focus": "site/scripts/extract-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_f07c6c88",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_f07c6c88",
           "branch": "bruv/primary-site-scripts-extract-cells.ts-f07c6c88",
-          "base": "cf13efaae464c80b2b1b6b1137be43a885ac05fd"
+          "base": "cf13efaae464c80b2b1b6b1137be43a885ac05fd",
+          "commit": "a46a0ebf10fd94fa7756ffbc75365361a202f96a",
+          "result": "One geometry definition drives rendering/cropped buffer reads/metadata; browser returns final row-local style runs instead of entire terminal grid then Bun regroup/crop; Bun hashes/publishes. Loopback routing unchanged. Baseline/candidate JSON byte-identical;10 tests/123298 assertions;browser validation/strict TS/format pass."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_5628d052",
+          "candidate": "a46a0ebf10fd94fa7756ffbc75365361a202f96a",
+          "state": "running"
+        }
+      ],
       "initialBlob": "53e23a4d0a50dd36efdcb1f4f972a11f5cc1ff13"
     },
     {
       "focus": "site/scripts/generate-wordmark.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_ff69ebfe",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_ff69ebfe",
+          "branch": "bruv/primary-site-scripts-generate-wordmark.t-ff69ebfe",
+          "base": "f05b259ae8894f05cae0dedc0835705fc66017d9"
+        }
+      ],
       "judges": [],
       "initialBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c"
     },

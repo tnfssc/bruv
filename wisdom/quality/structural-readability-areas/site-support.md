@@ -15,3 +15,5 @@ Accepted renderer batch: terminal presents frame effects in sequence and confine
 site/scripts/validate.ts: Desktop/mobile/fallback each own browser journey and return evidence. Assertions/waits/inputs/capture/report/cleanup preserved. Judge 13 tests/123314 assertions; browser/TS parity writer-reported.
 
 site/scripts/capture-demo-source.ts: Replay fixture creation has one authority and returns persisted path; orchestration visibly proceeds settings/replay/isolation/capture/provenance/cleanup. Judge traced SDK session contract; 1 test/14 assertions does not exercise capture. Writer offline tmux/unshare byte parity not independently rerun.
+
+site/layout.ts: composeLanding owns document flow; panel returns content/end rather than rewinding shared cursor; max(copyEnd,panel.end) states section advance. layout owns clipping/hits/overlays/ANSI. Judge independently 17 tests and 64 complete output comparisons; no browser/typecheck/full build.

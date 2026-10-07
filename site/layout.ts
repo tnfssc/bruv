@@ -51,32 +51,69 @@ export function wrap(text: string, width: number): string[] {
   return lines;
 }
 
-export function layout(cols: number, rows: number, state: State) {
-  const grid = Array.from({ length: rows }, () =>
-    Array.from({ length: cols }, () => ({ c: " ", style: palette.base as string })),
-  );
-  const hits: Hit[] = [];
-  const margin = cols < 60 ? 2 : Math.max(4, Math.floor((cols - 112) / 2));
-  const width = cols - 2 * margin,
-    top = 3,
-    bottom = rows - 1;
-  const pieces: {
-    x: number;
-    y: number;
-    text: string;
-    style: string;
-    action?: string;
-    primary?: boolean;
-    height?: number;
-    demo?: DemoId;
-  }[] = [];
-  let y = width < 60 ? 1 : 2;
-  function put(x: number, row: number, value: string, style: string = palette.base) {
-    if (row < 0 || row >= rows) return;
-    [...value].forEach((c, i) => {
-      if (x + i >= 0 && x + i < cols) grid[row][x + i] = { c, style };
-    });
+type Piece = {
+  x: number;
+  y: number;
+  text: string;
+  style: string;
+  action?: string;
+  primary?: boolean;
+  height?: number;
+  demo?: DemoId;
+};
+type Capture = {
+  id: DemoId;
+  x: number;
+  y: number;
+  cols: number;
+  rows: { text: string; style: string }[][];
+  stage: string;
+};
+
+function demoPanel(id: DemoId, x: number, y: number, cols: number, elapsed: number) {
+  const demo = demoFrame(id, cols, elapsed);
+  const pieces: Piece[] = [
+    {
+      x,
+      y,
+      text: "╭" + "─".repeat(cols) + "╮",
+      style: palette.border,
+      action: "demo:" + id + ":toggle",
+      height: demo.rows.length + 2,
+      demo: id,
+    },
+  ];
+  const capture: Capture = {
+    id,
+    x: x + 1,
+    y: y + 1,
+    cols,
+    rows: demo.rows.map((row) => row.map((cell) => ({ text: cell.text, style: cell.style }))),
+    stage: demo.stage,
+  };
+  for (const [i, row] of capture.rows.entries()) {
+    const rowY = capture.y + i;
+    pieces.push({ x, y: rowY, text: "│", style: palette.border });
+    let runX = capture.x;
+    for (const run of row) {
+      pieces.push({ x: runX, y: rowY, text: run.text, style: run.style });
+      runX += [...run.text].length;
+    }
+    pieces.push({ x: x + 1 + cols, y: rowY, text: "│", style: palette.border });
   }
+  const bottom = capture.y + capture.rows.length;
+  pieces.push({ x, y: bottom, text: "╰" + "─".repeat(cols) + "╯", style: palette.border });
+  return { pieces, capture, end: bottom + 1 };
+}
+
+function composeLanding(
+  width: number,
+  margin: number,
+  state: Pick<State, "demos" | "installCommand" | "installUrl" | "copyLabel">,
+) {
+  const pieces: Piece[] = [];
+  const captures: Capture[] = [];
+  let y = width < 60 ? 2 : 3;
   function text(value: string, style: string = palette.base, x = margin, w = width) {
     for (const line of wrap(value, w)) pieces.push({ x, y: y++, text: line, style });
   }
@@ -90,13 +127,6 @@ export function layout(cols: number, rows: number, state: State) {
       primary,
     });
   }
-  put(margin, 1, "bruv", palette.accent);
-  if (width > 50) put(margin + 7, 1, "an opinionated coding agent", palette.muted);
-  const htmlLabel = "[ HTML ]",
-    htmlX = cols - margin - htmlLabel.length;
-  hits.push({ x: htmlX, y: 1, width: htmlLabel.length, height: 1, label: "HTML", action: "text" });
-  put(htmlX, 1, htmlLabel, state.focus === 0 ? palette.selected : palette.accent);
-  y += 1;
   for (const line of wordmark(width)) pieces.push({ x: margin, y: y++, text: line, style: palette.title });
   y++;
   text(landing.titleTail, palette.accent);
@@ -109,14 +139,6 @@ export function layout(cols: number, rows: number, state: State) {
     link("Source ↗", siteContent.repository);
   } else link("Source ↗", siteContent.repository, margin + 20);
   y += 4;
-  const captures: {
-    id: DemoId;
-    x: number;
-    y: number;
-    cols: number;
-    rows: { text: string; style: string }[][];
-    stage: string;
-  }[] = [];
   landing.features.forEach((feature, i) => {
     const id = demoIds[i];
     const beside = width >= 100;
@@ -127,39 +149,12 @@ export function layout(cols: number, rows: number, state: State) {
     y++;
     text(feature.text, palette.base, margin, captionWidth);
     const copyEnd = y;
-    y = beside ? sectionTop : y + 2;
-    const playback = state.demos?.[id];
-    const demo = demoFrame(id, demoCols, playback?.elapsed ?? demoDuration(id));
+    const frameTop = beside ? sectionTop : copyEnd + 2;
     const frameX = beside ? margin + width - demoCols - 2 : margin;
-    pieces.push({
-      x: frameX,
-      y: y++,
-      text: "╭" + "─".repeat(demoCols) + "╮",
-      style: palette.border,
-      action: "demo:" + id + ":toggle",
-      height: demo.rows.length + 2,
-      demo: id,
-    });
-    const capture = {
-      id,
-      x: frameX + 1,
-      y,
-      cols: demoCols,
-      rows: demo.rows.map((row) => row.map((cell) => ({ text: cell.text, style: cell.style }))),
-      stage: demo.stage,
-    };
-    captures.push(capture);
-    for (const row of capture.rows) {
-      pieces.push({ x: frameX, y, text: "│", style: palette.border });
-      let x = frameX + 1;
-      for (const run of row) {
-        pieces.push({ x, y, text: run.text, style: run.style });
-        x += [...run.text].length;
-      }
-      pieces.push({ x: frameX + 1 + demoCols, y: y++, text: "│", style: palette.border });
-    }
-    pieces.push({ x: frameX, y: y++, text: "╰" + "─".repeat(demoCols) + "╯", style: palette.border });
-    y = Math.max(copyEnd, y) + 4;
+    const panel = demoPanel(id, frameX, frameTop, demoCols, state.demos?.[id]?.elapsed ?? demoDuration(id));
+    pieces.push(...panel.pieces);
+    captures.push(panel.capture);
+    y = Math.max(copyEnd, panel.end) + 4;
   });
   text("─".repeat(width), palette.border);
   y += 2;
@@ -179,8 +174,33 @@ export function layout(cols: number, rows: number, state: State) {
   y++;
   text(landing.requirements, palette.muted, margin, Math.min(width, 66));
   y += 7;
+  return { pieces, captures, height: y };
+}
+
+export function layout(cols: number, rows: number, state: State) {
+  const grid = Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, () => ({ c: " ", style: palette.base as string })),
+  );
+  const hits: Hit[] = [];
+  const margin = cols < 60 ? 2 : Math.max(4, Math.floor((cols - 112) / 2));
+  const width = cols - 2 * margin,
+    top = 3,
+    bottom = rows - 1;
+  function put(x: number, row: number, value: string, style: string = palette.base) {
+    if (row < 0 || row >= rows) return;
+    [...value].forEach((c, i) => {
+      if (x + i >= 0 && x + i < cols) grid[row][x + i] = { c, style };
+    });
+  }
+  put(margin, 1, "bruv", palette.accent);
+  if (width > 50) put(margin + 7, 1, "an opinionated coding agent", palette.muted);
+  const htmlLabel = "[ HTML ]",
+    htmlX = cols - margin - htmlLabel.length;
+  hits.push({ x: htmlX, y: 1, width: htmlLabel.length, height: 1, label: "HTML", action: "text" });
+  put(htmlX, 1, htmlLabel, state.focus === 0 ? palette.selected : palette.accent);
+  const { pieces, captures, height } = composeLanding(width, margin, state);
   const visible = Math.max(1, bottom - top + 1),
-    maxScroll = Math.max(0, y - visible);
+    maxScroll = Math.max(0, height - visible);
   const scroll = Math.min(Math.max(0, state.scroll), maxScroll);
   const controls: { x: number; y: number; text: string; style: string }[] = [];
   for (const p of pieces) {
