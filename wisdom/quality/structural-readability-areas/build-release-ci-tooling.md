@@ -92,3 +92,5 @@ Launcher verifier:packaging→isolated release dispatch→isolated installed dis
 Update verifier:per-artifact contracts and readable generated runners;judge task_073fd75a ACCEPT88994dc plus related99c0344.7/50tests+2runnerinspection;real compiledfixture invocation retained,not production/historicaldownload/native proof. Frozenfixture/probe unchanged;related test primary pending.
 
 Native runner test primary:typed scenarios/readable child,owned fixture cleanup including failed setup,typed call log. Judge task_3098ce67 ACCEPT6762793;9/66tests. Explicitly supplied pathstrings/mockchildren/syntheticprovenance,not actual paired/native/setup gates.
+
+EXTRA setup-native test primary completed:ordered argv/checksum observations,independent exact-cutoff failures. Judge task_6e25dc37 ACCEPTe1bf5ce;15/85combined,all4postfetch oldpartialenv failures reproduced. Only SDKAPI usesrealNode;downloads/checksumexecution/extraction stubbed.

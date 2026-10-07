@@ -1128,7 +1128,7 @@
     {
       "focus": "src/assets.d.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_af4e93ee",
@@ -1144,13 +1144,18 @@
           "id": "task_ceeaba0d",
           "base": "38f0f0583a0de57ee39db48cb2246f781548d074",
           "candidate": "369e90e4cda90ecb446f97b12f520106ae9e4e41",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Direct path-string declarations match PNG/vendorJS/WASM loaders and both CLI/image consumers;TS7.0.2 cannot use Bun7.1-gated importattribute declarations,not dead.",
+          "checks": "Independentrepotsc/Biome/assets+imageheader tests,positiveprobe and3negativeerrors,tinycompiled/source4assethashes match.13dist-dependentimagetests filtered(notvalidated);writerfailures buildproofgap,noappbuild."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "522afc0a9deafebc2c1994f69426fddb7da3bf75",
       "readingResult": "Unchanged direct declarations match PNG/vendorJS/WASM path-string imports;no structural simplification.",
-      "checks": "typecheck/focusedtests/Biome/positive-negativetyping/tinycompiledassetbytes pass;13binaryimage testsfail absentdist/bruv;no fullbuild."
+      "checks": "typecheck/focusedtests/Biome/positive-negativetyping/tinycompiledassetbytes pass;13binaryimage testsfail absentdist/bruv;no fullbuild.",
+      "integrationState": "Unchanged declarations equals tip,notesexcluded."
     },
     {
       "focus": "src/update.ts",
@@ -2074,7 +2079,7 @@
     {
       "focus": "tests/setup-native-release-gate.test.ts",
       "initialBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_29efc903",
@@ -2090,11 +2095,18 @@
           "id": "task_6e25dc37",
           "base": "38f0f0583a0de57ee39db48cb2246f781548d074",
           "candidate": "c488ba1e60c710f1c511eda62151bf879f65a68b",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Ordered argv preserving boundaries and separate checksum observations expose effects;named independent failure cutoffs retain all5failpoints/no-partialenv/APIrefusal/browser/cardinality/pin/alias/successhandoff. Original partialenv failures reproduced.",
+          "checks": "Independent15tests85assertions;strict tsc/Biome/diffpass;original59413c setup reproduces4postfetchpartialenv failures. Download/checksumexecution/extraction stubbed,API realNode;no actualnative/build.",
+          "acceptedBlobs": {
+            "tests/setup-native-release-gate.test.ts": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
       "origin": {
         "primary": "task_2837e782",
         "candidate": "3cefc2172c5b14d87fce683266e80ce6d8cf6cbd"
@@ -2103,10 +2115,12 @@
         "id": "task_1e479592",
         "verdict": "ACCEPT",
         "blob": "8191a1d59ef6a19e416364ad52993fb4d483516d",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Separate ordered argv/checksum observations replace flattened logs;named independent failures with exact cutoff replace loop-hidden failures. Five failurepoints/API refusal/byte-exact no-partial-env retained.",
-      "checks": "15combinedpass;strict tsc/Biome/diffpass;no builds/live."
+      "checks": "15combinedpass;strict tsc/Biome/diffpass;no builds/live.",
+      "integrationState": "Full final focus patch integrated;EXTRA primary/finaljudge complete;setup sourceunchanged,notesexcluded."
     }
   ],
   "crossAreaNeeds": [],
