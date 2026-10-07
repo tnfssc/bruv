@@ -531,11 +531,18 @@
     {
       "focus": "src/tasks/local-agent-termination.ts",
       "initialBlob": "f82ba2130660c667cbe8b66ab9b4921ffcee5cb4",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_2553ce4b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_2553ce4b",
+        "branch": "bruv/primary-src-tasks-local-agent-terminatio-2553ce4b",
+        "base": "ed0131d292f50902ecb57f62817b07040463557c",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "ed0131d292f50902ecb57f62817b07040463557c"
     },
     {
       "focus": "src/tasks/resume-safeguards.ts",
@@ -592,7 +599,7 @@
     {
       "focus": "src/tasks/task-manager.ts",
       "initialBlob": "3f614d8920d22f8ae86d2adb8a7f40957af7b0e2",
-      "status": "rework-judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_53df8c4c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53df8c4c",
@@ -615,15 +622,23 @@
         },
         {
           "id": "task_a01fd3d7",
-          "status": "running",
+          "status": "complete",
           "candidate": "5eb5ac44b5ef72ddc095bd8cd20ae9827bc82dc3",
           "base": "62cfd14185774a6357c0f758bd82234f5c20344f",
           "priorJudge": "task_08e2c508",
-          "writerResponse": "Reproduced leaked controller on baseline and imported first candidate; explicit public metadata projection preserves nested copies and admission refactor. Added regression fails before fix and passes 27 assertions; inherited behavior defect explicitly documented."
+          "writerResponse": "Reproduced leaked controller on baseline and imported first candidate; explicit public metadata projection preserves nested copies and admission refactor. Added regression fails before fix and passes 27 assertions; inherited behavior defect explicitly documented.",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fresh admission vs reserved activation removes mode reconstruction; public snapshot projects every declared metadata field with nested copies. Judge independently reproduces prior controller leak and proves manager-only cancellation/settlement/delivery.",
+          "checks": [
+            "independent37 pass275 assertions",
+            "identity/waiter/deadline/authority regressions pass",
+            "six-suite independent retry blocked zod/pi-tui; broader writer78/516 remains reported"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "not imported: candidate rejected",
+      "acceptedBlob": "ca04acea4b9220de46fd19b8f40e4a669e027a39",
+      "integration": "full accepted rework source/test diff integrated; original rejected candidate retained",
       "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
       "changedRelatedPaths": [
         "src/tasks/task-manager.ts",
@@ -652,7 +667,8 @@
             "no full build/provider/SSH/platform claim"
           ]
         }
-      ]
+      ],
+      "incidentalFix": "Exercised inherited preparationController leak corrected by explicit public snapshot projection; intentional behavior correction, not neutral cleanup."
     },
     {
       "focus": "src/tasks/task-monitor-source.ts",
@@ -1032,15 +1048,23 @@
     {
       "focus": "tests/questions-runtime.test.ts",
       "initialBlob": "b21ea93a204464e814c4721a6ef9c1d955c63479",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_6e3500b8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_6e3500b8",
         "branch": "bruv/primary-tests-questions-runtime.test.ts-6e3500b8",
         "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
-        "commit": null
+        "commit": "d7db460494622a348d9bd8a34224ad64388fcfbf"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_438a45c6",
+          "status": "running",
+          "candidate": "d7db460494622a348d9bd8a34224ad64388fcfbf",
+          "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
+          "priorRelatedJudge": "task_d8a065ce"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
@@ -1050,7 +1074,16 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465"
+      "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
+      "changedRelatedPaths": [
+        "tests/questions-runtime.test.ts"
+      ],
+      "readingResult": "Each registration owns callbacks and full message outbox while sharing durable session storage; restart/race tests no longer rebuild inconsistent host adapters or mixed outboxes.",
+      "checks": [
+        "all13 tests retained; assertions57→60",
+        "75 focused pass371 assertions across5 files",
+        "format/lint/diff pass; no full build/liveSSH"
+      ]
     },
     {
       "focus": "tests/questions-sdk.test.ts",
@@ -1203,7 +1236,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_a01fd3d7",
+        "candidate": "5eb5ac44b5ef72ddc095bd8cd20ae9827bc82dc3",
+        "blob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/task-monitor-source.test.ts",

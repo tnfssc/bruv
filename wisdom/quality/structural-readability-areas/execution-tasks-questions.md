@@ -39,3 +39,7 @@ Judge `task_d8a065ce` accepts `62e05bf7`: local saved replies becoming parent tu
 ## Execution test primary accepted
 
 Fresh primary `task_b5390314` and judge `task_d1f6dac2` accept test blob `95801cca1074a934009985ab6f1c24e903b961f5`, replacing prior supplemental acceptance. Narrow actual-registration adapter removes event registration-order/map reconstruction without hiding scenario execution or assertions; all 116 expectation sites retained. Writer 25 tests/119 assertions; judge formatting/diff passed but dependency setup prevented rerun. Integrated only judged test diff.
+
+## Task-manager rejection resolved
+
+Fresh rework `task_e5da5ab0` / `5eb5ac44` retains admission refactor and projects every public summary field with nested copies. Fresh judge `task_a01fd3d7` independently reproduced controller leak on base/original and verified no escape plus manager-owned stop/settlement/single delivery. ACCEPT, 37 independent tests/275 assertions; broader six-suite retry blocked dependency resolution. Explicit inherited-defect behavior correction, not neutral cleanup. Full judged manager/test patch integrated; original rejection retained. Manager test still needs primary focus.

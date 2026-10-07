@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { type TaskInspection, TaskManager } from "../src/tasks/task-manager";
+import { type TaskInspection, TaskManager, type TaskSummary } from "../src/tasks/task-manager";
 
 const managers: TaskManager[] = [];
 
@@ -621,4 +621,139 @@ test("explicit titles survive launch, preparation, activation, summaries and com
     workspace: { kind: "inherit", path: process.cwd() },
   });
   expect(manager.failPreparedAgent("failed_title", new Error("fixture failure")).title).toBe("Prepare workspace");
+});
+
+test("activation keeps the reserved task's waiters, identity and foreground delivery policy", async () => {
+  const delivered: TaskInspection[] = [];
+  const events: string[] = [];
+  const diagnostics: string[] = [];
+  const manager = new TaskManager((task) => delivered.push(task), 20, {
+    recordDiagnostic: (entry) => diagnostics.push(entry.code),
+  });
+  managers.push(manager);
+  manager.subscribe((event) => events.push(event.type));
+  const identity = { sourceSessionId: "parent", sourceCallId: "call", callIndex: 0 };
+  const reserved = manager.prepareAgent({
+    id: "reserved_identity",
+    launchIdentity: identity,
+    displayCommand: "prepare workspace",
+    cwd: process.cwd(),
+    workspace: { kind: "inherit", path: process.cwd() },
+  });
+  const waiter = manager.wait(reserved.id);
+  const preparationSignal = manager.preparationSignal(reserved.id);
+  const activated = manager.activatePreparedAgent(reserved.id, {
+    ...commandLaunch("sleep 0.05; printf activated"),
+    launchIdentity: { ...identity, sourceCallId: "not-the-reservation" },
+    workspace: { kind: "inherit", path: process.cwd() },
+    notifyOnComplete: true,
+  });
+  expect(activated.id).toBe(reserved.id);
+  expect(activated.startedAt).toBe(reserved.startedAt);
+  expect(activated.launchIdentity).toEqual(identity);
+  expect(activated.background).toBe(false);
+  expect(activated.workspace?.preparationStatus).toBe("ready");
+  expect(manager.wait(reserved.id)).toBe(waiter);
+  expect(preparationSignal.aborted).toBe(false);
+  expect(events).toEqual(["spawned", "updated"]);
+  const completed = await waiter;
+  expect(completed.status).toBe("completed");
+  expect(completed.output).toBe("activated");
+  expect(delivered).toHaveLength(0);
+  expect(events.filter((event) => event === "completed")).toHaveLength(1);
+  expect(diagnostics.filter((code) => code === "JOBS_TASK_SPAWNED")).toHaveLength(1);
+  expect(diagnostics.filter((code) => code === "JOBS_TASK_COMPLETED")).toHaveLength(1);
+});
+
+test("activation does not replace the workspace preparation deadline", async () => {
+  const manager = new TaskManager(() => {}, 20);
+  managers.push(manager);
+  const reserved = manager.prepareAgent({
+    id: "reserved_deadline",
+    displayCommand: "prepare workspace",
+    cwd: process.cwd(),
+    workspace: { kind: "inherit", path: process.cwd() },
+    timeoutMs: 200,
+  });
+  manager.activatePreparedAgent(reserved.id, {
+    ...commandLaunch("sleep 10"),
+    timeoutMs: 1,
+  });
+  await Bun.sleep(30);
+  expect(manager.inspect(reserved.id).status).toBe("running");
+  const completed = await manager.wait(reserved.id);
+  expect(completed.status).toBe("killed");
+  expect(completed.timedOut).toBe(true);
+  expect(completed.termination?.cause).toBe("timeout");
+});
+
+test("preparation snapshots expose metadata without cancellation authority", async () => {
+  const delivered: TaskInspection[] = [];
+  const events: TaskSummary[] = [];
+  const manager = new TaskManager((task) => delivered.push(task), 20);
+  managers.push(manager);
+  manager.subscribe((event) => events.push(event.task));
+  const identity = { sourceSessionId: "parent", sourceCallId: "prepare", callIndex: 0 };
+  const workspace = { kind: "inherit" as const, path: process.cwd() };
+  const reserved = manager.prepareAgent({
+    id: "public_preparation",
+    title: "Prepare workspace",
+    launchIdentity: identity,
+    displayCommand: "prepare workspace",
+    cwd: workspace.path,
+    workspace,
+    notifyOnComplete: true,
+  });
+  const signal = manager.preparationSignal(reserved.id);
+  const waiter = manager.wait(reserved.id);
+  const updated = manager.updatePreparedWorkspace(reserved.id, workspace);
+  const snapshots = [
+    reserved,
+    updated,
+    manager.list()[0]!,
+    manager.pending()[0]!,
+    manager.inspect(reserved.id),
+    ...events,
+  ];
+
+  for (const snapshot of snapshots) {
+    expect(snapshot).not.toHaveProperty("preparationController");
+    expect(snapshot).toMatchObject({
+      id: reserved.id,
+      title: "Prepare workspace",
+      launchIdentity: identity,
+      workspace: { ...workspace, preparationStatus: "preparing" },
+      background: true,
+      status: "running",
+      command: "prepare workspace",
+      cwd: workspace.path,
+      startedAt: reserved.startedAt,
+      baseOffset: 0,
+      outputEnd: 0,
+      timedOut: false,
+      stdinOpen: false,
+    });
+  }
+  // Each read path and lifecycle event owns its nested metadata copies.
+  for (const snapshot of snapshots) {
+    snapshot.launchIdentity!.sourceCallId = "snapshot mutation";
+    snapshot.workspace!.preparationStatus = "failed";
+  }
+  expect(manager.inspect(reserved.id).launchIdentity).toEqual(identity);
+  expect(manager.inspect(reserved.id).workspace?.preparationStatus).toBe("preparing");
+  expect(signal.aborted).toBe(false);
+  expect(manager.inspect(reserved.id).termination).toBeUndefined();
+
+  const stopped = manager.kill(reserved.id, "user-stop");
+  expect(signal.aborted).toBe(true);
+  const completed = await waiter;
+  expect(stopped.status).toBe("killed");
+  expect(completed.status).toBe("killed");
+  expect(completed.termination?.cause).toBe("user-stop");
+  expect(completed.workspace?.preparationStatus).toBe("failed");
+  expect(manager.pending()).toHaveLength(0);
+  expect(delivered).toHaveLength(1);
+  expect(events.at(-1)?.status).toBe("killed");
+  stopped.termination!.cause = "timeout";
+  expect(manager.inspect(reserved.id).termination?.cause).toBe("user-stop");
 });
