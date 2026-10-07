@@ -8,22 +8,31 @@
     {
       "file": "scripts/bruv-claude-compat.sh",
       "initialBlob": "e3fc96419050e349c3beb8f9043a47e61b8443e0",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_3e881127",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3e881127",
         "branch": "bruv/primary-shell-compatibility-launcher-3e881127",
         "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
-        "commit": null
+        "commit": "73ce9724096b166af2d81d2767172b113a44247f"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_10115cb2",
+          "status": "running",
+          "candidate": "73ce9724096b166af2d81d2767172b113a44247f"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd"
+      "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged physical launcher resolution→validate sibling→legacy staged probe or exported exec one visible lifetime;helper extraction adds shell-global coupling.",
+      "checks": "13 tests53 assertions;disposable Linux probes missing sibling despite PATH decoy/env/cwd/argv/export/invalid executable;no normal compiled/macOS/Android/full gate."
     },
     {
       "file": "scripts/build-claude-compat.ts",
       "initialBlob": "288ab823259a840b1f8b547d4366406d0340c963",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_af37fc58",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_af37fc58",
@@ -34,20 +43,26 @@
       "judges": [
         {
           "id": "task_3de9555d",
-          "status": "running",
-          "candidate": "efc6ca67a41cbfda7ec74a84a72245283034d593"
+          "status": "completed",
+          "candidate": "efc6ca67a41cbfda7ec74a84a72245283034d593",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "288ab823259a840b1f8b547d4366406d0340c963",
+          "objections": [],
+          "evidence": "Ordered destination validation/assets/version/sibling compile wait/failure-before-launcher visible; target/helper forwarding explicit. Publication-time validation protects later write distinct preflight build protection. Independent13 launcher/packaging85 assertions.",
+          "limits": "No full build/updater compile/platform/preflight rerun;updater fixture not paired build proof."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "288ab823259a840b1f8b547d4366406d0340c963",
       "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
       "changedRelatedPaths": [],
       "readingResult": "Unchanged paired build→validate destinations→assets/version→compile normal sibling once forwarding target/helper→failure propagation→shell launcher publication already visible.",
-      "checks": "13 focused85 assertions;11 actual-script preflight cases protect bytes without compile;connector-update fixture compile missing deps/assets,not full build."
+      "checks": "13 focused85 assertions;11 actual-script preflight cases protect bytes without compile;connector-update fixture compile missing deps/assets,not full build.",
+      "integrationState": "Matches tip unchanged"
     },
     {
       "file": "scripts/claude-compat-launcher.ts",
       "initialBlob": "42cadbf1870ff31d75b1d2d137c7d405a3e5b285",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_fadcda8f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_fadcda8f",
@@ -58,15 +73,21 @@
       "judges": [
         {
           "id": "task_fe560183",
-          "status": "running",
-          "candidate": "a9a52ee8d264ce8aaa0933d55a174112ba47c59e"
+          "status": "completed",
+          "candidate": "a9a52ee8d264ce8aaa0933d55a174112ba47c59e",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "42cadbf1870ff31d75b1d2d137c7d405a3e5b285",
+          "objections": [],
+          "evidence": "Filename/template/guarded write coherent; explicit sibling override validation and quoted exec preserve argv/streams/PID/signals/status;legacy staged version probe narrow;CLI scrub/install staging+rollback separate real owners. Independent13 tests85 assertions.",
+          "limits": "No full build/provider/macOS/Android."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "42cadbf1870ff31d75b1d2d137c7d405a3e5b285",
       "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
       "changedRelatedPaths": [],
       "readingResult": "Unchanged filename validation/template selection/guarded write coherent visible effects; build/installer/shell exec/connector dispatch traced.",
-      "checks": "13 pass85 assertions;no full build/device/provider."
+      "checks": "13 pass85 assertions;no full build/device/provider.",
+      "integrationState": "Matches tip unchanged"
     },
     {
       "file": "scripts/claude-native-acceptance/app-delegation-driver.mjs",
@@ -1168,15 +1189,21 @@
     {
       "file": "tests/claude-compat-human-controls.test.ts",
       "initialBlob": "8dc79ae1e34631b7c6e55a6f3fad6fdb994ff647",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_46b8d726",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_46b8d726",
         "branch": "bruv/primary-human-control-tests-46b8d726",
         "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
-        "commit": null
+        "commit": "a681ae7aea98375a69c78df606cb03b5c0b85635"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_2057ad8a",
+          "status": "running",
+          "candidate": "a681ae7aea98375a69c78df606cb03b5c0b85635"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1186,7 +1213,10 @@
           "candidate": "d09a46d856445ce51003ad5e1b1aa0080986454c"
         }
       ],
-      "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd"
+      "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
+      "changedRelatedPaths": [],
+      "readingResult": "Each captured native dialog owns correlated reply; replacement test reuses transport with abort rejection disabled instead duplicated callback/correlation machinery. Ledger authority/lifecycle assertions explicit.",
+      "checks": "37 tests185 assertions;all15 names82 assertion lines retained;typecheck/format/lint/diff pass;no production/live."
     },
     {
       "file": "tests/claude-compat-launch.test.ts",
@@ -1687,8 +1717,14 @@
     {
       "file": "tests/t3/web-task-events.test.ts",
       "initialBlob": "f09ea82bc1e8c407aabc7e377f1dbd02e4debbd6",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_258e5ffd",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_258e5ffd",
+        "branch": "bruv/primary-web-task-event-tests-258e5ffd",
+        "launchBase": "b2174daa061d8bd1cb02510edcca91b98b092a7f",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1698,7 +1734,8 @@
           "blob": "95a7f1c9831296f560d4fbbc8786c6a55817cf36",
           "candidate": "0f1dfe3930622aac30b0a05120bb07bab7f4fe0c"
         }
-      ]
+      ],
+      "launchBase": "b2174daa061d8bd1cb02510edcca91b98b092a7f"
     }
   ],
   "extraFiles": [
@@ -1965,6 +2002,13 @@
       "status": "passed",
       "scope": "Final binding/projection16 outer pass88 assertions;typecheck",
       "limits": "Isolated binding child passes here;projection worker baseline failure was separate environment. No SDK/live/full gate."
+    },
+    {
+      "id": "task_8d17e4c5",
+      "commit": "b2174daa",
+      "status": "passed",
+      "scope": "Final projection/binding/event24 outer tests104 assertions;typecheck",
+      "limits": "Actual area combined passes;older projection candidate binding fixture failed and remains recorded;no live/full gate."
     }
   ],
   "combinedReviews": [
@@ -2009,6 +2053,15 @@
       },
       "evidence": "Actual combined causal/history-before-exposure/checkpoint/revision/resume/reattachment semantics traced. Binding/projection16 outer pass;runtime/history/transport23 pass7 SDK skips;diff clean.",
       "limits": "No pinned SDK/full gate/live/compiled;not primary test substitution."
+    }
+  ],
+  "parentCheckpoints": [
+    {
+      "head": "0072ad15",
+      "mergeBase": "7b5c7d69",
+      "reason": "Parent has accepted common caller/build/live/task and completed site code; merging at batch boundary to give later file workers current accepted context.",
+      "diskFreeGiB": 130,
+      "status": "merge-attempt"
     }
   ]
 }
