@@ -71,3 +71,5 @@ site/package.json: Manifest exposes build/preview/assets/test boundaries directl
 site/scripts/browser.ts: Single per-call browser selection/launch operation; caller owns cleanup,unset/empty override defers Playwright. Judge read complete six callers and browser tests;runtime/override execution not rerun.
 
 site/scripts/capture-real-pty.py: Direct namespace/PTY lifetime and timed IO->persist->terminate/wait/kill/close sequence. Judge Python syntax/help and1 hash/reflow test/7 assertions;synthetic probe read not rerun. Existing chunk-local cursor-query/pre-try cleanup gaps unchanged. Coordinator correction: verdict says shipped landing consumes captured cells, but layout uses scripted demoFrame; this historical tool acceptance does not establish shipped integration.
+
+site/scripts/install-ui.test.ts: observeTerminal owns instrumentation/dataset-buffer observation and target coordinate derivation; desktop/mobile snapshots no longer overwrite geometry state. Test actions/assertions remain visible; full caller contract inspected. No independent runtime rerun;fixed waits/minified-bundle instrumentation remain existing limits.

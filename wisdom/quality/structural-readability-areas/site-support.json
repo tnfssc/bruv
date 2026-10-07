@@ -913,7 +913,7 @@
     {
       "focus": "site/scripts/install-ui.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_072fdc49",
@@ -928,10 +928,16 @@
         {
           "id": "task_1588246a",
           "candidate": "7fdbc657f08ff313669b6ea2cb786e6732c36e83",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "observeTerminal owns instrumentation/dataset-buffer observation and target coordinate derivation; desktop/mobile snapshots no longer overwrite geometry state. Test actions/assertions remain visible; full caller contract inspected. No independent runtime rerun;fixed waits/minified-bundle instrumentation remain existing limits.",
+          "objections": []
         }
       ],
-      "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12"
+      "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12",
+      "acceptedBlob": "538556abc76aa8bb294950cbc23b64ac8ac1be84",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/install.test.ts",
@@ -959,7 +965,7 @@
     {
       "focus": "site/scripts/preview.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_0207fb65",
@@ -970,7 +976,13 @@
           "result": "Unchanged decodeURL->index/file resolve->root-escape rejection->existence->no-store response. Local request state;caller shutdown.4 HTTP probes/6 assertions;startup test blocked missing playwright in worker;area combined browser suite previously passed."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_21f20bcf",
+          "candidate": "0a903f459e4ce09442756f7f314b388a39ea9d71",
+          "state": "running"
+        }
+      ],
       "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a"
     },
     {
