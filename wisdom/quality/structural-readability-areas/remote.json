@@ -343,7 +343,7 @@
     {
       "focus": "src/remote/owner-child.ts",
       "initialBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_3fe528f2",
@@ -362,9 +362,12 @@
         },
         {
           "id": "task_280ab6b7",
-          "status": "running",
+          "status": "completed",
           "candidate": "d9b1b50ea6e9eec12a9f7bfa43fd3ab70d5e239f",
-          "context": "Fresh replacement; prior task killed with no verdict, current caller/test combined context explicitly supplied."
+          "context": "Fresh replacement; prior task killed with no verdict, current caller/test combined context explicitly supplied.",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Close guard/error/escalation/nonrejecting cleanup promise encode necessary distinctions. Owner retains cancellation/settlement policy and terminal publication after child release/persistence drain.",
+          "checks": "Fresh judge current owner/child identities verified; area lifecycle suite 11 pass/106 assertions; relevant services capabilityNeeds unchanged despite wider services diff."
         }
       ],
       "launchBase": "c9a84cf7c9eb36006c149e4f28f291486808a725",
@@ -376,7 +379,9 @@
       },
       "result": "Unchanged OwnerChild owns observed close and TERM/KILL escalation. Error retained while cleanup continues; waitForExit reports after close, release completes cleanup. Owner drains/publishes afterward.",
       "checks": "11 pass/106 assertions local Linux source fixtures; no live/compiled.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
+      "integrationState": "unchanged area blob; fresh replacement judge considered integrated caller/test context"
     },
     {
       "focus": "src/remote/owner-rpc.ts",
@@ -1597,5 +1602,17 @@
     "uniquePrimaryIds": 25,
     "launchedPrimaryCount": 25,
     "notFinal": true
+  },
+  "parentIntegrationCheckpoint": {
+    "tip": "695ade32",
+    "commonChanges": [
+      "src/questions/runtime.ts",
+      "src/questions/service.ts",
+      "src/tasks/job-service.ts"
+    ],
+    "remoteRelatedIncoming": [
+      "tests/remote-question-bridge.test.ts"
+    ],
+    "state": "merge preview pending; parent imported earlier accepted remote batch"
   }
 }
