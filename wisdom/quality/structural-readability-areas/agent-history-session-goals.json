@@ -517,16 +517,31 @@
     {
       "focus": "src/history/service.ts",
       "initialBlob": "60389949b2e69dbbfc6f2f73948369cb893f6abc",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f75129c8",
           "launchBase": "d890f4873ceef903e9bd14d9fb6f3a28993caa84",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f75129c8",
-          "branch": "bruv/primary-history-service-f75129c8"
+          "branch": "bruv/primary-history-service-f75129c8",
+          "commit": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
+          "changedPaths": [
+            "src/history/service.ts",
+            "tests/history.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "History branch/cross-session retrieval responsibilities clarified; preserved refs, scopes, original text and full validation.",
+          "checks": "21 focused tests/72 assertions; new characterization passes baseline; focused type/format/lint/diff pass; execute bridge 20 ENOENT missing dist/bruv, no compiled proof."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_150357ad",
+          "candidate": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
+          "base": "d890f4873ceef903e9bd14d9fb6f3a28993caa84",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -1038,8 +1053,15 @@
     {
       "focus": "tests/goals.test.ts",
       "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_6d7a5ed8",
+          "launchBase": "4bd65fd16c75678800b04e432dcaad64702ce0d3",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_6d7a5ed8",
+          "branch": "bruv/primary-goal-behavior-tests-6d7a5ed8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
