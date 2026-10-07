@@ -17,3 +17,5 @@ Removed unshipped CompletedInput and its API-only tests (candidate `35218b89`, j
 ## Instruction mode lifetime batch
 
 Candidate `b56b4b3a`, judge task_00bd7047 ACCEPT: eliminate cached session/digest/custom-frame state; derive deterministic marker identity while instruction-continuity retains real manager/session authority. Root custom/child routing and append-before-memory preserved. Exact extension one-argument adjustment and strengthened mode tests integrated together; both need fresh primary focus later. Worker 30 passes/219 assertions plus full tsc and focused format/lint; independent execution dependency-blocked, actual-code acceptance explicit.
+
+Combined proof at `4287844f`: 111 tests pass, 0 fail, 596 assertions across 10 history/instruction/goals/live-delegation source suites (task_b86bb73e). Shared dependencies/assets read-only; no binary/provider/device/SSH claim.
