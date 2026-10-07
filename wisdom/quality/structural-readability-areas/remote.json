@@ -282,8 +282,14 @@
     {
       "focus": "src/remote/entry.ts",
       "initialBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "primary": {
+        "id": "task_03f678fa",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_03f678fa",
+        "branch": "bruv/remote-primary-entry-03f678fa"
+      },
+      "launchBase": "6c4dcba1024226c5e6afb5e863cbc8a105b73838"
     },
     {
       "focus": "src/remote/extension.ts",
@@ -476,17 +482,21 @@
     {
       "focus": "src/remote/repository-wire.ts",
       "initialBlob": "24ff5f07fa4e85cbe898cf022d81cb507c0dbf90",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_6ea69bdc",
-          "status": "running",
+          "status": "completed",
           "candidate": "755b63c0fbed29dfb20f4236e39c3387b108761e",
           "suppliedCandidateCorrection": {
             "previous": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
             "actual": "755b63c0fbed29dfb20f4236e39c3387b108761e",
             "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
-          }
+          },
+          "verdict": "ACCEPT",
+          "reason": "Upload receipt/replay/persistence/ready separate from digest/destructive checkout construction; launch obtains immutable handoff before upload/dispatch, return fences unchanged.",
+          "checks": "Judge inlined upload equivalent modulo whitespace; terminal return/recovery suffix byte-identical; 9 pass/50 assertions, broader dependency loading blocked.",
+          "limits": "Existing unchanged retryRepository omits saved title while launch replay compares title, so titled retries can conflict. Not fixed by readability patch."
         }
       ],
       "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
@@ -502,7 +512,9 @@
       },
       "result": "Upload receipt validation/replay/persistence/ready publication separated from digest verification/destructive checkout replacement; launch obtains durable pinned handoff before uploading and using saved intent.",
       "checks": "58 pass/341 assertions; inlined upload equivalent modulo indentation; return/terminal bodies unchanged; format/lint/diff pass.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "64475e6cd3a0b363dfcdcdcb9ea936e83082d6f7",
+      "integrationState": "exact accepted source patch applied without overlap; no related edits"
     },
     {
       "focus": "src/remote/repository.md",
@@ -791,14 +803,22 @@
     {
       "focus": "src/remote/runtime.ts",
       "initialBlob": "ce4d30630047fa9536409754db3efeb72dd7cc5b",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_e1ab9585",
+          "status": "running",
+          "candidate": "edb1318b65ad68d88f987aa87785414787168991"
+        }
+      ],
       "launchBase": "20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d",
       "primary": {
         "id": "task_8e982299",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_8e982299",
-        "branch": "bruv/remote-primary-runtime-8e982299"
-      }
+        "branch": "bruv/remote-primary-runtime-8e982299",
+        "commit": "edb1318b65ad68d88f987aa87785414787168991"
+      },
+      "workerResponse": "Candidate committed; ready for independent judgment.\n\n- **Base:** `20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d`\n- **Candidate:** `edb1318b65ad68d88f987aa87785414787168991`\n- **Branch:** `bruv/remote-primary-runtime-8e982299`\n\n**Changed paths**\n- `src/remote/runtime.ts`\n- `tests/remote-runtime.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after walkthrough:** Following extension registration through the owner’s settlement reader previously required reconstructing pagination, artifact preservation, checkpoint assembly, and a duplicated durable-write closure. Now `captureNativeJobEvidence` owns the complete output-preserving scan. The settlement handler explicitly awaits that evidence, snapshots questions/messages, then publishes through the existing `durableJsonReplace`.\n\nAnswer claiming/replay suppression stays together unchanged. Cancellation and work/questions/completion distinctions remain intact, including turn settlement’s existing `killed` classification. Internal staging now uses the shared writer’s exclusive UUID file; flush ordering remains unchanged.\n\n**Proof:** candidate focused suite **20 pass / 83 assertions**; final runtime+owner checks **4 pass / 81 assertions**. Added runtime tests also pass against baseline source. Format, lint, and diff checks pass.\n\n**Overlap:** `remote.json` lists runtime/tests pending without active primary IDs. Related runtime-test edits need final coverage; accepted durability/cancellation files remain unchanged.\n\nClean worktree. No push/PR, full-build, live-provider, SSH, or power-loss claim."
     },
     {
       "focus": "src/remote/security.ts",
@@ -1121,8 +1141,14 @@
     {
       "focus": "tests/remote-capability-runtime.test.ts",
       "initialBlob": "d4d2ffbe0c7946380ad09921b34deb66d3defcb3",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_d83b6e0b",
+          "status": "running",
+          "candidate": "189f56e3a914e24dc04a6a795f4bc7a562498b98"
+        }
+      ],
       "relatedAcceptance": {
         "judge": "task_f6ad3799",
         "blob": "ee0b6d2bc37eeadb1e85facf2b35b9a9642a36f4",
@@ -1138,9 +1164,13 @@
       "primary": {
         "id": "task_669bdb5e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_669bdb5e",
-        "branch": "bruv/remote-primary-capability-runtime-tests-669bdb5e"
+        "branch": "bruv/remote-primary-capability-runtime-tests-669bdb5e",
+        "commit": "189f56e3a914e24dc04a6a795f4bc7a562498b98"
       },
-      "launchBase": "a6872af1deea4820d9c4505f3776bac54856edf8"
+      "launchBase": "a6872af1deea4820d9c4505f3776bac54856edf8",
+      "result": "Abort/deadline/revocation/terminal fences now independent authority/request lifetimes, avoiding already-cancelled/revoked confounds; frozen reply compares explicit expected bytes.",
+      "checks": "39 pass/212 assertions; service/mailbox regressions preserved; format/lint/diff pass.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-client.test.ts",
@@ -1385,12 +1415,18 @@
     {
       "focus": "tests/remote-root-client.test.ts",
       "initialBlob": "3a25d228b5f25291ffb2d4354888f4b295f6f523",
-      "status": "pending",
+      "status": "primary-running",
       "judgeRounds": [],
       "relatedAcceptance": {
         "judge": "task_b04a86e2",
         "blob": "f19df6e94cca27114dabeab08d7885a377fe75e9",
         "needs": "fresh primary focus and own independent judge"
+      },
+      "launchBase": "6c4dcba1024226c5e6afb5e863cbc8a105b73838",
+      "primary": {
+        "id": "task_0336c340",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_0336c340",
+        "branch": "bruv/remote-primary-root-client-tests-0336c340"
       }
     },
     {
@@ -1738,6 +1774,13 @@
       "command": "bun test remote-question-bridge,remote-source-approval,remote-jobs,remote-owner,remote-owner-lifecycle,root-owner,remote-capability-runtime tests",
       "result": "92 pass, 0 fail, 581 assertions across 7 files",
       "limits": "Not live SSH/provider/compiled parity"
+    },
+    {
+      "commit": "6c4dcba1",
+      "job": "task_986469b5",
+      "command": "bun run check; bun test remote-root-client,remote-root-presenter,root-owner,root-store,root-runtime,remote-root-transport tests",
+      "result": "Whole configured typecheck passes; 65 pass/397 assertions across 6 files",
+      "limits": "No full CI/build/authenticated SSH/provider/physical terminal/compiled parity"
     }
   ],
   "crossAreaNeeds": [
@@ -1852,5 +1895,13 @@
       }
     ],
     "method": "Compare recorded committed candidate to retained worktree HEAD; any true source judgment mismatch requires fresh review, never inferred acceptance."
-  }
+  },
+  "knownLimits": [
+    {
+      "file": "src/remote/repository-wire.ts",
+      "issue": "retryRepository omits saved title although launch retry compares it; titled retry conflict is unchanged",
+      "source": "task_6ea69bdc actual-code judgment",
+      "action": "Report to parent; no unrequested behavior fix in this patch."
+    }
+  ]
 }
