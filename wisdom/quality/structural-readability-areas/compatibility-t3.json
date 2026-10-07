@@ -314,7 +314,7 @@
     {
       "file": "src/claude-compat/commands.ts",
       "initialBlob": "f50902cd03e53ac8a58906b24d4ef01e532c55f8",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_b1382f6c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_b1382f6c",
@@ -325,17 +325,26 @@
       "judges": [
         {
           "id": "task_dfe81e3e",
-          "status": "running",
-          "candidate": "3013a308208dba8bf92de2a6b4a911a286a5ad5a"
+          "status": "completed",
+          "candidate": "3013a308208dba8bf92de2a6b4a911a286a5ad5a",
+          "verdict": "ACCEPT",
+          "blob": "b242e3cc8afa0f536e415b0fa41cc6d6154baa35",
+          "relatedBlobs": {
+            "tests/claude-compat-commands.test.ts": "79e9072515373a6863025dfd0c74e40168f7097c"
+          },
+          "objections": [],
+          "evidence": "Admission/normalization separated from visible effects; extension context projection and notification completion share owned lifetime. Independent exact-source probes passed admission/whitespace/native-open/context/notification order/error; existing assertions retained.",
+          "limits": "Normal focused suite unavailable due candidate deps; no full/runtime-validation claim."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "b242e3cc8afa0f536e415b0fa41cc6d6154baa35",
       "launchBase": "d94451f0cccb25bfa4269069bbc6dd82decd73d4",
       "changedRelatedPaths": [
         "tests/claude-compat-commands.test.ts"
       ],
       "readingResult": "readHumanCommand owns recognition/authority/syntax normalization; dispatch selects visible effects; runExtensionCommand owns context projection and ordered notification completion. Retains two spellings whitespace differences.",
-      "checks": "20 focused pass129 assertions; new tests baseline6 pass57 assertions; typecheck/format/lint/diff pass,7 infos."
+      "checks": "20 focused pass129 assertions; new tests baseline6 pass57 assertions; typecheck/format/lint/diff pass,7 infos.",
+      "integrationState": "Exact candidate source+related commands test joined; commands test primary pending"
     },
     {
       "file": "src/claude-compat/frontend.ts",
@@ -366,17 +375,28 @@
     {
       "file": "src/claude-compat/history.ts",
       "initialBlob": "a89c8a44b0fb136a21e4f11fd6213f07a8cf60a7",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_3a86626e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3a86626e",
         "branch": "bruv/primary-history-3a86626e",
         "launchBase": "6eda4dac92470f5180fdde2c7c56518480ac5212",
-        "commit": null
+        "commit": "71aaf5c4bb89e1004f1650b150b7afcde8afe235"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_9b56d280",
+          "status": "running",
+          "candidate": "71aaf5c4bb89e1004f1650b150b7afcde8afe235"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "6eda4dac92470f5180fdde2c7c56518480ac5212"
+      "launchBase": "6eda4dac92470f5180fdde2c7c56518480ac5212",
+      "changedRelatedPaths": [
+        "tests/claude-compat-history.test.ts"
+      ],
+      "readingResult": "Branch selection completes before content translation; internal translated messages paired with source UUID remove lockstep arrays. Writer says property order/source IDs/parenting/import authority/mirroring unchanged.",
+      "checks": "15 focused pass including SDK0.3.276 filesystem+isolated runtime; typecheck/format/lint/diff pass, warnings retained; no live/build/parity."
     },
     {
       "file": "src/claude-compat/human-controls.ts",
@@ -523,10 +543,17 @@
     {
       "file": "src/claude-compat/transport.ts",
       "initialBlob": "2955f0309942c4d94a591065f9d315cc4592c02a",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_6958d30f",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_6958d30f",
+        "branch": "bruv/primary-transport-6958d30f",
+        "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "402c11381670f61ec088c6a4e5532155837198ae"
     },
     {
       "file": "src/t3/README.md",
@@ -683,7 +710,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_dfe81e3e",
+          "verdict": "ACCEPT",
+          "blob": "79e9072515373a6863025dfd0c74e40168f7097c",
+          "candidate": "3013a308208dba8bf92de2a6b4a911a286a5ad5a"
+        }
+      ]
     },
     {
       "file": "tests/claude-compat-compiled.test.ts",
@@ -909,8 +944,14 @@
     {
       "file": "tests/claude-native-acceptance-model.test.mjs",
       "initialBlob": "0b993a6daeef0eb081aca96e1d202ff802e8e151",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_bb4a09fd",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_bb4a09fd",
+        "branch": "bruv/primary-acceptance-model-tests-bb4a09fd",
+        "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -920,7 +961,8 @@
           "blob": "341241ef6dc769bc102678cea91c9f3e4ec19b16",
           "candidate": "484fff19d6f71ce3459426ba881d2e953badc4f4"
         }
-      ]
+      ],
+      "launchBase": "402c11381670f61ec088c6a4e5532155837198ae"
     },
     {
       "file": "tests/claude-native-app-delegation-model.test.mjs",
@@ -1054,14 +1096,14 @@
       "file": "tests/claude-compat-arguments.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "primary-running",
+      "status": "judge-queued",
       "introducedBy": "e5f89da92237ef8f257f4afd30fe0250630eba66",
       "primary": {
         "id": "task_a3a6c083",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_a3a6c083",
         "branch": "bruv/primary-new-argument-tests-a3a6c083",
         "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
-        "commit": null
+        "commit": "84835d670152921268ecd3e5e0207158853efb10"
       },
       "judges": [],
       "acceptedBlob": null,
@@ -1073,7 +1115,10 @@
           "candidate": "e5f89da92237ef8f257f4afd30fe0250630eba66"
         }
       ],
-      "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388"
+      "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
+      "changedRelatedPaths": [],
+      "readingResult": "Fresh primary unchanged: two direct test contracts, flags leave launch state unchanged and grammar rejects values/duplicates; small loops expose both without hidden state.",
+      "checks": "2 pass26 assertions; Biome pass; clean tree."
     },
     {
       "file": "tests/claude-compat-frontend.test.ts",
@@ -1116,6 +1161,13 @@
       "status": "passed",
       "scope": "Integrated arguments/launch/transport/runtime/composition 39 outer pass179 assertions; tsc --noEmit; focused format/lint",
       "limits": "10 warnings/15 infos; isolated subprocess suites; no live/full gate."
+    },
+    {
+      "id": "task_1f5155a3",
+      "commit": "402c1138",
+      "status": "passed",
+      "scope": "Integrated six acceptance-model suites42 Node tests;node-path2 Bun tests10 assertions",
+      "limits": "Local fixtures only, not real native/provider acceptance."
     }
   ],
   "combinedReviews": [

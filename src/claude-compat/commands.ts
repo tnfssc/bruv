@@ -39,44 +39,10 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
     ];
   }
   async function dispatchUserCommand(message: UserMessage): Promise<boolean> {
-    if (message.type !== "user" || message.message.role !== "user") return false;
-    const content = message.message.content;
-    const text =
-      typeof content === "string"
-        ? content
-        : content
-            .flatMap((block) => {
-              if (
-                typeof block === "object" &&
-                block !== null &&
-                "type" in block &&
-                block.type === "text" &&
-                "text" in block &&
-                typeof block.text === "string"
-              )
-                return [block.text];
-              return [];
-            })
-            .join("\n");
-    const match = /^\/bruv(?::([a-z]+))?(?:\s+([\s\S]*))?$/.exec(text.trim());
-    if (!match) {
-      if (/^\/bruv(?=[:\s]|$)/.test(text.trim())) throw new Error("Invalid Bruv command syntax; use /bruv help");
-      return false;
-    }
-    if (message.session_id && message.session_id !== session.sessionId)
-      throw new Error("Human command session mismatch");
-    if (message.parent_tool_use_id != null) throw new Error("Human commands belong to the root session");
-    if (
-      Array.isArray(content) &&
-      content.some(
-        (block) => typeof block !== "object" || block === null || !("type" in block) || block.type !== "text",
-      )
-    )
-      throw new Error("Bruv commands accept text only; send attachments in a separate prompt");
-    const args = (match[2] ?? "").trim();
-    const [name = "help", ...tail] = match[1] ? [match[1], args] : args.split(/\s+/);
-    const value = tail.join(" ");
-    if (name === "help" || name === "") {
+    const input = readHumanCommand(message, session.sessionId);
+    if (!input) return false;
+    const { name, value } = input;
+    if (name === "help") {
       await options.notify(
         "/bruv " +
           available().join(" | ") +
@@ -130,6 +96,11 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
       await options.notify(question.id + " [" + question.status + "] " + question.text, "info");
       return true;
     }
+    await runExtensionCommand(name, value);
+    return true;
+  }
+
+  async function runExtensionCommand(name: string, value: string): Promise<void> {
     const command = session.extensionRunner.getCommand(name);
     if (!command) throw new Error("Unavailable Bruv command: " + name);
     const context = session.extensionRunner.createCommandContext();
@@ -144,7 +115,46 @@ export function createClaudeCompatCommands(options: ClaudeCompatCommandOptions) 
     };
     await command.handler(value, { ...context, ui });
     await notifications;
-    return true;
   }
+
   return { catalog, dispatchUserCommand };
+}
+
+/** Recognize and admit a root human command before any command effects. */
+function readHumanCommand(message: UserMessage, sessionId: string): { name: string; value: string } | null {
+  if (message.type !== "user" || message.message.role !== "user") return null;
+  const content = message.message.content;
+  const text =
+    typeof content === "string"
+      ? content
+      : content
+          .flatMap((block) => {
+            if (
+              typeof block === "object" &&
+              block !== null &&
+              "type" in block &&
+              block.type === "text" &&
+              "text" in block &&
+              typeof block.text === "string"
+            )
+              return [block.text];
+            return [];
+          })
+          .join("\n");
+  const match = /^\/bruv(?::([a-z]+))?(?:\s+([\s\S]*))?$/.exec(text.trim());
+  if (!match) {
+    if (/^\/bruv(?=[:\s]|$)/.test(text.trim())) throw new Error("Invalid Bruv command syntax; use /bruv help");
+    return null;
+  }
+  if (message.session_id && message.session_id !== sessionId) throw new Error("Human command session mismatch");
+  if (message.parent_tool_use_id != null) throw new Error("Human commands belong to the root session");
+  if (
+    Array.isArray(content) &&
+    content.some((block) => typeof block !== "object" || block === null || !("type" in block) || block.type !== "text")
+  )
+    throw new Error("Bruv commands accept text only; send attachments in a separate prompt");
+  const args = (match[2] ?? "").trim();
+  if (match[1]) return { name: match[1], value: args };
+  const [name, ...tail] = args.split(/\s+/);
+  return { name: name || "help", value: tail.join(" ") };
 }
