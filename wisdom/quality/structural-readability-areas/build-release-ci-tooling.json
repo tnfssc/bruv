@@ -15,25 +15,43 @@
     {
       "focus": ".github/workflows/ci.yml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_f5563536",
           "launchBase": "f1fca7d35a0785a69849f58fbadcae8f5c522457",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_f5563536",
           "branch": "bruv/primary-.github-workflows-ci.yml-f5563536",
+          "state": "completed",
+          "commit": "802ea4ed2ee7d35d9597be1ed693d002670bcc12"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_884543de",
+          "base": "f1fca7d35a0785a69849f58fbadcae8f5c522457",
+          "candidate": "802ea4ed2ee7d35d9597be1ed693d002670bcc12",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Nested policy predicates become two explicit allowed plan/result tuples with rejection diagnostics. Permissions/wiring/comparison/acceptance unchanged.",
+      "checks": "21 focused tests;17 shell blocks syntax;1500 baseline/candidate policy combinations equivalent; rejection messages checked. actionlint absent, no hosted/macOS/API."
     },
     {
       "focus": ".github/workflows/dependency-updates.yml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_6b0e313c",
+          "launchBase": "0cf3a39cc5436b10196620218615d2d356884c37",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_6b0e313c",
+          "branch": "bruv/primary-.github-workflows-dependency-upd-6b0e313c",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -112,7 +130,7 @@
     {
       "focus": "scripts/build-pair.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_fb3e9b39",
@@ -128,15 +146,24 @@
           "id": "task_438d5e06",
           "base": "f1fca7d35a0785a69849f58fbadcae8f5c522457",
           "candidate": "d1091db724e6ffa15471733ae14b1d43558f2db9",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "One connector command compiles normal sibling exactly once; singleton matrix/loop removed. Direct spawn exposes cwd/IO/exit; before-after argument/path/rejection semantics preserved.",
+          "checks": "Independent18pass109 assertions; typecheck/format/diff pass, existing2 lint warnings1info. Child probe delegation only, no compile/cross-native gate.",
+          "acceptedBlobs": {
+            "scripts/build-pair.ts": "3cfc224480eb04bd7019ec365b919fb031fef6c0",
+            "tests/production-packaging.test.ts": "aec669688b9fb751badf5e307ca0101fddc26b98"
+          }
         }
       ],
       "relatedPaths": [
         "tests/production-packaging.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "3cfc224480eb04bd7019ec365b919fb031fef6c0",
       "readingResult": "Singleton command matrix/generic execution loop becomes one command and one visible spawn; argument/output/failure propagation unchanged.",
-      "checks": "18 focused tests including child cwd/argv/IO/exit probes; changed-file tsc/format/diff pass; existing lint diagnostics. No full build."
+      "checks": "18 focused tests including child cwd/argv/IO/exit probes; changed-file tsc/format/diff pass; existing lint diagnostics. No full build.",
+      "integrationState": "Full coherent source/test patch integrated; no stale tracked pairedBuildCommands callers, worker note excluded."
     },
     {
       "focus": "scripts/build.ts",
@@ -893,7 +920,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_438d5e06",
+        "verdict": "ACCEPT",
+        "blob": "aec669688b9fb751badf5e307ca0101fddc26b98",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/publish-release.test.ts",

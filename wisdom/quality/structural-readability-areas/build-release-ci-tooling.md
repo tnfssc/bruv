@@ -46,3 +46,5 @@ Combined a472a64c seven-suite batch: **138 pass,0 fail,628 assertions**, includi
 Local-installer-test primary: phase suites and one chronological build/probe trace; explicit staged binding plus permanent SIGTERM restoration case. Judge task_5442746a ACCEPT51a27b0, all17 prior cases retained;18/65 focus,40/161 with current accepted download pair. No native proof.
 
 Download-test primary: scoped scenario cleanup, explicit fixture roles and source-based faults. Judge task_bdc5b9c4 ACCEPT7f47af8; candidate22/106 sequential/concurrent, related48/204. Independently reproduced baseline cross-test deletion (1pass21fail vs worker2pass20fail scheduling-dependent), repaired as explicit test-lifetime defect. No real download/platform proof.
+
+Paired build: singleton matrix/loop removed in favor of direct command→spawn→exit. Judge task_438d5e06 ACCEPT3cfc224;18/109 focused incl actual entrypoint stub child cwd/argv/IO/status. No compile claim. Related production-packaging test primary pending; no remaining tracked old plural API callers.
