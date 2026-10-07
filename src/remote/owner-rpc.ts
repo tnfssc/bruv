@@ -15,7 +15,6 @@ export class OwnerRpcOutput {
       const line = this.buffer.slice(0, newline);
       this.buffer = this.buffer.slice(newline + 1);
       if (Buffer.byteLength(line) > this.maxLineBytes) throw new Error("RPC line limit exceeded");
-      if (!line.trim()) continue;
       let event: unknown;
       try {
         event = JSON.parse(line);

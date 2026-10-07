@@ -235,11 +235,16 @@ for (const settled of [true, false]) {
 test("framing accepts split/coalesced lines and keeps malformed or oversized output out", () => {
   const output = new OwnerRpcOutput(32);
   expect([...output.push('{"type":')]).toEqual([]);
-  expect([...output.push('"start"}\n\n{"type":"end"}\n')]).toEqual([{ type: "start" }, { type: "end" }]);
+  expect([...output.push('"start"}\n{"type":"end"}\n')]).toEqual([{ type: "start" }, { type: "end" }]);
   expect(output.truncated).toBe(false);
   expect(() => [...output.push("bad json\n")]).toThrow("Invalid RPC JSON output");
   expect(() => [...new OwnerRpcOutput(4).push("12345")]).toThrow("RPC line limit exceeded");
   expect(() => [...new OwnerRpcOutput(4).push("12345\n")]).toThrow("RPC line limit exceeded");
+});
+
+test("framing rejects terminated blank and whitespace JSON frames", () => {
+  expect(() => [...new OwnerRpcOutput(32).push("\n")]).toThrow("Invalid RPC JSON output");
+  expect(() => [...new OwnerRpcOutput(32).push(" \t\n")]).toThrow("Invalid RPC JSON output");
 });
 
 test.skipIf(process.platform !== "linux")(
