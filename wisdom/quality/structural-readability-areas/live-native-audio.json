@@ -253,13 +253,20 @@
       "judgeRounds": [
         {
           "id": "task_27183ba4",
-          "status": "running",
+          "status": "complete",
           "candidate": "017776567ec43ba4a886dd5edadab71d6430331d",
-          "base": "08dc3dd7c0e48cbb811c003b70592b7e51628b55"
+          "base": "08dc3dd7c0e48cbb811c003b70592b7e51628b55",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Scenario-local core lifetimes remove interleaved playback/capture history and generations 0–10; purposeful restart/refill/flush-capacity sequences remain together. Flush helper identical; short-packet assertions stronger.",
+          "checks": "Independent baseline/candidate Clang22 strict ASan/UBSan; capture-gate/waveform pass; both reject three temporary faults; diff clean.",
+          "acceptedBlobs": {
+            "native/live/test-core.c": "182ca301ae67e70cfbaffd43ec6380c2ac9ff377"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "182ca301ae67e70cfbaffd43ec6380c2ac9ff377",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_365b0c49",
         "verdict": "ACCEPT",
