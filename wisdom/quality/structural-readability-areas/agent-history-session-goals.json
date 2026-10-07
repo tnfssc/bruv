@@ -1161,8 +1161,15 @@
     {
       "focus": "tests/cache-countdown.test.ts",
       "initialBlob": "ec7800207adfe05b026b4fc0cdcc715db2a8801b",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_5bc31e3d",
+          "launchBase": "7274d3c43360c22c1569aff93123ec97179f80af",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_5bc31e3d",
+          "branch": "bruv/primary-cache-countdown-tests-5bc31e3d"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -1454,16 +1461,30 @@
     {
       "focus": "tests/history.test.ts",
       "initialBlob": "d0b30b8f4e642de05f16f838c741087ed8d64186",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_396dabdf",
           "launchBase": "36d0938cc67e32ab8b9d3f4f866604f981b44d27",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_396dabdf",
-          "branch": "bruv/primary-history-behavior-tests-396dabdf"
+          "branch": "bruv/primary-history-behavior-tests-396dabdf",
+          "commit": "6e78787852d27ce9fc861d9fcac45d488172035b",
+          "changedPaths": [
+            "tests/history.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Independent history contract scenarios replace combined setup/order assumptions; identifiable entries and real SDK shake records replace numeric slots/synthetic session facade. Cross-session permission remains explicit per call.",
+          "checks": "Baseline 17 tests/59 assertions; final 23/67 pass; focused format/lint/type/diff pass with prepared assets; no full gate/build."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_01b94654",
+          "candidate": "6e78787852d27ce9fc861d9fcac45d488172035b",
+          "base": "36d0938cc67e32ab8b9d3f4f866604f981b44d27",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
