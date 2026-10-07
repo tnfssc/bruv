@@ -92,6 +92,49 @@ function hello(value: unknown, requireModel = false): Hello {
     throw new Error("Unsupported remote hello");
   return { ...h, profile: { ...p, model: p.model ?? "" } } as Hello;
 }
+/** Accept a whole page before advancing the cached transcript or reconciling its snapshot. */
+function acceptTranscriptPage(task: RemoteTask, taskId: string, response: unknown): void {
+  const r = object(response);
+  const snapshot = object(r.task);
+  if (
+    snapshot.taskId !== taskId ||
+    typeof snapshot.state !== "string" ||
+    !Array.isArray(r.events) ||
+    !Number.isSafeInteger(r.cursor) ||
+    typeof r.hasMore !== "boolean"
+  )
+    throw new Error("Invalid sync response");
+  let seq = task.cursor;
+  const events = r.events.map((raw) => {
+    const e = object(raw);
+    if (!Number.isSafeInteger(e.seq) || e.seq !== ++seq || !("event" in e))
+      throw new Error("Noncontiguous remote transcript");
+    return e as RemoteEvent;
+  });
+  if (r.cursor !== seq || (r.hasMore && !events.length)) throw new Error("Invalid sync cursor");
+  task.events.push(...events);
+  task.cursor = seq;
+  task.transcriptComplete = !r.hasMore;
+  // A stale owner snapshot must not erase an already observed terminal result.
+  if (
+    !task.task ||
+    !["done", "failed", "cancelled", "stopped"].includes(task.task.state) ||
+    task.task.state === snapshot.state
+  )
+    task.task = snapshot as Task;
+  const reply = snapshot.reply as { replyId?: string; status?: string } | undefined;
+  if (reply && (reply.status === "delivered" || reply.status === "uncertain")) {
+    for (const [id, intent] of Object.entries(task.replies ?? {}))
+      if (intent.replyId === reply.replyId) {
+        task.replyDelivery ??= {};
+        task.replyDelivery[id] = { replyId: intent.replyId, status: reply.status };
+      }
+  }
+  task.outcome = "accepted";
+  task.lastSync = new Date().toISOString();
+  delete task.lastError;
+}
+
 const MAX_CACHE_BYTES = 128 * 1024 * 1024;
 
 export function remoteStatePath(): string {
@@ -345,8 +388,8 @@ export class RemoteClient {
       }
     });
   }
-  private syncRaw(taskId: string): Promise<RemoteTask> {
-    return this.exclusive(async () => {
+  async sync(taskId: string): Promise<RemoteTask> {
+    const task = await this.exclusive(async () => {
       const state = await this.read(),
         task = state.tasks[taskId],
         c = state.connection;
@@ -360,55 +403,16 @@ export class RemoteClient {
             "Remote owner changed (server restart or replaced state); outcome unknown; cached transcript only",
           );
         for (let page = 0; page < 1000; page++) {
-          const r = object(
-            await this.transport(c.host, c.bruvPath, {
-              op: "sync",
-              ownerId: task.ownerId,
-              epoch: task.epoch,
-              taskId,
-              cursor: task.cursor,
-            }),
-          );
-          const snapshot = object(r.task);
-          if (
-            snapshot.taskId !== taskId ||
-            typeof snapshot.state !== "string" ||
-            !Array.isArray(r.events) ||
-            !Number.isSafeInteger(r.cursor) ||
-            typeof r.hasMore !== "boolean"
-          )
-            throw new Error("Invalid sync response");
-          let seq = task.cursor;
-          const events = r.events.map((raw) => {
-            const e = object(raw);
-            if (!Number.isSafeInteger(e.seq) || e.seq !== ++seq || !("event" in e))
-              throw new Error("Noncontiguous remote transcript");
-            return e as RemoteEvent;
+          const response = await this.transport(c.host, c.bruvPath, {
+            op: "sync",
+            ownerId: task.ownerId,
+            epoch: task.epoch,
+            taskId,
+            cursor: task.cursor,
           });
-          if (r.cursor !== seq || (r.hasMore && !events.length)) throw new Error("Invalid sync cursor");
-          task.events.push(...events);
-          task.cursor = seq;
-          task.transcriptComplete = !r.hasMore;
-          // A stale owner snapshot must not erase an already observed terminal result.
-          if (
-            !task.task ||
-            !["done", "failed", "cancelled", "stopped"].includes(task.task.state) ||
-            task.task.state === snapshot.state
-          )
-            task.task = snapshot as Task;
-          const reply = snapshot.reply as { replyId?: string; status?: string } | undefined;
-          if (reply && (reply.status === "delivered" || reply.status === "uncertain")) {
-            for (const [id, intent] of Object.entries(task.replies ?? {}))
-              if (intent.replyId === reply.replyId) {
-                task.replyDelivery ??= {};
-                task.replyDelivery[id] = { replyId: intent.replyId, status: reply.status };
-              }
-          }
-          task.outcome = "accepted";
-          task.lastSync = new Date().toISOString();
-          delete task.lastError;
+          acceptTranscriptPage(task, taskId, response);
           await this.save(state);
-          if (!r.hasMore) return task;
+          if (task.transcriptComplete) return task;
         }
         throw new Error("Remote pagination limit reached; cached pages retained");
       } catch (error) {
@@ -417,6 +421,14 @@ export class RemoteClient {
         throw error;
       }
     });
+
+    // Servicing may call control/updateTask: release the cache lock before it starts.
+    try {
+      await serviceRemoteTask(this, task);
+    } catch (error) {
+      await this.updateTask(taskId, { integrationError: String(error) });
+    }
+    return this.transcript(taskId);
   }
   async control(request: Record<string, unknown>, expected?: { ownerId: string; epoch: string }): Promise<unknown> {
     return this.exclusive(async () => {
@@ -449,15 +461,6 @@ export class RemoteClient {
       Object.assign(task, changes);
       await this.save(state);
     });
-  }
-  async sync(taskId: string): Promise<RemoteTask> {
-    const task = await this.syncRaw(taskId);
-    try {
-      await serviceRemoteTask(this, task);
-    } catch (error) {
-      await this.updateTask(taskId, { integrationError: String(error) });
-    }
-    return this.transcript(taskId);
   }
   async cancel(taskId: string): Promise<RemoteTask> {
     await this.exclusive(async () => {
