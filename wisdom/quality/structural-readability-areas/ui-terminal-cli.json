@@ -226,7 +226,7 @@
     {
       "focus": "scripts/benchmark-footer-context.ts",
       "initialBlob": "91d84fe12a843948add9cd91c219ee7098b1f419",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_98c25ed9",
@@ -241,11 +241,26 @@
           "id": "task_e562a5b1",
           "base": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
           "candidate": "0b04211f5d594e631d2a171807ecba84dc5e45f4",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/benchmark-footer-context.ts": "4a3883306c3a8437a15dbceaf93eae751204c4e0"
+          },
+          "evidence": "Context readers bind receiver once; measurement owns local materialization probe/restoration; fixture manager/history lifetime separate. Counter measures entry materialization not file reads, timing boundaries unchanged.",
+          "checks": [
+            "12records all nontiming fields incl bytes/counters equal; uncached80/800/4000 cached0",
+            "29tests/307assertions",
+            "Incoming prototype identity restored and manager/directory cleaned success/warmup/measured failure",
+            "Biome/diff"
+          ],
+          "limits": [
+            "No speed/build/typecheck/compiled CLI/provider/device/SSH",
+            "Manager creation before try and disposal-before-directory-removal inherited"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "4a3883306c3a8437a15dbceaf93eae751204c4e0",
+      "integrationState": "integrated exact judged candidate",
       "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
       "changedRelatedPaths": [],
       "result": "Candidate binds context readers once, scopes frame materialization counter/probe restoration and fixture history lifetime rather than nested receiver ternaries/global counter.",

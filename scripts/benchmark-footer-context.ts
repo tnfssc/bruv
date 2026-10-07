@@ -5,17 +5,16 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   AgentSession,
-  SessionManager,
   buildSessionProjection,
   type ExtensionContext,
-  type Theme,
   type ReadonlyFooterDataProvider,
+  SessionManager,
+  type Theme,
 } from "@earendil-works/pi-coding-agent";
-import { DiskEntryStore } from "../src/history/disk-entry-store";
-import { installDiskBackedSessionManager, disposeDiskBackedSessionManager } from "../src/history/session-manager";
-import { renderCompactFooter, renderDetailedFooter } from "../src/ui/footer";
-
 import { installShakeAccountingAdapter } from "../src/agent/manual-shake";
+import { DiskEntryStore } from "../src/history/disk-entry-store";
+import { disposeDiskBackedSessionManager, installDiskBackedSessionManager } from "../src/history/session-manager";
+import { renderCompactFooter, renderDetailedFooter } from "../src/ui/footer";
 
 const nativeContextUsage = AgentSession.prototype.getContextUsage;
 installDiskBackedSessionManager();
@@ -35,13 +34,51 @@ const data = {
   getAvailableProviderCount: () => 1,
   getExtensionStatuses: () => new Map(),
 } as unknown as ReadonlyFooterDataProvider;
-const materialize = DiskEntryStore.prototype.materialize;
-let materializations = 0;
-DiskEntryStore.prototype.materialize = function (...args) {
-  materializations++;
-  return materialize.apply(this, args);
-};
-for (const turns of [20, 200, 1000]) {
+// Each reader keeps its estimator and receiver together. The native reference
+// uses the SDK projection builder, never the adapter's cache-seeding hook.
+function contextUsageReaders(manager: SessionManager) {
+  const cachedContextUsage = AgentSession.prototype.getContextUsage;
+  const cachedHost = { sessionManager: manager, _limitsModel: () => model } as unknown as AgentSession;
+  const nativeHost = {
+    _limitsModel: () => model,
+    sessionManager: {
+      buildSessionProjection: () => buildSessionProjection(manager.getEntries(), manager.getLeafId()),
+      getBranch: () => manager.getBranch(),
+    },
+  } as unknown as AgentSession;
+  return [
+    { mode: "uncached-sdk", getContextUsage: () => nativeContextUsage.call(nativeHost) },
+    { mode: "cached-sdk", getContextUsage: () => cachedContextUsage.call(cachedHost) },
+  ] as const;
+}
+
+function measureFooterFrames(render: typeof renderCompactFooter, ctx: ExtensionContext) {
+  const materialize = DiskEntryStore.prototype.materialize;
+  let materializations = 0;
+  DiskEntryStore.prototype.materialize = function (...args) {
+    materializations++;
+    return materialize.apply(this, args);
+  };
+  try {
+    // Warm both context accounting and footer summaries before measuring frames.
+    render(ctx, data, theme, 100);
+    materializations = 0;
+    const samples: number[] = [];
+    for (let sample = 0; sample < 5; sample++) {
+      const start = performance.now();
+      render(ctx, data, theme, 100);
+      samples.push(performance.now() - start);
+    }
+    return {
+      medianMs: +samples.sort((a, b) => a - b)[2]!.toFixed(3),
+      historicalMaterializationsPerFrame: materializations / samples.length,
+    };
+  } finally {
+    DiskEntryStore.prototype.materialize = materialize;
+  }
+}
+
+function benchmarkHistory(turns: number) {
   const home = mkdtempSync(join(tmpdir(), "bruv-footer-bench-"));
   const manager = SessionManager.create(home, home);
   try {
@@ -60,37 +97,20 @@ for (const turns of [20, 200, 1000]) {
         timestamp: 1,
       });
     }
-    const host = { sessionManager: manager, _limitsModel: () => model } as unknown as AgentSession;
-    // Keep the reference independent of the adapter’s new projection-seeding hook.
-    const nativeHost = {
-      _limitsModel: () => model,
-      sessionManager: {
-        buildSessionProjection: () => buildSessionProjection(manager.getEntries(), manager.getLeafId()),
-        getBranch: () => manager.getBranch(),
-      },
-    } as unknown as AgentSession;
-    for (const mode of ["uncached-sdk", "cached-sdk"] as const) {
-      const read = mode === "uncached-sdk" ? nativeContextUsage : AgentSession.prototype.getContextUsage;
+    for (const { mode, getContextUsage } of contextUsageReaders(manager)) {
       const ctx = {
         mode: "tui",
         sessionManager: manager,
         model,
         modelRegistry: { isUsingOAuth: () => false },
-        getContextUsage: () => read.call(mode === "uncached-sdk" ? nativeHost : host),
+        getContextUsage,
         ui: { theme },
       } as unknown as ExtensionContext;
       for (const [name, render] of [
         ["compact", renderCompactFooter],
         ["detailed", renderDetailedFooter],
       ] as const) {
-        render(ctx, data, theme, 100);
-        materializations = 0;
-        const samples: number[] = [];
-        for (let sample = 0; sample < 5; sample++) {
-          const start = performance.now();
-          render(ctx, data, theme, 100);
-          samples.push(performance.now() - start);
-        }
+        const measurement = measureFooterFrames(render, ctx);
         console.log(
           JSON.stringify({
             mode,
@@ -98,8 +118,7 @@ for (const turns of [20, 200, 1000]) {
             turns,
             entries: turns * 2,
             fileBytes: statSync(manager.getSessionFile()!).size,
-            medianMs: +samples.sort((a, b) => a - b)[2]!.toFixed(3),
-            historicalMaterializationsPerFrame: materializations / samples.length,
+            ...measurement,
           }),
         );
       }
@@ -109,3 +128,5 @@ for (const turns of [20, 200, 1000]) {
     rmSync(home, { recursive: true, force: true });
   }
 }
+
+for (const turns of [20, 200, 1000]) benchmarkHistory(turns);
