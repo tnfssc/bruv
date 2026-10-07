@@ -43,3 +43,5 @@ site/.gitignore: Explicit installed-dependency/generated-output exclusions follo
 site/assets/brand/bruv-icon.svg: One accessible glyph with local theme fill/lean transform/even-odd counter is direct; build copies and metadata links it. Judge 10 build tests do not prove favicon copying/geometry/theme rendering; no browser/full build.
 
 site/assets/brand/bruv-wordmark-light.svg: Accessible SVG root and shared ink/transform visibly own four letters; direct README/build fallback references. Judge XML/labels/dimensions/variant equality plus2 tests/63 assertions. Tests reference assets/cells,not light-SVG pixels;no browser/build.
+
+site/scripts/generate-wordmark.ts: Checked rasterization->half-block rows->JSON and SVG geometry->checked social render->PNG are direct sequential operations; width-local state. Fresh judge2 consumer tests/56 assertions and1200x630 PNG header. Generator/failure paths/browser not run. Prior aborted judge retained with no verdict.

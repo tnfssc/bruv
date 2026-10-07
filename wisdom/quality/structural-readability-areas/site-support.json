@@ -115,7 +115,7 @@
     {
       "focus": "site/assets/brand/wordmark-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_4cffbf2e",
@@ -126,7 +126,13 @@
           "result": "Unchanged width-keyed glyph rows; generator creates,brand selects size,layout positions,terminal presents.1 wordmark test/43 assertions;no regeneration/browser/build."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_b3d7d253",
+          "candidate": "779a14fb3d429de7d4573828b11ea1e03cc126c2",
+          "state": "running"
+        }
+      ],
       "initialBlob": "7690aff87443de0a97521444bb7a64546f568f4e"
     },
     {
@@ -196,13 +202,15 @@
     {
       "focus": "site/content.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_6b21fc71",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_6b21fc71",
           "branch": "bruv/primary-site-content.ts-6b21fc71",
-          "base": "e9e1127352dd78ae1a7946fccea740d01d948a5d"
+          "base": "e9e1127352dd78ae1a7946fccea740d01d948a5d",
+          "commit": "9f9958395ce3c0b60c7350e6fbd97688d64171d1",
+          "result": "Unchanged two direct shared-copy objects; literals->named properties->terminal/HTML sections/links. No branching/effects/lifetimes.2 tests/24 assertions;no browser/build."
         }
       ],
       "judges": [],
@@ -388,8 +396,15 @@
     {
       "focus": "site/install-html.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_8dfc6d3c",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_8dfc6d3c",
+          "branch": "bruv/primary-site-install-html.ts-8dfc6d3c",
+          "base": "4bbd80ea0cbf91e1697219a3f07c2957950f771c"
+        }
+      ],
       "judges": [],
       "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db"
     },
@@ -656,7 +671,7 @@
     {
       "focus": "site/scripts/generate-wordmark.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_ff69ebfe",
@@ -679,10 +694,16 @@
         {
           "id": "task_a0a2c4e8",
           "candidate": "f9c925d7e00680f7c572e0e9667d6950cef2c2c8",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Checked rasterization->half-block rows->JSON and SVG geometry->checked social render->PNG are direct sequential operations; width-local state. Fresh judge2 consumer tests/56 assertions and1200x630 PNG header. Generator/failure paths/browser not run. Prior aborted judge retained with no verdict.",
+          "objections": []
         }
       ],
-      "initialBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c"
+      "initialBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c",
+      "acceptedBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/html-animation.test.ts",
