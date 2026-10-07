@@ -445,8 +445,15 @@
     {
       "focus": "src/history/types.ts",
       "initialBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_90c49aec",
+          "launchBase": "94e6edf6f19a0b270b6ac35c72b2a427d9be1295",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_90c49aec",
+          "branch": "bruv/primary-history-types-90c49aec"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -975,16 +982,32 @@
     {
       "focus": "tests/history-storage-io.test.ts",
       "initialBlob": "27d019686d63830282ec0a9143e45f10d6b091f4",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_3073210f",
           "launchBase": "8130a93798e0c03aca913c4469283430dd7a7290",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_3073210f",
-          "branch": "bruv/primary-storage-io-tests-3073210f"
+          "branch": "bruv/primary-storage-io-tests-3073210f",
+          "commit": "eaac149b84b707785584990ea9204a3d6b68905a",
+          "changedPaths": [
+            "tests/history-storage-io.test.ts",
+            "tests/fixtures/history-io-short-writes.ts",
+            "tests/fixtures/history-io-cleanup-failure.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Move interpolated subprocess programs into typed fixture modules with distinct fault lifetimes. Parent owns temp data cleanup/process launch. Explicit test correction moves cleanup fault assertion to publication and verifies fault consumption.",
+          "checks": "Baseline 10 pass; final related 13 pass/49 parent assertions plus fixtures 2 pass/10 assertions. Negative control baseline false-pass versus candidate failure. Strict focused TypeScript/format/lint/diff pass."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_6fc46161",
+          "candidate": "eaac149b84b707785584990ea9204a3d6b68905a",
+          "base": "8130a93798e0c03aca913c4469283430dd7a7290",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
@@ -1327,7 +1350,28 @@
       "integration": "pending"
     }
   ],
-  "extraFiles": [],
+  "extraFiles": [
+    {
+      "focus": "tests/fixtures/history-io-short-writes.ts",
+      "initialBlob": null,
+      "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate-new"
+    },
+    {
+      "focus": "tests/fixtures/history-io-cleanup-failure.ts",
+      "initialBlob": null,
+      "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate-new"
+    }
+  ],
   "crossAreaNeeds": [],
   "batchChecks": [
     {
