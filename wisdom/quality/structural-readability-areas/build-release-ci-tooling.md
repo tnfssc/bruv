@@ -66,3 +66,5 @@ Release-workflow-test primary: separate owned-job build/helper/assets contracts 
 Manual preparer: shared numeric ordering and one package snapshot. Judge task_706382eb ACCEPT5822e205 plus explicit combined fixture compatibility9fdf9ef (28/166), resolving manual-test follow-up. Independent numeric probes2/104; committed multi-tag coverage remains nonblocking gap.
 
 Dependency updater first candidate REJECT task_98fc9caa: inherited constructor appears as missing lock version after normalization. Not integrated. Fresh rework task_d9eeb4d5 owns full candidate+regression fix; earlier candidate/branch retained.
+
+Notices: explicit license policy/collection/render/publication with budget boundary. Judge task_9e042be2 ACCEPT10cc816;30/413related4/23baseline newtests;real211-package657015-byte output identical SHA256cb5746ceef28fea70e3c7c042cbb9edf3489f7a66407dbbd304f0661c94ccb4a. New test registered EXTRA pending own primary. Attributes: judge task_064019e9 ACCEPT65bbe845 after retirement history proof and3394 identical tracked attributes.

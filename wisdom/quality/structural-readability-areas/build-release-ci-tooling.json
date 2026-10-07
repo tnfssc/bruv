@@ -6,7 +6,7 @@
     {
       "focus": ".gitattributes",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_a31d93bd",
@@ -22,13 +22,21 @@
           "id": "task_064019e9",
           "base": "164deefcd9626c12b567a424d103ddc6636140cb",
           "candidate": "fc26b96625a211a38efd81baf49d6e179dcee99c",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Retired integration patch whitespace exception removed; historical retirement ancestor d898214f71b4131c1bca807824f4fe69420b6992 proves absent shipped tree, remaining actual patch rule coherent.",
+          "checks": "Independent3394 tracked attrs identical;remaining patch bytes need rule;ordinary source whitespace rejected;diffpass,no build.",
+          "acceptedBlobs": {
+            ".gitattributes": "65bbe845d312eb73e8b77b4ef5f7beee4a1c97cb"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "65bbe845d312eb73e8b77b4ef5f7beee4a1c97cb",
       "readingResult": "Removes obsolete whitespace exception for retired integration tree; only actual patch exception remains, avoids false reading trail.",
-      "checks": "All3394tracked path whitespace attributes identical;real patch exemption/source trailing-whitespace rejection checked;diff pass;no build."
+      "checks": "All3394tracked path whitespace attributes identical;real patch exemption/source trailing-whitespace rejection checked;diff pass;no build.",
+      "integrationState": "Full coherent patch integrated without overlap; local note excluded."
     },
     {
       "focus": ".github/workflows/ci.yml",
@@ -173,7 +181,7 @@
     {
       "focus": "biome.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "awaiting-judge",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_e7133eda",
@@ -184,7 +192,14 @@
           "commit": "4d2499a067f363cb8c12fbf830016a1ff7634c16"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_6ac6a0f9",
+          "base": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
+          "candidate": "4d2499a067f363cb8c12fbf830016a1ff7634c16",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [],
       "acceptedBlob": null,
       "readingResult": "Unchanged discovery/format/lint defaults/test exceptions separated; merging exclusions changes scope not structure.",
@@ -210,8 +225,16 @@
     {
       "focus": "install.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_e8ffe816",
+          "launchBase": "c157c301c165b7a56eb9f54adc36ea5a5b248beb",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_e8ffe816",
+          "branch": "bruv/primary-install.sh-e8ffe816",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -403,7 +426,7 @@
     {
       "focus": "scripts/generate-third-party-notices.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_18c3b50a",
@@ -419,15 +442,24 @@
           "id": "task_9e042be2",
           "base": "911a433455175b5af5db6bc909c220f2693ffd24",
           "candidate": "a6950a24b187330b9832fe6bc26a762826a6beb0",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicit license precedence→graph collection→pure render→budget/write boundary; unused directory/repository state removed. Required/optional/peer/nested/cycle/dedup/limits/fallbacks/output contracts preserved.",
+          "checks": "Independent30/413 related,4/23 new tests vsbase;Biomepass;211 packages657015bytes identical SHA256cb5746ceef28fea70e3c7c042cbb9edf3489f7a66407dbbd304f0661c94ccb4a;no build/judge tsc.",
+          "acceptedBlobs": {
+            "scripts/generate-third-party-notices.ts": "10cc8165ebff6cb5821490b6cbebfae901000fa8",
+            "tests/generate-third-party-notices.test.ts": "a727a8c127babe0ff6bdb9173258699abd97d6fa"
+          }
         }
       ],
       "relatedPaths": [
         "tests/generate-third-party-notices.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "10cc8165ebff6cb5821490b6cbebfae901000fa8",
       "readingResult": "Explicit license alternatives, graph collection, effect-free rendering and visible output publication replace interleaved traversal/fallback/render/write; unused entry directory removed.",
-      "checks": "37tests549assertions;newtests pass base;tsc/Biome/diff pass;real bundle211packages657015bytes identical. No full build."
+      "checks": "37tests549assertions;newtests pass base;tsc/Biome/diff pass;real bundle211packages657015bytes identical. No full build.",
+      "integrationState": "Full coherent patch integrated without overlap; local note excluded."
     },
     {
       "focus": "scripts/install-local.sh",
@@ -675,19 +707,29 @@
     {
       "focus": "scripts/smoke.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_9bca7048",
           "launchBase": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_9bca7048",
           "branch": "bruv/primary-scripts-smoke.sh-9bca7048",
+          "state": "completed",
+          "commit": "fcaf05e449e8b4a4023c06ef64f70e0ef8f1aec5"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_8b4ae038",
+          "base": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
+          "candidate": "fcaf05e449e8b4a4023c06ef64f70e0ef8f1aec5",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged validate→build/reuse→isolate pair→CLI/connector/web checks; wrappers would obscure isolation contract.",
+      "checks": "11focus112assertions;syntaxpass;no real binaries/full/native."
     },
     {
       "focus": "scripts/update-dependencies.ts",
@@ -1507,7 +1549,7 @@
     {
       "focus": "tests/generate-third-party-notices.test.ts",
       "initialBase": "911a433455175b5af5db6bc909c220f2693ffd24",
-      "state": "candidate-new",
+      "state": "pending",
       "primary": [],
       "judges": [],
       "relatedPaths": [],
@@ -1515,6 +1557,12 @@
       "origin": {
         "primary": "task_18c3b50a",
         "candidate": "a6950a24b187330b9832fe6bc26a762826a6beb0"
+      },
+      "relatedPatchJudgment": {
+        "id": "task_9e042be2",
+        "verdict": "ACCEPT",
+        "blob": "a727a8c127babe0ff6bdb9173258699abd97d6fa",
+        "primaryStillRequired": true
       }
     }
   ],
