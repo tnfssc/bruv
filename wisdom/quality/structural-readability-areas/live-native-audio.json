@@ -1121,13 +1121,20 @@
       "judgeRounds": [
         {
           "id": "task_4151cb4a",
-          "status": "running",
+          "status": "complete",
           "candidate": "a4836828bfb3336229bd70430539e5fb7fecbc77",
-          "base": "2c5d7aa9ae377dfda5fc059faea391444860c1fa"
+          "base": "2c5d7aa9ae377dfda5fc059faea391444860c1fa",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Purelocal tail2400codepoints/omissiondisclosure/UTF8chunk480 journey coherent;caller ownscorrelation/speechtrigger/failure/sessionlifetime;nullcorrelation observations notdelegationfinality.",
+          "checks": "Independent111tests938assertions/diffclean;no provider/device/Mac/authremote/fullbuild.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-context.ts": "ca67afe7f0da5fa93829785661d93b002a2d2302"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged tail2400codepoints/disclosedomissions thenquoted480byteUTF8chunks withoutsplitting codepoints;caller observations no inventedcorrelation,provisionaltimestamps/approxcontext/sessionselection separate.",
       "checks": "98tests555assertions context/delegation/request/extension,diffclean;no provider/device/macOS."
@@ -1178,9 +1185,16 @@
         "status": "candidate ready",
         "commit": "84ddffa8b4c5559f35dbcea6eb134af33e115900"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_af9fc144",
+          "status": "running",
+          "candidate": "84ddffa8b4c5559f35dbcea6eb134af33e115900",
+          "base": "e11164e48eedeedc5f1c95f0598c178c3a58e6b2"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [
         "tests/gpt-live-playback.test.ts"
       ],
@@ -1195,12 +1209,15 @@
         "launchBase": "168832841052c286d6f7fc0ed3bebdcda3e16167",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_8bc8ea03",
         "branch": "bruv/primary-src-live-gpt-live-request.ts-8bc8ea03",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "ee1694e6abc99958cdd3600cb6fa3b29954a71c6"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged rejectomittedspeech/scanarrivalorder timingvsadmission/jointext newlineoverlap/trim;rawaudit/provisionalreplay/admission stay withowners,no inventedfinality.",
+      "checks": "63tests705assertions;missingWASM fixedexistingfixtures;no runtime/sourcechange/provider/device/Mac/build."
     },
     {
       "focus": "src/live/gpt-live-session.ts",
@@ -1719,13 +1736,20 @@
       "judgeRounds": [
         {
           "id": "task_792067e5",
-          "status": "running",
+          "status": "complete",
           "candidate": "42b90f334af4af21e039fd199ff3b2b402c0b55c",
-          "base": "01f5af72fa90b817e0242978b5d99b37bc8199e2"
+          "base": "01f5af72fa90b817e0242978b5d99b37bc8199e2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Each overflow/malformed/disconnect/rejection/finalization ownsfixture evidence,notsharedarrays/positionallifetimes;routineconnectedfixture hidesonlyadmission,protocolunder-test remainsvisible;ordered provisional/correlation/concurrentclose journeys retained.",
+          "checks": "Independent54tests656assertions across6GPTfiles/Biome/diffpass;no build/typecheck/provider/device/macOS.",
+          "acceptedBlobs": {
+            "tests/gpt-live-session.test.ts": "21832ae3a8c518914e1e99e849a3f21340bcf303"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "21832ae3a8c518914e1e99e849a3f21340bcf303",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_86206c2a",
         "verdict": "ACCEPT",
@@ -2123,9 +2147,16 @@
         "status": "candidate ready",
         "commit": "d6a78704028e99ec22bc7d7e00cf9c83851754b6"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_8ab8f308",
+          "status": "running",
+          "candidate": "d6a78704028e99ec22bc7d7e00cf9c83851754b6",
+          "base": "000950277a6a27f3488b994db6cbf0186ba1cd98"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_542a0b36",
         "verdict": "ACCEPT",
