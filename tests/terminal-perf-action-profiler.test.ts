@@ -29,7 +29,7 @@ class ManualScheduler implements ActionProfilerScheduler {
   }
 }
 
-function fixture(capacity = 32, heartbeatIntervalMs: number | null = null) {
+function rendererFixture() {
   const scheduler = new ManualScheduler();
   const advance = (ms: number) => scheduler.advance(ms);
   const terminal = {
@@ -56,14 +56,19 @@ function fixture(capacity = 32, heartbeatIntervalMs: number | null = null) {
       return "frame-result";
     },
   };
-  const profiler = attachTerminalActionProfiler(renderer, {
-    now: () => scheduler.clock,
-    scheduler,
+  return { scheduler, advance, renderer };
+}
+
+function profiledFixture(capacity = 32, heartbeatIntervalMs: number | null = null) {
+  const fixture = rendererFixture();
+  const profiler = attachTerminalActionProfiler(fixture.renderer, {
+    now: () => fixture.scheduler.clock,
+    scheduler: fixture.scheduler,
     heartbeatIntervalMs,
     capacity,
     traceInfo: { fixtureVersion: "action-unit-v1", contentFingerprint: "fixed frame" },
   });
-  return { scheduler, advance, renderer, profiler };
+  return { ...fixture, profiler };
 }
 
 function span(profiler: ReturnType<typeof attachTerminalActionProfiler>, label: string) {
@@ -73,7 +78,7 @@ function span(profiler: ReturnType<typeof attachTerminalActionProfiler>, label: 
 }
 
 test("sync input and nested action are distinct from end-to-frame and request latency", () => {
-  const { renderer, profiler, advance } = fixture();
+  const { renderer, profiler, advance } = profiledFixture();
   try {
     const result = profiler.runAction("Enter", () => {
       advance(2);
@@ -118,8 +123,7 @@ test("sync input and nested action are distinct from end-to-frame and request la
 });
 
 test("observed async prefix preserves promise identity and excludes awaited work", async () => {
-  const { renderer, profiler: initial, scheduler, advance } = fixture();
-  initial.dispose();
+  const { renderer, scheduler, advance } = rendererFixture();
   let release!: () => void;
   const wait = new Promise<void>((resolve) => {
     release = resolve;
@@ -171,8 +175,7 @@ test("observed async prefix preserves promise identity and excludes awaited work
 });
 
 test("sync exceptions retain identity, restore stack, and frame failures remain visible", () => {
-  const { renderer, profiler: initial, scheduler, advance } = fixture();
-  initial.dispose();
+  const { renderer, scheduler, advance } = rendererFixture();
   const error = { code: "original exception" };
   const instance = {
     fail() {
@@ -213,8 +216,7 @@ test("sync exceptions retain identity, restore stack, and frame failures remain 
 });
 
 test("coalesced requests link multiple roots once and retain requests made during frame", () => {
-  const { renderer, profiler: initial, scheduler, advance } = fixture();
-  initial.dispose();
+  const { renderer, scheduler, advance } = rendererFixture();
   renderer.doRender = function () {
     advance(5);
     this.requestRender();
@@ -245,8 +247,7 @@ test("coalesced requests link multiple roots once and retain requests made durin
 });
 
 test("synchronous render request does not report negative post-return scheduling latency", () => {
-  const { renderer, profiler: initial, scheduler, advance } = fixture();
-  initial.dispose();
+  const { renderer, scheduler, advance } = rendererFixture();
   renderer.requestImmediateRender = function () {
     advance(2);
     this.doRender();
@@ -272,8 +273,7 @@ test("synchronous render request does not report negative post-return scheduling
 });
 
 test("request return finalizes its consumed frame, not the next request batch", () => {
-  const { renderer, profiler: initial, scheduler, advance } = fixture();
-  initial.dispose();
+  const { renderer, scheduler, advance } = rendererFixture();
   let renderCount = 0;
   renderer.doRender = function () {
     advance(5);
@@ -324,7 +324,7 @@ test("request return finalizes its consumed frame, not the next request batch", 
 });
 
 test("heartbeat exposes deferred work independent of span CPU, with no catch-up storm", () => {
-  const { scheduler, profiler, advance } = fixture(2, 4);
+  const { scheduler, profiler, advance } = profiledFixture(2, 4);
   try {
     advance(3); // Below interval: heartbeat cannot resolve this segment individually.
     scheduler.fireNext(); // at 4
@@ -352,7 +352,7 @@ test("heartbeat exposes deferred work independent of span CPU, with no catch-up 
 });
 
 test("bounded buffers, pending links, copies, clear, and monotonic trace IDs", () => {
-  const { renderer, profiler, advance } = fixture(2);
+  const { renderer, profiler, advance } = profiledFixture(2);
   try {
     for (let i = 0; i < 5; i++) profiler.runAction("action " + i, () => renderer.requestRender());
     renderer.doRender();
@@ -381,8 +381,7 @@ test("bounded buffers, pending links, copies, clear, and monotonic trace IDs", (
 });
 
 test("instance descriptors restored, disposal idempotent, failures roll back, later patches survive", () => {
-  const { renderer, profiler: initial, scheduler } = fixture();
-  initial.dispose();
+  const { renderer, scheduler } = rendererFixture();
   class Events {
     method() {
       return this;
@@ -620,7 +619,7 @@ test("real induced pre-frame Enter stall encloses known synchronous work; heartb
 });
 
 test("actions without requests are not associated with unrelated later frames", () => {
-  const { renderer, profiler, advance } = fixture();
+  const { renderer, profiler, advance } = profiledFixture();
   try {
     profiler.runAction("no visible mutation", () => advance(3));
     renderer.doRender();

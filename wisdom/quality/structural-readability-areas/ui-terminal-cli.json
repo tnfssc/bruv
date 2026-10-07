@@ -218,19 +218,36 @@
     {
       "focus": "scripts/benchmark-task-row-render.ts",
       "initialBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_c9f5fced",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c9f5fced",
           "branch": "bruv/primary-readability-scripts-benchmark-ta-c9f5fced",
-          "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8"
+          "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+          "commit": "5cbafa0c84777290a9c0d56da036fd524fec748d"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_21c6d061",
+          "base": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+          "candidate": "5cbafa0c84777290a9c0d56da036fd524fec748d",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8"
+      "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+      "changedRelatedPaths": [],
+      "result": "No-change: per-case setup,3warmups,counter reset,7renders,median/JSON,finally restoration explicit.",
+      "checks": [
+        "Nine ordered benchmark rows snapshots/frame1/1/0",
+        "95tests/1101assertions"
+      ],
+      "limits": [
+        "No performance/build"
+      ]
     },
     {
       "focus": "scripts/tasks-ui-native-proof.py",
@@ -2497,7 +2514,7 @@
     {
       "focus": "tests/terminal-perf-action-profiler.test.ts",
       "initialBlob": "9ba463bccc121cc8700bcd29f5b98be1ceaea9ce",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_b9c5eb3e",
@@ -2512,12 +2529,25 @@
           "id": "task_432725ee",
           "base": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
           "candidate": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_40ff7535"
+          "verdict": "ACCEPT",
+          "priorRelatedJudge": "task_40ff7535",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/terminal-perf-action-profiler.test.ts": "46abbafdc26b90a509b33f330bca9c13b348545a"
+          },
+          "evidence": "Renderer/clock fixture separate from default instrumentation eliminates six irrelevant attach/dispose lifetimes; test assertions/timing and explicit restore/rollback/foreign composition coverage unchanged.",
+          "checks": [
+            "Normalized complete test bodies identical",
+            "Base16/145; candidate profiler pair33/247",
+            "format/lint/diff"
+          ],
+          "limits": [
+            "No build/typecheck/provider/device/SSH/performance"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary focus pending",
+      "acceptedBlob": "46abbafdc26b90a509b33f330bca9c13b348545a",
+      "integrationState": "integrated exact primary candidate; supersedes earlier related test blob",
       "relatedPatchJudgments": [
         {
           "id": "task_40ff7535",
@@ -2566,16 +2596,25 @@
     {
       "focus": "tests/terminal-perf-profiler.test.ts",
       "initialBlob": "7cb1ce3c1390f701e65cc245a7deb03fa10c8360",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_6b781769",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_6b781769",
           "branch": "bruv/primary-readability-tests-terminal-perf--6b781769",
-          "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8"
+          "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+          "commit": "68ea091b9d1751f98c5c6ca5aa96591c05662c94"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_74718e8d",
+          "base": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+          "candidate": "68ea091b9d1751f98c5c6ca5aa96591c05662c94",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_5e042418"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
       "relatedPatchJudgments": [
@@ -2586,7 +2625,18 @@
           "blob": "708996371dabfb105ba97e010979b60c3af5b271"
         }
       ],
-      "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8"
+      "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+      "changedRelatedPaths": [],
+      "result": "No-change: local clocks, frame-consumed request/input scopes, real Pi scheduling/timing/native errors/descriptor restoration have explicit test ownership.",
+      "checks": [
+        "17focus/102assertions",
+        "4composition/52assertions",
+        "format/lint/diff"
+      ],
+      "limits": [
+        "Broader biome check existing import-order assist",
+        "No build"
+      ]
     },
     {
       "focus": "tests/terminal-perf-report.test.ts",
@@ -2728,8 +2778,15 @@
       "focus": "tests/terminal-interactions-normalize.test.ts",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "related-patch-reviewed-primary-pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_c93f9a76",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c93f9a76",
+          "branch": "bruv/new-file-primary-readability-tests-termi-c93f9a76",
+          "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": "96a49888775e77328e9cbeb1f416f2b5347b345b",
       "integrationState": "related patch integrated; primary pending",
@@ -2740,14 +2797,22 @@
           "verdict": "ACCEPT",
           "blob": "96a49888775e77328e9cbeb1f416f2b5347b345b"
         }
-      ]
+      ],
+      "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1"
     },
     {
       "focus": "tests/ui-cleanup-probe.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "related-patch-reviewed-primary-pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_09dea81c",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09dea81c",
+          "branch": "bruv/new-file-primary-readability-tests-ui-cl-09dea81c",
+          "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
@@ -2758,7 +2823,8 @@
           "verdict": "INSPECTED WITH ACCEPTED SOURCE",
           "blob": "f404edc33e4d99e3c363466338e431cbbc305d2b"
         }
-      ]
+      ],
+      "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1"
     }
   ],
   "batchChecks": [
