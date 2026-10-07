@@ -84,3 +84,5 @@ Client-test final rework 4e396c24 ACCEPT task_45f4b422 at 2439a575, independentl
 Root-client test own primary 81252d4c ACCEPT task_9e1c68cc at 4dc8a822: owner effects before response loss, normal logged missing-status path, independent durable checkpoint fixtures; exact abort→prompt and status-only/no-resend regressions retained. Independent 20 tests/144 assertions.
 
 Question bridge 4fdf931c ACCEPT task_7e7ebdea: projection and delivered receipt reconciliation separated without changing initial/fresh snapshots or pinned authority (89/1346). Root options ac44370f ACCEPT task_d1dd2209: consumption/effect switch preserves semantics (18/88); related placement tests require fresh own-primary coverage. Both full patches joined without worker notes.
+
+Job observations b6b2dbe5 ACCEPT task_c32ab4fa: terminal-result versus active-wait projection selected visibly;23/97 and 5-state byte parity. Full source/test patch joined; test own-primary pending. Protocol NO CHANGE task_31905010 at49a05368,25/200.

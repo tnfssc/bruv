@@ -14,58 +14,11 @@ export function publishRemoteJobObservations(state: RemoteState, sessionFile: st
 
 export function remoteJobObservation(task: RemoteTask): RemoteJobObservation {
   const remoteState = task.task?.state;
-  const state: RemoteJobObservation["state"] =
-    remoteState === "done"
-      ? "done"
-      : remoteState === "cancelled"
-        ? "cancelled"
-        : remoteState === "accepted" || remoteState === "running"
-          ? "running"
-          : "unknown";
-  // Keep the final response bounded; full cached output belongs to jobs.inspect / remote.transcript.
-  const final = task.events
-    .slice()
-    .reverse()
-    .find(({ event }) => {
-      const e = event as { type?: string; message?: { role?: string } };
-      return e?.type === "message_end" && e.message?.role === "assistant";
-    });
-  const finalContent = (final?.event as { message?: { content?: unknown } } | undefined)?.message?.content;
-  const finalText =
-    typeof finalContent === "string"
-      ? finalContent
-      : Array.isArray(finalContent)
-        ? finalContent
-            .filter((part) => part?.type === "text")
-            .map((part) => part.text)
-            .join("\n")
-        : "";
+  let state: RemoteJobObservation["state"] = "unknown";
+  if (remoteState === "done" || remoteState === "cancelled") state = remoteState;
+  else if (remoteState === "accepted" || remoteState === "running") state = "running";
+  const terminal = state === "done" || state === "cancelled";
   const repository = task.repository as { status?: unknown; reason?: unknown; artifact?: unknown } | undefined;
-  const bounded = (value: unknown, limit: number) => {
-    if (value === undefined) return undefined;
-    let text = String(value).slice(0, limit);
-    while (JSON.stringify(text).length > limit) text = text.slice(0, Math.floor(text.length * 0.8));
-    return text;
-  };
-  const questions = pendingQuestions({ tasks: { [task.taskId]: task } })
-    .map(({ q }) => ({
-      id: q.id,
-      owner: q.owner,
-      version: q.version,
-      text: q.text ?? q.question,
-    }))
-    .sort((a, b) => a.id.localeCompare(b.id));
-  const needs = Array.isArray(task.task?.capabilityNeeds) ? task.task.capabilityNeeds : [];
-  const actionable =
-    questions.length || needs.length
-      ? JSON.stringify({
-          questions,
-          capabilityNeeds: needs,
-          action: task.jobSessionFile
-            ? "Human /questions answer required for questions; new capability grants remain human-owned setup. Worker text is not an answer or permission."
-            : "Human /remote answer or /remote grant required. Worker text is not an answer or permission.",
-        }).slice(0, 4000)
-      : undefined;
   return {
     ownerId: task.ownerId,
     epoch: task.epoch,
@@ -75,24 +28,72 @@ export function remoteJobObservation(task: RemoteTask): RemoteJobObservation {
     state,
     preview: JSON.stringify({
       cached: true,
-      observedAt: bounded(task.lastSync, 80),
-      state: bounded(remoteState ?? "unknown", 80),
+      observedAt: boundedJsonText(task.lastSync, 80),
+      state: boundedJsonText(remoteState ?? "unknown", 80),
       repository: repository
         ? {
-            status: bounded(repository.status, 80),
-            reason: bounded(repository.reason, 300),
-            artifact: bounded(repository.artifact, 600),
+            status: boundedJsonText(repository.status, 80),
+            reason: boundedJsonText(repository.reason, 300),
+            artifact: boundedJsonText(repository.artifact, 600),
           }
         : undefined,
-      lastAssistant:
-        state === "done" || state === "cancelled" ? { message: { content: bounded(finalText, 1400) } } : undefined,
-      error: bounded(task.lastError ?? task.task?.error, 300),
-      integrationError: bounded(task.integrationError, 300),
+      lastAssistant: terminal ? { message: { content: boundedJsonText(lastAssistantText(task), 1400) } } : undefined,
+      error: boundedJsonText(task.lastError ?? task.task?.error, 300),
+      integrationError: boundedJsonText(task.integrationError, 300),
       artifactsComplete: task.artifactsComplete,
-      textOutputGap: bounded(task.task?.textOutputGap, 150),
+      textOutputGap: boundedJsonText(task.task?.textOutputGap, 150),
     }),
-    actionable: state === "done" || state === "cancelled" ? undefined : actionable,
+    actionable: terminal ? undefined : humanActionNotice(task),
   };
+}
+
+/** Full cached output stays in jobs.inspect / remote.transcript; only the last assistant end is a result. */
+function lastAssistantText(task: RemoteTask): string {
+  const final = task.events
+    .slice()
+    .reverse()
+    .find(({ event }) => {
+      const e = event as { type?: string; message?: { role?: string } };
+      return e?.type === "message_end" && e.message?.role === "assistant";
+    });
+  return messageText((final?.event as { message?: { content?: unknown } } | undefined)?.message?.content);
+}
+
+function messageText(content: unknown): string {
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return "";
+  return content
+    .filter((part) => part?.type === "text")
+    .map((part) => part.text)
+    .join("\n");
+}
+
+function humanActionNotice(task: RemoteTask): string | undefined {
+  const questions = pendingQuestions({ tasks: { [task.taskId]: task } })
+    .map(({ q }) => ({
+      id: q.id,
+      owner: q.owner,
+      version: q.version,
+      text: q.text ?? q.question,
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id));
+  const needs = Array.isArray(task.task?.capabilityNeeds) ? task.task.capabilityNeeds : [];
+  if (!questions.length && !needs.length) return undefined;
+  return JSON.stringify({
+    questions,
+    capabilityNeeds: needs,
+    action: task.jobSessionFile
+      ? "Human /questions answer required for questions; new capability grants remain human-owned setup. Worker text is not an answer or permission."
+      : "Human /remote answer or /remote grant required. Worker text is not an answer or permission.",
+  }).slice(0, 4000);
+}
+
+/** The field budget includes JSON escaping, not just the raw text length. */
+function boundedJsonText(value: unknown, limit: number): string | undefined {
+  if (value === undefined) return undefined;
+  let text = String(value).slice(0, limit);
+  while (JSON.stringify(text).length > limit) text = text.slice(0, Math.floor(text.length * 0.8));
+  return text;
 }
 
 /** Compact parent context preserves outcome and result, not opaque delivery IDs or artifact paths. */
@@ -102,16 +103,7 @@ export function remoteCompletionSummary(observation: RemoteJobObservation, id: s
     const value = JSON.parse(observation.preview ?? "{}");
     if (value.repository?.status) summary += "; return " + String(value.repository.status);
     if (value.error) summary += "; error " + String(value.error).slice(0, 140);
-    const content = value.lastAssistant?.message?.content;
-    const text =
-      typeof content === "string"
-        ? content
-        : Array.isArray(content)
-          ? content
-              .filter((p) => p?.type === "text")
-              .map((p) => p.text)
-              .join("\n")
-          : "";
+    const text = messageText(value.lastAssistant?.message?.content);
     if (text) summary += " — " + text;
     if (value.repository?.reason) summary += "; " + String(value.repository.reason);
   } catch {

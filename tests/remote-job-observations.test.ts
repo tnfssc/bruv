@@ -104,3 +104,98 @@ test("bounded normal completion includes the actual child result and safe return
   expect(text).toContain("return applied");
   expect(text.length).toBeLessThanOrEqual(430);
 });
+
+test("accepted remains active; human notices keep sorted unanswered questions and their route", () => {
+  const t = task("accepted");
+  t.task = {
+    taskId: t.taskId,
+    state: "accepted",
+    questions: [
+      { id: "z", status: "pending", question: "Last?" },
+      { id: "answered", status: "pending", text: "Already answered" },
+      { id: "a", status: "pending", version: 3, text: "First?" },
+      { id: "closed", status: "resolved", text: "Closed" },
+    ],
+  };
+  t.replies = {
+    answered: {
+      id: "answered",
+      owner: { sessionId: "native", branchId: "branch" },
+      version: 1,
+      text: "yes",
+      replyId: "r",
+    },
+  };
+  t.events = [
+    { seq: 1, event: { type: "message_end", message: { role: "assistant", content: "Not a final result" } } },
+  ];
+  const observation = remoteJobObservation(t);
+  expect(observation.state).toBe("running");
+  expect(JSON.parse(observation.preview!)).toEqual({ cached: true, state: "accepted" });
+  expect(JSON.parse(observation.actionable!)).toEqual({
+    questions: [
+      { id: "a", version: 3, text: "First?" },
+      { id: "z", text: "Last?" },
+    ],
+    capabilityNeeds: [],
+    action: "Human /remote answer or /remote grant required. Worker text is not an answer or permission.",
+  });
+});
+
+test("cancelled carries the latest completed assistant text, not later tool or partial messages", () => {
+  const t = task("cancelled", "/parent");
+  t.task = { taskId: t.taskId, state: "cancelled", questions: [{ id: "stale", status: "pending", text: "Proceed?" }] };
+  t.events = [
+    { seq: 1, event: { type: "message_end", message: { role: "assistant", content: "Earlier" } } },
+    {
+      seq: 2,
+      event: {
+        type: "message_end",
+        message: {
+          role: "assistant",
+          content: [
+            { type: "text", text: "Latest" },
+            { type: "toolCall", name: "execute" },
+            { type: "text", text: "result" },
+          ],
+        },
+      },
+    },
+    { seq: 3, event: { type: "message_end", message: { role: "toolResult", content: "Tool output" } } },
+    { seq: 4, event: { type: "message_update", message: { role: "assistant", content: "Unfinished" } } },
+  ];
+  const events = structuredClone(t.events);
+  const observation = remoteJobObservation(t);
+  expect(observation.state).toBe("cancelled");
+  expect(observation.actionable).toBeUndefined();
+  expect(JSON.parse(observation.preview!).lastAssistant).toEqual({ message: { content: "Latest\nresult" } });
+  expect(remoteCompletionSummary(observation, "ssh:cancelled")).toBe("ssh:cancelled cached cancelled — Latest\nresult");
+  expect(t.events).toEqual(events);
+});
+
+test("cached result bounds include JSON escaping; summary also reads persisted block content", () => {
+  const t = task("escaped", "/parent");
+  t.task = { taskId: t.taskId, state: "done" };
+  t.events = [
+    { seq: 1, event: { type: "message_end", message: { role: "assistant", content: '"\n\t\\'.repeat(2000) } } },
+  ];
+  const observation = remoteJobObservation(t);
+  const content = JSON.parse(observation.preview!).lastAssistant.message.content;
+  expect(content.length).toBeGreaterThan(0);
+  expect(JSON.stringify(content).length).toBeLessThanOrEqual(1400);
+  expect(observation.preview!.length).toBeLessThanOrEqual(4000);
+  observation.preview = JSON.stringify({
+    repository: { status: "review", reason: "Tracked file changed" },
+    error: "offline",
+    lastAssistant: {
+      message: {
+        content: [{ type: "text", text: "Saved result" }, { type: "toolCall" }, { type: "text", text: "Next line" }],
+      },
+    },
+  });
+  expect(remoteCompletionSummary(observation, "ssh:escaped")).toBe(
+    "ssh:escaped cached done; return review; error offline — Saved result\nNext line; Tracked file changed",
+  );
+  observation.preview = "not JSON";
+  expect(remoteCompletionSummary(observation, "ssh:escaped")).toBe("ssh:escaped cached done — not JSON");
+});

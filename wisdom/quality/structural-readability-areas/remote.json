@@ -327,8 +327,14 @@
     {
       "focus": "src/remote/job-delivery.ts",
       "initialBlob": "21d37bd7fca5f9bb0e75e7c99fac103008f4aba4",
-      "status": "candidate-awaiting-judge",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_2852e3a3",
+          "status": "running",
+          "candidate": "2256c36c7187c528bfe8cf91ec835ad3c3fe5dbd"
+        }
+      ],
       "launchBase": "926c1c58318b0202744be8636eef7064981f2514",
       "primary": {
         "id": "task_e51c82ae",
@@ -349,12 +355,15 @@
     {
       "focus": "src/remote/job-observations.ts",
       "initialBlob": "4732fa1eb7cda6df8303d6d6ee6316b785611c9f",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_c32ab4fa",
-          "status": "running",
-          "candidate": "b6b2dbe5eb292d0811bd004b8cef76253efb27c2"
+          "status": "completed",
+          "candidate": "b6b2dbe5eb292d0811bd004b8cef76253efb27c2",
+          "verdict": "ACCEPT",
+          "reason": "Terminal versus active projection selected at output sites rather than preparing/discarding both; coherent result/wait/decoding/bounding operations retain attribution and human authority.",
+          "checks": "Judge23 pass/97 plus 5-state serialized equivalence/input immutability; no full/live."
         }
       ],
       "primary": {
@@ -364,7 +373,9 @@
         "commit": "b6b2dbe5eb292d0811bd004b8cef76253efb27c2"
       },
       "launchBase": "e027cb0fcb01b7f964953fa3503973b2abfb9669",
-      "workerResponse": "Committed candidate; independent judgment pending.\n\n- **Base:** `e027cb0fcb01b7f964953fa3503973b2abfb9669`\n- **Candidate:** `b6b2dbe5eb292d0811bd004b8cef76253efb27c2`\n- **Branch:** `bruv/remote-primary-job-observations-f53ebeab`\n- **Focus blob:** `400739e5b9ed05b27483b7e6ecd1aa9f6ae11361`\n\n**Changed paths**\n- `src/remote/job-observations.ts`\n- `tests/remote-job-observations.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after walkthrough**\n\nTraced refresh → session-filtered publication → event source → durable outbox → parent notification.\n\nPreviously, observation construction prepared both transcript results and human waits before discarding one. Now:\n- Terminal observations retrieve the latest completed assistant result and omit stale waits.\n- Active/unknown observations construct unanswered-question/capability notices without scanning result text.\n- Result projection and persisted completion summaries share text decoding.\n- Session attribution, cached diagnostics, human-only guidance and serialization budgets remain unchanged.\n\n**Proof:** Extended baseline and candidate suites each passed **23 tests / 97 assertions**. Paired baseline/candidate imports produced identical observation bytes and summaries across five lifecycle states. Formatting, lint and diff checks passed; existing lint infos/import-order check errors remain.\n\n**Overlap:** `remote.json` lists the related test as a separate pending primary focus, without a registered worker ID. Coordinate/rejudge that overlap.\n\nNo behavior fixes, full build/typecheck, live SSH proof, push or PR. Working tree clean. Values unchanged; worker wisdom recorded."
+      "workerResponse": "Committed candidate; independent judgment pending.\n\n- **Base:** `e027cb0fcb01b7f964953fa3503973b2abfb9669`\n- **Candidate:** `b6b2dbe5eb292d0811bd004b8cef76253efb27c2`\n- **Branch:** `bruv/remote-primary-job-observations-f53ebeab`\n- **Focus blob:** `400739e5b9ed05b27483b7e6ecd1aa9f6ae11361`\n\n**Changed paths**\n- `src/remote/job-observations.ts`\n- `tests/remote-job-observations.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after walkthrough**\n\nTraced refresh → session-filtered publication → event source → durable outbox → parent notification.\n\nPreviously, observation construction prepared both transcript results and human waits before discarding one. Now:\n- Terminal observations retrieve the latest completed assistant result and omit stale waits.\n- Active/unknown observations construct unanswered-question/capability notices without scanning result text.\n- Result projection and persisted completion summaries share text decoding.\n- Session attribution, cached diagnostics, human-only guidance and serialization budgets remain unchanged.\n\n**Proof:** Extended baseline and candidate suites each passed **23 tests / 97 assertions**. Paired baseline/candidate imports produced identical observation bytes and summaries across five lifecycle states. Formatting, lint and diff checks passed; existing lint infos/import-order check errors remain.\n\n**Overlap:** `remote.json` lists the related test as a separate pending primary focus, without a registered worker ID. Coordinate/rejudge that overlap.\n\nNo behavior fixes, full build/typecheck, live SSH proof, push or PR. Working tree clean. Values unchanged; worker wisdom recorded.",
+      "acceptedBlob": "400739e5b9ed05b27483b7e6ecd1aa9f6ae11361",
+      "integrationState": "exact accepted source and related test patches applied"
     },
     {
       "focus": "src/remote/jobs.ts",
@@ -453,14 +464,24 @@
     {
       "focus": "src/remote/owner-rpc.ts",
       "initialBlob": "982d5b8fce885d5bd81d2aa76e753caa1e3be5c2",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_ac4bfb3b",
+          "status": "running",
+          "candidate": "3e1f4edbefd216d5b5a5d701d162610a9a3c1568"
+        }
+      ],
       "launchBase": "926c1c58318b0202744be8636eef7064981f2514",
       "primary": {
         "id": "task_1d39197a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_1d39197a",
-        "branch": "bruv/remote-primary-owner-rpc-1d39197a"
-      }
+        "branch": "bruv/remote-primary-owner-rpc-1d39197a",
+        "commit": "3e1f4edbefd216d5b5a5d701d162610a9a3c1568"
+      },
+      "result": "Unchanged suffix/frame byte validation and lazy newline yield; owner handles journal/routing/framing failure and post-exit truncation.",
+      "checks": "11 pass/106 plus14 probe assertions; no live/compiled.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/owner.ts",
@@ -509,12 +530,15 @@
     {
       "focus": "src/remote/protocol.ts",
       "initialBlob": "49a053687e54a3ce0085d5a4c0c6d40673aa77fc",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_31905010",
-          "status": "running",
-          "candidate": "3ed25d6edf5adbbde51ee6169894bcd6d4636693"
+          "status": "completed",
+          "candidate": "3ed25d6edf5adbbde51ee6169894bcd6d4636693",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Readable operation-specific wire contract preserves visible fences, reply owner/version/id, cancellation intent vs terminal, snapshot vs pages; aliases would add navigation.",
+          "checks": "Judge25 pass/200; exact hash matching, diff pass, no full/live."
         }
       ],
       "launchBase": "926c1c58318b0202744be8636eef7064981f2514",
@@ -526,7 +550,9 @@
       },
       "result": "Unchanged declarations expose validated identity-fenced operations; placement/override replay, question owner/version/reply identity, cancellation intent vs terminal and pages vs snapshot are distinct.",
       "checks": "25 pass/200 assertions; no live/build/compiled.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "49a053687e54a3ce0085d5a4c0c6d40673aa77fc",
+      "integrationState": "unchanged exact area blob"
     },
     {
       "focus": "src/remote/question-bridge.ts",
@@ -1495,7 +1521,13 @@
       "focus": "tests/remote-job-observations.test.ts",
       "initialBlob": "874b1d89a9c77153b030b59d43a219e7cda701ec",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedIntegration": {
+        "candidate": "b6b2dbe5eb292d0811bd004b8cef76253efb27c2",
+        "judge": "task_c32ab4fa",
+        "blob": "1f00ddf86616bad8589177469779f5ab06d89711",
+        "ownPrimaryStillRequired": true
+      }
     },
     {
       "focus": "tests/remote-jobs-e2e.test.ts",
@@ -1601,8 +1633,14 @@
     {
       "focus": "tests/remote-question-bridge.test.ts",
       "initialBlob": "73a94e3af266e9b0c3bc2fdcc67ecf6b8b7ff519",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "921a4c77daef78770d84d1d542a830a6dfec3e61",
+      "primary": {
+        "id": "task_4cf5a2f7",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_4cf5a2f7",
+        "branch": "bruv/remote-primary-remote-question-bridge.te-4cf5a2f7"
+      }
     },
     {
       "focus": "tests/remote-repository-download.test.ts",
@@ -1800,13 +1838,19 @@
     {
       "focus": "tests/root-placement-options.test.ts",
       "initialBlob": "d60e1a3f8a6847f3adad530b64f937ca54b5d5d9",
-      "status": "pending",
+      "status": "primary-running",
       "judgeRounds": [],
       "relatedIntegration": {
         "candidate": "ac44370fe3f3fb7de540fbb598cb1a0e77abcfe8",
         "judge": "task_d1dd2209",
         "blob": "928518054786e902a395d3a653278399697f8940",
         "ownPrimaryStillRequired": true
+      },
+      "launchBase": "921a4c77daef78770d84d1d542a830a6dfec3e61",
+      "primary": {
+        "id": "task_c13c26b1",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_c13c26b1",
+        "branch": "bruv/remote-primary-root-placement-options.te-c13c26b1"
       }
     },
     {
