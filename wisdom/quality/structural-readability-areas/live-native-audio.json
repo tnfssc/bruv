@@ -25,10 +25,15 @@
     {
       "focus": "native/live-linux/main.cpp",
       "initialBlob": "76741dde51fe38d1f42496c66309cb700e266987",
-      "primary": null,
+      "primary": {
+        "id": "task_71e74f3b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live-linux/tests/backpressure.py",
@@ -81,10 +86,17 @@
     {
       "focus": "native/live/AudioCore.c",
       "initialBlob": "2efc770027dad553a71f5bd1dfc34a87fbd3eb6a",
-      "primary": null,
+      "primary": {
+        "id": "task_08961c0d",
+        "launchBase": "4aeb4eb94c369d8a0338c849a0d18914e009d78a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_08961c0d",
+        "branch": "bruv/primary-native-live-audiocore.c-08961c0d",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live/AudioCore.h",
@@ -441,10 +453,17 @@
     {
       "focus": "src/live/openai-session.ts",
       "initialBlob": "5055955c85459ef4e03de7947f6053ef66282fd8",
-      "primary": null,
+      "primary": {
+        "id": "task_497094fa",
+        "launchBase": "4aeb4eb94c369d8a0338c849a0d18914e009d78a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_497094fa",
+        "branch": "bruv/primary-src-live-openai-session.ts-497094fa",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/openai-upgrade-socket.ts",
