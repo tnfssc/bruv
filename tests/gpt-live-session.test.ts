@@ -239,6 +239,41 @@ test("timeout and explicit close invalidate pending handshake and stale callback
   expect(f.socket.sent).toEqual([]);
 });
 
+test("concurrent close callers wait for one transport closure, not context delivery", async () => {
+  const finalized: unknown[] = [];
+  const usage: unknown[] = [];
+  const acknowledgments: unknown[] = [];
+  const { socket, session } = fixture({
+    onClosed: (ok, finalUsage) => finalized.push([ok, finalUsage]),
+    onUsage: (update) => usage.push(update),
+    onContextAppended: (ack) => acknowledgments.push(ack),
+  });
+  const start = session.connect("fake");
+  socket.ready();
+  await start;
+  session.observation("Still working");
+  let settled = 0;
+  const waiters = [session.close(), session.close(), session.close()].map((closing) => closing.then(() => settled++));
+  expect(socket.sent.filter((event) => event.type === "session.close")).toHaveLength(1);
+  socket.event({ type: "session.thinking.appended", client_event_id: "live_context_1", start_ms: 0, end_ms: 1 });
+  socket.event({ type: "session.usage.updated", usage: { seconds: 2 } });
+  await Promise.resolve();
+  expect(settled).toBe(0);
+  expect(acknowledgments).toEqual([]);
+  expect(usage).toEqual([{ seconds: 2 }]);
+  socket.event({ type: "session.closed", usage: { seconds: 3 } });
+  await Promise.all(waiters);
+  await session.close();
+  socket.ready();
+  socket.event({ type: "session.usage.updated", usage: { seconds: 4 } });
+  socket.event({ type: "session.closed", usage: { seconds: 5 } });
+  expect(settled).toBe(3);
+  expect(finalized).toEqual([[true, { seconds: 3 }]]);
+  expect(usage).toEqual([{ seconds: 2 }]);
+  expect(session.closeError).toBeUndefined();
+  await expect(session.connect("fake")).rejects.toThrow("Live session is single-use");
+});
+
 test("close deadline reports unknown final usage and no queued PCM survives closure", async () => {
   const socket = new Socket();
   const finalized: boolean[] = [];
@@ -252,9 +287,11 @@ test("close deadline reports unknown final usage and no queued PCM survives clos
   socket.ready();
   await pending;
   const closing = session.close();
+  const alsoClosing = session.close();
   expect(session.appendMicrophone(Buffer.alloc(640))).toBe(false);
   await Bun.sleep(10);
-  await closing;
+  await Promise.all([closing, alsoClosing]);
+  expect(socket.sent.filter((event) => event.type === "session.close")).toHaveLength(1);
   expect(finalized).toEqual([false]);
   expect(errors).toEqual(["Live session.close timed out; final usage unknown"]);
   expect(session.closeError).toBe("Live session.close timed out; final usage unknown");
