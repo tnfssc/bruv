@@ -14,7 +14,7 @@ Accepted unchanged files have concrete independent journeys in JSON: bounded-byt
 ## Proof / limits
 
 - First own paired build/full typecheck task_2ab7a960 passed. Nine executor/question/remote-approval/bridge/TUI suites task_d4e7f94e: 120 pass/630 assertions. Focused format/lint/diff passed, inherited warnings retained.
-- Second own paired build/full typecheck task_321e5898 passed at 1526684d, before attention integration. Combined23 suites task_bb0e210e:249 pass/1806 assertions using current source and that binary. Attention SDK imports source; fresh compiled attention parity not yet claimed. Current full typecheck/changed-file format/lint task_ed210885 running.
+- Second own paired build/full typecheck task_321e5898 passed at 1526684d, before attention integration. Combined23 suites task_bb0e210e:249 pass/1806 assertions using current source and that binary. Attention SDK imports source; fresh compiled attention parity not yet claimed. Attention-inclusive full typecheck plus9 changed-file format/lint/diff task_ed210885 passed (13 inherited warnings19 infos).
 - Several read-only judges could not link worker dependencies; their limited reruns are explicitly separate from writer claims. Combined area tests resolve tested integration gaps, not live-provider/authenticated SSH/macOS/device parity.
 - Dependencies reused read-only; area owns runtime-assets/dist. Automatic fish setup cannot find Bun, but workers receive explicit bash PATH. No source workaround for setup errors.
 

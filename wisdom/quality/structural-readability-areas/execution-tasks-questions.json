@@ -467,7 +467,7 @@
     {
       "focus": "src/tasks/foreground-stop.ts",
       "initialBlob": "f58ab9393447ade92677a85bb1f882b73f5662ea",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_de66cfbe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_de66cfbe",
@@ -478,13 +478,21 @@
       "judgeRounds": [
         {
           "id": "task_0a1a68a9",
-          "status": "running",
+          "status": "complete",
           "candidate": "f90c2951fd7aabf089fc27be8686a0a18abd9e8e",
-          "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465"
+          "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Delivery-gated cancellation request owns shared listener lifetime; delivery ACK, ownership validation, actual stop request and live/ordinary owner lookup remain distinct.",
+          "checks": [
+            "independent11 pass349 assertions",
+            "stop-work/CLI-control missing modules; writer16 not independently confirmed",
+            "diff clean"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "f58ab9393447ade92677a85bb1f882b73f5662ea",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
       "changedRelatedPaths": [],
       "readingResult": "No change: admission→await delivery ACK→listener release→authority validation→cancel request; ACK distinct from completion for ordinary/live owner.",
@@ -581,7 +589,7 @@
     {
       "focus": "src/tasks/local-agent-termination.ts",
       "initialBlob": "f82ba2130660c667cbe8b66ab9b4921ffcee5cb4",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_2553ce4b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_2553ce4b",
@@ -589,7 +597,14 @@
         "base": "ed0131d292f50902ecb57f62817b07040463557c",
         "commit": "5636d39579a15719f30f68d06df283042dd3570b"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_83f11296",
+          "status": "running",
+          "candidate": "5636d39579a15719f30f68d06df283042dd3570b",
+          "base": "ed0131d292f50902ecb57f62817b07040463557c"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "ed0131d292f50902ecb57f62817b07040463557c",
@@ -659,32 +674,46 @@
     {
       "focus": "src/tasks/subagent-profiles.ts",
       "initialBlob": "2a117125b2f25e592cad2c1bb4c720fda0832e64",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_f2d9d1fa",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f2d9d1fa",
         "branch": "bruv/primary-src-tasks-subagent-profiles.ts-f2d9d1fa",
         "base": "02e36f3372b5072d65fa39e4c2148827a1969a25",
+        "commit": "5079a29ca42fea67cf655a1f91d6ba7e0eb72ccc"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "02e36f3372b5072d65fa39e4c2148827a1969a25",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: load/panel/explicitSave/validated private temp/atomic rename; local delegation→profile resolution; SSH destination/native backend authority separate.",
+      "checks": [
+        "44 pass260 assertions six files",
+        "TUI rerun area binary passed",
+        "no full build/liveSSH"
+      ]
+    },
+    {
+      "focus": "src/tasks/subagent-settings-ui.ts",
+      "initialBlob": "56af9b3b1a9fc016caf842984e5d67577c726197",
+      "status": "primary-running",
+      "primary": {
+        "id": "task_92739d50",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_92739d50",
+        "branch": "bruv/primary-src-tasks-subagent-settings-ui.t-92739d50",
+        "base": "9c2abd811dae310c924836ca33c0d175e80cbba2",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "02e36f3372b5072d65fa39e4c2148827a1969a25"
-    },
-    {
-      "focus": "src/tasks/subagent-settings-ui.ts",
-      "initialBlob": "56af9b3b1a9fc016caf842984e5d67577c726197",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "launchBase": "9c2abd811dae310c924836ca33c0d175e80cbba2"
     },
     {
       "focus": "src/tasks/task-lifecycle.ts",
       "initialBlob": "606cc77e964e261f87c5c5777210584772e32747",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_da66c8c9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_da66c8c9",
@@ -692,7 +721,14 @@
         "base": "8b0b918042918037a96f996bd29f91e2624a166a",
         "commit": "b7e4deeca847f6201d0f117580923b5503da9a60"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_8f95bce7",
+          "status": "running",
+          "candidate": "b7e4deeca847f6201d0f117580923b5503da9a60",
+          "base": "8b0b918042918037a96f996bd29f91e2624a166a"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a",
@@ -1375,7 +1411,7 @@
     {
       "focus": "tests/task-manager.test.ts",
       "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_d2a99d2b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_d2a99d2b",
@@ -1386,17 +1422,24 @@
       "judgeRounds": [
         {
           "id": "task_69e81429",
-          "status": "running",
+          "status": "complete",
           "candidate": "bda0a5d07f39e2f3ad038e30623b7107d57c7e02",
           "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
           "priorRelatedJudges": [
             "task_08e2c508",
             "task_a01fd3d7"
+          ],
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Whole-file child cleanup/cursors/cancellation/delivery/activation journeys remain direct; authority regression enumerates public snapshots/events, mutates copies, then uses manager.kill to prove owned settlement. Earlier leak resolved without hidden fixture framework.",
+          "checks": [
+            "independent45 pass305 assertions manager/lifecycle/termination/progress",
+            "diff clean; no global/live parity"
           ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
+      "integration": "unchanged primary candidate blob matches integrated related patch",
       "relatedAcceptance": {
         "judge": "task_a01fd3d7",
         "candidate": "5eb5ac44b5ef72ddc095bd8cd20ae9827bc82dc3",
@@ -1636,9 +1679,10 @@
     },
     {
       "job": "task_ed210885",
-      "state": "running",
+      "state": "passed",
       "scope": "full typecheck plus9 changed-file format/lint and diff",
-      "tip": "4c0e427a"
+      "tip": "4c0e427a",
+      "proof": "Full tsc including attention passed;9 changed files format/lint and diff passed,13 inherited warnings19 infos."
     }
   ],
   "parentIntegrationInspection": {
