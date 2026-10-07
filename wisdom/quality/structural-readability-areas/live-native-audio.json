@@ -905,12 +905,15 @@
         "launchBase": "d50c5dcdcac64eebb0e8d9fb98f5f4e394159a34",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7d020b63",
         "branch": "bruv/primary-src-live-conversation.ts-7d020b63",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "79325faf09732f06bd890dbad180957b0a323def"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged conversation adapter keeps transcript record/correction and matching currentbranch reconstruction together;admission/context exclusion/playbackinterrupt/explicitworkcancel remain distinctauthorities;extra splitting addsnavigation.",
+      "checks": "43tests245assertions conversation/owner/passivehistory/transcript;initialWASM setupresolvedexistingasset,no behaviorfix/provider/device/Mac."
     },
     {
       "focus": "src/live/cost.ts",
@@ -2006,10 +2009,14 @@
     {
       "focus": "tests/live-host-bridge.test.ts",
       "initialBlob": "eaa1c68643eef793430b8e52c2db86ab543dd26c",
-      "primary": null,
+      "primary": {
+        "id": "task_98219b99",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "parent session-host related patch integrated;own primary pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_9ae7f05e",
         "verdict": "ACCEPT",
