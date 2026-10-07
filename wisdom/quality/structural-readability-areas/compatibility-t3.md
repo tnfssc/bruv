@@ -9,3 +9,7 @@ Proof limits: no tests yet; native/provider/device/SSH acceptance requires real 
 ## First accepted boundary
 
 `src/t3/tasks/native-task.ts`: independent judge `task_2c886e04` found no change needed at blob `9152be57bb326b4f919518efe6d13be4b10c363b`. Strict contracts, exceptional launch replay and caller-owned lifetime are already visible. Primary proof: 36 focused tests, 154 assertions. Important qualification: adapter does not replay cancellation ambiguity, but MCP transport may resend after 404. No source patch or worker pickup note imported. Other files remain pending/in flight; this is not area completion.
+
+## Accepted runtime ownership patch
+
+Integrated exact candidate `cb1bcfc8` runtime + regression test, not worker note. Judge `task_9a477342` ACCEPT: history queue/parent/sticky failure now share lifetime owner, runtime drains at lifecycle boundaries; shared message-body conversion leaves child frame policy at caller. Base/candidate serialized-history comparison preserved replay property order. Writer: 27 runtime tests plus 5 companion pass/7 SDK skips, typecheck/format/lint. Judge test rerun blocked by module resolution; no live/full gate. Runtime test still needs its own fresh primary focus.
