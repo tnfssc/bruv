@@ -96,27 +96,50 @@ test("event retention keeps the same contiguous byte-bounded suffix, including a
   withStore((store) => {
     store.accept({ ...intent, sessionId: "other" }, "other-create");
     store.append("other", "independent");
-    const retained: Array<{ seq: number; event: unknown }> = [];
-    const events = [
-      "tiny",
-      "é".repeat(12),
-      "x".repeat(35),
-      "wide".repeat(20),
-      "tail",
-      "😀".repeat(30),
-      null,
-      { type: "notice" },
+    const tiny = "tiny";
+    const accented = "é".repeat(12);
+    const nearBudget = "x".repeat(35);
+    const tail = "tail";
+    const notice = { type: "notice" };
+    // JSON UTF-8 bytes: 6 + 26 + 37 fit the 70-byte budget; 82 and 122 each empty the journal.
+    const steps = [
+      { event: tiny, cursor: 0, events: [{ seq: 1, event: tiny }] },
+      {
+        event: accented,
+        cursor: 0,
+        events: [
+          { seq: 1, event: tiny },
+          { seq: 2, event: accented },
+        ],
+      },
+      {
+        event: nearBudget,
+        cursor: 0,
+        events: [
+          { seq: 1, event: tiny },
+          { seq: 2, event: accented },
+          { seq: 3, event: nearBudget },
+        ],
+      },
+      { event: "wide".repeat(20), cursor: 4, events: [] },
+      { event: tail, cursor: 4, events: [{ seq: 5, event: tail }] },
+      { event: "😀".repeat(30), cursor: 6, events: [] },
+      { event: null, cursor: 6, events: [{ seq: 7, event: null }] },
+      {
+        event: notice,
+        cursor: 6,
+        events: [
+          { seq: 7, event: null },
+          { seq: 8, event: notice },
+        ],
+      },
     ];
-    for (const [index, event] of events.entries()) {
+    for (const [index, step] of steps.entries()) {
       const seq = index + 1;
-      store.append("session", event);
-      retained.push({ seq, event });
-      while (retained.reduce((sum, row) => sum + Buffer.byteLength(JSON.stringify(row.event)), 0) > store.eventBudget)
-        retained.shift();
-      const cursor = (retained[0]?.seq ?? seq + 1) - 1;
-      expect(store.observe("session", cursor)).toMatchObject({ events: retained, cursor: seq, hasMore: false });
+      store.append("session", step.event);
+      expect(store.observe("session", step.cursor)).toMatchObject({ events: step.events, cursor: seq, hasMore: false });
       expect(store.get("session").seq).toBe(seq);
-      if (cursor > 0) expect(() => store.observe("session", cursor - 1)).toThrow("gap");
+      if (step.cursor > 0) expect(() => store.observe("session", step.cursor - 1)).toThrow("gap");
       expect(() => store.observe("session", seq + 1)).toThrow("gap");
     }
     expect(store.observe("other", 0).events).toEqual([{ seq: 1, event: "independent" }]);
