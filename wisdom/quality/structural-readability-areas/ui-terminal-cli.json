@@ -2853,7 +2853,7 @@
       "focus": "tests/terminal-interactions-normalize.test.ts",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_c93f9a76",
@@ -2868,12 +2868,24 @@
           "id": "task_0d381a57",
           "base": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
           "candidate": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_23bf0f9f"
+          "verdict": "NO CHANGE NEEDED",
+          "priorRelatedJudge": "task_23bf0f9f",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/terminal-interactions-normalize.test.ts": "96a49888775e77328e9cbeb1f416f2b5347b345b"
+          },
+          "evidence": "Local synthetic records expose disjoint init/action, zero vs unknown, lifecycle evidence precedence and peak-not-sum accounting; no hidden fixture authority or needed abstraction.",
+          "checks": [
+            "Independent3primary/68assertions,24combined/164assertions",
+            "Pinned Biome check/diff"
+          ],
+          "limits": [
+            "Synthetic durations not latency; no fresh workload/typecheck/build/provider/network/PTY"
+          ]
         }
       ],
       "acceptedBlob": "96a49888775e77328e9cbeb1f416f2b5347b345b",
-      "integrationState": "related patch integrated; primary pending",
+      "integrationState": "new-file fresh primary and independent judge accepted exact integrated blob",
       "relatedPatchJudgments": [
         {
           "id": "task_23bf0f9f",
