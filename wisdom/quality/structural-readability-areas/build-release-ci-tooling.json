@@ -218,7 +218,7 @@
     {
       "focus": "bunfig.toml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_bd9983c7",
@@ -234,18 +234,23 @@
           "id": "task_b2bc2474",
           "base": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
           "candidate": "c1707bbda19c9d8f7d594f05c2cd66c86f795ae3",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Single Bun test preload ties identity-clearing to before-import test boundary, not ordinary scripts or separate subprocess boundary. Actual Herdr callers/fixtures traced.",
+          "checks": "Independent polluted-environment import identity probe passes;ordinary script retains3values;12Herdr/34 with shareddeps ownedWASM fixture. Initial missingdeps resolved isolated;no build/live/device/SSH."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "8370a0154a62bcc247a0a211d376458a7751d717",
       "readingResult": "Unchanged Bun test→explicit preload→inherited Herdr identity cleared before imports;ordinary scripts retain identity. Direct declarative link.",
-      "checks": "Preload/order1pass;ordinary identityprobe pass;Herdr12/34 with owned WASM;no build/live."
+      "checks": "Preload/order1pass;ordinary identityprobe pass;Herdr12/34 with owned WASM;no build/live.",
+      "integrationState": "Unchanged focus equals tip; local note excluded."
     },
     {
       "focus": "install.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "rework-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_e8ffe816",
@@ -260,16 +265,27 @@
           "launchBase": "cda898ee9cace88b9b290431abea7bb90d52d389",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_f94ad569",
           "branch": "bruv/follow-up-root-installer-related-test-co-f94ad569",
-          "state": "running",
+          "state": "completed",
           "role": "related-follow-up",
-          "priorCandidate": "b7427a75c49a6058de5f20e24f51f9cb06b6ed43"
+          "priorCandidate": "b7427a75c49a6058de5f20e24f51f9cb06b6ed43",
+          "commit": "936c51a3720ff3ed63026a23ea0b3195a879ad8c"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
+      "judges": [
+        {
+          "id": "task_9233d5f2",
+          "base": "cda898ee9cace88b9b290431abea7bb90d52d389",
+          "candidate": "936c51a3720ff3ed63026a23ea0b3195a879ad8c",
+          "state": "running"
+        }
+      ],
+      "relatedPaths": [
+        "tests/install-download.test.ts"
+      ],
       "acceptedBlob": null,
       "readingResult": "Root now canonical staged pair, private probe subshell and restore-or-remove operation; remains standalone. Candidate matches accepted scripts/install.sh exactly; shared test comment claiming old root staging is stale.",
-      "checks": "Base/candidate22pass;syntax/diffpass;mocked Linux only."
+      "checks": "Base/candidate22pass;syntax/diffpass;mocked Linux only.",
+      "writerResponse": "Full root patch retained exactly matching scripts installer125933e; stale dual-staging test comment corrected,3 obsolete filename alternatives removed,canonical-stage verification strengthened.22pass106assertions,shell/format/lint/equality/diff pass;broaderBiome unchanged import-order flag;no build/tsc/live."
     },
     {
       "focus": "mise.toml",
@@ -291,8 +307,16 @@
     {
       "focus": "package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_140be4ea",
+          "launchBase": "b1892d9c6c972a84d58689d0ef99226ed1091043",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_140be4ea",
+          "branch": "bruv/primary-package.json-140be4ea",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -779,7 +803,7 @@
     {
       "focus": "scripts/update-dependencies.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_b3760f86",
@@ -818,19 +842,31 @@
           "id": "task_68106474",
           "base": "5867361547ada310ee013bd7e9213247d0855a97",
           "candidate": "b6231ed20199f3da842337f8deba81ded4bf0a53",
-          "state": "running",
+          "state": "completed",
           "priorJudge": "task_98fc9caa",
           "priorVerdict": "REJECT",
-          "writerResponse": "Full prior source/test patch retained; own-entry-safe shared comparison prevents inherited constructor values for normalized lock AND root reports; add/remove regressions fail before fix,25/161 combined pass after. Strict tsc/Biome/diff pass."
+          "writerResponse": "Full prior source/test patch retained; own-entry-safe shared comparison prevents inherited constructor values for normalized lock AND root reports; add/remove regressions fail before fix,25/161 combined pass after. Strict tsc/Biome/diff pass.",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "resolvedObjections": [
+            "Independently reproduced prior constructor add/remove regression; final own-entry-safe comparison fixes lock/root reports.Constructor regressions plus __proto__/toString probes pass."
+          ],
+          "evidence": "Normalize lock→ordered changes→render reports and grouped validation boundary reduces duplicated bookkeeping without framework; pins/Pi/fixture authority/JSONC/metadata/order/cap/failures retained.",
+          "checks": "Independent25tests161expectations;strict tsc/Biome/diff pass;no live registry/hosted/build.",
+          "acceptedBlobs": {
+            "scripts/update-dependencies.ts": "109d8d0ff7a8a595a081377126c7a968830164a7",
+            "tests/dependency-updates.test.ts": "71c95a31f58bdbc8f88196e0963fe7e6f72fb735"
+          }
         }
       ],
       "relatedPaths": [
         "tests/dependency-updates.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "109d8d0ff7a8a595a081377126c7a968830164a7",
       "readingResult": "Shared ordered comparison/explicit lock-version normalization/grouped policy validation replace duplicate version ordering and inline post-update checks.",
       "checks": "16 focusedpass;tsc/Biome/diff pass;no registry/GitHub/build",
-      "writerResponse": "Full prior source/test patch retained; own-entry-safe shared comparison prevents inherited constructor values for normalized lock AND root reports; add/remove regressions fail before fix,25/161 combined pass after. Strict tsc/Biome/diff pass."
+      "writerResponse": "Full prior source/test patch retained; own-entry-safe shared comparison prevents inherited constructor values for normalized lock AND root reports; add/remove regressions fail before fix,25/161 combined pass after. Strict tsc/Biome/diff pass.",
+      "integrationState": "Complete rework source/test patch applied from fresh launch base; rejected first patch never integrated; notes excluded."
     },
     {
       "focus": "scripts/validate-release-tag.ts",
@@ -1068,7 +1104,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_68106474",
+        "verdict": "ACCEPT",
+        "blob": "71c95a31f58bdbc8f88196e0963fe7e6f72fb735",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/dependency-workflow.test.ts",
@@ -1480,8 +1522,16 @@
     {
       "focus": "tests/setup.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_c6585fe4",
+          "launchBase": "b1892d9c6c972a84d58689d0ef99226ed1091043",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_c6585fe4",
+          "branch": "bruv/primary-tests-setup.ts-c6585fe4",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1605,17 +1655,25 @@
     {
       "focus": "tests/generate-third-party-notices.test.ts",
       "initialBase": "911a433455175b5af5db6bc909c220f2693ffd24",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_075a5f2c",
           "launchBase": "cda898ee9cace88b9b290431abea7bb90d52d389",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_075a5f2c",
           "branch": "bruv/primary-new-tests-generate-third-party-n-075a5f2c",
+          "state": "completed",
+          "commit": "9eee3db6b9574820a465695dcafd3f9073112007"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_00d188a5",
+          "base": "cda898ee9cace88b9b290431abea7bb90d52d389",
+          "candidate": "9eee3db6b9574820a465695dcafd3f9073112007",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "origin": {
@@ -1627,7 +1685,9 @@
         "verdict": "ACCEPT",
         "blob": "a727a8c127babe0ff6bdb9173258699abd97d6fa",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Three independent graph/optional-peer/render scenarios replace mixed fixture; rendering assertions bind license declarations to packages and separate discovery/output ordering.",
+      "checks": "6focus4relatedrelease tests;Biome/strict tsc/diff pass;no build."
     }
   ],
   "crossAreaNeeds": [],

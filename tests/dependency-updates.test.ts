@@ -3,6 +3,7 @@ import {
   markdownLockSummary,
   markdownVersionSummary,
   selectDependencyNames,
+  validateDependencyUpdate,
   validatePiAlignment,
 } from "../scripts/update-dependencies";
 
@@ -46,6 +47,54 @@ describe("root dependency updater", () => {
       }),
     ).toThrow("not aligned");
     expect(() => validatePiAlignment({ dependencies: { "other/pi-ai": "1", "other/pi-server": "2" } })).not.toThrow();
+  });
+
+  test("rejects toolchain changes and misaligned Pi versions while accepting ordinary updates", () => {
+    expect(() => validateDependencyUpdate(manifest, manifest)).not.toThrow();
+    expect(() =>
+      validateDependencyUpdate(manifest, {
+        ...manifest,
+        dependencies: { ...manifest.dependencies, exact: "2.0.0" },
+      }),
+    ).not.toThrow();
+    for (const section of ["dependencies", "devDependencies"] as const) {
+      expect(() =>
+        validateDependencyUpdate({ [section]: { "@types/bun": "1.4.2" } }, { [section]: { "@types/bun": "1.5.0" } }),
+      ).toThrow("protected @types/bun");
+      expect(() => validateDependencyUpdate({ [section]: { "@types/bun": "1.4.2" } }, {})).toThrow(
+        "protected @types/bun",
+      );
+      expect(() => validateDependencyUpdate({}, { [section]: { "@types/bun": "1.4.2" } })).toThrow(
+        "protected @types/bun",
+      );
+    }
+    expect(() =>
+      validateDependencyUpdate(manifest, {
+        ...manifest,
+        devDependencies: { ...manifest.devDependencies, "@earendil-works/pi-tui": "0.100.0" },
+      }),
+    ).toThrow("not aligned");
+  });
+
+  test("orders changed root versions by section then package, including missing sections", () => {
+    expect(
+      markdownVersionSummary(
+        { dependencies: { z: "1", unchanged: "1", a: "1" } },
+        { dependencies: { a: "2", unchanged: "1" }, devDependencies: { z: "3", a: "2" } },
+      ),
+    ).toBe(
+      [
+        "# Dependency version updates",
+        "",
+        "| Section | Package | Before | After |",
+        "| --- | --- | --- | --- |",
+        "| dependencies | a | 1 | 2 |",
+        "| dependencies | z | 1 | — |",
+        "| devDependencies | a | — | 2 |",
+        "| devDependencies | z | — | 3 |",
+        "",
+      ].join("\n"),
+    );
   });
 
   test("summarizes changed versions, additions and removals in both sections", () => {
@@ -115,4 +164,43 @@ test("lockfile summary names transitive updates and additions/removals without m
   expect(summary).toContain("| added | — | added@2 |");
   expect(summary).not.toContain("| same |");
   expect(markdownLockSummary(after, after)).toContain("No resolved package versions changed");
+});
+
+test("lockfile summary bounds changed rows after sorting, not before filtering metadata", () => {
+  const packages = Object.fromEntries(
+    Array.from({ length: 201 }, (_, index) => {
+      const name = "package-" + String(200 - index).padStart(3, "0");
+      return [name, [name + "@2"]];
+    }),
+  );
+  const summary = markdownLockSummary(
+    JSON.stringify({ packages: { "aaa-same": ["same@1", "old metadata"] } }),
+    JSON.stringify({ packages: { ...packages, "aaa-same": ["same@1", "new metadata"] } }),
+  );
+  const rows = summary.split("\n").filter((line) => line.startsWith("| package-"));
+  expect(rows).toHaveLength(200);
+  expect(rows[0]).toBe("| package-000 | — | package-000@2 |");
+  expect(rows.at(-1)).toBe("| package-199 | — | package-199@2 |");
+  expect(summary).not.toContain("| aaa-same |");
+  expect(summary).not.toContain("| package-200 |");
+  expect(summary).toContain("Further package changes omitted; see the full lockfile diff.");
+});
+
+test("lockfile constructor additions use a missing previous version", () => {
+  const summary = markdownLockSummary('{"packages":{}}', '{"packages":{"constructor":["constructor@1.0.0"]}}');
+  expect(summary).toContain("| constructor | — | constructor@1.0.0 |");
+  expect(summary).not.toContain("function Object");
+});
+
+test("lockfile constructor removals use a missing next version", () => {
+  const summary = markdownLockSummary('{"packages":{"constructor":["constructor@1.0.0"]}}', '{"packages":{}}');
+  expect(summary).toContain("| constructor | constructor@1.0.0 | — |");
+  expect(summary).not.toContain("function Object");
+});
+
+test("root constructor additions and removals ignore inherited properties too", () => {
+  const empty = { dependencies: {} };
+  const added = { dependencies: { constructor: "1.0.0" } };
+  expect(markdownVersionSummary(empty, added)).toContain("| dependencies | constructor | — | 1.0.0 |");
+  expect(markdownVersionSummary(added, empty)).toContain("| dependencies | constructor | 1.0.0 | — |");
 });
