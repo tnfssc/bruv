@@ -64,3 +64,7 @@ Joined committed, independently judged partial batches from all eight areas. Exa
 ## Site area complete
 
 Joined final site-support 2da1ed1b: exact 41-file primary coverage, final per-file judgments, combined 16-source judgment and all accepted blob hashes checked. Website tests/build/Chromium/animation proof and the parent-installer probe are in the area report. Standalone historical capture strict diagnostics and runtime/platform limits remain explicit. Seven areas continue; whole-repo final judgment and gates still pending. No piecewise PR delivery.
+
+## Shared integration checkpoint 2
+
+Joined the next committed accepted-code batches from the seven running areas. Every new source blob/removal has matching actual-code judgment, including related-path verdicts; global per-file primary completion still remains. No new source overlap at this snapshot. Exact tips and paths are in integration-batches.json. This keeps callers/interfaces shared while remaining file work continues. Combined typecheck follows; no whole-task completion claim.
