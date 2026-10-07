@@ -516,14 +516,26 @@
     {
       "focus": "src/remote/source-approval.ts",
       "initialBlob": "cad9f95da9d7082968e17c4e65113d01adaf963d",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_72f3d841",
+          "status": "running",
+          "candidate": "a200ff7d130dc9b16f20666e011dc49c42f55e3a"
+        }
+      ],
       "launchBase": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
       "primary": {
         "id": "task_fbe1ebfa",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_fbe1ebfa",
-        "branch": "bruv/remote-primary-source-approval.ts-fbe1ebfa"
-      }
+        "branch": "bruv/remote-primary-source-approval.ts-fbe1ebfa",
+        "commit": "a200ff7d130dc9b16f20666e011dc49c42f55e3a"
+      },
+      "result": "prepare exposes replay check, pinned source reuse, cancellation gate, missing question attachment and answer acceptance; each phase owns durable write with provenance/CLI reply checks at decision.",
+      "changedRelatedPaths": [
+        "tests/remote-source-approval.test.ts"
+      ],
+      "checks": "45 pass/267 assertions; format/diff/lint pass warnings; no full/live SSH."
     },
     {
       "focus": "src/remote/ssh.ts",
@@ -943,12 +955,18 @@
       "focus": "tests/remote-cancellation.test.ts",
       "kind": "new",
       "introducedBy": "8677e1f44ec5d15c40fdc7af724648e03a29f224",
-      "status": "pending",
+      "status": "primary-running",
       "judgeRounds": [],
       "needs": "own fresh primary then independent judge after accepted integration",
       "relatedAcceptance": {
         "judge": "task_bac9b4e3",
         "blob": "d294d93ec8ee707f600fd055acda2c6c7e5b0d03"
+      },
+      "launchBase": "d60db7e71c8c304f84756d6dad8beff68df6cb41",
+      "primary": {
+        "id": "task_4bcaf84b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_4bcaf84b",
+        "branch": "bruv/remote-primary-new-cancellation-test-4bcaf84b"
       }
     },
     {
@@ -994,6 +1012,13 @@
       "command": "bun test tests/remote-cancellation.test.ts tests/remote-runtime.test.ts tests/remote-job-artifacts.test.ts tests/remote-owner-lifecycle.test.ts tests/remote-artifacts.test.ts",
       "result": "20 pass, 0 fail, 119 assertions",
       "limits": "Source fixtures and local child process; no authenticated SSH/provider/compiled CLI"
+    },
+    {
+      "commit": "d60db7e7",
+      "job": "task_d21d8e50",
+      "command": "bun test tests/root-store.test.ts tests/root-owner.test.ts tests/remote-root-client.test.ts tests/remote-root-presenter.test.ts tests/root-runtime.test.ts",
+      "result": "53 pass, 0 fail, 302 assertions",
+      "limits": "No live SSH/provider/compiled runtime/performance proof"
     }
   ]
 }

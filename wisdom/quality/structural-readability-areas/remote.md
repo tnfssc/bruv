@@ -1,27 +1,34 @@
 # Remote structural readability
 
-In progress: 119 baseline files, 2 independently accepted (repository.ts changed, root-runtime.ts unchanged). All others pending/in pipeline; not an area completion or whole-repo claim.
+ONGOING: 8/119 baseline files accepted at exact recorded blobs; 2 extra/new files require separate coverage. No area completion, PR or whole-repo claim.
 
 Retained area: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74
 Branch: bruv/whole-repo-structural-readability-remote-cbb4da74
-Initial commit: 59413c532e6422983f611915e509e8421aa2f363. Exact file/worker/worktree/branch/candidate/judge/blob records in remote.json. Three primary and three judge slots max; fill on substantive completion and yield. Worker pickup notes never imported.
+Initial area commit: 59413c532e6422983f611915e509e8421aa2f363. Durable per-file primary/judge/candidate/path/branch/hash records: remote.json. At most 3 active primary/rework workers and 3 judges; fill slots on results, yield otherwise. All source changes via workers; pickup notes excluded from integration.
 
-## Accepted batch reasoning
-- repository.ts: candidate 56906c45 separates construction of history-free transport input from capture authorization/provenance/stability/publication. Judge task_944616f9 ACCEPT at blob 88b0c7fd48b6844e2c25cb3853465a0d65c5b9c3; reverse extraction exactly recovers baseline. Worker 19 tests/112 assertions; judge core suite 5/24. Broader judge suites blocked dependency resolution, not passing by inference.
-- root-runtime.ts: task_a90ee127 NO CHANGE NEEDED at c10a7a7c45510373e30d9d2385045f9fad23fa93. Session ordering versus connection framing, question replay versus continuation, settlement versus process exit and rejection versus uncertain delivery remain visible. Worker 15 tests/82 assertions; judge test loading blocked missing dependencies.
+## Accepted reading results
+- src/remote/artifacts.ts: ACCEPT — File cache verification/download/atomic replacement now separate from incomplete manifest/progress/completion orchestration; all protocol and identity checks retained.
+- src/remote/cancellation.ts: ACCEPT — Timed request, complete output-capturing scan and bounded settlement wait now own separate lifetimes; handler shows request/abort/inspection/publication. Checkpoint remains distinct from owner-confirmed child exit.
+- src/remote/capabilities.ts: NO CHANGE NEEDED — Single bounded-read operation: filesystem confinement separated from caller permission, descriptor immediately try/finally owned, reply persistence/replay/cancellation separated.
+- src/remote/jobs.ts: ACCEPT — Explicit resolved launch request removes mutable parameter/closure ownership reconstruction. Approval gate, allowlisted trusted snapshot, retained unknown dispatch and raced cancellation remain visible.
+- src/remote/repository.ts: ACCEPT — History-free snapshot construction now owns patch/copy/tree validation/orphan HEAD; capture retains authorization/provenance/stability/publication. Collection/integration remain coherent.
+- src/remote/root-runtime.ts: NO CHANGE NEEDED — Shared session context and serial ordering distinct from per-connection framing; question service owns answer replay, runtime owns continuation; close settlement distinct from owner exit; acknowledged rejection distinct from unknown delivery.
+- src/remote/root-store.ts: ACCEPT — Database directly selects queued commands and settles unresolved receipts; append separates durable dialog lifetime from sequence/event/suffix retention. SQL adds reading cost but removes mutable pruning reconstruction.
+- src/remote/security.ts: NO CHANGE NEEDED — Pure per-component sensitive path policy is explicit; capture/export and capability callers own refusal and independent grant/traversal checks.
 
-## Pending integration
-Jobs candidate also changes tests/remote-source-approval.test.ts; full candidate is judged together and that test still requires its own fresh primary. No cross-area edits yet. No new helper/deletion.
+## Integration and pending coverage
+Accepted source commits: 4b0fa831 repository, 10db7d76 jobs+approval regression, 0ba0f32a artifacts+tests, 7a209eac cancellation+new test, d60db7e7 root-store+new test. Exact whole patches joined, no related edits dropped.
 
-## Limits / pickup
-Automatic fish setup cannot find Bun; explicit Bun 1.4.2 path/shared dependencies in worker briefs. No authenticated SSH/provider/macOS/compiled CLI parity claim; no combined full gate yet. Parent owns PR #45 and final integration. Preserve all worker worktrees.
+New tests/remote-cancellation.test.ts has its own primary running. New tests/root-store.test.ts is pending primary; parent should retain remote ownership for this newly added root-* file (not seed inventory). Existing tests/remote-artifacts.test.ts and tests/remote-source-approval.test.ts require fresh focus coverage despite related acceptance. Source-approval candidate re-edits approval tests from integrated jobs base; final blob must replace earlier related acceptance only after judgment. No other cross-area source edits, no deletions.
 
-Second source batch: jobs.ts candidate b13219c9 accepted by task_35f0c540. Explicit prepared request removes closure dependence on mutable request; uncertainty and raced cancellation stay at orchestration. Includes approved source-intent regression in tests/remote-source-approval.test.ts, whose own primary is still due. Security and capabilities unchanged blobs independently NO CHANGE NEEDED; exact rows in ledger. Area repository combined checks: 19 pass/112 assertions via real shared dependency symlink.
+## Combined proof
+- 4b0fa831: 19 pass, 0 fail, 112 assertions (task_66ad8475).
+- 10db7d76: 54 pass, 0 fail, 321 assertions (task_963e98d8).
+- 10db7d76: check=0 format=0 lint=0; 12 existing warnings/12 infos (task_ac0c70e2).
+- 7a209eac: 20 pass, 0 fail, 119 assertions (task_d112ceca).
+- d60db7e7: 53 pass, 0 fail, 302 assertions (task_d21d8e50).
 
-Batch proof at 10db7d76: jobs/approval/subagent-placement/repository/wire suites 54 pass, 321 assertions. Configured bun run check (assets + tsc) passes; changed-file Biome format and lint exit 0 (12 existing warnings, 12 infos). Strict biome check additionally flags inherited import organization; no passing claim for that command. No binary build needed so far.
+Check is configured assets+tsc; format/lint scoped changed files. No per-file binary build. Dependency symlink in area is untracked tooling; remove before final clean-tree audit. Automatic fish setup cannot find Bun; explicit Bun 1.4.2/shared dependencies work. Early judges had package-loading gaps; area combined reruns above are real checks, not inferred. No authenticated SSH/provider/macOS/compiled CLI parity or performance claims.
 
-Artifact batch: 12a09d8f judged ACCEPT by task_4b41ba14 (7 tests/64 assertions independently). File verification/atomic replacement now separate from manifest progress publication; failed file retains old bytes and successful prior progress. Includes tests/remote-artifacts.test.ts changes, own primary still due.
-
-Cancellation batch: candidate 8677e1f4, judge task_bac9b4e3 ACCEPT. Request timeout/complete output scan/settlement polling lifetimes separated; handler still requests cancellation, aborts, awaits evidence then publishes checkpoint. Owner exit authority unchanged. Judge new suite 4 pass/20 assertions; related suites had dependency failures and require area rerun. New tests/remote-cancellation.test.ts needs own primary and judge.
-
-Root-store batch: c5912090 judged ACCEPT by task_ab8da392. Queue/uncertain receipts expressed as database operations; append separates persistent dialogs from bounded journal suffix. Judge store+client 13 tests/92 assertions; broader dependency errors await area rerun. New tests/root-store.test.ts requires its own primary; report new root-* test ownership to parent.
+## Pickup
+Read ledger for active task IDs and retained worktrees. Next free primaries should cover root-owner.ts, services.ts, source-approval/artifact tests and both new tests alongside remaining 119-file baseline. Check parent accepted branch only at sensible batches; last inspected parent changes were documentation-only. Parent owns one PR #45 and final whole-repo gates.
