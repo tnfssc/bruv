@@ -817,11 +817,18 @@
     {
       "focus": "src/tasks/task-monitor-source.ts",
       "initialBlob": "00775b8a24575435eb6b98c7d88929b58cfec333",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_622c59be",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_622c59be",
+        "branch": "bruv/primary-src-tasks-task-monitor-source.ts-622c59be",
+        "base": "a5af6dc16d2128b4493a26341b5e319496076574",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "a5af6dc16d2128b4493a26341b5e319496076574"
     },
     {
       "focus": "src/tasks/task-monitor.ts",
@@ -857,11 +864,18 @@
     {
       "focus": "src/tasks/task-title.ts",
       "initialBlob": "868dbe84394877707260f5531554b4f419a4f08f",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_08ee1258",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_08ee1258",
+        "branch": "bruv/primary-src-tasks-task-title.ts-08ee1258",
+        "base": "a5af6dc16d2128b4493a26341b5e319496076574",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "a5af6dc16d2128b4493a26341b5e319496076574"
     },
     {
       "focus": "src/tasks/text-preview.ts",
@@ -1115,13 +1129,13 @@
     {
       "focus": "tests/job-attention.test.ts",
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_49f70753",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_49f70753",
         "branch": "bruv/primary-tests-job-attention.test.ts-49f70753",
         "base": "4c0e427a70cc663ed51f3863131f713eaf5f00c8",
-        "commit": null
+        "commit": "58aead918c9cd290b432e1c08d9b697b57d740e4"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
@@ -1133,7 +1147,14 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "4c0e427a70cc663ed51f3863131f713eaf5f00c8"
+      "launchBase": "4c0e427a70cc663ed51f3863131f713eaf5f00c8",
+      "changedRelatedPaths": [],
+      "readingResult": "No change after whole-file focus: activity/deadline/batch, snooze/watch eligibility, completion cleanup and inspection failure/checkpoint/recovery explicit; manager retains stop/settlement.",
+      "checks": [
+        "focus11/70",
+        "sourceSDK1/7",
+        "Biome/diff pass; shared binary before attention so no compiled parity"
+      ]
     },
     {
       "focus": "tests/job-bridge-protocol.test.ts",
@@ -1579,13 +1600,13 @@
     {
       "focus": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_f4444bc8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f4444bc8",
         "branch": "bruv/primary-tests-worktree-workspace.test.ts-f4444bc8",
         "base": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9",
-        "commit": null
+        "commit": "59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
@@ -1597,7 +1618,16 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9"
+      "launchBase": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9",
+      "changedRelatedPaths": [
+        "tests/worktree-workspace.test.ts"
+      ],
+      "readingResult": "Fixture owns manager shutdown before temporary worktree root restoration; scenario operations/assertions and Git/setup/cancel/sibling journeys remain explicit.",
+      "checks": [
+        "baseline13/50; paired24/117",
+        "13 titles49 static assertions unchanged",
+        "typecheck/Biome/diff pass;1 inherited lint info"
+      ]
     }
   ],
   "extras": [
