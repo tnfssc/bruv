@@ -1,4 +1,7 @@
 import { expect, test } from "bun:test";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 const workflowPath = new URL("../.github/workflows/dependency-updates.yml", import.meta.url);
 const source = await Bun.file(workflowPath).text();
@@ -69,4 +72,83 @@ test("one fixed PR branch has exact-candidate validation linked on GitHub", () =
   expect(source).toContain('gh pr edit "$number"');
   expect(source).toContain("repos/$GITHUB_REPOSITORY/statuses/$SHA");
   expect(source).toContain("dependency-update/Linux validation");
+});
+
+const verification = workflow.jobs.publish.steps.find((step) => step.run?.includes("git bundle verify"))!;
+
+test("downloaded candidate is verified without credentials before any remote writes", () => {
+  const publish = workflow.jobs.publish.steps.find((step) => step.env?.GH_TOKEN)!;
+  expect(verification.env).toEqual({
+    BASE: `\${{ needs.validate.outputs.base }}`,
+    SHA: `\${{ needs.validate.outputs.sha }}`,
+  });
+  expect(workflow.jobs.publish.steps.indexOf(verification)).toBeLessThan(workflow.jobs.publish.steps.indexOf(publish));
+  expect(verification.run).not.toContain("gh ");
+  expect(verification.run).not.toContain("git push");
+  expect(publish.run).not.toContain("git bundle");
+  const freshness = publish.run!.indexOf('[[ "$current" == "$BASE" ]]');
+  expect(freshness).toBeGreaterThan(-1);
+  expect(freshness).toBeLessThan(publish.run!.indexOf("git push"));
+});
+
+async function command(cwd: string, args: string[], env: Record<string, string> = {}) {
+  const child = Bun.spawn(args, { cwd, env: { ...process.env, ...env }, stdout: "pipe", stderr: "pipe" });
+  const [exitCode, stdout, stderr] = await Promise.all([
+    child.exited,
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text(),
+  ]);
+  return { exitCode, stdout, stderr };
+}
+
+// Use real Git bundles and a base-only checkout, just like the publisher job.
+test("candidate verification accepts dependency-only updates and rejects wrong identities or other files", async () => {
+  const root = await mkdtemp(join(tmpdir(), "bruv-dependency-workflow-"));
+  const repository = join(root, "source");
+  const publisher = join(root, "publisher");
+  try {
+    await mkdir(repository);
+    await mkdir(join(publisher, "candidate"), { recursive: true });
+    const git = async (cwd: string, ...args: string[]) => {
+      const result = await command(cwd, ["git", ...args]);
+      expect(result.exitCode, result.stderr).toBe(0);
+      return result.stdout.trim();
+    };
+    await git(repository, "init");
+    await git(repository, "config", "user.name", "Workflow test");
+    await git(repository, "config", "user.email", "workflow@example.invalid");
+    for (const file of ["package.json", "bun.lock", "unexpected.txt"]) {
+      await writeFile(join(repository, file), "base\n");
+    }
+    await git(repository, "add", ".");
+    await git(repository, "commit", "-m", "base");
+    const base = await git(repository, "rev-parse", "HEAD");
+    await git(publisher, "init");
+    await git(publisher, "fetch", "--depth=1", repository, base);
+    await git(publisher, "checkout", "FETCH_HEAD");
+
+    await writeFile(join(repository, "package.json"), "updated declaration\n");
+    await writeFile(join(repository, "bun.lock"), "updated lockfile\n");
+    await git(repository, "commit", "-am", "dependency update");
+    const sha = await git(repository, "rev-parse", "HEAD");
+    const bundle = join(publisher, "candidate", "candidate.bundle");
+    await git(repository, "bundle", "create", bundle, "HEAD", "^" + base);
+    const verify = (BASE: string, SHA: string) =>
+      command(publisher, ["/bin/bash", "-c", verification.run!], { BASE, SHA });
+    expect((await verify(base, sha)).exitCode).toBe(0);
+    expect((await verify(base, base)).exitCode).not.toBe(0);
+    expect((await verify(sha, sha)).exitCode).not.toBe(0);
+
+    await git(repository, "reset", "--hard", base);
+    await writeFile(join(repository, "unexpected.txt"), "not a dependency update\n");
+    await git(repository, "commit", "-am", "unrelated change");
+    const unrelated = await git(repository, "rev-parse", "HEAD");
+    await rm(bundle);
+    await git(repository, "bundle", "create", bundle, "HEAD", "^" + base);
+    const rejected = await verify(base, unrelated);
+    expect(rejected.exitCode).not.toBe(0);
+    expect(rejected.stdout).toContain("Unexpected candidate file: unexpected.txt");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });

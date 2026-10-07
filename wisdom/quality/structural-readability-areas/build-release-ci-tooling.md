@@ -50,3 +50,5 @@ Download-test primary: scoped scenario cleanup, explicit fixture roles and sourc
 Paired build: singleton matrix/loop removed in favor of direct command→spawn→exit. Judge task_438d5e06 ACCEPT3cfc224;18/109 focused incl actual entrypoint stub child cwd/argv/IO/status. No compile claim. Related production-packaging test primary pending; no remaining tracked old plural API callers.
 
 CI workflow: explicit feedback success then two accepted full/docs lane tuples; judge task_884543de ACCEPT8f17983.21/276 tests,17 bash syntax blocks,1500 behavior comparisons plus45 malformed values, exactly same two allowed outcomes. Permissions/wiring unchanged; no actionlint/hosted proof.
+
+Dependency workflow: verify downloaded identity/files before explicit credential exposure; publish step owns auth/freshness/leased push. Judge task_69a61924 ACCEPT8d6139c plus related tests;13 independent tests/nine shell syntax blocks. This scopes credentials within existing write job, not new security boundary; no hosted/auth/API proof.
