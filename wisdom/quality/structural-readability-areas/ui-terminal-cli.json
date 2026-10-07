@@ -101,28 +101,53 @@
     {
       "focus": "scripts/terminal-interactions.ts",
       "initialBlob": "36c68bbdea181e1066379e2176dc828abbd9c7d4",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "pending"
-    },
-    {
-      "focus": "scripts/terminal-perf.ts",
-      "initialBlob": "696dd170594931b9907916079576e46666367030",
       "status": "primary-running",
       "primary": [
         {
-          "id": "task_6c37950b",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_6c37950b",
-          "branch": "bruv/primary-readability-scripts-terminal-per-6c37950b",
-          "launchBase": "595c5739a106609b3588835fdc8146724941c6e2"
+          "id": "task_5ef7a768",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5ef7a768",
+          "branch": "bruv/primary-readability-scripts-terminal-int-5ef7a768",
+          "launchBase": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "595c5739a106609b3588835fdc8146724941c6e2"
+      "launchBase": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890"
+    },
+    {
+      "focus": "scripts/terminal-perf.ts",
+      "initialBlob": "696dd170594931b9907916079576e46666367030",
+      "status": "judging",
+      "primary": [
+        {
+          "id": "task_6c37950b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_6c37950b",
+          "branch": "bruv/primary-readability-scripts-terminal-per-6c37950b",
+          "launchBase": "595c5739a106609b3588835fdc8146724941c6e2",
+          "commit": "44c24d4a6651d9671b6a90dca91df7fa183c8159"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_219f2747",
+          "base": "595c5739a106609b3588835fdc8146724941c6e2",
+          "candidate": "44c24d4a6651d9671b6a90dca91df7fa183c8159",
+          "verdict": "pending"
+        }
+      ],
+      "acceptedBlob": null,
+      "integrationState": "pending",
+      "launchBase": "595c5739a106609b3588835fdc8146724941c6e2",
+      "changedRelatedPaths": [],
+      "result": "No-change: cold capture, warmup, steady sampling, nested cleanup/callback drain/reporting/exit status already visibly sequenced.",
+      "checks": [
+        "36 tests /513 assertions",
+        "12-case serial CLI smoke/help/broken-workload reporting"
+      ],
+      "limits": [
+        "No build/performance-speed claim"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/action-profiler.ts",
@@ -295,11 +320,19 @@
     {
       "focus": "scripts/terminal-perf/profiler.ts",
       "initialBlob": "3298aad91f561f6cee5e08f4efd3a840ac8bbb44",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_98eabc08",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_98eabc08",
+          "branch": "bruv/primary-readability-scripts-terminal-per-98eabc08",
+          "launchBase": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890"
     },
     {
       "focus": "scripts/terminal-perf/report.ts",
@@ -394,19 +427,31 @@
     {
       "focus": "scripts/tui-harness.ts",
       "initialBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_7f3c2fe5",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_7f3c2fe5",
           "branch": "bruv/primary-readability-scripts-tui-harness.-7f3c2fe5",
-          "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8"
+          "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8",
+          "commit": "e5880ac872c2d04ef90194ca3c5964437cb4efab"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8"
+      "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8",
+      "changedRelatedPaths": [],
+      "result": "No-change candidate: startup/watchdog, input/capture/recording and capture-before-stop ownership explicit.",
+      "checks": [
+        "4 tests /23 assertions",
+        "Isolated real tmux fixture",
+        "Biome"
+      ],
+      "limits": [
+        "Used shared prebuilt CLI read-only, not freshly compiled base binary",
+        "No build"
+      ]
     },
     {
       "focus": "scripts/ui-cleanup-probe.py",
