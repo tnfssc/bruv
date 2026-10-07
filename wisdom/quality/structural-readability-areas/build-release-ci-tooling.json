@@ -1753,7 +1753,17 @@
           "launchBase": "e4e418734f62fd5586662165c1d62353fbeffdcd",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_9358bad2",
           "branch": "bruv/primary-tests-native-node-path.test.ts-9358bad2",
-          "state": "running"
+          "state": "killed",
+          "stopRequested": true,
+          "reason": "20min attention: unchanged19758B since13:47:56,receiving model response;clean retained launchbase e4e41873, no candidate or coverage."
+        },
+        {
+          "id": "task_62d9a185",
+          "launchBase": "143f8d13a88ea923e6ebc861888028232040e714",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_62d9a185",
+          "branch": "bruv/fresh-primary-native-node-path-test-62d9a185",
+          "state": "running",
+          "role": "fresh-retry"
         }
       ],
       "judges": [],
@@ -2369,5 +2379,37 @@
     "commit": "695ade32",
     "state": "merged-clean",
     "proof": "git merge-tree clean; prospective merged tree had no changes to any71 area baseline/extra focus paths. Imported accepted parent common changes only; sibling source owners retain primary/judge authority. No inherited source acceptance claimed from area."
+  },
+  "combinedTypecheck": {
+    "commit": "4f71d1b0",
+    "job": "task_09f53559",
+    "result": "PASS exit0 real tsc --noEmit Bun1.4.2 with own generated runtime assets and shared read-only dependencies;covers then-combined source not later accepted changes."
+  },
+  "latestCombinedTestProof": {
+    "job": "task_818f5ea5",
+    "commit": "143f8d13",
+    "tests": [
+      "tests/ci-runner.test.ts",
+      "tests/ci-selective-workflow.test.ts",
+      "tests/ci-selective.test.ts",
+      "tests/dependency-updates.test.ts",
+      "tests/dependency-workflow.test.ts",
+      "tests/install-download.test.ts",
+      "tests/install-local.test.ts",
+      "tests/manual-release.test.ts",
+      "tests/native-release-gate.test.ts",
+      "tests/prepare-assets.test.ts",
+      "tests/production-packaging.test.ts",
+      "tests/publish-release.test.ts",
+      "tests/release-browser-setup.test.ts",
+      "tests/release-launcher-gate.test.ts",
+      "tests/release-workflows.test.ts",
+      "tests/update.test.ts",
+      "tests/verify-update.test.ts",
+      "tests/generate-third-party-notices.test.ts",
+      "tests/setup-native-release-gate.test.ts"
+    ],
+    "result": "PASS 354tests,0fail,1639expectations,19files22.11s",
+    "limits": "Real local focused tests include synthetic compiled fixtures;not fullbuild/hostedActions/live/native device proof."
   }
 }

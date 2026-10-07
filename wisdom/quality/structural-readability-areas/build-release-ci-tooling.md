@@ -106,3 +106,5 @@ CI runner-test primary:single invocationrecord,namedoptions,explicit cleanup eac
 Offline sourcePTY:home/setup/process/evidence lifetimes explicit;fresh transcript suffix checks replace sleep-dependent staleproof. Judge task_11e13c7d ACCEPT27df96e;actual startup shows --no-approve skips obsolete trustdialog;local revoke still confirmed and owner-not-notified.2/14+realofflinePTY and adversarialstale/cleanup/group checks;not liveSSH/compiled/runnerwidecancel.
 
 Selective-workflow tests accepted task_fd6b7e52 blob25486b26: explicit accepted tuples and separate admission/dependency rejection cases. Corrected stale release-source job expectation, preserving fail-closed authority.75focus97combined,tsc/Biome/diff;not hostedActions proof.
+
+Combined boundary proof at143f8d13:19accepted suites354pass0fail1639expectations (task_818f5ea5). Real tsc --noEmit passed at4f71d1b0(task_09f53559),own generated runtimeassets/sharedread-onlydeps. Earlier absent-asset typecheck blockers resolved for this combined source.56/72focusrowsaccepted;remaining16 still individuallyowned/pending,not areaacceptance.
