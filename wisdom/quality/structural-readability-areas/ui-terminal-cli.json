@@ -133,7 +133,7 @@
     {
       "focus": "scripts/ansi_video_renderer.py",
       "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
-      "status": "rework-awaiting-judge-slot",
+      "status": "rework-judging",
       "primary": [
         {
           "id": "task_32c7f556",
@@ -163,6 +163,18 @@
             "Shipped callback does not mutate timeline; not observed production failure, but contract preservation required",
             "No build/Docker/visual/product acceptance"
           ]
+        },
+        {
+          "id": "task_73d21038",
+          "base": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+          "candidate": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
+          "verdict": "pending",
+          "priorJudge": "task_c420e381",
+          "priorVerdict": "REJECT",
+          "priorFindings": [
+            "Sampling condition caches selected row after audit_frame, unlike base rereading rows[index]. If callback replaces rows[0] with t=1, base skips sample while candidate saves; can add sample-save exception. Restore t - rows[row_index][\"t\"] >= 0 and add focused regression; do not restrict callbacks."
+          ],
+          "writerResponse": "Restored post-audit rows[row_index] timestamp lookup; regression fails rejected source and passes exact base/rework"
         }
       ],
       "acceptedBlob": null,
@@ -467,7 +479,7 @@
     {
       "focus": "scripts/terminal-perf/interaction-normalize.ts",
       "initialBlob": "7d11dad027d30e5fb2599903470d54dce827e746",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_5fb34446",
@@ -482,11 +494,26 @@
           "id": "task_23bf0f9f",
           "base": "1cb5260434b94a06fefc8906f5061f7011e206d8",
           "candidate": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/interaction-normalize.ts": "03425e9333f88fd84f0aa26bc11a78a294ae3d0f",
+            "scripts/terminal-perf/interaction-tool-events.test.ts": "2e0e6eb8783ba3fcce9fde642717064f933dd67f",
+            "tests/terminal-interactions-normalize.test.ts": "96a49888775e77328e9cbeb1f416f2b5347b345b"
+          },
+          "evidence": "One tool-event evidence gate separates direct subset/total/burst reconciliation from ordered timing checks, then projects verified captured text. Missing/zero, raw identities and measurement boundaries unchanged.",
+          "checks": [
+            "Independent21tests/158assertions",
+            "Retained raw projections2/1/10/2/13cases equal exact base and validate accepted report join",
+            "format/lint/diff"
+          ],
+          "limits": [
+            "Retained record compatibility only; no fresh measurements/full catalog/latency/build/typecheck/provider/PTY"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "03425e9333f88fd84f0aa26bc11a78a294ae3d0f",
+      "integrationState": "integrated exact independently judged candidate",
       "launchBase": "1cb5260434b94a06fefc8906f5061f7011e206d8",
       "changedRelatedPaths": [
         "scripts/terminal-perf/interaction-tool-events.test.ts",
@@ -567,7 +594,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_23bf0f9f",
+          "candidate": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+          "verdict": "ACCEPT",
+          "blob": "2e0e6eb8783ba3fcce9fde642717064f933dd67f"
+        }
+      ]
     },
     {
       "focus": "scripts/terminal-perf/interaction-worker.ts",
@@ -904,7 +939,7 @@
     {
       "focus": "scripts/ui-cleanup-probe.py",
       "initialBlob": "d77fd2cfa040e6ccd506cc2613ba0cc5b9d7f75f",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_96febf21",
@@ -919,11 +954,26 @@
           "id": "task_988afb2b",
           "base": "086c29b0ddd3df29cefb22cc8795df658c2da1cb",
           "candidate": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/ui-cleanup-probe.py": "c68a4a4b1d55f6fa3ebde54cd408f5196a1ad8ce",
+            "tests/ui-cleanup-probe.test.py": "f404edc33e4d99e3c363466338e431cbbc305d2b"
+          },
+          "evidence": "Terminal owns socket/deadline, context owns HOME/fixture/tmux, exercise owns captures, pure assertion evaluation separate, report after teardown. Specific config-write thread/HOME leak independently reproduced/fixed.",
+          "checks": [
+            "8new+13adjacent Python tests",
+            "18predicate ASTs and SSE1-7 equal",
+            "Mocked successful commands/env/reports/seven files equal",
+            "Real base/candidate both exit1 same10screen failures/six requests"
+          ],
+          "limits": [
+            "Real terminal acceptance NOT passed; no current-source build or universal descendant cleanup guarantee; tmux best effort"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "c68a4a4b1d55f6fa3ebde54cd408f5196a1ad8ce",
+      "integrationState": "integrated exact independently judged candidate",
       "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb",
       "changedRelatedPaths": [
         "tests/ui-cleanup-probe.test.py"
@@ -2678,21 +2728,37 @@
       "focus": "tests/terminal-interactions-normalize.test.ts",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "candidate-related-primary-pending",
+      "status": "related-patch-reviewed-primary-pending",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "needs actual patch judgment then fresh primary"
+      "acceptedBlob": "96a49888775e77328e9cbeb1f416f2b5347b345b",
+      "integrationState": "related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_23bf0f9f",
+          "candidate": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+          "verdict": "ACCEPT",
+          "blob": "96a49888775e77328e9cbeb1f416f2b5347b345b"
+        }
+      ]
     },
     {
       "focus": "tests/ui-cleanup-probe.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "candidate-related-primary-pending",
+      "status": "related-patch-reviewed-primary-pending",
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "candidate patch; needs independent judgment then primary"
+      "integrationState": "related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_988afb2b",
+          "candidate": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
+          "verdict": "INSPECTED WITH ACCEPTED SOURCE",
+          "blob": "f404edc33e4d99e3c363466338e431cbbc305d2b"
+        }
+      ]
     }
   ],
   "batchChecks": [

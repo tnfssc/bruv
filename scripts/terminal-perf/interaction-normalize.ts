@@ -29,6 +29,45 @@ const frameDurations = (frames: { durationMs: number; failed?: boolean }[]) => {
   if (frames.some((f) => f.failed)) throw new Error("Renderer failed during interaction");
   return frames.map((f) => f.durationMs);
 };
+/** Reconcile independent fixture counters and timing records before deriving any report measurements. */
+function validateToolEventEvidence(id: string, e: ToolEventEvidence): string {
+  if (e.counts.networkAttempts !== 0) throw new Error(id + " attempted network activity");
+  if (!e.visibility.finalSeen || !e.visibility.finalStateMatches || e.visibility.pendingAfterFinal !== 0)
+    throw new Error(id + " final visible tool state is invalid");
+  if (!e.content.events.length || !e.callbacks.length || !e.frames.length || !e.inputs.length)
+    throw new Error(id + " incomplete event/frame/input evidence");
+  // The direct burst is a subset of callbacks: subscribed-session callbacks belong only to total counts.
+  const directCallbacks = e.callbacks.filter((c) => c.source === "direct-handleEvent");
+  if (
+    e.counts.callback !== e.callbacks.length ||
+    e.counts.frame !== e.frames.length ||
+    e.counts.input !== e.inputs.length ||
+    e.burst.callbackCount !== directCallbacks.length ||
+    e.burst.frameCount !== e.frames.filter((f) => f.phase === "burst").length ||
+    e.content.events.length !== e.burst.callbackCount ||
+    e.burst.updateDisplayCount !== directCallbacks.reduce((n, c) => n + c.updateDisplayCount, 0) ||
+    e.burst.renderResultCount !== directCallbacks.reduce((n, c) => n + c.renderResultCount, 0)
+  )
+    throw new Error(id + " malformed event timing/count evidence");
+
+  const validTiming = (startMs: number, endMs: number) =>
+    Number.isFinite(startMs) && Number.isFinite(endMs) && endMs >= startMs;
+  if (
+    !validTiming(e.burst.startMs, e.burst.endMs) ||
+    e.callbacks.some((c) => !validTiming(c.startMs, c.endMs)) ||
+    e.frames.some((f) => !validTiming(f.startMs, f.endMs)) ||
+    e.inputs.some((i) => !validTiming(i.enteredAtMs, i.returnedAtMs))
+  )
+    throw new Error(id + " malformed event timing/count evidence");
+  const t = e.trace;
+  if (t.droppedSpans || t.droppedFrameEntries || t.droppedHeartbeats || t.droppedPendingActionLinks)
+    throw new Error(id + " profiler trace lost evidence");
+  const lines = e.frames.flatMap((f) => f.lines);
+  const screenText = lines.map((line) => Bun.stripANSI(line)).join("\n");
+  if (!screenText.includes(e.visibility.finalMarker)) throw new Error(id + " final marker absent from captured screen");
+  return screenText;
+}
+
 export function normalizeInteraction(
   id: string,
   raw: unknown,
@@ -132,43 +171,8 @@ export function normalizeInteraction(
   if (id.startsWith("tools/events/")) {
     const e = (raw as { evidence?: ToolEventEvidence }).evidence;
     if (!e || e.fixtureVersion !== 1) throw new Error(id + " missing/unsupported tool-event evidence");
-    if (e.counts.networkAttempts !== 0) throw new Error(id + " attempted network activity");
-    if (!e.visibility.finalSeen || !e.visibility.finalStateMatches || e.visibility.pendingAfterFinal !== 0)
-      throw new Error(id + " final visible tool state is invalid");
-    if (!e.content.events.length || !e.callbacks.length || !e.frames.length || !e.inputs.length)
-      throw new Error(id + " incomplete event/frame/input evidence");
-    if (
-      e.counts.callback !== e.callbacks.length ||
-      e.counts.frame !== e.frames.length ||
-      e.counts.input !== e.inputs.length ||
-      e.burst.callbackCount !== e.callbacks.filter((c) => c.source === "direct-handleEvent").length ||
-      e.burst.frameCount !== e.frames.filter((f) => f.phase === "burst").length ||
-      e.counts.callback !== e.callbacks.length ||
-      e.counts.frame !== e.frames.length ||
-      e.counts.input !== e.inputs.length ||
-      e.content.events.length !== e.burst.callbackCount ||
-      e.burst.updateDisplayCount !==
-        e.callbacks.filter((c) => c.source === "direct-handleEvent").reduce((n, c) => n + c.updateDisplayCount, 0) ||
-      e.burst.renderResultCount !==
-        e.callbacks.filter((c) => c.source === "direct-handleEvent").reduce((n, c) => n + c.renderResultCount, 0) ||
-      !Number.isFinite(e.burst.startMs) ||
-      !Number.isFinite(e.burst.endMs) ||
-      e.burst.endMs < e.burst.startMs ||
-      e.counts.frame !== e.frames.length ||
-      e.callbacks.some((c) => !Number.isFinite(c.startMs) || !Number.isFinite(c.endMs) || c.endMs < c.startMs) ||
-      e.frames.some((f) => !Number.isFinite(f.startMs) || !Number.isFinite(f.endMs) || f.endMs < f.startMs) ||
-      e.inputs.some(
-        (i) => !Number.isFinite(i.enteredAtMs) || !Number.isFinite(i.returnedAtMs) || i.returnedAtMs < i.enteredAtMs,
-      )
-    )
-      throw new Error(id + " malformed event timing/count evidence");
+    const screenText = validateToolEventEvidence(id, e);
     const t = e.trace;
-    if (t.droppedSpans || t.droppedFrameEntries || t.droppedHeartbeats || t.droppedPendingActionLinks)
-      throw new Error(id + " profiler trace lost evidence");
-    const lines = e.frames.flatMap((f) => f.lines);
-    const screenText = lines.map((line) => Bun.stripANSI(line)).join("\n");
-    if (!screenText.includes(e.visibility.finalMarker))
-      throw new Error(id + " final marker absent from captured screen");
     const sample = Object.assign(base("tool-event-burst"), {
       spans: [
         ...e.callbacks.map((c) => ({
