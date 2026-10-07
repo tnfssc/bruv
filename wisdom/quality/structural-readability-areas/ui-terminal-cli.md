@@ -111,3 +111,5 @@ Performance report primary task_598e86e4 + judge task_7b633bb8 NO CHANGE NEEDED 
 Runtime acceptance primary task_8217bb2e; judge task_150f5c27 ACCEPT 98bd940bd8dc870efa814074b7c038649d4df706. Journal/snapshot/session fixture creation separated from unchanged UI/replay journey. Both Python suites 11 passes; independent deterministic bytes and AST preservation, syntax/diff. Fixture-only proof, not compiled/visual acceptance. Related Python test primary pending.
 
 Performance options primary task_61e4e31c + judge task_be297c64 NO CHANGE NEEDED at 9d123b4f21a13ef603be8c89b2eb9e16a68e1463; independent 9 tests/60 assertions and 63 supplemental parsing/selection/budget/strict-boundary assertions.
+
+Terminal acceptance primary task_28f2469a; judge task_c4ad6e75 ACCEPT b02afcce77ccd1ebb021dc6230641ab0294ce68e. Ordered routing now readable apart from scenario progression, with replay/lifecycle/question authority unchanged. Independent 13+10 Python tests, 148 differential histories, AST equality and loopback SSE/log check. No compiled/visual acceptance; related Python test primary pending.

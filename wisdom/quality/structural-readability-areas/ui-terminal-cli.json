@@ -82,7 +82,7 @@
     {
       "focus": "scripts/activity-terminal-acceptance.py",
       "initialBlob": "6189961015f97059362cb3698f831189221ae7a0",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_28f2469a",
@@ -97,11 +97,26 @@
           "id": "task_c4ad6e75",
           "base": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
           "candidate": "b02afcce77ccd1ebb021dc6230641ab0294ce68e",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/activity-terminal-acceptance.py": "8760c4c386ebb251f9d4bcce65f73d68820d8f54",
+            "tests/activity-terminal-acceptance-test.py": "2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d"
+          },
+          "evidence": "Ordered routing/failure priority separate from scenario-local next call/answer progression, no registry or shared context. Replay ID normalization, lifecycle persisted job/cancel IDs and saved question owner/version retained.",
+          "checks": [
+            "Independent 13 terminal tests +10 runtime helper tests",
+            "148 base/candidate request and SSE equivalence histories",
+            "Seven scenario bodies/evidence/existing test ASTs equal",
+            "Real loopback HTTP framing/log check; help/syntax/diff"
+          ],
+          "limits": [
+            "No compiled terminal/ANSI visual/full build/product acceptance"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "8760c4c386ebb251f9d4bcce65f73d68820d8f54",
+      "integrationState": "integrated exact judged candidate",
       "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
       "changedRelatedPaths": [
         "tests/activity-terminal-acceptance-test.py"
@@ -413,7 +428,7 @@
     {
       "focus": "scripts/terminal-perf/interaction-report.ts",
       "initialBlob": "18af4bb852d356ff8cb446eccd13fad32242b79d",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_5930e394",
@@ -423,7 +438,14 @@
           "commit": "d5fadc4552948bf4041af05249ccb577b313b269"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_e42d2c99",
+          "base": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+          "candidate": "d5fadc4552948bf4041af05249ccb577b313b269",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
@@ -1715,7 +1737,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch accepted; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_c4ad6e75",
+          "candidate": "b02afcce77ccd1ebb021dc6230641ab0294ce68e",
+          "verdict": "ACCEPT",
+          "blob": "2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d"
+        }
+      ]
     },
     {
       "focus": "tests/background-interrupt-tui.test.ts",
