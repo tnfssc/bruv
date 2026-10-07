@@ -1222,7 +1222,7 @@
     {
       "focus": "tests/goals.test.ts",
       "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
-      "status": "judging-combined",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_6d7a5ed8",
@@ -1268,16 +1268,26 @@
           "id": "task_134ecfd8",
           "candidate": "cf81cf961f870a8835854de8a268a928cf1c8abc",
           "base": "a37d5f5da6cff9a28002861fc9a98c0ee332731c",
-          "status": "running",
+          "status": "complete",
           "priorVerdicts": [
             "task_a7f9ce2d ACCEPT primary fixture",
             "task_4a2a31dd ACCEPT extension regressions"
           ],
-          "writerResponse": "Reconcile runtime-fixture primary with four accepted extension regression scenarios; preserve all domain order/assertions, genuine before-start correction and bounded payload retention."
+          "writerResponse": "Reconcile runtime-fixture primary with four accepted extension regression scenarios; preserve all domain order/assertions, genuine before-start correction and bounded payload retention.",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Final runtime fixture owns event/context/append-backed leaf/session restart; scenarios preserve explicit handoff/run/settled/completion and all four reminder regressions. Prior and area assertion sets compared, before-start correction retained.",
+          "checks": "Actual complete combined source/tests/prior diffs read; independent runtime missing dependencies; diff clean.",
+          "acceptedRelatedBlobs": {
+            "src/goals/extension.ts": "90e7ddd369fad8b41c6cf53a2114b85c4bda5af1",
+            "src/goals/controller.ts": "b46d074e022db912d2ea6565730a27879f83a361",
+            "src/goals/store.ts": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
+            "src/goals/types.ts": "8ccbe88cc95296fc9fa4c224c72c7cf2c447c5bd"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "53c72e5e41d625d696a76c2fe039de25e79ce733",
+      "integration": "integrated-reconciled-candidate",
       "relatedPatchReview": {
         "candidate": "3768ecd10500006ffdfed8bc12202224a483636a",
         "judge": "task_4a2a31dd",
