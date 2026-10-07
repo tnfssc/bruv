@@ -1,0 +1,3835 @@
+{
+  "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+  "files": [
+    {
+      "file": ".gitattributes",
+      "initialBlob": "88d4424a9f2930e49ebab395ba378fe2bdbdac66",
+      "status": "pending"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "initialBlob": "5c61dddbb8dd29e42359aef4a597600ee8d94dd9",
+      "status": "pending"
+    },
+    {
+      "file": ".github/workflows/dependency-updates.yml",
+      "initialBlob": "f916a1e5fda8cc00b34f514def1446be58018b6c",
+      "status": "pending"
+    },
+    {
+      "file": ".github/workflows/live.yml",
+      "initialBlob": "6c1b0780b78c229785db286e9f15b76a4be60d32",
+      "status": "pending"
+    },
+    {
+      "file": ".github/workflows/release.yml",
+      "initialBlob": "fc2aa93ed9e86f9f22cafc87dda1714e8a52eed3",
+      "status": "pending"
+    },
+    {
+      "file": ".gitignore",
+      "initialBlob": "b76078bd2295d5a07314030b6a1a6ac4248288c7",
+      "status": "pending"
+    },
+    {
+      "file": "biome.json",
+      "initialBlob": "c9ab9a6f17498d2c7f0c62fc8538128ddef546a1",
+      "status": "pending"
+    },
+    {
+      "file": "bunfig.toml",
+      "initialBlob": "8370a0154a62bcc247a0a211d376458a7751d717",
+      "status": "pending"
+    },
+    {
+      "file": "install.sh",
+      "initialBlob": "ad66605c0b27dbdbf3c1d1517aa896de1854ae1e",
+      "status": "pending"
+    },
+    {
+      "file": "mise.toml",
+      "initialBlob": "1ce68f9c298b3d2eedcd9a0c1e909fc1af14d1de",
+      "status": "pending"
+    },
+    {
+      "file": "native/live-linux/CaptureGate.h",
+      "initialBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
+      "status": "pending"
+    },
+    {
+      "file": "native/live-linux/main.cpp",
+      "initialBlob": "76741dde51fe38d1f42496c66309cb700e266987",
+      "status": "pending"
+    },
+    {
+      "file": "native/live-linux/tests/backpressure.py",
+      "initialBlob": "926018512888ed0d7b08002be97e2179a2089561",
+      "status": "pending"
+    },
+    {
+      "file": "native/live-linux/tests/capture-gate.cpp",
+      "initialBlob": "54545816cf0085d09b852dfad919fc9dc7545d57",
+      "status": "pending"
+    },
+    {
+      "file": "native/live-linux/tests/capture-protocol.py",
+      "initialBlob": "86a6f83cd562f0ab9f7e77bc7257f451c540a4c1",
+      "status": "pending"
+    },
+    {
+      "file": "native/live-linux/tests/protocol.py",
+      "initialBlob": "266caf808d098fac5a3c4b834c73f428b9fd19b6",
+      "status": "pending"
+    },
+    {
+      "file": "native/live-linux/tests/source-removal.py",
+      "initialBlob": "28a1a9d47228fc945f5837efd31a1b0c49a31dff",
+      "status": "pending"
+    },
+    {
+      "file": "native/live-linux/tests/virtual.sh",
+      "initialBlob": "02fea1a0e2d25ac75c78fce395ce9f39dcbaf52f",
+      "status": "pending"
+    },
+    {
+      "file": "native/live/AudioCore.c",
+      "initialBlob": "2efc770027dad553a71f5bd1dfc34a87fbd3eb6a",
+      "status": "pending"
+    },
+    {
+      "file": "native/live/AudioCore.h",
+      "initialBlob": "e2d8f07794f66272af89f64c69f86bee4ee70aee",
+      "status": "pending"
+    },
+    {
+      "file": "native/live/Info.plist",
+      "initialBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
+      "status": "pending"
+    },
+    {
+      "file": "native/live/main.swift",
+      "initialBlob": "4a29411a451125a88c2572107856a35bc97ea137",
+      "status": "pending"
+    },
+    {
+      "file": "native/live/test-capture-gate.c",
+      "initialBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
+      "status": "pending"
+    },
+    {
+      "file": "native/live/test-core.c",
+      "initialBlob": "16f9df07efbef8b515fb70f28e4de0c0c5b4d4cd",
+      "status": "pending"
+    },
+    {
+      "file": "native/live/test-waveform.c",
+      "initialBlob": "bb584e0f6042f5e82f7298fb3a84b8e2bcb6e749",
+      "status": "pending"
+    },
+    {
+      "file": "package.json",
+      "initialBlob": "555c3c153c503ba09efe2ebaaef2c5afdeca4da4",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/activity-runtime-acceptance.py",
+      "initialBlob": "ec93dec2d9d501bdb6233b29b383311f3480a166",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/activity-terminal-acceptance.py",
+      "initialBlob": "6189961015f97059362cb3698f831189221ae7a0",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/ansi_video_renderer.py",
+      "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/benchmark-footer-context.ts",
+      "initialBlob": "91d84fe12a843948add9cd91c219ee7098b1f419",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/benchmark-task-row-render.ts",
+      "initialBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/bruv-claude-compat.sh",
+      "initialBlob": "e3fc96419050e349c3beb8f9043a47e61b8443e0",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/build-claude-compat.ts",
+      "initialBlob": "288ab823259a840b1f8b547d4366406d0340c963",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/build-live-helper.sh",
+      "initialBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/build-live-linux-helper.sh",
+      "initialBlob": "81989563bcacb3c947843520081648afa4e4b521",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/build-pair.ts",
+      "initialBlob": "01820c57c83f8d61a082f591c93c38590f79688e",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/build.ts",
+      "initialBlob": "6162c89981b835927c7636d56bd3b054b9c17bba",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/ci-selective.ts",
+      "initialBlob": "0217656be1a3fda05afb81dd0bd9642355c0779a",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/ci.sh",
+      "initialBlob": "ffeab90a9248f3de7591633b6088ae6afd6889a4",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-compat-launcher.ts",
+      "initialBlob": "42cadbf1870ff31d75b1d2d137c7d405a3e5b285",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+      "initialBlob": "b155c48a81e9f9206dff243ce82caa5f1ce3f762",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/app-delegation-model.mjs",
+      "initialBlob": "cd31945f84240e89773e227fd0db20d8a5d0d6e0",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/driver.mjs",
+      "initialBlob": "882479646781146d901ab1b87e5d3a99865d8509",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/history-driver.mjs",
+      "initialBlob": "659797ad2ec3eede386464076c949ad0f700cf6c",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/history-model.mjs",
+      "initialBlob": "9446986b74d6df6bf6b4bdaddd5e3de7aa8740a6",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/history-replay.mjs",
+      "initialBlob": "0ccc3cc8c75866a526eb1f6928a936b0752c5496",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/history-run.mjs",
+      "initialBlob": "fb51c5b023103a4928903ce846abccd608e35a10",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/human-driver.mjs",
+      "initialBlob": "92e5682af10e949649d0f87236c00b412f02a3df",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/model.mjs",
+      "initialBlob": "974c4c41cd0b921a6b8bb569137a349d95135492",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/run-subagent.mjs",
+      "initialBlob": "333a6297626d5bedcd9aecd72757c436ce3f51ef",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/run.mjs",
+      "initialBlob": "949bb21f489de722a85735d22d5dabd27f6413a0",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/runtime-smoke.mjs",
+      "initialBlob": "f13d18e4883ef5fcc47aa785039ceee334cce15f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
+      "initialBlob": "b3a839d892d5d6ea15b4bc23a32504ce22a29103",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/subagent-model.mjs",
+      "initialBlob": "26c60744b7399e669da090a7c33e8a767d0bd61d",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+      "initialBlob": "89a45efad86898aea8b5202b63b3a5bcdf523ac1",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/tap.mjs",
+      "initialBlob": "5f8db4ace61b0211f53f5959653a2bf6f0dc2f26",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/worker.mjs",
+      "initialBlob": "766989628f65993cbde352037144c85dc25e316f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
+      "initialBlob": "93411cd8380fc52c7f69afc866bff5bf7912b156",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/find-ci-baseline.ts",
+      "initialBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/fixtures/task-placement-clean/fake-provider.ts",
+      "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/fixtures/task-placement-clean/models.json",
+      "initialBlob": "c84a95a5c122e5e94128004cea6607e770db1195",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/fixtures/task-placement-clean/scenario.ts",
+      "initialBlob": "1dd0984297604e141df606d48595c1f698a75ab7",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/fixtures/task-placement-clean/settings.json",
+      "initialBlob": "27af5ec1fdc3b8ae4a2457af4ca0de2de7ea1550",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/fixtures/task-placement-clean/subagents.json",
+      "initialBlob": "dbac92aeba134a96c4548de4ad435087468af091",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/generate-third-party-notices.ts",
+      "initialBlob": "3f18bd16c7605cd2635ff0baee0d426301921b63",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/history-sdk-probe.ts",
+      "initialBlob": "34e3e6650f47049c01f85ce117f5bf84bcc65c6d",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/history-storage-preload.ts",
+      "initialBlob": "8f7b5e5783bd2486eb7b0bc7f9952e080457617e",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/history-storage-probe.ts",
+      "initialBlob": "2e443cc387a687ffd98506aa489c8b8658683593",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/install-local.sh",
+      "initialBlob": "8b3ae448319b3b98ba86b7ff03272e35c960c58d",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/install.sh",
+      "initialBlob": "46160433a260b829e88f5e7b1d9eae054f679c49",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/leak-audit/bridge-retention.ts",
+      "initialBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/leak-audit/cli-rpc-soak.ts",
+      "initialBlob": "53a39f74d7b7c7932543ae4430d6645840e344d5",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/leak-audit/execution-runtime.ts",
+      "initialBlob": "a1b7750b9557d511dd7d7c5d9d9a417217829995",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/leak-audit/session-journal.ts",
+      "initialBlob": "e1c6629766f6f6511f2d347887310a885d455b92",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-acceptance.ts",
+      "initialBlob": "3d1e341a0ec3115c50c706e21dfa75184e69c098",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-gpt-live-offline-smoke.ts",
+      "initialBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-helper-bundle.ts",
+      "initialBlob": "59cc37569783f757e9bb64d760dc96aead37edfc",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-isolated-audio.sh",
+      "initialBlob": "ba92d903223fcee68a9c3a5ce799e4ec695230ab",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-onboarding-smoke.ts",
+      "initialBlob": "f02f07cca5ad453ba39de2fe1b0b6b396cc0c1bb",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-openai-offline-smoke.ts",
+      "initialBlob": "c900eaef25ae1b5501a4da8ee24b29854241b78d",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-probe-input.ts",
+      "initialBlob": "30da7b239c9a9bf9ef9fdfa05be474de72253f57",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-startup-fixture.ts",
+      "initialBlob": "57daaf09ced917e5130a196b1410cf0b6aa257cc",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/live-study-trial.ts",
+      "initialBlob": "63d6fd9dd0bdeead65c912d63ac4b50e7a60bb0c",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/loopback-parent-fixture.ts",
+      "initialBlob": "02e74db59339686bf3be7bab19c4cbf3f934808d",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/network-none-fixture.ts",
+      "initialBlob": "33b7fd198ac0af8f72eae995238a25f9169e793f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/offline-openai-default-transport.ts",
+      "initialBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/pi-host-adaptation.ts",
+      "initialBlob": "f0a19b44b776154c3308e02c5781824c30c40f1d",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/prepare-assets.ts",
+      "initialBlob": "6cb6ac67d3e10c91a47b412769efdbf67245d57d",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/prepare-manual-release.ts",
+      "initialBlob": "3693ef65f3f4d5245b9a3407f58c02bcf440bc18",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/probe-live-capability.ts",
+      "initialBlob": "755a16278c22dacfff5bade1859975616a2aefcb",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/probe-live-controlled.ts",
+      "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/probe-live-recorded.ts",
+      "initialBlob": "3c15dce87ad6cef0b8687c9d2dfeb793a48c9b3a",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/probe-live-startup-audio.ts",
+      "initialBlob": "7efa411dd2d16d6070ee511416884d1a64309fb1",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/probe-openai-realtime-setup.ts",
+      "initialBlob": "336872179296264402c6bac5fc5c7feaa1c8d244",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/prompt-preview.ts",
+      "initialBlob": "0075e30750857ec544a82816484892f3a4423786",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/publish-release.ts",
+      "initialBlob": "62fab61617323152fdf93ede351030a68b7253bd",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/remote-capability-pty-e2e.ts",
+      "initialBlob": "9d766840abdeaa12b164aae3f0d8f682cc3825c5",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/remote-e2e.sh",
+      "initialBlob": "34458325a2e2fde12b7f65e86359e16c984ddb53",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/remote-e2e.ts",
+      "initialBlob": "fe5d531b0210d36871c340023798a4c6acdd8216",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/remote-jobs-e2e.ts",
+      "initialBlob": "036860d89538bd9d6b19c57065c0a71d7a665111",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/remote-placement-e2e.ts",
+      "initialBlob": "2ec9d0ad139efe872aa17b34dd5497924781223a",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/remote-pty-e2e.ts",
+      "initialBlob": "ff9c6e8a70b09d2134b07c53336b95f56311bf4b",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/remote-recovery-e2e.ts",
+      "initialBlob": "7dc219cb2d14530fd8ce0738623792c6016a1de6",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/remote-root-placement-e2e.ts",
+      "initialBlob": "4acbdfa75d15a03e5e146f1d7761e393f8b1f16f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/run-native-release-gate.mjs",
+      "initialBlob": "57e8dbdd0787d336642358a9bc687772091bba13",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/select-release-notes.ts",
+      "initialBlob": "702067fdd441ace705964ea3df7c8b70a8975801",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/setup-native-release-gate.sh",
+      "initialBlob": "0eaa8e741804f76755fda5fe3c1bcec25953afc5",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/setup-release-browser.sh",
+      "initialBlob": "59ab77ba5d9eda96013afb287181eadaa16332b9",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/smoke.sh",
+      "initialBlob": "097f5cb9d15f5c6db5b7643aad74aa851ac7163b",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/task-placement-clean-capture.ts",
+      "initialBlob": "bab2afe49282ebd687fe9b26db81ef8112ce3ca2",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/task-placement-clean-scenario.test.ts",
+      "initialBlob": "491ff90418654c48dd83af0d2080984ade747f69",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/task-placement-clean-video.py",
+      "initialBlob": "86a649cd69e8eefb913ceb0a567644050e0bd3d9",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/tasks-ui-native-proof.py",
+      "initialBlob": "0255cb75d4ff7e4114d878669a7351fd2eb3cfed",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/tasks-ui-proof-build.ts",
+      "initialBlob": "3c50cd1531b85ff6b44517154be60c5c133b8b03",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/tasks-ui-proof-screenshots.ts",
+      "initialBlob": "c2db3b69aea3197ac7d013e9ba58ad8443a91199",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-interactions.ts",
+      "initialBlob": "36c68bbdea181e1066379e2176dc828abbd9c7d4",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf.ts",
+      "initialBlob": "696dd170594931b9907916079576e46666367030",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/action-profiler.ts",
+      "initialBlob": "833e1e060db3eeffde361abc7c260aaca53bd8f8",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/artifacts.ts",
+      "initialBlob": "eeac78ef15a882ca01423dfaf4c1ada83c10f861",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
+      "initialBlob": "5c485f7a7ac0a5311928a43436af9615e3d8e696",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/audit-probes/journal-stop.ts",
+      "initialBlob": "5d535f2de208af012789c2b9b05046ededd52463",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/dashboard.ts",
+      "initialBlob": "5da2c4acd3cdbf1ebbe47c5e32e4086843c9517e",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/interaction-catalog.ts",
+      "initialBlob": "9440f4128b7ec6f9dd429e456aca592ca32e5e14",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/interaction-dashboard.ts",
+      "initialBlob": "f18fa94af55dd9bf016b3629273abf2d1a30ecbd",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/interaction-normalize.ts",
+      "initialBlob": "7d11dad027d30e5fb2599903470d54dce827e746",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/interaction-options.ts",
+      "initialBlob": "5f02670045e3b06132b1ba92708364d4c3950c19",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/interaction-report.ts",
+      "initialBlob": "18af4bb852d356ff8cb446eccd13fad32242b79d",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/interaction-tool-events.test.ts",
+      "initialBlob": "2ba446b1c0b439cc7ee92256ad58ff7ccd3d0836",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/interaction-worker.ts",
+      "initialBlob": "479071932b154974ea189736685241aa5f1995c5",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/navigation-workloads.ts",
+      "initialBlob": "d01398743c5affb8cc99babeae794e3f0dfe95a7",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/options.ts",
+      "initialBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/profiler.ts",
+      "initialBlob": "3298aad91f561f6cee5e08f4efd3a840ac8bbb44",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/report.ts",
+      "initialBlob": "2fcf24ca57d3c81087a237150258a6ec944bbefa",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+      "initialBlob": "35e5c66c596e869e8067a9bb4c2298c671638330",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/selector-lifecycle-probe.ts",
+      "initialBlob": "c050db1227585d0f71f7c2156f0a94128a808491",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/selector-lifecycle.test.ts",
+      "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/send-workloads.ts",
+      "initialBlob": "52343cd8ba377fd60e745ecbc0d66c1e7afda918",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/tool-event-workloads.ts",
+      "initialBlob": "89b078ccdf8cb1198e2ac22be0b734cd334573e6",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/tool-workloads.ts",
+      "initialBlob": "9790dd19745757bf13aa0fe4980c1489ddecd511",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/trace.ts",
+      "initialBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/terminal-perf/workloads.ts",
+      "initialBlob": "1402e6d195cd12b111d928c54c394203221ead1f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/tmux.conf",
+      "initialBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/tui-harness.ts",
+      "initialBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/ui-cleanup-probe.py",
+      "initialBlob": "d77fd2cfa040e6ccd506cc2613ba0cc5b9d7f75f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/update-dependencies.ts",
+      "initialBlob": "a1a3be6d7c7ad83396b66cdf9753ce773bba35dd",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/validate-release-tag.ts",
+      "initialBlob": "00417d20e23db978be592c23e4a31be88493cc76",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/verify-release-launchers.ts",
+      "initialBlob": "a36b3257db8d9fb953d5681712894d992dc42b1c",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/verify-update-probe.ts",
+      "initialBlob": "d33b6f17e311bd423ffbbc42ab5707a9259da29f",
+      "status": "pending"
+    },
+    {
+      "file": "scripts/verify-update.ts",
+      "initialBlob": "01852393abf6c710c5b40e4d31b5296cb281f7df",
+      "status": "pending"
+    },
+    {
+      "file": "site/.gitignore",
+      "initialBlob": "b9470778764f72c5257a3361590d2994547f90e1",
+      "status": "pending"
+    },
+    {
+      "file": "site/assets/brand/bruv-icon.svg",
+      "initialBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646",
+      "status": "pending"
+    },
+    {
+      "file": "site/assets/brand/bruv-wordmark-light.svg",
+      "initialBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6",
+      "status": "pending"
+    },
+    {
+      "file": "site/assets/brand/bruv-wordmark.svg",
+      "initialBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7",
+      "status": "pending"
+    },
+    {
+      "file": "site/assets/brand/wordmark-cells.json",
+      "initialBlob": "7690aff87443de0a97521444bb7a64546f568f4e",
+      "status": "pending"
+    },
+    {
+      "file": "site/assets/cli-settings.txt",
+      "initialBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569",
+      "status": "pending"
+    },
+    {
+      "file": "site/assets/settings-cells.json",
+      "initialBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3",
+      "status": "pending"
+    },
+    {
+      "file": "site/brand.ts",
+      "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
+      "status": "pending"
+    },
+    {
+      "file": "site/capture.ts",
+      "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7",
+      "status": "pending"
+    },
+    {
+      "file": "site/content.ts",
+      "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8",
+      "status": "pending"
+    },
+    {
+      "file": "site/demos.test.ts",
+      "initialBlob": "8ca404103fe2971f2c54b810f45d0e527d5e40fd",
+      "status": "pending"
+    },
+    {
+      "file": "site/demos.ts",
+      "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23",
+      "status": "pending"
+    },
+    {
+      "file": "site/html-animation.ts",
+      "initialBlob": "83d93edb503c6c100e5a778c48b69a91bc91756e",
+      "status": "pending"
+    },
+    {
+      "file": "site/html-cells.ts",
+      "initialBlob": "7c70d1bdd3c530eddb002adeffd1d1f7be2f5dc1",
+      "status": "pending"
+    },
+    {
+      "file": "site/index.html",
+      "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3",
+      "status": "pending"
+    },
+    {
+      "file": "site/install-command.ts",
+      "initialBlob": "955cbf767fa094bd223bee8f0bba424692c3c663",
+      "status": "pending"
+    },
+    {
+      "file": "site/install-html.ts",
+      "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db",
+      "status": "pending"
+    },
+    {
+      "file": "site/layout.ts",
+      "initialBlob": "0ec60a65bd36d939f302323b7a5fd63ab170046b",
+      "status": "pending"
+    },
+    {
+      "file": "site/package.json",
+      "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d",
+      "status": "pending"
+    },
+    {
+      "file": "site/playback.ts",
+      "initialBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/animation.ts",
+      "initialBlob": "74f85bf8a7d44a454349084978f1dc4858ed9063",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/browser.ts",
+      "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/build.test.ts",
+      "initialBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/build.ts",
+      "initialBlob": "a8ca48ae0d03f2567d458737f143c245e9acfa89",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/capture-demo-source.ts",
+      "initialBlob": "68b0dc7db1ccdf38a27ea84dcdbd98168f99570c",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/capture-real-pty.py",
+      "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/capture-real.ts",
+      "initialBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/extract-cells.ts",
+      "initialBlob": "53e23a4d0a50dd36efdcb1f4f972a11f5cc1ff13",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/generate-wordmark.ts",
+      "initialBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/html-animation.test.ts",
+      "initialBlob": "294ddcb66e4bd9f75740b948dbdf989cdadeb5c7",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/install-ui.test.ts",
+      "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/install.test.ts",
+      "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/preview.ts",
+      "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/scroll.test.ts",
+      "initialBlob": "db16489bc7ef3c785b58fa42a8fb2d7a4c83af2c",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/startup.test.ts",
+      "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b",
+      "status": "pending"
+    },
+    {
+      "file": "site/scripts/validate.ts",
+      "initialBlob": "f4efd413bc0cb47bbcc2bd922bc4c33184e33066",
+      "status": "pending"
+    },
+    {
+      "file": "site/scroll.ts",
+      "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3",
+      "status": "pending"
+    },
+    {
+      "file": "site/styles.css",
+      "initialBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a",
+      "status": "pending"
+    },
+    {
+      "file": "site/terminal.ts",
+      "initialBlob": "9c375c3852c97216dc89f6d055587ef63353ac52",
+      "status": "pending"
+    },
+    {
+      "file": "site/wrangler.jsonc",
+      "initialBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/README.md",
+      "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/cache-affine-compaction.ts",
+      "initialBlob": "6a0fba6331dc4d46404ff9e81356202574390438",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/cache-countdown.ts",
+      "initialBlob": "c5a780a01a4498c8a34385509ec3ca1d846b2c79",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/extension.ts",
+      "initialBlob": "0cd419b1553cf5ec998b65ecf35ddbcff4f3ffc7",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/instruction-continuity.ts",
+      "initialBlob": "51020264675b38641611920f0adb4e4c4c03664a",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/instruction-mode.ts",
+      "initialBlob": "e5eef9b0983997dc00c999de6bca4a1843e659f9",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/last-used-cli-model.ts",
+      "initialBlob": "09d386f26bb6aa3e28e07e4b4d7800f92d8c0491",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/manual-shake.ts",
+      "initialBlob": "238257a3a9b17501825647ca16dbf5e38daba6c6",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/native-compaction.ts",
+      "initialBlob": "dbe3719e3628a5d5ece6f4eed440ea8ceba8b0f1",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/native-fast-mode.ts",
+      "initialBlob": "a89e3e2bac3e22cbf9b209a8694b8c871070ee21",
+      "status": "pending"
+    },
+    {
+      "file": "src/agent/provider-attempts.ts",
+      "initialBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
+      "status": "pending"
+    },
+    {
+      "file": "src/assets.d.ts",
+      "initialBlob": "522afc0a9deafebc2c1994f69426fddb7da3bf75",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/app-worker.ts",
+      "initialBlob": "a69edf87092ec0a5dc77bacd0150da6062722c76",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/arguments.ts",
+      "initialBlob": "61a99f162b7328d9f937d10ec33691a9b47bd645",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/binding.ts",
+      "initialBlob": "38964c2b098bc5e68f36594e9bdae4e03930f631",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/cli.ts",
+      "initialBlob": "fdc3bb4a35f2f52b9a7d970aac5213681ffa0f85",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/commands.ts",
+      "initialBlob": "f50902cd03e53ac8a58906b24d4ef01e532c55f8",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/frontend.ts",
+      "initialBlob": "72795e199794f3aaac8ca266277289b498235b52",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/history.ts",
+      "initialBlob": "a89c8a44b0fb136a21e4f11fd6213f07a8cf60a7",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/human-controls.ts",
+      "initialBlob": "dceabf00172ab6f8c57fcb462315e48bf6427256",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/launch.ts",
+      "initialBlob": "ec7515100c4560c03f473214973d9705380f927a",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/live-frontend.ts",
+      "initialBlob": "e1e8e088837528826765e9f5e101fc577aa99c81",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/mcp.ts",
+      "initialBlob": "01284c27fd7f3b9bfae7ec13b08f88bc78c3646d",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/permissions.ts",
+      "initialBlob": "77083e6264957aa744ef1e895d6ab537ec575c97",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/preflight.ts",
+      "initialBlob": "8d220bba36b3b6edbf7b131e60b45a3ad89792cf",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/runtime.ts",
+      "initialBlob": "40db8189be3b9179ae67df78548a55cf48043cdc",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/task-binding.ts",
+      "initialBlob": "f278a6a219b3b5fc5f710d97f3a2905748b9d670",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/task-projection.ts",
+      "initialBlob": "6c04a462ddfc040f2aaaee6c263d829fbf62499f",
+      "status": "pending"
+    },
+    {
+      "file": "src/claude-compat/transport.ts",
+      "initialBlob": "2955f0309942c4d94a591065f9d315cc4592c02a",
+      "status": "pending"
+    },
+    {
+      "file": "src/cli.ts",
+      "initialBlob": "cbad51b1148eb0e4401b95d3e20bb3574f293c53",
+      "status": "pending"
+    },
+    {
+      "file": "src/delegation-environment.ts",
+      "initialBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
+      "status": "pending"
+    },
+    {
+      "file": "src/diagnostics-extension.ts",
+      "initialBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
+      "status": "pending"
+    },
+    {
+      "file": "src/diagnostics.ts",
+      "initialBlob": "6fbe60bb93e4ee1cc78243ee5f28e585294dd5ca",
+      "status": "pending"
+    },
+    {
+      "file": "src/goals/controller.ts",
+      "initialBlob": "b46d074e022db912d2ea6565730a27879f83a361",
+      "status": "pending"
+    },
+    {
+      "file": "src/goals/extension.ts",
+      "initialBlob": "a174d5d8ed42f65ee4861e3ffb89080024cbf894",
+      "status": "pending"
+    },
+    {
+      "file": "src/goals/store.ts",
+      "initialBlob": "65bf58713c66da88994d4d67dead877af2fcdcd0",
+      "status": "pending"
+    },
+    {
+      "file": "src/goals/types.ts",
+      "initialBlob": "c032871506f64451dd458946bc06f5493b788e73",
+      "status": "pending"
+    },
+    {
+      "file": "src/herdr-agent-state.ts",
+      "initialBlob": "652dc28d948e82a263b789da4a2ec5dbb09d4296",
+      "status": "pending"
+    },
+    {
+      "file": "src/history/disk-entry-store.ts",
+      "initialBlob": "1118d257dc68995ed367a664dca875874e4ac500",
+      "status": "pending"
+    },
+    {
+      "file": "src/history/selector-lifecycle.ts",
+      "initialBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
+      "status": "pending"
+    },
+    {
+      "file": "src/history/service.ts",
+      "initialBlob": "60389949b2e69dbbfc6f2f73948369cb893f6abc",
+      "status": "pending"
+    },
+    {
+      "file": "src/history/session-manager.ts",
+      "initialBlob": "ed6dfb651192791de44bf933592e3061c2d32633",
+      "status": "pending"
+    },
+    {
+      "file": "src/history/shake-record.ts",
+      "initialBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
+      "status": "pending"
+    },
+    {
+      "file": "src/history/types.ts",
+      "initialBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
+      "status": "pending"
+    },
+    {
+      "file": "src/job-delivery.ts",
+      "initialBlob": "4b91a38bcfba713ea26a3b7094d9eecdbcd877fb",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/audio.ts",
+      "initialBlob": "f2549d1391e3184fe6463503542169e6c6c6b3f7",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/config.ts",
+      "initialBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/conversation.ts",
+      "initialBlob": "7f9a86a60e3eb296e41459e09e7ccbbec1470d49",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/cost.ts",
+      "initialBlob": "14d4bead2ec2e832da60d5816e9cee0b3e40069c",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/credentials.ts",
+      "initialBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/diagnostics.ts",
+      "initialBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/editor-push-to-talk.ts",
+      "initialBlob": "df048148512e56c08a09807a4e35db9577fae485",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/embedded.ts",
+      "initialBlob": "bda048c5bdf546d7dd7297e130b17920ce1c3f14",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/extension.ts",
+      "initialBlob": "84274f466746fb1665d4d9cb5c71ed3869d036c9",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/gpt-live-context.ts",
+      "initialBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/gpt-live-delegation.ts",
+      "initialBlob": "0096dd7f6d3ef5601f2605a8cf2f8117b648b2b7",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/gpt-live-playback.ts",
+      "initialBlob": "fcbf4975f3b457e798e7d959aee9943f62b7f698",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/gpt-live-request.ts",
+      "initialBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/gpt-live-session.ts",
+      "initialBlob": "4a59910d130a5d142313497b71c344f79aec7357",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/helper.ts",
+      "initialBlob": "7cd173370b3ab5bf89e08ea287cbbe8e9e70b8a8",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/lifecycle-access.ts",
+      "initialBlob": "907131d869263fb00bd1a84a042a244cf108c1dc",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/main-owner.ts",
+      "initialBlob": "6ef4a9e05c4dfc3d0d2191f0936fc12b9df2bc1f",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/offline-transport-probe.ts",
+      "initialBlob": "a45e47706f80941e5988bf58a43d28e57b68a73d",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/openai-connect-error.ts",
+      "initialBlob": "4b1dc32b7b36c544da534e9ca5f0cfe4686ddc68",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/openai-errors.ts",
+      "initialBlob": "aa59837c76b1d00430c2fa3648c6a73998f9a6c4",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/openai-resample.ts",
+      "initialBlob": "3237fbde60b8c0da9951552161d8ab61989547f8",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/openai-session.ts",
+      "initialBlob": "5055955c85459ef4e03de7947f6053ef66282fd8",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/openai-upgrade-socket.ts",
+      "initialBlob": "c6ced660c58ff7b517315e86ceb892bfe0a59f39",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/passive-history.ts",
+      "initialBlob": "6d734f3931a9a8f21016b121eddecf8ebef5e131",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/playback.ts",
+      "initialBlob": "13c3a077ca113568196fdc051184ac53d434fc69",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/providers.ts",
+      "initialBlob": "ac1238e745270cf870d48d98fa510b0893536a52",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/self-test.ts",
+      "initialBlob": "ee5fe8af00adb8b80b56f53b6581926a6525ccfc",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/session.ts",
+      "initialBlob": "6344b6c65a4f6aa3aa787923fb9d0b53fa18dda6",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/setup-probe.ts",
+      "initialBlob": "6b216e0773e6c7c1255a6777b43afb1d1fc2d50f",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/setup.ts",
+      "initialBlob": "728e62f964f69adb6228d1fbae8b9f536836d1eb",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/speaker-check.ts",
+      "initialBlob": "783d0aaaf7ae22808aad5cc8f00914a1e9610637",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/speaker-summary.ts",
+      "initialBlob": "95305051ea489012a17049fa326ea87e53ec06aa",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/status.ts",
+      "initialBlob": "50437274560d847fe5fb6441e69032f6d3549467",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/tool-result.ts",
+      "initialBlob": "f0338f1445387a86adfd6cc9917fa3dcfb39c739",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/transcript-text.ts",
+      "initialBlob": "e7e2fd9610dea3364c9dd23ac7a9286fa3eb48ee",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/types.ts",
+      "initialBlob": "982613947af84d36edeb598916e7826fc3f43190",
+      "status": "pending"
+    },
+    {
+      "file": "src/live/waveform.ts",
+      "initialBlob": "4fa724f5c981c5d85054dcccec102a67ced75e2d",
+      "status": "pending"
+    },
+    {
+      "file": "src/output-buffer.ts",
+      "initialBlob": "6f32c9b2f02426c3db598e7ec773aa3eb3aeb721",
+      "status": "pending"
+    },
+    {
+      "file": "src/pi-host.ts",
+      "initialBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompt-preview.ts",
+      "initialBlob": "f2700040ab0659020533497a4af4dccc05866548",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts.ts",
+      "initialBlob": "3aec2c16eb596e23461c6b3ad1c5b7d95366f0b8",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/background-handoff.md",
+      "initialBlob": "c46390ba223aa38f28fb9cae3d04b8f9dbe8fda4",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/compaction-jobs.md",
+      "initialBlob": "e896596cd3979381dd5e174aa023e9e89b4f8ae6",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/compaction.md",
+      "initialBlob": "130bda9935d6bccd28182ce185dcd88601fb3a04",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/execute-description.md",
+      "initialBlob": "1a75e9bd8ed0a8f13acc586b6739b35397a9c6b3",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/execute.md",
+      "initialBlob": "fa595c85d78fb668d28268d9ad1fb29cf4e0358a",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/fast.md",
+      "initialBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/goal-continuation.md",
+      "initialBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/goal.md",
+      "initialBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/gpt-live.md",
+      "initialBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/identity.md",
+      "initialBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/live.md",
+      "initialBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/main-orchestrator.md",
+      "initialBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/markdown.d.ts",
+      "initialBlob": "045cd12b2a85c7f0516f99e218fe500b18c8eace",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/native-compaction.md",
+      "initialBlob": "238e6ec4fd3014e47545ff7512f32377bf7749e0",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/normal.md",
+      "initialBlob": "17c2e5573655696a57d5cae9e8615f8809695eda",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/orchestrator.md",
+      "initialBlob": "1a844f93188dc4615c0f6115b795e152ff96f7af",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/system.md",
+      "initialBlob": "4e40ae34cd631f8840affd22c799c4c8bed9a836",
+      "status": "pending"
+    },
+    {
+      "file": "src/prompts/wisdom.md",
+      "initialBlob": "d3f933dbb141e5b009765351736c8bc0fdbcc956",
+      "status": "pending"
+    },
+    {
+      "file": "src/questions/extension.ts",
+      "initialBlob": "cb21f18834473a40051404aea015a95033c03aa0",
+      "status": "pending"
+    },
+    {
+      "file": "src/questions/picker.ts",
+      "initialBlob": "b3e4f1c4c717ddd9d1091c46e8f3b46b67b9c900",
+      "status": "pending"
+    },
+    {
+      "file": "src/questions/runtime.ts",
+      "initialBlob": "f9ed27c6279a3057808d320b3570a19f6d4fd2ed",
+      "status": "pending"
+    },
+    {
+      "file": "src/questions/service.ts",
+      "initialBlob": "e51d14128b9d800442d81eb34403b98306a649fe",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/CAPABILITY-INTEGRATION.md",
+      "initialBlob": "152542f9ed3fbbe64bfa70019aa84873f3be7063",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/README.md",
+      "initialBlob": "5c3efed97770f82bf34b4f82637207306564cf72",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/artifacts.ts",
+      "initialBlob": "0e9ff60dbda7ab6ef98b296024ad3af18947c9d8",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/cancellation.ts",
+      "initialBlob": "195fc52acc1eee3dc1d569be0728ae22a8585c1e",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/capabilities.ts",
+      "initialBlob": "c5669679c832b8fb3896ca6e9e33d5099f0842b2",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/capability-runtime.ts",
+      "initialBlob": "3e7b26feb5787add6c809baf9a3c92ba02e88a91",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/client.ts",
+      "initialBlob": "a31e194434d69baca48cabb7ea3bd8be9f97c05f",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/durable-json.ts",
+      "initialBlob": "480530ef23018ee846026752d20de8187ccef116",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/entry.ts",
+      "initialBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/extension.ts",
+      "initialBlob": "26230e656ba3a3d2fe7df5040c3327d92a2622bb",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/human-rendering.ts",
+      "initialBlob": "bb92205c07e0a331b531da9ff41fb71273fd31eb",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/job-artifacts.ts",
+      "initialBlob": "457f4370168fc3d95e920b79d03f480104dadf19",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/job-delivery.ts",
+      "initialBlob": "21d37bd7fca5f9bb0e75e7c99fac103008f4aba4",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/job-events.ts",
+      "initialBlob": "38774795309a62bf685943a7784d348584f26504",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/job-observations.ts",
+      "initialBlob": "4732fa1eb7cda6df8303d6d6ee6316b785611c9f",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/jobs.ts",
+      "initialBlob": "e34856a1f1b8aae577fff635b0328f720f092a12",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/menu.ts",
+      "initialBlob": "12313ca2b05f88f0fa2837706d3f219882e007a3",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/operations.ts",
+      "initialBlob": "67cf54865eeee7c16e178470b9fcd076d0d41747",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/owner-child.ts",
+      "initialBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/owner-rpc.ts",
+      "initialBlob": "982d5b8fce885d5bd81d2aa76e753caa1e3be5c2",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/owner.ts",
+      "initialBlob": "8d8f54a85fea43f1852497abc842100157aaac93",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/placement.ts",
+      "initialBlob": "c27e168ec203a643ed30def19cf8edbfd53abb09",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/protocol.ts",
+      "initialBlob": "49a053687e54a3ce0085d5a4c0c6d40673aa77fc",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/question-bridge.ts",
+      "initialBlob": "2d41cfbd4e6901e8dd683047f60c7337444c20f8",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/repository-download.ts",
+      "initialBlob": "c03eb8b1827d8f1c9f58449966dd0b4c1b1c0f0a",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/repository-wire.ts",
+      "initialBlob": "24ff5f07fa4e85cbe898cf022d81cb507c0dbf90",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/repository.md",
+      "initialBlob": "90e5d9625f8af05c4c3c5dee290e72b3b9353025",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/repository.ts",
+      "initialBlob": "264e183b88a7f1a0c667244efbb73c834369188e",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-cli.ts",
+      "initialBlob": "5c1ea1bcf7042888c9c1e340fb3ab1e79579b64f",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-client.ts",
+      "initialBlob": "936ef53c07b9a1d4fcf3c201479c65f29c90d0fe",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-contract.ts",
+      "initialBlob": "e9aceffe5f97333dfc828000fd59b40bab8fadee",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-entry.ts",
+      "initialBlob": "727f150cfcf105e5faef09c6af419393f71f931d",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-options.ts",
+      "initialBlob": "741b7f4a9bd5a1639ca2ba52813cbf5d9ab9167e",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-owner.ts",
+      "initialBlob": "8ce68f851487260d1d83f244965341d1c5233985",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-presenter.ts",
+      "initialBlob": "9e4d0c6095a3790f3608b921d8ed8092611e91df",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-runtime.ts",
+      "initialBlob": "c10a7a7c45510373e30d9d2385045f9fad23fa93",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-store.ts",
+      "initialBlob": "f930d363762822984029e7d509664a497c851c29",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/root-transport.ts",
+      "initialBlob": "c73012514dbcb2efc3ca12d8198d777fc7892f96",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/runtime.ts",
+      "initialBlob": "ce4d30630047fa9536409754db3efeb72dd7cc5b",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/security.ts",
+      "initialBlob": "81dff39ca5ffff8d61eaffceb6535a946361e3e1",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/services.ts",
+      "initialBlob": "5668a5df605155d82fa48f3c34c720e6fccd36b3",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/source-approval.ts",
+      "initialBlob": "cad9f95da9d7082968e17c4e65113d01adaf963d",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/ssh.ts",
+      "initialBlob": "1bff87d9d5b0de383721212b9dd03f5c4a6723d5",
+      "status": "pending"
+    },
+    {
+      "file": "src/remote/untracked-preview.ts",
+      "initialBlob": "f38709acfcbd963f923a5966b59f8bae238a34a7",
+      "status": "pending"
+    },
+    {
+      "file": "src/session/host-access.ts",
+      "initialBlob": "b5a5b4f018035a73c1261785c34b2fd75b057e61",
+      "status": "pending"
+    },
+    {
+      "file": "src/session/host.ts",
+      "initialBlob": "3879d5948ecb7335d2e702222068dcb8e199a603",
+      "status": "pending"
+    },
+    {
+      "file": "src/session/identity.ts",
+      "initialBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
+      "status": "pending"
+    },
+    {
+      "file": "src/session/input.ts",
+      "initialBlob": "3701ffae31a2ce480eff48ef5595ec5957fdeed6",
+      "status": "pending"
+    },
+    {
+      "file": "src/session/operations.ts",
+      "initialBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
+      "status": "pending"
+    },
+    {
+      "file": "src/session/restore-leaf.ts",
+      "initialBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
+      "status": "pending"
+    },
+    {
+      "file": "src/session/transcript.ts",
+      "initialBlob": "aa35d3df097d70d0dd921b41ba6acb26d6790303",
+      "status": "pending"
+    },
+    {
+      "file": "src/system-prompt.ts",
+      "initialBlob": "b22372b5a873d4b79f9814bd9d7e3467bf92c538",
+      "status": "pending"
+    },
+    {
+      "file": "src/t3/README.md",
+      "initialBlob": "3e491ecd1339adf477200f359e4ecca07961aef1",
+      "status": "pending"
+    },
+    {
+      "file": "src/t3/tasks/events.ts",
+      "initialBlob": "fee21123a7d6380e5d4ffee96fb6815471a3d47b",
+      "status": "pending"
+    },
+    {
+      "file": "src/t3/tasks/launch-identity.ts",
+      "initialBlob": "4162ee435592ca0bc00890499e6195006cf93225",
+      "status": "pending"
+    },
+    {
+      "file": "src/t3/tasks/local-notifications.ts",
+      "initialBlob": "76e02ef84211c59caf17457745a5fc5ed11dbf03",
+      "status": "pending"
+    },
+    {
+      "file": "src/t3/tasks/mcp-client.ts",
+      "initialBlob": "b00156caaeb4ba5fe15e0f3c7fb8eff472d282ce",
+      "status": "pending"
+    },
+    {
+      "file": "src/t3/tasks/native-task.ts",
+      "initialBlob": "9152be57bb326b4f919518efe6d13be4b10c363b",
+      "status": "pending"
+    },
+    {
+      "file": "src/t3/web/launcher.ts",
+      "initialBlob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/agent-progress.ts",
+      "initialBlob": "8089026a5b78616d952d89fc91f466fd757e0490",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/agent-session.ts",
+      "initialBlob": "5a5ec14b5753ce0e7ec7a92aabaf2149a5a40245",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/completion-batcher.ts",
+      "initialBlob": "3a08f369781a076686869017cda722559704d55c",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/completion-notification.ts",
+      "initialBlob": "d9cb46b93e636ab2da2b01f2534ef5eb6b66d9ae",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/foreground-stop.ts",
+      "initialBlob": "f58ab9393447ade92677a85bb1f882b73f5662ea",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/job-attention.ts",
+      "initialBlob": "ca8cfabde5250344a14d03571eae1c868733a4c3",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/job-service.ts",
+      "initialBlob": "3da97dcff05991e977081794f47aaad247a3cea6",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/local-agent-termination.ts",
+      "initialBlob": "f82ba2130660c667cbe8b66ab9b4921ffcee5cb4",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/resume-safeguards.ts",
+      "initialBlob": "6fee2681d6bd92c55b5abf7319451090fb352ca4",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/session-costs.ts",
+      "initialBlob": "70f770b65f897dc4980fef34ba2092a0c2b2430b",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/subagent-profiles.ts",
+      "initialBlob": "2a117125b2f25e592cad2c1bb4c720fda0832e64",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/subagent-settings-ui.ts",
+      "initialBlob": "56af9b3b1a9fc016caf842984e5d67577c726197",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/task-lifecycle.ts",
+      "initialBlob": "606cc77e964e261f87c5c5777210584772e32747",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/task-manager.ts",
+      "initialBlob": "3f614d8920d22f8ae86d2adb8a7f40957af7b0e2",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/task-monitor-source.ts",
+      "initialBlob": "00775b8a24575435eb6b98c7d88929b58cfec333",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/task-monitor.ts",
+      "initialBlob": "27acfb4e8b82ff387afbd53c59cfa399481632df",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/task-owner.ts",
+      "initialBlob": "b52d3b274bfcc6dc95c05b42bc38d7a45791d3c9",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/task-title.ts",
+      "initialBlob": "868dbe84394877707260f5531554b4f419a4f08f",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/text-preview.ts",
+      "initialBlob": "49fa24c1655726289c36f55ba530187554d1bb9c",
+      "status": "pending"
+    },
+    {
+      "file": "src/tasks/worktree-workspace.ts",
+      "initialBlob": "76fe2987f9f644571d9b478ba835254f1fe988da",
+      "status": "pending"
+    },
+    {
+      "file": "src/tool-schema.ts",
+      "initialBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
+      "status": "pending"
+    },
+    {
+      "file": "src/typescript/definition.ts",
+      "initialBlob": "7d850644a24233284f0dc1dba04e3c7096f400a5",
+      "status": "pending"
+    },
+    {
+      "file": "src/typescript/error-diagnostic.ts",
+      "initialBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
+      "status": "pending"
+    },
+    {
+      "file": "src/typescript/execution.ts",
+      "initialBlob": "4932e6fb23d2daf3b12e0b23b0e57845ed57a9ba",
+      "status": "pending"
+    },
+    {
+      "file": "src/typescript/extension.ts",
+      "initialBlob": "3bf31c850c9c529d1692e59b56b4667bb0af0599",
+      "status": "pending"
+    },
+    {
+      "file": "src/typescript/images.ts",
+      "initialBlob": "aa4d74eebcab9dc89cfbcbd11829ba68b5335286",
+      "status": "pending"
+    },
+    {
+      "file": "src/typescript/job-bridge.ts",
+      "initialBlob": "71303007f9886b7b34c7df16c958f4a050ffd41c",
+      "status": "pending"
+    },
+    {
+      "file": "src/typescript/output-capture.ts",
+      "initialBlob": "4b21e94241155f009144497997c9f8662e405ee8",
+      "status": "pending"
+    },
+    {
+      "file": "src/typescript/runner.ts",
+      "initialBlob": "0405699abd4d594fb5dbebe432169885984a338d",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/action-label.ts",
+      "initialBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/activity-projection.ts",
+      "initialBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/conversation-density.ts",
+      "initialBlob": "52d7ef08952d91ea499632280fc44dce2b3e4815",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/editor.ts",
+      "initialBlob": "6f91ff6f6b3fe970e4fc9b821a687f6a0ba2f666",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/execution-previews.ts",
+      "initialBlob": "26089d9420f9da4e0574d2053ba460283c46cb3a",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/footer.ts",
+      "initialBlob": "fb774576e55d56e380988652dafc11d3bc6c6653",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/quiet-tool-ui.ts",
+      "initialBlob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/rolling-activity.ts",
+      "initialBlob": "10c2ad0a2b8161b8b5b325707e32d25bd4cb5ed4",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/sdk-task-rows.ts",
+      "initialBlob": "f76d7f295123b136a1e2082c1d384f5fc5b1e9c9",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/settled-execute-render.ts",
+      "initialBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/startup.ts",
+      "initialBlob": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/subagent-settings.ts",
+      "initialBlob": "db6c10db1b02db15c995c20c2029ea6f9cb180c1",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/task-monitor.ts",
+      "initialBlob": "9670404b405f1ce9149fa5c882956f92a0cd9889",
+      "status": "pending"
+    },
+    {
+      "file": "src/ui/task-rows.ts",
+      "initialBlob": "6c4aaf00d8ca9275ed7dcfe7070fa5eb0e6a8179",
+      "status": "pending"
+    },
+    {
+      "file": "src/update.ts",
+      "initialBlob": "62ec77ad57c48696d38fea8c3a317a28eff88c5f",
+      "status": "pending"
+    },
+    {
+      "file": "src/wisdom/extension.ts",
+      "initialBlob": "46a871c1d8d4c420bec6f420f78c5f86c04a6949",
+      "status": "pending"
+    },
+    {
+      "file": "src/wisdom/location.ts",
+      "initialBlob": "909717075aaac02a273286168e712faf0269f7ab",
+      "status": "pending"
+    },
+    {
+      "file": "support/gpt-live-explained.html",
+      "initialBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce",
+      "status": "pending"
+    },
+    {
+      "file": "t3.json",
+      "initialBlob": "12872bad81fa69a18124acfb6050bf084d4abd69",
+      "status": "pending"
+    },
+    {
+      "file": "tests/action-label-wiring.test.ts",
+      "initialBlob": "d832b5e79f4dc55c772394e88ad5890c5594cd68",
+      "status": "pending"
+    },
+    {
+      "file": "tests/activity-runtime-acceptance-test.py",
+      "initialBlob": "ff2cea841882e0d28f20efc8314127b3afac029f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/activity-terminal-acceptance-test.py",
+      "initialBlob": "63f85dddf6e0c0890d2cc2b8c23e3ff8ac37c08b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/agent-progress.test.ts",
+      "initialBlob": "d5f84212da90759f76bccd2671f281e1327150bc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/agent-session.test.ts",
+      "initialBlob": "f6d95e20d621a4897f82623836a2a68771772eff",
+      "status": "pending"
+    },
+    {
+      "file": "tests/architecture.test.ts",
+      "initialBlob": "fe6b52be2dde66bf1ab7aad6b1b327d419f0acea",
+      "status": "pending"
+    },
+    {
+      "file": "tests/attention-sdk.test.ts",
+      "initialBlob": "73f10a5a52d4a7513e323d0552232bd88896d82f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/auto-shake-sdk.test.ts",
+      "initialBlob": "dfd337c15df9a002723db43e3db6023b233b6191",
+      "status": "pending"
+    },
+    {
+      "file": "tests/background-interrupt-tui.test.ts",
+      "initialBlob": "dcfc5d699293bf0adff7c09d0766b2b36d19f909",
+      "status": "pending"
+    },
+    {
+      "file": "tests/background-ux-tui.test.ts",
+      "initialBlob": "8b58841438e433e4f5cd95783ec097883b9d43ae",
+      "status": "pending"
+    },
+    {
+      "file": "tests/background-ux.test.ts",
+      "initialBlob": "2b3313e241a84f89290cef46bc9a016d9689ead5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/cache-affine-compaction-live.test.ts",
+      "initialBlob": "e2dabede2936b961a451e998c071d8ed8e4cae4c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/cache-affine-compaction-sdk.test.ts",
+      "initialBlob": "eb93fe2c9282b071f3948958d990f3e3b6923659",
+      "status": "pending"
+    },
+    {
+      "file": "tests/cache-affine-compaction.test.ts",
+      "initialBlob": "20236a300c5f611a16f6ec950c00aac31a29ffd1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/cache-countdown-sdk.test.ts",
+      "initialBlob": "04f59de886ea0b272ef89e9126a423da750dc86c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/cache-countdown-tui.test.ts",
+      "initialBlob": "69e9a1ad26d212b5c4439c51d96d82ca7ce07be1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/cache-countdown.test.ts",
+      "initialBlob": "ec7800207adfe05b026b4fc0cdcc715db2a8801b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/ci-remote-cli-source.test.ts",
+      "initialBlob": "337cb0c545a429561edfe755f6b7d07ab5d57e27",
+      "status": "pending"
+    },
+    {
+      "file": "tests/ci-remote-offline-source-pty.py",
+      "initialBlob": "46b43a7624ab2298385062e51e6ed87419a6ce03",
+      "status": "pending"
+    },
+    {
+      "file": "tests/ci-runner.test.ts",
+      "initialBlob": "28843d6525c47e50c2555200fe81545b4a9a439e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/ci-selective-workflow.test.ts",
+      "initialBlob": "5889d4c6c3a122b18ffc58d73966007b57ae6dd7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/ci-selective.test.ts",
+      "initialBlob": "b9d4b337467276f1aa908b134fb03e8c4cee249d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-app-worker.test.ts",
+      "initialBlob": "1e4988bd5b469c795b0a760d8ee268d8d0e581e0",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-command-lifecycle.test.ts",
+      "initialBlob": "94869a21d9887a385befc82ee9a45c8a757c47e4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-commands.test.ts",
+      "initialBlob": "e506ca3fda50eaebad675cf026e8948b8e4e128e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-compiled.test.ts",
+      "initialBlob": "5dd980739861ee24d0210c7db9734787f43973bd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-composition.test.ts",
+      "initialBlob": "0551197d52af008fbc723a70d9b157bb870ffc96",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-defaults.test.ts",
+      "initialBlob": "03cbe81b5655cb248754441d870562fde4794397",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-history.test.ts",
+      "initialBlob": "291daa0d1e8d8c9df89f68de6cf11a48642f2902",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-human-controls.test.ts",
+      "initialBlob": "8dc79ae1e34631b7c6e55a6f3fad6fdb994ff647",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-launch.test.ts",
+      "initialBlob": "43bb031ffd0b2d74bdc83b48c13434161c33547a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-launcher.test.ts",
+      "initialBlob": "f7c05c44d24a00a4795933f726df3e1c30733365",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-live-frontend.test.ts",
+      "initialBlob": "054ebbdd6ea64619c791db411fec83f2c49c627c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-preflight.test.ts",
+      "initialBlob": "45b60bcac768374ee21c786853c35ab2a763ede3",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-prompt-ownership.test.ts",
+      "initialBlob": "77df78bd7770d1c81f753dd5b29be8fea0799d78",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-retry.test.ts",
+      "initialBlob": "b47243122091cbf6159182f3a856508bdc5b4b51",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-runtime.test.ts",
+      "initialBlob": "5429ce6b5e28b1b1dcde77a0c4e1f75d19a398ef",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-task-binding.test.ts",
+      "initialBlob": "88bae66b92d33c773eb63314188b667b96b66447",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-task-projection.test.ts",
+      "initialBlob": "da89cdcea508117e2cbefe3d91d35670c3a71d9d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat-transport.test.ts",
+      "initialBlob": "136ce557bfba92d0c1baedbf32efe1980e2d2d8b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat/credential-isolation.test.ts",
+      "initialBlob": "5b0fd64bdd1a91b1bf8bb228393724152bff4ec4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
+      "initialBlob": "2885a3af02f178caee3a18d89fda257fa8ef49cb",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat/fixtures/stdio-mcp.ts",
+      "initialBlob": "3dcb59b21e85d47867b3acbd715778117bf8733b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat/mcp.test.ts",
+      "initialBlob": "35c79565ff48cb3976226b305697ca63cd122619",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
+      "initialBlob": "5ea45ec68845bb716a76b40c94407a36e2c590f9",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-compat/permissions.test.ts",
+      "initialBlob": "47e60ac228641c4cd9e1299a250d83731ce126f5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-native-acceptance-chronology.test.mjs",
+      "initialBlob": "49f0c09654bffd751ad8941db83ab3a2b94f1318",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-native-acceptance-model.test.mjs",
+      "initialBlob": "0b993a6daeef0eb081aca96e1d202ff802e8e151",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-native-app-delegation-model.test.mjs",
+      "initialBlob": "1cf00502ad018790f014c2cb3740e3fb38366ec6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-native-command-idle.test.mjs",
+      "initialBlob": "3bd6117eca7ceb80078fb3d22eef42a398560edd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-native-history-model.test.mjs",
+      "initialBlob": "d5f7bf0c5df506d5e38fca62409df9239258b3ce",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-native-subagent-model.test.mjs",
+      "initialBlob": "7312e31703cb656c2ba1d743b815887c2e018c82",
+      "status": "pending"
+    },
+    {
+      "file": "tests/claude-native-subagent-return.test.mjs",
+      "initialBlob": "58d83d7f782388c516f3897eb8cb6a364de866a4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/cli.test.ts",
+      "initialBlob": "70002a8662ff8db59fa74014040bb2544af9f464",
+      "status": "pending"
+    },
+    {
+      "file": "tests/compiled-bun-fixture.ts",
+      "initialBlob": "986f142853337c47db7f610939d4fdaebd2ae1bc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/completion-batcher.test.ts",
+      "initialBlob": "dc4068b79af8fe351ffbdc86ca308c2638d85aa2",
+      "status": "pending"
+    },
+    {
+      "file": "tests/completion-notification.test.ts",
+      "initialBlob": "47021c716155f3933a2e2332e77a02439ebc9f7d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/connector-update-fixture.ts",
+      "initialBlob": "acaac91fd1e482dee20b995a140615f1c8b10046",
+      "status": "pending"
+    },
+    {
+      "file": "tests/connector-update.test.ts",
+      "initialBlob": "51ca79b0702b94c5fb9823042408f71604d9f9d8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/context-usage-cache.test.ts",
+      "initialBlob": "199e737c751b91cc07848c4c52fc0bef173cdc67",
+      "status": "pending"
+    },
+    {
+      "file": "tests/conversation-density.test.ts",
+      "initialBlob": "e58898c0494a2673216105420c234d2be53960fa",
+      "status": "pending"
+    },
+    {
+      "file": "tests/cooperative-handoff.test.ts",
+      "initialBlob": "a7d4b31a5e3671b4f611cca28307d683a2360544",
+      "status": "pending"
+    },
+    {
+      "file": "tests/current-pipeline-live.test.ts",
+      "initialBlob": "2a82fccb8c45476d6e8a871afb598c3f11540e83",
+      "status": "pending"
+    },
+    {
+      "file": "tests/current-pipeline-sdk.test.ts",
+      "initialBlob": "10bbc30734f4b1a9da868402cd0084acf979d6d7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/dependency-updates.test.ts",
+      "initialBlob": "3930e75b6257455b375509c9e90e0f70c533df55",
+      "status": "pending"
+    },
+    {
+      "file": "tests/dependency-workflow.test.ts",
+      "initialBlob": "c35086a0333024c2fa0cf6a230ac43d098e597dc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/diagnostics.test.ts",
+      "initialBlob": "d58d7850cbe8b802a66c7049b161476b1beb955d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/editor-push-to-talk.test.ts",
+      "initialBlob": "cfbe46536c1c27623370d592c394ade2b5fad468",
+      "status": "pending"
+    },
+    {
+      "file": "tests/editor-voice-integration.test.ts",
+      "initialBlob": "a54b95973f39569c32af94c7043aa7665a8da4ca",
+      "status": "pending"
+    },
+    {
+      "file": "tests/editor.test.ts",
+      "initialBlob": "ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/error-diagnostic.test.ts",
+      "initialBlob": "5794b3579cc56a54507239584508e75c73a2052d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/execute-handoff.test.ts",
+      "initialBlob": "a3e11225c49f9a1af729bd4f1052286524d985d0",
+      "status": "pending"
+    },
+    {
+      "file": "tests/execute-output-capture.test.ts",
+      "initialBlob": "f1944e32116dbce754fa013622fd989907092d99",
+      "status": "pending"
+    },
+    {
+      "file": "tests/execute-row-render-performance.test.ts",
+      "initialBlob": "2abeb55df0a90d7f1c064ac48febe4f2ecc25de6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/execution-previews-tui.test.ts",
+      "initialBlob": "5ff3275f99b27de84faed1e746a40fceaff393e5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/execution-previews.test.ts",
+      "initialBlob": "8e4b6c11e870f65c670ff089d68223f759f559b4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/find-ci-baseline.test.ts",
+      "initialBlob": "fd1e1f5453615cc3a854db18d8e554ac7b3d94f4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/claude-task-worker.ts",
+      "initialBlob": "21bf893d3fffed763700fa4cf96a3ceb135f7c00",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/live-execute-cli.sh",
+      "initialBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/live-gpt-tui.ts",
+      "initialBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/live-picker-tui.ts",
+      "initialBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/live-push-to-talk-tui.ts",
+      "initialBlob": "179e7292fffc19c5281d1072c7aad31b0b700b77",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/live-spoken-tui.ts",
+      "initialBlob": "03c7168fdf7aa3a91084573c467eb7a94408f67b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-e2e/Dockerfile",
+      "initialBlob": "a09a77bc3faa327b69ba596c2d1ad79f2d1451cb",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-e2e/entrypoint.sh",
+      "initialBlob": "f55fd6b58bbc113387864d5b49719857abef6a0a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-e2e/fake-provider.ts",
+      "initialBlob": "0ca133ab070c33dc4ef9937017a2bbded956d20e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-e2e/models.json",
+      "initialBlob": "449f47e499f8fa715b248f18a532415010004c52",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-e2e/placement-parent.ts",
+      "initialBlob": "65dc9f4f1f5b893bf6b4e3ad7e7cf6bee1605cc1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-e2e/sshd_config",
+      "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-e2e/subagents.json",
+      "initialBlob": "77fb8e3477a59a1aa467edd97000701b2227e919",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-owner-error.ts.txt",
+      "initialBlob": "685a959578594802bf58ee0ca8fc607cf4040a37",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-placement-e2e/Dockerfile",
+      "initialBlob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-placement-e2e/entrypoint.sh",
+      "initialBlob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-placement-e2e/fake-provider.ts",
+      "initialBlob": "882eec6a23bbbb157263978900ebb1b4942b75ad",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-placement-e2e/models.json",
+      "initialBlob": "3849fbe167501b2b3c262687524d095988f14b93",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-placement-e2e/scenario.ts",
+      "initialBlob": "364bd429724eafcc4f6d657837c50f1197efcefc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-placement-e2e/ssh-proxy.ts",
+      "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-placement-e2e/sshd_config",
+      "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-placement-e2e/subagents.json",
+      "initialBlob": "c952ec558c8c91b62d2e84346b21484e71db1ef3",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/Dockerfile",
+      "initialBlob": "159f0b8598cbcd3aa0df75c6766681ed87d8284c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/entrypoint.sh",
+      "initialBlob": "e5680c805f076bcae5e02be77e20def1970aff9d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
+      "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/models.json",
+      "initialBlob": "4010451d3c42d520ae8729f3057198df2f693bcd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/proof.ts",
+      "initialBlob": "810ab260d994b27b3526d05f001064d42ef4b680",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/reply-loss.ts",
+      "initialBlob": "48a041d9861a0c53bc93419fadba22540fb9940d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/scenario.ts",
+      "initialBlob": "54ed191ca3a9a15aabdb54b2d1337ff2b382df7f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/settings.json",
+      "initialBlob": "ec9b88eda601f80ee98cb3b69305df6552b504e8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/ssh-proxy.ts",
+      "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/sshd_config",
+      "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/remote-typed-root-placement/subagents.json",
+      "initialBlob": "8d2fa02a457a15c6bf84070689ab7d4b673c13ed",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/saved-transcript-startup.ts",
+      "initialBlob": "e18b6dfed78feec20b1aff2d6e1232a097c7a2d5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fixtures/terminal-interaction-report.ts",
+      "initialBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/footer.test.ts",
+      "initialBlob": "44e272d01ed9552d2083fc4951cfc58700cb8bc2",
+      "status": "pending"
+    },
+    {
+      "file": "tests/foreground-execution-sdk.test.ts",
+      "initialBlob": "1e4adab3e9a13a49253aa57ef43dc98b89c49354",
+      "status": "pending"
+    },
+    {
+      "file": "tests/foreground-stop.test.ts",
+      "initialBlob": "76432c303b1f9917642f3965497136dc56cb2fa4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fullscreen-editor-tui.test.ts",
+      "initialBlob": "0765cd545300592af1d228e5fc3c4a5abcc94ecd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/fullscreen-editor.test.ts",
+      "initialBlob": "31d089bc93325dda108e3e30b11b82ec604e54a9",
+      "status": "pending"
+    },
+    {
+      "file": "tests/goals-live.test.ts",
+      "initialBlob": "0397caa9ef5367b746a6c6020ad6c8ece81dcc18",
+      "status": "pending"
+    },
+    {
+      "file": "tests/goals-marker-sdk.test.ts",
+      "initialBlob": "31f02b1233366797bff63b27d07516776fc486c3",
+      "status": "pending"
+    },
+    {
+      "file": "tests/goals-sdk.test.ts",
+      "initialBlob": "cf13910d34ed26c53cbc44a33165dff53a081ebd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/goals-tui.test.ts",
+      "initialBlob": "b924c11a5d4a3f9c55efce6378aa420badd98fdf",
+      "status": "pending"
+    },
+    {
+      "file": "tests/goals.test.ts",
+      "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/gpt-live-context.test.ts",
+      "initialBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
+      "status": "pending"
+    },
+    {
+      "file": "tests/gpt-live-delegation.test.ts",
+      "initialBlob": "1a6bb3e927e44740fd7d513e2d250be178b9c43e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/gpt-live-playback.test.ts",
+      "initialBlob": "f2532f05c7ea303b44d5ad520a32cad0e413bf63",
+      "status": "pending"
+    },
+    {
+      "file": "tests/gpt-live-request.test.ts",
+      "initialBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
+      "status": "pending"
+    },
+    {
+      "file": "tests/gpt-live-session.test.ts",
+      "initialBlob": "8cb2e77fbaf1c0853b0f458b445b10a08a1b92d1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/gpt-live-waveform.test.ts",
+      "initialBlob": "589251a028bd9137e96edecd23889db510e127b6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/helpers.ts",
+      "initialBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/helpers/live-startup-audio-queue.ts",
+      "initialBlob": "6b467a7c5c27d31655ae48c9e92828cbe076cf3a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/herdr-agent-state.test.ts",
+      "initialBlob": "e2f0f72bb9171344041b569305e2254d2b132c00",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-disk-footer.probe.ts",
+      "initialBlob": "ca840e4b2761d51886ebdd702db9c17effd05226",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-disk-footer.test.ts",
+      "initialBlob": "b99b881207ff61e892a6c8cf612209aa730e41d8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-disk-retrieval.test.ts",
+      "initialBlob": "273921ad18473731f0def26b87b41238083498dd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-projection-parity.test.ts",
+      "initialBlob": "a9a2ef0ba1858159df299208a2e8c13dd854fc28",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-publication-collision.test.ts",
+      "initialBlob": "a1bd76cd3e8f2bd74408014902efda653a8ff495",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-sdk-099.test.ts",
+      "initialBlob": "cce3da2d0aab19b869c68e6552b4e2f60e98e205",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-storage-cleanup.test.ts",
+      "initialBlob": "f533be5effe988d41ae6a340cef8623259e122c2",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-storage-io.test.ts",
+      "initialBlob": "27d019686d63830282ec0a9143e45f10d6b091f4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-storage-lifecycle.test.ts",
+      "initialBlob": "d4d08fc6ca8a8dbbf5c10a57ce9ec875aaadb12e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history-storage.test.ts",
+      "initialBlob": "8c833d8e75779376bf1f7e7f89edad7357b190c6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/history.test.ts",
+      "initialBlob": "d0b30b8f4e642de05f16f838c741087ed8d64186",
+      "status": "pending"
+    },
+    {
+      "file": "tests/image-fixture.ts",
+      "initialBlob": "7f1792f86e6968f6af61905539c915541cfdc91a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/install-download.test.ts",
+      "initialBlob": "a19f4472fe7ab7f1cb083244ce20b4b3cf4be3d2",
+      "status": "pending"
+    },
+    {
+      "file": "tests/install-local.test.ts",
+      "initialBlob": "ffaeaac0f918c7921dac2ccc60cdb68c21039fc6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/instruction-continuity-sdk.test.ts",
+      "initialBlob": "75902cb4b2fec1aa58c9fa3da1531b8463d3fd5f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/instruction-mode.test.ts",
+      "initialBlob": "6bda0c237bcaf3fbbce1aac4c43d6780b5a24742",
+      "status": "pending"
+    },
+    {
+      "file": "tests/job-attention.test.ts",
+      "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
+      "status": "pending"
+    },
+    {
+      "file": "tests/job-bridge-protocol.test.ts",
+      "initialBlob": "7f4c7f7cbfe6f214e5ca5ca4ac0721364d3f77a6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/job-bridge.test.ts",
+      "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/job-service.test.ts",
+      "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
+      "status": "pending"
+    },
+    {
+      "file": "tests/last-used-cli-model.test.ts",
+      "initialBlob": "479cb99a4f680520282922dc69e2b243b938015e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-audio-lifecycle.test.ts",
+      "initialBlob": "e210a7e633afecac8ef19c67837a9024fc462e13",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-audio.test.ts",
+      "initialBlob": "960e983066ac7261639690915733dd8e8c8cb3d7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-auth-lifecycle.test.ts",
+      "initialBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-capture-gate.test.ts",
+      "initialBlob": "f0ba15732398870ba1d0882f466f5c788133b1f2",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-config.test.ts",
+      "initialBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-conversation.test.ts",
+      "initialBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-cost.test.ts",
+      "initialBlob": "b48ba6cc2be94aa95e9846ad76b9f08bcdcd291d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-credentials.test.ts",
+      "initialBlob": "2813968a386603df54b51314c4238769805a8b86",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-dispatch-budget.test.ts",
+      "initialBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-dispatch-budget.ts",
+      "initialBlob": "e7fd8dae94e43f8c4a5f582a47e456f803c46bda",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-embedded-helper.test.ts",
+      "initialBlob": "603d475b0ba3b18b550c10cc0e950053358d1631",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-execute-controls.test.ts",
+      "initialBlob": "52ca28929328804ac0140069015586865883bf8a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-extension.test.ts",
+      "initialBlob": "1b32ba0926c08fdcaed34529c1707a95dd52de7a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-gpt-live-provider.acceptance.test.ts",
+      "initialBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-gpt-tui.test.ts",
+      "initialBlob": "333c95a90933643b25d6ab77f6ff0f10a77434e9",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-host-access.test.ts",
+      "initialBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-host-bridge.test.ts",
+      "initialBlob": "eaa1c68643eef793430b8e52c2db86ab543dd26c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-long-audio.test.ts",
+      "initialBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-macos-ci.test.ts",
+      "initialBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-main-integration.test.ts",
+      "initialBlob": "950dd13e9775f57f61cbf37aacc8b1d78446913c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-main-orchestrator-runtime.probe.ts",
+      "initialBlob": "9f5353942e250a8cf5c73837f6ea2cfc6abd8232",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-main-owner.test.ts",
+      "initialBlob": "1fcc147892d3cdd2f5adcdf0338ab281c0151506",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-native-workflows.test.ts",
+      "initialBlob": "06bd7f4a043216f68250ee481310ff12e8b7c5ce",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-notice.test.ts",
+      "initialBlob": "6af6d30ad7cb6cf0763d2c5fdaa7edadca694d9c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-openai-provider.acceptance.test.ts",
+      "initialBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-paired-runtime.test.ts",
+      "initialBlob": "3c8a12296f7d2a2cfe900c71dfe876a64e6472b8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-passive-history.test.ts",
+      "initialBlob": "973e8cd7089d5efafd89b79bef6eb466ad8c0001",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-picker-tui.test.ts",
+      "initialBlob": "493944773ae246afd77f57941b8ace8ee242fc47",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-platform.test.ts",
+      "initialBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-playback.test.ts",
+      "initialBlob": "55e410b4de84f8f0a83fc8e1e540d68085254e34",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-probe-input.test.ts",
+      "initialBlob": "bd5d23d0a95241c605c78a2b8aba5cb2fb8a841a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-prompt.test.ts",
+      "initialBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-provider.acceptance.test.ts",
+      "initialBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-push-to-talk-tui.test.ts",
+      "initialBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-session.test.ts",
+      "initialBlob": "f677fece47f695dec08e9a37dc204d10205bb67d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-setup-diagnostics.test.ts",
+      "initialBlob": "79f3cd7334d0ea0ac781e03c385ccffa8ab0ce16",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-setup.test.ts",
+      "initialBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-speaker-check.test.ts",
+      "initialBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-speaker-summary.test.ts",
+      "initialBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-spoken-tui.test.ts",
+      "initialBlob": "dca97e84254ed5773b34315e6006b5cde89d85ac",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-startup-audio-queue.test.ts",
+      "initialBlob": "88dd84ca8356b8512be44337dcc62b074138517e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-startup-natural-fixture.test.ts",
+      "initialBlob": "9f457024b7b1e6f5fd436fe799dfeb3abbfd32eb",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-startup-speech-probe.test.ts",
+      "initialBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-status.test.ts",
+      "initialBlob": "db179896d78a7b812017a91ec843399a8a7e70b5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-study-trial.test.ts",
+      "initialBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-tool-result.test.ts",
+      "initialBlob": "6d87f59d24f16d498e320e60d32836f635dfc0f0",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-tools.test.ts",
+      "initialBlob": "70033025563f0f8fb1789048e97ef02222bb8efc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-transcript.test.ts",
+      "initialBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-tui-startup.test.ts",
+      "initialBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-tui-startup.ts",
+      "initialBlob": "a54e5ee4473dde6061371c635228faf76de88b31",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-waveform.test.ts",
+      "initialBlob": "7badb15d60945ddde2798584094ab498f4e43645",
+      "status": "pending"
+    },
+    {
+      "file": "tests/llm.test.ts",
+      "initialBlob": "58b8635ace4e453680bd40bc6f4cf5793550c277",
+      "status": "pending"
+    },
+    {
+      "file": "tests/local-agent-termination.test.ts",
+      "initialBlob": "dc6c745a929c920ced66d8458f8a552cc9ad5863",
+      "status": "pending"
+    },
+    {
+      "file": "tests/long-thread-pty-latency.test.ts",
+      "initialBlob": "ee7d4d4ae5ad75052551d01df53a362ceeaa2b4e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/long-thread-tui.test.ts",
+      "initialBlob": "eb883c6d1d32cce8830ae43727f4b211a8484dca",
+      "status": "pending"
+    },
+    {
+      "file": "tests/main-agent-mode-sdk.test.ts",
+      "initialBlob": "24791f1a577e4ed976f19a37c1b4121b465a5b93",
+      "status": "pending"
+    },
+    {
+      "file": "tests/main-agent-mode-tui.test.ts",
+      "initialBlob": "4738e16439b75de7a6b5bdeb15a0f6ee100155c1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/manual-release.test.ts",
+      "initialBlob": "6e3ca567e18b244862c7878c3ae274492dd4ebe2",
+      "status": "pending"
+    },
+    {
+      "file": "tests/manual-shake-sdk.test.ts",
+      "initialBlob": "cdcfa1c18f1da93ba6a2948c9d8d99d2a0276839",
+      "status": "pending"
+    },
+    {
+      "file": "tests/manual-shake.test.ts",
+      "initialBlob": "9157e3f36bc1e1fde3f9b0e668f8d865b5dfeaa5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/native-compaction-shake-coverage.test.ts",
+      "initialBlob": "5d65015a7b494c0a76f466a9533a043830a8bf8c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/native-compaction.test.ts",
+      "initialBlob": "09cda8b18ce7f97ae15e301591969d99e38b80ba",
+      "status": "pending"
+    },
+    {
+      "file": "tests/native-fast-mode.test.ts",
+      "initialBlob": "d1a70d64a44454f962627792e65517f3c4171b9d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/native-node-path.test.ts",
+      "initialBlob": "48730a38d9ff63ce62e12886fc9f5b3ab5de7fed",
+      "status": "pending"
+    },
+    {
+      "file": "tests/native-release-gate.test.ts",
+      "initialBlob": "57b773d54ebe707f3ded1635ef1cb1cf69de927c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/native-request-history.test.ts",
+      "initialBlob": "afe104b02c5917ffbf94068bef556d59dd0499f0",
+      "status": "pending"
+    },
+    {
+      "file": "tests/native-shake-sdk.test.ts",
+      "initialBlob": "ba285f014dee32ff3d9010d99cd80aae98e9a349",
+      "status": "pending"
+    },
+    {
+      "file": "tests/offline-process-isolation.test.ts",
+      "initialBlob": "dc9cfb0d0e2e976a933fa3e57840da99e9d9e313",
+      "status": "pending"
+    },
+    {
+      "file": "tests/openai-session-diagnostics.test.ts",
+      "initialBlob": "092f838262b6233b561174bf8c55e2319a455381",
+      "status": "pending"
+    },
+    {
+      "file": "tests/openai-session-schema.test.ts",
+      "initialBlob": "f0285954c2a47aaa013df69828c262153238915e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/openai-session.test.ts",
+      "initialBlob": "a3284f8c1803e2b14259bddf0216ad4daa55aaaf",
+      "status": "pending"
+    },
+    {
+      "file": "tests/output-buffer.test.ts",
+      "initialBlob": "0fe2a49d04fb9fcd41e86dd5420900201649cf58",
+      "status": "pending"
+    },
+    {
+      "file": "tests/phase1-compaction-fixture.ts",
+      "initialBlob": "b67e4ee62f679187372e03f009db40b20a256403",
+      "status": "pending"
+    },
+    {
+      "file": "tests/phase2-native-live.test.ts",
+      "initialBlob": "b194b11139adbdc1329f1b43db241e92ccadb013",
+      "status": "pending"
+    },
+    {
+      "file": "tests/phase2-native-sdk.test.ts",
+      "initialBlob": "a9cad5cefdd2ad24aa78ee97606d77e7c375aa44",
+      "status": "pending"
+    },
+    {
+      "file": "tests/pi-host.test.ts",
+      "initialBlob": "13a3a72c282c4b42d9dfbab64316c05d6fd3b74c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/prepare-assets.test.ts",
+      "initialBlob": "586e397bb48edb63fbb0b1b8d160cb813cd1aab1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/product-identity.test.ts",
+      "initialBlob": "65e1b8db3e08dc180dc66bb6acc0bf455ad6a3be",
+      "status": "pending"
+    },
+    {
+      "file": "tests/production-packaging.test.ts",
+      "initialBlob": "8d962db51cfcac602edc2192aa2044f6fcb26d54",
+      "status": "pending"
+    },
+    {
+      "file": "tests/prompt-delivery.test.ts",
+      "initialBlob": "f97347e0fc492a83d549848df0d75fddce8cd4e4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/prompt-preview.test.ts",
+      "initialBlob": "b3d7dbfffd008f9432d016a0211ef64a83e81685",
+      "status": "pending"
+    },
+    {
+      "file": "tests/prompts.test.ts",
+      "initialBlob": "8ee97fbb55897ea0afb59014fb7ed84a29a1add7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/provider-prompt.test.ts",
+      "initialBlob": "6fe31d158cc6a58ca0b88ab749ca0728b45c42dd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/publish-release.test.ts",
+      "initialBlob": "3d0888281362221d826ff1d26450cff18b7b125a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/questions-bridge.test.ts",
+      "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
+      "status": "pending"
+    },
+    {
+      "file": "tests/questions-extension.test.ts",
+      "initialBlob": "87d72f9de8cdc0416706291eb97b1c65258f2169",
+      "status": "pending"
+    },
+    {
+      "file": "tests/questions-interactive-tui.test.ts",
+      "initialBlob": "cac19ca7ef48e5b2eb9645242b20ce85149bf557",
+      "status": "pending"
+    },
+    {
+      "file": "tests/questions-picker.test.ts",
+      "initialBlob": "0668492090f6120f5f66d0ee35c946bd87db12d8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/questions-runtime.test.ts",
+      "initialBlob": "b21ea93a204464e814c4721a6ef9c1d955c63479",
+      "status": "pending"
+    },
+    {
+      "file": "tests/questions-sdk.test.ts",
+      "initialBlob": "b986a86dc43a69adbb4c83094bb9c8c5bd6857a8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/questions-tui.test.ts",
+      "initialBlob": "c05c758c09040f768e443f06da209a98af82dd38",
+      "status": "pending"
+    },
+    {
+      "file": "tests/questions.test.ts",
+      "initialBlob": "79a2979c636f8a49ef3c192f91acea0868cc10ec",
+      "status": "pending"
+    },
+    {
+      "file": "tests/release-browser-setup.test.ts",
+      "initialBlob": "98350159371870d4bbc3ce6df89c7c6e0cc200f0",
+      "status": "pending"
+    },
+    {
+      "file": "tests/release-launcher-gate.test.ts",
+      "initialBlob": "86a7917691f5756c8b47fb952a9406e57dd0a157",
+      "status": "pending"
+    },
+    {
+      "file": "tests/release-workflows.test.ts",
+      "initialBlob": "0b4eac4aa03e8359773bb14e4a9e0ad44ac3737f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-artifacts.test.ts",
+      "initialBlob": "157e69ad514d0d88bdf13daa2075a1321b5bfdcc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-capabilities.test.ts",
+      "initialBlob": "fe468f2a82561942a0a00a1ce1f19a743a7df01b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-capability-runtime.test.ts",
+      "initialBlob": "d4d2ffbe0c7946380ad09921b34deb66d3defcb3",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-client.test.ts",
+      "initialBlob": "b7f7ba5ecb51b1dec96fe07d6cc5be4ddee790bc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-descendant-environment.test.ts",
+      "initialBlob": "0e3cac11755e9d99447cd9534fab27233c11c8c8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-durable-json.test.ts",
+      "initialBlob": "cfca9558c97cbd4602fd0a56f280cc54c550a584",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-e2e.test.ts",
+      "initialBlob": "19c4704dcfafad84ca4f9af4547dd31a21197acc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-extension.test.ts",
+      "initialBlob": "207b43a4ae5df415e4426d6cdea325d6472ddf77",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-human-rendering.test.ts",
+      "initialBlob": "c25823030618fc37e2db14cef8d9ae429055a6f6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-job-artifacts.test.ts",
+      "initialBlob": "7e7abc717c0eabb5ab835490816b9065460655b1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-job-delivery.test.ts",
+      "initialBlob": "de4fdda9e17881be5cc4c50b299fcd9be135a6be",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-job-observations.test.ts",
+      "initialBlob": "874b1d89a9c77153b030b59d43a219e7cda701ec",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-jobs-e2e.test.ts",
+      "initialBlob": "32242e046ef772be7a30fcba19211c4d7d7804ca",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-jobs-placement-fixture.test.ts",
+      "initialBlob": "7ef3fa97e43d987b31806519c2e4e08a029975c7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-jobs.test.ts",
+      "initialBlob": "03277ff6a2982bd7c76b334f7693b263ab7a712e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-menu.test.ts",
+      "initialBlob": "69ac41bc323cb8b95443d9ce440f25e014a03637",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-offline-menu-pty.py",
+      "initialBlob": "5f2cbe002c36d27dc965c984215fa6673bbdaa71",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-owner-lifecycle.test.ts",
+      "initialBlob": "1bb5b51b9e308c53cebf8d2b62f70372c1b2d613",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-owner.test.ts",
+      "initialBlob": "ffc20a70de38c9a32fdb0de3bef4f15cb552a637",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-placement-e2e-fixture.test.ts",
+      "initialBlob": "ab54907e3562bd6498fd44eb26bc329eea1f4ff6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-placement-entry.test.ts",
+      "initialBlob": "d79ea5dfc30377c01a5786c4e8b1d873a73d23eb",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-placement-legacy-launch.test.ts",
+      "initialBlob": "c829765e9417a9808e6663003f6e088d13b61da8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-placement.test.ts",
+      "initialBlob": "89b8bea144e6fc76d3218236619b70aea70d1323",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-question-bridge.test.ts",
+      "initialBlob": "73a94e3af266e9b0c3bc2fdcc67ecf6b8b7ff519",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-repository-download.test.ts",
+      "initialBlob": "2ce5b7deb99d70cb7b27785134b813505c223431",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-repository-wire.test.ts",
+      "initialBlob": "8732aee86472ffce2562b4e1091791555b14e594",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-repository.test.ts",
+      "initialBlob": "c80e00ddf92eae80be6baf9de8471e2fa5cdd2a0",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-root-client.test.ts",
+      "initialBlob": "3a25d228b5f25291ffb2d4354888f4b295f6f523",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-root-presenter.test.ts",
+      "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-root-transport.test.ts",
+      "initialBlob": "19e7050bac7fe90e61475a884641f056be1e4f78",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-runner-placement-fixture.test.ts",
+      "initialBlob": "5273a14f9828b786ae844471460651e9bfa6305f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-runtime.test.ts",
+      "initialBlob": "f71e08976aeb005bf9249915b1655f677096b4f2",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-session-switch.test.ts",
+      "initialBlob": "f984e97520c87a4216dc48c06df0f0d4d852f72e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-source-approval.test.ts",
+      "initialBlob": "c86156cc15c6d0c8130cf3d8aa9e0c47795f7b9d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-ssh.test.ts",
+      "initialBlob": "091e6877a8e4fe1be2040c3693f1e62bbbd5b899",
+      "status": "pending"
+    },
+    {
+      "file": "tests/remote-typed-root-placement-fixture.test.ts",
+      "initialBlob": "f4283873d51805a234ae99ebdafef71a5ba54ffb",
+      "status": "pending"
+    },
+    {
+      "file": "tests/resume-safeguards.test.ts",
+      "initialBlob": "0ba86426d2901c6fd824d50dc1eb2d12ae29c3f7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/resume-stream-cancellation.test.ts",
+      "initialBlob": "90adb1bb6cdb7f6c526404df57e8fcb87723f943",
+      "status": "pending"
+    },
+    {
+      "file": "tests/rolling-activity-disk.test.ts",
+      "initialBlob": "16109794da03297d71f74968b134a2c9e7929bf4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/rolling-activity.test.ts",
+      "initialBlob": "d7fd169b04f7e8041287a022458bdfe24cd4fc26",
+      "status": "pending"
+    },
+    {
+      "file": "tests/root-owner.test.ts",
+      "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
+      "status": "pending"
+    },
+    {
+      "file": "tests/root-placement-options.test.ts",
+      "initialBlob": "d60e1a3f8a6847f3adad530b64f937ca54b5d5d9",
+      "status": "pending"
+    },
+    {
+      "file": "tests/root-placement-policy.test.ts",
+      "initialBlob": "a4d822bf2938bd980be47974618467ccd21a1971",
+      "status": "pending"
+    },
+    {
+      "file": "tests/root-runtime.test.ts",
+      "initialBlob": "f5ad044150b0be9a1dbca3de6dec9c72fc143463",
+      "status": "pending"
+    },
+    {
+      "file": "tests/saved-transcript-startup.test.ts",
+      "initialBlob": "05a44fa4e35f729976a42e4ccf3c71fc26392e63",
+      "status": "pending"
+    },
+    {
+      "file": "tests/scroll-layout-render.test.ts",
+      "initialBlob": "a9cb7bece4e3c57da06b925be3d8d375e19cd3a7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/sdk-large-text-tui.test.ts",
+      "initialBlob": "f8bace9a51cf3ee12315a3cf3fef24c1e342bd10",
+      "status": "pending"
+    },
+    {
+      "file": "tests/sdk-markdown-blocks.test.ts",
+      "initialBlob": "d69a3da5367fb93fdc4c47336260d74c0fc10bfd",
+      "status": "pending"
+    },
+    {
+      "file": "tests/sdk-text-wrap-performance.test.ts",
+      "initialBlob": "ef27b8c491eb4f7f0d3af9da42c023be709eaec7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/session-boundaries.test.ts",
+      "initialBlob": "8faeaa42e6685e95367ad6a168a084457ab7f84f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/session-costs-tui.test.ts",
+      "initialBlob": "cda7fbe6aede6fc1648ba563e149d6a1e782e62d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/session-costs.test.ts",
+      "initialBlob": "6969bb9ed10e0a05b4cfb22c90aafcde4b9b0426",
+      "status": "pending"
+    },
+    {
+      "file": "tests/session-identity.test.ts",
+      "initialBlob": "fd17ddccd24c8e9626817fdb6a73bcb0c5f9f4cc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/session-input.test.ts",
+      "initialBlob": "58e94fbc168a6db197f9869d84c08d7c4e3e123e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/settled-execute-render.test.ts",
+      "initialBlob": "3451aa3fdb6adf55f912719befe93918a1418650",
+      "status": "pending"
+    },
+    {
+      "file": "tests/setup.ts",
+      "initialBlob": "d3c71348546664337fd231e07e3f5b7034da02ba",
+      "status": "pending"
+    },
+    {
+      "file": "tests/smoke-script.test.ts",
+      "initialBlob": "751053f8395d0eff039aaaf4538b784bd690d188",
+      "status": "pending"
+    },
+    {
+      "file": "tests/sol-model-catalog.test.ts",
+      "initialBlob": "c9a98a6406361ae955b4e484c6ac6b1395d4f3f4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/startup-tui.test.ts",
+      "initialBlob": "400c8cec0e31e00ca42ae4581de2c9e6dcf4b873",
+      "status": "pending"
+    },
+    {
+      "file": "tests/startup.test.ts",
+      "initialBlob": "06e1ab4b62941e35f3b67aad7f3e7097f63d15e7",
+      "status": "pending"
+    },
+    {
+      "file": "tests/stop-work.test.ts",
+      "initialBlob": "0145fd511ce1d999151bed8710f708be529252f9",
+      "status": "pending"
+    },
+    {
+      "file": "tests/subagent-extension.test.ts",
+      "initialBlob": "508e9dfd1900ae7387c9254e224eca79e2694473",
+      "status": "pending"
+    },
+    {
+      "file": "tests/subagent-placement.test.ts",
+      "initialBlob": "f897af60816f07c9eb116301c0ff626b36c525f4",
+      "status": "pending"
+    },
+    {
+      "file": "tests/subagent-profiles.test.ts",
+      "initialBlob": "1b8198ce3eb32c8ae99a69b59897997adc48bf75",
+      "status": "pending"
+    },
+    {
+      "file": "tests/subagent-settings-tui.test.ts",
+      "initialBlob": "f6345c6670f6dcc1d370372d3d85a3437bbfcb41",
+      "status": "pending"
+    },
+    {
+      "file": "tests/subagent-settings-ui.test.ts",
+      "initialBlob": "eacdda0427dd8083b5ddc0491ec2fa26a852d435",
+      "status": "pending"
+    },
+    {
+      "file": "tests/system-prompt.test.ts",
+      "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
+      "status": "pending"
+    },
+    {
+      "file": "tests/t3/local-notifications.test.ts",
+      "initialBlob": "a3076eba307fac9850dad74c870d4673dfc2db78",
+      "status": "pending"
+    },
+    {
+      "file": "tests/t3/native-routing.test.ts",
+      "initialBlob": "1902efb0c30480cc156329da0a1ceaa420afd3e8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/t3/production-bridge.test.ts",
+      "initialBlob": "3fe602a2184e31bfe3cb6bd96937bd6208b6dfd8",
+      "status": "pending"
+    },
+    {
+      "file": "tests/t3/web-launcher-process.test.ts",
+      "initialBlob": "7a393249d4cd32e63f236ca44eedc2a83440d7d5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/t3/web-launcher.test.ts",
+      "initialBlob": "f786918777c6f2073e1a6afa4b5e7658b67dbb86",
+      "status": "pending"
+    },
+    {
+      "file": "tests/t3/web-task-events.test.ts",
+      "initialBlob": "f09ea82bc1e8c407aabc7e377f1dbd02e4debbd6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/task-lifecycle.test.ts",
+      "initialBlob": "427713203db5f91472a7703b441c207d90123f7e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/task-manager.test.ts",
+      "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
+      "status": "pending"
+    },
+    {
+      "file": "tests/task-monitor-source.test.ts",
+      "initialBlob": "70e2cf3f3df3568b48df82627f88cf9767276478",
+      "status": "pending"
+    },
+    {
+      "file": "tests/task-monitor-tui.test.ts",
+      "initialBlob": "26bf71c2c66519461448a29dcbefa01dafe6b6db",
+      "status": "pending"
+    },
+    {
+      "file": "tests/task-monitor.test.ts",
+      "initialBlob": "538c4698f82dee8127b2281b470acf463af9a2d9",
+      "status": "pending"
+    },
+    {
+      "file": "tests/task-rows.test.ts",
+      "initialBlob": "020528a4b2ce3105e8d0c203cee2c9e13273cf96",
+      "status": "pending"
+    },
+    {
+      "file": "tests/task-title.test.ts",
+      "initialBlob": "6de23efe560776791c57b3574e1778c9718463dc",
+      "status": "pending"
+    },
+    {
+      "file": "tests/tasks-ui-proof-tooling.test.py",
+      "initialBlob": "c1873f4566134f30ceab13bbd9314c40bc41c5fe",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-interactions-cli.test.ts",
+      "initialBlob": "45005f3443bbbd98a85ad66cc0e31b59a8a33c0c",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-interactions-report.test.ts",
+      "initialBlob": "cfc814a308ee4706e83669beb49d53d7e4a84f4d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-action-profiler.test.ts",
+      "initialBlob": "9ba463bccc121cc8700bcd29f5b98be1ceaea9ce",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-cli.test.ts",
+      "initialBlob": "c8b2c787299512988880a71e71da14e912c2ae6e",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-navigation.test.ts",
+      "initialBlob": "a1e645587fbdc2b87426d83410d9c40fe3ef3f5a",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-options.test.ts",
+      "initialBlob": "53addac02c4655f7b3b8948ff18b52c3409b6812",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-profiler.test.ts",
+      "initialBlob": "7cb1ce3c1390f701e65cc245a7deb03fa10c8360",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-report.test.ts",
+      "initialBlob": "d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-send.test.ts",
+      "initialBlob": "1af5df2851173b7588355c9ab3b50ff3e9924d5d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-t3-config.test.ts",
+      "initialBlob": "f81c727c864b16e2d7a243d0ce2764654e0cafbb",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-tool-events.test.ts",
+      "initialBlob": "fbbc00c6ccae356bf334930e102cee43534c1ec5",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-tools.test.ts",
+      "initialBlob": "fc51f95e6eede1cd6df28a1e7dec2122a0151dd3",
+      "status": "pending"
+    },
+    {
+      "file": "tests/terminal-perf-workloads.test.ts",
+      "initialBlob": "162a5a3c74695d6edefe695eb9d5e4c4a52c0ed3",
+      "status": "pending"
+    },
+    {
+      "file": "tests/tool-schema.test.ts",
+      "initialBlob": "2bcea71c82e3f657a622c485085eb03872b3732b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/tooling-fixtures.test.ts",
+      "initialBlob": "cce26be612e4adc4b7fc70bd9d8c69782bc4d35b",
+      "status": "pending"
+    },
+    {
+      "file": "tests/tui-harness.test.ts",
+      "initialBlob": "b806b4944004e9d8806779d271da1b0c8ded8297",
+      "status": "pending"
+    },
+    {
+      "file": "tests/tui-helpers.test.ts",
+      "initialBlob": "e64a66d456b1a43ea29f404e9e8113b5cba48156",
+      "status": "pending"
+    },
+    {
+      "file": "tests/tui-helpers.ts",
+      "initialBlob": "b45f178e90e91b492f62d9eb4a86eeb2c23c02e6",
+      "status": "pending"
+    },
+    {
+      "file": "tests/tui-stop-restoration.test.ts",
+      "initialBlob": "a3a127ef7f44792d9b31b7944ad6ce6f74014c13",
+      "status": "pending"
+    },
+    {
+      "file": "tests/turn-boundaries.test.ts",
+      "initialBlob": "a9cff28172726411bd418587f5f44217036f76bb",
+      "status": "pending"
+    },
+    {
+      "file": "tests/turn-boundaries.ts",
+      "initialBlob": "5e9a22ac49df1f247fbad6482e1fc01b8784425d",
+      "status": "pending"
+    },
+    {
+      "file": "tests/typescript-execution.test.ts",
+      "initialBlob": "99f89a2a17d69ecbc9feb84d0d336aed5c9ecc36",
+      "status": "pending"
+    },
+    {
+      "file": "tests/typescript-images.test.ts",
+      "initialBlob": "94a00fb9bbe92edc63a9192476d6562be57ff4ce",
+      "status": "pending"
+    },
+    {
+      "file": "tests/typescript-runner.test.ts",
+      "initialBlob": "088665c0de3d9d9b07107ffe901dd2dc54d6f20f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/update-release-shape.test.ts",
+      "initialBlob": "ebb16b79809a6009c42fa8464e217aab31eef4df",
+      "status": "pending"
+    },
+    {
+      "file": "tests/update-self-fixture.ts",
+      "initialBlob": "aa2a0aa061aa0c1ea2908845af7950d1b912b50f",
+      "status": "pending"
+    },
+    {
+      "file": "tests/update-v0.16.3-fixture.ts",
+      "initialBlob": "a97a2d229678e12335a802823dbca5a8c78c0285",
+      "status": "pending"
+    },
+    {
+      "file": "tests/update.test.ts",
+      "initialBlob": "5490c14c48b525e3d3838da271c3ae510d3749ab",
+      "status": "pending"
+    },
+    {
+      "file": "tests/verify-update-probe.test.ts",
+      "initialBlob": "f8e9a96777f6c92a2ef823b56d70375db0271d66",
+      "status": "pending"
+    },
+    {
+      "file": "tests/verify-update.test.ts",
+      "initialBlob": "0dca83fccab1415ad9f5669701ebeac9b44e4537",
+      "status": "pending"
+    },
+    {
+      "file": "tests/wisdom-extension.test.ts",
+      "initialBlob": "37436aaf746e97961721fb1e042882ef487c90e2",
+      "status": "pending"
+    },
+    {
+      "file": "tests/worker-handoff.test.ts",
+      "initialBlob": "e4c717440abd69e64286171f553291704c3a5000",
+      "status": "pending"
+    },
+    {
+      "file": "tests/worktree-workspace.test.ts",
+      "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
+      "status": "pending"
+    },
+    {
+      "file": "tsconfig.json",
+      "initialBlob": "b984b24eea2a441adca35f80564e94c869658551",
+      "status": "pending"
+    }
+  ]
+}
