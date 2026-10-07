@@ -1636,7 +1636,7 @@
     {
       "focus": "tests/find-ci-baseline.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_109390aa",
@@ -1652,13 +1652,21 @@
           "id": "task_aa63512d",
           "base": "b2e6926b3d45bf905d8430e208bf50690dd38b91",
           "candidate": "486c2a12038fce135250d229915ac9ba186f788b",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Named trustboundary groups isolate rejection reasons;realGit object/ancestry and selector integration retained. Explicit endpoint/auth checks and sharedbudget exhaustion/abort proof;no green-count-only acceptance.",
+          "checks": "Independent35tests93assertions/47combined145;strictfocusedtsc/Biome/diffpass. RealAbortSignal stalled substitutedhistory abort,decreasing budgets,expired pre-localproof rejection closes narrowHTTPdeadlinegap only. No forced hangingGit/hostedtiming/fullbuild;finderjudgment not reissued.",
+          "acceptedBlobs": {
+            "tests/find-ci-baseline.test.ts": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
       "readingResult": "Named trust-boundary groups replace anonymous rejectionloops/mixedfailures;realGit/selector retained;endpointauth/commitvsblob/shareddeadlineabort added.",
-      "checks": "35focus47combined;strictfocus tsc/Biome/diff;finderunchanged. HTTPstub,no hostedAPI/forcedGithang/fullbuild."
+      "checks": "35focus47combined;strictfocus tsc/Biome/diff;finderunchanged. HTTPstub,no hostedAPI/forcedGithang/fullbuild.",
+      "integrationState": "Full focuspatch integrated;finder source unchanged;noteexcluded."
     },
     {
       "focus": "tests/helpers.ts",
@@ -1929,7 +1937,7 @@
     {
       "focus": "tests/offline-process-isolation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "rework-pending",
+      "state": "rework-running",
       "primary": [
         {
           "id": "task_61decf20",
@@ -1938,6 +1946,15 @@
           "branch": "bruv/primary-tests-offline-process-isolation.-61decf20",
           "state": "completed",
           "commit": "933de4fb5119a222d5843361016443eb012c20d3"
+        },
+        {
+          "id": "task_21c70b4e",
+          "launchBase": "58b93d9ce43fda8565720baeef40e98d25c85043",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_21c70b4e",
+          "branch": "bruv/rework-process-isolation-tui-root-fixtur-21c70b4e",
+          "state": "running",
+          "role": "rework",
+          "priorCandidate": "933de4fb5119a222d5843361016443eb012c20d3"
         }
       ],
       "judges": [
@@ -2248,19 +2265,29 @@
     {
       "focus": "tests/smoke-script.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_d0d9d3eb",
           "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d0d9d3eb",
           "branch": "bruv/primary-tests-smoke-script.test.ts-d0d9d3eb",
+          "state": "completed",
+          "commit": "e842e14fc17e2cadc3569df152c9f2f2a0671183"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_e67972f5",
+          "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "candidate": "e842e14fc17e2cadc3569df152c9f2f2a0671183",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Readable shellfixtures and independent pairfailure cases replace escaped strings/sequential mutation;probe/buildcount/cleanup explicit,unchangedcwd limit.",
+      "checks": "16focuspass;tsc/Biome/diff;copiedrealpairsmoke/cleanup pass."
     },
     {
       "focus": "tests/tooling-fixtures.test.ts",
