@@ -179,15 +179,13 @@
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
-        "candidate": "b56b4b3a99499178ace1cacba5538760fdc0a656",
-        "judge": "task_00bd7047",
+        "candidate": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
+        "judge": "task_eef5d289",
         "verdict": "ACCEPT",
-        "blob": "f4a1a32f98b631384b1ffb3e43e1507572d9d069",
+        "blob": "e8393b2496f38d915c39b260f3d084019385ad0b",
         "primaryFocusStillRequired": true
       },
-      "checkNeeds": [
-        "Biome check organizeImports error observed task_07ae383c; ask next file worker to resolve with focus patch and rejudge final hash."
-      ]
+      "checkNeeds": []
     },
     {
       "focus": "src/agent/instruction-continuity.ts",
@@ -1214,7 +1212,7 @@
     {
       "focus": "tests/instruction-mode.test.ts",
       "initialBlob": "6bda0c237bcaf3fbbce1aac4c43d6780b5a24742",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_5d4de9b9",
@@ -1236,11 +1234,18 @@
           "id": "task_eef5d289",
           "candidate": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
           "base": "147c19b262b2388db01cdb80541f537f8f8717d0",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Started-session fixture owns command wiring/observations, independent frame/command/history scenarios expose relevant state. Real branch/reopen lives explicit; refresh seam now actually tested.",
+          "checks": "Independent 40 tests/361 assertions; reproduced old refresh mutation false-pass/new failure. Extension 80 import bindings and non-import body identical.",
+          "acceptedRelatedBlobs": {
+            "src/agent/extension.ts": "e8393b2496f38d915c39b260f3d084019385ad0b"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "83ee0e37976b48d52ce63c562248e3373224f8aa",
+      "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "b56b4b3a99499178ace1cacba5538760fdc0a656",
         "judge": "task_00bd7047",
@@ -1248,9 +1253,7 @@
         "blob": "91cdf3d35143286cc1ff2b0147811156c949a1b0",
         "primaryFocusStillRequired": true
       },
-      "checkNeeds": [
-        "Biome check organizeImports error observed task_07ae383c; ask next file worker to resolve with focus patch and rejudge final hash."
-      ]
+      "checkNeeds": []
     },
     {
       "focus": "tests/last-used-cli-model.test.ts",
