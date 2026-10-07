@@ -872,3 +872,82 @@ test("typed background launches survive outer execute error with durable call ow
     await e.fire("session_shutdown", {}, ctx);
   }
 });
+
+test("failed SSH dispatch replays the same delivery after reattachment and releases the old source", async () => {
+  const root = mkdtempSync(join(tmpdir(), "ssh-delivery-reattach-"));
+  const file = join(root, "session.jsonl");
+  const e = load();
+  const ctx = contextFixture({ mode: "rpc", sessionManager: { getSessionFile: () => file } });
+  const dispatch = spyOn(e.messages, "push").mockImplementationOnce(() => {
+    throw new Error("delivery fixture rejection");
+  });
+  const errors = spyOn(console, "error").mockImplementation(() => {});
+  try {
+    await e.fire("session_start", {}, ctx);
+    const oldSource = remoteJobEvents(file);
+    const job = { ownerId: "owner", epoch: "epoch", taskId: "retry-job", state: "done" as const };
+    oldSource.publish(job);
+    await e.fire("agent_end", { messages: [] }, ctx);
+    expect(e.messages).toHaveLength(0);
+    expect(errors).toHaveBeenCalledTimes(1);
+    const rejectedId = (dispatch.mock.calls[0][0] as any).details.remote[0].id;
+
+    await e.fire("session_shutdown", {}, ctx);
+    oldSource.publish({ ...job, taskId: "detached-job" });
+    await e.fire("session_start", {}, ctx);
+    await e.fire("agent_end", { messages: [] }, ctx);
+    expect(e.messages).toHaveLength(1);
+    expect(e.messages[0].details.remote.map((row: any) => row.id)).toEqual([rejectedId]);
+    expect(e.messages[0].content).not.toContain("detached-job");
+
+    await e.fire("session_shutdown", {}, ctx);
+    await e.fire("session_start", {}, ctx);
+    remoteJobEvents(file).publish(job);
+    await e.fire("agent_end", { messages: [] }, ctx);
+    expect(e.messages).toHaveLength(1); // acknowledged replay cannot wake the parent again
+  } finally {
+    dispatch.mockRestore();
+    errors.mockRestore();
+    await e.fire("session_shutdown", {}, ctx);
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("a native attachment without a durable mailbox cannot create jobs and does not restrict the next local session", async () => {
+  const previousUrl = process.env.T3_MCP_URL;
+  const previousToken = process.env.T3_MCP_BEARER_TOKEN;
+  process.env.T3_MCP_URL = "http://127.0.0.1/mcp";
+  delete process.env.T3_MCP_BEARER_TOKEN;
+  let owners = 0;
+  let rpc: any;
+  const e = load(0, undefined, {
+    onTaskOwner: () => {
+      owners++;
+    },
+  });
+  const ctx = contextFixture({ mode: "rpc", sessionManager: { getSessionFile: () => undefined } });
+  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
+    rpc = options!.jobHandler;
+    return { exitCode: 0, stdout: "", stderr: "", timedOut: false, cancelled: false, images: [] } as any;
+  });
+  try {
+    await e.fire("session_start", {}, ctx);
+    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, ctx);
+    await expect(rpc("jobs.list", {}, new AbortController().signal)).rejects.toThrow("durable notification outbox");
+    expect(owners).toBe(0);
+    expect(e.messages).toHaveLength(0);
+
+    await e.fire("session_shutdown", {}, ctx);
+    delete process.env.T3_MCP_URL;
+    await e.fire("session_start", {}, ctx);
+    expect(await rpc("jobs.list", {}, new AbortController().signal)).toMatchObject({ jobs: [], total: 0 });
+    expect(owners).toBe(1);
+  } finally {
+    mock.mockRestore();
+    await e.fire("session_shutdown", {}, ctx);
+    if (previousUrl === undefined) delete process.env.T3_MCP_URL;
+    else process.env.T3_MCP_URL = previousUrl;
+    if (previousToken === undefined) delete process.env.T3_MCP_BEARER_TOKEN;
+    else process.env.T3_MCP_BEARER_TOKEN = previousToken;
+  }
+});
