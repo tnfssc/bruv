@@ -2,6 +2,43 @@ import { test, expect } from "bun:test";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { registerQuestions } from "../src/questions/extension";
 
+type QuestionDialog = { screen: string; pick: string | undefined } | { editor: string; answer: string | undefined };
+
+// Own the UI interaction order, not the question ledger or extension lifecycle.
+function questionDialogs(script: QuestionDialog[]) {
+  const remaining = [...script];
+  const notices: string[] = [];
+  return {
+    async custom(factory: Parameters<ExtensionContext["ui"]["custom"]>[0]) {
+      const step = remaining.shift();
+      if (!step || !("pick" in step)) throw new Error("Unexpected question picker");
+      const picker = await factory(
+        { terminal: { rows: 24 }, requestRender() {} } as Parameters<typeof factory>[0],
+        { fg: (_: string, text: string) => text } as Parameters<typeof factory>[1],
+        { matches: () => false } as unknown as Parameters<typeof factory>[2],
+        () => {},
+      );
+      expect(picker.render(80).join("\n")).toContain(step.screen);
+      return step.pick;
+    },
+    async editor(title: string) {
+      const step = remaining.shift();
+      if (!step || !("editor" in step)) throw new Error("Unexpected question editor");
+      expect(title).toBe(step.editor);
+      return step.answer;
+    },
+    notify(text: string) {
+      notices.push(text);
+    },
+    setStatus() {},
+    expectComplete(expectedNotices: string[] = []) {
+      expect(remaining).toEqual([]);
+      // The command catches UI errors, so completion must also check its notices.
+      expect(notices).toEqual(expectedNotices);
+    },
+  };
+}
+
 test("question commands keep status pinned without stealing focus or repeating notices", async () => {
   const hooks = new Map<string, (...args: any[]) => unknown>();
   let command!: { handler: (args: string, ctx: ExtensionContext) => Promise<void> };
@@ -274,31 +311,16 @@ test("interactive inbox answers only selected choice, advances, and escape leave
     { id: "q_second", text: "Why?", status: "pending", version: 1, owner: { sessionId: "s", branchId: "b" } },
   ];
   const replies: any[] = [];
-  const picks = ["q_first", "1", "q_second", "write", undefined, undefined];
-  const titles: string[] = [];
-  const ctx: any = {
-    mode: "tui",
-    ui: {
-      custom: async (factory: any) => {
-        const index = titles.length;
-        factory(
-          { terminal: { rows: 24 }, requestRender() {} },
-          { fg: (_: string, s: string) => s },
-          {
-            matches() {
-              return false;
-            },
-          },
-          () => {},
-        );
-        titles.push(index === 0 ? "inbox" : "choice");
-        return picks.shift();
-      },
-      editor: async () => undefined,
-      notify() {},
-      setStatus() {},
-    },
-  };
+  const dialogs = questionDialogs([
+    { screen: "Questions · 2 unanswered", pick: "q_first" },
+    { screen: "Which deployment target?", pick: "1" },
+    { screen: "Questions · 1 unanswered", pick: "q_second" },
+    { screen: "Why?", pick: "write" },
+    { editor: "Why?", answer: undefined },
+    { screen: "Why?", pick: undefined },
+    { screen: "Questions · 1 unanswered", pick: undefined },
+  ]);
+  const ctx = { mode: "tui", ui: dialogs } as unknown as ExtensionContext;
   registerQuestions(
     {
       on() {},
@@ -319,7 +341,7 @@ test("interactive inbox answers only selected choice, advances, and escape leave
   await command.handler("", ctx);
   expect(replies).toEqual([{ id: "q_first", answer: "production", owner: questions[0].owner, version: 2 }]);
   expect(questions[1].status).toBe("pending");
-  expect(titles).toHaveLength(6);
+  dialogs.expectComplete();
   expect((await command.getArgumentCompletions("ans"))[0].label).toBe("answer");
 });
 
@@ -333,27 +355,16 @@ test("cancelled or empty free text retries choices; Escape from choices returns 
     owner: { sessionId: "s", branchId: "b" },
   };
   const answers: any[] = [];
-  const picks = ["q_one", "write", "write", "write", undefined];
-  const editorReplies = [undefined, "   ", "valid answer"];
-  const titles: string[] = [];
-  const ctx: any = {
-    mode: "tui",
-    ui: {
-      custom: async (factory: any) => {
-        const picker = factory(
-          { terminal: { rows: 24 }, requestRender() {} },
-          { fg: (_: string, s: string) => s },
-          { matches: () => false },
-          () => {},
-        );
-        titles.push(picker.render(80).join("\n"));
-        return picks.shift();
-      },
-      editor: async () => editorReplies.shift(),
-      notify() {},
-      setStatus() {},
-    },
-  };
+  const dialogs = questionDialogs([
+    { screen: "Questions · 1 unanswered", pick: "q_one" },
+    { screen: "Why?", pick: "write" },
+    { editor: "Why?", answer: undefined },
+    { screen: "Why?", pick: "write" },
+    { editor: "Why?", answer: "   " },
+    { screen: "Why?", pick: "write" },
+    { editor: "Why?", answer: "valid answer" },
+  ]);
+  const ctx = { mode: "tui", ui: dialogs } as unknown as ExtensionContext;
   registerQuestions(
     {
       on() {},
@@ -372,14 +383,74 @@ test("cancelled or empty free text retries choices; Escape from choices returns 
     }),
   );
   await command.handler("", ctx);
-  expect(titles.slice(1, 4).every((title) => title.includes("Why?"))).toBe(true);
   expect(answers).toEqual([{ id: "q_one", answer: "valid answer", owner: question.owner, version: 1 }]);
+  // Answering the last question closes the inbox with a notice, not another picker.
+  dialogs.expectComplete(["No unanswered questions"]);
   question.status = "pending";
-  picks.push("q_one", undefined, undefined);
-  await command.handler("", ctx);
+  const escapeDialogs = questionDialogs([
+    { screen: "Questions · 1 unanswered", pick: "q_one" },
+    { screen: "Why?", pick: undefined },
+    { screen: "Questions · 1 unanswered", pick: undefined },
+  ]);
+  await command.handler("", { mode: "tui", ui: escapeDialogs });
+  escapeDialogs.expectComplete();
   expect(answers).toHaveLength(1);
   expect(question.status).toBe("pending");
-  expect(titles.at(-1)).toContain("Questions · 1 unanswered");
+});
+
+test("inbox submits displayed owner/version even when the ledger changes during a choice", async () => {
+  let command!: { handler: (args: string, ctx: ExtensionContext) => Promise<void> };
+  const displayed = {
+    id: "q_one",
+    text: "Which target?",
+    choices: ["staging"],
+    allowFreeText: false,
+    status: "pending",
+    version: 2,
+    owner: { sessionId: "s", branchId: "displayed" },
+  };
+  let current = displayed;
+  const replies: unknown[] = [];
+  const dialogs = questionDialogs([
+    { screen: "Questions · 1 unanswered", pick: "q_one" },
+    { screen: "Which target?", pick: "0" },
+  ]);
+  const ctx = {
+    mode: "tui",
+    ui: {
+      ...dialogs,
+      async custom(factory: Parameters<ExtensionContext["ui"]["custom"]>[0]) {
+        const selected = await dialogs.custom(factory);
+        if (selected === "0") {
+          current = { ...displayed, version: 3, owner: { sessionId: "s", branchId: "new" } };
+        }
+        return selected;
+      },
+    },
+  } as unknown as ExtensionContext;
+  registerQuestions(
+    {
+      on() {},
+      registerCommand(_: string, value: typeof command) {
+        command = value;
+      },
+    } as unknown as ExtensionAPI,
+    () => ({
+      handle(method: string, params: Record<string, unknown> = {}) {
+        if (method === "questions.list") return [current];
+        if (method === "questions.answer") {
+          replies.push(params);
+          // This mock rejects the stale submission; runtime/service tests own authorization.
+          throw new Error("Question changed while open; reopen /questions to answer the current question.");
+        }
+        throw new Error(method);
+      },
+    }),
+  );
+  await command.handler("", ctx);
+  dialogs.expectComplete(["Question changed while open; reopen /questions to answer the current question."]);
+  expect(replies).toEqual([{ id: displayed.id, answer: "staging", owner: displayed.owner, version: 2 }]);
+  expect(current.status).toBe("pending");
 });
 
 test("picker wraps full long labels at narrow width and filters without answering on escape", async () => {
@@ -508,4 +579,56 @@ test("refresh still propagates non-lifecycle status errors", async () => {
   );
   await Promise.resolve();
   await expect(refresh()).rejects.toThrow("status failure");
+});
+
+test("detail separates local delivery, remote observations and uncertain human replies", async () => {
+  let command: any;
+  const notices: string[] = [];
+  const question: any = { id: "q_saved", text: "Choose target?", status: "answered", answer: "staging" };
+  const ctx: any = { ui: { notify: (text: string) => notices.push(text), setStatus() {} } };
+  registerQuestions(
+    {
+      on() {},
+      registerCommand(_: string, value: any) {
+        command = value;
+      },
+    } as any,
+    () => ({
+      handle(method: string) {
+        if (method === "questions.list") return [question];
+        if (method === "questions.get") return question;
+        throw new Error("Detail must not mutate: " + method);
+      },
+    }),
+  );
+  const detail = async () => {
+    await command.handler("detail q_saved", ctx);
+    return notices.pop()!;
+  };
+  expect(await detail()).toBe(
+    "q_saved [answered] Choose target?\nAnswer: staging\nAnswer saved · /questions resume q_saved",
+  );
+  question.delivery = "queued";
+  expect(await detail()).toContain("Answer saved · waiting for parent");
+  question.delivery = "dispatching";
+  expect(await detail()).toContain("Answer saved · delivery uncertain; check parent chat");
+  question.delivery = "delivered";
+  expect(await detail()).toContain("Answer sent to parent");
+
+  question.remote = { host: "pinned", taskId: "task", id: "remote-q", version: 4 };
+  question.answer = undefined;
+  expect(await detail()).toBe(
+    "q_saved [answered] Choose target?\nRemote ledger: pinned · task · remote-q v4\nRemote ledger says answered; no local human reply inferred.",
+  );
+  question.answer = "staging";
+  expect(await detail()).toContain("Human answer delivered to pinned remote owner");
+  question.delivery = "dispatching";
+  expect(await detail()).toContain(
+    "Human answer saved · remote delivery uncertain; reconnect to reconcile. No duplicate answer will be sent.",
+  );
+  question.status = "cancelled";
+  question.blocked = { foreground: true, taskIds: ["child"], checkpoint: "choose a different plan" };
+  expect(await detail()).toBe(
+    "q_saved [cancelled] Choose target?\nRemote ledger: pinned · task · remote-q v4\nBlocked follow-up: parent, child — choose a different plan\nAnswer: staging\nCancelled; follow-up needs a new plan, not a guessed answer.",
+  );
 });
