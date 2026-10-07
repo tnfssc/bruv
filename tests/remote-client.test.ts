@@ -2,7 +2,8 @@ import { afterEach, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { RemoteClient, openRemoteLockDatabase, type Transport } from "../src/remote/client";
+import { RemoteClient, openRemoteLockDatabase, type RemoteState, type Transport } from "../src/remote/client";
+import type { RemoteRequest } from "../src/remote/protocol";
 const dirs: string[] = [];
 afterEach(async () => {
   for (const d of dirs.splice(0)) await rm(d, { recursive: true, force: true });
@@ -23,10 +24,13 @@ const h = (epoch = "one") => ({
 });
 test("pins intent before first network POST; uncertain retry uses identical ID only", async () => {
   let fail = true;
-  const requests: any[] = [];
+  const posts: { request: Extract<RemoteRequest, { op: "launch" }>; saved: unknown }[] = [];
   const client = await fixture(async (_host, _path, r) => {
-    requests.push(r);
     if (r.op === "hello") return h();
+    if (r.op !== "launch") throw Error("unexpected request: " + r.op);
+    const request = r as Extract<RemoteRequest, { op: "launch" }>;
+    const state: RemoteState = JSON.parse(await readFile(client.path, "utf8"));
+    posts.push({ request, saved: state.tasks[request.taskId]! });
     if (fail) {
       fail = false;
       throw new Error("lost reply");
@@ -39,11 +43,19 @@ test("pins intent before first network POST; uncertain retry uses identical ID o
   expect(saved.outcome).toBe("unknown");
   expect(saved.ownerId).toBe("owner");
   expect(saved.repoPath).toBe("/repo");
+  expect(posts[0]!.saved).toMatchObject({
+    taskId: posts[0]!.request.taskId,
+    ownerId: posts[0]!.request.ownerId,
+    epoch: posts[0]!.request.epoch,
+    repoPath: posts[0]!.request.repoPath,
+    prompt: posts[0]!.request.prompt,
+    outcome: "unknown",
+  });
   await expect(client.launch("/other", "work", "id1")).rejects.toThrow("different owner or intent");
   expect((await client.launch("/repo", "work", "id1")).outcome).toBe("accepted");
-  expect(requests.filter((r) => r.op === "launch").map((r) => r.taskId)).toEqual(["id1", "id1"]);
+  expect(posts.map(({ request }) => request.taskId)).toEqual(["id1", "id1"]);
   await client.launch("/repo", "work", "id1");
-  expect(requests.filter((r) => r.op === "launch")).toHaveLength(2);
+  expect(posts).toHaveLength(2);
   expect((await stat(client.path)).mode & 0o777).toBe(0o600);
   expect((await stat(join(client.path, ".."))).mode & 0o777).toBe(0o700);
   expect(JSON.parse(await readFile(client.path, "utf8")).tasks.id1.prompt).toBe("work");
@@ -235,34 +247,43 @@ test("independent client instances serialize local state writes", async () => {
 });
 
 test("opening a second lock connection does not release the first SQLite lock", async () => {
-  let child: ReturnType<typeof Bun.spawn> | undefined;
   let probed = false;
   const c = await fixture(async () => {
     const second = openRemoteLockDatabase(c.path + ".lock.sqlite");
     second.close();
-    const source =
-      "import { Database } from 'bun:sqlite'; const db = new Database(" +
-      JSON.stringify(c.path + ".lock.sqlite") +
-      "); db.exec('PRAGMA busy_timeout=0'); try { db.exec('BEGIN EXCLUSIVE'); console.log('acquired'); db.exec('COMMIT'); } catch (e) { console.log(e.code); } finally { db.close(); }";
-    child = Bun.spawn([process.execPath, "--eval", source], { stdout: "pipe", stderr: "pipe" });
-    const exit = await child.exited;
-    const output = await new Response(child.stdout as ReadableStream).text();
-    const error = await new Response(child.stderr as ReadableStream).text();
-    expect(exit).toBe(0);
-    expect(error).toBe("");
-    probed = true;
-    expect(output.trim()).toBe("SQLITE_BUSY");
+    const source = `
+      import { Database } from "bun:sqlite";
+      const db = new Database(${JSON.stringify(c.path + ".lock.sqlite")});
+      db.exec("PRAGMA busy_timeout=0");
+      try {
+        db.exec("BEGIN EXCLUSIVE");
+        console.log("acquired");
+        db.exec("COMMIT");
+      } catch (error) {
+        console.log(error.code);
+      } finally {
+        db.close();
+      }
+    `;
+    const child = Bun.spawn([process.execPath, "--eval", source], { stdout: "pipe", stderr: "pipe" });
+    try {
+      const exit = await child.exited;
+      const output = await new Response(child.stdout as ReadableStream).text();
+      const error = await new Response(child.stderr as ReadableStream).text();
+      expect(exit).toBe(0);
+      expect(error).toBe("");
+      expect(output.trim()).toBe("SQLITE_BUSY");
+      probed = true;
+    } finally {
+      child.kill();
+      await child.exited;
+    }
     return h();
   });
-  try {
-    await c.connect("box");
-    expect(probed).toBe(true);
-    expect((await c.status()).connection?.host).toBe("box");
-    expect((await stat(c.path + ".lock.sqlite")).mode & 0o777).toBe(0o600);
-  } finally {
-    child?.kill();
-    if (child) await child.exited;
-  }
+  await c.connect("box");
+  expect(probed).toBe(true);
+  expect((await c.status()).connection?.host).toBe("box");
+  expect((await stat(c.path + ".lock.sqlite")).mode & 0o777).toBe(0o600);
 });
 
 test("killed client releases state lock and reopens the same durable ambiguous ID", async () => {
@@ -271,22 +292,21 @@ test("killed client releases state lock and reopens the same durable ambiguous I
   );
   await c.connect("box");
   const marker = c.path + ".sent";
-  const source =
-    "import { RemoteClient } from " +
-    JSON.stringify(new URL("../src/remote/client.ts", import.meta.url).pathname) +
-    ";" +
-    "const client = new RemoteClient(" +
-    JSON.stringify(c.path) +
-    ',async(_h,_p,r)=>{if(r.op==="hello") return ' +
-    JSON.stringify(h()) +
-    ";await Bun.write(" +
-    JSON.stringify(marker) +
-    ',"sent");await Bun.sleep(60000);});await client.launch("/repo","work","crash-id");';
+  const source = `
+    import { RemoteClient } from ${JSON.stringify(new URL("../src/remote/client.ts", import.meta.url).pathname)};
+    const client = new RemoteClient(${JSON.stringify(c.path)}, async (_host, _path, request) => {
+      if (request.op === "hello") return ${JSON.stringify(h())};
+      await Bun.write(${JSON.stringify(marker)}, "sent");
+      await Bun.sleep(60000);
+    });
+    await client.launch("/repo", "work", "crash-id");
+  `;
   const child = Bun.spawn([process.execPath, "--eval", source], { stdout: "ignore", stderr: "pipe" });
   try {
     const until = Date.now() + 5000;
     while (!(await Bun.file(marker).exists()) && Date.now() < until) await Bun.sleep(10);
     expect(await Bun.file(marker).exists()).toBe(true);
+    expect((await c.transcript("crash-id")).outcome).toBe("unknown");
     child.kill("SIGKILL");
     await child.exited;
     expect((await c.transcript("crash-id")).outcome).toBe("unknown");
@@ -327,22 +347,32 @@ test("unknown task snapshot carries its error and native questions rather than l
 });
 
 test("targeted answer pins reply ID before transport, rejects changed intent, bounded reconnect sync", async () => {
-  const requests: any[] = [];
+  const answerPosts: {
+    request: Extract<RemoteRequest, { op: "answer" }>;
+    saved: unknown;
+  }[] = [];
+  const syncedTasks: string[] = [];
   let fail = true;
   const owner = { sessionId: "s", branchId: "b" };
   const q = { id: "q1", owner, version: 2, status: "pending" };
   const c = await fixture(async (_host, _path, r) => {
-    requests.push(r);
     if (r.op === "hello") return h();
     if (r.op === "launch") return { task: { taskId: r.taskId, state: "running", questions: [q] } };
     if (r.op === "answer") {
+      const request = r as Extract<RemoteRequest, { op: "answer" }>;
+      const state: RemoteState = JSON.parse(await readFile(c.path, "utf8"));
+      answerPosts.push({ request, saved: state.tasks[request.taskId]?.replies?.[request.id] });
       if (fail) {
         fail = false;
         throw Error("lost acknowledgement");
       }
       return { task: { taskId: r.taskId, state: "running" } };
     }
-    if (r.op === "sync") return { task: { taskId: r.taskId, state: "done" }, events: [], cursor: 0, hasMore: false };
+    if (r.op === "sync") {
+      const request = r as Extract<RemoteRequest, { op: "sync" }>;
+      syncedTasks.push(request.taskId);
+      return { task: { taskId: r.taskId, state: "done" }, events: [], cursor: 0, hasMore: false };
+    }
     throw Error("invalid request");
   });
   await c.connect("myhost");
@@ -351,11 +381,13 @@ test("targeted answer pins reply ID before transport, rejects changed intent, bo
   await expect(c.answer("one", { id: "q1", owner, version: 1, text: "yes" })).rejects.toThrow("stale");
   await expect(c.answer("one", { id: "q1", owner, version: 2, text: "yes" })).rejects.toThrow("uncertain");
   const replyId = (await c.transcript("one")).replies!.q1!.replyId;
+  expect(answerPosts[0]!.saved).toEqual({ id: "q1", owner, version: 2, text: "yes", replyId });
+  expect(answerPosts[0]!.request.replyId).toBe(replyId);
   await expect(c.answer("one", { id: "q1", owner, version: 2, text: "no" })).rejects.toThrow("Conflicting");
   await c.answer("one", { id: "q1", owner, version: 2, text: "yes" });
-  expect(requests.filter((r) => r.op === "answer").map((r) => r.replyId)).toEqual([replyId, replyId]);
+  expect(answerPosts.map(({ request }) => request.replyId)).toEqual([replyId, replyId]);
   await c.syncActive(1);
-  expect(requests.filter((r) => r.op === "sync")).toHaveLength(1);
+  expect(syncedTasks).toEqual(["one"]);
   expect((await c.transcript("one")).task?.state).toBe("done");
 });
 

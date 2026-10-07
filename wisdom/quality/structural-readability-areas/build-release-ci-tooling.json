@@ -2763,5 +2763,16 @@
     "commit": "b2e6926b",
     "accepted": 57,
     "mismatches": []
-  }
+  },
+  "parentCheckpoints": [
+    {
+      "commit": "db885fce5225bf31dbaadba34c14ceb2393f5999",
+      "mergeBase": "65e0d2188a205dec705f8b4694941724ee34bece",
+      "parentChangedPaths": 107,
+      "areaFocusOverlap": [],
+      "acceptedBlobsVerified": 67,
+      "tree": "6020cc0e06d6ab6f6480bdba4d0bccfc31b98765",
+      "note": "Parent-owned accepted common code only;no direct sibling merge/no otherarea coverage claimed. Actual binary will rebuild for final combined proof."
+    }
+  ]
 }

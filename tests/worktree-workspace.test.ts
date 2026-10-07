@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
-import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { JobService } from "../src/tasks/job-service";
 import { TaskManager } from "../src/tasks/task-manager";
 import { createWorktree, readWorktreeSetup, resolveWorktreeSource } from "../src/tasks/worktree-workspace";
@@ -25,6 +25,25 @@ async function fixture() {
   execFileSync("git", ["-C", repo, "add", "tracked.txt"]);
   execFileSync("git", ["-C", repo, "commit", "-qm", "base"]);
   return { root, repo, worktrees: join(root, "worktrees") };
+}
+
+// Drain jobs before restoring their root; afterEach then removes the owned repositories.
+async function withWorktreeJobs(
+  worktrees: string,
+  run: (manager: TaskManager, service: JobService) => Promise<void>,
+  profilesPath?: string,
+) {
+  const oldRoot = process.env.BRUV_WORKTREE_ROOT;
+  process.env.BRUV_WORKTREE_ROOT = worktrees;
+  const manager = new TaskManager(() => {}, 25);
+  const service = new JobService(manager, () => ({ depth: 0 }), undefined, profilesPath, undefined, undefined, {});
+  try {
+    await run(manager, service);
+  } finally {
+    await manager.shutdown();
+    if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
+    else process.env.BRUV_WORKTREE_ROOT = oldRoot;
+  }
 }
 
 describe("local worktree workspace", () => {
@@ -161,11 +180,7 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
-    process.env.BRUV_WORKTREE_ROOT = worktrees;
-    const manager = new TaskManager(() => {}, 25);
-    const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined, {});
-    try {
+    await withWorktreeJobs(worktrees, async (manager, service) => {
       const started = Date.now();
       const result = (await service.handle(
         "subagent",
@@ -189,11 +204,7 @@ describe("local worktree workspace", () => {
       expect(stopped.workspace?.setupTaskId).toBeTruthy();
       if (stopped.workspace?.setupTaskId)
         expect((await manager.wait(stopped.workspace.setupTaskId)).status).toBe("killed");
-    } finally {
-      await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
-      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
-    }
+    });
   });
 
   test("the child deadline includes worktree setup and prevents provider start", async () => {
@@ -211,11 +222,7 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
-    process.env.BRUV_WORKTREE_ROOT = worktrees;
-    const manager = new TaskManager(() => {}, 25);
-    const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined, {});
-    try {
+    await withWorktreeJobs(worktrees, async (manager, service) => {
       const result = (await service.handle(
         "subagent",
         {
@@ -232,11 +239,7 @@ describe("local worktree workspace", () => {
       expect(stopped.timedOut).toBe(true);
       expect(stopped.pid).toBeUndefined();
       expect(stopped.workspace?.preparationError).toBe("timed out");
-    } finally {
-      await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
-      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
-    }
+    });
   });
 
   test("repository setup runs automatically without trust approval while child trust remains denied", async () => {
@@ -255,88 +258,80 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldArgv = process.argv;
-    process.argv = [
-      oldArgv[0],
-      oldArgv[1],
-      "--system-prompt",
-      "fixture-system",
-      "--append-system-prompt",
-      "fixture-append",
-      "--",
-      "--system-prompt",
-      "do-not-copy",
-    ];
-    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
-    process.env.BRUV_WORKTREE_ROOT = worktrees;
-    const manager = new TaskManager(() => {}, 25);
-    const activate = spyOn(manager, "activatePreparedAgent");
-    const service = new JobService(
-      manager,
-      () => ({ depth: 0 }),
-      undefined,
+    await withWorktreeJobs(
+      worktrees,
+      async (manager, service) => {
+        const oldArgv = process.argv;
+        process.argv = [
+          oldArgv[0],
+          oldArgv[1],
+          "--system-prompt",
+          "fixture-system",
+          "--append-system-prompt",
+          "fixture-append",
+          "--",
+          "--system-prompt",
+          "do-not-copy",
+        ];
+        const activate = spyOn(manager, "activatePreparedAgent");
+        try {
+          const result = (await service.handle(
+            "subagent",
+            {
+              prompt: "untrusted",
+              title: "Inspect worktree",
+              workspace: { kind: "worktree" },
+              waitSeconds: 0,
+            },
+            { cwd: repo, model: { provider: "test", id: "model" }, isProjectTrusted: () => false } as never,
+            new AbortController().signal,
+          )) as { id: string };
+          for (let attempt = 0; attempt < 100; attempt++) {
+            const current = manager.inspect(result.id);
+            if (current.workspace?.setupStatus === "completed" && current.workspace.preparationStatus !== "preparing")
+              break;
+            await new Promise((resolve) => setTimeout(resolve, 5));
+          }
+          const current = manager.inspect(result.id);
+          expect(current.title).toBe("Inspect worktree");
+          expect(activate.mock.calls[0]?.[1].title).toBe("Inspect worktree");
+          expect(current.workspace?.setupStatus).toBe("completed");
+          const launch = activate.mock.calls[0]![1];
+          expect(launch.args).toEqual([
+            "--no-approve",
+            "--system-prompt",
+            "fixture-system",
+            "--append-system-prompt",
+            "fixture-append",
+            "--session",
+            launch.agent!.sessionFile,
+            "--mode",
+            "json",
+            "-p",
+            "--model",
+            "test/model",
+            "--",
+            "untrusted",
+          ]);
+          expect(launch).toMatchObject({
+            id: result.id,
+            cwd: current.workspace!.path,
+            closeStdin: true,
+            // waitSeconds:0 transfers actual background ownership at reservation/spawn.
+            notifyOnComplete: true,
+            env: { BRUV_SUBAGENT_DEPTH: "1", BRUV_SUBAGENT_TYPE: "normal" },
+          });
+          // The reserved task owns the deadline from preparation onward.
+          expect(launch.timeoutMs).toBeUndefined();
+          expect(await readFile(markerPath, "utf8")).toBe("");
+          if (current.status === "running") manager.kill(result.id);
+        } finally {
+          process.argv = oldArgv;
+          activate.mockRestore();
+        }
+      },
       join(root, "profiles.json"),
-      undefined,
-      undefined,
-      {},
     );
-    try {
-      const result = (await service.handle(
-        "subagent",
-        {
-          prompt: "untrusted",
-          title: "Inspect worktree",
-          workspace: { kind: "worktree" },
-          waitSeconds: 0,
-        },
-        { cwd: repo, model: { provider: "test", id: "model" }, isProjectTrusted: () => false } as never,
-        new AbortController().signal,
-      )) as { id: string };
-      for (let attempt = 0; attempt < 100; attempt++) {
-        const current = manager.inspect(result.id);
-        if (current.workspace?.setupStatus === "completed" && current.workspace.preparationStatus !== "preparing")
-          break;
-        await new Promise((resolve) => setTimeout(resolve, 5));
-      }
-      const current = manager.inspect(result.id);
-      expect(current.title).toBe("Inspect worktree");
-      expect(activate.mock.calls[0]?.[1].title).toBe("Inspect worktree");
-      expect(current.workspace?.setupStatus).toBe("completed");
-      const launch = activate.mock.calls[0]![1];
-      expect(launch.args).toEqual([
-        "--no-approve",
-        "--system-prompt",
-        "fixture-system",
-        "--append-system-prompt",
-        "fixture-append",
-        "--session",
-        launch.agent!.sessionFile,
-        "--mode",
-        "json",
-        "-p",
-        "--model",
-        "test/model",
-        "--",
-        "untrusted",
-      ]);
-      expect(launch).toMatchObject({
-        id: result.id,
-        cwd: current.workspace!.path,
-        closeStdin: true,
-        // waitSeconds:0 transfers actual background ownership at reservation/spawn.
-        notifyOnComplete: true,
-        env: { BRUV_SUBAGENT_DEPTH: "1", BRUV_SUBAGENT_TYPE: "normal" },
-      });
-      // The reserved task owns the deadline from preparation onward.
-      expect(launch.timeoutMs).toBeUndefined();
-      expect(await readFile(markerPath, "utf8")).toBe("");
-      if (current.status === "running") manager.kill(result.id);
-    } finally {
-      process.argv = oldArgv;
-      await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
-      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
-    }
   });
 
   test("async setup allows activation before settling and publishes its eventual failure", async () => {
@@ -355,43 +350,34 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
-    process.env.BRUV_WORKTREE_ROOT = worktrees;
-    const manager = new TaskManager(() => {}, 25);
-    const activate = spyOn(manager, "activatePreparedAgent");
-    const service = new JobService(
-      manager,
-      () => ({ depth: 0 }),
-      undefined,
+    await withWorktreeJobs(
+      worktrees,
+      async (manager, service) => {
+        const activate = spyOn(manager, "activatePreparedAgent");
+        try {
+          const result = (await service.handle(
+            "subagent",
+            { prompt: "async setup", workspace: { kind: "worktree" }, waitSeconds: 0 },
+            { cwd: repo, model: { provider: "test", id: "model" }, isProjectTrusted: () => false } as never,
+            new AbortController().signal,
+          )) as { id: string };
+          for (let attempt = 0; attempt < 100 && !activate.mock.calls.length; attempt++)
+            await new Promise((resolve) => setTimeout(resolve, 5));
+          expect(activate.mock.calls).toHaveLength(1);
+          const workspace = manager.inspect(result.id).workspace!;
+          expect(workspace.preparationStatus).toBe("ready");
+          expect(workspace.setupStatus).toBe("running");
+          const setupId = workspace.setupTaskId!;
+          expect(manager.inspect(setupId).status).toBe("running");
+          await writeFile(releasePath, "");
+          expect((await manager.wait(setupId)).exitCode).toBe(7);
+          expect(manager.inspect(result.id).workspace?.setupStatus).toBe("failed");
+        } finally {
+          activate.mockRestore();
+        }
+      },
       join(root, "profiles.json"),
-      undefined,
-      undefined,
-      {},
     );
-    try {
-      const result = (await service.handle(
-        "subagent",
-        { prompt: "async setup", workspace: { kind: "worktree" }, waitSeconds: 0 },
-        { cwd: repo, model: { provider: "test", id: "model" }, isProjectTrusted: () => false } as never,
-        new AbortController().signal,
-      )) as { id: string };
-      for (let attempt = 0; attempt < 100 && !activate.mock.calls.length; attempt++)
-        await new Promise((resolve) => setTimeout(resolve, 5));
-      expect(activate.mock.calls).toHaveLength(1);
-      const workspace = manager.inspect(result.id).workspace!;
-      expect(workspace.preparationStatus).toBe("ready");
-      expect(workspace.setupStatus).toBe("running");
-      const setupId = workspace.setupTaskId!;
-      expect(manager.inspect(setupId).status).toBe("running");
-      await writeFile(releasePath, "");
-      expect((await manager.wait(setupId)).exitCode).toBe(7);
-      expect(manager.inspect(result.id).workspace?.setupStatus).toBe("failed");
-    } finally {
-      activate.mockRestore();
-      await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
-      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
-    }
   });
 
   test("a synchronous setup failure retains every batch identity without killing siblings", async () => {
@@ -409,11 +395,7 @@ describe("local worktree workspace", () => {
         ],
       }),
     );
-    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
-    process.env.BRUV_WORKTREE_ROOT = worktrees;
-    const manager = new TaskManager(() => {}, 25);
-    const service = new JobService(manager, () => ({ depth: 0 }), undefined, undefined, undefined, undefined, {});
-    try {
+    await withWorktreeJobs(worktrees, async (manager, service) => {
       const results = (await service.handle(
         "subagent",
         {
@@ -430,10 +412,6 @@ describe("local worktree workspace", () => {
       expect(second.workspace?.path).not.toBe(repo);
       expect(manager.inspect(results[0].id).termination).toBeUndefined();
       expect(manager.inspect(results[2].id).termination).toBeUndefined();
-    } finally {
-      await manager.shutdown();
-      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
-      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
-    }
+    });
   });
 });

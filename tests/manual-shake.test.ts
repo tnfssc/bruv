@@ -191,6 +191,52 @@ describe("manual shake projection", () => {
     ]);
   });
 
+  test("replays a completed checkpoint beside pending and duplicate tool batches without planning a new shake", () => {
+    const manager = SessionManager.inMemory();
+    completed(manager, "settled");
+    const record = buildShakePlan(manager.buildContextEntries(), manager.getSessionId()).record;
+    manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, record);
+    manager.appendMessage(assistant([{ type: "toolCall", id: "pending", name: "execute", arguments: {} }]));
+    completed(manager, "duplicate");
+    completed(manager, "duplicate");
+    const entries = manager.buildContextEntries();
+    const plan = buildShakePlan(entries, manager.getSessionId());
+    expect(plan.unresolvedToolCallIds).toEqual(["pending", "duplicate"]);
+    expect(plan.orphanToolResultIds).toEqual(["duplicate"]);
+    expect([plan.removedAssistantBlocks, plan.removedToolResults]).toEqual([0, 0]);
+    const incoming = manager.buildSessionContext().messages;
+    const projected = projectShakenContext(incoming, entries, record);
+    expect(projected).toEqual(incoming.slice(2));
+  });
+
+  test("authorizes a multi-result batch only when every result is selected and unchanged", () => {
+    const manager = SessionManager.inMemory();
+    const batch = assistant([
+      { type: "thinking", thinking: "private" },
+      { type: "toolCall", id: "first", name: "execute", arguments: {} },
+      { type: "toolCall", id: "second", name: "execute", arguments: {} },
+      { type: "text", text: "kept prose" },
+    ]);
+    manager.appendMessage(batch);
+    manager.appendMessage(result("first"));
+    manager.appendMessage(result("second"));
+    const entries = manager.buildContextEntries();
+    const plan = buildShakePlan(entries, manager.getSessionId());
+    const incoming = manager.buildSessionContext().messages;
+    expect([plan.removedAssistantBlocks, plan.removedToolResults]).toEqual([3, 2]);
+    expect(projectShakenContext(incoming, entries, plan.record)).toEqual([
+      { ...batch, content: [{ type: "text", text: "kept prose" }] },
+    ]);
+    const partial = { ...plan.record, toolResultEntryIds: plan.record.toolResultEntryIds.slice(0, 1) };
+    expect(projectShakenContext(incoming, entries, partial)).toEqual(incoming);
+    const redacted = incoming.map((message) =>
+      message.role === "toolResult" && message.toolCallId === "second"
+        ? { ...message, content: [{ type: "text" as const, text: "REDACTED" }] }
+        : message,
+    );
+    expect(projectShakenContext(redacted, entries, plan.record)).toEqual(redacted);
+  });
+
   test("repeated shake is a no-op until a new completed trace exists", () => {
     const manager = SessionManager.inMemory();
     completed(manager, "one");

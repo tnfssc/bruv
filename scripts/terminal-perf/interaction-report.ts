@@ -232,116 +232,128 @@ export function interactionTextReport(run: InteractionRun, baseline?: Interactio
 
 /** Validate the portable data actually consumed by summaries/dashboard; raw evidence is opaque. */
 export function validateInteractionRun(value: unknown): InteractionRun {
-  const fail = (where: string): never => {
-    throw new Error("Invalid interaction report: " + where);
-  };
-  const obj = (v: unknown, where: string): Record<string, unknown> => {
-    if (!v || typeof v !== "object" || Array.isArray(v)) return fail(where);
-    return v as Record<string, unknown>;
-  };
-  const number = (v: unknown, where: string, positive = false) => {
-    if (typeof v !== "number" || !Number.isFinite(v) || (positive ? v <= 0 : v < 0)) fail(where);
-  };
-  const strings = (v: unknown, where: string) => {
-    if (!Array.isArray(v) || v.some((s) => typeof s !== "string")) fail(where);
-  };
-  const mapStrings = (v: unknown, where: string) => {
-    if (Object.values(obj(v, where)).some((s) => typeof s !== "string")) fail(where);
-  };
-  const numbers = (v: unknown, where: string) => {
-    if (!Array.isArray(v)) return fail(where);
-    for (const n of v) number(n, where);
-  };
-  const r = obj(value, "root");
+  const r = reportObject(value, "root");
   if (
     r.schemaVersion !== "terminal-interactions-v1" ||
     typeof r.startedAt !== "string" ||
     !Number.isFinite(Date.parse(r.startedAt))
   )
-    fail("schema/date");
-  number(r.budgetMs, "budget", true);
-  const env = obj(r.environment, "environment");
+    invalidReport("schema/date");
+  reportNumber(r.budgetMs, "budget", true);
+  const env = reportObject(r.environment, "environment");
   for (const key of ["revision", "bun", "platform", "arch", "cpu"])
-    if (typeof env[key] !== "string") fail("environment." + key);
-  if (typeof env.dirty !== "boolean") fail("environment.dirty");
-  mapStrings(env.dependencies, "dependencies");
-  const config = obj(r.config, "config");
+    if (typeof env[key] !== "string") invalidReport("environment." + key);
+  if (typeof env.dirty !== "boolean") invalidReport("environment.dirty");
+  reportStringMap(env.dependencies, "dependencies");
+  const config = reportObject(r.config, "config");
   for (const key of ["repetitions", "width", "height"]) {
-    number(config[key], "config." + key, true);
-    if (!Number.isSafeInteger(config[key])) fail("config integer");
+    reportNumber(config[key], "config." + key, true);
+    if (!Number.isSafeInteger(config[key])) invalidReport("config integer");
   }
-  const sources = obj(r.sources, "sources");
-  if (typeof sources.fingerprint !== "string") fail("source fingerprint");
-  mapStrings(sources.hashes, "source hashes");
-  const evidence = obj(r.evidence, "evidence");
-  strings(r.limits, "limits");
-  if (!Array.isArray(r.cases) || !r.cases.length) fail("empty cases");
+  const sources = reportObject(r.sources, "sources");
+  if (typeof sources.fingerprint !== "string") invalidReport("source fingerprint");
+  reportStringMap(sources.hashes, "source hashes");
+  const evidence = reportObject(r.evidence, "evidence");
+  reportStrings(r.limits, "limits");
+  if (!Array.isArray(r.cases) || !r.cases.length) invalidReport("empty cases");
   const ids = new Set();
   for (const entry of r.cases as unknown[]) {
-    const c = obj(entry, "case");
-    if (typeof c.id !== "string" || !c.id || ids.has(c.id)) fail("case id");
+    const c = reportObject(entry, "case");
+    if (typeof c.id !== "string" || !c.id || ids.has(c.id)) invalidReport("case id");
     ids.add(c.id);
-    if (!["send", "tools", "navigation"].includes(c.group as string) || typeof c.scope !== "string")
-      fail("case scope/group");
-    for (const v of Object.values(obj(c.parameters, "parameters")))
-      if (!["string", "number", "boolean"].includes(typeof v) || (typeof v === "number" && !Number.isFinite(v)))
-        fail("parameter");
-    if (!Array.isArray(c.samples) || !c.samples.length) fail("empty samples");
-    if ((c.samples as unknown[]).length !== config.repetitions) fail("incomplete repetition coverage");
-    const iterations = new Set<number>();
-    for (const entry of c.samples as unknown[]) {
-      const s = obj(entry, "sample");
-      for (const key of ["action", "contentHash", "screenHash", "outputHash", "rawEvidence"])
-        if (typeof s[key] !== "string") fail("sample." + key);
-      if (!Object.hasOwn(evidence, s.rawEvidence as string)) fail("missing raw evidence");
-      obj(evidence[s.rawEvidence as string], "raw evidence");
-      if (
-        !["cold", "init", "action"].includes(s.phase as string) ||
-        !["complete", "separate-turns", "missing"].includes(s.boundary as string)
-      )
-        fail("sample phase/boundary");
-      if (s.boundary === "complete" && s.contiguousSyncMs == null) fail("complete boundary without duration");
-      number(s.iteration, "iteration");
-      if (!Number.isSafeInteger(s.iteration)) fail("iteration integer");
-      if ((s.iteration as number) >= (config.repetitions as number) || iterations.has(s.iteration as number))
-        fail("invalid repetition coverage");
-      iterations.add(s.iteration as number);
-      strings(s.limits, "sample limits");
-      numbers(s.frameMs, "frames");
-      for (const key of [
-        "contiguousSyncMs",
-        "mutationBatchMs",
-        "elapsedMs",
-        "firstVisibleAckMs",
-        "firstProviderAdmissionMs",
-        "requestToFrameMs",
-        "changedRows",
-        "outputBytes",
-        "outputWrites",
-      ])
-        if (s[key] != null) number(s[key], key);
-      for (const key of ["providerWaitMs", "heartbeatDelayMs", "heartbeatGapMs", "inputLatenessMs"])
-        if (s[key] !== undefined) numbers(s[key], key);
-      for (const n of Object.values(obj(s.work, "work"))) number(n, "work value");
-      if (s.visible !== undefined && typeof s.visible !== "boolean") fail("visible");
-      if (!Array.isArray(s.spans)) fail("spans");
-      if (
-        !(s.spans as unknown[]).length &&
-        !(s.frameMs as number[]).length &&
-        s.contiguousSyncMs == null &&
-        s.mutationBatchMs == null
-      )
-        fail("sample has no observed synchronous timing");
-      for (const entry of s.spans as unknown[]) {
-        const p = obj(entry, "span");
-        if (typeof p.name !== "string" || !["sync", "async-prefix", "frame"].includes(p.kind as string))
-          fail("span name/kind");
-        for (const key of ["durationMs", "startedAtMs", "endedAtMs", "depth", "exclusiveMs"])
-          if (key === "durationMs" || p[key] !== undefined) number(p[key], "span." + key);
-        if (typeof p.startedAtMs === "number" && typeof p.endedAtMs === "number" && p.endedAtMs < p.startedAtMs)
-          fail("span reversed bounds");
-      }
-    }
+    validateInteractionCase(c, config.repetitions as number, evidence);
   }
   return value as InteractionRun;
 }
+
+// Case IDs are checked by the run; repetition coverage belongs to each case.
+function validateInteractionCase(c: Record<string, unknown>, repetitions: number, evidence: Record<string, unknown>) {
+  if (!["send", "tools", "navigation"].includes(c.group as string) || typeof c.scope !== "string")
+    invalidReport("case scope/group");
+  for (const v of Object.values(reportObject(c.parameters, "parameters")))
+    if (!["string", "number", "boolean"].includes(typeof v) || (typeof v === "number" && !Number.isFinite(v)))
+      invalidReport("parameter");
+  validateInteractionSamples(c.samples, repetitions, evidence);
+}
+
+function validateInteractionSamples(samples: unknown, repetitions: number, evidence: Record<string, unknown>) {
+  if (!Array.isArray(samples) || !samples.length) invalidReport("empty samples");
+  if ((samples as unknown[]).length !== repetitions) invalidReport("incomplete repetition coverage");
+  const iterations = new Set<number>();
+  for (const entry of samples as unknown[]) {
+    const s = reportObject(entry, "sample");
+    for (const key of ["action", "contentHash", "screenHash", "outputHash", "rawEvidence"])
+      if (typeof s[key] !== "string") invalidReport("sample." + key);
+    if (!Object.hasOwn(evidence, s.rawEvidence as string)) invalidReport("missing raw evidence");
+    reportObject(evidence[s.rawEvidence as string], "raw evidence");
+    if (
+      !["cold", "init", "action"].includes(s.phase as string) ||
+      !["complete", "separate-turns", "missing"].includes(s.boundary as string)
+    )
+      invalidReport("sample phase/boundary");
+    if (s.boundary === "complete" && s.contiguousSyncMs == null) invalidReport("complete boundary without duration");
+    reportNumber(s.iteration, "iteration");
+    if (!Number.isSafeInteger(s.iteration)) invalidReport("iteration integer");
+    if ((s.iteration as number) >= repetitions || iterations.has(s.iteration as number))
+      invalidReport("invalid repetition coverage");
+    iterations.add(s.iteration as number);
+    reportStrings(s.limits, "sample limits");
+    reportNumbers(s.frameMs, "frames");
+    for (const key of [
+      "contiguousSyncMs",
+      "mutationBatchMs",
+      "elapsedMs",
+      "firstVisibleAckMs",
+      "firstProviderAdmissionMs",
+      "requestToFrameMs",
+      "changedRows",
+      "outputBytes",
+      "outputWrites",
+    ])
+      if (s[key] != null) reportNumber(s[key], key);
+    for (const key of ["providerWaitMs", "heartbeatDelayMs", "heartbeatGapMs", "inputLatenessMs"])
+      if (s[key] !== undefined) reportNumbers(s[key], key);
+    for (const n of Object.values(reportObject(s.work, "work"))) reportNumber(n, "work value");
+    if (s.visible !== undefined && typeof s.visible !== "boolean") invalidReport("visible");
+    if (!Array.isArray(s.spans)) invalidReport("spans");
+    if (
+      !(s.spans as unknown[]).length &&
+      !(s.frameMs as number[]).length &&
+      s.contiguousSyncMs == null &&
+      s.mutationBatchMs == null
+    )
+      invalidReport("sample has no observed synchronous timing");
+    for (const entry of s.spans as unknown[]) validateInteractionSpan(entry);
+  }
+}
+
+function validateInteractionSpan(entry: unknown) {
+  const p = reportObject(entry, "span");
+  if (typeof p.name !== "string" || !["sync", "async-prefix", "frame"].includes(p.kind as string))
+    invalidReport("span name/kind");
+  for (const key of ["durationMs", "startedAtMs", "endedAtMs", "depth", "exclusiveMs"])
+    if (key === "durationMs" || p[key] !== undefined) reportNumber(p[key], "span." + key);
+  if (typeof p.startedAtMs === "number" && typeof p.endedAtMs === "number" && p.endedAtMs < p.startedAtMs)
+    invalidReport("span reversed bounds");
+}
+
+const invalidReport = (where: string): never => {
+  throw new Error("Invalid interaction report: " + where);
+};
+const reportObject = (v: unknown, where: string): Record<string, unknown> => {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return invalidReport(where);
+  return v as Record<string, unknown>;
+};
+const reportNumber = (v: unknown, where: string, positive = false) => {
+  if (typeof v !== "number" || !Number.isFinite(v) || (positive ? v <= 0 : v < 0)) invalidReport(where);
+};
+const reportStrings = (v: unknown, where: string) => {
+  if (!Array.isArray(v) || v.some((s) => typeof s !== "string")) invalidReport(where);
+};
+const reportStringMap = (v: unknown, where: string) => {
+  if (Object.values(reportObject(v, where)).some((s) => typeof s !== "string")) invalidReport(where);
+};
+const reportNumbers = (v: unknown, where: string) => {
+  if (!Array.isArray(v)) return invalidReport(where);
+  for (const n of v) reportNumber(n, where);
+};

@@ -21,6 +21,12 @@ beforeAll(() => {
 });
 
 const restores: Array<() => void> = [];
+function installDensity(): () => void {
+  const restore = installConversationDensity();
+  restores.push(restore);
+  return restore;
+}
+// Explicit restore calls exercise disposal; afterEach owns cleanup even if an assertion fails.
 afterEach(() => {
   while (restores.length) restores.pop()?.();
 });
@@ -127,7 +133,7 @@ function blankRuns(lines: string[]): number[] {
 
 describe("native conversation density adapter", () => {
   test("requires Pi 1.0 direct Markdown rather than the old nested Box", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const user = new UserMessageComponent("message");
     expect(user.children).toHaveLength(1);
     expect(user.children[0]).toBeInstanceOf(Markdown);
@@ -137,7 +143,7 @@ describe("native conversation density adapter", () => {
     expect(() => new Container().addChild(user)).toThrow("user Markdown shape is unsupported");
   });
   test("gives first and consecutive users one unhighlighted boundary row", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     add(
       chat,
@@ -172,7 +178,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("uses one plain row at every native user predecessor and successor", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const pairs: Array<[Component, Component, string, string]> = [
       [assistant("assistant before"), thinking(["thinking after"]), "assistant before", "thinking after"],
       [thinking(["thinking before"]), tool("tool after"), "thinking before", "tool after"],
@@ -193,7 +199,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("keeps internal user Markdown and successor image rows outside plain boundaries", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const imageBearing = tool("image status");
     (imageBearing as unknown as { imageComponents: Component[] }).imageComponents = [
@@ -212,7 +218,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("does not consume meaningful trailing rows from prior output", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const prior = tool("prior", "prior\n\n");
     prior.setExpanded(true);
@@ -226,7 +232,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("keeps user boundaries dense through streaming updates and history-style rebuilds", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const user = new UserMessageComponent("stream question", undefined, 3);
     const streaming = new AssistantMessageComponent(undefined, false, undefined, undefined, 3);
@@ -259,7 +265,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("keeps one visible handoff message through invisible tool carriers and density rendering", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const message = "Work is continuing while the background job finishes.";
     const carrier = new AssistantMessageComponent({
@@ -277,7 +283,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("compacts displayed thinking prose gaps while preserving normal answer Markdown", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const phases = new AssistantMessageComponent({
       role: "assistant",
@@ -315,7 +321,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("compacts Responses-style summaries accumulated in one thinking block while streaming and final", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const source = {
       role: "assistant" as const,
@@ -368,7 +374,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("retains thinking blank lines that protect lists and fenced code", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const phases = thinking([
       "First prose phase\n\nSecond prose phase\n\n- first item\n- second item\n\nAfter list\n\n" +
@@ -397,7 +403,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("preserves Markdown boundaries across separate thinking parts", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     add(chat, thinking(["- First item\n- Second item", "Following prose"]));
     const rows = plain(chat.render(80)).map((row) => row.trim());
@@ -405,7 +411,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("compacts consecutive non-user boundaries except status-to-prose", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const firstPhase = thinking(["Fixing test-harness isolation"]);
     const secondPhase = thinking(["Securing test-harness probes"]);
@@ -430,7 +436,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("keeps thinking compaction through hide/show, streaming updates, and resize", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const phases = thinking(["Fixing test-harness isolation", "Securing test-harness probes"], true);
     add(chat, phases);
@@ -478,7 +484,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("keeps statuses compact through thinking and separates following prose", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     add(
       chat,
@@ -510,7 +516,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("separates tool status from prose but not pure thinking", () => {
-    restores.push(installConversationDensity());
+    installDensity();
 
     const proseChat = new Container();
     add(proseChat, tool("completed tool"), assistant("Visible answer"));
@@ -522,7 +528,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("tracks mixed and streaming assistant transitions after a status", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const phases = new AssistantMessageComponent(undefined, false, undefined, undefined, 1);
     add(chat, status("task-complete", "complete"), phases);
@@ -552,7 +558,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("preserves expanded tool content, image-bearing layout, and failure text", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const first = tool("compact");
     const expanded = tool("expanded", "source\n\noutput");
@@ -572,7 +578,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("restores only wrappers it still owns", () => {
-    const restore = installConversationDensity();
+    const restore = installDensity();
     const chat = new Container();
     const message = assistant("answer");
     add(chat, new UserMessageComponent("question"), message);
@@ -585,7 +591,7 @@ describe("native conversation density adapter", () => {
     expect((message as Component).handleMouse).toBe(foreignMouse);
   });
   test("restores the native thinking renderer and original source parts", () => {
-    const restore = installConversationDensity();
+    const restore = installDensity();
     const chat = new Container();
     const phases = thinking(["Fixing test-harness isolation", "Securing test-harness probes"]);
     const nativeUpdate = phases.updateContent;
@@ -599,7 +605,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("restores the latest thinking source and streaming state after redraw and detach", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const phases = thinking(["initial phase", "next phase"]);
     const nativeUpdate = phases.updateContent;
@@ -639,8 +645,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("leaves foreign thinking update chains in place but stops presenting compact copies after disposal", () => {
-    const restore = installConversationDensity();
-    restores.push(restore);
+    const restore = installDensity();
     const chat = new Container();
     const phases = thinking(["first phase", "second phase"]);
     const nativeState = phases as unknown as { lastMessage: unknown };
@@ -666,7 +671,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("untracks removed and cleared components, then rebuilds and reinstalls cleanly", () => {
-    const firstRestore = installConversationDensity();
+    const firstRestore = installDensity();
     const chat = new Container();
     const first = new UserMessageComponent("first");
     const second = new UserMessageComponent("second");
@@ -690,7 +695,7 @@ describe("native conversation density adapter", () => {
     expect(second.render).toBe(secondRender);
     expect(answer.render).toBe(answerRender);
 
-    const secondRestore = installConversationDensity();
+    const secondRestore = installDensity();
     const rebuilt = new Container();
     add(rebuilt, first, second, answer);
     expect(blankRuns(rebuilt.render(80))).toEqual([1, 1, 1]);
@@ -698,7 +703,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("restores user padding and adjacent standalone spacers when detached", () => {
-    const restore = installConversationDensity();
+    const restore = installDensity();
     const chat = new Container();
     const spacer = new Spacer(1);
     const nativeSpacerRender = spacer.render;
@@ -722,7 +727,7 @@ describe("native conversation density adapter", () => {
   test("preserves a foreign addChild wrapper installed after the density adapter", () => {
     const prototype = Container.prototype;
     const originalAddChild = prototype.addChild;
-    const restore = installConversationDensity();
+    const restore = installDensity();
     const densityAddChild = prototype.addChild;
     function foreignAddChild(this: Container, component: Component): void {
       densityAddChild.call(this, component);
@@ -741,7 +746,7 @@ describe("native conversation density adapter", () => {
   });
 
   test("keeps dense native rows aligned with their original mouse hit areas", () => {
-    restores.push(installConversationDensity());
+    installDensity();
     const chat = new Container();
     const first = tool("first");
     const toggleHits: Array<{ y: number; height: number }> = [];
@@ -805,7 +810,7 @@ describe("native conversation density adapter", () => {
     expect(assistantHits).toEqual([{ y: 1, height: 2 }]);
   });
   test("foreign render chains stop applying density after disposal", () => {
-    const restore = installConversationDensity();
+    const restore = installDensity();
     const chat = new Container();
     const message = assistant("answer");
     const nativeRender = message.render;
@@ -813,14 +818,10 @@ describe("native conversation density adapter", () => {
     const denseRender = message.render;
     const foreign = (width: number) => denseRender.call(message, width);
     message.render = foreign;
-    try {
-      expect(plain(message.render(80))).toEqual([" answer"]);
-      restore();
-      expect(message.render).toBe(foreign);
-      expect(message.render(80)).toEqual(nativeRender.call(message, 80));
-    } finally {
-      restore();
-    }
+    expect(plain(message.render(80))).toEqual([" answer"]);
+    restore();
+    expect(message.render).toBe(foreign);
+    expect(message.render(80)).toEqual(nativeRender.call(message, 80));
   });
 });
 

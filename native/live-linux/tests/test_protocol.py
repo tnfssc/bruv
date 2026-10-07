@@ -109,5 +109,45 @@ class MicrophoneTests(unittest.TestCase):
         pulse.pa_simple_free.assert_not_called()
 
 
+class PlaybackFixtureTests(unittest.TestCase):
+    def test_waits_for_nonempty_queue_not_a_zero_report(self):
+        client = Mock()
+        client.read.side_effect = [{'queuedMs': 0}, {'queuedMs': 400}]
+        protocol.wait_for_queued_audio(client)
+        self.assertEqual(client.read.call_count, 2)
+        self.assertTrue(all(call.args == ('played',) for call in client.read.call_args_list))
+
+    def test_audio_device_error_is_not_ignored_while_waiting(self):
+        client = Mock()
+        client.read.side_effect = AssertionError('audio_device')
+        with self.assertRaisesRegex(AssertionError, 'audio_device'):
+            protocol.wait_for_queued_audio(client)
+
+    def test_scenario_observes_live_capture_before_playback_drain(self):
+        client = Mock()
+        queued = iter([0, 400, 0, 400, 0])
+
+        def read(kind, **options):
+            if kind == 'played': return {'queuedMs': next(queued)}
+            if kind == 'capture': return {'data': base64.b64encode(b'\x01\x00' * 320).decode()}
+            return {'type': kind}
+
+        client.read.side_effect = read
+        with patch.object(protocol, 'synthetic_microphone') as microphone:
+            protocol.check_virtual_audio(client, 'fixture-mic.monitor')
+        microphone.assert_called_once_with('fixture-mic')
+        plays = [call.kwargs for call in client.command.call_args_list
+                 if call.kwargs['type'] == 'play' and call.kwargs['data'] != '!!!!']
+        self.assertTrue(plays)
+        for play in plays:
+            # Remains queued across the helper's 100ms report throttle.
+            self.assertEqual(len(base64.b64decode(play['data'])), 24000)
+        reads = [call.args[0] for call in client.read.call_args_list]
+        capture = reads.index('capture')
+        self.assertEqual(reads[capture - 1:capture + 2], ['played', 'capture', 'played'])
+        self.assertEqual(reads.count('ready'), 2)
+        self.assertEqual(reads.count('stopped'), 2)
+
+
 if __name__ == '__main__':
     unittest.main()

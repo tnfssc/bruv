@@ -69,6 +69,42 @@ function error(value: unknown): Error {
   return value instanceof Error ? value : new Error(String(value));
 }
 
+/** Byte framing owns only its partial frame; EOF/cancellation belong to the transport. */
+async function* readFrames(input: Readable, maxFrameBytes: number): AsyncGenerator<string> {
+  let frame = Buffer.alloc(0);
+  let size = 0;
+  for await (const chunk of input) {
+    const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+    let offset = 0;
+    while (offset < buffer.length) {
+      const newline = buffer.indexOf(10, offset);
+      const end = newline < 0 ? buffer.length : newline;
+      const slice = buffer.subarray(offset, end);
+      const nextSize = size + slice.length;
+      if (nextSize > maxFrameBytes) throw new Error("Transport input frame limit exceeded");
+      // One geometrically grown buffer bounds both bytes and fragment metadata.
+      // Do not retain incoming pooled slabs or millions of tiny Buffer objects.
+      if (nextSize > frame.length) {
+        const next = Buffer.allocUnsafe(Math.min(maxFrameBytes, Math.max(nextSize, frame.length * 2, 4096)));
+        frame.copy(next, 0, 0, size);
+        frame = next;
+      }
+      slice.copy(frame, size);
+      size = nextSize;
+      if (newline < 0) break;
+      const line = frame.subarray(0, size).toString("utf8").trim();
+      frame = Buffer.alloc(0);
+      size = 0;
+      if (line) yield line;
+      offset = end + 1;
+    }
+  }
+  if (size) {
+    const line = frame.subarray(0, size).toString("utf8").trim();
+    if (line) yield line;
+  }
+}
+
 interface PendingRequest {
   resolve: (value: Record<string, unknown>) => void;
   reject: (reason: Error) => void;
@@ -176,40 +212,9 @@ export class ClaudeCompatTransport {
     output.on("error", failed);
     output.on("close", outputClosed);
     this.#lifetime.signal.addEventListener("abort", stopInput, { once: true });
-    let frame = Buffer.alloc(0);
-    let size = 0;
     try {
       if (this.#closed) throw this.#closed;
-      for await (const chunk of input) {
-        const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-        let offset = 0;
-        while (offset < buffer.length) {
-          const newline = buffer.indexOf(10, offset);
-          const end = newline < 0 ? buffer.length : newline;
-          const slice = buffer.subarray(offset, end);
-          const nextSize = size + slice.length;
-          if (nextSize > this.#maxFrame) throw new Error("Transport input frame limit exceeded");
-          // One geometrically grown buffer bounds both bytes and fragment metadata.
-          // Do not retain incoming pooled slabs or millions of tiny Buffer objects.
-          if (nextSize > frame.length) {
-            const next = Buffer.allocUnsafe(Math.min(this.#maxFrame, Math.max(nextSize, frame.length * 2, 4096)));
-            frame.copy(next, 0, 0, size);
-            frame = next;
-          }
-          slice.copy(frame, size);
-          size = nextSize;
-          if (newline < 0) break;
-          const line = frame.subarray(0, size).toString("utf8").trim();
-          frame = Buffer.alloc(0);
-          size = 0;
-          if (line) await this.#dispatchLine(line);
-          offset = end + 1;
-        }
-      }
-      if (size) {
-        const line = frame.subarray(0, size).toString("utf8").trim();
-        if (line) await this.#dispatchLine(line);
-      }
+      for await (const line of readFrames(input, this.#maxFrame)) await this.#dispatchLine(line);
       this.#inputEnded = true;
       for (const id of this.#pending.keys()) this.#settle(id, new Error("Transport input ended"));
       await this.#waitFor(Promise.all(this.#active));

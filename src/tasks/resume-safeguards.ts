@@ -106,39 +106,36 @@ async function decorate(sessions: SessionInfo[]): Promise<SessionInfo[]> {
   });
 }
 
-let installs = 0;
-let originalList: typeof SessionManager.list | undefined;
-let originalListAll: typeof SessionManager.listAll | undefined;
-let listAdapter: typeof SessionManager.list | undefined;
-let listAllAdapter: typeof SessionManager.listAll | undefined;
+// One method patch is shared by all active TUI session directories. Captured
+// methods stay alive in closures even if another extension wraps our adapters.
+let restorePickerMethods: (() => void) | undefined;
 function installPickerAdapter(root: string): () => void {
   const key = resolve(root);
-  roots.set(key, (roots.get(key) ?? 0) + 1);
-  installs++;
-  if (installs === 1) {
+  if (roots.size === 0) {
     const capturedList = SessionManager.list;
     const capturedListAll = SessionManager.listAll;
-    originalList = capturedList;
-    originalListAll = capturedListAll;
-    listAdapter = (async (...args: any[]) =>
+    const listAdapter = (async (...args: any[]) =>
       decorate(await (capturedList as any).apply(SessionManager, args))) as typeof SessionManager.list;
-    listAllAdapter = (async (...args: any[]) =>
+    const listAllAdapter = (async (...args: any[]) =>
       decorate(await (capturedListAll as any).apply(SessionManager, args))) as typeof SessionManager.listAll;
-    (SessionManager as any).list = listAdapter;
-    (SessionManager as any).listAll = listAllAdapter;
+    SessionManager.list = listAdapter;
+    SessionManager.listAll = listAllAdapter;
+    restorePickerMethods = () => {
+      if (SessionManager.list === listAdapter) SessionManager.list = capturedList;
+      if (SessionManager.listAll === listAllAdapter) SessionManager.listAll = capturedListAll;
+    };
   }
+  roots.set(key, (roots.get(key) ?? 0) + 1);
   let active = true;
   return () => {
     if (!active) return;
     active = false;
-    installs--;
     const count = (roots.get(key) ?? 1) - 1;
     if (count) roots.set(key, count);
     else roots.delete(key);
-    if (installs === 0 && originalList && originalListAll) {
-      if (SessionManager.list === listAdapter) (SessionManager as any).list = originalList;
-      if (SessionManager.listAll === listAllAdapter) (SessionManager as any).listAll = originalListAll;
-      originalList = originalListAll = listAdapter = listAllAdapter = undefined;
+    if (roots.size === 0) {
+      restorePickerMethods?.();
+      restorePickerMethods = undefined;
     }
   };
 }

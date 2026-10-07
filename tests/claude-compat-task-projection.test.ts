@@ -1,20 +1,20 @@
 import { describe, expect, test } from "bun:test";
-import { TaskManager, type TaskEvent } from "../src/tasks/task-manager";
 import {
   createTaskProjector,
   nativeTaskId,
   nativeTaskMessageId,
-  projectTask,
-  projectLocalTask,
   projectBackgroundRoster,
   projectChildFrame,
+  projectLocalTask,
+  projectTask,
   type TaskLink,
   type TaskObservation,
   type TaskProjectionCheckpoint,
 } from "../src/claude-compat/task-projection";
+import { type TaskEvent, TaskManager } from "../src/tasks/task-manager";
 
 const root = { namespace: "bruv:test-install", sourceSessionId: "/real/root.jsonl", sessionId: "native-root-id" };
-const worker: TaskLink = {
+const worker = {
   root,
   sourceId: "local-owner",
   jobId: "task_actual-job-1",
@@ -26,8 +26,8 @@ const worker: TaskLink = {
   prompt: "Inspect task projection",
   subagentType: "normal",
   spawnDepth: 1,
-};
-const shell: TaskLink = {
+} satisfies TaskLink;
+const shell = {
   root,
   sourceId: "local-owner",
   jobId: "shell_actual-job-2",
@@ -35,7 +35,13 @@ const shell: TaskLink = {
   origin: "bruv",
   kind: "shell",
   parent: worker.parent,
-};
+} satisfies TaskLink;
+const monitor = {
+  ...shell,
+  kind: "monitor",
+  jobId: "actual-watcher",
+  launchToolUseId: "call_actual-monitor",
+} satisfies TaskLink;
 const usage = { total_tokens: 125, tool_uses: 2, duration_ms: 740 };
 function observation(revision: number, patch: Partial<TaskObservation> = {}): TaskObservation {
   return {
@@ -48,18 +54,14 @@ function observation(revision: number, patch: Partial<TaskObservation> = {}): Ta
     ...patch,
   };
 }
-function start(link = worker) {
+function start(link: TaskLink = worker) {
   return projectTask(link, observation(1, { edge: "started" }));
 }
-function finish(link = worker, checkpoint = start(link).checkpoint) {
-  return projectTask(
-    link,
-    observation(3, {
-      status: "completed",
-      terminal: { confirmed: true, summary: "Actual answer", outputFile: "/real/artifact.txt", usage },
-    }),
-    checkpoint,
-  );
+function completion(revision: number): TaskObservation {
+  return observation(revision, {
+    status: "completed",
+    terminal: { confirmed: true, summary: "Actual answer", outputFile: "/real/artifact.txt", usage },
+  });
 }
 
 describe("native Claude SDK 0.3.276 task projection", () => {
@@ -74,7 +76,7 @@ describe("native Claude SDK 0.3.276 task projection", () => {
         description: "Inspecting tasks",
         task_type: "local_agent",
         is_backgrounded: true,
-        prompt: worker.kind === "worker" ? worker.prompt : "",
+        prompt: worker.prompt,
         subagent_type: "normal",
         spawn_depth: 1,
         uuid: nativeTaskMessageId(worker, "source-event-1", "task_started"),
@@ -83,6 +85,52 @@ describe("native Claude SDK 0.3.276 task projection", () => {
     ]);
     expect(result.checkpoint?.phase).toBe("active");
     expect(projectTask(worker, observation(1), result.checkpoint).skipped).toBe("stale");
+  });
+  test("a run starts before its first progress and leaves the previous cursor untouched", () => {
+    const reserved = projectTask(worker, observation(1, { status: "preparing" })).checkpoint!;
+    const original = { ...reserved };
+    const active = projectTask(
+      worker,
+      observation(2, {
+        description: "Now running",
+        isBackgrounded: false,
+        progress: { description: "First tool", usage },
+      }),
+      reserved,
+    );
+    expect(active.frames).toHaveLength(2);
+    expect(active.frames).toMatchObject([{ subtype: "task_started" }, { subtype: "task_progress" }]);
+    expect(active.checkpoint).toEqual({
+      ...reserved,
+      revision: 2,
+      phase: "active",
+      description: "Now running",
+      isBackgrounded: false,
+    });
+    expect(reserved).toEqual(original);
+  });
+  test("fresh ignored observations advance only the revision; duplicates keep the cursor", () => {
+    const active = start().checkpoint!;
+    const unknown = projectTask(
+      worker,
+      observation(2, { status: "unknown", description: "Uncertain", isBackgrounded: false }),
+      active,
+    );
+    expect(unknown).toEqual({ frames: [], skipped: "not-started", checkpoint: { ...active, revision: 2 } });
+    const unconfirmed = projectTask(
+      worker,
+      observation(3, { status: "killed", description: "Stop requested", isBackgrounded: false }),
+      unknown.checkpoint,
+    );
+    expect(unconfirmed).toEqual({ frames: [], skipped: "unconfirmed", checkpoint: { ...active, revision: 3 } });
+    const reconnect = projectTask(
+      { ...worker, runToolUseId: "unproven-resume" },
+      observation(4),
+      unconfirmed.checkpoint,
+    );
+    expect(reconnect).toEqual({ frames: [], skipped: "stale", checkpoint: { ...active, revision: 4 } });
+    expect(projectTask(worker, observation(4), reconnect.checkpoint).checkpoint).toBe(reconnect.checkpoint);
+    expect(active.revision).toBe(1);
   });
   test("progress uses actual measured usage, phase and tools", () => {
     expect(
@@ -122,7 +170,7 @@ describe("native Claude SDK 0.3.276 task projection", () => {
     const stopping = projectTask(worker, observation(2, { status: "stopping" }), started.checkpoint);
     expect(stopping.frames).toEqual([]);
     expect(stopping.checkpoint?.phase).toBe("active");
-    const done = finish(worker, stopping.checkpoint);
+    const done = projectTask(worker, completion(3), stopping.checkpoint);
     expect(done.frames).toEqual([
       {
         type: "system",
@@ -155,7 +203,8 @@ describe("native Claude SDK 0.3.276 task projection", () => {
     expect(projectTask(worker, observation(3, { status: "killed" }), stopping.checkpoint).skipped).toBe("unconfirmed");
   });
   test("only explicit authoritative resume reopens and keeps task identity", () => {
-    const done = finish();
+    const started = start();
+    const done = projectTask(worker, completion(3), started.checkpoint);
     const resumedLink = { ...worker, runToolUseId: "call_real-resume" };
     const resumed = projectTask(resumedLink, observation(4, { edge: "resumed" }), done.checkpoint);
     expect(resumed.frames[0]).toMatchObject({
@@ -164,20 +213,21 @@ describe("native Claude SDK 0.3.276 task projection", () => {
       tool_use_id: "call_real-resume",
     });
     expect(resumed.checkpoint?.phase).toBe("active");
-    if (resumedLink.kind === "worker")
-      expect(
-        projectChildFrame(resumedLink, {
-          sourceSessionId: resumedLink.child.sourceSessionId,
-          eventId: "real-resumed-child-output",
-          body: { type: "user", message: { role: "user", content: "Actual tool result" } },
-        })?.parent_tool_use_id,
-      ).toBe(worker.launchToolUseId);
+    expect(
+      projectChildFrame(resumedLink, {
+        sourceSessionId: resumedLink.child.sourceSessionId,
+        eventId: "real-resumed-child-output",
+        body: { type: "user", message: { role: "user", content: "Actual tool result" } },
+      })?.parent_tool_use_id,
+    ).toBe(worker.launchToolUseId);
     expect(projectTask(worker, observation(5), resumed.checkpoint).skipped).toBe("stale");
     expect(projectTask(resumedLink, observation(2, { edge: "resumed" }), done.checkpoint).skipped).toBe("stale");
   });
   test("preparing, unknown and orphan terminals never invent a running child", () => {
     for (const status of ["preparing", "unknown", "completed"] as const)
       expect(projectTask(worker, observation(1, { status })).frames).toEqual([]);
+  });
+  test("unknown state retains the last observed background membership", () => {
     const started = start(shell);
     const unknown = projectTask(
       shell,
@@ -190,26 +240,26 @@ describe("native Claude SDK 0.3.276 task projection", () => {
       projectBackgroundRoster(root, "snapshot-2", [{ link: shell, checkpoint: unknown.checkpoint }]).tasks,
     ).toHaveLength(1);
   });
-  test("shells and genuine monitors are opaque; roster REPLACE is full and accurate", () => {
-    const monitor: TaskLink = {
-      ...shell,
-      kind: "monitor",
-      jobId: "actual-watcher",
-      launchToolUseId: "call_actual-monitor",
-    };
-    expect(start(shell).frames[0]).toMatchObject({ task_type: "local_bash" });
+  test("shells and genuine monitors start as opaque local bash tasks", () => {
+    const startedShell = start(shell);
+    expect(startedShell.frames[0]).toMatchObject({ task_type: "local_bash" });
     expect(start(monitor).frames[0]).toMatchObject({ task_type: "local_bash", tool_use_id: monitor.launchToolUseId });
     expect(
       projectTask(
         shell,
         observation(2, { progress: { description: "stdout is not a worker", usage } }),
-        start(shell).checkpoint,
+        startedShell.checkpoint,
       ).frames,
     ).toEqual([]);
+  });
+  test("roster REPLACE lists background opaque jobs, then removes confirmed exits", () => {
+    const startedWorker = start(worker);
+    const startedShell = start(shell);
+    const startedMonitor = start(monitor);
     const roster = projectBackgroundRoster(root, "roster-real-1", [
-      { link: worker, checkpoint: start().checkpoint },
-      { link: shell, checkpoint: start(shell).checkpoint },
-      { link: monitor, checkpoint: start(monitor).checkpoint, ambient: true },
+      { link: worker, checkpoint: startedWorker.checkpoint },
+      { link: shell, checkpoint: startedShell.checkpoint },
+      { link: monitor, checkpoint: startedMonitor.checkpoint, ambient: true },
     ]);
     expect(roster).toMatchObject({ type: "system", subtype: "background_tasks_changed", session_id: root.sessionId });
     expect(roster.tasks).toHaveLength(2);
@@ -219,9 +269,17 @@ describe("native Claude SDK 0.3.276 task projection", () => {
       description: "Inspecting tasks",
       ambient: true,
     });
+    const finishedShell = projectTask(shell, completion(3), startedShell.checkpoint);
+    const finishedMonitor = projectTask(monitor, completion(3), startedMonitor.checkpoint);
     expect(
-      projectBackgroundRoster(root, "roster-real-2", [{ link: shell, checkpoint: finish(shell).checkpoint }]).tasks,
+      projectBackgroundRoster(root, "roster-real-2", [
+        { link: worker, checkpoint: startedWorker.checkpoint },
+        { link: shell, checkpoint: finishedShell.checkpoint },
+        { link: monitor, checkpoint: finishedMonitor.checkpoint, ambient: true },
+      ]).tasks,
     ).toEqual([]);
+  });
+  test("backgrounding a foreground shell updates membership without a second start", () => {
     const foreground = projectTask(shell, observation(1, { isBackgrounded: false }));
     expect(
       projectBackgroundRoster(root, "foreground", [{ link: shell, checkpoint: foreground.checkpoint }]).tasks,
@@ -246,7 +304,6 @@ describe("native Claude SDK 0.3.276 task projection", () => {
     expect(() => projectTask(variants[0], observation(2), start().checkpoint)).toThrow("another job/link");
   });
   test("nested real parent link and child output have explicit causal attribution", () => {
-    if (worker.kind !== "worker") throw new Error("fixture");
     const nested: TaskLink = {
       ...worker,
       jobId: "actual-nested-job",

@@ -301,6 +301,66 @@ describe("live playback scheduler", () => {
     expect(h.sent.map((s) => s.epoch)).toEqual([0, 1]);
     expect(h.sent[1]?.frame).toEqual(Buffer.alloc(FRAME_BYTES, 2));
   });
+  test("pending budget excludes the in-flight frame; copied tails keep their turn boundary", async () => {
+    let release!: () => void;
+    const h = harness({
+      maxPendingBytes: FRAME_BYTES,
+      send: () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    });
+    h.scheduler.start();
+    h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES, 1), 0);
+    expect(h.scheduler.state).toMatchObject({ pendingBytes: 0, inFlight: true });
+    const tail = Buffer.alloc(100, 2);
+    expect(h.scheduler.enqueue(tail, 0)).toBe(true);
+    h.scheduler.turnComplete(0);
+    tail.fill(9);
+    expect(h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES - 100, 3), 0)).toBe(true);
+    h.scheduler.turnComplete(0);
+    expect(h.scheduler.state.pendingBytes).toBe(FRAME_BYTES);
+    release();
+    await tick();
+    expect(h.sent[1]?.frame).toEqual(Buffer.alloc(100, 2));
+    expect(h.scheduler.state.pendingBytes).toBe(FRAME_BYTES - 100);
+    release();
+    await tick();
+    expect(h.sent[2]?.frame).toEqual(Buffer.alloc(FRAME_BYTES - 100, 3));
+    expect(h.scheduler.state.pendingBytes).toBe(0);
+    h.scheduler.close();
+    release();
+    await tick();
+  });
+  test("successful old write holds the pipe slot through flush, but cannot credit the new epoch", async () => {
+    let releaseOld!: () => void;
+    const h = harness({
+      send: (_frame, epoch) =>
+        epoch === 0
+          ? new Promise((resolve) => {
+              releaseOld = resolve;
+            })
+          : Promise.resolve(),
+    });
+    h.scheduler.start();
+    h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES), 0);
+    h.clock.advance(100);
+    h.scheduler.interrupt(1);
+    h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES), 1);
+    await tick(); // New flush is accepted, but the old pipe write still owns the slot.
+    expect(h.flushed).toEqual([1]);
+    expect(h.sent).toHaveLength(1);
+    expect(h.scheduler.state).toMatchObject({ pendingBytes: FRAME_BYTES, inFlight: true, epoch: 1 });
+    releaseOld();
+    await tick();
+    expect(h.sent.map((s) => s.epoch)).toEqual([0, 1]);
+    expect(h.scheduler.playedMs).toBe(0);
+    h.clock.advance(10);
+    expect(h.scheduler.playedMs).toBe(10);
+    h.scheduler.close();
+    h.clock.advance(100);
+    expect(h.scheduler.playedMs).toBe(10);
+  });
   test("pending budget is large enough for long replies; exceeded bound reports once, no silent drop", () => {
     const h = harness();
     expect(h.scheduler.enqueue(Buffer.alloc(MAX_PENDING_BYTES), 0)).toBe(true);

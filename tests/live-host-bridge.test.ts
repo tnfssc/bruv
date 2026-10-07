@@ -235,6 +235,31 @@ describe("Live host authority", () => {
     off();
     f.bridge.close();
   });
+  test("native observations remember active IDs, not progress states, and end with the last listener", async () => {
+    const f = fixture();
+    const events: unknown[] = [];
+    let off = f.bridge.subscribe((event) => events.push(event));
+    f.native("pending");
+    await f.bridge.refreshJobs();
+    f.native("running");
+    await f.bridge.refreshJobs();
+    expect(events).toEqual([]);
+    f.native("completed");
+    await f.bridge.refreshJobs();
+    await f.bridge.refreshJobs();
+    expect(events).toEqual([{ type: "completed", id: "native-scoped", status: "completed" }]);
+
+    events.length = 0;
+    f.native("running");
+    await f.bridge.refreshJobs();
+    off();
+    off = f.bridge.subscribe((event) => events.push(event));
+    f.native("completed");
+    await f.bridge.refreshJobs();
+    expect(events).toEqual([]);
+    off();
+    f.bridge.close();
+  });
   test("handoff quotes scoped received text and provides complete branch export beyond 24k", async () => {
     const f = fixture();
     const entry = (speaker: string, text: string, status = "final") => ({

@@ -43,6 +43,95 @@ function renderQuestion(question: Question, id = question.id): string {
     .join(" ");
 }
 
+/** Describe saved intent separately from delivery; a remote observation is not a human reply. */
+function renderAnswerDelivery(question: Question, displayId: string): string | undefined {
+  if (question.status !== "answered") return undefined;
+  if (question.remote && !question.answer) return "Remote ledger says answered; no local human reply inferred.";
+  switch (question.delivery) {
+    case "dispatching":
+      return question.remote
+        ? "Human answer saved · remote delivery uncertain; reconnect to reconcile. No duplicate answer will be sent."
+        : "Answer saved · delivery uncertain; check parent chat";
+    case "delivered":
+      return question.remote ? "Human answer delivered to pinned remote owner" : "Answer sent to parent";
+    case "queued":
+      return "Answer saved · waiting for parent";
+    default:
+      return "Answer saved · /questions resume " + displayId;
+  }
+}
+
+function renderQuestionDetail(question: Question, displayId: string): string {
+  return [
+    renderQuestion(question, displayId),
+    question.requester && "Requester: " + question.requester,
+    question.remote &&
+      "Remote ledger: " +
+        question.remote.host +
+        " · " +
+        question.remote.taskId +
+        " · " +
+        question.remote.id +
+        " v" +
+        question.remote.version,
+    question.reason && "Why: " + question.reason,
+    question.choices?.length &&
+      "Choices: " +
+        question.choices.join(" | ") +
+        (question.allowFreeText === false ? " (pick one)" : " (or your own answer)"),
+    question.blocked &&
+      "Blocked follow-up: " +
+        [question.blocked.foreground ? "parent" : "", ...(question.blocked.taskIds ?? [])].filter(Boolean).join(", ") +
+        " — " +
+        question.blocked.checkpoint,
+    question.answer && "Answer: " + question.answer,
+    question.status === "cancelled" &&
+      question.blocked &&
+      "Cancelled; follow-up needs a new plan, not a guessed answer.",
+    renderAnswerDelivery(question, displayId),
+    question.resolutionReason && "Closed: " + question.resolutionReason,
+    question.taskIds?.length &&
+      "Tasks: " +
+        question.taskIds.join(", ") +
+        (question.remote
+          ? ". Reply is human-only through the pinned remote ledger."
+          : ". Child in-place replies are not supported."),
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function pick(
+  ctx: ExtensionContext,
+  title: string,
+  items: { value: string; label: string; description?: string }[],
+): Promise<string | undefined> {
+  return ctx.ui.custom<string | undefined>(
+    (tui, theme, keys, done) =>
+      new QuestionPicker(
+        title,
+        items,
+        theme,
+        keys,
+        done,
+        () => tui.requestRender(),
+        () => tui.terminal.rows,
+      ),
+  );
+}
+
+/** Escape returns to the inbox; an empty or cancelled editor stays on this question. */
+async function promptAnswer(ctx: ExtensionContext, question: Question): Promise<string | undefined> {
+  const options = (question.choices ?? []).map((choice, index) => ({ value: String(index), label: choice }));
+  if (question.allowFreeText !== false) options.push({ value: "write", label: "Write an answer…" });
+  while (true) {
+    const selected = options.length ? await pick(ctx, question.text, options) : undefined;
+    if (selected === undefined) return undefined;
+    const answer = selected === "write" ? await ctx.ui.editor(question.text) : question.choices?.[Number(selected)];
+    if (answer?.trim()) return answer.trim();
+  }
+}
+
 /** No modal, focus transfer or repeated notification on background changes. */
 export function registerQuestions(
   pi: ExtensionAPI,
@@ -122,20 +211,8 @@ export function registerQuestions(
         ctx.ui.notify("No unanswered questions", "info");
         return;
       }
-      const pick = async (title: string, items: { value: string; label: string; description?: string }[]) =>
-        ctx.ui.custom<string | undefined>(
-          (tui, theme, keys, done) =>
-            new QuestionPicker(
-              title,
-              items,
-              theme,
-              keys,
-              done,
-              () => tui.requestRender(),
-              () => tui.terminal.rows,
-            ),
-        );
       const id = await pick(
+        ctx,
         "Questions · " + pending.length + " unanswered",
         pending.map((q) => ({
           value: q.id,
@@ -144,24 +221,17 @@ export function registerQuestions(
         })),
       );
       if (!id) return;
-      const q = pending.find((item) => item.id === id)!;
-      const text = q.text;
-      const options = (q.choices ?? []).map((choice, index) => ({ value: String(index), label: choice }));
-      if (q.allowFreeText !== false) options.push({ value: "write", label: "Write an answer…" });
-      while (true) {
-        const selected = options.length ? await pick(text, options) : undefined;
-        if (selected === undefined) break; // Escape from choices returns to the inbox.
-        const answer = selected === "write" ? await ctx.ui.editor(text) : q.choices?.[Number(selected)];
-        if (!answer?.trim()) continue; // Empty/cancelled editor returns to this question's choices.
-        await service.handle("questions.answer", {
-          id: q.id,
-          answer: answer.trim(),
-          owner: q.owner,
-          version: q.version,
-        });
-        await refresh();
-        break;
-      }
+      const question = pending.find((item) => item.id === id)!;
+      const answer = await promptAnswer(ctx, question);
+      if (answer === undefined) continue;
+      // Submit the displayed snapshot. The runtime checks its owner/version before accepting a reply.
+      await service.handle("questions.answer", {
+        id: question.id,
+        answer,
+        owner: question.owner,
+        version: question.version,
+      });
+      await refresh();
     }
   };
 
@@ -219,61 +289,7 @@ export function registerQuestions(
           if (!question) throw new Error("Question not found: " + id);
           const all = records(await service.handle("questions.list", {}));
           const displayId = shortId(question, all);
-          ctx.ui.notify(
-            [
-              renderQuestion(question, displayId),
-              question.requester && "Requester: " + question.requester,
-              question.remote &&
-                "Remote ledger: " +
-                  question.remote.host +
-                  " · " +
-                  question.remote.taskId +
-                  " · " +
-                  question.remote.id +
-                  " v" +
-                  question.remote.version,
-              question.reason && "Why: " + question.reason,
-              question.choices?.length &&
-                "Choices: " +
-                  question.choices.join(" | ") +
-                  (question.allowFreeText === false ? " (pick one)" : " (or your own answer)"),
-              question.blocked &&
-                "Blocked follow-up: " +
-                  [question.blocked.foreground ? "parent" : "", ...(question.blocked.taskIds ?? [])]
-                    .filter(Boolean)
-                    .join(", ") +
-                  " — " +
-                  question.blocked.checkpoint,
-              question.answer && "Answer: " + question.answer,
-              question.status === "cancelled" &&
-                question.blocked &&
-                "Cancelled; follow-up needs a new plan, not a guessed answer.",
-              question.status === "answered" &&
-                (question.remote && !question.answer
-                  ? "Remote ledger says answered; no local human reply inferred."
-                  : question.delivery === "dispatching"
-                    ? question.remote
-                      ? "Human answer saved · remote delivery uncertain; reconnect to reconcile. No duplicate answer will be sent."
-                      : "Answer saved · delivery uncertain; check parent chat"
-                    : question.delivery === "delivered"
-                      ? question.remote
-                        ? "Human answer delivered to pinned remote owner"
-                        : "Answer sent to parent"
-                      : question.delivery === "queued"
-                        ? "Answer saved · waiting for parent"
-                        : "Answer saved · /questions resume " + displayId),
-              question.resolutionReason && "Closed: " + question.resolutionReason,
-              question.taskIds?.length &&
-                "Tasks: " +
-                  question.taskIds.join(", ") +
-                  (question.remote
-                    ? ". Reply is human-only through the pinned remote ledger."
-                    : ". Child in-place replies are not supported."),
-            ]
-              .filter(Boolean)
-              .join("\n"),
-            "info",
-          );
+          ctx.ui.notify(renderQuestionDetail(question, displayId), "info");
         } else if (verb === "answer") {
           const answer =
             args

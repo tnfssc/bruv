@@ -134,3 +134,5 @@ Frozenfixture task_4e5800d8 NO CHANGE NEEDED a97a2d22,exacthistoricSHA preserved
 Toolingfixture tests task_900a3c32 ACCEPT0e9728fc:readableprograms/controlledpartialline/protocolfields,retained trust/prompt/malformed/cleanup.8/101plus4targetedmutationsfail;tsc/Biomepass. Unseededsecret/RPCargv-env-nosession/earlyexit gaps retained;loopback not shippedbinary/live.
 
 Isolation REJECT resolved only after freshworker21c70b4e and freshjudgecfbac1d2 ACCEPT2ff5cc4e. Judge independently reproduces oldrole falsepass and repairedTUI bypassfailure under parentnormal,plusdirectchildfailure/restoredsuccess. Full explicit-env/cleanup patch integrated;7/36tsc/Biome,scope unchanged. Priorrejection retained.
+
+Parent checkpoint db885fce joined after clean merge-tree6020cc0e;107parentpaths since common65e0d218,no area-focus overlap. All67acceptedblobs verifiedunchanged aftermerge. Otherarea source remains parent-owned;finalcombinedbinary proof will rebuild currentcommon code.5remainingfocusrows explicit.

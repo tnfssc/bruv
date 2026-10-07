@@ -46,12 +46,29 @@
         "launchBase": "4d3d4b3597528306318fc13a7d220f6300fa6b0d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7e221830",
         "branch": "bruv/primary-native-live-linux-capturegate.h-7e221830",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "d3ba046d7bdca2cbe0c008105abccf0278cd4a4b"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "primary running"
+      "judgeRounds": [
+        {
+          "id": "task_5e692e3f",
+          "status": "complete",
+          "candidate": "d3ba046d7bdca2cbe0c008105abccf0278cd4a4b",
+          "base": "4d3d4b3597528306318fc13a7d220f6300fa6b0d",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Focused acquisition policy leaves Pulse timing/reset lifetime in main; set resets frontier, arm converts16k latency to bytes, accepts visibly rejects backlog/straddling buffers. Release delivery epoch separate in JS.",
+          "checks": "Independent28 Bun pass/155 assertions; C++ gate ASan/UBSan exit0; diff pass, no runtime/device proof.",
+          "acceptedBlobs": {
+            "native/live-linux/CaptureGate.h": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e"
+          }
+        }
+      ],
+      "acceptedBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged acquisition frontier predicate: rejects unarmed/invalid origin/pre-frontier; main.cpp owns Pulse revision/cancellation/backlog resets, JS stale epoch rejection separate. Wrappers would add indirection.",
+      "checks": "28 Bun pass/155 assertions; C++ gate ASan/UBSan pass. No virtual/native helper/provider/macOS proof."
     },
     {
       "focus": "native/live-linux/main.cpp",
@@ -93,26 +110,93 @@
     {
       "focus": "native/live-linux/tests/backpressure.py",
       "initialBlob": "926018512888ed0d7b08002be97e2179a2089561",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_b65be047",
+        "launchBase": "1ece2913a7f8e25b5ccf2c6e4e8cf50a258ab9a9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_b65be047",
+        "branch": "bruv/primary-native-live-linux-tests-backpres-b65be047",
+        "status": "candidate ready",
+        "commit": "4ba1f1c1b0757f60bedd75076bd461397f6a112c"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_c68d41f2",
+          "status": "complete",
+          "candidate": "4ba1f1c1b0757f60bedd75076bd461397f6a112c",
+          "base": "1ece2913a7f8e25b5ccf2c6e4e8cf50a258ab9a9",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Preloaded input removes daemonproducer/sharedexception/blockedstdin lifetime;stdout remains real unread pipe. Independent3 instrumented runs exit74 with65269/65536bytes pending beforeEOF;deadline/diagnostic intact. Reproduced3 leaked baseline handles, candidate cleanup/reap explicit.",
+          "checks": "Independent nativebuild/backpressure/no-device protocol;silentdrop rejected,blocking killed/reaped5.001sec;diffpass. Standalone fixture no maintained caller found;no exhaustive framing/device proof.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/backpressure.py": "df54145e5bb23b98a0ba70decb49efa6f767a01c"
+          }
+        }
+      ],
+      "acceptedBlob": "df54145e5bb23b98a0ba70decb49efa6f767a01c",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [],
+      "readingResult": "Preloaded command replay file removes producer thread; unread stdout launch/exit74 deadline/diagnostic and failure kill/reap/close visible. Explicit baseline openpipe leak fixed by owned handle cleanup.",
+      "checks": "Native build/backpressure/no-device protocol pass;10 instrumented realhelper runs;silentdrop/wrongstatus/missingdiagnostic/blocking mutations rejected,blocking killed/reaped5.001sec. No device/provider/macOS/fullgate."
     },
     {
       "focus": "native/live-linux/tests/capture-gate.cpp",
       "initialBlob": "54545816cf0085d09b852dfad919fc9dc7545d57",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_3f8cfc8c",
+        "launchBase": "f473c8e5a1c4377742f0b65c27d06782d456f7d1",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_3f8cfc8c",
+        "branch": "bruv/primary-native-live-linux-tests-capture--3f8cfc8c",
+        "status": "candidate ready",
+        "commit": "60884cc93465a0bd217574abdb6e148db81dfaf6"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_794b83a8",
+          "status": "complete",
+          "candidate": "60884cc93465a0bd217574abdb6e148db81dfaf6",
+          "base": "f473c8e5a1c4377742f0b65c27d06782d456f7d1",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Local continuous/backlog/reopen fixtures remove accidental shared history; reopening keeps complete temporal journey with9000 acceptance/rejection; first-hold units/boundaries remain together. All prior assertions retained.",
+          "checks": "Independent4 Bun tests24 assertions,strictGCC,ClangASanUBSan,diff pass;no Pulse/device runtime.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/capture-gate.cpp": "6cb2911f8dbc46de4ea293fed9d12f8b64f0730d"
+          }
+        }
+      ],
+      "acceptedBlob": "6cb2911f8dbc46de4ea293fed9d12f8b64f0730d",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [],
+      "readingResult": "Three local gate fixtures isolate continuous/first hold/reopen; reopening proves index9000 accepted before mute then rejected until new snapshot and against new frontier, units explicit. Prior assertions retained.",
+      "checks": "4 Bun tests/24 assertions; strict GCC and ClangASan/UBSan pass; diff clean. No Pulse/device/provider/macOS runtime."
     },
     {
       "focus": "native/live-linux/tests/capture-protocol.py",
       "initialBlob": "86a6f83cd562f0ab9f7e77bc7257f451c540a4c1",
-      "primary": null,
-      "judgeRounds": [],
+      "primary": {
+        "id": "task_c8643d8b",
+        "launchBase": "6f82665bbbe90a15958576f541f5be68217232bf",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c8643d8b",
+        "branch": "bruv/primary-native-live-linux-tests-capture--c8643d8b",
+        "status": "candidate ready",
+        "commit": "3c71d4a280d89be9b6597d09af48a40a376451f8"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_c412b125",
+          "status": "running",
+          "candidate": "3c71d4a280d89be9b6597d09af48a40a376451f8",
+          "base": "6f82665bbbe90a15958576f541f5be68217232bf"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "judge running",
+      "relatedPaths": [
+        "native/live-linux/tests/test_capture_protocol.py"
+      ],
+      "readingResult": "Scoped session owns framing/shutdown and one validation path;scenario startup/hold/suspendedclient backlog/freshhold/stop visible. Baseline mutedrain accepted newepoch/malformedPCM;explicit regressions reject both while retaining oldepoch settling allowance.",
+      "checks": "27 Python tests+4 capturegate tests/helper build;launch+3candidate privatehardwarefree graph pass. Local PipeWirePulse not CI PulseAudio;nulltraffic not acquisitionorigin proof, nativefrontier tests supply it."
     },
     {
       "focus": "native/live-linux/tests/protocol.py",
@@ -139,10 +223,24 @@
             "native/live-linux/tests/protocol.py": "fe2b4525179d2ccfaadb9cc44b39b62f6c576473",
             "native/live-linux/tests/test_protocol.py": "79ed8c2697a35f9161237de1c3f718b2a4ce09fe"
           }
+        },
+        {
+          "id": "task_ab2edd5f",
+          "status": "complete",
+          "candidate": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+          "base": "efb1edd066ae3fe1b59334ff01cf15f14fc9b919",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Graph harness owns private servers/env/teardown, virtual owns2 modules with one cleanup owner and explicit release; protocol distinguishes queue observation from ack and exposes capture/drain/restart. Existing graph owner reused, default acceptance unchanged.",
+          "checks": "Independent17 regressions, unchanged Linux helper build/no-device smoke/3 consecutive private-graph smokes pass; desktop modules identical;failure23 preserved and owned processes/root gone;empty command/default acceptance tested;syntax/diff pass. Baseline missing played reproduced;500ms stimulus fixes100ms-throttle issue without weakening capture/drain/restart/removal.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/protocol.py": "3c2ef6bc49b9c8e2025132ffdab1877a82effa81"
+          },
+          "round": "related combined virtual fixture revision"
         }
       ],
-      "acceptedBlob": "fe2b4525179d2ccfaadb9cc44b39b62f6c576473",
-      "integration": "integrated accepted exact primary candidate",
+      "acceptedBlob": "3c2ef6bc49b9c8e2025132ffdab1877a82effa81",
+      "integration": "integrated related revision with fresh combined actual-code judgment",
       "relatedPatchJudgment": {
         "judgeId": "task_13282f24",
         "verdict": "ACCEPT",
@@ -157,10 +255,37 @@
     {
       "focus": "native/live-linux/tests/source-removal.py",
       "initialBlob": "28a1a9d47228fc945f5837efd31a1b0c49a31dff",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_ba46a6b0",
+        "launchBase": "a9961ef20926e291fd3c4ff04571d0e0906b25ae",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_ba46a6b0",
+        "branch": "bruv/primary-native-live-linux-tests-source-r-ba46a6b0",
+        "status": "candidate ready",
+        "commit": "bebc961f249c35103aa08d0bebf496548844c8ad"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_46031fcf",
+          "status": "complete",
+          "candidate": "bebc961f249c35103aa08d0bebf496548844c8ad",
+          "base": "a9961ef20926e291fd3c4ff04571d0e0906b25ae",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "RemovalHelper owns process/framing/shutdown;scenario exposes checkedunload/timedstop/stopped;deviceerror/capture/silence/EOF cannot substitute ack. virtual retains moduleownership onfailure. Independent partialEOF rejection2.012s->.010s explicit fix,never accepts incomplete evidence.",
+          "checks": "24 focusedPython incl7newtests pass/diffclean;no independent build/privategraph rerun/physicalunplug/macOS/provider/fullgate;virtualreroutingpossible.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/source-removal.py": "5d707531d9753b02b575997c378f13517fc8370d",
+            "native/live-linux/tests/test_source_removal.py": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32"
+          }
+        }
+      ],
+      "acceptedBlob": "5d707531d9753b02b575997c378f13517fc8370d",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [
+        "native/live-linux/tests/test_source_removal.py"
+      ],
+      "readingResult": "RemovalHelper owns framing/process lifetime;scenario visibly hello/start/ready/checked unload/timedstop/stopped;device errors not acknowledgment. Explicit partial-frame EOF busy wait fixed.",
+      "checks": "24 focused tests/native build/private virtual graph protocol-removal pass;partialEOF baseline2.053sec vs candidate.059sec,both reject missing shutdown. Virtual may reroute,no physical/device/macOS/provider/fullgate."
     },
     {
       "focus": "native/live-linux/tests/virtual.sh",
@@ -170,12 +295,38 @@
         "launchBase": "efb1edd066ae3fe1b59334ff01cf15f14fc9b919",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_48ae14aa",
         "branch": "bruv/primary-native-live-linux-tests-virtual.-48ae14aa",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "primary running"
+      "judgeRounds": [
+        {
+          "id": "task_ab2edd5f",
+          "status": "complete",
+          "candidate": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+          "base": "efb1edd066ae3fe1b59334ff01cf15f14fc9b919",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Graph harness owns private servers/env/teardown, virtual owns2 modules with one cleanup owner and explicit release; protocol distinguishes queue observation from ack and exposes capture/drain/restart. Existing graph owner reused, default acceptance unchanged.",
+          "checks": "Independent17 regressions, unchanged Linux helper build/no-device smoke/3 consecutive private-graph smokes pass; desktop modules identical;failure23 preserved and owned processes/root gone;empty command/default acceptance tested;syntax/diff pass. Baseline missing played reproduced;500ms stimulus fixes100ms-throttle issue without weakening capture/drain/restart/removal.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/virtual.sh": "86e0f56798547d704db912eab2534a2161c93d0e",
+            "native/live-linux/tests/protocol.py": "3c2ef6bc49b9c8e2025132ffdab1877a82effa81",
+            "native/live-linux/tests/test_protocol.py": "533dc3e1828e0862e5e14e10876dc22abdaec999",
+            "native/live-linux/tests/test_virtual.py": "293dec5887c1ff795c2f8e8ab7536e64babaed99",
+            "scripts/live-isolated-audio.sh": "f7c0576052f505a18df2c1e2be234a8b54025af5"
+          }
+        }
+      ],
+      "acceptedBlob": "86e0f56798547d704db912eab2534a2161c93d0e",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [
+        "native/live-linux/tests/protocol.py",
+        "native/live-linux/tests/test_protocol.py",
+        "native/live-linux/tests/test_virtual.py",
+        "scripts/live-isolated-audio.sh"
+      ],
+      "readingResult": "Candidate makes virtual graph ownership private rather than touching desktop graph; uses existing isolated graph harness. Explicit fixture fix:20ms playback can finish within100ms report throttle;500ms ensures positive report while preserving nonzero capture,drain,restart,source-removal.",
+      "checks": "3 consecutive real virtual smokes pass;17 regressions; desktop modules unchanged; failure status23 preserved and owned processes/dir removed; syntax/diff pass. No physical/macOS/provider proof."
     },
     {
       "focus": "native/live/AudioCore.c",
@@ -220,20 +371,61 @@
         "launchBase": "b4a44ed5445f1339bd884d47ffc3681cce5348fc",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_db37eb3b",
         "branch": "bruv/primary-native-live-audiocore.h-db37eb3b",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "0e0c7d766c65f4cbfbfb46b973946cc6217c9e65"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "primary running"
+      "judgeRounds": [
+        {
+          "id": "task_8ae63e66",
+          "status": "complete",
+          "candidate": "0e0c7d766c65f4cbfbfb46b973946cc6217c9e65",
+          "base": "b4a44ed5445f1339bd884d47ffc3681cce5348fc",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Opaque API operations cleanly divide whole playback admission/generation/render and capture acquisition tagging/queue storage/resampling; convenience wrappers genuinely used; hardware acknowledgment remains Swift.",
+          "checks": "Independent3 strict ClangASanUBSan C regressions/zero waveform errors;21 Bun tests147 assertions;diff pass. No macOS/device proof.",
+          "acceptedBlobs": {
+            "native/live/AudioCore.h": "e2d8f07794f66272af89f64c69f86bee4ee70aee"
+          }
+        }
+      ],
+      "acceptedBlob": "e2d8f07794f66272af89f64c69f86bee4ee70aee",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged opaque core API exposes direct admission/generation/render operations; capture origin tags preserved through ring and validated before resampling; wrappers genuinely used.",
+      "checks": "3 C ASan/UBSan regressions and19 Bun tests pass; no macOS/device/provider proof."
     },
     {
       "focus": "native/live/Info.plist",
       "initialBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_68f2d62b",
+        "launchBase": "06e32904306803bcb25ea542d1e3676a54d234cb",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_68f2d62b",
+        "branch": "bruv/primary-native-live-info.plist-68f2d62b",
+        "status": "candidate ready",
+        "commit": "439444f649249259125c548e41f1a345977de91f"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_9de91bbe",
+          "status": "complete",
+          "candidate": "439444f649249259125c548e41f1a345977de91f",
+          "base": "06e32904306803bcb25ea542d1e3676a54d234cb",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Three native metadata entries directly serve Mach-O embedding and permission identity; actual Swift runtime owns consent, no tangled responsibility or useful extraction.",
+          "checks": "Independent exact plist dictionary/shell syntax and13 Bun tests120 assertions;no OS consent/macOS/device/provider proof.",
+          "acceptedBlobs": {
+            "native/live/Info.plist": "d027ae3e545619f1628e72bf2c0f0fafdda72718"
+          }
+        }
+      ],
+      "acceptedBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged three-entry metadata has one clear role: native build embeds Mach-O metadata, release embeds bytes, runtime launches helper, Swift owns microphone permission.",
+      "checks": "Exact plist assertions/build-script syntax;13 helper/workflow tests/120 assertions. No macOS permission/device/provider/full gate."
     },
     {
       "focus": "native/live/main.swift",
@@ -275,10 +467,34 @@
     {
       "focus": "native/live/test-capture-gate.c",
       "initialBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_c28913a3",
+        "launchBase": "8226c8524fdfa3f56329b591c7be4efb1843a0ad",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c28913a3",
+        "branch": "bruv/primary-native-live-test-capture-gate.c-c28913a3",
+        "status": "candidate ready",
+        "commit": "1dfc7b232c6ec64fdf89ff41b6c6eda2283baf8c"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_bd041eab",
+          "status": "complete",
+          "candidate": "1dfc7b232c6ec64fdf89ff41b6c6eda2283baf8c",
+          "base": "8226c8524fdfa3f56329b591c7be4efb1843a0ad",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One coherent temporal history intentionally carries queued acquisition tags across mute/reopen; cutoff rejection/acceptance adjacent; intentional gate reject distinct from capture loss. Splitting would erase essential cross-transition proof. Queue semantics not native publication claim.",
+          "checks": "Independent4 Bun tests24 assertions and strictClangASanUBSan pass;no stress/device/provider/macOS proof.",
+          "acceptedBlobs": {
+            "native/live/test-capture-gate.c": "292e509c5754bd29811b8472347afc8ae2e0637f"
+          }
+        }
+      ],
+      "acceptedBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged single temporal scenario purposefully retains queued block tags through mute/reopen transitions; extraction would hide lifetime. Startup-2,epoch0/1 and drop/backpressure distinctions explicit.",
+      "checks": "4 Bun pass/24 assertions;strict ClangASan/UBSan pass;no concurrent stress/macOS/device/provider."
     },
     {
       "focus": "native/live/test-core.c",
@@ -320,26 +536,98 @@
     {
       "focus": "native/live/test-waveform.c",
       "initialBlob": "bb584e0f6042f5e82f7298fb3a84b8e2bcb6e749",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_6cc26443",
+        "launchBase": "e450896fa5f2cc20e2f77eeb06375321e2021a55",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_6cc26443",
+        "branch": "bruv/primary-native-live-test-waveform.c-6cc26443",
+        "status": "candidate ready",
+        "commit": "84e6ee3d013babbac0e8f66c8137ecbeb59312c9"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_0d6645b3",
+          "status": "complete",
+          "candidate": "84e6ee3d013babbac0e8f66c8137ecbeb59312c9",
+          "base": "e450896fa5f2cc20e2f77eeb06375321e2021a55",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Each rendering operation owns core lifetime;958 first-arrival/960 subsequent/final-tail schedule coherent. Main shows fixture/two independent outputs/exact comparison; reference remains separately initialized full-buffer renderer, preserved packetization invariance.",
+          "checks": "Independent baseline/candidate strictClangASanUBSan zero errors;core tests pass;removed lookahead retry makes both reject49 mismatches identically;diff pass.",
+          "acceptedBlobs": {
+            "native/live/test-waveform.c": "7a88474d51cef3259e49ab8897263f9a19811b17"
+          }
+        }
+      ],
+      "acceptedBlob": "7a88474d51cef3259e49ab8897263f9a19811b17",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [],
+      "readingResult": "Contiguous reference and packet rendering each own core lifetime; packet operation exposes958 vs960 first-arrival timing/subsequent packets/final tail; main generates fixture/independent outputs/exact comparison.",
+      "checks": "Baseline/candidate strictASanUBSan zero waveform error;core regressions pass;both reject removed held-tail lookahead mutation;diff clean. No production/macOS/device/provider."
     },
     {
       "focus": "scripts/build-live-helper.sh",
       "initialBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_2ce0dc69",
+        "launchBase": "6f3ada6c721a7a8eb9d9ea091a52bcbadea5174a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_2ce0dc69",
+        "branch": "bruv/primary-scripts-build-live-helper.sh-2ce0dc69",
+        "status": "candidate ready",
+        "commit": "0c9fc2f2baff2c16895b74f6d2a5a75ebe6035ab"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_cdb98bdc",
+          "status": "complete",
+          "candidate": "0c9fc2f2baff2c16895b74f6d2a5a75ebe6035ab",
+          "base": "6f3ada6c721a7a8eb9d9ea091a52bcbadea5174a",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One temp lifetime owns object/executable cleanup; compile/link/selftest precede publication; installer rollback/release embedding/runtime extraction distinct owners. Extraction adds navigation. mv not claimed cross-volume atomic guarantee.",
+          "checks": "Independent syntax+6 fake-tool lifecycle cases;42pass2fail missingdeps/vendor and separate23pass144assertions. No reproduced44pass/nativeMac/signal/cross-volume proof.",
+          "acceptedBlobs": {
+            "scripts/build-live-helper.sh": "bf9a9d9873825675f42392aa331f61bda36097f4"
+          }
+        }
+      ],
+      "acceptedBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged linear temporary compile/link/self-test/publish sequence; install/CI/release/embedding/runtime cleanup distinct responsibilities, extraction adds navigation.",
+      "checks": "Shell syntax;44 focused tests481 assertions;6 fake-tool lifecycle order/failure/cleanup cases. No macOSXcode/device/provider/signal/cross-volume proof."
     },
     {
       "focus": "scripts/build-live-linux-helper.sh",
       "initialBlob": "81989563bcacb3c947843520081648afa4e4b521",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_4761041c",
+        "launchBase": "ccefb31e5026c37a0995e588fc5c2e1d7c3466cf",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_4761041c",
+        "branch": "bruv/primary-scripts-build-live-linux-helper.-4761041c",
+        "status": "candidate ready",
+        "commit": "a840d0db75cf09eeb7b3a0556de30c53e04a5e5d"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_1f20ecb1",
+          "status": "complete",
+          "candidate": "a840d0db75cf09eeb7b3a0556de30c53e04a5e5d",
+          "base": "ccefb31e5026c37a0995e588fc5c2e1d7c3466cf",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Direct repo cwd/Linux/output/compiler operation coherent; CI owns temp graph/protocol cleanup, runtime owns launch, Darwin embedding separate. Linux self-test only buildOK, not device proof.",
+          "checks": "Independent syntax and11 focused tests108 assertions; native build not rerun by judge.",
+          "acceptedBlobs": {
+            "scripts/build-live-linux-helper.sh": "81989563bcacb3c947843520081648afa4e4b521"
+          }
+        }
+      ],
+      "acceptedBlob": "81989563bcacb3c947843520081648afa4e4b521",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged direct dependency flags/output/compiler path; Linux build self-test only reports buildOK, no need to import macOS publication orchestration.",
+      "checks": "Shell syntax/real native build including spaced nested output/self-test/no-device hello-stop pass;11 workflow/platform tests108 assertions. No privatePulse/device/provider/macOS/full gate."
     },
     {
       "focus": "scripts/live-acceptance.ts",
@@ -368,10 +656,42 @@
     {
       "focus": "scripts/live-isolated-audio.sh",
       "initialBlob": "ba92d903223fcee68a9c3a5ce799e4ec695230ab",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_1b8756f7",
+        "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1b8756f7",
+        "branch": "bruv/primary-scripts-live-isolated-audio.sh-1b8756f7",
+        "status": "candidate ready",
+        "commit": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_1a73a583",
+          "status": "complete",
+          "candidate": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3",
+          "base": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Visible allocate/traps/startverify/workload/wait;single ordered PID snapshot for both shutdown stages;inline graph filtering readable. Existing cleanup immediatechildren snapshot not recursive tree or awaited workload before service signal.",
+          "checks": "Independent24 regressions;7 added checks baseline-pass;2 real privategraph smokes emptycleanup/exit23logs;syntax/diff pass,no compiled native/defaultacceptance runtime.",
+          "acceptedBlobs": {
+            "scripts/live-isolated-audio.sh": "056491cb8f7267f2cb0821fb5ccdc7911e0a1822",
+            "native/live-linux/tests/test_isolated_audio.py": "d4faa77a5ddf45b9757af01c9abd91adb076cd6f"
+          }
+        }
+      ],
+      "acceptedBlob": "056491cb8f7267f2cb0821fb5ccdc7911e0a1822",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPatchJudgment": {
+        "judgeId": "task_ab2edd5f",
+        "verdict": "ACCEPT",
+        "blob": "f7c0576052f505a18df2c1e2be234a8b54025af5"
+      },
+      "relatedPaths": [
+        "native/live-linux/tests/test_isolated_audio.py"
+      ],
+      "readingResult": "Entrypoint allocate/traps/start-verify graph/launch-wait visible;cleanup snapshots owned PID list once for both termination stages;readable inline Python graph filtering;default acceptance unchanged.",
+      "checks": "24 native regressions;7 new wrapper checks baseline-pass;3 real private graph smokes emptycleanup/failure statuslogs/native protocol-source-removal;syntax/diff pass. Initial smoke quoting corrected;no repo behavior fix."
     },
     {
       "focus": "scripts/live-onboarding-smoke.ts",
@@ -530,10 +850,34 @@
     {
       "focus": "src/live/config.ts",
       "initialBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_51d6ae66",
+        "launchBase": "575ba3835b85f46d758b9187447c70e161374c54",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_51d6ae66",
+        "branch": "bruv/primary-src-live-config.ts-51d6ae66",
+        "status": "candidate ready",
+        "commit": "fb653ebe559b3b04cd1588452662e7f246ff2249"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_6da0bcc2",
+          "status": "complete",
+          "candidate": "fb653ebe559b3b04cd1588452662e7f246ff2249",
+          "base": "575ba3835b85f46d758b9187447c70e161374c54",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Validation/storage boundary separate from catalogs/credentials/command concurrency/run snapshot/connector consent; ENOENT-only defaults and validate-before-private-temp/rename/cleanup effects visible.",
+          "checks": "Independent5 tests13 assertions plus privatepermissions/invalidsave/corruptload/failedrename target-preservation+cleanup probes. Caller suites dependency-blocked;82 writer passes not reproduced.",
+          "acceptedBlobs": {
+            "src/live/config.ts": "066a823fe085451dad54f693c824013f2a4ffbb5"
+          }
+        }
+      ],
+      "acceptedBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged validate-active-settings/load ENOENT defaults/private-temp atomic-save boundary; credentials/caches/run lifetimes outside.",
+      "checks": "82 tests452 assertions; initial missing assets resolved with standard prepare;no behavior fixes."
     },
     {
       "focus": "src/live/conversation.ts",
@@ -546,34 +890,69 @@
     {
       "focus": "src/live/cost.ts",
       "initialBlob": "14d4bead2ec2e832da60d5816e9cee0b3e40069c",
-      "primary": null,
+      "primary": {
+        "id": "task_2995e9e9",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/credentials.ts",
       "initialBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
-      "primary": null,
-      "judgeRounds": [],
+      "primary": {
+        "id": "task_9203c038",
+        "launchBase": "25f29f5e951dcbef28df99a15eac7cf41debaed0",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_9203c038",
+        "branch": "bruv/primary-src-live-credentials.ts-9203c038",
+        "status": "candidate ready",
+        "commit": "357b3a75677e60ce60bdf341e4988242f2d762fe"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_c817da47",
+          "status": "running",
+          "candidate": "357b3a75677e60ce60bdf341e4988242f2d762fe",
+          "base": "25f29f5e951dcbef28df99a15eac7cf41debaed0"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "judge running",
+      "relatedPaths": [],
+      "readingResult": "Unchanged discovery separate from runtime resolution;import guards descriptor access/rechecks config/locked callback decideswrite;one trycatchfinally owns file descriptor. Extraction addsindirection.",
+      "checks": "107tests580assertions acrosscredential/lifecycle/setup/extension/startupprobe;no provider/device/macOS/fullbuild."
     },
     {
       "focus": "src/live/diagnostics.ts",
       "initialBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
-      "primary": null,
+      "primary": {
+        "id": "task_84881347",
+        "launchBase": "3faae10fe2fb393f921117b47ebc565299db873e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_84881347",
+        "branch": "bruv/primary-src-live-diagnostics.ts-84881347",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/editor-push-to-talk.ts",
       "initialBlob": "df048148512e56c08a09807a4e35db9577fae485",
-      "primary": null,
+      "primary": {
+        "id": "task_7bb5cb79",
+        "launchBase": "16182b5898049994a37630cbfbf761eb6b7b982b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7bb5cb79",
+        "branch": "bruv/primary-src-live-editor-push-to-talk.ts-7bb5cb79",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/embedded.ts",
@@ -597,13 +976,21 @@
       "judgeRounds": [
         {
           "id": "task_65eb4c80",
-          "status": "running",
+          "status": "complete",
           "candidate": "f98b50c96fde73aaa0da8be7ce3b1c7015351866",
-          "base": "e81164ded74d4add7f7a8a0735b52d788da3cf39"
+          "base": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Start exposes connect-before-device startup without nested provider callbacks; separate delegated/tool wiring, late helper disposal and shared context dispatch own coherent operations; mirrored orchestration removed. Newer main-owner/audio seams inspected no collision.",
+          "checks": "Independent48 dependency-light+15 current audio tests pass; extension/integration dependency-blocked. Added Realtime-named test generic provider seam/default Google, not real Realtime transport proof.",
+          "acceptedBlobs": {
+            "src/live/extension.ts": "cd43d45e34ddc90153c765193c21ce7b9052d5de",
+            "tests/live-extension.test.ts": "ea3dffdf18791aac1b2e150b505d6bdb11ba6764"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "cd43d45e34ddc90153c765193c21ce7b9052d5de",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [
         "tests/live-extension.test.ts"
       ],
@@ -645,10 +1032,37 @@
     {
       "focus": "src/live/gpt-live-session.ts",
       "initialBlob": "4a59910d130a5d142313497b71c344f79aec7357",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_35b0a03e",
+        "launchBase": "e7a05d5f63b11cc8c4d57f4b2b4f4b797ef776fe",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_35b0a03e",
+        "branch": "bruv/primary-src-live-gpt-live-session.ts-35b0a03e",
+        "status": "candidate ready",
+        "commit": "6d69c467cd48fa7ebad64fc5faa5d73ed0e861bf"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_86206c2a",
+          "status": "complete",
+          "candidate": "6d69c467cd48fa7ebad64fc5faa5d73ed0e861bf",
+          "base": "e7a05d5f63b11cc8c4d57f4b2b4f4b797ef776fe",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "One terminal transport result replaces mutableclose-resolver chain;finishTransport owns timers/resampler/correlation/socket and finalizedvsunknownusage. Redundantserial removed withclosed/connecting guards intact. SemanticContextKind removeswire reverseparsing;ack correlation not speech/taskfinality.",
+          "checks": "Independent57pass1paidskip636assertions;teardownfailure probe waiterssettle/socketonce/closeError+terminalusage preserved;owner suite missingassets blocked;diffclean.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-session.ts": "92d985f0bd164825e712218e609930f2262beb0b",
+            "tests/gpt-live-session.test.ts": "c62f5f2fedaa619f3ccbdf492641105f7dc383b8"
+          }
+        }
+      ],
+      "acceptedBlob": "92d985f0bd164825e712218e609930f2262beb0b",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [
+        "tests/gpt-live-session.test.ts"
+      ],
+      "readingResult": "One shared transport teardown promise serves close callers;finishTransport owns cleanup/finalizedvsunknown usage;context append+matchedack together by semantic kinds. Delegation remains extension/bridge/owner admission,playback interruption notjobcancel,no inferred finality.",
+      "checks": "151passes1paidprovider skip;strict focusedTS/format/diff pass;concurrentclose finalized/timeout regression;initial missingWASM resolved existing readonlyassets;no behaviorfix/provider/device/macOS/fullgate."
     },
     {
       "focus": "src/live/helper.ts",
@@ -787,10 +1201,37 @@
     {
       "focus": "src/live/playback.ts",
       "initialBlob": "13c3a077ca113568196fdc051184ac53d434fc69",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_1ea27d33",
+        "launchBase": "1af60590b337533dc41a39e8d00ee66506c02b34",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1ea27d33",
+        "branch": "bruv/primary-src-live-playback.ts-1ea27d33",
+        "status": "candidate ready",
+        "commit": "83b1defbd83984e35197625252271702dfb6769d"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_542a0b36",
+          "status": "complete",
+          "candidate": "83b1defbd83984e35197625252271702dfb6769d",
+          "base": "1af60590b337533dc41a39e8d00ee66506c02b34",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "PendingAudio owns copiedsamples/offsets/turnboundaries/unsentbytes;PlaybackTimeline ownsreserve/acceptedcredit/conservativeplayed;Scheduler ownsepoch/readiness/pipe/flush/timers/failure. Immediateflush independent oldpipeslot;stalecompletion no newcredit;queue0 notphysicalsilence.",
+          "checks": "Independent53tests20755assertions/diffpass;no behaviorfix/device/provider/macOS/fullgate.",
+          "acceptedBlobs": {
+            "src/live/playback.ts": "ce0fd68dbcc5487dd3fa1f218dd353f34571feac",
+            "tests/live-playback.test.ts": "b4320ddedc2b1667c167b3bca5d7366a03f5039d"
+          }
+        }
+      ],
+      "acceptedBlob": "ce0fd68dbcc5487dd3fa1f218dd353f34571feac",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPaths": [
+        "tests/live-playback.test.ts"
+      ],
+      "readingResult": "PlaybackTimeline owns sixcounter reservation/acceptedcredit/conservative monotonicplayed estimation; scheduler retains epoch/lifecycle authority. Interrupt discards queued samples/resets estimates/immediateflush but oldwrite retainspipe slot;stalecompletion releases slot withoutnewcredit.",
+      "checks": "53 focusedtests20755assertions;updated23playbacktests baseline-pass;focusedstrictTS/Biome/diff pass1existinginfo;no behaviorfix/device/provider/macOS/fullgate."
     },
     {
       "focus": "src/live/providers.ts",
@@ -902,10 +1343,30 @@
     {
       "focus": "src/live/types.ts",
       "initialBlob": "982613947af84d36edeb598916e7826fc3f43190",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_d79e8579",
+        "status": "candidate ready",
+        "commit": "2932f52f154c8d697234bb620b66b927ba2afd44"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_2bb07f5d",
+          "status": "complete",
+          "candidate": "2932f52f154c8d697234bb620b66b927ba2afd44",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Contracts separate playbackepoch/turncompletion,transcript/evidence/authority,and transport vs admitted work;GPT provisional delegation remains distinct. Callers inspected, extra wrappers add navigation.",
+          "checks": "Independent80pass726 assertions+3 import errors;writer190pass not reproduced. No build/typecheck/provider/device proof.",
+          "acceptedBlobs": {
+            "src/live/types.ts": "982613947af84d36edeb598916e7826fc3f43190"
+          }
+        }
+      ],
+      "acceptedBlob": "982613947af84d36edeb598916e7826fc3f43190",
+      "integration": "accepted unchanged blob matches area tip",
+      "relatedPaths": [],
+      "readingResult": "Unchanged shared provider contracts keep input/output/turn epochs and admission separate;GPT provisional delegation protocol not fabricated shared completion.",
+      "checks": "190 tests1350 assertions across7;standard assets resolved initial missing WASM;no typecheck/build/provider/device proof."
     },
     {
       "focus": "src/live/waveform.ts",
@@ -934,10 +1395,41 @@
     {
       "focus": "tests/editor-voice-integration.test.ts",
       "initialBlob": "a54b95973f39569c32af94c7043aa7665a8da4ca",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_90932544",
+        "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_90932544",
+        "branch": "bruv/primary-tests-editor-voice-integration.t-90932544",
+        "status": "candidate ready",
+        "commit": "1bebfe90e9b17b318805063068d637b4f1f8b1b5"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_5f1948bf",
+          "status": "complete",
+          "candidate": "1bebfe90e9b17b318805063068d637b4f1f8b1b5",
+          "base": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent hold/cancel/release/rearm scenarios remove evolving shared draft;fixture owns replacement disposers and reverse teardown before clock restore;realSDK/draft/undo/focus/staledetach/terminal evidence retained.",
+          "checks": "Independent22 tests83 assertions and39 across3 suites171 assertions via read-only package mapping;diff pass. No behaviorfix/device/provider/macOS.",
+          "acceptedBlobs": {
+            "tests/editor-voice-integration.test.ts": "89f3ee58570d4e8d08bbb8aedf98e1e218524529"
+          }
+        }
+      ],
+      "acceptedBlob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPatchJudgment": {
+        "judgeId": "task_14234cb0",
+        "verdict": "ACCEPT",
+        "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
+        "blob": "95453da9cb3f0827a96b955c60f854e905939dac",
+        "reason": "UI attachment/controller/hook/reporting lifetime patch; same judged blob in parent checkpoint"
+      },
+      "relatedPaths": [],
+      "readingResult": "Independent cancellation journeys show hold/cancel/release/freshhold;mouse/programmatic edits separate;fixture owns all attachment disposers including reattach and teardown before clock restore;actual SDK/draft/undo/focus/stale-detach evidence retained.",
+      "checks": "22 primary tests83 assertions;39 across3 editor suites171 assertions;Biome/typecheck afterassets/diff pass;no production fix/device/provider/macOS."
     },
     {
       "focus": "tests/fixtures/live-execute-cli.sh",
@@ -1025,7 +1517,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_86206c2a",
+        "verdict": "ACCEPT",
+        "blob": "c62f5f2fedaa619f3ccbdf492641105f7dc383b8"
+      }
     },
     {
       "focus": "tests/gpt-live-waveform.test.ts",
@@ -1157,10 +1654,39 @@
     {
       "focus": "tests/live-extension.test.ts",
       "initialBlob": "1b32ba0926c08fdcaed34529c1707a95dd52de7a",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "primary": {
+        "id": "task_ecea00d6",
+        "launchBase": "50bbb773281940490cf11cf862ae15d5b2555951",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_ecea00d6",
+        "branch": "bruv/primary-tests-live-extension.test.ts-ecea00d6",
+        "status": "candidate ready",
+        "commit": "d0ffec5fdd32b4c66f1bee96d9e7e24919a937d9"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_d469e2f0",
+          "status": "complete",
+          "candidate": "d0ffec5fdd32b4c66f1bee96d9e7e24919a937d9",
+          "base": "50bbb773281940490cf11cf862ae15d5b2555951",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent helper/provider holds expose boundary-arrival/cancel/resume/noactivation;realSDK routing fixture separate from simulated deps;generic provider name resolves prior misleading Realtime claim. All assertions retained+4 preactivation assertions;combined parent editor full delta inspected coherent.",
+          "checks": "Independent byteverified snapshots76 tests442 assertions;combined editor108 tests604 assertions;focusedTS/Biome/diff pass. No native/auth/macOS/full gate.",
+          "acceptedBlobs": {
+            "tests/live-extension.test.ts": "605f1dc19bcd6c8ada6584d03410a3d671eac9ef"
+          }
+        }
+      ],
+      "acceptedBlob": "605f1dc19bcd6c8ada6584d03410a3d671eac9ef",
+      "integration": "integrated accepted exact primary candidate",
+      "relatedPatchJudgment": {
+        "judgeId": "task_65eb4c80",
+        "verdict": "ACCEPT",
+        "blob": "ea3dffdf18791aac1b2e150b505d6bdb11ba6764"
+      },
+      "relatedPaths": [],
+      "readingResult": "Independent helper-launch/provider-connect holds expose cancellation arrival/resume/activation journey; realSDK input/focus fixture separate from simulated Live dependencies; generic provider seam now truthfully named.",
+      "checks": "76 tests442 assertions;focused typecheck/Biome/diff pass;no assertion removed or product fix. Full typecheck blocked8 missing asset JSON imports;no native/provider/macOS."
     },
     {
       "focus": "tests/live-gpt-live-provider.acceptance.test.ts",
@@ -1240,13 +1766,20 @@
       "judgeRounds": [
         {
           "id": "task_3251abf2",
-          "status": "running",
+          "status": "complete",
           "candidate": "70bfa1a0e0d8dd8048bd60b7690c5e7a4a7ed4bb",
-          "base": "07bda6417ddbb90145ccd92024ce1bf98d150000"
+          "base": "07bda6417ddbb90145ccd92024ce1bf98d150000",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Session lifecycle isolated from actual execute/typed-input/text-fence/release journey; real registered tool and production renderers retained. Four race bodies whitespace identical,108 baseline assertions retained. Duplicate fixture idle-state bug independently reproduced/fixed.",
+          "checks": "Independent exact source mirror with shared deps:42 tests/352 assertions pass; Biome/diff pass. Initial incomplete mirror missing CLI fixtures not claimed green; no compiled parity.",
+          "acceptedBlobs": {
+            "tests/live-main-owner.test.ts": "9e228bc0c98e2ae271d679c8aeedcfd3e4a10fe1"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "9e228bc0c98e2ae271d679c8aeedcfd3e4a10fe1",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_bb0fe7ca",
         "verdict": "ACCEPT",
@@ -1318,7 +1851,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_542a0b36",
+        "verdict": "ACCEPT",
+        "blob": "b4320ddedc2b1667c167b3bca5d7366a03f5039d"
+      }
     },
     {
       "focus": "tests/live-probe-input.test.ts",
@@ -1640,10 +2178,24 @@
           "acceptedBlobs": {
             "native/live-linux/tests/test_protocol.py": "79ed8c2697a35f9161237de1c3f718b2a4ce09fe"
           }
+        },
+        {
+          "id": "task_ab2edd5f",
+          "status": "complete",
+          "candidate": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+          "base": "efb1edd066ae3fe1b59334ff01cf15f14fc9b919",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Graph harness owns private servers/env/teardown, virtual owns2 modules with one cleanup owner and explicit release; protocol distinguishes queue observation from ack and exposes capture/drain/restart. Existing graph owner reused, default acceptance unchanged.",
+          "checks": "Independent17 regressions, unchanged Linux helper build/no-device smoke/3 consecutive private-graph smokes pass; desktop modules identical;failure23 preserved and owned processes/root gone;empty command/default acceptance tested;syntax/diff pass. Baseline missing played reproduced;500ms stimulus fixes100ms-throttle issue without weakening capture/drain/restart/removal.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/test_protocol.py": "533dc3e1828e0862e5e14e10876dc22abdaec999"
+          },
+          "round": "related combined virtual fixture revision"
         }
       ],
-      "acceptedBlob": "79ed8c2697a35f9161237de1c3f718b2a4ce09fe",
-      "integration": "accepted unchanged primary final blob matches area tip",
+      "acceptedBlob": "533dc3e1828e0862e5e14e10876dc22abdaec999",
+      "integration": "integrated related revision with fresh combined actual-code judgment",
       "relatedPatchJudgment": {
         "judgeId": "task_5ff86413",
         "verdict": "ACCEPT",
@@ -1652,6 +2204,108 @@
       "relatedPaths": [],
       "readingResult": "Unchanged: subprocess bytes/read-rejection/adjacent assertions/context cleanup visible; microphone open/write/scenario failure and completion/freeing separate; no tangled ownership.",
       "checks": "9 unittest pass. No source changes; manual tests, parent CI wiring pending. No device/provider/macOS/helper validation."
+    },
+    {
+      "focus": "native/live-linux/tests/test_virtual.py",
+      "introducedBy": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+      "initialBlob": null,
+      "primary": {
+        "id": "task_d69d2178",
+        "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_d69d2178",
+        "branch": "bruv/primary-native-live-linux-tests-test_vir-d69d2178",
+        "status": "candidate ready",
+        "commit": "465d49952932b8c6877f755549b5efef41c977e6"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_d88de73c",
+          "status": "complete",
+          "candidate": "465d49952932b8c6877f755549b5efef41c977e6",
+          "base": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One temporary-dir fakeprocess/log lifetime runs realBash;handoff argument vector and partial acquisition cleanup visible;before/after unload failures explicitly preserve original status with removal marker. Splitting fake tools would scatter relationships.",
+          "checks": "Independent17 Python tests(5 virtual methods7 scenarios)pass/diff clean;no realserver/helper/device/provider/macOS claim.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/test_virtual.py": "293dec5887c1ff795c2f8e8ab7536e64babaed99"
+          }
+        }
+      ],
+      "acceptedBlob": "293dec5887c1ff795c2f8e8ab7536e64babaed99",
+      "integration": "accepted unchanged own-primary final blob",
+      "relatedPatchJudgment": {
+        "judgeId": "task_ab2edd5f",
+        "verdict": "ACCEPT",
+        "blob": "293dec5887c1ff795c2f8e8ab7536e64babaed99"
+      },
+      "relatedPaths": [],
+      "readingResult": "Unchanged temporary-dir runner owns fake commands/logs and realBash; tests expose handoff/acquisition/partial failure/removal-before-after-unload, cleanup ownership and preserved status locally visible.",
+      "checks": "17 Python tests including5 virtual methods7 scenarios pass;diff clean;no real server/device/provider/macOS/full gate."
+    },
+    {
+      "focus": "native/live-linux/tests/test_isolated_audio.py",
+      "introducedBy": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3",
+      "initialBlob": null,
+      "primary": {
+        "id": "task_7950a5e2",
+        "launchBase": "ba1575ae4a9300c6729f8988f79029f59699318a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7950a5e2",
+        "branch": "bruv/primary-native-live-linux-tests-test_iso-7950a5e2",
+        "status": "candidate ready",
+        "commit": "a4bdb033fc65291cdc41a36b3a0365b806aa7942"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_dd7fe5dc",
+          "status": "running",
+          "candidate": "a4bdb033fc65291cdc41a36b3a0365b806aa7942",
+          "base": "ba1575ae4a9300c6729f8988f79029f59699318a"
+        }
+      ],
+      "acceptedBlob": null,
+      "integration": "judge running",
+      "relatedPatchJudgment": {
+        "judgeId": "task_1a73a583",
+        "verdict": "ACCEPT",
+        "blob": "d4faa77a5ddf45b9757af01c9abd91adb076cd6f"
+      },
+      "relatedPaths": [],
+      "readingResult": "WrapperInvocation owns Bash/records/result/teardown instead of escaped tempdir/decodedtuple+manual cleanup;environmentpolicy vsrelease assertions distinct. Explicit stubbornfixture timeout cleanuphang fixed:kill recorded fakes beforedrain/reap.",
+      "checks": "Baseline7/candidate8 isolatedtests,final25nativePython pass;boundedbaselinehang probe and restoredordering mutant fail;diffclean. FakeLinuxaudio tools,no production/device/provider/macOS/fullbuild."
+    },
+    {
+      "focus": "native/live-linux/tests/test_source_removal.py",
+      "introducedBy": "bebc961f249c35103aa08d0bebf496548844c8ad",
+      "initialBlob": null,
+      "primary": {
+        "id": "task_2e92bcc7",
+        "launchBase": "186634bd6a0ef9906a3ccc8cedba4bdc47f4dd33",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_2e92bcc7",
+        "branch": "bruv/primary-native-live-linux-tests-test_sou-2e92bcc7",
+        "status": "candidate ready",
+        "commit": "2e62282fd6ca936b142a6f16a60ad69e96770804"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "awaiting judge slot",
+      "relatedPatchJudgment": {
+        "judgeId": "task_46031fcf",
+        "verdict": "ACCEPT",
+        "blob": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32"
+      },
+      "relatedPaths": [],
+      "readingResult": "Unchanged child transcripts adjacent to assertions;unplug requiresstopped aftererror/capture;deviceerror/EOF notsubstitute;contextcleanup separate, extraction hidesevidence.",
+      "checks": "7 focusedtests/diffpass,clean;nodevice/provider/macOS."
+    },
+    {
+      "focus": "native/live-linux/tests/test_capture_protocol.py",
+      "introducedBy": "3c71d4a280d89be9b6597d09af48a40a376451f8",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate addition;own primary pending"
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
@@ -1675,6 +2329,14 @@
       "format": "11 changed TypeScript files pass exit 0",
       "lint": "exit 0; 25 warnings/20 infos, no fixes",
       "limits": "native source sequences not physical device/macOS/provider execution; not full Linux gate"
+    },
+    {
+      "tip": "f6e7b649",
+      "jobId": "task_8c734875",
+      "tests": "277 pass/0 fail/21718 assertions across14 files;17 Python regressions pass",
+      "typecheck": "root check exit0 after parent shared checkpoint and own asset preparation",
+      "format": "40 files pass",
+      "limits": "not full Linux gate; no device/provider/macOS execution"
     }
   ],
   "followups": [
@@ -1688,11 +2350,12 @@
     }
   ],
   "audit": {
-    "tip": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
+    "tip": "bd5084664d34bc0a4b9a6f37592a4452b323335e",
     "baselineFiles": 140,
-    "extraFiles": 2,
-    "baselineAccepted": 8,
-    "extraAccepted": 1,
+    "extraFiles": 3,
+    "baselinePrimaryStarted": 28,
+    "baselineAccepted": 22,
+    "extraAccepted": 2,
     "acceptedBlobMismatches": [],
     "status": "partial; not completion"
   },
@@ -1701,6 +2364,16 @@
       "path": "scripts/ci.sh",
       "need": "New device-free native/live-linux/tests/test_protocol.py regressions currently manual; parent/assigned CI primary should decide coherent gate wiring. No cross-area edit made.",
       "status": "recorded for parent"
+    },
+    {
+      "path": "tests/editor-voice-integration.test.ts",
+      "need": "UI related patch now has assigned own-primary task_90932544 and fresh judge task_5f1948bf; final blob89f3ee58570d4e8d08bbb8aedf98e1e218524529 replaces earlier related-only95453da9. Parent/UI should reconcile final hash.",
+      "status": "accepted final test blob integrated"
     }
-  ]
+  ],
+  "parentCheckpoint": {
+    "target": "95d2e164",
+    "status": "clean shared accepted checkpoint joined; one area related test imported from UI accepted patch",
+    "limits": "combined checks pending; other-area notes imported unchanged"
+  }
 }

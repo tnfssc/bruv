@@ -228,6 +228,37 @@ for (const provider of ["openai", "openai-codex"] as const) {
   });
 }
 
+test("a shared runtime rejects competing authorizations and restores only after its last owner leaves", async () => {
+  const model = getModel("openai", "gpt-5.3-codex")!;
+  const first = harness(model, { mode: "print", accept: true });
+  const second = harness(model, { mode: "print", accept: true });
+  const runtime = first.runtime;
+  second.ctx.modelRegistry.runtime = runtime;
+  const originalDescriptor = Object.getOwnPropertyDescriptor(runtime, "streamSimple");
+  let preparations = 0;
+  const prepare = runtime.prepareRequest;
+  runtime.prepareRequest = async (...args) => {
+    preparations++;
+    return prepare(...args);
+  };
+
+  await first.command.handler("on", first.ctx);
+  const guard = runtime.streamSimple;
+  await second.command.handler("on", second.ctx);
+  expect(runtime.streamSimple).toBe(guard);
+  expect(await wirePayload(first)).toBeUndefined();
+  expect(preparations).toBe(0);
+
+  await second.emit("session_shutdown");
+  expect(runtime.streamSimple).toBe(guard);
+  expect((await wirePayload(first)).service_tier).toBe("priority");
+  expect(preparations).toBe(1);
+
+  await first.emit("session_shutdown");
+  expect(Object.getOwnPropertyDescriptor(runtime, "streamSimple")).toEqual(originalDescriptor);
+  expect((await wirePayload(first)).service_tier).toBeUndefined();
+});
+
 test("native fast rejects unofficial provider and endpoint routing", () => {
   const custom = { ...getModel("openai", "gpt-5.3-codex")!, provider: "gateway" };
   expect(nativeFastSupport(custom).supported).toBe(false);
