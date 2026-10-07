@@ -110,10 +110,17 @@
     {
       "focus": "native/live-linux/tests/backpressure.py",
       "initialBlob": "926018512888ed0d7b08002be97e2179a2089561",
-      "primary": null,
+      "primary": {
+        "id": "task_b65be047",
+        "launchBase": "1ece2913a7f8e25b5ccf2c6e4e8cf50a258ab9a9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_b65be047",
+        "branch": "bruv/primary-native-live-linux-tests-backpres-b65be047",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live-linux/tests/capture-gate.cpp",
@@ -1973,17 +1980,20 @@
         "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_d69d2178",
         "branch": "bruv/primary-native-live-linux-tests-test_vir-d69d2178",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "465d49952932b8c6877f755549b5efef41c977e6"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_ab2edd5f",
         "verdict": "ACCEPT",
         "blob": "293dec5887c1ff795c2f8e8ab7536e64babaed99"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Unchanged temporary-dir runner owns fake commands/logs and realBash; tests expose handoff/acquisition/partial failure/removal-before-after-unload, cleanup ownership and preserved status locally visible.",
+      "checks": "17 Python tests including5 virtual methods7 scenarios pass;diff clean;no real server/device/provider/macOS/full gate."
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
