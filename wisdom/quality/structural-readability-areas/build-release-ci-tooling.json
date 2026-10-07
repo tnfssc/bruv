@@ -890,5 +890,13 @@
     }
   ],
   "extra": [],
-  "crossAreaNeeds": []
+  "crossAreaNeeds": [],
+  "batchProof": [
+    {
+      "commit": "dc82af38",
+      "job": "task_9d9ef42e",
+      "command": "Bun1.4.2 test tests/ci-selective.test.ts tests/ci-selective-workflow.test.ts tests/find-ci-baseline.test.ts tests/publish-release.test.ts tests/install-local.test.ts",
+      "result": "57 pass,0 fail,346 assertions; no full build/hosted claims"
+    }
+  ]
 }
