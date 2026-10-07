@@ -7,8 +7,7 @@
   "branch": "bruv/whole-repo-structural-readability-ui-ter-f8e968d6",
   "limits": [
     "Live/provider/device/SSH checks must remain explicit limits.",
-    "Automatic setup reported fish cannot find bun (exit 127); workers have explicit Bun path and shared dependency instructions.",
-    "Full typecheck currently blocked tests/task-rows.test.ts:249 missing Component.invalidate; fresh primary/rework required, not a cross-area gap."
+    "Automatic setup reported fish cannot find bun (exit 127); workers have explicit Bun path and shared dependency instructions."
   ],
   "crossAreaNeeds": [
     {
@@ -431,11 +430,19 @@
     {
       "focus": "scripts/terminal-perf/interaction-normalize.ts",
       "initialBlob": "7d11dad027d30e5fb2599903470d54dce827e746",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_5fb34446",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5fb34446",
+          "branch": "bruv/primary-readability-scripts-terminal-per-5fb34446",
+          "launchBase": "1cb5260434b94a06fefc8906f5061f7011e206d8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "1cb5260434b94a06fefc8906f5061f7011e206d8"
     },
     {
       "focus": "scripts/terminal-perf/interaction-options.ts",
@@ -449,7 +456,7 @@
     {
       "focus": "scripts/terminal-perf/interaction-report.ts",
       "initialBlob": "18af4bb852d356ff8cb446eccd13fad32242b79d",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_5930e394",
@@ -464,11 +471,25 @@
           "id": "task_e42d2c99",
           "base": "10c405fe18f54e15e915efe5d9a98ee37144f798",
           "candidate": "d5fadc4552948bf4041af05249ccb577b313b269",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/interaction-report.ts": "c65d7a19f9e30836a378c88f12a3493a41031e5b",
+            "tests/terminal-interactions-report.test.ts": "15dec25e1d553a530fe00f16c0a4452c78e2ada7"
+          },
+          "evidence": "Run-wide case-ID uniqueness, per-case cohorts and span rules have explicit ownership; case helper validates rather than forwards. Traversal/diagnostic order and opaque own evidence links preserved.",
+          "checks": [
+            "Independent report/CLI20/117 plus event3/14",
+            "12 exact-base error/order differential contracts",
+            "Focused strict TS --ignoreConfig; format/lint/diff"
+          ],
+          "limits": [
+            "No full build/live/device/broad runtime; initial fixture setup issues corrected"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "c65d7a19f9e30836a378c88f12a3493a41031e5b",
+      "integrationState": "integrated exact independently judged primary candidate",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
       "changedRelatedPaths": [
         "tests/terminal-interactions-report.test.ts"
@@ -1877,16 +1898,28 @@
     {
       "focus": "tests/conversation-density.test.ts",
       "initialBlob": "e58898c0494a2673216105420c234d2be53960fa",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_9bb57a1e",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_9bb57a1e",
           "branch": "bruv/primary-readability-tests-conversation-d-9bb57a1e",
-          "launchBase": "5ae62b2e32a076821c5c28aeef53100b2f8c7689"
+          "launchBase": "5ae62b2e32a076821c5c28aeef53100b2f8c7689",
+          "commit": "cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_32a06541",
+          "base": "5ae62b2e32a076821c5c28aeef53100b2f8c7689",
+          "candidate": "cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6",
+          "verdict": "pending",
+          "priorRelatedJudges": [
+            "task_203052f5",
+            "task_060d7edf"
+          ]
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
       "relatedPatchJudgments": [
@@ -1905,7 +1938,19 @@
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
       ],
-      "launchBase": "5ae62b2e32a076821c5c28aeef53100b2f8c7689"
+      "launchBase": "5ae62b2e32a076821c5c28aeef53100b2f8c7689",
+      "changedRelatedPaths": [],
+      "result": "Candidate fixture registers cleanup for every install; explicit tested restore calls remain local. Observed baseline prototype leakage under assertion failure fixed, all assertion statements retained.",
+      "checks": [
+        "Base/candidate 27 tests /237 assertions",
+        "Four focused suites 87/679",
+        "126 ordered assertion statements retained",
+        "Failure probes show base leak/candidate cleanup",
+        "format/lint/diff"
+      ],
+      "limits": [
+        "Test fixture behavior fix explicit; no production edits/full build"
+      ]
     },
     {
       "focus": "tests/diagnostics.test.ts",
@@ -2198,7 +2243,7 @@
     {
       "focus": "tests/task-rows.test.ts",
       "initialBlob": "020528a4b2ce3105e8d0c203cee2c9e13273cf96",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_e44a3fd7",
@@ -2214,16 +2259,30 @@
           "id": "task_c584a1d4",
           "base": "10c405fe18f54e15e915efe5d9a98ee37144f798",
           "candidate": "1b66a8d1dc898e2953e963da9f4af5b663bafd86",
-          "verdict": "pending",
+          "verdict": "ACCEPT",
           "priorRelatedJudges": [
             "task_24064ab2",
             "task_060d7edf"
           ],
-          "unresolved": "Observed TS2741 missing Component.invalidate in prior accepted related test; primary repairs one-line fixture only"
+          "unresolved": "Observed TS2741 missing Component.invalidate in prior accepted related test; primary repairs one-line fixture only",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/task-rows.test.ts": "d2b90b93184b0a257924201768a79283208f9dd8"
+          },
+          "evidence": "Intrinsic whole test readable without structural rewrite. Only invalidate() {} fixes reproduced SDK Component TS2741; exact one-line delta preserves failure path/all assertions.",
+          "checks": [
+            "Independent full tsc: base sole TS2741, candidate exit0",
+            "31 tests /452 assertions both base/candidate",
+            "Six-file UI join149/13662",
+            "format/lint/diff"
+          ],
+          "limits": [
+            "No build/full runtime/live/PTY"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "related blob judged; full tsc blocked by missing fixture Component.invalidate; next free primary slot must repair and freshly judge",
+      "acceptedBlob": "d2b90b93184b0a257924201768a79283208f9dd8",
+      "integrationState": "integrated exact independently judged primary candidate",
       "relatedPatchJudgments": [
         {
           "id": "task_24064ab2",
@@ -2238,7 +2297,6 @@
           "blob": "56b4ebeb79c6dfb6538fd3dd5fa2eb83e1185587"
         }
       ],
-      "priority": "next-judge: reproduced full tsc fixture repair",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
       "changedRelatedPaths": [],
       "result": "Fresh primary finds readable local lifecycle/replay/SDK fixtures; repairs reproduced TS2741 with only no-op invalidate on throwing Component, assertions/render failure unchanged.",
@@ -2281,7 +2339,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch accepted; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_e42d2c99",
+          "candidate": "d5fadc4552948bf4041af05249ccb577b313b269",
+          "verdict": "ACCEPT",
+          "blob": "15dec25e1d553a530fe00f16c0a4452c78e2ada7"
+        }
+      ]
     },
     {
       "focus": "tests/terminal-perf-action-profiler.test.ts",
@@ -2538,6 +2604,11 @@
     },
     "limits": [
       "No full build/typecheck/CLI/provider/SSH/physical-terminal/GC-timing"
-    ]
+    ],
+    "laterTestRepair": {
+      "judge": "task_c584a1d4",
+      "blob": "d2b90b93184b0a257924201768a79283208f9dd8",
+      "proof": "Six-file UI join149/13662; no production blobs changed; one-line contract repair."
+    }
   }
 }

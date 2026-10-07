@@ -250,6 +250,7 @@ test("frame ownership expires after a failed native render and uninstall clears 
     render: () => {
       throw new Error("native body failed");
     },
+    invalidate() {},
   });
   expect(() => parent.render(100)).toThrow("native body failed");
   expect(getActivityTaskRows(launch)).toHaveLength(1);
