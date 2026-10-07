@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "rework-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -97,7 +97,14 @@
           "launchBase": "5c7875b573d6c35afe9e2f5e2bca152154f51281",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_c4082476",
           "branch": "bruv/rework-agent-map-for-notification-owner-c4082476",
-          "priorCandidate": "22538fc2778f389d8331126ccc19fbe1ba57f7fe"
+          "priorCandidate": "22538fc2778f389d8331126ccc19fbe1ba57f7fe",
+          "commit": "e5241b6b3919a8a62daa9c4a9f6003396ee0223d",
+          "changedPaths": [
+            "src/agent/README.md",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Update reading map for createJobNotifications attachment/delivery/settlement/close and separate snapshot retention lifetime; preserve local task vs extension assembly vs remote summary ownership.",
+          "checks": "63 existing tests/305 assertions; 30 links; byte/fence/whitespace checks; docs Biome unsupported; isolated TMPDIR/local assets, no build/typecheck."
         }
       ],
       "judgeRounds": [
@@ -126,6 +133,16 @@
           "objections": [],
           "reason": "Full map accurately describes attachment/service lifetime, delivery ownership, and compaction/fast-tier policy precedence; prior incorrect all-task-formatting claim resolved.",
           "checks": "Actual wiring/callers/tests inspected; 22 links and diff check pass; no runtime rerun for docs."
+        },
+        {
+          "id": "task_b5e28075",
+          "candidate": "e5241b6b3919a8a62daa9c4a9f6003396ee0223d",
+          "base": "5c7875b573d6c35afe9e2f5e2bca152154f51281",
+          "status": "running",
+          "priorObjections": [
+            "README lines 25–26 wrongly imply all notification formatting/batching lives in tasks/. extension.ts assembles SSH attention and mixed content/budgets; remote completion summaries live in remote/job-observations.ts. Qualify ownership sentence; no runtime change requested."
+          ],
+          "writerResponse": "Update reading map for createJobNotifications attachment/delivery/settlement/close and separate snapshot retention lifetime; preserve local task vs extension assembly vs remote summary ownership."
         }
       ],
       "acceptedBlob": null,
@@ -1668,8 +1685,15 @@
     {
       "focus": "tests/native-fast-mode.test.ts",
       "initialBlob": "d1a70d64a44454f962627792e65517f3c4171b9d",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_efb8e91c",
+          "launchBase": "9d91fb4693bdce5fc85cc002aeaf926d27668569",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_efb8e91c",
+          "branch": "bruv/primary-native-fast-policy-tests-efb8e91c"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
