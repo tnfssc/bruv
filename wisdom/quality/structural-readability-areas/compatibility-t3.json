@@ -192,7 +192,7 @@
     {
       "file": "src/claude-compat/arguments.ts",
       "initialBlob": "61a99f162b7328d9f937d10ec33691a9b47bd645",
-      "status": "judging",
+      "status": "rework-running",
       "primary": {
         "id": "task_1b5068a0",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1b5068a0",
@@ -203,15 +203,31 @@
       "judges": [
         {
           "id": "task_c9ec06dd",
-          "status": "running",
-          "candidate": "1e7d57820c33e827b221be0e3c4eb5a8ab6af771"
+          "status": "completed",
+          "candidate": "1e7d57820c33e827b221be0e3c4eb5a8ab6af771",
+          "verdict": "REJECT",
+          "blob": "61a99f162b7328d9f937d10ec33691a9b47bd645",
+          "objections": [
+            "ConnectorArguments.verbose and strictMcp are written but never read; carried fields imply nonexistent runtime switches. Remove stored booleans, preserve flag acceptance/toggle-value/duplicate validation; explain compatibility/always-on semantics at cases; focused tests preserve stream/aux contracts."
+          ],
+          "evidence": "Actual parser/admission/mode callers sound; no parser rewrite requested. Full diff note only. Independent execution blocked by missing generated clankolas asset."
         }
       ],
       "acceptedBlob": null,
       "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a",
       "changedRelatedPaths": [],
       "readingResult": "One option loop localizes cursor/duplicates; format gates select stream/auxiliary; shared assertLaunchBindings policy runs before runtime/state access. No proposed rewrite.",
-      "checks": "16 launch tests/89 assertions + isolated composition wrapper pass; no full build/live."
+      "checks": "16 launch tests/89 assertions + isolated composition wrapper pass; no full build/live.",
+      "reworks": [
+        {
+          "id": "task_565d6984",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_565d6984",
+          "branch": "bruv/rework-argument-dead-state-565d6984",
+          "launchBase": "a73ca8eb1a7fb68d297d41cd097532e569db3476",
+          "commit": null,
+          "respondsTo": "task_c9ec06dd"
+        }
+      ]
     },
     {
       "file": "src/claude-compat/binding.ts",
@@ -842,15 +858,21 @@
     {
       "file": "tests/t3/production-bridge.test.ts",
       "initialBlob": "3fe602a2184e31bfe3cb6bd96937bd6208b6dfd8",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_c1e2e00b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_c1e2e00b",
         "branch": "bruv/primary-production-bridge-tests-c1e2e00b",
         "launchBase": "0bc2b30a175d9af76fe95b04ce1966df1110eaa0",
-        "commit": null
+        "commit": "3f2d0daf007302dee1188caa1d0d6047d8ba5400"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_f50293ec",
+          "status": "running",
+          "candidate": "3f2d0daf007302dee1188caa1d0d6047d8ba5400"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -860,7 +882,10 @@
           "candidate": "17c4c9e34d15866ec8188865fb8ec57f9c5a3bcc"
         }
       ],
-      "launchBase": "0bc2b30a175d9af76fe95b04ce1966df1110eaa0"
+      "launchBase": "0bc2b30a175d9af76fe95b04ce1966df1110eaa0",
+      "changedRelatedPaths": [],
+      "readingResult": "Generic nested proxies for one header observation replaced with direct observation; mode-loop timeout replay/cancel/auth cases separated by relevant lifetime. Whole test reviewed; accepted late-old-404 regression untouched.",
+      "checks": "39 tests/159 assertions; bridge retains all 71 assertions; format/lint/typecheck/diff pass."
     },
     {
       "file": "tests/t3/web-launcher-process.test.ts",
@@ -888,7 +913,13 @@
     }
   ],
   "extraFiles": [],
-  "crossAreaNeeds": [],
+  "crossAreaNeeds": [
+    {
+      "file": "src/claude-compat/arguments.ts",
+      "kind": "internal-overlap",
+      "reason": "CLI primary task_adf93322 active while arguments rework queued. Must inspect actual changed paths before joining; do not silently overwrite."
+    }
+  ],
   "batchChecks": [
     {
       "id": "task_554a7ded",
