@@ -1171,23 +1171,30 @@
     {
       "focus": "src/typescript/definition.ts",
       "initialBlob": "7d850644a24233284f0dc1dba04e3c7096f400a5",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_58ef2195",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_58ef2195",
         "branch": "bruv/primary-src-typescript-definition.ts-58ef2195",
         "base": "e2da3df7682179df3011bf9690e118c000b88c10",
-        "commit": null
+        "commit": "e6c1dbdb4583531c763033773492c0b320ad0b69"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "e2da3df7682179df3011bf9690e118c000b88c10"
+      "launchBase": "e2da3df7682179df3011bf9690e118c000b88c10",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: registration/handler share ExecuteParameters; gated setup diagnostics adapt same declaration without execution dependencies; runtime lifetime remains extension.",
+      "checks": [
+        "12 pass79 assertions",
+        "asset-free import/schema boundaries pass",
+        "format/diff pass; no build/stale dist/liveprovider"
+      ]
     },
     {
       "focus": "src/typescript/error-diagnostic.ts",
       "initialBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_60592667",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_60592667",
@@ -1195,7 +1202,14 @@
         "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
         "commit": "a9c686b1c083d57296c65e3feb59da8a20d0e4de"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_5f71aa25",
+          "status": "running",
+          "candidate": "a9c686b1c083d57296c65e3feb59da8a20d0e4de",
+          "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
@@ -1528,8 +1542,14 @@
     {
       "focus": "tests/execute-handoff.test.ts",
       "initialBlob": "a3e11225c49f9a1af729bd4f1052286524d985d0",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_c5b89dde",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c5b89dde",
+        "branch": "bruv/primary-tests-execute-handoff.test.ts-c5b89dde",
+        "base": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -1539,12 +1559,13 @@
         "blob": "c4e1069d2c37f98b1eebe81ed0ea7e8500afd9a5",
         "verdict": "ACCEPT",
         "primaryStillRequired": true
-      }
+      },
+      "launchBase": "241e60a4ed3b07887724c5605d86ef29aedc00bc"
     },
     {
       "focus": "tests/execute-output-capture.test.ts",
       "initialBlob": "f1944e32116dbce754fa013622fd989907092d99",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_341d3c1d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_341d3c1d",
@@ -1555,14 +1576,21 @@
       "judgeRounds": [
         {
           "id": "task_6cb5fad6",
-          "status": "running",
+          "status": "complete",
           "candidate": "9ac5bfece6800ec7265d6958644120f84bba0519",
           "base": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73",
-          "priorRelatedJudge": "task_0321bbc2"
+          "priorRelatedJudge": "task_0321bbc2",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Complete test journeys expose decoded preview vs artifact bytes/error/budget and filesystem effects without fixture machinery; root cleanup/descriptor ownership visible, pump-before-close caller traced.",
+          "checks": [
+            "independent candidate16/65 incl Linux descriptors",
+            "diff clean; no fresh compiledCLI/fullgate"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "315f7fcd90966bafccad4c9d4c7f978ad77c4cbc",
+      "integration": "unchanged primary blob matches integrated related patch",
       "relatedAcceptance": {
         "judge": "task_0321bbc2",
         "candidate": "c88c37a075d16cd5ba9b1abc7f0354264406b337",
@@ -2342,6 +2370,20 @@
       "scope": "full typecheck plus9 changed-file format/lint and diff",
       "tip": "4c0e427a",
       "proof": "Full tsc including attention passed;9 changed files format/lint and diff passed,13 inherited warnings19 infos."
+    },
+    {
+      "job": "task_78bc3ded",
+      "state": "passed",
+      "scope": "own paired build +full typecheck of joined runner/bridge/capture/extension/attention/resume/questionUI",
+      "tip": "241e60a4",
+      "limits": "images candidate pending, not included",
+      "proof": "Own paired binary and full tsc pass, joined source at241e60a4."
+    },
+    {
+      "job": "task_e6a5072d",
+      "state": "running",
+      "scope": "21 original suites including compiled runner/bridge and joined execute/question/TUI/cancel checks",
+      "tip": "241e60a4"
     }
   ],
   "parentIntegrationInspection": {
