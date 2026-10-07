@@ -237,20 +237,30 @@
         "launchBase": "b4a44ed5445f1339bd884d47ffc3681cce5348fc",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_db37eb3b",
         "branch": "bruv/primary-native-live-audiocore.h-db37eb3b",
+        "status": "candidate ready",
+        "commit": "0e0c7d766c65f4cbfbfb46b973946cc6217c9e65"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged opaque core API exposes direct admission/generation/render operations; capture origin tags preserved through ring and validated before resampling; wrappers genuinely used.",
+      "checks": "3 C ASan/UBSan regressions and19 Bun tests pass; no macOS/device/provider proof."
+    },
+    {
+      "focus": "native/live/Info.plist",
+      "initialBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
+      "primary": {
+        "id": "task_68f2d62b",
+        "launchBase": "06e32904306803bcb25ea542d1e3676a54d234cb",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_68f2d62b",
+        "branch": "bruv/primary-native-live-info.plist-68f2d62b",
         "status": "running",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "primary running"
-    },
-    {
-      "focus": "native/live/Info.plist",
-      "initialBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
     },
     {
       "focus": "native/live/main.swift",
