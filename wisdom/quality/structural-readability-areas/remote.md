@@ -60,3 +60,5 @@ Partial audit at 7aa4b4a1: 20 accepted files match area blobs, 25 unique launche
 Lifecycle-test primary task_053c976a, judge task_52da150f ACCEPT at 53027e2c: explicit script sequence and task.run own gate release/child join before HOME cleanup. All 33 assertion statements retained; prior owner journal regressions retained. Exact final candidate requires area runtime rerun below.
 
 Presenter batch f8ba5c92 ACCEPT task_29eea7cb: local showModal owns mount/settle/focus/render, interaction builders no longer duplicate lifetime; server dialog authority and close-before-local-cancel remain distinct. Related presenter tests ae65079a need own primary. Mocked terminal routing evidence is not physical-terminal proof.
+
+Capability-runtime combined candidate 33088eba ACCEPT task_f6ad3799: intent/marker publication semantics explicit; admission chain retains rejection progress without serializing reply wait. Fresh combination worker preserved accepted services assertions and original runtime additions byte-for-byte; independent 86 tests/1367 assertions. Final related capability test ee0b6d2b still requires its own primary.

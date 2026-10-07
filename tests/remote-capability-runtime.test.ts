@@ -214,6 +214,10 @@ test("concurrent capability requests across mailbox instances obey the pending b
     expect(requests.filter((r) => r.status === "fulfilled")).toHaveLength(32);
     expect(requests.filter((r) => r.status === "rejected")).toHaveLength(8);
     expect(await f.owner.pending()).toHaveLength(32);
+    await f.owner.cancelRequest("request_0");
+    const recovered = await f.owner.request("grant_parallel", "repo.read", "file", "after_rejection");
+    expect(recovered.id).toBe("after_rejection");
+    expect(await f.owner.pending()).toHaveLength(32);
   } finally {
     await f.clean();
   }
@@ -351,6 +355,55 @@ test("child capability need survives cancellation and becomes a mailbox request 
   } finally {
     if (previousRuntime === undefined) delete process.env.BRUV_REMOTE_RUNTIME_STATE;
     else process.env.BRUV_REMOTE_RUNTIME_STATE = previousRuntime;
+    await f.clean();
+  }
+});
+
+test("immutable grant publication accepts identical concurrent replay but rejects changed authority", async () => {
+  const f = await fixture();
+  try {
+    const grants = await Promise.all([
+      f.client.grant("task1", f.repo, ["repo.read"], "same_grant"),
+      new ClientCapabilityStore(f.client.dir).grant("task1", f.repo, ["repo.read"], "same_grant"),
+    ]);
+    expect(grants[0]).toEqual(grants[1]);
+    await expect(f.client.grant("task1", f.repo, ["tool:git-status"], "same_grant")).rejects.toMatchObject({
+      code: "EEXIST",
+    });
+    await Promise.all(grants.map((grant) => f.owner.acceptGrant(grant)));
+    await expect(f.owner.acceptGrant({ ...grants[0], kinds: ["tool:git-status"] })).rejects.toMatchObject({
+      code: "EEXIST",
+    });
+    expect(await f.owner.grant("same_grant")).toEqual(grants[0]);
+  } finally {
+    await f.clean();
+  }
+});
+
+test("one-way markers keep their first record and cannot reopen replayed requests", async () => {
+  const f = await fixture();
+  try {
+    const grant = await f.client.grant("task1", f.repo, ["repo.read"]);
+    await f.owner.acceptGrant(grant);
+    const request = await f.owner.request(grant.id, "repo.read", "README.md", "cancelled_read");
+    await f.owner.cancelRequest(request.id);
+    await f.owner.cancelRequest(request.id);
+    expect(await f.owner.request(grant.id, "repo.read", "README.md", request.id)).toEqual(request);
+    await expect(f.owner.awaitReply(request)).rejects.toThrow("cancelled");
+    await f.owner.revoke(grant.id);
+    await f.owner.revoke(grant.id);
+    await f.client.revoke(grant.id);
+    await f.client.revoke(grant.id);
+    await f.owner.terminal("First terminal reason");
+    await f.owner.terminal("Later terminal reason");
+    const terminal = JSON.parse(
+      await fsPromises.readFile(join(f.owner.taskDir, "capabilities", "terminal.json"), "utf8"),
+    );
+    expect(terminal).toEqual({ reason: "First terminal reason" });
+    expect(await f.owner.grant(grant.id)).toBeUndefined();
+    expect(await f.owner.pending()).toEqual([]);
+    await expect(f.client.serve(request)).rejects.toThrow("grant");
+  } finally {
     await f.clean();
   }
 });
