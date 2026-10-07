@@ -85,3 +85,5 @@ site/scroll.ts: One remainder has gesture-local purpose; reversal/bounds/reset e
 site/scripts/startup.test.ts: Explicit local gate/pending/release/ready sequence,asset-failure loop and separate no-JS context keep short lifetimes visible. Judge read actual build/runtime/template and tests;candidate import missing playwright+ghostty prevented runtime,no assertions claimed. Separate area final browser gate passed.
 
 site/styles.css: CSS directly states terminal mode/viewport effects and HTML no-JS default;enhanced demo clipping preserves accessibility while screen/control keyboard-hover-touch rules stay adjacent. Distinct roles should not be coupled by cosmetic dedupe. Judge complete stylesheet/callers/tests and10 tests/123298 assertions;not browser/accessibility rendering proof.
+
+site/wrangler.jsonc: Worker identity/date/static output declared directly;build->site/dist->documented deploy from site is explicit,not hidden wrapper. Judge10 build tests plusfield/path checks;does not exercise Wrangler/deployment.

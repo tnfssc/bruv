@@ -1322,7 +1322,7 @@
     {
       "focus": "site/wrangler.jsonc",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_60419896",
@@ -1339,11 +1339,17 @@
         {
           "id": "task_c1525156",
           "candidate": "ce4e678aa3466c77be43ee1220755649bdbf7664",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Worker identity/date/static output declared directly;build->site/dist->documented deploy from site is explicit,not hidden wrapper. Judge10 build tests plusfield/path checks;does not exercise Wrangler/deployment.",
+          "objections": []
         }
       ],
       "initialBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "acceptedBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "support/gpt-live-explained.html",
