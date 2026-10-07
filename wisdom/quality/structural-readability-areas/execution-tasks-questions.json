@@ -51,36 +51,57 @@
     {
       "focus": "scripts/leak-audit/bridge-retention.ts",
       "initialBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_cd5dc6c2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cd5dc6c2",
         "branch": "bruv/primary-scripts-leak-audit-bridge-retent-cd5dc6c2",
         "base": "a162e56cc49a21401275253ed445b6027dbc248a",
+        "commit": "d174794cecc988c95a077c7586a92c858ca5bf72"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "a162e56cc49a21401275253ed445b6027dbc248a",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: real request→cancellation wrapper→responseACK→listener cleanup, success close and unconditional teardown together; no extraction needed.",
+      "checks": [
+        "existing10000-request probe exit0 in914ms allsamples0listeners",
+        "protocol14/368",
+        "no build"
+      ]
+    },
+    {
+      "focus": "scripts/leak-audit/cli-rpc-soak.ts",
+      "initialBlob": "53a39f74d7b7c7932543ae4430d6645840e344d5",
+      "status": "primary-running",
+      "primary": {
+        "id": "task_22687cca",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_22687cca",
+        "branch": "bruv/primary-scripts-leak-audit-cli-rpc-soak.-22687cca",
+        "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "a162e56cc49a21401275253ed445b6027dbc248a"
-    },
-    {
-      "focus": "scripts/leak-audit/cli-rpc-soak.ts",
-      "initialBlob": "53a39f74d7b7c7932543ae4430d6645840e344d5",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf"
     },
     {
       "focus": "scripts/leak-audit/execution-runtime.ts",
       "initialBlob": "a1b7750b9557d511dd7d7c5d9d9a417217829995",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_bf95f257",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf95f257",
+        "branch": "bruv/primary-scripts-leak-audit-execution-run-bf95f257",
+        "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf"
     },
     {
       "focus": "scripts/task-placement-clean-capture.ts",
@@ -2028,18 +2049,27 @@
     {
       "focus": "tests/questions.test.ts",
       "initialBlob": "79a2979c636f8a49ef3c192f91acea0868cc10ec",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_e678c58b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e678c58b",
         "branch": "bruv/primary-tests-questions.test.ts-e678c58b",
         "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
-        "commit": null
+        "commit": "ae3387d53e9f40c074eb0b3eceefd62844ad5caa"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b"
+      "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+      "changedRelatedPaths": [
+        "tests/questions.test.ts"
+      ],
+      "readingResult": "Three mixed tests→six independent lifecycle/replay,authority,dedup,lockwaitnavigation,race,capacity journeys; persisted race/version and retained capacity answer checked;8 branch/diagnostic tests byte-identical.",
+      "checks": [
+        "focus14/61 baseline11/57",
+        "sixfile integration50/392",
+        "Biome/tsc/diff pass; no build"
+      ]
     },
     {
       "focus": "tests/resume-safeguards.test.ts",
