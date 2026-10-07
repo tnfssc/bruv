@@ -342,7 +342,7 @@
     {
       "focus": "src/goals/types.ts",
       "initialBlob": "c032871506f64451dd458946bc06f5493b788e73",
-      "status": "rework-running-overlap",
+      "status": "judging-combined",
       "primary": [
         {
           "id": "task_b5e31e7f",
@@ -365,7 +365,14 @@
           "launchBase": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_30334bdd",
           "branch": "bruv/reconcile-goal-journal-contract-30334bdd",
-          "priorCandidate": "99438e18ec5dde7fdbff4c937edf67c663723834"
+          "priorCandidate": "99438e18ec5dde7fdbff4c937edf67c663723834",
+          "commit": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
+          "changedPaths": [
+            "src/goals/types.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Combine discriminated durable GoalEntry with accepted replay without touching store: old assertion site already removed; restored-entry view deliberately validates unknown payload apart from durable envelope.",
+          "checks": "31 goal tests/145 assertions; static baseline fails/candidate passes; focused Biome/diff pass; 8 generated-asset tsc baseline errors unchanged."
         }
       ],
       "judgeRounds": [
@@ -378,6 +385,17 @@
           "objections": [],
           "reason": "Discriminated journal contract matches parser validation and locally proves set/update carry snapshots; store assertion removal justified. Final reconciled blobs still require judgment.",
           "checks": "Focused types compilation and diff pass; runtime suite dependency-blocked."
+        },
+        {
+          "id": "task_d72cbe58",
+          "candidate": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
+          "base": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
+          "status": "running",
+          "priorVerdicts": [
+            "task_229853f3 ACCEPT exact types candidate",
+            "task_46beb0fa ACCEPT replay candidate"
+          ],
+          "writerResponse": "Combine discriminated durable GoalEntry with accepted replay without touching store: old assertion site already removed; restored-entry view deliberately validates unknown payload apart from durable envelope."
         }
       ],
       "acceptedBlob": null,
@@ -1112,16 +1130,31 @@
     {
       "focus": "tests/instruction-mode.test.ts",
       "initialBlob": "6bda0c237bcaf3fbbce1aac4c43d6780b5a24742",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_5d4de9b9",
           "launchBase": "147c19b262b2388db01cdb80541f537f8f8717d0",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_5d4de9b9",
-          "branch": "bruv/primary-instruction-mode-tests-5d4de9b9"
+          "branch": "bruv/primary-instruction-mode-tests-5d4de9b9",
+          "commit": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
+          "changedPaths": [
+            "tests/instruction-mode.test.ts",
+            "src/agent/extension.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "One started-session fixture wires commands/observations; independent scenarios expose history/effects; real filesystem lifetimes visible. Refresh coverage strengthened using late-attached history; imports organized in extension only.",
+          "checks": "Focus 14 pass/67 assertions; related 40 pass/361 assertions; mutation no-op refresh rejected after old test false-pass; typecheck/focused Biome/diff pass."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_eef5d289",
+          "candidate": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
+          "base": "147c19b262b2388db01cdb80541f537f8f8717d0",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
@@ -1336,7 +1369,7 @@
     {
       "focus": "tests/session-input.test.ts",
       "initialBlob": "58e94fbc168a6db197f9869d84c08d7c4e3e123e",
-      "status": "judging",
+      "status": "accepted-deletion",
       "primary": [
         {
           "id": "task_fe11d531",
@@ -1356,11 +1389,15 @@
           "id": "task_4b90b765",
           "candidate": "27dacc46efd49f6863ebaaef7244f25a0fb50e87",
           "base": "8edba9abaeca2ef09f01b2d445fd9b7c8c927cc8",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent historical search and shipped admission/delegation tracing confirms orphan-only tests; removed TTL/size/revoke policies not claimed reimplemented. Absence removes misleading second authority.",
+          "checks": "30 independent passes; MainOwner import blocked by missing Pi dependency; diff clean."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "absent",
+      "integration": "integrated-judged-deletion",
       "relatedPatchReview": {
         "candidate": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
         "judge": "task_ea00ebd0",
@@ -1420,8 +1457,15 @@
       "focus": "tests/fixtures/history-io-short-writes.ts",
       "initialBlob": null,
       "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_d44d38b0",
+          "launchBase": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_d44d38b0",
+          "branch": "bruv/primary-short-write-fixture-d44d38b0"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
@@ -1437,8 +1481,15 @@
       "focus": "tests/fixtures/history-io-cleanup-failure.ts",
       "initialBlob": null,
       "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_d007bea3",
+          "launchBase": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_d007bea3",
+          "branch": "bruv/primary-cleanup-failure-fixture-d007bea3"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
