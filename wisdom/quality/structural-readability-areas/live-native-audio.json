@@ -892,10 +892,17 @@
     {
       "focus": "src/live/conversation.ts",
       "initialBlob": "7f9a86a60e3eb296e41459e09e7ccbbec1470d49",
-      "primary": null,
+      "primary": {
+        "id": "task_7d020b63",
+        "launchBase": "d50c5dcdcac64eebb0e8d9fb98f5f4e394159a34",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7d020b63",
+        "branch": "bruv/primary-src-live-conversation.ts-7d020b63",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/cost.ts",
@@ -1737,17 +1744,20 @@
         "launchBase": "cf84f410a59cd511f13346aca89a6b195a86ad7b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_61f07074",
         "branch": "bruv/primary-tests-live-audio-lifecycle.test.-61f07074",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "df2795d38c86d819801a98dd480c217834d2a98c"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_aeb6dd8f",
         "verdict": "ACCEPT",
         "blob": "8a7be3d0c6cd48fd16c6a3bcbc9157dba226ab44"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Independently controlled callback/drain straightlineorders replace extractedcallbacks/doublebranch;callbackfailure vs nextwritethrow ownssettlement;commandsequences showFIFO and cancellationlifetimes separate.",
+      "checks": "27focusedneighbor tests131assertions;focusedTS/Biome/diffpass;timing/interruption/reaping evidence retained,no productfix/provider/device/macOS/fullgate."
     },
     {
       "focus": "tests/live-audio.test.ts",
