@@ -215,10 +215,17 @@
     {
       "focus": "native/live/AudioCore.h",
       "initialBlob": "e2d8f07794f66272af89f64c69f86bee4ee70aee",
-      "primary": null,
+      "primary": {
+        "id": "task_db37eb3b",
+        "launchBase": "b4a44ed5445f1339bd884d47ffc3681cce5348fc",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_db37eb3b",
+        "branch": "bruv/primary-native-live-audiocore.h-db37eb3b",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live/Info.plist",
@@ -1227,17 +1234,27 @@
         "launchBase": "07bda6417ddbb90145ccd92024ce1bf98d150000",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_d7333f4e",
         "branch": "bruv/primary-tests-live-main-owner.test.ts-d7333f4e",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "70bfa1a0e0d8dd8048bd60b7690c5e7a4a7ed4bb"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_3251abf2",
+          "status": "running",
+          "candidate": "70bfa1a0e0d8dd8048bd60b7690c5e7a4a7ed4bb",
+          "base": "07bda6417ddbb90145ccd92024ce1bf98d150000"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_bb0fe7ca",
         "verdict": "ACCEPT",
         "blob": "34a16d03a46801d8b70d8b4999a5c0a808668bf5"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Session cleanup one owner; separate loadout/rendering vs typed authority/fallback journeys. Authority preserves execute/typed input/forbidden text/release/ordinary text sequence; race gates and evidence explicit. Removed duplicated fixture activity state, new idle assertion.",
+      "checks": "42 tests/352 assertions; Biome/root typecheck/diff pass;108 assertions retained and4 race bodies whitespace-only. Idle regression fails launch fixture passes candidate; no production behavior change."
     },
     {
       "focus": "tests/live-native-workflows.test.ts",
@@ -1450,13 +1467,20 @@
       "judgeRounds": [
         {
           "id": "task_0b0630b0",
-          "status": "running",
+          "status": "complete",
           "candidate": "421cd3969f3db5e4c1d1358ae5fad4bf01a53d78",
-          "base": "e81164ded74d4add7f7a8a0735b52d788da3cf39"
+          "base": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fixture records actual execute seam without simulating admission; separate disconnect/admission/result journeys and independent deferred lifetime. Every deferred test asserts dispatch before resolve; cancellation/replay/capacity/identity evidence retained.",
+          "checks": "Independent 4 result tests pass; session/tool missing @google/genai so 33 writer passes not reproduced. Diff clean, added undeclared rejection assertion genuine evidence improvement.",
+          "acceptedBlobs": {
+            "tests/live-tools.test.ts": "1c93a8e1bdb4066f2ab226871e34415e658d48ea"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "1c93a8e1bdb4066f2ab226871e34415e658d48ea",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_aba16011",
         "verdict": "ACCEPT",
