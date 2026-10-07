@@ -51,3 +51,7 @@ Fresh primary `task_6e3500b8` / judge `task_438a45c6` accept `b169fd351936889ff1
 ## Accepted JobService journey
 
 Judge `task_6181fd8e` accepts `62b8e794`, including combined manager compatibility: reserve→pin→prepare/setup/activate→bounded foreground handoff is explicit; shared Git cancellation listener cleanup and setup gating/observation are coherent operations. Native/SSH/replay/delivery authorities preserved. Independent combined service/worktree checks 24/117, writer broad114/930+tsc. Full source and related worktree test imported; test still needs primary focus.
+
+## Attention scheduler accepted
+
+Judge `task_846bbe75` accepts `0fb97677`: due checkpoint consumption, pending inspection, evidence publication and reschedule are coherent operations; failure episode belongs job state rather than parallel cleanup set. No changed cancellation/delivery authority. Candidate and combined manager/JobService overlay 12 tests/77 assertions; strengthened baseline 11/70. Full source/test diff integrated after paired build/typecheck `task_321e5898` passed on pre-attention tip `1526684d`. Attention test primary still required; attention compile coverage remains next batch.

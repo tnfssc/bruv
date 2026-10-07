@@ -496,7 +496,7 @@
     {
       "focus": "src/tasks/job-attention.ts",
       "initialBlob": "ca8cfabde5250344a14d03571eae1c868733a4c3",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_0a24c1f9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_0a24c1f9",
@@ -507,13 +507,22 @@
       "judgeRounds": [
         {
           "id": "task_846bbe75",
-          "status": "running",
+          "status": "complete",
           "candidate": "0fb97677f66f54b55ee5902568f77d805139915a",
-          "base": "8b0b918042918037a96f996bd29f91e2624a166a"
+          "base": "8b0b918042918037a96f996bd29f91e2624a166a",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Checkpoint consumption, pending observation, notice, rescheduling form visible journey; failure episode belongs state lifetime not parallel set; quiet deadline consistent. Preserves no-retry failed checkpoint and authoritative retirement without cancellation.",
+          "checks": [
+            "baseline11/70",
+            "candidate12/77",
+            "candidate+accepted manager+JobService overlay12/77",
+            "no fresh build/typecheck"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "616cb27912bd78283f5fd9007e63757f6e4c7ace",
+      "integration": "full source/test diff integrated",
       "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a",
       "changedRelatedPaths": [
         "src/tasks/job-attention.ts",
@@ -595,7 +604,7 @@
     {
       "focus": "src/tasks/resume-safeguards.ts",
       "initialBlob": "6fee2681d6bd92c55b5abf7319451090fb352ca4",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_ac6cadbe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_ac6cadbe",
@@ -603,7 +612,14 @@
         "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
         "commit": "3de74516c210a58442656ed67a6e8584d987c302"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_021ccfb2",
+          "status": "running",
+          "candidate": "3de74516c210a58442656ed67a6e8584d987c302",
+          "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
@@ -1061,7 +1077,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_846bbe75",
+        "candidate": "0fb97677f66f54b55ee5902568f77d805139915a",
+        "blob": "dc777477cb0379b14073fba859471e30406134d8",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/job-bridge-protocol.test.ts",
@@ -1500,8 +1523,14 @@
     {
       "focus": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_f4444bc8",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f4444bc8",
+        "branch": "bruv/primary-tests-worktree-workspace.test.ts-f4444bc8",
+        "base": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -1511,7 +1540,8 @@
         "blob": "fe690cd9f5e4b724868724b68dfbbe0e4b2e440d",
         "verdict": "ACCEPT",
         "primaryStillRequired": true
-      }
+      },
+      "launchBase": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9"
     }
   ],
   "extras": [
@@ -1575,6 +1605,13 @@
         " 630 expect() calls",
         "Ran 120 tests across 9 files. [29.44s]"
       ]
+    },
+    {
+      "job": "task_321e5898",
+      "state": "passed",
+      "scope": "paired build and full typecheck",
+      "tip": "1526684d",
+      "limits": "attention candidate not yet integrated; build snapshot precedes attention"
     }
   ],
   "parentIntegrationInspection": {

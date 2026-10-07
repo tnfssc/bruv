@@ -41,6 +41,7 @@ interface AttentionState {
   snoozedUntilMs: number;
   quietNotified: boolean;
   watchEnabled: boolean;
+  inspectionFailed: boolean;
 }
 export interface AttentionDiagnostics {
   activeJobs: number;
@@ -71,7 +72,6 @@ export class JobAttentionScheduler {
   readonly #onNotice: (notices: AttentionNotice[]) => void;
   readonly #unsubscribe: () => void;
   readonly #waiters = new Set<() => void>();
-  readonly #inspectFailures = new Set<string>();
   #timer?: unknown;
   #scheduledAt = Infinity;
   #disposed = false;
@@ -163,11 +163,8 @@ export class JobAttentionScheduler {
     if (this.#disposed) return;
     this.#disposed = true;
     this.#unsubscribe();
-    if (this.#timer !== undefined) this.#clock.clearTimeout(this.#timer);
-    this.#timer = undefined;
-    this.#scheduledAt = Infinity;
+    this.#clearTimer();
     this.#states.clear();
-    this.#inspectFailures.clear();
     for (const waiter of [...this.#waiters]) waiter();
   }
 
@@ -188,7 +185,6 @@ export class JobAttentionScheduler {
       }
     } else if (event.type === "completed") {
       this.#states.delete(event.task.id);
-      this.#inspectFailures.delete(event.task.id);
       if (!this.#states.size) this.#clearTimer();
     }
   }
@@ -203,6 +199,7 @@ export class JobAttentionScheduler {
       snoozedUntilMs: 0,
       quietNotified: false,
       watchEnabled: true,
+      inspectionFailed: false,
     };
     this.#states.set(task.id, state);
     return state;
@@ -210,10 +207,28 @@ export class JobAttentionScheduler {
 
   #deadline(state: AttentionState): number {
     if (!state.watchEnabled) return Infinity;
-    const quiet = state.quietNotified
-      ? Infinity
-      : Math.max(state.lastActivityMs + this.#quietMs, state.quietEligibleMs, state.snoozedUntilMs);
+    const quiet = state.quietNotified ? Infinity : Math.max(this.#quietDeadline(state), state.snoozedUntilMs);
     return Math.min(quiet, state.nextReviewMs);
+  }
+
+  #quietDeadline(state: AttentionState): number {
+    return Math.max(state.lastActivityMs + this.#quietMs, state.quietEligibleMs);
+  }
+
+  /** Consume checkpoints before inspection: a failed observation must not retry in a tight loop. */
+  #takeDueReasons(state: AttentionState, now: number): AttentionReason[] {
+    const reasons: AttentionReason[] = [];
+    if (!state.watchEnabled || now < state.snoozedUntilMs) return reasons;
+    if (!state.quietNotified && now >= this.#quietDeadline(state)) {
+      reasons.push("quiet");
+      state.quietNotified = true;
+    }
+    if (now >= state.nextReviewMs) {
+      reasons.push("review");
+      const intervals = Math.floor((now - state.nextReviewMs) / this.#reviewMs) + 1;
+      state.nextReviewMs += intervals * this.#reviewMs;
+    }
+    return reasons;
   }
 
   #schedule(): void {
@@ -238,44 +253,10 @@ export class JobAttentionScheduler {
     const pending = new Map(this.#manager.pending().map((task) => [task.id, task]));
     for (const [id, state] of this.#states) {
       this.#stateVisits++;
-      if (!state.watchEnabled || now < state.snoozedUntilMs) continue;
-      const reasons: AttentionReason[] = [];
-      if (!state.quietNotified && now >= Math.max(state.lastActivityMs + this.#quietMs, state.quietEligibleMs)) {
-        reasons.push("quiet");
-        state.quietNotified = true;
-      }
-      if (now >= state.nextReviewMs) {
-        reasons.push("review");
-        const intervals = Math.floor((now - state.nextReviewMs) / this.#reviewMs) + 1;
-        state.nextReviewMs += intervals * this.#reviewMs;
-      }
+      const reasons = this.#takeDueReasons(state, now);
       if (!reasons.length) continue;
-      const summary = pending.get(id);
-      if (!summary) {
-        // pending() is the authoritative terminal/missing check. Only then is
-        // it safe to stop monitoring this task.
-        this.#states.delete(id);
-        this.#inspectFailures.delete(id);
-        continue;
-      }
-      let task: TaskInspection;
-      try {
-        task = this.#manager.inspect(id, Math.max(summary.baseOffset, summary.outputEnd - 1000), 1000);
-        this.#inspectFailures.delete(id);
-      } catch {
-        // Inspection can fail transiently while the task is still confirmed
-        // pending. Retain scheduler state and report the episode only once.
-        if (!this.#inspectFailures.has(id)) {
-          this.#inspectFailures.add(id);
-          recordDiagnostic(this.#manager, {
-            component: "attention",
-            code: "inspection_failed",
-            outcome: "failed",
-            taskId: id,
-          });
-        }
-        continue;
-      }
+      const task = this.#inspectPendingTask(id, state, pending.get(id));
+      if (!task) continue;
       notices.push({
         id,
         reasons,
@@ -297,6 +278,31 @@ export class JobAttentionScheduler {
       for (const waiter of [...this.#waiters]) waiter();
     }
     this.#schedule();
+  }
+
+  #inspectPendingTask(id: string, state: AttentionState, summary: TaskSummary | undefined): TaskInspection | undefined {
+    if (!summary) {
+      // pending() is the authoritative terminal/missing check, not an inspection failure.
+      this.#states.delete(id);
+      return undefined;
+    }
+    try {
+      const task = this.#manager.inspect(id, Math.max(summary.baseOffset, summary.outputEnd - 1000), 1000);
+      state.inspectionFailed = false;
+      return task;
+    } catch {
+      // Keep monitoring a confirmed pending task; report once per failure episode.
+      if (!state.inspectionFailed) {
+        state.inspectionFailed = true;
+        recordDiagnostic(this.#manager, {
+          component: "attention",
+          code: "inspection_failed",
+          outcome: "failed",
+          taskId: id,
+        });
+      }
+      return undefined;
+    }
   }
 
   #armIfEarlier(deadline: number): void {
