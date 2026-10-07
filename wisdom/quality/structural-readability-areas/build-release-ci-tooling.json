@@ -250,7 +250,7 @@
     {
       "focus": "install.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_e8ffe816",
@@ -276,33 +276,52 @@
           "id": "task_9233d5f2",
           "base": "cda898ee9cace88b9b290431abea7bb90d52d389",
           "candidate": "936c51a3720ff3ed63026a23ea0b3195a879ad8c",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Canonical names after verified download, private probe scope and shared restore/remove operation expose transaction lifecycle; standalone root retained. Updated tests actual canonical faults preserve all cases and strengthen binding. Checksums/replacement flags/modes/recovery/lock contracts intact.",
+          "checks": "Independentdownload22/106,sitefixtures7/97;sh/bashsyntax/equality/diff/Biomepass;mocked release/platform only,no build/typecheck/live.",
+          "acceptedBlobs": {
+            "install.sh": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+            "tests/install-download.test.ts": "e04230d818b527658f16eda023aa190bbb1b4f89"
+          }
         }
       ],
       "relatedPaths": [
         "tests/install-download.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
       "readingResult": "Root now canonical staged pair, private probe subshell and restore-or-remove operation; remains standalone. Candidate matches accepted scripts/install.sh exactly; shared test comment claiming old root staging is stale.",
       "checks": "Base/candidate22pass;syntax/diffpass;mocked Linux only.",
-      "writerResponse": "Full root patch retained exactly matching scripts installer125933e; stale dual-staging test comment corrected,3 obsolete filename alternatives removed,canonical-stage verification strengthened.22pass106assertions,shell/format/lint/equality/diff pass;broaderBiome unchanged import-order flag;no build/tsc/live."
+      "writerResponse": "Full root patch retained exactly matching scripts installer125933e; stale dual-staging test comment corrected,3 obsolete filename alternatives removed,canonical-stage verification strengthened.22pass106assertions,shell/format/lint/equality/diff pass;broaderBiome unchanged import-order flag;no build/tsc/live.",
+      "integrationState": "Full root/test followup patch integrated; root byte-identical to accepted scripts/install.sh; noteexcluded."
     },
     {
       "focus": "mise.toml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_f31c9cfd",
           "launchBase": "cda898ee9cace88b9b290431abea7bb90d52d389",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_f31c9cfd",
           "branch": "bruv/primary-mise.toml-f31c9cfd",
+          "state": "completed",
+          "commit": "4bbc468d880786deab95a1d8fa394aeb0c071b55"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_a39f170d",
+          "base": "cda898ee9cace88b9b290431abea7bb90d52d389",
+          "candidate": "4bbc468d880786deab95a1d8fa394aeb0c071b55",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Flat three-pin table unchanged structurally; obsolete T3 pnpm authority comment removed to avoid retired bundled-build detour,values unchanged.",
+      "checks": "23workflowtests;parsed pins baseline/all4workflows10Bun5Node2pnpm occurrences equal;no globalenv/build."
     },
     {
       "focus": "package.json",
@@ -722,8 +741,16 @@
     {
       "focus": "scripts/run-native-release-gate.mjs",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_e8c99be3",
+          "launchBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_e8c99be3",
+          "branch": "bruv/primary-scripts-run-native-release-gate.-e8c99be3",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -763,8 +790,16 @@
     {
       "focus": "scripts/setup-native-release-gate.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_2837e782",
+          "launchBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_2837e782",
+          "branch": "bruv/primary-scripts-setup-native-release-gat-2837e782",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1217,10 +1252,21 @@
           "acceptedBlobs": {
             "tests/install-download.test.ts": "7f47af81a54f226e9c5ef319890c24639a8ba1b3"
           }
+        },
+        {
+          "id": "task_9233d5f2",
+          "base": "cda898ee9cace88b9b290431abea7bb90d52d389",
+          "candidate": "936c51a3720ff3ed63026a23ea0b3195a879ad8c",
+          "verdict": "ACCEPT",
+          "role": "changed-related-final-blob",
+          "evidence": "Full changed test independently inspected with final root:obsolete filename alternatives removed,all22scenarios retained and canonical-path probe strengthened.",
+          "acceptedBlobs": {
+            "tests/install-download.test.ts": "e04230d818b527658f16eda023aa190bbb1b4f89"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "7f47af81a54f226e9c5ef319890c24639a8ba1b3",
+      "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
       "relatedPatchJudgment": {
         "id": "task_7be1ff38",
         "verdict": "ACCEPT",
@@ -1230,7 +1276,7 @@
       },
       "readingResult": "Scenario-owned try/finally replaces shared cleanup; explicit fixture roles replace reconstructed paths; visible source-based faults replace opaque mv args. Both staging-name forms covered. Incidental concurrency cleanup defect reproduced baseline2 pass20 fail.",
       "checks": "22/106 sequential+concurrent candidate; related48/204; strict tsc/format/lint/diff pass; no build/live downloads.",
-      "integrationState": "Full test patch integrated without overlap; worker report excluded; production installers unchanged."
+      "integrationState": "Prior primary coverage retained; later related final blob e04230d8 independently rejudged task_9233d5f2 with changed root."
     },
     {
       "focus": "tests/install-local.test.ts",
@@ -1540,19 +1586,29 @@
     {
       "focus": "tests/setup.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_c6585fe4",
           "launchBase": "b1892d9c6c972a84d58689d0ef99226ed1091043",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_c6585fe4",
           "branch": "bruv/primary-tests-setup.ts-c6585fe4",
+          "state": "completed",
+          "commit": "8ce83310ff34d55ef94a217fea177cf66e352432"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_6d717faf",
+          "base": "b1892d9c6c972a84d58689d0ef99226ed1091043",
+          "candidate": "8ce83310ff34d55ef94a217fea177cf66e352432",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged direct complete test-only identity boundary; extraction adds indirection.",
+      "checks": "2temporary boundarytests;ordinary retainsidentity;12Herdrtests;format/lintpass;ownedWASM required,no build. Worker reports parent branch ref-lock race after own commit; area integration not inferred."
     },
     {
       "focus": "tests/smoke-script.test.ts",
@@ -1737,5 +1793,9 @@
       "command": "Bun1.4.2 test tests/{update,install-download,install-local,ci-selective,ci-selective-workflow,find-ci-baseline,publish-release}.test.ts",
       "result": "138 pass0 fail628 assertions across7 files incl private compiled updater fixtures; no application build/hosted gate"
     }
-  ]
+  ],
+  "parentCheckpoint": {
+    "commit": "695ade32",
+    "observed": "Parent has partial accepted joins including older build area batch7c485f53 and combined tsc. Common branch inspection done; merge readiness considered at next clean batch checkpoint, not sibling direct merge."
+  }
 }
