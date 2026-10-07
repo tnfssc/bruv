@@ -261,22 +261,24 @@
     {
       "focus": "scripts/tasks-ui-proof-build.ts",
       "initialBlob": "3c50cd1531b85ff6b44517154be60c5c133b8b03",
-      "status": "primary-running",
+      "status": "primary-stop-requested",
       "primary": [
         {
           "id": "task_69932f49",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_69932f49",
           "branch": "bruv/primary-readability-scripts-tasks-ui-pro-69932f49",
-          "launchBase": "c9707192e101252662f82998d281ba8565592584"
+          "launchBase": "c9707192e101252662f82998d281ba8565592584",
+          "state": "stop requested after 30min, no source/tool progress since13:20; not confirmed stopped"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending",
+      "integrationState": "Uncommitted work retained in original worktree; no candidate integrated",
       "launchBase": "c9707192e101252662f82998d281ba8565592584",
       "coordinatorReviewTargets": [
         "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
-      ]
+      ],
+      "priority": "After confirmed stop, fresh primary retry in new worktree; independently inspect archive removal proposal, do not adopt blindly"
     },
     {
       "focus": "scripts/tasks-ui-proof-screenshots.ts",
