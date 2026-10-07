@@ -106,22 +106,33 @@
     {
       "file": "scripts/claude-native-acceptance/app-delegation-model.mjs",
       "initialBlob": "cd31945f84240e89773e227fd0db20d8a5d0d6e0",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_00f0a474",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_00f0a474",
         "branch": "bruv/primary-native-app-delegation-model-00f0a474",
         "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a",
-        "commit": null
+        "commit": "89be0631d4fa7d22ab17ce62ed59b2a70e0b6039"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_97f013af",
+          "status": "running",
+          "candidate": "89be0631d4fa7d22ab17ce62ed59b2a70e0b6039"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a"
+      "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a",
+      "changedRelatedPaths": [
+        "tests/claude-native-app-delegation-model.test.mjs"
+      ],
+      "readingResult": "Mixed reply path separated normal-child scope checks and root launch/cancel/ACK operations;transcript guards/evidence/native-app vs Bruv ownership retained.",
+      "checks": "39 Bun pass;7 Node app tests;Biome/diff;no native/browser/provider/full gate."
     },
     {
       "file": "scripts/claude-native-acceptance/driver.mjs",
       "initialBlob": "882479646781146d901ab1b87e5d3a99865d8509",
-      "status": "judging",
+      "status": "rework-running",
       "primary": {
         "id": "task_ffc92537",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ffc92537",
@@ -132,8 +143,28 @@
       "judges": [
         {
           "id": "task_2d4634f7",
-          "status": "running",
-          "candidate": "06f56bdd95bb033cd44026c458d3cb69d4e37a0c"
+          "status": "completed",
+          "candidate": "06f56bdd95bb033cd44026c458d3cb69d4e37a0c",
+          "verdict": "REJECT",
+          "objections": [
+            "run-subagent.mjs derives executable replay from shared wisdom replay, substituting subagent-driver.mjs. That driver has no capture export; its flushCapture collects final-provider-evidence.json before private runtime deletion. Replacing integration.flushCapture with observation.flush silently drops evidence. Judge exact finalizer probe:base writes exit evidence,candidate writes none. Preserve replay-owned capture but repair shared finalization contract and test actual generated caller join."
+          ],
+          "partialBlobJudgments": {
+            "scripts/claude-native-acceptance/driver.mjs": {
+              "blob": "aff1b1455a6ed50a7c611d9ba4c2b2d11c060e04",
+              "verdict": "ACCEPT"
+            },
+            "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs": {
+              "blob": "69e1d4ee12b0428ef555eecee1aa5a5af360a5c2",
+              "verdict": "REJECT"
+            },
+            "tests/claude-native-acceptance-capture.test.mjs": {
+              "blob": "20ed510e7870bddef93c27e00e4dbed0991cd847",
+              "verdict": "ACCEPT"
+            }
+          },
+          "evidence": "Reproduced baseline cross-page evidence contamination and candidate isolation;50 native tests pass but missed generated-subagent finalizer regression. Browser owns listener teardown;flush not detach.",
+          "limits": "No live browser/native;whole candidate rejected,none integrated."
         }
       ],
       "acceptedBlob": null,
@@ -143,7 +174,17 @@
         "tests/claude-native-acceptance-capture.test.mjs"
       ],
       "readingResult": "Module-global capture state replaced replay-owned observation: websocket evidence/cancel disclosure identity/teardown one lifetime. Two-page fixture reproduces cross-run evidence contamination before change;run.mjs untouched.",
-      "checks": "50 native unit pass;focused format/replay syntax/diff pass;existing lint info/warning;no live T3/browser/runtime executable/fullbuild."
+      "checks": "50 native unit pass;focused format/replay syntax/diff pass;existing lint info/warning;no live T3/browser/runtime executable/fullbuild.",
+      "reworks": [
+        {
+          "id": "task_23c0fcde",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_23c0fcde",
+          "branch": "bruv/rework-native-driver-finalization-join-23c0fcde",
+          "launchBase": "ef4769ec08e6ee2696ddb125a3d104317d0ec52e",
+          "commit": null,
+          "respondsTo": "task_2d4634f7"
+        }
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/history-driver.mjs",
@@ -302,17 +343,28 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-model.mjs",
       "initialBlob": "26c60744b7399e669da090a7c33e8a767d0bd61d",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_5996dfa6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_5996dfa6",
         "branch": "bruv/primary-native-subagent-model-5996dfa6",
         "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a",
-        "commit": null
+        "commit": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_f65d18f3",
+          "status": "running",
+          "candidate": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a"
+      "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a",
+      "changedRelatedPaths": [
+        "tests/claude-native-subagent-model.test.mjs"
+      ],
+      "readingResult": "Dense generated concatenation/mutable tails become readable launch→PID→readiness→explicit cancel/terminal inspect or root hold for native-owned Stop programs.",
+      "checks": "15 focused Bun+Node pass;expanded tests base pass;format/lint/diff pass;optional Biome check import assists;no driver/runner/native claim."
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
@@ -1975,9 +2027,15 @@
       "file": "tests/claude-native-acceptance-runner.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-primary",
+      "status": "primary-running",
       "introducedBy": "f478dc507c14e579b46a68aa69800a33f9f8b9b8",
-      "primary": null,
+      "primary": {
+        "id": "task_23190128",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_23190128",
+        "branch": "bruv/primary-new-native-runner-tests-23190128",
+        "launchBase": "ef4769ec08e6ee2696ddb125a3d104317d0ec52e",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1987,7 +2045,8 @@
           "blob": "3450e1a22c042ef6bb63a247fb860a32663530ec",
           "candidate": "f478dc507c14e579b46a68aa69800a33f9f8b9b8"
         }
-      ]
+      ],
+      "launchBase": "ef4769ec08e6ee2696ddb125a3d104317d0ec52e"
     },
     {
       "file": "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
@@ -2199,6 +2258,13 @@
       "status": "passed",
       "scope": "Final human/live/commands22 tests140 assertions;typecheck",
       "limits": "No live/device/full gate."
+    },
+    {
+      "id": "task_1bb498fc",
+      "commit": "ef4769ec",
+      "status": "passed",
+      "scope": "Integrated runner7 Node tests plus4 runner/model/chronology/app suites28 Bun tests;format",
+      "limits": "Offline child/model stubs+real gated process;not live native/provider."
     }
   ],
   "combinedReviews": [
