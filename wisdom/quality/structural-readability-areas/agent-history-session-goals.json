@@ -355,7 +355,7 @@
     {
       "focus": "src/agent/last-used-cli-model.ts",
       "initialBlob": "09d386f26bb6aa3e28e07e4b4d7800f92d8c0491",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_9d8cd3c0",
@@ -396,6 +396,13 @@
             "Adjacent thinking-persistence comment understates effective-level changes emitted for model switches/cycles, lacking source discriminator. Correct comment only; retain accurate startup/restoration distinction and all behavior."
           ],
           "checks": "Independent7 tests28 assertions; SDK event producers/settings/source fully traced."
+        },
+        {
+          "id": "task_b1432f83",
+          "candidate": "e7fe2eec0a44aa69a41ded01a6862217fdb7a7b7",
+          "base": "81bf0b75200c64e9d9ef2f545a908c7c2c6e186a",
+          "status": "running",
+          "priorObjectionJudge": "task_8d8d65eb"
         }
       ],
       "acceptedBlob": null,
@@ -1008,7 +1015,7 @@
     {
       "focus": "src/pi-host.ts",
       "initialBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_dad4fc12",
@@ -1028,11 +1035,15 @@
           "id": "task_43ae3d21",
           "candidate": "f41b2a9eb367298f703309897930711b7d8c20cd",
           "base": "de02b17ff1a64acb638e2da98b3eec3c107e114e",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Prepared SDK registry/markers runtime assertion is one fail-closed prerequisite, separate from preparation hash/version authority and actual session owners.",
+          "checks": "Independent isolated assertion accepted prepared state and rejected4 missing markers/3 invalid registries. Focused suite imports blocked by missing runtime-assets (zero executed), dist absent. Writer counts not independently reproduced; source/caller actual review and complete patch read, no fullgate proof."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/prompt-preview.ts",
