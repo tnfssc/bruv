@@ -248,7 +248,7 @@
     {
       "focus": "scripts/install.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_7cb4f7d8",
@@ -264,15 +264,24 @@
           "id": "task_7be1ff38",
           "base": "8747723aa2c3e306ae49365c17c728b576547673",
           "candidate": "36a30abee444a62a0c7b2e5fec89cf08f0cefa99",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Canonical staged pair bounds platform-name lifetime; private environment/explicit pair probe; restore_binary removes duplicated restore/remove decisions while interruption flags remain. Inherited override baseline failure reproduced; candidate normalization prerequisite reproduced separately.",
+          "checks": "Independent36 pass140 assertions vs older local installer; external rollback permission2/20; shell/Biome/isolated tsc pass. Full check missing local dependencies; no full typecheck/build/live/platform claim.",
+          "acceptedBlobs": {
+            "scripts/install.sh": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+            "tests/install-download.test.ts": "caf39e95601ad64f532c08d60b47d5acf507725b"
+          }
         }
       ],
       "relatedPaths": [
         "tests/install-download.test.ts"
       ],
-      "acceptedBlob": null,
-      "readingResult": "Maps downloaded platform asset names to canonical staged pair; explicit pair probes isolated; shared binary restoration operation retains interruption flags. Explicit incidental fixes: absolute destination resolution and inherited connector-override isolation.",
-      "checks": "36 pass140 assertions; shell syntax/Biome/tsc/diff pass; no build/live release/platform."
+      "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+      "readingResult": "Maps downloaded platform asset names to canonical staged pair; explicit pair probes isolated; shared binary restoration operation retains interruption flags. Explicit incidental fixes: absolute destination resolution and inherited connector-override isolation. Judge correction: relative destination alone worked at base when override cleared; normalization is necessary prerequisite of NEW explicit staged-path binding, not an old independent relative-path defect.",
+      "checks": "36 pass140 assertions; shell syntax/Biome/tsc/diff pass; no build/live release/platform.",
+      "integrationState": "Full coherent source/test patch integrated; no overlap; note excluded. Combined current local-installer tests required."
     },
     {
       "focus": "scripts/prepare-assets.ts",
@@ -674,13 +683,27 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_7be1ff38",
+        "verdict": "ACCEPT",
+        "blob": "caf39e95601ad64f532c08d60b47d5acf507725b",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/install-local.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_70f09987",
+          "launchBase": "dced757aa8b8b52369822c3dee2278454e16689b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_70f09987",
+          "branch": "bruv/primary-tests-install-local.test.ts-70f09987",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
@@ -757,17 +780,25 @@
     {
       "focus": "tests/publish-release.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_5bfa31b4",
           "launchBase": "6f476812d4f245c24fd1f9e2e8c311d9fd090665",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_5bfa31b4",
           "branch": "bruv/primary-tests-publish-release.test.ts-5bfa31b4",
+          "state": "completed",
+          "commit": "dd88c5aeabae3553d027ee65b601593ebe72af92"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_d35c8509",
+          "base": "6f476812d4f245c24fd1f9e2e8c311d9fd090665",
+          "candidate": "dd88c5aeabae3553d027ee65b601593ebe72af92",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -775,7 +806,9 @@
         "verdict": "ACCEPT",
         "blob": "268cb917055a44778d96c31c96da2d8c8e458c06",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "One byte-backed fixture replaces separate assets; named cases/missing assets replace anonymous/index fixtures; scoped awaited lookup assertions own fetch cleanup; strict effect replay is sole mutation proof. Ten CLI scenarios retained, wrong nonnull digest case added.",
+      "checks": "24 tests63 assertions focus; related50/471; strict tsc/lint/format/diff pass; no full build/publication."
     },
     {
       "focus": "tests/release-browser-setup.test.ts",
@@ -861,17 +894,25 @@
     {
       "focus": "tests/update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_27b632e4",
           "launchBase": "4171e52297cccc7e93ad15ab209d12f39bc6fd36",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_27b632e4",
           "branch": "bruv/primary-tests-update.test.ts-27b632e4",
+          "state": "completed",
+          "commit": "6ebec19f4749eff882c86aabb729e9c369f1eb4e"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_ee4235b6",
+          "base": "4171e52297cccc7e93ad15ab209d12f39bc6fd36",
+          "candidate": "6ebec19f4749eff882c86aabb729e9c369f1eb4e",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -879,7 +920,9 @@
         "verdict": "ACCEPT",
         "blob": "16166886024d4d339cf8ab535dc1f4275feae2db",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Typed per-artifact fixture inputs and explicit mutation timing replace interleaved untyped options; contract suites group journeys; URL tests now supply connector metadata to avoid masking URL acceptance defect. All36 definitions retained.",
+      "checks": "Base/candidate51 tests177 assertions; combined64/230; strict tsc/format/diff pass; existing lint warning; no full build/platform."
     },
     {
       "focus": "tests/verify-update-probe.test.ts",
