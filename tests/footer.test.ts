@@ -398,18 +398,15 @@ test("cost polling serializes refreshes, retries errors, and redraws only change
     factory = value;
   };
   let tick!: () => void;
-  let calls = 0,
-    renders = 0,
+  let renders = 0,
     cleared = 0;
-  let resolve!: () => void, reject!: (error: Error) => void;
+  const refreshes: ReturnType<typeof Promise.withResolvers<void>>[] = [];
   const tracker = {
     descendantCost: 0,
     refresh: () => {
-      calls++;
-      return new Promise<void>((done, fail) => {
-        resolve = done;
-        reject = fail;
-      });
+      const refresh = Promise.withResolvers<void>();
+      refreshes.push(refresh);
+      return refresh.promise;
     },
   };
   const oldSet = globalThis.setInterval,
@@ -433,27 +430,33 @@ test("cost polling serializes refreshes, retries errors, and redraws only change
       theme,
       data,
     );
-    expect(calls).toBe(1);
+    expect(refreshes).toHaveLength(1);
+    const initial = refreshes[0]!;
     tick();
-    expect(calls).toBe(1);
-    reject(new Error("transient disk error"));
-    await Promise.resolve();
+    expect(refreshes).toHaveLength(1);
+    initial.reject(new Error("transient disk error"));
+    await initial.promise.catch(() => {});
     expect(renders).toBe(0);
+
     tick();
-    expect(calls).toBe(2);
-    resolve();
-    await Promise.resolve();
+    expect(refreshes).toHaveLength(2);
+    const unchanged = refreshes[1]!;
+    unchanged.resolve();
+    await unchanged.promise;
     expect(renders).toBe(0);
+
     tick();
+    expect(refreshes).toHaveLength(3);
+    const changed = refreshes[2]!;
     tracker.descendantCost = 1;
-    resolve();
-    await Promise.resolve();
+    changed.resolve();
+    await changed.promise;
     expect(renders).toBe(1);
     stop();
     component.dispose?.();
     expect(cleared).toBe(1);
     tick();
-    expect(calls).toBe(3);
+    expect(refreshes).toHaveLength(3);
   } finally {
     globalThis.setInterval = oldSet;
     globalThis.clearInterval = oldClear;
@@ -476,9 +479,9 @@ test("footer includes failed compaction attempt costs without changing context u
   expect(plain(renderSingleRowFooter(ctx, data, theme, 150))[0]).toContain("ctx 1%");
 });
 
-test("cache estimate keeps footer usage layout and uses a bounded disposable minute timer", () => {
+test("cache estimate keeps footer usage layout and signals warning and urgent states", () => {
   const { ctx, data } = fixture();
-  let now = 1_000_000;
+  const now = 1_000_000;
   const cache = new CacheCountdown(() => now);
   cache.record({ appendEntry() {} } as unknown as ExtensionAPI, ctx.model!, now);
   const estimate = cache.estimate(ctx);
@@ -497,6 +500,13 @@ test("cache estimate keeps footer usage layout and uses a bounded disposable min
   expect(renderSingleRowFooter(ctx, data, colored, 150, 0, { state: "urgent", text: "cache est 5m" })[0]).toContain(
     "\x1b[31mcache est 5m",
   );
+});
+
+test("cache countdown uses a bounded disposable minute timer", () => {
+  const { ctx, data } = fixture();
+  let now = 1_000_000;
+  const cache = new CacheCountdown(() => now);
+  cache.record({ appendEntry() {} } as unknown as ExtensionAPI, ctx.model!, now);
   let factory: Parameters<ExtensionContext["ui"]["setFooter"]>[0];
   ctx.ui.setFooter = (value) => {
     factory = value;

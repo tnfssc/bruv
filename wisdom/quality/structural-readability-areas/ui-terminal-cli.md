@@ -71,3 +71,7 @@ Primary task_3856c420; judge task_24064ab2 ACCEPT candidate eeb7a1d09e39e95ba7ae
 ## Accepted settings navigation ownership
 
 Primary task_3ec62165; judge task_2c6056ba ACCEPT candidate f14b45ab14702f6e697aca70b3d929d7a55c6dac. Picker owns return location; open/filter/return visibly choose active selection, replacing hidden rebuild restoration. Independent 16 UI/profile tests/105 assertions, strict focused source typecheck and format/diff pass. Cross-area tests/subagent-settings-ui.test.ts at 2657c431fc90d593d5064b33b4a4dfd82d261370 needs execution/tasks/questions primary owner reconciliation.
+
+## Footer tests final primary acceptance
+
+Primary task_f4f7731b; judge task_dc793fa7 ACCEPT ecfd5a67ecdf054839b97e811999447f4f75da21, superseding prior related-test blob with 92878255d0c02ce9e906782e8757269a63221b9b. Explicit request promises and separate countdown/render tests reduce fixture bookkeeping. Reviewer reconciled apparent assertion drop: narrower suite omitted 3 assertions, new refresh adds 1; identical four suites rise 43 tests/365 assertions to 44/366. No weakened coverage. Independent format/lint/diff pass.

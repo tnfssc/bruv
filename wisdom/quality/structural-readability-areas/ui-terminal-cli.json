@@ -1216,7 +1216,7 @@
     {
       "focus": "tests/footer.test.ts",
       "initialBlob": "44e272d01ed9552d2083fc4951cfc58700cb8bc2",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f4f7731b",
@@ -1231,12 +1231,26 @@
           "id": "task_dc793fa7",
           "base": "b2297dabbf2f776682e0b88090c3039ef2b20893",
           "candidate": "ecfd5a67ecdf054839b97e811999447f4f75da21",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_05ce27ca"
+          "verdict": "ACCEPT",
+          "priorRelatedJudge": "task_05ce27ca",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/footer.test.ts": "92878255d0c02ce9e906782e8757269a63221b9b"
+          },
+          "evidence": "Each refresh owns explicit promise settlement; cache rendering/color and timer lifetime are independent test journeys, retaining all coverage. Apparent 365→363 assertion drop was narrower command: same four suites increase 365→366.",
+          "checks": [
+            "Independent base footer 24/290 vs candidate 25/291",
+            "Independent base 3-suite 42/362 vs candidate 43/363",
+            "Same prior 4-suite base 43/365 vs candidate 44/366",
+            "Biome format/lint/diff"
+          ],
+          "limits": [
+            "No build/typecheck/interactive/compiled CLI/provider/device/SSH"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "footer-related patch integrated; primary pending",
+      "acceptedBlob": "92878255d0c02ce9e906782e8757269a63221b9b",
+      "integrationState": "new primary candidate integrated, supersedes earlier related-test acceptance",
       "relatedPatchJudgments": [
         {
           "id": "task_05ce27ca",
