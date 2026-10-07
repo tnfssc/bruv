@@ -157,17 +157,25 @@
     {
       "focus": "site/playback.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_ed0b8880",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_ed0b8880",
           "branch": "bruv/primary-site-playback.ts-ed0b8880",
           "base": "303233f17b57d0990a66df6cd686f9af933206d0",
+          "state": "running",
+          "commit": "917dcf3c57503745fceef627068fd32752bdcff7",
+          "result": "No source change: callers own clocks, visibility, controls/render; advance gates mutation and wrap; inView direct threshold. demos.test: 4 pass."
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_993fa01c",
+          "candidate": "917dcf3c57503745fceef627068fd32752bdcff7",
           "state": "running"
         }
       ],
-      "judges": [],
       "initialBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e"
     },
     {
@@ -227,17 +235,25 @@
     {
       "focus": "site/scripts/capture-real.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_78b57531",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_78b57531",
           "branch": "bruv/primary-site-scripts-capture-real.ts-78b57531",
           "base": "303233f17b57d0990a66df6cd686f9af933206d0",
+          "state": "running",
+          "commit": "443a8840fe9a2d308e3c397f4df8409748e821b6",
+          "result": "No source change. Ordered transcript -> loopback requests -> Ghostty replay/render -> crop -> PNG -> cleanup. Historical manual tool not shipped site path. build.test 10 pass. No browser regeneration/typecheck."
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_a59154f4",
+          "candidate": "443a8840fe9a2d308e3c397f4df8409748e821b6",
           "state": "running"
         }
       ],
-      "judges": [],
       "initialBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b"
     },
     {
@@ -307,8 +323,15 @@
     {
       "focus": "site/scripts/validate.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_feb44467",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_feb44467",
+          "branch": "bruv/primary-site-scripts-validate.ts-feb44467",
+          "base": "20e8cff6ed94b618032adf87ef0a701322b1c974"
+        }
+      ],
       "judges": [],
       "initialBlob": "f4efd413bc0cb47bbcc2bd922bc4c33184e33066"
     },
@@ -331,8 +354,15 @@
     {
       "focus": "site/terminal.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_8638bdbf",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_8638bdbf",
+          "branch": "bruv/primary-site-terminal.ts-8638bdbf",
+          "base": "20e8cff6ed94b618032adf87ef0a701322b1c974"
+        }
+      ],
       "judges": [],
       "initialBlob": "9c375c3852c97216dc89f6d055587ef63353ac52"
     },
