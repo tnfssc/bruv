@@ -1,119 +1,46 @@
-# UI / terminal / CLI structural readability
-
-101 baseline files; three accepted primary focuses integrated, remaining coverage ongoing. This is an ongoing area, not whole-repo acceptance.
+# UI / terminal / CLI structural readability — ongoing
 
 Workspace: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6
 Branch: bruv/whole-repo-structural-readability-ui-ter-f8e968d6
-Initial area commit: 59413c532e6422983f611915e509e8421aa2f363
+Initial commit: 59413c532e6422983f611915e509e8421aa2f363
 
-## Pipeline and pickup
+## Coverage and pickup
 
-The adjacent JSON is authoritative per-file work/round/hash coverage. Up to three primary/rework writers and three fresh read-only judges run concurrently. Writers own source changes in retained worktrees; coordinator joins accepted diffs only and excludes worker-local pickup notes. Unchanged source still requires an independent actual-code judgment. Related final changes invalidate earlier hash acceptance. Extra/new/deleted paths are tracked separately.
+101 baseline files; 36 have launched fresh primary workers. Current statuses: accepted: 30; judging: 3; pending: 65; primary-running: 3. Extra paths: 3, tracked separately in JSON. **Not complete; no area PR/push or whole-repo acceptance.** Parent owns PR #45.
 
-First independent focus domains: CLI entry, editor lifecycle, terminal action profiling. Later primary workers launch from committed integrated area state. No area push or PR. Parent owns PR #45.
+Adjacent JSON is authoritative: one row per baseline/extra file, durable worker path/branch/base/commit, exact related paths, all judge IDs/verdicts/reasons/proof/limits and accepted blobs. Workers and notes retained; worker-local notes are never imported. Up to three writers and three fresh read-only judges. Coordinator joins accepted patches only, never writes source. New or changed final blobs require independent review; related patch judgment never replaces primary focus.
 
-## Proof and limits
+### Active next steps
 
-Exact source acceptance and focused proof are recorded below; whole-area acceptance remains pending. Shared read-only dependencies and explicit Bun PATH are required. Focused checks per actual edit; combined gates at batch boundaries. Live/provider/device/SSH limits remain explicit.
+- Full typecheck exposed TS2741 in the SDK-added throwing Component fixture at tests/task-rows.test.ts:249. Fresh primary task_e44a3fd7 reproduced it and proposed only invalidate() {} at 1b66a8d1dc898e2953e963da9f4af5b663bafd86; judge task_c584a1d4 is reviewing the entire primary file plus repair. Not yet integrated. Runtime assertions unchanged; worker reports full tsc passes.
+- Active writers/judges and queued candidates are statuses in JSON; fill slots on substantive completion, do not poll. Future workers start at current committed integrated state.
+- New tests/ansi-video-renderer.test.py is candidate-related only: once parent renderer patch accepted, launch its own fresh primary then independent judge.
+- Cross-area tests/editor-voice-integration.test.ts blob 95453da9cb3f0827a96b955c60f854e905939dac needs Live/native-audio primary reconciliation. tests/subagent-settings-ui.test.ts blob 2657c431fc90d593d5064b33b4a4dfd82d261370 needs execution/tasks/questions primary reconciliation. Both related patches independently accepted; do not infer their required primary coverage.
 
-## Accepted editor lifetime patch
+## Accepted structural reading results
 
-Primary task_ff96b465; judge task_14234cb0 ACCEPT candidate 58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7. Hook teardown and protocol restoration now sit with their setup; attachment shows one idempotent session lifetime. Exact accepted blobs and proof are in JSON. Writer: 40 editor/startup/controller + 10 live caller checks; baseline characterization 15 passes, focused Biome/diff clean. Judge rerun hit dependency resolution (no independent test-pass claim). No full build/typecheck/device/provider proof.
+- CLI boot authority and local SDK/presentation lifetime separated; editor voice hooks and terminal mode ownership paired with their restoration.
+- Rolling activity uses explicit contiguous runs instead of synthetic keys/counters. Task-row merge chooses lifecycle authority once, refreshes presentation metadata once, publishes once.
+- SDK frame ownership, body projection and installation cleanup separated. Density geometry/mouse and thinking/source/streaming each own inverse operations. Execution previews separate live partial spinner from cached settled views.
+- Footer clocks have separate observers and one shared lifetime gate. Footer tests own request promises and separate rendering/countdown fixtures; identical suite comparison proves no assertion weakening. Settings picker owns return selection instead of hidden rebuild correction. Monitor has explicit frame roles and per-view read budgets; frozen cancellation authority unchanged.
+- Diagnostics separates live observation from durable acceptance, keeping privacy/replay/budget/reentry/generation guards. Profiler attribution and pending-render requests have bounded owners, not broad context bags.
+- Interaction root separates one child process lifetime from report aggregation/checkpointing. Runtime/terminal fixture preparation and routing are separate from operational acceptance; fixture equivalence is not visual proof.
+- Clear files genuinely stayed unchanged with fresh actual-code judgments (formatters, startup, quiet/settled/projection bridges, diagnostics extension, CLI/diagnostic tests, perf entry/options/report/worker, harness). Exact journeys and checks are per-file in JSON; no name-count scores.
 
-Cross-area: tests/editor-voice-integration.test.ts accepted as related patch at 95453da9cb3f0827a96b955c60f854e905939dac; Live/native-audio primary must reconcile final blob. Worker-local notes excluded.
+## Combined-code proof
 
-## Accepted CLI boot boundaries
+- Batch 1 at fa5689ff: 71 tests/473 assertions; full tsc and six-path format/lint passed after own generated assets prepared. Initial missing assets and broader Biome import-order assist failure retained in ledger.
+- Batch 2 at 10508c78: 161 tests/2,032 assertions; full tsc and eight-path format/lint passed, existing 6 warnings/18 infos.
+- Judge task_060d7edf accepted exact SDK/density/projection/quiet/settled/rolling/preview join: ten exact source/test blobs in joinProof. Independent 159 tests/13,717 assertions, 2 app-stack failure/shutdown/reinstall probes/32 assertions, base lifetime characterization 1/6. Preserves publication before paint, lazy body suppression, mouse geometry, live overlay over cache, existing children/foreign wrapper/reinstall semantics. Later changes invalidate affected hashes.
+- Batch 3 at e4cf5e40: fresh normal CLI + connector launcher built; all 178 tests/1,654 assertions across nine suites passed, including previously unrun compiled CLI cases. Full tsc failed only the fixture contract above. Initial fish inline-quote launch failed before execution; local ignored Bash script corrected it. No passing static claim until repaired final integration rerun.
+- Parent accepted common checkpoint 695ade32dc055e22dd56a7bf06c01764973715d2 merged cleanly at bc8f6e5ffb75aa2b27fd939ce60888063e756383. No accepted UI blob changes (audit: zero mismatches). Other-area new/deleted files remain parent/sibling primary ownership, not falsely counted in UI scope. Later combined API gaps remain honest.
 
-Primary task_75c8d308; judge task_db22e114 ACCEPT candidate f27f3d73c76d754b0c19bdc0d561657fc5f66b0b. Shared environment setup, remote dispatch, and local SDK/UI lifetime now read separately; help transformation no longer interrupts acquisition/cleanup. Bodies/import/cleanup ordering retained. Independent 6 startup checks + 87 focused caller checks; Biome exits 0 with existing advisories; no compiled/full-gate/TTY/provider/SSH proof. tests/cli.test.ts still needs its own primary focus despite patch acceptance.
+## Toolchain and limits
 
-## Accepted profiler attribution ownership
+Bun 1.4.2: /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; PATH inside quoted Bash or local ignored script. Automatic fish setup cannot find bun. Shared node_modules at /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules is read-only; copy needed runtime assets locally, never prepare/mutate shared dependencies. Coordinator temporary node_modules symlink is untracked and must be removed before final clean-tree delivery. Local batch logs/scripts in runtime-assets are disposable validation artifacts. Disk latest: 136G available.
 
-Primary task_6ffa8972; judge task_40ff7535 ACCEPT candidate 84108130c3b7f3ba70e166dac04e53bfde0f7dcb. Request batching/frame attribution/late completion corrections now share a bounded owner, apart from wrappers and span accounting. Reentrant consumed-batch linkage preserved. Writer: 57 focused passes, targeted TS/Biome; judge exact base/candidate reentrant snapshots identical with 19 clock reads. Judge SDK suites blocked by module resolution, so no independent suite claim. Related action-profiler test primary still pending.
+No provider/device/macOS/authenticated SSH/physical-terminal acceptance. Unit fixtures and shared-prebuilt harness tests do not prove compiled parity; the actual batch CLI build covers only stated CLI tests. No performance-speed claim. Known unchanged limits: diagnostic append/leaf restore non-atomic and reopening may select diagnostic child; SDK getEntries materializes full list despite bounded replay scan; footer disposal suppresses observation rather than cancelling I/O; harness lacks partial-start rollback and capture failure prevents kill, configurable watchdog socket remains unquoted; interaction Promise.all failure does not guarantee child termination and artifact writes are nontransactional. These are explicit retained contracts/limits, not invented safety improvements.
 
-## Batch boundary
+## Final completion requirements
 
-First three accepted source patches integrated through fa5689ff. Combined editor/profiler focused checks, full TypeScript, and changed-file Biome running as task_4c9cc9a5. Shared dependencies linked read-only; only local photon WASM copied (prepare:assets not run against shared deps). Parent tip 6a285569 contains documentation progress only; no common code to bring in. Disk: 157G available.
-
-First-batch validation result: 71 tests passed, 473 assertions. Initial typecheck failed solely because generated runtime JSON assets were absent; after copying local assets without mutating shared dependencies, full TypeScript passed. Six changed paths pass Biome format and lint (3 existing warnings, 5 infos). Broader `biome check` additionally reported existing import-organization assist on profiler test imports; it was not silently represented as passing. No full build performed.
-
-## Action-label no-change acceptance
-
-Primary task_7482f459; fresh judge task_8d1d090b NO CHANGE NEEDED at 290d620d94ba2c45b195cc5c220ae0894bf95056. Pure fallback/precedence decisions already local, with status/animation/clipping owned by callers. Judge 12 direct assertions and pinned format/diff passed; independent suite reruns dependency-blocked, not claimed green.
-
-## Accepted contiguous activity groups
-
-Primary task_f8eb0cae; judge task_a6caab27 ACCEPT candidate 8aaffbf961e73dbedafd111ad18a21faf3a1bfdb. Explicit ordered runs replace synthetic map-key/counter reconstruction, while stable component expansion, callback provenance and handoff/native visibility boundaries remain intact. Writer 119 focused passes; independent disk test passed, four import-blocked suites not confirmed. Both changed rolling tests still need primary focus.
-
-## Accepted footer observer lifetimes
-
-Primary task_b0090f89; judge task_05ce27ca ACCEPT candidate 23d4c95aa626e1ef2e84308c792bffc4b1b130e6. Cost polling and cache countdown now own independent clocks; shared cache redraw/rescheduling and component gate remain explicit. Gate suppresses late redraw, does not cancel filesystem I/O. Independent 43 tests/365 assertions and format/lint pass (unchanged advisories). Footer tests still require primary coverage.
-
-## Accepted diagnostics acceptance boundaries
-
-Primary task_123df133; judge task_50dcf5f6 ACCEPT candidate 54ebccd6eeedc055d6832461c3fe4e4e9bae859b. Live observation and durable acceptance are visible separate operations; snapshot shape has one constructor. Privacy, bounded replay/write reservation, reentrancy and generation protections retained. Writer 58 passes; judge 15 independent assertions, full focused suites dependency-blocked. Diagnostics test primary still pending.
-
-## Accepted execution preview lifetimes
-
-Primary task_52ca0e94; judge task_9a76656a ACCEPT candidate 828e13116b668825a7d24cf4247e2b56e3ed49b9. Construction separates partial/live spinner from settled cached views; Pi reconstruction on updates/expansion preserves dynamic behavior. Warning reads/cache/animation ownership remain intact. Independent 130 tests/13,465 assertions, format/diff pass; no compiled TUI/device/provider proof.
-
-## Startup no-change acceptance
-
-Primary task_b0e54e09; judge task_f31c7dbc NO CHANGE NEEDED at 3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49. Override/replacement/factory/native-init ordering and conditional restoration already local. Independent 125 tests/859 assertions and pinned Biome check pass; simulated initialization/mocked Live getter, no compiled PTY/provider/device proof.
-
-Second combined batch task_a480f513 passed at 10508c78: 161 pass 0 fail 2032 expect() calls Ran 161 tests across 8 files. [2.12s] Full TypeScript and eight-file format/lint passed; lint has 6 warnings/18 infos. Log local runtime-assets/readability-batch2.log. No compiled build yet.
-
-CLI test primary task_f5df93a3 + fresh judge task_a07a60a3 independently accept unchanged 528e6e7735b03cdd9812839b8c18657884904713; related-patch coverage now backed by actual primary focus. Six source tests/42 assertions independently pass. Nine compiled cases still require batch-built artifacts.
-
-## Accepted task-row authority merge
-
-Primary task_3856c420; judge task_24064ab2 ACCEPT candidate eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1. Lifecycle authority selection, independent metadata refresh and publication are no longer duplicated across branches. Regressions preserve stale/partial/terminal-unknown evidence and input immutability. Independent 106 tests/965 assertions, exact-base characterization 30 tests/446 assertions; format/lint/diff pass. Task-row test primary still pending.
-
-## Accepted settings navigation ownership
-
-Primary task_3ec62165; judge task_2c6056ba ACCEPT candidate f14b45ab14702f6e697aca70b3d929d7a55c6dac. Picker owns return location; open/filter/return visibly choose active selection, replacing hidden rebuild restoration. Independent 16 UI/profile tests/105 assertions, strict focused source typecheck and format/diff pass. Cross-area tests/subagent-settings-ui.test.ts at 2657c431fc90d593d5064b33b4a4dfd82d261370 needs execution/tasks/questions primary owner reconciliation.
-
-## Footer tests final primary acceptance
-
-Primary task_f4f7731b; judge task_dc793fa7 ACCEPT ecfd5a67ecdf054839b97e811999447f4f75da21, superseding prior related-test blob with 92878255d0c02ce9e906782e8757269a63221b9b. Explicit request promises and separate countdown/render tests reduce fixture bookkeeping. Reviewer reconciled apparent assertion drop: narrower suite omitted 3 assertions, new refresh adds 1; identical four suites rise 43 tests/365 assertions to 44/366. No weakened coverage. Independent format/lint/diff pass.
-
-Diagnostics-test fresh primary task_28d3f49e + judge task_a3ac95db NO CHANGE NEEDED at 48a273afdc220bd4984fbc18739015dc4a86c88a. Explicit privacy/replay/reentry/generation/SDK restoration journeys; independent 13 tests/573 assertions, Biome/diff pass.
-
-Quiet-tool primary task_022db18e + judge task_a1a59af9 NO CHANGE NEEDED at 5970b1ea57aba517a223ded5c196ab3ebca133f1. Native delegation, owned child filtering and conditional restoration already local. Independent 34 tests/272 assertions plus 3 ownership probes/15 assertions; format/diff pass. Density join remains to check.
-
-## Density adapters and projection join
-
-Primary task_19cd167f; judge task_203052f5 ACCEPT density 1071775f8f3c9c120ddc639d60c267d4acd8ef1f: paired geometry/mouse and source/thinking restoration replace mixed late-assigned records; registration still precedes redraw. Independent 88 tests/683 assertions and base characterization 27/237; strict source TS/format/lint pass. Density test primary pending.
-
-Projection primary task_5c8f0f5d + judge task_f92fc2a1 NO CHANGE NEEDED at 90fe58e67e209ca8c64219ac0e60c8c7f1788dd8, independent 103 tests/934 assertions. **SDK/density combined review required**, including publication-before-paint, lazy render, component identity, independent teardown, dynamic prototype resolution and mouse composition. SDK judge task_060d7edf is explicitly inspecting these joins.
-
-Settled renderer primary task_cde04507 + judge task_ac462b2f NO CHANGE NEEDED at d8134b728f86ecd669820d7922f459350e78adc8. Independent 58 tests/791 assertions plus setter/foreign-wrapper/dispose/reinstall probe. Final SDK/density composition review still required: live overlays above cache, fallback on removal, cached arrays/mouse geometry, shutdown/reinstall/existing children, error/handoff/native images.
-
-Diagnostics-extension primary task_ce10c8d9 + judge task_bb4b2bf5 NO CHANGE NEEDED at 51f2655613a4022bf3b3742d0c2de4524711e002, independent 13 tests/573 assertions. Limits remain: append/restore non-atomic, reopen leaf not guaranteed, detach removes persistence not all observation, SDK entry-list materialization still unbounded.
-
-## SDK patch and final UI join accepted
-
-Primary task_5d9a622d; judge task_060d7edf ACCEPT candidate 9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7 **and exact combined join** at coordinator 7892a98f. All ten reviewed source/test blobs matched staged integration. Frame ownership, rendering and installation/restoration now have separate coherent boundaries. SDK/density/projection/quiet/settled/rolling/preview join preserves lazy rendering, authority-before-paint, mouse geometry, live overlays above cache and foreign-wrapper/reinstall behavior. Independent 159 tests/13,717 assertions + 2 app-stack failure/reinstall probes/32 assertions; baseline lifetime regression 1/6. Earlier join requirements resolved for these exact blobs; no compiled/device/provider proof. Latest task-row test primary still pending.
-
-Terminal-performance entry primary task_6c37950b + judge task_219f2747 NO CHANGE NEEDED at 696dd170594931b9907916079576e46666367030. Independent 37 tests/523 assertions and actual 12-case CLI across six modes, report-only/help/failure paths pass. No GUI/PTY/paint/speed claim; artifact writes remain nontransactional.
-
-Harness primary task_7f3c2fe5 + judge task_fdd2cd2a NO CHANGE NEEDED at 2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f; real tmux fixture checks passed using shared prebuilt CLI, not candidate parity. Existing limits retained: no partial-start rollback; timeout checked after creation; capture failure prevents kill; watchdog socket interpolated unquoted. No model/provider/platform proof.
-
-src/ui/task-monitor.ts: primary task_8f7cb2e9, judge task_77087f04 ACCEPT 95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e. Named frame roles make clipping priorities explicit. Overview and inspection own pagination/read budgets, shared observation rendering owns sanitized evidence; frozen confirmation and ownership revalidation untouched. Proof: 18 independent tests /143 assertions on base and candidate; 650 identical frames across sizes/local-agent-SSH; identical read args/stop decisions; Biome check exit 0 existing advisories/diff. Limits: No full build/typecheck/packaged TUI/provider/authenticated SSH; Existing short-terminal clipping does not guarantee every evidence row visible.
-
-scripts/terminal-interactions.ts: primary task_5ef7a768, judge task_16ed90d7 ACCEPT a536d856e661f353bd1bf690ec8e0902ee6660f1. Worker spawn/timeout/pipe observation/logging/raw evidence loading owns one child lifetime, while serial normalization/merge/checkpoint remains in parent. Return unknown keeps semantic validation outside. Proof: Independent 20 tests /125 assertions; Pinned format/lint/diff. Limits: No baseline run/timeout firing/signal/abnormal stream/full build/typecheck/provider/PTY/paint; Promise.all rejection can precede observation settlement; timer clearing is not termination; writes non-atomic, reused dir may retain old finals.
-
-Third combined batch task_73653eac: fresh normal CLI build + connector succeeded; all 178 tests/1,654 assertions across nine suites passed, including compiled CLI cases. Full tsc FAILED at tests/task-rows.test.ts:249: newly added throwing Component fixture lacks invalidate. Next free primary slot is reserved for fresh tests/task-rows.test.ts owner to repair this observed contract mismatch and obtain a new independent verdict. Source edits remain delegated.
-
-Render profiler primary task_98eabc08; judge task_5e042418 ACCEPT ec5417038093c7fe3cd22fc353ba27ef8cda3dbe. Bounded request/dispatch owner replaces scattered association/reset fields; wrappers expose lifecycle boundaries. Independent 95 tests/5,044 assertions, base characterization 17/102 and clock/guard/reentrancy identity probe 1/55; format/lint/diff pass. Related profiler-test primary pending; no performance-speed claim.
-
-Performance report primary task_598e86e4 + judge task_7b633bb8 NO CHANGE NEEDED at 2fcf24ca57d3c81087a237150258a6ec944bbefa, independent 22 tests/122 assertions. Pure capture/import/summary/budget/comparison transforms already coherent. Identity serialization stays order-sensitive; environment/content differences warn, not suppress comparisons.
-
-Runtime acceptance primary task_8217bb2e; judge task_150f5c27 ACCEPT 98bd940bd8dc870efa814074b7c038649d4df706. Journal/snapshot/session fixture creation separated from unchanged UI/replay journey. Both Python suites 11 passes; independent deterministic bytes and AST preservation, syntax/diff. Fixture-only proof, not compiled/visual acceptance. Related Python test primary pending.
-
-Performance options primary task_61e4e31c + judge task_be297c64 NO CHANGE NEEDED at 9d123b4f21a13ef603be8c89b2eb9e16a68e1463; independent 9 tests/60 assertions and 63 supplemental parsing/selection/budget/strict-boundary assertions.
-
-Terminal acceptance primary task_28f2469a; judge task_c4ad6e75 ACCEPT b02afcce77ccd1ebb021dc6230641ab0294ce68e. Ordered routing now readable apart from scenario progression, with replay/lifecycle/question authority unchanged. Independent 13+10 Python tests, 148 differential histories, AST equality and loopback SSE/log check. No compiled/visual acceptance; related Python test primary pending.
-
-Interaction-worker primary task_8e35cbf3 + judge task_5064dcca NO CHANGE NEEDED at 479071932b154974ea189736685241aa5f1995c5. Exact tests 19/98, joined root/profiler tests 20/125 and 81/4673, actual serial CLI 43 raw/193 normalized cases; init/action evidence separate, no lifecycle provider/fetch calls.
-
-Parent common checkpoint 695ade32dc055e22dd56a7bf06c01764973715d2 merged cleanly at bc8f6e5ffb75aa2b27fd939ce60888063e756383; 126 parent-approved paths, no UI accepted blob changes (0 mismatches). Other-area primary coverage remains owned by parent/siblings. Future workers launch from this common state. Disk 136G; pending task-row fixture TS repair still required, parent combined API gaps remain honest.
+Finish all baseline and extra primary/judge coverage, resolve every rework and cross-area primary final hash, audit unique primaries/exact accepted blobs against tip, run combined focused tests + real full typecheck + format/lint (build only when changed binary paths need it), validate wisdom bytes/fences, remove temporary untracked link, commit clean tracked tree. No accepted source while an actual-code rejection is unresolved. Parent runs whole Linux gate and integrated regression/PR update. Values unchanged: existing ownership/lifetime/independent-judge lessons suffice; propose shared lessons to parent, not competing values edits.

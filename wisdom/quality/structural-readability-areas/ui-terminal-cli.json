@@ -134,19 +134,40 @@
     {
       "focus": "scripts/ansi_video_renderer.py",
       "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_32c7f556",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_32c7f556",
           "branch": "bruv/primary-readability-scripts-ansi_video_r-32c7f556",
-          "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
+          "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+          "commit": "15e0abb0dc551c00523d84c928e363f2acaae3f9"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c420e381",
+          "base": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+          "candidate": "15e0abb0dc551c00523d84c928e363f2acaae3f9",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
+      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+      "changedRelatedPaths": [
+        "tests/ansi-video-renderer.test.py"
+      ],
+      "result": "Candidate separates ANSI color parsing/glyph drawing/frame composition/video encoding; snapshot color state local, fonts video-lifetime, unused bold bookkeeping removed.",
+      "checks": [
+        "7 Python contracts on base/candidate",
+        "4 Bun scenario tests",
+        "Real five-frame ffmpeg PNG/pixels/MP4/audit equality",
+        "diff"
+      ],
+      "limits": [
+        "No Docker/compiled CLI recapture/product/full build; exception cleanup unchanged"
+      ]
     },
     {
       "focus": "scripts/benchmark-footer-context.ts",
@@ -804,11 +825,19 @@
     {
       "focus": "scripts/ui-cleanup-probe.py",
       "initialBlob": "d77fd2cfa040e6ccd506cc2613ba0cc5b9d7f75f",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_96febf21",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_96febf21",
+          "branch": "bruv/primary-readability-scripts-ui-cleanup-p-96febf21",
+          "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb"
     },
     {
       "focus": "src/cli.ts",
@@ -2440,6 +2469,16 @@
       ],
       "acceptedBlob": "2657c431fc90d593d5064b33b4a4dfd82d261370",
       "integrationState": "integrated; parent must reconcile assigned primary owner"
+    },
+    {
+      "focus": "tests/ansi-video-renderer.test.py",
+      "kind": "new-test",
+      "initialBlob": null,
+      "status": "candidate-related-primary-pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "candidate with ANSI renderer; needs fresh primary after accepted integration"
     }
   ],
   "batchChecks": [
