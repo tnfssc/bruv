@@ -168,13 +168,15 @@
     {
       "focus": "site/html-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_0fff100d",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_0fff100d",
           "branch": "bruv/primary-site-html-cells.ts-0fff100d",
-          "base": "8b8f1122bc86a4d0a9b0c6f41c35e701c87a41e9"
+          "base": "8b8f1122bc86a4d0a9b0c6f41c35e701c87a41e9",
+          "commit": "6aef65244d48cb0fac62d8ee80886177d3e9a654",
+          "result": "No source change. Adjacent equal-style cells copied into runs, escaped, RGB serialized, rows wrapped. State local, Cell type producer ownership. 6 demos tests and 5 serialization assertions pass. No browser/build."
         }
       ],
       "judges": [],
@@ -302,7 +304,7 @@
     {
       "focus": "site/scripts/animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_5d88706f",
@@ -313,7 +315,13 @@
           "result": "Typed shared terminal observations/control coordinate conversion/cell scrolling; touch journey local initial/playing/paused observations; desktop mutable checkpoint replaced independent immutable checkpoints. Build and test:animation passed including 3 loops,touch controls,errors empty. Old-base typecheck missing ./type; fixed now in area."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_d3cccc82",
+          "candidate": "375ad0209a72f263e6c2e0e0c07e4dd321ca490d",
+          "state": "running"
+        }
+      ],
       "initialBlob": "74f85bf8a7d44a454349084978f1dc4858ed9063"
     },
     {
@@ -327,13 +335,15 @@
     {
       "focus": "site/scripts/build.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_3a3293a9",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_3a3293a9",
           "branch": "bruv/primary-site-scripts-build.test.ts-3a3293a9",
-          "base": "a7c9017050d478c22ce5a9b9c6f5c102ffd40011"
+          "base": "a7c9017050d478c22ce5a9b9c6f5c102ffd40011",
+          "commit": "d27476d3d0d4fe4702ede2e20c535ccff6093c48",
+          "result": "No source change; URL metadata authority direct, layout matrix inputs/assertions together, frame baseline/playback mutation local. 10 tests/123298 assertions; no browser/build/full gate."
         }
       ],
       "judges": [],
@@ -492,16 +502,30 @@
     {
       "focus": "site/scripts/html-animation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_9f36ba3a",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_9f36ba3a",
+          "branch": "bruv/primary-site-scripts-html-animation.test-9f36ba3a",
+          "base": "25a89310c4b2c6e98d321674fc7b75bcf02e69f0"
+        }
+      ],
       "judges": [],
       "initialBlob": "294ddcb66e4bd9f75740b948dbdf989cdadeb5c7"
     },
     {
       "focus": "site/scripts/install-ui.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_072fdc49",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_072fdc49",
+          "branch": "bruv/primary-site-scripts-install-ui.test.ts-072fdc49",
+          "base": "25a89310c4b2c6e98d321674fc7b75bcf02e69f0"
+        }
+      ],
       "judges": [],
       "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12"
     },
@@ -622,7 +646,7 @@
     {
       "focus": "support/gpt-live-explained.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_1e4c14a6",
@@ -637,10 +661,16 @@
         {
           "id": "task_69db8026",
           "candidate": "0d1abd8ba5c9b9c2e37b66f2c560ac732dace780",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Static task/handoff/authority/control narrative is structurally clear. Judge traced actual live authority/cancellation callers/tests. NO current-content endorsement: lines 19/21 incorrectly describe GPT-Live as unshipped; separate content refresh needed. No tests/browser/provider/build rerun.",
+          "objections": []
         }
       ],
-      "initialBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce"
+      "initialBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce",
+      "acceptedBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     }
   ],
   "extra": [],

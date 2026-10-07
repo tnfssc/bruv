@@ -25,3 +25,5 @@ Combined gate at 8b8f1122: `cd site; bun run test` (task_828d9d6a) passed 34 tes
 site/install-command.ts: Clipboard permission attempt/fallback and temporary textarea/focus effects are one visible operation; per-button feedback/reset timer owned by enhancement, terminal presentation separate. Shipped command remains available without JS. Runtime not rerun; permission-denied/fallback-failure/exceptional cleanup unproven.
 
 site/scripts/extract-cells.ts: Geometry is single authority and browser returns cropped grouped rows; Bun owns hash/publication. Judge 10 tests and independent baseline/candidate browser replay byte parity with tracked JSON SHA256 ab9210c0002890a088636581f3beeccbc558a096e8cadace3e5fba782484f76c. Maintained assets command, not current shipped scripted demos. Existing cleanup gaps unchanged.
+
+support/gpt-live-explained.html: Static task/handoff/authority/control narrative is structurally clear. Judge traced actual live authority/cancellation callers/tests. NO current-content endorsement: lines 19/21 incorrectly describe GPT-Live as unshipped; separate content refresh needed. No tests/browser/provider/build rerun.
