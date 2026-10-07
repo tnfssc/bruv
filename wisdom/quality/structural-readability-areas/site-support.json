@@ -7,287 +7,350 @@
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "b9470778764f72c5257a3361590d2994547f90e1"
     },
     {
       "focus": "site/assets/brand/bruv-icon.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark-light.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7"
     },
     {
       "focus": "site/assets/brand/wordmark-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "7690aff87443de0a97521444bb7a64546f568f4e"
     },
     {
       "focus": "site/assets/cli-settings.txt",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569"
     },
     {
       "focus": "site/assets/settings-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3"
     },
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4"
     },
     {
       "focus": "site/capture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7"
     },
     {
       "focus": "site/content.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8"
     },
     {
       "focus": "site/demos.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "8ca404103fe2971f2c54b810f45d0e527d5e40fd"
     },
     {
       "focus": "site/demos.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23"
     },
     {
       "focus": "site/html-animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "83d93edb503c6c100e5a778c48b69a91bc91756e"
     },
     {
       "focus": "site/html-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "7c70d1bdd3c530eddb002adeffd1d1f7be2f5dc1"
     },
     {
       "focus": "site/index.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3"
     },
     {
       "focus": "site/install-command.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "955cbf767fa094bd223bee8f0bba424692c3c663"
     },
     {
       "focus": "site/install-html.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db"
     },
     {
       "focus": "site/layout.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "0ec60a65bd36d939f302323b7a5fd63ab170046b"
     },
     {
       "focus": "site/package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d"
     },
     {
       "focus": "site/playback.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": []
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_ed0b8880",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_ed0b8880",
+          "branch": "bruv/primary-site-playback.ts-ed0b8880",
+          "base": "303233f17b57d0990a66df6cd686f9af933206d0",
+          "state": "running"
+        }
+      ],
+      "judges": [],
+      "initialBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e"
     },
     {
       "focus": "site/scripts/animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "74f85bf8a7d44a454349084978f1dc4858ed9063"
     },
     {
       "focus": "site/scripts/browser.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2"
     },
     {
       "focus": "site/scripts/build.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799"
     },
     {
       "focus": "site/scripts/build.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": []
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_f66bbf8b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d",
+          "state": "running"
+        }
+      ],
+      "judges": [],
+      "initialBlob": "a8ca48ae0d03f2567d458737f143c245e9acfa89"
     },
     {
       "focus": "site/scripts/capture-demo-source.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "68b0dc7db1ccdf38a27ea84dcdbd98168f99570c"
     },
     {
       "focus": "site/scripts/capture-real-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16"
     },
     {
       "focus": "site/scripts/capture-real.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": []
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_78b57531",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_78b57531",
+          "branch": "bruv/primary-site-scripts-capture-real.ts-78b57531",
+          "base": "303233f17b57d0990a66df6cd686f9af933206d0",
+          "state": "running"
+        }
+      ],
+      "judges": [],
+      "initialBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b"
     },
     {
       "focus": "site/scripts/extract-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "53e23a4d0a50dd36efdcb1f4f972a11f5cc1ff13"
     },
     {
       "focus": "site/scripts/generate-wordmark.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c"
     },
     {
       "focus": "site/scripts/html-animation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "294ddcb66e4bd9f75740b948dbdf989cdadeb5c7"
     },
     {
       "focus": "site/scripts/install-ui.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12"
     },
     {
       "focus": "site/scripts/install.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f"
     },
     {
       "focus": "site/scripts/preview.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a"
     },
     {
       "focus": "site/scripts/scroll.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "db16489bc7ef3c785b58fa42a8fb2d7a4c83af2c"
     },
     {
       "focus": "site/scripts/startup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b"
     },
     {
       "focus": "site/scripts/validate.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "f4efd413bc0cb47bbcc2bd922bc4c33184e33066"
     },
     {
       "focus": "site/scroll.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3"
     },
     {
       "focus": "site/styles.css",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a"
     },
     {
       "focus": "site/terminal.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "9c375c3852c97216dc89f6d055587ef63353ac52"
     },
     {
       "focus": "site/wrangler.jsonc",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75"
     },
     {
       "focus": "support/gpt-live-explained.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
       "state": "pending",
       "primary": [],
-      "judges": []
+      "judges": [],
+      "initialBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce"
     }
   ],
   "extra": [],
