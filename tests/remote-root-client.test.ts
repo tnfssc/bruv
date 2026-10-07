@@ -1,29 +1,29 @@
-import { test, expect, afterEach } from "bun:test";
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, statSync } from "node:fs";
+import { afterEach, expect, test } from "bun:test";
+import { createHash } from "node:crypto";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createHash } from "node:crypto";
 import { RootClient, type RootClientOptions } from "../src/remote/root-client";
-import type { RootRequest, RootRecord, RootTransport } from "../src/remote/root-contract";
+import type { RootCommandReceipt, RootRecord, RootRequest, RootTransport } from "../src/remote/root-contract";
+
 const dirs: string[] = [];
 afterEach(() => {
   for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
 });
-function setup() {
+function setup({ missingCommandStatus = "unknown" }: { missingCommandStatus?: "unknown" | "error" } = {}) {
   const dir = mkdtempSync(join(tmpdir(), "bruv-root-client-"));
   dirs.push(dir);
   const cwd = join(dir, "repo");
   mkdirSync(cwd);
   const target = { name: "fixture", host: "fixture", bruvPath: "bruv", ownerId: "owner", epoch: "epoch" };
   let record: RootRecord;
-  let lose = false,
-    gap = false,
-    owner = "owner";
+  let lostReply: "command" | "create" | undefined;
+  let gap = false;
+  let owner = "owner";
   const calls: RootRequest[] = [];
-  const receipts = new Map<string, any>();
+  const receipts = new Map<string, RootCommandReceipt>();
   let sourceResult: any;
-  const transport: RootTransport = async (_host, _path, req) => {
-    calls.push(req);
+  function ownerReply(req: RootRequest): unknown {
     if (req.op === "hello") return { ownerId: owner, epoch: "epoch" };
     if (req.op === "repository-upload")
       return { offset: req.offset + Buffer.from(req.data, "base64").length, checkout: "/independent/root/source" };
@@ -32,16 +32,15 @@ function setup() {
       return { record };
     }
     if (req.op === "command") {
-      const receipt = { commandId: req.commandId, state: "completed", result: { ok: true } };
+      const receipt: RootCommandReceipt = { commandId: req.commandId, state: "completed", result: { ok: true } };
       receipts.set(req.commandId, receipt);
-      if (lose) {
-        lose = false;
-        throw Error("lost reply");
-      }
       return receipt;
     }
-    if (req.op === "command-status")
-      return receipts.get(req.commandId) ?? { commandId: req.commandId, state: "unknown" };
+    if (req.op === "command-status") {
+      const receipt = receipts.get(req.commandId);
+      if (!receipt && missingCommandStatus === "error") throw Error("Unknown root command");
+      return receipt ?? { commandId: req.commandId, state: "unknown" };
+    }
     if (req.op === "observe")
       return {
         record,
@@ -52,6 +51,15 @@ function setup() {
     if (req.op === "detach") return { accepted: true };
     if (req.op === "repository-result") return sourceResult;
     throw Error("unexpected request");
+  }
+  const transport: RootTransport = async (_host, _path, req) => {
+    calls.push(req);
+    const response = ownerReply(req);
+    if (req.op === lostReply) {
+      lostReply = undefined;
+      throw Error(req.op === "create" ? "lost create reply" : "lost reply");
+    }
+    return response;
   };
   const options: RootClientOptions = {
     cwd,
@@ -65,8 +73,8 @@ function setup() {
     cwd,
     options,
     calls,
-    receipts,
-    setLose: () => (lose = true),
+    forgetCommand: (id: string) => receipts.delete(id),
+    loseNextReply: (op: "command" | "create") => (lostReply = op),
     setGap: () => (gap = true),
     setOwner: (x: string) => (owner = x),
     close: () => {
@@ -80,7 +88,7 @@ test("lost prompt reply + restart reconciles SAME saved command without automati
   const f = setup();
   const c = await RootClient.open(f.options);
   await c.ensureCreated();
-  f.setLose();
+  f.loseNextReply("command");
   await expect(c.initialPrompt("hello")).rejects.toThrow("uncertain");
   const saved = c.read();
   const id = saved.initialPrompt!.commandId;
@@ -97,9 +105,9 @@ test("unknown command status never redispatches, including explicit retry with s
   const f = setup();
   const c = await RootClient.open(f.options);
   await c.ensureCreated();
-  f.setLose();
+  f.loseNextReply("command");
   await expect(c.command({ kind: "abort" }, "durable")).rejects.toThrow();
-  f.receipts.clear();
+  f.forgetCommand("durable");
   expect((await c.command({ kind: "abort" }, "durable")).state).toBe("unknown");
   await expect(c.command({ kind: "close" }, "durable")).rejects.toThrow("conflict");
   expect(f.calls.filter((r) => r.op === "command")).toHaveLength(1);
@@ -226,7 +234,7 @@ test("lost create reply resumes the committed source checkout without transferri
   writeFileSync(join(f.cwd, "file.txt"), "before\n");
   git(f.cwd, "add", "file.txt");
   git(f.cwd, "commit", "-qm", "base");
-  let lose = true;
+  f.loseNextReply("create");
   const options = {
     ...f.options,
     remoteRepo: undefined,
@@ -235,12 +243,7 @@ test("lost create reply resumes the committed source checkout without transferri
         expect(client.read().intent.repoPath).toBe(req.intent.repoPath);
         expect(client.read().created).toBe(false);
       }
-      const response = await f.options.transport!(host, path, req);
-      if (req.op === "create" && lose) {
-        lose = false;
-        throw Error("lost create reply");
-      }
-      return response;
+      return f.options.transport!(host, path, req);
     },
   };
   const client = await RootClient.open(options);
@@ -268,37 +271,33 @@ test("startup reservation yields admission to an already queued command", async 
   expect(dispatched[1]!.commandId).toBe(client.read().initialPrompt!.commandId);
 });
 
-test("startup checkpoints distinguish reserved identity from admitted uncertain command", async () => {
-  const f = setup();
-  const options = {
-    ...f.options,
-    transport: async (host: string, path: string, req: RootRequest) => {
-      if (req.op === "command-status" && !f.receipts.has(req.commandId)) {
-        f.calls.push(req);
-        throw Error("Unknown root command");
-      }
-      return f.options.transport!(host, path, req);
-    },
-  };
-  const client = await RootClient.open(options);
+test("startup identity reserved without admission can dispatch its saved command", async () => {
+  const f = setup({ missingCommandStatus: "error" });
+  const client = await RootClient.open(f.options);
   await client.ensureCreated();
   const reserved = client.read();
   reserved.initialPrompt = { text: "reserved only", commandId: "reserved" };
   writeFileSync(client.path, JSON.stringify(reserved));
-  const reopened = await RootClient.open(options);
+
+  const reopened = await RootClient.open(f.options);
   await reopened.initialPrompt("reserved only");
   expect(f.calls.filter((r) => r.op === "command")).toHaveLength(1);
   expect(reopened.read().commands.reserved!.receipt.state).toBe("completed");
+});
 
-  const admitted = reopened.read();
+test("admitted startup command uses status only; a status error does not block later commands", async () => {
+  const f = setup({ missingCommandStatus: "error" });
+  const client = await RootClient.open(f.options);
+  await client.ensureCreated();
+  const admitted = client.read();
   admitted.initialPrompt = { text: "unknown before wire", commandId: "uncertain" };
   admitted.commands.uncertain = {
     command: { kind: "prompt", text: "unknown before wire" },
     receipt: { commandId: "uncertain", state: "unknown" },
   };
   writeFileSync(client.path, JSON.stringify(admitted));
-  f.calls.length = 0;
-  const resumed = await RootClient.open(options);
+
+  const resumed = await RootClient.open(f.options);
   await expect(resumed.initialPrompt("unknown before wire")).rejects.toThrow("Unknown root command");
   expect(f.calls.filter((r) => r.op === "command")).toHaveLength(0);
   expect(f.calls.filter((r) => r.op === "command-status")).toHaveLength(1);
