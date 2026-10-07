@@ -185,13 +185,16 @@
       "judgeRounds": [
         {
           "id": "task_c412b125",
-          "status": "running",
+          "status": "cancellation requested;exit pending",
           "candidate": "3c71d4a280d89be9b6597d09af48a40a376451f8",
-          "base": "6f82665bbbe90a15958576f541f5be68217232bf"
+          "base": "6f82665bbbe90a15958576f541f5be68217232bf",
+          "verdict": null,
+          "objections": [],
+          "reason": "30-minute attempt with no new captured source/tool output since13:29:53;still receiving model response, no verdict delivered. Coordinator cancelled incomplete round to permit fresh actual-code review; no acceptance inferred."
         }
       ],
       "acceptedBlob": null,
-      "integration": "judge running",
+      "integration": "candidate unaccepted;fresh review waits prior judge termination",
       "relatedPaths": [
         "native/live-linux/tests/test_capture_protocol.py"
       ],
