@@ -846,7 +846,7 @@
     {
       "file": "tests/claude-compat-launch.test.ts",
       "initialBlob": "43bb031ffd0b2d74bdc83b48c13434161c33547a",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_2cea9559",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_2cea9559",
@@ -857,11 +857,16 @@
       "judges": [
         {
           "id": "task_739abadc",
-          "status": "running",
-          "candidate": "6e25cf94e5b4224e205b1c90b4a616403a823612"
+          "status": "completed",
+          "candidate": "6e25cf94e5b4224e205b1c90b4a616403a823612",
+          "verdict": "ACCEPT",
+          "blob": "c882e0b3ac87294b1b6b76e89817362ec608364d",
+          "objections": [],
+          "evidence": "Harness NDJSON/EOF operations expose messages instead of repeated mechanics; startup/generation promise gates own readiness; env scrub vs resumed request lifetimes separate; close count measures asynchronous completion. Retains assertions/correlation/signal behavior.",
+          "limits": "Judge15 transport tests44 assertions pass; launch/argument deps unavailable, mutation result inspected not executed."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "c882e0b3ac87294b1b6b76e89817362ec608364d",
       "relatedPatchJudgments": [
         {
           "id": "task_71218826",
@@ -873,7 +878,8 @@
       "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
       "changedRelatedPaths": [],
       "readingResult": "Harness owns repeated NDJSON/EOF mechanics; explicit startup/generation promises replace readiness polling/optional reject callback; environment vs permission lifetimes separated; teardown completion count stronger than entry count.",
-      "checks": "38 tests178 assertions; typecheck/format/lint/diff; early-return mutation passes three baseline cancellation cases but fails all candidate cases; no production edit retained."
+      "checks": "38 tests178 assertions; typecheck/format/lint/diff; early-return mutation passes three baseline cancellation cases but fails all candidate cases; no production edit retained.",
+      "integrationState": "Exact fresh whole-file primary/judge patch integrated; replaces earlier CLI related/combined old test-blob acceptance"
     },
     {
       "file": "tests/claude-compat-launcher.test.ts",
@@ -1340,6 +1346,13 @@
       "status": "passed",
       "scope": "Integrated history/runtime/ownership/task-binding8 outer tests29 assertions;7 SDK skips;typecheck;format/lint",
       "limits": "Area SDK opt-in tests skipped unlike writer reported configured SDK run;15 warnings7 infos;no live/full gate."
+    },
+    {
+      "id": "task_ab294c27",
+      "commit": "9ea951f0",
+      "status": "passed",
+      "scope": "Integrated transport/launch/human/permissions54 tests240 assertions;typecheck;focused format/lint clean",
+      "limits": "Before latest whole-file launch-test join; no compiled/live."
     }
   ],
   "combinedReviews": [

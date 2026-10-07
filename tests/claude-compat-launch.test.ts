@@ -39,7 +39,8 @@ const auxiliaryFlags = [
   "--permission-mode",
   "dontAsk",
 ];
-function harness(input = new PassThrough()) {
+function harness() {
+  const input = new PassThrough();
   let stdout = "",
     stderr = "";
   const signals = new EventEmitter();
@@ -65,6 +66,8 @@ function harness(input = new PassThrough()) {
   return {
     io,
     signals,
+    sendFrame: (frame: Record<string, unknown>) => input.push(JSON.stringify(frame) + "\n"),
+    endInput: () => input.push(null),
     stdout: () => stdout,
     stderr: () => stderr,
     frames: () =>
@@ -241,24 +244,20 @@ describe("connector entry glue (injected engine, not integrated product proof)",
       factory,
       h.io,
     );
-    h.io.input.push(
-      JSON.stringify({ type: "control_request", request_id: "init", request: { subtype: "initialize" } }) + "\n",
-    );
+    h.sendFrame({ type: "control_request", request_id: "init", request: { subtype: "initialize" } });
     await until(() => h.frames().length === 1);
     expect(prompts).toBe(0);
     expect(h.frames()[0].response.response.account).toEqual({});
     expect(h.frames()[0].response.response.bruv.readiness.access_verified).toBe(false);
-    h.io.input.push(
-      JSON.stringify({
-        type: "user",
-        uuid: "source-id",
-        parent_tool_use_id: null,
-        message: { role: "user", content: "work" },
-      }) + "\n",
-    );
+    h.sendFrame({
+      type: "user",
+      uuid: "source-id",
+      parent_tool_use_id: null,
+      message: { role: "user", content: "work" },
+    });
     await until(() => h.frames().some((f) => f.type === "result"));
     expect(h.frames().map((f) => f.type)).toEqual(["control_response", "assistant", "result"]);
-    h.io.input.push(null);
+    h.endInput();
     expect(await running).toBe(0);
     expect(closed).toBe(1);
     expect(h.stderr()).toBe("");
@@ -280,19 +279,19 @@ describe("connector entry glue (injected engine, not integrated product proof)",
       runAuxiliary: async () => ({ type: "result" }),
     });
     const running = runConnector([...streamFlags, "--include-partial-messages"], factory, h.io);
-    h.io.input.push('{"type":"control_request","request_id":"mcp","request":{"subtype":"mcp_status"}}\n');
-    h.io.input.push('{"type":"user","parent_tool_use_id":null,"message":{"role":"user","content":"go"}}\n');
+    h.sendFrame({ type: "control_request", request_id: "mcp", request: { subtype: "mcp_status" } });
+    h.sendFrame({ type: "user", parent_tool_use_id: null, message: { role: "user", content: "go" } });
     await until(() => h.frames().length === 2);
     expect(h.frames()[0].response.subtype).toBe("error");
     expect(h.frames()[1].type).toBe("stream_event");
-    h.io.input.push(null);
+    h.endInput();
     expect(await running).toBe(0);
   });
   test("plain stdin schema request produces one JSON result and isolates runtime", async () => {
     const h = harness();
     let closed = 0;
     h.io.input.push("write a title");
-    h.io.input.push(null);
+    h.endInput();
     const factory: RuntimeFactory = async (o, args) => {
       expect(o.auxiliary).toBe(true);
       expect(o.permissionMode).toBe("dontAsk");
@@ -334,13 +333,13 @@ describe("connector entry glue (injected engine, not integrated product proof)",
   for (const stop of ["EOF", "SIGTERM", "SIGINT"] as const)
     test(stop + " cancels current owner and awaits exactly one teardown", async () => {
       const h = harness();
-      let started = false,
-        aborted = false,
+      const started = Promise.withResolvers<void>();
+      let aborted = false,
         closed = 0;
       const factory: RuntimeFactory = async () => ({
         controls: {},
         onUser: async (_message, signal) => {
-          started = true;
+          started.resolve();
           await new Promise<void>((resolve) =>
             signal.addEventListener(
               "abort",
@@ -353,15 +352,15 @@ describe("connector entry glue (injected engine, not integrated product proof)",
           );
         },
         close: async () => {
-          closed++;
           await Bun.sleep(5);
+          closed++;
         },
         runAuxiliary: async () => ({ type: "result" }),
       });
       const running = runConnector(streamFlags, factory, h.io);
-      h.io.input.push('{"type":"user","parent_tool_use_id":null,"message":{"role":"user","content":"long work"}}\n');
-      await until(() => started);
-      if (stop === "EOF") h.io.input.push(null);
+      h.sendFrame({ type: "user", parent_tool_use_id: null, message: { role: "user", content: "long work" } });
+      await started.promise;
+      if (stop === "EOF") h.endInput();
       else h.signals.emit(stop);
       expect(await running).toBe(stop === "EOF" ? 0 : stop === "SIGTERM" ? 143 : 130);
       expect(aborted).toBe(true);
@@ -451,25 +450,23 @@ describe("connector entry glue (injected engine, not integrated product proof)",
   });
   test("SIGTERM cancels auxiliary generation without publishing output", async () => {
     const h = harness();
-    let started = false,
-      closed = 0;
-    let rejectGeneration: ((error: Error) => void) | undefined;
+    const started = Promise.withResolvers<void>();
+    const generation = Promise.withResolvers<{ type: "result" }>();
+    let closed = 0;
     const factory: RuntimeFactory = async () => ({
       controls: {},
       onUser: async () => {},
       close: async () => {
         closed++;
-        rejectGeneration?.(new Error("Interrupted"));
+        generation.reject(new Error("Interrupted"));
       },
       runAuxiliary: async () => {
-        started = true;
-        return new Promise((_resolve, reject) => {
-          rejectGeneration = reject;
-        });
+        started.resolve();
+        return generation.promise;
       },
     });
     const running = runConnector([...auxiliaryFlags, "prompt"], factory, h.io);
-    await until(() => started);
+    await started.promise;
     h.signals.emit("SIGTERM");
     expect(await running).toBe(143);
     expect(h.stdout()).toBe("");
@@ -477,7 +474,7 @@ describe("connector entry glue (injected engine, not integrated product proof)",
   });
 });
 
-test("root controls are scrubbed before factory startup and resumed human requests wait for the paired transport", async () => {
+test("root controls are scrubbed before factory startup without losing auth or scoped configuration", async () => {
   const h = harness();
   h.io.env = {
     T3_MCP_URL: "must-not-reach-runtime",
@@ -487,8 +484,6 @@ test("root controls are scrubbed before factory startup and resumed human reques
     OPENAI_API_KEY: "fixture-only-auth",
     CLAUDE_CONFIG_DIR: "/scoped/sdk-home",
   };
-  const abort = new AbortController();
-  let callback: Promise<Record<string, unknown>> | undefined;
   const factory: RuntimeFactory = async (options) => {
     expect(h.io.env.T3_MCP_URL).toBeUndefined();
     expect(h.io.env.T3_ACP_MCP_BEARER).toBeUndefined();
@@ -496,6 +491,22 @@ test("root controls are scrubbed before factory startup and resumed human reques
     expect(h.io.env.BRUV_WEB_TASK_EVENTS).toBeUndefined();
     expect(h.io.env.OPENAI_API_KEY).toBe("fixture-only-auth");
     expect(options.configDir).toBe("/scoped/sdk-home");
+    return {
+      controls: {},
+      onUser: async () => {},
+      runAuxiliary: async () => ({ type: "result" }),
+      close: async () => {},
+    };
+  };
+  h.endInput();
+  expect(await runConnector(streamFlags, factory, h.io)).toBe(0);
+});
+
+test("resumed human requests made during startup wait for the paired transport", async () => {
+  const h = harness();
+  const abort = new AbortController();
+  let callback: Promise<Record<string, unknown>> | undefined;
+  const factory: RuntimeFactory = async (options) => {
     callback = options.request!(
       {
         subtype: "can_use_tool",
@@ -515,21 +526,18 @@ test("root controls are scrubbed before factory startup and resumed human reques
     };
   };
   const run = runConnector(streamFlags, factory, h.io);
-  for (let i = 0; i < 50 && !h.frames().some((f) => f.type === "control_request"); i++)
-    await new Promise((r) => setTimeout(r, 1));
+  await until(() => h.frames().some((f) => f.type === "control_request"));
   const request = h.frames().find((f) => f.type === "control_request")!;
   expect(request.request.tool_use_id).toBe("real-saved-question");
-  h.io.input.push(
-    JSON.stringify({
-      type: "control_response",
-      response: {
-        subtype: "success",
-        request_id: request.request_id,
-        response: { behavior: "allow", updatedInput: { answers: { Question: "Human answer" } } },
-      },
-    }) + "\n",
-  );
+  h.sendFrame({
+    type: "control_response",
+    response: {
+      subtype: "success",
+      request_id: request.request_id,
+      response: { behavior: "allow", updatedInput: { answers: { Question: "Human answer" } } },
+    },
+  });
   expect(await callback).toMatchObject({ behavior: "allow" });
-  h.io.input.push(null);
+  h.endInput();
   expect(await run).toBe(0);
 });
