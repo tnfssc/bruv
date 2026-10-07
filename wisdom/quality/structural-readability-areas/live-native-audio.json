@@ -41,10 +41,17 @@
     {
       "focus": "native/live-linux/CaptureGate.h",
       "initialBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
-      "primary": null,
+      "primary": {
+        "id": "task_7e221830",
+        "launchBase": "4d3d4b3597528306318fc13a7d220f6300fa6b0d",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7e221830",
+        "branch": "bruv/primary-native-live-linux-capturegate.h-7e221830",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live-linux/main.cpp",
@@ -1593,17 +1600,27 @@
         "launchBase": "281809b72c5f84caea67f940d746588cf1478f18",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_63e174cf",
         "branch": "bruv/primary-native-live-linux-tests-test_pro-63e174cf",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "74f87f8d75e3780f95eeb0e4dd18532aa779bd09"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_e561d4a8",
+          "status": "running",
+          "candidate": "74f87f8d75e3780f95eeb0e4dd18532aa779bd09",
+          "base": "281809b72c5f84caea67f940d746588cf1478f18"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_5ff86413",
         "verdict": "ACCEPT",
         "blob": "79ed8c2697a35f9161237de1c3f718b2a4ce09fe"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Unchanged: subprocess bytes/read-rejection/adjacent assertions/context cleanup visible; microphone open/write/scenario failure and completion/freeing separate; no tangled ownership.",
+      "checks": "9 unittest pass. No source changes; manual tests, parent CI wiring pending. No device/provider/macOS/helper validation."
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
