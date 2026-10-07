@@ -553,7 +553,7 @@
     {
       "focus": "tests/ci-selective.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_bf42118e",
@@ -569,19 +569,28 @@
           "id": "task_10e3096b",
           "base": "4e9d756b6119aafc0db6a906bfe9b223d3fe1180",
           "candidate": "5d2bcd155b9409ce803456161d9ce2442d3c1d8f",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Repository fixtures isolate unrelated mutable Git/CLI scenarios; prior artifact seeded explicitly not inherited. All classifier/parsing/freshness/mode/symlink/reporting/refusal assertions retained.",
+          "checks": "Independent12/52 focus,24/231 related; diff pass; no build/hosted/fresh judge tsc/lint.",
+          "acceptedBlobs": {
+            "tests/ci-selective.test.ts": "05b7307be28cfe9ae42a5d263b19d483e2f53d9f"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "05b7307be28cfe9ae42a5d263b19d483e2f53d9f",
       "relatedPatchJudgment": {
         "id": "task_36d1647b",
         "verdict": "ACCEPT",
         "blob": "e5c8c68e33035aa58de5bb6da9c3b1366d989baa",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Separate scoped Git/CLI fixture lifetimes replace shared scenario mutations/markers/reset bookkeeping; keeps two-tree executable/prior-artifact replacement coverage.",
-      "checks": "12 tests52 assertions focused; related24/231; focused tsc/format/lint/diff pass. No full build/hosted."
+      "checks": "12 tests52 assertions focused; related24/231; focused tsc/format/lint/diff pass. No full build/hosted.",
+      "integrationState": "Full test patch applied; supersedes related old-blob judgment, selector production blob unchanged."
     },
     {
       "focus": "tests/compiled-bun-fixture.ts",

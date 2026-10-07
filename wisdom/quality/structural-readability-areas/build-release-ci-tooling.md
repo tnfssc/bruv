@@ -28,3 +28,5 @@ Publication batch: authority → expected byte identity → verified complete dr
 Updater batch: explicit release/repair policy, named artifact pair, one staging/publication/reverse-rollback/recovery scope. Judge task_170d10bf ACCEPT; independent73 tests/367 assertions plus baseline phase-order1/10, focused strict tsc/format/lint passed with existing warnings. No full build/live/native proof; pair publication remains nontransactional. Related test primary still required.
 
 Local installer batch: successful-rename journal owns reverse rollback and clearing commits pair. Judge task_fa23cd76 ACCEPT; independent17/61 plus SIGTERM second-rename probe exit143 restores old pair/modes. Explicit recovery filename now bruv-claude-compat.previous; no tracked old-name consumers. Existing signal/rename window retained, no atomicity claim. Related test primary pending.
+
+Selective-CI test primary follow-up: independent fixture lifetimes replace scenarios sharing mutation/reset histories; judge task_10e3096b ACCEPT final05b7307 blob, all prior coverage retained with explicit prior-artifact seed. Independent12/52 focus and24/231 related. Production selector blob unchanged.
