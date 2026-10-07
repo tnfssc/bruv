@@ -79,7 +79,7 @@
     {
       "focus": "scripts/leak-audit/bridge-retention.ts",
       "initialBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_cd5dc6c2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cd5dc6c2",
@@ -90,13 +90,22 @@
       "judgeRounds": [
         {
           "id": "task_265d13f3",
-          "status": "running",
+          "status": "complete",
           "candidate": "d174794cecc988c95a077c7586a92c858ca5bf72",
-          "base": "a162e56cc49a21401275253ed445b6027dbc248a"
+          "base": "a162e56cc49a21401275253ed445b6027dbc248a",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Sequential actual bridge call→ACK→listener observation and finally cleanup coherent; bounded retention probe not comprehensive memory/delivery audit.",
+          "checks": [
+            "independent10000request probe833ms exit0 all7samples0handofflisteners",
+            "heapMiB0.8679 baseline→1.4699 requests→1.4393 closed; observational not asserting leakgate",
+            "protocol14/368",
+            "does not exercise JobService/concurrency/foreground/actualhandoffabort/IPC; no binary/fullgate/provider"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "a162e56cc49a21401275253ed445b6027dbc248a",
       "changedRelatedPaths": [],
       "readingResult": "No-change: real request→cancellation wrapper→responseACK→listener cleanup, success close and unconditional teardown together; no extraction needed.",
@@ -109,7 +118,7 @@
     {
       "focus": "scripts/leak-audit/cli-rpc-soak.ts",
       "initialBlob": "53a39f74d7b7c7932543ae4430d6645840e344d5",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_22687cca",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_22687cca",
@@ -117,7 +126,14 @@
         "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
         "commit": "89605c0477f7ccd000a1d7ad97eb671ca08ecc4f"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_9baa1135",
+          "status": "running",
+          "candidate": "89605c0477f7ccd000a1d7ad97eb671ca08ecc4f",
+          "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
