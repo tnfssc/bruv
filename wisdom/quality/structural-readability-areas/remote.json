@@ -107,12 +107,15 @@
     {
       "focus": "src/remote/cancellation.ts",
       "initialBlob": "195fc52acc1eee3dc1d569be0728ae22a8585c1e",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_bac9b4e3",
-          "status": "running",
-          "candidate": "8677e1f44ec5d15c40fdc7af724648e03a29f224"
+          "status": "completed",
+          "candidate": "8677e1f44ec5d15c40fdc7af724648e03a29f224",
+          "verdict": "ACCEPT",
+          "reason": "Timed request, complete output-capturing scan and bounded settlement wait now own separate lifetimes; handler shows request/abort/inspection/publication. Checkpoint remains distinct from owner-confirmed child exit.",
+          "checks": "Judge new cancellation 4 pass/20 assertions; related suite 5 pass/5 dependency failures, not green. Diff clean. Attempt bound not hard deadline unchanged."
         }
       ],
       "launchBase": "434f845b0084f093fc425e7e5d32e0222836aa77",
@@ -126,7 +129,9 @@
         "tests/remote-cancellation.test.ts"
       ],
       "result": "Timed request, complete output-capturing scan and bounded settlement wait separated; handler exposes cancellation request/foreground abort/host settlement/report publication.",
-      "checks": "14 pass/59 assertions; new contract tests pass baseline, Biome/diff pass."
+      "checks": "14 pass/59 assertions; new contract tests pass baseline, Biome/diff pass.",
+      "acceptedBlob": "17cd66cb16a8a3b5af3dd90b50bf86f7fd522d62",
+      "integrationState": "full accepted patch including new test applied without overlap"
     },
     {
       "focus": "src/remote/capabilities.ts",
@@ -933,9 +938,13 @@
       "focus": "tests/remote-cancellation.test.ts",
       "kind": "new",
       "introducedBy": "8677e1f44ec5d15c40fdc7af724648e03a29f224",
-      "status": "candidate-awaiting-integration",
+      "status": "pending",
       "judgeRounds": [],
-      "needs": "own fresh primary then independent judge after accepted integration"
+      "needs": "own fresh primary then independent judge after accepted integration",
+      "relatedAcceptance": {
+        "judge": "task_bac9b4e3",
+        "blob": "d294d93ec8ee707f600fd055acda2c6c7e5b0d03"
+      }
     },
     {
       "focus": "tests/root-store.test.ts",
