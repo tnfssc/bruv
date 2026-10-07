@@ -76,6 +76,77 @@ describe("goal durable state", () => {
     });
   });
 
+  test("rejected waiting updates revoke both sides of the authority boundary", () => {
+    const entries: any[] = [];
+    const store = new GoalStore((customType, data) => entries.push({ type: "custom", customType, data }));
+    store.set(input);
+    const waiting = store.update({ status: "waiting", pendingJobIds: ["task_prior"] }, new Set(["task_prior"]));
+    entries.push({
+      type: "custom",
+      customType: GOAL_ENTRY_TYPE,
+      data: { version: 1, operation: "update", at: "later", goal: { ...waiting, pendingJobIds: ["task_rejected"] } },
+    });
+    const owner = {};
+    expect(latestGoal(entries, owner)).toBeUndefined();
+    expect(inspectDiagnostics(owner).records.map((record) => record.taskId)).toEqual([
+      undefined,
+      "task_prior",
+      "task_rejected",
+    ]);
+
+    // Even a newer update cannot revive authority once its predecessor was revoked.
+    entries.push({
+      type: "custom",
+      customType: GOAL_ENTRY_TYPE,
+      data: { version: 1, operation: "update", at: "latest", goal: { ...waiting, revision: waiting.revision + 1 } },
+    });
+    expect(latestGoal(entries)).toBeUndefined();
+    const replacement = store.set(input);
+    const recoveredOwner = {};
+    expect(latestGoal(entries, recoveredOwner)).toEqual(replacement);
+    expect(inspectDiagnostics(recoveredOwner).records).toEqual([]);
+  });
+
+  test("malformed entries use untrusted references only for closed-schema diagnostics", () => {
+    const entries: any[] = [];
+    const store = new GoalStore((customType, data) => entries.push({ type: "custom", customType, data }));
+    store.set(input);
+    entries.push({
+      type: "custom",
+      customType: GOAL_ENTRY_TYPE,
+      data: {
+        version: 99,
+        goal: { pendingJobIds: ["forged arbitrary text", "task_named", "task_named", 42] },
+      },
+    });
+    const owner = {};
+    expect(latestGoal(entries, owner)).toBeUndefined();
+    const diagnostics = inspectDiagnostics(owner);
+    expect(diagnostics.records.map((record) => record.taskId)).toEqual([undefined, "task_named"]);
+    expect(diagnostics.invalid).toBe(0);
+
+    store.clear();
+    const clearedOwner = {};
+    expect(latestGoal(entries, clearedOwner)).toBeUndefined();
+    expect(inspectDiagnostics(clearedOwner).records).toEqual([]);
+  });
+
+  test("unrelated journal entries are ignored but mismatched goal updates revoke authority", () => {
+    const entries: any[] = [];
+    const store = new GoalStore((customType, data) => entries.push({ type: "custom", customType, data }));
+    const active = store.set(input);
+    entries.push({ type: "custom", customType: "unrelated", data: { version: 99 } });
+    entries.push({ type: "message", customType: GOAL_ENTRY_TYPE, data: { version: 99 } });
+    entries.push(null);
+    expect(latestGoal(entries)).toEqual(active);
+    entries.push({
+      type: "custom",
+      customType: GOAL_ENTRY_TYPE,
+      data: { version: 1, operation: "update", at: "later", goal: { ...active, id: "foreign", revision: 2 } },
+    });
+    expect(latestGoal(entries)).toBeUndefined();
+  });
+
   test("does not mutate memory when durable append fails", () => {
     let fail = false;
     const store = new GoalStore(() => {

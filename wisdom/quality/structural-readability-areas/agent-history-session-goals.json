@@ -299,7 +299,7 @@
     {
       "focus": "src/goals/store.ts",
       "initialBlob": "65bf58713c66da88994d4d67dead877af2fcdcd0",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_fda16f5b",
@@ -321,11 +321,18 @@
           "id": "task_46beb0fa",
           "candidate": "550ce6425a3d92d1b0300bc48bd9cfe69737da91",
           "base": "f3c522bfac81cc605156e8f870ca32f5e2394a53",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Replay visibly filters markers, clears/accepts or revokes authority; rejected waiting references diagnosed only. Malformed/future/stale/foreign entries revoke and updates cannot resurrect; writes preserve append-before-memory.",
+          "checks": "Independent read-only authority/diagnostic/recovery/waiting/write-failure checks; focused suite dependency-blocked; diff check pass.",
+          "acceptedRelatedBlobs": {
+            "tests/goals.test.ts": "caae760463f13ac5f391b5f5e438af90f7893a61"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/goals/types.ts",
@@ -905,7 +912,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "550ce6425a3d92d1b0300bc48bd9cfe69737da91",
+        "judge": "task_46beb0fa",
+        "verdict": "ACCEPT",
+        "blob": "caae760463f13ac5f391b5f5e438af90f7893a61",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/herdr-agent-state.test.ts",
