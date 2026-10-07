@@ -135,8 +135,13 @@
     {
       "focus": "src/agent/cache-countdown.ts",
       "initialBlob": "c5a780a01a4498c8a34385509ec3ca1d846b2c79",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_06296bc0",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -337,7 +342,7 @@
     {
       "focus": "src/goals/types.ts",
       "initialBlob": "c032871506f64451dd458946bc06f5493b788e73",
-      "status": "judging-overlap",
+      "status": "rework-running-overlap",
       "primary": [
         {
           "id": "task_b5e31e7f",
@@ -353,6 +358,14 @@
           "result": "Discriminate clear versus required goal snapshot records; store assertion no longer needed.",
           "checks": "28 tests/133 assertions; static contract probe candidate pass/baseline expected failures; missing runtime-assets tsc baseline reproduced.",
           "overlap": "Store one assertion removal overlaps pending replay candidate; coherent final combination requires fresh file worker."
+        },
+        {
+          "id": "task_30334bdd",
+          "role": "overlap-rework",
+          "launchBase": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_30334bdd",
+          "branch": "bruv/reconcile-goal-journal-contract-30334bdd",
+          "priorCandidate": "99438e18ec5dde7fdbff4c937edf67c663723834"
         }
       ],
       "judgeRounds": [
@@ -452,13 +465,19 @@
     {
       "focus": "src/history/types.ts",
       "initialBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_90c49aec",
           "launchBase": "94e6edf6f19a0b270b6ac35c72b2a427d9be1295",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_90c49aec",
-          "branch": "bruv/primary-history-types-90c49aec"
+          "branch": "bruv/primary-history-types-90c49aec",
+          "commit": "520137fbe51b09be0d9cb0c7a8833b90630f80bf",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: four explicit interfaces separate provenance, match, search/read page results; permission/cursor authority stays in service.",
+          "checks": "15 history tests/50 assertions; focused format/lint pass; no typecheck/build claim."
         }
       ],
       "judgeRounds": [],
@@ -1298,16 +1317,29 @@
     {
       "focus": "tests/session-input.test.ts",
       "initialBlob": "58e94fbc168a6db197f9869d84c08d7c4e3e123e",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_fe11d531",
           "launchBase": "8edba9abaeca2ef09f01b2d445fd9b7c8c927cc8",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_fe11d531",
-          "branch": "bruv/primary-deleted-session-input-tests-fe11d531"
+          "branch": "bruv/primary-deleted-session-input-tests-fe11d531",
+          "commit": "27dacc46efd49f6863ebaaef7244f25a0fb50e87",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Independently retain deletion: original tests exercised orphan TTL/size/single-use API, not actual shipped MainOwner/GPT paths. Remaining tests cover real finality/replay/stop/speech-loss, not imaginary replacement TTL.",
+          "checks": "9 focused suites 185 pass/972 assertions; format/lint pass with 4 existing warnings; biome check 6 pre-existing import-order diagnostics, no fixes; no build/typecheck."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_4b90b765",
+          "candidate": "27dacc46efd49f6863ebaaef7244f25a0fb50e87",
+          "base": "8edba9abaeca2ef09f01b2d445fd9b7c8c927cc8",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
