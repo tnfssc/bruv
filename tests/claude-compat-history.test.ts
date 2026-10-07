@@ -55,10 +55,8 @@ function assistant(sourceMessageId: string, content: unknown = [{ type: "text", 
 // Deliberately run the REAL pinned SDK in a separate Node process. No query/model/credentials.
 // Prepare: npm pack @anthropic-ai/claude-agent-sdk@0.3.276; extract under .cache/claude-compat-boundary/.
 async function sdk(
-  configDir: string,
+  environment: { HOME: string; CLAUDE_CONFIG_DIR?: string; CLAUDE_CODE_PROJECT_DIR_NAME?: string },
   actions: { method: string; args: unknown[] }[],
-  projectKey?: string,
-  parentConfig = true,
 ): Promise<any[]> {
   const metadata = JSON.parse(await readFile(join(dirname(sdkPath), "package.json"), "utf8"));
   if (metadata.name !== "@anthropic-ai/claude-agent-sdk" || metadata.version !== "0.3.276")
@@ -68,16 +66,26 @@ async function sdk(
       process.env.BRUV_HISTORY_NODE ?? "node",
       "--input-type=module",
       "-e",
-      "const sdk = await import(process.argv[1]); const actions = JSON.parse(process.argv[2]); const results = []; for (const a of actions) { try { results.push(await sdk[a.method](...a.args)); } catch (e) { results.push({ error: e.message }); } } console.log(JSON.stringify(results));",
+      `
+        const sdk = await import(process.argv[1]);
+        const actions = JSON.parse(process.argv[2]);
+        const results = [];
+        for (const action of actions) {
+          try {
+            results.push(await sdk[action.method](...action.args));
+          } catch (error) {
+            results.push({ error: error.message });
+          }
+        }
+        console.log(JSON.stringify(results));
+      `,
       sdkPath,
       JSON.stringify(actions),
     ],
     {
       env: {
         PATH: process.env.PATH,
-        HOME: configDir,
-        ...(parentConfig ? { CLAUDE_CONFIG_DIR: configDir } : {}),
-        ...(projectKey ? { CLAUDE_CODE_PROJECT_DIR_NAME: projectKey } : {}),
+        ...environment,
       },
       stdout: "pipe",
       stderr: "pipe",
@@ -133,13 +141,16 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       const final = await history.append(assistant("pi-final"));
       const reopened = await NativeHistory.open(options);
       expect(await reopened.append(user("pi-u", "root prompt", { uuid: promptId }))).toBe(u);
-      const [messages, page, agents, childMessages, nestedMessages] = await sdk(options.configDir, [
-        rootRead(options.sessionId, options.cwd),
-        rootRead(options.sessionId, options.cwd, { offset: 1, limit: 2 }),
-        { method: "listSubagents", args: [options.sessionId, { dir: options.cwd }] },
-        { method: "getSubagentMessages", args: [options.sessionId, "task_actual_child", { dir: options.cwd }] },
-        { method: "getSubagentMessages", args: [options.sessionId, "task_actual_nested", { dir: options.cwd }] },
-      ]);
+      const [messages, page, agents, childMessages, nestedMessages] = await sdk(
+        { HOME: options.configDir, CLAUDE_CONFIG_DIR: options.configDir },
+        [
+          rootRead(options.sessionId, options.cwd),
+          rootRead(options.sessionId, options.cwd, { offset: 1, limit: 2 }),
+          { method: "listSubagents", args: [options.sessionId, { dir: options.cwd }] },
+          { method: "getSubagentMessages", args: [options.sessionId, "task_actual_child", { dir: options.cwd }] },
+          { method: "getSubagentMessages", args: [options.sessionId, "task_actual_nested", { dir: options.cwd }] },
+        ],
+      );
       expect(messages.map((m: any) => m.uuid)).toEqual([u, a, r, final]);
       expect(messages.every((m: any) => m.session_id === options.sessionId && m.parent_tool_use_id === null)).toBe(
         true,
@@ -183,7 +194,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
         sourceCallId: "actual-tool",
       });
       await child.append(user("cu"));
-      const [created] = await sdk(options.configDir, [
+      const [created] = await sdk({ HOME: options.configDir, CLAUDE_CONFIG_DIR: options.configDir }, [
         fork(options.sessionId, options.cwd, { upToMessageId: checkpoint, title: "actual SDK fork" }),
       ]);
       expect(created.error).toBeUndefined();
@@ -226,7 +237,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       const nextPiId = pi.appendMessage({ role: "user", content: "new owner prompt", timestamp: Date.parse(stamp) });
       const resumed = await NativeHistory.resumeImported({ ...forkOptions, sourceSessionId: pi.getSessionId() }, pi);
       const nextNativeId = await resumed.append(user(nextPiId, "new owner prompt"));
-      const [messages, children] = await sdk(options.configDir, [
+      const [messages, children] = await sdk({ HOME: options.configDir, CLAUDE_CONFIG_DIR: options.configDir }, [
         rootRead(created.sessionId, options.cwd),
         { method: "listSubagents", args: [created.sessionId, { dir: options.cwd }] },
       ]);
@@ -237,7 +248,9 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
         SessionManager.open(result.sourceSessionFile),
       );
       expect(await again.append(user(nextPiId, "new owner prompt"))).toBe(nextNativeId);
-      const [grandchild] = await sdk(options.configDir, [fork(created.sessionId, options.cwd)]);
+      const [grandchild] = await sdk({ HOME: options.configDir, CLAUDE_CONFIG_DIR: options.configDir }, [
+        fork(created.sessionId, options.cwd),
+      ]);
       const secondImport = await importNativeHistory({
         ...forkOptions,
         sessionId: grandchild.sessionId,
@@ -252,7 +265,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       const pending = await history.append(
         assistant("tool", [{ type: "tool_use", id: "pending-call", name: "bash", input: { command: "dangerous" } }]),
       );
-      const [created, badCheckpoint] = await sdk(options.configDir, [
+      const [created, badCheckpoint] = await sdk({ HOME: options.configDir, CLAUDE_CONFIG_DIR: options.configDir }, [
         fork(options.sessionId, options.cwd, { upToMessageId: pending }),
         fork(options.sessionId, options.cwd, { upToMessageId: randomUUID() }),
       ]);
@@ -262,15 +275,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       await expect(importNativeHistory({ ...options, sessionId: created.sessionId, sessionDir })).rejects.toThrow(
         "incomplete tool exchange",
       );
-      expect(await Bun.file(join(sessionDir, "anything")).exists()).toBe(false);
-      expect(
-        await import("node:fs/promises").then((fs) =>
-          fs.stat(sessionDir).then(
-            () => true,
-            () => false,
-          ),
-        ),
-      ).toBe(false);
+      expect(existsSync(sessionDir)).toBe(false);
     });
 
     test("parent SDK config-home mismatch really misses files; explicit aligned override works", async () => {
@@ -278,7 +283,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       await history.append(user("u"));
       const wrong = join(dir, "sdk-other-home");
       await mkdir(wrong);
-      const [missing, failedFork] = await sdk(wrong, [
+      const [missing, failedFork] = await sdk({ HOME: wrong, CLAUDE_CONFIG_DIR: wrong }, [
         rootRead(options.sessionId, options.cwd),
         fork(options.sessionId, options.cwd),
       ]);
@@ -288,9 +293,12 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       const custom = await NativeHistory.open(customOptions);
       const id = await custom.append(user("custom-u"));
       const [aligned] = await sdk(
-        options.configDir,
+        {
+          HOME: options.configDir,
+          CLAUDE_CONFIG_DIR: options.configDir,
+          CLAUDE_CODE_PROJECT_DIR_NAME: customOptions.projectKey,
+        },
         [rootRead(customOptions.sessionId, options.cwd)],
-        customOptions.projectKey,
       );
       expect(aligned.map((m: any) => m.uuid)).toEqual([id]);
     });
@@ -311,20 +319,15 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       const sentinel = '{"fixture":"ordinary Claude settings must stay untouched"}\n';
       await writeFile(join(ordinaryClaude, "settings.json"), sentinel);
       const transcript = join(options.configDir, "projects", nativeProjectKey(options.cwd));
-      // parentConfig=false constructs an allowlisted environment with NO CLAUDE_CONFIG_DIR,
+      // Supplying only HOME leaves CLAUDE_CONFIG_DIR out of the allowlisted environment,
       // regardless of any inherited test-runner variable. This matches normal T3's SDK process.
-      const [missing, missingChild, failedFork, configAsDir, projectAsDir] = await sdk(
-        home,
-        [
-          rootRead(options.sessionId, options.cwd),
-          { method: "getSubagentMessages", args: [options.sessionId, "isolated-child", { dir: options.cwd }] },
-          fork(options.sessionId, options.cwd),
-          fork(options.sessionId, options.configDir),
-          fork(options.sessionId, transcript),
-        ],
-        undefined,
-        false,
-      );
+      const [missing, missingChild, failedFork, configAsDir, projectAsDir] = await sdk({ HOME: home }, [
+        rootRead(options.sessionId, options.cwd),
+        { method: "getSubagentMessages", args: [options.sessionId, "isolated-child", { dir: options.cwd }] },
+        fork(options.sessionId, options.cwd),
+        fork(options.sessionId, options.configDir),
+        fork(options.sessionId, transcript),
+      ]);
       expect(missing).toEqual([]);
       expect(missingChild).toEqual([]);
       for (const failed of [failedFork, configAsDir, projectAsDir]) expect(failed.error).toContain("not found");
@@ -332,7 +335,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       expect(await readdir(ordinaryClaude)).toEqual(["settings.json"]);
       // Keep a positive control: the same genuine transcript, SDK, and checkpoint work when
       // explicitly scoped in a separate process. This is not a proposed T3 launch workaround.
-      const [read, forked] = await sdk(options.configDir, [
+      const [read, forked] = await sdk({ HOME: options.configDir, CLAUDE_CONFIG_DIR: options.configDir }, [
         rootRead(options.sessionId, options.cwd),
         fork(options.sessionId, options.cwd, { upToMessageId: nativeId }),
       ]);
@@ -350,7 +353,9 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       const history = await NativeHistory.open({ ...options, cwd: alias });
       expect(nativeProjectKey(longCwd).length).toBeGreaterThan(200);
       const id = await history.append(user("u"));
-      const [messages] = await sdk(options.configDir, [rootRead(options.sessionId, alias)]);
+      const [messages] = await sdk({ HOME: options.configDir, CLAUDE_CONFIG_DIR: options.configDir }, [
+        rootRead(options.sessionId, alias),
+      ]);
       expect(messages.map((m: any) => m.uuid)).toEqual([id]);
     });
 
@@ -361,7 +366,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       const selected = await history.append(
         assistant("selected", [{ type: "text", text: "selected branch" }], { parentUuid: root }),
       );
-      const [messages, created] = await sdk(options.configDir, [
+      const [messages, created] = await sdk({ HOME: options.configDir, CLAUDE_CONFIG_DIR: options.configDir }, [
         rootRead(options.sessionId, options.cwd),
         fork(options.sessionId, options.cwd),
       ]);
