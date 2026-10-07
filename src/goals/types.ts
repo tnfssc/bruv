@@ -29,12 +29,18 @@ export interface GoalState {
   pauseReason?: string;
 }
 
-export interface GoalEntry {
-  version: 1;
-  operation: "set" | "update" | "clear";
-  goal?: GoalState;
-  at: string;
-}
+export type GoalEntry =
+  | {
+      version: 1;
+      operation: "set" | "update";
+      goal: GoalState;
+      at: string;
+    }
+  | {
+      version: 1;
+      operation: "clear";
+      at: string;
+    };
 
 export type OwnedJobStatus = "running" | "finished" | "unavailable";
 
