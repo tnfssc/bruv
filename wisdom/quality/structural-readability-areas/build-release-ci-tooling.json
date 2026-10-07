@@ -181,7 +181,7 @@
     {
       "focus": "biome.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_e7133eda",
@@ -197,53 +197,88 @@
           "id": "task_6ac6a0f9",
           "base": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
           "candidate": "4d2499a067f363cb8c12fbf830016a1ff7634c16",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Global discovery/VCS, formatter-only excludes and test lint overrides serve distinct scopes; fixture proof shows combining lists changes behavior. Test override disables4 rules, not writer count5.",
+          "checks": "IndependentBiome2.5.15 format/lint;CIrunner8/85;scope fixture diagnostics/exclusions. Schema/deprecatedrecommended infos remain;no full build/typecheck."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c9ab9a6f17498d2c7f0c62fc8538128ddef546a1",
       "readingResult": "Unchanged discovery/format/lint defaults/test exceptions separated; merging exclusions changes scope not structure.",
-      "checks": "FocusedBiomepass;CIrunner8pass;schema mismatch/deprecated recommended infos existing;no build."
+      "checks": "FocusedBiomepass;CIrunner8pass;schema mismatch/deprecated recommended infos existing;no build.",
+      "integrationState": "Unchanged focus equals area tip, note excluded."
     },
     {
       "focus": "bunfig.toml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_bd9983c7",
           "launchBase": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_bd9983c7",
           "branch": "bruv/primary-bunfig.toml-bd9983c7",
+          "state": "completed",
+          "commit": "c1707bbda19c9d8f7d594f05c2cd66c86f795ae3"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_b2bc2474",
+          "base": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
+          "candidate": "c1707bbda19c9d8f7d594f05c2cd66c86f795ae3",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged Bun test→explicit preload→inherited Herdr identity cleared before imports;ordinary scripts retain identity. Direct declarative link.",
+      "checks": "Preload/order1pass;ordinary identityprobe pass;Herdr12/34 with owned WASM;no build/live."
     },
     {
       "focus": "install.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "rework-running",
       "primary": [
         {
           "id": "task_e8ffe816",
           "launchBase": "c157c301c165b7a56eb9f54adc36ea5a5b248beb",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_e8ffe816",
           "branch": "bruv/primary-install.sh-e8ffe816",
-          "state": "running"
+          "state": "completed",
+          "commit": "b7427a75c49a6058de5f20e24f51f9cb06b6ed43"
+        },
+        {
+          "id": "task_f94ad569",
+          "launchBase": "cda898ee9cace88b9b290431abea7bb90d52d389",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_f94ad569",
+          "branch": "bruv/follow-up-root-installer-related-test-co-f94ad569",
+          "state": "running",
+          "role": "related-follow-up",
+          "priorCandidate": "b7427a75c49a6058de5f20e24f51f9cb06b6ed43"
         }
       ],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Root now canonical staged pair, private probe subshell and restore-or-remove operation; remains standalone. Candidate matches accepted scripts/install.sh exactly; shared test comment claiming old root staging is stale.",
+      "checks": "Base/candidate22pass;syntax/diffpass;mocked Linux only."
     },
     {
       "focus": "mise.toml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_f31c9cfd",
+          "launchBase": "cda898ee9cace88b9b290431abea7bb90d52d389",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_f31c9cfd",
+          "branch": "bruv/primary-mise.toml-f31c9cfd",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -734,7 +769,7 @@
     {
       "focus": "scripts/update-dependencies.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "rework-running",
+      "state": "awaiting-rework-judge",
       "primary": [
         {
           "id": "task_b3760f86",
@@ -749,10 +784,11 @@
           "launchBase": "5867361547ada310ee013bd7e9213247d0855a97",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d9eeb4d5",
           "branch": "bruv/rework-scripts-update-dependencies.ts-d9eeb4d5",
-          "state": "running",
+          "state": "completed",
           "role": "rework",
           "priorCandidate": "a7218e7ff7a5a20a884f8afe816838c66ba9876a",
-          "priorJudge": "task_98fc9caa"
+          "priorJudge": "task_98fc9caa",
+          "commit": "b6231ed20199f3da842337f8deba81ded4bf0a53"
         }
       ],
       "judges": [
@@ -774,7 +810,8 @@
       ],
       "acceptedBlob": null,
       "readingResult": "Shared ordered comparison/explicit lock-version normalization/grouped policy validation replace duplicate version ordering and inline post-update checks.",
-      "checks": "16 focusedpass;tsc/Biome/diff pass;no registry/GitHub/build"
+      "checks": "16 focusedpass;tsc/Biome/diff pass;no registry/GitHub/build",
+      "writerResponse": "Full prior source/test patch retained; own-entry-safe shared comparison prevents inherited constructor values for normalized lock AND root reports; add/remove regressions fail before fix,25/161 combined pass after. Strict tsc/Biome/diff pass."
     },
     {
       "focus": "scripts/validate-release-tag.ts",
@@ -1549,8 +1586,16 @@
     {
       "focus": "tests/generate-third-party-notices.test.ts",
       "initialBase": "911a433455175b5af5db6bc909c220f2693ffd24",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_075a5f2c",
+          "launchBase": "cda898ee9cace88b9b290431abea7bb90d52d389",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_075a5f2c",
+          "branch": "bruv/primary-new-tests-generate-third-party-n-075a5f2c",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
