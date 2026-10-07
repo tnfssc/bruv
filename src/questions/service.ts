@@ -1,15 +1,15 @@
+import { randomUUID } from "node:crypto";
 import {
-  mkdirSync,
-  readFileSync,
-  writeFileSync,
-  renameSync,
-  openSync,
   closeSync,
-  unlinkSync,
   fsyncSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+  writeFileSync,
 } from "node:fs";
 import { dirname } from "node:path";
-import { randomUUID } from "node:crypto";
 import { DIAGNOSTIC_ENTRY_TYPE } from "../diagnostics";
 
 export type QuestionOwner = { sessionId: string; branchId: string };
@@ -409,93 +409,61 @@ export class QuestionService {
   /** Trusted projection route only. The remote ledger, not an agent tool, closes or retargets a mirror. */
   async reflectRemote(
     ctx: QuestionContext,
-    source: Omit<RemoteQuestionSource, "observedVersion" | "observedStatus" | "replyState" | "error">,
-    snapshot: Pick<Question, "text" | "status" | "choices" | "allowFreeText" | "reason" | "replyId" | "delivery">,
+    source: RemoteProjection,
+    snapshot: RemoteSnapshot,
     parentOwner?: QuestionOwner,
   ): Promise<Question> {
     const owner = activeOwner(ctx, parentOwner?.branchId);
     if (parentOwner && parentOwner.sessionId !== owner.sessionId) throw new Error("Parent question owner mismatch");
-    const question = text(snapshot.text, 8000, "question");
-    let created = false;
+    const normalized = { ...snapshot, text: text(snapshot.text, 8000, "question") };
     const saved = await this.change(path(ctx), (records) => {
       if (JSON.stringify(activeOwner(ctx, owner.branchId)) !== JSON.stringify(owner))
         throw new Error("Session navigation changed");
-      const matches = (q: Question) =>
-        q.remote &&
-        JSON.stringify([
-          q.remote.taskId,
-          q.remote.host,
-          q.remote.ownerId,
-          q.remote.epoch,
-          q.remote.id,
-          q.remote.owner.sessionId,
-          q.remote.owner.branchId,
-        ]) ===
-          JSON.stringify([
-            source.taskId,
-            source.host,
-            source.ownerId,
-            source.epoch,
-            source.id,
-            source.owner.sessionId,
-            source.owner.branchId,
-          ]);
-      let q = records.find(matches);
-      if (q && !this.owns(ctx, q)) return { result: { ...q, readOnly: true }, changed: false };
-      if (!q) {
-        if (!parentOwner && ctx.sessionManager.getLeafId() !== owner.branchId)
-          throw new Error("Session navigation changed");
-        // Do not create historical closed questions that never needed this parent human.
-        if (
-          records.length >= maxPending + maxHistory ||
-          records.filter((q) => q.status === "pending").length >= maxPending
-        )
-          throw new Error("Question ledger full; remote question remains pending remotely");
-        const now = new Date().toISOString();
-        q = {
-          id: "q_" + randomUUID(),
-          owner,
-          text: question,
-          status: snapshot.status,
-          version: 1,
-          createdAt: now,
-          updatedAt: now,
-          requester: "SSH · " + source.host,
-          taskIds: ["ssh:" + encodeURIComponent(source.taskId)],
-          remote: { ...source, observedVersion: source.version, observedStatus: snapshot.status },
-        };
-        if (!this.owns(ctx, q)) throw new Error("Question launch branch is history only");
-        records.push(q);
-        created = true;
+      const existing = records.find(
+        (q): q is MirroredQuestion => !!q.remote && remoteIdentity(q.remote) === remoteIdentity(source),
+      );
+      if (existing) {
+        if (!this.owns(ctx, existing))
+          return { result: { question: { ...existing, readOnly: true }, created: false }, changed: false };
+        const updated = reconcileRemoteQuestion(existing, source, normalized);
+        const changed = JSON.stringify(existing) !== JSON.stringify(updated);
+        if (changed) {
+          updated.version++;
+          updated.updatedAt = new Date().toISOString();
+          records[records.indexOf(existing)] = updated;
+        }
+        return { result: { question: updated, created: false }, changed };
       }
-      const before = JSON.stringify(q);
-      q.remote!.taskState = source.taskState;
-      q.remote!.observedVersion = source.version;
-      q.remote!.observedStatus = snapshot.status;
-      // Once saved, a human reply retains its original target/version forever.
-      if (!q.replyId) {
-        q.remote!.version = source.version;
-        q.text = question;
-        q.choices = snapshot.choices;
-        q.allowFreeText = snapshot.allowFreeText;
-        q.reason = snapshot.reason;
-        q.status = snapshot.status;
-      } else if (snapshot.replyId === q.replyId && snapshot.delivery === "delivered") {
-        q.remote!.replyState = "delivered";
-        q.delivery = "delivered";
-        delete q.remote!.error;
-      } else if (snapshot.status === "cancelled" || snapshot.status === "resolved") {
-        q.status = snapshot.status;
-      }
-      const changed = created || before !== JSON.stringify(q);
-      if (changed && !created) {
-        q.version++;
-        q.updatedAt = new Date().toISOString();
-      }
-      return { result: q, changed };
+
+      if (!parentOwner && ctx.sessionManager.getLeafId() !== owner.branchId)
+        throw new Error("Session navigation changed");
+      if (
+        records.length >= maxPending + maxHistory ||
+        records.filter((q) => q.status === "pending").length >= maxPending
+      )
+        throw new Error("Question ledger full; remote question remains pending remotely");
+      const now = new Date().toISOString();
+      const question: MirroredQuestion = {
+        id: "q_" + randomUUID(),
+        owner,
+        text: normalized.text,
+        status: normalized.status,
+        version: 1,
+        createdAt: now,
+        updatedAt: now,
+        requester: "SSH · " + source.host,
+        taskIds: ["ssh:" + encodeURIComponent(source.taskId)],
+        remote: { ...source, observedVersion: source.version, observedStatus: normalized.status },
+        choices: normalized.choices,
+        allowFreeText: normalized.allowFreeText,
+        reason: normalized.reason,
+      };
+      if (!this.owns(ctx, question)) throw new Error("Question launch branch is history only");
+      records.push(question);
+      return { result: { question, created: true }, changed: true };
     });
-    if (created) this.onAsked?.(saved);
-    return saved;
+    if (saved.created) this.onAsked?.(saved.question);
+    return saved.question;
   }
   /** Claim durable human intent before transport. Uncertain claims are NEVER automatically replayed. */
   claimRemoteReply(ctx: QuestionContext, input: QuestionMutation): Promise<Question> {
@@ -559,4 +527,57 @@ function check(q: Question, version: number): void {
 function remoteOwned(q: Question): void {
   if (q.remote)
     throw new Error("Remote human question is ledger-owned; agents cannot resolve, cancel, block or dispatch it");
+}
+
+// A remote observation can advance without retargeting a saved human reply.
+type RemoteProjection = Omit<RemoteQuestionSource, "observedVersion" | "observedStatus" | "replyState" | "error">;
+type RemoteSnapshot = Pick<
+  Question,
+  "text" | "status" | "choices" | "allowFreeText" | "reason" | "replyId" | "delivery"
+>;
+type MirroredQuestion = Question & { remote: RemoteQuestionSource };
+
+function remoteIdentity(source: RemoteProjection): string {
+  return JSON.stringify([
+    source.taskId,
+    source.host,
+    source.ownerId,
+    source.epoch,
+    source.id,
+    source.owner.sessionId,
+    source.owner.branchId,
+  ]);
+}
+
+function reconcileRemoteQuestion(
+  question: MirroredQuestion,
+  source: RemoteProjection,
+  snapshot: RemoteSnapshot,
+): MirroredQuestion {
+  const remote: RemoteQuestionSource = {
+    ...question.remote,
+    taskState: source.taskState,
+    observedVersion: source.version,
+    observedStatus: snapshot.status,
+  };
+  if (!question.replyId) {
+    return {
+      ...question,
+      remote: { ...remote, version: source.version },
+      text: snapshot.text,
+      choices: snapshot.choices,
+      allowFreeText: snapshot.allowFreeText,
+      reason: snapshot.reason,
+      status: snapshot.status,
+    };
+  }
+  // Once saved, a human reply retains its original target/version and question text forever.
+  if (snapshot.replyId === question.replyId && snapshot.delivery === "delivered") {
+    remote.replyState = "delivered";
+    delete remote.error;
+    return { ...question, remote, delivery: "delivered" };
+  }
+  if (snapshot.status === "cancelled" || snapshot.status === "resolved")
+    return { ...question, remote, status: snapshot.status };
+  return { ...question, remote };
 }

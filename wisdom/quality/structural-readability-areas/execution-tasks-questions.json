@@ -114,11 +114,18 @@
     {
       "focus": "src/job-delivery.ts",
       "initialBlob": "4b91a38bcfba713ea26a3b7094d9eecdbcd877fb",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_4035e0d2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4035e0d2",
+        "branch": "bruv/primary-src-job-delivery.ts-4035e0d2",
+        "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2"
     },
     {
       "focus": "src/output-buffer.ts",
@@ -186,7 +193,7 @@
     {
       "focus": "src/questions/service.ts",
       "initialBlob": "e51d14128b9d800442d81eb34403b98306a649fe",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_53fcc8ba",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53fcc8ba",
@@ -197,13 +204,21 @@
       "judgeRounds": [
         {
           "id": "task_e49ceb90",
-          "status": "running",
+          "status": "complete",
           "candidate": "775567e6b75c8287d789e7fa58487c0cbed11b18",
-          "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
+          "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Existing mirror reconciliation and complete new mirror creation are separate; creation evidence returns from lock before notification. Frozen intent, matching receipts before closure and branch authority remain explicit.",
+          "checks": [
+            "independent 11 tests/57 assertions",
+            "inline creation/refresh/frozen intent/receipt/closure/authority checks passed",
+            "full suites unavailable: pi-ai/zod module resolution; no compiled CLI/TUI"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "e93ab8b86ff77c01f6fb355abd86ee7840b82a2c",
+      "integration": "integrated full source/test diff",
       "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
       "changedRelatedPaths": [
         "src/questions/service.ts",
@@ -230,34 +245,53 @@
     {
       "focus": "src/tasks/agent-session.ts",
       "initialBlob": "5a5ec14b5753ce0e7ec7a92aabaf2149a5a40245",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_c55b1950",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c55b1950",
         "branch": "bruv/primary-src-tasks-agent-session.ts-c55b1950",
         "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
-        "commit": null
+        "commit": "2e08b83504872a0bfb69b7bd76fb3ceb6a4c42bf"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c4737848",
+          "status": "running",
+          "candidate": "2e08b83504872a0bfb69b7bd76fb3ceb6a4c42bf",
+          "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
+      "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
+      "readingResult": "No-change: identity creation → exclusive header persistence → reopen → metadata/title → identity return → dispose private managers. Runtime task lifetime remains with callers.",
+      "checks": [
+        "41 tests /208 assertions",
+        "source blob unchanged; no compiled CLI/build"
+      ],
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/tasks/completion-batcher.ts",
       "initialBlob": "3a08f369781a076686869017cda722559704d55c",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_48abdba4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_48abdba4",
         "branch": "bruv/primary-src-tasks-completion-batcher.ts-48abdba4",
         "base": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7",
-        "commit": null
+        "commit": "48d5d9aee20b0298f5d392bdfab95e70e6904546"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7"
+      "launchBase": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7",
+      "changedRelatedPaths": [],
+      "readingResult": "No change: two explicit deadlines; flush detaches batch before delivery, dispose gates/discards, reset reopens; callers own delivery/replay.",
+      "checks": [
+        "5 focused tests /11 assertions",
+        "no full build/runtime acceptance"
+      ]
     },
     {
       "focus": "src/tasks/completion-notification.ts",
@@ -969,8 +1003,14 @@
     {
       "focus": "tests/typescript-execution.test.ts",
       "initialBlob": "99f89a2a17d69ecbc9feb84d0d336aed5c9ecc36",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_b5390314",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b5390314",
+        "branch": "bruv/primary-tests-typescript-execution.test.-b5390314",
+        "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -980,7 +1020,8 @@
         "blob": "e1aed384c93a9caabe74454ded1352c0b1f048b5",
         "verdict": "ACCEPT",
         "primaryStillRequired": true
-      }
+      },
+      "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2"
     },
     {
       "focus": "tests/typescript-images.test.ts",
@@ -1019,7 +1060,23 @@
       "integration": "pending"
     }
   ],
-  "extras": [],
+  "extras": [
+    {
+      "focus": "tests/remote-question-bridge.test.ts",
+      "kind": "cross-area-related",
+      "primaryOwner": "remote",
+      "primary": null,
+      "acceptedBlob": "069ad73fe9042f5b166b40c4ed9167ef8b2bcee2",
+      "judgeRounds": [
+        {
+          "id": "task_e49ceb90",
+          "verdict": "ACCEPT",
+          "candidate": "775567e6b75c8287d789e7fa58487c0cbed11b18"
+        }
+      ],
+      "integration": "integrated; remote primary owner required"
+    }
+  ],
   "limits": [
     "Automatic fish setup cannot resolve bun; workers launch independently and use explicit Bun PATH and shared read-only dependencies."
   ],
@@ -1028,8 +1085,10 @@
       "file": "tests/remote-question-bridge.test.ts",
       "owner": "remote",
       "candidate": "775567e6b75c8287d789e7fa58487c0cbed11b18",
-      "state": "candidate in judgment",
-      "need": "Preserve coherent remote-mirror regressions; remote primary owner must review accepted final blob. Parent coordinate overlap."
+      "state": "accepted and integrated",
+      "need": "Preserve coherent remote-mirror regressions; remote primary owner must review accepted final blob. Parent coordinate overlap.",
+      "blob": "069ad73fe9042f5b166b40c4ed9167ef8b2bcee2",
+      "judge": "task_e49ceb90"
     }
   ]
 }

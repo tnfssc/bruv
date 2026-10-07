@@ -15,3 +15,7 @@ Cross-area coordination: question-service candidate also changes `tests/remote-q
 ## Accepted execution patch
 
 Judge `task_b4813ac3` accepted executor `9ed85835`: one first-wins record replaces synchronized termination flags; cancellation owns subscription/timers while ACK commitment remains visible before teardown. Exact executor and test blobs recorded in JSON. Applied full source/test diff, excluding worker note. Test file still needs its own fresh primary. Writer: 72 focused passes; judge independently ran 13 output-capture checks but other suites lacked dependency/WASM setup. Combined batch gate remains pending.
+
+## Accepted question-service patch
+
+Judge `task_e49ceb90` accepted `775567e6`: explicit creation vs existing reconciliation removes nullable-record/captured-flag tracking; notification follows locked persistence. Human intent, receipt precedence, branch authority and uncertain dispatch remain preserved. Full source and remote regression test diff imported, no worker note. Remote-area primary coverage remains required for test blob `069ad73fe9042f5b166b40c4ed9167ef8b2bcee2`. Independent judge ran 11 tests and inline authority/projection journeys; full suites had module setup blockers.
