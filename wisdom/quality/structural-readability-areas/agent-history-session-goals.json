@@ -61,8 +61,15 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_f5ba33fd",
+          "launchBase": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f5ba33fd",
+          "branch": "bruv/primary-src-agent-readme.md-f5ba33fd"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -160,8 +167,15 @@
     {
       "focus": "src/goals/controller.ts",
       "initialBlob": "b46d074e022db912d2ea6565730a27879f83a361",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_b7e1aa63",
+          "launchBase": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_b7e1aa63",
+          "branch": "bruv/primary-src-goals-controller.ts-b7e1aa63"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -205,8 +219,13 @@
     {
       "focus": "src/history/disk-entry-store.ts",
       "initialBlob": "1118d257dc68995ed367a664dca875874e4ac500",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_93e226ba",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
