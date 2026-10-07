@@ -114,7 +114,7 @@
     {
       "focus": "src/job-delivery.ts",
       "initialBlob": "4b91a38bcfba713ea26a3b7094d9eecdbcd877fb",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_4035e0d2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4035e0d2",
@@ -125,13 +125,21 @@
       "judgeRounds": [
         {
           "id": "task_77427ce5",
-          "status": "running",
+          "status": "complete",
           "candidate": "0eeeb3af1f6fc852290d91042ddae1f658928598",
-          "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2"
+          "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One seam preserves delivery authority and immutable durable request identity while adding local cancellation. ACK cleanup, provisional ownership, replay ordinal and stop-work report ordering are explicit; job/replay storage stays outside.",
+          "checks": [
+            "independent39 pass/461 assertions",
+            "native replay1 pass20 assertions",
+            "area compiled binary used; no fresh build/live-provider/authenticated SSH claim"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "4b91a38bcfba713ea26a3b7094d9eecdbcd877fb",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
       "changedRelatedPaths": [],
       "readingResult": "No-change: bridge delivery, cancellation wrapper, task ownership/replay consumers already separate local wait cancellation, final ACK ownership and durable request identity.",
@@ -188,7 +196,7 @@
     {
       "focus": "src/questions/picker.ts",
       "initialBlob": "b3e4f1c4c717ddd9d1091c46e8f3b46b67b9c900",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_b3e92305",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b3e92305",
@@ -196,7 +204,14 @@
         "base": "f256384cb549f1987e9b32969ae3c09069454b53",
         "commit": "27c0eda3b2533c39a88047af57c5c7b84ae1fb67"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0cb4a524",
+          "status": "running",
+          "candidate": "27c0eda3b2533c39a88047af57c5c7b84ae1fb67",
+          "base": "f256384cb549f1987e9b32969ae3c09069454b53"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
@@ -1143,7 +1158,7 @@
     {
       "focus": "tests/typescript-execution.test.ts",
       "initialBlob": "99f89a2a17d69ecbc9feb84d0d336aed5c9ecc36",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_b5390314",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b5390314",
@@ -1154,14 +1169,22 @@
       "judgeRounds": [
         {
           "id": "task_d1f6dac2",
-          "status": "running",
+          "status": "complete",
           "candidate": "4203889ec83d22f2e4e373e0d7988f82077a9e94",
           "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
-          "priorRelatedJudge": "task_b4813ac3"
+          "priorRelatedJudge": "task_b4813ac3",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Narrow registration adapter removes callback-order/map bookkeeping without absorbing execution, contexts, assertions or semantic decisions; process/output journeys unchanged.",
+          "checks": [
+            "all116 expect sites retained by full diff",
+            "independent Biome/diff clean",
+            "writer25 tests119 assertions not independently rerun due dependency setup"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "95801cca1074a934009985ab6f1c24e903b961f5",
+      "integration": "primary candidate diff integrated; supersedes related acceptance blob",
       "relatedAcceptance": {
         "judge": "task_b4813ac3",
         "candidate": "9ed8583588dbe49928f662156437612997417036",

@@ -35,3 +35,7 @@ Independent judges found no concrete tangle in output-buffer (logical cursors an
 ## Accepted runtime owner
 
 Judge `task_d8a065ce` accepts `62e05bf7`: local saved replies becoming parent turns form one genuine lifetime; queue selection and durable claim/recheck/send/acknowledge are clear, native/remote permission boundaries remain outside. Judge inspected and tested combined accepted service: 57 tests/291 assertions plus 45 root-runtime/UI/goals checks/194 assertions; candidate 55/269, new contracts pass baseline. Source and related runtime test fully imported, worker note excluded. Runtime test still needs independent primary focus.
+
+## Execution test primary accepted
+
+Fresh primary `task_b5390314` and judge `task_d1f6dac2` accept test blob `95801cca1074a934009985ab6f1c24e903b961f5`, replacing prior supplemental acceptance. Narrow actual-registration adapter removes event registration-order/map reconstruction without hiding scenario execution or assertions; all 116 expectation sites retained. Writer 25 tests/119 assertions; judge formatting/diff passed but dependency setup prevented rerun. Integrated only judged test diff.
