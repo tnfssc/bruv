@@ -2018,7 +2018,7 @@
       "need": "If integrated, assigned live-area primary must cover final combined blob; do not overwrite sibling tests. Parent reconcile overlap.",
       "judge": "task_9ae7f05e",
       "verdict": "ACCEPT",
-      "checkLimit": "Full batch hit shared default TMPDIR snapshot budget after repeated tests; isolated TMPDIR rerun pending. Do not delete unrelated retained snapshots or weaken retention."
+      "checkLimit": "Identical full 21-suite set passes 234/1468 under unique TMPDIR; shared default temp budget polluted by repeated fixture runs. Parent gate should isolate TMPDIR; no production retention weakening/deletion of other retained snapshots."
     },
     {
       "file": "tests/subagent-extension.test.ts",
@@ -2057,6 +2057,11 @@
       "commit": "cdc57364",
       "job": "task_62ef91ce",
       "result": "Fresh-build 21-suite run: 231 pass/3 host-snapshot failures, 1454 assertions. All 3 failures are snapshot budget exhausted in shared default TMPDIR, not expected branch/delivery errors. tsc FAIL tests/goals.test.ts:560 calls GoalRuntime.handle with one argument (requires two). Record real failure; no gate pass claim."
+    },
+    {
+      "commit": "cdc57364",
+      "job": "task_df42d0f6",
+      "result": "Same freshly built 21-suite regression set passes in unique owned TMPDIR: 234 pass, 0 fail, 1468 assertions. Confirms prior host failures were shared-retention budget interference. Goal-test compile error remains unresolved, no overall gate pass."
     }
   ]
 }
