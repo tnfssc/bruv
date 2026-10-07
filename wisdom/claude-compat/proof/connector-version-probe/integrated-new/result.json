@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "profile": "realT3 2702: semver-free Bruv CLI identity",
+  "t3Sha256": "da741779029c88c84d26c22354c5b4ddaa0e81fc99d8a1b0a3b2f7a56232c6c0",
+  "connectorSha256": "55b58718cdfb8f87e7a947b8e67ec4911bf6fb60cb33d2acfe72f67a39d96246",
+  "updatePromptAbsent": true,
+  "oldVersionControl": false,
+  "remainingModelWarning": true,
+  "connectorVersion": "Bruv connector",
+  "bruvVersion": "bruv-claude-compat 0.16.13",
+  "twoBruvOverrides": false,
+  "serverClaudeConfigDir": false,
+  "unsupportedWarningAbsent": true,
+  "customModel": "fixture/fixture-model",
+  "modelRequests": [
+    {
+      "model": "fixture-model"
+    }
+  ],
+  "paidCalls": 0,
+  "authClaim": "upstream Authenticated label means fixture readiness; only local fake credentials used"
+}

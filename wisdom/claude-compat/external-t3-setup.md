@@ -42,9 +42,13 @@ In unmodified T3 **v0.0.46-nightly.20261005.2702**, source
 latest-Claude lookup is skipped and popup/settings update predicates exclude it.
 Tradeoff: version-gated built-in Claude models are filtered, and the separate
 “installed version is too old” model warning can remain. Custom Bruv models stay
-available. No fake high version or T3 settings change is needed. This is tagged
-source evidence, not new live UI acceptance or a promise about future hosts.
-See [label-only identity proof and limits](label-only-cli-identity.md).
+available. No fake high version or T3 settings change is needed. A private
+unchanged-2702 browser probe confirms the update popup and settings Update
+action disappear while native custom-model chat still works through a loopback
+fake model. The model-too-old advisory remains. This is not paid-provider auth,
+full native parity, or a promise about future hosts.
+See [label-only identity proof](label-only-cli-identity.md) and
+[final UI integration proof and limits](connector-version-probe-integration.md).
 
 Historical observation with the former semver CLI identity (not this change):
 Observed on unchanged official 2644: the **Unsupported version** warning is

@@ -119,3 +119,11 @@ See `gates.txt`, `full-suite-failures.txt`, `baseline-adapter-error.txt`, and
 `terminal-perf-isolated.txt` in the proof directory. Full-suite green is **not**
 claimed. There was no new T3 desktop run, real provider auth, real install/update,
 push, or release.
+
+## Parent UI acceptance
+
+The parent now has bounded unchanged-2702 UI proof on the integrated pair.
+See connector-version-probe-integration.md. Its control observes the old update
+popup; the label-only build removes it and preserves genuine native loopback
+custom-model chat. The separate model warning remains. This does not change
+the source/UI, full-suite, auth or full-parity limits of the worker gates above.
