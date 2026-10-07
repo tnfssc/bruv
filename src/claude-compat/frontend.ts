@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { AssistantMessage } from "@earendil-works/pi-ai";
+import type { AssistantMessage, AssistantMessageEvent } from "@earendil-works/pi-ai";
 import type {
   AgentSessionEvent,
   ExtensionContext,
@@ -30,20 +30,12 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let host: SessionHost | undefined;
   let tail = Promise.resolve();
   let outputError: unknown;
-  let started = 0;
   let active = false;
-  let turns = 0;
   let results = 0;
-  let lastText = "";
-  let providerFailure: string | undefined;
-  let terminalFailure: string | undefined;
-  const effectiveFailure = () => terminalFailure ?? providerFailure;
+  let run = new RunResult();
   let messageId = "";
   let commandUuid: string | undefined;
-  let usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
-  let cost = 0;
   let cumulativeCost = 0;
-  let denials: Record<string, unknown>[] = [];
   let consumedUserUuids: string[] = [];
   let echoPending = false;
   let consumedHuman = false;
@@ -89,42 +81,23 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     echoPending = false;
 
     commandUuid = undefined;
-    started = Date.now();
-    turns = 0;
-    lastText = "";
-    providerFailure = undefined;
-    terminalFailure = undefined;
-    cost = 0;
-    denials = [];
-    usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
+    run = new RunResult(Date.now());
   };
-  const result = (structuredOutput?: unknown) => {
-    const failure = effectiveFailure();
-    return {
-      type: "result",
-      ...base(),
-      ...promptEcho(),
-      // SDK 0.3.276 has no auto-continuation origin. Attribute real task wakes
-      // only when Pi consumes their custom message, never from a job lifecycle frame.
-      origin: { kind: consumedHuman ? "human" : consumedTaskNotification ? "task-notification" : "unclassified" },
-      subtype: failure ? "error_during_execution" : "success",
-      is_error: Boolean(failure),
-      duration_ms: started ? Date.now() - started : 0,
-      // Provider API latency is not measured separately; do not invent duration_api_ms.
-      num_turns: turns,
-      result: lastText,
-      total_cost_usd: cost,
-      usage,
-      permission_denials: denials,
-      ...(failure ? { errors: [failure] } : {}),
-      ...(structuredOutput === undefined ? {} : { structured_output: structuredOutput }),
-    };
-  };
+  const result = (structuredOutput?: unknown) => ({
+    type: "result",
+    ...base(),
+    ...promptEcho(),
+    // SDK 0.3.276 has no auto-continuation origin. Attribute real task wakes
+    // only when Pi consumes their custom message, never from a job lifecycle frame.
+    origin: { kind: consumedHuman ? "human" : consumedTaskNotification ? "task-notification" : "unclassified" },
+    ...run.resultFields(),
+    ...(structuredOutput === undefined ? {} : { structured_output: structuredOutput }),
+  });
   const end = () => {
     if (!active) return;
     active = false;
     results++;
-    cumulativeCost += cost;
+    cumulativeCost += run.cost;
     if (!options.auxiliary) {
       send(result());
       if (commandUuid)
@@ -132,7 +105,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
           type: "command_lifecycle",
           ...base(),
           command_uuid: commandUuid,
-          state: effectiveFailure() === "Interrupted" ? "cancelled" : "completed",
+          state: run.error === "Interrupted" ? "cancelled" : "completed",
         });
       // SDK 0.3.276 separates the result from the authoritative turn-over frame.
       // Only Pi agent_settled (or a handled command) ends the actual root run.
@@ -154,169 +127,161 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
   let hostAccess: () => SessionHost | undefined = () => undefined;
 
   function onEvent(event: AgentSessionEvent) {
-    if (event.type === "auto_retry_end") {
-      // Pi owns recovery. Its success also includes aborted responses, so only
-      // the provider error is recoverable; terminal failures stay latched.
-      if (event.success) providerFailure = undefined;
-      return;
+    switch (event.type) {
+      case "auto_retry_end":
+        if (event.success) run.retrySucceeded();
+        return;
+      case "agent_start":
+        begin();
+        return;
+      case "agent_settled":
+        end();
+        return;
+      case "message_start":
+        if (event.message.role === "custom" && ["task-complete", "task-attention"].includes(event.message.customType)) {
+          begin();
+          consumedTaskNotification = true;
+        } else if (event.message.role === "assistant") {
+          begin();
+          messageId = randomUUID();
+          stream({
+            type: "message_start",
+            message: {
+              id: messageId,
+              type: "message",
+              role: "assistant",
+              model: options.model(),
+              content: [],
+              stop_reason: null,
+              stop_sequence: null,
+              usage: { input_tokens: 0, output_tokens: 0 },
+            },
+          });
+        }
+        return;
+      case "message_update":
+        streamAssistantUpdate(event.assistantMessageEvent);
+        return;
+      case "message_end": {
+        const m = event.message;
+        if (m.role === "assistant") {
+          run.recordAssistant(m);
+          publishAssistant(m);
+        } else if (m.role === "toolResult" && !options.auxiliary) {
+          send({
+            type: "user",
+            ...base(),
+            uuid: options.messageUuid?.(m) ?? randomUUID(),
+            parent_tool_use_id: null,
+            message: {
+              role: "user",
+              content: [
+                {
+                  type: "tool_result",
+                  tool_use_id: m.toolCallId,
+                  content: m.content,
+                  is_error: m.isError,
+                },
+              ],
+            },
+          });
+        }
+        return;
+      }
     }
-    if (event.type === "agent_start") {
-      begin();
-      return;
+  }
+
+  function streamAssistantUpdate(e: AssistantMessageEvent) {
+    if (options.omitThinking && e.type.startsWith("thinking_")) return;
+    switch (e.type) {
+      case "text_start":
+        stream({ type: "content_block_start", index: e.contentIndex, content_block: { type: "text", text: "" } });
+        break;
+      case "text_delta":
+        stream({ type: "content_block_delta", index: e.contentIndex, delta: { type: "text_delta", text: e.delta } });
+        break;
+      case "thinking_start":
+        stream({
+          type: "content_block_start",
+          index: e.contentIndex,
+          content_block: { type: "thinking", thinking: "" },
+        });
+        break;
+      case "thinking_delta":
+        stream({
+          type: "content_block_delta",
+          index: e.contentIndex,
+          delta: { type: "thinking_delta", thinking: e.delta },
+        });
+        break;
+      case "toolcall_start": {
+        const block = e.partial.content[e.contentIndex];
+        if (block?.type === "toolCall")
+          stream({
+            type: "content_block_start",
+            index: e.contentIndex,
+            content_block: { type: "tool_use", id: block.id, name: block.name, input: {} },
+          });
+        break;
+      }
+      case "toolcall_delta":
+        stream({
+          type: "content_block_delta",
+          index: e.contentIndex,
+          delta: { type: "input_json_delta", partial_json: e.delta },
+        });
+        break;
+      case "text_end":
+      case "thinking_end":
+      case "toolcall_end":
+        stream({ type: "content_block_stop", index: e.contentIndex });
+        break;
     }
-    if (event.type === "agent_settled") {
-      end();
-      return;
-    }
-    if (
-      event.type === "message_start" &&
-      event.message.role === "custom" &&
-      ["task-complete", "task-attention"].includes(event.message.customType)
-    ) {
-      begin();
-      consumedTaskNotification = true;
-    }
-    if (event.type === "message_start" && event.message.role === "assistant") {
-      begin();
-      messageId = randomUUID();
-      stream({
-        type: "message_start",
+  }
+
+  function publishAssistant(assistant: AssistantMessage) {
+    const stopReason =
+      assistant.stopReason === "toolUse" ? "tool_use" : assistant.stopReason === "length" ? "max_tokens" : "end_turn";
+    const nativeUsage = {
+      input_tokens: assistant.usage.input,
+      output_tokens: assistant.usage.output,
+      cache_read_input_tokens: assistant.usage.cacheRead,
+      cache_creation_input_tokens: assistant.usage.cacheWrite,
+    };
+    stream({ type: "message_delta", delta: { stop_reason: stopReason, stop_sequence: null }, usage: nativeUsage });
+    stream({ type: "message_stop" });
+    if (!options.auxiliary)
+      send({
+        type: "assistant",
+        ...base(),
+        ...promptEcho(),
+        uuid: options.messageUuid?.(assistant) ?? randomUUID(),
+        parent_tool_use_id: null,
         message: {
           id: messageId,
           type: "message",
           role: "assistant",
           model: options.model(),
-          content: [],
-          stop_reason: null,
+          content: assistant.content
+            .filter((p) => !options.omitThinking || p.type !== "thinking")
+            .map((p) =>
+              p.type === "toolCall"
+                ? { type: "tool_use", id: p.id, name: p.name, input: p.arguments }
+                : p.type === "thinking"
+                  ? {
+                      type: "thinking",
+                      thinking: p.thinking,
+                      ...(p.thinkingSignature ? { signature: p.thinkingSignature } : {}),
+                    }
+                  : p,
+            ),
+          stop_reason: stopReason,
           stop_sequence: null,
-          usage: { input_tokens: 0, output_tokens: 0 },
+          usage: nativeUsage,
         },
       });
-    }
-    if (event.type === "message_update") {
-      const e = event.assistantMessageEvent;
-      if (options.omitThinking && e.type.startsWith("thinking_")) return;
-      switch (e.type) {
-        case "text_start":
-          stream({ type: "content_block_start", index: e.contentIndex, content_block: { type: "text", text: "" } });
-          break;
-        case "text_delta":
-          stream({ type: "content_block_delta", index: e.contentIndex, delta: { type: "text_delta", text: e.delta } });
-          break;
-        case "thinking_start":
-          stream({
-            type: "content_block_start",
-            index: e.contentIndex,
-            content_block: { type: "thinking", thinking: "" },
-          });
-          break;
-        case "thinking_delta":
-          stream({
-            type: "content_block_delta",
-            index: e.contentIndex,
-            delta: { type: "thinking_delta", thinking: e.delta },
-          });
-          break;
-        case "toolcall_start": {
-          const block = e.partial.content[e.contentIndex];
-          if (block?.type === "toolCall")
-            stream({
-              type: "content_block_start",
-              index: e.contentIndex,
-              content_block: { type: "tool_use", id: block.id, name: block.name, input: {} },
-            });
-          break;
-        }
-        case "toolcall_delta":
-          stream({
-            type: "content_block_delta",
-            index: e.contentIndex,
-            delta: { type: "input_json_delta", partial_json: e.delta },
-          });
-          break;
-        case "text_end":
-        case "thinking_end":
-        case "toolcall_end":
-          stream({ type: "content_block_stop", index: e.contentIndex });
-          break;
-      }
-    }
-    if (event.type !== "message_end") return;
-    const m = event.message;
-    if (m.role === "assistant") {
-      const assistant = m as AssistantMessage;
-      turns++;
-      lastText = assistant.content
-        .filter((p) => p.type === "text")
-        .map((p) => p.text)
-        .join("\n");
-      usage.input_tokens += assistant.usage.input;
-      usage.output_tokens += assistant.usage.output;
-      usage.cache_read_input_tokens += assistant.usage.cacheRead;
-      usage.cache_creation_input_tokens += assistant.usage.cacheWrite;
-      cost += assistant.usage.cost.total;
-      if (assistant.stopReason === "error") providerFailure = assistant.errorMessage ?? assistant.stopReason;
-      if (assistant.stopReason === "aborted") terminalFailure ??= assistant.errorMessage ?? assistant.stopReason;
-      const stopReason =
-        assistant.stopReason === "toolUse" ? "tool_use" : assistant.stopReason === "length" ? "max_tokens" : "end_turn";
-      const nativeUsage = {
-        input_tokens: assistant.usage.input,
-        output_tokens: assistant.usage.output,
-        cache_read_input_tokens: assistant.usage.cacheRead,
-        cache_creation_input_tokens: assistant.usage.cacheWrite,
-      };
-      stream({ type: "message_delta", delta: { stop_reason: stopReason, stop_sequence: null }, usage: nativeUsage });
-      stream({ type: "message_stop" });
-      if (!options.auxiliary)
-        send({
-          type: "assistant",
-          ...base(),
-          ...promptEcho(),
-          uuid: options.messageUuid?.(m) ?? randomUUID(),
-          parent_tool_use_id: null,
-          message: {
-            id: messageId,
-            type: "message",
-            role: "assistant",
-            model: options.model(),
-            content: assistant.content
-              .filter((p) => !options.omitThinking || p.type !== "thinking")
-              .map((p) =>
-                p.type === "toolCall"
-                  ? { type: "tool_use", id: p.id, name: p.name, input: p.arguments }
-                  : p.type === "thinking"
-                    ? {
-                        type: "thinking",
-                        thinking: p.thinking,
-                        ...(p.thinkingSignature ? { signature: p.thinkingSignature } : {}),
-                      }
-                    : p,
-              ),
-            stop_reason: stopReason,
-            stop_sequence: null,
-            usage: nativeUsage,
-          },
-        });
-    } else if (m.role === "toolResult" && !options.auxiliary) {
-      send({
-        type: "user",
-        ...base(),
-        uuid: options.messageUuid?.(m) ?? randomUUID(),
-        parent_tool_use_id: null,
-        message: {
-          role: "user",
-          content: [
-            {
-              type: "tool_result",
-              tool_use_id: m.toolCallId,
-              content: m.content,
-              is_error: m.isError,
-            },
-          ],
-        },
-      });
-    }
   }
+
   return {
     factory,
     consumeUser(uuid?: string) {
@@ -329,7 +294,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
     },
     notice(text: string, level: "info" | "warning" | "error" = "info") {
       begin();
-      lastText = lastText ? lastText + "\n" + text : text;
+      run.notice(text);
       send({
         type: "assistant",
         ...base(),
@@ -347,7 +312,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       });
     },
     denied(toolName: string, input: Record<string, unknown>, id: string) {
-      denials.push({ tool_name: toolName, tool_input: input, tool_use_id: id });
+      run.deny(toolName, input, id);
     },
     onEvent,
     sessionHost: () => hostAccess(),
@@ -361,7 +326,7 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       if (outputError) return;
       const running = active;
       begin();
-      terminalFailure = error instanceof Error ? error.message : String(error);
+      run.fail(error instanceof Error ? error.message : String(error));
       if (!running) end();
     },
     headlessUI(base: ExtensionUIContext): ExtensionUIContext {
@@ -408,12 +373,89 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       }
     },
     result,
-    text: () => lastText,
-    error: effectiveFailure,
-    usage: () => ({ ...usage }),
+    text: () => run.text,
+    error: () => run.error,
+    usage: () => run.usageSnapshot(),
     cost: () => cumulativeCost,
     interrupt() {
-      if (active) terminalFailure = "Interrupted";
+      if (active) run.fail("Interrupted");
     },
   };
+}
+
+/** Accounting and failures last for one root run; settlement leaves its result readable. */
+class RunResult {
+  private turns = 0;
+  private lastText = "";
+  private providerFailure: string | undefined;
+  private terminalFailure: string | undefined;
+  private usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
+  private denials: Record<string, unknown>[] = [];
+  private totalCost = 0;
+
+  constructor(private readonly started = 0) {}
+
+  get text() {
+    return this.lastText;
+  }
+
+  get error() {
+    return this.terminalFailure ?? this.providerFailure;
+  }
+
+  get cost() {
+    return this.totalCost;
+  }
+
+  recordAssistant(message: AssistantMessage) {
+    this.turns++;
+    this.lastText = message.content
+      .filter((p) => p.type === "text")
+      .map((p) => p.text)
+      .join("\n");
+    this.usage.input_tokens += message.usage.input;
+    this.usage.output_tokens += message.usage.output;
+    this.usage.cache_read_input_tokens += message.usage.cacheRead;
+    this.usage.cache_creation_input_tokens += message.usage.cacheWrite;
+    this.totalCost += message.usage.cost.total;
+    if (message.stopReason === "error") this.providerFailure = message.errorMessage ?? message.stopReason;
+    if (message.stopReason === "aborted") this.terminalFailure ??= message.errorMessage ?? message.stopReason;
+  }
+
+  retrySucceeded() {
+    // Pi's retry success includes aborted responses. Only provider failures recover.
+    this.providerFailure = undefined;
+  }
+
+  fail(error: string) {
+    this.terminalFailure = error;
+  }
+
+  notice(text: string) {
+    this.lastText = this.lastText ? `${this.lastText}\n${text}` : text;
+  }
+
+  deny(toolName: string, input: Record<string, unknown>, id: string) {
+    this.denials.push({ tool_name: toolName, tool_input: input, tool_use_id: id });
+  }
+
+  usageSnapshot() {
+    return { ...this.usage };
+  }
+
+  resultFields() {
+    const failure = this.error;
+    return {
+      subtype: failure ? "error_during_execution" : "success",
+      is_error: Boolean(failure),
+      duration_ms: this.started ? Date.now() - this.started : 0,
+      // Provider API latency is not measured separately; do not invent duration_api_ms.
+      num_turns: this.turns,
+      result: this.lastText,
+      total_cost_usd: this.totalCost,
+      usage: this.usage,
+      permission_denials: this.denials,
+      ...(failure ? { errors: [failure] } : {}),
+    };
+  }
 }
