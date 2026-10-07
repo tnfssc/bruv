@@ -740,8 +740,15 @@
     {
       "focus": "src/herdr-agent-state.ts",
       "initialBlob": "652dc28d948e82a263b789da4a2ec5dbb09d4296",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_841fe796",
+          "launchBase": "8d31b67dec5d017598a3307ac38fe6311396bea5",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_841fe796",
+          "branch": "bruv/primary-agent-state-persistence-841fe796"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -787,13 +794,19 @@
     {
       "focus": "src/history/selector-lifecycle.ts",
       "initialBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_1e7ee0c8",
           "launchBase": "4c80c3f380f237e77ec86350e4ae823c83e0c09b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_1e7ee0c8",
-          "branch": "bruv/primary-history-selector-lifecycle-1e7ee0c8"
+          "branch": "bruv/primary-history-selector-lifecycle-1e7ee0c8",
+          "commit": "313f21095386e99beda79404e94aefc4c05da23c",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: idempotent count override reads owned existing metadata or delegates native SDK; does not own picker selection/disposal. Actual CLI install/picker cancellation/runtime switch/storage lifetimes separate.",
+          "checks": "14 history tests/62 assertions; direct probe18 verifies idempotence/fallback/metadata-only/whole-journal/dispose-reopen bytes; format/lint/diff pass; no TUI/GC/typecheck/build."
         }
       ],
       "judgeRounds": [],
