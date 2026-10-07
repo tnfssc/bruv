@@ -337,7 +337,7 @@
             "tests/goals.test.ts",
             "wisdom/quality/structural-readability-worker.md"
           ],
-          "result": "Group goal session binding/restart/navigation reconciliation with visible accounting and delivery decisions.",
+          "result": "File-local GoalReminders owns issue/exact-payload consumption/stale-token rejection/revocation, separate from store cache and automatic-run accounting. Hooks visibly choose transport-only invalidation versus controller reset.",
           "checks": "39 focused tests/204 assertions pass baseline and candidate; leaf advancement/navigation/restart/queue retention added; focused format/lint/diff pass; identical 8 missing-assets tsc errors.",
           "overlap": "Active fresh primary task_6d7a5ed8 owns tests/goals.test.ts from older base; candidate additions require coherent final combination and rejudgment."
         }
@@ -1650,7 +1650,7 @@
       "focus": "tests/fixtures/history-io-cleanup-failure.ts",
       "initialBlob": null,
       "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_d007bea3",
@@ -1671,11 +1671,15 @@
           "id": "task_8dcf7bd3",
           "candidate": "bf821d9a48f8f20d05e487545df72db2cd119b51",
           "base": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One-shot pending unlink fault precedes store import in isolated child; publication completion and consumed fault explicitly checked, then append/reopen. Parent waits drained exit before cleanup, failure propagates.",
+          "checks": "Independent 10 parent tests/43 assertions; mutation probes not repeated; no exit-listener cleanup proof, redundant pending-link limitation remains."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "integrated-related-primary-pending",
+      "acceptedBlob": "baddd5ace399fa55d0903aad88ee4821905d1c22",
+      "integration": "unchanged-at-area-tip",
       "relatedPatchReview": {
         "candidate": "eaac149b84b707785584990ea9204a3d6b68905a",
         "judge": "task_6fc46161",
