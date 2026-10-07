@@ -1155,11 +1155,18 @@
     {
       "focus": "src/tool-schema.ts",
       "initialBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_9f98ded3",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_9f98ded3",
+        "branch": "bruv/primary-src-tool-schema.ts-9f98ded3",
+        "base": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "1b7977e10031ccc622c0b30f7359e04a912e2db4"
     },
     {
       "focus": "src/typescript/definition.ts",
@@ -1280,18 +1287,29 @@
     {
       "focus": "src/typescript/images.ts",
       "initialBlob": "aa4d74eebcab9dc89cfbcbd11829ba68b5335286",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_5f2762ae",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_5f2762ae",
         "branch": "bruv/primary-src-typescript-images.ts-5f2762ae",
         "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
-        "commit": null
+        "commit": "066f319f7741234a589fbc9d89d46a2be1a076d2"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d"
+      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+      "changedRelatedPaths": [
+        "src/typescript/images.ts",
+        "tests/typescript-images.test.ts"
+      ],
+      "readingResult": "Record validator returns trusted content/decoded size; channel loop owns aggregate accounting and atomic acceptance instead of stateful callback. Malformed later record rejects all.",
+      "checks": [
+        "18 pass107 assertions",
+        "directsource boundary4 pass baseline+candidate",
+        "Biome0 with3 inherited warnings; diff pass",
+        "older childbinary no fresh compiled proof"
+      ]
     },
     {
       "focus": "src/typescript/job-bridge.ts",
@@ -2305,8 +2323,8 @@
     }
   ],
   "parentIntegrationInspection": {
-    "tip": "6a285569",
-    "result": "Documentation only; no accepted common source to import at second batch boundary. No sibling merge.",
-    "freeDisk": "145GB"
+    "tip": "0072ad15",
+    "result": "Parent integrated site-support; no useful shared execution API/source delta to merge at this batch boundary. No sibling branches merged.",
+    "freeDisk": "129GB"
   }
 }
