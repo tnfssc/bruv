@@ -232,16 +232,29 @@
     {
       "focus": "src/agent/instruction-continuity.ts",
       "initialBlob": "51020264675b38641611920f0adb4e4c4c03664a",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_9489bfd1",
           "launchBase": "d2d42103b7bc010e242453cbe36d9d65ba8d2962",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9489bfd1",
-          "branch": "bruv/primary-instruction-continuity-9489bfd1"
+          "branch": "bruv/primary-instruction-continuity-9489bfd1",
+          "commit": "e1ce1259975e663d8f091564175612a85dafa92f",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: bound session, manager-scoped frame and per-run options are distinct real lifetimes; lifecycle and generation guards make authority explicit without added indirection.",
+          "checks": "6 focused files 102 pass/639 assertions; focused format/lint/diff pass; assets copied for rerun; no build/typecheck/compiled/live proof."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_7a60dd3f",
+          "candidate": "e1ce1259975e663d8f091564175612a85dafa92f",
+          "base": "d2d42103b7bc010e242453cbe36d9d65ba8d2962",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -297,8 +310,15 @@
     {
       "focus": "src/agent/manual-shake.ts",
       "initialBlob": "238257a3a9b17501825647ca16dbf5e38daba6c6",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_dd5dc858",
+          "launchBase": "8e3b36d9dc6b0ccf893791e119a71a60831ce972",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_dd5dc858",
+          "branch": "bruv/primary-manual-shake-projection-dd5dc858"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
