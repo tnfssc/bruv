@@ -27,3 +27,7 @@ Judge `task_08e2c508` rejects intrinsic candidate, while endorsing admission ref
 ## Integrated batch proof
 
 `task_2ab7a960`: own paired build and complete TypeScript check passed. `task_d4e7f94e`: nine executor/question/remote-approval/bridge/TUI suites passed against own paired binary, plus changed-file format/lint/diff checks exit 0 (7 inherited lint warnings, 20 infos). This resolves first-batch missing-dependency/WASM/compiled-CLI check gaps, not live-provider/device/authenticated-SSH parity. Shared read-only dependencies, private runtime assets/dist. Parent branch inspected at `6a285569`: documentation only, no accepted common source to import. Disk 157GB free.
+
+## Accepted unchanged files
+
+Independent judges found no concrete tangle in output-buffer (logical cursors and physical retention form one lifetime), completion-batcher (two deadlines and detached delivery/discard are explicit), and agent-session (exclusive header publication, append, return and cleanup ordering). Exact unchanged blobs and independent checks/limits are in JSON; none was accepted by size or inherited hash alone.

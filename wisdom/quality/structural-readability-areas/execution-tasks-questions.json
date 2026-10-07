@@ -114,7 +114,7 @@
     {
       "focus": "src/job-delivery.ts",
       "initialBlob": "4b91a38bcfba713ea26a3b7094d9eecdbcd877fb",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_4035e0d2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4035e0d2",
@@ -122,7 +122,14 @@
         "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
         "commit": "0eeeb3af1f6fc852290d91042ddae1f658928598"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_77427ce5",
+          "status": "running",
+          "candidate": "0eeeb3af1f6fc852290d91042ddae1f658928598",
+          "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
@@ -275,7 +282,7 @@
     {
       "focus": "src/tasks/agent-session.ts",
       "initialBlob": "5a5ec14b5753ce0e7ec7a92aabaf2149a5a40245",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_c55b1950",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c55b1950",
@@ -286,13 +293,21 @@
       "judgeRounds": [
         {
           "id": "task_c4737848",
-          "status": "running",
+          "status": "complete",
           "candidate": "2e08b83504872a0bfb69b7bd76fb3ceb6a4c42bf",
-          "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
+          "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Exclusive header publication, reopened append metadata, identity return and private manager cleanup have visible ordering; extraction would obscure publication lifetime.",
+          "checks": [
+            "independent cleanup subprocess passed",
+            "direct suite blocked by pi-coding-agent package resolution; 41-test writer result not independently verified",
+            "no build/compiled CLI/live-provider claim"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "5a5ec14b5753ce0e7ec7a92aabaf2149a5a40245",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
       "readingResult": "No-change: identity creation → exclusive header persistence → reopen → metadata/title → identity return → dispose private managers. Runtime task lifetime remains with callers.",
       "checks": [
@@ -304,7 +319,7 @@
     {
       "focus": "src/tasks/completion-batcher.ts",
       "initialBlob": "3a08f369781a076686869017cda722559704d55c",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_48abdba4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_48abdba4",
@@ -315,13 +330,20 @@
       "judgeRounds": [
         {
           "id": "task_37002b64",
-          "status": "running",
+          "status": "complete",
           "candidate": "48d5d9aee20b0298f5d392bdfab95e70e6904546",
-          "base": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7"
+          "base": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Two deadlines, flush detachment, discard/reset lifecycle are explicit; caller retains delivery/replay authority. No scattered scheduler lifetime.",
+          "checks": [
+            "independent 5 pass/11 assertions",
+            "no full runtime/provider/SSH claim"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "3a08f369781a076686869017cda722559704d55c",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7",
       "changedRelatedPaths": [],
       "readingResult": "No change: two explicit deadlines; flush detaches batch before delivery, dispose gates/discards, reset reopens; callers own delivery/replay.",
