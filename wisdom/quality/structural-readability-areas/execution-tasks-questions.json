@@ -105,18 +105,25 @@
     {
       "focus": "src/delegation-environment.ts",
       "initialBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_238b6364",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_238b6364",
         "branch": "bruv/primary-src-delegation-environment.ts-238b6364",
         "base": "739da40a80981fc3f47aff84b0958f94448c4ccb",
-        "commit": null
+        "commit": "90791397e19f73ad7616526b96671befb4579dfa"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "739da40a80981fc3f47aff84b0958f94448c4ccb"
+      "launchBase": "739da40a80981fc3f47aff84b0958f94448c4ccb",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: copied root scrub, inplace startup mutation and freshchild isolation explicit; helpers retain owner checkpoint while fresh agents remove/replace policy, native strips root before startup.",
+      "checks": [
+        "23 pass130 assertions",
+        "startup selection filtered15",
+        "no build/liveSSH/compiledparity"
+      ]
     },
     {
       "focus": "src/job-delivery.ts",
@@ -1155,18 +1162,24 @@
     {
       "focus": "src/tool-schema.ts",
       "initialBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_9f98ded3",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_9f98ded3",
         "branch": "bruv/primary-src-tool-schema.ts-9f98ded3",
         "base": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
-        "commit": null
+        "commit": "4894e9ad7736db769ac89495ad045247aba907bb"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "1b7977e10031ccc622c0b30f7359e04a912e2db4"
+      "launchBase": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: Zod definition→converted registration declaration while execution separately parses; Live reuses schema but owns validation/admission/cancel; setup probe declaration denies execution.",
+      "checks": [
+        "schema1/10 plus5 adapter assertions",
+        "diff pass; no staleDist/build/provider"
+      ]
     },
     {
       "focus": "src/typescript/definition.ts",
@@ -1454,7 +1467,7 @@
         }
       ],
       "acceptedBlob": "38b68c6d2f3f42a8ef8c9f03ffc004e235df2b6e",
-      "integration": "full runner diff integrated; mandatory compiled original suites still pending",
+      "integration": "full diff integrated; fresh joined build and ORIGINAL runner/bridge suites passed task_e6a5072d",
       "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
       "changedRelatedPaths": [
         "src/typescript/runner.ts"
@@ -1464,7 +1477,8 @@
         "format/lint/tsc pass1 inherited info",
         "source-adapted bridge/protocol29/423",
         "source-adapted runner20pass1fail extraHOME directory also baseline; assertions unchanged",
-        "MUST batch-build joined runner/bridge then original suites; no compiled proof yet"
+        "MUST batch-build joined runner/bridge then original suites; no compiled proof yet",
+        "Area fresh paired build task_78bc3ded plus original compiled suites task_e6a5072d passed; source-adapted extra HOME fixture failure did not reproduce compiled."
       ]
     },
     {
@@ -1734,11 +1748,18 @@
     {
       "focus": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_51bb34f2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_51bb34f2",
+        "branch": "bruv/primary-tests-job-service.test.ts-51bb34f2",
+        "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b"
     },
     {
       "focus": "tests/local-agent-termination.test.ts",
@@ -1904,11 +1925,18 @@
     {
       "focus": "tests/questions.test.ts",
       "initialBlob": "79a2979c636f8a49ef3c192f91acea0868cc10ec",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_e678c58b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e678c58b",
+        "branch": "bruv/primary-tests-questions.test.ts-e678c58b",
+        "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b"
     },
     {
       "focus": "tests/resume-safeguards.test.ts",
@@ -2381,9 +2409,17 @@
     },
     {
       "job": "task_e6a5072d",
-      "state": "running",
+      "state": "passed",
       "scope": "21 original suites including compiled runner/bridge and joined execute/question/TUI/cancel checks",
-      "tip": "241e60a4"
+      "tip": "241e60a4",
+      "proof": "182 pass,0 fail,1199 assertions across21 ORIGINAL suites on own fresh paired binary; includes original typescript-runner/job-bridge, joined handoff/output/images/questionTUI/resume/attention."
+    },
+    {
+      "job": "task_52557831",
+      "state": "passed",
+      "scope": "23 changed TS files since initial area baseline, format/lint/diff",
+      "tip": "241e60a4",
+      "proof": "All exit0;32 warnings62 infos retained (includes explicitly recorded new test void warning)."
     }
   ],
   "parentIntegrationInspection": {

@@ -43,3 +43,7 @@ Question-extension test primary accepted task_5abbe0b2, finaldcd59fc37732014cf80
 Runner accepted task_5c8f3c0f, blob38b68c6d2f3f42a8ef8c9f03ffc004e235df2b6e: established graph registrar owns visited traversal/hooks; native require lifecycle/loader order/CJS semantics preserved. Judge inspected actual joined bridge/capture/executor, ran28/412 source protocol+capture. Runner source integrated; REQUIRED original runner/bridge suites on freshly built joined binary remain open (source-adapted baseline fixture failure is not compiled proof).
 
 Execute invocation owner accepted task_cee52f91: reply handoff/wait metadata/launch evidence/finish lifetime distinct from registration session cancellation; concurrent calls isolated and launch evidence survives error. Source3542bf968fc6fdf8c06c82d149a15f3e9e95eac7 plus related execute-handoff testc4e1069d2c37f98b1eebe81ed0ea7e8500afd9a5 integrated; independent109/736+12/49 and actual joined runner/bridge/capture compatibility. Handoff-test primary still required.
+
+## Fresh compiled third-batch proof
+
+Own paired build/full typecheck task_78bc3ded passed at241e60a4. ORIGINAL21 suites task_e6a5072d:182 pass/0fail/1199 assertions, including original runner/bridge and joined execution/handoff/capture/images/foreground-stop/resume/question-TUI/attention. Required compiled runner/bridge proof is now satisfied; source-adapted extra-HOME failure did not reproduce. Pending images candidate is NOT part of this binary. No live-provider/authenticatedSSH/device parity claim.
