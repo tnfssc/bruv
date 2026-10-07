@@ -188,7 +188,7 @@
     {
       "focus": "src/goals/controller.ts",
       "initialBlob": "b46d074e022db912d2ea6565730a27879f83a361",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_b7e1aa63",
@@ -208,11 +208,15 @@
           "id": "task_61e44d61",
           "candidate": "ffdfb910",
           "base": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Transient accounting stays distinct from persistence/delivery; automatic/helper starts, per-run strikes and settled scheduling are explicit. First helper ordinary run exemption and waiting handoff accounting remain localized.",
+          "limits": "Independent tests blocked by missing Pi dependencies; actual callers and direct/SDK tests inspected."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "b46d074e022db912d2ea6565730a27879f83a361",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/goals/extension.ts",
@@ -226,8 +230,15 @@
     {
       "focus": "src/goals/store.ts",
       "initialBlob": "65bf58713c66da88994d4d67dead877af2fcdcd0",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_fda16f5b",
+          "launchBase": "f3c522bfac81cc605156e8f870ca32f5e2394a53",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_fda16f5b",
+          "branch": "bruv/primary-src-goals-store.ts-fda16f5b"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -253,14 +264,31 @@
     {
       "focus": "src/history/disk-entry-store.ts",
       "initialBlob": "1118d257dc68995ed367a664dca875874e4ac500",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_93e226ba",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7"
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_93e226ba",
+          "branch": "bruv/primary-src-history-disk-entry-store.ts-93e226ba",
+          "launchBase": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
+          "commit": "32cbff38aa54ff05659ea2365134f016ff8c4055",
+          "changedPaths": [
+            "src/history/disk-entry-store.ts",
+            "tests/history-storage-io.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Single descriptor owns first-conversation write/publication/rollback; path replaces redundant publication flags; only success updates indexes/cache.",
+          "checks": "21 focused history tests/113 assertions; focused TypeScript/format/diff pass; baseline lint 6 warnings/3 infos retained."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0426dce8",
+          "candidate": "32cbff38aa54ff05659ea2365134f016ff8c4055",
+          "base": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
