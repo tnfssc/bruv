@@ -299,7 +299,7 @@
     {
       "focus": "scripts/tasks-ui-proof-build.ts",
       "initialBlob": "3c50cd1531b85ff6b44517154be60c5c133b8b03",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_69932f49",
@@ -313,17 +313,43 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_259c27b0",
           "branch": "bruv/fresh-proof-build-primary-with-retained--259c27b0",
           "launchBase": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
-          "retryOf": "task_69932f49"
+          "retryOf": "task_69932f49",
+          "commit": "85e990227aa93c12c16337f7a23a686b77661eda"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_f9504048",
+          "base": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
+          "candidate": "85e990227aa93c12c16337f7a23a686b77661eda",
+          "verdict": "pending",
+          "priorAttempt": "task_69932f49 interrupted without judgment",
+          "coordinatorTargets": [
+            "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
+          ]
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "Uncommitted work retained in original worktree; no candidate integrated",
       "launchBase": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
       "coordinatorReviewTargets": [
         "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
       ],
-      "priority": "fresh retry active"
+      "priority": "fresh retry active",
+      "changedRelatedPaths": [
+        "tests/tasks-ui-proof-build.test.ts",
+        "wisdom/tasks-ui/native-proof-tooling.md"
+      ],
+      "result": "Fresh retry traced archive arg/link/hash as unconsumed by compile or proof consumer; explicitly removes dead archive contract, retains source and binary provenance, updates docs/tests.",
+      "checks": [
+        "32Bun/438assertions",
+        "13Python",
+        "Focused strict TS/Biome/diff",
+        "Build/assets test stubs only"
+      ],
+      "limits": [
+        "No real native build/PTY/screenshots"
+      ]
     },
     {
       "focus": "scripts/tasks-ui-proof-screenshots.ts",
@@ -2355,8 +2381,15 @@
     {
       "focus": "tests/rolling-activity-disk.test.ts",
       "initialBlob": "16109794da03297d71f74968b134a2c9e7929bf4",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_1b754cf4",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_1b754cf4",
+          "branch": "bruv/primary-readability-tests-rolling-activi-1b754cf4",
+          "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary focus pending",
@@ -2367,7 +2400,8 @@
           "candidate": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
           "blob": "343ee9ee808ac7cbca4d822e520476ef92ba7ee8"
         }
-      ]
+      ],
+      "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d"
     },
     {
       "focus": "tests/rolling-activity.test.ts",
@@ -2828,13 +2862,14 @@
       "focus": "tests/ansi-video-renderer.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_c89c25be",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c89c25be",
           "branch": "bruv/new-file-primary-readability-tests-ansi--c89c25be",
-          "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f"
+          "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+          "commit": "e684683cd2ab8d675e88f557c49763b5ff279780"
         }
       ],
       "judgeRounds": [
@@ -2843,11 +2878,31 @@
           "verdict": "ACCEPT",
           "candidate": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
           "kind": "related-patch-only"
+        },
+        {
+          "id": "task_c7691cb3",
+          "base": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+          "candidate": "e684683cd2ab8d675e88f557c49763b5ff279780",
+          "verdict": "pending",
+          "priorSourceJudges": [
+            "task_c420e381 REJECT",
+            "task_73d21038 ACCEPT rework"
+          ]
         }
       ],
       "acceptedBlob": "d5b9aa060a097d8e3b7cda75e52f15b550b646fd",
       "integrationState": "integrated round2 patch; separate fresh primary required",
-      "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f"
+      "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+      "changedRelatedPaths": [],
+      "result": "Candidate per-render captures replace overwritten TestCase observations and parallel image/draw lists; callback/font/failed encoder/patch ownership explicit.",
+      "checks": [
+        "8tests;39assertion calls/expectations preserved",
+        "Timeline replacement fails rejected original renderer, passes accepted production",
+        "Patch restoration/isolation probe and diff"
+      ],
+      "limits": [
+        "No media/visual/product/build"
+      ]
     },
     {
       "focus": "tests/terminal-interactions-normalize.test.ts",
@@ -2907,7 +2962,7 @@
       "focus": "tests/ui-cleanup-probe.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "judging",
+      "status": "rework-running",
       "primary": [
         {
           "id": "task_09dea81c",
@@ -2922,12 +2977,24 @@
           "id": "task_3bc6b56e",
           "base": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
           "candidate": "e6e787e74a42fc4228198cf91cc26d8285162ec8",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_988afb2b"
+          "verdict": "REJECT",
+          "priorRelatedJudge": "task_988afb2b",
+          "objections": [
+            "Phase-local clock.side_effect replaces unconsumed observations, weakening timeout negative: mutant reads time once per wait then retries forever passes candidate all8 but baseline fails StopIteration. Before replacing clock observations assert cumulative call counts1after start,3after READY,4after SECOND; rerun negative control."
+          ],
+          "evidence": "Request-number fixture structure genuinely clearer, intrinsic whole file readable; phase-local clock change sacrifices coverage.",
+          "checks": [
+            "Independent base/candidate8+13 pass",
+            "Six bodies AST unchanged; production unchanged",
+            "Negative control reproduced baseline rejection vs candidate pass"
+          ],
+          "limits": [
+            "Real inherited probes still ten screen failures; no product acceptance"
+          ]
         }
       ],
       "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary pending",
+      "integrationState": "Original related test remains integrated; rejected primary candidate NOT integrated",
       "relatedPatchJudgments": [
         {
           "id": "task_988afb2b",
@@ -2946,7 +3013,27 @@
       ],
       "limits": [
         "No new terminal run; prior ten screen failures remain"
+      ],
+      "reworks": [
+        {
+          "id": "task_3a95a2db",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_3a95a2db",
+          "branch": "bruv/fresh-cleanup-test-rework-after-deadline-3a95a2db",
+          "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+          "priorCandidate": "e6e787e74a42fc4228198cf91cc26d8285162ec8",
+          "respondsTo": "task_3bc6b56e"
+        }
       ]
+    },
+    {
+      "focus": "tests/tasks-ui-proof-build.test.ts",
+      "kind": "new-test",
+      "initialBlob": null,
+      "status": "candidate-related-primary-pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "proof build related candidate; future primary required"
     }
   ],
   "batchChecks": [
