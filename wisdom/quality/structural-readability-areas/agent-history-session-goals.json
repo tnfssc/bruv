@@ -1035,13 +1035,21 @@
     {
       "focus": "src/prompts.ts",
       "initialBlob": "3aec2c16eb596e23461c6b3ad1c5b7d95366f0b8",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_263c3f6a",
           "launchBase": "ad6878194a0a11da832972e4ccc001fdfd001b62",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_263c3f6a",
-          "branch": "bruv/primary-prompt-assembly-contracts-263c3f6a"
+          "branch": "bruv/primary-prompt-assembly-contracts-263c3f6a",
+          "commit": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
+          "changedPaths": [
+            "src/prompts.ts",
+            "src/agent/extension.ts",
+            "tests/prompts.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "checks": "70 tests468 assertions6 files;54 exact baseline/current comparisons; tsc/format/lint/diff pass inherited notices; no full build/live/authSSH/device."
         }
       ],
       "judgeRounds": [],
@@ -1454,8 +1462,15 @@
     {
       "focus": "src/system-prompt.ts",
       "initialBlob": "b22372b5a873d4b79f9814bd9d7e3467bf92c538",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_e1bfb465",
+          "launchBase": "b707e9139c3c9aec445bbce5344178954c6ae630",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_e1bfb465",
+          "branch": "bruv/primary-system-prompt-transport-boundary-e1bfb465"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
