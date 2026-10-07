@@ -4035,6 +4035,20 @@
       "file": "tsconfig.json",
       "initialBlob": "b984b24eea2a441adca35f80564e94c869658551",
       "status": "pending"
+    },
+    {
+      "file": "tests/live-linux-protocol-regressions.test.ts",
+      "initialBlob": "absent",
+      "status": "accepted",
+      "area": "parent-integration",
+      "acceptedBlob": "22517c3026595dc8dd22ecb7dd2f07a1d174c164",
+      "primaryId": "task_78b8dfee",
+      "primaryCommit": "fc0565f9c5ecbc2ebb99da97564211a313ed3353",
+      "primaryPath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_78b8dfee",
+      "judgeIds": ["task_4391eb2e"],
+      "result": "Existing 12-test device-free Python protocol regressions now run in the root gate; direct owned child/capture and useful failure output. No source/assertion copy.",
+      "checks": "Judge independently ran Python suite, 14 Bun wrapper/neighbors, broken-protocol negative control, format/diff/UTF8 checks.",
+      "limits": "Unix pipes; Windows skipped. Linux run, macOS inspected only. No physical audio or compiled native parity."
     }
   ],
   "completedAreas": {

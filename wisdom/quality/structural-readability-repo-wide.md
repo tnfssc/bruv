@@ -72,3 +72,7 @@ Joined the next committed accepted-code batches from the seven running areas. Ev
 ## Shared integration checkpoint 3
 
 Second combined typecheck passed at db885fce (task_9cb7440e). Joined next seven committed actual-code-accepted batches; exact blobs/removals and related-path judgments checked, with no changed-source overlap. Final global primary/quality coverage remains incomplete. Native protocol regressions also need automatic root coverage: parent primary task_78b8dfee created a narrow wrapper at fc0565f9; independent judge task_4391eb2e is reviewing it before integration. This closes a real manual-only coverage gap, not a new test matrix. Final root gate remains pending.
+
+## Automatic native protocol coverage joined
+
+New root wrapper tests/live-linux-protocol-regressions.test.ts has primary task_78b8dfee and independent ACCEPT task_4391eb2e at fc0565f9. Joined only the accepted wrapper, not worker-local notes. Global coverage now includes this new file and exact accepted hash. Judge ran the real 12 Python tests, 14 wrapper/neighbor tests and broken-protocol failure control. Source/assertions stayed intact; Unix pipe limit and no device/macOS execution claim are explicit. Third combined typecheck passed (task_6f69a633). Full whole-repo task continues.
