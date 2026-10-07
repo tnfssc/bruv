@@ -1,16 +1,17 @@
+import { randomUUID } from "node:crypto";
 import {
-  mkdirSync,
-  readFileSync,
-  writeFileSync,
-  renameSync,
-  openSync,
   closeSync,
-  unlinkSync,
   fsyncSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  renameSync,
+  unlinkSync,
+  writeFileSync,
 } from "node:fs";
 import { dirname } from "node:path";
-import { randomUUID } from "node:crypto";
 import { DIAGNOSTIC_ENTRY_TYPE } from "../diagnostics";
+import { getDiskBackedEntryMetadata, visitDiskBackedBranch } from "../history/session-manager";
 
 export type QuestionOwner = { sessionId: string; branchId: string };
 /** Remote ledger identity is provenance, never agent answer authority. */
@@ -74,12 +75,23 @@ function path(ctx: QuestionContext): string {
   if (!file) throw new Error("Questions require a persistent session file");
   return file + ".questions.json";
 }
+/** Question ownership needs IDs and causality, never saved message bodies. */
+export function questionBranchIds(manager: QuestionContext["sessionManager"]): string[] {
+  const ids: string[] = [];
+  if (
+    visitDiskBackedBranch(manager, (entry) => {
+      ids.push(entry.id);
+    })
+  )
+    return ids.reverse();
+  return manager.getBranch().map((entry) => entry.id);
+}
 function activeOwner(ctx: QuestionContext, branchId?: string): QuestionOwner {
   const m = ctx.sessionManager,
     sessionId = m.getSessionId(),
     leaf = m.getLeafId();
   if (!sessionId || !leaf) throw new Error("Questions require a saved session branch");
-  if (branchId && branchId !== leaf && !m.getBranch().some((e) => e.id === branchId))
+  if (branchId && branchId !== leaf && !questionBranchIds(m).includes(branchId))
     throw new Error("Owner branch is not active");
   return { sessionId, branchId: branchId ?? leaf };
 }
@@ -162,10 +174,10 @@ export class QuestionService {
   private owns(ctx: QuestionContext, q: Pick<Question, "owner">): boolean {
     const m = ctx.sessionManager;
     if (m.getSessionId() !== q.owner.sessionId) return false;
-    const branch = m.getBranch().map((e) => e.id);
+    const branch = questionBranchIds(m);
     const at = branch.indexOf(q.owner.branchId);
     if (at < 0) return false;
-    const entries = m.getEntries?.() ?? [];
+    const entries = getDiskBackedEntryMetadata(m) ?? m.getEntries?.() ?? [];
     const byId = new Map(entries.map((entry) => [entry.id, entry]));
     const diagnostic = (entry: { type?: string; customType?: string } | undefined) =>
       entry?.type === "custom" && entry.customType === DIAGNOSTIC_ENTRY_TYPE;
@@ -198,10 +210,12 @@ export class QuestionService {
   }
   list(ctx: QuestionContext): Question[] {
     if (!ctx.sessionManager.getLeafId()) return [];
+    const records = read(path(ctx));
+    if (!records.length) return [];
     const current = activeOwner(ctx);
-    const ancestors = new Set(ctx.sessionManager.getBranch().map((e) => e.id));
+    const ancestors = new Set(questionBranchIds(ctx.sessionManager));
     ancestors.add(current.branchId);
-    return read(path(ctx))
+    return records
       .filter((q) => q.owner.sessionId === current.sessionId && ancestors.has(q.owner.branchId))
       .map((q) => ({
         ...q,
@@ -305,7 +319,7 @@ export class QuestionService {
     return this.change(path(ctx), (records) => {
       if (
         ctx.sessionManager.getSessionId() !== sessionId ||
-        (ctx.sessionManager.getLeafId() !== leaf && !ctx.sessionManager.getBranch().some((e) => e.id === leaf))
+        (ctx.sessionManager.getLeafId() !== leaf && !(leaf && questionBranchIds(ctx.sessionManager).includes(leaf)))
       )
         throw new Error("Session navigation changed");
       const q = records.find(

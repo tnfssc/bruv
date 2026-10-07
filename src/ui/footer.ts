@@ -1,7 +1,3 @@
-import { getDiskBackedEntryMetadata } from "../history/session-manager";
-import { VOICE_COST_ENTRY } from "../live/cost";
-import { SessionCostTracker } from "../tasks/session-costs";
-import { sessionIdentity } from "../session/identity";
 import { homedir } from "node:os";
 import { basename, isAbsolute, relative, sep } from "node:path";
 import type { Usage } from "@earendil-works/pi-ai";
@@ -12,8 +8,12 @@ import type {
   Theme,
 } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { CompactEditor } from "./editor";
 import type { CacheCountdown, CacheEstimate } from "../agent/cache-countdown";
+import { getDiskBackedEntryMetadata } from "../history/session-manager";
+import { VOICE_COST_ENTRY } from "../live/cost";
+import { sessionIdentity } from "../session/identity";
+import { SessionCostTracker } from "../tasks/session-costs";
+import { CompactEditor } from "./editor";
 
 function singleLine(text: string): string {
   return text
@@ -136,8 +136,22 @@ function readFooterHistory(ctx: ExtensionContext): FooterHistory {
   let cacheHit: number | undefined;
   let hasFastCost = false;
   let unknownVoiceCost = false;
+  // Include every branch's billed usage without loading task checkpoints.
+  const entries = metadata
+    ? metadata
+        .filter(
+          (entry) =>
+            (entry.type === "message" && ["assistant", "toolResult"].includes(entry.messageRole ?? "")) ||
+            entry.type === "compaction" ||
+            entry.type === "branch_summary" ||
+            (entry.type === "custom" &&
+              ["bruv-compaction-attempt", "bruv-native-fast-mode", VOICE_COST_ENTRY].includes(entry.customType ?? "")),
+        )
+        .map((entry) => manager.getEntry(entry.id))
+        .filter((entry) => entry !== undefined)
+    : manager.getEntries();
   // Include pre-compaction usage, nested tool usage, and summaries, like Pi.
-  for (const entry of manager.getEntries()) {
+  for (const entry of entries) {
     let usage: Usage | undefined;
     if (entry.type === "message" && entry.message.role === "assistant") {
       usage = entry.message.usage;

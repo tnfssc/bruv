@@ -1,9 +1,9 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { currentMainToolOwner } from "../live/main-owner";
-import { QuestionService, type Question } from "./service";
-import { RemoteQuestionBridge, observeRemoteQuestions, type RemoteQuestionClient } from "../remote/question-bridge";
 import type { RemoteState } from "../remote/client";
+import { observeRemoteQuestions, RemoteQuestionBridge, type RemoteQuestionClient } from "../remote/question-bridge";
 import type { QuestionCommands } from "./extension";
+import { type Question, QuestionService, questionBranchIds } from "./service";
 
 /** Explicit native frontend lease; never exposed as an agent tool. */
 export const NATIVE_QUESTION_ACCESS = "bruv:questions:native-access";
@@ -77,7 +77,7 @@ export function registerQuestionRuntime(
           item.epoch === epoch &&
           item.manager === ctx.sessionManager &&
           item.question.owner.sessionId === ctx.sessionManager.getSessionId() &&
-          (!item.leaf || ctx.sessionManager.getBranch().some((entry) => entry.id === item.leaf));
+          (!item.leaf || questionBranchIds(ctx.sessionManager).includes(item.leaf));
         if (!eligible()) {
           queued.delete(key);
           continue;

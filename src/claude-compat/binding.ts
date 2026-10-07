@@ -126,6 +126,10 @@ export async function nativeStorage(
   options: { cwd: string; agentDir: string; configDir: string; projectKey?: string },
 ) {
   const { SessionManager } = await import("@earendil-works/pi-coding-agent");
+  // Storage opens history before runtime composition. Install the bounded reader
+  // here, not only in createClaudeCompatRuntime after the journal was loaded.
+  const { installDiskBackedSessionManager } = await import("../history/session-manager");
+  installDiskBackedSessionManager();
   const { NativeHistory, importNativeHistory, readNativeHistory, nativeHistoryToPi, nativeImportEntryMaps } =
     await import("./history");
   const sessionId = args.resume ?? args.sessionId ?? randomUUID();

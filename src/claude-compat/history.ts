@@ -170,9 +170,10 @@ export class NativeHistory {
   private async load(importedIds = new Set<string>()) {
     await mkdir(resolve(this.filePath, ".."), { recursive: true, mode: 0o700 });
     try {
-      // Explicit root fork validation still owns its full import view. Child
-      // writers only index identity/hash metadata and never retain message bodies.
-      const entries = this.sidechain ? streamedNativeEntries(this.filePath) : await entriesAt(this.filePath);
+      // Explicit fork validation needs its full import view. Ordinary root and
+      // child restore only index identity/hash metadata; stream both without
+      // retaining transcript bodies alongside the already-resident Pi index.
+      const entries = importedIds.size ? await entriesAt(this.filePath) : streamedNativeEntries(this.filePath);
       const selected = importedIds.size
         ? new Set(nativeHistoryToPi(entries as NativeEntry[], this.options.sessionId).nativeUuids)
         : undefined;

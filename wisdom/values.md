@@ -34,9 +34,9 @@ From: [production requirements](t3/t3-v2-production-requirements.md), [replay an
 
 ## 5. Keep use bounded. No quiet loss.
 
-Output, queues, retries, listeners can pile up. Put limit where pile grows. Say what happens at limit. Trim working context without losing originals we need to recover. Work using memory or saved data using disk is not proof of leak. Measure before adding cleanup rules. Bounded RAM does not mean endless disk. For saved, long-lived state, measure write growth and real reopen/startup. A small fresh fixture or one reader is not lifetime proof. Keep a copied failed fixture and a portable regression. Do not relax their budgets to make a fix green. This applies to saved or growing work, not every small stateless helper.
+Output, queues, retries, listeners can pile up. Put limit where pile grows. Say what happens at limit. Trim working context without losing originals we need to recover. Work using memory or saved data using disk is not proof of leak. Measure before adding cleanup rules. Bounded RAM does not mean endless disk. For saved, long-lived state, measure write growth and real reopen/startup. A small fresh fixture or one reader is not lifetime proof. Start replay at the real entry point in a fresh process; an already-installed global loader can hide broken startup order. Keep a copied failed fixture and a portable regression. Do not relax their budgets to make a fix green. This applies to saved or growing work, not every small stateless helper.
 
-From: [resource judgment](resources/memory-resource-judgment.md), [queue review](t3/t3-v2-production-queue-resources.md), [process lifecycle](t3/t3-v2-production-process-resources.md), [task history growth and real startup](resources/task-history-resource-fix.md).
+From: [resource judgment](resources/memory-resource-judgment.md), [queue review](t3/t3-v2-production-queue-resources.md), [process lifecycle](t3/t3-v2-production-process-resources.md), [task history growth and real startup](resources/task-history-resource-fix.md), [connector storage before runtime](resources/compat-resume-before-runtime.md).
 
 ## 6. Leave user's work safe
 
