@@ -294,7 +294,7 @@
     {
       "focus": "src/history/disk-entry-store.ts",
       "initialBlob": "1118d257dc68995ed367a664dca875874e4ac500",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_93e226ba",
@@ -316,11 +316,18 @@
           "id": "task_0426dce8",
           "candidate": "32cbff38aa54ff05659ea2365134f016ff8c4055",
           "base": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Single transaction descriptor owns write/publication/rollback; indexes/cache advance only on success. Removed flags derive from active path and immediate publication invariant. Collision and cleanup contracts preserved.",
+          "checks": "Independent 14 passes plus collision timeout at 5s; isolated rerun passed in 370ms with 30s ceiling.",
+          "acceptedRelatedBlobs": {
+            "tests/history-storage-io.test.ts": "5fba8ec9f35c04ef7a9a7c0254b5df1067337220"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "4bba42698529fdc9183ecd6e93110ab3b4484cff",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/history/selector-lifecycle.ts",
@@ -871,7 +878,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "32cbff38aa54ff05659ea2365134f016ff8c4055",
+        "judge": "task_0426dce8",
+        "verdict": "ACCEPT",
+        "blob": "5fba8ec9f35c04ef7a9a7c0254b5df1067337220",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/history-storage-lifecycle.test.ts",

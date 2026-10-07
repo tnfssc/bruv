@@ -5,3 +5,7 @@ In progress; 114 initial files require fresh individual primary workers and actu
 Area path: `/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7`; branch `bruv/whole-repo-structural-readability-agent--03712bc7`; initial commit `59413c532e6422983f611915e509e8421aa2f363`. JSON is authoritative per-file pickup ledger; baseline and extra coverage remain separate.
 
 Proof: initialization only; no runtime/readability acceptance claims. Bun location and shared dependencies follow repository-wide guidance. Next: primary/judge pipeline, integrate accepted coherent diffs excluding worker notes, rejudge altered final blobs. Parent owns PR #45 and whole-repo gates.
+
+## First accepted source batch
+
+DiskEntryStore append now owns write/publication/rollback with one descriptor, derives published status from active path, and advances indexes/cache only after success. Primary task_93e226ba candidate `32cbff38`; independent task_0426dce8 ACCEPT, exact blobs in JSON. Worker: 21 history tests/113 assertions, focused TypeScript/format pass; baseline lint diagnostics retained. Judge: 14 passes and collision timeout, isolated rerun passed. Related history-storage-io test remains queued for its own primary focus. No full gate/build/platform claim. Goal controller accepted unchanged by task_61e44d61. README rejected ownership-map sentence and is under fresh rework; not integrated.

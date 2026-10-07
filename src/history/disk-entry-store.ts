@@ -247,7 +247,6 @@ export class DiskEntryStore {
   header!: SessionHeader;
   entries: EntryMetadata[] = [];
   byId = new Map<string, EntryMetadata>();
-  flushed: boolean;
   private activePath: string;
   private spoolPath?: string;
   // Cache serialized bytes, not parsed object graphs: the data budget is exact
@@ -255,18 +254,20 @@ export class DiskEntryStore {
   // only to callers and are never retained by the store.
   private cache = new Map<string, Buffer>();
   private cacheBytes = 0;
-  private hasConversation = false;
 
-  private constructor(targetPath: string, budgetBytes: number, flushed: boolean, activePath: string) {
+  private constructor(targetPath: string, budgetBytes: number, activePath: string) {
     this.targetPath = resolve(targetPath);
     this.budgetBytes = budgetBytes;
-    this.flushed = flushed;
     this.activePath = activePath;
+  }
+
+  get flushed(): boolean {
+    return this.activePath === this.targetPath;
   }
 
   static open(path: string, budgetBytes = DEFAULT_SESSION_CACHE_BYTES): DiskEntryStore {
     const target = resolve(path);
-    const store = new DiskEntryStore(target, budgetBytes, true, target);
+    const store = new DiskEntryStore(target, budgetBytes, target);
     store.rescan();
     // Native persistent open repairs an unterminated tail only after validating
     // the session. This is never used by cross-session read-only retrieval.
@@ -309,7 +310,7 @@ export class DiskEntryStore {
     } finally {
       closeSync(fd);
     }
-    const store = new DiskEntryStore(target, budgetBytes, false, spool);
+    const store = new DiskEntryStore(target, budgetBytes, spool);
     store.spoolPath = spool;
     liveSpools.add(spool);
     store.header = header;
@@ -373,56 +374,38 @@ export class DiskEntryStore {
   append(entry: SessionEntry): void {
     const fd = openSync(this.activePath, "a+");
     let location: { offset: number; length: number; bytes: Buffer };
-    let size: number;
+    let meta: EntryMetadata;
     try {
-      size = fstatSync(fd).size;
-    } catch (error) {
-      closeSync(fd);
-      throw error;
-    }
-    try {
-      if (size > 0) {
-        const last = Buffer.allocUnsafe(1);
-        readSync(fd, last, 0, 1, size - 1);
-        if (last[0] !== 10) writeAll(fd, Buffer.from("\n"));
-      }
-      location = writeLine(fd, entry);
-    } catch (error) {
-      // Single-writer journal: a failed partial record must not corrupt the
-      // next append or destroy the previously valid unterminated tail.
+      const size = fstatSync(fd).size;
+      let rollbackFailure = "Session append and rollback failed";
       try {
-        ftruncateSync(fd, size);
-      } catch (rollbackError) {
-        throw new AggregateError([error, rollbackError], "Session append and rollback failed");
-      }
-      throw error;
-    } finally {
-      closeSync(fd);
-    }
-    const meta = metadata(entry, location.offset, location.length);
-    if (!this.flushed && (this.hasConversation || meta.messageRole === "user" || meta.messageRole === "assistant")) {
-      try {
-        this.publish();
+        if (size > 0) {
+          const last = Buffer.allocUnsafe(1);
+          readSync(fd, last, 0, 1, size - 1);
+          if (last[0] !== 10) writeAll(fd, Buffer.from("\n"));
+        }
+        location = writeLine(fd, entry);
+        meta = metadata(entry, location.offset, location.length);
+        if (!this.flushed && (meta.messageRole === "user" || meta.messageRole === "assistant")) {
+          rollbackFailure = "Session publication and rollback failed";
+          this.publish();
+        }
       } catch (error) {
-        // Publication is part of the first-user-or-assistant append transaction. Keep
-        // the pending journal and its in-memory indexes at their prior state so
-        // the manager can safely leave its leaf unchanged and retry later.
-        let rollbackFd: number | undefined;
+        // Writing and first-conversation publication are one transaction. Keep
+        // the original tail and leave indexes untouched so the manager can retry.
         try {
-          rollbackFd = openSync(this.activePath, "r+");
-          ftruncateSync(rollbackFd, size);
+          ftruncateSync(fd, size);
         } catch (rollbackError) {
-          throw new AggregateError([error, rollbackError], "Session publication and rollback failed");
-        } finally {
-          if (rollbackFd !== undefined) closeSync(rollbackFd);
+          throw new AggregateError([error, rollbackError], rollbackFailure);
         }
         throw error;
       }
+    } finally {
+      closeSync(fd);
     }
     this.entries.push(meta);
     this.byId.set(meta.id, meta);
     this.remember(location.bytes, meta);
-    this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";
   }
 
   private publish(): void {
@@ -431,7 +414,6 @@ export class DiskEntryStore {
     linkSync(spool, this.targetPath);
     this.spoolPath = undefined;
     this.activePath = this.targetPath;
-    this.flushed = true;
     try {
       unlinkSync(spool);
       liveSpools.delete(spool);
@@ -478,7 +460,6 @@ export class DiskEntryStore {
     this.cache.clear();
     this.cacheBytes = 0;
     let header: SessionHeader | undefined;
-    this.hasConversation = false;
     scanJsonl(this.activePath, ({ entry, offset, length }, index) => {
       if (index === 0 && (entry.type !== "session" || typeof entry.id !== "string"))
         throw new Error("Session file has no valid initial header: " + this.targetPath);
@@ -489,7 +470,6 @@ export class DiskEntryStore {
       const meta = metadata(entry as SessionEntry, offset, length);
       this.entries.push(meta);
       this.byId.set(meta.id, meta);
-      this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";
     });
     if (!header) throw new Error(`Session file has no header: ${this.targetPath}`);
     this.header = header;

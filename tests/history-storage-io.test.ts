@@ -151,6 +151,28 @@ test("short writes", () => {
     });
     expect(exitCode, `short-write subprocess failed:\n${stdout}\n${stderr}`).toBe(0);
   });
+  test.each([
+    ["user", message("first", "published", "setup")],
+    ["assistant", assistant("first", "setup")],
+  ] as const)("a pending journal publishes on its first %s, not setup entries", async (_role, first) => {
+    const path = await temporaryFile();
+    const store = DiskEntryStore.pending(path, header());
+    store.append({
+      type: "thinking_level_change",
+      id: "setup",
+      parentId: null,
+      timestamp: "2026-01-01T00:00:00.000Z",
+      thinkingLevel: "off",
+    } as SessionEntry);
+    expect(await Bun.file(path).exists()).toBe(false);
+    expect(store.flushed).toBe(false);
+
+    store.append(first);
+
+    expect(store.flushed).toBe(true);
+    expect(DiskEntryStore.open(path).materializeAll()).toEqual([store.materialize("setup"), first]);
+  });
+
   test("failed first-user publication rolls back the pending append and can be retried", async () => {
     const path = await temporaryFile();
     const store = DiskEntryStore.pending(path, header(), 1024);
@@ -165,10 +187,11 @@ test("short writes", () => {
     const internals = store as unknown as {
       cache: Map<string, Buffer>;
       cacheBytes: number;
-      hasConversation: boolean;
+      spoolPath: string;
     };
     const cachedBefore = [...internals.cache].map(([key, bytes]) => [key, Buffer.from(bytes)] as const);
     const cacheBytesBefore = internals.cacheBytes;
+    const pendingBytesBefore = await readFile(internals.spoolPath);
     await writeFile(path, "collision sentinel\n");
 
     expect(() => store.append(message("failed", "must retry", "before"))).toThrow();
@@ -177,7 +200,8 @@ test("short writes", () => {
     expect(store.entries.map(({ id }) => id)).toEqual(["before"]);
     expect(store.byId.has("failed")).toBe(false);
     expect(() => store.materialize("failed")).toThrow("not found");
-    expect(internals.hasConversation).toBe(false);
+    expect(store.flushed).toBe(false);
+    expect(await readFile(internals.spoolPath)).toEqual(pendingBytesBefore);
     expect(internals.cacheBytes).toBe(cacheBytesBefore);
     expect([...internals.cache].map(([key, bytes]) => [key, bytes] as const)).toEqual(cachedBefore);
 
