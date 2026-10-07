@@ -1252,8 +1252,16 @@
     {
       "focus": "tests/ci-runner.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_d6fe839f",
+          "launchBase": "cb84937d401f032eaf5ff8ec7f4e2a3c3e6fb283",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d6fe839f",
+          "branch": "bruv/primary-tests-ci-runner.test.ts-d6fe839f",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1780,25 +1788,43 @@
     {
       "focus": "tests/release-browser-setup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_6553f324",
           "launchBase": "65e0d2188a205dec705f8b4694941724ee34bece",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_6553f324",
           "branch": "bruv/primary-tests-release-browser-setup.test-6553f324",
+          "state": "completed",
+          "commit": "eb585948a74bfc858af482374186326e06af92e6"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_d53adce7",
+          "base": "65e0d2188a205dec705f8b4694941724ee34bece",
+          "candidate": "eb585948a74bfc858af482374186326e06af92e6",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Explicit scenario command outcomes/library reports replace shared MODE decoding and bundledfailures;ordered Bun/ldd traces expose install/recheck/failure boundaries.",
+      "checks": "31focused376assertions;tsc/Biome/diffpass;removingfinalrecheck causes3expectedfailures;no actualbrowser/download."
     },
     {
       "focus": "tests/release-launcher-gate.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_2db23507",
+          "launchBase": "cb84937d401f032eaf5ff8ec7f4e2a3c3e6fb283",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_2db23507",
+          "branch": "bruv/primary-tests-release-launcher-gate.test-2db23507",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1976,17 +2002,25 @@
     {
       "focus": "tests/verify-update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_6b28b190",
           "launchBase": "86a61a54cbebef3222c17ec53ef60f4f1d8da474",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_6b28b190",
           "branch": "bruv/primary-tests-verify-update.test.ts-6b28b190",
+          "state": "completed",
+          "commit": "3025fbb411c6f29a1f6e7ca0809deae6dbefd3f1"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_3bcf763e",
+          "base": "86a61a54cbebef3222c17ec53ef60f4f1d8da474",
+          "candidate": "3025fbb411c6f29a1f6e7ca0809deae6dbefd3f1",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -1994,7 +2028,9 @@
         "verdict": "ACCEPT",
         "blob": "99c0344bdbf7fb6c65d3ea110ca580894c9069b2",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Explicit pair roles/per-run updater options/readable identity branches replace positional roles,fixture-owned legacy state and compressed executable logic;compiled/frozenSHA/diagnostic/cleanup assertions retained.",
+      "checks": "Baseline5/38,candidatecombined7/50;Biome/tsc localruntimeJSON/diffpass;no fullbuild."
     },
     {
       "focus": "tsconfig.json",
