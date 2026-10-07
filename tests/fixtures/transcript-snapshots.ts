@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, expect, mock, spyOn, test } from "bun:test";
+import { beforeEach, expect, spyOn, test } from "bun:test";
 import { createHash } from "node:crypto";
 import * as fs from "node:fs/promises";
 import { join } from "node:path";
@@ -30,7 +30,6 @@ async function exists(path: string): Promise<boolean> {
 beforeEach(async () => {
   await fs.rm(SNAPSHOT_DIR, { recursive: true, force: true });
 });
-afterEach(() => mock.restore());
 
 test("content identity is immutable; reuse renews the queued reader lifetime without rewriting", async () => {
   const content = JSON.stringify({ entries: [{ text: "received voice text" }] });
@@ -57,8 +56,12 @@ test("expiry reclaims only snapshots at or beyond TTL; unrelated files and queue
   await fs.utimes(queued, new Date(now - SNAPSHOT_TTL_MS + 1_000), new Date(now - SNAPSHOT_TTL_MS + 1_000));
   const unrelated = join(SNAPSHOT_DIR, "unrelated.txt");
   await fs.writeFile(unrelated, "not a snapshot");
-  spyOn(Date, "now").mockReturnValue(now);
-  await retainTranscriptSnapshot("later handoff");
+  const clock = spyOn(Date, "now").mockReturnValue(now);
+  try {
+    await retainTranscriptSnapshot("later handoff");
+  } finally {
+    clock.mockRestore();
+  }
   expect(await exists(expired)).toBe(false);
   expect(await fs.readFile(queued, "utf8")).toBe("queued reader");
   expect(await fs.readFile(unrelated, "utf8")).toBe("not a snapshot");
@@ -108,14 +111,25 @@ test("concurrent handoffs of identical content share one immutable file", async 
   expect(await fs.readdir(SNAPSHOT_DIR)).toEqual([pathFor("shared").split("/").at(-1)!]);
 });
 
-test("a held lock delays writes; an abandoned lock is reclaimed", async () => {
+test("a held lock delays writes until its owner releases it", async () => {
   await fs.mkdir(SNAPSHOT_DIR, { mode: 0o700 });
   await fs.mkdir(lock, { mode: 0o700 });
   const waiting = retainTranscriptSnapshot("waited");
-  await Bun.sleep(60);
-  expect(await exists(pathFor("waited"))).toBe(false);
-  await fs.rm(lock, { recursive: true });
+  try {
+    await Bun.sleep(60);
+    expect(await exists(pathFor("waited"))).toBe(false);
+  } finally {
+    // Even a failed assertion must release and drain this test's queued write
+    // before the next case removes the store.
+    await fs.rm(lock, { recursive: true });
+    await waiting;
+  }
   await expect(waiting).resolves.toBe(pathFor("waited"));
+  expect(await exists(lock)).toBe(false);
+});
+
+test("an abandoned lock is reclaimed after its owner crashes", async () => {
+  await fs.mkdir(SNAPSHOT_DIR, { mode: 0o700 });
   await fs.mkdir(lock, { mode: 0o700 });
   const stale = new Date(Date.now() - 10 * 60 * 1000 - 1_000);
   await fs.utimes(lock, stale, stale);
@@ -131,11 +145,16 @@ test("a live lock times out without removing its owner or publishing a snapshot"
   expect(await exists(pathFor("blocked"))).toBe(false);
 }, 10_000);
 
-test("unsafe directory and snapshot symlinks are rejected without following their targets", async () => {
+test("an unsafe store directory is rejected without publishing a snapshot", async () => {
   await fs.mkdir(SNAPSHOT_DIR, { mode: 0o755 });
   await fs.chmod(SNAPSHOT_DIR, 0o755);
   await expect(retainTranscriptSnapshot("private")).rejects.toThrow("Unsafe transcript snapshot directory");
-  await fs.chmod(SNAPSHOT_DIR, 0o700);
+  expect(await exists(pathFor("private"))).toBe(false);
+  expect(await exists(lock)).toBe(false);
+});
+
+test("a snapshot symlink is rejected without following or changing its target", async () => {
+  await fs.mkdir(SNAPSHOT_DIR, { mode: 0o700 });
   const target = join(SNAPSHOT_DIR, "target.txt");
   await fs.writeFile(target, "private target");
   await fs.symlink(target, pathFor("private"));
@@ -159,22 +178,29 @@ test("a failed partial write is removed and the lock is released so a later atte
     await realWrite(path, "partial", options);
     throw Object.assign(new Error("disk full"), { code: "ENOSPC" });
   });
-  await expect(retainTranscriptSnapshot("complete")).rejects.toThrow("disk full");
+  try {
+    await expect(retainTranscriptSnapshot("complete")).rejects.toThrow("disk full");
+  } finally {
+    write.mockRestore();
+  }
   expect(await exists(pathFor("complete"))).toBe(false);
   expect(await exists(lock)).toBe(false);
   expect(await fs.readFile(queued, "utf8")).toBe("queued reader");
-  write.mockRestore();
   const path = await retainTranscriptSnapshot("complete");
   expect(await fs.readFile(path, "utf8")).toBe("complete");
 });
 
 test("exclusive-write collision does not roll back a file owned by another writer", async () => {
   const realWrite = fs.writeFile;
-  spyOn(fs, "writeFile").mockImplementation(async (path, _content, options) => {
+  const write = spyOn(fs, "writeFile").mockImplementation(async (path, _content, options) => {
     await realWrite(path, "other writer", options);
     await realWrite(path, _content, options);
   });
-  await expect(retainTranscriptSnapshot("collision")).rejects.toThrow("EEXIST");
+  try {
+    await expect(retainTranscriptSnapshot("collision")).rejects.toThrow("EEXIST");
+  } finally {
+    write.mockRestore();
+  }
   expect(await fs.readFile(pathFor("collision"), "utf8")).toBe("other writer");
   expect(await exists(lock)).toBe(false);
 });

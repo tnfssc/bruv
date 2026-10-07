@@ -632,9 +632,174 @@ function persistBillableUsage(
   }
 }
 
+type ReadyCapturedRequest = CapturedRequest & { payload: unknown; headers: Record<string, string | null> };
+type PendingCompactionJob = { id: string; kind: string; status: string };
+
+/** A native attempt owns its pinned scope from credential lookup through settlement.
+ * Capture/replay hooks may keep running, but stale attempts cannot publish into them. */
+async function compactNativeCapture(
+  pi: ExtensionAPI,
+  event: SessionBeforeCompactEvent,
+  ctx: ExtensionContext,
+  request: ReadyCapturedRequest,
+  pendingJobs: () => readonly PendingCompactionJob[],
+  operationId: ReturnType<typeof crypto.randomUUID>,
+  readGeneration: () => number,
+): Promise<{ cancel: true } | { compaction: CompactionResult<NativeCodexCompactionDetails> }> {
+  const scope = {
+    manager: ctx.sessionManager,
+    sessionId: ctx.sessionManager.getSessionId(),
+    leafId: ctx.sessionManager.getLeafId(),
+    api: ctx.model?.api,
+    provider: ctx.model?.provider,
+    model: ctx.model?.id,
+    thinkingLevel: ctx.thinkingLevel ?? null,
+    generation: readGeneration(),
+  };
+  const scopeIsCurrent = () =>
+    readGeneration() === scope.generation &&
+    ctx.sessionManager === scope.manager &&
+    scope.manager.getSessionId() === scope.sessionId &&
+    scope.manager.getLeafId() === scope.leafId &&
+    ctx.model?.api === scope.api &&
+    ctx.model?.provider === scope.provider &&
+    ctx.model?.id === scope.model &&
+    (ctx.thinkingLevel ?? null) === scope.thinkingLevel;
+  let dispatch: "none" | "initiated" | "response" | "unknown" = "none";
+  try {
+    const resolved = await ctx.modelRegistry.getApiKeyAndHeaders(request.model);
+    if (!scopeIsCurrent()) return { cancel: true };
+    if (!resolved.ok) {
+      bestEffortDiagnostic(ctx, {
+        component: "provider",
+        code: "provider_failed",
+        outcome: "failed",
+        operationId,
+        dispatch: "none",
+      });
+      ctx.ui?.notify?.(
+        "Codex native compaction credentials are unavailable. Compaction cancelled; no plaintext request was sent.",
+        "error",
+      );
+      return { cancel: true };
+    }
+    for (const [key, value] of Object.entries(request.headers)) {
+      if (
+        ["x-api-key", "api-key"].includes(key.toLowerCase()) &&
+        !Object.entries(resolved.headers ?? {}).some(
+          ([name, current]) => name.toLowerCase() === key.toLowerCase() && current === value,
+        )
+      ) {
+        bestEffortDiagnostic(ctx, {
+          component: "provider",
+          code: "identity_stale",
+          outcome: "blocked",
+          operationId,
+          dispatch: "none",
+          cancellation: "safety",
+        });
+        ctx.ui?.notify?.(
+          "Codex native compaction credentials changed. Compaction cancelled; no plaintext request was sent.",
+          "error",
+        );
+        return { cancel: true };
+      }
+    }
+    const resolvedModel = { ...request.model, baseUrl: resolved.baseUrl ?? request.model.baseUrl };
+    const native = await requestNativeCodexCompaction({
+      model: resolvedModel,
+      payload: request.payload,
+      headers: request.headers,
+      auth: { apiKey: resolved.apiKey, headers: resolved.headers },
+      sessionId: request.sessionId,
+      operationId,
+      signal: event.signal,
+      onDispatch: (model) => {
+        dispatch = "initiated";
+        if (scopeIsCurrent()) bestEffortProviderObservation(scope.manager, model, "dispatch", operationId);
+      },
+    });
+    dispatch = "response";
+    if (!scopeIsCurrent()) return { cancel: true };
+    // A successful native HTTP response refreshes the same provider cache as
+    // ordinary traffic. Rejections and transport failures never reach here.
+    bestEffortProviderObservation(scope.manager, request.model, "response", operationId);
+    if (event.signal.aborted) {
+      persistBillableUsage(pi, ctx, native.usage, "cancelled", operationId);
+      bestEffortDiagnostic(ctx, {
+        component: "compaction",
+        code: "caller_aborted",
+        outcome: "cancelled",
+        operationId,
+        dispatch: "response",
+        cancellation: "caller",
+      });
+      return { cancel: true };
+    }
+    const jobs = pendingJobs();
+    const runtimeState = jobs.length
+      ? jobsTemplate
+          .trimEnd()
+          .replace("{{jobs}}", () => jobs.map((job) => `- ${job.id}: ${job.kind}, ${job.status}`).join("\n"))
+      : undefined;
+    const details: NativeCodexCompactionDetails = {
+      strategy: "codex-native",
+      version: 1,
+      api: "openai-codex-responses",
+      provider: request.model.provider,
+      model: request.model.id,
+      thinkingLevel: request.thinkingLevel,
+      runtimeState,
+      readFiles: [...event.preparation.fileOps.read],
+      modifiedFiles: [...new Set([...event.preparation.fileOps.written, ...event.preparation.fileOps.edited])],
+      item: native.item,
+    };
+    const result: CompactionResult<NativeCodexCompactionDetails> = {
+      summary: NATIVE_CODEX_SUMMARY + (runtimeState ? "\n\n" + runtimeState : ""),
+      firstKeptEntryId: event.preparation.firstKeptEntryId,
+      tokensBefore: event.preparation.tokensBefore,
+      usage: native.usage,
+      details,
+    };
+    return { compaction: result };
+  } catch (error) {
+    if (!scopeIsCurrent()) return { cancel: true };
+    const usage = error instanceof NativeCodexResponseError ? error.usage : undefined;
+    const callerCancelled = event.signal.aborted;
+    const providerCancelled = error instanceof NativeCodexResponseError && error.message.includes("was cancelled");
+    const cancelled = callerCancelled || providerCancelled;
+    persistBillableUsage(pi, ctx, usage, cancelled ? "cancelled" : "failed", operationId);
+    bestEffortDiagnostic(ctx, {
+      component: "provider",
+      code: callerCancelled
+        ? "caller_aborted"
+        : providerCancelled
+          ? "provider_cancelled"
+          : error instanceof NativeCodexHttpError
+            ? "http_rejected"
+            : error instanceof NativeCodexResponseError
+              ? "response_invalid"
+              : "transport_error",
+      outcome: cancelled ? "cancelled" : "failed",
+      operationId,
+      dispatch: error instanceof NativeCodexHttpError ? "response" : dispatch,
+      ...(error instanceof NativeCodexHttpError ? { httpStatus: error.status } : {}),
+      ...(callerCancelled ? { cancellation: "caller" as const } : {}),
+      ...(providerCancelled ? { cancellation: "provider" as const } : {}),
+    });
+    ctx.ui?.notify?.(
+      cancelled
+        ? "Codex native compaction was cancelled; no plaintext request was sent."
+        : "Codex native compaction failed. Compaction cancelled; no plaintext request was sent.",
+      "error",
+    );
+    return { cancel: true };
+  }
+}
+
 export function registerNativeCodexCompaction(
   pi: ExtensionAPI,
-  pendingJobs: () => readonly { id: string; kind: string; status: string }[] = () => [],
+  pendingJobs: () => readonly PendingCompactionJob[] = () => [],
 ): { invalidateCapture(): void; hasFreshCapture(): boolean } {
   let captured: CapturedRequest | undefined;
   let captureInvalidated = false;
@@ -826,156 +991,15 @@ export function registerNativeCodexCompaction(
       return;
     }
 
-    const readyRequest = request as CapturedRequest & { payload: unknown; headers: Record<string, string | null> };
-    const scope = {
-      manager: ctx.sessionManager,
-      sessionId: ctx.sessionManager.getSessionId(),
-      leafId: ctx.sessionManager.getLeafId(),
-      api: ctx.model?.api,
-      provider: ctx.model?.provider,
-      model: ctx.model?.id,
-      thinkingLevel: ctx.thinkingLevel ?? null,
-      generation,
-    };
-    const scopeIsCurrent = () =>
-      generation === scope.generation &&
-      ctx.sessionManager === scope.manager &&
-      scope.manager.getSessionId() === scope.sessionId &&
-      scope.manager.getLeafId() === scope.leafId &&
-      ctx.model?.api === scope.api &&
-      ctx.model?.provider === scope.provider &&
-      ctx.model?.id === scope.model &&
-      (ctx.thinkingLevel ?? null) === scope.thinkingLevel;
-    let dispatch: "none" | "initiated" | "response" | "unknown" = "none";
-    try {
-      const resolved = await ctx.modelRegistry.getApiKeyAndHeaders(readyRequest.model);
-      if (!scopeIsCurrent()) return { cancel: true };
-      if (!resolved.ok) {
-        bestEffortDiagnostic(ctx, {
-          component: "provider",
-          code: "provider_failed",
-          outcome: "failed",
-          operationId,
-          dispatch: "none",
-        });
-        ctx.ui?.notify?.(
-          "Codex native compaction credentials are unavailable. Compaction cancelled; no plaintext request was sent.",
-          "error",
-        );
-        return { cancel: true };
-      }
-      for (const [key, value] of Object.entries(readyRequest.headers)) {
-        if (
-          ["x-api-key", "api-key"].includes(key.toLowerCase()) &&
-          !Object.entries(resolved.headers ?? {}).some(
-            ([name, current]) => name.toLowerCase() === key.toLowerCase() && current === value,
-          )
-        ) {
-          bestEffortDiagnostic(ctx, {
-            component: "provider",
-            code: "identity_stale",
-            outcome: "blocked",
-            operationId,
-            dispatch: "none",
-            cancellation: "safety",
-          });
-          ctx.ui?.notify?.(
-            "Codex native compaction credentials changed. Compaction cancelled; no plaintext request was sent.",
-            "error",
-          );
-          return { cancel: true };
-        }
-      }
-      const resolvedModel = { ...readyRequest.model, baseUrl: resolved.baseUrl ?? readyRequest.model.baseUrl };
-      const native = await requestNativeCodexCompaction({
-        model: resolvedModel,
-        payload: readyRequest.payload,
-        headers: readyRequest.headers,
-        auth: { apiKey: resolved.apiKey, headers: resolved.headers },
-        sessionId: readyRequest.sessionId,
-        operationId,
-        signal: event.signal,
-        onDispatch: (model) => {
-          dispatch = "initiated";
-          if (scopeIsCurrent()) bestEffortProviderObservation(scope.manager, model, "dispatch", operationId);
-        },
-      });
-      dispatch = "response";
-      if (!scopeIsCurrent()) return { cancel: true };
-      // A successful native HTTP response refreshes the same provider cache as
-      // ordinary traffic. Rejections and transport failures never reach here.
-      bestEffortProviderObservation(scope.manager, readyRequest.model, "response", operationId);
-      if (event.signal.aborted) {
-        persistBillableUsage(pi, ctx, native.usage, "cancelled", operationId);
-        bestEffortDiagnostic(ctx, {
-          component: "compaction",
-          code: "caller_aborted",
-          outcome: "cancelled",
-          operationId,
-          dispatch: "response",
-          cancellation: "caller",
-        });
-        return { cancel: true };
-      }
-      const jobs = pendingJobs();
-      const runtimeState = jobs.length
-        ? jobsTemplate
-            .trimEnd()
-            .replace("{{jobs}}", () => jobs.map((job) => `- ${job.id}: ${job.kind}, ${job.status}`).join("\n"))
-        : undefined;
-      const details: NativeCodexCompactionDetails = {
-        strategy: "codex-native",
-        version: 1,
-        api: "openai-codex-responses",
-        provider: readyRequest.model.provider,
-        model: readyRequest.model.id,
-        thinkingLevel: readyRequest.thinkingLevel,
-        runtimeState,
-        readFiles: [...event.preparation.fileOps.read],
-        modifiedFiles: [...new Set([...event.preparation.fileOps.written, ...event.preparation.fileOps.edited])],
-        item: native.item,
-      };
-      const result: CompactionResult<NativeCodexCompactionDetails> = {
-        summary: NATIVE_CODEX_SUMMARY + (runtimeState ? "\n\n" + runtimeState : ""),
-        firstKeptEntryId: event.preparation.firstKeptEntryId,
-        tokensBefore: event.preparation.tokensBefore,
-        usage: native.usage,
-        details,
-      };
-      return { compaction: result };
-    } catch (error) {
-      if (!scopeIsCurrent()) return { cancel: true };
-      const usage = error instanceof NativeCodexResponseError ? error.usage : undefined;
-      const callerCancelled = event.signal.aborted;
-      const providerCancelled = error instanceof NativeCodexResponseError && error.message.includes("was cancelled");
-      const cancelled = callerCancelled || providerCancelled;
-      persistBillableUsage(pi, ctx, usage, cancelled ? "cancelled" : "failed", operationId);
-      bestEffortDiagnostic(ctx, {
-        component: "provider",
-        code: callerCancelled
-          ? "caller_aborted"
-          : providerCancelled
-            ? "provider_cancelled"
-            : error instanceof NativeCodexHttpError
-              ? "http_rejected"
-              : error instanceof NativeCodexResponseError
-                ? "response_invalid"
-                : "transport_error",
-        outcome: cancelled ? "cancelled" : "failed",
-        operationId,
-        dispatch: error instanceof NativeCodexHttpError ? "response" : dispatch,
-        ...(error instanceof NativeCodexHttpError ? { httpStatus: error.status } : {}),
-        ...(callerCancelled ? { cancellation: "caller" as const } : {}),
-        ...(providerCancelled ? { cancellation: "provider" as const } : {}),
-      });
-      ctx.ui?.notify?.(
-        cancelled
-          ? "Codex native compaction was cancelled; no plaintext request was sent."
-          : "Codex native compaction failed. Compaction cancelled; no plaintext request was sent.",
-        "error",
-      );
-      return { cancel: true };
-    }
+    return compactNativeCapture(
+      pi,
+      event,
+      ctx,
+      request as ReadyCapturedRequest,
+      pendingJobs,
+      operationId,
+      () => generation,
+    );
   });
   return {
     invalidateCapture() {

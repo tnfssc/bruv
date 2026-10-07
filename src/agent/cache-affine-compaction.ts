@@ -9,6 +9,7 @@ import {
   type ExtensionContext,
   estimateTokens,
   type SessionBeforeCompactEvent,
+  type SessionBeforeCompactResult,
 } from "@earendil-works/pi-coding-agent";
 import { recordDiagnostic } from "../diagnostics.js";
 import promptTemplate from "../prompts/compaction.md" with { type: "text" };
@@ -331,9 +332,213 @@ function bestEffortCompactionDiagnostic(
   } catch {}
 }
 
+function bestEffortCompactionNotice(ctx: ExtensionContext, message: string, severity: "warning" | "error"): void {
+  // Observer failure must not escape the hook: Pi would otherwise be free to
+  // run its default summarizer despite our paid-attempt cancellation decision.
+  try {
+    ctx.ui?.notify?.(message, severity);
+  } catch {}
+}
+
+type PendingJobs = () => readonly { id: string; kind: string; status: string }[];
+
+type SummaryAttempt =
+  | { compaction: NonNullable<SessionBeforeCompactResult["compaction"]> }
+  | {
+      diagnostic: Omit<Parameters<typeof recordDiagnostic>[1], "operationId">;
+      notice?: { message: string; severity: "warning" | "error" };
+      response?: AssistantMessage;
+    };
+
+type WireDispatch =
+  | { status: "unseen" }
+  | { status: "rejected"; reason: string }
+  | { status: "accepted"; priorPayloadAffine: boolean | undefined };
+
+/** Send one summary request and project its response; no session writes or UI
+ * effects occur here. Wire acceptance is dispatch evidence, not a usage receipt. */
+async function attemptCacheAffineSummary(
+  event: SessionBeforeCompactEvent,
+  captured: Snapshot,
+  current: PreparedConversation,
+  request: CacheAffineRequest,
+  answerTokens: number,
+  pendingJobs: PendingJobs,
+): Promise<SummaryAttempt> {
+  let wireDispatch: WireDispatch = { status: "unseen" };
+  let response: AssistantMessage | undefined;
+  try {
+    response = await withStandardProviderTier(() =>
+      current.complete(request, answerTokens, (payload: unknown) => {
+        // The old capture measures cache reuse, not permission to prepare the
+        // current branch. Legitimate framing/redaction changes may break affinity.
+        const priorPayloadAffine =
+          captured.providerPayload === undefined
+            ? undefined
+            : isCacheAffineProviderPayload(captured.providerPayload, payload);
+        const wire = payload && typeof payload === "object" ? (payload as Record<string, unknown>) : undefined;
+        const wireCeiling = Number(wire?.max_tokens ?? wire?.max_output_tokens ?? wire?.max_completion_tokens);
+        if (
+          Number.isFinite(wireCeiling) &&
+          request.estimatedInputTokens + wireCeiling + 256 > captured.model.contextWindow
+        ) {
+          const reason = "final provider output and thinking ceiling exceeds the model context window";
+          // An earlier accepted payload may already have been dispatched. A
+          // later retry rejection cannot revoke that billing uncertainty.
+          wireDispatch =
+            wireDispatch.status === "accepted"
+              ? { status: "accepted", priorPayloadAffine }
+              : { status: "rejected", reason };
+          throw new Error(reason);
+        }
+        wireDispatch = { status: "accepted", priorPayloadAffine };
+        return payload;
+      }),
+    );
+    if (event.signal.aborted) {
+      return {
+        response,
+        diagnostic: {
+          component: "compaction",
+          code: "caller_aborted",
+          outcome: "cancelled",
+          dispatch: "response",
+          cancellation: "caller",
+        },
+      };
+    }
+    // Providers may turn an onPayload rejection into an error response rather
+    // than rejecting result(). Both paths are a pre-inference capacity block.
+    const dispatch = wireDispatch as WireDispatch;
+    if (dispatch.status === "rejected") {
+      return {
+        diagnostic: {
+          component: "provider",
+          code: "capacity_insufficient",
+          outcome: "blocked",
+          dispatch: "none",
+          cancellation: "safety",
+        },
+        notice: {
+          message: `Cache-affine compaction rejected before inference: ${dispatch.reason}. Compaction cancelled; conversation preserved.`,
+          severity: "warning",
+        },
+      };
+    }
+    if (!isUsableSummaryResponse(response)) {
+      return {
+        response,
+        diagnostic: {
+          component: "provider",
+          code: "response_invalid",
+          outcome: response.stopReason === "aborted" ? "cancelled" : "failed",
+          dispatch: "response",
+          ...(response.stopReason === "aborted" ? { cancellation: "provider" as const } : {}),
+        },
+        notice: {
+          message: "Cache-affine summary was unusable; compaction was cancelled to avoid duplicate inference.",
+          severity: "error",
+        },
+      };
+    }
+    const jobs = pendingJobs();
+    const runtimeState = jobs.length
+      ? "\n\n" +
+        jobsTemplate
+          .trimEnd()
+          .replace("{{jobs}}", () => jobs.map((job) => `- ${job.id}: ${job.kind}, ${job.status}`).join("\n"))
+      : "";
+    const modified = new Set([...event.preparation.fileOps.written, ...event.preparation.fileOps.edited]);
+    const priorPayloadAffine = dispatch.status === "accepted" ? dispatch.priorPayloadAffine : undefined;
+    return {
+      compaction: {
+        summary: textOf(response) + runtimeState,
+        firstKeptEntryId: event.preparation.firstKeptEntryId,
+        tokensBefore: event.preparation.tokensBefore,
+        usage: response.usage,
+        details: {
+          strategy: "cache-affine-plaintext",
+          version: CACHE_AFFINE_COMPACTION_VERSION,
+          ...(priorPayloadAffine === undefined ? {} : { priorPayloadAffine }),
+          readFiles: [...event.preparation.fileOps.read].filter((path) => !modified.has(path)).sort(),
+          modifiedFiles: [...modified].sort(),
+        },
+      },
+    };
+  } catch {
+    const callerCancelled = event.signal.aborted;
+    const dispatch = wireDispatch as WireDispatch;
+    if (dispatch.status === "rejected" && !callerCancelled) {
+      return {
+        response,
+        diagnostic: {
+          component: "provider",
+          code: "capacity_insufficient",
+          outcome: "blocked",
+          dispatch: "none",
+          cancellation: "safety",
+        },
+        notice: {
+          message:
+            "Cache-affine compaction rejected before inference: provider output ceiling exceeds the context window. Compaction cancelled; conversation preserved.",
+          severity: "warning",
+        },
+      };
+    }
+    return {
+      response,
+      diagnostic: {
+        component: "provider",
+        code: callerCancelled ? "caller_aborted" : "provider_failed",
+        outcome: callerCancelled ? "cancelled" : "failed",
+        dispatch: response ? "response" : dispatch.status === "accepted" ? "unknown" : "none",
+        ...(callerCancelled ? { cancellation: "caller" as const } : {}),
+      },
+      notice: callerCancelled
+        ? undefined
+        : dispatch.status === "accepted"
+          ? {
+              message:
+                "Cache-affine compaction failed after inference began. Compaction was cancelled to avoid duplicate inference.",
+              severity: "error",
+            }
+          : {
+              message:
+                "Cache-affine compaction rejected before inference. Compaction cancelled; conversation preserved.",
+              severity: "warning",
+            },
+    };
+  }
+}
+
+function recordCancelledUsage(
+  pi: ExtensionAPI,
+  ctx: ExtensionContext,
+  operationId: string,
+  response: AssistantMessage,
+): void {
+  if (response.usage.totalTokens <= 0) return;
+  try {
+    pi.appendEntry("bruv-compaction-attempt", {
+      strategy: "cache-affine-plaintext",
+      stopReason: response.stopReason,
+      usage: response.usage,
+    });
+  } catch {
+    bestEffortCompactionDiagnostic(ctx, {
+      component: "observer",
+      code: "state_write_failed",
+      outcome: "failed",
+      operationId,
+      dispatch: "response",
+    });
+    bestEffortCompactionNotice(ctx, "Compaction usage checkpoint could not be written; compaction cancelled.", "error");
+  }
+}
+
 export function registerCacheAffineCompaction(
   pi: ExtensionAPI,
-  pendingJobs: () => readonly { id: string; kind: string; status: string }[] = () => [],
+  pendingJobs: PendingJobs = () => [],
   options: { skipCodexNative?: boolean | (() => boolean) } = {},
 ): void {
   installCurrentConversationAdapter();
@@ -509,170 +714,14 @@ export function registerCacheAffineCompaction(
       );
       return { cancel: true };
     }
-    let responseUsageRecorded = false;
-    let paidResponse: AssistantMessage | undefined;
-    const recordFailedUsage = (): boolean => {
-      if (responseUsageRecorded || !paidResponse || paidResponse.usage.totalTokens <= 0) return true;
-      // Mark first: a failing append must not be retried by the surrounding catch.
-      responseUsageRecorded = true;
-      try {
-        pi.appendEntry("bruv-compaction-attempt", {
-          strategy: "cache-affine-plaintext",
-          stopReason: paidResponse.stopReason,
-          usage: paidResponse.usage,
-        });
-        return true;
-      } catch {
-        try {
-          recordDiagnostic(ctx.sessionManager, {
-            component: "observer",
-            code: "state_write_failed",
-            outcome: "failed",
-            operationId,
-            dispatch: "response",
-          });
-        } catch {}
-        ctx.ui?.notify?.("Compaction usage checkpoint could not be written; compaction cancelled.", "error");
-        return false;
-      }
-    };
-    let payloadAccepted = false;
-    let prefixRejection: string | undefined;
-    let priorPayloadAffine: boolean | undefined;
-    try {
-      const response = await withStandardProviderTier(() =>
-        current.complete(request, answerTokens, (payload: unknown) => {
-          // A prior wire request is evidence for prefix reuse, not permission to
-          // prepare the current conversation. When available, compare it here.
-          // Old capture affinity is diagnostic only. Current system, tools,
-          // context transforms, and redactions are allowed to differ legitimately.
-          priorPayloadAffine =
-            captured.providerPayload === undefined
-              ? undefined
-              : isCacheAffineProviderPayload(captured.providerPayload, payload);
-          const wire = payload && typeof payload === "object" ? (payload as Record<string, unknown>) : undefined;
-          const wireCeiling = Number(wire?.max_tokens ?? wire?.max_output_tokens ?? wire?.max_completion_tokens);
-          if (
-            Number.isFinite(wireCeiling) &&
-            request.estimatedInputTokens + wireCeiling + 256 > captured.model.contextWindow
-          ) {
-            prefixRejection = "final provider output and thinking ceiling exceeds the model context window";
-            throw new Error(prefixRejection);
-          }
-          payloadAccepted = true;
-          return payload;
-        }),
-      );
-      paidResponse = response;
-      if (event.signal.aborted) {
-        recordFailedUsage();
-        bestEffortCompactionDiagnostic(ctx, {
-          component: "compaction",
-          code: "caller_aborted",
-          outcome: "cancelled",
-          operationId,
-          dispatch: "response",
-          cancellation: "caller",
-        });
-        return { cancel: true };
-      }
-      if (!payloadAccepted && prefixRejection) {
-        bestEffortCompactionDiagnostic(ctx, {
-          component: "provider",
-          code: "capacity_insufficient",
-          outcome: "blocked",
-          operationId,
-          dispatch: "none",
-          cancellation: "safety",
-        });
-        ctx.ui?.notify?.(
-          `Cache-affine compaction rejected before inference: ${prefixRejection}. Compaction cancelled; conversation preserved.`,
-          "warning",
-        );
-        return { cancel: true };
-      }
-      if (!isUsableSummaryResponse(response)) {
-        recordFailedUsage();
-        bestEffortCompactionDiagnostic(ctx, {
-          component: "provider",
-          code: "response_invalid",
-          outcome: response.stopReason === "aborted" ? "cancelled" : "failed",
-          operationId,
-          dispatch: "response",
-          ...(response.stopReason === "aborted" ? { cancellation: "provider" as const } : {}),
-        });
-        // A response may already be billable. Cancelling is safer than silently
-        // launching Pi's fallback summarizer and losing this usage checkpoint.
-        ctx.ui?.notify?.(
-          "Cache-affine summary was unusable; compaction was cancelled to avoid duplicate inference.",
-          "error",
-        );
-        return { cancel: true };
-      }
-      const jobs = pendingJobs();
-      const runtimeState = jobs.length
-        ? "\n\n" +
-          jobsTemplate
-            .trimEnd()
-            .replace("{{jobs}}", () => jobs.map((job) => `- ${job.id}: ${job.kind}, ${job.status}`).join("\n"))
-        : "";
-      const modified = new Set([...event.preparation.fileOps.written, ...event.preparation.fileOps.edited]);
-      return {
-        compaction: {
-          summary: textOf(response) + runtimeState,
-          firstKeptEntryId: event.preparation.firstKeptEntryId,
-          tokensBefore: event.preparation.tokensBefore,
-          usage: response.usage,
-          details: {
-            strategy: "cache-affine-plaintext",
-            version: CACHE_AFFINE_COMPACTION_VERSION,
-            ...(priorPayloadAffine === undefined ? {} : { priorPayloadAffine }),
-            readFiles: [...event.preparation.fileOps.read].filter((path) => !modified.has(path)).sort(),
-            modifiedFiles: [...modified].sort(),
-          },
-        },
-      };
-    } catch {
-      recordFailedUsage();
-      const callerCancelled = event.signal.aborted;
-      if (prefixRejection && !payloadAccepted && !callerCancelled) {
-        bestEffortCompactionDiagnostic(ctx, {
-          component: "provider",
-          code: "capacity_insufficient",
-          outcome: "blocked",
-          operationId,
-          dispatch: "none",
-          cancellation: "safety",
-        });
-        ctx.ui?.notify?.(
-          "Cache-affine compaction rejected before inference: provider output ceiling exceeds the context window. Compaction cancelled; conversation preserved.",
-          "warning",
-        );
-        return { cancel: true };
-      }
-      bestEffortCompactionDiagnostic(ctx, {
-        component: "provider",
-        code: callerCancelled ? "caller_aborted" : "provider_failed",
-        outcome: callerCancelled ? "cancelled" : "failed",
-        operationId,
-        dispatch: paidResponse ? "response" : payloadAccepted ? "unknown" : "none",
-        ...(callerCancelled ? { cancellation: "caller" as const } : {}),
-      });
-      if (callerCancelled) return { cancel: true };
-      if (!payloadAccepted) {
-        ctx.ui?.notify?.(
-          "Cache-affine compaction rejected before inference. Compaction cancelled; conversation preserved.",
-          "warning",
-        );
-        return { cancel: true };
-      }
-      // Once a payload was accepted, the provider may have billed the request.
-      // Do not silently start a second summarization with no usage checkpoint.
-      ctx.ui?.notify?.(
-        "Cache-affine compaction failed after inference began. Compaction was cancelled to avoid duplicate inference.",
-        "error",
-      );
-      return { cancel: true };
-    }
+    const attempt = await attemptCacheAffineSummary(event, captured, current, request, answerTokens, pendingJobs);
+    if ("compaction" in attempt) return attempt;
+
+    // Only Pi's committed compaction owns successful usage. A cancelled attempt
+    // owns its returned usage here, once, and never launches another summarizer.
+    if (attempt.response) recordCancelledUsage(pi, ctx, operationId, attempt.response);
+    bestEffortCompactionDiagnostic(ctx, { ...attempt.diagnostic, operationId });
+    if (attempt.notice) bestEffortCompactionNotice(ctx, attempt.notice.message, attempt.notice.severity);
+    return { cancel: true };
   });
 }

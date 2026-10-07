@@ -1,9 +1,9 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+import { type Context, lazyStream, type Model, normalizeContext } from "@earendil-works/pi-ai";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { recordDiagnostic } from "../diagnostics.js";
 import { selectDiskBackedEntries } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { AsyncLocalStorage } from "node:async_hooks";
-import { lazyStream, normalizeContext, type Context, type Model } from "@earendil-works/pi-ai";
-import { recordDiagnostic } from "../diagnostics.js";
 
 export const NATIVE_FAST_CHILD_ENV = "BRUV_SUBAGENT_NATIVE_FAST";
 export const NATIVE_FAST_ENTRY = "bruv-native-fast-mode";

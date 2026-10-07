@@ -618,3 +618,114 @@ describe("instruction frame ownership lifecycle", () => {
     expect(setCurrentInstructionFrame(owner, "revived-frame")).toBe(false);
   });
 });
+
+function summaryAttemptHarness(
+  complete: (options: any) => Promise<any>,
+  pendingJobs: () => readonly { id: string; kind: string; status: string }[] = () => [],
+) {
+  const handlers = new Map<string, Function>();
+  const attempts: any[] = [];
+  const notices: string[] = [];
+  let requests = 0;
+  const pi = {
+    on: (name: string, handler: Function) => handlers.set(name, handler),
+    getActiveTools: () => [],
+    getAllTools: () => [],
+    appendEntry: (type: string, data: unknown) => attempts.push({ type, data }),
+  } as any;
+  registerCacheAffineCompaction(pi, pendingJobs);
+  const ctx = {
+    model,
+    thinkingLevel: "high",
+    getSystemPrompt: () => "s",
+    sessionManager: { getSessionId: () => "stable-session" },
+    ui: { notify: (message: string) => notices.push(message) },
+    modelRegistry: {
+      completeSimple: async (_model: any, _context: any, options: any) => {
+        requests++;
+        return complete(options);
+      },
+    },
+  } as any;
+  wireProvider(ctx, pi);
+  return {
+    compact: async () => {
+      await handlers.get("context")!({ messages: [] }, ctx);
+      return handlers.get("session_before_compact")!(event(), ctx);
+    },
+    attempts,
+    notices,
+    ui: ctx.ui,
+    diagnostics: () => inspectDiagnostics(ctx.sessionManager).records,
+    requests: () => requests,
+  };
+}
+
+test.each([false, true])(
+  "final wire rejection cancels before inference (provider returns error: %s)",
+  async (swallow) => {
+    const harness = summaryAttemptHarness(async (options) => {
+      try {
+        await options.onPayload({ max_output_tokens: model.contextWindow });
+      } catch (error) {
+        if (!swallow) throw error;
+      }
+      return { ...assistant(""), stopReason: "error", usage: { ...usage, totalTokens: 0 } };
+    });
+    expect(await harness.compact()).toEqual({ cancel: true });
+    expect(harness.requests()).toBe(1);
+    expect(harness.attempts).toEqual([]);
+    expect(harness.diagnostics().at(-1)).toMatchObject({
+      code: "capacity_insufficient",
+      dispatch: "none",
+      outcome: "blocked",
+    });
+    expect(harness.notices.at(-1)).toContain("rejected before inference");
+  },
+);
+
+test("an accepted request remains uncertain even if a later payload is rejected", async () => {
+  const harness = summaryAttemptHarness(async (options) => {
+    await options.onPayload({ max_output_tokens: 8192 });
+    await options.onPayload({ max_output_tokens: model.contextWindow });
+    throw new Error("unreachable");
+  });
+  expect(await harness.compact()).toEqual({ cancel: true });
+  expect(harness.requests()).toBe(1);
+  expect(harness.attempts).toEqual([]);
+  expect(harness.diagnostics().at(-1)).toMatchObject({ code: "provider_failed", dispatch: "unknown" });
+  expect(harness.notices.at(-1)).toContain("avoid duplicate inference");
+});
+
+test("failure to project a paid summary checkpoints usage once without another inference", async () => {
+  const harness = summaryAttemptHarness(
+    async (options) => {
+      await options.onPayload({ max_output_tokens: 8192 });
+      return assistant("valid summary");
+    },
+    () => {
+      throw new Error("job observer failed");
+    },
+  );
+  expect(await harness.compact()).toEqual({ cancel: true });
+  expect(harness.requests()).toBe(1);
+  expect(harness.attempts).toEqual([
+    { type: "bruv-compaction-attempt", data: { strategy: "cache-affine-plaintext", stopReason: "stop", usage } },
+  ]);
+  expect(harness.diagnostics().at(-1)).toMatchObject({ code: "provider_failed", dispatch: "response" });
+  expect(harness.notices.at(-1)).toContain("avoid duplicate inference");
+});
+
+test("failed notifications do not erase paid-attempt cancellation or retry its usage write", async () => {
+  const harness = summaryAttemptHarness(async (options) => {
+    await options.onPayload({ max_output_tokens: 8192 });
+    return { ...assistant("partial summary"), stopReason: "length" };
+  });
+  harness.ui.notify = () => {
+    throw new Error("notification unavailable");
+  };
+  expect(await harness.compact()).toEqual({ cancel: true });
+  expect(harness.requests()).toBe(1);
+  expect(harness.attempts).toHaveLength(1);
+  expect(harness.diagnostics().at(-1)).toMatchObject({ code: "response_invalid", dispatch: "response" });
+});
