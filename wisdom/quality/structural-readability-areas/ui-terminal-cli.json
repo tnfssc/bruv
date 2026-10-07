@@ -564,11 +564,19 @@
     {
       "focus": "src/ui/activity-projection.ts",
       "initialBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_5c8f0f5d",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5c8f0f5d",
+          "branch": "bruv/primary-readability-src-ui-activity-proj-5c8f0f5d",
+          "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30"
     },
     {
       "focus": "src/ui/conversation-density.ts",
@@ -731,19 +739,37 @@
     {
       "focus": "src/ui/quiet-tool-ui.ts",
       "initialBlob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_022db18e",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_022db18e",
           "branch": "bruv/primary-readability-src-ui-quiet-tool-ui-022db18e",
-          "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286"
+          "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286",
+          "commit": "34143eafe466f0f402e62382e3a03b6a602dedde"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_a1a59af9",
+          "base": "c18d20532ffe409cccc86719081ba8d0e0fba286",
+          "candidate": "34143eafe466f0f402e62382e3a03b6a602dedde",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286"
+      "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286",
+      "changedRelatedPaths": [],
+      "result": "No-change candidate: native reconstruction/filtering, collapse removal of only owned status pair, and conditional owned-method restoration are local.",
+      "checks": [
+        "34 tests /272 assertions",
+        "Ownership probe 8 assertions",
+        "format/diff"
+      ],
+      "limits": [
+        "No build/typecheck/packaged/visual proof"
+      ]
     },
     {
       "focus": "src/ui/rolling-activity.ts",
@@ -801,11 +827,19 @@
     {
       "focus": "src/ui/sdk-task-rows.ts",
       "initialBlob": "f76d7f295123b136a1e2082c1d384f5fc5b1e9c9",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_5d9a622d",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5d9a622d",
+          "branch": "bruv/primary-readability-src-ui-sdk-task-rows-5d9a622d",
+          "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30"
     },
     {
       "focus": "src/ui/settled-execute-render.ts",
@@ -1097,16 +1131,25 @@
     {
       "focus": "tests/diagnostics.test.ts",
       "initialBlob": "d58d7850cbe8b802a66c7049b161476b1beb955d",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_28d3f49e",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_28d3f49e",
           "branch": "bruv/primary-readability-tests-diagnostics.te-28d3f49e",
-          "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286"
+          "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286",
+          "commit": "d2bf06b4b75226b367e8889279889527f076dab8"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_a3ac95db",
+          "base": "c18d20532ffe409cccc86719081ba8d0e0fba286",
+          "candidate": "d2bf06b4b75226b367e8889279889527f076dab8",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_50dcf5f6"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
       "relatedPatchJudgments": [
@@ -1117,7 +1160,13 @@
           "blob": "48a273afdc220bd4984fbc18739015dc4a86c88a"
         }
       ],
-      "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286"
+      "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286",
+      "changedRelatedPaths": [],
+      "result": "No-change candidate: explicit privacy/replay/budget/generation/reentry and SDK leaf-restoration journeys with local assertions.",
+      "checks": [
+        "13 tests /573 assertions",
+        "format/diff"
+      ]
     },
     {
       "focus": "tests/editor.test.ts",
