@@ -1000,11 +1000,19 @@
     {
       "focus": "scripts/terminal-perf/trace.ts",
       "initialBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_fb8832c3",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_fb8832c3",
+          "branch": "bruv/primary-readability-scripts-terminal-per-fb8832c3",
+          "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f"
     },
     {
       "focus": "scripts/terminal-perf/workloads.ts",
@@ -2430,16 +2438,25 @@
     {
       "focus": "tests/rolling-activity-disk.test.ts",
       "initialBlob": "16109794da03297d71f74968b134a2c9e7929bf4",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_1b754cf4",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_1b754cf4",
           "branch": "bruv/primary-readability-tests-rolling-activi-1b754cf4",
-          "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d"
+          "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+          "commit": "ad493ccc4986fb5c18bc708590a38232c84621bd"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_6f3b1071",
+          "base": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+          "candidate": "ad493ccc4986fb5c18bc708590a38232c84621bd",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_a6caab27"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary focus pending",
       "relatedPatchJudgments": [
@@ -2450,21 +2467,38 @@
           "blob": "343ee9ee808ac7cbca4d822e520476ef92ba7ee8"
         }
       ],
-      "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d"
+      "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+      "changedRelatedPaths": [],
+      "result": "Candidate splits state-coupled replay/branch, live-frame and owner-replacement into independently seeded subprocess journeys with finally teardown.",
+      "checks": [
+        "109related tests pass",
+        "53 original assertions/checkpoints retained",
+        "Three negative controls fail intended assertions",
+        "Biome/diff"
+      ]
     },
     {
       "focus": "tests/rolling-activity.test.ts",
       "initialBlob": "d7fd169b04f7e8041287a022458bdfe24cd4fc26",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_635acd35",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_635acd35",
           "branch": "bruv/primary-readability-tests-rolling-activi-635acd35",
-          "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081"
+          "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081",
+          "commit": "68e4045e79c099bd1397fb8f36e62b13d41fce80"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_b0411e3d",
+          "base": "28e3431334aaaf6888f1ce638057cc44eece8081",
+          "candidate": "68e4045e79c099bd1397fb8f36e62b13d41fce80",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_a6caab27"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary focus pending",
       "relatedPatchJudgments": [
@@ -2475,7 +2509,13 @@
           "blob": "dcd301abaa75cadf31522a28357a2fa68f08f820"
         }
       ],
-      "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081"
+      "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081",
+      "changedRelatedPaths": [],
+      "result": "No-change: ordered groups/provenance/permission/handoff/visibility/native expansion/scroll/render budget contracts local.",
+      "checks": [
+        "48tests/267assertions",
+        "format/diff"
+      ]
     },
     {
       "focus": "tests/scroll-layout-render.test.ts",
@@ -3136,8 +3176,15 @@
       "focus": "tests/tasks-ui-proof-build.test.ts",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "related-patch-accepted-primary-pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_eed22df6",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_eed22df6",
+          "branch": "bruv/primary-readability-tests-tasks-ui-proof-eed22df6",
+          "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f"
+        }
+      ],
       "judgeRounds": [
         {
           "id": "task_f9504048",
@@ -3147,7 +3194,8 @@
         }
       ],
       "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
-      "integrationState": "integrated related patch; fresh primary required"
+      "integrationState": "integrated related patch; fresh primary required",
+      "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f"
     }
   ],
   "batchChecks": [
