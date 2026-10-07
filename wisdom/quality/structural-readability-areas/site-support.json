@@ -1029,7 +1029,7 @@
     {
       "focus": "site/scripts/startup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_2473ecf3",
@@ -1044,10 +1044,16 @@
         {
           "id": "task_07a74302",
           "candidate": "0a09cf324d706407d0f12d83eccd9d47827d27ad",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Explicit local gate/pending/release/ready sequence,asset-failure loop and separate no-JS context keep short lifetimes visible. Judge read actual build/runtime/template and tests;candidate import missing playwright+ghostty prevented runtime,no assertions claimed. Separate area final browser gate passed.",
+          "objections": []
         }
       ],
-      "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b"
+      "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b",
+      "acceptedBlob": "8ff4a906e773189da064dd81b8087d883ab7019b",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/validate.ts",
@@ -1162,7 +1168,7 @@
     {
       "focus": "site/wrangler.jsonc",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_60419896",
@@ -1173,7 +1179,13 @@
           "result": "Unchanged explicit Worker identity,compatibility date,static output;build creates site/dist,deploy from site reads ./dist.10 tests/config path assertions;no build/browser/deploy."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_c1525156",
+          "candidate": "ce4e678aa3466c77be43ee1220755649bdbf7664",
+          "state": "running"
+        }
+      ],
       "initialBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75"
     },
     {

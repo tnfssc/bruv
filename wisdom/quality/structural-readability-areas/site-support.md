@@ -81,3 +81,5 @@ site/scripts/preview.ts: Request-local decode/resolve/root-escape check/existenc
 site/scripts/install.test.ts: Host mocks/release publication/fixture ownership separate; explicit platform expectations remove repeated selection logic. Fixture owns setup/execution/checks/cleanup; judge independently verified cleanup on success and rejection with propagation. Production installer unchanged;offline Linux fixtures,not actual macOS/Termux/live download.
 
 site/scroll.ts: One remainder has gesture-local purpose; reversal/bounds/reset explicit and caller owns resets on navigation/input lifecycle. Judge traced sole shipped terminal caller and3 tests/16 assertions;browser inspected not rerun.
+
+site/scripts/startup.test.ts: Explicit local gate/pending/release/ready sequence,asset-failure loop and separate no-JS context keep short lifetimes visible. Judge read actual build/runtime/template and tests;candidate import missing playwright+ghostty prevented runtime,no assertions claimed. Separate area final browser gate passed.
