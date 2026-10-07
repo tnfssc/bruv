@@ -50,36 +50,61 @@
     {
       "focus": ".github/workflows/dependency-updates.yml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_6b0e313c",
           "launchBase": "0cf3a39cc5436b10196620218615d2d356884c37",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_6b0e313c",
           "branch": "bruv/primary-.github-workflows-dependency-upd-6b0e313c",
+          "state": "completed",
+          "commit": "951368355262e415d6677ce59e68ea5c80ef4f25"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_69a61924",
+          "base": "0cf3a39cc5436b10196620218615d2d356884c37",
+          "candidate": "951368355262e415d6677ce59e68ea5c80ef4f25",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/dependency-workflow.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Bundle verification separated from authenticated publishing shell scope; verification before token exposure, freshness stays immediately before leased push; controls/values retained.",
+      "checks": "34pass;targeted tsc/Biome/nine Bash blocks syntax/diff pass; real Git identity/parent/file restrictions; no hosted/build."
     },
     {
       "focus": ".github/workflows/release.yml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_bc9b05c3",
           "launchBase": "e28d9d7faa7efb20abf8cdc7573623146061443c",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_bc9b05c3",
           "branch": "bruv/primary-.github-workflows-release.yml-bc9b05c3",
+          "state": "completed",
+          "commit": "8fa4466c2d0941f6f70ce17c590b1b2008f1fc17"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_265f1748",
+          "base": "e28d9d7faa7efb20abf8cdc7573623146061443c",
+          "candidate": "8fa4466c2d0941f6f70ce17c590b1b2008f1fc17",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/manual-release.test.ts",
+        "tests/release-workflows.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "One read-only release-source job replaces repeated admission predicates and SHA/tag reconstruction; preserves manual prep/publication authority and payload/gates. Explicit cost: additional Ubuntu runner startup.",
+      "checks": "66 focused tests; tsc/format/diff pass,5 existing Actions-literal lint warnings; no hosted/platform/build."
     },
     {
       "focus": ".gitignore",
@@ -246,8 +271,16 @@
     {
       "focus": "scripts/ci.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_ec82b387",
+          "launchBase": "6d71a95c5c8ed79da1a3f4247e06cefa777ac215",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_ec82b387",
+          "branch": "bruv/primary-scripts-ci.sh-ec82b387",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -924,8 +957,16 @@
     {
       "focus": "tests/production-packaging.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_93f789d2",
+          "launchBase": "6d71a95c5c8ed79da1a3f4247e06cefa777ac215",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_93f789d2",
+          "branch": "bruv/primary-tests-production-packaging.test.-93f789d2",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
