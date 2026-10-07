@@ -16,6 +16,12 @@
       "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
       "blob": "95453da9cb3f0827a96b955c60f854e905939dac",
       "state": "accepted patch integrated; assigned primary owner must inspect final blob"
+    },
+    {
+      "file": "tests/subagent-settings-ui.test.ts",
+      "owner": "execution-tasks-questions",
+      "candidate": "f14b45ab14702f6e697aca70b3d929d7a55c6dac",
+      "state": "pending candidate judgment; assigned primary owner must reconcile final blob"
     }
   ],
   "files": [
@@ -724,11 +730,19 @@
     {
       "focus": "src/ui/quiet-tool-ui.ts",
       "initialBlob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_022db18e",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_022db18e",
+          "branch": "bruv/primary-readability-src-ui-quiet-tool-ui-022db18e",
+          "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286"
     },
     {
       "focus": "src/ui/rolling-activity.ts",
@@ -851,19 +865,39 @@
     {
       "focus": "src/ui/subagent-settings.ts",
       "initialBlob": "db6c10db1b02db15c995c20c2029ea6f9cb180c1",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_3ec62165",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_3ec62165",
           "branch": "bruv/primary-readability-src-ui-subagent-sett-3ec62165",
-          "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487"
+          "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487",
+          "commit": "f14b45ab14702f6e697aca70b3d929d7a55c6dac"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_2c6056ba",
+          "base": "808375961557a918570c0a7d0ed7bf966fb1f487",
+          "candidate": "f14b45ab14702f6e697aca70b3d929d7a55c6dac",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487"
+      "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487",
+      "changedRelatedPaths": [
+        "tests/subagent-settings-ui.test.ts"
+      ],
+      "result": "Candidate picker state owns return row instead of split screen/type/row fields and hidden rebuild selection restoration.",
+      "checks": [
+        "16 tests /105 assertions",
+        "Focused source typecheck/format/diff",
+        "lint exit 0 existing advisories"
+      ],
+      "limits": [
+        "No full build/compiled PTY"
+      ]
     },
     {
       "focus": "src/ui/task-monitor.ts",
@@ -1034,8 +1068,15 @@
     {
       "focus": "tests/diagnostics.test.ts",
       "initialBlob": "d58d7850cbe8b802a66c7049b161476b1beb955d",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_28d3f49e",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_28d3f49e",
+          "branch": "bruv/primary-readability-tests-diagnostics.te-28d3f49e",
+          "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
@@ -1046,7 +1087,8 @@
           "verdict": "ACCEPT",
           "blob": "48a273afdc220bd4984fbc18739015dc4a86c88a"
         }
-      ]
+      ],
+      "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286"
     },
     {
       "focus": "tests/editor.test.ts",
@@ -1096,16 +1138,25 @@
     {
       "focus": "tests/footer.test.ts",
       "initialBlob": "44e272d01ed9552d2083fc4951cfc58700cb8bc2",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f4f7731b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_f4f7731b",
           "branch": "bruv/primary-readability-tests-footer.test.ts-f4f7731b",
-          "launchBase": "b2297dabbf2f776682e0b88090c3039ef2b20893"
+          "launchBase": "b2297dabbf2f776682e0b88090c3039ef2b20893",
+          "commit": "ecfd5a67ecdf054839b97e811999447f4f75da21"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_dc793fa7",
+          "base": "b2297dabbf2f776682e0b88090c3039ef2b20893",
+          "candidate": "ecfd5a67ecdf054839b97e811999447f4f75da21",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_05ce27ca"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "footer-related patch integrated; primary pending",
       "relatedPatchJudgments": [
@@ -1116,7 +1167,17 @@
           "blob": "056832cfee4ac38b504ba64803de17fc6ccd1ddd"
         }
       ],
-      "launchBase": "b2297dabbf2f776682e0b88090c3039ef2b20893"
+      "launchBase": "b2297dabbf2f776682e0b88090c3039ef2b20893",
+      "changedRelatedPaths": [],
+      "result": "Candidate gives each polling request its promise and separates rendering/color assertions from countdown timer lifetime setup.",
+      "checks": [
+        "Footer 25 pass /291 assertions",
+        "Related observers 43 pass /363 assertions",
+        "Biome format/lint/diff"
+      ],
+      "limits": [
+        "Mocked only, no interactive CLI/provider/build/typecheck"
+      ]
     },
     {
       "focus": "tests/fullscreen-editor-tui.test.ts",
