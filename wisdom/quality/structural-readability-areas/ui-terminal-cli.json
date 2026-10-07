@@ -372,7 +372,7 @@
     {
       "focus": "scripts/terminal-perf/profiler.ts",
       "initialBlob": "3298aad91f561f6cee5e08f4efd3a840ac8bbb44",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_98eabc08",
@@ -382,7 +382,14 @@
           "commit": "ec5417038093c7fe3cd22fc353ba27ef8cda3dbe"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_5e042418",
+          "base": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890",
+          "candidate": "ec5417038093c7fe3cd22fc353ba27ef8cda3dbe",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
       "launchBase": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890",
@@ -500,7 +507,7 @@
     {
       "focus": "scripts/tui-harness.ts",
       "initialBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_7f3c2fe5",
@@ -515,11 +522,26 @@
           "id": "task_fdd2cd2a",
           "base": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8",
           "candidate": "e5880ac872c2d04ef90194ca3c5964437cb4efab",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/tui-harness.ts": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f"
+          },
+          "evidence": "CLI dispatch, startup/watchdog, tmux input/capture/recording and final capture-before-kill are locally visible; no competing authority to disentangle.",
+          "checks": [
+            "Independent harness tests with shared prebuilt CLI",
+            "Owned real-tmux cat fixture input/capture/record/list/stop",
+            "diff and clean candidate"
+          ],
+          "limits": [
+            "Shared prebuilt CLI not candidate binary; no model/provider/platform proof",
+            "Existing partial-start rollback absent; timeout validation after creation; stale state; failed final capture prevents kill",
+            "Existing watchdog socket interpolation unquoted; no behavior fix made"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
+      "integrationState": "unchanged final focus accepted",
       "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8",
       "changedRelatedPaths": [],
       "result": "No-change candidate: startup/watchdog, input/capture/recording and capture-before-stop ownership explicit.",
