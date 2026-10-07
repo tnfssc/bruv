@@ -331,7 +331,7 @@
     {
       "focus": "src/goals/extension.ts",
       "initialBlob": "a174d5d8ed42f65ee4861e3ffb89080024cbf894",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_28c52a22",
@@ -354,11 +354,18 @@
           "id": "task_4a2a31dd",
           "candidate": "3768ecd10500006ffdfed8bc12202224a483636a",
           "base": "a877b31baa58c7765e662d8cbe3fbe6089d70a81",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "GoalReminders coherently owns transport tokens/epoch/generation/bounded pending IDs, separate from store and controller. Hooks retain visible transport-only invalidation vs full accounting reset. Exact payload, queue/navigation/restart, waiting and run/settled contracts preserved.",
+          "checks": "Actual full patch/callers/tests read; independent runtime dependency-blocked; diff clean.",
+          "acceptedRelatedBlobs": {
+            "tests/goals.test.ts": "3f2c50d0e9f5ed8a11dfc86d8dafcf7ac8d41c3d"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "90e7ddd369fad8b41c6cf53a2114b85c4bda5af1",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/goals/store.ts",
@@ -1119,11 +1126,12 @@
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
-        "candidate": "550ce6425a3d92d1b0300bc48bd9cfe69737da91",
-        "judge": "task_46beb0fa",
+        "candidate": "3768ecd10500006ffdfed8bc12202224a483636a",
+        "judge": "task_4a2a31dd",
         "verdict": "ACCEPT",
-        "blob": "caae760463f13ac5f391b5f5e438af90f7893a61",
-        "primaryFocusStillRequired": true
+        "blob": "3f2c50d0e9f5ed8a11dfc86d8dafcf7ac8d41c3d",
+        "primaryFocusStillRequired": true,
+        "overlap": "Active primary launched before these four regression additions; final combination via fresh file worker and independent judge required."
       }
     },
     {
