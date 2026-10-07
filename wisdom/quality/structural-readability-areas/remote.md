@@ -37,3 +37,5 @@ Parser tests own-primary199fe91c ACCEPT task_ea570b89 at725ebe43: contract-group
 Observation tests own-primary1bbf7d18 ACCEPT task_158bd70e at24928f2d: projection bounds and persisted-summary decoder fixtures independent; all28 assertion calls retained;31/174 independent.
 
 Bridge tests1406a1c6 ACCEPT task_9172c217 atf0e7f199: ordered multicast session fixture, actual publication notification instead of sleep, held-poll shutdown generation fence.19 baseline tests retained/16 byte-identical,69/1231 independent. Awaited hooks do not imply arbitrary owner-I/O drain. Extension primary task_e6af1dbe must retain/reconcile this final blob if related changes.
+
+Native artifact capture66543af9 ACCEPT task_1352e407 at3a6de6bd: per-job recoverable text/gap separate from fatal publication; serial/latest-gap and runtime checkpoint contracts retained.25/2337 independent. Related test927e7038 requires own primary. Existing PID staging/no directory fsync/failed-stage cleanup/marker-overflow limits unchanged; no power-loss claim.

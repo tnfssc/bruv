@@ -321,8 +321,14 @@
     {
       "focus": "src/remote/human-rendering.ts",
       "initialBlob": "bb92205c07e0a331b531da9ff41fb71273fd31eb",
-      "status": "candidate-awaiting-judge",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_1cfa60a3",
+          "status": "running",
+          "candidate": "f8ea2a7905704611e8be3a049299c28e652fdbcc"
+        }
+      ],
       "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
       "primary": {
         "id": "task_3a4c1736",
@@ -335,12 +341,15 @@
     {
       "focus": "src/remote/job-artifacts.ts",
       "initialBlob": "457f4370168fc3d95e920b79d03f480104dadf19",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_1352e407",
-          "status": "running",
-          "candidate": "66543af9dba1d12000377998018ee52126cc02ae"
+          "status": "completed",
+          "candidate": "66543af9dba1d12000377998018ee52126cc02ae",
+          "verdict": "ACCEPT",
+          "reason": "Per-job text/gap separates recoverable inspection from fatal publication; serial batch retains last gap, descriptor write/fsync/close/rename lifetime explicit. Runtime capture-before-checkpoint and cancellation contracts preserved.",
+          "checks": "Independent25 pass/2337 capture/runtime/cancellation/artifact tests; EISDIR proves open failure only, unchanged staging/dir-fsync/marker overflow gaps, no full/live/power-loss proof."
         }
       ],
       "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
@@ -350,7 +359,12 @@
         "branch": "bruv/remote-primary-job-artifacts-b2c19617",
         "commit": "66543af9dba1d12000377998018ee52126cc02ae"
       },
-      "workerResponse": "Committed; clean tree. No push/PR.\n\n- **Base:** `a7830f7d2541164f5170e2323a3e621e5de1f35d`\n- **Candidate:** `66543af9dba1d12000377998018ee52126cc02ae`\n- **Branch:** `bruv/remote-primary-job-artifacts-b2c19617`\n\n**Changed paths**\n- `src/remote/job-artifacts.ts`\n- `tests/remote-job-artifacts.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after:** A single batch loop mixed shared gap state, recoverable pagination failures, and fatal filesystem publication. Now each job’s read returns its text/gap, publication owns write→fsync→close→rename, and the batch visibly processes jobs serially while retaining the last gap. Inspection failure still publishes the captured prefix plus exact marker; disk failure still rejects before processing later jobs. Runtime/cancellation callers remain unchanged.\n\n**Proof:** Added regressions passed against original source. Candidate artifact/runtime/cancellation suites: **14 pass, 0 fail**; offline artifact consumer suite: **11 pass, 0 fail**. Formatting, lint, and diff checks passed; five inherited informational lint suggestions remain.\n\n**Overlap:** Related artifact tests are pending primary coverage in `remote.json`; no active primary is recorded there. Accepted caller areas were untouched.\n\nIndependent judgment remains required. No full build/typecheck or live SSH proof. Worker wisdom added; values unchanged."
+      "workerResponse": "Committed; clean tree. No push/PR.\n\n- **Base:** `a7830f7d2541164f5170e2323a3e621e5de1f35d`\n- **Candidate:** `66543af9dba1d12000377998018ee52126cc02ae`\n- **Branch:** `bruv/remote-primary-job-artifacts-b2c19617`\n\n**Changed paths**\n- `src/remote/job-artifacts.ts`\n- `tests/remote-job-artifacts.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after:** A single batch loop mixed shared gap state, recoverable pagination failures, and fatal filesystem publication. Now each job’s read returns its text/gap, publication owns write→fsync→close→rename, and the batch visibly processes jobs serially while retaining the last gap. Inspection failure still publishes the captured prefix plus exact marker; disk failure still rejects before processing later jobs. Runtime/cancellation callers remain unchanged.\n\n**Proof:** Added regressions passed against original source. Candidate artifact/runtime/cancellation suites: **14 pass, 0 fail**; offline artifact consumer suite: **11 pass, 0 fail**. Formatting, lint, and diff checks passed; five inherited informational lint suggestions remain.\n\n**Overlap:** Related artifact tests are pending primary coverage in `remote.json`; no active primary is recorded there. Accepted caller areas were untouched.\n\nIndependent judgment remains required. No full build/typecheck or live SSH proof. Worker wisdom added; values unchanged.",
+      "acceptedBlob": "3a6de6bdc028e1be29be5faa977d7c1fcf7502e7",
+      "integrationState": "exact full source/related-test patch applied",
+      "changedRelatedPaths": [
+        "tests/remote-job-artifacts.test.ts"
+      ]
     },
     {
       "focus": "src/remote/job-delivery.ts",
@@ -382,12 +396,15 @@
     {
       "focus": "src/remote/job-events.ts",
       "initialBlob": "38774795309a62bf685943a7784d348584f26504",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_af2942c6",
-          "status": "running",
-          "candidate": "25dec5b190c514a8ee88c77092398896b85e1e9f"
+          "status": "completed",
+          "candidate": "25dec5b190c514a8ee88c77092398896b85e1e9f",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Volatile identity/fence/dedup/store/notification belongs together; publication identity is not authorization, held source handles survive clearing, durable outbox remains separate.",
+          "checks": "Independent49 pass/1132 plus2 SSH parent-boundary tests/6 and17 lifecycle assertions; listener-throw/dedup delivery window characterized, not fixed; no full/live."
         }
       ],
       "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
@@ -399,7 +416,9 @@
       },
       "result": "Unchanged session publication/identity/terminal fence/serialized dedup/store/copied-listener notification; startup subscribe+snapshot, waits recheck/unsubscribe, shutdown clears only session volatile state.",
       "checks": "51 pass/1138 plus11 temporary lifecycle assertions; prepared assets resolved setup-only parent-wakeup failures; no full/live.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "38774795309a62bf685943a7784d348584f26504",
+      "integrationState": "unchanged exact area blob"
     },
     {
       "focus": "src/remote/job-observations.ts",
@@ -470,14 +489,18 @@
     {
       "focus": "src/remote/operations.ts",
       "initialBlob": "67cf54865eeee7c16e178470b9fcd076d0d41747",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge",
       "judgeRounds": [],
       "launchBase": "d37b6be992205ef995555d9156f1cadf0899cda7",
       "primary": {
         "id": "task_7fa15931",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_7fa15931",
-        "branch": "bruv/remote-primary-operations-7fa15931"
-      }
+        "branch": "bruv/remote-primary-operations-7fa15931",
+        "commit": "fb80b584e985cb6112a203ac0cee7b928a6d0c33"
+      },
+      "result": "Unchanged direct dispatch: execute owns cancellation confirmation/publication; client durable intent/fences/uncertainty/sync; services grant-wait/mailbox. Bounded cached transcript not live state.",
+      "checks": "75 pass/1280 extension/legacy/client/capability; no full/live.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/owner-child.ts",
@@ -529,6 +552,13 @@
       "judgeRounds": [
         {
           "id": "task_ac4bfb3b",
+          "status": "killed",
+          "candidate": "3e1f4edbefd216d5b5a5d701d162610a9a3c1568",
+          "reason": "Confirmed killed after20min with17min response generation/no new inspection output. No verdict or objections; history preserved.",
+          "exitCode": 143
+        },
+        {
+          "id": "task_69fda549",
           "status": "running",
           "candidate": "3e1f4edbefd216d5b5a5d701d162610a9a3c1568"
         }
@@ -585,8 +615,14 @@
     {
       "focus": "src/remote/placement.ts",
       "initialBlob": "c27e168ec203a643ed30def19cf8edbfd53abb09",
-      "status": "candidate-awaiting-judge",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_c7aba3df",
+          "status": "running",
+          "candidate": "ffb65d9db1c2ab2923e11c0715f2bfd5840f4afe"
+        }
+      ],
       "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
       "primary": {
         "id": "task_abc863bb",
@@ -1595,13 +1631,25 @@
       "focus": "tests/remote-job-artifacts.test.ts",
       "initialBlob": "7e7abc717c0eabb5ab835490816b9065460655b1",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedIntegration": {
+        "candidate": "66543af9dba1d12000377998018ee52126cc02ae",
+        "judge": "task_1352e407",
+        "blob": "927e703847bb6825fa26ec8357786640b3f83066",
+        "ownPrimaryStillRequired": true
+      }
     },
     {
       "focus": "tests/remote-job-delivery.test.ts",
       "initialBlob": "de4fdda9e17881be5cc4c50b299fcd9be135a6be",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "primary": {
+        "id": "task_3f195746",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_3f195746",
+        "branch": "bruv/remote-primary-delivery-tests-3f195746"
+      },
+      "launchBase": "2d38e9563a36e256a272f1f5ed88aed80d710fb3"
     },
     {
       "focus": "tests/remote-job-observations.test.ts",

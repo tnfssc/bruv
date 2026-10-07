@@ -1,6 +1,7 @@
 import { mkdirSync, openSync, closeSync, writeFileSync, renameSync, fsyncSync } from "node:fs";
 import { join, dirname } from "node:path";
 import type { SessionHost } from "../session/host";
+
 /** Snapshot scoped native job output before the owning CLI exits and releases its in-memory buffers. */
 export async function captureNativeJobText(
   host: Pick<SessionHost, "inspect">,
@@ -15,44 +16,57 @@ export async function captureNativeJobText(
       !["completed", "failed", "cancelled", "stopped", "killed"].includes(job.status)
     )
       continue;
-    const chunks: string[] = [];
-    let offset = 0,
-      bytes = 0;
-    try {
-      for (let page = 0; page < 2200; page++) {
-        const value = (await host.inspect(job.id, offset)) as {
-          output?: string;
-          nextOffset?: number;
-          hasMore?: boolean;
-          outputLost?: boolean;
-          baseOffset?: number;
-        };
-        if (value.outputLost || (value.baseOffset ?? 0) > offset) gap = "Native job output retention gap: " + job.id;
-        const text = typeof value.output === "string" ? value.output : "";
-        bytes += Buffer.byteLength(text);
-        if (bytes > 10 * 1024 * 1024) throw Error("Native job output exceeds 10 MiB artifact limit");
-        chunks.push(text);
-        if (!value.hasMore) break;
-        if (typeof value.nextOffset !== "number" || value.nextOffset <= offset || page === 2199)
-          throw Error("Native job output pagination gap");
-        offset = value.nextOffset;
-      }
-    } catch (error) {
-      gap = "Native job text capture incomplete for " + job.id + ": " + String(error);
-      chunks.push("\n[" + gap + "]\n");
-    }
-    const dir = join(dirname(runtimePath), "session.jsonl.artifacts", "execute-job-" + job.id);
-    mkdirSync(dir, { recursive: true, mode: 0o700 });
-    const path = join(dir, "stdout.log"),
-      temp = path + "." + process.pid;
-    const fd = openSync(temp, "w", 0o600);
-    try {
-      writeFileSync(fd, chunks.join(""));
-      fsyncSync(fd);
-    } finally {
-      closeSync(fd);
-    }
-    renameSync(temp, path);
+    const captured = await readNativeJobText(host, job.id);
+    publishNativeJobText(runtimePath, job.id, captured.text);
+    gap = captured.gap ?? gap;
   }
   return gap;
+}
+
+/** Inspection failures still yield the retained prefix, with an incomplete-capture marker. */
+async function readNativeJobText(host: Pick<SessionHost, "inspect">, jobId: string) {
+  const chunks: string[] = [];
+  let gap: string | undefined;
+  let offset = 0,
+    bytes = 0;
+  try {
+    for (let page = 0; page < 2200; page++) {
+      const value = (await host.inspect(jobId, offset)) as {
+        output?: string;
+        nextOffset?: number;
+        hasMore?: boolean;
+        outputLost?: boolean;
+        baseOffset?: number;
+      };
+      if (value.outputLost || (value.baseOffset ?? 0) > offset) gap = "Native job output retention gap: " + jobId;
+      const text = typeof value.output === "string" ? value.output : "";
+      bytes += Buffer.byteLength(text);
+      if (bytes > 10 * 1024 * 1024) throw Error("Native job output exceeds 10 MiB artifact limit");
+      chunks.push(text);
+      if (!value.hasMore) break;
+      if (typeof value.nextOffset !== "number" || value.nextOffset <= offset || page === 2199)
+        throw Error("Native job output pagination gap");
+      offset = value.nextOffset;
+    }
+  } catch (error) {
+    gap = "Native job text capture incomplete for " + jobId + ": " + String(error);
+    chunks.push("\n[" + gap + "]\n");
+  }
+  return { text: chunks.join(""), gap };
+}
+
+/** Disk failures must reject capture; only flushed, closed text replaces the artifact. */
+function publishNativeJobText(runtimePath: string, jobId: string, text: string): void {
+  const dir = join(dirname(runtimePath), "session.jsonl.artifacts", "execute-job-" + jobId);
+  mkdirSync(dir, { recursive: true, mode: 0o700 });
+  const path = join(dir, "stdout.log"),
+    temp = path + "." + process.pid;
+  const fd = openSync(temp, "w", 0o600);
+  try {
+    writeFileSync(fd, text);
+    fsyncSync(fd);
+  } finally {
+    closeSync(fd);
+  }
+  renameSync(temp, path);
 }
