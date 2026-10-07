@@ -584,12 +584,15 @@
     {
       "focus": "src/remote/repository-download.ts",
       "initialBlob": "c03eb8b1827d8f1c9f58449966dd0b4c1b1c0f0a",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_0dc615f7",
-          "status": "running",
-          "candidate": "a2692e801884e7deda5ceda42a55f310ee1e71bd"
+          "status": "completed",
+          "candidate": "a2692e801884e7deda5ceda42a55f310ee1e71bd",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "One coherent bounded page download/identity validation and final digest verification; caller owns terminal approval, pinned request, patch persistence, repository lock and integration.",
+          "checks": "Independent23 pass/132 assertions matching exact area/candidate source/tests; no full/live."
         }
       ],
       "launchBase": "926c1c58318b0202744be8636eef7064981f2514",
@@ -601,7 +604,9 @@
       },
       "result": "Unchanged coherent bounded page request/identity/offset validation then digest/snapshot verification; callers own successful completion/pinned identity/patch writes/locks/integration receipts.",
       "checks": "23 pass/132 assertions across download/wire/root-client/repo; shared deps resolved initial setup; no live/full.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "c03eb8b1827d8f1c9f58449966dd0b4c1b1c0f0a",
+      "integrationState": "unchanged exact area blob"
     },
     {
       "focus": "src/remote/repository-wire.ts",
@@ -1520,13 +1525,19 @@
     {
       "focus": "tests/remote-job-observations.test.ts",
       "initialBlob": "874b1d89a9c77153b030b59d43a219e7cda701ec",
-      "status": "pending",
+      "status": "primary-running",
       "judgeRounds": [],
       "relatedIntegration": {
         "candidate": "b6b2dbe5eb292d0811bd004b8cef76253efb27c2",
         "judge": "task_c32ab4fa",
         "blob": "1f00ddf86616bad8589177469779f5ab06d89711",
         "ownPrimaryStillRequired": true
+      },
+      "launchBase": "df656c0cf005ba2e8963ee8db70d139abfc007e0",
+      "primary": {
+        "id": "task_0e0a9a10",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_0e0a9a10",
+        "branch": "bruv/remote-primary-observation-tests-0e0a9a10"
       }
     },
     {
@@ -2125,6 +2136,14 @@
       "command": "bun test remote-client,remote-capability-runtime,remote-question-bridge tests",
       "result": "57 pass, 0 fail, 310 assertions",
       "limits": "No live/provider/compiled parity"
+    },
+    {
+      "base": "df656c0c",
+      "job": "task_ae943bf2",
+      "status": "completed",
+      "scope": "Configured assets+tsc and bridge/questions/client/extension/root-options/policy/root-client/observations/delivery/menu combined checks",
+      "exitCode": 0,
+      "result": "Configured prepare:assets + tsc passed; combined10 suites131 pass/1535 assertions."
     }
   ],
   "crossAreaNeeds": [
@@ -2139,13 +2158,11 @@
     }
   ],
   "partialAudit": {
-    "at": "7aa4b4a1",
-    "baselineCount": 119,
-    "acceptedCount": 20,
-    "hashMismatches": [],
-    "uniquePrimaryIds": 25,
-    "launchedPrimaryCount": 25,
-    "notFinal": true
+    "atCommit": "df656c0cf005ba2e8963ee8db70d139abfc007e0",
+    "acceptedBaseline": 39,
+    "totalBaseline": 119,
+    "acceptedBlobMismatches": [],
+    "note": "Partial audit only; all39 accepted initial file blobs match current disk. 75 pending,3 primaries,2 judges. Extras/cross-area final audit still required."
   },
   "parentIntegrationCheckpoint": {
     "tip": "695ade32",

@@ -1,88 +1,33 @@
-# Remote structural readability
+# Remote structural readability — ongoing
 
-ONGOING: 18/119 baseline files accepted; two new tests accepted after their own primary/judge; one related cross-area test awaits its assigned owner. No area-complete or PR claim.
+39/119 initial files accepted. Two new tests have own primary/judge acceptance; one existing cross-area related test still needs assigned-owner reconciliation. This is not area completion or full-gate evidence.
 
-Path: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74
+Worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74
 Branch: bruv/whole-repo-structural-readability-remote-cbb4da74
-Initial area commit: 59413c532e6422983f611915e509e8421aa2f363. Full durable primary/path/branch/candidate/judge-round/hash/check records in remote.json; all old attempts retained. Workers own all edits, max 3 primary/rework and 3 judges. Only accepted whole patches joined; worker pickup notes excluded.
+Initial commit: 59413c532e6422983f611915e509e8421aa2f363
+Current source checkpoint: df656c0cf005ba2e8963ee8db70d139abfc007e0
 
-## Accepted reading results
-- src/remote/artifacts.ts: ACCEPT — File cache verification/download/atomic replacement now separate from incomplete manifest/progress/completion orchestration; all protocol and identity checks retained.
-- src/remote/cancellation.ts: ACCEPT — Timed request, complete output-capturing scan and bounded settlement wait now own separate lifetimes; handler shows request/abort/inspection/publication. Checkpoint remains distinct from owner-confirmed child exit.
-- src/remote/capabilities.ts: NO CHANGE NEEDED — Single bounded-read operation: filesystem confinement separated from caller permission, descriptor immediately try/finally owned, reply persistence/replay/cancellation separated.
-- src/remote/client.ts: ACCEPT — sync exposes full locked fetch/accept/save lifetime then releases before service integrations; whole-page validation/terminal preservation/reply reconciliation coherently owned by acceptTranscriptPage.
-- src/remote/durable-json.ts: NO CHANGE NEEDED — Private staging descriptor and parent-directory descriptor have explicit try/finally lifetimes; write/fsync/rename/directory fsync publication order visible, caller intent authority remains separate.
-- src/remote/jobs.ts: ACCEPT — Explicit resolved launch request removes mutable parameter/closure ownership reconstruction. Approval gate, allowlisted trusted snapshot, retained unknown dispatch and raced cancellation remain visible.
-- src/remote/owner.ts: ACCEPT — Journal descriptor/sequence/replay refusal/limits/full writes/fsync belong to one resource-owning operation; existing answer/native settlement/child boundaries need no churn. Combined cancellation/artifacts/client contracts inspected compatible.
-- src/remote/repository.ts: ACCEPT — History-free snapshot construction now owns patch/copy/tree validation/orphan HEAD; capture retains authorization/provenance/stability/publication. Collection/integration remain coherent.
-- src/remote/root-contract.ts: NO CHANGE NEEDED — Pinned creation authority, command receipt versus session settlement, detach versus abort/close, sequenced observations and successful-closure data return are distinct discoverable protocol concepts.
-- src/remote/root-owner.ts: ACCEPT — Close operation groups durable admission fence/queue clear/settlement/pending evidence/end; exit requires clean process result and nonunknown state before closure publication. Concurrent prompt/abort retained, unused tracking removed.
-- src/remote/root-runtime.ts: NO CHANGE NEEDED — Shared session context and serial ordering distinct from per-connection framing; question service owns answer replay, runtime owns continuation; close settlement distinct from owner exit; acknowledged rejection distinct from unknown delivery.
-- src/remote/root-store.ts: ACCEPT — Database directly selects queued commands and settles unresolved receipts; append separates durable dialog lifetime from sequence/event/suffix retention. SQL adds reading cost but removes mutable pruning reconstruction.
-- src/remote/security.ts: NO CHANGE NEEDED — Pure per-component sensitive path policy is explicit; capture/export and capability callers own refusal and independent grant/traversal checks.
-- src/remote/services.ts: ACCEPT — Capability identity/revocation/frozen reply/persistence/delivery is cohesive transaction before independent result collection; child entry exposes need creation, authority wait, need removal and mailbox execution.
-- src/remote/source-approval.ts: ACCEPT — Pin persistence, question attachment and answer acceptance are coherent durable phases. Replay/provenance/authentic CLI reply/frozen decision/cancellation checks remain ordered and visible.
-- src/remote/ssh.ts: NO CHANGE NEEDED — Single transaction shows hardened target/argv/environment, request framing, bounded output and limit-triggered TERM/KILL before close; callers retain identity/replay authority. Error handler rejects immediately, not universal close settlement.
-- tests/remote-artifacts.test.ts: ACCEPT — Separate owner/client rejection fixture lifetimes and page-offset mutation remove shared damage/repair/callback-counter reconstruction; coherent failure-progress-retry journey retained.
-- tests/remote-source-approval.test.ts: ACCEPT — Independent question/fixture lifetimes separate denial/cancellation and stale-reply/integrity; named human choices no longer mislabel cancellation as approval.
-- tests/remote-cancellation.test.ts: ACCEPT — Supported toBe expected-value type overload preserves exact reference identity assertion and all readable fixture/order evidence; no casts or production change.
-- tests/root-store.test.ts: ACCEPT — Explicit append/observe transcript and reconnect cursors replace mentally executing a second pruning algorithm; all eight inputs, outcomes, gaps, sequence and isolation assertions preserved.
+## Pickup and ownership
+remote.json is authoritative for all119 assignments, durable worker paths/branches/bases/candidates, independent judge rounds, accepted blobs, related overlaps and proofs. Reusable briefs are stored there. Preserve every attempt/worktree. Max3 active normal primary/rework workers and3 independent read-only normal judges. Coordinator does not edit source; accepted complete source/test patches only, excluding shared worker-note paths. Each related final file needs own primary and final-hash judgment; no shallow rename/extract quota.
 
-## Active and next work
-- src/remote/capability-runtime.ts: primary-running; primary task_efc7153f.
-- src/remote/owner-child.ts: judging; primary task_4e578c3e.
-- src/remote/root-client.ts: primary-running; primary task_a812b85a.
-- tests/remote-client.test.ts: judging; primary task_e6c82233.
-- tests/remote-owner-lifecycle.test.ts: primary-running; primary task_053c976a.
-Continue every pending initial file with fresh primary and independent actual-code judge. Prior related patch acceptance never substitutes primary focus. tests/remote-capability-runtime.test.ts remains pending own primary after services changed it; active capability-runtime source worker knows overlap.
+Active primaries: root-placement-options tests task_c13c26b1; remote-question-bridge tests task_4cf5a2f7; remote-job-observations tests task_0e0a9a10. Judges: job-delivery task_2852e3a3; owner-rpc task_ac4bfb3b. Fill freed slots from pending ledger rows; do not poll just to stay busy.
 
-## Cross-area need
-tests/root-owner.test.ts is assigned execution-tasks-questions; accepted root-owner candidate 770c112f adds closure/concurrency regressions, blob 0990a29347df87831dd11c544bdcac94e85ee798 judged task_e77399ef. Parent must reconcile assigned primary and independently judge final combined test. Remote has not edited sibling notes. New tests/root-store.test.ts is remote-owned extra, now primary task_1dae7d84 + judge task_7ef7eb4e accepted at b1f3cc8f.
+## Accepted structural boundaries
+Source changes make repository snapshot construction, launch resolution, artifact-file lifetime, cancellation request/settlement, root-store pruning, source approval, client locked sync, owner journal lifetime, root-owner close/exit evidence, capability intent/reply transactions, root presenter modal lifetime, root-client command admission, repository return and runtime capture-before-checkpoint explicit. Latest bridge change separates projection from authoritative delivered-receipt reconciliation while preserving initial versus fresh snapshots. Root parser co-locates consumption/effect; --place was intentionally already selected, not a fixed bug. Observation projection selects terminal results versus active human waits without constructing discarded alternatives.
 
-## Proof and honest limits
-- 4b0fa831: 19 pass, 0 fail, 112 assertions (task_66ad8475).
-- 10db7d76: 54 pass, 0 fail, 321 assertions (task_963e98d8).
-- 10db7d76: check=0 format=0 lint=0; 12 existing warnings/12 infos (task_ac0c70e2).
-- 7a209eac: 20 pass, 0 fail, 119 assertions (task_d112ceca).
-- d60db7e7: 53 pass, 0 fail, 302 assertions (task_d21d8e50).
-- 7750fb20: 45 pass, 0 fail, 267 assertions (task_5eb75765).
-- 9f121a62: 124 pass, 0 fail, 1588 assertions across 8 files (task_e2045841).
-- 9f121a62: Typecheck FAIL TS2769 tests/remote-cancellation.test.ts:52 partial ctx assigned to ExtensionContext; format=0 lint=0 (task_872c642e).
-- aeb0a983: 45 pass, 0 fail, 311 assertions across 6 files (task_47d5a3b7).
-- 78a0c7cd: 58 pass, 0 fail, 347 assertions across 6 files (task_9991ad83).
-- f5df927f: Full configured typecheck passes; 41 pass/244 assertions across 4 files (task_7ed9fd72).
-- 7aa4b4a1: 84 pass, 0 fail, 1355 assertions across 6 files (task_93fcabee).
+Own-primary test improvements expose source-approval authority, artifact pagination, owner cleanup, root presenter routing, capability outcomes, client persistence/child cleanup, and root-client response-loss versus owner effects. Runtime tests and coherent contract/adapter/download sources legitimately remain unchanged. Exact per-file intrinsic/improvement/safety reasoning and hashes live in JSON, not inferred from passing tests.
 
-Observed TS2769 in new cancellation test was at identity assertion overload, not event emission. Fresh worker task_f9d2ba8e and judge task_7be6f9c9 preserved identical runtime assertion via supported expected-value type overload; full area check now passes at f5df927f. Old and new accepted blobs/rounds retained in ledger.
+## Important retained history
+- Root-client original candidate f1ecb410 was not joined: coordinator caught prompt-before-abort scheduling regression despite first readability acceptance. Fresh rework613bf20c + judge task_b04a86e2 restored two-lock ordering; final source7670632c and exact abort→prompt regression preserved.
+- Client-test initial e2e6c5d rejected for5 new Transport typing errors. Stalled rework task_11672539 stopped (exit143), edits preserved. Fresh4e396c24 + judge task_45f4b422 fixed fixture-local types; final test2439a575, whole check and57/310 combined passed.
+- New cancellation test reworke58f7fee + judge task_7be6f9c9 resolves toBe(ctx) generic overload without weakened identity assertion; finala1a19877. New root-store tests finalb1f3cc8f independently accepted.
+- Capability/services overlapping tests combined by fresh task_b95e28d8 candidate33088eba, independent judge task_f6ad3799; both contributions retained,86/1367.
+- Owner-child judge task_3fe528f2 stalled and was stopped confirmed killed; fresh task_280ab6b7 accepted unchanged source after lifecycle inspection.
+- Candidate metadata regex once captured base hashes in12 rows. Git HEAD audit corrected metadata with old values retained; actual judge hashes/source acceptance were genuine. Obtain candidates through git rev-parse HEAD, never loose report parsing.
 
-Partial audit at 7aa4b4a1: 20 accepted files match area blobs, 25 unique launched primary IDs; NOT final coverage. Current read-only dependency symlink node_modules is untracked tooling, remove for final clean tree. Automatic fish setup cannot find Bun; explicit Bun 1.4.2 + shared dependencies work. Judge dependency-loading failures are not passing tests; real combined area reruns above supply safety proof. No authenticated SSH/provider/macOS/compiled CLI parity or performance claims; no full binary build needed so far. Last parent branch check had documentation-only changes; inspect at sensible future batches, no sibling merges. Parent owns final gates and ONE PR #45.
+## Cross-area integration
+Parent accepted checkpoint695ade32 merged cleanly at a6872af1. No accepted remote blobs changed; configured check +92/581 passed. Incoming bridge test069ad73f now has fresh own-primary running. tests/root-owner.test.ts is assigned execution-tasks-questions: related root-owner patch judged at0990a293; parent must reconcile final own-primary coverage. Do not double-count or edit sibling ledgers. Known unchanged repository-wire retry/title replay mismatch remains recorded, not silently fixed.
 
-Lifecycle-test primary task_053c976a, judge task_52da150f ACCEPT at 53027e2c: explicit script sequence and task.run own gate release/child join before HOME cleanup. All 33 assertion statements retained; prior owner journal regressions retained. Exact final candidate requires area runtime rerun below.
-
-Presenter batch f8ba5c92 ACCEPT task_29eea7cb: local showModal owns mount/settle/focus/render, interaction builders no longer duplicate lifetime; server dialog authority and close-before-local-cancel remain distinct. Related presenter tests ae65079a need own primary. Mocked terminal routing evidence is not physical-terminal proof.
-
-Capability-runtime combined candidate 33088eba ACCEPT task_f6ad3799: intent/marker publication semantics explicit; admission chain retains rejection progress without serializing reply wait. Fresh combination worker preserved accepted services assertions and original runtime additions byte-for-byte; independent 86 tests/1367 assertions. Final related capability test ee0b6d2b still requires its own primary.
-
-Parent accepted shared checkpoint 695ade32 merged cleanly in staging: questions runtime/service and job-service common updates, plus sibling accepted areas only via parent. No accepted remote blob changes. Incoming tests/remote-question-bridge.test.ts remains pending own remote primary/final judge. Real combined typecheck and authority/bridge/owner suites running before merge checkpoint commit.
-
-Parent join proof: assets + whole-project tsc pass; seven cross-authority/bridge/owner/capability suites 92 pass/581 assertions. Existing remote accepted hashes unchanged; incoming related test remains pending primary.
-
-Root-client final 613bf20c accepted fresh task_b04a86e2 at 7670632c after coordinator-required scheduling preservation. Original f1ecb410 candidate changed startup/abort ordering and was never integrated; baseline/rework abort→prompt, original prompt→abort independently reproduced. Final tests f19df6e9 retain prior bodies and add reliable regression; own test primary due.
-
-Candidate-identity audit found loose summary regex matched introductory “candidate” followed by Base in 12 records. Corrected from retained committed worktree HEAD; each affected accepted judge explicitly reported actual candidate/hash in terminal report, source hashes matched independently. Original supplied labels/corrections preserved in ledger. Future candidates use Git identity, not summary regex. No source acceptance inferred from corrected metadata.
-
-Repository-wire 755b63c0 ACCEPT task_6ea69bdc at 64475e6c: upload receipt/replay independent of checked destructive checkout construction, durable pinned launch intent explicit; terminal/return bodies unchanged. Existing titled retry conflict (retryRepository omits title) noted for parent, not silently fixed.
-
-Runtime edb1318b ACCEPT task_e1ab9585 at 87b03ef3: output-preserving evidence collection before exit-authorizing checkpoint; shared durable writer replaces duplicate resource ownership. Internal staging explicitly changes PID overwrite to exclusive UUID, same flush/close/rename/dir-fsync order; no power-loss claim. Related runtime test fe29cd1c needs own primary.
-
-Presenter-test own primary/judge task_20e04838 ACCEPT b4ed20c0. Real terminal callback/focused TUI routing replaces incorrect helper bypass; independent harness reproduced old 2 root calls vs new 0, all assertions retained. Mocked I/O is not physical-terminal proof. Judge accidentally ran area build creating dist; not counted as build acceptance.
-
-Capability-test own primary 189f56e3 ACCEPT task_d83b6e0b at bb79598d: abort/deadline/revocation/terminal tests have independent authority, remove confounded failures and use explicit frozen-reply oracle. All prior combined service/mailbox regressions retained.
-
-Client-test final rework 4e396c24 ACCEPT task_45f4b422 at 2439a575, independently 23 tests/126 + whole tsc pass. Original e2e6c5d stays REJECTED for five typing errors and was never integrated; stopped task_11672539 edits retained. Final preserves pre-POST disk evidence/child cleanup and byte-identical prior page/integration regressions; only three request assertions resolve typing.
-
-Root-client test own primary 81252d4c ACCEPT task_9e1c68cc at 4dc8a822: owner effects before response loss, normal logged missing-status path, independent durable checkpoint fixtures; exact abort→prompt and status-only/no-resend regressions retained. Independent 20 tests/144 assertions.
-
-Question bridge 4fdf931c ACCEPT task_7e7ebdea: projection and delivered receipt reconciliation separated without changing initial/fresh snapshots or pinned authority (89/1346). Root options ac44370f ACCEPT task_d1dd2209: consumption/effect switch preserves semantics (18/88); related placement tests require fresh own-primary coverage. Both full patches joined without worker notes.
-
-Job observations b6b2dbe5 ACCEPT task_c32ab4fa: terminal-result versus active-wait projection selected visibly;23/97 and 5-state byte parity. Full source/test patch joined; test own-primary pending. Protocol NO CHANGE task_31905010 at49a05368,25/200.
+## Proof and limits
+Latest configured assets+tsc passed at df656c0c;10 combined bridge/questions/client/extension/root parser/policy/client/observation/delivery/menu suites131 pass,1535 assertions (task_ae943bf2). Partial audit: all39 accepted initial blobs match disk. Other per-candidate/combined proofs in JSON. No final whole-repo build/Linux gate, live SSH/provider, physical terminal/device, macOS or compiled-CLI parity claim.
+Automatic fish setup fails mise trust/bun127; workers use Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin with Bash and read-only shared dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Configured check is bun run check, not nonexistent typecheck alias. Biome format/lint separate from inherited organizeImports check warnings. Area node_modules symlink is untracked; generated dist from an accidental judge build is not acceptance proof. Clean only owned generated artifacts before final audit. Last disk check124GiB free. No push or separate PR; parent integrates PR45.
