@@ -865,7 +865,7 @@
             "tests/live-host-bridge.test.ts",
             "wisdom/quality/structural-readability-worker.md"
           ],
-          "result": "Separate transcript snapshot encoding/paging from host authority and task operations; helper coherently owns immutable snapshot projection.",
+          "result": "Move process-shared expiry/budget/locking/rollback filesystem snapshot retention to transcript-snapshots.ts; host keeps scoped delivery and quoted JSON. Remove unused creation metadata and unread native polling progress values; one completion decision covers paged/hidden observations.",
           "checks": "46 host/access/extension passes; 3 outer remote/artifact/compatibility passes; regression passes baseline; baseline/final tsc/format/diff pass; inherited lint diagnostics."
         }
       ],
