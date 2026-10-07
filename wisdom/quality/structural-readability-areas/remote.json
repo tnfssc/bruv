@@ -315,24 +315,39 @@
     {
       "focus": "src/remote/human-rendering.ts",
       "initialBlob": "bb92205c07e0a331b531da9ff41fb71273fd31eb",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
+      "primary": {
+        "id": "task_3a4c1736",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_3a4c1736",
+        "branch": "bruv/remote-primary-human-rendering-3a4c1736"
+      }
     },
     {
       "focus": "src/remote/job-artifacts.ts",
       "initialBlob": "457f4370168fc3d95e920b79d03f480104dadf19",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
+      "primary": {
+        "id": "task_b2c19617",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_b2c19617",
+        "branch": "bruv/remote-primary-job-artifacts-b2c19617"
+      }
     },
     {
       "focus": "src/remote/job-delivery.ts",
       "initialBlob": "21d37bd7fca5f9bb0e75e7c99fac103008f4aba4",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_2852e3a3",
-          "status": "running",
-          "candidate": "2256c36c7187c528bfe8cf91ec835ad3c3fe5dbd"
+          "status": "completed",
+          "candidate": "2256c36c7187c528bfe8cf91ec835ad3c3fe5dbd",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Coherent SQL durable enqueue/attention retirement, immediate claims, token-fenced delivery/failure, retry/replay operations; host acceptance distinct from task completion and end-to-end acknowledgment.",
+          "checks": "Independent candidate10 pass/52; identity-matched area delivery5 pass/37; related final observations covered by combined131/1535. No crash/live/full guarantee."
         }
       ],
       "launchBase": "926c1c58318b0202744be8636eef7064981f2514",
@@ -344,13 +359,25 @@
       },
       "result": "No change: attributed observation durable dedup/terminal retirement, transactional leases and claim-token fencing, bounded retries, resource teardown separate from SSH cancellation.",
       "checks": "10 pass/52 assertions; no full/live.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "21d37bd7fca5f9bb0e75e7c99fac103008f4aba4",
+      "integrationState": "unchanged exact area blob"
     },
     {
       "focus": "src/remote/job-events.ts",
       "initialBlob": "38774795309a62bf685943a7784d348584f26504",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "candidate-awaiting-judge",
+      "judgeRounds": [],
+      "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
+      "primary": {
+        "id": "task_573d7ca9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_573d7ca9",
+        "branch": "bruv/remote-primary-job-events-573d7ca9",
+        "commit": "25dec5b190c514a8ee88c77092398896b85e1e9f"
+      },
+      "result": "Unchanged session publication/identity/terminal fence/serialized dedup/store/copied-listener notification; startup subscribe+snapshot, waits recheck/unsubscribe, shutdown clears only session volatile state.",
+      "checks": "51 pass/1138 plus11 temporary lifecycle assertions; prepared assets resolved setup-only parent-wakeup failures; no full/live.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/job-observations.ts",
@@ -524,8 +551,14 @@
     {
       "focus": "src/remote/placement.ts",
       "initialBlob": "c27e168ec203a643ed30def19cf8edbfd53abb09",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
+      "primary": {
+        "id": "task_abc863bb",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_abc863bb",
+        "branch": "bruv/remote-primary-placement-abc863bb"
+      }
     },
     {
       "focus": "src/remote/protocol.ts",
@@ -1525,8 +1558,14 @@
     {
       "focus": "tests/remote-job-observations.test.ts",
       "initialBlob": "874b1d89a9c77153b030b59d43a219e7cda701ec",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_158bd70e",
+          "status": "running",
+          "candidate": "1bbf7d18a2c366201dea50cb9bc84d6fc5c57e76"
+        }
+      ],
       "relatedIntegration": {
         "candidate": "b6b2dbe5eb292d0811bd004b8cef76253efb27c2",
         "judge": "task_c32ab4fa",
@@ -1537,8 +1576,12 @@
       "primary": {
         "id": "task_0e0a9a10",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_0e0a9a10",
-        "branch": "bruv/remote-primary-observation-tests-0e0a9a10"
-      }
+        "branch": "bruv/remote-primary-observation-tests-0e0a9a10",
+        "commit": "1bbf7d18a2c366201dea50cb9bc84d6fc5c57e76"
+      },
+      "result": "Independent serialized bound observation, persisted-summary fixture, malformed preview value replace unrelated preview mutations; authority/cancellation/result assertions unchanged.",
+      "checks": "Baseline30/candidate31 tests both174 assertions; format/lint/diff pass.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-jobs-e2e.test.ts",
@@ -1644,14 +1687,24 @@
     {
       "focus": "tests/remote-question-bridge.test.ts",
       "initialBlob": "73a94e3af266e9b0c3bc2fdcc67ecf6b8b7ff519",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_9172c217",
+          "status": "running",
+          "candidate": "1406a1c6aeee538cb12bfc42e32d120385773389"
+        }
+      ],
       "launchBase": "921a4c77daef78770d84d1d542a830a6dfec3e61",
       "primary": {
         "id": "task_4cf5a2f7",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_4cf5a2f7",
-        "branch": "bruv/remote-primary-remote-question-bridge.te-4cf5a2f7"
-      }
+        "branch": "bruv/remote-primary-remote-question-bridge.te-4cf5a2f7",
+        "commit": "1406a1c6aeee538cb12bfc42e32d120385773389"
+      },
+      "result": "Session fixture gives ordered multicast hooks explicit startup/settlement/shutdown; polling waits for actual runtime publication, held-poll shutdown regression; all19 original tests retained,16 bodies byte-identical.",
+      "checks": "69 pass/1231 assertions; format/lint/diff pass; no full/live.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-repository-download.test.ts",
@@ -1849,8 +1902,17 @@
     {
       "focus": "tests/root-placement-options.test.ts",
       "initialBlob": "d60e1a3f8a6847f3adad530b64f937ca54b5d5d9",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_ea570b89",
+          "status": "completed",
+          "candidate": "199fe91cdc4bba1573e3ed5c590292090cfa7f3f",
+          "verdict": "ACCEPT",
+          "reason": "Inline local dispatch/source selection/startup intent/attachment contracts replace unrelated rejection loop; all25 baseline and13 original argument cases retained, complete-result assertions stronger.",
+          "checks": "Independent19 pass/56, format/lint/diff; no production/full/live changes."
+        }
+      ],
       "relatedIntegration": {
         "candidate": "ac44370fe3f3fb7de540fbb598cb1a0e77abcfe8",
         "judge": "task_d1dd2209",
@@ -1861,8 +1923,14 @@
       "primary": {
         "id": "task_c13c26b1",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_c13c26b1",
-        "branch": "bruv/remote-primary-root-placement-options.te-c13c26b1"
-      }
+        "branch": "bruv/remote-primary-root-placement-options.te-c13c26b1",
+        "commit": "199fe91cdc4bba1573e3ed5c590292090cfa7f3f"
+      },
+      "result": "Anonymous rejection loop reorganized by authority/routing/source/prompt/override contracts; specific refusal messages and complete dispatch results, all25 baseline argument arrays retained.",
+      "checks": "19 pass/56 focused+adjacent; format/lint/diff pass, no live.",
+      "changedRelatedPaths": [],
+      "acceptedBlob": "725ebe43d07c2c3d17142ce140b9aebe46bc3fbf",
+      "integrationState": "exact own-primary patch applied, related acceptance superseded"
     },
     {
       "focus": "tests/root-placement-policy.test.ts",
