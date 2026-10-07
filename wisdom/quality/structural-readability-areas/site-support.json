@@ -5,13 +5,15 @@
     {
       "focus": "site/.gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_e433e2c2",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_e433e2c2",
           "branch": "bruv/primary-site-.gitignore-e433e2c2",
-          "base": "4175acd2ef96419451a130dec86c6ce2d3f78cf0"
+          "base": "4175acd2ef96419451a130dec86c6ce2d3f78cf0",
+          "commit": "c8ac4589989164e9934a45b20b7c6d9136fe38e2",
+          "result": "Unchanged explicit dependency/output exclusions; install->dist build->preview/deploy trace. 10 asserted git ignore probes; no build/runtime."
         }
       ],
       "judges": [],
@@ -20,13 +22,15 @@
     {
       "focus": "site/assets/brand/bruv-icon.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_74788f3b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_74788f3b",
           "branch": "bruv/primary-site-assets-brand-bruv-icon.svg-74788f3b",
-          "base": "3647146013dbb2bd05ae7ee977fa476cd5d4686e"
+          "base": "3647146013dbb2bd05ae7ee977fa476cd5d4686e",
+          "commit": "738098f73a9080238aa241eb765ecf458d353ad3",
+          "result": "No source change; accessible labels->theme fill->local lean transform->even-odd silhouette/counter coherent; site links/copies unchanged. build.test 10 pass; no browser/full build."
         }
       ],
       "judges": [],
@@ -35,24 +39,45 @@
     {
       "focus": "site/assets/brand/bruv-wordmark-light.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_8e8b5dd8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_8e8b5dd8",
+          "branch": "bruv/primary-site-assets-brand-bruv-wordmark--8e8b5dd8",
+          "base": "cf3212898bfeb490e314207cd740758d06aa01ca"
+        }
+      ],
       "judges": [],
       "initialBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_e142ec25",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_e142ec25",
+          "branch": "bruv/primary-site-assets-brand-bruv-wordmark.-e142ec25",
+          "base": "cf3212898bfeb490e314207cd740758d06aa01ca"
+        }
+      ],
       "judges": [],
       "initialBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7"
     },
     {
       "focus": "site/assets/brand/wordmark-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_4cffbf2e",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_4cffbf2e",
+          "branch": "bruv/primary-site-assets-brand-wordmark-cells-4cffbf2e",
+          "base": "cf3212898bfeb490e314207cd740758d06aa01ca"
+        }
+      ],
       "judges": [],
       "initialBlob": "7690aff87443de0a97521444bb7a64546f568f4e"
     },
@@ -99,7 +124,7 @@
     {
       "focus": "site/demos.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_008ddeae",
@@ -114,7 +139,10 @@
         {
           "id": "task_fae7ccc8",
           "candidate": "5517249dd1180a80bec468b8aebb58bc4cb2458b",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Story assertions have independent journeys; pause/offscreen/hold/wrap setups independent and nonzero freeze catches reset-to-zero. Assertions strengthened, no production change. Judge 11 tests/5582285 assertions plus 10 build tests/123298 assertions; mutation probe writer-only.",
+          "objections": []
         }
       ],
       "initialBlob": "8ca404103fe2971f2c54b810f45d0e527d5e40fd",
@@ -124,7 +152,10 @@
         "blob": "9eb31e6f56ef27e3f4677fc96c0e984d510c31d8",
         "verdict": "ACCEPT",
         "needsOwnPrimary": true
-      }
+      },
+      "acceptedBlob": "9a554baa5a3a7c3ae6e4d424a6af2cd8fd02c7c8",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/demos.ts",
@@ -554,7 +585,7 @@
     {
       "focus": "site/scripts/html-animation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_9f36ba3a",
@@ -565,7 +596,13 @@
           "result": "withDemoPage owns setup/awaited assertions/context teardown, tests get Page; final hold names manualClock installed before navigation. Assertions/timings/routing unchanged. 5 Chromium tests/48 expectations,TS/format pass. Behavior delta: setup exceptions now close context; not injected. Judge whether justified lifetime coherence vs speculative defense."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_32ee7f46",
+          "candidate": "dcafa0e98cd6cc5216e326efc4634a327a8129c0",
+          "state": "running"
+        }
+      ],
       "initialBlob": "294ddcb66e4bd9f75740b948dbdf989cdadeb5c7"
     },
     {
@@ -588,13 +625,15 @@
     {
       "focus": "site/scripts/install.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_d558bcd2",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_d558bcd2",
           "branch": "bruv/primary-site-scripts-install.test.ts-d558bcd2",
-          "base": "d60a32ac5d87d5865097b99f40ddb1f6cabdb768"
+          "base": "d60a32ac5d87d5865097b99f40ddb1f6cabdb768",
+          "commit": "14fb20cae47d4ff2cfa33c2a89a65d756f251cb6",
+          "result": "Host mocks/release publication coherent owners; fixture owns setup/execution/assertions/cleanup; platform expectations explicit scenario data not repeated selection logic.7 tests/97 assertions retained;TS/Biome;120 mock/asset byte comparisons baseline match. Cleanup now covers setup errors, explicit behavior delta requiring scrutiny; production unchanged."
         }
       ],
       "judges": [],

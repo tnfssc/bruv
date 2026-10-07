@@ -33,3 +33,5 @@ site/scripts/animation.ts: Typed shared terminal observation and control/cell co
 site/html-cells.ts: Local copied style-run grouping -> escaping/RGB spans -> row wrapper directly readable; producer-owned type-only Cell import clear. Judge independently 6 demos tests and 7 serializer assertions including frozen-input preservation. Browser inspected not rerun.
 
 site/scripts/build.test.ts: URL authority cases direct, layout matrices keep inputs beside assertions, frame/playback setups local. Judge read full test and real build/layout/demo/capture/runtime dependencies; independently 16 focus+demo tests. No browser/build/full gate.
+
+site/demos.test.ts: Story assertions have independent journeys; pause/offscreen/hold/wrap setups independent and nonzero freeze catches reset-to-zero. Assertions strengthened, no production change. Judge 11 tests/5582285 assertions plus 10 build tests/123298 assertions; mutation probe writer-only.
