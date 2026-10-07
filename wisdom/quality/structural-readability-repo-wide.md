@@ -60,3 +60,7 @@ Next: parent launches area orchestrators from this initialization commit, runs t
 ## Shared integration checkpoint
 
 Joined committed, independently judged partial batches from all eight areas. Exact tips: [integration batches](structural-readability-integration-batches.json). No changed source overlap at this checkpoint. Related files are accepted as parts of coherent patches; their dedicated primary focus coverage still remains where area ledgers say pending. Two unused session-input files have judged removals, not missing hashes. This is common code for the remaining workers, not whole-repo acceptance or delivery. Parent integration typecheck passed at 95d2e164 (task_a2ce6aa8), including asset preparation and TypeScript noEmit. Final primary/judge coverage, integration quality audit and full gates remain.
+
+## Site area complete
+
+Joined final site-support 2da1ed1b: exact 41-file primary coverage, final per-file judgments, combined 16-source judgment and all accepted blob hashes checked. Website tests/build/Chromium/animation proof and the parent-installer probe are in the area report. Standalone historical capture strict diagnostics and runtime/platform limits remain explicit. Seven areas continue; whole-repo final judgment and gates still pending. No piecewise PR delivery.

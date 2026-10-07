@@ -749,202 +749,402 @@
     {
       "file": "site/.gitignore",
       "initialBlob": "b9470778764f72c5257a3361590d2994547f90e1",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "b9470778764f72c5257a3361590d2994547f90e1",
+      "primaryId": "task_e433e2c2",
+      "judgeIds": ["task_2a36b538"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/assets/brand/bruv-icon.svg",
       "initialBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646",
+      "primaryId": "task_74788f3b",
+      "judgeIds": ["task_3d50228c"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/assets/brand/bruv-wordmark-light.svg",
       "initialBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6",
+      "primaryId": "task_8e8b5dd8",
+      "judgeIds": ["task_08863fc0"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/assets/brand/bruv-wordmark.svg",
       "initialBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7",
+      "primaryId": "task_e142ec25",
+      "judgeIds": ["task_ac6fe577"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/assets/brand/wordmark-cells.json",
       "initialBlob": "7690aff87443de0a97521444bb7a64546f568f4e",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "7690aff87443de0a97521444bb7a64546f568f4e",
+      "primaryId": "task_4cffbf2e",
+      "judgeIds": ["task_b3d7d253"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/assets/cli-settings.txt",
       "initialBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569",
+      "primaryId": "task_a55e7213",
+      "judgeIds": ["task_f29c1365"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/assets/settings-cells.json",
       "initialBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3",
+      "primaryId": "task_dc9fc829",
+      "judgeIds": ["task_d45f272d"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/brand.ts",
       "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
+      "primaryId": "task_4f28d450",
+      "judgeIds": ["task_b82db0dc", "task_884e8b0b"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/capture.ts",
       "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "ea72ee5ebc5145f474b9b9e3a2b3f7afeb49f54b",
+      "primaryId": "task_a8322d06",
+      "judgeIds": ["task_bdc898a5"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/content.ts",
       "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8",
+      "primaryId": "task_6b21fc71",
+      "judgeIds": ["task_2ebc2a13"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/demos.test.ts",
       "initialBlob": "8ca404103fe2971f2c54b810f45d0e527d5e40fd",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "9a554baa5a3a7c3ae6e4d424a6af2cd8fd02c7c8",
+      "primaryId": "task_008ddeae",
+      "judgeIds": ["task_fae7ccc8"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/demos.ts",
       "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "5f211cd265a0d4cb8377b5148fa13281f2ccb5fa",
+      "primaryId": "task_01e034e7",
+      "judgeIds": ["task_608a711c"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/html-animation.ts",
       "initialBlob": "83d93edb503c6c100e5a778c48b69a91bc91756e",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "611b710f3e082fde979cb1ea86e462445030a2fa",
+      "primaryId": "task_9c42d8e3",
+      "judgeIds": ["task_a0562ba4"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/html-cells.ts",
       "initialBlob": "7c70d1bdd3c530eddb002adeffd1d1f7be2f5dc1",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
+      "primaryId": "task_0fff100d",
+      "judgeIds": ["task_7c587dbb"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/index.html",
       "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3",
+      "primaryId": "task_1510f666",
+      "judgeIds": ["task_076ad4af"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/install-command.ts",
       "initialBlob": "955cbf767fa094bd223bee8f0bba424692c3c663",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "955cbf767fa094bd223bee8f0bba424692c3c663",
+      "primaryId": "task_867e5969",
+      "judgeIds": ["task_203c204d"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/install-html.ts",
       "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db",
+      "primaryId": "task_8dfc6d3c",
+      "judgeIds": ["task_fbbc0bfe"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/layout.ts",
       "initialBlob": "0ec60a65bd36d939f302323b7a5fd63ab170046b",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "128855476c64c4b43bd0258b9064f2b44831878c",
+      "primaryId": "task_c8710829",
+      "judgeIds": ["task_b7d332ee"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/package.json",
       "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d",
+      "primaryId": "task_f9d8fefe",
+      "judgeIds": ["task_4e8a8bc6"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/playback.ts",
       "initialBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e",
+      "primaryId": "task_ed0b8880",
+      "judgeIds": ["task_993fa01c"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/animation.ts",
       "initialBlob": "74f85bf8a7d44a454349084978f1dc4858ed9063",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "4bea05dabee326db5d3cc42783a45b9f73e66750",
+      "primaryId": "task_5d88706f",
+      "judgeIds": ["task_d3cccc82"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/browser.ts",
       "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2",
+      "primaryId": "task_4d170cd0",
+      "judgeIds": ["task_4d85f3b6"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/build.test.ts",
       "initialBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799",
+      "primaryId": "task_3a3293a9",
+      "judgeIds": ["task_53cb3831"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/build.ts",
       "initialBlob": "a8ca48ae0d03f2567d458737f143c245e9acfa89",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "1cf04b95f42c7d500d2dd302f02f48db84273aba",
+      "primaryId": "task_f66bbf8b",
+      "judgeIds": ["task_f3451b4a"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/capture-demo-source.ts",
       "initialBlob": "68b0dc7db1ccdf38a27ea84dcdbd98168f99570c",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "cb174478a55a37871373add5263eebfb36de2b19",
+      "primaryId": "task_82201d2d",
+      "judgeIds": ["task_53b78b16"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/capture-real-pty.py",
       "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16",
+      "primaryId": "task_46c581d4",
+      "judgeIds": ["task_59d37faf"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/capture-real.ts",
       "initialBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b",
+      "primaryId": "task_78b57531",
+      "judgeIds": ["task_a59154f4"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/extract-cells.ts",
       "initialBlob": "53e23a4d0a50dd36efdcb1f4f972a11f5cc1ff13",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "0c08612f134666dff26b631ae44408b7bedde80d",
+      "primaryId": "task_f07c6c88",
+      "judgeIds": ["task_5628d052"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/generate-wordmark.ts",
       "initialBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c",
+      "primaryId": "task_ff69ebfe",
+      "judgeIds": ["task_a0a2c4e8"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/html-animation.test.ts",
       "initialBlob": "294ddcb66e4bd9f75740b948dbdf989cdadeb5c7",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "ec93e1910b0f9d4d1ff2ea31e9f3c1de61086360",
+      "primaryId": "task_9f36ba3a",
+      "judgeIds": ["task_32ee7f46"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/install-ui.test.ts",
       "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "538556abc76aa8bb294950cbc23b64ac8ac1be84",
+      "primaryId": "task_072fdc49",
+      "judgeIds": ["task_1588246a"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/install.test.ts",
       "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "1da41ffef989ec064e62295f04d8352eb5137345",
+      "primaryId": "task_d558bcd2",
+      "judgeIds": ["task_5840db21"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/preview.ts",
       "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "7b3f72d907458d58798d63986222b4a95ab9608a",
+      "primaryId": "task_0207fb65",
+      "judgeIds": ["task_21f20bcf"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/scroll.test.ts",
       "initialBlob": "db16489bc7ef3c785b58fa42a8fb2d7a4c83af2c",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "5a1025b2f60ae7f6ef6ff55951b79cce6edd55f1",
+      "primaryId": "task_6f289d7b",
+      "judgeIds": ["task_8e721489"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/startup.test.ts",
       "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "8ff4a906e773189da064dd81b8087d883ab7019b",
+      "primaryId": "task_2473ecf3",
+      "judgeIds": ["task_07a74302"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scripts/validate.ts",
       "initialBlob": "f4efd413bc0cb47bbcc2bd922bc4c33184e33066",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "31ae70389bba2af920c96f41f2bcb2292ee53292",
+      "primaryId": "task_feb44467",
+      "judgeIds": ["task_012c74d4"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/scroll.ts",
       "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3",
+      "primaryId": "task_955a4df5",
+      "judgeIds": ["task_9f837c1d"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/styles.css",
       "initialBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a",
+      "primaryId": "task_05fa70bb",
+      "judgeIds": ["task_4b051cf8"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/terminal.ts",
       "initialBlob": "9c375c3852c97216dc89f6d055587ef63353ac52",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "53be49f1b82e4629de9793286e4db958b467e226",
+      "primaryId": "task_8638bdbf",
+      "judgeIds": ["task_d14c7a16"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "site/wrangler.jsonc",
       "initialBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75",
+      "primaryId": "task_60419896",
+      "judgeIds": ["task_c1525156"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "src/agent/README.md",
@@ -2014,7 +2214,12 @@
     {
       "file": "support/gpt-live-explained.html",
       "initialBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce",
-      "status": "pending"
+      "status": "accepted",
+      "area": "site-support",
+      "acceptedBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce",
+      "primaryId": "task_1e4c14a6",
+      "judgeIds": ["task_69db8026"],
+      "report": "wisdom/quality/structural-readability-areas/site-support.json"
     },
     {
       "file": "t3.json",
@@ -3831,5 +4036,12 @@
       "initialBlob": "b984b24eea2a441adca35f80564e94c869658551",
       "status": "pending"
     }
-  ]
+  ],
+  "completedAreas": {
+    "site-support": {
+      "tip": "2da1ed1b70639cdcc07810df2f0dd139f2642411",
+      "files": 41,
+      "combinedJudge": "task_a3b96800"
+    }
+  }
 }
