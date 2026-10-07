@@ -1719,25 +1719,35 @@
         "launchBase": "b418d87d4ba3cd6651d70ff65a31242a2e9cc7d6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_79a24111",
         "branch": "bruv/primary-tests-gpt-live-delegation.test.t-79a24111",
+        "status": "candidate ready",
+        "commit": "bea2d9d57a4d1fa9a2279f5ec9d67a5b39e1d9db"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "awaiting judge slot",
+      "relatedPatchJudgment": {
+        "judgeId": "task_3583b317",
+        "verdict": "ACCEPT",
+        "blob": "fad7de7b0b4d4ece4f11e17fd29c27ff313bb2d3"
+      },
+      "relatedPaths": [],
+      "readingResult": "Fixture alwaysobservessubmissions;testowned admissionpromises replacecallback-initializedmutable resolvers;acceptfirst/rejectsecond evictedadmission explicit. Four contractgroups eventtime/authorityspeechfreshness/replay/losssettlement;stalespeechvsrealsettlement watermark asserted.",
+      "checks": "26focusedtests91assertions;strictTS/format/diffpass3baseline lintwarnings;no runtimefix/provider/device/Mac/wholegate."
+    },
+    {
+      "focus": "tests/gpt-live-playback.test.ts",
+      "initialBlob": "f2532f05c7ea303b44d5ad520a32cad0e413bf63",
+      "primary": {
+        "id": "task_3186f4b0",
+        "launchBase": "1a327b0c55fbdada30c1a84d0ad3fe33f1918667",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_3186f4b0",
+        "branch": "bruv/primary-tests-gpt-live-playback.test.ts-3186f4b0",
         "status": "running",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "primary running",
-      "relatedPatchJudgment": {
-        "judgeId": "task_3583b317",
-        "verdict": "ACCEPT",
-        "blob": "fad7de7b0b4d4ece4f11e17fd29c27ff313bb2d3"
-      }
-    },
-    {
-      "focus": "tests/gpt-live-playback.test.ts",
-      "initialBlob": "f2532f05c7ea303b44d5ad520a32cad0e413bf63",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
       "relatedPatchJudgment": {
         "judgeId": "task_af9fc144",
         "verdict": "ACCEPT",
