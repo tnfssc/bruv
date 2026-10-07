@@ -13,8 +13,6 @@ import {
 } from "../src/typescript/images";
 import { makePng } from "./image-fixture";
 
-const binary = resolve(import.meta.dir, "../dist/bruv");
-let directory: string;
 const png = makePng();
 const jpeg = Buffer.from("ffd8ffe00010", "hex");
 const gif = Buffer.from("GIF89a" + "\0".repeat(7));
@@ -22,20 +20,24 @@ const webp = Buffer.from("RIFF" + "\0".repeat(4) + "WEBPVP8 " + "\0".repeat(4));
 const encoded = png.toString("base64");
 const bytesCode = `Buffer.from(${JSON.stringify(encoded)}, "base64")`;
 
-beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), "bruv-images-"));
-});
-afterEach(async () => {
-  await rm(directory, { recursive: true, force: true });
-});
-function execute(code: string, timeoutMs = 3_000) {
-  return executeIsolated(code, directory, undefined, timeoutMs, { executablePath: binary, killGraceMs: 100 });
-}
 function record(data = encoded, mimeType = "image/png") {
   return Buffer.from(JSON.stringify({ type: "image", data, mimeType }) + "\n");
 }
 
 describe("execute image output", () => {
+  const binary = resolve(import.meta.dir, "../dist/bruv");
+  let directory: string;
+
+  beforeEach(async () => {
+    directory = await mkdtemp(join(tmpdir(), "bruv-images-"));
+  });
+  afterEach(async () => {
+    await rm(directory, { recursive: true, force: true });
+  });
+  function execute(code: string, timeoutMs = 3_000) {
+    return executeIsolated(code, directory, undefined, timeoutMs, { executablePath: binary, killGraceMs: 100 });
+  }
+
   test("exposes showImage without the old emitImage alias", async () => {
     const result = await execute(
       `console.log(typeof showImage, typeof globalThis.showImage, typeof globalThis.emitImage); await showImage(${bytesCode});`,
@@ -256,16 +258,23 @@ describe("execute image output", () => {
     expect(code).toBe(1);
     expect(stderr).toContain("available only through the execute tool");
   });
+});
 
-  test("validates format headers and untrusted frame metadata", () => {
+describe("image format detection", () => {
+  test("recognizes supported headers and rejects other bytes", () => {
     expect(imageMimeType(png)).toBe("image/png");
     expect(imageMimeType(jpeg)).toBe("image/jpeg");
     expect(imageMimeType(webp)).toBe("image/webp");
     expect(() => imageMimeType(gif)).toThrow("supports PNG, JPEG, and WebP bytes");
+    expect(() => imageMimeType(Buffer.from("not an image"))).toThrow();
+  });
+});
+
+describe("image channel validation", () => {
+  test("validates untrusted record contents before accepting images", () => {
     expect(() => decodeImageChannel(record(gif.toString("base64"), "image/gif"))).toThrow(
       "supports PNG, JPEG, and WebP bytes",
     );
-    expect(() => imageMimeType(Buffer.from("not an image"))).toThrow();
     expect(() => decodeImageChannel(record(encoded, "image/jpeg"))).toThrow("mismatch");
     expect(() => decodeImageChannel(record("%%%"))).toThrow("base64");
     expect(() => decodeImageChannel(Buffer.from("null\n"))).toThrow("Invalid");
@@ -282,11 +291,8 @@ describe("execute image output", () => {
       ),
     ).toThrow("Invalid image resize metadata");
     expect(() => decodeImageChannel(Buffer.from("{bad json}\n"))).toThrow("Invalid JSON");
-    expect(() => decodeImageChannel(Buffer.concat(Array(5).fill(record())))).toThrow("4 images");
   });
-});
 
-describe("image channel validation", () => {
   test("accepts ordered records and preserves validated resize metadata", () => {
     const resize = { originalWidth: 4, originalHeight: 6, width: 2, height: 3 };
     const resized = Buffer.from(
@@ -325,5 +331,6 @@ describe("image channel validation", () => {
     );
     expect(() => decodeImageChannel(Buffer.from("{bad json}"))).toThrow("Incomplete image output record");
     expect(() => decodeImageChannel(Buffer.from("null\n".repeat(5)))).toThrow("Image output exceeds 4 images");
+    expect(() => decodeImageChannel(Buffer.concat(Array(5).fill(record())))).toThrow("4 images");
   });
 });

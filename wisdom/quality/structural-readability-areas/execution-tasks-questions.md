@@ -57,3 +57,5 @@ Handoff-test primary accepted task_8ed2ab8e, final4c64cdd32dcefa46258e47612c2fa2
 ## Open JobService-test rework
 
 Judge task_207ccf5d REJECTS candidate6c2a4f36 (NOT imported): coherent three-authority split omitted policy fixture sessionManager, causing durable child history outside temp cleanup in real agent sessions. Green13/70 missed it; judge reproduced retained file after temp directory removal. Fresh rework must preserve split/real-manager benefits, restore fixture getSessionDir/getSessionFile and assert prepared session remains in dir, then fresh judge with full rejection/response. No production change needed.
+
+Image-test primary task_c0294795 and question-ledger primary task_67d501cd accepted: execution-only fixture ownership vs pure validators, and independent ledger contract lifetimes remove real reconstruction. Exact final blobs in JSON; independent image19/107+source6/24+cancel6/29; questions14/61+sixfile50/392, static checks passed. Both full test diffs integrated.

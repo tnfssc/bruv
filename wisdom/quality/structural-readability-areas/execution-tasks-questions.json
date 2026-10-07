@@ -6,7 +6,7 @@
     {
       "focus": "scripts/fixtures/task-placement-clean/fake-provider.ts",
       "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_15c2f619",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_15c2f619",
@@ -14,7 +14,14 @@
         "base": "5541e227169c66a51af1854b644cbf42103f29d7",
         "commit": "974450ede40c7c55f70002457fcacfbccaa22acb"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_d44580c4",
+          "status": "running",
+          "candidate": "974450ede40c7c55f70002457fcacfbccaa22acb",
+          "base": "5541e227169c66a51af1854b644cbf42103f29d7"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "5541e227169c66a51af1854b644cbf42103f29d7",
@@ -38,11 +45,18 @@
     {
       "focus": "scripts/fixtures/task-placement-clean/scenario.ts",
       "initialBlob": "1dd0984297604e141df606d48595c1f698a75ab7",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_c163c18d",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c163c18d",
+        "branch": "bruv/primary-scripts-fixtures-task-placement--c163c18d",
+        "base": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9"
     },
     {
       "focus": "scripts/fixtures/task-placement-clean/settings.json",
@@ -111,18 +125,36 @@
     {
       "focus": "scripts/leak-audit/execution-runtime.ts",
       "initialBlob": "a1b7750b9557d511dd7d7c5d9d9a417217829995",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_bf95f257",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf95f257",
         "branch": "bruv/primary-scripts-leak-audit-execution-run-bf95f257",
         "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
-        "commit": null
+        "commit": "db26839716843264d2b04407245826d2ad453bf0"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_9bfea73b",
+          "status": "running",
+          "candidate": "db26839716843264d2b04407245826d2ad453bf0",
+          "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf"
+      "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+      "changedRelatedPaths": [
+        "scripts/leak-audit/execution-runtime.ts"
+      ],
+      "readingResult": "Audit operation owns artifacts/PIDs/cleanup; per-execution abort/descendant lifetimes scoped and named timeout/bridge options expose effects. Workload/phase/assertions retained.",
+      "checks": [
+        "baseline+candidate bounded343 executions each;10labels8FDs6bridgeaborts0descendants",
+        "synthetic rejection reproduced timer cleanup fix",
+        "focused tsc/format/diff pass",
+        "measurements not leak absence/replayproof; binary predates image update"
+      ],
+      "incidentalFix": "Probe timer cleanup corrected on synthetic execution rejection; explicit audit-only fix."
     },
     {
       "focus": "scripts/task-placement-clean-capture.ts",
@@ -2105,7 +2137,7 @@
     {
       "focus": "tests/questions.test.ts",
       "initialBlob": "79a2979c636f8a49ef3c192f91acea0868cc10ec",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_e678c58b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e678c58b",
@@ -2116,13 +2148,21 @@
       "judgeRounds": [
         {
           "id": "task_67d501cd",
-          "status": "running",
+          "status": "complete",
           "candidate": "ae3387d53e9f40c074eb0b3eceefd62844ad5caa",
-          "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b"
+          "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Lifecycle/replay,dedup/navigation,race/capacity independent fixture lifetimes remove state-dependent reconstruction; all old obligations retained,8branchcases unchanged,persisted winner/answer deterministic.",
+          "checks": [
+            "independent baseline11/57 candidate14/61 sixfile50/392",
+            "Biome/fulltsc/diff pass",
+            "no humanUI/liveSSH/fullgate"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "6baf85f21deab6c3d694f54aeba957d665bb3391",
+      "integration": "full primary test diff integrated",
       "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
       "changedRelatedPaths": [
         "tests/questions.test.ts"
@@ -2438,7 +2478,7 @@
     {
       "focus": "tests/typescript-images.test.ts",
       "initialBlob": "94a00fb9bbe92edc63a9192476d6562be57ff4ce",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_cf585928",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cf585928",
@@ -2449,14 +2489,22 @@
       "judgeRounds": [
         {
           "id": "task_c0294795",
-          "status": "running",
+          "status": "complete",
           "candidate": "4e012a7723635492f49eb27bfd292f3b052dda53",
           "base": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
-          "priorRelatedJudge": "task_2d0765d2"
+          "priorRelatedJudge": "task_2d0765d2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Execution suite owns tempworkspace/executable/hooks; pure header/record/channel tests no longer inherit execution lifetime. All assertions preserved, atomic rejection direct.",
+          "checks": [
+            "independent baseline18/107 candidate19/107",
+            "source6/24 adjacentcancel6/29",
+            "format/lint/diff pass; no fresh packageddecoder"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "c812a1a951d36405c07022c0aaf61963bc51bdd6",
+      "integration": "full primary test diff integrated",
       "relatedAcceptance": {
         "judge": "task_2d0765d2",
         "candidate": "066f319f7741234a589fbc9d89d46a2be1a076d2",
