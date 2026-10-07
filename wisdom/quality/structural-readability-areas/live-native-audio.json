@@ -1175,10 +1175,17 @@
     {
       "focus": "tests/live-main-owner.test.ts",
       "initialBlob": "1fcc147892d3cdd2f5adcdf0338ab281c0151506",
-      "primary": null,
+      "primary": {
+        "id": "task_d7333f4e",
+        "launchBase": "07bda6417ddbb90145ccd92024ce1bf98d150000",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_d7333f4e",
+        "branch": "bruv/primary-tests-live-main-owner.test.ts-d7333f4e",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_bb0fe7ca",
         "verdict": "ACCEPT",
@@ -1458,17 +1465,27 @@
         "launchBase": "ffafbca7bdd95d535b73d915a3211eca801b7479",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_b8b36154",
         "branch": "bruv/primary-tests-openai-session.test.ts-b8b36154",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "af9b22ff882959f601e8748f75cf296e4fbfa7d1"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_4cb31324",
+          "status": "running",
+          "candidate": "af9b22ff882959f601e8748f75cf296e4fbfa7d1",
+          "base": "ffafbca7bdd95d535b73d915a3211eca801b7479"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_5c3c9aed",
         "verdict": "ACCEPT",
         "blob": "2bd1f6b720bb60c98916efc1dde12a7dfbb52f38"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Scenarios contiguous by capture/context/response/playback/transport; dispatch result lifetimes explicit and keyed by call ID, admission awaited in revocation tests, protocol messages remain visible. Oversized-result artifact directory now owned/cleaned and complete content verified.",
+      "checks": "64 focused tests/393 assertions; all 46 expanded scenarios and 143 provider-message expressions retained; typecheck/format/diff pass, existing PCM warning. Baseline artifact 100050 bytes vs candidate zero entries explicit fixture leak fix."
     }
   ],
   "extraFiles": [
