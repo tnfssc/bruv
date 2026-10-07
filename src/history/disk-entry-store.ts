@@ -47,24 +47,60 @@ export interface EntryMetadata {
   name?: string;
 }
 
+/** Custom rows dominate old task journals. Keep their common type and exact
+ * canonical timestamp off each resident record; decode timestamp on demand.
+ * Noncanonical timestamps retain their original spelling unchanged.
+ */
+class CustomEntryMetadata implements EntryMetadata {
+  private time: string | number;
+  constructor(
+    public id: string,
+    public parentId: string | null,
+    timestamp: string,
+    public offset: number,
+    public length: number,
+    public customType: string | undefined,
+  ) {
+    const millis = Date.parse(timestamp);
+    this.time = Number.isFinite(millis) && new Date(millis).toISOString() === timestamp ? millis : timestamp;
+  }
+  get type(): string {
+    return "custom";
+  }
+  get timestamp(): string {
+    return typeof this.time === "number" ? new Date(this.time).toISOString() : this.time;
+  }
+}
+
 type LocatedEntry = { entry: FileEntry; offset: number; length: number };
 
 /** Read valid JSONL records without keeping the whole file. */
-export function scanJsonl(path: string, visit: (record: LocatedEntry, validIndex: number) => void): void {
+export function scanJsonl(
+  path: string,
+  visit: (record: LocatedEntry, validIndex: number) => void,
+  parse: (line: Buffer) => FileEntry = (line) => JSON.parse(line.toString("utf8")),
+): void {
   const fd = openSync(path, "r");
   const buffer = Buffer.allocUnsafe(64 * 1024);
   let fileOffset = 0;
   let lineOffset = 0;
-  let pieces: Buffer[] = [];
-  let piecesLength = 0;
+  let lineBuffer = Buffer.allocUnsafe(buffer.length);
+  let lineLength = 0;
+  const appendFragment = (fragment: Buffer) => {
+    if (lineLength + fragment.length > lineBuffer.length) {
+      const grown = Buffer.allocUnsafe(Math.max(lineBuffer.length * 2, lineLength + fragment.length));
+      lineBuffer.copy(grown, 0, 0, lineLength);
+      lineBuffer = grown;
+    }
+    fragment.copy(lineBuffer, lineLength);
+    lineLength += fragment.length;
+  };
   let validIndex = 0;
   const consume = (line: Buffer, offset: number) => {
     if (line.length === 0) return;
-    const text = line.toString("utf8");
-    if (text.trim().length === 0) return;
     let entry: FileEntry;
     try {
-      entry = JSON.parse(text) as FileEntry;
+      entry = parse(line);
     } catch {
       // Match the SDK: malformed lines are ignored.
       return;
@@ -85,27 +121,234 @@ export function scanJsonl(path: string, visit: (record: LocatedEntry, validIndex
         // This fragment is consumed before the read buffer is reused. Only
         // unfinished tails below need an owned copy.
         const fragment = buffer.subarray(start, i);
-        if (pieces.length === 0) consume(fragment, lineOffset);
+        if (lineLength === 0) consume(fragment, lineOffset);
         else {
-          pieces.push(fragment);
-          consume(Buffer.concat(pieces, piecesLength + fragment.length), lineOffset);
-          pieces = [];
-          piecesLength = 0;
+          appendFragment(fragment);
+          consume(lineBuffer.subarray(0, lineLength), lineOffset);
+          lineLength = 0;
         }
         lineOffset = fileOffset + i + 1;
         start = i + 1;
       }
       if (start < count) {
-        const fragment = Buffer.from(buffer.subarray(start, count));
-        pieces.push(fragment);
-        piecesLength += fragment.length;
+        appendFragment(buffer.subarray(start, count));
       }
       fileOffset += count;
     }
-    if (pieces.length) consume(Buffer.concat(pieces, piecesLength), lineOffset);
+    if (lineLength) consume(lineBuffer.subarray(0, lineLength), lineOffset);
   } finally {
     closeSync(fd);
   }
+}
+
+/** Validate JSON while projecting only fields used by the resident index.
+ * Skipping values still validates their grammar, but never builds discarded
+ * snapshot arrays/objects or decodes their strings. Normal retrieval parses
+ * the original bytes with JSON.parse as before.
+ */
+const JSON_LITERALS = ["true", "false", "null"];
+const JSON_ESCAPES = [34, 92, 47, 98, 102, 110, 114, 116];
+const EMPTY_BUFFER = Buffer.alloc(0);
+class MetadataParser {
+  private at = 0;
+  private text: Buffer = EMPTY_BUFFER;
+  private rootFields = new Set([
+    "type",
+    "id",
+    "parentId",
+    "timestamp",
+    "customType",
+    "firstKeptEntryId",
+    "thinkingLevel",
+    "provider",
+    "modelId",
+    "targetId",
+    "label",
+    "name",
+    // Session header fields are needed for reopen, too.
+    "version",
+    "cwd",
+    "parentSession",
+  ]);
+  private messageFields = new Set(["role", "provider", "model"]);
+  private fail(): never {
+    throw new SyntaxError("Invalid JSON session record");
+  }
+  private space(): void {
+    for (;;) {
+      const byte = this.text[this.at];
+      if (byte !== 32 && byte !== 9 && byte !== 10 && byte !== 13) return;
+      this.at++;
+    }
+  }
+  private token(start: number, end = this.at): any {
+    return JSON.parse(this.text.subarray(start, end).toString("utf8"));
+  }
+  private stringEnd(): void {
+    if (this.text[this.at++] !== 34) this.fail();
+    while (this.at < this.text.length) {
+      const byte = this.text[this.at++];
+      if (byte === 34) return;
+      if (byte < 32) this.fail();
+      if (byte !== 92) continue;
+      const escapeByte = this.text[this.at++];
+      if (escapeByte === 117) {
+        for (let i = 0; i < 4; i++) {
+          const hex = this.text[this.at++];
+          if (!((hex >= 48 && hex <= 57) || (hex >= 65 && hex <= 70) || (hex >= 97 && hex <= 102))) this.fail();
+        }
+      } else if (!JSON_ESCAPES.includes(escapeByte)) this.fail();
+    }
+    this.fail();
+  }
+  private digits(): void {
+    const start = this.at;
+    while (this.text[this.at] >= 48 && this.text[this.at] <= 57) this.at++;
+    if (start === this.at) this.fail();
+  }
+  private scalar(): void {
+    if (this.text[this.at] === 34) {
+      this.stringEnd();
+      return;
+    }
+    for (const literal of JSON_LITERALS) {
+      if (this.text[this.at] !== literal.charCodeAt(0)) continue;
+      for (let i = 0; i < literal.length; i++) if (this.text[this.at++] !== literal.charCodeAt(i)) this.fail();
+      return;
+    }
+    if (this.text[this.at] === 45) this.at++;
+
+    if (this.text[this.at] === 48) this.at++;
+    else this.digits();
+    if (this.text[this.at] === 46) {
+      this.at++;
+      this.digits();
+    }
+    if (this.text[this.at] === 69 || this.text[this.at] === 101) {
+      this.at++;
+      if (this.text[this.at] === 43 || this.text[this.at] === 45) this.at++;
+      this.digits();
+    }
+  }
+  private skipScopes: number[] = [];
+  private skipValue(): void {
+    const scopes = this.skipScopes;
+    scopes.length = 0;
+    let state: "value" | "key" | "comma" = "value";
+    let empty = false;
+    for (;;) {
+      this.space();
+      const byte = this.text[this.at];
+      if (state === "value") {
+        if (byte === 123 || byte === 91) {
+          scopes.push(byte === 123 ? 125 : 93);
+          this.at++;
+          state = byte === 123 ? "key" : "value";
+          empty = true;
+          continue;
+        }
+        if (byte === 93 && empty && scopes.at(-1) === 93) {
+          scopes.pop();
+          this.at++;
+        } else this.scalar();
+        state = "comma";
+      } else if (state === "key") {
+        if (byte === 125 && empty) {
+          scopes.pop();
+          this.at++;
+          state = "comma";
+        } else {
+          this.stringEnd();
+          this.space();
+          if (this.text[this.at++] !== 58) this.fail();
+          state = "value";
+          empty = false;
+        }
+      } else {
+        if (!scopes.length) return;
+        if (byte === scopes.at(-1)) {
+          scopes.pop();
+          this.at++;
+        } else {
+          if (byte !== 44) this.fail();
+          this.at++;
+          state = scopes.at(-1) === 125 ? "key" : "value";
+          empty = false;
+        }
+      }
+    }
+  }
+  private value(fields?: Set<string>, root = false): any {
+    if (!fields) {
+      this.skipValue();
+      return;
+    }
+    this.space();
+    const start = this.at;
+    if (this.text[this.at] === 123) {
+      this.at++;
+      const result: Record<string, unknown> = {};
+      this.space();
+      if (this.text[this.at] === 125) {
+        this.at++;
+        return result;
+      }
+      for (;;) {
+        this.space();
+        const keyStart = this.at;
+        this.stringEnd();
+        const key = this.token(keyStart);
+        this.space();
+        if (this.text[this.at++] !== 58) this.fail();
+        if (fields.has(key)) {
+          this.space();
+          const begin = this.at;
+          this.value();
+          result[key] = this.token(begin);
+        } else if (root && key === "message") result[key] = this.value(this.messageFields);
+        else this.value();
+        this.space();
+        const next = this.text[this.at++];
+        if (next === 125) return result;
+        if (next !== 44) this.fail();
+      }
+    }
+    if (this.text[this.at] === 91) {
+      this.at++;
+      this.space();
+      if (this.text[this.at] === 93) {
+        this.at++;
+        return;
+      }
+      for (;;) {
+        this.value();
+        this.space();
+        const next = this.text[this.at++];
+        if (next === 93) return;
+        if (next !== 44) this.fail();
+      }
+    }
+    this.scalar();
+    // Preserve the SDK's handling of truthy primitive records.
+    if (fields) return this.token(start);
+  }
+
+  parse(text: Buffer): FileEntry {
+    this.at = 0;
+    this.text = text;
+    try {
+      const result = this.value(this.rootFields, true);
+      this.space();
+      if (this.at !== text.length) this.fail();
+      return result?.type === "session" ? JSON.parse(text.toString("utf8")) : result;
+    } finally {
+      this.text = EMPTY_BUFFER;
+    }
+  }
+}
+const metadataParser = new MetadataParser();
+export function parseEntryMetadata(text: string): FileEntry {
+  return metadataParser.parse(Buffer.from(text));
 }
 
 function tempPath(target: string, purpose: string): string {
@@ -204,16 +447,24 @@ export function migrateSessionFile(path: string, version: number): void {
   });
 }
 
-function metadata(entry: SessionEntry, offset: number, length: number): EntryMetadata {
+function ownedString(value: string): string {
+  // Preserve UTF-16 code units, including lone surrogates.
+  return JSON.parse(JSON.stringify(value)) as string;
+}
+
+function metadata(entry: SessionEntry, offset: number, length: number, ownStrings: boolean): EntryMetadata {
   const value = entry as SessionEntry & Record<string, any>;
-  const meta: EntryMetadata = {
-    type: entry.type,
-    id: entry.id,
-    parentId: entry.parentId,
-    timestamp: entry.timestamp,
-    offset,
-    length,
-  };
+  const meta: EntryMetadata =
+    entry.type === "custom"
+      ? new CustomEntryMetadata(entry.id, entry.parentId, entry.timestamp, offset, length, value.customType)
+      : {
+          type: entry.type,
+          id: entry.id,
+          parentId: entry.parentId,
+          timestamp: entry.timestamp,
+          offset,
+          length,
+        };
   if (entry.type === "message") {
     meta.messageRole = value.message?.role;
     meta.messageProvider = value.message?.provider;
@@ -228,6 +479,14 @@ function metadata(entry: SessionEntry, offset: number, length: number): EntryMet
     meta.targetId = value.targetId;
     meta.label = value.label;
   } else if (entry.type === "session_info") meta.name = value.name;
+  // JSON parsers can return slices backed by the complete input line. The
+  // resident index must own its tiny strings, not retain discarded payloads
+  // (old task checkpoints can contain very large cursor snapshots).
+  if (ownStrings)
+    for (const key of Object.keys(meta) as Array<keyof EntryMetadata>) {
+      const value = meta[key];
+      if (typeof value === "string") (meta as unknown as Record<string, unknown>)[key] = ownedString(value);
+    }
   return meta;
 }
 
@@ -237,6 +496,7 @@ export function metadataSkeleton(meta: EntryMetadata): SessionEntry {
     id: meta.id,
     parentId: meta.parentId,
     timestamp: meta.timestamp,
+    ...(meta.type === "custom" ? { customType: meta.customType } : {}),
     ...(meta.type === "session_info" ? { name: meta.name } : {}),
   } as SessionEntry;
 }
@@ -250,6 +510,33 @@ export class DiskEntryStore {
   flushed: boolean;
   private activePath: string;
   private spoolPath?: string;
+  private sharedStrings = new Map<string, string>();
+
+  private indexMetadata(entry: SessionEntry, offset: number, length: number, ownStrings = true): EntryMetadata {
+    const meta = metadata(entry, offset, length, ownStrings);
+    // IDs and parent links name the same index nodes. Reuse their owned strings.
+    if (meta.parentId) meta.parentId = this.byId.get(meta.parentId)?.id ?? meta.parentId;
+    // These are vocabulary, not user payload: hundreds of thousands of old
+    // checkpoints must not each own another copy of their type/model names.
+    for (const key of [
+      "type",
+      "customType",
+      "messageRole",
+      "messageProvider",
+      "messageModel",
+      "thinkingLevel",
+      "provider",
+      "modelId",
+    ] as const) {
+      if (key === "type" && meta.type === "custom") continue;
+      const value = meta[key];
+      if (value === undefined) continue;
+      const shared = this.sharedStrings.get(value);
+      if (shared !== undefined) meta[key] = shared;
+      else this.sharedStrings.set(value, value);
+    }
+    return meta;
+  }
   // Cache serialized bytes, not parsed object graphs: the data budget is exact
   // even when JSON expands into many small JS objects. Parsed entries belong
   // only to callers and are never retained by the store.
@@ -399,7 +686,7 @@ export class DiskEntryStore {
     } finally {
       closeSync(fd);
     }
-    const meta = metadata(entry, location.offset, location.length);
+    const meta = this.indexMetadata(entry, location.offset, location.length);
     if (!this.flushed && (this.hasConversation || meta.messageRole === "user" || meta.messageRole === "assistant")) {
       try {
         this.publish();
@@ -475,22 +762,29 @@ export class DiskEntryStore {
   private rescan(): void {
     this.entries = [];
     this.byId.clear();
+    this.sharedStrings.clear();
     this.cache.clear();
     this.cacheBytes = 0;
     let header: SessionHeader | undefined;
     this.hasConversation = false;
-    scanJsonl(this.activePath, ({ entry, offset, length }, index) => {
-      if (index === 0 && (entry.type !== "session" || typeof entry.id !== "string"))
-        throw new Error("Session file has no valid initial header: " + this.targetPath);
-      if (entry.type === "session") {
-        header ??= entry as SessionHeader;
-        return;
-      }
-      const meta = metadata(entry as SessionEntry, offset, length);
-      this.entries.push(meta);
-      this.byId.set(meta.id, meta);
-      this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";
-    });
+    scanJsonl(
+      this.activePath,
+      ({ entry, offset, length }, index) => {
+        if (index === 0 && (entry.type !== "session" || typeof entry.id !== "string"))
+          throw new Error("Session file has no valid initial header: " + this.targetPath);
+        if (entry.type === "session") {
+          header ??= entry as SessionHeader;
+          return;
+        }
+        // Selected tokens were decoded from their own byte views, not a full-row
+      // JS string. They already own their small backing storage.
+      const meta = this.indexMetadata(entry as SessionEntry, offset, length, false);
+        this.entries.push(meta);
+        this.byId.set(meta.id, meta);
+        this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";
+      },
+      (line) => metadataParser.parse(line),
+    );
     if (!header) throw new Error(`Session file has no header: ${this.targetPath}`);
     this.header = header;
   }

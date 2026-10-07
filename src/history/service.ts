@@ -2,8 +2,8 @@ import { constants } from "node:fs";
 import { open } from "node:fs/promises";
 import { resolve } from "node:path";
 import type { SessionEntry, SessionManager } from "@earendil-works/pi-coding-agent";
-import { InvalidShakeRecordError, isShakeRecord, MANUAL_SHAKE_ENTRY } from "./shake-record";
 import { getDiskBackedBranch } from "./session-manager";
+import { InvalidShakeRecordError, isShakeRecord, MANUAL_SHAKE_ENTRY } from "./shake-record";
 import type { HistoryProvenance, HistoryReadResult, HistorySearchMatch, HistorySearchResult } from "./types";
 
 const MAX_QUERY_CHARS = 500;
@@ -160,10 +160,25 @@ async function openReadonlySession(path: string): Promise<Manager> {
   }
 }
 
-function boundedBranch(manager: Manager, fromId?: string): SessionEntry[] {
-  const branch = getDiskBackedBranch(manager, fromId, MAX_ACTIVE_BRANCH_ENTRIES) ?? manager.getBranch(fromId);
-  if (branch.length > MAX_ACTIVE_BRANCH_ENTRIES)
-    throw new Error(`Active history branch exceeds the ${MAX_ACTIVE_BRANCH_ENTRIES}-entry limit`);
+function retrievalCandidate(entry: { type: string; customType?: string }): boolean {
+  return entry.type === "message" || (entry.type === "custom" && entry.customType === MANUAL_SHAKE_ENTRY);
+}
+
+function boundedBranch(manager: Manager, fromId?: string, includeId?: string | null): SessionEntry[] {
+  // Auxiliary task/cache checkpoints are neither searchable text nor exclusion
+  // policy. Traverse their links, but do not count or load their bodies.
+  let candidates = 0;
+  const select = (entry: { type: string; id: string; customType?: string }) => {
+    if (retrievalCandidate(entry)) {
+      if (++candidates > MAX_ACTIVE_BRANCH_ENTRIES)
+        throw new Error(`Active history branch exceeds the ${MAX_ACTIVE_BRANCH_ENTRIES}-entry limit`);
+      return true;
+    }
+    return entry.id === includeId;
+  };
+  const branch =
+    getDiskBackedBranch(manager, fromId, MAX_ACTIVE_BRANCH_ENTRIES + (includeId ? 1 : 0), select) ??
+    manager.getBranch(fromId).filter(select);
   return branch;
 }
 
@@ -175,7 +190,7 @@ function retrievalExcludedResults(manager: Manager, entries: readonly SessionEnt
   const excluded = new Set<string>();
   let work = 0;
   for (const metadata of entries) {
-    if (metadata.type !== "custom") continue;
+    if (metadata.type !== "custom" || metadata.customType !== MANUAL_SHAKE_ENTRY) continue;
     const entry = entryBody(manager, metadata);
     if (entry.type !== "custom" || entry.customType !== MANUAL_SHAKE_ENTRY) continue;
     // Validate before using any subset: truncating exclusion data could leak a
@@ -365,7 +380,7 @@ export class HistoryService {
     if (!cursor) return;
     if (cursor.sessionId !== manager.getSessionId() || cursor.key !== key)
       throw new Error("History cursor does not match this query, reference, session, or active branch");
-    const activeIds = new Set(boundedBranch(manager).map((entry) => entry.id));
+    const activeIds = new Set(boundedBranch(manager, undefined, cursor.leafId).map((entry) => entry.id));
     if (cursor.leafId !== null && !activeIds.has(cursor.leafId))
       throw new Error("History cursor does not match this query, reference, session, or active branch");
   }

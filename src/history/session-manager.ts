@@ -59,6 +59,33 @@ export function getDiskBackedEntryMetadata(manager: object): readonly EntryMetad
   return states.get(manager as SessionManager)?.store.entries;
 }
 
+/** Latest matching custom record on the active branch, newest first.
+ * Undefined means unowned manager; null means no matching record. Only
+ * matching custom types are materialized, and search stops on acceptance.
+ */
+export function getLatestDiskBackedCustomEntry(
+  manager: object,
+  customType: string,
+  accept: (entry: Extract<SessionEntry, { type: "custom" }>) => boolean = () => true,
+): Extract<SessionEntry, { type: "custom" }> | null | undefined {
+  const owned = states.get(manager as SessionManager);
+  if (!owned) return undefined;
+  let id = internals(manager as SessionManager).leafId;
+  const seen = new Set<string>();
+  while (id) {
+    if (seen.has(id)) throw new Error("Active history branch contains a cycle");
+    seen.add(id);
+    const meta = owned.store.byId.get(id);
+    if (!meta) throw new Error("Active history branch contains a broken parent link");
+    if (meta.type === "custom" && meta.customType === customType) {
+      const entry = owned.store.materialize(meta);
+      if (entry.type === "custom" && accept(entry)) return entry;
+    }
+    id = meta.parentId;
+  }
+  return null;
+}
+
 /** Identity of the latest relevant active-branch metadata, or the empty index.
  * Appends leave metadata identities intact; reread/rewrite/reset replace them.
  * Walk only the ignored suffix through the owner's index, without bodies or a
@@ -147,11 +174,12 @@ function internals(manager: SessionManager): ManagerInternals {
 
 function syncIndexes(manager: SessionManager, store: DiskEntryStore): void {
   const target = internals(manager);
-  const skeletons = store.entries.map(metadataSkeleton);
-  target.fileEntries = [store.header, ...skeletons];
+  // The SDK's internal indexes only need metadata; share the owned index
+  // instead of allocating a second object/map for every old checkpoint.
+  target.fileEntries = [store.header, ...(store.entries as unknown as SessionEntry[])];
   const owned = states.get(manager);
   if (owned) owned.skeletonEntries = target.fileEntries;
-  target.byId = new Map(skeletons.map((entry) => [entry.id, entry]));
+  target.byId = store.byId as unknown as Map<string, SessionEntry>;
   target.labelsById = new Map();
   target.labelTimestampsById = new Map();
   for (const meta of store.entries) {
@@ -376,9 +404,7 @@ export function installDiskBackedSessionManager(): void {
     }
     const target = internals(this);
     const meta = owned.store.entries.at(-1)!;
-    const skeleton = metadataSkeleton(meta);
-    target.fileEntries.push(skeleton);
-    target.byId.set(meta.id, skeleton);
+    target.fileEntries.push(meta as unknown as SessionEntry);
     target.leafId = meta.id;
     target.flushed = owned.store.flushed;
     if (meta.type === "label" && meta.targetId) {
@@ -599,11 +625,13 @@ export function installDiskBackedSessionManager(): void {
       if (existsSync(resolved)) {
         if (statSync(resolved).size === 0) {
           const explicitPath = resolved;
+          internals(this).byId = new Map();
           original.newSession.call(this);
           const header = internals(this).fileEntries[0] as SessionHeader;
           adopt(this, DiskEntryStore.published(explicitPath, header));
         } else adopt(this, openStore(resolved));
       } else {
+        internals(this).byId = new Map();
         original.newSession.call(this);
         internals(this).sessionFile = resolved;
         const header = internals(this).fileEntries[0] as SessionHeader;
@@ -617,6 +645,8 @@ export function installDiskBackedSessionManager(): void {
     options?: { id?: string; parentSession?: string },
   ): string | undefined {
     return recoverStateOnFailure(this, () => {
+      // Native reset clears its map in place; do not clear the journal owner.
+      if (state(this)) internals(this).byId = new Map();
       const result = original.newSession.call(this, options);
       if (!internals(this).persist || !result) return result;
       const header = internals(this).fileEntries[0] as SessionHeader;
@@ -629,6 +659,9 @@ export function installDiskBackedSessionManager(): void {
     return recoverStateOnFailure(this, () => {
       const owned = state(this);
       if (!owned) return original.createBranchedSession.call(this, leafId);
+      // Native branch creation rebuilds its map before persisting. Keep the
+      // previous owner intact until publication succeeds (failure can recover).
+      internals(this).byId = new Map(internals(this).byId);
       const result = original.createBranchedSession.call(this, leafId);
       if (!result) return result;
       // _rewriteFile adopts assistant-containing branches. Deferred branches still
@@ -739,6 +772,7 @@ export function getDiskBackedBranch(
   manager: object,
   fromId?: string,
   maxEntries = 100_000,
+  select: (metadata: EntryMetadata) => boolean = () => true,
 ): SessionEntry[] | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
@@ -747,12 +781,14 @@ export function getDiskBackedBranch(
   let id = fromId ?? internals(manager as SessionManager).leafId;
   while (id) {
     if (seen.has(id)) throw new Error("Active history branch contains a cycle");
-    if (entries.length >= maxEntries)
-      throw new Error("Active history branch exceeds the " + maxEntries + "-entry limit");
     seen.add(id);
     const meta = owned.store.byId.get(id);
     if (!meta) throw new Error("Active history branch contains a broken parent link");
-    entries.push(metadataSkeleton(meta));
+    if (select(meta)) {
+      if (entries.length >= maxEntries)
+        throw new Error("Active history branch exceeds the " + maxEntries + "-entry limit");
+      entries.push(metadataSkeleton(meta));
+    }
     id = meta.parentId;
   }
   return entries.reverse();
