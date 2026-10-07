@@ -133,7 +133,7 @@
     {
       "focus": "scripts/ansi_video_renderer.py",
       "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
-      "status": "rework-judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_32c7f556",
@@ -168,17 +168,35 @@
           "id": "task_73d21038",
           "base": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
           "candidate": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
-          "verdict": "pending",
+          "verdict": "ACCEPT",
           "priorJudge": "task_c420e381",
           "priorVerdict": "REJECT",
           "priorFindings": [
             "Sampling condition caches selected row after audit_frame, unlike base rereading rows[index]. If callback replaces rows[0] with t=1, base skips sample while candidate saves; can add sample-save exception. Restore t - rows[row_index][\"t\"] >= 0 and add focused regression; do not restrict callbacks."
           ],
-          "writerResponse": "Restored post-audit rows[row_index] timestamp lookup; regression fails rejected source and passes exact base/rework"
+          "writerResponse": "Restored post-audit rows[row_index] timestamp lookup; regression fails rejected source and passes exact base/rework",
+          "objections": [],
+          "resolvedPriorFindings": "Post-audit timeline timestamp reread restored; regression fails rejected code and passes original/rework. Callback freedom and sampling exception behavior preserved.",
+          "reviewedBlobs": {
+            "scripts/ansi_video_renderer.py": "b692fce492c0c227e42e9cc4645ce4bded57b27a",
+            "tests/ansi-video-renderer.test.py": "d5b9aa060a097d8e3b7cda75e52f15b550b646fd"
+          },
+          "evidence": "SGR parsing, snapshot-local glyph/color state, video-lifetime presentation/fonts and encoder orchestration form coherent boundaries; bold bookkeeping zero reads.",
+          "checks": [
+            "Independent original base/rework8tests pass; rejected version regression fails",
+            "Callback/exception ordering differential probes",
+            "Six-frame real audit/PNG/MP4/decoded RGB identical",
+            "H264/yuv420p1600x1200/5FPS/full decode/faststart",
+            "diff clean"
+          ],
+          "limits": [
+            "Existing exception encoder cleanup unchanged",
+            "No build/Docker/compiled recapture/provider/SSH/visual/product acceptance; callbacks not exhaustive"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "old rejected source unintegrated; fresh rework running",
+      "acceptedBlob": "b692fce492c0c227e42e9cc4645ce4bded57b27a",
+      "integrationState": "fresh rework integrated only after round2 ACCEPT; rejected attempt retained",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
       "changedRelatedPaths": [
         "tests/ansi-video-renderer.test.py"
@@ -193,7 +211,6 @@
       "limits": [
         "No Docker/compiled CLI recapture/product/full build; exception cleanup unchanged"
       ],
-      "priority": "next-judge: fresh ANSI rework full prior rejection context",
       "reworks": [
         {
           "id": "task_283b2f40",
@@ -261,24 +278,31 @@
     {
       "focus": "scripts/tasks-ui-proof-build.ts",
       "initialBlob": "3c50cd1531b85ff6b44517154be60c5c133b8b03",
-      "status": "primary-stop-requested",
+      "status": "primary-running",
       "primary": [
         {
           "id": "task_69932f49",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_69932f49",
           "branch": "bruv/primary-readability-scripts-tasks-ui-pro-69932f49",
           "launchBase": "c9707192e101252662f82998d281ba8565592584",
-          "state": "stop requested after 30min, no source/tool progress since13:20; not confirmed stopped"
+          "state": "killed exit143; retained uncommitted proposal, not candidate accepted"
+        },
+        {
+          "id": "task_259c27b0",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_259c27b0",
+          "branch": "bruv/fresh-proof-build-primary-with-retained--259c27b0",
+          "launchBase": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
+          "retryOf": "task_69932f49"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "Uncommitted work retained in original worktree; no candidate integrated",
-      "launchBase": "c9707192e101252662f82998d281ba8565592584",
+      "launchBase": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
       "coordinatorReviewTargets": [
         "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
       ],
-      "priority": "After confirmed stop, fresh primary retry in new worktree; independently inspect archive removal proposal, do not adopt blindly"
+      "priority": "fresh retry active"
     },
     {
       "focus": "scripts/tasks-ui-proof-screenshots.ts",
@@ -2770,11 +2794,18 @@
       "focus": "tests/ansi-video-renderer.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "candidate-related-primary-pending",
+      "status": "related-patch-accepted-primary-pending",
       "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "Unintegrated rejected related candidate; requires rework regression then new judgment and primary focus"
+      "judgeRounds": [
+        {
+          "id": "task_73d21038",
+          "verdict": "ACCEPT",
+          "candidate": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
+          "kind": "related-patch-only"
+        }
+      ],
+      "acceptedBlob": "d5b9aa060a097d8e3b7cda75e52f15b550b646fd",
+      "integrationState": "integrated round2 patch; separate fresh primary required"
     },
     {
       "focus": "tests/terminal-interactions-normalize.test.ts",
