@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "judging",
+      "status": "rework-pending",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -82,7 +82,13 @@
           "id": "task_0cfbdfd3",
           "candidate": "cc7e03d0427c25a75f14d535a6a168a6ffc0c33d",
           "base": "3a73f519ee4652ddddf86c9f5bca9aef89f5906c",
-          "status": "running"
+          "status": "complete",
+          "verdict": "REJECT",
+          "objections": [
+            "README lines 25–26 wrongly imply all notification formatting/batching lives in tasks/. extension.ts assembles SSH attention and mixed content/budgets; remote completion summaries live in remote/job-observations.ts. Qualify ownership sentence; no runtime change requested."
+          ],
+          "reason": "Attachment/dispatch/delivery/detach and context order improve the map, but ownership of notification content still misdirects concrete SSH edit journey.",
+          "checks": "Independent 7 boundary/architecture tests/33 assertions; diff clean; no provider/device claim."
         }
       ],
       "acceptedBlob": null,
