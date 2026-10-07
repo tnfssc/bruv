@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "rework-pending",
+      "status": "rework-running",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -75,6 +75,14 @@
           ],
           "result": "Separate entrypoints, attachment/dispatch/delivery/detach, and context policy; link actual operation owners.",
           "checks": "8 focused tests/49 assertions; 21 links resolve; diff/control checks; no Markdown lint supported."
+        },
+        {
+          "id": "task_92562cf3",
+          "role": "rework",
+          "launchBase": "439a4b07750ec7dc3e98d6a56b5e371de3047be9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_92562cf3",
+          "branch": "bruv/rework-agent-readme-ownership-map-92562cf3",
+          "priorCandidate": "cc7e03d0427c25a75f14d535a6a168a6ffc0c33d"
         }
       ],
       "judgeRounds": [
@@ -133,16 +141,32 @@
     {
       "focus": "src/agent/instruction-mode.ts",
       "initialBlob": "e5eef9b0983997dc00c999de6bca4a1843e659f9",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_146763c6",
           "launchBase": "c5c77b5ea66f848f3a35c46ab32cfddb4a20bd72",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_146763c6",
-          "branch": "bruv/primary-src-agent-instruction-mode.ts-146763c6"
+          "branch": "bruv/primary-src-agent-instruction-mode.ts-146763c6",
+          "commit": "b56b4b3a99499178ace1cacba5538760fdc0a656",
+          "changedPaths": [
+            "src/agent/instruction-mode.ts",
+            "src/agent/extension.ts",
+            "tests/instruction-mode.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Derive instruction owner digest from current context; remove duplicate cached ID/digest/custom state and resets. Guidance becomes side-effect-free.",
+          "checks": "30 focused tests/219 assertions; expanded tests also pass baseline; focused format/lint and full tsc pass after shared assets supplied."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_00bd7047",
+          "candidate": "b56b4b3a99499178ace1cacba5538760fdc0a656",
+          "base": "c5c77b5ea66f848f3a35c46ab32cfddb4a20bd72",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
