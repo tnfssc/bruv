@@ -773,8 +773,15 @@
     {
       "focus": "src/history/selector-lifecycle.ts",
       "initialBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_1e7ee0c8",
+          "launchBase": "4c80c3f380f237e77ec86350e4ae823c83e0c09b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_1e7ee0c8",
+          "branch": "bruv/primary-history-selector-lifecycle-1e7ee0c8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -1250,13 +1257,19 @@
     {
       "focus": "src/session/restore-leaf.ts",
       "initialBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_6d6e2568",
           "launchBase": "b8a7d4debe5e37f75a0e0b7f7bf18208e8fde820",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_6d6e2568",
-          "branch": "bruv/primary-session-leaf-restoration-6d6e2568"
+          "branch": "bruv/primary-session-leaf-restoration-6d6e2568",
+          "commit": "8f868493f1a28ce307445964ddb38f1b70e667cb",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Unchanged clear unavailable/empty/branched snapshots and active-view-only restoration; failure policy belongs to fast/shake/compaction callers, SDK entries intact.",
+          "checks": "104 tests/527 assertions; real SDK probe9 assertions; focused format/lint/diff pass; assets prepared after import failure; no compile/build/live."
         }
       ],
       "judgeRounds": [],
