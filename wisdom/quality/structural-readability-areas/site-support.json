@@ -88,12 +88,19 @@
       "state": "pending",
       "primary": [],
       "judges": [],
-      "initialBlob": "8ca404103fe2971f2c54b810f45d0e527d5e40fd"
+      "initialBlob": "8ca404103fe2971f2c54b810f45d0e527d5e40fd",
+      "relatedPatchJudgment": {
+        "primaryFocus": "site/demos.ts",
+        "judge": "task_608a711c",
+        "blob": "9eb31e6f56ef27e3f4677fc96c0e984d510c31d8",
+        "verdict": "ACCEPT",
+        "needsOwnPrimary": true
+      }
     },
     {
       "focus": "site/demos.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_01e034e7",
@@ -108,10 +115,19 @@
         {
           "id": "task_608a711c",
           "candidate": "54a43b76809cac9f4290e1c170ecb2aaa160f6fc",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicit projected turns compute summary once instead of reconstructing surrounding rows during rendering; frame selection/placement and footer fitting separate. Confirmed missing type import repaired at producer. Judge 16 tests,4950 whole-frame comparisons,strict TS."
         }
       ],
-      "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23"
+      "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23",
+      "changedRelatedPaths": [
+        "site/demos.test.ts",
+        "site/html-cells.ts"
+      ],
+      "acceptedBlob": "5f211cd265a0d4cb8377b5148fa13281f2ccb5fa",
+      "integration": "full coherent patch integrated; related files still need their own fresh primary and judge"
     },
     {
       "focus": "site/html-animation.ts",
@@ -148,7 +164,14 @@
       "state": "pending",
       "primary": [],
       "judges": [],
-      "initialBlob": "7c70d1bdd3c530eddb002adeffd1d1f7be2f5dc1"
+      "initialBlob": "7c70d1bdd3c530eddb002adeffd1d1f7be2f5dc1",
+      "relatedPatchJudgment": {
+        "primaryFocus": "site/demos.ts",
+        "judge": "task_608a711c",
+        "blob": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
+        "verdict": "ACCEPT",
+        "needsOwnPrimary": true
+      }
     },
     {
       "focus": "site/index.html",
@@ -161,16 +184,24 @@
     {
       "focus": "site/install-command.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_867e5969",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_867e5969",
           "branch": "bruv/primary-site-install-command.ts-867e5969",
-          "base": "c7a2d6b293f6a22671efc2c6a0ffb29ba37e358e"
+          "base": "c7a2d6b293f6a22671efc2c6a0ffb29ba37e358e",
+          "commit": "03d2624e7ed97f1a15dce3a68f5ed4e451fb1abf",
+          "result": "No source change recommended. copyCommand keeps clipboard permission and textarea/focus effects together. enhanceInstall owns per-button feedback/reset timer; terminal owns separate presentation. Traced shipped HTML/terminal/layout/UI tests. Runtime not rerun; legacy fallback failure not covered."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_203c204d",
+          "candidate": "03d2624e7ed97f1a15dce3a68f5ed4e451fb1abf",
+          "state": "running"
+        }
+      ],
       "initialBlob": "955cbf767fa094bd223bee8f0bba424692c3c663"
     },
     {
@@ -548,8 +579,15 @@
     {
       "focus": "support/gpt-live-explained.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_1e4c14a6",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_1e4c14a6",
+          "branch": "bruv/primary-support-gpt-live-explained.html-1e4c14a6",
+          "base": "5c3b6a0d449c5716a14ca62d2bde25722a443e9b"
+        }
+      ],
       "judges": [],
       "initialBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce"
     }
@@ -557,8 +595,8 @@
   "extra": [],
   "crossArea": [],
   "limits": [
-    "Automatic fish setup lacks Bun; explicit Bun tooling supplied to all workers.",
-    "Observed initial demos.ts missing ./type import blocks focused terminal typecheck; demos primary tasked to trace and explicitly fix if confirmed."
+    "Automatic fish setup lacks Bun; explicit tooling supplied.",
+    "Confirmed missing demos ./type fixed in accepted demos patch; strict targeted TS passed in writer/judge. Full area gate pending."
   ],
   "parentBoundary": "Inspected integration 6a285569: docs-only changes, no common source to bring in. Disk 159G available."
 }

@@ -1,5 +1,7 @@
 import { expect, test } from "bun:test";
-import { demoIds, demoDuration, demoFrame, demoHeight, demoTranscript } from "./demos";
+import { demoDuration, demoFrame, demoHeight, demoIds, demoTranscript } from "./demos";
+import { layout } from "./layout";
+import { advance, FINAL_HOLD, inView } from "./playback";
 
 const text = (id: (typeof demoIds)[number], cols: number, ms: number) =>
   demoFrame(id, cols, ms)
@@ -55,8 +57,36 @@ test("typing leads to source-shaped tool activity and useful final results", () 
   expect(demoTranscript("wisdom")).toContain("Added the quoted-newline test");
 });
 
-import { advance, FINAL_HOLD, inView } from "./playback";
-import { layout } from "./layout";
+test("one turn summary stays before interleaved prose and shows the latest action only while busy", () => {
+  const working = text("wisdom", 80, 11200);
+  expect(working.match(/tools? called ▸/g)).toHaveLength(1);
+  expect(working).toContain("3 tools called ▸ · Run import tests");
+  expect(working.indexOf("3 tools called")).toBeLessThan(working.indexOf("The notes say"));
+  expect(working).not.toContain("Add quoted-newline test");
+  const finished = text("wisdom", 80, demoDuration("wisdom"));
+  expect(finished.match(/tools? called ▸/g)).toHaveLength(1);
+  expect(finished).toContain("4 tools called ▸");
+  expect(finished).not.toContain("4 tools called ▸ ·");
+  expect(finished.indexOf("4 tools called")).toBeLessThan(finished.indexOf("The notes say"));
+});
+
+test("footer compacts and highlights active tasks, then clears them on completion", () => {
+  for (const cols of [30, 80]) {
+    const active = demoFrame("background", cols, 9000).rows[demoHeight(cols) - 1];
+    const label = cols === 30 ? "1t" : "1 task";
+    const footerText = active.map((cell) => cell.text).join("");
+    expect(footerText).toContain(label);
+    expect(footerText).toContain("studio");
+    const start = footerText.indexOf(label);
+    const taskStyle = active[start].style;
+    expect(taskStyle).not.toBe(active[start + label.length].style);
+    for (const cell of active.slice(start, start + label.length)) expect(cell.style).toBe(taskStyle);
+    const finished = demoFrame("background", cols, demoDuration("background")).rows.at(-1)!;
+    expect(finished.map((cell) => cell.text).join("")).not.toContain(label);
+    expect(finished.every((cell) => cell.style === finished[0].style)).toBe(true);
+  }
+});
+
 test("loop holds the final frame, wraps once, and stops when paused/offscreen", () => {
   for (const id of demoIds) {
     const duration = demoDuration(id);

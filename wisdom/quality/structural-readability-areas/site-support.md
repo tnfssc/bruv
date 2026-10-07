@@ -17,3 +17,5 @@ site/scripts/validate.ts: Desktop/mobile/fallback each own browser journey and r
 site/scripts/capture-demo-source.ts: Replay fixture creation has one authority and returns persisted path; orchestration visibly proceeds settings/replay/isolation/capture/provenance/cleanup. Judge traced SDK session contract; 1 test/14 assertions does not exercise capture. Writer offline tmux/unshare byte parity not independently rerun.
 
 site/layout.ts: composeLanding owns document flow; panel returns content/end rather than rewinding shared cursor; max(copyEnd,panel.end) states section advance. layout owns clipping/hits/overlays/ANSI. Judge independently 17 tests and 64 complete output comparisons; no browser/typecheck/full build.
+
+Demos coherent patch accepted: projected turns own summaries; rendering owns placement, with explicit missing-type import fix. Added interleaved-prose regression and related html-cells type import both integrated and patch-judged; their primary coverage remains pending. Judge: 16 tests, 4950 whole-frame comparisons, strict TS.
