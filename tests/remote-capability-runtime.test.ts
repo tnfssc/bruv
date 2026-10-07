@@ -52,7 +52,7 @@ test("offline request survives reload, explicitly granted read and idempotent fe
   }
 });
 test.each([0, 250])(
-  "offline execute remains pending; abort, deadline, revoke and terminal fence (fsync delay %i ms)",
+  "offline execute publishes durably before abort removes it from pending (fsync delay %i ms)",
   async (delayMs) => {
     const f = await fixture();
     const ac = new AbortController();
@@ -84,25 +84,12 @@ test.each([0, 250])(
       // Observe rejection immediately, even if a publication/assertion fails before the abort check.
       void promise.catch(() => {});
       // Same-ID requests are serialized and idempotent: this joins execute's durable publication.
-      await f.owner.request(grant.id, "repo.read", "README.md", requestId);
+      const request = await f.owner.request(grant.id, "repo.read", "README.md", requestId);
       expect(delayedSync).toBe(delayMs > 0);
-      expect((await f.owner.pending()).length).toBe(1);
+      expect(await f.owner.pending()).toEqual([request]);
       ac.abort();
       await expect(promise).rejects.toThrow("cancelled");
       expect(await f.owner.pending()).toEqual([]);
-      const request = await f.owner.request(grant.id, "repo.read", "README.md");
-      await expect(f.owner.awaitReply(request, { deadlineMs: 1 })).rejects.toThrow("deadline");
-      expect(await f.owner.pending()).toEqual([]);
-      const revokeRequest = await f.owner.request(grant.id, "repo.read", "README.md");
-      await f.owner.revoke(grant.id);
-      await expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow();
-      expect(await f.owner.reply({ requestId: request.id, grantId: grant.id, taskId: "task1", value: "fake" })).toBe(
-        false,
-      );
-      await expect(f.owner.awaitReply(revokeRequest)).rejects.toThrow("revoked");
-      await f.owner.terminal();
-      expect(await f.owner.pending()).toEqual([]);
-      await expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow();
     } finally {
       ac.abort();
       await promise?.catch(() => {});
@@ -111,6 +98,60 @@ test.each([0, 250])(
     }
   },
 );
+test("reply deadline cancels its request and fences late delivery", async () => {
+  const f = await fixture();
+  try {
+    const grant = await f.client.grant("task1", f.repo, ["repo.read"]);
+    await f.owner.acceptGrant(grant);
+    const request = await f.owner.request(grant.id, "repo.read", "README.md");
+    await expect(f.owner.awaitReply(request, { deadlineMs: 1 })).rejects.toThrow("deadline");
+    expect(await f.owner.pending()).toEqual([]);
+    expect(await f.owner.reply({ requestId: request.id, grantId: grant.id, taskId: "task1", value: "fake" })).toBe(
+      false,
+    );
+  } finally {
+    await f.clean();
+  }
+});
+
+test("grant revocation fences a pending request, late reply and new admission", async () => {
+  const f = await fixture();
+  try {
+    const grant = await f.client.grant("task1", f.repo, ["repo.read"]);
+    await f.owner.acceptGrant(grant);
+    const request = await f.owner.request(grant.id, "repo.read", "README.md");
+    expect(await f.owner.pending()).toEqual([request]);
+    await f.owner.revoke(grant.id);
+    await expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow("No active task grant");
+    expect(await f.owner.reply({ requestId: request.id, grantId: grant.id, taskId: "task1", value: "fake" })).toBe(
+      false,
+    );
+    await expect(f.owner.awaitReply(request)).rejects.toThrow("revoked");
+    expect(await f.owner.pending()).toEqual([]);
+  } finally {
+    await f.clean();
+  }
+});
+
+test("task terminal fences a pending request, late reply and new admission", async () => {
+  const f = await fixture();
+  try {
+    const grant = await f.client.grant("task1", f.repo, ["repo.read"]);
+    await f.owner.acceptGrant(grant);
+    const request = await f.owner.request(grant.id, "repo.read", "README.md");
+    expect(await f.owner.pending()).toEqual([request]);
+    await f.owner.terminal();
+    expect(await f.owner.pending()).toEqual([]);
+    await expect(f.owner.awaitReply(request)).rejects.toThrow("Task terminal");
+    expect(await f.owner.reply({ requestId: request.id, grantId: grant.id, taskId: "task1", value: "fake" })).toBe(
+      false,
+    );
+    await expect(f.owner.request(grant.id, "repo.read", "README.md")).rejects.toThrow("No active task grant");
+  } finally {
+    await f.clean();
+  }
+});
+
 test("sensitive paths denied, explicit skills and read-only git tools", async () => {
   const f = await fixture();
   try {
@@ -257,6 +298,7 @@ test("task servicing persists capability replies before delivery and retries fro
     const grant = await store.grant("task1", f.repo, ["repo.read"]);
     await f.owner.acceptGrant(grant);
     const request = await f.owner.request(grant.id, "repo.read", "README.md", "read1");
+    const expectedReply = { requestId: request.id, grantId: grant.id, taskId: "task1", value: "first read" };
     const replies: unknown[] = [];
     let offline = true;
     const client = {
@@ -276,7 +318,7 @@ test("task servicing persists capability replies before delivery and retries fro
     await writeFile(join(f.repo, "README.md"), "changed after first read");
     offline = false;
     await serviceRemoteTask(client as any, task as any);
-    expect(replies).toEqual([replies[0], replies[0]]);
+    expect(replies).toEqual([expectedReply, expectedReply]);
     expect(await f.owner.awaitReply(request)).toBe("first read");
 
     await expect(

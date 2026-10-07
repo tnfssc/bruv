@@ -76,3 +76,5 @@ Repository-wire 755b63c0 ACCEPT task_6ea69bdc at 64475e6c: upload receipt/replay
 Runtime edb1318b ACCEPT task_e1ab9585 at 87b03ef3: output-preserving evidence collection before exit-authorizing checkpoint; shared durable writer replaces duplicate resource ownership. Internal staging explicitly changes PID overwrite to exclusive UUID, same flush/close/rename/dir-fsync order; no power-loss claim. Related runtime test fe29cd1c needs own primary.
 
 Presenter-test own primary/judge task_20e04838 ACCEPT b4ed20c0. Real terminal callback/focused TUI routing replaces incorrect helper bypass; independent harness reproduced old 2 root calls vs new 0, all assertions retained. Mocked I/O is not physical-terminal proof. Judge accidentally ran area build creating dist; not counted as build acceptance.
+
+Capability-test own primary 189f56e3 ACCEPT task_d83b6e0b at bb79598d: abort/deadline/revocation/terminal tests have independent authority, remove confounded failures and use explicit frozen-reply oracle. All prior combined service/mailbox regressions retained.

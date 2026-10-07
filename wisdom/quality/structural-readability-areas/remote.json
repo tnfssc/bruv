@@ -1173,12 +1173,15 @@
     {
       "focus": "tests/remote-capability-runtime.test.ts",
       "initialBlob": "d4d2ffbe0c7946380ad09921b34deb66d3defcb3",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_d83b6e0b",
-          "status": "running",
-          "candidate": "189f56e3a914e24dc04a6a795f4bc7a562498b98"
+          "status": "completed",
+          "candidate": "189f56e3a914e24dc04a6a795f4bc7a562498b98",
+          "verdict": "ACCEPT",
+          "reason": "Independent abort/deadline/revocation/terminal authority/request lifetimes prove intended fence rather than prior cancellation/revocation; frozen delivery oracle explicit; prior combined services/mailbox journeys retained.",
+          "checks": "Judge full/cumulative diff, actual fence order/callers, format/lint/diff pass; runtime package loading blocked, no inferred pass."
         }
       ],
       "relatedAcceptance": {
@@ -1202,7 +1205,9 @@
       "launchBase": "a6872af1deea4820d9c4505f3776bac54856edf8",
       "result": "Abort/deadline/revocation/terminal fences now independent authority/request lifetimes, avoiding already-cancelled/revoked confounds; frozen reply compares explicit expected bytes.",
       "checks": "39 pass/212 assertions; service/mailbox regressions preserved; format/lint/diff pass.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "bb79598d6c168ff5654a48adfe6d0ce57623ace8",
+      "integrationState": "exact accepted primary test patch applied; related combined blob superseded"
     },
     {
       "focus": "tests/remote-client.test.ts",
@@ -1455,8 +1460,14 @@
     {
       "focus": "tests/remote-root-client.test.ts",
       "initialBlob": "3a25d228b5f25291ffb2d4354888f4b295f6f523",
-      "status": "candidate-awaiting-judge",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_9e1c68cc",
+          "status": "running",
+          "candidate": "81252d4c9681a5e397e136a52f293f5ed999932d"
+        }
+      ],
       "relatedAcceptance": {
         "judge": "task_b04a86e2",
         "blob": "f19df6e94cca27114dabeab08d7885a377fe75e9",
@@ -1858,6 +1869,13 @@
       "command": "bun test remote-runtime,remote-owner,remote-owner-lifecycle,remote-cancellation,remote-durable-json,remote-job-artifacts tests",
       "result": "21 pass, 0 fail, 151 assertions across 6 files",
       "limits": "Local Linux fixtures, no power-loss/live/provider/compiled parity"
+    },
+    {
+      "commit": "3266052b",
+      "job": "task_54758365",
+      "command": "bun run check; bun test tests/remote-root-presenter.test.ts tests/remote-root-client.test.ts",
+      "result": "Whole configured typecheck pass; 39 pass/212 assertions",
+      "limits": "Mocked terminal routing, no physical/live/compiled proof"
     }
   ],
   "crossAreaNeeds": [
