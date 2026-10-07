@@ -102,3 +102,5 @@ Shared helper NO CHANGE NEEDED task_f7319ebc45e0d907;13tests and1MiBbothstreams/
 Launcher-test primary:fresh validfixture per rejection,explicit checksum authority,alloldcases plusbothlayoutdirections/shippedtemplates. Judge task_a8a68815 ACCEPTda1a4e5;21/47tests. Judge tsc absentgeneratedJSON—notgreenclaim;no nativeexecution.
 
 CI runner-test primary:single invocationrecord,namedoptions,explicit cleanup eachscenario. Judge task_562c8dbd ACCEPT7b18e15;8/85andtrap6/offline2/pipefail3mutationfailures. Stubs not realgates;no judge tsc/actionlint.
+
+Offline sourcePTY:home/setup/process/evidence lifetimes explicit;fresh transcript suffix checks replace sleep-dependent staleproof. Judge task_11e13c7d ACCEPT27df96e;actual startup shows --no-approve skips obsolete trustdialog;local revoke still confirmed and owner-not-notified.2/14+realofflinePTY and adversarialstale/cleanup/group checks;not liveSSH/compiled/runnerwidecancel.

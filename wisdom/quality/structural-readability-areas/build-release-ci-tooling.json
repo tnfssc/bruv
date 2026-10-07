@@ -503,7 +503,7 @@
     {
       "focus": "scripts/find-ci-baseline.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "retry-pending",
+      "state": "primary-running",
       "primary": [
         {
           "id": "task_706aaff1",
@@ -520,6 +520,14 @@
           "branch": "bruv/retry-primary-scripts-find-ci-baseline.t-5eb0e8fd",
           "state": "killed",
           "limit": "Second20-minute model-response stall with unchanged output since source read12:34:11; no edits, no candidate. Retain worktree. Defer fresh retry until other independent files progress."
+        },
+        {
+          "id": "task_8a5f8213",
+          "launchBase": "956a90ee75a8931e7336fb611802ca6aeecccad1",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_8a5f8213",
+          "branch": "bruv/fresh-primary-ci-baseline-after-retained-8a5f8213",
+          "state": "running",
+          "role": "fresh-retry"
         }
       ],
       "judges": [],
@@ -1239,8 +1247,16 @@
     {
       "focus": "tests/ci-remote-cli-source.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_0c5ce992",
+          "launchBase": "956a90ee75a8931e7336fb611802ca6aeecccad1",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_0c5ce992",
+          "branch": "bruv/primary-tests-ci-remote-cli-source.test.-0c5ce992",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1248,19 +1264,37 @@
     {
       "focus": "tests/ci-remote-offline-source-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_d96a560c",
           "launchBase": "46e6a59e5ccfe859ef4931115d5de886c3108f96",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d96a560c",
           "branch": "bruv/primary-tests-ci-remote-offline-source-p-d96a560c",
-          "state": "running"
+          "state": "completed",
+          "commit": "2ea927a7a413bf468df77d716bb3e42fbaf3f1a0"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_11e13c7d",
+          "base": "46e6a59e5ccfe859ef4931115d5de886c3108f96",
+          "candidate": "2ea927a7a413bf468df77d716bb3e42fbaf3f1a0",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Home owner/setup cachedauthority/PTyprocess descriptorowner/linear revokeproof separated coherentlifetimes. Actual trust overridefalse means no startupdialog,removal observed not permissioncut. Suffix checkpoints reject preloadedstaleevidence;confirm before durablelocalrevoke with owner-not-notified honesty;cleanupallfailurepaths/groupinherit/terminatekill preserved.",
+          "checks": "Independent2caller14expectations+realoffline sourcePTY;startup/staletranscript/faultsetupspawnproof/childexitgroup/killescalation checks,diffpass. No liveSSH/compiled/fullbuild/runnerwidecancellation.",
+          "acceptedBlobs": {
+            "tests/ci-remote-offline-source-pty.py": "27df96e51274e622ee761637d580160ca90405d7"
+          }
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": "27df96e51274e622ee761637d580160ca90405d7",
+      "readingResult": "Fixture setup,PTY/process ownership and terminal evidence separated;fresh-evidence waits replace fixed sleeps;observed obsolete trust keystrokes removed;setup/launch cleanup covered.",
+      "checks": "2Bunfocuspass;3additionalreal sourcePTYruns;cleanupfault/diffpass;no liveSSH/build.",
+      "integrationState": "Full focuspatchintegrated;remoteproductionunchanged;notesexcluded;wrapperprimarypendingseparate."
     },
     {
       "focus": "tests/ci-runner.test.ts",
@@ -1300,19 +1334,29 @@
     {
       "focus": "tests/ci-selective-workflow.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_7308b752",
           "launchBase": "e4e418734f62fd5586662165c1d62353fbeffdcd",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7308b752",
           "branch": "bruv/primary-tests-ci-selective-workflow.test-7308b752",
+          "state": "completed",
+          "commit": "8bc3a8c4fe417d921d644f7d03f52e8cd16489b2"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_fd6b7e52",
+          "base": "e4e418734f62fd5586662165c1d62353fbeffdcd",
+          "candidate": "8bc3a8c4fe417d921d644f7d03f52e8cd16489b2",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Named acceptedtuples/isolated rejections/admission vsdependency contracts replace positional outcome/resetloops;comparison inputs identify invalidSHA. Explicitfix stale releasejob expectation to current acceptedrelease-source authority.",
+      "checks": "75focus97combinedtests;tsc/Biome/diffpass;no hostedActions."
     },
     {
       "focus": "tests/ci-selective.test.ts",
