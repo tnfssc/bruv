@@ -16,10 +16,17 @@
     {
       "file": "scripts/build-claude-compat.ts",
       "initialBlob": "288ab823259a840b1f8b547d4366406d0340c963",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_af37fc58",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_af37fc58",
+        "branch": "bruv/primary-compatibility-build-script-af37fc58",
+        "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301"
     },
     {
       "file": "scripts/claude-compat-launcher.ts",
@@ -468,7 +475,7 @@
     {
       "file": "src/claude-compat/human-controls.ts",
       "initialBlob": "dceabf00172ab6f8c57fcb462315e48bf6427256",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_449c2e3a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_449c2e3a",
@@ -479,17 +486,26 @@
       "judges": [
         {
           "id": "task_262e4f9b",
-          "status": "running",
-          "candidate": "d09a46d856445ce51003ad5e1b1aa0080986454c"
+          "status": "completed",
+          "candidate": "d09a46d856445ce51003ad5e1b1aa0080986454c",
+          "verdict": "ACCEPT",
+          "blob": "2d8fe9d62992a87370438cae5cde46da043fa823",
+          "relatedBlobs": {
+            "tests/claude-compat-human-controls.test.ts": "d6c438994c37886a9531ea7b3ed2285d0ee0de91"
+          },
+          "objections": [],
+          "evidence": "Bound frontend captures command port and owns subscription/seen/dialog lifetime; replacement invalidates stale callback and aborts while interrupt retains owner. Terminal drain follows replacement. Explicit returned authority, version/correlation, defer vs cancel remain, durable dispatch/replay stays questions runtime. Independent28 tests pass partial.",
+          "limits": "3 suite files Pi deps blocked,not independent60-pass result;no live/full gate."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "2d8fe9d62992a87370438cae5cde46da043fa823",
       "launchBase": "3c404c225d458d07d85de3008eea309663cf4163",
       "changedRelatedPaths": [
         "tests/claude-compat-human-controls.test.ts"
       ],
       "readingResult": "One bound frontend owns subscription/dispose callbacks, remembered versions, active dialogs; refresh/save use captured command port. Replacement closes/invalidate late callbacks/abort dialogs, interrupt retains binding, terminal drain follows replacement. Explicit answer/correlation/owner/version/defer/delivery authority retained.",
-      "checks": "60 focused295 assertions+runtime wrapper;typecheck/format/lint/diff pass,one info;new lifetime tests pass base,no behavior fix."
+      "checks": "60 focused295 assertions+runtime wrapper;typecheck/format/lint/diff pass,one info;new lifetime tests pass base,no behavior fix.",
+      "integrationState": "Exact accepted human-controls source+test joined; whole test primary pending"
     },
     {
       "file": "src/claude-compat/launch.ts",
@@ -524,17 +540,26 @@
     {
       "file": "src/claude-compat/live-frontend.ts",
       "initialBlob": "e1e8e088837528826765e9f5e101fc577aa99c81",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_1868ec30",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1868ec30",
         "branch": "bruv/primary-live-frontend-1868ec30",
         "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
-        "commit": null
+        "commit": "cab5870156b255ed5d1bb44fd5f27145b7832a0d"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_0d9e0626",
+          "status": "running",
+          "candidate": "cab5870156b255ed5d1bb44fd5f27145b7832a0d"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9"
+      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged: owner binding, command consent and audio teardown purposeful distinct lifetimes, caller paths traced.",
+      "checks": "18 focused105 assertions;no live/provider/device proof."
     },
     {
       "file": "src/claude-compat/mcp.ts",
@@ -781,10 +806,17 @@
     {
       "file": "src/t3/tasks/events.ts",
       "initialBlob": "fee21123a7d6380e5d4ffee96fb6815471a3d47b",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_18567a85",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_18567a85",
+        "branch": "bruv/primary-t3-task-events-18567a85",
+        "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301"
     },
     {
       "file": "src/t3/tasks/launch-identity.ts",
@@ -925,17 +957,26 @@
     {
       "file": "src/t3/web/launcher.ts",
       "initialBlob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_9cfebe77",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_9cfebe77",
         "branch": "bruv/primary-t3-web-launcher-9cfebe77",
         "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
-        "commit": null
+        "commit": "dd2647cb402bf047cf80b0419765eba1e0ee88ae"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_082c33db",
+          "status": "running",
+          "candidate": "dd2647cb402bf047cf80b0419765eba1e0ee88ae"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9"
+      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged web dispatch validates flags/prints setup/exits; pure formatting, no hidden server/worktree/setup/cancel lifetime. Real owners traced elsewhere including CLI/build/env.",
+      "checks": "7 launcher/architecture81 assertions pass;compiled process test not run absent dist;no build/live."
     },
     {
       "file": "tests/claude-compat-app-worker.test.ts",
@@ -1059,7 +1100,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_262e4f9b",
+          "verdict": "ACCEPT",
+          "blob": "d6c438994c37886a9531ea7b3ed2285d0ee0de91",
+          "candidate": "d09a46d856445ce51003ad5e1b1aa0080986454c"
+        }
+      ]
     },
     {
       "file": "tests/claude-compat-launch.test.ts",
@@ -1212,13 +1261,13 @@
     {
       "file": "tests/claude-compat-task-projection.test.ts",
       "initialBlob": "da89cdcea508117e2cbefe3d91d35670c3a71d9d",
-      "status": "primary-running",
+      "status": "judge-queued",
       "primary": {
         "id": "task_532af0c5",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_532af0c5",
         "branch": "bruv/primary-task-projection-tests-532af0c5",
         "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
-        "commit": null
+        "commit": "b0586a2aa4f9e3d453e92b1260da2ec6be93dc15"
       },
       "judges": [],
       "acceptedBlob": null,
@@ -1230,7 +1279,10 @@
           "candidate": "7e679084be24d21c23492a319f7bf2657abd7630"
         }
       ],
-      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9"
+      "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
+      "changedRelatedPaths": [],
+      "readingResult": "finish helper no longer silently starts/checkpoints; callers connect lifecycle explicitly. Roster opacity/membership/disconnected contracts distinct; replacement journey closes both opaque jobs. Impossible fixture-kind branches removed, resumed-child attribution unconditional.",
+      "checks": "18 projection87 assertions;typecheck/Biome/diff pass. Worker baseline binding SDK fixture failed tasks undefined;no binding fix/native claim. Area prior combined binding passed separately."
     },
     {
       "file": "tests/claude-compat-transport.test.ts",
@@ -1445,8 +1497,14 @@
     {
       "file": "tests/t3/local-notifications.test.ts",
       "initialBlob": "a3076eba307fac9850dad74c870d4673dfc2db78",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_514938ef",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_514938ef",
+        "branch": "bruv/primary-local-notification-tests-514938ef",
+        "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1456,7 +1514,8 @@
           "blob": "39074cbdb7213812a4200dbc8b307a698901d560",
           "candidate": "5fe1a9886250d111282c347f3350e60cbd3e0c4e"
         }
-      ]
+      ],
+      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301"
     },
     {
       "file": "tests/t3/native-routing.test.ts",
@@ -1772,6 +1831,13 @@
       "status": "passed",
       "scope": "Final MCP/appworker19 tests91 assertions;typecheck",
       "limits": "No live/full gate."
+    },
+    {
+      "id": "task_345d3c06",
+      "commit": "58795ed9",
+      "status": "passed",
+      "scope": "Integrated notifications/bridge/routing52 tests204 assertions;typecheck;format/lint",
+      "limits": "4 infos;no live/full gate."
     }
   ],
   "combinedReviews": [
