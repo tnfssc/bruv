@@ -105,11 +105,18 @@
     {
       "focus": "src/delegation-environment.ts",
       "initialBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_238b6364",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_238b6364",
+        "branch": "bruv/primary-src-delegation-environment.ts-238b6364",
+        "base": "739da40a80981fc3f47aff84b0958f94448c4ccb",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "739da40a80981fc3f47aff84b0958f94448c4ccb"
     },
     {
       "focus": "src/job-delivery.ts",
@@ -1374,7 +1381,7 @@
     {
       "focus": "src/typescript/runner.ts",
       "initialBlob": "0405699abd4d594fb5dbebe432169885984a338d",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_e65a5513",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e65a5513",
@@ -1385,13 +1392,22 @@
       "judgeRounds": [
         {
           "id": "task_5c8f3c0f",
-          "status": "running",
+          "status": "complete",
           "candidate": "7758b00c032100018a3548e9e7a6dfa3beaab6e8",
-          "base": "d5623c8e9d529384108765b2ae2604f493c0c60d"
+          "base": "d5623c8e9d529384108765b2ae2604f493c0c60d",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Graph registrar owns visited/canonicalization/static traversal/TS erasure/hooks before callbacks capture it; native require/resolve hook one lifetime, loader order/CJS cache/cycles/lazy imports intact; run catches only handoff and drains jobs then images. Joined bridge/capture/executor inspected compatible.",
+          "checks": [
+            "independent joined protocol+capture28/412",
+            "diff clean",
+            "NOT compiled runner acceptance: mandatory joined build+ORIGINAL runner/bridge suites",
+            "writer source-adapted baseline failure not independent proof"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "38b68c6d2f3f42a8ef8c9f03ffc004e235df2b6e",
+      "integration": "full runner diff integrated; mandatory compiled original suites still pending",
       "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
       "changedRelatedPaths": [
         "src/typescript/runner.ts"
@@ -1599,15 +1615,23 @@
     {
       "focus": "tests/job-bridge-protocol.test.ts",
       "initialBlob": "7f4c7f7cbfe6f214e5ca5ca4ac0721364d3f77a6",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_6e7d0428",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_6e7d0428",
         "branch": "bruv/primary-tests-job-bridge-protocol.test.t-6e7d0428",
         "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
-        "commit": null
+        "commit": "c9bbbce5a4f1f00a261e93e922e6341e056f0f56"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_b123eb27",
+          "status": "running",
+          "candidate": "c9bbbce5a4f1f00a261e93e922e6341e056f0f56",
+          "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+          "priorRelatedJudge": "task_849e9ce1"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
@@ -1617,7 +1641,18 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d"
+      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+      "changedRelatedPaths": [
+        "tests/job-bridge-protocol.test.ts"
+      ],
+      "readingResult": "One fixture owns install/socket teardown/exact globals restore; prior9 installed globals only6 restored. Server close in finally; all protocol authority assertions retained.",
+      "checks": [
+        "base12/347",
+        "base restore regression12pass1fail",
+        "candidate+foreground16/379",
+        "strict tsc/format/lint/diff pass; source-only no binary"
+      ],
+      "incidentalFix": "Observed test global contamination: installed9 globals but restored6; new restoration regression fails baseline, fixture restores exact descriptors/absence on failure and success."
     },
     {
       "focus": "tests/job-bridge.test.ts",
