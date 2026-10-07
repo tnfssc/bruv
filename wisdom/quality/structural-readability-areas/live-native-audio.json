@@ -890,10 +890,17 @@
     {
       "focus": "src/live/credentials.ts",
       "initialBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
-      "primary": null,
+      "primary": {
+        "id": "task_9203c038",
+        "launchBase": "25f29f5e951dcbef28df99a15eac7cf41debaed0",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_9203c038",
+        "branch": "bruv/primary-src-live-credentials.ts-9203c038",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/diagnostics.ts",
@@ -994,12 +1001,24 @@
         "launchBase": "e7a05d5f63b11cc8c4d57f4b2b4f4b797ef776fe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_35b0a03e",
         "branch": "bruv/primary-src-live-gpt-live-session.ts-35b0a03e",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "6d69c467cd48fa7ebad64fc5faa5d73ed0e861bf"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_86206c2a",
+          "status": "running",
+          "candidate": "6d69c467cd48fa7ebad64fc5faa5d73ed0e861bf",
+          "base": "e7a05d5f63b11cc8c4d57f4b2b4f4b797ef776fe"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "judge running",
+      "relatedPaths": [
+        "tests/gpt-live-session.test.ts"
+      ],
+      "readingResult": "One shared transport teardown promise serves close callers;finishTransport owns cleanup/finalizedvsunknown usage;context append+matchedack together by semantic kinds. Delegation remains extension/bridge/owner admission,playback interruption notjobcancel,no inferred finality.",
+      "checks": "151passes1paidprovider skip;strict focusedTS/format/diff pass;concurrentclose finalized/timeout regression;initial missingWASM resolved existing readonlyassets;no behaviorfix/provider/device/macOS/fullgate."
     },
     {
       "focus": "src/live/helper.ts",
