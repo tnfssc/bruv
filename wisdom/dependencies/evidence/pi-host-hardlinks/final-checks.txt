@@ -1,0 +1,30 @@
+$ bun ./scripts/build-pair.ts
+Built /home/tnfssc/.bruv/worktrees/t3-3152ea81-5442693331ce-task_e32185ee/dist/bruv
+Built Bruv connector launcher /home/tnfssc/.bruv/worktrees/t3-3152ea81-5442693331ce-task_e32185ee/dist/bruv-claude-compat
+bun test v1.4.2 (744846f84)
+
+tests/pi-host.test.ts:
+(pass) Pi host adaptations include the required disk-backed history seam [0.14ms]
+(pass) Pi host adaptation is exact, idempotent, and rejects dependency drift [12.98ms]
+(pass) runtime host gate rejects pristine and partly prepared dependencies [0.10ms]
+(pass) adaptation validates all files and version before any writes [5.16ms]
+(pass) preparation detaches Bun-style hardlinks without changing cache or sibling bytes [18.71ms]
+(pass) failed validation leaves every hardlinked file untouched [9.85ms]
+(pass) trusted project overrides and explicit built-in selectors cannot restore removed factories; config retains llama [47.77ms]
+(pass) source CLI removes MCP command/help and rejects all explicit removed built-ins [3197.57ms]
+(pass) source CLI starts no configured MCP server and preserves user extension registration [690.15ms]
+(pass) compiled CLI removes MCP command/help and rejects all explicit removed built-ins [2890.79ms]
+(pass) compiled CLI starts no configured MCP server and preserves user extension registration [686.52ms]
+(pass) bruv execute stays active and user-authored codemode tools are not banned [22.45ms]
+(pass) upstream defaults to fullscreen and honors explicit regular mode [0.29ms]
+
+tests/prepare-assets.test.ts:
+(pass) build asset preparation > keeps only required assets and does not rewrite unchanged files [43.46ms]
+
+ 14 pass
+ 0 fail
+ 314 expect() calls
+Ran 14 tests across 2 files. [8.18s]
+$ bun run prepare:assets && tsc --noEmit
+$ bun ./scripts/prepare-assets.ts
+Checked 2 files in 11ms. No fixes applied.

@@ -1,21 +1,21 @@
 import { afterEach, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, link, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
+import { getModel } from "@earendil-works/pi-ai/compat";
 import {
+  createAgentSession,
   DefaultPackageManager,
   DefaultResourceLoader,
   ModelRuntime,
   SessionManager,
   SettingsManager,
-  createAgentSession,
 } from "@earendil-works/pi-coding-agent";
-import { getModel } from "@earendil-works/pi-ai/compat";
 import { builtInExtensions } from "../node_modules/@earendil-works/pi-coding-agent/dist/extensions/index.js";
 import { adaptPiHostFile, piHostPatches, preparePiHost } from "../scripts/pi-host-adaptation";
-import { assertBruvPiHost } from "../src/pi-host";
 import tasks from "../src/agent/extension";
+import { assertBruvPiHost } from "../src/pi-host";
 import { offlineTestEnv, run } from "./helpers";
 
 const root = resolve(import.meta.dir, "..");
@@ -37,34 +37,42 @@ const digest = (text: string) => createHash("sha256").update(text).digest("hex")
 const originalRegistry =
   'import codemodeExtension from "./codemode/index.js";\nimport llamaExtension from "./llama/index.js";\nimport mcpExtension from "./mcp/index.js";\nimport toolSearchExtension from "./tool-search/index.js";\nexport const builtInExtensions = [\n    { name: "llama.cpp", factory: llamaExtension, builtin: true },\n    // Replaceable: an extension that registers `codemode`, `tool_search`, or `/mcp` (such as a third-party\n    // MCP extension) takes over instead of running alongside the built-in one.\n    { name: "codemode", factory: codemodeExtension, replaceable: true, builtin: true },\n    { name: "tool-search", factory: toolSearchExtension, replaceable: true, builtin: true },\n    { name: "mcp", factory: mcpExtension, replaceable: true, builtin: true },\n];\n//# sourceMappingURL=index.js.map';
 
+async function originalPiHostFile(patch: (typeof piHostPatches)[number]): Promise<string> {
+  const installed = await readFile(join(piRoot, patch.path), "utf8");
+  let original = installed;
+  if (digest(installed) === patch.adaptedSha256) {
+    original = patch.content
+      ? originalRegistry
+      : (patch.replacements ?? []).reduceRight((text, [before, after]) => {
+          // The removed main import is restored at its original adjacent seam.
+          if (after === "" && patch.path === "dist/main.js")
+            return text.replace(
+              'import { builtInExtensions } from "./extensions/index.js";\n',
+              'import { builtInExtensions } from "./extensions/index.js";\n' + before,
+            );
+          if (after === "")
+            return text.replace(`  \${APP_NAME} <command> --help`, before + `  \${APP_NAME} <command> --help`);
+          return text.replace(after, before);
+        }, installed);
+  }
+  return original;
+}
+
 test("Pi host adaptations include the required disk-backed history seam", () => {
   expect(piHostPatches.some((patch) => patch.path === "dist/core/session-manager.js")).toBe(true);
 });
 
 test("Pi host adaptation is exact, idempotent, and rejects dependency drift", async () => {
   for (const patch of piHostPatches) {
-    const installed = await readFile(join(piRoot, patch.path), "utf8");
-    let original = installed;
-    if (digest(installed) === patch.adaptedSha256) {
-      original = patch.content
-        ? originalRegistry
-        : (patch.replacements ?? []).reduceRight((text, [before, after]) => {
-            // The removed main import is restored at its original adjacent seam.
-            if (after === "" && patch.path === "dist/main.js")
-              return text.replace(
-                'import { builtInExtensions } from "./extensions/index.js";\n',
-                'import { builtInExtensions } from "./extensions/index.js";\n' + before,
-              );
-            if (after === "")
-              return text.replace(`  \${APP_NAME} <command> --help`, before + `  \${APP_NAME} <command> --help`);
-            return text.replace(after, before);
-          }, installed);
-    }
+    const original = await originalPiHostFile(patch);
     expect(digest(original)).toBe(patch.originalSha256);
     const adapted = adaptPiHostFile(patch, original);
     expect(digest(adapted)).toBe(patch.adaptedSha256);
     expect(adaptPiHostFile(patch, adapted)).toBe(adapted);
     expect(() => adaptPiHostFile(patch, original + "\n// drift")).toThrow("Unsupported Pi host file");
+    expect(() => adaptPiHostFile({ ...patch, adaptedSha256: "0".repeat(64) }, original)).toThrow(
+      "Pi host adaptation result changed",
+    );
   }
   assertBruvPiHost();
   const ready = {
@@ -110,6 +118,71 @@ test("adaptation validates all files and version before any writes", async () =>
   expect(await readFile(join(dir, piHostPatches[0]!.path), "utf8")).toBe(originalRegistry);
   await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.2" }));
   await expect(preparePiHost(dir)).rejects.toThrow("Unsupported Pi host version");
+});
+
+async function hardlinkedPiHost(driftPath?: string) {
+  const dir = await temp();
+  const local = join(dir, "local");
+  const cache = join(dir, "cache");
+  const sibling = join(dir, "sibling");
+  await mkdir(local);
+  await writeFile(join(local, "package.json"), JSON.stringify({ version: "1.0.3" }));
+  const originals = new Map<string, string>();
+  for (const patch of piHostPatches) {
+    const original = await originalPiHostFile(patch);
+    originals.set(patch.path, patch.path === driftPath ? original + "\n// drift" : original);
+    for (const root of [local, cache, sibling]) await mkdir(dirname(join(root, patch.path)), { recursive: true });
+    await writeFile(join(cache, patch.path), originals.get(patch.path)!);
+    // main.js is executable in Pi; replacement must retain dependency modes.
+    await chmod(join(cache, patch.path), patch.path === "dist/main.js" ? 0o755 : 0o640);
+    await link(join(cache, patch.path), join(local, patch.path));
+    await link(join(cache, patch.path), join(sibling, patch.path));
+  }
+  return { local, cache, sibling, originals };
+}
+
+test("preparation detaches Bun-style hardlinks without changing cache or sibling bytes", async () => {
+  const { local, cache, sibling, originals } = await hardlinkedPiHost();
+  const before = await Promise.all(piHostPatches.map((patch) => stat(join(local, patch.path))));
+  for (const file of before) expect(file.nlink).toBe(3);
+  await preparePiHost(local);
+  for (const [index, patch] of piHostPatches.entries()) {
+    const path = join(local, patch.path);
+    const prepared = await stat(path);
+    expect(digest(await readFile(path, "utf8"))).toBe(patch.adaptedSha256);
+    expect(prepared.ino).not.toBe(before[index]!.ino);
+    expect(prepared.nlink).toBe(1);
+    expect(prepared.mode).toBe(before[index]!.mode);
+    for (const root of [cache, sibling]) {
+      expect(await readFile(join(root, patch.path), "utf8")).toBe(originals.get(patch.path)!);
+      const unchanged = await stat(join(root, patch.path));
+      expect(unchanged.ino).toBe(before[index]!.ino);
+      expect(unchanged.mtimeMs).toBe(before[index]!.mtimeMs);
+    }
+  }
+  const preparedStats = await Promise.all(piHostPatches.map((patch) => stat(join(local, patch.path))));
+  await preparePiHost(local);
+  for (const [index, patch] of piHostPatches.entries()) {
+    expect(digest(await readFile(join(local, patch.path), "utf8"))).toBe(patch.adaptedSha256);
+    const unchanged = await stat(join(local, patch.path));
+    expect(unchanged.ino).toBe(preparedStats[index]!.ino);
+    expect(unchanged.mtimeMs).toBe(preparedStats[index]!.mtimeMs);
+  }
+});
+
+test("failed validation leaves every hardlinked file untouched", async () => {
+  const { local, cache, sibling, originals } = await hardlinkedPiHost(piHostPatches.at(-1)!.path);
+  const before = await Promise.all(piHostPatches.map((patch) => stat(join(local, patch.path))));
+  await expect(preparePiHost(local)).rejects.toThrow("Unsupported Pi host file");
+  for (const [index, patch] of piHostPatches.entries()) {
+    for (const root of [local, cache, sibling]) {
+      expect(await readFile(join(root, patch.path), "utf8")).toBe(originals.get(patch.path)!);
+      const unchanged = await stat(join(root, patch.path));
+      expect(unchanged.ino).toBe(before[index]!.ino);
+      expect(unchanged.nlink).toBe(3);
+      expect(unchanged.mtimeMs).toBe(before[index]!.mtimeMs);
+    }
+  }
 });
 
 test("trusted project overrides and explicit built-in selectors cannot restore removed factories; config retains llama", async () => {
