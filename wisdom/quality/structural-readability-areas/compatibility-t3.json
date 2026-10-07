@@ -204,10 +204,17 @@
     {
       "file": "src/claude-compat/app-worker.ts",
       "initialBlob": "a69edf87092ec0a5dc77bacd0150da6062722c76",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_4260afa3",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_4260afa3",
+        "branch": "bruv/primary-app-worker-4260afa3",
+        "launchBase": "060c3bfd969e4bdb4c088cbd49b0b167c8cb7720",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "060c3bfd969e4bdb4c088cbd49b0b167c8cb7720"
     },
     {
       "file": "src/claude-compat/arguments.ts",
@@ -271,17 +278,28 @@
     {
       "file": "src/claude-compat/binding.ts",
       "initialBlob": "38964c2b098bc5e68f36594e9bdae4e03930f631",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_f0de0fb4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_f0de0fb4",
         "branch": "bruv/primary-binding-f0de0fb4",
         "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d",
-        "commit": null
+        "commit": "3743b41972dd27bbeb33d459f2a6f5ced7413c33"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_dfcc2819",
+          "status": "running",
+          "candidate": "3743b41972dd27bbeb33d459f2a6f5ced7413c33"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d"
+      "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d",
+      "changedRelatedPaths": [
+        "tests/claude-compat-binding.test.ts"
+      ],
+      "readingResult": "Native storage explicit bound reopen / unbound resume import / fresh persist-reopen-open branches. Transient import ends locally, durable entry map shared by checkpoint paths; context validation before branching and exclusive index publication after.",
+      "checks": "7 focused49 assertions;typecheck/format/lint/diff pass,retained warnings;fresh/reopen checkpoint and incomplete tool reject leave persisted leaf/index unchanged."
     },
     {
       "file": "src/claude-compat/cli.ts",
@@ -450,17 +468,28 @@
     {
       "file": "src/claude-compat/mcp.ts",
       "initialBlob": "01284c27fd7f3b9bfae7ec13b08f88bc78c3646d",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_18afd0bf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_18afd0bf",
         "branch": "bruv/primary-compatibility-mcp-18afd0bf",
         "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868",
-        "commit": null
+        "commit": "de68965bf0465751e9a80f787eb957aec285d035"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_5e2a8606",
+          "status": "running",
+          "candidate": "de68965bf0465751e9a80f787eb957aec285d035"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868"
+      "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868",
+      "changedRelatedPaths": [
+        "tests/claude-compat/mcp.test.ts"
+      ],
+      "readingResult": "connect discover=true hidden modes replaced by visible startup admit/init→discover→ready→park app leases; resume reacquires admitted connection without rediscovery. Failed init remains registered for cleanup.",
+      "checks": "16 focused pass63 assertions MCP+2 isolated wrappers; strengthened lease checks baseline pass;format pass;5 retained lint warnings;no typecheck/full gate/live claim."
     },
     {
       "file": "src/claude-compat/permissions.ts",
@@ -559,10 +588,17 @@
     {
       "file": "src/claude-compat/task-binding.ts",
       "initialBlob": "f278a6a219b3b5fc5f710d97f3a2905748b9d670",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_b586bdb8",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_b586bdb8",
+        "branch": "bruv/primary-task-binding-b586bdb8",
+        "launchBase": "060c3bfd969e4bdb4c088cbd49b0b167c8cb7720",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "060c3bfd969e4bdb4c088cbd49b0b167c8cb7720"
     },
     {
       "file": "src/claude-compat/task-projection.ts",
@@ -759,7 +795,7 @@
     {
       "file": "tests/claude-compat-commands.test.ts",
       "initialBlob": "e506ca3fda50eaebad675cf026e8948b8e4e128e",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_71d2ae32",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_71d2ae32",
@@ -770,11 +806,16 @@
       "judges": [
         {
           "id": "task_41daae2e",
-          "status": "running",
-          "candidate": "73528c0f1ecfc22fb008d7883322cb6e54cee415"
+          "status": "completed",
+          "candidate": "73528c0f1ecfc22fb008d7883322cb6e54cee415",
+          "verdict": "ACCEPT",
+          "blob": "44f9c527bee1426cb71d094855db8b493079fd80",
+          "objections": [],
+          "evidence": "Only real extension/ledger integration owns temp directory; unrelated admission/resources/native-open fixtures no disk lifetime. Unused never-dispatched event registry removed, not coverage. Explicit notification gates preserve real context/order/await and authority. Actual adapter/runtime/human/extensions traced.",
+          "limits": "Dependency resolution blocked valid independent suite run; format/diff/blob/clean verified."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "44f9c527bee1426cb71d094855db8b493079fd80",
       "relatedPatchJudgments": [
         {
           "id": "task_dfe81e3e",
@@ -786,7 +827,8 @@
       "launchBase": "fcf8c27950ddece94e2bb981fc436829dbb503e6",
       "changedRelatedPaths": [],
       "readingResult": "Real goal/mode/questions integration retains ledger/temp lifetime locally; shared fixture drops unused handlers and temp ownership. Admission/resources/native-open own visible registrations without disk; notification gates explicit preserving real-context/order/completion.",
-      "checks": "Baseline/candidate6 tests57 assertions each; candidate+human19 tests128 assertions;format/diff pass."
+      "checks": "Baseline/candidate6 tests57 assertions each; candidate+human19 tests128 assertions;format/diff pass.",
+      "integrationState": "Exact whole-file candidate joined; supersedes related source-patch test blob"
     },
     {
       "file": "tests/claude-compat-compiled.test.ts",
@@ -815,15 +857,21 @@
     {
       "file": "tests/claude-compat-history.test.ts",
       "initialBlob": "291daa0d1e8d8c9df89f68de6cf11a48642f2902",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_aba67ce5",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_aba67ce5",
         "branch": "bruv/primary-history-tests-aba67ce5",
         "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d",
-        "commit": null
+        "commit": "8ba70a29058e3ffe6b5ad2253f6fc7bd2c0df75d"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_139e64e4",
+          "status": "running",
+          "candidate": "8ba70a29058e3ffe6b5ad2253f6fc7bd2c0df75d"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -833,7 +881,10 @@
           "candidate": "71aaf5c4bb89e1004f1650b150b7afcde8afe235"
         }
       ],
-      "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d"
+      "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d",
+      "changedRelatedPaths": [],
+      "readingResult": "SDK subprocess HOME/config/project environments explicit per call instead of overloaded positional args+boolean; child program readable inline; direct directory absence instead nested promises. Redundant child-file assertion removed with stronger directory absence retained.",
+      "checks": "Real pinned SDK12 pass including hostile inherited config;missing optional SDK5 pass7 skip;format/lint/diff pass;no build/live."
     },
     {
       "file": "tests/claude-compat-human-controls.test.ts",
@@ -978,8 +1029,14 @@
     {
       "file": "tests/claude-compat-transport.test.ts",
       "initialBlob": "136ce557bfba92d0c1baedbf32efe1980e2d2d8b",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_ea845de6",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ea845de6",
+        "branch": "bruv/primary-transport-tests-ea845de6",
+        "launchBase": "060c3bfd969e4bdb4c088cbd49b0b167c8cb7720",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -989,7 +1046,8 @@
           "blob": "dcfb613e839d20932af1dcf68919366c48dd490a",
           "candidate": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8"
         }
-      ]
+      ],
+      "launchBase": "060c3bfd969e4bdb4c088cbd49b0b167c8cb7720"
     },
     {
       "file": "tests/claude-compat/credential-isolation.test.ts",
@@ -1257,7 +1315,7 @@
       "file": "tests/claude-compat-frontend.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "judging",
+      "status": "accepted-unchanged",
       "introducedBy": "898826edd36649f92faa239effb2989d1364ac25",
       "primary": {
         "id": "task_a49cb4c3",
@@ -1269,11 +1327,16 @@
       "judges": [
         {
           "id": "task_5958071a",
-          "status": "running",
-          "candidate": "b24301489aef9ed999390a8730980c9cc685305b"
+          "status": "completed",
+          "candidate": "b24301489aef9ed999390a8730980c9cc685305b",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "3b61902f5d029433cac72a63e9188bd729889f21",
+          "objections": [],
+          "evidence": "Fixture constructs actual frontend and records frames without hidden settle/flush/reset. Explicit settlement/retained accounting/next run and auxiliary distinction; full ordered thinking/tool protocol visible. Actual frontend/runtime/Pi settlement callers traced.Independent4 tests27 assertions+Biome clean.",
+          "limits": "Not full delivery-failure/durable persistence/live coverage."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "3b61902f5d029433cac72a63e9188bd729889f21",
       "relatedPatchJudgments": [
         {
           "id": "task_78d1ce83",
@@ -1285,7 +1348,18 @@
       "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868",
       "changedRelatedPaths": [],
       "readingResult": "Whole new file unchanged: explicit settlement→retained accounting→next-run reset/session cost; separate auxiliary accounting; shared ordered protocol expectations across thinking policies, no split warranted.",
-      "checks": "4 tests27 assertions pass;Biome clean."
+      "checks": "4 tests27 assertions pass;Biome clean.",
+      "integrationState": "New-file fresh primary and whole-file judge complete at exact area blob"
+    },
+    {
+      "file": "tests/claude-compat-binding.test.ts",
+      "kind": "new",
+      "initialBlob": null,
+      "status": "pending-candidate",
+      "introducedBy": "3743b41972dd27bbeb33d459f2a6f5ced7413c33",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
     }
   ],
   "crossAreaNeeds": [],
@@ -1353,6 +1427,13 @@
       "status": "passed",
       "scope": "Integrated transport/launch/human/permissions54 tests240 assertions;typecheck;focused format/lint clean",
       "limits": "Before latest whole-file launch-test join; no compiled/live."
+    },
+    {
+      "id": "task_5593481c",
+      "commit": "060c3bfd",
+      "status": "passed",
+      "scope": "Joined launch/arguments/transport40 pass186 assertions;typecheck",
+      "limits": "No compiled/live/full gate."
     }
   ],
   "combinedReviews": [
