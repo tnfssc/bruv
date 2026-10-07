@@ -135,7 +135,7 @@
     {
       "focus": "src/agent/cache-countdown.ts",
       "initialBlob": "c5a780a01a4498c8a34385509ec3ca1d846b2c79",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_06296bc0",
@@ -157,11 +157,18 @@
           "id": "task_7fc83ddf",
           "candidate": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
           "base": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Observer owns request/subscription/HTTP-terminal debt lifetime apart from settings/durable countdown. Atomic select+consume, grouped terminal debt/ambiguity disposal, native real-operation evidence remove cross-hook reconstruction without safety reduction.",
+          "checks": "Independent 12 countdown tests pass; footer missing Pi TUI dependency blocked; source/footer/native regressions read; diff clean.",
+          "acceptedRelatedBlobs": {
+            "tests/cache-countdown.test.ts": "171d704cbc1e6bbedca67308b2efd2d541a14242"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "e77c355972a0581e3773f8cabd457fe4424a55ee",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/agent/extension.ts",
@@ -976,7 +983,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
+        "judge": "task_7fc83ddf",
+        "verdict": "ACCEPT",
+        "blob": "171d704cbc1e6bbedca67308b2efd2d541a14242",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/current-pipeline-sdk.test.ts",
@@ -1565,7 +1579,7 @@
       "focus": "tests/fixtures/history-io-cleanup-failure.ts",
       "initialBlob": null,
       "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_d007bea3",
@@ -1581,7 +1595,14 @@
           "limits": "Bun normal test termination left redundant pending link and observed exit listener not invoked; no exit cleanup proof or behavior fix."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_8dcf7bd3",
+          "candidate": "bf821d9a48f8f20d05e487545df72db2cd119b51",
+          "base": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
       "relatedPatchReview": {
