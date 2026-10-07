@@ -191,7 +191,7 @@
     {
       "focus": "site/install-command.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_867e5969",
@@ -206,10 +206,16 @@
         {
           "id": "task_203c204d",
           "candidate": "03d2624e7ed97f1a15dce3a68f5ed4e451fb1abf",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Clipboard permission attempt/fallback and temporary textarea/focus effects are one visible operation; per-button feedback/reset timer owned by enhancement, terminal presentation separate. Shipped command remains available without JS. Runtime not rerun; permission-denied/fallback-failure/exceptional cleanup unproven.",
+          "objections": []
         }
       ],
-      "initialBlob": "955cbf767fa094bd223bee8f0bba424692c3c663"
+      "initialBlob": "955cbf767fa094bd223bee8f0bba424692c3c663",
+      "acceptedBlob": "955cbf767fa094bd223bee8f0bba424692c3c663",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/install-html.ts",
