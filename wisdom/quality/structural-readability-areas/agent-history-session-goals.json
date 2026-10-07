@@ -355,7 +355,7 @@
     {
       "focus": "src/agent/last-used-cli-model.ts",
       "initialBlob": "09d386f26bb6aa3e28e07e4b4d7800f92d8c0491",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_9d8cd3c0",
@@ -375,7 +375,14 @@
           "role": "rework",
           "launchBase": "81bf0b75200c64e9d9ef2f545a908c7c2c6e186a",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_e862a0d8",
-          "branch": "bruv/rework-cli-preference-event-contract-com-e862a0d8"
+          "branch": "bruv/rework-cli-preference-event-contract-com-e862a0d8",
+          "commit": "e7fe2eec0a44aa69a41ded01a6862217fdb7a7b7",
+          "changedPaths": [
+            "src/agent/last-used-cli-model.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Adjacent comment now documents effective-level/model-change event provenance and no source/consent discriminator, startup/restoration distinction; mechanical import ordering only otherwise.",
+          "checks": "7 tests28 assertions; Biome/diff pass2baseline warnings; no fullbuild/typecheck/liveTUI."
         }
       ],
       "judgeRounds": [
@@ -1489,8 +1496,15 @@
     {
       "focus": "src/wisdom/extension.ts",
       "initialBlob": "46a871c1d8d4c420bec6f420f78c5f86c04a6949",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_39d152ef",
+          "launchBase": "e621f6a9727dd283a3be5b16e2e0a379693ce408",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_39d152ef",
+          "branch": "bruv/primary-wisdom-extension-effects-39d152ef"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
