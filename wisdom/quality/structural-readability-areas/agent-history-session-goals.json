@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "rework-pending",
+      "status": "rework-running",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -90,6 +90,14 @@
           ],
           "result": "Clarifies local task formatters versus extension mixed assembly/budgets/destinations and remote completion summary owner; resolves first judge objection.",
           "checks": "22 relative links; no NUL; diff check; docs-only no runtime gate."
+        },
+        {
+          "id": "task_c4082476",
+          "role": "semantic-rework",
+          "launchBase": "5c7875b573d6c35afe9e2f5e2bca152154f51281",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_c4082476",
+          "branch": "bruv/rework-agent-map-for-notification-owner-c4082476",
+          "priorCandidate": "22538fc2778f389d8331126ccc19fbe1ba57f7fe"
         }
       ],
       "judgeRounds": [
@@ -1869,16 +1877,32 @@
       "focus": "src/session/transcript-snapshots.ts",
       "initialBlob": null,
       "originCandidate": "7f466cef21871ee373a158c35f58f85e19861166",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_3b6b9b8d",
           "launchBase": "aa29a96f021b586c95a74c56452dcabe6be8490a",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_3b6b9b8d",
-          "branch": "bruv/primary-transcript-snapshot-retention-3b6b9b8d"
+          "branch": "bruv/primary-transcript-snapshot-retention-3b6b9b8d",
+          "commit": "dfd632869cc21aaf0b20cb3e732e14258929b910",
+          "changedPaths": [
+            "src/session/transcript-snapshots.ts",
+            "tests/fixtures/transcript-snapshots.ts",
+            "tests/transcript-snapshots.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Locked transaction visibly reclaims expired usage, renews verified existing content before admission, then exclusive write with owned rollback; lock recovery unchanged. Separate helpers expose real I/O stages, no policy changes.",
+          "checks": "Baseline filesystem 12 pass/48 assertions; final isolated 13 pass/52; host+wrapper 19 pass/107; focused type/format/lint/diff pass; no multiprocess crash/otherUID/macOS proof."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_35e27b6b",
+          "candidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
+          "base": "aa29a96f021b586c95a74c56452dcabe6be8490a",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
       "relatedPatchReview": {
@@ -1888,6 +1912,26 @@
         "blob": "58773a0331d48e8470d1775ecd99c275d5f2261d",
         "primaryFocusStillRequired": true
       }
+    },
+    {
+      "focus": "tests/fixtures/transcript-snapshots.ts",
+      "initialBlob": null,
+      "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate-new"
+    },
+    {
+      "focus": "tests/transcript-snapshots.test.ts",
+      "initialBlob": null,
+      "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate-new"
     }
   ],
   "crossAreaNeeds": [
