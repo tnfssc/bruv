@@ -477,12 +477,24 @@
         "launchBase": "4aeb4eb94c369d8a0338c849a0d18914e009d78a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_497094fa",
         "branch": "bruv/primary-src-live-openai-session.ts-497094fa",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "ad16124ce7a5b7ad8fd5bb82abc334189f0161e2"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_5c3c9aed",
+          "status": "running",
+          "candidate": "ad16124ce7a5b7ad8fd5bb82abc334189f0161e2",
+          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "judge running",
+      "relatedPaths": [
+        "tests/openai-session.test.ts"
+      ],
+      "readingResult": "Candidate groups output authorization and timing ownership into OutputAudioTimeline; response owns direct reply entries instead of cross-map reconstruction.",
+      "checks": "60 pass/384 assertions; four regressions pass baseline; focused TypeScript/format/diff pass, lint unchanged 8 warnings/7 infos. No full build/provider/device/macOS claim."
     },
     {
       "focus": "src/live/openai-upgrade-socket.ts",
@@ -527,10 +539,17 @@
     {
       "focus": "src/live/session.ts",
       "initialBlob": "6344b6c65a4f6aa3aa787923fb9d0b53fa18dda6",
-      "primary": null,
+      "primary": {
+        "id": "task_51a039fa",
+        "launchBase": "6da356d503d6aba3d0667dab743c671d6f3201fc",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_51a039fa",
+        "branch": "bruv/primary-src-live-session.ts-51a039fa",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/setup-probe.ts",
