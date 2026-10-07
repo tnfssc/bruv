@@ -751,19 +751,31 @@
     {
       "focus": "scripts/run-native-release-gate.mjs",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_e8c99be3",
           "launchBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_e8c99be3",
           "branch": "bruv/primary-scripts-run-native-release-gate.-e8c99be3",
+          "state": "completed",
+          "commit": "61192d38df528326197be46745c9624b09e9c87f"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_83089869",
+          "base": "7211ff984b6c23c684ff364356f43401bd7a17ea",
+          "candidate": "61192d38df528326197be46745c9624b09e9c87f",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/native-release-gate.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "runVerifiedSuite owns process lifecycle→binary authority→evidence admission; named suite entries/final orchestration expose ordering; strict checks/cancellation/provenance/protocol unchanged.",
+      "checks": "12/12and58/58testbatches;focusedtsc/format/lint/syntax/diffpass;no actualnative/build/download."
     },
     {
       "focus": "scripts/select-release-notes.ts",
@@ -800,19 +812,31 @@
     {
       "focus": "scripts/setup-native-release-gate.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_2837e782",
           "launchBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_2837e782",
           "branch": "bruv/primary-scripts-setup-native-release-gat-2837e782",
+          "state": "completed",
+          "commit": "3cefc2172c5b14d87fce683266e80ce6d8cf6cbd"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_1e479592",
+          "base": "7211ff984b6c23c684ff364356f43401bd7a17ea",
+          "candidate": "3cefc2172c5b14d87fce683266e80ce6d8cf6cbd",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/setup-native-release-gate.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Preparation/SDK checks lead to one final environment handoff rather than exports interleaved before verification;explicit reproduced fix SDK failure no partial gate configuration export.",
+      "checks": "65testspass;newregressionsfailbaseline;tsc/Biome/bashsyntax/diffpass;no downloads/build/realbinarygates."
     },
     {
       "focus": "scripts/setup-release-browser.sh",
@@ -975,8 +999,16 @@
     {
       "focus": "scripts/verify-update-probe.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_4cc3ea11",
+          "launchBase": "10b718a8211635494d5a1c8fbac3db1d44100111",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_4cc3ea11",
+          "branch": "bruv/primary-scripts-verify-update-probe.ts-4cc3ea11",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -984,8 +1016,16 @@
     {
       "focus": "scripts/verify-update.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_47004efe",
+          "launchBase": "10b718a8211635494d5a1c8fbac3db1d44100111",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_47004efe",
+          "branch": "bruv/primary-scripts-verify-update.ts-47004efe",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1804,6 +1844,19 @@
       "readingResult": "Three independent graph/optional-peer/render scenarios replace mixed fixture; rendering assertions bind license declarations to packages and separate discovery/output ordering.",
       "checks": "6focus4relatedrelease tests;Biome/strict tsc/diff pass;no build.",
       "integrationState": "Full focus patch integrated; NEW path now has genuine primary and independent final focus judgment;noteexcluded."
+    },
+    {
+      "focus": "tests/setup-native-release-gate.test.ts",
+      "initialBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
+      "state": "candidate-new",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null,
+      "origin": {
+        "primary": "task_2837e782",
+        "candidate": "3cefc2172c5b14d87fce683266e80ce6d8cf6cbd"
+      }
     }
   ],
   "crossAreaNeeds": [],
