@@ -30,3 +30,9 @@ Captured replay counts old journal bytes as input, not growth, and disables the 
 Workload tests were adjusted to allow fewer checkpoints after a real fix. They keep preservation, derived-history content, deduplication, and metric accuracy checks. They must not enshrine quadratic growth as required behavior.
 
 Values stay the same for now. The existing measured-resource and safe-recovery values fit. No production history repair is part of this harness task.
+
+## Review checkpoint
+
+Code is committed locally through 21ff174a. Safety review task: task_5786fbb0. Worktree: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_5786fbb0. Branch: bruv/resource-harness-safety-review-5786fbb0. Review is read-only. Its findings still need parent triage.
+
+Validation so far: 18 harness tests pass, TypeScript passes, focused Biome passes, bash syntax and git diff checks pass. Shared full CI is not green: the newly measured stress gate exposes the current product bug. Full build/root suite were not repeated for this script-only harness. Existing connector regressions are being checked separately. No PR or push yet.
