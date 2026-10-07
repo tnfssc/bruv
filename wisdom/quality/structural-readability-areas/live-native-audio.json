@@ -1103,9 +1103,16 @@
         "status": "candidate ready",
         "commit": "a4836828bfb3336229bd70430539e5fb7fecbc77"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_4151cb4a",
+          "status": "running",
+          "candidate": "a4836828bfb3336229bd70430539e5fb7fecbc77",
+          "base": "2c5d7aa9ae377dfda5fc059faea391444860c1fa"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged tail2400codepoints/disclosedomissions thenquoted480byteUTF8chunks withoutsplitting codepoints;caller observations no inventedcorrelation,provisionaltimestamps/approxcontext/sessionselection separate.",
       "checks": "98tests555assertions context/delegation/request/extension,diffclean;no provider/device/macOS."
@@ -1124,13 +1131,21 @@
       "judgeRounds": [
         {
           "id": "task_3583b317",
-          "status": "running",
+          "status": "complete",
           "candidate": "a5f932b5712711f4de4767f2fed28986dec14052",
-          "base": "bb9c21526dfa7e1aca0c27cf97d5fe0c108ee081"
+          "base": "bb9c21526dfa7e1aca0c27cf97d5fe0c108ee081",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "ProvisionalSpeech ownsretention/reservation/lossretirement/settlement;bridge ownsreplay/history/spokenfreshness,mainowner codingadmission. Entryuse/retention replaces3identityjoins;pendingeviction and acceptance/rejection explicit,stalespeech still settles actualadmission. IDsnonevicting/timestampswatermark notfinality.",
+          "checks": "Independent44delegation/request/session/history+32playback pass;ownersuite missingWASMblocked;joinedGPT92d985f0/playbackce0fd68d seamchecked;diffpass,no productfix/device/provider/macOS.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-delegation.ts": "160003768942615890ecba4835805cd3954be71a",
+            "tests/gpt-live-delegation.test.ts": "fad7de7b0b4d4ece4f11e17fd29c27ff313bb2d3"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "160003768942615890ecba4835805cd3954be71a",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [
         "tests/gpt-live-delegation.test.ts"
       ],
@@ -1645,7 +1660,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_3583b317",
+        "verdict": "ACCEPT",
+        "blob": "fad7de7b0b4d4ece4f11e17fd29c27ff313bb2d3"
+      }
     },
     {
       "focus": "tests/gpt-live-playback.test.ts",

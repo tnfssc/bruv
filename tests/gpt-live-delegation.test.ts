@@ -351,3 +351,86 @@ test("late correction before a new followup stays separate, not fused into a new
   expect(gptLiveRequestOverlaps(captured[1]!)).toBe(true);
   expect(captured[1]?.priorSpeechEndMs).toBe(200);
 });
+
+test("each evicted admission settles independently before lost speech can be retired", async () => {
+  let acceptFirst!: (result: { queued: true }) => void;
+  let rejectSecond!: (error: Error) => void;
+  const snapshots: DelegationSnapshot[] = [];
+  const { bridge } = fixture(async (id, snapshot) => {
+    snapshots.push(snapshot);
+    if (id === "first")
+      return new Promise((resolve) => {
+        acceptFirst = resolve;
+      });
+    if (id === "second")
+      return new Promise((_resolve, reject) => {
+        rejectSecond = reject;
+      });
+    return { queued: true };
+  });
+  bridge.addFragment({ startMs: 0, endMs: 100, text: "first request" });
+  const first = bridge.handleCreated({ id: "first", target: "client", offsetMs: 100 });
+  bridge.addFragment({ startMs: 100, endMs: 200, text: "second request" });
+  const second = bridge.handleCreated({ id: "second", target: "client", offsetMs: 200 });
+  expect(snapshots.map((snapshot) => snapshot.fragments.map((fragment) => fragment.text))).toEqual([
+    ["first request"],
+    ["second request"],
+  ]);
+  // Evict both reserved requests as well as this oversized fragment.
+  bridge.addFragment({ startMs: 200, endMs: 300, text: "x".repeat(GPT_LIVE_FRAGMENT_BYTES) });
+  acceptFirst({ queued: true });
+  expect(await first).toEqual({ kind: "stale", id: "first" });
+  expect(await bridge.handleCreated({ id: "still-pending", target: "client", offsetMs: 300 })).toMatchObject({
+    kind: "clarification",
+    commentary: "I'm still checking whether the earlier request was accepted. Please try again in a moment.",
+  });
+  rejectSecond(new Error("Not admitted"));
+  expect(await second).toEqual({ kind: "stale", id: "second" });
+  expect(await bridge.handleCreated({ id: "lost", target: "client", offsetMs: 300 })).toMatchObject({
+    kind: "clarification",
+    commentary: "I couldn't retain the whole request. Please repeat it.",
+  });
+  expect(snapshots).toHaveLength(2);
+  bridge.addFragment({ startMs: 300, endMs: 400, text: "repeat second request" });
+  expect(await bridge.handleCreated({ id: "repeat", target: "client", offsetMs: 400 })).toMatchObject({
+    kind: "queued",
+  });
+  expect(snapshots[2]).toMatchObject({
+    fragments: [{ startMs: 300, endMs: 400, text: "repeat second request" }],
+    omittedFragments: 0,
+    priorSpeechEndMs: 100,
+  });
+});
+
+test("accepting pending evidence cannot acknowledge later unrelated loss", async () => {
+  let accept!: (result: { queued: true }) => void;
+  const snapshots: DelegationSnapshot[] = [];
+  const { bridge } = fixture(async (id, snapshot) => {
+    snapshots.push(snapshot);
+    if (id === "first")
+      return new Promise((resolve) => {
+        accept = resolve;
+      });
+    return { queued: true };
+  });
+  bridge.addFragment({ startMs: 0, endMs: 100, text: "first request" });
+  const first = bridge.handleCreated({ id: "first", target: "client", offsetMs: 100 });
+  bridge.addFragment({ startMs: 100, endMs: 200, text: "x".repeat(GPT_LIVE_FRAGMENT_BYTES) });
+  bridge.addFragment({ startMs: 200, endMs: 300, text: "unsafe suffix" });
+  accept({ queued: true });
+  expect(await first).toEqual({ kind: "stale", id: "first" });
+  expect(await bridge.handleCreated({ id: "incomplete", target: "client", offsetMs: 300 })).toMatchObject({
+    kind: "clarification",
+    commentary: "I couldn't retain the whole request. Please repeat it.",
+  });
+  expect(snapshots).toHaveLength(1);
+  bridge.addFragment({ startMs: 300, endMs: 400, text: "whole request repeated" });
+  expect(await bridge.handleCreated({ id: "repeat", target: "client", offsetMs: 400 })).toMatchObject({
+    kind: "queued",
+  });
+  expect(snapshots[1]).toMatchObject({
+    fragments: [{ startMs: 300, endMs: 400, text: "whole request repeated" }],
+    omittedFragments: 0,
+    priorSpeechEndMs: 100,
+  });
+});
