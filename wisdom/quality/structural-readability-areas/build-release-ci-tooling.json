@@ -248,19 +248,31 @@
     {
       "focus": "scripts/install.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_7cb4f7d8",
           "launchBase": "8747723aa2c3e306ae49365c17c728b576547673",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7cb4f7d8",
           "branch": "bruv/primary-scripts-install.sh-7cb4f7d8",
+          "state": "completed",
+          "commit": "36a30abee444a62a0c7b2e5fec89cf08f0cefa99"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_7be1ff38",
+          "base": "8747723aa2c3e306ae49365c17c728b576547673",
+          "candidate": "36a30abee444a62a0c7b2e5fec89cf08f0cefa99",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/install-download.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Maps downloaded platform asset names to canonical staged pair; explicit pair probes isolated; shared binary restoration operation retains interruption flags. Explicit incidental fixes: absolute destination resolution and inherited connector-override isolation.",
+      "checks": "36 pass140 assertions; shell syntax/Biome/tsc/diff pass; no build/live release/platform."
     },
     {
       "focus": "scripts/prepare-assets.ts",
@@ -745,8 +757,16 @@
     {
       "focus": "tests/publish-release.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_5bfa31b4",
+          "launchBase": "6f476812d4f245c24fd1f9e2e8c311d9fd090665",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_5bfa31b4",
+          "branch": "bruv/primary-tests-publish-release.test.ts-5bfa31b4",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
