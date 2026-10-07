@@ -516,13 +516,20 @@
       "judgeRounds": [
         {
           "id": "task_cdb98bdc",
-          "status": "running",
+          "status": "complete",
           "candidate": "0c9fc2f2baff2c16895b74f6d2a5a75ebe6035ab",
-          "base": "6f3ada6c721a7a8eb9d9ea091a52bcbadea5174a"
+          "base": "6f3ada6c721a7a8eb9d9ea091a52bcbadea5174a",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One temp lifetime owns object/executable cleanup; compile/link/selftest precede publication; installer rollback/release embedding/runtime extraction distinct owners. Extraction adds navigation. mv not claimed cross-volume atomic guarantee.",
+          "checks": "Independent syntax+6 fake-tool lifecycle cases;42pass2fail missingdeps/vendor and separate23pass144assertions. No reproduced44pass/nativeMac/signal/cross-volume proof.",
+          "acceptedBlobs": {
+            "scripts/build-live-helper.sh": "bf9a9d9873825675f42392aa331f61bda36097f4"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged linear temporary compile/link/self-test/publish sequence; install/CI/release/embedding/runtime cleanup distinct responsibilities, extraction adds navigation.",
       "checks": "Shell syntax;44 focused tests481 assertions;6 fake-tool lifecycle order/failure/cleanup cases. No macOSXcode/device/provider/signal/cross-volume proof."
@@ -768,9 +775,16 @@
         "status": "candidate ready",
         "commit": "fb653ebe559b3b04cd1588452662e7f246ff2249"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_6da0bcc2",
+          "status": "running",
+          "candidate": "fb653ebe559b3b04cd1588452662e7f246ff2249",
+          "base": "575ba3835b85f46d758b9187447c70e161374c54"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged validate-active-settings/load ENOENT defaults/private-temp atomic-save boundary; credentials/caches/run lifetimes outside.",
       "checks": "82 tests452 assertions; initial missing assets resolved with standard prepare;no behavior fixes."
