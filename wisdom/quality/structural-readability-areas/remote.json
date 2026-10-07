@@ -442,12 +442,15 @@
     {
       "focus": "src/remote/root-store.ts",
       "initialBlob": "f930d363762822984029e7d509664a497c851c29",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_ab8da392",
-          "status": "running",
-          "candidate": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5"
+          "status": "completed",
+          "candidate": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
+          "verdict": "ACCEPT",
+          "reason": "Database directly selects queued commands and settles unresolved receipts; append separates durable dialog lifetime from sequence/event/suffix retention. SQL adds reading cost but removes mutable pruning reconstruction.",
+          "checks": "Judge store 7 pass/63 assertions and client 6 pass/29; broader dependency errors; no full/package/performance claim."
         }
       ],
       "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
@@ -461,7 +464,9 @@
       "changedRelatedPaths": [
         "tests/root-store.test.ts"
       ],
-      "checks": "53 pass/302 assertions; seven new tests pass unchanged baseline; focused strict TS/format/diff pass."
+      "checks": "53 pass/302 assertions; seven new tests pass unchanged baseline; focused strict TS/format/diff pass.",
+      "acceptedBlob": "109babbf1e78a7575570000e6dd8a7181bbb67ca",
+      "integrationState": "accepted full patch applied without overlap"
     },
     {
       "focus": "src/remote/root-transport.ts",
@@ -950,9 +955,13 @@
       "focus": "tests/root-store.test.ts",
       "kind": "new",
       "introducedBy": "c5912090ccf01564ea7e43556ca6210da9734b58",
-      "status": "candidate-awaiting-integration",
+      "status": "pending",
       "judgeRounds": [],
-      "needs": "own fresh primary then independent judge after accepted integration; tell parent new root-* test ownership"
+      "needs": "own fresh primary then independent judge after accepted integration; tell parent new root-* test ownership",
+      "relatedAcceptance": {
+        "judge": "task_ab8da392",
+        "blob": "801fe9b0393d64bf63c1c4471c262d69c6f5b65a"
+      }
     }
   ],
   "primaryBrief": "Fresh PRIMARY file worker, single focus below. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. User rejected shallow rename/comment sweep: maximize actual understanding, not names/diff count/short files/boilerplate. Identify concrete mental bookkeeping by tracing real callers/shipped paths. Simplify tangled responsibilities/branching/hidden state/lifetimes/needless indirection/dead machinery into coherent domain operations with visible effects. Not arbitrary splitting/context bags/registries/frameworks. Genuinely readable may remain unchanged. Related coherent edits allowed; record all paths, flag overlaps with active area workers from remote.json. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts. No speculative defenses/deps/feature cuts/test weakening. Incidental fixes explicit/reproduced/tested. Before commit SHORT wisdom/quality/structural-readability-worker.md (focus/problem/why/exact proof/limits/path/branch). Return exact base/candidate commit, all changed paths, concrete before/after walkthrough. Independent judge decides acceptance. No push/PR. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun via /bin/bash PATH inside quoted script; shared read-only deps /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Focused existing tests per edit, no per-file full builds.",
@@ -978,6 +987,13 @@
       "command": "bun run check; biome format and biome lint src/remote/jobs.ts src/remote/repository.ts tests/remote-source-approval.test.ts",
       "result": "check=0 format=0 lint=0; 12 existing warnings/12 infos",
       "limits": "No full build or runtime parity. Earlier bun run typecheck invalid alias; biome check stricter import organization failed baseline imports, not configured gate."
+    },
+    {
+      "commit": "7a209eac",
+      "job": "task_d112ceca",
+      "command": "bun test tests/remote-cancellation.test.ts tests/remote-runtime.test.ts tests/remote-job-artifacts.test.ts tests/remote-owner-lifecycle.test.ts tests/remote-artifacts.test.ts",
+      "result": "20 pass, 0 fail, 119 assertions",
+      "limits": "Source fixtures and local child process; no authenticated SSH/provider/compiled CLI"
     }
   ]
 }
