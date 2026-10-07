@@ -1671,11 +1671,18 @@
     {
       "focus": "tests/agent-session.test.ts",
       "initialBlob": "f6d95e20d621a4897f82623836a2a68771772eff",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_b74d589c",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b74d589c",
+        "branch": "bruv/primary-tests-agent-session.test.ts-b74d589c",
+        "base": "acac9e04fb89f422027e080ab64e4dff268a3090",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "acac9e04fb89f422027e080ab64e4dff268a3090"
     },
     {
       "focus": "tests/attention-sdk.test.ts",
@@ -1960,7 +1967,7 @@
     {
       "focus": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "rework-running",
+      "status": "rework-awaiting-judge",
       "primary": {
         "id": "task_51bb34f2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_51bb34f2",
@@ -2003,8 +2010,14 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_57b22da7",
           "branch": "bruv/rework-jobservice-test-session-ownership-57b22da7",
           "base": "5fdfc376dfeb1ba0bcd80eef80d37f41b890f1eb",
-          "commit": null,
-          "respondsTo": "task_207ccf5d"
+          "commit": "a7e7c1de30189ac337e9fec9c3599e9c2e42a53d",
+          "respondsTo": "task_207ccf5d",
+          "response": "Imported full rejected structural test diff; reproduced policy child history escaping temp root, containment assertion fails before and passes after local sessionManager restoration. Keeps all assertions/real manager/shutdown-before-rm. Removed only own reproduction artifact.",
+          "checks": [
+            "focus13/71",
+            "format/lint/diff pass",
+            "full focus used isolatedHOME because unchanged baseline partialspawn test also defaults session storage"
+          ]
         }
       ]
     },
