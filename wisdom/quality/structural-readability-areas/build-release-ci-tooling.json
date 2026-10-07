@@ -154,7 +154,7 @@
     {
       "focus": ".gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_63f2878d",
@@ -170,13 +170,18 @@
           "id": "task_599df207",
           "base": "164deefcd9626c12b567a424d103ddc6636140cb",
           "candidate": "819644b1826ef41395e17dea9d7ac47a9046480a",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Short direct generated-output/privacy exceptions; ordinary reviewed wisdom visible. Historical runtime protection purposeful; moved preview runtime has nested tracked ignore, source research visible.",
+          "checks": "Independent14ignored9visible assertions and diffpass;ignore not protection against force-add/tracked secrets;no build/live."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b76078bd2295d5a07314030b6a1a6ac4248288c7",
       "readingResult": "Unchanged direct generated-output list and explained privacy/memory exceptions; traced real producer/cache/credential/historical runtime paths.",
-      "checks": "12ignored6visible path assertions;diffpass;empty candidate commit/local note untracked;no build."
+      "checks": "12ignored6visible path assertions;diffpass;empty candidate commit/local note untracked;no build.",
+      "integrationState": "Unchanged config matches tip; local untracked note excluded."
     },
     {
       "focus": "biome.json",
@@ -742,7 +747,7 @@
     {
       "focus": "scripts/smoke.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_9bca7048",
@@ -758,18 +763,23 @@
           "id": "task_8b4ae038",
           "base": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
           "candidate": "fcaf05e449e8b4a4023c06ef64f70e0ef8f1aec5",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Argument/build-reuse then owned pair/probe environment and visible CLI/connector/web effects. Callers build pair then reuse smoke; additional wrappers obscure isolation journey.",
+          "checks": "Independent sh-n and11/112focus;fixtures not compiled binaries;cwd unchanged means env/PATH/HOME isolation not fs sandbox;smoke-specific signal/failure cleanup not independently exercised."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "097f5cb9d15f5c6db5b7643aad74aa851ac7163b",
       "readingResult": "Unchanged validate→build/reuse→isolate pair→CLI/connector/web checks; wrappers would obscure isolation contract.",
-      "checks": "11focus112assertions;syntaxpass;no real binaries/full/native."
+      "checks": "11focus112assertions;syntaxpass;no real binaries/full/native.",
+      "integrationState": "Unchanged focus matches tip; local note excluded."
     },
     {
       "focus": "scripts/update-dependencies.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "awaiting-rework-judge",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_b3760f86",
@@ -803,6 +813,15 @@
           ],
           "requiredRework": "Fresh worker retain shared comparison, use prototype-free normalized map or own-entry-safe lookup; add constructor addition/removal tests; fresh judge with full prior finding.",
           "checks": "Independent16pass106assertions,Biome/tsc/diffpass;no live registry/build."
+        },
+        {
+          "id": "task_68106474",
+          "base": "5867361547ada310ee013bd7e9213247d0855a97",
+          "candidate": "b6231ed20199f3da842337f8deba81ded4bf0a53",
+          "state": "running",
+          "priorJudge": "task_98fc9caa",
+          "priorVerdict": "REJECT",
+          "writerResponse": "Full prior source/test patch retained; own-entry-safe shared comparison prevents inherited constructor values for normalized lock AND root reports; add/remove regressions fail before fix,25/161 combined pass after. Strict tsc/Biome/diff pass."
         }
       ],
       "relatedPaths": [
