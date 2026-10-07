@@ -22,3 +22,5 @@ Checks: explicit Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin in PA
 
 ## Accepted first source batch
 Selective CI: direct reference eligibility and scoped two-tree blockers, visible plan → publish → execute; actual-code judge task_36d1647b ACCEPT. Full related test patch retained; test file still needs its own primary focus. Base and candidate 16 tests/231 assertions; independent rerun same. Fail-closed Git/freshness/refusal/output contracts inspected. No hosted/full-gate claim. Build compiler file independently NO CHANGE NEEDED; judge dependency gap retained in ledger.
+
+Publication batch: authority → expected byte identity → verified complete draft/public snapshot → publish → independent public readback. Judge task_517172cd ACCEPT; 37 tests/391 assertions independently reproduced with shared dependencies; baseline characterization16/54. No actual publication. Complete related tests retained pending own primary.

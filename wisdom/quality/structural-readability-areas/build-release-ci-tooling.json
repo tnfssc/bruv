@@ -210,25 +210,45 @@
     {
       "focus": "scripts/install-local.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_56171a8b",
           "launchBase": "3f7811fb2f9c5675ccc877f839d01adfdb0430ca",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_56171a8b",
           "branch": "bruv/primary-scripts-install-local.sh-56171a8b",
+          "state": "completed",
+          "commit": "8e688196c804aac23216d4a6bc1498aa3574fb0a"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_fa23cd76",
+          "base": "3f7811fb2f9c5675ccc877f839d01adfdb0430ca",
+          "candidate": "8e688196c804aac23216d4a6bc1498aa3574fb0a",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/install-local.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Candidate unifies separate replacement flags/commit state/path aliases into successful-rename journal; clearing journal commits pair. Explicit recovery backup rename compat.previous → bruv-claude-compat.previous.",
+      "checks": "17 pass/61 assertions; bash syntax/strict tsc/format/diff pass; two unchanged lint warnings. No build/smoke/mac/device. Existing rename/signal window retained. Worker note untracked in retained candidate checkout."
     },
     {
       "focus": "scripts/install.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_7cb4f7d8",
+          "launchBase": "8747723aa2c3e306ae49365c17c728b576547673",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7cb4f7d8",
+          "branch": "bruv/primary-scripts-install.sh-7cb4f7d8",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -272,7 +292,7 @@
     {
       "focus": "scripts/publish-release.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_36e9172d",
@@ -288,15 +308,24 @@
           "id": "task_517172cd",
           "base": "59475aee72cbbc2511cd5f6bc77b4669363bcc9a",
           "candidate": "f605df32710abd34efb7bf2da09676460d05a173",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Visible authority→expected bytes→complete snapshot→publish→public readback; immutable snapshots reduce bookkeeping. Peeled tags, stale-develop/conflict refusal, exact 20 assets, paginated draft discovery, missing-only draft repair, and independent final verification preserved.",
+          "checks": "Independent isolated-dependency run 37 pass/391 assertions; base with added tests16 pass/54 assertions. No authenticated publication/full build.",
+          "acceptedBlobs": {
+            "scripts/publish-release.ts": "5ffbb5141171cc6857ffd67b7f7eef971754c5a5",
+            "tests/publish-release.test.ts": "268cb917055a44778d96c31c96da2d8c8e458c06"
+          }
         }
       ],
       "relatedPaths": [
         "tests/publish-release.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "5ffbb5141171cc6857ffd67b7f7eef971754c5a5",
       "readingResult": "verifyRemoteTag owns stale-develop/push/reuse policy; readExpectedAssets hashes bytes; ensureCompleteRelease repairs permissible drafts and returns verified immutable snapshot; main publishes then independently verifies public state.",
-      "checks": "37 pass/391 assertions; 16 CLI baseline characterization pass/54 assertions incl ten new cases; strict tsc/format/lint/diff pass, no authenticated publication/full build."
+      "checks": "37 pass/391 assertions; 16 CLI baseline characterization pass/54 assertions incl ten new cases; strict tsc/format/lint/diff pass, no authenticated publication/full build.",
+      "integrationState": "Full source/test patch applied from launch base; no overlap; local worker note excluded."
     },
     {
       "focus": "scripts/run-native-release-gate.mjs",
@@ -665,7 +694,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_517172cd",
+        "verdict": "ACCEPT",
+        "blob": "268cb917055a44778d96c31c96da2d8c8e458c06",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/release-browser-setup.test.ts",
