@@ -9,10 +9,17 @@
     {
       "focus": ".github/workflows/live.yml",
       "initialBlob": "6c1b0780b78c229785db286e9f15b76a4be60d32",
-      "primary": null,
+      "primary": {
+        "id": "task_8194489e",
+        "launchBase": "80720079160a7bbc23be750dcffaefb6fc7458f2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_8194489e",
+        "branch": "bruv/primary-.github-workflows-live.yml-8194489e",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live-linux/CaptureGate.h",
@@ -91,12 +98,24 @@
         "launchBase": "4aeb4eb94c369d8a0338c849a0d18914e009d78a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_08961c0d",
         "branch": "bruv/primary-native-live-audiocore.c-08961c0d",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "693ef0906777ccc267265d5b16e25a5df5ff1b66"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_365b0c49",
+          "status": "running",
+          "candidate": "693ef0906777ccc267265d5b16e25a5df5ff1b66",
+          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "judge running",
+      "relatedPaths": [
+        "native/live/test-core.c"
+      ],
+      "readingResult": "Candidate replaces primed/tail bookkeeping with explicit callback PlaybackCursor sample states and shared lookahead/reset operations; independent judgment pending.",
+      "checks": "Worker reports ASan/UBSan core/capture-gate tests; 16 focused Bun tests; baseline-compatible flush tests; 10,000-operation differential trace 7985c85bc32c5b06. No macOS/device/provider/concurrency proof."
     },
     {
       "focus": "native/live/AudioCore.h",
@@ -1146,5 +1165,8 @@
       "integration": "pending"
     }
   ],
-  "extraFiles": []
+  "extraFiles": [],
+  "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
+  "primaryBrief": "Fresh PRIMARY FILE worker, one focus file. Work in your durable worktree. Before commit write SHORT local pickup note wisdom/quality/structural-readability-worker.md: actual problem, why better, exact proof, limits/path/branch. Commit candidate; return exact launch base/commit/changed paths and concrete before/after reader walkthrough. Worker completion means candidate only; fresh independent actual-code judge decides acceptance. Do not edit area ledger. Start from your launch committed state; do not import other candidates.",
+  "judgeBrief": "Fresh READ-ONLY independent actual-code judge, separate from writer. Inspect ACTUAL source, callers, tests and FULL candidate diff at exact candidate path/commit/base, not just summaries or green tests. Judge intrinsic current code and improvement separately; cite important reader journeys and why mental reconstruction decreased. Return ACCEPT / REJECT / NO CHANGE NEEDED with exact inspected file blobs and concrete reasons. Already readable code may pass unchanged. For REJECT give concrete unmet targets and smallest coherent rework. Review ALL related/new/deleted paths. No edits/commits. Context includes any prior findings, writer responses and unresolved objections; do not launder earlier acceptance."
 }
