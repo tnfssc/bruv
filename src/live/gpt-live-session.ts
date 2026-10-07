@@ -13,6 +13,8 @@ export interface LiveSocket {
 export type LiveSocketFactory = (url: string, headers: Record<string, string>) => LiveSocket;
 export type LiveTranscript = { delta: string; startMs: number; endMs: number };
 export type LiveDelegation = { id: string; target: "client"; offsetMs: number };
+type ContextKind = "instructions" | "thinking" | "commentary";
+
 export interface GPTLiveCallbacks {
   onReady?: (sessionId: string) => void;
   /** Provisional fragments, NOT completed user turns. */
@@ -26,12 +28,7 @@ export interface GPTLiveCallbacks {
   onClosed?: (finalized: boolean, usage?: unknown) => void;
   onUsage?: (usage: unknown) => void;
   /** Context reached its estimated timeline position, not proof of speech or task completion. */
-  onContextAppended?: (ack: {
-    eventId: string;
-    type: "instructions" | "thinking" | "commentary";
-    startMs: number;
-    endMs: number;
-  }) => void;
+  onContextAppended?: (ack: { eventId: string; type: ContextKind; startMs: number; endMs: number }) => void;
 }
 const URL = "wss://api.openai.com/v1/live/sessions";
 const MAX_EVENT = 150_000,
@@ -51,6 +48,7 @@ const validB64 = (s: unknown): s is string =>
 
 /** Single-use transport. No invented speech_started, finished transcript or server truncate event. */
 export class GPTLiveSession {
+  // Single-use: closed is irreversible, so phase also fences late socket callbacks.
   private phase: "idle" | "connecting" | "ready" | "closing" | "closed" = "idle";
   private socket?: LiveSocket;
   private closureError?: string;
@@ -59,12 +57,11 @@ export class GPTLiveSession {
   }
   private timer?: ReturnType<typeof setTimeout>;
   private finishConnect?: () => void;
-  private finishClose?: () => void;
+  private readonly transportClosed = Promise.withResolvers<void>();
   private readonly resampler = new InputResampler();
   private readonly delegations = new Set<string>();
-  private serial = 0;
   private nextContextId = 0;
-  private readonly pendingContext = new Map<string, "instructions" | "thinking" | "commentary">();
+  private readonly pendingContext = new Map<string, ContextKind>();
   constructor(
     private readonly callbacks: GPTLiveCallbacks,
     private readonly factory: LiveSocketFactory = (url, headers) =>
@@ -85,11 +82,10 @@ export class GPTLiveSession {
       this.fail("Live callback failed");
     }
   }
-  private done(finalized: boolean, reason?: string, usage?: unknown) {
+  private finishTransport(finalized: boolean, reason?: string, usage?: unknown) {
     if (this.phase === "closed") return;
     if (this.phase === "closing" && reason) this.closureError = reason;
     this.phase = "closed";
-    ++this.serial;
     this.clearTimer();
     this.resampler.reset();
     this.delegations.clear();
@@ -102,8 +98,7 @@ export class GPTLiveSession {
     this.socket = undefined;
     this.finishConnect?.();
     this.finishConnect = undefined;
-    this.finishClose?.();
-    this.finishClose = undefined;
+    this.transportClosed.resolve();
     if (reason) {
       try {
         this.callbacks.onError?.(reason);
@@ -118,7 +113,7 @@ export class GPTLiveSession {
     }
   }
   private fail(reason: string) {
-    this.done(false, reason);
+    this.finishTransport(false, reason);
   }
   private send(event: Record<string, unknown>) {
     if (!this.socket || (this.phase !== "ready" && this.phase !== "closing")) return false;
@@ -142,20 +137,19 @@ export class GPTLiveSession {
       return;
     }
     this.phase = "connecting";
-    const serial = ++this.serial;
     await new Promise<void>((resolve) => {
       this.finishConnect = resolve;
       this.timer = setTimeout(() => this.fail("Live session start timed out"), this.timeouts.connectMs);
       this.timer.unref?.();
       try {
         const socket = this.factory(URL, { Authorization: "Bearer " + key });
-        if (this.phase !== "connecting" || serial !== this.serial) {
+        if (this.phase !== "connecting") {
           socket.close();
           return;
         }
         this.socket = socket;
         socket.addEventListener("open", () => {
-          if (serial !== this.serial || this.phase !== "connecting") return;
+          if (this.phase !== "connecting") return;
           try {
             socket.send(
               JSON.stringify({
@@ -174,13 +168,13 @@ export class GPTLiveSession {
           }
         });
         socket.addEventListener("message", (e) => {
-          if (serial === this.serial) this.receive(e.data);
+          this.receive(e.data);
         });
         socket.addEventListener("error", () => {
-          if (serial === this.serial) this.fail("Live transport failed");
+          this.fail("Live transport failed");
         });
         socket.addEventListener("close", () => {
-          if (serial === this.serial) this.fail("Live connection closed before session.closed");
+          this.fail("Live connection closed before session.closed");
         });
       } catch {
         this.fail("Live connection failed");
@@ -229,7 +223,7 @@ export class GPTLiveSession {
       return;
     }
     if (event.type === "session.closed") {
-      this.done(true, undefined, event.usage);
+      this.finishTransport(true, undefined, event.usage);
       return;
     }
     if (event.type === "error") {
@@ -241,17 +235,7 @@ export class GPTLiveSession {
       case "session.instructions.appended":
       case "session.thinking.appended":
       case "session.commentary.appended": {
-        const id = event.client_event_id;
-        const kind = this.pendingContext.get(id);
-        if (!kind || event.type !== `session.${kind}.appended`) return;
-        if (!validTime(event.start_ms) || !validTime(event.end_ms) || event.end_ms < event.start_ms) {
-          this.fail("Invalid Live context acknowledgment");
-          return;
-        }
-        this.pendingContext.delete(id);
-        this.emit(() =>
-          this.callbacks.onContextAppended?.({ eventId: id, type: kind, startMs: event.start_ms, endMs: event.end_ms }),
-        );
+        this.acknowledgeContext(event);
         break;
       }
       case "session.input_transcript.delta":
@@ -314,59 +298,57 @@ export class GPTLiveSession {
   }
   /** App must verify content/authority. Only observed client delegation IDs are accepted. */
   commentary(delegationId: string, content: string): boolean {
-    return this.update("session.commentary.append", delegationId, content);
+    return this.appendContext("commentary", delegationId, content);
   }
   /** Safe progress only; never send private reasoning. */
   thinking(delegationId: string, content: string): boolean {
-    return this.update("session.thinking.append", delegationId, content);
+    return this.appendContext("thinking", delegationId, content);
   }
   /** Trusted application direction only; never promote provisional transcript or tool output into instructions. */
   instructions(content: string): boolean {
-    return this.update("session.instructions.append", null, content);
+    return this.appendContext("instructions", null, content);
   }
   /** General host observations have no proven delegation correlation. Never invent one. */
   observation(content: string, speak = false): boolean {
-    return this.update(speak ? "session.commentary.append" : "session.thinking.append", null, content);
+    return this.appendContext(speak ? "commentary" : "thinking", null, content);
   }
-  private update(
-    type: "session.commentary.append" | "session.thinking.append" | "session.instructions.append",
-    id: string | null,
-    content: string,
-  ): boolean {
+  private appendContext(kind: ContextKind, id: string | null, content: string): boolean {
     if (this.phase !== "ready" || (id !== null && !this.delegations.has(id))) return false;
     if (!content || Buffer.byteLength(content) > 480) throw new Error("Invalid Live update");
     if (this.pendingContext.size >= 256) return false;
     const eventId = `live_context_${++this.nextContextId}`;
-    const kind = type.slice("session.".length, -".append".length) as "instructions" | "thinking" | "commentary";
     this.pendingContext.set(eventId, kind);
-    const sent = this.send({ type, event_id: eventId, delegation_id: id, content });
+    const sent = this.send({ type: `session.${kind}.append`, event_id: eventId, delegation_id: id, content });
     if (!sent) this.pendingContext.delete(eventId);
     return sent;
   }
-  /** Wait for session.closed; transport failure/timeout leaves final usage unknown. */
-  async close(): Promise<void> {
-    if (this.phase === "closed") return;
-    if (this.phase === "idle" || this.phase === "connecting") {
-      this.done(false);
+  private acknowledgeContext(event: any) {
+    const id = event.client_event_id;
+    const kind = this.pendingContext.get(id);
+    if (!kind || event.type !== `session.${kind}.appended`) return;
+    if (!validTime(event.start_ms) || !validTime(event.end_ms) || event.end_ms < event.start_ms) {
+      this.fail("Invalid Live context acknowledgment");
       return;
     }
-    if (this.phase === "closing")
-      return new Promise((resolve) => {
-        const prior = this.finishClose;
-        this.finishClose = () => {
-          prior?.();
-          resolve();
-        };
-      });
-    this.phase = "closing";
-    await new Promise<void>((resolve) => {
-      this.finishClose = resolve;
+    this.pendingContext.delete(id);
+    this.emit(() =>
+      this.callbacks.onContextAppended?.({ eventId: id, type: kind, startMs: event.start_ms, endMs: event.end_ms }),
+    );
+  }
+  /** Wait for session.closed; transport failure/timeout leaves final usage unknown. */
+  async close(): Promise<void> {
+    if (this.phase === "idle" || this.phase === "connecting") {
+      this.finishTransport(false);
+    } else if (this.phase === "ready") {
+      this.phase = "closing";
       this.timer = setTimeout(
         () => this.fail("Live session.close timed out; final usage unknown"),
         this.timeouts.closeMs,
       );
       this.timer.unref?.();
       this.send({ type: "session.close" });
-    });
+    }
+    // Every caller waits for the same terminal transport result, not a new close request.
+    await this.transportClosed.promise;
   }
 }

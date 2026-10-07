@@ -910,9 +910,16 @@
         "status": "candidate ready",
         "commit": "357b3a75677e60ce60bdf341e4988242f2d762fe"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c817da47",
+          "status": "running",
+          "candidate": "357b3a75677e60ce60bdf341e4988242f2d762fe",
+          "base": "25f29f5e951dcbef28df99a15eac7cf41debaed0"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged discovery separate from runtime resolution;import guards descriptor access/rechecks config/locked callback decideswrite;one trycatchfinally owns file descriptor. Extraction addsindirection.",
       "checks": "107tests580assertions acrosscredential/lifecycle/setup/extension/startupprobe;no provider/device/macOS/fullbuild."
@@ -1036,13 +1043,21 @@
       "judgeRounds": [
         {
           "id": "task_86206c2a",
-          "status": "running",
+          "status": "complete",
           "candidate": "6d69c467cd48fa7ebad64fc5faa5d73ed0e861bf",
-          "base": "e7a05d5f63b11cc8c4d57f4b2b4f4b797ef776fe"
+          "base": "e7a05d5f63b11cc8c4d57f4b2b4f4b797ef776fe",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "One terminal transport result replaces mutableclose-resolver chain;finishTransport owns timers/resampler/correlation/socket and finalizedvsunknownusage. Redundantserial removed withclosed/connecting guards intact. SemanticContextKind removeswire reverseparsing;ack correlation not speech/taskfinality.",
+          "checks": "Independent57pass1paidskip636assertions;teardownfailure probe waiterssettle/socketonce/closeError+terminalusage preserved;owner suite missingassets blocked;diffclean.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-session.ts": "92d985f0bd164825e712218e609930f2262beb0b",
+            "tests/gpt-live-session.test.ts": "c62f5f2fedaa619f3ccbdf492641105f7dc383b8"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "92d985f0bd164825e712218e609930f2262beb0b",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [
         "tests/gpt-live-session.test.ts"
       ],
@@ -1494,7 +1509,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_86206c2a",
+        "verdict": "ACCEPT",
+        "blob": "c62f5f2fedaa619f3ccbdf492641105f7dc383b8"
+      }
     },
     {
       "focus": "tests/gpt-live-waveform.test.ts",
