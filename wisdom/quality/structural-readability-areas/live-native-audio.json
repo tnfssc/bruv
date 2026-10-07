@@ -52,13 +52,20 @@
       "judgeRounds": [
         {
           "id": "task_5e692e3f",
-          "status": "running",
+          "status": "complete",
           "candidate": "d3ba046d7bdca2cbe0c008105abccf0278cd4a4b",
-          "base": "4d3d4b3597528306318fc13a7d220f6300fa6b0d"
+          "base": "4d3d4b3597528306318fc13a7d220f6300fa6b0d",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Focused acquisition policy leaves Pulse timing/reset lifetime in main; set resets frontier, arm converts16k latency to bytes, accepts visibly rejects backlog/straddling buffers. Release delivery epoch separate in JS.",
+          "checks": "Independent28 Bun pass/155 assertions; C++ gate ASan/UBSan exit0; diff pass, no runtime/device proof.",
+          "acceptedBlobs": {
+            "native/live-linux/CaptureGate.h": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged acquisition frontier predicate: rejects unarmed/invalid origin/pre-frontier; main.cpp owns Pulse revision/cancellation/backlog resets, JS stale epoch rejection separate. Wrappers would add indirection.",
       "checks": "28 Bun pass/155 assertions; C++ gate ASan/UBSan pass. No virtual/native helper/provider/macOS proof."
@@ -116,12 +123,15 @@
         "launchBase": "f473c8e5a1c4377742f0b65c27d06782d456f7d1",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_3f8cfc8c",
         "branch": "bruv/primary-native-live-linux-tests-capture--3f8cfc8c",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "60884cc93465a0bd217574abdb6e148db81dfaf6"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Three local gate fixtures isolate continuous/first hold/reopen; reopening proves index9000 accepted before mute then rejected until new snapshot and against new frontier, units explicit. Prior assertions retained.",
+      "checks": "4 Bun tests/24 assertions; strict GCC and ClangASan/UBSan pass; diff clean. No Pulse/device/provider/macOS runtime."
     },
     {
       "focus": "native/live-linux/tests/capture-protocol.py",
@@ -190,9 +200,16 @@
         "status": "candidate ready",
         "commit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_ab2edd5f",
+          "status": "running",
+          "candidate": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+          "base": "efb1edd066ae3fe1b59334ff01cf15f14fc9b919"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [
         "native/live-linux/tests/protocol.py",
         "native/live-linux/tests/test_protocol.py",
@@ -362,10 +379,17 @@
     {
       "focus": "native/live/test-waveform.c",
       "initialBlob": "bb584e0f6042f5e82f7298fb3a84b8e2bcb6e749",
-      "primary": null,
+      "primary": {
+        "id": "task_6cc26443",
+        "launchBase": "e450896fa5f2cc20e2f77eeb06375321e2021a55",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_6cc26443",
+        "branch": "bruv/primary-native-live-test-waveform.c-6cc26443",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "scripts/build-live-helper.sh",
