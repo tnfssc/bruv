@@ -282,3 +282,53 @@ test.skipIf(process.platform !== "linux")("spawn failure publishes unknown only 
     expect(t.state().error).toContain("missing-executable");
   });
 });
+
+test.skipIf(process.platform !== "linux")(
+  "owner refuses to replay a nonempty journal before spawning RPC",
+  async () => {
+    await withOwner(async ({ task }) => {
+      const t = await task("journal_replay", 'touch "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/spawned"\n');
+      const path = join(t.directory, "events.jsonl");
+      const original = JSON.stringify({ seq: 1, event: { type: "previous-owner" } }) + "\n";
+      writeFileSync(path, original);
+      await t.start();
+      expect(t.state()).toMatchObject({ state: "unknown", error: "Error: Existing journal; cannot replay owner" });
+      expect(readFileSync(path, "utf8")).toBe(original);
+      expect(existsSync(join(t.directory, "spawned"))).toBe(false);
+    });
+  },
+);
+
+test.skipIf(process.platform !== "linux")(
+  "journal row limit includes its envelope, not just the RPC frame",
+  async () => {
+    await withOwner(async ({ task }) => {
+      const frame = { type: "fixture", text: "" };
+      frame.text = "x".repeat(512 * 1024 - Buffer.byteLength(JSON.stringify(frame)));
+      const line = JSON.stringify(frame);
+      const t = await task("journal_row_limit", "echo '" + line + "'\n");
+      await t.start();
+      expect(t.state()).toMatchObject({
+        state: "unknown",
+        error: "Journal write failed: Error: RPC journal limit exceeded",
+      });
+      // The configuration response is durable; the rejected row is never appended.
+      const rows = readFileSync(join(t.directory, "events.jsonl"), "utf8")
+        .trimEnd()
+        .split("\n")
+        .map((row) => JSON.parse(row));
+      expect(rows).toEqual([
+        {
+          seq: 1,
+          event: {
+            type: "response",
+            id: "remote-config",
+            success: true,
+            data: { model: { provider: "example", id: "model" }, thinkingLevel: "off" },
+          },
+        },
+      ]);
+      expect(await t.sync()).toMatchObject({ task: { state: "unknown" }, events: rows, cursor: 1, hasMore: false });
+    });
+  },
+);

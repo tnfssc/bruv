@@ -2,7 +2,7 @@
 
 ## State and delivery
 
-Initialization only; no whole-repo readability acceptance. Integration checkout: `/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_e5546eb4`, branch `bruv/structural-readability-repo-wide`. Initial tree was clean at `118edf14db266c51d563c83342fef6dacdc5267b` (judge-accepted owner pilot), descended from upstream `886c4c84`. The rejected 662-file naming sweep is not imported. No source edits, push or PR creation in initialization.
+Whole-repo run started; no whole-repo readability acceptance yet. Eight area orchestrators are launching per-file primary workers and independent judges. Exact IDs, durable paths and branches are in [area jobs](structural-readability-repo-wide-jobs.json). Integration checkout: `/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_e5546eb4`, branch `bruv/structural-readability-repo-wide`. Initial tree was clean at `118edf14db266c51d563c83342fef6dacdc5267b` (judge-accepted owner pilot), descended from upstream `886c4c84`. The rejected 662-file naming sweep is not imported. No source edits, push or PR creation in initialization.
 
 Deliver one integrated result to **existing PR #45**, not area PRs or piecewise pilots. Keep progress quietly in the background until integrated. Read [values](../values.md), [guidance](structural-readability-guidance.md) and [pilot](structural-readability-owner-pilot.md); values already contain the judge lesson and are unchanged.
 
@@ -56,3 +56,7 @@ Initialization proof: 766 baseline blob matches and pending rows; 766 assignment
 Use Bun 1.4.2 at `/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin`, with PATH set inside a quoted `/bin/bash` script; automatic fish setup may fail while a worker still starts. Full gate: `SHELL=/bin/sh bun run ci`.
 
 Next: parent launches area orchestrators from this initialization commit, runs the per-file pipeline and integrates durable worker commits here, reconciling hashes/ledgers. Refresh final inventory for additions/deletions explicitly. Done only when **every final first-party code file** has primary coverage and independent actual-code acceptance at its final hash, groups fit, full gates pass and integrated PR #45 is updated.
+
+## Shared integration checkpoint
+
+Joined committed, independently judged partial batches from all eight areas. Exact tips: [integration batches](structural-readability-integration-batches.json). No changed source overlap at this checkpoint. Related files are accepted as parts of coherent patches; their dedicated primary focus coverage still remains where area ledgers say pending. Two unused session-input files have judged removals, not missing hashes. This is common code for the remaining workers, not whole-repo acceptance or delivery. Parent integration typecheck passed at 95d2e164 (task_a2ce6aa8), including asset preparation and TypeScript noEmit. Final primary/judge coverage, integration quality audit and full gates remain.

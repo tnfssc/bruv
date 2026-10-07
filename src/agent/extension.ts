@@ -1,46 +1,30 @@
-import type { TaskOwnerBinding, TaskOwnerObserver } from "../tasks/task-owner";
-import { registerRollingActivity } from "../ui/rolling-activity";
-import { installSdkTaskRows } from "../ui/sdk-task-rows";
-import {
-  taskRowFromLaunch,
-  taskRowFromRemote,
-  taskRowKey,
-  taskRowsFromDetails,
-  taskRowsFromSessionEntries,
-  upsertTaskRow,
-  type TaskRow,
-} from "../ui/task-rows";
-import { registerRootRuntime } from "../remote/root-runtime";
-import { remoteCompletionSummary } from "../remote/job-observations";
-import { registerRemoteCancellationService } from "../remote/cancellation";
 import { createHash } from "node:crypto";
-import { RemoteClient } from "../remote/client";
-import { createRemoteJobsAdapter, sshJobId } from "../remote/jobs";
-import { publishRemoteJobObservations } from "../remote/job-observations";
-import { createRemoteOperations, type RemoteOperation } from "../remote/operations";
-import { registerQuestions } from "../questions/extension";
-import { registerQuestionRuntime } from "../questions/runtime";
-import { currentMainOwner, currentMainToolOwner } from "../live/main-owner";
-import { requestForegroundStop } from "../tasks/foreground-stop";
-import { SessionHost, type SessionTaskPort } from "../session/host";
-import { registerSessionHost } from "../session/host-access";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../delegation-environment";
 import { attachDiagnosticSink, diagnosticRecorder, recordDiagnostic } from "../diagnostics";
 import { registerOperationDiagnostics } from "../diagnostics-extension";
 import { type GoalRuntime, registerGoalMode } from "../goals/extension";
 import { HistoryService } from "../history/service";
-import { registerProjectWisdom } from "../wisdom/extension";
+import { currentMainOwner, currentMainToolOwner } from "../live/main-owner";
 import { collaborationGuidance, isBruvSystemPrompt, subagentGuidance } from "../prompts";
-import { registerExecuteTool } from "../typescript/extension";
-import { completionPreview } from "../ui/execution-previews";
-import { createCompactUI } from "../ui/footer";
-import { registerCacheAffineCompaction } from "./cache-affine-compaction";
-import { CacheCountdown, registerCacheCountdown } from "./cache-countdown";
+import { registerQuestions } from "../questions/extension";
+import { registerQuestionRuntime } from "../questions/runtime";
+import { registerRemoteCancellationService } from "../remote/cancellation";
+import { RemoteClient } from "../remote/client";
+import { RemoteJobDeliveryOutbox } from "../remote/job-delivery";
+import { clearRemoteJobEvents, type RemoteJobObservation, remoteJobEvents } from "../remote/job-events";
+import { publishRemoteJobObservations, remoteCompletionSummary } from "../remote/job-observations";
+import { createRemoteJobsAdapter, sshJobId } from "../remote/jobs";
+import { createRemoteOperations, type RemoteOperation } from "../remote/operations";
+import { registerRootRuntime } from "../remote/root-runtime";
+import { SessionHost, type SessionTaskPort } from "../session/host";
+import { registerSessionHost } from "../session/host-access";
+import { createWebTaskEventEmitter } from "../t3/tasks/events";
+import { T3LocalNotificationDelivery, T3LocalNotificationOutbox } from "../t3/tasks/local-notifications";
+import { t3BridgeEnvironment } from "../t3/tasks/mcp-client";
 import { CompletionBatcher } from "../tasks/completion-batcher";
 import { formatCompletionNotification } from "../tasks/completion-notification";
-import { clearInstructionContinuity, scopeInstructionContinuity } from "./instruction-continuity";
-import { registerInstructionMode } from "./instruction-mode";
-import { registerLastUsedCliModel } from "./last-used-cli-model";
+import { requestForegroundStop } from "../tasks/foreground-stop";
 import {
   type AttentionNotice,
   type AttentionOptions,
@@ -49,21 +33,36 @@ import {
 } from "../tasks/job-attention";
 import { JobService } from "../tasks/job-service";
 import { installLocalAgentTermination } from "../tasks/local-agent-termination";
-import { registerManualShake } from "./manual-shake";
-import { registerNativeCodexCompaction } from "./native-compaction";
-import { registerNativeFastMode } from "./native-fast-mode";
 import { registerResumeSafeguards } from "../tasks/resume-safeguards";
 import { SUBAGENT_TYPES } from "../tasks/subagent-profiles";
 import { registerSubagentSettings } from "../tasks/subagent-settings-ui";
-import { T3LocalNotificationDelivery, T3LocalNotificationOutbox } from "../t3/tasks/local-notifications";
-import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../delegation-environment";
-import { t3BridgeEnvironment } from "../t3/tasks/mcp-client";
 import { createTaskLifecycleRecorder } from "../tasks/task-lifecycle";
 import { type TaskInspection, TaskManager } from "../tasks/task-manager";
 import { registerTaskMonitor } from "../tasks/task-monitor";
-import { createWebTaskEventEmitter } from "../t3/tasks/events";
-import { clearRemoteJobEvents, remoteJobEvents, type RemoteJobObservation } from "../remote/job-events";
-import { RemoteJobDeliveryOutbox } from "../remote/job-delivery";
+import type { TaskOwnerBinding, TaskOwnerObserver } from "../tasks/task-owner";
+import { registerExecuteTool } from "../typescript/extension";
+import { completionPreview } from "../ui/execution-previews";
+import { createCompactUI } from "../ui/footer";
+import { registerRollingActivity } from "../ui/rolling-activity";
+import { installSdkTaskRows } from "../ui/sdk-task-rows";
+import {
+  type TaskRow,
+  taskRowFromLaunch,
+  taskRowFromRemote,
+  taskRowKey,
+  taskRowsFromDetails,
+  taskRowsFromSessionEntries,
+  upsertTaskRow,
+} from "../ui/task-rows";
+import { registerProjectWisdom } from "../wisdom/extension";
+import { registerCacheAffineCompaction } from "./cache-affine-compaction";
+import { CacheCountdown, registerCacheCountdown } from "./cache-countdown";
+import { clearInstructionContinuity, scopeInstructionContinuity } from "./instruction-continuity";
+import { registerInstructionMode } from "./instruction-mode";
+import { registerLastUsedCliModel } from "./last-used-cli-model";
+import { registerManualShake } from "./manual-shake";
+import { registerNativeCodexCompaction } from "./native-compaction";
+import { registerNativeFastMode } from "./native-fast-mode";
 
 export function completionDiagnosticDetails(tasks: TaskInspection[], notices: AttentionNotice[]) {
   const taskStatusCounts = {
@@ -911,7 +910,7 @@ export default function asynchronousTasksExtension(
     // retain their role identity and delegation boundary on every base.
     const userCustom = custom && !isBruvSystemPrompt(event.systemPromptOptions);
     if (userCustom && subagentDepth === 0) return;
-    const role = subagentDepth > 0 ? subagentGuidance(agentType ?? "normal") : instructionMode.guidance(ctx, false);
+    const role = subagentDepth > 0 ? subagentGuidance(agentType ?? "normal") : instructionMode.guidance(ctx);
     const additions = [userCustom ? "" : collaborationGuidance(), role].filter(Boolean).join("\n\n");
     if (additions) return { systemPrompt: event.systemPrompt + "\n\n" + additions };
   });

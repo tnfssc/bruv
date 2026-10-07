@@ -94,6 +94,37 @@ export function textContent(animated = true) {
     '<footer><a href="./">Terminal view</a> · <a href="./licenses/ghostty-web.txt">Renderer license</a> · <a href="./licenses/vesper.txt">Vesper theme</a></footer>'
   );
 }
+function renderPage(template: string, metadata: string, view: "terminal" | "text") {
+  const html = template
+    .replace("<!-- META -->", metadata)
+    .replaceAll("<!-- DESCRIPTION -->", escapeHtml(siteContent.description));
+  if (view === "text") {
+    return html
+      .replace("<!-- BOOTSTRAP -->", "")
+      .replace("<!-- CONTENT -->", textContent(true))
+      .replace("<!-- ACCESSIBLE SWITCH -->", "")
+      .replace(
+        "<!-- RUNTIME -->",
+        '<script type="module" src="./html-animation.js"></script><script type="module" src="./install-html.js"></script>',
+      )
+      .replace("<!-- SWITCH -->", '<nav aria-label="View"><p><a href="./">Terminal view</a></p></nav>');
+  }
+  return html
+    .replace(
+      "<!-- BOOTSTRAP -->",
+      '<style>html{background:#101010}.terminal-pending #text-content{display:none}.terminal-pending{overflow:hidden}</style><script>document.documentElement.classList.add("terminal-pending")</script>',
+    )
+    .replace("<!-- CONTENT -->", textContent(false))
+    .replace(
+      "<!-- ACCESSIBLE SWITCH -->",
+      '<nav aria-label="Accessible view"><a class="plain-switch" href="./text.html">Accessible HTML / text view</a></nav>',
+    )
+    .replace(
+      "<!-- RUNTIME -->",
+      '<script type="module">import("./terminal.js").catch(() => document.documentElement.classList.remove("terminal-pending"))</script>',
+    )
+    .replace("<!-- SWITCH -->", '<nav aria-label="View"><p><a href="./text.html">HTML view</a></p></nav>');
+}
 export async function build(raw = process.env.BASE_URL) {
   const metadata = siteMetadata(raw);
   const root = resolve(import.meta.dir, ".."),
@@ -101,37 +132,8 @@ export async function build(raw = process.env.BASE_URL) {
   await rm(out, { recursive: true, force: true });
   await mkdir(out, { recursive: true });
   const template = await Bun.file(resolve(root, "index.html")).text();
-  for (const plain of [false, true]) {
-    const html = template
-      .replace("<!-- META -->", plain ? siteMetadata(raw, "text.html").html : metadata.html)
-      .replaceAll("<!-- DESCRIPTION -->", escapeHtml(siteContent.description))
-      .replace(
-        "<!-- BOOTSTRAP -->",
-        plain
-          ? ""
-          : '<style>html{background:#101010}.terminal-pending #text-content{display:none}.terminal-pending{overflow:hidden}</style><script>document.documentElement.classList.add("terminal-pending")</script>',
-      )
-      .replace("<!-- CONTENT -->", textContent(plain))
-      .replace(
-        "<!-- ACCESSIBLE SWITCH -->",
-        plain
-          ? ""
-          : '<nav aria-label="Accessible view"><a class="plain-switch" href="./text.html">Accessible HTML / text view</a></nav>',
-      )
-      .replace(
-        "<!-- RUNTIME -->",
-        plain
-          ? '<script type="module" src="./html-animation.js"></script><script type="module" src="./install-html.js"></script>'
-          : '<script type="module">import("./terminal.js").catch(() => document.documentElement.classList.remove("terminal-pending"))</script>',
-      )
-      .replace(
-        "<!-- SWITCH -->",
-        plain
-          ? '<nav aria-label="View"><p><a href="./">Terminal view</a></p></nav>'
-          : '<nav aria-label="View"><p><a href="./text.html">HTML view</a></p></nav>',
-      );
-    await Bun.write(resolve(out, plain ? "text.html" : "index.html"), html);
-  }
+  await Bun.write(resolve(out, "index.html"), renderPage(template, metadata.html, "terminal"));
+  await Bun.write(resolve(out, "text.html"), renderPage(template, siteMetadata(raw, "text.html").html, "text"));
   const result = await Bun.build({
     entrypoints: [resolve(root, "terminal.ts"), resolve(root, "html-animation.ts"), resolve(root, "install-html.ts")],
     outdir: out,

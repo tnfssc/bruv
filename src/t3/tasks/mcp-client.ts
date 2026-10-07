@@ -26,6 +26,13 @@ class McpHttpError extends Error {
   }
 }
 
+type RpcMessage = {
+  jsonrpc: "2.0";
+  id?: number;
+  method: string;
+  params?: Record<string, unknown>;
+};
+
 type RpcResponse = {
   jsonrpc: "2.0";
   id: number;
@@ -202,7 +209,6 @@ export class T3McpClient {
   #closed = false;
   #owner = new AbortController();
   #initializing?: Promise<void>;
-  #reconnecting?: Promise<void>;
   #inFlight = new Set<Promise<unknown>>();
   #closePromise?: Promise<void>;
 
@@ -251,18 +257,25 @@ export class T3McpClient {
     return pending;
   }
 
-  async #request<T>(
-    init: RequestInit,
-    caller: AbortSignal | undefined,
-    consume: (response: Response) => Promise<T>,
-  ): Promise<T> {
+  async #send(message: RpcMessage, caller?: AbortSignal): Promise<unknown> {
+    this.#assertOpen();
+    const requestSession = this.#sessionId;
+    const body = JSON.stringify(message);
     return withSignal(this.#owner.signal, caller, this.requestTimeoutMs, async (signal, timedOut) => {
       let response: Response;
       try {
         response = await fetch(this.endpoint, {
-          ...init,
+          method: "POST",
           redirect: "error",
           signal,
+          headers: {
+            authorization: "Bearer " + this.token,
+            accept: "application/json, text/event-stream",
+            "content-type": "application/json",
+            "mcp-protocol-version": T3_MCP_PROTOCOL_VERSION,
+            ...(requestSession ? { "mcp-session-id": requestSession } : {}),
+          },
+          body,
         });
       } catch {
         if (caller?.aborted || this.#owner.signal.aborted) throw new Error("T3 MCP request aborted");
@@ -270,41 +283,16 @@ export class T3McpClient {
         throw new McpAmbiguousResponseError("T3 MCP transport failed");
       }
       try {
-        return await consume(response);
-      } catch (error) {
-        if (caller?.aborted || this.#owner.signal.aborted) throw new Error("T3 MCP request aborted");
-        if (timedOut()) throw new McpAmbiguousResponseError("T3 MCP request timed out");
-        throw error;
-      }
-    });
-  }
-
-  async #post(method: string, params: Record<string, unknown> | undefined, caller?: AbortSignal): Promise<unknown> {
-    this.#assertOpen();
-    const id = ++this.#nextId;
-    const requestSession = this.#sessionId;
-    return this.#request(
-      {
-        method: "POST",
-        headers: {
-          authorization: "Bearer " + this.token,
-          accept: "application/json, text/event-stream",
-          "content-type": "application/json",
-          "mcp-protocol-version": T3_MCP_PROTOCOL_VERSION,
-          ...(requestSession ? { "mcp-session-id": requestSession } : {}),
-        },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id,
-          method,
-          ...(params ? { params } : {}),
-        }),
-      },
-      caller,
-      async (response) => {
         if (!response.ok) {
           await response.body?.cancel().catch(() => undefined);
+          this.#assertOpen();
           throw new McpHttpError(response.status, requestSession);
+        }
+        // Notifications have no RPC response and do not acquire a session.
+        if (message.id === undefined) {
+          await response.body?.cancel().catch(() => undefined);
+          this.#assertOpen();
+          return;
         }
         const receivedSession = response.headers.get("mcp-session-id");
         if (receivedSession) {
@@ -314,64 +302,55 @@ export class T3McpClient {
           }
           this.#sessionId = receivedSession;
         }
-        const rpc = await readRpc(response, response.headers.get("content-type") ?? "", id);
+        const rpc = await readRpc(response, response.headers.get("content-type") ?? "", message.id);
         this.#assertOpen();
         if ("error" in rpc) throw new Error("T3 MCP request failed");
         return rpc.result;
-      },
-    );
+      } catch (error) {
+        if (caller?.aborted || this.#owner.signal.aborted) throw new Error("T3 MCP request aborted");
+        if (timedOut()) throw new McpAmbiguousResponseError("T3 MCP request timed out");
+        throw error;
+      }
+    });
   }
 
-  async #notify(method: string, caller?: AbortSignal): Promise<void> {
+  #post(method: string, params: Record<string, unknown>, caller?: AbortSignal): Promise<unknown> {
+    return this.#send({ jsonrpc: "2.0", id: ++this.#nextId, method, params }, caller);
+  }
+
+  // Initial connect and expired-session recovery share this one owned handshake.
+  // Caller cancellation only leaves the wait; close() owns interrupting it.
+  #connect(): Promise<void> {
     this.#assertOpen();
-    await this.#request(
-      {
-        method: "POST",
-        headers: {
-          authorization: "Bearer " + this.token,
-          accept: "application/json, text/event-stream",
-          "content-type": "application/json",
-          "mcp-protocol-version": T3_MCP_PROTOCOL_VERSION,
-          ...(this.#sessionId ? { "mcp-session-id": this.#sessionId } : {}),
-        },
-        body: JSON.stringify({ jsonrpc: "2.0", method }),
-      },
-      caller,
-      async (response) => {
-        await response.body?.cancel().catch(() => undefined);
+    if (this.#initialized) return Promise.resolve();
+    if (!this.#initializing) {
+      const pending = this.#track(async () => {
+        await this.#post("initialize", {
+          protocolVersion: T3_MCP_PROTOCOL_VERSION,
+          capabilities: {},
+          clientInfo: { name: "bruv", version: "1" },
+        });
+        await this.#send({ jsonrpc: "2.0", method: "notifications/initialized" });
         this.#assertOpen();
-        if (!response.ok) throw new McpHttpError(response.status, this.#sessionId);
-      },
-    );
+        this.#initialized = true;
+      });
+      this.#initializing = pending;
+      void pending.then(
+        () => {
+          this.#initializing = undefined;
+        },
+        () => {
+          this.#initializing = undefined;
+        },
+      );
+    }
+    return this.#initializing;
   }
 
   async #ensureInitialized(caller?: AbortSignal): Promise<void> {
     this.#assertOpen();
     if (caller?.aborted) throw new Error("T3 MCP request aborted");
-    if (this.#initialized) return;
-    if (!this.#initializing) {
-      const pending = this.#track(async () => {
-        await this.#post(
-          "initialize",
-          {
-            protocolVersion: T3_MCP_PROTOCOL_VERSION,
-            capabilities: {},
-            clientInfo: { name: "bruv", version: "1" },
-          },
-          undefined,
-        );
-        await this.#notify("notifications/initialized");
-        this.#assertOpen();
-        this.#initialized = true;
-      });
-      this.#initializing = pending;
-      void pending
-        .finally(() => {
-          if (this.#initializing === pending) this.#initializing = undefined;
-        })
-        .catch(() => undefined);
-    }
-    await awaitCaller(this.#initializing, caller);
+    await awaitCaller(this.#connect(), caller);
     this.#assertOpen();
   }
 
@@ -381,22 +360,11 @@ export class T3McpClient {
 
   async #reconnect(expiredSession: string | undefined, caller?: AbortSignal): Promise<void> {
     this.#assertOpen();
+    // A late 404 from an old session must not reset its replacement.
     if (this.#initialized && this.#sessionId !== expiredSession) return;
-    if (!this.#reconnecting) {
-      const pending = this.#track(async () => {
-        if (this.#initialized && this.#sessionId !== expiredSession) return;
-        this.#initialized = false;
-        if (this.#sessionId === expiredSession) this.#sessionId = undefined;
-        await this.#ensureInitialized();
-      });
-      this.#reconnecting = pending;
-      void pending
-        .finally(() => {
-          if (this.#reconnecting === pending) this.#reconnecting = undefined;
-        })
-        .catch(() => undefined);
-    }
-    await awaitCaller(this.#reconnecting, caller);
+    this.#initialized = false;
+    if (this.#sessionId === expiredSession) this.#sessionId = undefined;
+    await awaitCaller(this.#connect(), caller);
     this.#assertOpen();
   }
 

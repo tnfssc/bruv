@@ -379,16 +379,33 @@ class RpcPort implements RootSessionPort {
 }
 export class RootAcknowledgedError extends Error {}
 
+type PendingRootClose = { commandId: string; result: unknown; requestedAt: number };
+
+function confirmRootClosed(store: RootStore, id: string, close: PendingRootClose) {
+  store.transaction(() => {
+    const root = store.get(id);
+    root.record = { ...root.record, state: "closed", exitCode: 0, error: undefined };
+    store.save(root);
+    store.finish(id, {
+      commandId: close.commandId,
+      state: "completed",
+      result: { ...(close.result as object), exitCode: 0 },
+    });
+  });
+  while (true) {
+    const queued = store.claimCommand(id);
+    if (!queued) break;
+    store.finish(id, { ...queued.receipt, state: "completed", error: "Root closed before command dispatch" });
+  }
+  store.append(id, { type: "root_closed", exitCode: 0 });
+}
+
 /** Injectable real-session port keeps tests inference-free; production always uses installed normal CLI RPC. */
 export async function serveRootSession(store: RootStore, id: string, port: RootSessionPort): Promise<void> {
-  let exited = false,
-    closed = false,
-    closingId: string | undefined,
-    closeResult: unknown;
-  let closingAt = 0;
+  let exited = false;
+  let pendingClose: PendingRootClose | undefined;
   let lastSnapshot = "",
     snapshotAt = 0;
-  const inflight = new Set<Promise<unknown>>();
   const unlisten = port.onEvent((event) => {
     if ((event as { type?: string })?.type === "response") return;
     try {
@@ -400,23 +417,8 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
   });
   const exit = port.exited.then(({ code, signal }) => {
     exited = true;
-    if (closingId && closed && code === 0 && !signal && store.get(id).record.state !== "unknown") {
-      store.transaction(() => {
-        const r = store.get(id);
-        r.record = { ...r.record, state: "closed", exitCode: 0, error: undefined };
-        store.save(r);
-        store.finish(id, {
-          commandId: closingId!,
-          state: "completed",
-          result: { ...(closeResult as object), exitCode: 0 },
-        });
-      });
-      while (true) {
-        const queued = store.claimCommand(id);
-        if (!queued) break;
-        store.finish(id, { ...queued.receipt, state: "completed", error: "Root closed before command dispatch" });
-      }
-      store.append(id, { type: "root_closed", exitCode: 0 });
+    if (pendingClose && code === 0 && !signal && store.get(id).record.state !== "unknown") {
+      confirmRootClosed(store, id, pendingClose);
     } else store.unknown(id, "Root runtime exit outcome unknown (code=" + code + ", signal=" + signal + ")");
   });
   try {
@@ -478,10 +480,36 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
         });
       }
     }
+    async function requestClose(receipt: RootCommandReceipt) {
+      try {
+        store.transaction(() => {
+          const root = store.get(id);
+          root.closing = true;
+          store.save(root);
+        });
+        // Clear queued user turns before the trusted child-settlement check.
+        await port.rpc("root-clear-" + receipt.commandId, { type: "clear_queue" });
+        const result = await port.facet({ kind: "close" });
+        if ((result as { settled?: boolean })?.settled === true) {
+          // Install the evidence before end(): a port may acknowledge exit immediately.
+          pendingClose = { commandId: receipt.commandId, result, requestedAt: Date.now() };
+          port.end();
+        } else {
+          store.transaction(() => {
+            const root = store.get(id);
+            root.closing = false;
+            store.save(root);
+            store.finish(id, { ...receipt, state: "completed", result });
+          });
+        }
+      } catch (error) {
+        store.unknown(id, "Root close acknowledgement unknown: " + error);
+      }
+    }
     while (!exited) {
       if (store.get(id).record.state === "unknown") break;
-      if (closingId) {
-        if (Date.now() - closingAt >= 20000)
+      if (pendingClose) {
+        if (Date.now() - pendingClose.requestedAt >= 20000)
           store.unknown(id, "Root close exit acknowledgement unknown; runtime was not replaced");
         await Bun.sleep(25);
         continue;
@@ -490,7 +518,8 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
       if (next) {
         const { command, receipt } = next;
         if (command.kind === "prompt" || command.kind === "abort") {
-          const task = finishCommand(receipt, () =>
+          // Prompt acknowledgement may wait for inference; abort must remain dispatchable.
+          void finishCommand(receipt, () =>
             port.rpc(
               receipt.commandId,
               command.kind === "prompt"
@@ -498,40 +527,14 @@ export async function serveRootSession(store: RootStore, id: string, port: RootS
                 : { type: "abort" },
             ),
           );
-          inflight.add(task);
-          void task.finally(() => inflight.delete(task));
         } else if (command.kind === "ui.respond") {
           // Hide the prompt before writing; an uncertain human response must not be solicited/replayed.
           store.append(id, { type: "root_ui_response", id: command.id });
           await finishCommand(receipt, () =>
             port.ui ? port.ui(command) : Promise.reject(new RootAcknowledgedError("Root UI facet unavailable")),
           );
-        } else if (command.kind === "close") {
-          try {
-            store.transaction(() => {
-              const r = store.get(id);
-              r.closing = true;
-              store.save(r);
-            });
-            // Clear queued user turns before the trusted child-settlement check.
-            await port.rpc("root-clear-" + receipt.commandId, { type: "clear_queue" });
-            closeResult = await port.facet(command);
-            if ((closeResult as { settled?: boolean })?.settled === true) {
-              closingId = receipt.commandId;
-              closingAt = Date.now();
-              closed = true;
-              port.end();
-            } else
-              store.transaction(() => {
-                const r = store.get(id);
-                r.closing = false;
-                store.save(r);
-                store.finish(id, { ...receipt, state: "completed", result: closeResult });
-              });
-          } catch (error) {
-            store.unknown(id, "Root close acknowledgement unknown: " + error);
-          }
-        } else await finishCommand(receipt, () => port.facet(command));
+        } else if (command.kind === "close") await requestClose(receipt);
+        else await finishCommand(receipt, () => port.facet(command));
         continue;
       }
       if (Date.now() - snapshotAt >= 1000) {

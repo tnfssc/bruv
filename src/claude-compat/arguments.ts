@@ -7,7 +7,6 @@ export interface ConnectorArguments {
   schema?: Record<string, unknown>;
   appendSystemPrompt: string[];
   partialMessages: boolean;
-  verbose: boolean;
   noPersistence: boolean;
   permissionMode?: string;
   allowBypass: boolean;
@@ -18,7 +17,6 @@ export interface ConnectorArguments {
   disableSlashCommands: boolean;
   settings?: Record<string, unknown>;
   settingSources?: string;
-  strictMcp: boolean;
   mcpConfig?: Record<string, unknown>;
   sessionId?: string;
   resume?: string;
@@ -49,11 +47,9 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
     mode: "stream",
     appendSystemPrompt: [],
     partialMessages: false,
-    verbose: false,
     noPersistence: false,
     allowBypass: false,
     disableSlashCommands: false,
-    strictMcp: false,
     addDirs: [],
   };
   if (argv.length === 1 && ["--help", "-h", "--version", "-v", "--bruv-version"].includes(argv[0]!)) {
@@ -100,7 +96,8 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
         output = value();
         break;
       case "--verbose":
-        result.verbose = toggle();
+        // Protocol JSON output is unconditional; accepted for host compatibility.
+        toggle();
         break;
       case "--include-partial-messages":
         result.partialMessages = toggle();
@@ -115,7 +112,8 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
         result.disableSlashCommands = toggle();
         break;
       case "--strict-mcp-config":
-        result.strictMcp = toggle();
+        // Only explicitly injected MCP config is loaded, with or without this flag.
+        toggle();
         break;
       case "--model":
         result.model = value();
@@ -203,7 +201,7 @@ export function parseConnectorArguments(argv: string[]): ConnectorArguments {
   return result;
 }
 
-/** Every accepted flag must have a real production effect. */
+/** Reject unsupported launch semantics before runtime or state access. */
 export function assertLaunchBindings(args: ConnectorArguments): void {
   launchPolicy(args);
   if (args.resumeAt && !args.resume) throw new Error("--resume-session-at requires --resume");

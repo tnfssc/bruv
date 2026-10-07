@@ -1801,6 +1801,7 @@
   ],
   "parentCheckpoint": {
     "commit": "695ade32",
-    "observed": "Parent has partial accepted joins including older build area batch7c485f53 and combined tsc. Common branch inspection done; merge readiness considered at next clean batch checkpoint, not sibling direct merge."
+    "state": "merged-clean",
+    "proof": "git merge-tree clean; prospective merged tree had no changes to any71 area baseline/extra focus paths. Imported accepted parent common changes only; sibling source owners retain primary/judge authority. No inherited source acceptance claimed from area."
   }
 }

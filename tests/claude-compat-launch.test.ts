@@ -331,7 +331,7 @@ describe("connector entry glue (injected engine, not integrated product proof)",
     expect(h.stdout()).toBe("");
     expect(h.stderr()).toContain("does not satisfy schema");
   });
-  for (const stop of ["EOF", "SIGTERM"] as const)
+  for (const stop of ["EOF", "SIGTERM", "SIGINT"] as const)
     test(stop + " cancels current owner and awaits exactly one teardown", async () => {
       const h = harness();
       let started = false,
@@ -362,12 +362,76 @@ describe("connector entry glue (injected engine, not integrated product proof)",
       h.io.input.push('{"type":"user","parent_tool_use_id":null,"message":{"role":"user","content":"long work"}}\n');
       await until(() => started);
       if (stop === "EOF") h.io.input.push(null);
-      else h.signals.emit("SIGTERM");
-      expect(await running).toBe(stop === "EOF" ? 0 : 143);
+      else h.signals.emit(stop);
+      expect(await running).toBe(stop === "EOF" ? 0 : stop === "SIGTERM" ? 143 : 130);
       expect(aborted).toBe(true);
       expect(closed).toBe(1);
       expect(h.signals.listenerCount("SIGTERM")).toBe(0);
     });
+  test("normal completion awaits teardown and reports a teardown failure once", async () => {
+    const h = harness();
+    let closed = 0;
+    const factory: RuntimeFactory = async () => ({
+      controls: {},
+      onUser: async () => {},
+      runAuxiliary: async () => ({ type: "result", structured_output: { title: "fixture" } }),
+      close: async () => {
+        closed++;
+        await Bun.sleep(5);
+        throw new Error("History flush failed");
+      },
+    });
+    expect(await runConnector([...auxiliaryFlags, "prompt"], factory, h.io)).toBe(1);
+    expect(closed).toBe(1);
+    expect(h.frames()).toHaveLength(1);
+    expect(h.stderr()).toBe("[bruv-claude-compat] shutdown failed: History flush failed\n");
+    expect(h.signals.listenerCount("SIGTERM")).toBe(0);
+    expect(h.signals.listenerCount("SIGINT")).toBe(0);
+  });
+  test("run failure and teardown failure remain distinct diagnostics", async () => {
+    const h = harness();
+    let closed = 0;
+    const factory: RuntimeFactory = async () => ({
+      controls: {},
+      onUser: async () => {},
+      runAuxiliary: async () => {
+        throw new Error("Model output does not satisfy schema");
+      },
+      close: async () => {
+        closed++;
+        throw new Error("History flush failed");
+      },
+    });
+    expect(await runConnector([...auxiliaryFlags, "prompt"], factory, h.io)).toBe(1);
+    expect(closed).toBe(1);
+    expect(h.stdout()).toBe("");
+    expect(h.stderr()).toBe(
+      "[bruv-claude-compat] Model output does not satisfy schema\n" +
+        "[bruv-claude-compat] shutdown failed: History flush failed\n",
+    );
+  });
+  test("startup cancellation cannot hide teardown failure", async () => {
+    const h = harness();
+    let closed = 0;
+    const factory: RuntimeFactory = async () => {
+      h.signals.emit("SIGTERM");
+      return {
+        controls: {},
+        onUser: async () => {},
+        runAuxiliary: async () => {
+          throw new Error("must not start");
+        },
+        close: async () => {
+          closed++;
+          throw new Error("History flush failed");
+        },
+      };
+    };
+    expect(await runConnector([...auxiliaryFlags, "prompt"], factory, h.io)).toBe(1);
+    expect(closed).toBe(1);
+    expect(h.stdout()).toBe("");
+    expect(h.stderr()).toBe("[bruv-claude-compat] shutdown failed: History flush failed\n");
+  });
   test("SIGTERM during startup still closes the eventual runtime", async () => {
     const h = harness();
     let closed = 0;

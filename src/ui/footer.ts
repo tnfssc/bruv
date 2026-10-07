@@ -401,6 +401,68 @@ export function createCompactUI(pi: ExtensionAPI, cache?: CacheCountdown): (ctx:
   };
 }
 
+/** Disk-backed costs run on a coarse poll, with at most one refresh in flight. */
+function pollDescendantCost(
+  tracker: SessionCostTracker,
+  isActive: () => boolean,
+  requestRender: () => void,
+): () => void {
+  let busy = false;
+  const refresh = async () => {
+    if (!isActive() || busy) return;
+    busy = true;
+    const before = tracker.descendantCost;
+    try {
+      await tracker.refresh();
+      if (isActive() && tracker.descendantCost !== before) requestRender();
+    } catch {
+      // A transient filesystem error must not interrupt the terminal.
+    } finally {
+      busy = false;
+    }
+  };
+  const timer = isActive() ? setInterval(() => void refresh(), 2_000) : undefined;
+  timer?.unref?.();
+  void refresh();
+  return () => {
+    if (timer) clearInterval(timer);
+  };
+}
+
+/** Cache changes and deadline ticks share one text-change/redraw path. */
+function followCacheCountdown(
+  ctx: ExtensionContext,
+  cache: CacheCountdown,
+  isActive: () => boolean,
+  requestRender: () => void,
+): () => void {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let lastText = cache.estimate(ctx).text;
+  const schedule = () => {
+    if (timer) clearTimeout(timer);
+    if (!isActive()) return;
+    const estimate = cache.estimate(ctx);
+    if (estimate.nextUpdateMs === undefined) return;
+    timer = setTimeout(update, Math.min(60_000, Math.max(1, estimate.nextUpdateMs)));
+    timer.unref?.();
+  };
+  const update = () => {
+    if (!isActive()) return;
+    const text = cache.estimate(ctx).text;
+    if (text !== lastText) {
+      lastText = text;
+      requestRender();
+    }
+    schedule();
+  };
+  const unsubscribe = cache.subscribe(update);
+  schedule();
+  return () => {
+    if (timer) clearTimeout(timer);
+    unsubscribe();
+  };
+}
+
 export function installCompactFooter(
   ctx: ExtensionContext,
   expanded: () => boolean = () => false,
@@ -415,72 +477,21 @@ export function installCompactFooter(
   let dispose = () => {};
   let stopped = false;
   ctx.ui.setFooter((tui, theme, data) => {
-    const unsubscribe = data.onBranchChange(() => tui.requestRender());
+    // The component owns one lifetime; observers own their clocks/subscriptions.
     let active = !stopped;
-    let busy = false;
-    const refresh = async () => {
-      if (!active || busy || !tracker) return;
-      busy = true;
-      const before = tracker.descendantCost;
-      try {
-        await tracker.refresh();
-        if (active && tracker.descendantCost !== before) tui.requestRender();
-      } catch {
-        // A transient filesystem error must not interrupt the terminal.
-      } finally {
-        busy = false;
-      }
-    };
-    // Cost is ancillary and disk-backed; a coarse poll avoids requiring a one-second timer.
-    const timer =
-      active && tracker
-        ? setInterval(() => {
-            void refresh();
-          }, 2_000)
-        : undefined;
-    timer?.unref?.();
-    void refresh();
-    let cacheTimer: ReturnType<typeof setTimeout> | undefined;
-    let lastCacheText = cache?.estimate(ctx).text;
-    const scheduleCache = () => {
-      if (cacheTimer) clearTimeout(cacheTimer);
-      if (!active || !cache) return;
-      const estimate = cache.estimate(ctx);
-      if (estimate.nextUpdateMs === undefined) return;
-      cacheTimer = setTimeout(
-        () => {
-          if (!active) return;
-          const next = cache.estimate(ctx);
-          if (next.text !== lastCacheText) {
-            lastCacheText = next.text;
-            tui.requestRender();
-          }
-          scheduleCache();
-        },
-        Math.min(60_000, Math.max(1, estimate.nextUpdateMs)),
-      );
-      cacheTimer.unref?.();
-    };
-    const unsubscribeCache =
-      cache?.subscribe(() => {
-        if (!active) return;
-        const next = cache.estimate(ctx).text;
-        if (next !== lastCacheText) {
-          lastCacheText = next;
-          tui.requestRender();
-        }
-        scheduleCache();
-      }) ?? (() => {});
-    scheduleCache();
+    const isActive = () => active;
+    const requestRender = () => tui.requestRender();
+    const unsubscribeBranch = data.onBranchChange(requestRender);
+    const stopCost = tracker ? pollDescendantCost(tracker, isActive, requestRender) : () => {};
+    const stopCache = cache ? followCacheCountdown(ctx, cache, isActive, requestRender) : () => {};
     let disposed = false;
     dispose = () => {
       if (disposed) return;
       disposed = true;
       active = false;
-      if (timer) clearInterval(timer);
-      if (cacheTimer) clearTimeout(cacheTimer);
-      unsubscribeCache();
-      unsubscribe();
+      stopCost();
+      stopCache();
+      unsubscribeBranch();
     };
     return {
       render: (width) =>

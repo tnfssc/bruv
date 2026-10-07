@@ -75,6 +75,75 @@ describe("original history", () => {
     expect(read.text).toBe("exact launch condition alpha-seven");
   });
 
+  test("orders dialogue before execution output with deterministic timestamp and ref ties", async () => {
+    const manager = SessionManager.inMemory("/project");
+    const ids = [
+      manager.appendMessage(toolResult("ordering-call", "ordering needle tool")),
+      manager.appendMessage({
+        role: "bashExecution",
+        command: "ordering needle command",
+        output: "ordering needle output",
+        exitCode: 0,
+        cancelled: false,
+        truncated: false,
+        timestamp: Date.now(),
+      } as any),
+      manager.appendMessage(assistant([{ type: "text", text: "ordering needle answer" }])),
+      manager.appendMessage(user("ordering needle older")),
+      manager.appendMessage(user("ordering needle tie one")),
+      manager.appendMessage(user("ordering needle tie two")),
+    ];
+    for (const id of ids) manager.getEntry(id)!.timestamp = "2026-01-02T00:00:00.000Z";
+    manager.getEntry(ids[3]!)!.timestamp = "2026-01-01T00:00:00.000Z";
+    const result = await new HistoryService().search({ query: "ordering needle" }, { sessionManager: manager });
+    expect(result.matches.map((match) => match.provenance.role)).toEqual([
+      "user",
+      "user",
+      "user",
+      "assistant",
+      "bashExecution",
+      "bashExecution",
+      "toolResult",
+    ]);
+    expect(result.matches.slice(0, 2).map((match) => match.ref)).toEqual(
+      ids
+        .slice(4)
+        .map((id) => "bruv-history-v1:" + manager.getSessionId() + ":" + id + ":0")
+        .sort((a, b) => a.localeCompare(b)),
+    );
+    expect(result.matches[2]!.provenance.entryId).toBe(ids[3]!);
+    expect(result.matches.slice(4, 6).map((match) => match.provenance.part)).toEqual([0, 1]);
+  });
+
+  test("cursor pages keep their original branch leaf when matching dialogue is appended", async () => {
+    const manager = SessionManager.inMemory("/project");
+    manager.appendMessage(user("snapshot needle first"));
+    const leaf = manager.appendMessage(user("snapshot needle second"));
+    const service = new HistoryService();
+    const ctx = { sessionManager: manager };
+    const first = await service.search({ query: "snapshot needle", limit: 1 }, ctx);
+    const read = await service.read({ ref: first.matches[0]!.ref, maxChars: 4 }, ctx);
+    const appended = manager.appendMessage(user("snapshot needle appended"));
+    const next = await service.search({ query: "snapshot needle", cursor: first.nextCursor, limit: 5 }, ctx);
+    expect(next.matches).toHaveLength(1);
+    expect(next.nextCursor).toBeUndefined();
+    expect(next.matches[0]!.provenance.branchLeafId).toBe(leaf);
+    expect(next.matches[0]!.provenance.entryId).not.toBe(appended);
+    const nextRead = await service.read({ ref: read.ref, cursor: read.nextCursor, maxChars: 4 }, ctx);
+    expect(nextRead.provenance.branchLeafId).toBe(leaf);
+    expect(nextRead.range.start).toBe(4);
+  });
+
+  test("read validates the whole scan even when its reference precedes oversized text", async () => {
+    const manager = SessionManager.inMemory("/project");
+    manager.appendMessage(user("read validation target"));
+    const service = new HistoryService();
+    const ctx = { sessionManager: manager };
+    const found = await service.search({ query: "read validation target" }, ctx);
+    manager.appendMessage(user("x".repeat(4 * 1024 * 1024 + 1)));
+    await expect(service.read({ ref: found.matches[0]!.ref }, ctx)).rejects.toThrow("text part exceeds");
+  });
+
   test("does not cross inactive branches", async () => {
     const manager = SessionManager.inMemory("/project");
     const root = manager.appendMessage(user("root-visible"));

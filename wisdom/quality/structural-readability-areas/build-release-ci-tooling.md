@@ -74,3 +74,5 @@ Dependency updater ROUND2: task_68106474 ACCEPT109d8d0 after independent reprodu
 EXTRA new notices test primary completed: independent graph/optional/render fixtures, package-bound licenses and reverse-discovery sorting proof. Judge task_00d188a5 ACCEPT13c3bd3,6/27focus3/4failurechecks;all old coverage retained. New-file primary/hash/judge requirement satisfied at this blob.
 
 Root standalone installer: same canonical-stage transaction as accepted scripts copy; coherent final shared-test correction by fresh worker. Judge task_9233d5f2 ACCEPT root125933e/teste04230d8,22/106download7/97site. Prior test primary preserved and changed final blob rejudged. Parent common branch checkpoint695ade32 observed (partial accepted joins incl old area batch,combined tsc); no sibling direct imports.
+
+Parent accepted common checkpoint695ade32 merged clean at batch boundary. merge-tree confirmed none of71 area baseline/extra focus paths changed, so accepted area blobs remain exact. Other-area common source stays parent-owned; no area coverage bluff or sibling direct imports. Combined proof will use this common integrated state.

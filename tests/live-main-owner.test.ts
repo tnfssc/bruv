@@ -1,22 +1,22 @@
+import { beforeAll, describe, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { createAssistantMessageEventStream, getModel } from "@earendil-works/pi-ai/compat";
 import {
   createAgentSession,
   DefaultResourceLoader,
+  initTheme,
   ModelRuntime,
   SessionManager,
   ToolExecutionComponent,
-  initTheme,
 } from "@earendil-works/pi-coding-agent";
-import { createAssistantMessageEventStream, getModel } from "@earendil-works/pi-ai/compat";
-import tasks from "../src/agent/extension";
 import { stripTerminalSequences } from "@earendil-works/pi-tui";
-import { registerExecuteTool } from "../src/typescript/extension";
-import { bruvSystemPrompt } from "../src/prompts";
-import { beforeAll, describe, expect, test } from "bun:test";
+import tasks from "../src/agent/extension";
 import { bindInstructionContinuitySession } from "../src/agent/instruction-continuity";
-import { acquireMainOwner, beforeOrdinaryPrompt, currentMainOwner } from "../src/live/main-owner";
+import { acquireMainOwner, beforeOrdinaryPrompt, currentMainOwner, currentMainToolOwner } from "../src/live/main-owner";
+import { bruvSystemPrompt } from "../src/prompts";
+import { registerExecuteTool } from "../src/typescript/extension";
 
 beforeAll(() => {
   const packageDir = process.env.PI_PACKAGE_DIR;
@@ -455,6 +455,140 @@ describe("direct Live main owner", () => {
     expect(f.messages.at(-1).role).toBe("toolResult");
     expect(allowed).toBe(true);
   });
+  test("serializes canonical pairs and flushes observations before preparing the spoken turn", async () => {
+    const f = fixture();
+    let started!: () => void;
+    const firstStarted = new Promise<void>((resolve) => {
+      started = resolve;
+    });
+    let finish!: (result: any) => void;
+    const preparations: string[] = [];
+    f.session._extensionRunner.emitBeforeAgentStart = async (text?: string) => {
+      preparations.push(text ?? "");
+      return {
+        messages: [],
+        systemPromptOptions: { selectedTools: ["execute"], forceSystemPrompt: "effective ordinary root + hooks" },
+      };
+    };
+    (f.session._toolRegistry.get("execute") as any).execute = async (_id: string, args: any) => {
+      f.hooks.push("execute:" + args.code);
+      if (args.code === "first") {
+        started();
+        return await new Promise((resolve) => {
+          finish = resolve;
+        });
+      }
+      return { content: [{ type: "text", text: "second result" }] };
+    };
+    const presented: any[] = [];
+    const owner = await acquireMainOwner({} as any, f.ctx, { onMessage: (m) => presented.push(m) });
+    const first = owner.orchestration.execute({ id: "first", name: "execute", args: { code: "first" } });
+    await firstStarted;
+    const second = owner.orchestration.execute({ id: "second", name: "execute", args: { code: "second" } });
+    // execute first passes its resolved preparation gate before reserving the next pair.
+    await Promise.resolve();
+    owner.sendContext("job observation");
+    owner.inputTranscript("next spoken request");
+    expect(f.messages.map((m) => m.role)).toEqual(["assistant"]);
+    expect(preparations).toEqual([""]);
+    finish({ content: [{ type: "text", text: "first result" }] });
+    await Promise.all([first, second]);
+    // typedInput awaits the same preparation chain, without admitting another tool.
+    await owner.typedInput("typed request");
+    expect(f.messages.map((m) => m.role)).toEqual([
+      "assistant",
+      "toolResult",
+      "custom",
+      "user",
+      "assistant",
+      "toolResult",
+      "user",
+    ]);
+    expect(f.entries).toEqual(f.messages.map((m) => (m.role === "custom" ? m.content : m)));
+    expect(presented.map((m) => m.role)).toEqual(["custom", "user", "user"]);
+    expect(preparations).toEqual(["", "next spoken request", "typed request"]);
+    owner.close();
+    await owner.released;
+  });
+
+  test("close drains an admitted pair but rejects the next reserved pair without executing it", async () => {
+    const f = fixture();
+    let started!: () => void;
+    const firstStarted = new Promise<void>((resolve) => {
+      started = resolve;
+    });
+    let finish!: (result: any) => void;
+    (f.session._toolRegistry.get("execute") as any).execute = () => {
+      started();
+      return new Promise((resolve) => {
+        finish = resolve;
+      });
+    };
+    const owner = await acquireMainOwner({} as any, f.ctx);
+    const first = owner.orchestration.execute({ id: "first", name: "execute", args: { code: "first" } });
+    await firstStarted;
+    const second = owner.orchestration.execute({ id: "second", name: "execute", args: { code: "second" } });
+    await Promise.resolve();
+    owner.close();
+    const rejected = second.then(
+      () => undefined,
+      (error: Error) => error,
+    );
+    finish({ content: [{ type: "text", text: "done" }] });
+    await first;
+    expect((await rejected)?.message).toBe("Live owner closed before tool admission");
+    await owner.released;
+    expect(f.messages.map((m) => m.role)).toEqual(["assistant", "toolResult"]);
+    expect(f.events.map((e) => e.type)).toEqual(["tool_execution_start", "tool_execution_end"]);
+    await beforeOrdinaryPrompt(f.manager);
+  });
+
+  test("draining stop-work retains host evidence for the result hook and canonical result", async () => {
+    const f = fixture();
+    let started!: () => void;
+    const running = new Promise<void>((resolve) => {
+      started = resolve;
+    });
+    let lateUpdate!: (update: unknown) => void;
+    (f.session._toolRegistry.get("execute") as any).execute = (
+      _id: string,
+      _args: any,
+      signal: AbortSignal,
+      update: any,
+    ) => {
+      lateUpdate = update;
+      started();
+      return new Promise((_resolve, reject) => {
+        signal.addEventListener("abort", () => reject(new Error("foreground cancelled")), { once: true });
+      });
+    };
+    let hookResult: any;
+    f.session.agent.afterToolCall = async (event?: any) => {
+      hookResult = event.result;
+      return undefined;
+    };
+    const owner = await acquireMainOwner({} as any, f.ctx);
+    const result = owner.orchestration.execute({ id: "stop", name: "execute", args: { code: "waiting" } });
+    await running;
+    owner.close();
+    expect(currentMainOwner(f.manager)).toBeUndefined();
+    const draining = currentMainToolOwner(f.manager)!;
+    expect(draining).toBe(owner);
+    const report = { outcome: "partial", jobs: [{ id: "background", outcome: "pending" }] };
+    draining.captureStopWorkReport!(report);
+    draining.stopForeground();
+    const settled: any = await result;
+    await owner.released;
+    expect(settled.isError).toBe(true);
+    expect(hookResult.content).toEqual(settled.content);
+    expect(settled.content[1].text).toContain(JSON.stringify(report));
+    expect(f.messages.at(-1).content).toEqual(settled.content);
+    expect(f.events.at(-1).result.content).toEqual(settled.content);
+    lateUpdate({ content: [{ type: "text", text: "too late" }] });
+    expect(f.events.map((e) => e.type)).toEqual(["tool_execution_start", "tool_execution_end"]);
+    expect(currentMainToolOwner(f.manager)).toBeUndefined();
+  });
+
   test("records host updates and only labels incomplete transcripts provisional", async () => {
     const f = fixture();
     const contexts: string[] = [];

@@ -59,6 +59,43 @@ test("escape from picker returns to the same row; escape from overview discards"
   expect(ui.result()).toBeUndefined();
   expect(original.normal.model).toBe("beta/coder");
 });
+test("reopening pickers selects the draft value and clears the previous model search", () => {
+  const original = parseProfiles({ normal: { model: "beta/coder", thinking: "high" } });
+  const ui = panel(original);
+  const selectedLine = () => ui.component.render(100).find((line) => line.startsWith("→ "));
+  ui.send(DOWN, DOWN, ENTER);
+  expect(selectedLine()).toContain("coder");
+  ui.send("alpha", ENTER);
+  expect(selectedLine()).toContain("normal model");
+  ui.send(ENTER);
+  expect(selectedLine()).toContain("quick");
+  expect(ui.component.render(100).join("\n")).toContain("coder"); // search was cleared
+  ui.send(ESC, DOWN, ENTER);
+  expect(selectedLine()).toContain("high");
+  ui.send(UP, ENTER, ENTER);
+  expect(selectedLine()).toContain("medium");
+  ui.send(ESC, DOWN, DOWN, DOWN, ENTER); // normal thinking -> Save
+  expect(ui.result()?.normal).toEqual({ model: "alpha/quick", thinking: "medium" });
+  expect(original.normal).toEqual({ model: "beta/coder", thinking: "high" });
+});
+test("page navigation clamps to the active list and Cancel discards the edited draft", () => {
+  const original = parseProfiles({});
+  const ui = panel(original);
+  const PAGE_DOWN = "\x1b[6~",
+    PAGE_UP = "\x1b[5~";
+  const selectedLine = () => ui.component.render(100).find((line) => line.startsWith("→ "));
+  ui.send(PAGE_DOWN);
+  expect(selectedLine()).toContain("Cancel");
+  ui.send(PAGE_UP, ENTER, PAGE_DOWN);
+  expect(selectedLine()).toContain("coder");
+  ui.send(ENTER);
+  expect(selectedLine()).toContain("fast model");
+  expect(ui.component.render(100).join("\n")).toContain("beta/coder");
+  ui.send(PAGE_DOWN, ENTER);
+  expect(ui.closed()).toBe(true);
+  expect(ui.result()).toBeUndefined();
+  expect(original.fast).toEqual({});
+});
 test("inherit resets model and thinking without manual IDs", () => {
   const ui = panel(parseProfiles({ fast: { model: "alpha/quick", thinking: "high" } }));
   ui.send(ENTER, UP, ENTER, DOWN, ENTER, ...Array(5).fill(UP), ENTER, ...Array(5).fill(DOWN), ENTER);

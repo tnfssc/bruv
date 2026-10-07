@@ -1,13 +1,13 @@
-import { test, expect } from "bun:test";
+import { expect, test } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { QuestionService, type Question } from "../src/questions/service";
-import { RemoteQuestionBridge, publishRemoteQuestionState } from "../src/remote/question-bridge";
 import { registerQuestionRuntime } from "../src/questions/runtime";
+import { type Question, QuestionService } from "../src/questions/service";
+import { RemoteClient, type RemoteState } from "../src/remote/client";
 import remoteExtension from "../src/remote/extension";
 import { clearRemoteJobEvents } from "../src/remote/job-events";
-import { RemoteClient, type RemoteState } from "../src/remote/client";
+import { publishRemoteQuestionState, RemoteQuestionBridge } from "../src/remote/question-bridge";
 
 function harness() {
   const dir = mkdtempSync(join(tmpdir(), "bruv-remote-question-"));
@@ -108,6 +108,112 @@ test("real human question mirrors durably once, preserving remote provenance and
       owner: h.native.owner,
       version: 3,
     });
+    expect(h.calls).toHaveLength(0);
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("pending snapshots reconcile durably without recreating or renotifying a mirror", async () => {
+  const h = harness();
+  try {
+    const asked: Question[] = [];
+    h.service.onAsked = (q) => {
+      expect(h.service.get(h.ctx, q.id).version).toBe(q.version);
+      asked.push(q);
+    };
+    h.native.text = "  Initial decision  ";
+    await h.bridge.sync(h.ctx);
+    const initial = h.service.list(h.ctx)[0]!;
+    expect(initial.text).toBe("Initial decision");
+    expect(initial.version).toBe(1);
+    expect(initial.choices).toEqual(["Yes", "No"]);
+    await h.bridge.sync(h.ctx);
+    expect(h.service.get(h.ctx, initial.id)).toEqual(initial);
+
+    Object.assign(h.native, {
+      version: 4,
+      text: "  Revised decision  ",
+      choices: ["Later"],
+      allowFreeText: true,
+      reason: "More context",
+    });
+    await h.bridge.sync(h.ctx);
+    const revised = h.service.get(h.ctx, initial.id);
+    expect(revised).toMatchObject({
+      id: initial.id,
+      version: 2,
+      text: "Revised decision",
+      choices: ["Later"],
+      allowFreeText: true,
+      reason: "More context",
+      remote: { version: 4, observedVersion: 4, observedStatus: "pending" },
+    });
+    await h.bridge.sync(h.ctx);
+    expect(new QuestionService().get(h.ctx, initial.id)).toEqual(revised);
+    expect(asked).toHaveLength(1);
+    expect(h.calls).toHaveLength(0);
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("saved reply freezes question details while observations, receipts and closure reconcile", async () => {
+  const h = harness();
+  try {
+    await h.bridge.sync(h.ctx);
+    let q = h.service.list(h.ctx)[0]!;
+    q = await h.service.answer(h.ctx, { ...h.mutation(q), text: "Yes", replyId: "human-reply" });
+    q = await h.service.claimRemoteReply(h.ctx, h.mutation(q));
+    q = await h.service.finishRemoteReply(h.ctx, {
+      ...h.mutation(q),
+      replyId: q.replyId!,
+      delivered: false,
+      error: "response lost",
+    });
+    Object.assign(h.native, {
+      version: 4,
+      text: "Different question",
+      choices: ["Different"],
+      allowFreeText: true,
+      reason: "Changed remotely",
+      replyId: "another-reply",
+      delivery: "delivered",
+    });
+    await h.bridge.sync(h.ctx);
+    const observed = h.service.get(h.ctx, q.id);
+    expect(observed).toMatchObject({
+      status: "answered",
+      text: q.text,
+      choices: q.choices,
+      allowFreeText: false,
+      answer: "Yes",
+      replyId: "human-reply",
+      replyVersion: q.replyVersion,
+      delivery: "dispatching",
+      remote: { version: 3, observedVersion: 4, replyState: "uncertain", error: "response lost" },
+    });
+    expect(observed.reason).toBeUndefined();
+    expect(observed.version).toBe(q.version + 1);
+    await h.bridge.sync(h.ctx);
+    expect(h.service.get(h.ctx, q.id)).toEqual(observed);
+
+    // A matching delivery receipt takes precedence over a closed snapshot.
+    Object.assign(h.native, { status: "resolved", replyId: "human-reply" });
+    await h.bridge.sync(h.ctx);
+    const delivered = h.service.get(h.ctx, q.id);
+    expect(delivered.status).toBe("answered");
+    expect(delivered.delivery).toBe("delivered");
+    expect(delivered.remote).toMatchObject({ version: 3, observedStatus: "resolved", replyState: "delivered" });
+    expect(delivered.remote!.error).toBeUndefined();
+
+    Object.assign(h.native, { replyId: "another-reply" });
+    await h.bridge.sync(h.ctx);
+    const closed = new QuestionService().get(h.ctx, q.id);
+    expect(closed.status).toBe("resolved");
+    expect(closed.answer).toBe("Yes");
+    expect(closed.remote!.version).toBe(3);
+    expect(closed.delivery).toBe("delivered");
     expect(h.calls).toHaveLength(0);
   } finally {
     h.cleanup();
