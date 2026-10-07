@@ -1157,27 +1157,41 @@
     {
       "focus": "src/typescript/definition.ts",
       "initialBlob": "7d850644a24233284f0dc1dba04e3c7096f400a5",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
-    },
-    {
-      "focus": "src/typescript/error-diagnostic.ts",
-      "initialBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
       "status": "primary-running",
       "primary": {
-        "id": "task_60592667",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_60592667",
-        "branch": "bruv/primary-src-typescript-error-diagnostic.-60592667",
-        "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
+        "id": "task_58ef2195",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_58ef2195",
+        "branch": "bruv/primary-src-typescript-definition.ts-58ef2195",
+        "base": "e2da3df7682179df3011bf9690e118c000b88c10",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "4f28172f2d4c8430b0138a415f2d338138ee7ef9"
+      "launchBase": "e2da3df7682179df3011bf9690e118c000b88c10"
+    },
+    {
+      "focus": "src/typescript/error-diagnostic.ts",
+      "initialBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
+      "status": "awaiting-judge",
+      "primary": {
+        "id": "task_60592667",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_60592667",
+        "branch": "bruv/primary-src-typescript-error-diagnostic.-60592667",
+        "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
+        "commit": "a9c686b1c083d57296c65e3feb59da8a20d0e4de"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: guarded nonError conversion, Error message/stack reconciliation and diagnostic bounds; CLI sanitizes URL/stderr/exit1; caller owns execution cancellation/delivery.",
+      "checks": [
+        "3 tests7 assertions",
+        "2 sourceCLI probes",
+        "Biome/diff pass; no build/staledist proof"
+      ]
     },
     {
       "focus": "src/typescript/execution.ts",
@@ -1474,7 +1488,7 @@
     {
       "focus": "tests/execute-output-capture.test.ts",
       "initialBlob": "f1944e32116dbce754fa013622fd989907092d99",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_341d3c1d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_341d3c1d",
@@ -1482,7 +1496,15 @@
         "base": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73",
         "commit": "9ac5bfece6800ec7265d6958644120f84bba0519"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_6cb5fad6",
+          "status": "running",
+          "candidate": "9ac5bfece6800ec7265d6958644120f84bba0519",
+          "base": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73",
+          "priorRelatedJudge": "task_0321bbc2"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
@@ -1645,7 +1667,7 @@
     {
       "focus": "tests/questions-extension.test.ts",
       "initialBlob": "87d72f9de8cdc0416706291eb97b1c65258f2169",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_353749fb",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_353749fb",
@@ -1656,14 +1678,23 @@
       "judgeRounds": [
         {
           "id": "task_5abbe0b2",
-          "status": "running",
+          "status": "complete",
           "candidate": "76e6e6a0c785229849c14c3d4cdae56d7bb9899a",
           "base": "b457ae3d2e0b852a62258799beb66a10f73a1171",
-          "priorRelatedJudge": "task_d615005a"
+          "priorRelatedJudge": "task_d615005a",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Domain scripts own ordered UI interaction/notices only; visible command/ledger assertions. Rendered prompt checks and separate Escape script remove invented labels/unused reply causing skipped journey. Displayed snapshot mutation proves adapter old owner/version dispatch, not service authorization.",
+          "checks": [
+            "independent15/74 focus and45/377 related",
+            "strict tsc/format/diff pass1 inheriteduseConstwarning",
+            "14 originals retained; wrongprompt mutation writer-only",
+            "no compiledTUI/liveSSH/fullgate"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "dcd59fc37732014cf809153c65036fe79582fdbd",
+      "integration": "full primary test diff integrated; supplemental acceptance superseded",
       "relatedAcceptance": {
         "judge": "task_d615005a",
         "candidate": "b319684abb95ad0f172303d2699e8f1dbb26b2d8",
