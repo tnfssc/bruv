@@ -96,10 +96,17 @@
     {
       "file": "scripts/claude-native-acceptance/model.mjs",
       "initialBlob": "974c4c41cd0b921a6b8bb569137a349d95135492",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_caff1c75",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_caff1c75",
+        "branch": "bruv/primary-scripts-claude-native-acceptance-caff1c75",
+        "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47"
     },
     {
       "file": "scripts/claude-native-acceptance/run-subagent.mjs",
@@ -280,10 +287,17 @@
     {
       "file": "src/claude-compat/runtime.ts",
       "initialBlob": "40db8189be3b9179ae67df78548a55cf48043cdc",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_4cd5eb88",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_4cd5eb88",
+        "branch": "bruv/primary-src-claude-compat-runtime.ts-4cd5eb88",
+        "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47"
     },
     {
       "file": "src/claude-compat/task-binding.ts",
@@ -352,10 +366,17 @@
     {
       "file": "src/t3/tasks/native-task.ts",
       "initialBlob": "9152be57bb326b4f919518efe6d13be4b10c363b",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_c80e2264",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_c80e2264",
+        "branch": "bruv/primary-src-t3-tasks-native-task.ts-c80e2264",
+        "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47"
     },
     {
       "file": "src/t3/web/launcher.ts",
