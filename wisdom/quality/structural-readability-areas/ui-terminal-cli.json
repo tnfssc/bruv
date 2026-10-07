@@ -126,7 +126,7 @@
     {
       "focus": "scripts/terminal-perf.ts",
       "initialBlob": "696dd170594931b9907916079576e46666367030",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_6c37950b",
@@ -141,11 +141,26 @@
           "id": "task_219f2747",
           "base": "595c5739a106609b3588835fdc8146724941c6e2",
           "candidate": "44c24d4a6651d9671b6a90dca91df7fa183c8159",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf.ts": "696dd170594931b9907916079576e46666367030"
+          },
+          "evidence": "Direct orchestration exposes cold/warm/steady phases, nested cleanup and callback drain before report/artifacts/budget exit. Report-only path distinct from measurement; no added helpers needed.",
+          "checks": [
+            "Independent 37 focused tests /523 assertions",
+            "Actual 12-case six-mode CLI, four artifacts/36 trace spans exit 0",
+            "Help/report-only/unknown option/unchanged screen/artifact failure checks",
+            "diff clean"
+          ],
+          "limits": [
+            "No build/compiled/T3 GUI/PTY/paint/speed claim",
+            "Cleanup failures not exhaustively injected; artifacts nontransactional"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "696dd170594931b9907916079576e46666367030",
+      "integrationState": "unchanged final focus accepted",
       "launchBase": "595c5739a106609b3588835fdc8146724941c6e2",
       "changedRelatedPaths": [],
       "result": "No-change: cold capture, warmup, steady sampling, nested cleanup/callback drain/reporting/exit status already visibly sequenced.",
@@ -1280,7 +1295,7 @@
     {
       "focus": "src/ui/task-monitor.ts",
       "initialBlob": "9670404b405f1ce9149fa5c882956f92a0cd9889",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_8f7cb2e9",
@@ -1290,7 +1305,14 @@
           "commit": "95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_77087f04",
+          "base": "595c5739a106609b3588835fdc8146724941c6e2",
+          "candidate": "95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
       "launchBase": "595c5739a106609b3588835fdc8146724941c6e2",
