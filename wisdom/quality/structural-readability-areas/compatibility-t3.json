@@ -468,7 +468,7 @@
     {
       "file": "src/claude-compat/mcp.ts",
       "initialBlob": "01284c27fd7f3b9bfae7ec13b08f88bc78c3646d",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_18afd0bf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_18afd0bf",
@@ -479,17 +479,26 @@
       "judges": [
         {
           "id": "task_5e2a8606",
-          "status": "running",
-          "candidate": "de68965bf0465751e9a80f787eb957aec285d035"
+          "status": "completed",
+          "candidate": "de68965bf0465751e9a80f787eb957aec285d035",
+          "verdict": "ACCEPT",
+          "blob": "6c5fb958a3cb79642c8dac28abdd5e24dcddc158",
+          "relatedBlobs": {
+            "tests/claude-compat/mcp.test.ts": "0a3ab57b979b033461329f8287e70960372026f1"
+          },
+          "objections": [],
+          "evidence": "Startup makes admission/init/discovery/readiness/parking explicit; resume reacquires lease without tool rediscovery. Registered-before-init cleanup retained. Updated args guard before resume+single dispatch, no retry; abort/error content/fatal remote release unchanged. Actual runtime/binding/call tests traced.",
+          "limits": "Independent MCP execution blocked by SDK deps; format/diff/clean pass; no live/full gate."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "6c5fb958a3cb79642c8dac28abdd5e24dcddc158",
       "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868",
       "changedRelatedPaths": [
         "tests/claude-compat/mcp.test.ts"
       ],
       "readingResult": "connect discover=true hidden modes replaced by visible startup admit/init→discover→ready→park app leases; resume reacquires admitted connection without rediscovery. Failed init remains registered for cleanup.",
-      "checks": "16 focused pass63 assertions MCP+2 isolated wrappers; strengthened lease checks baseline pass;format pass;5 retained lint warnings;no typecheck/full gate/live claim."
+      "checks": "16 focused pass63 assertions MCP+2 isolated wrappers; strengthened lease checks baseline pass;format pass;5 retained lint warnings;no typecheck/full gate/live claim.",
+      "integrationState": "Exact reviewed source+related test joined; MCP test primary pending"
     },
     {
       "file": "src/claude-compat/permissions.ts",
@@ -1079,7 +1088,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_5e2a8606",
+          "verdict": "ACCEPT",
+          "blob": "0a3ab57b979b033461329f8287e70960372026f1",
+          "candidate": "de68965bf0465751e9a80f787eb957aec285d035"
+        }
+      ]
     },
     {
       "file": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
@@ -1434,6 +1451,13 @@
       "status": "passed",
       "scope": "Joined launch/arguments/transport40 pass186 assertions;typecheck",
       "limits": "No compiled/live/full gate."
+    },
+    {
+      "id": "task_aeeb20ca",
+      "commit": "6a71ca7c",
+      "status": "passed",
+      "scope": "Joined commands/human-controls19 tests128 assertions;typecheck",
+      "limits": "No live/full gate."
     }
   ],
   "combinedReviews": [

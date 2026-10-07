@@ -411,18 +411,30 @@ test("official T3 returned OrchestratorMcpFailure is an error, never a success-s
 test("app HTTP discovery parks an actual session; concurrent resume reuses one lease and park never cancels app tasks", async () => {
   const peer = await httpMcpLifecycleFixture();
   cleanup.push(peer.stopHost);
+  const admitted: string[] = [];
   const session = track(
     await InjectedMcpSession.open(peer.config, {
       cwd: process.cwd(),
       appOwnedServers: ["t3-code"],
-      policy: { ...allow, beforeAppOwnedCall: async () => {} },
+      policy: {
+        ...allow,
+        authorizeServer: async (name) => {
+          admitted.push(name);
+          return true;
+        },
+        beforeAppOwnedCall: async () => {},
+      },
     }),
   );
   expect(peer.activeSessions()).toBe(0);
+  expect(admitted).toEqual(["t3-code"]);
+  expect(peer.requests.filter((request) => request.rpc === "tools/list")).toHaveLength(1);
   expect(session.tools().map((tool) => tool.remoteName)).toEqual(["echo"]);
   await Promise.all([session.resumeAppOwned(), session.resumeAppOwned()]);
   expect(peer.activeSessions()).toBe(1);
   expect(peer.requests.filter((request) => request.rpc === "initialize")).toHaveLength(2);
+  expect(admitted).toEqual(["t3-code", "t3-code"]);
+  expect(peer.requests.filter((request) => request.rpc === "tools/list")).toHaveLength(1);
   await session.callTool("mcp__t3-code__echo", { text: "actual" }, { toolUseId: "echo" });
   await Promise.all([session.parkAppOwned(), session.parkAppOwned()]);
   expect(peer.activeSessions()).toBe(0);
