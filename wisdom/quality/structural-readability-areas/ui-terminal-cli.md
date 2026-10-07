@@ -51,3 +51,7 @@ Primary task_b0090f89; judge task_05ce27ca ACCEPT candidate 23d4c95aa626e1ef2e84
 ## Accepted diagnostics acceptance boundaries
 
 Primary task_123df133; judge task_50dcf5f6 ACCEPT candidate 54ebccd6eeedc055d6832461c3fe4e4e9bae859b. Live observation and durable acceptance are visible separate operations; snapshot shape has one constructor. Privacy, bounded replay/write reservation, reentrancy and generation protections retained. Writer 58 passes; judge 15 independent assertions, full focused suites dependency-blocked. Diagnostics test primary still pending.
+
+## Accepted execution preview lifetimes
+
+Primary task_52ca0e94; judge task_9a76656a ACCEPT candidate 828e13116b668825a7d24cf4247e2b56e3ed49b9. Construction separates partial/live spinner from settled cached views; Pi reconstruction on updates/expansion preserves dynamic behavior. Warning reads/cache/animation ownership remain intact. Independent 130 tests/13,465 assertions, format/diff pass; no compiled TUI/device/provider proof.
