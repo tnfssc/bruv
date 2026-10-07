@@ -6,11 +6,18 @@
     {
       "focus": "scripts/fixtures/task-placement-clean/fake-provider.ts",
       "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_15c2f619",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_15c2f619",
+        "branch": "bruv/primary-scripts-fixtures-task-placement--15c2f619",
+        "base": "5541e227169c66a51af1854b644cbf42103f29d7",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "5541e227169c66a51af1854b644cbf42103f29d7"
     },
     {
       "focus": "scripts/fixtures/task-placement-clean/models.json",
@@ -1205,7 +1212,7 @@
     {
       "focus": "src/tool-schema.ts",
       "initialBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_9f98ded3",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_9f98ded3",
@@ -1216,13 +1223,21 @@
       "judgeRounds": [
         {
           "id": "task_87f3fbc6",
-          "status": "running",
+          "status": "complete",
           "candidate": "4894e9ad7736db769ac89495ad045247aba907bb",
-          "base": "1b7977e10031ccc622c0b30f7359e04a912e2db4"
+          "base": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Pure schema projection boundary strips provider metadata while keeping validation authority at runtime; registration/setup equality and no-execution setup remain explicit, no extra state needed.",
+          "checks": [
+            "independent16 source assertions registration/setup/required/enum/coercion/rejection/metadata/denial",
+            "normal suite WASM import blocker no green suite claim",
+            "diff clean no build/provider"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
       "changedRelatedPaths": [],
       "readingResult": "No-change: Zod definition→converted registration declaration while execution separately parses; Live reuses schema but owns validation/admission/cancel; setup probe declaration denies execution.",
@@ -2049,7 +2064,7 @@
     {
       "focus": "tests/questions.test.ts",
       "initialBlob": "79a2979c636f8a49ef3c192f91acea0868cc10ec",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_e678c58b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e678c58b",
@@ -2057,7 +2072,14 @@
         "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
         "commit": "ae3387d53e9f40c074eb0b3eceefd62844ad5caa"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_67d501cd",
+          "status": "running",
+          "candidate": "ae3387d53e9f40c074eb0b3eceefd62844ad5caa",
+          "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
@@ -2375,13 +2397,13 @@
     {
       "focus": "tests/typescript-images.test.ts",
       "initialBlob": "94a00fb9bbe92edc63a9192476d6562be57ff4ce",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_cf585928",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cf585928",
         "branch": "bruv/primary-tests-typescript-images.test.ts-cf585928",
         "base": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
-        "commit": null
+        "commit": "4e012a7723635492f49eb27bfd292f3b052dda53"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
@@ -2393,7 +2415,16 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "65e63c95e0526c6ae3d3c64993e2de8f875699b8"
+      "launchBase": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
+      "changedRelatedPaths": [
+        "tests/typescript-images.test.ts"
+      ],
+      "readingResult": "Execution cases own temp workspace instead of global hooks covering pure validators; header detection/record trust/channel accounting grouped separately from delivery. All assertions retained.",
+      "checks": [
+        "baseline18/107 candidate19/107",
+        "sourceonly6/24",
+        "format/lint/diff pass; no current packaged decoder claim"
+      ]
     },
     {
       "focus": "tests/typescript-runner.test.ts",
