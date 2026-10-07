@@ -44,8 +44,9 @@ Real code paths:
 - Production `installDiskBackedSessionManager` with persistent root and child Pi
   journals; the seed user publishes each journal via the real SDK append lifecycle.
 - Real `bindNativeTasks`: clone/serialize each cursor into
-  `bruv-native-task-projection`, read complete child journals, translate new IDs,
-  persist replay cursors, and restore checkpoints using the real root branch API.
+  `bruv-native-task-projection`, tail complete child records from a bounded byte-offset
+  cursor, translate new messages, and restore only latest keyed checkpoints through
+  `visitDiskBackedBranch` (metadata skeleton fallback: `getDiskBackedBranch`).
 - Text-only user/assistant translation (including assistant usage), and the real
   `NativeHistory.child().append()` write path used by `runtime.ts` for derived
   sidechains. The workload does not cache writers beyond production's behavior.
@@ -60,20 +61,23 @@ No API calls, models, auth files, user histories, SDK AgentSession/model continu
 completion delivery, compaction, tool results, images, or UI rendering are exercised.
 Interrupted fixture initialization is not a recoverable session workflow.
 
-## Growth oracle (current implementation, not a fix)
+## Growth oracle (bounded byte-offset cursors)
 
-With T tasks, U update rounds and E entries per round, the written root has:
+With T tasks and U update rounds, the root contains a header, launch user and C
+checkpoints: `2 + C` rows, with `T <= C <= T * (U + 1)` in the focused workload.
+Launch/background/terminal boundaries save immediately, progress saves every 64
+observations, and close drains dirty cursors. Each new checkpoint stores the last
+complete child byte offset and usage totals, not an accumulated child-ID vector.
+Child reads use 64 KiB chunks; keyed root restore materializes only latest matching
+checkpoints, not all root messages or superseded checkpoint bodies.
 
-- `2 + T * (U + 1)` JSONL rows (header, launch user, checkpoints).
-- `T * [(U + 1) + E * U * (U + 1) / 2]` child-ID references across checkpoints.
-- Resume adds T root checkpoint rows; original root bytes remain an exact prefix,
-  and original child Pi/native sidechain bytes remain unchanged.
-
-These deterministic counts are primary. Repeated full-history cursor snapshots
-amplify journal bytes even though the disk-backed message cache is bounded; root
-branch materialization during restore can still create large temporary residency.
-This workload intentionally exposes that present behavior. It does not implement
-retention, checkpoint consolidation, or a memory fix.
+Resume adds T root checkpoint rows; original root bytes remain an exact prefix,
+and original child Pi/native sidechain bytes remain unchanged. Tests verify final
+child offsets, absence of new childEntries arrays, preserved original content and
+no duplicate derived transcript rows. Root checkpoint payloads no longer grow
+quadratically with the child transcript. Original/derived child journals and
+body-free indexes still grow with history; this is not retention or a promise of
+flat total RSS/disk usage.
 
 Focused checks: `bun test tests/resource-harness-workload.test.ts`.
 Task evidence/limits: [wisdom note](../../wisdom/resources/resource-harness-workload.md).

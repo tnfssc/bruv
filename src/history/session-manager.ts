@@ -70,17 +70,11 @@ export function getLatestDiskBackedCustomEntry(
 ): Extract<SessionEntry, { type: "custom" }> | null | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
-  let id = internals(manager as SessionManager).leafId;
-  let steps = 0;
-  while (id) {
-    if (++steps > owned.store.entries.length) throw new Error("Active history branch contains a cycle");
-    const meta = owned.store.byId.get(id);
-    if (!meta) throw new Error("Active history branch contains a broken parent link");
+  for (const meta of walkMetadata(owned.store, internals(manager as SessionManager).leafId)) {
     if (meta.type === "custom" && meta.customType === customType) {
       const entry = owned.store.materialize(meta);
       if (entry.type === "custom" && accept(entry)) return entry;
     }
-    id = meta.parentId;
   }
   return null;
 }
@@ -96,33 +90,21 @@ export function getDiskBackedBranchRevision(
 ): object | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
-  let id = internals(manager as SessionManager).leafId;
-  let steps = 0;
-  while (id) {
-    if (++steps > owned.store.entries.length) return undefined;
-    const meta = owned.store.byId.get(id);
-    if (!meta) return undefined;
+  for (const meta of walkMetadata(owned.store, internals(manager as SessionManager).leafId)) {
     if (relevant(meta)) return meta;
-    id = meta.parentId;
   }
   return owned.store.entries;
 }
 
 function contextLeaf(owned: ManagerState, fromId: string | null, assistantOnly = false): string | null {
-  let id = fromId;
-  let steps = 0;
-  while (id) {
-    if (++steps > owned.store.entries.length) throw new Error("Active history branch contains a cycle");
-    const entry = owned.store.byId.get(id);
-    if (!entry) break;
+  for (const entry of walkMetadata(owned.store, fromId)) {
     if (
       (entry.type === "message" && (!assistantOnly || entry.messageRole === "assistant")) ||
       (!assistantOnly && entry.type === "custom_message") ||
       ["compaction", "branch_summary", "context_edit"].includes(entry.type) ||
       (entry.type === "custom" && entry.customType === MANUAL_SHAKE_ENTRY)
     )
-      return id;
-    id = entry.parentId;
+      return entry.id;
   }
   return null;
 }
@@ -225,19 +207,56 @@ function recoverStateOnFailure<T>(manager: SessionManager, operation: () => T): 
   }
 }
 
-function pathMetadata(store: DiskEntryStore, leafId: string | null | undefined): EntryMetadata[] {
-  if (!leafId) return [];
-  let current = store.byId.get(leafId);
-  if (!current) return [];
-  const path: EntryMetadata[] = [];
-  let steps = 0;
-  while (current) {
-    if (++steps > store.entries.length) throw new Error("Active history branch contains a cycle");
-    path.push(current);
-    current = current.parentId ? store.byId.get(current.parentId) : undefined;
+/** Count unique nodes only when a non-backward link makes a cycle possible.
+ * Floyd's walk uses constant space; ordinary append-only paths need no preflight.
+ */
+function uniquePathLength(store: DiskEntryStore, leaf: EntryMetadata): number {
+  const next = (meta: EntryMetadata | undefined) => (meta?.parentId ? store.byId.get(meta.parentId) : undefined);
+  let slow = next(leaf);
+  let fast = next(next(leaf));
+  while (slow && fast && slow !== fast) {
+    slow = next(slow);
+    fast = next(next(fast));
   }
-  path.reverse();
-  return path;
+  if (!slow || !fast) return store.entries.length;
+  let prefix = 0;
+  slow = leaf;
+  while (slow !== fast) {
+    slow = next(slow)!;
+    fast = next(fast)!;
+    prefix++;
+  }
+  let cycle = 1;
+  fast = next(slow)!;
+  while (slow !== fast) {
+    fast = next(fast)!;
+    cycle++;
+  }
+  return prefix + cycle;
+}
+
+/** Newest first, stopping at gaps or before a repeated node. No per-walk ID set.
+ * Strictly decreasing byte offsets cannot cycle. On the first forward/self link,
+ * compute the unique path length before delivering any duplicate metadata.
+ */
+function* walkMetadata(store: DiskEntryStore, leafId: string | null | undefined): Generator<EntryMetadata> {
+  const leaf = leafId ? store.byId.get(leafId) : undefined;
+  let current = leaf;
+  let limit = store.entries.length;
+  let checked = false;
+  for (let steps = 0; current && steps < limit; steps++) {
+    yield current;
+    const parent = current.parentId ? store.byId.get(current.parentId) : undefined;
+    if (parent && parent.offset >= current.offset && !checked) {
+      limit = uniquePathLength(store, leaf!);
+      checked = true;
+    }
+    current = parent;
+  }
+}
+
+function pathMetadata(store: DiskEntryStore, leafId: string | null | undefined): EntryMetadata[] {
+  return Array.from(walkMetadata(store, leafId)).reverse();
 }
 
 /** Visit active-branch metadata newest first without copying the branch.
@@ -250,14 +269,8 @@ export function visitDiskBackedBranch(
 ): true | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
-  let id = internals(manager as SessionManager).leafId;
-  let steps = 0;
-  while (id) {
-    if (++steps > owned.store.entries.length) throw new Error("Active history branch contains a cycle");
-    const meta = owned.store.byId.get(id);
-    if (!meta) throw new Error("Active history branch contains a broken parent link");
+  for (const meta of walkMetadata(owned.store, internals(manager as SessionManager).leafId)) {
     if (visit(meta) === false) break;
-    id = meta.parentId;
   }
   return true;
 }
@@ -975,7 +988,7 @@ export function installDiskBackedSessionManager(): void {
   };
 }
 
-/** Walk metadata only. Fail closed and bound original-history reads. */
+/** Walk truncated metadata paths, bounding selected original-history reads. */
 export function getDiskBackedBranch(
   manager: object,
   fromId?: string,
@@ -985,19 +998,12 @@ export function getDiskBackedBranch(
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
   const entries: SessionEntry[] = [];
-  const seen = new Set<string>();
-  let id = fromId ?? internals(manager as SessionManager).leafId;
-  while (id) {
-    if (seen.has(id)) throw new Error("Active history branch contains a cycle");
-    seen.add(id);
-    const meta = owned.store.byId.get(id);
-    if (!meta) throw new Error("Active history branch contains a broken parent link");
+  for (const meta of walkMetadata(owned.store, fromId ?? internals(manager as SessionManager).leafId)) {
     if (select(meta)) {
       if (entries.length >= maxEntries)
         throw new Error("Active history branch exceeds the " + maxEntries + "-entry limit");
       entries.push(metadataSkeleton(meta));
     }
-    id = meta.parentId;
   }
   return entries.reverse();
 }

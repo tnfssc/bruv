@@ -26,6 +26,16 @@ Use pinned Bun 1.4.2 and Node 24.21.0. Full captured-original measurement remain
 
 A synthetic negative control restored only the SDK startup getBranch readers: the real 100,000-row regression failed at its auxiliary-body guard. The restored bounded implementation passes.
 
-Integration dependency: src/agent/manual-shake.ts:770 still calls getBranch in its session_compact handler to find the prior shake marker. This agent does not own src/agent/* and did not change it. The extension worker must replace that lookup with latest matching indexed custom-record selection (keeping invalid-record/session-scope semantics). Explicit original-history surfaces remain intentionally materializing APIs.
+Integrated manual-shake session_compact restoration uses getLatestDiskBackedCustomEntry for the prior shake marker. Only unowned/native managers fall back to getBranch; invalid-record/session-scope semantics remain with the shake parser. Explicit original-history surfaces remain intentionally materializing APIs.
 
 Validation: a clean-cache dependency install with --backend copyfile, bun run check, and bun run build passed. The focused history/usage/projection/model-context, native/manual/automatic shake SDK, current-pipeline/cache-affine compaction SDK, rolling-activity, and Pi-host suites passed (159 tests across 13 files). No real-original replay was run here.
+
+## Truncated branch recovery (PR #48 review)
+
+Malformed complete rows remain ignored by the loader without changing journal bytes. Every disk-backed parent walk now stops at the first missing indexed parent, preserving the usable suffix just like native getBranch/context projection. Latest/custom and visit readers must not turn this gap into a startup or request failure.
+
+Shared walkMetadata also ends quietly before duplicate delivery on cycles. Normal backward byte-offset links need no preflight; a forward/self link triggers constant-space Floyd counting of the unique prefix and cycle. No per-walk branch-sized ID set or body materialization is added. The pinned native SDK itself has no cycle guard; quiet cycle recovery is the adapter's policy, not a native parity claim.
+
+Regression: tests/history-truncated-branch.test.ts compares the corrupt-middle branch/messages/settings with the native SDK, checks self/multi-node cycles with extra off-branch rows and an acyclic forward link, and checks original bytes. tests/extension-startup-disk.test.ts runs installed identity/cache/goals/task-row/remote/native-compaction handlers over the corrupt-middle fixture with byte-prefix preservation checked by a streamed SHA-256 digest rather than retaining the large fixture. Values remain unchanged: safe recovery, bounded resources and real-path proof already cover this correction.
+
+Review validation: isolated pristine Bun cache/copyfile install, guarded prepare:assets + TypeScript (bun run check), paired build, and 34 focused tests across 13 files passed. Scoped Biome check passed with warning/info diagnostics; git diff --check passed. Negative controls with the original session-manager source fail both gap/projection recovery and installed goal startup; the source was restored before final validation. No captured original replay, full CI rerun, push or PR creation was performed in this review worktree.

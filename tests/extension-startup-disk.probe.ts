@@ -1,15 +1,16 @@
 import { strict as assert } from "node:assert";
-import { openSync, closeSync, writeSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { closeSync, createReadStream, openSync, statSync, writeSync } from "node:fs";
 import { join } from "node:path";
 import { SessionManager, ToolExecutionComponent } from "@earendil-works/pi-coding-agent";
 import { Container } from "@earendil-works/pi-tui";
+import { CACHE_CALL_ENTRY, CacheCountdown, registerCacheCountdown } from "../src/agent/cache-countdown";
 import extension from "../src/agent/extension";
-import remoteExtension from "../src/remote/extension";
-import { CacheCountdown, CACHE_CALL_ENTRY, registerCacheCountdown } from "../src/agent/cache-countdown";
-import { NATIVE_FAST_ENTRY, nativeFastEnabled } from "../src/agent/native-fast-mode";
 import { registerNativeCodexCompaction } from "../src/agent/native-compaction";
+import { NATIVE_FAST_ENTRY, nativeFastEnabled } from "../src/agent/native-fast-mode";
 import { DiskEntryStore } from "../src/history/disk-entry-store";
-import { installDiskBackedSessionManager, disposeDiskBackedSessionManager } from "../src/history/session-manager";
+import { disposeDiskBackedSessionManager, installDiskBackedSessionManager } from "../src/history/session-manager";
+import remoteExtension from "../src/remote/extension";
 import { taskRowsFromSessionManager } from "../src/ui/task-rows";
 
 const root = process.env.PROBE_ROOT!;
@@ -29,6 +30,10 @@ writeSync(fd, JSON.stringify({ type: "session", version: 3, id: "startup", cwd: 
 const anchor = row({ type: "message", message: { role: "user", content: "start", timestamp: 1 } });
 const aux = { version: 1, jobs: [{ transcript: "old checkpoint body".repeat(2048) }] };
 for (let i = 0; i < 1600; i++) custom("bruv-native-task-projection", aux);
+if (process.env.PROBE_CORRUPT_MIDDLE) {
+  leaf = "corrupt-middle";
+  writeSync(fd, '{"type":"custom","id":"corrupt-middle",broken}\n');
+}
 custom(CACHE_CALL_ENTRY, { provider: "p", model: "before-shake", timestamp: 50_000 });
 custom("bruv-manual-shake", { malformed: "cache invalidation does not parse shake bodies" });
 custom(CACHE_CALL_ENTRY, { provider: "p", model: "m", timestamp: 140_001 });
@@ -120,10 +125,23 @@ custom("bruv-instruction-mode", { mode: "normal" });
 custom("die-task-row", { id: "task_offbranch", source: "local", status: "failed", terminal: true });
 custom(CACHE_CALL_ENTRY, { provider: "p", model: "m", timestamp: 250_000 });
 closeSync(fd);
+const originalSize = statSync(file).size;
+const prefixHash = async () => {
+  const hash = createHash("sha256");
+  for await (const chunk of createReadStream(file, { start: 0, end: originalSize - 1 })) hash.update(chunk);
+  return hash.digest("hex");
+};
+const originalHash = await prefixHash();
 
 installDiskBackedSessionManager();
 const manager = SessionManager.open(file);
 manager.branch(activeTip);
+if (process.env.PROBE_CORRUPT_MIDDLE) {
+  const branch = manager.getBranch();
+  assert.ok(!branch.some((entry) => entry.id === anchor));
+  assert.equal(await prefixHash(), originalHash, "branch reads preserve corrupt original bytes");
+  assert.equal(statSync(file).size, originalSize);
+}
 manager.getBranch = () => {
   throw Error("startup requested all original branch bodies");
 };
@@ -268,6 +286,15 @@ try {
   );
   const turn = await fire("before_agent_start", { systemPrompt: "base" }, ctx);
   assert.equal(typeof turn.systemPrompt, "string");
+  assert.doesNotMatch(
+    turn.systemPrompt,
+    /You are a (?:normal|fast|orchestrator) sub-agent/,
+    "a truncated root must not be demoted",
+  );
+  if (process.env.PROBE_CORRUPT_MIDDLE) {
+    assert.ok(manager.buildSessionProjection().messages.length > 0);
+    assert.ok(manager.buildContextEntries().length > 0);
+  }
   await commands.get("goal").handler("status", ctx);
   assert.ok(notices.some((text) => text.includes("Restore indexed goal")));
   assert.ok(loaded.length < 100, "startup should load only state records, not auxiliary checkpoints");
@@ -297,6 +324,7 @@ try {
   const invalid = await fire("before_agent_start", { systemPrompt: "base" }, ctx);
   assert.match(invalid.systemPrompt, /You are a normal sub-agent/);
   await fire("session_shutdown", {}, ctx);
+  assert.equal(await prefixHash(), originalHash);
   console.log(
     "installed startup restored rows, cache, goals, identity and remote attention without auxiliary originals",
   );
