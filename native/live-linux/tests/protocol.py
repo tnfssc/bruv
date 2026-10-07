@@ -16,7 +16,7 @@ def read(kind, timeout=4):
     while time.monotonic() < deadline:
         if not select.select([p.stdout], [], [], deadline - time.monotonic())[0]: break
         obj = json.loads(p.stdout.readline())
-        if obj['type'] == 'error': raise AssertionError(obj)
+        if obj['type'] == 'error' and kind != 'error': raise AssertionError(obj)
         if obj['type'] == kind: return obj
         if obj['type'] == 'capture':
             assert kind != 'ready', 'capture preceded ready'
@@ -24,8 +24,20 @@ def read(kind, timeout=4):
     raise AssertionError('missing '+kind)
 def cmd(**kwargs):
     p.stdin.write(json.dumps(kwargs)+'\n'); p.stdin.flush()
+def reject(code, message, **command):
+    cmd(**command)
+    assert read('error') == {'type': 'error', 'code': code, 'message': message}
 try:
     assert read('hello')['protocol'] == 1
+    # These rejections leave the initial generation and continuous-capture mode
+    # intact, so the same script still exercises device startup below.
+    reject('protocol', 'Missing type')
+    reject('protocol', 'Unknown command', type='unknown')
+    reject('generation', 'Invalid generation', type='flush', generation=True)
+    reject('generation', 'Flush generation must increase', type='flush', generation=0)
+    reject('capture_gate', 'Invalid hold epoch', type='capture_gate', epoch='0')
+    reject('state', 'Start audio before play', type='play', generation=0, data='AAAA')
+    cmd(type='stop'); read('stopped')
     if len(sys.argv) > 2:
         cmd(type='start'); read('ready')
         # Feed synthetic near-end audio to the isolated virtual microphone sink.
@@ -47,9 +59,13 @@ try:
             lib.pa_simple_free(stream)
         feeder = threading.Thread(target=inject); feeder.start()
         pcm = base64.b64encode(b'\x00\x20'*480).decode()
+        reject('play', 'Invalid PCM16 data or generation', type='play', generation=1, data=pcm)
+        reject('play', 'Invalid PCM16 data or generation', type='play', generation=0, data='!!!!')
         cmd(type='play', generation=0, data=pcm)
         assert read('played')['queuedMs'] >= 0
         cmd(type='flush', generation=1)
+        reject('generation', 'Flush generation must increase', type='flush', generation=1)
+        reject('play', 'Invalid PCM16 data or generation', type='play', generation=0, data=pcm)
         cmd(type='play', generation=1, data=pcm)
         read('played')
         # Drain reports must reach zero without a new play command.

@@ -7,3 +7,9 @@ Pickup: area branch `bruv/whole-repo-structural-readability-live-n-662639e6`, ch
 ## Accepted AudioCore batch
 
 Candidate `693ef090` independently accepted by `task_365b0c49`: callback-owned cursor now shows empty/pair/last-sample playback windows; lookahead and reset decisions are coherent operations, while queue authority and generation-tagged accounting stay intact. Included `native/live/test-core.c` flush regressions; its own fresh primary focus remains pending. Judge reran sanitizer tests, 16 Bun tests (72 assertions), and 30,000-operation baseline differential. No macOS/device/acoustic/concurrency proof. Exact accepted blobs in JSON; no worker note imported.
+
+## Accepted Linux and OpenAI batch
+
+`751c9ba0` / judge `task_13282f24`: synchronized playback buffer operations remove scattered lock/ring/generation reconstruction; Live keeps device/AEC effects. Startup drops redundant opening state. Related protocol assertions and new playback harness included; each needs own focus coverage. Native self-test, sanitizer buffer, no-device protocol/backpressure and 25 Bun tests passed independently. Virtual-device `audio_device` failures also occurred at baseline; runtime parity is not claimed.
+
+`ad16124c` / judge `task_5c3c9aed`: output metadata lifetimes have one owner; response-owned reply entries remove cross-map joins. Wire sends, epoch and cancellation remain session effects; replay IDs remain retained. Related tests included. Independent 49 tests/315 assertions passed; schema checks blocked by unresolved zod for judge, though worker reported 60 pass. Final integration dependency proof remains required. No provider/device/macOS claims.

@@ -1067,3 +1067,166 @@ describe("OpenAI push-to-talk turns", () => {
     f.session.close();
   });
 });
+
+describe("OpenAI output audio timeline", () => {
+  test("chunks share one item start and later items queue behind unheard audio", async () => {
+    let played = 1000,
+      clockReads = 0;
+    const f = fixture({
+      getPlayedAudioMs: () => {
+        ++clockReads;
+        return played;
+      },
+    });
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "r1" } });
+    const chunk = Buffer.alloc(4800).toString("base64");
+    f.socket.message({ type: "response.output_item.added", response_id: "r1", item: { type: "message", id: "first" } });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "first", content_index: 2, delta: chunk });
+    played = 1150;
+    f.socket.message({ type: "response.output_audio.delta", item_id: "first", content_index: 9, delta: chunk });
+    expect(clockReads).toBe(2); // response creation and first chunk, not every chunk
+    f.socket.message({
+      type: "response.output_item.added",
+      response_id: "r1",
+      item: { type: "message", id: "second" },
+    });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "second", content_index: 3, delta: chunk });
+    expect(clockReads).toBe(3);
+    f.socket.message({ type: "response.done", response: { id: "r1", status: "cancelled" } });
+    expect(f.socket.events.filter((e) => e.type === "conversation.item.truncate")).toEqual([
+      { type: "conversation.item.truncate", item_id: "first", content_index: 2, audio_end_ms: 150 },
+      { type: "conversation.item.truncate", item_id: "second", content_index: 3, audio_end_ms: 0 },
+    ]);
+    f.session.close();
+  });
+
+  test("unheard audio outlives its completed response but late chunks lose authorization", async () => {
+    let played = 0;
+    const audio: number[] = [],
+      interrupts: number[] = [];
+    const f = fixture({
+      getPlayedAudioMs: () => played,
+      onAudio: (_, epoch) => audio.push(epoch),
+      onInterrupted: (epoch) => interrupts.push(epoch),
+    });
+    await f.connect();
+    const chunk = Buffer.alloc(48000).toString("base64");
+    f.socket.message({ type: "response.created", response: { id: "r1" } });
+    f.socket.message({ type: "response.output_item.added", response_id: "r1", item: { type: "message", id: "old" } });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "old", delta: chunk });
+    f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
+    played = 400;
+    f.socket.message({ type: "response.created", response: { id: "r2" } });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "old", response_id: "r1", delta: chunk });
+    f.socket.message({ type: "response.output_item.added", response_id: "r2", item: { type: "message", id: "new" } });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "new", delta: chunk });
+    expect(audio).toEqual([0, 0]);
+    f.socket.message({ type: "input_audio_buffer.speech_started" });
+    expect(f.socket.events.filter((e) => e.type === "conversation.item.truncate")).toEqual([
+      { type: "conversation.item.truncate", item_id: "old", content_index: 0, audio_end_ms: 400 },
+      { type: "conversation.item.truncate", item_id: "new", content_index: 0, audio_end_ms: 0 },
+    ]);
+    expect(interrupts).toEqual([1]);
+    // The flush starts a fresh playback clock; the previous queue must not offset it.
+    played = 0;
+    f.socket.message({ type: "response.created", response: { id: "r3" } });
+    f.socket.message({ type: "response.output_item.added", response_id: "r3", item: { type: "message", id: "fresh" } });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "fresh", delta: chunk });
+    played = 200;
+    f.socket.message({ type: "response.done", response: { id: "r3", status: "cancelled" } });
+    expect(f.socket.events.at(-1)).toEqual({
+      type: "conversation.item.truncate",
+      item_id: "fresh",
+      content_index: 0,
+      audio_end_ms: 200,
+    });
+    expect(audio).toEqual([0, 0, 1]);
+    expect(interrupts).toEqual([1, 2]);
+    f.session.close();
+  });
+
+  test("heard completed items retire while the output item bound remains enforced", async () => {
+    let played = 0;
+    const errors: string[] = [];
+    const f = fixture({ getPlayedAudioMs: () => played, onError: (e) => errors.push(e.message) });
+    await f.connect();
+    const chunk = Buffer.alloc(480).toString("base64");
+    for (let response = 0; response < 2; ++response) {
+      const id = "r" + response;
+      f.socket.message({ type: "response.created", response: { id } });
+      for (let item = 0; item < 128; ++item) {
+        const itemId = id + ":" + item;
+        f.socket.message({
+          type: "response.output_item.added",
+          response_id: id,
+          item: { type: "message", id: itemId },
+        });
+        f.socket.message({ type: "response.output_audio.delta", item_id: itemId, delta: chunk });
+      }
+      expect(f.session.state).toBe("ready");
+      f.socket.message({ type: "response.done", response: { id, status: "completed" } });
+      played += 1280;
+    }
+    // All audio is heard, so speech has nothing to truncate or flush.
+    f.socket.message({ type: "response.created", response: { id: "r2" } });
+    f.socket.message({ type: "input_audio_buffer.speech_started" });
+    expect(f.session.generation).toBe(0);
+    expect(f.socket.events.filter((e) => e.type === "conversation.item.truncate")).toEqual([]);
+    for (let item = 0; item <= 128; ++item)
+      f.socket.message({
+        type: "response.output_item.added",
+        response_id: "r2",
+        item: { type: "message", id: "bounded:" + item },
+      });
+    expect(f.session.state).toBe("closed");
+    expect(errors).toEqual(["Output item limit exceeded"]);
+  });
+});
+
+test("tool replay IDs survive pending replies and retire with settled responses", async () => {
+  let executions = 0;
+  let resolveFirst!: (result: unknown) => void;
+  const first = new Promise<unknown>((resolve) => {
+    resolveFirst = resolve;
+  });
+  const f = fixture(
+    {},
+    {
+      tools: [{ name: "execute", parametersJsonSchema: { type: "object", properties: {} } }],
+      execute: () => {
+        ++executions;
+        return executions === 1 ? first : Promise.resolve({ content: [{ type: "text", text: "second" }] });
+      },
+    },
+  );
+  const call = (responseId: string) =>
+    f.socket.message({
+      type: "response.function_call_arguments.done",
+      response_id: responseId,
+      call_id: "retained",
+      name: "execute",
+      arguments: "{}",
+    });
+  const replies = () => f.socket.events.filter((e) => e.item?.call_id === "retained");
+  await f.connect();
+  f.socket.message({ type: "response.created", response: { id: "r1" } });
+  call("r1");
+  await Bun.sleep(0);
+  expect(executions).toBe(1);
+  f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
+  f.socket.message({ type: "response.created", response: { id: "r2" } });
+  call("r2");
+  await Bun.sleep(0);
+  expect(executions).toBe(1);
+  resolveFirst({ content: [{ type: "text", text: "first" }] });
+  for (let attempt = 0; attempt < 100 && replies().length < 1; ++attempt) await Bun.sleep(1);
+  expect(replies()).toHaveLength(1);
+  f.socket.message({ type: "response.done", response: { id: "r2", status: "completed" } });
+  f.socket.message({ type: "response.created", response: { id: "r3" } });
+  call("r3");
+  for (let attempt = 0; attempt < 100 && replies().length < 2; ++attempt) await Bun.sleep(1);
+  expect(executions).toBe(2);
+  expect(replies()).toHaveLength(2);
+  f.session.close();
+});

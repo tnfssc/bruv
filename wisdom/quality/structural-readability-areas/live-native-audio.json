@@ -53,13 +53,22 @@
       "judgeRounds": [
         {
           "id": "task_13282f24",
-          "status": "running",
+          "status": "complete",
           "candidate": "751c9ba0be74eb6939791c49c06d84de8882e669",
-          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a"
+          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "PlaybackBuffer owns synchronized playback operations; Live retains device/AEC orchestration. Startup stream existence replaces redundant flag; distinct flush paths and generation persistence preserved.",
+          "checks": "Independent native build/self-test, ASan/UBSan harness, no-device protocol/backpressure; 25 tests/172 assertions. Virtual audio_device baseline/candidate gap remains; no runtime parity.",
+          "acceptedBlobs": {
+            "native/live-linux/main.cpp": "b8ae3e08f47d6346d45324baa24605ef61e9d907",
+            "native/live-linux/tests/playback-buffer.cpp": "c0e51f58392b76f16021a44393b32a7955b3dac4",
+            "native/live-linux/tests/protocol.py": "8956a9fdb069683d9e5b364801019c1972a89aff"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "b8ae3e08f47d6346d45324baa24605ef61e9d907",
+      "integration": "integrated accepted exact candidate",
       "relatedPaths": [
         "native/live-linux/tests/playback-buffer.cpp",
         "native/live-linux/tests/protocol.py"
@@ -97,7 +106,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_13282f24",
+        "verdict": "ACCEPT",
+        "blob": "8956a9fdb069683d9e5b364801019c1972a89aff"
+      }
     },
     {
       "focus": "native/live-linux/tests/source-removal.py",
@@ -535,13 +549,21 @@
       "judgeRounds": [
         {
           "id": "task_5c3c9aed",
-          "status": "running",
+          "status": "complete",
           "candidate": "ad16124ce7a5b7ad8fd5bb82abc334189f0161e2",
-          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a"
+          "base": "4aeb4eb94c369d8a0338c849a0d18914e009d78a",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Audio timeline owns metadata lifetimes while wire/epoch/cancellation remain explicit; response-owned calls remove map joins and retained IDs preserve replay/budget.",
+          "checks": "Independent 49 pass/315 assertions; schema suite blocked by unresolved zod, worker 60 pass not independently reproduced.",
+          "acceptedBlobs": {
+            "src/live/openai-session.ts": "f465da4ecd02d562de5e01a85c6b66fac41d85bf",
+            "tests/openai-session.test.ts": "2bd1f6b720bb60c98916efc1dde12a7dfbb52f38"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "f465da4ecd02d562de5e01a85c6b66fac41d85bf",
+      "integration": "integrated accepted exact candidate",
       "relatedPaths": [
         "tests/openai-session.test.ts"
       ],
@@ -1233,7 +1255,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_5c3c9aed",
+        "verdict": "ACCEPT",
+        "blob": "2bd1f6b720bb60c98916efc1dde12a7dfbb52f38"
+      }
     }
   ],
   "extraFiles": [
@@ -1244,7 +1271,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate related addition; needs own primary focus after accepted integration"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_13282f24",
+        "verdict": "ACCEPT",
+        "blob": "c0e51f58392b76f16021a44393b32a7955b3dac4"
+      }
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
