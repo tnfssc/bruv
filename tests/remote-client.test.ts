@@ -121,6 +121,83 @@ test("rejects gaps without persisting bad transcript and never accepts hostile h
   expect((await c.transcript("id1")).events).toEqual([]);
 });
 
+test("page acceptance resumes after rejection, preserving terminal truth and correlating reply receipts", async () => {
+  const owner = { sessionId: "s", branchId: "b" };
+  const question = { id: "q1", owner, version: 1, status: "pending" };
+  let replyId = "";
+  let invalidCursor = true;
+  const cursors: number[] = [];
+  const transport: Transport = async (_host, _path, r) => {
+    if (r.op === "hello") return h();
+    if (r.op === "launch") return { task: { taskId: r.taskId, state: "running", questions: [question] } };
+    if (r.op === "answer") throw Error("lost answer acknowledgement");
+    cursors.push(r.cursor as number);
+    if (r.cursor === 0)
+      return {
+        task: {
+          taskId: r.taskId,
+          state: "done",
+          result: "terminal",
+          reply: { replyId: "unrelated", status: "delivered" },
+        },
+        events: [{ seq: 1, event: "first" }],
+        cursor: 1,
+        hasMore: true,
+      };
+    return {
+      task: { taskId: r.taskId, state: "running", reply: { replyId, status: "delivered" } },
+      events: [{ seq: 2, event: "second" }],
+      cursor: invalidCursor ? 3 : 2,
+      hasMore: false,
+    };
+  };
+  const client = await fixture(transport);
+  await client.connect("box");
+  await client.launch("/repo", "work", "pages");
+  await expect(client.answer("pages", { id: "q1", owner, version: 1, text: "yes" })).rejects.toThrow("uncertain");
+  replyId = (await client.transcript("pages")).replies!.q1!.replyId;
+
+  await expect(client.sync("pages")).rejects.toThrow("Invalid sync cursor");
+  const partial = await client.transcript("pages");
+  expect(partial.events).toEqual([{ seq: 1, event: "first" }]);
+  expect(partial.cursor).toBe(1);
+  expect(partial.transcriptComplete).toBe(false);
+  expect(partial.task).toMatchObject({ state: "done", result: "terminal" });
+  expect(partial.replyDelivery!.q1!.status).toBe("uncertain");
+
+  invalidCursor = false;
+  const resumed = await new RemoteClient(client.path, transport).sync("pages");
+  expect(cursors).toEqual([0, 1, 1]);
+  expect(resumed.events.map((e) => e.seq)).toEqual([1, 2]);
+  expect(resumed.cursor).toBe(2);
+  expect(resumed.transcriptComplete).toBe(true);
+  expect(resumed.task).toMatchObject({ state: "done", result: "terminal" });
+  expect(resumed.replyDelivery!.q1).toEqual({ replyId, status: "delivered" });
+  expect(resumed.lastError).toBeUndefined();
+});
+
+test("sync releases the cache lock before servicing and returns persisted integration outcomes", async () => {
+  let artifactError: string | undefined = "fixture artifact unavailable";
+  const client = await fixture(async (_host, _path, r) => {
+    if (r.op === "hello") return h();
+    if (r.op === "launch") return { task: { taskId: r.taskId, state: "running" } };
+    return { task: { taskId: r.taskId, state: "done", artifactError }, events: [], cursor: 0, hasMore: false };
+  });
+  await client.connect("box");
+  await client.launch("/repo", "work", "servicing");
+  const failedIntegration = await client.sync("servicing");
+  expect(failedIntegration.task?.state).toBe("done");
+  expect(failedIntegration.transcriptComplete).toBe(true);
+  expect(failedIntegration.integrationError).toBe("Error: Offline text artifacts: Error: fixture artifact unavailable");
+  expect((await client.transcript("servicing")).integrationError).toBe(failedIntegration.integrationError);
+
+  artifactError = undefined;
+  const recovered = await client.sync("servicing");
+  expect(recovered.task?.state).toBe("done");
+  expect(recovered.integrationError).toBeUndefined();
+  expect((await client.transcript("servicing")).integrationError).toBeUndefined();
+});
+
 test("lost launch reply blocks automatic fresh-ID repeat of the same intent", async () => {
   let posts = 0;
   const c = await fixture(async (_h, _p, r) => {
