@@ -1,17 +1,24 @@
 # Child Fast mode PR work
 
-User asked for a fix PR after the diagnosis.
+User asked for a fix PR, then asked to sync with main. The repo default branch is develop.
+
+## Integration
 
 - Parent branch: t3/inherit-fast-mode.
-- Implementation job: task_0b5bec79.
-- Worker branch: bruv/t3-fast-mode-binding.
+- Worker job: task_0b5bec79. Worker branch: bruv/t3-fast-mode-binding.
 - Worker path: /home/tnfssc/.bruv/worktrees/t3-fbf8eba6-5442693331ce-task_0b5bec79.
-- Research job: task_de081bf7. Current host Fast input and badge trace.
+- Worker commit d883ce72 integrated as 91a43c8b.
+- Merged origin/develop at 307eb514. This includes PR #49 and its Pi cache hardlink fix.
+- Review task_5ce79577 found no connector defect in the draft, but flagged the remaining host gap. Parent reviewed the integrated change and confirmed the pinned host renderer lacks Fast status.
 
-The worker setup failed at prepare:assets with an unsupported session-manager.js digest. A separate local fix a11348ef addresses Bun cache hardlink writes. Do not silently change that other branch or the installed host. Check fresh private install paths for validation.
+## Synced proof
 
-Next: integrate worker commit, review the real host input and billing authorization, run focused tests, push the parent branch and open a PR to develop. Link the PR to this thread. No PR exists yet. Values unchanged; existing handoff and proof values apply.
+Fresh private Bun cache and copyfile install passed. bun run check and paired binary build passed. Seven focused suites passed: 123 tests, 945 assertions. Focused format and git diff --check passed. First synced test run had two failures because dist/bruv had not been built; the built rerun passed without changing assertions.
 
-## Sync with main
+The real connector launch/control and child-runtime tests use offline provider fetch and mocked process spawn. No live provider, SSH, installed-host or billing proof.
 
-The repo default branch is develop. User asked to sync with main. Fetched origin/develop at 307eb514. It includes PR #49, the Pi cache hardlink fix a11348ef. Worker committed d883ce72. Integrate that commit, merge origin/develop, and re-run validation on the synced tree.
+## Delivery boundary
+
+Open the PR to develop with the connector fix only. This does not repair the installed T3 custom-model composer path: the host drops Fast before launch and its badge has no Fast field. See [pinned host trace and next work](parent-fast-host-trace.md). No installed binaries changed.
+
+Wisdom updated. Values unchanged: existing proof-scope, real-path, consent and handoff values cover this lesson.
