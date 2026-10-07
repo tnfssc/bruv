@@ -1,8 +1,8 @@
 import { expect, spyOn, test } from "bun:test";
-import { type Component, type Editor, TuiMainScreen } from "@earendil-works/pi-tui";
+import { type Component, type Editor, ProcessTerminal, TuiMainScreen } from "@earendil-works/pi-tui";
 import { parseStreamingJson } from "@earendil-works/pi-ai";
 import { taskRowFromLaunch, taskRowsFromDetails, taskRowsFromSessionEntries } from "../src/ui/task-rows";
-import type { RootDialog, RootObservation } from "../src/remote/root-contract";
+import type { RootCommand, RootDialog, RootObservation } from "../src/remote/root-contract";
 import { dispatchRootFacet } from "../src/remote/root-runtime";
 import {
   presentRemoteRoot,
@@ -24,11 +24,8 @@ function replay(messages: unknown[], extraEvents: unknown[] = []): RootObservati
   };
 }
 
-function fixture(receipt: Record<string, unknown> = {}) {
+function remoteReplies(receipt: Record<string, unknown> = {}) {
   const commands: any[] = [];
-  const picks: string[] = [];
-  const notices: string[] = [];
-  const titles: string[] = [];
   const question = {
     id: "not-a-routine-copy-id",
     text: "Choose implementation",
@@ -37,20 +34,28 @@ function fixture(receipt: Record<string, unknown> = {}) {
     status: "pending",
     choices: ["first", "second"],
   };
-  let detached = false;
-  const client: any = {
+  const client = {
     read: () => ({ commands: {}, target: { name: "builder" } }),
-    command: async (command: any) => {
+    command: async (command: RootCommand) => {
       commands.push(command);
       return { commandId: "c", state: "completed", ...receipt };
     },
-    result: async (command: any) => {
+    result: async (command: RootCommand) => {
       commands.push(command);
       if (command.kind === "questions.list") return { questions: [question] };
       if (command.kind === "jobs.list") return { jobs: [{ id: "job", title: "Run tests", status: "running" }] };
       return { output: "test progress" };
     },
   };
+  return { client, commands, question };
+}
+
+function fixture(receipt: Record<string, unknown> = {}) {
+  const remote = remoteReplies(receipt);
+  const picks: string[] = [];
+  const notices: string[] = [];
+  const titles: string[] = [];
+  let detached = false;
   const ui: RootPresentationControls = {
     choose: async (title) => {
       titles.push(title);
@@ -61,13 +66,11 @@ function fixture(receipt: Record<string, unknown> = {}) {
     detach: () => (detached = true),
   };
   return {
-    client,
-    commands,
+    ...remote,
     picks,
     notices,
     titles,
-    question,
-    controls: new RootControls(client, ui),
+    controls: new RootControls(remote.client as any, ui),
     detached: () => detached,
   };
 }
@@ -789,21 +792,26 @@ test("root resume correlates unnamed shells to execute labels before command pre
   expect(t.render(120, 0).join("\n")).toContain("RAW_LAUNCH_SOURCE");
 });
 
-// Keep the real picker/editor and presenter routing; suppress only terminal I/O.
+// Mount shipped TUI input routing with terminal I/O and scheduled rendering suppressed.
 function mountedPresentation(dialog?: RootDialog) {
-  const f = fixture();
+  const remote = remoteReplies();
   const record = replay([]).record;
   record.dialogs = dialog ? [dialog] : [];
   let root!: Component;
   let focus!: Component;
-  let input!: Parameters<TuiMainScreen["addInputListener"]>[0];
+  let terminalInput!: (data: string) => void;
   let detached = false;
   const focuses: Component[] = [];
   const addChild = TuiMainScreen.prototype.addChild;
   const setFocus = TuiMainScreen.prototype.setFocus;
   const spies = [
-    spyOn(TuiMainScreen.prototype, "start").mockImplementation(() => {}),
-    spyOn(TuiMainScreen.prototype, "stop").mockImplementation(() => {}),
+    spyOn(ProcessTerminal.prototype, "start").mockImplementation((onInput) => {
+      terminalInput = onInput;
+    }),
+    spyOn(ProcessTerminal.prototype, "stop").mockImplementation(() => {}),
+    spyOn(ProcessTerminal.prototype, "write").mockImplementation(() => {}),
+    spyOn(ProcessTerminal.prototype, "hideCursor").mockImplementation(() => {}),
+    spyOn(ProcessTerminal.prototype, "showCursor").mockImplementation(() => {}),
     spyOn(TuiMainScreen.prototype, "requestRender").mockImplementation(() => {}),
     spyOn(TuiMainScreen.prototype, "addChild").mockImplementation(function (this: TuiMainScreen, component) {
       addChild.call(this, component);
@@ -814,15 +822,11 @@ function mountedPresentation(dialog?: RootDialog) {
       focus = component!;
       focuses.push(focus);
     }),
-    spyOn(TuiMainScreen.prototype, "addInputListener").mockImplementation((listener) => {
-      input = listener;
-      return () => {};
-    }),
   ];
   const running = presentRemoteRoot(
     {
-      ...f.client,
-      read: () => ({ ...f.client.read(), record, events: [], sourceLabel: "saved", cacheStart: 1 }),
+      ...remote.client,
+      read: () => ({ ...remote.client.read(), record, events: [], sourceLabel: "saved", cacheStart: 1 }),
       reconcile: async () => [],
       observe: async () => ({ ...replay([]), record }),
       detach: async () => {
@@ -832,11 +836,11 @@ function mountedPresentation(dialog?: RootDialog) {
     { pollMs: 1 },
   );
   const editor = focus as Editor;
-  const key = (data: string) => {
-    if (!input(data)?.consume) root.handleInput?.(data);
-  };
+  // Only the terminal boundary is fake: listeners and focused-component dispatch are shipped TUI code.
+  const key = (data: string) => terminalInput(data);
   return {
-    ...f,
+    ...remote,
+    root,
     editor,
     key,
     focuses,
@@ -858,11 +862,28 @@ async function waitForPresentation(predicate: () => boolean) {
   expect(predicate()).toBe(true);
 }
 
+test("shipped terminal input submits through the focused editor, not root fallback", async () => {
+  const p = mountedPresentation();
+  const rootInput = spyOn(p.root, "handleInput");
+  try {
+    p.key("Do work");
+    expect(p.editor.getText()).toBe("Do work");
+    p.key("\r");
+    await waitForPresentation(() => p.editor.getText() === "");
+    expect(p.commands).toEqual([{ kind: "prompt", text: "Do work" }]);
+    expect(rootInput).not.toHaveBeenCalled();
+  } finally {
+    rootInput.mockRestore();
+    await p.close();
+  }
+  expect(p.detached()).toBe(true);
+});
+
 test("shipped question flow restores prompt focus between selection and free-text answer", async () => {
   const p = mountedPresentation();
   try {
-    p.editor.setText("/questions");
-    p.editor.onSubmit!("/questions");
+    p.key("/questions");
+    p.key("\r");
     await waitForPresentation(() => p.focus() !== p.editor);
     expect(p.frame()).toContain("Human questions");
     p.key("\r");
@@ -894,8 +915,8 @@ test("shipped question flow restores prompt focus between selection and free-tex
 test("shipped picker cancellation restores prompt; Ctrl-C outside the modal still aborts", async () => {
   const p = mountedPresentation();
   try {
-    p.editor.setText("/questions");
-    p.editor.onSubmit!("/questions");
+    p.key("/questions");
+    p.key("\r");
     await waitForPresentation(() => p.focus() !== p.editor);
     p.key("\x03");
     expect(p.focus()).toBe(p.editor);

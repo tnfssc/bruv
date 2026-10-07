@@ -282,14 +282,24 @@
     {
       "focus": "src/remote/entry.ts",
       "initialBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_1a846ca2",
+          "status": "running",
+          "candidate": "e9674b1b8468e74288f6ae2dabe297d2d752e13e"
+        }
+      ],
       "primary": {
         "id": "task_03f678fa",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_03f678fa",
-        "branch": "bruv/remote-primary-entry-03f678fa"
+        "branch": "bruv/remote-primary-entry-03f678fa",
+        "commit": "e9674b1b8468e74288f6ae2dabe297d2d752e13e"
       },
-      "launchBase": "6c4dcba1024226c5e6afb5e863cbc8a105b73838"
+      "launchBase": "6c4dcba1024226c5e6afb5e863cbc8a105b73838",
+      "result": "Unchanged bounded stdin/parsing/own-field validation/await owner/error JSON/await stdout flush sequence; owner remains semantic authority.",
+      "checks": "2 pass/18 assertions; own asset prep fixed generated asset setup; no live/build.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/extension.ts",
@@ -650,8 +660,14 @@
     {
       "focus": "src/remote/root-entry.ts",
       "initialBlob": "727f150cfcf105e5faef09c6af419393f71f931d",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "c6f7908aafd83361e6ee6ca1a351cd152ee764fc",
+      "primary": {
+        "id": "task_717a7437",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_717a7437",
+        "branch": "bruv/remote-primary-root-entry-717a7437"
+      }
     },
     {
       "focus": "src/remote/root-options.ts",
@@ -1439,7 +1455,7 @@
     {
       "focus": "tests/remote-root-client.test.ts",
       "initialBlob": "3a25d228b5f25291ffb2d4354888f4b295f6f523",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge",
       "judgeRounds": [],
       "relatedAcceptance": {
         "judge": "task_b04a86e2",
@@ -1450,23 +1466,31 @@
       "primary": {
         "id": "task_0336c340",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_0336c340",
-        "branch": "bruv/remote-primary-root-client-tests-0336c340"
-      }
+        "branch": "bruv/remote-primary-root-client-tests-0336c340",
+        "commit": "81252d4c9681a5e397e136a52f293f5ed999932d"
+      },
+      "result": "ownerReply separates owner effects from logged lost response; missing status follows same protocol path; reserved and admitted recovery fixtures now independent instead of history reset.",
+      "checks": "Baseline 10/candidate 11 tests, 55 assertions each; combined 20 pass/144; exact abort→prompt/status-only/no-resend/source protection retained; Biome/diff pass.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-root-presenter.test.ts",
       "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_20e04838",
-          "status": "running",
+          "status": "completed",
           "candidate": "77ea8f3a80698debf5ffe36ce5f501076f266888",
           "suppliedCandidateCorrection": {
             "previous": "20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d",
             "actual": "77ea8f3a80698debf5ffe36ce5f501076f266888",
             "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
-          }
+          },
+          "verdict": "ACCEPT",
+          "reason": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup.",
+          "checks": "Judge in-memory hash-identical harness: old helper two root calls fails, new zero passes; four mounted journeys pass; full native candidate package loading blocked; assertions retained/diff clean.",
+          "limits": "Immediate TUI rendering remains live despite scheduled rendering suppressed. Judge accidentally generated area dist via build; not acceptance evidence."
         }
       ],
       "relatedAcceptance": {
@@ -1485,7 +1509,11 @@
           "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
         }
       },
-      "workerResponse": "Candidate committed; ready for independent judgment.\n\n- **Base:** `20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d`\n- **Candidate:** `77ea8f3a80698debf5ffe36ce5f501076f266888`\n- **Branch:** `bruv/remote-primary-root-presenter-tests-d3ae9262`\n\n**Changed paths**\n- `tests/remote-root-presenter.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after**\n- Mounted tests constructed unused scripted controls and shadowed their detach state. Remote replies now stand apart from each fixture’s UI ownership.\n- Keys previously passed through a captured listener, then directly into the root component—bypassing shipped focused-component dispatch. They now enter through the terminal callback and real TUI routing.\n- Question journeys now start with typed keys rather than directly invoking editor submission.\n\n**Proof**\n- Existing assertions retained.\n- Focused suite: **29 pass, 157 assertions**.\n- New routing regression fails with the baseline helper: root input receives two calls instead of zero.\n- Formatting and diff checks pass; lint reports only the existing ANSI-regex warning.\n\nProduction code unchanged. No active overlap with root-client rework; inherited presenter-test edits preserved. No physical-terminal, authenticated SSH, full-gate or typecheck claim. Wisdom recorded; values unchanged. Clean tree; no push/PR."
+      "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
+      "integrationState": "exact independently accepted primary test patch applied",
+      "result": "Distinct remoteReplies/scripted UI/mounted UI lifetimes; terminal callback exercises real shipped focused input dispatch; added regression reproduces old helper bypass.",
+      "checks": "Worker 29 pass/157 assertions; baseline helper new routing regression fails; format/lint/diff pass existing ANSI regex warning.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-root-transport.test.ts",
@@ -1502,12 +1530,18 @@
     {
       "focus": "tests/remote-runtime.test.ts",
       "initialBlob": "f71e08976aeb005bf9249915b1655f677096b4f2",
-      "status": "pending",
+      "status": "primary-running",
       "judgeRounds": [],
       "relatedAcceptance": {
         "judge": "task_e1ab9585",
         "blob": "fe29cd1cfb93ec39984d2fd2e3babc5054c29260",
         "needs": "fresh primary focus and final independent judge"
+      },
+      "launchBase": "c6f7908aafd83361e6ee6ca1a351cd152ee764fc",
+      "primary": {
+        "id": "task_a9d68611",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_a9d68611",
+        "branch": "bruv/remote-primary-runtime-tests-a9d68611"
       }
     },
     {
@@ -1817,6 +1851,13 @@
       "command": "bun test remote-repository-wire,remote-repository,remote-repository-download,root-owner,remote-source-approval,remote-jobs tests",
       "result": "62 pass, 0 fail, 367 assertions across 6 files",
       "limits": "Source fixtures only; no authenticated SSH/provider/compiled parity"
+    },
+    {
+      "commit": "c6f7908a",
+      "job": "task_ff55aaa3",
+      "command": "bun test remote-runtime,remote-owner,remote-owner-lifecycle,remote-cancellation,remote-durable-json,remote-job-artifacts tests",
+      "result": "21 pass, 0 fail, 151 assertions across 6 files",
+      "limits": "Local Linux fixtures, no power-loss/live/provider/compiled parity"
     }
   ],
   "crossAreaNeeds": [
