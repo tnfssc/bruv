@@ -226,16 +226,24 @@
     {
       "focus": "scripts/benchmark-footer-context.ts",
       "initialBlob": "91d84fe12a843948add9cd91c219ee7098b1f419",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_98c25ed9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_98c25ed9",
+          "branch": "bruv/primary-readability-scripts-benchmark-fo-98c25ed9",
+          "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f"
     },
     {
       "focus": "scripts/benchmark-task-row-render.ts",
       "initialBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_c9f5fced",
@@ -250,11 +258,24 @@
           "id": "task_21c6d061",
           "base": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
           "candidate": "5cbafa0c84777290a9c0d56da036fd524fec748d",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/benchmark-task-row-render.ts": "ae42ddf511434a63a309d1d4fbc023d366d938fa"
+          },
+          "evidence": "One case owns fixture warmups/counter reset/measured renders/median output/finally restoration; extracted fixtures would obscure intentional counter scope.",
+          "checks": [
+            "Independent benchmark nine rows schema/order/finite medians snapshot ratios1/1/0",
+            "95tests/1101assertions",
+            "diff clean"
+          ],
+          "limits": [
+            "No performance gain/build/gate/compiled terminal/provider/SSH/platform"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
+      "integrationState": "unchanged final primary accepted",
       "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
       "changedRelatedPaths": [],
       "result": "No-change: per-case setup,3warmups,counter reset,7renders,median/JSON,finally restoration explicit.",
@@ -2794,8 +2815,15 @@
       "focus": "tests/ansi-video-renderer.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "related-patch-accepted-primary-pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_c89c25be",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c89c25be",
+          "branch": "bruv/new-file-primary-readability-tests-ansi--c89c25be",
+          "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f"
+        }
+      ],
       "judgeRounds": [
         {
           "id": "task_73d21038",
@@ -2805,22 +2833,32 @@
         }
       ],
       "acceptedBlob": "d5b9aa060a097d8e3b7cda75e52f15b550b646fd",
-      "integrationState": "integrated round2 patch; separate fresh primary required"
+      "integrationState": "integrated round2 patch; separate fresh primary required",
+      "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f"
     },
     {
       "focus": "tests/terminal-interactions-normalize.test.ts",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_c93f9a76",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c93f9a76",
           "branch": "bruv/new-file-primary-readability-tests-termi-c93f9a76",
-          "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1"
+          "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+          "commit": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0d381a57",
+          "base": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+          "candidate": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_23bf0f9f"
+        }
+      ],
       "acceptedBlob": "96a49888775e77328e9cbeb1f416f2b5347b345b",
       "integrationState": "related patch integrated; primary pending",
       "relatedPatchJudgments": [
@@ -2831,22 +2869,38 @@
           "blob": "96a49888775e77328e9cbeb1f416f2b5347b345b"
         }
       ],
-      "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1"
+      "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+      "changedRelatedPaths": [],
+      "result": "No-change: local synthetic records expose init/action, zero/null, lifecycle input/stage precedence and teardown exclusion directly.",
+      "checks": [
+        "3primary/68assertions",
+        "24related/164assertions",
+        "Biome/diff"
+      ]
     },
     {
       "focus": "tests/ui-cleanup-probe.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_09dea81c",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09dea81c",
           "branch": "bruv/new-file-primary-readability-tests-ui-cl-09dea81c",
-          "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1"
+          "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+          "commit": "e6e787e74a42fc4228198cf91cc26d8285162ec8"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_3bc6b56e",
+          "base": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+          "candidate": "e6e787e74a42fc4228198cf91cc26d8285162ec8",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_988afb2b"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
       "relatedPatchJudgments": [
@@ -2857,7 +2911,17 @@
           "blob": "f404edc33e4d99e3c363466338e431cbbc305d2b"
         }
       ],
-      "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1"
+      "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+      "changedRelatedPaths": [],
+      "result": "Candidate protocol expectations keyed by real request numbers, finite clock values adjacent to retry/expired-wait operations; six other test bodies AST unchanged.",
+      "checks": [
+        "Base/candidate8primary+13adjacent Python tests",
+        "Six test bodies AST same",
+        "compile/help/diff"
+      ],
+      "limits": [
+        "No new terminal run; prior ten screen failures remain"
+      ]
     }
   ],
   "batchChecks": [
