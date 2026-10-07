@@ -2289,7 +2289,7 @@
   ],
   "parentCheckpoint": {
     "commit": "0072ad15",
-    "result": "Parent integrated accepted site-support only; no non-site/support/wisdom source delta, no useful common area source to merge. No sibling branches merged directly."
+    "result": "Correction: top log showed site completion, but full diff reveals parent has also integrated accepted common changes across areas and an earlier batch of this area. Prior no-common-source conclusion was premature; inspect first-parent integrations and clean merge before continuing final-context proof."
   },
   "auditCheckpoint": {
     "commit": "8ab9543f",
