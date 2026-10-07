@@ -150,18 +150,18 @@ test("production CI caches downloads only and delegates paired validation to the
     };
     let downloadCaches = 0;
     for (const job of Object.values(parsed.jobs)) {
+      if (filename === "ci.yml")
+        for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache")))
+          expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
       for (const step of job.steps.filter(
-        (step) =>
-          step.uses?.startsWith("actions/cache") && step.with?.path === "\u0024{{ runner.temp }}/bruv-bun-cache",
+        (step) => step.uses?.startsWith("actions/cache") && step.with?.path === "${{ runner.temp }}/bruv-bun-cache",
       )) {
         downloadCaches++;
-        expect(step.with?.path).toBe("\u0024{{ runner.temp }}/bruv-bun-cache");
+        expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
         expect(step.with?.key).toBe(
-          "bun-download-v2-1.4.2-\u0024{{ runner.os }}-\u0024{{ runner.arch }}-\u0024{{ hashFiles('bun.lock', 'package.json') }}",
+          "bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}",
         );
-        expect(step.with?.["restore-keys"]).toBe(
-          "bun-download-v2-1.4.2-\u0024{{ runner.os }}-\u0024{{ runner.arch }}-",
-        );
+        expect(step.with?.["restore-keys"]).toBe("bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-");
         expect(step.with?.key).not.toContain("bun-1.4.2-");
         expect(step.with?.["restore-keys"]).not.toContain("bun-1.4.2-");
       }

@@ -7,3 +7,7 @@ The Pi-host atomic copy/rename writer from mainline prevents future writes from 
 CI and release now use the bun-download-v2-1.4.2- family for both exact keys and restore prefixes. This is a one-time cache namespace rotation. Bun version, runner OS/architecture, lockfile/package identity, and cached download path remain unchanged. The new restore prefixes cannot match the old family. No cache contents are deleted or silently repaired.
 
 Focused workflow regression assertions cover CI and release cache keys, restore prefixes, path, and Bun version. No new value is needed; existing cache-isolation guidance covers this recovery.
+
+Parent integration: /home/tnfssc/.bruv/worktrees/bruv-task-history-cache-recovery, branch fix/pr48-ci-cache-recovery. Worker task_81a9f7fa committed 942597d7 in /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_81a9f7fa. Parent kept the prior CI check that every CI cache stores only Bun downloads; release still has its separate browser cache. Hosted validation will rerun after the parent pushes this to PR #48. No hashes or resource budgets were weakened.
+
+Parent workflow checks passed: 8 tests, zero failures, plus diff checks. This small workflow recovery does not claim a repeated full product gate; the hosted run is the required confirmation.
