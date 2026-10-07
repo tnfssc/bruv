@@ -759,7 +759,7 @@
     {
       "focus": "src/herdr-agent-state.ts",
       "initialBlob": "652dc28d948e82a263b789da4a2ec5dbb09d4296",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_841fe796",
@@ -774,7 +774,14 @@
           "checks": "12 tests34 assertions; Biome check0 with3 existing infos; generated WASM supplied from shared deps; no build/typecheck/liveHerdr/Windows."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_740befb5",
+          "candidate": "f57af221d2c5558b34d3db7959bd91d7898efd7f",
+          "base": "8d31b67dec5d017598a3307ac38fe6311396bea5",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -819,7 +826,7 @@
     {
       "focus": "src/history/selector-lifecycle.ts",
       "initialBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_1e7ee0c8",
@@ -839,11 +846,15 @@
           "id": "task_2011e8a7",
           "candidate": "313f21095386e99beda79404e94aefc4c05da23c",
           "base": "4c80c3f380f237e77ec86350e4ae823c83e0c09b",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Metadata-count override has one installation lifetime and native fallback; picker selection/disposal belong elsewhere. Metadata-only count avoids body hydration with clear authority.",
+          "checks": "Independent actual SDK/caller/source/fixture review and focused checks; byte/body preservation after disposal/reopen; no liveTUI/GC/fullgate."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/history/service.ts",
