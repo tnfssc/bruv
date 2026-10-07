@@ -39,65 +39,94 @@ def fixture(body, root):
               any(error in str(i.get("output", "")) for error in ["Execution failed", "BuildMessage:", "Persistent questions need"])]
     if failed:
         return [prose("The fixture action failed. Inspect its original error before continuing this acceptance run.", "final_answer")]
+    # Preserve priority when replay and task/question deliveries add user messages.
     if "Inspect grouped records" in user_text:
-        for call_id, label in [("record-a", "Read first record"), ("record-b", "Read second record"), ("record-c", "Read third record")]:
-            if call_id not in called:
-                return [tool(call_id, label, 'console.log("' + call_id.upper() + '_DETAIL\\n" + Array.from({length:12}, (_,i)=>"' + call_id.upper() + '_LINE_"+i).join("\\n"));')]
-        if "split-a" not in called:
-            return [prose("Saved note: the next records belong to a separate step.", "commentary"),
-                    tool("split-a", "Read fourth record", 'console.log("SPLIT_A_DETAIL");')]
-        if "split-b" not in called:
-            return [tool("split-b", "Read fifth record", 'console.log("SPLIT_B_DETAIL");')]
-        return [prose("Grouped records are ready. The saved note remains visible.", "final_answer")]
+        return grouped_records(called)
     if "Run lifecycle checks" in user_text:
-        if "launch-lifecycle" not in called:
-            code = []
-            for name, status in [("complete", 0), ("fail", 7), ("cancel", 0)]:
-                gate = shlex.quote(str(root / "gates" / name))
-                cmd = "sh -c " + shlex.quote("printf '" + name + " check started\n'; while [ ! -e " + gate + " ]; do sleep 0.1; done; printf '" + name + " check settled\n'; exit " + str(status))
-                code.append('const ' + name + ' = await shell(' + json.dumps(cmd) + ', {waitSeconds:0});')
-            code.append('await Bun.write(' + json.dumps(str(root / "lifecycle-jobs.json")) + ', JSON.stringify({complete:complete.id,fail:fail.id,cancel:cancel.id}));')
-            code.append('console.log({complete,fail,cancel}); await jobs.snooze(cancel.id,{minutes:0.02});')
-            return [tool("launch-lifecycle", "Start lifecycle checks", " ".join(code))]
-        if "Cancel fixture check" in user_text and "cancel-lifecycle" not in called:
-            return [tool("cancel-lifecycle", "Cancel the fixture check", 'const ids = await Bun.file(' + json.dumps(str(root / "lifecycle-jobs.json")) + ').json(); console.log(await jobs.stop(ids.cancel));')]
-        return [prose("Lifecycle checks are available for inspection.", "final_answer")]
+        return lifecycle_checks(called, user_text, root)
     if "Keep concise" in user_text:
-        if "resolve-question" not in called:
-            return [tool("resolve-question", "Use the notes preference",
-                         'const q = (await questions.list()).find(q => q.text === "How detailed should the notes be?"); '
-                         'if (q) await questions.resolve({id:q.id,owner:q.owner,version:q.version,reason:"Used your preference"});')]
-        return [prose("I will keep the notes concise. Your preference is saved.", "final_answer")]
+        return notes_answer(called)
     if "Ask about notes" in user_text:
-        if "ask-question" not in called:
-            return [tool("ask-question", "Ask about the notes",
-                         'const q = await questions.ask({text:"How detailed should the notes be?",'
-                         'choices:["Keep concise","Include examples"],dedupKey:"activity-acceptance-notes"}); '
-                         'await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Write notes using the saved answer",foreground:true});')]
-        return [prose("How detailed should the notes be? Please choose a saved answer.", "final_answer")]
+        return notes_question(called)
     if "While checks run" in user_text:
-        if "foreground-read" not in called:
-            gate = json.dumps(str(root / "gates" / "foreground"))
-            return [prose("I am checking the release note while the checks run.", "commentary"),
-                    tool("foreground-read", "Read the release note",
-                         'while (!(await Bun.file(' + gate + ').exists())) await Bun.sleep(100); '
-                         'console.log("Release note: keep the setup instructions short.");')]
-        # A completion delivery after the foreground result gets a separate lasting answer.
-        if "While checks run" not in latest:
-            return [prose("The background check update is available. The release note remains unchanged.", "final_answer")]
-        return [prose("The release note recommends short setup instructions.", "final_answer")]
+        return foreground_read(called, latest, root)
     if "Run parallel checks" in user_text:
-        if "launch-checks" not in called:
-            commands = []
-            for name in ["slow", "fast"]:
-                gate = shlex.quote(str(root / "gates" / name))
-                cmd = "sh -c " + shlex.quote("while [ ! -e " + gate + " ]; do sleep 0.1; done; printf '" + name + " check complete\n'")
-                commands.append('console.log(await shell(' + json.dumps(cmd) + ', {waitSeconds:0}));')
-            return [prose("I am starting two independent checks.", "commentary"),
-                    tool("launch-checks", "Start parallel checks", " ".join(commands))]
-        if "Run parallel checks" not in latest:
-            return [prose("A background check update is available; inspect the check results.", "final_answer")]
-        return [prose("The checks are running. You can continue while they finish.", "final_answer")]
+        return parallel_checks(called, latest, root)
+    return review_guide(called)
+
+
+def grouped_records(called):
+    for call_id, label in [("record-a", "Read first record"), ("record-b", "Read second record"), ("record-c", "Read third record")]:
+        if call_id not in called:
+            return [tool(call_id, label, 'console.log("' + call_id.upper() + '_DETAIL\\n" + Array.from({length:12}, (_,i)=>"' + call_id.upper() + '_LINE_"+i).join("\\n"));')]
+    if "split-a" not in called:
+        return [prose("Saved note: the next records belong to a separate step.", "commentary"),
+                tool("split-a", "Read fourth record", 'console.log("SPLIT_A_DETAIL");')]
+    if "split-b" not in called:
+        return [tool("split-b", "Read fifth record", 'console.log("SPLIT_B_DETAIL");')]
+    return [prose("Grouped records are ready. The saved note remains visible.", "final_answer")]
+
+
+def lifecycle_checks(called, user_text, root):
+    if "launch-lifecycle" not in called:
+        code = []
+        for name, status in [("complete", 0), ("fail", 7), ("cancel", 0)]:
+            gate = shlex.quote(str(root / "gates" / name))
+            cmd = "sh -c " + shlex.quote("printf '" + name + " check started\n'; while [ ! -e " + gate + " ]; do sleep 0.1; done; printf '" + name + " check settled\n'; exit " + str(status))
+            code.append('const ' + name + ' = await shell(' + json.dumps(cmd) + ', {waitSeconds:0});')
+        code.append('await Bun.write(' + json.dumps(str(root / "lifecycle-jobs.json")) + ', JSON.stringify({complete:complete.id,fail:fail.id,cancel:cancel.id}));')
+        code.append('console.log({complete,fail,cancel}); await jobs.snooze(cancel.id,{minutes:0.02});')
+        return [tool("launch-lifecycle", "Start lifecycle checks", " ".join(code))]
+    if "Cancel fixture check" in user_text and "cancel-lifecycle" not in called:
+        return [tool("cancel-lifecycle", "Cancel the fixture check", 'const ids = await Bun.file(' + json.dumps(str(root / "lifecycle-jobs.json")) + ').json(); console.log(await jobs.stop(ids.cancel));')]
+    return [prose("Lifecycle checks are available for inspection.", "final_answer")]
+
+
+def notes_answer(called):
+    if "resolve-question" not in called:
+        return [tool("resolve-question", "Use the notes preference",
+                     'const q = (await questions.list()).find(q => q.text === "How detailed should the notes be?"); '
+                     'if (q) await questions.resolve({id:q.id,owner:q.owner,version:q.version,reason:"Used your preference"});')]
+    return [prose("I will keep the notes concise. Your preference is saved.", "final_answer")]
+
+
+def notes_question(called):
+    if "ask-question" not in called:
+        return [tool("ask-question", "Ask about the notes",
+                     'const q = await questions.ask({text:"How detailed should the notes be?",'
+                     'choices:["Keep concise","Include examples"],dedupKey:"activity-acceptance-notes"}); '
+                     'await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Write notes using the saved answer",foreground:true});')]
+    return [prose("How detailed should the notes be? Please choose a saved answer.", "final_answer")]
+
+
+def foreground_read(called, latest, root):
+    if "foreground-read" not in called:
+        gate = json.dumps(str(root / "gates" / "foreground"))
+        return [prose("I am checking the release note while the checks run.", "commentary"),
+                tool("foreground-read", "Read the release note",
+                     'while (!(await Bun.file(' + gate + ').exists())) await Bun.sleep(100); '
+                     'console.log("Release note: keep the setup instructions short.");')]
+    # A completion delivery after the foreground result gets a separate lasting answer.
+    if "While checks run" not in latest:
+        return [prose("The background check update is available. The release note remains unchanged.", "final_answer")]
+    return [prose("The release note recommends short setup instructions.", "final_answer")]
+
+
+def parallel_checks(called, latest, root):
+    if "launch-checks" not in called:
+        commands = []
+        for name in ["slow", "fast"]:
+            gate = shlex.quote(str(root / "gates" / name))
+            cmd = "sh -c " + shlex.quote("while [ ! -e " + gate + " ]; do sleep 0.1; done; printf '" + name + " check complete\n'")
+            commands.append('console.log(await shell(' + json.dumps(cmd) + ', {waitSeconds:0}));')
+        return [prose("I am starting two independent checks.", "commentary"),
+                tool("launch-checks", "Start parallel checks", " ".join(commands))]
+    if "Run parallel checks" not in latest:
+        return [prose("A background check update is available; inspect the check results.", "final_answer")]
+    return [prose("The checks are running. You can continue while they finish.", "final_answer")]
+
+
+def review_guide(called):
     if "guide-a" not in called:
         return [prose("I am reading the project guide.", "commentary"),
                 tool("guide-a", "Read the project guide", 'console.log(await Bun.file("README.md").text());')]

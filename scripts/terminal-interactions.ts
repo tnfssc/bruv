@@ -71,6 +71,34 @@ async function loadReport(path: string): Promise<InteractionRun> {
   if (file.size > 100 * 1024 * 1024) throw new Error("Report exceeds 100 MiB: " + path);
   return validateInteractionRun(await file.json());
 }
+// Own one fresh worker through exit and pipe drain; persist diagnostics before accepting its evidence.
+async function runInteractionWorker(id: string, width: number, height: number, path: string): Promise<unknown> {
+  const proc = Bun.spawn(
+    [
+      process.execPath,
+      resolve(root, "scripts/terminal-perf/interaction-worker.ts"),
+      id,
+      String(width),
+      String(height),
+      path,
+    ],
+    { cwd: root, stdout: "pipe", stderr: "pipe" },
+  );
+  const timer = setTimeout(() => proc.kill(), 120000);
+  let exit: number, stdout: string, stderr: string;
+  try {
+    [exit, stdout, stderr] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+  await Bun.write(path + ".log", stdout + stderr);
+  if (exit !== 0) throw new Error(id + " child exited " + exit + ": " + stderr.slice(-4000));
+  return Bun.file(path).json();
+}
 export async function measureInteractions(o: InteractionOptions): Promise<InteractionRun> {
   const ids = selectInteractionCases(o),
     out = resolve(o.out);
@@ -96,31 +124,7 @@ export async function measureInteractions(o: InteractionOptions): Promise<Intera
       const key = "raw/" + id.replaceAll("/", "-") + "-" + iteration + ".json";
       const path = resolve(out, key);
       console.error("Measuring " + id + " repetition " + (iteration + 1));
-      const proc = Bun.spawn(
-        [
-          process.execPath,
-          resolve(root, "scripts/terminal-perf/interaction-worker.ts"),
-          id,
-          String(o.width),
-          String(o.height),
-          path,
-        ],
-        { cwd: root, stdout: "pipe", stderr: "pipe" },
-      );
-      const timer = setTimeout(() => proc.kill(), 120000);
-      let exit: number, stdout: string, stderr: string;
-      try {
-        [exit, stdout, stderr] = await Promise.all([
-          proc.exited,
-          new Response(proc.stdout).text(),
-          new Response(proc.stderr).text(),
-        ]);
-      } finally {
-        clearTimeout(timer);
-      }
-      await Bun.write(path + ".log", stdout + stderr);
-      if (exit !== 0) throw new Error(id + " child exited " + exit + ": " + stderr.slice(-4000));
-      const raw = await Bun.file(path).json();
+      const raw = await runInteractionWorker(id, o.width, o.height, path);
       run.evidence[key] = raw;
       for (const result of normalizeInteraction(id, raw, iteration, key)) {
         const previous = run.cases.find((c) => c.id === result.id);
