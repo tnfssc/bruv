@@ -94,3 +94,5 @@ Update verifier:per-artifact contracts and readable generated runners;judge task
 Native runner test primary:typed scenarios/readable child,owned fixture cleanup including failed setup,typed call log. Judge task_3098ce67 ACCEPT6762793;9/66tests. Explicitly supplied pathstrings/mockchildren/syntheticprovenance,not actual paired/native/setup gates.
 
 EXTRA setup-native test primary completed:ordered argv/checksum observations,independent exact-cutoff failures. Judge task_6e25dc37 ACCEPTe1bf5ce;15/85combined,all4postfetch oldpartialenv failures reproduced. Only SDKAPI usesrealNode;downloads/checksumexecution/extraction stubbed.
+
+Browser tests:explicitoutcomes/orderedtraces,duplicate shell and recheckproof;task_d53adce7 ACCEPT80b148a,31/376. Verifier tests:namedpair/per-runupdater/readableidentity;task_3bcf763e ACCEPT9d3d678,7/50frozencompiledfixturechecks. BroaderBiome unchangedimport-ordererror remains,not whollygreen. No actualbrowser/publishedbinaryproof.

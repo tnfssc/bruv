@@ -1198,7 +1198,7 @@
     {
       "focus": "t3.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_a20a31fc",
@@ -1214,13 +1214,18 @@
           "id": "task_42469010",
           "base": "38f0f0583a0de57ee39db48cb2246f781548d074",
           "candidate": "7965f3ec2e060f794730d734417e7cf79f6cef60",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Five direct actions expose command/async boundary;native parser/setup hash/worktree execution distinct from external T3 stored scripts whose import drops async. Setup semicolon trust/install and&&asset semantics explicit;CI shell scoped.",
+          "checks": "Independent14tests60assertions,SHELL/bin/sh;actualparserasync true/digest5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932;formatpass. Realfish/Bundiscovery notvalidated;externalT3 source notdeployedweb;no install/build/gate."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "12872bad81fa69a18124acfb6050bf084d4abd69",
       "readingResult": "Unchanged five direct actions,actual native/worktree/web consumers traced;changing shell/async semantics speculative.",
-      "checks": "14focus tests,actual parserprobe/formatpass;fishBundiscovery untouched;no deployedweb/build."
+      "checks": "14focus tests,actual parserprobe/formatpass;fishBundiscovery untouched;no deployedweb/build.",
+      "integrationState": "Unchangedconfig matchestip;noteexcluded."
     },
     {
       "focus": "tests/architecture.test.ts",
@@ -1243,8 +1248,16 @@
     {
       "focus": "tests/ci-remote-offline-source-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_d96a560c",
+          "launchBase": "46e6a59e5ccfe859ef4931115d5de886c3108f96",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d96a560c",
+          "branch": "bruv/primary-tests-ci-remote-offline-source-p-d96a560c",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1440,19 +1453,29 @@
     {
       "focus": "tests/helpers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_9dd6501e",
           "launchBase": "86a61a54cbebef3222c17ec53ef60f4f1d8da474",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_9dd6501e",
           "branch": "bruv/primary-tests-helpers.ts-9dd6501e",
+          "state": "completed",
+          "commit": "563d135c927828318186eea7a1e2efdb299c3629"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_f7319ebc",
+          "base": "86a61a54cbebef3222c17ec53ef60f4f1d8da474",
+          "candidate": "563d135c927828318186eea7a1e2efdb299c3629",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged env isolation→spawn→concurrent output drain→exit;build/fixture/interactivecancellation/tmuxlifetimes caller-owned,appropriate boundary.",
+      "checks": "18focus tests,Biome,isolatedstricttscpass;no build/compiledintegration/live."
     },
     {
       "focus": "tests/install-download.test.ts",
@@ -1788,7 +1811,7 @@
     {
       "focus": "tests/release-browser-setup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_6553f324",
@@ -1804,13 +1827,21 @@
           "id": "task_d53adce7",
           "base": "65e0d2188a205dec705f8b4694941724ee34bece",
           "candidate": "eb585948a74bfc858af482374186326e06af92e6",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicit scenario outcomes/library reports and ordered traces replace sharedMODE/bundledfailure bookkeeping;prior cases retained plus duplicate shell/exactenv/pkg/ordering. Finalrecheckmutation baseline2pass1fail vsfinal5pass3fail strengthensready/repaired checks.",
+          "checks": "Independent31tests376assertions;tsc/Biome/diffpass;syntheticfiles/stubs not browser/download/executableproof;unusedRELEASE_BOOT_PLAYWRIGHT existing.",
+          "acceptedBlobs": {
+            "tests/release-browser-setup.test.ts": "80b148a19e03c2e30b008964bdbcadc883cd9651"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "80b148a19e03c2e30b008964bdbcadc883cd9651",
       "readingResult": "Explicit scenario command outcomes/library reports replace shared MODE decoding and bundledfailures;ordered Bun/ldd traces expose install/recheck/failure boundaries.",
-      "checks": "31focused376assertions;tsc/Biome/diffpass;removingfinalrecheck causes3expectedfailures;no actualbrowser/download."
+      "checks": "31focused376assertions;tsc/Biome/diffpass;removingfinalrecheck causes3expectedfailures;no actualbrowser/download.",
+      "integrationState": "Full focuspatchintegrated;productionunchanged;noteexcluded."
     },
     {
       "focus": "tests/release-launcher-gate.test.ts",
@@ -2002,7 +2033,7 @@
     {
       "focus": "tests/verify-update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_6b28b190",
@@ -2018,19 +2049,28 @@
           "id": "task_3bcf763e",
           "base": "86a61a54cbebef3222c17ec53ef60f4f1d8da474",
           "candidate": "3025fbb411c6f29a1f6e7ca0809deae6dbefd3f1",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Named normal/connector roles,per-run updater options,readable fixture identity branches remove positional/fixturelegacy state. Frozenhash,compiledauthority,diagnostics,aliasedTMPDIRrollback,cleanup retained.",
+          "checks": "Independent7tests50assertions;tsc/focusBiome/diffpass;broaderBiome unchangedimportordererror. FrozenSHA256cab60e412c13277cf8a415d0c09fb0dbdfd69c9d000c42d21b2695f5b03230aa. Linuxsyntheticcompiled not publishedbinary/fullbuild.",
+          "acceptedBlobs": {
+            "tests/verify-update.test.ts": "9d3d678072b9e5994e3653c91e05f0d31cc8daa2"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9d3d678072b9e5994e3653c91e05f0d31cc8daa2",
       "relatedPatchJudgment": {
         "id": "task_073fd75a",
         "verdict": "ACCEPT",
         "blob": "99c0344bdbf7fb6c65d3ea110ca580894c9069b2",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Explicit pair roles/per-run updater options/readable identity branches replace positional roles,fixture-owned legacy state and compressed executable logic;compiled/frozenSHA/diagnostic/cleanup assertions retained.",
-      "checks": "Baseline5/38,candidatecombined7/50;Biome/tsc localruntimeJSON/diffpass;no fullbuild."
+      "checks": "Baseline5/38,candidatecombined7/50;Biome/tsc localruntimeJSON/diffpass;no fullbuild.",
+      "integrationState": "Full focuspatchintegrated;productionunchanged;noteexcluded."
     },
     {
       "focus": "tsconfig.json",

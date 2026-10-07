@@ -10,41 +10,61 @@ const roots: string[] = [];
 afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
-async function fixture(connectorVersion = "0.17.0", legacy = false) {
+
+async function fixture(connectorVersion = "0.17.0") {
   const root = await mkdtemp(join(tmpdir(), "bruv-paired-update-gate-test-"));
   roots.push(root);
-  const names = [asset!, asset!.replace(/^bruv-/, "bruv-claude-compat-")];
+  const names = {
+    normal: asset!,
+    connector: asset!.replace(/^bruv-/, "bruv-claude-compat-"),
+  };
   const normalSource = join(root, "normal.ts");
   await writeFile(
     normalSource,
-    `const connector = process.argv[2] === "claude-compat"; const flag = process.argv[connector ? 3 : 2]; if ((!connector && flag !== "--version") || (connector && !["--version", "--bruv-version"].includes(flag!))) process.exit(2); console.log(connector && flag === "--version" ? "Bruv connector" : connector ? "bruv-claude-compat ${connectorVersion}" : "0.17.0");`,
+    `const connector = process.argv[2] === "claude-compat";
+const flag = process.argv[connector ? 3 : 2];
+if (connector) {
+  if (flag === "--version") console.log("Bruv connector");
+  else if (flag === "--bruv-version") console.log("bruv-claude-compat ${connectorVersion}");
+  else process.exit(2);
+} else {
+  if (flag !== "--version") process.exit(2);
+  console.log("0.17.0");
+}
+`,
   );
-  const build = await Bun.build({ entrypoints: [normalSource], compile: { outfile: join(root, names[0]!) } });
+  const build = await Bun.build({ entrypoints: [normalSource], compile: { outfile: join(root, names.normal) } });
   expect(build.success, build.logs.join("\n")).toBe(true);
   const launcher = await readFile(
     process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? resolve(import.meta.dir, "../scripts/bruv-claude-compat.sh"),
     "utf8",
   );
-  await writeFile(join(root, names[1]!), launcher);
-  for (const name of names) {
+  await writeFile(join(root, names.connector), launcher);
+  for (const name of Object.values(names)) {
     const digest = createHash("sha256")
       .update(await readFile(join(root, name)))
       .digest("hex");
     await writeFile(join(root, name + ".sha256"), digest + "  " + name + "\n");
   }
-  const run = async (env: NodeJS.ProcessEnv = process.env) => {
+  const run = async ({
+    updater = "current",
+    temporaryDirectory,
+  }: {
+    updater?: "current" | "frozen 0.16.3";
+    temporaryDirectory?: string;
+  } = {}) => {
     const child = Bun.spawn(
       [
         process.execPath,
         resolve(import.meta.dir, "../scripts/verify-update.ts"),
-        join(root, names[0]!),
+        join(root, names.normal),
         "0.17.0",
-        ...(legacy ? ["--legacy-updater"] : []),
+        ...(updater === "frozen 0.16.3" ? ["--legacy-updater"] : []),
       ],
       {
         stdout: "pipe",
         stderr: "pipe",
-        env,
+        env: temporaryDirectory ? { ...process.env, TMPDIR: temporaryDirectory } : process.env,
       },
     );
     const [output, errors, code] = await Promise.all([
@@ -65,7 +85,7 @@ test.skipIf(!asset)(
     expect(passed.code, passed.errors).toBe(0);
     expect(passed.output).toContain("checksum failures preserved BOTH installed files");
     expect(passed.output).toContain("matched versions 0.17.0 passed");
-    for (const name of names) {
+    for (const name of Object.values(names)) {
       const checksum = join(root, name + ".sha256");
       const original = await readFile(checksum);
       await writeFile(checksum, "0".repeat(64) + "  " + name);
@@ -74,7 +94,7 @@ test.skipIf(!asset)(
       expect(failed.errors).toContain("Staged release checksum mismatch: " + name);
       await writeFile(checksum, original);
     }
-    await rm(join(root, names[1]!));
+    await rm(join(root, names.connector));
     expect((await run()).code).not.toBe(0);
   },
   30_000,
@@ -86,7 +106,7 @@ test.skipIf(!asset)(
     const { root, run } = await fixture("0.2.0");
     const temporary = join(root, "gate-tmp");
     await mkdir(temporary);
-    const result = await run({ ...process.env, TMPDIR: temporary });
+    const result = await run({ temporaryDirectory: temporary });
     expect(result.code).not.toBe(0);
     expect(result.errors).toContain("Staged Bruv pair version mismatch");
     const diagnostic = JSON.parse(result.errors.match(/error: Compiled updater failed rollback gate: (.+)/)![1]!);
@@ -109,25 +129,25 @@ test.skipIf(!asset)(
     expect(createHash("sha256").update(frozen).digest("hex")).toBe(
       "cab60e412c13277cf8a415d0c09fb0dbdfd69c9d000c42d21b2695f5b03230aa",
     );
-    const { run } = await fixture("0.17.0", true);
-    const result = await run();
+    const { run } = await fixture();
+    const result = await run({ updater: "frozen 0.16.3" });
     expect(result.code, result.errors).toBe(0);
     expect(result.output).toContain("Frozen v0.16.3 updater");
   },
   30_000,
 );
 
-for (const legacy of [false, true]) {
+for (const updater of ["current", "frozen 0.16.3"] as const) {
   test.skipIf(!asset)(
-    `compiled ${legacy ? "frozen 0.16.3" : "current"} updater gate injects rollback through an aliased TMPDIR`,
+    `compiled ${updater} updater gate injects rollback through an aliased TMPDIR`,
     async () => {
-      const { root, run } = await fixture("0.17.0", legacy);
+      const { root, run } = await fixture();
       const temporary = join(root, "real-tmp");
       const alias = join(root, "alias-tmp");
       await mkdir(temporary);
       await symlink(temporary, alias, "dir");
       expect(await realpath(alias)).not.toBe(alias);
-      const result = await run({ ...process.env, TMPDIR: alias });
+      const result = await run({ updater, temporaryDirectory: alias });
       expect(result.code, result.errors).toBe(0);
       expect(result.output).toContain("checksum failures preserved BOTH installed files");
       expect(result.output).toContain("second-rename rollback restored pair");
