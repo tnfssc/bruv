@@ -3,7 +3,7 @@
   "scripts": [
     {
       "name": "Setup Worktree",
-      "command": "mise trust -y --quiet; bun install --frozen-lockfile && bun run prepare:assets",
+      "command": "mise trust -y --quiet && mise exec -- bun install --frozen-lockfile && mise exec -- bun run prepare:assets",
       "icon": "configure",
       "runOnWorktreeCreate": true
     },
