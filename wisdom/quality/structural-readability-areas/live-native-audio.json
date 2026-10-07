@@ -187,12 +187,20 @@
         "launchBase": "efb1edd066ae3fe1b59334ff01cf15f14fc9b919",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_48ae14aa",
         "branch": "bruv/primary-native-live-linux-tests-virtual.-48ae14aa",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [
+        "native/live-linux/tests/protocol.py",
+        "native/live-linux/tests/test_protocol.py",
+        "native/live-linux/tests/test_virtual.py",
+        "scripts/live-isolated-audio.sh"
+      ],
+      "readingResult": "Candidate makes virtual graph ownership private rather than touching desktop graph; uses existing isolated graph harness. Explicit fixture fix:20ms playback can finish within100ms report throttle;500ms ensures positive report while preserving nonzero capture,drain,restart,source-removal.",
+      "checks": "3 consecutive real virtual smokes pass;17 regressions; desktop modules unchanged; failure status23 preserved and owned processes/dir removed; syntax/diff pass. No physical/macOS/provider proof."
     },
     {
       "focus": "native/live/AudioCore.c",
@@ -302,10 +310,17 @@
     {
       "focus": "native/live/test-capture-gate.c",
       "initialBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
-      "primary": null,
+      "primary": {
+        "id": "task_c28913a3",
+        "launchBase": "8226c8524fdfa3f56329b591c7be4efb1843a0ad",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c28913a3",
+        "branch": "bruv/primary-native-live-test-capture-gate.c-c28913a3",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live/test-core.c",
@@ -1679,6 +1694,15 @@
       "relatedPaths": [],
       "readingResult": "Unchanged: subprocess bytes/read-rejection/adjacent assertions/context cleanup visible; microphone open/write/scenario failure and completion/freeing separate; no tangled ownership.",
       "checks": "9 unittest pass. No source changes; manual tests, parent CI wiring pending. No device/provider/macOS/helper validation."
+    },
+    {
+      "focus": "native/live-linux/tests/test_virtual.py",
+      "introducedBy": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate related addition; own primary pending"
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
