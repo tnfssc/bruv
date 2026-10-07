@@ -711,7 +711,7 @@
         }
       ],
       "acceptedBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
-      "integrationState": "unchanged accepted blob; combined SDK/density join review required",
+      "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
       "changedRelatedPaths": [],
       "result": "No-change: SDK canonical ownership, lazy native body projection and installer-owned registration teardown are explicit separate authorities.",
@@ -721,6 +721,14 @@
       ],
       "limits": [
         "No build/live/PTY; joins must be checked after active SDK/density changes"
+      ],
+      "joinJudgments": [
+        {
+          "id": "task_060d7edf",
+          "verdict": "ACCEPT",
+          "blob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
+          "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
+        }
       ]
     },
     {
@@ -760,7 +768,7 @@
         }
       ],
       "acceptedBlob": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
-      "integrationState": "integrated unchanged from judged candidate; SDK join under review",
+      "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "756cbb9f216616e36d6fd26cc238759fb37b6444",
       "changedRelatedPaths": [
         "tests/conversation-density.test.ts"
@@ -774,6 +782,14 @@
       "limits": [
         "Broader Biome check unchanged import-order assist",
         "No full build/gate/interactive/platform proof"
+      ],
+      "joinJudgments": [
+        {
+          "id": "task_060d7edf",
+          "verdict": "ACCEPT",
+          "blob": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
+          "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
+        }
       ]
     },
     {
@@ -857,7 +873,7 @@
         }
       ],
       "acceptedBlob": "7510d94b1cb34373854df0680caf60e017c83834",
-      "integrationState": "integrated unchanged from judged candidate",
+      "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "4f808ab2263b80475eddcbc772a48570afa438bd",
       "changedRelatedPaths": [],
       "result": "Candidate chooses partial/handoff/transcript/outcome view at component creation instead of mixing mutable spinner handling into width callback; shared live spinner row.",
@@ -867,6 +883,14 @@
       ],
       "limits": [
         "No full build/typecheck/compiled TUI/provider/device"
+      ],
+      "joinJudgments": [
+        {
+          "id": "task_060d7edf",
+          "verdict": "ACCEPT",
+          "blob": "7510d94b1cb34373854df0680caf60e017c83834",
+          "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
+        }
       ]
     },
     {
@@ -953,7 +977,7 @@
         }
       ],
       "acceptedBlob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
-      "integrationState": "unchanged focus accepted; density join contract check pending",
+      "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286",
       "changedRelatedPaths": [],
       "result": "No-change candidate: native reconstruction/filtering, collapse removal of only owned status pair, and conditional owned-method restoration are local.",
@@ -964,6 +988,14 @@
       ],
       "limits": [
         "No build/typecheck/packaged/visual proof"
+      ],
+      "joinJudgments": [
+        {
+          "id": "task_060d7edf",
+          "verdict": "ACCEPT",
+          "blob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
+          "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
+        }
       ]
     },
     {
@@ -1003,7 +1035,7 @@
         }
       ],
       "acceptedBlob": "66cf00a2db4b52746cc4595c4eab964acd863e42",
-      "integrationState": "integrated unchanged from judged candidate",
+      "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
       "changedRelatedPaths": [
         "tests/rolling-activity.test.ts",
@@ -1017,12 +1049,20 @@
       ],
       "limits": [
         "No build/typecheck/compiled CLI/live/device/provider/SSH/latency proof"
+      ],
+      "joinJudgments": [
+        {
+          "id": "task_060d7edf",
+          "verdict": "ACCEPT",
+          "blob": "66cf00a2db4b52746cc4595c4eab964acd863e42",
+          "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
+        }
       ]
     },
     {
       "focus": "src/ui/sdk-task-rows.ts",
       "initialBlob": "f76d7f295123b136a1e2082c1d384f5fc5b1e9c9",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_5d9a622d",
@@ -1037,12 +1077,38 @@
           "id": "task_060d7edf",
           "base": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
           "candidate": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7",
-          "verdict": "pending",
-          "joinWithDensity": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f"
+          "verdict": "ACCEPT",
+          "joinWithDensity": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/sdk-task-rows.ts": "12dd2d82132e1997f9ca53903172babf28586e9b",
+            "tests/task-rows.test.ts": "56b4ebeb79c6dfb6538fd3dd5fa2eb83e1185587"
+          },
+          "joinedBlobs": {
+            "src/ui/conversation-density.ts": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
+            "tests/conversation-density.test.ts": "1df4e439d4bf3ba40bf20c4e5accdfbaf3134b4b",
+            "src/ui/task-rows.ts": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
+            "src/ui/quiet-tool-ui.ts": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
+            "src/ui/settled-execute-render.ts": "d8134b728f86ecd669820d7922f459350e78adc8",
+            "src/ui/activity-projection.ts": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
+            "src/ui/rolling-activity.ts": "66cf00a2db4b52746cc4595c4eab964acd863e42",
+            "src/ui/execution-previews.ts": "7510d94b1cb34373854df0680caf60e017c83834"
+          },
+          "joinVerdict": "ACCEPT",
+          "evidence": "Frame ownership, native body rendering and installation/restoration have coherent boundaries. Frame ownership expires after errors while published facts persist until refresh/uninstall. Join preserves publication-before-render, lazy skipping, density mouse/source, cache below overlays, foreign wrappers and reinstall.",
+          "checks": [
+            "Independent 159 tests /13717 assertions",
+            "2 app-stack failure/shutdown/reinstall probes /32 assertions",
+            "Lifetime characterization against base 1 test /6 assertions",
+            "Biome format/lint/diff"
+          ],
+          "limits": [
+            "No full build/typecheck/CLI/provider/SSH/physical-terminal/GC-timing"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "12dd2d82132e1997f9ca53903172babf28586e9b",
+      "integrationState": "integrated exact judged candidate and combined join",
       "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
       "changedRelatedPaths": [
         "tests/task-rows.test.ts"
@@ -1093,7 +1159,7 @@
         }
       ],
       "acceptedBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
-      "integrationState": "unchanged accepted; final SDK/density joins required",
+      "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
       "changedRelatedPaths": [],
       "result": "No-change: eligibility, single-width cache, SDK lifecycle eviction and owned-method restoration are explicit in one closure.",
@@ -1103,6 +1169,14 @@
       ],
       "limits": [
         "No full build; pending SDK/density joins need final combined review"
+      ],
+      "joinJudgments": [
+        {
+          "id": "task_060d7edf",
+          "verdict": "ACCEPT",
+          "blob": "d8134b728f86ecd669820d7922f459350e78adc8",
+          "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
+        }
       ]
     },
     {
@@ -1267,7 +1341,7 @@
         }
       ],
       "acceptedBlob": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
-      "integrationState": "integrated unchanged from judged candidate",
+      "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487",
       "changedRelatedPaths": [
         "tests/task-rows.test.ts"
@@ -1280,6 +1354,14 @@
       ],
       "limits": [
         "No full build/live/authenticated SSH/compiled CLI"
+      ],
+      "joinJudgments": [
+        {
+          "id": "task_060d7edf",
+          "verdict": "ACCEPT",
+          "blob": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
+          "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
+        }
       ]
     },
     {
@@ -1407,6 +1489,14 @@
           "candidate": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
           "verdict": "ACCEPT",
           "blob": "1df4e439d4bf3ba40bf20c4e5accdfbaf3134b4b"
+        }
+      ],
+      "joinJudgments": [
+        {
+          "id": "task_060d7edf",
+          "verdict": "ACCEPT",
+          "blob": "1df4e439d4bf3ba40bf20c4e5accdfbaf3134b4b",
+          "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
       ]
     },
@@ -1705,13 +1795,19 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary pending",
+      "integrationState": "SDK related patch integrated; primary pending at latest blob",
       "relatedPatchJudgments": [
         {
           "id": "task_24064ab2",
           "candidate": "eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1",
           "verdict": "ACCEPT",
           "blob": "804a93927808efaa7a764dc5f4b4790ba1c7c98f"
+        },
+        {
+          "id": "task_060d7edf",
+          "candidate": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7",
+          "verdict": "ACCEPT",
+          "blob": "56b4ebeb79c6dfb6538fd3dd5fa2eb83e1185587"
         }
       ]
     },
@@ -1949,7 +2045,24 @@
     "result": "Only documentation progress commits beyond initial area base; no common source changes to import."
   },
   "diskBoundary": "157G available after first three accepted patches",
-  "joinRequirements": [
-    "Final SDK/density/activity-projection/quiet-tool/settled-render composition: ownership before paint; live projection above settled cache; task overlay removal/native fallback; cached arrays and mouse translation on resize/expansion; shutdown/reinstall/already-built children; error/handoff/native images; source preservation and owned-wrapper teardown."
-  ]
+  "joinRequirements": [],
+  "joinProof": {
+    "judge": "task_060d7edf",
+    "verdict": "ACCEPT",
+    "blobs": {
+      "src/ui/sdk-task-rows.ts": "12dd2d82132e1997f9ca53903172babf28586e9b",
+      "tests/task-rows.test.ts": "56b4ebeb79c6dfb6538fd3dd5fa2eb83e1185587",
+      "src/ui/conversation-density.ts": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
+      "tests/conversation-density.test.ts": "1df4e439d4bf3ba40bf20c4e5accdfbaf3134b4b",
+      "src/ui/task-rows.ts": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
+      "src/ui/quiet-tool-ui.ts": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
+      "src/ui/settled-execute-render.ts": "d8134b728f86ecd669820d7922f459350e78adc8",
+      "src/ui/activity-projection.ts": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
+      "src/ui/rolling-activity.ts": "66cf00a2db4b52746cc4595c4eab964acd863e42",
+      "src/ui/execution-previews.ts": "7510d94b1cb34373854df0680caf60e017c83834"
+    },
+    "limits": [
+      "No full build/typecheck/CLI/provider/SSH/physical-terminal/GC-timing"
+    ]
+  }
 }
