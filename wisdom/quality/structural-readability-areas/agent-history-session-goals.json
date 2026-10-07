@@ -1164,7 +1164,7 @@
     {
       "focus": "tests/goals.test.ts",
       "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
-      "status": "rework-running-overlap",
+      "status": "judging-combined",
       "primary": [
         {
           "id": "task_6d7a5ed8",
@@ -1185,7 +1185,14 @@
           "launchBase": "a37d5f5da6cff9a28002861fc9a98c0ee332731c",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9a60ee5b",
           "branch": "bruv/reconcile-goal-behavior-test-coverage-9a60ee5b",
-          "priorCandidate": "2e323383ea64470abbc17605d7838f50cc461954"
+          "priorCandidate": "2e323383ea64470abbc17605d7838f50cc461954",
+          "commit": "cf81cf961f870a8835854de8a268a928cf1c8abc",
+          "changedPaths": [
+            "tests/goals.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Reconcile runtime-fixture primary with four accepted extension regression scenarios; preserve all domain order/assertions, genuine before-start correction and bounded payload retention.",
+          "checks": "Baseline 35 goals/171 assertions; final related 39 pass/206 assertions; startup mutation fails; format/diff pass, inherited lint warning; no build/typecheck."
         }
       ],
       "judgeRounds": [
@@ -1198,6 +1205,17 @@
           "objections": [],
           "reason": "Runtime fixture owns event envelopes/context and completion-status notification; scenarios express domain event order. Direct store/JSONL fixtures retained for separate authority/persistence behavior. Before-start test now checks genuine uninitialized state.",
           "checks": "Independent 31 passes/147 assertions; diff clean; no mutation rerun. Acceptance excludes later extension regression additions until final combined review."
+        },
+        {
+          "id": "task_134ecfd8",
+          "candidate": "cf81cf961f870a8835854de8a268a928cf1c8abc",
+          "base": "a37d5f5da6cff9a28002861fc9a98c0ee332731c",
+          "status": "running",
+          "priorVerdicts": [
+            "task_a7f9ce2d ACCEPT primary fixture",
+            "task_4a2a31dd ACCEPT extension regressions"
+          ],
+          "writerResponse": "Reconcile runtime-fixture primary with four accepted extension regression scenarios; preserve all domain order/assertions, genuine before-start correction and bounded payload retention."
         }
       ],
       "acceptedBlob": null,
@@ -1368,8 +1386,15 @@
     {
       "focus": "tests/history.test.ts",
       "initialBlob": "d0b30b8f4e642de05f16f838c741087ed8d64186",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_396dabdf",
+          "launchBase": "36d0938cc67e32ab8b9d3f4f866604f981b44d27",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_396dabdf",
+          "branch": "bruv/primary-history-behavior-tests-396dabdf"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
