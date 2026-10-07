@@ -184,8 +184,16 @@
     {
       "focus": "scripts/find-ci-baseline.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_706aaff1",
+          "launchBase": "4e9d756b6119aafc0db6a906bfe9b223d3fe1180",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_706aaff1",
+          "branch": "bruv/primary-scripts-find-ci-baseline.ts-706aaff1",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -228,19 +236,29 @@
     {
       "focus": "scripts/prepare-assets.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_5746779b",
           "launchBase": "3f7811fb2f9c5675ccc877f839d01adfdb0430ca",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_5746779b",
           "branch": "bruv/primary-scripts-prepare-assets.ts-5746779b",
+          "state": "completed",
+          "commit": "07ca2de961c8ce72d973913cf6b826ebc9c18419"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_e71379a8",
+          "base": "3f7811fb2f9c5675ccc877f839d01adfdb0430ca",
+          "candidate": "07ca2de961c8ce72d973913cf6b826ebc9c18419",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged: direct validate Pi → copy explicit assets → write versioned metadata; further extraction adds indirection.",
+      "checks": "Existing 1 pass/3 assertions; owned-fixture supplemental 3 pass/17 assertions. No shared dependency writes or full build."
     },
     {
       "focus": "scripts/prepare-manual-release.ts",
@@ -292,19 +310,22 @@
     {
       "focus": "scripts/select-release-notes.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "awaiting-judge",
       "primary": [
         {
           "id": "task_5013c91b",
           "launchBase": "cedf50c46bf53456e5b1ab3509a3d9f2e70a7c46",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_5013c91b",
           "branch": "bruv/primary-scripts-select-release-notes.ts-5013c91b",
-          "state": "running"
+          "state": "completed",
+          "commit": "0068c32fbdbf56cf53d73a79c84cd294afff4569"
         }
       ],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged: validate tag/version → exact notes path → require nonempty regular file → return. CLI/publisher contract direct.",
+      "checks": "3 focused tests, four CLI checks; Biome exit0 two existing infos; no release/network/build gate."
     },
     {
       "focus": "scripts/setup-native-release-gate.sh",
@@ -473,8 +494,16 @@
     {
       "focus": "tests/ci-selective.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_bf42118e",
+          "launchBase": "4e9d756b6119aafc0db6a906bfe9b223d3fe1180",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_bf42118e",
+          "branch": "bruv/primary-tests-ci-selective.test.ts-bf42118e",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
