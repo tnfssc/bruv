@@ -844,13 +844,19 @@
     {
       "focus": "src/history/shake-record.ts",
       "initialBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_ce232122",
           "launchBase": "f6d9e4b75cbcf76217e97904ff477ba624b26b10",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_ce232122",
-          "branch": "bruv/primary-persisted-shake-record-ce232122"
+          "branch": "bruv/primary-persisted-shake-record-ce232122",
+          "commit": "976ba477d57be183677d200913cca5c810d42908",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: exact schema then field/ID bounds then serialized-byte cap linear. Callers intentionally own different invalid-marker selection/projection/native coverage/history exclusion consequences.",
+          "checks": "96 tests/454 assertions; focused format/lint pass; initial SDK missingWASM resolved by local assets; no typecheck/build/live/platform."
         }
       ],
       "judgeRounds": [],
@@ -1159,13 +1165,15 @@
       "primary": [
         {
           "id": "task_743c2cfa",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7",
-          "commit": "ddc4ad72c1125d125f83e9eaee2530e40b57e2a2",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_743c2cfa",
+          "commit": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
           "changedPaths": [
             "wisdom/quality/structural-readability-worker.md"
           ],
           "result": "Unchanged durable manager path or existing ID gives stable attribution; child parent link/cost/footer/connector consumers separate from restore/replay/native authority. No hidden state/mixed lifetimes.",
-          "checks": "11 tests/37 assertions; format/lint/diff pass with2 infos; broader unchanged compat task-binding test521 fails tasks undefined; no typecheck/build/live claims."
+          "checks": "11 tests/37 assertions; format/lint/diff pass with2 infos; broader unchanged compat task-binding test521 fails tasks undefined; no typecheck/build/live claims.",
+          "branch": "bruv/primary-session-identity-743c2cfa",
+          "launchBase": "7ad61b57"
         }
       ],
       "judgeRounds": [],
@@ -1258,8 +1266,15 @@
     {
       "focus": "src/session/transcript.ts",
       "initialBlob": "aa35d3df097d70d0dd921b41ba6acb26d6790303",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_308d89c5",
+          "launchBase": "908644c12df90bd445a8dde0229b16f525a69a27",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_308d89c5",
+          "branch": "bruv/primary-shared-session-transcript-308d89c5"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -2374,7 +2389,7 @@
       "owner": "compatibility-t3",
       "state": "observed-unrelated-check-failure",
       "need": "Session identity primary broader compatibility test failed unchanged at line521: tasks undefined. No edits; parent/assigned owner investigate combined fixture/source compatibility. Focused identity11/37 passed.",
-      "candidate": "ddc4ad72c1125d125f83e9eaee2530e40b57e2a2"
+      "candidate": "b5a177e68e2705c9ad68004938618b6cb53a2c60"
     }
   ],
   "batchChecks": [
