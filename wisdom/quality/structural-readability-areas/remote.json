@@ -1,0 +1,740 @@
+{
+  "area": "remote",
+  "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+  "status": "in-progress",
+  "files": [
+    {
+      "focus": "scripts/loopback-parent-fixture.ts",
+      "initialBlob": "02e74db59339686bf3be7bab19c4cbf3f934808d",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/network-none-fixture.ts",
+      "initialBlob": "33b7fd198ac0af8f72eae995238a25f9169e793f",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/remote-capability-pty-e2e.ts",
+      "initialBlob": "9d766840abdeaa12b164aae3f0d8f682cc3825c5",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/remote-e2e.sh",
+      "initialBlob": "34458325a2e2fde12b7f65e86359e16c984ddb53",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/remote-e2e.ts",
+      "initialBlob": "fe5d531b0210d36871c340023798a4c6acdd8216",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/remote-jobs-e2e.ts",
+      "initialBlob": "036860d89538bd9d6b19c57065c0a71d7a665111",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/remote-placement-e2e.ts",
+      "initialBlob": "2ec9d0ad139efe872aa17b34dd5497924781223a",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/remote-pty-e2e.ts",
+      "initialBlob": "ff9c6e8a70b09d2134b07c53336b95f56311bf4b",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/remote-recovery-e2e.ts",
+      "initialBlob": "7dc219cb2d14530fd8ce0738623792c6016a1de6",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "scripts/remote-root-placement-e2e.ts",
+      "initialBlob": "4acbdfa75d15a03e5e146f1d7761e393f8b1f16f",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/CAPABILITY-INTEGRATION.md",
+      "initialBlob": "152542f9ed3fbbe64bfa70019aa84873f3be7063",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/README.md",
+      "initialBlob": "5c3efed97770f82bf34b4f82637207306564cf72",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/artifacts.ts",
+      "initialBlob": "0e9ff60dbda7ab6ef98b296024ad3af18947c9d8",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/cancellation.ts",
+      "initialBlob": "195fc52acc1eee3dc1d569be0728ae22a8585c1e",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/capabilities.ts",
+      "initialBlob": "c5669679c832b8fb3896ca6e9e33d5099f0842b2",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/capability-runtime.ts",
+      "initialBlob": "3e7b26feb5787add6c809baf9a3c92ba02e88a91",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/client.ts",
+      "initialBlob": "a31e194434d69baca48cabb7ea3bd8be9f97c05f",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/durable-json.ts",
+      "initialBlob": "480530ef23018ee846026752d20de8187ccef116",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/entry.ts",
+      "initialBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/extension.ts",
+      "initialBlob": "26230e656ba3a3d2fe7df5040c3327d92a2622bb",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/human-rendering.ts",
+      "initialBlob": "bb92205c07e0a331b531da9ff41fb71273fd31eb",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/job-artifacts.ts",
+      "initialBlob": "457f4370168fc3d95e920b79d03f480104dadf19",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/job-delivery.ts",
+      "initialBlob": "21d37bd7fca5f9bb0e75e7c99fac103008f4aba4",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/job-events.ts",
+      "initialBlob": "38774795309a62bf685943a7784d348584f26504",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/job-observations.ts",
+      "initialBlob": "4732fa1eb7cda6df8303d6d6ee6316b785611c9f",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/jobs.ts",
+      "initialBlob": "e34856a1f1b8aae577fff635b0328f720f092a12",
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "primary": {
+        "id": "task_e65b0fab",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_e65b0fab",
+        "branch": "bruv/remote-primary-src-remote-jobs.ts-e65b0fab"
+      }
+    },
+    {
+      "focus": "src/remote/menu.ts",
+      "initialBlob": "12313ca2b05f88f0fa2837706d3f219882e007a3",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/operations.ts",
+      "initialBlob": "67cf54865eeee7c16e178470b9fcd076d0d41747",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/owner-child.ts",
+      "initialBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/owner-rpc.ts",
+      "initialBlob": "982d5b8fce885d5bd81d2aa76e753caa1e3be5c2",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/owner.ts",
+      "initialBlob": "8d8f54a85fea43f1852497abc842100157aaac93",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/placement.ts",
+      "initialBlob": "c27e168ec203a643ed30def19cf8edbfd53abb09",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/protocol.ts",
+      "initialBlob": "49a053687e54a3ce0085d5a4c0c6d40673aa77fc",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/question-bridge.ts",
+      "initialBlob": "2d41cfbd4e6901e8dd683047f60c7337444c20f8",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/repository-download.ts",
+      "initialBlob": "c03eb8b1827d8f1c9f58449966dd0b4c1b1c0f0a",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/repository-wire.ts",
+      "initialBlob": "24ff5f07fa4e85cbe898cf022d81cb507c0dbf90",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/repository.md",
+      "initialBlob": "90e5d9625f8af05c4c3c5dee290e72b3b9353025",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/repository.ts",
+      "initialBlob": "264e183b88a7f1a0c667244efbb73c834369188e",
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "primary": {
+        "id": "task_91f9307a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_91f9307a",
+        "branch": "bruv/remote-primary-src-remote-repository.ts-91f9307a"
+      }
+    },
+    {
+      "focus": "src/remote/root-cli.ts",
+      "initialBlob": "5c1ea1bcf7042888c9c1e340fb3ab1e79579b64f",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/root-client.ts",
+      "initialBlob": "936ef53c07b9a1d4fcf3c201479c65f29c90d0fe",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/root-contract.ts",
+      "initialBlob": "e9aceffe5f97333dfc828000fd59b40bab8fadee",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/root-entry.ts",
+      "initialBlob": "727f150cfcf105e5faef09c6af419393f71f931d",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/root-options.ts",
+      "initialBlob": "741b7f4a9bd5a1639ca2ba52813cbf5d9ab9167e",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/root-owner.ts",
+      "initialBlob": "8ce68f851487260d1d83f244965341d1c5233985",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/root-presenter.ts",
+      "initialBlob": "9e4d0c6095a3790f3608b921d8ed8092611e91df",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/root-runtime.ts",
+      "initialBlob": "c10a7a7c45510373e30d9d2385045f9fad23fa93",
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "primary": {
+        "id": "task_05879739",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_05879739",
+        "branch": "bruv/remote-primary-src-remote-root-runtime.t-05879739"
+      }
+    },
+    {
+      "focus": "src/remote/root-store.ts",
+      "initialBlob": "f930d363762822984029e7d509664a497c851c29",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/root-transport.ts",
+      "initialBlob": "c73012514dbcb2efc3ca12d8198d777fc7892f96",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/runtime.ts",
+      "initialBlob": "ce4d30630047fa9536409754db3efeb72dd7cc5b",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/security.ts",
+      "initialBlob": "81dff39ca5ffff8d61eaffceb6535a946361e3e1",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/services.ts",
+      "initialBlob": "5668a5df605155d82fa48f3c34c720e6fccd36b3",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/source-approval.ts",
+      "initialBlob": "cad9f95da9d7082968e17c4e65113d01adaf963d",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/ssh.ts",
+      "initialBlob": "1bff87d9d5b0de383721212b9dd03f5c4a6723d5",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "src/remote/untracked-preview.ts",
+      "initialBlob": "f38709acfcbd963f923a5966b59f8bae238a34a7",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-e2e/Dockerfile",
+      "initialBlob": "a09a77bc3faa327b69ba596c2d1ad79f2d1451cb",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-e2e/entrypoint.sh",
+      "initialBlob": "f55fd6b58bbc113387864d5b49719857abef6a0a",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-e2e/fake-provider.ts",
+      "initialBlob": "0ca133ab070c33dc4ef9937017a2bbded956d20e",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-e2e/models.json",
+      "initialBlob": "449f47e499f8fa715b248f18a532415010004c52",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-e2e/placement-parent.ts",
+      "initialBlob": "65dc9f4f1f5b893bf6b4e3ad7e7cf6bee1605cc1",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-e2e/sshd_config",
+      "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-e2e/subagents.json",
+      "initialBlob": "77fb8e3477a59a1aa467edd97000701b2227e919",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-owner-error.ts.txt",
+      "initialBlob": "685a959578594802bf58ee0ca8fc607cf4040a37",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-placement-e2e/Dockerfile",
+      "initialBlob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-placement-e2e/entrypoint.sh",
+      "initialBlob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-placement-e2e/fake-provider.ts",
+      "initialBlob": "882eec6a23bbbb157263978900ebb1b4942b75ad",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-placement-e2e/models.json",
+      "initialBlob": "3849fbe167501b2b3c262687524d095988f14b93",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-placement-e2e/scenario.ts",
+      "initialBlob": "364bd429724eafcc4f6d657837c50f1197efcefc",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-placement-e2e/ssh-proxy.ts",
+      "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-placement-e2e/sshd_config",
+      "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-placement-e2e/subagents.json",
+      "initialBlob": "c952ec558c8c91b62d2e84346b21484e71db1ef3",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/Dockerfile",
+      "initialBlob": "159f0b8598cbcd3aa0df75c6766681ed87d8284c",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/entrypoint.sh",
+      "initialBlob": "e5680c805f076bcae5e02be77e20def1970aff9d",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
+      "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/models.json",
+      "initialBlob": "4010451d3c42d520ae8729f3057198df2f693bcd",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/proof.ts",
+      "initialBlob": "810ab260d994b27b3526d05f001064d42ef4b680",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/reply-loss.ts",
+      "initialBlob": "48a041d9861a0c53bc93419fadba22540fb9940d",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/scenario.ts",
+      "initialBlob": "54ed191ca3a9a15aabdb54b2d1337ff2b382df7f",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/settings.json",
+      "initialBlob": "ec9b88eda601f80ee98cb3b69305df6552b504e8",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/ssh-proxy.ts",
+      "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/sshd_config",
+      "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/fixtures/remote-typed-root-placement/subagents.json",
+      "initialBlob": "8d2fa02a457a15c6bf84070689ab7d4b673c13ed",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-artifacts.test.ts",
+      "initialBlob": "157e69ad514d0d88bdf13daa2075a1321b5bfdcc",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-capabilities.test.ts",
+      "initialBlob": "fe468f2a82561942a0a00a1ce1f19a743a7df01b",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-capability-runtime.test.ts",
+      "initialBlob": "d4d2ffbe0c7946380ad09921b34deb66d3defcb3",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-client.test.ts",
+      "initialBlob": "b7f7ba5ecb51b1dec96fe07d6cc5be4ddee790bc",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-descendant-environment.test.ts",
+      "initialBlob": "0e3cac11755e9d99447cd9534fab27233c11c8c8",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-durable-json.test.ts",
+      "initialBlob": "cfca9558c97cbd4602fd0a56f280cc54c550a584",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-e2e.test.ts",
+      "initialBlob": "19c4704dcfafad84ca4f9af4547dd31a21197acc",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-extension.test.ts",
+      "initialBlob": "207b43a4ae5df415e4426d6cdea325d6472ddf77",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-human-rendering.test.ts",
+      "initialBlob": "c25823030618fc37e2db14cef8d9ae429055a6f6",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-job-artifacts.test.ts",
+      "initialBlob": "7e7abc717c0eabb5ab835490816b9065460655b1",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-job-delivery.test.ts",
+      "initialBlob": "de4fdda9e17881be5cc4c50b299fcd9be135a6be",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-job-observations.test.ts",
+      "initialBlob": "874b1d89a9c77153b030b59d43a219e7cda701ec",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-jobs-e2e.test.ts",
+      "initialBlob": "32242e046ef772be7a30fcba19211c4d7d7804ca",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-jobs-placement-fixture.test.ts",
+      "initialBlob": "7ef3fa97e43d987b31806519c2e4e08a029975c7",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-jobs.test.ts",
+      "initialBlob": "03277ff6a2982bd7c76b334f7693b263ab7a712e",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-menu.test.ts",
+      "initialBlob": "69ac41bc323cb8b95443d9ce440f25e014a03637",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-offline-menu-pty.py",
+      "initialBlob": "5f2cbe002c36d27dc965c984215fa6673bbdaa71",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-owner-lifecycle.test.ts",
+      "initialBlob": "1bb5b51b9e308c53cebf8d2b62f70372c1b2d613",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-owner.test.ts",
+      "initialBlob": "ffc20a70de38c9a32fdb0de3bef4f15cb552a637",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-placement-e2e-fixture.test.ts",
+      "initialBlob": "ab54907e3562bd6498fd44eb26bc329eea1f4ff6",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-placement-entry.test.ts",
+      "initialBlob": "d79ea5dfc30377c01a5786c4e8b1d873a73d23eb",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-placement-legacy-launch.test.ts",
+      "initialBlob": "c829765e9417a9808e6663003f6e088d13b61da8",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-placement.test.ts",
+      "initialBlob": "89b8bea144e6fc76d3218236619b70aea70d1323",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-question-bridge.test.ts",
+      "initialBlob": "73a94e3af266e9b0c3bc2fdcc67ecf6b8b7ff519",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-repository-download.test.ts",
+      "initialBlob": "2ce5b7deb99d70cb7b27785134b813505c223431",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-repository-wire.test.ts",
+      "initialBlob": "8732aee86472ffce2562b4e1091791555b14e594",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-repository.test.ts",
+      "initialBlob": "c80e00ddf92eae80be6baf9de8471e2fa5cdd2a0",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-root-client.test.ts",
+      "initialBlob": "3a25d228b5f25291ffb2d4354888f4b295f6f523",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-root-presenter.test.ts",
+      "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-root-transport.test.ts",
+      "initialBlob": "19e7050bac7fe90e61475a884641f056be1e4f78",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-runner-placement-fixture.test.ts",
+      "initialBlob": "5273a14f9828b786ae844471460651e9bfa6305f",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-runtime.test.ts",
+      "initialBlob": "f71e08976aeb005bf9249915b1655f677096b4f2",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-session-switch.test.ts",
+      "initialBlob": "f984e97520c87a4216dc48c06df0f0d4d852f72e",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-source-approval.test.ts",
+      "initialBlob": "c86156cc15c6d0c8130cf3d8aa9e0c47795f7b9d",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-ssh.test.ts",
+      "initialBlob": "091e6877a8e4fe1be2040c3693f1e62bbbd5b899",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/remote-typed-root-placement-fixture.test.ts",
+      "initialBlob": "f4283873d51805a234ae99ebdafef71a5ba54ffb",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/root-placement-options.test.ts",
+      "initialBlob": "d60e1a3f8a6847f3adad530b64f937ca54b5d5d9",
+      "status": "pending",
+      "judgeRounds": []
+    },
+    {
+      "focus": "tests/root-placement-policy.test.ts",
+      "initialBlob": "a4d822bf2938bd980be47974618467ccd21a1971",
+      "status": "pending",
+      "judgeRounds": []
+    }
+  ],
+  "extras": []
+}
