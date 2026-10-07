@@ -76,3 +76,7 @@ Second combined typecheck passed at db885fce (task_9cb7440e). Joined next seven 
 ## Automatic native protocol coverage joined
 
 New root wrapper tests/live-linux-protocol-regressions.test.ts has primary task_78b8dfee and independent ACCEPT task_4391eb2e at fc0565f9. Joined only the accepted wrapper, not worker-local notes. Global coverage now includes this new file and exact accepted hash. Judge ran the real 12 Python tests, 14 wrapper/neighbor tests and broken-protocol failure control. Source/assertions stayed intact; Unix pipe limit and no device/macOS execution claim are explicit. Third combined typecheck passed (task_6f69a633). Full whole-repo task continues.
+
+## Build/release/tooling area complete
+
+Joined final 2d4a18b2: 70 exact baseline files plus four extras, each with unique primary coverage and independent final-code acceptance, all blob hashes checked. Both rejections resolved. Area proof: 490 tests/2,443 assertions, actual Linux paired build, full typecheck, scoped format/lint. Parent still owns global reconciliation and final whole-tree gate. No area PR or whole-task completion. Six areas continue.

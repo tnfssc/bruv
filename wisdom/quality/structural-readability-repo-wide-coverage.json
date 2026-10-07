@@ -4,17 +4,32 @@
     {
       "file": ".gitattributes",
       "initialBlob": "88d4424a9f2930e49ebab395ba378fe2bdbdac66",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "65bbe845d312eb73e8b77b4ef5f7beee4a1c97cb",
+      "primaryId": "task_a31d93bd",
+      "judgeIds": ["task_064019e9"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": ".github/workflows/ci.yml",
       "initialBlob": "5c61dddbb8dd29e42359aef4a597600ee8d94dd9",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "8f1798300f04ecf1317570abb5b8868422f140b9",
+      "primaryId": "task_f5563536",
+      "judgeIds": ["task_884543de"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": ".github/workflows/dependency-updates.yml",
       "initialBlob": "f916a1e5fda8cc00b34f514def1446be58018b6c",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "8d6139ce1417bcf9d58c87750a78f049ac58721b",
+      "primaryId": "task_6b0e313c",
+      "judgeIds": ["task_69a61924"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": ".github/workflows/live.yml",
@@ -24,32 +39,62 @@
     {
       "file": ".github/workflows/release.yml",
       "initialBlob": "fc2aa93ed9e86f9f22cafc87dda1714e8a52eed3",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "72a12eb6a00a934c436ce9ff6982123c10320564",
+      "primaryId": "task_bc9b05c3",
+      "judgeIds": ["task_265f1748"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": ".gitignore",
       "initialBlob": "b76078bd2295d5a07314030b6a1a6ac4248288c7",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "b76078bd2295d5a07314030b6a1a6ac4248288c7",
+      "primaryId": "task_63f2878d",
+      "judgeIds": ["task_599df207"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "biome.json",
       "initialBlob": "c9ab9a6f17498d2c7f0c62fc8538128ddef546a1",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "c9ab9a6f17498d2c7f0c62fc8538128ddef546a1",
+      "primaryId": "task_e7133eda",
+      "judgeIds": ["task_6ac6a0f9"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "bunfig.toml",
       "initialBlob": "8370a0154a62bcc247a0a211d376458a7751d717",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "8370a0154a62bcc247a0a211d376458a7751d717",
+      "primaryId": "task_bd9983c7",
+      "judgeIds": ["task_b2bc2474"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "install.sh",
       "initialBlob": "ad66605c0b27dbdbf3c1d1517aa896de1854ae1e",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+      "primaryId": "task_f94ad569",
+      "judgeIds": ["task_9233d5f2"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "mise.toml",
       "initialBlob": "1ce68f9c298b3d2eedcd9a0c1e909fc1af14d1de",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "a0de5dad9cb229123d4b8f5f7935042e0a01dbde",
+      "primaryId": "task_f31c9cfd",
+      "judgeIds": ["task_a39f170d"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "native/live-linux/CaptureGate.h",
@@ -129,7 +174,12 @@
     {
       "file": "package.json",
       "initialBlob": "555c3c153c503ba09efe2ebaaef2c5afdeca4da4",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "555c3c153c503ba09efe2ebaaef2c5afdeca4da4",
+      "primaryId": "task_140be4ea",
+      "judgeIds": ["task_7aa03035"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/activity-runtime-acceptance.py",
@@ -179,22 +229,42 @@
     {
       "file": "scripts/build-pair.ts",
       "initialBlob": "01820c57c83f8d61a082f591c93c38590f79688e",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "3cfc224480eb04bd7019ec365b919fb031fef6c0",
+      "primaryId": "task_fb3e9b39",
+      "judgeIds": ["task_438d5e06"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/build.ts",
       "initialBlob": "6162c89981b835927c7636d56bd3b054b9c17bba",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "6162c89981b835927c7636d56bd3b054b9c17bba",
+      "primaryId": "task_df95845d",
+      "judgeIds": ["task_ee123d58"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/ci-selective.ts",
       "initialBlob": "0217656be1a3fda05afb81dd0bd9642355c0779a",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "1995804abd171d6f2d73d107b79ba5aee0b57120",
+      "primaryId": "task_e1108b07",
+      "judgeIds": ["task_36d1647b"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/ci.sh",
       "initialBlob": "ffeab90a9248f3de7591633b6088ae6afd6889a4",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "ffeab90a9248f3de7591633b6088ae6afd6889a4",
+      "primaryId": "task_ec82b387",
+      "judgeIds": ["task_23554482"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/claude-compat-launcher.ts",
@@ -294,7 +364,12 @@
     {
       "file": "scripts/find-ci-baseline.ts",
       "initialBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
+      "primaryId": "task_8a5f8213",
+      "judgeIds": ["task_149c9180"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/fixtures/task-placement-clean/fake-provider.ts",
@@ -324,7 +399,12 @@
     {
       "file": "scripts/generate-third-party-notices.ts",
       "initialBlob": "3f18bd16c7605cd2635ff0baee0d426301921b63",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "10cc8165ebff6cb5821490b6cbebfae901000fa8",
+      "primaryId": "task_18c3b50a",
+      "judgeIds": ["task_9e042be2"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/history-sdk-probe.ts",
@@ -344,12 +424,22 @@
     {
       "file": "scripts/install-local.sh",
       "initialBlob": "8b3ae448319b3b98ba86b7ff03272e35c960c58d",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "ef8220b9c0b3bf364d5c4515f8fa7764f9ee13ff",
+      "primaryId": "task_56171a8b",
+      "judgeIds": ["task_fa23cd76"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/install.sh",
       "initialBlob": "46160433a260b829e88f5e7b1d9eae054f679c49",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+      "primaryId": "task_7cb4f7d8",
+      "judgeIds": ["task_7be1ff38"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/leak-audit/bridge-retention.ts",
@@ -439,12 +529,22 @@
     {
       "file": "scripts/prepare-assets.ts",
       "initialBlob": "6cb6ac67d3e10c91a47b412769efdbf67245d57d",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "6cb6ac67d3e10c91a47b412769efdbf67245d57d",
+      "primaryId": "task_5746779b",
+      "judgeIds": ["task_e71379a8"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/prepare-manual-release.ts",
       "initialBlob": "3693ef65f3f4d5245b9a3407f58c02bcf440bc18",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "5822e205569312022b3f453469049e3dfb7f271e",
+      "primaryId": "task_50c3fd8e",
+      "judgeIds": ["task_706382eb"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/probe-live-capability.ts",
@@ -479,7 +579,12 @@
     {
       "file": "scripts/publish-release.ts",
       "initialBlob": "62fab61617323152fdf93ede351030a68b7253bd",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "5ffbb5141171cc6857ffd67b7f7eef971754c5a5",
+      "primaryId": "task_36e9172d",
+      "judgeIds": ["task_517172cd"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/remote-capability-pty-e2e.ts",
@@ -524,27 +629,52 @@
     {
       "file": "scripts/run-native-release-gate.mjs",
       "initialBlob": "57e8dbdd0787d336642358a9bc687772091bba13",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "1037e58051ec59f325a31ed2945655eb9434b21e",
+      "primaryId": "task_e8c99be3",
+      "judgeIds": ["task_83089869"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/select-release-notes.ts",
       "initialBlob": "702067fdd441ace705964ea3df7c8b70a8975801",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "702067fdd441ace705964ea3df7c8b70a8975801",
+      "primaryId": "task_5013c91b",
+      "judgeIds": ["task_6cb6e619"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/setup-native-release-gate.sh",
       "initialBlob": "0eaa8e741804f76755fda5fe3c1bcec25953afc5",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "9d6cfd866efee6fbc40ae2947f9a733216568f59",
+      "primaryId": "task_2837e782",
+      "judgeIds": ["task_1e479592"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/setup-release-browser.sh",
       "initialBlob": "59ab77ba5d9eda96013afb287181eadaa16332b9",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "59ab77ba5d9eda96013afb287181eadaa16332b9",
+      "primaryId": "task_6d47ada5",
+      "judgeIds": ["task_2a8f8b95"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/smoke.sh",
       "initialBlob": "097f5cb9d15f5c6db5b7643aad74aa851ac7163b",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "097f5cb9d15f5c6db5b7643aad74aa851ac7163b",
+      "primaryId": "task_9bca7048",
+      "judgeIds": ["task_8b4ae038"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/task-placement-clean-capture.ts",
@@ -724,27 +854,52 @@
     {
       "file": "scripts/update-dependencies.ts",
       "initialBlob": "a1a3be6d7c7ad83396b66cdf9753ce773bba35dd",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "109d8d0ff7a8a595a081377126c7a968830164a7",
+      "primaryId": "task_d9eeb4d5",
+      "judgeIds": ["task_68106474"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/validate-release-tag.ts",
       "initialBlob": "00417d20e23db978be592c23e4a31be88493cc76",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "00417d20e23db978be592c23e4a31be88493cc76",
+      "primaryId": "task_36d64ea6",
+      "judgeIds": ["task_81661b13"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/verify-release-launchers.ts",
       "initialBlob": "a36b3257db8d9fb953d5681712894d992dc42b1c",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "9fd1db0e1baa21cc4a69d5edc702f962eb82173d",
+      "primaryId": "task_644a204a",
+      "judgeIds": ["task_dc2eea02"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/verify-update-probe.ts",
       "initialBlob": "d33b6f17e311bd423ffbbc42ab5707a9259da29f",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "d33b6f17e311bd423ffbbc42ab5707a9259da29f",
+      "primaryId": "task_4cc3ea11",
+      "judgeIds": ["task_e49b32f4"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "scripts/verify-update.ts",
       "initialBlob": "01852393abf6c710c5b40e4d31b5296cb281f7df",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "88994dc94c3236cbe0398d152565d401cc6b4012",
+      "primaryId": "task_47004efe",
+      "judgeIds": ["task_073fd75a"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "site/.gitignore",
@@ -1204,7 +1359,12 @@
     {
       "file": "src/assets.d.ts",
       "initialBlob": "522afc0a9deafebc2c1994f69426fddb7da3bf75",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "522afc0a9deafebc2c1994f69426fddb7da3bf75",
+      "primaryId": "task_af4e93ee",
+      "judgeIds": ["task_ceeaba0d"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "src/claude-compat/app-worker.ts",
@@ -2199,7 +2359,12 @@
     {
       "file": "src/update.ts",
       "initialBlob": "62ec77ad57c48696d38fea8c3a317a28eff88c5f",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "18439821dc68983f7f315f3c6b31fa5f7b320a3b",
+      "primaryId": "task_d0b99b87",
+      "judgeIds": ["task_170d10bf"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "src/wisdom/extension.ts",
@@ -2224,7 +2389,12 @@
     {
       "file": "t3.json",
       "initialBlob": "12872bad81fa69a18124acfb6050bf084d4abd69",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "12872bad81fa69a18124acfb6050bf084d4abd69",
+      "primaryId": "task_a20a31fc",
+      "judgeIds": ["task_42469010"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/action-label-wiring.test.ts",
@@ -2254,7 +2424,12 @@
     {
       "file": "tests/architecture.test.ts",
       "initialBlob": "fe6b52be2dde66bf1ab7aad6b1b327d419f0acea",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "fe6b52be2dde66bf1ab7aad6b1b327d419f0acea",
+      "primaryId": "task_66f5eec2",
+      "judgeIds": ["task_bdc1d4a5"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/attention-sdk.test.ts",
@@ -2314,27 +2489,52 @@
     {
       "file": "tests/ci-remote-cli-source.test.ts",
       "initialBlob": "337cb0c545a429561edfe755f6b7d07ab5d57e27",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "2b8ba4bd8fef50f0e235b16a6d7d404a82f4ea9c",
+      "primaryId": "task_0c5ce992",
+      "judgeIds": ["task_65a4c618"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/ci-remote-offline-source-pty.py",
       "initialBlob": "46b43a7624ab2298385062e51e6ed87419a6ce03",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "27df96e51274e622ee761637d580160ca90405d7",
+      "primaryId": "task_d96a560c",
+      "judgeIds": ["task_11e13c7d"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/ci-runner.test.ts",
       "initialBlob": "28843d6525c47e50c2555200fe81545b4a9a439e",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "7b18e15b1fd1497570f6094f4a41b6b99f1c7de6",
+      "primaryId": "task_d6fe839f",
+      "judgeIds": ["task_562c8dbd"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/ci-selective-workflow.test.ts",
       "initialBlob": "5889d4c6c3a122b18ffc58d73966007b57ae6dd7",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "25486b26fff7f6fb5d6a65d98e83c906ba4e3d38",
+      "primaryId": "task_7308b752",
+      "judgeIds": ["task_fd6b7e52"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/ci-selective.test.ts",
       "initialBlob": "b9d4b337467276f1aa908b134fb03e8c4cee249d",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "05b7307be28cfe9ae42a5d263b19d483e2f53d9f",
+      "primaryId": "task_bf42118e",
+      "judgeIds": ["task_10e3096b"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/claude-compat-app-worker.test.ts",
@@ -2499,7 +2699,12 @@
     {
       "file": "tests/compiled-bun-fixture.ts",
       "initialBlob": "986f142853337c47db7f610939d4fdaebd2ae1bc",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "986f142853337c47db7f610939d4fdaebd2ae1bc",
+      "primaryId": "task_ad105ef8",
+      "judgeIds": ["task_0f0570b0"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/completion-batcher.test.ts",
@@ -2514,12 +2719,22 @@
     {
       "file": "tests/connector-update-fixture.ts",
       "initialBlob": "acaac91fd1e482dee20b995a140615f1c8b10046",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "11fbb1c606d69a7d5df227b963f8a2a088005ce9",
+      "primaryId": "task_1c667037",
+      "judgeIds": ["task_cab47470"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/connector-update.test.ts",
       "initialBlob": "51ca79b0702b94c5fb9823042408f71604d9f9d8",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "049c8cd3dcc817bcb8452ea564f22ca8644a59ba",
+      "primaryId": "task_23398c8b",
+      "judgeIds": ["task_4a768c2f"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/context-usage-cache.test.ts",
@@ -2549,12 +2764,22 @@
     {
       "file": "tests/dependency-updates.test.ts",
       "initialBlob": "3930e75b6257455b375509c9e90e0f70c533df55",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
+      "primaryId": "task_81d46e58",
+      "judgeIds": ["task_f509c814"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/dependency-workflow.test.ts",
       "initialBlob": "c35086a0333024c2fa0cf6a230ac43d098e597dc",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
+      "primaryId": "task_c708fc82",
+      "judgeIds": ["task_35b870b5"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/diagnostics.test.ts",
@@ -2609,7 +2834,12 @@
     {
       "file": "tests/find-ci-baseline.test.ts",
       "initialBlob": "fd1e1f5453615cc3a854db18d8e554ac7b3d94f4",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
+      "primaryId": "task_109390aa",
+      "judgeIds": ["task_aa63512d"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/fixtures/claude-task-worker.ts",
@@ -2869,7 +3099,12 @@
     {
       "file": "tests/helpers.ts",
       "initialBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
+      "primaryId": "task_9dd6501e",
+      "judgeIds": ["task_f7319ebc"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/helpers/live-startup-audio-queue.ts",
@@ -2944,12 +3179,22 @@
     {
       "file": "tests/install-download.test.ts",
       "initialBlob": "a19f4472fe7ab7f1cb083244ce20b4b3cf4be3d2",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
+      "primaryId": "task_7936354f",
+      "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/install-local.test.ts",
       "initialBlob": "ffaeaac0f918c7921dac2ccc60cdb68c21039fc6",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
+      "primaryId": "task_70f09987",
+      "judgeIds": ["task_5442746a"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/instruction-continuity-sdk.test.ts",
@@ -3274,7 +3519,12 @@
     {
       "file": "tests/manual-release.test.ts",
       "initialBlob": "6e3ca567e18b244862c7878c3ae274492dd4ebe2",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "9fdf9ef3fc1b9cb88a95e49ca012d78b86561024",
+      "primaryId": "task_cceff3bf",
+      "judgeIds": ["task_69fdb98c", "task_706382eb"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/manual-shake-sdk.test.ts",
@@ -3304,12 +3554,22 @@
     {
       "file": "tests/native-node-path.test.ts",
       "initialBlob": "48730a38d9ff63ce62e12886fc9f5b3ab5de7fed",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "48730a38d9ff63ce62e12886fc9f5b3ab5de7fed",
+      "primaryId": "task_62d9a185",
+      "judgeIds": ["task_179e47de"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/native-release-gate.test.ts",
       "initialBlob": "57b773d54ebe707f3ded1635ef1cb1cf69de927c",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "6762793bbfc261db8c55f7aba82d685c4b146d9b",
+      "primaryId": "task_d230f8cd",
+      "judgeIds": ["task_3098ce67"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/native-request-history.test.ts",
@@ -3324,7 +3584,12 @@
     {
       "file": "tests/offline-process-isolation.test.ts",
       "initialBlob": "dc9cfb0d0e2e976a933fa3e57840da99e9d9e313",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "2ff5cc4eda8213e4b91e5a632132c490d73ce04a",
+      "primaryId": "task_21c70b4e",
+      "judgeIds": ["task_cfbac1d2"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/openai-session-diagnostics.test.ts",
@@ -3369,17 +3634,32 @@
     {
       "file": "tests/prepare-assets.test.ts",
       "initialBlob": "586e397bb48edb63fbb0b1b8d160cb813cd1aab1",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "6c6ae2ca09e7f769d3f2ec4dde252ed58d792170",
+      "primaryId": "task_eee3ca81",
+      "judgeIds": ["task_a43b5841"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/product-identity.test.ts",
       "initialBlob": "65e1b8db3e08dc180dc66bb6acc0bf455ad6a3be",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "b9e4e9ae5d8185883f905c42d4459d4c213847c5",
+      "primaryId": "task_0c3e11ef",
+      "judgeIds": ["task_b7a011bf"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/production-packaging.test.ts",
       "initialBlob": "8d962db51cfcac602edc2192aa2044f6fcb26d54",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "aec669688b9fb751badf5e307ca0101fddc26b98",
+      "primaryId": "task_93f789d2",
+      "judgeIds": ["task_5bc6b47f"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/prompt-delivery.test.ts",
@@ -3404,7 +3684,12 @@
     {
       "file": "tests/publish-release.test.ts",
       "initialBlob": "3d0888281362221d826ff1d26450cff18b7b125a",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "ace4cea386836a04f36cedee9d29c4624191fffc",
+      "primaryId": "task_5bfa31b4",
+      "judgeIds": ["task_d35c8509"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/questions-bridge.test.ts",
@@ -3449,17 +3734,32 @@
     {
       "file": "tests/release-browser-setup.test.ts",
       "initialBlob": "98350159371870d4bbc3ce6df89c7c6e0cc200f0",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "80b148a19e03c2e30b008964bdbcadc883cd9651",
+      "primaryId": "task_6553f324",
+      "judgeIds": ["task_d53adce7"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/release-launcher-gate.test.ts",
       "initialBlob": "86a7917691f5756c8b47fb952a9406e57dd0a157",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "da1a4e566b38096580f59ed59f15d57f18ef0641",
+      "primaryId": "task_2db23507",
+      "judgeIds": ["task_a8a68815"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/release-workflows.test.ts",
       "initialBlob": "0b4eac4aa03e8359773bb14e4a9e0ad44ac3737f",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "ffcf4742d5aadb88e1ed76996e43df81e3dc079d",
+      "primaryId": "task_3d7fb50a",
+      "judgeIds": ["task_f9136eba"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/remote-artifacts.test.ts",
@@ -3739,12 +4039,22 @@
     {
       "file": "tests/setup.ts",
       "initialBlob": "d3c71348546664337fd231e07e3f5b7034da02ba",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "d3c71348546664337fd231e07e3f5b7034da02ba",
+      "primaryId": "task_c6585fe4",
+      "judgeIds": ["task_6d717faf"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/smoke-script.test.ts",
       "initialBlob": "751053f8395d0eff039aaaf4538b784bd690d188",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
+      "primaryId": "task_d0d9d3eb",
+      "judgeIds": ["task_f209f608"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/sol-model-catalog.test.ts",
@@ -3939,7 +4249,12 @@
     {
       "file": "tests/tooling-fixtures.test.ts",
       "initialBlob": "cce26be612e4adc4b7fc70bd9d8c69782bc4d35b",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
+      "primaryId": "task_8c70c1f6",
+      "judgeIds": ["task_900a3c32"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/tui-harness.test.ts",
@@ -3989,32 +4304,62 @@
     {
       "file": "tests/update-release-shape.test.ts",
       "initialBlob": "ebb16b79809a6009c42fa8464e217aab31eef4df",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "2803b32f5712f44343edb649aaffbbce2fe29921",
+      "primaryId": "task_dc6a6799",
+      "judgeIds": ["task_811b18de"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/update-self-fixture.ts",
       "initialBlob": "aa2a0aa061aa0c1ea2908845af7950d1b912b50f",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d",
+      "primaryId": "task_1fdcbe47",
+      "judgeIds": ["task_81083bad"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/update-v0.16.3-fixture.ts",
       "initialBlob": "a97a2d229678e12335a802823dbca5a8c78c0285",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "a97a2d229678e12335a802823dbca5a8c78c0285",
+      "primaryId": "task_bf44caf8",
+      "judgeIds": ["task_4e5800d8"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/update.test.ts",
       "initialBlob": "5490c14c48b525e3d3838da271c3ae510d3749ab",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
+      "primaryId": "task_27b632e4",
+      "judgeIds": ["task_ee4235b6"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/verify-update-probe.test.ts",
       "initialBlob": "f8e9a96777f6c92a2ef823b56d70375db0271d66",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "f8e9a96777f6c92a2ef823b56d70375db0271d66",
+      "primaryId": "task_7b923de0",
+      "judgeIds": ["task_17380c61"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/verify-update.test.ts",
       "initialBlob": "0dca83fccab1415ad9f5669701ebeac9b44e4537",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "9d3d678072b9e5994e3653c91e05f0d31cc8daa2",
+      "primaryId": "task_6b28b190",
+      "judgeIds": ["task_3bcf763e"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/wisdom-extension.test.ts",
@@ -4034,7 +4379,12 @@
     {
       "file": "tsconfig.json",
       "initialBlob": "b984b24eea2a441adca35f80564e94c869658551",
-      "status": "pending"
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "b984b24eea2a441adca35f80564e94c869658551",
+      "primaryId": "task_357ea541",
+      "judgeIds": ["task_4c5a1d2a"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     },
     {
       "file": "tests/live-linux-protocol-regressions.test.ts",
@@ -4049,6 +4399,46 @@
       "result": "Existing 12-test device-free Python protocol regressions now run in the root gate; direct owned child/capture and useful failure output. No source/assertion copy.",
       "checks": "Judge independently ran Python suite, 14 Bun wrapper/neighbors, broken-protocol negative control, format/diff/UTF8 checks.",
       "limits": "Unix pipes; Windows skipped. Linux run, macOS inspected only. No physical audio or compiled native parity."
+    },
+    {
+      "file": "tests/generate-third-party-notices.test.ts",
+      "initialBlob": "absent",
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "13c3bd3e7a94b90202089ca216d25cd5e422c7b7",
+      "primaryId": "task_075a5f2c",
+      "judgeIds": ["task_00d188a5"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+    },
+    {
+      "file": "tests/setup-native-release-gate.test.ts",
+      "initialBlob": "absent",
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
+      "primaryId": "task_29efc903",
+      "judgeIds": ["task_6e25dc37"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+    },
+    {
+      "file": "tests/update-self-fixture.test.ts",
+      "initialBlob": "absent",
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
+      "primaryId": "task_0ecce4b1",
+      "judgeIds": ["task_efae7e17"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+    },
+    {
+      "file": "tests/update-release-shape.md",
+      "initialBlob": "absent",
+      "status": "accepted",
+      "area": "build-release-ci-tooling",
+      "acceptedBlob": "b117a5a3499c9169edad37d9514810ebded9b6b1",
+      "primaryId": "task_cdc39c59",
+      "judgeIds": ["task_c158deef"],
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
     }
   ],
   "completedAreas": {
@@ -4056,6 +4446,11 @@
       "tip": "2da1ed1b70639cdcc07810df2f0dd139f2642411",
       "files": 41,
       "combinedJudge": "task_a3b96800"
+    },
+    "build-release-ci-tooling": {
+      "tip": "2d4a18b2d7c646d88b68e9fec887b25cf4d02e9f",
+      "baseline": 70,
+      "extras": 4
     }
   }
 }
