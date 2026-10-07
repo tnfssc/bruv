@@ -2043,6 +2043,11 @@
       "commit": "f3f039a6",
       "job": "task_8495a524",
       "result": "118 tests pass, 0 fail, 898 assertions across 13 history/instruction/goals/cache/footer suites; tsc --noEmit passes. No build/provider/device/SSH proof. 13 accepted initial blobs match area HEAD; 98 initial primaries still unstarted, 3 running; 2 extra primary results under judgment."
+    },
+    {
+      "commit": "cdc57364",
+      "job": "task_33a9bf6f",
+      "result": "Fresh paired area build passed: owned dist/bruv + dist/bruv-claude-compat; owned copied/prepared runtime-assets, shared node_modules read-only. Follow-up integrated binary regressions task_62ef91ce running."
     }
   ]
 }
