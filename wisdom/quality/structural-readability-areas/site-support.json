@@ -5,7 +5,7 @@
     {
       "focus": "site/.gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_e433e2c2",
@@ -16,7 +16,13 @@
           "result": "Unchanged explicit dependency/output exclusions; install->dist build->preview/deploy trace. 10 asserted git ignore probes; no build/runtime."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_2a36b538",
+          "candidate": "c8ac4589989164e9934a45b20b7c6d9136fe38e2",
+          "state": "running"
+        }
+      ],
       "initialBlob": "b9470778764f72c5257a3361590d2994547f90e1"
     },
     {
@@ -39,13 +45,15 @@
     {
       "focus": "site/assets/brand/bruv-wordmark-light.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_8e8b5dd8",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_8e8b5dd8",
           "branch": "bruv/primary-site-assets-brand-bruv-wordmark--8e8b5dd8",
-          "base": "cf3212898bfeb490e314207cd740758d06aa01ca"
+          "base": "cf3212898bfeb490e314207cd740758d06aa01ca",
+          "commit": "2ff0f2c0c985dedb7aa545ccca6bb84b8d15a631",
+          "result": "No source change; four letter paths share ink/lean transform,b counter evenodd; README dark-mode and HTML fallback direct references; build copies unchanged.2 tests/63 assertions;XML/geometry checks;no browser/build."
         }
       ],
       "judges": [],
@@ -54,13 +62,15 @@
     {
       "focus": "site/assets/brand/bruv-wordmark.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_e142ec25",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_e142ec25",
           "branch": "bruv/primary-site-assets-brand-bruv-wordmark.-e142ec25",
-          "base": "cf3212898bfeb490e314207cd740758d06aa01ca"
+          "base": "cf3212898bfeb490e314207cd740758d06aa01ca",
+          "commit": "b561da257dcfa98464b66377ae61aff1503e8695",
+          "result": "Unchanged accessible SVG root/shared fill-transform/four paths; traced README/generator/terminal cells/HTML/build copy.2 tests/63 assertions;dark/light differ only fill;no raster/browser."
         }
       ],
       "judges": [],
@@ -84,16 +94,30 @@
     {
       "focus": "site/assets/cli-settings.txt",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_a55e7213",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_a55e7213",
+          "branch": "bruv/primary-site-assets-cli-settings.txt-a55e7213",
+          "base": "8c9cb30674039dade57fd6707e7fd4ce6ff896af"
+        }
+      ],
       "judges": [],
       "initialBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569"
     },
     {
       "focus": "site/assets/settings-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_dc9fc829",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_dc9fc829",
+          "branch": "bruv/primary-site-assets-settings-cells.json-dc9fc829",
+          "base": "8c9cb30674039dade57fd6707e7fd4ce6ff896af"
+        }
+      ],
       "judges": [],
       "initialBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3"
     },
@@ -585,7 +609,7 @@
     {
       "focus": "site/scripts/html-animation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_9f36ba3a",
@@ -600,10 +624,16 @@
         {
           "id": "task_32ee7f46",
           "candidate": "dcafa0e98cd6cc5216e326efc4634a327a8129c0",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "withDemoPage owns context lifetime including awaited checks; tests receive only Page and explicitly request pre-navigation manual clock. Assertions/timings/routes retained. Setup exception cleanup expansion explicit, coherent with owner boundary; failure path not injected. Judge read complete actual code/callers/tests; runtime writer-only proof.",
+          "objections": []
         }
       ],
-      "initialBlob": "294ddcb66e4bd9f75740b948dbdf989cdadeb5c7"
+      "initialBlob": "294ddcb66e4bd9f75740b948dbdf989cdadeb5c7",
+      "acceptedBlob": "ec93e1910b0f9d4d1ff2ea31e9f3c1de61086360",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/install-ui.test.ts",
