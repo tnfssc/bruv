@@ -78,26 +78,50 @@
     {
       "focus": "src/remote/artifacts.ts",
       "initialBlob": "0e9ff60dbda7ab6ef98b296024ad3af18947c9d8",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_4b41ba14",
+          "status": "running",
+          "candidate": "12a09d8f8c05398cbbbe80b10ae8e2f82837e914"
+        }
+      ],
       "primary": {
         "id": "task_8d554dba",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_8d554dba",
-        "branch": "bruv/remote-primary-artifacts-8d554dba"
+        "branch": "bruv/remote-primary-artifacts-8d554dba",
+        "commit": "12a09d8f8c05398cbbbe80b10ae8e2f82837e914"
       },
-      "launchBase": "434f845b0084f093fc425e7e5d32e0222836aa77"
+      "launchBase": "434f845b0084f093fc425e7e5d32e0222836aa77",
+      "result": "Catalog validated before file work; syncArtifactFile owns cached digest reuse or download/verification/atomic replacement; manifest incremental progress and completion remain in orchestration.",
+      "changedRelatedPaths": [
+        "tests/remote-artifacts.test.ts"
+      ],
+      "checks": "Baseline/candidate extended suite 7 pass/64 assertions; format/diff pass, lint unchanged diagnostics."
     },
     {
       "focus": "src/remote/cancellation.ts",
       "initialBlob": "195fc52acc1eee3dc1d569be0728ae22a8585c1e",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_bac9b4e3",
+          "status": "running",
+          "candidate": "8677e1f44ec5d15c40fdc7af724648e03a29f224"
+        }
+      ],
       "launchBase": "434f845b0084f093fc425e7e5d32e0222836aa77",
       "primary": {
         "id": "task_3ca50561",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_3ca50561",
-        "branch": "bruv/remote-primary-cancellation-3ca50561"
-      }
+        "branch": "bruv/remote-primary-cancellation-3ca50561",
+        "commit": "8677e1f44ec5d15c40fdc7af724648e03a29f224"
+      },
+      "changedRelatedPaths": [
+        "tests/remote-cancellation.test.ts"
+      ],
+      "result": "Timed request, complete output-capturing scan and bounded settlement wait separated; handler exposes cancellation request/foreground abort/host settlement/report publication.",
+      "checks": "14 pass/59 assertions; new contract tests pass baseline, Biome/diff pass."
     },
     {
       "focus": "src/remote/capabilities.ts",
@@ -135,8 +159,14 @@
     {
       "focus": "src/remote/client.ts",
       "initialBlob": "a31e194434d69baca48cabb7ea3bd8be9f97c05f",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
+      "primary": {
+        "id": "task_6f52d2e9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_6f52d2e9",
+        "branch": "bruv/remote-primary-client-6f52d2e9"
+      }
     },
     {
       "focus": "src/remote/durable-json.ts",
@@ -323,8 +353,14 @@
     {
       "focus": "src/remote/root-contract.ts",
       "initialBlob": "e9aceffe5f97333dfc828000fd59b40bab8fadee",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
+      "primary": {
+        "id": "task_d0eb6d5d",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_d0eb6d5d",
+        "branch": "bruv/remote-primary-root-contract.ts-d0eb6d5d"
+      }
     },
     {
       "focus": "src/remote/root-entry.ts",
@@ -380,14 +416,26 @@
     {
       "focus": "src/remote/root-store.ts",
       "initialBlob": "f930d363762822984029e7d509664a497c851c29",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_ab8da392",
+          "status": "running",
+          "candidate": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5"
+        }
+      ],
       "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
       "primary": {
         "id": "task_15f8e7d9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_15f8e7d9",
-        "branch": "bruv/remote-primary-root-store-15f8e7d9"
-      }
+        "branch": "bruv/remote-primary-root-store-15f8e7d9",
+        "commit": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5"
+      },
+      "result": "SQLite selects oldest queued receipt, transactional unresolved settlement, explicit durable dialog transition/sequence/event/bounded journal suffix.",
+      "changedRelatedPaths": [
+        "tests/root-store.test.ts"
+      ],
+      "checks": "53 pass/302 assertions; seven new tests pass unchanged baseline; focused strict TS/format/diff pass."
     },
     {
       "focus": "src/remote/root-transport.ts",
@@ -437,8 +485,14 @@
     {
       "focus": "src/remote/source-approval.ts",
       "initialBlob": "cad9f95da9d7082968e17c4e65113d01adaf963d",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
+      "primary": {
+        "id": "task_fbe1ebfa",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_fbe1ebfa",
+        "branch": "bruv/remote-primary-source-approval.ts-fbe1ebfa"
+      }
     },
     {
       "focus": "src/remote/ssh.ts",
@@ -848,7 +902,24 @@
       "judgeRounds": []
     }
   ],
-  "extras": [],
+  "extras": [
+    {
+      "focus": "tests/remote-cancellation.test.ts",
+      "kind": "new",
+      "introducedBy": "8677e1f44ec5d15c40fdc7af724648e03a29f224",
+      "status": "candidate-awaiting-integration",
+      "judgeRounds": [],
+      "needs": "own fresh primary then independent judge after accepted integration"
+    },
+    {
+      "focus": "tests/root-store.test.ts",
+      "kind": "new",
+      "introducedBy": "c5912090ccf01564ea7e43556ca6210da9734b58",
+      "status": "candidate-awaiting-integration",
+      "judgeRounds": [],
+      "needs": "own fresh primary then independent judge after accepted integration; tell parent new root-* test ownership"
+    }
+  ],
   "primaryBrief": "Fresh PRIMARY file worker, single focus below. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. User rejected shallow rename/comment sweep: maximize actual understanding, not names/diff count/short files/boilerplate. Identify concrete mental bookkeeping by tracing real callers/shipped paths. Simplify tangled responsibilities/branching/hidden state/lifetimes/needless indirection/dead machinery into coherent domain operations with visible effects. Not arbitrary splitting/context bags/registries/frameworks. Genuinely readable may remain unchanged. Related coherent edits allowed; record all paths, flag overlaps with active area workers from remote.json. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts. No speculative defenses/deps/feature cuts/test weakening. Incidental fixes explicit/reproduced/tested. Before commit SHORT wisdom/quality/structural-readability-worker.md (focus/problem/why/exact proof/limits/path/branch). Return exact base/candidate commit, all changed paths, concrete before/after walkthrough. Independent judge decides acceptance. No push/PR. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun via /bin/bash PATH inside quoted script; shared read-only deps /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Focused existing tests per edit, no per-file full builds.",
   "judgeBrief": "Fresh INDEPENDENT READ-ONLY actual-code judge. Original user brief: maximize actual ease of understanding, not diff count/names/shorter files/boilerplate. Identify mental reconstruction across authorities/responsibilities/lifetimes; coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/frameworks. Clear code may remain unchanged. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions or forced churn. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Inspect ACTUAL source, callers/tests and FULL candidate diff, not summaries or green tests. Judge intrinsic current code separately from improvement. Return ACCEPT / REJECT / NO CHANGE NEEDED with concrete reader journeys, exact inspected blob hashes, safety/check limits. REJECT: concrete unmet targets and smallest coherent rework. No edits/commits. Each round is fresh; consider all prior objections supplied below. Dependency note: area checkout now has ignored node_modules symlink to shared dependency tree; use area tests if candidate source identity matches. NODE_PATH alone did not resolve Bun packages in previous judge attempts.",
   "batchChecks": [
@@ -858,6 +929,20 @@
       "result": "19 pass, 0 fail, 112 assertions",
       "job": "task_66ad8475",
       "limits": "Source/fake fixture evidence, not authenticated SSH/provider/compiled CLI."
+    },
+    {
+      "commit": "10db7d76",
+      "job": "task_963e98d8",
+      "command": "bun test tests/remote-jobs.test.ts tests/remote-source-approval.test.ts tests/subagent-placement.test.ts tests/remote-repository.test.ts tests/remote-repository-wire.test.ts",
+      "result": "54 pass, 0 fail, 321 assertions",
+      "limits": "Source fixtures, not live SSH/provider or compiled CLI"
+    },
+    {
+      "commit": "10db7d76",
+      "job": "task_ac0c70e2",
+      "command": "bun run check; biome format and biome lint src/remote/jobs.ts src/remote/repository.ts tests/remote-source-approval.test.ts",
+      "result": "check=0 format=0 lint=0; 12 existing warnings/12 infos",
+      "limits": "No full build or runtime parity. Earlier bun run typecheck invalid alias; biome check stricter import organization failed baseline imports, not configured gate."
     }
   ]
 }
