@@ -56,3 +56,5 @@ Dependency workflow: verify downloaded identity/files before explicit credential
 Release workflow: one read-only admission/SHA-tag job; downstream explicit success gates and immutable-source wiring replace scattered policy. Judge task_265f1748 ACCEPT72a12eb plus both tests;56 independent tests. Extra Ubuntu queue/start/failure boundary explicit. Boolean fixture is not hosted scheduling; no platform/build proof. Both related test primaries pending.
 
 Asset-test primary: owned copied dependencies/input checkout, explicit generation→inventory→old timestamps→idempotence→cleanup. Judge task_a43b5841 ACCEPT6c6ae2c; three mutations independently caught. No shared dependency writes, no full byte fidelity/stale-output cleanup/compiled proof.
+
+Dependency-workflow-test primary: step-local contracts, isolated real bundle scenarios. Judge task_35b870b5 ACCEPT5d0f15a;11focus39combined575assertions. Existing identity mutation-proof gap explicit; no hosted/authenticated push.

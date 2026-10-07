@@ -6,8 +6,16 @@
     {
       "focus": ".gitattributes",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_a31d93bd",
+          "launchBase": "164deefcd9626c12b567a424d103ddc6636140cb",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_a31d93bd",
+          "branch": "bruv/primary-.gitattributes-a31d93bd",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -128,8 +136,16 @@
     {
       "focus": ".gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_63f2878d",
+          "launchBase": "164deefcd9626c12b567a424d103ddc6636140cb",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_63f2878d",
+          "branch": "bruv/primary-.gitignore-63f2878d",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -473,19 +489,29 @@
     {
       "focus": "scripts/prepare-manual-release.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_50c3fd8e",
           "launchBase": "911a433455175b5af5db6bc909c220f2693ffd24",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_50c3fd8e",
           "branch": "bruv/primary-scripts-prepare-manual-release.t-50c3fd8e",
+          "state": "completed",
+          "commit": "e5903f4059dd5bebcc34699f42c4351b9affc4a6"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_706382eb",
+          "base": "911a433455175b5af5db6bc909c220f2693ffd24",
+          "candidate": "e5903f4059dd5bebcc34699f42c4351b9affc4a6",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Shared version ordering, one release-selection comparison and package-source snapshot replace duplicate comparators/reversed comparisons/package reads.",
+      "checks": "7pass;11 baseline comparisons and numeric multi-tag CLI fixtures equivalent;tsc/format/diff pass;no publication/build"
     },
     {
       "focus": "scripts/publish-release.ts",
@@ -596,19 +622,24 @@
     {
       "focus": "scripts/update-dependencies.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "awaiting-judge",
       "primary": [
         {
           "id": "task_b3760f86",
           "launchBase": "911a433455175b5af5db6bc909c220f2693ffd24",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_b3760f86",
           "branch": "bruv/primary-scripts-update-dependencies.ts-b3760f86",
-          "state": "running"
+          "state": "completed",
+          "commit": "a7218e7ff7a5a20a884f8afe816838c66ba9876a"
         }
       ],
       "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/dependency-updates.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Shared ordered comparison/explicit lock-version normalization/grouped policy validation replace duplicate version ordering and inline post-update checks.",
+      "checks": "16 focusedpass;tsc/Biome/diff pass;no registry/GitHub/build"
     },
     {
       "focus": "scripts/validate-release-tag.ts",
@@ -851,7 +882,7 @@
     {
       "focus": "tests/dependency-workflow.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_c708fc82",
@@ -867,19 +898,28 @@
           "id": "task_35b870b5",
           "base": "3471000073611ed798a890b9ca70905cf5d1df1a",
           "candidate": "6923961505f2ab2882e2c5cdca4ae0aa47928563",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Step-local contracts and four isolated real bundle scenarios remove global string search and shared repository evolution. Prior identity/parent/file refusal retained plus publication token assertion. Base-as-candidate not independently mutation-proof for every identity assertion(existing gap).",
+          "checks": "Independent11focus;39combined575assertions with provisioned exact snapshot;Biome/tsc/diff pass. Initial2missingdeps failures resolved in isolated fixture. No hosted/build.",
+          "acceptedBlobs": {
+            "tests/dependency-workflow.test.ts": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
       "relatedPatchJudgment": {
         "id": "task_69a61924",
         "verdict": "ACCEPT",
         "blob": "3a4db40db2a956ed3ebeada4f3d7c9fc692ad619",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Step-local contracts replace global YAML searches; four isolated real bundle cases with cleanup replace successive shared repository mutations. Baseline checks retained.",
-      "checks": "11focus39combined workflow tests;Biome/tsc/diff pass;no hosted/build."
+      "checks": "11focus39combined workflow tests;Biome/tsc/diff pass;no hosted/build.",
+      "integrationState": "Full focus patch integrated without overlap; worker report excluded;workflow unchanged."
     },
     {
       "focus": "tests/find-ci-baseline.test.ts",
