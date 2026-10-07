@@ -928,10 +928,17 @@
     {
       "focus": "src/live/editor-push-to-talk.ts",
       "initialBlob": "df048148512e56c08a09807a4e35db9577fae485",
-      "primary": null,
+      "primary": {
+        "id": "task_7bb5cb79",
+        "launchBase": "16182b5898049994a37630cbfbf761eb6b7b982b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7bb5cb79",
+        "branch": "bruv/primary-src-live-editor-push-to-talk.ts-7bb5cb79",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/embedded.ts",
@@ -2226,17 +2233,20 @@
         "launchBase": "186634bd6a0ef9906a3ccc8cedba4bdc47f4dd33",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_2e92bcc7",
         "branch": "bruv/primary-native-live-linux-tests-test_sou-2e92bcc7",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "2e62282fd6ca936b142a6f16a60ad69e96770804"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_46031fcf",
         "verdict": "ACCEPT",
         "blob": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Unchanged child transcripts adjacent to assertions;unplug requiresstopped aftererror/capture;deviceerror/EOF notsubstitute;contextcleanup separate, extraction hidesevidence.",
+      "checks": "7 focusedtests/diffpass,clean;nodevice/provider/macOS."
     },
     {
       "focus": "native/live-linux/tests/test_capture_protocol.py",
