@@ -88,6 +88,82 @@ function parseRelease(data: unknown): Release {
   return data as Release;
 }
 
+function remoteTagCommit(tag: string): string | undefined {
+  // Annotated tags advertise both the tag object and its peeled commit; compare the commit.
+  const refs = git("ls-remote", "--tags", "origin", "refs/tags/" + tag, "refs/tags/" + tag + "^{}");
+  const lines = refs.split("\n");
+  const ref =
+    lines.find((line) => line.endsWith("refs/tags/" + tag + "^{}")) ??
+    lines.find((line) => line.endsWith("refs/tags/" + tag));
+  return ref?.split("\t")[0];
+}
+
+function verifyRemoteTag(tag: string, sha: string, event: string): void {
+  const action = tagAction(remoteTagCommit(tag), sha);
+  if (event === "workflow_dispatch") {
+    git("fetch", "origin", "develop");
+    if (git("rev-parse", "origin/develop") !== sha)
+      throw new Error("develop advanced during verification; refusing stale publication");
+    if (action === "push") git("push", "origin", sha + ":refs/tags/" + tag);
+  } else if (action !== "reuse") {
+    throw new Error("Push-triggered release requires the remote tag");
+  }
+  // Re-read after any push to catch concurrent creation before touching the release API.
+  const actual = remoteTagCommit(tag);
+  tagAction(actual, sha);
+  if (!actual) throw new Error("Tag push did not create the remote tag");
+}
+
+async function readExpectedAssets(): Promise<Map<string, Asset>> {
+  const expected = new Map<string, Asset>();
+  for (const name of assetNames) {
+    const bytes = await readFile(join("dist/release", name));
+    expected.set(name, {
+      name,
+      size: bytes.length,
+      digest: "sha256:" + createHash("sha256").update(bytes).digest("hex"),
+    });
+  }
+  return expected;
+}
+
+// Return a complete, byte-verified snapshot. Only drafts may be repaired.
+async function ensureCompleteRelease(
+  repo: string,
+  tag: string,
+  token: string,
+  expected: Map<string, Asset>,
+): Promise<Release> {
+  const getRelease = () => findRelease(repo, tag, token);
+  const notes = execFileSync("bun", ["scripts/select-release-notes.ts", tag], { encoding: "utf8" }).trim();
+  const existing = await getRelease();
+  if (!existing) {
+    gh(
+      "release",
+      "create",
+      tag,
+      "--verify-tag",
+      "--draft",
+      "--generate-notes",
+      "--notes-file",
+      notes,
+      "--title",
+      tag,
+      ...assetNames.map((name) => join("dist/release", name)),
+    );
+  }
+  const release = existing ?? (await getRelease());
+  if (!release) throw new Error("Release was not created");
+  const missing = missingReleaseAssets(release, expected);
+  if (!missing.length) return release;
+
+  gh("release", "upload", tag, ...missing.map((name) => join("dist/release", name)));
+  const completed = await getRelease();
+  if (!completed || missingReleaseAssets(completed, expected).length)
+    throw new Error("Release assets still incomplete");
+  return completed;
+}
+
 async function main() {
   const {
     RELEASE_TAG: tag,
@@ -106,68 +182,12 @@ async function main() {
     !/^[a-f0-9]{40}$/.test(sha)
   )
     throw new Error("Missing or invalid release environment");
-  // ls-remote includes a peeled line for annotated tags; always compare the commit, not tag object.
-  const refs = git("ls-remote", "--tags", "origin", "refs/tags/" + tag, "refs/tags/" + tag + "^{}");
-  const lines = refs.split("\n").filter(Boolean);
-  const peeled = lines.find((line) => line.endsWith("refs/tags/" + tag + "^{}"));
-  const plain = lines.find((line) => line.endsWith("refs/tags/" + tag));
-  const remote = (peeled ?? plain)?.split("	")[0];
-  const action = tagAction(remote, sha);
-  if (event === "workflow_dispatch") {
-    git("fetch", "origin", "develop");
-    if (git("rev-parse", "origin/develop") !== sha)
-      throw new Error("develop advanced during verification; refusing stale publication");
-    if (action === "push") git("push", "origin", sha + ":refs/tags/" + tag);
-  } else if (action !== "reuse") {
-    throw new Error("Push-triggered release requires the remote tag");
-  }
-  // Also cover a concurrent creation between lookup and push. No release API mutation before this check.
-  const confirmed = git("ls-remote", "--tags", "origin", "refs/tags/" + tag, "refs/tags/" + tag + "^{}");
-  const confirmedLines = confirmed.split("\n");
-  const actual = (
-    confirmedLines.find((line) => line.endsWith("refs/tags/" + tag + "^{}")) ??
-    confirmedLines.find((line) => line.endsWith("refs/tags/" + tag))
-  )?.split("	")[0];
-  tagAction(actual, sha);
-  if (!actual) throw new Error("Tag push did not create the remote tag");
+  verifyRemoteTag(tag, sha, event);
 
-  const expected = new Map<string, Asset>();
-  for (const name of assetNames) {
-    const bytes = await readFile(join("dist/release", name));
-    expected.set(name, {
-      name,
-      size: bytes.length,
-      digest: "sha256:" + createHash("sha256").update(bytes).digest("hex"),
-    });
-  }
-  const getRelease = () => findRelease(repo, tag, token);
-  const notes = execFileSync("bun", ["scripts/select-release-notes.ts", tag], { encoding: "utf8" }).trim();
-  let release = await getRelease();
-  if (!release) {
-    gh(
-      "release",
-      "create",
-      tag,
-      "--verify-tag",
-      "--draft",
-      "--generate-notes",
-      "--notes-file",
-      notes,
-      "--title",
-      tag,
-      ...assetNames.map((name) => join("dist/release", name)),
-    );
-    release = await getRelease();
-  }
-  if (!release) throw new Error("Release was not created");
-  const missing = missingReleaseAssets(release, expected);
-  if (missing.length) {
-    gh("release", "upload", tag, ...missing.map((name) => join("dist/release", name)));
-    release = await getRelease();
-    if (!release || missingReleaseAssets(release, expected).length) throw new Error("Release assets still incomplete");
-  }
-  if (release.draft) gh("release", "edit", tag, "--draft=false");
-  const final = await getRelease();
+  const expected = await readExpectedAssets();
+  const ready = await ensureCompleteRelease(repo, tag, token, expected);
+  if (ready.draft) gh("release", "edit", tag, "--draft=false");
+  const final = await findRelease(repo, tag, token);
   if (!final || final.draft || missingReleaseAssets(final, expected).length)
     throw new Error("Release publication not verified");
   console.log("Published " + tag + " from " + sha + " with verified release assets.");

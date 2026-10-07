@@ -1,30 +1,25 @@
 import { basename, dirname, resolve } from "node:path";
 
-/** Keep the connector beside the normal CLI, including release target suffixes. */
-export function pairedBuildCommands(options: string[], root: string, bun: string): string[][] {
+/** One connector build refreshes both siblings, including release target suffixes. */
+export function pairedBuildCommand(options: string[], root: string, bun: string): string[] {
   options = options.filter((arg) => arg !== "--");
   const output = options.find((arg) => arg.startsWith("--outfile="))?.slice("--outfile=".length) ?? "dist/bruv";
   const name = basename(output);
   if (!/^bruv(?:$|-|\.exe$)/.test(name) || name.startsWith("bruv-claude-compat"))
     throw new Error("Paired output must name the normal bruv binary (optionally with a target suffix)");
-  const connectorOutput = dirname(resolve(root, output));
-  const connector = resolve(connectorOutput, name.replace(/^bruv/, "bruv-claude-compat"));
-  // The standalone connector build refreshes its normal sibling exactly once.
+  const connector = resolve(root, dirname(output), name.replace(/^bruv/, "bruv-claude-compat"));
   return [
-    [
-      bun,
-      resolve(root, "scripts", "build-claude-compat.ts"),
-      ...options.filter((arg) => !arg.startsWith("--outfile=")),
-      "--outfile=" + connector,
-    ],
+    bun,
+    resolve(root, "scripts", "build-claude-compat.ts"),
+    ...options.filter((arg) => !arg.startsWith("--outfile=")),
+    "--outfile=" + connector,
   ];
 }
 
 if (import.meta.main) {
   const root = resolve(import.meta.dir, "..");
-  for (const command of pairedBuildCommands(process.argv.slice(2), root, process.execPath)) {
-    const child = Bun.spawn(command, { cwd: root, stdio: ["inherit", "inherit", "inherit"] });
-    const code = await child.exited;
-    if (code !== 0) process.exit(code);
-  }
+  const command = pairedBuildCommand(process.argv.slice(2), root, process.execPath);
+  const child = Bun.spawn(command, { cwd: root, stdio: ["inherit", "inherit", "inherit"] });
+  const code = await child.exited;
+  if (code !== 0) process.exit(code);
 }
