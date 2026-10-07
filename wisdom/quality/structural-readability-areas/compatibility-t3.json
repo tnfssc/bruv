@@ -476,17 +476,26 @@
     {
       "file": "src/claude-compat/launch.ts",
       "initialBlob": "ec7515100c4560c03f473214973d9705380f927a",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_58f5a56b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_58f5a56b",
         "branch": "bruv/primary-launch-policy-58f5a56b",
         "launchBase": "7e19e0f72539d75c097a2e6bb4bdf7c764ba207f",
-        "commit": null
+        "commit": "15eb6b922c9d3a188066b71673e3762a8853b6f8"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_f677e563",
+          "status": "running",
+          "candidate": "15eb6b922c9d3a188066b71673e3762a8853b6f8"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "7e19e0f72539d75c097a2e6bb4bdf7c764ba207f"
+      "launchBase": "7e19e0f72539d75c097a2e6bb4bdf7c764ba207f",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged pure defaults and distinct identities coherent. Trial branch removal altered path-normalization/home-expansion ordering and was reverted rather than unrelated behavior change.",
+      "checks": "23 defaults+launch pass115 assertions;clean;no full gate/product claim."
     },
     {
       "file": "src/claude-compat/live-frontend.ts",
@@ -1093,7 +1102,7 @@
     {
       "file": "tests/claude-compat-transport.test.ts",
       "initialBlob": "136ce557bfba92d0c1baedbf32efe1980e2d2d8b",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_ea845de6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ea845de6",
@@ -1104,11 +1113,16 @@
       "judges": [
         {
           "id": "task_d5030f7e",
-          "status": "running",
-          "candidate": "a1b0b3fedee5ca17f335d2d042d444ae59aa5e9e"
+          "status": "completed",
+          "candidate": "a1b0b3fedee5ca17f335d2d042d444ae59aa5e9e",
+          "verdict": "ACCEPT",
+          "blob": "43115a9a1fa3e50536fc46fd77ca3163134f21ae",
+          "objections": [],
+          "evidence": "Explicit stream ownership fixes reproduced fixture returned wrong output; identity assertion protects. Actual reply/handler-entry/EOF gates replace scheduler guesses, paired held frames/callbacks remove lockstep arrays. Byte/UTF8/CRLF/bounds/correlation/cancel/drain/malformed/error contracts retained; independent17 tests53 assertions.",
+          "limits": "No production change/full CI/compiled/live peer."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "43115a9a1fa3e50536fc46fd77ca3163134f21ae",
       "relatedPatchJudgments": [
         {
           "id": "task_70aa7bb7",
@@ -1120,7 +1134,8 @@
       "launchBase": "060c3bfd969e4bdb4c088cbd49b0b167c8cb7720",
       "changedRelatedPaths": [],
       "readingResult": "Explicit fixture stream ownership replaces spare output/ambiguous overrides; actual reply/handler entry/EOF gates replace ticks; held writes pair frame+release callback replacing parallel arrays. Fixture-output regression reproduced, no production change.",
-      "checks": "17 pass53 assertions;strict focused typecheck/Biome/diff pass;framing/bounds/correlation/cancel/drain assertions retained."
+      "checks": "17 pass53 assertions;strict focused typecheck/Biome/diff pass;framing/bounds/correlation/cancel/drain assertions retained.",
+      "integrationState": "Exact fresh whole-file primary/judge patch joined, replaces old related test blob"
     },
     {
       "file": "tests/claude-compat/credential-isolation.test.ts",
@@ -1443,9 +1458,15 @@
       "file": "tests/claude-compat-binding.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-primary",
+      "status": "primary-running",
       "introducedBy": "3743b41972dd27bbeb33d459f2a6f5ced7413c33",
-      "primary": null,
+      "primary": {
+        "id": "task_f673edab",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_f673edab",
+        "branch": "bruv/primary-new-binding-tests-f673edab",
+        "launchBase": "cbae72747a50b54edc7e4d30347f2c67b680dc5e",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1455,7 +1476,8 @@
           "blob": "35149e461ce949a6a0d48bf591e7c9ba14256916",
           "candidate": "3743b41972dd27bbeb33d459f2a6f5ced7413c33"
         }
-      ]
+      ],
+      "launchBase": "cbae72747a50b54edc7e4d30347f2c67b680dc5e"
     }
   ],
   "crossAreaNeeds": [],
@@ -1544,6 +1566,13 @@
       "status": "passed",
       "scope": "Integrated MCP/appworker/runtime20 top-level91 assertions;typecheck;format/lint",
       "limits": "5 retained warnings;no live/compiled/full gate."
+    },
+    {
+      "id": "task_596aead1",
+      "commit": "cbae7274",
+      "status": "passed",
+      "scope": "Joined binding/history/runtime8 outer pass42 assertions7 SDK skips;typecheck;format/lint",
+      "limits": "4 warnings7 infos;no live/compiled/full gate;configured SDK worker/judge evidence separate."
     }
   ],
   "combinedReviews": [
