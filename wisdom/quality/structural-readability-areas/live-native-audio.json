@@ -797,13 +797,20 @@
       "judgeRounds": [
         {
           "id": "task_6da0bcc2",
-          "status": "running",
+          "status": "complete",
           "candidate": "fb653ebe559b3b04cd1588452662e7f246ff2249",
-          "base": "575ba3835b85f46d758b9187447c70e161374c54"
+          "base": "575ba3835b85f46d758b9187447c70e161374c54",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Validation/storage boundary separate from catalogs/credentials/command concurrency/run snapshot/connector consent; ENOENT-only defaults and validate-before-private-temp/rename/cleanup effects visible.",
+          "checks": "Independent5 tests13 assertions plus privatepermissions/invalidsave/corruptload/failedrename target-preservation+cleanup probes. Caller suites dependency-blocked;82 writer passes not reproduced.",
+          "acceptedBlobs": {
+            "src/live/config.ts": "066a823fe085451dad54f693c824013f2a4ffbb5"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged validate-active-settings/load ENOENT defaults/private-temp atomic-save boundary; credentials/caches/run lifetimes outside.",
       "checks": "82 tests452 assertions; initial missing assets resolved with standard prepare;no behavior fixes."
@@ -2019,9 +2026,16 @@
         "status": "candidate ready",
         "commit": "465d49952932b8c6877f755549b5efef41c977e6"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_d88de73c",
+          "status": "running",
+          "candidate": "465d49952932b8c6877f755549b5efef41c977e6",
+          "base": "6f8654b872df51edd8f578f6b730babd1c42c439"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_ab2edd5f",
         "verdict": "ACCEPT",
