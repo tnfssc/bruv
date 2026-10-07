@@ -33,3 +33,5 @@ Primary task_6ffa8972; judge task_40ff7535 ACCEPT candidate 84108130c3b7f3ba70e1
 ## Batch boundary
 
 First three accepted source patches integrated through fa5689ff. Combined editor/profiler focused checks, full TypeScript, and changed-file Biome running as task_4c9cc9a5. Shared dependencies linked read-only; only local photon WASM copied (prepare:assets not run against shared deps). Parent tip 6a285569 contains documentation progress only; no common code to bring in. Disk: 157G available.
+
+First-batch validation result: 71 tests passed, 473 assertions. Initial typecheck failed solely because generated runtime JSON assets were absent; after copying local assets without mutating shared dependencies, full TypeScript passed. Six changed paths pass Biome format and lint (3 existing warnings, 5 infos). Broader `biome check` additionally reported existing import-organization assist on profiler test imports; it was not silently represented as passing. No full build performed.

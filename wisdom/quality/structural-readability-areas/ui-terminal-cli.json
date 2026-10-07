@@ -593,19 +593,36 @@
     {
       "focus": "src/ui/footer.ts",
       "initialBlob": "fb774576e55d56e380988652dafc11d3bc6c6653",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_b0090f89",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_b0090f89",
           "branch": "bruv/primary-readability-src-ui-footer.ts-b0090f89",
-          "launchBase": "85d3d852913bc59905b9c81e21d2fbe28d4332c1"
+          "launchBase": "85d3d852913bc59905b9c81e21d2fbe28d4332c1",
+          "commit": "23d4c95aa626e1ef2e84308c792bffc4b1b130e6"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_05ce27ca",
+          "base": "85d3d852913bc59905b9c81e21d2fbe28d4332c1",
+          "candidate": "23d4c95aa626e1ef2e84308c792bffc4b1b130e6",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "85d3d852913bc59905b9c81e21d2fbe28d4332c1"
+      "launchBase": "85d3d852913bc59905b9c81e21d2fbe28d4332c1",
+      "changedRelatedPaths": [
+        "tests/footer.test.ts"
+      ],
+      "result": "Candidate separates cost polling/cache deadlines into observers owning each clock, shared redraw path and installation lifetime gate.",
+      "checks": [
+        "43 focused tests",
+        "Expanded footer suite passes baseline",
+        "format/diff pass; lint exit 0 with existing advisories"
+      ]
     },
     {
       "focus": "src/ui/quiet-tool-ui.ts",
@@ -675,11 +692,19 @@
     {
       "focus": "src/ui/startup.ts",
       "initialBlob": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_b0e54e09",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_b0e54e09",
+          "branch": "bruv/primary-readability-src-ui-startup.ts-b0e54e09",
+          "launchBase": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6"
     },
     {
       "focus": "src/ui/subagent-settings.ts",
@@ -1172,7 +1197,12 @@
       "job": "task_4c9cc9a5",
       "commit": "fa5689ff",
       "scope": "editor/startup/controller/action-profiler/profiler tests; full tsc; changed-file Biome",
-      "status": "running"
+      "status": "71 tests pass /473 assertions; initial tsc blocked missing local generated assets; initial biome check failed existing import organization assist"
+    },
+    {
+      "scope": "full tsc, six changed-path format/lint",
+      "status": "pass after local assets populated without modifying shared deps; lint 3 existing warnings/5 infos",
+      "tests": "71 pass 0 fail"
     }
   ],
   "parentBoundary": {
