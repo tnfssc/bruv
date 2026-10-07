@@ -61,3 +61,5 @@ site/content.ts: Two literal copy objects expose metadata/landing content withou
 site/capture.ts: Menu alignment/fallback and styled wrapping have coherent operations; settingsCapture dispatches rather than interleaving fit/continue. Judge10 tests/123298 assertions,complete widths1-110 baseline parity,native identity and input immutability. Test-only capture path,not shipped-demo improvement.
 
 site/index.html: Literal head/body/runtime slots expose terminal-hidden/HTML-visible fallback; build/runtime own selection/startup lifetime rather than template machinery. Judge10 tests;browser/build/validation read not rerun.
+
+site/brand.ts: Fresh corrected-path/base review independently confirms explicit48/28/24 selector and separate generation/layout/presentation responsibilities. Exact pinned checkout1 test/43 assertions at25/28/34/48/100 widths;not visual/freshness/every narrow viewport proof. Prior provenance-deficient round retained.

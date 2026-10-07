@@ -208,7 +208,7 @@
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_4f28d450",
@@ -232,12 +232,16 @@
         {
           "id": "task_884e8b0b",
           "candidate": "18fb3b71fee4cb3734eef1c27a93e03a3a73646c",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Fresh corrected-path/base review independently confirms explicit48/28/24 selector and separate generation/layout/presentation responsibilities. Exact pinned checkout1 test/43 assertions at25/28/34/48/100 widths;not visual/freshness/every narrow viewport proof. Prior provenance-deficient round retained.",
+          "objections": []
         }
       ],
       "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
       "changedRelatedPaths": [],
-      "integration": "unchanged; final acceptance pending corrected-provenance review"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "acceptedBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4"
     },
     {
       "focus": "site/capture.ts",
@@ -543,7 +547,7 @@
     {
       "focus": "site/package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_f9d8fefe",
@@ -554,7 +558,13 @@
           "result": "Unchanged direct build/dist,preview,full tests && validation operations.31 existing tests;7 test files listed,17 script paths resolve,3 pins match lock. No browser/build/deploy."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_4e8a8bc6",
+          "candidate": "57ffbc1f5c422d22b90c05977f2aeeaf29b7af0a",
+          "state": "running"
+        }
+      ],
       "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d"
     },
     {
@@ -935,13 +945,15 @@
     {
       "focus": "site/scripts/startup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_2473ecf3",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_2473ecf3",
           "branch": "bruv/primary-site-scripts-startup.test.ts-2473ecf3",
-          "base": "6e555e5e148be83d37cceed3254165503bb87753"
+          "base": "6e555e5e148be83d37cceed3254165503bb87753",
+          "commit": "0a09cf324d706407d0f12d83eccd9d47827d27ad",
+          "result": "Unchanged local gate->pending assertions->release->ready assertions;asset failures straightforward loop,no-JS separate context;short lifetimes would scatter behind hooks. Focused test blocked missing playwright in worker,no assertions;area combined browser run previously passed."
         }
       ],
       "judges": [],
@@ -979,13 +991,15 @@
     {
       "focus": "site/scroll.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_955a4df5",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_955a4df5",
           "branch": "bruv/primary-site-scroll.ts-955a4df5",
-          "base": "6e555e5e148be83d37cceed3254165503bb87753"
+          "base": "6e555e5e148be83d37cceed3254165503bb87753",
+          "commit": "e885ab24fc6484750785eef0aae246c3d9f2963e",
+          "result": "Unchanged one remainder accumulates fractional cells,reversal discards stale distance,movement clamps,outward resets. Terminal callers own gesture/navigation/resize reset.3 tests/16 assertions;no browser/build."
         }
       ],
       "judges": [],
@@ -994,13 +1008,15 @@
     {
       "focus": "site/styles.css",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_05fa70bb",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_05fa70bb",
           "branch": "bruv/primary-site-styles.css-05fa70bb",
-          "base": "6e555e5e148be83d37cceed3254165503bb87753"
+          "base": "6e555e5e148be83d37cceed3254165503bb87753",
+          "commit": "716c6d7d795200a0331303e729d7e27f0895009d",
+          "result": "Unchanged terminal caller owns mode/visibility;CSS viewport effects direct. HTML transcripts readable without JS;enhancement screen/control+clip not aria-hide;adjacent keyboard/hover/touch rules. Deduplication would couple distinct accessibility roles.10 tests;no browser/full gate."
         }
       ],
       "judges": [],
@@ -1038,8 +1054,15 @@
     {
       "focus": "site/wrangler.jsonc",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_60419896",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_60419896",
+          "branch": "bruv/primary-site-wrangler.jsonc-60419896",
+          "base": "f9b22f136850bfc50e8ad99c12fbda1591d329cd"
+        }
+      ],
       "judges": [],
       "initialBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75"
     },
