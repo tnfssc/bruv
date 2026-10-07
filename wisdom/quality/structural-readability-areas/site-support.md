@@ -49,3 +49,5 @@ site/scripts/generate-wordmark.ts: Checked rasterization->half-block rows->JSON 
 site/assets/brand/bruv-wordmark.svg: Accessible root/shared fill-transform/four glyph paths are explicit geometry; traced asset generation/README/template/CSS/build consumers. Judge2 tests/63 assertions prove cell/semantic bounds not SVG fidelity/freshness. No regeneration/browser/build.
 
 site/assets/brand/wordmark-cells.json: Width-keyed glyph rows directly express generated raster output; generator/brand selector/layout/terminal responsibilities separate. Judge1 test/43 assertions proves glyph presence/width,not SVG fidelity;no regeneration/browser/build.
+
+site/assets/settings-cells.json: Explicit provenance/crop/ordered glyph-style runs retain captured effects without indirection; trace ends in capture tests,not shipped demos. Judge2 tests/99 assertions,source SHA256 and base blob match. No fresh emulator fidelity/browser/build.

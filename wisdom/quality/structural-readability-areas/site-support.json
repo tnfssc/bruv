@@ -173,7 +173,7 @@
     {
       "focus": "site/assets/settings-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_dc9fc829",
@@ -188,15 +188,21 @@
         {
           "id": "task_d45f272d",
           "candidate": "feaf97355ed70cb36f97e778a0dfd0da4f666478",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Explicit provenance/crop/ordered glyph-style runs retain captured effects without indirection; trace ends in capture tests,not shipped demos. Judge2 tests/99 assertions,source SHA256 and base blob match. No fresh emulator fidelity/browser/build.",
+          "objections": []
         }
       ],
-      "initialBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3"
+      "initialBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3",
+      "acceptedBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_4f28d450",
@@ -205,7 +211,13 @@
           "result": "Unchanged terminal->layout->wordmark(width)->48/28/24 rows; explicit selection,no hidden state.1 test/43 assertions;no build/browser/generator."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_b82db0dc",
+          "candidate": "18fb3b71fee4cb3734eef1c27a93e03a3a73646c",
+          "state": "running"
+        }
+      ],
       "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4"
     },
     {
@@ -470,13 +482,15 @@
     {
       "focus": "site/package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_f9d8fefe",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_f9d8fefe",
           "branch": "bruv/primary-site-package.json-f9d8fefe",
-          "base": "4309575976bb77cfe16ee459cfc0cc6eebb17663"
+          "base": "4309575976bb77cfe16ee459cfc0cc6eebb17663",
+          "commit": "57ffbc1f5c422d22b90c05977f2aeeaf29b7af0a",
+          "result": "Unchanged direct build/dist,preview,full tests && validation operations.31 existing tests;7 test files listed,17 script paths resolve,3 pins match lock. No browser/build/deploy."
         }
       ],
       "judges": [],
@@ -544,13 +558,15 @@
     {
       "focus": "site/scripts/browser.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_4d170cd0",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_4d170cd0",
           "branch": "bruv/primary-site-scripts-browser.ts-4d170cd0",
-          "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2"
+          "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2",
+          "commit": "512c2bf69853e9d992dccb681d3bd5828e94f456",
+          "result": "Unchanged per-call CHROMIUM_BIN selection,empty/unset defers Playwright,returns launch promise;callers own cleanup.1 startup test/6 assertions;no override-path/full suite."
         }
       ],
       "judges": [],
@@ -822,16 +838,28 @@
     {
       "focus": "site/scripts/preview.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_0207fb65",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_0207fb65",
+          "branch": "bruv/primary-site-scripts-preview.ts-0207fb65",
+          "base": "992ae03cb1d19ff6d5cca4802a80261720897705"
+        }
+      ],
       "judges": [],
       "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a"
     },
     {
       "focus": "site/scripts/scroll.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_6f289d7b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d"
+        }
+      ],
       "judges": [],
       "initialBlob": "db16489bc7ef3c785b58fa42a8fb2d7a4c83af2c"
     },
