@@ -1207,7 +1207,7 @@
     {
       "focus": "tests/cache-countdown.test.ts",
       "initialBlob": "ec7800207adfe05b026b4fc0cdcc715db2a8801b",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_5bc31e3d",
@@ -1228,11 +1228,15 @@
           "id": "task_79840549",
           "candidate": "03755e5b3097404d6c9ce755407754702cdaeb04",
           "base": "7274d3c43360c22c1569aff93123ec97179f80af",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent request histories remove cumulative append/debt bookkeeping; capture fixture records real registrations not policy. Settings/evidence and persistence/delivery lifetimes separate, session replacement chronology retained; timing/replay assertions directly prove distinctions.",
+          "checks": "Independent 19 tests/67 assertions; SDK/native/footer dependency-blocked, actual related source/tests read; diff clean."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "0e9faeaa1de954835aea36d309bede70079c9ec6",
+      "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
         "judge": "task_7fc83ddf",
@@ -1289,7 +1293,7 @@
     {
       "focus": "tests/goals.test.ts",
       "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_6d7a5ed8",
@@ -1366,6 +1370,21 @@
             "src/goals/store.ts": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
             "src/goals/types.ts": "8ccbe88cc95296fc9fa4c224c72c7cf2c447c5bd"
           }
+        },
+        {
+          "id": "task_d26b0999",
+          "candidate": "3ae9918527f5233e52e6683774e02438e37bf31f",
+          "base": "fcbade1c776f50c86bdd29dd5d365936d3a6fa5d",
+          "status": "running",
+          "priorVerdicts": [
+            "task_a7f9ce2d ACCEPT",
+            "task_4a2a31dd ACCEPT",
+            "task_134ecfd8 ACCEPT combined"
+          ],
+          "priorObjections": [
+            "Observed tsc TS2554 tests/goals.test.ts:560: h.runtime.handle(\"goal.get\") lacks required second argument. Fresh file-worker correction and new actual-code judge required. Runtime tests pass but compile does not."
+          ],
+          "writerResponse": "Pass explicit undefined RPC params to required GoalRuntime.handle contract, preserving genuine before-start assertion and reminder invalidation. No production change."
         }
       ],
       "acceptedBlob": "53c72e5e41d625d696a76c2fe039de25e79ce733",
