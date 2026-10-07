@@ -773,8 +773,15 @@
     {
       "focus": "src/session/host.ts",
       "initialBlob": "3879d5948ecb7335d2e702222068dcb8e199a603",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_9fef6998",
+          "launchBase": "ee798ba3e68d341f52c08bb2b2cf428b9c0b36d3",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9fef6998",
+          "branch": "bruv/primary-session-host-9fef6998"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -1492,13 +1499,20 @@
       "focus": "tests/fixtures/history-io-short-writes.ts",
       "initialBlob": null,
       "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_d44d38b0",
           "launchBase": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_d44d38b0",
-          "branch": "bruv/primary-short-write-fixture-d44d38b0"
+          "branch": "bruv/primary-short-write-fixture-d44d38b0",
+          "commit": "0100f6e726bea78b391b356fe9c9e8846e133719",
+          "changedPaths": [
+            "tests/history-storage-io.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Fixture unchanged: linear partial-write failure/byte rollback/retry; fault counters child-owned, parent awaits drained exit before temp cleanup. Related parent import order fixed only.",
+          "checks": "Focused combined Biome/tsc pass; fixture 1 pass/6 assertions; parent/history 24 pass/91 assertions; compatibility 12 pass/58 assertions; diff clean; no physical disk-exhaustion proof."
         }
       ],
       "judgeRounds": [],
