@@ -196,7 +196,7 @@
     {
       "focus": "src/questions/picker.ts",
       "initialBlob": "b3e4f1c4c717ddd9d1091c46e8f3b46b67b9c900",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_b3e92305",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b3e92305",
@@ -207,13 +207,21 @@
       "judgeRounds": [
         {
           "id": "task_0cb4a524",
-          "status": "running",
+          "status": "complete",
           "candidate": "27c0eda3b2533c39a88047af57c5c7b84ae1fb67",
-          "base": "f256384cb549f1987e9b32969ae3c09069454b53"
+          "base": "f256384cb549f1987e9b32969ae3c09069454b53",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Selection/layout fields have concrete local meaning; picker returns value without submission authority. Adapter retains navigation/editor retry/owner-version checks; remote/root consumers own reply dispatch/modal/focus.",
+          "checks": [
+            "full code/callers/test read and diff clean",
+            "independent tests blocked by package setup;18/220 remains writer-reported",
+            "no compiled TUI claim"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "b3e4f1c4c717ddd9d1091c46e8f3b46b67b9c900",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
       "changedRelatedPaths": [],
       "readingResult": "No-change: picker owns filtering/selection/resize restoration/detail paging; adapter owns mounting/editor retries/owner-version submission.",
@@ -311,7 +319,7 @@
     {
       "focus": "src/tasks/agent-progress.ts",
       "initialBlob": "8089026a5b78616d952d89fc91f466fd757e0490",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_717608b7",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_717608b7",
@@ -322,13 +330,21 @@
       "judgeRounds": [
         {
           "id": "task_c2bc3a8f",
-          "status": "running",
+          "status": "complete",
           "candidate": "5c3d27c435dddab11810de524dbbef94bc27856b",
-          "base": "f256384cb549f1987e9b32969ae3c09069454b53"
+          "base": "f256384cb549f1987e9b32969ae3c09069454b53",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "JSONL framing→tool/handoff/reply projection→close settlement are separate; clipped inspection vs answer-tail policies and historical error vs latest failure are purposeful.",
+          "checks": [
+            "independent39 pass236 assertions",
+            "read-only clipping/tail/image exclusion/recovery probe pass",
+            "no full build/provider/SSH"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "8089026a5b78616d952d89fc91f466fd757e0490",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
       "changedRelatedPaths": [],
       "readingResult": "No-change: JSONL framing, tool/handoff/reply projection and process settlement separated; inspect text and retained answer tails intentionally differ.",
@@ -413,7 +429,7 @@
     {
       "focus": "src/tasks/completion-notification.ts",
       "initialBlob": "d9cb46b93e636ab2da2b01f2534ef5eb6b66d9ae",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_672581ab",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_672581ab",
@@ -421,7 +437,14 @@
         "base": "f256384cb549f1987e9b32969ae3c09069454b53",
         "commit": "81fea008fb3a637c997b470c534584a4447c4b7f"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_1a568352",
+          "status": "running",
+          "candidate": "81fea008fb3a637c997b470c534584a4447c4b7f",
+          "base": "f256384cb549f1987e9b32969ae3c09069454b53"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
@@ -436,43 +459,74 @@
     {
       "focus": "src/tasks/foreground-stop.ts",
       "initialBlob": "f58ab9393447ade92677a85bb1f882b73f5662ea",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_de66cfbe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_de66cfbe",
         "branch": "bruv/primary-src-tasks-foreground-stop.ts-de66cfbe",
         "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
+        "commit": "f90c2951fd7aabf089fc27be8686a0a18abd9e8e"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
+      "changedRelatedPaths": [],
+      "readingResult": "No change: admission→await delivery ACK→listener release→authority validation→cancel request; ACK distinct from completion for ordinary/live owner.",
+      "checks": [
+        "16 tests367 assertions incl source CLI ACK-before-cancel",
+        "no build"
+      ]
+    },
+    {
+      "focus": "src/tasks/job-attention.ts",
+      "initialBlob": "ca8cfabde5250344a14d03571eae1c868733a4c3",
+      "status": "primary-running",
+      "primary": {
+        "id": "task_0a24c1f9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_0a24c1f9",
+        "branch": "bruv/primary-src-tasks-job-attention.ts-0a24c1f9",
+        "base": "8b0b918042918037a96f996bd29f91e2624a166a",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465"
-    },
-    {
-      "focus": "src/tasks/job-attention.ts",
-      "initialBlob": "ca8cfabde5250344a14d03571eae1c868733a4c3",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a"
     },
     {
       "focus": "src/tasks/job-service.ts",
       "initialBlob": "3da97dcff05991e977081794f47aaad247a3cea6",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_0d4cb273",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_0d4cb273",
         "branch": "bruv/primary-src-tasks-job-service.ts-0d4cb273",
         "base": "62cfd14185774a6357c0f758bd82234f5c20344f",
-        "commit": null
+        "commit": "62b8e7949c68612fdf86dcd8599120650b313ed0"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_6181fd8e",
+          "status": "running",
+          "candidate": "62b8e7949c68612fdf86dcd8599120650b313ed0",
+          "base": "62cfd14185774a6357c0f758bd82234f5c20344f"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "62cfd14185774a6357c0f758bd82234f5c20344f"
+      "launchBase": "62cfd14185774a6357c0f758bd82234f5c20344f",
+      "changedRelatedPaths": [
+        "src/tasks/job-service.ts",
+        "tests/worktree-workspace.test.ts"
+      ],
+      "readingResult": "Reserve→pin once→prepare/setup/activate→bounded wait operations replace interwoven worktree dispatch; cleanup and setup ownership grouped, manager/native/SSH authority preserved.",
+      "checks": [
+        "114 tests930 assertions",
+        "typecheck/format pass; lint no errors",
+        "new async setup test passes fish",
+        "bridge uses unchanged area runner; no full build/live SSH"
+      ]
     },
     {
       "focus": "src/tasks/local-agent-termination.ts",
@@ -522,11 +576,18 @@
     {
       "focus": "src/tasks/task-lifecycle.ts",
       "initialBlob": "606cc77e964e261f87c5c5777210584772e32747",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_da66c8c9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_da66c8c9",
+        "branch": "bruv/primary-src-tasks-task-lifecycle.ts-da66c8c9",
+        "base": "8b0b918042918037a96f996bd29f91e2624a166a",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a"
     },
     {
       "focus": "src/tasks/task-manager.ts",
