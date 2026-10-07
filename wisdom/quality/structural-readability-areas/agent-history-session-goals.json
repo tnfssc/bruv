@@ -342,7 +342,7 @@
     {
       "focus": "src/agent/manual-shake.ts",
       "initialBlob": "238257a3a9b17501825647ca16dbf5e38daba6c6",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_dd5dc858",
@@ -364,11 +364,18 @@
           "id": "task_c5c84c0c",
           "candidate": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
           "base": "8e3b36d9dc6b0ccf893791e119a71a60831ce972",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Protocol evidence/plan/match/authorize/rewrite/commit responsibilities distinct; replay no longer plans checkpoint just for ambiguity. Original occurrence/redaction/duplicate/order safety and native full-window coverage preserved. One commit owns append/rollback/carry block; callers retain policy.",
+          "checks": "Independent 122 tests/712 assertions across 11 files; focused format/diff pass; lint 2->4 warnings justified exact-match indices, no safety blocker.",
+          "acceptedRelatedBlobs": {
+            "tests/manual-shake.test.ts": "cf84c73d7f7669bb6fcb42ec6954c68c2a27f22c"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "51bbeaf48a9a3fab8d9cdfb58eca338c92350337",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/agent/native-compaction.ts",
@@ -1721,7 +1728,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
+        "judge": "task_c5c84c0c",
+        "verdict": "ACCEPT",
+        "blob": "cf84c73d7f7669bb6fcb42ec6954c68c2a27f22c",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/native-compaction-shake-coverage.test.ts",
@@ -2112,7 +2126,7 @@
       "focus": "tests/fixtures/transcript-snapshots.ts",
       "initialBlob": null,
       "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_e8c1f4a2",
@@ -2128,7 +2142,14 @@
           "checks": "Isolated fixture 15/55; wrapper 1 pass; strict focused type/format/lint/diff pass; injected assertion baseline pending vs candidate settled; marker refusal preserves sentinel; no full compile/platform claim."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_a19d2f25",
+          "candidate": "b8e3ca50e2975b03255962af351f20c1dad57f16",
+          "base": "69fa3b70dfa8987a2bf8784a73c66d650fe43f48",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
       "relatedPatchReview": {
