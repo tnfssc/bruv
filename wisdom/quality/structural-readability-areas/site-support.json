@@ -5,8 +5,15 @@
     {
       "focus": "site/.gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_e433e2c2",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_e433e2c2",
+          "branch": "bruv/primary-site-.gitignore-e433e2c2",
+          "base": "4175acd2ef96419451a130dec86c6ce2d3f78cf0"
+        }
+      ],
       "judges": [],
       "initialBlob": "b9470778764f72c5257a3361590d2994547f90e1"
     },
@@ -170,7 +177,7 @@
     {
       "focus": "site/html-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_0fff100d",
@@ -185,7 +192,10 @@
         {
           "id": "task_7c587dbb",
           "candidate": "6aef65244d48cb0fac62d8ee80886177d3e9a654",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Local copied style-run grouping -> escaping/RGB spans -> row wrapper directly readable; producer-owned type-only Cell import clear. Judge independently 6 demos tests and 7 serializer assertions including frozen-input preservation. Browser inspected not rerun.",
+          "objections": []
         }
       ],
       "initialBlob": "7c70d1bdd3c530eddb002adeffd1d1f7be2f5dc1",
@@ -195,7 +205,10 @@
         "blob": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
         "verdict": "ACCEPT",
         "needsOwnPrimary": true
-      }
+      },
+      "acceptedBlob": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/index.html",
@@ -349,7 +362,7 @@
     {
       "focus": "site/scripts/build.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_3a3293a9",
@@ -360,7 +373,13 @@
           "result": "No source change; URL metadata authority direct, layout matrix inputs/assertions together, frame baseline/playback mutation local. 10 tests/123298 assertions; no browser/build/full gate."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_53cb3831",
+          "candidate": "d27476d3d0d4fe4702ede2e20c535ccff6093c48",
+          "state": "running"
+        }
+      ],
       "initialBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799"
     },
     {
@@ -531,13 +550,15 @@
     {
       "focus": "site/scripts/install-ui.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_072fdc49",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_072fdc49",
           "branch": "bruv/primary-site-scripts-install-ui.test.ts-072fdc49",
-          "base": "25a89310c4b2c6e98d321674fc7b75bcf02e69f0"
+          "base": "25a89310c4b2c6e98d321674fc7b75bcf02e69f0",
+          "commit": "7fdbc657f08ff313669b6ea2cb786e6732c36e83",
+          "result": "observeTerminal owns bundle instrumentation/observations; targets expose pixel coordinates and column bounds; desktop/mobile have independent snapshots instead of overwritten hit variables. Actions/assertions remain visible. 2 tests/52 assertions pass; format/diff pass;screenshots restored."
         }
       ],
       "judges": [],
@@ -708,6 +729,16 @@
       "command": "cd site; bun run test",
       "result": "34 pass,0 fail,5705802 assertions across 7 files; real build and Chromium validate passed: desktop/mobile/touch/no-JS, errors empty",
       "limits": "No physical device, full-root CI or live-provider claim."
+    },
+    {
+      "commit": "25a89310..4175acd2",
+      "jobs": [
+        "task_b91e76a4",
+        "task_bcf9b2d3",
+        "task_79aea0ab"
+      ],
+      "result": "All site TS except unchanged historical capture-real.ts passes strict tsc --ignoreConfig --noEmit --strict --skipLibCheck --types bun --target ES2023 --module Preserve --moduleResolution Bundler. Full site strict attempt retains six capture-real diagnostics (five implicit any, /ghostty-web.js browser import). Format passes; lint 105 warnings/90 infos, no errors. First probe omitted --types bun and failed; corrected probe used explicit Bun types.",
+      "limits": "Do not claim all-site strict clean or root typecheck from this."
     }
   ]
 }

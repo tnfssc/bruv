@@ -29,3 +29,5 @@ site/scripts/extract-cells.ts: Geometry is single authority and browser returns 
 support/gpt-live-explained.html: Static task/handoff/authority/control narrative is structurally clear. Judge traced actual live authority/cancellation callers/tests. NO current-content endorsement: lines 19/21 incorrectly describe GPT-Live as unshipped; separate content refresh needed. No tests/browser/provider/build rerun.
 
 site/scripts/animation.ts: Typed shared terminal observation and control/cell coordinate operations remove repeated protocol decoding. Independent immutable checkpoints clarify desktop and touch progression. Judge 7 playback/layout/scroll tests; browser harness writer-only proof. Desktop-only error collector unchanged; combined type fix outside candidate.
+
+site/html-cells.ts: Local copied style-run grouping -> escaping/RGB spans -> row wrapper directly readable; producer-owned type-only Cell import clear. Judge independently 6 demos tests and 7 serializer assertions including frozen-input preservation. Browser inspected not rerun.
