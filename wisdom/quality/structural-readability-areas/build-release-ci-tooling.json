@@ -1543,19 +1543,29 @@
     {
       "focus": "tests/connector-update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_23398c8b",
           "launchBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_23398c8b",
           "branch": "bruv/primary-tests-connector-update.test.ts-23398c8b",
+          "state": "completed",
+          "commit": "150cc2abe7c5f2daca57c5e4712f5958278b2d63"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_4a768c2f",
+          "base": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+          "candidate": "150cc2abe7c5f2daca57c5e4712f5958278b2d63",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Named entrycontract/install journeys replace positionalslicing;exactdownloadseq/bothproductprobes/exactconnectorbytes/bothchecksumfail/wrongproduct/symlinkauthority.",
+      "checks": "66connector/updatertests rollback plus12actualpair existingtests;tsc/Biome;acceptedfixture/source unchanged."
     },
     {
       "focus": "tests/dependency-updates.test.ts",
@@ -2363,36 +2373,62 @@
     {
       "focus": "tests/update-release-shape.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-pending",
       "primary": [
         {
           "id": "task_dc6a6799",
           "launchBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_dc6a6799",
           "branch": "bruv/primary-tests-update-release-shape.test.-dc6a6799",
-          "state": "running"
+          "state": "completed",
+          "commit": "1651a56fc3d5a8cbe259339a3d8aa73c4306096a"
         }
       ],
       "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/update-release-shape.md"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Explicit metadata/payloadmutations and actualemittedlauncher/stagedsiblingidentity replace diskfixtures/filename-onlyprobes;bothsiblings+cleanup failures,tarrejectactualupdater.",
+      "checks": "34focus92combined;tsc/Biome;actualLinuxpair default-runner installpass;crossplatformsimulated."
     },
     {
       "focus": "tests/update-self-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_1fdcbe47",
           "launchBase": "452205ec0667aad35ef854a9862d4b5182143095",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_1fdcbe47",
           "branch": "bruv/primary-tests-update-self-fixture.ts-1fdcbe47",
-          "state": "running"
+          "state": "completed",
+          "commit": "346d492a3d4d24f3a5990e4c40c6f9388603cb4e"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "judges": [
+        {
+          "id": "task_81083bad",
+          "base": "452205ec0667aad35ef854a9862d4b5182143095",
+          "candidate": "346d492a3d4d24f3a5990e4c40c6f9388603cb4e",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "One closedrelease map/transport and explicitrunner boundary removes duplicated URLauthority;runtimeassetselection explicitfix Linuxx64 assumption,optionalversion defaultpreserved0.3.0. No networkfallback;sourceunauthorized;real compiled probes retained.",
+          "checks": "Independent58tests258assertions;tsc/changedBiomepass;wrongversion keepsboth and removesstage;actual0.16.14payload bytes/probes and unchangedrunner/sourcehashes. Linuxonly,no productrebuild.",
+          "acceptedBlobs": {
+            "tests/update-self-fixture.ts": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d",
+            "tests/update-self-fixture.test.ts": "18ec63dc2d6927f4af87c6d7677b247ca7205340"
+          }
+        }
+      ],
+      "relatedPaths": [
+        "tests/update-self-fixture.test.ts"
+      ],
+      "acceptedBlob": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d",
+      "readingResult": "Closed releaseconstruction + explicit runner replaces interleaved URL/execution;explicitfix runtimeasset selection insteadLinuxx64;optionalversion for realpair(default0.3.0).",
+      "checks": "58tests258assertions;tsc/Biome;new tests/update-self-fixture.test.ts transport/sourceauthority/cleanup/compiledactualpair installation;frozenunchanged.",
+      "integrationState": "Fullfixture+newtestpatch integrated after fullpatchjudge;newtest separateprimarypending;noteexcluded."
     },
     {
       "focus": "tests/update-v0.16.3-fixture.ts",
@@ -2474,8 +2510,16 @@
     {
       "focus": "tests/verify-update-probe.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_7b923de0",
+          "launchBase": "ac29bd4f75d9ec48b381061ae775ee9b265ecc73",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7b923de0",
+          "branch": "bruv/primary-tests-verify-update-probe.test.t-7b923de0",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -2647,6 +2691,34 @@
       "readingResult": "Separate ordered argv/checksum observations replace flattened logs;named independent failures with exact cutoff replace loop-hidden failures. Five failurepoints/API refusal/byte-exact no-partial-env retained.",
       "checks": "15combinedpass;strict tsc/Biome/diffpass;no builds/live.",
       "integrationState": "Full final focus patch integrated;EXTRA primary/finaljudge complete;setup sourceunchanged,notesexcluded."
+    },
+    {
+      "focus": "tests/update-self-fixture.test.ts",
+      "initialBase": "452205ec0667aad35ef854a9862d4b5182143095",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPatchJudgment": {
+        "candidate": "346d492a3d4d24f3a5990e4c40c6f9388603cb4e",
+        "judge": "task_81083bad",
+        "state": "accepted",
+        "blob": "18ec63dc2d6927f4af87c6d7677b247ca7205340",
+        "primaryStillRequired": true
+      },
+      "introducedBy": "task_1fdcbe47"
+    },
+    {
+      "focus": "tests/update-release-shape.md",
+      "initialBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "introducedBy": "task_dc6a6799",
+      "relatedPatchJudgment": {
+        "candidate": "1651a56fc3d5a8cbe259339a3d8aa73c4306096a",
+        "state": "judge-pending",
+        "primaryStillRequired": true
+      }
     }
   ],
   "crossAreaNeeds": [],

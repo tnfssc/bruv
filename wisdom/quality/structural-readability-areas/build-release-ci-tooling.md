@@ -136,3 +136,5 @@ Toolingfixture tests task_900a3c32 ACCEPT0e9728fc:readableprograms/controlledpar
 Isolation REJECT resolved only after freshworker21c70b4e and freshjudgecfbac1d2 ACCEPT2ff5cc4e. Judge independently reproduces oldrole falsepass and repairedTUI bypassfailure under parentnormal,plusdirectchildfailure/restoredsuccess. Full explicit-env/cleanup patch integrated;7/36tsc/Biome,scope unchanged. Priorrejection retained.
 
 Parent checkpoint db885fce joined after clean merge-tree6020cc0e;107parentpaths since common65e0d218,no area-focus overlap. All67acceptedblobs verifiedunchanged aftermerge. Otherarea source remains parent-owned;finalcombinedbinary proof will rebuild currentcommon code.5remainingfocusrows explicit.
+
+Selfupdater fixture task_81083bad ACCEPTa6959fca plus relatednewtest18ec63dc:closed release transport/explicitrunner,runtimeasset correction and optionalversion(default0.3.0).58/258+tsc/Biome;source refusal/wrongversion preservation/staging cleanup/actual0.16.14pair bytes and runnerhash. Newtest still needs ownprimary/judge.
