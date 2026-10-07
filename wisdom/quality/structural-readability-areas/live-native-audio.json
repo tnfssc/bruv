@@ -898,9 +898,16 @@
         "branch": "bruv/primary-src-live-cost.ts-2995e9e9",
         "launchBase": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_4b5c5997",
+          "status": "running",
+          "candidate": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+          "base": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot;related accepted extension blobs will require fresh judgment",
+      "integration": "judge running;related extension accepted blobs pending rejudgment",
       "relatedPaths": [
         "src/live/extension.ts",
         "tests/live-cost.test.ts",
@@ -974,12 +981,17 @@
         "launchBase": "16182b5898049994a37630cbfbf761eb6b7b982b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7bb5cb79",
         "branch": "bruv/primary-src-live-editor-push-to-talk.ts-7bb5cb79",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "7f72408d2e97646332d752d423d96ccbf56d310c"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [
+        "tests/editor-push-to-talk.test.ts"
+      ],
+      "readingResult": "Explicit pendingSpaceBatch owns held-space/edit evidence;recognition chooses ordinaryinsert vs guardedpromotion;startTalking consumesundo newestfirst andopenscapture onlyafterguards. Rawrelease/focus/paste/navigation,epochs/Abortattachment intact.",
+      "checks": "114tests634assertions discriminator/realeditor/extension/offlineCLI;14discriminatorcases baseline-pass;strictTS/Biome/diff;assetsresolved initialCLIerrors then80/120columns pass. No behaviorfix/provider/device/macOS."
     },
     {
       "focus": "src/live/embedded.ts",
@@ -1396,7 +1408,8 @@
           "checks": "Independent80pass726 assertions+3 import errors;writer190pass not reproduced. No build/typecheck/provider/device proof.",
           "acceptedBlobs": {
             "src/live/types.ts": "982613947af84d36edeb598916e7826fc3f43190"
-          }
+          },
+          "base": "9b2a7153f08d1f3604ddfbb5921c5e12f8259f8c"
         }
       ],
       "acceptedBlob": "982613947af84d36edeb598916e7826fc3f43190",
@@ -1551,10 +1564,17 @@
     {
       "focus": "tests/gpt-live-session.test.ts",
       "initialBlob": "8cb2e77fbaf1c0853b0f458b445b10a08a1b92d1",
-      "primary": null,
+      "primary": {
+        "id": "task_1a45d152",
+        "launchBase": "01f5af72fa90b817e0242978b5d99b37bc8199e2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1a45d152",
+        "branch": "bruv/primary-tests-gpt-live-session.test.ts-1a45d152",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_86206c2a",
         "verdict": "ACCEPT",
@@ -2344,13 +2364,20 @@
       "judgeRounds": [
         {
           "id": "task_3b13ed9b",
-          "status": "running",
+          "status": "complete",
           "candidate": "2e62282fd6ca936b142a6f16a60ad69e96770804",
-          "base": "186634bd6a0ef9906a3ccc8cedba4bdc47f4dd33"
+          "base": "186634bd6a0ef9906a3ccc8cedba4bdc47f4dd33",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Exact framingbytes/readassertions adjacent;unplug scenario requires checkedunload thenstop/stopped,negative EOF/error/silence evidence direct;contextcleanup and protocolack distinct;no tangledfixture.",
+          "checks": "Independent7source-removal+5virtual tests pass,diffclean;no helper/physicalunplug/provider/macOS proof.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/test_source_removal.py": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32",
+      "integration": "accepted unchanged own-primary final blob",
       "relatedPatchJudgment": {
         "judgeId": "task_46031fcf",
         "verdict": "ACCEPT",
