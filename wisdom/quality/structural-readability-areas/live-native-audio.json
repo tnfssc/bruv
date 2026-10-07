@@ -157,10 +157,17 @@
     {
       "focus": "native/live-linux/tests/capture-protocol.py",
       "initialBlob": "86a6f83cd562f0ab9f7e77bc7257f451c540a4c1",
-      "primary": null,
+      "primary": {
+        "id": "task_c8643d8b",
+        "launchBase": "6f82665bbbe90a15958576f541f5be68217232bf",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c8643d8b",
+        "branch": "bruv/primary-native-live-linux-tests-capture--c8643d8b",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live-linux/tests/protocol.py",
@@ -1226,19 +1233,22 @@
         "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_90932544",
         "branch": "bruv/primary-tests-editor-voice-integration.t-90932544",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "1bebfe90e9b17b318805063068d637b4f1f8b1b5"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_14234cb0",
         "verdict": "ACCEPT",
         "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
         "blob": "95453da9cb3f0827a96b955c60f854e905939dac",
         "reason": "UI attachment/controller/hook/reporting lifetime patch; same judged blob in parent checkpoint"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Independent cancellation journeys show hold/cancel/release/freshhold;mouse/programmatic edits separate;fixture owns all attachment disposers including reattach and teardown before clock restore;actual SDK/draft/undo/focus/stale-detach evidence retained.",
+      "checks": "22 primary tests83 assertions;39 across3 editor suites171 assertions;Biome/typecheck afterassets/diff pass;no production fix/device/provider/macOS."
     },
     {
       "focus": "tests/fixtures/live-execute-cli.sh",
