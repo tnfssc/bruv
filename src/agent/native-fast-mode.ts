@@ -1,4 +1,4 @@
-import { selectDiskBackedEntries } from "../history/session-manager";
+import { getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -155,12 +155,19 @@ function resolveSetting(
       },
     };
   }
-  const entries =
-    selectDiskBackedEntries(
-      ctx.sessionManager,
-      "branch",
-      (meta) => meta.type === "custom" && meta.customType === NATIVE_FAST_ENTRY,
-    ) ?? branch(ctx);
+  const latest = getLatestDiskBackedCustomEntry(ctx.sessionManager, NATIVE_FAST_ENTRY, (entry) => {
+    // Malformed identity is authoritative; well-formed records for another
+    // session/model may be skipped, just as in the native branch scan below.
+    const data = entry.data;
+    return (
+      !record(data) ||
+      !boundedId(data.sessionId) ||
+      !boundedId(data.provider) ||
+      !boundedId(data.model) ||
+      (data.sessionId === sessionId && data.provider === model.provider && data.model === model.id)
+    );
+  });
+  const entries = latest === undefined ? branch(ctx) : latest ? [latest] : [];
   for (let index = entries.length - 1; index >= 0; index--) {
     const entry = entries[index];
     if (entry?.type !== "custom" || entry.customType !== NATIVE_FAST_ENTRY) continue;

@@ -71,10 +71,9 @@ export function getLatestDiskBackedCustomEntry(
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
   let id = internals(manager as SessionManager).leafId;
-  const seen = new Set<string>();
+  let steps = 0;
   while (id) {
-    if (seen.has(id)) throw new Error("Active history branch contains a cycle");
-    seen.add(id);
+    if (++steps > owned.store.entries.length) throw new Error("Active history branch contains a cycle");
     const meta = owned.store.byId.get(id);
     if (!meta) throw new Error("Active history branch contains a broken parent link");
     if (meta.type === "custom" && meta.customType === customType) {
@@ -259,9 +258,12 @@ function contextMetadata(path: EntryMetadata[]): EntryMetadata[] {
 
 /** Visit active-branch metadata newest first without copying the branch.
  * The resident entry count bounds the walk, including cyclic parent links.
- * Undefined means an unowned manager.
+ * Return false to stop at an authority boundary. Undefined means an unowned manager.
  */
-export function visitDiskBackedBranch(manager: object, visit: (metadata: EntryMetadata) => void): true | undefined {
+export function visitDiskBackedBranch(
+  manager: object,
+  visit: (metadata: EntryMetadata) => void | boolean,
+): true | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
   let id = internals(manager as SessionManager).leafId;
@@ -270,10 +272,24 @@ export function visitDiskBackedBranch(manager: object, visit: (metadata: EntryMe
     if (++steps > owned.store.entries.length) throw new Error("Active history branch contains a cycle");
     const meta = owned.store.byId.get(id);
     if (!meta) throw new Error("Active history branch contains a broken parent link");
-    visit(meta);
+    if (visit(meta) === false) break;
     id = meta.parentId;
   }
   return true;
+}
+
+/** Filter the active branch before loading originals. Only selected records are
+ * retained, in public-API (oldest-first) order; no branch-sized path or ID set.
+ */
+export function selectDiskBackedBranchEntries(
+  manager: object,
+  select: (metadata: EntryMetadata) => boolean,
+): SessionEntry[] | undefined {
+  const entries: SessionEntry[] = [];
+  const indexed = visitDiskBackedBranch(manager, (metadata) => {
+    if (select(metadata)) entries.push((manager as SessionManager).getEntry(metadata.id)!);
+  });
+  return indexed ? entries.reverse() : undefined;
 }
 
 /** Select indexed candidates from the same branch/context as the public APIs.

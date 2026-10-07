@@ -1,3 +1,4 @@
+import { getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import type { TaskOwnerBinding, TaskOwnerObserver } from "../tasks/task-owner";
 import { registerRollingActivity } from "../ui/rolling-activity";
 import { installSdkTaskRows } from "../ui/sdk-task-rows";
@@ -6,7 +7,7 @@ import {
   taskRowFromRemote,
   taskRowKey,
   taskRowsFromDetails,
-  taskRowsFromSessionEntries,
+  taskRowsFromSessionManager,
   upsertTaskRow,
   type TaskRow,
 } from "../ui/task-rows";
@@ -162,7 +163,13 @@ export default function asynchronousTasksExtension(
       const sessionManager = ctx.sessionManager as
         | { getBranch?: () => unknown; getEntries?: () => unknown }
         | undefined;
-      const entries = sessionManager?.getBranch?.() ?? sessionManager?.getEntries?.() ?? [];
+      const latest = sessionManager && getLatestDiskBackedCustomEntry(sessionManager, "bruv-agent");
+      const entries =
+        latest === undefined
+          ? (sessionManager?.getBranch?.() ?? sessionManager?.getEntries?.() ?? [])
+          : latest
+            ? [latest]
+            : [];
       if (!Array.isArray(entries)) throw new Error("Invalid session entries");
 
       let marker: Record<string, unknown> | undefined;
@@ -919,7 +926,7 @@ export default function asynchronousTasksExtension(
   pi.on("session_start", async (_event, ctx) => {
     owningContext = ctx;
     transcriptRows.clear();
-    for (const row of taskRowsFromSessionEntries(ctx.sessionManager.getBranch()))
+    for (const row of taskRowsFromSessionManager(ctx.sessionManager))
       upsertTaskRow(transcriptRows, row.status === "running" ? { ...row, status: "unknown" } : row);
     restoreTaskRows?.();
     restoreTaskRows =
