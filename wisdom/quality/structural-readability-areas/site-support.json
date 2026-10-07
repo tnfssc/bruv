@@ -32,7 +32,8 @@
       "acceptedBlob": "b9470778764f72c5257a3361590d2994547f90e1",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/brand/bruv-icon.svg",
@@ -64,7 +65,8 @@
       "acceptedBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark-light.svg",
@@ -96,7 +98,8 @@
       "acceptedBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark.svg",
@@ -128,7 +131,8 @@
       "acceptedBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/brand/wordmark-cells.json",
@@ -160,7 +164,8 @@
       "acceptedBlob": "7690aff87443de0a97521444bb7a64546f568f4e",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/cli-settings.txt",
@@ -192,7 +197,8 @@
       "acceptedBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/settings-cells.json",
@@ -224,7 +230,8 @@
       "acceptedBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/brand.ts",
@@ -265,7 +272,8 @@
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
       "acceptedBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/capture.ts",
@@ -280,9 +288,7 @@
           "commit": "f1fbca6a73dbd788dd994fd40d9ddb37cbb0c691",
           "result": "reflowMenuRow owns label/value alignment+fallback,wrapRow styled line splitting; settingsCapture native output or decode/dispatch instead of interleaved fit/continue.10 tests/123298 assertions,widths1-110 complete baseline output parity incl source/full-width identity;TS/format/lint pass. Only tests currently call capture;not current shipped demo path.",
           "state": "completed",
-          "changedPaths": [
-            "site/capture.ts"
-          ]
+          "changedPaths": ["site/capture.ts"]
         }
       ],
       "judges": [
@@ -299,7 +305,8 @@
       "acceptedBlob": "ea72ee5ebc5145f474b9b9e3a2b3f7afeb49f54b",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/content.ts",
@@ -331,7 +338,8 @@
       "acceptedBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/demos.test.ts",
@@ -346,9 +354,7 @@
           "commit": "5517249dd1180a80bec468b8aebb58bc4cb2458b",
           "result": "Each story owns assertions; hold/wrap,pause,offscreen,visibility have independent setups instead of shared wrapped zero clock. Nonzero freeze tests catch reset mutation baseline missed. 11 tests/5582285 assertions,format/diff pass; existing lint warning. No production edits.",
           "state": "completed",
-          "changedPaths": [
-            "site/demos.test.ts"
-          ]
+          "changedPaths": ["site/demos.test.ts"]
         }
       ],
       "judges": [
@@ -373,7 +379,8 @@
       "acceptedBlob": "9a554baa5a3a7c3ae6e4d424a6af2cd8fd02c7c8",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/demos.ts",
@@ -388,11 +395,7 @@
           "commit": "54a43b76809cac9f4290e1c170ecb2aaa160f6fc",
           "result": "Transcript projection forms explicit turns and computes each tool summary once instead of backward/forward searching while rendering; footer fitting separate. Explicit incidental fix missing ./type: Cell owned by producer demos.ts; html-cells imports it. Changed demos.ts,demos.test.ts,html-cells.ts. 16 tests,4994 complete frame/style/stage baseline comparisons,targeted strict TS/Biome pass. Judge related patch too; related files get their own primary later.",
           "state": "completed",
-          "changedPaths": [
-            "site/demos.test.ts",
-            "site/demos.ts",
-            "site/html-cells.ts"
-          ]
+          "changedPaths": ["site/demos.test.ts", "site/demos.ts", "site/html-cells.ts"]
         }
       ],
       "judges": [
@@ -406,13 +409,11 @@
         }
       ],
       "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23",
-      "changedRelatedPaths": [
-        "site/demos.test.ts",
-        "site/html-cells.ts"
-      ],
+      "changedRelatedPaths": ["site/demos.test.ts", "site/html-cells.ts"],
       "acceptedBlob": "5f211cd265a0d4cb8377b5148fa13281f2ccb5fa",
       "integration": "full coherent patch integrated; related files still need their own fresh primary and judge",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/html-animation.ts",
@@ -427,9 +428,7 @@
           "commit": "79091f23d4496931af90ea863ed9f5e812126397",
           "result": "HtmlDemo owns complete panel operations instead of mount interleaving per-panel state/UI with shared scheduling/observer lifetime. Click toggle updates UI then mount schedules; reduced-motion holds final frame then reschedules; shared clock/observers/listeners/teardown remain together. 19 existing tests, focused TS, formatting/diff pass. Only html-animation.ts source changed.",
           "state": "completed",
-          "changedPaths": [
-            "site/html-animation.ts"
-          ]
+          "changedPaths": ["site/html-animation.ts"]
         }
       ],
       "judges": [
@@ -446,7 +445,8 @@
       "acceptedBlob": "611b710f3e082fde979cb1ea86e462445030a2fa",
       "changedRelatedPaths": [],
       "integration": "exact disjoint candidate patch; no worker note imported",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/html-cells.ts",
@@ -486,7 +486,8 @@
       "acceptedBlob": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/index.html",
@@ -518,7 +519,8 @@
       "acceptedBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/install-command.ts",
@@ -550,7 +552,8 @@
       "acceptedBlob": "955cbf767fa094bd223bee8f0bba424692c3c663",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/install-html.ts",
@@ -582,7 +585,8 @@
       "acceptedBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/layout.ts",
@@ -597,9 +601,7 @@
           "commit": "c2a5542a924202243771bc68252cb61c0113cfc6",
           "result": "composeLanding owns document flow; demoPanel returns positioned content/end; sections explicitly advance max(copyEnd,panel.end), replacing mutable cursor rewind. layout owns clipping/hits/overlays/ANSI. 17 tests and 64 complete output baseline comparisons pass. Missing demos.ts ./type baseline typecheck blocker unchanged.",
           "state": "completed",
-          "changedPaths": [
-            "site/layout.ts"
-          ]
+          "changedPaths": ["site/layout.ts"]
         }
       ],
       "judges": [
@@ -616,7 +618,8 @@
       "acceptedBlob": "128855476c64c4b43bd0258b9064f2b44831878c",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/package.json",
@@ -648,7 +651,8 @@
       "acceptedBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/playback.ts",
@@ -680,7 +684,8 @@
       "acceptedBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e",
       "changedRelatedPaths": [],
       "integration": "area tip blob verified",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/animation.ts",
@@ -695,9 +700,7 @@
           "commit": "375ad0209a72f263e6c2e0e0c07e4dd321ca490d",
           "result": "Typed shared terminal observations/control coordinate conversion/cell scrolling; touch journey local initial/playing/paused observations; desktop mutable checkpoint replaced independent immutable checkpoints. Build and test:animation passed including 3 loops,touch controls,errors empty. Old-base typecheck missing ./type; fixed now in area.",
           "state": "completed",
-          "changedPaths": [
-            "site/scripts/animation.ts"
-          ]
+          "changedPaths": ["site/scripts/animation.ts"]
         }
       ],
       "judges": [
@@ -714,7 +717,8 @@
       "acceptedBlob": "4bea05dabee326db5d3cc42783a45b9f73e66750",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/browser.ts",
@@ -746,7 +750,8 @@
       "acceptedBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/build.test.ts",
@@ -778,7 +783,8 @@
       "acceptedBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/build.ts",
@@ -793,9 +799,7 @@
           "base": "303233f17b57d0990a66df6cd686f9af933206d0",
           "commit": "05d5c22da50b4bcd69e4239b6cd547b07fac2c9a",
           "result": "renderPage chooses mode once instead of six scattered plain decisions; complete page policy grouped; build explicitly writes both pages then bundles/copies. 18 focused tests; generated artifacts byte-identical baseline empty/subpath BASE_URL; invalid URL still rejects before deletion. Only build.ts source changed.",
-          "changedPaths": [
-            "site/scripts/build.ts"
-          ]
+          "changedPaths": ["site/scripts/build.ts"]
         }
       ],
       "judges": [
@@ -812,7 +816,8 @@
       "acceptedBlob": "1cf04b95f42c7d500d2dd302f02f48db84273aba",
       "changedRelatedPaths": [],
       "integration": "exact candidate source patch applied; no overlap; worker note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/capture-demo-source.ts",
@@ -827,9 +832,7 @@
           "commit": "9099a7b7ee45aa8a8648bb66dbac38ec507288de",
           "result": "createCsvReviewReplay(home) owns fixture creation, returns persisted session path; main shows settings -> replay -> isolated launch -> validated captures -> provenance -> cleanup. Baseline/candidate real tmux/unshare offline captures/provenance byte-identical; focused test 1/14 assertions passed. Safety flags/transcript/timing/validation/teardown unchanged.",
           "state": "completed",
-          "changedPaths": [
-            "site/scripts/capture-demo-source.ts"
-          ]
+          "changedPaths": ["site/scripts/capture-demo-source.ts"]
         }
       ],
       "judges": [
@@ -846,7 +849,8 @@
       "acceptedBlob": "cb174478a55a37871373add5263eebfb36de2b19",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/capture-real-pty.py",
@@ -878,7 +882,8 @@
       "acceptedBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/capture-real.ts",
@@ -911,7 +916,8 @@
       "changedRelatedPaths": [],
       "integration": "area tip blob verified",
       "limits": "No screenshot/browser regeneration/typecheck. Existing launch-before-try and close-failure shutdown gaps unchanged. Judge correction: shipped layout uses scripted demo frames, not settingsCapture; historical provenance docs stale.",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/extract-cells.ts",
@@ -926,9 +932,7 @@
           "commit": "a46a0ebf10fd94fa7756ffbc75365361a202f96a",
           "result": "One geometry definition drives rendering/cropped buffer reads/metadata; browser returns final row-local style runs instead of entire terminal grid then Bun regroup/crop; Bun hashes/publishes. Loopback routing unchanged. Baseline/candidate JSON byte-identical;10 tests/123298 assertions;browser validation/strict TS/format pass.",
           "state": "completed",
-          "changedPaths": [
-            "site/scripts/extract-cells.ts"
-          ]
+          "changedPaths": ["site/scripts/extract-cells.ts"]
         }
       ],
       "judges": [
@@ -945,7 +949,8 @@
       "acceptedBlob": "0c08612f134666dff26b631ae44408b7bedde80d",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/generate-wordmark.ts",
@@ -985,7 +990,8 @@
       "acceptedBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/html-animation.test.ts",
@@ -1000,9 +1006,7 @@
           "commit": "dcafa0e98cd6cc5216e326efc4634a327a8129c0",
           "result": "withDemoPage owns setup/awaited assertions/context teardown, tests get Page; final hold names manualClock installed before navigation. Assertions/timings/routing unchanged. 5 Chromium tests/48 expectations,TS/format pass. Behavior delta: setup exceptions now close context; not injected. Judge whether justified lifetime coherence vs speculative defense.",
           "state": "completed",
-          "changedPaths": [
-            "site/scripts/html-animation.test.ts"
-          ]
+          "changedPaths": ["site/scripts/html-animation.test.ts"]
         }
       ],
       "judges": [
@@ -1019,7 +1023,8 @@
       "acceptedBlob": "ec93e1910b0f9d4d1ff2ea31e9f3c1de61086360",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/install-ui.test.ts",
@@ -1034,9 +1039,7 @@
           "commit": "7fdbc657f08ff313669b6ea2cb786e6732c36e83",
           "result": "observeTerminal owns bundle instrumentation/observations; targets expose pixel coordinates and column bounds; desktop/mobile have independent snapshots instead of overwritten hit variables. Actions/assertions remain visible. 2 tests/52 assertions pass; format/diff pass;screenshots restored.",
           "state": "completed",
-          "changedPaths": [
-            "site/scripts/install-ui.test.ts"
-          ]
+          "changedPaths": ["site/scripts/install-ui.test.ts"]
         }
       ],
       "judges": [
@@ -1053,7 +1056,8 @@
       "acceptedBlob": "538556abc76aa8bb294950cbc23b64ac8ac1be84",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/install.test.ts",
@@ -1068,9 +1072,7 @@
           "commit": "14fb20cae47d4ff2cfa33c2a89a65d756f251cb6",
           "result": "Host mocks/release publication coherent owners; fixture owns setup/execution/assertions/cleanup; platform expectations explicit scenario data not repeated selection logic.7 tests/97 assertions retained;TS/Biome;120 mock/asset byte comparisons baseline match. Cleanup now covers setup errors, explicit behavior delta requiring scrutiny; production unchanged.",
           "state": "completed",
-          "changedPaths": [
-            "site/scripts/install.test.ts"
-          ]
+          "changedPaths": ["site/scripts/install.test.ts"]
         }
       ],
       "judges": [
@@ -1087,7 +1089,8 @@
       "acceptedBlob": "1da41ffef989ec064e62295f04d8352eb5137345",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/preview.ts",
@@ -1119,7 +1122,8 @@
       "acceptedBlob": "7b3f72d907458d58798d63986222b4a95ab9608a",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/scroll.test.ts",
@@ -1134,9 +1138,7 @@
           "commit": "6f158bfb311d5fd5f6bf6f0d1807a5834fb8a70b",
           "result": "Fresh accumulator per behavior and separate wheel conversion remove hidden remainder between unrelated scenarios. All original assertions retained,reset setup gains assertion.7 tests/17 assertions;format/diff pass;existing lint info.",
           "state": "completed",
-          "changedPaths": [
-            "site/scripts/scroll.test.ts"
-          ]
+          "changedPaths": ["site/scripts/scroll.test.ts"]
         }
       ],
       "judges": [
@@ -1153,7 +1155,8 @@
       "acceptedBlob": "5a1025b2f60ae7f6ef6ff55951b79cce6edd55f1",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/startup.test.ts",
@@ -1185,7 +1188,8 @@
       "acceptedBlob": "8ff4a906e773189da064dd81b8087d883ab7019b",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/validate.ts",
@@ -1200,9 +1204,7 @@
           "commit": "2ae1bd3d0e19fd395227c9a39e9700e56d8eb2d2",
           "result": "Desktop owns frame/scroll/navigation sequence; mobile owns narrow screens/touch/restoration; fallback owns separate pages. Each returns final evidence rather than shared result mutation. Baseline/candidate Chromium checks.json byte-identical; four tests 22 assertions pass. Five targeted TS imported-file diagnostics identical baseline/candidate.",
           "state": "completed",
-          "changedPaths": [
-            "site/scripts/validate.ts"
-          ]
+          "changedPaths": ["site/scripts/validate.ts"]
         }
       ],
       "judges": [
@@ -1219,7 +1221,8 @@
       "acceptedBlob": "31ae70389bba2af920c96f41f2bcb2292ee53292",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scroll.ts",
@@ -1251,7 +1254,8 @@
       "acceptedBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/styles.css",
@@ -1283,7 +1287,8 @@
       "finalChange": "unchanged",
       "acceptedBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/terminal.ts",
@@ -1298,9 +1303,7 @@
           "commit": "dd7569a9e16e31deaec78bae830dc45f43b9e03c",
           "result": "paint now advances playback -> resizes -> lays out -> presents -> schedules; presentFrame owns presentation caches/publication; bindPointerInput contains gesture state/consumers. 10 focused tests, rendered-grid validation and animation journeys passed. Formatting passed; lint baseline. Typecheck blocked by baseline missing site/demos.ts import ./type. Only terminal.ts source changed.",
           "state": "completed",
-          "changedPaths": [
-            "site/terminal.ts"
-          ]
+          "changedPaths": ["site/terminal.ts"]
         }
       ],
       "judges": [
@@ -1317,7 +1320,8 @@
       "acceptedBlob": "53be49f1b82e4629de9793286e4db958b467e226",
       "changedRelatedPaths": [],
       "integration": "exact disjoint candidate patch; no worker note imported",
-      "finalChange": "changed"
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/wrangler.jsonc",
@@ -1349,7 +1353,8 @@
       "finalChange": "unchanged",
       "acceptedBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "support/gpt-live-explained.html",
@@ -1381,16 +1386,42 @@
       "acceptedBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce",
       "changedRelatedPaths": [],
       "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
-      "finalChange": "unchanged"
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     }
   ],
   "extra": [],
-  "crossArea": [],
-  "limits": [
-    "Automatic fish setup lacks Bun; explicit tooling supplied.",
-    "Confirmed missing demos ./type fixed in accepted demos patch; strict targeted TS passed in writer/judge. Full area gate pending."
+  "crossArea": [
+    {
+      "kind": "parent-final-gate",
+      "paths": [],
+      "need": "Parent owns whole Linux gate and PR45; no cross-area source edits or unresolved API dependency."
+    },
+    {
+      "kind": "content-followup",
+      "paths": ["support/gpt-live-explained.html"],
+      "need": "Dated current-production claims predate shipped GPT-Live. Structural acceptance is not factual-content endorsement; separate refresh decision."
+    }
   ],
-  "parentBoundary": "Inspected integration 6a285569: docs-only changes, no common source to bring in. Disk 159G available.",
+  "limits": [
+    "Historical site/scripts/capture-real.ts has6 unchanged strict diagnostics:5 implicit-any parameters and browser-only /ghostty-web.js import. Final scoped strict check explicitly excludes it;do not claim all-site strict clean.",
+    "No root Linux CI,production deployment,live provider,physical device or cross-browser acceptance from area.",
+    "Historical settings captures are maintained tooling/test inputs,not current shipped scripted demos. Several original provenance narratives were stale;ledger corrections retained.",
+    "Existing font-ready/disposal,harness pre-try cleanup,minified instrumentation,legacy clipboard failure and other per-file limits remain."
+  ],
+  "parentBoundary": {
+    "commit": "695ade32",
+    "description": "Parent has already joined partial site-support at0562be91; only capture.ts,install-ui.test.ts,install.test.ts,scroll.test.ts differ in final area source. No reverse merge of broad partial sibling snapshot/overlapping area notes. Parent canonical installer is independently accepted in tooling area; exact final area tests are being run against that parent blob in a disposable probe.",
+    "installer": {
+      "path": "scripts/install.sh",
+      "blob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+      "primary": "task_7cb4f7d8",
+      "judge": "task_7be1ff38",
+      "verdict": "ACCEPT"
+    },
+    "probeJob": "task_40515eed",
+    "probeResult": "7 pass,0 fail,97 assertions against exact parent installer125933e061095c79bd5e2f16c68d384e8a2c9013 and final area test1da41ffef989ec064e62295f04d8352eb5137345;no source imported."
+  },
   "batchProof": [
     {
       "commit": "8b8f1122",
@@ -1401,11 +1432,7 @@
     },
     {
       "commit": "25a89310..4175acd2",
-      "jobs": [
-        "task_b91e76a4",
-        "task_bcf9b2d3",
-        "task_79aea0ab"
-      ],
+      "jobs": ["task_b91e76a4", "task_bcf9b2d3", "task_79aea0ab"],
       "result": "All site TS except unchanged historical capture-real.ts passes strict tsc --ignoreConfig --noEmit --strict --skipLibCheck --types bun --target ES2023 --module Preserve --moduleResolution Bundler. Full site strict attempt retains six capture-real diagnostics (five implicit any, /ghostty-web.js browser import). Format passes; lint 105 warnings/90 infos, no errors. First probe omitted --types bun and failed; corrected probe used explicit Bun types.",
       "limits": "Do not claim all-site strict clean or root typecheck from this."
     },
@@ -1428,13 +1455,20 @@
         "assertions": 5705803,
         "files": 7
       }
+    },
+    {
+      "job": "task_40515eed",
+      "parent": "695ade32",
+      "parentInstallerBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+      "areaTestBlob": "1da41ffef989ec064e62295f04d8352eb5137345",
+      "result": "7 pass,0 fail,97 assertions. Disposable exact-byte combined probe;no parent/area source edits."
     }
   ],
   "combinedJudge": {
     "id": "task_a3b96800",
     "base": "59413c532e6422983f611915e509e8421aa2f363",
     "candidate": "593f80d57b33a2f827e06ca4425f360cb239583f",
-    "state": "running",
+    "state": "completed",
     "paths": [
       "site/capture.ts",
       "site/demos.test.ts",
@@ -1452,18 +1486,90 @@
       "site/scripts/scroll.test.ts",
       "site/scripts/validate.ts",
       "site/terminal.ts"
-    ]
+    ],
+    "verdict": "ACCEPT",
+    "objections": [],
+    "evidence": "Inspected complete combined16-source diff and actual pinned code/callers/tests. Build page contracts;terminal timing/presentation;layout document/viewport projection;explicit demo turns/footer;HTML panel versus mount lifetime;input policies;historical capture and fixture cleanup compose coherently. Cell type fix explicit;assertions preserved/strengthened.",
+    "independentChecks": "988 demo frames+3 transcripts,128 layouts,5 capture reflows,4 assembled pages baseline/candidate parity;diff check. Did not rerun area browser gate.",
+    "limits": "Pending font-ready continuation and document-lifetime terminal listeners;pre-cleanup harness acquisitions,minified hooks;no physical/cross-browser or all-site strict proof.",
+    "acceptedBlobs": {
+      "site/capture.ts": "ea72ee5ebc5145f474b9b9e3a2b3f7afeb49f54b",
+      "site/demos.test.ts": "9a554baa5a3a7c3ae6e4d424a6af2cd8fd02c7c8",
+      "site/demos.ts": "5f211cd265a0d4cb8377b5148fa13281f2ccb5fa",
+      "site/html-animation.ts": "611b710f3e082fde979cb1ea86e462445030a2fa",
+      "site/html-cells.ts": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
+      "site/layout.ts": "128855476c64c4b43bd0258b9064f2b44831878c",
+      "site/scripts/animation.ts": "4bea05dabee326db5d3cc42783a45b9f73e66750",
+      "site/scripts/build.ts": "1cf04b95f42c7d500d2dd302f02f48db84273aba",
+      "site/scripts/capture-demo-source.ts": "cb174478a55a37871373add5263eebfb36de2b19",
+      "site/scripts/extract-cells.ts": "0c08612f134666dff26b631ae44408b7bedde80d",
+      "site/scripts/html-animation.test.ts": "ec93e1910b0f9d4d1ff2ea31e9f3c1de61086360",
+      "site/scripts/install-ui.test.ts": "538556abc76aa8bb294950cbc23b64ac8ac1be84",
+      "site/scripts/install.test.ts": "1da41ffef989ec064e62295f04d8352eb5137345",
+      "site/scripts/scroll.test.ts": "5a1025b2f60ae7f6ef6ff55951b79cce6edd55f1",
+      "site/scripts/validate.ts": "31ae70389bba2af920c96f41f2bcb2292ee53292",
+      "site/terminal.ts": "53be49f1b82e4629de9793286e4db958b467e226"
+    }
   },
   "audit": {
     "baseline": 41,
     "uniquePrimary": 41,
     "finalChanged": 16,
     "extraNewDeletedSource": [],
-    "accepted": 39,
-    "pending": [
-      "site/styles.css",
-      "site/wrangler.jsonc"
+    "accepted": 41,
+    "pending": [],
+    "errors": [],
+    "perFileJudgeAttempts": 43,
+    "finalJudgeIds": [
+      "task_2a36b538",
+      "task_3d50228c",
+      "task_08863fc0",
+      "task_ac6fe577",
+      "task_b3d7d253",
+      "task_f29c1365",
+      "task_d45f272d",
+      "task_884e8b0b",
+      "task_bdc898a5",
+      "task_2ebc2a13",
+      "task_fae7ccc8",
+      "task_608a711c",
+      "task_a0562ba4",
+      "task_7c587dbb",
+      "task_076ad4af",
+      "task_203c204d",
+      "task_fbbc0bfe",
+      "task_b7d332ee",
+      "task_4e8a8bc6",
+      "task_993fa01c",
+      "task_d3cccc82",
+      "task_4d85f3b6",
+      "task_53cb3831",
+      "task_f3451b4a",
+      "task_53b78b16",
+      "task_59d37faf",
+      "task_a59154f4",
+      "task_5628d052",
+      "task_a0a2c4e8",
+      "task_32ee7f46",
+      "task_1588246a",
+      "task_5840db21",
+      "task_21f20bcf",
+      "task_8e721489",
+      "task_07a74302",
+      "task_012c74d4",
+      "task_9f837c1d",
+      "task_4b051cf8",
+      "task_d14c7a16",
+      "task_c1525156",
+      "task_69db8026"
     ],
-    "errors": []
-  }
+    "uniqueFinalJudges": 41,
+    "combinedJudgeAccepted": true,
+    "totalJudgeAttempts": 44,
+    "roundExplanation": "41 final per-file judgments;1 superseded provenance-deficient brand round;1 cancelled generator attempt;1 final combined judgment. No rejection unresolved.",
+    "finalUnchanged": 25,
+    "cleanSource": true,
+    "noteByteCheck": "No NUL or ANSI escape bytes;Markdown fences balanced."
+  },
+  "status": "accepted-ready-for-parent-integration"
 }
