@@ -36,6 +36,55 @@ function continuation(goal: GoalState): string {
   return goalContinuation.trimEnd();
 }
 
+// Transport tokens authorize only a pending, exact extension payload. They are
+// separate from the controller's accounting of automatic model runs.
+class GoalReminders {
+  #epoch = randomUUID();
+  #generation = 0;
+  #sequence = 0;
+  #pending = new Set<string>();
+
+  issue(goal: GoalState): string {
+    const id = String(++this.#sequence);
+    if (this.#pending.size >= 16) this.#pending.delete(this.#pending.values().next().value!);
+    this.#pending.add(id);
+    return continuation(goal) + `\n\n<!-- bruv-goal-reminder:${this.#epoch}:${this.#generation}:${id} -->`;
+  }
+
+  consume(text: string, goal: GoalState | undefined, hasBlockingQuestions: () => boolean) {
+    const match = /<!-- bruv-goal-reminder:([^:>]+):(\d+):(\d+) -->/.exec(text);
+    if (!match) return;
+    const id = match[3]!;
+    const accepted = match[1] === this.#epoch && Number(match[2]) === this.#generation && this.#pending.has(id);
+    if (!accepted) return { action: "handled" as const };
+    // A foreground question can appear after the reminder was issued.
+    if (hasBlockingQuestions()) {
+      this.#pending.delete(id);
+      return { action: "handled" as const };
+    }
+    // A copied trailer must neither transform unrelated content nor consume
+    // the legitimate pending reminder.
+    const plain = continuation(goal!);
+    if (text !== `${plain}\n\n${match[0]}`) return { action: "handled" as const };
+    this.#pending.delete(id);
+    return { action: "transform" as const, text: plain };
+  }
+
+  discard(): void {
+    this.#pending.clear();
+  }
+
+  invalidate(): void {
+    this.#generation++;
+    this.discard();
+  }
+
+  restart(): void {
+    this.#epoch = randomUUID();
+    this.discard();
+  }
+}
+
 function parseSet(args: string): { objective: string; criteria: string[]; constraints: string[] } {
   const criteriaAt = args.indexOf(" --criteria ");
   const constraintsAt = args.indexOf(" --constraints ");
@@ -63,12 +112,9 @@ export function registerGoalMode(
   let loadedManager: object | undefined;
   let loadedLeaf: string | undefined;
   let context: ExtensionContext | undefined;
-  let generation = 0;
   let jobsDirty = false;
   let queuedUserInput = false;
-  let reminderEpoch = randomUUID();
-  let reminderSequence = 0;
-  const queuedReminderIds = new Set<string>();
+  const reminders = new GoalReminders();
   const controller = new GoalContinuationController();
   // Only foreground blockers should be reported here; child-only questions do not stop goal continuation.
   const hasBlockingQuestions = () => options.hasBlockingQuestions?.() ?? false;
@@ -98,7 +144,7 @@ export function registerGoalMode(
       if (branchChanged) {
         store = candidate;
         jobsDirty = store.get()?.status === "waiting";
-        queuedReminderIds.clear();
+        reminders.discard();
         controller.reset();
       }
     }
@@ -112,26 +158,19 @@ export function registerGoalMode(
   const notify = (message: string, level: "info" | "warning" = "info") => {
     context?.ui.notify(message, level);
   };
-  const bumpGeneration = () => {
-    generation++;
-    queuedReminderIds.clear();
-  };
-  const invalidate = () => {
-    bumpGeneration();
+  const resetContinuation = () => {
+    reminders.invalidate();
     controller.reset();
   };
   const pause = (reason: string) => {
     const current = store?.get();
     if (current?.status === "active" || current?.status === "waiting") {
       store!.update({ status: "paused", reason });
-      invalidate();
+      resetContinuation();
     }
   };
   const sendContinuation = (goal: GoalState) => {
-    const id = String(++reminderSequence);
-    if (queuedReminderIds.size >= 16) queuedReminderIds.delete(queuedReminderIds.values().next().value!);
-    queuedReminderIds.add(id);
-    const message = continuation(goal) + `\n\n<!-- bruv-goal-reminder:${reminderEpoch}:${generation}:${id} -->`;
+    const message = reminders.issue(goal);
     controller.markAutomaticStart(goal);
     pi.sendUserMessage(message, { deliverAs: "followUp" });
   };
@@ -148,7 +187,7 @@ export function registerGoalMode(
       );
     } else if (statuses.some((status) => status === "finished")) {
       store!.update({ status: "active" });
-      bumpGeneration();
+      reminders.invalidate();
     }
   };
 
@@ -171,7 +210,7 @@ export function registerGoalMode(
         else if (command === "clear") activeStore.clear();
         else throw new Error("Usage: /goal set|status|pause|resume|clear");
 
-        invalidate();
+        resetContinuation();
         const current = activeStore.get();
         notify(formatGoal(current));
         if (current?.status === "active" && !hasBlockingQuestions() && (command === "set" || command === "resume")) {
@@ -188,10 +227,9 @@ export function registerGoalMode(
     store = undefined;
     loadedManager = undefined;
     loadedLeaf = undefined;
-    reminderEpoch = randomUUID();
-    queuedReminderIds.clear();
+    reminders.restart();
     ensureStore(ctx);
-    invalidate();
+    resetContinuation();
   });
 
   // Runs before every provider request, including tool and custom-message
@@ -220,24 +258,7 @@ export function registerGoalMode(
     context = ctx;
     ensureStore(ctx);
     if (event.source === "extension") {
-      const match = /<!-- bruv-goal-reminder:([^:>]+):(\d+):(\d+) -->/.exec(event.text);
-      if (match) {
-        const accepted =
-          match[1] === reminderEpoch && Number(match[2]) === generation && queuedReminderIds.has(match[3]!);
-        // A reminder may have been queued before the foreground question was posted.
-        if (!accepted) return { action: "handled" as const };
-        if (hasBlockingQuestions()) {
-          queuedReminderIds.delete(match[3]!);
-          return { action: "handled" as const };
-        }
-        // Only transform the exact generated extension payload, not other extension
-        // content bearing a copied trailer. Do not consume its pending ID either.
-        const plain = continuation(store!.get()!);
-        if (event.text !== `${plain}\n\n${match[0]}`) return { action: "handled" as const };
-        queuedReminderIds.delete(match[3]!);
-        return { action: "transform" as const, text: plain };
-      }
-      return;
+      return reminders.consume(event.text, store?.get(), hasBlockingQuestions);
     }
     if (event.streamingBehavior !== undefined) {
       queuedUserInput = true;
@@ -254,7 +275,7 @@ export function registerGoalMode(
     const pendingJobIds = [...jobs.runningIds()];
     if (pendingJobIds.length === 0) return;
     store!.update({ status: "waiting", pendingJobIds }, new Set(pendingJobIds));
-    bumpGeneration();
+    reminders.invalidate();
   });
 
   pi.on("agent_end", (event, ctx) => {
@@ -268,7 +289,7 @@ export function registerGoalMode(
         status: "paused",
         reason: "Paused after repeated automatic turns made no meaningful progress",
       });
-      invalidate();
+      resetContinuation();
       notify("Goal paused: repeated continuations made no meaningful progress", "warning");
     }
   });
@@ -299,8 +320,7 @@ export function registerGoalMode(
   });
 
   pi.on("session_shutdown", () => {
-    queuedReminderIds.clear();
-    reminderEpoch = randomUUID();
+    reminders.restart();
     controller.reset();
     store = undefined;
     context = undefined;
@@ -327,7 +347,7 @@ export function registerGoalMode(
         // A helper-created goal begins inside an existing turn, so there is no
         // queued reminder to mark that turn automatic. Track it directly after
         // resetting any previous goal's continuation history.
-        invalidate();
+        resetContinuation();
         controller.markHelperStart(result);
         return result;
       }
@@ -341,12 +361,12 @@ export function registerGoalMode(
           );
         }
         const result = requireStore().update(input as never);
-        bumpGeneration();
+        reminders.invalidate();
         return result;
       }
       if (method === "goal.clear") {
         requireStore().clear();
-        invalidate();
+        resetContinuation();
         return { cleared: true };
       }
       throw new Error(`Unknown goal method: ${method}`);

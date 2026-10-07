@@ -358,23 +358,14 @@ test("close aborts initialize, waits for settlement, then deletes an acquired se
       };
       return reader;
     }) as typeof body.getReader;
-    const headers = new Proxy(response.headers, {
-      get(target, property) {
-        if (property === "get")
-          return (name: string) => {
-            const value = target.get(name);
-            if (name === "mcp-session-id" && value === "close-init-session") sessionHeaderReceived();
-            return value;
-          };
-        const value = Reflect.get(target, property, target);
-        return typeof value === "function" ? value.bind(target) : value;
-      },
-    });
-    return new Proxy(response, {
-      get(target, property) {
-        return property === "headers" ? headers : Reflect.get(target, property, target);
-      },
-    });
+    const headers = response.headers;
+    const getHeader = headers.get.bind(headers);
+    headers.get = (name) => {
+      const value = getHeader(name);
+      if (name === "mcp-session-id" && value === "close-init-session") sessionHeaderReceived();
+      return value;
+    };
+    return response;
   }) as typeof fetch);
   const client = new T3McpClient(endpoint, "token");
   const pending = client.initialize().catch((error) => error);
@@ -528,6 +519,47 @@ test("concurrent expired requests share one reconnect and preserve each request"
   await client.close();
 });
 
+test("a late expired-session response reuses the completed replacement handshake", async () => {
+  let initializes = 0;
+  let oldCalls = 0;
+  let bothOldArrived!: () => void;
+  const oldArrived = new Promise<void>((resolve) => (bothOldArrived = resolve));
+  let releaseLate!: () => void;
+  const lateResponse = new Promise<void>((resolve) => (releaseLate = resolve));
+  const deleted: string[] = [];
+  const endpoint = listen(async (request) => {
+    if (request.method === "DELETE") {
+      deleted.push(request.headers.get("mcp-session-id")!);
+      return new Response(null, { status: 204 });
+    }
+    const body = await rpc(request);
+    if (body.method === "initialize") return json(body.id, {}, { "mcp-session-id": "late-" + ++initializes });
+    if (body.method === "notifications/initialized") return new Response(null, { status: 202 });
+    if (request.headers.get("mcp-session-id") === "late-1") {
+      if (++oldCalls === 2) bothOldArrived();
+      await oldArrived;
+      if (body.params.arguments.taskId === "late") await lateResponse;
+      return new Response(null, { status: 404 });
+    }
+    return json(body.id, { structuredContent: { taskId: body.params.arguments.taskId } });
+  });
+  const client = new T3McpClient(endpoint, "token");
+  try {
+    await client.initialize();
+    const first = client.callTool("bruv_task_observe", { taskId: "first" });
+    const late = client.callTool("bruv_task_observe", { taskId: "late" });
+    expect((await first).structuredContent).toEqual({ taskId: "first" });
+    expect(initializes).toBe(2);
+    releaseLate();
+    expect((await late).structuredContent).toEqual({ taskId: "late" });
+    expect(initializes).toBe(2);
+  } finally {
+    releaseLate();
+    await client.close();
+  }
+  expect(deleted).toEqual(["late-2"]);
+});
+
 test("SSE multiline JSON survives CRLF split across chunks without waiting for EOF", async () => {
   let cancelled = 0;
   const mockFetch = Object.assign(
@@ -664,7 +696,7 @@ test("native launch replays empty JSON and truncated SSE success with the same k
   }
 });
 
-test("native launch replays an internal timeout but not caller abort or HTTP auth rejection", async () => {
+test("native launch replays an internal timeout", async () => {
   let calls = 0;
   const timeoutEndpoint = listen(async (request) => {
     if (request.method === "DELETE") return new Response(null, { status: 204 });
@@ -682,36 +714,52 @@ test("native launch replays an internal timeout but not caller abort or HTTP aut
   } finally {
     await timeoutClient.close();
   }
+});
 
-  for (const mode of ["abort", "auth"] as const) {
-    let attempts = 0;
-    let started!: () => void;
-    const dispatched = new Promise<void>((resolve) => {
-      started = resolve;
-    });
-    const endpoint = listen(async (request) => {
-      if (request.method === "DELETE") return new Response(null, { status: 204 });
-      const body = await rpc(request);
-      if (body.method === "initialize") return json(body.id, {}, { "mcp-session-id": mode });
-      if (body.method === "notifications/initialized") return new Response(null, { status: 202 });
-      attempts++;
-      started();
-      if (mode === "auth") return new Response(null, { status: 401 });
-      await Bun.sleep(500);
-      return json(body.id, { structuredContent: launchResult });
-    });
-    const client = new T3McpClient(endpoint, "token");
-    const controller = new AbortController();
-    try {
-      const pending = new T3NativeTaskAdapter(client).launch(launchInput, controller.signal);
-      if (mode === "abort") {
-        await dispatched;
-        controller.abort();
-      }
-      await expect(pending).rejects.toThrow(mode === "auth" ? "HTTP 401" : "aborted");
-      expect(attempts).toBe(1);
-    } finally {
-      await client.close();
-    }
+test("native launch does not replay caller cancellation", async () => {
+  let attempts = 0;
+  let started!: () => void;
+  const dispatched = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  const endpoint = listen(async (request) => {
+    if (request.method === "DELETE") return new Response(null, { status: 204 });
+    const body = await rpc(request);
+    if (body.method === "initialize") return json(body.id, {}, { "mcp-session-id": "abort" });
+    if (body.method === "notifications/initialized") return new Response(null, { status: 202 });
+    attempts++;
+    started();
+    await Bun.sleep(500);
+    return json(body.id, { structuredContent: launchResult });
+  });
+  const client = new T3McpClient(endpoint, "token");
+  const controller = new AbortController();
+  try {
+    const pending = new T3NativeTaskAdapter(client).launch(launchInput, controller.signal);
+    await dispatched;
+    controller.abort();
+    await expect(pending).rejects.toThrow("aborted");
+    expect(attempts).toBe(1);
+  } finally {
+    await client.close();
+  }
+});
+
+test("native launch does not replay HTTP auth rejection", async () => {
+  let attempts = 0;
+  const endpoint = listen(async (request) => {
+    if (request.method === "DELETE") return new Response(null, { status: 204 });
+    const body = await rpc(request);
+    if (body.method === "initialize") return json(body.id, {}, { "mcp-session-id": "auth" });
+    if (body.method === "notifications/initialized") return new Response(null, { status: 202 });
+    attempts++;
+    return new Response(null, { status: 401 });
+  });
+  const client = new T3McpClient(endpoint, "token");
+  try {
+    await expect(new T3NativeTaskAdapter(client).launch(launchInput)).rejects.toThrow("HTTP 401");
+    expect(attempts).toBe(1);
+  } finally {
+    await client.close();
   }
 });

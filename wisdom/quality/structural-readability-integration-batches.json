@@ -1,0 +1,45 @@
+{
+  "baseline": "59413c53",
+  "batches": [
+    {
+      "group": "remote",
+      "tip": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+      "state": "partial; full primary coverage still pending"
+    },
+    {
+      "group": "live-native-audio",
+      "tip": "f473c8e5a1c4377742f0b65c27d06782d456f7d1",
+      "state": "partial; full primary coverage still pending"
+    },
+    {
+      "group": "compatibility-t3",
+      "tip": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d",
+      "state": "partial; full primary coverage still pending"
+    },
+    {
+      "group": "agent-history-session-goals",
+      "tip": "37d4008c925134e26efa34898be2627c3cc48441",
+      "state": "partial; full primary coverage still pending"
+    },
+    {
+      "group": "execution-tasks-questions",
+      "tip": "9c2abd811dae310c924836ca33c0d175e80cbba2",
+      "state": "partial; full primary coverage still pending"
+    },
+    {
+      "group": "ui-terminal-cli",
+      "tip": "d6d7a1f961f75feeea462e19d0e333da29ffd9f0",
+      "state": "partial; full primary coverage still pending"
+    },
+    {
+      "group": "build-release-ci-tooling",
+      "tip": "49dc4c3b460884b93f04eb5d2b4739a6fdcf0345",
+      "state": "partial; full primary coverage still pending"
+    },
+    {
+      "group": "site-support",
+      "tip": "6e555e5e148be83d37cceed3254165503bb87753",
+      "state": "partial; full primary coverage still pending"
+    }
+  ]
+}

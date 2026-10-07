@@ -229,6 +229,75 @@ describe("cache countdown", () => {
     expect(appended).toHaveLength(5);
   });
 
+  test("failed assistant endings consume the request without recording an observation", async () => {
+    const handlers = new Map<string, Function>();
+    const appended: unknown[] = [];
+    const pi = {
+      on: (name: string, fn: Function) => handlers.set(name, fn),
+      registerCommand() {},
+      appendEntry: (_type: string, data: unknown) => appended.push(data),
+    } as unknown as ExtensionAPI;
+    registerCacheCountdown(pi, new CacheCountdown(), join(tmpdir(), "missing-cache-settings-" + crypto.randomUUID()));
+    const ctx = context("p", "m");
+    await handlers.get("session_start")!({}, ctx);
+    for (const stopReason of ["error", "aborted"]) {
+      handlers.get("before_provider_request")!({}, ctx);
+      handlers.get("message_end")!({ message: { role: "assistant", provider: "p", model: "m", stopReason } }, ctx);
+      handlers.get("message_end")!(
+        { message: { role: "assistant", provider: "p", model: "m", stopReason: "stop" } },
+        ctx,
+      );
+      expect(appended).toHaveLength(0);
+    }
+  });
+
+  test("session replacement clears request evidence and owns exactly one provider subscription", async () => {
+    const handlers = new Map<string, Function>();
+    const appended: Array<{ type: string; data: { model: string } }> = [];
+    const pi = {
+      on: (name: string, fn: Function) => handlers.set(name, fn),
+      registerCommand() {},
+      appendEntry: (type: string, data: { model: string }) => appended.push({ type, data }),
+    } as unknown as ExtensionAPI;
+    const countdown = new CacheCountdown();
+    registerCacheCountdown(pi, countdown, join(tmpdir(), "missing-cache-settings-" + crypto.randomUUID()));
+    const first = context("p", "same-model");
+    const second = context("p", "same-model");
+    const endMessage = (model: string) =>
+      handlers.get("message_end")!(
+        { message: { role: "assistant", provider: "p", model, stopReason: "stop" } },
+        second,
+      );
+    await handlers.get("session_start")!({}, first);
+    handlers.get("before_provider_request")!({}, first);
+    handlers.get("after_provider_response")!({ status: 200 }, first);
+    handlers.get("before_provider_request")!({}, context("p", "unfinished"));
+    expect(appended).toHaveLength(1);
+
+    await handlers.get("session_start")!({}, second);
+    expect(countdown.estimate(second).state).toBe("unknown");
+    reportProviderAttempt(first.sessionManager, first.model!, "response");
+    endMessage("unfinished");
+    expect(appended).toHaveLength(1);
+    // The first session's HTTP-terminal debt must not block this new request.
+    handlers.get("before_provider_request")!({}, second);
+    endMessage("same-model");
+    expect(appended).toHaveLength(2);
+
+    // Starting again with the same manager must replace, not duplicate, the subscription.
+    await handlers.get("session_start")!({}, second);
+    reportProviderAttempt(second.sessionManager, second.model!, "dispatch");
+    expect(appended).toHaveLength(2);
+    reportProviderAttempt(second.sessionManager, second.model!, "response");
+    expect(appended).toHaveLength(3);
+
+    handlers.get("before_provider_request")!({}, second);
+    handlers.get("session_shutdown")!({}, second);
+    endMessage("same-model");
+    reportProviderAttempt(second.sessionManager, second.model!, "response");
+    expect(appended).toHaveLength(3);
+  });
+
   test("attempt IDs are unique and observer diagnostics contain no private failure data", () => {
     const owner = {},
       ids: string[] = [];

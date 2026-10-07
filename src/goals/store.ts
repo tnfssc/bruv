@@ -89,64 +89,64 @@ function parseGoal(value: unknown): GoalState | undefined {
   }
 }
 
-function parseEntry(raw: unknown): GoalEntry | undefined {
-  if (!raw || typeof raw !== "object") return undefined;
-  const entry = raw as { type?: unknown; customType?: unknown; data?: unknown };
-  if (entry.type !== "custom" || entry.customType !== GOAL_ENTRY_TYPE) return undefined;
-  if (!entry.data || typeof entry.data !== "object") return undefined;
-  const data = entry.data as Record<string, unknown>;
-  if (data.version !== 1 || typeof data.at !== "string") return undefined;
-  if (data.operation === "clear") return { version: 1, operation: "clear", at: data.at };
-  if (data.operation !== "set" && data.operation !== "update") return undefined;
-  const goal = parseGoal(data.goal);
-  return goal ? { version: 1, operation: data.operation, goal, at: data.at } : undefined;
+type RestoredEntry = { operation: "clear" } | { operation: "set" | "update"; goal: GoalState };
+
+function parseEntry(entry: unknown): RestoredEntry | undefined {
+  if (!entry || typeof entry !== "object") return undefined;
+  const data = (entry as { data?: unknown }).data;
+  if (!data || typeof data !== "object") return undefined;
+  const raw = data as Record<string, unknown>;
+  if (raw.version !== 1 || typeof raw.at !== "string") return undefined;
+  if (raw.operation === "clear") return { operation: "clear" };
+  if (raw.operation !== "set" && raw.operation !== "update") return undefined;
+  const goal = parseGoal(raw.goal);
+  return goal ? { operation: raw.operation, goal } : undefined;
+}
+
+// These references are only for diagnostics, never for restoring job authority.
+function untrustedWaitingIds(entry: unknown): string[] {
+  if (!entry || typeof entry !== "object") return [];
+  const data = (entry as { data?: unknown }).data;
+  if (!data || typeof data !== "object") return [];
+  const candidate = (data as { goal?: unknown }).goal;
+  if (!candidate || typeof candidate !== "object") return [];
+  const ids = (candidate as { pendingJobIds?: unknown }).pendingJobIds;
+  return Array.isArray(ids) ? ids.slice(0, MAX_ITEMS).filter((id): id is string => typeof id === "string") : [];
 }
 
 export function latestGoal(entries: readonly unknown[], diagnosticOwner?: object): GoalState | undefined {
   let goal: GoalState | undefined;
   let restoreFailure: { taskIds: string[] } | undefined;
-  const waitingIds = (value: unknown): string[] => {
-    if (!value || typeof value !== "object") return [];
-    const data = (value as { data?: unknown }).data;
-    if (!data || typeof data !== "object") return [];
-    const candidate = (data as { goal?: unknown }).goal;
-    if (!candidate || typeof candidate !== "object") return [];
-    const ids = (candidate as { pendingJobIds?: unknown }).pendingJobIds;
-    return Array.isArray(ids) ? ids.slice(0, MAX_ITEMS).filter((id): id is string => typeof id === "string") : [];
-  };
   for (const raw of entries) {
     const marker = raw as { type?: unknown; customType?: unknown } | undefined;
     if (marker?.type !== "custom" || marker.customType !== GOAL_ENTRY_TYPE) continue;
 
-    // Every entry of our custom type is an authority boundary. A corrupt or
-    // future-version entry must fail closed rather than revive an older goal.
-    const priorWaitingIds = goal?.status === "waiting" ? (goal.pendingJobIds ?? []) : [];
     const entry = parseEntry(raw);
-    if (!entry) {
-      restoreFailure = { taskIds: [...new Set([...priorWaitingIds, ...waitingIds(raw)])] };
-      goal = undefined;
-      continue;
-    }
-    if (entry.operation === "clear") {
+    if (entry?.operation === "clear") {
       goal = undefined;
       restoreFailure = undefined;
       continue;
     }
-    const candidate = entry.goal!;
-    if (entry.operation === "set") {
-      goal = structuredClone(candidate);
+    if (
+      entry &&
+      (entry.operation === "set" || (goal && entry.goal.id === goal.id && entry.goal.revision > goal.revision))
+    ) {
+      goal = structuredClone(entry.goal);
       restoreFailure = undefined;
-    } else if (goal && candidate.id === goal.id && candidate.revision > goal.revision) {
-      goal = structuredClone(candidate);
-      restoreFailure = undefined;
+      continue;
+    }
+
+    // Every entry of our custom type is an authority boundary. Malformed entries
+    // and updates without a matching predecessor revoke, rather than revive, a goal.
+    const priorWaitingIds = goal?.status === "waiting" ? (goal.pendingJobIds ?? []) : [];
+    let rejectedWaitingIds: string[];
+    if (entry) {
+      rejectedWaitingIds = entry.goal.status === "waiting" ? (entry.goal.pendingJobIds ?? []) : [];
     } else {
-      restoreFailure = {
-        taskIds: [
-          ...new Set([...priorWaitingIds, ...(candidate.status === "waiting" ? (candidate.pendingJobIds ?? []) : [])]),
-        ],
-      };
-      goal = undefined;
+      rejectedWaitingIds = untrustedWaitingIds(raw);
     }
+    restoreFailure = { taskIds: [...new Set([...priorWaitingIds, ...rejectedWaitingIds])] };
+    goal = undefined;
   }
   if (restoreFailure && diagnosticOwner) {
     // Always diagnose the authority boundary, even when forged task references

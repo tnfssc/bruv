@@ -24,6 +24,29 @@ export class CompactEditor extends CustomEditor {
     if (options.signal.aborted) return () => {};
     const control = new EditorPushToTalk(options);
     this.voice = control;
+    const stopWatching = this.watchPushToTalkCancellation(ui, control);
+    const restoreReporting = this.requestPushToTalkEvents();
+    let disposed = false;
+    const detach = () => {
+      if (disposed) return;
+      disposed = true;
+      control.dispose();
+      stopWatching();
+      options.signal.removeEventListener("abort", detach);
+      this.voice = undefined;
+      this.detachVoice = undefined;
+      restoreReporting();
+    };
+    this.detachVoice = detach;
+    options.signal.addEventListener("abort", detach, { once: true });
+    return detach;
+  }
+
+  /** Cancel before Pi can consume input or move focus to another component. */
+  private watchPushToTalkCancellation(
+    ui: Pick<ExtensionUIContext, "onTerminalInput">,
+    control: EditorPushToTalk,
+  ): () => void {
     let focused = this.focused;
     // Pi's Editor declares a data property, so an override accessor would be
     // illegal in TS. Install the focus hook only for this attached session.
@@ -51,33 +74,29 @@ export class CompactEditor extends CustomEditor {
     listeners.clear();
     listeners.add(observe);
     for (const listener of previousListeners) listeners.add(listener);
-    // Pi negotiates flag 2; printable keys need flag 8 as well to report Space
-    // releases. Push/pop only while attached, without claiming routing proof.
-    const pushed = this.tui.terminal.kittyProtocolActive;
-    if (pushed) this.tui.terminal.write("\x1b[>15u");
-    const ownsFocusReporting = this.tui.mode !== "fullscreen";
-    if (ownsFocusReporting) this.tui.terminal.write("\x1b[?1004h");
-    let disposed = false;
-    const detach = () => {
-      if (disposed) return;
-      disposed = true;
-      control.dispose();
+    return () => {
       remove();
-      options.signal.removeEventListener("abort", detach);
       Object.defineProperty(this, "focused", {
         configurable: true,
         enumerable: true,
         writable: true,
         value: focused,
       });
-      this.voice = undefined;
-      this.detachVoice = undefined;
+    };
+  }
+
+  /** Negotiate key releases and focus events; restore only modes this attachment acquired. */
+  private requestPushToTalkEvents(): () => void {
+    // Pi negotiates flag 2; printable keys need flag 8 as well to report Space
+    // releases. Push/pop only while attached, without claiming routing proof.
+    const pushed = this.tui.terminal.kittyProtocolActive;
+    if (pushed) this.tui.terminal.write("\x1b[>15u");
+    const ownsFocusReporting = this.tui.mode !== "fullscreen";
+    if (ownsFocusReporting) this.tui.terminal.write("\x1b[?1004h");
+    return () => {
       if (ownsFocusReporting) this.tui.terminal.write("\x1b[?1004l");
       if (pushed) this.tui.terminal.write("\x1b[<u");
     };
-    this.detachVoice = detach;
-    options.signal.addEventListener("abort", detach, { once: true });
-    return detach;
   }
 
   /** Pi filters releases unless the focused component opts in. */

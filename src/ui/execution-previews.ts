@@ -66,6 +66,17 @@ function startExecutePreviewAnimation(state: ExecutePreviewState | undefined, in
   state.spinnerTimer.unref?.();
 }
 
+function runningActionRow(
+  caption: string,
+  theme: Theme,
+  state: ExecutePreviewState | undefined,
+  width: number,
+): string {
+  const line =
+    theme.fg("accent", actionFrames[state?.spinnerFrame ?? 0]!) + (caption ? " " + theme.fg("toolTitle", caption) : "");
+  return truncateToWidth(line, width);
+}
+
 export function executeInputPreview(
   code: unknown,
   expanded: boolean,
@@ -88,10 +99,7 @@ export function executeInputPreview(
           truncateToWidth(theme.fg("toolTitle", "Execute · TypeScript"), width),
           ...wrappedRows(source, width).map((line) => theme.fg("muted", line)),
         ];
-      const line =
-        theme.fg("accent", actionFrames[state?.spinnerFrame ?? 0]!) +
-        (summary ? " " + theme.fg("toolTitle", summary) : "");
-      return [truncateToWidth(line, width)];
+      return [runningActionRow(summary, theme, state, width)];
     }),
     padding,
   );
@@ -143,69 +151,76 @@ export function executeOutputPreview(
     state.resultVisible = true;
     if (!isPartial) stopExecutePreviewAnimation(state);
   }
+  // Pi replaces the component when the result or expansion changes. Choose its
+  // view once; only width, theme invalidation and the partial spinner stay live.
+  const preview = (render: (width: number) => string[]): Component =>
+    padded(
+      component((width) => (width < 1 ? [] : render(width)), !isPartial),
+      padding,
+    );
+
+  if (!expanded && isPartial) {
+    const caption = typeof label === "string" ? oneLine(label) : "";
+    return preview((width) => [runningActionRow(caption, theme, state, width)]);
+  }
+
   const full = result.content
     .filter((part) => part.type === "text")
     .map((part) => part.text ?? "")
     .join("\n");
   const details = result.details as ExecuteDetails | undefined;
-  const status = statusSummary(details, isError);
   const source = typeof code === "string" ? code : "";
+
+  if (expanded) {
+    return preview((width) => {
+      const lines = [
+        theme.fg("toolTitle", "Execute · TypeScript"),
+        ...wrappedRows(source, width).map((line) => theme.fg("muted", line)),
+        "",
+        ...wrappedRows(full, width),
+      ];
+      if (details?.outputArtifactErrors) lines.push(theme.fg("warning", "… execute could not save all output"));
+      // Wrapping already fits almost every row. Native truncation still builds a
+      // grapheme-by-grapheme prefix even when it ultimately returns the input.
+      // Measure first: preserve native clipping for oversized graphemes at
+      // narrow widths, titles and warnings, without rebuilding fitting rows.
+      return lines.map((line) => (visibleWidth(line) <= width ? line : truncateToWidth(line, width)));
+    });
+  }
+
+  const status = statusSummary(details, isError);
   const summary = actionLabel(label, "");
   const handoff = typeof details?.handoff === "string" ? details.handoff.trim() : "";
-  return padded(
-    component((width) => {
-      if (width < 1) return [];
-      if (!expanded && isPartial) {
-        const caption = typeof label === "string" ? oneLine(label) : "";
-        return [
-          truncateToWidth(
-            theme.fg("accent", actionFrames[state?.spinnerFrame ?? 0]!) +
-              (caption ? " " + theme.fg("toolTitle", caption) : ""),
-            width,
-          ),
-        ];
-      }
-      if (!expanded && handoff && status.color === "success") {
-        const prefix = "↪ ";
-        const rows = wrappedRows(handoff, Math.max(1, width - prefix.length)).map((line, index) =>
-          truncateToWidth((index === 0 ? theme.fg("success", prefix) : " ".repeat(prefix.length)) + line, width),
-        );
-        return details?.outputArtifactErrors
-          ? [
-              truncateToWidth(
-                theme.fg("success", "✓ " + summary) + theme.fg("warning", " — ⚠ couldn’t save full output"),
-                width,
-              ),
-              ...rows,
-            ]
-          : rows;
-      }
-      if (expanded) {
-        const lines = [
-          theme.fg("toolTitle", "Execute · TypeScript"),
-          ...wrappedRows(source, width).map((line) => theme.fg("muted", line)),
-          "",
-          ...wrappedRows(full, width),
-        ];
-        if (details?.outputArtifactErrors) lines.push(theme.fg("warning", "… execute could not save all output"));
-        // Wrapping already fits almost every row. Native truncation still builds a
-        // grapheme-by-grapheme prefix even when it ultimately returns the input.
-        // Measure first: preserve native clipping for oversized graphemes at
-        // narrow widths, titles and warnings, without rebuilding fitting rows.
-        return lines.map((line) => (visibleWidth(line) <= width ? line : truncateToWidth(line, width)));
-      }
-      const failed = status.color === "error";
-      const reason = failed ? actionError(details, full) : status.text;
-      const row = theme.fg(
-        failed ? "error" : status.color,
-        (failed ? "✗" : status.color === "success" ? "✓" : "?") + " " + summary,
+
+  if (handoff && status.color === "success") {
+    return preview((width) => {
+      const prefix = "↪ ";
+      const rows = wrappedRows(handoff, Math.max(1, width - prefix.length)).map((line, index) =>
+        truncateToWidth((index === 0 ? theme.fg("success", prefix) : " ".repeat(prefix.length)) + line, width),
       );
-      const warning = details?.outputArtifactErrors ? "⚠ couldn’t save full output" : "";
-      const suffix = [reason, warning].filter(Boolean).join(" — ");
-      return [truncateToWidth(row + (suffix ? " — " + theme.fg(failed ? "error" : "warning", suffix) : ""), width)];
-    }, !isPartial),
-    padding,
-  );
+      return details?.outputArtifactErrors
+        ? [
+            truncateToWidth(
+              theme.fg("success", "✓ " + summary) + theme.fg("warning", " — ⚠ couldn’t save full output"),
+              width,
+            ),
+            ...rows,
+          ]
+        : rows;
+    });
+  }
+
+  return preview((width) => {
+    const failed = status.color === "error";
+    const reason = failed ? actionError(details, full) : status.text;
+    const row = theme.fg(
+      failed ? "error" : status.color,
+      (failed ? "✗" : status.color === "success" ? "✓" : "?") + " " + summary,
+    );
+    const warning = details?.outputArtifactErrors ? "⚠ couldn’t save full output" : "";
+    const suffix = [reason, warning].filter(Boolean).join(" — ");
+    return [truncateToWidth(row + (suffix ? " — " + theme.fg(failed ? "error" : "warning", suffix) : ""), width)];
+  });
 }
 
 export function completionPreview(

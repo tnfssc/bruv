@@ -1,10 +1,9 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import type { Browser } from "playwright-core";
+import type { Browser, BrowserContextOptions, Page } from "playwright-core";
 import { launchBrowser } from "./browser";
 import { build, textContent } from "./build";
 import { cellRowHtml, cellStyle, escapeText } from "../html-cells";
 import { demoIds, demoTranscript, demoDuration } from "../demos";
-import { landing } from "../content";
 import { FINAL_HOLD } from "../playback";
 
 const origin = "https://bruv.test";
@@ -16,23 +15,29 @@ beforeAll(async () => {
 afterAll(async () => {
   await browser?.close();
 });
-async function open(options: Parameters<Browser["newContext"]>[0] = {}, clock = false) {
+async function withDemoPage(
+  { manualClock = false, ...options }: BrowserContextOptions & { manualClock?: boolean },
+  check: (page: Page) => Promise<void>,
+) {
   const context = await browser.newContext(options);
-  await context.route(origin + "/**", async (route) => {
-    const path = new URL(route.request().url()).pathname;
-    const file = Bun.file(new URL("../dist" + path, import.meta.url));
-    if (await file.exists())
-      await route.fulfill({ body: Buffer.from(await file.arrayBuffer()), contentType: file.type });
-    else await route.fulfill({ status: 404 });
-  });
-  const page = await context.newPage();
-  if (clock) await page.clock.install();
-  await page.goto(origin + "/text.html");
-  if (options.javaScriptEnabled !== false) await page.locator(".demo-enhanced").first().waitFor();
-  return { context, page };
+  try {
+    await context.route(origin + "/**", async (route) => {
+      const path = new URL(route.request().url()).pathname;
+      const file = Bun.file(new URL("../dist" + path, import.meta.url));
+      if (await file.exists())
+        await route.fulfill({ body: Buffer.from(await file.arrayBuffer()), contentType: file.type });
+      else await route.fulfill({ status: 404 });
+    });
+    const page = await context.newPage();
+    if (manualClock) await page.clock.install();
+    await page.goto(origin + "/text.html");
+    if (options.javaScriptEnabled !== false) await page.locator(".demo-enhanced").first().waitFor();
+    await check(page);
+  } finally {
+    await context.close();
+  }
 }
-const screenText = (page: Awaited<ReturnType<typeof open>>["page"], id = "delegate") =>
-  page.locator('[data-demo="' + id + '"] .demo-screen').textContent();
+const screenText = (page: Page, id = "delegate") => page.locator('[data-demo="' + id + '"] .demo-screen').textContent();
 
 describe("semantic HTML feature demos", () => {
   test("crawlable transcripts and RGB cell runs survive HTML escaping", () => {
@@ -55,8 +60,7 @@ describe("semantic HTML feature demos", () => {
   });
 
   test("no JavaScript shows every complete transcript without controls", async () => {
-    const { context, page } = await open({ javaScriptEnabled: false });
-    try {
+    await withDemoPage({ javaScriptEnabled: false }, async (page) => {
       for (const id of demoIds) {
         const figure = page.locator('[data-demo="' + id + '"]');
         expect(await figure.locator(".demo-transcript").textContent()).toBe(demoTranscript(id));
@@ -66,16 +70,13 @@ describe("semantic HTML feature demos", () => {
       }
       expect(await page.locator("canvas").count()).toBe(0);
       expect(await page.getByRole("link", { name: "Install bruv" }).count()).toBe(1);
-    } finally {
-      await context.close();
-    }
+    });
   }, 15000);
 
   test("DOM UI animates at stable height; pause, offscreen and hidden stop time", async () => {
-    const { context, page } = await open();
-    const errors: string[] = [];
-    page.on("pageerror", (error) => errors.push(error.message));
-    try {
+    await withDemoPage({}, async (page) => {
+      const errors: string[] = [];
+      page.on("pageerror", (error) => errors.push(error.message));
       const first = page.locator('[data-demo="delegate"]');
       await first.scrollIntoViewIfNeeded();
       await page.waitForTimeout(150);
@@ -117,14 +118,11 @@ describe("semantic HTML feature demos", () => {
       expect(await first.locator(".demo-screen").getAttribute("aria-hidden")).toBe("true");
       expect(await first.locator(".demo-transcript").getAttribute("aria-hidden")).toBeNull();
       expect(errors).toEqual([]);
-    } finally {
-      await context.close();
-    }
+    });
   }, 15000);
 
   test("shared playback loops only after the final hold", async () => {
-    const { context, page } = await open({ viewport: { width: 1280, height: 1000 } }, true);
-    try {
+    await withDemoPage({ viewport: { width: 1280, height: 1000 }, manualClock: true }, async (page) => {
       const first = page.locator('[data-demo="delegate"]');
       await first.scrollIntoViewIfNeeded();
       // Let layout and the visibility observer settle before controlling time.
@@ -135,53 +133,51 @@ describe("semantic HTML feature demos", () => {
       expect(await screenText(page)).toBe(final);
       await page.clock.runFor(800);
       expect(await screenText(page)).not.toBe(final);
-    } finally {
-      await context.close();
-    }
+    });
   }, 10000);
 
   test("reduced motion holds final UI until keyboard opt-in; touch control fits", async () => {
-    const { context, page } = await open({
-      reducedMotion: "reduce",
-      viewport: { width: 320, height: 720 },
-      isMobile: true,
-      hasTouch: true,
-    });
-    try {
-      const first = page.locator('[data-demo="delegate"]');
-      await first.scrollIntoViewIfNeeded();
-      const final = await screenText(page);
-      await page.waitForTimeout(300);
-      expect(await screenText(page)).toBe(final);
-      const button = first.locator("button");
-      expect(await button.getAttribute("aria-label")).toStartWith("Animate");
-      expect(await button.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
-      expect((await button.boundingBox())!.width).toBeGreaterThanOrEqual(44);
-      const geometry = await first.evaluate((el) => {
-        const screen = el.querySelector<HTMLElement>(".demo-screen")!;
-        const row = el.querySelector<HTMLElement>(".demo-row")!;
-        const button = el.querySelector("button")!;
-        const style = getComputedStyle(screen);
-        return {
-          available: screen.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
-          row: row.getBoundingClientRect().width,
-          rowTop: row.getBoundingClientRect().top,
-          buttonBottom: button.getBoundingClientRect().bottom,
-        };
-      });
-      expect(geometry.available - geometry.row).toBeLessThan(10);
-      expect(geometry.rowTop).toBeGreaterThan(geometry.buttonBottom);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await button.focus();
-      await page.keyboard.press("Enter");
-      await page.waitForTimeout(200);
-      expect(await screenText(page)).not.toBe(final);
-      await page.keyboard.press("Space");
-      const paused = await screenText(page);
-      await page.waitForTimeout(200);
-      expect(await screenText(page)).toBe(paused);
-    } finally {
-      await context.close();
-    }
+    await withDemoPage(
+      {
+        reducedMotion: "reduce",
+        viewport: { width: 320, height: 720 },
+        isMobile: true,
+        hasTouch: true,
+      },
+      async (page) => {
+        const first = page.locator('[data-demo="delegate"]');
+        await first.scrollIntoViewIfNeeded();
+        const final = await screenText(page);
+        await page.waitForTimeout(300);
+        expect(await screenText(page)).toBe(final);
+        const button = first.locator("button");
+        expect(await button.getAttribute("aria-label")).toStartWith("Animate");
+        expect(await button.evaluate((el) => getComputedStyle(el).opacity)).toBe("1");
+        expect((await button.boundingBox())!.width).toBeGreaterThanOrEqual(44);
+        const geometry = await first.evaluate((el) => {
+          const screen = el.querySelector<HTMLElement>(".demo-screen")!;
+          const row = el.querySelector<HTMLElement>(".demo-row")!;
+          const button = el.querySelector("button")!;
+          const style = getComputedStyle(screen);
+          return {
+            available: screen.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
+            row: row.getBoundingClientRect().width,
+            rowTop: row.getBoundingClientRect().top,
+            buttonBottom: button.getBoundingClientRect().bottom,
+          };
+        });
+        expect(geometry.available - geometry.row).toBeLessThan(10);
+        expect(geometry.rowTop).toBeGreaterThan(geometry.buttonBottom);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        await button.focus();
+        await page.keyboard.press("Enter");
+        await page.waitForTimeout(200);
+        expect(await screenText(page)).not.toBe(final);
+        await page.keyboard.press("Space");
+        const paused = await screenText(page);
+        await page.waitForTimeout(200);
+        expect(await screenText(page)).toBe(paused);
+      },
+    );
   }, 10000);
 });

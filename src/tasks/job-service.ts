@@ -20,9 +20,17 @@ import {
 import { prepareAgentSession } from "./agent-session";
 import { type JobAttentionScheduler, MAX_SNOOZE_MINUTES } from "./job-attention";
 import { canDelegate, loadProfiles, resolveProfile, SUBAGENT_TYPES, THINKING_LEVELS } from "./subagent-profiles";
-import { type TaskManager, type TaskSummary, utf8SafeSlice } from "./task-manager";
+import { type TaskLaunch, type TaskManager, type TaskSummary, utf8SafeSlice } from "./task-manager";
 import { boundedMiddlePreview } from "./text-preview";
-import { createWorktree, resolveWorktreeSource, setupShell, type WorkspaceRequest } from "./worktree-workspace";
+import {
+  createWorktree,
+  resolveWorktreeSource,
+  setupShell,
+  type WorkspaceRequest,
+  type WorkspaceSummary,
+  type WorktreeSource,
+  type WorktreeSetup,
+} from "./worktree-workspace";
 
 const waitSeconds = z.optional(z.number().check(z.minimum(0), z.maximum(86400)));
 const timeoutSeconds = z.optional(z.number().check(z.minimum(0.1), z.maximum(86400)));
@@ -83,6 +91,14 @@ const Agent = z.strictObject({
   waitSeconds,
   timeoutSeconds,
 });
+type AgentParams = z.infer<typeof Agent>;
+type PrepareLocalAgent = (
+  cwd: string,
+  prompt: string,
+  taskId?: string,
+  continuityArgs?: string[],
+) => Promise<Omit<TaskLaunch, "kind">>;
+
 const List = z.strictObject({
   cursor: z.optional(z.union([z.int().check(z.minimum(0)), z.string().check(z.maxLength(256))])),
   count: z.optional(z.int().check(z.minimum(1), z.maximum(100))),
@@ -623,147 +639,7 @@ export class JobService {
           this.#refresh();
           return params.prompts ? results : results[0];
         }
-        const launchStarted = Date.now();
-        const reserved = prompts.map((prompt) => {
-          const id = "task_" + randomUUID().slice(0, 8);
-          return this.manager.prepareAgent({
-            id,
-            launchIdentity: this.#launchIdentity(ctx, signal, prompt, type),
-            displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
-            title: launchTaskTitle(params.title, prompt) || "Agent task",
-            cwd: ctx.cwd,
-            workspace: { kind: "worktree", path: ctx.cwd, baseRef: workspace.baseRef ?? "HEAD" },
-            timeoutMs: params.timeoutSeconds ? params.timeoutSeconds * 1000 : undefined,
-            notifyOnComplete: params.waitSeconds === 0,
-          });
-        });
-        this.#refresh();
-
-        // A batch resolves its source commit exactly once. Individual cancellation
-        // does not disrupt siblings; Git is aborted when every reserved child is done.
-        const sourceController = new AbortController();
-        const preparationSignals = reserved.map((task) => this.manager.preparationSignal(task.id));
-        const abortSourceIfUnused = () => {
-          if (preparationSignals.every((item) => item.aborted) && !sourceController.signal.aborted)
-            sourceController.abort(new Error("Workspace preparation cancelled"));
-        };
-        for (const item of preparationSignals) item.addEventListener("abort", abortSourceIfUnused, { once: true });
-        const worktreeSourcePromise = (async () => {
-          try {
-            return await resolveWorktreeSource(ctx.cwd, workspace.baseRef ?? "HEAD", sourceController.signal);
-          } finally {
-            for (const item of preparationSignals) item.removeEventListener("abort", abortSourceIfUnused);
-          }
-        })();
-
-        const sourceTrusted = typeof ctx.isProjectTrusted === "function" && ctx.isProjectTrusted();
-        const childContinuityArgs = [sourceTrusted ? "--approve" : "--no-approve"];
-        const optionBoundary = process.argv.indexOf("--");
-        const optionArgs = process.argv.slice(0, optionBoundary < 0 ? process.argv.length : optionBoundary);
-        for (let index = 0; index < optionArgs.length - 1; index++) {
-          if (optionArgs[index] === "--system-prompt" || optionArgs[index] === "--append-system-prompt")
-            childContinuityArgs.push(optionArgs[index], optionArgs[index + 1]);
-        }
-
-        const preparations = reserved.map(async (task, index) => {
-          const prompt = prompts[index];
-          const prepSignal = this.manager.preparationSignal(task.id);
-          try {
-            const worktreeSource = await worktreeSourcePromise;
-            prepSignal.throwIfAborted();
-            const workspaceSummary = await createWorktree(worktreeSource, {
-              taskId: task.id,
-              title: params.title ?? (prompts.length > 1 ? "agent-" + (index + 1) : undefined),
-              branch: workspace.branch,
-              signal: prepSignal,
-              onPlanned: (planned) => this.manager.updatePreparedWorkspace(task.id, planned),
-            });
-            prepSignal.throwIfAborted();
-            this.manager.updatePreparedWorkspace(task.id, workspaceSummary);
-
-            if (worktreeSource.setup) {
-              const setupCommand = setupShell(worktreeSource.setup.command);
-              const setupTask = this.manager.spawn({
-                launchIdentity: this.#launchIdentity(ctx, signal),
-                kind: "command",
-                command: setupCommand.command,
-                args: setupCommand.args,
-                displayCommand: "worktree setup: " + worktreeSource.setup.command,
-                cwd: workspaceSummary.path,
-                env: {
-                  ...scrubT3BridgeEnvironment(process.env),
-                  T3CODE_PROJECT_ROOT: worktreeSource.sourcePath,
-                  T3CODE_WORKTREE_PATH: workspaceSummary.path,
-                  BRUV_PROJECT_ROOT: worktreeSource.sourcePath,
-                  BRUV_WORKTREE_PATH: workspaceSummary.path,
-                  NO_COLOR: "1",
-                  FORCE_COLOR: "0",
-                },
-                closeStdin: true,
-                notifyOnComplete: worktreeSource.setup.async,
-              });
-              workspaceSummary.setupTaskId = setupTask.id;
-              workspaceSummary.setupStatus = "running";
-              workspaceSummary.setupConfigDigest = worktreeSource.setup.configDigest;
-              this.manager.updatePreparedWorkspace(task.id, workspaceSummary);
-              if (worktreeSource.setup.async) {
-                void this.manager.wait(setupTask.id).then((outcome) => {
-                  this.manager.updateWorkspaceSetup(task.id, outcome.status === "completed" ? "completed" : "failed");
-                });
-              }
-              if (!worktreeSource.setup.async) {
-                let onAbort: (() => void) | undefined;
-                try {
-                  const outcome = await Promise.race([
-                    this.manager.wait(setupTask.id),
-                    new Promise<never>((_, reject) => {
-                      onAbort = () => reject(prepSignal.reason ?? new Error("Worktree setup cancelled"));
-                      prepSignal.addEventListener("abort", onAbort, { once: true });
-                      if (prepSignal.aborted) onAbort();
-                    }),
-                  ]);
-                  if (outcome.status !== "completed") throw new Error("Worktree setup failed: " + outcome.output);
-                  workspaceSummary.setupStatus = "completed";
-                  this.manager.updatePreparedWorkspace(task.id, workspaceSummary);
-                } finally {
-                  if (onAbort) prepSignal.removeEventListener("abort", onAbort);
-                }
-              }
-            }
-
-            prepSignal.throwIfAborted();
-            const launch = await prepareLaunch(workspaceSummary.path, prompt, task.id, childContinuityArgs);
-            prepSignal.throwIfAborted();
-            this.manager.activatePreparedAgent(task.id, {
-              ...launch,
-              workspace: workspaceSummary,
-              timeoutMs: undefined,
-            });
-          } catch (error) {
-            const current = this.manager.inspect(task.id);
-            if (current.status === "running") this.manager.failPreparedAgent(task.id, error);
-          }
-        });
-
-        // Preserve inherit's historical behavior: session preparation completes
-        // before its foreground wait starts. Worktree preparation remains async so
-        // waitSeconds:0 can immediately return a cancellable managed identity.
-        // Preparations settle independently through their reserved tasks.
-        void preparations;
-        this.#refresh();
-        const results = await Promise.all(
-          reserved.map(async (task) =>
-            preview(
-              await this.manager.foreground(
-                task.id,
-                Math.max(0, (params.waitSeconds ?? 1) * 1000 - (Date.now() - launchStarted)),
-                signal,
-              ),
-            ),
-          ),
-        );
-        this.#refresh();
-        return params.prompts ? results : results[0];
+        return this.#launchWorktreeAgents(params, prompts, workspace, ctx, signal, prepareLaunch);
       }
       case "jobs.targets": {
         z.parse(z.strictObject({}), input);
@@ -1091,6 +967,179 @@ export class JobService {
       }
       default:
         throw new Error(`Unknown job method: ${method}`);
+    }
+  }
+
+  async #launchWorktreeAgents(
+    params: AgentParams,
+    prompts: string[],
+    workspace: Extract<WorkspaceRequest, { kind: "worktree" }>,
+    ctx: ExtensionContext,
+    signal: AbortSignal,
+    prepareLaunch: PrepareLocalAgent,
+  ): Promise<unknown> {
+    const type = params.type ?? "normal";
+    const launchStarted = Date.now();
+    const reserved = prompts.map((prompt) => {
+      const id = "task_" + randomUUID().slice(0, 8);
+      return this.manager.prepareAgent({
+        id,
+        launchIdentity: this.#launchIdentity(ctx, signal, prompt, type),
+        displayCommand: "bruv agent [" + type + "]: " + (params.title ?? prompt),
+        title: launchTaskTitle(params.title, prompt) || "Agent task",
+        cwd: ctx.cwd,
+        workspace: { kind: "worktree", path: ctx.cwd, baseRef: workspace.baseRef ?? "HEAD" },
+        timeoutMs: params.timeoutSeconds ? params.timeoutSeconds * 1000 : undefined,
+        notifyOnComplete: params.waitSeconds === 0,
+      });
+    });
+    this.#refresh();
+
+    const worktreeSourcePromise = this.#pinWorktreeSource(
+      ctx.cwd,
+      workspace.baseRef ?? "HEAD",
+      reserved.map((task) => this.manager.preparationSignal(task.id)),
+    );
+
+    const sourceTrusted = typeof ctx.isProjectTrusted === "function" && ctx.isProjectTrusted();
+    const childContinuityArgs = [sourceTrusted ? "--approve" : "--no-approve"];
+    const optionBoundary = process.argv.indexOf("--");
+    const optionArgs = process.argv.slice(0, optionBoundary < 0 ? process.argv.length : optionBoundary);
+    for (let index = 0; index < optionArgs.length - 1; index++) {
+      if (optionArgs[index] === "--system-prompt" || optionArgs[index] === "--append-system-prompt")
+        childContinuityArgs.push(optionArgs[index], optionArgs[index + 1]);
+    }
+
+    // Preparation settles through each reserved task, independently of this call.
+    void reserved.map(async (task, index) => {
+      const prompt = prompts[index];
+      const prepSignal = this.manager.preparationSignal(task.id);
+      try {
+        const worktreeSource = await worktreeSourcePromise;
+        prepSignal.throwIfAborted();
+        const workspaceSummary = await createWorktree(worktreeSource, {
+          taskId: task.id,
+          title: params.title ?? (prompts.length > 1 ? "agent-" + (index + 1) : undefined),
+          branch: workspace.branch,
+          signal: prepSignal,
+          onPlanned: (planned) => this.manager.updatePreparedWorkspace(task.id, planned),
+        });
+        prepSignal.throwIfAborted();
+        this.manager.updatePreparedWorkspace(task.id, workspaceSummary);
+
+        if (worktreeSource.setup)
+          await this.#runWorktreeSetup(
+            task.id,
+            worktreeSource.setup,
+            worktreeSource.sourcePath,
+            workspaceSummary,
+            prepSignal,
+            this.#launchIdentity(ctx, signal),
+          );
+
+        prepSignal.throwIfAborted();
+        const launch = await prepareLaunch(workspaceSummary.path, prompt, task.id, childContinuityArgs);
+        prepSignal.throwIfAborted();
+        this.manager.activatePreparedAgent(task.id, {
+          ...launch,
+          workspace: workspaceSummary,
+          timeoutMs: undefined,
+        });
+      } catch (error) {
+        const current = this.manager.inspect(task.id);
+        if (current.status === "running") this.manager.failPreparedAgent(task.id, error);
+      }
+    });
+
+    // The wait budget includes preparation. A zero wait immediately hands back
+    // the reserved, cancellable identities while their preparation continues.
+    this.#refresh();
+    const results = await Promise.all(
+      reserved.map(async (task) =>
+        preview(
+          await this.manager.foreground(
+            task.id,
+            Math.max(0, (params.waitSeconds ?? 1) * 1000 - (Date.now() - launchStarted)),
+            signal,
+          ),
+        ),
+      ),
+    );
+    this.#refresh();
+    return params.prompts ? results : results[0];
+  }
+
+  // One pinned source serves the whole batch. Cancelling a child leaves its
+  // siblings' Git operation alive; the last cancellation aborts it.
+  async #pinWorktreeSource(cwd: string, baseRef: string, preparationSignals: AbortSignal[]): Promise<WorktreeSource> {
+    const sourceController = new AbortController();
+    const abortSourceIfUnused = () => {
+      if (preparationSignals.every((item) => item.aborted) && !sourceController.signal.aborted)
+        sourceController.abort(new Error("Workspace preparation cancelled"));
+    };
+    for (const item of preparationSignals) item.addEventListener("abort", abortSourceIfUnused, { once: true });
+    try {
+      return await resolveWorktreeSource(cwd, baseRef, sourceController.signal);
+    } finally {
+      for (const item of preparationSignals) item.removeEventListener("abort", abortSourceIfUnused);
+    }
+  }
+
+  // Setup is a managed child of the reserved agent. Async setup only publishes
+  // its eventual status; blocking setup gates activation and observes cancellation.
+  async #runWorktreeSetup(
+    taskId: string,
+    setup: WorktreeSetup,
+    sourcePath: string,
+    workspaceSummary: WorkspaceSummary,
+    prepSignal: AbortSignal,
+    launchIdentity: TaskLaunch["launchIdentity"],
+  ): Promise<void> {
+    const setupCommand = setupShell(setup.command);
+    const setupTask = this.manager.spawn({
+      launchIdentity,
+      kind: "command",
+      command: setupCommand.command,
+      args: setupCommand.args,
+      displayCommand: "worktree setup: " + setup.command,
+      cwd: workspaceSummary.path,
+      env: {
+        ...scrubT3BridgeEnvironment(process.env),
+        T3CODE_PROJECT_ROOT: sourcePath,
+        T3CODE_WORKTREE_PATH: workspaceSummary.path,
+        BRUV_PROJECT_ROOT: sourcePath,
+        BRUV_WORKTREE_PATH: workspaceSummary.path,
+        NO_COLOR: "1",
+        FORCE_COLOR: "0",
+      },
+      closeStdin: true,
+      notifyOnComplete: setup.async,
+    });
+    workspaceSummary.setupTaskId = setupTask.id;
+    workspaceSummary.setupStatus = "running";
+    workspaceSummary.setupConfigDigest = setup.configDigest;
+    this.manager.updatePreparedWorkspace(taskId, workspaceSummary);
+    if (setup.async) {
+      void this.manager.wait(setupTask.id).then((outcome) => {
+        this.manager.updateWorkspaceSetup(taskId, outcome.status === "completed" ? "completed" : "failed");
+      });
+      return;
+    }
+    let onAbort: (() => void) | undefined;
+    try {
+      const outcome = await Promise.race([
+        this.manager.wait(setupTask.id),
+        new Promise<never>((_, reject) => {
+          onAbort = () => reject(prepSignal.reason ?? new Error("Worktree setup cancelled"));
+          prepSignal.addEventListener("abort", onAbort, { once: true });
+          if (prepSignal.aborted) onAbort();
+        }),
+      ]);
+      if (outcome.status !== "completed") throw new Error("Worktree setup failed: " + outcome.output);
+      workspaceSummary.setupStatus = "completed";
+      this.manager.updatePreparedWorkspace(taskId, workspaceSummary);
+    } finally {
+      if (onAbort) prepSignal.removeEventListener("abort", onAbort);
     }
   }
 

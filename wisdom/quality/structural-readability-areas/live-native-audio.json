@@ -1150,7 +1150,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "parent UI related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_14234cb0",
+        "verdict": "ACCEPT",
+        "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
+        "blob": "95453da9cb3f0827a96b955c60f854e905939dac",
+        "reason": "UI attachment/controller/hook/reporting lifetime patch; same judged blob in parent checkpoint"
+      }
     },
     {
       "focus": "tests/fixtures/live-execute-cli.sh",
@@ -1965,6 +1972,7 @@
   ],
   "parentCheckpoint": {
     "target": "95d2e164",
-    "status": "attempting clean join; parent has included accepted live batch f473c8e5"
+    "status": "clean shared accepted checkpoint joined; one area related test imported from UI accepted patch",
+    "limits": "combined checks pending; other-area notes imported unchanged"
   }
 }

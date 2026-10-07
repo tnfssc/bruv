@@ -195,6 +195,110 @@ test("ordinary root fake inference, observe, detach, exact command replay, child
     f.cleanup();
   }
 });
+test("settled close waits for clean exit, then completes already queued commands without dispatch", async () => {
+  const f = fixture(),
+    port = new FakeInference();
+  // Ending the RPC stream is not an exit acknowledgement.
+  port.end = () => {
+    port.endCount++;
+  };
+  let owner: Promise<void> | undefined;
+  try {
+    f.store.accept(root(f.dir), "create");
+    owner = runRootOwner("session", { directory: f.store.directory, port: () => port });
+    await until(() => f.store.get("session").record.state === "running");
+    f.store.enqueue("session", "close", { kind: "close" });
+    f.store.enqueue("session", "queued", { kind: "prompt", text: "must not dispatch" });
+    await until(() => port.endCount === 1);
+    expect(f.store.get("session").record.state).toBe("running");
+    expect(f.store.get("session").closing).toBe(true);
+    expect(f.store.receipt("session", "close").state).toBe("dispatching");
+    expect(f.store.receipt("session", "queued").state).toBe("queued");
+    expect(() => f.store.enqueue("session", "new", { kind: "abort" })).toThrow("not accepting");
+    expect(port.calls.at(-1)?.command).toEqual({ type: "clear_queue" });
+    expect(port.facets.at(-1)).toEqual({ kind: "close" });
+    port.resolveExit({ code: 0, signal: null });
+    await owner;
+    expect(f.store.get("session").record.state).toBe("closed");
+    expect(f.store.receipt("session", "close")).toMatchObject({
+      state: "completed",
+      result: { settled: true, exitCode: 0 },
+    });
+    expect(f.store.receipt("session", "queued")).toMatchObject({
+      state: "completed",
+      error: "Root closed before command dispatch",
+    });
+    expect(port.calls.some((call) => call.id === "queued")).toBe(false);
+    expect(f.store.observe("session", 0).events.at(-1)?.event).toEqual({ type: "root_closed", exitCode: 0 });
+  } finally {
+    port.resolveExit({ code: 0, signal: null });
+    await owner;
+    f.cleanup();
+  }
+});
+
+test("settled close with failed process exit remains unknown and never certifies closure", async () => {
+  const f = fixture(),
+    port = new FakeInference();
+  port.end = () => {
+    port.endCount++;
+  };
+  let owner: Promise<void> | undefined;
+  try {
+    f.store.accept(root(f.dir), "create");
+    owner = runRootOwner("session", { directory: f.store.directory, port: () => port });
+    await until(() => f.store.get("session").record.state === "running");
+    f.store.enqueue("session", "close", { kind: "close" });
+    await until(() => port.endCount === 1);
+    port.resolveExit({ code: 1, signal: null });
+    await owner;
+    expect(f.store.get("session").record.state).toBe("unknown");
+    expect(f.store.receipt("session", "close").state).toBe("unknown");
+    expect(f.store.observe("session", 0).events.some((e) => (e.event as { type: string }).type === "root_closed")).toBe(
+      false,
+    );
+    expect(f.store.enqueue("session", "close", { kind: "close" }).state).toBe("unknown");
+    expect(port.facets.filter((facet) => facet.kind === "close")).toHaveLength(1);
+  } finally {
+    port.resolveExit({ code: 0, signal: null });
+    await owner;
+    f.cleanup();
+  }
+});
+
+test("abort dispatch does not wait for an outstanding prompt acknowledgement", async () => {
+  const f = fixture(),
+    port = new FakeInference();
+  const rpc = port.rpc.bind(port);
+  let acknowledgePrompt!: () => void;
+  const promptAcknowledgement = new Promise<void>((resolve) => {
+    acknowledgePrompt = resolve;
+  });
+  port.rpc = async (id, command) => {
+    if (command.type === "prompt") await promptAcknowledgement;
+    return rpc(id, command);
+  };
+  let owner: Promise<void> | undefined;
+  try {
+    f.store.accept(root(f.dir), "create");
+    owner = runRootOwner("session", { directory: f.store.directory, port: () => port });
+    await until(() => f.store.get("session").record.state === "running");
+    f.store.enqueue("session", "prompt", { kind: "prompt", text: "inference pending" });
+    await until(() => f.store.receipt("session", "prompt").state === "dispatching");
+    f.store.enqueue("session", "abort", { kind: "abort" });
+    await until(() => f.store.receipt("session", "abort").state === "completed");
+    expect(f.store.receipt("session", "prompt").state).toBe("dispatching");
+    expect(port.calls.at(-1)?.command).toEqual({ type: "abort" });
+    acknowledgePrompt();
+    await until(() => f.store.receipt("session", "prompt").state === "completed");
+  } finally {
+    acknowledgePrompt();
+    port.end();
+    await owner;
+    f.cleanup();
+  }
+});
+
 test("unknown runtime write never replays and owner death does not start a replacement", async () => {
   const f = fixture(),
     port = new FakeInference();

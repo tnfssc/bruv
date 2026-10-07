@@ -271,6 +271,58 @@ test("synchronous render request does not report negative post-return scheduling
   }
 });
 
+test("request return finalizes its consumed frame, not the next request batch", () => {
+  const { renderer, profiler: initial, scheduler, advance } = fixture();
+  initial.dispose();
+  let renderCount = 0;
+  renderer.doRender = function () {
+    advance(5);
+    if (++renderCount === 1) this.requestRender();
+    return "frame-result";
+  };
+  renderer.requestImmediateRender = function () {
+    advance(2);
+    this.doRender();
+    advance(1);
+  };
+  const profiler = attachTerminalActionProfiler(renderer, { now: () => scheduler.clock, heartbeatIntervalMs: null });
+  try {
+    const duringAction = profiler.runAction("two immediate frames", () => {
+      renderer.requestImmediateRender();
+      const snapshot = profiler.snapshot();
+      renderer.requestImmediateRender();
+      return snapshot;
+    });
+    const [first, second] = profiler.snapshot().frameEntries;
+    expect(first).toMatchObject({
+      enteredAtMs: 2,
+      requestCount: 1,
+      firstRequestAtMs: 0,
+      firstRequestSyncEndedAtMs: 9,
+      firstRequestSyncEndToFrameEntryMs: null,
+    });
+    expect(first!.firstFrameForActions).toHaveLength(1);
+    expect(first!.firstFrameForActions[0]).toMatchObject({
+      label: "two immediate frames",
+      actionSyncEndedAtMs: 17,
+      actionSyncEndToFirstFrameEntryMs: null,
+    });
+    // The in-frame request starts the next batch; the second immediate request joins it.
+    expect(second).toMatchObject({
+      enteredAtMs: 11,
+      requestCount: 2,
+      firstRequestAtMs: 7,
+      firstRequestSyncEndedAtMs: 8,
+      firstRequestSyncEndToFrameEntryMs: 3,
+      firstFrameForActions: [],
+    });
+    expect(duringAction.frameEntries[0]!.firstFrameForActions[0]!.actionSyncEndedAtMs).toBeNull();
+    expect(span(profiler, "two immediate frames").syncDurationMs).toBe(17);
+  } finally {
+    profiler.dispose();
+  }
+});
+
 test("heartbeat exposes deferred work independent of span CPU, with no catch-up storm", () => {
   const { scheduler, profiler, advance } = fixture(2, 4);
   try {
