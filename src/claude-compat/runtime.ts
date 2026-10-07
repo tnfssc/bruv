@@ -79,6 +79,8 @@ export interface ClaudeCompatRuntimeOptions {
   disableSlashCommands?: boolean;
   thinkingLevel?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
   thinkingDisplay?: string;
+  /** Official host --settings fastMode: explicit user premium-tier opt-in. */
+  fastMode?: boolean;
   profilesPath?: string;
   /** The actual enforced policy, not a readiness label. */
   permissionMode?: string;
@@ -325,6 +327,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     sessionId: () => options.nativeSessionId ?? session.sessionId,
     model: () => (session.model ? session.model.provider + "/" + session.model.id : (options.model ?? "")),
   });
+  let nativeFast: ReturnType<typeof import("../agent/native-fast-mode").registerNativeFastMode> | undefined;
   let factories: { name: string; factory: ExtensionFactory; hidden: boolean }[] = [];
   if (!options.auxiliary) {
     const [{ default: tasks }, { default: state }, { default: remote }] = await Promise.all([
@@ -339,6 +342,9 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           tasks(pi, {
             executablePath: options.executablePath,
             profilesPath: options.profilesPath,
+            onNativeFastMode: (control) => {
+              nativeFast = control;
+            },
             onTaskOwner: (owner) =>
               bindNativeTasks(owner, {
                 root: {
@@ -613,6 +619,17 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     throw error;
   }
 
+  if (options.fastMode !== undefined) {
+    try {
+      if (!nativeFast) {
+        if (options.fastMode) throw new Error("Native fast mode is unavailable in this runtime");
+      } else nativeFast.setWithCostConsent(options.fastMode);
+    } catch (error) {
+      await close();
+      throw error;
+    }
+  }
+
   // Bruv's extension installs its ordinary CLI execute-only default at session_start.
   // Native selection belongs to this composition, after those defaults have run.
   const selectedTools = options.auxiliary ? [] : (options.tools ?? ["execute"]);
@@ -674,6 +691,22 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           },
         }
       : {}),
+    apply_flag_settings: async (message) => {
+      checkOpen();
+      if (!session.isIdle) throw new Error("Cannot change Fast during a running turn; interrupt first");
+      const settings = message.request.settings;
+      if (
+        !settings ||
+        typeof settings !== "object" ||
+        Array.isArray(settings) ||
+        Object.keys(settings).some((key) => key !== "fastMode") ||
+        typeof (settings as Record<string, unknown>).fastMode !== "boolean"
+      )
+        throw new Error("apply_flag_settings supports only boolean fastMode");
+      if (!nativeFast) throw new Error("Native fast mode is unavailable in this runtime");
+      nativeFast.setWithCostConsent((settings as { fastMode: boolean }).fastMode);
+      return {};
+    },
     set_model: async (message) => {
       checkOpen();
       if (!session.isIdle) throw new Error("Cannot change model during a running turn; interrupt first");

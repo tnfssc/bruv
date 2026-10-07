@@ -16,3 +16,11 @@ User saw GPT 6.1 Sol High Fast in the parent composer, but only High on a child 
 Trace how the current T3 Claude adapter sends Fast options, then bind that input to the existing auth-bound native-fast path. Carry effective Fast status into child projection and labels. Do not just add a Fast label: stored options and actual request tier are different facts. Check the provider payload in a focused test. No live provider tier or billing proof was obtained.
 
 No code fix, push, PR, install or release in this diagnosis. Values unchanged: existing proof-scope and real-path values cover this lesson.
+
+## Connector binding follow-up
+
+[Parent host trace and connector binding](parent-fast-host-trace.md) records the exact
+2702 host input, tested auth-bound mapping, effective CLI-child inheritance, and the
+remaining host bug: the bundled Claude catalog can drop Fast for custom OpenAI models
+before launch. Saved true is still not proof that the connector received opt-in. The
+pinned child bar has no Fast label. No installed-host update or live billing proof.
