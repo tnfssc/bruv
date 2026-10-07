@@ -472,7 +472,7 @@
     {
       "focus": "scripts/terminal-perf/interaction-worker.ts",
       "initialBlob": "479071932b154974ea189736685241aa5f1995c5",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_8e35cbf3",
@@ -487,11 +487,25 @@
           "id": "task_5064dcca",
           "base": "f52931303dd0e226144ce3eb7a490867b8c1f146",
           "candidate": "0975c6b36cb08cf00bbc697c414746d09d0e10f1",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/interaction-worker.ts": "479071932b154974ea189736685241aa5f1995c5"
+          },
+          "evidence": "Family-local lifecycle/cold-init/action ownership is explicit; generic handler extraction would obscure real differences. Send init evidence cleared before action; disposal scoped per family.",
+          "checks": [
+            "Independent exact 19 tests /98 assertions",
+            "Joined root/profiler 20/125 plus workload/profiler 81/4673",
+            "Joined CLI 43 raw/193 normalized cases, init/action IDs separate, lifecycle provider/fetch zero",
+            "Unknown case exits 2 no artifact"
+          ],
+          "limits": [
+            "No full build/compiled CLI/provider/PTY/performance proof"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "479071932b154974ea189736685241aa5f1995c5",
+      "integrationState": "unchanged accepted with joined root/profiler caller checks",
       "launchBase": "f52931303dd0e226144ce3eb7a490867b8c1f146",
       "changedRelatedPaths": [],
       "result": "No-change: family-local setup/action/finally boundaries and send-init snapshots/clear-before-measure are explicit; generic runner would hide distinct lifetimes.",
@@ -2461,10 +2475,12 @@
     }
   ],
   "parentBoundary": {
-    "checkedTip": "6a285569",
-    "result": "Only documentation progress commits beyond initial area base; no common source changes to import."
+    "checkedTip": "695ade32dc055e22dd56a7bf06c01764973715d2",
+    "mergeCommit": "bc8f6e5ffb75aa2b27fd939ce60888063e756383",
+    "result": "Merged accepted parent common code cleanly; all UI accepted final blobs unchanged",
+    "acceptedHashMismatches": []
   },
-  "diskBoundary": "157G available after first three accepted patches",
+  "diskBoundary": "136G available at parent-common-code merge",
   "joinRequirements": [],
   "joinProof": {
     "judge": "task_060d7edf",

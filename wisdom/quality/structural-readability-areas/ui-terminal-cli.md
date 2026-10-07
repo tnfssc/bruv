@@ -113,3 +113,7 @@ Runtime acceptance primary task_8217bb2e; judge task_150f5c27 ACCEPT 98bd940bd8d
 Performance options primary task_61e4e31c + judge task_be297c64 NO CHANGE NEEDED at 9d123b4f21a13ef603be8c89b2eb9e16a68e1463; independent 9 tests/60 assertions and 63 supplemental parsing/selection/budget/strict-boundary assertions.
 
 Terminal acceptance primary task_28f2469a; judge task_c4ad6e75 ACCEPT b02afcce77ccd1ebb021dc6230641ab0294ce68e. Ordered routing now readable apart from scenario progression, with replay/lifecycle/question authority unchanged. Independent 13+10 Python tests, 148 differential histories, AST equality and loopback SSE/log check. No compiled/visual acceptance; related Python test primary pending.
+
+Interaction-worker primary task_8e35cbf3 + judge task_5064dcca NO CHANGE NEEDED at 479071932b154974ea189736685241aa5f1995c5. Exact tests 19/98, joined root/profiler tests 20/125 and 81/4673, actual serial CLI 43 raw/193 normalized cases; init/action evidence separate, no lifecycle provider/fetch calls.
+
+Parent common checkpoint 695ade32dc055e22dd56a7bf06c01764973715d2 merged cleanly at bc8f6e5ffb75aa2b27fd939ce60888063e756383; 126 parent-approved paths, no UI accepted blob changes (0 mismatches). Other-area primary coverage remains owned by parent/siblings. Future workers launch from this common state. Disk 136G; pending task-row fixture TS repair still required, parent combined API gaps remain honest.
