@@ -191,6 +191,13 @@ installs carry this behavior in their own files; no machine-specific shim is
 required. Both entries accept only no arguments, `--check`, or `--help`/`-h`,
 just like the normal updater. Mixed stream flags and other arguments fail.
 
+This assumes the standalone matched-pair install, such as `~/.local/bin`. T3 may
+choose an Anthropic package-manager updater for paths it classifies as managed
+by npm or another package manager. Bruv cannot intercept that command; do not
+use that updater for a Bruv instance. Use the official paired installer path
+shown above. Self-update supports Linux x64/arm64, macOS arm64 and
+Android/Termux arm64; other platforms need a manual matching install.
+
 **A real Bruv update may still leave T3 saying unchanged/outdated.** T3 compares
 our protocol compatibility version against latest Anthropic Claude, not the
 Bruv product version. Updating Bruv does not promise to change that protocol
