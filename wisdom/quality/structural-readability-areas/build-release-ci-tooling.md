@@ -50,3 +50,41 @@ Download-test primary: scoped scenario cleanup, explicit fixture roles and sourc
 Paired build: singleton matrix/loop removed in favor of direct command→spawn→exit. Judge task_438d5e06 ACCEPT3cfc224;18/109 focused incl actual entrypoint stub child cwd/argv/IO/status. No compile claim. Related production-packaging test primary pending; no remaining tracked old plural API callers.
 
 CI workflow: explicit feedback success then two accepted full/docs lane tuples; judge task_884543de ACCEPT8f17983.21/276 tests,17 bash syntax blocks,1500 behavior comparisons plus45 malformed values, exactly same two allowed outcomes. Permissions/wiring unchanged; no actionlint/hosted proof.
+
+Dependency workflow: verify downloaded identity/files before explicit credential exposure; publish step owns auth/freshness/leased push. Judge task_69a61924 ACCEPT8d6139c plus related tests;13 independent tests/nine shell syntax blocks. This scopes credentials within existing write job, not new security boundary; no hosted/auth/API proof.
+
+Release workflow: one read-only admission/SHA-tag job; downstream explicit success gates and immutable-source wiring replace scattered policy. Judge task_265f1748 ACCEPT72a12eb plus both tests;56 independent tests. Extra Ubuntu queue/start/failure boundary explicit. Boolean fixture is not hosted scheduling; no platform/build proof. Both related test primaries pending.
+
+Asset-test primary: owned copied dependencies/input checkout, explicit generation→inventory→old timestamps→idempotence→cleanup. Judge task_a43b5841 ACCEPT6c6ae2c; three mutations independently caught. No shared dependency writes, no full byte fidelity/stale-output cleanup/compiled proof.
+
+Dependency-workflow-test primary: step-local contracts, isolated real bundle scenarios. Judge task_35b870b5 ACCEPT5d0f15a;11focus39combined575assertions. Existing identity mutation-proof gap explicit; no hosted/authenticated push.
+
+Manual-test primary: isolated release states and owned repository lifetime, named admission/identity cases, byte retry/no-mutation refusals. Judge task_69fdb98c ACCEPT9fdf9ef;28/166focus52withpublisher. Explicit follow-up: rejudge fixture compatibility if pending preparer script changes; no hosted evaluator claim.
+
+Release-workflow-test primary: separate owned-job build/helper/assets contracts and required named-step lookup. Judge task_f9136eba ACCEPTffcf474;23/351 vs baseline21/339, wrong-job validation mutation caught2 tests previously missed. Lint warning attribution corrected:4 at both base/candidate. Static only, no hosted gate.
+
+Manual preparer: shared numeric ordering and one package snapshot. Judge task_706382eb ACCEPT5822e205 plus explicit combined fixture compatibility9fdf9ef (28/166), resolving manual-test follow-up. Independent numeric probes2/104; committed multi-tag coverage remains nonblocking gap.
+
+Dependency updater first candidate REJECT task_98fc9caa: inherited constructor appears as missing lock version after normalization. Not integrated. Fresh rework task_d9eeb4d5 owns full candidate+regression fix; earlier candidate/branch retained.
+
+Notices: explicit license policy/collection/render/publication with budget boundary. Judge task_9e042be2 ACCEPT10cc816;30/413related4/23baseline newtests;real211-package657015-byte output identical SHA256cb5746ceef28fea70e3c7c042cbb9edf3489f7a66407dbbd304f0661c94ccb4a. New test registered EXTRA pending own primary. Attributes: judge task_064019e9 ACCEPT65bbe845 after retirement history proof and3394 identical tracked attributes.
+
+Dependency updater ROUND2: task_68106474 ACCEPT109d8d0 after independent reproduction of original constructor bug and verification own-entry-safe lock/root reports, constructor/__proto__/toString probes.25/161combined+strict tsc/Biome;full candidate coherent patch retained. Old REJECT and branches preserved, not overwritten. Related dependency-updates test primary pending.
+
+EXTRA new notices test primary completed: independent graph/optional/render fixtures, package-bound licenses and reverse-discovery sorting proof. Judge task_00d188a5 ACCEPT13c3bd3,6/27focus3/4failurechecks;all old coverage retained. New-file primary/hash/judge requirement satisfied at this blob.
+
+Root standalone installer: same canonical-stage transaction as accepted scripts copy; coherent final shared-test correction by fresh worker. Judge task_9233d5f2 ACCEPT root125933e/teste04230d8,22/106download7/97site. Prior test primary preserved and changed final blob rejudged. Parent common branch checkpoint695ade32 observed (partial accepted joins incl old area batch,combined tsc); no sibling direct imports.
+
+Parent accepted common checkpoint695ade32 merged clean at batch boundary. merge-tree confirmed none of71 area baseline/extra focus paths changed, so accepted area blobs remain exact. Other-area common source stays parent-owned; no area coverage bluff or sibling direct imports. Combined proof will use this common integrated state.
+
+Mise config: obsolete T3 authority comment removed,flat pins unchanged;judge task_a39f170d ACCEPTa0de5dad. Current pnpm uses traced,10Bun5Node2pnpm pin checks150assertions;21pass2missingdepsfail fullworkflow remains honest.
+
+Test preload NO CHANGE NEEDED task_6d717faf atd3c71348. Qualification: Bun.spawnSync without explicitenv retained startup identity in judge probe;explicit spreadprocess.env sanitizes. Preload is not universal subprocess isolation;TUI helper separately sanitizes.2/8boundary checks,ordinary identity retained,no live proof.
+
+Dependency-test primary: independent cases grouped by6contracts;judge task_f509c814 ACCEPTda5d3d5,all prior46assertions retained and4constructor regressions mutation-verified. Source own-entry fix unchanged;no registry/hosted proof.
+
+Native runner:check→spawn→close→recheckbinary→success→admit evidence lifecycle;named suites/final proof boundary. Judge task_83089869 ACCEPT1037e580 plus tests;40tests/Node24.21syntax. Child signal only—not parent teardown/actual upstream run. Setup candidate separately reviewed;combined proof pending.
+
+Native setup:all verification before env handoff;task_1e479592 ACCEPT9d6cfd86/newtest8191a1d5. Explicit reproduced SDK-failure partial export fix (base1pass2fail/new3pass);65checks. Final runner handoff compatible;not atomicfs or actual native run. EXTRA test primary pending. Diagnostic probe task_e49b32f4 NO CHANGE NEEDEDd33b6f17;normalization not redaction,7/47tests.
+
+Launcher verifier:packaging→isolated release dispatch→isolated installed dispatch,one temporary sibling lifetime each. Judge task_dc2eea02 ACCEPT exact ledgerhash;35/395plusalltarget template/oversize/failurecleanup probes. Not nativeAndroid or compiledcross-target proof.

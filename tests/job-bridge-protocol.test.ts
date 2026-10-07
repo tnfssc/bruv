@@ -3,7 +3,7 @@ import { getEventListeners } from "node:events";
 import { Duplex, PassThrough } from "node:stream";
 import { inspectDiagnostics } from "../src/diagnostics";
 import { installJobGlobals, MAX_JOB_BRIDGE_FRAME_BYTES, serveJobBridge } from "../src/typescript/job-bridge";
-import { withJobCancellation } from "../src/job-delivery";
+import { JOB_RESPONSE_ACK_EVENT, withJobCancellation } from "../src/job-delivery";
 
 function socket() {
   return new Duplex({
@@ -271,6 +271,73 @@ test("failed RPCs release controllers while foreground ACK ownership stays provi
 
     bridge.close(true);
     expect(getEventListeners(cancellation.signal, "abort")).toHaveLength(0);
+  } finally {
+    bridge.close();
+    worker.destroy();
+  }
+});
+
+for (const commit of [false, true]) {
+  test(
+    "foreground batch ACK survives transport end but transfers ownership only on committed close: " + commit,
+    async () => {
+      const { server, worker } = bridgePair();
+      const events: string[] = [];
+      const bridge = serveJobBridge(
+        server,
+        async (_method, _params, signal) => {
+          signal.addEventListener(JOB_RESPONSE_ACK_EVENT, () => events.push("ack"));
+          signal.addEventListener("abort", () => events.push("abort"));
+          return [{ background: true }, { background: false }];
+        },
+        new AbortController().signal,
+      );
+      try {
+        const response = nextFrame(worker);
+        worker.write('{"id":1,"method":"subagent","params":{}}\n');
+        expect(await response).toEqual({ id: 1, result: [{ background: true }, { background: false }] });
+        worker.write('{"ack":1}\n');
+        // Exercise the same end callback that runs before executeIsolated sees
+        // worker close. Receipt must neither commit nor relinquish ownership.
+        const ended = new Promise<void>((resolve) => server.once("end", resolve));
+        worker.end();
+        await ended;
+        expect(events).toEqual([]);
+        bridge.close(commit);
+        bridge.close(commit);
+        expect(events).toEqual(commit ? ["ack", "abort"] : ["abort"]);
+      } finally {
+        bridge.close();
+        worker.destroy();
+      }
+    },
+  );
+}
+
+test("replayed foreground ACK rejects the protocol and restores notification ownership", async () => {
+  const { server, worker } = bridgePair();
+  const owner = {};
+  const events: string[] = [];
+  const bridge = serveJobBridge(
+    server,
+    async (_method, _params, signal) => {
+      signal.addEventListener(JOB_RESPONSE_ACK_EVENT, () => events.push("ack"));
+      signal.addEventListener("abort", () => events.push("abort"));
+      return { background: false };
+    },
+    new AbortController().signal,
+    owner,
+  );
+  try {
+    const response = nextFrame(worker);
+    worker.write('{"id":1,"method":"shell","params":{}}\n');
+    expect(await response).toEqual({ id: 1, result: { background: false } });
+    const closed = new Promise<void>((resolve) => server.once("close", resolve));
+    worker.write('{"ack":1}\n{"ack":1}\n');
+    await closed;
+    bridge.close(true);
+    expect(events).toEqual(["abort"]);
+    expect(inspectDiagnostics(owner).records.some((record) => record.code === "protocol_invalid")).toBe(true);
   } finally {
     bridge.close();
     worker.destroy();

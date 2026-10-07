@@ -200,6 +200,48 @@ test("saved report rejects absent timings, raw data and repetition coverage", ()
   expect(() => validateInteractionRun(incomplete)).toThrow("repetition coverage");
 });
 
+test("validation preserves portable values and opaque evidence without normalization", () => {
+  const run = reportFixture();
+  run.config.repetitions = 2;
+  const sample = run.cases[0].samples[0];
+  sample.iteration = 1;
+  sample.firstVisibleAckMs = null;
+  sample.firstProviderAdmissionMs = null;
+  sample.requestToFrameMs = null;
+  sample.spans = [{ name: "prefix", kind: "async-prefix", durationMs: 0, parentId: null }];
+  run.cases[0].samples.push({ ...structuredClone(sample), iteration: 0 });
+  const second = structuredClone(run.cases[0]);
+  second.id = "tools/second/reveal";
+  run.cases.push(second);
+  run.evidence["raw/test.json"] = { fixtureSpecific: [null, "opaque", { nested: true }] };
+  const before = structuredClone(run);
+  expect(validateInteractionRun(run)).toBe(run);
+  expect(run).toEqual(before);
+});
+
+test("validation keeps identity and repetition diagnostics ahead of nested measurements", () => {
+  const duplicate = reportFixture();
+  const second = structuredClone(duplicate.cases[0]);
+  second.samples[0].frameMs = [-1];
+  duplicate.cases.push(second);
+  expect(() => validateInteractionRun(duplicate)).toThrow("Invalid interaction report: case id");
+
+  const repetition = reportFixture();
+  repetition.cases[0].samples[0].iteration = 1;
+  repetition.cases[0].samples[0].frameMs = [-1];
+  expect(() => validateInteractionRun(repetition)).toThrow("Invalid interaction report: invalid repetition coverage");
+});
+
+test("validation checks optional span bounds after required timing", () => {
+  const run = reportFixture();
+  const span = run.cases[0].samples[0].spans[0];
+  span.startedAtMs = 10;
+  span.endedAtMs = 9;
+  expect(() => validateInteractionRun(run)).toThrow("Invalid interaction report: span reversed bounds");
+  span.durationMs = -1;
+  expect(() => validateInteractionRun(run)).toThrow("Invalid interaction report: span.durationMs");
+});
+
 test("baseline deltas require matched action, phase, iteration and measurement boundary", () => {
   const run = reportFixture();
   for (const key of ["action", "phase", "iteration", "boundary"] as const) {

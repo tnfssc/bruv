@@ -35,12 +35,12 @@ type PackageInfo = {
   name: string;
   version: string;
   license?: unknown;
-  repository?: unknown;
   dependencies?: Record<string, string>;
   optionalDependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
 };
-type Entry = { info: PackageInfo; directory: string; notices: Array<{ name: string; text: string }> };
+type Notice = { name: string; text: string };
+type PackageNotices = { info: PackageInfo; notices: Notice[] };
 type ByteBudget = { used: number; maximum: number };
 
 async function readLicense(path: string, budget: ByteBudget): Promise<string> {
@@ -68,28 +68,34 @@ async function packageDirectory(name: string, from: string): Promise<string | un
   }
 }
 
-async function noticeFiles(directory: string, budget: ByteBudget): Promise<Array<{ name: string; text: string }>> {
+async function readPackageNotices(
+  root: string,
+  directory: string,
+  info: PackageInfo,
+  budget: ByteBudget,
+): Promise<Notice[]> {
   const names = (await readdir(directory))
     .filter((name) => /^(?:licen[cs]e|copying|notice)(?:$|[._-])/i.test(name))
     .sort();
-  const notices = [];
+  const notices: Notice[] = [];
   for (const name of names) notices.push({ name, text: await readLicense(join(directory, name), budget) });
-  return notices;
+  if (notices.length > 0) return notices;
+
+  const fallback = fallbackNotices[info.name];
+  if (fallback) {
+    return [{ name: `curated ${fallback}`, text: await readLicense(join(root, "third_party/npm", fallback), budget) }];
+  }
+  if (pinnedPiPackages.has(info.name) && info.version === PI_VERSION) return [];
+  throw new Error(`${info.name}@${info.version} has no packaged or curated LICENSE, COPYING, or NOTICE file`);
 }
 
-export async function generateThirdPartyNotices(
+async function collectProductionNotices(
   root: string,
-  output: string,
-  maximumBytes = MAX_BYTES,
-): Promise<number> {
-  const rootPackage = (await Bun.file(join(root, "package.json")).json()) as { dependencies?: Record<string, string> };
-  const budget = { used: 0, maximum: maximumBytes };
-  const piLicense = await readLicense(join(root, "third_party/pi/LICENSE"), budget);
-  const bunLicense = await readLicense(join(root, "third_party/bun/LICENSE.md"), budget);
-  const entries = new Map<string, Entry>();
-  const queue = Object.keys(rootPackage.dependencies ?? {})
-    .sort()
-    .map((name) => ({ name, from: root, required: true }));
+  dependencies: string[],
+  budget: ByteBudget,
+): Promise<PackageNotices[]> {
+  const entries = new Map<string, PackageNotices>();
+  const queue = dependencies.sort().map((name) => ({ name, from: root, required: true }));
   while (queue.length > 0) {
     const next = queue.shift();
     if (!next) break;
@@ -102,25 +108,17 @@ export async function generateThirdPartyNotices(
     const key = `${info.name}@${info.version}`;
     if (entries.has(key)) continue;
     if (entries.size >= MAX_PACKAGES) throw new Error(`production dependency graph exceeds ${MAX_PACKAGES} packages`);
-    const notices = await noticeFiles(directory, budget);
-    const fallback = fallbackNotices[info.name];
-    if (notices.length === 0 && fallback) {
-      notices.push({
-        name: `curated ${fallback}`,
-        text: await readLicense(join(root, "third_party/npm", fallback), budget),
-      });
-    }
-    const pinnedPiFallback = pinnedPiPackages.has(info.name) && info.version === PI_VERSION;
-    if (notices.length === 0 && !pinnedPiFallback) {
-      throw new Error(`${key} has no packaged or curated LICENSE, COPYING, or NOTICE file`);
-    }
-    entries.set(key, { info, directory, notices });
+    entries.set(key, { info, notices: await readPackageNotices(root, directory, info, budget) });
     for (const name of Object.keys(info.dependencies ?? {}).sort())
       queue.push({ name, from: directory, required: true });
     const optional = { ...info.optionalDependencies, ...info.peerDependencies };
     for (const name of Object.keys(optional).sort()) queue.push({ name, from: directory, required: false });
   }
 
+  return [...entries.values()];
+}
+
+function renderNotices(entries: PackageNotices[], piLicense: string, bunLicense: string): string {
   const lines = [
     "BRUV THIRD-PARTY LICENSE AND COPYRIGHT NOTICES",
     "",
@@ -128,8 +126,8 @@ export async function generateThirdPartyNotices(
     "packaged LICENSE/COPYING/NOTICE files; it is attribution information, not legal advice.",
     "",
   ];
-  for (const { info, notices } of [...entries.values()].sort((a, b) =>
-    (a.info.name + "@" + a.info.version).localeCompare(b.info.name + "@" + b.info.version),
+  for (const { info, notices } of [...entries].sort((a, b) =>
+    `${a.info.name}@${a.info.version}`.localeCompare(`${b.info.name}@${b.info.version}`),
   )) {
     lines.push(
       "=".repeat(78),
@@ -164,11 +162,24 @@ export async function generateThirdPartyNotices(
     bunLicense.trimEnd(),
     "",
   );
-  const content = lines.join("\n");
+  return lines.join("\n");
+}
+
+export async function generateThirdPartyNotices(
+  root: string,
+  output: string,
+  maximumBytes = MAX_BYTES,
+): Promise<number> {
+  const rootPackage = (await Bun.file(join(root, "package.json")).json()) as { dependencies?: Record<string, string> };
+  const budget = { used: 0, maximum: maximumBytes };
+  const piLicense = await readLicense(join(root, "third_party/pi/LICENSE"), budget);
+  const bunLicense = await readLicense(join(root, "third_party/bun/LICENSE.md"), budget);
+  const entries = await collectProductionNotices(root, Object.keys(rootPackage.dependencies ?? {}), budget);
+  const content = renderNotices(entries, piLicense, bunLicense);
   if (Buffer.byteLength(content) > maximumBytes) throw new Error(`notice bundle exceeds ${maximumBytes} bytes`);
   await Bun.write(output, content);
-  console.log(`wrote ${output} with ${entries.size} production packages (${Buffer.byteLength(content)} bytes)`);
-  return entries.size;
+  console.log(`wrote ${output} with ${entries.length} production packages (${Buffer.byteLength(content)} bytes)`);
+  return entries.length;
 }
 
 if (import.meta.main) {

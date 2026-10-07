@@ -13,7 +13,9 @@
           "branch": "bruv/primary-site-.gitignore-e433e2c2",
           "base": "4175acd2ef96419451a130dec86c6ce2d3f78cf0",
           "commit": "c8ac4589989164e9934a45b20b7c6d9136fe38e2",
-          "result": "Unchanged explicit dependency/output exclusions; install->dist build->preview/deploy trace. 10 asserted git ignore probes; no build/runtime."
+          "result": "Unchanged explicit dependency/output exclusions; install->dist build->preview/deploy trace. 10 asserted git ignore probes; no build/runtime.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -29,7 +31,9 @@
       "initialBlob": "b9470778764f72c5257a3361590d2994547f90e1",
       "acceptedBlob": "b9470778764f72c5257a3361590d2994547f90e1",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/brand/bruv-icon.svg",
@@ -42,7 +46,9 @@
           "branch": "bruv/primary-site-assets-brand-bruv-icon.svg-74788f3b",
           "base": "3647146013dbb2bd05ae7ee977fa476cd5d4686e",
           "commit": "738098f73a9080238aa241eb765ecf458d353ad3",
-          "result": "No source change; accessible labels->theme fill->local lean transform->even-odd silhouette/counter coherent; site links/copies unchanged. build.test 10 pass; no browser/full build."
+          "result": "No source change; accessible labels->theme fill->local lean transform->even-odd silhouette/counter coherent; site links/copies unchanged. build.test 10 pass; no browser/full build.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -58,7 +64,9 @@
       "initialBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646",
       "acceptedBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark-light.svg",
@@ -71,7 +79,9 @@
           "branch": "bruv/primary-site-assets-brand-bruv-wordmark--8e8b5dd8",
           "base": "cf3212898bfeb490e314207cd740758d06aa01ca",
           "commit": "2ff0f2c0c985dedb7aa545ccca6bb84b8d15a631",
-          "result": "No source change; four letter paths share ink/lean transform,b counter evenodd; README dark-mode and HTML fallback direct references; build copies unchanged.2 tests/63 assertions;XML/geometry checks;no browser/build."
+          "result": "No source change; four letter paths share ink/lean transform,b counter evenodd; README dark-mode and HTML fallback direct references; build copies unchanged.2 tests/63 assertions;XML/geometry checks;no browser/build.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -87,7 +97,9 @@
       "initialBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6",
       "acceptedBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark.svg",
@@ -100,7 +112,9 @@
           "branch": "bruv/primary-site-assets-brand-bruv-wordmark.-e142ec25",
           "base": "cf3212898bfeb490e314207cd740758d06aa01ca",
           "commit": "b561da257dcfa98464b66377ae61aff1503e8695",
-          "result": "Unchanged accessible SVG root/shared fill-transform/four paths; traced README/generator/terminal cells/HTML/build copy.2 tests/63 assertions;dark/light differ only fill;no raster/browser."
+          "result": "Unchanged accessible SVG root/shared fill-transform/four paths; traced README/generator/terminal cells/HTML/build copy.2 tests/63 assertions;dark/light differ only fill;no raster/browser.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -116,7 +130,9 @@
       "initialBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7",
       "acceptedBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/brand/wordmark-cells.json",
@@ -129,7 +145,9 @@
           "branch": "bruv/primary-site-assets-brand-wordmark-cells-4cffbf2e",
           "base": "cf3212898bfeb490e314207cd740758d06aa01ca",
           "commit": "779a14fb3d429de7d4573828b11ea1e03cc126c2",
-          "result": "Unchanged width-keyed glyph rows; generator creates,brand selects size,layout positions,terminal presents.1 wordmark test/43 assertions;no regeneration/browser/build."
+          "result": "Unchanged width-keyed glyph rows; generator creates,brand selects size,layout positions,terminal presents.1 wordmark test/43 assertions;no regeneration/browser/build.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -145,7 +163,9 @@
       "initialBlob": "7690aff87443de0a97521444bb7a64546f568f4e",
       "acceptedBlob": "7690aff87443de0a97521444bb7a64546f568f4e",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/cli-settings.txt",
@@ -158,7 +178,9 @@
           "branch": "bruv/primary-site-assets-cli-settings.txt-a55e7213",
           "base": "8c9cb30674039dade57fd6707e7fd4ce6ff896af",
           "commit": "12fc1cec879428a41139b35049fbcd74cbe559a2",
-          "result": "Authentic PTY recording unchanged; rewriting escape bytes changes replay evidence not structure. PTY->Ghostty->explicit crop->styled JSON, not current scripted landing.1 integrity/reflow test/7 assertions;no replay/build."
+          "result": "Authentic PTY recording unchanged; rewriting escape bytes changes replay evidence not structure. PTY->Ghostty->explicit crop->styled JSON, not current scripted landing.1 integrity/reflow test/7 assertions;no replay/build.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -174,7 +196,9 @@
       "initialBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569",
       "acceptedBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/assets/settings-cells.json",
@@ -187,7 +211,9 @@
           "branch": "bruv/primary-site-assets-settings-cells.json-dc9fc829",
           "base": "8c9cb30674039dade57fd6707e7fd4ce6ff896af",
           "commit": "feaf97355ed70cb36f97e778a0dfd0da4f666478",
-          "result": "Unchanged provenance->crop geometry->ordered glyph/style runs; repetition retains terminal effects. Extractor->settingsCapture->fidelity/reflow tests,not current scripted landing.2 tests/99 assertions;no browser/build."
+          "result": "Unchanged provenance->crop geometry->ordered glyph/style runs; repetition retains terminal effects. Extractor->settingsCapture->fidelity/reflow tests,not current scripted landing.2 tests/99 assertions;no browser/build.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -203,7 +229,9 @@
       "initialBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3",
       "acceptedBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/brand.ts",
@@ -216,7 +244,9 @@
           "commit": "18fb3b71fee4cb3734eef1c27a93e03a3a73646c",
           "result": "Unchanged terminal->layout->wordmark(width)->48/28/24 rows; explicit selection,no hidden state.1 test/43 assertions;no build/browser/generator.",
           "base": "72f671abdad36dd1d34df99112715484a50e2aa6",
-          "branch": "bruv/primary-site-brand.ts-4f28d450"
+          "branch": "bruv/primary-site-brand.ts-4f28d450",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -226,18 +256,29 @@
           "state": "completed",
           "verdict": "NO CHANGE NEEDED",
           "evidence": "One explicit width selector returns48/28/24-cell rows; layout/presentation separate,extra helper adds navigation. Judge1 test/43 assertions;sampled bounds,not visual/freshness proof;no browser/build/generator. Judge used candidate git blobs despite shared checkout advancement.",
+          "objections": [],
+          "limit": "Judge had explicit candidate commit but launch response initially exposed unprepared source workspace and missing base; coordinator repaired provenance. Fresh final review required despite prior acceptance."
+        },
+        {
+          "id": "task_884e8b0b",
+          "candidate": "18fb3b71fee4cb3734eef1c27a93e03a3a73646c",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Fresh corrected-path/base review independently confirms explicit48/28/24 selector and separate generation/layout/presentation responsibilities. Exact pinned checkout1 test/43 assertions at25/28/34/48/100 widths;not visual/freshness/every narrow viewport proof. Prior provenance-deficient round retained.",
           "objections": []
         }
       ],
       "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
-      "acceptedBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "acceptedBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/capture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_a8322d06",
@@ -245,22 +286,32 @@
           "branch": "bruv/primary-site-capture.ts-a8322d06",
           "base": "e9e1127352dd78ae1a7946fccea740d01d948a5d",
           "commit": "f1fbca6a73dbd788dd994fd40d9ddb37cbb0c691",
-          "result": "reflowMenuRow owns label/value alignment+fallback,wrapRow styled line splitting; settingsCapture native output or decode/dispatch instead of interleaved fit/continue.10 tests/123298 assertions,widths1-110 complete baseline output parity incl source/full-width identity;TS/format/lint pass. Only tests currently call capture;not current shipped demo path."
+          "result": "reflowMenuRow owns label/value alignment+fallback,wrapRow styled line splitting; settingsCapture native output or decode/dispatch instead of interleaved fit/continue.10 tests/123298 assertions,widths1-110 complete baseline output parity incl source/full-width identity;TS/format/lint pass. Only tests currently call capture;not current shipped demo path.",
+          "state": "completed",
+          "changedPaths": ["site/capture.ts"]
         }
       ],
       "judges": [
         {
           "id": "task_bdc898a5",
           "candidate": "f1fbca6a73dbd788dd994fd40d9ddb37cbb0c691",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Menu alignment/fallback and styled wrapping have coherent operations; settingsCapture dispatches rather than interleaving fit/continue. Judge10 tests/123298 assertions,complete widths1-110 baseline parity,native identity and input immutability. Test-only capture path,not shipped-demo improvement.",
+          "objections": []
         }
       ],
-      "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7"
+      "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7",
+      "acceptedBlob": "ea72ee5ebc5145f474b9b9e3a2b3f7afeb49f54b",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/content.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_6b21fc71",
@@ -268,17 +319,27 @@
           "branch": "bruv/primary-site-content.ts-6b21fc71",
           "base": "e9e1127352dd78ae1a7946fccea740d01d948a5d",
           "commit": "9f9958395ce3c0b60c7350e6fbd97688d64171d1",
-          "result": "Unchanged two direct shared-copy objects; literals->named properties->terminal/HTML sections/links. No branching/effects/lifetimes.2 tests/24 assertions;no browser/build."
+          "result": "Unchanged two direct shared-copy objects; literals->named properties->terminal/HTML sections/links. No branching/effects/lifetimes.2 tests/24 assertions;no browser/build.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
         {
           "id": "task_2ebc2a13",
           "candidate": "9f9958395ce3c0b60c7350e6fbd97688d64171d1",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Two literal copy objects expose metadata/landing content without effects or hidden lifetimes; named-property flow to layout/build direct. Judge2 tests/24 assertions;no browser/build/factual-copy audit.",
+          "objections": []
         }
       ],
-      "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8"
+      "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8",
+      "acceptedBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/demos.test.ts",
@@ -291,7 +352,9 @@
           "branch": "bruv/primary-site-demos.test.ts-008ddeae",
           "base": "a7c9017050d478c22ce5a9b9c6f5c102ffd40011",
           "commit": "5517249dd1180a80bec468b8aebb58bc4cb2458b",
-          "result": "Each story owns assertions; hold/wrap,pause,offscreen,visibility have independent setups instead of shared wrapped zero clock. Nonzero freeze tests catch reset mutation baseline missed. 11 tests/5582285 assertions,format/diff pass; existing lint warning. No production edits."
+          "result": "Each story owns assertions; hold/wrap,pause,offscreen,visibility have independent setups instead of shared wrapped zero clock. Nonzero freeze tests catch reset mutation baseline missed. 11 tests/5582285 assertions,format/diff pass; existing lint warning. No production edits.",
+          "state": "completed",
+          "changedPaths": ["site/demos.test.ts"]
         }
       ],
       "judges": [
@@ -310,11 +373,14 @@
         "judge": "task_608a711c",
         "blob": "9eb31e6f56ef27e3f4677fc96c0e984d510c31d8",
         "verdict": "ACCEPT",
-        "needsOwnPrimary": true
+        "needsOwnPrimary": false,
+        "finalPrimaryBlob": "9a554baa5a3a7c3ae6e4d424a6af2cd8fd02c7c8"
       },
       "acceptedBlob": "9a554baa5a3a7c3ae6e4d424a6af2cd8fd02c7c8",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/demos.ts",
@@ -327,7 +393,9 @@
           "branch": "bruv/primary-site-demos.ts-01e034e7",
           "base": "a91050017527e1dade52382f0908aefc28ddf981",
           "commit": "54a43b76809cac9f4290e1c170ecb2aaa160f6fc",
-          "result": "Transcript projection forms explicit turns and computes each tool summary once instead of backward/forward searching while rendering; footer fitting separate. Explicit incidental fix missing ./type: Cell owned by producer demos.ts; html-cells imports it. Changed demos.ts,demos.test.ts,html-cells.ts. 16 tests,4994 complete frame/style/stage baseline comparisons,targeted strict TS/Biome pass. Judge related patch too; related files get their own primary later."
+          "result": "Transcript projection forms explicit turns and computes each tool summary once instead of backward/forward searching while rendering; footer fitting separate. Explicit incidental fix missing ./type: Cell owned by producer demos.ts; html-cells imports it. Changed demos.ts,demos.test.ts,html-cells.ts. 16 tests,4994 complete frame/style/stage baseline comparisons,targeted strict TS/Biome pass. Judge related patch too; related files get their own primary later.",
+          "state": "completed",
+          "changedPaths": ["site/demos.test.ts", "site/demos.ts", "site/html-cells.ts"]
         }
       ],
       "judges": [
@@ -341,12 +409,11 @@
         }
       ],
       "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23",
-      "changedRelatedPaths": [
-        "site/demos.test.ts",
-        "site/html-cells.ts"
-      ],
+      "changedRelatedPaths": ["site/demos.test.ts", "site/html-cells.ts"],
       "acceptedBlob": "5f211cd265a0d4cb8377b5148fa13281f2ccb5fa",
-      "integration": "full coherent patch integrated; related files still need their own fresh primary and judge"
+      "integration": "full coherent patch integrated; related files still need their own fresh primary and judge",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/html-animation.ts",
@@ -359,7 +426,9 @@
           "branch": "bruv/primary-site-html-animation.ts-9c42d8e3",
           "base": "b5e49e8740cd201d38d59342ebec6fdcd429c7f9",
           "commit": "79091f23d4496931af90ea863ed9f5e812126397",
-          "result": "HtmlDemo owns complete panel operations instead of mount interleaving per-panel state/UI with shared scheduling/observer lifetime. Click toggle updates UI then mount schedules; reduced-motion holds final frame then reschedules; shared clock/observers/listeners/teardown remain together. 19 existing tests, focused TS, formatting/diff pass. Only html-animation.ts source changed."
+          "result": "HtmlDemo owns complete panel operations instead of mount interleaving per-panel state/UI with shared scheduling/observer lifetime. Click toggle updates UI then mount schedules; reduced-motion holds final frame then reschedules; shared clock/observers/listeners/teardown remain together. 19 existing tests, focused TS, formatting/diff pass. Only html-animation.ts source changed.",
+          "state": "completed",
+          "changedPaths": ["site/html-animation.ts"]
         }
       ],
       "judges": [
@@ -375,7 +444,9 @@
       "initialBlob": "83d93edb503c6c100e5a778c48b69a91bc91756e",
       "acceptedBlob": "611b710f3e082fde979cb1ea86e462445030a2fa",
       "changedRelatedPaths": [],
-      "integration": "exact disjoint candidate patch; no worker note imported"
+      "integration": "exact disjoint candidate patch; no worker note imported",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/html-cells.ts",
@@ -388,7 +459,9 @@
           "branch": "bruv/primary-site-html-cells.ts-0fff100d",
           "base": "8b8f1122bc86a4d0a9b0c6f41c35e701c87a41e9",
           "commit": "6aef65244d48cb0fac62d8ee80886177d3e9a654",
-          "result": "No source change. Adjacent equal-style cells copied into runs, escaped, RGB serialized, rows wrapped. State local, Cell type producer ownership. 6 demos tests and 5 serialization assertions pass. No browser/build."
+          "result": "No source change. Adjacent equal-style cells copied into runs, escaped, RGB serialized, rows wrapped. State local, Cell type producer ownership. 6 demos tests and 5 serialization assertions pass. No browser/build.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -407,16 +480,19 @@
         "judge": "task_608a711c",
         "blob": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
         "verdict": "ACCEPT",
-        "needsOwnPrimary": true
+        "needsOwnPrimary": false,
+        "finalPrimaryBlob": "5e434b577ca98a6d08082102cbb39efab63d1fdf"
       },
       "acceptedBlob": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/index.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_1510f666",
@@ -424,11 +500,27 @@
           "branch": "bruv/primary-site-index.html-1510f666",
           "base": "4679f3868a540fe2664d34487027b81af8dcf1ce",
           "commit": "26c935af68ca49c3f004c75d3ab1078c7ca9930d",
-          "result": "Unchanged literal shell:head metadata/bootstrap,body hidden terminal+visible fallback/navigation/content then runtime injection. Build/runtime own view/startup/failure lifetimes.10 tests;browser startup read not rerun."
+          "result": "Unchanged literal shell:head metadata/bootstrap,body hidden terminal+visible fallback/navigation/content then runtime injection. Build/runtime own view/startup/failure lifetimes.10 tests;browser startup read not rerun.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
-      "judges": [],
-      "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3"
+      "judges": [
+        {
+          "id": "task_076ad4af",
+          "candidate": "26c935af68ca49c3f004c75d3ab1078c7ca9930d",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Literal head/body/runtime slots expose terminal-hidden/HTML-visible fallback; build/runtime own selection/startup lifetime rather than template machinery. Judge10 tests;browser/build/validation read not rerun.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3",
+      "acceptedBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/install-command.ts",
@@ -441,7 +533,9 @@
           "branch": "bruv/primary-site-install-command.ts-867e5969",
           "base": "c7a2d6b293f6a22671efc2c6a0ffb29ba37e358e",
           "commit": "03d2624e7ed97f1a15dce3a68f5ed4e451fb1abf",
-          "result": "No source change recommended. copyCommand keeps clipboard permission and textarea/focus effects together. enhanceInstall owns per-button feedback/reset timer; terminal owns separate presentation. Traced shipped HTML/terminal/layout/UI tests. Runtime not rerun; legacy fallback failure not covered."
+          "result": "No source change recommended. copyCommand keeps clipboard permission and textarea/focus effects together. enhanceInstall owns per-button feedback/reset timer; terminal owns separate presentation. Traced shipped HTML/terminal/layout/UI tests. Runtime not rerun; legacy fallback failure not covered.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -457,12 +551,14 @@
       "initialBlob": "955cbf767fa094bd223bee8f0bba424692c3c663",
       "acceptedBlob": "955cbf767fa094bd223bee8f0bba424692c3c663",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/install-html.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_8dfc6d3c",
@@ -470,11 +566,27 @@
           "branch": "bruv/primary-site-install-html.ts-8dfc6d3c",
           "base": "4bbd80ea0cbf91e1697219a3f07c2957950f771c",
           "commit": "1cc107a22f17ff8f2f7b6ffc5539d87be54fc59c",
-          "result": "Unchanged import+one enhanceInstall invocation; separately bundled HTML entry avoids terminal/WASM startup coupling; copy/timer effects owned by shared operation. Traced build/callers/browser assertions;no test rerun."
+          "result": "Unchanged import+one enhanceInstall invocation; separately bundled HTML entry avoids terminal/WASM startup coupling; copy/timer effects owned by shared operation. Traced build/callers/browser assertions;no test rerun.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
-      "judges": [],
-      "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db"
+      "judges": [
+        {
+          "id": "task_fbbc0bfe",
+          "candidate": "1cc107a22f17ff8f2f7b6ffc5539d87be54fc59c",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Two-line dedicated entry invokes shared install enhancement independently of terminal/WASM startup. Copy effects/timers stay in shared operation. Judge traced build/runtime/template and complete browser assertions;tests read not rerun.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db",
+      "acceptedBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/layout.ts",
@@ -487,7 +599,9 @@
           "branch": "bruv/primary-site-layout.ts-c8710829",
           "base": "a91050017527e1dade52382f0908aefc28ddf981",
           "commit": "c2a5542a924202243771bc68252cb61c0113cfc6",
-          "result": "composeLanding owns document flow; demoPanel returns positioned content/end; sections explicitly advance max(copyEnd,panel.end), replacing mutable cursor rewind. layout owns clipping/hits/overlays/ANSI. 17 tests and 64 complete output baseline comparisons pass. Missing demos.ts ./type baseline typecheck blocker unchanged."
+          "result": "composeLanding owns document flow; demoPanel returns positioned content/end; sections explicitly advance max(copyEnd,panel.end), replacing mutable cursor rewind. layout owns clipping/hits/overlays/ANSI. 17 tests and 64 complete output baseline comparisons pass. Missing demos.ts ./type baseline typecheck blocker unchanged.",
+          "state": "completed",
+          "changedPaths": ["site/layout.ts"]
         }
       ],
       "judges": [
@@ -503,12 +617,14 @@
       "initialBlob": "0ec60a65bd36d939f302323b7a5fd63ab170046b",
       "acceptedBlob": "128855476c64c4b43bd0258b9064f2b44831878c",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_f9d8fefe",
@@ -516,11 +632,27 @@
           "branch": "bruv/primary-site-package.json-f9d8fefe",
           "base": "4309575976bb77cfe16ee459cfc0cc6eebb17663",
           "commit": "57ffbc1f5c422d22b90c05977f2aeeaf29b7af0a",
-          "result": "Unchanged direct build/dist,preview,full tests && validation operations.31 existing tests;7 test files listed,17 script paths resolve,3 pins match lock. No browser/build/deploy."
+          "result": "Unchanged direct build/dist,preview,full tests && validation operations.31 existing tests;7 test files listed,17 script paths resolve,3 pins match lock. No browser/build/deploy.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
-      "judges": [],
-      "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d"
+      "judges": [
+        {
+          "id": "task_4e8a8bc6",
+          "candidate": "57ffbc1f5c422d22b90c05977f2aeeaf29b7af0a",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Manifest exposes build/preview/assets/test boundaries directly; && visibly gates validation on test success. Judge31 dependency-free tests,7 selected files and17 resolving script occurrences;no browser/build/animation/deploy.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d",
+      "acceptedBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/playback.ts",
@@ -532,9 +664,10 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_ed0b8880",
           "branch": "bruv/primary-site-playback.ts-ed0b8880",
           "base": "303233f17b57d0990a66df6cd686f9af933206d0",
-          "state": "running",
+          "state": "completed",
           "commit": "917dcf3c57503745fceef627068fd32752bdcff7",
-          "result": "No source change: callers own clocks, visibility, controls/render; advance gates mutation and wrap; inView direct threshold. demos.test: 4 pass."
+          "result": "No source change: callers own clocks, visibility, controls/render; advance gates mutation and wrap; inView direct threshold. demos.test: 4 pass.",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -550,7 +683,9 @@
       "initialBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e",
       "acceptedBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e",
       "changedRelatedPaths": [],
-      "integration": "area tip blob verified"
+      "integration": "area tip blob verified",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/animation.ts",
@@ -563,7 +698,9 @@
           "branch": "bruv/primary-site-scripts-animation.ts-5d88706f",
           "base": "cf13efaae464c80b2b1b6b1137be43a885ac05fd",
           "commit": "375ad0209a72f263e6c2e0e0c07e4dd321ca490d",
-          "result": "Typed shared terminal observations/control coordinate conversion/cell scrolling; touch journey local initial/playing/paused observations; desktop mutable checkpoint replaced independent immutable checkpoints. Build and test:animation passed including 3 loops,touch controls,errors empty. Old-base typecheck missing ./type; fixed now in area."
+          "result": "Typed shared terminal observations/control coordinate conversion/cell scrolling; touch journey local initial/playing/paused observations; desktop mutable checkpoint replaced independent immutable checkpoints. Build and test:animation passed including 3 loops,touch controls,errors empty. Old-base typecheck missing ./type; fixed now in area.",
+          "state": "completed",
+          "changedPaths": ["site/scripts/animation.ts"]
         }
       ],
       "judges": [
@@ -579,12 +716,14 @@
       "initialBlob": "74f85bf8a7d44a454349084978f1dc4858ed9063",
       "acceptedBlob": "4bea05dabee326db5d3cc42783a45b9f73e66750",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/browser.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_4d170cd0",
@@ -592,11 +731,27 @@
           "branch": "bruv/primary-site-scripts-browser.ts-4d170cd0",
           "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2",
           "commit": "512c2bf69853e9d992dccb681d3bd5828e94f456",
-          "result": "Unchanged per-call CHROMIUM_BIN selection,empty/unset defers Playwright,returns launch promise;callers own cleanup.1 startup test/6 assertions;no override-path/full suite."
+          "result": "Unchanged per-call CHROMIUM_BIN selection,empty/unset defers Playwright,returns launch promise;callers own cleanup.1 startup test/6 assertions;no override-path/full suite.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
-      "judges": [],
-      "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2"
+      "judges": [
+        {
+          "id": "task_4d85f3b6",
+          "candidate": "512c2bf69853e9d992dccb681d3bd5828e94f456",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Single per-call browser selection/launch operation; caller owns cleanup,unset/empty override defers Playwright. Judge read complete six callers and browser tests;runtime/override execution not rerun.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2",
+      "acceptedBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/build.test.ts",
@@ -609,7 +764,9 @@
           "branch": "bruv/primary-site-scripts-build.test.ts-3a3293a9",
           "base": "a7c9017050d478c22ce5a9b9c6f5c102ffd40011",
           "commit": "d27476d3d0d4fe4702ede2e20c535ccff6093c48",
-          "result": "No source change; URL metadata authority direct, layout matrix inputs/assertions together, frame baseline/playback mutation local. 10 tests/123298 assertions; no browser/build/full gate."
+          "result": "No source change; URL metadata authority direct, layout matrix inputs/assertions together, frame baseline/playback mutation local. 10 tests/123298 assertions; no browser/build/full gate.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -625,7 +782,9 @@
       "initialBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799",
       "acceptedBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/build.ts",
@@ -635,11 +794,12 @@
         {
           "id": "task_f66bbf8b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_f66bbf8b",
-          "state": "running",
+          "state": "completed",
           "branch": "bruv/primary-site-scripts-build.ts-f66bbf8b",
           "base": "303233f17b57d0990a66df6cd686f9af933206d0",
           "commit": "05d5c22da50b4bcd69e4239b6cd547b07fac2c9a",
-          "result": "renderPage chooses mode once instead of six scattered plain decisions; complete page policy grouped; build explicitly writes both pages then bundles/copies. 18 focused tests; generated artifacts byte-identical baseline empty/subpath BASE_URL; invalid URL still rejects before deletion. Only build.ts source changed."
+          "result": "renderPage chooses mode once instead of six scattered plain decisions; complete page policy grouped; build explicitly writes both pages then bundles/copies. 18 focused tests; generated artifacts byte-identical baseline empty/subpath BASE_URL; invalid URL still rejects before deletion. Only build.ts source changed.",
+          "changedPaths": ["site/scripts/build.ts"]
         }
       ],
       "judges": [
@@ -655,7 +815,9 @@
       "initialBlob": "a8ca48ae0d03f2567d458737f143c245e9acfa89",
       "acceptedBlob": "1cf04b95f42c7d500d2dd302f02f48db84273aba",
       "changedRelatedPaths": [],
-      "integration": "exact candidate source patch applied; no overlap; worker note excluded"
+      "integration": "exact candidate source patch applied; no overlap; worker note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/capture-demo-source.ts",
@@ -668,7 +830,9 @@
           "branch": "bruv/primary-site-scripts-capture-demo-source-82201d2d",
           "base": "d4f7c77e7ce188ce78a8a2a041e1dff34c62a20e",
           "commit": "9099a7b7ee45aa8a8648bb66dbac38ec507288de",
-          "result": "createCsvReviewReplay(home) owns fixture creation, returns persisted session path; main shows settings -> replay -> isolated launch -> validated captures -> provenance -> cleanup. Baseline/candidate real tmux/unshare offline captures/provenance byte-identical; focused test 1/14 assertions passed. Safety flags/transcript/timing/validation/teardown unchanged."
+          "result": "createCsvReviewReplay(home) owns fixture creation, returns persisted session path; main shows settings -> replay -> isolated launch -> validated captures -> provenance -> cleanup. Baseline/candidate real tmux/unshare offline captures/provenance byte-identical; focused test 1/14 assertions passed. Safety flags/transcript/timing/validation/teardown unchanged.",
+          "state": "completed",
+          "changedPaths": ["site/scripts/capture-demo-source.ts"]
         }
       ],
       "judges": [
@@ -684,22 +848,42 @@
       "initialBlob": "68b0dc7db1ccdf38a27ea84dcdbd98168f99570c",
       "acceptedBlob": "cb174478a55a37871373add5263eebfb36de2b19",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/capture-real-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_46c581d4",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_46c581d4",
           "branch": "bruv/primary-site-scripts-capture-real-pty.py-46c581d4",
-          "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2"
+          "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2",
+          "commit": "39e433dd12fa47efd56007077764c72bdfdebe37",
+          "result": "Unchanged ordered namespace/PTY startup->timed IO/byte persistence->terminate/wait/kill/close;three loop variables one lifetime. Python syntax/help,1 capture test/7 assertions,real namespaces+PTY synthetic executable timing/geometry/exactIO/SIGTERM/preserve output on nonzero proof. No real Bruv/browser recapture or escalation claim.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
-      "judges": [],
-      "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16"
+      "judges": [
+        {
+          "id": "task_59d37faf",
+          "candidate": "39e433dd12fa47efd56007077764c72bdfdebe37",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Direct namespace/PTY lifetime and timed IO->persist->terminate/wait/kill/close sequence. Judge Python syntax/help and1 hash/reflow test/7 assertions;synthetic probe read not rerun. Existing chunk-local cursor-query/pre-try cleanup gaps unchanged. Coordinator correction: verdict says shipped landing consumes captured cells, but layout uses scripted demoFrame; this historical tool acceptance does not establish shipped integration.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16",
+      "acceptedBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/capture-real.ts",
@@ -711,9 +895,10 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_78b57531",
           "branch": "bruv/primary-site-scripts-capture-real.ts-78b57531",
           "base": "303233f17b57d0990a66df6cd686f9af933206d0",
-          "state": "running",
+          "state": "completed",
           "commit": "443a8840fe9a2d308e3c397f4df8409748e821b6",
-          "result": "No source change. Ordered transcript -> loopback requests -> Ghostty replay/render -> crop -> PNG -> cleanup. Historical manual tool not shipped site path. build.test 10 pass. No browser regeneration/typecheck."
+          "result": "No source change. Ordered transcript -> loopback requests -> Ghostty replay/render -> crop -> PNG -> cleanup. Historical manual tool not shipped site path. build.test 10 pass. No browser regeneration/typecheck.",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -730,7 +915,9 @@
       "acceptedBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b",
       "changedRelatedPaths": [],
       "integration": "area tip blob verified",
-      "limits": "No screenshot/browser regeneration/typecheck. Existing launch-before-try and close-failure shutdown gaps unchanged. Judge correction: shipped layout uses scripted demo frames, not settingsCapture; historical provenance docs stale."
+      "limits": "No screenshot/browser regeneration/typecheck. Existing launch-before-try and close-failure shutdown gaps unchanged. Judge correction: shipped layout uses scripted demo frames, not settingsCapture; historical provenance docs stale.",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/extract-cells.ts",
@@ -743,7 +930,9 @@
           "branch": "bruv/primary-site-scripts-extract-cells.ts-f07c6c88",
           "base": "cf13efaae464c80b2b1b6b1137be43a885ac05fd",
           "commit": "a46a0ebf10fd94fa7756ffbc75365361a202f96a",
-          "result": "One geometry definition drives rendering/cropped buffer reads/metadata; browser returns final row-local style runs instead of entire terminal grid then Bun regroup/crop; Bun hashes/publishes. Loopback routing unchanged. Baseline/candidate JSON byte-identical;10 tests/123298 assertions;browser validation/strict TS/format pass."
+          "result": "One geometry definition drives rendering/cropped buffer reads/metadata; browser returns final row-local style runs instead of entire terminal grid then Bun regroup/crop; Bun hashes/publishes. Loopback routing unchanged. Baseline/candidate JSON byte-identical;10 tests/123298 assertions;browser validation/strict TS/format pass.",
+          "state": "completed",
+          "changedPaths": ["site/scripts/extract-cells.ts"]
         }
       ],
       "judges": [
@@ -759,7 +948,9 @@
       "initialBlob": "53e23a4d0a50dd36efdcb1f4f972a11f5cc1ff13",
       "acceptedBlob": "0c08612f134666dff26b631ae44408b7bedde80d",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/generate-wordmark.ts",
@@ -772,7 +963,9 @@
           "branch": "bruv/primary-site-scripts-generate-wordmark.t-ff69ebfe",
           "base": "f05b259ae8894f05cae0dedc0835705fc66017d9",
           "commit": "f9c925d7e00680f7c572e0e9667d6950cef2c2c8",
-          "result": "No source change. Checked rasterization->half-block rows->JSON then SVG geometry->checked social render->PNG. Local width state and visible writes/failures. Consumer tests 2 pass/56 assertions; generator not rerun. Prior reviewer was cancelled with no findings; inspect independently from scratch."
+          "result": "No source change. Checked rasterization->half-block rows->JSON then SVG geometry->checked social render->PNG. Local width state and visible writes/failures. Consumer tests 2 pass/56 assertions; generator not rerun. Prior reviewer was cancelled with no findings; inspect independently from scratch.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -796,7 +989,9 @@
       "initialBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c",
       "acceptedBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/html-animation.test.ts",
@@ -809,7 +1004,9 @@
           "branch": "bruv/primary-site-scripts-html-animation.test-9f36ba3a",
           "base": "25a89310c4b2c6e98d321674fc7b75bcf02e69f0",
           "commit": "dcafa0e98cd6cc5216e326efc4634a327a8129c0",
-          "result": "withDemoPage owns setup/awaited assertions/context teardown, tests get Page; final hold names manualClock installed before navigation. Assertions/timings/routing unchanged. 5 Chromium tests/48 expectations,TS/format pass. Behavior delta: setup exceptions now close context; not injected. Judge whether justified lifetime coherence vs speculative defense."
+          "result": "withDemoPage owns setup/awaited assertions/context teardown, tests get Page; final hold names manualClock installed before navigation. Assertions/timings/routing unchanged. 5 Chromium tests/48 expectations,TS/format pass. Behavior delta: setup exceptions now close context; not injected. Judge whether justified lifetime coherence vs speculative defense.",
+          "state": "completed",
+          "changedPaths": ["site/scripts/html-animation.test.ts"]
         }
       ],
       "judges": [
@@ -825,12 +1022,14 @@
       "initialBlob": "294ddcb66e4bd9f75740b948dbdf989cdadeb5c7",
       "acceptedBlob": "ec93e1910b0f9d4d1ff2ea31e9f3c1de61086360",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/install-ui.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_072fdc49",
@@ -838,16 +1037,32 @@
           "branch": "bruv/primary-site-scripts-install-ui.test.ts-072fdc49",
           "base": "25a89310c4b2c6e98d321674fc7b75bcf02e69f0",
           "commit": "7fdbc657f08ff313669b6ea2cb786e6732c36e83",
-          "result": "observeTerminal owns bundle instrumentation/observations; targets expose pixel coordinates and column bounds; desktop/mobile have independent snapshots instead of overwritten hit variables. Actions/assertions remain visible. 2 tests/52 assertions pass; format/diff pass;screenshots restored."
+          "result": "observeTerminal owns bundle instrumentation/observations; targets expose pixel coordinates and column bounds; desktop/mobile have independent snapshots instead of overwritten hit variables. Actions/assertions remain visible. 2 tests/52 assertions pass; format/diff pass;screenshots restored.",
+          "state": "completed",
+          "changedPaths": ["site/scripts/install-ui.test.ts"]
         }
       ],
-      "judges": [],
-      "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12"
+      "judges": [
+        {
+          "id": "task_1588246a",
+          "candidate": "7fdbc657f08ff313669b6ea2cb786e6732c36e83",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "observeTerminal owns instrumentation/dataset-buffer observation and target coordinate derivation; desktop/mobile snapshots no longer overwrite geometry state. Test actions/assertions remain visible; full caller contract inspected. No independent runtime rerun;fixed waits/minified-bundle instrumentation remain existing limits.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12",
+      "acceptedBlob": "538556abc76aa8bb294950cbc23b64ac8ac1be84",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/install.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_d558bcd2",
@@ -855,47 +1070,126 @@
           "branch": "bruv/primary-site-scripts-install.test.ts-d558bcd2",
           "base": "d60a32ac5d87d5865097b99f40ddb1f6cabdb768",
           "commit": "14fb20cae47d4ff2cfa33c2a89a65d756f251cb6",
-          "result": "Host mocks/release publication coherent owners; fixture owns setup/execution/assertions/cleanup; platform expectations explicit scenario data not repeated selection logic.7 tests/97 assertions retained;TS/Biome;120 mock/asset byte comparisons baseline match. Cleanup now covers setup errors, explicit behavior delta requiring scrutiny; production unchanged."
+          "result": "Host mocks/release publication coherent owners; fixture owns setup/execution/assertions/cleanup; platform expectations explicit scenario data not repeated selection logic.7 tests/97 assertions retained;TS/Biome;120 mock/asset byte comparisons baseline match. Cleanup now covers setup errors, explicit behavior delta requiring scrutiny; production unchanged.",
+          "state": "completed",
+          "changedPaths": ["site/scripts/install.test.ts"]
         }
       ],
-      "judges": [],
-      "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f"
+      "judges": [
+        {
+          "id": "task_5840db21",
+          "candidate": "14fb20cae47d4ff2cfa33c2a89a65d756f251cb6",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Host mocks/release publication/fixture ownership separate; explicit platform expectations remove repeated selection logic. Fixture owns setup/execution/checks/cleanup; judge independently verified cleanup on success and rejection with propagation. Production installer unchanged;offline Linux fixtures,not actual macOS/Termux/live download.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f",
+      "acceptedBlob": "1da41ffef989ec064e62295f04d8352eb5137345",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/preview.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_0207fb65",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_0207fb65",
           "branch": "bruv/primary-site-scripts-preview.ts-0207fb65",
-          "base": "992ae03cb1d19ff6d5cca4802a80261720897705"
+          "base": "992ae03cb1d19ff6d5cca4802a80261720897705",
+          "commit": "0a903f459e4ce09442756f7f314b388a39ea9d71",
+          "result": "Unchanged decodeURL->index/file resolve->root-escape rejection->existence->no-store response. Local request state;caller shutdown.4 HTTP probes/6 assertions;startup test blocked missing playwright in worker;area combined browser suite previously passed.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
-      "judges": [],
-      "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a"
+      "judges": [
+        {
+          "id": "task_21f20bcf",
+          "candidate": "0a903f459e4ce09442756f7f314b388a39ea9d71",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Request-local decode/resolve/root-escape check/existence/no-store response directly follows delivery;caller owns shutdown. Judge3 HTTP probes404/400/traversal404. Worker/judge startup import blocked missing playwright,no assertions;area browser gate separately passed. Existing pre-try browser-launch caller cleanup gap and symlink containment unproven.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a",
+      "acceptedBlob": "7b3f72d907458d58798d63986222b4a95ab9608a",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/scroll.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_6f289d7b",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d"
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_6f289d7b",
+          "branch": "bruv/primary-site-scripts-scroll.test.ts-6f289d7b",
+          "base": "992ae03cb1d19ff6d5cca4802a80261720897705",
+          "commit": "6f158bfb311d5fd5f6bf6f0d1807a5834fb8a70b",
+          "result": "Fresh accumulator per behavior and separate wheel conversion remove hidden remainder between unrelated scenarios. All original assertions retained,reset setup gains assertion.7 tests/17 assertions;format/diff pass;existing lint info.",
+          "state": "completed",
+          "changedPaths": ["site/scripts/scroll.test.ts"]
         }
       ],
-      "judges": [],
-      "initialBlob": "db16489bc7ef3c785b58fa42a8fb2d7a4c83af2c"
+      "judges": [
+        {
+          "id": "task_8e721489",
+          "candidate": "6f158bfb311d5fd5f6bf6f0d1807a5834fb8a70b",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Separate accumulators remove hidden remainder across unrelated reversal/horizontal/bounds/reset scenarios;wheel normalization stands alone;all original assertions retained+reset assertion. Judge7 tests/17 assertions;bounds still does not independently prove same-direction boundary remainder clearing.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "db16489bc7ef3c785b58fa42a8fb2d7a4c83af2c",
+      "acceptedBlob": "5a1025b2f60ae7f6ef6ff55951b79cce6edd55f1",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/startup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
-      "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b"
+      "state": "accepted-unchanged",
+      "primary": [
+        {
+          "id": "task_2473ecf3",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_2473ecf3",
+          "branch": "bruv/primary-site-scripts-startup.test.ts-2473ecf3",
+          "base": "6e555e5e148be83d37cceed3254165503bb87753",
+          "commit": "0a09cf324d706407d0f12d83eccd9d47827d27ad",
+          "result": "Unchanged local gate->pending assertions->release->ready assertions;asset failures straightforward loop,no-JS separate context;short lifetimes would scatter behind hooks. Focused test blocked missing playwright in worker,no assertions;area combined browser run previously passed.",
+          "state": "completed",
+          "changedPaths": []
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_07a74302",
+          "candidate": "0a09cf324d706407d0f12d83eccd9d47827d27ad",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Explicit local gate/pending/release/ready sequence,asset-failure loop and separate no-JS context keep short lifetimes visible. Judge read actual build/runtime/template and tests;candidate import missing playwright+ghostty prevented runtime,no assertions claimed. Separate area final browser gate passed.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b",
+      "acceptedBlob": "8ff4a906e773189da064dd81b8087d883ab7019b",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scripts/validate.ts",
@@ -908,7 +1202,9 @@
           "branch": "bruv/primary-site-scripts-validate.ts-feb44467",
           "base": "20e8cff6ed94b618032adf87ef0a701322b1c974",
           "commit": "2ae1bd3d0e19fd395227c9a39e9700e56d8eb2d2",
-          "result": "Desktop owns frame/scroll/navigation sequence; mobile owns narrow screens/touch/restoration; fallback owns separate pages. Each returns final evidence rather than shared result mutation. Baseline/candidate Chromium checks.json byte-identical; four tests 22 assertions pass. Five targeted TS imported-file diagnostics identical baseline/candidate."
+          "result": "Desktop owns frame/scroll/navigation sequence; mobile owns narrow screens/touch/restoration; fallback owns separate pages. Each returns final evidence rather than shared result mutation. Baseline/candidate Chromium checks.json byte-identical; four tests 22 assertions pass. Five targeted TS imported-file diagnostics identical baseline/candidate.",
+          "state": "completed",
+          "changedPaths": ["site/scripts/validate.ts"]
         }
       ],
       "judges": [
@@ -924,23 +1220,75 @@
       "initialBlob": "f4efd413bc0cb47bbcc2bd922bc4c33184e33066",
       "acceptedBlob": "31ae70389bba2af920c96f41f2bcb2292ee53292",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/scroll.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
-      "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3"
+      "state": "accepted-unchanged",
+      "primary": [
+        {
+          "id": "task_955a4df5",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_955a4df5",
+          "branch": "bruv/primary-site-scroll.ts-955a4df5",
+          "base": "6e555e5e148be83d37cceed3254165503bb87753",
+          "commit": "e885ab24fc6484750785eef0aae246c3d9f2963e",
+          "result": "Unchanged one remainder accumulates fractional cells,reversal discards stale distance,movement clamps,outward resets. Terminal callers own gesture/navigation/resize reset.3 tests/16 assertions;no browser/build.",
+          "state": "completed",
+          "changedPaths": []
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_9f837c1d",
+          "candidate": "e885ab24fc6484750785eef0aae246c3d9f2963e",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "One remainder has gesture-local purpose; reversal/bounds/reset explicit and caller owns resets on navigation/input lifecycle. Judge traced sole shipped terminal caller and3 tests/16 assertions;browser inspected not rerun.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3",
+      "acceptedBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/styles.css",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
-      "initialBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a"
+      "state": "accepted-unchanged",
+      "primary": [
+        {
+          "id": "task_05fa70bb",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_05fa70bb",
+          "branch": "bruv/primary-site-styles.css-05fa70bb",
+          "base": "6e555e5e148be83d37cceed3254165503bb87753",
+          "commit": "716c6d7d795200a0331303e729d7e27f0895009d",
+          "result": "Unchanged terminal caller owns mode/visibility;CSS viewport effects direct. HTML transcripts readable without JS;enhancement screen/control+clip not aria-hide;adjacent keyboard/hover/touch rules. Deduplication would couple distinct accessibility roles.10 tests;no browser/full gate.",
+          "state": "completed",
+          "changedPaths": []
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_4b051cf8",
+          "candidate": "716c6d7d795200a0331303e729d7e27f0895009d",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "CSS directly states terminal mode/viewport effects and HTML no-JS default;enhanced demo clipping preserves accessibility while screen/control keyboard-hover-touch rules stay adjacent. Distinct roles should not be coupled by cosmetic dedupe. Judge complete stylesheet/callers/tests and10 tests/123298 assertions;not browser/accessibility rendering proof.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a",
+      "finalChange": "unchanged",
+      "acceptedBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/terminal.ts",
@@ -953,7 +1301,9 @@
           "branch": "bruv/primary-site-terminal.ts-8638bdbf",
           "base": "20e8cff6ed94b618032adf87ef0a701322b1c974",
           "commit": "dd7569a9e16e31deaec78bae830dc45f43b9e03c",
-          "result": "paint now advances playback -> resizes -> lays out -> presents -> schedules; presentFrame owns presentation caches/publication; bindPointerInput contains gesture state/consumers. 10 focused tests, rendered-grid validation and animation journeys passed. Formatting passed; lint baseline. Typecheck blocked by baseline missing site/demos.ts import ./type. Only terminal.ts source changed."
+          "result": "paint now advances playback -> resizes -> lays out -> presents -> schedules; presentFrame owns presentation caches/publication; bindPointerInput contains gesture state/consumers. 10 focused tests, rendered-grid validation and animation journeys passed. Formatting passed; lint baseline. Typecheck blocked by baseline missing site/demos.ts import ./type. Only terminal.ts source changed.",
+          "state": "completed",
+          "changedPaths": ["site/terminal.ts"]
         }
       ],
       "judges": [
@@ -969,15 +1319,42 @@
       "initialBlob": "9c375c3852c97216dc89f6d055587ef63353ac52",
       "acceptedBlob": "53be49f1b82e4629de9793286e4db958b467e226",
       "changedRelatedPaths": [],
-      "integration": "exact disjoint candidate patch; no worker note imported"
+      "integration": "exact disjoint candidate patch; no worker note imported",
+      "finalChange": "changed",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "site/wrangler.jsonc",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
-      "initialBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75"
+      "state": "accepted-unchanged",
+      "primary": [
+        {
+          "id": "task_60419896",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_60419896",
+          "branch": "bruv/primary-site-wrangler.jsonc-60419896",
+          "base": "f9b22f136850bfc50e8ad99c12fbda1591d329cd",
+          "commit": "ce4e678aa3466c77be43ee1220755649bdbf7664",
+          "result": "Unchanged explicit Worker identity,compatibility date,static output;build creates site/dist,deploy from site reads ./dist.10 tests/config path assertions;no build/browser/deploy.",
+          "state": "completed",
+          "changedPaths": []
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_c1525156",
+          "candidate": "ce4e678aa3466c77be43ee1220755649bdbf7664",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Worker identity/date/static output declared directly;build->site/dist->documented deploy from site is explicit,not hidden wrapper. Judge10 build tests plusfield/path checks;does not exercise Wrangler/deployment.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75",
+      "finalChange": "unchanged",
+      "acceptedBlob": "c9cc4cc3f39438128f68ab1dc6bec76b827fed75",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "integrationState": "accepted-at-area-tip"
     },
     {
       "focus": "support/gpt-live-explained.html",
@@ -990,7 +1367,9 @@
           "branch": "bruv/primary-support-gpt-live-explained.html-1e4c14a6",
           "base": "5c3b6a0d449c5716a14ca62d2bde25722a443e9b",
           "commit": "0d1abd8ba5c9b9c2e37b66f2c560ac732dace780",
-          "result": "No source change: sequential task->handoff->metadata versus executable request->authority->separate interruption/Live-stop/work-cancel controls. Existing live-config tests 5/13; no browser/provider/build. Dated current-production claims predate shipped GPT-Live; flagged separate content refresh, not silently changed."
+          "result": "No source change: sequential task->handoff->metadata versus executable request->authority->separate interruption/Live-stop/work-cancel controls. Existing live-config tests 5/13; no browser/provider/build. Dated current-production claims predate shipped GPT-Live; flagged separate content refresh, not silently changed.",
+          "state": "completed",
+          "changedPaths": []
         }
       ],
       "judges": [
@@ -1006,16 +1385,43 @@
       "initialBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce",
       "acceptedBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded",
+      "finalChange": "unchanged",
+      "integrationState": "accepted-at-area-tip"
     }
   ],
   "extra": [],
-  "crossArea": [],
-  "limits": [
-    "Automatic fish setup lacks Bun; explicit tooling supplied.",
-    "Confirmed missing demos ./type fixed in accepted demos patch; strict targeted TS passed in writer/judge. Full area gate pending."
+  "crossArea": [
+    {
+      "kind": "parent-final-gate",
+      "paths": [],
+      "need": "Parent owns whole Linux gate and PR45; no cross-area source edits or unresolved API dependency."
+    },
+    {
+      "kind": "content-followup",
+      "paths": ["support/gpt-live-explained.html"],
+      "need": "Dated current-production claims predate shipped GPT-Live. Structural acceptance is not factual-content endorsement; separate refresh decision."
+    }
   ],
-  "parentBoundary": "Inspected integration 6a285569: docs-only changes, no common source to bring in. Disk 159G available.",
+  "limits": [
+    "Historical site/scripts/capture-real.ts has6 unchanged strict diagnostics:5 implicit-any parameters and browser-only /ghostty-web.js import. Final scoped strict check explicitly excludes it;do not claim all-site strict clean.",
+    "No root Linux CI,production deployment,live provider,physical device or cross-browser acceptance from area.",
+    "Historical settings captures are maintained tooling/test inputs,not current shipped scripted demos. Several original provenance narratives were stale;ledger corrections retained.",
+    "Existing font-ready/disposal,harness pre-try cleanup,minified instrumentation,legacy clipboard failure and other per-file limits remain."
+  ],
+  "parentBoundary": {
+    "commit": "695ade32",
+    "description": "Parent has already joined partial site-support at0562be91; only capture.ts,install-ui.test.ts,install.test.ts,scroll.test.ts differ in final area source. No reverse merge of broad partial sibling snapshot/overlapping area notes. Parent canonical installer is independently accepted in tooling area; exact final area tests are being run against that parent blob in a disposable probe.",
+    "installer": {
+      "path": "scripts/install.sh",
+      "blob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+      "primary": "task_7cb4f7d8",
+      "judge": "task_7be1ff38",
+      "verdict": "ACCEPT"
+    },
+    "probeJob": "task_40515eed",
+    "probeResult": "7 pass,0 fail,97 assertions against exact parent installer125933e061095c79bd5e2f16c68d384e8a2c9013 and final area test1da41ffef989ec064e62295f04d8352eb5137345;no source imported."
+  },
   "batchProof": [
     {
       "commit": "8b8f1122",
@@ -1026,13 +1432,144 @@
     },
     {
       "commit": "25a89310..4175acd2",
-      "jobs": [
-        "task_b91e76a4",
-        "task_bcf9b2d3",
-        "task_79aea0ab"
-      ],
+      "jobs": ["task_b91e76a4", "task_bcf9b2d3", "task_79aea0ab"],
       "result": "All site TS except unchanged historical capture-real.ts passes strict tsc --ignoreConfig --noEmit --strict --skipLibCheck --types bun --target ES2023 --module Preserve --moduleResolution Bundler. Full site strict attempt retains six capture-real diagnostics (five implicit any, /ghostty-web.js browser import). Format passes; lint 105 warnings/90 infos, no errors. First probe omitted --types bun and failed; corrected probe used explicit Bun types.",
       "limits": "Do not claim all-site strict clean or root typecheck from this."
+    },
+    {
+      "commit": "6d4a9ed6",
+      "job": "task_4f3ed68f",
+      "command": "Strict tsc on site/*.ts and site/scripts/*.ts except capture-real.ts, then biome format site && biome lint site (set -e)",
+      "result": "Passed. Format checked37 files;lint79 warnings/88 infos,no errors.",
+      "limits": "Historical capture-real.ts unchanged six diagnostics explicitly excluded;not a clean full-site strict claim."
+    },
+    {
+      "commit": "6d4a9ed6",
+      "job": "task_c14e0751",
+      "command": "cd site; bun run test; bun run test:animation (set -e)",
+      "result": "All tests/build/Chromium validation and animation harness passed. Desktop/mobile/touch/no-JS,keyboard pause/resume/exit,visibility,all3 demo loop+6000ms final holds,offscreen pause,reduced motion/touch play/pause;both errors arrays empty.",
+      "limits": "Not physical device,cross-browser,Cloudflare deployment or root Linux CI.",
+      "tests": {
+        "passed": 43,
+        "failed": 0,
+        "assertions": 5705803,
+        "files": 7
+      }
+    },
+    {
+      "job": "task_40515eed",
+      "parent": "695ade32",
+      "parentInstallerBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+      "areaTestBlob": "1da41ffef989ec064e62295f04d8352eb5137345",
+      "result": "7 pass,0 fail,97 assertions. Disposable exact-byte combined probe;no parent/area source edits."
     }
-  ]
+  ],
+  "combinedJudge": {
+    "id": "task_a3b96800",
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "candidate": "593f80d57b33a2f827e06ca4425f360cb239583f",
+    "state": "completed",
+    "paths": [
+      "site/capture.ts",
+      "site/demos.test.ts",
+      "site/demos.ts",
+      "site/html-animation.ts",
+      "site/html-cells.ts",
+      "site/layout.ts",
+      "site/scripts/animation.ts",
+      "site/scripts/build.ts",
+      "site/scripts/capture-demo-source.ts",
+      "site/scripts/extract-cells.ts",
+      "site/scripts/html-animation.test.ts",
+      "site/scripts/install-ui.test.ts",
+      "site/scripts/install.test.ts",
+      "site/scripts/scroll.test.ts",
+      "site/scripts/validate.ts",
+      "site/terminal.ts"
+    ],
+    "verdict": "ACCEPT",
+    "objections": [],
+    "evidence": "Inspected complete combined16-source diff and actual pinned code/callers/tests. Build page contracts;terminal timing/presentation;layout document/viewport projection;explicit demo turns/footer;HTML panel versus mount lifetime;input policies;historical capture and fixture cleanup compose coherently. Cell type fix explicit;assertions preserved/strengthened.",
+    "independentChecks": "988 demo frames+3 transcripts,128 layouts,5 capture reflows,4 assembled pages baseline/candidate parity;diff check. Did not rerun area browser gate.",
+    "limits": "Pending font-ready continuation and document-lifetime terminal listeners;pre-cleanup harness acquisitions,minified hooks;no physical/cross-browser or all-site strict proof.",
+    "acceptedBlobs": {
+      "site/capture.ts": "ea72ee5ebc5145f474b9b9e3a2b3f7afeb49f54b",
+      "site/demos.test.ts": "9a554baa5a3a7c3ae6e4d424a6af2cd8fd02c7c8",
+      "site/demos.ts": "5f211cd265a0d4cb8377b5148fa13281f2ccb5fa",
+      "site/html-animation.ts": "611b710f3e082fde979cb1ea86e462445030a2fa",
+      "site/html-cells.ts": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
+      "site/layout.ts": "128855476c64c4b43bd0258b9064f2b44831878c",
+      "site/scripts/animation.ts": "4bea05dabee326db5d3cc42783a45b9f73e66750",
+      "site/scripts/build.ts": "1cf04b95f42c7d500d2dd302f02f48db84273aba",
+      "site/scripts/capture-demo-source.ts": "cb174478a55a37871373add5263eebfb36de2b19",
+      "site/scripts/extract-cells.ts": "0c08612f134666dff26b631ae44408b7bedde80d",
+      "site/scripts/html-animation.test.ts": "ec93e1910b0f9d4d1ff2ea31e9f3c1de61086360",
+      "site/scripts/install-ui.test.ts": "538556abc76aa8bb294950cbc23b64ac8ac1be84",
+      "site/scripts/install.test.ts": "1da41ffef989ec064e62295f04d8352eb5137345",
+      "site/scripts/scroll.test.ts": "5a1025b2f60ae7f6ef6ff55951b79cce6edd55f1",
+      "site/scripts/validate.ts": "31ae70389bba2af920c96f41f2bcb2292ee53292",
+      "site/terminal.ts": "53be49f1b82e4629de9793286e4db958b467e226"
+    }
+  },
+  "audit": {
+    "baseline": 41,
+    "uniquePrimary": 41,
+    "finalChanged": 16,
+    "extraNewDeletedSource": [],
+    "accepted": 41,
+    "pending": [],
+    "errors": [],
+    "perFileJudgeAttempts": 43,
+    "finalJudgeIds": [
+      "task_2a36b538",
+      "task_3d50228c",
+      "task_08863fc0",
+      "task_ac6fe577",
+      "task_b3d7d253",
+      "task_f29c1365",
+      "task_d45f272d",
+      "task_884e8b0b",
+      "task_bdc898a5",
+      "task_2ebc2a13",
+      "task_fae7ccc8",
+      "task_608a711c",
+      "task_a0562ba4",
+      "task_7c587dbb",
+      "task_076ad4af",
+      "task_203c204d",
+      "task_fbbc0bfe",
+      "task_b7d332ee",
+      "task_4e8a8bc6",
+      "task_993fa01c",
+      "task_d3cccc82",
+      "task_4d85f3b6",
+      "task_53cb3831",
+      "task_f3451b4a",
+      "task_53b78b16",
+      "task_59d37faf",
+      "task_a59154f4",
+      "task_5628d052",
+      "task_a0a2c4e8",
+      "task_32ee7f46",
+      "task_1588246a",
+      "task_5840db21",
+      "task_21f20bcf",
+      "task_8e721489",
+      "task_07a74302",
+      "task_012c74d4",
+      "task_9f837c1d",
+      "task_4b051cf8",
+      "task_d14c7a16",
+      "task_c1525156",
+      "task_69db8026"
+    ],
+    "uniqueFinalJudges": 41,
+    "combinedJudgeAccepted": true,
+    "totalJudgeAttempts": 44,
+    "roundExplanation": "41 final per-file judgments;1 superseded provenance-deficient brand round;1 cancelled generator attempt;1 final combined judgment. No rejection unresolved.",
+    "finalUnchanged": 25,
+    "cleanSource": true,
+    "noteByteCheck": "No NUL or ANSI escape bytes;Markdown fences balanced."
+  },
+  "status": "accepted-ready-for-parent-integration"
 }

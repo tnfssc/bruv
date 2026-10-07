@@ -240,6 +240,30 @@ for (const installFirst of [true, false]) {
     },
   );
 }
+test("frame ownership expires after a failed native render and uninstall clears activity facts", () => {
+  const stop = installSdkTaskRows(theme);
+  restores.push(stop);
+  const parent = new Container();
+  const launch = tool([row()]);
+  parent.addChild(launch);
+  parent.addChild({
+    render: () => {
+      throw new Error("native body failed");
+    },
+    invalidate() {},
+  });
+  expect(() => parent.render(100)).toThrow("native body failed");
+  expect(getActivityTaskRows(launch)).toHaveLength(1);
+  // Direct SDK rendering outside the parent frame must not retain its task overlay.
+  expect(plain(launch.render(100))).toContain("LAUNCH OUTPUT");
+  parent.children.pop();
+  expect(plain(parent.render(100))).toEqual(["↗ Run tests"]);
+  stop();
+  restores.pop();
+  expect(getActivityTaskRows(launch)).toBeUndefined();
+  expect(launch.render).toBe(ToolExecutionComponent.prototype.render);
+});
+
 test("shutdown and reinstall use only the new session snapshot and restore SDK renders", () => {
   const originalAdd = Container.prototype.addChild;
   const originalRender = Container.prototype.render;

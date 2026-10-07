@@ -6,7 +6,7 @@ import {
   stripTerminalSequences,
   truncateToWidth,
 } from "@earendil-works/pi-tui";
-import { monitorActive, type MonitorTask, type TaskMonitorSource } from "../tasks/task-monitor-source";
+import { type MonitorTask, monitorActive, type TaskMonitorSource } from "../tasks/task-monitor-source";
 
 const OUTPUT_BYTES = 2400;
 const OUTPUT_LINES = 12;
@@ -35,28 +35,35 @@ function cleanCommand(value: string): string {
 function terminalRows(value: unknown): number {
   return typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 24;
 }
-function fitRows(lines: string[], height: number, identity?: string): string[] {
+interface TaskView {
+  lines: string[];
+  identity: string;
+}
+interface MonitorFrame {
+  border: string;
+  title: string;
+  body: string[];
+  controls: string;
+  identity?: string;
+}
+function fitRows(frame: MonitorFrame, height: number): string[] {
   if (height <= 0) return [];
+  const { border, title, body, controls, identity = controls } = frame;
+  const lines = [border, title, ...body, controls, border];
   if (lines.length <= height) return lines;
-  const controls = lines.at(-2) ?? lines.at(-1) ?? "";
   // A usable action must never outlive the line identifying its target. At one
   // row show only that identity; at two and three rows pair it with controls.
   // Stop prompts are both the frozen identity and the controls, so avoid
   // duplicating them.
-  const target = identity ?? controls;
-  if (height === 1) return [target];
-  if (height === 2) return target === controls ? [lines[1] ?? lines[0] ?? "", controls] : [target, controls];
-  if (height === 3)
-    return target === controls
-      ? [lines[0] ?? "", lines[1] ?? "", controls]
-      : [lines[1] ?? lines[0] ?? "", target, controls];
-  if (height === 4 && target !== controls) return [lines[1] ?? lines[0] ?? "", target, controls, lines.at(-1) ?? ""];
+  if (height === 1) return [identity];
+  if (height === 2) return identity === controls ? [title, controls] : [identity, controls];
+  if (height === 3) return identity === controls ? [border, title, controls] : [title, identity, controls];
+  if (height === 4 && identity !== controls) return [title, identity, controls, border];
 
   // Keep the frame title and controls. Blank spacer rows are the first thing
   // dropped on a short terminal so selected/inspection information remains useful.
-  const body = lines.slice(2, -2);
   const usefulBody = [...body.filter((line) => line !== ""), ...body.filter((line) => line === "")];
-  return [lines[0]!, lines[1]!, ...usefulBody.slice(0, height - 4), controls, lines.at(-1)!];
+  return [border, title, ...usefulBody.slice(0, height - 4), controls, border];
 }
 function cleanOutput(value: string): string[] {
   const lines = cleanTerminalText(value, true).replace(/\r/g, "").split("\n");
@@ -64,7 +71,7 @@ function cleanOutput(value: string): string[] {
   return lines.slice(-OUTPUT_LINES);
 }
 
-/** Focused, read-only phase-one job monitor. It never consumes task completion. */
+/** Session job observations and confirmed stop requests; never consumes task completion. */
 export class TaskMonitorPanel implements Component, Focusable {
   private selected = 0;
   private selectedId?: string;
@@ -193,107 +200,121 @@ export class TaskMonitorPanel implements Component, Focusable {
     const height = terminalRows(this.maxRows());
     const tasks = this.running();
     this.syncSelection(tasks);
-    const lines: string[] = [
-      this.theme.fg("accent", "─".repeat(width)),
-      this.theme.bold(
+    const prompt = this.stopPrompt();
+    const frame: MonitorFrame = {
+      border: this.theme.fg("accent", "─".repeat(width)),
+      title: this.theme.bold(
         tasks.some((task) => task.status === "unknown") ? "Running jobs · unknown SSH observations" : "Running jobs",
       ),
-    ];
-    if (!tasks.length) {
-      lines.push(
+      body: [],
+      controls: prompt ?? this.theme.fg("dim", "Esc close"),
+      identity: prompt,
+    };
+    const task = tasks[this.selected];
+    if (!task) {
+      frame.body = [
         "",
         this.theme.fg(
           "muted",
           this.manager.list().length ? "No jobs are running." : "No jobs have been started in this session.",
         ),
         this.manager.notice ? this.theme.fg("warning", cleanCommand(this.manager.notice)) : "",
-        this.stopPrompt() ?? this.theme.fg("dim", "Esc close"),
-        this.theme.fg("accent", "─".repeat(width)),
-      );
-      return fitRows(lines, height, this.stopPrompt()).map((line) => truncateToWidth(line, width));
-    }
-    if (this.manager.notice) lines.push(this.theme.fg("warning", cleanCommand(this.manager.notice)));
-    lines.push("");
-    let identityLine: string | undefined;
-    const task = tasks[this.selected];
-    // syncSelection above guarantees a selected task whenever the running list is non-empty.
-    if (!task) return lines.map((line) => truncateToWidth(line, width));
-    let outputRows: number;
-    const outputBytes = this.inspecting ? INSPECT_BYTES : OUTPUT_BYTES;
-    if (this.inspecting) {
-      const metadataRows = 9 + (task.agent?.lastActivityAt ? 1 : 0);
-      outputRows = Math.max(1, Math.min(OUTPUT_LINES, height - metadataRows));
-
-      identityLine = this.theme.bold(this.theme.fg("accent", "Inspect " + displayId(task.id)));
-      lines.push(
-        identityLine,
+      ];
+    } else {
+      if (this.manager.notice) frame.body.push(this.theme.fg("warning", cleanCommand(this.manager.notice)));
+      const view = this.inspecting ? this.renderInspection(task, height) : this.renderOverview(tasks, task, height);
+      frame.body.push("", ...view.lines, "");
+      frame.identity = prompt ?? view.identity;
+      frame.controls =
+        prompt ??
         this.theme.fg(
           "dim",
-          cleanCommand(
-            [
-              task.agent ? "agent " + task.agent.type : task.kind,
-              task.ssh
-                ? "owner " + task.ssh.ownerId + " · epoch " + task.ssh.epoch
-                : task.pid
-                  ? "pid " + task.pid
-                  : "pid unavailable",
-              task.cwd,
-            ].join(" · "),
-          ),
-        ),
-        this.theme.fg(
-          "muted",
-          task.ssh
-            ? "SSH cached output · first " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines"
-            : "Bounded output · last " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines",
-        ),
-      );
-    } else {
-      const hasActivity = !!task.agent?.lastActivityAt;
-      const fixedRows = 8 + (hasActivity ? 1 : 0);
-      const available = Math.max(2, height - fixedRows);
-      const previewRows = Math.min(OUTPUT_LINES, Math.max(1, Math.floor(available / 2)));
-      const taskRows = Math.max(1, available - previewRows);
-      const pageStart = Math.max(0, Math.min(this.selected - Math.floor(taskRows / 2), tasks.length - taskRows));
-      const pageEnd = Math.min(tasks.length, pageStart + taskRows);
-      for (let i = pageStart; i < pageEnd; i++) {
-        const listed = tasks[i],
-          selected = i === this.selected;
-        if (!listed) continue;
-        const role = listed.ssh ? "ssh " + listed.status + " stale" : listed.agent ? listed.agent.type : listed.kind;
-        const label =
-          (selected ? "› " : "  ") +
-          this.theme.fg(selected ? "accent" : "muted", displayId(listed.id)) +
-          " " +
-          this.theme.fg(
-            listed.agent?.type === "orchestrator" ? "warning" : listed.agent ? "accent" : "dim",
-            "[" + role + "]",
-          ) +
-          " " +
-          cleanCommand(listed.command) +
-          "  " +
-          this.theme.fg("dim", listed.ssh ? "cached observation" : age(Date.now() - Date.parse(listed.startedAt)));
-        const line = selected ? this.theme.bold(label) : label;
-        if (selected) identityLine = line;
-        lines.push(line);
-      }
-      lines.push(
-        "",
-        this.theme.fg(
-          "muted",
-          task.ssh
-            ? "SSH cached output · first " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines"
-            : "Live preview · last " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines",
-        ),
-      );
-      outputRows = previewRows;
+          this.inspecting
+            ? "↑↓/j/k select · Enter/i back · s/x stop · Esc back"
+            : "↑↓/j/k select · Enter/i inspect · s/x stop · Esc close",
+        );
     }
-    const inspection = this.manager.inspect(
-      task.id,
-      Math.max(task.baseOffset, task.outputEnd - outputBytes),
-      outputBytes,
+    return fitRows(frame, height).map((line) => truncateToWidth(line, width));
+  }
+  private renderInspection(task: MonitorTask, height: number): TaskView {
+    const lines: string[] = [];
+    const metadataRows = 9 + (task.agent?.lastActivityAt ? 1 : 0);
+    const outputRows = Math.max(1, Math.min(OUTPUT_LINES, height - metadataRows));
+
+    const identity = this.theme.bold(this.theme.fg("accent", "Inspect " + displayId(task.id)));
+    lines.push(
+      identity,
+      this.theme.fg(
+        "dim",
+        cleanCommand(
+          [
+            task.agent ? "agent " + task.agent.type : task.kind,
+            task.ssh
+              ? "owner " + task.ssh.ownerId + " · epoch " + task.ssh.epoch
+              : task.pid
+                ? "pid " + task.pid
+                : "pid unavailable",
+            task.cwd,
+          ].join(" · "),
+        ),
+      ),
+      this.theme.fg(
+        "muted",
+        task.ssh
+          ? "SSH cached output · first " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines"
+          : "Bounded output · last " + INSPECT_BYTES + " bytes / " + outputRows + " visible lines",
+      ),
     );
-    const outputLines = cleanOutput(inspection.output).slice(-outputRows);
+    lines.push(...this.renderObservation(task, INSPECT_BYTES, outputRows));
+    return { lines, identity };
+  }
+  private renderOverview(tasks: MonitorTask[], task: MonitorTask, height: number): TaskView {
+    const lines: string[] = [];
+    const hasActivity = !!task.agent?.lastActivityAt;
+    const fixedRows = 8 + (hasActivity ? 1 : 0);
+    const available = Math.max(2, height - fixedRows);
+    const previewRows = Math.min(OUTPUT_LINES, Math.max(1, Math.floor(available / 2)));
+    const taskRows = Math.max(1, available - previewRows);
+    const pageStart = Math.max(0, Math.min(this.selected - Math.floor(taskRows / 2), tasks.length - taskRows));
+    const pageEnd = Math.min(tasks.length, pageStart + taskRows);
+    let identity = "";
+    for (let i = pageStart; i < pageEnd; i++) {
+      const listed = tasks[i],
+        selected = i === this.selected;
+      if (!listed) continue;
+      const role = listed.ssh ? "ssh " + listed.status + " stale" : listed.agent ? listed.agent.type : listed.kind;
+      const label =
+        (selected ? "› " : "  ") +
+        this.theme.fg(selected ? "accent" : "muted", displayId(listed.id)) +
+        " " +
+        this.theme.fg(
+          listed.agent?.type === "orchestrator" ? "warning" : listed.agent ? "accent" : "dim",
+          "[" + role + "]",
+        ) +
+        " " +
+        cleanCommand(listed.command) +
+        "  " +
+        this.theme.fg("dim", listed.ssh ? "cached observation" : age(Date.now() - Date.parse(listed.startedAt)));
+      const line = selected ? this.theme.bold(label) : label;
+      if (selected) identity = line;
+      lines.push(line);
+    }
+    lines.push(
+      "",
+      this.theme.fg(
+        "muted",
+        task.ssh
+          ? "SSH cached output · first " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines"
+          : "Live preview · last " + OUTPUT_BYTES + " bytes / " + OUTPUT_LINES + " lines",
+      ),
+    );
+    lines.push(...this.renderObservation(task, OUTPUT_BYTES, previewRows));
+    return { lines, identity };
+  }
+  private renderObservation(task: MonitorTask, bytes: number, rows: number): string[] {
+    const lines: string[] = [];
+    const inspection = this.manager.inspect(task.id, Math.max(task.baseOffset, task.outputEnd - bytes), bytes);
+    const outputLines = cleanOutput(inspection.output).slice(-rows);
     if (task.outputEnd === 0) lines.push(this.theme.fg("dim", "No output available yet."));
     else if (!outputLines.some((line) => line.trim()))
       lines.push(this.theme.fg("dim", "Output received, but it is whitespace only."));
@@ -328,19 +349,7 @@ export class TaskMonitorPanel implements Component, Focusable {
       const note = task.monitorNote ?? task.ssh.lastError;
       if (note) lines.push(this.theme.fg("warning", cleanCommand(note)));
     }
-    const stopPrompt = this.stopPrompt();
-    lines.push(
-      "",
-      stopPrompt ??
-        this.theme.fg(
-          "dim",
-          this.inspecting
-            ? "↑↓/j/k select · Enter/i back · s/x stop · Esc back"
-            : "↑↓/j/k select · Enter/i inspect · s/x stop · Esc close",
-        ),
-      this.theme.fg("accent", "─".repeat(width)),
-    );
-    return fitRows(lines, height, stopPrompt ?? identityLine).map((line) => truncateToWidth(line, width));
+    return lines;
   }
   invalidate() {}
   dispose() {

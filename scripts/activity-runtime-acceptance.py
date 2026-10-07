@@ -66,6 +66,39 @@ def header_contract(frame, prose_tokens):
         assert len(line) - len(line.lstrip()) == next(iter(insets)), ("Header left alignment", line, prose)
 
 
+def prepare_long_thread(root):
+    """Install the private saved journal and select it for the next reopen.
+
+    Return its original lines so acceptance can check replay without rewriting.
+    This creates fixture data only; it does not run the CLI or prove rendering.
+    """
+    journal = root / "sessions" / "acceptance-long.jsonl"
+    records = [{"type":"session", "version":3, "id":str(uuid.uuid4()), "timestamp":"2026-10-04T12:00:00.000Z", "cwd":str(root / "project")}]
+    parent = None
+    usage = {"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}}
+    def append(message):
+        nonlocal parent
+        eid = uuid.uuid4().hex[:8]
+        records.append({"type":"message","id":eid,"parentId":parent,"timestamp":"2026-10-04T12:00:00.000Z","message":message})
+        parent = eid
+    def assistant(content, stop):
+        return {"role":"assistant","content":content,"api":"openai-responses","provider":"activity-fixture","model":"acceptance","usage":usage,"stopReason":stop,"timestamp":1791115200000}
+    for turn in range(100):
+        append({"role":"user","content":"Saved turn " + str(turn),"timestamp":1791115200000})
+        for tool in range(10):
+            cid = f"saved-{turn}-{tool}"
+            token = "DETAIL_" + cid
+            append(assistant([{"type":"toolCall","id":cid,"name":"execute","arguments":{"label":"Read saved file " + cid,"code":'console.log("' + token + '")'}}], "toolUse"))
+            append({"role":"toolResult","toolCallId":cid,"toolName":"execute","content":[{"type":"text","text":token}],"details":{"exitCode":0,"stdout":token,"stderr":"","images":[]},"isError":False,"timestamp":1791115200000})
+    append(assistant([{"type":"text","text":"LONG_THREAD_READY"}], "stop"))
+    journal.write_text("".join(json.dumps(r) + "\n" for r in records))
+    original_lines = journal.read_text().splitlines()
+    state_path = root / "state.json"
+    state = json.loads(state_path.read_text()); state["session"] = str(journal)
+    state_path.write_text(json.dumps(state, indent=2))
+    return journal, original_lines
+
+
 class Run:
     def __init__(self, root, binary):
         self.root, self.binary = root, binary
@@ -246,30 +279,7 @@ class Run:
         # stdout "check started" is NOT a typed progress-notification claim.
 
     def long_thread(self):
-        journal = self.root / "sessions" / "acceptance-long.jsonl"
-        records = [{"type":"session", "version":3, "id":str(uuid.uuid4()), "timestamp":"2026-10-04T12:00:00.000Z", "cwd":str(self.root / "project")}]
-        parent = None
-        usage = {"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}}
-        def append(message):
-            nonlocal parent
-            eid = uuid.uuid4().hex[:8]
-            records.append({"type":"message","id":eid,"parentId":parent,"timestamp":"2026-10-04T12:00:00.000Z","message":message})
-            parent = eid
-        def assistant(content, stop):
-            return {"role":"assistant","content":content,"api":"openai-responses","provider":"activity-fixture","model":"acceptance","usage":usage,"stopReason":stop,"timestamp":1791115200000}
-        for turn in range(100):
-            append({"role":"user","content":"Saved turn " + str(turn),"timestamp":1791115200000})
-            for tool in range(10):
-                cid = f"saved-{turn}-{tool}"
-                token = "DETAIL_" + cid
-                append(assistant([{"type":"toolCall","id":cid,"name":"execute","arguments":{"label":"Read saved file " + cid,"code":'console.log("' + token + '")'}}], "toolUse"))
-                append({"role":"toolResult","toolCallId":cid,"toolName":"execute","content":[{"type":"text","text":token}],"details":{"exitCode":0,"stdout":token,"stderr":"","images":[]},"isError":False,"timestamp":1791115200000})
-        append(assistant([{"type":"text","text":"LONG_THREAD_READY"}], "stop"))
-        journal.write_text("".join(json.dumps(r) + "\n" for r in records))
-        original_lines = journal.read_text().splitlines()
-        state_path = self.root / "state.json"
-        state = json.loads(state_path.read_text()); state["session"] = str(journal)
-        state_path.write_text(json.dumps(state, indent=2))
+        journal, original_lines = prepare_long_thread(self.root)
         self.command("resize", 100, 30)
         start = time.monotonic()
         self.command("reopen")

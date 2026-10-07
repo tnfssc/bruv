@@ -122,6 +122,62 @@ describe("terminal render profiler", () => {
     profiler.dispose();
   });
 
+  test("frame entry consumes requests without ending the current input dispatch", () => {
+    const { tui, now, advance } = fixture();
+    const error = new Error("input failed after rendering");
+    tui.handleTerminalInput = () => {
+      advance(4);
+      tui.requestRender();
+      advance(6);
+      tui.doRender();
+      advance(3);
+      tui.requestImmediateRender();
+      advance(5);
+      tui.doRender();
+      throw error;
+    };
+    const profiler = attachTerminalProfiler(tui, { now });
+    try {
+      expect(() => tui.handleTerminalInput("input")).toThrow(error);
+      const frames = profiler.snapshot().frames;
+      expect(frames.map((frame) => frame.requestCount)).toEqual([1, 1]);
+      expect(frames.map((frame) => frame.requestDelayMs)).toEqual([6, 5]);
+      expect(frames.map((frame) => frame.inputCount)).toEqual([1, 1]);
+      expect(frames.map((frame) => frame.inputDelayMs)).toEqual([10, 32]);
+      tui.requestRender();
+      tui.doRender();
+      expect(profiler.snapshot().frames[2]!.inputDelayMs).toBeNull();
+    } finally {
+      profiler.dispose();
+    }
+  });
+
+  test("a throwing nested input dispatch restores the outer association", () => {
+    const { tui, now, advance } = fixture();
+    const error = new Error("nested input failed");
+    tui.handleTerminalInput = (data: string) => {
+      if (data === "inner") {
+        advance(3);
+        throw error;
+      }
+      advance(4);
+      expect(() => tui.handleTerminalInput("inner")).toThrow(error);
+      tui.requestRender();
+      advance(2);
+      tui.doRender();
+    };
+    const profiler = attachTerminalProfiler(tui, { now });
+    try {
+      tui.handleTerminalInput("outer");
+      const frame = profiler.snapshot().frames[0]!;
+      expect(frame.inputCount).toBe(1);
+      expect(frame.inputDelayMs).toBe(9);
+      expect(frame.requestDelayMs).toBe(2);
+    } finally {
+      profiler.dispose();
+    }
+  });
+
   test("ignored input is not associated with an unrelated later frame", () => {
     const { tui, now, advance } = fixture();
     tui.handleTerminalInput = () => {};

@@ -1,43 +1,42 @@
-# Agent / history / session / goals
+# Agent / history / session / goals — ongoing
 
-In progress; 114 initial files require fresh individual primary workers and actual-code judges. No source accepted yet. Coordinator never edits source. Cap: three active primary/rework workers and three judges. Worker worktrees and branches retained; local pickup notes are not integrated.
+Area: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7
+Branch: bruv/whole-repo-structural-readability-agent--03712bc7
+Initial commit: 59413c532e6422983f611915e509e8421aa2f363. Parent owns PR #45; no area PR/push.
 
-Area path: `/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7`; branch `bruv/whole-repo-structural-readability-agent--03712bc7`; initial commit `59413c532e6422983f611915e509e8421aa2f363`. JSON is authoritative per-file pickup ledger; baseline and extra coverage remain separate.
+The adjacent JSON is the authoritative per-file pickup ledger: 114 initial rows; extra helpers separate; every primary/rework worktree, base, commit and judge retained. Coordinator never edits source. At most three primary/rework workers and three fresh read-only judges; fill free slots and yield, no polling loops. Import accepted coherent diffs, never worker-local notes. Unchanged source requires real primary plus judge too. Final hashes and semantic maps can be invalidated by later related edits.
 
-Proof: initialization only; no runtime/readability acceptance claims. Bun location and shared dependencies follow repository-wide guidance. Next: primary/judge pipeline, integrate accepted coherent diffs excluding worker notes, rejudge altered final blobs. Parent owns PR #45 and whole-repo gates.
+## Current accepted structure (not whole-area completion)
 
-## First accepted source batch
+- Disk store: one append/publication/rollback descriptor; published state derives from path; cache/index effects follow success. History retrieval: prepare identity/ancestry/pinned snapshot/live exclusions together; rank by provenance instead of generator side map. Original UTF-16/full-scan/permission contracts preserved.
+- Goals: journal clear vs snapshot-bearing records explicit; replay clear/accept/revoke and diagnostic references coherent. Reminder transport owns tokens/epochs separately from per-model-run no-progress accounting. Goal tests reconciled both primary fixture and all four extension regressions with fresh combined judgment; a later real compile defect is queued below.
+- Agent: instruction mode drops redundant frame cache while continuity retains actual manager/session authority. Countdown observer owns request/subscription/HTTP-terminal evidence apart from durable TTL/settings. Fast policy separates policy, immutable authorization, guarded preparation/dispatch, and persistence rollback. Composition root keeps task/cancel authority; one notification owner groups attach/replay/mailboxes/batching/turn-settlement/close. Purposeful guards remain.
+- Host: session-scoped delivery distinct from process-shared immutable snapshot expiry/locking/budget lifetime; native polling tracks active IDs and one completion decision. Retention transaction visibly reclaims, renews before admission, then exclusively writes with owned rollback.
+- Tests: typed child IO fixtures replace generated source, retaining mock isolation; cleanup fault consumption negative control corrected an old false pass. Instruction/history tests expose independent journeys, real frame/history effects, and visible permissions. Exact checks/rounds/blobs reside in JSON.
+- Unshipped CompletedInput and API-only tests deleted after separate primary reviews and judges traced imports/build/public surface and actual Live/GPT owners. Retired TTL/size rules are NOT claimed reimplemented. Both initial deletion rows have genuine coverage.
+- Already-clear controller, history types, host access, provider evidence, instruction continuity and two IO fixtures accepted unchanged with actual caller/lifetime reasoning.
 
-DiskEntryStore append now owns write/publication/rollback with one descriptor, derives published status from active path, and advances indexes/cache only after success. Primary task_93e226ba candidate `32cbff38`; independent task_0426dce8 ACCEPT, exact blobs in JSON. Worker: 21 history tests/113 assertions, focused TypeScript/format pass; baseline lint diagnostics retained. Judge: 14 passes and collision timeout, isolated rerun passed. Related history-storage-io test remains queued for its own primary focus. No full gate/build/platform claim. Goal controller accepted unchanged by task_61e44d61. README rejected ownership-map sentence and is under fresh rework; not integrated.
+## Pickup next
 
-## Judged dead authority removal
+1. Active/pending states and job IDs are in JSON. Never call a pending candidate accepted. All branches/worktrees remain for reuse.
+2. Goal-test observed TS2554 corrected by fresh task_1ac39db6 candidate 3ae99185; fresh task_d26b0999 ACCEPT final blob fa176b1df06db3887321f0c3452a18cd92d4b9e1. Genuine before-start assertion retained; rerun area typecheck at next batch.
+3. README semantic rework e5241b6b accepted by fresh task_b5e28075 against current composition and final retention helper; accurate final map restored, original incorrect all-formatting-in-tasks claim remains corrected. Future owner changes still require semantic map review.
+4. Native-fast source/test import organization remains a known check issue; give tests/native-fast-mode.test.ts fresh primary and coherent source import correction, then rejudge both final blobs.
+5. New tests/fixtures/transcript-snapshots.ts and tests/transcript-snapshots.test.ts still need separate fresh primary focus, not credit from helper writer or patch judge.
+6. Continue all untouched initial files. Goal/runtime-map rejections and overlaps are not permission to stop after a small batch. No final area report until exact scope/unique-primary/hash/judge audit passes and tracked tree is clean.
 
-Removed unshipped CompletedInput and its API-only tests (candidate `35218b89`, judge task_ea00ebd0 ACCEPT). Independent import/build/public-surface proof finds only deleted test consumer; real input/replay/cancellation authority stays in Live MainOwner/GPT delegation, with safety assertions unchanged. No claim that retired TTL policy exists elsewhere. Deleted test still requires its own primary-focus coverage. Worker 24 shipped-path passes/125 assertions; judge 18 GPT delegation passes/67 assertions, other reruns dependency-blocked.
+## Cross-area parent needs
 
-## Instruction mode lifetime batch
+- tests/live-host-bridge.test.ts: accepted related blob 7232dfaac76b2bdf548b5bcca45932ba3cf98431 (task_9ae7f05e); live area must primary-review final combined hash.
+- tests/subagent-extension.test.ts: accepted related blob 2bbf39985a247af7d4b586444d853f420a46cd06 (task_0acb5c07); execution area must primary-review final combined hash.
+- Do not overwrite sibling notes or silently drop regression additions. Parent reconciles overlaps and rejudges modified final hashes. Inspect parent integration only at batch boundaries; last inspection had progress notes, no common source changes.
 
-Candidate `b56b4b3a`, judge task_00bd7047 ACCEPT: eliminate cached session/digest/custom-frame state; derive deterministic marker identity while instruction-continuity retains real manager/session authority. Root custom/child routing and append-before-memory preserved. Exact extension one-argument adjustment and strengthened mode tests integrated together; both need fresh primary focus later. Worker 30 passes/219 assertions plus full tsc and focused format/lint; independent execution dependency-blocked, actual-code acceptance explicit.
+## Proof and honest limits
 
-Combined proof at `4287844f`: 111 tests pass, 0 fail, 596 assertions across 10 history/instruction/goals/live-delegation source suites (task_b86bb73e). Shared dependencies/assets read-only; no binary/provider/device/SSH claim.
+Fresh owned paired build at cdc57364 passed (task_33a9bf6f), producing dist/bruv and connector. Same 21-suite source/binary set passes in unique owned TMPDIR: **234 pass / 1468 assertions** (task_df42d0f6). Earlier default-TMPDIR run had 231 pass/3 failures from shared retained-snapshot budget; it also exposed the real goal-test TS2554. Do not delete others' snapshots or weaken retention. Earlier 13-suite batch passed 118/898 and tsc at f3f039a6; that is historical, not a claim after later edits. Current full typecheck passes at 0f8c0cdb after judged goal correction (task_2ef0f9a9); focused format/lint across 22 paths pass with 50 warnings/28 infos, not a warning-free claim. Exact focused and independent checks/limits are recorded per file; green tests do not establish readability.
 
-Batch typecheck `tsc --noEmit` and diff check pass. Stronger `biome check` failed organizeImports on extension.ts, history-storage-io.test.ts, instruction-mode.test.ts (12 warnings/12 infos also). This is not a format/lint-only pass contradiction; queued file owners must address/rejudge final hashes. No green combined style claim.
+Use /bin/bash with Bun 1.4.2 PATH inside quoted script. Shared node_modules stays read-only; own runtime-assets and dist. Automatic fish setup cannot find Bun but workers start. Failed independent dependency resolution is reported as such; NODE_PATH often insufficient. Use unique TMPDIR for snapshot tests. No live-provider/authenticated SSH/macOS/device or whole Linux gate claim. Parent owns final gate. Last disk boundary: 136 GB free; check later batches.
 
-README round 2 task_8739dae2 ACCEPT after fresh rework fixes notification ownership map; exact final blob recorded, rejected candidate retained. No runtime changes. Goal types primary overlaps goal-store replay candidate by one removed assertion; queued coherent file-worker integration and judgment, not silently dropping related diff.
+## Wisdom
 
-Goal replay candidate `550ce642`, judge task_46beb0fa ACCEPT, integrated exact: one clear/accept/revoke authority path and one rejected-reference diagnostic boundary, while write/waiting permissions stay unchanged. Worker 32 passes/153 assertions plus focused type/style; independent read-only replay/write-failure checks pass, suite dependency-blocked. Goal tests retain primary-focus need. Types candidate overlap must be reconciled by a worker against this committed state.
-
-IO tests candidate `eaac149b`, judge task_6fc46161 ACCEPT structural readability: isolate filesystem mocks in real typed subprocess fixtures, parent owns temp/process lifetime. Explicit observed test correction ensures publication cleanup fault actually occurs; independent negative control confirms old false-pass. 14 independent safety passes and strict tsc; import-order check still fails, queued worker correction/rejudgment. Both new fixtures have separate extra coverage rows requiring fresh primary focus.
-
-Final goals overlap resolved by fresh worker task_30334bdd, candidate `0f29a6e2`; fresh combined judge task_d72cbe58 ACCEPT types/store/tests. Durable union requires snapshots for set/update, while validated replay view omits envelope. Prior assertion site was truly removed, not silently dropped. Store/test blobs unchanged from accepted replay; exact combined hashes recorded.
-
-Cache countdown `b2b130e3` ACCEPT task_7fc83ddf: observer groups session request/subscription/debt lifetime and atomically consumes evidence; settings/durable countdown remain separate. Native success/current-generation evidence and conservative timestamps preserved. Worker 34 countdown/footer passes/330 assertions on baseline and candidate; judge 12 countdown passes, footer dependency-blocked. Related countdown tests need their own primary.
-
-Instruction tests `7600a587` ACCEPT task_eef5d289: coherent started-session fixture and independent journeys; actual late-attached-history refresh seam now tested. Independent 40 passes/361 assertions and no-op-refresh negative control reproduced. Extension change only sorts imports (all bindings/body identical), resolving its and test import-order errors. Extension still requires own primary.
-
-Batch `f3f039a6`: 118 tests pass/898 assertions across 13 relevant suites, full `tsc --noEmit` pass (task_8495a524). Exact accepted-hash audit: no mismatches among 13 accepted initial rows. Still in progress: 98 initial primary focuses unstarted, 3 running, 2 new-fixture primary results judging. Parent inspected at batch boundary: no common source changes yet. Disk 149 GB free.
-
-IO final parent import correction `0100f6e7`: fresh task_cc13d7e2 ACCEPT parent / NO CHANGE NEEDED primary short-write fixture after actual full-code review. Biome including imports now passes; independent 10 parent tests/43 assertions. Exact parent acceptance updated; helper primary coverage genuine.
-
-History retrieval `3e75dd44` ACCEPT task_150357ad: remove lazy scan rank-map side effects; prepare cursor identity/ancestry, pinned snapshot and live exclusions together. Full-scan read validation and original UTF-16/ref/permission contracts preserved. Independent 21 passes/72 assertions; no compiled bridge proof. Related history tests still need primary focus.
-
-Goal reminders `3768ecd1` ACCEPT task_4a2a31dd: transport token lifecycle gets coherent owner, distinct from store and no-progress controller. Hooks visibly invalidate transport only versus reset accounting; exact payload, navigation/restart, waiting and run/settled contracts remain. All four related regression additions integrated; active goal-test primary began earlier, so final overlap must be worker-reconciled and rejudged. Worker 39 passes/204 assertions baseline/candidate; judge execution dependency-blocked.
+Only this area's notes and reusable brief files changed; values/global guidance unchanged. Proposed parent lesson: final semantic documentation can go stale without a blob change; rejudge/update its map after owner restructuring. Isolate retained-artifact tests rather than weakening shared retention. Do not import hundreds of worker notes or mistake check-only diagnostics for structural verdicts. No new shared values edit made here.

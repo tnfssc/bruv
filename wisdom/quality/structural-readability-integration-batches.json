@@ -41,5 +41,155 @@
       "tip": "6e555e5e148be83d37cceed3254165503bb87753",
       "state": "partial; full primary coverage still pending"
     }
+  ],
+  "round2": [
+    {
+      "area": "remote",
+      "tip": "926c1c58318b0202744be8636eef7064981f2514",
+      "sourcePaths": [
+        "src/remote/capability-runtime.ts",
+        "src/remote/repository-wire.ts",
+        "src/remote/root-client.ts",
+        "src/remote/root-presenter.ts",
+        "src/remote/runtime.ts",
+        "tests/remote-capability-runtime.test.ts",
+        "tests/remote-client.test.ts",
+        "tests/remote-owner-lifecycle.test.ts",
+        "tests/remote-root-client.test.ts",
+        "tests/remote-root-presenter.test.ts",
+        "tests/remote-runtime.test.ts"
+      ]
+    },
+    {
+      "area": "live-native-audio",
+      "tip": "02c89e33b6a0811671f31c580193e47ac16f4a79",
+      "sourcePaths": [
+        "native/live-linux/tests/backpressure.py",
+        "native/live-linux/tests/capture-gate.cpp",
+        "native/live-linux/tests/protocol.py",
+        "native/live-linux/tests/source-removal.py",
+        "native/live-linux/tests/test_isolated_audio.py",
+        "native/live-linux/tests/test_protocol.py",
+        "native/live-linux/tests/test_source_removal.py",
+        "native/live-linux/tests/test_virtual.py",
+        "native/live-linux/tests/virtual.sh",
+        "native/live/test-waveform.c",
+        "scripts/live-isolated-audio.sh",
+        "src/live/extension.ts",
+        "src/live/gpt-live-session.ts",
+        "src/live/playback.ts",
+        "tests/editor-voice-integration.test.ts",
+        "tests/gpt-live-session.test.ts",
+        "tests/live-extension.test.ts",
+        "tests/live-main-owner.test.ts",
+        "tests/live-playback.test.ts"
+      ]
+    },
+    {
+      "area": "compatibility-t3",
+      "tip": "994058813ce5c18a460d304418610b4a0995fb06",
+      "sourcePaths": [
+        "src/claude-compat/binding.ts",
+        "src/claude-compat/human-controls.ts",
+        "src/claude-compat/mcp.ts",
+        "src/claude-compat/task-binding.ts",
+        "src/claude-compat/task-projection.ts",
+        "src/claude-compat/transport.ts",
+        "src/t3/tasks/local-notifications.ts",
+        "tests/claude-compat-binding.test.ts",
+        "tests/claude-compat-commands.test.ts",
+        "tests/claude-compat-history.test.ts",
+        "tests/claude-compat-human-controls.test.ts",
+        "tests/claude-compat-launch.test.ts",
+        "tests/claude-compat-task-binding.test.ts",
+        "tests/claude-compat-task-projection.test.ts",
+        "tests/claude-compat-transport.test.ts",
+        "tests/claude-compat/mcp.test.ts",
+        "tests/t3/local-notifications.test.ts",
+        "tests/t3/web-task-events.test.ts"
+      ]
+    },
+    {
+      "area": "agent-history-session-goals",
+      "tip": "7fd63ca6705e21860be2631faa23b28680bb816c",
+      "sourcePaths": [
+        "src/agent/README.md",
+        "src/agent/extension.ts",
+        "src/agent/manual-shake.ts",
+        "src/agent/native-fast-mode.ts",
+        "src/session/host.ts",
+        "src/session/transcript-snapshots.ts",
+        "tests/cache-countdown.test.ts",
+        "tests/fixtures/transcript-snapshots.ts",
+        "tests/goals.test.ts",
+        "tests/history.test.ts",
+        "tests/live-host-bridge.test.ts",
+        "tests/manual-shake.test.ts",
+        "tests/native-fast-mode.test.ts",
+        "tests/subagent-extension.test.ts",
+        "tests/transcript-snapshots.test.ts"
+      ]
+    },
+    {
+      "area": "execution-tasks-questions",
+      "tip": "739da40a80981fc3f47aff84b0958f94448c4ccb",
+      "sourcePaths": [
+        "src/questions/extension.ts",
+        "src/tasks/resume-safeguards.ts",
+        "src/typescript/job-bridge.ts",
+        "src/typescript/output-capture.ts",
+        "tests/execute-output-capture.test.ts",
+        "tests/job-bridge-protocol.test.ts",
+        "tests/questions-extension.test.ts",
+        "tests/resume-safeguards.test.ts",
+        "tests/worktree-workspace.test.ts"
+      ]
+    },
+    {
+      "area": "ui-terminal-cli",
+      "tip": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+      "sourcePaths": [
+        "scripts/activity-runtime-acceptance.py",
+        "scripts/activity-terminal-acceptance.py",
+        "scripts/terminal-interactions.ts",
+        "scripts/terminal-perf/interaction-report.ts",
+        "scripts/terminal-perf/profiler.ts",
+        "src/ui/sdk-task-rows.ts",
+        "src/ui/task-monitor.ts",
+        "tests/activity-runtime-acceptance-test.py",
+        "tests/activity-terminal-acceptance-test.py",
+        "tests/conversation-density.test.ts",
+        "tests/task-rows.test.ts",
+        "tests/terminal-interactions-cli.test.ts",
+        "tests/terminal-interactions-report.test.ts",
+        "tests/terminal-perf-profiler.test.ts"
+      ]
+    },
+    {
+      "area": "build-release-ci-tooling",
+      "tip": "65e0d2188a205dec705f8b4694941724ee34bece",
+      "sourcePaths": [
+        ".gitattributes",
+        ".github/workflows/dependency-updates.yml",
+        ".github/workflows/release.yml",
+        "install.sh",
+        "mise.toml",
+        "scripts/generate-third-party-notices.ts",
+        "scripts/prepare-manual-release.ts",
+        "scripts/run-native-release-gate.mjs",
+        "scripts/setup-native-release-gate.sh",
+        "scripts/update-dependencies.ts",
+        "scripts/verify-release-launchers.ts",
+        "tests/dependency-updates.test.ts",
+        "tests/dependency-workflow.test.ts",
+        "tests/generate-third-party-notices.test.ts",
+        "tests/install-download.test.ts",
+        "tests/manual-release.test.ts",
+        "tests/native-release-gate.test.ts",
+        "tests/prepare-assets.test.ts",
+        "tests/release-workflows.test.ts",
+        "tests/setup-native-release-gate.test.ts"
+      ]
+    }
   ]
 }

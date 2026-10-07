@@ -44,6 +44,8 @@ async function ownerFixture(home: string) {
     );
     const directory = join(home, ".bruv", "remote-owner", "tasks", taskId);
     const statePath = join(directory, "state.json");
+    // Launch creates the durable task; /bin/true does not run it. Claim its owner
+    // identity here so runOwnerTask exercises the real ownership guard in this process.
     const state = JSON.parse(readFileSync(statePath, "utf8"));
     state.pid = process.pid;
     state.startTime = readFileSync("/proc/" + process.pid + "/stat", "utf8")
@@ -54,18 +56,32 @@ async function ownerFixture(home: string) {
     const executable = join(directory, "rpc.sh");
     writeFileSync(
       executable,
-      "#!/bin/sh\n" +
-        'read line\necho \'{"type":"response","id":"remote-config","success":true,"data":{"model":{"provider":"example","id":"model"},"thinkingLevel":"off"}}\'\nread line\n' +
-        body,
+      `#!/bin/sh
+task_directory="$(dirname "$BRUV_REMOTE_RUNTIME_STATE")"
+read line
+echo '{"type":"response","id":"remote-config","success":true,"data":{"model":{"provider":"example","id":"model"},"thinkingLevel":"off"}}'
+read line
+${body}
+`,
     );
     chmodSync(executable, 0o700);
+    const start = () => owner.runOwnerTask(taskId, executable);
     return {
       directory,
-      statePath,
-      executable,
       state: () => JSON.parse(readFileSync(statePath, "utf8")).task,
       sync: () => owner.handleRemoteRequest({ ...identity, op: "sync", taskId }),
-      start: () => owner.runOwnerTask(taskId, executable),
+      start,
+      // Release every scripted gate and join the owner before HOME/temp state cleanup,
+      // even if an assertion fails while the native child is waiting for the test.
+      async run(releaseGates: string[], exercise: (running: Promise<void>) => Promise<void>) {
+        const running = start();
+        try {
+          await exercise(running);
+        } finally {
+          for (const name of releaseGates) writeFileSync(join(directory, name), "go");
+          await running;
+        }
+      },
       answer: (replyId: string) =>
         owner.handleRemoteRequest({
           ...identity,
@@ -80,18 +96,16 @@ async function ownerFixture(home: string) {
       cancel: () => owner.handleRemoteRequest({ ...identity, op: "cancel", taskId }),
     };
   }
-  return { task, owner, identity };
+  return { task, owner };
 }
 
 function checkpoint(state: object): string {
-  return (
-    "echo '" +
-    JSON.stringify({ settled: true, activeJobs: 0, pendingMessages: false, questions: [], ...state }) +
-    '\' > "$BRUV_REMOTE_RUNTIME_STATE"\necho \'{"type":"agent_settled"}\'\n'
-  );
+  const runtime = { settled: true, activeJobs: 0, pendingMessages: false, questions: [], ...state };
+  return `echo '${JSON.stringify(runtime)}' > "$BRUV_REMOTE_RUNTIME_STATE"
+echo '{"type":"agent_settled"}'`;
 }
 function gate(name: string): string {
-  return 'while [ ! -f "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/' + name + '" ]; do sleep 0.01; done\n';
+  return `while [ ! -f "$task_directory/${name}" ]; do sleep 0.01; done`;
 }
 const question = { id: "q", status: "pending", owner: { sessionId: "s", branchId: "b" }, version: 2 };
 
@@ -101,16 +115,15 @@ test.skipIf(process.platform !== "linux")(
     await withOwner(async ({ task }) => {
       const t = await task(
         "pending_work",
-        checkpoint({ activeJobs: 1 }) +
-          gate("jobs-finished") +
-          checkpoint({ pendingMessages: true }) +
-          gate("messages-finished") +
-          checkpoint({ questions: [question] }) +
-          gate("human-finished") +
-          checkpoint({}),
+        `${checkpoint({ activeJobs: 1 })}
+${gate("jobs-finished")}
+${checkpoint({ pendingMessages: true })}
+${gate("messages-finished")}
+${checkpoint({ questions: [question] })}
+${gate("human-finished")}
+${checkpoint({})}`,
       );
-      const running = t.start();
-      try {
+      await t.run(["jobs-finished", "messages-finished", "human-finished"], async (running) => {
         const journal = join(t.directory, "events.jsonl");
         await until(() => existsSync(journal) && readFileSync(journal, "utf8").includes("agent_settled"));
         expect(t.state().state).toBe("running");
@@ -123,11 +136,7 @@ test.skipIf(process.platform !== "linux")(
         writeFileSync(join(t.directory, "human-finished"), "go");
         await running;
         expect(await t.sync()).toMatchObject({ task: { state: "done", questions: [] } });
-      } finally {
-        for (const name of ["jobs-finished", "messages-finished", "human-finished"])
-          writeFileSync(join(t.directory, name), "go");
-        await running;
-      }
+      });
     });
   },
 );
@@ -138,18 +147,19 @@ test.skipIf(process.platform !== "linux")(
     await withOwner(async ({ task }) => {
       const t = await task(
         "answer_proof",
-        checkpoint({ questions: [question] }) +
-          'read command\nprintf "%s" "$command" > "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/command.json"\n' +
-          gate("ack") +
-          'echo \'[{"id":"q","status":"answered","replyVersion":1,"replyId":"reply","delivery":"delivered"}]\' > "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/session.jsonl.questions.json"\n' +
-          'echo \'{"type":"response","id":"remote-answer-reply","success":true}\'\n' +
-          gate("finish") +
-          checkpoint({}) +
-          // stdin closes only on verified settlement. A replay would be captured here.
-          'while read command; do echo "$command" >> "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/replayed"; done\n',
+        `${checkpoint({ questions: [question] })}
+read command
+printf "%s" "$command" > "$task_directory/command.json"
+${gate("ack")}
+# The ledger deliberately has a stale replyVersion (1, not the requested 2).
+echo '[{"id":"q","status":"answered","replyVersion":1,"replyId":"reply","delivery":"delivered"}]' > "$task_directory/session.jsonl.questions.json"
+echo '{"type":"response","id":"remote-answer-reply","success":true}'
+${gate("finish")}
+${checkpoint({})}
+# stdin closes only on verified settlement. A replay would be captured here.
+while read command; do echo "$command" >> "$task_directory/replayed"; done`,
       );
-      const running = t.start();
-      try {
+      await t.run(["ack", "finish"], async (running) => {
         await until(() => t.state().questions?.length === 1);
         await t.answer("reply");
         const receipt = join(t.directory, "answers", "reply.json");
@@ -168,11 +178,7 @@ test.skipIf(process.platform !== "linux")(
         });
         expect(JSON.parse(readFileSync(receipt, "utf8"))).toMatchObject({ status: "uncertain" });
         expect(existsSync(join(t.directory, "replayed"))).toBe(false);
-      } finally {
-        writeFileSync(join(t.directory, "ack"), "go");
-        writeFileSync(join(t.directory, "finish"), "go");
-        await running;
-      }
+      });
     });
   },
 );
@@ -184,21 +190,19 @@ for (const settled of [true, false]) {
       await withOwner(async ({ task }) => {
         const t = await task(
           "cancel_" + settled,
-          checkpoint({ activeJobs: 1 }) +
-            'read command\nprintf "%s" "$command" > "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/cancel-command.json"\n' +
-            "echo '" +
-            JSON.stringify({ settled }) +
-            '\' > "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/cancel-report.json"\n' +
-            "while read command; do :; done\n" +
-            gate("exit") +
-            'echo closed > "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/child-exited"\n',
+          `${checkpoint({ activeJobs: 1 })}
+read command
+printf "%s" "$command" > "$task_directory/cancel-command.json"
+echo '${JSON.stringify({ settled })}' > "$task_directory/cancel-report.json"
+while read command; do :; done
+${gate("exit")}
+echo closed > "$task_directory/child-exited"`,
         );
-        const running = t.start();
-        let returned = false;
-        void running.then(() => {
-          returned = true;
-        });
-        try {
+        await t.run(["exit"], async (running) => {
+          let returned = false;
+          void running.then(() => {
+            returned = true;
+          });
           await until(
             () =>
               existsSync(join(t.directory, "events.jsonl")) &&
@@ -223,10 +227,7 @@ for (const settled of [true, false]) {
                   error: "Cancellation acknowledged but native work exit is unconfirmed",
                 },
           });
-        } finally {
-          writeFileSync(join(t.directory, "exit"), "go");
-          await running;
-        }
+        });
       });
     },
   );
@@ -287,7 +288,7 @@ test.skipIf(process.platform !== "linux")(
   "owner refuses to replay a nonempty journal before spawning RPC",
   async () => {
     await withOwner(async ({ task }) => {
-      const t = await task("journal_replay", 'touch "$(dirname "$BRUV_REMOTE_RUNTIME_STATE")/spawned"\n');
+      const t = await task("journal_replay", 'touch "$task_directory/spawned"');
       const path = join(t.directory, "events.jsonl");
       const original = JSON.stringify({ seq: 1, event: { type: "previous-owner" } }) + "\n";
       writeFileSync(path, original);
@@ -306,7 +307,7 @@ test.skipIf(process.platform !== "linux")(
       const frame = { type: "fixture", text: "" };
       frame.text = "x".repeat(512 * 1024 - Buffer.byteLength(JSON.stringify(frame)));
       const line = JSON.stringify(frame);
-      const t = await task("journal_row_limit", "echo '" + line + "'\n");
+      const t = await task("journal_row_limit", `echo '${line}'`);
       await t.start();
       expect(t.state()).toMatchObject({
         state: "unknown",

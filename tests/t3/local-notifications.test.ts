@@ -208,3 +208,130 @@ test("a rejected attention cannot starve another task completion", async () => {
   expect(outbox.list().map((row) => row.taskId)).toEqual(["stale"]);
   await delivery.stop();
 });
+
+test("only a matching terminal ACK retires a row, after its client closes", async () => {
+  const outbox = new T3LocalNotificationOutbox(fixture());
+  const row = outbox.add({ taskId: "ack-contract", kind: "completion", text: "done" });
+  const calls: Array<Record<string, unknown>> = [];
+  const replies = [
+    { isError: true, structuredContent: { notificationId: row.notificationId, state: "committed" } },
+    { structuredContent: { notificationId: "another-notification", state: "committed" } },
+    { structuredContent: { notificationId: row.notificationId, state: "pending" } },
+    { structuredContent: { notificationId: row.notificationId, state: "disposed" } },
+  ];
+  let closed = 0;
+  const delivery = new T3LocalNotificationDelivery(
+    outbox,
+    { kind: "remote", url: "http://127.0.0.1/mcp", token: "secret" },
+    () =>
+      ({
+        callTool: async (_: string, args: Record<string, unknown>) => {
+          expect(closed).toBe(calls.length);
+          expect(outbox.list()).toEqual([row]);
+          calls.push(args);
+          return replies[calls.length - 1];
+        },
+        close: async () => {
+          expect(outbox.list()).toEqual([row]);
+          closed++;
+        },
+      }) as unknown as T3McpClient,
+  );
+  try {
+    await delivery.flush();
+    expect(calls).toHaveLength(4);
+    expect(calls.every((args) => JSON.stringify(args) === JSON.stringify(calls[0]))).toBe(true);
+    expect(closed).toBe(4);
+    expect(outbox.list()).toEqual([]);
+  } finally {
+    await delivery.stop();
+  }
+});
+
+test("an in-flight attention ACK cannot retire its superseding completion", async () => {
+  const outbox = new T3LocalNotificationOutbox(fixture());
+  let started!: () => void;
+  let release!: () => void;
+  const firstStarted = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  const blocked = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const calls: Array<Record<string, unknown>> = [];
+  const delivery = new T3LocalNotificationDelivery(
+    outbox,
+    { kind: "remote", url: "http://127.0.0.1/mcp", token: "secret" },
+    () =>
+      ({
+        callTool: async (_: string, args: Record<string, unknown>) => {
+          calls.push(args);
+          if (calls.length === 1) {
+            started();
+            await blocked;
+          } else {
+            expect(outbox.list().map((row) => row.kind)).toEqual(["completion"]);
+          }
+          return { structuredContent: { notificationId: args.notificationId, state: "committed" } };
+        },
+        close: async () => {},
+      }) as unknown as T3McpClient,
+  );
+  try {
+    delivery.enqueue({ taskId: "superseded", kind: "attention", text: "running" });
+    await firstStarted;
+    delivery.enqueue({ taskId: "superseded", kind: "completion", text: "finished" });
+    release();
+    await delivery.flush();
+    expect(calls.map((args) => args.kind)).toEqual(["attention", "completion"]);
+    expect(calls[0]?.notificationId).not.toBe(calls[1]?.notificationId);
+    expect(outbox.list()).toEqual([]);
+  } finally {
+    release();
+    await delivery.stop();
+  }
+});
+
+test("Stop closes the active client and retains an ambiguous notification for resume", async () => {
+  const session = fixture();
+  const outbox = new T3LocalNotificationOutbox(session);
+  let started!: () => void;
+  let interrupt!: () => void;
+  const requestStarted = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  const interrupted = new Promise<void>((resolve) => {
+    interrupt = resolve;
+  });
+  let calls = 0;
+  let closed = false;
+  const delivery = new T3LocalNotificationDelivery(
+    outbox,
+    { kind: "remote", url: "http://127.0.0.1/mcp", token: "secret" },
+    () =>
+      ({
+        callTool: async () => {
+          calls++;
+          started();
+          await interrupted;
+          throw Error("connection closed before ACK");
+        },
+        close: async () => {
+          closed = true;
+          interrupt();
+        },
+      }) as unknown as T3McpClient,
+  );
+  try {
+    delivery.enqueue({ taskId: "cancelled-delivery", kind: "completion", text: "done" });
+    await requestStarted;
+    await delivery.stop();
+    await delivery.flush();
+    expect(closed).toBe(true);
+    expect(calls).toBe(1);
+    expect(new T3LocalNotificationOutbox(session).list()).toEqual(outbox.list());
+    expect(outbox.list()).toHaveLength(1);
+  } finally {
+    await delivery.stop();
+  }
+});

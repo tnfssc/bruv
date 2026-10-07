@@ -124,7 +124,9 @@ export class InjectedMcpSession {
     try {
       for (const [name, server] of Object.entries(parsed.mcpServers)) {
         if ("url" in server && options.appOwnedServers.includes(name)) session.appHttpServers.set(name, server);
-        await session.connect(name, server);
+        const connection = await session.startConnection(name, server);
+        await session.discoverTools(name, connection);
+        connection.status = "connected";
       }
       await session.parkAppOwned();
       return session;
@@ -142,7 +144,7 @@ export class InjectedMcpSession {
     }
   }
 
-  private async connect(name: string, server: InjectedMcpServer, discover = true): Promise<void> {
+  private async startConnection(name: string, server: InjectedMcpServer): Promise<Connection> {
     const signal = this.lifetime.signal;
     signal.throwIfAborted();
     if (!(await this.options.policy.authorizeServer(name, structuredClone(server), signal)))
@@ -197,30 +199,37 @@ export class InjectedMcpSession {
     client.onerror = () => {}; // Errors delivered to the outstanding SDK request, not stdout/stderr.
     await client.connect(transport, { signal, timeout: requestTimeout });
     signal.throwIfAborted();
+    return connection;
+  }
+
+  /** Populate the tool catalog once; acquiring another app lease does not rediscover tools. */
+  private async discoverTools(name: string, connection: Connection): Promise<void> {
+    const signal = this.lifetime.signal;
     let cursor: string | undefined;
-    if (discover)
-      do {
-        const listed = await client.listTools(cursor ? { cursor } : {}, { signal, timeout: requestTimeout });
-        for (const tool of listed.tools) {
-          // The removed patched Bruv task bridge is not a native app delegation surface.
-          if (tool.name.startsWith("bruv_task_")) continue;
-          const toolName = `mcp__${name}__${tool.name}`;
-          if (this.options.selectedTools && !this.options.selectedTools.some((rule) => matchesToolRule(toolName, rule)))
-            continue;
-          if (this.registry.has(toolName)) throw new Error("Ambiguous MCP tool name");
-          this.registry.set(toolName, {
-            name: toolName,
-            serverName: name,
-            remoteName: tool.name,
-            owner: this.options.appOwnedServers?.includes(name) ? "app_owned" : "external",
-            description: tool.description,
-            inputSchema: tool.inputSchema,
-            annotations: tool.annotations,
-          });
-        }
-        cursor = listed.nextCursor;
-      } while (cursor !== undefined);
-    connection.status = "connected";
+    do {
+      const listed = await connection.client.listTools(cursor ? { cursor } : {}, {
+        signal,
+        timeout: connection.timeout,
+      });
+      for (const tool of listed.tools) {
+        // The removed patched Bruv task bridge is not a native app delegation surface.
+        if (tool.name.startsWith("bruv_task_")) continue;
+        const toolName = `mcp__${name}__${tool.name}`;
+        if (this.options.selectedTools && !this.options.selectedTools.some((rule) => matchesToolRule(toolName, rule)))
+          continue;
+        if (this.registry.has(toolName)) throw new Error("Ambiguous MCP tool name");
+        this.registry.set(toolName, {
+          name: toolName,
+          serverName: name,
+          remoteName: tool.name,
+          owner: this.options.appOwnedServers?.includes(name) ? "app_owned" : "external",
+          description: tool.description,
+          inputSchema: tool.inputSchema,
+          annotations: tool.annotations,
+        });
+      }
+      cursor = listed.nextCursor;
+    } while (cursor !== undefined);
   }
 
   tools(): InjectedMcpTool[] {
@@ -313,7 +322,8 @@ export class InjectedMcpSession {
         if (connection.closing) await connection.closing;
         if (connection.status === "closed") {
           try {
-            await this.connect(name, server, false);
+            const resumed = await this.startConnection(name, server);
+            resumed.status = "connected";
           } catch {
             await this.closeConnection(this.connections.get(name)!);
             throw new McpOperationError("connection-failed", "App-owned MCP reconnect failed or was denied");

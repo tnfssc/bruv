@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { reportFixture } from "./fixtures/terminal-interaction-report";
@@ -47,7 +47,21 @@ test("real repeated serial cases preserve raw evidence and separate cold/init fr
     expect(result.stderr).not.toContain("child exited");
     expect(result.exit).toBe(0);
     const report = await Bun.file(join(dir, "run.json")).json();
-    expect(Object.keys(report.evidence)).toHaveLength(8);
+    expect(Object.keys(report.evidence)).toEqual([
+      "raw/send-short-0.json",
+      "raw/send-short-1.json",
+      "raw/send-bruv-short-0.json",
+      "raw/send-bruv-short-1.json",
+      "raw/tools-short-0.json",
+      "raw/tools-short-1.json",
+      "raw/navigation-search-0.json",
+      "raw/navigation-search-1.json",
+    ]);
+    expect(await Bun.file(join(dir, "partial.json")).json()).toEqual(report);
+    for (const key of Object.keys(report.evidence)) {
+      expect(await Bun.file(join(dir, key)).json()).toEqual(report.evidence[key]);
+      expect(await Bun.file(join(dir, key + ".log")).exists()).toBe(true);
+    }
     expect(report.cases.every((c: { samples: unknown[] }) => c.samples.length === 2)).toBe(true);
     expect(report.sources.fingerprint).toMatch(/^[a-f0-9]{64}$/);
     const send = report.evidence["raw/send-short-0.json"];
@@ -81,3 +95,28 @@ test("strict saved-report mode cannot pass missing observations", async () => {
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test("worker failure keeps diagnostics and the preceding checkpoint without publishing a report", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "interactions-worker-failure-"));
+  try {
+    // Let the first case succeed, then prevent the second worker from writing its evidence.
+    const blocked = join(dir, "raw/tools-short-0.json");
+    await mkdir(blocked, { recursive: true });
+    const result = await run("--cases", "send/short,tools/short", "--out", dir);
+    expect(result.exit).toBe(2);
+    expect(result.stderr).toContain("tools/short child exited 2");
+    const log = await Bun.file(blocked + ".log").text();
+    expect(log).toContain("EISDIR");
+    expect(result.stderr).toContain(log.trim());
+    const partial = await Bun.file(join(dir, "partial.json")).json();
+    expect(Object.keys(partial.evidence)).toEqual(["raw/send-short-0.json"]);
+    expect(partial.cases.every((c: { id: string }) => c.id.startsWith("send/short/"))).toBe(true);
+    expect(await Bun.file(join(dir, "raw/send-short-0.json")).json()).toEqual(
+      partial.evidence["raw/send-short-0.json"],
+    );
+    for (const name of ["run.json", "report.txt", "index.html"])
+      expect(await Bun.file(join(dir, name)).exists()).toBe(false);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}, 30000);

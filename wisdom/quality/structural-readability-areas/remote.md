@@ -56,3 +56,29 @@ tests/root-owner.test.ts is assigned execution-tasks-questions; accepted root-ow
 Observed TS2769 in new cancellation test was at identity assertion overload, not event emission. Fresh worker task_f9d2ba8e and judge task_7be6f9c9 preserved identical runtime assertion via supported expected-value type overload; full area check now passes at f5df927f. Old and new accepted blobs/rounds retained in ledger.
 
 Partial audit at 7aa4b4a1: 20 accepted files match area blobs, 25 unique launched primary IDs; NOT final coverage. Current read-only dependency symlink node_modules is untracked tooling, remove for final clean tree. Automatic fish setup cannot find Bun; explicit Bun 1.4.2 + shared dependencies work. Judge dependency-loading failures are not passing tests; real combined area reruns above supply safety proof. No authenticated SSH/provider/macOS/compiled CLI parity or performance claims; no full binary build needed so far. Last parent branch check had documentation-only changes; inspect at sensible future batches, no sibling merges. Parent owns final gates and ONE PR #45.
+
+Lifecycle-test primary task_053c976a, judge task_52da150f ACCEPT at 53027e2c: explicit script sequence and task.run own gate release/child join before HOME cleanup. All 33 assertion statements retained; prior owner journal regressions retained. Exact final candidate requires area runtime rerun below.
+
+Presenter batch f8ba5c92 ACCEPT task_29eea7cb: local showModal owns mount/settle/focus/render, interaction builders no longer duplicate lifetime; server dialog authority and close-before-local-cancel remain distinct. Related presenter tests ae65079a need own primary. Mocked terminal routing evidence is not physical-terminal proof.
+
+Capability-runtime combined candidate 33088eba ACCEPT task_f6ad3799: intent/marker publication semantics explicit; admission chain retains rejection progress without serializing reply wait. Fresh combination worker preserved accepted services assertions and original runtime additions byte-for-byte; independent 86 tests/1367 assertions. Final related capability test ee0b6d2b still requires its own primary.
+
+Parent accepted shared checkpoint 695ade32 merged cleanly in staging: questions runtime/service and job-service common updates, plus sibling accepted areas only via parent. No accepted remote blob changes. Incoming tests/remote-question-bridge.test.ts remains pending own remote primary/final judge. Real combined typecheck and authority/bridge/owner suites running before merge checkpoint commit.
+
+Parent join proof: assets + whole-project tsc pass; seven cross-authority/bridge/owner/capability suites 92 pass/581 assertions. Existing remote accepted hashes unchanged; incoming related test remains pending primary.
+
+Root-client final 613bf20c accepted fresh task_b04a86e2 at 7670632c after coordinator-required scheduling preservation. Original f1ecb410 candidate changed startup/abort ordering and was never integrated; baseline/rework abort→prompt, original prompt→abort independently reproduced. Final tests f19df6e9 retain prior bodies and add reliable regression; own test primary due.
+
+Candidate-identity audit found loose summary regex matched introductory “candidate” followed by Base in 12 records. Corrected from retained committed worktree HEAD; each affected accepted judge explicitly reported actual candidate/hash in terminal report, source hashes matched independently. Original supplied labels/corrections preserved in ledger. Future candidates use Git identity, not summary regex. No source acceptance inferred from corrected metadata.
+
+Repository-wire 755b63c0 ACCEPT task_6ea69bdc at 64475e6c: upload receipt/replay independent of checked destructive checkout construction, durable pinned launch intent explicit; terminal/return bodies unchanged. Existing titled retry conflict (retryRepository omits title) noted for parent, not silently fixed.
+
+Runtime edb1318b ACCEPT task_e1ab9585 at 87b03ef3: output-preserving evidence collection before exit-authorizing checkpoint; shared durable writer replaces duplicate resource ownership. Internal staging explicitly changes PID overwrite to exclusive UUID, same flush/close/rename/dir-fsync order; no power-loss claim. Related runtime test fe29cd1c needs own primary.
+
+Presenter-test own primary/judge task_20e04838 ACCEPT b4ed20c0. Real terminal callback/focused TUI routing replaces incorrect helper bypass; independent harness reproduced old 2 root calls vs new 0, all assertions retained. Mocked I/O is not physical-terminal proof. Judge accidentally ran area build creating dist; not counted as build acceptance.
+
+Capability-test own primary 189f56e3 ACCEPT task_d83b6e0b at bb79598d: abort/deadline/revocation/terminal tests have independent authority, remove confounded failures and use explicit frozen-reply oracle. All prior combined service/mailbox regressions retained.
+
+Client-test final rework 4e396c24 ACCEPT task_45f4b422 at 2439a575, independently 23 tests/126 + whole tsc pass. Original e2e6c5d stays REJECTED for five typing errors and was never integrated; stopped task_11672539 edits retained. Final preserves pre-POST disk evidence/child cleanup and byte-identical prior page/integration regressions; only three request assertions resolve typing.
+
+Root-client test own primary 81252d4c ACCEPT task_9e1c68cc at 4dc8a822: owner effects before response loss, normal logged missing-status path, independent durable checkpoint fixtures; exact abort→prompt and status-only/no-resend regressions retained. Independent 20 tests/144 assertions.

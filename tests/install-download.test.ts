@@ -105,9 +105,9 @@ ${operation}
   );
 }
 
-// Root install.sh stages asset names; scripts/install.sh stages canonical pair names.
+// Both download entrypoints publish the canonical staged pair.
 const failNormalPublication = `
-case "$source" in */.bruv-install.*/bruv-linux-x64|*/.bruv-install.*/bruv) exit 1;; esac
+case "$source" in */.bruv-install.*/bruv) exit 1;; esac
 exec /bin/mv "$@"
 `;
 
@@ -184,7 +184,8 @@ describe.each(["../install.sh", "../scripts/install.sh"])("download entrypoint %
 
   test("version probes use private directories and an explicit staged connector pair", () =>
     withSandbox(installer, async ({ assetsDir, run }) => {
-      const checks = `case "$HOME" in */.bruv-install.*/probe) ;; *) exit 1;; esac
+      const checks = `case "$0" in */.bruv-install.*/bruv) ;; *) exit 1;; esac
+case "$HOME" in */.bruv-install.*/probe) ;; *) exit 1;; esac
 [ "$XDG_CONFIG_HOME" = "$HOME/config" ] && [ "$XDG_CACHE_HOME" = "$HOME/cache" ] && [ "$XDG_DATA_HOME" = "$HOME/data" ] || exit 1
 if [ "$1" = --version ]; then [ -z "\${BRUV_CLAUDE_COMPAT_BRUV_PATH:-}" ] || exit 1; fi
 `;
@@ -236,7 +237,7 @@ if [ "$1" = --version ]; then [ -z "\${BRUV_CLAUDE_COMPAT_BRUV_PATH:-}" ] || exi
         root,
         `
 /bin/mv "$@" || exit $?
-case "$source" in */.bruv-install.*/bruv-claude-compat-linux-x64|*/.bruv-install.*/bruv-claude-compat) kill -HUP "$PPID";; esac
+case "$source" in */.bruv-install.*/bruv-claude-compat) kill -HUP "$PPID";; esac
 `,
       );
       const result = await run();
@@ -257,7 +258,7 @@ case "$source" in */.bruv-install.*/bruv-claude-compat-linux-x64|*/.bruv-install
         root,
         `
 case "$source" in
-  */.bruv-install.*/bruv-linux-x64|*/.bruv-install.*/bruv|*/.bruv-install.*/compat.previous) exit 1;;
+  */.bruv-install.*/bruv|*/.bruv-install.*/compat.previous) exit 1;;
 esac
 exec /bin/mv "$@"
 `,

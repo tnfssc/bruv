@@ -1,3 +1,2 @@
 # Unified diffs contain significant space-only context lines. Validate source whitespace in the patched checkout.
-integrations/t3/upstream/bruv.patch -whitespace
 wisdom/t3/route-reload-source.delta.patch -whitespace

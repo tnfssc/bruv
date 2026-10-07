@@ -2009,7 +2009,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "parent session-host related patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_9ae7f05e",
+        "verdict": "ACCEPT",
+        "candidate": "7f466cef21871ee373a158c35f58f85e19861166",
+        "blob": "7232dfaac76b2bdf548b5bcca45932ba3cf98431",
+        "reason": "Native observations retainactiveIDs notprogressstate and lastlistener lifetime;scopedsnapshot retention moved torealowner. Parent assigned primary needed."
+      }
     },
     {
       "focus": "tests/live-long-audio.test.ts",
@@ -2751,8 +2758,20 @@
     }
   ],
   "parentCheckpoint": {
-    "target": "95d2e164",
-    "status": "clean shared accepted checkpoint joined; one area related test imported from UI accepted patch",
-    "limits": "combined checks pending; other-area notes imported unchanged"
-  }
+    "target": "db885fce",
+    "status": "clean shared accepted checkpoint joined;one assigned host-bridge test related patch imported",
+    "limits": "combined checks pending;other-area notes imported unchanged"
+  },
+  "parentCheckpoints": [
+    {
+      "target": "95d2e164",
+      "status": "clean shared accepted checkpoint joined; one area related test imported from UI accepted patch",
+      "limits": "combined checks pending; other-area notes imported unchanged"
+    },
+    {
+      "target": "db885fce",
+      "status": "clean shared accepted checkpoint joined;one assigned host-bridge test related patch imported",
+      "limits": "combined checks pending;other-area notes imported unchanged"
+    }
+  ]
 }

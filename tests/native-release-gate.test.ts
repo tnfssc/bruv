@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 
 // Unit fixtures test orchestration only, never count as native acceptance evidence.
-async function fixture(failSuite?: string) {
+async function fixture(failSuite?: string, afterResult = "") {
   const root = await mkdtemp(path.join(tmpdir(), "bruv-release-gate-unit-"));
   await mkdir(path.join(root, "scripts/claude-native-acceptance"), { recursive: true });
   const proof = path.join(root, "wisdom/claude-compat/proof/official-2644");
@@ -50,6 +50,7 @@ async function fixture(failSuite?: string) {
       ", upstreamUnmodified: true, t3BinarySha256: " +
       JSON.stringify(hash) +
       "}));",
+    afterResult,
   ].join("\n");
   await writeFile(path.join(proof, "run-trace.mjs"), child);
   await writeFile(path.join(root, "scripts/claude-native-acceptance/run.mjs"), child);
@@ -166,6 +167,44 @@ test("wrong history SDK fails before any native suite starts", async () => {
     expect(result.exitCode).not.toBe(0);
     expect(result.stderr).toContain("Native history gate requires SDK 0.3.276");
     expect(await Bun.file(path.join(f.output, "calls.ndjson")).exists()).toBe(false);
+  } finally {
+    await rm(f.root, { recursive: true, force: true });
+  }
+}, 30_000);
+
+for (const [label, stop] of [
+  ["nonzero exit", "process.exit(7)"],
+  ["signal termination", "process.kill(process.pid, 'SIGTERM')"],
+]) {
+  test(`valid suite evidence cannot override ${label}`, async () => {
+    const f = await fixture(undefined, stop);
+    try {
+      const result = await f.run();
+      expect(result.exitCode).not.toBe(0);
+      expect(result.stderr).toContain("command native gate failed");
+      const calls = (await readFile(path.join(f.output, "calls.ndjson"), "utf8")).trim().split("\n");
+      expect(calls).toHaveLength(1);
+      expect(await Bun.file(path.join(f.output, "command/result.json")).exists()).toBe(true);
+      expect(await Bun.file(path.join(f.output, "gate.json")).exists()).toBe(false);
+    } finally {
+      await rm(f.root, { recursive: true, force: true });
+    }
+  }, 30_000);
+}
+
+test("a suite cannot hide upstream mutation behind passing pinned evidence", async () => {
+  const f = await fixture(
+    undefined,
+    "await fs.writeFile(path.join(process.env.T3_UPSTREAM, 'platform/t3'), 'modified during suite');",
+  );
+  try {
+    const result = await f.run();
+    expect(result.exitCode).not.toBe(0);
+    expect(result.stderr).toContain("Not unchanged official");
+    const calls = (await readFile(path.join(f.output, "calls.ndjson"), "utf8")).trim().split("\n");
+    expect(calls).toHaveLength(1);
+    expect(JSON.parse(await readFile(path.join(f.output, "command/result.json"), "utf8")).passed).toBe(true);
+    expect(await Bun.file(path.join(f.output, "gate.json")).exists()).toBe(false);
   } finally {
     await rm(f.root, { recursive: true, force: true });
   }
