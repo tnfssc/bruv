@@ -46,12 +46,22 @@
         "launchBase": "4d3d4b3597528306318fc13a7d220f6300fa6b0d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7e221830",
         "branch": "bruv/primary-native-live-linux-capturegate.h-7e221830",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "d3ba046d7bdca2cbe0c008105abccf0278cd4a4b"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_5e692e3f",
+          "status": "running",
+          "candidate": "d3ba046d7bdca2cbe0c008105abccf0278cd4a4b",
+          "base": "4d3d4b3597528306318fc13a7d220f6300fa6b0d"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "judge running",
+      "relatedPaths": [],
+      "readingResult": "Unchanged acquisition frontier predicate: rejects unarmed/invalid origin/pre-frontier; main.cpp owns Pulse revision/cancellation/backlog resets, JS stale epoch rejection separate. Wrappers would add indirection.",
+      "checks": "28 Bun pass/155 assertions; C++ gate ASan/UBSan pass. No virtual/native helper/provider/macOS proof."
     },
     {
       "focus": "native/live-linux/main.cpp",
@@ -101,10 +111,17 @@
     {
       "focus": "native/live-linux/tests/capture-gate.cpp",
       "initialBlob": "54545816cf0085d09b852dfad919fc9dc7545d57",
-      "primary": null,
+      "primary": {
+        "id": "task_3f8cfc8c",
+        "launchBase": "f473c8e5a1c4377742f0b65c27d06782d456f7d1",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_3f8cfc8c",
+        "branch": "bruv/primary-native-live-linux-tests-capture--3f8cfc8c",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live-linux/tests/capture-protocol.py",
