@@ -79,3 +79,5 @@ site/scripts/scroll.test.ts: Separate accumulators remove hidden remainder acros
 site/scripts/preview.ts: Request-local decode/resolve/root-escape check/existence/no-store response directly follows delivery;caller owns shutdown. Judge3 HTTP probes404/400/traversal404. Worker/judge startup import blocked missing playwright,no assertions;area browser gate separately passed. Existing pre-try browser-launch caller cleanup gap and symlink containment unproven.
 
 site/scripts/install.test.ts: Host mocks/release publication/fixture ownership separate; explicit platform expectations remove repeated selection logic. Fixture owns setup/execution/checks/cleanup; judge independently verified cleanup on success and rejection with propagation. Production installer unchanged;offline Linux fixtures,not actual macOS/Termux/live download.
+
+site/scroll.ts: One remainder has gesture-local purpose; reversal/bounds/reset explicit and caller owns resets on navigation/input lifecycle. Judge traced sole shipped terminal caller and3 tests/16 assertions;browser inspected not rerun.

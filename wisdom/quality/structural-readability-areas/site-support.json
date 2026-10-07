@@ -1081,7 +1081,7 @@
     {
       "focus": "site/scroll.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_955a4df5",
@@ -1096,15 +1096,21 @@
         {
           "id": "task_9f837c1d",
           "candidate": "e885ab24fc6484750785eef0aae246c3d9f2963e",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "One remainder has gesture-local purpose; reversal/bounds/reset explicit and caller owns resets on navigation/input lifecycle. Judge traced sole shipped terminal caller and3 tests/16 assertions;browser inspected not rerun.",
+          "objections": []
         }
       ],
-      "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3"
+      "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3",
+      "acceptedBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/styles.css",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_05fa70bb",
@@ -1115,7 +1121,13 @@
           "result": "Unchanged terminal caller owns mode/visibility;CSS viewport effects direct. HTML transcripts readable without JS;enhancement screen/control+clip not aria-hide;adjacent keyboard/hover/touch rules. Deduplication would couple distinct accessibility roles.10 tests;no browser/full gate."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_4b051cf8",
+          "candidate": "716c6d7d795200a0331303e729d7e27f0895009d",
+          "state": "running"
+        }
+      ],
       "initialBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a"
     },
     {
@@ -1218,6 +1230,26 @@
       ],
       "result": "All site TS except unchanged historical capture-real.ts passes strict tsc --ignoreConfig --noEmit --strict --skipLibCheck --types bun --target ES2023 --module Preserve --moduleResolution Bundler. Full site strict attempt retains six capture-real diagnostics (five implicit any, /ghostty-web.js browser import). Format passes; lint 105 warnings/90 infos, no errors. First probe omitted --types bun and failed; corrected probe used explicit Bun types.",
       "limits": "Do not claim all-site strict clean or root typecheck from this."
+    },
+    {
+      "commit": "6d4a9ed6",
+      "job": "task_4f3ed68f",
+      "command": "Strict tsc on site/*.ts and site/scripts/*.ts except capture-real.ts, then biome format site && biome lint site (set -e)",
+      "result": "Passed. Format checked37 files;lint79 warnings/88 infos,no errors.",
+      "limits": "Historical capture-real.ts unchanged six diagnostics explicitly excluded;not a clean full-site strict claim."
+    },
+    {
+      "commit": "6d4a9ed6",
+      "job": "task_c14e0751",
+      "command": "cd site; bun run test; bun run test:animation (set -e)",
+      "result": "All tests/build/Chromium validation and animation harness passed. Desktop/mobile/touch/no-JS,keyboard pause/resume/exit,visibility,all3 demo loop+6000ms final holds,offscreen pause,reduced motion/touch play/pause;both errors arrays empty.",
+      "limits": "Not physical device,cross-browser,Cloudflare deployment or root Linux CI.",
+      "tests": {
+        "passed": 43,
+        "failed": 0,
+        "assertions": 5705803,
+        "files": 7
+      }
     }
   ]
 }
