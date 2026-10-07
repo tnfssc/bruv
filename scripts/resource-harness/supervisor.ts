@@ -9,6 +9,7 @@ export interface Budgets {
   timeoutMs: number;
 }
 export interface WorkloadMetric {
+  stage?: string;
   type: "sample" | "complete";
   phase: string;
   step: number;

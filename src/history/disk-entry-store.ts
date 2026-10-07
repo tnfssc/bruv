@@ -52,7 +52,7 @@ export interface EntryMetadata {
  * canonical timestamp off each resident record; decode timestamp on demand.
  * Noncanonical timestamps retain their original spelling unchanged.
  */
-class CustomEntryMetadata implements EntryMetadata {
+class CustomEntryMetadataBase implements EntryMetadata {
   private time: string | number;
   constructor(
     public id: string,
@@ -60,8 +60,6 @@ class CustomEntryMetadata implements EntryMetadata {
     timestamp: string,
     public offset: number,
     public length: number,
-    public customType: string | undefined,
-    public taskProjection?: EntryMetadata["taskProjection"],
   ) {
     const millis = Date.parse(timestamp);
     this.time = Number.isFinite(millis) && new Date(millis).toISOString() === timestamp ? millis : timestamp;
@@ -71,6 +69,37 @@ class CustomEntryMetadata implements EntryMetadata {
   }
   get timestamp(): string {
     return typeof this.time === "number" ? new Date(this.time).toISOString() : this.time;
+  }
+}
+
+const TASK_PROJECTION_CUSTOM_TYPE = "bruv-native-task-projection";
+class CustomEntryMetadata extends CustomEntryMetadataBase {
+  constructor(
+    id: string,
+    parentId: string | null,
+    timestamp: string,
+    offset: number,
+    length: number,
+    public customType: string | undefined,
+  ) {
+    super(id, parentId, timestamp, offset, length);
+  }
+}
+// Task checkpoints need one owner key, not a type string plus another slot.
+// Keep the common custom type on the prototype to leave six resident fields.
+class TaskProjectionMetadata extends CustomEntryMetadataBase {
+  constructor(
+    id: string,
+    parentId: string | null,
+    timestamp: string,
+    offset: number,
+    length: number,
+    public taskProjection?: EntryMetadata["taskProjection"],
+  ) {
+    super(id, parentId, timestamp, offset, length);
+  }
+  get customType(): string {
+    return TASK_PROJECTION_CUSTOM_TYPE;
   }
 }
 
@@ -475,7 +504,9 @@ function metadata(entry: SessionEntry, offset: number, length: number, ownString
   const value = entry as SessionEntry & Record<string, any>;
   const meta: EntryMetadata =
     entry.type === "custom"
-      ? new CustomEntryMetadata(entry.id, entry.parentId, entry.timestamp, offset, length, value.customType)
+      ? value.customType === TASK_PROJECTION_CUSTOM_TYPE
+        ? new TaskProjectionMetadata(entry.id, entry.parentId, entry.timestamp, offset, length)
+        : new CustomEntryMetadata(entry.id, entry.parentId, entry.timestamp, offset, length, value.customType)
       : {
           type: entry.type,
           id: entry.id,
@@ -489,8 +520,7 @@ function metadata(entry: SessionEntry, offset: number, length: number, ownString
     meta.messageProvider = value.message?.provider;
     meta.messageModel = value.message?.model;
   } else if (entry.type === "custom") {
-    meta.customType = value.customType;
-    if (value.customType === "bruv-native-task-projection") {
+    if (value.customType === TASK_PROJECTION_CUSTOM_TYPE) {
       const root = value.data?.root;
       const jobId = value.data?.cursor?.link?.jobId;
       if (
@@ -571,6 +601,7 @@ export class DiskEntryStore {
       "modelId",
     ] as const) {
       if (key === "type" && meta.type === "custom") continue;
+      if (key === "customType" && meta.customType === TASK_PROJECTION_CUSTOM_TYPE) continue;
       const value = meta[key];
       if (value === undefined) continue;
       const shared = this.sharedStrings.get(value);

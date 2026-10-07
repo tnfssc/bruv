@@ -14,16 +14,16 @@ Both commands fail with exit code 1 if a budget is exceeded, a child crashes, it
 
 Stop the source writer before capture. The size/mtime check detects common changes; it cannot prove a live writer is quiesced.
 
---session takes a private copy-on-write snapshot of an existing native Pi journal and runs the real session reopen and task-binding restore in a guarded child. It never sends a prompt or starts a model. The copy preserves the original root IDs and cursor data. Reflink is required; unsupported filesystems fail rather than silently copying gigabytes. The snapshot and report stay in a mode-0700 run directory. Do not upload real history without reviewing its private content.
+--session takes a private copy-on-write snapshot of an existing native Pi journal and runs the real session reopen, old task-binding restore, native extension startup, and model-context preparation in a guarded child. It never sends a prompt or starts a model. Provider stream calls throw. The native runtime uses a fresh private home and offline model setup; it cannot resume live jobs from the original home. The copy preserves the original root IDs and cursor data. Reflink is required; unsupported filesystems fail rather than silently copying gigabytes. The snapshot and report stay in a mode-0700 run directory. Do not upload real history without reviewing its private content.
 
-The existing journal is input, so its bytes are recorded but not charged as new disk growth. New writes are still capped at 64 MiB. Captured replay keeps the 512 MiB RSS and 90 s limits, but does not kill merely for an existing entry count. The JSON report states that distinction. If indexing trips the limit, later restore stages are not claimed as tested.
+The existing journal is input, so its bytes are recorded but not charged as new disk growth. New writes are still capped at 64 MiB. Captured replay keeps the 512 MiB RSS and 90 s limits, but does not kill merely for an existing entry count. The JSON report states that distinction. Each stage is recorded. If indexing or startup trips the limit, later stages are not claimed as tested.
 
 ## Measures
 
 - Real persistent session and task-binding writes. The workload uses fake job/model activity but the shipped history and projection code.
 - Journal bytes and entry count as the session grows.
 - Child heap and RSS samples, plus independent Linux RSS and fixture disk samples every 100 ms.
-- Fresh-process resume time and sampled peak memory. This includes session reopen and task binding, not just parsing a tiny fixture.
+- Fresh-process resume time and sampled peak memory. This includes session reopen and task binding, not just parsing a tiny fixture. Captured replay also exercises actual native extension startup and prepares the model context.
 - Runtime version, source revision, dirty state, configuration, limits, exit status, metric timeline, and failure reason in report.json. A missing Git executable is reported explicitly rather than discarding measurements.
 
 Write and resume run in separate owned processes. A failed write skips resume and says why; a partial fixture is not a successful session. The small profile checks startup/resume. The stress profile exercises a long fanout offline: 50 tasks with 2,000 updates each. The first 128 rounds add a child message; later rounds replay the same saved history. It keeps 100,000 task updates without charging the checkpoint budget for 100,000 required transcript copies. It runs seconds, not hours. Short fixture tests alone missed the incident.

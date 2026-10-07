@@ -61,6 +61,8 @@ test("Linux builds the pair without preparing or validating bundled web", () => 
     "run format:check",
     "run lint",
     "run check",
+    "run perf:resources --profile ci --out " + join(root, "artifacts/ci/resources"),
+    "run perf:resources --profile stress --out " + join(root, "artifacts/ci/resources"),
     "run build",
     "scripts/offline-openai-default-transport.ts",
     "test --parallel=3 ./tests",
@@ -86,7 +88,22 @@ test("Release log destination uses the same Linux commands, env and owned temp",
   const ci = run("linux");
   const release = run("linux", "", "artifacts/release/ci");
   expect(release.result.status).toBe(0);
-  expect(release.calls.map((line) => line.split("|")[2])).toEqual(ci.calls.map((line) => line.split("|")[2]));
+  const normalized = (calls: string[], root: string, logs: string) =>
+    calls.map((line) => line.split("|")[2]!.replace(join(root, logs), "<log-dir>").replace(logs, "<log-dir>"));
+  expect(normalized(release.calls, release.root, "artifacts/release/ci")).toEqual(
+    normalized(ci.calls, ci.root, "artifacts/ci"),
+  );
+  for (const { root, calls, logs } of [
+    { root: ci.root, calls: ci.calls, logs: join(ci.root, "artifacts/ci") },
+    { root: release.root, calls: release.calls, logs: "artifacts/release/ci" },
+  ])
+    for (const profile of ["ci", "stress"])
+      expect(
+        calls.some(
+          (line) =>
+            line.split("|")[2] === "run perf:resources --profile " + profile + " --out " + join(logs, "resources"),
+        ),
+      ).toBe(true);
   for (const { root, calls } of [ci, release]) {
     expect(calls.every((line) => line.split("|")[1] === root)).toBe(true);
   }
@@ -144,6 +161,8 @@ test("production CI caches downloads only and delegates paired validation to the
     "bun run format:check",
     "bun run lint",
     "bun run check",
+    'bun run perf:resources --profile ci --out "$log_dir/resources"',
+    'bun run perf:resources --profile stress --out "$log_dir/resources"',
     "bun run build",
     "bun scripts/offline-openai-default-transport.ts",
     "bun test --parallel=3 ./tests",

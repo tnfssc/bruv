@@ -37,7 +37,7 @@ test("CoW capture preserves the source and refuses to overwrite a destination", 
   }
 });
 
-test("captured replay exercises real session open and binding without changing its source", async () => {
+test("captured replay exercises real session, native startup and model context without changing original bytes", async () => {
   const dir = await fixture();
   try {
     const snapshot = join(dir, "session.jsonl");
@@ -84,9 +84,11 @@ test("captured replay exercises real session open and binding without changing i
     });
     expect(result.stderr).toBe("");
     expect(result.passed).toBe(true);
-    expect(result.metrics.map((row) => row.step)).toEqual([0, 1, 2, 3]);
-    expect(result.journalEntries).toBe(1);
-    expect(await readFile(snapshot, "utf8")).toBe(text);
+    expect(result.metrics.map((row) => row.step)).toEqual([0, 1, 2, 3, 4, 5]);
+    expect(result.journalEntries).toBeGreaterThanOrEqual(1);
+    expect(result.metrics.map((row) => row.stage)).toContain("native-startup-restored");
+    expect(result.metrics.map((row) => row.stage)).toContain("model-context-prepared");
+    expect((await readFile(snapshot, "utf8")).startsWith(text)).toBe(true);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

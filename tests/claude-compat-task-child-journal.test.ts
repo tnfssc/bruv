@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { appendFile, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { appendFile, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { childJournalEntries } from "../src/claude-compat/task-child-journal";
@@ -43,4 +43,19 @@ test("child originals cannot be silently truncated behind a saved cursor", async
   fixture(async (path) => {
     await writeFile(path, "");
     await expect(collect(path, 10)).rejects.toThrow("truncated");
+  }));
+
+test("child tail skips malformed complete rows, advances their offsets and keeps originals", async () =>
+  fixture(async (path) => {
+    const bad = '{"type":broken}\nnull\nfalse\n\n';
+    const valid = JSON.stringify({ type: "message", id: "later" }) + "\n";
+    const incomplete = '{"type":"message","id":"pending"';
+    const bytes = bad + valid + incomplete;
+    await writeFile(path, bytes);
+    const rows = await collect(path);
+    expect(rows.filter((row) => row.entry).map((row) => row.entry?.id)).toEqual(["later"]);
+    expect(rows.at(-1)?.endOffset).toBe(Buffer.byteLength(bad + valid));
+    expect(await readFile(path, "utf8")).toBe(bytes);
+    await appendFile(path, "}\n");
+    expect((await collect(path, rows.at(-1)!.endOffset)).map((row) => row.entry?.id)).toEqual(["pending"]);
   }));
