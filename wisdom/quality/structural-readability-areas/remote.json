@@ -470,8 +470,14 @@
     {
       "focus": "src/remote/question-bridge.ts",
       "initialBlob": "2d41cfbd4e6901e8dd683047f60c7337444c20f8",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "d9bd6ecbc77b5160c09e1d539c4f4cf29352f395",
+      "primary": {
+        "id": "task_2ff5dd20",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_2ff5dd20",
+        "branch": "bruv/remote-primary-question-bridge-2ff5dd20"
+      }
     },
     {
       "focus": "src/remote/repository-download.ts",
@@ -803,12 +809,16 @@
     {
       "focus": "src/remote/runtime.ts",
       "initialBlob": "ce4d30630047fa9536409754db3efeb72dd7cc5b",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_e1ab9585",
-          "status": "running",
-          "candidate": "edb1318b65ad68d88f987aa87785414787168991"
+          "status": "completed",
+          "candidate": "edb1318b65ad68d88f987aa87785414787168991",
+          "verdict": "ACCEPT",
+          "reason": "Complete output-preserving job scan owns pagination/liveness/gaps; handler visibly awaits evidence before checkpoint publication. Shared durable writer removes duplicate descriptor ownership with same flush/close/rename/directory fsync order.",
+          "checks": "Judge candidate runtime/persistence/artifact/cancellation 10 pass/45; broader owner suite dependency failures; full source/callers/diff inspected.",
+          "limits": "Explicit internal staging change PID overwrite→exclusive UUID at 0600, no abandoned staging cleanup/power-loss promise; turn killed classification intentionally differs cancellation."
         }
       ],
       "launchBase": "20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d",
@@ -818,7 +828,13 @@
         "branch": "bruv/remote-primary-runtime-8e982299",
         "commit": "edb1318b65ad68d88f987aa87785414787168991"
       },
-      "workerResponse": "Candidate committed; ready for independent judgment.\n\n- **Base:** `20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d`\n- **Candidate:** `edb1318b65ad68d88f987aa87785414787168991`\n- **Branch:** `bruv/remote-primary-runtime-8e982299`\n\n**Changed paths**\n- `src/remote/runtime.ts`\n- `tests/remote-runtime.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after walkthrough:** Following extension registration through the owner’s settlement reader previously required reconstructing pagination, artifact preservation, checkpoint assembly, and a duplicated durable-write closure. Now `captureNativeJobEvidence` owns the complete output-preserving scan. The settlement handler explicitly awaits that evidence, snapshots questions/messages, then publishes through the existing `durableJsonReplace`.\n\nAnswer claiming/replay suppression stays together unchanged. Cancellation and work/questions/completion distinctions remain intact, including turn settlement’s existing `killed` classification. Internal staging now uses the shared writer’s exclusive UUID file; flush ordering remains unchanged.\n\n**Proof:** candidate focused suite **20 pass / 83 assertions**; final runtime+owner checks **4 pass / 81 assertions**. Added runtime tests also pass against baseline source. Format, lint, and diff checks pass.\n\n**Overlap:** `remote.json` lists runtime/tests pending without active primary IDs. Related runtime-test edits need final coverage; accepted durability/cancellation files remain unchanged.\n\nClean worktree. No push/PR, full-build, live-provider, SSH, or power-loss claim."
+      "acceptedBlob": "87b03ef3cc853ca66bbc6edbf0b1b36de4ee2586",
+      "integrationState": "accepted whole source+runtime tests applied without overlap",
+      "result": "captureNativeJobEvidence owns output-preserving scan before settlement assembly/publication; answer replay remains unchanged; shared existing durable writer owns descriptor sequence.",
+      "checks": "Worker focused 20 pass/83, runtime+owner 4/81; added tests pass baseline; format/lint/diff pass.",
+      "changedRelatedPaths": [
+        "tests/remote-runtime.test.ts"
+      ]
     },
     {
       "focus": "src/remote/security.ts",
@@ -1175,7 +1191,7 @@
     {
       "focus": "tests/remote-client.test.ts",
       "initialBlob": "b7f7ba5ecb51b1dec96fe07d6cc5be4ddee790bc",
-      "status": "rework-running",
+      "status": "rework-judging",
       "judgeRounds": [
         {
           "id": "task_43df06c7",
@@ -1190,6 +1206,12 @@
             "actual": "e2e6c5d581e0f1e6408f174641eb69e452cab382",
             "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
           }
+        },
+        {
+          "id": "task_45f4b422",
+          "status": "running",
+          "candidate": "4e396c2449478a2e089c79138bb2691ebdb0dbb1",
+          "context": "Fresh complete-context review after REJECT for five fixture type errors; stopped attempt preserved; final aliases plus full proof."
         }
       ],
       "relatedAcceptance": {
@@ -1234,8 +1256,10 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_b3067ab8",
           "branch": "bruv/remote-client-test-typing-fresh-rework-b3067ab8",
           "launchBase": "a6872af1deea4820d9c4505f3776bac54856edf8",
-          "status": "running",
-          "reason": "Fresh replacement of stalled rework; same unresolved five fixture request-type errors, full prior context supplied."
+          "status": "candidate",
+          "reason": "Fresh replacement of stalled rework; same unresolved five fixture request-type errors, full prior context supplied.",
+          "commit": "4e396c2449478a2e089c79138bb2691ebdb0dbb1",
+          "response": "Committed candidate; ready for independent judge.\n\n- **Base:** `a6872af1deea4820d9c4505f3776bac54856edf8`\n- **Candidate:** `4e396c2449478a2e089c79138bb2691ebdb0dbb1`\n- **Branch:** `bruv/remote-client-test-typing-fresh-rework-b3067ab8`\n- **Changed paths:** `tests/remote-client.test.ts`, `wisdom/quality/structural-readability-worker.md`\n\n**Before → after:** tests inferred persistence after transport failure and filtered mixed request logs. They now capture on-disk launch/answer intent before POST, separate mutation evidence from sync observations, and own lock-probe child cleanup inside the callback.\n\n**Rejection addressed:** reproduced all five compiler errors, then fixed them using three fixture-local launch/answer/sync request aliases. Compared with the original candidate, only these aliases/use-sites differ. Production `Transport` is unchanged.\n\n**Proof:** full `bun run check` passes; focused suite **23 pass, 126 assertions**; format, lint and diff checks pass. Pagination/integration regressions remain byte-identical. Stronger pre-POST assertions and callback-owned cleanup are preserved.\n\nStopped worker’s worktree untouched. No active-area overlap, incidental behavior fix, push or PR. Fresh proof note written; values unchanged. Acceptance remains the independent judge’s decision."
         }
       ]
     },
@@ -1479,7 +1503,12 @@
       "focus": "tests/remote-runtime.test.ts",
       "initialBlob": "f71e08976aeb005bf9249915b1655f677096b4f2",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedAcceptance": {
+        "judge": "task_e1ab9585",
+        "blob": "fe29cd1cfb93ec39984d2fd2e3babc5054c29260",
+        "needs": "fresh primary focus and final independent judge"
+      }
     },
     {
       "focus": "tests/remote-session-switch.test.ts",
@@ -1781,6 +1810,13 @@
       "command": "bun run check; bun test remote-root-client,remote-root-presenter,root-owner,root-store,root-runtime,remote-root-transport tests",
       "result": "Whole configured typecheck passes; 65 pass/397 assertions across 6 files",
       "limits": "No full CI/build/authenticated SSH/provider/physical terminal/compiled parity"
+    },
+    {
+      "commit": "d9bd6ecb",
+      "job": "task_1718432b",
+      "command": "bun test remote-repository-wire,remote-repository,remote-repository-download,root-owner,remote-source-approval,remote-jobs tests",
+      "result": "62 pass, 0 fail, 367 assertions across 6 files",
+      "limits": "Source fixtures only; no authenticated SSH/provider/compiled parity"
     }
   ],
   "crossAreaNeeds": [
