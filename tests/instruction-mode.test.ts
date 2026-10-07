@@ -6,6 +6,11 @@ import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { inspectDiagnostics } from "../src/diagnostics";
 import { mainAgentGuidance, replaceMainAgentGuidance } from "../src/prompts";
 import { INSTRUCTION_MODE_ENTRY, registerInstructionMode } from "../src/agent/instruction-mode";
+import {
+  bindInstructionContinuitySession,
+  scopeInstructionContinuity,
+  setCurrentInstructionFrame,
+} from "../src/agent/instruction-continuity";
 
 function fixture(root = true, entries: any[] = [], appendError?: Error) {
   let command: any;
@@ -33,6 +38,51 @@ function fixture(root = true, entries: any[] = [], appendError?: Error) {
   mode.sessionStart(ctx);
   return { mode, command, appended, notices, statuses, ctx };
 }
+
+function prepareFrame(ctx: any, prompt: string) {
+  const session = {
+    sessionManager: ctx.sessionManager,
+    _baseSystemPromptOptions: {},
+    _runSystemPromptOptions: {},
+  } as any;
+  bindInstructionContinuitySession(session);
+  scopeInstructionContinuity(ctx.sessionManager);
+  expect(setCurrentInstructionFrame(ctx.sessionManager, prompt)).toBe(true);
+  return session;
+}
+
+test("mode changes rewrite the prepared owned region, preserving surrounding instructions", async () => {
+  const f = fixture();
+  const initial = "BEFORE\n" + f.mode.guidance(f.ctx) + "\nAFTER";
+  const session = prepareFrame(f.ctx, initial);
+  await f.command.handler("fast", f.ctx);
+  expect(session._runSystemPromptOptions.forceSystemPrompt).toBe("BEFORE\n" + f.mode.guidance(f.ctx) + "\nAFTER");
+  expect(session._runSystemPromptOptions.forceSystemPrompt).not.toContain("You lead work.");
+  await f.command.handler("orchestrator", f.ctx);
+  expect(session._runSystemPromptOptions.forceSystemPrompt).toBe(initial);
+});
+
+test("mode changes leave prepared explicit custom instructions untouched", async () => {
+  const f = fixture();
+  const prompt = "EXPLICIT CUSTOM\n" + mainAgentGuidance("orchestrator", "another-owner");
+  const session = prepareFrame(f.ctx, prompt);
+  await f.command.handler("fast", f.ctx);
+  expect(f.mode.get()).toBe("fast");
+  expect(session._runSystemPromptOptions.forceSystemPrompt).toBe(prompt);
+});
+
+test("owned regions derive from the current session, not prior framing or lifecycle calls", () => {
+  const f = fixture();
+  const first = f.mode.guidance(f.ctx);
+  f.ctx.sessionManager.getSessionId = () => "another-session";
+  const second = f.mode.guidance(f.ctx);
+  expect(second).not.toBe(first);
+  f.mode.shutdown();
+  f.mode.sessionStart(f.ctx);
+  expect(f.mode.guidance(f.ctx)).toBe(second);
+  f.ctx.sessionManager.getSessionId = () => "session";
+  expect(f.mode.guidance(f.ctx)).toBe(first);
+});
 
 test("/mode reports, validates, persists and changes instructions only", async () => {
   const f = fixture();
@@ -106,11 +156,14 @@ test("resume reads only the active branch", () => {
 
 test("failed mode persistence leaves memory, status, and frame unchanged", async () => {
   const f = fixture(true, [], new Error("disk full"));
+  const initial = f.mode.guidance(f.ctx);
+  const session = prepareFrame(f.ctx, initial);
   await f.command.handler("fast", f.ctx);
   expect(f.mode.get()).toBe("orchestrator");
   expect(f.statuses.at(-1)).toEqual({ key: "bruv-mode", value: "mode: orchestrator" });
   expect(f.notices.at(-1)).toMatchObject({ kind: "error" });
   expect(f.notices.at(-1).message).toContain("disk full");
+  expect(session._runSystemPromptOptions.forceSystemPrompt).toBe(initial);
 });
 
 test("a real SessionManager branch ignores mode entries on the abandoned branch", async () => {
@@ -161,7 +214,7 @@ test("a real disk reopen produces a byte-identical mode prompt", async () => {
       const state = registerInstructionMode(pi, () => true);
       const ctx = { sessionManager: manager, ui: { setStatus() {}, notify() {} } } as any;
       state.sessionStart(ctx);
-      return "base\n\n" + state.guidance(ctx, false);
+      return "base\n\n" + state.guidance(ctx);
     };
     const beforeRestart = render(SessionManager.open(file));
     const afterRestart = render(SessionManager.open(file));

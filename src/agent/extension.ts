@@ -911,7 +911,7 @@ export default function asynchronousTasksExtension(
     // retain their role identity and delegation boundary on every base.
     const userCustom = custom && !isBruvSystemPrompt(event.systemPromptOptions);
     if (userCustom && subagentDepth === 0) return;
-    const role = subagentDepth > 0 ? subagentGuidance(agentType ?? "normal") : instructionMode.guidance(ctx, false);
+    const role = subagentDepth > 0 ? subagentGuidance(agentType ?? "normal") : instructionMode.guidance(ctx);
     const additions = [userCustom ? "" : collaborationGuidance(), role].filter(Boolean).join("\n\n");
     if (additions) return { systemPrompt: event.systemPrompt + "\n\n" + additions };
   });

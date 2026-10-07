@@ -144,7 +144,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "b56b4b3a99499178ace1cacba5538760fdc0a656",
+        "judge": "task_00bd7047",
+        "verdict": "ACCEPT",
+        "blob": "f4a1a32f98b631384b1ffb3e43e1507572d9d069",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "src/agent/instruction-continuity.ts",
@@ -158,7 +165,7 @@
     {
       "focus": "src/agent/instruction-mode.ts",
       "initialBlob": "e5eef9b0983997dc00c999de6bca4a1843e659f9",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_146763c6",
@@ -181,11 +188,19 @@
           "id": "task_00bd7047",
           "candidate": "b56b4b3a99499178ace1cacba5538760fdc0a656",
           "base": "c5c77b5ea66f848f3a35c46ab32cfddb4a20bd72",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Removes duplicate frame lifecycle: owner digest derives from context; custom flag never true in shipped caller. Actual manager/session authority, root custom/child isolation, marker replacement and persistence ordering remain explicit.",
+          "limits": "Independent tests blocked by missing Pi dependencies; actual source/callers/tests inspected.",
+          "acceptedRelatedBlobs": {
+            "src/agent/extension.ts": "f4a1a32f98b631384b1ffb3e43e1507572d9d069",
+            "tests/instruction-mode.test.ts": "91cdf3d35143286cc1ff2b0147811156c949a1b0"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "bcb44e0107f9dedc6ed401bb74ebb20431861cb5",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/agent/last-used-cli-model.ts",
@@ -277,7 +292,7 @@
     {
       "focus": "src/goals/store.ts",
       "initialBlob": "65bf58713c66da88994d4d67dead877af2fcdcd0",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_fda16f5b",
@@ -294,7 +309,14 @@
           "checks": "32 focused tests/153 assertions; new replay tests pass baseline too; focused TypeScript/format/diff pass; 3 baseline lint warnings; SDK absent dist/bruv blocked."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_46beb0fa",
+          "candidate": "550ce6425a3d92d1b0300bc48bd9cfe69737da91",
+          "base": "f3c522bfac81cc605156e8f870ca32f5e2394a53",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -989,7 +1011,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "b56b4b3a99499178ace1cacba5538760fdc0a656",
+        "judge": "task_00bd7047",
+        "verdict": "ACCEPT",
+        "blob": "91cdf3d35143286cc1ff2b0147811156c949a1b0",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/last-used-cli-model.test.ts",

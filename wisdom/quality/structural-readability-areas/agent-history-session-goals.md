@@ -13,3 +13,7 @@ DiskEntryStore append now owns write/publication/rollback with one descriptor, d
 ## Judged dead authority removal
 
 Removed unshipped CompletedInput and its API-only tests (candidate `35218b89`, judge task_ea00ebd0 ACCEPT). Independent import/build/public-surface proof finds only deleted test consumer; real input/replay/cancellation authority stays in Live MainOwner/GPT delegation, with safety assertions unchanged. No claim that retired TTL policy exists elsewhere. Deleted test still requires its own primary-focus coverage. Worker 24 shipped-path passes/125 assertions; judge 18 GPT delegation passes/67 assertions, other reruns dependency-blocked.
+
+## Instruction mode lifetime batch
+
+Candidate `b56b4b3a`, judge task_00bd7047 ACCEPT: eliminate cached session/digest/custom-frame state; derive deterministic marker identity while instruction-continuity retains real manager/session authority. Root custom/child routing and append-before-memory preserved. Exact extension one-argument adjustment and strengthened mode tests integrated together; both need fresh primary focus later. Worker 30 passes/219 assertions plus full tsc and focused format/lint; independent execution dependency-blocked, actual-code acceptance explicit.
