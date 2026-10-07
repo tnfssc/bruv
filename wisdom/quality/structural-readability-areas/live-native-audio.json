@@ -1,0 +1,1131 @@
+{
+  "area": "live-native-audio",
+  "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+  "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+  "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6",
+  "branch": "bruv/whole-repo-structural-readability-live-n-662639e6",
+  "status": "in progress; no area completion claim",
+  "files": [
+    {
+      "focus": ".github/workflows/live.yml",
+      "initialBlob": "6c1b0780b78c229785db286e9f15b76a4be60d32",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live-linux/CaptureGate.h",
+      "initialBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live-linux/main.cpp",
+      "initialBlob": "76741dde51fe38d1f42496c66309cb700e266987",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live-linux/tests/backpressure.py",
+      "initialBlob": "926018512888ed0d7b08002be97e2179a2089561",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live-linux/tests/capture-gate.cpp",
+      "initialBlob": "54545816cf0085d09b852dfad919fc9dc7545d57",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live-linux/tests/capture-protocol.py",
+      "initialBlob": "86a6f83cd562f0ab9f7e77bc7257f451c540a4c1",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live-linux/tests/protocol.py",
+      "initialBlob": "266caf808d098fac5a3c4b834c73f428b9fd19b6",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live-linux/tests/source-removal.py",
+      "initialBlob": "28a1a9d47228fc945f5837efd31a1b0c49a31dff",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live-linux/tests/virtual.sh",
+      "initialBlob": "02fea1a0e2d25ac75c78fce395ce9f39dcbaf52f",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live/AudioCore.c",
+      "initialBlob": "2efc770027dad553a71f5bd1dfc34a87fbd3eb6a",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live/AudioCore.h",
+      "initialBlob": "e2d8f07794f66272af89f64c69f86bee4ee70aee",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live/Info.plist",
+      "initialBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live/main.swift",
+      "initialBlob": "4a29411a451125a88c2572107856a35bc97ea137",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live/test-capture-gate.c",
+      "initialBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live/test-core.c",
+      "initialBlob": "16f9df07efbef8b515fb70f28e4de0c0c5b4d4cd",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "native/live/test-waveform.c",
+      "initialBlob": "bb584e0f6042f5e82f7298fb3a84b8e2bcb6e749",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/build-live-helper.sh",
+      "initialBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/build-live-linux-helper.sh",
+      "initialBlob": "81989563bcacb3c947843520081648afa4e4b521",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-acceptance.ts",
+      "initialBlob": "3d1e341a0ec3115c50c706e21dfa75184e69c098",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-gpt-live-offline-smoke.ts",
+      "initialBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-helper-bundle.ts",
+      "initialBlob": "59cc37569783f757e9bb64d760dc96aead37edfc",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-isolated-audio.sh",
+      "initialBlob": "ba92d903223fcee68a9c3a5ce799e4ec695230ab",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-onboarding-smoke.ts",
+      "initialBlob": "f02f07cca5ad453ba39de2fe1b0b6b396cc0c1bb",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-openai-offline-smoke.ts",
+      "initialBlob": "c900eaef25ae1b5501a4da8ee24b29854241b78d",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-probe-input.ts",
+      "initialBlob": "30da7b239c9a9bf9ef9fdfa05be474de72253f57",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-startup-fixture.ts",
+      "initialBlob": "57daaf09ced917e5130a196b1410cf0b6aa257cc",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/live-study-trial.ts",
+      "initialBlob": "63d6fd9dd0bdeead65c912d63ac4b50e7a60bb0c",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/offline-openai-default-transport.ts",
+      "initialBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/probe-live-capability.ts",
+      "initialBlob": "755a16278c22dacfff5bade1859975616a2aefcb",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/probe-live-controlled.ts",
+      "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/probe-live-recorded.ts",
+      "initialBlob": "3c15dce87ad6cef0b8687c9d2dfeb793a48c9b3a",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/probe-live-startup-audio.ts",
+      "initialBlob": "7efa411dd2d16d6070ee511416884d1a64309fb1",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/probe-openai-realtime-setup.ts",
+      "initialBlob": "336872179296264402c6bac5fc5c7feaa1c8d244",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/audio.ts",
+      "initialBlob": "f2549d1391e3184fe6463503542169e6c6c6b3f7",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/config.ts",
+      "initialBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/conversation.ts",
+      "initialBlob": "7f9a86a60e3eb296e41459e09e7ccbbec1470d49",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/cost.ts",
+      "initialBlob": "14d4bead2ec2e832da60d5816e9cee0b3e40069c",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/credentials.ts",
+      "initialBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/diagnostics.ts",
+      "initialBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/editor-push-to-talk.ts",
+      "initialBlob": "df048148512e56c08a09807a4e35db9577fae485",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/embedded.ts",
+      "initialBlob": "bda048c5bdf546d7dd7297e130b17920ce1c3f14",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/extension.ts",
+      "initialBlob": "84274f466746fb1665d4d9cb5c71ed3869d036c9",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/gpt-live-context.ts",
+      "initialBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/gpt-live-delegation.ts",
+      "initialBlob": "0096dd7f6d3ef5601f2605a8cf2f8117b648b2b7",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/gpt-live-playback.ts",
+      "initialBlob": "fcbf4975f3b457e798e7d959aee9943f62b7f698",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/gpt-live-request.ts",
+      "initialBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/gpt-live-session.ts",
+      "initialBlob": "4a59910d130a5d142313497b71c344f79aec7357",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/helper.ts",
+      "initialBlob": "7cd173370b3ab5bf89e08ea287cbbe8e9e70b8a8",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/lifecycle-access.ts",
+      "initialBlob": "907131d869263fb00bd1a84a042a244cf108c1dc",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/main-owner.ts",
+      "initialBlob": "6ef4a9e05c4dfc3d0d2191f0936fc12b9df2bc1f",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/offline-transport-probe.ts",
+      "initialBlob": "a45e47706f80941e5988bf58a43d28e57b68a73d",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/openai-connect-error.ts",
+      "initialBlob": "4b1dc32b7b36c544da534e9ca5f0cfe4686ddc68",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/openai-errors.ts",
+      "initialBlob": "aa59837c76b1d00430c2fa3648c6a73998f9a6c4",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/openai-resample.ts",
+      "initialBlob": "3237fbde60b8c0da9951552161d8ab61989547f8",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/openai-session.ts",
+      "initialBlob": "5055955c85459ef4e03de7947f6053ef66282fd8",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/openai-upgrade-socket.ts",
+      "initialBlob": "c6ced660c58ff7b517315e86ceb892bfe0a59f39",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/passive-history.ts",
+      "initialBlob": "6d734f3931a9a8f21016b121eddecf8ebef5e131",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/playback.ts",
+      "initialBlob": "13c3a077ca113568196fdc051184ac53d434fc69",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/providers.ts",
+      "initialBlob": "ac1238e745270cf870d48d98fa510b0893536a52",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/self-test.ts",
+      "initialBlob": "ee5fe8af00adb8b80b56f53b6581926a6525ccfc",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/session.ts",
+      "initialBlob": "6344b6c65a4f6aa3aa787923fb9d0b53fa18dda6",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/setup-probe.ts",
+      "initialBlob": "6b216e0773e6c7c1255a6777b43afb1d1fc2d50f",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/setup.ts",
+      "initialBlob": "728e62f964f69adb6228d1fbae8b9f536836d1eb",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/speaker-check.ts",
+      "initialBlob": "783d0aaaf7ae22808aad5cc8f00914a1e9610637",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/speaker-summary.ts",
+      "initialBlob": "95305051ea489012a17049fa326ea87e53ec06aa",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/status.ts",
+      "initialBlob": "50437274560d847fe5fb6441e69032f6d3549467",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/tool-result.ts",
+      "initialBlob": "f0338f1445387a86adfd6cc9917fa3dcfb39c739",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/transcript-text.ts",
+      "initialBlob": "e7e2fd9610dea3364c9dd23ac7a9286fa3eb48ee",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/types.ts",
+      "initialBlob": "982613947af84d36edeb598916e7826fc3f43190",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/live/waveform.ts",
+      "initialBlob": "4fa724f5c981c5d85054dcccec102a67ced75e2d",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/current-pipeline-live.test.ts",
+      "initialBlob": "2a82fccb8c45476d6e8a871afb598c3f11540e83",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/editor-push-to-talk.test.ts",
+      "initialBlob": "cfbe46536c1c27623370d592c394ade2b5fad468",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/editor-voice-integration.test.ts",
+      "initialBlob": "a54b95973f39569c32af94c7043aa7665a8da4ca",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/fixtures/live-execute-cli.sh",
+      "initialBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/fixtures/live-gpt-tui.ts",
+      "initialBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/fixtures/live-picker-tui.ts",
+      "initialBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/fixtures/live-push-to-talk-tui.ts",
+      "initialBlob": "179e7292fffc19c5281d1072c7aad31b0b700b77",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/fixtures/live-spoken-tui.ts",
+      "initialBlob": "03c7168fdf7aa3a91084573c467eb7a94408f67b",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/goals-live.test.ts",
+      "initialBlob": "0397caa9ef5367b746a6c6020ad6c8ece81dcc18",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/gpt-live-context.test.ts",
+      "initialBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/gpt-live-delegation.test.ts",
+      "initialBlob": "1a6bb3e927e44740fd7d513e2d250be178b9c43e",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/gpt-live-playback.test.ts",
+      "initialBlob": "f2532f05c7ea303b44d5ad520a32cad0e413bf63",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/gpt-live-request.test.ts",
+      "initialBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/gpt-live-session.test.ts",
+      "initialBlob": "8cb2e77fbaf1c0853b0f458b445b10a08a1b92d1",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/gpt-live-waveform.test.ts",
+      "initialBlob": "589251a028bd9137e96edecd23889db510e127b6",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/helpers/live-startup-audio-queue.ts",
+      "initialBlob": "6b467a7c5c27d31655ae48c9e92828cbe076cf3a",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-audio-lifecycle.test.ts",
+      "initialBlob": "e210a7e633afecac8ef19c67837a9024fc462e13",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-audio.test.ts",
+      "initialBlob": "960e983066ac7261639690915733dd8e8c8cb3d7",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-auth-lifecycle.test.ts",
+      "initialBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-capture-gate.test.ts",
+      "initialBlob": "f0ba15732398870ba1d0882f466f5c788133b1f2",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-config.test.ts",
+      "initialBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-conversation.test.ts",
+      "initialBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-cost.test.ts",
+      "initialBlob": "b48ba6cc2be94aa95e9846ad76b9f08bcdcd291d",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-credentials.test.ts",
+      "initialBlob": "2813968a386603df54b51314c4238769805a8b86",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-dispatch-budget.test.ts",
+      "initialBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-dispatch-budget.ts",
+      "initialBlob": "e7fd8dae94e43f8c4a5f582a47e456f803c46bda",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-embedded-helper.test.ts",
+      "initialBlob": "603d475b0ba3b18b550c10cc0e950053358d1631",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-execute-controls.test.ts",
+      "initialBlob": "52ca28929328804ac0140069015586865883bf8a",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-extension.test.ts",
+      "initialBlob": "1b32ba0926c08fdcaed34529c1707a95dd52de7a",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-gpt-live-provider.acceptance.test.ts",
+      "initialBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-gpt-tui.test.ts",
+      "initialBlob": "333c95a90933643b25d6ab77f6ff0f10a77434e9",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-host-access.test.ts",
+      "initialBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-host-bridge.test.ts",
+      "initialBlob": "eaa1c68643eef793430b8e52c2db86ab543dd26c",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-long-audio.test.ts",
+      "initialBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-macos-ci.test.ts",
+      "initialBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-main-integration.test.ts",
+      "initialBlob": "950dd13e9775f57f61cbf37aacc8b1d78446913c",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-main-orchestrator-runtime.probe.ts",
+      "initialBlob": "9f5353942e250a8cf5c73837f6ea2cfc6abd8232",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-main-owner.test.ts",
+      "initialBlob": "1fcc147892d3cdd2f5adcdf0338ab281c0151506",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-native-workflows.test.ts",
+      "initialBlob": "06bd7f4a043216f68250ee481310ff12e8b7c5ce",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-notice.test.ts",
+      "initialBlob": "6af6d30ad7cb6cf0763d2c5fdaa7edadca694d9c",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-openai-provider.acceptance.test.ts",
+      "initialBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-paired-runtime.test.ts",
+      "initialBlob": "3c8a12296f7d2a2cfe900c71dfe876a64e6472b8",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-passive-history.test.ts",
+      "initialBlob": "973e8cd7089d5efafd89b79bef6eb466ad8c0001",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-picker-tui.test.ts",
+      "initialBlob": "493944773ae246afd77f57941b8ace8ee242fc47",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-platform.test.ts",
+      "initialBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-playback.test.ts",
+      "initialBlob": "55e410b4de84f8f0a83fc8e1e540d68085254e34",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-probe-input.test.ts",
+      "initialBlob": "bd5d23d0a95241c605c78a2b8aba5cb2fb8a841a",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-prompt.test.ts",
+      "initialBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-provider.acceptance.test.ts",
+      "initialBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-push-to-talk-tui.test.ts",
+      "initialBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-session.test.ts",
+      "initialBlob": "f677fece47f695dec08e9a37dc204d10205bb67d",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-setup-diagnostics.test.ts",
+      "initialBlob": "79f3cd7334d0ea0ac781e03c385ccffa8ab0ce16",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-setup.test.ts",
+      "initialBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-speaker-check.test.ts",
+      "initialBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-speaker-summary.test.ts",
+      "initialBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-spoken-tui.test.ts",
+      "initialBlob": "dca97e84254ed5773b34315e6006b5cde89d85ac",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-startup-audio-queue.test.ts",
+      "initialBlob": "88dd84ca8356b8512be44337dcc62b074138517e",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-startup-natural-fixture.test.ts",
+      "initialBlob": "9f457024b7b1e6f5fd436fe799dfeb3abbfd32eb",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-startup-speech-probe.test.ts",
+      "initialBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-status.test.ts",
+      "initialBlob": "db179896d78a7b812017a91ec843399a8a7e70b5",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-study-trial.test.ts",
+      "initialBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-tool-result.test.ts",
+      "initialBlob": "6d87f59d24f16d498e320e60d32836f635dfc0f0",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-tools.test.ts",
+      "initialBlob": "70033025563f0f8fb1789048e97ef02222bb8efc",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-transcript.test.ts",
+      "initialBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-tui-startup.test.ts",
+      "initialBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-tui-startup.ts",
+      "initialBlob": "a54e5ee4473dde6061371c635228faf76de88b31",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/live-waveform.test.ts",
+      "initialBlob": "7badb15d60945ddde2798584094ab498f4e43645",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/openai-session-diagnostics.test.ts",
+      "initialBlob": "092f838262b6233b561174bf8c55e2319a455381",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/openai-session-schema.test.ts",
+      "initialBlob": "f0285954c2a47aaa013df69828c262153238915e",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/openai-session.test.ts",
+      "initialBlob": "a3284f8c1803e2b14259bddf0216ad4daa55aaaf",
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    }
+  ],
+  "extraFiles": []
+}
