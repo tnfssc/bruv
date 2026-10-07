@@ -191,6 +191,14 @@
           "launchBase": "4e9d756b6119aafc0db6a906bfe9b223d3fe1180",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_706aaff1",
           "branch": "bruv/primary-scripts-find-ci-baseline.ts-706aaff1",
+          "state": "killed",
+          "limit": "No candidate; 20-minute attention checkpoint showed unchanged output since focused7/43 check, model response stalled; cancellation confirmed143. Worktree clean at launch base and retained."
+        },
+        {
+          "id": "task_5eb0e8fd",
+          "launchBase": "869a3a9a6bba9c443f0cd61d9260e10398a79968",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_5eb0e8fd",
+          "branch": "bruv/retry-primary-scripts-find-ci-baseline.t-5eb0e8fd",
           "state": "running"
         }
       ],
@@ -374,7 +382,7 @@
     {
       "focus": "scripts/select-release-notes.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_5013c91b",
@@ -390,13 +398,18 @@
           "id": "task_6cb6e619",
           "base": "cedf50c46bf53456e5b1ab3509a3d9f2e70a7c46",
           "candidate": "0068c32fbdbf56cf53d73a79c84cd294afff4569",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Validate tag/version→exact notes path→nonempty regular file→return; CLI input boundary explicit. Current accepted publisher preserves contract; no tangled lifetimes.",
+          "checks": "Independent focused3/14 and publication16/54; four real CLI probes plus invalid version/directory/prerelease probes. Existing symlink/whitespace/error-collapse limits; no build/actual publication."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "702067fdd441ace705964ea3df7c8b70a8975801",
       "readingResult": "Unchanged: validate tag/version → exact notes path → require nonempty regular file → return. CLI/publisher contract direct.",
-      "checks": "3 focused tests, four CLI checks; Biome exit0 two existing infos; no release/network/build gate."
+      "checks": "3 focused tests, four CLI checks; Biome exit0 two existing infos; no release/network/build gate.",
+      "integrationState": "Unchanged blob matches area; actual current integrated publisher contract inspected; local note excluded."
     },
     {
       "focus": "scripts/setup-native-release-gate.sh",
