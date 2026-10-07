@@ -19,7 +19,7 @@ The adjacent JSON is the authoritative per-file pickup ledger: 114 initial rows;
 ## Pickup next
 
 1. Active/pending states and job IDs are in JSON. Never call a pending candidate accepted. All branches/worktrees remain for reuse.
-2. Goal-test check rework task_1ac39db6 fixes observed TS2554 at tests/goals.test.ts:560 (missing required RPC params); preserve genuine before-start assertion, then fresh judge.
+2. Goal-test observed TS2554 corrected by fresh task_1ac39db6 candidate 3ae99185; fresh task_d26b0999 ACCEPT final blob fa176b1df06db3887321f0c3452a18cd92d4b9e1. Genuine before-start assertion retained; rerun area typecheck at next batch.
 3. README semantic rework e5241b6b accepted by fresh task_b5e28075 against current composition and final retention helper; accurate final map restored, original incorrect all-formatting-in-tasks claim remains corrected. Future owner changes still require semantic map review.
 4. Native-fast source/test import organization remains a known check issue; give tests/native-fast-mode.test.ts fresh primary and coherent source import correction, then rejudge both final blobs.
 5. New tests/fixtures/transcript-snapshots.ts and tests/transcript-snapshots.test.ts still need separate fresh primary focus, not credit from helper writer or patch judge.

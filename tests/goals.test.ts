@@ -557,7 +557,7 @@ test("continuation relies on the assembled authoritative state without duplicati
 test("slash command initializes before session_start and invalidates reminders", async () => {
   const h = harness([], { startSession: false });
   expect(h.runtime.get()).toBeUndefined();
-  expect(() => h.runtime.handle("goal.get")).toThrow("not initialized");
+  expect(() => h.runtime.handle("goal.get", undefined)).toThrow("not initialized");
   await h.goalCommand("set Build it --criteria one; two --constraints stay offline");
   expect(h.runtime.get()).toMatchObject({
     objective: "Build it",

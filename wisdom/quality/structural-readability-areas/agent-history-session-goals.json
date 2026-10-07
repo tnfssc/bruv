@@ -1318,7 +1318,7 @@
     {
       "focus": "tests/goals.test.ts",
       "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_6d7a5ed8",
@@ -1400,7 +1400,7 @@
           "id": "task_d26b0999",
           "candidate": "3ae9918527f5233e52e6683774e02438e37bf31f",
           "base": "fcbade1c776f50c86bdd29dd5d365936d3a6fa5d",
-          "status": "running",
+          "status": "complete",
           "priorVerdicts": [
             "task_a7f9ce2d ACCEPT",
             "task_4a2a31dd ACCEPT",
@@ -1409,11 +1409,15 @@
           "priorObjections": [
             "Observed tsc TS2554 tests/goals.test.ts:560: h.runtime.handle(\"goal.get\") lacks required second argument. Fresh file-worker correction and new actual-code judge required. Runtime tests pass but compile does not."
           ],
-          "writerResponse": "Pass explicit undefined RPC params to required GoalRuntime.handle contract, preserving genuine before-start assertion and reminder invalidation. No production change."
+          "writerResponse": "Pass explicit undefined RPC params to required GoalRuntime.handle contract, preserving genuine before-start assertion and reminder invalidation. No production change.",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Explicit undefined matches required RPC method/params contract without weakening genuine before-start assertion; all final fixture/controller/store/transport journeys remain clear, no production/API change.",
+          "checks": "Fresh actual full final test/source/prior findings inspected; correction compile proof checked, see judge report; formatting/diff pass."
         }
       ],
-      "acceptedBlob": "53c72e5e41d625d696a76c2fe039de25e79ce733",
-      "integration": "integrated-reconciled-candidate",
+      "acceptedBlob": "fa176b1df06db3887321f0c3452a18cd92d4b9e1",
+      "integration": "integrated-check-rework",
       "relatedPatchReview": {
         "candidate": "3768ecd10500006ffdfed8bc12202224a483636a",
         "judge": "task_4a2a31dd",
@@ -1422,9 +1426,7 @@
         "primaryFocusStillRequired": true,
         "overlap": "Active primary launched before these four regression additions; final combination via fresh file worker and independent judge required."
       },
-      "checkNeeds": [
-        "Observed tsc TS2554 tests/goals.test.ts:560: h.runtime.handle(\"goal.get\") lacks required second argument. Fresh file-worker correction and new actual-code judge required. Runtime tests pass but compile does not."
-      ]
+      "checkNeeds": []
     },
     {
       "focus": "tests/herdr-agent-state.test.ts",
