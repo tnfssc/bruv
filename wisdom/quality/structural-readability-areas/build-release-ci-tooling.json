@@ -1023,6 +1023,12 @@
       "job": "task_7493a10f",
       "command": "Bun1.4.2 test tests/install-download.test.ts tests/install-local.test.ts",
       "result": "39 pass0 fail157 assertions; both accepted current installer scripts combined; no live/platform proof"
+    },
+    {
+      "commit": "a472a64c",
+      "job": "task_f6b41b88",
+      "command": "Bun1.4.2 test tests/{update,install-download,install-local,ci-selective,ci-selective-workflow,find-ci-baseline,publish-release}.test.ts",
+      "result": "138 pass0 fail628 assertions across7 files incl private compiled updater fixtures; no application build/hosted gate"
     }
   ]
 }
