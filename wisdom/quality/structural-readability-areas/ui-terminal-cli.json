@@ -226,19 +226,38 @@
     {
       "focus": "scripts/benchmark-footer-context.ts",
       "initialBlob": "91d84fe12a843948add9cd91c219ee7098b1f419",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_98c25ed9",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_98c25ed9",
           "branch": "bruv/primary-readability-scripts-benchmark-fo-98c25ed9",
-          "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f"
+          "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+          "commit": "0b04211f5d594e631d2a171807ecba84dc5e45f4"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_e562a5b1",
+          "base": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+          "candidate": "0b04211f5d594e631d2a171807ecba84dc5e45f4",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f"
+      "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+      "changedRelatedPaths": [],
+      "result": "Candidate binds context readers once, scopes frame materialization counter/probe restoration and fixture history lifetime rather than nested receiver ternaries/global counter.",
+      "checks": [
+        "12benchmark records identical nontiming fields/counters",
+        "26tests/294assertions",
+        "Success and synthetic render-failure restoration/temp-history cleanup harness",
+        "Biome/diff"
+      ],
+      "limits": [
+        "No speed/build/typecheck"
+      ]
     },
     {
       "focus": "scripts/benchmark-task-row-render.ts",
@@ -2406,8 +2425,15 @@
     {
       "focus": "tests/rolling-activity.test.ts",
       "initialBlob": "d7fd169b04f7e8041287a022458bdfe24cd4fc26",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_635acd35",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_635acd35",
+          "branch": "bruv/primary-readability-tests-rolling-activi-635acd35",
+          "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary focus pending",
@@ -2418,7 +2444,8 @@
           "candidate": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
           "blob": "dcd301abaa75cadf31522a28357a2fa68f08f820"
         }
-      ]
+      ],
+      "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081"
     },
     {
       "focus": "tests/scroll-layout-render.test.ts",
