@@ -1772,8 +1772,15 @@
     {
       "focus": "tests/conversation-density.test.ts",
       "initialBlob": "e58898c0494a2673216105420c234d2be53960fa",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_9bb57a1e",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_9bb57a1e",
+          "branch": "bruv/primary-readability-tests-conversation-d-9bb57a1e",
+          "launchBase": "5ae62b2e32a076821c5c28aeef53100b2f8c7689"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
@@ -1792,7 +1799,8 @@
           "blob": "1df4e439d4bf3ba40bf20c4e5accdfbaf3134b4b",
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
-      ]
+      ],
+      "launchBase": "5ae62b2e32a076821c5c28aeef53100b2f8c7689"
     },
     {
       "focus": "tests/diagnostics.test.ts",
@@ -2085,14 +2093,15 @@
     {
       "focus": "tests/task-rows.test.ts",
       "initialBlob": "020528a4b2ce3105e8d0c203cee2c9e13273cf96",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_e44a3fd7",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_e44a3fd7",
           "branch": "bruv/primary-task-row-tests-and-observed-type-e44a3fd7",
           "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
-          "reason": "fresh required primary plus observed TS2741 fixture contract repair"
+          "reason": "fresh required primary plus observed TS2741 fixture contract repair",
+          "commit": "1b66a8d1dc898e2953e963da9f4af5b663bafd86"
         }
       ],
       "judgeRounds": [],
@@ -2112,8 +2121,15 @@
           "blob": "56b4ebeb79c6dfb6538fd3dd5fa2eb83e1185587"
         }
       ],
-      "priority": "next-primary: fresh test file focus plus observed TS2741 repair",
-      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
+      "priority": "next-judge: reproduced full tsc fixture repair",
+      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+      "changedRelatedPaths": [],
+      "result": "Fresh primary finds readable local lifecycle/replay/SDK fixtures; repairs reproduced TS2741 with only no-op invalidate on throwing Component, assertions/render failure unchanged.",
+      "checks": [
+        "Full tsc passes after owned assets",
+        "31 tests /452 assertions before and after",
+        "Exact one-line source delta; format/lint/diff"
+      ]
     },
     {
       "focus": "tests/tasks-ui-proof-tooling.test.py",
