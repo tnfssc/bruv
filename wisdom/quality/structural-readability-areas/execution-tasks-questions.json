@@ -6,7 +6,7 @@
     {
       "focus": "scripts/fixtures/task-placement-clean/fake-provider.ts",
       "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_15c2f619",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_15c2f619",
@@ -17,13 +17,21 @@
       "judgeRounds": [
         {
           "id": "task_d44580c4",
-          "status": "running",
+          "status": "complete",
           "candidate": "974450ede40c7c55f70002457fcacfbccaa22acb",
-          "base": "5541e227169c66a51af1854b644cbf42103f29d7"
+          "base": "5541e227169c66a51af1854b644cbf42103f29d7",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Thin request route/parse/log/scenarioSSE,errorlog400 boundary coherent; container readiness/cleanup belongs capture, stage machine belongs scenario; no provider authority inferred.",
+          "checks": [
+            "independent4scenario tests13assertions",
+            "actual handler/real scenario interceptedserve/appends health404/SSE/log/error400/parsing-order probe pass",
+            "no HTTPserver/Docker/capture/video/compiledpair/authSSH/liveprovider"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "5541e227169c66a51af1854b644cbf42103f29d7",
       "changedRelatedPaths": [],
       "readingResult": "No-change: route→parse→record inference→scenarioSSE; error→record→400. Capture owns readiness/diagnostics/containercleanup, scenario owns decisions.",
@@ -36,27 +44,52 @@
     {
       "focus": "scripts/fixtures/task-placement-clean/models.json",
       "initialBlob": "c84a95a5c122e5e94128004cea6607e770db1195",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
-    },
-    {
-      "focus": "scripts/fixtures/task-placement-clean/scenario.ts",
-      "initialBlob": "1dd0984297604e141df606d48595c1f698a75ab7",
       "status": "primary-running",
       "primary": {
-        "id": "task_c163c18d",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c163c18d",
-        "branch": "bruv/primary-scripts-fixtures-task-placement--c163c18d",
-        "base": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9",
+        "id": "task_7fd7969e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_7fd7969e",
+        "branch": "bruv/primary-scripts-fixtures-task-placement--7fd7969e",
+        "base": "82785a3026958b2a41115c214ac4872edeab2ceb",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9"
+      "launchBase": "82785a3026958b2a41115c214ac4872edeab2ceb"
+    },
+    {
+      "focus": "scripts/fixtures/task-placement-clean/scenario.ts",
+      "initialBlob": "1dd0984297604e141df606d48595c1f698a75ab7",
+      "status": "judge-running",
+      "primary": {
+        "id": "task_c163c18d",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c163c18d",
+        "branch": "bruv/primary-scripts-fixtures-task-placement--c163c18d",
+        "base": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9",
+        "commit": "c320f627d8afad6cbfbce09906a0e0325dcffb13"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_58a442b6",
+          "status": "running",
+          "candidate": "c320f627d8afad6cbfbce09906a0e0325dcffb13",
+          "base": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9"
+        }
+      ],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9",
+      "changedRelatedPaths": [
+        "scripts/fixtures/task-placement-clean/scenario.ts",
+        "scripts/task-placement-clean-scenario.test.ts"
+      ],
+      "readingResult": "Inline executable templates expose ask→block and list→resolve→write effects/ownership without concatenated fragment reconstruction; transcript selection/failure rejection/SSE preserved.",
+      "checks": [
+        "6 tests69 assertions",
+        "7 base/candidate turns same after emittedcode whitespace normalize",
+        "format/diff pass lint noerrors existingdiagnostics",
+        "no capture/video/build/providerSSH"
+      ]
     },
     {
       "focus": "scripts/fixtures/task-placement-clean/settings.json",
@@ -153,7 +186,7 @@
     {
       "focus": "scripts/leak-audit/execution-runtime.ts",
       "initialBlob": "a1b7750b9557d511dd7d7c5d9d9a417217829995",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_bf95f257",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf95f257",
@@ -164,13 +197,23 @@
       "judgeRounds": [
         {
           "id": "task_9bfea73b",
-          "status": "running",
+          "status": "complete",
           "candidate": "db26839716843264d2b04407245826d2ad453bf0",
-          "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf"
+          "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Audit-owned artifacts/PIDs/samples and finally, aborttimer execution/release and descendant launch/register/observe coherent. Named effects replace positional undefined/any. Workloads/criteria unchanged; explicit timer rejection fix verified.",
+          "checks": [
+            "independent343candidate executions10labels8FDs6reportedaborts10descendants0survivors exactPIDs absent",
+            "baseline/candidate logs compared not fullbaseline rerun",
+            "synthetic rejection baseline1timer0clears candidate1timer1clear bothrootremoved",
+            "strict tsc/format/diff pass",
+            "observational Linux only no leakabsence/replay/ACK/disk proof"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "4aa62fc619c272ae73a45011e2fc1ce41b770812",
+      "integration": "full audit source diff integrated",
       "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
       "changedRelatedPaths": [
         "scripts/leak-audit/execution-runtime.ts"
@@ -1967,7 +2010,7 @@
     {
       "focus": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "rework-awaiting-judge",
+      "status": "rework-judge-running",
       "primary": {
         "id": "task_51bb34f2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_51bb34f2",
@@ -1990,6 +2033,14 @@
           "checks": [
             "independent13 pass70 assertions green despite reproduced persistence leak"
           ]
+        },
+        {
+          "id": "task_2ae89e04",
+          "status": "running",
+          "candidate": "a7e7c1de30189ac337e9fec9c3599e9c2e42a53d",
+          "base": "5fdfc376dfeb1ba0bcd80eef80d37f41b890f1eb",
+          "priorJudge": "task_207ccf5d",
+          "writerResponse": "Imported full rejected structural test diff; reproduced policy child history escaping temp root, containment assertion fails before and passes after local sessionManager restoration. Keeps all assertions/real manager/shutdown-before-rm. Removed only own reproduction artifact."
         }
       ],
       "acceptedBlob": null,
