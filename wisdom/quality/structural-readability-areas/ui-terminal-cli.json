@@ -68,28 +68,49 @@
     {
       "focus": "scripts/activity-terminal-acceptance.py",
       "initialBlob": "6189961015f97059362cb3698f831189221ae7a0",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_28f2469a",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_28f2469a",
           "branch": "bruv/primary-readability-scripts-activity-ter-28f2469a",
-          "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b"
+          "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
+          "commit": "b02afcce77ccd1ebb021dc6230641ab0294ce68e"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b"
+      "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
+      "changedRelatedPaths": [
+        "tests/activity-terminal-acceptance-test.py"
+      ],
+      "result": "Candidate fixture exposes extraction/failure priority/ordered routing, with scenario-local retained-call progression instead of one mixed generator.",
+      "checks": [
+        "13 terminal tests and 10 unchanged runtime-helper tests",
+        "Base/candidate fixture and SSE equality across 44 histories",
+        "Lifecycle/transport AST identical; syntax/help/diff"
+      ],
+      "limits": [
+        "Fixture-only no compiled terminal/visual acceptance"
+      ]
     },
     {
       "focus": "scripts/ansi_video_renderer.py",
       "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_32c7f556",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_32c7f556",
+          "branch": "bruv/primary-readability-scripts-ansi_video_r-32c7f556",
+          "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
     },
     {
       "focus": "scripts/benchmark-footer-context.ts",
@@ -363,11 +384,19 @@
     {
       "focus": "scripts/terminal-perf/interaction-report.ts",
       "initialBlob": "18af4bb852d356ff8cb446eccd13fad32242b79d",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_5930e394",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5930e394",
+          "branch": "bruv/primary-readability-scripts-terminal-per-5930e394",
+          "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
     },
     {
       "focus": "scripts/terminal-perf/interaction-tool-events.test.ts",
@@ -381,19 +410,30 @@
     {
       "focus": "scripts/terminal-perf/interaction-worker.ts",
       "initialBlob": "479071932b154974ea189736685241aa5f1995c5",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_8e35cbf3",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_8e35cbf3",
           "branch": "bruv/primary-readability-scripts-terminal-per-8e35cbf3",
-          "launchBase": "f52931303dd0e226144ce3eb7a490867b8c1f146"
+          "launchBase": "f52931303dd0e226144ce3eb7a490867b8c1f146",
+          "commit": "0975c6b36cb08cf00bbc697c414746d09d0e10f1"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "f52931303dd0e226144ce3eb7a490867b8c1f146"
+      "launchBase": "f52931303dd0e226144ce3eb7a490867b8c1f146",
+      "changedRelatedPaths": [],
+      "result": "No-change: family-local setup/action/finally boundaries and send-init snapshots/clear-before-measure are explicit; generic runner would hide distinct lifetimes.",
+      "checks": [
+        "19 tests /98 assertions",
+        "All 43 catalog CLI cases produced 193 normalized cases",
+        "Unknown worker exits 2 without JSON"
+      ],
+      "limits": [
+        "No build/provider/compiled CLI/PTY/performance"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/navigation-workloads.ts",
@@ -407,19 +447,25 @@
     {
       "focus": "scripts/terminal-perf/options.ts",
       "initialBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_61e4e31c",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_61e4e31c",
           "branch": "bruv/primary-readability-scripts-terminal-per-61e4e31c",
-          "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b"
+          "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
+          "commit": "b17800456f856f9314ab01b6387210c2f3376592"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b"
+      "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
+      "changedRelatedPaths": [],
+      "result": "No-change: defaults/validation, runner-owned union selection and explicit budget override remain direct.",
+      "checks": [
+        "9 options/report/CLI tests /60 assertions"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/profiler.ts",
@@ -1968,8 +2014,16 @@
     {
       "focus": "tests/task-rows.test.ts",
       "initialBlob": "020528a4b2ce3105e8d0c203cee2c9e13273cf96",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_e44a3fd7",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_e44a3fd7",
+          "branch": "bruv/primary-task-row-tests-and-observed-type-e44a3fd7",
+          "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+          "reason": "fresh required primary plus observed TS2741 fixture contract repair"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related blob judged; full tsc blocked by missing fixture Component.invalidate; next free primary slot must repair and freshly judge",
@@ -1987,7 +2041,8 @@
           "blob": "56b4ebeb79c6dfb6538fd3dd5fa2eb83e1185587"
         }
       ],
-      "priority": "next-primary: fresh test file focus plus observed TS2741 repair"
+      "priority": "next-primary: fresh test file focus plus observed TS2741 repair",
+      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
     },
     {
       "focus": "tests/tasks-ui-proof-tooling.test.py",
