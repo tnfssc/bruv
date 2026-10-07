@@ -92,7 +92,7 @@
     {
       "focus": "site/assets/brand/bruv-wordmark.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_e142ec25",
@@ -107,10 +107,16 @@
         {
           "id": "task_ac6fe577",
           "candidate": "b561da257dcfa98464b66377ae61aff1503e8695",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Accessible root/shared fill-transform/four glyph paths are explicit geometry; traced asset generation/README/template/CSS/build consumers. Judge2 tests/63 assertions prove cell/semantic bounds not SVG fidelity/freshness. No regeneration/browser/build.",
+          "objections": []
         }
       ],
-      "initialBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7"
+      "initialBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7",
+      "acceptedBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/assets/brand/wordmark-cells.json",
@@ -138,7 +144,7 @@
     {
       "focus": "site/assets/cli-settings.txt",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_a55e7213",
@@ -149,7 +155,13 @@
           "result": "Authentic PTY recording unchanged; rewriting escape bytes changes replay evidence not structure. PTY->Ghostty->explicit crop->styled JSON, not current scripted landing.1 integrity/reflow test/7 assertions;no replay/build."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_f29c1365",
+          "candidate": "12fc1cec879428a41139b35049fbcd74cbe559a2",
+          "state": "running"
+        }
+      ],
       "initialBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569"
     },
     {
@@ -187,13 +199,15 @@
     {
       "focus": "site/capture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_a8322d06",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_a8322d06",
           "branch": "bruv/primary-site-capture.ts-a8322d06",
-          "base": "e9e1127352dd78ae1a7946fccea740d01d948a5d"
+          "base": "e9e1127352dd78ae1a7946fccea740d01d948a5d",
+          "commit": "f1fbca6a73dbd788dd994fd40d9ddb37cbb0c691",
+          "result": "reflowMenuRow owns label/value alignment+fallback,wrapRow styled line splitting; settingsCapture native output or decode/dispatch instead of interleaved fit/continue.10 tests/123298 assertions,widths1-110 complete baseline output parity incl source/full-width identity;TS/format/lint pass. Only tests currently call capture;not current shipped demo path."
         }
       ],
       "judges": [],
@@ -440,8 +454,15 @@
     {
       "focus": "site/package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_f9d8fefe",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_f9d8fefe",
+          "branch": "bruv/primary-site-package.json-f9d8fefe",
+          "base": "4309575976bb77cfe16ee459cfc0cc6eebb17663"
+        }
+      ],
       "judges": [],
       "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d"
     },
