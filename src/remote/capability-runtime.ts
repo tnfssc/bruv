@@ -70,6 +70,22 @@ async function durable(path: string, value: unknown): Promise<void> {
   }
 }
 const conflict = (e: unknown) => (e as NodeJS.ErrnoException).code === "EEXIST";
+// Grants, requests and replies may be replayed, but never replaced with a different intent.
+async function persistIntent(path: string, value: unknown): Promise<void> {
+  try {
+    await durable(path, value);
+  } catch (error) {
+    if (!conflict(error) || JSON.stringify(await read(path)) !== JSON.stringify(value)) throw error;
+  }
+}
+// Cancellation, revocation and terminal state are one-way: the first durable marker wins.
+async function persistMarker(path: string, value: unknown): Promise<void> {
+  try {
+    await durable(path, value);
+  } catch (error) {
+    if (!conflict(error)) throw error;
+  }
+}
 const pause = (ms: number, signal?: AbortSignal) =>
   new Promise<void>((r) => {
     const done = () => {
@@ -83,19 +99,17 @@ const pause = (ms: number, signal?: AbortSignal) =>
 
 const requestQueues = new Map<string, Promise<void>>();
 async function serializeRequest<T>(key: string, run: () => Promise<T>): Promise<T> {
-  const prior = requestQueues.get(key) ?? Promise.resolve();
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => {
-    release = resolve;
-  });
-  const queued = prior.then(() => gate);
-  requestQueues.set(key, queued);
-  await prior;
+  const result = (requestQueues.get(key) ?? Promise.resolve()).then(run);
+  // A failed admission still releases the next request; only its caller receives the rejection.
+  const settled = result.then(
+    () => {},
+    () => {},
+  );
+  requestQueues.set(key, settled);
   try {
-    return await run();
+    return await result;
   } finally {
-    release();
-    if (requestQueues.get(key) === queued) requestQueues.delete(key);
+    if (requestQueues.get(key) === settled) requestQueues.delete(key);
   }
 }
 export type GrantMetadata = { id: string; taskId: string; kinds: CapabilityKind[] };
@@ -140,30 +154,18 @@ export class OwnerCapabilityMailbox {
     });
     if (grants.length >= 64 && !grants.includes(grant.id + ".json")) throw Error("Capability grant limit reached");
     const value = { id: grant.id, taskId: this.taskId, kinds: [...grant.kinds] };
-    try {
-      await durable(this.grantPath(grant.id), value);
-    } catch (e) {
-      if (!conflict(e) || JSON.stringify(await read(this.grantPath(grant.id))) !== JSON.stringify(value)) throw e;
-    }
+    await persistIntent(this.grantPath(grant.id), value);
   }
   async revoke(grantId: string): Promise<void> {
     if (!(await read(this.grantPath(grantId)))) throw new Error("Unknown grant");
-    try {
-      await durable(this.revokedPath(grantId), { revoked: true });
-    } catch (e) {
-      if (!conflict(e)) throw e;
-    }
+    await persistMarker(this.revokedPath(grantId), { revoked: true });
   }
   async grant(grantId: string): Promise<GrantMetadata | undefined> {
     if (await read(this.revokedPath(grantId))) return undefined;
     return read<GrantMetadata>(this.grantPath(grantId));
   }
   async terminal(reason = "Task ended"): Promise<void> {
-    try {
-      await durable(this.terminalPath(), { reason });
-    } catch (e) {
-      if (!conflict(e)) throw e;
-    }
+    await persistMarker(this.terminalPath(), { reason });
   }
   request(
     grantId: string,
@@ -197,21 +199,13 @@ export class OwnerCapabilityMailbox {
     if (records.length >= 1024) throw Error("Capability mailbox retention limit reached");
     const pending = await this.pending();
     if (pending.length >= 32) throw new Error("Too many pending capability requests");
-    try {
-      await durable(this.requestPath(requestId), value);
-    } catch (e) {
-      if (!conflict(e) || JSON.stringify(await read(this.requestPath(requestId))) !== JSON.stringify(value)) throw e;
-    }
+    await persistIntent(this.requestPath(requestId), value);
     return value;
   }
   async cancelRequest(requestId: string): Promise<void> {
     if (!id(requestId)) throw new Error("Invalid request id");
     if (!(await read(this.requestPath(requestId)))) return;
-    try {
-      await durable(this.cancelledPath(requestId), { cancelled: true });
-    } catch (e) {
-      if (!conflict(e)) throw e;
-    }
+    await persistMarker(this.cancelledPath(requestId), { cancelled: true });
   }
   async pending(): Promise<Request[]> {
     let names: string[];
@@ -263,12 +257,7 @@ export class OwnerCapabilityMailbox {
       if (JSON.stringify(previous) !== JSON.stringify(reply)) throw new Error("Reply ID conflict");
       return true;
     }
-    try {
-      await durable(this.replyPath(reply.requestId), reply);
-    } catch (e) {
-      if (!conflict(e) || JSON.stringify(await read(this.replyPath(reply.requestId))) !== JSON.stringify(reply))
-        throw e;
-    }
+    await persistIntent(this.replyPath(reply.requestId), reply);
     return true;
   }
   async awaitReply(request: Request, options: { signal?: AbortSignal; deadlineMs?: number } = {}): Promise<string> {
@@ -395,21 +384,12 @@ export class ClientCapabilityStore {
     const root = await realpath(localRoot);
     if (!(await stat(root)).isDirectory()) throw new Error("Invalid local repo root");
     const record: Grant = { id: grantId, taskId, repoRoot: root, kinds: [...kinds] };
-    try {
-      await durable(join(this.dir, grantId + ".json"), record);
-    } catch (e) {
-      if (!conflict(e) || JSON.stringify(await read(join(this.dir, grantId + ".json"))) !== JSON.stringify(record))
-        throw e;
-    }
+    await persistIntent(join(this.dir, grantId + ".json"), record);
     return { id: grantId, taskId, kinds: [...kinds] };
   }
   async revoke(grantId: string): Promise<void> {
     if (!id(grantId)) throw new Error("Invalid grant id");
-    try {
-      await durable(join(this.dir, grantId + ".revoked"), true);
-    } catch (e) {
-      if (!conflict(e)) throw e;
-    }
+    await persistMarker(join(this.dir, grantId + ".revoked"), true);
   }
   async serve(request: Request, signal?: AbortSignal): Promise<Reply> {
     if (

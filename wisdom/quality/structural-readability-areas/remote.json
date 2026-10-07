@@ -163,14 +163,56 @@
     {
       "focus": "src/remote/capability-runtime.ts",
       "initialBlob": "3e7b26feb5787add6c809baf9a3c92ba02e88a91",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_f6ad3799",
+          "status": "completed",
+          "candidate": "33088eba8459d07a139130e3fe1b5166fb92e6d2",
+          "context": "Original primary plus fresh combination preserving accepted services test edits; no earlier source acceptance.",
+          "verdict": "ACCEPT",
+          "reason": "Intent replay/conflict versus first-marker publication explicit. Admission chain follows actual operation result, rejection-neutral tail and identity cleanup retain progress and do not serialize reply wait.",
+          "checks": "Judge original/full combined diff and callers; both contributors test bodies preserved byte-exact; hash-verified candidate snapshot 86 pass/1367 assertions, clean diff; process-local queue only.",
+          "suppliedCandidateCorrection": {
+            "previous": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+            "actual": "33088eba8459d07a139130e3fe1b5166fb92e6d2",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
+        }
+      ],
       "launchBase": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
       "primary": {
         "id": "task_efc7153f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_efc7153f",
-        "branch": "bruv/remote-primary-capability-runtime-efc7153f"
-      }
+        "branch": "bruv/remote-primary-capability-runtime-efc7153f",
+        "commit": "52dbf0a027436b6cfd3760551cc1fc60924d9d3f",
+        "identityCorrection": {
+          "previousRecord": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
+      },
+      "result": "persistIntent owns exact replay/changed intent conflict; persistMarker first-record-wins; admission result chain replaces deferred gate/manual release.",
+      "changedRelatedPaths": [
+        "tests/remote-capability-runtime.test.ts"
+      ],
+      "checks": "12 pass/146 assertions; added tests pass baseline; format/lint/diff pass.",
+      "reworks": [
+        {
+          "id": "task_b95e28d8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_b95e28d8",
+          "branch": "bruv/remote-combine-capability-runtime-candid-b95e28d8",
+          "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "reason": "Integrate primary candidate with accepted services-related test additions before first independent judgment.",
+          "commit": "33088eba8459d07a139130e3fe1b5166fb92e6d2",
+          "response": "Combined runtime byte-identical original primary; accepted services test bodies plus runtime regressions all preserved. 86 pass/1367; full bun run check pass.",
+          "identityCorrection": {
+            "previousRecord": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+            "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+          }
+        }
+      ],
+      "acceptedBlob": "4bbb64ff4d098157cd34868561e286c8292abfe8",
+      "integrationState": "full combined candidate source/test applied without overlap; exact blobs"
     },
     {
       "focus": "src/remote/client.ts",
@@ -180,10 +222,15 @@
         {
           "id": "task_f7fa308f",
           "status": "completed",
-          "candidate": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
+          "candidate": "4b540816a639f8af3043785e355ea253b43b4dac",
           "verdict": "ACCEPT",
           "reason": "sync exposes full locked fetch/accept/save lifetime then releases before service integrations; whole-page validation/terminal preservation/reply reconciliation coherently owned by acceptTranscriptPage.",
-          "checks": "Actual full source/tests/diff and callers inspected; format/lint/diff pass; runtime blocked zod/mini, worker 100 passes not independently reproduced."
+          "checks": "Actual full source/tests/diff and callers inspected; format/lint/diff pass; runtime blocked zod/mini, worker 100 passes not independently reproduced.",
+          "suppliedCandidateCorrection": {
+            "previous": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
+            "actual": "4b540816a639f8af3043785e355ea253b43b4dac",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
         }
       ],
       "launchBase": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
@@ -191,7 +238,11 @@
         "id": "task_6f52d2e9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_6f52d2e9",
         "branch": "bruv/remote-primary-client-6f52d2e9",
-        "commit": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589"
+        "commit": "4b540816a639f8af3043785e355ea253b43b4dac",
+        "identityCorrection": {
+          "previousRecord": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
       },
       "result": "sync exposes fetch/page acceptance/durable save inside lock then servicing outside; acceptTranscriptPage owns validation-before-mutation and snapshot/receipt reconciliation.",
       "changedRelatedPaths": [
@@ -231,8 +282,29 @@
     {
       "focus": "src/remote/entry.ts",
       "initialBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_1a846ca2",
+          "status": "completed",
+          "candidate": "e9674b1b8468e74288f6ae2dabe297d2d752e13e",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Single bounded stdin→parse/ownership validation→await owner→encode→await stdout flush path; transport errors distinct from owner identity/replay/execution authority.",
+          "checks": "Judge candidate 2 pass/18 assertions/1 filtered; full diff/callers checked; no successful launch/size/cancel/live/compiled proof."
+        }
+      ],
+      "primary": {
+        "id": "task_03f678fa",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_03f678fa",
+        "branch": "bruv/remote-primary-entry-03f678fa",
+        "commit": "e9674b1b8468e74288f6ae2dabe297d2d752e13e"
+      },
+      "launchBase": "6c4dcba1024226c5e6afb5e863cbc8a105b73838",
+      "result": "Unchanged bounded stdin/parsing/own-field validation/await owner/error JSON/await stdout flush sequence; owner remains semantic authority.",
+      "checks": "2 pass/18 assertions; own asset prep fixed generated asset setup; no live/build.",
+      "changedRelatedPaths": [],
+      "acceptedBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
+      "integrationState": "unchanged exact area blob"
     },
     {
       "focus": "src/remote/extension.ts",
@@ -267,8 +339,14 @@
     {
       "focus": "src/remote/job-observations.ts",
       "initialBlob": "4732fa1eb7cda6df8303d6d6ee6316b785611c9f",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "primary": {
+        "id": "task_f53ebeab",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_f53ebeab",
+        "branch": "bruv/remote-primary-job-observations-f53ebeab"
+      },
+      "launchBase": "e027cb0fcb01b7f964953fa3503973b2abfb9669"
     },
     {
       "focus": "src/remote/jobs.ts",
@@ -314,12 +392,31 @@
     {
       "focus": "src/remote/owner-child.ts",
       "initialBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_3fe528f2",
-          "status": "running",
-          "candidate": "d9b1b50ea6e9eec12a9f7bfa43fd3ab70d5e239f"
+          "status": "killed",
+          "candidate": "d9b1b50ea6e9eec12a9f7bfa43fd3ab70d5e239f",
+          "attention": "Two attention checkpoints (20 minutes) with unchanged output ending first source read at 12:46:54; stop requested to replace stalled review. No verdict.",
+          "stopResult": {
+            "status": "running",
+            "termination": {
+              "cause": "user-stop",
+              "requestedAt": "2026-10-07T13:07:14.881Z"
+            }
+          },
+          "verdict": null,
+          "reason": "No verdict; stalled review replaced after two unchanged-output attention checkpoints; SIGKILL completion confirmed."
+        },
+        {
+          "id": "task_280ab6b7",
+          "status": "completed",
+          "candidate": "d9b1b50ea6e9eec12a9f7bfa43fd3ab70d5e239f",
+          "context": "Fresh replacement; prior task killed with no verdict, current caller/test combined context explicitly supplied.",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Close guard/error/escalation/nonrejecting cleanup promise encode necessary distinctions. Owner retains cancellation/settlement policy and terminal publication after child release/persistence drain.",
+          "checks": "Fresh judge current owner/child identities verified; area lifecycle suite 11 pass/106 assertions; relevant services capabilityNeeds unchanged despite wider services diff."
         }
       ],
       "launchBase": "c9a84cf7c9eb36006c149e4f28f291486808a725",
@@ -331,7 +428,9 @@
       },
       "result": "Unchanged OwnerChild owns observed close and TERM/KILL escalation. Error retained while cleanup continues; waitForExit reports after close, release completes cleanup. Owner drains/publishes afterward.",
       "checks": "11 pass/106 assertions local Linux source fixtures; no live/compiled.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
+      "integrationState": "unchanged area blob; fresh replacement judge considered integrated caller/test context"
     },
     {
       "focus": "src/remote/owner-rpc.ts",
@@ -347,10 +446,15 @@
         {
           "id": "task_b276db50",
           "status": "completed",
-          "candidate": "79b37fbc28399fb32eced5774c7c62edd44d438d",
+          "candidate": "c2fc7873a5df0e9b293dfe1ee88f943636086ef8",
           "verdict": "ACCEPT",
           "reason": "Journal descriptor/sequence/replay refusal/limits/full writes/fsync belong to one resource-owning operation; existing answer/native settlement/child boundaries need no churn. Combined cancellation/artifacts/client contracts inspected compatible.",
-          "checks": "Judge full diff/callers checked; runtime 3 pass/11 fail/3 errors from dependency loading, not passing. Needs dependency-ready area rerun."
+          "checks": "Judge full diff/callers checked; runtime 3 pass/11 fail/3 errors from dependency loading, not passing. Needs dependency-ready area rerun.",
+          "suppliedCandidateCorrection": {
+            "previous": "79b37fbc28399fb32eced5774c7c62edd44d438d",
+            "actual": "c2fc7873a5df0e9b293dfe1ee88f943636086ef8",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
         }
       ],
       "launchBase": "79b37fbc28399fb32eced5774c7c62edd44d438d",
@@ -358,7 +462,11 @@
         "id": "task_d98e8afe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_d98e8afe",
         "branch": "bruv/remote-primary-owner-d98e8afe",
-        "commit": "79b37fbc28399fb32eced5774c7c62edd44d438d"
+        "commit": "c2fc7873a5df0e9b293dfe1ee88f943636086ef8",
+        "identityCorrection": {
+          "previousRecord": "79b37fbc28399fb32eced5774c7c62edd44d438d",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
       },
       "result": "OwnerEventJournal owns descriptor/sequence/replay guard/full writes/fsync; runner append failure stops child; release/drain/close order retained before terminal publication.",
       "checks": "56 pass/373 assertions across five suites; two new journal checks pass baseline; format/lint/diff pass warnings.",
@@ -383,8 +491,24 @@
     {
       "focus": "src/remote/question-bridge.ts",
       "initialBlob": "2d41cfbd4e6901e8dd683047f60c7337444c20f8",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_7e7ebdea",
+          "status": "running",
+          "candidate": "4fdf931cc855a1cef5e5e56aa75ce044af8a865e"
+        }
+      ],
+      "launchBase": "d9bd6ecbc77b5160c09e1d539c4f4cf29352f395",
+      "primary": {
+        "id": "task_2ff5dd20",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_2ff5dd20",
+        "branch": "bruv/remote-primary-question-bridge-2ff5dd20",
+        "commit": "4fdf931cc855a1cef5e5e56aa75ce044af8a865e"
+      },
+      "result": "sync separates eligible task admission, task-scoped question projection and delivered receipt reconciliation; common pinned-owner check also serves dispatch, initial/fresh mirror reads explicit.",
+      "checks": "89 pass/1346 assertions; bridge-rooted TS/format/lint/diff pass warnings; no full/live.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/repository-download.ts",
@@ -395,8 +519,39 @@
     {
       "focus": "src/remote/repository-wire.ts",
       "initialBlob": "24ff5f07fa4e85cbe898cf022d81cb507c0dbf90",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_6ea69bdc",
+          "status": "completed",
+          "candidate": "755b63c0fbed29dfb20f4236e39c3387b108761e",
+          "suppliedCandidateCorrection": {
+            "previous": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+            "actual": "755b63c0fbed29dfb20f4236e39c3387b108761e",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          },
+          "verdict": "ACCEPT",
+          "reason": "Upload receipt/replay/persistence/ready separate from digest/destructive checkout construction; launch obtains immutable handoff before upload/dispatch, return fences unchanged.",
+          "checks": "Judge inlined upload equivalent modulo whitespace; terminal return/recovery suffix byte-identical; 9 pass/50 assertions, broader dependency loading blocked.",
+          "limits": "Existing unchanged retryRepository omits saved title while launch replay compares title, so titled retries can conflict. Not fixed by readability patch."
+        }
+      ],
+      "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+      "primary": {
+        "id": "task_b4da79f3",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_b4da79f3",
+        "branch": "bruv/remote-primary-repository-wire-b4da79f3",
+        "commit": "755b63c0fbed29dfb20f4236e39c3387b108761e",
+        "identityCorrection": {
+          "previousRecord": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
+      },
+      "result": "Upload receipt validation/replay/persistence/ready publication separated from digest verification/destructive checkout replacement; launch obtains durable pinned handoff before uploading and using saved intent.",
+      "checks": "58 pass/341 assertions; inlined upload equivalent modulo indentation; return/terminal bodies unchanged; format/lint/diff pass.",
+      "changedRelatedPaths": [],
+      "acceptedBlob": "64475e6cd3a0b363dfcdcdcb9ea936e83082d6f7",
+      "integrationState": "exact accepted source patch applied without overlap; no related edits"
     },
     {
       "focus": "src/remote/repository.md",
@@ -434,20 +589,73 @@
     {
       "focus": "src/remote/root-cli.ts",
       "initialBlob": "5c1ea1bcf7042888c9c1e340fb3ab1e79579b64f",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "e027cb0fcb01b7f964953fa3503973b2abfb9669",
+      "primary": {
+        "id": "task_6ad5ae14",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_6ad5ae14",
+        "branch": "bruv/remote-primary-root-cli-6ad5ae14"
+      }
     },
     {
       "focus": "src/remote/root-client.ts",
       "initialBlob": "936ef53c07b9a1d4fcf3c201479c65f29c90d0fe",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_86eaaad6",
+          "status": "completed",
+          "candidate": "f1ecb41079440ac99349f7607d318bdeb99ea5a3",
+          "verdict": "ACCEPT",
+          "reason": "Locked state acquisition and source upload are coherent operations with visible durable writes; startup identity/admission clearer. Judge found no safety reduction but reproduced changed concurrent command order.",
+          "checks": "Candidate client 8 pass/46 assertions; store/transport 9 pass/89; remaining dependency loading failures. Probes: baseline concurrent abort then startup prompt; candidate startup prompt then abort. Checkpoints/replay preserved.",
+          "coordinatorObjection": "Not behavior-neutral: writer did not test/document ordering change as intentional observed fix. Preserve original startup reservation/admission lock boundary rather than smuggling scheduling change into readability. Source not integrated.",
+          "suppliedCandidateCorrection": {
+            "previous": "78a0c7cd351e3226921f4f4c361c8809f3fcbf21",
+            "actual": "f1ecb41079440ac99349f7607d318bdeb99ea5a3",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
+        },
+        {
+          "id": "task_b04a86e2",
+          "status": "completed",
+          "candidate": "613bf20cad676a4e38ad99c2b8cc5b8c8167c11f",
+          "context": "Prior ACCEPT with detected order change; coordinator required preservation; rework restores/test-proves baseline boundary.",
+          "verdict": "ACCEPT",
+          "reason": "Locked fresh-state acquisition and pinned upload are coherent, durable writes visible. Startup explicitly reserves then admits in separate lock turns; independent probes confirm original abort→prompt ordering, status-only recovery and no resend.",
+          "checks": "Judge final client/store/transport 19 pass/144 assertions; old tests/candidate tests retained byte-prefix; baseline/original/rework ordering reproduced; broader suites dependency blocked."
+        }
+      ],
       "launchBase": "78a0c7cd351e3226921f4f4c361c8809f3fcbf21",
       "primary": {
         "id": "task_a812b85a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_a812b85a",
-        "branch": "bruv/remote-primary-root-client-a812b85a"
-      }
+        "branch": "bruv/remote-primary-root-client-a812b85a",
+        "commit": "f1ecb41079440ac99349f7607d318bdeb99ea5a3",
+        "identityCorrection": {
+          "previousRecord": "78a0c7cd351e3226921f4f4c361c8809f3fcbf21",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
+      },
+      "changedRelatedPaths": [
+        "tests/remote-root-client.test.ts"
+      ],
+      "result": "withState centralizes lock/read; source upload separated. Startup one-lock consolidation changed observable concurrent command order, requiring preservation rework.",
+      "checks": "Worker 60 pass/364 assertions; independent client/store/transport 17 pass/135; concurrency change reproduced by judge.",
+      "integrationState": "only ordering-preserving rework applied, original changed-order candidate never joined",
+      "reworks": [
+        {
+          "id": "task_8c9c6147",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_8c9c6147",
+          "branch": "bruv/remote-rework-root-client-startup-orderi-8c9c6147",
+          "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "reason": "Preserve baseline concurrent startup/abort ordering and two-lock boundary; original judge ACCEPT but coordinator blocks unrequested scheduling change.",
+          "commit": "613bf20cad676a4e38ad99c2b8cc5b8c8167c11f",
+          "response": "Restored two-lock startup boundary and added regression passes baseline/rework, fails original candidate; 62 pass/373 assertions, full check pass."
+        }
+      ],
+      "acceptedBlob": "7670632c58bcccd97dad7f5e49e654f4eb79a4c0"
     },
     {
       "focus": "src/remote/root-contract.ts",
@@ -479,14 +687,41 @@
     {
       "focus": "src/remote/root-entry.ts",
       "initialBlob": "727f150cfcf105e5faef09c6af419393f71f931d",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_b0d1026c",
+          "status": "completed",
+          "candidate": "bec424285135d23fe400d6c3e03142c99176bf75",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Bounded one-request/await semantic owner/encode failures/await stdout sequence is coherent; response-delivery rejection outside catch ensures no second false response and nonzero exit.",
+          "checks": "Judge matching-source 16 pass/106; malformed/oversize subprocess errors, injected stdout failure one write/exit1; no live/compiled/full lifecycle."
+        }
+      ],
+      "launchBase": "c6f7908aafd83361e6ee6ca1a351cd152ee764fc",
+      "primary": {
+        "id": "task_717a7437",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_717a7437",
+        "branch": "bruv/remote-primary-root-entry-717a7437",
+        "commit": "bec424285135d23fe400d6c3e03142c99176bf75"
+      },
+      "result": "Unchanged bounded input/parse/await owner/error encode/await stdout sequence; delivery outside catch retains nonzero write failure exit, owner owns validation/replay/storage.",
+      "checks": "16 existing pass/106 assertions plus malformed JSON and oversized input subprocess probes; no live/build.",
+      "changedRelatedPaths": [],
+      "acceptedBlob": "727f150cfcf105e5faef09c6af419393f71f931d",
+      "integrationState": "unchanged exact area blob"
     },
     {
       "focus": "src/remote/root-options.ts",
       "initialBlob": "741b7f4a9bd5a1639ca2ba52813cbf5d9ab9167e",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "8f9797abb9b4bbf6e443740368321320aacade21",
+      "primary": {
+        "id": "task_59933a23",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_59933a23",
+        "branch": "bruv/remote-primary-root-options-59933a23"
+      }
     },
     {
       "focus": "src/remote/root-owner.ts",
@@ -496,10 +731,15 @@
         {
           "id": "task_e77399ef",
           "status": "completed",
-          "candidate": "c167ab16afb92729c5cc3848bf9ce2258e8d8104",
+          "candidate": "770c112fcdd39d6ed3a9a43f593209e5218ac43f",
           "verdict": "ACCEPT",
           "reason": "Close operation groups durable admission fence/queue clear/settlement/pending evidence/end; exit requires clean process result and nonunknown state before closure publication. Concurrent prompt/abort retained, unused tracking removed.",
-          "checks": "Judge complete source/tests/diff and callers; 15 pass/118 assertions, owner/runtime/presenter module-loading failures; no safety weakening found."
+          "checks": "Judge complete source/tests/diff and callers; 15 pass/118 assertions, owner/runtime/presenter module-loading failures; no safety weakening found.",
+          "suppliedCandidateCorrection": {
+            "previous": "c167ab16afb92729c5cc3848bf9ce2258e8d8104",
+            "actual": "770c112fcdd39d6ed3a9a43f593209e5218ac43f",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
         }
       ],
       "launchBase": "c167ab16afb92729c5cc3848bf9ce2258e8d8104",
@@ -507,7 +747,11 @@
         "id": "task_79081a53",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_79081a53",
         "branch": "bruv/remote-primary-root-owner-79081a53",
-        "commit": "c167ab16afb92729c5cc3848bf9ce2258e8d8104"
+        "commit": "770c112fcdd39d6ed3a9a43f593209e5218ac43f",
+        "identityCorrection": {
+          "previousRecord": "c167ab16afb92729c5cc3848bf9ce2258e8d8104",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
       },
       "changedRelatedPaths": [
         "tests/root-owner.test.ts"
@@ -520,8 +764,40 @@
     {
       "focus": "src/remote/root-presenter.ts",
       "initialBlob": "9e4d0c6095a3790f3608b921d8ed8092611e91df",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_29eea7cb",
+          "status": "completed",
+          "candidate": "f8ba5c9248fdd3a9d048e926a1cfb6e8b70a1696",
+          "verdict": "ACCEPT",
+          "reason": "showModal owns mount/settle/focus/render and paired component/cancel lifetime; question/editor builders own interaction only. Local cancellation separate from server ui.respond, detach closes before cancel.",
+          "checks": "Judge full source/test/diff/callers; 6 client tests/29 assertions, presenter package loading blocked; mocked terminal tests are not physical terminal proof.",
+          "suppliedCandidateCorrection": {
+            "previous": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+            "actual": "f8ba5c9248fdd3a9d048e926a1cfb6e8b70a1696",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
+        }
+      ],
+      "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+      "primary": {
+        "id": "task_790d1377",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_790d1377",
+        "branch": "bruv/remote-primary-root-presenter-790d1377",
+        "commit": "f8ba5c9248fdd3a9d048e926a1cfb6e8b70a1696",
+        "identityCorrection": {
+          "previousRecord": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
+      },
+      "acceptedBlob": "98c70fb74f5e40d6f281463a75d4c0106240c860",
+      "integrationState": "accepted source+related test patch applied without overlap",
+      "changedRelatedPaths": [
+        "tests/remote-root-presenter.test.ts"
+      ],
+      "result": "One local showModal lifetime and paired active handle replace separate picker/editor settlement and modal/cancel state.",
+      "checks": "Worker 34 pass/181 assertions; new shipped-flow subset passed baseline; format/lint/diff pass."
     },
     {
       "focus": "src/remote/root-runtime.ts",
@@ -558,10 +834,15 @@
         {
           "id": "task_ab8da392",
           "status": "completed",
-          "candidate": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
+          "candidate": "c5912090ccf01564ea7e43556ca6210da9734b58",
           "verdict": "ACCEPT",
           "reason": "Database directly selects queued commands and settles unresolved receipts; append separates durable dialog lifetime from sequence/event/suffix retention. SQL adds reading cost but removes mutable pruning reconstruction.",
-          "checks": "Judge store 7 pass/63 assertions and client 6 pass/29; broader dependency errors; no full/package/performance claim."
+          "checks": "Judge store 7 pass/63 assertions and client 6 pass/29; broader dependency errors; no full/package/performance claim.",
+          "suppliedCandidateCorrection": {
+            "previous": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
+            "actual": "c5912090ccf01564ea7e43556ca6210da9734b58",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
         }
       ],
       "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
@@ -569,7 +850,11 @@
         "id": "task_15f8e7d9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_15f8e7d9",
         "branch": "bruv/remote-primary-root-store-15f8e7d9",
-        "commit": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5"
+        "commit": "c5912090ccf01564ea7e43556ca6210da9734b58",
+        "identityCorrection": {
+          "previousRecord": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
       },
       "result": "SQLite selects oldest queued receipt, transactional unresolved settlement, explicit durable dialog transition/sequence/event/bounded journal suffix.",
       "changedRelatedPaths": [
@@ -582,14 +867,54 @@
     {
       "focus": "src/remote/root-transport.ts",
       "initialBlob": "c73012514dbcb2efc3ca12d8198d777fc7892f96",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_8650ec09",
+          "status": "running",
+          "candidate": "41f81273d6c43fb8cbf50fd114cff9ee9ee5119e"
+        }
+      ],
+      "launchBase": "8f9797abb9b4bbf6e443740368321320aacade21",
+      "primary": {
+        "id": "task_948b327d",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_948b327d",
+        "branch": "bruv/remote-primary-root-transport-948b327d",
+        "commit": "41f81273d6c43fb8cbf50fd114cff9ee9ee5119e"
+      },
+      "result": "Unchanged adapter selects root-control endpoint; RootClient identity/durable status reconciliation and SSH framing/subprocess lifetime remain separate coherent responsibilities.",
+      "checks": "2 pass/26 assertions fake SSH/source; diff clean, no live/compiled/timeout proof.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/runtime.ts",
       "initialBlob": "ce4d30630047fa9536409754db3efeb72dd7cc5b",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_e1ab9585",
+          "status": "completed",
+          "candidate": "edb1318b65ad68d88f987aa87785414787168991",
+          "verdict": "ACCEPT",
+          "reason": "Complete output-preserving job scan owns pagination/liveness/gaps; handler visibly awaits evidence before checkpoint publication. Shared durable writer removes duplicate descriptor ownership with same flush/close/rename/directory fsync order.",
+          "checks": "Judge candidate runtime/persistence/artifact/cancellation 10 pass/45; broader owner suite dependency failures; full source/callers/diff inspected.",
+          "limits": "Explicit internal staging change PID overwrite→exclusive UUID at 0600, no abandoned staging cleanup/power-loss promise; turn killed classification intentionally differs cancellation."
+        }
+      ],
+      "launchBase": "20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d",
+      "primary": {
+        "id": "task_8e982299",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_8e982299",
+        "branch": "bruv/remote-primary-runtime-8e982299",
+        "commit": "edb1318b65ad68d88f987aa87785414787168991"
+      },
+      "acceptedBlob": "87b03ef3cc853ca66bbc6edbf0b1b36de4ee2586",
+      "integrationState": "accepted whole source+runtime tests applied without overlap",
+      "result": "captureNativeJobEvidence owns output-preserving scan before settlement assembly/publication; answer replay remains unchanged; shared existing durable writer owns descriptor sequence.",
+      "checks": "Worker focused 20 pass/83, runtime+owner 4/81; added tests pass baseline; format/lint/diff pass.",
+      "changedRelatedPaths": [
+        "tests/remote-runtime.test.ts"
+      ]
     },
     {
       "focus": "src/remote/security.ts",
@@ -912,23 +1237,69 @@
     {
       "focus": "tests/remote-capability-runtime.test.ts",
       "initialBlob": "d4d2ffbe0c7946380ad09921b34deb66d3defcb3",
-      "status": "pending",
-      "judgeRounds": [],
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_d83b6e0b",
+          "status": "completed",
+          "candidate": "189f56e3a914e24dc04a6a795f4bc7a562498b98",
+          "verdict": "ACCEPT",
+          "reason": "Independent abort/deadline/revocation/terminal authority/request lifetimes prove intended fence rather than prior cancellation/revocation; frozen delivery oracle explicit; prior combined services/mailbox journeys retained.",
+          "checks": "Judge full/cumulative diff, actual fence order/callers, format/lint/diff pass; runtime package loading blocked, no inferred pass."
+        }
+      ],
       "relatedAcceptance": {
-        "judge": "task_662f378f",
-        "blob": "bbe2ee62a33c10eaac3d8d881f33c53dafcde5eb",
-        "needs": "fresh primary focus and final independent judge; concurrent capability-runtime candidate may require overlap resolution"
-      }
+        "judge": "task_f6ad3799",
+        "blob": "ee0b6d2bc37eeadb1e85facf2b35b9a9642a36f4",
+        "needs": "fresh primary focus and own final independent judgment"
+      },
+      "priorRelatedAcceptances": [
+        {
+          "judge": "task_662f378f",
+          "blob": "bbe2ee62a33c10eaac3d8d881f33c53dafcde5eb",
+          "needs": "fresh primary focus and final independent judge; concurrent capability-runtime candidate may require overlap resolution"
+        }
+      ],
+      "primary": {
+        "id": "task_669bdb5e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_669bdb5e",
+        "branch": "bruv/remote-primary-capability-runtime-tests-669bdb5e",
+        "commit": "189f56e3a914e24dc04a6a795f4bc7a562498b98"
+      },
+      "launchBase": "a6872af1deea4820d9c4505f3776bac54856edf8",
+      "result": "Abort/deadline/revocation/terminal fences now independent authority/request lifetimes, avoiding already-cancelled/revoked confounds; frozen reply compares explicit expected bytes.",
+      "checks": "39 pass/212 assertions; service/mailbox regressions preserved; format/lint/diff pass.",
+      "changedRelatedPaths": [],
+      "acceptedBlob": "bb79598d6c168ff5654a48adfe6d0ce57623ace8",
+      "integrationState": "exact accepted primary test patch applied; related combined blob superseded"
     },
     {
       "focus": "tests/remote-client.test.ts",
       "initialBlob": "b7f7ba5ecb51b1dec96fe07d6cc5be4ddee790bc",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_43df06c7",
-          "status": "running",
-          "candidate": "d4e376614fb4d3ea13231e304bbe565e597056ea"
+          "status": "completed",
+          "candidate": "e2e6c5d581e0f1e6408f174641eb69e452cab382",
+          "verdict": "REJECT",
+          "reason": "Intrinsic readability and improvement accepted, but five introduced TypeScript errors: Transport request is Record<string,unknown>; r.op check does not narrow to RemoteRequest. Lines 32/362 typed launch/answer recording and unknown indexing; line 370 unknown taskId pushed string[].",
+          "rework": "Fixture-local request typing at launch/answer/sync observation boundaries. Preserve on-disk snapshots/pre-POST assertions, callback-owned child cleanup, byte-identical prior page/integration regressions. Do not change production Transport or add framework.",
+          "checks": "Focused compiler reproduced errors; related accepted blob passes same invocation. Candidate runtime package-load blocked. Not integrated.",
+          "suppliedCandidateCorrection": {
+            "previous": "d4e376614fb4d3ea13231e304bbe565e597056ea",
+            "actual": "e2e6c5d581e0f1e6408f174641eb69e452cab382",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
+        },
+        {
+          "id": "task_45f4b422",
+          "status": "completed",
+          "candidate": "4e396c2449478a2e089c79138bb2691ebdb0dbb1",
+          "context": "Fresh complete-context review after REJECT for five fixture type errors; stopped attempt preserved; final aliases plus full proof.",
+          "verdict": "ACCEPT",
+          "reason": "Actual pre-POST on-disk evidence and separate mutation/sync observations clarify durability; callback owns lock-probe child lifetime. Three fixture request assertions resolve every prior typing rejection without production Transport changes.",
+          "checks": "Judge 23 pass/126 assertions and whole-project tsc pass; format/lint/diff pass; original-to-final only aliases/use sites; old page/integration regressions byte-identical."
         }
       ],
       "relatedAcceptance": {
@@ -941,11 +1312,45 @@
         "id": "task_e6c82233",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_e6c82233",
         "branch": "bruv/remote-primary-client-tests-e6c82233",
-        "commit": "d4e376614fb4d3ea13231e304bbe565e597056ea"
+        "commit": "e2e6c5d581e0f1e6408f174641eb69e452cab382",
+        "identityCorrection": {
+          "previousRecord": "d4e376614fb4d3ea13231e304bbe565e597056ea",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
       },
       "result": "Pre-POST persistence evidence captured at transport boundary rather than inferred post-failure; mutation versus sync records separate; lock probe lifetime callback-owned; child scripts show acquire/crash phases.",
       "checks": "23 pass/126 assertions; old tests survived omitting pre-POST saves while new fail at explicit evidence; production restored; format/lint/diff pass.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "integrationState": "only final rework integrated; original rejected candidate and stalled uncommitted attempt retained",
+      "reworks": [
+        {
+          "id": "task_11672539",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_11672539",
+          "branch": "bruv/remote-rework-client-test-typing-11672539",
+          "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "reason": "Second attention checkpoint at 20m; output unchanged since initial inspection 12:56:03. Preserve worktree; replacement only after confirmed exit.",
+          "status": "killed",
+          "stopResult": {
+            "status": "running",
+            "termination": {
+              "cause": "user-stop",
+              "requestedAt": "2026-10-07T13:14:59.360Z"
+            }
+          },
+          "limits": "No completed candidate; uncommitted test edits retained in durable worktree."
+        },
+        {
+          "id": "task_b3067ab8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_b3067ab8",
+          "branch": "bruv/remote-client-test-typing-fresh-rework-b3067ab8",
+          "launchBase": "a6872af1deea4820d9c4505f3776bac54856edf8",
+          "status": "candidate",
+          "reason": "Fresh replacement of stalled rework; same unresolved five fixture request-type errors, full prior context supplied.",
+          "commit": "4e396c2449478a2e089c79138bb2691ebdb0dbb1",
+          "response": "All five TS errors reproduced then fixed at three internal fixture request boundaries; no production changes. Full check and 23/126 pass; prior regressions byte-identical."
+        }
+      ],
+      "acceptedBlob": "2439a5752941a42426a09c94e8d57c19ab97b792"
     },
     {
       "focus": "tests/remote-descendant-environment.test.ts",
@@ -1028,8 +1433,22 @@
     {
       "focus": "tests/remote-owner-lifecycle.test.ts",
       "initialBlob": "1bb5b51b9e308c53cebf8d2b62f70372c1b2d613",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_52da150f",
+          "status": "completed",
+          "candidate": "06949897bf648f505f3673d809e8726bc281962c",
+          "verdict": "ACCEPT",
+          "reason": "task.run owns child start/exercise/gate release/final join before HOME cleanup; scripts expose settlement, stale-ledger reply and cancellation sequence; all 33 assertion statements retained.",
+          "checks": "Judge candidate Biome/diff pass, partial runtime dependency-blocked; base/area 11/106 not candidate proof. Actual code and lifecycle contracts inspected.",
+          "suppliedCandidateCorrection": {
+            "previous": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
+            "actual": "06949897bf648f505f3673d809e8726bc281962c",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          }
+        }
+      ],
       "relatedAcceptance": {
         "judge": "task_b276db50",
         "blob": "c56dff8b6c27b39df0b6ad545f763be2820a6fc4",
@@ -1039,8 +1458,18 @@
       "primary": {
         "id": "task_053c976a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_053c976a",
-        "branch": "bruv/remote-primary-owner-lifecycle-tests-053c976a"
-      }
+        "branch": "bruv/remote-primary-owner-lifecycle-tests-053c976a",
+        "commit": "06949897bf648f505f3673d809e8726bc281962c",
+        "identityCorrection": {
+          "previousRecord": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
+      },
+      "acceptedBlob": "53027e2cc777c7fddfabe9b0420d1d134dab6130",
+      "integrationState": "accepted exact primary test patch applied; prior related blob superseded",
+      "result": "Scenario scripts show execution order; task.run centralizes gate release and awaited owner completion before fixture cleanup, including failure paths.",
+      "checks": "Worker baseline/candidate 10 pass/38 assertions; combined 11/106; 33 static assertions unchanged; failure cleanup probe passed.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-owner.test.ts",
@@ -1099,14 +1528,76 @@
     {
       "focus": "tests/remote-root-client.test.ts",
       "initialBlob": "3a25d228b5f25291ffb2d4354888f4b295f6f523",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_9e1c68cc",
+          "status": "completed",
+          "candidate": "81252d4c9681a5e397e136a52f293f5ed999932d",
+          "verdict": "ACCEPT",
+          "reason": "Owner effects and transport response loss separate; missing status goes through logged protocol; independent reserved/admitted recovery fixtures remove hidden history resets. Exact abort→prompt/status-only/no-resend and source protection retained.",
+          "checks": "Judge 11 pass/55 focus, combined client/store/transport20 pass/144; Biome/diff pass, full source/caller/initial diff examined."
+        }
+      ],
+      "relatedAcceptance": {
+        "judge": "task_b04a86e2",
+        "blob": "f19df6e94cca27114dabeab08d7885a377fe75e9",
+        "needs": "fresh primary focus and own independent judge"
+      },
+      "launchBase": "6c4dcba1024226c5e6afb5e863cbc8a105b73838",
+      "primary": {
+        "id": "task_0336c340",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_0336c340",
+        "branch": "bruv/remote-primary-root-client-tests-0336c340",
+        "commit": "81252d4c9681a5e397e136a52f293f5ed999932d"
+      },
+      "result": "ownerReply separates owner effects from logged lost response; missing status follows same protocol path; reserved and admitted recovery fixtures now independent instead of history reset.",
+      "checks": "Baseline 10/candidate 11 tests, 55 assertions each; combined 20 pass/144; exact abort→prompt/status-only/no-resend/source protection retained; Biome/diff pass.",
+      "changedRelatedPaths": [],
+      "acceptedBlob": "4dc8a822d189b03ed87b13067ec8c4dcd0edd389",
+      "integrationState": "exact accepted primary test patch applied, prior related blob superseded"
     },
     {
       "focus": "tests/remote-root-presenter.test.ts",
       "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_20e04838",
+          "status": "completed",
+          "candidate": "77ea8f3a80698debf5ffe36ce5f501076f266888",
+          "suppliedCandidateCorrection": {
+            "previous": "20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d",
+            "actual": "77ea8f3a80698debf5ffe36ce5f501076f266888",
+            "reason": "Metadata record parsing correction; judge actual final source hash and full diff verdict remain authority."
+          },
+          "verdict": "ACCEPT",
+          "reason": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup.",
+          "checks": "Judge in-memory hash-identical harness: old helper two root calls fails, new zero passes; four mounted journeys pass; full native candidate package loading blocked; assertions retained/diff clean.",
+          "limits": "Immediate TUI rendering remains live despite scheduled rendering suppressed. Judge accidentally generated area dist via build; not acceptance evidence."
+        }
+      ],
+      "relatedAcceptance": {
+        "judge": "task_29eea7cb",
+        "blob": "ae65079a689ce194167578b16e42d2559840b710",
+        "needs": "fresh primary focus and own final judge"
+      },
+      "launchBase": "20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d",
+      "primary": {
+        "id": "task_d3ae9262",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_d3ae9262",
+        "branch": "bruv/remote-primary-root-presenter-tests-d3ae9262",
+        "commit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
+        "identityCorrection": {
+          "previousRecord": "20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d",
+          "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
+        }
+      },
+      "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
+      "integrationState": "exact independently accepted primary test patch applied",
+      "result": "Distinct remoteReplies/scripted UI/mounted UI lifetimes; terminal callback exercises real shipped focused input dispatch; added regression reproduces old helper bypass.",
+      "checks": "Worker 29 pass/157 assertions; baseline helper new routing regression fails; format/lint/diff pass existing ANSI regex warning.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-root-transport.test.ts",
@@ -1123,8 +1614,29 @@
     {
       "focus": "tests/remote-runtime.test.ts",
       "initialBlob": "f71e08976aeb005bf9249915b1655f677096b4f2",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_5783d9c9",
+          "status": "running",
+          "candidate": "cac155c2d54ef9b7eff6385e248d24c27421c4d3"
+        }
+      ],
+      "relatedAcceptance": {
+        "judge": "task_e1ab9585",
+        "blob": "fe29cd1cfb93ec39984d2fd2e3babc5054c29260",
+        "needs": "fresh primary focus and final independent judge"
+      },
+      "launchBase": "c6f7908aafd83361e6ee6ca1a351cd152ee764fc",
+      "primary": {
+        "id": "task_a9d68611",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_a9d68611",
+        "branch": "bruv/remote-primary-runtime-tests-a9d68611",
+        "commit": "cac155c2d54ef9b7eff6385e248d24c27421c4d3"
+      },
+      "result": "Unchanged explicit start/blocked capture/artifact persistence/settlement publication; cleanup drains capture; repeated pagination error-only; killed turn liveness distinct cancellation.",
+      "checks": "27 pass/201 across four files; format/lint/diff pass, inherited import organization error under stricter Biome check.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-session-switch.test.ts",
@@ -1391,6 +1903,76 @@
       "command": "bun test remote-capability-runtime,remote-capabilities,remote-client,remote-extension,remote-repository-wire,remote-artifacts tests",
       "result": "84 pass, 0 fail, 1355 assertions across 6 files",
       "limits": "No authenticated SSH/provider/compiled parity"
+    },
+    {
+      "commit": "85534717",
+      "job": "task_6643d950",
+      "command": "bun test tests/remote-owner-lifecycle.test.ts tests/remote-owner.test.ts",
+      "result": "11 pass, 0 fail, 106 assertions",
+      "limits": "Local Linux child/process fixtures; no authenticated SSH/compiled parity"
+    },
+    {
+      "commit": "20fe2cb0",
+      "job": "task_eed6d83e",
+      "command": "bun test tests/remote-root-presenter.test.ts tests/remote-root-client.test.ts",
+      "result": "34 pass, 0 fail, 181 assertions",
+      "limits": "Mocked terminal integration and source fixtures, not physical/live/compiled parity"
+    },
+    {
+      "commit": "staged merge of 94632c6e + parent 695ade32",
+      "job": "task_1f9268d9",
+      "command": "bun run check",
+      "result": "assets + whole-project tsc pass",
+      "limits": "No full CI/binary build; combined authority tests pending"
+    },
+    {
+      "commit": "merge checkpoint of 94632c6e + parent 695ade32",
+      "job": "task_68449671",
+      "command": "bun test remote-question-bridge,remote-source-approval,remote-jobs,remote-owner,remote-owner-lifecycle,root-owner,remote-capability-runtime tests",
+      "result": "92 pass, 0 fail, 581 assertions across 7 files",
+      "limits": "Not live SSH/provider/compiled parity"
+    },
+    {
+      "commit": "6c4dcba1",
+      "job": "task_986469b5",
+      "command": "bun run check; bun test remote-root-client,remote-root-presenter,root-owner,root-store,root-runtime,remote-root-transport tests",
+      "result": "Whole configured typecheck passes; 65 pass/397 assertions across 6 files",
+      "limits": "No full CI/build/authenticated SSH/provider/physical terminal/compiled parity"
+    },
+    {
+      "commit": "d9bd6ecb",
+      "job": "task_1718432b",
+      "command": "bun test remote-repository-wire,remote-repository,remote-repository-download,root-owner,remote-source-approval,remote-jobs tests",
+      "result": "62 pass, 0 fail, 367 assertions across 6 files",
+      "limits": "Source fixtures only; no authenticated SSH/provider/compiled parity"
+    },
+    {
+      "commit": "c6f7908a",
+      "job": "task_ff55aaa3",
+      "command": "bun test remote-runtime,remote-owner,remote-owner-lifecycle,remote-cancellation,remote-durable-json,remote-job-artifacts tests",
+      "result": "21 pass, 0 fail, 151 assertions across 6 files",
+      "limits": "Local Linux fixtures, no power-loss/live/provider/compiled parity"
+    },
+    {
+      "commit": "3266052b",
+      "job": "task_54758365",
+      "command": "bun run check; bun test tests/remote-root-presenter.test.ts tests/remote-root-client.test.ts",
+      "result": "Whole configured typecheck pass; 39 pass/212 assertions",
+      "limits": "Mocked terminal routing, no physical/live/compiled proof"
+    },
+    {
+      "commit": "8f9797ab",
+      "job": "task_ccc79951",
+      "command": "bun test remote-capability-runtime,remote-capabilities,remote-client tests",
+      "result": "39 pass, 0 fail, 212 assertions",
+      "limits": "No live/provider/compiled parity"
+    },
+    {
+      "commit": "e027cb0f",
+      "job": "task_809b2b01",
+      "command": "bun test remote-client,remote-capability-runtime,remote-question-bridge tests",
+      "result": "57 pass, 0 fail, 310 assertions",
+      "limits": "No live/provider/compiled parity"
     }
   ],
   "crossAreaNeeds": [
@@ -1412,5 +1994,106 @@
     "uniquePrimaryIds": 25,
     "launchedPrimaryCount": 25,
     "notFinal": true
-  }
+  },
+  "parentIntegrationCheckpoint": {
+    "tip": "695ade32",
+    "state": "clean join accepted; all accepted remote blob hashes unchanged; whole configured typecheck and 92-test authority suite pass",
+    "commonChanges": [
+      "src/questions/runtime.ts",
+      "src/questions/service.ts",
+      "src/tasks/job-service.ts"
+    ],
+    "remoteRelatedIncoming": [
+      {
+        "file": "tests/remote-question-bridge.test.ts",
+        "blob": "069ad73fe9042f5b166b40c4ed9167ef8b2bcee2",
+        "needs": "already pending remote primary; fresh coverage must use combined final blob"
+      }
+    ]
+  },
+  "identityAudit": {
+    "corrections": [
+      {
+        "file": "src/remote/capability-runtime.ts",
+        "worker": "task_efc7153f",
+        "recorded": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
+        "actual": "52dbf0a027436b6cfd3760551cc1fc60924d9d3f"
+      },
+      {
+        "file": "src/remote/capability-runtime.ts",
+        "worker": "task_b95e28d8",
+        "recorded": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+        "actual": "33088eba8459d07a139130e3fe1b5166fb92e6d2"
+      },
+      {
+        "file": "src/remote/client.ts",
+        "worker": "task_6f52d2e9",
+        "recorded": "10db7d764592a5850a7ca3a8ffdc1abb99ef8589",
+        "actual": "4b540816a639f8af3043785e355ea253b43b4dac"
+      },
+      {
+        "file": "src/remote/owner.ts",
+        "worker": "task_d98e8afe",
+        "recorded": "79b37fbc28399fb32eced5774c7c62edd44d438d",
+        "actual": "c2fc7873a5df0e9b293dfe1ee88f943636086ef8"
+      },
+      {
+        "file": "src/remote/repository-wire.ts",
+        "worker": "task_b4da79f3",
+        "recorded": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+        "actual": "755b63c0fbed29dfb20f4236e39c3387b108761e"
+      },
+      {
+        "file": "src/remote/root-client.ts",
+        "worker": "task_a812b85a",
+        "recorded": "78a0c7cd351e3226921f4f4c361c8809f3fcbf21",
+        "actual": "f1ecb41079440ac99349f7607d318bdeb99ea5a3"
+      },
+      {
+        "file": "src/remote/root-owner.ts",
+        "worker": "task_79081a53",
+        "recorded": "c167ab16afb92729c5cc3848bf9ce2258e8d8104",
+        "actual": "770c112fcdd39d6ed3a9a43f593209e5218ac43f"
+      },
+      {
+        "file": "src/remote/root-presenter.ts",
+        "worker": "task_790d1377",
+        "recorded": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+        "actual": "f8ba5c9248fdd3a9d048e926a1cfb6e8b70a1696"
+      },
+      {
+        "file": "src/remote/root-store.ts",
+        "worker": "task_15f8e7d9",
+        "recorded": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
+        "actual": "c5912090ccf01564ea7e43556ca6210da9734b58"
+      },
+      {
+        "file": "tests/remote-client.test.ts",
+        "worker": "task_e6c82233",
+        "recorded": "d4e376614fb4d3ea13231e304bbe565e597056ea",
+        "actual": "e2e6c5d581e0f1e6408f174641eb69e452cab382"
+      },
+      {
+        "file": "tests/remote-owner-lifecycle.test.ts",
+        "worker": "task_053c976a",
+        "recorded": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
+        "actual": "06949897bf648f505f3673d809e8726bc281962c"
+      },
+      {
+        "file": "tests/remote-root-presenter.test.ts",
+        "worker": "task_d3ae9262",
+        "recorded": "20fe2cb00bb50e0a0a63048a5e8e23c06c07d31d",
+        "actual": "77ea8f3a80698debf5ffe36ce5f501076f266888"
+      }
+    ],
+    "method": "Compare recorded committed candidate to retained worktree HEAD; any true source judgment mismatch requires fresh review, never inferred acceptance."
+  },
+  "knownLimits": [
+    {
+      "file": "src/remote/repository-wire.ts",
+      "issue": "retryRepository omits saved title although launch retry compares it; titled retry conflict is unchanged",
+      "source": "task_6ea69bdc actual-code judgment",
+      "action": "Report to parent; no unrequested behavior fix in this patch."
+    }
+  ]
 }
