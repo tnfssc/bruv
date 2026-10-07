@@ -1203,7 +1203,7 @@
     {
       "file": "tests/claude-compat-human-controls.test.ts",
       "initialBlob": "8dc79ae1e34631b7c6e55a6f3fad6fdb994ff647",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_46b8d726",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_46b8d726",
@@ -1214,11 +1214,16 @@
       "judges": [
         {
           "id": "task_2057ad8a",
-          "status": "running",
-          "candidate": "a681ae7aea98375a69c78df606cb03b5c0b85635"
+          "status": "completed",
+          "candidate": "a681ae7aea98375a69c78df606cb03b5c0b85635",
+          "verdict": "ACCEPT",
+          "blob": "34e9b716d5cd1f9a6a16e456021641bd7a3aa439",
+          "objections": [],
+          "evidence": "Captured native dialog owns correlated response helper;abort-ignoring replacement reuses same transport yet explicit late rejection/pending ledger/current promise asserts remain. Defer owner/version/no answer,cancel withdrawal,interrupt/replacement drain and real NDJSON correlation preserved. Independent37 tests185 assertions,15 names82 assertions retained.",
+          "limits": "No live/typecheck rerun by judge;area typecheck follows."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "34e9b716d5cd1f9a6a16e456021641bd7a3aa439",
       "relatedPatchJudgments": [
         {
           "id": "task_262e4f9b",
@@ -1230,7 +1235,8 @@
       "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
       "changedRelatedPaths": [],
       "readingResult": "Each captured native dialog owns correlated reply; replacement test reuses transport with abort rejection disabled instead duplicated callback/correlation machinery. Ledger authority/lifecycle assertions explicit.",
-      "checks": "37 tests185 assertions;all15 names82 assertion lines retained;typecheck/format/lint/diff pass;no production/live."
+      "checks": "37 tests185 assertions;all15 names82 assertion lines retained;typecheck/format/lint/diff pass;no production/live.",
+      "integrationState": "Exact whole-file primary/judge patch joined, supersedes earlier related test blob"
     },
     {
       "file": "tests/claude-compat-launch.test.ts",
@@ -2052,6 +2058,13 @@
       "status": "passed",
       "scope": "Post-parent-merge17-file compatibility/T3 regression164 pass766 assertions7 SDK skips",
       "limits": "Focused source fixtures/isolated children;no full gate/live/device/compiled proof."
+    },
+    {
+      "id": "task_17e0d145",
+      "commit": "385ae40e",
+      "status": "passed",
+      "scope": "Final notifications/bridge35 tests116 assertions;typecheck",
+      "limits": "No live/full gate."
     }
   ],
   "combinedReviews": [
