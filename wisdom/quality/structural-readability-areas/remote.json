@@ -463,12 +463,15 @@
     {
       "focus": "src/remote/root-owner.ts",
       "initialBlob": "8ce68f851487260d1d83f244965341d1c5233985",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_e77399ef",
-          "status": "running",
-          "candidate": "c167ab16afb92729c5cc3848bf9ce2258e8d8104"
+          "status": "completed",
+          "candidate": "c167ab16afb92729c5cc3848bf9ce2258e8d8104",
+          "verdict": "ACCEPT",
+          "reason": "Close operation groups durable admission fence/queue clear/settlement/pending evidence/end; exit requires clean process result and nonunknown state before closure publication. Concurrent prompt/abort retained, unused tracking removed.",
+          "checks": "Judge complete source/tests/diff and callers; 15 pass/118 assertions, owner/runtime/presenter module-loading failures; no safety weakening found."
         }
       ],
       "launchBase": "c167ab16afb92729c5cc3848bf9ce2258e8d8104",
@@ -482,7 +485,9 @@
         "tests/root-owner.test.ts"
       ],
       "result": "requestClose owns admission fencing/queue clearing/settlement/end with pending-close evidence; exit requires settled evidence/clean exit/nonunknown before closure publication; unread in-flight promise set removed preserving concurrency.",
-      "checks": "58 pass/347 assertions; regressions pass baseline; focused strict TS/format/diff pass, lint existing diagnostics."
+      "checks": "58 pass/347 assertions; regressions pass baseline; focused strict TS/format/diff pass, lint existing diagnostics.",
+      "acceptedBlob": "0f0e9fcee2856618b80a033f436397c52f3356e9",
+      "integrationState": "accepted full source+cross-area test patch applied without overlap"
     },
     {
       "focus": "src/remote/root-presenter.ts",
@@ -629,8 +634,14 @@
     {
       "focus": "src/remote/ssh.ts",
       "initialBlob": "1bff87d9d5b0de383721212b9dd03f5c4a6723d5",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "primary": {
+        "id": "task_0f525d7e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_0f525d7e",
+        "branch": "bruv/remote-primary-ssh-0f525d7e"
+      },
+      "launchBase": "aeb0a983c7448750a0e74c0d883b25bb14baad44"
     },
     {
       "focus": "src/remote/untracked-preview.ts",
@@ -1099,7 +1110,7 @@
       "focus": "tests/remote-cancellation.test.ts",
       "kind": "new",
       "introducedBy": "8677e1f44ec5d15c40fdc7af724648e03a29f224",
-      "status": "rework-running",
+      "status": "rework-judging",
       "judgeRounds": [
         {
           "id": "task_9c33e422",
@@ -1108,6 +1119,12 @@
           "verdict": "NO CHANGE NEEDED",
           "reason": "Fixture resource scope and held callback expose cancellation report/abort ordering, paginated capture/settlement and incomplete observations without hiding assertions in helpers.",
           "checks": "Judge actual code/callers/both diffs; identical area test/runtime/helper verified; 4 pass/20 assertions."
+        },
+        {
+          "id": "task_7be6f9c9",
+          "status": "running",
+          "candidate": "e58f7fee0d98e85e44266fbd6c10b0f934a4ba4b",
+          "context": "Prior accepted readability, observed integration TS2769, explicit expected-value overload rework; all prior findings supplied."
         }
       ],
       "relatedAcceptance": {
@@ -1132,7 +1149,11 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_f9d2ba8e",
           "reason": "Integration TS2769 partial fixture context at line 52; preserve assertions and runtime contract.",
           "branch": "bruv/remote-rework-cancellation-test-typechec-f9d2ba8e",
-          "launchBase": "9f121a62e78309f351d12e1ff4933a0cf72281e7"
+          "launchBase": "9f121a62e78309f351d12e1ff4933a0cf72281e7",
+          "commit": "e58f7fee0d98e85e44266fbd6c10b0f934a4ba4b",
+          "response": "TS2769 actually at identity assertion toBe(ctx), not event emit. toBe<typeof ctx>(ctx) selects Bun expected-value overload; identical identity runtime assertion, no cast.",
+          "checks": "4 pass/20 assertions; full bun run check, format/lint/diff pass.",
+          "changedRelatedPaths": []
         }
       ]
     },
@@ -1167,6 +1188,24 @@
       "changedRelatedPaths": [],
       "acceptedBlob": "b1f3cc8f7b18c1aa5d3a8895324792e7cfec59d8",
       "integrationState": "exact accepted candidate patch applied; prior related blob superseded"
+    },
+    {
+      "focus": "tests/root-owner.test.ts",
+      "kind": "related-existing-cross-area",
+      "assignedArea": "execution-tasks-questions",
+      "status": "awaiting-parent-primary-final-coverage",
+      "judgeRounds": [
+        {
+          "id": "task_e77399ef",
+          "verdict": "ACCEPT",
+          "candidate": "770c112fcdd39d6ed3a9a43f593209e5218ac43f",
+          "scope": "related patch, not primary focus"
+        }
+      ],
+      "relatedAcceptance": {
+        "blob": "0990a29347df87831dd11c544bdcac94e85ee798"
+      },
+      "needs": "Parent reconcile assigned primary and independently judge final combined blob."
     }
   ],
   "primaryBrief": "Fresh PRIMARY file worker, single focus below. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. User rejected shallow rename/comment sweep: maximize actual understanding, not names/diff count/short files/boilerplate. Identify concrete mental bookkeeping by tracing real callers/shipped paths. Simplify tangled responsibilities/branching/hidden state/lifetimes/needless indirection/dead machinery into coherent domain operations with visible effects. Not arbitrary splitting/context bags/registries/frameworks. Genuinely readable may remain unchanged. Related coherent edits allowed; record all paths, flag overlaps with active area workers from remote.json. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts. No speculative defenses/deps/feature cuts/test weakening. Incidental fixes explicit/reproduced/tested. Before commit SHORT wisdom/quality/structural-readability-worker.md (focus/problem/why/exact proof/limits/path/branch). Return exact base/candidate commit, all changed paths, concrete before/after walkthrough. Independent judge decides acceptance. No push/PR. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun via /bin/bash PATH inside quoted script; shared read-only deps /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Focused existing tests per edit, no per-file full builds.",
@@ -1227,6 +1266,24 @@
       "command": "bun run check; changed-file biome format/lint",
       "result": "Typecheck FAIL TS2769 tests/remote-cancellation.test.ts:52 partial ctx assigned to ExtensionContext; format=0 lint=0",
       "limits": "Focused tests did not detect static test fixture type mismatch. Rework required."
+    },
+    {
+      "commit": "aeb0a983",
+      "job": "task_47d5a3b7",
+      "command": "bun test remote-owner,remote-owner-lifecycle,remote-client,remote-cancellation,remote-artifacts,remote-runtime tests",
+      "result": "45 pass, 0 fail, 311 assertions across 6 files",
+      "limits": "Local source fixtures/child process; no authenticated SSH/provider/compiled parity"
+    }
+  ],
+  "crossAreaNeeds": [
+    {
+      "file": "tests/root-owner.test.ts",
+      "assignedArea": "execution-tasks-questions",
+      "candidate": "770c112fcdd39d6ed3a9a43f593209e5218ac43f",
+      "state": "accepted patch integrated; parent assigned owner must inspect final test",
+      "needs": "Parent reconcile with assigned primary and rejudge exact final combined test blob. Remote will not overwrite area notes.",
+      "blob": "0990a29347df87831dd11c544bdcac94e85ee798",
+      "judge": "task_e77399ef"
     }
   ]
 }
