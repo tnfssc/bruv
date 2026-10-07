@@ -6,19 +6,22 @@
     {
       "focus": ".gitattributes",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "awaiting-judge",
       "primary": [
         {
           "id": "task_a31d93bd",
           "launchBase": "164deefcd9626c12b567a424d103ddc6636140cb",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_a31d93bd",
           "branch": "bruv/primary-.gitattributes-a31d93bd",
-          "state": "running"
+          "state": "completed",
+          "commit": "fc26b96625a211a38efd81baf49d6e179dcee99c"
         }
       ],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Removes obsolete whitespace exception for retired integration tree; only actual patch exception remains, avoids false reading trail.",
+      "checks": "All3394tracked path whitespace attributes identical;real patch exemption/source trailing-whitespace rejection checked;diff pass;no build."
     },
     {
       "focus": ".github/workflows/ci.yml",
@@ -136,13 +139,33 @@
     {
       "focus": ".gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "awaiting-judge",
       "primary": [
         {
           "id": "task_63f2878d",
           "launchBase": "164deefcd9626c12b567a424d103ddc6636140cb",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_63f2878d",
           "branch": "bruv/primary-.gitignore-63f2878d",
+          "state": "completed",
+          "commit": "819644b1826ef41395e17dea9d7ac47a9046480a"
+        }
+      ],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null,
+      "readingResult": "Unchanged direct generated-output list and explained privacy/memory exceptions; traced real producer/cache/credential/historical runtime paths.",
+      "checks": "12ignored6visible path assertions;diffpass;empty candidate commit/local note untracked;no build."
+    },
+    {
+      "focus": "biome.json",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_e7133eda",
+          "launchBase": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_e7133eda",
+          "branch": "bruv/primary-biome.json-e7133eda",
           "state": "running"
         }
       ],
@@ -151,19 +174,18 @@
       "acceptedBlob": null
     },
     {
-      "focus": "biome.json",
-      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
-    },
-    {
       "focus": "bunfig.toml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_bd9983c7",
+          "launchBase": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_bd9983c7",
+          "branch": "bruv/primary-bunfig.toml-bd9983c7",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -364,19 +386,31 @@
     {
       "focus": "scripts/generate-third-party-notices.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_18c3b50a",
           "launchBase": "911a433455175b5af5db6bc909c220f2693ffd24",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_18c3b50a",
           "branch": "bruv/primary-scripts-generate-third-party-not-18c3b50a",
+          "state": "completed",
+          "commit": "a6950a24b187330b9832fe6bc26a762826a6beb0"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_9e042be2",
+          "base": "911a433455175b5af5db6bc909c220f2693ffd24",
+          "candidate": "a6950a24b187330b9832fe6bc26a762826a6beb0",
           "state": "running"
         }
       ],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "relatedPaths": [
+        "tests/generate-third-party-notices.test.ts"
+      ],
+      "acceptedBlob": null,
+      "readingResult": "Explicit license alternatives, graph collection, effect-free rendering and visible output publication replace interleaved traversal/fallback/render/write; unused entry directory removed.",
+      "checks": "37tests549assertions;newtests pass base;tsc/Biome/diff pass;real bundle211packages657015bytes identical. No full build."
     },
     {
       "focus": "scripts/install-local.sh",
@@ -613,8 +647,16 @@
     {
       "focus": "scripts/smoke.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_9bca7048",
+          "launchBase": "78b02f0fcfdef4d696952f97f7fe8bc69293cb46",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_9bca7048",
+          "branch": "bruv/primary-scripts-smoke.sh-9bca7048",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1408,7 +1450,21 @@
       "acceptedBlob": null
     }
   ],
-  "extra": [],
+  "extra": [
+    {
+      "focus": "tests/generate-third-party-notices.test.ts",
+      "initialBase": "911a433455175b5af5db6bc909c220f2693ffd24",
+      "state": "candidate-new",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null,
+      "origin": {
+        "primary": "task_18c3b50a",
+        "candidate": "a6950a24b187330b9832fe6bc26a762826a6beb0"
+      }
+    }
+  ],
   "crossAreaNeeds": [],
   "batchProof": [
     {
