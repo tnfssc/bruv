@@ -1212,13 +1212,21 @@
       "judgeRounds": [
         {
           "id": "task_542a0b36",
-          "status": "running",
+          "status": "complete",
           "candidate": "83b1defbd83984e35197625252271702dfb6769d",
-          "base": "1af60590b337533dc41a39e8d00ee66506c02b34"
+          "base": "1af60590b337533dc41a39e8d00ee66506c02b34",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "PendingAudio owns copiedsamples/offsets/turnboundaries/unsentbytes;PlaybackTimeline ownsreserve/acceptedcredit/conservativeplayed;Scheduler ownsepoch/readiness/pipe/flush/timers/failure. Immediateflush independent oldpipeslot;stalecompletion no newcredit;queue0 notphysicalsilence.",
+          "checks": "Independent53tests20755assertions/diffpass;no behaviorfix/device/provider/macOS/fullgate.",
+          "acceptedBlobs": {
+            "src/live/playback.ts": "ce0fd68dbcc5487dd3fa1f218dd353f34571feac",
+            "tests/live-playback.test.ts": "b4320ddedc2b1667c167b3bca5d7366a03f5039d"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "ce0fd68dbcc5487dd3fa1f218dd353f34571feac",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [
         "tests/live-playback.test.ts"
       ],
@@ -1843,7 +1851,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_542a0b36",
+        "verdict": "ACCEPT",
+        "blob": "b4320ddedc2b1667c167b3bca5d7366a03f5039d"
+      }
     },
     {
       "focus": "tests/live-probe-input.test.ts",
@@ -2242,9 +2255,16 @@
         "status": "candidate ready",
         "commit": "a4bdb033fc65291cdc41a36b3a0365b806aa7942"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_dd7fe5dc",
+          "status": "running",
+          "candidate": "a4bdb033fc65291cdc41a36b3a0365b806aa7942",
+          "base": "ba1575ae4a9300c6729f8988f79029f59699318a"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_1a73a583",
         "verdict": "ACCEPT",
