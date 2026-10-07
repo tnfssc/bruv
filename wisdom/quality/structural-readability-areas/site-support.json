@@ -101,8 +101,15 @@
     {
       "focus": "site/html-animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_9c42d8e3",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_9c42d8e3",
+          "branch": "bruv/primary-site-html-animation.ts-9c42d8e3",
+          "base": "b5e49e8740cd201d38d59342ebec6fdcd429c7f9"
+        }
+      ],
       "judges": [],
       "initialBlob": "83d93edb503c6c100e5a778c48b69a91bc91756e"
     },
@@ -157,7 +164,7 @@
     {
       "focus": "site/playback.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_ed0b8880",
@@ -173,10 +180,16 @@
         {
           "id": "task_993fa01c",
           "candidate": "917dcf3c57503745fceef627068fd32752bdcff7",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "advance gates both mutations and wraps with final hold; inView direct threshold. Traced terminal/layout/demoFrame and HTML observer/cleanup: renderer clocks stay owned by renderers. Full diff note-only. Independent demos test 4 pass.",
+          "objections": []
         }
       ],
-      "initialBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e"
+      "initialBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e",
+      "acceptedBlob": "b3715cdf84d0d0f80e871835079c3c1d5a16b16e",
+      "changedRelatedPaths": [],
+      "integration": "area tip blob verified"
     },
     {
       "focus": "site/scripts/animation.ts",
@@ -205,15 +218,25 @@
     {
       "focus": "site/scripts/build.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_f66bbf8b",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_f66bbf8b",
+          "state": "running",
+          "branch": "bruv/primary-site-scripts-build.ts-f66bbf8b",
+          "base": "303233f17b57d0990a66df6cd686f9af933206d0",
+          "commit": "05d5c22da50b4bcd69e4239b6cd547b07fac2c9a",
+          "result": "renderPage chooses mode once instead of six scattered plain decisions; complete page policy grouped; build explicitly writes both pages then bundles/copies. 18 focused tests; generated artifacts byte-identical baseline empty/subpath BASE_URL; invalid URL still rejects before deletion. Only build.ts source changed."
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_f3451b4a",
+          "candidate": "05d5c22da50b4bcd69e4239b6cd547b07fac2c9a",
           "state": "running"
         }
       ],
-      "judges": [],
       "initialBlob": "a8ca48ae0d03f2567d458737f143c245e9acfa89"
     },
     {
@@ -235,7 +258,7 @@
     {
       "focus": "site/scripts/capture-real.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_78b57531",
@@ -251,10 +274,17 @@
         {
           "id": "task_a59154f4",
           "candidate": "443a8840fe9a2d308e3c397f4df8409748e821b6",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Direct inputs/isolation, replay/output and page/run lifetime journeys. Loopback allowlist and crop differences visible. Full diff note-only. Independent build.test 10 pass do NOT exercise this script.",
+          "objections": []
         }
       ],
-      "initialBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b"
+      "initialBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b",
+      "acceptedBlob": "5b4bb6b11f529882a4d0bc2268f1a334723b6f3b",
+      "changedRelatedPaths": [],
+      "integration": "area tip blob verified",
+      "limits": "No screenshot/browser regeneration/typecheck. Existing launch-before-try and close-failure shutdown gaps unchanged. Judge correction: shipped layout uses scripted demo frames, not settingsCapture; historical provenance docs stale."
     },
     {
       "focus": "site/scripts/extract-cells.ts",
