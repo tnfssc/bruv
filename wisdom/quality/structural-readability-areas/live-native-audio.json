@@ -1773,10 +1773,17 @@
     {
       "focus": "tests/live-cost.test.ts",
       "initialBlob": "b48ba6cc2be94aa95e9846ad76b9f08bcdcd291d",
-      "primary": null,
+      "primary": {
+        "id": "task_0ed9f187",
+        "launchBase": "7d8902e0818915cbc1cc56d8996f91f1b327e083",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_0ed9f187",
+        "branch": "bruv/primary-tests-live-cost.test.ts-0ed9f187",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_4b5c5997",
         "verdict": "ACCEPT",
@@ -2039,17 +2046,20 @@
         "launchBase": "000950277a6a27f3488b994db6cbf0186ba1cd98",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_29a09f86",
         "branch": "bruv/primary-tests-live-playback.test.ts-29a09f86",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "d6a78704028e99ec22bc7d7e00cf9c83851754b6"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_542a0b36",
         "verdict": "ACCEPT",
         "blob": "b4320ddedc2b1667c167b3bca5d7366a03f5039d"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "RealNativeRing testowner groups consumption/delayedfeedback/timers;tests show render/JSadvance/feedback/settling;interruption keepsdistinct oldwrite+flush;failure/close-beforestart lifetimes split.",
+      "checks": "80focusedtests20487assertions;20139orderedplayback assertionobservations matchbaseline byteforbyte inclBufferhashes;strictTS/Biome/diffpass;no runtimefix/device/provider/macOS/build."
     },
     {
       "focus": "tests/live-probe-input.test.ts",
