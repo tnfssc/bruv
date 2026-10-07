@@ -187,18 +187,36 @@
     {
       "focus": "src/questions/extension.ts",
       "initialBlob": "cb21f18834473a40051404aea015a95033c03aa0",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_4c9d577a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4c9d577a",
         "branch": "bruv/primary-src-questions-extension.ts-4c9d577a",
         "base": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d",
-        "commit": null
+        "commit": "b319684abb95ad0f172303d2699e8f1dbb26b2d8"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_d615005a",
+          "status": "running",
+          "candidate": "b319684abb95ad0f172303d2699e8f1dbb26b2d8",
+          "base": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d"
+      "launchBase": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d",
+      "changedRelatedPaths": [
+        "src/questions/extension.ts",
+        "tests/questions-extension.test.ts"
+      ],
+      "readingResult": "promptAnswer owns UI retry/Escape only; inbox explicitly submits displayed owner/version through runtime. Detail projections separate saved intent/uncertain delivery/remote observations.",
+      "checks": [
+        "31 pass139 assertions incl real Pi command",
+        "new preservation baseline pass",
+        "focused tsc/format/lint/diff pass inherited warnings",
+        "no fullbuild/compiledterminal"
+      ]
     },
     {
       "focus": "src/questions/picker.ts",
@@ -714,7 +732,7 @@
     {
       "focus": "src/tasks/subagent-profiles.ts",
       "initialBlob": "2a117125b2f25e592cad2c1bb4c720fda0832e64",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_f2d9d1fa",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f2d9d1fa",
@@ -725,13 +743,21 @@
       "judgeRounds": [
         {
           "id": "task_ee69dc68",
-          "status": "running",
+          "status": "complete",
           "candidate": "5079a29ca42fea67cf655a1f91d6ba7e0eb72ccc",
-          "base": "02e36f3372b5072d65fa39e4c2148827a1969a25"
+          "base": "02e36f3372b5072d65fa39e4c2148827a1969a25",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Explicit load/validate/default/save operations, private temp/rename persistence, current-parent resolution and remote/native authority separate; no stale cache/second settings owner.",
+          "checks": [
+            "matching area19 pass119 assertions profile/settingsUI/app-worker",
+            "candidate dependencies blocked; writer six-fileTUI not independently reproduced",
+            "prebuilt binary limitation"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "2a117125b2f25e592cad2c1bb4c720fda0832e64",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "02e36f3372b5072d65fa39e4c2148827a1969a25",
       "changedRelatedPaths": [],
       "readingResult": "No-change: load/panel/explicitSave/validated private temp/atomic rename; local delegation→profile resolution; SSH destination/native backend authority separate.",
@@ -744,7 +770,7 @@
     {
       "focus": "src/tasks/subagent-settings-ui.ts",
       "initialBlob": "56af9b3b1a9fc016caf842984e5d67577c726197",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_92739d50",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_92739d50",
@@ -755,13 +781,20 @@
       "judgeRounds": [
         {
           "id": "task_05218d53",
-          "status": "running",
+          "status": "complete",
           "candidate": "c97cd7845c2d85a49815e118dae6f5da8cb5e701",
-          "base": "9c2abd811dae310c924836ca33c0d175e80cbba2"
+          "base": "9c2abd811dae310c924836ca33c0d175e80cbba2",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Mode-gated invocation, isolated draft, cancel and save-only persistence directly traceable; extracting orchestration would hide commit boundary.",
+          "checks": [
+            "independent exact5 matching source/test blobs area14/90",
+            "mocked UI rendered/navigation/narrow/save/malformed preservation; no liveTUI/compiledCLI"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "56af9b3b1a9fc016caf842984e5d67577c726197",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "9c2abd811dae310c924836ca33c0d175e80cbba2",
       "changedRelatedPaths": [],
       "readingResult": "No-change: mode gate→load→isolated panel draft→explicit Save→atomic persistence→notice. Cancel never writes; launches reread profiles.",
@@ -1088,20 +1121,34 @@
     {
       "focus": "src/typescript/job-bridge.ts",
       "initialBlob": "71303007f9886b7b34c7df16c958f4a050ffd41c",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_10057488",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_10057488",
+        "branch": "bruv/primary-src-typescript-job-bridge.ts-10057488",
+        "base": "7a99d536c8be21afa20521148843a2d85f3c96b3",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3"
     },
     {
       "focus": "src/typescript/output-capture.ts",
       "initialBlob": "4b21e94241155f009144497997c9f8662e405ee8",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_105272bf",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_105272bf",
+        "branch": "bruv/primary-src-typescript-output-capture.ts-105272bf",
+        "base": "7a99d536c8be21afa20521148843a2d85f3c96b3",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3"
     },
     {
       "focus": "src/typescript/runner.ts",
@@ -1426,15 +1473,23 @@
     {
       "focus": "tests/resume-safeguards.test.ts",
       "initialBlob": "0ba86426d2901c6fd824d50dc1eb2d12ae29c3f7",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_4a71daea",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4a71daea",
         "branch": "bruv/primary-tests-resume-safeguards.test.ts-4a71daea",
         "base": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
-        "commit": null
+        "commit": "64815c5467793ca8e062db7f212fabd4ffc6fb09"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0b6d754e",
+          "status": "running",
+          "candidate": "64815c5467793ca8e062db7f212fabd4ffc6fb09",
+          "base": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
+          "priorRelatedJudge": "task_021ccfb2"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
@@ -1444,7 +1499,17 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23"
+      "launchBase": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
+      "changedRelatedPaths": [
+        "tests/resume-safeguards.test.ts"
+      ],
+      "readingResult": "Required named lifecycle callbacks replace untyped optional map dispatch; finally teardown fixes reproduced adapter leakage on aborted test; typed foreign wrappers forward real SDK row.",
+      "checks": [
+        "7 journeys47 static assertions retained",
+        "9 pass59 assertions; tsc/format/lint/diff pass3 inherited warnings",
+        "injected abort baseline3 failures vs candidate deliberate abort only",
+        "no fullgate/compiled parity"
+      ]
     },
     {
       "focus": "tests/resume-stream-cancellation.test.ts",
