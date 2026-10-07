@@ -2643,7 +2643,7 @@
     {
       "focus": "tests/terminal-perf-profiler.test.ts",
       "initialBlob": "7cb1ce3c1390f701e65cc245a7deb03fa10c8360",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_6b781769",
@@ -2658,12 +2658,25 @@
           "id": "task_74718e8d",
           "base": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
           "candidate": "68ea091b9d1751f98c5c6ca5aa96591c05662c94",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_5e042418"
+          "verdict": "NO CHANGE NEEDED",
+          "priorRelatedJudge": "task_5e042418",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/terminal-perf-profiler.test.ts": "708996371dabfb105ba97e010979b60c3af5b271"
+          },
+          "evidence": "Local fixture clocks and real Pi next-tick tests expose batching/eviction/timing boundaries, errors and descriptor restoration; generic fixture extraction would hide clock differences.",
+          "checks": [
+            "Independent focus17/102; composition4/52; action16/145",
+            "Pinned format/lint/diff"
+          ],
+          "limits": [
+            "Broader Biome check existing import-order assist fails",
+            "No build/typecheck/full suite/CLI/PTY/device/platform/latency"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary pending",
+      "acceptedBlob": "708996371dabfb105ba97e010979b60c3af5b271",
+      "integrationState": "fresh primary/judge accept unchanged integrated test blob",
       "relatedPatchJudgments": [
         {
           "id": "task_5e042418",
