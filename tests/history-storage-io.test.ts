@@ -3,7 +3,6 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { pathToFileURL } from "node:url";
 import type { SessionEntry, SessionHeader } from "@earendil-works/pi-coding-agent";
 import { DiskEntryStore, scanJsonl } from "../src/history/disk-entry-store";
 
@@ -12,10 +11,20 @@ afterEach(async () => {
   await Promise.all(roots.splice(0).map((path) => rm(path, { recursive: true, force: true })));
 });
 
-async function temporaryFile(name = "session.jsonl"): Promise<string> {
+async function temporaryFile(): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), "bruv-history-io-"));
   roots.push(root);
-  return join(root, name);
+  return join(root, "session.jsonl");
+}
+
+// Filesystem mocks must never enter the parent test process's module cache.
+async function runIsolatedIoFault(fixture: string): Promise<void> {
+  const path = await temporaryFile();
+  const { stdout, stderr, code } = await runProcess(
+    [process.execPath, "test", join(import.meta.dir, "fixtures", fixture)],
+    { cwd: join(import.meta.dir, ".."), env: { ...process.env, HISTORY_IO_PATH: path } },
+  );
+  expect(code, `${fixture} failed:\n${stdout}\n${stderr}`).toBe(0);
 }
 
 function header(): SessionHeader {
@@ -101,56 +110,9 @@ describe("disk entry store I/O correctness", () => {
   });
 
   test("retries short writes and rolls back failed partial appends in an isolated subprocess", async () => {
-    const path = await temporaryFile("short-write.jsonl");
-    const script = join(path, "..", "short-write.test.ts");
-    const moduleUrl = pathToFileURL(join(import.meta.dir, "..", "src", "history", "disk-entry-store.ts")).href;
-    await writeFile(
-      script,
-      `
-import { expect, mock, test } from "bun:test";
-import * as fs from "node:fs";
-const realWriteSync = fs.writeSync.bind(fs);
-let calls = 0;
-let failOn = Infinity;
-function shortWrite(fd: number, buffer: string | NodeJS.ArrayBufferView, offset?: number, length?: number, position?: number | null): number {
-  if (typeof buffer === "string") return (realWriteSync as any)(fd, buffer, offset);
-  calls++;
-  if (calls === failOn) throw new Error("simulated disk full");
-  const start = typeof offset === "number" ? offset : 0;
-  const requested = typeof length === "number" ? length : buffer.byteLength - start;
-  const shortLength = Math.max(1, Math.min(requested, Math.ceil(requested / 3)));
-  return (realWriteSync as any)(fd, buffer, start, shortLength, position ?? null);
-}
-mock.module("node:fs", () => ({ ...fs, default: { ...(fs as any).default, writeSync: shortWrite }, writeSync: shortWrite }));
-const { DiskEntryStore } = await import(${JSON.stringify(moduleUrl)});
-test("short writes", () => {
-  const header = { type: "session", version: 3, id: "short", timestamp: "x", cwd: "/" };
-  const entry = { type: "message", id: "entry", parentId: null, timestamp: "x", message: { role: "user", content: "🙂".repeat(1000), timestamp: 1 } };
-  const store = DiskEntryStore.fromEntries(process.env.SHORT_WRITE_PATH!, header, [entry], true);
-  expect(store.materialize("entry").message.content).toBe(entry.message.content);
-  expect(calls).toBeGreaterThan(2);
-  const before = fs.readFileSync(process.env.SHORT_WRITE_PATH!);
-  failOn = calls + 2;
-  expect(() => store.append({ ...entry, id: "failed" })).toThrow("simulated disk full");
-  expect(fs.readFileSync(process.env.SHORT_WRITE_PATH!)).toEqual(before);
-  failOn = Infinity;
-  store.append({ ...entry, id: "after", parentId: "entry" });
-  const reopened = DiskEntryStore.open(process.env.SHORT_WRITE_PATH!);
-  expect(reopened.entries.map((entry: any) => entry.id)).toEqual(["entry", "after"]);
-  expect(reopened.materialize("entry").message.content).toBe(entry.message.content);
-});
-`,
-    );
-    const {
-      stdout,
-      stderr,
-      code: exitCode,
-    } = await runProcess([Bun.which("bun")!, "test", script], {
-      cwd: join(import.meta.dir, ".."),
-      env: { ...process.env, SHORT_WRITE_PATH: path },
-    });
-    expect(exitCode, `short-write subprocess failed:\n${stdout}\n${stderr}`).toBe(0);
+    await runIsolatedIoFault("history-io-short-writes.ts");
   });
+
   test.each([
     ["user", message("first", "published", "setup")],
     ["assistant", assistant("first", "setup")],
@@ -213,49 +175,10 @@ test("short writes", () => {
   });
 
   test("a failed spool unlink does not undo successful publication", async () => {
-    const path = await temporaryFile("cleanup-failure.jsonl");
-    const script = join(path, "..", "cleanup-failure.test.ts");
-    const moduleUrl = pathToFileURL(join(import.meta.dir, "..", "src", "history", "disk-entry-store.ts")).href;
-    await writeFile(
-      script,
-      `
-import { expect, mock, test } from "bun:test";
-import * as fs from "node:fs";
-const realUnlinkSync = fs.unlinkSync.bind(fs);
-let failCleanup = true;
-function unlinkSync(path: fs.PathLike): void {
-  if (failCleanup && String(path).includes(".pending-")) {
-    failCleanup = false;
-    throw new Error("simulated cleanup failure");
-  }
-  realUnlinkSync(path);
-}
-mock.module("node:fs", () => ({ ...fs, default: { ...(fs as any).default, unlinkSync }, unlinkSync }));
-const { DiskEntryStore } = await import(${JSON.stringify(moduleUrl)});
-test("cleanup failure", () => {
-  const header = { type: "session", version: 3, id: "cleanup", timestamp: "x", cwd: "/" };
-  const user = { type: "message", id: "user", parentId: null, timestamp: "x", message: { role: "user", content: "before", timestamp: 1 } };
-  const assistant = { type: "message", id: "assistant", parentId: "user", timestamp: "x", message: { role: "assistant", content: [], timestamp: 2 } };
-  const store = DiskEntryStore.pending(process.env.CLEANUP_FAILURE_PATH!, header);
-  store.append(user);
-  expect(() => store.append(assistant)).not.toThrow();
-  expect(store.flushed).toBe(true);
-  expect(DiskEntryStore.open(process.env.CLEANUP_FAILURE_PATH!).entries.map((entry: any) => entry.id)).toEqual(["user", "assistant"]);
-});
-`,
-    );
-    const {
-      stdout,
-      stderr,
-      code: exitCode,
-    } = await runProcess([Bun.which("bun")!, "test", script], {
-      cwd: join(import.meta.dir, ".."),
-      env: { ...process.env, CLEANUP_FAILURE_PATH: path },
-    });
-    expect(exitCode, `cleanup-failure subprocess failed:\n${stdout}\n${stderr}`).toBe(0);
+    await runIsolatedIoFault("history-io-cleanup-failure.ts");
   });
 
-  test("failed atomic replacement leaves a pending journal usable and publishable", async () => {
+  test("failed atomic replacement leaves a published journal usable and appendable", async () => {
     const path = await temporaryFile();
     const store = DiskEntryStore.pending(path, header());
     store.append(message("before", "must survive"));

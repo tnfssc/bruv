@@ -1026,7 +1026,7 @@
     {
       "focus": "tests/history-storage-io.test.ts",
       "initialBlob": "27d019686d63830282ec0a9143e45f10d6b091f4",
-      "status": "judging",
+      "status": "accepted-check-rework-pending",
       "primary": [
         {
           "id": "task_3073210f",
@@ -1049,11 +1049,19 @@
           "id": "task_6fc46161",
           "candidate": "eaac149b84b707785584990ea9204a3d6b68905a",
           "base": "8130a93798e0c03aca913c4469283430dd7a7290",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Real fixture files separate isolated mock/transaction lifetime from parent process/temp cleanup. Child discovery/isolation verified, assertions retained/strengthened, negative control independently reproduces old cleanup fault false-pass.",
+          "checks": "Independent 14 passes; strict tsc pass; Biome organizeImports still fails focus, correction and final hash rejudgment required.",
+          "acceptedRelatedBlobs": {
+            "tests/fixtures/history-io-short-writes.ts": "a738fc9cace7df491e9267a165a326e2b61511e6",
+            "tests/fixtures/history-io-cleanup-failure.ts": "baddd5ace399fa55d0903aad88ee4821905d1c22"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "3ba4ff61f232596ce66a6045ddd8ec04b5fac5aa",
+      "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "32cbff38aa54ff05659ea2365134f016ff8c4055",
         "judge": "task_0426dce8",
@@ -1416,7 +1424,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate-new"
+      "integration": "integrated-related-primary-pending",
+      "relatedPatchReview": {
+        "candidate": "eaac149b84b707785584990ea9204a3d6b68905a",
+        "judge": "task_6fc46161",
+        "verdict": "ACCEPT",
+        "blob": "a738fc9cace7df491e9267a165a326e2b61511e6",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/fixtures/history-io-cleanup-failure.ts",
@@ -1426,7 +1441,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate-new"
+      "integration": "integrated-related-primary-pending",
+      "relatedPatchReview": {
+        "candidate": "eaac149b84b707785584990ea9204a3d6b68905a",
+        "judge": "task_6fc46161",
+        "verdict": "ACCEPT",
+        "blob": "baddd5ace399fa55d0903aad88ee4821905d1c22",
+        "primaryFocusStillRequired": true
+      }
     }
   ],
   "crossAreaNeeds": [],
