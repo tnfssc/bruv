@@ -598,6 +598,73 @@ describe("native conversation density adapter", () => {
     expect(blankRuns(phases.render(80))).toEqual([1, 1]);
   });
 
+  test("restores the latest thinking source and streaming state after redraw and detach", () => {
+    restores.push(installConversationDensity());
+    const chat = new Container();
+    const phases = thinking(["initial phase", "next phase"]);
+    const nativeUpdate = phases.updateContent;
+    const nativeState = phases as unknown as { lastMessage: unknown; isStreaming: boolean };
+    add(chat, phases);
+
+    const latest = {
+      role: "assistant",
+      content: [
+        { type: "thinking", thinking: "streaming phase" },
+        { type: "thinking", thinking: "latest phase" },
+      ],
+    };
+    phases.updateContent(latest as never, true);
+    expect(nativeState.lastMessage).not.toBe(latest);
+    phases.setHideThinkingBlock(true);
+    phases.setHideThinkingBlock(false);
+    phases.invalidate();
+    expect(plain(phases.render(80)).map((row) => row.trim())).toEqual(["", "streaming phase", "latest phase"]);
+
+    chat.removeChild(phases);
+    expect(phases.updateContent).toBe(nativeUpdate);
+    expect(nativeState.lastMessage).toBe(latest);
+    expect(nativeState.isStreaming).toBe(true);
+    expect(blankRuns(phases.render(80))).toEqual([1, 1]);
+    expect(latest.content).toEqual([
+      { type: "thinking", thinking: "streaming phase" },
+      { type: "thinking", thinking: "latest phase" },
+    ]);
+
+    add(chat, phases);
+    expect(blankRuns(phases.render(80))).toEqual([1]);
+    chat.clear();
+    expect(phases.updateContent).toBe(nativeUpdate);
+    expect(nativeState.lastMessage).toBe(latest);
+    expect(nativeState.isStreaming).toBe(true);
+  });
+
+  test("leaves foreign thinking update chains in place but stops presenting compact copies after disposal", () => {
+    const restore = installConversationDensity();
+    restores.push(restore);
+    const chat = new Container();
+    const phases = thinking(["first phase", "second phase"]);
+    const nativeState = phases as unknown as { lastMessage: unknown };
+    add(chat, phases);
+    const densityUpdate = phases.updateContent;
+    const foreignUpdate: typeof phases.updateContent = (message, isStreaming) => {
+      densityUpdate.call(phases, message, isStreaming);
+    };
+    phases.updateContent = foreignUpdate;
+    phases.setHideThinkingBlock(false);
+    expect(blankRuns(phases.render(80))).toEqual([1]);
+
+    restore();
+    expect(phases.updateContent).toBe(foreignUpdate);
+    expect(blankRuns(phases.render(80))).toEqual([1, 1]);
+    const next = {
+      role: "assistant",
+      content: [{ type: "thinking", thinking: "new phase\n\nnext phase" }],
+    };
+    phases.updateContent(next as never, false);
+    expect(nativeState.lastMessage).toBe(next);
+    expect(blankRuns(phases.render(80))).toEqual([1, 1]);
+  });
+
   test("untracks removed and cleared components, then rebuilds and reinstalls cleanly", () => {
     const firstRestore = installConversationDensity();
     const chat = new Container();

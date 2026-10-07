@@ -394,11 +394,19 @@
     {
       "focus": "scripts/tui-harness.ts",
       "initialBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_7f3c2fe5",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_7f3c2fe5",
+          "branch": "bruv/primary-readability-scripts-tui-harness.-7f3c2fe5",
+          "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8"
     },
     {
       "focus": "scripts/ui-cleanup-probe.py",
@@ -465,19 +473,28 @@
     {
       "focus": "src/diagnostics-extension.ts",
       "initialBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_ce10c8d9",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_ce10c8d9",
           "branch": "bruv/primary-readability-src-diagnostics-exte-ce10c8d9",
-          "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde"
+          "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
+          "commit": "c7ce40535fb494bdadac75ae970755e48a379e39"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde"
+      "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
+      "changedRelatedPaths": [],
+      "result": "No-change candidate: activation ownership, guarded append/leaf restoration, shutdown capture and bounded inspection already local.",
+      "checks": [
+        "13 diagnostics tests /573 assertions"
+      ],
+      "limits": [
+        "No build/provider"
+      ]
     },
     {
       "focus": "src/diagnostics.ts",
@@ -580,7 +597,7 @@
     {
       "focus": "src/ui/activity-projection.ts",
       "initialBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_5c8f0f5d",
@@ -595,11 +612,25 @@
           "id": "task_f92fc2a1",
           "base": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
           "candidate": "64bd85472711c2d5c6469466641b14107d4d532f",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/activity-projection.ts": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8"
+          },
+          "evidence": "Canonical ownership publication and lazy native projection remain separate component-keyed authorities with independent cleanup; absent/empty distinction explicit.",
+          "checks": [
+            "Independent 103 tests /934 assertions",
+            "Supplemental component identity/absent-empty/lazy activation/cleanup checks",
+            "format/diff"
+          ],
+          "limits": [
+            "Pending SDK/density combined review mandatory",
+            "No build/typecheck/compiled terminal/provider/remote execution"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
+      "integrationState": "unchanged accepted blob; combined SDK/density join review required",
       "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
       "changedRelatedPaths": [],
       "result": "No-change: SDK canonical ownership, lazy native body projection and installer-owned registration teardown are explicit separate authorities.",
@@ -614,7 +645,7 @@
     {
       "focus": "src/ui/conversation-density.ts",
       "initialBlob": "52d7ef08952d91ea499632280fc44dce2b3e4815",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_19cd167f",
@@ -629,11 +660,26 @@
           "id": "task_203052f5",
           "base": "756cbb9f216616e36d6fd26cc238759fb37b6444",
           "candidate": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/conversation-density.ts": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
+            "tests/conversation-density.test.ts": "1df4e439d4bf3ba40bf20c4e5accdfbaf3134b4b"
+          },
+          "evidence": "Layout/mouse geometry and thinking/source/streaming each own paired restoration. Registry owns lifetime bookkeeping, adapters registered before initial redraw. Foreign wrapper identity/source restoration and weak tracking unchanged.",
+          "checks": [
+            "Independent 88 tests /683 assertions",
+            "Exact base with final tests 27/237",
+            "Strict source TS/pinned format/lint/diff"
+          ],
+          "limits": [
+            "Unchanged import-order assist in full Biome check on base and candidate",
+            "No build/gate/interactive/live/SSH/device/GC-retention"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
+      "integrationState": "integrated unchanged from judged candidate; SDK join under review",
       "launchBase": "756cbb9f216616e36d6fd26cc238759fb37b6444",
       "changedRelatedPaths": [
         "tests/conversation-density.test.ts"
@@ -895,7 +941,7 @@
     {
       "focus": "src/ui/sdk-task-rows.ts",
       "initialBlob": "f76d7f295123b136a1e2082c1d384f5fc5b1e9c9",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_5d9a622d",
@@ -905,7 +951,15 @@
           "commit": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_060d7edf",
+          "base": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
+          "candidate": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7",
+          "verdict": "pending",
+          "joinWithDensity": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
       "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
@@ -1240,7 +1294,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_203052f5",
+          "candidate": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
+          "verdict": "ACCEPT",
+          "blob": "1df4e439d4bf3ba40bf20c4e5accdfbaf3134b4b"
+        }
+      ]
     },
     {
       "focus": "tests/diagnostics.test.ts",

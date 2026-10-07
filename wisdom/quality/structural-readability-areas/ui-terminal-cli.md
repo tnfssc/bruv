@@ -79,3 +79,9 @@ Primary task_f4f7731b; judge task_dc793fa7 ACCEPT ecfd5a67ecdf054839b97e81199944
 Diagnostics-test fresh primary task_28d3f49e + judge task_a3ac95db NO CHANGE NEEDED at 48a273afdc220bd4984fbc18739015dc4a86c88a. Explicit privacy/replay/reentry/generation/SDK restoration journeys; independent 13 tests/573 assertions, Biome/diff pass.
 
 Quiet-tool primary task_022db18e + judge task_a1a59af9 NO CHANGE NEEDED at 5970b1ea57aba517a223ded5c196ab3ebca133f1. Native delegation, owned child filtering and conditional restoration already local. Independent 34 tests/272 assertions plus 3 ownership probes/15 assertions; format/diff pass. Density join remains to check.
+
+## Density adapters and projection join
+
+Primary task_19cd167f; judge task_203052f5 ACCEPT density 1071775f8f3c9c120ddc639d60c267d4acd8ef1f: paired geometry/mouse and source/thinking restoration replace mixed late-assigned records; registration still precedes redraw. Independent 88 tests/683 assertions and base characterization 27/237; strict source TS/format/lint pass. Density test primary pending.
+
+Projection primary task_5c8f0f5d + judge task_f92fc2a1 NO CHANGE NEEDED at 90fe58e67e209ca8c64219ac0e60c8c7f1788dd8, independent 103 tests/934 assertions. **SDK/density combined review required**, including publication-before-paint, lazy render, component identity, independent teardown, dynamic prototype resolution and mouse composition. SDK judge task_060d7edf is explicitly inspecting these joins.
