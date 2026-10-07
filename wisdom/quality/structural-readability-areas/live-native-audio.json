@@ -893,7 +893,10 @@
       "primary": {
         "id": "task_2995e9e9",
         "status": "candidate ready",
-        "commit": "fatal: cannot change to 'undefined': No such file or directory"
+        "commit": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_2995e9e9",
+        "branch": "bruv/primary-src-live-cost.ts-2995e9e9",
+        "launchBase": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
@@ -1377,7 +1380,10 @@
       "primary": {
         "id": "task_d79e8579",
         "status": "candidate ready",
-        "commit": "2932f52f154c8d697234bb620b66b927ba2afd44"
+        "commit": "2932f52f154c8d697234bb620b66b927ba2afd44",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_d79e8579",
+        "branch": "bruv/primary-src-live-types.ts-d79e8579",
+        "launchBase": "9b2a7153f08d1f3604ddfbb5921c5e12f8259f8c"
       },
       "judgeRounds": [
         {
