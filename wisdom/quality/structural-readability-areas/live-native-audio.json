@@ -1595,17 +1595,20 @@
         "launchBase": "01f5af72fa90b817e0242978b5d99b37bc8199e2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1a45d152",
         "branch": "bruv/primary-tests-gpt-live-session.test.ts-1a45d152",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "42b90f334af4af21e039fd199ff3b2b402c0b55c"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_86206c2a",
         "verdict": "ACCEPT",
         "blob": "c62f5f2fedaa619f3ccbdf492641105f7dc383b8"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Overflow/malformedaudio/disconnect ownfixture evidence instead3sessions sharedarrays;earlyreject/successbilling lifetimes separate;routineadmission centralized but handshakes/terminal/interleaving/replay/concurrentclose explicit.",
+      "checks": "20sessiontests unchanged383assertions;6GPTfiles54pass656assertions;Biome/diffpass;no runtimefix/typecheck/build/provider/device/macOS."
     },
     {
       "focus": "tests/gpt-live-waveform.test.ts",
@@ -1639,10 +1642,17 @@
     {
       "focus": "tests/live-audio.test.ts",
       "initialBlob": "960e983066ac7261639690915733dd8e8c8cb3d7",
-      "primary": null,
+      "primary": {
+        "id": "task_af04f669",
+        "launchBase": "92dfbbbd944f133de6c4b94cd1ffdb73489ad085",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_af04f669",
+        "branch": "bruv/primary-tests-live-audio.test.ts-af04f669",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_610f6154",
         "verdict": "ACCEPT",
