@@ -509,3 +509,55 @@ test("refresh still propagates non-lifecycle status errors", async () => {
   await Promise.resolve();
   await expect(refresh()).rejects.toThrow("status failure");
 });
+
+test("detail separates local delivery, remote observations and uncertain human replies", async () => {
+  let command: any;
+  const notices: string[] = [];
+  const question: any = { id: "q_saved", text: "Choose target?", status: "answered", answer: "staging" };
+  const ctx: any = { ui: { notify: (text: string) => notices.push(text), setStatus() {} } };
+  registerQuestions(
+    {
+      on() {},
+      registerCommand(_: string, value: any) {
+        command = value;
+      },
+    } as any,
+    () => ({
+      handle(method: string) {
+        if (method === "questions.list") return [question];
+        if (method === "questions.get") return question;
+        throw new Error("Detail must not mutate: " + method);
+      },
+    }),
+  );
+  const detail = async () => {
+    await command.handler("detail q_saved", ctx);
+    return notices.pop()!;
+  };
+  expect(await detail()).toBe(
+    "q_saved [answered] Choose target?\nAnswer: staging\nAnswer saved · /questions resume q_saved",
+  );
+  question.delivery = "queued";
+  expect(await detail()).toContain("Answer saved · waiting for parent");
+  question.delivery = "dispatching";
+  expect(await detail()).toContain("Answer saved · delivery uncertain; check parent chat");
+  question.delivery = "delivered";
+  expect(await detail()).toContain("Answer sent to parent");
+
+  question.remote = { host: "pinned", taskId: "task", id: "remote-q", version: 4 };
+  question.answer = undefined;
+  expect(await detail()).toBe(
+    "q_saved [answered] Choose target?\nRemote ledger: pinned · task · remote-q v4\nRemote ledger says answered; no local human reply inferred.",
+  );
+  question.answer = "staging";
+  expect(await detail()).toContain("Human answer delivered to pinned remote owner");
+  question.delivery = "dispatching";
+  expect(await detail()).toContain(
+    "Human answer saved · remote delivery uncertain; reconnect to reconcile. No duplicate answer will be sent.",
+  );
+  question.status = "cancelled";
+  question.blocked = { foreground: true, taskIds: ["child"], checkpoint: "choose a different plan" };
+  expect(await detail()).toBe(
+    "q_saved [cancelled] Choose target?\nRemote ledger: pinned · task · remote-q v4\nBlocked follow-up: parent, child — choose a different plan\nAnswer: staging\nCancelled; follow-up needs a new plan, not a guessed answer.",
+  );
+});

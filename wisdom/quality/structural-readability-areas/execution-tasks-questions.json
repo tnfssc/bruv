@@ -187,7 +187,7 @@
     {
       "focus": "src/questions/extension.ts",
       "initialBlob": "cb21f18834473a40051404aea015a95033c03aa0",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_4c9d577a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4c9d577a",
@@ -198,13 +198,21 @@
       "judgeRounds": [
         {
           "id": "task_d615005a",
-          "status": "running",
+          "status": "complete",
           "candidate": "b319684abb95ad0f172303d2699e8f1dbb26b2d8",
-          "base": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d"
+          "base": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "UI answer interaction separated from visible displayed id/owner/version submission; detail facts vs delivery decision explicit, remote observation never inferred human intent; refresh generation/session authority unchanged.",
+          "checks": [
+            "independent in-memory exact base/candidate UI/command journeys matched",
+            "format/lint/diff pass2warnings12infos",
+            "four-suite dependency loading blocked; writer31/139+tsc not independently reproduced"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "4bd8d2bc1025d7607604c9a12877aaf79be36578",
+      "integration": "full source/test candidate diff integrated",
       "launchBase": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d",
       "changedRelatedPaths": [
         "src/questions/extension.ts",
@@ -918,7 +926,7 @@
     {
       "focus": "src/tasks/task-monitor-source.ts",
       "initialBlob": "00775b8a24575435eb6b98c7d88929b58cfec333",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_622c59be",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_622c59be",
@@ -929,13 +937,21 @@
       "judgeRounds": [
         {
           "id": "task_35e693c9",
-          "status": "running",
+          "status": "complete",
           "candidate": "12b464febcc8110d66f5f3bd291279be3d659ce0",
-          "base": "a5af6dc16d2128b4493a26341b5e319496076574"
+          "base": "a5af6dc16d2128b4493a26341b5e319496076574",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Ownership-bound refresh/inspection/stop effects local; inflight suppression vs persistent uncertainty notes have different lifetimes. Adapter disposal does not kill jobs, stale callbacks fenced.",
+          "checks": [
+            "matching source/callers/tests area20 pass184 assertions",
+            "includes compiled /ps/resume with binary636590cf2b9be38037056fd08c63e88669fe855e4543d23e119858f10206aa90",
+            "no freshbuild/authSSH"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "00775b8a24575435eb6b98c7d88929b58cfec333",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "a5af6dc16d2128b4493a26341b5e319496076574",
       "changedRelatedPaths": [],
       "readingResult": "No-change: panel owns merged source; refresh observations/ownership eviction, inspect bounded cached output, stop revalidation/cancellation evidence; inflight sets vs persistent uncertainty notes distinct.",
@@ -947,7 +963,7 @@
     {
       "focus": "src/tasks/task-monitor.ts",
       "initialBlob": "27acfb4e8b82ff387afbd53c59cfa399481632df",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_276c367a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_276c367a",
@@ -955,7 +971,14 @@
         "base": "eb0e877718005a15d0e7604f3538098627c65730",
         "commit": "c9e944995c92d27bc5c95b18d9cb40ccd9bd8230"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_901a796a",
+          "status": "running",
+          "candidate": "c9e944995c92d27bc5c95b18d9cb40ccd9bd8230",
+          "base": "eb0e877718005a15d0e7604f3538098627c65730"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "eb0e877718005a15d0e7604f3538098627c65730",
@@ -1161,23 +1184,34 @@
     {
       "focus": "src/typescript/job-bridge.ts",
       "initialBlob": "71303007f9886b7b34c7df16c958f4a050ffd41c",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_10057488",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_10057488",
         "branch": "bruv/primary-src-typescript-job-bridge.ts-10057488",
         "base": "7a99d536c8be21afa20521148843a2d85f3c96b3",
-        "commit": null
+        "commit": "9d80aab5646300b24ae57999007d62463e6bb6b5"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3"
+      "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3",
+      "changedRelatedPaths": [
+        "src/typescript/job-bridge.ts",
+        "tests/job-bridge-protocol.test.ts"
+      ],
+      "readingResult": "Explicit delivery phases replace crossing status/ownership/controller flags; ACK operation exposes immediate ordinary cleanup vs provisional foreground; failed replies only ACK tokens; request dispatch separate from framing.",
+      "checks": [
+        "62 pass566 assertions",
+        "new lifecycle regressions pass base",
+        "tsc/format/lint/diff pass",
+        "older compiled worker used no freshbuild"
+      ]
     },
     {
       "focus": "src/typescript/output-capture.ts",
       "initialBlob": "4b21e94241155f009144497997c9f8662e405ee8",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_105272bf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_105272bf",
@@ -1185,7 +1219,14 @@
         "base": "7a99d536c8be21afa20521148843a2d85f3c96b3",
         "commit": "c88c37a075d16cd5ba9b1abc7f0354264406b337"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0321bbc2",
+          "status": "running",
+          "candidate": "c88c37a075d16cd5ba9b1abc7f0354264406b337",
+          "base": "7a99d536c8be21afa20521148843a2d85f3c96b3"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3",
@@ -1441,7 +1482,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_d615005a",
+        "candidate": "b319684abb95ad0f172303d2699e8f1dbb26b2d8",
+        "blob": "782a2cadf6487c58de6f82055ed0c0ca4a987e7e",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/questions-interactive-tui.test.ts",
