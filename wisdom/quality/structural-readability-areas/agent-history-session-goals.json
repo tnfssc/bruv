@@ -872,7 +872,7 @@
     {
       "focus": "src/history/shake-record.ts",
       "initialBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_ce232122",
@@ -887,7 +887,14 @@
           "checks": "96 tests/454 assertions; focused format/lint pass; initial SDK missingWASM resolved by local assets; no typecheck/build/live/platform."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_776b93a2",
+          "candidate": "976ba477d57be183677d200913cca5c810d42908",
+          "base": "f6d9e4b75cbcf76217e97904ff477ba624b26b10",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -2345,7 +2352,7 @@
       "focus": "tests/fixtures/transcript-snapshots.ts",
       "initialBlob": null,
       "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_e8c1f4a2",
@@ -2366,11 +2373,18 @@
           "id": "task_a19d2f25",
           "candidate": "b8e3ca50e2975b03255962af351f20c1dad57f16",
           "base": "69fa3b70dfa8987a2bf8784a73c66d650fe43f48",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Each mock ends locally before real-fs assertions; held-lock case owns release/drain even on assertion failure; independent unsafe/stale scenarios separate setup. Independent injected failure reproduces old pending work vs final settled while assertion still surfaces.",
+          "checks": "Independent fixture15/55, wrapper1, host18/106 in privateTMPDIR; isolation refusal preserves sentinel; final combined wrapper/store/host explicitly read, no timeout-kill claim.",
+          "acceptedRelatedBlobs": {
+            "tests/transcript-snapshots.test.ts": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "integrated-related-primary-pending",
+      "acceptedBlob": "2eaf2608f31112be616f737b64e8413e29b8c2b1",
+      "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
         "judge": "task_35e27b6b",
@@ -2408,6 +2422,20 @@
           "objections": [],
           "reason": "Private TMPDIR/env ownership precedes fixture import, wrapper drains output/exit before private cleanup and preserves shared snapshots. Linear visible effects need no abstraction; deadline is not child-kill ownership.",
           "checks": "Independent isolation/exit/output/private cleanup checks performed; no forced-timeout kill guarantee. Future fixture join needs actual combined judgment, active task_a19d2f25 includes wrapper."
+        },
+        {
+          "id": "task_a19d2f25",
+          "candidate": "b8e3ca50e2975b03255962af351f20c1dad57f16",
+          "base": "69fa3b70dfa8987a2bf8784a73c66d650fe43f48",
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Each mock ends locally before real-fs assertions; held-lock case owns release/drain even on assertion failure; independent unsafe/stale scenarios separate setup. Independent injected failure reproduces old pending work vs final settled while assertion still surfaces.",
+          "checks": "Independent fixture15/55, wrapper1, host18/106 in privateTMPDIR; isolation refusal preserves sentinel; final combined wrapper/store/host explicitly read, no timeout-kill claim.",
+          "acceptedRelatedBlobs": {
+            "tests/transcript-snapshots.test.ts": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2"
+          },
+          "role": "combined-final-fixture-wrapper-review"
         }
       ],
       "acceptedBlob": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2",
