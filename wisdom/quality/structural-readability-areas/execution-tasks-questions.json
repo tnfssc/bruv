@@ -6,18 +6,25 @@
     {
       "focus": "scripts/fixtures/task-placement-clean/fake-provider.ts",
       "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_15c2f619",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_15c2f619",
         "branch": "bruv/primary-scripts-fixtures-task-placement--15c2f619",
         "base": "5541e227169c66a51af1854b644cbf42103f29d7",
-        "commit": null
+        "commit": "974450ede40c7c55f70002457fcacfbccaa22acb"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "5541e227169c66a51af1854b644cbf42103f29d7"
+      "launchBase": "5541e227169c66a51af1854b644cbf42103f29d7",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: route→parse→record inference→scenarioSSE; error→record→400. Capture owns readiness/diagnostics/containercleanup, scenario owns decisions.",
+      "checks": [
+        "4 scenario tests",
+        "exactsource handler probe intercepted logs",
+        "no liveprovider/Docker/HTTPserver/compiledproof"
+      ]
     },
     {
       "focus": "scripts/fixtures/task-placement-clean/models.json",
@@ -58,7 +65,7 @@
     {
       "focus": "scripts/leak-audit/bridge-retention.ts",
       "initialBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_cd5dc6c2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cd5dc6c2",
@@ -66,7 +73,14 @@
         "base": "a162e56cc49a21401275253ed445b6027dbc248a",
         "commit": "d174794cecc988c95a077c7586a92c858ca5bf72"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_265d13f3",
+          "status": "running",
+          "candidate": "d174794cecc988c95a077c7586a92c858ca5bf72",
+          "base": "a162e56cc49a21401275253ed445b6027dbc248a"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "a162e56cc49a21401275253ed445b6027dbc248a",
@@ -1879,7 +1893,7 @@
     {
       "focus": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "judge-running",
+      "status": "rework-running",
       "primary": {
         "id": "task_51bb34f2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_51bb34f2",
@@ -1890,13 +1904,22 @@
       "judgeRounds": [
         {
           "id": "task_207ccf5d",
-          "status": "running",
+          "status": "complete",
           "candidate": "6c2a4f36feb6c9cce854d33dc9af178fc0216842",
-          "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b"
+          "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+          "verdict": "REJECT",
+          "reason": "Three authority journeys and real-manager substitution coherent, but new delegation-policy fixture omits sessionManager, leaking prepared child history into real agent directory outside cleanup. Baseline supplied fixture session dir.",
+          "objections": [
+            "Judge reproduced removed /tmp/bruv-jobs-depth-3jiE8h but surviving real ~/.bruv/agent/sessions/--tmp-bruv-jobs-depth-3jiE8h-- child JSONL.",
+            "Restore policy fixture sessionManager.getSessionDir()=>dir and getSessionFile()=>undefined; assert prepared child session path in dir, retain shutdown-before-rm and all existing assertions. No production/framework change."
+          ],
+          "checks": [
+            "independent13 pass70 assertions green despite reproduced persistence leak"
+          ]
         }
       ],
       "acceptedBlob": null,
-      "integration": "pending",
+      "integration": "NOT imported; rejected candidate retained",
       "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
       "changedRelatedPaths": [
         "tests/job-service.test.ts"
@@ -1906,6 +1929,16 @@
         "focus13/70",
         "related5suites77/471",
         "tsc/Biome/diff pass; no production changes/fullCI/liveprovider"
+      ],
+      "reworks": [
+        {
+          "id": "task_57b22da7",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_57b22da7",
+          "branch": "bruv/rework-jobservice-test-session-ownership-57b22da7",
+          "base": "5fdfc376dfeb1ba0bcd80eef80d37f41b890f1eb",
+          "commit": null,
+          "respondsTo": "task_207ccf5d"
+        }
       ]
     },
     {

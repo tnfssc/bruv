@@ -53,3 +53,7 @@ Protocol-test primary accepted task_b123eb27, blob4c2ec710464729b919dec726c538d3
 Image validation accepted task_2d0765d2: complete record trust decision vs channel accounting/atomic acceptance; malformed later records reject before publication. Actual joined runner/bridge/capture/extension inspected. Source0a762301d2a0acfbdfee65d553121800a36fbbc0/test9f9558c9cdacab507096ffa1a1a07f7094cef177 integrated; related test primary and image-updated compiled batch pending.4 boundary bodies12 assertions baseline/candidate independently replayed; writer18/107 not independently rerun due WASM.
 
 Handoff-test primary accepted task_8ed2ab8e, final4c64cdd32dcefa46258e47612c2fa2ab02c72122: both invocation promises drain before shared spy restore; independent early rejection reproduces base unsettled vs fixed settled, same original error/background notice. Whole10 test bodies passed read-only harness; normal4suite dependency blocker retained. Explicit fixture defect correction integrated.
+
+## Open JobService-test rework
+
+Judge task_207ccf5d REJECTS candidate6c2a4f36 (NOT imported): coherent three-authority split omitted policy fixture sessionManager, causing durable child history outside temp cleanup in real agent sessions. Green13/70 missed it; judge reproduced retained file after temp directory removal. Fresh rework must preserve split/real-manager benefits, restore fixture getSessionDir/getSessionFile and assert prepared session remains in dir, then fresh judge with full rejection/response. No production change needed.
