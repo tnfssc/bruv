@@ -192,17 +192,26 @@
     {
       "file": "src/claude-compat/arguments.ts",
       "initialBlob": "61a99f162b7328d9f937d10ec33691a9b47bd645",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_1b5068a0",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1b5068a0",
         "branch": "bruv/primary-arguments-1b5068a0",
         "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a",
-        "commit": null
+        "commit": "1e7d57820c33e827b221be0e3c4eb5a8ab6af771"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_c9ec06dd",
+          "status": "running",
+          "candidate": "1e7d57820c33e827b221be0e3c4eb5a8ab6af771"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a"
+      "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a",
+      "changedRelatedPaths": [],
+      "readingResult": "One option loop localizes cursor/duplicates; format gates select stream/auxiliary; shared assertLaunchBindings policy runs before runtime/state access. No proposed rewrite.",
+      "checks": "16 launch tests/89 assertions + isolated composition wrapper pass; no full build/live."
     },
     {
       "file": "src/claude-compat/binding.ts",
@@ -215,10 +224,17 @@
     {
       "file": "src/claude-compat/cli.ts",
       "initialBlob": "fdc3bb4a35f2f52b9a7d970aac5213681ffa0f85",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_adf93322",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_adf93322",
+        "branch": "bruv/primary-cli-composition-adf93322",
+        "launchBase": "0bc2b30a175d9af76fe95b04ce1966df1110eaa0",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "0bc2b30a175d9af76fe95b04ce1966df1110eaa0"
     },
     {
       "file": "src/claude-compat/commands.ts",
@@ -279,7 +295,7 @@
     {
       "file": "src/claude-compat/permissions.ts",
       "initialBlob": "77083e6264957aa744ef1e895d6ab537ec575c97",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_8e956f8c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_8e956f8c",
@@ -290,15 +306,21 @@
       "judges": [
         {
           "id": "task_8e89cb17",
-          "status": "running",
-          "candidate": "b46e82cf279b6799c61d790bc5e2a8b67d635861"
+          "status": "completed",
+          "candidate": "b46e82cf279b6799c61d790bc5e2a8b67d635861",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "77083e6264957aa744ef1e895d6ab537ec575c97",
+          "objections": [],
+          "evidence": "Snapshot→pre-abort→hard denies→allow/mode→human callback→post-abort explicit safety ordering; binding transport removes cancelled pending request, runtime abort owns turn/session authority. Splitting would hide order. Independent probes plus 18 pass/67 assertions on verified-identical permission/MCP source+tests in dependency-ready checkout.",
+          "limits": "Candidate-local four permission tests pass; MCP SDK unavailable there; no live/full gate."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "77083e6264957aa744ef1e895d6ab537ec575c97",
       "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee",
       "changedRelatedPaths": [],
       "readingResult": "Unchanged ordered policy snapshot → cancellation → hard denials → explicit/mode allows → human callback → cancellation recheck; writer traced binding/runtime/MCP/app callers.",
-      "checks": "18 pass/67 assertions; no full gate/live."
+      "checks": "18 pass/67 assertions; no full gate/live.",
+      "integrationState": "Matches area tip unchanged"
     },
     {
       "file": "src/claude-compat/preflight.ts",
@@ -407,7 +429,7 @@
     {
       "file": "src/t3/tasks/launch-identity.ts",
       "initialBlob": "4162ee435592ca0bc00890499e6195006cf93225",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_2f86e222",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_2f86e222",
@@ -418,15 +440,21 @@
       "judges": [
         {
           "id": "task_1cec47b4",
-          "status": "running",
-          "candidate": "430f24edb86cdc322aab2038745648ddd778b32d"
+          "status": "completed",
+          "candidate": "430f24edb86cdc322aab2038745648ddd778b32d",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "4162ee435592ca0bc00890499e6195006cf93225",
+          "objections": [],
+          "evidence": "Actual native/SSH caller identity/replay journeys; readonly handle lifetime explicit. Legacy reserve terminology imperfect but rename not structural improvement; lookup preserves purposeful replay. 10 independent assertions: deterministic IDs, part boundaries, no sidecars on reopen, unchanged legacy mappings, invalid/oversized rejection.",
+          "limits": "Existing suites inspected not rerun; no build/live/authenticated SSH."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "4162ee435592ca0bc00890499e6195006cf93225",
       "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee",
       "changedRelatedPaths": [],
       "readingResult": "Caller durable identity → fingerprint → valid legacy mapping or deterministic bruv-v1 ID without writes; native uses ID, SSH derives task ID. Read handle lifetime local.",
-      "checks": "30 native-routing/SSH placement pass,159 assertions; diff check; no live/authenticated SSH/full build."
+      "checks": "30 native-routing/SSH placement pass,159 assertions; diff check; no live/authenticated SSH/full build.",
+      "integrationState": "Unchanged matches area tip"
     },
     {
       "file": "src/t3/tasks/local-notifications.ts",
@@ -630,15 +658,21 @@
     {
       "file": "tests/claude-compat-runtime.test.ts",
       "initialBlob": "5429ce6b5e28b1b1dcde77a0c4e1f75d19a398ef",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_5d5cfc47",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_5d5cfc47",
         "branch": "bruv/primary-runtime-tests-5d5cfc47",
         "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a",
-        "commit": null
+        "commit": "01d354b0c197cd25c300368146bebc5ab28a9395"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_340d96b8",
+          "status": "running",
+          "candidate": "01d354b0c197cd25c300368146bebc5ab28a9395"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -648,7 +682,10 @@
           "candidate": "cb1bcfc8a31d7869005ebed4106b56fe81773bed"
         }
       ],
-      "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a"
+      "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a",
+      "changedRelatedPaths": [],
+      "readingResult": "Fresh full-file primary proposes unchanged after fixture, steering/preflight cancellation, shutdown/wake, MCP release/fatal delivery, permission/question, history drain and command correlation traces. Largest test branches model three real shipped origins.",
+      "checks": "Isolated wrapper 1 pass, child exit zero; initial missing-assets resolved with readonly asset links, removed before commit."
     },
     {
       "file": "tests/claude-compat-task-binding.test.ts",
@@ -805,8 +842,14 @@
     {
       "file": "tests/t3/production-bridge.test.ts",
       "initialBlob": "3fe602a2184e31bfe3cb6bd96937bd6208b6dfd8",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_c1e2e00b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_c1e2e00b",
+        "branch": "bruv/primary-production-bridge-tests-c1e2e00b",
+        "launchBase": "0bc2b30a175d9af76fe95b04ce1966df1110eaa0",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -816,7 +859,8 @@
           "blob": "cc7ae68a148fa2687a1b23e043d95696ffb9dbe5",
           "candidate": "17c4c9e34d15866ec8188865fb8ec57f9c5a3bcc"
         }
-      ]
+      ],
+      "launchBase": "0bc2b30a175d9af76fe95b04ce1966df1110eaa0"
     },
     {
       "file": "tests/t3/web-launcher-process.test.ts",
@@ -853,6 +897,13 @@
       "scope": "area-owned prepare:assets; runtime/history/task-binding/prompt-ownership tests; tsc --noEmit; focused Biome format/lint",
       "limits": "Lint exit zero with 4 warnings/14 infos; no compiled/live/full gate.",
       "tests": "6 outer tests pass, 7 opt-in SDK skips, 0 fail, 19 outer assertions; isolated subprocess suites included."
+    },
+    {
+      "id": "task_059796b2",
+      "commit": "0bc2b30a",
+      "status": "passed",
+      "scope": "production-bridge/native-routing/local-notifications tests 47 pass/180 assertions; tsc --noEmit; focused Biome format/lint",
+      "limits": "2 inherited warnings/10 infos; no live/build/full gate."
     }
   ]
 }
