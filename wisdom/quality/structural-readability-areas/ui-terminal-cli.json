@@ -7,7 +7,8 @@
   "branch": "bruv/whole-repo-structural-readability-ui-ter-f8e968d6",
   "limits": [
     "Live/provider/device/SSH checks must remain explicit limits.",
-    "Automatic setup reported fish cannot find bun (exit 127); workers have explicit Bun path and shared dependency instructions."
+    "Automatic setup reported fish cannot find bun (exit 127); workers have explicit Bun path and shared dependency instructions.",
+    "Full typecheck currently blocked tests/task-rows.test.ts:249 missing Component.invalidate; fresh primary/rework required, not a cross-area gap."
   ],
   "crossAreaNeeds": [
     {
@@ -1971,7 +1972,7 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "SDK related patch integrated; primary pending at latest blob",
+      "integrationState": "related blob judged; full tsc blocked by missing fixture Component.invalidate; next free primary slot must repair and freshly judge",
       "relatedPatchJudgments": [
         {
           "id": "task_24064ab2",
@@ -1985,7 +1986,8 @@
           "verdict": "ACCEPT",
           "blob": "56b4ebeb79c6dfb6538fd3dd5fa2eb83e1185587"
         }
-      ]
+      ],
+      "priority": "next-primary: fresh test file focus plus observed TS2741 repair"
     },
     {
       "focus": "tests/tasks-ui-proof-tooling.test.py",
@@ -2222,6 +2224,16 @@
       "log": "runtime-assets/readability-batch2.log",
       "proof": "161 pass\n 0 fail\n 2032 expect() calls\nRan 161 tests across 8 files. [2.12s]",
       "static": "Full tsc and eight-file format/lint pass; lint 6 warnings/18 infos"
+    },
+    {
+      "job": "task_73653eac",
+      "commit": "e4cf5e40",
+      "scope": "normal compiled CLI + connector launcher, full tsc, nine combined CLI/UI/interaction suites",
+      "status": "build and 178 tests pass; full tsc failed",
+      "log": "runtime-assets/readability-batch3.log",
+      "setup": "Initial inline quoting failed under fish before execution; corrected to local ignored Bash script. Generated assets prepared locally; no shared dependency preparation/mutation.",
+      "proof": "178 pass, 0 fail, 1654 assertions across nine suites; fresh compiled CLI and connector built",
+      "blocker": "tests/task-rows.test.ts:249 TS2741 missing invalidate in Component fixture introduced by SDK candidate"
     }
   ],
   "parentBoundary": {
