@@ -242,3 +242,26 @@ test("legacy child ID snapshots migrate once without replay or rewriting origina
     await rm(dir, { recursive: true, force: true });
   }
 }, 30_000);
+
+test("stable-history rounds repeat task updates without inventing new child messages", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-resource-stable-history-"));
+  const counts = { tasks: 1, updates: 20, childEntries: 2 };
+  try {
+    const written = await invoke(dir, "write", counts, ["--child-updates", "3"]);
+    expect(written.code).toBe(0);
+    const fixture = JSON.parse(await readFile(join(dir, "fixture.json"), "utf8"));
+    expect(fixture.counts.childUpdates).toBe(3);
+    const childPath = fixture.tasks[0].agent.sessionFile;
+    const before = await readFile(childPath);
+    expect(jsonl(before)).toHaveLength(8); // header, seed, six new messages
+    const resumed = await invoke(dir, "resume", counts, ["--child-updates", "3"]);
+    expect(resumed.stderr).toBe("");
+    expect(resumed.code).toBe(0);
+    expect((await readFile(childPath)).equals(before)).toBe(true);
+    const invalid = await invoke(dir, "resume", counts, ["--child-updates", "21"]);
+    expect(invalid.code).not.toBe(0);
+    expect(invalid.stderr).toContain("must not exceed");
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}, 15_000);

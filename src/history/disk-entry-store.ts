@@ -36,6 +36,7 @@ export interface EntryMetadata {
   length: number;
   messageRole?: string;
   customType?: string;
+  taskProjection?: { rootKey: string; jobId: string };
   messageProvider?: string;
   messageModel?: string;
   firstKeptEntryId?: string;
@@ -60,6 +61,7 @@ class CustomEntryMetadata implements EntryMetadata {
     public offset: number,
     public length: number,
     public customType: string | undefined,
+    public taskProjection?: EntryMetadata["taskProjection"],
   ) {
     const millis = Date.parse(timestamp);
     this.time = Number.isFinite(millis) && new Date(millis).toISOString() === timestamp ? millis : timestamp;
@@ -171,6 +173,10 @@ class MetadataParser {
     "parentSession",
   ]);
   private messageFields = new Set(["role", "provider", "model"]);
+  private dataFields = new Set<string>();
+  private taskRootFields = new Set(["namespace", "sourceSessionId", "sessionId"]);
+  private cursorFields = new Set<string>();
+  private linkFields = new Set(["jobId"]);
   private fail(): never {
     throw new SyntaxError("Invalid JSON session record");
   }
@@ -306,6 +312,10 @@ class MetadataParser {
           this.value();
           result[key] = this.token(begin);
         } else if (root && key === "message") result[key] = this.value(this.messageFields);
+        else if (root && key === "data") result[key] = this.value(this.dataFields);
+        else if (fields === this.dataFields && key === "root") result[key] = this.value(this.taskRootFields);
+        else if (fields === this.dataFields && key === "cursor") result[key] = this.value(this.cursorFields);
+        else if (fields === this.cursorFields && key === "link") result[key] = this.value(this.linkFields);
         else this.value();
         this.space();
         const next = this.text[this.at++];
@@ -340,6 +350,15 @@ class MetadataParser {
       const result = this.value(this.rootFields, true);
       this.space();
       if (this.at !== text.length) this.fail();
+      if (
+        result &&
+        typeof result === "object" &&
+        (result.type !== "custom" ||
+          result.customType !== "bruv-native-task-projection" ||
+          !result.data?.root ||
+          !result.data?.cursor?.link)
+      )
+        delete result.data;
       return result?.type === "session" ? JSON.parse(text.toString("utf8")) : result;
     } finally {
       this.text = EMPTY_BUFFER;
@@ -469,8 +488,24 @@ function metadata(entry: SessionEntry, offset: number, length: number, ownString
     meta.messageRole = value.message?.role;
     meta.messageProvider = value.message?.provider;
     meta.messageModel = value.message?.model;
-  } else if (entry.type === "custom") meta.customType = value.customType;
-  else if (entry.type === "compaction") meta.firstKeptEntryId = value.firstKeptEntryId;
+  } else if (entry.type === "custom") {
+    meta.customType = value.customType;
+    if (value.customType === "bruv-native-task-projection") {
+      const root = value.data?.root;
+      const jobId = value.data?.cursor?.link?.jobId;
+      if (
+        root &&
+        typeof root.namespace === "string" &&
+        typeof root.sourceSessionId === "string" &&
+        typeof root.sessionId === "string" &&
+        typeof jobId === "string"
+      )
+        meta.taskProjection = {
+          rootKey: JSON.stringify([root.namespace, root.sourceSessionId, root.sessionId]),
+          jobId: ownedString(jobId),
+        };
+    }
+  } else if (entry.type === "compaction") meta.firstKeptEntryId = value.firstKeptEntryId;
   else if (entry.type === "thinking_level_change") meta.thinkingLevel = value.thinkingLevel;
   else if (entry.type === "model_change") {
     meta.provider = value.provider;
@@ -511,9 +546,16 @@ export class DiskEntryStore {
   private activePath: string;
   private spoolPath?: string;
   private sharedStrings = new Map<string, string>();
+  private taskKeys = new Map<string, NonNullable<EntryMetadata["taskProjection"]>>();
 
   private indexMetadata(entry: SessionEntry, offset: number, length: number, ownStrings = true): EntryMetadata {
     const meta = metadata(entry, offset, length, ownStrings);
+    if (meta.taskProjection) {
+      const key = JSON.stringify([meta.taskProjection.rootKey, meta.taskProjection.jobId]);
+      const shared = this.taskKeys.get(key);
+      if (shared) meta.taskProjection = shared;
+      else this.taskKeys.set(key, meta.taskProjection);
+    }
     // IDs and parent links name the same index nodes. Reuse their owned strings.
     if (meta.parentId) meta.parentId = this.byId.get(meta.parentId)?.id ?? meta.parentId;
     // These are vocabulary, not user payload: hundreds of thousands of old
@@ -763,6 +805,7 @@ export class DiskEntryStore {
     this.entries = [];
     this.byId.clear();
     this.sharedStrings.clear();
+    this.taskKeys.clear();
     this.cache.clear();
     this.cacheBytes = 0;
     let header: SessionHeader | undefined;
@@ -777,8 +820,8 @@ export class DiskEntryStore {
           return;
         }
         // Selected tokens were decoded from their own byte views, not a full-row
-      // JS string. They already own their small backing storage.
-      const meta = this.indexMetadata(entry as SessionEntry, offset, length, false);
+        // JS string. They already own their small backing storage.
+        const meta = this.indexMetadata(entry as SessionEntry, offset, length, false);
         this.entries.push(meta);
         this.byId.set(meta.id, meta);
         this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";

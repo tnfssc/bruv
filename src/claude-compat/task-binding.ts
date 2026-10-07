@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type { ExtensionFactory, SessionEntry } from "@earendil-works/pi-coding-agent";
 import type tasksExtension from "../agent/extension";
 import type { EntryMetadata } from "../history/disk-entry-store";
-import { getDiskBackedBranch, selectDiskBackedEntries } from "../history/session-manager";
+import { getDiskBackedBranch, visitDiskBackedBranch } from "../history/session-manager";
 import type { LocalTaskLaunchIdentity, TaskEvent, TaskSummary } from "../tasks/task-manager";
 import type { TaskOwnerAttachment, TaskOwnerBinding } from "../tasks/task-owner";
 import { childJournalEntries } from "./task-child-journal";
@@ -107,14 +107,13 @@ export function bindNativeTasks(
   const rootKey = JSON.stringify([options.root.namespace, options.root.sourceSessionId, options.root.sessionId]);
   const latest = new Map<string, EntryMetadata>();
   let needsLegacyScan = false;
-  const indexed = selectDiskBackedEntries(manager, "branch", (meta) => {
+  const indexed = visitDiskBackedBranch(manager, (meta) => {
     if (meta.type === "custom" && meta.customType === TASK_BINDING_ENTRY) {
       // Supplied by the history owner while indexing both old and new originals.
-      const key = (meta as EntryMetadata & { taskProjection?: { rootKey: string; jobId: string } }).taskProjection;
+      const key = meta.taskProjection;
       if (!key) needsLegacyScan = true;
-      else if (key.rootKey === rootKey) latest.set(key.jobId, meta);
+      else if (key.rootKey === rootKey && !latest.has(key.jobId)) latest.set(key.jobId, meta);
     }
-    return false;
   });
   const restore = (entry: SessionEntry) => {
     if (entry.type !== "custom" || entry.customType !== TASK_BINDING_ENTRY) return;
@@ -132,8 +131,10 @@ export function bindNativeTasks(
     }
   };
   if (indexed && !needsLegacyScan) {
-    const selected = new Set(latest.values());
-    for (const entry of selectDiskBackedEntries(manager, "branch", (meta) => selected.has(meta))!) restore(entry);
+    for (const meta of latest.values()) {
+      const entry = manager.getEntry(meta.id);
+      if (entry) restore(entry);
+    }
   } else {
     // Native/in-memory managers keep their existing API. Disk managers without
     // keyed metadata stream one custom entry at a time, not the whole root.

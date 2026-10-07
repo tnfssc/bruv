@@ -4,7 +4,8 @@ import { appendFile, mkdir, readFile, realpath, writeFile } from "node:fs/promis
 import { isAbsolute, join, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import type { AssistantMessage, ImageContent, Message, TextContent } from "@earendil-works/pi-ai";
-import { SessionManager } from "@earendil-works/pi-coding-agent";
+import { type SessionEntry, SessionManager } from "@earendil-works/pi-coding-agent";
+import { getDiskBackedEntryMetadata } from "../history/session-manager";
 
 export interface NativeHistoryOptions {
   /** Must be the config directory visible to the parent SDK, not just the executable. */
@@ -103,6 +104,19 @@ interface NativeRecord {
   messageHash: string;
 }
 
+/** Import maps are bookkeeping; looking for one must not load every task snapshot. */
+export function nativeImportEntryMaps(manager: SessionManager): SessionEntry[] {
+  const metadata = getDiskBackedEntryMetadata(manager);
+  if (metadata)
+    return metadata
+      .filter((entry) => entry.type === "custom" && entry.customType === "bruv-native-entry-map")
+      .map((entry) => manager.getEntry(entry.id))
+      .filter((entry): entry is SessionEntry => entry !== undefined);
+  return manager
+    .getEntries()
+    .filter((entry) => entry.type === "custom" && entry.customType === "bruv-native-entry-map");
+}
+
 /** Derived transcripts only. One writer per root/child; this class never starts or restores work. */
 export class NativeHistory {
   private queue: Promise<unknown> = Promise.resolve();
@@ -126,9 +140,7 @@ export class NativeHistory {
     if (manager.getSessionId() !== options.sourceSessionId) throw new Error("Imported Pi session identity mismatch");
     const loc = await location(options);
     const writer = new NativeHistory({ ...options, cwd: loc.cwd }, loc.filePath, false);
-    const maps = manager
-      .getEntries()
-      .filter((entry) => entry.type === "custom" && entry.customType === "bruv-native-entry-map");
+    const maps = nativeImportEntryMaps(manager);
     const map = maps
       .map((entry) => object((entry as { data?: unknown }).data))
       .find((data) => data.nativeSessionId === options.sessionId);

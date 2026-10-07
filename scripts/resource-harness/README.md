@@ -24,9 +24,9 @@ The existing journal is input, so its bytes are recorded but not charged as new 
 - Journal bytes and entry count as the session grows.
 - Child heap and RSS samples, plus independent Linux RSS and fixture disk samples every 100 ms.
 - Fresh-process resume time and sampled peak memory. This includes session reopen and task binding, not just parsing a tiny fixture.
-- Runtime version, source revision, dirty state, configuration, limits, exit status, metric timeline, and failure reason in report.json.
+- Runtime version, source revision, dirty state, configuration, limits, exit status, metric timeline, and failure reason in report.json. A missing Git executable is reported explicitly rather than discarding measurements.
 
-Write and resume run in separate owned processes. A failed write skips resume and says why; a partial fixture is not a successful session. The small profile checks startup/resume. The stress profile exercises a long fanout offline: 50 tasks with 2,000 updates each and one new child entry per update. It runs seconds, not hours. Short fixture tests alone missed the incident.
+Write and resume run in separate owned processes. A failed write skips resume and says why; a partial fixture is not a successful session. The small profile checks startup/resume. The stress profile exercises a long fanout offline: 50 tasks with 2,000 updates each. The first 128 rounds add a child message; later rounds replay the same saved history. It keeps 100,000 task updates without charging the checkpoint budget for 100,000 required transcript copies. It runs seconds, not hours. Short fixture tests alone missed the incident.
 
 | Profile | RSS | Fixture disk | Root journal entries | Time per phase |
 | --- | --- | --- | --- | --- |

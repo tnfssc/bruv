@@ -257,6 +257,25 @@ function contextMetadata(path: EntryMetadata[]): EntryMetadata[] {
   return selected;
 }
 
+/** Visit active-branch metadata newest first without copying the branch.
+ * The resident entry count bounds the walk, including cyclic parent links.
+ * Undefined means an unowned manager.
+ */
+export function visitDiskBackedBranch(manager: object, visit: (metadata: EntryMetadata) => void): true | undefined {
+  const owned = states.get(manager as SessionManager);
+  if (!owned) return undefined;
+  let id = internals(manager as SessionManager).leafId;
+  let steps = 0;
+  while (id) {
+    if (++steps > owned.store.entries.length) throw new Error("Active history branch contains a cycle");
+    const meta = owned.store.byId.get(id);
+    if (!meta) throw new Error("Active history branch contains a broken parent link");
+    visit(meta);
+    id = meta.parentId;
+  }
+  return true;
+}
+
 /** Select indexed candidates from the same branch/context as the public APIs.
  * Undefined means an unowned manager: callers must keep their native fallback.
  * Context indices matter: only index zero can be a replayed checkpoint.

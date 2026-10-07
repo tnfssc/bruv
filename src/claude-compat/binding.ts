@@ -3,11 +3,10 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import type { ExtensionFactory, SessionManager as PiSessionManager } from "@earendil-works/pi-coding-agent";
 import type { TSchema } from "typebox";
-import type { ConnectorArguments } from "./arguments";
-import { createPermissionPolicy, type PermissionMode, type PermissionRequest } from "./permissions";
 import type { TaskLaunch } from "../tasks/task-manager";
-
-import { InjectedMcpSession, parseInjectedMcpConfig } from "./mcp";
+import type { ConnectorArguments } from "./arguments";
+import { type InjectedMcpSession, parseInjectedMcpConfig } from "./mcp";
+import { createPermissionPolicy, type PermissionMode, type PermissionRequest } from "./permissions";
 
 import type { ClaudeCompatTransport } from "./transport";
 
@@ -117,7 +116,8 @@ export async function nativeStorage(
   options: { cwd: string; agentDir: string; configDir: string; projectKey?: string },
 ) {
   const { SessionManager } = await import("@earendil-works/pi-coding-agent");
-  const { NativeHistory, importNativeHistory, readNativeHistory, nativeHistoryToPi } = await import("./history");
+  const { NativeHistory, importNativeHistory, readNativeHistory, nativeHistoryToPi, nativeImportEntryMaps } =
+    await import("./history");
   const sessionId = args.resume ?? args.sessionId ?? randomUUID();
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId))
     throw new Error("Native session ID must be a UUID");
@@ -153,7 +153,7 @@ export async function nativeStorage(
   }
   const history =
     imported?.history ??
-    (manager.getEntries().some((e) => e.type === "custom" && e.customType === "bruv-native-entry-map")
+    (nativeImportEntryMaps(manager).length > 0
       ? await NativeHistory.resumeImported({ ...location, sourceSessionId: manager.getSessionId() }, manager)
       : await NativeHistory.open({ ...location, sourceSessionId: manager.getSessionId() }));
   let parentUuid: string | undefined;
@@ -164,12 +164,7 @@ export async function nativeStorage(
     if (!checkpoint) throw new Error("Unknown native checkpoint");
     // Validate complete context before changing Pi's leaf. Never reexecute an imported tool.
     nativeHistoryToPi(entries.slice(0, entries.indexOf(checkpoint) + 1), sessionId);
-    const mapping =
-      imported?.entries ??
-      manager
-        .getEntries()
-        .filter((e) => e.type === "custom" && e.customType === "bruv-native-entry-map")
-        .flatMap((e) => (e as any).data.entries);
+    const mapping = imported?.entries ?? nativeImportEntryMaps(manager).flatMap((e) => (e as any).data.entries);
     const id =
       checkpoint.bruv?.sourceSessionId === manager.getSessionId()
         ? checkpoint.bruv.sourceMessageId

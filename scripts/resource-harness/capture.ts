@@ -1,8 +1,8 @@
-import { execFileSync } from "node:child_process";
 import { constants } from "node:fs";
 import { chmod, copyFile, mkdir, mkdtemp, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { sourceProvenance } from "./provenance";
 import { type Budgets, supervise } from "./supervisor";
 
 /** Requires a stopped writer. Clone existing history with CoW, not a live task or a byte-by-byte giant copy. */
@@ -37,14 +37,7 @@ export async function runCapturedSession(options: { source: string; out: string;
   });
   const report = {
     schemaVersion: 1,
-    revision: execFileSync("git", ["rev-parse", "HEAD"], {
-      cwd: dirname(fileURLToPath(import.meta.url)),
-      encoding: "utf8",
-    }).trim(),
-    dirty: !!execFileSync("git", ["status", "--porcelain", "--untracked-files=no"], {
-      cwd: dirname(fileURLToPath(import.meta.url)),
-      encoding: "utf8",
-    }).trim(),
+    ...sourceProvenance(),
     createdAt: new Date().toISOString(),
     profile: "captured",
     source: options.source,

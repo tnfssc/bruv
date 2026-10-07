@@ -20,18 +20,19 @@ interface Options {
   tasks: number;
   updates: number;
   childEntries: number;
+  childUpdates: number;
   phase: "write" | "resume";
 }
 interface Fixture {
   version: 1;
-  counts: Pick<Options, "tasks" | "updates" | "childEntries">;
+  counts: Pick<Options, "tasks" | "updates" | "childEntries" | "childUpdates">;
   root: { namespace: string; sourceSessionId: string; sessionId: string };
   tasks: TaskSummary[];
 }
 
 function parseOptions(args: string[]): Options {
   const values = new Map<string, string>();
-  const names = ["--dir", "--tasks", "--updates", "--child-entries", "--phase"];
+  const names = ["--dir", "--tasks", "--updates", "--child-entries", "--child-updates", "--phase"];
   for (let i = 0; i < args.length; i += 2) {
     const name = args[i];
     const value = args[i + 1];
@@ -49,11 +50,15 @@ function parseOptions(args: string[]): Options {
   const dir = values.get("--dir");
   const phase = values.get("--phase");
   if (!dir || (phase !== "write" && phase !== "resume")) throw new Error("Missing --dir or invalid --phase");
+  const updates = count("--updates", 0);
+  const childUpdates = values.has("--child-updates") ? count("--child-updates", 0) : updates;
+  if (childUpdates > updates) throw new Error("--child-updates must not exceed --updates");
   return {
     dir: resolve(dir),
     phase,
     tasks: count("--tasks", 1),
-    updates: count("--updates", 0),
+    updates,
+    childUpdates,
     childEntries: count("--child-entries", 0),
   };
 }
@@ -64,7 +69,12 @@ class FakeJobs {
   private readonly listeners = new Set<TaskEventListener>();
   constructor(private readonly tasks: TaskSummary[]) {}
   list() {
-    return this.tasks.map((task) => structuredClone(task));
+    // Match TaskManager summaries: copy public state, not a deep clone of every static launch field.
+    return this.tasks.map((task) => ({
+      ...task,
+      ...(task.launchIdentity ? { launchIdentity: { ...task.launchIdentity } } : {}),
+      ...(task.agent ? { agent: { ...task.agent } } : {}),
+    }));
   }
   subscribe(listener: TaskEventListener) {
     this.listeners.add(listener);
@@ -148,7 +158,12 @@ async function main(options: Options) {
       root.appendMessage({ role: "user", content: "Offline resource harness: launch fixture tasks", timestamp: 0 });
       fixture = {
         version: 1,
-        counts: { tasks: options.tasks, updates: options.updates, childEntries: options.childEntries },
+        counts: {
+          tasks: options.tasks,
+          updates: options.updates,
+          childEntries: options.childEntries,
+          childUpdates: options.childUpdates,
+        },
         root: {
           namespace: "bruv:resource-harness",
           sourceSessionId: sessionFile(root),
@@ -201,7 +216,8 @@ async function main(options: Options) {
         fixture.version !== 1 ||
         fixture.counts.tasks !== options.tasks ||
         fixture.counts.updates !== options.updates ||
-        fixture.counts.childEntries !== options.childEntries
+        fixture.counts.childEntries !== options.childEntries ||
+        (fixture.counts.childUpdates ?? fixture.counts.updates) !== options.childUpdates
       )
         throw new Error("Resume counts must match the written fixture");
       root = SessionManager.open(fixture.root.sourceSessionId);
@@ -265,7 +281,7 @@ async function main(options: Options) {
       const batch = Math.max(1, Math.ceil(options.updates / 20));
       for (let update = 1; update <= options.updates; update++) {
         for (const [index, { manager: child, task }] of children.entries()) {
-          for (let entry = 0; entry < options.childEntries; entry++) {
+          for (let entry = 0; entry < (update <= options.childUpdates ? options.childEntries : 0); entry++) {
             const timestamp = (update - 1) * options.childEntries + entry + 1;
             const text = `worker=${index} update=${update} entry=${entry} ${"x".repeat(128)}`;
             if (entry % 2 === 0) child.appendMessage({ role: "user", content: [{ type: "text", text }], timestamp });

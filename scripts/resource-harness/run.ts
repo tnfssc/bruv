@@ -1,8 +1,8 @@
-import { execFileSync } from "node:child_process";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCapturedSession } from "./capture";
+import { sourceProvenance } from "./provenance";
 import { type Budgets, supervise } from "./supervisor";
 
 const MiB = 1024 * 1024;
@@ -11,15 +11,20 @@ export const profiles = {
     tasks: 8,
     updates: 128,
     childEntries: 1,
+    childUpdates: 128,
     budgets: { rssBytes: 384 * MiB, diskBytes: 8 * MiB, journalEntries: 8192, timeoutMs: 30_000 },
   },
   stress: {
     tasks: 50,
     updates: 2000,
     childEntries: 1,
+    childUpdates: 128,
     budgets: { rssBytes: 512 * MiB, diskBytes: 64 * MiB, journalEntries: 50_000, timeoutMs: 90_000 },
   },
-} satisfies Record<string, { tasks: number; updates: number; childEntries: number; budgets: Budgets }>;
+} satisfies Record<
+  string,
+  { tasks: number; updates: number; childEntries: number; childUpdates: number; budgets: Budgets }
+>;
 
 function options(args: string[]) {
   let profile: keyof typeof profiles = "ci";
@@ -61,6 +66,8 @@ export async function runHarness(args: string[]) {
         String(config.updates),
         "--child-entries",
         String(config.childEntries),
+        "--child-updates",
+        String(config.childUpdates),
         "--phase",
         phase,
       ],
@@ -90,11 +97,7 @@ export async function runHarness(args: string[]) {
   const passed = phases.length === 2 && phases.every((phase) => phase.passed);
   const report = {
     schemaVersion: 1,
-    revision: execFileSync("git", ["rev-parse", "HEAD"], { cwd: dirname(workload), encoding: "utf8" }).trim(),
-    dirty: !!execFileSync("git", ["status", "--porcelain", "--untracked-files=no"], {
-      cwd: dirname(workload),
-      encoding: "utf8",
-    }).trim(),
+    ...sourceProvenance(),
     createdAt: new Date().toISOString(),
     profile,
     config,

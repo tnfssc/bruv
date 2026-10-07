@@ -24,7 +24,14 @@ export async function* childJournalEntries(
         const line = pieces.length ? Buffer.concat([...pieces, fragment], length + fragment.length) : fragment;
         const endOffset = position + newline + 1;
         const text = line.toString("utf8");
-        yield { entry: text.trim() ? (JSON.parse(text) as SessionEntry) : undefined, endOffset };
+        let entry: SessionEntry | undefined;
+        try {
+          entry = text.trim() ? (JSON.parse(text) as SessionEntry) || undefined : undefined;
+        } catch {
+          // Match SDK loading: skip malformed complete rows, never rewrite them.
+          // The offset still advances; an incomplete final row is retried below.
+        }
+        yield { entry, endOffset };
         pieces = [];
         length = 0;
         start = newline + 1;

@@ -77,3 +77,9 @@ retention, checkpoint consolidation, or a memory fix.
 
 Focused checks: `bun test tests/resource-harness-workload.test.ts`.
 Task evidence/limits: [wisdom note](../../wisdom/resources/resource-harness-workload.md).
+
+## Stable-history stress
+
+--child-updates N grows the child transcript only during the first N update rounds. The default is --updates. Later updates still traverse the real binding, checkpoint, and child-tail code. Standard stress uses 50 tasks, 2,000 update rounds, one child entry per growing round, and 128 growing rounds. Original and derived transcripts remain intact.
+
+The fake manager now returns shallow public summaries like TaskManager; it no longer deep-clones all launch fields on every roster read. This avoids measuring a fake-only allocation cost.
