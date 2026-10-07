@@ -404,12 +404,15 @@
         "launchBase": "e450896fa5f2cc20e2f77eeb06375321e2021a55",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_6cc26443",
         "branch": "bruv/primary-native-live-test-waveform.c-6cc26443",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "84e6ee3d013babbac0e8f66c8137ecbeb59312c9"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Contiguous reference and packet rendering each own core lifetime; packet operation exposes958 vs960 first-arrival timing/subsequent packets/final tail; main generates fixture/independent outputs/exact comparison.",
+      "checks": "Baseline/candidate strictASanUBSan zero waveform error;core regressions pass;both reject removed held-tail lookahead mutation;diff clean. No production/macOS/device/provider."
     },
     {
       "focus": "scripts/build-live-helper.sh",
@@ -1265,10 +1268,17 @@
     {
       "focus": "tests/live-extension.test.ts",
       "initialBlob": "1b32ba0926c08fdcaed34529c1707a95dd52de7a",
-      "primary": null,
+      "primary": {
+        "id": "task_ecea00d6",
+        "launchBase": "50bbb773281940490cf11cf862ae15d5b2555951",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_ecea00d6",
+        "branch": "bruv/primary-tests-live-extension.test.ts-ecea00d6",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_65eb4c80",
         "verdict": "ACCEPT",
