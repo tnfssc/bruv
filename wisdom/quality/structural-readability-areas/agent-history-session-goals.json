@@ -312,8 +312,15 @@
     {
       "focus": "src/goals/extension.ts",
       "initialBlob": "a174d5d8ed42f65ee4861e3ffb89080024cbf894",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_28c52a22",
+          "launchBase": "a877b31baa58c7765e662d8cbe3fbe6089d70a81",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_28c52a22",
+          "branch": "bruv/primary-goals-extension-28c52a22"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -1509,13 +1516,20 @@
       "focus": "tests/fixtures/history-io-cleanup-failure.ts",
       "initialBlob": null,
       "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_d007bea3",
           "launchBase": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_d007bea3",
-          "branch": "bruv/primary-cleanup-failure-fixture-d007bea3"
+          "branch": "bruv/primary-cleanup-failure-fixture-d007bea3",
+          "commit": "bf821d9a48f8f20d05e487545df72db2cd119b51",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Unchanged linear child-only one-shot fault: pending store -> first-user publication despite unlink failure -> assistant append -> reopened IDs; extra abstractions obscure flow.",
+          "checks": "Direct fixture and parent 10 tests/43 assertions pass; timing probe 12 assertions proves fault after target/spool inode identity; fixture assertion negative control fails parent; focused format/lint pass.",
+          "limits": "Bun normal test termination left redundant pending link and observed exit listener not invoked; no exit cleanup proof or behavior fix."
         }
       ],
       "judgeRounds": [],
