@@ -158,10 +158,17 @@
     {
       "focus": "native/live-linux/tests/virtual.sh",
       "initialBlob": "02fea1a0e2d25ac75c78fce395ce9f39dcbaf52f",
-      "primary": null,
+      "primary": {
+        "id": "task_48ae14aa",
+        "launchBase": "efb1edd066ae3fe1b59334ff01cf15f14fc9b919",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_48ae14aa",
+        "branch": "bruv/primary-native-live-linux-tests-virtual.-48ae14aa",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live/AudioCore.c",
@@ -1405,17 +1412,27 @@
         "launchBase": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_217fe0fb",
         "branch": "bruv/primary-tests-live-tools.test.ts-217fe0fb",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "421cd3969f3db5e4c1d1358ae5fad4bf01a53d78"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0b0630b0",
+          "status": "running",
+          "candidate": "421cd3969f3db5e4c1d1358ae5fad4bf01a53d78",
+          "base": "e81164ded74d4add7f7a8a0735b52d788da3cf39"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_aba16011",
         "verdict": "ACCEPT",
         "blob": "700a785d33c4f17d4b7201f6a7f58bc01db2526a"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Split mixed rejection/failure/result/disconnect journeys; host calls recorded at one execution seam and deferred results expose dispatch/settlement; disconnect before/after together, replay/cancel checkpoints explicit; undeclared-tool response assertion added.",
+      "checks": "33 focused/adjacent pass/134 assertions; typecheck/format/lint/diff pass. No production change/full gate/provider/macOS/device."
     },
     {
       "focus": "tests/live-transcript.test.ts",
