@@ -1111,7 +1111,7 @@
     {
       "focus": "src/tasks/worktree-workspace.ts",
       "initialBlob": "76fe2987f9f644571d9b478ba835254f1fe988da",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_2d59fe31",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_2d59fe31",
@@ -1122,13 +1122,21 @@
       "judgeRounds": [
         {
           "id": "task_866a3bd6",
-          "status": "running",
+          "status": "complete",
           "candidate": "7edb33c9c4a7716c772deed6644cc0bdd09f1088",
-          "base": "d5623c8e9d529384108765b2ae2604f493c0c60d"
+          "base": "d5623c8e9d529384108765b2ae2604f493c0c60d",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Source/config pin and validated Git publication linear; all scripts validated then first flagged setup selected, explicit asyncfalse and original text digest preserved; service/manager own activation/cancel/deadline.",
+          "checks": [
+            "matching focus/service/manager/workspace-test area13/50",
+            "candidate format/diff pass; direct zod dependency blocker",
+            "no liveprovider/candidate-wide claim"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "76fe2987f9f644571d9b478ba835254f1fe988da",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
       "changedRelatedPaths": [],
       "readingResult": "No-change: one batch source/config pin; validation→planned publication→Git creation explicit; service/manager retain setup/cancel/deadline/activation.",
@@ -1158,11 +1166,18 @@
     {
       "focus": "src/typescript/error-diagnostic.ts",
       "initialBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_60592667",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_60592667",
+        "branch": "bruv/primary-src-typescript-error-diagnostic.-60592667",
+        "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "4f28172f2d4c8430b0138a415f2d338138ee7ef9"
     },
     {
       "focus": "src/typescript/execution.ts",
@@ -1209,18 +1224,37 @@
     {
       "focus": "src/typescript/extension.ts",
       "initialBlob": "3bf31c850c9c529d1692e59b56b4667bb0af0599",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_032f5c01",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_032f5c01",
         "branch": "bruv/primary-src-typescript-extension.ts-032f5c01",
         "base": "b457ae3d2e0b852a62258799beb66a10f73a1171",
-        "commit": null
+        "commit": "081b8862213c79f947489cd5becb63d1ff680f5a"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_cee52f91",
+          "status": "running",
+          "candidate": "081b8862213c79f947489cd5becb63d1ff680f5a",
+          "base": "b457ae3d2e0b852a62258799beb66a10f73a1171"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "b457ae3d2e0b852a62258799beb66a10f73a1171"
+      "launchBase": "b457ae3d2e0b852a62258799beb66a10f73a1171",
+      "changedRelatedPaths": [
+        "src/typescript/extension.ts",
+        "tests/execute-handoff.test.ts"
+      ],
+      "readingResult": "One invocation owner groups handoff and launched-result projection; recordLaunches immediate publication and finish retains background evidence on failure. Session shutdown/cancel/diagnostics/live stop remain registration-owned.",
+      "checks": [
+        "109 pass736 assertions",
+        "preservation checks baseline+candidate",
+        "tsc/format/error-level lint/diff pass",
+        "old dist no freshbuild/fullgate"
+      ],
+      "overlap": "Verified actual diff edits tests/execute-handoff.test.ts, NOT already accepted tests/typescript-execution.test.ts. No accepted test blob invalidated; execute-handoff still needs primary."
     },
     {
       "focus": "src/typescript/images.ts",
