@@ -1000,7 +1000,7 @@
     {
       "focus": "src/tasks/task-title.ts",
       "initialBlob": "868dbe84394877707260f5531554b4f419a4f08f",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_08ee1258",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_08ee1258",
@@ -1008,7 +1008,14 @@
         "base": "a5af6dc16d2128b4493a26341b5e319496076574",
         "commit": "0f5c3dcca6b3fed2968cd3276964f0b2ff0b2cef"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_855d0a91",
+          "status": "running",
+          "candidate": "0f5c3dcca6b3fed2968cd3276964f0b2ff0b2cef",
+          "base": "a5af6dc16d2128b4493a26341b5e319496076574"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "a5af6dc16d2128b4493a26341b5e319496076574",
@@ -1501,7 +1508,7 @@
     {
       "focus": "tests/resume-safeguards.test.ts",
       "initialBlob": "0ba86426d2901c6fd824d50dc1eb2d12ae29c3f7",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_4a71daea",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4a71daea",
@@ -1512,14 +1519,24 @@
       "judgeRounds": [
         {
           "id": "task_0b6d754e",
-          "status": "running",
+          "status": "complete",
           "candidate": "64815c5467793ca8e062db7f212fabd4ffc6fb09",
           "base": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
-          "priorRelatedJudge": "task_021ccfb2"
+          "priorRelatedJudge": "task_021ccfb2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Required named lifecycle callbacks remove silent optional dispatch; finally releases registrations before files and foreign methods. Permission/root/malformed/foreign wrapper journeys preserved; explicit test-lifetime defect correction reproduced.",
+          "checks": [
+            "independent baseline+candidate9/59;7 scenarios47 static assertions retained",
+            "abort baseline5pass3fail vs candidate7pass1deliberatefail",
+            "tsc/format/lint/diff pass",
+            "CORRECTION:2 inherited regex warnings+1 NEW noConfusingVoidType warning, not3 inherited",
+            "no renderedTUI/fullgate"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "54ab26258f93b8600e178f3f62dfbce8e0311334",
+      "integration": "full primary test diff integrated; supplemental blob superseded",
       "relatedAcceptance": {
         "judge": "task_021ccfb2",
         "candidate": "3de74516c210a58442656ed67a6e8584d987c302",
@@ -1534,10 +1551,11 @@
       "readingResult": "Required named lifecycle callbacks replace untyped optional map dispatch; finally teardown fixes reproduced adapter leakage on aborted test; typed foreign wrappers forward real SDK row.",
       "checks": [
         "7 journeys47 static assertions retained",
-        "9 pass59 assertions; tsc/format/lint/diff pass3 inherited warnings",
+        "9 pass59 assertions; tsc/format/lint/diff pass2 inherited warnings and1 new noConfusingVoidType warning (judge correction)",
         "injected abort baseline3 failures vs candidate deliberate abort only",
         "no fullgate/compiled parity"
-      ]
+      ],
+      "incidentalFix": "Test failure leaked global adapter registrations; finally teardown prevents reproduced cross-test contamination. Production unchanged."
     },
     {
       "focus": "tests/resume-stream-cancellation.test.ts",
