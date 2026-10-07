@@ -47,3 +47,5 @@ site/assets/brand/bruv-wordmark-light.svg: Accessible SVG root and shared ink/tr
 site/scripts/generate-wordmark.ts: Checked rasterization->half-block rows->JSON and SVG geometry->checked social render->PNG are direct sequential operations; width-local state. Fresh judge2 consumer tests/56 assertions and1200x630 PNG header. Generator/failure paths/browser not run. Prior aborted judge retained with no verdict.
 
 site/assets/brand/bruv-wordmark.svg: Accessible root/shared fill-transform/four glyph paths are explicit geometry; traced asset generation/README/template/CSS/build consumers. Judge2 tests/63 assertions prove cell/semantic bounds not SVG fidelity/freshness. No regeneration/browser/build.
+
+site/assets/brand/wordmark-cells.json: Width-keyed glyph rows directly express generated raster output; generator/brand selector/layout/terminal responsibilities separate. Judge1 test/43 assertions proves glyph presence/width,not SVG fidelity;no regeneration/browser/build.

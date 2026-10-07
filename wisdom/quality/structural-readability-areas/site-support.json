@@ -121,7 +121,7 @@
     {
       "focus": "site/assets/brand/wordmark-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_4cffbf2e",
@@ -136,10 +136,16 @@
         {
           "id": "task_b3d7d253",
           "candidate": "779a14fb3d429de7d4573828b11ea1e03cc126c2",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Width-keyed glyph rows directly express generated raster output; generator/brand selector/layout/terminal responsibilities separate. Judge1 test/43 assertions proves glyph presence/width,not SVG fidelity;no regeneration/browser/build.",
+          "objections": []
         }
       ],
-      "initialBlob": "7690aff87443de0a97521444bb7a64546f568f4e"
+      "initialBlob": "7690aff87443de0a97521444bb7a64546f568f4e",
+      "acceptedBlob": "7690aff87443de0a97521444bb7a64546f568f4e",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/assets/cli-settings.txt",
@@ -167,7 +173,7 @@
     {
       "focus": "site/assets/settings-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_dc9fc829",
@@ -178,7 +184,13 @@
           "result": "Unchanged provenance->crop geometry->ordered glyph/style runs; repetition retains terminal effects. Extractor->settingsCapture->fidelity/reflow tests,not current scripted landing.2 tests/99 assertions;no browser/build."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_d45f272d",
+          "candidate": "feaf97355ed70cb36f97e778a0dfd0da4f666478",
+          "state": "running"
+        }
+      ],
       "initialBlob": "d2ed6e9f218ba8cad77bedbe4fa3df15bad002a3"
     },
     {
@@ -366,13 +378,15 @@
     {
       "focus": "site/index.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_1510f666",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_1510f666",
           "branch": "bruv/primary-site-index.html-1510f666",
-          "base": "4679f3868a540fe2664d34487027b81af8dcf1ce"
+          "base": "4679f3868a540fe2664d34487027b81af8dcf1ce",
+          "commit": "26c935af68ca49c3f004c75d3ab1078c7ca9930d",
+          "result": "Unchanged literal shell:head metadata/bootstrap,body hidden terminal+visible fallback/navigation/content then runtime injection. Build/runtime own view/startup/failure lifetimes.10 tests;browser startup read not rerun."
         }
       ],
       "judges": [],
@@ -410,13 +424,15 @@
     {
       "focus": "site/install-html.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_8dfc6d3c",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_8dfc6d3c",
           "branch": "bruv/primary-site-install-html.ts-8dfc6d3c",
-          "base": "4bbd80ea0cbf91e1697219a3f07c2957950f771c"
+          "base": "4bbd80ea0cbf91e1697219a3f07c2957950f771c",
+          "commit": "1cc107a22f17ff8f2f7b6ffc5539d87be54fc59c",
+          "result": "Unchanged import+one enhanceInstall invocation; separately bundled HTML entry avoids terminal/WASM startup coupling; copy/timer effects owned by shared operation. Traced build/callers/browser assertions;no test rerun."
         }
       ],
       "judges": [],
@@ -528,8 +544,15 @@
     {
       "focus": "site/scripts/browser.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_4d170cd0",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_4d170cd0",
+          "branch": "bruv/primary-site-scripts-browser.ts-4d170cd0",
+          "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2"
+        }
+      ],
       "judges": [],
       "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2"
     },
@@ -624,8 +647,15 @@
     {
       "focus": "site/scripts/capture-real-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_46c581d4",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_46c581d4",
+          "branch": "bruv/primary-site-scripts-capture-real-pty.py-46c581d4",
+          "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2"
+        }
+      ],
       "judges": [],
       "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16"
     },
