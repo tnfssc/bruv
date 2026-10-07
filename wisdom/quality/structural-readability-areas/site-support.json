@@ -988,7 +988,7 @@
     {
       "focus": "site/scripts/scroll.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_6f289d7b",
@@ -999,8 +999,20 @@
           "result": "Fresh accumulator per behavior and separate wheel conversion remove hidden remainder between unrelated scenarios. All original assertions retained,reset setup gains assertion.7 tests/17 assertions;format/diff pass;existing lint info."
         }
       ],
-      "judges": [],
-      "initialBlob": "db16489bc7ef3c785b58fa42a8fb2d7a4c83af2c"
+      "judges": [
+        {
+          "id": "task_8e721489",
+          "candidate": "6f158bfb311d5fd5f6bf6f0d1807a5834fb8a70b",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Separate accumulators remove hidden remainder across unrelated reversal/horizontal/bounds/reset scenarios;wheel normalization stands alone;all original assertions retained+reset assertion. Judge7 tests/17 assertions;bounds still does not independently prove same-direction boundary remainder clearing.",
+          "objections": []
+        }
+      ],
+      "initialBlob": "db16489bc7ef3c785b58fa42a8fb2d7a4c83af2c",
+      "acceptedBlob": "5a1025b2f60ae7f6ef6ff55951b79cce6edd55f1",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/startup.test.ts",
