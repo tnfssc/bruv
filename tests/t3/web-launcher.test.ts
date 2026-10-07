@@ -48,7 +48,10 @@ test("guide retains history limitations and safe paired updates without parent w
   expect(guide).toContain("no fixed release");
   expect(guide).toContain("Do not work around it with the parent environment");
   expect(guide).toContain("explicitly Decline any stale approval card; do not approve it");
-  expect(guide).toContain("Never use T3's Claude login, install or updater for Bruv");
+  expect(guide).toContain("Never use T3's Claude login or install for Bruv");
+  expect(guide).toContain("the connector's paired Bruv updater (not Claude)");
+  expect(guide).toContain("unchanged/outdated after updating");
+  expect(guide).toContain("Restart T3 after updating");
   expect(guide).toContain("Stop active Bruv/T3 sessions");
   expect(guide).toContain("bruv update --check    (read-only check)");
   expect(guide).toContain("bruv update            (CLI + connector together)");

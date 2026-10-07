@@ -48,7 +48,13 @@ bruv update --check           # Check without changing files
 bruv update                  # Update the sibling CLI and connector together
 ```
 
-Stop active sessions first and restart afterward. Split/custom binary layouts
+The connector commands `bruv-claude-compat update` and `bruv claude-compat update`
+use this same paired updater, including `--check` and `--help`/`-h`. T3's update
+button is supported for a configured Bruv connector, but it may still report
+unchanged/outdated after a successful update: it compares our protocol version
+against latest Claude, not the Bruv product version. No Claude/T3 is updated.
+
+Stop active sessions first and restart T3 afterward. Split/custom binary layouts
 need a manual paired reinstall. External T3 updates separately with `t3 update`;
 check its [accepted version and setup](wisdom/claude-compat/external-t3-setup.md)
 before updating.
