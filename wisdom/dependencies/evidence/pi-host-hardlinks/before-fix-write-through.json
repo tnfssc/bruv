@@ -1,0 +1,43 @@
+{
+  "dir": "/tmp/bruv-pi-write-through.zZeE2Y",
+  "before": [
+    {
+      "root": "local",
+      "ino": 2795019,
+      "nlink": 3,
+      "sha256": "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a"
+    },
+    {
+      "root": "cache",
+      "ino": 2795019,
+      "nlink": 3,
+      "sha256": "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a"
+    },
+    {
+      "root": "sibling",
+      "ino": 2795019,
+      "nlink": 3,
+      "sha256": "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a"
+    }
+  ],
+  "after": [
+    {
+      "root": "local",
+      "ino": 2795019,
+      "nlink": 3,
+      "sha256": "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202"
+    },
+    {
+      "root": "cache",
+      "ino": 2795019,
+      "nlink": 3,
+      "sha256": "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202"
+    },
+    {
+      "root": "sibling",
+      "ino": 2795019,
+      "nlink": 3,
+      "sha256": "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202"
+    }
+  ]
+}

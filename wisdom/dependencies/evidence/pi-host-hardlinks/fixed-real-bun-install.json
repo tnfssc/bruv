@@ -1,0 +1,140 @@
+{
+  "bun": "1.4.2",
+  "cache": "/home/tnfssc/.bruv/worktrees/t3-3152ea81-5442693331ce-task_e32185ee/dist/pi-host-cache.tEH3NH",
+  "backend": "hardlink",
+  "sibling": "/home/tnfssc/.bruv/worktrees/t3-3152ea81-5442693331ce-task_e32185ee/dist/pi-host-sibling.GqL4jF",
+  "preparationExitCodes": [
+    0,
+    0
+  ],
+  "allFilesDetached": true,
+  "secondPreparationPreservedLocalInodesAndMtimes": true,
+  "files": [
+    {
+      "path": "dist/extensions/index.js",
+      "before": {
+        "ino": 65574310,
+        "nlink": 3,
+        "sha256": "ed7f805d46160c30db9be874b2350d0bd01f8b390f94a55ec1d8d4ed9474bf9b"
+      },
+      "after": {
+        "localIno": 65574683,
+        "localNlink": 1,
+        "localSha256": "ec465bb227a60159a8b3aa00e62f794370311a232b839cb104917da7b2651fc8",
+        "cacheIno": 65574310,
+        "cacheNlink": 2,
+        "cacheSha256": "ed7f805d46160c30db9be874b2350d0bd01f8b390f94a55ec1d8d4ed9474bf9b",
+        "cacheAndSiblingByteIdentical": true
+      },
+      "localMtimeMs": 1791404970551.7776
+    },
+    {
+      "path": "dist/main.js",
+      "before": {
+        "ino": 65574325,
+        "nlink": 3,
+        "sha256": "060521b0b81f91948d8ded9139e423e5d0c9e6808a45c81750cc30519de4d2db"
+      },
+      "after": {
+        "localIno": 65574684,
+        "localNlink": 1,
+        "localSha256": "b0197a0d0abb0261fac507a9e30c33a5e6a2c4fcedfd28b0d4e29fa2f30be786",
+        "cacheIno": 65574325,
+        "cacheNlink": 2,
+        "cacheSha256": "060521b0b81f91948d8ded9139e423e5d0c9e6808a45c81750cc30519de4d2db",
+        "cacheAndSiblingByteIdentical": true
+      },
+      "localMtimeMs": 1791404970552.7776
+    },
+    {
+      "path": "dist/cli/args.js",
+      "before": {
+        "ino": 65573874,
+        "nlink": 3,
+        "sha256": "f48f91efc303fc7b826f0ce02ba6eb70fcc271d31671f0f68f562fdd8c6885e6"
+      },
+      "after": {
+        "localIno": 65574685,
+        "localNlink": 1,
+        "localSha256": "4a3d92e391f2205174c71cfd30a8aed771ad9f560b80c0c6e662322f8e846e83",
+        "cacheIno": 65573874,
+        "cacheNlink": 2,
+        "cacheSha256": "f48f91efc303fc7b826f0ce02ba6eb70fcc271d31671f0f68f562fdd8c6885e6",
+        "cacheAndSiblingByteIdentical": true
+      },
+      "localMtimeMs": 1791404970554.7776
+    },
+    {
+      "path": "dist/core/session-manager.js",
+      "before": {
+        "ino": 65573474,
+        "nlink": 3,
+        "sha256": "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a"
+      },
+      "after": {
+        "localIno": 65574686,
+        "localNlink": 1,
+        "localSha256": "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202",
+        "cacheIno": 65573474,
+        "cacheNlink": 2,
+        "cacheSha256": "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a",
+        "cacheAndSiblingByteIdentical": true
+      },
+      "localMtimeMs": 1791404970555.7776
+    },
+    {
+      "path": "dist/modes/interactive/chat-viewport.js",
+      "before": {
+        "ino": 65574118,
+        "nlink": 3,
+        "sha256": "77ff3d8a3f20950a95cc3b758ab04ee7cffdaba5a490a2390626e781ae30f70a"
+      },
+      "after": {
+        "localIno": 65574687,
+        "localNlink": 1,
+        "localSha256": "d8935ff445ff638165a4f11dba32eddea46191377894a8b644ee1511ef36e48f",
+        "cacheIno": 65574118,
+        "cacheNlink": 2,
+        "cacheSha256": "77ff3d8a3f20950a95cc3b758ab04ee7cffdaba5a490a2390626e781ae30f70a",
+        "cacheAndSiblingByteIdentical": true
+      },
+      "localMtimeMs": 1791404970556.7776
+    },
+    {
+      "path": "dist/core/agent-session.js",
+      "before": {
+        "ino": 65573285,
+        "nlink": 3,
+        "sha256": "35ca1dabd54d98c236c9601b569c2856b726ade392d06b2eaaf50158f48913ab"
+      },
+      "after": {
+        "localIno": 65574688,
+        "localNlink": 1,
+        "localSha256": "b6675dce26fc39803b1fe1f9deb1261cb1efc701b585cecd0ac280085dbd8eb6",
+        "cacheIno": 65573285,
+        "cacheNlink": 2,
+        "cacheSha256": "35ca1dabd54d98c236c9601b569c2856b726ade392d06b2eaaf50158f48913ab",
+        "cacheAndSiblingByteIdentical": true
+      },
+      "localMtimeMs": 1791404970557.7776
+    },
+    {
+      "path": "dist/core/agent-session.d.ts",
+      "before": {
+        "ino": 65573598,
+        "nlink": 3,
+        "sha256": "2e50b35a37f9c7149c6297ae554b2d965bd74dbfcb8ccd7be44f13226ce497e7"
+      },
+      "after": {
+        "localIno": 65574689,
+        "localNlink": 1,
+        "localSha256": "c50ee6235e917833ac40629f34dc0974e309786dbbe123e2b73929a554d40e73",
+        "cacheIno": 65573598,
+        "cacheNlink": 2,
+        "cacheSha256": "2e50b35a37f9c7149c6297ae554b2d965bd74dbfcb8ccd7be44f13226ce497e7",
+        "cacheAndSiblingByteIdentical": true
+      },
+      "localMtimeMs": 1791404970559.7776
+    }
+  ]
+}
