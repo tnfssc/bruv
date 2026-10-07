@@ -1302,18 +1302,28 @@
     {
       "focus": "src/typescript/runner.ts",
       "initialBlob": "0405699abd4d594fb5dbebe432169885984a338d",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_e65a5513",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e65a5513",
         "branch": "bruv/primary-src-typescript-runner.ts-e65a5513",
         "base": "d5623c8e9d529384108765b2ae2604f493c0c60d",
-        "commit": null
+        "commit": "7758b00c032100018a3548e9e7a6dfa3beaab6e8"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d"
+      "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
+      "changedRelatedPaths": [
+        "src/typescript/runner.ts"
+      ],
+      "readingResult": "Runner visibly installs loader, prepares dependencies, executes, drains jobs/images; native module loading/cache owns one lifetime instead of interleaved boot machinery.",
+      "checks": [
+        "format/lint/tsc pass1 inherited info",
+        "source-adapted bridge/protocol29/423",
+        "source-adapted runner20pass1fail extraHOME directory also baseline; assertions unchanged",
+        "MUST batch-build joined runner/bridge then original suites; no compiled proof yet"
+      ]
     },
     {
       "focus": "tests/agent-progress.test.ts",
@@ -1399,8 +1409,14 @@
     {
       "focus": "tests/execute-output-capture.test.ts",
       "initialBlob": "f1944e32116dbce754fa013622fd989907092d99",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_341d3c1d",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_341d3c1d",
+        "branch": "bruv/primary-tests-execute-output-capture.tes-341d3c1d",
+        "base": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -1410,7 +1426,8 @@
         "blob": "315f7fcd90966bafccad4c9d4c7f978ad77c4cbc",
         "verdict": "ACCEPT",
         "primaryStillRequired": true
-      }
+      },
+      "launchBase": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73"
     },
     {
       "focus": "tests/foreground-execution-sdk.test.ts",
