@@ -8,33 +8,65 @@
     {
       "file": "scripts/bruv-claude-compat.sh",
       "initialBlob": "e3fc96419050e349c3beb8f9043a47e61b8443e0",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_3e881127",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3e881127",
+        "branch": "bruv/primary-shell-compatibility-launcher-3e881127",
+        "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd"
     },
     {
       "file": "scripts/build-claude-compat.ts",
       "initialBlob": "288ab823259a840b1f8b547d4366406d0340c963",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_af37fc58",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_af37fc58",
         "branch": "bruv/primary-compatibility-build-script-af37fc58",
         "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
-        "commit": null
+        "commit": "efc6ca67a41cbfda7ec74a84a72245283034d593"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_3de9555d",
+          "status": "running",
+          "candidate": "efc6ca67a41cbfda7ec74a84a72245283034d593"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301"
+      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged paired build→validate destinations→assets/version→compile normal sibling once forwarding target/helper→failure propagation→shell launcher publication already visible.",
+      "checks": "13 focused85 assertions;11 actual-script preflight cases protect bytes without compile;connector-update fixture compile missing deps/assets,not full build."
     },
     {
       "file": "scripts/claude-compat-launcher.ts",
       "initialBlob": "42cadbf1870ff31d75b1d2d137c7d405a3e5b285",
-      "status": "pending",
-      "primary": null,
-      "judges": [],
-      "acceptedBlob": null
+      "status": "judging",
+      "primary": {
+        "id": "task_fadcda8f",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_fadcda8f",
+        "branch": "bruv/primary-compatibility-executable-launche-fadcda8f",
+        "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
+        "commit": "a9a52ee8d264ce8aaa0933d55a174112ba47c59e"
+      },
+      "judges": [
+        {
+          "id": "task_fe560183",
+          "status": "running",
+          "candidate": "a9a52ee8d264ce8aaa0933d55a174112ba47c59e"
+        }
+      ],
+      "acceptedBlob": null,
+      "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged filename validation/template selection/guarded write coherent visible effects; build/installer/shell exec/connector dispatch traced.",
+      "checks": "13 pass85 assertions;no full build/device/provider."
     },
     {
       "file": "scripts/claude-native-acceptance/app-delegation-driver.mjs",
@@ -147,10 +179,17 @@
     {
       "file": "scripts/claude-native-acceptance/run.mjs",
       "initialBlob": "949bb21f489de722a85735d22d5dabd27f6413a0",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_52aa2a57",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_52aa2a57",
+        "branch": "bruv/primary-native-acceptance-runner-52aa2a57",
+        "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd"
     },
     {
       "file": "scripts/claude-native-acceptance/runtime-smoke.mjs",
@@ -540,7 +579,7 @@
     {
       "file": "src/claude-compat/live-frontend.ts",
       "initialBlob": "e1e8e088837528826765e9f5e101fc577aa99c81",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_1868ec30",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1868ec30",
@@ -551,15 +590,21 @@
       "judges": [
         {
           "id": "task_0d9e0626",
-          "status": "running",
-          "candidate": "cab5870156b255ed5d1bb44fd5f27145b7832a0d"
+          "status": "completed",
+          "candidate": "cab5870156b255ed5d1bb44fd5f27145b7832a0d",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "e1e8e088837528826765e9f5e101fc577aa99c81",
+          "objections": [],
+          "evidence": "Owner binding vs native command consent vs audio/provider teardown purposefully distinct;interrupt not live.stop,commands await callback;human.flush drains saved question and Keep pending never saves answer. Adjacent human source captured-port ownership fits. Independent18 tests105 assertions.",
+          "limits": "No live device/provider/macOS/rendered client proof;adjacent fit source-level only."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "e1e8e088837528826765e9f5e101fc577aa99c81",
       "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
       "changedRelatedPaths": [],
       "readingResult": "Unchanged: owner binding, command consent and audio teardown purposeful distinct lifetimes, caller paths traced.",
-      "checks": "18 focused105 assertions;no live/provider/device proof."
+      "checks": "18 focused105 assertions;no live/provider/device proof.",
+      "integrationState": "Matches tip unchanged;judge inspected accepted adjacent human-control source interface"
     },
     {
       "file": "src/claude-compat/mcp.ts",
@@ -806,17 +851,37 @@
     {
       "file": "src/t3/tasks/events.ts",
       "initialBlob": "fee21123a7d6380e5d4ffee96fb6815471a3d47b",
-      "status": "primary-running",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_18567a85",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_18567a85",
         "branch": "bruv/primary-t3-task-events-18567a85",
         "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
-        "commit": null
+        "commit": "0f1dfe3930622aac30b0a05120bb07bab7f4fe0c"
       },
-      "judges": [],
-      "acceptedBlob": null,
-      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301"
+      "judges": [
+        {
+          "id": "task_63537626",
+          "status": "completed",
+          "candidate": "0f1dfe3930622aac30b0a05120bb07bab7f4fe0c",
+          "verdict": "ACCEPT",
+          "blob": "fee21123a7d6380e5d4ffee96fb6815471a3d47b",
+          "objections": [],
+          "evidence": "Unchanged intrinsic source opt-in projection/transport ownership clear. Related tests replace swallowed throwing writer with captured traffic,metadata bounds and failed-write next-terminal. Judge in-memory gate mutation0→1 record reproduced blind spot;39 tests246 assertions/Biome.",
+          "limits": "No browser/RPC consumer end-to-end/full gate.",
+          "relatedBlobs": {
+            "tests/t3/web-task-events.test.ts": "95a7f1c9831296f560d4fbbc8786c6a55817cf36"
+          }
+        }
+      ],
+      "acceptedBlob": "fee21123a7d6380e5d4ffee96fb6815471a3d47b",
+      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
+      "changedRelatedPaths": [
+        "tests/t3/web-task-events.test.ts"
+      ],
+      "readingResult": "Source unchanged: projection vs transport explicit; spawn/subscription/opt-in NDJSON, stopping silent until terminal, durable delivery separate, shutdown drain then listener cleanup. Related tests fixed blind spot swallowed throwing writer could falsely prove flag-off;direct traffic/bounds/failure assertions.",
+      "checks": "39 pass246 assertions;Biome/diff;gate-removal mutation now fails;source restored exact;no browser/full gate.",
+      "integrationState": "Exact accepted patch joined; final source/test acceptance at listed blob"
     },
     {
       "file": "src/t3/tasks/launch-identity.ts",
@@ -1103,8 +1168,14 @@
     {
       "file": "tests/claude-compat-human-controls.test.ts",
       "initialBlob": "8dc79ae1e34631b7c6e55a6f3fad6fdb994ff647",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_46b8d726",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_46b8d726",
+        "branch": "bruv/primary-human-control-tests-46b8d726",
+        "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1114,7 +1185,8 @@
           "blob": "d6c438994c37886a9531ea7b3ed2285d0ee0de91",
           "candidate": "d09a46d856445ce51003ad5e1b1aa0080986454c"
         }
-      ]
+      ],
+      "launchBase": "12206c5557d620150df81b472aec7e9212f4c5bd"
     },
     {
       "file": "tests/claude-compat-launch.test.ts",
@@ -1273,7 +1345,7 @@
     {
       "file": "tests/claude-compat-task-projection.test.ts",
       "initialBlob": "da89cdcea508117e2cbefe3d91d35670c3a71d9d",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_532af0c5",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_532af0c5",
@@ -1284,11 +1356,16 @@
       "judges": [
         {
           "id": "task_39d6f247",
-          "status": "running",
-          "candidate": "b0586a2aa4f9e3d453e92b1260da2ec6be93dc15"
+          "status": "completed",
+          "candidate": "b0586a2aa4f9e3d453e92b1260da2ec6be93dc15",
+          "verdict": "ACCEPT",
+          "blob": "477fba2b01fe10243d285cd68d5020714904bfa5",
+          "objections": [],
+          "evidence": "Observation-only completion helper no hidden prior start;explicit causal checkpoints;roster opacity/membership/disconnect split preserves coverage, removes both terminal opaque jobs with worker active;fixed worker fixture attribution unconditional.Independent18 tests87 assertions+typecheck/Biome.",
+          "limits": "Candidate combined binding reproduces tasks undefined7 inner pass1 fail on unchanged base binding inputs;no binding fix claim. Area final different binding test passed separately;rerun combined after join."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "477fba2b01fe10243d285cd68d5020714904bfa5",
       "relatedPatchJudgments": [
         {
           "id": "task_157d0ec7",
@@ -1300,7 +1377,8 @@
       "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
       "changedRelatedPaths": [],
       "readingResult": "finish helper no longer silently starts/checkpoints; callers connect lifecycle explicitly. Roster opacity/membership/disconnected contracts distinct; replacement journey closes both opaque jobs. Impossible fixture-kind branches removed, resumed-child attribution unconditional.",
-      "checks": "18 projection87 assertions;typecheck/Biome/diff pass. Worker baseline binding SDK fixture failed tasks undefined;no binding fix/native claim. Area prior combined binding passed separately."
+      "checks": "18 projection87 assertions;typecheck/Biome/diff pass. Worker baseline binding SDK fixture failed tasks undefined;no binding fix/native claim. Area prior combined binding passed separately.",
+      "integrationState": "Exact accepted patch joined; final source/test acceptance at listed blob"
     },
     {
       "file": "tests/claude-compat-transport.test.ts",
@@ -1515,15 +1593,21 @@
     {
       "file": "tests/t3/local-notifications.test.ts",
       "initialBlob": "a3076eba307fac9850dad74c870d4673dfc2db78",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_514938ef",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_514938ef",
         "branch": "bruv/primary-local-notification-tests-514938ef",
         "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
-        "commit": null
+        "commit": "d5648579f7360c7578a084cbfaa9c0c34e3d88a5"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_cd9bfa00",
+          "status": "running",
+          "candidate": "d5648579f7360c7578a084cbfaa9c0c34e3d88a5"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1533,7 +1617,10 @@
           "candidate": "5fe1a9886250d111282c347f3350e60cbd3e0c4e"
         }
       ],
-      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301"
+      "launchBase": "58795ed902af70cffef2f3bc18f72662dab3f301",
+      "changedRelatedPaths": [],
+      "readingResult": "Mailbox vs delivery contract groups; one typed mock adapter replaces repeated casts while scenario effects inline; native promise/resolver pairs;finally Stop cleanup;call history replaces redundant replay counter.",
+      "checks": "13 tests45 assertions;36 assertion statements preserved modulo whitespace;strict focused typecheck/Biome/diff pass;no production edits."
     },
     {
       "file": "tests/t3/native-routing.test.ts",
@@ -1603,7 +1690,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_63537626",
+          "verdict": "ACCEPT",
+          "blob": "95a7f1c9831296f560d4fbbc8786c6a55817cf36",
+          "candidate": "0f1dfe3930622aac30b0a05120bb07bab7f4fe0c"
+        }
+      ]
     }
   ],
   "extraFiles": [
@@ -1863,6 +1958,13 @@
       "status": "passed",
       "scope": "Integrated human/live/runtime/commands23 top-level141 assertions;typecheck;format/lint",
       "limits": "1 info;no live provider/device/full gate."
+    },
+    {
+      "id": "task_146c6b92",
+      "commit": "12206c55",
+      "status": "passed",
+      "scope": "Final binding/projection16 outer pass88 assertions;typecheck",
+      "limits": "Isolated binding child passes here;projection worker baseline failure was separate environment. No SDK/live/full gate."
     }
   ],
   "combinedReviews": [
