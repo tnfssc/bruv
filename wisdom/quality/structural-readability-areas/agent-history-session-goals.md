@@ -37,3 +37,5 @@ Instruction tests `7600a587` ACCEPT task_eef5d289: coherent started-session fixt
 Batch `f3f039a6`: 118 tests pass/898 assertions across 13 relevant suites, full `tsc --noEmit` pass (task_8495a524). Exact accepted-hash audit: no mismatches among 13 accepted initial rows. Still in progress: 98 initial primary focuses unstarted, 3 running, 2 new-fixture primary results judging. Parent inspected at batch boundary: no common source changes yet. Disk 149 GB free.
 
 IO final parent import correction `0100f6e7`: fresh task_cc13d7e2 ACCEPT parent / NO CHANGE NEEDED primary short-write fixture after actual full-code review. Biome including imports now passes; independent 10 parent tests/43 assertions. Exact parent acceptance updated; helper primary coverage genuine.
+
+History retrieval `3e75dd44` ACCEPT task_150357ad: remove lazy scan rank-map side effects; prepare cursor identity/ancestry, pinned snapshot and live exclusions together. Full-scan read validation and original UTF-16/ref/permission contracts preserved. Independent 21 passes/72 assertions; no compiled bridge proof. Related history tests still need primary focus.

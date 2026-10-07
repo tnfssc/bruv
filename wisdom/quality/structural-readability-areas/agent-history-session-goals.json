@@ -547,7 +547,7 @@
     {
       "focus": "src/history/service.ts",
       "initialBlob": "60389949b2e69dbbfc6f2f73948369cb893f6abc",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f75129c8",
@@ -560,7 +560,7 @@
             "tests/history.test.ts",
             "wisdom/quality/structural-readability-worker.md"
           ],
-          "result": "History branch/cross-session retrieval responsibilities clarified; preserved refs, scopes, original text and full validation.",
+          "result": "Remove ref/rank map mutated inside lazy iteration; rank directly from provenance. One retrieval preparation validates cursor identity/ancestry, pins text snapshot and applies live-branch exclusions; projection generator has no side map, read still consumes full scan.",
           "checks": "21 focused tests/72 assertions; new characterization passes baseline; focused type/format/lint/diff pass; execute bridge 20 ENOENT missing dist/bruv, no compiled proof."
         }
       ],
@@ -569,11 +569,18 @@
           "id": "task_150357ad",
           "candidate": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
           "base": "d890f4873ceef903e9bd14d9fb6f3a28993caa84",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Retrieval preparation owns cursor/ancestry/snapshot/live exclusions together; sorting uses visible provenance not generator side map. Read retains full scan and original UTF-16, permission/ref/cursor/live exclusion contracts.",
+          "checks": "Independent 21 tests/72 assertions across history/disk/session; no compiled bridge/full gate claim.",
+          "acceptedRelatedBlobs": {
+            "tests/history.test.ts": "0723cdd03b3cca2e58b1e2f4d817819306eae219"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "7ccf86cf97d5e1b35a5382d1b6a8b62aca041a9c",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/history/session-manager.ts",
@@ -1280,7 +1287,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
+        "judge": "task_150357ad",
+        "verdict": "ACCEPT",
+        "blob": "0723cdd03b3cca2e58b1e2f4d817819306eae219",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/instruction-continuity-sdk.test.ts",
