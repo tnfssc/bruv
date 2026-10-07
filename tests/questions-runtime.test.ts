@@ -355,3 +355,72 @@ test("cancel withdraws the question without releasing blocked goal work", async 
     h.cleanup();
   }
 });
+
+test("pause during the durable dispatch claim leaves a resumable answer without a host turn", async () => {
+  const h = harness();
+  let releaseClaim!: () => void;
+  let claimStarted!: () => void;
+  const started = new Promise<void>((resolve) => {
+    claimStarted = resolve;
+  });
+  const released = new Promise<void>((resolve) => {
+    releaseClaim = resolve;
+  });
+  try {
+    const q = await h.runtime.service.ask(h.ctx, { text: "Pause at claim?" });
+    const save = h.runtime.service.setDelivery.bind(h.runtime.service);
+    h.runtime.service.setDelivery = async (ctx, input) => {
+      const saved = await save(ctx, input);
+      if (input.delivery === "dispatching") {
+        claimStarted();
+        await released;
+      }
+      return saved;
+    };
+    await h.runtime.commands(h.ctx).handle("questions.answer", { id: q.id, answer: "A" });
+    h.idle(true);
+    h.emit("agent_settled");
+    await started;
+    expect(h.runtime.service.get(h.ctx, q.id).delivery).toBe("dispatching");
+    h.runtime.pause();
+    releaseClaim();
+    await h.tick();
+    expect(h.sent).toHaveLength(0);
+    expect(h.runtime.service.get(h.ctx, q.id).delivery).toBe("resume-needed");
+    await h.runtime.commands(h.ctx).handle("questions.resume", { id: q.id });
+    await h.tick();
+    expect(h.sent).toHaveLength(1);
+    expect(h.runtime.service.get(h.ctx, q.id).delivery).toBe("delivered");
+  } finally {
+    releaseClaim();
+    h.cleanup();
+  }
+});
+
+test("shutdown fences old callbacks and commands; reopening requires explicit resume", async () => {
+  const h = harness();
+  try {
+    const q = await h.runtime.service.ask(h.ctx, { text: "Reopen?" });
+    const commands = h.runtime.commands(h.ctx);
+    await commands.handle("questions.answer", { id: q.id, answer: "A" });
+    h.emit("session_shutdown");
+    h.idle(true);
+    h.emit("agent_settled");
+    h.emit("before_agent_start");
+    await h.tick();
+    await expect(commands.handle("questions.list")).rejects.toThrow("no longer active");
+    await expect(h.runtime.handle(h.ctx, "questions.list", {})).rejects.toThrow("no longer active");
+    expect(h.sent).toHaveLength(0);
+    h.emit("session_start");
+    const questions = await h.runtime.commands(h.ctx).handle("questions.list");
+    expect((questions as any[]).find((item) => item.id === q.id).delivery).toBe("resume-needed");
+    h.emit("agent_settled");
+    await h.tick();
+    expect(h.sent).toHaveLength(0);
+    await h.runtime.commands(h.ctx).handle("questions.resume", { id: q.id });
+    await h.tick();
+    expect(h.sent).toHaveLength(1);
+  } finally {
+    h.cleanup();
+  }
+});

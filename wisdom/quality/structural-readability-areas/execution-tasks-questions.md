@@ -31,3 +31,7 @@ Judge `task_08e2c508` rejects intrinsic candidate, while endorsing admission ref
 ## Accepted unchanged files
 
 Independent judges found no concrete tangle in output-buffer (logical cursors and physical retention form one lifetime), completion-batcher (two deadlines and detached delivery/discard are explicit), and agent-session (exclusive header publication, append, return and cleanup ordering). Exact unchanged blobs and independent checks/limits are in JSON; none was accepted by size or inherited hash alone.
+
+## Accepted runtime owner
+
+Judge `task_d8a065ce` accepts `62e05bf7`: local saved replies becoming parent turns form one genuine lifetime; queue selection and durable claim/recheck/send/acknowledge are clear, native/remote permission boundaries remain outside. Judge inspected and tested combined accepted service: 57 tests/291 assertions plus 45 root-runtime/UI/goals checks/194 assertions; candidate 55/269, new contracts pass baseline. Source and related runtime test fully imported, worker note excluded. Runtime test still needs independent primary focus.

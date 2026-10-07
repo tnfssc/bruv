@@ -210,7 +210,7 @@
     {
       "focus": "src/questions/runtime.ts",
       "initialBlob": "f9ed27c6279a3057808d320b3570a19f6d4fd2ed",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_b64cab37",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b64cab37",
@@ -221,13 +221,23 @@
       "judgeRounds": [
         {
           "id": "task_d8a065ce",
-          "status": "running",
+          "status": "complete",
           "candidate": "62e05bf77001c4fe0705fa95898dc9877b38b606",
-          "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
+          "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "One coherent owner of local saved replies becoming parent turns; admission, session fencing, queue selection and durable claim→recheck→send→ACK are visible. Remote/native authority stays outside. No combined concern with accepted service.",
+          "checks": [
+            "independent candidate55/269",
+            "combined service57/291",
+            "combined root-runtime/UI/goals45/194",
+            "new contracts baseline2/11",
+            "candidate+combined strict typechecks pass"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "2487208b21425f197644bd308d3a27fe25608bbc",
+      "integration": "full source/test diff integrated; judge checked combined accepted service",
       "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
       "changedRelatedPaths": [
         "src/questions/runtime.ts",
@@ -479,7 +489,7 @@
     {
       "focus": "src/tasks/task-manager.ts",
       "initialBlob": "3f614d8920d22f8ae86d2adb8a7f40957af7b0e2",
-      "status": "rework-awaiting-judge",
+      "status": "rework-judge-running",
       "primary": {
         "id": "task_53df8c4c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53df8c4c",
@@ -499,6 +509,14 @@
             "Judge reproduced snapshot.preparationController.abort affecting internal preparationSignal while task stayed running, without termination record. Inherited defect, not introduced by candidate.",
             "Keep admission refactor; explicitly project public snapshot metadata and nested copies. Add focused snapshot isolation plus manager-owned cancellation regression; report exercised inherited defect correction."
           ]
+        },
+        {
+          "id": "task_a01fd3d7",
+          "status": "running",
+          "candidate": "5eb5ac44b5ef72ddc095bd8cd20ae9827bc82dc3",
+          "base": "62cfd14185774a6357c0f758bd82234f5c20344f",
+          "priorJudge": "task_08e2c508",
+          "writerResponse": "Reproduced leaked controller on baseline and imported first candidate; explicit public metadata projection preserves nested copies and admission refactor. Added regression fails before fix and passes 27 assertions; inherited behavior defect explicitly documented."
         }
       ],
       "acceptedBlob": null,
@@ -915,7 +933,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_d8a065ce",
+        "candidate": "62e05bf77001c4fe0705fa95898dc9877b38b606",
+        "blob": "bad43b9ac8424c73931d650acde46bf2dafb3df0",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/questions-sdk.test.ts",
