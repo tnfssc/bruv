@@ -282,8 +282,15 @@
     {
       "focus": "src/agent/provider-attempts.ts",
       "initialBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_1b7e035c",
+          "launchBase": "4ac050c611fe27f7ac757429cdd11d4ddb1842c6",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_1b7e035c",
+          "branch": "bruv/primary-provider-attempt-evidence-1b7e035c"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -844,16 +851,32 @@
     {
       "focus": "src/session/host.ts",
       "initialBlob": "3879d5948ecb7335d2e702222068dcb8e199a603",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_9fef6998",
           "launchBase": "ee798ba3e68d341f52c08bb2b2cf428b9c0b36d3",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9fef6998",
-          "branch": "bruv/primary-session-host-9fef6998"
+          "branch": "bruv/primary-session-host-9fef6998",
+          "commit": "7f466cef21871ee373a158c35f58f85e19861166",
+          "changedPaths": [
+            "src/session/host.ts",
+            "src/session/transcript-snapshots.ts",
+            "tests/live-host-bridge.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Separate transcript snapshot encoding/paging from host authority and task operations; helper coherently owns immutable snapshot projection.",
+          "checks": "46 host/access/extension passes; 3 outer remote/artifact/compatibility passes; regression passes baseline; baseline/final tsc/format/diff pass; inherited lint diagnostics."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_9ae7f05e",
+          "candidate": "7f466cef21871ee373a158c35f58f85e19861166",
+          "base": "ee798ba3e68d341f52c08bb2b2cf428b9c0b36d3",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -1687,9 +1710,28 @@
         "blob": "baddd5ace399fa55d0903aad88ee4821905d1c22",
         "primaryFocusStillRequired": true
       }
+    },
+    {
+      "focus": "src/session/transcript-snapshots.ts",
+      "initialBlob": null,
+      "originCandidate": "7f466cef21871ee373a158c35f58f85e19861166",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate-new"
     }
   ],
-  "crossAreaNeeds": [],
+  "crossAreaNeeds": [
+    {
+      "file": "tests/live-host-bridge.test.ts",
+      "owner": "live-native-audio",
+      "candidate": "7f466cef21871ee373a158c35f58f85e19861166",
+      "blob": "7232dfaac76b2bdf548b5bcca45932ba3cf98431",
+      "state": "candidate-under-judge",
+      "need": "If integrated, assigned live-area primary must cover final combined blob; do not overwrite sibling tests. Parent reconcile overlap."
+    }
+  ],
   "batchChecks": [
     {
       "commit": "4287844f",
