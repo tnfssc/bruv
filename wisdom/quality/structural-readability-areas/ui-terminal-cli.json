@@ -959,7 +959,7 @@
     {
       "focus": "tests/cli.test.ts",
       "initialBlob": "70002a8662ff8db59fa74014040bb2544af9f464",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f5df93a3",
@@ -974,12 +974,26 @@
           "id": "task_a07a60a3",
           "base": "868ad04a4bc7bf245bb63eeb87767e7d55769691",
           "candidate": "3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_db22e114"
+          "verdict": "NO CHANGE NEEDED",
+          "priorRelatedJudge": "task_db22e114",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/cli.test.ts": "528e6e7735b03cdd9812839b8c18657884904713"
+          },
+          "evidence": "Each fixture owns temporary HOME and awaits child before cleanup; source/compiled contract journeys keep alias/mtime/dispatch consequences adjacent. Extra fixture wrappers would add indirection without resolving ownership tangle.",
+          "checks": [
+            "Independent 6 source tests /42 assertions",
+            "Pinned Biome format/lint",
+            "candidate and original CLI patch diff checks"
+          ],
+          "limits": [
+            "Nine compiled cases unrun; no dist build",
+            "No provider/SSH/TTY/device"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "CLI-related patch integrated; primary focus still pending",
+      "acceptedBlob": "528e6e7735b03cdd9812839b8c18657884904713",
+      "integrationState": "fresh primary/judge accepted existing integrated test blob",
       "relatedPatchJudgments": [
         {
           "id": "task_db22e114",

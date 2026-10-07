@@ -61,3 +61,5 @@ Primary task_52ca0e94; judge task_9a76656a ACCEPT candidate 828e13116b668825a7d2
 Primary task_b0e54e09; judge task_f31c7dbc NO CHANGE NEEDED at 3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49. Override/replacement/factory/native-init ordering and conditional restoration already local. Independent 125 tests/859 assertions and pinned Biome check pass; simulated initialization/mocked Live getter, no compiled PTY/provider/device proof.
 
 Second combined batch task_a480f513 passed at 10508c78: 161 pass 0 fail 2032 expect() calls Ran 161 tests across 8 files. [2.12s] Full TypeScript and eight-file format/lint passed; lint has 6 warnings/18 infos. Log local runtime-assets/readability-batch2.log. No compiled build yet.
+
+CLI test primary task_f5df93a3 + fresh judge task_a07a60a3 independently accept unchanged 528e6e7735b03cdd9812839b8c18657884904713; related-patch coverage now backed by actual primary focus. Six source tests/42 assertions independently pass. Nine compiled cases still require batch-built artifacts.
