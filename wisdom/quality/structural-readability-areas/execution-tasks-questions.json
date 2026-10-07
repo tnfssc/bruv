@@ -114,23 +114,29 @@
     {
       "focus": "src/job-delivery.ts",
       "initialBlob": "4b91a38bcfba713ea26a3b7094d9eecdbcd877fb",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_4035e0d2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4035e0d2",
         "branch": "bruv/primary-src-job-delivery.ts-4035e0d2",
         "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
-        "commit": null
+        "commit": "0eeeb3af1f6fc852290d91042ddae1f658928598"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2"
+      "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: bridge delivery, cancellation wrapper, task ownership/replay consumers already separate local wait cancellation, final ACK ownership and durable request identity.",
+      "checks": [
+        "20 pass /396 assertions",
+        "protocol cleanup/foreground stop/handoff survival/native replay; no full build"
+      ]
     },
     {
       "focus": "src/output-buffer.ts",
       "initialBlob": "6f32c9b2f02426c3db598e7ec773aa3eb3aeb721",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_0f4f4f90",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_0f4f4f90",
@@ -141,13 +147,20 @@
       "judgeRounds": [
         {
           "id": "task_4a8a08b3",
-          "status": "running",
+          "status": "complete",
           "candidate": "433ad79868127c2bf53257053e93eb9f599d0150",
-          "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
+          "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Logical cursor interval and physical chunk head serve one bounded FIFO lifetime; compaction changes storage not cursors; UTF-8/completion/image semantics stay with callers.",
+          "checks": [
+            "independent 39 pass /236 assertions",
+            "image source-only in judge; first integrated batch ran image tests"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "6f32c9b2f02426c3db598e7ec773aa3eb3aeb721",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
       "changedRelatedPaths": [],
       "readingResult": "No source change: bounded FIFO chunks and logical offsets own one coherent lifetime; traced task inspection, delivery and image callers.",
@@ -177,18 +190,35 @@
     {
       "focus": "src/questions/runtime.ts",
       "initialBlob": "f9ed27c6279a3057808d320b3570a19f6d4fd2ed",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_b64cab37",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b64cab37",
         "branch": "bruv/primary-src-questions-runtime.ts-b64cab37",
         "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
-        "commit": null
+        "commit": "62e05bf77001c4fe0705fa95898dc9877b38b606"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_d8a065ce",
+          "status": "running",
+          "candidate": "62e05bf77001c4fe0705fa95898dc9877b38b606",
+          "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
+      "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
+      "changedRelatedPaths": [
+        "src/questions/runtime.ts",
+        "tests/questions-runtime.test.ts"
+      ],
+      "readingResult": "One private reply-delivery owner groups admission/resume/session fencing/queue/block/claim-send-ACK; registration retains native/remote authority.",
+      "checks": [
+        "55 tests/269 assertions",
+        "two contract tests pass baseline",
+        "focused typecheck/format/diff pass; inherited lint warnings"
+      ]
     },
     {
       "focus": "src/questions/service.ts",
@@ -330,11 +360,18 @@
     {
       "focus": "src/tasks/job-service.ts",
       "initialBlob": "3da97dcff05991e977081794f47aaad247a3cea6",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_0d4cb273",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_0d4cb273",
+        "branch": "bruv/primary-src-tasks-job-service.ts-0d4cb273",
+        "base": "62cfd14185774a6357c0f758bd82234f5c20344f",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "62cfd14185774a6357c0f758bd82234f5c20344f"
     },
     {
       "focus": "src/tasks/local-agent-termination.ts",
@@ -393,7 +430,7 @@
     {
       "focus": "src/tasks/task-manager.ts",
       "initialBlob": "3f614d8920d22f8ae86d2adb8a7f40957af7b0e2",
-      "status": "rework-needed",
+      "status": "rework-running",
       "primary": {
         "id": "task_53df8c4c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53df8c4c",
@@ -429,7 +466,17 @@
         "format/diff clean; inherited lint warnings",
         "no full build/typecheck"
       ],
-      "limits": "Writer evidence pending independent acceptance and combined checks."
+      "limits": "Writer evidence pending independent acceptance and combined checks.",
+      "reworks": [
+        {
+          "id": "task_e5da5ab0",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e5da5ab0",
+          "branch": "bruv/rework-task-manager-snapshot-authority-e5da5ab0",
+          "base": "62cfd14185774a6357c0f758bd82234f5c20344f",
+          "commit": null,
+          "respondsTo": "task_08e2c508"
+        }
+      ]
     },
     {
       "focus": "src/tasks/task-monitor-source.ts",
