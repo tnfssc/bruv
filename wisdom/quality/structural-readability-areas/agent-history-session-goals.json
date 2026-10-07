@@ -2307,6 +2307,11 @@
       "commit": "0f8c0cdb",
       "job": "task_2ef0f9a9",
       "result": "Full tsc --noEmit passes after judged goal RPC argument fix. Focused Biome format and lint pass on 22 source/test files; lint reports 50 warnings/28 infos. No claim of warning-free check; native-fast import assists still queued in fresh primary."
+    },
+    {
+      "commit": "7fd63ca6",
+      "job": "task_b6a730c5",
+      "result": "Full tsc --noEmit passed after clean parent 0072ad15 accepted-common checkpoint merge. Own accepted hashes unchanged; no common API compile gaps observed. Runtime/binary combined proof after parent merge remains needed."
     }
   ],
   "parentCheckpoint": {

@@ -29,13 +29,13 @@ The adjacent JSON is the authoritative per-file pickup ledger: 114 initial rows;
 
 - tests/live-host-bridge.test.ts: accepted related blob 7232dfaac76b2bdf548b5bcca45932ba3cf98431 (task_9ae7f05e); live area must primary-review final combined hash.
 - tests/subagent-extension.test.ts: accepted related blob 2bbf39985a247af7d4b586444d853f420a46cd06 (task_0acb5c07); execution area must primary-review final combined hash.
-- Do not overwrite sibling notes or silently drop regression additions. Parent reconciles overlaps and rejudges modified final hashes. Inspect parent integration only at batch boundaries; last inspection had progress notes, no common source changes.
+- Do not overwrite sibling notes or silently drop regression additions. Parent reconciles overlaps and rejudges modified final hashes. Inspect parent integration only at batch boundaries; checkpoint 0072ad15 included judged partial common integrations and completed site. Clean three-way merge brought it into this area; own accepted hashes unchanged, full typecheck passed afterward (task_b6a730c5). Runtime/binary combined proof after that merge remains pending.
 
 ## Proof and honest limits
 
 Fresh owned paired build at cdc57364 passed (task_33a9bf6f), producing dist/bruv and connector. Same 21-suite source/binary set passes in unique owned TMPDIR: **234 pass / 1468 assertions** (task_df42d0f6). Earlier default-TMPDIR run had 231 pass/3 failures from shared retained-snapshot budget; it also exposed the real goal-test TS2554. Do not delete others' snapshots or weaken retention. Earlier 13-suite batch passed 118/898 and tsc at f3f039a6; that is historical, not a claim after later edits. Current full typecheck passes at 0f8c0cdb after judged goal correction (task_2ef0f9a9); focused format/lint across 22 paths pass with 50 warnings/28 infos, not a warning-free claim. Exact focused and independent checks/limits are recorded per file; green tests do not establish readability.
 
-Use /bin/bash with Bun 1.4.2 PATH inside quoted script. Shared node_modules stays read-only; own runtime-assets and dist. Automatic fish setup cannot find Bun but workers start. Failed independent dependency resolution is reported as such; NODE_PATH often insufficient. Use unique TMPDIR for snapshot tests. No live-provider/authenticated SSH/macOS/device or whole Linux gate claim. Parent owns final gate. Last disk boundary: 136 GB free; check later batches.
+Use /bin/bash with Bun 1.4.2 PATH inside quoted script. Shared node_modules stays read-only; own runtime-assets and dist. Automatic fish setup cannot find Bun but workers start. Failed independent dependency resolution is reported as such; NODE_PATH often insufficient. Use unique TMPDIR for snapshot tests. No live-provider/authenticated SSH/macOS/device or whole Linux gate claim. Parent owns final gate. Last disk boundary: 130 GB free; check later batches.
 
 ## Wisdom
 
