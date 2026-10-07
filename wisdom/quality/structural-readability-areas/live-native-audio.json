@@ -194,14 +194,22 @@
         },
         {
           "id": "task_0f8a556e",
-          "status": "running",
+          "status": "complete",
           "candidate": "3c71d4a280d89be9b6597d09af48a40a376451f8",
           "base": "6f82665bbbe90a15958576f541f5be68217232bf",
-          "round": "fresh replacement after incomplete terminated review"
+          "round": "fresh replacement after incomplete terminated review",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Scoped CaptureProtocol replacesdaemoncollector/queue/twoconsumers withone validatedevent path;closedepoch explicitsettling;scope resumes suspendedhelper beforeEOF/waitkill/close. Scenario startup/hold/backlog/freshhold/stop visible.",
+          "checks": "Independent27Python+4Bun24assertions/helperbuild;exactbaseline/candidate passprivatePipeWirePulse;entrysynthetic probes preservevalidoldepoch and reject newepoch/malformedPCM baselineaccepted. No CI Pulseparity/acousticorigin/physical/provider/Mac.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/capture-protocol.py": "6918a3b62e8bcaf6687e73874bd5ae31ce3a46f3",
+            "native/live-linux/tests/test_capture_protocol.py": "589184ed6845c98d21a05cc338101e89708c3c6f"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "fresh judge running;no earlier verdict",
+      "acceptedBlob": "6918a3b62e8bcaf6687e73874bd5ae31ce3a46f3",
+      "integration": "integrated accepted fresh replacement judgment;incomplete attempt retained",
       "relatedPaths": [
         "native/live-linux/tests/test_capture_protocol.py"
       ],
@@ -1777,9 +1785,16 @@
         "status": "candidate ready",
         "commit": "ed86cb9cd103d92c431cef5e03fe55184fa6f59f"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_849c1ccb",
+          "status": "running",
+          "candidate": "ed86cb9cd103d92c431cef5e03fe55184fa6f59f",
+          "base": "92dfbbbd944f133de6c4b94cd1ffdb73489ad085"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_610f6154",
         "verdict": "ACCEPT",
@@ -2616,7 +2631,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate addition;own primary pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_0f8a556e",
+        "verdict": "ACCEPT",
+        "blob": "589184ed6845c98d21a05cc338101e89708c3c6f"
+      }
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
