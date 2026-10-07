@@ -322,7 +322,7 @@
     {
       "focus": "scripts/find-ci-baseline.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "retry-pending",
       "primary": [
         {
           "id": "task_706aaff1",
@@ -337,7 +337,8 @@
           "launchBase": "869a3a9a6bba9c443f0cd61d9260e10398a79968",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_5eb0e8fd",
           "branch": "bruv/retry-primary-scripts-find-ci-baseline.t-5eb0e8fd",
-          "state": "running"
+          "state": "killed",
+          "limit": "Second20-minute model-response stall with unchanged output since source read12:34:11; no edits, no candidate. Retain worktree. Defer fresh retry until other independent files progress."
         }
       ],
       "judges": [],
@@ -826,8 +827,16 @@
     {
       "focus": "tests/dependency-workflow.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_c708fc82",
+          "launchBase": "3471000073611ed798a890b9ca70905cf5d1df1a",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_c708fc82",
+          "branch": "bruv/primary-tests-dependency-workflow.test.t-c708fc82",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
@@ -943,8 +952,16 @@
     {
       "focus": "tests/manual-release.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_cceff3bf",
+          "launchBase": "3471000073611ed798a890b9ca70905cf5d1df1a",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_cceff3bf",
+          "branch": "bruv/primary-tests-manual-release.test.ts-cceff3bf",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
@@ -985,19 +1002,29 @@
     {
       "focus": "tests/prepare-assets.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_eee3ca81",
           "launchBase": "49dc4c3b460884b93f04eb5d2b4739a6fdcf0345",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_eee3ca81",
           "branch": "bruv/primary-tests-prepare-assets.test.ts-eee3ca81",
+          "state": "completed",
+          "commit": "dfcb3f2587a3d0980b52f07f5e1552067ff23398"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_a43b5841",
+          "base": "49dc4c3b460884b93f04eb5d2b4739a6fdcf0345",
+          "candidate": "dfcb3f2587a3d0980b52f07f5e1552067ff23398",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Owned temporary checkout and explicit preparation replace implicit prebuild/shared mutation; deterministic timestamp comparison and guaranteed cleanup.",
+      "checks": "Focus testpass;3 preparation mutations correctly fail;Biome/focused tsc/diff pass;installed deps required, no full build."
     },
     {
       "focus": "tests/product-identity.test.ts",
@@ -1011,7 +1038,7 @@
     {
       "focus": "tests/production-packaging.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_93f789d2",
@@ -1027,19 +1054,24 @@
           "id": "task_5bc6b47f",
           "base": "6d71a95c5c8ed79da1a3f4247e06cefa777ac215",
           "candidate": "0265b4e62a974523680fc17997cb16a14455652f",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Command expectations direct, owned fake-child fixture shows cwd/args/IO/status+cleanup, inventory/provenance/env handoff explicit. Integrated workflow still puts native acceptance after setup; no extraction needed.",
+          "checks": "Independentfocus5/51,format/lint0(existing2 regexwarnings);current combined31pass2fail498assertions missingPi/vendor banner deps. No compile/native/download/publication."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "aec669688b9fb751badf5e307ca0101fddc26b98",
       "relatedPatchJudgment": {
         "id": "task_438d5e06",
         "verdict": "ACCEPT",
         "blob": "aec669688b9fb751badf5e307ca0101fddc26b98",
-        "primaryStillRequired": true
+        "primaryStillRequired": false
       },
       "readingResult": "Unchanged command expectations→self-contained child fixture+cleanup→release inventory→provenance/env handoff; no structural tangle.",
-      "checks": "31pass459assertions related packaging/manual/workflows;format pass,2 existing lint regex warnings;no full/native."
+      "checks": "31pass459assertions related packaging/manual/workflows;format pass,2 existing lint regex warnings;no full/native.",
+      "integrationState": "Unchanged focus at area tip, independent primary and fresh focus judge completed; note excluded."
     },
     {
       "focus": "tests/publish-release.test.ts",
