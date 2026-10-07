@@ -2691,6 +2691,11 @@
       "commit": "b33ac3d9",
       "job": "task_0d0f6278",
       "result": "Fresh merged-area paired build passed; isolated TMPDIR25-suite regression passed358 tests/1964 assertions; full tsc passed. Includes actual compiled bridge/attention/goals and previously failing claude-compat-task-binding. No authenticated providers/device/whole-gate claim."
+    },
+    {
+      "commit": "83d1a2ad",
+      "job": "task_7b7a8764",
+      "result": "Integrated session-manager/current compaction/storage11 suites156 pass659 assertions; full tsc pass. Source-level proof, no fresh compiled build claim."
     }
   ],
   "parentCheckpoint": {
