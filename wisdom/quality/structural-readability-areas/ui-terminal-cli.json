@@ -704,11 +704,19 @@
     {
       "focus": "scripts/terminal-perf/interaction-options.ts",
       "initialBlob": "5f02670045e3b06132b1ba92708364d4c3950c19",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_1d27744f",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_1d27744f",
+          "branch": "bruv/primary-readability-scripts-terminal-per-1d27744f",
+          "launchBase": "c0f402b8e1a5a531c9de49afab12d45dbd6a75a2"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "c0f402b8e1a5a531c9de49afab12d45dbd6a75a2"
     },
     {
       "focus": "scripts/terminal-perf/interaction-report.ts",
@@ -1033,7 +1041,7 @@
     {
       "focus": "scripts/terminal-perf/trace.ts",
       "initialBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_fb8832c3",
@@ -1048,11 +1056,24 @@
           "id": "task_36396b4b",
           "base": "b3ba838f312025822bf41e69da23c4ada4c9579f",
           "candidate": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/trace.ts": "2cae4e67ca3341e12927116d7ec45dfd81ec957f"
+          },
+          "evidence": "One coherent frame trace projection and one cursor; actual zero/missing timestamps, cold/steady order and microsecond conversion visible. Phase totals remain args, no fabricated span lanes.",
+          "checks": [
+            "Independent24tests/152assertions",
+            "18mixed-start/gaps/backwards/fallback/order/units/metadata/nonmutation/artifact assertions",
+            "blob/diff"
+          ],
+          "limits": [
+            "No viewer/build/fullsuite/paint/responsiveness/latency"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
+      "integrationState": "unchanged final primary accepted",
       "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
       "changedRelatedPaths": [],
       "result": "No-change: case/cold/steady order and real timestamp vs fallback cursor explicit; timestamps/durations convert units, other args retain meaning; no fabricated lanes.",
@@ -2798,16 +2819,25 @@
     {
       "focus": "tests/terminal-interactions-report.test.ts",
       "initialBlob": "cfc814a308ee4706e83669beb49d53d7e4a84f4d",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_374aa134",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_374aa134",
           "branch": "bruv/primary-readability-tests-terminal-inter-374aa134",
-          "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e"
+          "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e",
+          "commit": "92a6e31512ade19844c2ec80bcc089fd24143141"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_b8bd6e1b",
+          "base": "e2858e433821f359346cac97b1547653ebb9f13e",
+          "candidate": "92a6e31512ade19844c2ec80bcc089fd24143141",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_e42d2c99"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch accepted; primary pending",
       "relatedPatchJudgments": [
@@ -2818,7 +2848,17 @@
           "blob": "15dec25e1d553a530fe00f16c0a4452c78e2ada7"
         }
       ],
-      "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e"
+      "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e",
+      "changedRelatedPaths": [],
+      "result": "Candidate groups report contracts into coherent suites; malformed/repetition/identity negatives fresh named fixtures, deliberate multi-invalid order scenarios retained.",
+      "checks": [
+        "40tests/213assertions",
+        "Report/normalizer136assertions retained",
+        "Biome/diff"
+      ],
+      "limits": [
+        "No build/typecheck/latency"
+      ]
     },
     {
       "focus": "tests/terminal-perf-action-profiler.test.ts",
