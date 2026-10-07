@@ -244,9 +244,16 @@
         "status": "candidate ready",
         "commit": "bebc961f249c35103aa08d0bebf496548844c8ad"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_46031fcf",
+          "status": "running",
+          "candidate": "bebc961f249c35103aa08d0bebf496548844c8ad",
+          "base": "a9961ef20926e291fd3c4ff04571d0e0906b25ae"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [
         "native/live-linux/tests/test_source_removal.py"
       ],
@@ -633,13 +640,21 @@
       "judgeRounds": [
         {
           "id": "task_1a73a583",
-          "status": "running",
+          "status": "complete",
           "candidate": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3",
-          "base": "6f8654b872df51edd8f578f6b730babd1c42c439"
+          "base": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Visible allocate/traps/startverify/workload/wait;single ordered PID snapshot for both shutdown stages;inline graph filtering readable. Existing cleanup immediatechildren snapshot not recursive tree or awaited workload before service signal.",
+          "checks": "Independent24 regressions;7 added checks baseline-pass;2 real privategraph smokes emptycleanup/exit23logs;syntax/diff pass,no compiled native/defaultacceptance runtime.",
+          "acceptedBlobs": {
+            "scripts/live-isolated-audio.sh": "056491cb8f7267f2cb0821fb5ccdc7911e0a1822",
+            "native/live-linux/tests/test_isolated_audio.py": "d4faa77a5ddf45b9757af01c9abd91adb076cd6f"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "056491cb8f7267f2cb0821fb5ccdc7911e0a1822",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_ab2edd5f",
         "verdict": "ACCEPT",
@@ -1289,13 +1304,20 @@
       "judgeRounds": [
         {
           "id": "task_5f1948bf",
-          "status": "running",
+          "status": "complete",
           "candidate": "1bebfe90e9b17b318805063068d637b4f1f8b1b5",
-          "base": "6f8654b872df51edd8f578f6b730babd1c42c439"
+          "base": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent hold/cancel/release/rearm scenarios remove evolving shared draft;fixture owns replacement disposers and reverse teardown before clock restore;realSDK/draft/undo/focus/staledetach/terminal evidence retained.",
+          "checks": "Independent22 tests83 assertions and39 across3 suites171 assertions via read-only package mapping;diff pass. No behaviorfix/device/provider/macOS.",
+          "acceptedBlobs": {
+            "tests/editor-voice-integration.test.ts": "89f3ee58570d4e8d08bbb8aedf98e1e218524529"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_14234cb0",
         "verdict": "ACCEPT",
@@ -2116,7 +2138,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate addition;own primary pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_1a73a583",
+        "verdict": "ACCEPT",
+        "blob": "d4faa77a5ddf45b9757af01c9abd91adb076cd6f"
+      }
     },
     {
       "focus": "native/live-linux/tests/test_source_removal.py",
@@ -2184,6 +2211,11 @@
       "path": "scripts/ci.sh",
       "need": "New device-free native/live-linux/tests/test_protocol.py regressions currently manual; parent/assigned CI primary should decide coherent gate wiring. No cross-area edit made.",
       "status": "recorded for parent"
+    },
+    {
+      "path": "tests/editor-voice-integration.test.ts",
+      "need": "UI related patch now has assigned own-primary task_90932544 and fresh judge task_5f1948bf; final blob89f3ee58570d4e8d08bbb8aedf98e1e218524529 replaces earlier related-only95453da9. Parent/UI should reconcile final hash.",
+      "status": "accepted final test blob integrated"
     }
   ],
   "parentCheckpoint": {
