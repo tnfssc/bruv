@@ -160,16 +160,31 @@
     {
       "focus": "src/agent/cache-affine-compaction.ts",
       "initialBlob": "6a0fba6331dc4d46404ff9e81356202574390438",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f6a2cf6a",
           "launchBase": "52f67ec6edd404e9865237f6607bd95e3f69b4f7",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f6a2cf6a",
-          "branch": "bruv/primary-cache-affine-compaction-f6a2cf6a"
+          "branch": "bruv/primary-cache-affine-compaction-f6a2cf6a",
+          "commit": "6765c847fd17806b697ec1bede8a8260ac9123d0",
+          "changedPaths": [
+            "src/agent/cache-affine-compaction.ts",
+            "tests/cache-affine-compaction.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Summary attempt returns compaction or classified cancellation plus response receipt; handler settles successful usage or cancelled usage once outside inference/projection catch. Wire acceptance distinct from returned response. Observed fix: post-inference notification errors now best-effort so cancel result cannot escape into SDK fallback.",
+          "checks": "79 compaction/native tests/488 assertions; costs8/20; four dispatch/projection tests baseline pass; notifier regression baseline fails/candidate passes, cancel+single usage append; format/lint pass17warnings1info; stale-base goal TS2554, now area fixed."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_2020f326",
+          "candidate": "6765c847fd17806b697ec1bede8a8260ac9123d0",
+          "base": "52f67ec6edd404e9865237f6607bd95e3f69b4f7",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -807,8 +822,15 @@
     {
       "focus": "src/history/shake-record.ts",
       "initialBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_ce232122",
+          "launchBase": "f6d9e4b75cbcf76217e97904ff477ba624b26b10",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_ce232122",
+          "branch": "bruv/primary-persisted-shake-record-ce232122"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
