@@ -393,7 +393,8 @@
             "tests/native-compaction.test.ts",
             "wisdom/quality/structural-readability-worker.md"
           ],
-          "checks": "134 tests/732 assertions across 8 native/cache/fast/instruction files; deferred HTTP invalidation regression passes baseline, generation-guard mutation fails; format/diff pass; baseline lint16/3; known old goal TS2554 only, no compiled/live claim."
+          "checks": "134 tests/732 assertions across 8 native/cache/fast/instruction files; deferred HTTP invalidation regression passes baseline, generation-guard mutation fails; format/diff pass; baseline lint16/3; known old goal TS2554 only, no compiled/live claim.",
+          "result": "Registration owns durable capture/admission/fallback; compactNativeCapture owns one pinned async attempt from credentials through settlement with generation read access but no capture mutation. Transport/parser/projection body behavior preserved, no postlaunch plaintext fallback."
         }
       ],
       "judgeRounds": [
