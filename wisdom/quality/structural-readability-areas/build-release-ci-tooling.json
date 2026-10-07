@@ -1111,8 +1111,16 @@
     {
       "focus": "src/assets.d.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_af4e93ee",
+          "launchBase": "38f0f0583a0de57ee39db48cb2246f781548d074",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_af4e93ee",
+          "branch": "bruv/primary-src-assets.d.ts-af4e93ee",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1158,8 +1166,16 @@
     {
       "focus": "t3.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_a20a31fc",
+          "launchBase": "38f0f0583a0de57ee39db48cb2246f781548d074",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_a20a31fc",
+          "branch": "bruv/primary-t3.json-a20a31fc",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1539,14 +1555,15 @@
     {
       "focus": "tests/native-release-gate.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "awaiting-judge",
       "primary": [
         {
           "id": "task_d230f8cd",
           "launchBase": "6bbab92af36001555036325216dea9270bb32964",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d230f8cd",
           "branch": "bruv/primary-tests-native-release-gate.test.t-d230f8cd",
-          "state": "running"
+          "state": "completed",
+          "commit": "258c2277c3df7d06a9860df140eb85642f29af46"
         }
       ],
       "judges": [],
@@ -1557,7 +1574,9 @@
         "verdict": "ACCEPT",
         "blob": "eac3d0f7298aa70df327b5c6c87bf440185d4073",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Typed scenarios and readable mock-child source replace positional raw-JS injection;central fixture lifetime/typed call log decoding,all assertions retained.",
+      "checks": "9combined66assertions;strict tsc/format/lint/diffpass;orchestrationfixturesnotnative."
     },
     {
       "focus": "tests/offline-process-isolation.test.ts",
@@ -1892,19 +1911,29 @@
     {
       "focus": "tsconfig.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_357ea541",
           "launchBase": "fd0ff748a36a5ba307e85060df397bd3d8ab57e3",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_357ea541",
           "branch": "bruv/primary-tsconfig.json-357ea541",
+          "state": "completed",
+          "commit": "024d75619f77b79d8210a2b0bdfad24bea21d967"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_4c5a1d2a",
+          "base": "fd0ff748a36a5ba307e85060df397bd3d8ab57e3",
+          "candidate": "024d75619f77b79d8210a2b0bdfad24bea21d967",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged flat compiler policy and explicit src/scripts/tests scope;no useful structure change.",
+      "checks": "Effectiveconfig609files/ambient/package resolution/formatpass;no fulltypecheck/build."
     }
   ],
   "extra": [
@@ -1957,8 +1986,16 @@
     {
       "focus": "tests/setup-native-release-gate.test.ts",
       "initialBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_29efc903",
+          "launchBase": "38f0f0583a0de57ee39db48cb2246f781548d074",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_29efc903",
+          "branch": "bruv/primary-new-native-setup-tests-29efc903",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
