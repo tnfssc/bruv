@@ -1145,20 +1145,32 @@
         "launchBase": "e11164e48eedeedc5f1c95f0598c178c3a58e6b2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_65c3efca",
         "branch": "bruv/primary-src-live-gpt-live-playback.ts-65c3efca",
+        "status": "candidate ready",
+        "commit": "84ddffa8b4c5559f35dbcea6eb134af33e115900"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "awaiting judge slot",
+      "relatedPaths": [
+        "tests/gpt-live-playback.test.ts"
+      ],
+      "readingResult": "OutputRecovery owns speechguard/terminalfailure suppression and capturedquiet resumes;interruption explicitqueueinvalidate;terminalfailure no duplicate speechflush;closure independent. Micforwarding/thresholds/pacing/flushgating/epochs/shortdrain unchanged.",
+      "checks": "88offlinepass1paidskip20903assertions;3newregressions baselinepass;strictTS/Biomepass1existingwarn;actualterminal blankpane startup fails baseline/candidate rootcauseunproven,no device/provider/macOS."
+    },
+    {
+      "focus": "src/live/gpt-live-request.ts",
+      "initialBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
+      "primary": {
+        "id": "task_8bc8ea03",
+        "launchBase": "168832841052c286d6f7fc0ed3bebdcda3e16167",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_8bc8ea03",
+        "branch": "bruv/primary-src-live-gpt-live-request.ts-8bc8ea03",
         "status": "running",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "primary running"
-    },
-    {
-      "focus": "src/live/gpt-live-request.ts",
-      "initialBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
     },
     {
       "focus": "src/live/gpt-live-session.ts",
