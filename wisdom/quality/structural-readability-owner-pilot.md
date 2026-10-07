@@ -1,68 +1,42 @@
-# Owner structural readability pilot
+# Structural readability: remote owner
 
-Worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_7b98d051
-Branch: bruv/structural-readability-owner-pilot
-Base: 886c4c84 (origin/develop). Original pilot review range: 886c4c84..390651f0 on that branch.
+## Direction and result
 
-Narrow follow-up worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_eacecb49
-Follow-up branch: bruv/structural-readability-owner-reviewed
-Follow-up base candidate: 390651f0ad30faf9fe1726ce118d5723b4898374. The original pilot and closed parent worktrees are untouched.
-No edits to the closed parent pass, no push, no PR.
+User rejected the repo-wide naming sweep and asked for an independent judge. That correction changed the bar: fewer things to reconstruct, not more renamed variables or green test counts.
 
-## Correction and verdict
+This is a focused pilot on upstream 886c4c84. The old rename branch was not imported. First judge rejected its owner changes as useful names with unchanged structure. A fresh judge accepted structural candidate 390651f0. A third judge accepted final code 25fe1082 after framing and note fixes. This acceptance covers owner.ts and its inspected contracts, not the whole repository.
 
-The user rejected the superficial repo-wide pass. The first independent judge **REJECTED** the prior owner cleanup: useful names, unchanged reading burden. Transport and decisions were interleaved; answer acceptance, dispatch and delivery proof were scattered; resource ownership was unclear. Baseline and upstream owner blobs are identical. This pilot keeps taskSnapshot/nativeSettled/controlTimer, not the old rename branch.
+## What is easier to follow
 
-The second independent judge **ACCEPTED** exact candidate **390651f0ad30faf9fe1726ce118d5723b4898374**, reviewed against **886c4c84e703dc12ea6eee2a78f0e5a159c42f0e**. The coherent answer, settlement, cancellation and resource boundaries are meaningful structural improvement, not another naming pass. Acceptance covers this owner pilot and inspected contracts, not the whole repository. The judge independently ran the focused suite: 102 passed, 0 failed.
+- **Answer round trip:** NativeAnswerDelivery groups acceptance/recovery, durable dispatch marking, and ledger-backed acknowledgement. Receipt, slot, reply and native ledger remain separate authorities. The caller visibly invokes these operations instead of burying them in parsing and timer blocks.
+- **Native settlement:** framing only yields events. nativeSettlement distinguishes active work, pending questions and completion; settleNativeTurn exposes their consequences. Successful process exit or agent_settled alone still cannot prove task completion.
+- **Cancellation through exit:** OwnerCancellation owns request/report evidence. OwnerChild owns shutdown, escalation and actual close. One finally releases timers/child, drains persistence and closes the journal before locked terminal publication. Concurrent reply/cancellation fields and terminal immutability remain protected.
 
-Two observed follow-ups remain in that accepted candidate: preserve baseline rejection of terminated blank/whitespace JSON frames instead of skipping them, and repair this note's six NUL bytes and corrupted code fences. This narrow delta does both, with a focused framing regression; accepted owner orchestration stays unchanged. Final-code independent review is still **pending**, as is the parent's full Linux gate. Parent must send the exact resulting code and narrow diff for confirmation before any PR or fan-out. Passing tests remain safety evidence, not a readability verdict.
+These boundaries own coherent operations. They are not a generic context bag, handler registry or state-machine framework. The reader can follow the three journeys without reconstructing the entire stdout callback and control timer together.
 
-## Three journeys
+## Explicit behavior fix
 
-**Answer round trip.** Before: request handling accepted/recovered the intent, a timer marked/sent it, stdout interpreted RPC success and persisted a result. Now NativeAnswerDelivery owns accept, dispatch and acknowledge together. accept runs under the request lock, validates owner/version, writes receipt before slot and only repairs the known pre-dispatch crash window. dispatch writes the uncertain marker before sending and never resends a marked slot. acknowledge snapshots matching native-ledger proof before waiting for the fresh-state lock, then publishes receipt and task.reply. The timer supplies send; semantic routing supplies response ID/success and tracks the returned persistence promise. Receipt, slot and native ledger remain different authorities, but their relationship no longer lives in three unrelated blocks.
+A synthetic child-error event against a real SIGTERM-ignoring process exposed the teardown path. Independent judge rerun: baseline returned after 25 ms with child alive; candidate returned after 2028 ms with child dead and result unknown. This is an exercised error path, not a naturally observed OS failure. Shutdown ownership persists through escalation and close.
 
-**Settlement with work/questions.** Before: stdout parsing used continue for active jobs, pending messages, questions and cancellation. Now framing has no protocol decisions. nativeSettlement validates the extension checkpoint and returns work-pending, questions-pending or complete. settleNativeTurn leaves work running, publishes questions without closing, or marks nativeSettled and closes stdin. agent_start resets turn evidence. Exit reconstruction still checks the native question ledger: RPC exit or agent_settled alone is not completion.
+The first candidate also began ignoring blank/whitespace RPC frames. Judge caught that extra change. Final code restores baseline rejection; a regression failed before that fix and passes afterward. Corrupt Markdown fences and six NUL bytes were repaired.
 
-**Cancellation through exit.** Before: the answer timer mixed dispatch with cancellation deadlines/report reads; exception paths could discard escalation before close. Now OwnerCancellation owns request time, command/report evidence and outcomes. The control tick explicitly maps settled/unconfirmed/timed-out to shutdown and certainty. OwnerChild owns error observation, stdin/TERM shutdown, escalation and close. runOwnerTask has one finally that clears control/watchdog timers, releases the child, drains persistence, and closes the journal. Only afterwards does it select and publish a terminal result with the existing locked fresh-state merge and immutability rules.
+## Proof
 
-## Behavior fix and tradeoffs
+- Final focused suite: 103 pass, 0 fail, 1,493 assertions across 11 files. Existing authority/replay/configuration/race/journal tests retained; new lifecycle/framing/error/spawn cases added.
+- Independent final judge: framing checks 2 pass, 8 assertions; accepted owner.ts/owner-child.ts blob identity, narrow delta, clean tree, diff checks, note bytes and fences verified.
+- Parent Linux gate at 25fe1082: locked install, format, lint, typecheck, paired build, offline OpenAI transport, complete root tests, paired standalone smoke all passed. Root: 2,235 pass, 30 opt-in skips, 0 fail; 112,743 assertions across 303 files. Smoke is not native parity acceptance.
+- CI job: task_452152ec. Transient log: /tmp/bruv-owner-reviewed-ci.log. Readability verdict is separate from these checks.
 
-An isolated fixture injects a synthetic child-error event into a real SIGTERM-ignoring child. The baseline returned in 19 ms with the child alive; this pilot returned in 2031 ms with it dead and state unknown. This exercises the rejected-wait teardown path, not a naturally occurring OS failure. The independent judge reran the fixture against throwaway baseline sources and candidate 390651f0: baseline returned after 25 ms with the child alive; candidate returned after 2028 ms with it dead and result still unknown. The committed subprocess regression requires no child alive after return; spawn-failure coverage also passes. Error handling now retains escalation through actual close. Fatal framing/journaling errors also stop routing the rest of that chunk instead of making more semantic decisions after failure.
+Run the full gate with Bun 1.4.2 on PATH and SHELL=/bin/sh: `bun run ci`. Automatic fish setup could not find Bun; explicit binary directory is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin. No checks or assertions were weakened.
 
-No serialized semantic queue was added. Ledger/runtime evidence is read synchronously at the event; fresh locked persistence remains asynchronous so lock contention does not block control polling. pendingWrites removes completed promises rather than retaining lifetime history, and all remaining writes are awaited after stdio close on success and failure. This is not backpressure: a burst can still accumulate writes while the lock is busy. Existing lock retries (100 x 30 ms) and the 32 MiB journal bound remain; no new absolute concurrency cap was proved. The concurrent sync/terminal regression remains intact.
+## Limits
 
-Cost: two narrow modules and extra lines, not a shorter whole file. runOwnerTask still holds turn/result evidence, and the watchdog still distinguishes human waiting from an uncertain dispatched answer. External ledger, lock and cancellation-extension contracts still need reading. The second judge accepted these local boundaries; confirmation of the exact final code after this narrow delta remains open.
+Outstanding async persistence can still accumulate under contention. Completed promises are removed; that is not backpressure. No live-provider, authenticated SSH, macOS, physical-device or remote-owner compiled-CLI parity claim. Root build and generic paired smoke do not erase those limits. Pending work/questions and uncertain cancellation remain intentional safety complexity.
 
-## Original pilot checks
+## Pickup and delivery
 
-Bun 1.4.2. Commands ran via /bin/bash -c with PATH=/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin:$PATH. Shared node_modules is a read-only symlink; generated assets and dist binaries belong to this worktree.
+Branch: bruv/structural-readability-owner-reviewed. Worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_eacecb49. First candidate is retained at /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_7b98d051, branch bruv/structural-readability-owner-pilot.
 
-- bun run check: passed (prepare:assets + root tsc --noEmit).
-- bun run format:check: passed, 848 files, no fixes.
-- bun run lint: exit 0; 996 warnings and 1549 infos remain. Not warning-free.
-- bun run build: passed; own dist/bruv and connector launcher rebuilt from changed source.
-- git diff --check: passed.
-- Focused safety check: 102 passed, 0 failed, 1491 assertions across 11 files:
+Implementation task_7b98d051; follow-up task_eacecb49. Judge rounds: task_e67bcc5b (reject prior naming pass), task_9174b83a (accept structural pilot), task_0d485f50 (accept final narrow follow-ups). All code is committed; PR delivery is next. No broad fan-out or whole-repo quality claim from this one pilot.
 
-```sh
-bun test tests/remote-owner.test.ts tests/remote-owner-lifecycle.test.ts tests/remote-runtime.test.ts tests/remote-client.test.ts tests/remote-extension.test.ts tests/remote-capabilities.test.ts tests/remote-capability-runtime.test.ts tests/remote-job-delivery.test.ts tests/remote-durable-json.test.ts tests/remote-artifacts.test.ts tests/remote-question-bridge.test.ts
-```
-
-New tests cover work/messages/questions keeping the child alive, ledger-backed negative acknowledgement and no uncertain replay, confirmed/unconfirmed cancellation through real close, framing, injected owner error teardown and spawn failure. Existing tests retain successful answer delivery, receipt crash recovery, configuration gating, ownership, concurrent terminal publication, journal bounds/gaps and artifacts.
-
-Limits: Linux protocol fixtures, not live provider/SSH, Mac or full repository test proof. No compiled-CLI integration test was run; the changed-source build succeeded. Final-code judge confirmation and the parent's full Linux gate remain the next steps.
-
-Read values and remote startup/replay, job delivery, native-question ownership and production SSH wisdom, plus runtime.ts/cancellation.ts. Value 2 is now clarified: the user correction and independent judge rounds repeat the lesson that broad readability work needs actual-code judgment separate from test safety proof. This joins “Say what proof shows,” not a new value or a demand for more rounds on every tiny rename. See [structural readability guidance](structural-readability-guidance.md).
-
-## Narrow follow-up checks
-
-Bun 1.4.2, in the new follow-up worktree above, with the same /bin/bash and PATH setup. The new regression failed on candidate 390651f0 because a terminated blank frame did not throw. Removing only the whitespace skip restores the original JSON.parse rejection; the existing split/coalesced happy path no longer includes an invalid blank frame.
-
-- Red check: bun test tests/remote-owner-lifecycle.test.ts --test-name-pattern "framing rejects": 0 passed, 1 failed (the expected missing rejection).
-- Rerun the 11-file focused command above: 103 passed, 0 failed, 1493 assertions.
-- bun run check: passed (prepare:assets + root tsc --noEmit).
-- bunx --no-install biome format src/remote/owner-rpc.ts tests/remote-owner-lifecycle.test.ts: passed, 2 files, no fixes.
-- bunx --no-install biome lint src/remote/owner-rpc.ts tests/remote-owner-lifecycle.test.ts: exit 0, one existing noAssignInExpressions warning; no unrelated fix.
-- git diff --check: passed. Markdown checked for NUL bytes, balanced fences and local links; all six NUL bytes are gone and both fences are ordinary Markdown.
-
-No rebuild was run for this narrow follow-up. Full Linux gate and final independent confirmation of the exact resulting code are still pending with the parent. No push or PR.
+[Guidance](structural-readability-guidance.md) records the structural and judge lessons. Value 2 was clarified, not expanded into a new rule set: broad readability work needs actual-code judgment separate from safety proof. It helps large agent-led passes; not extra rounds for every tiny rename. Wider structural work still remains.
