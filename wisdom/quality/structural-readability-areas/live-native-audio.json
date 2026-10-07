@@ -577,12 +577,24 @@
         "launchBase": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_b67e363a",
         "branch": "bruv/primary-src-live-extension.ts-b67e363a",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "f98b50c96fde73aaa0da8be7ce3b1c7015351866"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_65eb4c80",
+          "status": "running",
+          "candidate": "f98b50c96fde73aaa0da8be7ce3b1c7015351866",
+          "base": "e81164ded74d4add7f7a8a0735b52d788da3cf39"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "judge running",
+      "relatedPaths": [
+        "tests/live-extension.test.ts"
+      ],
+      "readingResult": "Start exposes owner acquisition/helper/conversation/connect/context replay/capture-playback; coherent delegated vs tool-calling wiring, shared replay/live context dispatch, removes mirrored owner orchestration run state.",
+      "checks": "146 tests across8 files, TypeScript/format pass; Biome no errors; replay regression passes baseline. No native/device/provider/macOS/full build."
     },
     {
       "focus": "src/live/gpt-live-context.ts",
@@ -1569,10 +1581,17 @@
       "focus": "native/live-linux/tests/test_protocol.py",
       "introducedBy": "fb78a73f068ff690931fc08f829c33b19dfbbee6",
       "initialBlob": null,
-      "primary": null,
+      "primary": {
+        "id": "task_63e174cf",
+        "launchBase": "281809b72c5f84caea67f940d746588cf1478f18",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_63e174cf",
+        "branch": "bruv/primary-native-live-linux-tests-test_pro-63e174cf",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_5ff86413",
         "verdict": "ACCEPT",
