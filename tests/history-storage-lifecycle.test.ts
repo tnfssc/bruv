@@ -24,6 +24,13 @@ test("owned SDK lifecycle keeps rewrite bodies, sorted trees, migrations, paths 
       const manager=SessionManager.create(root,dir);
       const first=manager.appendMessage({role:"user",content:"keep exact original",timestamp:1});
       manager.appendCustomEntry("private-state",{secret:"original custom body"});
+      const bookmark=manager.appendLabelChange(first,"bookmark");
+      assert.equal(manager.getLabel(first),"bookmark");
+      assert.equal(manager.getTree()[0].labelTimestamp,manager.getEntry(bookmark).timestamp);
+      manager.appendLabelChange(first,undefined);
+      assert.equal(manager.getLabel(first),undefined);
+      assert.equal(manager.getTree()[0].labelTimestamp,undefined);
+      assert.equal(SessionManager.open(manager.getSessionFile()).getLabel(first),undefined);
       manager.appendLabelChange(first,"bookmark");
       const before=manager.getEntries();
       manager.branch(first);
@@ -45,6 +52,8 @@ test("owned SDK lifecycle keeps rewrite bodies, sorted trees, migrations, paths 
       assert.equal(manager.getSessionFile(),file);
       assert.equal(manager.getLeafId(),first);
       assert.deepEqual(manager.getEntries(),before);
+      assert.equal(manager.getLabel(first),"bookmark");
+      assert.equal(manager.getTree()[0].labelTimestamp,before.at(-1).timestamp);
       const blocked=SessionManager.create(root,dir);
       blocked.appendThinkingLevelChange("off");
       writeFileSync(blocked.getSessionFile(),"occupied");

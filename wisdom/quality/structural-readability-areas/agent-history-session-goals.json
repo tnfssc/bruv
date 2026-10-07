@@ -801,7 +801,7 @@
     {
       "focus": "src/history/selector-lifecycle.ts",
       "initialBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_1e7ee0c8",
@@ -816,7 +816,14 @@
           "checks": "14 history tests/62 assertions; direct probe18 verifies idempotence/fallback/metadata-only/whole-journal/dispose-reopen bytes; format/lint/diff pass; no TUI/GC/typecheck/build."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_2011e8a7",
+          "candidate": "313f21095386e99beda79404e94aefc4c05da23c",
+          "base": "4c80c3f380f237e77ec86350e4ae823c83e0c09b",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -861,7 +868,7 @@
     {
       "focus": "src/history/session-manager.ts",
       "initialBlob": "ed6dfb651192791de44bf933592e3061c2d32633",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f9b9fc58",
@@ -883,11 +890,18 @@
           "id": "task_4b35440e",
           "candidate": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
           "base": "5bd90dce070d7d1656f78d6e441dc1dd579919da",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Unified append/rebuild metadata publisher; explicit owner in syncIndexes; accounting installer owns cache validation/native estimate/projection recording. Append/publication/recovery, skeleton identity, replay and disposal remain purposeful separate lifetimes.",
+          "checks": "Independent14 tests across11 files, SDK/CLI/caller implementations and full diff read; label removal/reopen/reset regressions preserve originals/transaction/accounting contracts. No full gate/live claim.",
+          "acceptedRelatedBlobs": {
+            "tests/history-storage-lifecycle.test.ts": "33c54c77cd356b3470423a19c532602b1c11ecd8"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "d7032c57091c90f661c37edd3b69bf27f0835243",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/history/shake-record.ts",
@@ -1831,7 +1845,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
+        "judge": "task_4b35440e",
+        "verdict": "ACCEPT",
+        "blob": "33c54c77cd356b3470423a19c532602b1c11ecd8",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/history-storage.test.ts",
