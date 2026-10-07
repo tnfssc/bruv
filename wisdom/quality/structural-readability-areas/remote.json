@@ -90,8 +90,24 @@
     {
       "focus": "src/remote/capabilities.ts",
       "initialBlob": "c5669679c832b8fb3896ca6e9e33d5099f0842b2",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_3469e5e5",
+          "status": "running",
+          "candidate": "28fd359f161e2c5b5773ed16102fa55e8664b4a5"
+        }
+      ],
+      "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
+      "primary": {
+        "id": "task_2e4d80de",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_2e4d80de",
+        "branch": "bruv/remote-primary-capabilities-2e4d80de",
+        "commit": "28fd359f161e2c5b5773ed16102fa55e8664b4a5"
+      },
+      "result": "Unchanged: caller grant/path policy; reader confinement/symlinks/descriptor/bounded UTF-8/finally-close; caller cancellation/revocation and correlated reply.",
+      "checks": "8 pass, 63 assertions; blob unchanged; whitespace clean.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/capability-runtime.ts",
@@ -234,14 +250,24 @@
     {
       "focus": "src/remote/repository.ts",
       "initialBlob": "264e183b88a7f1a0c667244efbb73c834369188e",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_944616f9",
+          "status": "running",
+          "candidate": "56906c4565e6a2a0b667e105b8d8cb613bf5e414"
+        }
+      ],
       "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
       "primary": {
         "id": "task_91f9307a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_91f9307a",
-        "branch": "bruv/remote-primary-src-remote-repository.ts-91f9307a"
-      }
+        "branch": "bruv/remote-primary-src-remote-repository.ts-91f9307a",
+        "commit": "56906c4565e6a2a0b667e105b8d8cb613bf5e414"
+      },
+      "result": "Capture mixed approval/provenance and assembling a parentless snapshot; extracted createOrphanSnapshot to own patch/copy/validation/history replacement.",
+      "checks": "Baseline and candidate 19 pass, 112 assertions; format/diff pass, pre-existing lint warnings.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/root-cli.ts",
@@ -288,20 +314,36 @@
     {
       "focus": "src/remote/root-runtime.ts",
       "initialBlob": "c10a7a7c45510373e30d9d2385045f9fad23fa93",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_a90ee127",
+          "status": "running",
+          "candidate": "216602412f172476fa0e2946fa1f26cb5f9aa418"
+        }
+      ],
       "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
       "primary": {
         "id": "task_05879739",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_05879739",
-        "branch": "bruv/remote-primary-src-remote-root-runtime.t-05879739"
-      }
+        "branch": "bruv/remote-primary-src-remote-root-runtime.t-05879739",
+        "commit": "216602412f172476fa0e2946fa1f26cb5f9aa418"
+      },
+      "result": "No source change proposed. Registration/session ordering, connection framing, ordinary question replay, close settlement, rejection vs unknown delivery traced.",
+      "checks": "15 tests pass, 82 assertions; no live/authenticated SSH/build.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/root-store.ts",
       "initialBlob": "f930d363762822984029e7d509664a497c851c29",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
+      "primary": {
+        "id": "task_15f8e7d9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_15f8e7d9",
+        "branch": "bruv/remote-primary-root-store-15f8e7d9"
+      }
     },
     {
       "focus": "src/remote/root-transport.ts",
@@ -318,8 +360,14 @@
     {
       "focus": "src/remote/security.ts",
       "initialBlob": "81dff39ca5ffff8d61eaffceb6535a946361e3e1",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
+      "primary": {
+        "id": "task_c4d61278",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_c4d61278",
+        "branch": "bruv/remote-primary-security-c4d61278"
+      }
     },
     {
       "focus": "src/remote/services.ts",
@@ -736,5 +784,7 @@
       "judgeRounds": []
     }
   ],
-  "extras": []
+  "extras": [],
+  "primaryBrief": "Fresh PRIMARY file worker, single focus below. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. User rejected shallow rename/comment sweep: maximize actual understanding, not names/diff count/short files/boilerplate. Identify concrete mental bookkeeping by tracing real callers/shipped paths. Simplify tangled responsibilities/branching/hidden state/lifetimes/needless indirection/dead machinery into coherent domain operations with visible effects. Not arbitrary splitting/context bags/registries/frameworks. Genuinely readable may remain unchanged. Related coherent edits allowed; record all paths, flag overlaps with active area workers from remote.json. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts. No speculative defenses/deps/feature cuts/test weakening. Incidental fixes explicit/reproduced/tested. Before commit SHORT wisdom/quality/structural-readability-worker.md (focus/problem/why/exact proof/limits/path/branch). Return exact base/candidate commit, all changed paths, concrete before/after walkthrough. Independent judge decides acceptance. No push/PR. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun via /bin/bash PATH inside quoted script; shared read-only deps /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Focused existing tests per edit, no per-file full builds.",
+  "judgeBrief": "Fresh INDEPENDENT READ-ONLY actual-code judge. Original user brief: maximize actual ease of understanding, not diff count/names/shorter files/boilerplate. Identify mental reconstruction across authorities/responsibilities/lifetimes; coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/frameworks. Clear code may remain unchanged. Preserve permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions or forced churn. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Inspect ACTUAL source, callers/tests and FULL candidate diff, not summaries or green tests. Judge intrinsic current code separately from improvement. Return ACCEPT / REJECT / NO CHANGE NEEDED with concrete reader journeys, exact inspected blob hashes, safety/check limits. REJECT: concrete unmet targets and smallest coherent rework. No edits/commits. Each round is fresh; consider all prior objections supplied below."
 }
