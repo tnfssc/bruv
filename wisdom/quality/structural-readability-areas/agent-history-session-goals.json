@@ -972,8 +972,15 @@
     {
       "focus": "src/prompts.ts",
       "initialBlob": "3aec2c16eb596e23461c6b3ad1c5b7d95366f0b8",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_263c3f6a",
+          "launchBase": "ad6878194a0a11da832972e4ccc001fdfd001b62",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_263c3f6a",
+          "branch": "bruv/primary-prompt-assembly-contracts-263c3f6a"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -1349,13 +1356,20 @@
     {
       "focus": "src/session/transcript.ts",
       "initialBlob": "aa35d3df097d70d0dd921b41ba6acb26d6790303",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_308d89c5",
           "launchBase": "908644c12df90bd445a8dde0229b16f525a69a27",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_308d89c5",
-          "branch": "bruv/primary-shared-session-transcript-308d89c5"
+          "branch": "bruv/primary-shared-session-transcript-308d89c5",
+          "commit": "c3c3f816323828d4a44d5ae0d311c52a6b62698d",
+          "changedPaths": [
+            "src/session/transcript.ts",
+            "tests/live-transcript.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "checks": "96 focused tests/563 assertions; added contracts pass baseline; focused strict type/format/diff pass; lint2 baseline infos; no full compile/build/live/device."
         }
       ],
       "judgeRounds": [],
@@ -2498,9 +2512,18 @@
     {
       "file": "tests/claude-compat-task-binding.test.ts",
       "owner": "compatibility-t3",
-      "state": "observed-unrelated-check-failure",
+      "state": "resolved-by-fresh-merged-build-check",
       "need": "Session identity primary broader compatibility test failed unchanged at line521: tasks undefined. No edits; parent/assigned owner investigate combined fixture/source compatibility. Focused identity11/37 passed.",
-      "candidate": "b5a177e68e2705c9ad68004938618b6cb53a2c60"
+      "candidate": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
+      "resolution": "Fresh paired build and uniqueTMPDIR25-suite run task_0d0f6278 passed358/1964 including this suite; no source fix here. Prior stale/environment failure retained as history."
+    },
+    {
+      "file": "tests/live-transcript.test.ts",
+      "owner": "live-native-audio",
+      "candidate": "c3c3f816323828d4a44d5ae0d311c52a6b62698d",
+      "blob": "4d8ec7bbfeb1605e6e9d7f1c74a55d601aa051b7",
+      "state": "candidate-under-judge",
+      "need": "If accepted/integrated, assigned live-area primary must cover final combined hash; parent reconcile test overlaps."
     }
   ],
   "batchChecks": [
@@ -2544,6 +2567,11 @@
       "commit": "7fd63ca6",
       "job": "task_b6a730c5",
       "result": "Full tsc --noEmit passed after clean parent 0072ad15 accepted-common checkpoint merge. Own accepted hashes unchanged; no common API compile gaps observed. Runtime/binary combined proof after parent merge remains needed."
+    },
+    {
+      "commit": "b33ac3d9",
+      "job": "task_0d0f6278",
+      "result": "Fresh merged-area paired build passed; isolated TMPDIR25-suite regression passed358 tests/1964 assertions; full tsc passed. Includes actual compiled bridge/attention/goals and previously failing claude-compat-task-binding. No authenticated providers/device/whole-gate claim."
     }
   ],
   "parentCheckpoint": {
