@@ -422,10 +422,17 @@
     {
       "focus": "scripts/build-live-linux-helper.sh",
       "initialBlob": "81989563bcacb3c947843520081648afa4e4b521",
-      "primary": null,
+      "primary": {
+        "id": "task_4761041c",
+        "launchBase": "ccefb31e5026c37a0995e588fc5c2e1d7c3466cf",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_4761041c",
+        "branch": "bruv/primary-scripts-build-live-linux-helper.-4761041c",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "scripts/live-acceptance.ts",
