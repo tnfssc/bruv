@@ -1630,13 +1630,20 @@
       "judgeRounds": [
         {
           "id": "task_e561d4a8",
-          "status": "running",
+          "status": "complete",
           "candidate": "74f87f8d75e3780f95eeb0e4dd18532aa779bd09",
-          "base": "281809b72c5f84caea67f940d746588cf1478f18"
+          "base": "281809b72c5f84caea67f940d746588cf1478f18",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Exact subprocess byte stimuli adjacent to framing/deadline assertions; semantic protocol failures separate; context exit checks lifetime; microphone open/write/scenario failures expose free/join authority without generic harness.",
+          "checks": "Independent9 unittest pass/diff clean; CI does not invoke suite. No helper/device/Pulse/macOS/provider execution.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/test_protocol.py": "79ed8c2697a35f9161237de1c3f718b2a4ce09fe"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "79ed8c2697a35f9161237de1c3f718b2a4ce09fe",
+      "integration": "accepted unchanged primary final blob matches area tip",
       "relatedPatchJudgment": {
         "judgeId": "task_5ff86413",
         "verdict": "ACCEPT",
