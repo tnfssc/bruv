@@ -355,7 +355,7 @@
     {
       "focus": "src/agent/last-used-cli-model.ts",
       "initialBlob": "09d386f26bb6aa3e28e07e4b4d7800f92d8c0491",
-      "status": "judging",
+      "status": "primary-running",
       "primary": [
         {
           "id": "task_9d8cd3c0",
@@ -369,6 +369,13 @@
           "result": "No change candidate: root TUI guard, exact preference update, awaited flush and error notification already local; short parallel handlers need no indirection.",
           "checks": "7 tests/28 assertions; format/lint pass2warnings; stronger Biome import-order error baseline; no compile/build.",
           "limits": "Observed comment caveat: Pi thinking-selection also fires on model-induced effective thinking changes; picker-only comment understates upstream event surface. Needs judge actual-code decision, no behavior fix claimed."
+        },
+        {
+          "id": "task_e862a0d8",
+          "role": "rework",
+          "launchBase": "81bf0b75200c64e9d9ef2f545a908c7c2c6e186a",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_e862a0d8",
+          "branch": "bruv/rework-cli-preference-event-contract-com-e862a0d8"
         }
       ],
       "judgeRounds": [
@@ -376,7 +383,12 @@
           "id": "task_8d8d65eb",
           "candidate": "f2547578087fdb398df7a2bbaa7bfdb0ca36c1dc",
           "base": "ddc4ad72c1125d125f83e9eaee2530e40b57e2a2",
-          "status": "running"
+          "status": "complete",
+          "verdict": "REJECT",
+          "objections": [
+            "Adjacent thinking-persistence comment understates effective-level changes emitted for model switches/cycles, lacking source discriminator. Correct comment only; retain accurate startup/restoration distinction and all behavior."
+          ],
+          "checks": "Independent7 tests28 assertions; SDK event producers/settings/source fully traced."
         }
       ],
       "acceptedBlob": null,
@@ -747,13 +759,19 @@
     {
       "focus": "src/herdr-agent-state.ts",
       "initialBlob": "652dc28d948e82a263b789da4a2ec5dbb09d4296",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_841fe796",
           "launchBase": "8d31b67dec5d017598a3307ac38fe6311396bea5",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_841fe796",
-          "branch": "bruv/primary-agent-state-persistence-841fe796"
+          "branch": "bruv/primary-agent-state-persistence-841fe796",
+          "commit": "f57af221d2c5558b34d3db7959bd91d7898efd7f",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: pane-state reporting, not persisted role/model state. Root/TUI eligibility, reporter authority, event precedence, serialized/coalesced delivery, cancellation/quit release coherent.",
+          "checks": "12 tests34 assertions; Biome check0 with3 existing infos; generated WASM supplied from shared deps; no build/typecheck/liveHerdr/Windows."
         }
       ],
       "judgeRounds": [],
@@ -972,7 +990,7 @@
     {
       "focus": "src/pi-host.ts",
       "initialBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_dad4fc12",
@@ -987,15 +1005,29 @@
           "checks": "Host/sourceCLI9 tests90 assertions; isolated compat3/33; format/lint/diff pass; unfiltered2 compiled failures missing dist/bruv, no fresh build/typecheck/live claim."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_43ae3d21",
+          "candidate": "f41b2a9eb367298f703309897930711b7d8c20cd",
+          "base": "de02b17ff1a64acb638e2da98b3eec3c107e114e",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
     {
       "focus": "src/prompt-preview.ts",
       "initialBlob": "f2700040ab0659020533497a4af4dccc05866548",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_321320f8",
+          "launchBase": "81bf0b75200c64e9d9ef2f545a908c7c2c6e186a",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_321320f8",
+          "branch": "bruv/primary-prompt-preview-ownership-321320f8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -1358,7 +1390,7 @@
     {
       "focus": "src/session/restore-leaf.ts",
       "initialBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_6d6e2568",
@@ -1378,16 +1410,20 @@
           "id": "task_58208ff4",
           "candidate": "8f868493f1a28ce307445964ddb38f1b70e667cb",
           "base": "b8a7d4debe5e37f75a0e0b7f7bf18208e8fde820",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Unavailable/empty/branched view snapshots explicit; helper restores active view without deleting durable entries or absorbing caller-owned failure policy.",
+          "checks": "Independent104 tests527 assertions plus realSDK13 assertion probe; actual callers and SDK read."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/session/transcript.ts",
       "initialBlob": "aa35d3df097d70d0dd921b41ba6acb26d6790303",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_308d89c5",
@@ -1404,7 +1440,14 @@
           "result": "Single speaker-owned draft replaces two slots whose invariant allowed only one. Receive handles replacement/interleaving/finality; append owns whole-turn retention vs4096-byte audit chunks; views/finish use same draft, sink/source/status/supersession semantics preserved."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_91f2cc12",
+          "candidate": "c3c3f816323828d4a44d5ae0d311c52a6b62698d",
+          "base": "908644c12df90bd445a8dde0229b16f525a69a27",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -1429,13 +1472,20 @@
     {
       "focus": "src/wisdom/location.ts",
       "initialBlob": "909717075aaac02a273286168e712faf0269f7ab",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_4e40c20e",
           "launchBase": "f120f454c4d706972b9220340d35614262c39cac",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_4e40c20e",
-          "branch": "bruv/primary-wisdom-location-resolution-4e40c20e"
+          "branch": "bruv/primary-wisdom-location-resolution-4e40c20e",
+          "commit": "07fafa2a65e73e99654c5a998c2bd3d0226a70e6",
+          "changedPaths": [
+            "tests/wisdom-location.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Source unchanged: lexical ancestor selection separated from trust-gated read/validation/path resolution. Added characterization tests, no claimed structural source change.",
+          "checks": "28 tests165 assertions plus configuredSDK1/3; focused Biome/strictTS pass; UID1000 permission case ran, skips root; no global build/macOS/live."
         }
       ],
       "judgeRounds": [],
@@ -2531,6 +2581,14 @@
         "blob": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2",
         "primaryFocusStillRequired": true
       }
+    },
+    {
+      "focus": "tests/wisdom-location.test.ts",
+      "status": "pending-candidate-integration",
+      "primary": [],
+      "judgeRounds": [],
+      "introducedBy": "task_4e40c20e",
+      "candidate": "07fafa2a65e73e99654c5a998c2bd3d0226a70e6"
     }
   ],
   "crossAreaNeeds": [
