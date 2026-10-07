@@ -173,8 +173,15 @@
     {
       "focus": "src/agent/extension.ts",
       "initialBlob": "0cd419b1553cf5ec998b65ecf35ddbcff4f3ffc7",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_f10ebf0a",
+          "launchBase": "738e1d3ad264a15ff8c60be741ddc7a6c922aee4",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f10ebf0a",
+          "branch": "bruv/primary-agent-composition-root-f10ebf0a"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -317,16 +324,32 @@
     {
       "focus": "src/goals/extension.ts",
       "initialBlob": "a174d5d8ed42f65ee4861e3ffb89080024cbf894",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_28c52a22",
           "launchBase": "a877b31baa58c7765e662d8cbe3fbe6089d70a81",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_28c52a22",
-          "branch": "bruv/primary-goals-extension-28c52a22"
+          "branch": "bruv/primary-goals-extension-28c52a22",
+          "commit": "3768ecd10500006ffdfed8bc12202224a483636a",
+          "changedPaths": [
+            "src/goals/extension.ts",
+            "tests/goals.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Group goal session binding/restart/navigation reconciliation with visible accounting and delivery decisions.",
+          "checks": "39 focused tests/204 assertions pass baseline and candidate; leaf advancement/navigation/restart/queue retention added; focused format/lint/diff pass; identical 8 missing-assets tsc errors.",
+          "overlap": "Active fresh primary task_6d7a5ed8 owns tests/goals.test.ts from older base; candidate additions require coherent final combination and rejudgment."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_4a2a31dd",
+          "candidate": "3768ecd10500006ffdfed8bc12202224a483636a",
+          "base": "a877b31baa58c7765e662d8cbe3fbe6089d70a81",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
