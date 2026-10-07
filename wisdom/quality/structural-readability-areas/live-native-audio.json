@@ -437,12 +437,15 @@
         "launchBase": "ccefb31e5026c37a0995e588fc5c2e1d7c3466cf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_4761041c",
         "branch": "bruv/primary-scripts-build-live-linux-helper.-4761041c",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "a840d0db75cf09eeb7b3a0556de30c53e04a5e5d"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged direct dependency flags/output/compiler path; Linux build self-test only reports buildOK, no need to import macOS publication orchestration.",
+      "checks": "Shell syntax/real native build including spaced nested output/self-test/no-device hello-stop pass;11 workflow/platform tests108 assertions. No privatePulse/device/provider/macOS/full gate."
     },
     {
       "focus": "scripts/live-acceptance.ts",
@@ -1013,10 +1016,14 @@
     {
       "focus": "src/live/types.ts",
       "initialBlob": "982613947af84d36edeb598916e7826fc3f43190",
-      "primary": null,
+      "primary": {
+        "id": "task_d79e8579",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/waveform.ts",
