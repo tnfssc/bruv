@@ -9,7 +9,15 @@ afterEach(() => {
   for (const fixture of fixtures.splice(0)) rmSync(fixture, { recursive: true, force: true });
 });
 
-function run(lane: "linux" | "macos", fail = "", logDir = "") {
+function runCi({
+  lane = "linux",
+  failCommand = "",
+  logDirectory = "",
+}: {
+  lane?: "linux" | "macos";
+  failCommand?: string;
+  logDirectory?: string;
+} = {}) {
   const root = mkdtempSync(join(tmpdir(), "bruv-ci-runner-"));
   fixtures.push(root);
   const bin = join(root, "bin");
@@ -20,9 +28,9 @@ function run(lane: "linux" | "macos", fail = "", logDir = "") {
   mkdirSync(bin);
   copyFileSync(resolve(import.meta.dir, "../scripts/ci.sh"), join(root, "scripts/ci.sh"));
   copyFileSync(resolve(import.meta.dir, "../package.json"), join(root, "package.json"));
+  // Record each gate's working directory and temp ownership alongside its command.
   const stub = `#!/usr/bin/env bash
-printf '%s|%s|%s\n' "$(basename "$0")" "$PWD" "$*" >> "$CALLS"
-printf '%s\n' "$TMPDIR" >> "$TEMP_CALLS"
+printf '%s|%s|%s\n' "$PWD" "$TMPDIR" "$*" >> "$CALLS"
 test -d "$TMPDIR" || exit 38
 printf 'owned transient state' > "$TMPDIR/owned-session"
 if [[ "$*" == "$FAIL" ]]; then echo intentional-failure; exit 37; fi
@@ -30,33 +38,45 @@ if [[ "$*" == "test --parallel=3 ./tests" ]]; then echo "llm=$BRUV_RUN_LLM_TESTS
 echo "completed $*"
 `;
   writeFileSync(join(bin, "bun"), stub, { mode: 0o755 });
-  const calls = join(root, "calls");
+  const callsPath = join(root, "calls");
   const result = spawnSync(process.execPath, ["run", lane === "linux" ? "ci" : "ci:macos"], {
     cwd: root,
     env: {
       ...process.env,
       PATH: bin + ":" + process.env.PATH,
-      CALLS: calls,
-      FAIL: fail,
+      CALLS: callsPath,
+      FAIL: failCommand,
       TMPDIR: parentTmp,
-      TEMP_CALLS: join(root, "temp-calls"),
-      CI_LOG_DIR: logDir,
+      CI_LOG_DIR: logDirectory,
       BRUV_RUN_LLM_TESTS: "1",
     },
     encoding: "utf8",
   });
-  const temps = readFileSync(join(root, "temp-calls"), "utf8").trim().split("\n");
-  expect(new Set(temps).size).toBe(1);
-  expect(temps[0]).toStartWith(parentTmp + "/bruv-ci.");
-  expect(existsSync(temps[0]!)).toBe(false);
+  const calls = readFileSync(callsPath, "utf8")
+    .trim()
+    .split("\n")
+    .map((line) => {
+      const [cwd, tempDirectory, command] = line.split("|");
+      return { cwd: cwd!, tempDirectory: tempDirectory!, command: command! };
+    });
+  return { root, parentTmp, result, calls };
+}
+
+function expectOwnedTempCleaned({ parentTmp, calls }: ReturnType<typeof runCi>) {
+  const temps = new Set(calls.map((call) => call.tempDirectory));
+  expect(temps.size).toBe(1);
+  const [temp] = temps;
+  expect(temp).toStartWith(parentTmp + "/bruv-ci.");
+  expect(existsSync(temp!)).toBe(false);
   expect(readFileSync(join(parentTmp, "user-session"), "utf8")).toBe("leave alone");
-  return { root, result, calls: readFileSync(calls, "utf8").trim().split("\n") };
 }
 
 test("Linux builds the pair without preparing or validating bundled web", () => {
-  const { root, result, calls } = run("linux");
+  const run = runCi();
+  expectOwnedTempCleaned(run);
+  const { root, result, calls } = run;
   expect(result.status).toBe(0);
-  expect(calls.map((line) => line.split("|")[2])).toEqual([
+  expect(calls.map((call) => call.command)).toEqual([
     "install --frozen-lockfile",
     "run format:check",
     "run lint",
@@ -70,25 +90,31 @@ test("Linux builds the pair without preparing or validating bundled web", () => 
 });
 
 test("failed root tests prevent smoke", () => {
-  const { result, calls } = run("linux", "test --parallel=3 ./tests");
+  const run = runCi({ failCommand: "test --parallel=3 ./tests" });
+  expectOwnedTempCleaned(run);
+  const { result, calls } = run;
   expect(result.status).toBe(37);
-  expect(calls.some((line) => line.includes("run smoke"))).toBe(false);
+  expect(calls.some((call) => call.command.includes("run smoke"))).toBe(false);
 });
 
 test("a failed gate stops immediately and preserves its output", () => {
-  const { root, result, calls } = run("linux", "run lint");
+  const run = runCi({ failCommand: "run lint" });
+  expectOwnedTempCleaned(run);
+  const { root, result, calls } = run;
   expect(result.status).toBe(37);
-  expect(calls.at(-1)).toContain("run lint");
+  expect(calls.at(-1)?.command).toBe("run lint");
   expect(readFileSync(join(root, "artifacts/ci/lint.log"), "utf8")).toContain("intentional-failure");
 });
 
 test("Release log destination uses the same Linux commands, env and owned temp", () => {
-  const ci = run("linux");
-  const release = run("linux", "", "artifacts/release/ci");
+  const ci = runCi();
+  const release = runCi({ logDirectory: "artifacts/release/ci" });
+  expectOwnedTempCleaned(ci);
+  expectOwnedTempCleaned(release);
   expect(release.result.status).toBe(0);
-  expect(release.calls.map((line) => line.split("|")[2])).toEqual(ci.calls.map((line) => line.split("|")[2]));
+  expect(release.calls.map((call) => call.command)).toEqual(ci.calls.map((call) => call.command));
   for (const { root, calls } of [ci, release]) {
-    expect(calls.every((line) => line.split("|")[1] === root)).toBe(true);
+    expect(calls.every((call) => call.cwd === root)).toBe(true);
   }
   for (const log of ["install", "format", "lint", "typecheck", "build", "openai-transport", "tests", "smoke"]) {
     expect(readFileSync(join(release.root, "artifacts/release/ci", log + ".log"), "utf8")).toEqual(
@@ -100,17 +126,21 @@ test("Release log destination uses the same Linux commands, env and owned temp",
 });
 
 test("Release test failure propagates its exact exit, retains logs, cleans temp and prevents smoke", () => {
-  const { root, result, calls } = run("linux", "test --parallel=3 ./tests", "artifacts/release/ci");
+  const run = runCi({ failCommand: "test --parallel=3 ./tests", logDirectory: "artifacts/release/ci" });
+  expectOwnedTempCleaned(run);
+  const { root, result, calls } = run;
   expect(result.status).toBe(37);
-  expect(calls.at(-1)?.split("|")[2]).toBe("test --parallel=3 ./tests");
+  expect(calls.at(-1)?.command).toBe("test --parallel=3 ./tests");
   expect(existsSync(join(root, "artifacts/release/ci/smoke.log"))).toBe(false);
   expect(readFileSync(join(root, "artifacts/release/ci/tests.log"), "utf8")).toContain("intentional-failure");
 });
 
 test("macOS lane runs only its device-free source and Live checks", () => {
-  const { root, result, calls } = run("macos");
+  const run = runCi({ lane: "macos" });
+  expectOwnedTempCleaned(run);
+  const { root, result, calls } = run;
   expect(result.status).toBe(0);
-  expect(calls.map((line) => line.split("|")[2])).toEqual([
+  expect(calls.map((call) => call.command)).toEqual([
     "install --frozen-lockfile",
     "run prepare:assets",
     "scripts/offline-openai-default-transport.ts --source-only",
@@ -128,15 +158,14 @@ test("production CI caches downloads only and delegates paired validation to the
   const parsed = Bun.YAML.parse(workflow) as {
     jobs: Record<string, { steps: { uses?: string; run?: string; with?: Record<string, string> }[] }>;
   };
-  let downloadCaches = 0;
-  for (const job of Object.values(parsed.jobs)) {
-    for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache"))) {
-      downloadCaches++;
-      expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
-      expect(step.with?.key).toContain("bun-1.4.2-");
-    }
+  const downloadCaches = Object.values(parsed.jobs).flatMap((job) =>
+    job.steps.filter((step) => step.uses?.startsWith("actions/cache")),
+  );
+  expect(downloadCaches.length).toBeGreaterThan(0);
+  for (const cache of downloadCaches) {
+    expect(cache.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
+    expect(cache.with?.key).toContain("bun-1.4.2-");
   }
-  expect(downloadCaches).toBeGreaterThan(0);
   expect(parsed.jobs.test!.steps.some((step) => step.run === "bun run ci")).toBe(true);
   const runner = await Bun.file(resolve(import.meta.dir, "../scripts/ci.sh")).text();
   for (const gate of [

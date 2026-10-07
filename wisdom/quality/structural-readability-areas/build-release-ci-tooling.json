@@ -1265,7 +1265,7 @@
     {
       "focus": "tests/ci-runner.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_d6fe839f",
@@ -1281,13 +1281,21 @@
           "id": "task_562c8dbd",
           "base": "cb84937d401f032eaf5ff8ec7f4e2a3c3e6fb283",
           "candidate": "3dea9c6855478074b139a4087136dc5f022b8786",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "One decoded command/cwd/temp record removes correlated transcripts and repeated indexes;named options and per-case cleanup assertions expose owned temp boundary. Gate order/log/status/offline contract retained.",
+          "checks": "Independent8tests85assertions;format/diffpass;mutations trap6fail,offlineenv2fail,pipefail3fail vs8baselinepass. No freshjudge tsc/actionlint/build;stubBunnotrealgates.",
+          "acceptedBlobs": {
+            "tests/ci-runner.test.ts": "7b18e15b1fd1497570f6094f4a41b6b99f1c7de6"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "7b18e15b1fd1497570f6094f4a41b6b99f1c7de6",
       "readingResult": "One decoded invocation record replaces synchronized transcripts/indexing;named failure/releaseoptions,explicit per-scenario cleanup.",
-      "checks": "8tests85assertions;tsc/formatpass;existingActionlintwarning;cleanup/offline-envmutationsfail;no fullbuild."
+      "checks": "8tests85assertions;tsc/formatpass;existingActionlintwarning;cleanup/offline-envmutationsfail;no fullbuild.",
+      "integrationState": "Full focuspatchintegrated;runner/workflows/helpers unchanged,notesexcluded."
     },
     {
       "focus": "tests/ci-selective-workflow.test.ts",
