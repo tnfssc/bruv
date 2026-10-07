@@ -1,0 +1,1036 @@
+{
+  "area": "agent-history-session-goals",
+  "initialCommit": "59413c532e6422983f611915e509e8421aa2f363",
+  "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+  "status": "in-progress",
+  "baselineFiles": [
+    {
+      "focus": "scripts/history-sdk-probe.ts",
+      "initialBlob": "34e3e6650f47049c01f85ce117f5bf84bcc65c6d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/history-storage-preload.ts",
+      "initialBlob": "8f7b5e5783bd2486eb7b0bc7f9952e080457617e",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/history-storage-probe.ts",
+      "initialBlob": "2e443cc387a687ffd98506aa489c8b8658683593",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/leak-audit/session-journal.ts",
+      "initialBlob": "e1c6629766f6f6511f2d347887310a885d455b92",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/pi-host-adaptation.ts",
+      "initialBlob": "f0a19b44b776154c3308e02c5781824c30c40f1d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "scripts/prompt-preview.ts",
+      "initialBlob": "0075e30750857ec544a82816484892f3a4423786",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/README.md",
+      "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/cache-affine-compaction.ts",
+      "initialBlob": "6a0fba6331dc4d46404ff9e81356202574390438",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/cache-countdown.ts",
+      "initialBlob": "c5a780a01a4498c8a34385509ec3ca1d846b2c79",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/extension.ts",
+      "initialBlob": "0cd419b1553cf5ec998b65ecf35ddbcff4f3ffc7",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/instruction-continuity.ts",
+      "initialBlob": "51020264675b38641611920f0adb4e4c4c03664a",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/instruction-mode.ts",
+      "initialBlob": "e5eef9b0983997dc00c999de6bca4a1843e659f9",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/last-used-cli-model.ts",
+      "initialBlob": "09d386f26bb6aa3e28e07e4b4d7800f92d8c0491",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/manual-shake.ts",
+      "initialBlob": "238257a3a9b17501825647ca16dbf5e38daba6c6",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/native-compaction.ts",
+      "initialBlob": "dbe3719e3628a5d5ece6f4eed440ea8ceba8b0f1",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/native-fast-mode.ts",
+      "initialBlob": "a89e3e2bac3e22cbf9b209a8694b8c871070ee21",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/agent/provider-attempts.ts",
+      "initialBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/goals/controller.ts",
+      "initialBlob": "b46d074e022db912d2ea6565730a27879f83a361",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/goals/extension.ts",
+      "initialBlob": "a174d5d8ed42f65ee4861e3ffb89080024cbf894",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/goals/store.ts",
+      "initialBlob": "65bf58713c66da88994d4d67dead877af2fcdcd0",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/goals/types.ts",
+      "initialBlob": "c032871506f64451dd458946bc06f5493b788e73",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/herdr-agent-state.ts",
+      "initialBlob": "652dc28d948e82a263b789da4a2ec5dbb09d4296",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/history/disk-entry-store.ts",
+      "initialBlob": "1118d257dc68995ed367a664dca875874e4ac500",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/history/selector-lifecycle.ts",
+      "initialBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/history/service.ts",
+      "initialBlob": "60389949b2e69dbbfc6f2f73948369cb893f6abc",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/history/session-manager.ts",
+      "initialBlob": "ed6dfb651192791de44bf933592e3061c2d32633",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/history/shake-record.ts",
+      "initialBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/history/types.ts",
+      "initialBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/pi-host.ts",
+      "initialBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompt-preview.ts",
+      "initialBlob": "f2700040ab0659020533497a4af4dccc05866548",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts.ts",
+      "initialBlob": "3aec2c16eb596e23461c6b3ad1c5b7d95366f0b8",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/background-handoff.md",
+      "initialBlob": "c46390ba223aa38f28fb9cae3d04b8f9dbe8fda4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/compaction-jobs.md",
+      "initialBlob": "e896596cd3979381dd5e174aa023e9e89b4f8ae6",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/compaction.md",
+      "initialBlob": "130bda9935d6bccd28182ce185dcd88601fb3a04",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/execute-description.md",
+      "initialBlob": "1a75e9bd8ed0a8f13acc586b6739b35397a9c6b3",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/execute.md",
+      "initialBlob": "fa595c85d78fb668d28268d9ad1fb29cf4e0358a",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/fast.md",
+      "initialBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/goal-continuation.md",
+      "initialBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/goal.md",
+      "initialBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/gpt-live.md",
+      "initialBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/identity.md",
+      "initialBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/live.md",
+      "initialBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/main-orchestrator.md",
+      "initialBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/markdown.d.ts",
+      "initialBlob": "045cd12b2a85c7f0516f99e218fe500b18c8eace",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/native-compaction.md",
+      "initialBlob": "238e6ec4fd3014e47545ff7512f32377bf7749e0",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/normal.md",
+      "initialBlob": "17c2e5573655696a57d5cae9e8615f8809695eda",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/orchestrator.md",
+      "initialBlob": "1a844f93188dc4615c0f6115b795e152ff96f7af",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/system.md",
+      "initialBlob": "4e40ae34cd631f8840affd22c799c4c8bed9a836",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/prompts/wisdom.md",
+      "initialBlob": "d3f933dbb141e5b009765351736c8bc0fdbcc956",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/session/host-access.ts",
+      "initialBlob": "b5a5b4f018035a73c1261785c34b2fd75b057e61",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/session/host.ts",
+      "initialBlob": "3879d5948ecb7335d2e702222068dcb8e199a603",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/session/identity.ts",
+      "initialBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/session/input.ts",
+      "initialBlob": "3701ffae31a2ce480eff48ef5595ec5957fdeed6",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/session/operations.ts",
+      "initialBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/session/restore-leaf.ts",
+      "initialBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/session/transcript.ts",
+      "initialBlob": "aa35d3df097d70d0dd921b41ba6acb26d6790303",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/system-prompt.ts",
+      "initialBlob": "b22372b5a873d4b79f9814bd9d7e3467bf92c538",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/wisdom/extension.ts",
+      "initialBlob": "46a871c1d8d4c420bec6f420f78c5f86c04a6949",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "src/wisdom/location.ts",
+      "initialBlob": "909717075aaac02a273286168e712faf0269f7ab",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/auto-shake-sdk.test.ts",
+      "initialBlob": "dfd337c15df9a002723db43e3db6023b233b6191",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/cache-affine-compaction-live.test.ts",
+      "initialBlob": "e2dabede2936b961a451e998c071d8ed8e4cae4c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/cache-affine-compaction-sdk.test.ts",
+      "initialBlob": "eb93fe2c9282b071f3948958d990f3e3b6923659",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/cache-affine-compaction.test.ts",
+      "initialBlob": "20236a300c5f611a16f6ec950c00aac31a29ffd1",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/cache-countdown-sdk.test.ts",
+      "initialBlob": "04f59de886ea0b272ef89e9126a423da750dc86c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/cache-countdown-tui.test.ts",
+      "initialBlob": "69e9a1ad26d212b5c4439c51d96d82ca7ce07be1",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/cache-countdown.test.ts",
+      "initialBlob": "ec7800207adfe05b026b4fc0cdcc715db2a8801b",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/current-pipeline-sdk.test.ts",
+      "initialBlob": "10bbc30734f4b1a9da868402cd0084acf979d6d7",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/fixtures/saved-transcript-startup.ts",
+      "initialBlob": "e18b6dfed78feec20b1aff2d6e1232a097c7a2d5",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/goals-marker-sdk.test.ts",
+      "initialBlob": "31f02b1233366797bff63b27d07516776fc486c3",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/goals-sdk.test.ts",
+      "initialBlob": "cf13910d34ed26c53cbc44a33165dff53a081ebd",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/goals-tui.test.ts",
+      "initialBlob": "b924c11a5d4a3f9c55efce6378aa420badd98fdf",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/goals.test.ts",
+      "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/herdr-agent-state.test.ts",
+      "initialBlob": "e2f0f72bb9171344041b569305e2254d2b132c00",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-disk-footer.probe.ts",
+      "initialBlob": "ca840e4b2761d51886ebdd702db9c17effd05226",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-disk-footer.test.ts",
+      "initialBlob": "b99b881207ff61e892a6c8cf612209aa730e41d8",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-disk-retrieval.test.ts",
+      "initialBlob": "273921ad18473731f0def26b87b41238083498dd",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-projection-parity.test.ts",
+      "initialBlob": "a9a2ef0ba1858159df299208a2e8c13dd854fc28",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-publication-collision.test.ts",
+      "initialBlob": "a1bd76cd3e8f2bd74408014902efda653a8ff495",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-sdk-099.test.ts",
+      "initialBlob": "cce3da2d0aab19b869c68e6552b4e2f60e98e205",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-storage-cleanup.test.ts",
+      "initialBlob": "f533be5effe988d41ae6a340cef8623259e122c2",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-storage-io.test.ts",
+      "initialBlob": "27d019686d63830282ec0a9143e45f10d6b091f4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-storage-lifecycle.test.ts",
+      "initialBlob": "d4d08fc6ca8a8dbbf5c10a57ce9ec875aaadb12e",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history-storage.test.ts",
+      "initialBlob": "8c833d8e75779376bf1f7e7f89edad7357b190c6",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/history.test.ts",
+      "initialBlob": "d0b30b8f4e642de05f16f838c741087ed8d64186",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/instruction-continuity-sdk.test.ts",
+      "initialBlob": "75902cb4b2fec1aa58c9fa3da1531b8463d3fd5f",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/instruction-mode.test.ts",
+      "initialBlob": "6bda0c237bcaf3fbbce1aac4c43d6780b5a24742",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/last-used-cli-model.test.ts",
+      "initialBlob": "479cb99a4f680520282922dc69e2b243b938015e",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/llm.test.ts",
+      "initialBlob": "58b8635ace4e453680bd40bc6f4cf5793550c277",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/main-agent-mode-sdk.test.ts",
+      "initialBlob": "24791f1a577e4ed976f19a37c1b4121b465a5b93",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/main-agent-mode-tui.test.ts",
+      "initialBlob": "4738e16439b75de7a6b5bdeb15a0f6ee100155c1",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/manual-shake-sdk.test.ts",
+      "initialBlob": "cdcfa1c18f1da93ba6a2948c9d8d99d2a0276839",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/manual-shake.test.ts",
+      "initialBlob": "9157e3f36bc1e1fde3f9b0e668f8d865b5dfeaa5",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/native-compaction-shake-coverage.test.ts",
+      "initialBlob": "5d65015a7b494c0a76f466a9533a043830a8bf8c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/native-compaction.test.ts",
+      "initialBlob": "09cda8b18ce7f97ae15e301591969d99e38b80ba",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/native-fast-mode.test.ts",
+      "initialBlob": "d1a70d64a44454f962627792e65517f3c4171b9d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/native-request-history.test.ts",
+      "initialBlob": "afe104b02c5917ffbf94068bef556d59dd0499f0",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/native-shake-sdk.test.ts",
+      "initialBlob": "ba285f014dee32ff3d9010d99cd80aae98e9a349",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/phase1-compaction-fixture.ts",
+      "initialBlob": "b67e4ee62f679187372e03f009db40b20a256403",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/phase2-native-live.test.ts",
+      "initialBlob": "b194b11139adbdc1329f1b43db241e92ccadb013",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/phase2-native-sdk.test.ts",
+      "initialBlob": "a9cad5cefdd2ad24aa78ee97606d77e7c375aa44",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/pi-host.test.ts",
+      "initialBlob": "13a3a72c282c4b42d9dfbab64316c05d6fd3b74c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/prompt-delivery.test.ts",
+      "initialBlob": "f97347e0fc492a83d549848df0d75fddce8cd4e4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/prompt-preview.test.ts",
+      "initialBlob": "b3d7dbfffd008f9432d016a0211ef64a83e81685",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/prompts.test.ts",
+      "initialBlob": "8ee97fbb55897ea0afb59014fb7ed84a29a1add7",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/provider-prompt.test.ts",
+      "initialBlob": "6fe31d158cc6a58ca0b88ab749ca0728b45c42dd",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/saved-transcript-startup.test.ts",
+      "initialBlob": "05a44fa4e35f729976a42e4ccf3c71fc26392e63",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/session-boundaries.test.ts",
+      "initialBlob": "8faeaa42e6685e95367ad6a168a084457ab7f84f",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/session-identity.test.ts",
+      "initialBlob": "fd17ddccd24c8e9626817fdb6a73bcb0c5f9f4cc",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/session-input.test.ts",
+      "initialBlob": "58e94fbc168a6db197f9869d84c08d7c4e3e123e",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/sol-model-catalog.test.ts",
+      "initialBlob": "c9a98a6406361ae955b4e484c6ac6b1395d4f3f4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/system-prompt.test.ts",
+      "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/turn-boundaries.test.ts",
+      "initialBlob": "a9cff28172726411bd418587f5f44217036f76bb",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/turn-boundaries.ts",
+      "initialBlob": "5e9a22ac49df1f247fbad6482e1fc01b8784425d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    },
+    {
+      "focus": "tests/wisdom-extension.test.ts",
+      "initialBlob": "37436aaf746e97961721fb1e042882ef487c90e2",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending"
+    }
+  ],
+  "extraFiles": [],
+  "crossAreaNeeds": []
+}
