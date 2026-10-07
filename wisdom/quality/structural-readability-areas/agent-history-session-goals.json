@@ -819,7 +819,8 @@
             "tests/history-storage-lifecycle.test.ts",
             "wisdom/quality/structural-readability-worker.md"
           ],
-          "checks": "14 tests across11 focused files; label index assertions baseline pass; full tsc pass after assets; focused format/lint13warnings2infos baseline retained; diff pass; no full gate/live/SSH."
+          "checks": "14 tests across11 focused files; label index assertions baseline pass; full tsc pass after assets; focused format/lint13warnings2infos baseline retained; diff pass; no full gate/live/SSH.",
+          "result": "Context-accounting installer owns footer estimator/cache lifetime separate from model projection, supplies recording operation to journal. One metadata publisher serves append/rebuild; rebuild owner explicit rather than hidden WeakMap lookup. Store/replay/fallback/recovery/disposal unchanged."
         }
       ],
       "judgeRounds": [],
