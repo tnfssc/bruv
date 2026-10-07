@@ -106,7 +106,7 @@
     {
       "file": "scripts/claude-native-acceptance/app-delegation-model.mjs",
       "initialBlob": "cd31945f84240e89773e227fd0db20d8a5d0d6e0",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_00f0a474",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_00f0a474",
@@ -117,17 +117,26 @@
       "judges": [
         {
           "id": "task_97f013af",
-          "status": "running",
-          "candidate": "89be0631d4fa7d22ab17ce62ed59b2a70e0b6039"
+          "status": "completed",
+          "candidate": "89be0631d4fa7d22ab17ce62ed59b2a70e0b6039",
+          "verdict": "ACCEPT",
+          "blob": "3bd2f8206676320c0bdb28e800db9ee9d9389d7f",
+          "relatedBlobs": {
+            "tests/claude-native-app-delegation-model.test.mjs": "2fe8fdf939efc4def7f70a717d0337d8bda91ad7"
+          },
+          "objections": [],
+          "evidence": "Normal-child scope vs root launch/cancel/ACK distinct authority journeys;Bruv registry observes duplicate absence not ownership. Native ACK/disposal/credentials/late cancelled output preserved. Independent7 Node tests;original3 test bodies,3 generated execute programs,Responses adapter byte-identical;redundant capability write removed explicit+tested.",
+          "limits": "Transcript/loopback not native/browser/provider/full gate."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "3bd2f8206676320c0bdb28e800db9ee9d9389d7f",
       "launchBase": "ced416af573bb897867c7d72e90308e6625aa03a",
       "changedRelatedPaths": [
         "tests/claude-native-app-delegation-model.test.mjs"
       ],
       "readingResult": "Mixed reply path separated normal-child scope checks and root launch/cancel/ACK operations;transcript guards/evidence/native-app vs Bruv ownership retained.",
-      "checks": "39 Bun pass;7 Node app tests;Biome/diff;no native/browser/provider/full gate."
+      "checks": "39 Bun pass;7 Node app tests;Biome/diff;no native/browser/provider/full gate.",
+      "integrationState": "Exact accepted model+related test joined;whole app-model test primary pending"
     },
     {
       "file": "scripts/claude-native-acceptance/driver.mjs",
@@ -1730,7 +1739,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_97f013af",
+          "verdict": "ACCEPT",
+          "blob": "2fe8fdf939efc4def7f70a717d0337d8bda91ad7",
+          "candidate": "89be0631d4fa7d22ab17ce62ed59b2a70e0b6039"
+        }
+      ]
     },
     {
       "file": "tests/claude-native-command-idle.test.mjs",
@@ -2282,6 +2299,13 @@
       "status": "passed",
       "scope": "Integrated runner7 Node tests plus4 runner/model/chronology/app suites28 Bun tests;format",
       "limits": "Offline child/model stubs+real gated process;not live native/provider."
+    },
+    {
+      "id": "task_7827d239",
+      "commit": "aae8752c",
+      "status": "passed",
+      "scope": "Subagent-model+return15 tests each Node/Bun",
+      "limits": "Unit generated programs/fixtures,not native owner/process/provider acceptance."
     }
   ],
   "combinedReviews": [
