@@ -2319,7 +2319,7 @@
     {
       "focus": "tests/smoke-script.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_d0d9d3eb",
@@ -2343,14 +2343,22 @@
           "id": "task_f209f608",
           "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "candidate": "e842e14fc17e2cadc3569df152c9f2f2a0671183",
-          "state": "running",
-          "role": "fresh-retry"
+          "state": "completed",
+          "role": "fresh-retry",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Readable emittedscripts/percase invalidpair fixtures replace escapedstrings/sequentialrepairs;explicit probes/buildcounts and script-temp cleanup checked before outerfixture cleanup. env-i clearsinheritedvars but cwd unchanged.",
+          "checks": "Independentfocusedtests/tsc/Biome/diffpass;copied current actualpairSHAcb7aec7d/55b58718 smoke reuse exit0,ownedtemp/outercleanup pass. Initial wrappertrapquotingfailure corrected(emptydirremoved). No filesystemsandbox/native/live/exhaustivesideeffects.",
+          "acceptedBlobs": {
+            "tests/smoke-script.test.ts": "b0b5232653b47e05d11275766e5f9ede4229e561"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
       "readingResult": "Readable shellfixtures and independent pairfailure cases replace escaped strings/sequential mutation;probe/buildcount/cleanup explicit,unchangedcwd limit.",
-      "checks": "16focuspass;tsc/Biome/diff;copiedrealpairsmoke/cleanup pass."
+      "checks": "16focuspass;tsc/Biome/diff;copiedrealpairsmoke/cleanup pass.",
+      "integrationState": "Fullfocuspatch integrated;smokesourceunchanged;notesexcluded;stalledjudge noverdict."
     },
     {
       "focus": "tests/tooling-fixtures.test.ts",
@@ -2779,8 +2787,16 @@
     {
       "focus": "tests/update-release-shape.md",
       "initialBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_cdc39c59",
+          "launchBase": "23ddbf92a93cb173d91b4fbd9e92e00fd6e5bc19",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_cdc39c59",
+          "branch": "bruv/primary-release-shape-fixture-documentat-cdc39c59",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "introducedBy": "task_dc6a6799",
       "relatedPatchJudgment": {

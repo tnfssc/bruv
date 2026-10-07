@@ -146,3 +146,5 @@ Connectorupdate tests task_4a768c2f ACCEPT049c8cd3:namedentry/install journeys,e
 Probe tests task_17380c61 NO CHANGE NEEDEDf8e9a967;2/12plusfocusedtsc/Biome. Diagnostic not validation/redaction;optionalerrorfields/nonASCII preservation incomplete. Extra selfupdatertest now ownfinalblob judge.
 
 Releaseshape task_811b18de ACCEPT2803b32f + relateddocb117a5a3:explicitmetadata/payloads,actualemittedlauncher/stagedidentity,bothsiblings/cleanup/tarreachesupdater.34focus92combined/tsc/Biome;currentrealpaircb7aec7d defaultprobe temporaryinstallpassed(no releaseprovenance). Companiondoc freshprimary stillneeded.
+
+Smoke tests freshjudge task_f209f608 ACCEPTb0b52326:readablefixtures/percase failures/probes/buildcounts/tempcleanup. Currentactualpair cb7aec7d/55b58718 copied and smoke reusepassed;env-i not cwd/filesystemsandbox. Priorstalledjudge noverdict retained. All70baselinefiles now accepted;two extras finishing independently.
