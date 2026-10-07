@@ -38,3 +38,5 @@ Download installer: canonical staged pair, private probe environment with explic
 Combined installer tip ff1e8fad: **39 pass,0 fail,157 assertions** across download/local tests, now both accepted scripts together (task_7493a10f).
 
 Publication-test primary: one byte-backed fixture, named cases, awaited fetch-replacement lifetime, strict effect replay removes redundant journal without losing mutation proof. Judge task_d35c8509 ACCEPT finalace4cea blob; 24/63 focus50/471 related. Ten CLI scenarios retained; prior unawaited rejection assertion now awaited, explicit test-proof improvement.
+
+Updater-test primary: contract suites and typed per-artifact fixture inputs, explicit mutation timing. Judge task_ee4235b6 ACCEPT6569bd7; 36 definitions/116 static assertion sites retained. Independent mutation check proves URL assertions stronger (baseline masks removed validation, candidate fails).51/177 focus64/230 candidate-related checks.

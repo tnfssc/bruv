@@ -450,8 +450,16 @@
     {
       "focus": "scripts/validate-release-tag.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_36d64ea6",
+          "launchBase": "81837423373d8b661a6a116f66cf3e7a490e4fc8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_36d64ea6",
+          "branch": "bruv/primary-scripts-validate-release-tag.ts-36d64ea6",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -715,17 +723,25 @@
     {
       "focus": "tests/install-local.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_70f09987",
           "launchBase": "dced757aa8b8b52369822c3dee2278454e16689b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_70f09987",
           "branch": "bruv/primary-tests-install-local.test.ts-70f09987",
+          "state": "completed",
+          "commit": "cb9fe054e6ebf24fa082dc5f9ab831f1bd31ba1b"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_5442746a",
+          "base": "dced757aa8b8b52369822c3dee2278454e16689b",
+          "candidate": "cb9fe054e6ebf24fa082dc5f9ab831f1bd31ba1b",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -733,7 +749,9 @@
         "verdict": "ACCEPT",
         "blob": "501a2d5272f9a22acfbc295e0a0222cb48d423e0",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Phase-organized tests replace mixed phases/escaped fixture strings; ordered build/probe trace replaces separate logs; explicit staged binding and permanent SIGTERM rollback coverage, all old cases retained.",
+      "checks": "Focus18/65; related22/81 using older download script; strict tsc/format/lint/diff pass; no full/native/live."
     },
     {
       "focus": "tests/manual-release.test.ts",
@@ -924,7 +942,7 @@
     {
       "focus": "tests/update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_27b632e4",
@@ -940,19 +958,28 @@
           "id": "task_ee4235b6",
           "base": "4171e52297cccc7e93ad15ab209d12f39bc6fd36",
           "candidate": "6ebec19f4749eff882c86aabb729e9c369f1eb4e",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Contract suites and typed per-artifact fixture controls make authority/layout/repair/integrity/probes/recovery readable.36 definitions116 static assertion sites retained. Mutation proof: disabling official URL equality leaves baseline2 URL tests passing but candidate2 fail, confirms genuine strengthening.",
+          "checks": "Independent baseline51/177,candidate51/177,combined64/230 on candidate older installer; strict tsc/format/diff pass, existing lint warning.",
+          "acceptedBlobs": {
+            "tests/update.test.ts": "6569bd7e550e94dcd82b41da3774848f4347eae2"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
       "relatedPatchJudgment": {
         "id": "task_170d10bf",
         "verdict": "ACCEPT",
         "blob": "16166886024d4d339cf8ab535dc1f4275feae2db",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Typed per-artifact fixture inputs and explicit mutation timing replace interleaved untyped options; contract suites group journeys; URL tests now supply connector metadata to avoid masking URL acceptance defect. All36 definitions retained.",
-      "checks": "Base/candidate51 tests177 assertions; combined64/230; strict tsc/format/diff pass; existing lint warning; no full build/platform."
+      "checks": "Base/candidate51 tests177 assertions; combined64/230; strict tsc/format/diff pass; existing lint warning; no full build/platform.",
+      "integrationState": "Full test patch integrated; local note excluded; production updater unchanged."
     },
     {
       "focus": "tests/verify-update-probe.test.ts",
