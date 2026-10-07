@@ -434,10 +434,17 @@
     {
       "file": "src/claude-compat/mcp.ts",
       "initialBlob": "01284c27fd7f3b9bfae7ec13b08f88bc78c3646d",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_18afd0bf",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_18afd0bf",
+        "branch": "bruv/primary-compatibility-mcp-18afd0bf",
+        "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868"
     },
     {
       "file": "src/claude-compat/permissions.ts",
@@ -552,17 +559,22 @@
     {
       "file": "src/claude-compat/transport.ts",
       "initialBlob": "2955f0309942c4d94a591065f9d315cc4592c02a",
-      "status": "primary-running",
+      "status": "judge-queued",
       "primary": {
         "id": "task_6958d30f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_6958d30f",
         "branch": "bruv/primary-transport-6958d30f",
         "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
-        "commit": null
+        "commit": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8"
       },
       "judges": [],
       "acceptedBlob": null,
-      "launchBase": "402c11381670f61ec088c6a4e5532155837198ae"
+      "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
+      "changedRelatedPaths": [
+        "tests/claude-compat-transport.test.ts"
+      ],
+      "readingResult": "Internal readFrames owns bounded NDJSON cursor/buffer; run shows dispatch→EOF callback rejection→handler/output drain→close. Correlation/cancellation/ordered writes retained.",
+      "checks": "2 added regressions pass baseline/candidate;35 focused tests pass;Biome/focused TypeScript/diff pass; no compiled/live."
     },
     {
       "file": "src/t3/README.md",
@@ -779,7 +791,7 @@
     {
       "file": "tests/claude-compat-launch.test.ts",
       "initialBlob": "43bb031ffd0b2d74bdc83b48c13434161c33547a",
-      "status": "judge-queued",
+      "status": "judging",
       "primary": {
         "id": "task_2cea9559",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_2cea9559",
@@ -787,7 +799,13 @@
         "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
         "commit": "6e25cf94e5b4224e205b1c90b4a616403a823612"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_739abadc",
+          "status": "running",
+          "candidate": "6e25cf94e5b4224e205b1c90b4a616403a823612"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1124,7 +1142,7 @@
       "file": "tests/claude-compat-arguments.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "judging",
+      "status": "accepted-unchanged",
       "introducedBy": "e5f89da92237ef8f257f4afd30fe0250630eba66",
       "primary": {
         "id": "task_a3a6c083",
@@ -1136,11 +1154,16 @@
       "judges": [
         {
           "id": "task_4c141287",
-          "status": "running",
-          "candidate": "84835d670152921268ecd3e5e0207158853efb10"
+          "status": "completed",
+          "candidate": "84835d670152921268ecd3e5e0207158853efb10",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "49284980b17450943aaf9fed71f6cbc2dbd74cdd",
+          "objections": [],
+          "evidence": "Small direct loops expose neither/either/both flag invariance for each mode, and separate value/duplicate grammar. CLI parse/validate before runtime and no carried state traced. No hidden fixture mutation/lifetimes.",
+          "limits": "Independent tests blocked by MCP SDK resolution; blob/diff/clean check only."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "49284980b17450943aaf9fed71f6cbc2dbd74cdd",
       "relatedPatchJudgments": [
         {
           "id": "task_e06dc5c8",
@@ -1152,15 +1175,22 @@
       "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
       "changedRelatedPaths": [],
       "readingResult": "Fresh primary unchanged: two direct test contracts, flags leave launch state unchanged and grammar rejects values/duplicates; small loops expose both without hidden state.",
-      "checks": "2 pass26 assertions; Biome pass; clean tree."
+      "checks": "2 pass26 assertions; Biome pass; clean tree.",
+      "integrationState": "New-file fresh primary + whole-file judge complete, exact area blob"
     },
     {
       "file": "tests/claude-compat-frontend.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-primary",
+      "status": "primary-running",
       "introducedBy": "898826edd36649f92faa239effb2989d1364ac25",
-      "primary": null,
+      "primary": {
+        "id": "task_a49cb4c3",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_a49cb4c3",
+        "branch": "bruv/primary-new-frontend-tests-a49cb4c3",
+        "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1170,7 +1200,8 @@
           "blob": "3b61902f5d029433cac72a63e9188bd729889f21",
           "candidate": "898826edd36649f92faa239effb2989d1364ac25"
         }
-      ]
+      ],
+      "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868"
     }
   ],
   "crossAreaNeeds": [],
@@ -1217,6 +1248,13 @@
       "status": "passed",
       "scope": "Integrated commands/lifecycle/human-controls/runtime22 top-level pass137 assertions;typecheck",
       "limits": "Runtime isolated child; no compiled/live/full gate."
+    },
+    {
+      "id": "task_aa404554",
+      "commit": "3c1068e7",
+      "status": "passed",
+      "scope": "Integrated frontend/runtime/ownership/command/retry16 top-level tests69 assertions;typecheck;format/lint",
+      "limits": "One retained warning; no live/full gate."
     }
   ],
   "combinedReviews": [
