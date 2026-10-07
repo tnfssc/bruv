@@ -77,3 +77,5 @@ Primary task_3ec62165; judge task_2c6056ba ACCEPT candidate f14b45ab14702f6e697a
 Primary task_f4f7731b; judge task_dc793fa7 ACCEPT ecfd5a67ecdf054839b97e811999447f4f75da21, superseding prior related-test blob with 92878255d0c02ce9e906782e8757269a63221b9b. Explicit request promises and separate countdown/render tests reduce fixture bookkeeping. Reviewer reconciled apparent assertion drop: narrower suite omitted 3 assertions, new refresh adds 1; identical four suites rise 43 tests/365 assertions to 44/366. No weakened coverage. Independent format/lint/diff pass.
 
 Diagnostics-test fresh primary task_28d3f49e + judge task_a3ac95db NO CHANGE NEEDED at 48a273afdc220bd4984fbc18739015dc4a86c88a. Explicit privacy/replay/reentry/generation/SDK restoration journeys; independent 13 tests/573 assertions, Biome/diff pass.
+
+Quiet-tool primary task_022db18e + judge task_a1a59af9 NO CHANGE NEEDED at 5970b1ea57aba517a223ded5c196ab3ebca133f1. Native delegation, owned child filtering and conditional restoration already local. Independent 34 tests/272 assertions plus 3 ownership probes/15 assertions; format/diff pass. Density join remains to check.
