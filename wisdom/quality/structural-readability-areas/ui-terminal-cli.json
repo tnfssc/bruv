@@ -133,7 +133,7 @@
     {
       "focus": "scripts/ansi_video_renderer.py",
       "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
-      "status": "rework-awaiting-primary-slot",
+      "status": "rework-running",
       "primary": [
         {
           "id": "task_32c7f556",
@@ -166,7 +166,7 @@
         }
       ],
       "acceptedBlob": null,
-      "integrationState": "REJECTED candidate NOT integrated",
+      "integrationState": "old rejected source unintegrated; fresh rework running",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
       "changedRelatedPaths": [
         "tests/ansi-video-renderer.test.py"
@@ -181,7 +181,17 @@
       "limits": [
         "No Docker/compiled CLI recapture/product/full build; exception cleanup unchanged"
       ],
-      "priority": "next-primary: fresh rework then fresh judge"
+      "priority": "next-primary: fresh rework then fresh judge",
+      "reworks": [
+        {
+          "id": "task_283b2f40",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_283b2f40",
+          "branch": "bruv/fresh-ansi-renderer-rework-after-callbac-283b2f40",
+          "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+          "priorCandidate": "15e0abb0dc551c00523d84c928e363f2acaae3f9",
+          "respondsTo": "task_c420e381"
+        }
+      ]
     },
     {
       "focus": "scripts/benchmark-footer-context.ts",
@@ -448,19 +458,40 @@
     {
       "focus": "scripts/terminal-perf/interaction-normalize.ts",
       "initialBlob": "7d11dad027d30e5fb2599903470d54dce827e746",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_5fb34446",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5fb34446",
           "branch": "bruv/primary-readability-scripts-terminal-per-5fb34446",
-          "launchBase": "1cb5260434b94a06fefc8906f5061f7011e206d8"
+          "launchBase": "1cb5260434b94a06fefc8906f5061f7011e206d8",
+          "commit": "e5654ea0d0f92812e5a1bf526f78057f631d4189"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_23bf0f9f",
+          "base": "1cb5260434b94a06fefc8906f5061f7011e206d8",
+          "candidate": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "1cb5260434b94a06fefc8906f5061f7011e206d8"
+      "launchBase": "1cb5260434b94a06fefc8906f5061f7011e206d8",
+      "changedRelatedPaths": [
+        "scripts/terminal-perf/interaction-tool-events.test.ts",
+        "tests/terminal-interactions-normalize.test.ts"
+      ],
+      "result": "Candidate tool-event evidence gate separates direct-burst counters from totals and timing checks from projection, preserving other fixture mappings.",
+      "checks": [
+        "21 tests /158 assertions",
+        "Five offline worker records normalize identically base/candidate",
+        "format/lint/diff"
+      ],
+      "limits": [
+        "No build/typecheck/latency"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/interaction-options.ts",
@@ -864,19 +895,41 @@
     {
       "focus": "scripts/ui-cleanup-probe.py",
       "initialBlob": "d77fd2cfa040e6ccd506cc2613ba0cc5b9d7f75f",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_96febf21",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_96febf21",
           "branch": "bruv/primary-readability-scripts-ui-cleanup-p-96febf21",
-          "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb"
+          "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb",
+          "commit": "caed7a396d78adb86e2b4e2294806491cb62a0b3"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_988afb2b",
+          "base": "086c29b0ddd3df29cefb22cc8795df658c2da1cb",
+          "candidate": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb"
+      "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb",
+      "changedRelatedPaths": [
+        "tests/ui-cleanup-probe.test.py"
+      ],
+      "result": "Candidate separates tmux/capture/cleanup/validation, reporting after teardown; explicit observed configuration-write failure leak fixed for fixture thread/temp home.",
+      "checks": [
+        "8 new Python tests +13 adjacent proof tooling",
+        "18 original assertion predicates/SSE bytes retained",
+        "Deterministic successful commands/reports/evidence match",
+        "Real shared-binary base/candidate same10 screen failures and6 requests",
+        "syntax/help/diff"
+      ],
+      "limits": [
+        "No terminal acceptance/current-source build; real probe baseline/candidate failures retained"
+      ]
     },
     {
       "focus": "src/cli.ts",
@@ -2385,8 +2438,15 @@
     {
       "focus": "tests/terminal-perf-action-profiler.test.ts",
       "initialBlob": "9ba463bccc121cc8700bcd29f5b98be1ceaea9ce",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_b9c5eb3e",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_b9c5eb3e",
+          "branch": "bruv/primary-readability-tests-terminal-perf--b9c5eb3e",
+          "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary focus pending",
@@ -2397,7 +2457,8 @@
           "verdict": "ACCEPT",
           "blob": "4d02e0adb5d1eed02f4c5a1be49de460092d5a15"
         }
-      ]
+      ],
+      "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39"
     },
     {
       "focus": "tests/terminal-perf-cli.test.ts",
@@ -2578,6 +2639,26 @@
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "Unintegrated rejected related candidate; requires rework regression then new judgment and primary focus"
+    },
+    {
+      "focus": "tests/terminal-interactions-normalize.test.ts",
+      "kind": "new-test",
+      "initialBlob": null,
+      "status": "candidate-related-primary-pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "needs actual patch judgment then fresh primary"
+    },
+    {
+      "focus": "tests/ui-cleanup-probe.test.py",
+      "kind": "new-test",
+      "initialBlob": null,
+      "status": "candidate-related-primary-pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "candidate patch; needs independent judgment then primary"
     }
   ],
   "batchChecks": [
