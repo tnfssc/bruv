@@ -1,0 +1,639 @@
+{
+  "area": "build-release-ci-tooling",
+  "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+  "retainedPath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828",
+  "baseline": [
+    {
+      "focus": ".gitattributes",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": ".github/workflows/ci.yml",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": ".github/workflows/dependency-updates.yml",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": ".github/workflows/release.yml",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": ".gitignore",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "biome.json",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "bunfig.toml",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "install.sh",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "mise.toml",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "package.json",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/build-pair.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/build.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/ci-selective.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/ci.sh",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/find-ci-baseline.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/generate-third-party-notices.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/install-local.sh",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/install.sh",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/prepare-assets.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/prepare-manual-release.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/publish-release.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/run-native-release-gate.mjs",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/select-release-notes.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/setup-native-release-gate.sh",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/setup-release-browser.sh",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/smoke.sh",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/update-dependencies.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/validate-release-tag.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/verify-release-launchers.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/verify-update-probe.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "scripts/verify-update.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "src/assets.d.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "src/update.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "t3.json",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/architecture.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/ci-remote-cli-source.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/ci-remote-offline-source-pty.py",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/ci-runner.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/ci-selective-workflow.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/ci-selective.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/compiled-bun-fixture.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/connector-update-fixture.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/connector-update.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/dependency-updates.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/dependency-workflow.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/find-ci-baseline.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/helpers.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/install-download.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/install-local.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/manual-release.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/native-node-path.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/native-release-gate.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/offline-process-isolation.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/prepare-assets.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/product-identity.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/production-packaging.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/publish-release.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/release-browser-setup.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/release-launcher-gate.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/release-workflows.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/setup.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/smoke-script.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/tooling-fixtures.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/update-release-shape.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/update-self-fixture.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/update-v0.16.3-fixture.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/update.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/verify-update-probe.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tests/verify-update.test.ts",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    },
+    {
+      "focus": "tsconfig.json",
+      "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+      "state": "pending",
+      "primary": [],
+      "judges": [],
+      "relatedPaths": [],
+      "acceptedBlob": null
+    }
+  ],
+  "extra": [],
+  "crossAreaNeeds": []
+}
