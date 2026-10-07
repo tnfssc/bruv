@@ -5,73 +5,112 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { assetNames, findRelease, missingReleaseAssets, tagAction } from "../scripts/publish-release";
 
-const expected = new Map(assetNames.map((name) => [name, { name, size: 42, digest: "sha256:abc" }]));
-const assets = [...expected.values()];
+// Unit decisions and CLI readbacks describe the same bytes written to the temporary release directory.
+const releaseFiles = new Map(assetNames.map((name) => [name, Buffer.from("verified " + name)]));
+const assets: { name: string; size: number; digest: string | null }[] = [...releaseFiles].map(([name, bytes]) => ({
+  name,
+  size: bytes.length,
+  digest: "sha256:" + createHash("sha256").update(bytes).digest("hex"),
+}));
+const expected = new Map(assets.map((asset) => [asset.name, asset]));
+const missingNames = ["bruv-linux-x64", "SOURCE.txt"];
+const partialAssets = assets.filter((asset) => !missingNames.includes(asset.name));
+const draftMissingSource = assets.filter((asset) => asset.name !== "SOURCE.txt");
 
 describe("release retry decisions", () => {
-  test("new tag is pushed, same SHA reused, conflicting tag fails", () => {
+  test("new tag is pushed", () => {
     expect(tagAction(undefined, "a".repeat(40))).toBe("push");
-    expect(tagAction("a".repeat(40), "a".repeat(40))).toBe("reuse");
-    expect(() => tagAction("b".repeat(40), "a".repeat(40))).toThrow();
   });
-  test("complete published or draft release needs no duplicate upload", () => {
-    expect(missingReleaseAssets({ draft: false, assets }, expected)).toEqual([]);
+  test("same SHA is reused", () => {
+    expect(tagAction("a".repeat(40), "a".repeat(40))).toBe("reuse");
+  });
+  test("conflicting tag fails", () => {
+    expect(() => tagAction("b".repeat(40), "a".repeat(40))).toThrow("Release tag points to a different commit");
+  });
+  test("complete draft needs no duplicate upload", () => {
     expect(missingReleaseAssets({ draft: true, assets }, expected)).toEqual([]);
   });
-  test("partial draft repairs only missing verified assets", () => {
-    expect(missingReleaseAssets({ draft: true, assets: assets.slice(0, 9) }, expected)).toEqual(assetNames.slice(9));
-    expect(() => missingReleaseAssets({ draft: false, assets: assets.slice(0, 9) }, expected)).toThrow();
+  test("complete public release needs no duplicate upload", () => {
+    expect(missingReleaseAssets({ draft: false, assets }, expected)).toEqual([]);
   });
-  test("unknown, duplicate, wrong size or digest fails closed", () => {
-    for (const bad of [
-      [...assets, { name: "extra", size: 42, digest: "sha256:abc" }],
-      [...assets, assets[0]!],
-      [{ ...assets[0]!, size: 1 }, ...assets.slice(1)],
-      [{ ...assets[0]!, digest: null }, ...assets.slice(1)],
-    ])
-      expect(() => missingReleaseAssets({ draft: true, assets: bad }, expected)).toThrow();
+  test("partial draft repairs exactly the missing verified assets", () => {
+    expect(missingReleaseAssets({ draft: true, assets: partialAssets }, expected)).toEqual(missingNames);
+  });
+  test("partial public release cannot be repaired", () => {
+    expect(() => missingReleaseAssets({ draft: false, assets: partialAssets }, expected)).toThrow(
+      "Published release is incomplete; refusing to change it",
+    );
+  });
+  test.each<{ problem: string; invalid: typeof assets }>([
+    { problem: "unknown asset", invalid: [...assets, { name: "extra", size: 42, digest: "sha256:abc" }] },
+    { problem: "duplicate asset", invalid: [...assets, assets[0]!] },
+    { problem: "wrong size", invalid: [{ ...assets[0]!, size: 1 }, ...assets.slice(1)] },
+    { problem: "missing digest", invalid: [{ ...assets[0]!, digest: null }, ...assets.slice(1)] },
+    { problem: "wrong digest", invalid: [{ ...assets[0]!, digest: "sha256:wrong" }, ...assets.slice(1)] },
+  ])("$problem fails closed", ({ invalid }) => {
+    expect(() => missingReleaseAssets({ draft: true, assets: invalid }, expected)).toThrow(
+      "Release asset differs from verified build",
+    );
   });
 });
 
-// The failed v0.15.3 job created a draft (gh printed an untagged URL), then
-// /releases/tags/v0.15.3 returned 404. A retry must find it before creating another.
-test("finds an existing draft when tag lookup returns 404", async () => {
-  const original = globalThis.fetch;
-  const urls: string[] = [];
-  globalThis.fetch = (async (input: string | URL | Request) => {
-    urls.push(String(input));
-    if (urls.length === 1) return new Response(null, { status: 404 });
-    return Response.json([{ tag_name: "v0.15.3", draft: true, assets }]);
-  }) as unknown as typeof fetch;
-  try {
-    expect((await findRelease("tnfssc/bruv", "v0.15.3", "token"))?.assets).toEqual(assets);
-    expect(urls).toEqual([
-      "https://api.github.com/repos/tnfssc/bruv/releases/tags/v0.15.3",
-      "https://api.github.com/repos/tnfssc/bruv/releases?per_page=100&page=1",
-    ]);
-  } finally {
-    globalThis.fetch = original;
-  }
-});
+type ReleaseRead = { url: string; status?: number; body?: unknown };
 
-test("fails closed when draft list cannot be read", async () => {
+// Own the fetch replacement until the assertion's promise settles, including rejection checks.
+async function withReleaseReads(reads: ReleaseRead[], assertion: () => Promise<void>) {
   const original = globalThis.fetch;
-  let calls = 0;
-  globalThis.fetch = (async () => new Response(null, { status: ++calls === 1 ? 404 : 403 })) as unknown as typeof fetch;
+  const remaining = [...reads];
+  globalThis.fetch = (async (input, options) => {
+    const read = remaining.shift();
+    if (!read) throw new Error("Unexpected release read: " + String(input));
+    expect(String(input)).toBe(read.url);
+    expect(options?.headers).toEqual({
+      Authorization: "Bearer token",
+      Accept: "application/vnd.github+json",
+    });
+    return Response.json(read.body ?? {}, { status: read.status ?? 200 });
+  }) as typeof fetch;
   try {
-    expect(findRelease("tnfssc/bruv", "v0.15.3", "token")).rejects.toThrow("HTTP 403");
+    await assertion();
+    expect(remaining).toEqual([]);
   } finally {
     globalThis.fetch = original;
   }
+}
+
+const lookupUrl = "https://api.github.com/repos/tnfssc/bruv/releases/tags/v0.15.3";
+const listUrl = "https://api.github.com/repos/tnfssc/bruv/releases?per_page=100&page=1";
+
+describe("release lookup", () => {
+  // The failed v0.15.3 job created a draft (gh printed an untagged URL), then
+  // /releases/tags/v0.15.3 returned 404. A retry must find it before creating another.
+  test("finds an existing draft when tag lookup returns 404", async () => {
+    await withReleaseReads(
+      [
+        { url: lookupUrl, status: 404 },
+        { url: listUrl, body: [{ tag_name: "v0.15.3", draft: true, assets }] },
+      ],
+      async () => {
+        expect(await findRelease("tnfssc/bruv", "v0.15.3", "token")).toMatchObject({ draft: true, assets });
+      },
+    );
+  });
+  test("fails closed when draft list cannot be read", async () => {
+    await withReleaseReads(
+      [
+        { url: lookupUrl, status: 404 },
+        { url: listUrl, status: 403 },
+      ],
+      async () => {
+        await expect(findRelease("tnfssc/bruv", "v0.15.3", "token")).rejects.toThrow("HTTP 403");
+      },
+    );
+  });
 });
 
 // Run the shipped CLI, including its subprocesses and API readbacks, without touching a remote.
 const tag = "v9.8.7";
 const sha = "a".repeat(40);
-const cliAssets: { name: string; size: number; digest: string | null }[] = assetNames.map((name) => {
-  const bytes = Buffer.from("verified " + name);
-  return { name, size: bytes.length, digest: "sha256:" + createHash("sha256").update(bytes).digest("hex") };
-});
 type Step = { command: string; args: string[]; output?: string; response?: unknown; status?: number };
 const command = (name: string, args: string[], output = ""): Step => ({ command: name, args, output });
 const refs = (commit = sha, annotated = false) =>
@@ -82,11 +121,13 @@ const remote = (output = refs()) =>
   command("git", ["ls-remote", "--tags", "origin", "refs/tags/" + tag, "refs/tags/" + tag + "^{}"], output);
 const notes = command("bun", ["scripts/select-release-notes.ts", tag], "notes.md");
 const base = "https://api.github.com/repos/tnfssc/bruv/releases";
-const lookup = (draft: boolean, assets = cliAssets): Step => ({
+const releaseRead = (draft: boolean, releaseAssets = assets): Step => ({
   command: "fetch",
   args: [base + "/tags/" + tag],
-  response: { draft, assets },
+  response: { draft, assets: releaseAssets },
 });
+const draftRead = (releaseAssets = assets) => releaseRead(true, releaseAssets);
+const publicRead = (releaseAssets = assets) => releaseRead(false, releaseAssets);
 const publish = command("gh", ["release", "edit", tag, "--draft=false"]);
 const create = command("gh", [
   "release",
@@ -107,9 +148,9 @@ async function runPublication(steps: Step[], event = "push") {
   try {
     await mkdir(join(directory, "bin"));
     await mkdir(join(directory, "dist/release"), { recursive: true });
-    for (const name of assetNames) await Bun.write(join(directory, "dist/release", name), "verified " + name);
+    for (const [name, bytes] of releaseFiles) await Bun.write(join(directory, "dist/release", name), bytes);
     const state = join(directory, "state.json");
-    await Bun.write(state, JSON.stringify({ steps, calls: [] }));
+    await Bun.write(state, JSON.stringify({ steps }));
     // Every command and fetch consumes one expected effect; unexpected effects fail the subprocess.
     await Bun.write(
       join(directory, "consume.ts"),
@@ -119,7 +160,6 @@ async function runPublication(steps: Step[], event = "push") {
         const path = process.env.RELEASE_TEST_STATE;
         const state = JSON.parse(readFileSync(path, "utf8"));
         const step = state.steps.shift();
-        state.calls.push({ command, args });
         writeFileSync(path, JSON.stringify(state));
         if (!step || step.command !== command || JSON.stringify(step.args) !== JSON.stringify(args))
           throw new Error("Unexpected release effect: " + JSON.stringify({ command, args, step }));
@@ -175,7 +215,7 @@ async function runPublication(steps: Step[], event = "push") {
     const remaining = await Bun.file(state).json();
     expect(stderr).not.toContain("Unexpected release effect");
     expect(remaining.steps).toEqual([]);
-    return { stdout, stderr, exitCode, calls: remaining.calls };
+    return { stdout, stderr, exitCode };
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -194,9 +234,9 @@ describe("release CLI authority and publication", () => {
         { command: "fetch", args: [base + "/tags/" + tag], status: 404 },
         { command: "fetch", args: [base + "?per_page=100&page=1"], response: [] },
         create,
-        lookup(true),
+        draftRead(),
         publish,
-        lookup(false),
+        publicRead(),
       ],
       "workflow_dispatch",
     );
@@ -205,15 +245,15 @@ describe("release CLI authority and publication", () => {
   });
 
   test("annotated tag and complete published release are reused without mutation", async () => {
+    // This entire replay contains reads only; any gh mutation is an unexpected effect.
     const result = await runPublication([
       remote(refs(sha, true)),
       remote(refs(sha, true)),
       notes,
-      lookup(false),
-      lookup(false),
+      publicRead(),
+      publicRead(),
     ]);
     expect(result.exitCode).toBe(0);
-    expect(result.calls.filter((call: Step) => call.command === "gh")).toEqual([]);
   });
 
   test("repairs only missing draft assets and verifies repair before publishing", async () => {
@@ -221,31 +261,30 @@ describe("release CLI authority and publication", () => {
       remote(),
       remote(),
       notes,
-      lookup(true, cliAssets.slice(0, -1)),
+      draftRead(draftMissingSource),
       command("gh", ["release", "upload", tag, "dist/release/SOURCE.txt"]),
-      lookup(true),
+      draftRead(),
       publish,
-      lookup(false),
+      publicRead(),
     ]);
     expect(result.exitCode).toBe(0);
   });
 
   test("incomplete repair cannot reach publication", async () => {
-    const partial = cliAssets.slice(0, -1);
     const result = await runPublication([
       remote(),
       remote(),
       notes,
-      lookup(true, partial),
+      draftRead(draftMissingSource),
       command("gh", ["release", "upload", tag, "dist/release/SOURCE.txt"]),
-      lookup(true, partial),
+      draftRead(draftMissingSource),
     ]);
     expect(result.exitCode).not.toBe(0);
     expect(result.stderr).toContain("Release assets still incomplete");
   });
 
   test("published release missing assets cannot be repaired", async () => {
-    const result = await runPublication([remote(), remote(), notes, lookup(false, cliAssets.slice(0, -1))]);
+    const result = await runPublication([remote(), remote(), notes, publicRead(draftMissingSource)]);
     expect(result.exitCode).not.toBe(0);
     expect(result.stderr).toContain("Published release is incomplete; refusing to change it");
   });
@@ -255,7 +294,7 @@ describe("release CLI authority and publication", () => {
       remote(),
       remote(),
       notes,
-      lookup(true, [{ ...cliAssets[0]!, digest: null }, ...cliAssets.slice(1)]),
+      draftRead([{ ...assets[0]!, digest: null }, ...assets.slice(1)]),
     ]);
     expect(result.exitCode).not.toBe(0);
     expect(result.stderr).toContain("Release asset differs from verified build");
@@ -287,7 +326,7 @@ describe("release CLI authority and publication", () => {
   });
 
   test("publication is not success until its final remote snapshot is public", async () => {
-    const result = await runPublication([remote(), remote(), notes, lookup(true), publish, lookup(true)]);
+    const result = await runPublication([remote(), remote(), notes, draftRead(), publish, draftRead()]);
     expect(result.exitCode).not.toBe(0);
     expect(result.stderr).toContain("Release publication not verified");
     expect(result.stdout).not.toContain("Published " + tag);

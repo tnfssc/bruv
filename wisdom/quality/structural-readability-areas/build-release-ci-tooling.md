@@ -36,3 +36,5 @@ Combined area tip dc82af38: pinned Bun five-suite selection/publishing/local-ins
 Download installer: canonical staged pair, private probe environment with explicit pair binding, shared binary restore operation retaining preattempt interruption flags. Judge task_7be1ff38 ACCEPT; inherited override failure reproduced at base. Attribution correction: base relative path worked when override cleared; absolute normalization is prerequisite of new staged binding, not separate old defect. Independent36/140 plus rollback mode2/20; combined new local installer proof next. Full check lacked candidate dependencies; no false full-typecheck claim.
 
 Combined installer tip ff1e8fad: **39 pass,0 fail,157 assertions** across download/local tests, now both accepted scripts together (task_7493a10f).
+
+Publication-test primary: one byte-backed fixture, named cases, awaited fetch-replacement lifetime, strict effect replay removes redundant journal without losing mutation proof. Judge task_d35c8509 ACCEPT finalace4cea blob; 24/63 focus50/471 related. Ten CLI scenarios retained; prior unawaited rejection assertion now awaited, explicit test-proof improvement.

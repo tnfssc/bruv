@@ -788,7 +788,7 @@
     {
       "focus": "tests/publish-release.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_5bfa31b4",
@@ -804,19 +804,28 @@
           "id": "task_d35c8509",
           "base": "6f476812d4f245c24fd1f9e2e8c311d9fd090665",
           "candidate": "dd88c5aeabae3553d027ee65b601593ebe72af92",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Single byte-backed fixture removes unit/CLI reconciliation; missing assets named; awaited scoped fetch replacement owns restoration. Ten strict effect-replay CLI cases retained; removing redundant call journal does not weaken proof. Wrong digest case added.",
+          "checks": "Independent base16/54,candidate24/63,related50/471; strict tsc/lint/format/diff pass. No actual publication/full build.",
+          "acceptedBlobs": {
+            "tests/publish-release.test.ts": "ace4cea386836a04f36cedee9d29c4624191fffc"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ace4cea386836a04f36cedee9d29c4624191fffc",
       "relatedPatchJudgment": {
         "id": "task_517172cd",
         "verdict": "ACCEPT",
         "blob": "268cb917055a44778d96c31c96da2d8c8e458c06",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "One byte-backed fixture replaces separate assets; named cases/missing assets replace anonymous/index fixtures; scoped awaited lookup assertions own fetch cleanup; strict effect replay is sole mutation proof. Ten CLI scenarios retained, wrong nonnull digest case added.",
-      "checks": "24 tests63 assertions focus; related50/471; strict tsc/lint/format/diff pass; no full build/publication."
+      "checks": "24 tests63 assertions focus; related50/471; strict tsc/lint/format/diff pass; no full build/publication.",
+      "integrationState": "Full test patch integrated, note excluded; production publisher blob unchanged."
     },
     {
       "focus": "tests/release-browser-setup.test.ts",
