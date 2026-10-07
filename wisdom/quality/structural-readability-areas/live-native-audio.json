@@ -475,14 +475,22 @@
         },
         {
           "id": "task_610f6154",
-          "status": "running",
+          "status": "complete",
           "candidate": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
           "base": "4861031d34e3f3939ae6aade2863cd51c4150e6b",
-          "round": "observed native-stop fix and combined contract"
+          "round": "observed native-stop fix and combined contract",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Prior objection resolved by independent exact-source reproduction: bounded played reports accepted during stopping; only stopped acknowledges stop. Active/FIFO ownership remains intrinsically clear; actual combined native and caller shutdown sequence inspected.",
+          "checks": "Independent 45 pass/20255 assertions; baseline fails native played(0)->stopped, candidate succeeds; format/diff/lint pass (4 existing infos). Broader dependency errors, no device/macOS/provider execution.",
+          "acceptedBlobs": {
+            "src/live/audio.ts": "b3b015c01c83ae297d9b2dbb2a8016d1945bc636",
+            "tests/live-audio.test.ts": "703bdeb68fe253c7c6765f6dbd3dd539f05c6ff8"
+          }
         }
       ],
-      "acceptedBlob": "9c7db008d0f1f1284fda01c2e564157c7171d231",
-      "integration": "accepted earlier blob; rework under judge",
+      "acceptedBlob": "b3b015c01c83ae297d9b2dbb2a8016d1945bc636",
+      "integration": "integrated accepted final rework blob",
       "relatedPaths": [
         "tests/live-audio-lifecycle.test.ts"
       ],
@@ -494,7 +502,7 @@
           "launchBase": "4861031d34e3f3939ae6aade2863cd51c4150e6b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7ae21cac",
           "branch": "bruv/rework-native-stop-acknowledgement-7ae21cac",
-          "status": "candidate ready",
+          "status": "accepted integrated",
           "commit": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
           "reason": "Swift judge task_660502a4 reproduced inherited native stop sequence played(queuedMs:0) before stopped; LiveAudio rejects played while stopping, reports helper_failure/stopError. Baseline also affected. Fresh worker must reproduce against actual native sequence, preserve ack/reaping safety, explicitly test incidental fix; fresh judge then combined native/bridge review.",
           "relatedPaths": [
@@ -1028,7 +1036,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_610f6154",
+        "verdict": "ACCEPT",
+        "blob": "703bdeb68fe253c7c6765f6dbd3dd539f05c6ff8"
+      }
     },
     {
       "focus": "tests/live-auth-lifecycle.test.ts",
@@ -1584,9 +1597,11 @@
   "followups": [
     {
       "focus": "src/live/audio.ts",
-      "status": "rework running",
+      "status": "resolved by judged explicit behavior fix",
       "reason": "Swift judge task_660502a4 reproduced inherited native stop sequence played(queuedMs:0) before stopped; LiveAudio rejects played while stopping, reports helper_failure/stopError. Baseline also affected. Fresh worker must reproduce against actual native sequence, preserve ack/reaping safety, explicitly test incidental fix; fresh judge then combined native/bridge review.",
-      "id": "task_7ae21cac"
+      "id": "task_7ae21cac",
+      "resolvedCandidate": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
+      "judgeId": "task_610f6154"
     }
   ],
   "audit": {

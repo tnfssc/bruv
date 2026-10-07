@@ -417,6 +417,20 @@ export class LiveAudio {
       this.fail(new Error("Audio helper reported an error"), safeCode(m.code), setup);
       return;
     }
+    // Native output can still report queue depth before its stopped barrier.
+    // A queue report updates playback observers; only stopped acknowledges stop.
+    if (
+      m.type === "played" &&
+      (this.state === "running" || this.state === "stopping") &&
+      typeof m.queuedMs === "number" &&
+      Number.isFinite(m.queuedMs) &&
+      m.queuedMs >= 0 &&
+      m.queuedMs <= 60_000
+    ) {
+      this.diagnostics.queuedMs = m.queuedMs;
+      this.options.callbacks?.played?.(m.queuedMs);
+      return;
+    }
     if (this.state !== "running") throw new Error("Unexpected audio helper event");
     if (m.type === "capture") {
       const pcm = decode(m.data, MAX_CAPTURE);
@@ -427,17 +441,6 @@ export class LiveAudio {
       this.diagnostics.captureFrames++;
       this.diagnostics.capturedBytes += pcm.length;
       this.options.callbacks?.capture?.(pcm, m.epoch as number | undefined);
-      return;
-    }
-    if (
-      m.type === "played" &&
-      typeof m.queuedMs === "number" &&
-      Number.isFinite(m.queuedMs) &&
-      m.queuedMs >= 0 &&
-      m.queuedMs <= 60_000
-    ) {
-      this.diagnostics.queuedMs = m.queuedMs;
-      this.options.callbacks?.played?.(m.queuedMs);
       return;
     }
     throw new Error("Unexpected audio helper event");
