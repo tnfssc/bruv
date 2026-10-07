@@ -2658,16 +2658,25 @@
     {
       "focus": "tests/terminal-interactions-cli.test.ts",
       "initialBlob": "45005f3443bbbd98a85ad66cc0e31b59a8a33c0c",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_58841b38",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_58841b38",
           "branch": "bruv/primary-readability-tests-terminal-inter-58841b38",
-          "launchBase": "0dc957493a1c216603772fb9aa207cfef43023c1"
+          "launchBase": "0dc957493a1c216603772fb9aa207cfef43023c1",
+          "commit": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_9704585a",
+          "base": "0dc957493a1c216603772fb9aa207cfef43023c1",
+          "candidate": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_16ed90d7"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
       "relatedPatchJudgments": [
@@ -2678,13 +2687,28 @@
           "blob": "19ba98790a5c96bcac30a340e540ab4323df1a2a"
         }
       ],
-      "launchBase": "0dc957493a1c216603772fb9aa207cfef43023c1"
+      "launchBase": "0dc957493a1c216603772fb9aa207cfef43023c1",
+      "changedRelatedPaths": [],
+      "result": "Candidate gives each saved-report invocation separate artifact destination and local assertions; baseline comparison assertion checks actual data rather than unconditional heading.",
+      "checks": [
+        "Baseline4/49",
+        "Final23/197",
+        "Dashboard baseline-drop mutant passes original/fails candidate",
+        "format/lint/diff"
+      ]
     },
     {
       "focus": "tests/terminal-interactions-report.test.ts",
       "initialBlob": "cfc814a308ee4706e83669beb49d53d7e4a84f4d",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_374aa134",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_374aa134",
+          "branch": "bruv/primary-readability-tests-terminal-inter-374aa134",
+          "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related patch accepted; primary pending",
@@ -2695,7 +2719,8 @@
           "verdict": "ACCEPT",
           "blob": "15dec25e1d553a530fe00f16c0a4452c78e2ada7"
         }
-      ]
+      ],
+      "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e"
     },
     {
       "focus": "tests/terminal-perf-action-profiler.test.ts",
