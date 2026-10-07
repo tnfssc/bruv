@@ -62,28 +62,71 @@ function harness(
   });
   return { clock, sent, flushed, errors, scheduler };
 }
+// Each attempted write owns its completion; accepting one never releases the next.
+class HeldPipe {
+  readonly writes: { accept(): void }[] = [];
+  send = (_frame: Buffer, _epoch: number): Promise<void> => {
+    const write = Promise.withResolvers<void>();
+    this.writes.push({ accept: write.resolve });
+    return write.promise;
+  };
+}
+
+type NativeFeedback = "none" | "stale-zero" | "delayed-coarse";
+
+// Native rendering and reported ring depth have their own cadence, independent of JS timers.
+class NativeRing {
+  queuedMs = 0;
+  peakMs = 0;
+  underrunMs = 0;
+  consumedMs = 0;
+  private readonly reports: { at: number; ms: number }[] = [];
+
+  constructor(
+    private readonly blockMs: number,
+    private readonly feedback: NativeFeedback,
+  ) {}
+
+  send = async (frame: Buffer): Promise<void> => {
+    this.queuedMs += frame.length / 48;
+    this.peakMs = Math.max(this.peakMs, this.queuedMs);
+  };
+
+  renderAt(time: number) {
+    if (time % this.blockMs !== 0) return;
+    const used = Math.min(this.blockMs, this.queuedMs);
+    this.underrunMs += this.blockMs - used;
+    this.consumedMs += used;
+    this.queuedMs -= used;
+  }
+
+  feedbackAt(time: number): number[] {
+    if (this.feedback === "stale-zero") return [0];
+    if (this.feedback === "delayed-coarse" && time % 40 === 0)
+      this.reports.push({ at: time + 15, ms: Math.floor(this.queuedMs / 10) * 10 });
+    const due: number[] = [];
+    while (this.reports[0]?.at === time) due.push(this.reports.shift()!.ms);
+    return due;
+  }
+}
+
 describe("live playback scheduler", () => {
   test("played estimate excludes enqueue and pending writes; accrues only accepted playback time", async () => {
-    let release!: () => void;
-    const h = harness({
-      send: () =>
-        new Promise((resolve) => {
-          release = resolve;
-        }),
-    });
+    const pipe = new HeldPipe();
+    const h = harness({ send: pipe.send });
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES * 2), 0);
     expect(h.scheduler.playedMs).toBe(0);
     h.scheduler.start();
     h.clock.advance(500);
     expect(h.scheduler.playedMs).toBe(0); // stalled pipe, not played
-    release();
+    pipe.writes[0]!.accept();
     await tick();
     expect(h.scheduler.playedMs).toBe(0); // success is not an audible ack
     h.clock.advance(10);
     expect(h.scheduler.playedMs).toBe(10);
     h.clock.advance(100);
     expect(h.scheduler.playedMs).toBe(20); // gap does not count as audio
-    release();
+    pipe.writes[1]!.accept();
     await tick();
     expect(h.scheduler.playedMs).toBe(20);
     h.clock.advance(8);
@@ -109,22 +152,17 @@ describe("live playback scheduler", () => {
     h.clock.advance(60);
     expect(h.scheduler.playedMs).toBe(40);
   });
-  test("interrupt resets estimate; old success and failed write never credit new epoch", async () => {
-    let rejectOld!: (error: Error) => void;
+  test("interrupt resets estimate; rejected old write cannot credit new epoch", async () => {
+    const oldWrite = Promise.withResolvers<void>();
     const h = harness({
-      send: (_frame, epoch) =>
-        epoch === 0
-          ? new Promise((_resolve, reject) => {
-              rejectOld = reject;
-            })
-          : Promise.resolve(),
+      send: (_frame, epoch) => (epoch === 0 ? oldWrite.promise : Promise.resolve()),
     });
     h.scheduler.start();
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES), 0);
     h.clock.advance(100);
     h.scheduler.interrupt(1);
     expect(h.scheduler.playedMs).toBe(0);
-    rejectOld(new Error("cancelled"));
+    oldWrite.reject(new Error("cancelled"));
     await tick();
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES), 1);
     await tick();
@@ -135,6 +173,8 @@ describe("live playback scheduler", () => {
     expect(h.scheduler.playedMs).toBe(0);
     h.clock.advance(100);
     expect(h.scheduler.playedMs).toBe(0);
+  });
+  test("failed current write reports an error without crediting played time", async () => {
     const failed = harness({ send: () => Promise.reject(new Error("pipe failed")) });
     failed.scheduler.start();
     failed.scheduler.enqueue(Buffer.alloc(FRAME_BYTES), 0);
@@ -204,45 +244,27 @@ describe("live playback scheduler", () => {
     expect(h.sent).toHaveLength(9);
   });
   for (const blockMs of [1, 10, 32]) {
-    for (const feedback of ["none", "stale-zero", "delayed-coarse"]) {
+    for (const feedback of ["none", "stale-zero", "delayed-coarse"] as const) {
       test("late timers keep reserve with " + blockMs + "ms native blocks and " + feedback, async () => {
-        let queued = 0;
-        let peak = 0;
-        let empty = 0;
-        let consumed = 0;
-        const reports: { at: number; ms: number }[] = [];
-        const h = harness({
-          send: async (frame) => {
-            queued += frame.length / 48;
-            peak = Math.max(peak, queued);
-          },
-        });
+        const native = new NativeRing(blockMs, feedback);
+        const h = harness({ send: native.send });
         h.clock.timerLateness = 2;
         h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES * 200), 0);
         h.scheduler.turnComplete(0);
         h.scheduler.start();
         await tick();
         for (let time = 1; time <= 2200; time++) {
-          // Native render callbacks consume in blocks independently of JS timers.
-          if (time % blockMs === 0) {
-            const used = Math.min(blockMs, queued);
-            empty += blockMs - used;
-            consumed += used;
-            queued -= used;
-          }
+          native.renderAt(time);
           h.clock.advance(1);
-          if (feedback === "stale-zero") h.scheduler.nativeQueued(0);
-          if (feedback === "delayed-coarse" && time % 40 === 0)
-            reports.push({ at: time + 15, ms: Math.floor(queued / 10) * 10 });
-          while (reports[0]?.at === time) h.scheduler.nativeQueued(reports.shift()!.ms);
+          for (const queuedMs of native.feedbackAt(time)) h.scheduler.nativeQueued(queuedMs);
           await tick();
           expect(h.scheduler.state.nativeQueuedMs).toBeLessThanOrEqual(80);
         }
-        expect(empty).toBe(0);
-        expect(consumed).toBe(Math.floor(2200 / blockMs) * blockMs);
+        expect(native.underrunMs).toBe(0);
+        expect(native.consumedMs).toBe(Math.floor(2200 / blockMs) * blockMs);
         // Discrete render phase can hold up to one additional callback block.
-        expect(peak).toBeLessThanOrEqual(80 + blockMs);
-        expect(peak).toBeLessThan(1000);
+        expect(native.peakMs).toBeLessThanOrEqual(80 + blockMs);
+        expect(native.peakMs).toBeLessThan(1000);
         expect(h.scheduler.state.pendingBytes).toBeGreaterThan(0);
         expect(h.errors).toHaveLength(0);
       });
@@ -272,19 +294,11 @@ describe("live playback scheduler", () => {
     expect(h.sent.at(-1)?.epoch).toBe(1);
   });
   test("interrupt discards unsent old generation, native flush gates new output; stale write rejection harmless", async () => {
-    let rejectOld!: (error: Error) => void;
-    let resolveFlush!: () => void;
+    const oldWrite = Promise.withResolvers<void>();
+    const flush = Promise.withResolvers<void>();
     const h = harness({
-      send: (_frame, epoch) =>
-        epoch === 0
-          ? new Promise((_resolve, reject) => {
-              rejectOld = reject;
-            })
-          : Promise.resolve(),
-      flush: () =>
-        new Promise((resolve) => {
-          resolveFlush = resolve;
-        }),
+      send: (_frame, epoch) => (epoch === 0 ? oldWrite.promise : Promise.resolve()),
+      flush: () => flush.promise,
     });
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES * 4, 1), 0);
     h.scheduler.start();
@@ -292,24 +306,18 @@ describe("live playback scheduler", () => {
     expect(h.flushed).toEqual([1]);
     expect(h.scheduler.state.pendingBytes).toBe(0);
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES, 2), 1);
-    rejectOld(new Error("Audio playback interrupted"));
+    oldWrite.reject(new Error("Audio playback interrupted"));
     await tick();
     expect(h.errors).toHaveLength(0);
     expect(h.sent).toHaveLength(1);
-    resolveFlush();
+    flush.resolve();
     await tick();
     expect(h.sent.map((s) => s.epoch)).toEqual([0, 1]);
     expect(h.sent[1]?.frame).toEqual(Buffer.alloc(FRAME_BYTES, 2));
   });
   test("pending budget excludes the in-flight frame; copied tails keep their turn boundary", async () => {
-    let release!: () => void;
-    const h = harness({
-      maxPendingBytes: FRAME_BYTES,
-      send: () =>
-        new Promise((resolve) => {
-          release = resolve;
-        }),
-    });
+    const pipe = new HeldPipe();
+    const h = harness({ maxPendingBytes: FRAME_BYTES, send: pipe.send });
     h.scheduler.start();
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES, 1), 0);
     expect(h.scheduler.state).toMatchObject({ pendingBytes: 0, inFlight: true });
@@ -320,27 +328,22 @@ describe("live playback scheduler", () => {
     expect(h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES - 100, 3), 0)).toBe(true);
     h.scheduler.turnComplete(0);
     expect(h.scheduler.state.pendingBytes).toBe(FRAME_BYTES);
-    release();
+    pipe.writes[0]!.accept();
     await tick();
     expect(h.sent[1]?.frame).toEqual(Buffer.alloc(100, 2));
     expect(h.scheduler.state.pendingBytes).toBe(FRAME_BYTES - 100);
-    release();
+    pipe.writes[1]!.accept();
     await tick();
     expect(h.sent[2]?.frame).toEqual(Buffer.alloc(FRAME_BYTES - 100, 3));
     expect(h.scheduler.state.pendingBytes).toBe(0);
     h.scheduler.close();
-    release();
+    pipe.writes[2]!.accept();
     await tick();
   });
   test("successful old write holds the pipe slot through flush, but cannot credit the new epoch", async () => {
-    let releaseOld!: () => void;
+    const oldWrite = Promise.withResolvers<void>();
     const h = harness({
-      send: (_frame, epoch) =>
-        epoch === 0
-          ? new Promise((resolve) => {
-              releaseOld = resolve;
-            })
-          : Promise.resolve(),
+      send: (_frame, epoch) => (epoch === 0 ? oldWrite.promise : Promise.resolve()),
     });
     h.scheduler.start();
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES), 0);
@@ -351,7 +354,7 @@ describe("live playback scheduler", () => {
     expect(h.flushed).toEqual([1]);
     expect(h.sent).toHaveLength(1);
     expect(h.scheduler.state).toMatchObject({ pendingBytes: FRAME_BYTES, inFlight: true, epoch: 1 });
-    releaseOld();
+    oldWrite.resolve();
     await tick();
     expect(h.sent.map((s) => s.epoch)).toEqual([0, 1]);
     expect(h.scheduler.playedMs).toBe(0);
@@ -372,20 +375,15 @@ describe("live playback scheduler", () => {
     expect(h.scheduler.enqueue(Buffer.alloc(2), 1)).toBe(true);
   });
   test("stalled pipe write does not start extra writes and stop prevents future output", async () => {
-    let release!: () => void;
-    const h = harness({
-      send: () =>
-        new Promise((resolve) => {
-          release = resolve;
-        }),
-    });
+    const pipe = new HeldPipe();
+    const h = harness({ send: pipe.send });
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES * 5), 0);
     h.scheduler.start();
     h.clock.stall(3000);
     h.clock.advance(0);
     await tick();
     expect(h.sent).toHaveLength(1);
-    release();
+    pipe.writes[0]!.accept();
     await tick();
     expect(h.sent).toHaveLength(2); // only one after stall
     h.scheduler.close();
@@ -393,6 +391,8 @@ describe("live playback scheduler", () => {
     await tick();
     expect(h.sent).toHaveLength(2);
     expect(h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES), 0)).toBe(false);
+  });
+  test("close before native readiness prevents start and output", () => {
     const other = harness();
     other.scheduler.close();
     other.scheduler.start();
@@ -400,13 +400,8 @@ describe("live playback scheduler", () => {
     expect(other.sent).toHaveLength(0);
   });
   test("pre-ready interruption flushes before first new frame and close during flush cancels output", async () => {
-    let release!: () => void;
-    const h = harness({
-      flush: () =>
-        new Promise((resolve) => {
-          release = resolve;
-        }),
-    });
+    const flush = Promise.withResolvers<void>();
+    const h = harness({ flush: () => flush.promise });
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES, 1), 0);
     h.scheduler.interrupt(1);
     h.scheduler.enqueue(Buffer.alloc(FRAME_BYTES, 2), 1);
@@ -414,7 +409,7 @@ describe("live playback scheduler", () => {
     expect(h.flushed).toEqual([1]);
     expect(h.sent).toHaveLength(0);
     h.scheduler.close();
-    release();
+    flush.resolve();
     await tick();
     expect(h.sent).toHaveLength(0);
   });
