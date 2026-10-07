@@ -1,0 +1,74 @@
+[
+  {
+    "group": "remote",
+    "name": "Remote",
+    "count": 119,
+    "id": "task_cbb4da74",
+    "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74",
+    "branch": "bruv/whole-repo-structural-readability-remote-cbb4da74",
+    "base": "59413c532e6422983f611915e509e8421aa2f363"
+  },
+  {
+    "group": "live-native-audio",
+    "name": "Live / native audio",
+    "count": 140,
+    "id": "task_662639e6",
+    "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6",
+    "branch": "bruv/whole-repo-structural-readability-live-n-662639e6",
+    "base": "59413c532e6422983f611915e509e8421aa2f363"
+  },
+  {
+    "group": "compatibility-t3",
+    "name": "Compatibility / T3",
+    "count": 83,
+    "id": "task_dc14408d",
+    "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d",
+    "branch": "bruv/whole-repo-structural-readability-compat-dc14408d",
+    "base": "59413c532e6422983f611915e509e8421aa2f363"
+  },
+  {
+    "group": "agent-history-session-goals",
+    "name": "Agent / history / session / goals",
+    "count": 114,
+    "id": "task_03712bc7",
+    "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7",
+    "branch": "bruv/whole-repo-structural-readability-agent--03712bc7",
+    "base": "59413c532e6422983f611915e509e8421aa2f363"
+  },
+  {
+    "group": "execution-tasks-questions",
+    "name": "Execution / tasks / questions",
+    "count": 98,
+    "id": "task_69c1198d",
+    "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d",
+    "branch": "bruv/whole-repo-structural-readability-execut-69c1198d",
+    "base": "59413c532e6422983f611915e509e8421aa2f363"
+  },
+  {
+    "group": "ui-terminal-cli",
+    "name": "UI / terminal / CLI",
+    "count": 101,
+    "id": "task_f8e968d6",
+    "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6",
+    "branch": "bruv/whole-repo-structural-readability-ui-ter-f8e968d6",
+    "base": "59413c532e6422983f611915e509e8421aa2f363"
+  },
+  {
+    "group": "build-release-ci-tooling",
+    "name": "Build / release / CI / tooling",
+    "count": 70,
+    "id": "task_d849d828",
+    "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828",
+    "branch": "bruv/whole-repo-structural-readability-build--d849d828",
+    "base": "59413c532e6422983f611915e509e8421aa2f363"
+  },
+  {
+    "group": "site-support",
+    "name": "Site / support",
+    "count": 41,
+    "id": "task_6608ea8d",
+    "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d",
+    "branch": "bruv/whole-repo-structural-readability-site-s-6608ea8d",
+    "base": "59413c532e6422983f611915e509e8421aa2f363"
+  }
+]

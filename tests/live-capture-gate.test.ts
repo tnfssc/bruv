@@ -1,5 +1,5 @@
-import { test, expect } from "bun:test";
-import { mkdtemp, rm, readFile } from "node:fs/promises";
+import { expect, test } from "bun:test";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -34,8 +34,18 @@ test("macOS uses tap origin host time, discards old tags and resets converter be
   expect(swift).toContain('message["epoch"] = Int(epoch)');
   const command = swift.split('case "capture_gate":')[1]!.split('case "start":')[0]!;
   expect(command).toContain("let cutoff = mach_absolute_time()");
-  expect(command).toContain("output.sync");
-  expect(command).toContain("self.resampler.reset()");
+  expect(command).toContain("output.captureGate(epoch: epoch, cutoff: cutoff)");
+  const apply = swift.split("func captureGate(epoch: Int, cutoff: UInt64) {")[1]!.split("func flushed()")[0]!;
+  expect(apply).toContain("queue.sync");
+  expect(apply).toContain("ll_capture_gate(self.core, Int32(epoch), cutoff)");
+  expect(apply).not.toContain("engine");
+  expect(apply.indexOf("ll_capture_gate(self.core, Int32(epoch), cutoff)")).toBeLessThan(
+    apply.indexOf("self.discardCapture()"),
+  );
+  expect(apply).toContain("self.discardCapture()");
+  const discard = swift.split("private func discardCapture() {")[1]!.split("private func poll()")[0]!;
+  expect(discard).toContain("resampler.reset()");
+  expect(discard).toContain("while ll_capture_pop(core, ptr.baseAddress!) > 0 {}");
   expect(command).not.toContain("engine?.stop()");
 });
 

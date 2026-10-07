@@ -1,9 +1,9 @@
 import { type QuestionContext, QuestionService } from "../questions/service";
 import { canDelegate, SUBAGENT_TYPES } from "../tasks/subagent-profiles";
 import type { WorkspaceRequest } from "../tasks/worktree-workspace";
-import type { RemoteClient, RemoteTask } from "./client";
+import type { RemoteClient, RemoteState, RemoteTask } from "./client";
 import type { RepositorySnapshot } from "./repository";
-import { launchRepository, launchPreparedRepository } from "./repository-wire";
+import { launchPreparedRepository, launchRepository } from "./repository-wire";
 import { SourceApprovalService, type SourcePreparation, type SourceSelection } from "./source-approval";
 
 /** SSH task IDs cannot collide with local or native task IDs. */
@@ -151,6 +151,21 @@ function project(task: RemoteTask): SshJob {
     epoch: task.epoch,
   };
 }
+function assertLaunchOwner(
+  task: RemoteTask,
+  request: SshLaunchRequest,
+  connection: NonNullable<RemoteState["connection"]>,
+): void {
+  if (
+    task.taskId !== request.taskId ||
+    task.jobSessionFile !== request.jobSessionFile ||
+    task.host !== connection.host ||
+    task.ownerId !== connection.hello.ownerId ||
+    task.epoch !== connection.hello.epoch ||
+    JSON.stringify(task.jobQuestionOwner) !== JSON.stringify(request.jobQuestionOwner)
+  )
+    throw new Error("SSH launch identity/parent ownership conflict");
+}
 export function createRemoteJobsAdapter(
   client: RemoteClient,
   repositoryLauncher: RepositoryLauncher = launchRepository,
@@ -206,6 +221,51 @@ export function createRemoteJobsAdapter(
     if (!task) throw new Error("Unknown SSH job in this session");
     return task;
   }
+  // Resolve replay ownership and source approval before building transport arguments.
+  async function prepareLaunchRequest(
+    request: SshLaunchRequest,
+    connection: NonNullable<RemoteState["connection"]>,
+    tasks: RemoteState["tasks"],
+    approvalContext?: QuestionContext,
+  ): Promise<{ request: SshLaunchRequest; preparation?: SourcePreparation }> {
+    const saved = approvals.get(request.jobSessionFile, request.taskId);
+    // A retry keeps the original question owner, even if the parent branch moved.
+    const ownedRequest = saved ? { ...request, jobQuestionOwner: saved.questionOwner } : request;
+    const {
+      source,
+      placement: { workspace },
+    } = ownedRequest;
+    if (source && workspace.kind === "worktree" && workspace.baseRef !== undefined)
+      throw Error("Untracked inclusion requires current-source snapshot, not an explicit baseRef");
+    const existing = tasks[ownedRequest.taskId];
+    if (existing) assertLaunchOwner(existing, ownedRequest, connection);
+    if (!source && !saved) return { request: ownedRequest };
+    if (!source || !approvalContext)
+      throw Error("Source approval retry requires the original source selection and parent question context");
+    if (source.retryTaskId && !saved) throw Error("Unknown source approval retry task ID in this parent session");
+    if (source.retryTaskId && source.retryTaskId !== ownedRequest.taskId)
+      throw Error("Source approval retry task ID conflict");
+    if (existing && !saved) throw Error("Cannot add source inclusion to an already dispatched task");
+    const preparation = await approvals.prepare(
+      {
+        taskId: ownedRequest.taskId,
+        jobSessionFile: ownedRequest.jobSessionFile,
+        localRoot: ownedRequest.localRoot,
+        target: ownedRequest.target,
+        ownerId: connection.hello.ownerId,
+        epoch: connection.hello.epoch,
+        prompt: ownedRequest.prompt,
+        ...(ownedRequest.title === undefined ? {} : { title: ownedRequest.title }),
+        placement: ownedRequest.placement,
+        ...(ownedRequest.model === undefined ? {} : { model: ownedRequest.model }),
+        ...(ownedRequest.thinking === undefined ? {} : { thinking: ownedRequest.thinking }),
+        includeUntracked: source.includeUntracked,
+      },
+      approvalContext,
+      Object.values(tasks).reduce((max, task) => Math.max(max, task.jobSequence ?? 0), 0),
+    );
+    return { request: { ...ownedRequest, jobQuestionOwner: preparation.questionOwner }, preparation };
+  }
   return {
     async targets() {
       const { connection } = await client.read();
@@ -240,52 +300,15 @@ export function createRemoteJobsAdapter(
       const authorizedTarget = connection.host === "local" ? "ssh:local" : connection.host;
       if (request.target !== authorizedTarget)
         throw new Error("SSH target must match the already human-pinned connection.host: " + authorizedTarget);
-      let preparation = approvals.get(request.jobSessionFile, request.taskId);
-      if (preparation) request = { ...request, jobQuestionOwner: preparation.questionOwner };
-      if (request.source && workspace.kind === "worktree" && workspace.baseRef !== undefined)
-        throw Error("Untracked inclusion requires current-source snapshot, not an explicit baseRef");
-      const existing = state.tasks[request.taskId];
-      const assertOwner = (task: RemoteTask) => {
-        if (
-          task.taskId !== request.taskId ||
-          task.jobSessionFile !== request.jobSessionFile ||
-          task.host !== connection.host ||
-          task.ownerId !== connection.hello.ownerId ||
-          task.epoch !== connection.hello.epoch ||
-          JSON.stringify(task.jobQuestionOwner) !== JSON.stringify(request.jobQuestionOwner)
-        )
-          throw new Error("SSH launch identity/parent ownership conflict");
-      };
-      if (existing) assertOwner(existing);
-      if (request.source || preparation) {
-        if (!request.source || !approvalContext)
-          throw Error("Source approval retry requires the original source selection and parent question context");
-        if (request.source.retryTaskId && !preparation)
-          throw Error("Unknown source approval retry task ID in this parent session");
-        if (request.source.retryTaskId && request.source.retryTaskId !== request.taskId)
-          throw Error("Source approval retry task ID conflict");
-        if (existing && !preparation) throw Error("Cannot add source inclusion to an already dispatched task");
-        preparation = await approvals.prepare(
-          {
-            taskId: request.taskId,
-            jobSessionFile: request.jobSessionFile,
-            localRoot: request.localRoot,
-            target: request.target,
-            ownerId: connection.hello.ownerId,
-            epoch: connection.hello.epoch,
-            prompt: request.prompt,
-            ...(request.title === undefined ? {} : { title: request.title }),
-            placement: request.placement,
-            ...(request.model === undefined ? {} : { model: request.model }),
-            ...(request.thinking === undefined ? {} : { thinking: request.thinking }),
-            includeUntracked: request.source.includeUntracked,
-          },
-          approvalContext,
-          Object.values(state.tasks).reduce((max, task) => Math.max(max, task.jobSequence ?? 0), 0),
-        );
-        request = { ...request, jobQuestionOwner: preparation.questionOwner };
-        if (preparation.state !== "ready")
-          return existing ? { ...project(existing), output: "", background: true } : projectPreparation(preparation);
+      const { request: launchRequest, preparation } = await prepareLaunchRequest(
+        request,
+        connection,
+        state.tasks,
+        approvalContext,
+      );
+      if (preparation && preparation.state !== "ready") {
+        const existing = state.tasks[launchRequest.taskId];
+        return existing ? { ...project(existing), output: "", background: true } : projectPreparation(preparation);
       }
       // Only the durable human-owned source preflight may populate the trusted
       // snapshot arguments; untyped agent callers cannot smuggle these fields.
@@ -298,14 +321,14 @@ export function createRemoteJobsAdapter(
           }
         : undefined;
       const args: Parameters<RepositoryLauncher>[1] = {
-        jobSessionFile: request.jobSessionFile,
-        jobQuestionOwner: request.jobQuestionOwner,
-        localRoot: request.localRoot,
-        prompt: request.prompt,
-        ...(request.title === undefined ? {} : { title: request.title }),
-        taskId: request.taskId,
-        ...(request.model === undefined ? {} : { model: request.model }),
-        ...(request.thinking === undefined ? {} : { thinking: request.thinking }),
+        jobSessionFile: launchRequest.jobSessionFile,
+        jobQuestionOwner: launchRequest.jobQuestionOwner,
+        localRoot: launchRequest.localRoot,
+        prompt: launchRequest.prompt,
+        ...(launchRequest.title === undefined ? {} : { title: launchRequest.title }),
+        taskId: launchRequest.taskId,
+        ...(launchRequest.model === undefined ? {} : { model: launchRequest.model }),
+        ...(launchRequest.thinking === undefined ? {} : { thinking: launchRequest.thinking }),
         placement: { profile, parentDepth, ...(parentType === undefined ? {} : { parentType }), workspace },
         ...prepared,
       };
@@ -317,24 +340,27 @@ export function createRemoteJobsAdapter(
           task = await launchPreparedRepository(client, { ...args, ...prepared });
         } else task = await repositoryLauncher(client, args);
       } catch (error) {
-        const retained = (await client.read()).tasks[request.taskId];
+        const retained = (await client.read()).tasks[launchRequest.taskId];
         if (!retained) {
           // Preparation may have an uncertain durable repository descriptor even
           // before a task record. Expose the reserved ID; retries reuse it.
           throw new Error(
-            "SSH launch failed or unconfirmed; retained task ID: " + sshJobId(request.taskId) + "; " + String(error),
+            "SSH launch failed or unconfirmed; retained task ID: " +
+              sshJobId(launchRequest.taskId) +
+              "; " +
+              String(error),
             { cause: error },
           );
         }
-        assertOwner(retained);
+        assertLaunchOwner(retained, launchRequest, connection);
         // Only uncertain transport outcomes are results. A deterministic conflict
         // or policy rejection must not be disguised as a successful replay.
         if (retained.outcome !== "unknown" || !/outcome unknown/i.test(String(error))) throw error;
         task = retained;
       }
-      assertOwner(task);
-      if (approvals.get(request.jobSessionFile, request.taskId)?.state === "cancelled")
-        task = await client.cancel(request.taskId);
+      assertLaunchOwner(task, launchRequest, connection);
+      if (approvals.get(launchRequest.jobSessionFile, launchRequest.taskId)?.state === "cancelled")
+        task = await client.cancel(launchRequest.taskId);
       return {
         ...project(task),
         output: preparation?.omissionReason ?? "",

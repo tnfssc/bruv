@@ -76,6 +76,77 @@ describe("goal durable state", () => {
     });
   });
 
+  test("rejected waiting updates revoke both sides of the authority boundary", () => {
+    const entries: any[] = [];
+    const store = new GoalStore((customType, data) => entries.push({ type: "custom", customType, data }));
+    store.set(input);
+    const waiting = store.update({ status: "waiting", pendingJobIds: ["task_prior"] }, new Set(["task_prior"]));
+    entries.push({
+      type: "custom",
+      customType: GOAL_ENTRY_TYPE,
+      data: { version: 1, operation: "update", at: "later", goal: { ...waiting, pendingJobIds: ["task_rejected"] } },
+    });
+    const owner = {};
+    expect(latestGoal(entries, owner)).toBeUndefined();
+    expect(inspectDiagnostics(owner).records.map((record) => record.taskId)).toEqual([
+      undefined,
+      "task_prior",
+      "task_rejected",
+    ]);
+
+    // Even a newer update cannot revive authority once its predecessor was revoked.
+    entries.push({
+      type: "custom",
+      customType: GOAL_ENTRY_TYPE,
+      data: { version: 1, operation: "update", at: "latest", goal: { ...waiting, revision: waiting.revision + 1 } },
+    });
+    expect(latestGoal(entries)).toBeUndefined();
+    const replacement = store.set(input);
+    const recoveredOwner = {};
+    expect(latestGoal(entries, recoveredOwner)).toEqual(replacement);
+    expect(inspectDiagnostics(recoveredOwner).records).toEqual([]);
+  });
+
+  test("malformed entries use untrusted references only for closed-schema diagnostics", () => {
+    const entries: any[] = [];
+    const store = new GoalStore((customType, data) => entries.push({ type: "custom", customType, data }));
+    store.set(input);
+    entries.push({
+      type: "custom",
+      customType: GOAL_ENTRY_TYPE,
+      data: {
+        version: 99,
+        goal: { pendingJobIds: ["forged arbitrary text", "task_named", "task_named", 42] },
+      },
+    });
+    const owner = {};
+    expect(latestGoal(entries, owner)).toBeUndefined();
+    const diagnostics = inspectDiagnostics(owner);
+    expect(diagnostics.records.map((record) => record.taskId)).toEqual([undefined, "task_named"]);
+    expect(diagnostics.invalid).toBe(0);
+
+    store.clear();
+    const clearedOwner = {};
+    expect(latestGoal(entries, clearedOwner)).toBeUndefined();
+    expect(inspectDiagnostics(clearedOwner).records).toEqual([]);
+  });
+
+  test("unrelated journal entries are ignored but mismatched goal updates revoke authority", () => {
+    const entries: any[] = [];
+    const store = new GoalStore((customType, data) => entries.push({ type: "custom", customType, data }));
+    const active = store.set(input);
+    entries.push({ type: "custom", customType: "unrelated", data: { version: 99 } });
+    entries.push({ type: "message", customType: GOAL_ENTRY_TYPE, data: { version: 99 } });
+    entries.push(null);
+    expect(latestGoal(entries)).toEqual(active);
+    entries.push({
+      type: "custom",
+      customType: GOAL_ENTRY_TYPE,
+      data: { version: 1, operation: "update", at: "later", goal: { ...active, id: "foreign", revision: 2 } },
+    });
+    expect(latestGoal(entries)).toBeUndefined();
+  });
+
   test("does not mutate memory when durable append fails", () => {
     let fail = false;
     const store = new GoalStore(() => {
@@ -587,4 +658,76 @@ test("queued reminder tokens are stripped only from valid extension turns", asyn
   expect(h.handlers.input[0]({ source: "extension", text: stale + " extra" }, h.ctx)).toEqual({ action: "handled" });
   await h.commands.goal.handler("pause", h.ctx);
   expect(h.handlers.input[0]({ source: "extension", text: stale }, h.ctx)).toEqual({ action: "handled" });
+});
+
+test("ordinary leaf advancement preserves reminder authority and automatic-run accounting", async () => {
+  const h = harness();
+  let leaf = "goal-leaf";
+  h.ctx.sessionManager.getLeafId = () => leaf;
+  h.ctx.sessionManager.getBranch = () => h.appended;
+  await h.commands.goal.handler("set Build it --criteria done --constraints safe", h.ctx);
+  const reminder = h.sent.at(-1)!;
+  const run = { messages: [{ role: "assistant", stopReason: "stop" }] };
+  h.handlers.agent_end[0](run, h.ctx);
+
+  // An ordinary message advances the journal, without changing the goal.
+  leaf = "message-leaf";
+  h.handlers.context[0]({ messages: [] }, h.ctx);
+  expect(h.handlers.input[0]({ source: "extension", text: reminder }, h.ctx)).toEqual({
+    action: "transform",
+    text: "Goal still active. Do next useful step, not another recap.",
+  });
+  for (let turn = 1; turn < MAX_NO_PROGRESS_CONTINUATIONS; turn++) {
+    h.handlers.agent_end[0](run, h.ctx);
+  }
+  expect(h.runtime.get()).toMatchObject({
+    status: "paused",
+    pauseReason: expect.stringContaining("no meaningful progress"),
+  });
+});
+
+test("branch navigation revokes reminders even when the destination goal is active", async () => {
+  const h = harness();
+  let leaf = "original";
+  let entries = h.appended;
+  h.ctx.sessionManager.getLeafId = () => leaf;
+  h.ctx.sessionManager.getBranch = () => entries;
+  await h.commands.goal.handler("set Build it --criteria done --constraints safe", h.ctx);
+  const reminder = h.sent.at(-1)!;
+  const destination = harness();
+  destination.runtime.handle("goal.set", { ...input, objective: "Different branch goal" });
+  entries = destination.appended;
+  leaf = "destination";
+
+  expect(h.handlers.input[0]({ source: "extension", text: reminder }, h.ctx)).toEqual({ action: "handled" });
+  expect(h.runtime.get()).toMatchObject({ status: "active", objective: "Different branch goal" });
+  h.handlers.agent_settled[0]({}, h.ctx);
+  expect(h.handlers.input[0]({ source: "extension", text: h.sent.at(-1)! }, h.ctx)?.action).toBe("transform");
+});
+
+test("session restart revokes old reminders while retaining durable active goal state", async () => {
+  const h = harness();
+  h.ctx.sessionManager.getBranch = () => h.appended;
+  await h.commands.goal.handler("set Build it --criteria done --constraints safe", h.ctx);
+  const reminder = h.sent.at(-1)!;
+  const goal = h.runtime.get();
+  h.handlers.session_shutdown[0]();
+  h.handlers.session_start[0]({}, h.ctx);
+
+  expect(h.runtime.get()).toEqual(goal);
+  expect(h.handlers.input[0]({ source: "extension", text: reminder }, h.ctx)).toEqual({ action: "handled" });
+  h.handlers.agent_settled[0]({}, h.ctx);
+  expect(h.handlers.input[0]({ source: "extension", text: h.sent.at(-1)! }, h.ctx)?.action).toBe("transform");
+});
+
+test("pending reminder transport retains the newest sixteen payloads", async () => {
+  const h = harness();
+  await h.commands.goal.handler("set Build it --criteria done --constraints safe", h.ctx);
+  for (let turn = 0; turn < 16; turn++) h.handlers.agent_settled[0]({}, h.ctx);
+
+  expect(h.sent).toHaveLength(17);
+  expect(h.handlers.input[0]({ source: "extension", text: h.sent[0]! }, h.ctx)).toEqual({ action: "handled" });
+  for (const text of h.sent.slice(1)) {
+    expect(h.handlers.input[0]({ source: "extension", text }, h.ctx)?.action).toBe("transform");
+  }
 });

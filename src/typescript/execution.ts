@@ -56,6 +56,51 @@ function signalProcessGroup(child: ReturnType<typeof spawn>, signal: NodeJS.Sign
   }
 }
 
+// Own the first termination request and the listener/timers that can issue it.
+// Watching starts only after the caller has installed child completion handlers.
+function executionCancellation(
+  child: ReturnType<typeof spawn>,
+  callerSignal: AbortSignal | undefined,
+  killGraceMs: number,
+) {
+  const controller = new AbortController();
+  let termination: ExecutionResult["termination"];
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  let killTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const terminate = (cause: NonNullable<ExecutionResult["termination"]>["cause"]) => {
+    // A caller abort racing a timeout cannot rewrite an established cause.
+    if (termination) return;
+    termination = { cause, requestedAt: new Date().toISOString() };
+    controller.abort(cause === "timeout" ? "timeout" : callerSignal?.reason);
+    signalProcessGroup(child, "SIGTERM");
+    killTimer = setTimeout(() => signalProcessGroup(child, "SIGKILL"), killGraceMs);
+    killTimer.unref?.();
+  };
+  const onAbort = () => terminate(callerSignal?.reason === "shutdown" ? "session-shutdown" : "execute-abort");
+
+  return {
+    signal: controller.signal,
+    get termination() {
+      return termination;
+    },
+    watch(timeoutMs: number | undefined) {
+      callerSignal?.addEventListener("abort", onAbort, { once: true });
+      if (callerSignal?.aborted) onAbort();
+      if (timeoutMs) {
+        timeout = setTimeout(() => terminate("timeout"), timeoutMs);
+        timeout.unref?.();
+      }
+    },
+    close() {
+      controller.abort();
+      callerSignal?.removeEventListener("abort", onAbort);
+      if (timeout) clearTimeout(timeout);
+      if (killTimer) clearTimeout(killTimer);
+    },
+  };
+}
+
 export async function executeIsolated(
   code: string,
   cwd: string,
@@ -129,43 +174,19 @@ export async function executeIsolated(
   const imageOutput = new BoundedOutputBuffer(MAX_IMAGE_CHANNEL_BYTES);
   const imagePipe = child.stdio[3] as Readable | undefined;
   const jobPipe = options.jobHandler ? openParentJobBridge(child) : undefined;
-  const executionController = new AbortController();
+  const cancellation = executionCancellation(child, signal, options.killGraceMs ?? 5_000);
   const bridgeDiagnosticOwner = {};
   const jobBridge =
     options.jobHandler && jobPipe
       ? serveJobBridge(
           jobPipe,
           options.jobHandler,
-          executionController.signal,
+          cancellation.signal,
           bridgeDiagnosticOwner,
           options.executeInvocationId,
         )
       : undefined;
   let imageError: string | undefined;
-  // The first termination request owns the result. In particular, a caller
-  // abort racing a timeout cannot rewrite an already-established cause.
-  let terminationCause: "timeout" | "abort" | undefined;
-  let termination: ExecutionResult["termination"];
-  let timedOut = false;
-  let cancelled = false;
-  let killTimer: ReturnType<typeof setTimeout> | undefined;
-  let timeout: ReturnType<typeof setTimeout> | undefined;
-
-  const terminate = (cause: "timeout" | "abort") => {
-    if (terminationCause) return;
-    terminationCause = cause;
-    termination = {
-      cause: cause === "timeout" ? "timeout" : signal?.reason === "shutdown" ? "session-shutdown" : "execute-abort",
-      requestedAt: new Date().toISOString(),
-    };
-    timedOut = cause === "timeout";
-    cancelled = cause === "abort";
-    executionController.abort(cause === "timeout" ? "timeout" : signal?.reason);
-    signalProcessGroup(child, "SIGTERM");
-    killTimer ??= setTimeout(() => signalProcessGroup(child, "SIGKILL"), options.killGraceMs ?? 5_000);
-    killTimer.unref?.();
-  };
-  const onAbort = () => terminate("abort");
   // Install completion handlers before writing source or acting on cancellation.
   const completion = new Promise<{
     exitCode: number | null;
@@ -199,12 +220,7 @@ export async function executeIsolated(
   child.stdin!.on("error", () => {
     // Early exits (including EPIPE while sending source) are reported by status.
   });
-  signal?.addEventListener("abort", onAbort, { once: true });
-  if (signal?.aborted) onAbort();
-  if (timeoutMs) {
-    timeout = setTimeout(() => terminate("timeout"), timeoutMs);
-    timeout.unref?.();
-  }
+  cancellation.watch(timeoutMs);
   child.stdin!.end(code);
 
   let completed: { exitCode: number | null; exitSignal: NodeJS.Signals | null } | undefined;
@@ -218,11 +234,8 @@ export async function executeIsolated(
     // Commit response ACKs only at clean worker completion. Until this point a
     // received ACK is provisional and bridge teardown restores notification
     // ownership for any foreground task results.
-    jobBridge?.close(completed?.exitCode === 0 && !timedOut && !cancelled);
-    executionController.abort();
-    signal?.removeEventListener("abort", onAbort);
-    if (timeout) clearTimeout(timeout);
-    if (killTimer) clearTimeout(killTimer);
+    jobBridge?.close(completed?.exitCode === 0 && !cancellation.termination);
+    cancellation.close();
     child.stdin!.destroy();
     child.stdout!.destroy();
     child.stderr!.destroy();
@@ -234,6 +247,9 @@ export async function executeIsolated(
   }
   if (!completed || !captured) throw new Error("Execution ended without a result");
   const { exitCode, exitSignal } = completed;
+  const termination = cancellation.termination;
+  const timedOut = termination?.cause === "timeout";
+  const cancelled = termination !== undefined && !timedOut;
 
   let images: ImageContent[] = [];
   const imageResizeNotes: string[] = [];
@@ -274,9 +290,9 @@ export async function executeIsolated(
       }
     : cancelled
       ? {
-          code: signal?.reason === "shutdown" ? ("shutdown" as const) : ("caller_aborted" as const),
+          code: termination?.cause === "session-shutdown" ? ("shutdown" as const) : ("caller_aborted" as const),
           outcome: "cancelled" as const,
-          cancellation: signal?.reason === "shutdown" ? ("shutdown" as const) : ("caller" as const),
+          cancellation: termination?.cause === "session-shutdown" ? ("shutdown" as const) : ("caller" as const),
         }
       : exitCode === 0 && !imageError
         ? { code: "process_exit" as const, outcome: "success" as const }

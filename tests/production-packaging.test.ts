@@ -1,11 +1,16 @@
 import { expect, test } from "bun:test";
-import { pairedBuildCommands } from "../scripts/build-pair";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { pairedBuildCommand } from "../scripts/build-pair";
 import { assetNames } from "../scripts/publish-release";
 
 test("default build ships normal CLI and connector without a T3 dependency", async () => {
-  const commands = pairedBuildCommands([], "/repo", "/bin/bun");
-  expect(commands).toEqual([
-    ["/bin/bun", "/repo/scripts/build-claude-compat.ts", "--outfile=/repo/dist/bruv-claude-compat"],
+  const command = pairedBuildCommand([], "/repo", "/bin/bun");
+  expect(command).toEqual([
+    "/bin/bun",
+    "/repo/scripts/build-claude-compat.ts",
+    "--outfile=/repo/dist/bruv-claude-compat",
   ]);
   const build = await Bun.file(new URL("../scripts/build.ts", import.meta.url)).text();
   expect(build).not.toContain("buildWeb");
@@ -15,21 +20,64 @@ test("default build ships normal CLI and connector without a T3 dependency", asy
 });
 
 test("release targets compile one normal binary and preserve the target/native helper", () => {
-  const commands = pairedBuildCommands(
+  const command = pairedBuildCommand(
     ["--", "--target=bun-darwin-arm64", "--live-helper=/helper", "--outfile=dist/release/bruv-darwin-arm64"],
     "/repo",
     "/bin/bun",
   );
-  expect(commands.map((command) => command.at(-1))).toEqual([
+  expect(command).toEqual([
+    "/bin/bun",
+    "/repo/scripts/build-claude-compat.ts",
+    "--target=bun-darwin-arm64",
+    "--live-helper=/helper",
     "--outfile=/repo/dist/release/bruv-claude-compat-darwin-arm64",
   ]);
-  for (const command of commands) {
-    expect(command).toContain("--target=bun-darwin-arm64");
-    expect(command).toContain("--live-helper=/helper");
+  expect(() => pairedBuildCommand(["--outfile=/bruv/bin/other"], "/repo", "/bin/bun")).toThrow();
+  expect(() => pairedBuildCommand(["--outfile=dist/bruv-claude-compat"], "/repo", "/bin/bun")).toThrow();
+});
+
+test("paired build delegates once from its repository root and relays child I/O and exit status", async () => {
+  const temporary = await mkdtemp(join(tmpdir(), "bruv-build-pair-"));
+  const root = join(temporary, "repo");
+  try {
+    await mkdir(join(root, "scripts"), { recursive: true });
+    await Bun.write(
+      join(root, "scripts/build-pair.ts"),
+      await Bun.file(new URL("../scripts/build-pair.ts", import.meta.url)).text(),
+    );
+    await Bun.write(
+      join(root, "scripts/build-claude-compat.ts"),
+      "console.log(JSON.stringify({ cwd: process.cwd(), args: process.argv.slice(2), input: await Bun.stdin.text() }));\n" +
+        'console.error("connector stderr");\nprocess.exit(Number(process.env.BRUV_TEST_BUILD_EXIT));\n',
+    );
+    for (const code of [0, 23]) {
+      const child = Bun.spawn(
+        [
+          process.execPath,
+          join(root, "scripts/build-pair.ts"),
+          "--",
+          "--target=bun-linux-x64",
+          "--outfile=dist/bruv-linux-x64",
+        ],
+        {
+          cwd: temporary,
+          env: { ...process.env, BRUV_TEST_BUILD_EXIT: String(code) },
+          stdio: ["pipe", "pipe", "pipe"],
+        },
+      );
+      child.stdin.write("build input");
+      child.stdin.end();
+      expect(await child.exited).toBe(code);
+      expect(JSON.parse(await new Response(child.stdout).text())).toEqual({
+        cwd: root,
+        args: ["--target=bun-linux-x64", "--outfile=" + join(root, "dist/bruv-claude-compat-linux-x64")],
+        input: "build input",
+      });
+      expect(await new Response(child.stderr).text()).toBe("connector stderr\n");
+    }
+  } finally {
+    await rm(temporary, { recursive: true, force: true });
   }
-  expect(commands).toHaveLength(1);
-  expect(() => pairedBuildCommands(["--outfile=/bruv/bin/other"], "/repo", "/bin/bun")).toThrow();
-  expect(() => pairedBuildCommands(["--outfile=dist/bruv-claude-compat"], "/repo", "/bin/bun")).toThrow();
 });
 
 test("every release target ships binary and launcher, checksums and shared licensing/source notices", () => {

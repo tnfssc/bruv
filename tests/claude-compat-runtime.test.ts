@@ -1023,7 +1023,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       sourceSessionId: manager.getSessionId(),
     });
     const { runtime, frames } = await fixture({
-      extra: { sessionManager: manager, nativeSessionId: nativeId, history },
+      extra: { sessionManager: manager, nativeSessionId: nativeId, history, thinkingDisplay: "omitted" },
     });
     await init(runtime);
     let calls = 0;
@@ -1033,6 +1033,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
             assistant("", {
               stopReason: "toolUse",
               content: [
+                { type: "thinking", thinking: "stored reasoning", thinkingSignature: "stored signature" },
                 {
                   type: "toolCall",
                   id: "stored-tool",
@@ -1062,7 +1063,22 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     for (let i = 1; i < entries.length; i++) expect(entries[i]!.parentUuid).toBe(entries[i - 1]!.uuid);
     const visible = frames.filter((f) => f.type === "assistant" || f.type === "user");
     for (const frame of visible) expect(entries.some((e) => e.uuid === frame.uuid)).toBe(true);
-    expect(JSON.stringify(entries)).toContain("stored-tool");
+    expect(entries[1]!.message!.content).toEqual([
+      { type: "thinking", thinking: "stored reasoning", signature: "stored signature" },
+      {
+        type: "tool_use",
+        id: "stored-tool",
+        name: "execute",
+        input: { code: 'console.log("HISTORY_RESULT")', label: "History real tool" },
+      },
+    ]);
+    expect((entries[2]!.message!.content as any[])[0]).toMatchObject({
+      type: "tool_result",
+      tool_use_id: "stored-tool",
+      is_error: false,
+    });
+    for (const frame of visible.filter((frame) => frame.type === "assistant"))
+      expect(JSON.stringify(frame.message)).not.toContain("stored reasoning");
     expect(JSON.stringify(entries)).toContain("HISTORY_RESULT");
     const reopened = SessionManager.open(manager.getSessionFile()!);
     expect(
@@ -1071,6 +1087,57 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
         .filter((e) => e.type === "message" && e.message.role !== "system")
         .map((e) => e.id),
     ).toEqual(canonical.map((e) => e.id));
+  });
+
+  test("turn completion and teardown drain queued history writes and retain the first failure", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "bruv-history-drain-"));
+    dirs.push(dir);
+    const manager = SessionManager.inMemory(dir);
+    const history = await NativeHistory.open({
+      cwd: dir,
+      configDir: join(dir, "native"),
+      sessionId: "00000000-0000-4000-8000-000000000031",
+      sourceSessionId: manager.getSessionId(),
+    });
+    const pending = Promise.withResolvers<string>();
+    const firstFailure = new Error("first history write failed");
+    const laterFailure = new Error("later history write failed");
+    const append = spyOn(history, "append")
+      .mockImplementationOnce(() => pending.promise)
+      .mockImplementationOnce(() => Promise.reject(laterFailure));
+    const { runtime, frames } = await fixture({ extra: { sessionManager: manager, history } });
+    await init(runtime);
+    runtime.session.agent.streamFunction = () => output(assistant("completed model turn"));
+    let turnFinished = false;
+    const turn = runtime.onUser(user(runtime), signal()).then(() => {
+      turnFinished = true;
+    });
+    await until(() => frames.some((frame) => frame.type === "result"));
+    expect(append.mock.calls).toHaveLength(1);
+    expect(turnFinished).toBe(false);
+    let closeFinished = false;
+    const closing = runtime.close().catch((error) => {
+      closeFinished = true;
+      return error;
+    });
+    // This is a held write, not a timer-dependent simulated slow filesystem.
+    await Promise.resolve();
+    expect(closeFinished).toBe(false);
+    pending.reject(firstFailure);
+    await turn;
+    const error = await closing;
+    runtimes.splice(runtimes.indexOf(runtime), 1);
+    expect(error).toBeInstanceOf(AggregateError);
+    expect(error.errors).toEqual([firstFailure]);
+    expect(append.mock.calls.map(([entry]) => entry.type)).toEqual(["user", "assistant"]);
+    expect(append.mock.calls[1]![0].parentUuid).toBe(append.mock.calls[0]![0].uuid);
+    const canonical = manager
+      .getEntries()
+      .filter((entry) => entry.type === "message" && ["user", "assistant"].includes(entry.message.role));
+    expect(append.mock.calls.map(([entry]) => entry.sourceMessageId)).toEqual(canonical.map((entry) => entry.id));
+    // A failed close remains idempotently rejected; cleanup below must not retry it.
+    await expect(runtime.close()).rejects.toBe(error);
+    append.mockRestore();
   });
 
   test("received namespaced human command has a correlated native echo, not a model prompt", async () => {

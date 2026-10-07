@@ -128,6 +128,37 @@ function intent(req: Extract<RemoteRequest, { op: "launch" }>, profile: RemoteTa
 const MAX_JOURNAL = 32 * 1024 * 1024;
 const MAX_LINE = 512 * 1024;
 const MAX_PAGE = 2 * 1024 * 1024; // below the SSH client's 4 MB response cap
+/** A fresh owner writes contiguous, bounded rows; only fsynced rows advance the sequence. */
+class OwnerEventJournal {
+  private readonly descriptor: number;
+  private sequence = 0;
+
+  constructor(taskId: string) {
+    const path = join(location(taskId), "events.jsonl");
+    // Never append from sequence one to an earlier owner's journal.
+    if (existsSync(path) && statSync(path).size) throw new Error("Existing journal; cannot replay owner");
+    this.descriptor = openSync(path, "a", 0o600);
+  }
+
+  append(event: unknown): void {
+    const line = JSON.stringify({ seq: this.sequence + 1, event }) + "\n";
+    if (Buffer.byteLength(line) > MAX_LINE || fstatSync(this.descriptor).size + Buffer.byteLength(line) > MAX_JOURNAL)
+      throw new Error("RPC journal limit exceeded");
+    const bytes = Buffer.from(line);
+    for (let offset = 0; offset < bytes.length; ) {
+      const written = writeSync(this.descriptor, bytes, offset, bytes.length - offset);
+      if (!written) throw new Error("Short journal write");
+      offset += written;
+    }
+    fsyncSync(this.descriptor);
+    this.sequence++;
+  }
+
+  close(): void {
+    closeSync(this.descriptor);
+  }
+}
+
 function events(id: string, cursor = 0) {
   if (!Number.isSafeInteger(cursor) || cursor < 0) throw new Error("Invalid cursor");
   const path = join(location(id), "events.jsonl");
@@ -650,8 +681,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     taskSnapshot.task.state !== "accepted"
   )
     return;
-  const path = join(location(taskId), "events.jsonl");
-  let journal: number | undefined;
+  let journal: OwnerEventJournal | undefined;
   if (taskSnapshot.task.cancelRequested || existsSync(join(location(taskId), "cancel.json"))) {
     taskSnapshot.task.state = "cancelled";
     await publishTerminal(taskId, taskSnapshot);
@@ -675,27 +705,14 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     stopChild(graceful);
   };
   try {
-    // A preexisting or malformed journal is not safe to append from sequence one.
-    if (existsSync(path) && statSync(path).size) throw new Error("Existing journal; cannot replay owner");
-    journal = openSync(path, "a", 0o600);
-    let seq = 0;
+    const writer = new OwnerEventJournal(taskId);
+    journal = writer;
     const record = (event: unknown) => {
       if (failure) return;
       try {
-        const line = JSON.stringify({ seq: seq + 1, event }) + "\n";
-        if (Buffer.byteLength(line) > MAX_LINE || fstatSync(journal!).size + Buffer.byteLength(line) > MAX_JOURNAL)
-          throw new Error("RPC journal limit exceeded");
-        const bytes = Buffer.from(line);
-        for (let offset = 0; offset < bytes.length; ) {
-          const written = writeSync(journal!, bytes, offset, bytes.length - offset);
-          if (!written) throw new Error("Short journal write");
-          offset += written;
-        }
-        fsyncSync(journal!);
-        seq++;
+        writer.append(event);
       } catch (e) {
-        failure = "Journal write failed: " + String(e);
-        stopChild();
+        fail("Journal write failed: " + String(e));
       }
     };
     await locked(async () => {
@@ -866,7 +883,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     if (controlTimer) clearInterval(controlTimer);
     await ownedChild?.release();
     await Promise.all(pendingWrites);
-    if (journal !== undefined) closeSync(journal);
+    journal?.close();
   }
 
   let pendingQuestion = false;

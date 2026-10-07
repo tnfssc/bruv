@@ -95,24 +95,116 @@ function decode(data: unknown, max: number): Buffer {
 function generation(value: number) {
   if (!Number.isSafeInteger(value) || value < 0 || value > 2147483647) throw new Error("Invalid audio generation");
 }
+type InputWrite = {
+  payload: string;
+  bytes: number;
+  type: string;
+  resolve: () => void;
+  reject: (error: Error) => void;
+};
+
+/** Owns pipe acceptance, not native playback or protocol acknowledgements. */
+class HelperInput {
+  private queued: InputWrite[] = [];
+  // An active write has entered stdin and cannot be interrupted by flush/stop.
+  private active?: InputWrite;
+  private pendingBytes = 0;
+  private closed = false;
+  private drainListener?: () => void;
+
+  constructor(
+    private readonly stream: Worker["stdin"],
+    private readonly failed: () => void,
+  ) {}
+
+  send(msg: { type: string; [key: string]: unknown }): Promise<void> {
+    if (this.closed) return Promise.reject(new Error("Audio helper closed"));
+    const payload = JSON.stringify(msg) + "\n";
+    const bytes = Buffer.byteLength(payload);
+    // Leave control-message headroom when admitting playback.
+    if (this.pendingBytes + bytes > MAX_PENDING - (msg.type === "play" ? 256 : 0))
+      return Promise.reject(new Error("Audio helper input queue full"));
+    return new Promise((resolve, reject) => {
+      this.pendingBytes += bytes;
+      this.queued.push({ payload, bytes, type: msg.type, resolve, reject });
+      this.pump();
+    });
+  }
+
+  interruptPlayback() {
+    this.queued = this.queued.filter((item) => {
+      if (item.type !== "play") return true;
+      this.pendingBytes -= item.bytes;
+      item.reject(new Error("Audio playback interrupted"));
+      return false;
+    });
+  }
+
+  close(reason: Error) {
+    if (this.closed) return;
+    this.closed = true;
+    this.detachDrain();
+    this.active?.reject(reason);
+    this.active = undefined;
+    for (const item of this.queued) item.reject(reason);
+    this.queued = [];
+    this.pendingBytes = 0;
+  }
+
+  private detachDrain() {
+    if (!this.drainListener) return;
+    this.stream.off("drain", this.drainListener);
+    this.drainListener = undefined;
+  }
+
+  private pump() {
+    if (this.active || this.closed) return;
+    const item = this.queued.shift();
+    if (!item) return;
+    this.active = item;
+    let callbackDone = false;
+    let drained = false;
+    const finish = () => {
+      if (!callbackDone || !drained || this.active !== item) return;
+      this.detachDrain();
+      this.active = undefined;
+      this.pendingBytes -= item.bytes;
+      item.resolve();
+      this.pump();
+    };
+    try {
+      drained = this.stream.write(item.payload, (err?: Error | null) => {
+        if (err) {
+          this.failed();
+          return;
+        }
+        callbackDone = true;
+        finish();
+      });
+      if (!drained && !this.closed) {
+        this.drainListener = () => {
+          drained = true;
+          this.drainListener = undefined;
+          finish();
+        };
+        this.stream.once("drain", this.drainListener);
+      }
+      finish();
+    } catch {
+      this.failed();
+    }
+  }
+}
+
 export class LiveAudio {
   private isClosed(): boolean {
     return this.state === "closed";
   }
   private state: "hello" | "idle" | "starting" | "running" | "stopping" | "closed" = "hello";
   private line = Buffer.alloc(0);
-  private pendingBytes = 0;
-  private queue: {
-    payload: string;
-    bytes: number;
-    type: string;
-    resolve: () => void;
-    reject: (error: Error) => void;
-  }[] = [];
-  private drainListener?: () => void;
+  private readonly input: HelperInput;
   private reapTimer?: ReturnType<typeof setTimeout>;
   private stoppedPromise?: Promise<void>;
-  private writing = false;
   private waiting:
     | {
         kind: "hello" | "ready" | "stopped";
@@ -146,6 +238,7 @@ export class LiveAudio {
     private readonly options: AudioOptions,
     private readonly extractedHelper?: ExtractedHelper,
   ) {
+    this.input = new HelperInput(worker.stdin, this.onInputError);
     worker.stdout.on("data", this.onData);
     worker.stderr.on("data", this.onStderr);
     worker.on("error", this.onError);
@@ -324,6 +417,20 @@ export class LiveAudio {
       this.fail(new Error("Audio helper reported an error"), safeCode(m.code), setup);
       return;
     }
+    // Native output can still report queue depth before its stopped barrier.
+    // A queue report updates playback observers; only stopped acknowledges stop.
+    if (
+      m.type === "played" &&
+      (this.state === "running" || this.state === "stopping") &&
+      typeof m.queuedMs === "number" &&
+      Number.isFinite(m.queuedMs) &&
+      m.queuedMs >= 0 &&
+      m.queuedMs <= 60_000
+    ) {
+      this.diagnostics.queuedMs = m.queuedMs;
+      this.options.callbacks?.played?.(m.queuedMs);
+      return;
+    }
     if (this.state !== "running") throw new Error("Unexpected audio helper event");
     if (m.type === "capture") {
       const pcm = decode(m.data, MAX_CAPTURE);
@@ -334,17 +441,6 @@ export class LiveAudio {
       this.diagnostics.captureFrames++;
       this.diagnostics.capturedBytes += pcm.length;
       this.options.callbacks?.capture?.(pcm, m.epoch as number | undefined);
-      return;
-    }
-    if (
-      m.type === "played" &&
-      typeof m.queuedMs === "number" &&
-      Number.isFinite(m.queuedMs) &&
-      m.queuedMs >= 0 &&
-      m.queuedMs <= 60_000
-    ) {
-      this.diagnostics.queuedMs = m.queuedMs;
-      this.options.callbacks?.played?.(m.queuedMs);
       return;
     }
     throw new Error("Unexpected audio helper event");
@@ -367,7 +463,7 @@ export class LiveAudio {
       this.lastCaptureEpoch = epoch;
     }
     this.captureGated = true;
-    return this.send({ type: "capture_gate", epoch }).catch((error) => {
+    return this.input.send({ type: "capture_gate", epoch }).catch((error) => {
       this.fail(new Error("Audio helper capture gate failed"));
       throw error;
     });
@@ -377,7 +473,7 @@ export class LiveAudio {
     if (this.state !== "idle") throw new Error("Audio helper not idle");
     this.state = "starting";
     const ready = this.waitFor("ready", this.options.startTimeoutMs ?? 30_000);
-    void this.send({ type: "start" }).catch(() => this.fail(new Error("Audio helper input failed")));
+    void this.input.send({ type: "start" }).catch(() => this.fail(new Error("Audio helper input failed")));
     return this.withAbort(ready, "start");
   }
   /** 24kHz mono little-endian PCM16, at most 200ms. Resolves when stdin accepts the write, NOT when played. */
@@ -388,7 +484,7 @@ export class LiveAudio {
       return Promise.reject(new Error("Stale audio generation; flush before changing generation"));
     if (!Buffer.isBuffer(pcm16) || !pcm16.length || pcm16.length > MAX_PLAY || pcm16.length % 2)
       return Promise.reject(new Error("Invalid playback frame"));
-    return this.send({ type: "play", data: pcm16.toString("base64"), generation: gen });
+    return this.input.send({ type: "play", data: pcm16.toString("base64"), generation: gen });
   }
   /** Interrupt with a strictly increasing int32 generation. Drops unsent play writes (their promises reject).
    * A pending write may already have entered the pipe; neither flush nor close can retract it. */
@@ -397,69 +493,8 @@ export class LiveAudio {
     generation(gen);
     if (gen <= this.currentGeneration) return Promise.reject(new Error("Flush generation must increase"));
     this.currentGeneration = gen;
-    this.dropQueuedPlay();
-    return this.send({ type: "flush", generation: gen });
-  }
-  private dropQueuedPlay() {
-    this.queue = this.queue.filter((item, index) => {
-      if (item.type !== "play" || (index === 0 && this.writing)) return true;
-      this.pendingBytes -= item.bytes;
-      item.reject(new Error("Audio playback interrupted"));
-      return false;
-    });
-  }
-  private send(msg: { type: string; [key: string]: unknown }): Promise<void> {
-    if (this.state === "closed") return Promise.reject(new Error("Audio helper closed"));
-    const payload = JSON.stringify(msg) + "\n";
-    const bytes = Buffer.byteLength(payload);
-    if (this.pendingBytes + bytes > MAX_PENDING - (msg.type === "play" ? 256 : 0))
-      return Promise.reject(new Error("Audio helper input queue full"));
-    return new Promise((resolve, reject) => {
-      this.pendingBytes += bytes;
-      this.queue.push({ payload, bytes, type: msg.type, resolve, reject });
-      this.pump();
-    });
-  }
-  private pump() {
-    if (this.writing || this.state === "closed") return;
-    const item = this.queue[0];
-    if (!item) return;
-    this.writing = true;
-    let callbackDone = false;
-    let drained = false;
-    const finish = () => {
-      if (!callbackDone || !drained || this.state === "closed") return;
-      if (this.drainListener) {
-        this.worker.stdin.off("drain", this.drainListener);
-        this.drainListener = undefined;
-      }
-      this.queue.shift();
-      this.pendingBytes -= item.bytes;
-      this.writing = false;
-      item.resolve();
-      this.pump();
-    };
-    try {
-      drained = this.worker.stdin.write(item.payload, (err?: Error | null) => {
-        if (err) {
-          this.fail(new Error("Audio helper input failed"));
-          return;
-        }
-        callbackDone = true;
-        finish();
-      });
-      if (!drained && !this.isClosed()) {
-        this.drainListener = () => {
-          drained = true;
-          this.drainListener = undefined;
-          finish();
-        };
-        this.worker.stdin.once("drain", this.drainListener);
-      }
-      finish();
-    } catch {
-      this.fail(new Error("Audio helper input failed"));
-    }
+    this.input.interruptPlayback();
+    return this.input.send({ type: "flush", generation: gen });
   }
   /** Timeout still closes ownership, but is not an observed microphone stop. */
   stopError?: string;
@@ -471,9 +506,9 @@ export class LiveAudio {
       return Promise.resolve();
     }
     this.state = "stopping";
-    this.dropQueuedPlay();
+    this.input.interruptPlayback();
     const stopped = this.waitFor("stopped", this.options.stopTimeoutMs ?? 2000);
-    void this.send({ type: "stop" }).catch(() => this.close());
+    void this.input.send({ type: "stop" }).catch(() => this.close());
     this.stoppedPromise = stopped.catch(() => {
       this.stopError = "Audio stop acknowledgement was not observed";
       this.close();
@@ -494,20 +529,13 @@ export class LiveAudio {
     this.worker.stdout.off("data", this.onData);
     this.worker.stderr.off("data", this.onStderr);
     this.worker.off("exit", this.onExit);
-    if (this.drainListener) {
-      this.worker.stdin.off("drain", this.drainListener);
-      this.drainListener = undefined;
-    }
     const reason = error ?? new Error("Audio helper closed");
     if (this.waiting) {
       clearTimeout(this.waiting.timer);
       this.waiting.reject(reason);
       this.waiting = undefined;
     }
-    for (const item of this.queue) item.reject(reason);
-    this.queue = [];
-    this.pendingBytes = 0;
-    this.writing = false;
+    this.input.close(reason);
     // Retain error guards until child close or bounded reaping: kill can emit late errors.
     try {
       this.worker.kill("SIGTERM");

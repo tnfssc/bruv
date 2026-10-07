@@ -6,6 +6,7 @@ import type { ExtensionAPI, ExtensionToolContext, ToolDefinition } from "@earend
 import { inspectDiagnostics } from "../src/diagnostics";
 import { executeIsolated, formatResult } from "../src/typescript/execution";
 import { registerExecuteTool } from "../src/typescript/extension";
+import type { TaskRow } from "../src/ui/task-rows";
 import { makePng } from "./image-fixture";
 
 const binary = resolve(import.meta.dir, "../dist/bruv");
@@ -49,6 +50,39 @@ async function stopped(pid: number) {
   } catch {
     return true;
   }
+}
+
+// Capture only the registration surfaces these tool tests exercise. Lifecycle
+// callbacks are selected by event, not by the order registerExecuteTool installs them.
+function registeredExecuteTool(jobHandler?: Parameters<typeof registerExecuteTool>[1]) {
+  let tool!: ToolDefinition;
+  let sessionStart!: () => void;
+  let sessionShutdown!: () => void | Promise<void>;
+  const launches: Array<{ name: string; event: { row: TaskRow } }> = [];
+  registerExecuteTool(
+    {
+      registerTool(value: ToolDefinition) {
+        tool = value;
+      },
+      on(event: string, handler: () => void | Promise<void>) {
+        if (event === "session_start") sessionStart = handler;
+        if (event === "session_shutdown") sessionShutdown = handler;
+      },
+      events: {
+        emit(name: string, event: { row: TaskRow }) {
+          launches.push({ name, event });
+        },
+      },
+    } as unknown as ExtensionAPI,
+    jobHandler,
+    binary,
+  );
+  return {
+    tool,
+    startSession: () => sessionStart(),
+    shutdownSession: () => sessionShutdown(),
+    launches,
+  };
 }
 
 const hang = 'process.on("SIGTERM", () => {}); setInterval(() => {}, 1000); await new Promise(() => {});';
@@ -196,6 +230,51 @@ describe("execute process lifecycle and output", () => {
     ]);
   });
 
+  test.skipIf(process.platform === "win32")(
+    "keeps timeout ownership through synchronous bridge cancellation",
+    async () => {
+      const controller = new AbortController();
+      let bridgeCancelled = false;
+      const result = await executeIsolated(
+        'process.on("SIGTERM", () => {}); try { await shell("wait"); } catch {} await new Promise(() => {});',
+        directory,
+        controller.signal,
+        1_200,
+        {
+          executablePath: binary,
+          killGraceMs: 100,
+          jobHandler: (_method, _params, bridgeSignal) =>
+            new Promise((_resolve, reject) => {
+              bridgeSignal.addEventListener(
+                "abort",
+                () => {
+                  bridgeCancelled = bridgeSignal.aborted;
+                  // Cancellation observers may synchronously request session shutdown.
+                  controller.abort("shutdown");
+                  reject(new Error("Bridge cancelled"));
+                },
+                { once: true },
+              );
+            }),
+        },
+      );
+      expect(bridgeCancelled).toBe(true);
+      expect(controller.signal.reason).toBe("shutdown");
+      expect(result.timedOut).toBe(true);
+      expect(result.cancelled).toBe(false);
+      expect(result.termination?.cause).toBe("timeout");
+      expect(result.signal).toBe("SIGKILL");
+      expect(inspectDiagnostics(result).records).toContainEqual({
+        version: 1,
+        generated: expect.any(String),
+        component: "jobs",
+        code: "timeout",
+        outcome: "cancelled",
+        cancellation: "timeout",
+      });
+    },
+  );
+
   test.skipIf(process.platform === "win32")("cancels a running process and escalates", async () => {
     const controller = new AbortController();
     const pending = execute(`await Bun.write("ready", "yes"); ${hang}`, controller.signal);
@@ -301,19 +380,11 @@ describe("execute process lifecycle and output", () => {
     expect(await readFile(result.stdoutPath!, "utf8")).toBe("begin" + "x".repeat(6000) + "end");
     expect(formatResult(result)).toContain(result.stdoutPath!);
   });
+});
 
+describe("registered execute tool", () => {
   test("tool result exposes session-backed output files to the model", async () => {
-    let tool!: ToolDefinition;
-    registerExecuteTool(
-      {
-        registerTool(value: ToolDefinition) {
-          tool = value;
-        },
-        on() {},
-      } as unknown as ExtensionAPI,
-      undefined,
-      binary,
-    );
+    const { tool } = registeredExecuteTool();
     const sessionFile = join(directory, "real-session.jsonl");
     const ctx = {
       cwd: directory,
@@ -327,224 +398,159 @@ describe("execute process lifecycle and output", () => {
   });
 
   test("marks cancellation as a tool error and rejects calls after session shutdown", async () => {
-    let tool!: ToolDefinition;
-    let shutdown!: () => Promise<void>;
-    registerExecuteTool({
-      registerTool(value: ToolDefinition) {
-        tool = value;
-      },
-      on(_event: string, handler: () => Promise<void>) {
-        shutdown = handler;
-      },
-    } as unknown as ExtensionAPI);
+    const { tool, shutdownSession } = registeredExecuteTool();
     const ctx = { cwd: directory } as ExtensionToolContext;
     await expect(
       tool.execute("cancel", { code: "console.log(1)" }, AbortSignal.abort(), undefined, ctx),
     ).rejects.toThrow("Execution cancelled");
-    await shutdown();
+    await shutdownSession();
     await expect(tool.execute("shutdown", { code: "console.log(1)" }, undefined, undefined, ctx)).rejects.toThrow(
       "Execution cancelled",
     );
   });
-});
 
-test("unsupported-image results keep the image for Pi to omit and use the concise advisory", async () => {
-  let tool!: ToolDefinition;
-  registerExecuteTool(
-    {
-      registerTool(value: ToolDefinition) {
-        tool = value;
-      },
-      on() {},
-    } as unknown as ExtensionAPI,
-    undefined,
-    binary,
-  );
-  const encoded = makePng().toString("base64");
-  const result = await tool.execute(
-    "image",
-    { code: `await showImage(Buffer.from(${JSON.stringify(encoded)}, "base64"));` },
-    undefined,
-    undefined,
-    { cwd: directory, model: { input: ["text"] } } as unknown as ExtensionToolContext,
-  );
-  const content = result.content as Array<{ type: string; text?: string }>;
-  expect(content[0]!.text).toEndWith("This model can't take images. Images not sent.");
-  expect(content[0]!.text).not.toContain("Switch to an image-capable model");
-  expect(content.filter((item) => item.type === "image")).toHaveLength(1);
-});
-
-test("execute shutdown cancellation is classified and a new session receives a fresh controller", async () => {
-  const preempted = await executeIsolated("", process.cwd(), AbortSignal.abort("shutdown"));
-  expect(preempted.termination?.cause).toBe("session-shutdown");
-  expect(inspectDiagnostics(preempted).records[0]).toMatchObject({ code: "shutdown", cancellation: "shutdown" });
-  let tool: any;
-  const handlers = new Map<string, Function>();
-  registerExecuteTool(
-    {
-      registerTool(value: any) {
-        tool = value;
-      },
-      on(event: string, handler: Function) {
-        handlers.set(event, handler);
-      },
-    } as any,
-    undefined,
-    binary,
-  );
-  await handlers.get("session_shutdown")!();
-  const ctx = { cwd: process.cwd() } as ExtensionToolContext;
-  await expect(tool.execute("closed", { code: "console.log(1)" }, undefined, undefined, ctx)).rejects.toThrow(
-    "Execution cancelled",
-  );
-  handlers.get("session_start")!();
-  const result = await tool.execute("fresh", { code: "console.log(2)" }, undefined, undefined, ctx);
-  expect(result.details.stdout.trim()).toBe("2");
-  expect(result.details.diagnostics).toContainEqual({
-    version: 1,
-    generated: expect.any(String),
-    component: "jobs",
-    code: "process_exit",
-    outcome: "success",
+  test("unsupported-image results keep the image for Pi to omit and use the concise advisory", async () => {
+    const { tool } = registeredExecuteTool();
+    const encoded = makePng().toString("base64");
+    const result = await tool.execute(
+      "image",
+      { code: `await showImage(Buffer.from(${JSON.stringify(encoded)}, "base64"));` },
+      undefined,
+      undefined,
+      { cwd: directory, model: { input: ["text"] } } as unknown as ExtensionToolContext,
+    );
+    const content = result.content as Array<{ type: string; text?: string }>;
+    expect(content[0]!.text).toEndWith("This model can't take images. Images not sent.");
+    expect(content[0]!.text).not.toContain("Switch to an image-capable model");
+    expect(content.filter((item) => item.type === "image")).toHaveLength(1);
   });
-});
 
-test("registered execute exposes configurable capture limits and truncation details", async () => {
-  let tool!: ToolDefinition;
-  registerExecuteTool(
-    {
-      registerTool(value: ToolDefinition) {
-        tool = value;
+  test("execute shutdown cancellation is classified and a new session receives a fresh controller", async () => {
+    const preempted = await executeIsolated("", process.cwd(), AbortSignal.abort("shutdown"));
+    expect(preempted.termination?.cause).toBe("session-shutdown");
+    expect(inspectDiagnostics(preempted).records[0]).toMatchObject({ code: "shutdown", cancellation: "shutdown" });
+    const { tool, startSession, shutdownSession } = registeredExecuteTool();
+    await shutdownSession();
+    const ctx = { cwd: process.cwd() } as ExtensionToolContext;
+    await expect(tool.execute("closed", { code: "console.log(1)" }, undefined, undefined, ctx)).rejects.toThrow(
+      "Execution cancelled",
+    );
+    startSession();
+    const result = await tool.execute("fresh", { code: "console.log(2)" }, undefined, undefined, ctx);
+    const details = result.details as { stdout: string; diagnostics: unknown[] };
+    expect(details.stdout.trim()).toBe("2");
+    expect(details.diagnostics).toContainEqual({
+      version: 1,
+      generated: expect.any(String),
+      component: "jobs",
+      code: "process_exit",
+      outcome: "success",
+    });
+  });
+
+  test("registered execute exposes configurable capture limits and truncation details", async () => {
+    const { tool } = registeredExecuteTool();
+    expect(tool.description).toContain("10 MiB");
+    const result = await tool.execute(
+      "capture-budget",
+      {
+        code: 'process.stdout.write("x".repeat(6000))',
+        label: "Capture large output",
+        outputByteLimit: 1000,
       },
-      on() {},
-    } as unknown as ExtensionAPI,
-    undefined,
-    binary,
-  );
-  expect(tool.description).toContain("10 MiB");
-  const result = await tool.execute(
-    "capture-budget",
-    {
-      code: 'process.stdout.write("x".repeat(6000))',
-      label: "Capture large output",
+      undefined,
+      undefined,
+      {
+        cwd: directory,
+        sessionManager: { getSessionFile: () => join(directory, "budget-session.jsonl") },
+      } as unknown as ExtensionToolContext,
+    );
+    expect(result.details).toMatchObject({
       outputByteLimit: 1000,
-    },
-    undefined,
-    undefined,
-    {
-      cwd: directory,
-      sessionManager: { getSessionFile: () => join(directory, "budget-session.jsonl") },
-    } as unknown as ExtensionToolContext,
-  );
-  expect(result.details).toMatchObject({
-    outputByteLimit: 1000,
-    outputBytes: 6000,
-    capturedOutputBytes: 1000,
-    outputTruncated: true,
+      outputBytes: 6000,
+      capturedOutputBytes: 1000,
+      outputTruncated: true,
+    });
+    const content = result.content as Array<{ type: string; text?: string }>;
+    expect(content[0]!.text).toContain("Output capture limit reached");
+    expect(content[0]!.text).not.toContain("complete output:");
+    expect(content[0]!.text).toContain("xxx");
+    expect(content[0]!.text).not.toContain("Capture large output");
   });
-  const content = result.content as Array<{ type: string; text?: string }>;
-  expect(content[0]!.text).toContain("Output capture limit reached");
-  expect(content[0]!.text).not.toContain("complete output:");
-  expect(content[0]!.text).toContain("xxx");
-  expect(content[0]!.text).not.toContain("Capture large output");
-});
 
-test("inline helper completion keeps canonical task identity without becoming background handoff prose", async () => {
-  let tool: any;
-  registerExecuteTool(
-    {
-      on() {},
-      registerTool(value: unknown) {
-        tool = value;
-      },
-    } as unknown as ExtensionAPI,
-    async (_ctx, method) => ({
+  test("inline helper completion keeps canonical task identity without becoming background handoff prose", async () => {
+    const { tool } = registeredExecuteTool(async (_ctx, method) => ({
       id: method === "subagent" ? "helper" : "shell",
       kind: method === "subagent" ? "agent" : "command",
       ...(method === "subagent" ? { title: "Review guide" } : {}),
       status: "completed",
       exitCode: 0,
       background: false,
-    }),
-    binary,
-  );
-  const ctx = { cwd: directory } as ExtensionToolContext;
-  const helper = await tool.execute(
-    "inline-helper",
-    { label: "Ask a helper", code: 'await subagent({prompt:"Review the guide",title:"Review guide"});' },
-    undefined,
-    undefined,
-    ctx,
-  );
-  expect(helper.isError).toBe(false);
-  expect(helper.details.backgroundJobs).toEqual([]);
-  expect(helper.details.taskRows).toEqual([
-    {
-      id: "helper",
-      source: "local",
-      sourceCallId: "inline-helper",
-      title: "Review guide",
-      status: "succeeded",
-      terminal: true,
-      exitCode: 0,
-    },
-  ]);
-  const foreground = await tool.execute(
-    "inline-shell",
-    { label: "Read guide", code: 'await shell("cat GUIDE.md");' },
-    undefined,
-    undefined,
-    ctx,
-  );
-  expect(foreground.isError).toBe(false);
-  expect(foreground.details.taskRows).toEqual([]);
-});
+    }));
+    const ctx = { cwd: directory } as ExtensionToolContext;
+    const helper = await tool.execute(
+      "inline-helper",
+      { label: "Ask a helper", code: 'await subagent({prompt:"Review the guide",title:"Review guide"});' },
+      undefined,
+      undefined,
+      ctx,
+    );
+    expect(helper.isError).toBe(false);
+    const helperDetails = helper.details as { backgroundJobs: string[]; taskRows: TaskRow[] };
+    expect(helperDetails.backgroundJobs).toEqual([]);
+    expect(helperDetails.taskRows).toEqual([
+      {
+        id: "helper",
+        source: "local",
+        sourceCallId: "inline-helper",
+        title: "Review guide",
+        status: "succeeded",
+        terminal: true,
+        exitCode: 0,
+      },
+    ]);
+    const foreground = await tool.execute(
+      "inline-shell",
+      { label: "Read guide", code: 'await shell("cat GUIDE.md");' },
+      undefined,
+      undefined,
+      ctx,
+    );
+    expect(foreground.isError).toBe(false);
+    expect((foreground.details as { taskRows: TaskRow[] }).taskRows).toEqual([]);
+  });
 
-test("background shells persist execute labels at launch and preserve explicit helper titles", async () => {
-  let tool: any;
-  const events: any[] = [];
-  registerExecuteTool(
-    {
-      on() {},
-      registerTool(value: unknown) {
-        tool = value;
-      },
-      events: {
-        emit(name: string, event: unknown) {
-          events.push({ name, event });
-        },
-      },
-    } as unknown as ExtensionAPI,
-    async (_ctx, method) => ({
+  test("background shells persist execute labels at launch and preserve explicit helper titles", async () => {
+    const { tool, launches } = registeredExecuteTool(async (_ctx, method) => ({
       id: method === "shell" ? "task_26de42bf" : "helper",
       kind: method === "shell" ? "command" : "agent",
       status: "running",
       background: true,
       ...(method === "shell" ? { command: "bash ENV=long-command" } : { title: "Review guide" }),
-    }),
-    binary,
-  );
-  const input = {
-    label: "Run final repaired root suite",
-    code: 'await shell("bash ENV=long-command", {waitSeconds:0}); await subagent({prompt:"Review",title:"Review guide"});',
-  };
-  const result = await tool.execute("background-call", input, undefined, undefined, {
-    cwd: directory,
-  } as ExtensionToolContext);
-  expect(result.details.taskRows).toMatchObject([
-    { id: "task_26de42bf", title: input.label, sourceCallId: "background-call", status: "running" },
-    { id: "helper", title: "Review guide", sourceCallId: "background-call", status: "running" },
-  ]);
-  expect(events.map(({ event }) => event.row)).toEqual(result.details.taskRows);
-  events.length = 0;
-  await expect(
-    tool.execute(
-      "failed-call",
-      { ...input, code: input.code + 'throw new Error("outer failure");' },
-      undefined,
-      undefined,
-      { cwd: directory } as ExtensionToolContext,
-    ),
-  ).rejects.toThrow("outer failure");
-  expect(events[0].event.row).toMatchObject({ title: input.label, sourceCallId: "failed-call" });
+    }));
+    const input = {
+      label: "Run final repaired root suite",
+      code: 'await shell("bash ENV=long-command", {waitSeconds:0}); await subagent({prompt:"Review",title:"Review guide"});',
+    };
+    const result = await tool.execute("background-call", input, undefined, undefined, {
+      cwd: directory,
+    } as ExtensionToolContext);
+    const details = result.details as { taskRows: TaskRow[] };
+    expect(details.taskRows).toMatchObject([
+      { id: "task_26de42bf", title: input.label, sourceCallId: "background-call", status: "running" },
+      { id: "helper", title: "Review guide", sourceCallId: "background-call", status: "running" },
+    ]);
+    expect(launches.map(({ event }) => event.row)).toEqual(details.taskRows);
+    launches.length = 0;
+    await expect(
+      tool.execute(
+        "failed-call",
+        { ...input, code: input.code + 'throw new Error("outer failure");' },
+        undefined,
+        undefined,
+        { cwd: directory } as ExtensionToolContext,
+      ),
+    ).rejects.toThrow("outer failure");
+    expect(launches[0]!.event.row).toMatchObject({ title: input.label, sourceCallId: "failed-call" });
+  });
 });

@@ -114,108 +114,93 @@ export class SourceApprovalService {
       const intent = canonical(input);
       if (ctx.sessionManager.getSessionFile() !== intent.jobSessionFile)
         throw Error("Source approval parent session mismatch");
-      let record = this.get(intent.jobSessionFile, intent.taskId);
-      if (record && JSON.stringify(record.intent) !== JSON.stringify(intent))
+      const saved = this.get(intent.jobSessionFile, intent.taskId);
+      if (saved && JSON.stringify(saved.intent) !== JSON.stringify(intent))
         throw Error("Source approval retry intent conflict");
-      if (!record) {
-        const questionOwner = {
-          sessionId: ctx.sessionManager.getSessionId(),
-          branchId: ctx.sessionManager.getLeafId()!,
-        };
-        if (!questionOwner.sessionId || !questionOwner.branchId)
-          throw Error("Source approval requires a durable parent branch");
-        let questionText =
-          "Include these exact pinned untracked files in current-source handoff?\n" +
-          JSON.stringify({
-            taskId: intent.taskId,
-            target: intent.target,
-            source: intent.localRoot,
-            ownerId: intent.ownerId,
-            epoch: intent.epoch,
-            parent: questionOwner,
-            promptSummary: intent.prompt.slice(0, 200),
-            promptSha256: digest(intent.prompt),
-            placement: intent.placement,
-            paths: intent.includeUntracked,
-          });
-        if (questionText.length > 4000) throw Error("Source approval intent exceeds question display limit");
-        const dir = join(this.directory, id(intent.taskId));
-        mkdirSync(dir, { mode: 0o700 });
-        const include = captureRepository(intent.localRoot, join(dir, "include"), intent.includeUntracked);
-        const omit = captureRepository(intent.localRoot, join(dir, "omit"));
-        if (include.base !== omit.base || include.head !== omit.head)
-          throw Error("Tracked source changed during approval preparation");
-        questionText += "\nPinned included snapshot SHA-256: " + digest(readFileSync(include.bundle));
-        if (questionText.length > 4000) throw Error("Source approval intent exceeds question display limit");
-        record = {
-          version: 1,
-          order: {
-            afterSequence,
-            ordinal: readdirSync(this.directory).filter((p) => /^[a-zA-Z0-9_-]{1,100}$/.test(p)).length,
-          },
-          intent,
-          questionOwner,
-          questionText,
-          dedupKey: "source-" + randomUUID(),
-          include: { snapshot: include, sha256: digest(readFileSync(include.bundle)) },
-          omit: { snapshot: omit, sha256: digest(readFileSync(omit.bundle)) },
-          state: "waiting",
-        };
-        atomic(this.file(intent.taskId), record);
-      }
-      if (record.state === "cancelled") return record;
-      if (!record.questionId) {
-        if (
-          ctx.sessionManager.getLeafId() !== record.questionOwner.branchId ||
-          ctx.sessionManager.getSessionId() !== record.questionOwner.sessionId
-        )
-          throw Error("Source approval owner branch changed before question creation");
-        let q = await this.questions.ask(ctx, {
-          text: record.questionText,
-          dedupKey: record.dedupKey,
-          choices: SOURCE_CHOICES,
-          allowFreeText: false,
-          requester: "Source handoff",
-          taskIds: [jobId(intent.taskId)],
-          reason: "Only a human CLI answer can include pinned untracked bytes. Default is omit all untracked files.",
-        });
-        if (q.status === "pending" && !q.blocked)
-          q = await this.questions.block(ctx, {
-            id: q.id,
-            owner: q.owner,
-            version: q.version,
-            checkpoint:
-              "Retry unchanged subagent source intent with source.retryTaskId=" + intent.taskId + " after human answer",
-            taskIds: [jobId(intent.taskId)],
-          });
-        record.questionId = q.id;
-        record.questionVersion = q.version;
-        atomic(this.file(intent.taskId), record);
-      }
-      const q = this.questions.get(ctx, record.questionId);
-      this.assertQuestion(record, q);
-      if (record.state === "ready") return record;
-      if (q.status === "pending") return record;
-      const human =
-        (q.status === "answered" || q.status === "resolved") &&
-        q.answeredFrom === "cli" &&
-        !!q.replyId &&
-        Number.isSafeInteger(q.replyVersion) &&
-        q.replyVersion! >= record.questionVersion! &&
-        q.version > q.replyVersion!;
-      if (human && q.answer === SOURCE_CHOICES[2]) record.state = "cancelled";
-      else {
-        record.state = "ready";
-        record.decision = human && q.answer === SOURCE_CHOICES[0] ? "include" : "omit";
-        record.replyId = human ? q.replyId : undefined;
-        if (record.decision === "omit")
-          record.omissionReason = "Untracked inclusion not approved; all untracked files omitted";
-      }
-      atomic(this.file(intent.taskId), record);
-      return record;
+      const pinned = saved ?? this.pinSource(intent, ctx, afterSequence);
+      if (pinned.state === "cancelled") return pinned;
+      const awaiting = pinned.questionId ? pinned : await this.requestApproval(pinned, ctx);
+      return this.acceptAnswer(awaiting, this.questions.get(ctx, awaiting.questionId!));
     });
   }
-  private assertQuestion(record: SourcePreparation, q: Question) {
+  private pinSource(intent: SourceIntent, ctx: QuestionContext, afterSequence: number): SourcePreparation {
+    const questionOwner = {
+      sessionId: ctx.sessionManager.getSessionId(),
+      branchId: ctx.sessionManager.getLeafId()!,
+    };
+    if (!questionOwner.sessionId || !questionOwner.branchId)
+      throw Error("Source approval requires a durable parent branch");
+    let questionText =
+      "Include these exact pinned untracked files in current-source handoff?\n" +
+      JSON.stringify({
+        taskId: intent.taskId,
+        target: intent.target,
+        source: intent.localRoot,
+        ownerId: intent.ownerId,
+        epoch: intent.epoch,
+        parent: questionOwner,
+        promptSummary: intent.prompt.slice(0, 200),
+        promptSha256: digest(intent.prompt),
+        placement: intent.placement,
+        paths: intent.includeUntracked,
+      });
+    if (questionText.length > 4000) throw Error("Source approval intent exceeds question display limit");
+    const dir = join(this.directory, id(intent.taskId));
+    mkdirSync(dir, { mode: 0o700 });
+    const include = captureRepository(intent.localRoot, join(dir, "include"), intent.includeUntracked);
+    const omit = captureRepository(intent.localRoot, join(dir, "omit"));
+    if (include.base !== omit.base || include.head !== omit.head)
+      throw Error("Tracked source changed during approval preparation");
+    questionText += "\nPinned included snapshot SHA-256: " + digest(readFileSync(include.bundle));
+    if (questionText.length > 4000) throw Error("Source approval intent exceeds question display limit");
+    const record: SourcePreparation = {
+      version: 1,
+      order: {
+        afterSequence,
+        ordinal: readdirSync(this.directory).filter((p) => /^[a-zA-Z0-9_-]{1,100}$/.test(p)).length,
+      },
+      intent,
+      questionOwner,
+      questionText,
+      dedupKey: "source-" + randomUUID(),
+      include: { snapshot: include, sha256: digest(readFileSync(include.bundle)) },
+      omit: { snapshot: omit, sha256: digest(readFileSync(omit.bundle)) },
+      state: "waiting",
+    };
+    atomic(this.file(intent.taskId), record);
+    return record;
+  }
+  private async requestApproval(record: SourcePreparation, ctx: QuestionContext): Promise<SourcePreparation> {
+    if (
+      ctx.sessionManager.getLeafId() !== record.questionOwner.branchId ||
+      ctx.sessionManager.getSessionId() !== record.questionOwner.sessionId
+    )
+      throw Error("Source approval owner branch changed before question creation");
+    let q = await this.questions.ask(ctx, {
+      text: record.questionText,
+      dedupKey: record.dedupKey,
+      choices: SOURCE_CHOICES,
+      allowFreeText: false,
+      requester: "Source handoff",
+      taskIds: [jobId(record.intent.taskId)],
+      reason: "Only a human CLI answer can include pinned untracked bytes. Default is omit all untracked files.",
+    });
+    if (q.status === "pending" && !q.blocked)
+      q = await this.questions.block(ctx, {
+        id: q.id,
+        owner: q.owner,
+        version: q.version,
+        checkpoint:
+          "Retry unchanged subagent source intent with source.retryTaskId=" +
+          record.intent.taskId +
+          " after human answer",
+        taskIds: [jobId(record.intent.taskId)],
+      });
+    const awaiting: SourcePreparation = { ...record, questionId: q.id, questionVersion: q.version };
+    atomic(this.file(record.intent.taskId), awaiting);
+    return awaiting;
+  }
+  private acceptAnswer(record: SourcePreparation, q: Question): SourcePreparation {
     if (
       q.readOnly ||
       q.owner.sessionId !== record.questionOwner.sessionId ||
@@ -227,7 +212,34 @@ export class SourceApprovalService {
       JSON.stringify(q.taskIds) !== JSON.stringify([jobId(record.intent.taskId)])
     )
       throw Error("Source approval question provenance conflict");
+    if (record.state === "ready") return record;
+    if (q.status === "pending") return record;
+    const human =
+      (q.status === "answered" || q.status === "resolved") &&
+      q.answeredFrom === "cli" &&
+      !!q.replyId &&
+      Number.isSafeInteger(q.replyVersion) &&
+      q.replyVersion! >= record.questionVersion! &&
+      q.version > q.replyVersion!;
+    if (human && q.answer === SOURCE_CHOICES[2]) {
+      const cancelled: SourcePreparation = { ...record, state: "cancelled" };
+      atomic(this.file(record.intent.taskId), cancelled);
+      return cancelled;
+    }
+    const decision = human && q.answer === SOURCE_CHOICES[0] ? "include" : "omit";
+    const ready: SourcePreparation = {
+      ...record,
+      state: "ready",
+      decision,
+      replyId: human ? q.replyId : undefined,
+      ...(decision === "omit"
+        ? { omissionReason: "Untracked inclusion not approved; all untracked files omitted" }
+        : {}),
+    };
+    atomic(this.file(record.intent.taskId), ready);
+    return ready;
   }
+
   snapshot(record: SourcePreparation): RepositorySnapshot {
     if (record.state !== "ready") throw Error("Source approval is not ready for dispatch");
     const pinned = record.decision === "include" ? record.include : record.omit;

@@ -80,6 +80,7 @@ function fixture() {
   });
   return {
     adapter,
+    registered,
     runtime,
     ctx,
     entries,
@@ -163,6 +164,130 @@ test("ordinary CLI text is untouched; unknown namespaced input cannot become a m
       { type: "image", source: {} },
     ];
     await expect(h.adapter.dispatchUserCommand(imageCommand)).rejects.toThrow("text only");
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("admission resolves both spellings before dispatch and preserves their argument semantics", async () => {
+  const h = fixture();
+  try {
+    const values: string[] = [];
+    h.registered.set("mode", { handler: async (value: string) => values.push(value) });
+    expect(await h.adapter.dispatchUserCommand(h.message("  /bruv mode   fast  now  "))).toBe(true);
+    expect(await h.adapter.dispatchUserCommand(h.message("  /bruv:mode   fast  now  "))).toBe(true);
+    expect(values).toEqual(["fast now", "fast  now"]);
+    const blocks = h.message("ignored");
+    blocks.message.content = [
+      { type: "text", text: "/bruv:mode" },
+      { type: "text", text: "fast" },
+    ];
+    expect(await h.adapter.dispatchUserCommand(blocks)).toBe(true);
+    expect(values.at(-1)).toBe("fast");
+    for (const text of ["/bruv", "/bruv help", "/bruv:help"]) {
+      expect(await h.adapter.dispatchUserCommand(h.message(text))).toBe(true);
+      expect(h.notices.at(-1)).toContain("/bruv questions open <id>");
+    }
+    await expect(h.adapter.dispatchUserCommand(h.message("/bruv status extra"))).rejects.toThrow("Usage:");
+    await expect(h.adapter.dispatchUserCommand(h.message("/bruv:resources extra"))).rejects.toThrow("Usage:");
+    h.registered.delete("mode");
+    expect(h.adapter.catalog().map((command) => command.name)).not.toContain("bruv:mode");
+    await expect(h.adapter.dispatchUserCommand(h.message("/bruv mode fast"))).rejects.toThrow("Unavailable");
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("extension execution keeps the real context and awaits ordered notification delivery", async () => {
+  const h = fixture();
+  let release!: () => void;
+  const firstDelivery = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const events: string[] = [];
+  let completed = false;
+  const originalNotify = h.ctx.ui.notify;
+  try {
+    h.registered.set("mode", {
+      handler: async (_value: string, context: any) => {
+        expect(context.hasUI).toBe(false);
+        expect(context.mode).toBe("rpc");
+        expect(context.sessionManager).toBe(h.ctx.sessionManager);
+        expect(context.ui.setStatus).toBe(h.ctx.ui.setStatus);
+        context.ui.notify("first", "warning");
+        context.ui.notify("second");
+        events.push("handler returned");
+      },
+    });
+    let deliveryStarted!: () => void;
+    const started = new Promise<void>((resolve) => {
+      deliveryStarted = resolve;
+    });
+    const adapter = createClaudeCompatCommands({
+      session: h.session,
+      async notify(text, level) {
+        events.push(text + " started " + level);
+        if (text === "first") {
+          deliveryStarted();
+          await firstDelivery;
+        }
+        events.push(text + " delivered");
+      },
+    });
+    const dispatch = adapter.dispatchUserCommand(h.message("/bruv mode fast")).then((result) => {
+      completed = true;
+      return result;
+    });
+    await started;
+    expect(completed).toBe(false);
+    expect(events).toEqual(["handler returned", "first started warning"]);
+    release();
+    expect(await dispatch).toBe(true);
+    expect(events).toEqual([
+      "handler returned",
+      "first started warning",
+      "first delivered",
+      "second started info",
+      "second delivered",
+    ]);
+    expect(h.originalNotifications()).toBe(0);
+    expect(h.ctx.ui.notify).toBe(originalNotify);
+  } finally {
+    release();
+    h.cleanup();
+  }
+});
+
+test("questions open uses native human controls, not the extension handler", async () => {
+  const h = fixture();
+  try {
+    const opened: string[] = [];
+    h.registered.set("questions", {
+      handler: () => {
+        throw new Error("must not reach extension");
+      },
+    });
+    const adapter = createClaudeCompatCommands({
+      session: h.session,
+      notify(text) {
+        h.notices.push(text);
+      },
+      humanControls: {
+        async openQuestion(id) {
+          opened.push(id);
+          return { id, status: "pending", text: "Which target?" } as any;
+        },
+      },
+    });
+    expect(await adapter.dispatchUserCommand(h.message("/bruv:questions open q_full"))).toBe(true);
+    expect(opened).toEqual(["q_full"]);
+    expect(h.notices.at(-1)).toBe("q_full [pending] Which target?");
+    await expect(adapter.dispatchUserCommand(h.message("/bruv questions open"))).rejects.toThrow("Usage:");
+    await expect(adapter.dispatchUserCommand(h.message("/bruv questions open q_full extra"))).rejects.toThrow("Usage:");
+    await expect(h.adapter.dispatchUserCommand(h.message("/bruv questions open q_full"))).rejects.toThrow(
+      "unavailable",
+    );
+    expect(opened).toEqual(["q_full"]);
   } finally {
     h.cleanup();
   }

@@ -1,4 +1,4 @@
-import type { Cell } from "./type";
+export type Cell = { text: string; style: string };
 
 /**
  * Scripted, condensed conversations, NOT recorded model responses.
@@ -233,6 +233,68 @@ function wrap(text: string, width: number): string[] {
   return result;
 }
 
+function transcriptRows(shot: Shot, cols: number, spin: string): Cell[][] {
+  // Tools collapse within a user turn, even when prose or tasks separate them.
+  let turn: Block[] = [];
+  const turns = [turn];
+  for (const block of shot.blocks) {
+    if (block.kind === "user" && turn.length) {
+      turn = [];
+      turns.push(turn);
+    }
+    turn.push(block);
+  }
+
+  const rows: Cell[][] = [];
+  let previous: Block | undefined;
+  for (const blocks of turns) {
+    const tools = blocks.filter((block) => block.kind === "tool");
+    const firstTool = blocks.findIndex((block) => block.kind === "tool");
+    for (const [i, block] of blocks.entries()) {
+      if (previous && (block.kind === "user" || previous.kind === "user" || block.kind === "prose"))
+        rows.push(line("", styles.text, cols));
+      previous = block;
+      if (block.kind === "tool") {
+        if (i !== firstTool) continue;
+        const label =
+          tools.length +
+          (tools.length === 1 ? " tool called ▸" : " tools called ▸") +
+          (shot.busy ? " · " + tools.at(-1)!.text : "");
+        const clipped =
+          label.length > cols ? label.slice(0, Math.max(0, cols - 3)) + ".".repeat(Math.min(3, cols)) : label;
+        rows.push(line(clipped, styles.text, cols));
+      } else if (block.kind === "task") {
+        if (block.state === "running") rows.push(line("1 tool called ▸", styles.text, cols));
+        const mark = block.state === "working" ? spin : block.state === "running" ? "↗" : "✓";
+        const color = block.state === "done" ? styles.success : styles.accent;
+        // Actual collapsed tool/task rows truncate instead of wrapping into cards.
+        rows.push(line(" " + mark + " " + block.text, color, cols));
+      } else {
+        for (const text of wrap(block.text, Math.max(1, cols - 2)))
+          rows.push(line(" " + text, block.kind === "user" ? styles.user : styles.text, cols));
+      }
+    }
+  }
+  return rows;
+}
+
+function footerRow(cols: number, jobs: number): Cell[] {
+  // Real compact-footer vocabulary/candidate order; no invented progress counters.
+  const full = "csv-app:main" + (jobs ? " · 1 task" : "") + " · $0.000 · ctx 4%";
+  const short = (jobs ? "1t " : "") + "$0.000 C4%";
+  const left = full.length + 8 <= cols ? full : short;
+  const footer = line(left, styles.dim, cols);
+  const model = "studio";
+  if (left.length + model.length + 2 <= cols)
+    for (let i = 0; i < model.length; i++) footer[cols - model.length + i] = { text: model[i], style: styles.dim };
+  if (jobs) {
+    const start = left.indexOf(left === full ? "1 task" : "1t");
+    const length = left === full ? 6 : 2;
+    for (let x = start; x < Math.min(cols, start + length); x++) if (x >= 0) footer[x].style = styles.accent;
+  }
+  return footer;
+}
+
 export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: Cell[][]; stage: string } {
   cols = Math.max(0, Math.floor(cols));
   const height = demoHeight(cols);
@@ -243,40 +305,7 @@ export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: 
   const shot = [...scripts[id]].reverse().find((s) => s.at <= elapsed) ?? scripts[id][0];
   const spin = spinner[Math.floor(elapsed / 80) % spinner.length];
   const rows = Array.from({ length: height }, () => line("", styles.text, cols));
-  const transcript: Cell[][] = [];
-  for (let i = 0; i < shot.blocks.length; i++) {
-    const block = shot.blocks[i];
-    const previous = shot.blocks[i - 1];
-    if (i && (block.kind === "user" || previous.kind === "user" || block.kind === "prose"))
-      transcript.push(line("", styles.text, cols));
-    if (block.kind === "tool") {
-      // Fullscreen bruv groups tools by user turn. The first tool owns the
-      // count row; active turns append the latest action label. Task details
-      // remain visible separately (protected by the real activity projector).
-      const boundary = shot.blocks.slice(0, i).findLastIndex((b) => b.kind === "user");
-      if (shot.blocks.slice(boundary + 1, i).some((b) => b.kind === "tool")) continue;
-      const nextUser = shot.blocks.findIndex((b, index) => index > i && b.kind === "user");
-      const tools = shot.blocks.slice(i, nextUser < 0 ? undefined : nextUser).filter((b) => b.kind === "tool");
-      const latest = tools.at(-1)!;
-      const label =
-        tools.length +
-        (tools.length === 1 ? " tool called ▸" : " tools called ▸") +
-        (shot.busy ? " · " + latest.text : "");
-      const clipped =
-        label.length > cols ? label.slice(0, Math.max(0, cols - 3)) + ".".repeat(Math.min(3, cols)) : label;
-      transcript.push(line(clipped, styles.text, cols));
-    } else if (block.kind === "task") {
-      if (block.state === "running") transcript.push(line("1 tool called ▸", styles.text, cols));
-      const mark = block.state === "working" ? spin : block.state === "running" ? "↗" : "✓";
-      const color = block.state === "done" ? styles.success : styles.accent;
-      // Actual collapsed tool/task rows truncate instead of wrapping into cards.
-      const cells = line(" " + mark + " " + block.text, color, cols);
-      transcript.push(cells);
-    } else {
-      for (const text of wrap(block.text, Math.max(1, cols - 2)))
-        transcript.push(line(" " + text, block.kind === "user" ? styles.user : styles.text, cols));
-    }
-  }
+  const transcript = transcriptRows(shot, cols, spin);
   const typed =
     shot.input?.slice(0, Math.floor(shot.input.length * Math.min(1, (elapsed - shot.at) / (shot.typeFor ?? 1)))) ?? "";
   const inputLines = wrap(typed, Math.max(1, cols - 2));
@@ -297,21 +326,7 @@ export function demoFrame(id: DemoId, cols: number, elapsedMs: number): { rows: 
     const x = Math.min(cols - 1, 2 + inputLines[inputLines.length - 1].length);
     if (!shot.input || Math.floor(elapsed / 500) % 2 === 0) rows[y][x] = { text: " ", style: styles.cursor };
   }
-  // Real compact-footer vocabulary/candidate order; no invented progress counters.
-  const jobs = shot.jobs ?? 0;
-  const full = "csv-app:main" + (jobs ? " · 1 task" : "") + " · $0.000 · ctx 4%";
-  const short = (jobs ? "1t " : "") + "$0.000 C4%";
-  const left = full.length + 8 <= cols ? full : short;
-  const footer = line(left, styles.dim, cols);
-  const model = "studio";
-  if (left.length + model.length + 2 <= cols)
-    for (let i = 0; i < model.length; i++) footer[cols - model.length + i] = { text: model[i], style: styles.dim };
-  if (jobs) {
-    const start = left.indexOf(left === full ? "1 task" : "1t");
-    const length = left === full ? 6 : 2;
-    for (let x = start; x < Math.min(cols, start + length); x++) if (x >= 0) footer[x].style = styles.accent;
-  }
-  rows[height - 1] = footer;
+  rows[height - 1] = footerRow(cols, shot.jobs ?? 0);
   return { rows, stage: shot.stage };
 }
 

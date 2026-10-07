@@ -28,6 +28,16 @@ const base64Bytes = (s: string): number => {
 };
 const pcm24 = (mime: string): boolean => /^audio\/pcm\s*;\s*rate=24000$/i.test(mime.trim());
 type Message = Parameters<LiveParams["callbacks"]["onmessage"]>[0];
+type ToolCalls = NonNullable<Message["toolCall"]>["functionCalls"];
+type ToolCallRecord = {
+  id: string;
+  name: string;
+  progress:
+    | { kind: "queued" }
+    | { kind: "cancelled" }
+    | { kind: "dispatched" }
+    | { kind: "resolved"; response: Record<string, unknown> };
+};
 
 /** Single-use native-audio session. Bounded transient context/tool results; no recording or persistence. */
 export class VoiceSession {
@@ -41,10 +51,7 @@ export class VoiceSession {
   private ended = false;
   private activityStarted = false;
   private cancelConnect?: () => void;
-  private readonly seenCalls = new Map<
-    string,
-    { name: string; response?: Record<string, unknown>; dispatched?: boolean; cancelled?: boolean }
-  >();
+  private readonly seenCalls = new Map<string, ToolCallRecord>();
   private pendingTools = 0;
   constructor(
     private readonly callbacks: VoiceCallbacks,
@@ -300,16 +307,56 @@ export class VoiceSession {
       this.fail("transport_error", "Could not send tool response");
     }
   }
-  private handleToolCalls(calls: NonNullable<Message["toolCall"]>["functionCalls"]): void {
-    if (!this.orchestration) return;
+  /** Record before sending: a replay must not re-execute even if delivery closes the session. */
+  private replyToToolCall(entry: ToolCallRecord, response: Record<string, unknown>): void {
+    entry.progress = { kind: "resolved", response };
+    this.sendToolReply(entry.id, entry.name, response);
+  }
+  private cancelQueuedToolCalls(ids: string[] | undefined): void {
+    // Advisory cancellation revokes only queued calls, never accepted agent work.
+    for (const id of ids ?? []) {
+      const entry = this.seenCalls.get(id);
+      if (entry?.progress.kind === "queued") entry.progress = { kind: "cancelled" };
+    }
+  }
+  private async dispatchToolCall(
+    entry: ToolCallRecord,
+    call: NonNullable<ToolCalls>[number],
+    orchestration: VoiceOrchestration,
+  ): Promise<void> {
+    ++this.pendingTools;
+    try {
+      // Leave the SDK callback before accepting work. Cancellation/close can still revoke it here.
+      await Promise.resolve();
+      if (this.stateValue !== "ready" || entry.progress.kind === "cancelled") {
+        this.replyToToolCall(entry, { error: "Tool execution failed" });
+        return;
+      }
+      entry.progress = { kind: "dispatched" };
+      let result: unknown;
+      try {
+        result = await orchestration.execute({ id: entry.id, name: entry.name, args: call.args });
+      } catch {
+        this.replyToToolCall(entry, { error: "Tool execution failed" });
+        return;
+      }
+      // Accepted work runs to completion even after disconnect; only wire delivery requires readiness.
+      this.replyToToolCall(entry, await voiceToolResult(result, orchestration.artifactDirectory));
+    } finally {
+      --this.pendingTools;
+    }
+  }
+  private handleToolCalls(calls: ToolCalls): void {
+    const orchestration = this.orchestration;
+    if (!orchestration) return;
     for (const call of calls ?? []) {
       if (this.stateValue !== "ready") return;
-      // Only identified, declared calls are executable. Keep IDs for the lifetime of the
-      // connection so retransmissions cannot run a side-effect twice.
+      // Retain every identified call for the connection lifetime, including rejected/cancelled calls.
       if (!call.id) continue;
       const previous = this.seenCalls.get(call.id);
       if (previous) {
-        if (previous.response) this.sendToolReply(call.id, previous.name, previous.response);
+        if (previous.progress.kind === "resolved")
+          this.sendToolReply(previous.id, previous.name, previous.progress.response);
         continue;
       }
       if (call.id.length > 256 || !call.name || call.name.length > 128) {
@@ -320,56 +367,27 @@ export class VoiceSession {
         this.fail("invalid_input", "Tool call limit exceeded");
         return;
       }
-      const name = call.name;
-      const entry: { name: string; response?: Record<string, unknown>; dispatched?: boolean; cancelled?: boolean } = {
-        name,
-      };
-      this.seenCalls.set(call.id, entry);
-      const reply = (response: Record<string, unknown>) => {
-        entry.response = response;
-        this.sendToolReply(call.id!, name, response);
-      };
+      const entry: ToolCallRecord = { id: call.id, name: call.name, progress: { kind: "queued" } };
+      this.seenCalls.set(entry.id, entry);
       let valid = false;
       try {
         valid =
-          !!name &&
-          this.orchestration.tools.some((tool) => tool.name === name) &&
+          orchestration.tools.some((tool) => tool.name === entry.name) &&
           (!call.args ||
             (typeof call.args === "object" && !Array.isArray(call.args) && jsonSize(call.args) <= MAX_TOOL_BYTES));
       } catch {
         /* malformed or cyclic input */
       }
       if (!valid || this.pendingTools >= MAX_PENDING_TOOLS) {
-        reply({ error: "Tool request rejected" });
+        this.replyToToolCall(entry, { error: "Tool request rejected" });
         continue;
       }
-      ++this.pendingTools;
-      // Dispatch off the SDK callback; cancellation revokes only undispatched calls.
-      void Promise.resolve()
-        .then(() => {
-          if (this.stateValue !== "ready" || entry.cancelled)
-            throw new Error("Tool request invalidated before dispatch");
-          entry.dispatched = true;
-          return this.orchestration!.execute({ id: call.id, name, args: call.args });
-        })
-        .then(
-          (result) => voiceToolResult(result, this.orchestration?.artifactDirectory).then(reply),
-          () => reply({ error: "Tool execution failed" }),
-        )
-        .finally(() => {
-          --this.pendingTools;
-        });
+      void this.dispatchToolCall(entry, call, orchestration);
     }
   }
   private receive(message: Message): void {
     if (message.usageMetadata) this.emit(() => this.callbacks.onUsage?.(message.usageMetadata));
-    // Cancel only undispatched calls, never already accepted agent work.
-    for (const id of message.toolCallCancellation?.ids ?? []) {
-      const entry = this.seenCalls.get(id);
-      if (entry && !entry.dispatched && !entry.response && !entry.cancelled) {
-        entry.cancelled = true;
-      }
-    }
+    this.cancelQueuedToolCalls(message.toolCallCancellation?.ids);
     const content = message.serverContent;
     // These optional signals are useful revocation evidence, never completion
     // evidence. We do not depend on the provider delivering them.

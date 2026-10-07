@@ -96,32 +96,33 @@ export async function revokeCapability(
     return { revoked: true, grantId, ownerNotified: false };
   }
 }
-export async function serviceRemoteTask(client: RemoteClient, task: RemoteTask) {
-  if (task.task?.state === "running" || task.task?.state === "accepted") {
-    const pending = task.task.capabilities;
-    if (Array.isArray(pending)) {
-      if (pending.length > 32) throw Error("Too many pending remote capabilities");
-      for (const raw of pending) {
-        const request = raw as Request;
-        if (request.taskId !== task.taskId || !safeId(request.id) || !safeId(request.grantId))
-          throw Error("Capability identity mismatch");
-        const { dir, store } = local(client);
-        if (existsSync(join(dir, request.grantId + ".revoked"))) continue;
-        const path = join(dirname(client.path), "capability-replies", task.taskId, request.id + ".json");
-        let reply: Reply;
-        if (existsSync(path)) {
-          const saved = JSON.parse(readFileSync(path, "utf8"));
-          if (JSON.stringify(saved.request) !== JSON.stringify(request))
-            throw Error("Capability retry intent conflict");
-          reply = saved.reply;
-        } else {
-          reply = await store.serve(request);
-          atomic(path, { request, reply });
-        }
-        await client.control({ op: "capability-reply", taskId: task.taskId, reply });
-      }
+async function replyToCapabilityRequests(client: RemoteClient, task: RemoteTask) {
+  if (task.task?.state !== "running" && task.task?.state !== "accepted") return;
+  const requests = task.task.capabilities;
+  if (!Array.isArray(requests)) return;
+  if (requests.length > 32) throw Error("Too many pending remote capabilities");
+  const { dir, store } = local(client);
+  for (const request of requests as Request[]) {
+    if (request.taskId !== task.taskId || !safeId(request.id) || !safeId(request.grantId))
+      throw Error("Capability identity mismatch");
+    if (existsSync(join(dir, request.grantId + ".revoked"))) continue;
+
+    // Freeze the locally authorized result before delivery; retries never reread the repository.
+    const path = join(dirname(client.path), "capability-replies", task.taskId, request.id + ".json");
+    let reply: Reply;
+    if (existsSync(path)) {
+      const saved = JSON.parse(readFileSync(path, "utf8"));
+      if (JSON.stringify(saved.request) !== JSON.stringify(request)) throw Error("Capability retry intent conflict");
+      reply = saved.reply;
+    } else {
+      reply = await store.serve(request);
+      atomic(path, { request, reply });
     }
+    await client.control({ op: "capability-reply", taskId: task.taskId, reply });
   }
+}
+export async function serviceRemoteTask(client: RemoteClient, task: RemoteTask) {
+  await replyToCapabilityRequests(client, task);
   const errors: string[] = [];
   try {
     const repository = await returnRepository(client, task);
@@ -170,21 +171,24 @@ export async function requestLocalCapability(
     if (capabilityNeeds(taskDir).length >= 32) throw Error("Too many capability needs");
     atomic(file, intent);
   }
-  const box = new OwnerCapabilityMailbox(taskDir, taskId),
-    start = Date.now();
+  const box = new OwnerCapabilityMailbox(taskDir, taskId);
+  const grant = await waitForCapabilityGrant(box, args.kind, signal);
+  rmSync(file, { force: true });
+  return box.execute(grant.id, args.kind, args.input, { requestId: id, signal, deadlineMs: 3600_000 });
+}
+
+async function waitForCapabilityGrant(box: OwnerCapabilityMailbox, kind: CapabilityKind, signal?: AbortSignal) {
+  const start = Date.now();
   for (;;) {
     if (signal?.aborted) throw Error("Capability request cancelled");
-    if (existsSync(join(taskDir, "capabilities", "terminal.json")))
+    if (existsSync(join(box.taskDir, "capabilities", "terminal.json")))
       throw Error("Remote task ended; capability unavailable");
     if (Date.now() - start > 3600_000) throw Error("Capability grant wait timed out; no local work performed");
-    const dir = join(taskDir, "capabilities", "grants");
+    const dir = join(box.taskDir, "capabilities", "grants");
     for (const name of existsSync(dir) ? readdirSync(dir) : []) {
       if (!name.endsWith(".json")) continue;
       const grant = await box.grant(name.slice(0, -5));
-      if (grant?.kinds.includes(args.kind)) {
-        rmSync(file, { force: true });
-        return box.execute(grant.id, args.kind, args.input, { requestId: id, signal, deadlineMs: 3600_000 });
-      }
+      if (grant?.kinds.includes(kind)) return grant;
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
