@@ -96,7 +96,7 @@
     {
       "file": "scripts/claude-native-acceptance/model.mjs",
       "initialBlob": "974c4c41cd0b921a6b8bb569137a349d95135492",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_caff1c75",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_caff1c75",
@@ -107,18 +107,27 @@
       "judges": [
         {
           "id": "task_84bcbfb5",
-          "status": "running",
-          "candidate": "484fff19d6f71ce3459426ba881d2e953badc4f4"
+          "status": "completed",
+          "candidate": "484fff19d6f71ce3459426ba881d2e953badc4f4",
+          "verdict": "ACCEPT",
+          "blob": "7dbf41d3d38502dc29c44cedc5a24603a408a25b",
+          "relatedBlobs": {
+            "tests/claude-native-acceptance-model.test.mjs": "341241ef6dc769bc102678cea91c9f3e4ec19b16"
+          },
+          "objections": [],
+          "evidence": "Full scenario/caller/diff review; separated notification-only correlation and visible generated cancellation/question authority programs. Judge reproduced baseline delayed sequence2 vs candidate sequence1; malformed JSON preserves no allocation/latest diagnostic convention. Independently 42 Node tests +2 Bun tests10 assertions +syntax/diff.",
+          "limits": "Injected generated-program APIs test order/authority, not real connector/dialog/cancellation delivery/provider acceptance."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "7dbf41d3d38502dc29c44cedc5a24603a408a25b",
       "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47",
       "observedIncidentalFix": "Worker reproduced overlapping async replies both recording/emitting sequence 2 while delayed request tool identity is sequence 1 using supported options.reply; proposes request-local attribution and deterministic overlap regression. Must be independently judged; not yet accepted.",
       "changedRelatedPaths": [
         "tests/claude-native-acceptance-model.test.mjs"
       ],
       "readingResult": "Notification-only persisted ID/history correlation separated from ordinary scenario selection; runtime programs expose launch/save-owned-ID/stop/terminal wait and saved question authority instead of nested quote concatenation. Request-local sequence fixes reproduced overlapping async SSE/record attribution.",
-      "checks": "42 Node tests across acceptance/model variants;2 Bun node-path tests/10 expectations;syntax/format/lint/diff passed; fixtures not real connector evidence."
+      "checks": "42 Node tests across acceptance/model variants;2 Bun node-path tests/10 expectations;syntax/format/lint/diff passed; fixtures not real connector evidence.",
+      "integrationState": "Exact accepted source + related test integrated; related test primary pending"
     },
     {
       "file": "scripts/claude-native-acceptance/run-subagent.mjs",
@@ -305,32 +314,54 @@
     {
       "file": "src/claude-compat/commands.ts",
       "initialBlob": "f50902cd03e53ac8a58906b24d4ef01e532c55f8",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_b1382f6c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_b1382f6c",
         "branch": "bruv/primary-commands-b1382f6c",
         "launchBase": "d94451f0cccb25bfa4269069bbc6dd82decd73d4",
-        "commit": null
+        "commit": "3013a308208dba8bf92de2a6b4a911a286a5ad5a"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_dfe81e3e",
+          "status": "running",
+          "candidate": "3013a308208dba8bf92de2a6b4a911a286a5ad5a"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "d94451f0cccb25bfa4269069bbc6dd82decd73d4"
+      "launchBase": "d94451f0cccb25bfa4269069bbc6dd82decd73d4",
+      "changedRelatedPaths": [
+        "tests/claude-compat-commands.test.ts"
+      ],
+      "readingResult": "readHumanCommand owns recognition/authority/syntax normalization; dispatch selects visible effects; runExtensionCommand owns context projection and ordered notification completion. Retains two spellings whitespace differences.",
+      "checks": "20 focused pass129 assertions; new tests baseline6 pass57 assertions; typecheck/format/lint/diff pass,7 infos."
     },
     {
       "file": "src/claude-compat/frontend.ts",
       "initialBlob": "72795e199794f3aaac8ca266277289b498235b52",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_01071cbe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_01071cbe",
         "branch": "bruv/primary-frontend-01071cbe",
         "launchBase": "d94451f0cccb25bfa4269069bbc6dd82decd73d4",
-        "commit": null
+        "commit": "898826edd36649f92faa239effb2989d1364ac25"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_78d1ce83",
+          "status": "running",
+          "candidate": "898826edd36649f92faa239effb2989d1364ac25"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "d94451f0cccb25bfa4269069bbc6dd82decd73d4"
+      "launchBase": "d94451f0cccb25bfa4269069bbc6dd82decd73d4",
+      "changedRelatedPaths": [
+        "tests/claude-compat-frontend.test.ts"
+      ],
+      "readingResult": "Run accounting/failures have one replacement boundary, separate persistent delivery; routing records/publishes assistant messages while settlement alone ends run. Retains results/retry precedence/command fate/consumption attribution.",
+      "checks": "16 top-level pass69 assertions across 5 suites including isolated runtime/ownership;4 new tests baseline pass; typecheck/format/diff pass;1 existing lint warning."
     },
     {
       "file": "src/claude-compat/history.ts",
@@ -697,8 +728,14 @@
     {
       "file": "tests/claude-compat-launch.test.ts",
       "initialBlob": "43bb031ffd0b2d74bdc83b48c13434161c33547a",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_2cea9559",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_2cea9559",
+        "branch": "bruv/primary-launch-tests-2cea9559",
+        "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -708,7 +745,8 @@
           "blob": "36dade8e529327d36e7defa61bf9acf899fbae0a",
           "candidate": "150667b5d6000ff8f6bdc933a1ef57e5256511e0"
         }
-      ]
+      ],
+      "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388"
     },
     {
       "file": "tests/claude-compat-launcher.test.ts",
@@ -874,7 +912,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_84bcbfb5",
+          "verdict": "ACCEPT",
+          "blob": "341241ef6dc769bc102678cea91c9f3e4ec19b16",
+          "candidate": "484fff19d6f71ce3459426ba881d2e953badc4f4"
+        }
+      ]
     },
     {
       "file": "tests/claude-native-app-delegation-model.test.mjs",
@@ -1008,9 +1054,15 @@
       "file": "tests/claude-compat-arguments.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-primary",
+      "status": "primary-running",
       "introducedBy": "e5f89da92237ef8f257f4afd30fe0250630eba66",
-      "primary": null,
+      "primary": {
+        "id": "task_a3a6c083",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_a3a6c083",
+        "branch": "bruv/primary-new-argument-tests-a3a6c083",
+        "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1020,7 +1072,18 @@
           "blob": "49284980b17450943aaf9fed71f6cbc2dbd74cdd",
           "candidate": "e5f89da92237ef8f257f4afd30fe0250630eba66"
         }
-      ]
+      ],
+      "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388"
+    },
+    {
+      "file": "tests/claude-compat-frontend.test.ts",
+      "kind": "new",
+      "initialBlob": null,
+      "status": "pending-candidate",
+      "introducedBy": "898826edd36649f92faa239effb2989d1364ac25",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
     }
   ],
   "crossAreaNeeds": [],
@@ -1046,6 +1109,26 @@
       "status": "passed",
       "scope": "Integrated production-bridge/native-routing 39 pass,159 assertions",
       "limits": "No live/full gate."
+    },
+    {
+      "id": "task_a8f68269",
+      "commit": "e2a40af0",
+      "status": "passed",
+      "scope": "Integrated arguments/launch/transport/runtime/composition 39 outer pass179 assertions; tsc --noEmit; focused format/lint",
+      "limits": "10 warnings/15 infos; isolated subprocess suites; no live/full gate."
+    }
+  ],
+  "combinedReviews": [
+    {
+      "id": "task_0e9b905b",
+      "status": "running",
+      "candidate": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
+      "files": [
+        "src/claude-compat/cli.ts",
+        "src/claude-compat/arguments.ts",
+        "tests/claude-compat-launch.test.ts",
+        "tests/claude-compat-arguments.test.ts"
+      ]
     }
   ]
 }
