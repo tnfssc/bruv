@@ -913,13 +913,20 @@
       "judgeRounds": [
         {
           "id": "task_c817da47",
-          "status": "running",
+          "status": "complete",
           "candidate": "357b3a75677e60ce60bdf341e4988242f2d762fe",
-          "base": "25f29f5e951dcbef28df99a15eac7cf41debaed0"
+          "base": "25f29f5e951dcbef28df99a15eac7cf41debaed0",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Readinessmetadata separated from runtimeresolution;OpenAIcanonical-only explicit;import guard/read/recheck/lockedoverwrite sequence clear;fd security/boundedliteralparse/opaqueerrors one lifetime;legacy diagnosticreader notproductfallback.",
+          "checks": "Independent107tests580assertions across5 areas,diffclean;no provider/device/macOS/fullbuild/compiledCLI.",
+          "acceptedBlobs": {
+            "src/live/credentials.ts": "ddff52c311a81faef6290ed979f50a04fd5182cb"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged discovery separate from runtime resolution;import guards descriptor access/rechecks config/locked callback decideswrite;one trycatchfinally owns file descriptor. Extraction addsindirection.",
       "checks": "107tests580assertions acrosscredential/lifecycle/setup/extension/startupprobe;no provider/device/macOS/fullbuild."
@@ -2286,9 +2293,16 @@
         "status": "candidate ready",
         "commit": "2e62282fd6ca936b142a6f16a60ad69e96770804"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_3b13ed9b",
+          "status": "running",
+          "candidate": "2e62282fd6ca936b142a6f16a60ad69e96770804",
+          "base": "186634bd6a0ef9906a3ccc8cedba4bdc47f4dd33"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_46031fcf",
         "verdict": "ACCEPT",
