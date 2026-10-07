@@ -282,12 +282,15 @@
     {
       "focus": "src/remote/entry.ts",
       "initialBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_1a846ca2",
-          "status": "running",
-          "candidate": "e9674b1b8468e74288f6ae2dabe297d2d752e13e"
+          "status": "completed",
+          "candidate": "e9674b1b8468e74288f6ae2dabe297d2d752e13e",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Single bounded stdin→parse/ownership validation→await owner→encode→await stdout flush path; transport errors distinct from owner identity/replay/execution authority.",
+          "checks": "Judge candidate 2 pass/18 assertions/1 filtered; full diff/callers checked; no successful launch/size/cancel/live/compiled proof."
         }
       ],
       "primary": {
@@ -299,7 +302,9 @@
       "launchBase": "6c4dcba1024226c5e6afb5e863cbc8a105b73838",
       "result": "Unchanged bounded stdin/parsing/own-field validation/await owner/error JSON/await stdout flush sequence; owner remains semantic authority.",
       "checks": "2 pass/18 assertions; own asset prep fixed generated asset setup; no live/build.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
+      "integrationState": "unchanged exact area blob"
     },
     {
       "focus": "src/remote/extension.ts",
@@ -660,20 +665,36 @@
     {
       "focus": "src/remote/root-entry.ts",
       "initialBlob": "727f150cfcf105e5faef09c6af419393f71f931d",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_b0d1026c",
+          "status": "running",
+          "candidate": "bec424285135d23fe400d6c3e03142c99176bf75"
+        }
+      ],
       "launchBase": "c6f7908aafd83361e6ee6ca1a351cd152ee764fc",
       "primary": {
         "id": "task_717a7437",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_717a7437",
-        "branch": "bruv/remote-primary-root-entry-717a7437"
-      }
+        "branch": "bruv/remote-primary-root-entry-717a7437",
+        "commit": "bec424285135d23fe400d6c3e03142c99176bf75"
+      },
+      "result": "Unchanged bounded input/parse/await owner/error encode/await stdout sequence; delivery outside catch retains nonzero write failure exit, owner owns validation/replay/storage.",
+      "checks": "16 existing pass/106 assertions plus malformed JSON and oversized input subprocess probes; no live/build.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/root-options.ts",
       "initialBlob": "741b7f4a9bd5a1639ca2ba52813cbf5d9ab9167e",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "8f9797abb9b4bbf6e443740368321320aacade21",
+      "primary": {
+        "id": "task_59933a23",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_59933a23",
+        "branch": "bruv/remote-primary-root-options-59933a23"
+      }
     },
     {
       "focus": "src/remote/root-owner.ts",
@@ -819,8 +840,14 @@
     {
       "focus": "src/remote/root-transport.ts",
       "initialBlob": "c73012514dbcb2efc3ca12d8198d777fc7892f96",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "8f9797abb9b4bbf6e443740368321320aacade21",
+      "primary": {
+        "id": "task_948b327d",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_948b327d",
+        "branch": "bruv/remote-primary-root-transport-948b327d"
+      }
     },
     {
       "focus": "src/remote/runtime.ts",
@@ -1212,7 +1239,7 @@
     {
       "focus": "tests/remote-client.test.ts",
       "initialBlob": "b7f7ba5ecb51b1dec96fe07d6cc5be4ddee790bc",
-      "status": "rework-judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_43df06c7",
@@ -1230,9 +1257,12 @@
         },
         {
           "id": "task_45f4b422",
-          "status": "running",
+          "status": "completed",
           "candidate": "4e396c2449478a2e089c79138bb2691ebdb0dbb1",
-          "context": "Fresh complete-context review after REJECT for five fixture type errors; stopped attempt preserved; final aliases plus full proof."
+          "context": "Fresh complete-context review after REJECT for five fixture type errors; stopped attempt preserved; final aliases plus full proof.",
+          "verdict": "ACCEPT",
+          "reason": "Actual pre-POST on-disk evidence and separate mutation/sync observations clarify durability; callback owns lock-probe child lifetime. Three fixture request assertions resolve every prior typing rejection without production Transport changes.",
+          "checks": "Judge 23 pass/126 assertions and whole-project tsc pass; format/lint/diff pass; original-to-final only aliases/use sites; old page/integration regressions byte-identical."
         }
       ],
       "relatedAcceptance": {
@@ -1254,7 +1284,7 @@
       "result": "Pre-POST persistence evidence captured at transport boundary rather than inferred post-failure; mutation versus sync records separate; lock probe lifetime callback-owned; child scripts show acquire/crash phases.",
       "checks": "23 pass/126 assertions; old tests survived omitting pre-POST saves while new fail at explicit evidence; production restored; format/lint/diff pass.",
       "changedRelatedPaths": [],
-      "integrationState": "REJECTED candidate retained, not integrated; area remains earlier related accepted ba03c0e blob",
+      "integrationState": "only final rework integrated; original rejected candidate and stalled uncommitted attempt retained",
       "reworks": [
         {
           "id": "task_11672539",
@@ -1280,9 +1310,10 @@
           "status": "candidate",
           "reason": "Fresh replacement of stalled rework; same unresolved five fixture request-type errors, full prior context supplied.",
           "commit": "4e396c2449478a2e089c79138bb2691ebdb0dbb1",
-          "response": "Committed candidate; ready for independent judge.\n\n- **Base:** `a6872af1deea4820d9c4505f3776bac54856edf8`\n- **Candidate:** `4e396c2449478a2e089c79138bb2691ebdb0dbb1`\n- **Branch:** `bruv/remote-client-test-typing-fresh-rework-b3067ab8`\n- **Changed paths:** `tests/remote-client.test.ts`, `wisdom/quality/structural-readability-worker.md`\n\n**Before → after:** tests inferred persistence after transport failure and filtered mixed request logs. They now capture on-disk launch/answer intent before POST, separate mutation evidence from sync observations, and own lock-probe child cleanup inside the callback.\n\n**Rejection addressed:** reproduced all five compiler errors, then fixed them using three fixture-local launch/answer/sync request aliases. Compared with the original candidate, only these aliases/use-sites differ. Production `Transport` is unchanged.\n\n**Proof:** full `bun run check` passes; focused suite **23 pass, 126 assertions**; format, lint and diff checks pass. Pagination/integration regressions remain byte-identical. Stronger pre-POST assertions and callback-owned cleanup are preserved.\n\nStopped worker’s worktree untouched. No active-area overlap, incidental behavior fix, push or PR. Fresh proof note written; values unchanged. Acceptance remains the independent judge’s decision."
+          "response": "All five TS errors reproduced then fixed at three internal fixture request boundaries; no production changes. Full check and 23/126 pass; prior regressions byte-identical."
         }
-      ]
+      ],
+      "acceptedBlob": "2439a5752941a42426a09c94e8d57c19ab97b792"
     },
     {
       "focus": "tests/remote-descendant-environment.test.ts",
@@ -1541,8 +1572,14 @@
     {
       "focus": "tests/remote-runtime.test.ts",
       "initialBlob": "f71e08976aeb005bf9249915b1655f677096b4f2",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_5783d9c9",
+          "status": "running",
+          "candidate": "cac155c2d54ef9b7eff6385e248d24c27421c4d3"
+        }
+      ],
       "relatedAcceptance": {
         "judge": "task_e1ab9585",
         "blob": "fe29cd1cfb93ec39984d2fd2e3babc5054c29260",
@@ -1552,8 +1589,12 @@
       "primary": {
         "id": "task_a9d68611",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_a9d68611",
-        "branch": "bruv/remote-primary-runtime-tests-a9d68611"
-      }
+        "branch": "bruv/remote-primary-runtime-tests-a9d68611",
+        "commit": "cac155c2d54ef9b7eff6385e248d24c27421c4d3"
+      },
+      "result": "Unchanged explicit start/blocked capture/artifact persistence/settlement publication; cleanup drains capture; repeated pagination error-only; killed turn liveness distinct cancellation.",
+      "checks": "27 pass/201 across four files; format/lint/diff pass, inherited import organization error under stricter Biome check.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-session-switch.test.ts",
@@ -1876,6 +1917,13 @@
       "command": "bun run check; bun test tests/remote-root-presenter.test.ts tests/remote-root-client.test.ts",
       "result": "Whole configured typecheck pass; 39 pass/212 assertions",
       "limits": "Mocked terminal routing, no physical/live/compiled proof"
+    },
+    {
+      "commit": "8f9797ab",
+      "job": "task_ccc79951",
+      "command": "bun test remote-capability-runtime,remote-capabilities,remote-client tests",
+      "result": "39 pass, 0 fail, 212 assertions",
+      "limits": "No live/provider/compiled parity"
     }
   ],
   "crossAreaNeeds": [

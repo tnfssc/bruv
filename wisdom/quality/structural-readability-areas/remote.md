@@ -78,3 +78,5 @@ Runtime edb1318b ACCEPT task_e1ab9585 at 87b03ef3: output-preserving evidence co
 Presenter-test own primary/judge task_20e04838 ACCEPT b4ed20c0. Real terminal callback/focused TUI routing replaces incorrect helper bypass; independent harness reproduced old 2 root calls vs new 0, all assertions retained. Mocked I/O is not physical-terminal proof. Judge accidentally ran area build creating dist; not counted as build acceptance.
 
 Capability-test own primary 189f56e3 ACCEPT task_d83b6e0b at bb79598d: abort/deadline/revocation/terminal tests have independent authority, remove confounded failures and use explicit frozen-reply oracle. All prior combined service/mailbox regressions retained.
+
+Client-test final rework 4e396c24 ACCEPT task_45f4b422 at 2439a575, independently 23 tests/126 + whole tsc pass. Original e2e6c5d stays REJECTED for five typing errors and was never integrated; stopped task_11672539 edits retained. Final preserves pre-POST disk evidence/child cleanup and byte-identical prior page/integration regressions; only three request assertions resolve typing.
