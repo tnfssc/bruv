@@ -1693,10 +1693,17 @@
     {
       "focus": "tests/live-audio-lifecycle.test.ts",
       "initialBlob": "e210a7e633afecac8ef19c67837a9024fc462e13",
-      "primary": null,
+      "primary": {
+        "id": "task_61f07074",
+        "launchBase": "cf84f410a59cd511f13346aca89a6b195a86ad7b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_61f07074",
+        "branch": "bruv/primary-tests-live-audio-lifecycle.test.-61f07074",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_aeb6dd8f",
         "verdict": "ACCEPT",
@@ -1711,17 +1718,20 @@
         "launchBase": "92dfbbbd944f133de6c4b94cd1ffdb73489ad085",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_af04f669",
         "branch": "bruv/primary-tests-live-audio.test.ts-af04f669",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "ed86cb9cd103d92c431cef5e03fe55184fa6f59f"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_610f6154",
         "verdict": "ACCEPT",
         "blob": "703bdeb68fe253c7c6765f6dbd3dd539f05c6ff8"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Independent contract tests remove unrelated helperlifetimes insidecompoundcases;grouped byauthority withinline effects;native batchedplayed->stopped/queueonlytimeout/parser/gate/reaping preserved,newpendingready+EOFnotack;honesttitles.",
+      "checks": "66focusedtests20339assertions;focusedTS/Biome/diffpass;roottypes absentassetJSON, no runtimefix/provider/device/macOS."
     },
     {
       "focus": "tests/live-auth-lifecycle.test.ts",
