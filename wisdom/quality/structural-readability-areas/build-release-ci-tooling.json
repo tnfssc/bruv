@@ -290,7 +290,7 @@
     {
       "focus": "scripts/ci.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_ec82b387",
@@ -306,13 +306,18 @@
           "id": "task_23554482",
           "base": "6d71a95c5c8ed79da1a3f4247e06cefa777ac215",
           "candidate": "b39480aa68327f107e93545f7280f19677b38260",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Single runner temp lifetime/EXIT cleanup, one log wrapper with pipefail, early macOS branch and linear Linux gates. Command order/lane ownership visibly coherent.",
+          "checks": "Independent bash-n and12tests124assertions; broader43pass2fail due absent candidate dependencies(Pi/vendor-license). No real build/macOS/device/SSH."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ffeab90a9248f3de7591633b6088ae6afd6889a4",
       "readingResult": "Unchanged direct caller→one owned temp lifetime→one logging wrapper→explicit macOS branch and Linux gate sequence; extraction adds navigation.",
-      "checks": "45pass513assertions with shared deps; shell syntax pass; no full build/real macOS/provider."
+      "checks": "45pass513assertions with shared deps; shell syntax pass; no full build/real macOS/provider.",
+      "integrationState": "Unchanged focus matches area tip; local note excluded; no inference on other workflow paths."
     },
     {
       "focus": "scripts/find-ci-baseline.ts",
@@ -1006,17 +1011,25 @@
     {
       "focus": "tests/production-packaging.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_93f789d2",
           "launchBase": "6d71a95c5c8ed79da1a3f4247e06cefa777ac215",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_93f789d2",
           "branch": "bruv/primary-tests-production-packaging.test.-93f789d2",
+          "state": "completed",
+          "commit": "0265b4e62a974523680fc17997cb16a14455652f"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_5bc6b47f",
+          "base": "6d71a95c5c8ed79da1a3f4247e06cefa777ac215",
+          "candidate": "0265b4e62a974523680fc17997cb16a14455652f",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -1024,7 +1037,9 @@
         "verdict": "ACCEPT",
         "blob": "aec669688b9fb751badf5e307ca0101fddc26b98",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Unchanged command expectations→self-contained child fixture+cleanup→release inventory→provenance/env handoff; no structural tangle.",
+      "checks": "31pass459assertions related packaging/manual/workflows;format pass,2 existing lint regex warnings;no full/native."
     },
     {
       "focus": "tests/publish-release.test.ts",
@@ -1089,8 +1104,16 @@
     {
       "focus": "tests/release-workflows.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_3d7fb50a",
+          "launchBase": "6fef8439097918b80bac1693f31160f1e799b54d",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_3d7fb50a",
+          "branch": "bruv/primary-tests-release-workflows.test.ts-3d7fb50a",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
