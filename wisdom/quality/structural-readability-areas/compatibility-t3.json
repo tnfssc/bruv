@@ -349,7 +349,7 @@
     {
       "file": "src/claude-compat/frontend.ts",
       "initialBlob": "72795e199794f3aaac8ca266277289b498235b52",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_01071cbe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_01071cbe",
@@ -360,17 +360,26 @@
       "judges": [
         {
           "id": "task_78d1ce83",
-          "status": "running",
-          "candidate": "898826edd36649f92faa239effb2989d1364ac25"
+          "status": "completed",
+          "candidate": "898826edd36649f92faa239effb2989d1364ac25",
+          "verdict": "ACCEPT",
+          "blob": "557693c15cc2ce9e8db9d339dc708bb799e0242c",
+          "relatedBlobs": {
+            "tests/claude-compat-frontend.test.ts": "3b61902f5d029433cac72a63e9188bd729889f21"
+          },
+          "objections": [],
+          "evidence": "Replaceable per-run accounting/error state separate from persistent output tail/error; message event recording distinct from settlement. Retained result/retry priority/command fate/consumption attribution/aux accounting. Independent14 tests67 assertions.",
+          "limits": "Runtime/ownership suite blocked by pi-ai/compat dependency resolution; no live/full gate."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "557693c15cc2ce9e8db9d339dc708bb799e0242c",
       "launchBase": "d94451f0cccb25bfa4269069bbc6dd82decd73d4",
       "changedRelatedPaths": [
         "tests/claude-compat-frontend.test.ts"
       ],
       "readingResult": "Run accounting/failures have one replacement boundary, separate persistent delivery; routing records/publishes assistant messages while settlement alone ends run. Retains results/retry precedence/command fate/consumption attribution.",
-      "checks": "16 top-level pass69 assertions across 5 suites including isolated runtime/ownership;4 new tests baseline pass; typecheck/format/diff pass;1 existing lint warning."
+      "checks": "16 top-level pass69 assertions across 5 suites including isolated runtime/ownership;4 new tests baseline pass; typecheck/format/diff pass;1 existing lint warning.",
+      "integrationState": "Exact reviewed source+new test joined; new test primary pending"
     },
     {
       "file": "src/claude-compat/history.ts",
@@ -707,8 +716,14 @@
     {
       "file": "tests/claude-compat-commands.test.ts",
       "initialBlob": "e506ca3fda50eaebad675cf026e8948b8e4e128e",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_71d2ae32",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_71d2ae32",
+        "branch": "bruv/primary-command-tests-71d2ae32",
+        "launchBase": "fcf8c27950ddece94e2bb981fc436829dbb503e6",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -718,7 +733,8 @@
           "blob": "79e9072515373a6863025dfd0c74e40168f7097c",
           "candidate": "3013a308208dba8bf92de2a6b4a911a286a5ad5a"
         }
-      ]
+      ],
+      "launchBase": "fcf8c27950ddece94e2bb981fc436829dbb503e6"
     },
     {
       "file": "tests/claude-compat-compiled.test.ts",
@@ -763,13 +779,13 @@
     {
       "file": "tests/claude-compat-launch.test.ts",
       "initialBlob": "43bb031ffd0b2d74bdc83b48c13434161c33547a",
-      "status": "primary-running",
+      "status": "judge-queued",
       "primary": {
         "id": "task_2cea9559",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_2cea9559",
         "branch": "bruv/primary-launch-tests-2cea9559",
         "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
-        "commit": null
+        "commit": "6e25cf94e5b4224e205b1c90b4a616403a823612"
       },
       "judges": [],
       "acceptedBlob": null,
@@ -781,7 +797,10 @@
           "candidate": "150667b5d6000ff8f6bdc933a1ef57e5256511e0"
         }
       ],
-      "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388"
+      "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
+      "changedRelatedPaths": [],
+      "readingResult": "Harness owns repeated NDJSON/EOF mechanics; explicit startup/generation promises replace readiness polling/optional reject callback; environment vs permission lifetimes separated; teardown completion count stronger than entry count.",
+      "checks": "38 tests178 assertions; typecheck/format/lint/diff; early-return mutation passes three baseline cancellation cases but fails all candidate cases; no production edit retained."
     },
     {
       "file": "tests/claude-compat-launcher.test.ts",
@@ -944,15 +963,21 @@
     {
       "file": "tests/claude-native-acceptance-model.test.mjs",
       "initialBlob": "0b993a6daeef0eb081aca96e1d202ff802e8e151",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_bb4a09fd",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_bb4a09fd",
         "branch": "bruv/primary-acceptance-model-tests-bb4a09fd",
         "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
-        "commit": null
+        "commit": "e64138c06a0b4bbcd0b5dc56089cae40851e9259"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_abb511f6",
+          "status": "running",
+          "candidate": "e64138c06a0b4bbcd0b5dc56089cae40851e9259"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -962,7 +987,10 @@
           "candidate": "484fff19d6f71ce3459426ba881d2e953badc4f4"
         }
       ],
-      "launchBase": "402c11381670f61ec088c6a4e5532155837198ae"
+      "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
+      "changedRelatedPaths": [],
+      "readingResult": "Fresh whole337-line review unchanged: separate cancellation ownership/terminal inspection/delivery evidence; question returned authority+explicit answers; request-local concurrency evidence; each fixture owns server/temp lifetime.",
+      "checks": "15 focused Bun tests pass; no real connector/full gate."
     },
     {
       "file": "tests/claude-native-app-delegation-model.test.mjs",
@@ -1096,7 +1124,7 @@
       "file": "tests/claude-compat-arguments.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "judge-queued",
+      "status": "judging",
       "introducedBy": "e5f89da92237ef8f257f4afd30fe0250630eba66",
       "primary": {
         "id": "task_a3a6c083",
@@ -1105,7 +1133,13 @@
         "launchBase": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
         "commit": "84835d670152921268ecd3e5e0207158853efb10"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_4c141287",
+          "status": "running",
+          "candidate": "84835d670152921268ecd3e5e0207158853efb10"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1124,11 +1158,19 @@
       "file": "tests/claude-compat-frontend.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-candidate",
+      "status": "pending-primary",
       "introducedBy": "898826edd36649f92faa239effb2989d1364ac25",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_78d1ce83",
+          "verdict": "ACCEPT",
+          "blob": "3b61902f5d029433cac72a63e9188bd729889f21",
+          "candidate": "898826edd36649f92faa239effb2989d1364ac25"
+        }
+      ]
     }
   ],
   "crossAreaNeeds": [],
@@ -1168,19 +1210,36 @@
       "status": "passed",
       "scope": "Integrated six acceptance-model suites42 Node tests;node-path2 Bun tests10 assertions",
       "limits": "Local fixtures only, not real native/provider acceptance."
+    },
+    {
+      "id": "task_c5b8510a",
+      "commit": "fcf8c279",
+      "status": "passed",
+      "scope": "Integrated commands/lifecycle/human-controls/runtime22 top-level pass137 assertions;typecheck",
+      "limits": "Runtime isolated child; no compiled/live/full gate."
     }
   ],
   "combinedReviews": [
     {
       "id": "task_0e9b905b",
-      "status": "running",
+      "status": "completed",
       "candidate": "e2a40af0f736aee0d495e7672b3c198a5eb21388",
       "files": [
         "src/claude-compat/cli.ts",
         "src/claude-compat/arguments.ts",
         "tests/claude-compat-launch.test.ts",
         "tests/claude-compat-arguments.test.ts"
-      ]
+      ],
+      "verdict": "ACCEPT",
+      "objections": [],
+      "blobs": {
+        "src/claude-compat/cli.ts": "c3d9050ff5912bb22e961b72c52717b5cb3aede4",
+        "src/claude-compat/arguments.ts": "f84dc294d18bb530a4147da1d02abe3baf2ac05e",
+        "tests/claude-compat-launch.test.ts": "36dade8e529327d36e7defa61bf9acf899fbae0a",
+        "tests/claude-compat-arguments.test.ts": "49284980b17450943aaf9fed71f6cbc2dbd74cdd"
+      },
+      "evidence": "Independent combined admission/mode/output/teardown journeys; 37 focused +20 runtime/composition/permissions/MCP top-level passes; baseline double diagnostic vs final single reproduced. Delayed teardown/repeated first signal/invalid MCP before start/unbound request release/aux output error close probes pass.",
+      "limits": "No compiled/live; does not substitute fresh test primary coverage."
     }
   ]
 }
