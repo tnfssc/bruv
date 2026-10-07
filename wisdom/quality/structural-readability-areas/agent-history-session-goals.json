@@ -151,7 +151,10 @@
         "verdict": "ACCEPT",
         "blob": "f4a1a32f98b631384b1ffb3e43e1507572d9d069",
         "primaryFocusStillRequired": true
-      }
+      },
+      "checkNeeds": [
+        "Biome check organizeImports error observed task_07ae383c; ask next file worker to resolve with focus patch and rejudge final hash."
+      ]
     },
     {
       "focus": "src/agent/instruction-continuity.ts",
@@ -970,7 +973,10 @@
         "verdict": "ACCEPT",
         "blob": "5fba8ec9f35c04ef7a9a7c0254b5df1067337220",
         "primaryFocusStillRequired": true
-      }
+      },
+      "checkNeeds": [
+        "Biome check organizeImports error observed task_07ae383c; ask next file worker to resolve with focus patch and rejudge final hash."
+      ]
     },
     {
       "focus": "tests/history-storage-lifecycle.test.ts",
@@ -1022,7 +1028,10 @@
         "verdict": "ACCEPT",
         "blob": "91cdf3d35143286cc1ff2b0147811156c949a1b0",
         "primaryFocusStillRequired": true
-      }
+      },
+      "checkNeeds": [
+        "Biome check organizeImports error observed task_07ae383c; ask next file worker to resolve with focus patch and rejudge final hash."
+      ]
     },
     {
       "focus": "tests/last-used-cli-model.test.ts",
@@ -1299,6 +1308,11 @@
       "job": "task_b86bb73e",
       "command": "bun test tests/history-storage-io.test.ts tests/history-publication-collision.test.ts tests/instruction-mode.test.ts tests/instruction-continuity-sdk.test.ts tests/prompts.test.ts tests/system-prompt.test.ts tests/goals.test.ts tests/live-main-owner.test.ts tests/live-tools.test.ts tests/gpt-live-delegation.test.ts --timeout 30000",
       "result": "111 pass, 0 fail, 596 assertions across 10 files; Linux source tests, shared read-only deps/assets; no provider/device/SSH claim."
+    },
+    {
+      "commit": "4287844f",
+      "job": "task_07ae383c",
+      "result": "tsc --noEmit passed; git diff --check passed. Biome check FAILED: organizeImports errors in src/agent/extension.ts, tests/history-storage-io.test.ts, tests/instruction-mode.test.ts; 12 warnings/12 infos. Formatting/lint-only worker proof is distinct from check assists. File owners to address when focused, then rejudge final hashes."
     }
   ]
 }
