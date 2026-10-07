@@ -159,11 +159,18 @@
     {
       "focus": "src/questions/service.ts",
       "initialBlob": "e51d14128b9d800442d81eb34403b98306a649fe",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_53fcc8ba",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53fcc8ba",
+        "branch": "bruv/primary-src-questions-service.ts-53fcc8ba",
+        "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
     },
     {
       "focus": "src/tasks/agent-progress.ts",
@@ -285,11 +292,18 @@
     {
       "focus": "src/tasks/task-manager.ts",
       "initialBlob": "3f614d8920d22f8ae86d2adb8a7f40957af7b0e2",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_53df8c4c",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53df8c4c",
+        "branch": "bruv/primary-src-tasks-task-manager.ts-53df8c4c",
+        "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
     },
     {
       "focus": "src/tasks/task-monitor-source.ts",
@@ -375,11 +389,18 @@
     {
       "focus": "src/typescript/execution.ts",
       "initialBlob": "4932e6fb23d2daf3b12e0b23b0e57845ed57a9ba",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_dc0e00cd",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_dc0e00cd",
+        "branch": "bruv/primary-src-typescript-execution.ts-dc0e00cd",
+        "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
     },
     {
       "focus": "src/typescript/extension.ts",
@@ -886,5 +907,8 @@
       "integration": "pending"
     }
   ],
-  "extras": []
+  "extras": [],
+  "limits": [
+    "Automatic fish setup cannot resolve bun; workers launch independently and use explicit Bun PATH and shared read-only dependencies."
+  ]
 }
