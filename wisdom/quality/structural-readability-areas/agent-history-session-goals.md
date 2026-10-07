@@ -20,7 +20,7 @@ The adjacent JSON is the authoritative per-file pickup ledger: 114 initial rows;
 
 1. Active/pending states and job IDs are in JSON. Never call a pending candidate accepted. All branches/worktrees remain for reuse.
 2. Goal-test check rework task_1ac39db6 fixes observed TS2554 at tests/goals.test.ts:560 (missing required RPC params); preserve genuine before-start assertion, then fresh judge.
-3. README semantic rework task_c4082476: old accepted map names delivery facades removed by composition refactor. Prior doc acceptance invalidated despite unchanged blob. Initial judge also rejected incorrect all-formatting-in-tasks claim; preserve its ownership correction in final map.
+3. README semantic rework e5241b6b accepted by fresh task_b5e28075 against current composition and final retention helper; accurate final map restored, original incorrect all-formatting-in-tasks claim remains corrected. Future owner changes still require semantic map review.
 4. Native-fast source/test import organization remains a known check issue; give tests/native-fast-mode.test.ts fresh primary and coherent source import correction, then rejudge both final blobs.
 5. New tests/fixtures/transcript-snapshots.ts and tests/transcript-snapshots.test.ts still need separate fresh primary focus, not credit from helper writer or patch judge.
 6. Continue all untouched initial files. Goal/runtime-map rejections and overlaps are not permission to stop after a small batch. No final area report until exact scope/unique-primary/hash/judge audit passes and tracked tree is clean.

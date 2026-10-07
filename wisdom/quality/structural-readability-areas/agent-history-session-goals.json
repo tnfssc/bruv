@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -138,19 +138,23 @@
           "id": "task_b5e28075",
           "candidate": "e5241b6b3919a8a62daa9c4a9f6003396ee0223d",
           "base": "5c7875b573d6c35afe9e2f5e2bca152154f51281",
-          "status": "running",
+          "status": "complete",
           "priorObjections": [
             "README lines 25–26 wrongly imply all notification formatting/batching lives in tasks/. extension.ts assembles SSH attention and mixed content/budgets; remote completion summaries live in remote/job-observations.ts. Qualify ownership sentence; no runtime change requested."
           ],
-          "writerResponse": "Update reading map for createJobNotifications attachment/delivery/settlement/close and separate snapshot retention lifetime; preserve local task vs extension assembly vs remote summary ownership."
+          "writerResponse": "Update reading map for createJobNotifications attachment/delivery/settlement/close and separate snapshot retention lifetime; preserve local task vs extension assembly vs remote summary ownership.",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Final map accurately follows notification attachment/execution/settlement/acknowledgment/close, separate persistent delivery and snapshot ownership. Prior all-formatting-in-tasks error not repeated; current refactored retention helper explicitly inspected.",
+          "checks": "Full patch/source/callers/tests read; 30 links/diff pass; tests not rerun for docs.",
+          "contextBlobs": {
+            "src/agent/extension.ts": "1aab431cbafaa31522e0ccb977e4aef5fe6199f1",
+            "src/session/transcript-snapshots.ts": "be5d94bde803903b1cc6d25132f17a9d63a6cb09"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "semantic-map-update-needed",
-      "pendingRelatedNeed": {
-        "candidate": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
-        "reason": "If composition candidate accepted, delivery reading map names completions/attentions/notificationBatch removed/reowned by createJobNotifications. Fresh file worker must reconcile README to final source and fresh judge; same doc blob alone is insufficient semantic evidence."
-      },
+      "acceptedBlob": "613be07a1fc8c96a91487f30764fa5f213b7182c",
+      "integration": "integrated-semantic-rework",
       "previousAcceptedBlob": "463258e1632b8aca69b566ffe8a60fdb76790cb4"
     },
     {
@@ -2125,7 +2129,7 @@
       "focus": "tests/transcript-snapshots.test.ts",
       "initialBlob": null,
       "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_08a471b0",
@@ -2140,7 +2144,14 @@
           "checks": "Two concurrent parent runs pass; fixture 13/52; refusal preserves outer sentinel; injected exit17 streams/cleanup verified; focused type/format/lint/diff pass; full tsc known assets/goal error, no timeout-kill claim."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_6e5c5f73",
+          "candidate": "f45666020f9de3ccf6e27934077664726665918c",
+          "base": "4b1df2f3343aab4fe418037aefdefbce5d99ca90",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
       "relatedPatchReview": {
