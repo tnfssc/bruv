@@ -920,10 +920,17 @@
     {
       "focus": "src/live/diagnostics.ts",
       "initialBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
-      "primary": null,
+      "primary": {
+        "id": "task_84881347",
+        "launchBase": "3faae10fe2fb393f921117b47ebc565299db873e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_84881347",
+        "branch": "bruv/primary-src-live-diagnostics.ts-84881347",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/editor-push-to-talk.ts",
@@ -2212,17 +2219,20 @@
         "launchBase": "ba1575ae4a9300c6729f8988f79029f59699318a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7950a5e2",
         "branch": "bruv/primary-native-live-linux-tests-test_iso-7950a5e2",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "a4bdb033fc65291cdc41a36b3a0365b806aa7942"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_1a73a583",
         "verdict": "ACCEPT",
         "blob": "d4faa77a5ddf45b9757af01c9abd91adb076cd6f"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "WrapperInvocation owns Bash/records/result/teardown instead of escaped tempdir/decodedtuple+manual cleanup;environmentpolicy vsrelease assertions distinct. Explicit stubbornfixture timeout cleanuphang fixed:kill recorded fakes beforedrain/reap.",
+      "checks": "Baseline7/candidate8 isolatedtests,final25nativePython pass;boundedbaselinehang probe and restoredordering mutant fail;diffclean. FakeLinuxaudio tools,no production/device/provider/macOS/fullbuild."
     },
     {
       "focus": "native/live-linux/tests/test_source_removal.py",
