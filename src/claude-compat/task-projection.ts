@@ -176,6 +176,73 @@ function validateUsage(usage: TaskUsage): void {
   }
 }
 
+// Wire shapes are separate from the lifecycle decision below; these builders do not change the cursor.
+function taskEnvelope(
+  link: TaskLink,
+  eventId: string,
+  subtype: TaskStarted["subtype"] | TaskProgress["subtype"] | TaskNotification["subtype"],
+) {
+  return {
+    type: "system" as const,
+    session_id: link.root.sessionId,
+    uuid: nativeTaskMessageId(link, eventId, subtype),
+    task_id: nativeTaskId(link),
+    tool_use_id: link.runToolUseId ?? link.launchToolUseId,
+  };
+}
+
+function taskStartedFrame(link: TaskLink, observation: TaskObservation): TaskStarted {
+  return {
+    ...taskEnvelope(link, observation.eventId, "task_started"),
+    subtype: "task_started",
+    task_type: link.kind === "worker" ? "local_agent" : "local_bash",
+    description: observation.description,
+    is_backgrounded: observation.isBackgrounded,
+    ...(link.kind === "worker"
+      ? {
+          prompt: link.prompt,
+          ...(link.subagentType === undefined ? {} : { subagent_type: link.subagentType }),
+          ...(link.spawnDepth === undefined ? {} : { spawn_depth: link.spawnDepth }),
+        }
+      : {}),
+  };
+}
+
+function taskProgressFrame(
+  link: Extract<TaskLink, { kind: "worker" }>,
+  eventId: string,
+  progress: NonNullable<TaskObservation["progress"]>,
+): TaskProgress {
+  validateUsage(progress.usage);
+  return {
+    ...taskEnvelope(link, eventId, "task_progress"),
+    subtype: "task_progress",
+    description: progress.description,
+    usage: { ...progress.usage },
+    ...(link.subagentType === undefined ? {} : { subagent_type: link.subagentType }),
+    ...(progress.lastToolName === undefined ? {} : { last_tool_name: progress.lastToolName }),
+    ...(progress.summary === undefined ? {} : { summary: progress.summary }),
+  };
+}
+
+function taskNotificationFrame(
+  link: TaskLink,
+  eventId: string,
+  status: "completed" | "failed" | "killed",
+  terminal: NonNullable<TaskObservation["terminal"]>,
+): TaskNotification {
+  if (terminal.usage) validateUsage(terminal.usage);
+  return {
+    ...taskEnvelope(link, eventId, "task_notification"),
+    subtype: "task_notification",
+    status: status === "killed" ? "stopped" : status,
+    summary: terminal.summary,
+    // Required SDK string: empty means no artifact. Never invent a path or equate Pi JSONL with SDK replay.
+    output_file: terminal.outputFile ?? "",
+    ...(terminal.usage ? { usage: { ...terminal.usage } } : {}),
+  };
+}
+
 export function projectTask(
   link: TaskLink,
   observation: TaskObservation,
@@ -194,6 +261,8 @@ export function projectTask(
     throw new Error("Projection checkpoint belongs to another job/link");
   if (previous && observation.revision <= previous.revision)
     return { frames: [], checkpoint: previous, skipped: "stale" };
+
+  // Every fresh observation advances the cursor, even when it cannot change the observed lifecycle.
   const checkpoint: TaskProjectionCheckpoint = previous
     ? { ...previous, revision: observation.revision }
     : {
@@ -205,75 +274,40 @@ export function projectTask(
         isBackgrounded: false,
         description: observation.description,
       };
-  const frames: NativeTaskFrame[] = [];
-  const result = (skipped?: TaskProjection["skipped"]): TaskProjection => ({
-    frames,
-    checkpoint,
-    ...(skipped ? { skipped } : {}),
-  });
+  const skip = (skipped: TaskProjection["skipped"]): TaskProjection => ({ frames: [], checkpoint, skipped });
   const resumed = observation.edge === "resumed" && observation.status === "running";
-  if (checkpoint.phase === "terminal" && !resumed) return result("terminal");
-  if (observation.status === "unknown" || observation.status === "preparing") return result("not-started");
+  if (checkpoint.phase === "terminal" && !resumed) return skip("terminal");
+  if (observation.status === "unknown" || observation.status === "preparing") return skip("not-started");
   // A changed run call is only authoritative with a real resumed edge, never a reconnect snapshot.
-  if (previous && previous.runToolUseId !== runToolUseId && !resumed) return result("stale");
-  const base = (subtype: string) => ({
-    type: "system" as const,
-    session_id: link.root.sessionId,
-    uuid: nativeTaskMessageId(link, observation.eventId, subtype),
-    task_id: taskId,
-    tool_use_id: runToolUseId,
-  });
-  if (observation.status === "running" && (checkpoint.phase === "unstarted" || resumed)) {
-    frames.push({
-      ...base("task_started"),
-      subtype: "task_started",
-      task_type: link.kind === "worker" ? "local_agent" : "local_bash",
-      description: observation.description,
-      is_backgrounded: observation.isBackgrounded,
-      ...(link.kind === "worker"
-        ? {
-            prompt: link.prompt,
-            ...(link.subagentType === undefined ? {} : { subagent_type: link.subagentType }),
-            ...(link.spawnDepth === undefined ? {} : { spawn_depth: link.spawnDepth }),
-          }
-        : {}),
-    });
-    checkpoint.phase = "active";
-    checkpoint.runToolUseId = runToolUseId;
-  }
-  if (checkpoint.phase === "unstarted") return result("not-started");
+  if (previous && previous.runToolUseId !== runToolUseId && !resumed) return skip("stale");
+  if (checkpoint.phase === "unstarted" && observation.status !== "running") return skip("not-started");
+
   if (observation.status === "completed" || observation.status === "failed" || observation.status === "killed") {
-    if (!observation.terminal) return result("unconfirmed");
-    if (observation.terminal.usage) validateUsage(observation.terminal.usage);
-    frames.push({
-      ...base("task_notification"),
-      subtype: "task_notification",
-      status: observation.status === "killed" ? "stopped" : observation.status,
-      summary: observation.terminal.summary,
-      // Required SDK string: empty means no artifact. Never invent a path or equate Pi JSONL with SDK replay.
-      output_file: observation.terminal.outputFile ?? "",
-      ...(observation.terminal.usage ? { usage: { ...observation.terminal.usage } } : {}),
-    });
-    checkpoint.phase = "terminal";
-    checkpoint.isBackgrounded = false;
-    return result();
+    if (!observation.terminal) return skip("unconfirmed");
+    return {
+      frames: [taskNotificationFrame(link, observation.eventId, observation.status, observation.terminal)],
+      checkpoint: { ...checkpoint, phase: "terminal", isBackgrounded: false },
+    };
   }
-  checkpoint.isBackgrounded = observation.isBackgrounded;
-  checkpoint.description = observation.description;
+
+  const frames: NativeTaskFrame[] = [];
+  if (observation.status === "running" && (checkpoint.phase === "unstarted" || resumed)) {
+    frames.push(taskStartedFrame(link, observation));
+  }
   // T3 can misclassify opaque foreground progress as a subagent. Shell output stays with its real tool/artifact.
   if (link.kind === "worker" && observation.progress) {
-    validateUsage(observation.progress.usage);
-    frames.push({
-      ...base("task_progress"),
-      subtype: "task_progress",
-      description: observation.progress.description,
-      usage: { ...observation.progress.usage },
-      ...(link.subagentType === undefined ? {} : { subagent_type: link.subagentType }),
-      ...(observation.progress.lastToolName === undefined ? {} : { last_tool_name: observation.progress.lastToolName }),
-      ...(observation.progress.summary === undefined ? {} : { summary: observation.progress.summary }),
-    });
+    frames.push(taskProgressFrame(link, observation.eventId, observation.progress));
   }
-  return result();
+  return {
+    frames,
+    checkpoint: {
+      ...checkpoint,
+      phase: "active",
+      runToolUseId,
+      isBackgrounded: observation.isBackgrounded,
+      description: observation.description,
+    },
+  };
 }
 
 /** Structural subset of TaskSummary/TaskInspection. No runtime dependency on TaskManager. */

@@ -45,10 +45,9 @@ function validRecord(value: unknown): value is T3LocalNotification {
   );
 }
 
-/** Crash-safe, session-affine mailbox. A row is removed only after server ACK. */
+/** Crash-safe, session-affine mailbox; completions remain until server ACK. */
 export class T3LocalNotificationOutbox {
   readonly path: string;
-  #records: T3LocalNotification[];
 
   constructor(sessionFile: string) {
     this.path = sessionFile + ".t3-local-notifications-v1.json";
@@ -57,7 +56,7 @@ export class T3LocalNotificationOutbox {
     try {
       unlinkSync(this.path + ".tmp");
     } catch {}
-    this.#records = this.#read();
+    this.#read(); // Fail closed before this mailbox can be used for new jobs.
   }
 
   #read(): T3LocalNotification[] {
@@ -75,8 +74,7 @@ export class T3LocalNotificationOutbox {
   }
 
   list(): readonly T3LocalNotification[] {
-    this.#records = this.#read();
-    return this.#records.slice();
+    return this.#read();
   }
 
   assertLaunchCapacity(runningTasks: number): void {
@@ -87,13 +85,13 @@ export class T3LocalNotificationOutbox {
   }
 
   add(input: { taskId: string; kind: T3LocalNotificationKind; text: string }): T3LocalNotification {
-    this.#records = this.#read();
+    const records = this.#read();
     const text = input.text.slice(0, MAX_TEXT_CHARS);
-    const previous = this.#records.find((row) => row.taskId === input.taskId && row.kind === "completion");
+    const previous = records.find((row) => row.taskId === input.taskId && row.kind === "completion");
     if (previous) return previous;
     // Attention is a checkpoint, not an append-only event. Keep only the newest
     // checkpoint and let a terminal completion supersede it before persistence.
-    const retained = this.#records.filter((row) => row.taskId !== input.taskId);
+    const retained = records.filter((row) => row.taskId !== input.taskId);
     if (retained.length >= MAX_RECORDS) throw new Error("T3 local notification outbox is full");
     const record: T3LocalNotification = {
       version: 1,
@@ -111,9 +109,9 @@ export class T3LocalNotificationOutbox {
   }
 
   acknowledge(notificationId: string): void {
-    this.#records = this.#read();
-    const next = this.#records.filter((row) => row.notificationId !== notificationId);
-    if (next.length === this.#records.length) return;
+    const records = this.#read();
+    const next = records.filter((row) => row.notificationId !== notificationId);
+    if (next.length === records.length) return;
     this.#commit(next);
   }
 
@@ -135,7 +133,6 @@ export class T3LocalNotificationOutbox {
       } finally {
         closeSync(directory);
       }
-      this.#records = records;
     } finally {
       if (fd !== undefined) closeSync(fd);
       try {
@@ -216,45 +213,47 @@ export class T3LocalNotificationDelivery {
       if (!row) return;
       attempted.add(row.notificationId);
       if (this.#stopped) return;
-      let acknowledged = false;
-      const retryDelays = [0, 20, 100, 250, 500] as const;
-      for (let attempt = 0; attempt < retryDelays.length && !acknowledged && !this.#stopped; attempt++) {
-        if (!this.outbox.list().some((current) => current.notificationId === row.notificationId)) break;
-        if (retryDelays[attempt] > 0) await this.#pause(retryDelays[attempt]);
-        if (this.#stopped) return;
-        const client = this.clientFactory(this.bridge.url, this.bridge.token);
-        this.#client = client;
-        try {
-          const result = await client.callTool("bruv_local_job_notify", {
-            version: 1,
-            notificationId: row.notificationId,
-            taskId: row.taskId,
-            kind: row.kind,
-            text: row.text,
-          });
-          const value = result.structuredContent;
-          acknowledged =
-            !result.isError &&
-            !!value &&
-            typeof value === "object" &&
-            (value as { notificationId?: unknown }).notificationId === row.notificationId &&
-            ((value as { state?: unknown }).state === "committed" ||
-              (value as { state?: unknown }).state === "disposed");
-        } catch {
-          // Ambiguous responses replay the stable command/message identity.
-        } finally {
-          await client.close().catch(() => undefined);
-          if (this.#client === client) this.#client = undefined;
-        }
+      if (await this.#deliver(row)) {
+        this.outbox.acknowledge(row.notificationId);
+        this.#retryDelay = 1_000;
       }
-      if (!acknowledged) {
-        if (!this.outbox.list().some((current) => current.notificationId === row.notificationId)) continue;
-        // A rejected/stale row must not starve another task’s terminal output.
-        // Keep it durable for the next bounded retry pass.
-        continue;
-      }
-      this.outbox.acknowledge(row.notificationId);
-      this.#retryDelay = 1_000;
+      // Unacknowledged rows stay durable, but cannot starve this pass's other tasks.
     }
+  }
+
+  async #deliver(row: T3LocalNotification): Promise<boolean> {
+    for (const delay of [0, 20, 100, 250, 500]) {
+      if (this.#stopped) return false;
+      // A newer checkpoint/completion or another connection's ACK ends this replay.
+      if (!this.outbox.list().some((current) => current.notificationId === row.notificationId)) return false;
+      if (delay > 0) await this.#pause(delay);
+      if (this.#stopped) return false;
+      const client = this.clientFactory(this.bridge.url, this.bridge.token);
+      this.#client = client;
+      try {
+        const result = await client.callTool("bruv_local_job_notify", {
+          version: 1,
+          notificationId: row.notificationId,
+          taskId: row.taskId,
+          kind: row.kind,
+          text: row.text,
+        });
+        const value = result.structuredContent;
+        if (
+          !result.isError &&
+          value &&
+          typeof value === "object" &&
+          (value as { notificationId?: unknown }).notificationId === row.notificationId &&
+          ((value as { state?: unknown }).state === "committed" || (value as { state?: unknown }).state === "disposed")
+        )
+          return true;
+      } catch {
+        // Ambiguous responses replay the stable command/message identity.
+      } finally {
+        await client.close().catch(() => undefined);
+        if (this.#client === client) this.#client = undefined;
+      }
+    }
+    return false;
   }
 }
