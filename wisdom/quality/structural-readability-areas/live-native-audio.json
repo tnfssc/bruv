@@ -1170,12 +1170,24 @@
         "launchBase": "1af60590b337533dc41a39e8d00ee66506c02b34",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1ea27d33",
         "branch": "bruv/primary-src-live-playback.ts-1ea27d33",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "83b1defbd83984e35197625252271702dfb6769d"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_542a0b36",
+          "status": "running",
+          "candidate": "83b1defbd83984e35197625252271702dfb6769d",
+          "base": "1af60590b337533dc41a39e8d00ee66506c02b34"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "judge running",
+      "relatedPaths": [
+        "tests/live-playback.test.ts"
+      ],
+      "readingResult": "PlaybackTimeline owns sixcounter reservation/acceptedcredit/conservative monotonicplayed estimation; scheduler retains epoch/lifecycle authority. Interrupt discards queued samples/resets estimates/immediateflush but oldwrite retainspipe slot;stalecompletion releases slot withoutnewcredit.",
+      "checks": "53 focusedtests20755assertions;updated23playbacktests baseline-pass;focusedstrictTS/Biome/diff pass1existinginfo;no behaviorfix/device/provider/macOS/fullgate."
     },
     {
       "focus": "src/live/providers.ts",
@@ -2202,10 +2214,17 @@
       "focus": "native/live-linux/tests/test_source_removal.py",
       "introducedBy": "bebc961f249c35103aa08d0bebf496548844c8ad",
       "initialBlob": null,
-      "primary": null,
+      "primary": {
+        "id": "task_2e92bcc7",
+        "launchBase": "186634bd6a0ef9906a3ccc8cedba4bdc47f4dd33",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_2e92bcc7",
+        "branch": "bruv/primary-native-live-linux-tests-test_sou-2e92bcc7",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_46031fcf",
         "verdict": "ACCEPT",
