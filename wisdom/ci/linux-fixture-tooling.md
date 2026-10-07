@@ -27,3 +27,9 @@ The focused shell fixture checks one update/install pair, missing-package
 selection, deb-cache location, bounded waits and skipping installed tools.
 Workflow contracts check both lanes and release still install tools before tests.
 Values unchanged: existing whole-path proof and bounded-resource rules cover this.
+
+Hosted run 37702458864 installed Linux tools in 24 seconds (23:29:13–23:29:37Z),
+then passed the private capture fixture. It later failed typecheck: the cache
+assertion passed an optional path to toContain. Coalesce only the missing path to
+an empty string so it remains a failing assertion, then typecheck before pushing.
+The policy failure only reflected Linux. No audio test or gate was skipped.

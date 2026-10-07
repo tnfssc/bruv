@@ -153,7 +153,7 @@ test("production CI caches downloads only and delegates paired validation to the
       if (filename === "ci.yml")
         for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache")))
           expect(["${{ runner.temp }}/bruv-bun-cache", "${{ runner.temp }}/bruv-apt-cache/*.deb"]).toContain(
-            step.with?.path,
+            step.with?.path ?? "",
           );
       for (const step of job.steps.filter(
         (step) => step.uses?.startsWith("actions/cache") && step.with?.path === "${{ runner.temp }}/bruv-bun-cache",
