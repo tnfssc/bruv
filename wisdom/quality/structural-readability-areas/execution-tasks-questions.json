@@ -1072,7 +1072,7 @@
     {
       "focus": "src/tasks/text-preview.ts",
       "initialBlob": "49fa24c1655726289c36f55ba530187554d1bb9c",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_b8e22edf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b8e22edf",
@@ -1083,13 +1083,22 @@
       "judgeRounds": [
         {
           "id": "task_ea5e9a6f",
-          "status": "running",
+          "status": "complete",
           "candidate": "2468f27a3ab522bef68d6eda1ef53796c701ed2e",
-          "base": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23"
+          "base": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Marker sizing loop and retained preview one local operation; callers preview copies, formatter owns evidence budgets, manager originals/delivery and remote authority untouched.",
+          "checks": [
+            "independent15/135",
+            "36 shipped-limit probes",
+            "real shell/list/inspect bounded copy vs manager original verified",
+            "no arbitrary tiny/grapheme/build/provider/UI claim"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "49fa24c1655726289c36f55ba530187554d1bb9c",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
       "changedRelatedPaths": [],
       "readingResult": "No-change: local marker-sizing loop owns truncation; JobService and completion preview returned copies, not stored originals/delivery ownership.",
@@ -1216,11 +1225,18 @@
     {
       "focus": "src/typescript/images.ts",
       "initialBlob": "aa4d74eebcab9dc89cfbcbd11829ba68b5335286",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_5f2762ae",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_5f2762ae",
+        "branch": "bruv/primary-src-typescript-images.ts-5f2762ae",
+        "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d"
     },
     {
       "focus": "src/typescript/job-bridge.ts",
@@ -1424,13 +1440,13 @@
     {
       "focus": "tests/execute-output-capture.test.ts",
       "initialBlob": "f1944e32116dbce754fa013622fd989907092d99",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_341d3c1d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_341d3c1d",
         "branch": "bruv/primary-tests-execute-output-capture.tes-341d3c1d",
         "base": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73",
-        "commit": null
+        "commit": "9ac5bfece6800ec7265d6958644120f84bba0519"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
@@ -1442,7 +1458,14 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73"
+      "launchBase": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change complete file: decoder-end spill/raw bytes, ordered shared budget, preview tails/storage errors and pump-before-close journeys explicit.",
+      "checks": [
+        "capture16/65",
+        "focused execution4/25",
+        "format/lint/diff pass; older child runner no fresh parity"
+      ]
     },
     {
       "focus": "tests/foreground-execution-sdk.test.ts",
@@ -1520,8 +1543,14 @@
     {
       "focus": "tests/job-bridge-protocol.test.ts",
       "initialBlob": "7f4c7f7cbfe6f214e5ca5ca4ac0721364d3f77a6",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_6e7d0428",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_6e7d0428",
+        "branch": "bruv/primary-tests-job-bridge-protocol.test.t-6e7d0428",
+        "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -1531,7 +1560,8 @@
         "blob": "a4577cd8ce21d1176c5b1c3215a32eeb36f0ec25",
         "verdict": "ACCEPT",
         "primaryStillRequired": true
-      }
+      },
+      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d"
     },
     {
       "focus": "tests/job-bridge.test.ts",
@@ -1581,15 +1611,23 @@
     {
       "focus": "tests/questions-extension.test.ts",
       "initialBlob": "87d72f9de8cdc0416706291eb97b1c65258f2169",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_353749fb",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_353749fb",
         "branch": "bruv/primary-tests-questions-extension.test.t-353749fb",
         "base": "b457ae3d2e0b852a62258799beb66a10f73a1171",
-        "commit": null
+        "commit": "76e6e6a0c785229849c14c3d4cdae56d7bb9899a"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_5abbe0b2",
+          "status": "running",
+          "candidate": "76e6e6a0c785229849c14c3d4cdae56d7bb9899a",
+          "base": "b457ae3d2e0b852a62258799beb66a10f73a1171",
+          "priorRelatedJudge": "task_d615005a"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
@@ -1599,7 +1637,17 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "b457ae3d2e0b852a62258799beb66a10f73a1171"
+      "launchBase": "b457ae3d2e0b852a62258799beb66a10f73a1171",
+      "changedRelatedPaths": [
+        "tests/questions-extension.test.ts"
+      ],
+      "readingResult": "Chronological UI scripts verify prompt/retry/Escape/notice instead of reconstructing queue responses; ledger-change regression proves displayed owner/version submission.",
+      "checks": [
+        "focus15/74;related45/377",
+        "14 original scenarios retained",
+        "wrong-prompt probe base pass/candidate fail restored",
+        "tsc/format/diff pass1 inherited lint warning"
+      ]
     },
     {
       "focus": "tests/questions-interactive-tui.test.ts",
