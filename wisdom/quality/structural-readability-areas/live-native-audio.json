@@ -892,12 +892,19 @@
       "initialBlob": "14d4bead2ec2e832da60d5816e9cee0b3e40069c",
       "primary": {
         "id": "task_2995e9e9",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "fatal: cannot change to 'undefined': No such file or directory"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot;related accepted extension blobs will require fresh judgment",
+      "relatedPaths": [
+        "src/live/extension.ts",
+        "tests/live-cost.test.ts",
+        "tests/live-extension.test.ts"
+      ],
+      "readingResult": "Provider-specific accounting: GPT cumulative snapshots vsGemini perturn vsRealtime independent responses;pricing operations replace mixedcachevalidation/positionalrates. Explicit GPTsnapshot overcount+ignoredterminalduration fixes.",
+      "checks": "122tests1142assertions;two regressions fail exactlaunch/passcandidate;changedTS/format/diffpass,lintzero warnings;roottypes missingassetimports. SessionID persistence and unknownbackend/ASR retained."
     },
     {
       "focus": "src/live/credentials.ts",
@@ -2295,7 +2302,7 @@
         }
       ],
       "acceptedBlob": null,
-      "integration": "REJECTED candidate retained unintegrated;fresh rework queued",
+      "integration": "rejected candidate retained;fresh rework running",
       "relatedPatchJudgment": {
         "judgeId": "task_1a73a583",
         "verdict": "ACCEPT",
@@ -2303,7 +2310,18 @@
       },
       "relatedPaths": [],
       "readingResult": "WrapperInvocation owns Bash/records/result/teardown instead of escaped tempdir/decodedtuple+manual cleanup;environmentpolicy vsrelease assertions distinct. Explicit stubbornfixture timeout cleanuphang fixed:kill recorded fakes beforedrain/reap.",
-      "checks": "Baseline7/candidate8 isolatedtests,final25nativePython pass;boundedbaselinehang probe and restoredordering mutant fail;diffclean. FakeLinuxaudio tools,no production/device/provider/macOS/fullbuild."
+      "checks": "Baseline7/candidate8 isolatedtests,final25nativePython pass;boundedbaselinehang probe and restoredordering mutant fail;diffclean. FakeLinuxaudio tools,no production/device/provider/macOS/fullbuild.",
+      "reworks": [
+        {
+          "id": "task_c11abfe2",
+          "launchBase": "e0d16fcab040e73015809ed99f6e3ef7c1d192a9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c11abfe2",
+          "branch": "bruv/rework-isolated-fixture-temporary-owners-c11abfe2",
+          "status": "running",
+          "commit": null,
+          "reason": "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain."
+        }
+      ]
     },
     {
       "focus": "native/live-linux/tests/test_source_removal.py",
@@ -2388,10 +2406,11 @@
     },
     {
       "focus": "native/live-linux/tests/test_isolated_audio.py",
-      "status": "queued for next primary/rework slot",
+      "status": "fresh rework running",
       "reason": "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain.",
       "rejectedCandidate": "a4bdb033fc65291cdc41a36b3a0365b806aa7942",
-      "judgeId": "task_dd7fe5dc"
+      "judgeId": "task_dd7fe5dc",
+      "workerId": "task_c11abfe2"
     }
   ],
   "audit": {
