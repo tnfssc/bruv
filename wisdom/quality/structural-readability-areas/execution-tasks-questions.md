@@ -5,3 +5,9 @@ Ongoing: 98 baseline files; no inherited readability acceptance. At most three p
 Pickup: this area worktree and branch; JSON records exact candidate, worker, judge and blob evidence. Accepted source batches exclude worker-local pickup notes. Parent owns PR #45 and final integration.
 
 Proof/limits: initial inventory loaded from assignments and coverage. No runtime or quality claims yet. Bun PATH must be set inside bash; dependencies are reused read-only from the parent dependency tree. Live/provider/device/SSH parity is not inferred from tests.
+
+## First batch in judgment
+
+Question service separates remote creation from reconciliation; task manager separates reservation lifetime from process admission; execution unifies first-wins cancellation state and resource ownership. These remain candidates, not accepted code. Exact worker branches, commits, judge IDs and proof limits are in JSON. Three further primaries run on output-buffer, agent-session and questions runtime.
+
+Cross-area coordination: question-service candidate also changes `tests/remote-question-bridge.test.ts` (remote area), adding pending refresh, frozen intent and receipt/closure journeys. Keep the coherent test patch if accepted; remote primary owner must cover its final blob. No sibling notes changed.

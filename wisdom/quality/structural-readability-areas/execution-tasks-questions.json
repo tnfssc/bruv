@@ -123,11 +123,18 @@
     {
       "focus": "src/output-buffer.ts",
       "initialBlob": "6f32c9b2f02426c3db598e7ec773aa3eb3aeb721",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_0f4f4f90",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_0f4f4f90",
+        "branch": "bruv/primary-src-output-buffer.ts-0f4f4f90",
+        "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
     },
     {
       "focus": "src/questions/extension.ts",
@@ -150,27 +157,53 @@
     {
       "focus": "src/questions/runtime.ts",
       "initialBlob": "f9ed27c6279a3057808d320b3570a19f6d4fd2ed",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
-    },
-    {
-      "focus": "src/questions/service.ts",
-      "initialBlob": "e51d14128b9d800442d81eb34403b98306a649fe",
       "status": "primary-running",
       "primary": {
-        "id": "task_53fcc8ba",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53fcc8ba",
-        "branch": "bruv/primary-src-questions-service.ts-53fcc8ba",
-        "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+        "id": "task_b64cab37",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b64cab37",
+        "branch": "bruv/primary-src-questions-runtime.ts-b64cab37",
+        "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
+      "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
+    },
+    {
+      "focus": "src/questions/service.ts",
+      "initialBlob": "e51d14128b9d800442d81eb34403b98306a649fe",
+      "status": "judge-running",
+      "primary": {
+        "id": "task_53fcc8ba",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53fcc8ba",
+        "branch": "bruv/primary-src-questions-service.ts-53fcc8ba",
+        "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+        "commit": "775567e6b75c8287d789e7fa58487c0cbed11b18"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_e49ceb90",
+          "status": "running",
+          "candidate": "775567e6b75c8287d789e7fa58487c0cbed11b18",
+          "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
+        }
+      ],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+      "changedRelatedPaths": [
+        "src/questions/service.ts",
+        "tests/remote-question-bridge.test.ts"
+      ],
+      "readingResult": "Separate new remote mirror creation from existing value reconciliation, frozen intent, receipt precedence and persistence.",
+      "checks": [
+        "45 focused passes / 242 assertions",
+        "expanded 19 remote tests pass launch base",
+        "focused strict typecheck/format/diff pass",
+        "compiled bridge/TUI blocked by generated WASM/dist absence"
+      ],
+      "limits": "Writer evidence pending independent acceptance and combined checks."
     },
     {
       "focus": "src/tasks/agent-progress.ts",
@@ -184,11 +217,18 @@
     {
       "focus": "src/tasks/agent-session.ts",
       "initialBlob": "5a5ec14b5753ce0e7ec7a92aabaf2149a5a40245",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_c55b1950",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c55b1950",
+        "branch": "bruv/primary-src-tasks-agent-session.ts-c55b1950",
+        "base": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559"
     },
     {
       "focus": "src/tasks/completion-batcher.ts",
@@ -292,18 +332,37 @@
     {
       "focus": "src/tasks/task-manager.ts",
       "initialBlob": "3f614d8920d22f8ae86d2adb8a7f40957af7b0e2",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_53df8c4c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53df8c4c",
         "branch": "bruv/primary-src-tasks-task-manager.ts-53df8c4c",
         "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
-        "commit": null
+        "commit": "0a7873bdf4c9652b95049d5f968a890840cc96dd"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_08e2c508",
+          "status": "running",
+          "candidate": "0a7873bdf4c9652b95049d5f968a890840cc96dd",
+          "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
+      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+      "changedRelatedPaths": [
+        "src/tasks/task-manager.ts",
+        "tests/task-manager.test.ts"
+      ],
+      "readingResult": "Separate new task admission, reservation activation and shared process observation; retained reservation identity/deadline/waiters are visible.",
+      "checks": [
+        "77 focused passes / 489 assertions",
+        "2 new reservation regressions also pass launch base",
+        "format/diff clean; inherited lint warnings",
+        "no full build/typecheck"
+      ],
+      "limits": "Writer evidence pending independent acceptance and combined checks."
     },
     {
       "focus": "src/tasks/task-monitor-source.ts",
@@ -389,18 +448,37 @@
     {
       "focus": "src/typescript/execution.ts",
       "initialBlob": "4932e6fb23d2daf3b12e0b23b0e57845ed57a9ba",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_dc0e00cd",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_dc0e00cd",
         "branch": "bruv/primary-src-typescript-execution.ts-dc0e00cd",
         "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
-        "commit": null
+        "commit": "9ed8583588dbe49928f662156437612997417036"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_b4813ac3",
+          "status": "running",
+          "candidate": "9ed8583588dbe49928f662156437612997417036",
+          "base": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e"
+      "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
+      "changedRelatedPaths": [
+        "src/typescript/execution.ts",
+        "tests/typescript-execution.test.ts"
+      ],
+      "readingResult": "One first-wins cancellation record owns listeners/timers and derives ACK eligibility, flags and diagnostics.",
+      "checks": [
+        "72 focused passes / 353 assertions",
+        "new cancellation test passes launch base",
+        "shared unchanged compiled runner; no full build",
+        "format/diff clean; inherited lint warnings"
+      ],
+      "limits": "Writer evidence pending independent acceptance and combined checks."
     },
     {
       "focus": "src/typescript/extension.ts",
@@ -910,5 +988,14 @@
   "extras": [],
   "limits": [
     "Automatic fish setup cannot resolve bun; workers launch independently and use explicit Bun PATH and shared read-only dependencies."
+  ],
+  "crossAreaNeeds": [
+    {
+      "file": "tests/remote-question-bridge.test.ts",
+      "owner": "remote",
+      "candidate": "775567e6b75c8287d789e7fa58487c0cbed11b18",
+      "state": "candidate in judgment",
+      "need": "Preserve coherent remote-mirror regressions; remote primary owner must review accepted final blob. Parent coordinate overlap."
+    }
   ]
 }
