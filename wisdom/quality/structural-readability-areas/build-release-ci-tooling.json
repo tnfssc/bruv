@@ -1945,7 +1945,7 @@
     {
       "focus": "tests/offline-process-isolation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_61decf20",
@@ -1978,21 +1978,31 @@
           "objections": [
             "Inherited BRUV_SUBAGENT_TYPE=normal masks TUI startup Herdr check;empty-request assertion passes for unrelated reason. Root depth alone insufficient."
           ],
-          "requiredRework": "Explicit rootchild BRUV_SUBAGENT_TYPE= with DEPTH=0;preserve sanitizer scope;verify pass and TUI-specific bypassfailure under normal parenttype."
+          "requiredRework": "Explicit rootchild BRUV_SUBAGENT_TYPE= with DEPTH=0;preserve sanitizer scope;verify pass and TUI-specific bypassfailure under normal parenttype.",
+          "resolvedBy": "task_cfbac1d2"
         },
         {
           "id": "task_cfbac1d2",
           "base": "58b93d9ce43fda8565720baeef40e98d25c85043",
           "candidate": "d75ad9eb6eae5973e53b8134092e9bb04e9158e0",
-          "state": "running",
+          "state": "completed",
           "round": 2,
-          "priorJudge": "task_685f1bda"
+          "priorJudge": "task_685f1bda",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicit hostile perlaunch environments remove globalmutation;realchild sanitizedHerdr/retainedAPIkey/sourceimmutability;cleanupscope coherent. PriorREJECT independently reproduced:oldrole bypassfalsepasses;explicit rootrole repairedTUI bypassfails Herdrreport/release;directchildbypassfails;restoredbothpass.",
+          "checks": "Independent7tests36assertions;tsc/Biome/diffpass. Same actualbinarySHA4049e1a6691a74aece96ac664d3e02d5078cb659255df889f2c4f4826f62ef24. Observedstartup only,not credential/network/timeout/processtree/live.",
+          "acceptedBlobs": {
+            "tests/offline-process-isolation.test.ts": "2ff5cc4eda8213e4b91e5a632132c490d73ce04a"
+          },
+          "resolvedPriorJudge": "task_685f1bda"
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2ff5cc4eda8213e4b91e5a632132c490d73ce04a",
       "readingResult": "Explicit hostile childenv replaces global mutation/restoration;realchild checks strippedHerdr,retainedAPIkey,unchangedsource;reuse quoting/readiness helpers,listener setup inside cleanupscope.",
-      "checks": "7tests;focusBiome/tsc/diff;sanitizerbypassnegative controlfails. Reused area realbinary;not credential/network/timeout/processtree proof."
+      "checks": "7tests;focusBiome/tsc/diff;sanitizerbypassnegative controlfails. Reused area realbinary;not credential/network/timeout/processtree proof.",
+      "integrationState": "Fullrework patch integrated only after fresh round2acceptance;helper/sanitizerscope unchanged;notesexcluded."
     },
     {
       "focus": "tests/prepare-assets.test.ts",

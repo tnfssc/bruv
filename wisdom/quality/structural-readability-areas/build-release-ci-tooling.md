@@ -132,3 +132,5 @@ Product identity tests task_b7a011bf ACCEPTb9e4e9ae: independent freshhomes/name
 Frozenfixture task_4e5800d8 NO CHANGE NEEDED a97a2d22,exacthistoricSHA preserved.5/38+frozencompiled updater on copiedrealpair checksum/secondrename rollback/hashes/version/cleanup. Retained-recovery failure inspected,not injected. Isolation rework d75ad9eb now freshjudge with full rejection context.
 
 Toolingfixture tests task_900a3c32 ACCEPT0e9728fc:readableprograms/controlledpartialline/protocolfields,retained trust/prompt/malformed/cleanup.8/101plus4targetedmutationsfail;tsc/Biomepass. Unseededsecret/RPCargv-env-nosession/earlyexit gaps retained;loopback not shippedbinary/live.
+
+Isolation REJECT resolved only after freshworker21c70b4e and freshjudgecfbac1d2 ACCEPT2ff5cc4e. Judge independently reproduces oldrole falsepass and repairedTUI bypassfailure under parentnormal,plusdirectchildfailure/restoredsuccess. Full explicit-env/cleanup patch integrated;7/36tsc/Biome,scope unchanged. Priorrejection retained.
