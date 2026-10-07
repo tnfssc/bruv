@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -104,6 +104,16 @@
           ],
           "reason": "Attachment/dispatch/delivery/detach and context order improve the map, but ownership of notification content still misdirects concrete SSH edit journey.",
           "checks": "Independent 7 boundary/architecture tests/33 assertions; diff clean; no provider/device claim."
+        },
+        {
+          "id": "task_8739dae2",
+          "candidate": "22538fc2778f389d8331126ccc19fbe1ba57f7fe",
+          "base": "439a4b07750ec7dc3e98d6a56b5e371de3047be9",
+          "status": "running",
+          "priorObjections": [
+            "README lines 25–26 wrongly imply all notification formatting/batching lives in tasks/. extension.ts assembles SSH attention and mixed content/budgets; remote completion summaries live in remote/job-observations.ts. Qualify ownership sentence; no runtime change requested."
+          ],
+          "writerResponse": "Clarifies local task formatters versus extension mixed assembly/budgets/destinations and remote completion summary owner; resolves first judge objection."
         }
       ],
       "acceptedBlob": null,
@@ -627,7 +637,7 @@
     {
       "focus": "src/session/input.ts",
       "initialBlob": "3701ffae31a2ce480eff48ef5595ec5957fdeed6",
-      "status": "judging",
+      "status": "accepted-deletion",
       "primary": [
         {
           "id": "task_aeae3a68",
@@ -649,11 +659,18 @@
           "id": "task_ea00ebd0",
           "candidate": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
           "base": "ac2953661414342bf5314e92d9de0fe2d73e75e5",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent 775-module baseline import scan and package/build tracing found only deleted test consumer. Actual input/replay/cancellation authority is MainOwner and GPT delegation; removed test asserted only unused API, not shipped safety.",
+          "checks": "Independent GPT delegation 18 pass/67 assertions; other suites blocked by unresolved dependencies; diff check pass.",
+          "acceptedRelatedBlobs": {
+            "tests/session-input.test.ts": "absent"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "absent",
+      "integration": "integrated-judged-deletion"
     },
     {
       "focus": "src/session/operations.ts",
@@ -1171,7 +1188,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
+        "judge": "task_ea00ebd0",
+        "verdict": "ACCEPT",
+        "blob": "absent",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/sol-model-catalog.test.ts",

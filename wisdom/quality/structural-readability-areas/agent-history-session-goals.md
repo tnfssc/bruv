@@ -9,3 +9,7 @@ Proof: initialization only; no runtime/readability acceptance claims. Bun locati
 ## First accepted source batch
 
 DiskEntryStore append now owns write/publication/rollback with one descriptor, derives published status from active path, and advances indexes/cache only after success. Primary task_93e226ba candidate `32cbff38`; independent task_0426dce8 ACCEPT, exact blobs in JSON. Worker: 21 history tests/113 assertions, focused TypeScript/format pass; baseline lint diagnostics retained. Judge: 14 passes and collision timeout, isolated rerun passed. Related history-storage-io test remains queued for its own primary focus. No full gate/build/platform claim. Goal controller accepted unchanged by task_61e44d61. README rejected ownership-map sentence and is under fresh rework; not integrated.
+
+## Judged dead authority removal
+
+Removed unshipped CompletedInput and its API-only tests (candidate `35218b89`, judge task_ea00ebd0 ACCEPT). Independent import/build/public-surface proof finds only deleted test consumer; real input/replay/cancellation authority stays in Live MainOwner/GPT delegation, with safety assertions unchanged. No claim that retired TTL policy exists elsewhere. Deleted test still requires its own primary-focus coverage. Worker 24 shipped-path passes/125 assertions; judge 18 GPT delegation passes/67 assertions, other reruns dependency-blocked.
