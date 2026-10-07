@@ -208,7 +208,7 @@
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_4f28d450",
@@ -228,6 +228,11 @@
           "evidence": "One explicit width selector returns48/28/24-cell rows; layout/presentation separate,extra helper adds navigation. Judge1 test/43 assertions;sampled bounds,not visual/freshness proof;no browser/build/generator. Judge used candidate git blobs despite shared checkout advancement.",
           "objections": [],
           "limit": "Judge had explicit candidate commit but launch response initially exposed unprepared source workspace and missing base; coordinator repaired provenance. Fresh final review required despite prior acceptance."
+        },
+        {
+          "id": "task_884e8b0b",
+          "candidate": "18fb3b71fee4cb3734eef1c27a93e03a3a73646c",
+          "state": "running"
         }
       ],
       "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
@@ -237,7 +242,7 @@
     {
       "focus": "site/capture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_a8322d06",
@@ -252,10 +257,16 @@
         {
           "id": "task_bdc898a5",
           "candidate": "f1fbca6a73dbd788dd994fd40d9ddb37cbb0c691",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Menu alignment/fallback and styled wrapping have coherent operations; settingsCapture dispatches rather than interleaving fit/continue. Judge10 tests/123298 assertions,complete widths1-110 baseline parity,native identity and input immutability. Test-only capture path,not shipped-demo improvement.",
+          "objections": []
         }
       ],
-      "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7"
+      "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7",
+      "acceptedBlob": "ea72ee5ebc5145f474b9b9e3a2b3f7afeb49f54b",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/content.ts",

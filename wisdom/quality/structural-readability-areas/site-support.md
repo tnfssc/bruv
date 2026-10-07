@@ -57,3 +57,5 @@ site/assets/cli-settings.txt: Authentic PTY bytes are replay evidence,not code t
 site/brand.ts: One explicit width selector returns48/28/24-cell rows; layout/presentation separate,extra helper adds navigation. Judge1 test/43 assertions;sampled bounds,not visual/freshness proof;no browser/build/generator. Judge used candidate git blobs despite shared checkout advancement.
 
 site/content.ts: Two literal copy objects expose metadata/landing content without effects or hidden lifetimes; named-property flow to layout/build direct. Judge2 tests/24 assertions;no browser/build/factual-copy audit.
+
+site/capture.ts: Menu alignment/fallback and styled wrapping have coherent operations; settingsCapture dispatches rather than interleaving fit/continue. Judge10 tests/123298 assertions,complete widths1-110 baseline parity,native identity and input immutability. Test-only capture path,not shipped-demo improvement.
