@@ -529,8 +529,15 @@
     {
       "focus": "src/session/host-access.ts",
       "initialBlob": "b5a5b4f018035a73c1261785c34b2fd75b057e61",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_bb3cc0b8",
+          "launchBase": "c20f1ed7bd9c2995630f9711575c8db6e52271b8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_bb3cc0b8",
+          "branch": "bruv/primary-src-session-host-access.ts-bb3cc0b8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -556,16 +563,31 @@
     {
       "focus": "src/session/input.ts",
       "initialBlob": "3701ffae31a2ce480eff48ef5595ec5957fdeed6",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_aeae3a68",
           "launchBase": "ac2953661414342bf5314e92d9de0fe2d73e75e5",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_aeae3a68",
-          "branch": "bruv/primary-src-session-input.ts-aeae3a68"
+          "branch": "bruv/primary-src-session-input.ts-aeae3a68",
+          "commit": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
+          "changedPaths": [
+            "src/session/input.ts",
+            "tests/session-input.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Remove unshipped CompletedInput class and API-only tests; live/main-owner owns actual final input/replay/cancellation.",
+          "checks": "27 baseline tests; candidate 24 pass/125 assertions on unchanged shipped-path suites; 628-module literal import scan has no references; focused format/diff pass; baseline lint warnings."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_ea00ebd0",
+          "candidate": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
+          "base": "ac2953661414342bf5314e92d9de0fe2d73e75e5",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
