@@ -348,8 +348,16 @@
     {
       "focus": "scripts/generate-third-party-notices.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_18c3b50a",
+          "launchBase": "911a433455175b5af5db6bc909c220f2693ffd24",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_18c3b50a",
+          "branch": "bruv/primary-scripts-generate-third-party-not-18c3b50a",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -465,8 +473,16 @@
     {
       "focus": "scripts/prepare-manual-release.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_50c3fd8e",
+          "launchBase": "911a433455175b5af5db6bc909c220f2693ffd24",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_50c3fd8e",
+          "branch": "bruv/primary-scripts-prepare-manual-release.t-50c3fd8e",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -580,8 +596,16 @@
     {
       "focus": "scripts/update-dependencies.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_b3760f86",
+          "launchBase": "911a433455175b5af5db6bc909c220f2693ffd24",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_b3760f86",
+          "branch": "bruv/primary-scripts-update-dependencies.ts-b3760f86",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -827,17 +851,25 @@
     {
       "focus": "tests/dependency-workflow.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_c708fc82",
           "launchBase": "3471000073611ed798a890b9ca70905cf5d1df1a",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_c708fc82",
           "branch": "bruv/primary-tests-dependency-workflow.test.t-c708fc82",
+          "state": "completed",
+          "commit": "6923961505f2ab2882e2c5cdca4ae0aa47928563"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_35b870b5",
+          "base": "3471000073611ed798a890b9ca70905cf5d1df1a",
+          "candidate": "6923961505f2ab2882e2c5cdca4ae0aa47928563",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -845,7 +877,9 @@
         "verdict": "ACCEPT",
         "blob": "3a4db40db2a956ed3ebeada4f3d7c9fc692ad619",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Step-local contracts replace global YAML searches; four isolated real bundle cases with cleanup replace successive shared repository mutations. Baseline checks retained.",
+      "checks": "11focus39combined workflow tests;Biome/tsc/diff pass;no hosted/build."
     },
     {
       "focus": "tests/find-ci-baseline.test.ts",
@@ -952,17 +986,25 @@
     {
       "focus": "tests/manual-release.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_cceff3bf",
           "launchBase": "3471000073611ed798a890b9ca70905cf5d1df1a",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_cceff3bf",
           "branch": "bruv/primary-tests-manual-release.test.ts-cceff3bf",
+          "state": "completed",
+          "commit": "10555f146dd356bc1437da6270183a0cd52726ed"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_69fdb98c",
+          "base": "3471000073611ed798a890b9ca70905cf5d1df1a",
+          "candidate": "10555f146dd356bc1437da6270183a0cd52726ed",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -970,7 +1012,9 @@
         "verdict": "ACCEPT",
         "blob": "5f8bd56781ff6e2f44148f74008b99e5b77fa97e",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Isolated release-state scenarios with owned cleanup replace mutable prep journey; grouped workflow responsibilities and named admission/identity cases; retry/refusal effects strengthened.",
+      "checks": "Combined50pass;tsc/focus format/lint pass;no build/hosted/native/publication."
     },
     {
       "focus": "tests/native-node-path.test.ts",
@@ -1144,17 +1188,25 @@
     {
       "focus": "tests/release-workflows.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_3d7fb50a",
           "launchBase": "6fef8439097918b80bac1693f31160f1e799b54d",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_3d7fb50a",
           "branch": "bruv/primary-tests-release-workflows.test.ts-3d7fb50a",
+          "state": "completed",
+          "commit": "a117749237e6e49cbd7c0e8459e73c3cd32f0584"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_f9136eba",
+          "base": "6fef8439097918b80bac1693f31160f1e799b54d",
+          "candidate": "a117749237e6e49cbd7c0e8459e73c3cd32f0584",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -1162,7 +1214,9 @@
         "verdict": "ACCEPT",
         "blob": "38423dc785ee300c75dc1ec6a868e3eef9a4a05e",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Separate build/helper/assets contracts replace whole-workflow assertion pile; shared workflow types, owning jobs and named present steps replace repeated untyped shapes/order searches. Wrong-job validation mutation now fails two tests previously missed.",
+      "checks": "23pass;tsc/format/diff pass;4 existing Actions-literal warnings;mutation proof;no production/build."
     },
     {
       "focus": "tests/setup.ts",
