@@ -34,3 +34,5 @@ Selective-CI test primary follow-up: independent fixture lifetimes replace scena
 Combined area tip dc82af38: pinned Bun five-suite selection/publishing/local-install batch **57 pass,0 fail,346 assertions** (task_9d9ef42e). Updater compiled proof remains candidate/judge-specific until combined assets/dependencies setup.
 
 Download installer: canonical staged pair, private probe environment with explicit pair binding, shared binary restore operation retaining preattempt interruption flags. Judge task_7be1ff38 ACCEPT; inherited override failure reproduced at base. Attribution correction: base relative path worked when override cleared; absolute normalization is prerequisite of new staged binding, not separate old defect. Independent36/140 plus rollback mode2/20; combined new local installer proof next. Full check lacked candidate dependencies; no false full-typecheck claim.
+
+Combined installer tip ff1e8fad: **39 pass,0 fail,157 assertions** across download/local tests, now both accepted scripts together (task_7493a10f).

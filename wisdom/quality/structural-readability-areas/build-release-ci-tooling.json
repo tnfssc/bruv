@@ -679,8 +679,16 @@
     {
       "focus": "tests/install-download.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_7936354f",
+          "launchBase": "ff1e8fad27798df7beb8c9b6df2c287633f5acf8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7936354f",
+          "branch": "bruv/primary-tests-install-download.test.ts-7936354f",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
@@ -960,6 +968,12 @@
       "job": "task_9d9ef42e",
       "command": "Bun1.4.2 test tests/ci-selective.test.ts tests/ci-selective-workflow.test.ts tests/find-ci-baseline.test.ts tests/publish-release.test.ts tests/install-local.test.ts",
       "result": "57 pass,0 fail,346 assertions; no full build/hosted claims"
+    },
+    {
+      "commit": "ff1e8fad",
+      "job": "task_7493a10f",
+      "command": "Bun1.4.2 test tests/install-download.test.ts tests/install-local.test.ts",
+      "result": "39 pass0 fail157 assertions; both accepted current installer scripts combined; no live/platform proof"
     }
   ]
 }
