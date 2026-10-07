@@ -80,3 +80,5 @@ Parent accepted common checkpoint695ade32 merged clean at batch boundary. merge-
 Mise config: obsolete T3 authority comment removed,flat pins unchanged;judge task_a39f170d ACCEPTa0de5dad. Current pnpm uses traced,10Bun5Node2pnpm pin checks150assertions;21pass2missingdepsfail fullworkflow remains honest.
 
 Test preload NO CHANGE NEEDED task_6d717faf atd3c71348. Qualification: Bun.spawnSync without explicitenv retained startup identity in judge probe;explicit spreadprocess.env sanitizes. Preload is not universal subprocess isolation;TUI helper separately sanitizes.2/8boundary checks,ordinary identity retained,no live proof.
+
+Dependency-test primary: independent cases grouped by6contracts;judge task_f509c814 ACCEPTda5d3d5,all prior46assertions retained and4constructor regressions mutation-verified. Source own-entry fix unchanged;no registry/hosted proof.

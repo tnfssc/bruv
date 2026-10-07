@@ -841,19 +841,29 @@
     {
       "focus": "scripts/setup-release-browser.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_6d47ada5",
           "launchBase": "d17eea9c8b661b3b851ed5089b5023f5d4838f27",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_6d47ada5",
           "branch": "bruv/primary-scripts-setup-release-browser.sh-6d47ada5",
+          "state": "completed",
+          "commit": "f10f9f9d30ddf031112069670afb037f9888d2aa"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_2a8f8b95",
+          "base": "d17eea9c8b661b3b851ed5089b5023f5d4838f27",
+          "candidate": "f10f9f9d30ddf031112069670afb037f9888d2aa",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged pinned isolated harness→singleton shell→library inspection→conditional dependencies→final check;short coherent local flow.",
+      "checks": "26browser/workflowtestspass;syntaxpass;no downloads/install/build/browser/native."
     },
     {
       "focus": "scripts/smoke.sh",
@@ -990,8 +1000,16 @@
     {
       "focus": "scripts/verify-release-launchers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_644a204a",
+          "launchBase": "fb12edc6d79b0f2ee5612171a6d6d4eaffa652f2",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_644a204a",
+          "branch": "bruv/primary-scripts-verify-release-launchers-644a204a",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1203,7 +1221,7 @@
     {
       "focus": "tests/dependency-updates.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_81d46e58",
@@ -1219,19 +1237,28 @@
           "id": "task_f509c814",
           "base": "a4cb693637b4c13370d776a2a42104847ce6de69",
           "candidate": "fcd76fe9049234d706c5ada88a2db406a202e838",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Six responsibilities directly navigable with independent scenarios;all baseline selection/permission/Pi/toolchain/order/metadata/cap checks retained incl4constructor regressions. Independent removal of own-entry fix fails all4,prior rejection preserved.",
+          "checks": "IndependentBunfocus/Biome/tsc/diffpass;30tests46assertions supports preserved code,not countproxy;no realupdate/build/hosted.",
+          "acceptedBlobs": {
+            "tests/dependency-updates.test.ts": "da5d3d5056c91024797839ef57544af184a603bf"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
       "relatedPatchJudgment": {
         "id": "task_68106474",
         "verdict": "ACCEPT",
         "blob": "71c95a31f58bdbc8f88196e0963fe7e6f72fb735",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Six contract suites and independently named cases replace bundled mixed scenarios whose failure skipped later checks;section-specific toolchain protection explicit.",
-      "checks": "14→30tests,same46assertions;focus/Biome/tsc/diffpass;own-entry mutation fails all4 constructor cases;production untouched."
+      "checks": "14→30tests,same46assertions;focus/Biome/tsc/diffpass;own-entry mutation fails all4 constructor cases;production untouched.",
+      "integrationState": "Full focus patch integrated; accepted updater own-entry fix unchanged;noteexcluded."
     },
     {
       "focus": "tests/dependency-workflow.test.ts",
