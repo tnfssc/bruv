@@ -408,13 +408,20 @@
       "judgeRounds": [
         {
           "id": "task_bd041eab",
-          "status": "running",
+          "status": "complete",
           "candidate": "1dfc7b232c6ec64fdf89ff41b6c6eda2283baf8c",
-          "base": "8226c8524fdfa3f56329b591c7be4efb1843a0ad"
+          "base": "8226c8524fdfa3f56329b591c7be4efb1843a0ad",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One coherent temporal history intentionally carries queued acquisition tags across mute/reopen; cutoff rejection/acceptance adjacent; intentional gate reject distinct from capture loss. Splitting would erase essential cross-transition proof. Queue semantics not native publication claim.",
+          "checks": "Independent4 Bun tests24 assertions and strictClangASanUBSan pass;no stress/device/provider/macOS proof.",
+          "acceptedBlobs": {
+            "native/live/test-capture-gate.c": "292e509c5754bd29811b8472347afc8ae2e0637f"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged single temporal scenario purposefully retains queued block tags through mute/reopen transitions; extraction would hide lifetime. Startup-2,epoch0/1 and drop/backpressure distinctions explicit.",
       "checks": "4 Bun pass/24 assertions;strict ClangASan/UBSan pass;no concurrent stress/macOS/device/provider."
@@ -470,13 +477,20 @@
       "judgeRounds": [
         {
           "id": "task_0d6645b3",
-          "status": "running",
+          "status": "complete",
           "candidate": "84e6ee3d013babbac0e8f66c8137ecbeb59312c9",
-          "base": "e450896fa5f2cc20e2f77eeb06375321e2021a55"
+          "base": "e450896fa5f2cc20e2f77eeb06375321e2021a55",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Each rendering operation owns core lifetime;958 first-arrival/960 subsequent/final-tail schedule coherent. Main shows fixture/two independent outputs/exact comparison; reference remains separately initialized full-buffer renderer, preserved packetization invariance.",
+          "checks": "Independent baseline/candidate strictClangASanUBSan zero errors;core tests pass;removed lookahead retry makes both reject49 mismatches identically;diff pass.",
+          "acceptedBlobs": {
+            "native/live/test-waveform.c": "7a88474d51cef3259e49ab8897263f9a19811b17"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "7a88474d51cef3259e49ab8897263f9a19811b17",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [],
       "readingResult": "Contiguous reference and packet rendering each own core lifetime; packet operation exposes958 vs960 first-arrival timing/subsequent packets/final tail; main generates fixture/independent outputs/exact comparison.",
       "checks": "Baseline/candidate strictASanUBSan zero waveform error;core regressions pass;both reject removed held-tail lookahead mutation;diff clean. No production/macOS/device/provider."

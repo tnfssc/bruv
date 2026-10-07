@@ -59,3 +59,5 @@ Changed protocol and test_protocol blobs received fresh combined judgments (old 
 ## Parent checkpoint join
 
 Shared accepted parent checkpoint `95d2e164` joined cleanly; parent already includes our `f473c8e5`. One assigned related file arrived via UI: `tests/editor-voice-integration.test.ts`, candidate `58af8f98`, judge `task_14234cb0`, blob `95453da9cb3f0827a96b955c60f854e905939dac`. Actual delta/provenance inspected; own primary+judge now required. All previously accepted area blobs unchanged. Other-area sources/notes imported unchanged from parent, not edited. Combined checks pending.
+
+Waveform primary `task_6cc26443` / judge `task_0d6645b3`: render-owned core lifetimes reveal packet timing while preserving independent full-buffer comparison; baseline/candidate sanitizer and49-mismatch mutation proof retained. C capture gate primary `task_c28913a3` / judge `task_bd041eab` NO CHANGE NEEDED: cross-transition queued-tag history is the point, not accidental coupling;4 focused tests and sanitizer pass.
