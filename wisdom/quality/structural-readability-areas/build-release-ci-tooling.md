@@ -138,3 +138,7 @@ Isolation REJECT resolved only after freshworker21c70b4e and freshjudgecfbac1d2 
 Parent checkpoint db885fce joined after clean merge-tree6020cc0e;107parentpaths since common65e0d218,no area-focus overlap. All67acceptedblobs verifiedunchanged aftermerge. Otherarea source remains parent-owned;finalcombinedbinary proof will rebuild currentcommon code.5remainingfocusrows explicit.
 
 Selfupdater fixture task_81083bad ACCEPTa6959fca plus relatednewtest18ec63dc:closed release transport/explicitrunner,runtimeasset correction and optionalversion(default0.3.0).58/258+tsc/Biome;source refusal/wrongversion preservation/staging cleanup/actual0.16.14pair bytes and runnerhash. Newtest still needs ownprimary/judge.
+
+Joined-checkpoint build/typecheck task_2901b129 passed at6004e052(parentdb885fce),realpair regenerated with ownedPi;exactbinary hashes recorded. Candidate launchprovenance audit found every recorded launchbase ancestor of its candidate. Final test batch remains after last accepted integrations.
+
+Connectorupdate tests task_4a768c2f ACCEPT049c8cd3:namedentry/install journeys,exactfetch/pairprobes/connectorbytes and rejection preservation.66/316+12/191;tsc/Biome. Judgeactualpair cb7aec7d differs writer4049e1a6 because documentedparentrebuild—not exactwriterartifact reproduction. Existingrollback not newcoverage.

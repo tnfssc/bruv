@@ -1543,7 +1543,7 @@
     {
       "focus": "tests/connector-update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_23398c8b",
@@ -1559,13 +1559,21 @@
           "id": "task_4a768c2f",
           "base": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
           "candidate": "150cc2abe7c5f2daca57c5e4712f5958278b2d63",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Named entry/install contracts expose compile-lifetime vs installation and exactfetch/probes/bytes authority;bothchecksumfail/wrongproduct/symlink preservation stronger. Existingrollbackrerun not newcoverage.",
+          "checks": "Independent66tests316assertions;12actualpair191assertions;tsc/Biome/diffpass. Actualpair judge hashcb7aec7d differswriter4049e1a6 due recorded parent rebuild;not writerartifactreproduction or parentcommoncodeacceptance. Syntheticdownloadnormal not shippedrelease/native/live.",
+          "acceptedBlobs": {
+            "tests/connector-update.test.ts": "049c8cd3dcc817bcb8452ea564f22ca8644a59ba"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "049c8cd3dcc817bcb8452ea564f22ca8644a59ba",
       "readingResult": "Named entrycontract/install journeys replace positionalslicing;exactdownloadseq/bothproductprobes/exactconnectorbytes/bothchecksumfail/wrongproduct/symlinkauthority.",
-      "checks": "66connector/updatertests rollback plus12actualpair existingtests;tsc/Biome;acceptedfixture/source unchanged."
+      "checks": "66connector/updatertests rollback plus12actualpair existingtests;tsc/Biome;acceptedfixture/source unchanged.",
+      "integrationState": "Fullfocuspatch integrated;fixture/updater/launcher unchanged;noteexcluded."
     },
     {
       "focus": "tests/dependency-updates.test.ts",
@@ -2517,7 +2525,7 @@
     {
       "focus": "tests/verify-update-probe.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-pending",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_7b923de0",
@@ -2528,7 +2536,14 @@
           "commit": "64aed029a2b9752dc8a1b70980bff53ee830f326"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_17380c61",
+          "base": "ac29bd4f75d9ec48b381061ae775ee9b265ecc73",
+          "candidate": "64aed029a2b9752dc8a1b70980bff53ee830f326",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [],
       "acceptedBlob": null,
       "readingResult": "Unchanged proposed: real UTF8 probe/serialize,SIGKILL vs exit contrast,ENOENTnullstreams;singlehelper no tangledstate.",
@@ -2866,10 +2881,15 @@
       "note": "Parent-owned accepted common code only;no direct sibling merge/no otherarea coverage claimed. Actual binary will rebuild for final combined proof."
     }
   ],
-  "pendingCombinedBuild": {
+  "latestCombinedBuild": {
     "job": "task_2901b129",
     "commit": "6004e052",
     "parent": "db885fce5225bf31dbaadba34c14ceb2393f5999",
-    "scope": "Actual paired build +real full tsc after acceptedcommonparentmerge;owned Pi adaptation."
+    "scope": "Actual paired build +real full tsc after acceptedcommonparentmerge;owned Pi adaptation.",
+    "result": "PASS actual bun run build and full tsc --noEmit exit0",
+    "binaries": {
+      "dist/bruv": "cb7aec7df02d980207b3c8c9fc5d71aa9459a58c40cadcf225ee2c8f5dcdf50f",
+      "dist/bruv-claude-compat": "55b58718cdfb8f87e7a947b8e67ec4911bf6fb60cb33d2acfe72f67a39d96246"
+    }
   }
 }
