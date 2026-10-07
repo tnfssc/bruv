@@ -213,6 +213,12 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       message: { role: "user", content: "launch the actual requested work" },
       timestamp: new Date().toISOString(),
     });
+    const emit = f.options.emit;
+    f.options.emit = (frame) => {
+      if ((frame.type === "assistant" || frame.type === "user") && frame.parent_tool_use_id !== null)
+        expect(f.history.some((entry: any) => entry.frame.uuid === frame.uuid)).toBe(true);
+      emit(frame);
+    };
     const recordChild = f.options.writeChildFrame;
     f.options.writeChildFrame = async (source, frame) => {
       const writer = await native.child({
@@ -317,6 +323,23 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       const child = f.frames.find(
         (frame: any) => frame.type === "assistant" && frame.parent_tool_use_id === agentId,
       ) as any;
+      const started = subtype(f.frames, "task_started")[0];
+      const terminal = subtype(f.frames, "task_notification").at(-1);
+      expect(f.frames.indexOf(call)).toBeLessThan(f.frames.indexOf(started));
+      expect(f.frames.indexOf(started)).toBeLessThan(f.frames.indexOf(launchAck));
+      expect(f.frames.indexOf(child)).toBeLessThan(f.frames.indexOf(terminal));
+      // A restored terminal cursor must not announce or return the Agent call again.
+      await f.binding.close();
+      const restored = bindNativeTasks(f.owner, f.options);
+      try {
+        await restored.flush();
+        expect(f.frames.filter((frame) => frame.uuid === call.uuid)).toHaveLength(1);
+        expect(f.frames.filter((frame) => frame.uuid === launchAck.uuid)).toHaveLength(1);
+        expect(f.frames.filter((frame) => frame.uuid === terminal.uuid)).toHaveLength(1);
+        expect(f.history).toHaveLength(2);
+      } finally {
+        await restored.close();
+      }
       expect(child.message.content).toEqual([
         { type: "text", text: "actual worker answer: the actual requested work" },
       ]);
