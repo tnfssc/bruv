@@ -108,3 +108,5 @@ Offline sourcePTY:home/setup/process/evidence lifetimes explicit;fresh transcrip
 Selective-workflow tests accepted task_fd6b7e52 blob25486b26: explicit accepted tuples and separate admission/dependency rejection cases. Corrected stale release-source job expectation, preserving fail-closed authority.75focus97combined,tsc/Biome/diff;not hostedActions proof.
 
 Combined boundary proof at143f8d13:19accepted suites354pass0fail1639expectations (task_818f5ea5). Real tsc --noEmit passed at4f71d1b0(task_09f53559),own generated runtimeassets/sharedread-onlydeps. Earlier absent-asset typecheck blockers resolved for this combined source.56/72focusrowsaccepted;remaining16 still individuallyowned/pending,not areaacceptance.
+
+CI baseline source NO CHANGE NEEDED task_149c9180 fb773c5d: linear trust/ancestry journey and shared budget appropriate.23candidatepass plus stale sibling testfailure;fixed acceptedworkflowblob75pass resolves latter. No authenticatedAPI/deadlineexhaustion proof. Two stopped attempts retained,not coverage.

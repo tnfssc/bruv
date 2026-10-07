@@ -503,7 +503,7 @@
     {
       "focus": "scripts/find-ci-baseline.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_706aaff1",
@@ -536,13 +536,21 @@
           "id": "task_149c9180",
           "base": "956a90ee75a8931e7336fb611802ca6aeecccad1",
           "candidate": "7e41d1be224fc6b5b51c4f8af37ca889d2f9b2a3",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Linear checkout/workflow identity/trusted-successful-push/ancestry;shared deadline helpers preserve operation-wide budget. On uncertainty CI emits empty baseline,selector fullvalidation. Foreign/mismatch/head/unavailable/nonancestor runs cannot narrow;PR path separate.",
+          "checks": "Candidate23pass1stale release-source expectationfail;accepted combinedworkflow blob25486b26 separately75pass. Focusedtsc/Biomepass. No empirical deadlineexhaustion/authenticatedAPI/build.",
+          "acceptedBlobs": {
+            "scripts/find-ci-baseline.ts": "fb773c5dff9e139a4773d05af38956eebf9d29c2"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
       "readingResult": "Unchanged proposed: linear checkout validation/workflow identity/trusted successful push filter/ancestry journey;predicate and deadline-sharing coherent.",
-      "checks": "19baseline/selector+4workflow tests;focusedtsc/Biome pass;stale release-source expectation separately fixed in judged selective-workflow candidate8bc3a8c4."
+      "checks": "19baseline/selector+4workflow tests;focusedtsc/Biome pass;stale release-source expectation separately fixed in judged selective-workflow candidate8bc3a8c4.",
+      "integrationState": "Unchanged focus matches area;only candidate note excluded;prior stalled attempts not coverage."
     },
     {
       "focus": "scripts/generate-third-party-notices.ts",
@@ -2411,5 +2419,17 @@
     ],
     "result": "PASS 354tests,0fail,1639expectations,19files22.11s",
     "limits": "Real local focused tests include synthetic compiled fixtures;not fullbuild/hostedActions/live/native device proof."
+  },
+  "latestScopedStyleProof": {
+    "commit": "143f8d13",
+    "job": "task_e5912fab",
+    "files": 40,
+    "result": "format exit0,lint exit0;13warnings92infos remain,no fixes applied",
+    "limits": "Only accepted TS/JSON focus paths,not full repository biome check/import ordering."
+  },
+  "pendingBuild": {
+    "job": "task_4c7a84d9",
+    "commit": "6ad16ebc",
+    "dependencyOwnership": "Actual paired build;root node_modules links read-only shared packages except owned dereferenced pi-coding-agent copy,so preparePiHost writes only owned package."
   }
 }
