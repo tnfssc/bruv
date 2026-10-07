@@ -98,3 +98,5 @@ EXTRA setup-native test primary completed:ordered argv/checksum observations,ind
 Browser tests:explicitoutcomes/orderedtraces,duplicate shell and recheckproof;task_d53adce7 ACCEPT80b148a,31/376. Verifier tests:namedpair/per-runupdater/readableidentity;task_3bcf763e ACCEPT9d3d678,7/50frozencompiledfixturechecks. BroaderBiome unchangedimport-ordererror remains,not whollygreen. No actualbrowser/publishedbinaryproof.
 
 Shared helper NO CHANGE NEEDED task_f7319ebc45e0d907;13tests and1MiBbothstreams/exit/environment/spawn probes. Sanitization only Herdr—not credentials/network;run has no timeout/cancellation/processtree cleanup. Boundaries honest.
+
+Launcher-test primary:fresh validfixture per rejection,explicit checksum authority,alloldcases plusbothlayoutdirections/shippedtemplates. Judge task_a8a68815 ACCEPTda1a4e5;21/47tests. Judge tsc absentgeneratedJSON—notgreenclaim;no nativeexecution.

@@ -1877,7 +1877,7 @@
     {
       "focus": "tests/release-launcher-gate.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_2db23507",
@@ -1893,13 +1893,21 @@
           "id": "task_a8a68815",
           "base": "cb84937d401f032eaf5ff8ec7f4e2a3c3e6fb283",
           "candidate": "cd9def98e7e76e55129e4caf7229e11ac7097825",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Each rejection owns freshvalid fixture,explicit checksum refresh keeps dispatch faults reachable. All interpreter/mode/checksum/argvexit/PIDexec/layout cases retained;adds targetlist/shippedtemplates/stalehash/oppositelayout.",
+          "checks": "Independent21tests47expectations;focusBiome/diffpass;judge directtsc missinggeneratedruntimeJSON,not corroborated. No generation/build/native/live.",
+          "acceptedBlobs": {
+            "tests/release-launcher-gate.test.ts": "da1a4e566b38096580f59ed59f15d57f18ef0641"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "da1a4e566b38096580f59ed59f15d57f18ef0641",
       "readingResult": "Fresh valid fixture per named rejection replaces aggregate mutation/repair sequence;checksumupdates explicit;adds actualstalechecksum,bothlayoutdirections,targetlist,shippedtemplate coverage.",
-      "checks": "21tests47expectations;tsc/Biome/diffpass;no native/fullbuild/live."
+      "checks": "21tests47expectations;tsc/Biome/diffpass;no native/fullbuild/live.",
+      "integrationState": "Full focuspatchintegrated;productionunchanged;notesexcluded."
     },
     {
       "focus": "tests/release-workflows.test.ts",
