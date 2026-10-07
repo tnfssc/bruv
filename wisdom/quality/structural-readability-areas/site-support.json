@@ -495,7 +495,7 @@
     {
       "focus": "site/install-html.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_8dfc6d3c",
@@ -510,10 +510,16 @@
         {
           "id": "task_fbbc0bfe",
           "candidate": "1cc107a22f17ff8f2f7b6ffc5539d87be54fc59c",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Two-line dedicated entry invokes shared install enhancement independently of terminal/WASM startup. Copy effects/timers stay in shared operation. Judge traced build/runtime/template and complete browser assertions;tests read not rerun.",
+          "objections": []
         }
       ],
-      "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db"
+      "initialBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db",
+      "acceptedBlob": "15cbf3457456fb819f4ba80d4fc74f7b9d9210db",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/layout.ts",
@@ -629,7 +635,7 @@
     {
       "focus": "site/scripts/browser.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_4d170cd0",
@@ -640,7 +646,13 @@
           "result": "Unchanged per-call CHROMIUM_BIN selection,empty/unset defers Playwright,returns launch promise;callers own cleanup.1 startup test/6 assertions;no override-path/full suite."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_4d85f3b6",
+          "candidate": "512c2bf69853e9d992dccb681d3bd5828e94f456",
+          "state": "running"
+        }
+      ],
       "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2"
     },
     {

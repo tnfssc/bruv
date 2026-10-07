@@ -63,3 +63,5 @@ site/capture.ts: Menu alignment/fallback and styled wrapping have coherent opera
 site/index.html: Literal head/body/runtime slots expose terminal-hidden/HTML-visible fallback; build/runtime own selection/startup lifetime rather than template machinery. Judge10 tests;browser/build/validation read not rerun.
 
 site/brand.ts: Fresh corrected-path/base review independently confirms explicit48/28/24 selector and separate generation/layout/presentation responsibilities. Exact pinned checkout1 test/43 assertions at25/28/34/48/100 widths;not visual/freshness/every narrow viewport proof. Prior provenance-deficient round retained.
+
+site/install-html.ts: Two-line dedicated entry invokes shared install enhancement independently of terminal/WASM startup. Copy effects/timers stay in shared operation. Judge traced build/runtime/template and complete browser assertions;tests read not rerun.
