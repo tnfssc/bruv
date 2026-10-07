@@ -104,12 +104,12 @@ describe("release automation", () => {
       const caches = job.steps.filter((step) => step.uses?.startsWith("actions/cache@"));
       expect(caches).toHaveLength(1);
       expect(caches[0]?.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
-      expect(caches[0]?.with?.key).toContain("hashFiles('bun.lock', 'package.json')");
+      expect(caches[0]?.with?.key).toBe(
+        "bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}",
+      );
       for (const cache of caches) {
         expect(cache.with?.key).toContain("${{ runner.os }}-${{ runner.arch }}");
-        expect(cache.with?.["restore-keys"]).toMatch(
-          /^(bun-1\.4\.2|pnpm-11\.10\.0)-\$\{\{ runner.os \}\}-\$\{\{ runner.arch \}\}-$/,
-        );
+        expect(cache.with?.["restore-keys"]).toBe("bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-");
         expect(cache.with?.path).not.toMatch(/node_modules|dist|HOME/);
       }
     }
