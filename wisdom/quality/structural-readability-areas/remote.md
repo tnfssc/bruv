@@ -35,3 +35,5 @@ Automatic fish setup fails mise trust/bun127; workers use Bun /home/tnfssc/.loca
 Parser tests own-primary199fe91c ACCEPT task_ea570b89 at725ebe43: contract-grouped inline assertions retain25 baseline/13 seed argument cases;19/56 independent. Delivery unchanged21d37bd7 independently accepted task_2852e3a3 (10/52 candidate and5/37 current).
 
 Observation tests own-primary1bbf7d18 ACCEPT task_158bd70e at24928f2d: projection bounds and persisted-summary decoder fixtures independent; all28 assertion calls retained;31/174 independent.
+
+Bridge tests1406a1c6 ACCEPT task_9172c217 atf0e7f199: ordered multicast session fixture, actual publication notification instead of sleep, held-poll shutdown generation fence.19 baseline tests retained/16 byte-identical,69/1231 independent. Awaited hooks do not imply arbitrary owner-I/O drain. Extension primary task_e6af1dbe must retain/reconcile this final blob if related changes.
