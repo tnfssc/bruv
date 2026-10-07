@@ -25,3 +25,7 @@ Cross-area: tests/editor-voice-integration.test.ts accepted as related patch at 
 ## Accepted CLI boot boundaries
 
 Primary task_75c8d308; judge task_db22e114 ACCEPT candidate f27f3d73c76d754b0c19bdc0d561657fc5f66b0b. Shared environment setup, remote dispatch, and local SDK/UI lifetime now read separately; help transformation no longer interrupts acquisition/cleanup. Bodies/import/cleanup ordering retained. Independent 6 startup checks + 87 focused caller checks; Biome exits 0 with existing advisories; no compiled/full-gate/TTY/provider/SSH proof. tests/cli.test.ts still needs its own primary focus despite patch acceptance.
+
+## Accepted profiler attribution ownership
+
+Primary task_6ffa8972; judge task_40ff7535 ACCEPT candidate 84108130c3b7f3ba70e166dac04e53bfde0f7dcb. Request batching/frame attribution/late completion corrections now share a bounded owner, apart from wrappers and span accounting. Reentrant consumed-batch linkage preserved. Writer: 57 focused passes, targeted TS/Biome; judge exact base/candidate reentrant snapshots identical with 19 clock reads. Judge SDK suites blocked by module resolution, so no independent suite claim. Related action-profiler test primary still pending.

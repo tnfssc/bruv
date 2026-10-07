@@ -133,7 +133,6 @@ interface ActiveSpan {
   sample: ActionSpanSample;
   childMs: number;
   root: ActiveSpan;
-  firstFrame?: { frame: ActionFrameEntrySample; link: ActionFirstFrameLink };
 }
 interface PendingRequest {
   at: number;
@@ -142,6 +141,108 @@ interface PendingRequest {
   roots: Map<number, ActiveSpan>;
   droppedLinks: number;
   frame?: ActionFrameEntrySample;
+}
+
+/** Correlates requests with frame entry, including frames entered before their callers return. */
+class FrameAttribution {
+  private pending: PendingRequest | undefined;
+  private frameSequence = 0;
+  private firstFrames = new WeakMap<ActiveSpan, { frame: ActionFrameEntrySample; link: ActionFirstFrameLink }>();
+  droppedPendingActionLinks = 0;
+
+  constructor(
+    private capacity: number,
+    private now: () => number,
+  ) {}
+
+  // Only the first request finalizes the batch timestamp, even if a frame consumes the batch before return.
+  beginRequest(root: ActiveSpan | undefined): PendingRequest | undefined {
+    this.pending ??= {
+      at: this.now(),
+      endedAt: null,
+      count: 0,
+      roots: new Map(),
+      droppedLinks: 0,
+    };
+    const record: PendingRequest = this.pending;
+    const first = record.count++ === 0;
+    if (root && !this.firstFrames.has(root) && !record.roots.has(root.sample.id)) {
+      if (record.roots.size < this.capacity) record.roots.set(root.sample.id, root);
+      else {
+        record.droppedLinks++;
+        this.droppedPendingActionLinks++;
+      }
+    }
+    return first ? record : undefined;
+  }
+
+  endRequest(record: PendingRequest | undefined) {
+    if (!record) return;
+    record.endedAt = this.now();
+    // The request can synchronously enter a frame. Finish its retained entry after return.
+    if (record.frame) {
+      record.frame.firstRequestSyncEndedAtMs = record.endedAt;
+      record.frame.firstRequestSyncEndToFrameEntryMs =
+        record.frame.enteredAtMs >= record.endedAt ? record.frame.enteredAtMs - record.endedAt : null;
+    }
+  }
+
+  enterFrame(activeSpans: readonly ActiveSpan[]): ActionFrameEntrySample {
+    const enteredAtMs = this.now();
+    const record = this.pending;
+    // Requests made during rendering belong to the next frame, not the batch entering now.
+    this.pending = undefined;
+    const sample: ActionFrameEntrySample = {
+      id: ++this.frameSequence,
+      enteredAtMs,
+      requestCount: record?.count ?? 0,
+      firstRequestAtMs: record?.at ?? null,
+      firstRequestSyncEndedAtMs: record?.endedAt ?? null,
+      firstRequestToFrameEntryMs: record ? enteredAtMs - record.at : null,
+      firstRequestSyncEndToFrameEntryMs: record?.endedAt != null ? enteredAtMs - record.endedAt : null,
+      firstFrameForActions: [],
+      droppedActionLinks: record?.droppedLinks ?? 0,
+      syncThrew: false,
+    };
+    if (record) {
+      record.frame = sample;
+      for (const root of record.roots.values()) {
+        if (this.firstFrames.has(root)) continue;
+        const ended = activeSpans.includes(root) ? null : root.sample.endedAtMs;
+        const link: ActionFirstFrameLink = {
+          rootSpanId: root.sample.id,
+          label: root.sample.label,
+          actionStartedAtMs: root.sample.startedAtMs,
+          actionSyncEndedAtMs: ended,
+          actionStartToFirstFrameEntryMs: enteredAtMs - root.sample.startedAtMs,
+          actionSyncEndToFirstFrameEntryMs: ended === null ? null : enteredAtMs - ended,
+        };
+        this.firstFrames.set(root, { frame: sample, link });
+        sample.firstFrameForActions.push(link);
+      }
+    }
+    return sample;
+  }
+
+  endSpan(active: ActiveSpan) {
+    const { sample } = active;
+    const firstFrame = this.firstFrames.get(active);
+    if (firstFrame) {
+      const { frame, link } = firstFrame;
+      link.actionSyncEndedAtMs = sample.endedAtMs;
+      link.actionSyncEndToFirstFrameEntryMs =
+        frame.enteredAtMs >= sample.endedAtMs ? frame.enteredAtMs - sample.endedAtMs : null;
+    }
+  }
+
+  discardPending() {
+    this.pending = undefined;
+  }
+
+  clear() {
+    this.discardPending();
+    this.droppedPendingActionLinks = 0;
+  }
 }
 
 /**
@@ -186,10 +287,8 @@ export function attachTerminalActionProfiler(
   const stack: ActiveSpan[] = [];
   const restores: (() => void)[] = [];
   const patched = new Map<object, Set<string>>();
-  let spanSequence = 0,
-    frameSequence = 0,
-    droppedPendingActionLinks = 0;
-  let pending: PendingRequest | undefined;
+  const attribution = new FrameAttribution(capacity, now);
+  let spanSequence = 0;
   let disposed = false;
   let timer: unknown;
   let timerPending = false;
@@ -225,12 +324,7 @@ export function attachTerminalActionProfiler(
       sample.syncExclusiveMs = sample.syncDurationMs - active.childMs;
       stack.pop();
       if (parent) parent.childMs += sample.syncDurationMs;
-      if (active.firstFrame) {
-        const { frame, link } = active.firstFrame;
-        link.actionSyncEndedAtMs = sample.endedAtMs;
-        link.actionSyncEndToFirstFrameEntryMs =
-          frame.enteredAtMs >= sample.endedAtMs ? frame.enteredAtMs - sample.endedAtMs : null;
-      }
+      attribution.endSpan(active);
       spans.push(sample);
     }
   }
@@ -272,33 +366,11 @@ export function attachTerminalActionProfiler(
       if (disposed || this.stopped) return original.apply(this, args);
       // Capture caller root BEFORE the request span itself becomes a root.
       const root = stack.at(-1)?.root;
-      pending ??= {
-        at: now(),
-        endedAt: null,
-        count: 0,
-        roots: new Map(),
-        droppedLinks: 0,
-      };
-      const record: PendingRequest = pending;
-      const first = record.count++ === 0;
-      if (root && !root.firstFrame && !record.roots.has(root.sample.id)) {
-        if (record.roots.size < capacity) record.roots.set(root.sample.id, root);
-        else {
-          record.droppedLinks++;
-          droppedPendingActionLinks++;
-        }
-      }
+      const firstRequest = attribution.beginRequest(root);
       try {
         return measure(name, "request", () => original.apply(this, args));
       } finally {
-        if (first) {
-          record.endedAt = now();
-          if (record.frame) {
-            record.frame.firstRequestSyncEndedAtMs = record.endedAt;
-            record.frame.firstRequestSyncEndToFrameEntryMs =
-              record.frame.enteredAtMs >= record.endedAt ? record.frame.enteredAtMs - record.endedAt : null;
-          }
-        }
+        attribution.endRequest(firstRequest);
       }
     };
   }
@@ -307,38 +379,7 @@ export function attachTerminalActionProfiler(
     return function (this: Instance, ...args: unknown[]) {
       if (disposed || this.stopped || (this.mode === "fullscreen" && this.altScreenActive === false))
         return original.apply(this, args);
-      const enteredAtMs = now();
-      const record = pending;
-      pending = undefined;
-      const sample: ActionFrameEntrySample = {
-        id: ++frameSequence,
-        enteredAtMs,
-        requestCount: record?.count ?? 0,
-        firstRequestAtMs: record?.at ?? null,
-        firstRequestSyncEndedAtMs: record?.endedAt ?? null,
-        firstRequestToFrameEntryMs: record ? enteredAtMs - record.at : null,
-        firstRequestSyncEndToFrameEntryMs: record?.endedAt != null ? enteredAtMs - record.endedAt : null,
-        firstFrameForActions: [],
-        droppedActionLinks: record?.droppedLinks ?? 0,
-        syncThrew: false,
-      };
-      if (record) {
-        record.frame = sample;
-        for (const root of record.roots.values()) {
-          if (root.firstFrame) continue;
-          const ended = stack.includes(root) ? null : root.sample.endedAtMs;
-          const link: ActionFirstFrameLink = {
-            rootSpanId: root.sample.id,
-            label: root.sample.label,
-            actionStartedAtMs: root.sample.startedAtMs,
-            actionSyncEndedAtMs: ended,
-            actionStartToFirstFrameEntryMs: enteredAtMs - root.sample.startedAtMs,
-            actionSyncEndToFirstFrameEntryMs: ended === null ? null : enteredAtMs - ended,
-          };
-          root.firstFrame = { frame: sample, link };
-          sample.firstFrameForActions.push(link);
-        }
-      }
+      const sample = attribution.enterFrame(stack);
       try {
         return measure("renderer.doRender", "frame", () => original.apply(this, args));
       } catch (error) {
@@ -392,15 +433,14 @@ export function attachTerminalActionProfiler(
         droppedFrameEntries: frames.dropped,
         totalHeartbeats: heartbeats.total,
         droppedHeartbeats: heartbeats.dropped,
-        droppedPendingActionLinks,
+        droppedPendingActionLinks: attribution.droppedPendingActionLinks,
       };
     },
     clear() {
       spans.clear();
       frames.clear();
       heartbeats.clear();
-      pending = undefined;
-      droppedPendingActionLinks = 0;
+      attribution.clear();
     },
     dispose() {
       if (disposed) return;
@@ -409,7 +449,7 @@ export function attachTerminalActionProfiler(
       timerPending = false;
       for (const restore of restores.reverse()) restore();
       attached.delete(renderer);
-      pending = undefined;
+      attribution.discardPending();
     },
   };
   attached.add(renderer);

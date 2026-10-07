@@ -113,7 +113,7 @@
     {
       "focus": "scripts/terminal-perf/action-profiler.ts",
       "initialBlob": "833e1e060db3eeffde361abc7c260aaca53bd8f8",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_6ffa8972",
@@ -128,11 +128,25 @@
           "id": "task_40ff7535",
           "base": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
           "candidate": "84108130c3b7f3ba70e166dac04e53bfde0f7dcb",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/action-profiler.ts": "062743f9b9d3f410ff09eda39e76db21b717e11a",
+            "tests/terminal-perf-action-profiler.test.ts": "4d02e0adb5d1eed02f4c5a1be49de460092d5a15"
+          },
+          "evidence": "Bounded FrameAttribution owner colocates request coalescing, frame links and late corrections instead of scattering them through wrappers. Reentrant consumed-batch record, weak root associations and clear/dispose contracts preserved.",
+          "checks": [
+            "Dependency-free exact base/candidate reentrant run: identical snapshots and 19 clock reads",
+            "diff check"
+          ],
+          "limits": [
+            "SDK two-suite rerun blocked by NODE_PATH resolution; writer suites not independently confirmed",
+            "No full build/device/live/performance proof"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "062743f9b9d3f410ff09eda39e76db21b717e11a",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
       "changedRelatedPaths": [
         "tests/terminal-perf-action-profiler.test.ts"
@@ -563,11 +577,19 @@
     {
       "focus": "src/ui/execution-previews.ts",
       "initialBlob": "26089d9420f9da4e0574d2053ba460283c46cb3a",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_52ca0e94",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_52ca0e94",
+          "branch": "bruv/primary-readability-src-ui-execution-pre-52ca0e94",
+          "launchBase": "4f808ab2263b80475eddcbc772a48570afa438bd"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "4f808ab2263b80475eddcbc772a48570afa438bd"
     },
     {
       "focus": "src/ui/footer.ts",
@@ -598,19 +620,40 @@
     {
       "focus": "src/ui/rolling-activity.ts",
       "initialBlob": "10c2ad0a2b8161b8b5b325707e32d25bd4cb5ed4",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f8eb0cae",
           "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_f8eb0cae",
-          "branch": "bruv/primary-readability-src-ui-rolling-activ-f8eb0cae"
+          "branch": "bruv/primary-readability-src-ui-rolling-activ-f8eb0cae",
+          "commit": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_a6caab27",
+          "base": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
+          "candidate": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb"
+      "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
+      "changedRelatedPaths": [
+        "tests/rolling-activity.test.ts",
+        "tests/rolling-activity-disk.test.ts"
+      ],
+      "result": "Candidate replaces synthetic map keys/segment counters/last identity with explicit contiguous activity runs and boundary resets.",
+      "checks": [
+        "119 focused tests /3274 assertions",
+        "focused format/diff check",
+        "lint exit 0 with existing diagnostics"
+      ],
+      "limits": [
+        "No build/typecheck/compiled CLI/live/device/provider/SSH/latency proof"
+      ]
     },
     {
       "focus": "src/ui/sdk-task-rows.ts",
@@ -969,7 +1012,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary focus pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_40ff7535",
+          "candidate": "84108130c3b7f3ba70e166dac04e53bfde0f7dcb",
+          "verdict": "ACCEPT",
+          "blob": "4d02e0adb5d1eed02f4c5a1be49de460092d5a15"
+        }
+      ]
     },
     {
       "focus": "tests/terminal-perf-cli.test.ts",
