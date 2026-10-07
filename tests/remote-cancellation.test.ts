@@ -49,7 +49,7 @@ test("cancellation receives stop report before abort and captures every page bef
       },
     };
     registerRemoteCancellationService(pi, async (received) => {
-      expect(received).toBe(ctx);
+      expect(received).toBe<typeof ctx>(ctx);
       effects.push("stop");
       return new Promise((resolve) => {
         release = resolve;

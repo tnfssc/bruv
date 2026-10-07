@@ -308,8 +308,14 @@
     {
       "focus": "src/remote/owner-child.ts",
       "initialBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "c9a84cf7c9eb36006c149e4f28f291486808a725",
+      "primary": {
+        "id": "task_4e578c3e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_4e578c3e",
+        "branch": "bruv/remote-primary-owner-child-4e578c3e"
+      }
     },
     {
       "focus": "src/remote/owner-rpc.ts",
@@ -599,14 +605,26 @@
     {
       "focus": "src/remote/services.ts",
       "initialBlob": "5668a5df605155d82fa48f3c34c720e6fccd36b3",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_662f378f",
+          "status": "running",
+          "candidate": "d9db2f5f806ab216b77820ec25aa5cff4d7c2c26"
+        }
+      ],
       "primary": {
         "id": "task_4a268808",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_4a268808",
-        "branch": "bruv/remote-primary-services-4a268808"
+        "branch": "bruv/remote-primary-services-4a268808",
+        "commit": "d9db2f5f806ab216b77820ec25aa5cff4d7c2c26"
       },
-      "launchBase": "9f121a62e78309f351d12e1ff4933a0cf72281e7"
+      "launchBase": "9f121a62e78309f351d12e1ff4933a0cf72281e7",
+      "result": "Capability delivery transaction owns identity/revocation/durable replay/delivery; collection remains orchestration. Child entry visibly records need/waits authority/removes need/executes.",
+      "checks": "79 candidate tests pass; lifecycle tests pass baseline; format/lint/diff pass; no full/live.",
+      "changedRelatedPaths": [
+        "tests/remote-capability-runtime.test.ts"
+      ]
     },
     {
       "focus": "src/remote/source-approval.ts",
@@ -1136,7 +1154,7 @@
       "focus": "tests/remote-cancellation.test.ts",
       "kind": "new",
       "introducedBy": "8677e1f44ec5d15c40fdc7af724648e03a29f224",
-      "status": "rework-judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_9c33e422",
@@ -1148,9 +1166,12 @@
         },
         {
           "id": "task_7be6f9c9",
-          "status": "running",
+          "status": "completed",
           "candidate": "e58f7fee0d98e85e44266fbd6c10b0f934a4ba4b",
-          "context": "Prior accepted readability, observed integration TS2769, explicit expected-value overload rework; all prior findings supplied."
+          "context": "Prior accepted readability, observed integration TS2769, explicit expected-value overload rework; all prior findings supplied.",
+          "verdict": "ACCEPT",
+          "reason": "Supported toBe expected-value type overload preserves exact reference identity assertion and all readable fixture/order evidence; no casts or production change.",
+          "checks": "Judge 4 pass/20 assertions, focused strict TS pass; old blob TS2769 reproduced at toBe(ctx), format/lint/diff pass; full project dependency blocked."
         }
       ],
       "relatedAcceptance": {
@@ -1167,8 +1188,8 @@
       "result": "Unchanged fixture owns environment/cleanup; held cancellation proves report-before-abort, two-page running/cancelled scan and capture-before-settlement; rejection/incomplete pagination/idle foreground directly exposed.",
       "changedRelatedPaths": [],
       "checks": "4 pass/20 assertions; clean diff.",
-      "acceptedBlob": "d294d93ec8ee707f600fd055acda2c6c7e5b0d03",
-      "integrationState": "unchanged new-file blob at area tip",
+      "acceptedBlob": "a1a198779b4e9cf1bd48b7459e3e0c3b0adcb901",
+      "integrationState": "exact rework patch accepted and applied; runtime assertions unchanged",
       "reworks": [
         {
           "id": "task_f9d2ba8e",
@@ -1181,6 +1202,9 @@
           "checks": "4 pass/20 assertions; full bun run check, format/lint/diff pass.",
           "changedRelatedPaths": []
         }
+      ],
+      "priorAcceptedBlobs": [
+        "d294d93ec8ee707f600fd055acda2c6c7e5b0d03"
       ]
     },
     {
