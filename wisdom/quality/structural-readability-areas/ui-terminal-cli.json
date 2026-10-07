@@ -14,8 +14,8 @@
       "file": "tests/editor-voice-integration.test.ts",
       "owner": "live-native-audio",
       "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
-      "blob": "95453da9cb3f0827a96b955c60f854e905939dac",
-      "state": "accepted patch integrated; assigned primary owner must inspect final blob"
+      "blob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+      "state": "resolved by assigned Live primary task_90932544 and judge task_5f1948bf, parent merge exact final hash"
     },
     {
       "file": "tests/subagent-settings-ui.test.ts",
@@ -2959,17 +2959,43 @@
       "kind": "cross-area-related",
       "assignedOwner": "live-native-audio",
       "initialBlob": "a54b95973f39569c32af94c7043aa7665a8da4ca",
-      "status": "related-patch-accepted-primary-pending",
-      "primary": [],
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_90932544",
+          "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_90932544",
+          "branch": "bruv/primary-tests-editor-voice-integration.t-90932544",
+          "status": "candidate ready",
+          "commit": "1bebfe90e9b17b318805063068d637b4f1f8b1b5",
+          "externalOwner": "live-native-audio"
+        }
+      ],
       "judgeRounds": [
         {
           "id": "task_14234cb0",
           "verdict": "ACCEPT",
           "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7"
+        },
+        {
+          "id": "task_5f1948bf",
+          "status": "complete",
+          "candidate": "1bebfe90e9b17b318805063068d637b4f1f8b1b5",
+          "base": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent hold/cancel/release/rearm scenarios remove evolving shared draft;fixture owns replacement disposers and reverse teardown before clock restore;realSDK/draft/undo/focus/staledetach/terminal evidence retained.",
+          "checks": "Independent22 tests83 assertions and39 across3 suites171 assertions via read-only package mapping;diff pass. No behaviorfix/device/provider/macOS.",
+          "acceptedBlobs": {
+            "tests/editor-voice-integration.test.ts": "89f3ee58570d4e8d08bbb8aedf98e1e218524529"
+          },
+          "externalOwner": "live-native-audio"
         }
       ],
-      "acceptedBlob": "95453da9cb3f0827a96b955c60f854e905939dac",
-      "integrationState": "integrated; parent must reconcile assigned primary owner"
+      "acceptedBlob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+      "integrationState": "parent merged assigned-owner fresh primary/judge final test; prior related blob superseded",
+      "result": "Independent cancellation journeys show hold/cancel/release/freshhold;mouse/programmatic edits separate;fixture owns all attachment disposers including reattach and teardown before clock restore;actual SDK/draft/undo/focus/stale-detach evidence retained.",
+      "checks": "22 primary tests83 assertions;39 across3 editor suites171 assertions;Biome/typecheck afterassets/diff pass;no production fix/device/provider/macOS."
     },
     {
       "focus": "tests/subagent-settings-ui.test.ts",
@@ -3273,12 +3299,11 @@
     }
   ],
   "parentBoundary": {
-    "checkedTip": "695ade32dc055e22dd56a7bf06c01764973715d2",
-    "mergeCommit": "bc8f6e5ffb75aa2b27fd939ce60888063e756383",
-    "result": "Merged accepted parent common code cleanly; all UI accepted final blobs unchanged",
-    "acceptedHashMismatches": []
+    "checkedTip": "db885fce5225bf31dbaadba34c14ceb2393f5999",
+    "mergeCommit": "cef74bca0621739e63a5ae98e5b26dd38103141e",
+    "result": "Merged next accepted parent common checkpoint; only area overlap editor-voice test, assigned owner primary/judge exact final accepted blob reconciled"
   },
-  "diskBoundary": "136G available at parent-common-code merge",
+  "diskBoundary": "119G at second parent-common merge",
   "joinRequirements": [],
   "joinProof": {
     "judge": "task_060d7edf",
