@@ -23,3 +23,7 @@ Judge `task_e49ceb90` accepted `775567e6`: explicit creation vs existing reconci
 ## Rework required: task manager
 
 Judge `task_08e2c508` rejects intrinsic candidate, while endorsing admission refactor: `#summary` rest-spread exposes private preparation AbortController. Judge exercised snapshot abort changing manager signal without termination/status settlement. Inherited defect, not patch regression. Candidate NOT imported. Next fresh worker must preserve admission improvement, explicitly project public metadata/nested snapshots, add focused authority-isolation and manager cancellation regression, label behavior correction, then fresh judge with original and prior findings.
+
+## Integrated batch proof
+
+`task_2ab7a960`: own paired build and complete TypeScript check passed. `task_d4e7f94e`: nine executor/question/remote-approval/bridge/TUI suites passed against own paired binary, plus changed-file format/lint/diff checks exit 0 (7 inherited lint warnings, 20 infos). This resolves first-batch missing-dependency/WASM/compiled-CLI check gaps, not live-provider/device/authenticated-SSH parity. Shared read-only dependencies, private runtime assets/dist. Parent branch inspected at `6a285569`: documentation only, no accepted common source to import. Disk 157GB free.

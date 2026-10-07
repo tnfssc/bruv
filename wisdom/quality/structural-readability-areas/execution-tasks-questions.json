@@ -1107,10 +1107,33 @@
   "batchChecks": [
     {
       "job": "task_2ab7a960",
-      "state": "running",
+      "state": "passed",
       "command": "bun run build && bun run check",
       "tip": "2e78913f",
-      "setup": "shared read-only node_modules symlink; private runtime-assets copy; own dist build"
+      "setup": "shared read-only node_modules symlink; private runtime-assets copy; own dist build",
+      "proof": "Own paired build and full tsc --noEmit passed; no shared compiled binary used."
+    },
+    {
+      "job": "task_d4e7f94e",
+      "state": "passed",
+      "scope": [
+        "tests/typescript-execution.test.ts",
+        "tests/job-bridge.test.ts",
+        "tests/typescript-images.test.ts",
+        "tests/execute-output-capture.test.ts",
+        "tests/questions.test.ts",
+        "tests/remote-question-bridge.test.ts",
+        "tests/remote-source-approval.test.ts",
+        "tests/questions-bridge.test.ts",
+        "tests/questions-tui.test.ts"
+      ],
+      "proof": "All tests passed on own paired binary; focused format/lint/diff exited 0. Lint retains 7 warnings/20 infos.",
+      "totals": [
+        " 120 pass",
+        " 0 fail",
+        " 630 expect() calls",
+        "Ran 120 tests across 9 files. [29.44s]"
+      ]
     }
   ],
   "parentIntegrationInspection": {
