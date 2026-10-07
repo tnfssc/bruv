@@ -192,10 +192,17 @@
     {
       "file": "src/claude-compat/arguments.ts",
       "initialBlob": "61a99f162b7328d9f937d10ec33691a9b47bd645",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_1b5068a0",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1b5068a0",
+        "branch": "bruv/primary-arguments-1b5068a0",
+        "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a"
     },
     {
       "file": "src/claude-compat/binding.ts",
@@ -272,22 +279,31 @@
     {
       "file": "src/claude-compat/permissions.ts",
       "initialBlob": "77083e6264957aa744ef1e895d6ab537ec575c97",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_8e956f8c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_8e956f8c",
         "branch": "bruv/primary-src-claude-compat-permissions.ts-8e956f8c",
         "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee",
-        "commit": null
+        "commit": "b46e82cf279b6799c61d790bc5e2a8b67d635861"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_8e89cb17",
+          "status": "running",
+          "candidate": "b46e82cf279b6799c61d790bc5e2a8b67d635861"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee"
+      "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee",
+      "changedRelatedPaths": [],
+      "readingResult": "Unchanged ordered policy snapshot → cancellation → hard denials → explicit/mode allows → human callback → cancellation recheck; writer traced binding/runtime/MCP/app callers.",
+      "checks": "18 pass/67 assertions; no full gate/live."
     },
     {
       "file": "src/claude-compat/preflight.ts",
       "initialBlob": "8d220bba36b3b6edbf7b131e60b45a3ad89792cf",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_276ba03d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_276ba03d",
@@ -298,15 +314,20 @@
       "judges": [
         {
           "id": "task_b4734a45",
-          "status": "running",
-          "candidate": "2d6aae08ca1f143ebbb3740fa74e7407bbd0d624"
+          "status": "completed",
+          "candidate": "2d6aae08ca1f143ebbb3740fa74e7407bbd0d624",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "8d220bba36b3b6edbf7b131e60b45a3ad89792cf",
+          "objections": [],
+          "evidence": "Read-only ancestor resolver localizes missing suffix/symlink traversal; validator ordered policy gates. CLI invokes before resource allocation; auxiliary deliberately bypasses gate and storage. Inspected actual compiled rejection tests; no test rerun."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "8d220bba36b3b6edbf7b131e60b45a3ad89792cf",
       "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee",
       "changedRelatedPaths": [],
       "readingResult": "No source change proposed: readonly ancestor resolution distinct from native-home validation; explicit absolute path → canonicalize → refuse default Claude subtree → check ancestor permissions.",
-      "checks": "Direct-source 6 pass/23 assertions; no compiled/full gate."
+      "checks": "Direct-source 6 pass/23 assertions; no compiled/full gate.",
+      "integrationState": "Unchanged matches area tip"
     },
     {
       "file": "src/claude-compat/runtime.ts",
@@ -386,17 +407,26 @@
     {
       "file": "src/t3/tasks/launch-identity.ts",
       "initialBlob": "4162ee435592ca0bc00890499e6195006cf93225",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_2f86e222",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_2f86e222",
         "branch": "bruv/primary-src-t3-tasks-launch-identity.ts-2f86e222",
         "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee",
-        "commit": null
+        "commit": "430f24edb86cdc322aab2038745648ddd778b32d"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_1cec47b4",
+          "status": "running",
+          "candidate": "430f24edb86cdc322aab2038745648ddd778b32d"
+        }
+      ],
       "acceptedBlob": null,
-      "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee"
+      "launchBase": "bc2e473db438b5f152476cd01058a3be4a42ceee",
+      "changedRelatedPaths": [],
+      "readingResult": "Caller durable identity → fingerprint → valid legacy mapping or deterministic bruv-v1 ID without writes; native uses ID, SSH derives task ID. Read handle lifetime local.",
+      "checks": "30 native-routing/SSH placement pass,159 assertions; diff check; no live/authenticated SSH/full build."
     },
     {
       "file": "src/t3/tasks/local-notifications.ts",
@@ -588,8 +618,14 @@
     {
       "file": "tests/claude-compat-runtime.test.ts",
       "initialBlob": "5429ce6b5e28b1b1dcde77a0c4e1f75d19a398ef",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_5d5cfc47",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_5d5cfc47",
+        "branch": "bruv/primary-runtime-tests-5d5cfc47",
+        "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -599,7 +635,8 @@
           "blob": "1d98a4025fda59bbb5ccce3da917d58a1fbee364",
           "candidate": "cb1bcfc8a31d7869005ebed4106b56fe81773bed"
         }
-      ]
+      ],
+      "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a"
     },
     {
       "file": "tests/claude-compat-task-binding.test.ts",

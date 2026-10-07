@@ -13,3 +13,5 @@ Proof limits: no tests yet; native/provider/device/SSH acceptance requires real 
 ## Accepted runtime ownership patch
 
 Integrated exact candidate `cb1bcfc8` runtime + regression test, not worker note. Judge `task_9a477342` ACCEPT: history queue/parent/sticky failure now share lifetime owner, runtime drains at lifecycle boundaries; shared message-body conversion leaves child frame policy at caller. Base/candidate serialized-history comparison preserved replay property order. Writer: 27 runtime tests plus 5 companion pass/7 SDK skips, typecheck/format/lint. Judge test rerun blocked by module resolution; no live/full gate. Runtime test still needs its own fresh primary focus.
+
+Batch checkpoint: parent integration `6a285569` contained only common progress notes since initialization; no useful source merge needed. Disk 156 GiB available. Area batch proof job `task_554a7ded` generates area-owned runtime assets and runs runtime/history/task-binding/prompt-ownership, typecheck and focused format/lint. Result pending; never inferred from worker results.
