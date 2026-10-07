@@ -1256,7 +1256,7 @@
     {
       "focus": "tests/architecture.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_66f5eec2",
@@ -1272,13 +1272,21 @@
           "id": "task_bdc1d4a5",
           "base": "4f71d1b0e2cb25e1abd126730484ead7212aff82",
           "candidate": "74ccbdbf77e0a83423099f84c47dc1816b865eed",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Scan/normalize directruntimeedges/explicitownership predicates/report;maintained/retired homes visible. Actual sourceowners traced;no indirection improvement needed.",
+          "checks": "15tests143assertions;21disposable rule fixtures;format/lintpass;188TS423relative runtimeedges. Nonrelative imports ignored;JS-suffixed taskowner target evades predicate,no currentcorrespondingT3edge. Not transitive/package-resolution/universaluniqueness proof. No tsc/fullbuild.",
+          "acceptedBlobs": {
+            "tests/architecture.test.ts": "fe6b52be2dde66bf1ab7aad6b1b327d419f0acea"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "fe6b52be2dde66bf1ab7aad6b1b327d419f0acea",
       "readingResult": "Unchanged proposed: scan/normalize runtimeedges/three explicit ownership predicates/report;maintained/retired homes directlylisted.",
-      "checks": "15focuspass;disposable dependency/retired-path rejection and type-only TaskEvent allowprobes;format/lintpass."
+      "checks": "15focuspass;disposable dependency/retired-path rejection and type-only TaskEvent allowprobes;format/lintpass.",
+      "integrationState": "Unchanged focus matches tip;candidate note excluded."
     },
     {
       "focus": "tests/ci-remote-cli-source.test.ts",
@@ -1806,7 +1814,7 @@
     {
       "focus": "tests/native-node-path.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_9358bad2",
@@ -1832,13 +1840,21 @@
           "id": "task_179e47de",
           "base": "143f8d13a88ea923e6ebc861888028232040e714",
           "candidate": "df84d39f150a2051b70a3108a4d3f3af38f3171e",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "One fixture lifetime with linear tap/child/protocol observations and separate generatedcommand policy;actual acceptance caller requires pinnedconnector/exit/hash/evidence,not fixture success alone.",
+          "checks": "Independent17tests95assertions Bun1.4.2Node24.21.0;focusBiomepass. ChildexecPath not independenttapinterpreter proof;generatedcommands inspectednotexecuted;wireonlystdoutrecord;workflowstatictext;not nativeacceptance/build/tsc.",
+          "acceptedBlobs": {
+            "tests/native-node-path.test.ts": "48730a38d9ff63ce62e12886fc9f5b3ab5de7fed"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "48730a38d9ff63ce62e12886fc9f5b3ab5de7fed",
       "readingResult": "Unchanged proposed: one local fixture lifetime and linear effects;helper extraction adds navigation. Freshly traced tap/model/worker/runner/orchestrator/setup/workflow.",
-      "checks": "17relatedtests95assertions Bun1.4.2 Node24.21.0;Biomepass. Existing limits:child Nodepath doesnot independently prove tapinterpreter;generated modelcommands inspectednotexecuted;not native acceptance."
+      "checks": "17relatedtests95assertions Bun1.4.2 Node24.21.0;Biomepass. Existing limits:child Nodepath doesnot independently prove tapinterpreter;generated modelcommands inspectednotexecuted;not native acceptance.",
+      "integrationState": "Unchanged focus matches tip;note excluded;stalled predecessor not evidence."
     },
     {
       "focus": "tests/native-release-gate.test.ts",

@@ -116,3 +116,7 @@ Actual Linux pair buildtask_4c7a84d9passed;Pi adaptation on owned dependencycopy
 Compiled Bun fixture NO CHANGE NEEDED task_0f0570b0 blob986f1428:direct runtimeauthority,private compiler caller owns cleanup,no sourcefallback.Independent compiledtrue/sourcefalse,7compiled+2sourceguardassertions,tsc/Biomepass;Linuxfixture not releaseacceptance.
 
 Source remoteCLI tests:case-owned homes/specificerrors/reject-before-owner proof;judge task_65a4c618 ACCEPT2b8ba4bd.4/17 with acceptedPython27df96e,tsc/Biomepass. Disposable environment initially missed trustwarning;compatibility proof requires worktree trust resources and cleared BRUV_* agentidentity—not arbitraryambient guarantee. No cancellation/liveSSHclaim.
+
+Architecture guard NO CHANGE NEEDED task_bdc1d4a5 fe6b52be:15/143+21disposable fixtures,188TS423relativeedges. Direct relativeimport/layout only;nonrelativeignored and .js-suffixed taskowner predicate gap observed(no current correspondingedge). Listedhomes not universalownershipuniqueness.
+
+Nodepath tests NO CHANGE NEEDED task_179e47de48730a38;17/95independent. ChildexecPath not tapinterpreterproof;generatedcommands onlyinspected,wireonlystdout,workflowstatictext. Actual native acceptance caller separately pinned/hash/exit/evidence. Stalledpredecessor not evidence.
