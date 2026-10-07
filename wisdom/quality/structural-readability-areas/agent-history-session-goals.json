@@ -1170,7 +1170,11 @@
           "id": "task_a7f9ce2d",
           "candidate": "2e323383ea64470abbc17605d7838f50cc461954",
           "base": "4bd65fd16c75678800b04e432dcaad64702ce0d3",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Runtime fixture owns event envelopes/context and completion-status notification; scenarios express domain event order. Direct store/JSONL fixtures retained for separate authority/persistence behavior. Before-start test now checks genuine uninitialized state.",
+          "checks": "Independent 31 passes/147 assertions; diff clean; no mutation rerun. Acceptance excludes later extension regression additions until final combined review."
         }
       ],
       "acceptedBlob": null,
