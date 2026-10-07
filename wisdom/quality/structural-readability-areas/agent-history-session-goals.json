@@ -1187,7 +1187,8 @@
             "tests/cache-countdown.test.ts",
             "wisdom/quality/structural-readability-worker.md"
           ],
-          "checks": "Baseline 12/61; candidate 19/67; countdown+SDK+native+footer 87/546 pass; format/lint/diff pass; known goal-test TS2554 baseline persists."
+          "checks": "Baseline 12/61; candidate 19/67; countdown+SDK+native+footer 87/546 pass; format/lint/diff pass; known goal-test TS2554 baseline persists.",
+          "result": "Split four unrelated correlation histories and combined command/subscription/delivery/persistence scenarios. Local fixture captures real SDK registrations/effects; domain callbacks/assertions remain visible, session lifecycle stays chronological."
         }
       ],
       "judgeRounds": [
