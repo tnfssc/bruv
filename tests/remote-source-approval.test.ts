@@ -10,6 +10,8 @@ import { SOURCE_CHOICES, SourceApprovalService, type SourceIntent } from "../src
 import { JobService } from "../src/tasks/job-service";
 import { TaskManager } from "../src/tasks/task-manager";
 
+const [includeRequestedFiles, omitAllUntrackedFiles, cancelSourceLaunch] = SOURCE_CHOICES;
+
 // Git snapshot helpers spawn their own Git processes; fence both global and
 // system config for these isolated fixtures, not only the setup helper.
 const gitKeys = ["GIT_CONFIG_GLOBAL", "GIT_CONFIG_SYSTEM", "GIT_CONFIG_NOSYSTEM"] as const;
@@ -99,7 +101,7 @@ function fixture() {
     },
   };
 }
-async function approve(f: ReturnType<typeof fixture>, choice: string) {
+async function answerSourceQuestion(f: ReturnType<typeof fixture>, choice: string) {
   const record = f.service.get(f.file, f.intent.taskId)!;
   const q = f.questions.get(f.ctx, record.questionId!);
   return f.questions.answer(f.ctx, { id: q.id, owner: q.owner, version: q.version, text: choice });
@@ -113,7 +115,7 @@ test("exact human-owned question pins tracked edits and requested bytes, not pos
   expect(q.text).toContain("SHA-256");
   expect(q.text).toContain('"target":"box"');
   expect(pending.state).toBe("waiting");
-  await approve(f, SOURCE_CHOICES[0]);
+  await answerSourceQuestion(f, includeRequestedFiles);
   writeFileSync(join(f.root, "new.txt"), "changed after human answer");
   writeFileSync(join(f.root, "tracked"), "changed later tracked edit");
   const ready = await new SourceApprovalService(f.path).prepare(f.intent, f.ctx);
@@ -145,7 +147,7 @@ test("question creation failure retains pinned source and retries without recapt
   expect(awaiting.questionOwner).toEqual(pinned.questionOwner);
   expect(awaiting.dedupKey).toBe(pinned.dedupKey);
   expect(f.questions.list(f.ctx)).toHaveLength(1);
-  await approve(f, SOURCE_CHOICES[0]);
+  await answerSourceQuestion(f, includeRequestedFiles);
   const ready = await restarted.prepare(f.intent, f.ctx);
   const checkout = join(f.dir, "restarted-proof");
   git(f.dir, "clone", "-q", restarted.snapshot(ready).bundle, checkout);
@@ -156,7 +158,7 @@ test("ordinary agent ask/resolve cannot forge approval; unresolved defaults omit
   const f = fixture();
   const pending = await f.service.prepare(f.intent, f.ctx);
   const q = f.questions.get(f.ctx, pending.questionId!);
-  expect(() => f.questions.handle("questions.answer", { id: q.id, text: SOURCE_CHOICES[0] }, f.ctx)).toThrow(
+  expect(() => f.questions.handle("questions.answer", { id: q.id, text: includeRequestedFiles }, f.ctx)).toThrow(
     "UI reply only",
   );
   await expect(f.questions.ask(f.ctx, { text: "approved:true", dedupKey: q.dedupKey })).rejects.toThrow(
@@ -168,24 +170,26 @@ test("ordinary agent ask/resolve cannot forge approval; unresolved defaults omit
   expect(ready.omissionReason).toContain("all untracked files omitted");
   expect(f.service.snapshot(ready).selectedUntracked).toEqual([]);
 });
-test("explicit denial omits all untracked; explicit cancel never yields a dispatch snapshot", async () => {
+test("explicit human denial omits all untracked files from the dispatch snapshot", async () => {
   const f = fixture();
   await f.service.prepare(f.intent, f.ctx);
-  await approve(f, SOURCE_CHOICES[1]);
+  await answerSourceQuestion(f, omitAllUntrackedFiles);
   const denied = await f.service.prepare(f.intent, f.ctx);
   expect(denied.decision).toBe("omit");
   expect(f.service.snapshot(denied).omittedUntracked).toEqual(["new.txt", "omitted.txt"]);
-  const g = fixture();
-  await g.service.prepare(g.intent, g.ctx);
-  await approve(g, SOURCE_CHOICES[2]);
-  const cancelled = await g.service.prepare(g.intent, g.ctx);
+});
+test("explicit human cancellation never yields a dispatch snapshot", async () => {
+  const f = fixture();
+  await f.service.prepare(f.intent, f.ctx);
+  await answerSourceQuestion(f, cancelSourceLaunch);
+  const cancelled = await f.service.prepare(f.intent, f.ctx);
   expect(cancelled.state).toBe("cancelled");
-  expect(() => g.service.snapshot(cancelled)).toThrow("not ready");
+  expect(() => f.service.snapshot(cancelled)).toThrow("not ready");
 });
 test("owner, target, epoch, source and prompt retries cannot reuse approval", async () => {
   const f = fixture();
   await f.service.prepare(f.intent, f.ctx);
-  await approve(f, SOURCE_CHOICES[0]);
+  await answerSourceQuestion(f, includeRequestedFiles);
   for (const change of [
     { target: "elsewhere" },
     { epoch: "new" },
@@ -200,27 +204,29 @@ test("owner, target, epoch, source and prompt retries cannot reuse approval", as
   f.navigate("sibling");
   await expect(f.service.prepare(f.intent, f.ctx)).rejects.toThrow("Question not found");
 });
-test("stale or non-CLI answers do not grant inclusion; changed pinned bundle refuses dispatch", async () => {
+test("a CLI inclusion answer older than the pinned question version does not grant inclusion", async () => {
   const f = fixture();
-  const p = await f.service.prepare(f.intent, f.ctx);
+  const pending = await f.service.prepare(f.intent, f.ctx);
+  expect(pending.questionVersion).toBe(2);
   const ledger = f.file + ".questions.json";
   const records = JSON.parse(readFileSync(ledger, "utf8"));
   Object.assign(records[0], {
     status: "answered",
-    answer: SOURCE_CHOICES[0],
+    answer: includeRequestedFiles,
     answeredFrom: "cli",
     replyId: "stale",
     replyVersion: 0,
   });
   writeFileSync(ledger, JSON.stringify(records));
   expect((await f.service.prepare(f.intent, f.ctx)).decision).toBe("omit");
-  const g = fixture();
-  await g.service.prepare(g.intent, g.ctx);
-  await approve(g, SOURCE_CHOICES[0]);
-  const ready = await g.service.prepare(g.intent, g.ctx);
+});
+test("an approved pinned bundle that changes before dispatch is refused", async () => {
+  const f = fixture();
+  await f.service.prepare(f.intent, f.ctx);
+  await answerSourceQuestion(f, includeRequestedFiles);
+  const ready = await f.service.prepare(f.intent, f.ctx);
   writeFileSync(ready.include.snapshot.bundle, "tampered");
-  expect(() => g.service.snapshot(ready)).toThrow("changed");
-  expect(p.questionVersion).toBe(2);
+  expect(() => f.service.snapshot(ready)).toThrow("changed");
 });
 test("credential paths never receive an inclusion question", async () => {
   const f = fixture();
@@ -233,7 +239,7 @@ test("credential paths never receive an inclusion question", async () => {
 test("question delivery mutations preserve authentic human approval", async () => {
   const f = fixture();
   await f.service.prepare(f.intent, f.ctx);
-  const answered = await approve(f, SOURCE_CHOICES[0]);
+  const answered = await answerSourceQuestion(f, includeRequestedFiles);
   await f.questions.setDelivery(f.ctx, {
     id: answered.id,
     owner: answered.owner,
@@ -334,7 +340,7 @@ test("normal jobs track pending source permission, inspect and cancel without re
 test("offline restart reuses exact pinned task ID and intent; uncertain accepted run cannot duplicate", async () => {
   const f = await adapterFixture();
   await f.adapter.launch(f.request, f.ctx);
-  await approve(f, SOURCE_CHOICES[0]);
+  await answerSourceQuestion(f, includeRequestedFiles);
   f.offline(true);
   const retry = { ...f.request, source: { includeUntracked: ["new.txt"], retryTaskId: f.request.taskId } };
   const uncertain = await createRemoteJobsAdapter(f.client, f.launcher).launch(retry, f.ctx);
@@ -350,7 +356,7 @@ test("offline restart reuses exact pinned task ID and intent; uncertain accepted
 test("adapter retries preserve an already-pinned source intent and its original question owner", async () => {
   const f = await adapterFixture();
   const pinned = await f.service.prepare(f.intent, f.ctx);
-  await approve(f, SOURCE_CHOICES[0]);
+  await answerSourceQuestion(f, includeRequestedFiles);
   f.continueParent();
   const result = await f.adapter.launch(
     {
@@ -414,7 +420,7 @@ test("JobService exposes selection not approval, passes parent context and follo
       "explicit cross-placement",
     );
     const q = f.questions.get(f.ctx, pending.sourceApproval.questionId);
-    await f.questions.answer(f.ctx, { id: q.id, owner: q.owner, version: q.version, text: SOURCE_CHOICES[1] });
+    await f.questions.answer(f.ctx, { id: q.id, owner: q.owner, version: q.version, text: omitAllUntrackedFiles });
     f.continueParent();
     const result = (await service.handle(
       "subagent",
@@ -437,7 +443,7 @@ test("JobService exposes selection not approval, passes parent context and follo
 test("human answer stays human-owned after ordinary agent resolution", async () => {
   const f = fixture();
   await f.service.prepare(f.intent, f.ctx);
-  const q = await approve(f, SOURCE_CHOICES[0]);
+  const q = await answerSourceQuestion(f, includeRequestedFiles);
   await f.questions.resolve(f.ctx, {
     id: q.id,
     owner: q.owner,
@@ -454,7 +460,7 @@ test("approval acceptance keeps cached normal-job ordering stable", async () => 
   const secondResult = await f.adapter.launch(second, f.ctx);
   expect((await f.adapter.list(f.file)).map((job) => job.id)).toEqual([firstResult.id, secondResult.id]);
   const q = f.questions.get(f.ctx, secondResult.sourceApproval!.questionId!);
-  await f.questions.answer(f.ctx, { id: q.id, owner: q.owner, version: q.version, text: SOURCE_CHOICES[0] });
+  await f.questions.answer(f.ctx, { id: q.id, owner: q.owner, version: q.version, text: includeRequestedFiles });
   await f.adapter.launch(second, f.ctx);
   expect((await createRemoteJobsAdapter(f.client, f.launcher).list(f.file)).map((job) => job.id)).toEqual([
     firstResult.id,
@@ -478,7 +484,7 @@ test("source preflight at an execute anchor ignores diagnostic-only children, st
   expect(q.answeredFrom).toBeUndefined();
   expect(q.blocked?.checkpoint).toContain(f.intent.taskId);
   expect((await f.service.prepare(f.intent, f.ctx)).state).toBe("waiting");
-  await approve(f, SOURCE_CHOICES[0]);
+  await answerSourceQuestion(f, includeRequestedFiles);
   f.continueParent();
   const ready = await f.service.prepare(f.intent, f.ctx);
   expect(ready.decision).toBe("include");

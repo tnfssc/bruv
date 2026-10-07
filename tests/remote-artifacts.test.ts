@@ -50,13 +50,11 @@ test("catalog includes entire journal and execute spill, not tool preview; retur
 test("mid-download change leaves incomplete manifest and retry refetches", async () => {
   const { root, remote } = fixture();
   writeFileSync(join(remote, "session.jsonl"), Buffer.alloc(ARTIFACT_CHUNK + 1, 65));
-  let calls = 0;
   const client = {
     path: join(root, "client", "remote.json"),
     control: async (req: Record<string, unknown>) => {
       if (req.action === "list") return { artifacts: listRemoteArtifacts(remote) };
-      calls++;
-      if (calls === 2) writeFileSync(join(remote, "session.jsonl"), "changed");
+      if (req.offset === ARTIFACT_CHUNK) writeFileSync(join(remote, "session.jsonl"), "changed");
       return getRemoteArtifact(remote, req as { name: string; sha256: string; offset: number });
     },
   };
@@ -68,18 +66,36 @@ test("mid-download change leaves incomplete manifest and retry refetches", async
   const ok = await syncRemoteArtifacts(client, task);
   expect(readFileSync(ok.files["session.jsonl"]!.path, "utf8")).toBe("changed");
 });
-test("rejects escapes, symlinks, oversized files, bad offsets and altered chunks", async () => {
-  const { root, remote } = fixture();
+test("owner rejects path escapes and offsets beyond the artifact", () => {
+  const { remote } = fixture();
   writeFileSync(join(remote, "session.jsonl"), "safe");
   expect(() => getRemoteArtifact(remote, { name: "../secret", sha256: "0".repeat(64), offset: 0 })).toThrow();
   const catalog = listRemoteArtifacts(remote);
   expect(() => getRemoteArtifact(remote, { name: "session.jsonl", sha256: catalog[0]!.sha256, offset: 5 })).toThrow();
+});
+
+test("owner refuses to catalog an oversized artifact", () => {
+  const { remote } = fixture();
   writeFileSync(join(remote, "session.jsonl"), Buffer.alloc(10 * 1024 * 1024 + 1));
   expect(() => listRemoteArtifacts(remote)).toThrow("10 MiB");
-  rmSync(join(remote, "session.jsonl"));
+});
+
+test("owner refuses to catalog a symlinked journal", () => {
+  const { root, remote } = fixture();
   symlinkSync(join(root, "secret"), join(remote, "session.jsonl"));
   expect(() => listRemoteArtifacts(remote)).toThrow();
-  rmSync(join(remote, "session.jsonl"));
+});
+
+test("owner refuses to catalog a symlinked execute directory", () => {
+  const { root, remote } = fixture();
+  writeFileSync(join(remote, "session.jsonl"), "abc");
+  mkdirSync(join(remote, "session.jsonl.artifacts"));
+  symlinkSync(root, join(remote, "session.jsonl.artifacts", "execute-linked"));
+  expect(() => listRemoteArtifacts(remote)).toThrow("Unsafe artifact directory");
+});
+
+test("client rejects bytes that do not match the catalog digest", async () => {
+  const { root, remote } = fixture();
   writeFileSync(join(remote, "session.jsonl"), "safe");
   const client = {
     path: join(root, "client", "remote.json"),
@@ -93,13 +109,9 @@ test("rejects escapes, symlinks, oversized files, bad offsets and altered chunks
   );
 });
 
-test("refuses symlinked execute directory and noncontiguous page", async () => {
+test("client rejects a noncontiguous page offset", async () => {
   const { root, remote } = fixture();
   writeFileSync(join(remote, "session.jsonl"), "abc");
-  mkdirSync(join(remote, "session.jsonl.artifacts"));
-  symlinkSync(root, join(remote, "session.jsonl.artifacts", "execute-linked"));
-  expect(() => listRemoteArtifacts(remote)).toThrow("Unsafe artifact directory");
-  rmSync(join(remote, "session.jsonl.artifacts", "execute-linked"));
   const client = {
     path: join(root, "client", "remote.json"),
     control: async (req: Record<string, unknown>) =>
@@ -110,6 +122,16 @@ test("refuses symlinked execute directory and noncontiguous page", async () => {
   await expect(syncRemoteArtifacts(client, { taskId: "task1", ownerId: "owner", epoch: "epoch" })).rejects.toThrow(
     "offset",
   );
+});
+
+test("client rejects a task path escape before contacting the owner", async () => {
+  const { root } = fixture();
+  const client = {
+    path: join(root, "client", "remote.json"),
+    control: async () => {
+      throw Error("Unexpected owner request");
+    },
+  };
   await expect(syncRemoteArtifacts(client, { taskId: "../other", ownerId: "owner", epoch: "epoch" })).rejects.toThrow(
     "identity",
   );

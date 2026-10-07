@@ -418,8 +418,14 @@
     {
       "focus": "src/remote/root-client.ts",
       "initialBlob": "936ef53c07b9a1d4fcf3c201479c65f29c90d0fe",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "78a0c7cd351e3226921f4f4c361c8809f3fcbf21",
+      "primary": {
+        "id": "task_a812b85a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_a812b85a",
+        "branch": "bruv/remote-primary-root-client-a812b85a"
+      }
     },
     {
       "focus": "src/remote/root-contract.ts",
@@ -634,14 +640,24 @@
     {
       "focus": "src/remote/ssh.ts",
       "initialBlob": "1bff87d9d5b0de383721212b9dd03f5c4a6723d5",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_bddb2d5c",
+          "status": "running",
+          "candidate": "43b4fcab51d1d04941d2549d3a466ae52f90c567"
+        }
+      ],
       "primary": {
         "id": "task_0f525d7e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_0f525d7e",
-        "branch": "bruv/remote-primary-ssh-0f525d7e"
+        "branch": "bruv/remote-primary-ssh-0f525d7e",
+        "commit": "43b4fcab51d1d04941d2549d3a466ae52f90c567"
       },
-      "launchBase": "aeb0a983c7448750a0e74c0d883b25bb14baad44"
+      "launchBase": "aeb0a983c7448750a0e74c0d883b25bb14baad44",
+      "result": "Unchanged hardened SSH transaction validate/spawn/scrub/bounded collection/single JSON/settle-close; limit reason retained through TERM/KILL escalation; callers own identity/replay.",
+      "checks": "7 pass/45 assertions; missing generated WASM resolved by asset preparation; no live SSH.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/untracked-preview.ts",
@@ -814,12 +830,15 @@
     {
       "focus": "tests/remote-artifacts.test.ts",
       "initialBlob": "157e69ad514d0d88bdf13daa2075a1321b5bfdcc",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_2b562570",
-          "status": "running",
-          "candidate": "1d9361ec50fc1a8e9e353000cab6111c7bb70a96"
+          "status": "completed",
+          "candidate": "1d9361ec50fc1a8e9e353000cab6111c7bb70a96",
+          "verdict": "ACCEPT",
+          "reason": "Separate owner/client rejection fixture lifetimes and page-offset mutation remove shared damage/repair/callback-counter reconstruction; coherent failure-progress-retry journey retained.",
+          "checks": "Judge candidate 11 tests/60 expectations; with job artifacts 12/64. All 37 baseline static assertions retained. Format/lint/diff pass."
         }
       ],
       "relatedAcceptance": {
@@ -836,7 +855,9 @@
       },
       "result": "Each rejection boundary owns fixture rather than damaging/repairing shared state; page-offset mutation replaces cross-retry counter; unusable transport exposes local identity rejection.",
       "checks": "Baseline 6/candidate 11 tests, 60 runtime assertions and 37 static clauses retained; format/lint/diff pass.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "1d819e294b230a85d08adfc9a4e37e323169cf12",
+      "integrationState": "accepted exact test patch applied; prior related blob superseded"
     },
     {
       "focus": "tests/remote-capabilities.test.ts",
@@ -1049,12 +1070,15 @@
     {
       "focus": "tests/remote-source-approval.test.ts",
       "initialBlob": "c86156cc15c6d0c8130cf3d8aa9e0c47795f7b9d",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_f56506f5",
-          "status": "running",
-          "candidate": "1e346f081833b86ab8445efdbfc66cb35e5ba9c3"
+          "status": "completed",
+          "candidate": "1e346f081833b86ab8445efdbfc66cb35e5ba9c3",
+          "verdict": "ACCEPT",
+          "reason": "Independent question/fixture lifetimes separate denial/cancellation and stale-reply/integrity; named human choices no longer mislabel cancellation as approval.",
+          "checks": "Judge retained 89/89 launch-base static expressions, 74/74 initial; actual code/full diff inspected; Biome/diff pass, runtime package load blocked."
         }
       ],
       "relatedAcceptance": {
@@ -1078,7 +1102,9 @@
       },
       "result": "Independent denial/cancellation/stale-answer/bundle-integrity contracts now have own fixture/test lifetimes; pinned version assertion beside stale reply; answer choices inclusion/omission/cancellation explicit.",
       "checks": "Focus 19 pass, original 101 assertions retained; related 49 pass/281 assertions; format/lint/diff pass.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "df9e4dfb8b79785aadfe43dd8cf5f8ccafb3acb9",
+      "integrationState": "accepted exact test patch applied; prior related blob superseded"
     },
     {
       "focus": "tests/remote-ssh.test.ts",
@@ -1273,6 +1299,13 @@
       "command": "bun test remote-owner,remote-owner-lifecycle,remote-client,remote-cancellation,remote-artifacts,remote-runtime tests",
       "result": "45 pass, 0 fail, 311 assertions across 6 files",
       "limits": "Local source fixtures/child process; no authenticated SSH/provider/compiled parity"
+    },
+    {
+      "commit": "78a0c7cd",
+      "job": "task_9991ad83",
+      "command": "bun test root-owner,root-store,root-runtime,remote-root-client,remote-root-presenter,remote-root-transport tests",
+      "result": "58 pass, 0 fail, 347 assertions across 6 files",
+      "limits": "Source/fake port proof, not authenticated SSH/provider/compiled parity"
     }
   ],
   "crossAreaNeeds": [
