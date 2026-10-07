@@ -553,7 +553,7 @@
     {
       "focus": "site/package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_f9d8fefe",
@@ -568,10 +568,16 @@
         {
           "id": "task_4e8a8bc6",
           "candidate": "57ffbc1f5c422d22b90c05977f2aeeaf29b7af0a",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Manifest exposes build/preview/assets/test boundaries directly; && visibly gates validation on test success. Judge31 dependency-free tests,7 selected files and17 resolving script occurrences;no browser/build/animation/deploy.",
+          "objections": []
         }
       ],
-      "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d"
+      "initialBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d",
+      "acceptedBlob": "e2cdce3c044bb1847c65d15fcb8c38cb182eab7d",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/playback.ts",
@@ -746,7 +752,7 @@
     {
       "focus": "site/scripts/capture-real-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_46c581d4",
@@ -757,7 +763,13 @@
           "result": "Unchanged ordered namespace/PTY startup->timed IO/byte persistence->terminate/wait/kill/close;three loop variables one lifetime. Python syntax/help,1 capture test/7 assertions,real namespaces+PTY synthetic executable timing/geometry/exactIO/SIGTERM/preserve output on nonzero proof. No real Bruv/browser recapture or escalation claim."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_59d37faf",
+          "candidate": "39e433dd12fa47efd56007077764c72bdfdebe37",
+          "state": "running"
+        }
+      ],
       "initialBlob": "712c09193cd3071bd3308ffdd3d9c72910039d16"
     },
     {
@@ -1066,13 +1078,15 @@
     {
       "focus": "site/wrangler.jsonc",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_60419896",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_60419896",
           "branch": "bruv/primary-site-wrangler.jsonc-60419896",
-          "base": "f9b22f136850bfc50e8ad99c12fbda1591d329cd"
+          "base": "f9b22f136850bfc50e8ad99c12fbda1591d329cd",
+          "commit": "ce4e678aa3466c77be43ee1220755649bdbf7664",
+          "result": "Unchanged explicit Worker identity,compatibility date,static output;build creates site/dist,deploy from site reads ./dist.10 tests/config path assertions;no build/browser/deploy."
         }
       ],
       "judges": [],
