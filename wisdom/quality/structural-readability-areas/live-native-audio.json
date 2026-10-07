@@ -890,10 +890,14 @@
     {
       "focus": "src/live/cost.ts",
       "initialBlob": "14d4bead2ec2e832da60d5816e9cee0b3e40069c",
-      "primary": null,
+      "primary": {
+        "id": "task_2995e9e9",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/credentials.ts",
@@ -903,12 +907,15 @@
         "launchBase": "25f29f5e951dcbef28df99a15eac7cf41debaed0",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_9203c038",
         "branch": "bruv/primary-src-live-credentials.ts-9203c038",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "357b3a75677e60ce60bdf341e4988242f2d762fe"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged discovery separate from runtime resolution;import guards descriptor access/rechecks config/locked callback decideswrite;one trycatchfinally owns file descriptor. Extraction addsindirection.",
+      "checks": "107tests580assertions acrosscredential/lifecycle/setup/extension/startupprobe;no provider/device/macOS/fullbuild."
     },
     {
       "focus": "src/live/diagnostics.ts",
