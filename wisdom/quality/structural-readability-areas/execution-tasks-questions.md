@@ -23,3 +23,7 @@ Accepted unchanged files have concrete independent journeys in JSON: bounded-byt
 Question service coherent patch includes remote-owned tests/remote-question-bridge.test.ts blob069ad73fe9042f5b166b40c4ed9167ef8b2bcee2, accepted by task_e49ceb90. Parent must retain it and coordinate remote primary focus/final blob coverage; remote notes untouched. No extra helper files or source deletions so far.
 
 Current area path /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d; branch bruv/whole-repo-structural-readability-execut-69c1198d. All worker paths/branches remain in JSON. Candidate source/test diffs applied whole from launch bases; worker pickup notes excluded. Parent integration inspected at second batch boundary:6a285569 still documentation only, no useful common source merge; no siblings merged. Disk145GB free. Keep filling three primary/rework and three judge slots; process queued judgments and accepted integrations before declaring any coverage complete. Values unchanged: existing judge/ownership guidance covers observed lessons.
+
+## Resume safeguards accepted
+
+Judge task_021ccfb2 accepts root-reference ownership and single restoration closure, preserving foreign wrappers/independent method ownership and fresh permission reads. Source blob129841b52c862394340238e73d5c19ecd1d46816; related test059a500b99eb05c94501ec3d26bce9af05d395d4 still needs primary. Independent9/59+2 probes16, same strengthened baseline11/75; source tsc/format/diff passed. Full coherent source/test patch integrated, worker note excluded.

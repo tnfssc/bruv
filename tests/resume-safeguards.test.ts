@@ -62,6 +62,7 @@ test("root sessions are not confirmation-gated", async () => {
       await handlers.get("session_before_switch")?.(
         { reason: "resume", targetSessionFile: file },
         {
+          mode: "tui",
           ui: {
             confirm: async () => {
               confirms++;
@@ -248,5 +249,62 @@ test("malformed roles stay unknown and task IDs are safe and bounded", async () 
     expect(prompt).not.toContain("\x1b");
   } finally {
     await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("picker lifetime follows all active roots, including shared registrations", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-picker-shared-"));
+  const otherDir = await mkdtemp(join(tmpdir(), "bruv-picker-other-"));
+  const originalList = SessionManager.list,
+    originalListAll = SessionManager.listAll;
+  const first = new Map<string, Function>(),
+    shared = new Map<string, Function>(),
+    other = new Map<string, Function>();
+  try {
+    await prepareAgentSession(dir, dir, {
+      type: "fast",
+      model: "p/model",
+      depth: 1,
+      parentSessionFile: "/parent.jsonl",
+    });
+    await prepareAgentSession(otherDir, otherDir, {
+      type: "normal",
+      model: "p/model",
+      depth: 1,
+      parentSessionFile: "/parent.jsonl",
+    });
+    for (const handlers of [first, shared, other]) {
+      registerResumeSafeguards({ on: (event: string, handler: Function) => handlers.set(event, handler) } as any);
+    }
+    const context = { mode: "tui", sessionManager: { getSessionDir: () => dir } };
+    await first.get("session_start")?.({}, context);
+    const installedList = SessionManager.list,
+      installedListAll = SessionManager.listAll;
+    await shared.get("session_start")?.({}, context);
+    await other.get("session_start")?.({}, { mode: "tui", sessionManager: { getSessionDir: () => otherDir } });
+    expect(SessionManager.list).toBe(installedList);
+    expect(SessionManager.listAll).toBe(installedListAll);
+
+    await first.get("session_shutdown")?.();
+    await first.get("session_shutdown")?.();
+    expect((await SessionManager.list(dir, dir))[0]?.name).toContain("◇ worker · fast");
+    expect((await SessionManager.listAll(dir))[0]?.name).toContain("◇ worker · fast");
+
+    // Restarting one session must release its old root without removing another owner's root.
+    await shared.get("session_start")?.({}, { mode: "print" });
+    expect((await SessionManager.list(dir, dir))[0]?.name).not.toContain("◇ worker");
+    expect((await SessionManager.listAll(dir))[0]?.name).not.toContain("◇ worker");
+    expect((await SessionManager.list(otherDir, otherDir))[0]?.name).toContain("◇ worker · normal");
+    expect((await SessionManager.listAll(otherDir))[0]?.name).toContain("◇ worker · normal");
+    expect(SessionManager.list).toBe(installedList);
+    expect(SessionManager.listAll).toBe(installedListAll);
+
+    await other.get("session_shutdown")?.();
+    expect(SessionManager.list).toBe(originalList);
+    expect(SessionManager.listAll).toBe(originalListAll);
+  } finally {
+    for (const handlers of [first, shared, other]) await handlers.get("session_shutdown")?.();
+    await rm(dir, { recursive: true, force: true });
+    await rm(otherDir, { recursive: true, force: true });
   }
 });

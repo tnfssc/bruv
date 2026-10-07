@@ -619,7 +619,7 @@
     {
       "focus": "src/tasks/resume-safeguards.ts",
       "initialBlob": "6fee2681d6bd92c55b5abf7319451090fb352ca4",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_ac6cadbe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_ac6cadbe",
@@ -630,13 +630,22 @@
       "judgeRounds": [
         {
           "id": "task_021ccfb2",
-          "status": "running",
+          "status": "complete",
           "candidate": "3de74516c210a58442656ed67a6e8584d987c302",
-          "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd"
+          "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Root reference counts directly own first install/last release; captured originals/adapters share one independently guarded restoration closure. Foreign wrappers remain callable; permission metadata reread stays independent of label cache. TUI test correction makes existing confirmation assertion meaningful.",
+          "checks": [
+            "independent9/59 +2 probes16",
+            "same strengthened baseline11/75",
+            "source tsc/format/diff pass",
+            "no renderedTUI/fullbuild/provider/platform"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "129841b52c862394340238e73d5c19ecd1d46816",
+      "integration": "full source/test diff integrated",
       "launchBase": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
       "changedRelatedPaths": [
         "src/tasks/resume-safeguards.ts",
@@ -1319,7 +1328,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_021ccfb2",
+        "candidate": "3de74516c210a58442656ed67a6e8584d987c302",
+        "blob": "059a500b99eb05c94501ec3d26bce9af05d395d4",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/resume-stream-cancellation.test.ts",
@@ -1600,7 +1616,7 @@
     {
       "focus": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_f4444bc8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f4444bc8",
@@ -1608,7 +1624,15 @@
         "base": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9",
         "commit": "59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_83034949",
+          "status": "running",
+          "candidate": "59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12",
+          "base": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9",
+          "priorRelatedJudge": "task_6181fd8e"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
