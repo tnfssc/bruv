@@ -942,7 +942,7 @@
     {
       "focus": "site/scripts/install.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_d558bcd2",
@@ -957,10 +957,16 @@
         {
           "id": "task_5840db21",
           "candidate": "14fb20cae47d4ff2cfa33c2a89a65d756f251cb6",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Host mocks/release publication/fixture ownership separate; explicit platform expectations remove repeated selection logic. Fixture owns setup/execution/checks/cleanup; judge independently verified cleanup on success and rejection with propagation. Production installer unchanged;offline Linux fixtures,not actual macOS/Termux/live download.",
+          "objections": []
         }
       ],
-      "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f"
+      "initialBlob": "5988b54af58eaab6319174f15747750fce878c6f",
+      "acceptedBlob": "1da41ffef989ec064e62295f04d8352eb5137345",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/preview.ts",
@@ -1075,7 +1081,7 @@
     {
       "focus": "site/scroll.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_955a4df5",
@@ -1086,7 +1092,13 @@
           "result": "Unchanged one remainder accumulates fractional cells,reversal discards stale distance,movement clamps,outward resets. Terminal callers own gesture/navigation/resize reset.3 tests/16 assertions;no browser/build."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_9f837c1d",
+          "candidate": "e885ab24fc6484750785eef0aae246c3d9f2963e",
+          "state": "running"
+        }
+      ],
       "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3"
     },
     {

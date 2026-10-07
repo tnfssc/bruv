@@ -77,3 +77,5 @@ site/scripts/install-ui.test.ts: observeTerminal owns instrumentation/dataset-bu
 site/scripts/scroll.test.ts: Separate accumulators remove hidden remainder across unrelated reversal/horizontal/bounds/reset scenarios;wheel normalization stands alone;all original assertions retained+reset assertion. Judge7 tests/17 assertions;bounds still does not independently prove same-direction boundary remainder clearing.
 
 site/scripts/preview.ts: Request-local decode/resolve/root-escape check/existence/no-store response directly follows delivery;caller owns shutdown. Judge3 HTTP probes404/400/traversal404. Worker/judge startup import blocked missing playwright,no assertions;area browser gate separately passed. Existing pre-try browser-launch caller cleanup gap and symlink containment unproven.
+
+site/scripts/install.test.ts: Host mocks/release publication/fixture ownership separate; explicit platform expectations remove repeated selection logic. Fixture owns setup/execution/checks/cleanup; judge independently verified cleanup on success and rejection with propagation. Production installer unchanged;offline Linux fixtures,not actual macOS/Termux/live download.
