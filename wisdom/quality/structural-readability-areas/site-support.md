@@ -19,3 +19,5 @@ site/scripts/capture-demo-source.ts: Replay fixture creation has one authority a
 site/layout.ts: composeLanding owns document flow; panel returns content/end rather than rewinding shared cursor; max(copyEnd,panel.end) states section advance. layout owns clipping/hits/overlays/ANSI. Judge independently 17 tests and 64 complete output comparisons; no browser/typecheck/full build.
 
 Demos coherent patch accepted: projected turns own summaries; rendering owns placement, with explicit missing-type import fix. Added interleaved-prose regression and related html-cells type import both integrated and patch-judged; their primary coverage remains pending. Judge: 16 tests, 4950 whole-frame comparisons, strict TS.
+
+Combined gate at 8b8f1122: `cd site; bun run test` (task_828d9d6a) passed 34 tests / 5,705,802 assertions plus real build and Chromium desktop/mobile/touch/no-JS validation, errors empty. Generated tracked evidence restored; JSON proof retained at /home/tnfssc/.bruv/site-support-6608ea8d-combined-checks.json. Not root CI/device proof.

@@ -161,8 +161,15 @@
     {
       "focus": "site/html-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_0fff100d",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_0fff100d",
+          "branch": "bruv/primary-site-html-cells.ts-0fff100d",
+          "base": "8b8f1122bc86a4d0a9b0c6f41c35e701c87a41e9"
+        }
+      ],
       "judges": [],
       "initialBlob": "7c70d1bdd3c530eddb002adeffd1d1f7be2f5dc1",
       "relatedPatchJudgment": {
@@ -434,16 +441,24 @@
     {
       "focus": "site/scripts/generate-wordmark.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_ff69ebfe",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_ff69ebfe",
           "branch": "bruv/primary-site-scripts-generate-wordmark.t-ff69ebfe",
-          "base": "f05b259ae8894f05cae0dedc0835705fc66017d9"
+          "base": "f05b259ae8894f05cae0dedc0835705fc66017d9",
+          "commit": "f9c925d7e00680f7c572e0e9667d6950cef2c2c8",
+          "result": "No source change. Checked rasterization->half-block rows->JSON then SVG geometry->checked social render->PNG. Local width state and visible writes/failures. Consumer tests 2 pass/56 assertions; generator not rerun."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_f6f14088",
+          "candidate": "f9c925d7e00680f7c572e0e9667d6950cef2c2c8",
+          "state": "running"
+        }
+      ],
       "initialBlob": "b26ef504c8956c092ad4450af16a310bbac2d30c"
     },
     {
@@ -598,5 +613,14 @@
     "Automatic fish setup lacks Bun; explicit tooling supplied.",
     "Confirmed missing demos ./type fixed in accepted demos patch; strict targeted TS passed in writer/judge. Full area gate pending."
   ],
-  "parentBoundary": "Inspected integration 6a285569: docs-only changes, no common source to bring in. Disk 159G available."
+  "parentBoundary": "Inspected integration 6a285569: docs-only changes, no common source to bring in. Disk 159G available.",
+  "batchProof": [
+    {
+      "commit": "8b8f1122",
+      "job": "task_828d9d6a",
+      "command": "cd site; bun run test",
+      "result": "34 pass,0 fail,5705802 assertions across 7 files; real build and Chromium validate passed: desktop/mobile/touch/no-JS, errors empty",
+      "limits": "No physical device, full-root CI or live-provider claim."
+    }
+  ]
 }
