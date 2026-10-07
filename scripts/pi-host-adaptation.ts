@@ -1,8 +1,9 @@
 // Keep guarded Pi fixes at the host seam. This owns inherited built-in removal,
 // session scan stream cleanup, and compact-editor reservation. No saved preferences
 // or global error handling are changed.
-import { createHash } from "node:crypto";
-import { readFile, writeFile } from "node:fs/promises";
+import { createHash, randomUUID } from "node:crypto";
+import { constants } from "node:fs";
+import { copyFile, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 interface Patch {
@@ -254,5 +255,17 @@ export async function preparePiHost(piRoot: string): Promise<void> {
       return { path, before, after: adaptPiHostFile(patch, before) };
     }),
   );
-  for (const { path, before, after } of prepared) if (before !== after) await writeFile(path, after);
+  for (const { path, before, after } of prepared) {
+    if (before === after) continue;
+    // Bun installs may hardlink to its cache and other worktrees. Never write the
+    // installed inode: copy beside it (retaining modes), adapt, then replace it.
+    const temporary = `${path}.bruv-${randomUUID()}`;
+    await copyFile(path, temporary, constants.COPYFILE_EXCL);
+    try {
+      await writeFile(temporary, after);
+      await rename(temporary, path);
+    } finally {
+      await rm(temporary, { force: true });
+    }
+  }
 }

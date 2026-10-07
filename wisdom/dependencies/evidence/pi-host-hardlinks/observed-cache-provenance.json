@@ -1,0 +1,13 @@
+{
+  "observedCachePath": "/home/tnfssc/.bun/install/cache/@earendil-works/pi-coding-agent@1.0.3@@@1_patch_hash=f67f900e9b31d144/dist/core/session-manager.js",
+  "sha256": "afa016a7535a8e6f57d516e3449cd1be3b56f08c07b05c32864b432e1c84add4",
+  "inode": 59690081,
+  "nlink": 47,
+  "mtime": "2026-10-07T19:26:36.619Z",
+  "supportedOriginalSha256": "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a",
+  "supportedAdaptedSha256": "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202",
+  "matchingHistoricalSource": "bd756bdad25e77cf6a9886657a818a1610c80ed0:scripts/pi-host-adaptation.ts",
+  "historicalAdaptedSha256": "afa016a7535a8e6f57d516e3449cd1be3b56f08c07b05c32864b432e1c84add4",
+  "exactHistoricalOutputMatch": true,
+  "limit": "The source output matches exactly; this is not process-level evidence identifying the last writer. Only session-manager.js was compared."
+}
