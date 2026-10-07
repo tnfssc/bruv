@@ -484,10 +484,9 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
   const transcript = new RootTranscript();
   const status = new Text();
   const editor = new Editor(tui, editorTheme);
-  let closed = false,
-    modal: Component | undefined;
+  let closed = false;
+  let modal: { component: Component; cancel(): void } | undefined;
   let finish!: () => void;
-  let cancelModal: (() => void) | undefined;
   const ended = new Promise<void>((resolve) => (finish = resolve));
   const notice = (text: string) => {
     status.setText(safe(text));
@@ -495,34 +494,34 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
   };
   const detach = () => {
     closed = true;
-    cancelModal?.();
+    modal?.cancel();
     finish();
   };
-  const pick = (
-    title: string,
-    items: Array<{ value: string; label: string; description?: string }>,
-  ): Promise<string | undefined> =>
+  const showModal = (create: (done: (value?: string) => void) => Component): Promise<string | undefined> =>
     new Promise((resolve) => {
       const done = (value?: string) => {
         modal = undefined;
-        cancelModal = undefined;
         tui.setFocus(editor);
         tui.requestRender();
         resolve(value);
       };
-      modal = new QuestionPicker(
-        safe(title),
-        items,
-        theme,
-        getKeybindings(),
-        done,
-        () => tui.requestRender(),
-        () => process.stdout.rows || 24,
-      );
-      cancelModal = () => done();
-      tui.setFocus(modal);
+      modal = { component: create(done), cancel: () => done() };
+      tui.setFocus(modal.component);
       tui.requestRender();
     });
+  const pick = (title: string, items: Array<{ value: string; label: string; description?: string }>) =>
+    showModal(
+      (done) =>
+        new QuestionPicker(
+          safe(title),
+          items,
+          theme,
+          getKeybindings(),
+          done,
+          () => tui.requestRender(),
+          () => process.stdout.rows || 24,
+        ),
+    );
   const answer = async (q: Question): Promise<string | undefined> => {
     if (q.choices?.length) {
       const items = q.choices.map((label, i) => ({ value: String(i), label: safe(label) }));
@@ -532,24 +531,14 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
       if (selected !== "free") return q.choices[Number(selected)];
     }
     if (q.allowFreeText === false) return;
-    return new Promise((resolve) => {
+    return showModal((done) => {
       const input = new Editor(tui, editorTheme);
-      const done = (value?: string) => {
-        modal = undefined;
-        cancelModal = undefined;
-        tui.setFocus(editor);
-        tui.requestRender();
-        resolve(value);
-      };
       input.onSubmit = (text) => done(text.trim() ? text : undefined);
-      modal = {
+      return {
         render: (width) => [...new Text(safe(q.text)).render(width), ...input.render(width)],
         handleInput: (data) => input.handleInput(data),
         invalidate: () => input.invalidate(),
       };
-      cancelModal = () => done();
-      tui.setFocus(modal);
-      tui.requestRender();
     });
   };
   const controls = new RootControls(client, { choose: pick, answer, notice, detach });
@@ -571,7 +560,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
   };
   const root: Component = {
     render(width) {
-      if (modal) return modal.render(width);
+      if (modal) return modal.component.render(width);
       return [
         ...new Text(
           accent("Bruv · " + client.read().target.name + " · root " + (transcript.record?.state ?? "connecting")),
@@ -588,12 +577,12 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
       ];
     },
     handleInput: (data) => {
-      if (modal) modal.handleInput?.(data);
+      if (modal) modal.component.handleInput?.(data);
       else editor.handleInput(data);
     },
     invalidate() {
       editor.invalidate();
-      modal?.invalidate();
+      modal?.component.invalidate();
     },
   };
   tui.addChild(root);
@@ -610,14 +599,14 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
     }
     if (data === "\x03") {
       if (modal) {
-        cancelModal?.();
+        modal.cancel();
         return { consume: true };
       }
       void controls.submit("/abort").catch((error) => notice(String(error)));
       return { consume: true };
     }
     if (data === "\x1b" && modal) {
-      cancelModal?.();
+      modal.cancel();
       return { consume: true };
     }
     return;
@@ -698,7 +687,7 @@ export async function presentRemoteRoot(client: RootClient, options: RootPresent
     await ended;
   } finally {
     closed = true;
-    cancelModal?.();
+    modal?.cancel();
     process.off("SIGTERM", signal);
     process.off("SIGHUP", signal);
     clearInterval(animation);

@@ -1,9 +1,15 @@
-import { expect, test } from "bun:test";
+import { expect, spyOn, test } from "bun:test";
+import { type Component, type Editor, TuiMainScreen } from "@earendil-works/pi-tui";
 import { parseStreamingJson } from "@earendil-works/pi-ai";
 import { taskRowFromLaunch, taskRowsFromDetails, taskRowsFromSessionEntries } from "../src/ui/task-rows";
-import type { RootObservation } from "../src/remote/root-contract";
+import type { RootDialog, RootObservation } from "../src/remote/root-contract";
 import { dispatchRootFacet } from "../src/remote/root-runtime";
-import { RootControls, type RootPresentationControls, RootTranscript } from "../src/remote/root-presenter";
+import {
+  presentRemoteRoot,
+  RootControls,
+  type RootPresentationControls,
+  RootTranscript,
+} from "../src/remote/root-presenter";
 
 function replay(messages: unknown[], extraEvents: unknown[] = []): RootObservation {
   const events = [...messages.map((message) => ({ type: "message_end", message })), ...extraEvents];
@@ -55,6 +61,7 @@ function fixture(receipt: Record<string, unknown> = {}) {
     detach: () => (detached = true),
   };
   return {
+    client,
     commands,
     picks,
     notices,
@@ -780,4 +787,147 @@ test("root resume correlates unnamed shells to execute labels before command pre
   ]);
   t.details = true;
   expect(t.render(120, 0).join("\n")).toContain("RAW_LAUNCH_SOURCE");
+});
+
+// Keep the real picker/editor and presenter routing; suppress only terminal I/O.
+function mountedPresentation(dialog?: RootDialog) {
+  const f = fixture();
+  const record = replay([]).record;
+  record.dialogs = dialog ? [dialog] : [];
+  let root!: Component;
+  let focus!: Component;
+  let input!: Parameters<TuiMainScreen["addInputListener"]>[0];
+  let detached = false;
+  const focuses: Component[] = [];
+  const addChild = TuiMainScreen.prototype.addChild;
+  const setFocus = TuiMainScreen.prototype.setFocus;
+  const spies = [
+    spyOn(TuiMainScreen.prototype, "start").mockImplementation(() => {}),
+    spyOn(TuiMainScreen.prototype, "stop").mockImplementation(() => {}),
+    spyOn(TuiMainScreen.prototype, "requestRender").mockImplementation(() => {}),
+    spyOn(TuiMainScreen.prototype, "addChild").mockImplementation(function (this: TuiMainScreen, component) {
+      addChild.call(this, component);
+      root = component;
+    }),
+    spyOn(TuiMainScreen.prototype, "setFocus").mockImplementation(function (this: TuiMainScreen, component) {
+      setFocus.call(this, component);
+      focus = component!;
+      focuses.push(focus);
+    }),
+    spyOn(TuiMainScreen.prototype, "addInputListener").mockImplementation((listener) => {
+      input = listener;
+      return () => {};
+    }),
+  ];
+  const running = presentRemoteRoot(
+    {
+      ...f.client,
+      read: () => ({ ...f.client.read(), record, events: [], sourceLabel: "saved", cacheStart: 1 }),
+      reconcile: async () => [],
+      observe: async () => ({ ...replay([]), record }),
+      detach: async () => {
+        detached = true;
+      },
+    } as any,
+    { pollMs: 1 },
+  );
+  const editor = focus as Editor;
+  const key = (data: string) => {
+    if (!input(data)?.consume) root.handleInput?.(data);
+  };
+  return {
+    ...f,
+    editor,
+    key,
+    focuses,
+    focus: () => focus,
+    frame: () => root.render(80).join("\n"),
+    detached: () => detached,
+    async close() {
+      key("\x04");
+      try {
+        await running;
+      } finally {
+        for (const spy of spies) spy.mockRestore();
+      }
+    },
+  };
+}
+async function waitForPresentation(predicate: () => boolean) {
+  for (let attempt = 0; attempt < 100 && !predicate(); attempt++) await Bun.sleep(1);
+  expect(predicate()).toBe(true);
+}
+
+test("shipped question flow restores prompt focus between selection and free-text answer", async () => {
+  const p = mountedPresentation();
+  try {
+    p.editor.setText("/questions");
+    p.editor.onSubmit!("/questions");
+    await waitForPresentation(() => p.focus() !== p.editor);
+    expect(p.frame()).toContain("Human questions");
+    p.key("\r");
+    await waitForPresentation(() => p.frame().includes("Type an answer"));
+    p.key("\x1b[B");
+    p.key("\x1b[B");
+    p.key("\r");
+    await waitForPresentation(() => !p.frame().includes("Type an answer"));
+    expect(p.focuses.slice(-2)[0]).toBe(p.editor);
+    p.key("a human answer");
+    p.key("\r");
+    await waitForPresentation(() => p.commands.some((command) => command.kind === "questions.answer"));
+    expect(p.commands.at(-1)).toEqual({
+      kind: "questions.answer",
+      id: p.question.id,
+      owner: p.question.owner,
+      version: p.question.version,
+      text: "a human answer",
+      replyId: expect.any(String),
+    });
+    expect(p.focus()).toBe(p.editor);
+    await waitForPresentation(() => p.editor.getText() === "");
+  } finally {
+    await p.close();
+  }
+  expect(p.detached()).toBe(true);
+});
+
+test("shipped picker cancellation restores prompt; Ctrl-C outside the modal still aborts", async () => {
+  const p = mountedPresentation();
+  try {
+    p.editor.setText("/questions");
+    p.editor.onSubmit!("/questions");
+    await waitForPresentation(() => p.focus() !== p.editor);
+    p.key("\x03");
+    expect(p.focus()).toBe(p.editor);
+    await waitForPresentation(() => p.editor.getText() === "");
+    expect(p.commands.map((command) => command.kind)).toEqual(["questions.list"]);
+    p.key("\x03");
+    await waitForPresentation(() => p.commands.some((command) => command.kind === "abort"));
+  } finally {
+    await p.close();
+  }
+});
+
+test("shipped dialog Escape cancels remotely but detach during text input never responds", async () => {
+  const cancelled = mountedPresentation({ id: "confirm", method: "confirm", title: "Proceed?" });
+  try {
+    await waitForPresentation(() => cancelled.focus() !== cancelled.editor);
+    cancelled.key("\x1b");
+    await waitForPresentation(() => cancelled.commands.length === 1);
+    expect(cancelled.commands).toEqual([{ kind: "ui.respond", id: "confirm", cancelled: true }]);
+    expect(cancelled.focus()).toBe(cancelled.editor);
+  } finally {
+    await cancelled.close();
+  }
+  const detached = mountedPresentation({ id: "input", method: "input", title: "Your answer" });
+  try {
+    await waitForPresentation(() => detached.focus() !== detached.editor);
+    detached.key("not submitted");
+    expect(detached.frame()).toContain("not submitted");
+  } finally {
+    await detached.close();
+  }
+  expect(detached.commands).toEqual([]);
+  expect(detached.detached()).toBe(true);
+  expect(detached.focus()).toBe(detached.editor);
 });

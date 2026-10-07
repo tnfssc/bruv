@@ -576,12 +576,15 @@
     {
       "focus": "src/remote/root-presenter.ts",
       "initialBlob": "9e4d0c6095a3790f3608b921d8ed8092611e91df",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_29eea7cb",
-          "status": "running",
-          "candidate": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9"
+          "status": "completed",
+          "candidate": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "verdict": "ACCEPT",
+          "reason": "showModal owns mount/settle/focus/render and paired component/cancel lifetime; question/editor builders own interaction only. Local cancellation separate from server ui.respond, detach closes before cancel.",
+          "checks": "Judge full source/test/diff/callers; 6 client tests/29 assertions, presenter package loading blocked; mocked terminal tests are not physical terminal proof."
         }
       ],
       "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
@@ -591,7 +594,13 @@
         "branch": "bruv/remote-primary-root-presenter-790d1377",
         "commit": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9"
       },
-      "workerResponse": "Candidate committed; ready for independent judgment.\n\n- **Base:** `0a2bb6899a72abd1ab7b184cf84bf6d2126364d9`\n- **Candidate:** `f8ba5c9248fdd3a9d048e926a1cfb6e8b70a1696`\n- **Branch:** `bruv/remote-primary-root-presenter-790d1377`\n\n**Changed paths**\n- `src/remote/root-presenter.ts`\n- `tests/remote-root-presenter.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after walkthrough:** CLI startup opens the presenter; `/questions` or polled SDK dialogs open a picker, sometimes followed by text input. Previously both UI constructors independently managed mounting, cancellation, promise settlement, and prompt-focus restoration, while routing/teardown tracked separate `modal` and `cancelModal` variables. Now one local `showModal` operation owns mounting/settlement, and one active handle pairs component with cancellation. Detach still marks closed before local cancellation, preventing server-dialog responses. Ledger, permission, replay, polling, and source-return logic is unchanged.\n\n**Proof:** 34 focused tests passed, 181 assertions. Baseline source also passed the shipped-flow subset with new tests. Scoped formatting and diff checks passed; lint exited zero with warnings.\n\nNo root-client/test overlap. Values unchanged; compact worker note recorded. No full build/typecheck, live SSH/provider, or physical-terminal claim. Clean worktree; no push/PR."
+      "acceptedBlob": "98c70fb74f5e40d6f281463a75d4c0106240c860",
+      "integrationState": "accepted source+related test patch applied without overlap",
+      "changedRelatedPaths": [
+        "tests/remote-root-presenter.test.ts"
+      ],
+      "result": "One local showModal lifetime and paired active handle replace separate picker/editor settlement and modal/cancel state.",
+      "checks": "Worker 34 pass/181 assertions; new shipped-flow subset passed baseline; format/lint/diff pass."
     },
     {
       "focus": "src/remote/root-runtime.ts",
@@ -1205,7 +1214,12 @@
       "focus": "tests/remote-root-presenter.test.ts",
       "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedAcceptance": {
+        "judge": "task_29eea7cb",
+        "blob": "ae65079a689ce194167578b16e42d2559840b710",
+        "needs": "fresh primary focus and own final judge"
+      }
     },
     {
       "focus": "tests/remote-root-transport.test.ts",
@@ -1490,6 +1504,13 @@
       "command": "bun test remote-capability-runtime,remote-capabilities,remote-client,remote-extension,remote-repository-wire,remote-artifacts tests",
       "result": "84 pass, 0 fail, 1355 assertions across 6 files",
       "limits": "No authenticated SSH/provider/compiled parity"
+    },
+    {
+      "commit": "85534717",
+      "job": "task_6643d950",
+      "command": "bun test tests/remote-owner-lifecycle.test.ts tests/remote-owner.test.ts",
+      "result": "11 pass, 0 fail, 106 assertions",
+      "limits": "Local Linux child/process fixtures; no authenticated SSH/compiled parity"
     }
   ],
   "crossAreaNeeds": [
