@@ -957,7 +957,7 @@
     {
       "file": "src/t3/web/launcher.ts",
       "initialBlob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
-      "status": "judging",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_9cfebe77",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_9cfebe77",
@@ -968,15 +968,21 @@
       "judges": [
         {
           "id": "task_082c33db",
-          "status": "running",
-          "candidate": "dd2647cb402bf047cf80b0419765eba1e0ee88ae"
+          "status": "completed",
+          "candidate": "dd2647cb402bf047cf80b0419765eba1e0ee88ae",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
+          "objections": [],
+          "evidence": "Pure path/setup instruction formatting vs validate/print/exit effects clear; no hidden server/config/process lifetime. Shared auth/settings vs isolated SDK history corroborated defaults/paired builds. Independent7 tests81 assertions.",
+          "limits": "Compiled process coverage read not run,dist absent;no full CI/live."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
       "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
       "changedRelatedPaths": [],
       "readingResult": "Unchanged web dispatch validates flags/prints setup/exits; pure formatting, no hidden server/worktree/setup/cancel lifetime. Real owners traced elsewhere including CLI/build/env.",
-      "checks": "7 launcher/architecture81 assertions pass;compiled process test not run absent dist;no build/live."
+      "checks": "7 launcher/architecture81 assertions pass;compiled process test not run absent dist;no build/live.",
+      "integrationState": "Matches tip unchanged"
     },
     {
       "file": "tests/claude-compat-app-worker.test.ts",
@@ -1229,7 +1235,7 @@
     {
       "file": "tests/claude-compat-task-binding.test.ts",
       "initialBlob": "88bae66b92d33c773eb63314188b667b96b66447",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_0e6166c9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_0e6166c9",
@@ -1240,11 +1246,16 @@
       "judges": [
         {
           "id": "task_dada1e0a",
-          "status": "running",
-          "candidate": "89ecd547979c0022ff93e98776a421cd683b5ba7"
+          "status": "completed",
+          "candidate": "89ecd547979c0022ff93e98776a421cd683b5ba7",
+          "verdict": "ACCEPT",
+          "blob": "ab4395a8ac3b3dcb9530d054ead571d8166845ab",
+          "objections": [],
+          "evidence": "Session resources separate explicit direct task owner, SDK extension sole authority no unused manager/binding; shared agent-only executable override retains real IDs/processes/lifecycle. History before emission/child before terminal/persisted cursor not authority kept. Direct shutdown/drain/resource cleanup explicit.",
+          "limits": "Independent13 projection78 assertions;binding Pi deps unavailable;UUID replay assertion narrow,existing SDK exception disposal not extension shutdown,not introduced/hidden."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "ab4395a8ac3b3dcb9530d054ead571d8166845ab",
       "relatedPatchJudgments": [
         {
           "id": "task_575ede26",
@@ -1256,12 +1267,13 @@
       "launchBase": "bf075025b80c839bee132274a7aa9d6f7c3de06e",
       "changedRelatedPaths": [],
       "readingResult": "SDK execute journey creates session resources without unused manager/binding; extension owns sole task authority. Direct tests add own owner explicitly; both worker journeys share agent-only executable replacement.",
-      "checks": "8 binding+13 projection tests+isolation wrapper;Biome/diff pass;assertions retained;missing assets both baseline/candidate resolved locally;optional pinned SDK unavailable;UUID assertion narrow."
+      "checks": "8 binding+13 projection tests+isolation wrapper;Biome/diff pass;assertions retained;missing assets both baseline/candidate resolved locally;optional pinned SDK unavailable;UUID assertion narrow.",
+      "integrationState": "Exact fresh whole-file patch joined; supersedes old related+combined test blob acceptance"
     },
     {
       "file": "tests/claude-compat-task-projection.test.ts",
       "initialBlob": "da89cdcea508117e2cbefe3d91d35670c3a71d9d",
-      "status": "judge-queued",
+      "status": "judging",
       "primary": {
         "id": "task_532af0c5",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_532af0c5",
@@ -1269,7 +1281,13 @@
         "launchBase": "14101d868ed747b636467378f81ea1e5fd6b83b9",
         "commit": "b0586a2aa4f9e3d453e92b1260da2ec6be93dc15"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_39d6f247",
+          "status": "running",
+          "candidate": "b0586a2aa4f9e3d453e92b1260da2ec6be93dc15"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1838,6 +1856,13 @@
       "status": "passed",
       "scope": "Integrated notifications/bridge/routing52 tests204 assertions;typecheck;format/lint",
       "limits": "4 infos;no live/full gate."
+    },
+    {
+      "id": "task_75a2cde7",
+      "commit": "a20cbcdc",
+      "status": "passed",
+      "scope": "Integrated human/live/runtime/commands23 top-level141 assertions;typecheck;format/lint",
+      "limits": "1 info;no live provider/device/full gate."
     }
   ],
   "combinedReviews": [
