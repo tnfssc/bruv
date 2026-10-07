@@ -88,3 +88,5 @@ Native runner:check→spawn→close→recheckbinary→success→admit evidence l
 Native setup:all verification before env handoff;task_1e479592 ACCEPT9d6cfd86/newtest8191a1d5. Explicit reproduced SDK-failure partial export fix (base1pass2fail/new3pass);65checks. Final runner handoff compatible;not atomicfs or actual native run. EXTRA test primary pending. Diagnostic probe task_e49b32f4 NO CHANGE NEEDEDd33b6f17;normalization not redaction,7/47tests.
 
 Launcher verifier:packaging→isolated release dispatch→isolated installed dispatch,one temporary sibling lifetime each. Judge task_dc2eea02 ACCEPT exact ledgerhash;35/395plusalltarget template/oversize/failurecleanup probes. Not nativeAndroid or compiledcross-target proof.
+
+Update verifier:per-artifact contracts and readable generated runners;judge task_073fd75a ACCEPT88994dc plus related99c0344.7/50tests+2runnerinspection;real compiledfixture invocation retained,not production/historicaldownload/native proof. Frozenfixture/probe unchanged;related test primary pending.

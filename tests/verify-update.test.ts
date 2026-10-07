@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { updateAssetFor } from "../src/update";
@@ -83,8 +83,10 @@ test.skipIf(!asset)(
 test.skipIf(!asset)(
   "release updater gate rejects an otherwise checksummed mismatched connector",
   async () => {
-    const { run } = await fixture("0.2.0");
-    const result = await run();
+    const { root, run } = await fixture("0.2.0");
+    const temporary = join(root, "gate-tmp");
+    await mkdir(temporary);
+    const result = await run({ ...process.env, TMPDIR: temporary });
     expect(result.code).not.toBe(0);
     expect(result.errors).toContain("Staged Bruv pair version mismatch");
     const diagnostic = JSON.parse(result.errors.match(/error: Compiled updater failed rollback gate: (.+)/)![1]!);
@@ -95,6 +97,7 @@ test.skipIf(!asset)(
     expect(diagnostic.args).toEqual(["--fail-normal-rename"]);
     expect(diagnostic.stderr).toContain("Staged Bruv pair version mismatch");
     expect(diagnostic.stderr).not.toContain("Previous installation restored");
+    expect(await readdir(temporary)).toEqual([]);
   },
   30_000,
 );
@@ -129,6 +132,7 @@ for (const legacy of [false, true]) {
       expect(result.output).toContain("checksum failures preserved BOTH installed files");
       expect(result.output).toContain("second-rename rollback restored pair");
       expect(result.output).toContain("matched versions 0.17.0 passed");
+      expect(await readdir(temporary)).toEqual([]);
     },
     30_000,
   );

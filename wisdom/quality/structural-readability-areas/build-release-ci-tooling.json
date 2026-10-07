@@ -1090,7 +1090,7 @@
     {
       "focus": "scripts/verify-update.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_47004efe",
@@ -1106,32 +1106,51 @@
           "id": "task_073fd75a",
           "base": "10b718a8211635494d5a1c8fbac3db1d44100111",
           "candidate": "905225fc8f8b667d0483a0eff3384e4c52ab9e93",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Per-artifact installed verification contracts remove index alignment;readable generated runners expose release responses/corruption/rename/errors. Real compile,frozen hash authority,distinct runningtarget,checksums/rollback/mismatch/hash/version/display/TMPDIR/cleanup preserved.",
+          "checks": "Independent7verifier/probetests50expectations+2emittedrunnerchecks,diffpass;109batch/tooling not rerun byjudge;fixtureLinux not historicaldownload/production/native.",
+          "acceptedBlobs": {
+            "scripts/verify-update.ts": "88994dc94c3236cbe0398d152565d401cc6b4012",
+            "tests/verify-update.test.ts": "99c0344bdbf7fb6c65d3ea110ca580894c9069b2"
+          }
         }
       ],
       "relatedPaths": [
         "tests/verify-update.test.ts"
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "88994dc94c3236cbe0398d152565d401cc6b4012",
       "readingResult": "Explicit installed-pair contracts replace positional arrays;readable generated compiled-runner source replaces compressed fragments;compile/frozenfixture/checksum/rollback/diagnostic/cleanup retained.",
-      "checks": "109combinedtests,7finalverifier/probetests;tsc/format/lint/diffpass;fulltsc missinggeneratedassets;fixturesnotproduction/no live."
+      "checks": "109combinedtests,7finalverifier/probetests;tsc/format/lint/diffpass;fulltsc missinggeneratedassets;fixturesnotproduction/no live.",
+      "integrationState": "Full verifier/test patch integrated;frozenfixture/probe unchanged,notesexcluded."
     },
     {
       "focus": "src/assets.d.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_af4e93ee",
           "launchBase": "38f0f0583a0de57ee39db48cb2246f781548d074",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_af4e93ee",
           "branch": "bruv/primary-src-assets.d.ts-af4e93ee",
+          "state": "completed",
+          "commit": "369e90e4cda90ecb446f97b12f520106ae9e4e41"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_ceeaba0d",
+          "base": "38f0f0583a0de57ee39db48cb2246f781548d074",
+          "candidate": "369e90e4cda90ecb446f97b12f520106ae9e4e41",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged direct declarations match PNG/vendorJS/WASM path-string imports;no structural simplification.",
+      "checks": "typecheck/focusedtests/Biome/positive-negativetyping/tinycompiledassetbytes pass;13binaryimage testsfail absentdist/bruv;no fullbuild."
     },
     {
       "focus": "src/update.ts",
@@ -1729,8 +1748,16 @@
     {
       "focus": "tests/release-browser-setup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_6553f324",
+          "launchBase": "65e0d2188a205dec705f8b4694941724ee34bece",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_6553f324",
+          "branch": "bruv/primary-tests-release-browser-setup.test-6553f324",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1921,7 +1948,13 @@
       "primary": [],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgment": {
+        "id": "task_073fd75a",
+        "verdict": "ACCEPT",
+        "blob": "99c0344bdbf7fb6c65d3ea110ca580894c9069b2",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tsconfig.json",
@@ -2006,17 +2039,25 @@
     {
       "focus": "tests/setup-native-release-gate.test.ts",
       "initialBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_29efc903",
           "launchBase": "38f0f0583a0de57ee39db48cb2246f781548d074",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_29efc903",
           "branch": "bruv/primary-new-native-setup-tests-29efc903",
+          "state": "completed",
+          "commit": "c488ba1e60c710f1c511eda62151bf879f65a68b"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_6e25dc37",
+          "base": "38f0f0583a0de57ee39db48cb2246f781548d074",
+          "candidate": "c488ba1e60c710f1c511eda62151bf879f65a68b",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "origin": {
@@ -2028,7 +2069,9 @@
         "verdict": "ACCEPT",
         "blob": "8191a1d59ef6a19e416364ad52993fb4d483516d",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Separate ordered argv/checksum observations replace flattened logs;named independent failures with exact cutoff replace loop-hidden failures. Five failurepoints/API refusal/byte-exact no-partial-env retained.",
+      "checks": "15combinedpass;strict tsc/Biome/diffpass;no builds/live."
     }
   ],
   "crossAreaNeeds": [],
