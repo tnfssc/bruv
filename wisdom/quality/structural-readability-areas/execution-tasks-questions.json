@@ -109,18 +109,30 @@
     {
       "focus": "scripts/leak-audit/cli-rpc-soak.ts",
       "initialBlob": "53a39f74d7b7c7932543ae4430d6645840e344d5",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_22687cca",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_22687cca",
         "branch": "bruv/primary-scripts-leak-audit-cli-rpc-soak.-22687cca",
         "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
-        "commit": null
+        "commit": "89605c0477f7ccd000a1d7ad97eb671ca08ecc4f"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf"
+      "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+      "changedRelatedPaths": [
+        "scripts/leak-audit/cli-rpc-soak.ts",
+        "tests/cli-rpc-soak.test.ts"
+      ],
+      "readingResult": "RPC session owns subprocess/correlations/drains; perturn endwait; soak scheduling/cleanup explicit instead of globalcallbacks/queues/catch reconstruction.",
+      "checks": [
+        "5 tests38 assertions",
+        "focused tsc/format/diff pass",
+        "mixed/replacement20cycle compiled probes pass",
+        "rejectedprompt timer leak reproduced+fixed; no heapplateau claim"
+      ],
+      "incidentalFix": "Rejected-prompt wait timer leak reproduced; perturn cleanup fixes audit resource lifetime."
     },
     {
       "focus": "scripts/leak-audit/execution-runtime.ts",
@@ -177,11 +189,18 @@
     {
       "focus": "scripts/task-placement-clean-video.py",
       "initialBlob": "86a649cd69e8eefb913ceb0a567644050e0bd3d9",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_577e2124",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_577e2124",
+        "branch": "bruv/primary-scripts-task-placement-clean-vid-577e2124",
+        "base": "e317b9a8c4a1a203d3bf25172cdc7c614128411e",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "e317b9a8c4a1a203d3bf25172cdc7c614128411e"
     },
     {
       "focus": "src/delegation-environment.ts",
@@ -2605,6 +2624,16 @@
         }
       ],
       "integration": "integrated; remote primary owner required"
+    },
+    {
+      "focus": "tests/cli-rpc-soak.test.ts",
+      "kind": "new-test",
+      "status": "pending",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate only; must add fresh primary after judged parent patch"
     }
   ],
   "limits": [
