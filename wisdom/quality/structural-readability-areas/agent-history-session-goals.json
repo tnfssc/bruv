@@ -355,7 +355,7 @@
     {
       "focus": "src/agent/last-used-cli-model.ts",
       "initialBlob": "09d386f26bb6aa3e28e07e4b4d7800f92d8c0491",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_9d8cd3c0",
@@ -371,7 +371,14 @@
           "limits": "Observed comment caveat: Pi thinking-selection also fires on model-induced effective thinking changes; picker-only comment understates upstream event surface. Needs judge actual-code decision, no behavior fix claimed."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_8d8d65eb",
+          "candidate": "f2547578087fdb398df7a2bbaa7bfdb0ca36c1dc",
+          "base": "ddc4ad72c1125d125f83e9eaee2530e40b57e2a2",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -885,7 +892,7 @@
     {
       "focus": "src/history/shake-record.ts",
       "initialBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_ce232122",
@@ -905,11 +912,15 @@
           "id": "task_776b93a2",
           "candidate": "976ba477d57be183677d200913cca5c810d42908",
           "base": "f6d9e4b75cbcf76217e97904ff477ba624b26b10",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Exact schema/version/ID/byte validation is linear; manual newest-authority, native full coverage and history cumulative live exclusions intentionally differ in caller-owned consequences. No central framework would reduce reader reconstruction.",
+          "checks": "Actual candidate/current consumers and tests inspected; exact schema blob unchanged, no rework requested; no whole-runtime quality inference."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/history/types.ts",
