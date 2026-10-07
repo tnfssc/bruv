@@ -1,83 +1,58 @@
-# Fix task history growth and reopen
+# Fix task history growth and real startup
 
-New task after the harness was finished. The old harness checkout stays unchanged.
+User asked to fix the OOM after the measurement harness was built. The failed thread had an 11,884,666,735-byte journal. Its process reached about 13.6 GiB RSS and was killed. See [incident](readability-thread-oom-2026-10-07.md) and [harness](task-history-resource-harness.md).
 
-Integration checkout: /home/tnfssc/.bruv/worktrees/bruv-task-history-resource-fix. Branch: fix/task-history-resource-growth.
-Base: e02e754b. It includes the harness commits, not yet pushed.
+Integration checkout: /home/tnfssc/.bruv/worktrees/bruv-task-history-resource-fix. Branch: fix/task-history-resource-growth. Base: e02e754b, including the harness. PR base is origin/develop. Final Linux gate passed. Delivery is next; no production install has been done. The old completed harness checkout and original history stay unchanged.
 
-Worker task_73c863fc owns task binding and its direct tests. Checkout: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_73c863fc. Branch: bruv/fix-native-task-checkpoint-growth-73c863fc.
-Worker task_b1e2df5b owns disk history indexing, metadata APIs, and history search limits. Checkout: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_b1e2df5b. Branch: bruv/fix-oversized-session-reopen-b1e2df5b.
-Parent owns integration, the derived NativeHistory writer hot path if needed, workload acceptance, and delivery.
+## What was wrong
 
-## Why
+Task updates repeatedly saved the whole growing child-ID cursor. Reopen indexed discarded payloads. Restore and several startup readers then loaded the whole branch again. A bounded message cache did not bound these callers. SDK model-context preparation also parsed plain custom records that cannot produce model messages. Testing one reader missed the next one.
 
-[Harness evidence](task-history-resource-harness.md) showed two distinct failures. Existing giant history fails during indexing. New task updates append whole growing cursor snapshots. Restore also materializes the whole branch. A bounded old-message body cache does not fix these callers.
+## What changed
 
-Keep original history and identities. Do not truncate the failed journal or merely raise resource budgets. Test fresh sessions and the actual stopped session copy. Workloads must preserve delivery, replay deduplication, branch selection, and causal task IDs.
+- Compact task checkpoints use append-only child byte offsets. No-op projected state is not saved again. Legacy IDs migrate through a reference to their original checkpoint, not another copied array. Child readers skip malformed complete rows and advance offsets; incomplete tails retry. Truncation behind a cursor fails.
+- Native child writers keep identity/hash indexes, reuse writers and suppress durable replay. They do not retain message bodies.
+- Disk indexing validates bytes while selecting only resident metadata. Task metadata shares root/job keys and the common custom type. Root-key JSON is made once per root, not twice per old row. Originals remain on disk.
+- Active-branch metadata walks do not copy the whole branch or allocate a branch-sized ID set. The resident row count bounds cycles; broken links fail. Task restore loads only the latest cursor per job.
+- Installed startup readers select cache, task rows, identity, mode, goals and remote state before reading originals. Latest malformed authority still blocks; it never revives an older setting. Cache restore keeps each model's greatest valid timestamp since the newest shake.
+- SDK startup, routing, context, previews, estimators and compaction use indexed model/settings selections. The host adaptations are hash guarded. Plain task checkpoints are never model-context bodies. Edits, shake, compaction boundaries and inactive branches remain covered. See [model-context fix](task-history-model-context.md).
+- Compaction's shake carry-forward reads only the latest original marker. It preserves IDs and rejects malformed latest state.
 
-## Checks planned
+## Harness and budgets
 
-Small resource profile, long offline profile, guarded captured-session replay, focused history/connector tests, full CI where it matters. Do not call a metadata-only replay full model continuation. The source snapshot contains private history; never commit or upload it.
+Portable ci/stress profiles keep their original RSS, disk, entry-count and time caps. Stress still makes 100,000 task updates. It grows child originals for 128 rounds, then replays the saved history through the remaining rounds. Keeping 100,000 required original + native child messages exceeded the old whole-fixture disk cap even after amplification was removed; deleting those would be data loss. The explicit child-updates option separates legitimate new transcripts from repeated checkpoints.
 
-Runtime setup may fail on this machine because mise cannot bootstrap the unrelated pnpm asset. Pinned Bun 1.4.2 and Node 24.21.0 binaries exist under ~/.local/share/mise/installs. Parent installed locked dependencies and prepared assets in both worker checkouts through those binaries.
+The corrected workload still fails base e02e754b: 64.08 MiB fixture bytes, 15,052 root rows, 343.3 MiB RSS, 22.8 s. Local report: artifacts/negative-control-7Mcqbo/report.json. Fixed stress in the first full gate used 145.1 MiB / 10.96 MiB / 1,652 rows for write and 107.3 MiB / 11.07 MiB / 1,702 rows for fresh-process resume. Final gate reruns both profiles.
 
-Values are unchanged so far. Existing bounded-resource, original-history safety, and whole-path checks already apply. Update this note while integrating pieces, before the final commit or PR.
+Captured replay uses a private CoW copy, never a writable original. Existing bytes and rows are input, not new growth. The 512 MiB RSS, 64 MiB new-write and 90 s limits stay enforced. It restores old owner-keyed task bindings, creates the actual native runtime in a private home, runs installed startup handlers, prepares model context and tears down. Provider stream calls throw. After binding restore, a body-read assertion forbids old task checkpoint originals during startup. Stages are recorded separately. It does not send a prompt, verify real provider access or revive original live jobs.
 
-## Integration checkpoint
+## Evidence
 
-Task binding worker also edits derived NativeHistory and added a child-tail reader; parent will not race those files. Its proposed restore path needs EntryMetadata.taskProjection = { rootKey, jobId }, where rootKey is JSON.stringify([namespace, sourceSessionId, sessionId]). The history worker did not yet have that field when parent inspected. Parent will join this contract after both commits arrive.
+- Source captured acceptance: all 634,329 rows; complete native startup + model context; 478.5 MiB peak RSS; 31.48 s. Local private report: artifacts/resource-harness/captured-uFAV0c/report.json.
+- Compiled version of the same replay: complete native startup + model context; 404.6 MiB peak RSS; 34.19 s. Local private report: artifacts/compiled-native-acceptance-btbmZh/report.json. The compiled helper is an input program outside the measured fixture; all runtime-created files stay inside it.
+- Earlier binding-only acceptance at 505.5 MiB did not prove full startup. Source and compiled probes without the final body-read/stage oracle tripped during startup. A GC probe did not solve that budget failure; no production GC workaround or cap increase was added. Reports remain under artifacts for honest comparison.
+- Read-only review task_60e93484 found missing startup readers and malformed child-tail recovery. Both were fixed. Follow-up task_f2d07069 found no must-fix issues in joined startup/model-context, shake or key indexing. Its limit was no full-scale original replay; parent ran the guarded acceptance above.
+- Worker startup checks: 223 tests. Context worker checks: 159 tests, build, typecheck and pristine-cache installation. Parent isolated huge-history/SDK/child-tail checks: 19 pass; SDK exactly 0.3.276.
 
-Parent added tests/task-checkpoint-index-contract.test.ts. It creates 400 old checkpoints in an isolated process, checks task keys survive reopen, and checks restore materializes only two latest task cursors rather than the branch. It is red on the base code because metadata has no taskProjection key yet. This is integration work, not a shipped red test.
+The first full Linux gate exposed this host's fish startup injecting mise trust errors into shell-test output. Those job-bridge tests pass with SHELL=/bin/bash. Two CI-runner tests needed the new resource commands and log-dir paths. A loaded compile probe timeout passed isolated. The joined gate then reached 2,282 passing tests and one stale fast-setting read-count assertion: newest-first validation correctly stops at a malformed authoritative marker. The assertion now expects only that marker, or marker then older setting when its identity is a well-formed different scope. The billing/dispatch validation assertions are unchanged. Final gate task_2dd3127a passed: format, lint, typecheck, both resource profiles, paired build, offline OpenAI transport, 2,283 tests (23 live tests skipped, zero failures), and standalone paired smoke. Logs: /tmp/bruv-fix-green-linux-ci.log and artifacts/ci.
 
-Both workers remain running. No production changes are merged into the integration checkout yet. Original stopped-session snapshot stays in the completed harness checkout. Do not mutate that checkout or original history.
+## Runtime setup
 
-## Harness correction, not a relaxed cap
+New SDK adaptations require pristine SDK files before prepare:assets. Existing old-adapted files fail the hash guards. Parent removed only this checkout's node_modules, installed the frozen lockfile with a fresh private cache, then prepared assets. New adapters are idempotent thereafter. Use pinned Bun 1.4.2 and Node 24.21.0 under ~/.local/share/mise/installs on this host. mise setup fails here because the worktree config is not trusted.
 
-The task worker measured stress at 64.02 MiB total fixture disk, 290.5 MiB RSS, and only 902 root rows after 62.7 s. Compact checkpoints removed the amplification. The old workload also generated 100,000 real child messages and their required SDK copies; those valid originals exceed the 64 MiB whole-fixture cap linearly. Treating required transcripts as a checkpoint leak would demand data loss.
+Final gate command uses SHELL=/bin/bash, pinned Bun/Node plus /usr/bin:/bin, BRUV_REQUIRE_CLAUDE_SDK=1 and BRUV_CLAUDE_SDK_PATH=/home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_73c863fc/artifacts/pinned-sdk/package/sdk.mjs. The SDK is a test-only input, not a new product dependency.
 
-Parent kept every budget unchanged. The stress workload now grows each child for 128 rounds, then replays that same saved history through the remaining 2,000 update rounds. It still delivers 100,000 task updates, but only 6,400 new child messages. This directly exercises repeated projection/checkpoint writes without burying the oracle in legitimate new transcript bytes. The actual 11.9 GB captured journal remains the primary old-session reopen check. New --child-updates makes this workload distinction explicit in command, fixture, and report; default remains growth on every update for standalone workload callers.
+Private real journals, snapshots and reports must not be committed or uploaded. Do not run a real original through an unguarded SDK API. Keep reports when a run fails; a completed shell wrapper is not workload success. No production install or server restart has been done.
 
-The corrected stable-history stress still catches old code: a bounded negative control against e02e754b stopped at 64.08 MiB fixture bytes, 15,052 root rows, 343.3 MiB RSS, after 22.8 s. Evidence: artifacts/negative-control-7Mcqbo/report.json. The fixed task worker completed the same update count under the unchanged caps: write 162.1 MiB RSS / 11.05 MiB disk / 1,652 rows; resume 123.7 MiB / 11.17 MiB / 1,702 rows. Report: artifacts/resource-harness/stress-H7OiuW/report.json. Write took 86.2 s on the loaded local host. Parent is replacing FakeJobs deep-cloned roster snapshots with the same shallow public summaries used by TaskManager; this cuts harness-only cloning, not production work or assertions.
+## Worker provenance
 
-A local PATH problem caused completed measurements to be discarded when Git provenance lookup threw. Reports now record an explicit provenanceError with null revision/dirty if Git is absent. Normal checks use pinned Bun/Node plus system paths. Production growth caps did not change.
+- task_73c863fc: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_73c863fc; branch bruv/fix-native-task-checkpoint-growth-73c863fc; integrated as 1dbc526b.
+- task_b1e2df5b: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_b1e2df5b; branch bruv/fix-oversized-session-reopen-b1e2df5b; integrated as a40d06fa.
+- task_53c2b0a8: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_53c2b0a8; branch bruv/bound-real-session-startup-history-reade-53c2b0a8; de7407b5 integrated as ee53052b.
+- task_3f7976d4: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_3f7976d4; branch bruv/bound-model-context-restore-of-checkpoin-3f7976d4; 0fed4f72 integrated as bd756bda.
 
-Parent found another real startup reader while integrating: nativeStorage checked for import maps with manager.getEntries(). That would still materialize all old task checkpoints before binding. Imported-history resume and checkpoint mapping now select only import-map metadata and load those originals. The captured replay alone does not cover this caller, so parent is adding a regression check for it.
+Values: strengthened the existing bounded-resource value with write-growth plus real reopen/startup tests. The lesson applies to saved or growing work, not every small stateless helper. No new value was added.
 
-## Joined reopen and restore
+## Next
 
-Worker commits are integrated as 1dbc526b and a40d06fa. Parent added taskProjection metadata with root/job keys for old and new checkpoints. Keys share one tiny object per root/job in each store; cursor snapshots stay on disk. Restore reads the latest keyed cursor per job on the active branch.
-
-The first combined replay exposed another allocation: selectDiskBackedEntries copied the whole branch and built a visited-ID set twice. The inline metadata run indexed all 634,329 rows but hit 528.7 MiB during restore. Parent added visitDiskBackedBranch, a newest-first metadata walk with no branch copy. The resident entry count bounds cyclic walks; missing parents fail. Task restore uses that visitor and materializes only selected cursors. Captured measurements remain under the original 512 MiB/90 s watchdog. No cap is raised.
-
-Read-only integration review: task_60e93484. It reads this checkout, including uncommitted integration changes. No new code workspace is needed for read-only research. Final evidence and delivery are still pending.
-
-## Review found missing real startup readers
-
-The guarded combined replay passed: 634,329 rows, 505.5 MiB peak RSS, 48.42 s. Private report: artifacts/resource-harness/captured-9yiDr4/report.json. It exercised task-binding restore, not full extension startup. Review task_60e93484 found unconditional getBranch calls in cache-countdown and task-row session_start handlers. These still parse all checkpoint bodies in actual runtime. Parent is fixing those handlers and expanding captured replay before claiming real startup bounded.
-
-Review also found malformed complete child rows now failed the tail reader, unlike SDK loading. Parent restored skip-and-advance semantics for malformed complete rows. Incomplete final rows remain unconsumed and retry later. No original is rewritten. Regression test follows.
-
-## Full runtime follow-up ownership
-
-Worker task_53c2b0a8 owns bounded agent extension startup readers and tests. Checkout: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_53c2b0a8. Branch: bruv/bound-real-session-startup-history-reade-53c2b0a8. Worker task_3f7976d4 owns SDK model-context projection and tests. Checkout: /home/tnfssc/.bruv/worktrees/t3-230f6fdf-5442693331ce-task_3f7976d4. Branch: bruv/bound-model-context-restore-of-checkpoin-3f7976d4. Both start at 019bd94b. Parent owns capture/runtime acceptance and metadata storage.
-
-Parent found buildSessionProjection also parsed every context custom checkpoint and allocated a whole branch of estimator skeletons. That is now a separate worker fix, not a claimed pass. Expanded captured replay runs createClaudeCompatRuntime with the real installed extensions, a private home, local offline model setup, and provider-stream functions that throw. It then prepares context and checks teardown. Old task binding is restored separately first with the original owner key; the isolated native home does not revive original jobs.
-
-The first complete Linux gate reached 2,259 passing tests, 13 failures and one error. Ten job-bridge failures were this host's fish startup printing mise trust errors into shell output. All passed when rerun with SHELL=/bin/bash. Two CI-runner assertions had not been updated for the new resource commands; parent fixes those without weakening checks. A compiled self-update probe timed out under concurrent load and passed isolated. A separate focused run had one huge-history test timeout during concurrent captured replay; it still needs an isolated pass. Resource ci/stress, format, lint, typecheck and paired build passed before those suite failures. Final full gate must rerun after integration.
-
-The expanded actual-startup negative control stopped at 512.6 MiB after 50.76 s before the indexed metric (private captured-jaav41 report). Keyed metadata had too little RSS margin even before extensions. Parent removed the extra per-checkpoint customType slot: task metadata now has a prototype type and one shared owner-key slot. Other custom metadata retains its own type. This addresses resident index size, not cache limits or history deletion. Full expanded replay waits for the two real startup/context fixes.
-
-At 2a470c5b, 19 isolated huge-history/SDK/child-tail checks passed (SDK pinned at 0.3.276); the prior huge-history timeout did not reproduce. First full gate's retained stress profile: write 145.1 MiB / 10.96 MiB / 1,652 root rows / 26.36 s; resume 107.3 MiB / 11.07 MiB / 1,702 rows / 1.0 s. Report: artifacts/ci/resources/stress-yadwpe/report.json. Mandatory CI budgets are unchanged. Final joined runtime replay and full CI are still pending worker results. Delivery target is origin/develop (GitHub default branch); no branch is pushed or PR opened yet.
-## Installed startup readers, not only task binding
-
-The P1 review was reproducible at the production extension factories: cache countdown, task-row restoration, agent identity, root instruction mode, goals, and the native runtime's remote extension all read a whole body branch during startup. Identity and mode repeat this at before_agent_start. Task-binding-only replay cannot prove these seams are bounded.
-
-These readers now filter the owned disk index before getEntry. Cache restoration walks newest-first, stops at the newest shake without parsing its body, ignores malformed calls, and keeps each model's maximum valid timestamp (journal order is not timestamp order). Task rows retain their original chronological merge and execute-label provenance, with running rows restored as unknown by the installed handler. Goals retain the full selected goal-operation sequence, including malformed authority boundaries. Remote active/attention records still replay in branch order. Identity and mode load only the latest matching custom record; corrupt latest authority never revives older state. Unknown/in-memory managers keep their public native APIs.
-
-The newest-custom reader also no longer allocates a branch-sized seen-ID set. The resident row count bounds cycles. The newest-first branch visitor can stop at a boundary; selected-entry readers collect only matching originals, not a complete branch path. Existing native-fast scope selection, native-compaction first-context checkpoint lookup, and rolling activity membership now avoid the old selector's whole-branch metadata array/set too. No additional persistent cache or fallback state was introduced.
-
-Regression: tests/extension-startup-disk.test.ts runs a separate process and installs the actual agent and remote extension factories. Its disk fixture contains 1,600 old auxiliary checkpoints (about 60 MiB), required state, malformed state, and physically newer off-branch records. Full getBranch/getEntries throw, and materialization of any auxiliary original throws. It checks real SDK task-row rendering, running-to-unknown restoration, labels and terminal outcome, per-model cache timing/next-update offset, shake invalidation, goal restoration, root mode, resumed child identity, corrupt authority recovery, native-fast scope filtering, and remote completion/attention deduplication across reopen. An independently installed native-compaction context handler checks absent and latest checkpoint selection without loading old originals.
-
-This is synthetic startup/reader proof, not a claim about full provider-request preparation: public buildContextEntries/buildSessionProjection and the manual-shake context transform still have separate full-context behavior. Parent owns captured replay expansion and the malformed child-tail check. No original captured replay was run in this worker; no resource budget changed. Existing values already require testing the real installed path and keeping proof with the work, so values.md is unchanged.
-
-Worker checks on pinned Bun 1.4.2/Node 24.21.0: 223 tests across 11 affected files passed (2,332 expectations), TypeScript no-emit passed, and git diff --check passed. Prepared dependencies were reused from the integration worktree; no replay harness or child-tail files were edited.
+Commit code + notes + values, inspect clean status, push fix/task-history-resource-growth, open/link PR against develop. Do not claim deployment or live provider continuation. Keep this note frozen after delivery; release facts belong with the next release task.

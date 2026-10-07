@@ -6,6 +6,7 @@ import { type ExtensionContext, ModelRuntime, SessionManager, SettingsManager } 
 import { bindNativeTasks, TASK_BINDING_ENTRY } from "../../src/claude-compat/task-binding";
 import type { RootTaskSession } from "../../src/claude-compat/task-projection";
 import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../../src/delegation-environment";
+import { DiskEntryStore } from "../../src/history/disk-entry-store";
 import {
   disposeDiskBackedSessionManager,
   getDiskBackedEntryMetadata,
@@ -64,6 +65,13 @@ const binding = bindNativeTasks(
 );
 await binding.flush();
 sample("sample", 2, "task-binding-restored");
+const materialize = DiskEntryStore.prototype.materialize;
+DiskEntryStore.prototype.materialize = function (value, ...rest) {
+  const meta = typeof value === "string" ? this.byId.get(value) : value;
+  if (meta?.customType === TASK_BINDING_ENTRY)
+    throw new Error("Native startup must not read old task checkpoint bodies after task binding restore");
+  return materialize.call(this, value, ...rest);
+};
 await binding.close();
 await tasks.shutdown();
 if (frames === 0) throw new Error("Replay did not exercise task binding");
@@ -89,7 +97,9 @@ models.hasConfiguredAuth = () => true;
 models.stream = models.streamSimple = (() => {
   throw new Error("Replay must never call a provider");
 }) as typeof models.stream;
+sample("sample", 3, "offline-model-setup");
 const { createClaudeCompatRuntime } = await import("../../src/claude-compat/runtime");
+sample("sample", 4, "runtime-imported");
 const errors: unknown[] = [];
 const runtime = await createClaudeCompatRuntime({
   cwd: dirname(snapshot),
@@ -109,11 +119,11 @@ const runtime = await createClaudeCompatRuntime({
   },
 });
 entries = session.getEntryCount();
-sample("sample", 3, "native-startup-restored");
+sample("sample", 5, "native-startup-restored");
 session.buildSessionProjection();
 runtime.session.getContextUsage();
-sample("sample", 4, "model-context-prepared");
+sample("sample", 6, "model-context-prepared");
 await runtime.close();
 if (errors.length) throw new AggregateError(errors, "Native startup emitted errors");
 disposeDiskBackedSessionManager(session);
-sample("complete", 5, "complete");
+sample("complete", 7, "complete");

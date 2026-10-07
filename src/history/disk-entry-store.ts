@@ -519,22 +519,6 @@ function metadata(entry: SessionEntry, offset: number, length: number, ownString
     meta.messageRole = value.message?.role;
     meta.messageProvider = value.message?.provider;
     meta.messageModel = value.message?.model;
-  } else if (entry.type === "custom") {
-    if (value.customType === TASK_PROJECTION_CUSTOM_TYPE) {
-      const root = value.data?.root;
-      const jobId = value.data?.cursor?.link?.jobId;
-      if (
-        root &&
-        typeof root.namespace === "string" &&
-        typeof root.sourceSessionId === "string" &&
-        typeof root.sessionId === "string" &&
-        typeof jobId === "string"
-      )
-        meta.taskProjection = {
-          rootKey: JSON.stringify([root.namespace, root.sourceSessionId, root.sessionId]),
-          jobId: ownedString(jobId),
-        };
-    }
   } else if (entry.type === "compaction") meta.firstKeptEntryId = value.firstKeptEntryId;
   else if (entry.type === "thinking_level_change") meta.thinkingLevel = value.thinkingLevel;
   else if (entry.type === "model_change") {
@@ -576,15 +560,57 @@ export class DiskEntryStore {
   private activePath: string;
   private spoolPath?: string;
   private sharedStrings = new Map<string, string>();
-  private taskKeys = new Map<string, NonNullable<EntryMetadata["taskProjection"]>>();
+  private taskRoots = new Map<
+    string,
+    Map<
+      string,
+      Map<
+        string,
+        {
+          rootKey: string;
+          jobs: Map<string, NonNullable<EntryMetadata["taskProjection"]>>;
+        }
+      >
+    >
+  >();
 
   private indexMetadata(entry: SessionEntry, offset: number, length: number, ownStrings = true): EntryMetadata {
     const meta = metadata(entry, offset, length, ownStrings);
-    if (meta.taskProjection) {
-      const key = JSON.stringify([meta.taskProjection.rootKey, meta.taskProjection.jobId]);
-      const shared = this.taskKeys.get(key);
-      if (shared) meta.taskProjection = shared;
-      else this.taskKeys.set(key, meta.taskProjection);
+    if (meta.customType === TASK_PROJECTION_CUSTOM_TYPE) {
+      const data = (
+        entry as SessionEntry & {
+          data?: {
+            root?: { namespace?: unknown; sourceSessionId?: unknown; sessionId?: unknown };
+            cursor?: { link?: { jobId?: unknown } };
+          };
+        }
+      ).data;
+      const root = data?.root,
+        jobId = data?.cursor?.link?.jobId;
+      if (
+        root &&
+        typeof root.namespace === "string" &&
+        typeof root.sourceSessionId === "string" &&
+        typeof root.sessionId === "string" &&
+        typeof jobId === "string"
+      ) {
+        let sources = this.taskRoots.get(root.namespace);
+        if (!sources) this.taskRoots.set(root.namespace, (sources = new Map()));
+        let sessions = sources.get(root.sourceSessionId);
+        if (!sessions) sources.set(root.sourceSessionId, (sessions = new Map()));
+        let owner = sessions.get(root.sessionId);
+        if (!owner)
+          sessions.set(
+            root.sessionId,
+            (owner = {
+              rootKey: JSON.stringify([root.namespace, root.sourceSessionId, root.sessionId]),
+              jobs: new Map(),
+            }),
+          );
+        let key = owner.jobs.get(jobId);
+        if (!key) owner.jobs.set(jobId, (key = { rootKey: owner.rootKey, jobId: ownedString(jobId) }));
+        meta.taskProjection = key;
+      }
     }
     // IDs and parent links name the same index nodes. Reuse their owned strings.
     if (meta.parentId) meta.parentId = this.byId.get(meta.parentId)?.id ?? meta.parentId;
@@ -836,7 +862,7 @@ export class DiskEntryStore {
     this.entries = [];
     this.byId.clear();
     this.sharedStrings.clear();
-    this.taskKeys.clear();
+    this.taskRoots.clear();
     this.cache.clear();
     this.cacheBytes = 0;
     let header: SessionHeader | undefined;

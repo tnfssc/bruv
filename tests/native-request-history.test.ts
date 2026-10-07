@@ -4,14 +4,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { lazyStream, type Model } from "@earendil-works/pi-ai";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
+import { NATIVE_CODEX_SUMMARY, registerNativeCodexCompaction } from "../src/agent/native-compaction";
+import { NATIVE_FAST_ENTRY, registerNativeFastMode } from "../src/agent/native-fast-mode";
 import { DiskEntryStore } from "../src/history/disk-entry-store";
 import {
   disposeDiskBackedSessionManager,
   getDiskBackedEntryMetadata,
   installDiskBackedSessionManager,
 } from "../src/history/session-manager";
-import { NATIVE_CODEX_SUMMARY, registerNativeCodexCompaction } from "../src/agent/native-compaction";
-import { NATIVE_FAST_ENTRY, registerNativeFastMode } from "../src/agent/native-fast-mode";
 
 // Adapter prototypes are process-wide. Exercise the CLI's disk-before-shake
 // installation order without inheriting another test file's earlier wrappers.
@@ -355,10 +355,16 @@ if (process.env.BRUV_TEST_NATIVE_REQUEST_HISTORY_CHILD !== "1") {
       const tracking = trackBodies();
       try {
         const result = await h.request();
-        expect(tracking.reads).toEqual([
-          { id: valid, type: "custom" },
-          { id: marker, type: "custom" },
-        ]);
+        // Read newest first. A malformed authoritative marker stops the scan;
+        // only a well-formed other scope permits reading the older setting.
+        expect(tracking.reads).toEqual(
+          kind === "other-scope"
+            ? [
+                { id: marker, type: "custom" },
+                { id: valid, type: "custom" },
+              ]
+            : [{ id: marker, type: "custom" }],
+        );
         expect(h.dispatched).toBe(kind === "other-scope" ? 1 : 0);
         if (kind !== "other-scope") expect(result.errorMessage).toContain("malformed");
         else expect(h.tier).toBe("priority");

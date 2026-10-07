@@ -16,7 +16,7 @@ Stop the source writer before capture. The size/mtime check detects common chang
 
 --session takes a private copy-on-write snapshot of an existing native Pi journal and runs the real session reopen, old task-binding restore, native extension startup, and model-context preparation in a guarded child. It never sends a prompt or starts a model. Provider stream calls throw. The native runtime uses a fresh private home and offline model setup; it cannot resume live jobs from the original home. The copy preserves the original root IDs and cursor data. Reflink is required; unsupported filesystems fail rather than silently copying gigabytes. The snapshot and report stay in a mode-0700 run directory. Do not upload real history without reviewing its private content.
 
-The existing journal is input, so its bytes are recorded but not charged as new disk growth. New writes are still capped at 64 MiB. Captured replay keeps the 512 MiB RSS and 90 s limits, but does not kill merely for an existing entry count. The JSON report states that distinction. Each stage is recorded. If indexing or startup trips the limit, later stages are not claimed as tested.
+The existing journal is input, so its bytes are recorded but not charged as new disk growth. New writes are still capped at 64 MiB. Captured replay keeps the 512 MiB RSS and 90 s limits, but does not kill merely for an existing entry count. The JSON report states that distinction. After old task-binding restore, startup is forbidden from reading old task-checkpoint bodies. This catches a new eager reader before it can parse the giant history. Each stage is recorded. If indexing or startup trips the limit, later stages are not claimed as tested.
 
 ## Measures
 

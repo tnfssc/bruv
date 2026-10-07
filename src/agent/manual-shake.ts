@@ -1,7 +1,5 @@
-import { getDiskBackedShakeLeafId } from "../history/session-manager";
-import { restoreLeaf } from "../session/restore-leaf";
-import type { ToolResultMessage } from "@earendil-works/pi-ai";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
+import type { ToolResultMessage } from "@earendil-works/pi-ai";
 import {
   AgentSession,
   type ExtensionAPI,
@@ -10,19 +8,21 @@ import {
   type SessionEntry,
   sessionEntryToContextMessages,
 } from "@earendil-works/pi-coding-agent";
+import { recordDiagnostic } from "../diagnostics.js";
+import { getDiskBackedShakeLeafId, getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import {
+  InvalidShakeRecordError,
+  isRecord,
+  isShakeRecord,
   MANUAL_SHAKE_ENTRY,
   MANUAL_SHAKE_VERSION,
   MAX_IDS_PER_KIND,
   MAX_RECORD_BYTES,
-  isRecord,
-  validId,
-  serializedBytes,
-  isShakeRecord,
-  InvalidShakeRecordError,
   type ShakeRecord,
+  serializedBytes,
+  validId,
 } from "../history/shake-record";
-import { recordDiagnostic } from "../diagnostics.js";
+import { restoreLeaf } from "../session/restore-leaf";
 import { getInstructionContinuitySession } from "./instruction-continuity";
 import {
   adaptNativeCompactionMessages,
@@ -767,7 +767,11 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
   pi.on("session_compact", (_event, ctx) => {
     const operationId = crypto.randomUUID();
     const sessionId = ctx.sessionManager.getSessionId();
-    const prior = latestShakeRecord(ctx.sessionManager.getBranch(), sessionId);
+    const indexed = getLatestDiskBackedCustomEntry(ctx.sessionManager, MANUAL_SHAKE_ENTRY);
+    const prior = latestShakeRecord(
+      indexed === undefined ? ctx.sessionManager.getBranch() : indexed ? [indexed] : [],
+      sessionId,
+    );
     if (!prior) return;
     const activeEntries = ctx.sessionManager.buildContextEntries();
     const active = new Set(activeShakeEntries(activeEntries).map((entry) => entry.id));
