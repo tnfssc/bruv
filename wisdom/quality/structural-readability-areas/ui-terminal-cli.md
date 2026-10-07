@@ -21,3 +21,7 @@ No source acceptance or runtime proof yet. Shared read-only dependencies and exp
 Primary task_ff96b465; judge task_14234cb0 ACCEPT candidate 58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7. Hook teardown and protocol restoration now sit with their setup; attachment shows one idempotent session lifetime. Exact accepted blobs and proof are in JSON. Writer: 40 editor/startup/controller + 10 live caller checks; baseline characterization 15 passes, focused Biome/diff clean. Judge rerun hit dependency resolution (no independent test-pass claim). No full build/typecheck/device/provider proof.
 
 Cross-area: tests/editor-voice-integration.test.ts accepted as related patch at 95453da9cb3f0827a96b955c60f854e905939dac; Live/native-audio primary must reconcile final blob. Worker-local notes excluded.
+
+## Accepted CLI boot boundaries
+
+Primary task_75c8d308; judge task_db22e114 ACCEPT candidate f27f3d73c76d754b0c19bdc0d561657fc5f66b0b. Shared environment setup, remote dispatch, and local SDK/UI lifetime now read separately; help transformation no longer interrupts acquisition/cleanup. Bodies/import/cleanup ordering retained. Independent 6 startup checks + 87 focused caller checks; Biome exits 0 with existing advisories; no compiled/full-gate/TTY/provider/SSH proof. tests/cli.test.ts still needs its own primary focus despite patch acceptance.

@@ -384,7 +384,7 @@
     {
       "focus": "src/cli.ts",
       "initialBlob": "cbad51b1148eb0e4401b95d3e20bb3574f293c53",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_75c8d308",
@@ -399,11 +399,27 @@
           "id": "task_db22e114",
           "base": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
           "candidate": "f27f3d73c76d754b0c19bdc0d561657fc5f66b0b",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/cli.ts": "b961477ed8253a6b69a65cf972905895b4eed010",
+            "tests/cli.test.ts": "528e6e7735b03cdd9812839b8c18657884904713"
+          },
+          "evidence": "Boot authority/lifetimes now explicit: shared environment then remote dispatch, local adapter/UI acquisition-through-finally, independent help transform; body/import/cleanup order preserved.",
+          "checks": [
+            "Independent 6 startup source checks /42 assertions",
+            "Independent 87 UI/prompt/placement checks /650 assertions",
+            "Biome exit 0 with existing 3 warnings/5 infos",
+            "diff check"
+          ],
+          "limits": [
+            "No full build/typecheck/compiled CLI/provider/SSH/device/TTY proof",
+            "Baseline tests not independently rerun"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "b961477ed8253a6b69a65cf972905895b4eed010",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
       "changedRelatedPaths": [
         "tests/cli.test.ts"
@@ -430,28 +446,54 @@
     {
       "focus": "src/diagnostics.ts",
       "initialBlob": "6fbe60bb93e4ee1cc78243ee5f28e585294dd5ca",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "pending"
-    },
-    {
-      "focus": "src/ui/action-label.ts",
-      "initialBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
       "status": "primary-running",
       "primary": [
         {
-          "id": "task_7482f459",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_7482f459",
-          "branch": "bruv/primary-readability-src-ui-action-label.-7482f459",
-          "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb"
+          "id": "task_123df133",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_123df133",
+          "branch": "bruv/primary-readability-src-diagnostics.ts-123df133",
+          "launchBase": "d7358730889bcc702110e71fae0e18c4bea3a840"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb"
+      "launchBase": "d7358730889bcc702110e71fae0e18c4bea3a840"
+    },
+    {
+      "focus": "src/ui/action-label.ts",
+      "initialBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
+      "status": "judging",
+      "primary": [
+        {
+          "id": "task_7482f459",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_7482f459",
+          "branch": "bruv/primary-readability-src-ui-action-label.-7482f459",
+          "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
+          "commit": "3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_8d1d090b",
+          "base": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
+          "candidate": "3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e",
+          "verdict": "pending"
+        }
+      ],
+      "acceptedBlob": null,
+      "integrationState": "pending",
+      "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
+      "changedRelatedPaths": [],
+      "result": "No-change candidate: local label sanitation/fallback and error evidence/precedence; callers own animation/status/clipping.",
+      "checks": [
+        "112 tests / 816 assertions in four caller/wiring suites",
+        "12 direct formatter assertions",
+        "Biome format"
+      ],
+      "limits": [
+        "No full build, interactive capture, provider or SSH checks."
+      ]
     },
     {
       "focus": "src/ui/activity-projection.ts",
@@ -676,7 +718,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "CLI-related patch integrated; primary focus still pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_db22e114",
+          "candidate": "f27f3d73c76d754b0c19bdc0d561657fc5f66b0b",
+          "verdict": "ACCEPT",
+          "blob": "528e6e7735b03cdd9812839b8c18657884904713"
+        }
+      ]
     },
     {
       "focus": "tests/context-usage-cache.test.ts",
