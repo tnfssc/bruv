@@ -90,3 +90,5 @@ Native setup:all verification before env handoff;task_1e479592 ACCEPT9d6cfd86/ne
 Launcher verifier:packaging→isolated release dispatch→isolated installed dispatch,one temporary sibling lifetime each. Judge task_dc2eea02 ACCEPT exact ledgerhash;35/395plusalltarget template/oversize/failurecleanup probes. Not nativeAndroid or compiledcross-target proof.
 
 Update verifier:per-artifact contracts and readable generated runners;judge task_073fd75a ACCEPT88994dc plus related99c0344.7/50tests+2runnerinspection;real compiledfixture invocation retained,not production/historicaldownload/native proof. Frozenfixture/probe unchanged;related test primary pending.
+
+Native runner test primary:typed scenarios/readable child,owned fixture cleanup including failed setup,typed call log. Judge task_3098ce67 ACCEPT6762793;9/66tests. Explicitly supplied pathstrings/mockchildren/syntheticprovenance,not actual paired/native/setup gates.

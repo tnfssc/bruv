@@ -1193,19 +1193,29 @@
     {
       "focus": "t3.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_a20a31fc",
           "launchBase": "38f0f0583a0de57ee39db48cb2246f781548d074",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_a20a31fc",
           "branch": "bruv/primary-t3.json-a20a31fc",
+          "state": "completed",
+          "commit": "7965f3ec2e060f794730d734417e7cf79f6cef60"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_42469010",
+          "base": "38f0f0583a0de57ee39db48cb2246f781548d074",
+          "candidate": "7965f3ec2e060f794730d734417e7cf79f6cef60",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged five direct actions,actual native/worktree/web consumers traced;changing shell/async semantics speculative.",
+      "checks": "14focus tests,actual parserprobe/formatpass;fishBundiscovery untouched;no deployedweb/build."
     },
     {
       "focus": "tests/architecture.test.ts",
@@ -1417,8 +1427,16 @@
     {
       "focus": "tests/helpers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_9dd6501e",
+          "launchBase": "86a61a54cbebef3222c17ec53ef60f4f1d8da474",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_9dd6501e",
+          "branch": "bruv/primary-tests-helpers.ts-9dd6501e",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1582,7 +1600,7 @@
     {
       "focus": "tests/native-release-gate.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_d230f8cd",
@@ -1598,19 +1616,28 @@
           "id": "task_3098ce67",
           "base": "6bbab92af36001555036325216dea9270bb32964",
           "candidate": "258c2277c3df7d06a9860df140eb85642f29af46",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Typed scenario options/readable generated child and fixture-owned cleanup remove positional source-fragment tracing;typed logs retain exact authority/ordering/assertions. Cleanup extends to incomplete setup explicitly.",
+          "checks": "Independent9tests66assertions;strict tscignoreConfig/Biome/diffpass. Mockchildren/syntheticprovenance/fakeSDK/binary-path strings only,no officialT3/setupdownload/realhistory/browser/native/provider/SSH.",
+          "acceptedBlobs": {
+            "tests/native-release-gate.test.ts": "6762793bbfc261db8c55f7aba82d685c4b146d9b"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6762793bbfc261db8c55f7aba82d685c4b146d9b",
       "relatedPatchJudgment": {
         "id": "task_83089869",
         "verdict": "ACCEPT",
         "blob": "eac3d0f7298aa70df327b5c6c87bf440185d4073",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Typed scenarios and readable mock-child source replace positional raw-JS injection;central fixture lifetime/typed call log decoding,all assertions retained.",
-      "checks": "9combined66assertions;strict tsc/format/lint/diffpass;orchestrationfixturesnotnative."
+      "checks": "9combined66assertions;strict tsc/format/lint/diffpass;orchestrationfixturesnotnative.",
+      "integrationState": "Full focus patch integrated;setup/runnercontracts inspected at exact final source,notesexcluded."
     },
     {
       "focus": "tests/offline-process-isolation.test.ts",
@@ -1944,8 +1971,16 @@
     {
       "focus": "tests/verify-update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_6b28b190",
+          "launchBase": "86a61a54cbebef3222c17ec53ef60f4f1d8da474",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_6b28b190",
+          "branch": "bruv/primary-tests-verify-update.test.ts-6b28b190",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
