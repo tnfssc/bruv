@@ -35,3 +35,5 @@ Cache countdown `b2b130e3` ACCEPT task_7fc83ddf: observer groups session request
 Instruction tests `7600a587` ACCEPT task_eef5d289: coherent started-session fixture and independent journeys; actual late-attached-history refresh seam now tested. Independent 40 passes/361 assertions and no-op-refresh negative control reproduced. Extension change only sorts imports (all bindings/body identical), resolving its and test import-order errors. Extension still requires own primary.
 
 Batch `f3f039a6`: 118 tests pass/898 assertions across 13 relevant suites, full `tsc --noEmit` pass (task_8495a524). Exact accepted-hash audit: no mismatches among 13 accepted initial rows. Still in progress: 98 initial primary focuses unstarted, 3 running, 2 new-fixture primary results judging. Parent inspected at batch boundary: no common source changes yet. Disk 149 GB free.
+
+IO final parent import correction `0100f6e7`: fresh task_cc13d7e2 ACCEPT parent / NO CHANGE NEEDED primary short-write fixture after actual full-code review. Biome including imports now passes; independent 10 parent tests/43 assertions. Exact parent acceptance updated; helper primary coverage genuine.

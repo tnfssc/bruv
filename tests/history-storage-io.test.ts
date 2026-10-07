@@ -1,10 +1,10 @@
-import { run as runProcess } from "./helpers";
 import { afterEach, describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { SessionEntry, SessionHeader } from "@earendil-works/pi-coding-agent";
 import { DiskEntryStore, scanJsonl } from "../src/history/disk-entry-store";
+import { run as runProcess } from "./helpers";
 
 const roots: string[] = [];
 afterEach(async () => {

@@ -1126,7 +1126,7 @@
     {
       "focus": "tests/history-storage-io.test.ts",
       "initialBlob": "27d019686d63830282ec0a9143e45f10d6b091f4",
-      "status": "accepted-check-rework-pending",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_3073210f",
@@ -1158,9 +1158,25 @@
             "tests/fixtures/history-io-short-writes.ts": "a738fc9cace7df491e9267a165a326e2b61511e6",
             "tests/fixtures/history-io-cleanup-failure.ts": "baddd5ace399fa55d0903aad88ee4821905d1c22"
           }
+        },
+        {
+          "id": "task_cc13d7e2",
+          "candidate": "0100f6e726bea78b391b356fe9c9e8846e133719",
+          "base": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "relatedVerdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fixture linear mock/import/write/failure/byte rollback/retry/reopen journey already clear; parent owns roots/drained child exit while child owns mocked module cache. Full final code reviewed independently.",
+          "checks": "Independent parent 10 tests/43 assertions; focused Biome including imports and diff pass.",
+          "acceptedRelatedBlobs": {
+            "tests/history-storage-io.test.ts": "7f0efbed4f5941360e28ede13c2c3d4027ec1da9",
+            "tests/fixtures/history-io-cleanup-failure.ts": "baddd5ace399fa55d0903aad88ee4821905d1c22"
+          },
+          "role": "final-related-parent-rejudgment"
         }
       ],
-      "acceptedBlob": "3ba4ff61f232596ce66a6045ddd8ec04b5fac5aa",
+      "acceptedBlob": "7f0efbed4f5941360e28ede13c2c3d4027ec1da9",
       "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "32cbff38aa54ff05659ea2365134f016ff8c4055",
@@ -1169,9 +1185,7 @@
         "blob": "5fba8ec9f35c04ef7a9a7c0254b5df1067337220",
         "primaryFocusStillRequired": true
       },
-      "checkNeeds": [
-        "Biome check organizeImports error observed task_07ae383c; ask next file worker to resolve with focus patch and rejudge final hash."
-      ]
+      "checkNeeds": []
     },
     {
       "focus": "tests/history-storage-lifecycle.test.ts",
@@ -1544,7 +1558,7 @@
       "focus": "tests/fixtures/history-io-short-writes.ts",
       "initialBlob": null,
       "originCandidate": "eaac149b84b707785584990ea9204a3d6b68905a",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_d44d38b0",
@@ -1565,11 +1579,20 @@
           "id": "task_cc13d7e2",
           "candidate": "0100f6e726bea78b391b356fe9c9e8846e133719",
           "base": "7a88dd6ca01c039ac9a956c571f70cb9778805a8",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "relatedVerdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fixture linear mock/import/write/failure/byte rollback/retry/reopen journey already clear; parent owns roots/drained child exit while child owns mocked module cache. Full final code reviewed independently.",
+          "checks": "Independent parent 10 tests/43 assertions; focused Biome including imports and diff pass.",
+          "acceptedRelatedBlobs": {
+            "tests/history-storage-io.test.ts": "7f0efbed4f5941360e28ede13c2c3d4027ec1da9",
+            "tests/fixtures/history-io-cleanup-failure.ts": "baddd5ace399fa55d0903aad88ee4821905d1c22"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "integrated-related-primary-pending",
+      "acceptedBlob": "a738fc9cace7df491e9267a165a326e2b61511e6",
+      "integration": "unchanged-at-area-tip",
       "relatedPatchReview": {
         "candidate": "eaac149b84b707785584990ea9204a3d6b68905a",
         "judge": "task_6fc46161",
