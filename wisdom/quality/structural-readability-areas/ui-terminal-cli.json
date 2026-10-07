@@ -10,7 +10,14 @@
     "Live/provider/device/SSH checks must remain explicit limits.",
     "Automatic setup reported fish cannot find bun (exit 127); workers have explicit Bun path and shared dependency instructions."
   ],
-  "crossAreaNeeds": [],
+  "crossAreaNeeds": [
+    {
+      "file": "tests/editor-voice-integration.test.ts",
+      "owner": "live-native-audio",
+      "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
+      "state": "candidate pending judge; parent must coordinate final primary owner"
+    }
+  ],
   "files": [
     {
       "focus": "scripts/activity-runtime-acceptance.py",
@@ -105,19 +112,39 @@
     {
       "focus": "scripts/terminal-perf/action-profiler.ts",
       "initialBlob": "833e1e060db3eeffde361abc7c260aaca53bd8f8",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_6ffa8972",
           "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_6ffa8972",
-          "branch": "bruv/primary-readability-scripts-terminal-per-6ffa8972"
+          "branch": "bruv/primary-readability-scripts-terminal-per-6ffa8972",
+          "commit": "84108130c3b7f3ba70e166dac04e53bfde0f7dcb"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_40ff7535",
+          "base": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+          "candidate": "84108130c3b7f3ba70e166dac04e53bfde0f7dcb",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf"
+      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+      "changedRelatedPaths": [
+        "tests/terminal-perf-action-profiler.test.ts"
+      ],
+      "result": "Candidate isolates frame/request correlation from span accounting in local FrameAttribution owner; pending judgment.",
+      "checks": [
+        "57 focused tests, 1422 assertions",
+        "Reentrant regression passes exact baseline and candidate",
+        "Focused TypeScript, Biome and diff checks"
+      ],
+      "limits": [
+        "No full build/gate, live-provider/device check or performance claim."
+      ]
     },
     {
       "focus": "scripts/terminal-perf/artifacts.ts",
@@ -391,11 +418,19 @@
     {
       "focus": "src/ui/action-label.ts",
       "initialBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_7482f459",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_7482f459",
+          "branch": "bruv/primary-readability-src-ui-action-label.-7482f459",
+          "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb"
     },
     {
       "focus": "src/ui/activity-projection.ts",
@@ -418,19 +453,40 @@
     {
       "focus": "src/ui/editor.ts",
       "initialBlob": "6f91ff6f6b3fe970e4fc9b821a687f6a0ba2f666",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_ff96b465",
           "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_ff96b465",
-          "branch": "bruv/primary-readability-src-ui-editor.ts-ff96b465"
+          "branch": "bruv/primary-readability-src-ui-editor.ts-ff96b465",
+          "commit": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_14234cb0",
+          "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
+          "base": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf"
+      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+      "changedRelatedPaths": [
+        "tests/editor-voice-integration.test.ts"
+      ],
+      "result": "Candidate pairs focus/listener cancellation hooks and terminal-mode acquisition with their teardown; pending independent judgment.",
+      "checks": [
+        "40 editor/startup/controller tests",
+        "10 live push-to-talk caller checks",
+        "15 expanded tests against baseline",
+        "focused Biome and diff check"
+      ],
+      "limits": [
+        "No full build/typecheck, compiled CLI, tmux, provider or physical-device acceptance."
+      ]
     },
     {
       "focus": "src/ui/execution-previews.ts",
@@ -462,11 +518,19 @@
     {
       "focus": "src/ui/rolling-activity.ts",
       "initialBlob": "10c2ad0a2b8161b8b5b325707e32d25bd4cb5ed4",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_f8eb0cae",
+          "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_f8eb0cae",
+          "branch": "bruv/primary-readability-src-ui-rolling-activ-f8eb0cae"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb"
     },
     {
       "focus": "src/ui/sdk-task-rows.ts",
