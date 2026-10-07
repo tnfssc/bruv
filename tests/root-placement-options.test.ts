@@ -43,3 +43,77 @@ test("project trust is explicit placement intent, never silently dropped", () =>
   });
   expect(() => parseRootPlacementArgs(["--place", "builder", "--approve", "--no-approve"])).toThrow("trust once");
 });
+
+test("existing server workspace keeps startup overrides without source transfer", () => {
+  const args = [
+    "--offline",
+    "--remote-repo",
+    "/server/repo",
+    "--place",
+    "builder",
+    "--model",
+    "provider/model",
+    "--thinking",
+    "high",
+    "--approve",
+    "--remote-fresh",
+  ];
+  const original = [...args];
+  expect(parseRootPlacementArgs(args)).toEqual({
+    localArgs: [],
+    remote: {
+      place: "builder",
+      remoteRepo: "/server/repo",
+      model: "provider/model",
+      thinking: "high",
+      projectTrusted: true,
+      fresh: true,
+    },
+  });
+  expect(args).toEqual(original);
+  expect(() => parseRootPlacementArgs(["--place", "builder", "--remote-repo", "relative"])).toThrow(
+    "absolute server path",
+  );
+  expect(() =>
+    parseRootPlacementArgs(["--place", "builder", "--remote-repo", "/server", "--remote-include", "file"]),
+  ).toThrow("different source choices");
+});
+
+test("only source includes repeat; singleton values and startup switches reject duplicates", () => {
+  expect(
+    parseRootPlacementArgs([
+      "--place",
+      "builder",
+      "--remote-include",
+      "first file",
+      "--remote-source",
+      "/local",
+      "--remote-include",
+      "second file",
+    ]).remote,
+  ).toEqual({ place: "builder", cwd: "/local", remoteInclude: ["first file", "second file"] });
+  expect(() => parseRootPlacementArgs(["--place", "builder", "--model", "one", "--model", "two"])).toThrow(
+    "Duplicate root option: --model",
+  );
+  expect(() => parseRootPlacementArgs(["--place", "builder", "--offline", "--offline"])).toThrow(
+    "Duplicate root option",
+  );
+  expect(() => parseRootPlacementArgs(["--place", "builder", "--remote-fresh", "--remote-fresh"])).toThrow(
+    "Duplicate root option",
+  );
+});
+
+test("local separator stays opaque while remote startup accepts no prompt tail or invalid values", () => {
+  const args = ["--", "--place", "builder", "--remote-source", "literal prompt"];
+  expect(parseRootPlacementArgs(args).localArgs).toBe(args);
+  expect(parseRootPlacementArgs(["--place", "local", ...args]).localArgs).toEqual(args);
+  expect(() => parseRootPlacementArgs(["--place", "builder", "--", "prompt"])).toThrow(
+    "Unsupported remote main-session argument: --",
+  );
+  expect(() => parseRootPlacementArgs(["--place", "builder", "--remote-source"])).toThrow(
+    "--remote-source requires a value",
+  );
+  expect(() => parseRootPlacementArgs(["--place", "builder", "--remote-include", "bad\nfile"])).toThrow(
+    "--remote-include requires a value",
+  );
+});

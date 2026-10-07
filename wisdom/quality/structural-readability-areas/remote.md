@@ -82,3 +82,5 @@ Capability-test own primary 189f56e3 ACCEPT task_d83b6e0b at bb79598d: abort/dea
 Client-test final rework 4e396c24 ACCEPT task_45f4b422 at 2439a575, independently 23 tests/126 + whole tsc pass. Original e2e6c5d stays REJECTED for five typing errors and was never integrated; stopped task_11672539 edits retained. Final preserves pre-POST disk evidence/child cleanup and byte-identical prior page/integration regressions; only three request assertions resolve typing.
 
 Root-client test own primary 81252d4c ACCEPT task_9e1c68cc at 4dc8a822: owner effects before response loss, normal logged missing-status path, independent durable checkpoint fixtures; exact abort→prompt and status-only/no-resend regressions retained. Independent 20 tests/144 assertions.
+
+Question bridge 4fdf931c ACCEPT task_7e7ebdea: projection and delivered receipt reconciliation separated without changing initial/fresh snapshots or pinned authority (89/1346). Root options ac44370f ACCEPT task_d1dd2209: consumption/effect switch preserves semantics (18/88); related placement tests require fresh own-primary coverage. Both full patches joined without worker notes.

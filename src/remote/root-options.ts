@@ -33,41 +33,55 @@ export function parseRootPlacementArgs(args: string[]): { localArgs: string[]; r
   const seen = new Set<string>();
   for (let i = 0; i < args.length; i++) {
     const flag = args[i]!;
-    // The thin client loads no packages/provider; offline startup does not prohibit its explicit SSH target.
-    if (flag === "--approve" || flag === "--no-approve") {
-      if (seen.has("projectTrust")) throw Error("Specify project trust once");
-      seen.add("projectTrust");
-      options.projectTrusted = flag === "--approve";
-      continue;
-    }
-    if (flag === "--offline") {
-      if (seen.has(flag)) throw Error("Duplicate root option");
+    const takeValue = (): string => {
+      const value = args[++i];
+      if (!value || value.startsWith("-") || /[\r\n\0]/.test(value)) throw Error(flag + " requires a value");
+      if (flag !== "--remote-include" && seen.has(flag)) throw Error("Duplicate root option: " + flag);
       seen.add(flag);
-      continue;
-    }
-    if (flag === "--remote-fresh") {
-      if (seen.has(flag)) throw Error("Duplicate root option");
-      seen.add(flag);
-      options.fresh = true;
-      continue;
-    }
-    if (!["--place", "--remote-repo", "--remote-source", "--remote-include", "--model", "--thinking"].includes(flag))
-      throw Error(
-        "Unsupported remote main-session argument: " + flag + ". Enter prompts in the attached conversation.",
-      );
-    const value = args[++i];
-    if (!value || value.startsWith("-") || /[\r\n\0]/.test(value)) throw Error(flag + " requires a value");
-    if (flag !== "--remote-include" && seen.has(flag)) throw Error("Duplicate root option: " + flag);
-    seen.add(flag);
-    if (flag === "--remote-repo") {
-      if (!value.startsWith("/")) throw Error("Remote repository must be an absolute server path");
-      options.remoteRepo = value;
-    } else if (flag === "--remote-source") options.cwd = value;
-    else if (flag === "--remote-include") (options.remoteInclude ??= []).push(value);
-    else if (flag === "--model") options.model = value;
-    else if (flag === "--thinking") {
-      if (!(THINKING_LEVELS as readonly string[]).includes(value)) throw Error("Unsupported root thinking override");
-      options.thinking = value;
+      return value;
+    };
+    switch (flag) {
+      case "--place":
+        options.place = takeValue();
+        break;
+      case "--approve":
+      case "--no-approve":
+        if (seen.has("projectTrust")) throw Error("Specify project trust once");
+        seen.add("projectTrust");
+        options.projectTrusted = flag === "--approve";
+        break;
+      // The thin client loads no packages/provider; offline startup still uses its explicit SSH target.
+      case "--offline":
+      case "--remote-fresh":
+        if (seen.has(flag)) throw Error("Duplicate root option");
+        seen.add(flag);
+        if (flag === "--remote-fresh") options.fresh = true;
+        break;
+      case "--remote-repo": {
+        const value = takeValue();
+        if (!value.startsWith("/")) throw Error("Remote repository must be an absolute server path");
+        options.remoteRepo = value;
+        break;
+      }
+      case "--remote-source":
+        options.cwd = takeValue();
+        break;
+      case "--remote-include":
+        (options.remoteInclude ??= []).push(takeValue());
+        break;
+      case "--model":
+        options.model = takeValue();
+        break;
+      case "--thinking": {
+        const value = takeValue();
+        if (!(THINKING_LEVELS as readonly string[]).includes(value)) throw Error("Unsupported root thinking override");
+        options.thinking = value;
+        break;
+      }
+      default:
+        throw Error(
+          "Unsupported remote main-session argument: " + flag + ". Enter prompts in the attached conversation.",
+        );
     }
   }
   if (options.remoteRepo && (options.cwd || options.remoteInclude?.length))
