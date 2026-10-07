@@ -492,9 +492,16 @@
         "status": "candidate ready",
         "commit": "0c9fc2f2baff2c16895b74f6d2a5a75ebe6035ab"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_cdb98bdc",
+          "status": "running",
+          "candidate": "0c9fc2f2baff2c16895b74f6d2a5a75ebe6035ab",
+          "base": "6f3ada6c721a7a8eb9d9ea091a52bcbadea5174a"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged linear temporary compile/link/self-test/publish sequence; install/CI/release/embedding/runtime cleanup distinct responsibilities, extraction adds navigation.",
       "checks": "Shell syntax;44 focused tests481 assertions;6 fake-tool lifecycle order/failure/cleanup cases. No macOSXcode/device/provider/signal/cross-volume proof."
@@ -551,10 +558,17 @@
     {
       "focus": "scripts/live-isolated-audio.sh",
       "initialBlob": "ba92d903223fcee68a9c3a5ce799e4ec695230ab",
-      "primary": null,
+      "primary": {
+        "id": "task_1b8756f7",
+        "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1b8756f7",
+        "branch": "bruv/primary-scripts-live-isolated-audio.sh-1b8756f7",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_ab2edd5f",
         "verdict": "ACCEPT",
@@ -1147,10 +1161,17 @@
     {
       "focus": "tests/editor-voice-integration.test.ts",
       "initialBlob": "a54b95973f39569c32af94c7043aa7665a8da4ca",
-      "primary": null,
+      "primary": {
+        "id": "task_90932544",
+        "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_90932544",
+        "branch": "bruv/primary-tests-editor-voice-integration.t-90932544",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "parent UI related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_14234cb0",
         "verdict": "ACCEPT",
@@ -1382,17 +1403,27 @@
         "launchBase": "50bbb773281940490cf11cf862ae15d5b2555951",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_ecea00d6",
         "branch": "bruv/primary-tests-live-extension.test.ts-ecea00d6",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "d0ffec5fdd32b4c66f1bee96d9e7e24919a937d9"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_d469e2f0",
+          "status": "running",
+          "candidate": "d0ffec5fdd32b4c66f1bee96d9e7e24919a937d9",
+          "base": "50bbb773281940490cf11cf862ae15d5b2555951"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_65eb4c80",
         "verdict": "ACCEPT",
         "blob": "ea3dffdf18791aac1b2e150b505d6bdb11ba6764"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Independent helper-launch/provider-connect holds expose cancellation arrival/resume/activation journey; realSDK input/focus fixture separate from simulated Live dependencies; generic provider seam now truthfully named.",
+      "checks": "76 tests442 assertions;focused typecheck/Biome/diff pass;no assertion removed or product fix. Full typecheck blocked8 missing asset JSON imports;no native/provider/macOS."
     },
     {
       "focus": "tests/live-gpt-live-provider.acceptance.test.ts",
@@ -1910,10 +1941,17 @@
       "focus": "native/live-linux/tests/test_virtual.py",
       "introducedBy": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
       "initialBlob": null,
-      "primary": null,
+      "primary": {
+        "id": "task_d69d2178",
+        "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_d69d2178",
+        "branch": "bruv/primary-native-live-linux-tests-test_vir-d69d2178",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_ab2edd5f",
         "verdict": "ACCEPT",
