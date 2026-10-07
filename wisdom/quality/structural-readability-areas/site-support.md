@@ -9,3 +9,5 @@ Use JSON ledger for precise launch/commit/round/blob evidence. At most three cod
 First accepted unchanged file: playback.ts. Independent judge traced mutation gate/wrap, terminal/layout rendering and HTML lifecycle; clear narrow timing helper, no forced extraction. Exact blob and verdict live in ledger. No repository-wide claim.
 
 Accepted build refactor integrated: each view now owns a complete rendering policy instead of six mode branches. Independent 18 focused tests, baseline/candidate artifact parity at root/subpath, and validation-before-deletion proof. No worker note imported. Parent boundary 6a285569 is documentation-only; no common source merged.
+
+Accepted renderer batch: terminal presents frame effects in sequence and confines gesture state; HTML panel operations now own panel-local mutations while mount retains shared scheduling/lifetime. Fresh judges accepted exact blobs; no overlapping source edits. Independent unit checks (7 terminal; 14 HTML) support preservation, browser paths inspected by judges and exercised by primaries. Combined batch proof still pending.
