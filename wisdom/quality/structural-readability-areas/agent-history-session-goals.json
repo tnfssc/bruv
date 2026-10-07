@@ -1216,7 +1216,7 @@
     {
       "focus": "src/session/identity.ts",
       "initialBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_743c2cfa",
@@ -1236,11 +1236,15 @@
           "id": "task_cbe6a2c8",
           "candidate": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
           "base": "7ad61b57",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Stateless helper prefers durable path else stable existing ID attribution, no allocation/write/authority. Child parent metadata/footer/connector consumers distinct from native/SSH persisted-session authority and replay/history identity.",
+          "checks": "Actual full source/callers/tests and note-only diff read; focused proof and unrelated compatibility limitation kept distinct, no whole-gate claim."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/session/input.ts",
@@ -1316,7 +1320,7 @@
     {
       "focus": "src/session/restore-leaf.ts",
       "initialBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_6d6e2568",
@@ -1331,7 +1335,14 @@
           "checks": "104 tests/527 assertions; real SDK probe9 assertions; focused format/lint/diff pass; assets prepared after import failure; no compile/build/live."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_58208ff4",
+          "candidate": "8f868493f1a28ce307445964ddb38f1b70e667cb",
+          "base": "b8a7d4debe5e37f75a0e0b7f7bf18208e8fde820",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
