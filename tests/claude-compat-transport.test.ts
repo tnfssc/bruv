@@ -70,6 +70,39 @@ describe("Claude-compatible NDJSON transport", () => {
     expect(h.lines).toEqual([]);
   });
 
+  test("separate input reads retain partial UTF-8 and reset the byte budget per frame", async () => {
+    const received: unknown[] = [];
+    const frame = Buffer.from(JSON.stringify(user));
+    const split = frame.indexOf(Buffer.from("😀")) + 1;
+    const h = harness({
+      maxFrameBytes: frame.length + 1,
+      onUser: (message) => {
+        received.push(message);
+      },
+    });
+    h.input.write(frame.subarray(0, split));
+    await tick();
+    expect(received).toEqual([]);
+    h.input.write(Buffer.concat([frame.subarray(split), Buffer.from("\r\n \n\n"), frame.subarray(0, split)]));
+    await tick();
+    expect(received).toEqual([user]);
+    h.input.end(frame.subarray(split));
+    await h.run;
+    expect(received).toEqual([user, user]);
+    expect(h.logs).toEqual([]);
+    expect(h.lines).toEqual([]);
+  });
+
+  test("fragmented frame limits count whitespace and CR before trimming", async () => {
+    const h = harness({ maxFrameBytes: 5 });
+    h.input.write("   ");
+    await tick();
+    h.input.end("  \r\n");
+    await expect(h.run).rejects.toThrow("Transport input frame limit exceeded");
+    expect(h.logs).toEqual([]);
+    expect(h.lines).toEqual([]);
+  });
+
   test("SDK initialize, interrupt and config route explicitly; unsupported/malformed controls get real errors", async () => {
     const captured: unknown[] = [];
     const h = harness({

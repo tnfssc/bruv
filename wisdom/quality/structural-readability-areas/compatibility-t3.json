@@ -271,10 +271,17 @@
     {
       "file": "src/claude-compat/binding.ts",
       "initialBlob": "38964c2b098bc5e68f36594e9bdae4e03930f631",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_f0de0fb4",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_f0de0fb4",
+        "branch": "bruv/primary-binding-f0de0fb4",
+        "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d"
     },
     {
       "file": "src/claude-compat/cli.ts",
@@ -568,7 +575,7 @@
     {
       "file": "src/claude-compat/transport.ts",
       "initialBlob": "2955f0309942c4d94a591065f9d315cc4592c02a",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_6958d30f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_6958d30f",
@@ -579,17 +586,26 @@
       "judges": [
         {
           "id": "task_70aa7bb7",
-          "status": "running",
-          "candidate": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8"
+          "status": "completed",
+          "candidate": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8",
+          "verdict": "ACCEPT",
+          "blob": "7426350d874d2222a7afb61335407f1215fa751d",
+          "relatedBlobs": {
+            "tests/claude-compat-transport.test.ts": "dcfb613e839d20932af1dcf68919366c48dd490a"
+          },
+          "objections": [],
+          "evidence": "Bounded byte framing localizes UTF8/cursor/budget before dispatch; run exposes EOF rejection/drains/close. Correlation/lifetime abort/input destruction/active handlers/write callback+drain remain owner. CLI EOF explicitly closes unlike transport graceful EOF, unchanged. Independent17 transport52 assertions+4 permission tests.",
+          "limits": "Human controls missing pi-ai; no compiled/live."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "7426350d874d2222a7afb61335407f1215fa751d",
       "launchBase": "402c11381670f61ec088c6a4e5532155837198ae",
       "changedRelatedPaths": [
         "tests/claude-compat-transport.test.ts"
       ],
       "readingResult": "Internal readFrames owns bounded NDJSON cursor/buffer; run shows dispatch→EOF callback rejection→handler/output drain→close. Correlation/cancellation/ordered writes retained.",
-      "checks": "2 added regressions pass baseline/candidate;35 focused tests pass;Biome/focused TypeScript/diff pass; no compiled/live."
+      "checks": "2 added regressions pass baseline/candidate;35 focused tests pass;Biome/focused TypeScript/diff pass; no compiled/live.",
+      "integrationState": "Exact reviewed framing source+related test joined; transport test primary pending"
     },
     {
       "file": "src/t3/README.md",
@@ -743,15 +759,21 @@
     {
       "file": "tests/claude-compat-commands.test.ts",
       "initialBlob": "e506ca3fda50eaebad675cf026e8948b8e4e128e",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_71d2ae32",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_71d2ae32",
         "branch": "bruv/primary-command-tests-71d2ae32",
         "launchBase": "fcf8c27950ddece94e2bb981fc436829dbb503e6",
-        "commit": null
+        "commit": "73528c0f1ecfc22fb008d7883322cb6e54cee415"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_41daae2e",
+          "status": "running",
+          "candidate": "73528c0f1ecfc22fb008d7883322cb6e54cee415"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -761,7 +783,10 @@
           "candidate": "3013a308208dba8bf92de2a6b4a911a286a5ad5a"
         }
       ],
-      "launchBase": "fcf8c27950ddece94e2bb981fc436829dbb503e6"
+      "launchBase": "fcf8c27950ddece94e2bb981fc436829dbb503e6",
+      "changedRelatedPaths": [],
+      "readingResult": "Real goal/mode/questions integration retains ledger/temp lifetime locally; shared fixture drops unused handlers and temp ownership. Admission/resources/native-open own visible registrations without disk; notification gates explicit preserving real-context/order/completion.",
+      "checks": "Baseline/candidate6 tests57 assertions each; candidate+human19 tests128 assertions;format/diff pass."
     },
     {
       "file": "tests/claude-compat-compiled.test.ts",
@@ -790,8 +815,14 @@
     {
       "file": "tests/claude-compat-history.test.ts",
       "initialBlob": "291daa0d1e8d8c9df89f68de6cf11a48642f2902",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_aba67ce5",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_aba67ce5",
+        "branch": "bruv/primary-history-tests-aba67ce5",
+        "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -801,7 +832,8 @@
           "blob": "4e8dde83542f073ccea50ac78414d4247204813f",
           "candidate": "71aaf5c4bb89e1004f1650b150b7afcde8afe235"
         }
-      ]
+      ],
+      "launchBase": "7b5c7d69f8468e9924aa255de9c96ddf281dd01d"
     },
     {
       "file": "tests/claude-compat-human-controls.test.ts",
@@ -943,7 +975,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_70aa7bb7",
+          "verdict": "ACCEPT",
+          "blob": "dcfb613e839d20932af1dcf68919366c48dd490a",
+          "candidate": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8"
+        }
+      ]
     },
     {
       "file": "tests/claude-compat/credential-isolation.test.ts",
@@ -1211,16 +1251,22 @@
       "file": "tests/claude-compat-frontend.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "primary-running",
+      "status": "judging",
       "introducedBy": "898826edd36649f92faa239effb2989d1364ac25",
       "primary": {
         "id": "task_a49cb4c3",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_a49cb4c3",
         "branch": "bruv/primary-new-frontend-tests-a49cb4c3",
         "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868",
-        "commit": null
+        "commit": "b24301489aef9ed999390a8730980c9cc685305b"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_5958071a",
+          "status": "running",
+          "candidate": "b24301489aef9ed999390a8730980c9cc685305b"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1230,7 +1276,10 @@
           "candidate": "898826edd36649f92faa239effb2989d1364ac25"
         }
       ],
-      "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868"
+      "launchBase": "3c1068e7effd1d80c8384cc2972997b0fdc79868",
+      "changedRelatedPaths": [],
+      "readingResult": "Whole new file unchanged: explicit settlement→retained accounting→next-run reset/session cost; separate auxiliary accounting; shared ordered protocol expectations across thinking policies, no split warranted.",
+      "checks": "4 tests27 assertions pass;Biome clean."
     }
   ],
   "crossAreaNeeds": [],
@@ -1284,6 +1333,13 @@
       "status": "passed",
       "scope": "Integrated frontend/runtime/ownership/command/retry16 top-level tests69 assertions;typecheck;format/lint",
       "limits": "One retained warning; no live/full gate."
+    },
+    {
+      "id": "task_8d13cd7e",
+      "commit": "7b5c7d69",
+      "status": "passed",
+      "scope": "Integrated history/runtime/ownership/task-binding8 outer tests29 assertions;7 SDK skips;typecheck;format/lint",
+      "limits": "Area SDK opt-in tests skipped unlike writer reported configured SDK run;15 warnings7 infos;no live/full gate."
     }
   ],
   "combinedReviews": [
