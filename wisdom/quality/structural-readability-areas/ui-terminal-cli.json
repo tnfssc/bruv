@@ -29,11 +29,19 @@
     {
       "focus": "scripts/activity-runtime-acceptance.py",
       "initialBlob": "ec93dec2d9d501bdb6233b29b383311f3480a166",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_8217bb2e",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_8217bb2e",
+          "branch": "bruv/primary-readability-scripts-activity-run-8217bb2e",
+          "launchBase": "d6d7a1f961f75feeea462e19d0e333da29ffd9f0"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "d6d7a1f961f75feeea462e19d0e333da29ffd9f0"
     },
     {
       "focus": "scripts/activity-terminal-acceptance.py",
@@ -427,7 +435,7 @@
     {
       "focus": "scripts/tui-harness.ts",
       "initialBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_7f3c2fe5",
@@ -437,7 +445,14 @@
           "commit": "e5880ac872c2d04ef90194ca3c5964437cb4efab"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_fdd2cd2a",
+          "base": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8",
+          "candidate": "e5880ac872c2d04ef90194ca3c5964437cb4efab",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
       "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8",
@@ -518,7 +533,7 @@
     {
       "focus": "src/diagnostics-extension.ts",
       "initialBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_ce10c8d9",
@@ -533,11 +548,25 @@
           "id": "task_bb4b2bf5",
           "base": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
           "candidate": "c7ce40535fb494bdadac75ae970755e48a379e39",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/diagnostics-extension.ts": "51f2655613a4022bf3b3742d0c2de4524711e002"
+          },
+          "evidence": "Activation lifetime, guarded append/leaf restoration and bounded command inspection remain locally understandable; native SDK limitations explicit, not hidden behind blanket guarantees.",
+          "checks": [
+            "Independent 13 tests /573 assertions",
+            "Actual core/test/caller/SDK persistence inspection"
+          ],
+          "limits": [
+            "Restoration not atomic; post-append failure may leave child active; reopen may select child",
+            "Detach removes persistence not all observation; SDK getEntries still materializes full entries despite bounded replay scan",
+            "No build/interactive/provider/SSH/exhaustive command warning proof"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
+      "integrationState": "unchanged final focus accepted",
       "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
       "changedRelatedPaths": [],
       "result": "No-change candidate: activation ownership, guarded append/leaf restoration, shutdown capture and bounded inspection already local.",
@@ -1177,19 +1206,30 @@
     {
       "focus": "src/ui/task-monitor.ts",
       "initialBlob": "9670404b405f1ce9149fa5c882956f92a0cd9889",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_8f7cb2e9",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_8f7cb2e9",
           "branch": "bruv/primary-readability-src-ui-task-monitor.-8f7cb2e9",
-          "launchBase": "595c5739a106609b3588835fdc8146724941c6e2"
+          "launchBase": "595c5739a106609b3588835fdc8146724941c6e2",
+          "commit": "95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "595c5739a106609b3588835fdc8146724941c6e2"
+      "launchBase": "595c5739a106609b3588835fdc8146724941c6e2",
+      "changedRelatedPaths": [],
+      "result": "Candidate named frame fields expose clipping priorities; overview/inspection own layout/read budgets, shared observation rendering owns output/activity/SSH evidence.",
+      "checks": [
+        "18 tests /143 assertions",
+        "Temporary exact-base comparison: 500 identical frames, inspection args and stop decisions",
+        "Biome check existing warnings/diff"
+      ],
+      "limits": [
+        "No build/typecheck/packaged TUI/provider/authenticated SSH; dist absent"
+      ]
     },
     {
       "focus": "src/ui/task-rows.ts",
