@@ -564,11 +564,19 @@
     {
       "focus": "scripts/terminal-perf/artifacts.ts",
       "initialBlob": "eeac78ef15a882ca01423dfaf4c1ada83c10f861",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_47a4d9cd",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_47a4d9cd",
+          "branch": "bruv/primary-readability-scripts-terminal-per-47a4d9cd",
+          "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017"
     },
     {
       "focus": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
@@ -1000,19 +1008,36 @@
     {
       "focus": "scripts/terminal-perf/trace.ts",
       "initialBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_fb8832c3",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_fb8832c3",
           "branch": "bruv/primary-readability-scripts-terminal-per-fb8832c3",
-          "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f"
+          "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+          "commit": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_36396b4b",
+          "base": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+          "candidate": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f"
+      "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+      "changedRelatedPaths": [],
+      "result": "No-change: case/cold/steady order and real timestamp vs fallback cursor explicit; timestamps/durations convert units, other args retain meaning; no fabricated lanes.",
+      "checks": [
+        "24tests/152assertions",
+        "Synthetic order/mixed timestamp/fallback/units/budget/serialization/nonmutation checks"
+      ],
+      "limits": [
+        "No build/viewer/performance"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/workloads.ts",
@@ -2438,7 +2463,7 @@
     {
       "focus": "tests/rolling-activity-disk.test.ts",
       "initialBlob": "16109794da03297d71f74968b134a2c9e7929bf4",
-      "status": "judging",
+      "status": "rework-running",
       "primary": [
         {
           "id": "task_1b754cf4",
@@ -2453,12 +2478,24 @@
           "id": "task_6f3b1071",
           "base": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
           "candidate": "ad493ccc4986fb5c18bc708590a38232c84621bd",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_a6caab27"
+          "verdict": "REJECT",
+          "priorRelatedJudge": "task_a6caab27",
+          "objections": [
+            "Owner transition now clean-seeded in new subprocess, losing dirty live controller state. Base before rewrite c,d,e expanded,e failed after branch/live/mouse/removal/settlement; candidate collapsed/all success. Expanded-group-only owner-invalidation mutant fails base rewrite0vs6 but candidate3passes. Preserve original branch roundtrip and live-state history in same controller lifetime or explicitly recreate before owner transitions."
+          ],
+          "evidence": "Structure easier to read and53 statements/counts retained, but statement preservation not journey coverage.",
+          "checks": [
+            "Base1pass; candidate109tests/965assertions",
+            "Three ordinary negatives retained; expanded-owner negative exposes weakening",
+            "Biome/diff"
+          ],
+          "limits": [
+            "Artificial mutant not production bug; no build/typecheck/compiled/provider/SSH"
+          ]
         }
       ],
       "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary focus pending",
+      "integrationState": "Rejected primary candidate NOT integrated; original related test retained",
       "relatedPatchJudgments": [
         {
           "id": "task_a6caab27",
@@ -2475,12 +2512,22 @@
         "53 original assertions/checkpoints retained",
         "Three negative controls fail intended assertions",
         "Biome/diff"
+      ],
+      "reworks": [
+        {
+          "id": "task_2031ace4",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_2031ace4",
+          "branch": "bruv/fresh-disk-activity-rework-preserving-di-2031ace4",
+          "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
+          "priorCandidate": "ad493ccc4986fb5c18bc708590a38232c84621bd",
+          "respondsTo": "task_6f3b1071"
+        }
       ]
     },
     {
       "focus": "tests/rolling-activity.test.ts",
       "initialBlob": "d7fd169b04f7e8041287a022458bdfe24cd4fc26",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_635acd35",
@@ -2495,12 +2542,24 @@
           "id": "task_b0411e3d",
           "base": "28e3431334aaaf6888f1ce638057cc44eece8081",
           "candidate": "68e4045e79c099bd1397fb8f36e62b13d41fce80",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_a6caab27"
+          "verdict": "NO CHANGE NEEDED",
+          "priorRelatedJudge": "task_a6caab27",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/rolling-activity.test.ts": "dcd301abaa75cadf31522a28357a2fa68f08f820"
+          },
+          "evidence": "Local native fixture/command stubs expose contiguous grouping, callback provenance, permission/handoff boundaries, native expansion, scroll anchors and bounded rendering; abstraction adds navigation not clarity.",
+          "checks": [
+            "Independent48/267; disk companion1/4plus subprocess",
+            "Pinned format/diff"
+          ],
+          "limits": [
+            "No build/typecheck/gate/compiled/live/device/provider/SSH/latency; companion not primary coverage"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary focus pending",
+      "acceptedBlob": "dcd301abaa75cadf31522a28357a2fa68f08f820",
+      "integrationState": "fresh primary/judge accept unchanged final test",
       "relatedPatchJudgments": [
         {
           "id": "task_a6caab27",
@@ -3227,13 +3286,14 @@
       "focus": "tests/tasks-ui-proof-build.test.ts",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_eed22df6",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_eed22df6",
           "branch": "bruv/primary-readability-tests-tasks-ui-proof-eed22df6",
-          "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f"
+          "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+          "commit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d"
         }
       ],
       "judgeRounds": [
@@ -3242,11 +3302,28 @@
           "verdict": "ACCEPT",
           "candidate": "85e990227aa93c12c16337f7a23a686b77661eda",
           "kind": "related-only"
+        },
+        {
+          "id": "task_db1c285c",
+          "base": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+          "candidate": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_f9504048"
         }
       ],
       "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
       "integrationState": "integrated related patch; fresh primary required",
-      "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f"
+      "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+      "changedRelatedPaths": [],
+      "result": "No-change: owned fixture cleanup, local source reset between preflight errors, compile/source-mutation failure with no published record explicit.",
+      "checks": [
+        "4tests/20assertions",
+        "format/lint",
+        "Read-only host/symlink preservation stub probe"
+      ],
+      "limits": [
+        "Stubs not real native/UI proof"
+      ]
     }
   ],
   "batchChecks": [
