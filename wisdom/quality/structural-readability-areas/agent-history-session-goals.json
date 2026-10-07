@@ -1182,7 +1182,7 @@
     {
       "focus": "src/session/identity.ts",
       "initialBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_743c2cfa",
@@ -1197,7 +1197,14 @@
           "launchBase": "7ad61b57"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_cbe6a2c8",
+          "candidate": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
+          "base": "7ad61b57",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -1242,7 +1249,7 @@
     {
       "focus": "src/session/operations.ts",
       "initialBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_7a84499f",
@@ -1262,11 +1269,15 @@
           "id": "task_864426d0",
           "candidate": "a285b48cd5f6879568f7514beb9f72bd5510f0dc",
           "base": "97259e213b9f78703fdc630f66bc53375ef669ae",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Session operation facade preserves owning-host replay/scope and task authority; cancellation confirmation distinct from observation, actual Live MainOwner path remains separate. Contracts already expose effects without hidden lifetime.",
+          "checks": "Independent6 files29 tests176 assertions; actual current job-service/compat/remote/live consumers read; no build/authSSH/provider/device."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/session/restore-leaf.ts",
