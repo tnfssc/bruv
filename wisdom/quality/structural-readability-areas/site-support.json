@@ -85,8 +85,15 @@
     {
       "focus": "site/demos.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_008ddeae",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_008ddeae",
+          "branch": "bruv/primary-site-demos.test.ts-008ddeae",
+          "base": "a7c9017050d478c22ce5a9b9c6f5c102ffd40011"
+        }
+      ],
       "judges": [],
       "initialBlob": "8ca404103fe2971f2c54b810f45d0e527d5e40fd",
       "relatedPatchJudgment": {
@@ -295,13 +302,15 @@
     {
       "focus": "site/scripts/animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_5d88706f",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_5d88706f",
           "branch": "bruv/primary-site-scripts-animation.ts-5d88706f",
-          "base": "cf13efaae464c80b2b1b6b1137be43a885ac05fd"
+          "base": "cf13efaae464c80b2b1b6b1137be43a885ac05fd",
+          "commit": "375ad0209a72f263e6c2e0e0c07e4dd321ca490d",
+          "result": "Typed shared terminal observations/control coordinate conversion/cell scrolling; touch journey local initial/playing/paused observations; desktop mutable checkpoint replaced independent immutable checkpoints. Build and test:animation passed including 3 loops,touch controls,errors empty. Old-base typecheck missing ./type; fixed now in area."
         }
       ],
       "judges": [],
@@ -318,8 +327,15 @@
     {
       "focus": "site/scripts/build.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_3a3293a9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_3a3293a9",
+          "branch": "bruv/primary-site-scripts-build.test.ts-3a3293a9",
+          "base": "a7c9017050d478c22ce5a9b9c6f5c102ffd40011"
+        }
+      ],
       "judges": [],
       "initialBlob": "08c3ddd5fccd3058c00176798cb24e05d6e78799"
     },
@@ -424,7 +440,7 @@
     {
       "focus": "site/scripts/extract-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_f07c6c88",
@@ -439,10 +455,16 @@
         {
           "id": "task_5628d052",
           "candidate": "a46a0ebf10fd94fa7756ffbc75365361a202f96a",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Geometry is single authority and browser returns cropped grouped rows; Bun owns hash/publication. Judge 10 tests and independent baseline/candidate browser replay byte parity with tracked JSON SHA256 ab9210c0002890a088636581f3beeccbc558a096e8cadace3e5fba782484f76c. Maintained assets command, not current shipped scripted demos. Existing cleanup gaps unchanged.",
+          "objections": []
         }
       ],
-      "initialBlob": "53e23a4d0a50dd36efdcb1f4f972a11f5cc1ff13"
+      "initialBlob": "53e23a4d0a50dd36efdcb1f4f972a11f5cc1ff13",
+      "acceptedBlob": "0c08612f134666dff26b631ae44408b7bedde80d",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/generate-wordmark.ts",
@@ -600,16 +622,24 @@
     {
       "focus": "support/gpt-live-explained.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_1e4c14a6",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_1e4c14a6",
           "branch": "bruv/primary-support-gpt-live-explained.html-1e4c14a6",
-          "base": "5c3b6a0d449c5716a14ca62d2bde25722a443e9b"
+          "base": "5c3b6a0d449c5716a14ca62d2bde25722a443e9b",
+          "commit": "0d1abd8ba5c9b9c2e37b66f2c560ac732dace780",
+          "result": "No source change: sequential task->handoff->metadata versus executable request->authority->separate interruption/Live-stop/work-cancel controls. Existing live-config tests 5/13; no browser/provider/build. Dated current-production claims predate shipped GPT-Live; flagged separate content refresh, not silently changed."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_69db8026",
+          "candidate": "0d1abd8ba5c9b9c2e37b66f2c560ac732dace780",
+          "state": "running"
+        }
+      ],
       "initialBlob": "af14e5b0ca791bbc9f3b60f54df5f2477e44e5ce"
     }
   ],

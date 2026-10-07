@@ -23,3 +23,5 @@ Demos coherent patch accepted: projected turns own summaries; rendering owns pla
 Combined gate at 8b8f1122: `cd site; bun run test` (task_828d9d6a) passed 34 tests / 5,705,802 assertions plus real build and Chromium desktop/mobile/touch/no-JS validation, errors empty. Generated tracked evidence restored; JSON proof retained at /home/tnfssc/.bruv/site-support-6608ea8d-combined-checks.json. Not root CI/device proof.
 
 site/install-command.ts: Clipboard permission attempt/fallback and temporary textarea/focus effects are one visible operation; per-button feedback/reset timer owned by enhancement, terminal presentation separate. Shipped command remains available without JS. Runtime not rerun; permission-denied/fallback-failure/exceptional cleanup unproven.
+
+site/scripts/extract-cells.ts: Geometry is single authority and browser returns cropped grouped rows; Bun owns hash/publication. Judge 10 tests and independent baseline/candidate browser replay byte parity with tracked JSON SHA256 ab9210c0002890a088636581f3beeccbc558a096e8cadace3e5fba782484f76c. Maintained assets command, not current shipped scripted demos. Existing cleanup gaps unchanged.
