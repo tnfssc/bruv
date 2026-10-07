@@ -121,13 +121,21 @@
       "judgeRounds": [
         {
           "id": "task_5ff86413",
-          "status": "running",
+          "status": "complete",
           "candidate": "fb78a73f068ff690931fc08f829c33b19dfbbee6",
-          "base": "fb00db79c282b970b827370a88e45146dd85fcef"
+          "base": "fb00db79c282b970b827370a88e45146dd85fcef",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Protocol owns child/framing bytes; ordered audio journey is uninterrupted by Pulse mechanics; synthetic_microphone lexical scope owns creation/worker/free/join/failure delivery. Independent reproductions confirm buffered response, deadline and feeder cleanup fixes.",
+          "checks": "9 regressions, helper build/no-device smoke/diff pass. Candidate virtual fails first played audio_device; baseline judge rerun fails earlier ready, not parity. Manual new regressions not CI-wired.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/protocol.py": "fe2b4525179d2ccfaadb9cc44b39b62f6c576473",
+            "native/live-linux/tests/test_protocol.py": "79ed8c2697a35f9161237de1c3f718b2a4ce09fe"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "fe2b4525179d2ccfaadb9cc44b39b62f6c576473",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_13282f24",
         "verdict": "ACCEPT",
@@ -1534,7 +1542,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate related addition; needs own primary focus"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_5ff86413",
+        "verdict": "ACCEPT",
+        "blob": "79ed8c2697a35f9161237de1c3f718b2a4ce09fe"
+      }
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
@@ -1567,5 +1580,12 @@
     "extraAccepted": 1,
     "acceptedBlobMismatches": [],
     "status": "partial; not completion"
-  }
+  },
+  "crossAreaNeeds": [
+    {
+      "path": "scripts/ci.sh",
+      "need": "New device-free native/live-linux/tests/test_protocol.py regressions currently manual; parent/assigned CI primary should decide coherent gate wiring. No cross-area edit made.",
+      "status": "recorded for parent"
+    }
+  ]
 }
