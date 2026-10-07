@@ -112,3 +112,7 @@ Combined boundary proof at143f8d13:19accepted suites354pass0fail1639expectations
 CI baseline source NO CHANGE NEEDED task_149c9180 fb773c5d: linear trust/ancestry journey and shared budget appropriate.23candidatepass plus stale sibling testfailure;fixed acceptedworkflowblob75pass resolves latter. No authenticatedAPI/deadlineexhaustion proof. Two stopped attempts retained,not coverage.
 
 Actual Linux pair buildtask_4c7a84d9passed;Pi adaptation on owned dependencycopy only. Full area test baseline atb2e6926b:405pass0fail2014expectations30suites(totalincluding2extras),task_4703d778.57accepted focus blobs match tip;15remaining still primary/judge pending. No whole-repo/hosted/native acceptance inferred.
+
+Compiled Bun fixture NO CHANGE NEEDED task_0f0570b0 blob986f1428:direct runtimeauthority,private compiler caller owns cleanup,no sourcefallback.Independent compiledtrue/sourcefalse,7compiled+2sourceguardassertions,tsc/Biomepass;Linuxfixture not releaseacceptance.
+
+Source remoteCLI tests:case-owned homes/specificerrors/reject-before-owner proof;judge task_65a4c618 ACCEPT2b8ba4bd.4/17 with acceptedPython27df96e,tsc/Biomepass. Disposable environment initially missed trustwarning;compatibility proof requires worktree trust resources and cleared BRUV_* agentidentity—not arbitraryambient guarantee. No cancellation/liveSSHclaim.

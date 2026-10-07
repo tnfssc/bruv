@@ -1283,7 +1283,7 @@
     {
       "focus": "tests/ci-remote-cli-source.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_0c5ce992",
@@ -1299,13 +1299,21 @@
           "id": "task_65a4c618",
           "base": "956a90ee75a8931e7336fb611802ca6aeecccad1",
           "candidate": "844f69c0e432948fa8f0ab144f70e9d6d65aadff",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Each malformedrequest owns freshhome and explicit validationerror;single responseparse,owner-state absence confirms rejectbefore dispatch. Child output/exit collection unified;Python owns PTY/home and local revoke not notification.",
+          "checks": "Independent4tests17assertions with exact acceptedPython27df96e;tsc/focusBiome/diffpass. Initial disposablefixture failed trustwarning;passing run recreated worktreetrust-resource prerequisite and cleared inherited BRUV_* identity. Existing ambientPTYlimit retained,not introduced bypatch. No cancellation/liveSSH/provider/device/compiled proof.",
+          "acceptedBlobs": {
+            "tests/ci-remote-cli-source.test.ts": "2b8ba4bd8fef50f0e235b16a6d7d404a82f4ea9c"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2b8ba4bd8fef50f0e235b16a6d7d404a82f4ea9c",
       "readingResult": "Independently named request rejection cases/scoped homes/specific errors/single response parsing;reject before owner-state creation.",
-      "checks": "4focuspass,tsc/Biome/diff;combined Python candidate4pass;unrelated stale release expectation now fixed."
+      "checks": "4focuspass,tsc/Biome/diff;combined Python candidate4pass;unrelated stale release expectation now fixed.",
+      "integrationState": "Full focuspatch integrated;Python/remoteproduction unchanged;candidate note excluded."
     },
     {
       "focus": "tests/ci-remote-offline-source-pty.py",
@@ -1457,7 +1465,7 @@
     {
       "focus": "tests/compiled-bun-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_ad105ef8",
@@ -1473,13 +1481,21 @@
           "id": "task_0f0570b0",
           "base": "4f71d1b0e2cb25e1abd126730484ead7212aff82",
           "candidate": "dbdb83940629b30103c877dbaa491323da0fdce1",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Direct production compiled-runtime detector on entryURL;caller privately compiles fixture and asserts Bunfs URL/detector then removes tempdirs. No sourcefallback;real release enters cli.ts.",
+          "checks": "Independent actual compiledJSON compiled:true with bunfsURL,sourcefalse;1compiled7assertions+1sourceguard2assertions;focus tsc/Biomepass. Initial shelltrap quoting failure corrected;Linux fixture only.",
+          "acceptedBlobs": {
+            "tests/compiled-bun-fixture.ts": "986f142853337c47db7f610939d4fdaebd2ae1bc"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "986f142853337c47db7f610939d4fdaebd2ae1bc",
       "readingResult": "Unchanged proposed: tiny entry directly exposes real compile/runtime authority;no source fallback or related edits.",
-      "checks": "Actual compiled test7assertions/sourceguard/source compiled:false;focus tsc/Biomepass."
+      "checks": "Actual compiled test7assertions/sourceguard/source compiled:false;focus tsc/Biomepass.",
+      "integrationState": "Unchanged focus matches tip;candidate note excluded."
     },
     {
       "focus": "tests/connector-update-fixture.ts",
@@ -1790,7 +1806,7 @@
     {
       "focus": "tests/native-node-path.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_9358bad2",
@@ -1806,13 +1822,23 @@
           "launchBase": "143f8d13a88ea923e6ebc861888028232040e714",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_62d9a185",
           "branch": "bruv/fresh-primary-native-node-path-test-62d9a185",
-          "state": "running",
-          "role": "fresh-retry"
+          "state": "completed",
+          "role": "fresh-retry",
+          "commit": "df84d39f150a2051b70a3108a4d3f3af38f3171e"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_179e47de",
+          "base": "143f8d13a88ea923e6ebc861888028232040e714",
+          "candidate": "df84d39f150a2051b70a3108a4d3f3af38f3171e",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged proposed: one local fixture lifetime and linear effects;helper extraction adds navigation. Freshly traced tap/model/worker/runner/orchestrator/setup/workflow.",
+      "checks": "17relatedtests95assertions Bun1.4.2 Node24.21.0;Biomepass. Existing limits:child Nodepath doesnot independently prove tapinterpreter;generated modelcommands inspectednotexecuted;not native acceptance."
     },
     {
       "focus": "tests/native-release-gate.test.ts",
@@ -1859,8 +1885,16 @@
     {
       "focus": "tests/offline-process-isolation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_61decf20",
+          "launchBase": "54d2cdb779c91c327c19e5768f2da2e6463b1512",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_61decf20",
+          "branch": "bruv/primary-tests-offline-process-isolation.-61decf20",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
