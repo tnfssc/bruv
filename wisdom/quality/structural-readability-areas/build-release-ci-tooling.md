@@ -78,3 +78,5 @@ Root standalone installer: same canonical-stage transaction as accepted scripts 
 Parent accepted common checkpoint695ade32 merged clean at batch boundary. merge-tree confirmed none of71 area baseline/extra focus paths changed, so accepted area blobs remain exact. Other-area common source stays parent-owned; no area coverage bluff or sibling direct imports. Combined proof will use this common integrated state.
 
 Mise config: obsolete T3 authority comment removed,flat pins unchanged;judge task_a39f170d ACCEPTa0de5dad. Current pnpm uses traced,10Bun5Node2pnpm pin checks150assertions;21pass2missingdepsfail fullworkflow remains honest.
+
+Test preload NO CHANGE NEEDED task_6d717faf atd3c71348. Qualification: Bun.spawnSync without explicitenv retained startup identity in judge probe;explicit spreadprocess.env sanitizes. Preload is not universal subprocess isolation;TUI helper separately sanitizes.2/8boundary checks,ordinary identity retained,no live proof.

@@ -817,8 +817,16 @@
     {
       "focus": "scripts/setup-release-browser.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_6d47ada5",
+          "launchBase": "d17eea9c8b661b3b851ed5089b5023f5d4838f27",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_6d47ada5",
+          "branch": "bruv/primary-scripts-setup-release-browser.sh-6d47ada5",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1155,17 +1163,25 @@
     {
       "focus": "tests/dependency-updates.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_81d46e58",
           "launchBase": "a4cb693637b4c13370d776a2a42104847ce6de69",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_81d46e58",
           "branch": "bruv/primary-tests-dependency-updates.test.ts-81d46e58",
+          "state": "completed",
+          "commit": "fcd76fe9049234d706c5ada88a2db406a202e838"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_f509c814",
+          "base": "a4cb693637b4c13370d776a2a42104847ce6de69",
+          "candidate": "fcd76fe9049234d706c5ada88a2db406a202e838",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -1173,7 +1189,9 @@
         "verdict": "ACCEPT",
         "blob": "71c95a31f58bdbc8f88196e0963fe7e6f72fb735",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Six contract suites and independently named cases replace bundled mixed scenarios whose failure skipped later checks;section-specific toolchain protection explicit.",
+      "checks": "14→30tests,same46assertions;focus/Biome/tsc/diffpass;own-entry mutation fails all4 constructor cases;production untouched."
     },
     {
       "focus": "tests/dependency-workflow.test.ts",
@@ -1596,7 +1614,7 @@
     {
       "focus": "tests/setup.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_c6585fe4",
@@ -1612,13 +1630,18 @@
           "id": "task_6d717faf",
           "base": "b1892d9c6c972a84d58689d0ef99226ed1091043",
           "candidate": "8ce83310ff34d55ef94a217fea177cf66e352432",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Direct test-only identity sanitization before imports,production callers unaffected,synthetic tests explicitly install/restore identity. Extra extraction adds navigation.",
+          "checks": "Independent2boundarytests8assertions;ordinaryscriptidentityretained;format/lintpass. Bun.spawnSync without explicitenv may retain startup identity;spreadprocess.env propagates sanitization. Not universal child isolation;TUI helper explicitly sanitizes. No12suite rerun/build/live."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d3c71348546664337fd231e07e3f5b7034da02ba",
       "readingResult": "Unchanged direct complete test-only identity boundary; extraction adds indirection.",
-      "checks": "2temporary boundarytests;ordinary retainsidentity;12Herdrtests;format/lintpass;ownedWASM required,no build. Worker reports parent branch ref-lock race after own commit; area integration not inferred."
+      "checks": "2temporary boundarytests;ordinary retainsidentity;12Herdrtests;format/lintpass;ownedWASM required,no build. Worker reports parent branch ref-lock race after own commit; area integration not inferred.",
+      "integrationState": "Unchanged preload equals area tip; noteexcluded."
     },
     {
       "focus": "tests/smoke-script.test.ts",
