@@ -219,10 +219,17 @@
     {
       "focus": "native/live-linux/tests/source-removal.py",
       "initialBlob": "28a1a9d47228fc945f5837efd31a1b0c49a31dff",
-      "primary": null,
+      "primary": {
+        "id": "task_ba46a6b0",
+        "launchBase": "a9961ef20926e291fd3c4ff04571d0e0906b25ae",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_ba46a6b0",
+        "branch": "bruv/primary-native-live-linux-tests-source-r-ba46a6b0",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "native/live-linux/tests/virtual.sh",
@@ -598,17 +605,22 @@
         "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1b8756f7",
         "branch": "bruv/primary-scripts-live-isolated-audio.sh-1b8756f7",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_ab2edd5f",
         "verdict": "ACCEPT",
         "blob": "f7c0576052f505a18df2c1e2be234a8b54025af5"
-      }
+      },
+      "relatedPaths": [
+        "native/live-linux/tests/test_isolated_audio.py"
+      ],
+      "readingResult": "Entrypoint allocate/traps/start-verify graph/launch-wait visible;cleanup snapshots owned PID list once for both termination stages;readable inline Python graph filtering;default acceptance unchanged.",
+      "checks": "24 native regressions;7 new wrapper checks baseline-pass;3 real private graph smokes emptycleanup/failure statuslogs/native protocol-source-removal;syntax/diff pass. Initial smoke quoting corrected;no repo behavior fix."
     },
     {
       "focus": "scripts/live-onboarding-smoke.ts",
@@ -2008,6 +2020,15 @@
       "relatedPaths": [],
       "readingResult": "Unchanged temporary-dir runner owns fake commands/logs and realBash; tests expose handoff/acquisition/partial failure/removal-before-after-unload, cleanup ownership and preserved status locally visible.",
       "checks": "17 Python tests including5 virtual methods7 scenarios pass;diff clean;no real server/device/provider/macOS/full gate."
+    },
+    {
+      "focus": "native/live-linux/tests/test_isolated_audio.py",
+      "introducedBy": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate addition;own primary pending"
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
