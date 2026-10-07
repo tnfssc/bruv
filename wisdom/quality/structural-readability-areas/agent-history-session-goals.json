@@ -2289,7 +2289,8 @@
   ],
   "parentCheckpoint": {
     "commit": "0072ad15",
-    "result": "Correction: top log showed site completion, but full diff reveals parent has also integrated accepted common changes across areas and an earlier batch of this area. Prior no-common-source conclusion was premature; inspect first-parent integrations and clean merge before continuing final-context proof."
+    "areaMerge": "e0fe105c008a532f7a6324b2d9329c92aa003759",
+    "result": "Clean three-way merge of parent accepted shared checkpoint (not direct sibling merge). All current own accepted blob hashes unchanged. Parent first-parent commits explicitly join judged partial areas; site complete. Combined API/type/tests still required, no acceptance inferred for untouched pending focuses."
   },
   "auditCheckpoint": {
     "commit": "8ab9543f",
