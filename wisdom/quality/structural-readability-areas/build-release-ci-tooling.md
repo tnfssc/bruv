@@ -148,3 +148,5 @@ Probe tests task_17380c61 NO CHANGE NEEDEDf8e9a967;2/12plusfocusedtsc/Biome. Dia
 Releaseshape task_811b18de ACCEPT2803b32f + relateddocb117a5a3:explicitmetadata/payloads,actualemittedlauncher/stagedidentity,bothsiblings/cleanup/tarreachesupdater.34focus92combined/tsc/Biome;currentrealpaircb7aec7d defaultprobe temporaryinstallpassed(no releaseprovenance). Companiondoc freshprimary stillneeded.
 
 Smoke tests freshjudge task_f209f608 ACCEPTb0b52326:readablefixtures/percase failures/probes/buildcounts/tempcleanup. Currentactualpair cb7aec7d/55b58718 copied and smoke reusepassed;env-i not cwd/filesystemsandbox. Priorstalledjudge noverdict retained. All70baselinefiles now accepted;two extras finishing independently.
+
+New selfupdater tests ownprimary+freshjudge task_efae7e17 ACCEPT06c4344c (supersedes related18ec63dc).Explicitpairs/exactmetadata/unchangedinstall invariant;60/250tsc/Biome. Initial5scompilehook timedout,identicalretry passed. Wrongversion is prepublication preservation,notrollback. Actualpairhashesunchanged. Only companiondoc primary/judge remains.

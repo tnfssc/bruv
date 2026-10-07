@@ -2754,7 +2754,7 @@
     {
       "focus": "tests/update-self-fixture.test.ts",
       "initialBase": "452205ec0667aad35ef854a9862d4b5182143095",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_0ecce4b1",
@@ -2770,7 +2770,14 @@
           "id": "task_efae7e17",
           "base": "6004e0528ec906e3c5205b0f6adb0a8bd8c65ebf",
           "candidate": "4f9efb98de0c2d35344e0c477d8d1154147fb38e",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicit artifact-byte pairs/exactmetadata/named install-payload pairs/shared unchangedinstall assertion removes positionalbookkeeping;closedtransport/sourcecompiledcontrast/pairbytes/runnerpayloadhash retained. Wrongversion exercises prepublicationpreservation NOT rollback;adjacentrollback inspected/rerun only.",
+          "checks": "Independent60tests250assertions;tsc/Biome/diffpass. Initial unchanged5secondcompilehooktimeout failed,identical retry passedwithoutedits. Actualpair hashes cb7aec7d/55b58718 unchangedafter;Linuxonly,notnetwork/releaseprovenance.",
+          "acceptedBlobs": {
+            "tests/update-self-fixture.test.ts": "06c4344c3274180322ba17971dc91486149f7a09"
+          }
         }
       ],
       "relatedPatchJudgment": {
@@ -2778,11 +2785,14 @@
         "judge": "task_81083bad",
         "state": "accepted",
         "blob": "18ec63dc2d6927f4af87c6d7677b247ca7205340",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "introducedBy": "task_1fdcbe47",
       "readingResult": "Explicitartifact-byte pairs/exactmetadata/namedinstallation-payload pairs/shared unchangedinstall assertion replace positional indexes/duplicateinvariants.",
-      "checks": "60tests;tsc/Biome/diff;closedtransport/sourcecompiledcontrast/staging/realpairbytes/runnerpayloadhash retained,sourcefixture unchanged."
+      "checks": "60tests;tsc/Biome/diff;closedtransport/sourcecompiledcontrast/staging/realpairbytes/runnerpayloadhash retained,sourcefixture unchanged.",
+      "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
+      "integrationState": "Ownprimary patch integrated after freshfinalblobjudge;fixture sourceunchanged;noteexcluded."
     },
     {
       "focus": "tests/update-release-shape.md",

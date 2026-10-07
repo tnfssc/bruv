@@ -5,6 +5,9 @@ import { join } from "node:path";
 import { RELEASES_URL, UPDATE_ASSETS } from "../src/update";
 import { createFixtureReleaseFetch } from "./update-self-fixture";
 
+type ExecutablePair = { bruv: string; connector: string };
+type Installation = ExecutablePair & { directory: string };
+
 const digest = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
 
 describe("private updater fixture transport", () => {
@@ -14,19 +17,20 @@ describe("private updater fixture transport", () => {
       const connector = new TextEncoder().encode("connector payload");
       const fetch = createFixtureReleaseFetch(asset, "0.3.0", bruv, connector);
       const release = await (await fetch(new Request(RELEASES_URL))).json();
-      expect(release.tag_name).toBe("v0.3.0");
-      const names = [asset, asset.replace(/^bruv-/, "bruv-claude-compat-")];
-      expect(release.assets.map((item: { name: string }) => item.name)).toEqual(
-        names.flatMap((name) => [name, name + ".sha256"]),
-      );
-      for (const [index, name] of names.entries()) {
-        const bytes = index === 0 ? bruv : connector;
-        const url = "https://github.com/tnfssc/bruv/releases/download/v0.3.0/" + name;
-        expect(release.assets[index * 2]).toEqual({ name, browser_download_url: url });
-        expect(release.assets[index * 2 + 1]).toEqual({
-          name: name + ".sha256",
-          browser_download_url: url + ".sha256",
-        });
+      const pair = [
+        { name: asset, bytes: bruv },
+        { name: asset.replace(/^bruv-/, "bruv-claude-compat-"), bytes: connector },
+      ];
+      const root = "https://github.com/tnfssc/bruv/releases/download/v0.3.0/";
+      expect(release).toEqual({
+        tag_name: "v0.3.0",
+        assets: pair.flatMap(({ name }) => [
+          { name, browser_download_url: root + name },
+          { name: name + ".sha256", browser_download_url: root + name + ".sha256" },
+        ]),
+      });
+      for (const { name, bytes } of pair) {
+        const url = root + name;
         expect(await (await fetch(new URL(url))).bytes()).toEqual(bytes);
         // Fresh responses remain readable after an earlier body has been consumed.
         expect(await (await fetch(url)).bytes()).toEqual(bytes);
@@ -65,49 +69,51 @@ describe("private updater fixture runtime", () => {
     return { stdout, stderr, code };
   }
 
-  async function installation() {
-    const install = await mkdtemp(join(dir, "install-"));
-    const target = join(install, "bruv");
-    const connector = join(install, "bruv-claude-compat");
-    await writeFile(target, "original bruv", { mode: 0o754 });
+  async function installation(): Promise<Installation> {
+    const directory = await mkdtemp(join(dir, "install-"));
+    const bruv = join(directory, "bruv");
+    const connector = join(directory, "bruv-claude-compat");
+    await writeFile(bruv, "original bruv", { mode: 0o754 });
     await writeFile(connector, "original connector", { mode: 0o754 });
-    return { install, target, connector };
+    return { directory, bruv, connector };
   }
 
-  function fixtureEnv(target: string, normal: string, connector: string, version = "0.3.0") {
+  async function expectInstallationUnchanged(installed: Installation) {
+    expect(await readFile(installed.bruv, "utf8")).toBe("original bruv");
+    expect(await readFile(installed.connector, "utf8")).toBe("original connector");
+    expect((await readdir(installed.directory)).sort()).toEqual(["bruv", "bruv-claude-compat"]);
+  }
+
+  function fixtureEnv(installed: Installation, payloads: ExecutablePair, version = "0.3.0") {
     return {
       HOME: dir,
       PATH: "/nonexistent",
-      BRUV_TEST_UPDATE_TARGET: target,
-      BRUV_TEST_UPDATE_PAYLOAD: normal,
-      BRUV_TEST_UPDATE_CONNECTOR_PAYLOAD: connector,
+      BRUV_TEST_UPDATE_TARGET: installed.bruv,
+      BRUV_TEST_UPDATE_PAYLOAD: payloads.bruv,
+      BRUV_TEST_UPDATE_CONNECTOR_PAYLOAD: payloads.connector,
       BRUV_TEST_UPDATE_VERSION: version,
     };
   }
 
   test("source execution has no compiled authority and leaves the install untouched", async () => {
-    const x = await installation();
-    const result = await run([process.execPath, source], fixtureEnv(x.target, x.target, x.connector));
+    const installed = await installation();
+    const result = await run([process.execPath, source], fixtureEnv(installed, installed));
     expect(result.code).not.toBe(0);
     expect(result.stderr).toContain("Refusing to self-update a source Bun invocation");
-    expect(await readFile(x.target, "utf8")).toBe("original bruv");
-    expect(await readFile(x.connector, "utf8")).toBe("original connector");
-    expect((await readdir(x.install)).sort()).toEqual(["bruv", "bruv-claude-compat"]);
+    await expectInstallationUnchanged(installed);
   });
 
   test("wrong staged version preserves both installed files and removes staging", async () => {
-    const x = await installation();
+    const installed = await installation();
     const normal = join(dir, "wrong-version");
     const connector = join(dir, "connector-stand-in");
     await writeFile(normal, "#!/bin/sh\necho 0.4.0\n");
     await writeFile(connector, "#!/bin/sh\necho bruv-claude-compat 0.3.0\n");
-    const result = await run([runner], fixtureEnv(x.target, normal, connector));
+    const result = await run([runner], fixtureEnv(installed, { bruv: normal, connector }));
     expect(result.code).not.toBe(0);
     expect(result.stderr).toContain("Installed files unchanged");
     expect(result.stderr).toContain("version");
-    expect(await readFile(x.target, "utf8")).toBe("original bruv");
-    expect(await readFile(x.connector, "utf8")).toBe("original connector");
-    expect((await readdir(x.install)).sort()).toEqual(["bruv", "bruv-claude-compat"]);
+    await expectInstallationUnchanged(installed);
     expect(digest(await readFile(runner))).toBe(runnerHash);
   });
 
@@ -120,20 +126,20 @@ describe("private updater fixture runtime", () => {
     const version = product.stdout.trim();
     const normalHash = digest(await readFile(normal));
     const connectorHash = digest(await readFile(connector));
-    const x = await installation();
-    const result = await run([runner], fixtureEnv(x.target, normal, connector, version));
+    const installed = await installation();
+    const result = await run([runner], fixtureEnv(installed, { bruv: normal, connector }, version));
     expect(result.code, result.stderr).toBe(0);
-    expect(JSON.parse(result.stdout)).toEqual({ status: "updated", version, path: x.target });
-    expect(digest(await readFile(x.target))).toBe(normalHash);
-    expect(digest(await readFile(x.connector))).toBe(connectorHash);
+    expect(JSON.parse(result.stdout)).toEqual({ status: "updated", version, path: installed.bruv });
+    expect(digest(await readFile(installed.bruv))).toBe(normalHash);
+    expect(digest(await readFile(installed.connector))).toBe(connectorHash);
     const installedEnv = { HOME: dir, PATH: "/nonexistent" };
-    const installedProduct = await run([x.target, "--version"], installedEnv);
-    const installedConnector = await run([x.connector, "--bruv-version"], installedEnv);
+    const installedProduct = await run([installed.bruv, "--version"], installedEnv);
+    const installedConnector = await run([installed.connector, "--bruv-version"], installedEnv);
     expect(installedProduct.code, installedProduct.stderr).toBe(0);
     expect(installedProduct.stdout.trim()).toBe(version);
     expect(installedConnector.code, installedConnector.stderr).toBe(0);
     expect(installedConnector.stdout.trim()).toBe("bruv-claude-compat " + version);
-    expect((await readdir(x.install)).sort()).toEqual(["bruv", "bruv-claude-compat"]);
+    expect((await readdir(installed.directory)).sort()).toEqual(["bruv", "bruv-claude-compat"]);
     expect(digest(await readFile(runner))).toBe(runnerHash);
     expect(digest(await readFile(normal))).toBe(normalHash);
     expect(digest(await readFile(connector))).toBe(connectorHash);
