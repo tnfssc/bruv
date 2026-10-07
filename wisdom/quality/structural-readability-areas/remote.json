@@ -320,12 +320,15 @@
     {
       "focus": "src/remote/owner.ts",
       "initialBlob": "8d8f54a85fea43f1852497abc842100157aaac93",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_b276db50",
-          "status": "running",
-          "candidate": "79b37fbc28399fb32eced5774c7c62edd44d438d"
+          "status": "completed",
+          "candidate": "79b37fbc28399fb32eced5774c7c62edd44d438d",
+          "verdict": "ACCEPT",
+          "reason": "Journal descriptor/sequence/replay refusal/limits/full writes/fsync belong to one resource-owning operation; existing answer/native settlement/child boundaries need no churn. Combined cancellation/artifacts/client contracts inspected compatible.",
+          "checks": "Judge full diff/callers checked; runtime 3 pass/11 fail/3 errors from dependency loading, not passing. Needs dependency-ready area rerun."
         }
       ],
       "launchBase": "79b37fbc28399fb32eced5774c7c62edd44d438d",
@@ -339,7 +342,9 @@
       "checks": "56 pass/373 assertions across five suites; two new journal checks pass baseline; format/lint/diff pass warnings.",
       "changedRelatedPaths": [
         "tests/remote-owner-lifecycle.test.ts"
-      ]
+      ],
+      "acceptedBlob": "9b79cdbf1fd65046575b469cc2017b1b3d75b747",
+      "integrationState": "accepted source+related lifecycle tests applied; exact blobs"
     },
     {
       "focus": "src/remote/placement.ts",
@@ -798,8 +803,14 @@
     {
       "focus": "tests/remote-artifacts.test.ts",
       "initialBlob": "157e69ad514d0d88bdf13daa2075a1321b5bfdcc",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_2b562570",
+          "status": "running",
+          "candidate": "1d9361ec50fc1a8e9e353000cab6111c7bb70a96"
+        }
+      ],
       "relatedAcceptance": {
         "judge": "task_4b41ba14",
         "blob": "3982bb54af4a6a0b1eb2e97cf0622d5188969019",
@@ -809,8 +820,12 @@
       "primary": {
         "id": "task_5534811b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_5534811b",
-        "branch": "bruv/remote-primary-remote-artifacts.test.ts-5534811b"
-      }
+        "branch": "bruv/remote-primary-remote-artifacts.test.ts-5534811b",
+        "commit": "1d9361ec50fc1a8e9e353000cab6111c7bb70a96"
+      },
+      "result": "Each rejection boundary owns fixture rather than damaging/repairing shared state; page-offset mutation replaces cross-retry counter; unusable transport exposes local identity rejection.",
+      "checks": "Baseline 6/candidate 11 tests, 60 runtime assertions and 37 static clauses retained; format/lint/diff pass.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-capabilities.test.ts",
@@ -827,12 +842,18 @@
     {
       "focus": "tests/remote-client.test.ts",
       "initialBlob": "b7f7ba5ecb51b1dec96fe07d6cc5be4ddee790bc",
-      "status": "pending",
+      "status": "primary-running",
       "judgeRounds": [],
       "relatedAcceptance": {
         "judge": "task_f7fa308f",
         "blob": "ba03c0e13e904025fb121462b26971e0dd986d0b",
         "needs": "fresh primary focus and own judge"
+      },
+      "launchBase": "d4e376614fb4d3ea13231e304bbe565e597056ea",
+      "primary": {
+        "id": "task_e6c82233",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_e6c82233",
+        "branch": "bruv/remote-primary-client-tests-e6c82233"
       }
     },
     {
@@ -917,7 +938,12 @@
       "focus": "tests/remote-owner-lifecycle.test.ts",
       "initialBlob": "1bb5b51b9e308c53cebf8d2b62f70372c1b2d613",
       "status": "pending",
-      "judgeRounds": []
+      "judgeRounds": [],
+      "relatedAcceptance": {
+        "judge": "task_b276db50",
+        "blob": "c56dff8b6c27b39df0b6ad545f763be2820a6fc4",
+        "needs": "fresh primary focus and own independent judge"
+      }
     },
     {
       "focus": "tests/remote-owner.test.ts",
