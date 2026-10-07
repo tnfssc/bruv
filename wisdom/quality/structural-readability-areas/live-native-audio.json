@@ -1053,10 +1053,17 @@
     {
       "focus": "src/live/gpt-live-context.ts",
       "initialBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
-      "primary": null,
+      "primary": {
+        "id": "task_07981349",
+        "launchBase": "2c5d7aa9ae377dfda5fc059faea391444860c1fa",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_07981349",
+        "branch": "bruv/primary-src-live-gpt-live-context.ts-07981349",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/gpt-live-delegation.ts",
@@ -1066,12 +1073,17 @@
         "launchBase": "bb9c21526dfa7e1aca0c27cf97d5fe0c108ee081",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_05694cc7",
         "branch": "bruv/primary-src-live-gpt-live-delegation.ts-05694cc7",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "a5f932b5712711f4de4767f2fed28986dec14052"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [
+        "tests/gpt-live-delegation.test.ts"
+      ],
+      "readingResult": "ProvisionalSpeech ownsretention/loss/reservation/settlement withentry state ratherthan3set joins/cumulativeomissioncounters;bridge exposesreplay/savedcontext/preparedadmission/hostsubmission/spokenfreshness/unconditionalsettlement;authority unchanged.",
+      "checks": "65tests718assertions;20delegationtests baselinepass incl2new;strictTS/format/lintpass4existingwarnings;no productfix/provider/device/macOS/fullgate."
     },
     {
       "focus": "src/live/gpt-live-playback.ts",
