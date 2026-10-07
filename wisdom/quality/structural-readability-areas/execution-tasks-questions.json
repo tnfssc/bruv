@@ -51,11 +51,18 @@
     {
       "focus": "scripts/leak-audit/bridge-retention.ts",
       "initialBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_cd5dc6c2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cd5dc6c2",
+        "branch": "bruv/primary-scripts-leak-audit-bridge-retent-cd5dc6c2",
+        "base": "a162e56cc49a21401275253ed445b6027dbc248a",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "a162e56cc49a21401275253ed445b6027dbc248a"
     },
     {
       "focus": "scripts/leak-audit/cli-rpc-soak.ts",
@@ -105,7 +112,7 @@
     {
       "focus": "src/delegation-environment.ts",
       "initialBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_238b6364",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_238b6364",
@@ -116,13 +123,21 @@
       "judgeRounds": [
         {
           "id": "task_36f1a10b",
-          "status": "running",
+          "status": "complete",
           "candidate": "90791397e19f73ad7616526b96671befb4579dfa",
-          "base": "739da40a80981fc3f47aff84b0958f94448c4ccb"
+          "base": "739da40a80981fc3f47aff84b0958f94448c4ccb",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Copied scrub vs startup mutation vs fresh child policy explicit; helpers retain needed checkpoint while fresh agents drop authority; native factory called only after argument validation/env scrub; configured MCP env not provider credential inheritance.",
+          "checks": [
+            "candidate18 tests before asset blocker",
+            "area22/121+startup1/9 with15filtered",
+            "area joined runner not exact candidate runner proof; no fullCI/liveSSH"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "739da40a80981fc3f47aff84b0958f94448c4ccb",
       "changedRelatedPaths": [],
       "readingResult": "No-change: copied root scrub, inplace startup mutation and freshchild isolation explicit; helpers retain owner checkpoint while fresh agents remove/replace policy, native strips root before startup.",
@@ -1169,7 +1184,7 @@
     {
       "focus": "src/tool-schema.ts",
       "initialBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_9f98ded3",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_9f98ded3",
@@ -1177,7 +1192,14 @@
         "base": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
         "commit": "4894e9ad7736db769ac89495ad045247aba907bb"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_87f3fbc6",
+          "status": "running",
+          "candidate": "4894e9ad7736db769ac89495ad045247aba907bb",
+          "base": "1b7977e10031ccc622c0b30f7359e04a912e2db4"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
@@ -1191,7 +1213,7 @@
     {
       "focus": "src/typescript/definition.ts",
       "initialBlob": "7d850644a24233284f0dc1dba04e3c7096f400a5",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_58ef2195",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_58ef2195",
@@ -1199,7 +1221,14 @@
         "base": "e2da3df7682179df3011bf9690e118c000b88c10",
         "commit": "e6c1dbdb4583531c763033773492c0b320ad0b69"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_f4dcc4bc",
+          "status": "running",
+          "candidate": "e6c1dbdb4583531c763033773492c0b320ad0b69",
+          "base": "e2da3df7682179df3011bf9690e118c000b88c10"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "e2da3df7682179df3011bf9690e118c000b88c10",
@@ -1214,7 +1243,7 @@
     {
       "focus": "src/typescript/error-diagnostic.ts",
       "initialBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_60592667",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_60592667",
@@ -1225,13 +1254,21 @@
       "judgeRounds": [
         {
           "id": "task_5f71aa25",
-          "status": "running",
+          "status": "complete",
           "candidate": "a9c686b1c083d57296c65e3feb59da8a20d0e4de",
-          "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9"
+          "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One bounded formatting decision reconciles Error message/stack and guarded nonError conversion; CLI owns URL sanitizing/exit and parent owns capture/cancel/ACK.",
+          "checks": [
+            "independent3/7",
+            "10 branchprobe assertions matching/stale/unrelated/missingstack/revokedproxy/truncation",
+            "format/diff clean; no sourceCLI/compiled/fullsuite rerun"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
       "changedRelatedPaths": [],
       "readingResult": "No-change: guarded nonError conversion, Error message/stack reconciliation and diagnostic bounds; CLI sanitizes URL/stderr/exit1; caller owns execution cancellation/delivery.",
@@ -1329,7 +1366,7 @@
     {
       "focus": "src/typescript/images.ts",
       "initialBlob": "aa4d74eebcab9dc89cfbcbd11829ba68b5335286",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_5f2762ae",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_5f2762ae",
@@ -1340,13 +1377,21 @@
       "judgeRounds": [
         {
           "id": "task_2d0765d2",
-          "status": "running",
+          "status": "complete",
           "candidate": "066f319f7741234a589fbc9d89d46a2be1a076d2",
-          "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d"
+          "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Record trust decision returns validated content/size; channel owns count/wholepipe/aggregate loop and atomic return. Malformed later rejects before publication; joined runner/bridge/capture/extension contracts unchanged.",
+          "checks": [
+            "independent4 boundary bodies12assertions each baseline/candidate in-memory",
+            "diff pass",
+            "WASM blocker prevented full18/107 rerun; fresh image compiled parity pending"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "0a762301d2a0acfbdfee65d553121800a36fbbc0",
+      "integration": "full source/test candidate diff integrated; compiled image update next batch",
       "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
       "changedRelatedPaths": [
         "src/typescript/images.ts",
@@ -1563,15 +1608,23 @@
     {
       "focus": "tests/execute-handoff.test.ts",
       "initialBlob": "a3e11225c49f9a1af729bd4f1052286524d985d0",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_c5b89dde",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c5b89dde",
         "branch": "bruv/primary-tests-execute-handoff.test.ts-c5b89dde",
         "base": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
-        "commit": null
+        "commit": "0f04b677427acd928f44731e043264ff19293b18"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_8ed2ab8e",
+          "status": "running",
+          "candidate": "0f04b677427acd928f44731e043264ff19293b18",
+          "base": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
+          "priorRelatedJudge": "task_cee52f91"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
@@ -1581,7 +1634,17 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "241e60a4ed3b07887724c5605d86ef29aedc00bc"
+      "launchBase": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
+      "changedRelatedPaths": [
+        "tests/execute-handoff.test.ts"
+      ],
+      "readingResult": "Concurrent invocation test releases AND drains both calls before restoring spy; prior released gates but call1 still unsettled on injected call2 failure. Existing evidence/validation/failure assertions retained.",
+      "checks": [
+        "baseline/candidate focus10/39",
+        "four suites33/441",
+        "format/lint/diff pass; no tsc/build/fullgate"
+      ],
+      "incidentalFix": "Reproduced test teardown overlap with injected call2 failure; draining outstanding invocations before spy restoration preserves original failure/background notice."
     },
     {
       "focus": "tests/execute-output-capture.test.ts",
@@ -2261,7 +2324,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_2d0765d2",
+        "candidate": "066f319f7741234a589fbc9d89d46a2be1a076d2",
+        "blob": "9f9558c9cdacab507096ffa1a1a07f7094cef177",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/typescript-runner.test.ts",

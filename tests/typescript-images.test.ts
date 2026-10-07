@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { executeIsolated, formatResult } from "../src/typescript/execution";
@@ -9,6 +9,7 @@ import {
   MAX_IMAGE_BYTES,
   MAX_IMAGE_CHANNEL_BYTES,
   MAX_IMAGE_INPUT_BYTES,
+  MAX_TOTAL_IMAGE_BYTES,
 } from "../src/typescript/images";
 import { makePng } from "./image-fixture";
 
@@ -282,5 +283,47 @@ describe("execute image output", () => {
     ).toThrow("Invalid image resize metadata");
     expect(() => decodeImageChannel(Buffer.from("{bad json}\n"))).toThrow("Invalid JSON");
     expect(() => decodeImageChannel(Buffer.concat(Array(5).fill(record())))).toThrow("4 images");
+  });
+});
+
+describe("image channel validation", () => {
+  test("accepts ordered records and preserves validated resize metadata", () => {
+    const resize = { originalWidth: 4, originalHeight: 6, width: 2, height: 3 };
+    const resized = Buffer.from(
+      JSON.stringify({ type: "image", data: encoded, mimeType: "image/png", resize, ignored: true }) + "\n",
+    );
+    expect(decodeImageChannel(Buffer.concat([record(), resized]))).toEqual([
+      { type: "image", data: encoded, mimeType: "image/png" },
+      { type: "image", data: encoded, mimeType: "image/png", resize },
+    ]);
+  });
+
+  test("rejects the whole channel when a later record is malformed", () => {
+    expect(() => decodeImageChannel(Buffer.concat([record(), record("%%%")]))).toThrow("Invalid image base64");
+    expect(() => decodeImageChannel(Buffer.concat([record(), Buffer.from("{bad json}\n")]))).toThrow(
+      "Invalid JSON in image output record",
+    );
+    expect(() => decodeImageChannel(Buffer.concat([record(), record().subarray(0, -1)]))).toThrow(
+      "Incomplete image output record",
+    );
+  });
+
+  test("accounts for decoded bytes across individually valid records", () => {
+    const large = Buffer.concat([png, Buffer.alloc(MAX_IMAGE_BYTES - png.length)]);
+    const channel = Buffer.concat([record(large.toString("base64")), record(large.toString("base64"))]);
+    expect(large.length * 2).toBe(MAX_TOTAL_IMAGE_BYTES);
+    expect(decodeImageChannel(channel)).toHaveLength(2);
+    const overflow = Buffer.concat([channel, record()]);
+    expect(overflow.length).toBeLessThan(MAX_IMAGE_CHANNEL_BYTES);
+    expect(() => decodeImageChannel(overflow)).toThrow("Image output exceeded its total byte limit");
+  });
+
+  test("keeps channel framing and count checks ahead of record validation", () => {
+    expect(decodeImageChannel(Buffer.alloc(0))).toEqual([]);
+    expect(() => decodeImageChannel(Buffer.alloc(MAX_IMAGE_CHANNEL_BYTES + 1))).toThrow(
+      "Image output channel exceeded its byte limit",
+    );
+    expect(() => decodeImageChannel(Buffer.from("{bad json}"))).toThrow("Incomplete image output record");
+    expect(() => decodeImageChannel(Buffer.from("null\n".repeat(5)))).toThrow("Image output exceeds 4 images");
   });
 });
