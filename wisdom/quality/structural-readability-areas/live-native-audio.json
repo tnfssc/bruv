@@ -115,12 +115,15 @@
         "launchBase": "1ece2913a7f8e25b5ccf2c6e4e8cf50a258ab9a9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_b65be047",
         "branch": "bruv/primary-native-live-linux-tests-backpres-b65be047",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "4ba1f1c1b0757f60bedd75076bd461397f6a112c"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Preloaded command replay file removes producer thread; unread stdout launch/exit74 deadline/diagnostic and failure kill/reap/close visible. Explicit baseline openpipe leak fixed by owned handle cleanup.",
+      "checks": "Native build/backpressure/no-device protocol pass;10 instrumented realhelper runs;silentdrop/wrongstatus/missingdiagnostic/blocking mutations rejected,blocking killed/reaped5.001sec. No device/provider/macOS/fullgate."
     },
     {
       "focus": "native/live-linux/tests/capture-gate.cpp",
@@ -940,10 +943,17 @@
     {
       "focus": "src/live/gpt-live-session.ts",
       "initialBlob": "4a59910d130a5d142313497b71c344f79aec7357",
-      "primary": null,
+      "primary": {
+        "id": "task_35b0a03e",
+        "launchBase": "e7a05d5f63b11cc8c4d57f4b2b4f4b797ef776fe",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_35b0a03e",
+        "branch": "bruv/primary-src-live-gpt-live-session.ts-35b0a03e",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/helper.ts",
