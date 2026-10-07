@@ -43,3 +43,7 @@ Primary task_7482f459; fresh judge task_8d1d090b NO CHANGE NEEDED at 290d620d94b
 ## Accepted contiguous activity groups
 
 Primary task_f8eb0cae; judge task_a6caab27 ACCEPT candidate 8aaffbf961e73dbedafd111ad18a21faf3a1bfdb. Explicit ordered runs replace synthetic map-key/counter reconstruction, while stable component expansion, callback provenance and handoff/native visibility boundaries remain intact. Writer 119 focused passes; independent disk test passed, four import-blocked suites not confirmed. Both changed rolling tests still need primary focus.
+
+## Accepted footer observer lifetimes
+
+Primary task_b0090f89; judge task_05ce27ca ACCEPT candidate 23d4c95aa626e1ef2e84308c792bffc4b1b130e6. Cost polling and cache countdown now own independent clocks; shared cache redraw/rescheduling and component gate remain explicit. Gate suppresses late redraw, does not cancel filesystem I/O. Independent 43 tests/365 assertions and format/lint pass (unchanged advisories). Footer tests still require primary coverage.

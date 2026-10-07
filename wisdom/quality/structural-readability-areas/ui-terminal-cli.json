@@ -608,24 +608,41 @@
     {
       "focus": "src/ui/execution-previews.ts",
       "initialBlob": "26089d9420f9da4e0574d2053ba460283c46cb3a",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_52ca0e94",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_52ca0e94",
           "branch": "bruv/primary-readability-src-ui-execution-pre-52ca0e94",
-          "launchBase": "4f808ab2263b80475eddcbc772a48570afa438bd"
+          "launchBase": "4f808ab2263b80475eddcbc772a48570afa438bd",
+          "commit": "828e13116b668825a7d24cf4247e2b56e3ed49b9"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_9a76656a",
+          "base": "4f808ab2263b80475eddcbc772a48570afa438bd",
+          "candidate": "828e13116b668825a7d24cf4247e2b56e3ed49b9",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "4f808ab2263b80475eddcbc772a48570afa438bd"
+      "launchBase": "4f808ab2263b80475eddcbc772a48570afa438bd",
+      "changedRelatedPaths": [],
+      "result": "Candidate chooses partial/handoff/transcript/outcome view at component creation instead of mixing mutable spinner handling into width callback; shared live spinner row.",
+      "checks": [
+        "121 tests /13414 assertions",
+        "focused format/lint/diff"
+      ],
+      "limits": [
+        "No full build/typecheck/compiled TUI/provider/device"
+      ]
     },
     {
       "focus": "src/ui/footer.ts",
       "initialBlob": "fb774576e55d56e380988652dafc11d3bc6c6653",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_b0090f89",
@@ -640,11 +657,25 @@
           "id": "task_05ce27ca",
           "base": "85d3d852913bc59905b9c81e21d2fbe28d4332c1",
           "candidate": "23d4c95aa626e1ef2e84308c792bffc4b1b130e6",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/footer.ts": "3d3aa8960033208e5b7c137bbdc3e20da4becfc6",
+            "tests/footer.test.ts": "056832cfee4ac38b504ba64803de17fc6ccd1ddd"
+          },
+          "evidence": "Cost refresh and cache deadlines own independent clocks. Cache notifications/ticks share comparison and scheduling policy; installation disables common gate before stopping observers. Late completion suppressed, not falsely described as I/O cancellation.",
+          "checks": [
+            "Independent 43 tests /365 assertions",
+            "Biome format/lint exit 0 with unchanged advisories",
+            "diff check"
+          ],
+          "limits": [
+            "No full build/typecheck/compiled TUI/device/provider"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "3d3aa8960033208e5b7c137bbdc3e20da4becfc6",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "85d3d852913bc59905b9c81e21d2fbe28d4332c1",
       "changedRelatedPaths": [
         "tests/footer.test.ts"
@@ -739,28 +770,53 @@
     {
       "focus": "src/ui/startup.ts",
       "initialBlob": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_b0e54e09",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_b0e54e09",
           "branch": "bruv/primary-readability-src-ui-startup.ts-b0e54e09",
-          "launchBase": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6"
+          "launchBase": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6",
+          "commit": "8d0911b585c89320ccee5d5b3c3981beb357e4a0"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_f31c7dbc",
+          "base": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6",
+          "candidate": "8d0911b585c89320ccee5d5b3c3981beb357e4a0",
+          "verdict": "pending"
+        }
+      ],
+      "acceptedBlob": null,
+      "integrationState": "pending",
+      "launchBase": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6",
+      "changedRelatedPaths": [],
+      "result": "No-change candidate: editor replacement groups guard, settings/draft preservation, ownership updates, factory registration and native init.",
+      "checks": [
+        "95 tests /527 assertions",
+        "Focused Biome/diff"
+      ],
+      "limits": [
+        "No full build/compiled PTY/device/provider/SSH"
+      ]
+    },
+    {
+      "focus": "src/ui/subagent-settings.ts",
+      "initialBlob": "db6c10db1b02db15c995c20c2029ea6f9cb180c1",
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_3ec62165",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_3ec62165",
+          "branch": "bruv/primary-readability-src-ui-subagent-sett-3ec62165",
+          "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6"
-    },
-    {
-      "focus": "src/ui/subagent-settings.ts",
-      "initialBlob": "db6c10db1b02db15c995c20c2029ea6f9cb180c1",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "pending"
+      "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487"
     },
     {
       "focus": "src/ui/task-monitor.ts",
@@ -774,11 +830,19 @@
     {
       "focus": "src/ui/task-rows.ts",
       "initialBlob": "6c4aaf00d8ca9275ed7dcfe7070fa5eb0e6a8179",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_3856c420",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_3856c420",
+          "branch": "bruv/primary-readability-src-ui-task-rows.ts-3856c420",
+          "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487"
     },
     {
       "focus": "tests/action-label-wiring.test.ts",
@@ -828,13 +892,14 @@
     {
       "focus": "tests/cli.test.ts",
       "initialBlob": "70002a8662ff8db59fa74014040bb2544af9f464",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_f5df93a3",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_f5df93a3",
           "branch": "bruv/primary-readability-tests-cli.test.ts-f5df93a3",
-          "launchBase": "868ad04a4bc7bf245bb63eeb87767e7d55769691"
+          "launchBase": "868ad04a4bc7bf245bb63eeb87767e7d55769691",
+          "commit": "3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5"
         }
       ],
       "judgeRounds": [],
@@ -848,7 +913,16 @@
           "blob": "528e6e7735b03cdd9812839b8c18657884904713"
         }
       ],
-      "launchBase": "868ad04a4bc7bf245bb63eeb87767e7d55769691"
+      "launchBase": "868ad04a4bc7bf245bb63eeb87767e7d55769691",
+      "result": "Fresh primary no-change: fixture home/child/cleanup lifetime and compiled/source contracts keep bookkeeping local.",
+      "changedRelatedPaths": [],
+      "checks": [
+        "6 source tests /42 assertions",
+        "Biome format/lint/diff"
+      ],
+      "limits": [
+        "9 compiled cases not run; need batch artifacts"
+      ]
     },
     {
       "focus": "tests/context-usage-cache.test.ts",
@@ -929,7 +1003,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "footer-related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_05ce27ca",
+          "candidate": "23d4c95aa626e1ef2e84308c792bffc4b1b130e6",
+          "verdict": "ACCEPT",
+          "blob": "056832cfee4ac38b504ba64803de17fc6ccd1ddd"
+        }
+      ]
     },
     {
       "focus": "tests/fullscreen-editor-tui.test.ts",
