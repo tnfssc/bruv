@@ -27,3 +27,5 @@ Current area path /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c
 ## Resume safeguards accepted
 
 Judge task_021ccfb2 accepts root-reference ownership and single restoration closure, preserving foreign wrappers/independent method ownership and fresh permission reads. Source blob129841b52c862394340238e73d5c19ecd1d46816; related test059a500b99eb05c94501ec3d26bce9af05d395d4 still needs primary. Independent9/59+2 probes16, same strengthened baseline11/75; source tsc/format/diff passed. Full coherent source/test patch integrated, worker note excluded.
+
+Worktree-test primary independently accepted by task_83034949: fixture owns manager shutdown before root restore, scenario operations remain visible; 13 titles49 assertions retained,24/117 independent passes. Final blob7a01e214fe52d9bd144d6e0171b03a22e6863f01 integrated. Task-owner unchanged contract accepted by task_5c2c90d3 with explicit delivery/closure authority evidence; test rerun dependency blocker retained.

@@ -187,11 +187,18 @@
     {
       "focus": "src/questions/extension.ts",
       "initialBlob": "cb21f18834473a40051404aea015a95033c03aa0",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_4c9d577a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_4c9d577a",
+        "branch": "bruv/primary-src-questions-extension.ts-4c9d577a",
+        "base": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d"
     },
     {
       "focus": "src/questions/picker.ts",
@@ -669,7 +676,7 @@
     {
       "focus": "src/tasks/session-costs.ts",
       "initialBlob": "70f770b65f897dc4980fef34ba2092a0c2b2430b",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_bc2d06ee",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bc2d06ee",
@@ -680,13 +687,22 @@
       "judgeRounds": [
         {
           "id": "task_fe953df2",
-          "status": "running",
+          "status": "complete",
           "candidate": "e8dcbeb63e0f1d23cf9707d20e0fc8461f71065b",
-          "base": "7d2ade817ce1887dea78ec597722a1dbf99b155e"
+          "base": "7d2ade817ce1887dea78ec597722a1dbf99b155e",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Lineage discovery/descendant closure and incremental identity-deduped costs coherent; footer owns refresh/disposal and adds descendant dollars not context/tokens. Reader partial bytes/handles separate.",
+          "checks": [
+            "candidate11 tests before footer module blocker",
+            "matching area blobs33 pass302 assertions",
+            "bounded read/concurrency does not claim bounded record buffer/dedup memory",
+            "no build/live remote"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "70f770b65f897dc4980fef34ba2092a0c2b2430b",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "7d2ade817ce1887dea78ec597722a1dbf99b155e",
       "changedRelatedPaths": [],
       "readingResult": "No-change: bounded lineage discovery→descendant closure→incremental deduplicated usage→total; footer owns polling/disposal, readers own handles/partial bytes.",
@@ -698,7 +714,7 @@
     {
       "focus": "src/tasks/subagent-profiles.ts",
       "initialBlob": "2a117125b2f25e592cad2c1bb4c720fda0832e64",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_f2d9d1fa",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f2d9d1fa",
@@ -706,7 +722,14 @@
         "base": "02e36f3372b5072d65fa39e4c2148827a1969a25",
         "commit": "5079a29ca42fea67cf655a1f91d6ba7e0eb72ccc"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_ee69dc68",
+          "status": "running",
+          "candidate": "5079a29ca42fea67cf655a1f91d6ba7e0eb72ccc",
+          "base": "02e36f3372b5072d65fa39e4c2148827a1969a25"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "02e36f3372b5072d65fa39e4c2148827a1969a25",
@@ -721,7 +744,7 @@
     {
       "focus": "src/tasks/subagent-settings-ui.ts",
       "initialBlob": "56af9b3b1a9fc016caf842984e5d67577c726197",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_92739d50",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_92739d50",
@@ -729,7 +752,14 @@
         "base": "9c2abd811dae310c924836ca33c0d175e80cbba2",
         "commit": "c97cd7845c2d85a49815e118dae6f5da8cb5e701"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_05218d53",
+          "status": "running",
+          "candidate": "c97cd7845c2d85a49815e118dae6f5da8cb5e701",
+          "base": "9c2abd811dae310c924836ca33c0d175e80cbba2"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "9c2abd811dae310c924836ca33c0d175e80cbba2",
@@ -880,7 +910,7 @@
     {
       "focus": "src/tasks/task-owner.ts",
       "initialBlob": "b52d3b274bfcc6dc95c05b42bc38d7a45791d3c9",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_59432ef6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_59432ef6",
@@ -891,13 +921,21 @@
       "judgeRounds": [
         {
           "id": "task_5c2c90d3",
-          "status": "running",
+          "status": "complete",
           "candidate": "7b48e8a6200974188b0da429386ed956da5da8b7",
-          "base": "f2882f8d5f1758aea9530f2c91fab98d00a79de8"
+          "base": "f2882f8d5f1758aea9530f2c91fab98d00a79de8",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Attachment uses existing manager; causal guarded ordered projection never recreates jobs. Shutdown awaits manager then unsubscribe/drain and surfaces delivery failure; bounded closure remains uncertain.",
+          "checks": [
+            "full binding/attachment/caller read; current manager matches",
+            "diff pass; independent tests blocked pi-ai/compat despite NODE_PATH",
+            "writer8/65 remains reported"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "b52d3b274bfcc6dc95c05b42bc38d7a45791d3c9",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "f2882f8d5f1758aea9530f2c91fab98d00a79de8",
       "changedRelatedPaths": [],
       "readingResult": "No-change: observer attaches existing session manager; causal-owner guarded projection checkpoint append never recreates jobs; shutdown waits manager then unsubscribes/drains observer.",
@@ -931,18 +969,25 @@
     {
       "focus": "src/tasks/text-preview.ts",
       "initialBlob": "49fa24c1655726289c36f55ba530187554d1bb9c",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_b8e22edf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b8e22edf",
         "branch": "bruv/primary-src-tasks-text-preview.ts-b8e22edf",
         "base": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
-        "commit": null
+        "commit": "2468f27a3ab522bef68d6eda1ef53796c701ed2e"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23"
+      "launchBase": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: local marker-sizing loop owns truncation; JobService and completion preview returned copies, not stored originals/delivery ownership.",
+      "checks": [
+        "15 tests135 assertions",
+        "36 shipped-limit boundary probes",
+        "no build/fullCI"
+      ]
     },
     {
       "focus": "src/tasks/worktree-workspace.ts",
@@ -1187,7 +1232,7 @@
     {
       "focus": "tests/job-attention.test.ts",
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_49f70753",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_49f70753",
@@ -1195,7 +1240,15 @@
         "base": "4c0e427a70cc663ed51f3863131f713eaf5f00c8",
         "commit": "58aead918c9cd290b432e1c08d9b697b57d740e4"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_d655e78f",
+          "status": "running",
+          "candidate": "58aead918c9cd290b432e1c08d9b697b57d740e4",
+          "base": "4c0e427a70cc663ed51f3863131f713eaf5f00c8",
+          "priorRelatedJudge": "task_846bbe75"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
@@ -1672,7 +1725,7 @@
     {
       "focus": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_f4444bc8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f4444bc8",
@@ -1683,14 +1736,22 @@
       "judgeRounds": [
         {
           "id": "task_83034949",
-          "status": "running",
+          "status": "complete",
           "candidate": "59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12",
           "base": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9",
-          "priorRelatedJudge": "task_6181fd8e"
+          "priorRelatedJudge": "task_6181fd8e",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fixture owns root override→manager/service→scenario→shutdown→root restore; afterEach separately owns repo removal. Five repeated lifetime reconstructions removed while cancel/deadline/trust/asyncsetup/sibling/path journeys visible.",
+          "checks": [
+            "independent24/117",
+            "13 titles49 assertions same",
+            "Biome/diff pass; no fullgate/tsc/provider claim"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
+      "integration": "primary test diff integrated; related acceptance superseded",
       "relatedAcceptance": {
         "judge": "task_6181fd8e",
         "candidate": "62b8e7949c68612fdf86dcd8599120650b313ed0",
