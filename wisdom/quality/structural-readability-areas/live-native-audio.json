@@ -241,12 +241,17 @@
         "launchBase": "a9961ef20926e291fd3c4ff04571d0e0906b25ae",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_ba46a6b0",
         "branch": "bruv/primary-native-live-linux-tests-source-r-ba46a6b0",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "bebc961f249c35103aa08d0bebf496548844c8ad"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [
+        "native/live-linux/tests/test_source_removal.py"
+      ],
+      "readingResult": "RemovalHelper owns framing/process lifetime;scenario visibly hello/start/ready/checked unload/timedstop/stopped;device errors not acknowledgment. Explicit partial-frame EOF busy wait fixed.",
+      "checks": "24 focused tests/native build/private virtual graph protocol-removal pass;partialEOF baseline2.053sec vs candidate.059sec,both reject missing shutdown. Virtual may reroute,no physical/device/macOS/provider/fullgate."
     },
     {
       "focus": "native/live-linux/tests/virtual.sh",
@@ -1099,10 +1104,17 @@
     {
       "focus": "src/live/playback.ts",
       "initialBlob": "13c3a077ca113568196fdc051184ac53d434fc69",
-      "primary": null,
+      "primary": {
+        "id": "task_1ea27d33",
+        "launchBase": "1af60590b337533dc41a39e8d00ee66506c02b34",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_1ea27d33",
+        "branch": "bruv/primary-src-live-playback.ts-1ea27d33",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/providers.ts",
@@ -2100,6 +2112,15 @@
     {
       "focus": "native/live-linux/tests/test_isolated_audio.py",
       "introducedBy": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate addition;own primary pending"
+    },
+    {
+      "focus": "native/live-linux/tests/test_source_removal.py",
+      "introducedBy": "bebc961f249c35103aa08d0bebf496548844c8ad",
       "initialBlob": null,
       "primary": null,
       "judgeRounds": [],
