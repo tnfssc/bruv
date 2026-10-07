@@ -5,7 +5,7 @@
     {
       "focus": "site/.gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_e433e2c2",
@@ -20,15 +20,21 @@
         {
           "id": "task_2a36b538",
           "candidate": "c8ac4589989164e9934a45b20b7c6d9136fe38e2",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Explicit installed-dependency/generated-output exclusions follow install/build/preview/deploy ownership; source and assets remain visible. Judge reproduced 10 probes including nested directories and non-exclusions; no build/browser/deploy claim.",
+          "objections": []
         }
       ],
-      "initialBlob": "b9470778764f72c5257a3361590d2994547f90e1"
+      "initialBlob": "b9470778764f72c5257a3361590d2994547f90e1",
+      "acceptedBlob": "b9470778764f72c5257a3361590d2994547f90e1",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/assets/brand/bruv-icon.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_74788f3b",
@@ -39,7 +45,13 @@
           "result": "No source change; accessible labels->theme fill->local lean transform->even-odd silhouette/counter coherent; site links/copies unchanged. build.test 10 pass; no browser/full build."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_3d50228c",
+          "candidate": "738098f73a9080238aa241eb765ecf458d353ad3",
+          "state": "running"
+        }
+      ],
       "initialBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646"
     },
     {
@@ -79,13 +91,15 @@
     {
       "focus": "site/assets/brand/wordmark-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_4cffbf2e",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_4cffbf2e",
           "branch": "bruv/primary-site-assets-brand-wordmark-cells-4cffbf2e",
-          "base": "cf3212898bfeb490e314207cd740758d06aa01ca"
+          "base": "cf3212898bfeb490e314207cd740758d06aa01ca",
+          "commit": "779a14fb3d429de7d4573828b11ea1e03cc126c2",
+          "result": "Unchanged width-keyed glyph rows; generator creates,brand selects size,layout positions,terminal presents.1 wordmark test/43 assertions;no regeneration/browser/build."
         }
       ],
       "judges": [],
@@ -124,8 +138,13 @@
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_4f28d450",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d"
+        }
+      ],
       "judges": [],
       "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4"
     },

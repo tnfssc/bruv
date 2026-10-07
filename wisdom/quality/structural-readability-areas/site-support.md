@@ -37,3 +37,5 @@ site/scripts/build.test.ts: URL authority cases direct, layout matrices keep inp
 site/demos.test.ts: Story assertions have independent journeys; pause/offscreen/hold/wrap setups independent and nonzero freeze catches reset-to-zero. Assertions strengthened, no production change. Judge 11 tests/5582285 assertions plus 10 build tests/123298 assertions; mutation probe writer-only.
 
 site/scripts/html-animation.test.ts: withDemoPage owns context lifetime including awaited checks; tests receive only Page and explicitly request pre-navigation manual clock. Assertions/timings/routes retained. Setup exception cleanup expansion explicit, coherent with owner boundary; failure path not injected. Judge read complete actual code/callers/tests; runtime writer-only proof.
+
+site/.gitignore: Explicit installed-dependency/generated-output exclusions follow install/build/preview/deploy ownership; source and assets remain visible. Judge reproduced 10 probes including nested directories and non-exclusions; no build/browser/deploy claim.
