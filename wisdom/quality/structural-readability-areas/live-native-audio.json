@@ -266,13 +266,21 @@
       "judgeRounds": [
         {
           "id": "task_46031fcf",
-          "status": "running",
+          "status": "complete",
           "candidate": "bebc961f249c35103aa08d0bebf496548844c8ad",
-          "base": "a9961ef20926e291fd3c4ff04571d0e0906b25ae"
+          "base": "a9961ef20926e291fd3c4ff04571d0e0906b25ae",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "RemovalHelper owns process/framing/shutdown;scenario exposes checkedunload/timedstop/stopped;deviceerror/capture/silence/EOF cannot substitute ack. virtual retains moduleownership onfailure. Independent partialEOF rejection2.012s->.010s explicit fix,never accepts incomplete evidence.",
+          "checks": "24 focusedPython incl7newtests pass/diffclean;no independent build/privategraph rerun/physicalunplug/macOS/provider/fullgate;virtualreroutingpossible.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/source-removal.py": "5d707531d9753b02b575997c378f13517fc8370d",
+            "native/live-linux/tests/test_source_removal.py": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "5d707531d9753b02b575997c378f13517fc8370d",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [
         "native/live-linux/tests/test_source_removal.py"
       ],
@@ -2197,7 +2205,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "candidate addition;own primary pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_46031fcf",
+        "verdict": "ACCEPT",
+        "blob": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32"
+      }
     },
     {
       "focus": "native/live-linux/tests/test_capture_protocol.py",
