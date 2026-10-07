@@ -1175,16 +1175,29 @@
     {
       "focus": "tests/cache-countdown.test.ts",
       "initialBlob": "ec7800207adfe05b026b4fc0cdcc715db2a8801b",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_5bc31e3d",
           "launchBase": "7274d3c43360c22c1569aff93123ec97179f80af",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_5bc31e3d",
-          "branch": "bruv/primary-cache-countdown-tests-5bc31e3d"
+          "branch": "bruv/primary-cache-countdown-tests-5bc31e3d",
+          "commit": "03755e5b3097404d6c9ce755407754702cdaeb04",
+          "changedPaths": [
+            "tests/cache-countdown.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "checks": "Baseline 12/61; candidate 19/67; countdown+SDK+native+footer 87/546 pass; format/lint/diff pass; known goal-test TS2554 baseline persists."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_79840549",
+          "candidate": "03755e5b3097404d6c9ce755407754702cdaeb04",
+          "base": "7274d3c43360c22c1569aff93123ec97179f80af",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
@@ -1243,7 +1256,7 @@
     {
       "focus": "tests/goals.test.ts",
       "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
-      "status": "rework-pending",
+      "status": "rework-running",
       "primary": [
         {
           "id": "task_6d7a5ed8",
@@ -1272,6 +1285,14 @@
           ],
           "result": "Reconcile runtime-fixture primary with four accepted extension regression scenarios; preserve all domain order/assertions, genuine before-start correction and bounded payload retention.",
           "checks": "Baseline 35 goals/171 assertions; final related 39 pass/206 assertions; startup mutation fails; format/diff pass, inherited lint warning; no build/typecheck."
+        },
+        {
+          "id": "task_1ac39db6",
+          "role": "check-rework",
+          "launchBase": "fcbade1c776f50c86bdd29dd5d365936d3a6fa5d",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_1ac39db6",
+          "branch": "bruv/rework-goal-test-required-rpc-argument-1ac39db6",
+          "priorCandidate": "cf81cf961f870a8835854de8a268a928cf1c8abc"
         }
       ],
       "judgeRounds": [
