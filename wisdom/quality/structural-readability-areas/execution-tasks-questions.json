@@ -963,7 +963,7 @@
     {
       "focus": "src/tasks/task-monitor.ts",
       "initialBlob": "27acfb4e8b82ff387afbd53c59cfa399481632df",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_276c367a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_276c367a",
@@ -974,13 +974,20 @@
       "judgeRounds": [
         {
           "id": "task_901a796a",
-          "status": "running",
+          "status": "complete",
           "candidate": "c9e944995c92d27bc5c95b18d9cb40ccd9bd8230",
-          "base": "eb0e877718005a15d0e7604f3538098627c65730"
+          "base": "eb0e877718005a15d0e7604f3538098627c65730",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Registration assembles session-captured view and cleanup; nonTUI no allocation; panel disposal releases adapter not shared manager; frozen stop target revalidated and pending remote cancellation stays uncertain.",
+          "checks": [
+            "matching area18 pass143 assertions",
+            "candidate module resolution blocked; no freshTUI/fullgate/authSSH/compiled claim"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "27acfb4e8b82ff387afbd53c59cfa399481632df",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "eb0e877718005a15d0e7604f3538098627c65730",
       "changedRelatedPaths": [],
       "readingResult": "No-change: nonTUI refusal before allocation, session-captured /ps, panel closes adapter not jobs, confirmed stop rechecks identity/owner and preserves pending semantics.",
@@ -1065,7 +1072,7 @@
     {
       "focus": "src/tasks/text-preview.ts",
       "initialBlob": "49fa24c1655726289c36f55ba530187554d1bb9c",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_b8e22edf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b8e22edf",
@@ -1073,7 +1080,14 @@
         "base": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
         "commit": "2468f27a3ab522bef68d6eda1ef53796c701ed2e"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_ea5e9a6f",
+          "status": "running",
+          "candidate": "2468f27a3ab522bef68d6eda1ef53796c701ed2e",
+          "base": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
@@ -1088,7 +1102,7 @@
     {
       "focus": "src/tasks/worktree-workspace.ts",
       "initialBlob": "76fe2987f9f644571d9b478ba835254f1fe988da",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_2d59fe31",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_2d59fe31",
@@ -1096,7 +1110,14 @@
         "base": "d5623c8e9d529384108765b2ae2604f493c0c60d",
         "commit": "7edb33c9c4a7716c772deed6644cc0bdd09f1088"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_866a3bd6",
+          "status": "running",
+          "candidate": "7edb33c9c4a7716c772deed6644cc0bdd09f1088",
+          "base": "d5623c8e9d529384108765b2ae2604f493c0c60d"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
@@ -1238,7 +1259,7 @@
     {
       "focus": "src/typescript/output-capture.ts",
       "initialBlob": "4b21e94241155f009144497997c9f8662e405ee8",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_105272bf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_105272bf",
@@ -1249,13 +1270,22 @@
       "judgeRounds": [
         {
           "id": "task_0321bbc2",
-          "status": "running",
+          "status": "complete",
           "candidate": "c88c37a075d16cd5ba9b1abc7f0354264406b337",
-          "base": "7a99d536c8be21afa20521148843a2d85f3c96b3"
+          "base": "7a99d536c8be21afa20521148843a2d85f3c96b3",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Preview text decoder/tails/fairshare separated from shared byte budget/storage; explicit append branch removes spill crossing flag reconstruction. Flush after pump rejection and failed storage accounting/close/delivery preserved.",
+          "checks": [
+            "independent16 pass65 assertions",
+            "5 baseline/candidate in-memory/file-byte comparisons matched spill/decode/zero-budget/UTF8/directoryfailure",
+            "strict tsc/format/lint/diff pass",
+            "execution integration WASM blocker; writer41/184 not independently reproduced"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "09646b097d3f6b343e5ee21009c3d8c4b85424c9",
+      "integration": "full source/test candidate diff integrated",
       "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3",
       "changedRelatedPaths": [
         "src/typescript/output-capture.ts",
@@ -1373,7 +1403,14 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedAcceptance": {
+        "judge": "task_0321bbc2",
+        "candidate": "c88c37a075d16cd5ba9b1abc7f0354264406b337",
+        "blob": "315f7fcd90966bafccad4c9d4c7f978ad77c4cbc",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      }
     },
     {
       "focus": "tests/foreground-execution-sdk.test.ts",

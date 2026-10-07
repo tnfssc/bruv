@@ -201,3 +201,36 @@ test("streams arriving after capture budget exhaustion do not create empty artif
   expect(result.stderrPath).toBeUndefined();
   expect(await readdir(dirname(result.stdoutPath!))).toEqual(["stdout.log"]);
 });
+
+test("inline tails share the character allowance independently of artifact bytes", async () => {
+  const output = new ExecuteOutputCapture({ outputByteLimit: 0 });
+  await output.consume("stdout", Readable.from(["x".repeat(3000)]));
+  await output.consume("stderr", Readable.from(["y".repeat(3000)]));
+  const result = await output.result();
+  expect(result).toMatchObject({
+    stdout: "x".repeat(2000),
+    stderr: "y".repeat(2000),
+    stdoutLost: true,
+    stderrLost: true,
+    capturedOutputBytes: 0,
+  });
+  expect(result.stdoutPath).toBeUndefined();
+  expect(result.stderrPath).toBeUndefined();
+});
+
+test("inline tails give the unused share to the longer stream", async () => {
+  const result = await capture(["short"], ["y".repeat(5000)]);
+  expect(result.stdout).toBe("short");
+  expect(result.stderr).toBe("y".repeat(3995));
+  expect(result.stdoutLost).toBe(false);
+  expect(result.stderrLost).toBe(true);
+  expect(await readFile(result.stderrPath!, "utf8")).toBe("y".repeat(5000));
+});
+
+test("spilled previews limit lines without trimming the saved bytes", async () => {
+  const text = "x\n".repeat(3000) + "last";
+  const result = await capture([text]);
+  expect(result.stdout).toBe("x\n".repeat(899) + "last");
+  expect(result.stdoutLost).toBe(true);
+  expect(await readFile(result.stdoutPath!, "utf8")).toBe(text);
+});
