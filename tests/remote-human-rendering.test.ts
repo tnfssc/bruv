@@ -231,3 +231,68 @@ test("known lifecycle message envelopes remain readable without losing new event
   expect(output).not.toContain('"usage"');
   expect(renderHuman(input, "transcript-raw")).toContain('"usage"');
 });
+
+test("tool event payloads preserve arguments, result metadata and empty output formatting", () => {
+  const input = page([
+    { type: "tool_execution_start", name: "read", args: { path: "file.ts", ownerId: "private" } },
+    { type: "tool_execution_start", toolName: "shell" },
+    {
+      type: "tool_execution_end",
+      toolName: "read",
+      result: { content: [{ type: "text", text: "contents" }], details: { kept: true, rpcId: "private" } },
+    },
+    {
+      type: "tool_execution_update",
+      name: "shell",
+      partialResult: { content: [{ type: "text", text: "waiting" }], requestId: "private" },
+    },
+    { type: "tool_execution_end", toolName: "shell", isError: true, result: { problem: "denied" } },
+    { type: "tool_execution_update", toolName: "shell", partialResult: null },
+    { type: "tool_execution_end", toolName: "shell" },
+  ]);
+  expect(renderHuman(input, "transcript")).toBe(
+    [
+      "Remote transcript · task · offset 0",
+      '#1 Tool call read:\n{"path":"file.ts"}\n',
+      "#2 Tool call shell",
+      '#3 Tool finished read:\ncontents\n{"details":{"kept":true}}',
+      "#4 Tool update shell:\nwaiting",
+      '#5 Tool finished shell (error):\n{"problem":"denied"}\n',
+      "#6 Tool update shell:\n\n",
+      "#7 Tool finished shell",
+      "End of cached transcript.",
+    ].join("\n"),
+  );
+});
+
+test("lifecycle messages render directly with row identity and retain unrecognized envelopes", () => {
+  const input = page(
+    [
+      {
+        type: "turn_end",
+        message: { role: "user", content: "question" },
+        toolResults: [{ role: "toolResult", toolName: "shell", isError: true, content: [] }],
+        future: { kept: true, epoch: "private" },
+      },
+      {
+        type: "agent_end",
+        messages: [
+          { role: "assistant", content: "answer", usage: "not displayed" },
+          { content: "unrecognized", textSignature: "private" },
+        ],
+      },
+      { type: "message_end", message: { content: "unrecognized", ownerId: "private" }, future: "kept" },
+    ],
+    { nextOffset: 3 },
+  );
+  expect(renderHuman(input, "transcript")).toBe(
+    [
+      "Remote transcript · task · offset 0",
+      '#1 turn_end:\n#1 user:\nquestion\n#1 Tool result shell (error) (empty)\n{"future":{"kept":true}}',
+      '#2 agent_end:\n#2 assistant:\nanswer\n#2 message_end: {"message":{"content":"unrecognized"}}',
+      '#3 message_end: {"message":{"content":"unrecognized"},"future":"kept"}',
+      "More: /remote transcript task 3",
+    ].join("\n"),
+  );
+  expect(renderHuman(input, "transcript-raw")).toContain("textSignature");
+});

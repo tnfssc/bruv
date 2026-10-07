@@ -116,60 +116,61 @@ const contentText = (value: unknown): string => {
     .filter(Boolean)
     .join("\n");
 };
+function messageRow(prefix: string, message: unknown): string {
+  const m = obj(message);
+  if (!m.role) return prefix + "message_end: " + readable({ message });
+  const role = m.role === "toolResult" ? "Tool result" : safe(m.role);
+  const title = role === "Tool result" && m.toolName ? role + " " + safe(m.toolName) : role;
+  const body = contentText(m.content);
+  return prefix + title + (m.isError ? " (error)" : "") + (body ? ":\n" + body : " (empty)");
+}
+
+function toolResultRow(prefix: string, event: Record<string, unknown>, label: string, payload: unknown): string {
+  const title = prefix + label + safe(event.toolName ?? event.name ?? "unknown") + (event.isError ? " (error)" : "");
+  if (payload === undefined) return title;
+  const result = obj(payload);
+  const metadata = result.content
+    ? readable(Object.fromEntries(Object.entries(result).filter(([key]) => key !== "content")))
+    : "";
+  return title + ":\n" + contentText(result.content ?? payload) + (metadata === "{}" ? "" : "\n" + metadata);
+}
+
 function transcriptRow(row: any): string {
-  const e = obj(row.event),
-    m = obj(e.message);
+  const e = obj(row.event);
   const prefix = "#" + safe(row.seq ?? "?") + " ";
-  if (e.type === "message_end" && m.role) {
-    const role = m.role === "toolResult" ? "Tool result" : safe(m.role);
-    const title = role === "Tool result" && m.toolName ? role + " " + safe(m.toolName) : role;
-    const body = contentText(m.content);
-    return prefix + title + (m.isError ? " (error)" : "") + (body ? ":\n" + body : " (empty)");
-  }
-  if (e.type === "tool_execution_start" || e.type === "tool_execution_end" || e.type === "tool_execution_update") {
-    const name = safe(e.toolName ?? e.name ?? "unknown");
-    const label =
-      e.type === "tool_execution_start"
-        ? "Tool call "
-        : e.type === "tool_execution_end"
-          ? "Tool finished "
-          : "Tool update ";
-    const payload =
-      e.type === "tool_execution_start" ? e.args : e.type === "tool_execution_end" ? e.result : e.partialResult;
-    const remainder =
-      e.type === "tool_execution_start" || !obj(payload).content
-        ? ""
-        : readable(Object.fromEntries(Object.entries(obj(payload)).filter(([key]) => key !== "content")));
-    return (
-      prefix +
-      label +
-      name +
-      (e.isError ? " (error)" : "") +
-      (payload === undefined
-        ? ""
-        : ":\n" +
-          (e.type === "tool_execution_start" ? readable(payload) : contentText(obj(payload).content ?? payload)) +
-          (remainder === "{}" ? "" : "\n" + remainder))
-    );
-  }
-  if (e.type === "turn_end" || e.type === "agent_end") {
-    const messages = [
-      e.message,
-      ...(Array.isArray(e.messages) ? e.messages : []),
-      ...(Array.isArray(e.toolResults) ? e.toolResults : []),
-    ].filter(Boolean);
-    const extra = Object.fromEntries(
-      Object.entries(e).filter(([key]) => !["type", "message", "messages", "toolResults"].includes(key)),
-    );
-    return (
-      prefix +
-      safe(e.type) +
-      (messages.length
-        ? ":\n" +
-          messages.map((message) => transcriptRow({ seq: row.seq, event: { type: "message_end", message } })).join("\n")
-        : "") +
-      (Object.keys(extra).length ? "\n" + readable(extra) : "")
-    );
+  switch (e.type) {
+    case "message_end":
+      if (obj(e.message).role) return messageRow(prefix, e.message);
+      break;
+    case "tool_execution_start":
+      return (
+        prefix +
+        "Tool call " +
+        safe(e.toolName ?? e.name ?? "unknown") +
+        (e.isError ? " (error)" : "") +
+        (e.args === undefined ? "" : ":\n" + readable(e.args) + "\n")
+      );
+    case "tool_execution_end":
+      return toolResultRow(prefix, e, "Tool finished ", e.result);
+    case "tool_execution_update":
+      return toolResultRow(prefix, e, "Tool update ", e.partialResult);
+    case "turn_end":
+    case "agent_end": {
+      const messages = [
+        e.message,
+        ...(Array.isArray(e.messages) ? e.messages : []),
+        ...(Array.isArray(e.toolResults) ? e.toolResults : []),
+      ].filter(Boolean);
+      const extra = Object.fromEntries(
+        Object.entries(e).filter(([key]) => !["type", "message", "messages", "toolResults"].includes(key)),
+      );
+      return (
+        prefix +
+        safe(e.type) +
+        (messages.length ? ":\n" + messages.map((message) => messageRow(prefix, message)).join("\n") : "") +
+        (Object.keys(extra).length ? "\n" + readable(extra) : "")
+      );
+    }
   }
   // Do not pretend unknown events are empty; retain their meaningful data in the human view.
   return (
