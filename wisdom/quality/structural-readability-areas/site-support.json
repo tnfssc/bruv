@@ -93,16 +93,24 @@
     {
       "focus": "site/demos.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_01e034e7",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_01e034e7",
           "branch": "bruv/primary-site-demos.ts-01e034e7",
-          "base": "a91050017527e1dade52382f0908aefc28ddf981"
+          "base": "a91050017527e1dade52382f0908aefc28ddf981",
+          "commit": "54a43b76809cac9f4290e1c170ecb2aaa160f6fc",
+          "result": "Transcript projection forms explicit turns and computes each tool summary once instead of backward/forward searching while rendering; footer fitting separate. Explicit incidental fix missing ./type: Cell owned by producer demos.ts; html-cells imports it. Changed demos.ts,demos.test.ts,html-cells.ts. 16 tests,4994 complete frame/style/stage baseline comparisons,targeted strict TS/Biome pass. Judge related patch too; related files get their own primary later."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_608a711c",
+          "candidate": "54a43b76809cac9f4290e1c170ecb2aaa160f6fc",
+          "state": "running"
+        }
+      ],
       "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23"
     },
     {
@@ -153,8 +161,15 @@
     {
       "focus": "site/install-command.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_867e5969",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_867e5969",
+          "branch": "bruv/primary-site-install-command.ts-867e5969",
+          "base": "c7a2d6b293f6a22671efc2c6a0ffb29ba37e358e"
+        }
+      ],
       "judges": [],
       "initialBlob": "955cbf767fa094bd223bee8f0bba424692c3c663"
     },
@@ -291,7 +306,7 @@
     {
       "focus": "site/scripts/capture-demo-source.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_82201d2d",
@@ -306,10 +321,16 @@
         {
           "id": "task_53b78b16",
           "candidate": "9099a7b7ee45aa8a8648bb66dbac38ec507288de",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Replay fixture creation has one authority and returns persisted path; orchestration visibly proceeds settings/replay/isolation/capture/provenance/cleanup. Judge traced SDK session contract; 1 test/14 assertions does not exercise capture. Writer offline tmux/unshare byte parity not independently rerun.",
+          "objections": []
         }
       ],
-      "initialBlob": "68b0dc7db1ccdf38a27ea84dcdbd98168f99570c"
+      "initialBlob": "68b0dc7db1ccdf38a27ea84dcdbd98168f99570c",
+      "acceptedBlob": "cb174478a55a37871373add5263eebfb36de2b19",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/capture-real-pty.py",
