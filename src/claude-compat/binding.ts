@@ -4,6 +4,7 @@ import { join, resolve } from "node:path";
 import type { ExtensionFactory, SessionManager as PiSessionManager } from "@earendil-works/pi-coding-agent";
 import type { TSchema } from "typebox";
 import type { ConnectorArguments } from "./arguments";
+import type { NativeHistory } from "./history";
 import { createPermissionPolicy, type PermissionMode, type PermissionRequest } from "./permissions";
 import type { TaskLaunch } from "../tasks/task-manager";
 
@@ -139,23 +140,26 @@ export async function nativeStorage(
   if (binding && (binding.cwd !== resolve(options.cwd) || binding.configDir !== resolve(options.configDir)))
     throw new Error("Native session home/cwd binding mismatch");
   const location = { ...options, sessionId };
-  const imported =
-    args.resume && !binding ? await importNativeHistory({ ...location, sessionDir: directory }) : undefined;
-  let manager =
-    imported?.sessionManager ??
-    (binding ? SessionManager.open(binding.file) : SessionManager.create(options.cwd, directory));
-  if (!binding && !imported) {
-    // Same canonical header-persistence recipe as prepareAgentSession: retain
-    // identity even if a new thread closes before its first assistant response.
-    const file = manager.getSessionFile()!;
-    await writeFile(file, JSON.stringify(manager.getHeader()) + "\n", { flag: "wx", mode: 0o600 });
+  let manager: PiSessionManager;
+  let history: NativeHistory;
+  if (binding) {
+    manager = SessionManager.open(binding.file);
+    const historyOptions = { ...location, sourceSessionId: manager.getSessionId() };
+    history = manager.getEntries().some((e) => e.type === "custom" && e.customType === "bruv-native-entry-map")
+      ? await NativeHistory.resumeImported(historyOptions, manager)
+      : await NativeHistory.open(historyOptions);
+  } else if (args.resume) {
+    const imported = await importNativeHistory({ ...location, sessionDir: directory });
+    manager = imported.sessionManager;
+    history = imported.history;
+  } else {
+    const fresh = SessionManager.create(options.cwd, directory);
+    // Persist the canonical header even if the thread closes before its first response.
+    const file = fresh.getSessionFile()!;
+    await writeFile(file, JSON.stringify(fresh.getHeader()) + "\n", { flag: "wx", mode: 0o600 });
     manager = SessionManager.open(file);
+    history = await NativeHistory.open({ ...location, sourceSessionId: manager.getSessionId() });
   }
-  const history =
-    imported?.history ??
-    (manager.getEntries().some((e) => e.type === "custom" && e.customType === "bruv-native-entry-map")
-      ? await NativeHistory.resumeImported({ ...location, sourceSessionId: manager.getSessionId() }, manager)
-      : await NativeHistory.open({ ...location, sourceSessionId: manager.getSessionId() }));
   let parentUuid: string | undefined;
   if (args.resumeAt) {
     if (!args.resume) throw new Error("--resume-session-at requires --resume");
@@ -164,12 +168,10 @@ export async function nativeStorage(
     if (!checkpoint) throw new Error("Unknown native checkpoint");
     // Validate complete context before changing Pi's leaf. Never reexecute an imported tool.
     nativeHistoryToPi(entries.slice(0, entries.indexOf(checkpoint) + 1), sessionId);
-    const mapping =
-      imported?.entries ??
-      manager
-        .getEntries()
-        .filter((e) => e.type === "custom" && e.customType === "bruv-native-entry-map")
-        .flatMap((e) => (e as any).data.entries);
+    const mapping = manager
+      .getEntries()
+      .filter((e) => e.type === "custom" && e.customType === "bruv-native-entry-map")
+      .flatMap((e) => (e as any).data.entries);
     const id =
       checkpoint.bruv?.sourceSessionId === manager.getSessionId()
         ? checkpoint.bruv.sourceMessageId

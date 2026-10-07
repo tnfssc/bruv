@@ -43,10 +43,7 @@ export interface CapturedOutput {
 }
 
 interface StreamState {
-  decoder: StringDecoder;
   prefix: Buffer[];
-  preview: string;
-  previewTrimmed: boolean;
   handle?: FileHandle;
   path?: string;
   writeError?: string;
@@ -76,6 +73,70 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+interface PreviewStream {
+  decoder: StringDecoder;
+  text: string;
+  trimmed: boolean;
+}
+
+/** Decodes all output, independently of the byte budget or artifact failures. */
+class InlineOutputPreview {
+  readonly #streams: Record<StreamName, PreviewStream> = {
+    stdout: { decoder: new StringDecoder("utf8"), text: "", trimmed: false },
+    stderr: { decoder: new StringDecoder("utf8"), text: "", trimmed: false },
+  };
+  #characters = 0;
+
+  get overflowed(): boolean {
+    return this.#characters > EXECUTE_INLINE_OUTPUT_CHARS;
+  }
+
+  append(name: StreamName, chunk: Buffer): void {
+    this.#retain(name, this.#streams[name].decoder.write(chunk));
+  }
+
+  end(name: StreamName): void {
+    this.#retain(name, this.#streams[name].decoder.end());
+  }
+
+  #retain(name: StreamName, text: string): void {
+    if (!text) return;
+    this.#characters = Math.min(EXECUTE_INLINE_OUTPUT_CHARS + 1, this.#characters + text.length);
+    const stream = this.#streams[name];
+    const retained = stream.text + text;
+    if (retained.length > EXECUTE_INLINE_OUTPUT_CHARS) {
+      stream.text = safeTail(retained, EXECUTE_INLINE_OUTPUT_CHARS);
+      stream.trimmed = true;
+    } else {
+      stream.text = retained;
+    }
+  }
+
+  result(): Pick<CapturedOutput, "stdout" | "stderr" | "stdoutLost" | "stderrLost"> {
+    const stdoutPreview = this.#streams.stdout.text;
+    const stderrPreview = this.#streams.stderr.text;
+    let stdoutLimit = stdoutPreview.length;
+    let stderrLimit = stderrPreview.length;
+    if (stdoutLimit + stderrLimit > EXECUTE_INLINE_OUTPUT_CHARS) {
+      stdoutLimit = Math.min(stdoutLimit, Math.floor(EXECUTE_INLINE_OUTPUT_CHARS / 2));
+      stderrLimit = Math.min(stderrLimit, EXECUTE_INLINE_OUTPUT_CHARS - stdoutLimit);
+      let remaining = EXECUTE_INLINE_OUTPUT_CHARS - stdoutLimit - stderrLimit;
+      const stdoutExtra = Math.min(remaining, stdoutPreview.length - stdoutLimit);
+      stdoutLimit += stdoutExtra;
+      remaining -= stdoutExtra;
+      stderrLimit += Math.min(remaining, stderrPreview.length - stderrLimit);
+    }
+
+    const stdoutTail = safeTail(stdoutPreview, stdoutLimit);
+    const stderrTail = safeTail(stderrPreview, stderrLimit);
+    const stdout = this.overflowed ? safeLineTail(stdoutTail) : stdoutTail;
+    const stderr = this.overflowed ? safeLineTail(stderrTail) : stderrTail;
+    const stdoutLost = this.#streams.stdout.trimmed || stdout.length < stdoutPreview.length;
+    const stderrLost = this.#streams.stderr.trimmed || stderr.length < stderrPreview.length;
+    return { stdout, stderr, stdoutLost, stderrLost };
+  }
+}
+
 /**
  * Capture execute's text streams with one byte budget and a separate bounded
  * inline preview. When the preview fills, move both streams to files and flush
@@ -85,19 +146,13 @@ function errorMessage(error: unknown): string {
 export class ExecuteOutputCapture {
   readonly #states: Record<StreamName, StreamState> = {
     stdout: {
-      decoder: new StringDecoder("utf8"),
       prefix: [],
-      preview: "",
-      previewTrimmed: false,
       bytes: 0,
       capturedBytes: 0,
       writtenBytes: 0,
     },
     stderr: {
-      decoder: new StringDecoder("utf8"),
       prefix: [],
-      preview: "",
-      previewTrimmed: false,
       bytes: 0,
       capturedBytes: 0,
       writtenBytes: 0,
@@ -108,7 +163,7 @@ export class ExecuteOutputCapture {
   // Budget-selected bytes; failed storage must not refund the capture allowance.
   #capturedOutputBytes = 0;
   #outputBytes = 0;
-  #characterCount = 0;
+  readonly #preview = new InlineOutputPreview();
   #spilled = false;
   #directory?: string;
   #directoryError?: string;
@@ -156,26 +211,7 @@ export class ExecuteOutputCapture {
       }),
     );
 
-    const stdoutPreview = this.#states.stdout.preview;
-    const stderrPreview = this.#states.stderr.preview;
-    let stdoutLimit = stdoutPreview.length;
-    let stderrLimit = stderrPreview.length;
-    if (stdoutLimit + stderrLimit > EXECUTE_INLINE_OUTPUT_CHARS) {
-      stdoutLimit = Math.min(stdoutLimit, Math.floor(EXECUTE_INLINE_OUTPUT_CHARS / 2));
-      stderrLimit = Math.min(stderrLimit, EXECUTE_INLINE_OUTPUT_CHARS - stdoutLimit);
-      let remaining = EXECUTE_INLINE_OUTPUT_CHARS - stdoutLimit - stderrLimit;
-      const stdoutExtra = Math.min(remaining, stdoutPreview.length - stdoutLimit);
-      stdoutLimit += stdoutExtra;
-      remaining -= stdoutExtra;
-      stderrLimit += Math.min(remaining, stderrPreview.length - stderrLimit);
-    }
-
-    const stdoutTail = safeTail(stdoutPreview, stdoutLimit);
-    const stderrTail = safeTail(stderrPreview, stderrLimit);
-    const stdout = this.#spilled ? safeLineTail(stdoutTail) : stdoutTail;
-    const stderr = this.#spilled ? safeLineTail(stderrTail) : stderrTail;
-    const stdoutLost = this.#states.stdout.previewTrimmed || stdout.length < stdoutPreview.length;
-    const stderrLost = this.#states.stderr.previewTrimmed || stderr.length < stderrPreview.length;
+    const preview = this.#preview.result();
     const errors: OutputArtifactErrors = {
       ...(this.#directoryError ? { directory: this.#directoryError } : {}),
       ...(this.#states.stdout.writeError || this.#states.stdout.readError
@@ -188,10 +224,7 @@ export class ExecuteOutputCapture {
     const capturedBytes = (name: StreamName) =>
       this.#spilled ? this.#states[name].writtenBytes : this.#states[name].capturedBytes;
     return {
-      stdout,
-      stderr,
-      stdoutLost,
-      stderrLost,
+      ...preview,
       outputBytes: this.#outputBytes,
       capturedOutputBytes: capturedBytes("stdout") + capturedBytes("stderr"),
       outputByteLimit: this.#outputByteLimit,
@@ -226,29 +259,18 @@ export class ExecuteOutputCapture {
     state.capturedBytes += retained.length;
     this.#capturedOutputBytes += retained.length;
 
-    const wasSpilled = this.#spilled;
-    if (!wasSpilled && retained.length) state.prefix.push(Buffer.from(retained));
-    this.#addDecoded(state, state.decoder.write(chunk));
-    if (!this.#spilled && this.#characterCount > EXECUTE_INLINE_OUTPUT_CHARS) await this.#startSpill();
-    if (wasSpilled) await this.#write(name, retained);
+    this.#preview.append(name, chunk);
+    if (this.#spilled) {
+      await this.#write(name, retained);
+    } else {
+      if (retained.length) state.prefix.push(Buffer.from(retained));
+      if (this.#preview.overflowed) await this.#startSpill();
+    }
   }
 
   async #end(name: StreamName): Promise<void> {
-    const state = this.#states[name];
-    this.#addDecoded(state, state.decoder.end());
-    if (!this.#spilled && this.#characterCount > EXECUTE_INLINE_OUTPUT_CHARS) await this.#startSpill();
-  }
-
-  #addDecoded(state: StreamState, text: string): void {
-    if (!text) return;
-    this.#characterCount = Math.min(EXECUTE_INLINE_OUTPUT_CHARS + 1, this.#characterCount + text.length);
-    const retained = state.preview + text;
-    if (retained.length > EXECUTE_INLINE_OUTPUT_CHARS) {
-      state.preview = safeTail(retained, EXECUTE_INLINE_OUTPUT_CHARS);
-      state.previewTrimmed = true;
-    } else {
-      state.preview = retained;
-    }
+    this.#preview.end(name);
+    if (!this.#spilled && this.#preview.overflowed) await this.#startSpill();
   }
 
   async #startSpill(): Promise<void> {

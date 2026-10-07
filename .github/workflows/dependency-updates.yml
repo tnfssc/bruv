@@ -136,6 +136,20 @@ jobs:
         with:
           name: dependency-candidate
           path: candidate
+      - name: Verify downloaded candidate identity and allowed files
+        env:
+          BASE: ${{ needs.validate.outputs.base }}
+          SHA: ${{ needs.validate.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git bundle verify candidate/candidate.bundle
+          git fetch candidate/candidate.bundle HEAD
+          [[ "$(git rev-parse FETCH_HEAD)" == "$SHA" ]]
+          [[ "$(git rev-parse "$SHA^")" == "$BASE" ]]
+          while IFS= read -r file; do
+            case "$file" in package.json|bun.lock) ;; *) echo "Unexpected candidate file: $file"; exit 1 ;; esac
+          done < <(git diff --name-only "$BASE" "$SHA")
       - name: Publish one bot branch and PR against develop
         env:
           GH_TOKEN: ${{ github.token }}
@@ -148,13 +162,6 @@ jobs:
           gh auth setup-git
           current=$(git ls-remote origin refs/heads/develop | cut -f1)
           [[ "$current" == "$BASE" ]] || { echo 'develop moved during validation; rerun instead of publishing stale results'; exit 1; }
-          git bundle verify candidate/candidate.bundle
-          git fetch candidate/candidate.bundle HEAD
-          [[ "$(git rev-parse FETCH_HEAD)" == "$SHA" ]]
-          [[ "$(git rev-parse "$SHA^")" == "$BASE" ]]
-          while IFS= read -r file; do
-            case "$file" in package.json|bun.lock) ;; *) echo "Unexpected candidate file: $file"; exit 1 ;; esac
-          done < <(git diff --name-only "$BASE" "$SHA")
           branch=automation/daily-dependencies
           previous=$(git ls-remote origin "refs/heads/$branch" | cut -f1)
           git push --force-with-lease="refs/heads/$branch:$previous" origin "$SHA:refs/heads/$branch"

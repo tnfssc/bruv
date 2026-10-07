@@ -181,7 +181,7 @@ export class RootClient {
   read(): RootLocalState {
     return JSON.parse(readFileSync(this.path, "utf8"));
   }
-  private locked<T>(fn: () => Promise<T>): Promise<T> {
+  private withState<T>(fn: (state: RootLocalState) => Promise<T>): Promise<T> {
     const run = async () => {
       const db = new Database(join(this.directory, "lock.sqlite"));
       try {
@@ -197,7 +197,7 @@ export class RootClient {
           }
         }
         if (!acquired) throw Error("Root presentation state is in use");
-        const result = await fn();
+        const result = await fn(this.read());
         db.exec("COMMIT");
         return result;
       } finally {
@@ -218,37 +218,10 @@ export class RootClient {
     return { ownerId: s.intent.ownerId, epoch: s.intent.epoch, sessionId: s.intent.sessionId };
   }
   async ensureCreated(): Promise<RootRecord> {
-    return this.locked(async () => {
-      const s = this.read();
+    return this.withState(async (s) => {
       if (s.created && s.record) return s.record;
       if (s.source && s.intent.repoPath === "pending-upload") {
-        const bytes = readFileSync(s.source.bundle);
-        const sha256 = hash(bytes);
-        if (
-          s.source.bundleSha256 !== sha256 ||
-          s.source.localRoot !== s.sourceRoot ||
-          !isDeepStrictEqual(JSON.parse(readFileSync(s.source.manifest, "utf8")), s.source)
-        )
-          throw Error("Pinned root source bytes or manifest changed; no transfer sent");
-        let offset = 0,
-          checkout: string | undefined;
-        while (offset < bytes.length) {
-          const r = await this.request(s, {
-            op: "repository-upload",
-            ...this.identity(s),
-            snapshot: s.source.snapshot,
-            sha256,
-            total: bytes.length,
-            offset,
-            data: bytes.subarray(offset, offset + CHUNK).toString("base64"),
-            workspace: s.workspace,
-          });
-          if (r.offset !== Math.min(bytes.length, offset + CHUNK)) throw Error("Invalid source upload acknowledgement");
-          offset = r.offset;
-          checkout = r.checkout;
-        }
-        if (!checkout || !checkout.startsWith("/")) throw Error("Missing root source checkout");
-        s.intent.repoPath = checkout;
+        s.intent.repoPath = await this.uploadPinnedSource(s, s.source);
         atomic(this.path, s);
       }
       const response = await this.request(s, { op: "create", intent: s.intent, requestId: s.requestId });
@@ -258,6 +231,35 @@ export class RootClient {
       return s.record;
     });
   }
+  private async uploadPinnedSource(s: RootLocalState, source: RepositorySnapshot): Promise<string> {
+    const bytes = readFileSync(source.bundle);
+    const sha256 = hash(bytes);
+    if (
+      source.bundleSha256 !== sha256 ||
+      source.localRoot !== s.sourceRoot ||
+      !isDeepStrictEqual(JSON.parse(readFileSync(source.manifest, "utf8")), source)
+    )
+      throw Error("Pinned root source bytes or manifest changed; no transfer sent");
+    let offset = 0,
+      checkout: string | undefined;
+    while (offset < bytes.length) {
+      const r = await this.request(s, {
+        op: "repository-upload",
+        ...this.identity(s),
+        snapshot: source.snapshot,
+        sha256,
+        total: bytes.length,
+        offset,
+        data: bytes.subarray(offset, offset + CHUNK).toString("base64"),
+        workspace: s.workspace,
+      });
+      if (r.offset !== Math.min(bytes.length, offset + CHUNK)) throw Error("Invalid source upload acknowledgement");
+      offset = r.offset;
+      checkout = r.checkout;
+    }
+    if (!checkout || !checkout.startsWith("/")) throw Error("Missing root source checkout");
+    return checkout;
+  }
   private record(value: unknown, s: RootLocalState): RootRecord {
     const r = object(value);
     if (!isDeepStrictEqual(r.intent, s.intent)) throw Error("Root snapshot identity or immutable intent mismatch");
@@ -265,8 +267,7 @@ export class RootClient {
     return r;
   }
   async observe(): Promise<RootObservation> {
-    return this.locked(async () => {
-      const s = this.read();
+    return this.withState(async (s) => {
       const r = (await this.request(s, { op: "observe", ...this.identity(s), cursor: s.cursor })) as RootObservation;
       const record = this.record(r.record, s);
       if (!Array.isArray(r.events) || !Number.isSafeInteger(r.cursor) || typeof r.hasMore !== "boolean")
@@ -295,30 +296,34 @@ export class RootClient {
     });
   }
   async command(command: RootCommand, commandId: string = randomUUID()): Promise<RootCommandReceipt> {
-    return this.locked(async () => {
-      const s = this.read();
-      const prior = s.commands[commandId];
-      if (prior) {
-        if (!isDeepStrictEqual(prior.command, command)) throw Error("Command ID intent conflict");
-        return this.reconcileSaved(s, commandId);
-      }
-      if (Object.keys(s.commands).length >= 10000) throw Error("Root command ledger full");
-      s.commands[commandId] = { command, receipt: { commandId, state: "unknown" } };
+    return this.withState((s) => this.sendOrReconcile(s, command, commandId));
+  }
+  private async sendOrReconcile(
+    s: RootLocalState,
+    command: RootCommand,
+    commandId: string,
+  ): Promise<RootCommandReceipt> {
+    const prior = s.commands[commandId];
+    if (prior) {
+      if (!isDeepStrictEqual(prior.command, command)) throw Error("Command ID intent conflict");
+      return this.reconcileSaved(s, commandId);
+    }
+    if (Object.keys(s.commands).length >= 10000) throw Error("Root command ledger full");
+    s.commands[commandId] = { command, receipt: { commandId, state: "unknown" } };
+    atomic(this.path, s);
+    try {
+      const r = await this.request(s, { op: "command", ...this.identity(s), commandId, command });
+      const receipt = this.receipt(r.receipt ?? r, commandId);
+      s.commands[commandId]!.receipt = receipt;
       atomic(this.path, s);
-      try {
-        const r = await this.request(s, { op: "command", ...this.identity(s), commandId, command });
-        const receipt = this.receipt(r.receipt ?? r, commandId);
-        s.commands[commandId]!.receipt = receipt;
-        atomic(this.path, s);
-        return receipt;
-      } catch (error) {
-        s.lastError =
-          "Command outcome uncertain; same saved identity will be reconciled, never automatically replayed: " +
-          String(error);
-        atomic(this.path, s);
-        throw Error(s.lastError);
-      }
-    });
+      return receipt;
+    } catch (error) {
+      s.lastError =
+        "Command outcome uncertain; same saved identity will be reconciled, never automatically replayed: " +
+        String(error);
+      atomic(this.path, s);
+      throw Error(s.lastError);
+    }
   }
   private receipt(value: unknown, id: string): RootCommandReceipt {
     const r = object(value);
@@ -334,8 +339,7 @@ export class RootClient {
     return receipt;
   }
   async reconcile(): Promise<RootCommandReceipt[]> {
-    return this.locked(async () => {
-      const s = this.read();
+    return this.withState(async (s) => {
       const results: RootCommandReceipt[] = [];
       for (const [id, c] of Object.entries(s.commands)) {
         if (c.receipt.state !== "completed") results.push(await this.reconcileSaved(s, id));
@@ -344,8 +348,7 @@ export class RootClient {
     });
   }
   async initialPrompt(text: string): Promise<RootCommandReceipt> {
-    const id = await this.locked(async () => {
-      const s = this.read();
+    const id = await this.withState(async (s) => {
       if (s.initialPrompt) {
         if (s.initialPrompt.text !== text)
           throw Error(
@@ -357,13 +360,14 @@ export class RootClient {
       atomic(this.path, s);
       return s.initialPrompt.commandId;
     });
+    // Reservation is not admission: commands already queued get their turn before the prompt.
     return this.command({ kind: "prompt", text }, id);
   }
   async result(command: RootCommand): Promise<unknown> {
     let r = await this.command(command);
     for (let i = 0; i < 30 && ["queued", "dispatching"].includes(r.state); i++) {
       await Bun.sleep(100);
-      r = await this.locked(() => this.reconcileSaved(this.read(), r.commandId));
+      r = await this.withState((s) => this.reconcileSaved(s, r.commandId));
     }
     if (r.state !== "completed") throw Error("Remote control outcome is " + r.state + "; no duplicate command sent");
     if (r.error) throw Error(r.error);
@@ -374,8 +378,7 @@ export class RootClient {
     await this.request(s, { op: "detach", ...this.identity(s) });
   }
   async returnSource(): Promise<RepositoryReturn | undefined> {
-    return this.locked(async () => {
-      const s = this.read();
+    return this.withState(async (s) => {
       if (s.outcome) return s.outcome;
       if (!s.source) return;
       const observed = await this.request(s, { op: "observe", ...this.identity(s), cursor: s.cursor });

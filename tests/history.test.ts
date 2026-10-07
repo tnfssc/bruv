@@ -42,13 +42,18 @@ function toolResult(id: string, text: string) {
   } as any;
 }
 
-async function persisted() {
+async function temporaryDirectory() {
   const dir = await mkdtemp(join(tmpdir(), "bruv-history-"));
   dirs.push(dir);
+  return dir;
+}
+
+async function persisted() {
+  const dir = await temporaryDirectory();
   return SessionManager.create(dir, dir);
 }
 
-describe("original history", () => {
+describe("original history: original text and provenance", () => {
   test("searches original active-branch dialogue after compaction with stable provenance", async () => {
     const manager = SessionManager.inMemory("/project");
     const old = manager.appendMessage(user("exact launch condition alpha-seven"));
@@ -61,7 +66,7 @@ describe("original history", () => {
     const kept = manager.appendMessage(user("tail"));
     manager.appendCompaction("summary without the phrase", kept, 100);
     const service = new HistoryService();
-    const result: any = await service.search({ query: "alpha-seven" }, { sessionManager: manager });
+    const result = await service.search({ query: "alpha-seven" }, { sessionManager: manager });
     expect(result.matches).toHaveLength(2);
     expect(result.matches[0].provenance).toMatchObject({
       source: "original-transcript",
@@ -70,31 +75,32 @@ describe("original history", () => {
       entryId: old,
       role: "user",
     });
-    expect(result.matches.map((item: any) => item.excerpt).join(" ")).not.toContain("private");
-    const read: any = await service.read({ ref: result.matches[0].ref }, { sessionManager: manager });
+    expect(result.matches.map((item) => item.excerpt).join(" ")).not.toContain("private");
+    const read = await service.read({ ref: result.matches[0].ref }, { sessionManager: manager });
     expect(read.text).toBe("exact launch condition alpha-seven");
   });
 
   test("orders dialogue before execution output with deterministic timestamp and ref ties", async () => {
     const manager = SessionManager.inMemory("/project");
-    const ids = [
-      manager.appendMessage(toolResult("ordering-call", "ordering needle tool")),
-      manager.appendMessage({
-        role: "bashExecution",
-        command: "ordering needle command",
-        output: "ordering needle output",
-        exitCode: 0,
-        cancelled: false,
-        truncated: false,
-        timestamp: Date.now(),
-      } as any),
-      manager.appendMessage(assistant([{ type: "text", text: "ordering needle answer" }])),
-      manager.appendMessage(user("ordering needle older")),
-      manager.appendMessage(user("ordering needle tie one")),
-      manager.appendMessage(user("ordering needle tie two")),
-    ];
-    for (const id of ids) manager.getEntry(id)!.timestamp = "2026-01-02T00:00:00.000Z";
-    manager.getEntry(ids[3]!)!.timestamp = "2026-01-01T00:00:00.000Z";
+    const tool = manager.appendMessage(toolResult("ordering-call", "ordering needle tool"));
+    const bash = manager.appendMessage({
+      role: "bashExecution",
+      command: "ordering needle command",
+      output: "ordering needle output",
+      exitCode: 0,
+      cancelled: false,
+      truncated: false,
+      timestamp: Date.now(),
+    } as any);
+    const answer = manager.appendMessage(assistant([{ type: "text", text: "ordering needle answer" }]));
+    const older = manager.appendMessage(user("ordering needle older"));
+    const tieOne = manager.appendMessage(user("ordering needle tie one"));
+    const tieTwo = manager.appendMessage(user("ordering needle tie two"));
+    for (const id of [tool, bash, answer, older, tieOne, tieTwo]) {
+      manager.getEntry(id)!.timestamp = "2026-01-02T00:00:00.000Z";
+    }
+    manager.getEntry(older)!.timestamp = "2026-01-01T00:00:00.000Z";
+
     const result = await new HistoryService().search({ query: "ordering needle" }, { sessionManager: manager });
     expect(result.matches.map((match) => match.provenance.role)).toEqual([
       "user",
@@ -106,13 +112,82 @@ describe("original history", () => {
       "toolResult",
     ]);
     expect(result.matches.slice(0, 2).map((match) => match.ref)).toEqual(
-      ids
-        .slice(4)
+      [tieOne, tieTwo]
         .map((id) => "bruv-history-v1:" + manager.getSessionId() + ":" + id + ":0")
         .sort((a, b) => a.localeCompare(b)),
     );
-    expect(result.matches[2]!.provenance.entryId).toBe(ids[3]!);
+    expect(result.matches[2]!.provenance.entryId).toBe(older);
     expect(result.matches.slice(4, 6).map((match) => match.provenance.part)).toEqual([0, 1]);
+  });
+
+  test("reports Unicode-insensitive match offsets in original UTF-16 coordinates", async () => {
+    const manager = SessionManager.inMemory("/project");
+    manager.appendMessage(user("İx 😀 NEEDLE"));
+    const service = new HistoryService();
+
+    const expanded = await service.search({ query: "x" }, { sessionManager: manager });
+    expect(expanded.matches[0].matchOffset).toBe(1);
+    const astral = await service.search({ query: "needle" }, { sessionManager: manager });
+    expect(astral.matches[0].matchOffset).toBe("İx 😀 ".length);
+  });
+
+  test("owned read pages preserve exact UTF-16 code units", async () => {
+    const manager = SessionManager.inMemory("/project");
+    const text = "original \ud800 tail " + "x".repeat(2000);
+    manager.appendMessage(user(text));
+    const service = new HistoryService();
+    const result = await service.search({ query: "original", excerptChars: 40 }, { sessionManager: manager });
+    expect(result.matches[0]?.excerpt).toContain("\ud800");
+    const page = await service.read({ ref: result.matches[0]!.ref, maxChars: 10 }, { sessionManager: manager });
+    expect(page.text).toBe(text.slice(0, 10));
+  });
+});
+
+describe("original history: branch snapshots and pagination", () => {
+  test("does not cross inactive branches", async () => {
+    const manager = SessionManager.inMemory("/project");
+    const root = manager.appendMessage(user("root-visible"));
+    manager.appendMessage(user("abandoned-secret-needle"));
+    manager.branch(root);
+    manager.appendMessage(user("active branch"));
+    const result = await new HistoryService().search({ query: "abandoned-secret-needle" }, { sessionManager: manager });
+    expect(result.matches).toEqual([]);
+  });
+
+  test("search pages respect the match limit and finish without another cursor", async () => {
+    const manager = SessionManager.inMemory("/project");
+    const first = manager.appendMessage(user("paged first"));
+    const second = manager.appendMessage(user("paged second"));
+    const service = new HistoryService();
+    const ctx = { sessionManager: manager };
+
+    const page1 = await service.search({ query: "paged", limit: 1 }, ctx);
+    expect(page1.matches).toHaveLength(1);
+    expect(page1.nextCursor).toBeString();
+    const page2 = await service.search({ query: "paged", limit: 1, cursor: page1.nextCursor }, ctx);
+    expect(page2.matches).toHaveLength(1);
+    expect(page2.nextCursor).toBeUndefined();
+    expect([page1.matches[0]!.provenance.entryId, page2.matches[0]!.provenance.entryId].sort()).toEqual(
+      [first, second].sort(),
+    );
+  });
+
+  test("read pages respect the character limit and continue at the previous end", async () => {
+    const manager = SessionManager.inMemory("/project");
+    const text = "paged " + "x".repeat(40);
+    manager.appendMessage(user(text));
+    const service = new HistoryService();
+    const ctx = { sessionManager: manager };
+    const found = await service.search({ query: "paged" }, ctx);
+    const ref = found.matches[0]!.ref;
+
+    const page1 = await service.read({ ref, maxChars: 7 }, ctx);
+    expect(page1.text.length).toBe(7);
+    expect(page1.text).toBe(text.slice(0, 7));
+    expect(page1.nextCursor).toBeString();
+    const page2 = await service.read({ ref, maxChars: 7, cursor: page1.nextCursor }, ctx);
+    expect(page2.range.start).toBe(7);
+    expect(page2.text).toBe(text.slice(7, 14));
   });
 
   test("cursor pages keep their original branch leaf when matching dialogue is appended", async () => {
@@ -134,29 +209,27 @@ describe("original history", () => {
     expect(nextRead.range.start).toBe(4);
   });
 
-  test("read validates the whole scan even when its reference precedes oversized text", async () => {
+  test("search cursors survive appends but reject a branch that abandons their leaf", async () => {
     const manager = SessionManager.inMemory("/project");
-    manager.appendMessage(user("read validation target"));
+    const root = manager.appendMessage(user("paged root"));
+    manager.appendMessage(user("paged branch tail"));
     const service = new HistoryService();
     const ctx = { sessionManager: manager };
-    const found = await service.search({ query: "read validation target" }, ctx);
-    manager.appendMessage(user("x".repeat(4 * 1024 * 1024 + 1)));
-    await expect(service.read({ ref: found.matches[0]!.ref }, ctx)).rejects.toThrow("text part exceeds");
-  });
+    const page = await service.search({ query: "paged", limit: 1 }, ctx);
+    expect(page.nextCursor).toBeString();
 
-  test("does not cross inactive branches", async () => {
-    const manager = SessionManager.inMemory("/project");
-    const root = manager.appendMessage(user("root-visible"));
-    manager.appendMessage(user("abandoned-secret-needle"));
+    manager.appendMessage(user("later append"));
+    const afterAppend = await service.search({ query: "paged", limit: 1, cursor: page.nextCursor }, ctx);
+    expect(afterAppend.matches).toHaveLength(1);
+
     manager.branch(root);
-    manager.appendMessage(user("active branch"));
-    const result: any = await new HistoryService().search(
-      { query: "abandoned-secret-needle" },
-      { sessionManager: manager },
+    await expect(service.search({ query: "paged", limit: 1, cursor: page.nextCursor }, ctx)).rejects.toThrow(
+      "active branch",
     );
-    expect(result.matches).toEqual([]);
   });
+});
 
+describe("original history: retrieval exclusions", () => {
   test("preserves shake, hidden-context, and private-reasoning exclusions", async () => {
     const manager = SessionManager.inMemory("/project");
     const callEntry = manager.appendMessage(
@@ -193,43 +266,11 @@ describe("original history", () => {
       "hidden-output-needle",
       "hidden-custom-needle",
     ]) {
-      expect(((await service.search({ query }, { sessionManager: manager })) as any).matches).toEqual([]);
+      const result = await service.search({ query }, { sessionManager: manager });
+      expect(result.matches).toEqual([]);
     }
-    expect(
-      ((await service.search({ query: "public-needle" }, { sessionManager: manager })) as any).matches,
-    ).toHaveLength(1);
-  });
-
-  test("requires explicit opt-in and session file for cross-session access", async () => {
-    const current = await persisted();
-    current.appendMessage(user("current only"));
-    const other = await persisted();
-    other.appendMessage(user("cross-session-needle"));
-    other.appendMessage(assistant([{ type: "text", text: "ack" }]));
-    const service = new HistoryService();
-    const ctx = { sessionManager: current };
-    expect(((await service.search({ query: "cross-session-needle" }, ctx)) as any).matches).toEqual([]);
-    await expect(
-      service.search({ query: "cross-session-needle", sessionFile: other.getSessionFile() }, ctx),
-    ).rejects.toThrow("allowCrossSession");
-    const found: any = await service.search(
-      { query: "cross-session-needle", sessionFile: other.getSessionFile(), allowCrossSession: true },
-      ctx,
-    );
-    expect(found.matches[0].provenance).toMatchObject({
-      scope: "cross-session-branch",
-      sessionId: other.getSessionId(),
-      sessionFile: other.getSessionFile(),
-    });
-    await expect(service.read({ ref: found.matches[0].ref }, ctx)).rejects.toThrow("selected session");
-    expect(
-      (
-        (await service.read(
-          { ref: found.matches[0].ref, sessionFile: other.getSessionFile(), allowCrossSession: true },
-          ctx,
-        )) as any
-      ).text,
-    ).toBe("cross-session-needle");
+    const visible = await service.search({ query: "public-needle" }, { sessionManager: manager });
+    expect(visible.matches).toHaveLength(1);
   });
 
   test("applies a new shake to old search and read cursor snapshots", async () => {
@@ -241,13 +282,10 @@ describe("original history", () => {
     );
     const resultEntry = manager.appendMessage(toolResult("cursor-call", "cursor-policy-needle secret-tail"));
     const service = new HistoryService();
-    const searchPage: any = await service.search(
-      { query: "cursor-policy-needle", limit: 2 },
-      { sessionManager: manager },
-    );
+    const searchPage = await service.search({ query: "cursor-policy-needle", limit: 2 }, { sessionManager: manager });
     expect(searchPage.nextCursor).toBeString();
-    const found: any = await service.search({ query: "secret-tail" }, { sessionManager: manager });
-    const readPage: any = await service.read({ ref: found.matches[0].ref, maxChars: 6 }, { sessionManager: manager });
+    const found = await service.search({ query: "secret-tail" }, { sessionManager: manager });
+    const readPage = await service.read({ ref: found.matches[0].ref, maxChars: 6 }, { sessionManager: manager });
     expect(readPage.nextCursor).toBeString();
 
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, {
@@ -258,7 +296,7 @@ describe("original history", () => {
       shakenAt: Date.now(),
     });
 
-    const after: any = await service.search(
+    const after = await service.search(
       { query: "cursor-policy-needle", limit: 2, cursor: searchPage.nextCursor },
       { sessionManager: manager },
     );
@@ -280,7 +318,7 @@ describe("original history", () => {
     );
     const resultEntry = manager.appendMessage(toolResult("carry-call", "carry-policy-needle excluded"));
     const service = new HistoryService();
-    const before: any = await service.search({ query: "carry-policy-needle", limit: 2 }, { sessionManager: manager });
+    const before = await service.search({ query: "carry-policy-needle", limit: 2 }, { sessionManager: manager });
     manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, {
       version: MANUAL_SHAKE_VERSION,
       sessionId: manager.getSessionId(),
@@ -297,15 +335,54 @@ describe("original history", () => {
       toolResultEntryIds: [],
       shakenAt: 2,
     });
-    const after: any = await service.search(
+    const after = await service.search(
       { query: "carry-policy-needle", limit: 2, cursor: before.nextCursor },
       { sessionManager: manager },
     );
     expect(after.matches).toEqual([]);
-    expect(((await service.search({ query: "excluded" }, { sessionManager: manager })) as any).matches).toEqual([]);
+    const fresh = await service.search({ query: "excluded" }, { sessionManager: manager });
+    expect(fresh.matches).toEqual([]);
+  });
+});
+
+describe("original history: cross-session permission and read-only loading", () => {
+  test("requires explicit opt-in and session file on each cross-session call", async () => {
+    const current = await persisted();
+    current.appendMessage(user("current only"));
+    const other = await persisted();
+    other.appendMessage(user("cross-session-needle"));
+    other.appendMessage(assistant([{ type: "text", text: "ack" }]));
+    const file = other.getSessionFile()!;
+    const service = new HistoryService();
+    const ctx = { sessionManager: current };
+
+    const local = await service.search({ query: "cross-session-needle" }, ctx);
+    expect(local.matches).toEqual([]);
+    await expect(service.search({ query: "cross-session-needle", allowCrossSession: true }, ctx)).rejects.toThrow(
+      "explicit sessionFile",
+    );
+    await expect(service.search({ query: "cross-session-needle", sessionFile: file }, ctx)).rejects.toThrow(
+      "allowCrossSession",
+    );
+
+    const found = await service.search(
+      { query: "cross-session-needle", sessionFile: file, allowCrossSession: true },
+      ctx,
+    );
+    const match = found.matches[0]!;
+    expect(match.provenance).toMatchObject({
+      scope: "cross-session-branch",
+      sessionId: other.getSessionId(),
+      sessionFile: file,
+    });
+
+    await expect(service.read({ ref: match.ref }, ctx)).rejects.toThrow("selected session");
+    await expect(service.read({ ref: match.ref, sessionFile: file }, ctx)).rejects.toThrow("allowCrossSession");
+    const read = await service.read({ ref: match.ref, sessionFile: file, allowCrossSession: true }, ctx);
+    expect(read.text).toBe("cross-session-needle");
   });
 
-  test("cross-session loading is read-only and rejects missing, empty, and oversized files", async () => {
+  test("cross-session loading leaves the transcript bytes and modification time unchanged", async () => {
     const current = await persisted();
     const other = await persisted();
     other.appendMessage(user("readonly-cross-needle"));
@@ -313,47 +390,71 @@ describe("original history", () => {
     const file = other.getSessionFile()!;
     const before = await readFile(file);
     const beforeStat = await stat(file);
-    const service = new HistoryService();
-    const result: any = await service.search(
+
+    const result = await new HistoryService().search(
       { query: "readonly-cross-needle", sessionFile: file, allowCrossSession: true },
       { sessionManager: current },
     );
     expect(result.matches).toHaveLength(1);
     expect(await readFile(file)).toEqual(before);
     expect((await stat(file)).mtimeMs).toBe(beforeStat.mtimeMs);
+  });
 
-    const dir = await mkdtemp(join(tmpdir(), "bruv-history-readonly-"));
-    dirs.push(dir);
+  test("missing cross-session files do not create parent directories", async () => {
+    const dir = await temporaryDirectory();
     const missing = join(dir, "new", "missing.jsonl");
     await expect(
-      service.search({ query: "x", sessionFile: missing, allowCrossSession: true }, { sessionManager: current }),
+      new HistoryService().search(
+        { query: "x", sessionFile: missing, allowCrossSession: true },
+        { sessionManager: SessionManager.inMemory("/project") },
+      ),
     ).rejects.toThrow();
     await expect(access(join(dir, "new"))).rejects.toThrow();
+  });
+
+  test("empty cross-session files are rejected without initializing them", async () => {
+    const dir = await temporaryDirectory();
     const empty = join(dir, "empty.jsonl");
     await writeFile(empty, "");
     await expect(
-      service.search({ query: "x", sessionFile: empty, allowCrossSession: true }, { sessionManager: current }),
+      new HistoryService().search(
+        { query: "x", sessionFile: empty, allowCrossSession: true },
+        { sessionManager: SessionManager.inMemory("/project") },
+      ),
     ).rejects.toThrow("non-empty regular file");
     expect((await stat(empty)).size).toBe(0);
+  });
+
+  test("legacy cross-session files are rejected without migrating them", async () => {
+    const dir = await temporaryDirectory();
     const legacy = join(dir, "legacy.jsonl");
     const legacyBytes = '{"type":"session","version":1,"id":"legacy","timestamp":"2020-01-01","cwd":"/tmp"}\n';
     await writeFile(legacy, legacyBytes);
     await expect(
-      service.search({ query: "x", sessionFile: legacy, allowCrossSession: true }, { sessionManager: current }),
+      new HistoryService().search(
+        { query: "x", sessionFile: legacy, allowCrossSession: true },
+        { sessionManager: SessionManager.inMemory("/project") },
+      ),
     ).rejects.toThrow("migrate a copy");
     expect(await readFile(legacy, "utf8")).toBe(legacyBytes);
+  });
+
+  test("oversized cross-session files are rejected before scanning", async () => {
+    const dir = await temporaryDirectory();
     const large = join(dir, "large.jsonl");
     await writeFile(large, "");
     await truncate(large, 64 * 1024 * 1024 + 1);
     await expect(
-      service.search({ query: "x", sessionFile: large, allowCrossSession: true }, { sessionManager: current }),
+      new HistoryService().search(
+        { query: "x", sessionFile: large, allowCrossSession: true },
+        { sessionManager: SessionManager.inMemory("/project") },
+      ),
     ).rejects.toThrow("history limit");
   });
 
   test("rejects a FIFO promptly without opening it for blocking reads", async () => {
     const current = SessionManager.inMemory("/project");
-    const dir = await mkdtemp(join(tmpdir(), "bruv-history-fifo-"));
-    dirs.push(dir);
+    const dir = await temporaryDirectory();
     const fifo = join(dir, "session.fifo");
     const made = Bun.spawnSync(["mkfifo", fifo]);
     expect(made.exitCode).toBe(0);
@@ -365,16 +466,17 @@ describe("original history", () => {
       ),
     ).rejects.toThrow("regular file");
   });
+});
 
-  test("reports Unicode-insensitive match offsets in original UTF-16 coordinates", async () => {
+describe("original history: bounded scan validation", () => {
+  test("read validates the whole scan even when its reference precedes oversized text", async () => {
     const manager = SessionManager.inMemory("/project");
-    manager.appendMessage(user("İx 😀 NEEDLE"));
+    manager.appendMessage(user("read validation target"));
     const service = new HistoryService();
-
-    const expanded: any = await service.search({ query: "x" }, { sessionManager: manager });
-    expect(expanded.matches[0].matchOffset).toBe(1);
-    const astral: any = await service.search({ query: "needle" }, { sessionManager: manager });
-    expect(astral.matches[0].matchOffset).toBe("İx 😀 ".length);
+    const ctx = { sessionManager: manager };
+    const found = await service.search({ query: "read validation target" }, ctx);
+    manager.appendMessage(user("x".repeat(4 * 1024 * 1024 + 1)));
+    await expect(service.read({ ref: found.matches[0]!.ref }, ctx)).rejects.toThrow("text part exceeds");
   });
 
   test("fails closed when active-branch traversal exceeds its work bound", async () => {
@@ -386,29 +488,18 @@ describe("original history", () => {
   });
 
   test("rejects excessive exclusion work rather than dropping exclusions", async () => {
-    const base = SessionManager.inMemory("/project");
+    const manager = SessionManager.inMemory("/project");
     const ids = Array.from({ length: 2_048 }, (_, index) => `excluded-${index}`);
-    const entries = Array.from({ length: 49 }, (_, index) => ({
-      id: `shake-${index}`,
-      parentId: index ? `shake-${index - 1}` : null,
-      type: "custom",
-      customType: MANUAL_SHAKE_ENTRY,
-      timestamp: new Date(index).toISOString(),
-      data: {
+    // Each valid shake contributes work, even when IDs repeat: 49 * 2,048 > 100,000.
+    for (let index = 0; index < 49; index++) {
+      manager.appendCustomEntry(MANUAL_SHAKE_ENTRY, {
         version: MANUAL_SHAKE_VERSION,
-        sessionId: base.getSessionId(),
+        sessionId: manager.getSessionId(),
         assistantEntryIds: [],
         toolResultEntryIds: ids,
         shakenAt: index,
-      },
-    }));
-    const manager = {
-      getSessionId: () => base.getSessionId(),
-      getSessionFile: () => undefined,
-      getCwd: () => "/project",
-      getLeafId: () => entries.at(-1)!.id,
-      getBranch: () => entries,
-    } as any;
+      });
+    }
     await expect(new HistoryService().search({ query: "x" }, { sessionManager: manager })).rejects.toThrow(
       "exclusions exceed",
     );
@@ -420,53 +511,5 @@ describe("original history", () => {
     await expect(new HistoryService().search({ query: "x" }, { sessionManager: manager })).rejects.toThrow(
       "text part exceeds",
     );
-  });
-
-  test("bounds and pages search and reads, and rejects cursors after branch changes", async () => {
-    const manager = SessionManager.inMemory("/project");
-    const first = manager.appendMessage(user("paged " + "x".repeat(40)));
-    manager.appendMessage(user("paged second"));
-    const service = new HistoryService();
-    const page1: any = await service.search({ query: "paged", limit: 1 }, { sessionManager: manager });
-    expect(page1.matches).toHaveLength(1);
-    expect(page1.nextCursor).toBeString();
-    const page2: any = await service.search(
-      { query: "paged", limit: 1, cursor: page1.nextCursor },
-      { sessionManager: manager },
-    );
-    expect(page2.matches).toHaveLength(1);
-    const target = [page1, page2]
-      .flatMap((page: any) => page.matches)
-      .find((item: any) => item.provenance.entryId === first);
-    const read1: any = await service.read({ ref: target.ref, maxChars: 7 }, { sessionManager: manager });
-    expect(read1.text.length).toBe(7);
-    const read2: any = await service.read(
-      { ref: target.ref, maxChars: 7, cursor: read1.nextCursor },
-      { sessionManager: manager },
-    );
-    expect(read2.range.start).toBe(7);
-    manager.appendMessage(user("later append"));
-    expect(
-      (
-        (await service.search(
-          { query: "paged", limit: 1, cursor: page1.nextCursor },
-          { sessionManager: manager },
-        )) as any
-      ).matches,
-    ).toHaveLength(1);
-    manager.branch(first);
-    await expect(
-      service.search({ query: "paged", limit: 1, cursor: page1.nextCursor }, { sessionManager: manager }),
-    ).rejects.toThrow("active branch");
-  });
-  test("owned read pages preserve exact UTF-16 code units", async () => {
-    const manager = SessionManager.inMemory("/project");
-    const text = "original \ud800 tail " + "x".repeat(2000);
-    manager.appendMessage(user(text));
-    const service = new HistoryService();
-    const result = await service.search({ query: "original", excerptChars: 40 }, { sessionManager: manager });
-    expect(result.matches[0]?.excerpt).toContain("\ud800");
-    const page = await service.read({ ref: result.matches[0]!.ref, maxChars: 10 }, { sessionManager: manager });
-    expect(page.text).toBe(text.slice(0, 10));
   });
 });

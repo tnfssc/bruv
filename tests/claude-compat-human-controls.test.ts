@@ -467,3 +467,70 @@ test("native defer label cannot consume a real ledger choice of the same name", 
     h.cleanup();
   }
 });
+
+test("replaced frontend rejects late allow even when transport ignores abort", async () => {
+  const callbacks: Array<{
+    request: any;
+    signal?: AbortSignal;
+    resolve: (response: any) => void;
+  }> = [];
+  const h = fixture(
+    undefined,
+    (request, options) =>
+      new Promise((resolve) => {
+        callbacks.push({ request, signal: options?.signal, resolve });
+      }),
+  );
+  const allow = (index: number, answer: string) => {
+    const callback = callbacks[index]!;
+    callback.resolve({
+      behavior: "allow",
+      toolUseID: callback.request.tool_use_id,
+      updatedInput: { answers: { [callback.request.input.questions[0].question]: answer } },
+    });
+  };
+  try {
+    await h.emit("session_start");
+    const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "Still owned?" });
+    await tick();
+    const old = h.controls.openQuestion(q.id);
+    await h.emit("session_tree");
+    await tick();
+    expect(callbacks).toHaveLength(2);
+    expect(callbacks[0]!.signal?.aborted).toBe(true);
+    const current = h.controls.openQuestion(q.id);
+    allow(0, "Stale human answer");
+    await expect(old).rejects.toThrow("frontend changed");
+    expect(h.runtime.service.get(h.ctx, q.id).status).toBe("pending");
+    expect(h.controls.openQuestion(q.id)).toBe(current);
+    allow(1, "Current human answer");
+    await current;
+    expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("Current human answer");
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("terminal consent drain follows dialogs opened by session replacement", async () => {
+  const h = fixture();
+  try {
+    await h.emit("session_start");
+    const q: any = await h.runtime.handle(h.ctx, "questions.ask", { text: "Replace while draining?" });
+    await tick();
+    let drained = false;
+    const drain = h.controls.flush().then(() => {
+      drained = true;
+    });
+    await h.emit("session_tree");
+    await tick();
+    expect(h.calls).toHaveLength(2);
+    expect(h.calls[0]!.signal?.aborted).toBe(true);
+    expect(drained).toBe(false);
+    h.allow(1, "Answered after replacement");
+    await drain;
+    expect(drained).toBe(true);
+    expect(h.runtime.service.get(h.ctx, q.id).answer).toBe("Answered after replacement");
+  } finally {
+    h.cleanup();
+  }
+});
