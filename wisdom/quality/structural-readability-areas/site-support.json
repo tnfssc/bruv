@@ -641,7 +641,7 @@
     {
       "focus": "site/scripts/browser.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_4d170cd0",
@@ -656,10 +656,16 @@
         {
           "id": "task_4d85f3b6",
           "candidate": "512c2bf69853e9d992dccb681d3bd5828e94f456",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Single per-call browser selection/launch operation; caller owns cleanup,unset/empty override defers Playwright. Judge read complete six callers and browser tests;runtime/override execution not rerun.",
+          "objections": []
         }
       ],
-      "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2"
+      "initialBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2",
+      "acceptedBlob": "fc565a66c1c4ff54286f757cd5f0dd422c83aea2",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/build.test.ts",
@@ -901,7 +907,7 @@
     {
       "focus": "site/scripts/install-ui.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_072fdc49",
@@ -912,7 +918,13 @@
           "result": "observeTerminal owns bundle instrumentation/observations; targets expose pixel coordinates and column bounds; desktop/mobile have independent snapshots instead of overwritten hit variables. Actions/assertions remain visible. 2 tests/52 assertions pass; format/diff pass;screenshots restored."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_1588246a",
+          "candidate": "7fdbc657f08ff313669b6ea2cb786e6732c36e83",
+          "state": "running"
+        }
+      ],
       "initialBlob": "e87341242de25df9d495800a27f0fe8da2874a12"
     },
     {

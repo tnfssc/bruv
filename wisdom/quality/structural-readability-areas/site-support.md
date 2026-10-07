@@ -67,3 +67,5 @@ site/brand.ts: Fresh corrected-path/base review independently confirms explicit4
 site/install-html.ts: Two-line dedicated entry invokes shared install enhancement independently of terminal/WASM startup. Copy effects/timers stay in shared operation. Judge traced build/runtime/template and complete browser assertions;tests read not rerun.
 
 site/package.json: Manifest exposes build/preview/assets/test boundaries directly; && visibly gates validation on test success. Judge31 dependency-free tests,7 selected files and17 resolving script occurrences;no browser/build/animation/deploy.
+
+site/scripts/browser.ts: Single per-call browser selection/launch operation; caller owns cleanup,unset/empty override defers Playwright. Judge read complete six callers and browser tests;runtime/override execution not rerun.
