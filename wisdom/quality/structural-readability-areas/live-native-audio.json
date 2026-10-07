@@ -942,9 +942,16 @@
         "status": "candidate ready",
         "commit": "ad1dfa9d42fc87c397fe92e691127958201e0f1a"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_3ac00f12",
+          "status": "running",
+          "candidate": "ad1dfa9d42fc87c397fe92e691127958201e0f1a",
+          "base": "3faae10fe2fb393f921117b47ebc565299db873e"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged nativephase/detail->bridge sanitize->extension ignores helpertext->fixedguidance switch;unknowncodes remainfailures;no hiddenstate/lifetimes tosplit.",
       "checks": "21tests139assertions/diffclean;mockedaudioUI/native source only,no macOS/device/provider/compiledCLI."
@@ -2275,13 +2282,20 @@
       "judgeRounds": [
         {
           "id": "task_dd7fe5dc",
-          "status": "running",
+          "status": "complete",
           "candidate": "a4bdb033fc65291cdc41a36b3a0365b806aa7942",
-          "base": "ba1575ae4a9300c6729f8988f79029f59699318a"
+          "base": "ba1575ae4a9300c6729f8988f79029f59699318a",
+          "verdict": "REJECT",
+          "objections": [
+            "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain."
+          ],
+          "reason": "Lifetime improvement and hang fix genuine, but newtimeout regression leaves wrapper-owned graph root unowned/unremoved.",
+          "checks": "Independent25 Python pass;baseline/restoredorder hang reproduced;leaked probe root removed byjudge. Fakeaudio only.",
+          "fullVerdict": "**REJECT — narrowly incomplete fixture ownership; substantial readability improvement otherwise.**\n\nReviewed the clean candidate worktree at `a4bdb033fc65291cdc41a36b3a0365b806aa7942` against `ba1575ae4a9300c6729f8988f79029f59699318a`, including the full two-path diff.\n\nExact changed blobs:\n- `native/live-linux/tests/test_isolated_audio.py`: `7b75ec3b9042defbb65eb848807a7822bc51bdd0` (baseline `d4faa77a5ddf45b9757af01c9abd91adb076cd6f`).\n- `wisdom/quality/structural-readability-worker.md`: `0ae55e637b503a18df254a1f8f935a47e50317f0`.\n\nContext traced through the real Bash wrapper (`056491cb8f7267f2cb0821fb5ccdc7911e0a1822`), virtual fixture (`86e0f56798547d704db912eab2534a2161c93d0e`) and caller-test handoff.\n\n**Intrinsic readability / improvement**\n- `WrapperInvocation` coherently owns one process and its evidence. Contamination subtests no longer erase prior records or overwrite a shared process slot.\n- Launch-policy checks and release checks are now distinct, visible expectations.\n- SIGTERM escalation remains tested before harness cleanup; environment, default dispatch, status and direct-child reaping assertions were retained.\n- The unchanged fake-tool dispatch was already straightforward.\n\n**Blocking finding**\n`stop()` kills Bash, bypassing its EXIT cleanup. The new timeout regression therefore leaves Bash’s private audio directory outside the test-owned temporary tree.\n\nIndependent probe: `/tmp/tmp.oV28zbZUWL` still existed after both `run.stop()` and `doCleanups()`, containing runtime/config directories and service logs. I removed that probe-owned directory afterward. This is an observed unfinished lifetime, not speculative hardening.\n\n**Smallest coherent rework**\nConfine wrapper-created temporary state to the harness-owned temporary tree—for example through a controlled `TMPDIR`—and verify timeout teardown ultimately removes it. Preserve per-invocation records and kill-before-drain ordering. No production-wrapper rewrite or new framework needed.\n\n**Proof**\n- Independently ran all native Python tests: **25 passed**, 5.532s; diff check clean.\n- Baseline and restored-order probes both blocked beyond two seconds, then completed once inherited-pipe holders were externally killed. The reported hang fix is real.\n- No source edits or commits. Fake audio tools only; no device/provider/macOS/full-build acceptance claim."
         }
       ],
       "acceptedBlob": null,
-      "integration": "judge running",
+      "integration": "REJECTED candidate retained unintegrated;fresh rework queued",
       "relatedPatchJudgment": {
         "judgeId": "task_1a73a583",
         "verdict": "ACCEPT",
@@ -2371,6 +2385,13 @@
       "id": "task_7ae21cac",
       "resolvedCandidate": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
       "judgeId": "task_610f6154"
+    },
+    {
+      "focus": "native/live-linux/tests/test_isolated_audio.py",
+      "status": "queued for next primary/rework slot",
+      "reason": "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain.",
+      "rejectedCandidate": "a4bdb033fc65291cdc41a36b3a0365b806aa7942",
+      "judgeId": "task_dd7fe5dc"
     }
   ],
   "audit": {
