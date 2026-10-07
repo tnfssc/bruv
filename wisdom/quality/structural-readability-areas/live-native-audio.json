@@ -1429,13 +1429,20 @@
       "judgeRounds": [
         {
           "id": "task_1ce2e593",
-          "status": "running",
+          "status": "complete",
           "candidate": "74ae2a442c5cb787d3666eeb5a1bc942c02319cf",
-          "base": "08dc3dd7c0e48cbb811c003b70592b7e51628b55"
+          "base": "08dc3dd7c0e48cbb811c003b70592b7e51628b55",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Six isolated fixture contracts remove unrelated shared history, preserve purposeful ring and flush sequences; consuming ramp helper checks flags and samples consistently.",
+          "checks": "Independent strict C++17 ASan/UBSan harness and diff pass. No device/concurrency/root-suite proof.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/playback-buffer.cpp": "86b16c263f912996fb907d7b1d960835a274c795"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "86b16c263f912996fb907d7b1d960835a274c795",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_13282f24",
         "verdict": "ACCEPT",
